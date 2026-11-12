@@ -32,7 +32,7 @@ import {
 } from "iconsax-reactjs";
 import Link from "next/link";
 import { type ReactNode, useState } from "react";
-import { PLUGINS } from "@/app/(app)/(home)/plugins/plugin-data";
+import { PLUGINS } from "@/app/[lang]/(home)/plugins/plugin-data";
 import {
   currentBuilderRequest,
   openPlaygroundBuilder,

@@ -5,6 +5,7 @@ import { GithubLogo } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { ArrowRight, Copy, ExportSquare } from "iconsax-reactjs";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { soundEvent } from "@/lib/sound/emit";
 import type { ResolvedAction } from "./resolve-action";
 
@@ -14,13 +15,13 @@ interface IntegrationActionProps {
   className?: string;
 }
 
-async function copy(text: string, message: string) {
+async function copy(text: string, message: string, failed: string) {
   try {
     await navigator.clipboard.writeText(text);
     toast.success(message);
     soundEvent("copy");
   } catch {
-    toast.error("Couldn't copy. Select the text and copy it instead.");
+    toast.error(failed);
   }
 }
 
@@ -30,13 +31,14 @@ export function IntegrationAction({
   variant = "default",
   className,
 }: IntegrationActionProps) {
+  const t = useTranslations("codeSnippet");
   if (action.type === "copy") {
     return (
       <Button
         type="button"
         variant={variant}
         className={className}
-        onClick={() => copy(action.text, action.toast)}
+        onClick={() => copy(action.text, action.toast, t("copyFailed"))}
       >
         <Copy aria-hidden className="size-4" />
         {action.label}
@@ -54,7 +56,7 @@ export function IntegrationAction({
           target="_blank"
           rel="noopener noreferrer"
           onClick={() => {
-            void copy(action.text, action.toast);
+            void copy(action.text, action.toast, t("copyFailed"));
           }}
         >
           {action.label}

@@ -8,19 +8,28 @@
 // labels. Every answer is checked (same ICU arguments and tags, every number
 // kept) and retried once; what still fails stays English and is listed.
 //
-// Writes messages/<locale>.json and records each string's source hash and
-// status ("machine") in messages/review/<locale>.json.
+// Two catalogs:
+// - the UI (JSX copy, next-intl): messages/<locale>.json, with each string's
+//   source hash and status ("machine") in messages/review/<locale>.json;
+// - content (copy in TypeScript data, lib/i18n/content.ts): the sources in
+//   lib/i18n/content-sources.ts, into messages/content/<locale>.json, a
+//   translation memory keyed by each English string's hash.
+// Both are saved after every request, so an interrupted run keeps its work.
 //
-//   --locale <l>  one locale (repeatable)    --all     every translated locale
-//   --keys <glob> only keys starting with it --force   redo machine strings too
-//   --dry-run     list what would be sent
-//   --record      no AI: record the strings already in the catalog (after
-//                 translating by hand), so i18n:check can tell when the
-//                 English changes later
+//   --locale <l>     one locale (repeatable)   --all       every translated locale
+//   --only ui|content  one catalog (default: both)
+//   --keys <prefix>  only keys (or content paths) starting with it
+//   --force          redo machine strings too  --dry-run   list what would be sent
+//   --concurrency <n> requests at a time per locale (default 3)
+//   --prune          drop content entries no source uses any more
+//   --record         no AI: record the UI strings already in the catalog
+//                    (after translating by hand), so i18n:check can tell
+//                    when the English changes later
 //
 // Translating needs AI_GATEWAY_API_KEY in the environment: your own Vercel
 // AI Gateway key (QRdx's isn't shared). I18N_MODEL picks another gateway
 // model. The token count is printed at the end.
+import "./i18n-env";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { createGateway, generateText, Output } from "ai";
@@ -37,14 +46,22 @@ import {
   TRANSLATED_LOCALES,
   type TranslatedLocale,
 } from "@/lib/i18n/config";
+import type { TranslationMemory } from "@/lib/i18n/content";
+import {
+  CONTENT_SOURCES,
+  type ContentString,
+  contentEnglish,
+} from "@/lib/i18n/content-sources";
 import { hasDocs } from "@/lib/i18n/docs";
-import { shapeMismatch } from "@/lib/i18n/icu";
+import { numberMismatch, shapeMismatch } from "@/lib/i18n/icu";
 
 const MESSAGES = path.join(__dirname, "../messages");
 const MODELS = process.env.I18N_MODEL
   ? [process.env.I18N_MODEL]
   : ["anthropic/claude-sonnet-5.5", "anthropic/claude-haiku-5.5"];
 const CHUNK = 30;
+/** Characters of English per request, so long FAQ answers share a request with few others. */
+const CHUNK_CHARS = 7000;
 
 const args = process.argv.slice(2);
 const flag = (name: string) => args.includes(name);
@@ -67,9 +84,16 @@ if (locales.length === 0) {
   process.exit(1);
 }
 const keyPrefixes = values("--keys");
+const only = values("--only")[0];
+if (only && only !== "ui" && only !== "content") {
+  console.error('--only takes "ui" or "content".');
+  process.exit(1);
+}
 const DRY = flag("--dry-run");
 const FORCE = flag("--force");
 const RECORD = flag("--record");
+const PRUNE = flag("--prune");
+const CONCURRENCY = Math.max(1, Number(values("--concurrency")[0] ?? 3) || 3);
 
 /** A catalog or review file; a new locale starts from none. */
 const readJson = <T>(file: string): T =>
@@ -95,7 +119,7 @@ const english = readJson<Catalog>("en.json");
 const source = flatten(english);
 const glossary = readJson<Glossary>("glossary.json");
 
-/** Where each namespace appears, for the translator. */
+/** Where each UI namespace appears, for the translator. */
 const SURFACES: Record<string, string> = {
   meta: "the page <title> and meta description of the home page (search results)",
   nav: "the site header: menu names, dropdown links with one-line descriptions, buttons",
@@ -107,6 +131,29 @@ const SURFACES: Record<string, string> = {
   pricing:
     "the pricing page: plan cards, the comparison table, the guarantee and FAQ",
   docs: "the documentation site's interface: search, table of contents, page buttons, the language menu, the help center's boxes, the 404 page and a note on pages not translated yet",
+  // i18n-site lane (marketing pages), kept in one block.
+  common:
+    "labels shared by many marketing pages: breadcrumbs, FAQ headings, 'see all' links, card badges",
+  toolHero: "the hero at the top of the tools and landing pages",
+  guarantee:
+    "the Never-Hostage Guarantee page: what happens to QR codes when a plan ends",
+  tools:
+    "the free tools hub and its tools: bulk CSV generator, print size calculator, scan checker",
+  scan: "the free online QR code and barcode scanner (camera and image upload)",
+  barcodeGenerator:
+    "the free barcode generator page (EAN, UPC, Code 128 and more)",
+  qrGenerator:
+    "the free QR code generator pages, one per content type, and their hub",
+  seoTopics:
+    "the 'QR codes for <industry>' and 'QR codes on <placement>' landing pages and their hubs",
+  pageCodes:
+    "sample QR codes shown on landing pages, each opening in the editor",
+  templates: "the hosted page templates gallery",
+  integrations: "the integrations directory and each integration's page",
+  plugins: "the plugins page: Chrome, Figma, Raycast and Canva",
+  mcp: "the MCP server page: connect QRdx to AI assistants",
+  ai: "the AI QR code theme designer and the AI QR art page",
+  compare: "the pages comparing QRdx with other QR code tools",
 };
 
 /** Short strings (labels, buttons) get a length budget. */
@@ -116,7 +163,7 @@ function budget(message: string): number | undefined {
   return Math.max(10, Math.round(message.length * 1.5));
 }
 
-function systemPrompt(locale: TranslatedLocale): string {
+function systemPrompt(locale: TranslatedLocale, plain: boolean): string {
   const info = LOCALE_INFO[locale];
   const fixed = Object.entries(glossary.fixed)
     .flatMap(([term, byLocale]) =>
@@ -129,30 +176,45 @@ function systemPrompt(locale: TranslatedLocale): string {
     `Rules:\n${glossary.rules.map((rule) => `- ${rule}`).join("\n")}`,
     "- Write numbers with Western digits (0-9), exactly as many and the same values as the English.",
     "- Plan names: Pro and Business stay in English; the Free plan uses the fixed translation below.",
+    ...(plain
+      ? []
+      : [
+          "- In these ICU messages an ASCII apostrophe (') right before {, }, # or < starts a quoted literal and breaks the message: for elisions and possessives use the typographic apostrophe (’), as in “l’<link>éditeur</link>”.",
+          "- Every tag in the English (<link>…</link>, <code>…</code>) appears exactly once in the translation, around the words that mean the same thing; never merge, drop or nest them differently.",
+        ]),
+    ...(plain
+      ? [
+          "- These strings are plain text, not ICU messages: braces, quotes, URLs, file names, field names in single quotes and example values stay exactly as written.",
+          "- Text in single quotes that names a button or setting in the QRdx editor ('Make it dynamic') is translated like a UI label, keeping the quotes.",
+        ]
+      : []),
     `Never translate these terms (keep them exactly): ${glossary.keep.join(", ")}.`,
     `Use these fixed translations:\n${fixed}`,
     "Return one translation per key, for every key you are given, with the key unchanged.",
   ].join("\n\n");
 }
 
-function userPrompt(
-  keys: string[],
-  notes: Map<string, string> = new Map(),
-): string {
-  const namespace = keys[0]?.split(".")[0] ?? "";
-  const lines = keys.map((key) => {
-    const message = source.get(key) ?? "";
+interface Item {
+  key: string;
+  english: string;
+  /** Where it appears (content strings). */
+  context?: string;
+  note?: string;
+}
+
+function userPrompt(surface: string, items: Item[]): string {
+  const lines = items.map(({ key, english: message, context, note }) => {
     const limit = budget(message);
-    const note = notes.get(key);
     return JSON.stringify({
       key,
+      ...(context && { context }),
       english: message,
       ...(limit && { maxLength: limit }),
       ...(note && { previousAttemptRejected: note }),
     });
   });
   return [
-    `Surface: ${SURFACES[namespace] ?? namespace}.`,
+    `Surface: ${surface}.`,
     "Strings (one JSON object per line; maxLength is a soft budget in characters for short labels):",
     ...lines,
   ].join("\n");
@@ -164,7 +226,7 @@ const schema = z.object({
 
 let gateway: ReturnType<typeof createGateway> | undefined;
 let model = "";
-const usage = { input: 0, output: 0, requests: 0 };
+const usage = { input: 0, output: 0, requests: 0, errors: 0 };
 
 async function setup() {
   const apiKey = process.env.AI_GATEWAY_API_KEY;
@@ -183,16 +245,17 @@ async function setup() {
   console.log(`model: ${model}`);
 }
 
-async function translate(
+async function request(
   locale: TranslatedLocale,
-  keys: string[],
-  notes?: Map<string, string>,
+  surface: string,
+  items: Item[],
+  plain: boolean,
 ): Promise<Map<string, string>> {
   if (!gateway) throw new Error("setup() first");
   const result = await generateText({
     model: gateway(model),
-    system: systemPrompt(locale),
-    prompt: userPrompt(keys, notes),
+    system: systemPrompt(locale, plain),
+    prompt: userPrompt(surface, items),
     output: Output.object({ schema }),
     // Anthropic only, as in lib/ai/models.ts (the subprocessors page names it).
     providerOptions: { gateway: { only: ["anthropic"] } },
@@ -200,21 +263,116 @@ async function translate(
   usage.requests++;
   usage.input += result.usage.inputTokens ?? 0;
   usage.output += result.usage.outputTokens ?? 0;
+  const keys = new Set(items.map((item) => item.key));
   const out = new Map<string, string>();
   for (const { key, text } of result.output.translations) {
-    if (keys.includes(key)) out.set(key, text);
+    if (keys.has(key)) out.set(key, text);
   }
   return out;
 }
 
-/** Why a translation can't be used, or null. */
-function problem(key: string, text: string | undefined): string | null {
-  if (text === undefined || text.trim() === "") return "no translation";
-  return shapeMismatch(source.get(key) ?? "", text);
+/** One request, retried once after a network or provider error. */
+async function attempt(
+  locale: TranslatedLocale,
+  surface: string,
+  items: Item[],
+  plain: boolean,
+): Promise<Map<string, string>> {
+  try {
+    return await request(locale, surface, items, plain);
+  } catch (error) {
+    usage.errors++;
+    console.warn(
+      `${locale}: request failed (${(error as Error).message}); retrying`,
+    );
+    await new Promise((resolve) => setTimeout(resolve, 5000));
+    try {
+      return await request(locale, surface, items, plain);
+    } catch (again) {
+      usage.errors++;
+      console.warn(
+        `${locale}: request failed again: ${(again as Error).message}`,
+      );
+      return new Map();
+    }
+  }
 }
 
+interface Job {
+  surface: string;
+  items: Item[];
+}
+
+/** Splits items (in order) into requests of at most CHUNK strings and CHUNK_CHARS characters. */
+function chunk(items: Item[]): Item[][] {
+  const out: Item[][] = [];
+  let current: Item[] = [];
+  let chars = 0;
+  for (const item of items) {
+    if (
+      current.length > 0 &&
+      (current.length >= CHUNK || chars + item.english.length > CHUNK_CHARS)
+    ) {
+      out.push(current);
+      current = [];
+      chars = 0;
+    }
+    current.push(item);
+    chars += item.english.length;
+  }
+  if (current.length > 0) out.push(current);
+  return out;
+}
+
+/**
+ * Translates every job, CONCURRENCY requests at a time: a first pass, then
+ * one retry for the answers `problem` rejects (with the reason).
+ */
+async function translateJobs(
+  locale: TranslatedLocale,
+  jobs: Job[],
+  plain: boolean,
+  problem: (item: Item, text: string | undefined) => string | null,
+  accept: (item: Item, text: string) => void,
+  save: () => void,
+): Promise<string[]> {
+  const failed: string[] = [];
+  const queue = [...jobs];
+  let done = 0;
+  const worker = async () => {
+    for (;;) {
+      const job = queue.shift();
+      if (!job) return;
+      const first = await attempt(locale, job.surface, job.items, plain);
+      const retry: Item[] = [];
+      for (const item of job.items) {
+        const reason = problem(item, first.get(item.key));
+        if (reason) retry.push({ ...item, note: reason });
+        else accept(item, first.get(item.key) as string);
+      }
+      if (retry.length > 0) {
+        const second = await attempt(locale, job.surface, retry, plain);
+        for (const item of retry) {
+          const reason = problem(item, second.get(item.key));
+          if (reason) failed.push(`${item.context ?? item.key}: ${reason}`);
+          else accept(item, second.get(item.key) as string);
+        }
+      }
+      save();
+      done++;
+      if (done % 10 === 0 || queue.length === 0) {
+        console.log(`${locale}: ${done} of ${jobs.length} requests done`);
+      }
+    }
+  };
+  await Promise.all(Array.from({ length: CONCURRENCY }, worker));
+  return failed;
+}
+
+// ---- The UI catalog -------------------------------------------------------
+
 /** Saves the catalog and its review entries, in English key order. */
-function save(
+function saveUi(
   locale: TranslatedLocale,
   catalog: Map<string, string>,
   review: ReviewFile,
@@ -234,18 +392,18 @@ function record(locale: TranslatedLocale) {
   const review = readJson<ReviewFile>(`review/${locale}.json`);
   let added = 0;
   for (const key of catalog.keys()) {
-    const english = source.get(key);
-    if (english === undefined) continue;
-    const hash = sourceHash(english);
+    const message = source.get(key);
+    if (message === undefined) continue;
+    const hash = sourceHash(message);
     if (review[key]?.source === hash) continue;
     review[key] = { source: hash, status: "machine" };
     added++;
   }
-  save(locale, catalog, review);
+  saveUi(locale, catalog, review);
   console.log(`${locale}: recorded ${added} string(s)`);
 }
 
-async function run(locale: TranslatedLocale) {
+async function runUi(locale: TranslatedLocale): Promise<string[]> {
   const catalog = flatten(readJson<Catalog>(`${locale}.json`));
   const review = readJson<ReviewFile>(`review/${locale}.json`);
 
@@ -262,58 +420,138 @@ async function run(locale: TranslatedLocale) {
     return FORCE && entry.status === "machine";
   });
   console.log(
-    `${locale}: ${todo.length} of ${source.size} strings to translate`,
+    `${locale}: ${todo.length} of ${source.size} UI strings to translate`,
   );
-  if (DRY || todo.length === 0) return { locale, failed: [] as string[] };
+  if (DRY || todo.length === 0) return [];
 
-  // Chunks stay within one surface (the top-level namespace), in catalog
+  // Requests stay within one surface (the top-level namespace), in catalog
   // order, so neighbouring strings give each other context.
-  const groups = new Map<string, string[]>();
+  const groups = new Map<string, Item[]>();
   for (const key of todo) {
     const group = key.split(".")[0] as string;
-    groups.set(group, [...(groups.get(group) ?? []), key]);
+    groups.set(group, [
+      ...(groups.get(group) ?? []),
+      { key, english: source.get(key) ?? "" },
+    ]);
   }
-  const chunks = [...groups.values()].flatMap((keys) =>
-    Array.from({ length: Math.ceil(keys.length / CHUNK) }, (_, i) =>
-      keys.slice(i * CHUNK, (i + 1) * CHUNK),
-    ),
+  const jobs = [...groups].flatMap(([group, items]) =>
+    chunk(items).map((part) => ({
+      surface: SURFACES[group] ?? group,
+      items: part,
+    })),
   );
 
-  const failed: string[] = [];
-  const accept = (key: string, text: string) => {
-    catalog.set(key, text);
-    review[key] = {
-      source: sourceHash(source.get(key) ?? ""),
-      status: "machine",
-    };
-  };
+  return translateJobs(
+    locale,
+    jobs,
+    false,
+    (item, text) => {
+      if (text === undefined || text.trim() === "") return "no translation";
+      return shapeMismatch(item.english, text);
+    },
+    (item, text) => {
+      catalog.set(item.key, text);
+      review[item.key] = {
+        source: sourceHash(item.english),
+        status: "machine",
+      };
+    },
+    () => saveUi(locale, catalog, review),
+  );
+}
 
-  // A few requests at a time.
-  const queue = [...chunks];
-  const worker = async () => {
-    for (;;) {
-      const keys = queue.shift();
-      if (!keys) return;
-      const first = await translate(locale, keys);
-      const notes = new Map<string, string>();
-      for (const key of keys) {
-        const reason = problem(key, first.get(key));
-        if (reason) notes.set(key, reason);
-        else accept(key, first.get(key) as string);
-      }
-      if (notes.size === 0) continue;
-      const retry = await translate(locale, [...notes.keys()], notes);
-      for (const key of notes.keys()) {
-        const reason = problem(key, retry.get(key));
-        if (reason) failed.push(`${key}: ${reason}`);
-        else accept(key, retry.get(key) as string);
-      }
+// ---- Content (TypeScript copy) ------------------------------------------
+
+const contentFile = (locale: TranslatedLocale) => `content/${locale}.json`;
+
+/** Saves the memory in source order; unused entries last (or dropped with --prune). */
+function saveContent(
+  locale: TranslatedLocale,
+  memory: TranslationMemory,
+  strings: readonly ContentString[],
+) {
+  const ordered: TranslationMemory = {};
+  for (const { english: text } of strings) {
+    const hash = sourceHash(text);
+    if (memory[hash]) ordered[hash] = memory[hash];
+  }
+  if (!PRUNE) {
+    for (const [hash, entry] of Object.entries(memory)) {
+      if (!ordered[hash]) ordered[hash] = entry;
     }
-  };
-  await Promise.all([worker(), worker(), worker()]);
+  }
+  writeJson(contentFile(locale), ordered);
+}
 
-  save(locale, catalog, review);
-  return { locale, failed };
+async function runContent(locale: TranslatedLocale): Promise<string[]> {
+  const strings = contentEnglish();
+  const memory = readJson<TranslationMemory>(contentFile(locale));
+  const todo = strings.filter(({ english: text, context }) => {
+    if (keyPrefixes.length && !keyPrefixes.some((p) => context.startsWith(p))) {
+      return false;
+    }
+    const entry = memory[sourceHash(text)];
+    if (!entry?.text.trim() || entry.source !== text) return true;
+    return FORCE && entry.status === "machine";
+  });
+  console.log(
+    `${locale}: ${todo.length} of ${strings.length} content strings to translate`,
+  );
+  if (DRY || todo.length === 0) {
+    if (!DRY && PRUNE) saveContent(locale, memory, strings);
+    return [];
+  }
+
+  // Requests stay within one page (the first two path segments), in source
+  // order, so a page's strings give each other context.
+  const surfaces = new Map(
+    CONTENT_SOURCES.map((entry) => [entry.namespace, entry.surface]),
+  );
+  const groups = new Map<string, { surface: string; items: Item[] }>();
+  for (const { english: text, context, namespace } of todo) {
+    const group = context.split(".").slice(0, 3).join(".");
+    const entry = groups.get(group) ?? {
+      surface: surfaces.get(namespace) ?? namespace,
+      items: [],
+    };
+    entry.items.push({ key: sourceHash(text), english: text, context });
+    groups.set(group, entry);
+  }
+  // Small pages share a request with their neighbours from the same source.
+  const jobs: Job[] = [];
+  for (const { surface, items } of groups.values()) {
+    const last = jobs.at(-1);
+    if (
+      last &&
+      last.surface === surface &&
+      last.items.length + items.length <= CHUNK &&
+      [...last.items, ...items].reduce((sum, i) => sum + i.english.length, 0) <=
+        CHUNK_CHARS
+    ) {
+      last.items.push(...items);
+      continue;
+    }
+    for (const part of chunk(items)) jobs.push({ surface, items: part });
+  }
+
+  return translateJobs(
+    locale,
+    jobs,
+    true,
+    (item, text) => {
+      if (text === undefined || text.trim() === "") return "no translation";
+      return numberMismatch(item.english, text);
+    },
+    (item, text) => {
+      memory[item.key] = {
+        source: item.english,
+        text,
+        status: "machine",
+        context: item.context ?? "",
+      };
+    },
+    () => saveContent(locale, memory, strings),
+  );
 }
 
 async function main() {
@@ -322,15 +560,20 @@ async function main() {
     return;
   }
   if (!DRY) await setup();
-  const results = [];
-  for (const locale of locales) results.push(await run(locale));
-  for (const { locale, failed } of results) {
-    for (const line of failed) {
-      console.warn(`${locale}: kept English for ${line}`);
+  const failed: string[] = [];
+  for (const locale of locales) {
+    if (only !== "content") {
+      for (const line of await runUi(locale)) failed.push(`${locale}: ${line}`);
+    }
+    if (only !== "ui") {
+      for (const line of await runContent(locale)) {
+        failed.push(`${locale}: ${line}`);
+      }
     }
   }
+  for (const line of failed) console.warn(`kept English for ${line}`);
   console.log(
-    `\n${usage.requests} requests, ${usage.input.toLocaleString("en-US")} input + ${usage.output.toLocaleString("en-US")} output tokens (${model || "none"})`,
+    `\n${usage.requests} requests (${usage.errors} errors), ${usage.input.toLocaleString("en-US")} input + ${usage.output.toLocaleString("en-US")} output tokens (${model || "none"})`,
   );
 }
 

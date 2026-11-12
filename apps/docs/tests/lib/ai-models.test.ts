@@ -148,7 +148,7 @@ describe("the art model in copy", () => {
       "components/sections/ai-art/ai-art-studio.tsx",
       "components/sections/ai-art/ai-art-result.tsx",
       "components/sections/ai-art/ai-art-coming-soon.tsx",
-      "app/(app)/(home)/ai/art/page.tsx",
+      "app/[lang]/(home)/ai/art/page.tsx",
       "content/docs/features/art-qr.mdx",
     ];
     for (const file of files) {

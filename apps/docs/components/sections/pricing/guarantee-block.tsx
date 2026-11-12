@@ -34,7 +34,7 @@ const promise = (key: PromiseKey, icon: Icon): GuaranteePromise => ({
   ...en.pricing.guarantee.promises[key],
 });
 
-/** The guarantee's promises; app/(app)/(home)/guarantee renders the full page. */
+/** The guarantee's promises; app/[lang]/(home)/guarantee renders the full page. */
 export const GUARANTEE_PROMISES: GuaranteePromise[] = [
   promise("static", ScanBarcode),
   promise("redirecting", Link2),

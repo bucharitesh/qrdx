@@ -23,6 +23,7 @@ import {
   Wifi,
 } from "iconsax-reactjs";
 import Link from "next/link";
+import { useLocale, useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 import { parseLinkUrl, playgroundHref } from "@/lib/playground-links";
 import { OpenButton } from "./confirm-open";
@@ -31,7 +32,6 @@ import { downloadText, fileSlug } from "./download";
 import { LinkPreview } from "./link-preview";
 import {
   type CalendarEvent,
-  KIND_LABELS,
   type ParsedScan,
   type PaymentScheme,
   parseScan,
@@ -73,24 +73,27 @@ const PAYMENT_NAMES: Record<PaymentScheme, string> = {
   monero: "Monero",
 };
 
-const COPY_LABELS: Record<PaymentScheme, string> = {
-  upi: "Copy UPI ID",
-  bitcoin: "Copy address",
-  ethereum: "Copy address",
-  paypal: "Copy link",
-  venmo: "Copy username",
-  epc: "Copy IBAN",
-  pix: "Copy Pix key",
-  paynow: "Copy number",
-  promptpay: "Copy number",
-  vietqr: "Copy account",
-  emv: "Copy merchant",
-  litecoin: "Copy address",
-  dogecoin: "Copy address",
-  bitcoincash: "Copy address",
-  solana: "Copy address",
-  monero: "Copy address",
-};
+/** The copy button's label: scanner.result.<key>. */
+const COPY_LABELS = {
+  upi: "copyUpi",
+  bitcoin: "copyAddress",
+  ethereum: "copyAddress",
+  paypal: "copyLink",
+  venmo: "copyUsername",
+  epc: "copyIban",
+  pix: "copyPixKey",
+  paynow: "copyNumber",
+  promptpay: "copyNumber",
+  vietqr: "copyAccount",
+  emv: "copyMerchant",
+  litecoin: "copyAddress",
+  dogecoin: "copyAddress",
+  bitcoincash: "copyAddress",
+  solana: "copyAddress",
+  monero: "copyAddress",
+} as const satisfies Record<PaymentScheme, string>;
+
+type Translate = ReturnType<typeof useTranslations<"scanner.result">>;
 
 /** Bank codes paid by scanning them in a banking app (no link to open). */
 const BANK_APP_SCHEMES = new Set<PaymentScheme>([
@@ -115,23 +118,27 @@ function mailtoAddress(value: string): string {
   return encodeURIComponent(value).replace(/%40/g, "@").replace(/%2C/gi, ",");
 }
 
-function formatWhen(value: string | undefined, allDay: boolean): string | null {
+function formatWhen(
+  value: string | undefined,
+  allDay: boolean,
+  locale: string,
+): string | null {
   if (!value) return null;
   const date = new Date(allDay ? `${value}T00:00:00` : value);
   if (Number.isNaN(date.getTime())) return value;
   return allDay
-    ? date.toLocaleDateString(undefined, { dateStyle: "full" })
-    : date.toLocaleString(undefined, { dateStyle: "full", timeStyle: "short" });
+    ? date.toLocaleDateString(locale, { dateStyle: "full" })
+    : date.toLocaleString(locale, { dateStyle: "full", timeStyle: "short" });
 }
 
-function eventFields(event: CalendarEvent) {
-  const start = formatWhen(event.start, event.allDay);
-  const end = formatWhen(event.end, event.allDay);
+function eventFields(event: CalendarEvent, t: Translate, locale: string) {
+  const start = formatWhen(event.start, event.allDay, locale);
+  const end = formatWhen(event.end, event.allDay, locale);
   return [
-    start && { label: "Starts", value: start },
-    end && { label: "Ends", value: end },
-    event.location && { label: "Where", value: event.location },
-    event.description && { label: "Details", value: event.description },
+    start && { label: t("starts"), value: start },
+    end && { label: t("ends"), value: end },
+    event.location && { label: t("where"), value: event.location },
+    event.description && { label: t("details"), value: event.description },
   ].filter((field): field is { label: string; value: string } =>
     Boolean(field),
   );
@@ -142,18 +149,19 @@ function WifiDetails({
 }: {
   parsed: Extract<ParsedScan, { kind: "wifi" }>;
 }) {
+  const t = useTranslations("scanner.result");
   const [revealed, setRevealed] = useState(false);
   return (
     <div className="flex flex-col gap-3">
       <FieldList
         fields={[
-          { label: "Network (SSID)", value: parsed.ssid },
-          { label: "Security", value: parsed.security },
-          ...(parsed.hidden ? [{ label: "Hidden network", value: "Yes" }] : []),
+          { label: t("ssid"), value: parsed.ssid },
+          { label: t("security"), value: parsed.security },
+          ...(parsed.hidden ? [{ label: t("hidden"), value: t("yes") }] : []),
           ...(parsed.password
             ? [
                 {
-                  label: "Password",
+                  label: t("password"),
                   mono: true,
                   value: (
                     <span className="inline-flex items-center gap-2">
@@ -163,9 +171,9 @@ function WifiDetails({
                           : "•".repeat(Math.min(parsed.password.length, 16))}
                       </span>
                       <button
-                        aria-label={
-                          revealed ? "Hide password" : "Show password"
-                        }
+                        aria-label={t(
+                          revealed ? "hidePassword" : "showPassword",
+                        )}
                         className="text-muted-foreground hover:text-foreground"
                         onClick={() => setRevealed((value) => !value)}
                         type="button"
@@ -185,14 +193,12 @@ function WifiDetails({
       />
       <div className="flex flex-wrap gap-2">
         {parsed.password && (
-          <CopyButton label="Copy password" value={parsed.password} />
+          <CopyButton label={t("copyPassword")} value={parsed.password} />
         )}
-        <CopyButton label="Copy network name" value={parsed.ssid} />
+        <CopyButton label={t("copyNetwork")} value={parsed.ssid} />
       </div>
       <p className="text-muted-foreground text-xs leading-relaxed">
-        Browsers aren't allowed to join Wi-Fi networks for you. Copy the
-        password, open your Wi-Fi settings and choose “{parsed.ssid}”. Your
-        phone's own camera app can usually join in one tap.
+        {t("wifiNote", { ssid: parsed.ssid })}
       </p>
     </div>
   );
@@ -203,20 +209,21 @@ function PaymentDetails({
 }: {
   parsed: Extract<ParsedScan, { kind: "payment" }>;
 }) {
+  const t = useTranslations("scanner.result");
   const name = PAYMENT_NAMES[parsed.scheme];
   const confirm = {
-    title: `Open ${name} to pay ${parsed.payee}?`,
+    title: t("payTitle", { name, payee: parsed.payee }),
     description: (
       <>
         <p>
-          You're about to hand this payment to your {name} app
-          {parsed.amount ? ` for ${parsed.amount}` : ""}. QR codes on stickers
-          and posters are sometimes swapped by scammers.
+          {parsed.amount
+            ? t("payBodyAmount", { name, amount: parsed.amount })
+            : t("payBody", { name })}
         </p>
-        <p>Check the payee and amount in the app before you confirm.</p>
+        <p>{t("payCheck")}</p>
       </>
     ),
-    action: `Open ${name}`,
+    action: t("payOpen", { name }),
   };
   return (
     <div className="flex flex-col gap-3">
@@ -231,7 +238,7 @@ function PaymentDetails({
       {parsed.openUrl && /^https:/i.test(parsed.openUrl) ? (
         <LinkPreview
           confirm={confirm}
-          openLabel={`Pay with ${name}`}
+          openLabel={t("payWith", { name })}
           url={parsed.openUrl}
         />
       ) : (
@@ -239,30 +246,28 @@ function PaymentDetails({
           {parsed.openUrl && (
             <OpenButton confirm={confirm} href={parsed.openUrl}>
               <Wallet className="size-3.5" />
-              Pay with {name}
+              {t("payWith", { name })}
             </OpenButton>
           )}
           <CopyButton
-            label={COPY_LABELS[parsed.scheme]}
+            label={t(COPY_LABELS[parsed.scheme])}
             value={parsed.copyValue}
           />
         </div>
       )}
       {parsed.scheme === "epc" && (
         <p className="text-muted-foreground text-xs leading-relaxed">
-          Banking apps in the euro area can scan this code directly. You can
-          also copy the IBAN into a new transfer.
+          {t("epcNote")}
         </p>
       )}
       {BANK_APP_SCHEMES.has(parsed.scheme) && (
         <p className="text-muted-foreground text-xs leading-relaxed">
-          Pay it by scanning the code with a banking app that supports {name}.
+          {t("bankAppNote", { name })}
         </p>
       )}
       {parsed.scheme === "upi" && (
         <p className="text-muted-foreground text-xs leading-relaxed">
-          Opens a UPI app (Google Pay, PhonePe, Paytm, BHIM…) on phones that
-          have one.
+          {t("upiNote")}
         </p>
       )}
     </div>
@@ -270,6 +275,8 @@ function PaymentDetails({
 }
 
 function Details({ parsed }: { parsed: ParsedScan }) {
+  const t = useTranslations("scanner.result");
+  const locale = useLocale();
   switch (parsed.kind) {
     case "url": {
       const restyle = restyleHref(parsed.url);
@@ -297,7 +304,7 @@ function Details({ parsed }: { parsed: ParsedScan }) {
               prefetch={false}
             >
               <Brush2 aria-hidden className="size-3.5 shrink-0" />
-              Restyle in the playground
+              {t("restyle")}
             </Link>
           )}
         </div>
@@ -311,15 +318,15 @@ function Details({ parsed }: { parsed: ParsedScan }) {
         <div className="flex flex-col gap-3">
           <FieldList
             fields={[
-              { label: "Name", value: contact.name },
+              { label: t("name"), value: contact.name },
               ...(contact.organization
-                ? [{ label: "Organization", value: contact.organization }]
+                ? [{ label: t("organization"), value: contact.organization }]
                 : []),
               ...(contact.title
-                ? [{ label: "Title", value: contact.title }]
+                ? [{ label: t("jobTitle"), value: contact.title }]
                 : []),
               ...contact.phones.map((phone, index) => ({
-                label: index === 0 ? "Phone" : `Phone ${index + 1}`,
+                label: index === 0 ? t("phone") : t("phoneN", { n: index + 1 }),
                 value: (
                   <a
                     className="underline underline-offset-4"
@@ -330,7 +337,7 @@ function Details({ parsed }: { parsed: ParsedScan }) {
                 ),
               })),
               ...contact.emails.map((email, index) => ({
-                label: index === 0 ? "Email" : `Email ${index + 1}`,
+                label: index === 0 ? t("email") : t("emailN", { n: index + 1 }),
                 value: (
                   <a
                     className="underline underline-offset-4"
@@ -341,14 +348,17 @@ function Details({ parsed }: { parsed: ParsedScan }) {
                 ),
               })),
               ...contact.urls.map((url, index) => ({
-                label: index === 0 ? "Website" : `Website ${index + 1}`,
+                label:
+                  index === 0 ? t("website") : t("websiteN", { n: index + 1 }),
                 value: url,
                 mono: true,
               })),
               ...(contact.address
-                ? [{ label: "Address", value: contact.address }]
+                ? [{ label: t("address"), value: contact.address }]
                 : []),
-              ...(contact.note ? [{ label: "Note", value: contact.note }] : []),
+              ...(contact.note
+                ? [{ label: t("note"), value: contact.note }]
+                : []),
             ]}
           />
           <div className="flex flex-wrap gap-2">
@@ -364,7 +374,7 @@ function Details({ parsed }: { parsed: ParsedScan }) {
               type="button"
             >
               <Download className="size-3.5" />
-              Save contact (.vcf)
+              {t("saveContact")}
             </Button>
           </div>
         </div>
@@ -375,8 +385,8 @@ function Details({ parsed }: { parsed: ParsedScan }) {
         <div className="flex flex-col gap-3">
           <FieldList
             fields={[
-              { label: "Event", value: parsed.event.summary },
-              ...eventFields(parsed.event),
+              { label: t("event"), value: parsed.event.summary },
+              ...eventFields(parsed.event, t, locale),
             ]}
           />
           <div className="flex flex-wrap gap-2">
@@ -392,7 +402,7 @@ function Details({ parsed }: { parsed: ParsedScan }) {
               type="button"
             >
               <CalendarPlus className="size-3.5" />
-              Add to calendar (.ics)
+              {t("addToCalendar")}
             </Button>
           </div>
         </div>
@@ -404,10 +414,10 @@ function Details({ parsed }: { parsed: ParsedScan }) {
           <FieldList
             fields={[
               ...(parsed.label
-                ? [{ label: "Place", value: parsed.label }]
+                ? [{ label: t("place"), value: parsed.label }]
                 : []),
               {
-                label: "Coordinates",
+                label: t("coordinates"),
                 value: `${parsed.lat}, ${parsed.lon}`,
                 mono: true,
               },
@@ -428,7 +438,7 @@ function Details({ parsed }: { parsed: ParsedScan }) {
               <MapPin className="size-3.5" />
               OpenStreetMap
             </LinkButton>
-            <CopyButton label="Copy coordinates" value={coords} />
+            <CopyButton label={t("copyCoordinates")} value={coords} />
           </div>
         </div>
       );
@@ -437,16 +447,16 @@ function Details({ parsed }: { parsed: ParsedScan }) {
       return (
         <div className="flex flex-col gap-3">
           <FieldList
-            fields={[{ label: "Number", value: parsed.number, mono: true }]}
+            fields={[{ label: t("number"), value: parsed.number, mono: true }]}
           />
           <div className="flex flex-wrap gap-2">
             <LinkButton
               href={`tel:${parsed.number.replace(/[^\d+*#,;]/g, "")}`}
             >
               <Phone className="size-3.5" />
-              Call
+              {t("call")}
             </LinkButton>
-            <CopyButton label="Copy number" value={parsed.number} />
+            <CopyButton label={t("copyNumber")} value={parsed.number} />
           </div>
         </div>
       );
@@ -456,10 +466,10 @@ function Details({ parsed }: { parsed: ParsedScan }) {
           <FieldList
             fields={[
               ...(parsed.number
-                ? [{ label: "To", value: parsed.number, mono: true }]
+                ? [{ label: t("to"), value: parsed.number, mono: true }]
                 : []),
               ...(parsed.body
-                ? [{ label: "Message", value: parsed.body }]
+                ? [{ label: t("message"), value: parsed.body }]
                 : []),
             ]}
           />
@@ -468,16 +478,13 @@ function Details({ parsed }: { parsed: ParsedScan }) {
               href={`sms:${parsed.number.replace(/[^\d+*#]/g, "")}${parsed.body ? `?body=${encodeURIComponent(parsed.body)}` : ""}`}
             >
               <MessageSquare className="size-3.5" />
-              Write text
+              {t("writeText")}
             </LinkButton>
             {parsed.number && (
-              <CopyButton label="Copy number" value={parsed.number} />
+              <CopyButton label={t("copyNumber")} value={parsed.number} />
             )}
           </div>
-          <p className="text-muted-foreground text-xs">
-            Your messaging app opens with the text filled in. Nothing is sent
-            until you press send.
-          </p>
+          <p className="text-muted-foreground text-xs">{t("smsNote")}</p>
         </div>
       );
     case "email": {
@@ -489,12 +496,12 @@ function Details({ parsed }: { parsed: ParsedScan }) {
         <div className="flex flex-col gap-3">
           <FieldList
             fields={[
-              { label: "To", value: parsed.to, mono: true },
+              { label: t("to"), value: parsed.to, mono: true },
               ...(parsed.subject
-                ? [{ label: "Subject", value: parsed.subject }]
+                ? [{ label: t("subject"), value: parsed.subject }]
                 : []),
               ...(parsed.body
-                ? [{ label: "Message", value: parsed.body }]
+                ? [{ label: t("message"), value: parsed.body }]
                 : []),
             ]}
           />
@@ -503,9 +510,9 @@ function Details({ parsed }: { parsed: ParsedScan }) {
               href={`mailto:${mailtoAddress(parsed.to)}${search ? `?${search}` : ""}`}
             >
               <Mail className="size-3.5" />
-              Write email
+              {t("writeEmail")}
             </LinkButton>
-            <CopyButton label="Copy address" value={parsed.to} />
+            <CopyButton label={t("copyAddress")} value={parsed.to} />
           </div>
         </div>
       );
@@ -523,15 +530,9 @@ function Details({ parsed }: { parsed: ParsedScan }) {
         <div className="flex flex-col gap-3">
           <FieldList
             fields={[
-              { label: "Number", value: parsed.code, mono: true },
+              { label: t("number"), value: parsed.code, mono: true },
               ...(parsed.checkDigitValid === false
-                ? [
-                    {
-                      label: "Check digit",
-                      value:
-                        "Doesn't match. The code may have been misread; scan it again.",
-                    },
-                  ]
+                ? [{ label: t("checkDigit"), value: t("checkDigitBad") }]
                 : []),
             ]}
           />
@@ -541,9 +542,9 @@ function Details({ parsed }: { parsed: ParsedScan }) {
               href={`https://www.google.com/search?q=${encodeURIComponent(parsed.code)}`}
             >
               <Search className="size-3.5" />
-              Search the web
+              {t("searchWeb")}
             </LinkButton>
-            <CopyButton label="Copy number" value={parsed.code} />
+            <CopyButton label={t("copyNumber")} value={parsed.code} />
           </div>
         </div>
       );
@@ -554,7 +555,7 @@ function Details({ parsed }: { parsed: ParsedScan }) {
             {parsed.text}
           </p>
           <div>
-            <CopyButton label="Copy text" value={parsed.text} />
+            <CopyButton label={t("copyText")} value={parsed.text} />
           </div>
         </div>
       );
@@ -568,6 +569,7 @@ export function ResultCard({
   value: string;
   format: string;
 }) {
+  const t = useTranslations("scanner");
   const parsed = useMemo(() => parseScan(value, format), [value, format]);
   const Icon = KIND_ICONS[parsed.kind];
   return (
@@ -578,7 +580,7 @@ export function ResultCard({
         </span>
         <div className="min-w-0">
           <h3 className="font-medium leading-tight">
-            {KIND_LABELS[parsed.kind]}
+            {t(`kinds.${parsed.kind}`)}
           </h3>
           <p className="text-muted-foreground text-xs">{formatLabel(format)}</p>
         </div>
@@ -587,14 +589,14 @@ export function ResultCard({
       {parsed.kind !== "text" && (
         <details className="text-sm">
           <summary className="text-muted-foreground cursor-pointer">
-            Raw content
+            {t("result.raw")}
           </summary>
           <div className="mt-2 flex flex-col gap-2">
             <p className="bg-muted/50 max-h-48 overflow-auto rounded-md p-3 font-mono text-xs break-all whitespace-pre-wrap">
               {value}
             </p>
             <div>
-              <CopyButton label="Copy raw content" value={value} />
+              <CopyButton label={t("result.copyRaw")} value={value} />
             </div>
           </div>
         </details>

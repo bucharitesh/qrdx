@@ -8,8 +8,18 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import type { Metadata } from "next";
 import type { ReactElement } from "react";
-import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
+import { renderIntl } from "../support/intl";
+
+// /plugins and /integrations/<slug> are translated pages (lib/i18n).
+vi.mock(
+  "next-intl/server",
+  async () => (await import("../support/intl")).intlServer,
+);
+vi.mock(
+  "@/lib/i18n/server",
+  async () => (await import("../support/intl")).i18nServer,
+);
 
 vi.hoisted(() => {
   Object.assign(process.env, {
@@ -27,14 +37,14 @@ vi.hoisted(() => {
 import DiscordPage, {
   metadata as discordMetadata,
 } from "@/app/(app)/(home)/discord/page";
-import IntegrationDetailPage from "@/app/(app)/(home)/integrations/[slug]/page";
-import PluginsPage from "@/app/(app)/(home)/plugins/page";
 import SlackPage, {
   metadata as slackMetadata,
 } from "@/app/(app)/(home)/slack/page";
 import TelegramPage, {
   metadata as telegramMetadata,
 } from "@/app/(app)/(home)/telegram/page";
+import IntegrationDetailPage from "@/app/[lang]/(home)/integrations/[slug]/page";
+import PluginsPage from "@/app/[lang]/(home)/plugins/page";
 import { CHAT_BOTS } from "@/components/sections/chat-bots/bots";
 import {
   isFeatureAvailable,
@@ -69,7 +79,7 @@ const PAGES = [
   },
 ] as const;
 
-const html = (page: () => ReactElement) => renderToStaticMarkup(page());
+const html = (page: () => ReactElement) => renderIntl(page());
 
 /** Every <a href> in `markup`, decoded (React escapes & as &amp;). */
 const hrefs = (markup: string) =>
@@ -190,7 +200,7 @@ describe("with every bot set up", () => {
 
   it("links each bot's integration page to its landing page", async () => {
     for (const bot of CHAT_BOTS) {
-      const markup = renderToStaticMarkup(
+      const markup = renderIntl(
         await IntegrationDetailPage({
           params: Promise.resolve({ slug: bot.catalogSlug }),
         }),
@@ -199,8 +209,8 @@ describe("with every bot set up", () => {
     }
   });
 
-  it("lists the bots on /plugins", () => {
-    const links = hrefs(renderToStaticMarkup(PluginsPage()));
+  it("lists the bots on /plugins", async () => {
+    const links = hrefs(renderIntl(await PluginsPage()));
     for (const bot of CHAT_BOTS) expect(links).toContain(bot.path);
   });
 });

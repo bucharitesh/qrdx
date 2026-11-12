@@ -1,15 +1,16 @@
 // The /mcp prompt gallery: each example prompt is copied, or sent to Claude
 // as ?q=, followed by how to connect QRdx. They're joined by one blank line,
 // with no indentation from the source carried into the text.
-import { renderToStaticMarkup } from "react-dom/server";
+
 import { describe, expect, it } from "vitest";
-import { McpPromptGalleryView } from "@/app/(app)/(home)/mcp/mcp-connect";
+import { McpPromptGalleryView } from "@/app/[lang]/(home)/mcp/mcp-connect";
+import { renderIntl } from "../support/intl";
 
 const SERVER = "https://mcp.qrdx.dev/mcp";
 const PAGE = "https://qrdx.dev/mcp";
 
 function claudePrompts(): string[] {
-  const html = renderToStaticMarkup(
+  const html = renderIntl(
     <McpPromptGalleryView pageUrl={PAGE} tab="claude" url={SERVER} />,
   );
   const hrefs = [

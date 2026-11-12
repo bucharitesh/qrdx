@@ -28,6 +28,7 @@ import {
   Export as Upload,
 } from "iconsax-reactjs";
 import Link from "next/link";
+import { useLocale, useTranslations } from "next-intl";
 import Papa from "papaparse";
 import { getQRCodeDataUrl, QRCode } from "qrdx";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -155,14 +156,17 @@ function downloadSampleCsv() {
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
-function readableError(error: unknown): string {
-  const message = error instanceof Error ? error.message : String(error);
-  return /too long/i.test(message)
-    ? "Too much data for one QR code"
-    : message || "Could not generate";
-}
-
 export function BulkGenerator() {
+  const t = useTranslations("tools.bulk.generator");
+  const locale = useLocale();
+  const n = (value: number) => value.toLocaleString(locale);
+  /** A row's or the run's error for people (and errors.csv). */
+  const readableError = (error: unknown): string => {
+    const message = error instanceof Error ? error.message : String(error);
+    return /too long/i.test(message)
+      ? t("errorTooMuch")
+      : message || t("errorFailed");
+  };
   const mounted = useMounted();
   const editorStyles = useQREditorStore((state) => state.themeState.styles);
   const { data: session, isPending: sessionPending } = authClient.useSession();
@@ -203,7 +207,7 @@ export function BulkGenerator() {
       });
     }
     options.set("editor", {
-      label: "My editor style",
+      label: t("editorStyle"),
       styles: withDefaults(editorStyles),
     });
     for (const theme of savedThemes ?? []) {
@@ -213,7 +217,7 @@ export function BulkGenerator() {
       });
     }
     return options;
-  }, [editorStyles, savedThemes]);
+  }, [editorStyles, savedThemes, t]);
 
   // A saved theme stays selected while the list loads, and shows as soon as
   // it arrives; until then (or if it never does) the default stands in.
@@ -268,30 +272,33 @@ export function BulkGenerator() {
     return () => URL.revokeObjectURL(status.url);
   }, [status]);
 
-  const onDrop = useCallback((accepted: File[]) => {
-    const file = accepted[0];
-    if (!file) return;
-    setParseError(null);
-    setStatus({ phase: "idle" });
-    Papa.parse<string[]>(file, {
-      skipEmptyLines: "greedy",
-      // Header row + MAX rows + 1 to detect truncation.
-      preview: MAX_BULK_ROWS + 2,
-      complete: (results) => {
-        if (results.data.length === 0) {
-          setParseError("The file is empty.");
+  const onDrop = useCallback(
+    (accepted: File[]) => {
+      const file = accepted[0];
+      if (!file) return;
+      setParseError(null);
+      setStatus({ phase: "idle" });
+      Papa.parse<string[]>(file, {
+        skipEmptyLines: "greedy",
+        // Header row + MAX rows + 1 to detect truncation.
+        preview: MAX_BULK_ROWS + 2,
+        complete: (results) => {
+          if (results.data.length === 0) {
+            setParseError(t("errorEmpty"));
+            setRawRows(null);
+            return;
+          }
+          setFileName(file.name);
+          setRawRows(results.data);
+        },
+        error: (error) => {
+          setParseError(error.message);
           setRawRows(null);
-          return;
-        }
-        setFileName(file.name);
-        setRawRows(results.data);
-      },
-      error: (error) => {
-        setParseError(error.message);
-        setRawRows(null);
-      },
-    });
-  }, []);
+        },
+      });
+    },
+    [t],
+  );
 
   const { getRootProps, getInputProps, isDragActive, fileRejections } =
     useDropzone({
@@ -308,7 +315,7 @@ export function BulkGenerator() {
   const rejection = fileRejections[0]?.errors[0];
   const rejectionMessage =
     rejection?.code === "file-too-large"
-      ? "The file is larger than 10 MB."
+      ? t("errorTooLarge")
       : rejection?.message;
 
   const previewRow = table?.rows.find((row) => row[valueColumn]?.trim());
@@ -340,7 +347,7 @@ export function BulkGenerator() {
         logo = await imageToDataUrl(style.customLogo ?? DEFAULT_QR_LOGO);
       } catch {
         style = { ...style, showLogo: false };
-        warning = "The logo couldn't be loaded, so codes were made without it.";
+        warning = t("logoFailed");
       }
     }
 
@@ -362,7 +369,7 @@ export function BulkGenerator() {
         batch.map(async (row, offset): Promise<RowOutput> => {
           const index = start + offset;
           const value = row[valueColumn]?.trim() ?? "";
-          if (!value) return { index, value, error: "Empty value" };
+          if (!value) return { index, value, error: t("errorEmptyValue") };
           try {
             const dataUrl = await getQRCodeDataUrl(
               buildQrProps(value, style, { quietZone, logo }),
@@ -381,7 +388,7 @@ export function BulkGenerator() {
           failures.push({
             row: output.index + lineOffset,
             value: output.value,
-            error: output.error ?? "Could not generate",
+            error: output.error ?? t("errorFailed"),
           });
           continue;
         }
@@ -413,7 +420,7 @@ export function BulkGenerator() {
       zip.abort();
       setStatus({
         phase: "error",
-        message: "No codes could be generated from this file.",
+        message: t("errorNone"),
         failures,
       });
       return;
@@ -460,18 +467,21 @@ export function BulkGenerator() {
         <div className="flex flex-col gap-3">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <h2 className="font-medium">
-              1. Upload a CSV <InfoHint align="start" id="bulk-csv" />
+              {t("stepUpload")} <InfoHint align="start" id="bulk-csv" />
             </h2>
             <Button size="sm" variant="ghost" onClick={downloadSampleCsv}>
               <FileSpreadsheet className="size-4" />
-              Sample CSV
+              {t("sampleCsv")}
             </Button>
           </div>
           {table ? (
             <div className="flex items-center gap-3 rounded-lg border border-border bg-muted px-3 py-2 text-sm">
               <FileSpreadsheet className="size-4 shrink-0 text-muted-foreground" />
               <span className="min-w-0 flex-1 truncate">
-                {fileName} · {table.rows.length.toLocaleString()} rows
+                {t("fileRows", {
+                  file: fileName ?? "",
+                  count: table.rows.length,
+                })}
               </span>
               <Button
                 size="icon"
@@ -479,7 +489,7 @@ export function BulkGenerator() {
                 className="size-7"
                 onClick={reset}
                 disabled={running}
-                aria-label="Remove file"
+                aria-label={t("removeFile")}
               >
                 <X className="size-4" />
               </Button>
@@ -494,12 +504,9 @@ export function BulkGenerator() {
             >
               <input {...getInputProps()} />
               <Upload className="size-6 text-muted-foreground" />
-              <p className="text-sm font-medium">
-                Drop a CSV file here, or click to choose one
-              </p>
+              <p className="text-sm font-medium">{t("drop")}</p>
               <p className="text-xs text-muted-foreground">
-                Up to {MAX_BULK_ROWS.toLocaleString()} rows and 10 MB. The file
-                stays on your device.
+                {t("dropHelp", { rows: MAX_BULK_ROWS })}
               </p>
             </div>
           )}
@@ -510,8 +517,7 @@ export function BulkGenerator() {
           )}
           {table?.truncated && (
             <p className="text-sm text-muted-foreground">
-              This file has more than {MAX_BULK_ROWS.toLocaleString()} rows.
-              Only the first {MAX_BULK_ROWS.toLocaleString()} will be used.
+              {t("truncated", { rows: MAX_BULK_ROWS })}
             </p>
           )}
           {table && (
@@ -523,7 +529,7 @@ export function BulkGenerator() {
                 disabled={running}
               />
               <Label htmlFor="bulk-header" className="text-sm font-normal">
-                First row contains column names
+                {t("header")}
               </Label>
             </div>
           )}
@@ -531,11 +537,11 @@ export function BulkGenerator() {
 
         {table && (
           <div className="flex flex-col gap-3">
-            <h2 className="font-medium">2. Map columns</h2>
+            <h2 className="font-medium">{t("stepMap")}</h2>
             <div className="grid gap-3 sm:grid-cols-2">
               <div className="flex flex-col gap-1.5">
                 <Label className="text-xs" htmlFor="bulk-value-column">
-                  QR code content
+                  {t("valueColumn")}
                 </Label>
                 <Select
                   value={String(valueColumn)}
@@ -559,7 +565,7 @@ export function BulkGenerator() {
               </div>
               <div className="flex flex-col gap-1.5">
                 <Label className="text-xs" htmlFor="bulk-filename-column">
-                  File name (optional)
+                  {t("filenameColumn")}
                 </Label>
                 <Select
                   value={String(filenameColumn)}
@@ -570,7 +576,7 @@ export function BulkGenerator() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="-1">Numbered (qr-0001)</SelectItem>
+                    <SelectItem value="-1">{t("numbered")}</SelectItem>
                     {table.columns.map((column, index) => (
                       <SelectItem
                         key={column + String(index)}
@@ -587,11 +593,13 @@ export function BulkGenerator() {
         )}
 
         <div className="flex flex-col gap-3">
-          <h2 className="font-medium">{table ? "3." : "2."} Choose a style</h2>
+          <h2 className="font-medium">
+            {t("stepStyle", { step: table ? 3 : 2 })}
+          </h2>
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="flex flex-col gap-1.5">
               <Label className="text-xs" htmlFor="bulk-style">
-                Style
+                {t("style")}
               </Label>
               <Select
                 value={activeStyleId}
@@ -604,8 +612,8 @@ export function BulkGenerator() {
                 <SelectContent>
                   {mounted && (
                     <SelectGroup>
-                      <SelectLabel>Yours</SelectLabel>
-                      <SelectItem value="editor">My editor style</SelectItem>
+                      <SelectLabel>{t("yours")}</SelectLabel>
+                      <SelectItem value="editor">{t("editorStyle")}</SelectItem>
                       {(savedThemes ?? []).map((theme) => (
                         <SelectItem key={theme.id} value={`saved:${theme.id}`}>
                           {theme.name}
@@ -614,7 +622,7 @@ export function BulkGenerator() {
                     </SelectGroup>
                   )}
                   <SelectGroup>
-                    <SelectLabel>Presets</SelectLabel>
+                    <SelectLabel>{t("presets")}</SelectLabel>
                     {Object.entries(defaultPresets).map(([id, preset]) => (
                       <SelectItem key={id} value={`preset:${id}`}>
                         {preset.label ?? id}
@@ -625,9 +633,7 @@ export function BulkGenerator() {
               </Select>
               {requestedSavedMissing && (
                 <p className="text-xs text-muted-foreground">
-                  {session?.user
-                    ? "That saved theme wasn't found in your account."
-                    : "Sign in to use your saved theme."}
+                  {t(session?.user ? "savedMissing" : "savedSignIn")}
                 </p>
               )}
               <Link
@@ -635,23 +641,23 @@ export function BulkGenerator() {
                 href={playgroundStyleHref(activeStyleId)}
               >
                 <EditStyle aria-hidden className="size-3.5 shrink-0" />
-                Edit this style in the playground
+                {t("editStyle")}
               </Link>
             </div>
             <div className="flex flex-col gap-1.5">
               <Label className="text-xs">
-                Error correction <InfoHint id="error-correction" />
+                {t("ecc")} <InfoHint id="error-correction" />
               </Label>
               <Select
                 value={level}
                 onValueChange={(value) => setLevel(value as LevelChoice)}
                 disabled={running}
               >
-                <SelectTrigger aria-label="Error correction" className="w-full">
+                <SelectTrigger aria-label={t("ecc")} className="w-full">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="style">From style</SelectItem>
+                  <SelectItem value="style">{t("eccFromStyle")}</SelectItem>
                   <SelectItem value="L">L (7%)</SelectItem>
                   <SelectItem value="M">M (15%)</SelectItem>
                   <SelectItem value="Q">Q (25%)</SelectItem>
@@ -661,7 +667,7 @@ export function BulkGenerator() {
             </div>
             <div className="flex flex-col gap-1.5">
               <Label className="text-xs" htmlFor="bulk-format">
-                Format
+                {t("format")}
               </Label>
               <Select
                 value={format}
@@ -672,16 +678,16 @@ export function BulkGenerator() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="png">PNG (image)</SelectItem>
-                  <SelectItem value="webp">WebP (image, smaller)</SelectItem>
-                  <SelectItem value="svg">SVG (vector, for print)</SelectItem>
+                  <SelectItem value="png">{t("formatPng")}</SelectItem>
+                  <SelectItem value="webp">{t("formatWebp")}</SelectItem>
+                  <SelectItem value="svg">{t("formatSvg")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             {format !== "svg" && (
               <div className="flex flex-col gap-1.5">
                 <Label className="text-xs" htmlFor="bulk-png-size">
-                  {format === "webp" ? "WebP" : "PNG"} size
+                  {t("size", { format: format === "webp" ? "WebP" : "PNG" })}
                 </Label>
                 <Select
                   value={String(pngSize)}
@@ -704,8 +710,7 @@ export function BulkGenerator() {
           </div>
           <div className="flex items-center justify-between gap-3 rounded-lg border border-border px-3 py-2">
             <Label htmlFor="bulk-quiet-zone" className="text-sm font-normal">
-              Add a {QUIET_ZONE_MODULES}-module quiet zone (recommended for
-              print)
+              {t("quietZone", { modules: QUIET_ZONE_MODULES })}
             </Label>
             <Switch
               id="bulk-quiet-zone"
@@ -740,9 +745,7 @@ export function BulkGenerator() {
           ) : (
             <div className="flex flex-col items-center gap-3 px-4 text-center">
               <HairlineFigure figure="Stack" className="aspect-square w-28" />
-              <p className="text-sm text-muted-foreground">
-                Upload a CSV to preview the first code.
-              </p>
+              <p className="text-sm text-muted-foreground">{t("empty")}</p>
             </div>
           )}
         </div>
@@ -757,7 +760,7 @@ export function BulkGenerator() {
             <Progress value={(status.done / Math.max(status.total, 1)) * 100} />
             <div className="flex items-center justify-between text-xs text-muted-foreground">
               <span>
-                {status.done.toLocaleString()} / {status.total.toLocaleString()}
+                {n(status.done)} / {n(status.total)}
               </span>
               <Button
                 size="sm"
@@ -766,7 +769,7 @@ export function BulkGenerator() {
                   if (runRef.current) runRef.current.cancelled = true;
                 }}
               >
-                Cancel
+                {t("cancel")}
               </Button>
             </div>
           </div>
@@ -777,13 +780,15 @@ export function BulkGenerator() {
             onClick={generate}
           >
             <Download className="size-4" />
-            Generate {table ? table.rows.length.toLocaleString() : ""} codes
+            {table
+              ? t("generateCount", { count: table.rows.length })
+              : t("generate")}
           </Button>
         )}
 
         {status.phase === "running" && status.done === 0 && (
           <p className="flex items-center gap-2 text-xs text-muted-foreground">
-            <Loader2 className="size-3 animate-spin" /> Preparing…
+            <Loader2 className="size-3 animate-spin" /> {t("preparing")}
           </p>
         )}
 
@@ -791,8 +796,14 @@ export function BulkGenerator() {
           <div className="flex w-full flex-col gap-2 text-sm">
             <p>
               {status.parts > 1
-                ? `Done: ${status.generated.toLocaleString()} codes in ${status.parts} ZIP files (large batches are saved in parts as they're made).`
-                : `Done: ${status.generated.toLocaleString()} codes in ${status.filename}.`}
+                ? t("doneParts", {
+                    count: status.generated,
+                    parts: status.parts,
+                  })
+                : t("done", {
+                    count: status.generated,
+                    file: status.filename,
+                  })}
             </p>
             {status.warning && (
               <p className="text-xs text-muted-foreground">{status.warning}</p>
@@ -803,8 +814,8 @@ export function BulkGenerator() {
               onClick={() => saveBlob(status.url, status.filename)}
             >
               {status.parts > 1
-                ? `Download part ${status.parts} again`
-                : "Download again"}
+                ? t("downloadPartAgain", { part: status.parts })
+                : t("downloadAgain")}
             </Button>
           </div>
         )}
@@ -816,13 +827,14 @@ export function BulkGenerator() {
         {failures.length > 0 && (
           <div className="w-full text-xs">
             <p className="font-medium">
-              {failures.length.toLocaleString()} rows skipped
-              {status.phase === "done" ? " (listed in errors.csv)" : ""}:
+              {t(status.phase === "done" ? "skippedListed" : "skipped", {
+                count: failures.length,
+              })}
             </p>
             <ul className="mt-1 flex flex-col gap-0.5 text-muted-foreground">
               {failures.slice(0, 5).map((failure) => (
                 <li key={failure.row}>
-                  Line {failure.row}: {failure.error}
+                  {t("line", { row: failure.row, error: failure.error })}
                 </li>
               ))}
               {failures.length > 5 && <li>…</li>}
@@ -831,8 +843,7 @@ export function BulkGenerator() {
         )}
 
         <p className="text-center text-[11px] text-muted-foreground">
-          Everything runs in your browser. Your CSV and the generated codes are
-          never uploaded.
+          {t("private")}
         </p>
       </div>
     </div>

@@ -15,10 +15,39 @@ import {
 import { hasDocs, isDocsPath } from "./docs";
 import localized from "./localized-paths.json";
 
+/**
+ * Translated pages, as their route paths. Dynamic segments are written the
+ * way their folders are named: "/compare/[slug]" matches one segment there
+ * ("/compare/qr-tiger"), "[...slug]" one or more, "[[...slug]]" none or
+ * more. A slug that doesn't exist still 404s, in every language.
+ */
 export const LOCALIZED_PATHS: readonly string[] = localized.paths;
 
+const escapeRegex = (text: string) =>
+  text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+/** "/compare/[slug]" → /^\/compare\/[^/]+$/; plain paths match only themselves. */
+export function routeMatcher(route: string): (path: string) => boolean {
+  if (!route.includes("[")) return (path) => path === route;
+  const pattern = route
+    .split("/")
+    .map((segment, index) => {
+      if (index === 0) return "";
+      if (/^\[\[\.\.\.[^/[\]]+\]\]$/.test(segment)) return "(?:/[^?#]*)?";
+      if (/^\[\.\.\.[^/[\]]+\]$/.test(segment)) return "/[^?#]+";
+      // One segment, never a file name (public/integrations/zapier.svg).
+      if (/^\[[^/[\].]+\]$/.test(segment)) return "/[^/.?#]+";
+      return `/${escapeRegex(segment)}`;
+    })
+    .join("");
+  const regex = new RegExp(`^${pattern || "/"}$`);
+  return (path) => regex.test(path);
+}
+
+const MATCHERS = LOCALIZED_PATHS.map(routeMatcher);
+
 export function isLocalizedPath(path: string): boolean {
-  return LOCALIZED_PATHS.includes(path);
+  return MATCHERS.some((matches) => matches(path));
 }
 
 /**
@@ -67,7 +96,9 @@ export function splitLocale(pathname: string): {
 } {
   const match = /^\/([^/]+)(\/.*)?$/.exec(pathname);
   const locale = localeFromSegment(match?.[1]);
-  if (match && locale && locale !== DEFAULT_LOCALE) {
+  // "/en/scan" too: the route an English page prerenders as, which is what
+  // usePathname() says while it does, before the browser's "/scan".
+  if (match && locale) {
     const path = match[2] ?? "/";
     if (isPathIn(path, locale)) return { locale, path };
   }

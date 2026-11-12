@@ -3,6 +3,7 @@
 import { cn } from "@repo/design-system/lib/utils";
 import { Scan } from "iconsax-reactjs";
 import dynamic from "next/dynamic";
+import { useTranslations } from "next-intl";
 import { useEffect, useId, useRef, useState } from "react";
 
 // The QR encoder loads the first time someone opens a code, not with the page.
@@ -40,12 +41,13 @@ export function DemoQrButton({ url, name }: { url: string; name: string }) {
     };
   }, [open]);
 
+  const t = useTranslations("templateDemo");
   return (
     <div className="contents" ref={rootRef}>
       <button
         aria-controls={open ? panelId : undefined}
         aria-expanded={open}
-        aria-label={`Show a QR code that opens the ${name} demo on your phone`}
+        aria-label={t("showQr", { name })}
         className={cn(
           "absolute right-5 bottom-5 z-20 hidden h-8 items-center gap-1.5 rounded-full border bg-background/90 px-3 text-xs font-medium text-foreground shadow-xs backdrop-blur-sm transition-[opacity,background-color] hover:bg-background focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none",
           // Not on phones (they're already there); on larger screens, quiet
@@ -57,18 +59,18 @@ export function DemoQrButton({ url, name }: { url: string; name: string }) {
         type="button"
       >
         <Scan aria-hidden className="size-3.5" />
-        Scan
+        {t("scan")}
       </button>
       {open && (
         <div
           className="absolute inset-x-5 bottom-16 z-20 flex flex-col items-center gap-3 rounded-2xl border bg-background/95 p-5 text-center shadow-lg backdrop-blur-sm"
           id={panelId}
           role="dialog"
-          aria-label={`QR code for the ${name} demo`}
+          aria-label={t("qrLabel", { name })}
         >
           <DemoQr className="size-36" value={url} />
           <p className="text-muted-foreground text-xs text-pretty">
-            Scan with your phone's camera to open the live demo.
+            {t("scanHint")}
           </p>
         </div>
       )}

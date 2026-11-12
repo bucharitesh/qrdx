@@ -5,17 +5,20 @@ import { Tick as Check } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
 import { Copy } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { type ReactNode, useState } from "react";
 
 export function CopyButton({
   value,
-  label = "Copy",
+  label,
   className,
 }: {
   value: string;
+  /** "Copy" by default. */
   label?: string;
   className?: string;
 }) {
+  const t = useTranslations("scanner.main");
   const [copied, setCopied] = useState(false);
   return (
     <Button
@@ -26,7 +29,7 @@ export function CopyButton({
           setCopied(true);
           setTimeout(() => setCopied(false), 1500);
         } catch {
-          toast.error("Couldn't copy. Select the text and copy it instead.");
+          toast.error(t("copyFailed"));
         }
       }}
       size="sm"
@@ -34,7 +37,7 @@ export function CopyButton({
       variant="outline"
     >
       {copied ? <Check className="size-3.5" /> : <Copy className="size-3.5" />}
-      {copied ? "Copied" : label}
+      {copied ? t("copied") : (label ?? t("copy"))}
     </Button>
   );
 }

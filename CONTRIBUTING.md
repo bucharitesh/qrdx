@@ -154,7 +154,7 @@ A maintainer applies schema changes to the production database before the code t
 
 ## Translating QRdx
 
-English is the source and keeps the unprefixed URLs (`/pricing`). Every other language lives under its own lowercase segment: `/es/pricing`, `/pt-br/pricing`, `/zh-hans`. Translated so far: the header, the footer, the cookie banner and its dialog, the home page and `/pricing`. The docs are also in Spanish, Brazilian Portuguese, Japanese and Simplified Chinese (see [Docs](#docs) below). The blog, the legal pages and the signed-in app are English only.
+English is the source and keeps the unprefixed URLs (`/pricing`). Every other language lives under its own lowercase segment: `/es/pricing`, `/pt-br/pricing`, `/zh-hans`. Translated so far: the header, the footer, the cookie banner and its dialog, the home page, `/pricing` and the other marketing pages listed in `apps/docs/lib/i18n/localized-paths.json` (tools, scanner, generators, industry and placement guides, templates, integrations, plugins, MCP, AI and the comparison index). A dynamic route is listed the way its folder is named (`/qr-code-generator/[type]`). The docs are also in Spanish, Brazilian Portuguese, Japanese and Simplified Chinese (see [Docs](#docs) below). The blog, the legal pages, the comparison pages themselves and the signed-in app are English only.
 
 The copy is in `apps/docs/messages/`:
 
@@ -164,6 +164,9 @@ The copy is in `apps/docs/messages/`:
 | `<locale>.json` | One language's translations of those keys. A missing key shows in English |
 | `review/<locale>.json` | For each translated string, a hash of the English it came from and its status, `machine` or `reviewed` |
 | `glossary.json` | Names that are never translated (`keep`), fixed translations per language (`fixed`) and each language's tone (`register`) |
+| `content/<locale>.json` | Translations of copy that lives in TypeScript data (generator pages, industry and placement guides, FAQ lists), keyed by a hash of the English, with the English beside each one |
+
+Long copy kept in TypeScript (for example `lib/qr-types-content.ts`, `lib/seo-content`, a page's `content.ts`) stays English in its file. `apps/docs/lib/i18n/content-sources.ts` lists that data, the translate script fills `content/<locale>.json` from it, and pages render it with `localizeContent()` (client components with `useContentText()`). A string is looked up by its English, so when the English changes it shows in English until it's translated again.
 
 ### Add a language
 
@@ -190,6 +193,8 @@ With a model: the script translates missing and stale strings through Vercel AI 
 AI_GATEWAY_API_KEY=<your key> bun run --filter docs i18n:translate --locale <code>
 I18N_MODEL=<gateway model id> AI_GATEWAY_API_KEY=<your key> bun run --filter docs i18n:translate --locale <code>
 ```
+
+It translates both catalogs; `--only ui` or `--only content` picks one, `--concurrency <n>` sets the requests at a time (3 by default) and `--prune` drops content translations no page uses any more. Work is saved after every request, so an interrupted run keeps what it finished.
 
 Read the result before you open the pull request. Machine output gets the same review as a hand translation.
 

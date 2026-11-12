@@ -17,6 +17,7 @@ import {
   LOCALIZED_PATHS,
   localizeHref,
   localizePath,
+  routeMatcher,
   splitLocale,
 } from "@/lib/i18n/paths";
 import {
@@ -25,7 +26,11 @@ import {
   REVIEW,
   type ReviewTable,
 } from "@/lib/i18n/review";
-import { englishRedirects, englishRewrites } from "@/lib/i18n/routing";
+import {
+  englishRedirects,
+  englishRewrites,
+  rewriteSource,
+} from "@/lib/i18n/routing";
 import { localizedEntries } from "@/lib/i18n/sitemap";
 import { baseUrl } from "@/lib/metadata";
 
@@ -150,9 +155,15 @@ describe("paths", () => {
       path: "/docs/help",
     });
     expect(splitLocale("/fr/docs")).toEqual({ locale: "en", path: "/fr/docs" });
+    // What an English page prerenders as (usePathname() says /en/pricing
+    // there): the same English path as the browser's /pricing.
     expect(splitLocale("/en/pricing")).toEqual({
       locale: "en",
-      path: "/en/pricing",
+      path: "/pricing",
+    });
+    expect(splitLocale("/en/q/abc")).toEqual({
+      locale: "en",
+      path: "/en/q/abc",
     });
     expect(isLocalizedPath("/docs")).toBe(false);
   });
@@ -283,11 +294,58 @@ describe("next.config.ts routing", () => {
 
   it("rewrites English URLs to [lang]=en", () => {
     expect(englishRewrites()).toEqual(
-      LOCALIZED_PATHS.map((path) => ({
-        source: path,
-        destination: path === "/" ? "/en" : `/en${path}`,
-      })),
+      LOCALIZED_PATHS.map((path) => {
+        const source = rewriteSource(path);
+        const target = source.replace(/\([^)]*\)/g, "");
+        return {
+          source,
+          destination: target === "/" ? "/en" : `/en${target}`,
+        };
+      }),
     );
+    // Dynamic routes are one rule each, in next.config.ts syntax.
+    expect(englishRewrites()).toContainEqual({
+      source: "/qr-code-generator/:type([^/.]+)",
+      destination: "/en/qr-code-generator/:type",
+    });
+    for (const rule of englishRewrites()) {
+      expect(
+        matches(rule.source, "/integrations/slack/link"),
+        rule.source,
+      ).toBe(false);
+    }
+  });
+
+  it("matches dynamic segments the way the folders name them", () => {
+    expect(rewriteSource("/compare/[slug]")).toBe("/compare/:slug([^/.]+)");
+    expect(rewriteSource("/docs/[...slug]")).toBe("/docs/:slug+");
+    expect(rewriteSource("/docs/[[...slug]]")).toBe("/docs/:slug*");
+    const one = routeMatcher("/compare/[slug]");
+    expect(one("/compare/qr-tiger")).toBe(true);
+    expect(one("/compare")).toBe(false);
+    expect(one("/compare/a/b")).toBe(false);
+    expect(one("/compare/logo.svg")).toBe(false);
+    const some = routeMatcher("/docs/[...slug]");
+    expect(some("/docs/a/b")).toBe(true);
+    expect(some("/docs")).toBe(false);
+    const any = routeMatcher("/docs/[[...slug]]");
+    expect(any("/docs")).toBe(true);
+    expect(any("/docs/a/b")).toBe(true);
+    expect(any("/docsx")).toBe(false);
+    expect(routeMatcher("/pricing")("/pricing/x")).toBe(false);
+    // Generator pages are translated; their links follow the language.
+    expect(isLocalizedPath("/qr-code-generator/wifi")).toBe(true);
+    expect(localizeHref("/qr-codes-on/menus#sizing", "ja")).toBe(
+      "/ja/qr-codes-on/menus#sizing",
+    );
+    expect(splitLocale("/es/qr-code-generator/wifi")).toEqual({
+      locale: "es",
+      path: "/qr-code-generator/wifi",
+    });
+    // Short links and app routes never are.
+    for (const path of ["/q/abc", "/p/abc", "/m/abc", "/dashboard", "/docs"]) {
+      expect(isLocalizedPath(path), path).toBe(false);
+    }
   });
 
   it("redirects /en and /en/... to the unprefixed URL on QRdx hosts only", () => {

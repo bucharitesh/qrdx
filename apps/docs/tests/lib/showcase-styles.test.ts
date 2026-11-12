@@ -18,7 +18,7 @@ import {
   type QRProps,
 } from "qrdx/types";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { PLUGIN_CODES } from "@/app/(app)/(home)/plugins/mock-codes";
+import { PLUGIN_CODES } from "@/app/[lang]/(home)/plugins/mock-codes";
 import { CHAT_MOCK_CODE } from "@/components/sections/chat-bots/mock-code";
 import { HOME_CODES } from "@/components/sections/home/demos/codes";
 import {

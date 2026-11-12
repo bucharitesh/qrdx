@@ -1,9 +1,15 @@
-// A deployment with none of the chat bots set up (a self-hosted copy without
-// their variables; vitest.config.ts drops SLACK_*, DISCORD_* and TELEGRAM_*):
-// /slack, /telegram and /discord are 404s, their Open Graph images too, and
-// nothing links to them: not /plugins, not the Slack integration page.
-import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
+import { renderIntl } from "../support/intl";
+
+// /plugins and /integrations/<slug> are translated pages (lib/i18n).
+vi.mock(
+  "next-intl/server",
+  async () => (await import("../support/intl")).intlServer,
+);
+vi.mock(
+  "@/lib/i18n/server",
+  async () => (await import("../support/intl")).i18nServer,
+);
 
 vi.mock("next/navigation", async (importOriginal) => ({
   ...(await importOriginal<typeof import("next/navigation")>()),
@@ -17,12 +23,12 @@ vi.mock("next/navigation", async (importOriginal) => ({
 
 import DiscordImage from "@/app/(app)/(home)/discord/opengraph-image";
 import DiscordPage from "@/app/(app)/(home)/discord/page";
-import IntegrationDetailPage from "@/app/(app)/(home)/integrations/[slug]/page";
-import PluginsPage from "@/app/(app)/(home)/plugins/page";
 import SlackImage from "@/app/(app)/(home)/slack/opengraph-image";
 import SlackPage from "@/app/(app)/(home)/slack/page";
 import TelegramImage from "@/app/(app)/(home)/telegram/opengraph-image";
 import TelegramPage from "@/app/(app)/(home)/telegram/page";
+import IntegrationDetailPage from "@/app/[lang]/(home)/integrations/[slug]/page";
+import PluginsPage from "@/app/[lang]/(home)/plugins/page";
 import { CHAT_BOTS } from "@/components/sections/chat-bots/bots";
 import { siteConfig } from "@/config/site";
 import {
@@ -54,14 +60,14 @@ describe("with no chat bot set up", () => {
     }
   });
 
-  it("leaves them out of /plugins", () => {
-    const links = hrefs(renderToStaticMarkup(PluginsPage()));
+  it("leaves them out of /plugins", async () => {
+    const links = hrefs(renderIntl(await PluginsPage()));
     expect(links).toContain("/mcp");
     for (const path of BOT_PATHS) expect(links).not.toContain(path);
   });
 
   it("keeps the Slack alerts page, without a link to /slack", async () => {
-    const markup = renderToStaticMarkup(
+    const markup = renderIntl(
       await IntegrationDetailPage({
         params: Promise.resolve({ slug: "slack" }),
       }),

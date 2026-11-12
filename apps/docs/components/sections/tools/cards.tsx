@@ -1,7 +1,7 @@
 import { cn } from "@repo/design-system/lib/utils";
 import { ArrowRight } from "iconsax-reactjs";
-import Link from "next/link";
 import type { ComponentType, ReactNode } from "react";
+import { LocaleLink } from "@/components/i18n/locale-link";
 import { PRESSABLE } from "@/components/mockups/motion";
 import { SpotlightLink } from "./spotlight-link";
 
@@ -194,7 +194,7 @@ export function SectionLink({
   children: ReactNode;
 }) {
   return (
-    <Link
+    <LocaleLink
       href={href}
       className="group inline-flex shrink-0 items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
     >
@@ -203,7 +203,7 @@ export function SectionLink({
         aria-hidden
         className="size-3.5 transition-transform duration-200 group-hover:translate-x-0.5"
       />
-    </Link>
+    </LocaleLink>
   );
 }
 
