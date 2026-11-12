@@ -1,0 +1,72 @@
+---
+title: "Remplacer l'API QR code de Google Chart"
+description: "Les QR codes de chart.googleapis.com renvoient désormais une erreur 404. Faites correspondre chl, chs et chld à l'Image API gratuite de QRdx, et mettez à jour vos anciennes URL avec une seule commande."
+icon: Wrench
+---
+
+Google a déprécié ses Image Charts en avril 2012, y compris les QR codes de `chart.googleapis.com/chart?cht=qr`. Le point d'accès répond désormais `404` (vérifié le 13 novembre 2026) : les anciennes balises `<img>`, les e-mails et les feuilles de calcul qui l'utilisaient affichent donc une image brisée.
+
+L'[Image API](/docs/developers/image-api) de QRdx fonctionne de la même manière : une URL `GET` qui renvoie l'image, sans compte ni clé. Changez l'hôte et renommez trois paramètres.
+
+## Avant et après [#before-and-after]
+
+```txt
+https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=https%3A%2F%2Fexample.com&chld=M|2
+https://api.qrdx.dev/v1/qr?format=png&size=300&data=https%3A%2F%2Fexample.com&level=M&margin=2
+```
+
+Les deux dessinent un PNG de 300 × 300 pour `https://example.com`, avec une correction d'erreur de niveau M et une marge de 2 modules.
+
+## Correspondance des paramètres [#parameter-mapping]
+
+| Google Chart | QRdx | Remarques |
+| --- | --- | --- |
+| `cht=qr` | inutile | Le point d'accès ne dessine que des QR codes. S'il est présent, il est ignoré. |
+| `chl=<data>` | `data=<data>` | Encodé en URL de la même façon, jusqu'à 2048 caractères. |
+| `chs=<width>x<height>` | `size=<width>` | Un seul nombre, car les QR codes sont carrés : de `64` à `2048` pixels. |
+| `chld=<level>\|<margin>` | `level=<level>&margin=<margin>` | Les mêmes lettres, `L`, `M`, `Q` et `H`. La marge est exprimée en modules, de `0` à `16`. |
+| `choe=UTF-8` | inutile | QRdx encode toujours le texte en UTF-8, qui était la valeur par défaut de Google. Il n'existe pas d'option Shift_JIS ni ISO-8859-1. S'il est présent, il est ignoré. |
+| toujours PNG | `format=png` | QRdx renvoie du SVG sauf si vous demandez `png`, `webp` ou `eps`. Conservez le PNG pour les e-mails, car de nombreux clients de messagerie n'affichent pas le SVG. |
+
+Deux valeurs par défaut diffèrent. Sans `chld`, Google utilisait la correction d'erreur `L` ; QRdx utilise `Q`, qui résiste à davantage de dégâts mais produit un code plus dense. Ajoutez `level=L` si vous voulez retrouver l'ancien rendu. Dans les deux cas, la marge par défaut est de 4 modules.
+
+## Migrer avec une seule commande [#migrate-with-one-command]
+
+Cette commande réécrit chaque URL de QR code Google Chart dans les fichiers que vous indiquez, y compris l'ancien hôte `chart.apis.google.com`. Elle modifie l'hôte et le chemin, renomme `chl`, `chs` et `chld`, et ajoute `format=png` pour que les images restent en PNG. Perl est fourni avec macOS et la plupart des distributions Linux.
+
+```bash
+perl -pi -e 's{https?://chart\.(?:googleapis|apis\.google)\.com/chart\?([^\s"\x27<>)]*)}{my $q = $1; $q =~ s/(^|[&;])chl=/${1}data=/; $q =~ s/(^|[&;])chs=(\d+)x\d+/${1}size=$2/; $q =~ s/(^|[&;])chld=([LMQH])(?:\||%7C)(\d+)/${1}level=$2&margin=$3/i; $q =~ s/(^|[&;])chld=([LMQH])/${1}level=$2/i; "https://api.qrdx.dev/v1/qr?format=png&$q"}ge' index.html
+```
+
+Exécutez-la à un endroit où vous pouvez examiner la modification, par exemple dans un dépôt git, puis vérifiez le diff. Pour trouver les fichiers qui utilisent encore l'ancienne API :
+
+```bash
+grep -rlE "chart\.(googleapis|apis\.google)\.com/chart" .
+```
+
+Un `chs` inférieur à 64 pixels (`50x50`) ou supérieur à 2048 reçoit une erreur `400` de la part de QRdx : modifiez ces tailles à la main.
+
+## Dans le code [#in-code]
+
+```js
+// Before
+const src = `https://chart.googleapis.com/chart?cht=qr&chs=200x200&chl=${encodeURIComponent(link)}`;
+
+// After
+const src = `https://api.qrdx.dev/v1/qr?format=png&size=200&data=${encodeURIComponent(link)}`;
+```
+
+Dans Google Sheets :
+
+```txt
+=IMAGE("https://api.qrdx.dev/v1/qr?format=png&size=150&data="&ENCODEURL(A2))
+```
+
+Sheets charge les images via ses propres serveurs Google : une feuille contenant des centaines de codes peut donc atteindre la limite par IP indiquée ci-dessous. Pour une longue liste, générez les fichiers en une seule fois avec le [générateur en masse](/tools/bulk) ou avec `qrdx batch` de la [CLI](/docs/developers/cli).
+
+## À savoir aussi [#what-else-to-know]
+
+- **Limite de débit :** {facts.imageApiPerMinute} requêtes par minute et par adresse IP. Au-delà, vous recevez `429` avec un en-tête `Retry-After`.
+- **Mise en cache :** une même URL renvoie toujours les mêmes octets ; les réponses sont donc mises en cache pendant un an (`Cache-Control: public, max-age=31536000, immutable`).
+- **Autres options :** couleurs (`fg`, `bg`), formes des modules et des yeux, icône de logo (`logoIcon`) et cadres. Essayez-les dans le [générateur d'URL](/qr-code-api), ou consultez les [paramètres](/docs/developers/image-api#parameters).
+- **Auto-hébergement :** une instance QRdx [auto-hébergée](/docs/self-hosting) sert la même API à l'adresse `/api/v1/qr` sur votre propre domaine.

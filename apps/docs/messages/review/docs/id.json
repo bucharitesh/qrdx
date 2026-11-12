@@ -4,7 +4,7 @@
     "status": "machine"
   },
   "(react)/meta.json": {
-    "source": "f39f7612dd28",
+    "source": "079cea1b5c15",
     "status": "machine"
   },
   "(self-hosting)/meta.json": {
@@ -52,7 +52,7 @@
     "status": "machine"
   },
   "components/qr-code.mdx": {
-    "source": "9dc032d49d03",
+    "source": "f9407df848c9",
     "status": "machine"
   },
   "components/vcard-qr-code.mdx": {
@@ -95,6 +95,10 @@
     "source": "eaf24098059d",
     "status": "machine"
   },
+  "developers/google-chart-api.mdx": {
+    "source": "496a16e11c25",
+    "status": "machine"
+  },
   "developers/image-api.mdx": {
     "source": "adb6c5eaf03d",
     "status": "machine"
@@ -108,7 +112,7 @@
     "status": "machine"
   },
   "developers/meta.json": {
-    "source": "19c0a1c8ead7",
+    "source": "98ff392ec155",
     "status": "machine"
   },
   "developers/n8n.mdx": {
@@ -429,6 +433,10 @@
   },
   "migrate.mdx": {
     "source": "06fa10cc4a4a",
+    "status": "machine"
+  },
+  "nextjs.mdx": {
+    "source": "a96f3f261b41",
     "status": "machine"
   },
   "nfc.mdx": {
