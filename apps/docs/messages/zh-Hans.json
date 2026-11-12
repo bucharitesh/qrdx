@@ -4003,7 +4003,8 @@
           "edit": "编辑背景",
           "options": "背景选项",
           "random": "随机背景",
-          "more": "更多背景选项"
+          "more": "更多背景选项",
+          "editShape": "编辑二维码形状"
         },
         "frame": {
           "edit": "编辑边框",
@@ -4027,13 +4028,59 @@
         "backgroundColor": "背景颜色",
         "padding": "内边距",
         "frameStyle": "边框样式",
-        "frameColor": "边框颜色"
+        "frameColor": "边框颜色",
+        "whichEyes": "选择定位点",
+        "allEyes": "所有定位点",
+        "thisEye": "此定位点",
+        "thisEyesColor": "此定位点的颜色",
+        "thisEyesCenterColor": "此定位点的中心颜色",
+        "shapesChangeAllThreeEyes": "形状会同时更改三个定位点。",
+        "sameAsTheOthers": "与其他定位点相同",
+        "eyesWithTheirOwnColor": "有独立颜色的定位点会保持原色。如需单独更改，请选择“此定位点”。",
+        "logoShapeAndPlate": "Logo 形状和底板",
+        "clearSpace": "留白区域",
+        "content": "内容",
+        "codeShape": "二维码形状",
+        "errorCorrection": "纠错级别"
       },
       "random": "随机",
       "moreOptions": "更多选项",
       "sheet": {
         "changesShowOnTheCode": "你所做的更改会实时显示在二维码上。点击“完成”即可保留。",
         "done": "完成"
+      },
+      "content": {
+        "link": "链接",
+        "text": "文本",
+        "theCodeKeepsItsContent": "在此内容有效之前，二维码将保留原有内容。",
+        "scansOpenHost": "扫描后打开 {host}",
+        "textHint": "扫描二维码后将显示这段文本。",
+        "editedInTheContentTab": "此类内容在“内容”选项卡中有专属表单。",
+        "openTheContentTab": "打开“内容”选项卡"
+      },
+      "codeShape": {
+        "codeShape": "二维码形状",
+        "names": {
+          "square": "方形",
+          "circle": "圆形",
+          "heart": "心形"
+        },
+        "aCircleOrHeartTakes": "圆形或心形会取代边框。"
+      },
+      "errorCorrection": {
+        "theLogoRaisesItToLevel": "目前，Logo 将纠错级别提高到了 {level}。"
+      },
+      "handles": {
+        "moveLogo": "移动 Logo",
+        "dragOrUseTheArrowKeys": "可拖动，或使用方向键。按住 Shift 可移动更远。按 Delete 可隐藏。",
+        "logoSize": "Logo 大小",
+        "percentOfTheCode": "占二维码的 {value, number}%",
+        "padding": "内边距",
+        "modules": "{count, plural, other {# 个模块}}",
+        "dragToChangeThePadding": "向内或向外拖动可调整内边距"
+      },
+      "drop": {
+        "dropToUseAsLogo": "松开即可用作 Logo"
       }
     },
     "gradientPicker": {
@@ -4285,6 +4332,7 @@
         "actions": "操作",
         "themeAppearance": "主题与外观",
         "patternCustomization": "图案自定义",
+        "preview": "预览",
         "help": "帮助"
       },
       "shortcuts": {
@@ -4306,7 +4354,11 @@
         "cycleCornerEyePatterns": "循环切换角部定位点样式",
         "cycleInternalEyePatterns": "循环切换内部定位点样式",
         "cycleFrames": "循环切换边框",
-        "showThisShortcutsDialog": "显示此快捷键对话框"
+        "showThisShortcutsDialog": "显示此快捷键对话框",
+        "editAPartOfTheCode": "编辑指针所在或已聚焦的二维码部分",
+        "randomLookForThatPart": "随机生成该部分的外观",
+        "hideTheFocusedLogo": "隐藏已聚焦的 Logo",
+        "moveTheLogoWhileEditing": "编辑 Logo 时移动 Logo"
       }
     },
     "soundSwitch": {

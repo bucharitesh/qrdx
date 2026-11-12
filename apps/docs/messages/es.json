@@ -4003,7 +4003,8 @@
           "edit": "Editar fondo",
           "options": "Opciones de fondo",
           "random": "Fondo aleatorio",
-          "more": "Más opciones de fondo"
+          "more": "Más opciones de fondo",
+          "editShape": "Editar forma del código"
         },
         "frame": {
           "edit": "Editar marco",
@@ -4027,13 +4028,59 @@
         "backgroundColor": "Color de fondo",
         "padding": "Margen",
         "frameStyle": "Estilo de marco",
-        "frameColor": "Color del marco"
+        "frameColor": "Color del marco",
+        "whichEyes": "Qué ojos",
+        "allEyes": "Todos los ojos",
+        "thisEye": "Este ojo",
+        "thisEyesColor": "Color de este ojo",
+        "thisEyesCenterColor": "Color del centro de este ojo",
+        "shapesChangeAllThreeEyes": "Las formas cambian los tres ojos.",
+        "sameAsTheOthers": "Igual que los demás",
+        "eyesWithTheirOwnColor": "Los ojos con un color propio lo conservan. Elige Este ojo para cambiar uno.",
+        "logoShapeAndPlate": "Forma y base del logo",
+        "clearSpace": "Espacio libre",
+        "content": "Contenido",
+        "codeShape": "Forma del código",
+        "errorCorrection": "Corrección de errores"
       },
       "random": "Aleatorio",
       "moreOptions": "Más opciones",
       "sheet": {
         "changesShowOnTheCode": "Los cambios se ven en el código a medida que los haces. Listo los conserva.",
         "done": "Listo"
+      },
+      "content": {
+        "link": "Enlace",
+        "text": "Texto",
+        "theCodeKeepsItsContent": "El código conserva su contenido hasta que esto sea válido.",
+        "scansOpenHost": "Los escaneos abren {host}",
+        "textHint": "El código muestra este texto al escanearlo.",
+        "editedInTheContentTab": "Este tipo de contenido tiene su propio formulario en la pestaña Contenido.",
+        "openTheContentTab": "Abrir la pestaña Contenido"
+      },
+      "codeShape": {
+        "codeShape": "Forma del código",
+        "names": {
+          "square": "Cuadrado",
+          "circle": "Círculo",
+          "heart": "Corazón"
+        },
+        "aCircleOrHeartTakes": "Un círculo o un corazón ocupa el lugar del marco."
+      },
+      "errorCorrection": {
+        "theLogoRaisesItToLevel": "Por ahora, el logo lo sube al nivel {level}."
+      },
+      "handles": {
+        "moveLogo": "Mover logo",
+        "dragOrUseTheArrowKeys": "Arrástralo o usa las teclas de flecha. Con Shift se mueve más. Suprimir lo oculta.",
+        "logoSize": "Tamaño del logo",
+        "percentOfTheCode": "{value, number}% del código",
+        "padding": "Relleno",
+        "modules": "{count, plural, one {# módulo} other {# módulos}}",
+        "dragToChangeThePadding": "Arrastra hacia dentro o hacia fuera para cambiar el relleno"
+      },
+      "drop": {
+        "dropToUseAsLogo": "Suelta para usar como logo"
       }
     },
     "gradientPicker": {
@@ -4285,6 +4332,7 @@
         "actions": "Acciones",
         "themeAppearance": "Tema y apariencia",
         "patternCustomization": "Personalización del patrón",
+        "preview": "Vista previa",
         "help": "Ayuda"
       },
       "shortcuts": {
@@ -4306,7 +4354,11 @@
         "cycleCornerEyePatterns": "Alternar patrones de ojos de esquina",
         "cycleInternalEyePatterns": "Alternar patrones de ojos internos",
         "cycleFrames": "Alternar marcos",
-        "showThisShortcutsDialog": "Mostrar este diálogo de atajos"
+        "showThisShortcutsDialog": "Mostrar este diálogo de atajos",
+        "editAPartOfTheCode": "Editar la parte del código bajo el puntero o con el foco",
+        "randomLookForThatPart": "Aspecto aleatorio para esa parte",
+        "hideTheFocusedLogo": "Ocultar el logo con el foco",
+        "moveTheLogoWhileEditing": "Mover el logo mientras se edita"
       }
     },
     "soundSwitch": {

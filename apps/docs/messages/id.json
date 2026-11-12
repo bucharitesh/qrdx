@@ -4003,7 +4003,8 @@
           "edit": "Edit latar",
           "options": "Opsi latar",
           "random": "Latar acak",
-          "more": "Opsi latar lainnya"
+          "more": "Opsi latar lainnya",
+          "editShape": "Ubah bentuk kode"
         },
         "frame": {
           "edit": "Edit bingkai",
@@ -4027,13 +4028,59 @@
         "backgroundColor": "Warna latar",
         "padding": "Padding",
         "frameStyle": "Gaya bingkai",
-        "frameColor": "Warna bingkai"
+        "frameColor": "Warna bingkai",
+        "whichEyes": "Mata yang mana",
+        "allEyes": "Semua mata",
+        "thisEye": "Mata ini",
+        "thisEyesColor": "Warna mata ini",
+        "thisEyesCenterColor": "Warna tengah mata ini",
+        "shapesChangeAllThreeEyes": "Bentuk mengubah ketiga mata.",
+        "sameAsTheOthers": "Sama seperti lainnya",
+        "eyesWithTheirOwnColor": "Mata dengan warna sendiri tetap mempertahankannya. Pilih Mata ini untuk mengubah salah satunya.",
+        "logoShapeAndPlate": "Bentuk dan alas logo",
+        "clearSpace": "Ruang kosong",
+        "content": "Konten",
+        "codeShape": "Bentuk kode",
+        "errorCorrection": "Koreksi kesalahan"
       },
       "random": "Acak",
       "moreOptions": "Opsi lainnya",
       "sheet": {
         "changesShowOnTheCode": "Perubahan langsung tampil pada kode saat Anda membuatnya. Selesai akan menyimpannya.",
         "done": "Selesai"
+      },
+      "content": {
+        "link": "Tautan",
+        "text": "Teks",
+        "theCodeKeepsItsContent": "Kode mempertahankan kontennya sampai input ini valid.",
+        "scansOpenHost": "Pemindaian membuka {host}",
+        "textHint": "Kode menampilkan teks ini saat dipindai.",
+        "editedInTheContentTab": "Jenis konten ini memiliki formulirnya sendiri di tab Konten.",
+        "openTheContentTab": "Buka tab Konten"
+      },
+      "codeShape": {
+        "codeShape": "Bentuk kode",
+        "names": {
+          "square": "Persegi",
+          "circle": "Lingkaran",
+          "heart": "Hati"
+        },
+        "aCircleOrHeartTakes": "Lingkaran atau hati menggantikan bingkai."
+      },
+      "errorCorrection": {
+        "theLogoRaisesItToLevel": "Untuk saat ini, logo menaikkannya ke level {level}."
+      },
+      "handles": {
+        "moveLogo": "Pindahkan logo",
+        "dragOrUseTheArrowKeys": "Seret, atau gunakan tombol panah. Shift menggesernya lebih jauh. Delete menyembunyikannya.",
+        "logoSize": "Ukuran logo",
+        "percentOfTheCode": "{value, number}% dari kode",
+        "padding": "Padding",
+        "modules": "{count, plural, other {# modul}}",
+        "dragToChangeThePadding": "Seret ke dalam atau ke luar untuk mengubah padding"
+      },
+      "drop": {
+        "dropToUseAsLogo": "Lepas untuk dipakai sebagai logo"
       }
     },
     "gradientPicker": {
@@ -4285,6 +4332,7 @@
         "actions": "Tindakan",
         "themeAppearance": "Tema & Tampilan",
         "patternCustomization": "Kustomisasi Pola",
+        "preview": "Pratinjau",
         "help": "Bantuan"
       },
       "shortcuts": {
@@ -4306,7 +4354,11 @@
         "cycleCornerEyePatterns": "Ganti pola mata sudut",
         "cycleInternalEyePatterns": "Ganti pola mata dalam",
         "cycleFrames": "Ganti bingkai",
-        "showThisShortcutsDialog": "Tampilkan dialog pintasan ini"
+        "showThisShortcutsDialog": "Tampilkan dialog pintasan ini",
+        "editAPartOfTheCode": "Edit bagian kode yang berada di bawah penunjuk atau yang sedang difokuskan",
+        "randomLookForThatPart": "Tampilan acak untuk bagian itu",
+        "hideTheFocusedLogo": "Sembunyikan logo yang difokuskan",
+        "moveTheLogoWhileEditing": "Geser logo saat sedang diedit"
       }
     },
     "soundSwitch": {
