@@ -6,6 +6,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { DocsFrameworkProvider } from "@/components/docs/docs-framework-provider";
 import { DocsLocaleMenu } from "@/components/docs/docs-locale-menu";
+import { DocsProductLinks } from "@/components/docs/docs-product-links";
 import CustomSearchDialog from "@/components/search";
 import { JsonLd } from "@/components/sections/tools/json-ld";
 import { docsTabs, filterPageTree, mapLinkNodes } from "@/lib/docs-tree";
@@ -96,6 +97,7 @@ export default async function Layout({
                 className="pointer-events-none fixed inset-0 z-[-1] bg-[radial-gradient(ellipse_55%_45%_at_100%_0%,color-mix(in_oklab,var(--color-foreground)_3.5%,transparent),transparent)] dark:bg-[radial-gradient(ellipse_55%_45%_at_100%_0%,color-mix(in_oklab,var(--color-foreground)_7%,transparent),transparent)]"
               />
               {children}
+              <DocsProductLinks locale={locale} />
             </DocsLayout>
           </RootProvider>
         </NextIntlClientProvider>
