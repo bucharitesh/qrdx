@@ -1,6 +1,7 @@
 import type { KeyObject } from "node:crypto";
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import { after } from "next/server";
+import { recordUsage } from "@/lib/analytics/usage";
 import {
   editOriginalResponse,
   isInteractionToken,
@@ -8,6 +9,7 @@ import {
 import {
   INTERACTION_TYPE,
   interactionPlan,
+  interactionUsageKey,
   interactionUserId,
   NOTICES,
   notice,
@@ -108,6 +110,7 @@ export async function POST(request: Request) {
     return json({ error: "Invalid interaction" }, 400);
   }
 
+  recordUsage("discord", "command", interactionUsageKey(interaction));
   const userId = interactionUserId(interaction) ?? "unknown";
   if (!(await userLimiter.limit(`discord-bot:user:${userId}`)).success) {
     return json(notice(NOTICES.rateLimited));
@@ -129,12 +132,14 @@ export async function POST(request: Request) {
         logError(error as Error, {
           route: "/api/integrations/discord/interactions",
         });
+        recordUsage("discord", "error", "interaction");
         data = { content: NOTICES.failed, allowed_mentions: { parse: [] } };
       }
       await editOriginalResponse(settings.applicationId, token, data);
     });
     return json(plan.response);
   } catch (error) {
+    recordUsage("discord", "error", "interaction");
     // The error only: never the content or who sent it.
     logError(error as Error, {
       route: "/api/integrations/discord/interactions",

@@ -417,6 +417,28 @@ function restylePlan(interaction: DiscordInteraction): DiscordPlan {
 }
 
 /**
+ * What an interaction asks for, as a usage key (usage_daily): "qr" (/qr),
+ * "message" (Make QR code), "restyle" (a style menu pick) or "help". Never
+ * the content.
+ */
+export function interactionUsageKey(
+  interaction: DiscordInteraction,
+): "qr" | "message" | "restyle" | "help" {
+  if (interaction.type === INTERACTION_TYPE.messageComponent) return "restyle";
+  const data = interaction.data;
+  if (data?.type === COMMAND_TYPE.chatInput && data.name === QR_COMMAND.name) {
+    return "qr";
+  }
+  if (
+    data?.type === COMMAND_TYPE.message &&
+    data.name === MESSAGE_COMMAND.name
+  ) {
+    return "message";
+  }
+  return "help";
+}
+
+/**
  * The plan for an application command (/qr, Make QR code, or help) or a
  * pick in a code's style menus.
  */

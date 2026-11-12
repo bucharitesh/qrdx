@@ -3,6 +3,7 @@ import {
   codeIdSchema,
   getCode,
 } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
+import { withApiUsage } from "@/lib/analytics/usage";
 import { withApiQuotaHeaders } from "@/lib/api-quota";
 import { handleError } from "@/lib/error-response";
 import { getPlanForScope, getPlanLimits } from "@/lib/plans";
@@ -21,7 +22,7 @@ import { scansQuerySchema } from "../../_lib/schemas";
  * Aggregated analytics for a range (clamped to the plan's retention), plus
  * optional individual scans paginated with `before` = the last `scannedAt`.
  */
-export const GET = withApiQuotaHeaders(
+const handleGET = withApiQuotaHeaders(
   async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
     try {
       const scope = await resolveApiScope(req, "read");
@@ -91,3 +92,6 @@ export const GET = withApiQuotaHeaders(
     }
   },
 );
+
+// Counted with the API's requests (lib/analytics/usage.ts).
+export const GET = withApiUsage("codes", handleGET);

@@ -1,5 +1,6 @@
 import "server-only";
 
+import { recordUsage } from "@/lib/analytics/usage";
 import {
   type ChatDesign,
   checkForReply,
@@ -186,8 +187,16 @@ export async function styledReply(
     : { message: tooLongForSlack(), private: true };
 }
 
+/** The usage key for what was asked (usage_daily): a command word, never the text. */
+const COMMAND_KEYS = new Set(["help", "link", "unlink", "track"]);
+
 export async function answer(ask: BotAsk): Promise<BotAnswer> {
   const { word, rest } = splitCommand(ask.text);
+  recordUsage(
+    "slack",
+    "command",
+    word === "" ? "help" : COMMAND_KEYS.has(word) ? word : "qr",
+  );
   try {
     switch (word) {
       case "":
@@ -235,6 +244,7 @@ export async function answer(ask: BotAsk): Promise<BotAnswer> {
       return privately(noteMessage(UNAVAILABLE));
     }
     logError(error as Error, { action: "slack-bot.answer" });
+    recordUsage("slack", "error", "answer");
     return privately(noteMessage("Something went wrong. Try again."));
   }
 }
