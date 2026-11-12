@@ -1382,7 +1382,16 @@
       "browsersQuestion": "Quais navegadores são compatíveis?",
       "browsersAnswer": "Qualquer navegador moderno com acesso à câmera: Chrome, Edge, Safari e Firefox em celulares e computadores. Navegadores com leitor de código de barras integrado (Chrome no Android e no macOS) usam esse leitor diretamente; os outros baixam um decodificador de código aberto (ZXing, compilado para WebAssembly, cerca de 1 MB, pela CDN jsDelivr) na primeira leitura. A câmera exige uma página https e a sua permissão.",
       "installQuestion": "Posso instalar o leitor como um app?",
-      "installAnswer": "Sim. Use a opção Instalar ou Adicionar à tela inicial do seu navegador nesta página para ter um ícone do leitor que abre direto na câmera."
+      "installAnswer": "Sim. No Chrome, no Edge ou no Samsung Internet, toque em Instalar app abaixo do leitor, ou use a opção de instalação do próprio navegador. No iPhone e no iPad, toque em Adicionar à Tela de Início abaixo do leitor para ver os passos. O app abre direto no leitor, em uma janela própria, funciona offline depois que você fez uma leitura com ele e guarda o histórico no seu dispositivo.",
+      "shareQuestion": "Posso ler um QR code a partir de uma captura de tela?",
+      "shareAnswer": "Sim. Mude para Imagem e escolha, solte ou cole a captura de tela. No Android, com o leitor instalado, você também pode compartilhar uma captura de tela ou foto com o QRdx Scanner a partir de qualquer app: ele abre e lê o código no seu dispositivo. As imagens compartilhadas não são enviadas nem guardadas."
+    },
+    "app": {
+      "name": "QRdx Scanner",
+      "shortName": "QRdx Scanner",
+      "description": "Leia QR codes e códigos de barras com a câmera ou a partir de uma captura de tela. As imagens são lidas no seu dispositivo e os links são verificados antes de abrir.",
+      "cameraShortcut": "Ler com a câmera",
+      "imageShortcut": "Ler a partir de imagem"
     }
   },
   "scanner": {
@@ -1467,7 +1476,8 @@
       "drop": "Solte imagens aqui, escolha arquivos ou cole",
       "dropHelp": "Capturas de tela e fotos funcionam, com vários códigos por imagem.",
       "choose": "Escolher imagens",
-      "paste": "Colar imagem"
+      "paste": "Colar imagem",
+      "shareMissing": "A imagem compartilhada não chegou. Escolha ela aqui."
     },
     "result": {
       "starts": "Início",
@@ -1578,6 +1588,19 @@
       "copy": "Copiar link",
       "retry": "Tentar de novo",
       "report": "Denunciar este código"
+    },
+    "install": {
+      "install": "Instalar app",
+      "iosButton": "Adicionar à Tela de Início",
+      "iosTitle": "Adicione o leitor à sua Tela de Início",
+      "iosShare": "Toque em Compartilhar. No Safari do iPhone, ele fica no menu ao lado do endereço.",
+      "iosAdd": "Deslize para cima e escolha Adicionar à Tela de Início.",
+      "iosConfirm": "Deixe Abrir como App da Web ativado e toque em Adicionar.",
+      "macButton": "Adicionar ao Dock",
+      "macTitle": "Adicione o leitor ao seu Dock",
+      "macAdd": "Na barra de menus, escolha Arquivo e depois Adicionar ao Dock.",
+      "macConfirm": "Clique em Adicionar.",
+      "after": "Ele abre direto no leitor, em uma janela própria, e funciona offline depois que você ler um código com ele."
     }
   },
   "scanPages": {

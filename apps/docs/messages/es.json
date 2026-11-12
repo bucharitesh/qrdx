@@ -1382,7 +1382,16 @@
       "browsersQuestion": "¿Qué navegadores son compatibles?",
       "browsersAnswer": "Cualquier navegador moderno con acceso a la cámara: Chrome, Edge, Safari y Firefox en teléfonos y ordenadores. Los navegadores con lector de códigos de barras integrado (Chrome en Android y macOS) lo usan directamente; los demás descargan un decodificador de código abierto (ZXing, compilado a WebAssembly, de aproximadamente 1 MB desde la CDN de jsDelivr) la primera vez que escaneas. La cámara necesita una página https y tu permiso.",
       "installQuestion": "¿Puedo instalar el escáner como una app?",
-      "installAnswer": "Sí. Usa la opción Instalar o Añadir a la pantalla de inicio de tu navegador en esta página para tener un icono del escáner que abre directamente la cámara."
+      "installAnswer": "Sí. En Chrome, Edge o Samsung Internet, toca Instalar app debajo del escáner, o usa la opción de instalación del propio navegador. En iPhone y iPad, toca Añadir a pantalla de inicio debajo del escáner para ver los pasos. La app se abre directamente en el escáner, en su propia ventana, funciona sin conexión una vez que has hecho un escaneo con ella y guarda su historial en tu dispositivo.",
+      "shareQuestion": "¿Puedo escanear un código QR desde una captura de pantalla?",
+      "shareAnswer": "Sí. Cambia a Imagen y elige, suelta o pega la captura de pantalla. En Android, una vez instalado el escáner, también puedes compartir una captura o una foto con QRdx Scanner desde cualquier app: se abre y lee el código en tu dispositivo. Las imágenes compartidas no se suben ni se guardan."
+    },
+    "app": {
+      "name": "QRdx Scanner",
+      "shortName": "QRdx Scanner",
+      "description": "Haz el escaneo de códigos QR y códigos de barras con tu cámara o desde una captura de pantalla. Las imágenes se leen en tu dispositivo y los enlaces se comprueban antes de abrirse.",
+      "cameraShortcut": "Escanear con la cámara",
+      "imageShortcut": "Escanear desde imagen"
     }
   },
   "scanner": {
@@ -1467,7 +1476,8 @@
       "drop": "Suelta imágenes aquí, elige archivos o pega",
       "dropHelp": "Funcionan capturas de pantalla y fotos, con varios códigos por imagen.",
       "choose": "Elegir imágenes",
-      "paste": "Pegar imagen"
+      "paste": "Pegar imagen",
+      "shareMissing": "La imagen compartida no llegó. Elígela aquí en su lugar."
     },
     "result": {
       "starts": "Inicio",
@@ -1578,6 +1588,19 @@
       "copy": "Copiar enlace",
       "retry": "Reintentar",
       "report": "Denunciar este código"
+    },
+    "install": {
+      "install": "Instalar app",
+      "iosButton": "Añadir a pantalla de inicio",
+      "iosTitle": "Añade el escáner a tu pantalla de inicio",
+      "iosShare": "Toca Compartir. En Safari en iPhone, está en el menú junto a la dirección.",
+      "iosAdd": "Desliza hacia arriba y elige Añadir a pantalla de inicio.",
+      "iosConfirm": "Deja activado Abrir como app web y toca Añadir.",
+      "macButton": "Añadir al Dock",
+      "macTitle": "Añade el escáner a tu Dock",
+      "macAdd": "En la barra de menús, elige Archivo y luego Añadir al Dock.",
+      "macConfirm": "Haz clic en Añadir.",
+      "after": "Se abre directamente en el escáner, en su propia ventana, y funciona sin conexión una vez que has hecho un escaneo con él."
     }
   },
   "scanPages": {
