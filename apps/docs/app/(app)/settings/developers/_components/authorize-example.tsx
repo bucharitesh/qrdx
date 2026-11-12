@@ -8,6 +8,7 @@ import {
   CardTitle,
 } from "@repo/design-system/components/ui/card";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Snippet } from "./snippet";
 
 /** The authorize URL and token request for this app, ready to adapt. */
@@ -22,6 +23,7 @@ export function AuthorizeExample({
   redirectUri: string;
   scopes: string[];
 }) {
+  const t = useTranslations("app.settings.developers.authorizeExample");
   const scope = scopes.join(" ");
   const query: [string, string][] = [
     ["response_type", "code"],
@@ -52,23 +54,29 @@ export function AuthorizeExample({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Authorize URL</CardTitle>
+        <CardTitle>{t("authorizeUrl")}</CardTitle>
         <CardDescription>
-          Send people to this URL to install your app. Replace{" "}
-          <code className="font-mono">STATE</code> with a random value you check
-          on return, and <code className="font-mono">CODE_CHALLENGE</code> with
-          the S256 hash of a PKCE verifier.{" "}
-          <Link
-            className="text-foreground underline underline-offset-4"
-            href="/docs/developers/build-an-integration"
-          >
-            Quickstart
-          </Link>
+          {t.rich("sendPeopleToThisUrl", {
+            code: (chunks) => <code className="font-mono">{chunks}</code>,
+            code2: (chunks) => <code className="font-mono">{chunks}</code>,
+            link: (chunks) => (
+              <Link
+                className="text-foreground underline underline-offset-4"
+                href="/docs/developers/build-an-integration"
+              >
+                {chunks}
+              </Link>
+            ),
+          })}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
-        <Snippet code={readable} copy={authorizeUrl} label="Authorize URL" />
-        <Snippet code={token} label="Token request" />
+        <Snippet
+          code={readable}
+          copy={authorizeUrl}
+          label={t("authorizeUrl")}
+        />
+        <Snippet code={token} label={t("tokenRequest")} />
       </CardContent>
     </Card>
   );

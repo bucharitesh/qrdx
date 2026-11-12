@@ -2,21 +2,23 @@
 
 import { Button } from "@repo/design-system/components/ui/button";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useWorkspaceHref } from "@/components/workspace-provider";
 
 /** A code, page or webhook that isn't in this workspace (or no longer exists). */
 export default function WorkspacePageNotFound() {
+  const t = useTranslations("app.dashboard.notFound");
   const href = useWorkspaceHref();
   return (
     <div className="flex flex-col items-center gap-4 py-24 text-center">
       <h1 className="text-xl font-semibold tracking-tight">
-        This page could not be found
+        {t("thisPageCouldNotBe")}
       </h1>
       <p className="text-muted-foreground max-w-sm text-sm">
-        It may have been deleted, or it belongs to another workspace.
+        {t("itMayHaveBeenDeleted")}
       </p>
       <Button asChild variant="outline">
-        <Link href={href()}>Back to Home</Link>
+        <Link href={href()}>{t("backToHome")}</Link>
       </Button>
     </div>
   );

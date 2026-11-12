@@ -1,11 +1,13 @@
 import { cn } from "@repo/design-system/lib/utils";
 import Link from "next/link";
+import { use } from "react";
 import {
   CODE_TAB_LABELS,
   CODE_TABS,
   type CodeTab,
   codeTabHref,
 } from "@/app/(app)/dashboard/codes/_lib/code-tabs";
+import { getAppTranslations } from "@/lib/i18n/app-locale";
 
 /** Overview · Analytics · Settings. Each tab is its own URL. */
 export function CodeTabsNav({
@@ -18,8 +20,9 @@ export function CodeTabsNav({
   codeId: string;
   current: CodeTab;
 }) {
+  const t = use(getAppTranslations("app.dashboard.codes.codeTabsNav"));
   return (
-    <nav aria-label="Code sections" className="border-b">
+    <nav aria-label={t("codeSections")} className="border-b">
       <ul className="-mb-px flex gap-5">
         {CODE_TABS.map((tab) => {
           const active = tab === current;

@@ -11,6 +11,7 @@ import {
   SelectValue,
 } from "@repo/design-system/components/ui/select";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useTransition } from "react";
 
 const MAX_COMPARE = 4;
@@ -28,6 +29,7 @@ export function ComparePicker({
   /** Other query params of the page (without compare) */
   params: Record<string, string>;
 }) {
+  const t = useTranslations("app.dashboard.analytics.comparePicker");
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const labels = new Map(options.map((option) => [option.id, option.label]));
@@ -49,7 +51,9 @@ export function ComparePicker({
         <Badge className="gap-1 pr-1" key={id} variant="secondary">
           <span className="max-w-48 truncate">{labels.get(id) ?? id}</span>
           <Button
-            aria-label={`Stop comparing ${labels.get(id) ?? id}`}
+            aria-label={t("stopComparingValue", {
+              value: labels.get(id) ?? id,
+            })}
             className="size-5"
             disabled={isPending}
             onClick={() => go(selected.filter((item) => item !== id))}
@@ -68,15 +72,15 @@ export function ComparePicker({
         value=""
       >
         <SelectTrigger
-          aria-label="Add a code to compare"
+          aria-label={t("addACodeToCompare")}
           className="w-64"
           size="sm"
         >
           <SelectValue
             placeholder={
               selected.length >= MAX_COMPARE
-                ? `Up to ${MAX_COMPARE} codes`
-                : "Add a code to compare"
+                ? t("upToMaxCompareCodes", { MAX_COMPARE })
+                : t("addACodeToCompare")
             }
           />
         </SelectTrigger>

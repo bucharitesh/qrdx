@@ -7,6 +7,12 @@ import { CHROME_NAMESPACES } from "./messages";
 /** The whole editor: /playground, shared theme links, the dashboard. */
 export const EDITOR_NAMESPACES = [
   "editor",
+  "codeBuilder",
+  // The code builder over the editor reuses the dashboard's code panels.
+  "app.dashboard.codes.routingPanel",
+  "app.dashboard.codes.utmTemplates",
+  "app.dashboard.codes.codeOptions",
+  "app.shell.whatsNew",
   "playground",
   "scanChecker",
   "limits",
@@ -23,6 +29,7 @@ export const PLAYGROUND_NAMESPACES = [
 /** The content forms embedded in the generator pages (/qr-code-generator/<type>). */
 export const CONTENT_FORM_NAMESPACES = [
   "editor.contentForms",
+  "editor.connections",
   "editor.dynamicLinkToggle",
   "editor.linkSourceMenu",
 ] as const;
@@ -39,11 +46,13 @@ export const AI_CHAT_NAMESPACES = [
   "editor.themeGallery",
   "editor.qrPresetSelect",
   "editor.hooks.useImageUpload",
+  "editor.connections",
   "nav.themeToggle",
 ] as const;
 
 /** The AI art studio on /ai/art. */
 export const AI_ART_STUDIO_NAMESPACES = [
+  "editor.connections",
   "aiArt.aiArtStudio",
   "aiArt.aiArtResult",
   "aiArt.aiArtPresetGallery",
@@ -58,4 +67,47 @@ export const APP_NAMESPACES = [
   "barcodeTool",
   "templateDemo",
   ...EDITOR_NAMESPACES,
+  // The app's frame: sidebar, workspace switcher, command menu, and the
+  // New code dialog its create menu opens on every page.
+  "app.shell",
+  "app.workspaces",
+  "app.dashboard.codes.newCodeDialog",
+  "app.dashboard.codes.codeQr",
+  "app.dashboard.codes.domainPicker",
+  "app.dashboard.codes.lifecyclePanelForm",
+  "app.dashboard.codes.pixelsPanel",
+  "app.dashboard.codes.slugField",
+  "app.dashboard.codes.utmPanel",
+] as const;
+
+/** The dashboard: the app and its own pages. */
+export const DASHBOARD_NAMESPACES = [
+  ...APP_NAMESPACES,
+  "app.dashboard",
+  // Workspace settings (dashboard/<slug>/settings) use the account
+  // settings' developer components.
+  "app.settings.developers",
+] as const;
+
+/** Settings: the app and the settings pages. */
+export const SETTINGS_NAMESPACES = [
+  ...APP_NAMESPACES,
+  "app.settings",
+  // Notifications reuse the webhook event picker.
+  "app.dashboard.webhooks",
+] as const;
+
+/** Sign-in, two-step verification and the session check (signed out). */
+export const SIGN_IN_NAMESPACES = [
+  ...CHROME_NAMESPACES,
+  "app.signIn",
+  "app.sessionCheck",
+] as const;
+
+/** Team invitations, join links and OAuth consent: the app's frame too. */
+export const ACCOUNT_FLOW_NAMESPACES = [
+  ...APP_NAMESPACES,
+  "app.invite",
+  "app.join",
+  "app.oauth",
 ] as const;

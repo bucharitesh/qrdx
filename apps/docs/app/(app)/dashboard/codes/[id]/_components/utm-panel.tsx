@@ -7,6 +7,7 @@ import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import { Add as Plus } from "iconsax-reactjs";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Suspense, useId, useState, useTransition } from "react";
 import {
   type CodeMarketingSettings,
@@ -97,6 +98,7 @@ function UtmEditor({
   initial: CodeMarketingSettings;
   plan: PaidPlan | null;
 }) {
+  const t = useTranslations("app.dashboard.codes.utmPanel");
   const id = useId();
   const [settings, setSettings] = useState(initial);
   const [draft, setDraft] = useState(() => toDraft(initial.utm));
@@ -117,7 +119,7 @@ function UtmEditor({
       if (result.success) {
         setSettings(result.data);
         setDraft(toDraft(result.data.utm));
-        toast.success("UTM parameters saved");
+        toast.success(t("utmParametersSaved"));
       } else {
         setError(result.error.message);
       }
@@ -129,24 +131,21 @@ function UtmEditor({
   return (
     <PanelCard
       badge={plan}
-      description={
-        <>
-          Tag every scan for Google Analytics and other tools. Parameters are
-          added to the URL each scan opens (after smart routing) unless the URL
-          already has them.{" "}
+      description={t.rich("tagEveryScanForGoogle", {
+        link: (chunks) => (
           <Link className="underline" href="/docs/tracking-and-conversions">
-            Learn more
+            {chunks}
           </Link>
-        </>
-      }
+        ),
+      })}
       hint="utm"
-      title="UTM parameters"
+      title={t("utmParameters")}
     >
       {locked && plan && (
         <PlanLock plan={plan}>
           {settings.utm
-            ? `Your plan doesn't include UTM parameters. The saved ones keep being added; you can remove them, and changing them needs ${PLAN_NAMES[plan]}.`
-            : `Automatic UTM tagging is part of ${PLAN_NAMES[plan]}.`}
+            ? t("yourPlanDoesntIncludeUtm", { value: PLAN_NAMES[plan] })
+            : t("automaticUtmTaggingIsPart", { value: PLAN_NAMES[plan] })}
         </PlanLock>
       )}
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -176,13 +175,13 @@ function UtmEditor({
       </div>
 
       <div className="space-y-2">
-        <p className="text-sm font-medium">Other parameters</p>
+        <p className="text-sm font-medium">{t("otherParameters")}</p>
         {draft.params.length > 0 && (
           <ul className="space-y-2">
             {draft.params.map((param) => (
               <li className="flex items-center gap-2" key={param.id}>
                 <Input
-                  aria-label="Parameter name"
+                  aria-label={t("parameterName")}
                   className="h-8 w-40 font-mono text-xs"
                   disabled={locked}
                   maxLength={40}
@@ -196,11 +195,11 @@ function UtmEditor({
                       ),
                     }))
                   }
-                  placeholder="ref"
+                  placeholder={t("ref")}
                   value={param.key}
                 />
                 <Input
-                  aria-label="Parameter value"
+                  aria-label={t("parameterValue")}
                   className="h-8 flex-1"
                   disabled={locked}
                   maxLength={200}
@@ -214,11 +213,11 @@ function UtmEditor({
                       ),
                     }))
                   }
-                  placeholder="value"
+                  placeholder={t("value")}
                   value={param.value}
                 />
                 <Button
-                  aria-label="Remove parameter"
+                  aria-label={t("removeParameter")}
                   onClick={() =>
                     setDraft((current) => ({
                       ...current,
@@ -253,13 +252,13 @@ function UtmEditor({
           variant="outline"
         >
           <Plus />
-          Add parameter
+          {t("addParameter")}
         </Button>
       </div>
 
       <div className="bg-muted/50 space-y-1 rounded-md p-3">
         <p className="text-muted-foreground text-xs">
-          Main destination becomes
+          {t("mainDestinationBecomes")}
         </p>
         <p className="font-mono text-xs break-all">
           {previewUrl(settings.destinationUrl, draft)}
@@ -288,7 +287,7 @@ function UtmEditor({
               type="button"
               variant="ghost"
             >
-              Remove all
+              {t("removeAll")}
             </Button>
           )}
           <Button
@@ -297,7 +296,7 @@ function UtmEditor({
             size="sm"
             type="button"
           >
-            {isPending ? "Saving…" : "Save parameters"}
+            {isPending ? t("saving") : t("saveParameters")}
           </Button>
         </div>
       </div>
@@ -314,9 +313,10 @@ export function UtmPanel({
   /** The cheapest plan with UTM parameters (lib/plans.ts) */
   plan: PaidPlan | null;
 }) {
+  const t = useTranslations("app.dashboard.codes.utmPanel");
   return (
     <Suspense fallback={<PanelFallback />}>
-      <MarketingSettingsGate settings={settings} title="UTM parameters">
+      <MarketingSettingsGate settings={settings} title={t("utmParameters")}>
         {(data) => <UtmEditor initial={data} plan={plan} />}
       </MarketingSettingsGate>
     </Suspense>

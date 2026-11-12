@@ -9,6 +9,7 @@ import Link from "next/link";
 import { formatNumber } from "@/app/(app)/dashboard/codes/_components/format";
 import { codeTabHref } from "@/app/(app)/dashboard/codes/_lib/code-tabs";
 import type { QrCodeView } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
+import { getAppTranslations } from "@/lib/i18n/app-locale";
 import { cheapestPlanWith, getPlanForScope, getPlanLimits } from "@/lib/plans";
 import { type PaidPlan, PLAN_NAMES } from "@/lib/pricing";
 import { getPreciseLocations, type PreciseLocationSummary } from "@/lib/scans";
@@ -46,6 +47,9 @@ export async function PreciseLocationsCard({
   days: number;
   slug: string | null;
 }) {
+  const t = await getAppTranslations(
+    "app.dashboard.codes.preciseLocationsCard",
+  );
   const plan = await getPlanForScope(await getActiveScope());
   const included = getPlanLimits(plan).preciseLocation;
   let summary: PreciseLocationSummary | null = null;
@@ -67,25 +71,26 @@ export async function PreciseLocationsCard({
   if (!included) {
     body = upgradePlan ? (
       <PlanLock plan={upgradePlan}>
-        Precise scan locations, from scanners who choose to share them, are part
-        of {PLAN_NAMES[upgradePlan]}.
+        {t("preciseScanLocationsFromScanners", {
+          value: PLAN_NAMES[upgradePlan],
+        })}
       </PlanLock>
     ) : null;
   } else if (!summary) {
     body = (
       <p className="text-muted-foreground text-sm">
-        Precise locations couldn't be loaded right now.
+        {t("preciseLocationsCouldntBeLoaded")}
       </p>
     );
   } else if (summary.asked === 0) {
     body = (
       <p className="text-muted-foreground text-sm">
         {code.preciseLocation
-          ? `No scans asked for a location in the last ${days} days yet.`
-          : "This code doesn't ask scanners for their location."}{" "}
+          ? t("noScansAskedForA", { days })
+          : t("thisCodeDoesntAskScanners")}{" "}
         {!code.preciseLocation && (
           <Link className="text-foreground underline" href={settingsHref}>
-            Turn it on in Settings
+            {t("turnItOnInSettings")}
           </Link>
         )}
       </p>
@@ -94,10 +99,10 @@ export async function PreciseLocationsCard({
     body = (
       <div className="space-y-4">
         <div className="grid grid-cols-3 gap-4">
-          <Stat label="Asked" value={formatNumber(summary.asked)} />
-          <Stat label="Shared" value={formatNumber(summary.shared)} />
+          <Stat label={t("asked")} value={formatNumber(summary.asked)} />
+          <Stat label={t("shared")} value={formatNumber(summary.shared)} />
           <Stat
-            label="Allowed"
+            label={t("allowed")}
             value={percent(summary.shared, summary.asked)}
           />
         </div>
@@ -110,7 +115,7 @@ export async function PreciseLocationsCard({
           />
         ) : (
           <p className="text-muted-foreground text-sm">
-            No one shared their location in this period.
+            {t("noOneSharedTheirLocation")}
           </p>
         )}
       </div>
@@ -121,10 +126,9 @@ export async function PreciseLocationsCard({
   return (
     <Card className="gap-4 py-4" id="precise-locations">
       <CardHeader className="px-4">
-        <CardTitle>Precise locations</CardTitle>
+        <CardTitle>{t("preciseLocations")}</CardTitle>
         <CardDescription>
-          Shared by scanners who allowed it, rounded to about 100 m. Separate
-          from the IP-based countries and cities above. Last {days} days.
+          {t("sharedByScannersWhoAllowed", { days })}
         </CardDescription>
       </CardHeader>
       <CardContent className="px-4">{body}</CardContent>

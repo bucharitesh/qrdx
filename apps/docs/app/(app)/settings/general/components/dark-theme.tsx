@@ -1,11 +1,13 @@
 import type { IconProps as LucideProps } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 
 export const DarkTheme = (props: LucideProps) => {
+  const t = useTranslations("app.settings.general.darkTheme");
   return (
     <svg
       viewBox="0 0 177 140"
       fill="none"
-      aria-label="Dark theme"
+      aria-label={t("darkTheme")}
       xmlns="http://www.w3.org/2000/svg"
       {...props}
     >

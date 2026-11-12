@@ -5,6 +5,7 @@ import { Tick as Check } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Checkbox } from "@repo/design-system/components/ui/checkbox";
 import { Copy } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { type ComponentProps, useState } from "react";
 import { EVENT_INFO } from "@/lib/events/types";
 import { soundEvent } from "@/lib/sound/emit";
@@ -77,6 +78,7 @@ export function CopyButton({
   ComponentProps<typeof Button>,
   "value" | "onClick"
 >) {
+  const t = useTranslations("app.dashboard.webhooks.eventCheckboxes");
   const [copied, setCopied] = useState(false);
   return (
     <Button
@@ -88,7 +90,7 @@ export function CopyButton({
           soundEvent("copy");
           setTimeout(() => setCopied(false), 1500);
         } catch {
-          toast.error("Couldn't copy. Select the text and copy it instead.");
+          toast.error(t("couldntCopySelectTheText"));
         }
       }}
       size="icon-sm"

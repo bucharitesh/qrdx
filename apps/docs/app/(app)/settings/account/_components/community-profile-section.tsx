@@ -7,6 +7,7 @@ import { Checkbox } from "@repo/design-system/components/ui/checkbox";
 import { Input } from "@repo/design-system/components/ui/input";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { type FormEvent, useState } from "react";
 import { saveCommunityProfileAction } from "@/actions/community";
 import {
@@ -27,6 +28,7 @@ export function CommunityProfileSection({
 }: {
   profile: MyCommunityProfile;
 }) {
+  const t = useTranslations("app.settings.account.communityProfileSection");
   const router = useRouter();
   const [handle, setHandle] = useState(profile.handle ?? "");
   const [displayName, setDisplayName] = useState(profile.displayName);
@@ -37,16 +39,16 @@ export function CommunityProfileSection({
   if (profile.official) {
     return (
       <SettingsSection
-        description="This account publishes to the community as the official QRdx profile."
+        description={t("thisAccountPublishesToThe")}
         id="community"
-        title="Community profile"
+        title={t("communityProfile")}
       >
-        <SettingsRow label="Profile">
+        <SettingsRow label={t("profile")}>
           <Link
             className="text-sm underline underline-offset-2"
             href={profilePath(profile.handle ?? "qrdx")}
           >
-            @{profile.handle ?? "qrdx"}
+            @{profile.handle ?? t("qrdx")}
           </Link>
         </SettingsRow>
       </SettingsSection>
@@ -72,8 +74,8 @@ export function CommunityProfileSection({
     setHandle(result.data.handle ?? "");
     toast.success(
       result.data.handle
-        ? `Saved. Your profile is at /community/@${result.data.handle}`
-        : "Saved.",
+        ? t("savedYourProfileIsAt", { handle: result.data.handle })
+        : t("saved"),
     );
     router.refresh();
   };
@@ -89,15 +91,15 @@ export function CommunityProfileSection({
 
   return (
     <SettingsSection
-      description="How you appear on what you publish to the community. A handle is optional."
+      description={t("howYouAppearOnWhat")}
       id="community"
-      title="Community profile"
+      title={t("communityProfile")}
     >
       <form onSubmit={submit}>
         <SettingsRow
-          description="Gives you a public page with everything you publish. Never taken from your email."
+          description={t("givesYouAPublicPage")}
           htmlFor="community-handle"
-          label="Handle"
+          label={t("handle")}
         >
           <div className="space-y-2">
             <div className="flex items-center gap-2">
@@ -112,7 +114,7 @@ export function CommunityProfileSection({
                   setHandle(event.target.value);
                   setError(null);
                 }}
-                placeholder="your-handle"
+                placeholder={t("yourHandle")}
                 spellCheck={false}
                 value={handle}
               />
@@ -121,27 +123,26 @@ export function CommunityProfileSection({
               className="text-muted-foreground text-xs"
               id="community-handle-help"
             >
-              {profile.handle ? (
-                <>
-                  Live at{" "}
-                  <Link
-                    className="underline underline-offset-2"
-                    href={profilePath(profile.handle)}
-                  >
-                    /community/@{profile.handle}
-                  </Link>
-                  . Clear it to release the handle.
-                </>
-              ) : (
-                "3 to 30 lowercase letters, numbers, _ or -."
-              )}
+              {profile.handle
+                ? t.rich("liveAtCommunityHandleClear", {
+                    handle: profile.handle,
+                    link: (chunks) => (
+                      <Link
+                        className="underline underline-offset-2"
+                        href={profilePath(profile.handle ?? "")}
+                      >
+                        {chunks}
+                      </Link>
+                    ),
+                  })
+                : t("n3To30LowercaseLetters")}
             </p>
           </div>
         </SettingsRow>
         <SettingsRow
-          description="Shown on your items and profile."
+          description={t("shownOnYourItemsAnd")}
           htmlFor="community-name"
-          label="Display name"
+          label={t("displayName")}
         >
           <Input
             id="community-name"
@@ -150,7 +151,7 @@ export function CommunityProfileSection({
             value={displayName}
           />
         </SettingsRow>
-        <SettingsRow label="Picture">
+        <SettingsRow label={t("picture")}>
           <div className="flex items-center gap-2">
             <Checkbox
               checked={showPicture}
@@ -160,8 +161,8 @@ export function CommunityProfileSection({
             />
             <label className="text-sm" htmlFor="community-picture">
               {profile.accountPicture
-                ? "Show my profile picture"
-                : "Add a profile picture above to show one"}
+                ? t("showMyProfilePicture")
+                : t("addAProfilePictureAbove")}
             </label>
           </div>
         </SettingsRow>
@@ -178,12 +179,12 @@ export function CommunityProfileSection({
               type="button"
               variant="outline"
             >
-              Release handle
+              {t("releaseHandle")}
             </Button>
           )}
           <Button disabled={saving} type="submit">
             {saving && <Spinner className="size-4" />}
-            Save
+            {t("save")}
           </Button>
         </div>
       </form>

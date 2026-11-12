@@ -17,6 +17,7 @@ import {
 } from "@repo/design-system/components/ui/radio-group";
 import { cn } from "@repo/design-system/lib/utils";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useEffect, useState, useTransition } from "react";
 import {
   listCodeMoveTargets,
@@ -40,6 +41,7 @@ export function MoveToWorkspaceDialog({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
+  const t = useTranslations("app.dashboard.codes.moveWorkspaceDialog");
   const router = useRouter();
   const [targets, setTargets] = useState<MoveTarget[] | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -84,12 +86,12 @@ export function MoveToWorkspaceDialog({
         leftBehind.tags > 0 &&
           `${leftBehind.tags} tag${leftBehind.tags === 1 ? "" : "s"}`,
       ].filter(Boolean);
-      toast.success(`Moved to ${target.name}`, {
+      toast.success(t("movedToName", { name: target.name }), {
         description: `Same short link, scans and history.${
           behind.length > 0 ? ` ${behind.join(" and ")} stayed here.` : ""
         }`,
         action: {
-          label: "Open",
+          label: t("open"),
           onClick: () => router.push(workspaceHref(target.slug, "/codes")),
         },
       });
@@ -104,11 +106,10 @@ export function MoveToWorkspaceDialog({
     <Dialog onOpenChange={onOpenChange} open={open}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Move to another workspace</DialogTitle>
+          <DialogTitle>{t("moveToAnotherWorkspace")}</DialogTitle>
           <DialogDescription className="text-pretty">
-            <span className="text-foreground font-medium">{name}</span> keeps
-            its short link, so printed copies keep working. Its scans and
-            history move with it; its folder and tags stay here.
+            <span className="text-foreground font-medium">{name}</span>{" "}
+            {t("keepsItsShortLinkSo")}
           </DialogDescription>
         </DialogHeader>
 
@@ -118,16 +119,16 @@ export function MoveToWorkspaceDialog({
           </p>
         ) : targets === null ? (
           <div className="text-muted-foreground flex items-center gap-2 py-6 text-sm">
-            <Spinner aria-hidden className="animate-spin" /> Loading workspaces
+            <Spinner aria-hidden className="animate-spin" />{" "}
+            {t("loadingWorkspaces")}
           </div>
         ) : targets.length === 0 ? (
           <p className="text-muted-foreground py-2 text-sm text-pretty">
-            You're not in another workspace where you can add codes. Workspaces
-            where you're a viewer or billing member aren't listed.
+            {t("youreNotInAnotherWorkspace")}
           </p>
         ) : (
           <RadioGroup
-            aria-label="Workspaces"
+            aria-label={t("workspaces")}
             className="max-h-64 gap-1 overflow-y-auto"
             disabled={isPending}
             onValueChange={setPicked}
@@ -171,11 +172,11 @@ export function MoveToWorkspaceDialog({
             onClick={() => onOpenChange(false)}
             variant="ghost"
           >
-            Cancel
+            {t("cancel")}
           </Button>
           <Button disabled={!picked || isPending} onClick={move}>
             {isPending && <Spinner aria-hidden className="animate-spin" />}
-            Move code
+            {t("moveCode")}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -18,6 +18,7 @@ import { OverviewTab } from "@/app/(app)/dashboard/codes/[id]/_components/overvi
 import { SettingsTab } from "@/app/(app)/dashboard/codes/[id]/_components/settings-tab";
 import { ViewOnly } from "@/components/workspaces/view-only";
 import { HttpError } from "@/lib/error-response";
+import { getAppTranslations } from "@/lib/i18n/app-locale";
 import { can } from "@/lib/permissions";
 import { getPlanForScope, getPlanLimits } from "@/lib/plans";
 import { workspaceHref } from "@/lib/workspace-paths";
@@ -38,6 +39,7 @@ export default async function CodeDetailPage({
   params: Promise<{ workspace: string; id: string }>;
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
+  const t = await getAppTranslations("app.dashboard.codes.page");
   const scope = await requireDashboardScope();
   const [{ workspace: slug, id }, query] = await Promise.all([
     params,
@@ -64,7 +66,7 @@ export default async function CodeDetailPage({
           <Button asChild className="-ml-2" size="sm" variant="ghost">
             <Link href={workspaceHref(slug, "/codes")}>
               <ArrowLeft />
-              All codes
+              {t("allCodes")}
             </Link>
           </Button>
           <CodeHeader code={code} />

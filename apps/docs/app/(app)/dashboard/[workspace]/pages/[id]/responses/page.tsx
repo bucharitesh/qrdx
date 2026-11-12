@@ -41,6 +41,7 @@ import {
 import { SheetsExport } from "@/components/data-connections/sheets-export";
 import { HairlineFigure } from "@/components/mockups/hairline";
 import { HttpError } from "@/lib/error-response";
+import { getAppTranslations } from "@/lib/i18n/app-locale";
 import { can } from "@/lib/permissions";
 import { workspaceHref } from "@/lib/workspace-paths";
 
@@ -63,6 +64,7 @@ export default async function FormResponsesPage({
   params: Promise<{ workspace: string; id: string }>;
   searchParams: Promise<SearchParams>;
 }) {
+  const t = await getAppTranslations("app.dashboard.pages.responses.page");
   const scope = await requireDashboardScope();
   const [{ workspace, id }, query] = await Promise.all([params, searchParams]);
   const pageHref = (pageId: string) =>
@@ -135,13 +137,13 @@ export default async function FormResponsesPage({
       <Button asChild size="sm" variant="ghost">
         <Link href={pageHref(page.id)}>
           <ArrowLeft />
-          Back to page
+          {t("backToPage")}
         </Link>
       </Button>
 
       <PageHeader
         description={`Answers sent from the forms on ${page.title ? `"${page.title}"` : "this page"}.`}
-        title="Responses"
+        title={t("responses")}
       >
         {total > 0 && (
           <Button asChild size="sm" variant="outline">
@@ -150,7 +152,7 @@ export default async function FormResponsesPage({
               href={`${base}/export${formFilter ? `?form=${encodeURIComponent(formFilter)}` : ""}`}
             >
               <Download />
-              Export CSV
+              {t("exportCsv")}
             </a>
           </Button>
         )}
@@ -167,11 +169,8 @@ export default async function FormResponsesPage({
       {coupons.length > 0 && (
         <Card className="gap-3 py-4">
           <CardHeader className="px-4">
-            <CardTitle>Coupon redemptions</CardTitle>
-            <CardDescription>
-              Taps on Redeem. One phone counts once, but the same code can still
-              be shown on another phone.
-            </CardDescription>
+            <CardTitle>{t("couponRedemptions")}</CardTitle>
+            <CardDescription>{t("tapsOnRedeemOnePhone")}</CardDescription>
           </CardHeader>
           <CardContent className="px-4">
             <ul className="divide-y text-sm">
@@ -192,16 +191,16 @@ export default async function FormResponsesPage({
       )}
 
       {multipleForms && (
-        <nav aria-label="Forms" className="flex flex-wrap gap-1">
+        <nav aria-label={t("forms")} className="flex flex-wrap gap-1">
           {[
             {
               id: null,
-              label: "All forms",
+              label: t("allForms"),
               count: [...byBlock.values()].reduce((a, b) => a + b, 0),
             },
             ...[...formIds].map((formId) => ({
               id: formId,
-              label: titles.get(formId) ?? "Removed form",
+              label: titles.get(formId) ?? t("removedForm"),
               count: byBlock.get(formId) ?? 0,
             })),
           ].map((tab) => (
@@ -230,19 +229,19 @@ export default async function FormResponsesPage({
         <Empty className="border">
           <HairlineFigure className="aspect-square w-32" figure="PageForm" />
           <EmptyHeader>
-            <EmptyTitle>No responses yet</EmptyTitle>
+            <EmptyTitle>{t("noResponsesYet")}</EmptyTitle>
             <EmptyDescription>
               {page.forms.length === 0
-                ? "Add a Form block to this page to collect feedback, sign-ups or contact details."
-                : "Responses show up here as soon as visitors send the form on your published page."}
+                ? t("addAFormBlockTo")
+                : t("responsesShowUpHereAs")}
             </EmptyDescription>
           </EmptyHeader>
           <EmptyContent>
             <Button asChild size="sm" variant="outline">
               <Link href={pageHref(page.id)}>
                 {page.forms.length === 0
-                  ? "Add a form"
-                  : "Open the page editor"}
+                  ? t("addAForm")
+                  : t("openThePageEditor")}
               </Link>
             </Button>
           </EmptyContent>
@@ -253,7 +252,7 @@ export default async function FormResponsesPage({
 
       {pages > 1 && (
         <nav
-          aria-label="Pagination"
+          aria-label={t("pagination")}
           className="flex items-center justify-between gap-3 text-sm"
         >
           <Button
@@ -265,15 +264,18 @@ export default async function FormResponsesPage({
             {pageNumber > 1 ? (
               <Link href={href({ page: pageNumber - 1 })}>
                 <ChevronLeft />
-                Newer
+                {t("newer")}
               </Link>
             ) : (
-              <span>Newer</span>
+              <span>{t("newer")}</span>
             )}
           </Button>
           <span className="text-muted-foreground tabular-nums">
-            Page {Math.min(pageNumber, pages)} of {pages} ·{" "}
-            {total.toLocaleString("en-US")} responses
+            {t("pageValueOfPagesValue2", {
+              value: Math.min(pageNumber, pages),
+              pages,
+              value2: total.toLocaleString("en-US"),
+            })}
           </span>
           <Button
             asChild={pageNumber < pages}
@@ -283,11 +285,11 @@ export default async function FormResponsesPage({
           >
             {pageNumber < pages ? (
               <Link href={href({ page: pageNumber + 1 })}>
-                Older
+                {t("older")}
                 <ChevronRight />
               </Link>
             ) : (
-              <span>Older</span>
+              <span>{t("older")}</span>
             )}
           </Button>
         </nav>

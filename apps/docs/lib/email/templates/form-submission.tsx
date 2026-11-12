@@ -1,3 +1,4 @@
+import { type EmailIntl, ENGLISH_EMAIL } from "@/lib/i18n/email";
 import { EmailButton, EmailHeading, EmailLayout, EmailText } from "./layout";
 import { DetailsTable, formatEmailDateTime, MutedText } from "./parts";
 
@@ -8,6 +9,8 @@ export interface FormSubmissionEmailProps {
   responsesUrl: string;
   workspaceName: string;
   unsubscribeUrl: string;
+  /** The recipient's language */
+  intl?: EmailIntl;
 }
 
 const MAX_FIELDS = 30;
@@ -20,10 +23,14 @@ export function FormSubmissionEmail({
   responsesUrl,
   workspaceName,
   unsubscribeUrl,
+  intl = ENGLISH_EMAIL,
 }: FormSubmissionEmailProps) {
-  const page = pageTitle?.trim() ? `“${pageTitle.trim()}”` : "your page";
+  const { t } = intl;
+  const page = pageTitle?.trim()
+    ? `“${pageTitle.trim()}”`
+    : t("formSubmission.yourPage");
   const shown = fields.slice(0, MAX_FIELDS).map((field) => ({
-    label: field.label || "Answer",
+    label: field.label || t("formSubmission.answer"),
     value:
       field.value.length > MAX_VALUE_LENGTH
         ? `${field.value.slice(0, MAX_VALUE_LENGTH)}…`
@@ -31,22 +38,26 @@ export function FormSubmissionEmail({
   }));
   return (
     <EmailLayout
-      preview={`New form response on ${page}`}
-      reason={`You get this because form submission alerts are on for ${workspaceName}.`}
+      intl={intl}
+      preview={t("formSubmission.preview", { page })}
+      reason={t("formSubmission.reason", { workspace: workspaceName })}
       unsubscribeUrl={unsubscribeUrl}
     >
-      <EmailHeading>New response on {page}</EmailHeading>
+      <EmailHeading>{t("formSubmission.heading", { page })}</EmailHeading>
       <EmailText>
-        Submitted {formatEmailDateTime(submittedAt)}. Answers are shown as the
-        visitor typed them.
+        {t("formSubmission.submitted", {
+          when: formatEmailDateTime(submittedAt, intl.locale),
+        })}
       </EmailText>
       <DetailsTable rows={shown} />
       {fields.length > MAX_FIELDS ? (
         <MutedText>
-          {fields.length - MAX_FIELDS} more answers are in the dashboard.
+          {t("formSubmission.more", { count: fields.length - MAX_FIELDS })}
         </MutedText>
       ) : null}
-      <EmailButton href={responsesUrl}>View all responses</EmailButton>
+      <EmailButton href={responsesUrl}>
+        {t("formSubmission.viewAll")}
+      </EmailButton>
     </EmailLayout>
   );
 }

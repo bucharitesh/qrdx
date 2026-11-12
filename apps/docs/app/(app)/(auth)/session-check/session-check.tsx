@@ -4,6 +4,7 @@ import { authClient } from "@repo/auth/client";
 import { Spinner } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   ConfirmIdentityProvider,
@@ -38,6 +39,7 @@ function SessionCheckScreen({
   next: string;
   returning: boolean;
 }) {
+  const t = useTranslations("app.sessionCheck.sessionCheck");
   const { withConfirmation } = useConfirmation();
   const [step, setStep] = useState<Step>("asking");
   const [error, setError] = useState<string | null>(null);
@@ -114,7 +116,7 @@ function SessionCheckScreen({
             type="button"
           >
             {step === "leaving" && <Spinner className="animate-spin" />}
-            Continue
+            {t("continue")}
           </Button>
           <Button
             className="w-full max-sm:h-10"
@@ -123,7 +125,7 @@ function SessionCheckScreen({
             type="button"
             variant="outline"
           >
-            Sign out
+            {t("signOut")}
           </Button>
         </div>
       </div>
@@ -131,7 +133,7 @@ function SessionCheckScreen({
         className="text-muted-foreground hover:text-foreground inline-flex min-h-10 items-center rounded-sm px-2 text-sm transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
         href="/"
       >
-        Back to QRdx
+        {t("backToQrdx")}
       </Link>
     </main>
   );

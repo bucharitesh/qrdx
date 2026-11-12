@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import {
   ConfirmIdentityProvider,
@@ -23,6 +24,7 @@ export function NewOAuthApp({ storageEnabled }: { storageEnabled: boolean }) {
 }
 
 function NewOAuthAppForm({ storageEnabled }: { storageEnabled: boolean }) {
+  const t = useTranslations("app.settings.developers.newApp");
   const inWorkspace = useWorkspaceHref();
   const router = useRouter();
   const showLimit = useShowLimit();
@@ -71,7 +73,7 @@ function NewOAuthAppForm({ storageEnabled }: { storageEnabled: boolean }) {
             inWorkspace(`/settings/developers/${encodeURIComponent(id)}`),
           );
         }}
-        title="App created"
+        title={t("appCreated")}
       />
     </>
   );

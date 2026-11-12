@@ -1,4 +1,5 @@
 "use client";
+import { useTranslations } from "next-intl";
 
 // The Barcodes grid: a card per saved barcode with its picture, a menu
 // (edit, download in every format, duplicate, copy the image URL, move to a
@@ -128,6 +129,7 @@ function FolderItems({
   current?: string | null;
   onPick: (folderId: string | null) => void;
 }) {
+  const t = useTranslations("app.dashboard.barcodes.barcodesList");
   return (
     <>
       <DropdownMenuItem
@@ -135,7 +137,7 @@ function FolderItems({
         onSelect={() => onPick(null)}
       >
         <FolderMinus aria-hidden />
-        No folder
+        {t("noFolder")}
       </DropdownMenuItem>
       {folders.length > 0 && <DropdownMenuSeparator />}
       {folders.map((folder) => (
@@ -151,7 +153,7 @@ function FolderItems({
       ))}
       {folders.length === 0 && (
         <DropdownMenuLabel className="text-muted-foreground max-w-56 text-xs font-normal">
-          Make folders under Codes; barcodes share them.
+          {t("makeFoldersUnderCodesBarcodes")}
         </DropdownMenuLabel>
       )}
     </>
@@ -171,6 +173,7 @@ export function BarcodesList({
   status: BarcodeStatus;
   keyboardShortcuts: boolean;
 }) {
+  const t = useTranslations("app.dashboard.barcodes.barcodesList");
   const canWrite = useCan("content.write");
   const listRef = useRef<HTMLDivElement>(null);
   const [confirm, setConfirm] = useState<"purge" | "empty" | null>(null);
@@ -271,22 +274,22 @@ export function BarcodesList({
               variant="outline"
             >
               <Trash aria-hidden />
-              Empty trash
+              {t("emptyTrash")}
             </Button>
           </div>
         )}
         {count > 0 && (
           <div
-            aria-label="Bulk actions"
+            aria-label={t("bulkActions")}
             className="bg-background/95 supports-[backdrop-filter]:bg-background/80 sticky top-2 z-10 flex flex-wrap items-center gap-1 rounded-lg border p-1.5 shadow-sm backdrop-blur"
             role="toolbar"
           >
             <span className="px-2 text-sm font-medium tabular-nums">
-              {count} selected
+              {t("countSelected", { count })}
             </span>
-            <TooltipWrapper kbd="Esc" label="Clear selection">
+            <TooltipWrapper kbd="Esc" label={t("clearSelection")}>
               <Button
-                aria-label="Clear selection"
+                aria-label={t("clearSelection")}
                 onClick={clear}
                 size="icon-sm"
                 variant="ghost"
@@ -299,7 +302,7 @@ export function BarcodesList({
               <>
                 <TooltipWrapper
                   kbd={keyLabel(BULK_KEYS.restore)}
-                  label="Restore"
+                  label={t("restore")}
                 >
                   <Button
                     disabled={pending}
@@ -308,12 +311,12 @@ export function BarcodesList({
                     variant="ghost"
                   >
                     <RotateLeft aria-hidden />
-                    Restore
+                    {t("restore")}
                   </Button>
                 </TooltipWrapper>
                 <TooltipWrapper
                   kbd={keyLabel(BULK_KEYS.trash)}
-                  label="Delete for good"
+                  label={t("deleteForGood")}
                 >
                   <Button
                     disabled={pending}
@@ -322,7 +325,7 @@ export function BarcodesList({
                     variant="ghost"
                   >
                     <Trash aria-hidden />
-                    Delete for good
+                    {t("deleteForGood")}
                   </Button>
                 </TooltipWrapper>
               </>
@@ -332,7 +335,7 @@ export function BarcodesList({
                   <DropdownMenuTrigger asChild>
                     <Button disabled={pending} size="sm" variant="ghost">
                       <FolderOpen aria-hidden />
-                      Move to folder
+                      {t("moveToFolder")}
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="start" className="w-60">
@@ -342,7 +345,10 @@ export function BarcodesList({
                     />
                   </DropdownMenuContent>
                 </DropdownMenu>
-                <TooltipWrapper kbd={keyLabel(BULK_KEYS.trash)} label="Delete">
+                <TooltipWrapper
+                  kbd={keyLabel(BULK_KEYS.trash)}
+                  label={t("delete")}
+                >
                   <Button
                     disabled={pending}
                     onClick={() => trash(selectedIds)}
@@ -350,7 +356,7 @@ export function BarcodesList({
                     variant="ghost"
                   >
                     <Trash aria-hidden />
-                    Delete
+                    {t("delete")}
                   </Button>
                 </TooltipWrapper>
               </>
@@ -362,15 +368,20 @@ export function BarcodesList({
                     inTrash
                       ? [
                           {
-                            label: "Restore",
+                            label: t("restore"),
                             keys: [keyLabel(BULK_KEYS.restore)],
                           },
                           {
-                            label: "Delete for good",
+                            label: t("deleteForGood"),
                             keys: [keyLabel(BULK_KEYS.trash)],
                           },
                         ]
-                      : [{ label: "Delete", keys: [keyLabel(BULK_KEYS.trash)] }]
+                      : [
+                          {
+                            label: t("delete"),
+                            keys: [keyLabel(BULK_KEYS.trash)],
+                          },
+                        ]
                   }
                 />
               </div>
@@ -379,7 +390,7 @@ export function BarcodesList({
         )}
 
         <ul
-          aria-label="Barcodes"
+          aria-label={t("barcodes")}
           className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4"
         >
           {cards.map((card) => (
@@ -410,16 +421,17 @@ export function BarcodesList({
           <AlertDialogHeader>
             <AlertDialogTitle>
               {confirm === "empty"
-                ? "Empty the trash?"
-                : `Delete ${plural(count)} for good?`}
+                ? t("emptyTheTrash")
+                : t("deleteValueForGood", { value: plural(count) })}
             </AlertDialogTitle>
             <AlertDialogDescription>
-              Printed copies keep working: barcodes are static. They just leave
-              this workspace, and this can't be undone.
+              {t("printedCopiesKeepWorkingBarcodes")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={pending}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={pending}>
+              {t("cancel")}
+            </AlertDialogCancel>
             <Button
               disabled={pending}
               onClick={() =>
@@ -428,10 +440,10 @@ export function BarcodesList({
               variant="destructive"
             >
               {pending
-                ? "Deleting..."
+                ? t("deleting")
                 : confirm === "empty"
-                  ? "Empty trash"
-                  : "Delete for good"}
+                  ? t("emptyTrash")
+                  : t("deleteForGood")}
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -459,6 +471,7 @@ function BarcodeCardItem({
   onPurge: () => void;
   onMove: (folderId: string | null) => void;
 }) {
+  const t = useTranslations("app.dashboard.barcodes.barcodesList");
   const { selection, selectable } = useList();
   const canWrite = useCan("content.write");
   const router = useRouter();
@@ -490,18 +503,21 @@ function BarcodeCardItem({
         {card.preview ? (
           // A data URL in an <img>: the SVG never becomes page markup.
           <img
-            alt={`${card.formatLabel} barcode for ${card.value}`}
+            alt={t("formatlabelBarcodeForValue", {
+              formatLabel: card.formatLabel,
+              value: card.value,
+            })}
             className="max-h-full max-w-full object-contain"
             src={`data:image/svg+xml;charset=utf-8,${encodeURIComponent(card.preview)}`}
           />
         ) : (
           <span className="text-muted-foreground text-xs">
-            Can't draw this barcode
+            {t("cantDrawThisBarcode")}
           </span>
         )}
         {selectable.has(card.id) && (
           <Checkbox
-            aria-label={`Select ${card.label}`}
+            aria-label={t("selectLabel", { label: card.label })}
             className={cn(
               "bg-background absolute top-3 left-3 z-10 transition-opacity",
               selected || selection.count > 0
@@ -550,14 +566,14 @@ function BarcodeCardItem({
               </>
             )}
             <span className="shrink-0">
-              Updated {formatDate(card.updatedAt)}
+              {t("updatedUpdatedat", { updatedAt: formatDate(card.updatedAt) })}
             </span>
           </p>
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
-              aria-label={`Actions for ${card.label}`}
+              aria-label={t("actionsForLabel", { label: card.label })}
               className="-mr-1 shrink-0"
               size="icon-sm"
               variant="ghost"
@@ -571,7 +587,7 @@ function BarcodeCardItem({
                 <>
                   <DropdownMenuItem disabled={pending} onSelect={onRestore}>
                     <RotateLeft aria-hidden />
-                    Restore
+                    {t("restore")}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
@@ -580,7 +596,7 @@ function BarcodeCardItem({
                     onSelect={onPurge}
                   >
                     <Trash aria-hidden />
-                    Delete for good
+                    {t("deleteForGood")}
                   </DropdownMenuItem>
                 </>
               )
@@ -589,13 +605,13 @@ function BarcodeCardItem({
                 <DropdownMenuItem asChild>
                   <Link href={href}>
                     <Edit2 aria-hidden />
-                    {canWrite ? "Edit" : "Open"}
+                    {canWrite ? t("edit") : t("open")}
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSub>
                   <DropdownMenuSubTrigger>
                     <DocumentDownload aria-hidden />
-                    Download
+                    {t("download")}
                   </DropdownMenuSubTrigger>
                   <DropdownMenuSubContent className="w-56">
                     {BARCODE_FILE_TYPES.map((type) => (
@@ -629,27 +645,26 @@ function BarcodeCardItem({
                       .writeText(card.imageUrl)
                       .then(() => {
                         soundEvent("copy");
-                        toast.success("Image URL copied", {
-                          description:
-                            "Anyone with it can load the image: the value is in the link.",
+                        toast.success(t("imageUrlCopied"), {
+                          description: t("anyoneWithItCanLoad"),
                         });
                       })
-                      .catch(() => toast.error("Couldn't copy the link"));
+                      .catch(() => toast.error(t("couldntCopyTheLink")));
                   }}
                 >
                   <Link21 aria-hidden />
-                  Copy image URL
+                  {t("copyImageUrl")}
                 </DropdownMenuItem>
                 {canWrite && (
                   <>
                     <DropdownMenuItem disabled={pending} onSelect={duplicate}>
                       <Copy aria-hidden />
-                      Duplicate
+                      {t("duplicate")}
                     </DropdownMenuItem>
                     <DropdownMenuSub>
                       <DropdownMenuSubTrigger>
                         <FolderOpen aria-hidden />
-                        Move to folder
+                        {t("moveToFolder")}
                       </DropdownMenuSubTrigger>
                       <DropdownMenuSubContent className="max-h-80 w-60 overflow-y-auto">
                         <FolderItems
@@ -670,7 +685,7 @@ function BarcodeCardItem({
                       onSelect={onTrash}
                     >
                       <Trash aria-hidden />
-                      Move to trash
+                      {t("moveToTrash")}
                     </DropdownMenuItem>
                   </>
                 )}

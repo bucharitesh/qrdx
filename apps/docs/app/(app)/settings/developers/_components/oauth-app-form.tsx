@@ -13,6 +13,7 @@ import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import { Switch } from "@repo/design-system/components/ui/switch";
 import { Textarea } from "@repo/design-system/components/ui/textarea";
+import { useTranslations } from "next-intl";
 import { type FormEvent, type ReactNode, useId, useState } from "react";
 import { OAuthAppLogo } from "@/components/oauth/oauth-app-logo";
 import { UploadButton } from "@/lib/files/components/upload-button";
@@ -108,6 +109,7 @@ export function OAuthAppForm({
   verified?: boolean;
   onSubmit: (input: OAuthAppInput) => Promise<string | null>;
 }) {
+  const t = useTranslations("app.settings.developers.oauthAppForm");
   const id = useId();
   const [values, setValues] = useState(initial);
   const [error, setError] = useState<string | null>(null);
@@ -149,12 +151,10 @@ export function OAuthAppForm({
     <form className="space-y-6" onSubmit={submit}>
       <Card>
         <CardHeader>
-          <CardTitle>App details</CardTitle>
+          <CardTitle>{t("appDetails")}</CardTitle>
           <CardDescription>
-            What people see on the QRdx consent screen when your app asks for
-            access.
-            {verified &&
-              " Changing the name, logo or website removes the verified badge until QRdx reviews the app again."}
+            {t("whatPeopleSeeOnThe")}
+            {verified && t("changingTheNameLogoOr")}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-5">
@@ -165,7 +165,7 @@ export function OAuthAppForm({
               size="lg"
             />
             <div className="min-w-0 flex-1 space-y-2">
-              <Label htmlFor={`${id}-logo`}>Logo</Label>
+              <Label htmlFor={`${id}-logo`}>{t("logo")}</Label>
               <div className="flex flex-wrap items-start gap-2">
                 <Input
                   autoComplete="off"
@@ -186,48 +186,48 @@ export function OAuthAppForm({
                     onUploaded={([file]) => file && set("logoUrl", file.url)}
                     variant="outline"
                   >
-                    Upload
+                    {t("upload")}
                   </UploadButton>
                 )}
               </div>
               <FieldHint>
-                A square image, at least 128 × 128 px.
+                {t("aSquareImageAtLeast")}
                 {storageEnabled
-                  ? " Uploads are saved to this workspace's files."
-                  : " Paste an https:// link to the image."}
+                  ? t("uploadsAreSavedToThis")
+                  : t("pasteAnHttpsLinkTo")}
               </FieldHint>
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor={`${id}-name`}>Name</Label>
+            <Label htmlFor={`${id}-name`}>{t("name")}</Label>
             <Input
               autoComplete="off"
               disabled={locked}
               id={`${id}-name`}
               maxLength={MAX_APP_NAME_LENGTH}
               onChange={(event) => set("name", event.target.value)}
-              placeholder="Acme for QRdx"
+              placeholder={t("acmeForQrdx")}
               required
               value={values.name}
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor={`${id}-description`}>Description</Label>
+            <Label htmlFor={`${id}-description`}>{t("description")}</Label>
             <Textarea
               disabled={locked}
               id={`${id}-description`}
               maxLength={MAX_APP_DESCRIPTION_LENGTH}
               onChange={(event) => set("description", event.target.value)}
-              placeholder="Sync your QR codes and scans to Acme."
+              placeholder={t("syncYourQrCodesAnd")}
               rows={2}
               value={values.description}
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor={`${id}-website`}>Website</Label>
+            <Label htmlFor={`${id}-website`}>{t("website")}</Label>
             <Input
               autoComplete="off"
               disabled={locked}
@@ -245,35 +245,27 @@ export function OAuthAppForm({
 
       <Card>
         <CardHeader>
-          <CardTitle>OAuth</CardTitle>
-          <CardDescription>
-            Where QRdx sends people back to, and what your app may do.
-          </CardDescription>
+          <CardTitle>{t("oauth")}</CardTitle>
+          <CardDescription>{t("whereQrdxSendsPeopleBack")}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor={`${id}-redirects`}>Redirect URIs</Label>
+            <Label htmlFor={`${id}-redirects`}>{t("redirectUris")}</Label>
             <Textarea
               className="font-mono text-xs md:text-xs"
               disabled={locked}
               id={`${id}-redirects`}
               onChange={(event) => set("redirectUris", event.target.value)}
-              placeholder={
-                "https://acme.com/oauth/qrdx/callback\nhttp://localhost:3000/callback"
-              }
+              placeholder={t("httpsAcmeComOauthQrdx")}
               rows={3}
               spellCheck={false}
               value={values.redirectUris}
             />
-            <FieldHint>
-              One per line, up to {MAX_REDIRECT_URIS}. Authorization requests
-              must send one of them exactly. https:// only, except
-              http://localhost for development. No wildcards or fragments.
-            </FieldHint>
+            <FieldHint>{t("onePerLineUpTo", { MAX_REDIRECT_URIS })}</FieldHint>
           </div>
 
           <fieldset className="space-y-2">
-            <legend className="mb-2 text-sm font-medium">Scopes</legend>
+            <legend className="mb-2 text-sm font-medium">{t("scopes")}</legend>
             {OAUTH_SCOPES.map((scope) => {
               const checkboxId = `${id}-scope-${scope}`;
               return (
@@ -306,21 +298,25 @@ export function OAuthAppForm({
               );
             })}
             <FieldHint>
-              The most your app can request. Each authorization asks for some or
-              all of them in its <code className="font-mono">scope</code>{" "}
-              parameter.
+              {t.rich("theMostYourAppCan", {
+                code: (chunks) => <code className="font-mono">{chunks}</code>,
+              })}
             </FieldHint>
           </fieldset>
 
           <div className="flex items-start justify-between gap-4">
             <div className="space-y-0.5">
-              <Label htmlFor={`${id}-pkce`}>Require PKCE</Label>
+              <Label htmlFor={`${id}-pkce`}>{t("requirePkce")}</Label>
               <FieldHint>
-                Every authorization must send a{" "}
-                <code className="font-mono">code_challenge</code> with{" "}
-                <code className="font-mono">S256</code>, and the token request
-                its <code className="font-mono">code_verifier</code>.
-                Recommended.
+                {t.rich("everyAuthorizationMustSendA", {
+                  code: (chunks) => <code className="font-mono">{chunks}</code>,
+                  code2: (chunks) => (
+                    <code className="font-mono">{chunks}</code>
+                  ),
+                  code3: (chunks) => (
+                    <code className="font-mono">{chunks}</code>
+                  ),
+                })}
               </FieldHint>
             </div>
             <Switch

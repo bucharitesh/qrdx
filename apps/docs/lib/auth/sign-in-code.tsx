@@ -8,9 +8,10 @@ import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import { isOutboundDeliveryAllowed } from "@/lib/delivery-guard";
 import { sendEmail } from "@/lib/email/send";
 import {
-  SIGN_IN_CODE_SUBJECT,
   SignInCodeEmail,
+  signInCodeSubject,
 } from "@/lib/email/templates/sign-in-code";
+import { emailIntlForAddress } from "@/lib/i18n/email-locale";
 import { currentRequestDetails } from "@/lib/security/request-details";
 import {
   addressKey,
@@ -42,6 +43,8 @@ export const sendSignInCode: SignInCodeSender = async ({ email, otp }) => {
   ]);
   if (!allowed) throw signInCodeRateLimited();
   const { location } = await currentRequestDetails();
+  // The account's language, or the site's when there's no account yet.
+  const intl = await emailIntlForAddress(email);
   await deliverSignInCode(
     { email, otp },
     {
@@ -51,8 +54,8 @@ export const sendSignInCode: SignInCodeSender = async ({ email, otp }) => {
       send: () =>
         sendEmail({
           to: email,
-          subject: SIGN_IN_CODE_SUBJECT,
-          react: <SignInCodeEmail code={otp} location={location} />,
+          subject: signInCodeSubject(intl),
+          react: <SignInCodeEmail code={otp} intl={intl} location={location} />,
           tags: [{ name: "category", value: "sign_in_code" }],
         }),
     },

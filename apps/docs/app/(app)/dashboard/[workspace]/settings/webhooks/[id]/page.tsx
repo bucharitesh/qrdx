@@ -23,6 +23,7 @@ import {
   EVENT_INFO,
   MAX_DELIVERY_ATTEMPTS,
 } from "@/lib/events/types";
+import { getAppTranslations } from "@/lib/i18n/app-locale";
 import { workspaceHref } from "@/lib/workspace-paths";
 
 export const metadata: Metadata = {
@@ -46,6 +47,7 @@ export default async function WebhookDeliveriesPage({
   params,
   searchParams,
 }: Props) {
+  const t = await getAppTranslations("app.dashboard.settings.webhooks.page");
   const scope = await requireDashboardScope();
   const { workspace, id } = await params;
   const list = workspaceHref(workspace, "/settings/webhooks");
@@ -75,7 +77,7 @@ export default async function WebhookDeliveriesPage({
       <Button asChild className="-ml-2" size="sm" variant="ghost">
         <Link href={list}>
           <ArrowLeft />
-          Webhooks
+          {t("webhooks")}
         </Link>
       </Button>
 
@@ -83,10 +85,10 @@ export default async function WebhookDeliveriesPage({
         description={
           <span className="font-mono text-sm break-all">{endpoint.url}</span>
         }
-        title="Endpoint deliveries"
+        title={t("endpointDeliveries")}
       >
         <Badge variant={endpoint.active ? "secondary" : "outline"}>
-          {endpoint.active ? "Active" : "Disabled"}
+          {endpoint.active ? t("active") : t("disabled")}
         </Badge>
       </PageHeader>
 
@@ -111,13 +113,15 @@ export default async function WebhookDeliveriesPage({
       <section className="space-y-3">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div className="space-y-1">
-            <h2 className="text-base font-semibold">Recent deliveries</h2>
+            <h2 className="text-base font-semibold">{t("recentDeliveries")}</h2>
             <p className="text-muted-foreground text-sm">
-              The last 50, kept for 30 days. Failed deliveries are retried up to{" "}
-              {MAX_DELIVERY_ATTEMPTS} times with growing waits.
+              {t("theLast50KeptFor", { MAX_DELIVERY_ATTEMPTS })}
             </p>
           </div>
-          <nav aria-label="Filter deliveries" className="flex flex-wrap gap-1">
+          <nav
+            aria-label={t("filterDeliveries")}
+            className="flex flex-wrap gap-1"
+          >
             {FILTERS.map((filter) => (
               <Link
                 aria-current={filter === status ? "page" : undefined}
@@ -130,7 +134,7 @@ export default async function WebhookDeliveriesPage({
                 href={filter === "all" ? base : `${base}?status=${filter}`}
                 key={filter}
               >
-                {filter === "all" ? "All" : DELIVERY_STATUS_LABELS[filter]}
+                {filter === "all" ? t("all") : DELIVERY_STATUS_LABELS[filter]}
               </Link>
             ))}
           </nav>

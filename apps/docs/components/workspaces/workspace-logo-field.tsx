@@ -6,6 +6,7 @@ import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import { GalleryEdit, Link21 } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { type FormEvent, useRef, useState } from "react";
 import {
   removeWorkspaceLogo,
@@ -38,6 +39,7 @@ export function WorkspaceLogoField({
   logo: string | null;
   canEdit: boolean;
 }) {
+  const t = useTranslations("app.workspaces.workspaceLogoField");
   const refresh = useRefreshTeams();
   const canUpload = useAvailability().has("fileStorage");
   const inputRef = useRef<HTMLInputElement>(null);
@@ -55,7 +57,7 @@ export function WorkspaceLogoField({
   const onFile = async (file: File | undefined) => {
     if (!file) return;
     if (file.size > LOGO_INPUT_MAX_BYTES) {
-      toast.error("Choose a picture under 10 MB.");
+      toast.error(t("chooseAPictureUnder10"));
       return;
     }
     setBusy("upload");
@@ -64,11 +66,11 @@ export function WorkspaceLogoField({
       try {
         blob = await squareImage(file, LOGO_PIXELS);
       } catch {
-        toast.error("We couldn't read that picture. Try a PNG or JPEG.");
+        toast.error(t("weCouldntReadThatPicture"));
         return;
       }
       if (blob.size > LOGO_MAX_BYTES) {
-        toast.error("That picture is too large. Try a smaller one.");
+        toast.error(t("thatPictureIsTooLarge"));
         return;
       }
       const form = new FormData();
@@ -123,7 +125,7 @@ export function WorkspaceLogoField({
 
   return (
     <div className="space-y-3">
-      <Label>Logo</Label>
+      <Label>{t("logo")}</Label>
       <div className="flex flex-wrap items-center gap-4">
         <WorkspaceAvatar logo={logo} name={name} size="lg" />
         {canEdit ? (
@@ -151,7 +153,7 @@ export function WorkspaceLogoField({
                   ) : (
                     <GalleryEdit aria-hidden />
                   )}
-                  {logo ? "Change logo" : "Upload logo"}
+                  {logo ? t("changeLogo") : t("uploadLogo")}
                 </Button>
               </>
             )}
@@ -164,7 +166,7 @@ export function WorkspaceLogoField({
               variant="ghost"
             >
               <Link21 aria-hidden />
-              Use an image URL
+              {t("useAnImageUrl")}
             </Button>
             {logo && (
               <Button
@@ -177,22 +179,20 @@ export function WorkspaceLogoField({
                 {busy === "remove" && (
                   <Spinner aria-hidden className="animate-spin" />
                 )}
-                Remove
+                {t("remove")}
               </Button>
             )}
           </div>
         ) : (
           <p className="text-muted-foreground text-sm">
-            {logo
-              ? "The workspace's logo."
-              : "No logo yet: the switcher shows the first letter."}
+            {logo ? t("theWorkspacesLogo") : t("noLogoYetTheSwitcher")}
           </p>
         )}
       </div>
       {canEdit && urlOpen && (
         <form className="flex flex-col gap-2 sm:flex-row" onSubmit={saveUrl}>
           <Input
-            aria-label="Logo image URL"
+            aria-label={t("logoImageUrl")}
             autoComplete="off"
             inputMode="url"
             maxLength={LOGO_URL_MAX_LENGTH}
@@ -208,13 +208,13 @@ export function WorkspaceLogoField({
             type="submit"
           >
             {busy === "url" && <Spinner aria-hidden className="animate-spin" />}
-            Save
+            {t("save")}
           </Button>
         </form>
       )}
       <p className="text-muted-foreground text-xs text-pretty">
-        Square works best. Shown in the workspace switcher and settings.
-        {canUpload ? " Uploads are cropped to a square." : ""}
+        {t("squareWorksBestShownIn")}
+        {canUpload ? t("uploadsAreCroppedToA") : ""}
       </p>
     </div>
   );

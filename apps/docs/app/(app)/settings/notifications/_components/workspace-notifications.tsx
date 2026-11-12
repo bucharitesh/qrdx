@@ -41,6 +41,7 @@ import {
 } from "iconsax-reactjs";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { type FormEvent, useState, useTransition } from "react";
 import { EventCheckboxes } from "@/app/(app)/dashboard/webhooks/_components/event-checkboxes";
 import { UpgradePlanButton } from "@/app/(app)/dashboard/webhooks/_components/upgrade-plan-button";
@@ -101,6 +102,9 @@ export function WorkspaceNotifications({
   /** The signed-in account's address (email alerts always go there) */
   email: string;
 }) {
+  const t = useTranslations(
+    "app.settings.notifications.workspaceNotifications",
+  );
   const router = useRouter();
   const openUpgradeDialog = useGetProDialogStore((s) => s.openUpgradeDialog);
   const isTeam = !workspace.own;
@@ -122,7 +126,7 @@ export function WorkspaceNotifications({
     if (result.upgrade && !isTeam) {
       const plan = result.upgrade;
       toast.error(result.error, {
-        action: { label: "Upgrade", onClick: () => openUpgradeDialog(plan) },
+        action: { label: t("upgrade"), onClick: () => openUpgradeDialog(plan) },
       });
     } else {
       toast.error(result.error);
@@ -190,7 +194,7 @@ export function WorkspaceNotifications({
         return;
       }
       toast.success(
-        chatDialog.mode === "add" ? "Webhook added" : "Notifications saved",
+        chatDialog.mode === "add" ? t("webhookAdded") : t("notificationsSaved"),
       );
       setChatDialog(null);
       router.refresh();
@@ -204,7 +208,9 @@ export function WorkspaceNotifications({
       setBusy(null);
       if (result.ok) {
         toast.success(
-          `Test message sent to ${NOTIFICATION_CHANNEL_LABELS[chat.channel]}`,
+          t("testMessageSentToValue", {
+            value: NOTIFICATION_CHANNEL_LABELS[chat.channel],
+          }),
         );
       } else {
         reportError(result);
@@ -221,7 +227,7 @@ export function WorkspaceNotifications({
       setBusy(null);
       if (!result.ok) return reportError(result);
       setRemoving(null);
-      toast.success("Webhook removed");
+      toast.success(t("webhookRemoved"));
       router.refresh();
     });
   };
@@ -229,11 +235,8 @@ export function WorkspaceNotifications({
   const lockedNote = (plan: "pro" | "business", what: string) => (
     <div className="bg-muted/40 flex flex-wrap items-center justify-between gap-3 rounded-lg border p-3">
       <p className="text-muted-foreground text-sm">
-        {what}{" "}
-        {plan === "pro"
-          ? "are part of Pro and Business"
-          : "are part of Business"}
-        .{isTeam ? " This workspace follows the plan of its owners." : ""}
+        {what} {plan === "pro" ? t("arePartOfProAnd") : t("arePartOfBusiness")}.
+        {isTeam ? t("thisWorkspaceFollowsThePlan") : ""}
       </p>
       {!isTeam && <UpgradePlanButton plan={plan} size="sm" />}
     </div>
@@ -250,8 +253,8 @@ export function WorkspaceNotifications({
         </div>
         <CardDescription>
           {isTeam
-            ? "Alerts about this workspace's codes and pages. Only you get them; every member picks their own."
-            : "Alerts about the codes and pages in your own workspace."}
+            ? t("alertsAboutThisWorkspacesCodes")
+            : t("alertsAboutTheCodesAnd")}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -262,7 +265,7 @@ export function WorkspaceNotifications({
               className="text-sm font-semibold"
               id={`email-${workspace.organizationId ?? "me"}`}
             >
-              Email to {email}
+              {t("emailToEmail", { email })}
             </h3>
           </div>
           {!workspace.emailAlerts &&
@@ -313,7 +316,7 @@ export function WorkspaceNotifications({
                 className="text-sm font-semibold"
                 id={`chat-${workspace.organizationId ?? "me"}`}
               >
-                Slack and Discord
+                {t("slackAndDiscord")}
               </h3>
             </div>
             {workspace.chat && (
@@ -326,7 +329,7 @@ export function WorkspaceNotifications({
                   variant="outline"
                 >
                   <Plus />
-                  Slack
+                  {t("slack")}
                 </Button>
                 <Button
                   onClick={() =>
@@ -336,7 +339,7 @@ export function WorkspaceNotifications({
                   variant="outline"
                 >
                   <Plus />
-                  Discord
+                  {t("discord")}
                 </Button>
               </div>
             )}
@@ -346,8 +349,7 @@ export function WorkspaceNotifications({
           {workspace.chats.length === 0 ? (
             workspace.chat && (
               <p className="text-muted-foreground text-sm">
-                Post scan milestones, form responses and code changes to a
-                channel with an incoming webhook.
+                {t("postScanMilestonesFormResponses")}
               </p>
             )
           ) : (
@@ -377,31 +379,31 @@ export function WorkspaceNotifications({
                   </div>
                   <div className="flex gap-1">
                     <Button
-                      aria-label="Send a test message"
+                      aria-label={t("sendATestMessage")}
                       disabled={busy === chat.id || !workspace.chat}
                       onClick={() => test(chat)}
                       size="icon-sm"
-                      title="Send a test message"
+                      title={t("sendATestMessage")}
                       variant="ghost"
                     >
                       <Send />
                     </Button>
                     <Button
-                      aria-label="Edit events"
+                      aria-label={t("editEvents")}
                       disabled={!workspace.chat}
                       onClick={() => openChatDialog({ mode: "edit", chat })}
                       size="icon-sm"
-                      title="Edit events"
+                      title={t("editEvents")}
                       variant="ghost"
                     >
                       <Pencil />
                     </Button>
                     <Button
-                      aria-label="Remove webhook"
+                      aria-label={t("removeWebhook")}
                       disabled={busy === chat.id}
                       onClick={() => setRemoving(chat)}
                       size="icon-sm"
-                      title="Remove"
+                      title={t("remove")}
                       variant="ghost"
                     >
                       <Trash2 />
@@ -423,18 +425,20 @@ export function WorkspaceNotifications({
             <DialogHeader>
               <DialogTitle>
                 {chatDialog?.mode === "add"
-                  ? `Add a ${NOTIFICATION_CHANNEL_LABELS[chatDialog.channel]} webhook`
-                  : "Edit notifications"}
+                  ? t("addAValueWebhook", {
+                      value: NOTIFICATION_CHANNEL_LABELS[chatDialog.channel],
+                    })
+                  : t("editNotifications")}
               </DialogTitle>
               <DialogDescription>
                 {chatDialog?.mode === "add"
                   ? CHANNEL_HELP[chatDialog.channel].help
-                  : `Pick what ${workspace.name} posts to this channel.`}
+                  : t("pickWhatNamePostsTo", { name: workspace.name })}
               </DialogDescription>
             </DialogHeader>
             {chatDialog?.mode === "add" && (
               <div className="space-y-2">
-                <Label htmlFor="chat-webhook-url">Webhook URL</Label>
+                <Label htmlFor="chat-webhook-url">{t("webhookUrl")}</Label>
                 <Input
                   autoComplete="off"
                   id="chat-webhook-url"
@@ -447,13 +451,14 @@ export function WorkspaceNotifications({
                   value={chatUrl}
                 />
                 <p className="text-muted-foreground text-xs">
-                  Treat it like a password: anyone with it can post to the
-                  channel. We only show the start of it after saving.
+                  {t("treatItLikeAPassword")}
                 </p>
               </div>
             )}
             <fieldset>
-              <legend className="mb-2 text-sm font-medium">Post about</legend>
+              <legend className="mb-2 text-sm font-medium">
+                {t("postAbout")}
+              </legend>
               <EventCheckboxes
                 events={CHAT_NOTIFICATION_EVENTS}
                 idPrefix={`chat-${workspace.organizationId ?? "me"}`}
@@ -473,13 +478,13 @@ export function WorkspaceNotifications({
                 type="button"
                 variant="outline"
               >
-                Cancel
+                {t("cancel")}
               </Button>
               <Button
                 disabled={isSaving || chatEvents.length === 0}
                 type="submit"
               >
-                {isSaving ? "Saving..." : "Save"}
+                {isSaving ? t("saving") : t("save")}
               </Button>
             </DialogFooter>
           </form>
@@ -492,21 +497,22 @@ export function WorkspaceNotifications({
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Remove this webhook?</AlertDialogTitle>
+            <AlertDialogTitle>{t("removeThisWebhook")}</AlertDialogTitle>
             <AlertDialogDescription>
-              QRdx stops posting to {removing?.label}. The webhook itself stays
-              in {removing ? NOTIFICATION_CHANNEL_LABELS[removing.channel] : ""}{" "}
-              until you delete it there.
+              {t("qrdxStopsPostingTo")} {removing?.label}
+              {t("theWebhookItselfStaysIn")}{" "}
+              {removing ? NOTIFICATION_CHANNEL_LABELS[removing.channel] : ""}{" "}
+              {t("untilYouDeleteItThere")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
             <Button
               disabled={busy === removing?.id}
               onClick={confirmRemove}
               variant="destructive"
             >
-              Remove
+              {t("remove")}
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -516,15 +522,19 @@ export function WorkspaceNotifications({
 }
 
 export function NotificationsFooter() {
+  const t = useTranslations(
+    "app.settings.notifications.workspaceNotifications",
+  );
   const inWorkspace = useWorkspaceHref();
   return (
     <p className="text-muted-foreground text-xs">
-      Every alert email has an unsubscribe link. Team invitations and other
-      account emails are always sent. Want events in your own systems?{" "}
-      <Link className="underline" href={inWorkspace("/settings/webhooks")}>
-        Use webhooks
-      </Link>
-      .
+      {t.rich("everyAlertEmailHasAn", {
+        link: (chunks) => (
+          <Link className="underline" href={inWorkspace("/settings/webhooks")}>
+            {chunks}
+          </Link>
+        ),
+      })}
     </p>
   );
 }

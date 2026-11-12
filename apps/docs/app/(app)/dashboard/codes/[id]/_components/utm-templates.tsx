@@ -1,4 +1,5 @@
 "use client";
+import { useTranslations } from "next-intl";
 
 // Saved UTM templates in the UTM panel: fill the panel from a template, save
 // its values as one,
@@ -135,6 +136,7 @@ export function UtmTemplatesMenuBody({
   onRemoved: (id: string) => void;
   disabled?: boolean;
 }) {
+  const t = useTranslations("app.dashboard.codes.utmTemplates");
   const [dialog, setDialog] = useState<"save" | "manage" | null>(null);
   const empty = isEmptyUtm(current);
   const full = templates.length >= MAX_UTM_TEMPLATES;
@@ -145,15 +147,15 @@ export function UtmTemplatesMenuBody({
         <DropdownMenuTrigger asChild>
           <Button disabled={disabled} size="sm" type="button" variant="outline">
             <DocumentCopy />
-            Templates
+            {t("templates")}
             <ArrowDown2 className="text-muted-foreground" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start" className="w-72">
           <DropdownMenuLabel className="text-muted-foreground text-xs font-normal">
             {templates.length > 0
-              ? "Fill in from a template"
-              : "No templates in this workspace yet"}
+              ? t("fillInFromATemplate")
+              : t("noTemplatesInThisWorkspace")}
           </DropdownMenuLabel>
           {templates.map((template) => (
             <DropdownMenuItem
@@ -161,8 +163,8 @@ export function UtmTemplatesMenuBody({
               key={template.id}
               onSelect={() => {
                 onApply(template.utm);
-                toast.success(`Filled in from “${template.name}”`, {
-                  description: "Save the parameters to use them.",
+                toast.success(t("filledInFromName", { name: template.name }), {
+                  description: t("saveTheParametersToUse"),
                 });
               }}
             >
@@ -180,19 +182,19 @@ export function UtmTemplatesMenuBody({
             onSelect={() => setDialog("save")}
           >
             <Save2 />
-            Save as template…
+            {t("saveAsTemplate")}
           </DropdownMenuItem>
           {templates.length > 0 && (
             <DropdownMenuItem onSelect={() => setDialog("manage")}>
               <Setting4 />
-              Manage templates…
+              {t("manageTemplates")}
             </DropdownMenuItem>
           )}
           {(empty || full) && (
             <p className="text-muted-foreground px-2 pb-1.5 text-xs">
               {full
-                ? `A workspace keeps up to ${MAX_UTM_TEMPLATES} templates.`
-                : "Fill in a parameter to save a template."}
+                ? t("aWorkspaceKeepsUpTo", { MAX_UTM_TEMPLATES })
+                : t("fillInAParameterTo")}
             </p>
           )}
         </DropdownMenuContent>
@@ -226,6 +228,7 @@ function SaveTemplateDialog({
   current: UtmConfig;
   onSaved: (template: UtmTemplateView) => void;
 }) {
+  const t = useTranslations("app.dashboard.codes.utmTemplates");
   const id = useId();
   const [name, setName] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -249,7 +252,7 @@ function SaveTemplateDialog({
           return;
         }
         onSaved(result.data);
-        toast.success(`Template “${result.data.name}” saved`);
+        toast.success(t("templateNameSaved", { name: result.data.name }));
         onOpenChange(false);
       } catch {
         setError("Couldn't save the template. Try again.");
@@ -262,21 +265,19 @@ function SaveTemplateDialog({
       <DialogContent className="sm:max-w-md">
         <form className="space-y-4" onSubmit={submit}>
           <DialogHeader>
-            <DialogTitle>Save as template</DialogTitle>
+            <DialogTitle>{t("saveAsTemplate2")}</DialogTitle>
             <DialogDescription>
-              Everyone in this workspace can fill a code's UTM parameters from
-              it. Codes keep their own copy, so changing or deleting a template
-              never changes them.
+              {t("everyoneInThisWorkspaceCan")}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-1.5">
-            <Label htmlFor={`${id}-name`}>Name</Label>
+            <Label htmlFor={`${id}-name`}>{t("name")}</Label>
             <Input
               autoFocus
               id={`${id}-name`}
               maxLength={MAX_UTM_TEMPLATE_NAME}
               onChange={(event) => setName(event.target.value)}
-              placeholder="Spring posters"
+              placeholder={t("springPosters")}
               value={name}
             />
             <p className="text-muted-foreground truncate font-mono text-xs">
@@ -295,10 +296,10 @@ function SaveTemplateDialog({
               type="button"
               variant="ghost"
             >
-              Cancel
+              {t("cancel")}
             </Button>
             <Button disabled={isPending || !name.trim()} type="submit">
-              {isPending ? "Saving…" : "Save template"}
+              {isPending ? t("saving") : t("saveTemplate")}
             </Button>
           </DialogFooter>
         </form>
@@ -320,6 +321,7 @@ function ManageTemplatesDialog({
   onRenamed: (template: UtmTemplateView) => void;
   onRemoved: (id: string) => void;
 }) {
+  const t = useTranslations("app.dashboard.codes.utmTemplates");
   const [editing, setEditing] = useState<{ id: string; name: string } | null>(
     null,
   );
@@ -362,7 +364,7 @@ function ManageTemplatesDialog({
           return;
         }
         onRemoved(template.id);
-        toast.success(`Template “${template.name}” deleted`);
+        toast.success(t("templateNameDeleted", { name: template.name }));
       } catch {
         setError("Couldn't delete the template. Try again.");
       }
@@ -373,15 +375,14 @@ function ManageTemplatesDialog({
     <Dialog onOpenChange={onOpenChange} open={open}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>UTM templates</DialogTitle>
+          <DialogTitle>{t("utmTemplates")}</DialogTitle>
           <DialogDescription>
-            Rename or delete this workspace's templates. Codes filled from one
-            keep their parameters.
+            {t("renameOrDeleteThisWorkspaces")}
           </DialogDescription>
         </DialogHeader>
         {templates.length === 0 ? (
           <p className="text-muted-foreground py-4 text-center text-sm">
-            No templates left.
+            {t("noTemplatesLeft")}
           </p>
         ) : (
           <ul className="max-h-80 divide-y overflow-y-auto rounded-md border">
@@ -396,7 +397,7 @@ function ManageTemplatesDialog({
                     onSubmit={rename}
                   >
                     <Input
-                      aria-label="Template name"
+                      aria-label={t("templateName")}
                       autoFocus
                       className="h-8"
                       maxLength={MAX_UTM_TEMPLATE_NAME}
@@ -419,7 +420,7 @@ function ManageTemplatesDialog({
                       size="sm"
                       type="submit"
                     >
-                      Save
+                      {t("save")}
                     </Button>
                   </form>
                 ) : (
@@ -435,7 +436,7 @@ function ManageTemplatesDialog({
                     {template.canEdit && (
                       <>
                         <Button
-                          aria-label={`Rename ${template.name}`}
+                          aria-label={t("renameName", { name: template.name })}
                           disabled={isPending}
                           onClick={() =>
                             setEditing({ id: template.id, name: template.name })
@@ -447,7 +448,7 @@ function ManageTemplatesDialog({
                           <Edit2 />
                         </Button>
                         <Button
-                          aria-label={`Delete ${template.name}`}
+                          aria-label={t("deleteName", { name: template.name })}
                           disabled={isPending}
                           onClick={() => remove(template)}
                           size="icon-sm"
@@ -471,7 +472,7 @@ function ManageTemplatesDialog({
         )}
         <DialogFooter>
           <Button onClick={() => onOpenChange(false)} type="button">
-            Done
+            {t("done")}
           </Button>
         </DialogFooter>
       </DialogContent>

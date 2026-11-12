@@ -8,6 +8,7 @@ import {
   CardTitle,
 } from "@repo/design-system/components/ui/card";
 import { eq } from "drizzle-orm";
+import { use } from "react";
 import { CountBarChart } from "@/app/(app)/dashboard/analytics/_components/charts";
 import { TimeZoneSwitch } from "@/app/(app)/dashboard/analytics/_components/time-zone-switch";
 import {
@@ -21,6 +22,7 @@ import {
   displayUrl,
   formatNumber,
 } from "@/app/(app)/dashboard/codes/_components/format";
+import { getAppTranslations } from "@/lib/i18n/app-locale";
 import {
   parseRoutingConfig,
   type SplitBreakdownPlan,
@@ -90,6 +92,7 @@ export function TimeCard({
   days: number;
   switcher: React.ReactNode;
 }) {
+  const t = use(getAppTranslations("app.dashboard.codes.analyticsExtra"));
   const busiestHour = time.hours.indexOf(Math.max(...time.hours));
   const total = time.hours.reduce((sum, value) => sum + value, 0);
   return (
@@ -97,10 +100,11 @@ export function TimeCard({
       <CardHeader className="px-4">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div className="space-y-1">
-            <CardTitle>When people scan</CardTitle>
+            <CardTitle>{t("whenPeopleScan")}</CardTitle>
             <CardDescription>
-              Last {days} days, {time.timeZone}
-              {total > 0 && ` · busiest hour ${HOURS[busiestHour]}:00`}
+              {t("last")} {days} {t("days")} {time.timeZone}
+              {total > 0 &&
+                t("busiestHourValue00", { value: HOURS[busiestHour] })}
             </CardDescription>
           </div>
           {switcher}
@@ -108,23 +112,23 @@ export function TimeCard({
       </CardHeader>
       <CardContent className="grid gap-6 px-2 sm:px-4 md:grid-cols-2">
         <div className="space-y-2">
-          <p className="px-2 text-sm font-medium sm:px-0">Hour of day</p>
+          <p className="px-2 text-sm font-medium sm:px-0">{t("hourOfDay")}</p>
           <CountBarChart
             data={time.hours.map((count, hour) => ({
               label: HOURS[hour] as string,
               count,
             }))}
-            label={`Scans by hour of day in ${time.timeZone}`}
+            label={t("scansByHourOfDay", { timeZone: time.timeZone })}
           />
         </div>
         <div className="space-y-2">
-          <p className="px-2 text-sm font-medium sm:px-0">Day of week</p>
+          <p className="px-2 text-sm font-medium sm:px-0">{t("dayOfWeek")}</p>
           <CountBarChart
             data={time.weekdays.map((count, day) => ({
               label: WEEKDAYS[day] as string,
               count,
             }))}
-            label={`Scans by day of week in ${time.timeZone}`}
+            label={t("scansByDayOfWeek", { timeZone: time.timeZone })}
           />
         </div>
       </CardContent>
@@ -139,6 +143,7 @@ function SplitCard({
   plan: SplitBreakdownPlan;
   result: SplitVariantCounts;
 }) {
+  const t = use(getAppTranslations("app.dashboard.codes.analyticsExtra"));
   const { counts, replayed } = result;
   const total = [...counts.values()].reduce((sum, value) => sum + value, 0);
   const weights = plan.variants.reduce(
@@ -150,21 +155,23 @@ function SplitCard({
       <CardHeader className="px-4">
         <div className="flex flex-wrap items-center gap-2">
           <CardTitle>
-            A/B split{plan.ruleName ? `: ${plan.ruleName}` : ""}
+            {t("aBSplit")}
+            {plan.ruleName ? `: ${plan.ruleName}` : ""}
           </CardTitle>
-          {replayed > 0 && <Badge variant="outline">Estimate</Badge>}
+          {replayed > 0 && <Badge variant="outline">{t("estimate")}</Badge>}
         </div>
         <CardDescription>
-          Scans per variant
+          {t("scansPerVariant")}
           {plan.since
-            ? ` since ${plan.since.toLocaleDateString("en-US", { timeZone: "UTC" })}`
+            ? t("sinceValue", {
+                value: plan.since.toLocaleDateString("en-US", {
+                  timeZone: "UTC",
+                }),
+              })
             : ""}
           {replayed > 0 &&
             `. ${formatNumber(replayed)} older ${replayed === 1 ? "scan was" : "scans were"} recorded before variants were stored and ${replayed === 1 ? "is" : "are"} replayed with the current rules`}
-          {replayed > 0 &&
-            plan.approximate &&
-            " (language and scan-count rules can't be replayed, so these may include scans those rules sent elsewhere)"}
-          .
+          {replayed > 0 && plan.approximate && t("languageAndScanCountRules")}.
         </CardDescription>
       </CardHeader>
       <CardContent className="px-4">
@@ -187,8 +194,10 @@ function SplitCard({
                     {variant.name || variant.id.toUpperCase()}
                   </span>{" "}
                   <span className="text-muted-foreground">
-                    {displayUrl(variant.url)} ·{" "}
-                    {Math.round((variant.weight / weights) * 100)}% target
+                    {t("valueValue2Target", {
+                      value: displayUrl(variant.url),
+                      value2: Math.round((variant.weight / weights) * 100),
+                    })}
                   </span>
                 </span>
                 <span className="text-muted-foreground relative shrink-0 tabular-nums">
@@ -216,41 +225,46 @@ function languageName(tag: string): string {
 
 /** Top visitor languages (the browser's preferred language at scan time). */
 export function LanguagesCard({ languages }: { languages: LanguageBreakdown }) {
+  const t = use(getAppTranslations("app.dashboard.codes.analyticsExtra"));
   return (
     <BreakdownCard
       items={languages.rows.map((row) => ({
         label: row.value
           ? `${languageName(row.value)} (${row.value})`
-          : "Unknown",
+          : t("unknown"),
         count: row.count,
       }))}
-      title="Languages"
+      title={t("languages")}
       total={languages.total}
     />
   );
 }
 
 function PageEventsCard({ events }: { events: PageEventSummary }) {
+  const t = use(getAppTranslations("app.dashboard.codes.analyticsExtra"));
   return (
     <div className="grid gap-4 md:grid-cols-2">
       <Card className="gap-3 py-4">
         <CardHeader className="px-4">
-          <CardTitle>Page activity</CardTitle>
-          <CardDescription>Views and taps on the hosted page</CardDescription>
+          <CardTitle>{t("pageActivity")}</CardTitle>
+          <CardDescription>{t("viewsAndTapsOnThe")}</CardDescription>
         </CardHeader>
         <CardContent className="grid grid-cols-3 gap-3 px-4">
-          <Stat label="Page views" value={formatNumber(events.views)} />
-          <Stat label="Unique viewers" value={formatNumber(events.visitors)} />
-          <Stat label="Taps" value={formatNumber(events.interactions)} />
+          <Stat label={t("pageViews")} value={formatNumber(events.views)} />
+          <Stat
+            label={t("uniqueViewers")}
+            value={formatNumber(events.visitors)}
+          />
+          <Stat label={t("taps")} value={formatNumber(events.interactions)} />
         </CardContent>
       </Card>
       <BreakdownCard
         empty="No taps in this period"
         items={events.targets.map((row) => ({
-          label: row.value ? displayUrl(row.value) : "Unknown",
+          label: row.value ? displayUrl(row.value) : t("unknown"),
           count: row.count,
         }))}
-        title="Most tapped"
+        title={t("mostTapped")}
         total={events.interactions}
       />
     </div>
@@ -258,15 +272,19 @@ function PageEventsCard({ events }: { events: PageEventSummary }) {
 }
 
 function ConversionsCard({ conversions }: { conversions: ConversionSummary }) {
+  const t = use(getAppTranslations("app.dashboard.codes.analyticsExtra"));
   return (
     <div className="grid gap-4 md:grid-cols-2">
       <Card className="gap-3 py-4">
         <CardHeader className="px-4">
-          <CardTitle>Conversions</CardTitle>
-          <CardDescription>Attributed to scans of this code</CardDescription>
+          <CardTitle>{t("conversions")}</CardTitle>
+          <CardDescription>{t("attributedToScansOfThis")}</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-wrap gap-6 px-4">
-          <Stat label="Conversions" value={formatNumber(conversions.count)} />
+          <Stat
+            label={t("conversions")}
+            value={formatNumber(conversions.count)}
+          />
           {conversions.revenue
             .filter((row) => Number(row.total) > 0)
             .map((row) => (
@@ -283,7 +301,7 @@ function ConversionsCard({ conversions }: { conversions: ConversionSummary }) {
           label: row.name,
           count: row.count,
         }))}
-        title="Conversion types"
+        title={t("conversionTypes")}
         total={conversions.count}
       />
     </div>

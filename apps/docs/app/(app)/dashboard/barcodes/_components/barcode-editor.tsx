@@ -1,4 +1,5 @@
 "use client";
+import { useTranslations } from "next-intl";
 
 // Editing a saved barcode, or making one: the generator's form (the same
 // component /barcode-generator uses) with a title and a folder above it and
@@ -72,6 +73,7 @@ export function BarcodeEditor({
   /** Viewers and billing members see it without Save */
   readOnly: boolean;
 }) {
+  const t = useTranslations("app.dashboard.barcodes.barcodeEditor");
   const router = useRouter();
   const id = useId();
   const [title, setTitle] = useState(saved?.title ?? "");
@@ -104,7 +106,7 @@ export function BarcodeEditor({
         : await saveBarcode(fields);
       if (!result.success) {
         soundEvent("error");
-        toast.error("Couldn't save the barcode", {
+        toast.error(t("couldntSaveTheBarcode"), {
           description: result.error.message,
         });
         return;
@@ -112,14 +114,14 @@ export function BarcodeEditor({
       soundEvent("success");
       setSavedSnapshot(snapshot(current, title, folderId));
       if (saved) {
-        toast.success("Barcode saved");
+        toast.success(t("barcodeSaved"));
         router.refresh();
       } else {
         track("barcode_saved", {
           symbology: current.format,
           source: "dashboard",
         });
-        toast.success("Barcode saved");
+        toast.success(t("barcodeSaved"));
         router.replace(`${basePath}/${encodeURIComponent(result.data.id)}`);
       }
     } finally {
@@ -130,18 +132,18 @@ export function BarcodeEditor({
   const formTop = (
     <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_minmax(0,12rem)]">
       <div className="flex min-w-0 flex-col gap-1.5">
-        <Label htmlFor={`${id}-title`}>Title</Label>
+        <Label htmlFor={`${id}-title`}>{t("title")}</Label>
         <Input
           disabled={readOnly}
           id={`${id}-title`}
           maxLength={MAX_BARCODE_TITLE}
           onChange={(event) => setTitle(event.target.value)}
-          placeholder="Optional, to find it later"
+          placeholder={t("optionalToFindItLater")}
           value={title}
         />
       </div>
       <div className="flex min-w-0 flex-col gap-1.5">
-        <Label htmlFor={`${id}-folder`}>Folder</Label>
+        <Label htmlFor={`${id}-folder`}>{t("folder")}</Label>
         <Select
           disabled={readOnly}
           onValueChange={(value) =>
@@ -153,7 +155,7 @@ export function BarcodeEditor({
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value={NO_FOLDER}>No folder</SelectItem>
+            <SelectItem value={NO_FOLDER}>{t("noFolder")}</SelectItem>
             {folders.map((folder) => (
               <SelectItem key={folder.id} value={folder.id}>
                 <span style={{ paddingLeft: `${folder.depth * 0.75}rem` }}>
@@ -184,12 +186,12 @@ export function BarcodeEditor({
           <div className="flex items-center justify-between gap-3 border-t pt-3">
             <p className="text-muted-foreground text-xs">
               {!current
-                ? "Fix the highlighted input to save."
+                ? t("fixTheHighlightedInputTo")
                 : saved
                   ? changed
-                    ? "Unsaved changes"
-                    : "All changes saved"
-                  : "Not saved yet"}
+                    ? t("unsavedChanges")
+                    : t("allChangesSaved")
+                  : t("notSavedYet")}
             </p>
             <Button
               disabled={!current || saving || !changed}
@@ -200,7 +202,7 @@ export function BarcodeEditor({
               ) : (
                 <Save2 aria-hidden className="size-4" />
               )}
-              {saved ? "Save changes" : "Save barcode"}
+              {saved ? t("saveChanges") : t("saveBarcode")}
             </Button>
           </div>
         );

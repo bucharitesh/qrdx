@@ -52,6 +52,10 @@ const value = (name: string) => {
   return index === -1 ? undefined : args[index + 1];
 };
 const DRY = flag("--dry-run");
+/** Async server components read the signed-in app's language (getAppTranslations). */
+const APP = flag("--app");
+/** Also convert module-level helpers: they get a `t` parameter. */
+const HELPERS = flag("--helpers");
 const NAMESPACE = value("--namespace");
 const PREFIX = value("--prefix");
 const files = args.filter(
@@ -173,6 +177,13 @@ function namespaceFor(file: string): string {
     .filter((part) => !(part.startsWith("(") || part.startsWith("_")));
   const name = camel(parts.at(-1) as string);
   if (PREFIX) return `${PREFIX}.${name}`;
+  // --app: app/(app)/settings/general/components/x.tsx → app.settings.general.x
+  if (APP && parts[0] === "app") {
+    const route = parts
+      .slice(1, -1)
+      .filter((part) => !(part.startsWith("[") || part === "components"));
+    return ["app", ...route.map(camel), name].join(".");
+  }
   if (parts[0] === "components" && parts[1] === "editor") {
     return ["editor", ...parts.slice(2, -1).map(camel), name].join(".");
   }
@@ -205,11 +216,11 @@ const isCopy = (text: string) =>
   !/^(?:https?:|mailto:|\/|#)\S*$/.test(text.trim());
 
 /**
- * Plain text as an ICU message: braces quoted, and an apostrophe before a
+ * Plain text as an ICU message: braces and "<" quoted, and an apostrophe before a
  * brace, # or tag doubled (it would start a quoted literal).
  */
 const icuText = (text: string) =>
-  text.replace(/'(?=[{}#<])/g, "''").replace(/[{}]/g, (brace) => `'${brace}'`);
+  text.replace(/'(?=[{}#<])/g, "''").replace(/[{}<]/g, (char) => `'${char}'`);
 
 interface Report {
   file: string;
@@ -858,6 +869,160 @@ function extract(source: SourceFile): { count: number; text: string } {
       queueString(leaf, "expr");
   }
 
+  // 5. Module-level helpers that return copy (error messages by code): each
+  // gets a `t` parameter, and every call in the file passes its caller's t.
+  const helpers = new Map<string, Node>();
+  if (HELPERS) {
+    const helperCopy = (text: string) =>
+      isCopy(text) && (/\s/.test(text.trim()) || /^[A-Z]/.test(text));
+    const candidates: [string, Node][] = [];
+    for (const statement of source.getStatements()) {
+      const declaration = statement.asKind(SyntaxKind.FunctionDeclaration);
+      if (declaration?.getName()) {
+        candidates.push([declaration.getName() as string, declaration]);
+        continue;
+      }
+      for (const variable of statement
+        .asKind(SyntaxKind.VariableStatement)
+        ?.getDeclarations() ?? []) {
+        const initializer = variable.getInitializer();
+        if (
+          initializer?.getKind() === SyntaxKind.ArrowFunction ||
+          initializer?.getKind() === SyntaxKind.FunctionExpression
+        ) {
+          candidates.push([variable.getName(), initializer]);
+        }
+      }
+    }
+    for (const [name, fn] of candidates) {
+      if (/^(?:[A-Z]|use[A-Z])/.test(name)) continue;
+      const leaves = [
+        ...fn.getDescendantsOfKind(SyntaxKind.StringLiteral),
+        ...fn.getDescendantsOfKind(SyntaxKind.NoSubstitutionTemplateLiteral),
+        ...fn.getDescendantsOfKind(SyntaxKind.TemplateExpression),
+      ].filter((leaf) => {
+        if (
+          leaf.getFirstAncestorByKind(SyntaxKind.TemplateExpression) &&
+          leaf.getKind() !== SyntaxKind.TemplateExpression
+        )
+          return false;
+        const parent = leaf.getParent();
+        if (!parent) return false;
+        if (parent.getKind() === SyntaxKind.CaseClause) return false;
+        if (parent.getKind() === SyntaxKind.ImportDeclaration) return false;
+        if (
+          parent.asKind(SyntaxKind.PropertyAssignment)?.getNameNode() === leaf
+        )
+          return false;
+        if (parent.asKind(SyntaxKind.ElementAccessExpression)) return false;
+        const binary = parent.asKind(SyntaxKind.BinaryExpression);
+        if (binary && /[=!]==?|in/.test(binary.getOperatorToken().getText()))
+          return false;
+        const call = leaf.getFirstAncestorByKind(SyntaxKind.CallExpression);
+        if (
+          call &&
+          /^(console\.\w+|track|cn|JSON\.\w+|\w+\.(includes|startsWith|endsWith|split|replace|test|get|set|has))$/.test(
+            call.getExpression().getText(),
+          )
+        )
+          return false;
+        if (leaf.getFirstAncestorByKind(SyntaxKind.NewExpression)) return false;
+        if (leaf.getFirstAncestorByKind(SyntaxKind.JsxAttribute)) return false;
+        // A parameter's default can't use `t`, which comes after it.
+        if (leaf.getFirstAncestorByKind(SyntaxKind.Parameter)) return false;
+        const text =
+          leaf.getKind() === SyntaxKind.StringLiteral
+            ? leaf.asKindOrThrow(SyntaxKind.StringLiteral).getLiteralValue()
+            : leaf
+                .getText()
+                .slice(1, -1)
+                .replace(/\$\{[^}]*\}/g, "x");
+        return helperCopy(text);
+      });
+      if (leaves.length === 0) continue;
+      helpers.set(name, fn);
+      for (const leaf of leaves) {
+        if (isCovered(leaf)) continue;
+        const message =
+          leaf.getKind() === SyntaxKind.StringLiteral
+            ? {
+                text: icuText(
+                  leaf
+                    .asKindOrThrow(SyntaxKind.StringLiteral)
+                    .getLiteralValue(),
+                ),
+                values: [] as [string, string][],
+                tags: [] as [string, string][],
+              }
+            : templateMessage(leaf);
+        if (!message) {
+          report(
+            leaf,
+            `helper ${name}: template with JSX`,
+            leaf.getText().slice(1, -1),
+          );
+          continue;
+        }
+        const key = keyFor(bucket, message.text);
+        edits.push({
+          start: leaf.getStart(),
+          end: leaf.getEnd(),
+          render: () => callText("t", key, message),
+          component: fn,
+        });
+        covered.push([leaf.getStart(), leaf.getEnd()]);
+      }
+    }
+    // Calls pass the caller's t: a component's (declared below) or a helper's
+    // own parameter.
+    for (const call of source.getDescendantsOfKind(SyntaxKind.CallExpression)) {
+      const callee = call.getExpression().getText();
+      if (!helpers.has(callee)) continue;
+      const close = call.getEnd() - 1;
+      const args = call.getArguments();
+      const hasArgs = args.length > 0;
+      // After a trailing comma, no comma of our own.
+      const trailing =
+        hasArgs &&
+        source
+          .getFullText()
+          .slice((args.at(-1) as Node).getEnd(), close)
+          .includes(",");
+      if (isCovered(call)) {
+        report(
+          call,
+          `call to ${callee} inside converted copy: pass t by hand`,
+          call.getText().slice(0, 60),
+        );
+        continue;
+      }
+      const caller = componentOf(call);
+      const insideHelper = [...helpers.values()].some(
+        (fn) =>
+          call.getStart() >= fn.getStart() && call.getEnd() <= fn.getEnd(),
+      );
+      if (!(caller || insideHelper)) {
+        report(
+          call,
+          `call to ${callee} outside a component`,
+          call.getText().slice(0, 60),
+        );
+        continue;
+      }
+      edits.push({
+        start: close,
+        end: close,
+        render: (fn) => (hasArgs && !trailing ? `, ${fn}` : fn),
+        component:
+          caller ??
+          ([...helpers.values()].find(
+            (fn) =>
+              call.getStart() >= fn.getStart() && call.getEnd() <= fn.getEnd(),
+          ) as Node),
+      });
+    }
+  }
+
   if (edits.length === 0) return { count: 0, text: source.getFullText() };
 
   // Each component gets its translation function: `t`, or `tx` where it
@@ -865,15 +1030,51 @@ function extract(source: SourceFile): { count: number; text: string } {
   const components = new Map<Node, string>();
   for (const { component } of edits) {
     if (components.has(component)) continue;
-    const clash = component
-      .getDescendantsOfKind(SyntaxKind.Identifier)
-      .some((id) => id.getText() === "t");
+    // A `t` this script declared on an earlier run is the translator itself.
+    const declared =
+      /\bconst t = (?:await )?(?:useTranslations|getTranslations|getAppTranslations)\(/.test(
+        component.getText(),
+      );
+    const clash =
+      !declared &&
+      component
+        .getDescendantsOfKind(SyntaxKind.Identifier)
+        .some((id) => id.getText() === "t");
     components.set(component, clash ? "tx" : "t");
   }
   const insertions: Edit[] = [];
   let needsServer = false;
   let needsClient = false;
+  let needsTranslatorType = false;
+  const helperNodes = new Set(helpers.values());
   for (const [component, fn] of components) {
+    if (helperNodes.has(component)) {
+      // A helper: `t` comes in as its last parameter.
+      components.set(component, "t");
+      const fnNode = component as unknown as {
+        getParameters(): Node[];
+      };
+      const params = fnNode.getParameters();
+      const open = component.getFirstChildByKind(SyntaxKind.OpenParenToken);
+      const closeParen = component.getFirstChildByKind(
+        SyntaxKind.CloseParenToken,
+      );
+      const at = closeParen?.getStart() ?? open?.getEnd();
+      if (at === undefined) continue;
+      needsTranslatorType = true;
+      const lastParam = params.at(-1);
+      const trailingComma =
+        lastParam !== undefined &&
+        source.getFullText().slice(lastParam.getEnd(), at).includes(",");
+      insertions.push({
+        start: at,
+        end: at,
+        render: () =>
+          `${params.length > 0 && !trailingComma ? ", " : ""}t: Translator<${JSON.stringify(namespace)}>`,
+        component,
+      });
+      continue;
+    }
     const body = bodyOf(component);
     if (!body) continue;
     const isAsync =
@@ -882,7 +1083,7 @@ function extract(source: SourceFile): { count: number; text: string } {
     if (isAsync) needsServer = true;
     else needsClient = true;
     const declaration = isAsync
-      ? `const ${fn} = await getTranslations(${JSON.stringify(namespace)});`
+      ? `const ${fn} = await ${APP ? "getAppTranslations" : "getTranslations"}(${JSON.stringify(namespace)});`
       : `const ${fn} = useTranslations(${JSON.stringify(namespace)});`;
     if (body.getKind() === SyntaxKind.Block) {
       const already = (body as Block)
@@ -932,7 +1133,22 @@ function extract(source: SourceFile): { count: number; text: string } {
     imports.push('import { useTranslations } from "next-intl";');
   }
   if (
+    needsTranslatorType &&
+    !/\bTranslator\b[^;]*from "@\/lib\/i18n\/translator"/.test(text)
+  ) {
+    imports.push('import type { Translator } from "@/lib/i18n/translator";');
+  }
+  if (
     needsServer &&
+    APP &&
+    !/import \{[^}]*\bgetAppTranslations\b[^}]*\} from "@\/lib\/i18n\/app-locale"/.test(
+      text,
+    )
+  ) {
+    imports.push('import { getAppTranslations } from "@/lib/i18n/app-locale";');
+  } else if (
+    needsServer &&
+    !APP &&
     !/\bgetTranslations\b[^;]*from "next-intl\/server"/.test(text)
   ) {
     imports.push('import { getTranslations } from "next-intl/server";');

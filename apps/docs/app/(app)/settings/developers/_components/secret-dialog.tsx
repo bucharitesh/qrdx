@@ -9,6 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@repo/design-system/components/ui/dialog";
+import { useTranslations } from "next-intl";
 import { CopyField } from "./snippet";
 
 /**
@@ -24,6 +25,7 @@ export function ClientSecretDialog({
   title: string;
   onClose: () => void;
 }) {
+  const t = useTranslations("app.settings.developers.secretDialog");
   return (
     <Dialog
       onOpenChange={(open) => !open && onClose()}
@@ -32,20 +34,19 @@ export function ClientSecretDialog({
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
-          <DialogDescription>
-            Copy the client secret now: QRdx stores only a hash of it, so it
-            can't be shown again. Keep it on your server, never in a browser or
-            mobile app.
-          </DialogDescription>
+          <DialogDescription>{t("copyTheClientSecretNow")}</DialogDescription>
         </DialogHeader>
         {credentials && (
           <div className="space-y-4">
-            <CopyField label="Client ID" value={credentials.clientId} />
-            <CopyField label="Client secret" value={credentials.clientSecret} />
+            <CopyField label={t("clientId")} value={credentials.clientId} />
+            <CopyField
+              label={t("clientSecret")}
+              value={credentials.clientSecret}
+            />
           </div>
         )}
         <DialogFooter>
-          <Button onClick={onClose}>I've saved it</Button>
+          <Button onClick={onClose}>{t("iveSavedIt")}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

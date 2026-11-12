@@ -6,6 +6,7 @@ import {
   TableHeader,
   TableRow,
 } from "@repo/design-system/components/ui/table";
+import { useTranslations } from "next-intl";
 import { CopyButton } from "@/components/copy-button";
 import type { DnsRecord } from "@/lib/custom-domains";
 
@@ -25,6 +26,7 @@ export function DnsRecords({
   records: DnsRecord[];
   apexName: string | null;
 }) {
+  const t = useTranslations("app.dashboard.domains.dnsRecords");
   if (records.length === 0) return null;
 
   return (
@@ -32,9 +34,9 @@ export function DnsRecords({
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-20">Type</TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead>Value</TableHead>
+            <TableHead className="w-20">{t("type")}</TableHead>
+            <TableHead>{t("name")}</TableHead>
+            <TableHead>{t("value")}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -55,7 +57,7 @@ export function DnsRecords({
                     </code>
                     <CopyButton
                       className="-mt-1 shrink-0"
-                      successMessage={{ title: "Name copied" }}
+                      successMessage={{ title: t("nameCopied") }}
                       textToCopy={name}
                     />
                   </div>
@@ -67,7 +69,7 @@ export function DnsRecords({
                     </code>
                     <CopyButton
                       className="-mt-1 shrink-0"
-                      successMessage={{ title: "Value copied" }}
+                      successMessage={{ title: t("valueCopied") }}
                       textToCopy={record.value}
                     />
                   </div>

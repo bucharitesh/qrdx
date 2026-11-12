@@ -6,6 +6,7 @@ import { Button } from "@repo/design-system/components/ui/button";
 import type { SourceItem } from "@repo/integrations";
 import { ExportSquare, ImportCurve } from "iconsax-reactjs";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { useWorkspaceHref } from "@/components/workspace-provider";
 import {
@@ -26,6 +27,7 @@ const WHERE: Record<string, string> = {
 
 /** What the picker will offer, plus Shopify's bulk CSV. */
 export function SourcePreview({ slug, name }: { slug: string; name: string }) {
+  const t = useTranslations("app.settings.integrations.sourcePreview");
   const inWorkspace = useWorkspaceHref();
   const [items, setItems] = useState<SourceItem[] | null>(null);
   const [more, setMore] = useState(false);
@@ -55,11 +57,15 @@ export function SourcePreview({ slug, name }: { slug: string; name: string }) {
     <div className="space-y-4 rounded-xl border bg-card p-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="space-y-1">
-          <h2 className="text-base font-semibold">Ready to pick</h2>
+          <h2 className="text-base font-semibold">{t("readyToPick")}</h2>
           <p className="text-muted-foreground text-sm text-pretty">
-            Choose{" "}
-            <span className="text-foreground">From your account → {name}</span>{" "}
-            in {WHERE[slug]}.
+            {t.rich("chooseFromYourAccountName", {
+              name,
+              value: WHERE[slug],
+              span: (chunks) => (
+                <span className="text-foreground">{chunks}</span>
+              ),
+            })}
           </p>
         </div>
         {slug === "shopify" && (
@@ -74,11 +80,11 @@ export function SourcePreview({ slug, name }: { slug: string; name: string }) {
                 }
               >
                 <ImportCurve aria-hidden className="size-4" />
-                Download products CSV
+                {t("downloadProductsCsv")}
               </a>
             </Button>
             <Button asChild size="sm" variant="ghost">
-              <Link href={inWorkspace("/codes/import")}>Bulk import</Link>
+              <Link href={inWorkspace("/codes/import")}>{t("bulkImport")}</Link>
             </Button>
           </div>
         )}
@@ -93,7 +99,7 @@ export function SourcePreview({ slug, name }: { slug: string; name: string }) {
           {error}
         </p>
       ) : items.length === 0 ? (
-        <p className="text-muted-foreground text-sm">Nothing to pick yet.</p>
+        <p className="text-muted-foreground text-sm">{t("nothingToPickYet")}</p>
       ) : (
         <ul className="divide-y rounded-lg border">
           {items.map((item) => (
@@ -119,7 +125,7 @@ export function SourcePreview({ slug, name }: { slug: string; name: string }) {
                 </Badge>
               )}
               <a
-                aria-label={`Open ${item.title}`}
+                aria-label={t("openTitle", { title: item.title })}
                 className="shrink-0 text-muted-foreground hover:text-foreground"
                 href={item.url}
                 rel="noopener noreferrer"
@@ -132,13 +138,13 @@ export function SourcePreview({ slug, name }: { slug: string; name: string }) {
         </ul>
       )}
       {more && (
-        <p className="text-muted-foreground text-xs">And more in the picker.</p>
+        <p className="text-muted-foreground text-xs">
+          {t("andMoreInThePicker")}
+        </p>
       )}
       {slug === "shopify" && (
         <p className="text-muted-foreground text-xs text-pretty">
-          The CSV has one row per active product (up to 1,000) in the importer's
-          format: destination, title, folder and tags. Import it to make a
-          dynamic code for each product.
+          {t("theCsvHasOneRow")}
         </p>
       )}
     </div>

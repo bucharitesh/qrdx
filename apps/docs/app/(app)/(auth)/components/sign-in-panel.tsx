@@ -12,6 +12,7 @@ import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Separator } from "@repo/design-system/components/ui/separator";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { type ComponentType, type ReactNode, useEffect, useState } from "react";
 import { useAvailability } from "@/components/availability-provider";
 import { QrdxLogoAnimation } from "@/components/qrdx-logo-animation";
@@ -70,6 +71,7 @@ export function SignInPanel({
   notice,
   shown = true,
 }: SignInPanelProps) {
+  const t = useTranslations("auth.signInPanel");
   const isSignIn = mode === "signin";
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [isGithubLoading, setIsGithubLoading] = useState(false);
@@ -121,7 +123,7 @@ export function SignInPanel({
     } catch (error) {
       console.error(`${label} Sign In Error:`, error);
       setLoading(false);
-      toast.error(`${label} sign-in is not available right now`);
+      toast.error(t("labelSignInIsNot", { label }));
     }
   };
 
@@ -141,14 +143,14 @@ export function SignInPanel({
   const providers = [
     {
       id: "google",
-      label: "Google",
+      label: t("google"),
       icon: GoogleLogo,
       loading: isGoogleLoading,
       onClick: () => socialSignIn("google", "Google", setIsGoogleLoading),
     },
     {
       id: "github",
-      label: "GitHub",
+      label: t("github"),
       icon: GithubLogo,
       loading: isGithubLoading,
       onClick: () => socialSignIn("github", "GitHub", setIsGithubLoading),
@@ -163,35 +165,35 @@ export function SignInPanel({
           {twoFactor
             ? secondStep
               ? SECOND_STEP_TITLES[secondStep]
-              : "Two-step verification"
+              : t("twoStepVerification")
             : codeSentTo
-              ? "Check your email"
+              ? t("checkYourEmail")
               : ssoOfferFor
-                ? "Sign in with SSO"
+                ? t("signInWithSso")
                 : isSignIn
-                  ? "Sign in to QRdx"
-                  : "Create your QRdx account"}
+                  ? t("signInToQrdx")
+                  : t("createYourQrdxAccount")}
         </Title>
         <Description className="text-muted-foreground text-sm text-pretty">
           {twoFactor ? (
-            "Your account asks for a second step when you sign in."
+            t("yourAccountAsksForA")
           ) : codeSentTo ? (
             <>
-              Code sent to{" "}
+              {t("codeSentTo")}
               <span className="font-medium break-all text-foreground">
                 {codeSentTo}
               </span>
             </>
           ) : ssoOfferFor ? (
             ssoOfferRequired ? (
-              "Your company requires single sign-on."
+              t("yourCompanyRequiresSingleSign")
             ) : (
-              "Your company signs in with single sign-on."
+              t("yourCompanySignsInWith")
             )
           ) : isSignIn ? (
-            "Pick up where you left off."
+            t("pickUpWhereYouLeft")
           ) : (
-            "Free to start, no card needed."
+            t("freeToStartNoCard")
           )}
         </Description>
       </div>
@@ -226,7 +228,7 @@ export function SignInPanel({
                   className="pointer-events-none absolute -top-2 right-3 px-1.5 py-0 text-[10px]"
                   variant="secondary"
                 >
-                  Last used
+                  {t("lastUsed")}
                 </Badge>
               )}
             </div>
@@ -237,7 +239,7 @@ export function SignInPanel({
       {!emailStepPassed && (
         <div className="flex items-center gap-3 px-6 py-4">
           <Separator className="flex-1" />
-          <span className="text-xs text-muted-foreground">or</span>
+          <span className="text-xs text-muted-foreground">{t("or")}</span>
           <Separator className="flex-1" />
         </div>
       )}
@@ -287,22 +289,23 @@ export function SignInPanel({
       {/* Google, GitHub, email codes and workspace SSO create the account on first use, so there's no separate sign-up step (a passkey needs an account first). */}
       {!emailStepPassed && (
         <p className="px-6 pt-4 pb-6 text-center text-xs text-pretty text-muted-foreground">
-          New to QRdx? Google, GitHub or an email code creates your free
-          account.
+          {t("newToQrdxGoogleGithub")}
         </p>
       )}
 
       <footer className="flex items-center justify-between gap-4 border-t px-6 py-3 text-xs text-muted-foreground">
-        <span>© {new Date().getFullYear()} QRdx</span>
-        <nav aria-label="Help and legal" className="flex gap-3">
+        <span>
+          {t("valueQrdx", { value: String(new Date().getFullYear()) })}
+        </span>
+        <nav aria-label={t("helpAndLegal")} className="flex gap-3">
           <a className={FOOTER_LINK} href={`mailto:${siteConfig.links.email}`}>
-            Support
+            {t("support")}
           </a>
           <Link className={FOOTER_LINK} href="/legal/privacy-policy">
-            Privacy
+            {t("privacy")}
           </Link>
           <Link className={FOOTER_LINK} href="/legal/terms-of-service">
-            Terms
+            {t("terms")}
           </Link>
         </nav>
       </footer>

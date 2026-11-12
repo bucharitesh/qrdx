@@ -12,6 +12,7 @@ import {
   TableRow,
 } from "@repo/design-system/components/ui/table";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useTransition } from "react";
 import { cancelInvitation } from "@/actions/organizations";
 import {
@@ -34,6 +35,7 @@ export function PendingInvitations({
 }: {
   invitations: PendingInvitationRow[];
 }) {
+  const t = useTranslations("app.dashboard.team.pendingInvitations");
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
@@ -44,13 +46,17 @@ export function PendingInvitations({
         toast.error(result.error);
         return;
       }
-      toast.success(`Revoked the invitation for ${invitation.email}`);
+      toast.success(
+        t("revokedTheInvitationForEmail", { email: invitation.email }),
+      );
       router.refresh();
     });
 
   if (invitations.length === 0) {
     return (
-      <p className="text-muted-foreground text-sm">No pending invitations.</p>
+      <p className="text-muted-foreground text-sm">
+        {t("noPendingInvitations")}
+      </p>
     );
   }
 
@@ -58,11 +64,11 @@ export function PendingInvitations({
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>Email</TableHead>
-          <TableHead>Role</TableHead>
-          <TableHead className="hidden sm:table-cell">Expires</TableHead>
+          <TableHead>{t("email")}</TableHead>
+          <TableHead>{t("role")}</TableHead>
+          <TableHead className="hidden sm:table-cell">{t("expires")}</TableHead>
           <TableHead className="text-right">
-            <span className="max-sm:sr-only">Actions</span>
+            <span className="max-sm:sr-only">{t("actions")}</span>
           </TableHead>
         </TableRow>
       </TableHeader>
@@ -73,7 +79,9 @@ export function PendingInvitations({
               {invitation.email}
               {invitation.inviterName && (
                 <span className="text-muted-foreground block text-xs font-normal">
-                  Invited by {invitation.inviterName}
+                  {t("invitedByInvitername", {
+                    inviterName: invitation.inviterName,
+                  })}
                 </span>
               )}
             </TableCell>
@@ -94,7 +102,7 @@ export function PendingInvitations({
                   size="sm"
                   variant="ghost"
                 >
-                  Revoke
+                  {t("revoke")}
                 </Button>
               </div>
             </TableCell>

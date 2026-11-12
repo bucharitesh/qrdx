@@ -24,6 +24,7 @@ import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import { cn } from "@repo/design-system/lib/utils";
 import { Add as Plus } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { type FormEvent, useEffect, useMemo, useState } from "react";
 import {
   createCodeTag,
@@ -72,9 +73,10 @@ function ColorPicker({
   value: TagColor;
   onChange: (color: TagColor) => void;
 }) {
+  const t = useTranslations("app.dashboard.codes.tagDialogs");
   return (
     <fieldset className="space-y-2">
-      <legend className="text-sm leading-none font-medium">Color</legend>
+      <legend className="text-sm leading-none font-medium">{t("color")}</legend>
       <div className="flex flex-wrap gap-2">
         {TAG_COLORS.map((color) => (
           <button
@@ -109,6 +111,7 @@ export function TagEditDialog({
   onOpenChange: (open: boolean) => void;
   onSaved?: (tag: TagRow) => void;
 }) {
+  const t = useTranslations("app.dashboard.codes.tagDialogs");
   const { run, isPending } = useOrganizeAction();
   const [name, setName] = useState("");
   const [color, setColor] = useState<TagColor>("blue");
@@ -146,19 +149,19 @@ export function TagEditDialog({
       <DialogContent className="sm:max-w-sm">
         <form className="space-y-4" onSubmit={submit}>
           <DialogHeader>
-            <DialogTitle>{tag ? "Edit tag" : "New tag"}</DialogTitle>
+            <DialogTitle>{tag ? t("editTag") : t("newTag")}</DialogTitle>
             <DialogDescription>
-              Tags work across folders. Filter the list by one or more tags.
+              {t("tagsWorkAcrossFoldersFilter")}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-2">
-            <Label htmlFor="tag-name">Name</Label>
+            <Label htmlFor="tag-name">{t("name")}</Label>
             <Input
               autoFocus
               id="tag-name"
               maxLength={MAX_TAG_NAME}
               onChange={(event) => setName(event.target.value)}
-              placeholder="print"
+              placeholder={t("print")}
               required
               value={name}
             />
@@ -171,10 +174,10 @@ export function TagEditDialog({
               type="button"
               variant="ghost"
             >
-              Cancel
+              {t("cancel")}
             </Button>
             <Button disabled={isPending || !name.trim()} type="submit">
-              {tag ? "Save" : "Create tag"}
+              {tag ? t("save") : t("createTag")}
             </Button>
           </DialogFooter>
         </form>
@@ -192,6 +195,7 @@ export function DeleteTagDialog({
   onOpenChange: (open: boolean) => void;
   onDeleted?: () => void;
 }) {
+  const t = useTranslations("app.dashboard.codes.tagDialogs");
   const { run, isPending } = useOrganizeAction();
   const remove = async () => {
     if (!tag) return;
@@ -207,17 +211,21 @@ export function DeleteTagDialog({
     <AlertDialog onOpenChange={onOpenChange} open={tag !== null}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Delete tag "{tag?.name}"?</AlertDialogTitle>
+          <AlertDialogTitle>
+            {t("deleteTagName", { name: tag?.name ?? "" })}
+          </AlertDialogTitle>
           <AlertDialogDescription>
-            The tag is removed from{" "}
-            {tag ? plural(tag.codeCount, "code") : "its codes"}. The codes
-            themselves are not changed.
+            {t("theTagIsRemovedFrom")}{" "}
+            {tag ? plural(tag.codeCount, "code") : t("itsCodes")}
+            {t("theCodesThemselvesAreNot")}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={isPending}>Cancel</AlertDialogCancel>
+          <AlertDialogCancel disabled={isPending}>
+            {t("cancel")}
+          </AlertDialogCancel>
           <Button disabled={isPending} onClick={remove} variant="destructive">
-            Delete tag
+            {t("deleteTag")}
           </Button>
         </AlertDialogFooter>
       </AlertDialogContent>
@@ -242,6 +250,7 @@ export function TagsDialog({
   onOpenChange: (open: boolean) => void;
   tags?: TagRow[];
 }) {
+  const t = useTranslations("app.dashboard.codes.tagDialogs");
   const [tags, setTags] = useTags(open, initialTags);
   const { run, isPending } = useOrganizeAction();
   const [creating, setCreating] = useState(false);
@@ -300,20 +309,22 @@ export function TagsDialog({
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>
-              {single ? "Tags" : `Tags for ${plural(codes.length, "code")}`}
+              {single
+                ? t("tags")
+                : t("tagsForValue", { value: plural(codes.length, "code") })}
             </DialogTitle>
             <DialogDescription>
-              Up to {MAX_TAGS_PER_CODE} tags per code.
+              {t("upToMaxTagsPer", { MAX_TAGS_PER_CODE })}
             </DialogDescription>
           </DialogHeader>
           <div className="max-h-72 space-y-1 overflow-y-auto">
             {tags === null ? (
               <p className="text-muted-foreground py-3 text-sm">
-                Loading tags...
+                {t("loadingTags")}
               </p>
             ) : tags.length === 0 ? (
               <p className="text-muted-foreground py-3 text-sm">
-                No tags yet. Create one to start labelling codes.
+                {t("noTagsYetCreateOne")}
               </p>
             ) : (
               tags.map((row) => {
@@ -348,7 +359,7 @@ export function TagsDialog({
                     </Label>
                     {value === "indeterminate" && (
                       <span className="text-muted-foreground text-xs">
-                        Some
+                        {t("some")}
                       </span>
                     )}
                   </div>
@@ -364,7 +375,7 @@ export function TagsDialog({
               variant="outline"
             >
               <Plus />
-              New tag
+              {t("newTag")}
             </Button>
             <div className="flex gap-2">
               <Button
@@ -373,10 +384,10 @@ export function TagsDialog({
                 size="sm"
                 variant="ghost"
               >
-                Cancel
+                {t("cancel")}
               </Button>
               <Button disabled={isPending} onClick={save} size="sm">
-                Save
+                {t("save")}
               </Button>
             </div>
           </DialogFooter>

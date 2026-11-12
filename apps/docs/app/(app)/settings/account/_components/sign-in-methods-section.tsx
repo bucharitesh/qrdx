@@ -20,6 +20,7 @@ import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Sms } from "iconsax-reactjs";
 import { usePathname, useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { type ReactNode, useEffect, useState } from "react";
 import { useConfirmation } from "@/components/confirm-identity/provider";
 import {
@@ -99,6 +100,7 @@ export function SignInMethodsSection({
   email: string;
   outcome: LinkOutcome | null;
 }) {
+  const t = useTranslations("app.settings.account.signInMethodsSection");
   const router = useRouter();
   const pathname = usePathname();
   const { withConfirmation } = useConfirmation();
@@ -115,12 +117,14 @@ export function SignInMethodsSection({
   useEffect(() => {
     if (!outcome) return;
     if (outcome.kind === "linked") {
-      toast.success(`${PROVIDER_LABELS[outcome.provider]} is linked`);
+      toast.success(
+        t("valueIsLinked", { value: PROVIDER_LABELS[outcome.provider] }),
+      );
     } else {
       toast.error(linkErrorMessage(outcome.code));
     }
     router.replace(pathname, { scroll: false });
-  }, [outcome, pathname, router]);
+  }, [outcome, pathname, router, t]);
 
   // Asks "Confirm it's you" first when this session hasn't recently; the
   // server then answers the provider's address to go to.
@@ -143,7 +147,9 @@ export function SignInMethodsSection({
       window.location.assign(result.url);
     } catch (error) {
       console.error("Linking failed:", error);
-      toast.error(`${PROVIDER_LABELS[provider]} can't be linked right now.`);
+      toast.error(
+        t("valueCantBeLinkedRight", { value: PROVIDER_LABELS[provider] }),
+      );
       setLinking(null);
     }
   };
@@ -161,7 +167,7 @@ export function SignInMethodsSection({
         toast.error(result.error);
         return;
       }
-      toast.success(`${unlinking.label} is no longer linked`);
+      toast.success(t("labelIsNoLongerLinked", { label: unlinking.label }));
       setUnlinking(null);
       router.refresh();
     } finally {
@@ -170,13 +176,15 @@ export function SignInMethodsSection({
   };
 
   const lastUsedBadge = (method: string) =>
-    lastUsed === method ? <Badge variant="outline">Last used</Badge> : null;
+    lastUsed === method ? (
+      <Badge variant="outline">{t("lastUsed")}</Badge>
+    ) : null;
 
   return (
     <SettingsSection
-      description="The ways you can get into your account. Link Google or GitHub to sign in with one click."
+      description={t("theWaysYouCanGet")}
       id="sign-in"
-      title="Sign-in methods"
+      title={t("signInMethods")}
     >
       <ul className="divide-y">
         {methods.map((method) =>
@@ -184,7 +192,7 @@ export function SignInMethodsSection({
             <MethodRow
               badges={
                 <>
-                  <Badge variant="secondary">Always on</Badge>
+                  <Badge variant="secondary">{t("alwaysOn")}</Badge>
                   {lastUsedBadge("email-otp")}
                 </>
               }
@@ -203,7 +211,7 @@ export function SignInMethodsSection({
                   title={method.unlinkBlocked ?? undefined}
                   variant="outline"
                 >
-                  Unlink
+                  {t("unlink")}
                 </Button>
               }
               badges={lastUsedBadge(method.kind)}
@@ -228,7 +236,7 @@ export function SignInMethodsSection({
                 variant="outline"
               >
                 {linking === provider && <Spinner className="animate-spin" />}
-                Link
+                {t("link")}
               </Button>
             }
             detail={`Not linked. Use the ${PROVIDER_LABELS[provider]} account with ${email}.`}
@@ -247,21 +255,27 @@ export function SignInMethodsSection({
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Unlink {unlinking?.label}?</AlertDialogTitle>
+            <AlertDialogTitle>
+              {t("unlinkLabel", { label: unlinking?.label ?? "" })}
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              You won't be able to sign in with {unlinking?.label} until you
-              link it again. {EMAIL_CODES_REMAIN}
+              {t("youWontBeAbleTo", {
+                label: unlinking?.label ?? "",
+                EMAIL_CODES_REMAIN,
+              })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={removing}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={removing}>
+              {t("cancel")}
+            </AlertDialogCancel>
             <Button
               disabled={removing}
               onClick={confirmUnlink}
               variant="outline"
             >
               {removing && <Spinner className="animate-spin" />}
-              Unlink
+              {t("unlink")}
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>

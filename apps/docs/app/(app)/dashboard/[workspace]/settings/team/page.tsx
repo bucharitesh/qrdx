@@ -36,6 +36,7 @@ import { loadTwoFactorRequirement } from "@/app/(app)/dashboard/team/_lib/two-fa
 import { SettingsHeader } from "@/app/(app)/settings/components/settings-header";
 import { ConfirmIdentityProvider } from "@/components/confirm-identity/provider";
 import { isFeatureAvailable } from "@/lib/feature-availability";
+import { getAppTranslations } from "@/lib/i18n/app-locale";
 import {
   can,
   forbiddenMessage,
@@ -91,6 +92,7 @@ async function loadSsoRejoinDomains(organizationId: string) {
 
 /** The workspace's members, invitations and seats. */
 export default async function TeamPage() {
+  const t = await getAppTranslations("app.dashboard.settings.team.page");
   const scope = await requireDashboardScope();
   const canManage = can(scope.role, "members.manage");
   const [user, team, members, invitations, teamPlan, joinLink, ssoDomains] =
@@ -121,16 +123,16 @@ export default async function TeamPage() {
     <ConfirmIdentityProvider>
       <div className="space-y-6">
         <SettingsHeader
-          description={`Who can work in ${team.name}, and what they can do.`}
-          title="Team"
+          description={t("whoCanWorkInName", { name: team.name })}
+          title={t("team")}
         />
 
         {received.length > 0 && (
           <Card>
             <CardHeader>
-              <CardTitle>Invitations for you</CardTitle>
+              <CardTitle>{t("invitationsForYou")}</CardTitle>
               <CardDescription>
-                Pending invitations sent to {user.email}.
+                {t("pendingInvitationsSentToEmail", { email: user.email })}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-2">
@@ -142,15 +144,17 @@ export default async function TeamPage() {
                   <div>
                     <div className="font-medium">{invite.teamName}</div>
                     <div className="text-muted-foreground text-xs">
-                      {TEAM_ROLE_LABELS[invite.role]} · expires{" "}
-                      {formatUtcDateTime(invite.expiresAt)}
+                      {t("valueExpiresExpiresat", {
+                        value: TEAM_ROLE_LABELS[invite.role],
+                        expiresAt: formatUtcDateTime(invite.expiresAt),
+                      })}
                     </div>
                   </div>
                   <Link
                     className="text-sm font-medium text-foreground underline decoration-foreground/30 underline-offset-4 transition-colors hover:decoration-foreground"
                     href={invitePath(invite.id)}
                   >
-                    View invitation
+                    {t("viewInvitation")}
                   </Link>
                 </div>
               ))}
@@ -161,7 +165,7 @@ export default async function TeamPage() {
         <Card>
           <CardHeader>
             <div className="flex flex-wrap items-center gap-2">
-              <CardTitle>Members</CardTitle>
+              <CardTitle>{t("members")}</CardTitle>
               <Badge
                 title={WORKSPACE_ROLE_DESCRIPTIONS[scope.role]}
                 variant="outline"
@@ -173,9 +177,10 @@ export default async function TeamPage() {
               </Badge>
             </div>
             <CardDescription>
-              {members.length} member{members.length === 1 ? "" : "s"}
-              {Number.isFinite(seats) ? ` of ${seats}` : ""}. Seats follow the
-              plan of the workspace's owners and billing members.
+              {members.length} {t("member")}
+              {members.length === 1 ? "" : "s"}
+              {Number.isFinite(seats) ? t("ofSeats", { seats }) : ""}
+              {t("seatsFollowThePlanOf")}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -220,16 +225,17 @@ export default async function TeamPage() {
           (seats > 1 ? (
             <Card>
               <CardHeader>
-                <CardTitle>Invite people</CardTitle>
+                <CardTitle>{t("invitePeople")}</CardTitle>
                 <CardDescription>
-                  Invite links expire after 48 hours and only work for the
-                  invited email address.
+                  {t("inviteLinksExpireAfter48")}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <InviteForm currentRole={scope.role} />
                 <div className="space-y-2">
-                  <h3 className="text-sm font-medium">Pending invitations</h3>
+                  <h3 className="text-sm font-medium">
+                    {t("pendingInvitations")}
+                  </h3>
                   <PendingInvitations
                     invitations={invitations.map((i) => ({
                       id: i.id,
@@ -245,11 +251,14 @@ export default async function TeamPage() {
           ) : (
             <Card className="flex-col items-start gap-3 px-6 py-6 sm:flex-row sm:items-center sm:justify-between">
               <div className="space-y-0.5">
-                <p className="font-medium">Invite your colleagues</p>
+                <p className="font-medium">{t("inviteYourColleagues")}</p>
                 <p className="text-muted-foreground text-sm text-pretty">
                   {ownWorkspace || can(scope.role, "billing.manage")
-                    ? `Members are part of ${PLAN_NAMES.pro} and ${PLAN_NAMES.business}.`
-                    : "Ask a workspace owner or billing member to upgrade to add members."}
+                    ? t("membersArePartOfPro", {
+                        pro: PLAN_NAMES.pro,
+                        business: PLAN_NAMES.business,
+                      })
+                    : t("askAWorkspaceOwnerOr")}
                 </p>
               </div>
               {can(scope.role, "billing.manage") && <UpgradeButton size="sm" />}
@@ -259,18 +268,15 @@ export default async function TeamPage() {
         {canManage && seats > 1 && (
           <Card>
             <CardHeader>
-              <CardTitle>Join link</CardTitle>
+              <CardTitle>{t("joinLink")}</CardTitle>
               <CardDescription className="text-pretty">
-                One link for the whole team: anyone signed in who opens it joins
-                this workspace, while it has free seats. Reset it or turn it off
-                any time.
+                {t("oneLinkForTheWhole")}
               </CardDescription>
             </CardHeader>
             <CardContent>
               {joinLink === "unavailable" ? (
                 <p className="text-muted-foreground text-sm">
-                  Join links aren't set up on this server yet. Invite people by
-                  email for now.
+                  {t("joinLinksArentSetUp")}
                 </p>
               ) : (
                 <JoinLinkCard currentRole={scope.role} link={joinLink} />

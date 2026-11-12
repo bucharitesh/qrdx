@@ -34,6 +34,7 @@ import {
   Diamonds as Gem,
   Export as Upload,
 } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import Papa from "papaparse";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDropzone } from "react-dropzone";
@@ -159,6 +160,7 @@ export function ImportWizard({
   /** Where this person's import in this workspace is kept (for resume) */
   storeKey: string;
 }) {
+  const t = useTranslations("app.dashboard.codes.import.importWizard");
   const openGetProDialog = useGetProDialogStore(
     (state) => state.openGetProDialog,
   );
@@ -385,7 +387,7 @@ export function ImportWizard({
     return (
       <p className="text-muted-foreground flex items-center gap-2 text-sm">
         <Loader2 className="size-4 animate-spin" />
-        Loading...
+        {t("loading")}
       </p>
     );
   }
@@ -420,17 +422,20 @@ export function ImportWizard({
           <Gem />
           <AlertTitle>
             {bulkPlans[0]
-              ? `Bulk import is a ${PLAN_NAMES[bulkPlans[0]]} feature`
-              : "Bulk import isn't on your plan"}
+              ? t("bulkImportIsAValue", { value: PLAN_NAMES[bulkPlans[0]] })
+              : t("bulkImportIsntOnYour")}
           </AlertTitle>
           <AlertDescription>
             <p>
-              On the {PLAN_NAMES[plan]} plan you can import one code at a time.
+              {t("onThe")} {PLAN_NAMES[plan]} {t("planYouCanImportOne")}
               {bulkPlans.length > 0 &&
-                ` ${formatPlanList(bulkPlans)} import up to ${formatCount(MAX_IMPORT_ROWS)} codes per file.`}
+                t("bulkplansImportUpToMax", {
+                  bulkPlans: formatPlanList(bulkPlans),
+                  MAX_IMPORT_ROWS: formatCount(MAX_IMPORT_ROWS),
+                })}
             </p>
             <Button className="mt-2" onClick={openGetProDialog} size="sm">
-              Upgrade
+              {t("upgrade")}
             </Button>
           </AlertDescription>
         </Alert>
@@ -438,10 +443,10 @@ export function ImportWizard({
 
       <section className="space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <h2 className="text-base font-semibold">1. Choose a CSV file</h2>
+          <h2 className="text-base font-semibold">{t("n1ChooseACsvFile")}</h2>
           <Button onClick={downloadSample} size="sm" variant="ghost">
             <Download />
-            Sample CSV
+            {t("sampleCsv")}
           </Button>
         </div>
         {file ? (
@@ -455,7 +460,7 @@ export function ImportWizard({
               </p>
             </div>
             <Button
-              aria-label="Remove file"
+              aria-label={t("removeFile")}
               onClick={reset}
               size="icon-sm"
               variant="ghost"
@@ -473,16 +478,13 @@ export function ImportWizard({
           >
             <input {...getInputProps()} />
             <Upload className="text-muted-foreground size-6" />
-            <p className="text-sm font-medium">
-              Drop a CSV file here, or click to choose one
-            </p>
+            <p className="text-sm font-medium">{t("dropACsvFileHere")}</p>
             <p className="text-muted-foreground max-w-md text-xs">
-              First row: column names. Columns: destination (required), title,
-              folder (use "Parent / Child" for subfolders), tags (separated by ;
-              or |) and slug (optional custom back-half
-              {slugPlans.length > 0 && ` on ${formatPlanList(slugPlans)}`}: 3 to
-              64 letters, digits, - or _). Up to {formatCount(MAX_IMPORT_ROWS)}{" "}
-              rows and {MAX_IMPORT_FILE_BYTES / 1024 / 1024} MB.
+              {t("firstRowColumnNamesColumns")}
+              {slugPlans.length > 0 &&
+                t("onSlugplans", { slugPlans: formatPlanList(slugPlans) })}
+              {t("n3To64LettersDigits")} {formatCount(MAX_IMPORT_ROWS)}{" "}
+              {t("rowsAnd")} {MAX_IMPORT_FILE_BYTES / 1024 / 1024} MB.
             </p>
           </div>
         )}
@@ -493,15 +495,17 @@ export function ImportWizard({
         )}
         {file?.truncated && (
           <p className="text-muted-foreground text-sm">
-            This file has more than {formatCount(MAX_IMPORT_ROWS)} rows. Only
-            the first {formatCount(MAX_IMPORT_ROWS)} are shown and imported.
+            {t("thisFileHasMoreThan", {
+              MAX_IMPORT_ROWS: formatCount(MAX_IMPORT_ROWS),
+              MAX_IMPORT_ROWS2: formatCount(MAX_IMPORT_ROWS),
+            })}
           </p>
         )}
       </section>
 
       {file && mapping && (
         <section className="space-y-3">
-          <h2 className="text-base font-semibold">2. Match the columns</h2>
+          <h2 className="text-base font-semibold">{t("n2MatchTheColumns")}</h2>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
             {IMPORT_FIELDS.map((field: ImportField) => (
               <div className="space-y-1.5" key={field}>
@@ -526,7 +530,9 @@ export function ImportWizard({
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value={NOT_MAPPED}>Not in this file</SelectItem>
+                    <SelectItem value={NOT_MAPPED}>
+                      {t("notInThisFile")}
+                    </SelectItem>
                     {file.columns.map((column, index) => (
                       <SelectItem
                         key={`${column}-${index}`}
@@ -550,7 +556,7 @@ export function ImportWizard({
           </div>
           {!destinationMapped && (
             <p className="text-destructive text-sm">
-              Choose the column with the destination URLs.
+              {t("chooseTheColumnWithThe")}
             </p>
           )}
         </section>
@@ -558,7 +564,7 @@ export function ImportWizard({
 
       {file && destinationMapped && (
         <section className="space-y-3">
-          <h2 className="text-base font-semibold">3. Organize</h2>
+          <h2 className="text-base font-semibold">{t("n3Organize")}</h2>
           <BatchOrganize onChange={setTargets} value={targets} />
         </section>
       )}
@@ -567,7 +573,7 @@ export function ImportWizard({
         <section className="space-y-3">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <h2 className="flex items-center gap-2 text-base font-semibold">
-              4. Review
+              {t("n4Review")}
               {checking && (
                 <Loader2 className="text-muted-foreground size-4 animate-spin" />
               )}
@@ -579,11 +585,13 @@ export function ImportWizard({
               {errorsByLine.size > 0 && (
                 <>
                   <Badge variant="destructive">
-                    {plural(errorsByLine.size, "row")} with problems
+                    {t("valueWithProblems", {
+                      value: plural(errorsByLine.size, "row"),
+                    })}
                   </Badge>
                   <Button onClick={downloadErrors} size="sm" variant="ghost">
                     <Download />
-                    Problems CSV
+                    {t("problemsCsv")}
                   </Button>
                 </>
               )}
@@ -597,9 +605,11 @@ export function ImportWizard({
             (preview.newFolders.length > 0 || preview.newTags.length > 0) && (
               <p className="text-muted-foreground text-sm">
                 {preview.newFolders.length > 0 &&
-                  `New folders: ${preview.newFolders.join(", ")}. `}
+                  t("newFoldersValue", {
+                    value: preview.newFolders.join(", "),
+                  })}
                 {preview.newTags.length > 0 &&
-                  `New tags: ${preview.newTags.join(", ")}.`}
+                  t("newTagsValue", { value: preview.newTags.join(", ") })}
               </p>
             )}
 
@@ -607,13 +617,13 @@ export function ImportWizard({
             <Table>
               <TableHeader className="bg-background sticky top-0">
                 <TableRow>
-                  <TableHead className="w-14">Line</TableHead>
-                  <TableHead>Destination</TableHead>
-                  <TableHead>Title</TableHead>
-                  <TableHead>Folder</TableHead>
-                  <TableHead>Tags</TableHead>
-                  <TableHead>Slug</TableHead>
-                  <TableHead>Check</TableHead>
+                  <TableHead className="w-14">{t("line")}</TableHead>
+                  <TableHead>{t("destination")}</TableHead>
+                  <TableHead>{t("title")}</TableHead>
+                  <TableHead>{t("folder")}</TableHead>
+                  <TableHead>{t("tags")}</TableHead>
+                  <TableHead>{t("slug")}</TableHead>
+                  <TableHead>{t("check")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -640,7 +650,7 @@ export function ImportWizard({
                         {row.tags || "—"}
                       </TableCell>
                       <TableCell className="font-mono text-xs">
-                        {row.slug || "auto"}
+                        {row.slug || t("auto")}
                       </TableCell>
                       <TableCell className="min-w-[180px] text-xs">
                         {errors ? (
@@ -659,19 +669,21 @@ export function ImportWizard({
           </div>
           {rows.length > PREVIEW_ROWS && (
             <p className="text-muted-foreground text-xs">
-              Showing the first {PREVIEW_ROWS} of {formatCount(rows.length)}{" "}
-              rows. Every row is checked.
+              {t("showingTheFirstPreviewRows", {
+                PREVIEW_ROWS,
+                length: formatCount(rows.length),
+              })}
             </p>
           )}
 
           {blocked && (
             <Alert>
               <Gem />
-              <AlertTitle>Upgrade to import these codes</AlertTitle>
+              <AlertTitle>{t("upgradeToImportTheseCodes")}</AlertTitle>
               <AlertDescription>
                 <p>{blocked}</p>
                 <Button className="mt-2" onClick={openGetProDialog} size="sm">
-                  See plans
+                  {t("seePlans")}
                 </Button>
               </AlertDescription>
             </Alert>
@@ -687,14 +699,16 @@ export function ImportWizard({
               }
               onClick={runImport}
             >
-              Import {plural(validRows.length, "code")}
+              {t("importValue", { value: plural(validRows.length, "code") })}
             </Button>
             <span className="text-muted-foreground text-sm">
               {errorsByLine.size > 0 && validRows.length > 0
-                ? "Rows with problems are skipped. "
+                ? t("rowsWithProblemsAreSkipped")
                 : ""}
               {validRows.length > IMPORT_CHUNK_SIZE &&
-                `Sent ${formatCount(IMPORT_CHUNK_SIZE)} at a time; you can pause and resume.`}
+                t("sentImportChunkSizeAt", {
+                  IMPORT_CHUNK_SIZE: formatCount(IMPORT_CHUNK_SIZE),
+                })}
             </span>
           </div>
         </section>

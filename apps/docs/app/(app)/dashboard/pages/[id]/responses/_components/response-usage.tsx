@@ -3,6 +3,7 @@
 import { Button } from "@repo/design-system/components/ui/button";
 import { Progress } from "@repo/design-system/components/ui/progress";
 import { Diamonds as Gem } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { PLAN_NAMES, type Plan } from "@/lib/pricing";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
 
@@ -26,6 +27,7 @@ export function ResponseUsage({
   /** ISO date the count starts over */
   resetsAt: string;
 }) {
+  const t = useTranslations("app.dashboard.pages.responses.responseUsage");
   const openGetProDialog = useGetProDialogStore(
     (state) => state.openGetProDialog,
   );
@@ -34,8 +36,10 @@ export function ResponseUsage({
   if (limit === null) {
     return (
       <p className="text-muted-foreground text-sm">
-        {used.toLocaleString("en-US")} responses this month across your pages ·{" "}
-        {PLAN_NAMES[plan]} plan
+        {t("valueResponsesThisMonthAcross", {
+          value: used.toLocaleString("en-US"),
+          value2: PLAN_NAMES[plan],
+        })}
       </p>
     );
   }
@@ -46,25 +50,30 @@ export function ResponseUsage({
       <div className="flex-1 space-y-2">
         <div className="flex items-center justify-between gap-2 text-sm">
           <span className="font-medium">
-            {used.toLocaleString("en-US")} / {limit.toLocaleString("en-US")}{" "}
-            responses this month ({PLAN_NAMES[plan]})
+            {t("valueValue2ResponsesThisMonth", {
+              value: used.toLocaleString("en-US"),
+              value2: limit.toLocaleString("en-US"),
+              value3: PLAN_NAMES[plan],
+            })}
           </span>
-          <span className="text-muted-foreground text-xs">Resets {resets}</span>
+          <span className="text-muted-foreground text-xs">
+            {t("resetsResets", { resets })}
+          </span>
         </div>
         <Progress
-          aria-label="Form responses used this month"
+          aria-label={t("formResponsesUsedThisMonth")}
           value={Math.min(100, (used / Math.max(1, limit)) * 100)}
         />
         <p className="text-muted-foreground text-xs">
           {full
-            ? `Your forms show "not accepting responses" until ${resets}. Responses you already have are kept.`
-            : "Counted across all pages in this workspace. Responses are never deleted when you reach the limit."}
+            ? t("yourFormsShowNotAccepting", { resets })
+            : t("countedAcrossAllPagesIn")}
         </p>
       </div>
       {plan !== "business" && (
         <Button onClick={openGetProDialog} size="sm" variant="outline">
           <Gem />
-          {plan === "free" ? "Get 1,000 a month" : "Get 10,000 a month"}
+          {plan === "free" ? t("get1000AMonth") : t("get10000AMonth")}
         </Button>
       )}
     </div>

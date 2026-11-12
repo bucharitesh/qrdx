@@ -23,6 +23,7 @@ import {
   Lock,
 } from "iconsax-reactjs";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import {
   type FormEvent,
   useEffect,
@@ -183,9 +184,10 @@ export function TemplateGallery({
   selected: string | null;
   onSelect: (variantId: string) => void;
 }) {
+  const t = useTranslations("app.dashboard.codes.newCodeDialog");
   return (
     <fieldset>
-      <legend className="sr-only">Template</legend>
+      <legend className="sr-only">{t("template")}</legend>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
         {previews.map(({ variant: item, content }) => {
           const active = item.id === selected;
@@ -232,14 +234,14 @@ export function TemplateGallery({
               </button>
               {/* Above the card button, so opening it never selects the card. */}
               <a
-                aria-label={`Preview the ${item.name} template in a new tab`}
+                aria-label={t("previewTheNameTemplateIn", { name: item.name })}
                 className="bg-background/90 text-foreground hover:bg-background focus-visible:ring-ring/50 absolute top-3 right-3 z-10 inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium shadow-xs backdrop-blur-sm transition-colors outline-none focus-visible:ring-[3px]"
                 href={demoPath(type, item.id)}
                 rel="noopener"
                 target="_blank"
               >
                 <ExportSquare aria-hidden className="size-3" />
-                Preview
+                {t("preview")}
               </a>
             </div>
           );
@@ -275,6 +277,7 @@ export function NewCodeDialog({
    */
   style?: QRStyle | null;
 }) {
+  const t = useTranslations("app.dashboard.codes.newCodeDialog");
   const inWorkspace = useWorkspaceHref();
   // Pages built on uploads are hidden where file storage is off.
   const fileStorage = useAvailability().has("fileStorage");
@@ -345,8 +348,8 @@ export function NewCodeDialog({
         return;
       }
       if (fitted?.trimmed) {
-        toast.warning("Your logo was too large to save with the page's code.", {
-          description: "Upload a smaller one in the code's design.",
+        toast.warning(t("yourLogoWasTooLarge"), {
+          description: t("uploadASmallerOneIn"),
         });
       }
       track("template_used", { template_type: template.type });
@@ -368,15 +371,15 @@ export function NewCodeDialog({
         <ResponsiveDialogHeader>
           <ResponsiveDialogTitle>
             {template
-              ? `New ${template.label.toLowerCase()} page`
+              ? t("newLabelPage", { label: template.label.toLowerCase() })
               : pagesOnly
-                ? "New page"
-                : "New dynamic QR code"}
+                ? t("newPage")
+                : t("newDynamicQrCode")}
           </ResponsiveDialogTitle>
           <ResponsiveDialogDescription>
             {template
-              ? "Pick a starting point. You can change every block, color and text afterwards."
-              : "What should people see when they scan it? You can edit it after printing."}
+              ? t("pickAStartingPointYou")
+              : t("whatShouldPeopleSeeWhen")}
           </ResponsiveDialogDescription>
         </ResponsiveDialogHeader>
 
@@ -385,12 +388,12 @@ export function NewCodeDialog({
             {!pagesOnly && (
               <div className="space-y-2">
                 <p className="text-muted-foreground text-xs font-medium uppercase">
-                  Link
+                  {t("link")}
                 </p>
                 <TypeCard
-                  description="Send scans to any web address, and change it anytime"
+                  description={t("sendScansToAnyWeb")}
                   icon={Link2}
-                  label="Website link"
+                  label={t("websiteLink")}
                   onClick={() => {
                     onOpenChange(false);
                     openCodeBuilder({ mode: "create" });
@@ -401,12 +404,15 @@ export function NewCodeDialog({
             <div className="space-y-2">
               <div className="flex items-center justify-between gap-2">
                 <p className="text-muted-foreground text-xs font-medium uppercase">
-                  Hosted page
+                  {t("hostedPage")}
                 </p>
                 {usage && usage.limit !== null && (
                   <span className="text-muted-foreground text-xs">
-                    {usage.used} / {usage.limit} pages ({PLAN_NAMES[usage.plan]}
-                    )
+                    {t("usedLimitPagesValue", {
+                      used: usage.used,
+                      limit: usage.limit,
+                      value: PLAN_NAMES[usage.plan],
+                    })}
                   </span>
                 )}
               </div>
@@ -415,15 +421,16 @@ export function NewCodeDialog({
                   fallback={
                     <div className="bg-muted flex flex-col gap-2 rounded-md p-3 text-sm sm:flex-row sm:items-center sm:justify-between">
                       <span>
-                        Your plan includes {usage?.limit} hosted pages. Existing
-                        pages keep working.
+                        {t("yourPlanIncludesLimitHosted", {
+                          limit: usage?.limit ?? 0,
+                        })}
                       </span>
                       <Button
                         onClick={() => openUpgradeDialog("pro")}
                         size="sm"
                       >
                         <Gem />
-                        Upgrade for unlimited
+                        {t("upgradeForUnlimited")}
                       </Button>
                     </div>
                   }
@@ -468,16 +475,21 @@ export function NewCodeDialog({
             <form className="space-y-4" id="new-page-form" onSubmit={submit}>
               <div className="space-y-1.5">
                 <Label htmlFor="new-page-title">
-                  Name{" "}
-                  <span className="text-muted-foreground font-normal">
-                    (optional, only you see it)
-                  </span>
+                  {t.rich("nameOptionalOnlyYouSee", {
+                    span: (chunks) => (
+                      <span className="text-muted-foreground font-normal">
+                        {chunks}
+                      </span>
+                    ),
+                  })}
                 </Label>
                 <Input
                   id="new-page-title"
                   maxLength={100}
                   onChange={(event) => setTitle(event.target.value)}
-                  placeholder={`${template.label}, spring campaign`}
+                  placeholder={t("labelSpringCampaign", {
+                    label: template.label,
+                  })}
                   value={title}
                 />
               </div>
@@ -498,7 +510,7 @@ export function NewCodeDialog({
                           size="sm"
                           type="button"
                         >
-                          Upgrade
+                          {t("upgrade")}
                         </Button>
                       )}
                     </div>
@@ -520,11 +532,11 @@ export function NewCodeDialog({
               variant="outline"
             >
               <ArrowLeft />
-              Back
+              {t("back")}
             </Button>
             <Button disabled={isPending} form="new-page-form" type="submit">
               {isPending && <Loader2 className="animate-spin" />}
-              {isPending ? "Creating..." : "Create page"}
+              {isPending ? t("creating") : t("createPage")}
             </Button>
           </ResponsiveDialogFooter>
         )}

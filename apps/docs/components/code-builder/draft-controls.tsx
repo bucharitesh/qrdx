@@ -1,4 +1,6 @@
 "use client";
+import { useTranslations } from "next-intl";
+import type { Translator } from "@/lib/i18n/translator";
 
 // A quiet pill says the draft is saved; with older drafts it becomes a menu
 // to restore one.
@@ -18,7 +20,10 @@ import type { CodeDraft } from "./drafts";
 
 export type DraftState = "idle" | "saving" | "saved" | "failed";
 
-function draftLabel(draft: CodeDraft): string {
+function draftLabel(
+  draft: CodeDraft,
+  t: Translator<"codeBuilder.draftControls">,
+): string {
   const { title, destination, slug } = draft.fields;
   return (
     title.trim() ||
@@ -27,15 +32,19 @@ function draftLabel(draft: CodeDraft): string {
       .replace(/^https?:\/\//, "")
       .replace(/\/$/, "") ||
     slug.trim() ||
-    "Untitled code"
+    t("untitledCode")
   );
 }
 
 const relative = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
 
-function ago(timestamp: number, now: number): string {
+function ago(
+  timestamp: number,
+  now: number,
+  t: Translator<"codeBuilder.draftControls">,
+): string {
   const minutes = Math.round((timestamp - now) / 60_000);
-  if (minutes > -1) return "just now";
+  if (minutes > -1) return t("justNow");
   if (minutes > -60) return relative.format(minutes, "minute");
   const hours = Math.round(minutes / 60);
   if (hours > -24) return relative.format(hours, "hour");
@@ -54,18 +63,19 @@ export function DraftControls({
   onRestore: (draft: CodeDraft) => void;
   onDelete: (draft: CodeDraft) => void;
 }) {
+  const t = useTranslations("codeBuilder.draftControls");
   // Phones keep the icon only (the title needs the room); the words stay
   // for screen readers.
   const status =
     state === "saving" ? (
       <>
         <Spinner className="size-3.5" />
-        <span className="max-sm:sr-only">Saving…</span>
+        <span className="max-sm:sr-only">{t("saving")}</span>
       </>
     ) : state === "saved" ? (
       <>
         <Tick className="size-3.5" />
-        <span className="max-sm:sr-only">Draft saved</span>
+        <span className="max-sm:sr-only">{t("draftSaved")}</span>
       </>
     ) : state === "failed" ? (
       "Draft not saved"
@@ -81,8 +91,8 @@ export function DraftControls({
         )}
         title={
           state === "failed"
-            ? "This browser didn't let QRdx store the draft."
-            : "Kept in this browser for 7 days."
+            ? t("thisBrowserDidntLetQrdx")
+            : t("keptInThisBrowserFor")
         }
       >
         {status}
@@ -101,14 +111,14 @@ export function DraftControls({
           variant="outline"
         >
           <span aria-live="polite" className="inline-flex items-center gap-1.5">
-            {status ?? "Drafts"}
+            {status ?? t("drafts")}
           </span>
           <ArrowDown2 aria-hidden className="size-3" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-72">
         <DropdownMenuLabel className="text-muted-foreground text-xs font-normal">
-          Restore a draft
+          {t("restoreADraft")}
         </DropdownMenuLabel>
         {drafts.map((draft) => (
           <DropdownMenuItem
@@ -117,12 +127,16 @@ export function DraftControls({
             onSelect={() => onRestore(draft)}
           >
             <ArrowRotateLeft aria-hidden className="size-4 shrink-0" />
-            <span className="min-w-0 flex-1 truncate">{draftLabel(draft)}</span>
+            <span className="min-w-0 flex-1 truncate">
+              {draftLabel(draft, t)}
+            </span>
             <span className="text-muted-foreground shrink-0 text-xs">
-              {ago(draft.savedAt, now)}
+              {ago(draft.savedAt, now, t)}
             </span>
             <button
-              aria-label={`Delete the draft ${draftLabel(draft)}`}
+              aria-label={t("deleteTheDraftValue", {
+                value: draftLabel(draft, t),
+              })}
               className="text-muted-foreground hover:text-foreground -mr-1 rounded p-1"
               onClick={(event) => {
                 event.preventDefault();

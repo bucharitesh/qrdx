@@ -12,6 +12,7 @@ import { useIsMobile } from "@repo/design-system/hooks/use-mobile";
 import { cn } from "@repo/design-system/lib/utils";
 import { ArrowRight } from "iconsax-reactjs";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import {
   createContext,
   type ReactNode,
@@ -150,6 +151,7 @@ export function WhatsNewList({
   markNew: boolean;
   onNavigate?: () => void;
 }) {
+  const t = useTranslations("app.shell.whatsNew");
   return (
     <ol className="divide-y">
       {items.map((item) => {
@@ -168,7 +170,7 @@ export function WhatsNewList({
                       aria-hidden
                       className="bg-primary size-1.5 shrink-0 rounded-full"
                     />
-                    <span className="text-primary font-medium">New</span>
+                    <span className="text-primary font-medium">{t("new")}</span>
                     <span aria-hidden>·</span>
                   </>
                 )}
@@ -249,11 +251,12 @@ export function WhatsNewPanel({
   markNew: boolean;
   onNavigate?: () => void;
 }) {
+  const t = useTranslations("app.shell.whatsNew");
   return (
     <div className="flex h-full min-h-0 flex-col">
       <SheetHeader className="border-b px-5 py-4 pr-12">
-        <SheetTitle>What's new</SheetTitle>
-        <SheetDescription>New features and fixes in QRdx.</SheetDescription>
+        <SheetTitle>{t("whatsNew")}</SheetTitle>
+        <SheetDescription>{t("newFeaturesAndFixesIn")}</SheetDescription>
       </SheetHeader>
       <div className="min-h-0 flex-1 overflow-y-auto [scrollbar-width:thin]">
         <WhatsNewList
@@ -266,7 +269,7 @@ export function WhatsNewPanel({
       <div className="border-t p-4">
         <Button asChild className="w-full" variant="outline">
           <Link href="/changelogs" onClick={onNavigate}>
-            See all updates
+            {t("seeAllUpdates")}
             <ArrowRight aria-hidden />
           </Link>
         </Button>

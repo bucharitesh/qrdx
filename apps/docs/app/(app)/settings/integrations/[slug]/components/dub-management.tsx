@@ -18,9 +18,11 @@ import {
   Refresh2,
   Trash,
 } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import * as React from "react";
 import { toast } from "sonner";
 import { apiFetch } from "@/lib/api-fetch";
+import type { Translator } from "@/lib/i18n/translator";
 import { soundEvent } from "@/lib/sound/emit";
 
 interface DubLink {
@@ -55,7 +57,10 @@ function getShortUrl(link: DubLink) {
   return `https://${link.domain}/${link.key}`;
 }
 
-function getAnalyticsLabel(item: Record<string, string | number | null>) {
+function getAnalyticsLabel(
+  item: Record<string, string | number | null>,
+  t: Translator<"app.settings.integrations.dubManagement">,
+) {
   return String(
     item.start ||
       item.country ||
@@ -63,7 +68,7 @@ function getAnalyticsLabel(item: Record<string, string | number | null>) {
       item.browser ||
       item.os ||
       item.name ||
-      "Unknown",
+      t("unknown"),
   );
 }
 
@@ -85,6 +90,7 @@ interface DubManagementProps {
 }
 
 export function DubManagement({ metadata }: DubManagementProps) {
+  const t = useTranslations("app.settings.integrations.dubManagement");
   const workspaceName = getWorkspaceName(metadata);
   const [links, setLinks] = React.useState<DubLink[]>([]);
   const [search, setSearch] = React.useState("");
@@ -150,13 +156,13 @@ export function DubManagement({ metadata }: DubManagementProps) {
         toast.error(
           err instanceof Error
             ? err.message
-            : "Dub analytics are unavailable for this link",
+            : t("dubAnalyticsAreUnavailableFor"),
         );
       } finally {
         setIsAnalyticsLoading(false);
       }
     },
-    [groupBy],
+    [groupBy, t],
   );
 
   React.useEffect(() => {
@@ -165,7 +171,7 @@ export function DubManagement({ metadata }: DubManagementProps) {
 
   const handleCopy = async (link: DubLink) => {
     await navigator.clipboard.writeText(getShortUrl(link));
-    toast.success("Short link copied");
+    toast.success(t("shortLinkCopied"));
     soundEvent("copy");
   };
 
@@ -180,11 +186,11 @@ export function DubManagement({ metadata }: DubManagementProps) {
     );
 
     if (!response.ok) {
-      toast.error("Failed to archive Dub link");
+      toast.error(t("failedToArchiveDubLink"));
       return;
     }
 
-    toast.success("Dub link archived");
+    toast.success(t("dubLinkArchived"));
     await fetchLinks();
   };
 
@@ -198,11 +204,11 @@ export function DubManagement({ metadata }: DubManagementProps) {
     });
 
     if (!response.ok) {
-      toast.error("Failed to update Dub link");
+      toast.error(t("failedToUpdateDubLink"));
       return;
     }
 
-    toast.success("Dub link updated");
+    toast.success(t("dubLinkUpdated"));
     setEditingLinkId(null);
     setEditUrl("");
     await fetchLinks();
@@ -219,34 +225,34 @@ export function DubManagement({ metadata }: DubManagementProps) {
     <div className="rounded-xl border bg-card p-6 space-y-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="space-y-1">
-          <h2 className="text-base font-semibold">Dub links</h2>
+          <h2 className="text-base font-semibold">{t("dubLinks")}</h2>
           <p className="text-muted-foreground text-sm">
             {workspaceName
-              ? `Workspace: ${workspaceName}`
-              : "Search, manage, and inspect analytics for connected Dub links."}
+              ? t("workspaceWorkspacename", { workspaceName })
+              : t("searchManageAndInspectAnalytics")}
           </p>
         </div>
         <Button type="button" variant="outline" size="sm" onClick={fetchLinks}>
           <Refresh2 className="mr-1.5 size-3.5" />
-          Refresh
+          {t("refresh")}
         </Button>
       </div>
 
       <div className="flex gap-2">
         <Input
-          placeholder="Search Dub links..."
+          placeholder={t("searchDubLinks")}
           value={search}
           onChange={(event) => setSearch(event.target.value)}
         />
         <Button type="button" variant="outline" onClick={fetchLinks}>
-          Search
+          {t("search")}
         </Button>
       </div>
 
       {error && (
         <Alert variant="destructive">
           <InfoCircle />
-          <AlertTitle>Dub unavailable</AlertTitle>
+          <AlertTitle>{t("dubUnavailable")}</AlertTitle>
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
@@ -259,9 +265,9 @@ export function DubManagement({ metadata }: DubManagementProps) {
           </>
         ) : links.length === 0 ? (
           <div className="rounded-lg border border-dashed p-6 text-center">
-            <p className="text-sm font-medium">No Dub links found</p>
+            <p className="text-sm font-medium">{t("noDubLinksFound")}</p>
             <p className="text-muted-foreground text-xs">
-              Create a Dub-backed QR from the editor to see it here.
+              {t("createADubBackedQr")}
             </p>
           </div>
         ) : (
@@ -276,7 +282,9 @@ export function DubManagement({ metadata }: DubManagementProps) {
                     {link.domain}/{link.key}
                   </span>
                   {link.clicks !== undefined && (
-                    <Badge variant="secondary">{link.clicks} clicks</Badge>
+                    <Badge variant="secondary">
+                      {t("clicksClicks", { clicks: link.clicks })}
+                    </Badge>
                   )}
                 </div>
                 {editingLinkId === link.id ? (
@@ -300,7 +308,7 @@ export function DubManagement({ metadata }: DubManagementProps) {
                       onClick={() => handleUpdate(link)}
                       disabled={!editUrl.trim()}
                     >
-                      Save
+                      {t("save")}
                     </Button>
                     <Button
                       type="button"
@@ -308,7 +316,7 @@ export function DubManagement({ metadata }: DubManagementProps) {
                       size="sm"
                       onClick={() => setEditingLinkId(null)}
                     >
-                      Cancel
+                      {t("cancel")}
                     </Button>
                   </>
                 ) : (
@@ -320,7 +328,7 @@ export function DubManagement({ metadata }: DubManagementProps) {
                       onClick={() => handleCopy(link)}
                     >
                       <Copy className="mr-1.5 size-3.5" />
-                      Copy
+                      {t("copy")}
                     </Button>
                     <Button
                       type="button"
@@ -329,7 +337,7 @@ export function DubManagement({ metadata }: DubManagementProps) {
                       onClick={() => window.open(getShortUrl(link), "_blank")}
                     >
                       <ExportSquare className="mr-1.5 size-3.5" />
-                      Open
+                      {t("open")}
                     </Button>
                     <Button
                       type="button"
@@ -341,7 +349,7 @@ export function DubManagement({ metadata }: DubManagementProps) {
                       }}
                     >
                       <Edit2 className="mr-1.5 size-3.5" />
-                      Edit
+                      {t("edit")}
                     </Button>
                     <Button
                       type="button"
@@ -350,7 +358,7 @@ export function DubManagement({ metadata }: DubManagementProps) {
                       onClick={() => fetchAnalytics(link)}
                     >
                       <Chart className="mr-1.5 size-3.5" />
-                      Analytics
+                      {t("analytics")}
                     </Button>
                     <Button
                       type="button"
@@ -359,7 +367,7 @@ export function DubManagement({ metadata }: DubManagementProps) {
                       onClick={() => handleArchive(link)}
                     >
                       <Trash className="mr-1.5 size-3.5" />
-                      Archive
+                      {t("archive")}
                     </Button>
                   </>
                 )}
@@ -374,10 +382,13 @@ export function DubManagement({ metadata }: DubManagementProps) {
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-sm font-medium">
-                Analytics for {selectedLink.domain}/{selectedLink.key}
+                {t("analyticsForDomainKey", {
+                  domain: selectedLink.domain,
+                  key: selectedLink.key,
+                })}
               </p>
               <p className="text-muted-foreground text-xs">
-                Last 30 days from Dub. Some views require a paid Dub plan.
+                {t("last30DaysFromDub")}
               </p>
             </div>
             <div className="flex flex-wrap gap-1">
@@ -400,7 +411,7 @@ export function DubManagement({ metadata }: DubManagementProps) {
           ) : Array.isArray(analytics) && analytics.length > 0 ? (
             <div className="space-y-2">
               {analytics.slice(0, 8).map((item) => {
-                const label = getAnalyticsLabel(item);
+                const label = getAnalyticsLabel(item, t);
                 const value = getAnalyticsValue(item);
 
                 return (
@@ -418,11 +429,12 @@ export function DubManagement({ metadata }: DubManagementProps) {
             </div>
           ) : typeof analytics === "number" ? (
             <div className="rounded-md bg-background px-3 py-2 text-sm">
-              Total clicks: <span className="font-medium">{analytics}</span>
+              {t("totalClicks")}{" "}
+              <span className="font-medium">{analytics}</span>
             </div>
           ) : (
             <p className="text-muted-foreground text-sm">
-              Choose an analytics view to load Dub data.
+              {t("chooseAnAnalyticsViewTo")}
             </p>
           )}
         </div>

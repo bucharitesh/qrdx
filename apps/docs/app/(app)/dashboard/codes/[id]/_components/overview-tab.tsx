@@ -26,6 +26,7 @@ import {
 } from "@/app/(app)/dashboard/codes/_lib/code-options";
 import { codeTabHref } from "@/app/(app)/dashboard/codes/_lib/code-tabs";
 import type { QrCodeView } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
+import { getAppTranslations } from "@/lib/i18n/app-locale";
 import { getScanSparklines } from "@/lib/scans";
 import { requestWorkspaceSlug } from "@/lib/scope";
 import { LandingPagePanel } from "./landing-page-panel";
@@ -63,6 +64,7 @@ export async function OverviewTab({
   plans: CodeOptionPlans;
   marketing: MarketingSettingsPromise;
 }) {
+  const t = await getAppTranslations("app.dashboard.codes.overviewTab");
   const [sparklines, settings, lifecycle, slug] = await Promise.all([
     getScanSparklines([code.id], 7),
     marketing,
@@ -90,27 +92,27 @@ export async function OverviewTab({
       <LandingPagePanel codeId={code.id} />
       <Card className="gap-3 py-4">
         <CardHeader className="flex flex-row items-center justify-between gap-2 px-4">
-          <CardTitle className="text-base">Scans</CardTitle>
+          <CardTitle className="text-base">{t("scans")}</CardTitle>
           <Button asChild className="-my-1" size="sm" variant="ghost">
             <Link href={codeTabHref(slug, code.id, "analytics")}>
-              View analytics
+              {t("viewAnalytics")}
               <ArrowRight />
             </Link>
           </Button>
         </CardHeader>
         <CardContent className="grid grid-cols-3 gap-3 px-4">
-          <Stat label="Total" value={formatNumber(code.scanCount)} />
-          <Stat label="Last 7 days" value={formatNumber(weekTotal)}>
+          <Stat label={t("total")} value={formatNumber(code.scanCount)} />
+          <Stat label={t("last7Days")} value={formatNumber(weekTotal)}>
             {weekTotal > 0 && <Sparkline values={week} />}
           </Stat>
-          <Stat label="Last scan" value={formatDate(code.lastScannedAt)} />
+          <Stat label={t("lastScan")} value={formatDate(code.lastScannedAt)} />
         </CardContent>
       </Card>
       {/* NFC (feat/nfc) */}
       <NfcCard code={code} />
       <Card className="gap-3 py-4">
         <CardHeader className="px-4">
-          <CardTitle className="text-base">Options</CardTitle>
+          <CardTitle className="text-base">{t("options")}</CardTitle>
         </CardHeader>
         <CardContent className="px-4">
           <CodeOptionGrid

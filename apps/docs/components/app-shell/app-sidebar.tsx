@@ -16,6 +16,7 @@ import {
 } from "iconsax-reactjs";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import {
   type ReactElement,
   Suspense,
@@ -26,6 +27,7 @@ import {
 } from "react";
 import type { Meter } from "@/app/(app)/settings/usage/_lib/meters";
 import { useAvailability } from "@/components/availability-provider";
+import { useContentText } from "@/components/i18n/content-text";
 import { OrgSwitcher } from "@/components/org-switcher";
 import { useCan } from "@/components/workspace-provider";
 import { unreadLabel } from "@/lib/changelog-feed";
@@ -122,11 +124,12 @@ function AreaRow({
   collapsed: boolean;
   onArea: (href: string, byKeyboard: boolean) => void;
 }) {
+  const tc = useContentText();
   const ItemIcon = row.icon;
   return (
-    <RailTip collapsed={collapsed} label={row.label}>
+    <RailTip collapsed={collapsed} label={tc(row.label)}>
       <Link
-        aria-label={collapsed ? row.label : undefined}
+        aria-label={collapsed ? tc(row.label) : undefined}
         className={cn(
           rowClass,
           "group text-muted-foreground",
@@ -140,7 +143,7 @@ function AreaRow({
         <ItemIcon aria-hidden className="size-4 shrink-0" />
         {!collapsed && (
           <>
-            <span className="flex-1 truncate">{row.label}</span>
+            <span className="flex-1 truncate">{tc(row.label)}</span>
             <AREA_ROW_ICON
               aria-hidden
               className="text-muted-foreground/70 size-3.5 shrink-0 transition-transform duration-150 group-hover:translate-x-0.5 motion-reduce:transition-none"
@@ -162,11 +165,12 @@ function ActionRow({
   collapsed: boolean;
   onAction: (action: NavAction) => void;
 }) {
+  const tc = useContentText();
   const ItemIcon = row.icon;
   return (
-    <RailTip collapsed={collapsed} label={row.label}>
+    <RailTip collapsed={collapsed} label={tc(row.label)}>
       <button
-        aria-label={collapsed ? row.label : undefined}
+        aria-label={collapsed ? tc(row.label) : undefined}
         className={cn(
           rowClass,
           "text-muted-foreground",
@@ -176,7 +180,9 @@ function ActionRow({
         type="button"
       >
         <ItemIcon aria-hidden className="size-4 shrink-0" />
-        {!collapsed && <span className="truncate text-left">{row.label}</span>}
+        {!collapsed && (
+          <span className="truncate text-left">{tc(row.label)}</span>
+        )}
       </button>
     </RailTip>
   );
@@ -203,6 +209,8 @@ function AreaPanel({
   onArea: (href: string, byKeyboard: boolean) => void;
   onAction: (action: NavAction) => void;
 }) {
+  const tc = useContentText();
+  const t = useTranslations("app.shell.appSidebar");
   const pathname = usePathname();
   // Rendered twice (rail + sheet), so ids must be unique per instance.
   const idPrefix = useId();
@@ -239,9 +247,16 @@ function AreaPanel({
       inert={!open}
     >
       {area.back && (
-        <RailTip collapsed={collapsed} label={`Back to ${area.back.label}`}>
+        <RailTip
+          collapsed={collapsed}
+          label={t("backToLabel", { label: tc(area.back.label) })}
+        >
           <Link
-            aria-label={collapsed ? `Back to ${area.back.label}` : undefined}
+            aria-label={
+              collapsed
+                ? t("backToLabel", { label: tc(area.back.label) })
+                : undefined
+            }
             className={cn(
               rowClass,
               "text-muted-foreground mb-1",
@@ -256,17 +271,19 @@ function AreaPanel({
             }
           >
             <ArrowLeft aria-hidden className="size-4 shrink-0" />
-            {!collapsed && <span className="truncate">{area.back.label}</span>}
+            {!collapsed && (
+              <span className="truncate">{tc(area.back.label)}</span>
+            )}
           </Link>
         </RailTip>
       )}
       {area.back && !collapsed && (
         <h2 className="px-2.5 pt-1 pb-3 text-base font-semibold" id={titleId}>
-          {area.title}
+          {tc(area.title)}
         </h2>
       )}
       <nav
-        aria-label={area.back && !collapsed ? undefined : area.title}
+        aria-label={area.back && !collapsed ? undefined : tc(area.title)}
         aria-labelledby={area.back && !collapsed ? titleId : undefined}
         className={cn("flex flex-col", collapsed ? "items-center" : "gap-4")}
       >
@@ -289,11 +306,13 @@ function AreaPanel({
                       className="text-muted-foreground px-2.5 pb-1 text-xs font-medium"
                       id={labelId}
                     >
-                      {group.label}
+                      {tc(group.label)}
                     </div>
                   )}
               <ul
-                aria-label={collapsed ? group.label : undefined}
+                aria-label={
+                  collapsed && group.label ? tc(group.label) : undefined
+                }
                 aria-labelledby={
                   !collapsed && group.label ? labelId : undefined
                 }
@@ -318,7 +337,7 @@ function AreaPanel({
                         collapsed={collapsed}
                         href={row.item.href}
                         icon={row.item.icon}
-                        label={row.item.label}
+                        label={tc(row.item.label)}
                         onNavigate={onNavigate}
                       />
                     ) : row.kind === "area" ? (
@@ -353,6 +372,7 @@ function WhatsNewRow({
   collapsed: boolean;
   onNavigate?: () => void;
 }) {
+  const t = useTranslations("app.shell.appSidebar");
   const whatsNew = useWhatsNew();
   if (!whatsNew || whatsNew.items.length === 0) return null;
   const { unread, openPanel } = whatsNew;
@@ -376,7 +396,7 @@ function WhatsNewRow({
       >
         <Star aria-hidden className="size-4 shrink-0" />
         {!collapsed && (
-          <span className="flex-1 truncate text-left">What's new</span>
+          <span className="flex-1 truncate text-left">{t("whatsNew")}</span>
         )}
         {unread > 0 &&
           (collapsed ? (
@@ -426,6 +446,7 @@ export function AppSidebar({
   /** Another area was opened at `href` (the sheet stays open to show it) */
   onAreaNavigate?: (href: string) => void;
 }) {
+  const t = useTranslations("app.shell.appSidebar");
   const pathname = usePathname();
   const create = useCreate();
   const planName = shell ? PLAN_NAMES[shell.plan] : undefined;
@@ -472,10 +493,10 @@ export function AppSidebar({
   const toggle = onCollapsedChange && (
     <RailTip
       collapsed={collapsed}
-      label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+      label={collapsed ? t("expandSidebar") : t("collapseSidebar")}
     >
       <Button
-        aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+        aria-label={collapsed ? t("expandSidebar") : t("collapseSidebar")}
         className="text-muted-foreground size-8 shrink-0"
         onClick={() => onCollapsedChange(!collapsed)}
         size="icon"

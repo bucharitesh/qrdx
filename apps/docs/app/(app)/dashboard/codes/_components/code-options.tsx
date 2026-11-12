@@ -17,6 +17,7 @@ import {
   Routing2,
 } from "iconsax-reactjs";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import {
   createContext,
   type ReactNode,
@@ -73,6 +74,7 @@ function OptionBody({
   plans: CodeOptionPlans | null;
   on: boolean;
 }) {
+  const t = useTranslations("app.dashboard.codes.codeOptions");
   const OptionIcon = OPTION_ICONS[id];
   const copy = CODE_OPTION_COPY[id];
   const access = plans?.options[id];
@@ -88,7 +90,7 @@ function OptionBody({
           {on && (
             <>
               <Tick className="text-foreground size-3.5 shrink-0" />
-              <span className="sr-only">(on)</span>
+              <span className="sr-only">{t("on")}</span>
             </>
           )}
           <span className="ml-auto pl-1">
@@ -100,7 +102,7 @@ function OptionBody({
                   {!access.included && <Lock aria-hidden />}
                   {PLAN_NAMES[access.requiredPlan]}
                   {!access.included && (
-                    <span className="sr-only">(not on your plan)</span>
+                    <span className="sr-only">{t("notOnYourPlan")}</span>
                   )}
                 </Badge>
               )
@@ -183,15 +185,20 @@ export function CodeOptionPlanNote({
   option: CodeOptionId;
   plans: CodeOptionPlans;
 }) {
+  const t = useTranslations("app.dashboard.codes.codeOptions");
   const access = plans.options[option];
-  if (!access.requiredPlan) return <>Included in every plan.</>;
+  if (!access.requiredPlan) return <>{t("includedInEveryPlan")}</>;
   return (
     <>
-      Available on {formatPlanList(access.plans)}. This workspace is on{" "}
-      {PLAN_NAMES[plans.plan]}.{" "}
-      <Link className="underline underline-offset-4" href="/pricing">
-        Compare plans
-      </Link>
+      {t.rich("availableOnPlansThisWorkspace", {
+        plans: formatPlanList(access.plans),
+        value: PLAN_NAMES[plans.plan],
+        link: (chunks) => (
+          <Link className="underline underline-offset-4" href="/pricing">
+            {chunks}
+          </Link>
+        ),
+      })}
     </>
   );
 }
@@ -213,6 +220,7 @@ export function CodeOptionPanel({
   marketing: MarketingSettingsPromise | null;
   lifecycle: CodeOptionsData["lifecycle"];
 }) {
+  const t = useTranslations("app.dashboard.codes.codeOptions");
   const access = plans.options[option];
   if (!marketing) {
     // No code yet: options on the plan create one first (see the code builder).
@@ -248,7 +256,7 @@ export function CodeOptionPanel({
       ) : (
         <PanelCard
           description={lifecycle.error.message}
-          title="Access & schedule"
+          title={t("accessSchedule")}
         >
           {null}
         </PanelCard>
@@ -382,6 +390,7 @@ export function CodeOptionsField({
   creating?: boolean;
   disabled?: boolean;
 }) {
+  const t = useTranslations("app.dashboard.codes.codeOptions");
   // Only options on the plan create the code; the others explain the plan.
   const createsCode =
     creating &&
@@ -389,10 +398,10 @@ export function CodeOptionsField({
   return (
     <div className="space-y-2">
       <div className="space-y-0.5">
-        <p className="text-sm font-medium">Options</p>
+        <p className="text-sm font-medium">{t("options")}</p>
         {createsCode && (
           <p className="text-muted-foreground text-xs">
-            Opening one creates the code first.
+            {t("openingOneCreatesTheCode")}
           </p>
         )}
       </div>
@@ -408,7 +417,7 @@ export function CodeOptionsField({
             type="button"
             variant="outline"
           >
-            Try again
+            {t("tryAgain")}
           </Button>
         </div>
       ) : (

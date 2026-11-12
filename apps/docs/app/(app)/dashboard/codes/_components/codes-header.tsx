@@ -1,4 +1,5 @@
 "use client";
+import { useTranslations } from "next-intl";
 
 // The codes page's header: the folder switcher as its title, then one New
 // code button and a "…" menu holding both imports.
@@ -60,6 +61,7 @@ export function CodesHeader({
   total: number;
   usage: CodeUsage;
 }) {
+  const t = useTranslations("app.dashboard.codes.codesHeader");
   const router = useRouter();
   // Viewers and billing members only browse: no folder, code or import
   // actions (lib/permissions.ts; the server refuses them too).
@@ -78,8 +80,8 @@ export function CodesHeader({
   const title = current
     ? current.name
     : filters.folder === "none"
-      ? "Not in a folder"
-      : "All codes";
+      ? t("notInAFolder")
+      : t("allCodes");
   const parentName = (folder: FolderRow) =>
     folders.find((row) => row.id === folder.parentId)?.name ?? null;
   const to = (folder: string | null) =>
@@ -89,7 +91,7 @@ export function CodesHeader({
     <div className="flex items-center gap-3">
       <div className="flex min-w-0 flex-1 items-baseline gap-2">
         <h1 className="-ml-2 min-w-0 text-2xl font-semibold tracking-tight">
-          <span className="sr-only">Dynamic QR codes: </span>
+          <span className="sr-only">{t("dynamicQrCodes")} </span>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button
@@ -106,7 +108,7 @@ export function CodesHeader({
                   aria-hidden
                   className="text-muted-foreground size-4 shrink-0"
                 />
-                <span className="sr-only">, change folder</span>
+                <span className="sr-only">{t("changeFolder")}</span>
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
@@ -116,20 +118,20 @@ export function CodesHeader({
               <DropdownMenuItem asChild>
                 <Link href={to(null)}>
                   <Category aria-hidden />
-                  All codes
+                  {t("allCodes")}
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link href={to("none")}>
                   <FolderMinus aria-hidden />
-                  Not in a folder
+                  {t("notInAFolder")}
                 </Link>
               </DropdownMenuItem>
               {tree.length > 0 && (
                 <>
                   <DropdownMenuSeparator />
                   <DropdownMenuLabel className="text-muted-foreground text-xs font-medium">
-                    Folders
+                    {t("folders")}
                   </DropdownMenuLabel>
                   {tree.map((folder) => (
                     <DropdownMenuItem asChild key={folder.id}>
@@ -166,7 +168,7 @@ export function CodesHeader({
                     }
                   >
                     <FolderAdd aria-hidden />
-                    New folder…
+                    {t("newFolder")}
                   </DropdownMenuItem>
                 </>
               )}
@@ -178,7 +180,7 @@ export function CodesHeader({
                     }
                   >
                     <FolderAdd aria-hidden />
-                    New folder in {current.name}…
+                    {t("newFolderInName", { name: current.name })}
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onSelect={() =>
@@ -186,14 +188,14 @@ export function CodesHeader({
                     }
                   >
                     <Edit2 aria-hidden />
-                    Rename {current.name}…
+                    {t("renameName", { name: current.name })}
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onSelect={() => setDeleting(current)}
                     variant="destructive"
                   >
                     <Trash aria-hidden />
-                    Delete {current.name}…
+                    {t("deleteName", { name: current.name })}
                   </DropdownMenuItem>
                 </>
               )}
@@ -201,7 +203,7 @@ export function CodesHeader({
           </DropdownMenu>
         </h1>
         <span className="text-muted-foreground hidden shrink-0 text-sm tabular-nums sm:inline">
-          {formatNumber(total)} {total === 1 ? "code" : "codes"}
+          {formatNumber(total)} {total === 1 ? t("code") : t("codes")}
         </span>
       </div>
 
@@ -211,7 +213,7 @@ export function CodesHeader({
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
-                aria-label="More code actions"
+                aria-label={t("moreCodeActions")}
                 size="icon"
                 variant="outline"
               >
@@ -220,19 +222,19 @@ export function CodesHeader({
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-60">
               <DropdownMenuLabel className="text-muted-foreground text-xs font-medium">
-                Import codes
+                {t("importCodes")}
               </DropdownMenuLabel>
               <DropdownMenuItem asChild>
                 <Link href={`${basePath}/import`}>
                   <DocumentUpload aria-hidden />
-                  From a CSV file
+                  {t("fromACsvFile")}
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem
                 onSelect={() => setImportSignal((count) => count + 1)}
               >
                 <Import aria-hidden />
-                From Bitly and other apps
+                {t("fromBitlyAndOtherApps")}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

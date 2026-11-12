@@ -27,6 +27,7 @@ import {
   FolderAdd as FolderPlus,
   DirectInbox as Inbox,
 } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import {
   type FormEvent,
   type ReactNode,
@@ -83,6 +84,7 @@ export function FolderNameDialog({
   onOpenChange: (open: boolean) => void;
   onCreated?: (folder: FolderRow) => void;
 }) {
+  const t = useTranslations("app.dashboard.codes.folderDialogs");
   const { run, isPending } = useOrganizeAction();
   const [name, setName] = useState("");
 
@@ -125,18 +127,17 @@ export function FolderNameDialog({
           <DialogHeader>
             <DialogTitle>{title}</DialogTitle>
             <DialogDescription>
-              Folders only organize your list. Moving a code never changes its
-              link.
+              {t("foldersOnlyOrganizeYourList")}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-2">
-            <Label htmlFor="folder-name">Name</Label>
+            <Label htmlFor="folder-name">{t("name")}</Label>
             <Input
               autoFocus
               id="folder-name"
               maxLength={MAX_FOLDER_NAME}
               onChange={(event) => setName(event.target.value)}
-              placeholder="Spring campaign"
+              placeholder={t("springCampaign")}
               required
               value={name}
             />
@@ -148,10 +149,10 @@ export function FolderNameDialog({
               type="button"
               variant="ghost"
             >
-              Cancel
+              {t("cancel")}
             </Button>
             <Button disabled={isPending || !name.trim()} type="submit">
-              {mode?.type === "rename" ? "Save" : "Create folder"}
+              {mode?.type === "rename" ? t("save") : t("createFolder")}
             </Button>
           </DialogFooter>
         </form>
@@ -171,6 +172,7 @@ export function DeleteFolderDialog({
   onOpenChange: (open: boolean) => void;
   onDeleted?: (parentId: string | null) => void;
 }) {
+  const t = useTranslations("app.dashboard.codes.folderDialogs");
   const { run, isPending } = useOrganizeAction();
   const target = parentName ? `"${parentName}"` : "the top level";
 
@@ -178,7 +180,7 @@ export function DeleteFolderDialog({
     if (!folder) return;
     const result = await run(() => deleteCodeFolder({ id: folder.id }), {
       success: `Deleted "${folder.name}"`,
-      description: `Its codes and subfolders moved to ${target}.`,
+      description: t("itsCodesAndSubfoldersMoved", { target }),
     });
     if (result) {
       onOpenChange(false);
@@ -190,16 +192,19 @@ export function DeleteFolderDialog({
     <AlertDialog onOpenChange={onOpenChange} open={folder !== null}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Delete "{folder?.name}"?</AlertDialogTitle>
+          <AlertDialogTitle>
+            {t("deleteName", { name: folder?.name ?? "" })}
+          </AlertDialogTitle>
           <AlertDialogDescription>
-            Only the folder is deleted. Its codes and subfolders move to{" "}
-            {target}, and every code keeps working.
+            {t("onlyTheFolderIsDeleted", { target })}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={isPending}>Cancel</AlertDialogCancel>
+          <AlertDialogCancel disabled={isPending}>
+            {t("cancel")}
+          </AlertDialogCancel>
           <Button disabled={isPending} onClick={remove} variant="destructive">
-            Delete folder
+            {t("deleteFolder")}
           </Button>
         </AlertDialogFooter>
       </AlertDialogContent>
@@ -224,6 +229,7 @@ export function MoveToFolderDialog({
   currentFolderId?: string | null;
   onMoved?: () => void;
 }) {
+  const t = useTranslations("app.dashboard.codes.folderDialogs");
   const [folders, setFolders] = useFolders(open, initialFolders);
   const { run, isPending } = useOrganizeAction();
   const [creating, setCreating] = useState<FolderRow | null | false>(false);
@@ -264,7 +270,7 @@ export function MoveToFolderDialog({
       {icon}
       <span className="min-w-0 flex-1 truncate">{label}</span>
       {current && (
-        <span className="text-muted-foreground text-xs">Current</span>
+        <span className="text-muted-foreground text-xs">{t("current")}</span>
       )}
     </button>
   );
@@ -275,11 +281,12 @@ export function MoveToFolderDialog({
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>
-              Move {ids.length === 1 ? "code" : plural(ids.length, "code")} to
-              folder
+              {t("move")}{" "}
+              {ids.length === 1 ? t("code") : plural(ids.length, "code")}{" "}
+              {t("toFolder")}
             </DialogTitle>
             <DialogDescription>
-              Links and printed codes don't change.
+              {t("linksAndPrintedCodesDont")}
             </DialogDescription>
           </DialogHeader>
           <div className="max-h-80 space-y-0.5 overflow-y-auto">
@@ -292,7 +299,7 @@ export function MoveToFolderDialog({
             )}
             {folders === null ? (
               <p className="text-muted-foreground px-2 py-3 text-sm">
-                Loading folders...
+                {t("loadingFolders")}
               </p>
             ) : (
               nodes.map((node) =>
@@ -318,14 +325,14 @@ export function MoveToFolderDialog({
               variant="outline"
             >
               <FolderPlus />
-              New folder
+              {t("newFolder")}
             </Button>
             <Button
               onClick={() => onOpenChange(false)}
               size="sm"
               variant="ghost"
             >
-              Cancel
+              {t("cancel")}
             </Button>
           </DialogFooter>
         </DialogContent>

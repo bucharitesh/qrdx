@@ -93,7 +93,7 @@ export default async function BarcodeGeneratorPage() {
       />
 
       <section aria-label={t("toolLabel")} className="w-full px-10 py-10">
-        <ClientMessages namespaces={["barcodeTool"]}>
+        <ClientMessages namespaces={["barcodeTool", "editor.connections"]}>
           <ClientContent data={GENERATOR_CONTENT} rules={BARCODE_CONTENT_RULES}>
             <PublicBarcodeGenerator />
           </ClientContent>
