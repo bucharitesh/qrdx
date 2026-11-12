@@ -1,0 +1,163 @@
+---
+title: "Barcode API"
+description: "एक URL से EAN, UPC, Code 128, Data Matrix और दूसरे बारकोड की इमेज बनाएँ, बिना किसी API key के, और REST API से बारकोड को वर्कस्पेस में सहेजकर रखें।"
+icon: Barcode
+---
+
+`GET https://api.qrdx.dev/v1/barcode` एक बारकोड इमेज लौटाता है। सब कुछ query string में होता है, इसलिए URL ही इमेज है: इसे `<img>` टैग, प्रोडक्ट फ़ीड या लेबल टेम्पलेट में रखें। यह [बारकोड जनरेटर](/barcode-generator) जैसे ही {facts.barcodeFormats} फ़ॉर्मैट बनाता है, उन्हीं नियमों के साथ, और वही SVG लौटाता है।
+
+```html
+<img
+  src="https://api.qrdx.dev/v1/barcode?format=ean13&data=590123412345"
+  alt="EAN-13 barcode 5901234123457"
+/>
+```
+
+यह नंबर एक अंक कम है, इसलिए check digit (7) जोड़ दिया जाता है। सभी 13 अंक भेजने पर check digit की जाँच की जाती है: गलत होने पर `400` लौटता है और बताता है कि सही क्या होना चाहिए।
+
+अकाउंट या API key की ज़रूरत नहीं है। बारकोड को अपने वर्कस्पेस में रखने और बाद में एडिट करने के लिए [सहेजे गए बारकोड](#saved-barcodes) इस्तेमाल करें।
+
+## उदाहरण [#examples]
+
+हर module पर 3 पिक्सल वाली PNG (URL को quotes में रखें ताकि आपका shell `&` को न छेड़े):
+
+```bash
+curl -o box.png "https://api.qrdx.dev/v1/barcode?format=ean13&data=5901234123457&type=png&scale=3"
+```
+
+GS1-128 लॉजिस्टिक्स लेबल का वेक्टर PDF, जिसमें हर Application Identifier के चारों ओर brackets हैं:
+
+```bash
+curl -o pallet.pdf "https://api.qrdx.dev/v1/barcode?format=gs1-128&type=pdf&data=(01)09501101530003(17)261231(10)AB-123"
+```
+
+जिन values में `&`, `#`, `+` या स्पेस हों, उन्हें encode करें, जैसे JavaScript में `encodeURIComponent` से।
+
+गहरे नीले रंग का Code 128 शेल्फ़ लेबल, बार के नीचे टेक्स्ट के बिना, 90° घुमाया हुआ:
+
+```txt
+https://api.qrdx.dev/v1/barcode?format=code128&data=SHELF-A12&fg=1e3a8a&text=false&rotate=90
+```
+
+ज़्यादा चौड़े margin वाला Data Matrix:
+
+```txt
+https://api.qrdx.dev/v1/barcode?format=datamatrix&data=SN-0042-7781&quietZone=4
+```
+
+## पैरामीटर [#parameters]
+
+| पैरामीटर | डिफ़ॉल्ट | विवरण |
+| --- | --- | --- |
+| `format` | ज़रूरी | बारकोड का प्रकार; देखें [फ़ॉर्मैट](#formats)। अक्षरों का case और dash मायने नहीं रखते: `EAN-13` भी चलता है |
+| `data` | ज़रूरी | Encode करने के लिए नंबर या टेक्स्ट, 1,000 अक्षरों तक (ज़्यादातर linear फ़ॉर्मैट में कम) |
+| `type` | `svg` | `svg`, `png`, `jpg`, `webp`, `avif`, `pdf` या `eps` |
+| `scale` | `4` | PNG, JPG, WebP और AVIF में प्रति module पिक्सल, `1` से `10` |
+| `height` | फ़ॉर्मैट पर निर्भर | वेक्टर साइज़ पर linear बारकोड की बार की ऊँचाई मिलीमीटर में, `5` से `60` (EAN-13 के लिए 23) |
+| `quietZone` | फ़ॉर्मैट का न्यूनतम | modules में खाली margin: linear बारकोड में हर तरफ़ (`0` से `20`), 2D कोड में चारों ओर (`0` से `10`) |
+| `text` | `true` | linear बारकोड के नीचे अंक या टेक्स्ट प्रिंट करें |
+| `fg` | `000000` | बार और टेक्स्ट, hex में |
+| `bg` | `ffffff` | बैकग्राउंड, hex में |
+| `rotate` | `0` | घड़ी की दिशा में घुमाव: `0`, `90`, `180` या `270` |
+
+रंग `#` के बिना लिखें, या उसे `%23` के रूप में encode करें।
+
+## फ़ॉर्मैट [#formats]
+
+| `format` | बारकोड | क्या लेता है |
+| --- | --- | --- |
+| `ean13` | EAN-13 | 12 अंक (check digit जोड़ा जाता है) या 13 (जाँचा जाता है) |
+| `ean8` | EAN-8 | 7 अंक या 8 |
+| `upca` | UPC-A | 11 अंक या 12 |
+| `upce` | UPC-E | 6 से 8 अंक, या 12 अंकों का UPC-A जिसे छोटा किया जा सके |
+| `itf14` | ITF-14 | 13 अंक या 14 |
+| `gs1-128` | GS1-128 | brackets में Application Identifiers और उनकी values; GTIN और SSCC के check digit जोड़े या जाँचे जाते हैं; डेटा 48 अक्षरों तक |
+| `code128` | Code 128 | 80 printable ASCII अक्षरों तक |
+| `code39` | Code 39 | 40 तक कैपिटल अक्षर, अंक, स्पेस और `- . $ / + %` |
+| `datamatrix` | Data Matrix | 1,000 अक्षरों तक कोई भी टेक्स्ट |
+| `pdf417` | PDF417 | 1,000 अक्षरों तक कोई भी टेक्स्ट |
+| `aztec` | Aztec | 1,000 अक्षरों तक कोई भी टेक्स्ट |
+
+रिटेल नंबर (EAN, UPC, ITF-14, GS1-128 का GTIN) GS1 कंपनियों को लाइसेंस देता है। API कोई भी वैध नंबर बना देता है; वह नंबर जारी या रजिस्टर नहीं करता।
+
+## साइज़ [#sizes]
+
+PNG, JPG, WebP और AVIF में हर module के `scale` पिक्सल होते हैं, यानी सबसे पतली बार की चौड़ाई। 2D का एक cell दो modules चौड़ा होता है।
+
+SVG, PDF और EPS वेक्टर हैं, जिनमें हर module एक point (0.353 mm) का होता है, इसलिए डिफ़ॉल्ट पर EAN-13 अपने नॉमिनल साइज़ के लगभग 107% पर प्रिंट होता है। वेक्टर फ़ाइलों को अपने लेआउट में स्केल करें; रिटेल बारकोड के लिए 80% से 200% के बीच रखें और बार की ऊँचाई न काटें।
+
+## रिस्पॉन्स [#responses]
+
+सफल रिक्वेस्ट फ़ाइल लौटाती है, इनके साथ:
+
+- `Content-Type` फ़ाइल के प्रकार का। EPS डाउनलोड के रूप में आती है (`Content-Disposition: attachment`); बाकी inline खुलती हैं और फ़ाइल का नाम `ean13-5901234123457.png` जैसा होता है
+- `Cache-Control: public, max-age=31536000, immutable`: एक ही query हमेशा वही bytes लौटाती है
+- `Access-Control-Allow-Origin: *`, ताकि आप इसे किसी भी वेबसाइट से `fetch` कर सकें
+
+कोई पैरामीटर छूटा हो या अमान्य हो, या ऐसी value हो जिसे फ़ॉर्मैट संभाल न सके, तो `400` लौटता है और समस्या बताता है:
+
+```json
+{
+  "code": "VALIDATION_ERROR",
+  "message": "Invalid query parameters",
+  "data": {
+    "details": [
+      {
+        "param": "data",
+        "message": "EAN-13: The check digit should be 7, not 8. Check the number, or leave the last digit off and it's worked out for you."
+      }
+    ]
+  },
+  "status": 400
+}
+```
+
+## value को URL से बाहर रखें [#keep-the-value-out-of-the-url]
+
+`POST https://api.qrdx.dev/v1/barcode` वही फ़ील्ड JSON के रूप में लेता है और वही फ़ाइल लौटाता है, बिना cache के। इसे तब इस्तेमाल करें जब value URL की तरह logs, history या caches में न पहुँचनी चाहिए:
+
+```bash
+curl -o label.png https://api.qrdx.dev/v1/barcode \
+  -H "Content-Type: application/json" \
+  -d '{"format":"datamatrix","data":"Internal note 42","type":"png"}'
+```
+
+JSON में `text` एक boolean है और `scale`, `height`, `quietZone` और `rotate` संख्याएँ हैं।
+
+## सहेजे गए बारकोड [#saved-barcodes]
+
+[API key](/docs/developers/api-keys) के साथ, REST API बारकोड को key के वर्कस्पेस में रखता है, जहाँ वे डैशबोर्ड में **Barcodes** के तहत दिखते हैं। स्कोप कोड वाले ही हैं: सूची देखने और डाउनलोड के लिए `codes:read`, बदलाव के लिए `codes:write`।
+
+```bash
+curl https://api.qrdx.dev/v1/barcodes \
+  -H "Authorization: Bearer $QRDX_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"format":"ean13","value":"590123412345","title":"Spring box"}'
+```
+
+| Endpoint | क्या करता है |
+| --- | --- |
+| [`GET /v1/barcodes`](/docs/developers/api/list-barcodes) | उन्हें सूचीबद्ध करता है, सबसे ताज़ा बदलाव पहले; `q`, `format`, `folderId`, `status=trash` से फ़िल्टर करें |
+| [`POST /v1/barcodes`](/docs/developers/api/create-barcode) | एक बारकोड सहेजता है। `options` में `foreground`, `background`, `showText`, `barHeightMm`, `quietZone`, `scale` और `rotation` लिए जाते हैं |
+| [`GET /v1/barcodes/{id}`](/docs/developers/api/get-barcode) | एक बारकोड |
+| [`PATCH /v1/barcodes/{id}`](/docs/developers/api/update-barcode) | उसका शीर्षक, फ़ॉर्मैट, value, options या फ़ोल्डर बदलता है |
+| [`DELETE /v1/barcodes/{id}`](/docs/developers/api/delete-barcode) | उसे ट्रैश में भेजता है; `?permanent=true` उसे हमेशा के लिए हटा देता है |
+| [`GET /v1/barcodes/{id}/image`](/docs/developers/api/get-saved-barcode-image) | फ़ाइल, जैसी सहेजी गई थी वैसी बनी हुई: `type` और `scale` ऊपर की तरह |
+
+हर सहेजे गए बारकोड में एक `imageUrl` होता है: `GET /v1/barcode` वाली वही तस्वीर, जिसे लिंक वाला कोई भी व्यक्ति लोड कर सकता है। `/image` endpoint निजी है और इसके लिए key चाहिए।
+
+हर प्लान में बारकोड सहेजे जा सकते हैं: फ़्री पर 1,000 तक, Pro पर 10,000 और Business पर 100,000, ट्रैश को गिने बिना। ये रिक्वेस्ट वर्कस्पेस के रोज़ाना API कोटा में गिनी जाती हैं और [REST API](/docs/developers/rest-api) की तरह `X-RateLimit-*` हेडर भेजती हैं।
+
+## MCP [#mcp]
+
+[MCP server](/docs/developers/mcp) में `generate_barcode` है, जो value जाँचकर इमेज URL के साथ PNG लौटाता है, और `save_barcode` है, जो कनेक्शन की API key के वर्कस्पेस में सहेजता है।
+
+## सीमाएँ [#limits]
+
+- **Rate limit:** `GET` और `POST /v1/barcode` के लिए प्रति IP address 300 रिक्वेस्ट प्रति मिनट, [QR इमेज API](/docs/developers/image-api) की तरह। सीमा पार होने पर `Retry-After` हेडर के साथ `429` मिलता है। सहेजे गए बारकोड REST API की प्रति मिनट सीमाओं और रोज़ाना कोटा के हिसाब से चलते हैं।
+- **इमेज साइज़:** raster इमेज एक तरफ़ से ज़्यादा से ज़्यादा 6,000 पिक्सल की होती हैं। लंबी values के लिए `scale` घटाएँ।
+- **यहाँ स्कैन की जाँच नहीं होती।** [बारकोड जनरेटर](/barcode-generator) डाउनलोड से पहले जो बनाता है उसे decode करता है; API वही बनाता है जो आप माँगते हैं। एक टेस्ट प्रिंट करें और उसे उन्हीं स्कैनरों से स्कैन करें जो उसे पढ़ेंगे।
+
+## सेल्फ़-होस्टिंग [#self-hosting]
+
+ये endpoints QRdx वेब ऐप का हिस्सा हैं, इसलिए [सेल्फ़-होस्टेड](/docs/self-hosting) इंस्टेंस इन्हें आपके अपने डोमेन पर `/api/v1/barcode` और `/api/v1/barcodes` पर उपलब्ध कराता है।
