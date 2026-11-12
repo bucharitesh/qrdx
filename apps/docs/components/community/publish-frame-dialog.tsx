@@ -13,7 +13,6 @@ import {
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import { Textarea } from "@repo/design-system/components/ui/textarea";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 import type { QRCustomFrame } from "qrdx";
 import { useEffect, useId, useState } from "react";
@@ -21,6 +20,7 @@ import {
   publishCommunityFrame,
   publishCommunityThemeFrame,
 } from "@/actions/community";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import { TagSelector } from "@/components/tag-selector";
 import {
   DESCRIPTION_MAX_LENGTH,

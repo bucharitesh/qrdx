@@ -6,7 +6,6 @@ import { Label } from "@repo/design-system/components/ui/label";
 import { Switch } from "@repo/design-system/components/ui/switch";
 import type { IntegrationApiKeyConfig } from "@repo/integrations";
 import { ExportSquare } from "iconsax-reactjs";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useEffect, useId, useState } from "react";
 import { toast } from "sonner";
@@ -14,6 +13,7 @@ import { ensureConfirmed } from "@/components/confirm-identity/actions";
 import { useConfirmation } from "@/components/confirm-identity/provider";
 import { SheetsExportButton } from "@/components/data-connections/sheets-export-button";
 import { SyncStatus } from "@/components/data-connections/sync-status";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import {
   loadSinkView,
   retrySinkNow,

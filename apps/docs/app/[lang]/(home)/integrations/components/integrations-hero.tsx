@@ -5,10 +5,10 @@ import {
   type IntegrationCatalogEntry,
 } from "@repo/integrations/src/catalog";
 import { ArrowDown, ArrowRight } from "iconsax-reactjs";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 import type { CSSProperties } from "react";
 import { AsciiField, Backdrop, MeshGradient } from "@/components/fx";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import { QrdxLogo } from "@/components/qrdx-logo";
 import { IntegrationLogo } from "@/components/sections/integrations/integration-logo";
 

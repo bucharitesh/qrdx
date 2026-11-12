@@ -10,9 +10,9 @@ import {
 } from "@repo/design-system/components/ui/card";
 import { cn } from "@repo/design-system/lib/utils";
 import { Setting4, ShieldTick } from "iconsax-reactjs";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useLayoutEffect, useRef } from "react";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import { useMounted } from "@/lib/hooks/use-mounted";
 import { setConsentBannerInset } from "./banner-inset";
 import { PRIVACY_POLICY_URL, TEXT_LINK } from "./consent-copy";

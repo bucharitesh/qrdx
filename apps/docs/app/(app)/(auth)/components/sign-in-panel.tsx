@@ -14,10 +14,10 @@ import {
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Separator } from "@repo/design-system/components/ui/separator";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { type ComponentType, type ReactNode, useEffect, useState } from "react";
 import { useAvailability } from "@/components/availability-provider";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import { QrdxLogoAnimation } from "@/components/qrdx-logo-animation";
 import { siteConfig } from "@/config/site";
 import { SsoSignIn } from "@/ee/sso/sso-sign-in";

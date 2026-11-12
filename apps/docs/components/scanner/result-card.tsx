@@ -22,9 +22,9 @@ import {
   Wallet,
   Wifi,
 } from "iconsax-reactjs";
-import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import { parseLinkUrl, playgroundHref } from "@/lib/playground-links";
 import { OpenButton } from "./confirm-open";
 import { formatLabel } from "./detector";

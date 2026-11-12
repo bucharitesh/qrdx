@@ -41,7 +41,6 @@ import {
   Printer,
   TableDocument,
 } from "iconsax-reactjs";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 import {
   type DownloadSize,
@@ -71,6 +70,7 @@ import { useShownArt } from "@/components/editor/art/art-canvas";
 import { DialogCloseButton } from "@/components/editor/dialog-close-button";
 import { emitSound } from "@/components/editor/sound";
 import { InfoHint } from "@/components/help/info-hint";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import { track } from "@/lib/analytics";
 import { DEFAULT_QR_LOGO } from "@/lib/constants";
 import {

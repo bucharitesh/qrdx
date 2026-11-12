@@ -16,9 +16,9 @@ import {
 } from "fumadocs-ui/components/dialog/search";
 import { useTreeContext } from "fumadocs-ui/contexts/tree";
 import { ArrowRight } from "iconsax-reactjs";
-import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useMemo, useRef } from "react";
+import { useLocaleRouter as useRouter } from "@/components/i18n/locale-link";
 import { track } from "@/lib/analytics";
 
 /** docs_search once a query settles: its length and result count, never the text. */

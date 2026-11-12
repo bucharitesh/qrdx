@@ -2,9 +2,12 @@
 
 import { type Framework, FrameworkProvider } from "fumadocs-core/framework";
 import Image from "next/image";
-import Link from "next/link";
-import { useParams, usePathname, useRouter } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import type { ReactNode } from "react";
+import {
+  LocaleLink as Link,
+  useLocaleRouter as useRouter,
+} from "@/components/i18n/locale-link";
 import { DEFAULT_LOCALE, LOCALE_INFO } from "@/lib/i18n/config";
 
 const ENGLISH_PREFIX = new RegExp(

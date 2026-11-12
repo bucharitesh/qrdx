@@ -10,8 +10,8 @@ import {
   ScanBarcode,
   ShieldTick,
 } from "iconsax-reactjs";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import type { Messages } from "@/lib/i18n/messages";
 import en from "@/messages/en.json";
 

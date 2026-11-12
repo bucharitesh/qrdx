@@ -1,10 +1,10 @@
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
 import { Edit2 } from "iconsax-reactjs";
-import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { type ReactNode, Suspense } from "react";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
 
 interface EditButtonProps extends React.ComponentProps<typeof Button> {

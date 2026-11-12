@@ -7,12 +7,12 @@ import { Badge } from "@repo/design-system/components/ui/badge";
 import { Card } from "@repo/design-system/components/ui/card";
 import { cn } from "@repo/design-system/lib/utils";
 import { ArrowRight } from "iconsax-reactjs";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { loadQRArtImage, QRCodeSVG } from "qrdx";
 import type { QRArtImage, QRArtMode } from "qrdx/types";
 import { useEffect, useState } from "react";
 import { SpotlightCard } from "@/components/fx";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import { PRESSABLE } from "@/components/mockups/motion";
 import {
   SHOWCASE_PLACEMENTS as AT,

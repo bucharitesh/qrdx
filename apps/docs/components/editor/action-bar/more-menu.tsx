@@ -30,7 +30,6 @@ import {
   ScanBarcode,
   TableDocument,
 } from "iconsax-reactjs";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { type ReactNode, useState } from "react";
 import { PLUGINS } from "@/app/[lang]/(home)/plugins/plugin-data";
@@ -45,6 +44,7 @@ import {
 import { useCommunitySheetStore } from "@/components/editor/community-sheet-store";
 import { useDynamicLinkStore } from "@/components/editor/dynamic-link-toggle";
 import { usePhotoScanDialogStore } from "@/components/editor/photo-scan-dialog-store";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import { useKeyboardShortcutsModal } from "@/components/keyboard-shortcuts-trigger";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
 import { useUserSettings } from "@/lib/hooks/use-user-settings";

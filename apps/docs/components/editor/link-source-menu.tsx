@@ -14,7 +14,6 @@ import {
 } from "@repo/design-system/components/ui/dropdown-menu";
 import { cn } from "@repo/design-system/lib/utils";
 import { Add, ArrowDown2 } from "iconsax-reactjs";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -25,6 +24,7 @@ import { ShortLinkDialog } from "@/components/connected-accounts/short-link-dial
 import { useConnections } from "@/components/connected-accounts/use-connections";
 import { SourcePickerDialog } from "@/components/data-connections/source-picker";
 import { emitSound } from "@/components/editor/sound";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import { IntegrationLogo } from "@/components/sections/integrations/integration-logo";
 import type { ConnectedProvider } from "@/lib/connected-accounts/client";
 import {

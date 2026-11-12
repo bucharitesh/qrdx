@@ -10,8 +10,8 @@ import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import { Textarea } from "@repo/design-system/components/ui/textarea";
 import { ArrowSwapHorizontal } from "iconsax-reactjs";
-import Link from "next/link";
 import { TypeIconTile } from "@/components/editor/content-type-icons";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import {
   type ContentIssue,
   OTHER_DYNAMIC_TYPES,

@@ -3,7 +3,7 @@
 import { NavigationMenuLink } from "@repo/design-system/components/ui/navigation-menu";
 import { cn } from "@repo/design-system/lib/utils";
 import { ArrowRight, ExportSquare } from "iconsax-reactjs";
-import Link from "next/link";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import type { HeaderNavItem } from "./header-nav";
 import { NavArt, type NavArtKind } from "./header-nav-art";
 import styles from "./header-nav-panel.module.css";

@@ -11,7 +11,6 @@ import {
 import { useIsMobile } from "@repo/design-system/hooks/use-mobile";
 import { cn } from "@repo/design-system/lib/utils";
 import { ArrowRight } from "iconsax-reactjs";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 import {
   createContext,
@@ -22,6 +21,7 @@ import {
   useState,
 } from "react";
 import { markChangelogSeen } from "@/actions/changelog";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import {
   type ChangelogItem,
   effectiveSeenAt,

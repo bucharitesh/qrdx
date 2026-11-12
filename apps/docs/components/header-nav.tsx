@@ -9,7 +9,6 @@ import {
   NavigationMenuTrigger,
 } from "@repo/design-system/components/ui/navigation-menu";
 import { cn } from "@repo/design-system/lib/utils";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import {
@@ -20,7 +19,10 @@ import {
   useState,
 } from "react";
 import { useAvailability } from "@/components/availability-provider";
-import { useLocalizeHref } from "@/components/i18n/locale-link";
+import {
+  LocaleLink as Link,
+  useLocalizeHref,
+} from "@/components/i18n/locale-link";
 import { MAX_BULK_ROWS } from "@/components/sections/tools/bulk-utils";
 import {
   type NavEntryConfig,

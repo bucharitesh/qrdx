@@ -1,8 +1,8 @@
 import { buttonVariants } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
 import { ArrowRight } from "iconsax-reactjs";
-import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import { DemoQrButton } from "@/components/landing/demo/demo-qr-button";
 import { UseTemplateLink } from "@/components/landing/demo/use-template-link";
 import {

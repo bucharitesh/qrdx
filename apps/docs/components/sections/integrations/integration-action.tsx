@@ -4,8 +4,8 @@ import { toast } from "@repo/design-system";
 import { GithubLogo } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { ArrowRight, Copy, ExportSquare } from "iconsax-reactjs";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import { soundEvent } from "@/lib/sound/emit";
 import type { ResolvedAction } from "./resolve-action";
 

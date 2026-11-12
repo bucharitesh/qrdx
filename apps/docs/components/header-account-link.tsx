@@ -3,8 +3,8 @@
 import { authClient } from "@repo/auth/client";
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import { DEFAULT_NEXT_PATH } from "@/lib/safe-redirect";
 
 /** One grid cell for both labels; the hidden one still holds its width. */
