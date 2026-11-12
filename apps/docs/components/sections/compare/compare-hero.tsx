@@ -13,9 +13,19 @@ interface CompareHeroProps {
   slug: string;
   competitor: string;
   tagline: string;
+  /**
+   * The page's "<competitor> alternatives" heading. When set, that list sits
+   * right under the hero and the second button jumps to it.
+   */
+  alternativesLabel?: string;
 }
 
-export function CompareHero({ slug, competitor, tagline }: CompareHeroProps) {
+export function CompareHero({
+  slug,
+  competitor,
+  tagline,
+  alternativesLabel,
+}: CompareHeroProps) {
   const crumbs = [
     { name: "Home", path: "/" },
     { name: "Compare", path: "/compare" },
@@ -50,8 +60,8 @@ export function CompareHero({ slug, competitor, tagline }: CompareHeroProps) {
             </LocaleLink>
           </Button>
           <Button asChild variant="outline">
-            <a href="#at-a-glance">
-              See the comparison
+            <a href={alternativesLabel ? "#alternatives" : "#at-a-glance"}>
+              {alternativesLabel ?? "See the comparison"}
               <ArrowDown aria-hidden />
             </a>
           </Button>
