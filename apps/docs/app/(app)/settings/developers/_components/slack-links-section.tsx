@@ -104,11 +104,16 @@ export function SlackLinksSection({
                   </span>
                 </p>
                 <p className="text-muted-foreground text-xs">
-                  {t("as")} {member(link, t)} {t("linked")}{" "}
-                  {formatDate(link.linkedAt)}
                   {link.teamName
-                    ? t("slackWorkspaceTeamid", { teamId: link.teamId })
-                    : ""}
+                    ? t("linkedAsInWorkspace", {
+                        member: member(link, t),
+                        date: formatDate(link.linkedAt),
+                        teamId: link.teamId,
+                      })
+                    : t("linkedAs", {
+                        member: member(link, t),
+                        date: formatDate(link.linkedAt),
+                      })}
                 </p>
               </div>
               <Button

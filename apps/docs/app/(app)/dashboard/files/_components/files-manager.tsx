@@ -127,10 +127,18 @@ function UsageCard({
           <div className="space-y-1">
             <CardTitle className="text-base">{t("storage")}</CardTitle>
             <CardDescription>
-              {formatBytes(overview.usedBytes)} {t("of")}{" "}
-              {quota === null ? t("unlimited") : formatBytes(quota)} {t("used")}{" "}
-              {formatBytes(overview.maxFileBytes)} {t("maxPerFileOn")}{" "}
-              {overview.planName}
+              {quota === null
+                ? t("storageUsageUnlimited", {
+                    used: formatBytes(overview.usedBytes),
+                    maxFile: formatBytes(overview.maxFileBytes),
+                    plan: overview.planName,
+                  })
+                : t("storageUsage", {
+                    used: formatBytes(overview.usedBytes),
+                    quota: formatBytes(quota),
+                    maxFile: formatBytes(overview.maxFileBytes),
+                    plan: overview.planName,
+                  })}
             </CardDescription>
           </div>
           {canUpgrade && <UpgradeButton size="sm" />}
@@ -148,8 +156,7 @@ function UsageCard({
         )}
         {over && (
           <p className="text-muted-foreground text-xs">
-            {t("youreOverYourPlansStorage")}
-            {isTeam ? "" : t("orUpgrade")} {t("toUploadNewOnes")}
+            {isTeam ? t("overStorageTeam") : t("overStorage")}
           </p>
         )}
       </CardContent>

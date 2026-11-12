@@ -3,7 +3,7 @@
 import { Spinner } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
 import { unlinkSlackIdentityAction } from "../../slack-bot-actions";
@@ -23,13 +23,6 @@ export interface SlackBotSettings {
   unavailable?: boolean;
 }
 
-const date = (value: Date) =>
-  value.toLocaleDateString(undefined, {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
-
 /**
  * Settings → Integrations → Slack, "QRdx bot": add the bot to a Slack
  * workspace, the workspaces this user added it to, and the Slack accounts
@@ -42,6 +35,14 @@ export function SlackBotPanel({
   unavailable,
 }: SlackBotSettings) {
   const t = useTranslations("app.settings.integrations.slackBotPanel");
+  // Dates in the app's language, like the sentences around them.
+  const locale = useLocale();
+  const date = (value: Date) =>
+    new Date(value).toLocaleDateString(locale, {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
   const router = useRouter();
   const [busy, setBusy] = useState<string | null>(null);
 
@@ -139,9 +140,11 @@ export function SlackBotPanel({
                         </span>
                       </p>
                       <p className="text-muted-foreground text-xs">
-                        {t("trackedCodesGoTo")}{" "}
-                        {link.workspaceName ?? t("yourQrdxWorkspace")}
-                        {t("linked")} {date(link.linkedAt)}.
+                        {t("trackedCodesLine", {
+                          workspace:
+                            link.workspaceName ?? t("yourQrdxWorkspace"),
+                          date: date(link.linkedAt),
+                        })}
                       </p>
                     </div>
                     <Button

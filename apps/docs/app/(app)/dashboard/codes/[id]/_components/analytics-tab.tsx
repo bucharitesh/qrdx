@@ -78,7 +78,7 @@ function retentionText(
   if (!Number.isFinite(days)) return t("everyScan");
   if (days >= 365) {
     const years = Math.round(days / 365);
-    return `${years} year${years === 1 ? "" : "s"} of scan history`;
+    return t("yearsOfScanHistory", { years });
   }
   return t("daysDaysOfScanHistory", { days });
 }

@@ -50,19 +50,18 @@ export async function WorkspaceTwoFactorNotice({
       role="status"
     >
       <p className="text-muted-foreground text-pretty">
-        {on ? (
-          t.rich("twoStepVerificationIsOn", {
-            name: workspace.name,
-            span: (chunks) => (
-              <span className="text-foreground font-medium">{chunks}</span>
-            ),
-          })
-        ) : (
-          <>
-            <span className="text-foreground font-medium">
-              {workspace.name}
-            </span>
-            {t.rich("requiresTwoStepVerificationTurn", {
+        {on
+          ? t.rich("twoStepVerificationIsOn", {
+              name: workspace.name,
+              span: (chunks) => (
+                <span className="text-foreground font-medium">{chunks}</span>
+              ),
+            })
+          : t.rich("requiresTwoStepVerificationTurn", {
+              name: workspace.name,
+              span: (chunks) => (
+                <span className="text-foreground font-medium">{chunks}</span>
+              ),
               link: (chunks) => (
                 <Link
                   className="text-foreground underline decoration-foreground/30 underline-offset-4 transition-colors hover:decoration-foreground"
@@ -72,8 +71,6 @@ export async function WorkspaceTwoFactorNotice({
                 </Link>
               ),
             })}
-          </>
-        )}
       </p>
       {on && (
         <Button asChild className="max-sm:h-10 sm:shrink-0" size="sm">
