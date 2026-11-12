@@ -1,0 +1,81 @@
+---
+title: "Tarife und Limits"
+description: "Was Kostenlos, Pro und Business enthalten, wie Limits für jeden Workspace gelten und was passiert, wenn du herunterstufst oder kündigst."
+icon: Gauge
+---
+
+QRdx hat drei Tarife. Statische QR-Codes aus dem Playground und der `qrdx`-Bibliothek sind in allen Tarifen kostenlos und unbegrenzt, ganz ohne Konto. Die Preise vergleichst du auf der [Preisseite](/pricing).
+
+| | Kostenlos | Pro | Business |
+| --- | --- | --- | --- |
+| Preis (US$) | $0 | $5/Monat oder $48/Jahr | $15/Monat oder $144/Jahr |
+| Preis (Indien) | ₹0 | ₹199/Monat oder ₹1,499/Jahr | ₹599/Monat oder ₹4,999/Jahr |
+
+Besucher aus Indien sehen die Preise in Rupien. Den Checkout übernimmt [Polar](https://polar.sh). Kunden in Indien zahlen dort in ₹, alle anderen in US$, und lokale Steuern kommen dazu, wo sie anfallen.
+
+<IfAvailable feature="invoiceRequests">
+
+Ein Jahr Business kannst du auch per Banküberweisung bezahlen: Siehe [Zahlung per Rechnung](/docs/help/account-and-billing/pay-by-invoice).
+
+</IfAvailable>
+
+## Limits [#limits]
+
+| | Kostenlos | Pro | Business |
+| --- | --- | --- | --- |
+| Dynamische QR-Codes | 10 | Unbegrenzt | Unbegrenzt |
+| Scans | Unbegrenzt | Unbegrenzt | Unbegrenzt |
+| Gehostete Landingpages | 3, mit Footer „Made with QRdx“ | Unbegrenzt, ohne Footer | Unbegrenzt, White-Label, eigenes CSS |
+| Analytics-Verlauf | 90 Tage | 3 Jahre | Unbegrenzt |
+| Eigene Domains | Keine | 5 | 25 |
+| Eigene Back-Halves (`qrdx.dev/q/spring-menu`) | Nein | Ja | Ja |
+| Mitglieder pro Workspace | 1 (nur du) | 3 | Unbegrenzt |
+| Weitere Workspaces | Nein | Ja | Ja |
+| Smart Routing, A/B-Tests, UTM-Tags | Nein | Ja | Ja |
+| Passwörter, Zeitpläne, Ablauf, Scan-Limits | Nein | Ja | Ja |
+| Retargeting-Pixel | Nein | Ja | Ja |
+| Conversion-Tracking | Nein | Nein | Ja |
+| E-Mail-Zusammenfassungen und Benachrichtigungen | Nein | Ja | Ja |
+| Webhooks, Zapier und Slack | Nein | Nein | Ja |
+| OAuth-Apps ([Integration bauen](/docs/developers/build-an-integration)) | 1 | 5 | 25 |
+| Dateispeicher (größte Datei) | 50 MB (10 MB) | 5 GB (100 MB) | 50 GB (250 MB) |
+| Formularantworten pro Monat | 50 | 1,000 | 10,000 |
+| API-Anfragen pro Tag | 1,000 | 10,000, plus Massenerstellung | 100,000, plus Massenerstellung |
+| KI-Art-Bilder pro Monat | 3 | 30 | 150, gemeinsam pro Workspace |
+| KI-Theme-Generierungen | 5 insgesamt | Unbegrenzt | Unbegrenzt |
+| Gespeicherte Themes | 10 | Unbegrenzt, mit einem Workspace teilbar | Unbegrenzt, mit einem Workspace teilbar |
+| Gespeicherte [Barcodes](/docs/developers/barcode-api#saved-barcodes) | 1,000 | 10,000 | 100,000 |
+| [Statistikseiten im Kunden-Branding](/docs/client-reports) | Nein | Ja, mit kleinem „Made with QRdx“ | Ja, White-Label, mit deiner eigenen Domain nutzbar |
+| [Kundenportal](/docs/client-portal) | Nein | Nein | Ja |
+
+Nur aktive dynamische QR-Codes zählen zum Code-Limit: Archivierte Codes zählen nicht. Scans zählen nie zu irgendeinem Limit, und kein Tarif pausiert einen Code wegen Traffic. Die einzigen Scan-Limits sind die, die du selbst für einen Code festlegst.
+
+Das API-Kontingent gilt pro Workspace und wird um 00:00 UTC zurückgesetzt. Jede zählende Anfrage gibt `X-RateLimit-Limit`, `X-RateLimit-Remaining` und `X-RateLimit-Reset` zurück, damit du den Verbrauch im Blick behältst. Die Limits pro Minute findest du in der [REST API](/docs/developers/rest-api).
+
+## Workspaces [#workspaces]
+
+Limits gelten für jeden [Workspace](/docs/teams) einzeln, und ein Workspace nutzt den besten Tarif unter seinen Inhabern und [Abrechnungsmitgliedern](/docs/teams#roles). Jeder bekommt einen eigenen Workspace, der automatisch mit der Person als Inhaber angelegt wird und deshalb deren Tarif nutzt. In jedem anderen Workspace gibt ein Inhaber mit Business allen darin die Business-Limits; Mitglieder brauchen kein eigenes Abo.
+
+Für weitere Workspaces brauchst du Pro oder Business. Ein Workspace, dessen Inhaber und Abrechnungsmitglieder im Tarif Kostenlos sind, hat 1 Platz (nur du), mit Pro bis zu 3 und mit Business unbegrenzt viele. Plätze sind Mitglieder inklusive Inhaber plus ausstehende Einladungen. Widerrufe also eine Einladung, die du nicht mehr brauchst, um den Platz freizugeben. Wenn sich der Tarif der Inhaber ändert, bleiben aktuelle Mitglieder erhalten; nur neue Einladungen werden blockiert.
+
+## Limit überschritten, Herunterstufen und Kündigen [#going-over-a-limit-downgrading-and-cancelling]
+
+<Callout type="info">
+  Limits verhindern nur neue Dinge. Bestehende Codes leiten in jedem Tarif weiter, auch nach dem Herunterstufen, bei einer fehlgeschlagenen Zahlung oder nach einer Kündigung. Das ist die [Never-Hostage-Garantie](/guarantee).
+</Callout>
+
+- **Limit überschritten:** Du kannst keine weiteren erstellen, bis du wieder darunter liegst. Bestehende Inhalte kannst du weiterhin bearbeiten, archivieren und exportieren.
+- **Tägliches API-Kontingent überschritten:** API-Aufrufe erhalten `429` bis 00:00 UTC. Deine Codes leiten weiter und die Website funktioniert weiter.
+- **Herunterstufen:** Codes, Landingpages und verifizierte eigene Domains funktionieren weiter. Analytics zeigen den Verlauf, den dein neuer Tarif enthält.
+- **Kündigen:** Dein Tarif bleibt bis zum Ende des bezahlten Zeitraums aktiv, danach wechselt dein Konto zu Kostenlos.
+- **Fehlgeschlagene Zahlung:** Sobald das Abo ausläuft, ist es dasselbe wie eine Kündigung. Nichts wird pausiert.
+
+Codes, die aus einem von dir gewählten Grund enden, etwa wegen eines Ablaufdatums, einer Pause oder eines Scan-Limits, leiten Scanner zu deiner Fallback-URL oder auf eine neutrale Seite „Diese Kampagne ist beendet“ weiter, nie auf eine QRdx-Seite.
+
+## Abrechnung [#billing]
+
+Ein Upgrade machst du auf der [Preisseite](/pricing). Um den Tarif zu wechseln, zwischen monatlich und jährlich umzuschalten, deine Karte zu aktualisieren oder zu kündigen, öffne in den Einstellungen **Abo verwalten**. Das führt dich zum Polar-Abrechnungsportal. Ein Abo deckt dein Konto ab. Solange du eines hast, laufen Tarifwechsel deshalb über das Portal statt über einen neuen Checkout.
+
+## Self-Hosting [#self-hosting]
+
+Eine [selbst gehostete](/docs/self-hosting) Instanz nutzt dieselben Tarife. Die Limits sind in einer Datei definiert, `apps/docs/lib/plans.ts`, die du für deine Instanz ändern kannst. Ohne konfiguriertes Polar sind Upgrades nicht verfügbar, und jedes Konto nutzt die Limits von Kostenlos.
