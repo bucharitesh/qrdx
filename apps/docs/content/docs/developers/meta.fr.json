@@ -1,0 +1,27 @@
+{
+  "$schema": "../../../.source/json-schema/docs.meta.json",
+  "title": "Développeurs",
+  "description": "REST API, webhooks, MCP et la CLI",
+  "icon": "Terminal",
+  "root": true,
+  "pages": [
+    "index",
+    "---REST API---",
+    "quickstart",
+    "api-keys",
+    "rest-api",
+    "api",
+    "errors",
+    "../webhooks",
+    "build-an-integration",
+    "---Outils---",
+    "image-api",
+    "barcode-api",
+    "mcp",
+    "ai-agents",
+    "cli",
+    "n8n",
+    "---Plus---",
+    "[Journal des modifications](/changelogs)"
+  ]
+}

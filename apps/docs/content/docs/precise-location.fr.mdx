@@ -1,0 +1,78 @@
+---
+title: "Localisation précise et géorepérage"
+description: "Demandez aux personnes qui scannent un QR code dynamique de partager leur position, voyez où il a été scanné à environ 100 m près, et acheminez les scans selon la zone."
+icon: MapPin
+---
+
+Chaque [QR code dynamique](/docs/dynamic-qr-codes) enregistre le pays, la région et la ville de chaque scan à partir du réseau. Avec Pro et Business, vous pouvez aussi demander aux personnes qui scannent de partager leur position précise. Celles qui l'autorisent apparaissent dans les statistiques du code sous forme de points arrondis à environ 100 m, et le [routage intelligent](/docs/smart-routing) peut les envoyer vers une destination différente selon l'endroit où elles se trouvent.
+
+La demande est désactivée pour tous les codes tant que vous ne l'activez pas, et chaque personne décide pour elle-même dans son navigateur.
+
+## Activer la fonction [#turn-it-on]
+
+Ouvrez le code dans le [tableau de bord](/dashboard?to=codes), allez dans son onglet **Paramètres** et activez **Demander la localisation précise aux personnes qui scannent** dans le panneau **Localisation précise**. Cela fonctionne pour les codes qui ouvrent un lien vers un site web et pour ceux qui ouvrent une page hébergée.
+
+Avec la [REST API](/docs/developers/rest-api), envoyez `PATCH /v1/codes/{id}` avec `{"preciseLocation": true}`. Les codes indiquent ce paramètre dans leur champ `preciseLocation`.
+
+## Ce que voient les personnes qui scannent [#what-scanners-see]
+
+**Les codes qui ouvrent un lien vers un site web** affichent une courte étape « Partager votre position ? » avant l'ouverture du lien, avec **Autoriser** et **Ignorer**. Autoriser fait apparaître la demande de localisation propre au navigateur. Cette étape n'empêche jamais personne d'accéder à votre lien :
+
+- Ignorer ouvre immédiatement le lien.
+- Si la personne refuse dans le navigateur, ou si le navigateur ne parvient pas à trouver de position, le lien s'ouvre.
+- Si aucune position n'est obtenue 8 secondes après l'appui sur Autoriser, le lien s'ouvre quand même.
+- Un navigateur qui a déjà refusé pour ce site passe l'étape de lui-même, et un navigateur qui a déjà accepté partage la position sans second appui.
+- Sans JavaScript, le lien s'ouvre aussitôt.
+
+L'étape indique le site sur lequel la personne va arriver et renvoie vers la politique de confidentialité.
+
+**Les codes qui ouvrent une page hébergée** ouvrent la page immédiatement, comme d'habitude. Une fois la page chargée, le navigateur demande la position sur la page ; la page n'attend jamais de réponse. La demande n'est faite qu'juste après un scan, jamais lorsque quelqu'un ouvre directement l'adresse de la page.
+
+Lorsque le paramètre est désactivé, rien ne change : les scans vont directement à la destination, sans étape supplémentaire.
+
+## Ce qui est stocké [#whats-stored]
+
+Lorsque quelqu'un l'autorise, son navigateur arrondit la position à 3 décimales (environ 100 m) avant de l'envoyer, et QRdx l'arrondit à nouveau avant de la stocker avec ce scan, ainsi que la précision indiquée par le navigateur. Les positions exactes n'arrivent jamais jusqu'à QRdx.
+
+Rien n'est stocké lorsque la personne ignore ou refuse. Le scan est tout de même comptabilisé, avec son pays, sa région et sa ville issus du réseau, comme toujours.
+
+Les localisations précises sont conservées aussi longtemps que les autres scans du code, et votre offre détermine jusqu'où vous pouvez remonter dans le temps. Voir [Ce que QRdx enregistre lors d'un scan](/docs/help/privacy-and-security/scan-data).
+
+## Dans les statistiques [#in-analytics]
+
+L'onglet **Statistiques** du code comporte une carte **Localisations précises**, distincte des pays et des villes déterminés par l'IP. Elle indique combien de personnes ont reçu la demande, combien ont partagé leur position et quelle part cela représente, puis chaque point partagé avec son nombre de scans, sa précision moyenne et son dernier scan. Triez le tableau selon n'importe laquelle de ces colonnes, et ouvrez un point dans OpenStreetMap pour voir où il se trouve.
+
+L'export CSV contient les colonnes `latitude`, `longitude`, `location_accuracy_m` et `location_source`. `location_source` vaut `gps` pour une position partagée, `ip` lorsque le code a demandé la position mais que la personne ne l'a pas partagée, et reste vide lorsque le code n'a pas fait de demande. [`GET /v1/codes/{id}/scans`](/docs/developers/api/get-code-scans) renvoie les mêmes champs pour chaque scan, ainsi qu'un récapitulatif `preciseLocations`.
+
+Les liens de statistiques partagés (**Partager les statistiques** dans le menu d'un code) n'affichent jamais les localisations précises. Ils restent au niveau du pays.
+
+## Acheminer les scans selon la zone [#route-scans-by-area]
+
+Dans le panneau **Routage intelligent** du code, ajoutez une règle avec une condition **Zone** : un point central et un rayon compris entre 100 m et 500 km. Pour obtenir le centre, faites un clic droit sur un lieu dans une application de cartes et copiez ses coordonnées (par exemple `40.7580, -73.9855`), ou utilisez **Utiliser ma position** lorsque vous y êtes. **Vérifier sur une carte** ouvre le point dans OpenStreetMap.
+
+QRdx vérifie la zone avec la meilleure position dont il dispose pour ce scan :
+
+1. La position que la personne a partagée à l'étape dédiée, lorsque la localisation précise est activée et qu'elle l'a autorisée.
+2. Sinon, la position approximative de son adresse IP. Sur qrdx.dev, elle provient de la géolocalisation IP de Vercel et correspond généralement au centre de la ville ou de la zone de la personne, ce qui convient pour des rayons de plusieurs kilomètres. Elle sert à acheminer le scan et n'est jamais stockée.
+
+Lorsqu'aucune des deux n'est disponible, les conditions de zone ne correspondent pas, et les conditions de zone « n'est pas » correspondent. Les copies auto-hébergées qui ne s'exécutent pas sur Vercel n'ont pas de coordonnées IP : les règles de zone n'y fonctionnent donc qu'avec les positions partagées.
+
+**Tester vos règles** comporte un champ **Position**, pour vérifier où irait un scan effectué depuis n'importe quel point.
+
+### Uniquement dans une zone [#only-inside-an-area]
+
+Pour montrer un contenu uniquement aux personnes présentes à un endroit, comme un lieu d'événement ou un magasin :
+
+1. Ajoutez une règle avec une condition Zone autour de l'endroit, et définissez son URL sur le contenu destiné aux personnes qui s'y trouvent.
+2. Définissez la destination principale du code sur une page destinée à tous les autres, par exemple une page indiquant que l'offre n'est disponible que sur place.
+
+Activez aussi la localisation précise, afin qu'une position partagée par la personne décide, à environ 100 m près. Sans elle, c'est la position IP qui décide, ce qui ne donne qu'une précision à l'échelle de la ville.
+
+Les navigateurs permettent de falsifier sa position : une règle de zone n'est donc pas un contrôle d'accès. Utilisez un [mot de passe](/docs/code-controls) pour tout ce qui doit rester privé.
+
+## Bon à savoir [#good-to-know]
+
+- Les robots, les aperçus de liens et les requêtes HEAD ne voient jamais l'étape ; ils reçoivent la redirection habituelle.
+- Les codes protégés par mot de passe n'affichent pas l'étape : après la saisie du bon mot de passe, le scan va directement à la destination.
+- Les chiffres d'un test A/B pour une répartition placée derrière une condition de zone sont des estimations, car les scans n'enregistrent pas quelle position la règle a utilisée.
+- Si votre espace de travail passe à l'offre Gratuit, QRdx cesse de demander les localisations précises. Les règles de zone enregistrées continuent de fonctionner avec la position IP, et désactiver le paramètre ne nécessite jamais d'offre particulière.

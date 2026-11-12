@@ -1,0 +1,31 @@
+---
+title: "Importer des codes depuis un autre service"
+description: "Importez des liens depuis un fichier CSV, ou transférez vos codes depuis Bitly et d'autres services de QR code."
+---
+
+## Depuis un fichier CSV [#from-a-csv-file]
+
+1. Allez dans **Codes** et cliquez sur **Import CSV**.
+2. Téléversez un fichier CSV contenant un code par ligne.
+
+La seule colonne obligatoire est la destination. Vous pouvez aussi inclure un titre, un dossier, des tags et un suffixe personnalisé. Un fichier peut contenir jusqu'à {facts.importRows} lignes et peser jusqu'à 10 Mo. Chaque ligne est vérifiée avant toute création ; les lignes qui posent problème sont ignorées et listées.
+
+Vous pouvez aussi choisir un dossier et des tags pour tous les codes du fichier. Une ligne qui a son propre dossier le conserve, et les tags du fichier s'ajoutent à ceux que vous choisissez.
+
+Les fichiers volumineux sont envoyés par parties pendant que la barre de progression se remplit. Vous pouvez mettre en pause et reprendre. Si la page se recharge ou si la connexion est interrompue, l'import s'arrête et propose de reprendre ou de réessayer, sans qu'aucun code soit créé en double. Une fois terminé, téléchargez un CSV de résultats avec le lien court de chaque ligne, ou un ZIP des nouveaux codes au format PNG ou SVG.
+
+Avec l'offre Gratuit, vous pouvez importer un code à la fois. Pro et Business peuvent en importer plusieurs en même temps.
+
+## Depuis un autre service [#from-another-service]
+
+Cliquez sur **Import** dans la page **Codes** et choisissez où se trouvent actuellement vos codes.
+
+- **Bitly** : connectez-vous à Bitly et choisissez les liens.
+- **Rebrandly** et **Short.io** : collez une clé API de ce service.
+- **QR Code Generator PRO, Uniqode, Flowcode, QR TIGER, ME-QR, TinyURL, Hovercode, Scanova** et d'autres : téléversez le fichier d'export de ce service.
+
+## Conserver le fonctionnement des codes imprimés [#keep-printed-codes-working]
+
+Les codes imprimés pointent toujours vers l'ancien service. Le guide de migration explique comment les maintenir en état de marche et comment conserver vos suffixes d'origine.
+
+Voir [Quitter Bitly, Rebrandly et d'autres services](/docs/migrate).
