@@ -1,5 +1,6 @@
 import { getCatalogBySurface } from "@repo/integrations/src/catalog";
 import type { MetadataRoute } from "next";
+import { BARCODE_FORMAT_PAGES } from "@/app/[lang]/(home)/barcode-generator/[format]/content";
 import { CHAT_BOTS } from "@/components/sections/chat-bots/bots";
 import { isArtAvailable } from "@/lib/ai/art-availability";
 import { SLUG_TO_CATEGORY } from "@/lib/blog-constants";
@@ -323,6 +324,15 @@ function entries(): Entry[] {
       changeFrequency: "monthly",
       priority: 0.7,
     },
+    ...BARCODE_FORMAT_PAGES.map(
+      (page) =>
+        ({
+          url: url(`/barcode-generator/${page.slug}`),
+          lastModified: pageDate("/barcode-generator/[format]"),
+          changeFrequency: "monthly",
+          priority: 0.6,
+        }) satisfies Entry,
+    ),
     {
       url: url("/scan"),
       lastModified: pageDate("/scan"),
