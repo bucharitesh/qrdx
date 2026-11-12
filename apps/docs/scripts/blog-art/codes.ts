@@ -65,6 +65,11 @@ export const BLOG_ART = {
       },
     ],
   },
+  chatCover: {
+    file: "qr-code-with-chatgpt-or-claude/cover",
+    size: COVER,
+    codes: [{ id: "code", value: url("/mcp"), style: "signature" }],
+  },
   // Existing posts
   understandingCover: {
     file: "understanding-qr-codes/cover",
