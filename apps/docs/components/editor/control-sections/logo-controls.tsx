@@ -35,24 +35,22 @@ const ALLOWED_LOGO_TYPES = [
 
 /**
  * A logo file picker: `input` is the hidden file input to render, `choose`
- * opens it. A PNG, JPG, WebP or SVG within the size limit is read as a data
- * URL (the format logos are saved in) and handed to `onLogo`.
+ * opens it, `readFile` takes a file from elsewhere (a drop). A PNG, JPG,
+ * WebP or SVG within the size limit is read as a data URL (the format logos
+ * are saved in) and handed to `onLogo`; anything else gets the same error
+ * toasts.
  */
 export function useLogoUpload(onLogo: (dataUrl: string) => void) {
   const t = useTranslations("editor.controlSections.logoControls");
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
-  const onFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    // Logos are inlined as data URLs into the saved theme and local storage
+  // Logos are inlined as data URLs into the saved theme and local storage
+  const readFile = (file: File): boolean => {
     if (!ALLOWED_LOGO_TYPES.includes(file.type)) {
       toast.error(t("unsupportedLogoFormat"), {
         description: t("useAPngJpgWebp"),
       });
-      e.target.value = "";
-      return;
+      return false;
     }
 
     if (file.size > MAX_LOGO_FILE_SIZE) {
@@ -61,8 +59,7 @@ export function useLogoUpload(onLogo: (dataUrl: string) => void) {
           value: MAX_LOGO_FILE_SIZE / 1024 / 1024,
         }),
       });
-      e.target.value = "";
-      return;
+      return false;
     }
 
     const reader = new FileReader();
@@ -76,6 +73,13 @@ export function useLogoUpload(onLogo: (dataUrl: string) => void) {
       toast.error(t("failedToReadLogoFile"));
     };
     reader.readAsDataURL(file);
+    return true;
+  };
+
+  const onFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!readFile(file)) e.target.value = "";
   };
 
   const input = (
@@ -92,6 +96,8 @@ export function useLogoUpload(onLogo: (dataUrl: string) => void) {
 
   return {
     input,
+    /** Checks and reads a file (a dropped one, say) like a picked one */
+    readFile,
     choose: () => fileInputRef.current?.click(),
     clear: () => {
       if (fileInputRef.current) fileInputRef.current.value = "";

@@ -61,8 +61,10 @@ export function moveAlongToolbar(event: KeyboardEvent<HTMLDivElement>) {
 export const menuButton =
   "hover:bg-accent focus-visible:ring-ring/50 aria-expanded:bg-accent aria-pressed:bg-accent inline-flex h-7 items-center gap-1.5 rounded-full px-2 text-xs font-medium outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50";
 
+// w-max: an absolute box near the container's edge would otherwise shrink
+// to fit, and placing it by its width would then move it again
 export const toolbarClass =
-  "bg-popover text-popover-foreground pointer-events-auto absolute flex items-center gap-0.5 rounded-full border p-1 shadow-md";
+  "bg-popover text-popover-foreground pointer-events-auto absolute flex w-max items-center gap-0.5 rounded-full border p-1 shadow-md";
 
 export function Divider() {
   return <span aria-hidden className="bg-border mx-0.5 h-4 w-px" />;

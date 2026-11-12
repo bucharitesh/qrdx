@@ -4,7 +4,8 @@ import { Button } from "@repo/design-system/components/ui/button";
 import { Slider } from "@repo/design-system/components/ui/slider";
 import { useTranslations } from "next-intl";
 
-const MAX_PADDING = 10;
+/** Most quiet zone the padding control offers, in modules. */
+export const MAX_PADDING = 10;
 
 // Names in messages/en.json: editor.controlSections.paddingControls.presets.
 const PRESETS = [

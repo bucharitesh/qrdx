@@ -4003,7 +4003,8 @@
           "edit": "Edit background",
           "options": "Background options",
           "random": "Random background",
-          "more": "More background options"
+          "more": "More background options",
+          "editShape": "Edit code shape"
         },
         "frame": {
           "edit": "Edit frame",
@@ -4027,13 +4028,59 @@
         "backgroundColor": "Background color",
         "padding": "Padding",
         "frameStyle": "Frame style",
-        "frameColor": "Frame color"
+        "frameColor": "Frame color",
+        "whichEyes": "Which eyes",
+        "allEyes": "All eyes",
+        "thisEye": "This eye",
+        "thisEyesColor": "This eye's color",
+        "thisEyesCenterColor": "This eye's center color",
+        "shapesChangeAllThreeEyes": "Shapes change all three eyes.",
+        "sameAsTheOthers": "Same as the others",
+        "eyesWithTheirOwnColor": "Eyes with a color of their own keep it. Choose This eye to change one.",
+        "logoShapeAndPlate": "Logo shape and plate",
+        "clearSpace": "Clear space",
+        "content": "Content",
+        "codeShape": "Code shape",
+        "errorCorrection": "Error correction"
       },
       "random": "Random",
       "moreOptions": "More options",
       "sheet": {
         "changesShowOnTheCode": "Changes show on the code as you make them. Done keeps them.",
         "done": "Done"
+      },
+      "content": {
+        "link": "Link",
+        "text": "Text",
+        "theCodeKeepsItsContent": "The code keeps its content until this is valid.",
+        "scansOpenHost": "Scans open {host}",
+        "textHint": "The code shows this text when scanned.",
+        "editedInTheContentTab": "This kind of content has its own form in the Content tab.",
+        "openTheContentTab": "Open the Content tab"
+      },
+      "codeShape": {
+        "codeShape": "Code shape",
+        "names": {
+          "square": "Square",
+          "circle": "Circle",
+          "heart": "Heart"
+        },
+        "aCircleOrHeartTakes": "A circle or heart takes the place of a frame."
+      },
+      "errorCorrection": {
+        "theLogoRaisesItToLevel": "The logo raises it to level {level} for now."
+      },
+      "handles": {
+        "moveLogo": "Move logo",
+        "dragOrUseTheArrowKeys": "Drag it, or use the arrow keys. Shift moves it further. Delete hides it.",
+        "logoSize": "Logo size",
+        "percentOfTheCode": "{value, number}% of the code",
+        "padding": "Padding",
+        "modules": "{count, plural, one {# module} other {# modules}}",
+        "dragToChangeThePadding": "Drag in or out to change the padding"
+      },
+      "drop": {
+        "dropToUseAsLogo": "Drop to use as logo"
       }
     },
     "gradientPicker": {
@@ -4285,6 +4332,7 @@
         "actions": "Actions",
         "themeAppearance": "Theme & Appearance",
         "patternCustomization": "Pattern Customization",
+        "preview": "Preview",
         "help": "Help"
       },
       "shortcuts": {
@@ -4306,7 +4354,11 @@
         "cycleCornerEyePatterns": "Cycle corner eye patterns",
         "cycleInternalEyePatterns": "Cycle internal eye patterns",
         "cycleFrames": "Cycle frames",
-        "showThisShortcutsDialog": "Show this shortcuts dialog"
+        "showThisShortcutsDialog": "Show this shortcuts dialog",
+        "editAPartOfTheCode": "Edit the part of the code under the pointer or focused",
+        "randomLookForThatPart": "Random look for that part",
+        "hideTheFocusedLogo": "Hide the focused logo",
+        "moveTheLogoWhileEditing": "Move the logo while it's edited"
       }
     },
     "soundSwitch": {

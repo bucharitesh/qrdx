@@ -157,6 +157,71 @@ export function LogoSizeControl({
   );
 }
 
+/** Clear space around the logo, in modules (logoOptions.padding). */
+export function LogoClearSpaceControl({
+  style,
+  onChange,
+}: {
+  /** The style with defaults filled in */
+  style: QRStyle;
+  onChange: (change: Partial<QRStyle>) => void;
+}) {
+  const t = useTranslations("editor.controlSections.logoOptionsSection");
+  const padding = style.logoOptions?.padding ?? 0;
+  return (
+    <SliderRow
+      label={t("clearSpace")}
+      value={`${padding} ${padding === 1 ? "module" : "modules"}`}
+    >
+      <Slider
+        aria-label={t("clearSpaceAroundTheLogo")}
+        max={LOGO_PADDING_MAX}
+        min={0}
+        onValueChange={([next]) =>
+          onChange(
+            logoOptionsChange(style.logoOptions ?? {}, { padding: next ?? 0 }),
+          )
+        }
+        step={1}
+        value={[padding]}
+      />
+    </SliderRow>
+  );
+}
+
+/** The switch that raises error correction to H for a big logo (autoLevel). */
+export function AutoLevelControl({
+  style,
+  onChange,
+}: {
+  style: QRStyle;
+  onChange: (change: Partial<QRStyle>) => void;
+}) {
+  const t = useTranslations("editor.controlSections.logoOptionsSection");
+  const id = React.useId();
+  return (
+    <div className="flex items-center justify-between gap-3">
+      <div className="space-y-0.5">
+        <Label className="cursor-pointer text-sm" htmlFor={id}>
+          {t("raiseErrorCorrectionForBig")}
+        </Label>
+        <p className="text-muted-foreground text-xs">
+          {t("switchesToLevelHWhen", {
+            value: percent(AUTO_LEVEL_LOGO_COVERAGE),
+          })}
+        </p>
+      </div>
+      <Switch
+        checked={style.autoLevel ?? false}
+        id={id}
+        onCheckedChange={(value) =>
+          onChange({ autoLevel: value ? true : undefined })
+        }
+      />
+    </div>
+  );
+}
+
 /**
  * The logo's shape, plate and background, its size, clear space and
  * position, and automatic error correction. Shown while the logo is on.
@@ -168,7 +233,6 @@ export function LogoOptionsSection({
   const logoShapeNames = useLogoShapeNames();
   const t = useTranslations("editor.controlSections.logoOptionsSection");
   const options = style.logoOptions ?? {};
-  const padding = options.padding ?? 0;
   const x = options.x ?? 0.5;
   const y = options.y ?? 0.5;
   const centered = x === 0.5 && y === 0.5;
@@ -200,19 +264,7 @@ export function LogoOptionsSection({
 
       <LogoSizeControl onChange={onChange} style={style} />
 
-      <SliderRow
-        label={t("clearSpace")}
-        value={`${padding} ${padding === 1 ? "module" : "modules"}`}
-      >
-        <Slider
-          aria-label={t("clearSpaceAroundTheLogo")}
-          max={LOGO_PADDING_MAX}
-          min={0}
-          onValueChange={([next]) => setOptions({ padding: next ?? 0 })}
-          step={1}
-          value={[padding]}
-        />
-      </SliderRow>
+      <LogoClearSpaceControl onChange={onChange} style={style} />
 
       <div className="space-y-3">
         <div className="flex items-center justify-between gap-3">
@@ -253,25 +305,7 @@ export function LogoOptionsSection({
         </p>
       </div>
 
-      <div className="flex items-center justify-between gap-3">
-        <div className="space-y-0.5">
-          <Label className="cursor-pointer text-sm" htmlFor="logo-auto-level">
-            {t("raiseErrorCorrectionForBig")}
-          </Label>
-          <p className="text-muted-foreground text-xs">
-            {t("switchesToLevelHWhen", {
-              value: percent(AUTO_LEVEL_LOGO_COVERAGE),
-            })}
-          </p>
-        </div>
-        <Switch
-          checked={style.autoLevel ?? false}
-          id="logo-auto-level"
-          onCheckedChange={(value) =>
-            onChange({ autoLevel: value ? true : undefined })
-          }
-        />
-      </div>
+      <AutoLevelControl onChange={onChange} style={style} />
     </ControlSection>
   );
 }

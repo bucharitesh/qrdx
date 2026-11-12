@@ -33,8 +33,14 @@ export const BACKGROUND_REACH = 8;
 
 /** Where each part is drawn, relative to the preview (part-boxes.ts). */
 export interface MeasuredParts {
-  /** One per finder eye, outer ring and centre together */
+  /**
+   * The three finder eyes, outer ring and center together, in the order of
+   * EYE_POSITIONS (top-left, top-right, bottom-left); empty unless all three
+   * were found
+   */
   eyes: Box[];
+  /** The symbol itself (no quiet zone, no shaped code's ring), from the eyes */
+  symbol: Box | null;
   dots: Box | null;
   logo: Box | null;
   background: Box | null;
@@ -44,6 +50,7 @@ export interface MeasuredParts {
 
 export const NO_PARTS: MeasuredParts = {
   eyes: [],
+  symbol: null,
   dots: null,
   logo: null,
   background: null,
@@ -51,7 +58,13 @@ export const NO_PARTS: MeasuredParts = {
 };
 
 export interface PartTarget {
+  /** The toolbar it opens */
   part: PartId;
+  /**
+   * "ring": a shaped code's decorative ring around the symbol, its own
+   * button that opens the background's toolbar
+   */
+  kind: "part" | "ring";
   /** Where its buttons go (three for the eyes) */
   boxes: Box[];
   /** Higher is on top */
@@ -66,6 +79,31 @@ export function unionBox(boxes: Box[]): Box | null {
   const right = Math.max(...boxes.map((box) => box.left + box.width));
   const bottom = Math.max(...boxes.map((box) => box.top + box.height));
   return { left, top, width: right - left, height: bottom - top };
+}
+
+/** Where two boxes overlap, or null when they don't. */
+export function intersectBox(a: Box, b: Box): Box | null {
+  const left = Math.max(a.left, b.left);
+  const top = Math.max(a.top, b.top);
+  const right = Math.min(a.left + a.width, b.left + b.width);
+  const bottom = Math.min(a.top + a.height, b.top + b.height);
+  if (right <= left || bottom <= top) return null;
+  return { left, top, width: right - left, height: bottom - top };
+}
+
+/**
+ * The symbol's box from its three finder eyes (top-left, top-right,
+ * bottom-left): they sit in its corners.
+ */
+export function symbolBox(eyes: Box[]): Box | null {
+  const [topLeft, topRight, bottomLeft] = eyes;
+  if (!(topLeft && topRight && bottomLeft)) return null;
+  return {
+    left: topLeft.left,
+    top: topLeft.top,
+    width: topRight.left + topRight.width - topLeft.left,
+    height: bottomLeft.top + bottomLeft.height - topLeft.top,
+  };
 }
 
 /** `box` grown by `by` on every side. */
@@ -84,11 +122,13 @@ const visible = (box: Box | null): box is Box =>
 /**
  * The buttons to lay over the preview, in Tab order. Parts that aren't drawn
  * get none (no logo shown, no frame on); the frame's button covers the
- * whole artwork and sits under everything else.
+ * whole artwork and sits under everything else. A shaped code (circle,
+ * heart or a silhouette) adds a button over its ring, right above the
+ * background's, that opens the background's toolbar (where its Shape is).
  */
 export function partTargets(
   measured: MeasuredParts,
-  { frame }: { frame: boolean },
+  { frame, shaped = false }: { frame: boolean; shaped?: boolean },
 ): PartTarget[] {
   const boxes: Record<PartId, Box[]> = {
     eyes: measured.eyes.filter(visible),
@@ -99,11 +139,25 @@ export function partTargets(
       : [],
     frame: frame && visible(measured.artwork) ? [measured.artwork] : [],
   };
-  return PART_ORDER.filter((part) => boxes[part].length > 0).map((part) => ({
-    part,
-    boxes: boxes[part],
-    layer: PART_LAYER[part],
-  }));
+  return PART_ORDER.flatMap((part): PartTarget[] => {
+    if (boxes[part].length === 0) return [];
+    const target: PartTarget = {
+      part,
+      kind: "part",
+      boxes: boxes[part],
+      layer: PART_LAYER[part],
+    };
+    if (part === "background" && shaped && visible(measured.background)) {
+      const ring: PartTarget = {
+        part,
+        kind: "ring",
+        boxes: [measured.background],
+        layer: PART_LAYER.background,
+      };
+      return [target, ring];
+    }
+    return [target];
+  });
 }
 
 /** Where a part's toolbar anchors: around everything the part draws. */
