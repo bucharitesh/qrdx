@@ -20,7 +20,7 @@ const shared: Options = {
   outDir: "dist",
   sourcemap: true,
   dts: false, // Declarations are emitted by tsc (see the "build" script)
-  external: ["react", "react-dom", "jsqr", "jspdf"],
+  external: ["react", "react-dom", "jsqr", "jspdf", "@resvg/resvg-js", "sharp"],
   splitting: false,
   minify: true,
   esbuildOptions(options) {
