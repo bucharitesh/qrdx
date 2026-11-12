@@ -750,6 +750,99 @@
       "signInNote": "인보이스는 계정의 워크스페이스 기준으로 보내드리니 먼저 로그인해 주세요."
     }
   },
+  "docs": {
+    "meta": {
+      "titleSuffix": "QRdx 문서"
+    },
+    "breadcrumb": {
+      "home": "홈",
+      "docs": "문서"
+    },
+    "untranslated": {
+      "title": "이 페이지는 아직 번역되지 않았어요",
+      "body": "영어 버전을 보고 계세요."
+    },
+    "client": {
+      "actions": {
+        "copyMarkdown": "Markdown 복사",
+        "open": "열기",
+        "openIn": "{app}에서 열기",
+        "askPrompt": "{url}을 읽고, 그 내용에 대해 질문하고 싶어요."
+      },
+      "search": {
+        "jumpTo": "<page>{name}</page>(으)로 이동"
+      },
+      "language": {
+        "label": "문서 언어",
+        "note": "문서는 이 언어들로 제공돼요. 그 외 언어는 영어 문서를 보여드려요."
+      }
+    },
+    "help": {
+      "search": "도움말 및 문서 검색",
+      "stillStuck": {
+        "title": "아직 해결되지 않았나요?",
+        "body": "무엇을 하려고 했고 어떤 일이 일어났는지 알려주세요. 코드와 관련된 문의라면 해당 코드의 짧은 링크도 함께 보내주세요.",
+        "widget": "기능성 쿠키를 허용하면 qrdx.dev의 지원 위젯을 이용할 수 있어요.",
+        "github": "GitHub에 버그 신고",
+        "contact": "문의할 수 있는 모든 방법"
+      }
+    },
+    "notFound": {
+      "title": "문서에 없는 페이지예요",
+      "body": "페이지가 이동했거나 이름이 바뀌었을 수 있어요. 문서를 검색하거나 아래 항목에서 시작해 보세요.",
+      "places": {
+        "gettingStarted": {
+          "title": "시작하기",
+          "description": "첫 번째 코드를 디자인하고 다운로드해요."
+        },
+        "dynamic": {
+          "title": "동적 QR 코드",
+          "description": "인쇄한 뒤에도 바꿀 수 있는 짧은 링크예요."
+        },
+        "restApi": {
+          "title": "REST API",
+          "description": "내 앱에서 코드를 만들고 관리해요."
+        },
+        "components": {
+          "title": "컴포넌트",
+          "description": "QR 코드를 위한 React 및 shadcn/ui 컴포넌트예요."
+        }
+      }
+    },
+    "ui": {
+      "search": "검색",
+      "searchPlaceholder": "검색",
+      "openSearch": "검색 열기",
+      "closeSearch": "검색 닫기",
+      "noResults": "검색 결과가 없어요",
+      "searchFailed": "검색에 실패했어요",
+      "onThisPage": "이 페이지의 내용",
+      "noHeadings": "제목 없음",
+      "tableOfContents": "목차",
+      "lastUpdated": "마지막 업데이트",
+      "previousPage": "이전 페이지",
+      "nextPage": "다음 페이지",
+      "copyCode": "텍스트 복사",
+      "copiedCode": "텍스트 복사됨",
+      "copyAnchor": "앵커 링크 복사",
+      "copiedAnchor": "앵커 링크 복사됨",
+      "copyLink": "링크 복사",
+      "copiedLink": "링크 복사됨",
+      "toggleMenu": "메뉴 전환",
+      "toggleTheme": "테마 전환",
+      "themeLight": "라이트",
+      "themeDark": "다크",
+      "themeSystem": "시스템",
+      "openSidebar": "사이드바 열기",
+      "closeSidebar": "사이드바 닫기",
+      "collapseSidebar": "사이드바 접기",
+      "typeTableProp": "속성",
+      "typeTableType": "타입",
+      "typeTableDefault": "기본값",
+      "typeTableParameters": "매개변수",
+      "typeTableReturns": "반환값"
+    }
+  },
   "common": {
     "breadcrumb": "탐색 경로",
     "home": "홈",

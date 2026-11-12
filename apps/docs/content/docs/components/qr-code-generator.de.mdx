@@ -1,0 +1,64 @@
+---
+title: "QR-Code-Generator"
+description: "Ein Texteingabefeld mit Live-Vorschau des QR-Codes, Stil-Presets und Download-Buttons."
+icon: Sparkles
+---
+
+<ComponentLinks name="qr-code-generator" />
+
+<ComponentPreview name="qr-code-generator-demo" />
+
+## Installation [#installation]
+
+<InstallationTabs name="qr-code-generator" />
+
+## Verwendung [#usage]
+
+```tsx
+import { QrCodeGenerator } from "@/components/qr-code-generator";
+```
+
+```tsx
+<QrCodeGenerator defaultValue="https://example.com" />
+```
+
+Die Vorschau aktualisiert sich, während du tippst. Jeder Preset-Button zeigt ein kleines Beispiel seines Stils, und Downloads verwenden das ausgewählte Preset mit 1024 Pixeln.
+
+## Beispiele [#examples]
+
+### Eigene Presets [#custom-presets]
+
+Ersetze die integrierten Presets durch deine eigenen. Ein Preset besteht aus einer `id`, einem `name` und einem `style` mit beliebigen qrdx-Optionen, darunter Verläufe, Logos und die Fehlerkorrektur `level`.
+
+<ComponentPreview name="qr-code-generator-presets" />
+
+Die integrierten Presets werden als `QR_CODE_PRESETS` exportiert, sodass du sie erweitern kannst:
+
+```tsx
+import { QR_CODE_PRESETS, QrCodeGenerator } from "@/components/qr-code-generator";
+
+<QrCodeGenerator
+  presets={[
+    ...QR_CODE_PRESETS,
+    { id: "brand", name: "Brand", style: { fgColor: "#155DFC" } },
+  ]}
+/>
+```
+
+### Ergebnis speichern [#saving-the-result]
+
+`onChange` meldet bei jeder Änderung den Text und das ausgewählte Preset, zum Beispiel, um die Auswahl des Nutzers zu speichern:
+
+```tsx
+<QrCodeGenerator
+  onChange={({ value, preset }) => saveDraft({ value, style: preset.style })}
+/>
+```
+
+## API-Referenz [#api-reference]
+
+<auto-type-table path="../../../registry/qrdx/qr-code-generator.tsx" type="{ [K in keyof QrCodeGeneratorProps as K extends keyof ComponentProps<'div'> ? never : K]: QrCodeGeneratorProps[K] }" />
+
+### QrCodePreset [#qrcodepreset]
+
+<auto-type-table path="../../../registry/qrdx/qr-code-generator.tsx" name="QrCodePreset" />

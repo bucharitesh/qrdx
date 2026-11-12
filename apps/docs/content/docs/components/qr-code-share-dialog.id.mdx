@@ -1,0 +1,53 @@
+---
+title: "Dialog Berbagi Kode QR"
+description: "Dialog berbagi dengan kode QR untuk sebuah tautan, tombol salin, unduhan PNG, dan lembar berbagi bawaan perangkat."
+icon: Webhook
+---
+
+<ComponentLinks name="qr-code-share-dialog" />
+
+<ComponentPreview name="qr-code-share-dialog-demo" />
+
+## Instalasi [#installation]
+
+<InstallationTabs name="qr-code-share-dialog" />
+
+## Penggunaan [#usage]
+
+```tsx
+import { QrCodeShareDialog } from "@/components/qr-code-share-dialog";
+```
+
+```tsx
+<QrCodeShareDialog url="https://example.com/invite/abc123" />
+```
+
+Dialog menampilkan kode, tautan dalam kolom hanya-baca dengan tombol salin, dan unduhan PNG. Pada perangkat yang memiliki lembar berbagi (sebagian besar ponsel), tombol "Bagikan…" akan membukanya.
+
+## Contoh [#examples]
+
+### Pemicu kustom [#custom-trigger]
+
+Teruskan pemicu Anda sendiri sebagai children, misalnya tombol ikon di toolbar. `title`, `description`, dan `qr` menyesuaikan dialog.
+
+<ComponentPreview name="qr-code-share-dialog-trigger" />
+
+### Terkontrol [#controlled]
+
+Dialog menerima props [Dialog](https://ui.shadcn.com/docs/components/dialog), sehingga Anda dapat membukanya dari kode:
+
+```tsx
+const [open, setOpen] = useState(false);
+
+<QrCodeShareDialog
+  url="https://example.com"
+  open={open}
+  onOpenChange={setOpen}
+/>
+```
+
+## Referensi API [#api-reference]
+
+<auto-type-table path="../../../registry/qrdx/qr-code-share-dialog.tsx" type="{ [K in keyof QrCodeShareDialogProps as K extends Exclude<keyof ComponentProps<typeof Dialog>, 'children'> ? never : K]: QrCodeShareDialogProps[K] }" />
+
+`open`, `defaultOpen`, `onOpenChange`, dan `modal` diteruskan ke Dialog.

@@ -1,0 +1,91 @@
+---
+title: "Proteggi il tuo account"
+description: "Come funziona l'accesso, la verifica in due passaggi, le passkey, il controllo quando un accesso viene usato da un posto nuovo, le email che QRdx invia sulla sicurezza del tuo account, quanto dura un accesso, come disconnettere gli altri dispositivi e come segnalare un problema di sicurezza."
+---
+
+## Nessuna password da far trapelare [#no-password-to-leak]
+
+QRdx non usa password. Accedi con Google, GitHub o un codice monouso inviato alla tua email<IfAvailable feature="passkeys">, oppure con una passkey</IfAvailable>.<IfAvailable feature="sso"> Se il tuo workspace ha il piano Business, può anche permetterti di accedere con il [single sign-on](/docs/help/teams/single-sign-on) della tua azienda, oppure richiederlo.</IfAvailable>
+
+Questo rende il tuo account email, e il tuo account Google o GitHub, le chiavi di accesso a QRdx. Attiva la verifica in due passaggi anche per questi account.
+
+<IfAvailable feature="sso" id="if-your-company-requires-single-sign-on" title="Se la tua azienda richiede il single sign-on">
+Un workspace Business può [richiedere il single sign-on](/docs/help/teams/single-sign-on#require-single-sign-on) per il dominio email della sua azienda. Se il tuo indirizzo appartiene a quel dominio:
+
+- accedi solo con il single sign-on: un codice via email, Google o GitHub<IfAvailable feature="passkeys">, o **Continua con la passkey**,</IfAvailable> non ti farà accedere;
+- la verifica in due passaggi si applica comunque dopo la pagina di accesso della tua azienda<IfAvailable feature="passkeys">, e una passkey funziona ancora come secondo passaggio</IfAvailable>;
+- ogni accesso dura al massimo 24 ore, poi accedi di nuovo con il single sign-on;
+- l'email del tuo account QRdx non può essere cambiata con un indirizzo esterno al dominio.
+
+Quando il workspace attiva questa opzione, vieni disconnesso dalle sessioni che non sono iniziate con il single sign-on. I proprietari del workspace mantengono gli altri modi per accedere, così un problema con la pagina di accesso dell'azienda non può escludere tutti.
+</IfAvailable>
+
+## Attiva la verifica in due passaggi [#turn-on-two-step-verification]
+
+La [verifica in due passaggi](/docs/help/privacy-and-security/two-step-verification) fa sì che QRdx richieda un secondo passaggio dopo l'accesso, in qualunque modo accedi: <IfAvailable feature="passkeys">la tua passkey o </IfAvailable>un codice da un'app di autenticazione. Chi riesce a entrare nella tua email o nel tuo account Google non può comunque entrare in QRdx senza di essa. Ricevi 10 codici di backup per quando non puoi completare il secondo passaggio. Attivarla disconnette tutti gli altri browser o dispositivi collegati al tuo account, quindi ognuno dovrà accedere di nuovo con il secondo passaggio.
+
+<IfAvailable feature="passkeys" id="add-a-passkey" title="Aggiungi una passkey">
+Una [passkey](/docs/help/privacy-and-security/passkeys) verifica che sei tu con la tua impronta, il tuo volto o il blocco schermo. Funziona solo sul sito di QRdx, quindi un sito contraffatto non può raccoglierla. Può farti accedere da sola con **Continua con la passkey**, oppure essere il tuo secondo passaggio. Aggiungere una passkey mentre la verifica in due passaggi è disattivata la attiva, e questo disconnette gli altri tuoi dispositivi.
+</IfAvailable>
+
+## Le modifiche ti chiedono di confermare la tua identità [#changes-ask-you-to-confirm-its-you]
+
+Prima di una modifica alla sicurezza del tuo account, QRdx ti chiede di [confermare che sei tu](/docs/help/privacy-and-security/two-step-verification#confirm-its-you), anche se hai già effettuato l'accesso: cambiare il tuo indirizzo email, eliminare il tuo account, attivare o disattivare la verifica in due passaggi, generare nuovi codici di backup, cambiare i metodi del secondo passaggio, o collegare o scollegare Google o GitHub. Lo stesso vale per creare una chiave API o il client secret di un'app OAuth, approvare un'app che chiede di usare il tuo account, aggiungere un webhook o cambiarne l'URL, mostrare o ruotare il segreto di firma di un webhook, aggiungere un webhook di notifica Slack o Discord o collegare un'integrazione che invia le tue scansioni o le risposte dei moduli a un altro strumento e, in un workspace, eliminarlo, cambiare il ruolo di qualcuno, rimuovere qualcuno o invitare un amministratore.<IfAvailable feature="sso"> Lo stesso vale per le modifiche alla connessione di single sign-on di un workspace e per l'obbligo del single sign-on.</IfAvailable>
+
+Con la verifica in due passaggi attiva, confermi con <IfAvailable feature="passkeys">la tua passkey, </IfAvailable>un codice dell'app di autenticazione o un codice di backup, mai con un codice inviato via email. Senza di essa, puoi usare un codice di 6 cifre che QRdx ti invia via email<IfAvailable feature="passkeys">, la tua passkey se ne hai una,</IfAvailable> oppure accedere di nuovo con un account Google o GitHub che hai collegato<IfAvailable feature="sso"> (o con il single sign-on del tuo workspace, quando usa OIDC)</IfAvailable>. Una conferma dura 10 minuti in quel browser.
+
+Per cambiare l'indirizzo email serve anche un codice inviato al nuovo indirizzo. Poi vieni disconnesso da tutti gli altri dispositivi e il vecchio indirizzo riceve un'email che avvisa del cambio. Hai perso l'accesso alla tua email? Vedi [cosa fare](/docs/help/account-and-billing/sign-in#lost-access-to-your-email).
+
+## Un accesso usato da un posto nuovo [#a-sign-in-used-somewhere-new]
+
+Quando accedi, QRdx registra il paese da cui accedi e il tuo browser, ad esempio "Chrome su macOS". Se in seguito quell'accesso viene usato da un paese diverso e da un browser diverso, QRdx ti chiede di [confermare che sei tu](/docs/help/privacy-and-security/two-step-verification#confirm-its-you) prima di poter fare altro nel tuo account. Finché non lo fai, quel browser è trattato come disconnesso ovunque su QRdx. Così chi copia il tuo accesso dal tuo browser non può usarlo da lontano, a meno che non riesca anche a confermare che sei tu.
+
+Te lo chiede solo quando sono cambiati entrambi. Viaggiare con lo stesso browser, o aggiornare il browser o il sistema, non conta. Dopo la conferma, QRdx registra il nuovo paese e il nuovo browser per quell'accesso. In alternativa puoi disconnetterti e accedere di nuovo.
+
+È un controllo in più, non una garanzia: un accesso copiato e usato dal tuo stesso paese, o dallo stesso tipo di browser, non viene messo in discussione. QRdx conosce il paese solo quando il suo provider di hosting lo fornisce, e dove non lo fornisce questo controllo non viene eseguito. Per terminare un accesso che non riconosci, [disconnetti gli altri dispositivi](#sign-out-other-devices).
+
+## Email sulla sicurezza del tuo account [#emails-about-your-accounts-security]
+
+Inviamo un'email all'indirizzo del tuo account quando:
+
+- un browser o dispositivo accede al tuo account per la prima volta;
+- la verifica in due passaggi viene attivata o disattivata, un'app di autenticazione<IfAvailable feature="passkeys"> o una passkey</IfAvailable> viene aggiunta o rimossa, oppure vengono creati nuovi codici di backup;
+- viene usato un codice di backup, per accedere o per confermare che sei tu, con il numero di codici che ti restano;
+- viene chiesto al supporto di disattivare la tua verifica in due passaggi, con il giorno in cui avviene e come impedirlo, e quando la richiesta viene annullata;
+- il tuo indirizzo email viene cambiato (al vecchio indirizzo).
+
+Ognuna indica cosa è successo, su quale dispositivo e browser (ad esempio "Chrome su macOS"), approssimativamente dove, da quale indirizzo IP e quando. **Controlla la sicurezza** apre le impostazioni di sicurezza. Se non eri tu, segui i passaggi indicati nell'email e contatta il supporto.
+
+Le email che contengono un codice, come i codici di accesso e il codice che conferma che sei tu, indicano approssimativamente da dove è stato richiesto il codice. QRdx non chiederà mai un codice per telefono, in chat o via email: non comunicarlo a nessuno.
+
+### Nuovi accessi [#new-sign-ins]
+
+QRdx riconosce un browser da un cookie che imposta quando completi l'accesso. Quando un browser o dispositivo senza quel cookie accede al tuo account, ricevi un'email. Con la verifica in due passaggi attiva, viene inviata dopo aver completato il secondo passaggio.
+
+Accedere di nuovo in un browser che QRdx già riconosce non ne invia una, e nemmeno la creazione del tuo account. Se cancelli i cookie o usi una finestra privata, il prossimo accesso lì conta come nuovo.
+
+Ogni nuovo browser riceve la propria email, fino a 10 al giorno, così una raffica di accessi non può sommergere la tua casella. Ogni accesso compare comunque in **Sessioni**. QRdx ricorda gli ultimi 50 browser che hai usato e dimentica quello che non accede da 400 giorni.
+
+<IfAvailable feature="sso">
+Un'eccezione: quando accedi tramite il provider di identità SAML del tuo workspace e la verifica in due passaggi è disattivata, QRdx non può riconoscere il browser al ritorno, quindi non invia questa email.
+</IfAvailable>
+
+## Quanto resti connesso [#how-long-you-stay-signed-in]
+
+Un accesso dura fino a 30 giorni. Dopo, QRdx ti chiede di accedere di nuovo in quel browser, indipendentemente da quanto spesso lo hai usato. Se non usi QRdx in un browser per circa una settimana, lì vieni disconnesso prima.
+
+## Disconnetti gli altri dispositivi [#sign-out-other-devices]
+
+Vai su **Impostazioni** → **Profilo e sicurezza**. In **Sessioni**, disconnetti un dispositivo oppure fai clic su **Disconnetti ovunque altrove**. Questa azione non ti chiede mai di confermare che sei tu, quindi puoi farla subito.
+
+Anche attivare la verifica in due passaggi disconnette tutti gli altri dispositivi. Se il supporto la disattiva per te, operazione che [richiede un'attesa di 7 giorni](/docs/help/privacy-and-security/two-step-verification#lost-your-phone-and-your-backup-codes), tutti i dispositivi vengono disconnessi in quel giorno, compreso quello che stai usando.<IfAvailable feature="sso"> Se la tua azienda inizia a richiedere il single sign-on, vieni disconnesso dalle sessioni che non sono iniziate con esso, e una sessione di single sign-on dura al massimo 24 ore.</IfAvailable>
+
+## Rimuovi le app che hai collegato [#remove-apps-you-connected]
+
+Se hai permesso a un'altra app di usare il tuo account QRdx, la trovi in **Impostazioni** → **App autorizzate**. Rimuovi quelle che non usi. Un'app continua a funzionare anche dopo la disconnessione, quindi approvarne una ti chiede di confermare che sei tu.
+
+## Segnala un problema di sicurezza [#report-a-security-problem]
+
+Scrivi a [support@qrdx.dev](mailto:support@qrdx.dev) con un oggetto che inizia con `[security]`. Per favore non pubblicarlo nelle issue pubbliche di GitHub. Vedi la [politica di sicurezza](/legal/security).
+
+Un QR code dannoso non è un bug di sicurezza: [segnalalo](/docs/help/privacy-and-security/report-abuse) invece.

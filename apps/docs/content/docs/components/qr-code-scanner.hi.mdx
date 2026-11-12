@@ -1,0 +1,41 @@
+---
+title: "QR Code Scanner"
+description: "एक ड्रॉप ज़ोन जो ब्राउज़र में इमेज से QR कोड पढ़ता है, साथ में कॉपी और लिंक खोलने के एक्शन भी देता है।"
+icon: Scan
+---
+
+<ComponentLinks name="qr-code-scanner" />
+
+<ComponentPreview name="qr-code-scanner-demo" />
+
+## इंस्टॉलेशन [#installation]
+
+<InstallationTabs name="qr-code-scanner" />
+
+## उपयोग [#usage]
+
+```tsx
+import { QrCodeScanner } from "@/components/qr-code-scanner";
+```
+
+```tsx
+<QrCodeScanner onResult={(value) => console.log(value)} />
+```
+
+यूज़र कोई इमेज ड्रॉप करते हैं या क्लिक करके चुनते हैं। डिकोडिंग ब्राउज़र में ही qrdx के [डिटेक्शन हेल्पर](/docs/qr-detection) से होती है, इसलिए इमेज डिवाइस से बाहर नहीं जाती। यह इमेज फ़ाइलें पढ़ता है, लाइव कैमरा फ़ीड नहीं।
+
+नतीजा एक कॉपी बटन के साथ दिखता है, और अगर वह `http` या `https` URL है तो "Open link" बटन भी दिखता है।
+
+## उदाहरण [#examples]
+
+### नतीजा जाँचना [#checking-a-result]
+
+`onResult` को डिकोड किया हुआ टेक्स्ट मिलता है, जिससे आप उस पर कार्रवाई कर सकते हैं, जैसे किसी टिकट को चेक-इन करना। `label` ड्रॉप ज़ोन का शीर्षक बदलता है। ऊपर दिया गया सैंपल कोड डाउनलोड करें और उसे ड्रॉप करके देखें कि वैध टिकट कैसा दिखता है।
+
+<ComponentPreview name="qr-code-scanner-tickets" />
+
+## API रेफ़रेंस [#api-reference]
+
+<auto-type-table path="../../../registry/qrdx/qr-code-scanner.tsx" type="{ [K in keyof QrCodeScannerProps as K extends keyof ComponentProps<'div'> ? never : K]: QrCodeScannerProps[K] }" />
+
+कोई भी दूसरा prop, जैसे `className`, रैपिंग `<div>` को पास कर दिया जाता है।

@@ -1,0 +1,234 @@
+---
+title: "다운로드"
+description: "QR 코드를 PNG, JPG, WebP, SVG, PDF 또는 벡터 EPS로 내보내거나, 클립보드에 복사하거나, 데이터 URL로 가져올 수 있어요."
+icon: Download
+---
+
+QR 코드를 PNG, JPG, WebP, SVG, PDF 또는 EPS로 내보냅니다.
+
+## 빠른 다운로드 [#quick-download]
+
+```tsx
+import { downloadQRCode, PRESET_SIZES } from 'qrdx';
+
+await downloadQRCode(
+  {
+    value: "https://example.com",
+    size: 1024,
+    fgColor: "#000000",
+    bgColor: "#ffffff",
+  },
+  {
+    format: "png",
+    size: PRESET_SIZES.large,
+    filename: "my-qrcode.png"
+  }
+);
+```
+
+## 지원 형식 [#supported-formats]
+
+### PNG [#png]
+웹에 가장 적합하며 투명 배경을 지원합니다.
+
+```tsx
+await downloadQRCode(
+  { value: "https://example.com", size: 512 },
+  {
+    format: "png",
+    size: { width: 512, height: 512 },
+    filename: "qrcode.png"
+  }
+);
+```
+
+### JPG [#jpg]
+파일 크기가 더 작지만 단색 배경만 사용할 수 있습니다.
+
+```tsx
+await downloadQRCode(
+  { value: "https://example.com", size: 512 },
+  { format: "jpg", size: { width: 512, height: 512 }, filename: "qrcode.jpg" }
+);
+```
+
+### WebP [#webp]
+PNG와 같은 픽셀을 더 작은 파일에 담아 웹사이트에 적합합니다. WebP는 기본적으로 무손실이므로 모듈 가장자리가 그대로 유지되고, 투명 배경도 투명하게 유지됩니다.
+
+```tsx
+await downloadQRCode(
+  { value: "https://example.com", size: 512 },
+  { format: "webp", size: { width: 512, height: 512 }, filename: "qrcode.webp" }
+);
+```
+
+브라우저의 캔버스가 무손실 WebP를 지원하는 경우(Chrome과 Edge가 해당)에는 브라우저가 파일을 만듭니다. 지원하지 않는 경우에는 qrdx가 바이트를 확인한 뒤 내장된 작은 무손실 인코더로 픽셀을 직접 인코딩합니다. Safari가 그런 브라우저 중 하나로, WebP를 요청해도 PNG를 반환합니다. 어느 쪽이든 `.webp` 파일은 항상 WebP입니다.
+
+`quality`(0~1)를 지정하면 브라우저가 지원하는 경우 더 작은 손실 압축 파일을 요청합니다. 손실 WebP는 모듈 가장자리와 색상을 흐리게 하므로, 멀리서 스캔해야 하는 코드에는 기본값을 유지하세요. `getQRAsWebP`는 파일을 `Blob`으로 반환합니다.
+
+```tsx
+import { getQRAsWebP } from "qrdx";
+
+const lossless = await getQRAsWebP({ value: "https://example.com", size: 1024 });
+const lossy = await getQRAsWebP({ value: "https://example.com", size: 1024 }, { quality: 0.9 });
+```
+
+### SVG [#svg]
+인쇄에 알맞고 무한히 확대할 수 있습니다.
+
+```tsx
+await downloadQRCode(
+  { value: "https://example.com", size: 512 },
+  { format: "svg", size: { width: 512, height: 512 }, filename: "qrcode.svg" }
+);
+```
+
+### PDF [#pdf]
+전문 문서에 적합합니다. PDF 내보내기에는 선택 패키지인 `jspdf`가 필요합니다(`npm i jspdf`). 설치하지 않으면 PDF 다운로드 시 명확한 오류가 발생합니다.
+
+```tsx
+await downloadQRCode(
+  { value: "https://example.com", size: 1024 },
+  { format: "pdf", size: { width: 1024, height: 1024 }, filename: "qrcode.pdf" }
+);
+```
+
+### EPS [#eps]
+인쇄소와 디자인 도구(Illustrator, CorelDRAW, InDesign)용 벡터 PostScript입니다. 추가 패키지는 필요하지 않습니다. 여기서 `size.width`는 포인트 단위(1인치당 72포인트)이므로 이 파일의 너비는 512pt입니다.
+
+```tsx
+await downloadQRCode(
+  { value: "https://example.com", size: 512 },
+  { format: "eps", size: { width: 512, height: 512 }, filename: "qrcode.eps" }
+);
+```
+
+정확한 실제 크기가 필요하면 `getQRAsEPS`를 사용하세요. EPS를 문자열로 반환하며, 코드의 너비는 `sizeMm`(기본값 50mm)이고 프레임을 사용하면 그만큼 더해집니다.
+
+```tsx
+import { getQRAsEPS } from "qrdx";
+
+const eps = await getQRAsEPS(
+  { value: "https://example.com" },
+  { sizeMm: 40, bleedMm: 3, colorMode: "cmyk" }
+);
+```
+
+EPS는 투명도와 재단선을 지원하지 않습니다. 선형 및 방사형 그라데이션은 부드러운 PostScript Level 3 셰이딩으로 인쇄됩니다. PNG와 JPEG 로고는 포함됩니다.
+
+{/* Angular gradients, see-through colors and image fills (paint picker) */}
+각도 그라데이션은 가느다란 쐐기 모양이 부채꼴로 모인 형태로 인쇄됩니다. 비치는 색상은 배경과 혼합되고, 배경은 흰 종이와 혼합됩니다. EPS는 [이미지 채우기](/docs/features/colors-gradients#image-fills)를 담을 수 없습니다. `getQRAsEPS`는 `EPS_IMAGE_FILL_REASON` 오류를 발생시키고, 다운로드 대화상자에서는 대신 PDF, SVG, PNG를 제안합니다.
+
+## 사전 설정 크기 [#preset-sizes]
+
+```tsx
+import { PRESET_SIZES } from 'qrdx';
+
+PRESET_SIZES.small    // 200x200
+PRESET_SIZES.medium   // 400x400
+PRESET_SIZES.large    // 800x800
+PRESET_SIZES.xlarge   // 1200x1200
+PRESET_SIZES["2xl"]   // 1600x1600
+PRESET_SIZES["3xl"]   // 2000x2000
+```
+
+### 크기 권장 사항 [#size-recommendations]
+
+- **Small (200px)** — 소셜 미디어 썸네일
+- **Medium (400px)** — 일반적인 웹 사용
+- **Large (800px)** — 고품질 웹
+- **X-Large (1200px)** — 인쇄물
+- **2X-Large (1600px)** — 대형 인쇄
+- **3X-Large (2000px)** — 최고 품질
+
+## 고급 옵션 [#advanced-options]
+
+### 데이터 URL 가져오기 [#get-data-url]
+
+```tsx
+import { getQRCodeDataUrl } from 'qrdx';
+
+const dataUrl = await getQRCodeDataUrl(
+  { value: "https://example.com", size: 512 },
+  "png",
+  { width: 512, height: 512 }
+);
+```
+
+### 클립보드에 복사 [#copy-to-clipboard]
+
+```tsx
+import { copyQRCodeToClipboard } from 'qrdx';
+
+await copyQRCodeToClipboard(
+  { value: "https://example.com" },
+  { width: 512, height: 512 }
+);
+```
+
+### SVG 문자열 가져오기 [#get-svg-string]
+
+```tsx
+import { getSVGString } from 'qrdx';
+
+const svgString = await getSVGString({
+  value: "https://example.com",
+  size: 512
+});
+```
+
+## 일괄 다운로드 [#batch-downloads]
+
+여러 QR 코드를 다운로드합니다.
+
+```tsx
+const qrCodes = [
+  {
+    props: { value: "https://example.com", size: 512 },
+    options: { format: "png", size: { width: 512, height: 512 }, filename: "site.png" }
+  },
+  {
+    props: { value: "tel:+1234567890", size: 512 },
+    options: { format: "svg", size: { width: 512, height: 512 }, filename: "phone.svg" }
+  }
+];
+
+for (const qr of qrCodes) {
+  await downloadQRCode(qr.props, qr.options);
+}
+```
+
+## 오류 처리 [#error-handling]
+
+```tsx
+try {
+  await downloadQRCode(
+    { value: "https://example.com", size: 512 },
+    { format: "png", size: { width: 512, height: 512 }, filename: "qr.png" }
+  );
+} catch (error) {
+  console.error("Download failed:", error);
+}
+```
+
+## 형식 선택 [#format-selection]
+
+- **PNG** — 최고 품질, 큰 파일, 투명 배경 지원
+- **JPG** — 작은 파일, 투명 배경 미지원
+- **WebP** — PNG의 품질과 투명 배경을 더 작은 파일에 담아 웹사이트에 적합
+- **SVG** — 확대 가능, 작은 파일, 웹/인쇄용
+- **PDF** — 전문 문서용, 큰 파일
+- **EPS** — 인쇄소와 디자인 도구용 벡터 인쇄 파일
+
+## 크기 최적화 [#size-optimization]
+
+- **웹 사용** — 256~512px, PNG 또는 WebP
+- **인쇄** — 1024px 이상, PDF 또는 PNG
+- **모바일** — 256px, 최적화
+- **이메일** — 200~300px, 균형
+
+## 다음 단계 [#next-steps]
+
+- [사용법](/docs/usage) — 기본 생성 방법 알아보기
+- [템플릿](/docs/features/templates) — 스타일이 적용된 QR 코드 다운로드
+- [API 레퍼런스](/docs/api-reference) — 전체 다운로드 API

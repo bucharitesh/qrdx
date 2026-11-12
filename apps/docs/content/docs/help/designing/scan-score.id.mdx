@@ -1,0 +1,41 @@
+---
+title: "Periksa desain dengan skor pemindaian"
+description: "Skor pemindaian menguji desain Anda seperti yang dilihat kamera ponsel, lalu memberi tahu apa yang perlu diperbaiki."
+---
+
+Setiap desain di Playground mendapat **Skor pemindaian** dari 0 sampai 100. Skor ini ditampilkan di bawah pratinjau, misalnya "Skor pemindaian 92 · Bagus".
+
+## Arti skor [#what-the-score-means]
+
+- **Bagus** (85 atau lebih): siap dicetak.
+- **Cukup** (65 sampai 84): seharusnya bisa dipindai, tetapi periksa peringatannya.
+- **Berisiko** (di bawah 65): perbaiki pemeriksaan yang bertanda silang.
+- **Gagal**: kode tidak berhasil didekode saat pengujian, atau kontrasnya terlalu rendah. Jangan dicetak.
+
+## Lihat apa yang perlu diperbaiki [#see-what-to-fix]
+
+Klik skornya. Panel **Apakah bisa dipindai?** menampilkan daftar semua pemeriksaan, dengan yang gagal di urutan pertama.
+
+Skor ini memeriksa:
+
+- **Dekode**: kode dibaca pada ukuran kecil dengan keburaman seperti kamera.
+- **Kontras**: kode dan latar belakang harus berbeda 4.5:1 atau lebih.
+- **Gelap di atas terang**: kode gelap pada latar terang bisa dipindai di lebih banyak aplikasi.
+- **Ukuran logo**: logo tidak boleh menutupi lebih dari yang bisa dipulihkan oleh koreksi kesalahan.
+- **Bentuk mata**: mata lingkaran dan mata keriting gagal di beberapa aplikasi pemindai.
+- **Ruang kosong**: tepi kosong di sekeliling kode. Empat modul adalah yang ideal.
+
+## Perbaikan cepat [#quick-fixes]
+
+- Kontras rendah: buat kode lebih gelap atau latar belakang lebih terang. Lihat [Pilih warna yang bisa dipindai](/docs/help/designing/colors-and-contrast).
+- Logo menutupi terlalu banyak: atur **Koreksi kesalahan** ke **Tinggi**. Lihat [Tambahkan logo](/docs/help/designing/logos).
+- Mata: ganti ke mata persegi, membulat, atau roda gigi.
+- Ruang kosong: atur **Padding** ke **Standar** atau **Besar**.
+
+## Periksa kode yang sudah dicetak [#check-a-printed-code]
+
+Skor ini menguji desain di layar. Untuk menguji kode yang sudah Anda cetak, ambil foto lalu letakkan ke [pemeriksa pemindaian](/tools/scan-checker). Gambar tidak pernah meninggalkan perangkat Anda.
+
+## Terkait [#related]
+
+- [Kode tidak bisa dipindai](/docs/help/troubleshooting/wont-scan)

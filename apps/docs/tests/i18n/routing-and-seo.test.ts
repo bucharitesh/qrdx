@@ -121,9 +121,10 @@ describe("paths", () => {
     expect(localizeHref("/docs/help#faq", "zh-Hans")).toBe(
       "/zh-hans/docs/help#faq",
     );
-    // French has no docs: its links go to the English docs.
-    expect(localizePath("/docs", "fr")).toBe("/docs");
-    expect(localizeHref("/docs/help", "de")).toBe("/docs/help");
+    expect(localizePath("/docs", "fr")).toBe("/fr/docs");
+    expect(localizeHref("/docs/help", "hi")).toBe("/hi/docs/help");
+    // English keeps the unprefixed docs.
+    expect(localizePath("/docs/help", "en")).toBe("/docs/help");
     // Not a docs path, only a prefix of one.
     expect(localizePath("/docsearch", "ja")).toBe("/docsearch");
   });
@@ -150,13 +151,16 @@ describe("paths", () => {
     });
     expect(splitLocale("/ja")).toEqual({ locale: "ja", path: "/" });
     expect(splitLocale("/pricing")).toEqual({ locale: "en", path: "/pricing" });
-    // Docs pages, in a language with docs; /fr/docs isn't a page.
+    // Docs pages, in a language with docs.
     expect(splitLocale("/es/docs")).toEqual({ locale: "es", path: "/docs" });
     expect(splitLocale("/zh-hans/docs/help")).toEqual({
       locale: "zh-Hans",
       path: "/docs/help",
     });
-    expect(splitLocale("/fr/docs")).toEqual({ locale: "en", path: "/fr/docs" });
+    expect(splitLocale("/ko/docs/help")).toEqual({
+      locale: "ko",
+      path: "/docs/help",
+    });
     // What an English page prerenders as (usePathname() says /en/pricing
     // there): the same English path as the browser's /pricing.
     expect(splitLocale("/en/pricing")).toEqual({

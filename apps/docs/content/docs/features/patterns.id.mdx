@@ -1,0 +1,215 @@
+---
+title: "Pola"
+description: "Ubah bentuk modul data, mata sudut, dan titik mata."
+icon: Grid3x3
+---
+
+Ubah bentuk elemen kode QR untuk desain yang unik. Lihat setiap opsi yang digambar langsung (dan didekode di browser Anda) di [Bentuk, mata, dan bingkai](/docs/styles).
+
+## Pola Badan [#body-patterns]
+
+Atur bentuk titik data. Tersedia {facts.bodyPatterns} pola badan:
+
+- Klasik: `square`, `small-square`, `horizontal-line`, `vertical-line`, `octagon`
+- Membulat: `circle` (default), `circle-large`, `rounded`, `liquid`, `liquid-horizontal`, `liquid-vertical`, `random-dots`
+- Dekoratif: `classy`, `classy-rounded`, `leaf`, `diamond`, `hexagon`
+- Playful: `mosaic`, `plus`, `star`, `heart`, `pacman`, `circle-mixed`
+
+`liquid`, `classy`, dan `classy-rounded` menggabungkan modul yang bertetangga menjadi satu garis tepi yang mulus (`liquid-horizontal` dan `liquid-vertical` hanya menggabungkannya dalam baris atau kolom). `random-dots` dan `mosaic` bervariasi pada setiap modul, tetapi selalu menghasilkan kode yang sama untuk nilai yang sama. Pola penyejajaran selalu digambar sebagai kotak penuh, apa pun polanya, agar dekoder dapat menemukannya dengan andal.
+
+```tsx
+import { QRCode } from 'qrdx';
+
+<QRCode value="https://example.com" bodyPattern="circle" size={256} />
+<QRCode value="https://example.com" bodyPattern="liquid" size={256} />
+<QRCode value="https://example.com" bodyPattern="classy-rounded" size={256} />
+```
+
+### Skala modul [#module-scale]
+
+`moduleScale` (0,5 hingga 1, default 1) mengecilkan setiap modul data di sekitar pusatnya agar tampilan lebih ringan dan lebih renggang; pada pola yang terhubung, garisnya yang menjadi lebih tipis. Setiap pola berhenti mengecil pada ukuran terkecil yang masih dapat didekode dalam pengujian kami (misalnya 0,95 untuk `circle`, 0,7 untuk `classy`; lihat `MODULE_SCALE_FLOOR`), dan pola penyejajaran tetap berukuran penuh.
+
+```tsx
+<QRCode value="https://example.com" bodyPattern="liquid" moduleScale={0.8} />
+```
+
+## Pola Mata Sudut [#corner-eye-patterns]
+
+Atur bentuk penanda sudut. Tersedia {facts.eyeShapes} pola mata sudut (komponen React menggunakan `gear` sebagai default; CLI menggunakan `square`): `square`, `rounded`, `extra-rounded`, `squircle`, `cushion`, `bevel`, `octagon`, `leaf`, `leaf-reverse`, `drop`, `petal`, `shield`, `gear`, `circle`, `diya`, `message`, dan `pointy`.
+
+`leaf`, `leaf-reverse`, `drop`, dan `petal` memutar ketiga mata agar masing-masing menghadap sudutnya pada kode. Mata `circle` mungkin tidak terbaca oleh beberapa aplikasi pemindai; [skor pemindaian](/docs/utilities) memberi peringatan tentangnya.
+
+```tsx
+<QRCode value="https://example.com" cornerEyePattern="square" />
+<QRCode value="https://example.com" cornerEyePattern="leaf" />
+<QRCode value="https://example.com" cornerEyePattern="squircle" />
+```
+
+## Pola Titik Mata Sudut [#corner-eye-dot-patterns]
+
+Atur titik di dalam setiap penanda sudut. Tersedia {facts.eyeCentres} pola titik mata sudut (komponen React menggunakan `circle` sebagai default; CLI menggunakan `square`): `square`, `rounded`, `extra-rounded`, `circle`, `squircle`, `octagon`, `hexagon`, `dots`, `leaf`, `leaf-reverse`, `drop`, `drop-reverse`, `plus`, `cross-rounded`, `flower`, `heart`, `message`, `message-reverse`, `diya`, `diya-reverse`, dan `rounded-triangle`.
+
+```tsx
+<QRCode value="https://example.com" cornerEyeDotPattern="square" />
+<QRCode value="https://example.com" cornerEyeDotPattern="flower" />
+<QRCode value="https://example.com" cornerEyeDotPattern="heart" />
+```
+
+### Pasangan yang perlu dihindari dan bentuk yang dihentikan [#pairs-to-avoid-and-retired-shapes]
+
+Badan `diamond` di samping mata `square`, `pacman` di samping `rounded`, dan `small-square` di samping mata `square` atau `rounded` terlewat saat dipindai dari dekat; playground tidak akan menggabungkannya, pasangan ini disertakan sebagai `WEAK_BODY_EYES`, dan `getStylePairRisk(props)` mengembalikan peringatan yang ditampilkan skor pemindaian.
+
+Pusat `circle` di dalam mata dengan sudut persegi (`square`, `rounded`, `extra-rounded`, dan sebagian besar lainnya) dapat terlewat oleh dekoder yang ketat pada render yang tajam: di layar, pada ekspor PNG, dan pada cetakan besar. jsQR gagal membacanya pada beberapa ukuran, sedangkan zbar dapat membacanya. Badan solid (`square`, `liquid`, `classy`, `classy-rounded`) biasanya tetap terbaca, dan mata `gear`, `circle`, dan `octagon` tidak terpengaruh. Skor pemindaian memberi peringatan tentang hal ini (`style-pair`) dan Anda tetap dapat memilihnya. Pasangan ini disertakan sebagai `WEAK_SHARP_DOT_EYES` (bersama `SHARP_DOT_EYE_SAFE_BODIES`), dan pusat `rounded` menghindari masalah ini.
+
+Mata `curly` serta pusat `diamond`, `star`, dan `banner` dihentikan karena tidak terbaca dengan andal. Desain yang disimpan dengan bentuk tersebut tetap dirender, tetapi tidak lagi ditawarkan atau dicantumkan (lihat [Bentuk yang dihentikan](/docs/styles#retired-shapes)).
+
+## Kode lingkaran [#circle-codes]
+
+`shape="circle"` menempatkan kode di dalam cakram dan mengisi sisanya dengan modul dekoratif berbentuk titik yang sama. Kode yang sebenarnya memiliki cincin terang setebal `margin` modul di sekelilingnya (minimal 3), dan pemindai hanya membaca kode di tengah. Cakramnya lebih besar daripada kodenya, jadi cetaklah sedikit lebih besar untuk jarak pemindaian yang sama; kalkulator ukuran cetak menghitung seluruh cakram.
+
+```tsx
+<QRCode value="https://example.com" shape="circle" bodyPattern="rounded" />
+```
+
+Dalam pengujian dekode kami, kode lingkaran terbaca seperti kode persegi dengan bentuk titik solid (`square`, `rounded`, `classy`, `liquid`). Di playground, pengaturannya ada di **Design → Frame → Shaped code → Dot circle**.
+
+{/* Heart and custom shapes (feat/heart-silhouette-shapes) */}
+
+## Kode hati [#heart-codes]
+
+`shape="heart"` bekerja seperti kode lingkaran, tetapi berbentuk hati. Kode yang sebenarnya berada di tengah hati dengan cincin terang minimal 3 modul, dan sisa hati diisi dengan modul dekoratif. Kode menempati bagian yang lebih kecil dari hati dibandingkan dari lingkaran, jadi cetaklah kode hati lebih besar daripada kode persegi untuk jarak pemindaian yang sama. Skor pemindaian memperhitungkan hal ini: pada ukuran yang sama, kode hati mendapat skor lebih rendah daripada kode lingkaran.
+
+```tsx
+<QRCode value="https://example.com" shape="heart" bodyPattern="rounded" />
+```
+
+Kode berbentuk menggantikan bingkai di playground: memilih salah satunya akan menghapus bingkai, dan memilih bingkai akan menghapus bentuk. Setiap bingkai melukis pelat terang di bawah kode, yang akan menyembunyikan garis tepinya. Mesin tetap menggambar `shape` bersama `frame` jika Anda memberikan keduanya.
+
+Dalam pengujian dekode kami, kode hati terbaca dengan setiap bentuk titik solid, dengan mata `square`, `rounded`, dan `gear`, serta pada tampilan default, dan zbar membacanya pada render yang tajam.
+
+## Bentuk kustom [#custom-shapes]
+
+`shape` juga menerima siluet: grid kecil yang dilacak dari gambar milik Anda (maksimal 64 sel per sisi). Kode berada di bagian tengah bentuk yang paling lapang, dan sisa bentuk diisi dengan modul dekoratif. Hanya grid yang disimpan, bukan gambarnya.
+
+```tsx
+import { getQRSilhouetteFit, loadQRSilhouette, QRCode } from "qrdx";
+
+const shape = await loadQRSilhouette(file); // a PNG, JPEG or SVG, in the browser
+const fit = getQRSilhouetteFit(shape);
+if (!fit.ok) throw new Error(fit.message);
+
+<QRCode value="https://example.com" shape={shape} />;
+```
+
+`loadQRSilhouette` menggambar gambar pada kanvas dan menggunakan transparansinya, atau tingkat kegelapannya jika gambar buram (bentuk terang di atas latar gelap juga dapat digunakan). Di server, berikan piksel yang sudah didekode ke `createQRSilhouette`. `getQRSilhouetteFit` menolak bentuk yang terlalu tipis untuk memuat kode beserta zona tenangnya, seperti bintang yang tipis, batang, atau cincin. Bentuk yang ditolak digambar sebagai kode persegi.
+
+Di playground, pilih **Design → Frame → Shaped code → Silhouette** lalu unggah PNG, JPEG, atau SVG (hati adalah **Heart** di sana). Bentuk Anda tetap bersama desain Anda, seperti logo yang diunggah: tautan yang dibagikan, item komunitas, cuplikan kode, dan obrolan AI menggunakan kode persegi.
+
+{/* end heart and custom shapes */}
+
+## Warna per mata [#per-eye-colors]
+
+`eyeColor` dan `dotColor` mewarnai ketiga mata. `eyeColors` menimpanya per mata (`topLeft`, `topRight`, `bottomLeft`), masing-masing dengan warna atau gradien `outer` (bingkai) dan `inner` (titik):
+
+```tsx
+<QRCode
+  value="https://example.com"
+  eyeColor="#111827"
+  eyeColors={{
+    topLeft: { outer: "#dc2626", inner: "#1d4ed8" },
+    topRight: { outer: "#16a34a" },
+  }}
+/>
+```
+
+Jaga agar setiap mata tetap gelap terhadap latar belakang: dekoder menemukan kode lewat ketiga matanya. Skor pemindaian memeriksa kontras warna setiap mata.
+
+Di playground, **Design → Eye colors** mengatur warna bingkai dan pusat untuk setiap mata, dan **Design → Dot size** mengatur `moduleScale` dalam rentang yang diizinkan bentuk titik saat ini.
+
+## Gabungkan Pola [#combine-patterns]
+
+Padukan berbagai pola untuk desain yang unik:
+
+```tsx
+<QRCode
+  value="https://example.com"
+  bodyPattern="rounded"
+  cornerEyePattern="circle"
+  cornerEyeDotPattern="circle"
+  size={256}
+/>
+```
+
+## Performa [#performance]
+
+### Pola Cepat [#fast-patterns]
+- `circle` — Performa sangat baik
+- `square` — Sangat cepat
+
+### Pola Menengah [#medium-patterns]
+- `rounded` — Keseimbangan yang baik
+- `diamond` — Sedang
+
+### Pola Kompleks [#complex-patterns]
+- `pacman` — Pemrosesan lebih tinggi
+- `circle-mixed` — Kompleksitas bervariasi
+
+## Pemilihan Pola [#pattern-selection]
+
+### Untuk Identitas Merek [#for-brand-identity]
+```tsx
+// Minimal, professional
+<QRCode
+  value="https://example.com"
+  bodyPattern="rounded"
+  cornerEyePattern="square"
+/>
+
+// Modern, tech-focused
+<QRCode
+  value="https://example.com"
+  bodyPattern="circle"
+  cornerEyePattern="rounded"
+/>
+```
+
+### Untuk Pemasaran [#for-marketing]
+```tsx
+// Eye-catching
+<QRCode
+  value="https://example.com"
+  bodyPattern="liquid"
+  cornerEyePattern="leaf"
+  cornerEyeDotPattern="leaf"
+/>
+
+// Elegant
+<QRCode
+  value="https://example.com"
+  bodyPattern="diamond"
+  cornerEyePattern="rounded"
+/>
+```
+
+### Untuk Cetak [#for-print]
+```tsx
+// High contrast
+<QRCode
+  value="https://example.com"
+  bodyPattern="square"
+  cornerEyePattern="square"
+/>
+
+// Smooth, professional
+<QRCode
+  value="https://example.com"
+  bodyPattern="rounded"
+  cornerEyePattern="rounded"
+/>
+```
+
+## Langkah Berikutnya [#next-steps]
+
+- [Warna & Gradien](/docs/features/colors-gradients) — Tambahkan warna pada pola
+- [Template](/docs/features/templates) — Pola yang sudah dikonfigurasi
+- [Logo](/docs/features/logos) — Gabungkan pola dengan logo

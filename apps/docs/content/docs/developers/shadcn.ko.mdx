@@ -1,0 +1,72 @@
+---
+title: "shadcn/ui 레지스트리"
+description: "qrdx 라이브러리를 기반으로 만든 shadcn/ui 프로젝트용 QR 코드 컴포넌트 8종입니다. 명령어 하나로 설치하고 코드를 직접 소유하세요."
+icon: Blocks
+---
+
+QRdx는 [`qrdx`](https://www.npmjs.com/package/qrdx) 라이브러리를 기반으로 만든 QR 코드 컴포넌트의 [shadcn/ui](https://ui.shadcn.com) 레지스트리를 제공합니다. shadcn CLI가 소스 코드를 프로젝트에 복사하므로 코드를 직접 소유하고 원하는 대로 수정할 수 있습니다.
+
+<NpmStatus package="qrdx" />
+
+<PackageManagerTabs command="npx shadcn@latest add https://qrdx.dev/r/qr-code.json" />
+
+각 컴포넌트에는 실시간 미리보기, 소스 코드, 설치 방법, 예제, API 레퍼런스가 담긴 전용 페이지가 있습니다.
+
+[Playground에서 사용해 보기](/playground?open=code&lang=shadcn): 그곳에서 코드를 꾸민 뒤 레지스트리의 QR Code 컴포넌트용으로 복사하세요.
+
+## 컴포넌트 [#components]
+
+<Cards>
+  <Card title="QR Code" href="/docs/components/qr-code" icon={<QrCode />}>
+    다운로드 버튼, 색상, 그라디언트, 패턴, 로고, 프레임 템플릿을 지원하는 접근성 높은 스타일 QR 코드입니다.
+  </Card>
+  <Card title="QR Code Card" href="/docs/components/qr-code-card" icon={<Frame />}>
+    "Scan me" 프레임 안의 코드, 제목, 설명, 액션을 넣을 공간을 갖춘 카드입니다.
+  </Card>
+  <Card title="QR Code Download" href="/docs/components/qr-code-download" icon={<Download />}>
+    선택한 크기로 PNG, SVG, JPG, PDF를 내보내거나 이미지를 복사하는 메뉴입니다.
+  </Card>
+  <Card title="QR Code Share Dialog" href="/docs/components/qr-code-share-dialog" icon={<Webhook />}>
+    링크용 코드, 복사 버튼, PNG 다운로드, 기본 공유 시트를 제공하는 대화상자입니다.
+  </Card>
+  <Card title="QR Code Generator" href="/docs/components/qr-code-generator" icon={<Sparkles />}>
+    실시간 미리보기, 스타일 프리셋, 다운로드 버튼이 있는 텍스트 입력창입니다.
+  </Card>
+  <Card title="QR Code Scanner" href="/docs/components/qr-code-scanner" icon={<Scan />}>
+    브라우저에서 이미지 속 QR 코드를 읽는 드롭 영역입니다.
+  </Card>
+  <Card title="Wi-Fi QR Code" href="/docs/components/wifi-qr-code" icon={<Globe />}>
+    이스케이프 처리된 페이로드 빌더로 Wi-Fi 네트워크에 연결하는 코드입니다.
+  </Card>
+  <Card title="vCard QR Code" href="/docs/components/vcard-qr-code" icon={<Users />}>
+    vCard 3.0 빌더로 연락처 카드를 저장하는 코드입니다.
+  </Card>
+</Cards>
+
+## 설치되는 항목 [#what-gets-installed]
+
+각 컴포넌트는 `components/` 안의 파일 하나입니다. CLI는 `qrdx`(그리고 일부 컴포넌트가 아이콘에 사용하는 `lucide-react`)도 함께 설치하고, 컴포넌트가 기반으로 하는 `button`, `card`, `dialog`, `dropdown-menu`, `input` 같은 shadcn/ui 컴포넌트를 추가합니다.
+
+전체 인덱스는 [`https://qrdx.dev/r/registry.json`](https://qrdx.dev/r/registry.json)에서 확인할 수 있습니다.
+
+## 레지스트리 네임스페이스 사용하기 [#using-the-registry-namespace]
+
+짧은 이름으로 설치하려면 `components.json`에 레지스트리를 추가하세요.
+
+```json
+{
+  "registries": {
+    "@qrdx": "https://qrdx.dev/r/{name}.json"
+  }
+}
+```
+
+그런 다음 이름으로 컴포넌트를 하나 또는 여러 개 추가하세요.
+
+<PackageManagerTabs command="npx shadcn@latest add @qrdx/qr-code @qrdx/qr-code-download @qrdx/qr-code-share-dialog" />
+
+## 스타일링 [#styling]
+
+컴포넌트는 표준 shadcn/ui 테마 토큰(`bg-card`, `border`, `text-muted-foreground`, `ring-ring`)이 적용된 Tailwind 클래스와 사용자의 Button, Card, Dialog, Input을 사용하므로 테마와 다크 모드를 그대로 따릅니다. QR 코드는 기본적으로 밝은 배경을 유지합니다. 밝은 타일 위의 어두운 모듈은 모든 리더기에서 스캔되기 때문입니다.
+
+PDF 다운로드에는 선택 패키지인 `jspdf`가 필요합니다(`npm install jspdf`).

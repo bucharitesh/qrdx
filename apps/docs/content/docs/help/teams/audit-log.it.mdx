@@ -1,0 +1,69 @@
+---
+title: "Registro di controllo"
+description: "Scopri chi ha cambiato cosa nel tuo workspace e quando, filtra le voci ed esportale in CSV. Incluso nel piano Business."
+---
+
+Il registro di controllo è una funzione Business, soggetta alla licenza commerciale di QRdx. Un server QRdx self-hosted ha bisogno di una chiave di licenza (`QRDX_EE_LICENSE`) per attivarla; vedi [Self-hosting](/docs/self-hosting#optional-services).
+
+<IfAvailable feature="auditLog">
+
+Il registro di controllo elenca le modifiche fatte dalle persone in un workspace: chi le ha fatte, cosa è cambiato e quando. Proprietari e amministratori lo leggono in **Impostazioni** → **Registro di controllo**, dove possono filtrarlo ed esportarlo come file CSV.
+
+## Chi ce l'ha [#who-has-it]
+
+Il registro di controllo fa parte del piano **Business**. Un workspace ce l'ha quando uno dei suoi proprietari o dei suoi membri con accesso alla fatturazione ha il piano Business. Vedi [Posti e limiti del workspace](/docs/help/teams/seats).
+
+La cronologia parte da quando il workspace passa a Business. Le modifiche fatte prima, o mentre il workspace aveva un altro piano, non vengono registrate. Se il workspace lascia Business, la registrazione si interrompe; le voci già conservate restano finché non hanno {facts.auditLogRetentionDays} giorni, e puoi rivederle se il workspace torna a Business.
+
+Solo **proprietari** e **amministratori** possono aprire il registro di controllo ed esportarlo. Membri, spettatori e membri con accesso alla fatturazione non possono. Vedi [Ruoli](/docs/help/teams/roles).
+
+## Cosa viene registrato [#whats-recorded]
+
+Ogni voce riporta l'ora, chi ha fatto la modifica, cosa ha cambiato e l'oggetto interessato (un codice, una pagina, una persona, un dominio). Dove ha senso, la voce conserva il valore vecchio e quello nuovo, come la vecchia e la nuova destinazione di un codice. Clicca la freccia su una voce per vederli.
+
+Chi ha fatto la modifica è una persona, oppure una chiave API o un'app che agisce per conto di una persona. Le modifiche fatte tramite la [REST API](/docs/developers/rest-api) con una chiave API mostrano il nome della chiave; quelle fatte tramite un'app che hai autorizzato mostrano il nome dell'app.<IfAvailable feature="slackBot"> I codici creati in Slack con `/qr track` mostrano la persona collegata "via Slack", con gli id dell'utente e del workspace Slack. Quando un proprietario o un amministratore revoca il collegamento di un account Slack in [Impostazioni → Chiavi API e app](/dashboard?to=settings/developers), viene registrato nella categoria Sviluppatori.</IfAvailable>
+
+Ogni voce conserva anche l'indirizzo IP e il dispositivo della richiesta, cioè browser e sistema, ad esempio "Chrome on macOS". Le modifiche fatte dal sistema, come un cambio di piano dalla fatturazione, non hanno né l'uno né l'altro.
+
+Vengono registrate queste modifiche:
+
+- **Codici:** creazione (comprese importazioni e copie), cambio di destinazione, rinomina, cambio di design, cambio del link breve, cambio dei controlli del link (password attivata o disattivata, date di inizio e fine, limite di scansioni, URL di riserva), cambio delle regole di instradamento, messa in pausa o ripresa, archiviazione o ripristino dall'archivio, spostamento nel cestino, ripristino, eliminazione definitiva, ripristino di una versione precedente, spostamento in un'altra cartella, spostamento da o verso un altro workspace. Cartelle e tag creati, rinominati o eliminati.
+- **Pagine:** create, pubblicate, eliminate.
+- **Team:** inviti inviati e revocati, persone che entrano con un invito, con il link di accesso o con il single sign-on, cambi di ruolo, persone rimosse, persone che se ne vanno, e link di accesso attivato, modificato o disattivato. Vengono registrati in qualunque modo sia stata fatta la modifica, in QRdx o tramite la sua API.
+- **Sicurezza:** "Richiedi la verifica in due passaggi" e "Richiedi il single sign-on" attivati o disattivati (l'attivazione del single sign-on indica anche quante sessioni ha chiuso), single sign-on configurato, modificato, verificato o rimosso, il ruolo assegnato alle nuove persone al primo accesso con il single sign-on, ed esportazioni del registro di controllo.
+- **Sviluppatori:** chiavi API create e revocate (nome e ambiti), app autorizzate o revocate, endpoint webhook aggiunti, modificati o eliminati, e segreto di firma di un webhook sostituito. Per un endpoint il registro conserva solo il server, ad esempio `https://hooks.zapier.com/…`, perché il resto dell'URL di un webhook spesso è segreto.
+- **Domini:** domini personalizzati aggiunti, verificati o rimossi.
+- **Workspace:** nome o URL cambiati, e passaggio del workspace a Business (registrato come "Fatturazione").
+
+Il registro di controllo non conserva mai una chiave API, un token OAuth, una password, il percorso o la query dell'URL di un webhook, un segreto di firma di un webhook, né il client secret o il certificato del single sign-on. Registra che ne è stato creato, sostituito o rimosso uno, non il suo valore.
+
+Le app che autorizzi agiscono sul tuo workspace, quindi l'autorizzazione o la revoca di un'app viene registrata lì.
+
+Questi eventi non sono nel registro di controllo:
+
+- scansioni, risposte ai moduli e analisi, che non sono modifiche al workspace (le trovi in Analytics e Risposte);
+- modifiche al tuo account personale, come nome, email o verifica in due passaggi.
+
+## Filtrare il registro [#filter-the-log]
+
+Le modifiche più recenti vengono per prime, 50 alla volta. Clicca **Carica altro** in fondo per vedere quelle più vecchie.
+
+- **Chi**: una persona, comprese le chiavi API e le app che agiscono per lei.
+- **Categoria**: Codici (con cartelle e tag), Pagine, Team, Sicurezza, Sviluppatori, Domini o Workspace.
+- **Da** e **A**: il primo e l'ultimo giorno da mostrare. I giorni sono in UTC; gli orari di ogni voce sono nel tuo fuso orario.
+
+## Esportare in CSV [#export-as-csv]
+
+Clicca **Esporta CSV** per scaricare ciò che mostrano i filtri, dalla voce più recente. Un'esportazione contiene fino a {facts.auditLogExportRows} voci. Per averne di più, esporta un intervallo di date più breve alla volta.
+
+Il file ha una riga per modifica: l'ora in UTC, la categoria, l'azione, una frase che la descrive, chi l'ha fatta (e la chiave API o l'app, se presente), l'oggetto interessato, l'indirizzo IP, il dispositivo, e i valori vecchio e nuovo in JSON.
+
+Anche l'esportazione viene registrata, insieme ai filtri usati.
+
+## Per quanto tempo si conservano le voci [#how-long-entries-are-kept]
+
+Le voci vengono conservate per {facts.auditLogRetentionDays} giorni, poi vengono eliminate. Eliminare un workspace elimina anche il suo registro di controllo.
+
+Gli indirizzi IP e i dispositivi nel registro di controllo sono dati personali delle persone che lavorano nel workspace. L'[informativa sulla privacy](/legal/privacy-policy) spiega come li gestisce QRdx.
+
+</IfAvailable>

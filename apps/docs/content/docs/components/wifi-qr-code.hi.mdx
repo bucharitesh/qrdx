@@ -1,0 +1,49 @@
+---
+title: "Wi-Fi QR कोड"
+description: "ऐसा QR कोड जो स्कैन करने पर Wi-Fi नेटवर्क से जुड़ जाता है, टाइप्ड और एस्केप किए गए payload builder के साथ।"
+icon: Globe
+---
+
+<ComponentLinks name="wifi-qr-code" />
+
+<ComponentPreview name="wifi-qr-code-demo" />
+
+## इंस्टॉलेशन [#installation]
+
+<InstallationTabs name="wifi-qr-code" />
+
+## उपयोग [#usage]
+
+```tsx
+import { WifiQrCode } from "@/components/wifi-qr-code";
+```
+
+```tsx
+<WifiQrCode ssid="Cafe Guest" password="espresso-2024" />
+```
+
+iOS और Android के कैमरे कोड स्कैन करने पर नेटवर्क से जुड़ने का विकल्प देते हैं। किसी app की ज़रूरत नहीं है।
+
+## उदाहरण [#examples]
+
+### वेरिएंट [#variants]
+
+`showPassword` पासवर्ड को प्रिंट करता है, ताकि मेहमान उसे टाइप कर सकें। ओपन नेटवर्क के लिए `encryption="nopass"` और ऐसे नेटवर्क के लिए `hidden` इस्तेमाल करें जो अपना नाम ब्रॉडकास्ट नहीं करते।
+
+<ComponentPreview name="wifi-qr-code-variants" />
+
+### Payload builder [#payload-builder]
+
+`buildWifiPayload` वह `WIFI:` टेक्स्ट लौटाता है जिसे कोड एन्कोड करता है। यह नाम और पासवर्ड में `\`, `;`, `,`, `:` और `"` को एस्केप करता है, जहाँ हाथ से लिखे payload आमतौर पर टूट जाते हैं। इसे किसी भी QR renderer के साथ इस्तेमाल करें, या डीबगिंग के लिए payload प्रिंट करने में।
+
+<ComponentPreview name="wifi-qr-code-payload" />
+
+## API रेफ़रेंस [#api-reference]
+
+<auto-type-table path="../../../registry/qrdx/wifi-qr-code.tsx" type="{ [K in keyof WifiQrCodeProps as K extends Exclude<keyof ComponentProps<'figure'>, 'hidden'> ? never : K]: WifiQrCodeProps[K] }" />
+
+कोई भी दूसरा prop, जैसे `className`, रैपिंग `<figure>` को पास कर दिया जाता है।
+
+### buildWifiPayload [#buildwifipayload]
+
+`buildWifiPayload(network: WifiNetwork): string` वही नेटवर्क फ़ील्ड लेता है जो कॉम्पोनेंट लेता है: `ssid`, `password`, `encryption` और `hidden`।

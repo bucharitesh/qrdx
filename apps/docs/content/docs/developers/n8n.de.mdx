@@ -1,0 +1,77 @@
+---
+title: "n8n"
+description: "Erstelle QR-Codes, verwalte dynamische QR-Codes, lies Scans aus und starte n8n-Workflows bei QRdx-Ereignissen – mit den QRdx-Community-Nodes für n8n."
+icon: Blocks
+---
+
+Das Paket `@qrdx/n8n-nodes-qrdx` fügt [n8n](https://n8n.io) zwei Nodes hinzu:
+
+- **QRdx** erstellt QR-Code-Bilder, legt [dynamische QR-Codes](/docs/dynamic-qr-codes) an und bearbeitet sie und liest ihre Scans und deine gespeicherten Themes aus. Ein n8n AI Agent kann ihn als Tool nutzen.
+- **QRdx Trigger** startet einen Workflow, wenn deine Codes gescannt, erstellt oder geändert werden oder wenn jemand auf einer [gehosteten Seite](/docs/forms-and-pages) ein Formular absendet.
+
+Das Paket ist auf npm als [`@qrdx/n8n-nodes-qrdx`](https://www.npmjs.com/package/@qrdx/n8n-nodes-qrdx) verfügbar und wird in einer selbst gehosteten n8n-Instanz installiert. n8n Cloud führt nur Community-Nodes aus, die n8n verifiziert hat, und dieser ist noch nicht verifiziert.
+
+Um Ereignisse ohne Installation zu empfangen, nutze stattdessen einen [Webhook-Node](#without-the-package).
+
+## Installieren [#install]
+
+Öffne in n8n **Settings → Community Nodes**, klicke auf **Install**, gib `@qrdx/n8n-nodes-qrdx` ein, bestätige den Hinweis zu Community-Nodes und klicke auf **Install**. Suche dann im Nodes-Panel nach **QRdx**.
+
+Wenn deine n8n-Instanz diese Seite ausblendet oder du sie über die Kommandozeile verwaltest, installiere das Paket im Ordner `nodes` deines n8n-Benutzerordners und starte n8n neu:
+
+```bash
+mkdir -p ~/.n8n/nodes
+cd ~/.n8n/nodes
+npm install @qrdx/n8n-nodes-qrdx
+```
+
+Wenn n8n in Docker läuft, führe dieselben Befehle im Container aus (`docker exec -it n8n sh`) oder richte sie in deinem Image ein.
+
+## Workspace verbinden [#connect-your-workspace]
+
+Erstelle einen [API-Schlüssel](/docs/developers/api-keys) unter [Settings → API keys & apps](/dashboard?to=settings/developers) und lege dann in n8n mit dem Schlüssel ein **QRdx API**-Credential an. Lass **Base URL** auf `https://api.qrdx.dev/v1`, es sei denn, du [hostest QRdx selbst](/docs/self-hosting); dann nimm deine Adresse gefolgt von `/api/v1`.
+
+n8n testet das Credential, indem es dein Profil liest. Dafür ist der Scope Profile nötig, daher ist ein Schlüssel mit vollem Zugriff am einfachsten. Ein Schlüssel wirkt auf den Workspace, in dem er erstellt wurde. Für das Erzeugen von QR-Bildern brauchst du gar kein Credential.
+
+## Der QRdx-Node [#the-qrdx-node]
+
+| Ressource | Operationen |
+| --- | --- |
+| QR Image | Ein Bild als PNG, WebP, SVG oder EPS erzeugen. Kein API-Schlüssel, kein Konto |
+| Code | Create, Get, Get Many, Update (einschließlich Archivieren und Wiederherstellen), Delete |
+| Scan | Get Many (einzelne Scans, neueste zuerst), Get Summary (Summen, Tageswerte und Top-Länder, -Städte, -Geräte, -Browser und -Referrer) |
+| Theme | Get, Get Many |
+
+**Generate** legt das Bild in einem Binärfeld ab, das du an eine E-Mail anhängen oder überallhin hochladen kannst. Du kannst Größe, Farben, Form von Körper, Augen und Augenpunkten, Fehlerkorrektur, Rand, einen [Rahmen](/docs/features/frames) mit Beschriftung und ein Logo-Icon festlegen. Die Ausgabe enthält außerdem `url`: einen Link auf dasselbe Bild über die [Image API](/docs/developers/image-api), bereit für ein `<img>`-Tag.
+
+Die Code- und Scan-Operationen rufen die [REST API](/docs/developers/rest-api) mit deinem Schlüssel auf und zählen auf das tägliche API-Kontingent des Workspace. **Get Many** blättert für dich durch die Ergebnisse. Fehler behalten die ursprüngliche Meldung von QRdx; ein eigener Back-Half erfordert zum Beispiel Pro oder Business, und der Node zeigt den [Fehler](/docs/developers/errors) an, den QRdx im Tarif Kostenlos zurückgibt.
+
+## Der QRdx-Trigger-Node [#the-qrdx-trigger-node]
+
+Wähle die Ereignisse und aktiviere dann den Workflow. Der Node abonniert über die [REST Hooks API](/docs/webhooks#zapier-make-and-n8n-rest-hooks) und kündigt das Abonnement, wenn du den Workflow deaktivierst. Das Abonnement erscheint in Settings → Webhooks, solange es aktiv ist.
+
+| Ereignis | Wann |
+| --- | --- |
+| Scans | Codes werden gescannt. Die Zustellung erfolgt gebündelt: eine pro Minute mit bis zu 100 Scans und der genauen Anzahl |
+| Scan Milestones | Der erste Scan eines Codes, dann 10, 100, 500, 1,000 Scans und darüber hinaus |
+| New Codes | Ein dynamischer QR-Code wird erstellt |
+| Code Changes | Ziel, Titel, Design oder Domain eines Codes ändert sich |
+| Form Submissions | Jemand sendet auf einer gehosteten Seite ein Formular ab |
+
+Der Node prüft bei jeder Zustellung `X-QRdx-Signature` mit dem Signing Secret, das QRdx beim Abonnieren zurückgegeben hat, und antwortet mit `401` auf alles, was nicht passt. Aktiviere **Output One Item per Scan**, um einen Scans-Batch als einzelne Items zu erhalten, und **Include Test Events**, um den Workflow auszuführen, wenn du in Settings → Webhooks auf **Send test** klickst. Die Payloads entsprechen denen, die unter [Webhooks](/docs/webhooks#payloads) beschrieben sind.
+
+Der Trigger benötigt:
+
+- den Tarif Business, da [Webhooks](/docs/webhooks) darin enthalten sind
+- einen API-Schlüssel mit dem Scope Manage codes
+- n8n unter einer öffentlichen `https://`-Adresse, weil QRdx nicht an `localhost` oder private Netzwerke zustellt. Setze hinter einem Proxy die `WEBHOOK_URL` von n8n. Das gilt auch für die Test-URL, die n8n verwendet, während du auf **Listen for test event** klickst
+
+## Ohne das Paket [#without-the-package]
+
+QRdx kann Ereignisse direkt an einen n8n-**Webhook**-Node zustellen, in n8n Cloud oder in einer selbst gehosteten n8n-Instanz:
+
+1. Füge einen Webhook-Node hinzu, stelle seine HTTP-Methode auf `POST` und kopiere seine Production-URL.
+2. Aktiviere den Workflow. Die Production-URL antwortet nur, solange der Workflow aktiv ist.
+3. Klicke unter [Settings → Webhooks](/dashboard?to=settings/webhooks) auf **Add endpoint**, füge die URL ein und wähle die Ereignisse.
+
+Jedes Ereignis startet den Workflow mit dem JSON-Payload. Um Signaturen zu prüfen, lies `X-QRdx-Signature` in einem Code-Node und [verifiziere sie](/docs/webhooks#verify-signatures) mit dem Signing Secret des Endpunkts.

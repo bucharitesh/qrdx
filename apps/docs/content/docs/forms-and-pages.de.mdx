@@ -1,0 +1,127 @@
+---
+title: "Menüs, Gutscheine, Events und Formulare"
+description: "Gehostete Seitentypen für Restaurants, Angebote, Events und App-Downloads sowie Formulare, die Feedback in einem Antwort-Posteingang sammeln."
+icon: ClipboardList
+---
+
+Ein dynamischer QR-Code kann statt einer Website eine gehostete Seite öffnen. Neben Linklisten, Business-Seiten und vCards bietet QRdx fünf Seitentypen für gängige Druckanwendungen. Jeder startet mit einer Vorlage, die du im Seiteneditor Block für Block anpassen kannst, mit Live-Vorschau auf dem Smartphone.
+
+| Seitentyp | Gedacht für | Startet mit diesen Blöcken |
+| --- | --- | --- |
+| **Menü** | Cafés, Restaurants, Bars | Menü, Wi-Fi, Öffnungszeiten, Karte |
+| **Gutschein** | Rabatte und Gratisaktionen | Gutschein mit Barcode und Einlösen-Button |
+| **Event** | Partys, Konferenzen, Webinare | Event mit Kalender-Eintrag |
+| **App-Download** | Ein Code für alle App-Stores | App-Download |
+| **Feedback & Formulare** | Bewertungen, NPS-Umfragen, Anmeldungen | Formular, Bewertungslinks |
+
+Jeder der folgenden Blöcke lässt sich auch jeder anderen Seite hinzufügen.
+
+## Menü [#menu]
+
+Der Block **Menü** listet Abschnitte (Vorspeisen, Hauptgerichte, ...) mit Einträgen auf. Jeder Eintrag kann eine Beschreibung, einen Preis, einen Hinweis hinter dem Preis („pro Glas", „Tagespreis"), ein Foto, ein kurzes Badge („Empfehlung des Küchenchefs") und Folgendes haben:
+
+- **Ernährungs-Tags:** vegetarisch, vegan, glutenfrei, laktosefrei, halal, koscher, scharf, bio.
+- **Allergene:** die 14 Allergene, die Lebensmittelbetriebe in der EU und im Vereinigten Königreich angeben müssen (Gluten, Krebstiere, Eier, Fisch, Erdnüsse, Soja, Milch, Schalenfrüchte, Sellerie, Senf, Sesam, Sulfite, Lupine, Weichtiere), angezeigt als „Enthält: …".
+- **Ausverkauft:** Der Eintrag bleibt im Menü, wird abgedunkelt dargestellt und als ausverkauft markiert.
+
+Alle Preise in einem Menü verwenden die Währung, die du auswählst. Bei zwei oder mehr Abschnitten springen Shortcut-Chips oben zum jeweiligen Abschnitt. Ein Menü kann bis zu 30 Abschnitte und 300 Einträge enthalten.
+
+Der Block **Wi-Fi** zeigt Netzwerkname und Passwort mit Kopieren-Buttons. Smartphones können einem Netzwerk nicht über eine Webseite beitreten, deshalb kopieren Gäste das Passwort und fügen es in ihren Wi-Fi-Einstellungen ein. Jeder, der die Seite öffnet, kann das Passwort sehen.
+
+## Gutschein [#coupon]
+
+Der Block **Gutschein** zeigt eine Überschrift, den Code mit Kopieren-Button und optional einen Barcode, den deine Kasse scannen kann:
+
+- **Code 128** kodiert bis zu 48 Buchstaben, Ziffern und Symbole (keine Akzente oder Emojis).
+- **EAN-13** nimmt 12 Ziffern (QRdx ergänzt die Prüfziffer) oder alle 13. Nummern, die mit 20–29 beginnen, sind für die Verwendung im Geschäft reserviert, was zu Gutscheincodes passt.
+
+Standardmäßig kodiert der Barcode den Gutscheincode. Mit **Barcode-Wert** kannst du etwas anderes kodieren, zum Beispiel deine Kassennummer.
+
+**Gültig ab** und **Gültig bis** sind Kalendertage. Ein Gutschein gilt als gestartet, sobald sein erster Tag irgendwo auf der Welt begonnen hat, und als abgelaufen erst, nachdem sein letzter Tag überall zu Ende gegangen ist. So sieht niemand wegen seiner Zeitzone vorzeitig „abgelaufen". Abgelaufene Gutscheine bleiben sichtbar und sind als abgelaufen markiert.
+
+Aktiviere **Einlösen-Button**, um Einlösungen zu zählen: Der Besucher zeigt deinem Personal den Bildschirm und tippt auf **Jetzt einlösen**. Die Seite zeigt dann auf diesem Smartphone „Eingelöst" mit der Uhrzeit an, und die Anzahl erscheint auf dem Bildschirm [Antworten](#responses) der Seite. Es kann nicht verhindern, dass derselbe Code auf einem anderen Smartphone gezeigt wird. Betrachte es also als Zähler, nicht als Sperre.
+
+## Event [#event]
+
+Der Block **Event** zeigt Datum und Uhrzeit, Veranstaltungsort und Adresse (mit einem Link **In Karten öffnen**), einen Online-Link, den Veranstalter und einen Button wie **Tickets holen**. Die Zeiten werden in der Zeitzone des Events eingegeben und den Besuchern in dieser Zeitzone angezeigt, zum Beispiel „7:00 – 10:00 PM GMT+1". Ganztägige und mehrtägige Events werden unterstützt. Ohne Endzeit dauert ein Event eine Stunde.
+
+**Zum Kalender hinzufügen** bietet Google Calendar, Apple Calendar (eine `.ics`-Datei), Outlook.com und Yahoo Calendar an. Der `.ics`-Download wird von der Adresse deiner Seite aus bereitgestellt und funktioniert deshalb auch auf einer [eigenen Domain](/docs/custom-domains). In der Editor-Vorschau ist er deaktiviert, bis die Seite veröffentlicht ist. Sobald das Event vorbei ist, weist der Block darauf hin und blendet den Kalender-Button aus.
+
+## App-Download [#app-download]
+
+Der Block **App-Download** nimmt deinen App-Store-Link (`apps.apple.com`), deinen Google-Play-Link (`play.google.com`) und eine Website entgegen. Der Store des Besuchers steht zuerst: iPhone- und iPad-Nutzer sehen oben den App-Store-Button, Android-Nutzer Google Play, alle anderen deine Website. Die anderen Links bleiben darunter, sodass niemand in der Sackgasse landet.
+
+## Formulare [#forms]
+
+Der Block **Formular** sammelt Antworten. Fragen können folgende Typen haben:
+
+| Typ | Besucher antworten mit |
+| --- | --- |
+| Text | Einer kurzen oder langen Antwort (die maximale Länge legst du fest) |
+| E-Mail | Einer E-Mail-Adresse |
+| Telefon | Einer Telefonnummer |
+| Sternebewertung | Sternen, von 3 bis 10 (du wählst; standardmäßig 5) |
+| NPS | Einem Wert von 0–10 auf die Frage „Wie wahrscheinlich ist es, dass du uns weiterempfiehlst?" |
+| Auswahl | Einer Option oder mehreren, wenn **Mehrere Antworten erlauben** aktiviert ist |
+| Kontrollkästchen | Einem Häkchen, zum Beispiel als Einwilligung zur Kontaktaufnahme |
+
+Markiere Fragen als **Erforderlich**, um sie zur Pflicht zu machen. Besucher sehen Fehler direkt bei der Frage und nach dem Absenden eine Dankesnachricht, die du selbst schreibst. Frage nur nach dem, was du brauchst, und erkläre, wie du Kontaktdaten verwendest.
+
+Ein Spam-Schutz ist eingebaut: ein verstecktes Feld, das nur Bots ausfüllen, und Begrenzungen, wie oft ein Gerät ein Formular absenden kann. Wenn auf dem Server [Cloudflare Turnstile](#cloudflare-turnstile)-Schlüssel hinterlegt sind, führen Formulare zusätzlich die unsichtbare Prüfung von Turnstile aus.
+
+### Bewertungslinks [#review-links]
+
+Der Block **Bewertungslinks** zeigt Buttons wie „Bewerte uns auf Google" (und Tripadvisor, Yelp, Facebook, Trustpilot oder jede andere Seite). Er wird jedem Besucher angezeigt, unabhängig davon, was er in einem Formular geantwortet hat. Bewertungsportale, Google eingeschlossen, erlauben es nicht, Bewertungslinks nur Personen zu zeigen, die dich gut bewertet haben. Deshalb blendet QRdx sie nie anhand einer Bewertung aus.
+
+Wähle in Google Business Profile **Bewertungen anfordern**, um deinen Bewertungslink zu kopieren.
+
+## Antworten [#responses]
+
+Öffne eine Seite unter **Dashboard → Seiten & Formulare** und wähle **Antworten** (oder rufe `/dashboard/<workspace>/pages/<page id>/responses` auf). Die Antworten werden mit den neuesten zuerst aufgelistet, 25 pro Seite, mit der Uhrzeit (UTC), dem vom Besucher gescannten Code und jeder Antwort. E-Mail-Adressen und Telefonnummern sind Links.
+
+- **Mehrere Formulare auf einer Seite:** Tabs filtern nach Formular.
+- **CSV exportieren:** eine Zeile pro Antwort und eine Spalte pro Frage. Die Spalten folgen den aktuellen Fragen, danach kommen entfernte Fragen, die noch Antworten haben. Wenn du eine Frage umbenennst, bleibt ihre Spalte erhalten.
+- **Löschen:** Wähle Antworten aus oder nutze den Papierkorb-Button bei einer einzelnen. Löschen lässt sich nicht rückgängig machen. Mitglieder können Antworten auf Seiten löschen, die sie erstellt haben, Inhaber und Admins auf jeder Seite im Workspace.
+
+Antworten gehören zur Seite. Wenn du die Seite löschst, werden auch ihre Antworten gelöscht.
+
+### Monatliche Limits [#monthly-limits]
+
+| Tarif | Antworten pro Monat |
+| --- | --- |
+| Kostenlos | 50 |
+| Pro | 1.000 |
+| Business | 10.000 |
+
+Das Limit zählt die Antworten, die alle Seiten im Workspace erhalten, pro Kalendermonat (UTC), und beginnt am 1. von vorn. Der Bildschirm Antworten zeigt, wie viele du schon verbraucht hast.
+
+Ist das Limit erreicht, zeigen Formulare „Dieses Formular nimmt gerade keine Antworten an" und behalten, was der Besucher eingegeben hat. Bereits vorhandene Antworten werden bei keinem Tarif gelöscht oder ausgeblendet, auch nicht nach einem Downgrade.
+
+## Zugriffsregeln [#access-rules]
+
+Formulare und Kalenderdateien folgen den [Code-Steuerungen](/docs/code-controls) der Seite: Solange ein Code pausiert, für später geplant, abgelaufen oder über seinem Scan-Limit ist, nimmt sein Formular keine Antworten an und die `.ics`-Datei wird nicht ausgeliefert. Auf einer passwortgeschützten Seite funktionieren sie, sobald der Besucher das Passwort eingegeben hat.
+
+## Benachrichtigungen und Webhooks [#notifications-and-webhooks]
+
+Jede Antwort löst ein `form.submitted`-Event mit den Antworten aus. Nutze es für [E-Mail- oder Slack/Discord-Benachrichtigungen](/docs/notifications) und [Webhooks](/docs/webhooks) (Zapier, Make, dein eigener Server).
+
+## Datenschutz [#privacy]
+
+Antworten werden mit der Seite in deinem Workspace gespeichert. QRdx speichert die IP-Adressen der Besucher nicht zusammen mit den Antworten: Jede Antwort behält nur einen gesalzenen Hash aus IP-Adresse und Browser für den jeweiligen Tag, der sich in keines von beiden zurückrechnen lässt.
+
+## Self-Hosting [#self-hosting]
+
+### Cloudflare Turnstile [#cloudflare-turnstile]
+
+Setze beide Variablen, um Formulare mit [Cloudflare Turnstile](https://developers.cloudflare.com/turnstile/) zu schützen:
+
+```bash
+NEXT_PUBLIC_TURNSTILE_SITE_KEY=0x4AAAAAAA...
+TURNSTILE_SECRET_KEY=0x4AAAAAAA...
+```
+
+Ist nur eine von beiden gesetzt, bleibt Turnstile aus. Das Turnstile-Skript wird geladen, wenn ein Besucher zum ersten Mal ein Formular berührt, nicht mit der Seite, und läuft unsichtbar, es sei denn, Cloudflare braucht einen Klick des Besuchers. Ist Cloudflare nicht erreichbar, werden Antworten trotzdem angenommen, damit du nie Feedback verlierst. Die anderen Spam-Schutzmaßnahmen greifen weiterhin.
+
+### Eigene Domains [#custom-domains]
+
+Auf einer verifizierten [eigenen Domain](/docs/custom-domains) werden der Formular-Endpunkt (`/api/forms/...`) und die Kalenderdateien (`/api/calendar/...`) neben deinen Seiten bereitgestellt. Formulare und „Zum Kalender hinzufügen" funktionieren dort also ohne zusätzliche Einrichtung.

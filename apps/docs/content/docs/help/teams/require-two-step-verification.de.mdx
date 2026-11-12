@@ -1,0 +1,48 @@
+---
+title: "Zwei-Schritt-Verifizierung verpflichtend machen"
+description: "Alle in einem Workspace müssen die Zwei-Schritt-Verifizierung aktivieren, bevor sie ihn öffnen können. Teil des Business-Plans."
+---
+
+Owner und Admins können für alle in einem Workspace die [Zwei-Schritt-Verifizierung](/docs/help/privacy-and-security/two-step-verification) verpflichtend machen. Wer sie nicht aktiviert hat, kann den Workspace dann erst öffnen, wenn sie eingeschaltet ist. Der Zugriff auf das E-Mail-Postfach einer Person allein reicht also nicht aus, um in deinen Workspace zu gelangen.
+
+Die verpflichtende Zwei-Schritt-Verifizierung ist Teil des **Business**-Plans. Ein Workspace hat sie, wenn einer seiner Owner oder Abrechnungsmitglieder Business nutzt. Siehe [Plätze und Workspace-Limits](/docs/help/teams/seats).
+
+## Einschalten [#turn-it-on]
+
+1. Schalte zuerst die Zwei-Schritt-Verifizierung für dein eigenes Konto ein, unter **Einstellungen** → **Profil & Sicherheit**. Du kannst sie nicht verpflichtend machen, ohne sie selbst zu nutzen.
+2. Gehe im Workspace zu **Einstellungen** → **Team**.
+3. Schalte unter **Zwei-Schritt-Verifizierung** die Option **Zwei-Schritt-Verifizierung verlangen** ein.
+4. Haben einige Mitglieder sie noch nicht aktiviert, zeigt QRdx dir, wie viele es sind, und fragt nach, bevor es weitergeht.
+5. [Bestätige, dass du es bist](/docs/help/privacy-and-security/two-step-verification#confirm-its-you).
+
+Nur Owner und Admins können die Einstellung ändern. Beim Ein- und Ausschalten musst du bestätigen, dass du es bist.
+
+Es werden keine E-Mails verschickt. Mitglieder ohne Zwei-Schritt-Verifizierung erfahren es, sobald sie den Workspace das nächste Mal öffnen.
+
+## Sehen, wer sie aktiviert hat [#see-who-has-it-on]
+
+Auf der Seite **Einstellungen** → **Team** sehen Owner und Admins, ob die Zwei-Schritt-Verifizierung bei jedem Mitglied **An** oder **Aus** ist. Auf dem Smartphone steht die Angabe unter der E-Mail-Adresse der jeweiligen Person.
+
+## Was Mitglieder ohne Zwei-Schritt-Verifizierung sehen [#what-members-without-it-see]
+
+Beim Öffnen des Workspace sehen sie den Hinweis, dass er die Zwei-Schritt-Verifizierung verlangt, mit der Schaltfläche **Zwei-Schritt-Verifizierung aktivieren**. Sie führt zu **Einstellungen** → **Profil & Sicherheit**. Sobald sie aktiviert ist, bringt **Zurück zu** dem Workspace sie wieder auf die Seite, auf der sie waren.
+
+Bis dahin können sie in diesem Workspace nichts sehen oder ändern. Ihre anderen Workspaces funktionieren wie gewohnt.
+
+Das gilt auch für alles, was der Workspace ihnen sendet. Ihre E-Mail-Benachrichtigungen, die wöchentliche Zusammenfassung und die Slack- oder Discord-Benachrichtigungen dafür stoppen, und sie können keine neuen hinzufügen. Synchronisierungen, die sie eingerichtet haben, um die Daten des Workspace an andere Tools zu senden, pausieren. Benachrichtigungen starten wieder, sobald die Zwei-Schritt-Verifizierung aktiv ist. Eine pausierte Synchronisierung muss wieder eingeschaltet werden.
+
+Schaltet jemand die Zwei-Schritt-Verifizierung später wieder aus, ist der Workspace für diese Person erneut gesperrt, bis sie sie wieder einschaltet. Das gilt auch für Owner und Admins.
+
+## API-Schlüssel [#api-keys]
+
+API-Schlüssel, die im Workspace erstellt wurden, funktionieren für die Person, die sie erstellt hat, weiter, mit oder ohne Zwei-Schritt-Verifizierung. Die Zwei-Schritt-Verifizierung schützt die Anmeldung, und ein Schlüssel ist eine eigene Zugangsberechtigung. Niemand kann einen neuen Schlüssel im Workspace erstellen, ohne ihn öffnen zu können. Owner und Admins können die Schlüssel aller Mitglieder unter **Einstellungen** → **Entwickler** des Workspace einsehen und widerrufen.
+
+Apps, die per OAuth mit dem Konto einer Person verbunden sind, funktionieren immer nur im persönlichen Workspace dieser Person und erreichen daher nie einen Team-Workspace.
+
+## Wenn der Workspace Business verlässt [#if-the-workspace-leaves-business]
+
+Die Pflicht gilt dann nicht mehr, und die Einstellung wird als ausgeschaltet angezeigt. Wechselt der Workspace wieder zu Business, gilt sie erneut.
+
+## Ausschalten [#turn-it-off]
+
+Schalte auf der Seite **Einstellungen** → **Team** die Option **Zwei-Schritt-Verifizierung verlangen** aus und bestätige, dass du es bist. Mitglieder ohne Zwei-Schritt-Verifizierung können den Workspace sofort wieder öffnen.

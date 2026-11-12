@@ -1,0 +1,93 @@
+---
+title: "Domaines personnalisés"
+description: "Diffusez les liens courts de vos QR codes dynamiques depuis un domaine qui vous appartient."
+icon: Globe
+---
+
+Par défaut, un [QR code dynamique](/docs/dynamic-qr-codes) encode un lien court tel que `https://qrdx.dev/q/aB3dE5f`. Avec un domaine personnalisé, il encode à la place `https://go.yourbrand.com/aB3dE5f` : vos utilisateurs voient votre marque avant de scanner. Les redirections, la modification et les statistiques de scan fonctionnent de la même manière.
+
+Les domaines personnalisés sont inclus dans Pro (jusqu'à 5 par espace de travail) et Business (jusqu'à 25).
+
+## Connecter un domaine [#connect-a-domain]
+
+1. Ouvrez [Paramètres → Domaines](/dashboard?to=settings/domains) et saisissez le domaine, par exemple `go.yourbrand.com`. Un sous-domaine est préférable, car votre site web principal reste là où il est.
+2. Ajoutez les enregistrements DNS affichés pour le domaine chez votre fournisseur DNS (là où vous avez acheté le domaine, Cloudflare, etc.) :
+   - un sous-domaine reçoit un enregistrement `CNAME`,
+   - un domaine racine (`yourbrand.com`) reçoit un enregistrement `A`,
+   - un enregistrement `TXT` est aussi affiché lorsque la propriété du domaine doit être confirmée.
+
+   Copiez les valeurs exactes depuis le tableau de bord. La plupart des fournisseurs attendent uniquement la partie située avant votre domaine comme nom (`go`, ou `@` pour la racine).
+3. Cliquez sur **Vérifier**. Les modifications DNS apparaissent généralement en quelques minutes, mais cela peut prendre jusqu'à 48 heures : réessayez plus tard si les enregistrements ne sont pas encore trouvés.
+
+Une fois vérifié, le domaine apparaît dans le sélecteur **Domaine du lien court** lorsque vous créez ou modifiez un code dynamique. Les domaines vérifiés le restent jusqu'à ce que vous les supprimiez, et **Vérifier le DNS** relit les enregistrements à tout moment.
+
+<Callout type="info">
+  Un domaine qui n'est pas vérifié dans les 3 jours peut être ajouté par un autre compte : personne ne peut donc garder un domaine qu'il ne contrôle pas.
+</Callout>
+
+<IfAvailable feature="domainConnect" id="one-click-dns-setup" title="Configuration DNS en un clic">
+
+Certains fournisseurs DNS prennent en charge [Domain Connect](https://www.domainconnect.org), un standard ouvert qui permet à un service d'ajouter ses enregistrements à votre place. Lorsque votre fournisseur le prend en charge et propose la configuration de QRdx, un domaine en attente de DNS affiche un bouton **Configurer avec …** portant le nom de votre fournisseur.
+
+1. Cliquez sur le bouton. Votre fournisseur DNS s'ouvre et liste les enregistrements dont QRdx a besoin.
+2. Connectez-vous-y si on vous le demande, puis approuvez la modification. Rien ne change tant que vous n'avez pas approuvé.
+3. Vous revenez à la page Domaines, qui vérifie le DNS immédiatement, puis de nouveau pendant la demi-minute suivante.
+
+Le bouton n'apparaît que pour les sous-domaines tels que `go.yourbrand.com`, et uniquement lorsque votre fournisseur peut ajouter exactement les enregistrements affichés. Sinon, ajoutez vous-même les enregistrements du tableau, comme indiqué plus haut.
+
+</IfAvailable>
+
+## L'utiliser pour vos codes [#use-it-for-codes]
+
+- **Nouveau code :** choisissez le domaine dans **Domaine du lien court** avant de cliquer sur **Créer le code**.
+- **Code existant :** choisissez le domaine dans **Modifier le lien**, enregistrez, puis téléchargez à nouveau le QR code, car le lien encodé change.
+
+Chaque code continue aussi de fonctionner avec son lien par défaut `https://qrdx.dev/q/<slug>` : les QR codes que vous avez imprimés avant de déplacer un code vers votre domaine ne cessent donc jamais de fonctionner. En revanche, déplacer un code d'un domaine personnalisé à un autre (ou revenir au domaine par défaut) invalide les QR codes imprimés avec l'ancien lien de domaine personnalisé ; la boîte de dialogue vous en avertit avant l'enregistrement.
+
+### Vos propres fins de lien [#your-own-back-halves]
+
+Avec Pro et Business, vous pouvez choisir la [fin de lien](/docs/dynamic-qr-codes#custom-back-halves) d'un code sur votre domaine, par exemple `go.yourbrand.com/spring-menu`. Elle doit seulement être unique sur ce domaine : qu'un autre client de QRdx utilise `spring-menu` n'a donc aucune importance, et seuls `api`, `p` et `q` y sont réservés. Une fin de lien choisie sur votre domaine lui appartient et n'a pas de lien `qrdx.dev/q/`. Déplacer un tel code vers un autre domaine conserve la fin de lien si elle y est libre ; le ramener au lien par défaut la conserve si elle est libre sur `qrdx.dev`, sinon le code reçoit une nouvelle fin de lien générée.
+
+Sur votre domaine :
+
+- `https://go.yourbrand.com/<slug>` redirige pour les codes qui utilisent ce domaine. Les codes d'autres domaines, ou uniquement sur le lien par défaut, y affichent une page « introuvable ».
+- `https://go.yourbrand.com/` affiche une petite page indiquant que le domaine héberge des liens de QR code.
+- `https://go.yourbrand.com/01/<GTIN>` ([GS1 Digital Link](/docs/product-pages#gs1-digital-link)) ouvre la page produit portant ce GTIN dont le code utilise le domaine.
+- Tout autre chemin renvoie « introuvable ». Le domaine ne diffuse jamais le reste de QRdx.
+
+Les changements (un domaine nouvellement vérifié ou supprimé) mettent jusqu'à une minute pour atteindre tous les serveurs.
+
+## Espaces de travail et rôles [#workspaces-and-roles]
+
+Un domaine appartient à l'espace de travail dans lequel il a été ajouté. Les propriétaires et les administrateurs l'ajoutent, le vérifient et le suppriment ; chaque membre peut utiliser les domaines vérifiés de l'espace de travail pour ses codes.
+
+## Offres et suppression de domaines [#plans-and-removing-domains]
+
+- Passer à une offre inférieure ne casse rien : les domaines vérifiés continuent de servir les codes qui les utilisent. Sans Pro ni Business, vous ne pouvez pas ajouter ni vérifier de domaines, ni y déplacer d'autres codes, mais vous pouvez toujours modifier ces codes et supprimer des domaines.
+- Supprimer un domaine remet ses codes sur leur lien par défaut `qrdx.dev/q/<slug>`. Les fins de lien choisies sur le domaine passent sur `qrdx.dev` lorsqu'elles y sont libres ; les autres reçoivent une nouvelle fin de lien générée. Les QR codes imprimés avec le lien du domaine personnalisé cessent de fonctionner : la boîte de dialogue indique donc d'abord combien de codes utilisent le domaine.
+
+## REST API [#rest-api]
+
+L'[API des codes](/docs/dynamic-qr-codes#rest-api) accepte `domainId` (l'identifiant d'un domaine vérifié du même espace de travail) sur `POST /v1/codes` et `PATCH /v1/codes/{id}`. Envoyez `"domainId": null` dans un `PATCH` pour revenir au lien par défaut. Déplacer un code vers un domaine nécessite Pro et renvoie sinon `402 PLAN_REQUIRED`.
+
+Chaque code d'une réponse comprend :
+
+| Champ | Description |
+| --- | --- |
+| `shortLink` | Le lien à encoder : sur le domaine personnalisé une fois celui-ci vérifié |
+| `defaultShortLink` | `https://qrdx.dev/q/<slug>`, qui fonctionne toujours ; `null` pour une fin de lien choisie sur le domaine personnalisé |
+| `domain` | `{ "id", "hostname", "verified" }`, ou `null` |
+
+## Auto-hébergement [#self-hosting]
+
+La façon dont les domaines sont connectés dépend de votre déploiement :
+
+- **Sur Vercel :** définissez `VERCEL_API_TOKEN` (un jeton ayant accès au projet), `VERCEL_PROJECT_ID` et, pour un projet d'équipe, `VERCEL_TEAM_ID`. Les domaines sont alors ajoutés au projet via l'API Vercel Domains, qui émet aussi les certificats TLS. Sans ces variables, la page Domaines explique que les domaines personnalisés ne sont pas configurés, car Vercel ne route que les domaines ajoutés au projet.
+- **Partout ailleurs** (Docker, Node.js) : laissez ces variables non définies. Les domaines sont vérifiés manuellement :
+  1. Faites pointer le domaine vers votre serveur avec un enregistrement `CNAME` (vers le nom d'hôte de votre application) ou `A` (l'IP de votre serveur).
+  2. Configurez votre reverse proxy pour qu'il accepte le domaine, serve le HTTPS pour celui-ci (par exemple avec le TLS à la demande de Caddy ou un certificat certbot) et transmette l'en-tête `Host` d'origine à l'application. Avec nginx, c'est `proxy_set_header Host $host;` ; Caddy le fait par défaut.
+  3. Ajoutez le domaine sur la page Domaines, créez l'enregistrement `TXT` qu'elle affiche (`_qrdx-challenge.<your-domain>` avec la valeur `qrdx-verify=<token>`), puis cliquez sur **Vérifier**. L'application contrôle l'enregistrement par une requête DNS.
+
+La **configuration DNS en un clic** (facultative) utilise [Domain Connect](https://www.domainconnect.org). Elle nécessite un modèle qui vous est propre, accepté par chaque fournisseur DNS que vous souhaitez prendre en charge, et une clé RSA qui signe les liens de configuration : définissez `DOMAIN_CONNECT_PROVIDER_ID`, `DOMAIN_CONNECT_SERVICE_ID` et `DOMAIN_CONNECT_PRIVATE_KEY` (PEM), puis publiez la clé publique sous forme d'enregistrements `TXT` à `_dck1.<provider id>`. Le modèle propre à QRdx (`domain-connect/` dans le dépôt) ne fonctionne que pour qrdx.dev, car les fournisseurs vérifient la signature avec sa clé. Tant que la clé publiée ne correspond pas, aucun bouton n'est affiché et l'application consigne la raison dans ses journaux.
+
+L'application reconnaît les domaines personnalisés grâce à l'en-tête `Host`. Les requêtes vers l'URL de votre application, `NEXT_PUBLIC_SHORT_LINK_BASE_URL`, `localhost` et `*.vercel.app` sont toujours traitées comme celles de l'application principale.

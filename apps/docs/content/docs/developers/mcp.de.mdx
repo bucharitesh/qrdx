@@ -1,0 +1,223 @@
+---
+title: "MCP-Server"
+description: "Lass Claude, Cursor, VS Code und andere KI-Tools mit dem QRdx MCP-Server gestaltete QR-Codes erzeugen."
+icon: Bot
+---
+
+QRdx betreibt einen öffentlichen [Model Context Protocol](https://modelcontextprotocol.io)-Server unter:
+
+```txt
+https://mcp.qrdx.dev/mcp
+```
+
+Verwende diese URL in jedem Client. Derselbe Server antwortet auch unter `https://qrdx.dev/api/mcp`, und die [Verbindungsseite](/mcp) zeigt die öffentliche URL auf qrdx.dev, in Preview-Deployments und in der lokalen Entwicklung.
+
+Er nutzt den Streamable-HTTP-Transport und speichert keinen Sitzungszustand. Dein KI-Assistent kann ihn aufrufen, um QR-Codes für jeden Inhaltstyp mit einem geprüften Scan-Score zu gestalten, QR-Codes zu rendern, die verfügbaren Stile aufzulisten, Community-Rahmen und -Themes zu finden und korrekt formatierte Payloads für Wi-Fi, Kontakte, E-Mail, SMS und Kartenstandorte zu erstellen. Dafür brauchst du weder ein Konto noch einen API-Schlüssel. Mit einem QRdx-API-Schlüssel an der Verbindung kann er außerdem ein Design in deinen Themes speichern und Logos verwenden, die du hochgeladen hast (siehe [API-Schlüssel verwenden](#use-an-api-key)).
+
+[Im Playground ausprobieren](/playground?open=code&lang=mcp): Gestalte dort einen Code und kopiere ihn dann als `design_qr`-Argumente für deinen Assistenten.
+
+## Einrichtung [#setup]
+
+<Tabs items={["Claude Code", "Cursor", "VS Code", "Other clients"]}>
+  <Tab value="Claude Code">
+    ```bash
+    claude mcp add --transport http qrdx https://mcp.qrdx.dev/mcp
+    ```
+  </Tab>
+  <Tab value="Cursor">
+    Füge den Server zu `~/.cursor/mcp.json` (alle Projekte) oder `.cursor/mcp.json` (ein Projekt) hinzu:
+
+    ```json
+    {
+      "mcpServers": {
+        "qrdx": {
+          "url": "https://mcp.qrdx.dev/mcp"
+        }
+      }
+    }
+    ```
+  </Tab>
+  <Tab value="VS Code">
+    Füge den Server in deinem Workspace zu `.vscode/mcp.json` hinzu:
+
+    ```json
+    {
+      "servers": {
+        "qrdx": {
+          "type": "http",
+          "url": "https://mcp.qrdx.dev/mcp"
+        }
+      }
+    }
+    ```
+  </Tab>
+  <Tab value="Other clients">
+    Clients, die Remote-Server (Streamable HTTP) unterstützen, brauchen nur die URL `https://mcp.qrdx.dev/mcp`. Für Clients, die nur lokale stdio-Server ausführen, kannst du die Verbindung über [`mcp-remote`](https://www.npmjs.com/package/mcp-remote) überbrücken:
+
+    ```json
+    {
+      "mcpServers": {
+        "qrdx": {
+          "command": "npx",
+          "args": ["-y", "mcp-remote", "https://mcp.qrdx.dev/mcp"]
+        }
+      }
+    }
+    ```
+  </Tab>
+</Tabs>
+
+Frag dann nach dem, was du brauchst, zum Beispiel:
+
+- „Erstelle einen QR-Code für https://example.com in unserem Markenblau, #155dfc, mit abgerundeten Modulen."
+- „Erstelle einen Wi-Fi-QR-Code für das Netzwerk Office Guest mit dem Passwort correct-horse-battery."
+- „Erzeuge einen Kontakt-QR-Code für Ada Lovelace, ada@example.com, und füge ihn zur README hinzu."
+- „Gestalte einen Wi-Fi-QR-Code für Cafe Guest in warmen Brauntönen mit einem Free-Wi-Fi-Rahmen und nenne mir seinen Scan-Score."
+- „Finde einen Community-Rahmen für eine Restaurantkarte und verwende ihn für https://example.com/menu."
+
+## Tools [#tools]
+
+| Tool | Funktion |
+|------|----------|
+| `design_qr` | Gestaltet einen Code für jeden Inhaltstyp mit dem Stil, den dein Assistent wählt, oder ausgehend von einem integrierten Theme oder einem Community-Element, prüft den Scan-Score und repariert den Stil, bis er Great erreicht. Liefert den Score, was geändert wurde, das Stil-JSON, einen Playground-Link, ein PNG und das SVG. |
+| `list_options` | Listet jeden Wert auf, den `design_qr` akzeptiert: Inhaltstypen und ihre Felder, Farben und Verläufe, Formen, Rahmen (mit den IDs der offiziellen QRdx-Rahmen), Ränder, Logo-Icons und Markenlogos, integrierte Themes, Fehlerkorrekturstufen und Limits. |
+| `generate_qr_code` | Rendert einen QR-Code mit den Stilen des Editors. Liefert ein PNG-Bild und öffentliche [Image API](/docs/developers/image-api)-URLs (SVG, PNG, verlustfreies WebP und Vektor-EPS), bereit für Markdown, HTML oder Druck, auf Wunsch zusätzlich das SVG-Markup. |
+| `list_qr_styles` | Listet Körpermuster, Formen für Eckaugen und Augenpunkte, Rahmenvorlagen, Rahmen, Logo-Icons, Fehlerkorrekturstufen, Standardwerte und Limits auf. |
+| `search_community` | Findet veröffentlichte [Community](/community)-Rahmen, -Themes und -Sammlungen nach Wörtern, Typ oder Tag. |
+| `get_community_item` | Ein Community-Element mit dem Stil, den es anwendet, bereit für `design_qr` oder `generate_qr_code`. |
+| `save_template` | Speichert ein Design als Theme in deinem Workspace. Erfordert einen [API-Schlüssel](#use-an-api-key). |
+| `generate_barcode` | Zeichnet einen Barcode vom Typ EAN-13, UPC-A, UPC-E, EAN-8, ITF-14, GS1-128, Code 128, Code 39, Data Matrix, PDF417 oder Aztec, nachdem der Wert geprüft wurde (Prüfziffern, Längen, Zeichen). Liefert ein PNG und öffentliche [Barcode-API](/docs/developers/barcode-api)-URLs. |
+| `save_barcode` | Speichert einen Barcode in den Barcodes deines Workspaces. Erfordert einen [API-Schlüssel](#use-an-api-key). |
+| `qr_payload_wifi` | Erstellt eine `WIFI:`-Netzwerk-Payload (WPA, WEP oder offen, optional versteckt) mit maskierten Sonderzeichen. |
+| `qr_payload_vcard` | Erstellt einen vCard-3.0-Kontakt (RFC 2426): Name, Organisation, Titel, Telefonnummern, E-Mail, Website, Adresse und Notiz. |
+| `qr_payload_email` | Erstellt einen `mailto:`-Link (RFC 6068) mit optionalen Feldern für Cc, Bcc, Betreff und Text. |
+| `qr_payload_sms` | Erstellt einen `sms:`-Link (RFC 5724) mit optionaler Nachricht oder die ältere Form `SMSTO:`. |
+| `qr_payload_geo` | Erstellt einen `geo:`-Standort (RFC 5870) aus Breiten- und Längengrad. |
+| `qr_payload_payment` | Erstellt einen Bankzahlungscode: einen Pix BR Code, eine SEPA-Überweisung (EPC069-12) oder einen PayNow-, PromptPay- oder VietQR-Code (EMV, mit CRC). Die Felder werden so geprüft wie in den Formularen des Playground. |
+
+Die Payload-Tools liefern einen einfachen String. Dein Assistent übergibt ihn dann als `data` an `generate_qr_code`.
+
+### design_qr [#design_qr]
+
+`design_qr` nimmt den Inhalt als Typ mit seinen Feldern entgegen, mit denselben Typen und Prüfungen wie die Inhaltsformulare des Editors (`list_options` listet sie auf), und optional einen Stil:
+
+```json
+{
+  "content": { "type": "wifi", "ssid": "Cafe Guest", "password": "sunshine123", "encryption": "WPA" },
+  "style": {
+    "bgColor": "#FFF7ED",
+    "fgColor": "#9A3412",
+    "bodyPattern": "rounded",
+    "cornerEyePattern": "rounded",
+    "frame": { "style": "banner-bottom", "text": "Free Wi-Fi" }
+  }
+}
+```
+
+Optionen, die du weglässt, erhalten Standardwerte (Augen folgen der Punktfarbe, eckige Formen, Rand 4, Fehlerkorrektur Q, kein Rahmen). Danach führt QRdx die Scan-Prüfung des Editors für das Design aus: Es rendert den Code, decodiert ihn bei 96, 160 und 320 px mit einem Modell der Handykamera und prüft Kontrast, Ruhezone, Augenformen und Formpaare. Liegt der Score unter Great (85), wird der Stil bis zu dreimal repariert, und zwar mit möglichst wenigen Änderungen (dunklere Farben, die ihren Farbton behalten, eine sicherere Augenform, weniger Fehlerkorrektur bei langen Inhalten). Reicht das nicht aus, greift QRdx auf einen klassischen schwarz-auf-weißen Code mit deinem Rahmen zurück. Das Ergebnis nennt, was geändert wurde und warum.
+
+Auf Seiten von QRdx läuft für `design_qr` kein KI-Modell: Dein Assistent wählt den Stil, QRdx validiert, prüft und repariert ihn. Ungültige Inhalte (ein WPA-Passwort mit weniger als 8 Zeichen, eine fehlerhafte E-Mail-Adresse) werden mit Begründung abgelehnt. Für `design_qr` gilt ein eigenes Limit von 20 Aufrufen pro Minute und IP-Adresse.
+
+Weitere Eingaben:
+
+- **`preset`**: Starte mit der ID eines integrierten Themes (`list_options` listet sie auf). Stiloptionen, die du setzt, haben Vorrang.
+- **`community_item`**: Starte mit der ID eines Community-Rahmens oder -Themes, etwa `frame:wifi-card`. Ein Rahmen-Element sitzt auf einem klassischen Code; deine Stiloptionen verändern den Code darunter.
+- **Offizielle Rahmen**: Die offiziellen QRdx-Rahmen sind ebenfalls Community-Elemente. `list_options` listet ihre IDs nach Gruppen auf (Feiertage, Jahreszeiten und Anwendungen), sodass `frame:diwali-diya` oder `frame:menu-cutlery` als `community_item` funktioniert.
+- **Ein eigener Rahmen**: `style.frame` kann `{ "style": "custom", "spec": … }` mit einer Rahmenspezifikation sein, etwa der eines Community-Rahmens aus `get_community_item`. Er wird so gezeichnet und bewertet, wie er ist; Reparaturen ändern den Code, nie den Rahmen.
+- **`style.logo`**: ein schnelles Logo-Icon (`wifi`, `location`, `phone`, `email`, `link`, `file`, `calendar`, `whatsapp` oder `instagram`) oder ein Markenlogo über seinen [Simple Icons](https://simpleicons.org)-Slug (`spotify`, `paypal:white`). `list_options` listet die gängigen Marken-Slugs auf.
+- **Engine-Optionen**: `style.eyeColors` (Farben pro Auge als `#RRGGBB`), `moduleScale` (Punktgröße, `0.5` bis `1`), `shape` (`circle` für einen runden Code), `autoLevel` und `logoOptions` (Größe, Freiraum, Position, Zuschnitt und Unterlage des Logos). Sie werden wie angegeben gezeichnet und bewertet; Reparaturen ändern sie nicht.
+
+<IfAvailable feature="fileStorage">
+`logo_file_id` zeichnet stattdessen ein Logo, das du zu QRdx hochgeladen hast, mit einem [API-Schlüssel](#use-an-api-key).
+</IfAvailable>
+
+Logos werden wie im Editor nach den Modulen bewertet, die sie verdecken. Eine Reparatur kann also die Fehlerkorrektur auf H erhöhen oder das Logo entfernen. Das QRdx-Zeichen, das der Editor standardmäßig anzeigt, wird hier nicht gezeichnet.
+
+Das `qrdxStyle` im Ergebnis ist das Design als Stil-JSON des Editors. Übergib es an `save_template`, an `generate_qr_code` als `style`, um dasselbe Design in einer anderen Größe zu rendern, oder an den [`style`](/docs/developers/image-api#style)-Parameter der Image API. `playground_url` öffnet das Design im [Playground](/playground): Er enthält nur den Stil, nie das Logo oder den Inhalt, und `playgroundLeftOut` nennt, was fehlt.
+
+### Eingaben von generate_qr_code [#generate_qr_code-inputs]
+
+Die Eingaben entsprechen den [Parametern der Image API](/docs/developers/image-api#parameters): `data` (erforderlich), `size`, `fg`, `bg`, `eyeColor`, `dotColor`, `body`, `eye`, `dot`, `level`, `margin`, `template`, `frame`, `frameText`, `logoIcon`, `logoFileId`, `item` (die ID eines Community-Elements) und `style` (das Stil-JSON des Editors: Verläufe, eigene Rahmen und der Rest, so wie `design_qr` es liefert). Die einzelnen Optionen haben Vorrang vor `style`, und `style` hat Vorrang vor `item`. Setze `include_svg` auf `true`, um das SVG-Markup zusätzlich als Text zu erhalten, zum Beispiel um eine `.svg`-Datei zu speichern. Standardmäßig ist das aus, weil das Markup oft 50 bis 150 KB groß ist und die Unterhaltung füllen würde.
+
+`generate_qr_code` prüft den Scan-Score nicht; nutze dafür `design_qr`. Ein Code mit deinem hochgeladenen Logo hat keine öffentliche Bild-URL, da die Image API dieses Logo nur für Anfragen mit deinem Schlüssel zeichnet.
+
+### Die QR-Karte [#qr-card]
+
+In Apps, die [MCP Apps](https://modelcontextprotocol.io/extensions/apps/overview) unterstützen, zeigen `design_qr` und `generate_qr_code` im Chat zusätzlich eine QR-Karte. Sie enthält den Code, was er kodiert (ein Wi-Fi-Code zeigt den Netzwerknamen, nie das Passwort), die Größe und die Fehlerkorrektur oder den Scan-Score sowie eine Schaltfläche **Im Editor öffnen**. Der Editor-Link enthält nur den Stil, genau wie `playground_url`.
+
+Die Schaltflächen für PNG und SVG hängen davon ab, was die App erlaubt. Wo sie Dateien aus einer Karte speichern kann, speichern die Schaltflächen sie. Andernfalls öffnen sie die URL der Image API in deinem Browser. Deshalb zeigt die Karte von `design_qr` sie nur in Apps, die Dateien speichern: Sein Inhalt gelangt nie in eine Bild-URL. Apps bitten dich eventuell um Bestätigung, bevor ein Link geöffnet wird.
+
+Apps ohne MCP Apps erhalten denselben Text und dasselbe Bild wie zuvor. Für Client-Entwickler:
+
+- Die Karte ist die Ressource `ui://qrdx/qr-card` (`text/html;profile=mcp-app`), die `resources/list` auflistet. Beide Tools verweisen mit `_meta.ui.resourceUri` darauf.
+- Ihre Daten stehen im `_meta` des Tool-Ergebnisses unter `dev.qrdx/qr-card`, das für die Karte gedacht ist und nicht für das Modell. Die Tools liefern kein `structuredContent`.
+- Die Karte ist eine einzelne HTML-Datei mit Inline-Stilen und -Skript. Das Einzige, was sie lädt, ist das Bild des Codes von der Image API (`https://api.qrdx.dev` oder deine eigene Domain beim Self-Hosting). Ihre Content Security Policy (`_meta.ui.csp.resourceDomains`) erlaubt diesen Host und sonst nichts.
+
+Wenn du QRdx verbunden hast, bevor es die Karte gab, entferne den Connector und füge ihn erneut hinzu oder aktualisiere seine Tools, damit die App die neuen Tool-Metadaten übernimmt.
+
+### Community [#community]
+
+`search_community` findet veröffentlichte [Community](/community)-Rahmen, -Themes und -Sammlungen, kostenlos unter CC0, nach Wörtern (`q`), `type` und `tag`. `get_community_item` liefert ein Element mit dem Stil, den es anwendet; übergib seine ID an `design_qr` als `community_item` oder an `generate_qr_code` als `item`. Dieselben Daten gibt es in der REST API unter [`/v1/community/items`](/docs/developers/api/list-community-items).
+
+Die Texte der Elemente stammen von Community-Mitgliedern. Namen, Beschreibungen, Handles, Tags und Rahmenbeschriftungen kommen kurz, einzeilig und ohne Links, E-Mail-Adressen oder Markup zurück, und jedes Ergebnis weist darauf hin, sie als Daten zu behandeln, nicht als Anweisungen.
+
+## API-Key verwenden [#use-an-api-key]
+
+Einige Tools brauchen für die Verbindung einen QRdx-[API-Key](/docs/developers/api-keys), der als `Authorization: Bearer qrdx_…` gesendet wird:
+
+- **`save_template`** speichert ein Design als Theme, das im Dashboard unter Themes aufgelistet und im Editor angeboten wird. Dafür brauchst du einen Key mit `codes:write`, den **Full access**-Keys haben. Ein Key deines eigenen Workspace speichert in deinen Themes. Ein Team-Key speichert in den geteilten Themes des Teams, wenn sein Ersteller Owner oder Admin ist und der Plan Team-Themes enthält. Jedes Speichern zählt zum Limit gespeicherter Themes des Plans (siehe [Pläne und Limits](/docs/plans-and-limits)). Wird das Limit überschritten, gibt das Tool den API-Fehler `LIMIT_REACHED` (`402`) zurück. Ohne Key gibt es einen `401`-Fehler zurück, der erklärt, wie du einen hinzufügst.
+- **`save_barcode`** speichert einen Barcode (Format, Wert, optional einen Titel und Zeichenoptionen) im Workspace des Keys, aufgelistet im Dashboard unter Barcodes. Dafür brauchst du einen Key mit `codes:write`. Jeder Plan kann Barcodes speichern, im Plan Kostenlos bis zu 1.000. Bei Überschreitung des Limits kommt `LIMIT_REACHED` (`402`) zurück.
+<IfAvailable feature="fileStorage">
+- **Hochgeladene Logos** unter [Dashboard → Dateien](/docs/files), per Datei-ID (`logo_file_id` in `design_qr`, `logoFileId` in `generate_qr_code`): ein PNG oder JPEG mit bis zu 1 MB. Der Key muss zum Workspace gehören, dem die Datei gehört.
+</IfAvailable>
+
+<Tabs items={["Claude Code", "Cursor", "VS Code"]}>
+  <Tab value="Claude Code">
+    ```bash
+    claude mcp add --transport http qrdx https://mcp.qrdx.dev/mcp \
+      --header "Authorization: Bearer $QRDX_API_KEY"
+    ```
+  </Tab>
+  <Tab value="Cursor">
+    ```json
+    {
+      "mcpServers": {
+        "qrdx": {
+          "url": "https://mcp.qrdx.dev/mcp",
+          "headers": { "Authorization": "Bearer qrdx_…" }
+        }
+      }
+    }
+    ```
+  </Tab>
+  <Tab value="VS Code">
+    ```json
+    {
+      "servers": {
+        "qrdx": {
+          "type": "http",
+          "url": "https://mcp.qrdx.dev/mcp",
+          "headers": { "Authorization": "Bearer qrdx_…" }
+        }
+      }
+    }
+    ```
+  </Tab>
+</Tabs>
+
+Halte den Key aus gemeinsam genutzten oder eingecheckten Konfigurationsdateien heraus. Aufrufe mit einem Key zählen zum täglichen [API-Kontingent](/docs/plans-and-limits) des Workspace. Alle anderen Tools funktionieren mit und ohne Key gleich.
+
+## Datenschutz und Limits [#privacy-and-limits]
+
+- Die Tools rendern Bilder, prüfen Designs, formatieren Text und lesen die öffentliche Community. Nur `save_template` und `save_barcode` schreiben etwas: das Theme oder den Barcode, den du speichern lässt, im Workspace des API-Keys. Der Server speichert die QR-Codes, die du generierst, nicht.
+- Die Bild-URLs, die `generate_qr_code` und `generate_barcode` zurückgeben, enthalten die codierten Daten. Teile sie nicht, wenn die Daten privat sind, etwa ein Wi-Fi-Passwort.
+- Anfragen sind auf 120 pro Minute und IP-Adresse begrenzt, `design_qr` auf 20. Mit einem Key ist `save_template` zusätzlich auf 30 pro Minute und Nutzer begrenzt.
+
+## Self-Hosting und lokale Entwicklung [#self-hosting-and-local-development]
+
+Der MCP-Server ist Teil der QRdx-Web-App, daher stellt jede Instanz ihn unter `/api/mcp` bereit:
+
+- **Self-Hosted.** Wenn `NEXT_PUBLIC_APP_URL` deine eigene Domain ist, verwenden die Verbindungsseite, die Snippets und die Installationslinks `https://<your-domain>/api/mcp`.
+- **Lokale Entwicklung.** `bun run dev` stellt ihn unter `http://localhost:3000/api/mcp` bereit. Die Verbindungsseite zeigt weiterhin die öffentliche URL und bietet die lokale als Hinweis an. So kannst du einen Client auf deinen Rechner zeigen lassen und Änderungen am Server testen, bevor sie live gehen.
+
+Wenn du `/api/mcp` in einem Browser öffnest, wirst du zur Verbindungsseite weitergeleitet. MCP-Clients fordern nie HTML an, daher erreichen sie den Server wie gewohnt.

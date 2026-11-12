@@ -89,6 +89,7 @@ export const LOCALE_CONFIG = {
     ogLocale: "fr_FR",
     dir: "ltr",
     review: "machine",
+    docs: true,
   },
   de: {
     segment: "de",
@@ -98,6 +99,7 @@ export const LOCALE_CONFIG = {
     ogLocale: "de_DE",
     dir: "ltr",
     review: "machine",
+    docs: true,
   },
   it: {
     segment: "it",
@@ -107,6 +109,7 @@ export const LOCALE_CONFIG = {
     ogLocale: "it_IT",
     dir: "ltr",
     review: "machine",
+    docs: true,
   },
   ja: {
     segment: "ja",
@@ -126,6 +129,7 @@ export const LOCALE_CONFIG = {
     ogLocale: "ko_KR",
     dir: "ltr",
     review: "machine",
+    docs: true,
   },
   "zh-Hans": {
     segment: "zh-hans",
@@ -145,6 +149,7 @@ export const LOCALE_CONFIG = {
     ogLocale: "id_ID",
     dir: "ltr",
     review: "machine",
+    docs: true,
   },
   hi: {
     segment: "hi",
@@ -154,6 +159,7 @@ export const LOCALE_CONFIG = {
     ogLocale: "hi_IN",
     dir: "ltr",
     review: "machine",
+    docs: true,
   },
 } as const satisfies Record<string, LocaleDefinition>;
 

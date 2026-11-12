@@ -1,0 +1,66 @@
+---
+title: "Smart Routing"
+description: "Leite jeden Scan eines dynamischen QR-Codes je nach Gerät, Land, Gebiet, Sprache, Uhrzeit oder Scan-Anzahl an eine andere URL weiter, führe A/B-Tests durch und füge UTM-Parameter hinzu."
+icon: Split
+---
+
+Ein [dynamischer QR-Code](/docs/dynamic-qr-codes) leitet normalerweise jeden Scan an ein einziges Ziel weiter. Mit Smart Routing kann ein einziger gedruckter Code auf iPhones den App Store öffnen und auf Android Google Play, für spanischsprachige Besucher eine spanische Seite oder außerhalb der Geschäftszeiten ein anderes Angebot. Du richtest es im Bereich **Smart routing** auf der Seite des Codes im [Dashboard](/dashboard?to=codes) ein (öffne einen Code und dann den Tab **Settings**).
+
+Smart Routing und UTM-Parameter sind Teil von Pro und Business. Sie gelten für Codes, die einen Website-Link öffnen; [gehostete Seiten](/docs/landing-pages) leiten nicht weiter und haben deshalb kein Routing.
+
+## So funktionieren Regeln [#how-rules-work]
+
+- Ein Code kann bis zu 20 **Regeln** haben. Jede Regel hat Bedingungen („wenn“) und eine Aktion („dann“).
+- Die Regeln werden bei jedem Scan **von oben nach unten** geprüft. Die **erste Regel, deren Bedingungen alle zutreffen**, entscheidet, wohin der Scan geht. Mit den Pfeilen änderst du die Reihenfolge der Regeln.
+- Trifft keine Regel zu, geht der Scan an das Hauptziel des Codes.
+- Eine Regel ohne Bedingungen trifft auf jeden Scan zu, sodass Regeln darunter nie ausgeführt werden.
+- Schalte eine Regel **aus**, um sie zu behalten, ohne sie zu verwenden.
+- Änderungen gelten ab dem nächsten Scan; du musst den Code nie neu drucken.
+
+Kann eine Regel aus irgendeinem Grund nicht ausgewertet werden, geht der Scan trotzdem an das Hauptziel: Routing verhindert nie, dass ein Code funktioniert.
+
+## Bedingungen [#conditions]
+
+Jede Bedingung lässt sich mit **is not** umkehren (zum Beispiel „Land ist nicht US“).
+
+| Bedingung | Trifft zu, wenn | Hinweise |
+| --- | --- | --- |
+| Gerät | Der Scanner ein Smartphone, Tablet, einen Desktop oder ein anderes Gerät verwendet | Aus dem User-Agent des Browsers |
+| Betriebssystem | iOS, Android, Windows, macOS, Linux, ChromeOS, HarmonyOS, … | iPhone und iPad zählen beide als iOS |
+| Land | Der Scan aus einem der aufgeführten Länder kommt | 2-stellige Codes wie `US, CA, GB` |
+| Region | Der Scan aus einer der aufgeführten Regionen kommt | Codes wie `US-CA, US-NY` (Land + Unterteilung) |
+| Sprache | Die bevorzugte Browsersprache des Besuchers eine der aufgeführten ist | `es` trifft auf alle spanischen Varianten zu (`es-MX`, `es-ES`); `pt-BR` nur auf brasilianisches Portugiesisch |
+| Uhrzeit | Der Scan an den gewählten Wochentagen zwischen zwei Uhrzeiten in einer von dir gewählten Zeitzone stattfindet | Ein Zeitfenster wie 22:00–02:00 geht über Mitternacht hinaus und gehört zu dem Tag, an dem es beginnt |
+| Zeitraum | Der Scan zwischen zwei Daten stattfindet | Lass eine Seite leer für „bis“ oder „ab“; Daten gelten in der Zeitzone deines Browsers |
+| Scan-Anzahl | Es einer der ersten N Scans ist oder ein beliebiger Scan nach N | Zählt erfasste Scans (Bots werden nicht gezählt), daher ungefähr, wenn viele Personen gleichzeitig scannen |
+| Gebiet | Der Scanner innerhalb eines Radius (100 m bis 500 km) um einen Punkt ist | Nutzt den vom Scanner geteilten Standort, wenn der [genaue Standort](/docs/precise-location) aktiviert ist, sonst den ungefähren Standort seiner IP-Adresse |
+
+Land, Region und der IP-basierte Standort für Gebiete stammen aus der IP-Adresse des Scanners, die QRdx nie speichert. Ist ein Standort unbekannt, treffen Standortbedingungen nicht zu (und „is not“-Bedingungen schon). [Genauer Standort und Geofencing](/docs/precise-location) erklärt Gebiete, auch wie du einen Code so einrichtest, dass er nur innerhalb eines Gebiets funktioniert.
+
+## Smarte App-Links [#smart-app-links]
+
+Wähle **Add rule → Smart app link**, um zwei Regeln auf einmal zu erstellen: iOS geht zu deinem App-Store-Link, Android zu deinem Google-Play-Link. Alle anderen (Desktop, andere Smartphones) gehen zum Hauptziel, zum Beispiel deiner Website.
+
+## A/B-Tests [#ab-tests]
+
+Stelle die Aktion einer Regel auf **Split between URLs (A/B)** und füge 2 bis 5 Varianten hinzu, jeweils mit einer URL und einer Gewichtung. Bei einer Aufteilung von 70 und 30 gehen etwa 70 % der Besucher zur ersten URL.
+
+- Die Zuweisung ist **sticky**: Ein Besucher, der am selben Tag erneut scannt, bekommt dieselbe Variante. Sie basiert auf einem anonymen täglichen Besucher-Hash, nie auf einem Cookie.
+- Die Analytics des Codes zeigen **Scans pro Variante** seit der letzten Änderung der Varianten oder Gewichtungen der Aufteilung. Jeder Scan speichert die Variante, die ausgespielt wurde. Scans, die erfasst wurden, bevor QRdx Varianten gespeichert hat, werden mit deinen aktuellen Regeln neu berechnet, und die Karte wird als Schätzung gekennzeichnet.
+- Auch eine Aufteilung kann Bedingungen haben, zum Beispiel „A/B-Test nur für Besucher in Deutschland“.
+
+## Regeln testen [#test-your-rules]
+
+**Test your rules** unten im Bereich zeigt, wohin ein Scan gehen würde, für jedes Gerät, Betriebssystem, Land, jede Region, Sprache, jedes Datum und jede Uhrzeit, Scan-Nummer und jeden Besucher, basierend auf deinen noch nicht gespeicherten Änderungen. Es listet auf, welche Regel zugetroffen hat und warum die anderen nicht, und zeigt die endgültige URL einschließlich UTM-Parametern.
+
+## UTM-Parameter [#utm-parameters]
+
+Der Bereich **UTM parameters** fügt `utm_source`, `utm_medium`, `utm_campaign`, `utm_term`, `utm_content` und bis zu 10 eigene Parameter zu der URL hinzu, die jeder Scan öffnet, damit Analyse-Tools QR-Traffic unterscheiden können.
+
+- Parameter werden nach dem Routing hinzugefügt, und zwar an die URL, zu der der Scan geht.
+- Ein Parameter, den die URL schon hat, wird nie ersetzt, und der Rest der URL bleibt genau so, wie du ihn eingegeben hast.
+- Namen, die mit `qrdx_` beginnen, sind für das [Conversion-Tracking](/docs/tracking-and-conversions) reserviert.
+
+## Tarife und Downgrades [#plans-and-downgrades]
+
+Regeln und UTM-Parameter, die mit Pro gespeichert wurden, funktionieren nach einem Downgrade weiter: Limits verhindern nur das Erstellen neuer Elemente. Ohne Pro kannst du Regeln weiterhin ausschalten und löschen oder UTM-Parameter entfernen; sie zu ändern erfordert wieder Pro.

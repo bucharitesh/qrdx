@@ -1,0 +1,58 @@
+---
+title: "Instal pustaka React"
+description: "Instal pustaka React qrdx dan tampilkan kode QR pertama Anda hanya dengan beberapa baris."
+icon: Rocket
+---
+
+Instal `qrdx` dan buat kode QR pertama Anda dalam hitungan menit.
+
+<NpmStatus package="qrdx" />
+
+## Instal paket [#install-the-package]
+
+```package-install
+qrdx@latest
+```
+
+`react` dan `react-dom` (versi 18 atau lebih baru) adalah peer dependency, sehingga `qrdx` memakai versi yang sudah ada di aplikasi Anda. Ekspor PDF bersifat opsional: instal `jspdf` hanya jika Anda membutuhkannya.
+
+## Mulai Cepat [#quick-start]
+
+Buat kode QR pertama Anda:
+
+```tsx
+import { QRCode } from 'qrdx';
+
+export default function App() {
+  return (
+    <QRCode
+      value="https://example.com"
+      size={256}
+    />
+  );
+}
+```
+
+Selesai. Sekarang Anda sudah memiliki kode QR yang berfungsi.
+
+Ingin mendesainnya terlebih dahulu? [Coba di Playground](/playground?open=code&lang=react): atur gaya kode di sana, lalu salin sebagai komponen React.
+
+## Langkah Berikutnya [#next-steps]
+
+<Cards>
+  <Card
+    href="/docs/usage"
+    title="Pelajari Penggunaan"
+    description="Sesuaikan warna, pola, dan lainnya"
+  />
+  <Card
+    href="/docs/features/templates"
+    title="Gunakan Templat"
+    description="Terapkan gaya siap pakai secara instan"
+  />
+  <Card
+    href="/docs/api-reference"
+    title="Referensi API"
+    description="Dokumentasi lengkap semua prop"
+  />
+</Cards>

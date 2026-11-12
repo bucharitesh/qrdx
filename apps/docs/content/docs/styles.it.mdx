@@ -1,0 +1,59 @@
+---
+title: "Forme, occhi e cornici"
+description: "Ogni pattern del corpo, cornice dell'occhio, centro dell'occhio e cornice call-to-action, disegnati in tempo reale dal renderer qrdx e decodificati nel tuo browser."
+icon: Grid3x3
+---
+
+import { QrCatalog } from "@/components/docs/qr-catalog";
+
+Ogni stile qui sotto è disegnato dallo stesso renderer dei tuoi download, con il nome dell'opzione e il valore API da copiare. Ogni riquadro viene decodificato con [jsQR](https://github.com/cozmo/jsQR) direttamente nel tuo browser, uno alla volta, quindi il badge **Scans** è un risultato in tempo reale e non una promessa.
+
+Tutti sono anche testati nel pacchetto (`packages/qrdx/tests/catalog-*.test.ts`): ogni valore viene decodificato con un modello di fotocamera del telefono (perdita di contrasto e sfocatura di un quarto di modulo) a 4, 6 e 9 pixel per modulo, accanto a ogni altro corpo, occhio e centro, con correzione degli errori L, M, Q e H, a 148 px e 1024 px, chiaro su scuro, con i colori del brand e con un logo al centro; sono stati verificati anche con ZXing e in render nitidi. Alcune combinazioni funzionano male insieme; vedi [Coppie da evitare](#pairs-to-avoid).
+
+## Pattern del corpo [#body-patterns]
+
+La forma dei moduli dei dati (`bodyPattern`). Gli stili connessi (`liquid`, `classy`) uniscono i moduli vicini in un unico contorno. `random-dots` e `mosaic` variano per modulo ma sono deterministici: lo stesso valore disegna sempre lo stesso codice.
+
+<QrCatalog kind="body" />
+
+## Cornici degli occhi [#eye-frames]
+
+L'anello esterno dei tre marcatori d'angolo (`cornerEyePattern`). `leaf`, `leaf-reverse`, `drop` e `petal` ruotano ogni occhio in modo che sia rivolto verso l'angolo del codice. Ogni riquadro abbina l'occhio al suo centro consigliato.
+
+<QrCatalog kind="eye" />
+
+## Centri degli occhi [#eye-centers]
+
+Il centro pieno di ogni marcatore d'angolo (`cornerEyeDotPattern`), mostrato dentro occhi quadrati.
+
+<QrCatalog kind="dot" />
+
+## Cornici [#frames]
+
+Le cornici call-to-action sono disegnate attorno al codice, quindi il codice e la sua zona di rispetto non vengono mai coperti e l'immagine scaricata si ingrandisce per contenerle. Ogni cornice accetta `text` (fino a 24 caratteri), `color`, `textColor` e `fontScale` (da 0.5 a 1.5). `banner-top-bottom`, `circle` e `menu-card` mostrano anche `secondaryText`; `gradient-border` va da `color` a `secondaryColor`.
+
+<QrCatalog kind="frame" />
+
+```tsx
+import { QRCode } from "qrdx";
+
+<QRCode
+  value="https://example.com"
+  bodyPattern="liquid"
+  cornerEyePattern="leaf"
+  cornerEyeDotPattern="leaf"
+  frame={{ style: "circle", text: "Scan me", secondaryText: "example.com" }}
+/>;
+```
+
+## Coppie da evitare [#pairs-to-avoid]
+
+Alcune combinazioni di forme che da sole vengono scansionate falliscono insieme nei nostri test di decodifica. Il playground non ti permette di sceglierle insieme e il punteggio di scansione le segnala (`style-pair`):
+
+- corpi `diamond` accanto a occhi `square`, `pacman` accanto a `rounded` e `small-square` accanto a occhi `square` o `rounded` (non letti da vicino).
+
+Gli occhi `circle` vengono letti da entrambi i decoder che testiamo (jsQR e ZXing) ma sono contrassegnati come **cautela**: alcune app di scansione non li leggono. Le coppie sono incluse nel pacchetto come `WEAK_BODY_EYES`, e `getStylePairRisk(props)` restituisce l'avviso per uno stile.
+
+## Forme ritirate [#retired-shapes]
+
+Gli occhi `curly` e i centri `diamond`, `star` e `banner` sono stati rimossi perché non vengono letti in modo affidabile: ZXing (il decoder della maggior parte degli scanner Android) non legge gli occhi curly e i centri diamond e star alle distanze del telefono, e jsQR non legge i centri banner in nessun render nitido. I codici salvati con queste forme si caricano e vengono disegnati esattamente come prima, e l'Image API le disegna ancora per i link esistenti, ma nessun selettore, preset o tema AI le propone, e i loro nomi restano solo come valori deprecati (`RETIRED_CORNER_EYE_PATTERNS`, `RETIRED_CORNER_EYE_DOT_PATTERNS`).

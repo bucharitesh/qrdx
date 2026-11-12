@@ -1,0 +1,30 @@
+---
+title: "Utiliser votre propre domaine"
+description: "Connectez un domaine personnalisé, comme go.yourbrand.com, pour les liens courts de vos codes dynamiques."
+---
+
+Avec un domaine personnalisé, vos codes encodent `go.yourbrand.com/…` au lieu d'un lien `qrdx.dev`. Les gens voient votre marque avant de scanner. Pro inclut 5 domaines et Business 25.
+
+## Connecter un domaine [#connect-a-domain]
+
+1. Allez dans **Domaines** dans votre tableau de bord et cliquez sur **Ajouter un domaine**.
+2. Saisissez le domaine, par exemple `go.yourbrand.com`. Un sous-domaine est préférable : votre site principal reste là où il est.
+3. Ajoutez les enregistrements DNS que QRdx affiche chez votre fournisseur DNS, c'est-à-dire là où vous avez acheté le domaine ou où vous gérez son DNS. Copiez les valeurs exactement.<IfAvailable feature="domainConnect"> Si vous voyez **Configurer avec** suivi du nom de votre fournisseur, vous pouvez cliquer dessus à la place : votre fournisseur ajoute les enregistrements une fois que vous les avez approuvés chez lui.</IfAvailable>
+4. Cliquez sur **Vérifier**.
+
+Le statut affiche **En attente du DNS** jusqu'à ce que les enregistrements soient trouvés, puis **Vérifié**. Les modifications DNS apparaissent généralement en quelques minutes, mais cela peut prendre jusqu'à 48 heures.
+
+## Utiliser le domaine pour un code [#use-it-for-a-code]
+
+- **Nouveau code :** choisissez votre domaine dans **Domaine du lien court** avant de cliquer sur **Créer le code**.
+- **Code existant :** choisissez le domaine dans **Modifier le lien**, enregistrez, puis téléchargez de nouveau le code. Le lien encodé a changé.
+
+## Les codes imprimés continuent de fonctionner [#printed-codes-keep-working]
+
+Chaque code continue aussi de fonctionner via son lien `qrdx.dev`. Les codes que vous avez imprimés avant de passer à votre domaine ne cessent pas de fonctionner.
+
+En revanche, faire passer un code d'un domaine personnalisé à un autre rend inutilisables les codes imprimés avec l'ancien domaine. QRdx vous avertit avant que vous enregistriez.
+
+## À lire aussi [#related]
+
+- [Guide des domaines personnalisés](/docs/custom-domains)

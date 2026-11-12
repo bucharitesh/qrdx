@@ -1,0 +1,27 @@
+{
+  "$schema": "../../../.source/json-schema/docs.meta.json",
+  "title": "डेवलपर",
+  "description": "REST API, वेबहुक, MCP और CLI",
+  "icon": "Terminal",
+  "root": true,
+  "pages": [
+    "index",
+    "---REST API---",
+    "quickstart",
+    "api-keys",
+    "rest-api",
+    "api",
+    "errors",
+    "../webhooks",
+    "build-an-integration",
+    "---टूल---",
+    "image-api",
+    "barcode-api",
+    "mcp",
+    "ai-agents",
+    "cli",
+    "n8n",
+    "---और---",
+    "[चेंजलॉग](/changelogs)"
+  ]
+}

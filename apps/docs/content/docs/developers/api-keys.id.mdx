@@ -1,0 +1,61 @@
+---
+title: "Kunci API"
+description: "Buat kunci API qrdx_ di Pengaturan → Kunci API & aplikasi, lalu panggil REST API dengannya. Cakupan akses (scope), workspace dan peran, masa berlaku, penggunaan terakhir, dan pencabutan."
+icon: LockKeyhole
+---
+
+Kunci API memungkinkan server, skrip, dan job CI Anda sendiri memanggil [REST API](/docs/developers/rest-api) tanpa alur OAuth. Kirim kunci tersebut di header `Authorization`:
+
+```bash
+curl https://api.qrdx.dev/v1/codes -H "Authorization: Bearer $QRDX_API_KEY"
+```
+
+Setiap endpoint yang menerima token akses OAuth juga menerima kunci di header yang sama, dan [Image API](/docs/developers/image-api) tidak membutuhkan keduanya. Jika produk Anda bertindak atas nama pengguna QRdx lain, gunakan [aplikasi OAuth](/docs/developers/build-an-integration) sebagai gantinya, agar setiap orang menyetujuinya.
+
+## Buat kunci [#create-a-key]
+
+1. Buka [Pengaturan → Kunci API & aplikasi](/dashboard?to=settings/developers&new=1) di workspace yang akan memakai kunci tersebut. Tautan ini membuka workspace yang terakhir Anda gunakan; pilih workspace lain di pengalih workspace.
+2. Pilih **Buat kunci**. Beri nama sesuai tempat kunci akan dijalankan, pilih aksesnya, dan jika perlu, tentukan kapan kunci kedaluwarsa. Kunci bekerja tanpa Anda, sehingga QRdx meminta Anda [mengonfirmasi bahwa ini Anda](/docs/help/privacy-and-security/two-step-verification#confirm-its-you) terlebih dahulu, kecuali Anda sudah melakukannya di browser tersebut dalam 10 menit terakhir.
+3. Salin kunci. Kunci hanya ditampilkan sekali: QRdx hanya menyimpan hash-nya, sehingga kunci tidak dapat ditampilkan lagi. Dialog yang sama menampilkan permintaan curl dengan kunci dan alamat API situs ini yang sudah terisi, siap ditempel.
+
+Kunci berbentuk `qrdx_` diikuti 40 huruf dan angka. Daftar kunci hanya menampilkan bagian awalnya, seperti `qrdx_7KpQ2m…`, agar Anda dapat membedakan kunci satu dengan yang lain.
+
+## Akses [#access]
+
+Kunci memakai scope yang sama dengan aplikasi OAuth. Pilih salah satu dari tiga opsi saat membuat kunci:
+
+| Akses | Scope | Memungkinkan |
+| --- | --- | --- |
+| Akses penuh | `profile:read`, `themes:read`, `codes:read`, `codes:write` | Semua yang dapat dilakukan API |
+| Hanya baca | `profile:read`, `themes:read`, `codes:read` | Membaca kode, analitik pemindaian, tema, dan profil |
+| Kustom | Yang Anda pilih | Apa yang diizinkan scope tersebut ([daftar scope](/docs/developers/rest-api#get-an-access-token)) |
+
+`codes:write` juga mengizinkan semua yang dapat dilakukan `codes:read`. Scope kunci tidak dapat diubah nanti; buat kunci baru jika perlu. Permintaan di luar scope kunci akan mendapat `403 INSUFFICIENT_SCOPE`, dan pesannya menyebutkan scope yang dibutuhkan.
+
+## Workspace dan peran [#workspaces-and-roles]
+
+Kunci dimiliki oleh workspace yang sedang terbuka saat Anda membuatnya, dan bertindak di sana sebagai Anda:
+
+- Kunci bekerja dengan kode, pemindaian, hook, dan tema milik workspace tersebut, sesuai paket workspace dan [kuota harian](/docs/developers/rest-api#rate-limits).
+- Kunci dapat melakukan apa yang dapat Anda lakukan di workspace, berdasarkan [peran](/docs/teams) Anda pada saat setiap permintaan. Di workspace Anda sendiri, Anda adalah pemilik. Jika peran Anda berubah, hak kunci ikut berubah; jika Anda keluar dari workspace, kunci berhenti berfungsi, dan menghapus workspace akan menghapus kunci-kuncinya.
+
+Setiap anggota workspace dapat membuat kunci. Pemilik dan admin melihat semua kunci di workspace dan dapat mencabut kunci mana pun; anggota hanya melihat dan mencabut kunci miliknya sendiri. `GET /v1/me` mengembalikan profil orang yang membuat kunci.
+
+## Masa berlaku, penggunaan terakhir, dan pencabutan [#revoke]
+
+- **Masa berlaku.** Kunci tidak pernah kedaluwarsa, atau kedaluwarsa setelah 30 hari, 90 hari, atau 1 tahun. Kunci yang kedaluwarsa mendapat `401 INVALID_TOKEN` dan tetap berada di daftar, bertanda **Kedaluwarsa**, sampai Anda mencabutnya.
+- **Penggunaan terakhir.** Daftar menampilkan tanggal terakhir setiap kunci mengautentikasi permintaan.
+- **Pencabutan.** Pilih **Cabut** di samping kunci. Sejak itu, permintaan dengan kunci tersebut mendapat `401 INVALID_TOKEN`. Pencabutan tidak dapat dibatalkan.
+
+Setiap orang dapat memiliki hingga 25 kunci aktif di setiap workspace. Kunci yang dicabut dan kedaluwarsa tidak dihitung.
+
+## Jaga keamanan kunci [#keep-keys-safe]
+
+- Simpan kunci di server: dalam variabel lingkungan atau pengelola rahasia. Jangan pernah menaruhnya di halaman web, aplikasi seluler, prompt, atau repositori.
+- Gunakan satu kunci untuk setiap tempat kunci dijalankan, sehingga Anda dapat mencabut satu tanpa merusak yang lain.
+- Berikan kunci hanya baca untuk skrip yang hanya membuat laporan, dan berikan kunci yang kedaluwarsa untuk job jangka pendek.
+- Jika kunci bocor, cabut dan buat kunci baru. Awalan `qrdx_` membuat kunci mudah dicari di kode dan log.
+
+## Hosting mandiri [#self-hosting]
+
+Instans [hosting mandiri](/docs/self-hosting) membutuhkan tabel `api_key` di basis datanya, yang dibuat oleh sinkronisasi skema biasa setelah pembaruan (layanan `migrate` dengan Docker, atau `bun run db:push` jika tidak; lihat [pembaruan](/docs/self-hosting)). Sebelum tabel itu ada, Pengaturan → Kunci API & aplikasi menyatakan kunci API tidak tersedia dan API menolak kunci dengan `401`. API-nya berada di `/api/v1` pada domainnya sendiri, yaitu alamat yang diisi otomatis oleh dialog kunci baru.

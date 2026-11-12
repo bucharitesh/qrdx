@@ -1,0 +1,53 @@
+---
+title: "Scans an unterschiedliche Links weiterleiten"
+description: "Leite jeden Scan nach Gerät, Land, Gebiet, Sprache oder Uhrzeit um und führe mit Smart Routing A/B-Tests durch."
+---
+
+Mit Smart Routing leitest du jeden Scan eines dynamischen QR-Codes anhand von Regeln, die du festlegst, an einen anderen Link weiter. Nur für Pro und Business.
+
+## Regel hinzufügen [#add-a-rule]
+
+1. Öffne den Code unter **Codes**.
+2. Öffne unter **Einstellungen** den Bereich **Smart Routing**.
+3. Klicke auf **Regel hinzufügen** oder starte mit einer Vorlage.
+4. Wähle eine Bedingung und den Link, den passende Scans öffnen.
+5. Klicke auf **Regeln speichern**.
+
+Scans, auf die keine Regel zutrifft, öffnen das normale Ziel des Codes.
+
+## Mögliche Bedingungen [#conditions-you-can-use]
+
+Gerät, Betriebssystem, Land, Region, Gebiet, Sprache, Tageszeit, Zeitraum und Anzahl der Scans. Jede Bedingung lässt sich außerdem mit **ist nicht** umkehren.
+
+Ein **Gebiet** besteht aus einem Punkt und einem Radius. Es nutzt den Standort, den eine scannende Person teilt, wenn der [genaue Standort](/docs/precise-location) aktiviert ist, und andernfalls den ungefähren Standort ihres Netzwerks.
+
+Eine Regel kann bis zu 8 Bedingungen haben. Ein Code kann bis zu 20 Regeln haben.
+
+## Vorlagen [#templates]
+
+- **Smarter App-Link**: iPhones zum App Store, Android-Handys zu Google Play.
+- **Land** und **Besuchersprache**.
+- **Geschäftszeiten**.
+- **Zeitraum** für eine Kampagne.
+- **Erste Scans**: ein anderer Link für die ersten Scans.
+- **Innerhalb eines Gebiets**: ein anderer Link für Scans in der Nähe eines Ortes.
+- **A/B-Aufteilung**: verteile Scans auf bis zu 5 Versionen.
+
+## Die erste passende Regel gilt [#the-first-matching-rule-wins]
+
+Die Regeln werden von oben nach unten geprüft. Setze die spezifischsten Regeln an den Anfang.
+
+Klicke auf **Regeln testen**, um vor dem Speichern zu sehen, wohin ein Scan führen würde.
+
+## A/B-Tests [#ab-tests]
+
+Eine A/B-Aufteilung schickt jede besuchende Person zu einer Version. Dieselbe Person sieht für den Rest des Tages dieselbe Version. Die Seite des Codes zeigt, wie sich die Scans auf die Versionen verteilen.
+
+## Nach einem Downgrade [#after-a-downgrade]
+
+Gespeicherte Regeln funktionieren weiter.
+
+## Verwandte Themen [#related]
+
+- [Leitfaden zu Smart Routing](/docs/smart-routing)
+- [Ein Code öffnet die falsche Seite](/docs/help/troubleshooting/wrong-destination)

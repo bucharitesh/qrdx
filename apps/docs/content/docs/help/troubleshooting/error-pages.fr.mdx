@@ -1,0 +1,47 @@
+---
+title: "Un scan affiche une page d'erreur"
+description: "Ce que signifie chaque page d'erreur de QR code, de « QR code introuvable » à « Cette campagne est terminée », et comment la corriger."
+---
+
+Lorsqu'un QR code dynamique ne parvient pas à ouvrir sa destination, les personnes qui le scannent voient une courte page. Voici ce que signifie chacune d'elles.
+
+## « QR code introuvable » [#qr-code-not-found]
+
+Il s'agit d'une page 404 : le lien court n'appartient à aucun code.
+
+- Le code a été **supprimé définitivement**.
+- Le **suffixe** ou le **domaine** du code a été modifié après son impression.
+- Le compte auquel il appartenait a été supprimé.
+- Le lien a été saisi à la main avec une erreur. Les liens courts sont sensibles à la casse.
+
+Un code supprimé ne peut pas être récupéré. Si vous avez modifié le suffixe, rétablissez-le avec **Modifier le lien**.
+
+## « Ce QR code n'est plus actif » [#this-qr-code-is-no-longer-active]
+
+Le code est **archivé** ou dans la **corbeille**. Choisissez **Désarchiver** ou **Restaurer** dans **Codes**. Consultez [Archiver, supprimer et restaurer des codes](/docs/help/dynamic-codes/archive-and-delete).
+
+QRdx désactive également les codes qui pointent vers des sites dangereux.
+
+## « Cette campagne est en pause », « n'a pas encore commencé » ou « est terminée » [#this-campaign-is-paused-hasnt-started-yet-or-has-ended]
+
+Ces messages dépendent des paramètres propres au code : une pause, une date de début ou de fin, ou une limite de scans. Modifiez-les dans **Accès et planification**. Consultez [Mettre en pause, planifier ou limiter un code](/docs/help/dynamic-codes/pause-schedule-limit).
+
+## « Ce QR code est protégé par un mot de passe » [#this-qr-code-is-password-protected]
+
+Le code est protégé par un mot de passe. Saisissez-le et cliquez sur **Continuer**. Consultez [Protéger un code avec un mot de passe](/docs/help/dynamic-codes/password).
+
+## « Trop de requêtes » [#too-many-requests]
+
+Un même réseau a ouvert un grand nombre de QR codes en quelques secondes. Patientez un instant, puis scannez à nouveau.
+
+## « Ce domaine n'est pas encore connecté » [#this-domain-isnt-connected-yet]
+
+Le code utilise un domaine personnalisé dont la configuration DNS n'est pas terminée. Vérifiez le domaine sur la page **Domaines** de votre tableau de bord.
+
+## « Cette page est introuvable » sur une page [#this-page-could-not-be-found-on-a-page]
+
+Une page mobile située à l'adresse `/p/…` affiche ce message lorsque la page a été supprimée ou que l'adresse a été mal saisie.
+
+## « Ce formulaire n'accepte pas de réponses pour le moment » [#this-form-isnt-accepting-responses-right-now]
+
+L'espace de travail a atteint sa limite mensuelle de réponses aux formulaires. Consultez [Recueillir des réponses avec un formulaire](/docs/help/pages-and-forms/forms#monthly-limits).

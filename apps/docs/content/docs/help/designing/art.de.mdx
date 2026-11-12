@@ -1,0 +1,41 @@
+---
+title: "Logo oder Foto in den Code einbetten"
+description: "Logo QR und Image QR integrieren ein Bild direkt in die Punkte selbst, ganz ohne KI."
+---
+
+## Logo QR und Image QR [#logo-qr-and-image-qr]
+
+Öffne im [Playground](/playground?tab=art) den Tab **Art**. Wähle einen Modus:
+
+- **Logo QR** färbt die Punkte innerhalb der Form deines Logos.
+- **Image QR** verwandelt den ganzen Code in dein Foto.
+- **Off** schaltet die Art-Funktion aus.
+
+Lade dein eigenes Bild hoch oder probiere ein Beispiel aus. Logos funktionieren am besten als transparentes PNG oder als SVG. Fotos funktionieren am besten mit einem klaren Motiv.
+
+Art funktioniert in jedem Download-Format, und es ist keine KI beteiligt.
+
+## Art und Scannbarkeit ausbalancieren [#balance-art-and-scanning]
+
+Wähle, wie stark die Art-Wirkung sein soll: **Subtle**, **Balanced** oder **Bold**. Stärkere Art sieht besser aus, lässt sich aber schwerer scannen.
+
+Der **Scan check** unter der Art dekodiert deinen echten Code in deinem Browser in drei Größen. Ist das Ergebnis nicht gut, listet er auf, was du verbessern kannst.
+
+Für die besten Ergebnisse stellst du **Error correction** auf **High** und lässt einen freien Rand um den Code.
+
+Beim Logo-QR-Badge wächst das Logo nur so weit, wie der Code Fehler korrigieren kann. Ein kurzer Link ergibt einen kleinen Code, daher bleibt das Logo klein, und die kleinsten Codes zeigen gar kein Logo. Mit **High** bei der Fehlerkorrektur hat das Logo den meisten Platz.
+
+<IfAvailable feature="aiArt" title="AI art">
+
+[AI QR art](/ai/art) erzeugt Artwork rund um einen Code, der trotzdem scannbar bleibt. Dafür brauchst du ein kostenloses Konto.
+
+Wähle im Playground im Tab **Art** die Option **AI art**. Sie gestaltet den Code, den du gerade bearbeitest. Ist dieser Code mit einem dynamischen QR-Code verknüpft, kodiert die Art den Kurzlink, sodass du nach dem Druck ändern kannst, wohin er zeigt. AI art ist ein Bild: Lade es als PNG herunter oder wandle es mit **Use as Image QR** in einen Vektorcode für SVG, PDF oder EPS um.
+
+Jeder Tarif enthält eine bestimmte Anzahl an AI-art-Bildern pro Monat: 3 bei Kostenlos, 30 bei Pro und 150 bei Business, geteilt von allen im Workspace.
+
+</IfAvailable>
+
+## Verwandte Themen [#related]
+
+- [Ein Design mit dem Scan-Score prüfen](/docs/help/designing/scan-score)
+- [Art-QR-Codes für Entwickler](/docs/features/art-qr)
