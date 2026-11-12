@@ -1,6 +1,7 @@
 import { ArrowRight } from "iconsax-reactjs";
 import Link from "next/link";
 import { CompareCard } from "@/components/sections/compare/compare-card";
+import { pickCompareSiblings } from "@/lib/compare-siblings";
 import { compareSource } from "@/lib/source";
 
 /** Six cards fill two rows of three (or three of two) with no orphans. */
@@ -12,17 +13,17 @@ interface CompareOthersProps {
 
 export function CompareOthers({ currentSlug }: CompareOthersProps) {
   const pages = compareSource.getPages();
-  const current = pages.find((p) => (p.slugs[0] ?? "") === currentSlug);
-  // Same kind of tool first (generator or library), then alphabetical.
-  const others = pages
-    .filter((p) => p !== current)
-    .sort(
-      (a, b) =>
-        Number(b.data.category === current?.data.category) -
-          Number(a.data.category === current?.data.category) ||
-        a.data.competitor.localeCompare(b.data.competitor),
-    )
-    .slice(0, SHOWN);
+  // A rotation, so every comparison gets about as many sibling links.
+  const others = pickCompareSiblings(
+    pages.map((page) => ({
+      page,
+      slug: page.slugs[0] ?? "",
+      name: page.data.competitor,
+      category: page.data.category,
+    })),
+    currentSlug,
+    SHOWN,
+  ).map(({ page }) => page);
 
   if (others.length === 0) return null;
 
