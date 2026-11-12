@@ -59,6 +59,8 @@ const PRICING_CARD_NAMESPACES = [
   "pricing.footnote",
   // Agency tools: the pay-by-invoice dialog on the Business card
   "pricing.invoice",
+  // The Enterprise card (components/sections/pricing/enterprise-card.tsx)
+  "pricing.enterprise",
 ];
 
 /** The pricing copy in this page's language. */

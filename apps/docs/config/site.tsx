@@ -781,6 +781,7 @@ export const siteConfig = {
         { id: 7, key: "pageTemplates", url: "/templates" },
         { id: 5, key: "pricing", url: "/pricing" },
         { id: 6, key: "guarantee", url: "/guarantee" },
+        { id: 11, key: "enterprise", url: "/enterprise" },
         // Shown only where each bot is set up (feature-availability-rules).
         { id: 8, key: "slackBot", url: "/slack" },
         { id: 9, key: "telegramBot", url: "/telegram" },
@@ -828,6 +829,7 @@ export const siteConfig = {
         { id: 6, key: "placements", url: "/qr-codes-on" },
         { id: 9, key: "affiliates", url: "/affiliates" },
         { id: 4, key: "contact", url: "mailto:support@qrdx.dev" },
+        { id: 10, key: "security", url: "/security" },
         {
           id: 7,
           key: "legal",
@@ -854,7 +856,7 @@ export const siteConfig = {
               key: "affiliateTerms",
               url: "/legal/affiliate-terms",
             },
-            { id: 10, key: "security", url: "/legal/security" },
+            { id: 10, key: "securityPolicy", url: "/legal/security" },
           ],
         },
       ],

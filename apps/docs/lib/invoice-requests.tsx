@@ -6,6 +6,7 @@ import {
   InvoiceRequestEmail,
   invoiceRequestSubject,
 } from "@/lib/email/templates/invoice-request";
+import { ENTERPRISE_EMAIL } from "@/lib/enterprise";
 import { HttpError } from "@/lib/error-response";
 import { isFeatureAvailable } from "@/lib/feature-availability";
 import { cheapestPlanWith } from "@/lib/plans";
@@ -19,7 +20,7 @@ import { formatPrice, PLAN_NAMES, PRICING } from "@/lib/pricing";
 // arranged by hand. Only on qrdx.dev (feature "invoiceRequests").
 
 /** Where requests go: QRdx's address for contracts and custom invoicing. */
-export const INVOICE_REQUEST_TO = "enterprise@qrdx.dev";
+export const INVOICE_REQUEST_TO = ENTERPRISE_EMAIL;
 
 /** The plan an invoice can pay for: the cheapest with invoiceBilling, yearly. */
 export function invoicePlan() {

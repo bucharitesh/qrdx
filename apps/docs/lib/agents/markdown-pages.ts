@@ -19,6 +19,7 @@ import {
   type PricingOptions,
   priceRow,
 } from "@/components/sections/pricing/plan-content";
+import { ENTERPRISE_ADDS } from "@/lib/enterprise";
 import {
   claudeCodeCommand,
   claudeConnectorUrl,
@@ -121,6 +122,8 @@ export function pricingMarkdown({
     "## More",
     [
       `- [Plans and limits](${abs("/docs/plans-and-limits")}): what happens at each limit`,
+      `- [Enterprise](${abs("/enterprise")}): custom price, the Business plan under a contract. Adds: ${ENTERPRISE_ADDS.join("; ")}`,
+      `- [Security](${abs("/security")}): how QRdx protects accounts and data`,
       `- [Help with billing](${abs("/docs/help")})`,
       `- [Site index for LLMs](${abs("/llms.txt")})`,
     ].join("\n"),

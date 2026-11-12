@@ -20,6 +20,7 @@ import { AsciiField, RadialHalo } from "@/components/fx";
 import { LocaleLink } from "@/components/i18n/locale-link";
 import { EASE_CLASS } from "@/components/mockups/motion";
 import { useSlidingPill } from "@/components/mockups/sliding-pill";
+import { EnterpriseCard } from "@/components/sections/pricing/enterprise-card";
 import { InvoiceRequestDialog } from "@/components/sections/pricing/invoice-request-dialog";
 import { maxYearlySavingsPercent } from "@/components/sections/pricing/savings";
 import { siteConfig } from "@/config/site";
@@ -460,7 +461,8 @@ export function PricingSection({
         </div>
       </div>
 
-      <div className="relative grid w-full max-w-[74rem] gap-4 px-10 md:grid-cols-3">
+      {/* Four cards: two by two on tablets, a row of four on wide screens. */}
+      <div className="relative grid w-full max-w-[80rem] gap-4 px-10 md:grid-cols-2 xl:grid-cols-4">
         {/* The Pro card (the middle one, also when stacked) sits in a soft light. */}
         <RadialHalo className="-inset-y-32" width={760} height={1000} />
         {cards.map(({ plan, lead, action }) => {
@@ -509,6 +511,8 @@ export function PricingSection({
             </Card>
           );
         })}
+        {/* Enterprise: the Business plan under a contract (lib/enterprise.ts) */}
+        <EnterpriseCard />
       </div>
 
       {invoices && isSignedIn && (
@@ -520,7 +524,7 @@ export function PricingSection({
         />
       )}
 
-      <div className="mt-4 w-full max-w-[74rem] px-10">
+      <div className="mt-4 w-full max-w-[80rem] px-10">
         <Card className="gap-4 bg-muted/40 p-5 shadow-none md:flex-row md:items-center md:justify-between dark:bg-card">
           <div className="flex items-start gap-4">
             <span className="grid size-9 shrink-0 place-items-center rounded-full border bg-muted/40">
