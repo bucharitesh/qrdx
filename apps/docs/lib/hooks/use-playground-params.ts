@@ -50,12 +50,21 @@ function handoffReferrer(origin: string): string {
  * playground (a new query or `#`) is applied the same way.
  *
  * Returns `settled`: false until the first address has been handled. The
- * editor keeps its loading shell up until then, so the content forms mount
- * with the link's values instead of writing their old ones back over them.
+ * editor keeps its server snapshot (or loading shell) up until then, so the
+ * content forms mount with the link's values instead of writing their old
+ * ones back over them.
  *
  * `themePath`: the page is /playground/<themeId>, whose theme is the look.
+ * `searchKey`: the address's query string from SearchParamsListener; a
+ * change means a new link to the open page.
  */
-export function usePlaygroundParams({ themePath }: { themePath: boolean }): {
+export function usePlaygroundParams({
+  themePath,
+  searchKey,
+}: {
+  themePath: boolean;
+  searchKey: string;
+}): {
   settled: boolean;
 } {
   const t = useTranslations("editor.hooks.usePlaygroundParams");
@@ -69,8 +78,8 @@ export function usePlaygroundParams({ themePath }: { themePath: boolean }): {
   const handled = useRef<string | null>(null);
   const failedFrames = useRef(new Set<string>());
   const [settled, setSettled] = useState(false);
-  // Changes to these re-read window.location: a new link to the open page.
-  const searchKey = useSearchParams().toString();
+  // Changes to these (and searchKey) re-read window.location: a new link to
+  // the open page.
   const [hashKey, setHashKey] = useState("");
   // Bumped when an official frame a link names has loaded
   const [framesLoaded, setFramesLoaded] = useState(0);
@@ -218,4 +227,20 @@ export function usePlaygroundParams({ themePath }: { themePath: boolean }): {
   ]);
 
   return { settled };
+}
+
+/**
+ * Reports the address's query string to `onChange` whenever it changes.
+ * Render it only in the browser (after mount): on a prerendered page,
+ * useSearchParams() on the server gives up on server-rendering everything
+ * up to the nearest Suspense boundary, which was the whole editor.
+ */
+export function SearchParamsListener({
+  onChange,
+}: {
+  onChange: (searchKey: string) => void;
+}) {
+  const searchKey = useSearchParams().toString();
+  useEffect(() => onChange(searchKey), [searchKey, onChange]);
+  return null;
 }

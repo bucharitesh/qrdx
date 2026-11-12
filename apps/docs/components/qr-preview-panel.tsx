@@ -18,6 +18,17 @@ import ExamplesPreviewContainer from "./editor/theme-preview/examples-preview-co
 
 interface QRPreviewPanelProps {
   style: Partial<QRStyle>;
+  /**
+   * No enter animation. The server snapshot (components/editor/editor-snapshot.tsx)
+   * never runs one, so it renders the settled look.
+   */
+  still?: boolean;
+  /**
+   * The sample as an image file instead of a drawn code, for the server
+   * snapshot: an <img> is the page's largest paint, an inline SVG isn't.
+   * Only for the default look, which the file shows.
+   */
+  sampleSrc?: string;
 }
 
 const QRCode = lazy(() =>
@@ -59,7 +70,11 @@ function SampleLabel({ className }: { className?: string }) {
   );
 }
 
-const QRPreviewPanel: React.FC<QRPreviewPanelProps> = ({ style }) => {
+const QRPreviewPanel: React.FC<QRPreviewPanelProps> = ({
+  style,
+  still,
+  sampleSrc,
+}) => {
   const storedValue = useQREditorStore((state) => state.value);
   const hasContent = storedValue.trim().length > 0;
   const value = hasContent ? storedValue : SAMPLE_PREVIEW_VALUE;
@@ -84,7 +99,7 @@ const QRPreviewPanel: React.FC<QRPreviewPanelProps> = ({ style }) => {
             <AnimatePresence mode="wait">
               <motion.div
                 key={hasContent ? value : "sample"}
-                initial={{ filter: "blur(2px)", opacity: 0.4 }}
+                initial={still ? false : { filter: "blur(2px)", opacity: 0.4 }}
                 animate={{ filter: "blur(0px)", opacity: 1 }}
                 exit={{ filter: "blur(2px)", opacity: 0.4 }}
                 transition={{ duration: 0.1 }}
@@ -99,7 +114,7 @@ const QRPreviewPanel: React.FC<QRPreviewPanelProps> = ({ style }) => {
                 <div
                   aria-hidden={hasContent ? undefined : true}
                   className={cn(
-                    "flex items-center justify-center transition-[opacity,filter] [&>svg]:size-full",
+                    "flex items-center justify-center transition-[opacity,filter] [&>img]:size-full [&>svg]:size-full",
                     !hasContent && "opacity-40 blur-[2.5cqmin]",
                   )}
                   data-preview-code=""
@@ -108,26 +123,37 @@ const QRPreviewPanel: React.FC<QRPreviewPanelProps> = ({ style }) => {
                     height: "min(100cqw, 100cqh)",
                   }}
                 >
-                  <QRCode
-                    art={style.art}
-                    bgColor={style.bgColor}
-                    cornerEyeDotPattern={style.cornerEyeDotPattern}
-                    cornerEyePattern={style.cornerEyePattern}
-                    dotColor={style.dotColor}
-                    bodyPattern={style.bodyPattern}
-                    level={style.level}
-                    eyeColor={style.eyeColor}
-                    fgColor={style.fgColor}
-                    frame={style.frame}
-                    frameLabelMarkers
-                    hideLogo={!style.showLogo}
-                    logo={style.customLogo ?? DEFAULT_QR_LOGO}
-                    scale={previewScale}
-                    margin={style.margin}
-                    templateId={style.templateId}
-                    value={value}
-                    {...styleEngineOptions(style)}
-                  />
+                  {sampleSrc && !hasContent ? (
+                    <img
+                      alt=""
+                      decoding="async"
+                      fetchPriority="high"
+                      height={512}
+                      src={sampleSrc}
+                      width={512}
+                    />
+                  ) : (
+                    <QRCode
+                      art={style.art}
+                      bgColor={style.bgColor}
+                      cornerEyeDotPattern={style.cornerEyeDotPattern}
+                      cornerEyePattern={style.cornerEyePattern}
+                      dotColor={style.dotColor}
+                      bodyPattern={style.bodyPattern}
+                      level={style.level}
+                      eyeColor={style.eyeColor}
+                      fgColor={style.fgColor}
+                      frame={style.frame}
+                      frameLabelMarkers
+                      hideLogo={!style.showLogo}
+                      logo={style.customLogo ?? DEFAULT_QR_LOGO}
+                      scale={previewScale}
+                      margin={style.margin}
+                      templateId={style.templateId}
+                      value={value}
+                      {...styleEngineOptions(style)}
+                    />
+                  )}
                 </div>
               </motion.div>
             </AnimatePresence>

@@ -1,10 +1,4 @@
-/** biome-ignore-all lint/suspicious/noArrayIndexKey: FAQ items are static config with stable order */
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@repo/design-system/components/ui/accordion";
+import { ArrowDown2 } from "iconsax-reactjs";
 import { useLocale, useTranslations } from "next-intl";
 import { HairlineFigure } from "@/components/mockups/hairline";
 import { SectionHeader } from "@/components/sections/section-header";
@@ -50,6 +44,11 @@ function faqValues(locale: Locale) {
  * Answers only mention features this deployment can offer (custom domains
  * in the paid-plans answer). Counts and prices come from code
  * (lib/product-facts, lib/pricing), in the page's number format.
+ *
+ * Native <details> (one open at a time, by `name`) keeps every answer in the
+ * server-rendered HTML; a closed Radix accordion panel has no content. The
+ * look is the accordion's, including its 0.2s open and close where the
+ * browser can animate ::details-content.
  */
 export function FAQSection() {
   const t = useTranslations("home.faq");
@@ -106,24 +105,28 @@ export function FAQSection() {
             </a>
           </p>
         </div>
-        <Accordion type="single" collapsible className="w-full border-t">
-          {items.map((faq, index) => (
-            <AccordionItem
+        <div className="w-full border-t [interpolate-size:allow-keywords]">
+          {items.map((faq) => (
+            <details
+              className="group border-b [&::details-content]:h-0 [&::details-content]:overflow-hidden [&::details-content]:transition-[height,content-visibility] [&::details-content]:duration-200 [&::details-content]:ease-out [&::details-content]:[transition-behavior:allow-discrete] open:[&::details-content]:h-auto motion-reduce:[&::details-content]:transition-none"
               key={faq.key}
-              value={index.toString()}
-              className="last:border-b"
+              name="home-faq"
             >
-              <AccordionTrigger className="cursor-pointer py-5 text-base hover:no-underline data-[state=open]:text-foreground [&:not([data-state=open])]:text-foreground/85">
+              <summary className="focus-visible:border-ring focus-visible:ring-ring/50 text-foreground/85 group-open:text-foreground flex cursor-pointer list-none items-start justify-between gap-4 rounded-md py-5 text-left text-base font-medium transition-all outline-none focus-visible:ring-[3px] [&::-webkit-details-marker]:hidden">
                 {faq.question}
-              </AccordionTrigger>
-              <AccordionContent className="pb-5 text-muted-foreground">
+                <ArrowDown2
+                  aria-hidden
+                  className="text-muted-foreground pointer-events-none size-4 shrink-0 translate-y-0.5 transition-transform duration-200 group-open:rotate-180"
+                />
+              </summary>
+              <div className="pb-5 text-sm text-muted-foreground">
                 <p className="max-w-prose leading-relaxed text-pretty">
                   {faq.answer}
                 </p>
-              </AccordionContent>
-            </AccordionItem>
+              </div>
+            </details>
           ))}
-        </Accordion>
+        </div>
       </div>
     </section>
   );

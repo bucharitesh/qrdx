@@ -95,6 +95,14 @@ function initialValues(
   ) as Values;
 }
 
+/** The label of the option holding `value`, if one does. */
+function optionLabel(
+  options: readonly FormOption[] | undefined,
+  value: unknown,
+): string | undefined {
+  return options?.find((option) => option.value === value)?.label;
+}
+
 /**
  * A content form driven by the type's schema: it shows each field's own
  * error once the field has been touched or holds something, and writes the
@@ -242,7 +250,10 @@ export function SchemaForm({
           </Label>
           <Select onValueChange={changeMode} value={mode}>
             <SelectTrigger className="w-full" id={`${id}-mode`}>
-              <SelectValue />
+              {/* The label as children, so it's in the server HTML too */}
+              <SelectValue>
+                {copy(optionLabel(modes.options, mode))}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
               {modes.options.map((option) => (
@@ -304,7 +315,9 @@ export function SchemaForm({
                   className="w-full"
                   id={fieldId}
                 >
-                  <SelectValue placeholder={copy(field.placeholder)} />
+                  <SelectValue placeholder={copy(field.placeholder)}>
+                    {copy(optionLabel(field.options, value))}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent className="max-h-72">
                   {field.options?.map((option) => (

@@ -4,10 +4,23 @@ import { Edit2 } from "iconsax-reactjs";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { type ReactNode, Suspense } from "react";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
 
 interface EditButtonProps extends React.ComponentProps<typeof Button> {
   themeId: string;
+}
+
+/** Renders the theme's link with the current search params (the open tab). */
+function WithSearchParams({
+  themeId,
+  render,
+}: {
+  themeId: string;
+  render: (href: string) => ReactNode;
+}) {
+  const searchParams = useSearchParams();
+  return render(`/playground/${themeId}?${searchParams}`);
 }
 
 export function EditButton({
@@ -18,26 +31,32 @@ export function EditButton({
 }: EditButtonProps) {
   const t = useTranslations("editor.actionBar.editButton");
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const isEditing = pathname.includes(themeId);
 
-  // Keep the current search params for tab persistence
-  const href = `/playground/${themeId}?${searchParams}`;
+  const button = (
+    <Button
+      variant="ghost"
+      size="sm"
+      className={cn(className)}
+      disabled={disabled || isEditing}
+      {...props}
+    >
+      <Edit2 className="size-4" />
+      <span className="hidden text-sm md:block">{t("edit")}</span>
+    </Button>
+  );
 
-  return (
+  const link = (href: string) => (
     <TooltipWrapper label={t("editTheme")} asChild>
-      <Link href={href}>
-        <Button
-          variant="ghost"
-          size="sm"
-          className={cn(className)}
-          disabled={disabled || isEditing}
-          {...props}
-        >
-          <Edit2 className="size-4" />
-          <span className="hidden text-sm md:block">{t("edit")}</span>
-        </Button>
-      </Link>
+      <Link href={href}>{button}</Link>
     </TooltipWrapper>
+  );
+
+  // useSearchParams() on a prerendered page falls back to the browser up to
+  // the nearest Suspense boundary: this one, so only the link waits for it.
+  return (
+    <Suspense fallback={link(`/playground/${themeId}`)}>
+      <WithSearchParams render={link} themeId={themeId} />
+    </Suspense>
   );
 }
