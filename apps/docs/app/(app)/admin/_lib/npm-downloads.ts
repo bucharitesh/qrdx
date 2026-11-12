@@ -144,7 +144,10 @@ async function loadPackage(
         `https://api.npmjs.org/downloads/range/${weeks[0]}:${today}/${name}`,
         signal,
       ),
-      getJson(`https://registry.npmjs.org/${name.replace("/", "%2f")}`, signal),
+      getJson(
+        `https://registry.npmjs.org/${name.replaceAll("/", "%2f")}`,
+        signal,
+      ),
     ]);
     return summarizeDownloads(
       parseDownloads((range as { downloads?: unknown }).downloads),
