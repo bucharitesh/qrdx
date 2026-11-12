@@ -22,7 +22,11 @@ import {
   PRICING,
   PRICING_CURRENCIES,
 } from "@/lib/pricing";
-import { founderSchema, organizationId } from "@/lib/seo-schema";
+import {
+  founderSchema,
+  organizationId,
+  webSiteAlternateNames,
+} from "@/lib/seo-schema";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await requireLocale();
@@ -136,6 +140,7 @@ const webSiteSchema = {
   "@context": "https://schema.org",
   "@type": "WebSite",
   name: siteName,
+  alternateName: webSiteAlternateNames,
   url: url("/"),
   publisher: { "@id": organizationId },
   description:
