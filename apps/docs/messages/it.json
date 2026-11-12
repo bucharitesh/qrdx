@@ -77,6 +77,14 @@
         "name": "Server MCP",
         "description": "Crea QR code da Claude, ChatGPT o Cursor"
       },
+      "qrCodeApi": {
+        "name": "API QR code gratuita",
+        "description": "Un’immagine QR code da un solo URL, senza chiave né registrazione"
+      },
+      "nextjs": {
+        "name": "Guida Next.js",
+        "description": "QR code in Server e Client Components"
+      },
       "imageApi": {
         "name": "Image API",
         "description": "L'immagine di un QR code da un URL, senza chiave API"
@@ -184,10 +192,15 @@
       "scanChecker": "Verifica scansione",
       "printSize": "Calcolatore dimensioni di stampa",
       "barcode": "Generatore di codici a barre",
+      "pdfQr": "QR code PDF",
+      "businessCard": "Biglietto da visita digitale",
+      "menuQr": "QR code per menu",
       "scanner": "Lettore di QR code",
       "allTools": "Tutti gli strumenti",
       "docs": "Documentazione",
       "apiReference": "Riferimento API",
+      "qrCodeApi": "API QR code gratuita",
+      "nextjs": "Guida a Next.js",
       "imageApi": "Image API",
       "mcp": "Server MCP",
       "shadcn": "Registry shadcn/ui",

@@ -77,6 +77,14 @@
         "name": "MCPサーバー",
         "description": "Claude、ChatGPT、CursorからQRコードを作成できます"
       },
+      "qrCodeApi": {
+        "name": "無料のQRコードAPI",
+        "description": "キーや登録なしで、1つのURLからQRコード画像を生成できます"
+      },
+      "nextjs": {
+        "name": "Next.jsガイド",
+        "description": "サーバーコンポーネントとクライアントコンポーネントでのQRコード"
+      },
       "imageApi": {
         "name": "Image API",
         "description": "APIキー不要で、URLからQRコード画像を取得できます"
@@ -184,10 +192,15 @@
       "scanChecker": "スキャンチェッカー",
       "printSize": "印刷サイズ計算ツール",
       "barcode": "バーコードジェネレーター",
+      "pdfQr": "PDF QRコード",
+      "businessCard": "デジタル名刺",
+      "menuQr": "メニューQRコード",
       "scanner": "QRコードスキャナー",
       "allTools": "すべてのツール",
       "docs": "ドキュメント",
       "apiReference": "APIリファレンス",
+      "qrCodeApi": "フリーQRコードAPI",
+      "nextjs": "Next.jsガイド",
       "imageApi": "Image API",
       "mcp": "MCPサーバー",
       "shadcn": "shadcn/uiレジストリ",

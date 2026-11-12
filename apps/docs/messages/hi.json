@@ -77,6 +77,14 @@
         "name": "MCP server",
         "description": "Claude, ChatGPT या Cursor से QR कोड बनाएं"
       },
+      "qrCodeApi": {
+        "name": "फ़्री QR code API",
+        "description": "एक URL से QR code इमेज, बिना key या साइनअप के"
+      },
+      "nextjs": {
+        "name": "Next.js गाइड",
+        "description": "Server और Client Components में QR code"
+      },
       "imageApi": {
         "name": "Image API",
         "description": "URL से QR कोड इमेज, API key की ज़रूरत नहीं"
@@ -184,10 +192,15 @@
       "scanChecker": "स्कैन चेकर",
       "printSize": "प्रिंट साइज़ कैलकुलेटर",
       "barcode": "बारकोड जनरेटर",
+      "pdfQr": "PDF QR कोड",
+      "businessCard": "डिजिटल बिज़नेस कार्ड",
+      "menuQr": "मेन्यू QR कोड",
       "scanner": "QR कोड स्कैनर",
       "allTools": "सभी टूल्स",
       "docs": "डॉक्यूमेंटेशन",
       "apiReference": "API रेफ़रेंस",
+      "qrCodeApi": "फ़्री QR कोड API",
+      "nextjs": "Next.js गाइड",
       "imageApi": "Image API",
       "mcp": "MCP सर्वर",
       "shadcn": "shadcn/ui रजिस्ट्री",
