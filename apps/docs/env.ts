@@ -136,6 +136,12 @@ export const env = validateTogether(() =>
       // GitHub token for the star counter in the docs (avoids API rate limits)
       GITHUB_TOKEN: z.string().min(1).optional(),
 
+      // The docs site (apps/docs-site), e.g. https://docs.qrdx.dev: when set,
+      // next.config.ts proxies the docs' URLs there and the sitemap and
+      // llms.txt read its /zone/docs-manifest.json. Unset, this app serves
+      // its own copy of the docs.
+      DOCS_ZONE_URL: z.url().optional(),
+
       // Standard Node.js environment
       NODE_ENV: z
         .enum(["development", "test", "production"])
@@ -218,6 +224,7 @@ export const env = validateTogether(() =>
       CSP_HTTPS: process.env.CSP_HTTPS,
       QRDX_HOME_NUMBERS: process.env.QRDX_HOME_NUMBERS,
       GITHUB_TOKEN: process.env.GITHUB_TOKEN,
+      DOCS_ZONE_URL: process.env.DOCS_ZONE_URL,
       NODE_ENV: process.env.NODE_ENV,
       NEXT_PUBLIC_FEATUREBASE_APP_ID:
         process.env.NEXT_PUBLIC_FEATUREBASE_APP_ID,
