@@ -8,6 +8,8 @@
     "qr-code-generator",
     "react-qr-code",
     "react",
+    "preact",
+    "solidjs",
     "vanilla-js",
     "svg",
     "typescript",
@@ -76,6 +78,26 @@
         "default": "./dist/node.js"
       }
     },
+    "./preact": {
+      "import": {
+        "types": "./dist/src/preact.d.ts",
+        "default": "./dist/preact.mjs"
+      },
+      "require": {
+        "types": "./dist/src/preact.d.ts",
+        "default": "./dist/preact.js"
+      }
+    },
+    "./solid": {
+      "import": {
+        "types": "./dist/src/solid.d.ts",
+        "default": "./dist/solid.mjs"
+      },
+      "require": {
+        "types": "./dist/src/solid.d.ts",
+        "default": "./dist/solid.js"
+      }
+    },
     "./types": {
       "import": {
         "types": "./dist/types/public.d.ts",
@@ -116,8 +138,11 @@
     "jsdom": "28.1.0",
     "jspdf": "^4.2.1",
     "next": "16.4.3",
+    "preact": "^11.2.0",
+    "preact-render-to-string": "^6.8.3",
     "react": "^19.3.1",
     "sharp": "0.35.5",
+    "solid-js": "^1.9.19",
     "tsup": "^9.0.0",
     "typescript": "6.0.3",
     "vitest": "^5.0.5"
@@ -125,15 +150,20 @@
   "peerDependencies": {
     "@resvg/resvg-js": "^2.6.2",
     "jspdf": "^2.5.0 || ^3.0.0 || ^4.0.0",
+    "preact": ">=10.0.0",
     "react": ">=18.0.0",
     "react-dom": ">=18.0.0",
-    "sharp": ">=0.34.0"
+    "sharp": ">=0.34.0",
+    "solid-js": "^1.8.0"
   },
   "peerDependenciesMeta": {
     "@resvg/resvg-js": {
       "optional": true
     },
     "jspdf": {
+      "optional": true
+    },
+    "preact": {
       "optional": true
     },
     "react": {
@@ -143,6 +173,9 @@
       "optional": true
     },
     "sharp": {
+      "optional": true
+    },
+    "solid-js": {
       "optional": true
     }
   },

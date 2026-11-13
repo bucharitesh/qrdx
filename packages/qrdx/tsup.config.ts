@@ -173,6 +173,26 @@ export default defineConfig([
     treeshake: true,
     esbuildPlugins: [sharedCore(".js", ["vanilla-api"])],
   },
+  // ── qrdx/preact and qrdx/solid, on the shared core ──────────────────────
+  // Neither file has JSX: Preact's elements come from its `h`, and Solid's
+  // components return DOM nodes or ssr() markup, so no Solid compiler runs.
+  // The framework stays an import of the app's own copy (optional peers).
+  {
+    ...shared,
+    entry: { preact: "src/preact.ts", solid: "src/solid.ts" },
+    format: ["esm"],
+    treeshake: true,
+    external: [...(shared.external ?? []), "preact", /^solid-js(\/|$)/],
+    esbuildPlugins: [sharedCore(".mjs", [])],
+  },
+  {
+    ...shared,
+    entry: { preact: "src/preact.ts", solid: "src/solid.ts" },
+    format: ["cjs"],
+    treeshake: true,
+    external: [...(shared.external ?? []), "preact", /^solid-js(\/|$)/],
+    esbuildPlugins: [sharedCore(".js", [])],
+  },
   // ── qrdx/vanilla as one file for <script type="module">, no bundler ─────
   // zod is inlined; jspdf and jsqr stay on-demand imports (an import map
   // provides them), and the official frame library's data is left out.
