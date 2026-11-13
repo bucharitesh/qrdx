@@ -1,0 +1,210 @@
+{
+  "meta": {
+    "siteTitle": "QRdx: gerador de QR code grátis com logos e códigos dinâmicos",
+    "siteDescription": "Gerador de QR code grátis e de código aberto: códigos ilimitados com logos, cores e molduras, sem cadastro nem marca d’água. Além de códigos dinâmicos e estatísticas de leitura.",
+    "ogImageAlt": "QRdx: gerador de QR code grátis com QR codes dinâmicos, páginas hospedadas e estatísticas de leitura"
+  },
+  "footer": {
+    "description": "Gerador de QR code gratuito e de código aberto. Padrões personalizados, gradientes, logos e molduras, com downloads em PNG, JPG, SVG, PDF e EPS e sem cadastro. Além de códigos dinâmicos, páginas hospedadas e análises de leitura.",
+    "starOnGithub": "Dê uma estrela no GitHub",
+    "navLabel": "Rodapé",
+    "scanIt": "Vai lá, faça a leitura",
+    "copyright": "© {year} QRdx. Código aberto sob AGPL-3.0.",
+    "columns": {
+      "product": "Produto",
+      "tools": "Ferramentas",
+      "developers": "Desenvolvedores",
+      "resources": "Recursos",
+      "compare": "Comparar"
+    },
+    "links": {
+      "playground": "Playground",
+      "dynamicCodes": "QR codes dinâmicos",
+      "aiThemes": "Temas de IA",
+      "communityThemes": "Temas da comunidade",
+      "pageTemplates": "Modelos de página",
+      "pricing": "Preços",
+      "guarantee": "Garantia Never-Hostage",
+      "enterprise": "Enterprise",
+      "slackBot": "Bot do Slack",
+      "telegramBot": "Bot do Telegram",
+      "discordBot": "Bot do Discord",
+      "generators": "Geradores de QR code",
+      "bulk": "Gerador em massa",
+      "scanChecker": "Verificador de leitura",
+      "printSize": "Calculadora de tamanho de impressão",
+      "barcode": "Gerador de código de barras",
+      "pdfQr": "QR code de PDF",
+      "businessCard": "Cartão de visita digital",
+      "menuQr": "QR code de cardápio",
+      "scanner": "Leitor de QR code",
+      "allTools": "Todas as ferramentas",
+      "docs": "Documentação",
+      "apiReference": "Referência da API",
+      "qrCodeApi": "API de QR code grátis",
+      "nextjs": "Guia de Next.js",
+      "imageApi": "Image API",
+      "mcp": "Servidor MCP",
+      "shadcn": "Registro shadcn/ui",
+      "plugins": "Plugins",
+      "selfHosting": "Auto-hospedagem",
+      "openSource": "Código aberto",
+      "github": "GitHub",
+      "help": "Central de ajuda",
+      "blog": "Blog",
+      "changelog": "Changelog",
+      "integrations": "Integrações",
+      "industries": "QR codes por setor",
+      "placements": "QR codes por posição",
+      "affiliates": "Programa de afiliados",
+      "contact": "Contato",
+      "legal": "Legal",
+      "privacy": "Política de privacidade",
+      "terms": "Termos de serviço",
+      "subprocessors": "Subprocessadores",
+      "reportAbuse": "Denunciar abuso",
+      "acceptableUse": "Uso aceitável",
+      "cookies": "Política de cookies",
+      "dpa": "Processamento de dados (DPA)",
+      "aiFeatures": "Recursos de IA",
+      "refunds": "Reembolsos",
+      "affiliateTerms": "Termos de afiliados",
+      "security": "Segurança",
+      "securityPolicy": "Política de segurança",
+      "allComparisons": "Todas as comparações"
+    }
+  },
+  "localeSwitcher": {
+    "label": "Idioma",
+    "englishOnly": "Esta página só está disponível em inglês. Os outros idiomas abrem a página inicial."
+  },
+  "consent": {
+    "banner": {
+      "title": "Cookies no QRdx",
+      "description": "Contamos as visitas sem cookies; o PostHog e o widget de feedback só carregam depois do seu OK.",
+      "privacyPolicy": "Política de privacidade"
+    },
+    "actions": {
+      "accept": "Aceitar todos",
+      "reject": "Recusar todos",
+      "customize": "Personalizar",
+      "save": "Salvar escolhas",
+      "dismiss": "OK"
+    },
+    "dialog": {
+      "title": "Config. de cookies",
+      "description": "Escolha quais ferramentas opcionais o QRdx pode usar. Nada opcional é carregado até você permitir, e você pode mudar isso quando quiser.",
+      "details": "Detalhes na nossa <link>política de privacidade</link>.",
+      "alwaysOn": "Sempre ativo",
+      "usedBy": "Usado por {tools}"
+    },
+    "categories": {
+      "necessary": {
+        "title": "Necessários",
+        "description": "Mantém você conectado, bloqueia spam em formulários e lembra configurações como o tema e esta escolha."
+      },
+      "functionality": {
+        "title": "Funcionalidade",
+        "description": "Mostra o widget de feedback e suporte."
+      },
+      "measurement": {
+        "title": "Análises",
+        "description": "Mede quais páginas e recursos são usados, para sabermos o que melhorar. A contagem de visitas sem cookies (Umami) funciona sem isso."
+      }
+    },
+    "settingsButton": "Config. de cookies"
+  },
+  "docs": {
+    "meta": {
+      "titleSuffix": "Docs do QRdx"
+    },
+    "breadcrumb": {
+      "home": "Início",
+      "docs": "Docs"
+    },
+    "untranslated": {
+      "title": "Esta página ainda não foi traduzida",
+      "body": "Você está lendo a versão em inglês."
+    },
+    "client": {
+      "actions": {
+        "copyMarkdown": "Copiar Markdown",
+        "open": "Abrir",
+        "openIn": "Abrir no {app}",
+        "askPrompt": "Leia {url}, quero tirar dúvidas sobre o conteúdo."
+      },
+      "search": {
+        "jumpTo": "Ir para <page>{name}</page>"
+      },
+      "language": {
+        "label": "Idioma da documentação",
+        "note": "A documentação está disponível nestes idiomas. Os demais idiomas leem a documentação em inglês."
+      }
+    },
+    "help": {
+      "search": "Buscar na ajuda e na documentação",
+      "stillStuck": {
+        "title": "Ainda com dúvida?",
+        "body": "Conte o que você estava tentando fazer e o que aconteceu. Se for sobre um código, inclua o link curto dele.",
+        "widget": "O widget de suporte em qrdx.dev, depois que você permitir os cookies de Funcionalidade.",
+        "github": "Reportar um bug no GitHub",
+        "contact": "Todas as formas de falar com a gente"
+      }
+    },
+    "notFound": {
+      "title": "Esta página não está na documentação",
+      "body": "Ela pode ter sido movida ou renomeada. Busque na documentação ou comece por um destes links.",
+      "places": {
+        "gettingStarted": {
+          "title": "Primeiros passos",
+          "description": "Crie e baixe seu primeiro código."
+        },
+        "dynamic": {
+          "title": "QR codes dinâmicos",
+          "description": "Links curtos que você pode alterar depois de imprimir."
+        },
+        "restApi": {
+          "title": "REST API",
+          "description": "Crie e gerencie códigos a partir do seu próprio app."
+        },
+        "components": {
+          "title": "Componentes",
+          "description": "Componentes React e shadcn/ui para QR codes."
+        }
+      }
+    },
+    "ui": {
+      "search": "Buscar",
+      "searchPlaceholder": "Buscar",
+      "openSearch": "Abrir busca",
+      "closeSearch": "Fechar busca",
+      "noResults": "Nenhum resultado",
+      "searchFailed": "A busca falhou",
+      "onThisPage": "Nesta página",
+      "noHeadings": "Sem títulos",
+      "tableOfContents": "Índice",
+      "lastUpdated": "Última atualização em",
+      "previousPage": "Página anterior",
+      "nextPage": "Próxima página",
+      "copyCode": "Copiar texto",
+      "copiedCode": "Texto copiado",
+      "copyAnchor": "Copiar link da âncora",
+      "copiedAnchor": "Link da âncora copiado",
+      "copyLink": "Copiar link",
+      "copiedLink": "Link copiado",
+      "toggleMenu": "Alternar menu",
+      "toggleTheme": "Alternar tema",
+      "themeLight": "Claro",
+      "themeDark": "Escuro",
+      "themeSystem": "Sistema",
+      "openSidebar": "Abrir barra lateral",
+      "closeSidebar": "Fechar barra lateral",
+      "collapseSidebar": "Recolher barra lateral",
+      "typeTableProp": "Prop",
+      "typeTableType": "Tipo",
+      "typeTableDefault": "Padrão",
+      "typeTableParameters": "Parâmetros",
+      "typeTableReturns": "Retorna"
+    }
+  }
+}

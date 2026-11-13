@@ -1,6 +1,6 @@
 // bun run --filter docs i18n:check [--verbose]   (CI, next to tsc and biome)
 //
-// Every catalog in lib/i18n/config.ts (messages/<locale>.json) against
+// Every catalog in packages/i18n/config.ts (messages/<locale>.json) against
 // English. Errors (exit 1): a missing catalog file, keys English doesn't
 // have, changed ICU arguments or tags, dropped numbers, and, in a locale
 // marked "reviewed", any missing, unrecorded, machine or stale string.
@@ -10,6 +10,10 @@
 // The content catalogs (copy in TypeScript data, lib/i18n/content.ts) get
 // the same treatment: messages/content/<locale>.json against the English
 // in lib/i18n/content-sources.ts, numbers checked, gaps warned about.
+//
+// The copy of the docs' namespaces in packages/i18n/messages must match the
+// catalogs: an out-of-date file is an error (`bun run --filter docs
+// i18n:docs-messages` rewrites it; lib/i18n/docs-messages.ts).
 //
 // Fill gaps with `bun run --filter docs i18n:translate --locale <locale>`, or
 // translate by hand and record it with `i18n:translate --record`.
@@ -36,6 +40,10 @@ import {
   type DocsReviewFile,
   strayTranslations,
 } from "@/lib/i18n/docs-check";
+import {
+  DOCS_MESSAGES_COMMAND,
+  staleDocsMessages,
+} from "@/lib/i18n/docs-messages";
 import { icuShape } from "@/lib/i18n/icu";
 import { fileHash } from "@/lib/i18n/mdx";
 import { REVIEW } from "@/lib/i18n/review";
@@ -167,6 +175,13 @@ for (const locale of TRANSLATED_LOCALES) {
   const { strings, machine, reviewed, missing, unused } = report.counts;
   console.log(
     `${locale.padEnd(8)} content   ${strings} strings: ${reviewed} reviewed, ${machine} machine, ${missing} missing, ${unused} unused`,
+  );
+}
+
+// The docs' copy of their namespaces in @repo/i18n (lib/i18n/docs-messages.ts).
+for (const file of staleDocsMessages()) {
+  errors.push(
+    `packages/i18n/messages/${file} is out of date with messages/ (run \`${DOCS_MESSAGES_COMMAND}\`)`,
   );
 }
 

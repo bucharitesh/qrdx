@@ -41,6 +41,7 @@ import {
   type SourceFile,
   SyntaxKind,
 } from "ts-morph";
+import { writeDocsMessages } from "@/lib/i18n/docs-messages";
 
 const DOCS = path.join(__dirname, "..");
 const EN = path.join(DOCS, "messages/en.json");
@@ -1178,7 +1179,11 @@ for (const file of files) {
   );
   if (!DRY && count > 0) writeFileSync(source.getFilePath(), text);
 }
-if (!DRY) writeFileSync(EN, `${JSON.stringify(en, null, 2)}\n`);
+if (!DRY) {
+  writeFileSync(EN, `${JSON.stringify(en, null, 2)}\n`);
+  // The docs' copy of their namespaces (lib/i18n/docs-messages.ts).
+  writeDocsMessages(["en"]);
+}
 for (const { file, line, why, text } of reports) {
   console.log(
     `  by hand: ${path.relative(DOCS, file)}:${line} (${why}) ${JSON.stringify(text.slice(0, 100))}`,

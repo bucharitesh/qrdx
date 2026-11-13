@@ -1,7 +1,7 @@
 // bun run --filter docs i18n:docs --locale es   (or --all)
 //
 // Machine-translates the docs (content/docs) into the languages with docs
-// (lib/i18n/config.ts `docs: true`) through Vercel AI Gateway: each page to
+// (packages/i18n/config.ts `docs: true`) through Vercel AI Gateway: each page to
 // <page>.<locale>.mdx beside the English one, and each folder's sidebar
 // labels to meta.<locale>.json. Pages that are missing or stale (the English
 // changed since) are translated; pages a native reviewer signed off are left
@@ -93,7 +93,7 @@ const locales: Locale[] = flag("--all")
       const locale = TARGETS.find((l) => l === value);
       if (!locale) {
         throw new Error(
-          `"${value}" has no docs. One of: ${TARGETS.join(", ")} (lib/i18n/config.ts, docs: true)`,
+          `"${value}" has no docs. One of: ${TARGETS.join(", ")} (packages/i18n/config.ts, docs: true)`,
         );
       }
       return locale;
