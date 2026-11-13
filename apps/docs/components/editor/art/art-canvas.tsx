@@ -313,10 +313,10 @@ export function ArtCanvas() {
   const selected = useArtSessionStore((state) => state.selected);
   const setCanvasOpen = useArtSessionStore((state) => state.setCanvasOpen);
   const { results, best } = useRunChecks(shown.result);
+  const progress = useArtModeProgress(useArtSessionStore);
 
   if (!shown.visible) return null;
   const { result, variant, generating } = shown;
-  const progress = useArtModeProgress(useArtSessionStore);
   const check = results[selected];
   const back = () => setCanvasOpen(false);
 

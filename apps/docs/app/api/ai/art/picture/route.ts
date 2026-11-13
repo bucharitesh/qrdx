@@ -1,9 +1,5 @@
 import { randomInt } from "node:crypto";
-import {
-  createRateLimiter,
-  fixedWindow,
-  slidingWindow,
-} from "@repo/rate-limit";
+import { createRateLimiter, fixedWindow } from "@repo/rate-limit";
 import { type NextRequest, NextResponse } from "next/server";
 import {
   ART_MAX_SEED,
