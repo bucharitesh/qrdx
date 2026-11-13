@@ -242,6 +242,11 @@ export interface QRProps {
   // export (getQRAsSVGDataUri and the PNG, JPG, PDF and EPS built on it)
   // drops it, so downloads never carry the marker.
   frameLabelMarkers?: boolean;
+  // For editors drawing a live preview: marks the drawn parts with
+  // data-qrdx-part ("eye-outer" and "eye-centre", each with data-qrdx-eye,
+  // "body", "logo", "background"; see QR_PART_ATTRIBUTE). Off by default,
+  // and every export drops it, like frameLabelMarkers.
+  partMarkers?: boolean;
 }
 
 export type QRPropsCanvas = QRProps &

@@ -4370,6 +4370,110 @@
         "moreFrameOptions": "更多边框选项"
       }
     },
+    "partInline": {
+      "parts": {
+        "eyes": {
+          "edit": "编辑定位点",
+          "options": "定位点选项",
+          "random": "随机定位点",
+          "more": "更多定位点选项"
+        },
+        "dots": {
+          "edit": "编辑圆点",
+          "options": "圆点选项",
+          "random": "随机圆点",
+          "more": "更多圆点选项"
+        },
+        "logo": {
+          "edit": "编辑标志",
+          "options": "标志选项",
+          "random": "随机标志",
+          "more": "更多标志选项"
+        },
+        "background": {
+          "edit": "编辑背景",
+          "options": "背景选项",
+          "random": "随机背景",
+          "more": "更多背景选项",
+          "editShape": "编辑二维码形状"
+        },
+        "frame": {
+          "edit": "编辑边框",
+          "options": "边框选项",
+          "random": "随机边框",
+          "more": "更多边框选项"
+        }
+      },
+      "items": {
+        "outerShape": "外框形状",
+        "centerShape": "中心形状",
+        "eyeColor": "定位点颜色",
+        "centerColor": "中心颜色",
+        "pattern": "图案",
+        "dotColor": "圆点颜色",
+        "dotSize": "圆点大小",
+        "logo": "标志",
+        "quickIcons": "快捷图标",
+        "logoSize": "标志大小",
+        "hideLogo": "隐藏标志",
+        "backgroundColor": "背景颜色",
+        "padding": "内边距",
+        "frameStyle": "边框样式",
+        "frameColor": "边框颜色",
+        "whichEyes": "选择定位点",
+        "allEyes": "所有定位点",
+        "thisEye": "此定位点",
+        "thisEyesColor": "此定位点的颜色",
+        "thisEyesCenterColor": "此定位点的中心颜色",
+        "shapesChangeAllThreeEyes": "形状会同时更改三个定位点。",
+        "sameAsTheOthers": "与其他定位点相同",
+        "eyesWithTheirOwnColor": "有独立颜色的定位点会保持原色。如需单独更改，请选择“此定位点”。",
+        "logoShapeAndPlate": "Logo 形状和底板",
+        "clearSpace": "留白区域",
+        "content": "内容",
+        "codeShape": "二维码形状",
+        "errorCorrection": "纠错级别"
+      },
+      "random": "随机",
+      "moreOptions": "更多选项",
+      "sheet": {
+        "changesShowOnTheCode": "你所做的更改会实时显示在二维码上。点击“完成”即可保留。",
+        "done": "完成"
+      },
+      "content": {
+        "link": "链接",
+        "text": "文本",
+        "theCodeKeepsItsContent": "在此内容有效之前，二维码将保留原有内容。",
+        "scansOpenHost": "扫描后打开 {host}",
+        "textHint": "扫描二维码后将显示这段文本。",
+        "editedInTheContentTab": "此类内容在“内容”选项卡中有专属表单。",
+        "openTheContentTab": "打开“内容”选项卡"
+      },
+      "codeShape": {
+        "codeShape": "二维码形状",
+        "names": {
+          "square": "方形",
+          "circle": "圆形",
+          "heart": "心形"
+        },
+        "aCircleOrHeartTakes": "圆形或心形会取代边框。"
+      },
+      "errorCorrection": {
+        "theLogoRaisesItToLevel": "目前，Logo 将纠错级别提高到了 {level}。"
+      },
+      "handles": {
+        "moveLogo": "移动 Logo",
+        "dragOrUseTheArrowKeys": "可拖动，或使用方向键。按住 Shift 可移动更远。按 Delete 可隐藏。",
+        "logoSize": "Logo 大小",
+        "percentOfTheCode": "占二维码的 {value, number}%",
+        "padding": "内边距",
+        "modules": "{count, plural, other {# 个模块}}",
+        "dragToChangeThePadding": "向内或向外拖动可调整内边距"
+      },
+      "drop": {
+        "dropToUseAsLogo": "松开即可用作 Logo"
+      }
+    },
     "gradientPicker": {
       "pickASolidColorA": "为{label}选择纯色、渐变或色板。"
     },
@@ -4619,6 +4723,7 @@
         "actions": "操作",
         "themeAppearance": "主题与外观",
         "patternCustomization": "图案自定义",
+        "preview": "预览",
         "help": "帮助"
       },
       "shortcuts": {
@@ -4640,7 +4745,11 @@
         "cycleCornerEyePatterns": "循环切换角部定位点样式",
         "cycleInternalEyePatterns": "循环切换内部定位点样式",
         "cycleFrames": "循环切换边框",
-        "showThisShortcutsDialog": "显示此快捷键对话框"
+        "showThisShortcutsDialog": "显示此快捷键对话框",
+        "editAPartOfTheCode": "编辑指针所在或已聚焦的二维码部分",
+        "randomLookForThatPart": "随机生成该部分的外观",
+        "hideTheFocusedLogo": "隐藏已聚焦的 Logo",
+        "moveTheLogoWhileEditing": "编辑 Logo 时移动 Logo"
       }
     },
     "soundSwitch": {
@@ -5272,7 +5381,8 @@
           "afterYouSignInPasskeyOrApp": "登录后，QRdx 会要求你提供通行密钥，或身份验证器应用中的验证码。使用备用码也可以。",
           "afterYouSignInPasskey": "登录后，QRdx 会要求你提供通行密钥。使用备用码也可以。",
           "afterYouSignInApp": "登录后，QRdx 会要求你输入身份验证器应用中的验证码。使用备用码也可以。",
-          "afterYouSignInQrdx2": "登录后，QRdx 会要求输入备用码。"
+          "afterYouSignInQrdx2": "登录后，QRdx 会要求输入备用码。",
+          "passkeySpotlight": "现在可以用通行密钥作为第二步验证，不必再输入验证器代码。"
         },
         "twoFactorSetupDialog": {
           "stepStepnumberOfLength": "第 {stepNumber, number} 步，共 {length, number} 步",
@@ -7914,7 +8024,19 @@
         "new": "新",
         "whatsNew": "新功能",
         "newFeaturesAndFixesIn": "QRdx 的新功能和修复。",
-        "seeAllUpdates": "查看全部更新"
+        "seeAllUpdates": "查看全部更新",
+        "newFeatures": "新功能",
+        "dismissTitle": "关闭{title}",
+        "previousUpdate": "上一条更新",
+        "nextUpdate": "下一条更新",
+        "positionOfTotal": "第 {position, number} 条，共 {total, number} 条",
+        "readOnTheChangelog": "在更新日志中阅读",
+        "tryIt": "试一试",
+        "close": "关闭"
+      },
+      "spotlight": {
+        "new": "新",
+        "gotIt": "知道了"
       }
     },
     "workspaces": {
