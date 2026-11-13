@@ -8,7 +8,7 @@ import {
   getIntegrationRegistry,
 } from "@repo/integrations";
 import { cookies } from "next/headers";
-import { env } from "@/lib/env";
+import { env } from "@/env";
 import { safeReturnPath } from "@/lib/integration-return";
 
 const OAUTH_COOKIE_MAX_AGE_SECONDS = 60 * 10; // 10 minutes

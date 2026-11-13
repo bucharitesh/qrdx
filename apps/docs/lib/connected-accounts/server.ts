@@ -23,7 +23,7 @@ import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import { and, eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
-import { env } from "@/lib/env";
+import { env } from "@/env";
 import { HttpError } from "@/lib/error-response";
 import { enforceRateLimits } from "@/lib/request-guards";
 

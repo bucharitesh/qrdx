@@ -67,7 +67,7 @@ export interface PlanPrice {
 const id = (value: string | undefined) => value || null;
 
 // Literal `process.env.NEXT_PUBLIC_*` reads so Next inlines them into client
-// bundles (validated by lib/env.ts on the server).
+// bundles (validated by env.ts on the server).
 const PRODUCT_IDS: Record<ProductIdEnv, string | null> = {
   NEXT_PUBLIC_QRDX_PRO_MONTHLY_PRODUCT_ID: id(
     process.env.NEXT_PUBLIC_QRDX_PRO_MONTHLY_PRODUCT_ID,

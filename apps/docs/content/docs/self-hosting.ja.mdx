@@ -38,7 +38,7 @@ cd qrdx
 ### 2. 環境を設定する [#2-configure-the-environment]
 
 ```bash
-cp .env.example .env
+cp apps/docs/.env.example .env
 ```
 
 `.env` を編集します。
@@ -107,8 +107,7 @@ git clone https://github.com/bucharitesh/qrdx.git
 cd qrdx
 bun install
 
-cp .env.example apps/docs/.env.local                    # then edit it
-echo 'DATABASE_URL=<your connection string>' > packages/database/.env
+cp apps/docs/.env.example apps/docs/.env.local          # then edit it
 
 bun run db:push                                          # apply the schema
 bun run --filter docs dev                                # http://localhost:3000
@@ -130,7 +129,7 @@ DATABASE_HTTP_ENDPOINT=http://localhost:4444/sql
 
 ## 環境変数 [#environment-variables]
 
-[`.env.example`](https://github.com/bucharitesh/qrdx/blob/main/.env.example) には、すべての変数と、それぞれの入手先についての短いメモが載っています。
+[`apps/docs/.env.example`](https://github.com/bucharitesh/qrdx/blob/main/apps/docs/.env.example) には、すべての変数と、それぞれの入手先についての短いメモが載っています。
 
 ### 最小構成 [#minimum]
 

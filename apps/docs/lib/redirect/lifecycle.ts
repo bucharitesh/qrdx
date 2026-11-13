@@ -1,17 +1,13 @@
 import "server-only";
 
-import {
-  createHash,
-  createHmac,
-  randomBytes,
-  timingSafeEqual,
-} from "node:crypto";
+import { createHash, createHmac, timingSafeEqual } from "node:crypto";
 import { database as db, qrCode } from "@repo/database";
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import { compare } from "bcryptjs";
 import cuid from "cuid";
 import { cookies, headers } from "next/headers";
 import { CUSTOM_DOMAIN_HEADER } from "@/app/(app)/dashboard/domains/_lib/hostname";
+import { env } from "@/env";
 import { type ScanPagesIntl, scanPagesIntlFor } from "@/lib/i18n/scan-pages";
 import { getClientIp } from "@/lib/request-guards";
 import { slugWhere } from "@/lib/slug-claims";
@@ -127,13 +123,9 @@ export const unlockCookieName = (slug: string) =>
 let unlockKey: Buffer | null = null;
 
 function getUnlockKey(): Buffer {
-  if (!unlockKey) {
-    const secret = process.env.BETTER_AUTH_SECRET;
-    unlockKey = secret
-      ? createHash("sha256").update(`qrdx:unlock:${secret}`).digest()
-      : // Without a secret, unlocks last until the server restarts.
-        randomBytes(32);
-  }
+  unlockKey ??= createHash("sha256")
+    .update(`qrdx:unlock:${env.BETTER_AUTH_SECRET}`)
+    .digest();
   return unlockKey;
 }
 

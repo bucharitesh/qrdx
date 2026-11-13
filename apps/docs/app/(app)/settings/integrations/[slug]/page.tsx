@@ -8,7 +8,7 @@ import {
 import { headers } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 import { ConfirmIdentityProvider } from "@/components/confirm-identity/provider";
-import { env } from "@/lib/env";
+import { env } from "@/env";
 import {
   getIntegrationAvailability,
   getStoredConnections,

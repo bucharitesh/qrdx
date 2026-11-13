@@ -2,7 +2,7 @@ import "server-only";
 
 import { randomBytes } from "node:crypto";
 import { Resolver } from "node:dns/promises";
-import { env } from "@/lib/env";
+import { env } from "@/env";
 import { getCustomDomainMode } from "@/lib/feature-availability";
 import type { CustomDomainMode } from "@/lib/feature-availability-rules";
 import { baseUrl } from "@/lib/metadata";

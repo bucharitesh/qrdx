@@ -16,6 +16,7 @@ import {
 } from "@repo/database";
 import { and, count, eq, isNull, like, lte, ne, or, sql } from "drizzle-orm";
 import { requestOrigin } from "@/app/(app)/settings/developers/_lib/origin";
+import { env } from "@/env";
 import { isFeatureAvailable } from "@/lib/feature-availability";
 import {
   hasAuthenticatorApp,
@@ -109,8 +110,8 @@ const NO_ORIGIN = new URL("https://unknown.invalid");
 export function passkeysWorkHere(requestHeaders: Headers): boolean {
   if (!isFeatureAvailable("passkeys")) return false;
   const relyingParty = passkeyRelyingParty({
-    BETTER_AUTH_URL: process.env.BETTER_AUTH_URL,
-    NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+    BETTER_AUTH_URL: env.BETTER_AUTH_URL,
+    NEXT_PUBLIC_APP_URL: env.NEXT_PUBLIC_APP_URL,
   });
   return isPasskeyOrigin(
     relyingParty,
