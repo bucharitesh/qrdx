@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
+import { docsIndex } from "@/lib/docs-index";
 import { getLLMText } from "@/lib/get-llm-text";
-import { source } from "@/lib/source";
 import { buildTimeParams } from "@/lib/static-params";
 
 export const revalidate = false;
@@ -18,7 +18,7 @@ export async function GET(
   const { slug } = await params;
   // /docs/x.md asked for as text/markdown arrives here as x.md.
   const last = slug?.at(-1)?.replace(/\.mdx?$/, "");
-  const page = source.getPage(
+  const page = docsIndex().getPage(
     slug && last !== undefined ? [...slug.slice(0, -1), last] : slug,
   );
   if (!page) notFound();
@@ -30,5 +30,5 @@ export async function GET(
 
 // Unknown pages answer notFound() above (lib/static-params.ts).
 export function generateStaticParams() {
-  return buildTimeParams(() => source.generateParams());
+  return buildTimeParams(() => docsIndex().generateParams());
 }

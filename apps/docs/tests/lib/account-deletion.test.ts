@@ -10,7 +10,6 @@ import {
 import {
   canDeliverSignInCodes,
   type DeletionFacts,
-  describeDeletionPlan,
   isDeleteConfirmed,
   isRecentSignIn,
   pickSuccessor,
@@ -18,6 +17,7 @@ import {
   roleRank,
   type TeamMemberFacts,
 } from "@/lib/account/deletion";
+import { describeDeletionPlan } from "@/lib/account/deletion-summary";
 
 const at = (day: number) => new Date(Date.UTC(2026, 0, day));
 

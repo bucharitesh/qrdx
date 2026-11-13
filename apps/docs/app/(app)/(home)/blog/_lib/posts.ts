@@ -2,8 +2,8 @@ import type { InferPageType } from "fumadocs-core/source";
 import type { Metadata } from "next";
 import { resolveAuthors } from "@/lib/blog-authors";
 import { SLUG_TO_CATEGORY } from "@/lib/blog-constants";
+import { blogSource } from "@/lib/content-source";
 import { baseUrl } from "@/lib/metadata";
-import { blogSource } from "@/lib/source";
 
 export type BlogPage = InferPageType<typeof blogSource>;
 

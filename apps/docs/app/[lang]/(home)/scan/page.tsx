@@ -10,7 +10,7 @@ import {
   Personalcard,
   Wifi,
 } from "iconsax-reactjs";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { getTranslations } from "next-intl/server";
 import { ClientMessages } from "@/components/i18n/client-messages";
 import { LocaleLink } from "@/components/i18n/locale-link";
@@ -31,7 +31,14 @@ import { localizeHref } from "@/lib/i18n/paths";
 import { requireLocale } from "@/lib/i18n/server";
 import { baseUrl } from "@/lib/metadata";
 import { playgroundHref } from "@/lib/playground-links";
+import { rootViewport, siteIcons } from "@/lib/root-metadata";
 import { isWebRiskConfigured } from "@/lib/safety/web-risk";
+import {
+  SCANNER_APP_DARK,
+  SCANNER_APP_LIGHT,
+  scannerManifestPath,
+  scannerScope,
+} from "@/lib/scanner-app";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await requireLocale();
@@ -44,10 +51,26 @@ export async function generateMetadata(): Promise<Metadata> {
       description: t("metaDescription"),
       ownOgImage: true,
     }),
-    // The installable scanner (app/scan/manifest.webmanifest) opens /scan.
-    manifest: "/scan/manifest.webmanifest",
+    // The installable scanner (lib/scanner-app.ts): its own app per
+    // language, opening on this page.
+    manifest: scannerManifestPath(locale),
+    appleWebApp: {
+      capable: true,
+      title: t("app.shortName"),
+      statusBarStyle: "default",
+    },
+    icons: { ...siteIcons, apple: "/app-icons/scanner/apple-touch-icon.png" },
   };
 }
+
+// The installed app's title bar and the phone's status bar follow the page.
+export const viewport: Viewport = {
+  ...rootViewport,
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: SCANNER_APP_LIGHT },
+    { media: "(prefers-color-scheme: dark)", color: SCANNER_APP_DARK },
+  ],
+};
 
 /** Barcode formats; product names stay as they are in every language. */
 const FORMATS = [
@@ -95,6 +118,7 @@ const FAQS = [
   "offline",
   "browsers",
   "install",
+  "share",
 ] as const;
 
 const linkClass =
@@ -125,7 +149,10 @@ export default async function ScanPage() {
           : t(`faq.${key}Answer`),
   }));
   return (
-    <main className="flex flex-col divide-y divide-border min-h-screen w-full">
+    <main
+      className="flex flex-col divide-y divide-border min-h-screen w-full"
+      data-scanner-app=""
+    >
       <JsonLd
         data={{
           "@context": "https://schema.org",
@@ -157,11 +184,15 @@ export default async function ScanPage() {
         intro={[t("intro1"), t("intro2", { webRisk })]}
       />
 
-      <section aria-label={t("toolLabel")} className="w-full px-10 py-10">
+      <section
+        aria-label={t("toolLabel")}
+        className="w-full px-10 py-10"
+        data-scanner-tool=""
+      >
         <ClientMessages namespaces={SCANNER_MESSAGES}>
           <Scanner />
         </ClientMessages>
-        <RegisterScannerServiceWorker />
+        <RegisterScannerServiceWorker scope={scannerScope(locale)} />
       </section>
 
       <section

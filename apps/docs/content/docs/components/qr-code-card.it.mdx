@@ -1,0 +1,60 @@
+---
+title: "QR Code Card"
+description: "Una card con un QR code in una cornice \"Scan me\", un titolo, una descrizione e lo spazio per le azioni."
+icon: Frame
+---
+
+<ComponentLinks name="qr-code-card" />
+
+<ComponentPreview name="qr-code-card-demo" />
+
+## Installazione [#installation]
+
+<InstallationTabs name="qr-code-card" />
+
+## Utilizzo [#usage]
+
+```tsx
+import { QrCodeCard } from "@/components/qr-code-card";
+```
+
+```tsx
+<QrCodeCard
+  value="https://example.com/menu"
+  title="Our menu"
+  description="Scan to see today's specials."
+/>
+```
+
+Tutto ciò che passi come children viene mostrato nel footer della card, per esempio un pulsante di copia o un [menu di download](/docs/components/qr-code-download).
+
+## Esempi [#examples]
+
+### Cornici [#frames]
+
+`frame` mette la call to action sotto il codice (`"bottom"`), sopra (`"top"`) oppure omette la cornice (`"none"`). `cta` cambia l'etichetta, mentre `frameClassName` modifica lo stile della cornice, per esempio con il colore del tuo brand.
+
+<ComponentPreview name="qr-code-card-frames" />
+
+Per impostazione predefinita la cornice usa i colori `foreground` e `background` del tuo tema, quindi resta leggibile sia in modalità chiara sia in modalità scura. Il codice invece mantiene uno sfondo chiaro, che ogni scanner riesce a leggere.
+
+### Stile del codice [#styling-the-code]
+
+`qr` accetta qualsiasi opzione di stile di qrdx: `fgColor`, `bgColor`, gradienti, `bodyPattern`, pattern degli angoli, `logo` e `templateId`.
+
+```tsx
+<QrCodeCard
+  value="https://example.com"
+  qr={{
+    fgColor: "#155DFC",
+    bodyPattern: "rounded",
+    cornerEyePattern: "extra-rounded",
+  }}
+/>
+```
+
+## Riferimento API [#api-reference]
+
+<auto-type-table path="../../../registry/qrdx/qr-code-card.tsx" type="{ [K in keyof QrCodeCardProps as K extends Exclude<keyof ComponentProps<'div'>, 'title' | 'children'> ? never : K]: QrCodeCardProps[K] }" />
+
+Qualsiasi altra prop, come `className`, viene passata alla [Card](https://ui.shadcn.com/docs/components/card).

@@ -1,0 +1,50 @@
+---
+title: "QR Code Download"
+description: "एक डाउनलोड मेन्यू जो QR कोड को आपके चुने हुए साइज़ में PNG, SVG, JPG या PDF के रूप में एक्सपोर्ट करता है, या उसे इमेज के रूप में कॉपी करता है।"
+icon: Download
+---
+
+<ComponentLinks name="qr-code-download" />
+
+<ComponentPreview name="qr-code-download-demo" />
+
+## इंस्टॉलेशन [#installation]
+
+<InstallationTabs name="qr-code-download" />
+
+## उपयोग [#usage]
+
+```tsx
+import { QrCodeDownload } from "@/components/qr-code-download";
+```
+
+```tsx
+<QrCodeDownload value="https://qrdx.dev" />
+```
+
+मेन्यू में हर फ़ॉर्मैट एक छोटे संकेत के साथ दिखता है, साथ में एक साइज़ पिकर और "Copy image" भी होता है, जो PNG को क्लिपबोर्ड पर रखता है। फ़ाइलें ब्राउज़र में ही बनती हैं; कुछ भी अपलोड नहीं होता।
+
+## उदाहरण [#examples]
+
+### स्टाइल के साथ एक्सपोर्ट [#styled-export]
+
+`qr` को वही स्टाइल ऑब्जेक्ट दें जो आप स्क्रीन पर रेंडर करते हैं, ताकि हर एक्सपोर्ट की गई फ़ाइल प्रीव्यू से मेल खाए। `formats`, `sizes`, `label` और `variant` मेन्यू और उसके बटन का रूप तय करते हैं।
+
+<ComponentPreview name="qr-code-download-styled" />
+
+### फ़ॉर्मैट [#formats]
+
+| फ़ॉर्मैट | आउटपुट |
+|--------|--------|
+| `png` | कोड के बैकग्राउंड वाली इमेज |
+| `jpg` | ठोस बैकग्राउंड वाली इमेज |
+| `svg` | वेक्टर, जो किसी भी साइज़ तक स्केल होता है |
+| `pdf` | एक पेज का दस्तावेज़। इसके लिए वैकल्पिक `jspdf` पैकेज चाहिए (`npm install jspdf`) |
+
+रास्टर साइज़ 50 से 5000 पिक्सल तक होते हैं। साइज़ पिकर छिपाने के लिए `sizes` में केवल एक एंट्री दें।
+
+## API रेफ़रेंस [#api-reference]
+
+<auto-type-table path="../../../registry/qrdx/qr-code-download.tsx" type="{ [K in keyof QrCodeDownloadProps as K extends Exclude<keyof ComponentProps<'div'>, 'onError'> ? never : K]: QrCodeDownloadProps[K] }" />
+
+कोई भी दूसरा prop, जैसे `className`, रैपिंग `<div>` को पास कर दिया जाता है।

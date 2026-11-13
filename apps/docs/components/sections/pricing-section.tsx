@@ -20,7 +20,10 @@ import { AsciiField, RadialHalo } from "@/components/fx";
 import { LocaleLink } from "@/components/i18n/locale-link";
 import { EASE_CLASS } from "@/components/mockups/motion";
 import { useSlidingPill } from "@/components/mockups/sliding-pill";
+import { CurrencyNote } from "@/components/sections/pricing/currency-note";
+import { EnterpriseCard } from "@/components/sections/pricing/enterprise-card";
 import { InvoiceRequestDialog } from "@/components/sections/pricing/invoice-request-dialog";
+import { PricingOffers } from "@/components/sections/pricing/pricing-offers";
 import { maxYearlySavingsPercent } from "@/components/sections/pricing/savings";
 import { siteConfig } from "@/config/site";
 import { track } from "@/lib/analytics";
@@ -29,6 +32,7 @@ import { playgroundHref } from "@/lib/playground-links";
 import {
   BILLING_INTERVALS,
   type BillingInterval,
+  EUR_PRICES,
   formatPrice,
   PAID_PLANS,
   type PaidPlan,
@@ -37,12 +41,6 @@ import {
   PRICING,
   type PricingCurrency,
 } from "@/lib/pricing";
-import {
-  CURRENCY_COOKIE,
-  CURRENCY_COOKIE_MAX_AGE,
-  CURRENCY_PARAM,
-  overrideForCurrency,
-} from "@/lib/region";
 import { useAuthStore } from "@/store/auth-store";
 
 interface PricingSectionProps {
@@ -121,37 +119,6 @@ function SavingsBadge({ children }: { children: React.ReactNode }) {
     <Badge className="border-transparent bg-emerald-500/10 text-emerald-700 tabular-nums dark:text-emerald-400">
       {children}
     </Badge>
-  );
-}
-
-/** "Prices in ₹ for India" note with a switch; the choice is kept in a cookie. */
-function CurrencyNote({ currency }: { currency: PricingCurrency }) {
-  const t = useTranslations("pricing.currency");
-  const next: PricingCurrency = currency === "INR" ? "USD" : "INR";
-  const value = overrideForCurrency(next);
-
-  const remember = () => {
-    try {
-      // biome-ignore lint/suspicious/noDocumentCookie: a display preference; the server reads it on the next render
-      document.cookie = `${CURRENCY_COOKIE}=${value}; path=/; max-age=${CURRENCY_COOKIE_MAX_AGE}; samesite=lax`;
-    } catch {
-      // Blocked cookies: the ?currency param still applies.
-    }
-  };
-
-  return (
-    <p className="text-center text-sm text-muted-foreground">
-      {currency === "INR" ? t("inr") : t("usd")}{" "}
-      <LocaleLink
-        className="font-medium text-foreground underline decoration-foreground/30 underline-offset-4 transition-colors hover:decoration-foreground"
-        href={`/pricing?${CURRENCY_PARAM}=${value}`}
-        onClick={remember}
-        replace
-        scroll={false}
-      >
-        {next === "INR" ? t("showInr") : t("showUsd")}
-      </LocaleLink>
-    </p>
   );
 }
 
@@ -460,7 +427,8 @@ export function PricingSection({
         </div>
       </div>
 
-      <div className="relative grid w-full max-w-[74rem] gap-4 px-10 md:grid-cols-3">
+      {/* Four cards: two by two on tablets, a row of four on wide screens. */}
+      <div className="relative grid w-full max-w-[80rem] gap-4 px-10 md:grid-cols-2 xl:grid-cols-4">
         {/* The Pro card (the middle one, also when stacked) sits in a soft light. */}
         <RadialHalo className="-inset-y-32" width={760} height={1000} />
         {cards.map(({ plan, lead, action }) => {
@@ -509,7 +477,12 @@ export function PricingSection({
             </Card>
           );
         })}
+        {/* Enterprise: the Business plan under a contract (lib/enterprise.ts) */}
+        <EnterpriseCard />
       </div>
+
+      {/* Money-back guarantee and non-profit discount (pricing/pricing-offers.tsx) */}
+      <PricingOffers className="mt-6" signedIn={isSignedIn} />
 
       {invoices && isSignedIn && (
         <InvoiceRequestDialog
@@ -520,7 +493,7 @@ export function PricingSection({
         />
       )}
 
-      <div className="mt-4 w-full max-w-[74rem] px-10">
+      <div className="mt-4 w-full max-w-[80rem] px-10">
         <Card className="gap-4 bg-muted/40 p-5 shadow-none md:flex-row md:items-center md:justify-between dark:bg-card">
           <div className="flex items-start gap-4">
             <span className="grid size-9 shrink-0 place-items-center rounded-full border bg-muted/40">
@@ -554,7 +527,7 @@ export function PricingSection({
           </div>
         </Card>
         <p className="mx-auto mt-6 max-w-2xl text-center text-xs text-pretty text-muted-foreground">
-          {t("footnote")}
+          {t(EUR_PRICES ? "footnoteEur" : "footnote")}
         </p>
       </div>
     </section>

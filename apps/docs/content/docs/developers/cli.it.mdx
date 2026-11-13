@@ -1,0 +1,109 @@
+---
+title: "CLI"
+description: "Genera QR code con stile in SVG, PNG, WebP o EPS vettoriale dal terminale o dalla CI con lo strumento da riga di comando @qrdx/cli, uno alla volta o da un intero CSV con qrdx batch."
+icon: Terminal
+---
+
+`@qrdx/cli` genera gli stessi QR code del Playground e della [libreria `qrdx`](/docs/getting-started) dalla riga di comando. Negli script e nella CI non fa mai domande, e quando esegui `qrdx generate` senza argomenti in un terminale ti chiede passo dopo passo il contenuto e le opzioni.
+
+<NpmStatus package="@qrdx/cli" />
+
+```bash
+npx @qrdx/cli generate "https://example.com" -o qr.svg
+```
+
+Installalo globalmente per avere il comando `qrdx`:
+
+```bash
+npm install -g @qrdx/cli
+qrdx generate "https://example.com" -o qr.png --size 1024
+```
+
+Richiede Node.js 22 o successivo. L'output PNG e WebP usa [sharp](https://sharp.pixelplumbing.com), una dipendenza opzionale che npm installa dove la tua piattaforma la supporta; SVG ed EPS funzionano senza. Il pacchetto npm `qrdx` è la libreria React: la CLI si trova solo in `@qrdx/cli`.
+
+## Formati di output [#output-formats]
+
+L'estensione del file determina il formato, oppure usa `--format` quando il nome del file non ha estensione.
+
+| Formato | Quando usarlo | Significato di `--size` |
+| --- | --- | --- |
+| `.svg` | Pagine web, strumenti di design, ridimensionamento senza perdite | Larghezza in pixel (predefinito 512) |
+| `.png` | Documenti, presentazioni, ovunque serva un'immagine | Larghezza in pixel |
+| `.webp` | Siti web: i pixel del PNG, senza perdita di qualità, in un file più piccolo | Larghezza in pixel |
+| `.eps` | Tipografie, Illustrator, InDesign | Larghezza in punti (72 per pollice, quindi `144` sono 2 pollici) |
+
+I file EPS sono PostScript vettoriale. I loghi PNG e JPEG vengono incorporati così come sono; gli altri formati di logo vengono convertiti con sharp se è installato, altrimenti vengono omessi con un avviso.
+
+## Opzioni [#options]
+
+| Flag | Predefinito | Descrizione |
+| --- | --- | --- |
+| `-o`, `--output` | `qr.svg` | File di output |
+| `--format` | dall'estensione | `svg`, `png`, `webp` o `eps` |
+| `--size` | `512` | Dimensione dell'output (vedi sopra) |
+| `-l`, `--level` | `Q` | Correzione degli errori: `L`, `M`, `Q` o `H` |
+| `--body` | `square` | [Pattern](/docs/features/patterns) dei moduli dati |
+| `--eye` | `square` | Pattern degli occhi agli angoli |
+| `--dot` | `square` | Pattern del punto dell'occhio agli angoli |
+| `--fg`, `--bg` | `#000000`, `#ffffff` | Primo piano e sfondo: un colore esadecimale o un gradiente JSON |
+| `--eye-color`, `--dot-color` | `--fg` | Colori dell'occhio e del punto dell'occhio agli angoli |
+| `--logo` | | URL dell'immagine del logo al centro (da usare con `--level H`) |
+| `--margin` | `0` | Zona di quiete, in moduli |
+| `--template` | | `Arrow`, `StandardBox`, `SquareBorder`, `StrikedBox` o `Halloween` |
+| `--frame` | | [Cornice](/docs/features/frames) con invito all'azione: uno qualsiasi dei {facts.frameStyles} stili di cornice, come `banner-bottom`, `rounded-border`, `circle`, `sticker` o `phone` (vedi [tutti gli stili](/docs/styles#frames)) |
+| `--frame-text` | `Scan me` | Etichetta della cornice, fino a 24 caratteri |
+| `--frame-color`, `--frame-text-color` | | Colori della cornice e dell'etichetta (esadecimale) |
+
+`qrdx --help` elenca tutti i nomi dei pattern. I valori non validi terminano con codice `1` e un messaggio che elenca i valori accettati.
+
+## Tanti codici da un CSV [#many-codes-from-a-csv]
+
+`qrdx batch` scrive in una cartella un QR code statico per ogni riga di un file CSV:
+
+```bash
+qrdx batch products.csv -o codes --format png --size 1024 --body circle
+```
+
+Legge le stesse colonne del [generatore in blocco](/tools/bulk): il contenuto da una colonna chiamata `value`, `url`, `link`, `data`, `content`, `text` o `qr` (altrimenti la prima colonna), e i nomi dei file da una colonna chiamata `file name`, `name`, `label`, `id`, `title` o `sku` (altrimenti `qr-00001`, `qr-00002` e così via). Puoi sceglierne altre per nome dell'intestazione o per numero di colonna:
+
+| Flag | Predefinito | Descrizione |
+| --- | --- | --- |
+| `-o`, `--out` | `qr-codes` | Cartella per i codici |
+| `--format` | `svg` | `svg`, `png` o `eps` |
+| `--value-column` | rilevata | Colonna con il contenuto di ogni codice |
+| `--name-column` | rilevata | Colonna con i nomi dei file |
+| `--no-header` | | La prima riga è un codice, non i nomi delle colonne |
+| `--jobs` | `4` per SVG, `8` negli altri casi | Codici generati contemporaneamente |
+
+Tutte le opzioni di stile qui sopra si applicano a tutti i codici. Il CSV viene letto come flusso e ogni codice viene salvato appena è pronto, quindi il comando non ha limiti di righe: su un portatile, 10.000 codici SVG hanno richiesto circa 40 secondi e meno di 200 MB di memoria. Non viene caricato nulla e non serve alcun account. Le righe che non possono essere codificate vengono saltate ed elencate con il motivo in `errors.csv` nella cartella di output.
+
+Per stampare in blocco [QR code dinamici](/docs/dynamic-qr-codes), creali prima (con l'importazione CSV della dashboard o con l'API) ed esegui `qrdx batch` sul CSV dei risultati fornito dall'importazione, con `--value-column short_link`.
+
+## Esempi [#examples]
+
+```bash
+# High-resolution PNG for print
+qrdx generate "https://example.com" -o qr.png --size 2048 --level H
+
+# Vector EPS, 2 inches wide, for a print shop
+qrdx generate "https://example.com" -o qr.eps --size 144
+
+# Branded colors and patterns
+qrdx generate "https://example.com" --body circle --eye rounded --fg "#1a1a2e" -o brand.svg
+
+# Gradient foreground
+qrdx generate "https://example.com" -o gradient.svg \
+  --fg '{"type":"linear","stops":[{"color":"#6366f1","offset":0},{"color":"#ec4899","offset":100}],"angle":135}'
+
+# "Scan for the menu" frame
+qrdx generate "https://example.com/menu" --frame banner-bottom --frame-text "Scan for the menu" -o menu.png
+
+# Wi-Fi network
+qrdx generate "WIFI:T:WPA;S:MyNetwork;P:MyPassword;;" -o wifi.svg
+```
+
+Per stampare un [QR code dinamico](/docs/dynamic-qr-codes), passa come dato il suo link breve (`https://qrdx.dev/q/<slug>`).
+
+## Usalo da un agente di programmazione AI [#use-it-from-an-ai-coding-agent]
+
+La [skill `generate-qr`](https://github.com/bucharitesh/qrdx/tree/main/skills/generate-qr) del repository insegna ad agenti come Claude Code a richiamare la CLI. Per gli agenti che supportano MCP, il [server MCP](/docs/developers/mcp) non richiede alcuna installazione.

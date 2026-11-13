@@ -1,0 +1,152 @@
+---
+title: "बुनियादी उपयोग"
+description: "QRCode कॉम्पोनेंट से QR कोड बनाएँ, फिर उसके रंग, पैटर्न, लोगो, टेम्पलेट और एरर करेक्शन बदलें।"
+icon: FileCode
+---
+
+अपनी ज़रूरत के हिसाब से QR कोड बनाएँ और उन्हें कस्टमाइज़ करें।
+
+<NpmStatus package="qrdx" />
+
+## बेसिक QR कोड [#basic-qr-code]
+
+```tsx
+import { QRCode } from 'qrdx';
+
+<QRCode
+  value="https://example.com"
+  size={256}
+/>
+```
+
+## रंग कस्टमाइज़ करें [#customize-colors]
+
+```tsx
+<QRCode
+  value="https://example.com"
+  size={256}
+  fgColor="#1a56db"
+  bgColor="#ffffff"
+  eyeColor="#0d47a1"
+  dotColor="#3b82f6"
+/>
+```
+
+## पैटर्न जोड़ें [#add-patterns]
+
+{facts.bodyPatterns} बॉडी पैटर्न, {facts.eyeShapes} कॉर्नर आई पैटर्न और {facts.eyeCentres} कॉर्नर आई डॉट पैटर्न में से चुनें:
+
+```tsx
+<QRCode
+  value="https://example.com"
+  size={256}
+  bodyPattern="rounded"
+  cornerEyePattern="circle"
+/>
+```
+
+यहाँ {facts.bodyPatterns} बॉडी पैटर्न हैं, जिनमें `square`, `rounded` और `circle` से लेकर आपस में जुड़े `liquid` और `classy` स्टाइल, और मज़ेदार `star` या `heart` डॉट तक शामिल हैं। पूरी सूची और कॉर्नर आई व आई डॉट के विकल्प [पैटर्न](/docs/features/patterns) में देखें, और सभी को एक साथ देखने के लिए [शेप, आई और फ़्रेम](/docs/styles) देखें।
+
+## लोगो जोड़ें [#add-a-logo]
+
+```tsx
+<QRCode
+  value="https://example.com"
+  size={512}
+  hideLogo={false}
+  logo="https://example.com/logo.png"
+  level="Q"
+/>
+```
+
+लोगो जोड़ते समय ऊँचा एरर करेक्शन (`Q` या `H`) इस्तेमाल करें।
+
+## टेम्पलेट इस्तेमाल करें [#use-templates]
+
+```tsx
+<QRCode
+  value="https://example.com"
+  templateId="Arrow"
+  size={256}
+/>
+```
+
+उपलब्ध टेम्पलेट: `default`, `Arrow`, `StandardBox`, `SquareBorder`, `StrikedBox`, `Halloween`
+
+## एरर करेक्शन [#error-correction]
+
+अपने उपयोग के हिसाब से चुनें:
+
+- **L (Low)** — ~7% करेक्शन, साफ़ माहौल के लिए
+- **M (Medium)** — ~15% करेक्शन, सामान्य उपयोग के लिए
+- **Q (Quartile)** — ~25% करेक्शन, लोगो के साथ
+- **H (High)** — ~30% करेक्शन, सबसे ज़्यादा मज़बूती
+
+```tsx
+<QRCode
+  value="https://example.com"
+  level="Q"
+/>
+```
+
+## कॉम्पोनेंट वेरिएंट [#component-variants]
+
+### QRCodeCanvas [#qrcodecanvas]
+
+ग्रेडिएंट के साथ एडवांस्ड कस्टमाइज़ेशन के लिए:
+
+```tsx
+import { QRCodeCanvas } from 'qrdx';
+
+<QRCodeCanvas
+  value="https://example.com"
+  size={512}
+  fgColor={{
+    type: 'linear',
+    stops: [
+      { offset: 0, color: '#667eea' },
+      { offset: 1, color: '#764ba2' }
+    ],
+    x1: 0, y1: 0, x2: 1, y2: 1
+  }}
+/>
+```
+
+### QRCodeSVG [#qrcodesvg]
+
+स्केलेबल वेक्टर ग्राफ़िक्स के लिए:
+
+```tsx
+import { QRCodeSVG } from 'qrdx';
+
+<QRCodeSVG
+  value="https://example.com"
+  size={512}
+/>
+```
+
+## सर्वोत्तम तरीके [#best-practices]
+
+### साइज़ के दिशानिर्देश [#size-guidelines]
+
+- **128px** — स्कैन करने के लिए न्यूनतम
+- **256-512px** — वेब के लिए अनुशंसित
+- **1024px+** — उच्च क्वालिटी प्रिंट
+
+### एरर करेक्शन [#error-correction-1]
+
+- लोगो जोड़ते समय `Q` या `H` इस्तेमाल करें
+- सामान्य एप्लिकेशन के लिए `M` इस्तेमाल करें
+- `L` केवल साफ़ माहौल में इस्तेमाल करें
+
+### परफ़ॉर्मेंस [#performance]
+
+- जहाँ संभव हो, ग्रेडिएंट की जगह सॉलिड रंग इस्तेमाल करें
+- बेहतर परफ़ॉर्मेंस के लिए सरल पैटर्न चुनें
+- जहाँ संभव हो, QR कोड को सर्वर-साइड कैश करें
+
+## अगले चरण [#next-steps]
+
+- [रंग और ग्रेडिएंट](/docs/features/colors-gradients) — एडवांस्ड रंग विकल्प
+- [टेम्पलेट](/docs/features/templates) — पहले से बने स्टाइल
+- [डाउनलोड](/docs/features/downloads) — एक्सपोर्ट विकल्प

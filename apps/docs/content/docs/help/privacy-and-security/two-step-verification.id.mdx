@@ -1,0 +1,133 @@
+---
+title: "Verifikasi dua langkah"
+description: "Tambahkan langkah kedua pada setiap proses masuk dengan passkey atau aplikasi autentikator, simpan kode cadangan, dan masuk kembali jika ponsel Anda hilang."
+---
+
+Verifikasi dua langkah (disebut juga 2FA) menambahkan langkah kedua saat masuk. Setelah Anda masuk dengan kode email, Google, atau GitHub<IfAvailable feature="sso"> (atau single sign-on workspace Anda)</IfAvailable>, QRdx meminta <IfAvailable feature="passkeys">passkey Anda atau </IfAvailable>kode 6 digit dari aplikasi autentikator. Orang yang berhasil masuk ke email atau akun Google Anda tetap tidak bisa masuk ke QRdx tanpa langkah ini.
+
+<IfAvailable feature="passkeys">
+[Passkey](/docs/help/privacy-and-security/passkeys) memastikan bahwa itu benar Anda melalui sidik jari, wajah, kunci layar, atau kunci keamanan. Passkey hanya berfungsi di situs resmi QRdx, sehingga situs tiruan tidak dapat mengambilnya.
+</IfAvailable>
+
+Aplikasi autentikator juga bisa digunakan: aplikasi apa pun yang menampilkan kode 6 digit yang berganti setiap 30 detik, termasuk fitur kode sekali pakai di sebagian besar pengelola kata sandi. QRdx tidak mengirim kode langkah kedua lewat email atau pesan teks.
+
+Anda dapat menyiapkan keduanya, lalu menggunakan mana pun yang tersedia saat masuk.
+
+## Aktifkan [#turn-it-on]
+
+1. Buka **Settings** → **Profile & security**.
+2. Di bawah **Two-step verification**, klik **Turn on**, lalu [konfirmasikan bahwa itu Anda](#confirm-its-you).
+3. Siapkan langkah kedua Anda<IfAvailable feature="passkeys">: pilih **Passkey** atau **Authenticator app**</IfAvailable>, seperti dijelaskan di bawah.
+4. Simpan 10 kode cadangan Anda. Salin atau unduh sebagai file teks, lalu simpan di tempat aman, misalnya pengelola kata sandi. QRdx hanya menampilkannya sekali. Centang **I've saved my backup codes** dan klik **Done**.
+
+<IfAvailable feature="passkeys">
+Untuk passkey, pertahankan nama yang disarankan (browser dan sistem Anda, seperti "Chrome on macOS") atau ketik nama sendiri, klik **Continue**, lalu biarkan browser Anda menyimpan passkey.
+</IfAvailable>
+
+Untuk aplikasi autentikator, pindai kode QR dengan aplikasi tersebut, atau ketik kunci yang ditampilkan di bawahnya. Masukkan kode 6 digit dari aplikasi dan klik **Verify**.
+
+Verifikasi dua langkah kini aktif, dan setiap browser atau perangkat lain yang masuk ke akun Anda akan keluar. Masing-masing harus masuk lagi, kali ini dengan langkah kedua. Browser tempat Anda mengaktifkannya tetap masuk.<IfAvailable feature="passkeys"> Untuk menambahkan metode lain nanti, gunakan bagian yang sama. Kode cadangan yang sudah Anda miliki tetap berlaku, dan tidak ada yang dikeluarkan.</IfAvailable>
+
+<IfAvailable feature="passkeys">
+Jika Anda menambahkan passkey sebelum verifikasi dua langkah dapat menggunakannya, Settings menampilkan **Your passkey is ready to be your second step**. Klik **Turn on**, konfirmasikan bahwa itu Anda, verifikasi dengan passkey tersebut, dan simpan kode cadangan Anda. Langkah ini juga mengeluarkan perangkat Anda yang lain.
+</IfAvailable>
+
+Kami mengirim email ke alamat akun Anda setiap kali verifikasi dua langkah diaktifkan atau dinonaktifkan, sebuah metode ditambahkan atau dihapus, kode cadangan baru dibuat, atau sebuah kode cadangan digunakan. Kami juga mengirim email saat tim dukungan diminta menonaktifkan verifikasi dua langkah untuk Anda.
+
+## Masuk dengan verifikasi dua langkah [#sign-in-with-it]
+
+Masuklah seperti biasa. QRdx kemudian meminta langkah kedua.
+
+<IfAvailable feature="passkeys">
+Jika Anda memiliki passkey, perintah passkey di browser Anda terbuka dengan sendirinya. Beberapa browser baru membukanya setelah klik: dalam kasus itu, klik **Continue with passkey**. Jika Anda menutup perintah tersebut atau waktunya habis, coba lagi, atau pilih metode lain.
+</IfAvailable>
+
+Di bawah langkah ini, **Use an authenticator code** dan **Use a backup code** beralih ke metode lain yang Anda miliki. QRdx mengingat metode yang terakhir Anda gunakan di browser ini dan memulai dengan metode itu pada kesempatan berikutnya.
+
+Kode autentikator berganti setiap 30 detik, jadi jika sebuah kode ditolak, tunggu kode berikutnya.
+
+Setiap langkah masuk mengizinkan 5 kode yang salah<IfAvailable feature="passkeys">, dan passkey yang gagal diverifikasi dihitung sebagai satu</IfAvailable>. Setelah itu, mulai proses masuk dari awal. Setelah 10 kode salah berturut-turut, QRdx berhenti menerima kode untuk akun Anda selama 15 menit.
+
+Langkah ini kedaluwarsa setelah 10 menit. Jika itu terjadi, masuk lagi.
+
+## Kode cadangan [#backup-codes]
+
+Kode cadangan berfungsi sebagai pengganti langkah kedua Anda, saat Anda tidak memegang ponsel<IfAvailable feature="passkeys"> atau passkey</IfAvailable>. Pada langkah kedua, klik **Use a backup code** dan masukkan salah satunya. Kode berbentuk seperti `ABCDE-FGH23`: huruf kapital dan angka 2 sampai 9, tanpa 0, O, 1, atau I agar tidak tertukar. Anda boleh mengetiknya dengan huruf kecil, dengan atau tanpa tanda hubung. Setiap kode hanya berlaku sekali.
+
+Setiap kali kode cadangan digunakan, baik untuk masuk maupun untuk mengonfirmasi bahwa itu Anda, kami mengirim email ke alamat akun Anda berisi jumlah kode yang tersisa. Jika itu bukan Anda, berarti seseorang memiliki kode cadangan Anda: segera hubungi tim dukungan.
+
+Settings menampilkan jumlah kode yang tersisa. Saat tersisa 2 kode atau kurang, buat yang baru: klik **New codes** dan konfirmasikan bahwa itu Anda. Kode lama Anda tidak akan berfungsi lagi.
+
+## Perangkat tepercaya [#trusted-devices]
+
+Pada langkah kedua, centang **Don't ask again on this device for 30 days** untuk melewatinya di browser tersebut selama 30 hari. Gunakan hanya pada perangkat milik Anda. Menonaktifkan verifikasi dua langkah akan menghapus semua perangkat tepercaya.
+
+## Proses masuk yang memintanya [#which-sign-ins-ask-for-it]
+
+Semuanya: kode email, Google, dan GitHub<IfAvailable feature="sso">, serta single sign-on workspace</IfAvailable>. Ini termasuk masuk kembali di browser tempat Anda sudah masuk.
+
+<IfAvailable feature="passkeys">
+Masuk dengan **Continue with passkey** adalah pengecualian. Masuk dengan passkey sudah menggunakan dua faktor, yaitu perangkat dan sidik jari, wajah, atau kunci layar Anda, sehingga QRdx tidak meminta langkah kedua. QRdx hanya menerima passkey yang memverifikasi Anda dengan cara itu.
+</IfAvailable>
+
+## Ubah metode Anda [#change-your-methods]
+
+Di **Settings** → **Profile & security**, pada **Two-step verification**, siapkan atau hapus aplikasi autentikator<IfAvailable feature="passkeys">, serta tambahkan, ganti nama, atau hapus passkey</IfAvailable>. Setiap perubahan meminta Anda mengonfirmasi bahwa itu Anda.
+
+Jika Anda menghapus metode terakhir, verifikasi dua langkah dinonaktifkan dan kode cadangan Anda tidak berfungsi lagi. QRdx memberi tahu Anda sebelum Anda mengonfirmasi.
+
+## Konfirmasikan bahwa itu Anda [#confirm-its-you]
+
+Sebelum perubahan pada keamanan akun Anda, QRdx meminta Anda mengonfirmasi bahwa itu Anda, meskipun Anda sudah masuk. Ini mencakup:
+
+- mengubah alamat email Anda;
+- menghapus akun Anda;
+- mengaktifkan atau menonaktifkan verifikasi dua langkah, dan membuat kode cadangan baru;
+- menambahkan atau menghapus aplikasi autentikator<IfAvailable feature="passkeys">, serta menambahkan, mengganti nama, atau menghapus passkey</IfAvailable>;
+- menautkan atau melepas tautan akun Google atau GitHub;
+- membuat kunci API, membuat aplikasi OAuth, atau membuat client secret baru untuknya;
+- menyetujui aplikasi yang meminta untuk menggunakan akun QRdx Anda, pada layar **Authorize**;
+- menambahkan endpoint webhook, mengubah URL endpoint, serta menampilkan atau merotasi signing secret-nya;
+- menambahkan webhook notifikasi Slack atau Discord, atau menghubungkan integrasi yang mengirim data pemindaian atau jawaban formulir Anda ke alat lain;
+- di workspace: menghapusnya, mengubah peran seseorang, mengeluarkan seseorang, mengundang admin lewat email atau dengan tautan bergabung, serta [mewajibkan verifikasi dua langkah](/docs/help/teams/require-two-step-verification) atau tidak lagi mewajibkannya.
+
+<IfAvailable feature="sso">
+Hal yang sama berlaku untuk membuat, mengedit, memverifikasi, atau menghapus koneksi single sign-on workspace, atau mewajibkan single sign-on.
+</IfAvailable>
+
+Dengan verifikasi dua langkah aktif, konfirmasikan dengan <IfAvailable feature="passkeys">passkey Anda, </IfAvailable>kode dari aplikasi autentikator Anda, atau kode cadangan (yang kemudian habis terpakai). QRdx tidak menawarkan kode lewat email di sini, sehingga akses ke email Anda saja tidak cukup untuk mengubah keamanan Anda.
+
+Jika verifikasi dua langkah nonaktif, konfirmasikan dengan salah satu cara berikut:
+
+- kode 6 digit yang dikirim QRdx ke email Anda;
+- masuk kembali dengan akun Google atau GitHub yang sudah Anda tautkan<IfAvailable feature="sso">, atau single sign-on workspace Anda jika menggunakan OIDC</IfAvailable>.
+
+<IfAvailable feature="passkeys">
+Passkey Anda juga bisa digunakan, jika Anda memilikinya.
+</IfAvailable>
+
+Masuk kembali akan membawa Anda ke proses masuk tersebut, tempat Anda diminta memilih atau masuk ke akun Anda, lalu kembali ke halaman yang sama. Perubahan Anda tidak tersimpan selama Anda pergi, jadi lakukan lagi setelah kembali. Gunakan akun yang Anda tautkan: QRdx tidak akan memindahkan Anda ke akun lain atau membuat akun baru.
+
+Jadi, jika Anda tidak bisa mengakses email, Anda masih bisa mengonfirmasi dengan cara lain. Jika tidak ada satu pun yang bisa, lihat [Kehilangan akses ke email Anda](/docs/help/account-and-billing/sign-in#lost-access-to-your-email).
+
+Konfirmasi berlaku selama 10 menit di browser tersebut, sehingga beberapa perubahan berturut-turut hanya meminta sekali.
+
+Masuk juga dihitung sebagai konfirmasi, selama 10 menit di browser tersebut. Dengan verifikasi dua langkah aktif, itu hanya berlaku untuk proses masuk yang Anda jawab langkah keduanya<IfAvailable feature="passkeys"> atau yang menggunakan **Continue with passkey**</IfAvailable>, bukan proses masuk yang langkah keduanya dilewati oleh perangkat tepercaya.<IfAvailable feature="sso"> Membuka QRdx dari dasbor aplikasi penyedia identitas Anda juga tidak dihitung, kecuali Anda menjawab langkah kedua.</IfAvailable>
+
+Mengeluarkan perangkat Anda yang lain tidak pernah meminta konfirmasi, sehingga jika orang lain masuk ke akun Anda, Anda dapat langsung mengeluarkannya.
+
+## Matikan [#turn-it-off]
+
+Buka **Settings** → **Profile & security**, klik **Turn off** di bawah **Two-step verification**, lalu konfirmasikan bahwa itu Anda. Kode cadangan Anda, beserta pengaturan aplikasi autentikator jika Anda memilikinya, akan dihapus.
+
+Jika sebuah workspace yang Anda ikuti [mewajibkan verifikasi dua langkah](/docs/help/teams/require-two-step-verification), Anda tidak dapat membukanya lagi sampai Anda mengaktifkannya kembali.
+
+## Ponsel dan kode cadangan Anda hilang [#lost-your-phone-and-your-backup-codes]
+
+Jika Anda masih memiliki <IfAvailable feature="passkeys">passkey, </IfAvailable>aplikasi autentikator, atau kode cadangan, masuklah dengan salah satunya lalu ubah metode Anda di Settings.
+
+Jika Anda kehilangan semua cara untuk langkah kedua, kirim email ke [support@qrdx.dev](mailto:support@qrdx.dev) dari alamat email akun Anda dan ceritakan apa yang terjadi. Orang yang menulis kepada kami bisa jadi bukan Anda, jadi setelah kami memastikan permintaan itu berasal dari alamat tersebut, penonaktifan oleh dukungan baru berlaku setelah 7 hari:
+
+- **Kami mengirim email ke alamat itu pada hari permintaan diproses.** Sampai saat itu tidak ada yang berubah, dan Anda tetap masuk di perangkat tempat Anda sedang masuk.
+- **Jika Anda tidak memintanya, hentikan.** Masuklah dengan aplikasi autentikator atau kode cadangan: itu akan membatalkannya.<IfAvailable feature="passkeys"> Masuk dengan passkey tidak membatalkannya, karena reset ini untuk perangkat yang hilang dan passkey mungkin tersimpan di perangkat itu.</IfAvailable> Anda juga dapat mengeklik **Cancel** di bawah **Two-step verification** di **Settings** → **Profile & security** lalu [konfirmasikan bahwa itu Anda](#confirm-its-you), atau membalas email tersebut. Kami akan mengirim email kepada Anda saat pembatalan selesai.
+- **Pada hari itu, verifikasi dua langkah dimatikan.** Pengaturan aplikasi autentikator, kode cadangan, dan perangkat tepercaya Anda dihapus,<IfAvailable feature="passkeys"> passkey Anda tetap ada,</IfAvailable> akun Anda dikeluarkan di semua perangkat, dan kami mengirim email untuk memberi tahu Anda. Setelah itu, masuklah seperti biasa dan aktifkan kembali.

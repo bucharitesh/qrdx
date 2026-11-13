@@ -51,9 +51,11 @@ import {
   removeFromHistory,
   writeHistoryPreference,
 } from "./history";
-import { ImageScan } from "./image-scan";
+import { ImageScan, type IncomingImages } from "./image-scan";
+import { InstallScanner } from "./install-app";
 import { parseScan } from "./parse";
 import { ResultCard } from "./result-card";
+import { launchIntent, takeSharedImages } from "./shared-images";
 
 const HISTORY_PAGE = 30;
 
@@ -72,6 +74,7 @@ export function Scanner() {
   const [saveHistory, setSaveHistory] = useState(true);
   const [historyShown, setHistoryShown] = useState(HISTORY_PAGE);
   const [viewing, setViewing] = useState<HistoryEntry | null>(null);
+  const [incoming, setIncoming] = useState<IncomingImages | null>(null);
   const resultsRef = useRef<HTMLHeadingElement>(null);
   const batchRef = useRef(batch);
   const batchKeys = useRef(new Set<string>());
@@ -85,6 +88,29 @@ export function Scanner() {
       setHistory(entries);
       setHistoryLoaded(true);
     });
+  }, []);
+
+  // The installed app opens with #shared (images shared to it), #image or
+  // #camera (its shortcuts). The hash is cleared so a reload starts fresh.
+  useEffect(() => {
+    const intent = launchIntent(window.location.hash);
+    if (!intent) return;
+    window.history.replaceState(
+      window.history.state,
+      "",
+      window.location.pathname + window.location.search,
+    );
+    if (intent === "camera") {
+      setTab("camera");
+      setCameraOn(true);
+      return;
+    }
+    setTab("image");
+    if (intent === "shared") {
+      takeSharedImages().then((files) =>
+        setIncoming({ files, id: Date.now() }),
+      );
+    }
   }, []);
 
   const remember = useCallback(async (entries: HistoryEntry[]) => {
@@ -220,7 +246,7 @@ export function Scanner() {
           />
         </TabsContent>
         <TabsContent value="image">
-          <ImageScan onDetect={onImageDetect} />
+          <ImageScan incoming={incoming} onDetect={onImageDetect} />
         </TabsContent>
       </Tabs>
 
@@ -411,10 +437,15 @@ export function Scanner() {
         )}
       </section>
 
-      <p className="text-muted-foreground flex items-start gap-2 text-xs leading-relaxed">
-        <ShieldCheck aria-hidden className="mt-0.5 size-3.5 shrink-0" />
-        {t("privacy")}
-      </p>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
+        <p className="text-muted-foreground flex max-w-2xl items-start gap-2 text-xs leading-relaxed">
+          <ShieldCheck aria-hidden className="mt-0.5 size-3.5 shrink-0" />
+          {t("privacy")}
+        </p>
+        <div className="shrink-0 empty:hidden">
+          <InstallScanner />
+        </div>
+      </div>
 
       <Dialog
         onOpenChange={(open) => !open && setViewing(null)}

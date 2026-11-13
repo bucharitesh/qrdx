@@ -184,6 +184,7 @@
       "pageTemplates": "Page templates",
       "pricing": "Pricing",
       "guarantee": "Never-Hostage Guarantee",
+      "enterprise": "Enterprise",
       "slackBot": "Slack bot",
       "telegramBot": "Telegram bot",
       "discordBot": "Discord bot",
@@ -227,6 +228,7 @@
       "refunds": "Refunds",
       "affiliateTerms": "Affiliate terms",
       "security": "Security",
+      "securityPolicy": "Security policy",
       "allComparisons": "All comparisons"
     }
   },
@@ -509,7 +511,9 @@
       "inr": "Prices in ₹ for India.",
       "usd": "Prices in US$.",
       "showInr": "In India? See prices in ₹",
-      "showUsd": "Show prices in US$"
+      "showUsd": "Show prices in US$",
+      "eur": "Prices in € for the EU and EEA.",
+      "showEur": "In the EU or EEA? See prices in €"
     },
     "price": {
       "forever": "forever",
@@ -553,6 +557,13 @@
       "guide": "Self-hosting guide"
     },
     "footnote": "Polar handles checkout as merchant of record; local taxes may be added at checkout. Customers in India are charged in ₹, everyone else in US$.",
+    "footnoteEur": "Polar handles checkout as merchant of record; local taxes may be added at checkout. Customers in India are charged in ₹, customers in the EU and EEA in €, everyone else in US$.",
+    "offers": {
+      "moneyBack": "{days, number}-day money-back guarantee on your first payment.",
+      "moneyBackLink": "How refunds work",
+      "nonprofit": "Non-profit or charity? {percent, number}% off Pro and Business.",
+      "nonprofitLink": "Ask for a code"
+    },
     "values": {
       "unlimited": "Unlimited",
       "days": "{count, plural, one {# day} other {# days}}",
@@ -700,6 +711,10 @@
           "question": "What happens if I cancel?",
           "answer": "Nothing breaks. Your plan stays active until the end of the period you paid for, then your account moves to Free. Every dynamic code keeps redirecting and every scan is still counted: that's our Never-Hostage Guarantee. On Free you can't create more than the Free limits allow, and analytics show the last 90 days."
         },
+        "refund": {
+          "question": "Can I get my money back?",
+          "answer": "Yes. Your first payment for Pro or Business, monthly or yearly, comes with a {days, number}-day money-back guarantee: email support@qrdx.dev from your account's email address within {days, number} days of paying and we refund it in full, no questions asked. It's once per customer. Your codes keep working afterwards on the Free plan."
+        },
         "paymentFails": {
           "question": "What happens if a payment fails?",
           "answer": "Your codes keep working. If the subscription lapses, your account follows the Free limits, exactly as if you had cancelled. We never pause codes, show ads, or send your scanners to a QRdx page because of billing."
@@ -712,6 +727,10 @@
           "question": "Why do I see prices in ₹?",
           "answer": "Visitors from India see prices in Indian rupees: Pro is {proMonthly} a month or {proYearly} a year, Business {businessMonthly} a month or {businessYearly} a year. Checkout charges customers in India in ₹ and everyone else in US$, whichever currency you browsed in. Use the switch above the plans to change the display currency."
         },
+        "currencies": {
+          "question": "Why do I see prices in ₹ or €?",
+          "answer": "Prices show in the currency of the country you're in. In India, Pro is {proMonthly} a month or {proYearly} a year and Business {businessMonthly} a month or {businessYearly} a year. In the EU and EEA, Pro is {proMonthlyEur} a month or {proYearlyEur} a year and Business {businessMonthlyEur} a month or {businessYearlyEur} a year. Everywhere else it's US$. Checkout charges the currency of your country, whichever currency you browsed in. Use the switch above the plans to change the display currency."
+        },
         "switchPlans": {
           "question": "Can I switch plans or billing periods later?",
           "answer": "Yes. Open Manage subscription in your settings to change or cancel your plan in the Polar billing portal. Moving to a smaller plan never turns off existing codes, pages or domains."
@@ -723,6 +742,10 @@
         "selfHost": {
           "question": "Can I self-host instead?",
           "answer": "Yes. QRdx is open source under the AGPL-3.0. Run it with your own Postgres database by following the self-hosting guide; the plan limits are defined in one file that you can change for your instance."
+        },
+        "nonprofit": {
+          "question": "Do you have a discount for non-profits?",
+          "answer": "Yes. Registered non-profits and charities get {percent, number}% off Pro or Business, monthly or yearly. Tell us about your organization with the non-profit link under the plans. We usually reply within a few days, with a discount code to enter at checkout."
         },
         "billing": {
           "question": "Who handles billing and taxes?",
@@ -748,6 +771,38 @@
       "close": "Close",
       "signIn": "Sign in to ask for an invoice",
       "signInNote": "We send the invoice for your account's workspace, so sign in first."
+    },
+    "enterprise": {
+      "name": "Enterprise",
+      "tagline": "For companies that need a contract and a security review",
+      "price": "Custom",
+      "priceNote": "Yearly contract, paid by invoice",
+      "cta": "Contact us",
+      "lead": "Everything in Business, plus:",
+      "adds": {
+        "contract": "A yearly contract, paid by invoice",
+        "replies": "Replies within {hours, plural, one {# business hour} other {# business hours}} when codes stop working",
+        "review": "Answers for your security review",
+        "selfHost": "SSO and audit log on your own server"
+      },
+      "security": "Security at QRdx"
+    },
+    "nonprofit": {
+      "title": "Non-profit discount",
+      "description": "Registered non-profits and charities get {percent, number}% off Pro or Business, monthly or yearly. Tell us about your organization and we'll email you a discount code to enter at checkout.",
+      "organization": "Organization name",
+      "country": "Country",
+      "registration": "Registration number or link",
+      "registrationHint": "Your number in a charity or non-profit register, or a link to your entry in a public register.",
+      "contactEmail": "Contact email",
+      "plan": "Plan",
+      "reply": "We usually reply within a few days. Nothing is charged until you check out.",
+      "submit": "Send request",
+      "sending": "Sending…",
+      "sentTitle": "Request sent",
+      "sent": "We'll reply to {email}, usually within a few days. If your organization qualifies, the reply has a discount code to enter at checkout.",
+      "close": "Close",
+      "failed": "Something went wrong. Email {email} instead."
     }
   },
   "docs": {
@@ -1382,7 +1437,16 @@
       "browsersQuestion": "Which browsers are supported?",
       "browsersAnswer": "Any modern browser with camera access: Chrome, Edge, Safari and Firefox on phones and computers. Browsers with a built-in barcode reader (Chrome on Android and macOS) use it directly; others download an open-source decoder (ZXing, compiled to WebAssembly, about 1 MB from the jsDelivr CDN) the first time you scan. The camera needs an https page and your permission.",
       "installQuestion": "Can I install the scanner as an app?",
-      "installAnswer": "Yes. Use your browser's Install or Add to Home Screen option on this page to get a scanner icon that opens straight to the camera."
+      "installAnswer": "Yes. In Chrome, Edge or Samsung Internet, tap Install app under the scanner, or use the browser's own Install option. On iPhone and iPad, tap Add to Home Screen under the scanner for the steps. The app opens straight to the scanner in its own window, works offline once you've scanned with it, and keeps its history on your device.",
+      "shareQuestion": "Can I scan a QR code from a screenshot?",
+      "shareAnswer": "Yes. Switch to Image and choose, drop or paste the screenshot. On Android, once the scanner is installed, you can also share a screenshot or photo to QRdx Scanner from any app: it opens and reads the code on your device. Shared images aren't uploaded or kept."
+    },
+    "app": {
+      "name": "QRdx Scanner",
+      "shortName": "QRdx Scanner",
+      "description": "Scan QR codes and barcodes with your camera or from a screenshot. Images are read on your device, and links are checked before they open.",
+      "cameraShortcut": "Scan with camera",
+      "imageShortcut": "Scan from image"
     }
   },
   "scanner": {
@@ -1467,7 +1531,8 @@
       "drop": "Drop images here, choose files or paste",
       "dropHelp": "Screenshots and photos work, with several codes per image.",
       "choose": "Choose images",
-      "paste": "Paste image"
+      "paste": "Paste image",
+      "shareMissing": "The shared image didn't arrive. Choose it here instead."
     },
     "result": {
       "starts": "Starts",
@@ -1578,6 +1643,19 @@
       "copy": "Copy link",
       "retry": "Try again",
       "report": "Report this code"
+    },
+    "install": {
+      "install": "Install app",
+      "iosButton": "Add to Home Screen",
+      "iosTitle": "Add the scanner to your Home Screen",
+      "iosShare": "Tap Share. In Safari on iPhone, it's in the menu next to the address.",
+      "iosAdd": "Swipe up and choose Add to Home Screen.",
+      "iosConfirm": "Leave Open as Web App on, then tap Add.",
+      "macButton": "Add to Dock",
+      "macTitle": "Add the scanner to your Dock",
+      "macAdd": "In the menu bar, choose File, then Add to Dock.",
+      "macConfirm": "Click Add.",
+      "after": "It opens straight to the scanner in its own window, and works offline once you've scanned a code with it."
     }
   },
   "scanPages": {
@@ -1850,7 +1928,8 @@
           "choices": "Choose from the options",
           "choice": "Choose one of the options",
           "invalid": "Invalid value"
-        }
+        },
+        "checkAnswer": "This answer needs another look."
       }
     }
   },
@@ -1952,6 +2031,36 @@
       "savedDescription": "Find it under Barcodes in your dashboard.",
       "open": "Open",
       "save": "Save to dashboard"
+    },
+    "issues": {
+      "enterDigits": "Enter {short} digits, or all {length} with the check digit.",
+      "digitsOnly": "{label} takes digits only.",
+      "checkDigitAdded": "Check digit {check} added.",
+      "wrongCheckDigit": "The check digit should be {expected}, not {given}. Check the number, or leave the last digit off and it's worked out for you.",
+      "wrongLength": "{label} needs {short} or {length} digits; this has {count, plural, one {# digit} other {# digits}}.",
+      "upceEnter": "Enter 6 to 8 digits, or a 12-digit UPC-A to shorten.",
+      "upceSystem": "Only UPC-A numbers starting with 0 or 1 have a UPC-E form. Use UPC-A instead.",
+      "upceNoForm": "This UPC-A number has no UPC-E form: only numbers with zeros in the right places can be shortened. Use UPC-A instead.",
+      "shortenedFromUpca": "Shortened from UPC-A {upca}.",
+      "numberSystemAssumed": "Number system 0 assumed.",
+      "upceLength": "UPC-E needs 6, 7 or 8 digits (or a 12-digit UPC-A); this has {count, plural, one {# digit} other {# digits}}.",
+      "upceStart": "A UPC-E number starts with number system 0 or 1.",
+      "enterText": "Enter the text to encode.",
+      "tooLong": "{label} here takes up to {max, number} characters; this has {count, number}.",
+      "code128Chars": "Code 128 here takes plain ASCII letters, digits, spaces and symbols. Not allowed: {chars}",
+      "code39Chars": "Code 39 takes capital letters, digits, spaces and - . $ / + % only. Not allowed: {chars}",
+      "code39Lowercase": "Code 39 has no lowercase letters. Use capitals, or Code 128 for mixed case.",
+      "gs1Enter": "Enter Application Identifiers in brackets with their values, e.g. (01)09501101530003.",
+      "gs1Start": "Start with an Application Identifier in brackets, e.g. (01) for a GTIN, then its value.",
+      "gs1Brackets": "Brackets don't line up: write each AI as (digits), followed by its value.",
+      "gs1BadAi": "“({ai})” isn't an Application Identifier: AIs are 2 to 4 digits.",
+      "gs1NoValue": "AI ({ai}) has no value after it.",
+      "gs1BadChars": "AI ({ai}) has characters GS1 doesn't allow: {chars}",
+      "gs1Ai": "AI ({ai}): {inner}",
+      "gs1TooLong": "GS1-128 holds up to {max} characters of AIs and data; this has {count}. Split it over two barcodes.",
+      "unknownFormat": "Unknown barcode format.",
+      "space": "space",
+      "lineBreak": "a line break"
     }
   },
   "guarantee": {
@@ -1995,9 +2104,322 @@
         "outcome": "You get at least 12 months' notice, time to export everything, and a documented path to run the open-source app on your own server."
       }
     },
+    "moneyBackTitle": "Money-back guarantee",
+    "moneyBack": "Your first payment for Pro or Business, monthly or yearly, comes with a {days, number}-day money-back guarantee. If the plan isn't right for you, email <mail>{email}</mail> within {days, number} days of paying and we refund it in full, no questions asked. It's once per customer, and your codes keep working on the Free plan afterwards.",
+    "moneyBackLink": "Read the refund policy",
     "exceptionTitle": "The one exception: abuse",
     "exception": "We disable a code only when it breaks our <terms>terms of service</terms>, for example by pointing to phishing or malware. That's a safety decision made after a report or a review, never a billing one. Anyone can <report>report a code</report>.",
     "questions": "Questions about the guarantee? Email <mail>{email}</mail>. Last updated <time>{date, date, long}</time>."
+  },
+  "enterprise": {
+    "metaTitle": "QRdx Enterprise: SSO, Audit Log, Contracts and Reply Times",
+    "metaDescription": "QRdx for larger teams: single sign-on, an audit log with CSV export, roles, custom domains and a client portal, with a yearly contract, written reply times and payment by invoice.",
+    "crumb": "Enterprise",
+    "title": "QRdx for enterprise teams",
+    "intro1": "For companies that put QR codes on packaging, signs and campaigns across many teams, brands or clients, and need single sign-on, an audit trail and a contract before they roll them out.",
+    "intro2": "Enterprise is the Business plan with a contract around it: written reply times, payment by invoice and answers for your security review.",
+    "contactCta": "Contact us",
+    "securityCta": "How we handle security",
+    "whoTitle": "Who it's for",
+    "who": {
+      "brands": {
+        "title": "Brands and retailers",
+        "body": "Codes on packaging, menus and signs in many places, run by several teams that each need their own access."
+      },
+      "agencies": {
+        "title": "Agencies",
+        "body": "A workspace per client, a read-only portal for each client and stats pages in their branding."
+      },
+      "security": {
+        "title": "IT and security teams",
+        "body": "A vendor that signs people in through your identity provider, records who changed what and answers your security questionnaire."
+      }
+    },
+    "featuresTitle": "What you get",
+    "featuresIntro": "Everything in the Business plan. Each item works on qrdx.dev today.",
+    "features": {
+      "sso": {
+        "title": "Single sign-on",
+        "body": "OIDC or SAML 2.0 for your email domain, proven with a DNS record. Require it, and your identity provider becomes the only way in for that domain."
+      },
+      "auditLog": {
+        "title": "Audit log",
+        "body": "Who changed which code, page, member, domain, API key or setting, and when. Filter it, export up to {rows, number} rows as CSV, and keep {days, number} days of history."
+      },
+      "roles": {
+        "title": "Roles and two-step verification",
+        "body": "Owners, admins, members, billing members and read-only viewers. Workspaces can require two-step verification of everyone in them."
+      },
+      "seats": {
+        "title": "Workspaces and seats",
+        "body": "Unlimited members, with a separate workspace for each team, brand or client, and its own roles in each."
+      },
+      "domains": {
+        "title": "Custom domains",
+        "body": "Short links and hosted pages on up to {count, number} of your own domains."
+      },
+      "clients": {
+        "title": "Client portal and branded stats",
+        "body": "A read-only portal where clients see the folders you share with them, and stats pages in their branding without the QRdx mark."
+      },
+      "api": {
+        "title": "API and bulk creation",
+        "body": "{requests, number} API requests a day, up to {batch, number} codes in one API call, and CSV imports of up to {importRows, number} rows."
+      },
+      "export": {
+        "title": "Your data, exportable",
+        "body": "Download everything in your account as a ZIP, and export scans, form responses and the audit log as CSV."
+      }
+    },
+    "contractTitle": "What the contract adds",
+    "contractIntro": "On top of the Business plan:",
+    "contract": {
+      "replies": {
+        "title": "Written reply times",
+        "body": "Within {outage, plural, one {# business hour} other {# business hours}} when your codes or hosted pages stop working, and within {other, plural, one {# business day} other {# business days}} for everything else."
+      },
+      "invoice": {
+        "title": "A yearly contract, paid by invoice",
+        "body": "Pay by bank transfer instead of a card, with your company's details, tax ID and purchase order number on the invoice."
+      },
+      "review": {
+        "title": "Answers for your security review",
+        "body": "We fill in your security questionnaire and send a signed copy of the Data Processing Addendum."
+      },
+      "selfHost": {
+        "title": "Single sign-on and audit log when you self-host",
+        "body": "QRdx is open source, but single sign-on and the audit log are under the QRdx commercial license. An Enterprise agreement lets you run them on your own server with a license key."
+      }
+    },
+    "limitsNote": "On qrdx.dev, Enterprise workspaces have the Business plan's limits. If you need more of something, say so in the form.",
+    "repliesTitle": "Reply times",
+    "replies": {
+      "when": "When",
+      "enterprise": "Enterprise",
+      "business": "Business",
+      "outage": "Your codes or hosted pages stop working",
+      "other": "Everything else",
+      "hours": "Within {count, plural, one {# business hour} other {# business hours}}",
+      "days": "Within {count, plural, one {# business day} other {# business days}}"
+    },
+    "repliesNote": "Business hours are Monday to Friday, India time. These are reply times: QRdx doesn't offer an uptime guarantee.",
+    "buyTitle": "How to buy",
+    "buy": {
+      "ask": {
+        "title": "Tell us what you need",
+        "body": "Use the form below or email {email}. Mention your team size and anything your security review asks for."
+      },
+      "quote": {
+        "title": "Get answers and a price",
+        "body": "We reply by email with answers to your questions and a yearly price."
+      },
+      "sign": {
+        "title": "Sign and pay by invoice",
+        "body": "Once the contract is signed, we move your workspace to the Business plan and send the invoice."
+      }
+    },
+    "formTitle": "Talk to us",
+    "formIntro": "Tell us about your team and what you need. We reply by email.",
+    "form": {
+      "name": "Name",
+      "email": "Work email",
+      "company": "Company",
+      "teamSize": "Team size",
+      "teamSizePlaceholder": "Choose a size",
+      "sizes": {
+        "1-10": "1 to 10 people",
+        "11-50": "11 to 50 people",
+        "51-200": "51 to 200 people",
+        "201-1000": "201 to 1,000 people",
+        "1000+": "More than 1,000 people"
+      },
+      "need": "What do you need?",
+      "needPlaceholder": "For example: single sign-on for 300 people, a yearly invoice, our security questionnaire",
+      "submit": "Send",
+      "sending": "Sending…",
+      "sentTitle": "Message sent",
+      "sent": "Thanks. We'll reply to {email}.",
+      "privacy": "We use these details only to reply to you. See our <privacy>privacy policy</privacy>.",
+      "errors": {
+        "name": "Enter your name.",
+        "email": "Enter a valid work email address.",
+        "company": "Enter your company's name.",
+        "teamSize": "Choose your team size.",
+        "need": "Tell us what you need.",
+        "rateLimited": "You've sent a few messages already. We'll reply to those, or email {email}.",
+        "check": "Please complete the check above the button and send again.",
+        "notSent": "We couldn't send your message. Email {email} instead.",
+        "unavailable": "This form isn't available here. Email {email} instead.",
+        "unknown": "Something went wrong. Email {email} instead."
+      }
+    },
+    "orEmail": "Prefer email? Write to <mail>{email}</mail>.",
+    "relatedTitle": "Read more",
+    "related": {
+      "security": "Security at QRdx",
+      "dpa": "Data Processing Addendum",
+      "subprocessors": "Subprocessors",
+      "pricing": "Pricing"
+    }
+  },
+  "security": {
+    "metaTitle": "Security at QRdx: Sign-in, Data Storage and Reporting Issues",
+    "metaDescription": "How QRdx protects accounts and data: HTTPS with HSTS, a content security policy, passkeys and two-step verification, single sign-on, an audit log, link checks, where data is stored and how to report a vulnerability.",
+    "crumb": "Security",
+    "title": "Security at QRdx",
+    "intro1": "What QRdx does to protect your account, your codes and your visitors' data. Each item describes something that runs on qrdx.dev today, and the code is open source, so you can check it.",
+    "intro2": "QRdx doesn't have SOC 2 or HIPAA certification, or any other security certification, and isn't promising one.",
+    "reportCta": "Report a vulnerability",
+    "enterpriseCta": "Security review? Contact us",
+    "sections": {
+      "transport": {
+        "title": "Connections and browsers",
+        "items": {
+          "https": {
+            "title": "HTTPS everywhere",
+            "body": "Every page and API call is served over HTTPS, and browsers are told to keep using HTTPS for qrdx.dev for two years (HSTS)."
+          },
+          "csp": {
+            "title": "Content security policy",
+            "body": "QRdx's own pages limit which scripts, frames and connections they may load. Pages that show your account's data get a fresh nonce on every request, so a script injected into them doesn't run."
+          },
+          "framing": {
+            "title": "No framing by other sites",
+            "body": "QRdx's own pages can't be shown inside another site's frame, and the screen where you approve an app can't be framed at all. Browsers are also told not to guess file types."
+          }
+        }
+      },
+      "signIn": {
+        "title": "Signing in",
+        "items": {
+          "passwords": {
+            "title": "No passwords",
+            "body": "You sign in with Google, GitHub or a one-time email code{passkeys, select, yes {, or with a passkey} other {}}. QRdx stores no passwords to leak."
+          },
+          "twoFactor": {
+            "title": "Two-step verification",
+            "body": "A second step with an authenticator app{passkeys, select, yes { or a passkey} other {}}, with backup codes for when you can't use it. Workspaces on Business can require it of every member."
+          },
+          "confirm": {
+            "title": "Confirm it's you",
+            "body": "Security changes, new API keys and webhooks, role changes and deleting a workspace ask you to confirm it's you, even when you're signed in. A confirmation lasts 10 minutes."
+          },
+          "alerts": {
+            "title": "New sign-in alerts",
+            "body": "We email you when a browser or device signs in to your account for the first time, and when your two-step verification settings change."
+          },
+          "sessions": {
+            "title": "Sign-ins that end",
+            "body": "A sign-in lasts 30 days at most, and less if you stop using it. One used from a new country and a new browser must confirm it's you, and you can sign out every other device at once."
+          }
+        }
+      },
+      "workspaces": {
+        "title": "Workspaces and teams",
+        "items": {
+          "sso": {
+            "title": "Single sign-on",
+            "body": "OIDC or SAML 2.0 on Business, for an email domain you prove with a DNS record. SAML responses must be signed with SHA-256 or stronger. When a workspace requires it, every other way in is closed for that domain and sessions last 24 hours at most."
+          },
+          "roles": {
+            "title": "Roles",
+            "body": "Owner, admin, member, billing and viewer. Only owners and admins manage people, domains and settings, and billing members and viewers can't change codes."
+          },
+          "auditLog": {
+            "title": "Audit log",
+            "body": "On Business, owners and admins see who changed which code, page, member, domain, API key or setting, and can export it as CSV. Rows are kept for {days, number} days."
+          },
+          "staff": {
+            "title": "Staff access",
+            "body": "Only QRdx staff accounts can open the admin tools, and every staff action there is recorded in an audit log."
+          }
+        }
+      },
+      "secrets": {
+        "title": "Keys and secrets",
+        "items": {
+          "hashed": {
+            "title": "Hashed keys and tokens",
+            "body": "API keys and OAuth access tokens are stored only as SHA-256 hashes, so a copy of the database doesn't reveal them. Passwords on protected codes are stored as hashes too."
+          },
+          "encrypted": {
+            "title": "Encrypted integration tokens",
+            "body": "Tokens for the tools you connect, such as Google Drive or Slack, are encrypted with AES-256-GCM."
+          },
+          "webhooks": {
+            "title": "Signed webhooks",
+            "body": "Each webhook endpoint has its own secret, and every payload is signed with it, so your server can check it came from QRdx."
+          }
+        }
+      },
+      "abuse": {
+        "title": "Abuse and link safety",
+        "items": {
+          "linkChecks": {
+            "title": "Link checks",
+            "body": "When a dynamic code's destination is set, QRdx checks it against Google Web Risk's lists of malware and phishing sites and refuses flagged ones. A destination that couldn't be checked in time is checked again, and its code is switched off if it's flagged."
+          },
+          "rateLimits": {
+            "title": "Rate limits",
+            "body": "The API, the MCP server, forms and other public endpoints are rate limited per key, account or IP address."
+          },
+          "bots": {
+            "title": "Bot checks on forms",
+            "body": "Public forms use Cloudflare Turnstile and hidden fields that only bots fill in."
+          },
+          "reports": {
+            "title": "Reporting harmful codes",
+            "body": "Anyone can <report>report a QR code</report> that leads to phishing, malware or a scam. Codes that break the rules are switched off."
+          }
+        }
+      },
+      "storage": {
+        "title": "Where data is stored",
+        "items": {
+          "hosting": {
+            "title": "Hosting",
+            "body": "The app runs on Vercel. Its server functions run in Washington, D.C., in the United States, behind Vercel's global edge network."
+          },
+          "database": {
+            "title": "Database",
+            "body": "Accounts, codes, scans and form responses are kept in a Neon Postgres database in AWS US East (N. Virginia). Neon <neon>encrypts data at rest</neon> with AES-256 and keeps encrypted backups."
+          },
+          "files": {
+            "title": "Uploaded files",
+            "body": "Files you upload are stored in Cloudflare R2, in its Asia-Pacific region."
+          },
+          "scans": {
+            "title": "Scan data",
+            "body": "Scanner IP addresses are never stored. Unique visitors are counted with a hash that changes every day."
+          }
+        }
+      },
+      "yourData": {
+        "title": "Your data and the paperwork",
+        "items": {
+          "export": {
+            "title": "Export",
+            "body": "Download everything QRdx keeps about your account as a ZIP from Settings, and export scans, form responses and the audit log as CSV."
+          },
+          "delete": {
+            "title": "Deletion",
+            "body": "Delete codes, pages, files and form responses at any time, or your whole account. Deleted data can stay in the database provider's recovery history for a short time."
+          },
+          "dpa": {
+            "title": "Data Processing Addendum",
+            "body": "The <dpa>DPA</dpa> is part of the Terms for every customer and includes the Standard Contractual Clauses. Ask for a signed copy if you need one."
+          },
+          "subprocessors": {
+            "title": "Subprocessors",
+            "body": "The <list>subprocessors list</list> names every service that handles personal data for QRdx, what it does and where. We update it at least 30 days before a new one starts."
+          }
+        }
+      }
+    },
+    "reportTitle": "Report a vulnerability",
+    "report": "Email <mail>{email}</mail> with a subject that starts with [security], and please don't post it in a public GitHub issue. Our <policy>security policy</policy> covers scope and safe harbor, and <txt>security.txt</txt> has the same contact details.",
+    "reviewTitle": "Doing a security review?",
+    "review": "Send us your questionnaire. <enterprise>Enterprise</enterprise> contracts include answers for your review and a signed DPA."
   },
   "templates": {
     "metaTitle": "QR Code Landing Page Templates with Live Demos",
@@ -4898,6 +5320,23 @@
         "page": {
           "yourProfileHowYouSign": "Your profile, how you sign in, where you're signed in, and your data.",
           "profileSecurity": "Profile & security"
+        },
+        "deletion": {
+          "counts": {
+            "codes": "{count, plural, one {# code} other {# codes}}",
+            "pages": "{count, plural, one {# hosted page} other {# hosted pages}}",
+            "files": "{count, plural, one {# file} other {# files}}",
+            "domains": "{count, plural, one {# custom domain} other {# custom domains}}"
+          },
+          "workspaceEmpty": "Your own workspace is deleted, with your themes, settings and integrations.",
+          "workspaceWith": "Your own workspace is deleted, with its {list}, plus your scans, themes, webhooks and integrations.",
+          "workspaceWithCodes": "Your own workspace is deleted, with its {list}, plus your scans, themes, webhooks and integrations. Its printed QR codes show a \"QR code not found\" page.",
+          "teamPromote": "{team}: {who} ({role, select, owner {owner} admin {admin} billing {billing} viewer {viewer} other {member}}) becomes an owner and takes over what you created in the workspace, so its codes keep working.",
+          "teamStays": "{team}: what you created in the workspace stays with it, under {who}.",
+          "teamDeleted": "{team}: you're the only member, so the workspace and its content are deleted.",
+          "subscriptionCancelled": "Your {plan} subscription is cancelled straight away.",
+          "signedOut": "You're signed out on every device.",
+          "subscriptionBlocker": "Your {plan} subscription can't be cancelled from here right now. Cancel it under Settings → Plan & usage first, or email support@qrdx.dev."
         }
       },
       "affiliate": {
@@ -4985,7 +5424,8 @@
           "appsYouveAllowedToUse": "Apps you've allowed to use your QRdx account through the API. Revoke access to sign an app out right away.",
           "authorizedApps": "Authorized apps",
           "noApiPermissions": "No API permissions",
-          "lastActiveLastactiveat": " · last active {lastActiveAt}",
+          "authorizedOn": "Authorized {authorizedAt}",
+          "authorizedLastActive": "Authorized {authorizedAt} · last active {lastActiveAt}",
           "revoking": "Revoking…",
           "nameCanNoLongerUse": "{name} can no longer use your account"
         }
@@ -5563,7 +6003,13 @@
           "selectLabel": "Select {label}",
           "actionsForLabel": "Actions for {label}",
           "emptyTheTrash": "Empty the trash?",
-          "deleteValueForGood": "Delete {value} for good?",
+          "deleteValueForGood": "Delete {count, plural, one {# barcode} other {# barcodes}} for good?",
+          "movedToTrash": "Moved {count, plural, one {# barcode} other {# barcodes}} to the trash",
+          "movedToTrashSkipped": "Moved {count, plural, one {# barcode} other {# barcodes}} to the trash. {skipped, number} made by others stayed: only owners and admins can delete them.",
+          "restored": "Restored {count, plural, one {# barcode} other {# barcodes}}",
+          "movedToFolder": "Moved {count, plural, one {# barcode} other {# barcodes}} to {name}",
+          "tookOutOfFolders": "Took {count, plural, one {# barcode} other {# barcodes}} out of folders",
+          "deletedForGood": "Deleted {count, plural, one {# barcode} other {# barcodes}} for good",
           "deleting": "Deleting...",
           "edit": "Edit",
           "open": "Open",
@@ -5623,7 +6069,12 @@
             "rowsSentOf": "{sent} of {total} rows sent",
             "createdCount": "{created} created",
             "createdWithProblems": "{created} created · {rowErrors} with problems",
-            "valueCouldntBeSent": "{value} couldn't be sent",
+            "valueCouldntBeSent": "{count, plural, one {# row} other {# rows}} couldn't be sent",
+            "retryValue": "Retry {count, plural, one {# row} other {# rows}}",
+            "codesCount": "{count, plural, one {# code} other {# codes}}",
+            "codesIntoFolder": "{count, plural, one {# code} other {# codes}}, into {folder}",
+            "codesTagged": "{count, plural, one {# code} other {# codes}}, tagged {tags}",
+            "codesIntoFolderTagged": "{count, plural, one {# code} other {# codes}}, into {folder}, tagged {tags}",
             "retryThemNothingIsMade": "Retry them; nothing is made twice.",
             "pause": "Pause",
             "resume": "Resume",
@@ -5635,7 +6086,6 @@
             "paused": "Paused",
             "theRequestDidntGoThrough": "The request didn't go through.",
             "retryAndContinue": "Retry and continue",
-            "retryValue": "Retry {value}",
             "finishWithWhatsMade": "Finish with what's made",
             "stop": "Stop"
           },
@@ -5653,7 +6103,13 @@
             "downloadImages": "Download images",
             "imagesProgress": "Images progress",
             "imageFormat": "Image format",
-            "createdValue": "Created {value}",
+            "createdValue": "Created {count, plural, one {# code} other {# codes}}",
+            "zipParts": "Saved as {parts, number} ZIP files (large batches come in parts of about 500 MB; codes.csv is in the last).",
+            "imagesMissing": "{count, plural, one {# image couldn't be drawn and is missing.} other {# images couldn't be drawn and are missing.}}",
+            "zipFailed": "The ZIP couldn't be made.",
+            "rowsNotImported": "{count, plural, one {# row couldn't be imported.} other {# rows couldn't be imported.}}",
+            "rowsNotSent": "{count, plural, one {# row wasn't sent (the import ended early).} other {# rows weren't sent (the import ended early).}}",
+            "rowsSkipped": "{count, plural, one {# row with problems in the file was skipped.} other {# rows with problems in the file were skipped.}}",
             "noCodesWereCreated": "No codes were created",
             "everyRowWasImported": "Every row was imported."
           },
@@ -5672,7 +6128,13 @@
             "chooseTheColumnWithThe": "Choose the column with the destination URLs.",
             "n3Organize": "3. Organize",
             "n4Review": "4. Review",
-            "valueWithProblems": "{value} with problems",
+            "valueWithProblems": "{count, plural, one {# row} other {# rows}} with problems",
+            "importValue": "Import {count, plural, one {# code} other {# codes}}",
+            "rowsAndColumns": "{rows, plural, one {# row} other {# rows}} · {columns, plural, one {# column} other {# columns}}",
+            "validRows": "{count, plural, one {# valid row} other {# valid rows}}",
+            "needsHeaderAndRows": "The file needs a header row and at least one row of codes.",
+            "columnNumber": "Column {number}",
+            "fileTooLarge": "The file is larger than {size} MB.",
             "problemsCsv": "Problems CSV",
             "line": "Line",
             "destination": "Destination",
@@ -5684,7 +6146,6 @@
             "showingTheFirstPreviewRows": "Showing the first {PREVIEW_ROWS, number} of {length} rows. Every row is checked.",
             "upgradeToImportTheseCodes": "Upgrade to import these codes",
             "seePlans": "See plans",
-            "importValue": "Import {value}",
             "removeFile": "Remove file",
             "bulkImportIsAValue": "Bulk import is a {value} feature",
             "bulkImportIsntOnYour": "Bulk import isn't on your plan",
@@ -5694,6 +6155,43 @@
             "auto": "auto",
             "rowsWithProblemsAreSkipped": "Rows with problems are skipped.",
             "sentImportChunkSizeAt": "Sent {IMPORT_CHUNK_SIZE} at a time; you can pause and resume."
+          },
+          "issues": {
+            "destinationMissing": "Destination URL is missing",
+            "destinationTooLong": "Destination URL is too long",
+            "destinationNotUrl": "Destination must be a full URL starting with https://",
+            "destinationProtocol": "Only http:// and https:// destinations can be used",
+            "destinationCredentials": "Destinations with a username or password are not allowed",
+            "destinationShortLink": "A dynamic code cannot point to another QRdx short link",
+            "destinationRejected": "This destination URL can't be used",
+            "titleTooLong": "Title is longer than {max, number} characters",
+            "folderDepth": "Folders can be nested up to {max, number} levels",
+            "folderNameTooLong": "Folder names can be up to {max, number} characters",
+            "tooManyTags": "Up to {max, number} tags per code",
+            "tooManyTagsWithBatch": "Up to {max, number} tags per code, counting the ones for every code",
+            "tagNameTooLong": "Tag names can be up to {max, number} characters",
+            "slugReserved": "This back-half is reserved",
+            "slugLength": "Back-half: use {min} to {max} characters.",
+            "slugCharacters": "Back-half: use only letters, digits, - and _.",
+            "slugDash": "Back-half: it can't start or end with a dash.",
+            "slugDuplicate": "This back-half appears earlier in the file",
+            "slugTaken": "This back-half is already in use",
+            "slugNotOnPlan": "Custom back-halves are part of {plans}"
+          },
+          "reasons": {
+            "imported": "Already imported",
+            "duplicate": "A QRdx code with this destination already exists",
+            "selectedTwice": "Selected twice",
+            "qrdx": "Already points to a QRdx short link",
+            "limit": "Over your plan's active-code limit",
+            "providerEnded": "Imports from {provider} have ended",
+            "backHalfShape": "QRdx back-halves are 3 to 64 letters, digits, - or _, so this one can't be kept.",
+            "backHalfReservedDomain": "This back-half is reserved on {domain}.",
+            "backHalfReservedShared": "This back-half is reserved on qrdx.dev.",
+            "backHalfReservedSharedAddDomain": "This back-half is reserved on qrdx.dev. Add {domain} on the Domains page to keep it there.",
+            "backHalfTakenDomain": "Another code on {domain} already uses this back-half.",
+            "backHalfTakenShared": "Another QRdx code already uses this back-half on qrdx.dev.",
+            "backHalfRepeated": "Another selected link has the same back-half."
           }
         },
         "analyticsExtra": {
@@ -6104,7 +6602,14 @@
           "onlyTeamOwnersAndAdmins": "Only team owners and admins can delete codes created by others.",
           "downloadFailedPleaseTryAgain": "Download failed. Please try again.",
           "shortLinkCopied": "Short link copied",
-          "couldntCopyTheShortLink": "Couldn't copy the short link"
+          "couldntCopyTheShortLink": "Couldn't copy the short link",
+          "removedFromFavorites": "Removed from favorites",
+          "addedToFavorites": "Added to favorites",
+          "copyCreated": "Copy created",
+          "copyOpensSamePage": "New short link {link}. It opens the same landing page.",
+          "copyScansFromZero": "New short link {link}. Scans start from zero.",
+          "movedToTrash": "Moved to trash",
+          "codeRestored": "Code restored"
         },
         "codeOptions": {
           "on": "(on)",
@@ -6168,7 +6673,19 @@
           "svgImagesZip": "SVG images (ZIP)",
           "more": "More",
           "moveToTrash": "Move to trash",
-          "deleteValueForever": "Delete {value} forever?",
+          "preparingValue": "Preparing {count, plural, one {# QR code} other {# QR codes}}...",
+          "downloadedValueAsValue2": "Downloaded {count, plural, one {# QR code} other {# QR codes}} as {value2}",
+          "deleteValueForever": "Delete {count, plural, one {# code} other {# codes}} forever?",
+          "allSelectedOthersSkipped": "All selected codes were created by other team members and were skipped: only owners and admins can delete them.",
+          "movedToTrash": "Moved {count, plural, one {# code} other {# codes}} to trash",
+          "deletedForever": "Deleted {count, plural, one {# code} other {# codes}} forever",
+          "othersSkipped": "{count, plural, one {# code created by another team member was skipped} other {# codes created by other team members were skipped}}: only owners and admins can delete them.",
+          "trashScansNote": "Scans show a 'no longer active' page until you restore them.",
+          "restoredCodes": "Restored {count, plural, one {# code} other {# codes}}",
+          "archivedCodes": "Archived {count, plural, one {# code} other {# codes}}",
+          "unarchivedCodes": "Unarchived {count, plural, one {# code} other {# codes}}",
+          "pausedCodes": "Paused {count, plural, one {# code} other {# codes}}",
+          "resumedCodes": "Resumed {count, plural, one {# code} other {# codes}}",
           "theirScanAndVersionHistory": "Their scan and version history are deleted, and printed copies show a \"QR code not found\" page. This can't be undone.",
           "cancel": "Cancel",
           "bulkActions": "Bulk actions",
@@ -6184,11 +6701,8 @@
           "failedCouldntBeRendered": "{failed, number} couldn't be rendered.",
           "scansRedirectAgain": "Scans redirect again.",
           "scansGoToEachCodes": "Scans go to each code's fallback URL, or a neutral 'paused' page.",
-          "allSelectedOthersSkipped": "All selected {OTHERS_SKIPPED}",
-          "preparingValue": "Preparing {value}...",
           "renderingFinishedOfTotal": "Rendering {finished, number} of {total, number}...",
           "theQrCodesCouldntBe": "The QR codes couldn't be rendered.",
-          "downloadedValueAsValue2": "Downloaded {value} as {value2}",
           "downloadFailedPleaseTryAgain": "Download failed. Please try again."
         },
         "codesTable": {
@@ -6225,7 +6739,9 @@
           "clearAll": "Clear all",
           "codesWithAllOfThese": "Codes with all of these tags",
           "emptyTheTrash": "Empty the trash?",
-          "valueAndTheirScanHistory": "{value} and their scan history are deleted forever. Printed copies show a \"QR code not found\" page. This can't be undone.",
+          "valueAndTheirScanHistory": "{count, plural, one {# code} other {# codes}} and their scan history are deleted forever. Printed copies show a \"QR code not found\" page. This can't be undone.",
+          "codeCount": "{count, plural, one {# code} other {# codes}}",
+          "deletedForever": "Deleted {count, plural, one {# code} other {# codes}} forever",
           "cancel": "Cancel",
           "editName": "Edit {name}",
           "deleteName": "Delete {name}",
@@ -6285,7 +6801,12 @@
           "springCampaign": "Spring campaign",
           "save": "Save",
           "createFolder": "Create folder",
-          "itsCodesAndSubfoldersMoved": "Its codes and subfolders moved to {target}."
+          "itsCodesAndSubfoldersMoved": "Its codes and subfolders moved to {target}.",
+          "movedToFolder": "Moved {count, plural, one {# code} other {# codes}} to “{name}”",
+          "movedOutOfFolders": "Moved {count, plural, one {# code} other {# codes}} to no folder",
+          "theTopLevel": "the top level",
+          "deletedFolder": "Deleted “{name}”",
+          "folderRenamed": "Folder renamed"
         },
         "importDialog": {
           "import": "Import",
@@ -6319,22 +6840,24 @@
           "theOldShortLinkOr": "The old short link (or code ID) is what makes a re-upload of the same file skip codes it already imported, and it goes into the mapping of old to new links.",
           "provider": "Provider",
           "exportFile": "Export file",
-          "import": "import",
-          "firstMaxJobLinks": " (first {MAX_JOB_LINKS, number})",
+          "previewRows": "Preview {count, plural, one {# row} other {# rows}}",
+          "previewImport": "Preview import",
+          "rows": "{count, plural, one {# row} other {# rows}}",
+          "rowsFirst": "{count, plural, one {# row} other {# rows}} (first {MAX_JOB_LINKS, number})",
           "chooseAnotherFile": "Choose another file",
           "chooseFile": "Choose file"
         },
         "importLinksStep": {
           "importingFromNameIsntAvailable": "Importing from {name} isn't available yet.",
           "qrdxReadsYourLinksTo": "QRdx reads your links to import them. The token is stored encrypted; disconnect any time in Settings.",
-          "signInWith": "Sign in with",
+          "signInWith": "Sign in with {name}",
+          "valueSelected": "{count, plural, one {# link} other {# links}} selected",
           "afterSigningInYouCome": "After signing in you come straight back here to pick your links.",
           "orPasteAKey": "or paste a key",
           "connect": "Connect",
           "openName": "Open {name}",
           "connectingNameIsntAvailableRight": "Connecting {name} isn't available right now. Export your links as CSV from {name2} and use \"Another provider (CSV)\" instead.",
           "allProviders": "All providers",
-          "valueSelected": "{value} selected",
           "previewImport": "Preview import",
           "allDomains": "All domains",
           "allTags": "All tags",
@@ -6395,8 +6918,8 @@
           "folderName": "Folder name",
           "yourDomain": "Your domain",
           "nothingToImport": "Nothing to import",
-          "importTheFirstValue": "Import the first {value}",
-          "importValue": "Import {value}",
+          "importTheFirstValue": "Import the first {count, plural, one {# code} other {# codes}}",
+          "importValue": "Import {count, plural, one {# code} other {# codes}}",
           "keepTheirsOnThatDomain": "Back-halves stay on the domain you pick, so printed codes work again after its DNS moves to QRdx.",
           "everyBackHalfIsKept": "Every back-half is kept on qrdx.dev.",
           "keepingBackHalvesIsPart": "Keeping back-halves is part of {slugPlans}.",
@@ -6411,9 +6934,9 @@
           "forProvidersWithoutApiAccess": "For providers without API access. Upload a CSV, check the columns, then preview and import.",
           "alreadyUsingTheQrdxCsv": "Already using the QRdx CSV template? <link>Import CSV</link>",
           "recentImports": "Recent imports",
-          "valueValue2Created": "{value} · {value2} created",
+          "valueValue2Created": "{value} · {count, plural, one {# code} other {# codes}} created",
+          "valuePointingToQrdx": "{count, plural, one {# old link} other {# old links}} pointing to QRdx",
           "resumeProcessedTotal": "Resume {processed, number}/{total, number}",
-          "valuePointingToQrdx": " · {value} pointing to QRdx",
           "open": "Open",
           "checking": "Checking…",
           "connected": "Connected",
@@ -6424,19 +6947,19 @@
         },
         "importRedirectsStep": {
           "summary": "Summary",
-          "undoValue": "Undo {value}",
-          "update": "Update",
-          "in": "in",
+          "undoValue": "Undo {count, plural, one {# link} other {# links}}",
+          "valueRestored": "{count, plural, one {# link} other {# links}} restored",
+          "valueNowOpenQrdx": "{count, plural, one {# link now opens} other {# links now open}} QRdx",
+          "dryRunValueWouldChange": "Dry run <span>· {count, plural, one {# link would change} other {# links would change}}</span>",
+          "updateLinksIn": "Update {count, plural, one {# link} other {# links}} in {name}",
+          "oldLinksAlreadyPoint": "{count, plural, one {# old link already points} other {# old links already point}} to QRdx.",
           "importsFromNameHaveEnded": "Imports from {name} have ended.",
           "qrdxNoLongerChangesName": "QRdx no longer changes {name} links. Undo puts the original destinations back in your {name2} account (they're saved with this import). The QRdx codes stay.",
           "thisChangesLinksInYour": "This changes links in your {name} account.",
           "eachOldLinkWillOpen": "Each old link will open its new QRdx code, which sends visitors to the same destination, so printed codes keep working and their scans show in QRdx. {name} still sees a click first. Undo puts the original destinations back (they're saved with this import).",
           "listingTheChanges": "Listing the changes…",
-          "dryRunValueWouldChange": "Dry run <span>· {value} would change</span>",
           "iUnderstandTheseNameLinks": "I understand these {name} links will point to QRdx until I undo it.",
           "updateProgress": "Update progress",
-          "valueRestored": "{value} restored",
-          "valueNowOpenQrdx": "{value} now open QRdx",
           "restoringOriginalDestinations": "Restoring original destinations…",
           "updatingLinksInName": "Updating links in {name}…",
           "everyOldNameLinkHas": "Every old {name} link has its original destination.",
@@ -6459,7 +6982,9 @@
           "keepMyPrintedCodesWorking": "Keep my printed codes working",
           "optionalPointEachOldName": "Optional. Point each old {name} link at its new QRdx code, so codes already printed keep working and their scans show up in QRdx. You'll see every change first, and can undo it.",
           "pointYourOldCodesAt": "Point your old codes at QRdx",
-          "codesLiveOnItsOwn": "codes live on its own domain, so QRdx can't change them. For each old code:",
+          "oldProviderCodesLiveOnItsDomain": "Your old provider's codes live on its own domain, so QRdx can't change them. For each old code:",
+          "providerCodesLiveOnItsDomain": "{name}'s codes live on its own domain, so QRdx can't change them. For each old code:",
+          "oldLinksPointToQrdx": "{count, plural, one {# old {name} link points} other {# old {name} links point}} to QRdx",
           "backHalvesOnBackhalfdomain": "Back-halves on {backHalfDomain}",
           "attachCodes": "Attach codes",
           "notesOnEachCodeSay": "Notes on each code say where it came from, its old link and its original creation date. Re-running this import skips everything already imported.",
@@ -6470,24 +6995,27 @@
           "importingFromName": "Importing from {name}…",
           "importPaused": "Import paused",
           "waitingWaitingSForThe": "Waiting {waiting, number}s for the rate limit, then continuing…",
-          "valueCreatedSoFarIn": "{value} created so far, in batches of 50. Each link is imported once, even if you retry.",
+          "valueCreatedSoFarIn": "{count, plural, one {# code} other {# codes}} created so far, in batches of 50. Each link is imported once, even if you retry.",
           "manage": "Manage",
           "reviewChanges": "Review changes",
-          "yourOldProviders": "Your old provider's",
           "theCodesAreOnBackhalfdomain": "The codes are on {backHalfDomain}. Old links on it work again as soon as its DNS points to QRdx and it's verified on the Domains page.",
           "afterBackhalfdomainPointsToQrdx": "After {backHalfDomain} points to QRdx and is verified on the Domains page, attach the codes so {backHalfDomain2}/'<'back-half'>' opens them.",
           "other": "Other"
         },
         "moveWorkspaceDialog": {
           "moveToAnotherWorkspace": "Move to another workspace",
-          "keepsItsShortLinkSo": "keeps its short link, so printed copies keep working. Its scans and history move with it; its folder and tags stay here.",
+          "keepsItsShortLinkSo": "<strong>{name}</strong> keeps its short link, so printed copies keep working. Its scans and history move with it; its folder and tags stay here.",
           "loadingWorkspaces": "Loading workspaces",
           "youreNotInAnotherWorkspace": "You're not in another workspace where you can add codes. Workspaces where you're a viewer or billing member aren't listed.",
           "cancel": "Cancel",
           "moveCode": "Move code",
           "workspaces": "Workspaces",
           "open": "Open",
-          "movedToName": "Moved to {name}"
+          "movedToName": "Moved to {name}",
+          "movedSameLink": "Same short link, scans and history.",
+          "movedFolderStayed": "Same short link, scans and history. Its folder stayed here.",
+          "movedTagsStayed": "Same short link, scans and history. {count, plural, one {# tag} other {# tags}} stayed here.",
+          "movedFolderAndTagsStayed": "Same short link, scans and history. Its folder and {count, plural, one {# tag} other {# tags}} stayed here."
         },
         "newCodeDialog": {
           "template": "Template",
@@ -6529,8 +7057,8 @@
           "bytesBytes": "{bytes, number} bytes",
           "fits": "Fits",
           "theLinkNeedsBytesBytes": "The link needs {bytes, number} bytes. NTAG215 and NTAG216 leave room if you later write a longer link.",
-          "openThisPageInChrome": "Open this page in Chrome on an Android phone with NFC turned on, tap Write to NFC tag and hold the",
-          "againstTheBackOfThe": "against the back of the phone. On iPhone, use an NFC writer app.",
+          "writeItTag": "Open this page in Chrome on an Android phone with NFC turned on, tap Write to NFC tag and hold the tag against the back of the phone. On iPhone, use an NFC writer app.",
+          "writeItCard": "Open this page in Chrome on an Android phone with NFC turned on, tap Write to NFC tag and hold the card against the back of the phone. On iPhone, use an NFC writer app.",
           "analyticsCountsTapsAndScans": "Analytics counts taps and scans apart.",
           "downloadTheQrCode": "Download the QR code",
           "androidPhonesWithNfcOn": "Android phones with NFC on and iPhone XS or later open the link when the tag touches the phone, with no app. The tag keeps following the code: change where it leads in QRdx and every tag you wrote follows.",
@@ -6648,7 +7176,11 @@
           "editTag": "Edit tag",
           "createTag": "Create tag",
           "tags": "Tags",
-          "tagsForValue": "Tags for {value}"
+          "tagsForValue": "Tags for {count, plural, one {# code} other {# codes}}",
+          "tagsSaved": "Tags saved",
+          "updatedTagsOn": "Updated tags on {count, plural, one {# code} other {# codes}}",
+          "tagSaved": "Tag saved",
+          "deletedTag": "Deleted tag “{name}”"
         },
         "usage": {
           "unlimitedUsage": "{count, plural, one {# active dynamic code} other {# active dynamic codes}} · {plan} plan, unlimited codes",
@@ -6706,7 +7238,9 @@
           "linkCopied": "Link copied",
           "couldntCopyTheLink": "Couldn't copy the link.",
           "notUsedYet": "Not used yet",
-          "usedByValue": "Used by {value}"
+          "usedByPagesAndCodes": "Used by {pages, plural, one {# page} other {# pages}} · {codes, plural, one {# code} other {# codes}}",
+          "usedByPages": "Used by {pages, plural, one {# page} other {# pages}}",
+          "usedByCodes": "Used by {codes, plural, one {# code} other {# codes}}"
         }
       },
       "loading": {
@@ -6975,8 +7509,8 @@
           "cancel": "Cancel",
           "save": "Save",
           "deleteName": "Delete {name}?",
-          "qrCodesYouAlreadyMade": "QR codes you already made with this theme keep their look. This only removes the saved theme",
           "deleteTheme": "Delete theme",
+          "deleteThemeTeam": "QR codes you already made with this theme keep their look. This only removes the saved theme for everyone in this workspace.",
           "updateTheTagsForName": "Update the tags for \"{name}\".",
           "saveTags": "Save tags",
           "openNameInThePlayground": "Open {name} in the playground",
@@ -6986,8 +7520,7 @@
           "removeAsDefault": "Remove as default",
           "setAsWorkspaceDefault": "Set as workspace default",
           "setAsDefault": "Set as default",
-          "forEveryoneInThisWorkspace": " for everyone in this workspace",
-          "itIsAlsoRemovedFrom": " It is also removed from the community.",
+          "itIsAlsoRemovedFrom": "It is also removed from the community.",
           "upgrade": "Upgrade",
           "themeRenamed": "Theme renamed",
           "couldNotRenameTheTheme": "Could not rename the theme. Please try again.",
@@ -7090,7 +7623,14 @@
           "removeHostname": "Remove {hostname}?",
           "cancel": "Cancel",
           "removeHostname2": "Remove {hostname}",
-          "shortLinksLookLikeHttps": "Short links look like https://{hostname}/aB3dE5f · used by {value}",
+          "shortLinksLookLikeHttps": "Short links look like https://{hostname}/aB3dE5f · used by {count, plural, one {# code} other {# codes}}",
+          "youveAddedValueTheMost": "You've added {count, plural, one {# domain} other {# domains}}, the most your plan includes. Remove one to add another.",
+          "providerCanAddRecords": "Your DNS is at {provider}, which can add these records for you.",
+          "yourProviderCanAddRecords": "Your DNS provider can add these records for you.",
+          "approveAtProvider": "You approve the change at {provider}, then return here.",
+          "approveAtYourProvider": "You approve the change at your DNS provider, then return here.",
+          "removeDomainInUse": "{count, plural, one {# code uses} other {# codes use}} this domain. QR codes printed with {hostname} links will stop working, and the codes switch to their {defaultHost}/q/… link. Back-halves chosen on the domain stay when they're free on {defaultHost}; the others get a new one.",
+          "removeDomainUnused": "Short links on {hostname} stop working.",
           "addTheseRecordsAtYour": "Add these records at your DNS provider, then click Verify.",
           "checkDns": "Check DNS",
           "verify": "Verify",
@@ -7105,7 +7645,6 @@
           "addDomain": "Add domain",
           "aSubdomainSuchAsGo": "A subdomain such as go. or qr. works best: your main website stays where it is.",
           "addingDomainsNeedsProOr": "Adding domains needs Pro or Business.",
-          "youveAddedValueTheMost": "You've added {value}, the most your plan includes. Remove one to add another.",
           "removing": "Removing...",
           "removeDomain": "Remove domain",
           "addTheDnsRecordsShown": "Add the DNS records shown, then click Verify.",

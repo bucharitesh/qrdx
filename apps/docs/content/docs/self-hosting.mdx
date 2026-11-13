@@ -163,6 +163,7 @@ Add one OAuth provider (GitHub or Google), or Resend for email sign-in codes, so
 | Link safety (Google Web Risk) | `WEB_RISK_API_KEY` | Destinations are checked by the offline rules only. See [Code controls](/docs/code-controls) |
 | Form spam check (Cloudflare Turnstile) | `NEXT_PUBLIC_TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY` | Forms rely on the built-in honeypot and rate limits |
 | Payments (Polar) | `POLAR_ACCESS_TOKEN`, `POLAR_WEBHOOK_SECRET`, `NEXT_PUBLIC_QRDX_PRO_MONTHLY_PRODUCT_ID`, `NEXT_PUBLIC_QRDX_PRO_YEARLY_PRODUCT_ID`, `NEXT_PUBLIC_QRDX_BUSINESS_MONTHLY_PRODUCT_ID`, `NEXT_PUBLIC_QRDX_BUSINESS_YEARLY_PRODUCT_ID` | Upgrading doesn't work (plans without a product id show "Coming soon"), and every account uses the Free limits |
+| Euro prices | `NEXT_PUBLIC_QRDX_EUR_PRICES=1`, set only once every product above has a EUR price in Polar | Visitors from the EU and EEA see, and are charged, US$ prices |
 | Affiliate program | None: it runs only on qrdx.dev | Off: QRdx's affiliate program and its [terms](/legal/affiliate-terms) are written for qrdx.dev, so a self-hosted copy has no **/affiliates** page, no applications, no **Settings** → **Affiliate program**, and referral links go to the home page. |
 | Dub short links | `DUB_CLIENT_ID`, `DUB_CLIENT_SECRET`, `DUB_REDIRECT_URI`, `INTEGRATION_ENCRYPTION_KEY` | The Dub integration can't be connected |
 | Google Drive | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_DRIVE_REDIRECT_URI`, `INTEGRATION_ENCRYPTION_KEY` | The Google Drive integration can't be connected |

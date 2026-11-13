@@ -1,0 +1,174 @@
+---
+title: "Pindah dari Bitly, Rebrandly, dan lainnya"
+description: "Impor tautan pendek dan kode QR dinamis Anda ke QRdx, pertahankan kode yang sudah dicetak tetap berfungsi, dan pertahankan back-half bermerek Anda."
+icon: Download
+---
+
+QRdx mengimpor tautan dan kode dinamis dari penyedia lain sekaligus. Buka [Dasbor → Kode](/dashboard?to=codes) dan klik **Impor**. Setiap impor memiliki tiga langkah yang sama: pilih apa yang ingin dibawa, pratinjau, lalu impor.
+
+- **Akun terhubung:** Bitly, Rebrandly, dan Short.io. QRdx mencantumkan tautan Anda melalui API penyedia.
+- **File ekspor:** QR Code Generator PRO, Uniqode (Beaconstac), Flowcode, QR TIGER, ME-QR, TinyURL, Hovercode, Scanova, atau CSV apa pun yang berisi URL tujuan.
+
+Tidak ada yang berubah di akun lama Anda selama proses impor itu sendiri.
+
+## Apa yang dibuat oleh impor [#what-an-import-creates]
+
+Setiap tautan atau kode menjadi [kode QR dinamis](/docs/dynamic-qr-codes) dengan:
+
+- tujuan dan judulnya;
+- tag-nya (opsional), dan folder seperti "Imported from Bitly" (Anda dapat mengganti namanya atau menonaktifkannya);
+- catatan seperti `Imported from Bitly bit.ly/3AbCdEf on 2026-11-01.` beserta tanggal pembuatan asli tautan. QRdx menetapkan tanggal pembuatannya sendiri untuk kode baru.
+
+Pratinjau menunjukkan berapa banyak kode yang akan dibuat, tag mana yang baru, dan apa yang dilewati:
+
+- **Sudah diimpor:** tautan yang pernah diimpor sebelumnya (dari proses mana pun) selalu dilewati, sehingga menjalankan impor dua kali tidak pernah membuat duplikat.
+- **Tujuan sama:** tautan yang tujuannya sudah memiliki kode QRdx dilewati secara default. Centang opsinya untuk tetap mengimpornya.
+- **Tidak dapat diimpor:** tujuan yang hilang atau tidak valid, dan tautan yang sudah mengarah ke tautan pendek QRdx.
+
+Impor berjalan dalam kelompok berisi 50 dengan bilah kemajuan. Aman untuk menutup dialog: buka **Impor** lagi dan impor akan dilanjutkan dari **Impor terbaru**. Ringkasan mencantumkan kode yang dibuat, dilewati, dan gagal beserta alasannya.
+
+<Callout type="info">
+Batas paket berlaku seperti untuk kode baru lainnya. Gratis mencakup 10 kode dinamis aktif; jika impor membutuhkan lebih banyak, pratinjau menunjukkan berapa banyak yang muat dan menawarkan untuk mengimpor yang pertama saja, atau untuk upgrade. Pro dan Business tidak memiliki batas.
+</Callout>
+
+## Dari akun terhubung [#from-a-connected-account]
+
+1. Klik **Impor** dan pilih penyedia. Jika belum terhubung, hubungkan langsung di sana (masuk, atau tempel kunci API atau token). Token disimpan dalam bentuk terenkripsi, dan Anda dapat memutuskan koneksi di Pengaturan → Integrasi.
+2. Cari, filter berdasarkan domain atau tag, lalu pilih tautan. **Pilih semua tautan yang cocok** mengambil hingga 1.000 tautan per impor; jalankan lagi untuk sisanya.
+3. Periksa pratinjau dan klik **Impor**.
+
+| Penyedia | Hubungkan dengan | Daftar tautan | Pertahankan kode cetak tetap berfungsi |
+|---|---|---|---|
+| Bitly | Masuk, atau token akses generik | Ya | Hanya paket Bitly berbayar: 5 pengalihan tautan per bulan di Core, 20 di Growth, 110 di Premium |
+| Rebrandly | Kunci API | Ya | Dalam batas pengeditan tujuan bulanan Rebrandly: 10 di Essentials, 50 di Professional, 150 di Growth (tidak ada di Gratis) |
+| Short.io | Kunci API | Ya, satu domain per kali | Ya, di setiap paket |
+
+Batas paket adalah milik penyedia itu sendiri dan dapat berubah dari waktu ke waktu. Periksa halaman harga mereka.
+
+## Pertahankan kode cetak tetap berfungsi [#keep-printed-codes-working]
+
+Kode QR yang Anda cetak dengan penyedia lain mengodekan tautan pendek penyedia tersebut. Setelah impor akun terhubung, ringkasan menawarkan **Pertahankan kode cetak saya tetap berfungsi**:
+
+1. Sebuah **uji coba** mencantumkan setiap tautan lama dan tautan QRdx yang akan dituju. Belum ada yang berubah.
+2. Konfirmasi, lalu QRdx mengubah tujuan setiap tautan lama ke kode QRdx barunya. Pengunjung tetap tiba di halaman yang sama, dan setiap pemindaian kini muncul di analitik QRdx. Penyedia lama tetap melihat satu klik terlebih dahulu.
+3. **Urungkan** mengembalikan tujuan asli, yang disimpan QRdx bersama impor.
+
+Jika penyedia menolak (misalnya paket Bitly yang pengalihan tautannya sudah habis), QRdx berhenti, menjelaskan alasannya, dan membiarkan tautan sisanya tidak berubah. Tautan yang dilewati karena tujuannya sudah memiliki kode QRdx diarahkan ke kode yang sudah ada itu.<IfAvailable feature="customDomains"> Tautan yang back-half-nya ikut berpindah bersama domain Anda sendiri (di bawah) tidak diubah: setelah peralihan DNS, tautan tersebut adalah tautan QRdx.</IfAvailable>
+
+## Pertahankan back-half asli [#keep-the-original-back-halves]
+
+Di Pro dan Business, centang **Pertahankan back-half asli** di pratinjau impor. Setiap kode kemudian mendapat back-half lamanya, bukan yang acak, jika QRdx dapat mempertahankannya, sehingga `bit.ly/spring-menu` menjadi `qrdx.dev/q/spring-menu`:
+
+- Back-half dipertahankan jika terdiri dari 3 hingga 64 huruf, angka, `-` atau `_` (lihat [back-half kustom](/docs/dynamic-qr-codes#custom-back-halves)), tidak dicadangkan, dan belum digunakan di `qrdx.dev` oleh kode QRdx mana pun<IfAvailable feature="customDomains"> (di domain Anda sendiri, hanya oleh kode Anda di sana)</IfAvailable>.
+- Jika tidak, kode mendapat back-half yang dihasilkan, dan pratinjau menunjukkan perubahannya beserta alasannya, misalnya `spring-menu → Ab3xK9q · Another QRdx code already uses this back-half on qrdx.dev`. Impor menggunakan persis back-half yang ditampilkan pratinjau.
+- Back-half peka huruf besar/kecil, seperti di Bitly dan Short.io.
+
+<Callout type="warn">
+Biarkan penyedia tetap terhubung sampai Anda yakin: pengurungan membutuhkan koneksi tersebut. Akun lama juga harus tetap aktif agar tautannya terus mengalihkan.
+</Callout>
+
+<IfAvailable feature="customDomains" id="your-own-domain-go-yourbrand-com" title="Domain Anda sendiri (go.yourbrand.com)">
+
+Jika tautan Anda menggunakan domain sendiri, Anda dapat memindahkan domain itu ke QRdx dan mempertahankan back-half, sehingga `go.yourbrand.com/spring-menu` tetap berfungsi setelah peralihan DNS.
+
+1. Tambahkan domain di [Pengaturan → Domain](/dashboard?to=settings/domains) terlebih dahulu. Domain boleh belum terverifikasi untuk saat ini: back-half kemudian dipertahankan di domain itu sendiri, di mana back-half hanya harus unik di antara kode Anda sendiri, dan hanya `api`, `p`, dan `q` yang dicadangkan.
+2. Di pratinjau impor, centang **Pertahankan back-half asli** dan pilih domain di bawah **Tautan di**. Pratinjau menunjukkan back-half mana yang dipertahankan.
+3. Impor. Kode ditempatkan di domain dan langsung mengklaim back-half-nya.
+4. Arahkan DNS domain ke QRdx dan verifikasi (lihat [Domain kustom](/docs/custom-domains)). Lakukan ini pada waktu yang sepi: tautan di domain berhenti berfungsi di penyedia lama begitu DNS berpindah, dan mulai berfungsi di QRdx setelah diverifikasi.
+
+Jika domain belum ada di QRdx saat Anda mengimpor, back-half-nya dipertahankan di `qrdx.dev` (di mana back-half harus bebas di seluruh QRdx). Setelah Anda menambahkan dan memverifikasi domain, klik **Kaitkan kode** di ringkasan impor untuk memindahkan kode tersebut ke domain itu.
+
+</IfAvailable>
+
+Back-half yang tidak dapat dipertahankan mendapat yang dihasilkan; tautan tersebut perlu dicetak ulang atau dialihkan di penyedia lama. Back-half kustom adalah bagian dari Pro dan Business.
+
+## Dari file ekspor [#from-an-export-file]
+
+1. Dapatkan file tersebut (langkah di bawah). QRdx membaca CSV; untuk file Excel, simpan atau unduh sebagai CSV terlebih dahulu.
+2. Klik **Import**, pilih penyedia, lalu unggah file. QRdx mengenali kolom penyedia jika memungkinkan, dan Anda dapat mengubah pemetaannya. Hanya tujuan yang wajib diisi; tautan pendek lama (atau ID kode) memungkinkan unggahan ulang melewati kode yang sudah diimpor.
+3. Pratinjau dan impor, lalu gunakan **Copy all new links** atau **Download mapping CSV** (tautan lama → tautan QRdx baru).
+
+Kode dari penyedia-penyedia ini berada di domain penyedia, sehingga QRdx tidak dapat mengubahnya. Agar kode yang sudah dicetak tetap berfungsi, buka setiap kode dinamis lama di penyedia lama dan atur tujuannya ke tautan QRdx baru sesuai pemetaan. Akun lama harus tetap aktif agar kode-kode tersebut dapat dialihkan; cetak ulang dengan kode QRdx sebelum Anda berhenti berlangganan.
+
+### QR Code Generator PRO [#qr-code-generator-pro]
+
+Tidak ada ekspor daftar kode yang terdokumentasi. Buat spreadsheet dengan **Name**, **Short URL**, dan **Destination URL** untuk setiap kode. Untuk mengarahkan ulang kode: buka kode → **Details** → **Edit**, ganti URL, lalu simpan. Untuk banyak kode, pembaruan massalnya menerima CSV berisi URL baru untuk hingga 500 kode.
+
+### Uniqode (Beaconstac) [#uniqode-beaconstac]
+
+**QR Codes → Dynamic**, pilih semua, **⋯ → Export**, per organisasi atau folder. Kolom hasil ekspor (QR Code Name, QR Code URL, Destination URL, Labels, …) dikenali. Untuk mengarahkan ulang: buka kode → **Edit** → URL baru → **Next** → **Save**.
+
+### Flowcode [#flowcode]
+
+Tidak ada ekspor daftar kode yang terdokumentasi. Gunakan kembali sheet pembuatan massal Anda (Flowcode Name, Flowcode Scan URL) atau daftarkan Name, Scan URL, dan Destination. Untuk mengarahkan ulang: **Assets** → kode tersebut → **Overview** → **Destination** → **Save**.
+
+### QR TIGER [#qr-tiger]
+
+**My Account** → pilih kategori (misalnya URL) → **Download QR List**, sekali untuk setiap kategori. Untuk mengarahkan ulang: **My Account → Dashboard → URL** → kampanye → **Edit** → **Save**.
+
+### ME-QR [#me-qr]
+
+Tidak ada ekspor. Daftarkan Name, QR link, dan Destination URL untuk setiap kode. Untuk mengarahkan ulang: edit kode di daftar kode ME-QR Anda.
+
+### TinyURL [#tinyurl]
+
+TinyURL mencantumkan ekspor CSV pada paket berbayarnya. Ekspor tautan Anda sebagai CSV, atau daftarkan Alias dan Long URL. Mengedit tujuan TinyURL memerlukan paket TinyURL berbayar.
+
+### Hovercode, Scanova, dan lainnya [#hovercode-scanova-and-others]
+
+Ekspor kode Anda sebagai CSV dari penyedia (Hovercode mencantumkan ekspor CSV pada paket Business-nya; Scanova mengirim tautan unduhan lewat email), lalu periksa pemetaan kolom. CSV apa pun dengan kolom tujuan dapat digunakan dengan **Another provider (CSV)**.
+
+Kode QR statis (dari goQR.me, QR Code Monkey, Adobe Express, dan alat serupa) menyandikan tujuannya langsung, sehingga tetap berfungsi tanpa alat tersebut. Impor tujuannya dari CSV hanya jika Anda menginginkan kode yang dapat diedit dan dilacak untuk cetakan baru.
+
+## Dari pustaka kode QR [#from-a-qr-code-library]
+
+Pustaka merender kode statis, jadi tidak ada yang perlu dimigrasikan: kode yang sudah dicetak tetap berfungsi. Untuk mengganti perenderan di aplikasi Anda, instal `qrdx` dan ganti komponennya.
+
+### Dari qrcode.react [#from-qrcode-react]
+
+```tsx
+// Before
+import { QRCodeSVG } from "qrcode.react";
+
+<QRCodeSVG value="https://example.com" size={256} fgColor="#111827" />;
+
+// After
+import { QRCodeSVG } from "qrdx";
+
+<QRCodeSVG
+  value="https://example.com"
+  size={256}
+  fgColor="#111827"
+  bodyPattern="rounded"
+/>;
+```
+
+`value`, `size`, `level`, `fgColor`, `bgColor`, `marginSize` (sebagai `margin`), dan `imageSettings` tetap berlaku; qrdx menambahkan pola, gradien, dan templat. Lihat [referensi API](/docs/api-reference).
+
+### Dari qr-code-styling [#from-qr-code-styling]
+
+```tsx
+// Before
+import QRCodeStyling from "qr-code-styling";
+
+const qr = new QRCodeStyling({
+  data: "https://example.com",
+  width: 256,
+  dotsOptions: { type: "rounded", color: "#111827" },
+  image: "/logo.png",
+});
+qr.append(ref.current);
+
+// After
+import { QRCodeSVG } from "qrdx";
+
+<QRCodeSVG
+  value="https://example.com"
+  size={256}
+  bodyPattern="rounded"
+  fgColor="#111827"
+  imageSettings={{ src: "/logo.png", width: 64, height: 64, excavate: true }}
+/>;
+```
+
+qrdx adalah komponen React, sehingga tidak ada instans yang perlu ditambahkan: render seperti elemen lainnya. Unduhan menggunakan helper di [referensi API](/docs/api-reference).

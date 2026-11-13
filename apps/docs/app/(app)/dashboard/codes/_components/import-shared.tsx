@@ -124,9 +124,6 @@ export function saveText(text: string, filename: string, type = "text/csv") {
 export const formatCount = (value: number) =>
   new Intl.NumberFormat("en-US").format(value);
 
-export const plural = (count: number, one: string, many = `${one}s`) =>
-  `${formatCount(count)} ${count === 1 ? one : many}`;
-
 export function formatDay(value: string | null) {
   if (!value) return "—";
   const date = new Date(value);

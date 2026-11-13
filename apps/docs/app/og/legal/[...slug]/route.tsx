@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { ImageResponse } from "next/og";
 import { BrandOgImage, loadOgFonts, ogSize } from "@/app/og/brand";
-import { getLegalPageImage, legalSource } from "@/lib/source";
+import { getLegalPageImage, legalSource } from "@/lib/content-source";
 import { buildTimeParams } from "@/lib/static-params";
 
 // Legal pages live under an optional catch-all, which can't hold an

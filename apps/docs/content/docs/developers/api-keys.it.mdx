@@ -1,0 +1,61 @@
+---
+title: "Chiavi API"
+description: "Crea una chiave API qrdx_ in Impostazioni → Chiavi API e app e usala per chiamare la REST API. Scope, workspace e ruoli, scadenza, ultimo utilizzo e revoca."
+icon: LockKeyhole
+---
+
+Una chiave API permette ai tuoi server, script e job di CI di chiamare la [REST API](/docs/developers/rest-api) senza alcun flusso OAuth. Inviala nell'header `Authorization`:
+
+```bash
+curl https://api.qrdx.dev/v1/codes -H "Authorization: Bearer $QRDX_API_KEY"
+```
+
+Ogni endpoint che accetta un access token OAuth accetta una chiave nello stesso header, mentre l'[Image API](/docs/developers/image-api) non richiede nessuno dei due. Quando il tuo prodotto agisce per conto di altri utenti QRdx, usa invece un'[app OAuth](/docs/developers/build-an-integration), così ogni persona la autorizza.
+
+## Crea una chiave [#create-a-key]
+
+1. Apri [Impostazioni → Chiavi API e app](/dashboard?to=settings/developers&new=1) nel workspace a cui è destinata la chiave. Il link apre l'ultimo workspace che hai usato; scegline un altro con il selettore dei workspace.
+2. Scegli **Crea chiave**. Dalle un nome in base a dove verrà eseguita, scegli il suo accesso e, se vuoi, la scadenza. Una chiave funziona anche senza di te, quindi QRdx ti chiede prima di [confermare la tua identità](/docs/help/privacy-and-security/two-step-verification#confirm-its-you), a meno che tu non l'abbia già fatto in quel browser negli ultimi 10 minuti.
+3. Copia la chiave. Viene mostrata una sola volta: QRdx ne memorizza soltanto un hash, quindi non può essere mostrata di nuovo. La stessa finestra mostra una richiesta curl con la chiave e l'indirizzo API di questo sito già inseriti, pronta da incollare.
+
+Una chiave è `qrdx_` seguito da 40 lettere e cifre. Gli elenchi ne mostrano solo l'inizio, ad esempio `qrdx_7KpQ2m…`, così puoi distinguere le chiavi.
+
+## Accesso [#access]
+
+Le chiavi usano gli stessi scope delle app OAuth. Quando crei la chiave scegli una di tre opzioni:
+
+| Accesso | Scope | Consente |
+| --- | --- | --- |
+| Accesso completo | `profile:read`, `themes:read`, `codes:read`, `codes:write` | Tutto ciò che fa l'API |
+| Sola lettura | `profile:read`, `themes:read`, `codes:read` | Leggere codici, analisi delle scansioni, temi e profilo |
+| Personalizzato | Quelli che scegli | Ciò che consentono quegli scope ([l'elenco degli scope](/docs/developers/rest-api#get-an-access-token)) |
+
+`codes:write` consente anche tutto ciò che consente `codes:read`. Gli scope di una chiave non possono essere modificati in seguito: crea invece una nuova chiave. Una richiesta al di fuori degli scope della chiave riceve `403 INSUFFICIENT_SCOPE`, e il messaggio indica lo scope che serviva.
+
+## Workspace e ruoli [#workspaces-and-roles]
+
+Una chiave appartiene al workspace che era aperto quando l'hai creata e agisce lì come te:
+
+- La chiave lavora con i codici, le scansioni, gli hook e i temi di quel workspace, in base al piano del workspace e alla sua [quota giornaliera](/docs/developers/rest-api#rate-limits).
+- Può fare ciò che puoi fare tu nel workspace, in base al tuo [ruolo](/docs/teams) al momento di ogni richiesta. Nel tuo workspace personale sei il proprietario. Se il tuo ruolo cambia, cambiano anche i permessi della chiave; se lasci il workspace, la chiave smette di funzionare, e l'eliminazione di un workspace ne elimina le chiavi.
+
+Ogni membro di un workspace può creare chiavi. Proprietari e amministratori vedono tutte le chiavi del workspace e possono revocarle; i membri vedono e revocano solo le proprie. `GET /v1/me` restituisce il profilo della persona che ha creato la chiave.
+
+## Scadenza, ultimo utilizzo e revoca [#revoke]
+
+- **Scadenza.** Una chiave non scade mai, oppure scade dopo 30 giorni, 90 giorni o 1 anno. Una chiave scaduta riceve `401 INVALID_TOKEN` e resta nell'elenco, contrassegnata come **Scaduta**, finché non la revochi.
+- **Ultimo utilizzo.** L'elenco mostra la data in cui ogni chiave ha autenticato l'ultima richiesta.
+- **Revoca.** Scegli **Revoca** accanto a una chiave. Da quel momento le richieste con quella chiave ricevono `401 INVALID_TOKEN`. La revoca non può essere annullata.
+
+Ogni persona può avere fino a 25 chiavi attive in ogni workspace. Le chiavi revocate e scadute non vengono contate.
+
+## Proteggi le chiavi [#keep-keys-safe]
+
+- Conserva la chiave su un server: in una variabile d'ambiente o in un gestore di segreti. Non inserirla mai in una pagina web, in un'app mobile, in un prompt o in un repository.
+- Usa una chiave per ogni posto in cui viene eseguita, così puoi revocarne una senza compromettere le altre.
+- Dai agli script che si limitano a creare report una chiave di sola lettura, e ai job di breve durata una chiave che scade.
+- Se una chiave viene esposta, revocala e creane una nuova. Il prefisso `qrdx_` rende le chiavi facili da cercare nel codice e nei log.
+
+## Self-hosting [#self-hosting]
+
+Un'istanza [self-hosted](/docs/self-hosting) ha bisogno della tabella `api_key` nel suo database, che viene creata dalla consueta sincronizzazione dello schema dopo un aggiornamento (il servizio `migrate` con Docker, `bun run db:push` negli altri casi; vedi [aggiornamento](/docs/self-hosting)). Finché non c'è, Impostazioni → Chiavi API e app segnala che le chiavi API non sono disponibili e l'API rifiuta le chiavi con `401`. La sua API si trova su `/api/v1` nel suo dominio, che è l'indirizzo inserito dalla finestra della nuova chiave.

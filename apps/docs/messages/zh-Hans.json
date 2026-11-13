@@ -184,6 +184,7 @@
       "pageTemplates": "页面模板",
       "pricing": "价格",
       "guarantee": "Never-Hostage 保障",
+      "enterprise": "企业版",
       "slackBot": "Slack 机器人",
       "telegramBot": "Telegram 机器人",
       "discordBot": "Discord 机器人",
@@ -227,6 +228,7 @@
       "refunds": "退款政策",
       "affiliateTerms": "联盟条款",
       "security": "安全",
+      "securityPolicy": "安全政策",
       "allComparisons": "全部对比"
     }
   },
@@ -509,7 +511,9 @@
       "inr": "价格以印度卢比（₹）显示。",
       "usd": "价格以美元（US$）显示。",
       "showInr": "在印度？查看 ₹ 价格",
-      "showUsd": "显示 US$ 价格"
+      "showUsd": "显示 US$ 价格",
+      "eur": "欧盟和欧洲经济区的价格以 € 显示。",
+      "showEur": "在欧盟或欧洲经济区？查看 € 价格"
     },
     "price": {
       "forever": "永久",
@@ -553,6 +557,13 @@
       "guide": "自托管指南"
     },
     "footnote": "Polar 作为商户代理（merchant of record）处理结账；结账时可能会加收当地税费。印度的客户以 ₹ 计费，其他客户以 US$ 计费。",
+    "footnoteEur": "Polar 作为商户代理（merchant of record）处理结账；结账时可能会加收当地税费。印度的客户以 ₹ 计费，欧盟和欧洲经济区的客户以 € 计费，其他所有客户以 US$ 计费。",
+    "offers": {
+      "moneyBack": "首次付款享 {days, number} 天退款保证。",
+      "moneyBackLink": "退款如何运作",
+      "nonprofit": "非营利组织或慈善机构？Pro 和 Business 可享 {percent, number}% 折扣。",
+      "nonprofitLink": "申请折扣码"
+    },
     "values": {
       "unlimited": "不限",
       "days": "{count, plural, one {# 天} other {# 天}}",
@@ -700,6 +711,10 @@
           "question": "取消订阅会怎样？",
           "answer": "不会有任何影响。你的套餐会保持有效，直到已付费周期结束，之后账号将转为免费版。所有动态二维码继续跳转，每次扫描仍会计数：这就是我们的 Never-Hostage 保障。在免费版中，你无法创建超出免费版限额的内容，分析数据只显示最近 90 天。"
         },
+        "refund": {
+          "question": "可以退款吗？",
+          "answer": "可以。你首次购买 Pro 或 Business 的付款，无论按月还是按年，都享有 {days, number} 天退款保证：在付款后 {days, number} 天内，用账户邮箱向 support@qrdx.dev 发送邮件，我们会全额退款，不问原因。每位客户限一次。退款后，你的二维码仍可在免费版上继续使用。"
+        },
         "paymentFails": {
           "question": "付款失败会怎么样？",
           "answer": "您的二维码会继续正常使用。如果订阅失效，您的账户将按免费版的限制执行，与您主动取消订阅时完全一样。我们绝不会因为账单问题而暂停二维码、展示广告，或把扫描者引导到 QRdx 的页面。"
@@ -712,6 +727,10 @@
           "question": "为什么我看到的价格是 ₹？",
           "answer": "来自印度的访客会看到以印度卢比显示的价格：Pro 为每月 {proMonthly} 或每年 {proYearly}，Business 为每月 {businessMonthly} 或每年 {businessYearly}。结账时，印度的客户以 ₹ 付款，其他地区的客户以美元（US$）付款，与您浏览时使用的货币无关。您可以使用套餐上方的开关切换显示货币。"
         },
+        "currencies": {
+          "question": "为什么我看到的价格是 ₹ 或 €？",
+          "answer": "价格会以你所在国家或地区的货币显示。在印度，Pro 为每月 {proMonthly} 或每年 {proYearly}，Business 为每月 {businessMonthly} 或每年 {businessYearly}。在欧盟和欧洲经济区，Pro 为每月 {proMonthlyEur} 或每年 {proYearlyEur}，Business 为每月 {businessMonthlyEur} 或每年 {businessYearlyEur}。其他地区均为 US$。无论你浏览时使用哪种货币，结账时都按你所在国家或地区的货币收费。可使用套餐上方的开关切换显示货币。"
+        },
         "switchPlans": {
           "question": "之后可以更换套餐或计费周期吗？",
           "answer": "可以。在设置中打开“管理订阅”，即可在 Polar 账单门户中更改或取消您的套餐。降级到较低的套餐不会停用已有的二维码、页面或域名。"
@@ -723,6 +742,10 @@
         "selfHost": {
           "question": "可以自行托管吗？",
           "answer": "可以。QRdx 以 AGPL-3.0 协议开源。按照自托管指南，搭配您自己的 Postgres 数据库即可运行；套餐限制集中定义在一个文件中，您可以为自己的实例修改。"
+        },
+        "nonprofit": {
+          "question": "非营利组织有折扣吗？",
+          "answer": "有。已注册的非营利组织和慈善机构购买 Pro 或 Business，无论按月还是按年，都可享 {percent, number}% 折扣。请通过套餐下方的非营利链接向我们介绍你的组织。我们通常会在几天内回复，并附上可在结账时输入的折扣码。"
         },
         "billing": {
           "question": "谁负责账单和税务？",
@@ -748,6 +771,38 @@
       "close": "关闭",
       "signIn": "登录后申请发票",
       "signInNote": "发票会开给你账户的工作区，请先登录。"
+    },
+    "nonprofit": {
+      "title": "非营利组织折扣",
+      "description": "已注册的非营利组织和慈善机构购买 Pro 或 Business，无论按月还是按年，都可享 {percent, number}% 折扣。请向我们介绍你的组织，我们会通过邮件发送可在结账时输入的折扣码。",
+      "organization": "组织名称",
+      "country": "国家或地区",
+      "registration": "注册编号或链接",
+      "registrationHint": "你在慈善机构或非营利组织登记册中的编号，或你在公开登记册中的条目链接。",
+      "contactEmail": "联系邮箱",
+      "plan": "套餐",
+      "reply": "我们通常会在几天内回复。结账前不会扣费。",
+      "submit": "发送申请",
+      "sending": "发送中…",
+      "sentTitle": "申请已发送",
+      "sent": "我们会回复到 {email}，通常在几天内。如果你的组织符合条件，回复中会附上可在结账时输入的折扣码。",
+      "close": "关闭",
+      "failed": "出错了。请改为发送邮件至 {email}。"
+    },
+    "enterprise": {
+      "name": "Enterprise",
+      "tagline": "适合需要合同和安全评审的企业",
+      "price": "定制",
+      "priceNote": "按年签约，凭发票付款",
+      "cta": "联系我们",
+      "lead": "包含 Business 的全部功能，另加：",
+      "adds": {
+        "contract": "按年签约，凭发票付款",
+        "replies": "二维码失效时，{hours, plural, other {# 个工作小时内回复}}",
+        "review": "解答您的安全评审问题",
+        "selfHost": "在您自己的服务器上使用 SSO 和审计日志"
+      },
+      "security": "QRdx 的安全措施"
     }
   },
   "docs": {
@@ -1382,7 +1437,16 @@
       "browsersQuestion": "支持哪些浏览器？",
       "browsersAnswer": "任何支持访问相机的现代浏览器：手机和电脑上的 Chrome、Edge、Safari 和 Firefox。内置条码读取器的浏览器（Android 和 macOS 上的 Chrome）会直接使用它；其他浏览器会在你首次扫描时下载开源解码器（ZXing，编译为 WebAssembly，来自 jsDelivr CDN，约 1 MB）。相机需要 https 页面和你的授权。",
       "installQuestion": "可以把扫描器安装为应用吗？",
-      "installAnswer": "可以。在此页面使用浏览器的“安装”或“添加到主屏幕”选项，即可获得一个直接打开相机的扫描器图标。"
+      "installAnswer": "可以。在 Chrome、Edge 或 Samsung Internet 中，点按扫描器下方的“安装应用”，也可以使用浏览器自带的安装选项。在 iPhone 和 iPad 上，点按扫描器下方的“添加到主屏幕”查看操作步骤。该应用会在独立窗口中直接打开扫描器，用它扫描过一次后即可离线使用，历史记录只保存在你的设备上。",
+      "shareQuestion": "可以通过截图扫描二维码吗？",
+      "shareAnswer": "可以。切换到“图片”，然后选择、拖入或粘贴截图。在 Android 上，安装扫描器后，你还可以从任意应用把截图或照片分享给 QRdx Scanner：它会打开并在你的设备上读取二维码。分享的图片不会被上传或保存。"
+    },
+    "app": {
+      "name": "QRdx Scanner",
+      "shortName": "QRdx Scanner",
+      "description": "用摄像头或截图扫描二维码和条形码。图片在你的设备上读取，链接在打开前会先经过检查。",
+      "cameraShortcut": "用摄像头扫描",
+      "imageShortcut": "从图片扫描"
     }
   },
   "scanner": {
@@ -1467,7 +1531,8 @@
       "drop": "将图片拖放到此处、选择文件或粘贴",
       "dropHelp": "截图和照片均可，每张图片可包含多个码。",
       "choose": "选择图片",
-      "paste": "粘贴图片"
+      "paste": "粘贴图片",
+      "shareMissing": "共享的图片没有送达，请在此处重新选择。"
     },
     "result": {
       "starts": "开始",
@@ -1578,6 +1643,19 @@
       "copy": "复制链接",
       "retry": "重试",
       "report": "举报此二维码"
+    },
+    "install": {
+      "install": "安装应用",
+      "iosButton": "添加到主屏幕",
+      "iosTitle": "将扫描器添加到主屏幕",
+      "iosShare": "点按“分享”。在 iPhone 的 Safari 中，它位于地址栏旁的菜单里。",
+      "iosAdd": "向上滑动，然后选择“添加到主屏幕”。",
+      "iosConfirm": "保持“作为 App 打开”开启，然后点按“添加”。",
+      "macButton": "添加到 Dock",
+      "macTitle": "将扫描器添加到 Dock",
+      "macAdd": "在菜单栏中依次选择“文件”和“添加到 Dock”。",
+      "macConfirm": "点击“添加”。",
+      "after": "它会在独立窗口中直接打开扫描器，并且在你用它扫描过一次二维码后即可离线使用。"
     }
   },
   "scanPages": {
@@ -1850,7 +1928,8 @@
           "choices": "请从选项中选择",
           "choice": "请选择其中一个选项",
           "invalid": "无效的值"
-        }
+        },
+        "checkAnswer": "请再检查一下这个答案。"
       }
     }
   },
@@ -1952,6 +2031,36 @@
       "savedDescription": "可在控制台的“条码”中找到。",
       "open": "打开",
       "save": "保存到控制台"
+    },
+    "issues": {
+      "enterDigits": "请输入 {short} 位数字，或输入包含校验位的全部 {length} 位数字。",
+      "digitsOnly": "{label} 只能输入数字。",
+      "checkDigitAdded": "已添加校验位 {check}。",
+      "wrongCheckDigit": "校验位应为 {expected}，而不是 {given}。请检查号码，或者去掉最后一位，系统会自动为你计算。",
+      "wrongLength": "{label} 需要 {short} 位或 {length} 位数字；当前为 {count, plural, other {# 位数字}}。",
+      "upceEnter": "请输入 6 到 8 位数字，或输入 12 位的 UPC-A 进行缩短。",
+      "upceSystem": "只有以 0 或 1 开头的 UPC-A 号码才有 UPC-E 形式。请改用 UPC-A。",
+      "upceNoForm": "此 UPC-A 号码没有 UPC-E 形式：只有零位于特定位置的号码才能缩短。请改用 UPC-A。",
+      "shortenedFromUpca": "由 UPC-A {upca} 缩短而成。",
+      "numberSystemAssumed": "已默认使用系统码 0。",
+      "upceLength": "UPC-E 需要 6、7 或 8 位数字（或 12 位的 UPC-A）；当前为 {count, plural, other {# 位数字}}。",
+      "upceStart": "UPC-E 号码以系统码 0 或 1 开头。",
+      "enterText": "请输入要编码的文本。",
+      "tooLong": "此处的 {label} 最多支持 {max, number} 个字符；当前为 {count, number} 个。",
+      "code128Chars": "此处的 Code 128 支持普通 ASCII 字母、数字、空格和符号。不允许的字符：{chars}",
+      "code39Chars": "Code 39 仅支持大写字母、数字、空格以及 - . $ / + % 。不允许的字符：{chars}",
+      "code39Lowercase": "Code 39 不支持小写字母。请使用大写字母，或使用 Code 128 来支持大小写混合。",
+      "gs1Enter": "请输入括号括起的应用标识符及其值，例如 (01)09501101530003。",
+      "gs1Start": "请以括号括起的应用标识符开头，例如 GTIN 使用 (01)，然后输入它的值。",
+      "gs1Brackets": "括号不匹配：请将每个 AI 写成 (数字)，后面紧跟它的值。",
+      "gs1BadAi": "“({ai})”不是有效的应用标识符：AI 为 2 到 4 位数字。",
+      "gs1NoValue": "AI ({ai}) 后面没有值。",
+      "gs1BadChars": "AI ({ai}) 包含 GS1 不允许的字符：{chars}",
+      "gs1Ai": "AI ({ai})：{inner}",
+      "gs1TooLong": "GS1-128 最多可容纳 {max} 个 AI 和数据字符；当前为 {count} 个。请拆分为两个条形码。",
+      "unknownFormat": "未知的条形码格式。",
+      "space": "空格",
+      "lineBreak": "换行符"
     }
   },
   "guarantee": {
@@ -1995,9 +2104,322 @@
         "outcome": "我们至少会提前 12 个月通知您，留出时间导出全部内容，并提供有文档说明的方法，让您在自己的服务器上运行这款开源应用。"
       }
     },
+    "moneyBackTitle": "退款保障",
+    "moneyBack": "您首次支付 Pro 或 Business 套餐的费用（无论按月还是按年）均享有 {days, number} 天退款保障。如果该套餐不适合您，请在付款后 {days, number} 天内发送邮件至 <mail>{email}</mail>，我们将全额退款，无需任何理由。每位客户仅限一次，退款后您的二维码仍可在免费版上继续使用。",
+    "moneyBackLink": "查看退款政策",
     "exceptionTitle": "唯一的例外：滥用",
     "exception": "只有当二维码违反我们的<terms>服务条款</terms>时，我们才会停用它，例如指向钓鱼网站或恶意软件。这是在收到举报或经过审核后做出的安全决定，与账单无关。任何人都可以<report>举报二维码</report>。",
     "questions": "对这项保障有疑问？请发送邮件至 <mail>{email}</mail>。最后更新于 <time>{date, date, long}</time>。"
+  },
+  "enterprise": {
+    "metaTitle": "QRdx Enterprise：SSO、审计日志、合同与响应时限",
+    "metaDescription": "QRdx 面向大型团队：单点登录、支持 CSV 导出的审计日志、角色权限、自定义域名和客户门户，提供年度合同、书面响应时限和发票付款。",
+    "crumb": "企业版",
+    "title": "面向企业团队的 QRdx",
+    "intro1": "适合在包装、标牌和营销活动中跨多个团队、品牌或客户使用二维码的公司，这些公司在正式推广之前需要单点登录、审计记录和合同。",
+    "intro2": "Enterprise 是附带合同的 Business 方案：书面响应时限、发票付款，以及对您安全审查的答复。",
+    "contactCta": "联系我们",
+    "securityCta": "我们如何保障安全",
+    "whoTitle": "适用对象",
+    "who": {
+      "brands": {
+        "title": "品牌与零售商",
+        "body": "二维码遍布包装、菜单和标牌等多个场景，由多个团队管理，每个团队都需要各自的访问权限。"
+      },
+      "agencies": {
+        "title": "代理机构",
+        "body": "为每个客户提供独立工作区、只读客户门户，以及采用客户自有品牌的统计页面。"
+      },
+      "security": {
+        "title": "IT 与安全团队",
+        "body": "通过您的身份提供商登录、记录谁修改了什么，并回答您的安全问卷的供应商。"
+      }
+    },
+    "featuresTitle": "您将获得",
+    "featuresIntro": "包含 Business 方案的全部功能。每一项目前都可在 qrdx.dev 上使用。",
+    "features": {
+      "sso": {
+        "title": "单点登录",
+        "body": "为您的邮箱域名提供 OIDC 或 SAML 2.0，通过 DNS 记录验证。启用强制后，您的身份提供商将成为该域名唯一的登录方式。"
+      },
+      "auditLog": {
+        "title": "审计日志",
+        "body": "记录谁在何时修改了哪个二维码、页面、成员、域名、API 密钥或设置。可筛选，可导出最多 {rows, number} 行 CSV，并保留 {days, number} 天的历史记录。"
+      },
+      "roles": {
+        "title": "角色与两步验证",
+        "body": "所有者、管理员、成员、账单成员和只读查看者。工作区可以要求其中的所有人启用两步验证。"
+      },
+      "seats": {
+        "title": "工作区与席位",
+        "body": "成员数量不限，可为每个团队、品牌或客户设立独立的工作区，并在各工作区中分别设置角色。"
+      },
+      "domains": {
+        "title": "自定义域名",
+        "body": "最多可在 {count, number} 个您自己的域名上使用短链接和托管页面。"
+      },
+      "clients": {
+        "title": "客户门户与品牌统计页",
+        "body": "客户可在只读门户中查看您与其共享的文件夹，统计页面采用客户自己的品牌，不显示 QRdx 标识。"
+      },
+      "api": {
+        "title": "API 与批量创建",
+        "body": "每天 {requests, number} 次 API 请求，单次 API 调用最多 {batch, number} 个二维码，CSV 导入最多 {importRows, number} 行。"
+      },
+      "export": {
+        "title": "您的数据，可导出",
+        "body": "可将账户中的全部内容下载为 ZIP，并将扫描记录、表单回复和审计日志导出为 CSV。"
+      }
+    },
+    "contractTitle": "合同带来的额外内容",
+    "contractIntro": "在 Business 套餐的基础上：",
+    "contract": {
+      "replies": {
+        "title": "书面答复时间",
+        "body": "二维码或托管页面无法正常使用时，{outage, plural, one {# 个工作小时} other {# 个工作小时}}内答复；其他问题在 {other, plural, one {# 个工作日} other {# 个工作日}}内答复。"
+      },
+      "invoice": {
+        "title": "年度合同，凭发票付款",
+        "body": "通过银行转账代替银行卡付款，发票上载明贵公司的信息、税号和采购订单号。"
+      },
+      "review": {
+        "title": "为您的安全审查提供答复",
+        "body": "我们会填写您的安全问卷，并提供已签署的数据处理附录副本。"
+      },
+      "selfHost": {
+        "title": "自托管时也能使用单点登录和审计日志",
+        "body": "QRdx 是开源的，但单点登录和审计日志属于 QRdx 商业许可范围。签订 Enterprise 协议后，您可以凭许可证密钥在自己的服务器上运行它们。"
+      }
+    },
+    "limitsNote": "在 qrdx.dev 上，Enterprise 工作区适用 Business 套餐的限额。如果您在某方面需要更多，请在表单中说明。",
+    "repliesTitle": "答复时间",
+    "replies": {
+      "when": "情形",
+      "enterprise": "Enterprise",
+      "business": "Business",
+      "outage": "二维码或托管页面无法正常使用",
+      "other": "其他所有问题",
+      "hours": "{count, plural, one {# 个工作小时} other {# 个工作小时}}内",
+      "days": "{count, plural, one {# 个工作日} other {# 个工作日}}内"
+    },
+    "repliesNote": "工作时间为周一至周五，按印度时间计算。以上为答复时间：QRdx 不提供正常运行时间保证。",
+    "buyTitle": "购买方式",
+    "buy": {
+      "ask": {
+        "title": "告诉我们您的需求",
+        "body": "请使用下方表单，或发送邮件至 {email}。请说明团队规模以及安全审查的各项要求。"
+      },
+      "quote": {
+        "title": "获取答复和报价",
+        "body": "我们会通过邮件答复您的问题，并给出年度价格。"
+      },
+      "sign": {
+        "title": "签订合同，凭发票付款",
+        "body": "合同签署后，我们会将您的工作区转至 Business 套餐，并发送发票。"
+      }
+    },
+    "formTitle": "联系我们",
+    "formIntro": "请告诉我们您的团队情况和需求，我们会通过电子邮件回复。",
+    "form": {
+      "name": "姓名",
+      "email": "工作邮箱",
+      "company": "公司",
+      "teamSize": "团队规模",
+      "teamSizePlaceholder": "请选择规模",
+      "sizes": {
+        "1-10": "1 至 10 人",
+        "11-50": "11 至 50 人",
+        "51-200": "51 至 200 人",
+        "201-1000": "201 至 1,000 人",
+        "1000+": "1,000 人以上"
+      },
+      "need": "您有什么需求？",
+      "needPlaceholder": "例如：为 300 人开通单点登录、按年开具发票、填写我们的安全问卷",
+      "submit": "发送",
+      "sending": "发送中…",
+      "sentTitle": "消息已发送",
+      "sent": "谢谢，我们会回复到 {email}。",
+      "privacy": "我们仅会使用这些信息回复您。请查看我们的<privacy>隐私政策</privacy>。",
+      "errors": {
+        "name": "请输入您的姓名。",
+        "email": "请输入有效的工作邮箱地址。",
+        "company": "请输入您的公司名称。",
+        "teamSize": "请选择您的团队规模。",
+        "need": "请告诉我们您的需求。",
+        "rateLimited": "您已发送了几条消息。我们会回复这些消息，您也可以发送邮件至 {email}。",
+        "check": "请先完成按钮上方的验证，然后重新发送。",
+        "notSent": "我们未能发送您的消息。请改为发送邮件至 {email}。",
+        "unavailable": "此表单在这里无法使用。请改为发送邮件至 {email}。",
+        "unknown": "出了点问题。请改为发送邮件至 {email}。"
+      }
+    },
+    "orEmail": "更喜欢邮件？请写信至 <mail>{email}</mail>。",
+    "relatedTitle": "了解更多",
+    "related": {
+      "security": "QRdx 的安全性",
+      "dpa": "数据处理附录",
+      "subprocessors": "子处理方",
+      "pricing": "价格"
+    }
+  },
+  "security": {
+    "metaTitle": "QRdx 安全：登录、数据存储与问题报告",
+    "metaDescription": "QRdx 如何保护账户和数据：启用 HSTS 的 HTTPS、内容安全策略、通行密钥和两步验证、单点登录、审计日志、链接检查、数据存储位置，以及如何报告安全漏洞。",
+    "crumb": "安全",
+    "title": "QRdx 安全",
+    "intro1": "QRdx 为保护你的账户、二维码以及访客数据所做的工作。每一项都是目前在 qrdx.dev 上实际运行的内容，代码开源，你可以自行查验。",
+    "intro2": "QRdx 没有 SOC 2、HIPAA 或任何其他安全认证，也不作此类承诺。",
+    "reportCta": "报告安全漏洞",
+    "enterpriseCta": "需要安全评审？联系我们",
+    "sections": {
+      "transport": {
+        "title": "连接与浏览器",
+        "items": {
+          "https": {
+            "title": "全站 HTTPS",
+            "body": "每个页面和 API 调用都通过 HTTPS 提供，并且浏览器会被告知在两年内持续对 qrdx.dev 使用 HTTPS（HSTS）。"
+          },
+          "csp": {
+            "title": "内容安全策略",
+            "body": "QRdx 自己的页面会限制可加载的脚本、框架和连接。显示你账户数据的页面每次请求都会获得新的 nonce，因此注入其中的脚本无法运行。"
+          },
+          "framing": {
+            "title": "禁止其他网站嵌入",
+            "body": "QRdx 自己的页面不能显示在其他网站的框架内，用于批准应用的页面则完全不能被嵌入框架。浏览器还被告知不要猜测文件类型。"
+          }
+        }
+      },
+      "signIn": {
+        "title": "登录",
+        "items": {
+          "passwords": {
+            "title": "无密码",
+            "body": "你可以使用 Google、GitHub 或一次性邮箱验证码登录{passkeys, select, yes {，或使用通行密钥登录} other {}}。QRdx 不保存任何密码，也就无从泄露。"
+          },
+          "twoFactor": {
+            "title": "两步验证",
+            "body": "第二步使用验证器应用{passkeys, select, yes {或通行密钥} other {}}，无法使用时可用备份码。Business 上的工作区可以要求每位成员启用。"
+          },
+          "confirm": {
+            "title": "确认是你本人",
+            "body": "安全设置变更、新建 API 密钥和 webhook、角色变更以及删除工作区时，即使你已登录，也需要再次确认是你本人操作。一次确认有效期为 10 分钟。"
+          },
+          "alerts": {
+            "title": "新登录提醒",
+            "body": "当有浏览器或设备首次登录你的账户，以及你的两步验证设置发生变化时，我们会给你发送邮件。"
+          },
+          "sessions": {
+            "title": "登录会过期",
+            "body": "一次登录最长有效 30 天，如果不再使用则会更早失效。从新的国家和新的浏览器发起的登录必须确认是你本人，你也可以一次性退出所有其他设备。"
+          }
+        }
+      },
+      "workspaces": {
+        "title": "工作区与团队",
+        "items": {
+          "sso": {
+            "title": "单点登录",
+            "body": "Business 上提供 OIDC 或 SAML 2.0，适用于你通过 DNS 记录验证的邮箱域名。SAML 响应必须使用 SHA-256 或更强的算法签名。工作区要求使用单点登录时，该域名的其他登录方式都会关闭，会话最长持续 24 小时。"
+          },
+          "roles": {
+            "title": "角色",
+            "body": "角色包括所有者、管理员、成员、账单成员和查看者。只有所有者和管理员可以管理成员、域名和设置，账单成员和查看者无法修改二维码。"
+          },
+          "auditLog": {
+            "title": "审计日志",
+            "body": "在 Business 套餐中，所有者和管理员可以查看谁修改了哪个二维码、页面、成员、域名、API 密钥或设置，并可导出为 CSV。记录保留 {days, number} 天。"
+          },
+          "staff": {
+            "title": "员工访问权限",
+            "body": "只有 QRdx 员工账号可以打开管理工具，员工在其中的每项操作都会记录在审计日志中。"
+          }
+        }
+      },
+      "secrets": {
+        "title": "密钥与机密信息",
+        "items": {
+          "hashed": {
+            "title": "哈希存储的密钥和令牌",
+            "body": "API 密钥和 OAuth 访问令牌仅以 SHA-256 哈希值的形式存储，因此数据库的副本也不会暴露它们。受保护二维码的密码同样以哈希值存储。"
+          },
+          "encrypted": {
+            "title": "加密存储的集成令牌",
+            "body": "你所连接工具（如 Google Drive 或 Slack）的令牌使用 AES-256-GCM 加密。"
+          },
+          "webhooks": {
+            "title": "已签名的 Webhook",
+            "body": "每个 Webhook 端点都有各自的密钥，每条载荷都用该密钥签名，因此你的服务器可以验证它确实来自 QRdx。"
+          }
+        }
+      },
+      "abuse": {
+        "title": "滥用与链接安全",
+        "items": {
+          "linkChecks": {
+            "title": "链接检查",
+            "body": "设置动态二维码的目标地址时，QRdx 会对照 Google Web Risk 的恶意软件和钓鱼网站列表进行检查，并拒绝被标记的地址。未能及时完成检查的目标地址会再次检查，如果被标记，对应的二维码会被停用。"
+          },
+          "rateLimits": {
+            "title": "速率限制",
+            "body": "API、MCP 服务器、表单和其他公开端点会按密钥、账号或 IP 地址进行速率限制。"
+          },
+          "bots": {
+            "title": "表单的机器人检测",
+            "body": "公开表单使用 Cloudflare Turnstile 和只有机器人才会填写的隐藏字段。"
+          },
+          "reports": {
+            "title": "举报有害二维码",
+            "body": "任何人都可以<report>举报二维码</report>，只要它指向钓鱼网站、恶意软件或诈骗内容。违反规则的二维码会被停用。"
+          }
+        }
+      },
+      "storage": {
+        "title": "数据存储位置",
+        "items": {
+          "hosting": {
+            "title": "托管",
+            "body": "应用运行在 Vercel 上，其服务器函数运行在美国华盛顿特区，位于 Vercel 全球边缘网络之后。"
+          },
+          "database": {
+            "title": "数据库",
+            "body": "账号、二维码、扫描记录和表单回复保存在位于 AWS US East（弗吉尼亚北部）的 Neon Postgres 数据库中。Neon 使用 AES-256 <neon>对静态数据加密</neon>，并保留加密备份。"
+          },
+          "files": {
+            "title": "上传的文件",
+            "body": "你上传的文件存储在 Cloudflare R2 的亚太区域。"
+          },
+          "scans": {
+            "title": "扫描数据",
+            "body": "不会存储扫描者的 IP 地址。独立访客通过每天都会变化的哈希值来统计。"
+          }
+        }
+      },
+      "yourData": {
+        "title": "您的数据与相关文件",
+        "items": {
+          "export": {
+            "title": "导出",
+            "body": "您可以在设置中以 ZIP 文件下载 QRdx 保存的与您账户相关的全部内容，并将扫描记录、表单回复和审计日志导出为 CSV。"
+          },
+          "delete": {
+            "title": "删除",
+            "body": "您可以随时删除二维码、页面、文件和表单回复，也可以删除整个账户。已删除的数据可能会在数据库服务商的恢复历史中短暂保留。"
+          },
+          "dpa": {
+            "title": "数据处理附录",
+            "body": "<dpa>DPA</dpa> 是所有客户适用的条款的一部分，并包含标准合同条款。如需已签署的副本，请向我们索取。"
+          },
+          "subprocessors": {
+            "title": "子处理方",
+            "body": "<list>子处理方列表</list>列出了为 QRdx 处理个人数据的每项服务、其用途及所在地。新增子处理方至少提前 30 天更新该列表。"
+          }
+        }
+      }
+    },
+    "reportTitle": "报告安全漏洞",
+    "report": "请发送邮件至 <mail>{email}</mail>，主题以 [security] 开头，并请勿在公开的 GitHub issue 中发布。我们的<policy>安全政策</policy>说明了适用范围和安全港条款，<txt>security.txt</txt> 中也提供相同的联系方式。",
+    "reviewTitle": "正在进行安全审查？",
+    "review": "请把您的问卷发给我们。<enterprise>Enterprise</enterprise> 合同包含供您审查的答复和已签署的 DPA。"
   },
   "templates": {
     "metaTitle": "二维码落地页模板，支持在线演示",
@@ -4898,6 +5320,23 @@
         "page": {
           "yourProfileHowYouSign": "你的个人资料、登录方式、登录位置和数据。",
           "profileSecurity": "个人资料与安全"
+        },
+        "deletion": {
+          "counts": {
+            "codes": "{count, plural, one {#个二维码} other {#个二维码}}",
+            "pages": "{count, plural, one {#个托管页面} other {#个托管页面}}",
+            "files": "{count, plural, one {#个文件} other {#个文件}}",
+            "domains": "{count, plural, one {#个自定义域名} other {#个自定义域名}}"
+          },
+          "workspaceEmpty": "你自己的工作区会被删除，其中的主题、设置和集成也会一并删除。",
+          "workspaceWith": "你自己的工作区会被删除，包括其中的{list}，以及你的扫描记录、主题、webhook 和集成。",
+          "workspaceWithCodes": "你自己的工作区会被删除，包括其中的{list}，以及你的扫描记录、主题、webhook 和集成。其已印刷的二维码将显示“二维码未找到”页面。",
+          "teamPromote": "{team}：{who}（{role, select, owner {所有者} admin {管理员} billing {账单管理员} viewer {查看者} other {成员}}）将成为所有者，并接管你在该工作区中创建的内容，因此其中的二维码会继续有效。",
+          "teamStays": "{team}：你在该工作区中创建的内容会保留在其中，归在 {who} 名下。",
+          "teamDeleted": "{team}：你是唯一的成员，因此该工作区及其内容将被删除。",
+          "subscriptionCancelled": "你的 {plan} 订阅将立即取消。",
+          "signedOut": "你会在所有设备上退出登录。",
+          "subscriptionBlocker": "目前无法在此处取消你的 {plan} 订阅。请先在“设置 → 套餐与用量”中取消，或发送邮件至 support@qrdx.dev。"
         }
       },
       "affiliate": {
@@ -4985,7 +5424,8 @@
           "appsYouveAllowedToUse": "你已允许通过 API 使用你的 QRdx 账户的应用。撤销访问权限即可让应用立即退出登录。",
           "authorizedApps": "已授权应用",
           "noApiPermissions": "无 API 权限",
-          "lastActiveLastactiveat": " · 最近活跃：{lastActiveAt}",
+          "authorizedOn": "授权于 {authorizedAt}",
+          "authorizedLastActive": "授权于 {authorizedAt} · 最近活跃于 {lastActiveAt}",
           "revoking": "正在撤销…",
           "nameCanNoLongerUse": "{name} 已无法再使用你的账户"
         }
@@ -5563,7 +6003,13 @@
           "selectLabel": "选择 {label}",
           "actionsForLabel": "{label} 的操作",
           "emptyTheTrash": "清空回收站？",
-          "deleteValueForGood": "永久删除 {value}？",
+          "deleteValueForGood": "永久删除{count, plural, one {#个条形码} other {#个条形码}}？",
+          "movedToTrash": "已将{count, plural, one {#个条形码} other {#个条形码}}移至回收站",
+          "movedToTrashSkipped": "已将{count, plural, one {#个条形码} other {#个条形码}}移至回收站。其他成员创建的 {skipped, number} 个条形码未被移动：只有所有者和管理员可以删除它们。",
+          "restored": "已恢复{count, plural, one {#个条形码} other {#个条形码}}",
+          "movedToFolder": "已将{count, plural, one {#个条形码} other {#个条形码}}移至 {name}",
+          "tookOutOfFolders": "已将{count, plural, one {#个条形码} other {#个条形码}}移出文件夹",
+          "deletedForGood": "已永久删除{count, plural, one {#个条形码} other {#个条形码}}",
           "deleting": "正在删除…",
           "edit": "编辑",
           "open": "打开",
@@ -5623,7 +6069,12 @@
             "rowsSentOf": "{total} 行中已发送 {sent} 行",
             "createdCount": "已创建 {created} 个",
             "createdWithProblems": "已创建 {created} 个 · {rowErrors} 行有问题",
-            "valueCouldntBeSent": "{value} 发送失败",
+            "valueCouldntBeSent": "{count, plural, one {#行未能发送} other {#行未能发送}}",
+            "retryValue": "重试{count, plural, one {#行} other {#行}}",
+            "codesCount": "{count, plural, one {#个二维码} other {#个二维码}}",
+            "codesIntoFolder": "{count, plural, one {#个二维码} other {#个二维码}}，放入 {folder}",
+            "codesTagged": "{count, plural, one {#个二维码} other {#个二维码}}，标签为 {tags}",
+            "codesIntoFolderTagged": "{count, plural, one {#个二维码} other {#个二维码}}，放入 {folder}，标签为 {tags}",
             "retryThemNothingIsMade": "请重试，不会重复创建。",
             "pause": "暂停",
             "resume": "继续",
@@ -5635,7 +6086,6 @@
             "paused": "已暂停",
             "theRequestDidntGoThrough": "请求未成功。",
             "retryAndContinue": "重试并继续",
-            "retryValue": "重试 {value}",
             "finishWithWhatsMade": "仅保留已创建的并完成",
             "stop": "停止"
           },
@@ -5653,7 +6103,13 @@
             "downloadImages": "下载图片",
             "imagesProgress": "图片进度",
             "imageFormat": "图片格式",
-            "createdValue": "已创建 {value}",
+            "createdValue": "已创建{count, plural, one {#个二维码} other {#个二维码}}",
+            "zipParts": "已保存为 {parts, number} 个 ZIP 文件（大批量会分成每份约 500 MB 的多个部分，codes.csv 在最后一个文件中）。",
+            "imagesMissing": "{count, plural, one {# 张图片未能生成，已缺失。} other {# 张图片未能生成，已缺失。}}",
+            "zipFailed": "无法生成 ZIP。",
+            "rowsNotImported": "{count, plural, one {# 行无法导入。} other {# 行无法导入。}}",
+            "rowsNotSent": "{count, plural, one {# 行未发送（导入已提前结束）。} other {# 行未发送（导入已提前结束）。}}",
+            "rowsSkipped": "{count, plural, one {文件中有问题的 # 行已被跳过。} other {文件中有问题的 # 行已被跳过。}}",
             "noCodesWereCreated": "未创建任何二维码",
             "everyRowWasImported": "所有行均已导入。"
           },
@@ -5672,7 +6128,13 @@
             "chooseTheColumnWithThe": "请选择包含目标网址的列。",
             "n3Organize": "3. 整理",
             "n4Review": "4. 检查",
-            "valueWithProblems": "有问题的{value}",
+            "valueWithProblems": "{count, plural, one {# 行有问题} other {# 行有问题}}",
+            "importValue": "导入 {count, plural, one {# 个二维码} other {# 个二维码}}",
+            "rowsAndColumns": "{rows, plural, one {# 行} other {# 行}} · {columns, plural, one {# 列} other {# 列}}",
+            "validRows": "{count, plural, one {# 个有效行} other {# 个有效行}}",
+            "needsHeaderAndRows": "文件需要包含一行标题，以及至少一行二维码数据。",
+            "columnNumber": "第 {number} 列",
+            "fileTooLarge": "文件大小超过 {size} MB。",
             "problemsCsv": "问题 CSV",
             "line": "行号",
             "destination": "目标网址",
@@ -5684,7 +6146,6 @@
             "showingTheFirstPreviewRows": "显示共 {length} 行中的前 {PREVIEW_ROWS, number} 行。每一行都会被检查。",
             "upgradeToImportTheseCodes": "升级后即可导入这些二维码",
             "seePlans": "查看套餐",
-            "importValue": "导入{value}",
             "removeFile": "移除文件",
             "bulkImportIsAValue": "批量导入是 {value} 功能",
             "bulkImportIsntOnYour": "您的套餐不含批量导入",
@@ -5694,6 +6155,43 @@
             "auto": "自动",
             "rowsWithProblemsAreSkipped": "有问题的行将被跳过。",
             "sentImportChunkSizeAt": "每次发送 {IMPORT_CHUNK_SIZE}，可随时暂停和继续。"
+          },
+          "issues": {
+            "destinationMissing": "缺少目标网址",
+            "destinationTooLong": "目标网址过长",
+            "destinationNotUrl": "目标地址必须是以 https:// 开头的完整网址",
+            "destinationProtocol": "目标地址只能使用 http:// 或 https://",
+            "destinationCredentials": "不允许使用包含用户名或密码的目标地址",
+            "destinationShortLink": "动态二维码不能指向另一个 QRdx 短链接",
+            "destinationRejected": "无法使用此目标网址",
+            "titleTooLong": "标题不能超过 {max, number} 个字符",
+            "folderDepth": "文件夹最多可嵌套 {max, number} 层",
+            "folderNameTooLong": "文件夹名称最多 {max, number} 个字符",
+            "tooManyTags": "每个二维码最多 {max, number} 个标签",
+            "tooManyTagsWithBatch": "每个二维码最多 {max, number} 个标签，包含应用于所有二维码的标签",
+            "tagNameTooLong": "标签名称最多 {max, number} 个字符",
+            "slugReserved": "此自定义后缀为保留后缀",
+            "slugLength": "自定义后缀：请使用 {min} 到 {max} 个字符。",
+            "slugCharacters": "自定义后缀：只能使用字母、数字、- 和 _。",
+            "slugDash": "自定义后缀：不能以短横线开头或结尾。",
+            "slugDuplicate": "此自定义后缀在文件中已出现过",
+            "slugTaken": "此自定义后缀已被使用",
+            "slugNotOnPlan": "自定义后缀属于 {plans} 的功能"
+          },
+          "reasons": {
+            "imported": "已导入",
+            "duplicate": "已存在目标地址相同的 QRdx 二维码",
+            "selectedTwice": "重复选择",
+            "qrdx": "已指向 QRdx 短链接",
+            "limit": "超出套餐的有效二维码数量上限",
+            "providerEnded": "已停止从 {provider} 导入",
+            "backHalfShape": "QRdx 的自定义后缀为 3 到 64 个字母、数字、- 或 _，因此无法保留此后缀。",
+            "backHalfReservedDomain": "此自定义后缀在 {domain} 上为保留后缀。",
+            "backHalfReservedShared": "此自定义后缀在 qrdx.dev 上为保留后缀。",
+            "backHalfReservedSharedAddDomain": "此自定义后缀在 qrdx.dev 上为保留后缀。请在“域名”页面添加 {domain}，以便在该域名下保留它。",
+            "backHalfTakenDomain": "{domain} 上已有另一个二维码使用了这个自定义后缀。",
+            "backHalfTakenShared": "qrdx.dev 上已有另一个 QRdx 二维码使用了这个自定义后缀。",
+            "backHalfRepeated": "所选的另一个链接使用了相同的自定义后缀。"
           }
         },
         "analyticsExtra": {
@@ -6104,7 +6602,14 @@
           "onlyTeamOwnersAndAdmins": "只有团队所有者和管理员可以删除他人创建的二维码。",
           "downloadFailedPleaseTryAgain": "下载失败，请重试。",
           "shortLinkCopied": "短链接已复制",
-          "couldntCopyTheShortLink": "无法复制短链接"
+          "couldntCopyTheShortLink": "无法复制短链接",
+          "removedFromFavorites": "已从收藏中移除",
+          "addedToFavorites": "已添加到收藏",
+          "copyCreated": "已创建副本",
+          "copyOpensSamePage": "新的短链接：{link}。它打开的是同一个落地页。",
+          "copyScansFromZero": "新的短链接：{link}。扫描次数从零开始计算。",
+          "movedToTrash": "已移至回收站",
+          "codeRestored": "二维码已恢复"
         },
         "codeOptions": {
           "on": "（已开启）",
@@ -6168,7 +6673,19 @@
           "svgImagesZip": "SVG 图片（ZIP）",
           "more": "更多",
           "moveToTrash": "移至回收站",
-          "deleteValueForever": "永久删除 {value}？",
+          "preparingValue": "正在准备 {count, plural, one {# 个二维码} other {# 个二维码}}…",
+          "downloadedValueAsValue2": "已将 {count, plural, one {# 个二维码} other {# 个二维码}}下载为 {value2}",
+          "deleteValueForever": "永久删除 {count, plural, one {# 个二维码} other {# 个二维码}}？",
+          "allSelectedOthersSkipped": "所选二维码均由其他团队成员创建，已被跳过：只有所有者和管理员可以删除。",
+          "movedToTrash": "已将 {count, plural, one {# 个二维码} other {# 个二维码}}移至回收站",
+          "deletedForever": "已永久删除 {count, plural, one {# 个二维码} other {# 个二维码}}",
+          "othersSkipped": "{count, plural, one {由其他团队成员创建的 # 个二维码已被跳过} other {由其他团队成员创建的 # 个二维码已被跳过}}：只有所有者和管理员可以删除。",
+          "trashScansNote": "在恢复之前，扫描时会显示“已不再有效”页面。",
+          "restoredCodes": "已恢复 {count, plural, one {# 个二维码} other {# 个二维码}}",
+          "archivedCodes": "已归档 {count, plural, one {# 个二维码} other {# 个二维码}}",
+          "unarchivedCodes": "已取消归档 {count, plural, one {# 个二维码} other {# 个二维码}}",
+          "pausedCodes": "已暂停 {count, plural, one {# 个二维码} other {# 个二维码}}",
+          "resumedCodes": "已恢复 {count, plural, one {# 个二维码} other {# 个二维码}}",
           "theirScanAndVersionHistory": "它们的扫描记录和版本历史将被删除，已印刷的二维码会显示“未找到二维码”页面。此操作无法撤销。",
           "cancel": "取消",
           "bulkActions": "批量操作",
@@ -6184,11 +6701,8 @@
           "failedCouldntBeRendered": "{failed, number} 个无法渲染。",
           "scansRedirectAgain": "扫描将重新跳转。",
           "scansGoToEachCodes": "扫描后会跳转到各二维码的备用网址，或一个中性的“已暂停”页面。",
-          "allSelectedOthersSkipped": "已选的全部{OTHERS_SKIPPED}",
-          "preparingValue": "正在准备 {value}...",
           "renderingFinishedOfTotal": "正在渲染 {finished, number}/{total, number}...",
           "theQrCodesCouldntBe": "无法渲染这些二维码。",
-          "downloadedValueAsValue2": "已将 {value} 下载为 {value2}",
           "downloadFailedPleaseTryAgain": "下载失败，请重试。"
         },
         "codesTable": {
@@ -6225,7 +6739,9 @@
           "clearAll": "全部清除",
           "codesWithAllOfThese": "含所有这些标签的二维码",
           "emptyTheTrash": "清空回收站？",
-          "valueAndTheirScanHistory": "{value} 及其扫描历史将被永久删除。已印刷的二维码会显示“未找到二维码”页面。此操作无法撤销。",
+          "valueAndTheirScanHistory": "{count, plural, one {# 个二维码} other {# 个二维码}}及其扫描记录将被永久删除。已打印的副本会显示“未找到二维码”页面。此操作无法撤销。",
+          "codeCount": "{count, plural, one {# 个二维码} other {# 个二维码}}",
+          "deletedForever": "已永久删除 {count, plural, one {# 个二维码} other {# 个二维码}}",
           "cancel": "取消",
           "editName": "编辑 {name}",
           "deleteName": "删除 {name}",
@@ -6285,7 +6801,12 @@
           "springCampaign": "春季活动",
           "save": "保存",
           "createFolder": "创建文件夹",
-          "itsCodesAndSubfoldersMoved": "其中的二维码和子文件夹已移至{target}。"
+          "itsCodesAndSubfoldersMoved": "其中的二维码和子文件夹已移至{target}。",
+          "movedToFolder": "已将 {count, plural, one {# 个二维码} other {# 个二维码}}移至“{name}”",
+          "movedOutOfFolders": "已将 {count, plural, one {# 个二维码} other {# 个二维码}}移出文件夹",
+          "theTopLevel": "顶层",
+          "deletedFolder": "已删除“{name}”",
+          "folderRenamed": "文件夹已重命名"
         },
         "importDialog": {
           "import": "导入",
@@ -6319,22 +6840,24 @@
           "theOldShortLinkOr": "旧短链接（或二维码 ID）可让您再次上传同一文件时跳过已导入的二维码，同时也会写入新旧链接的对应关系中。",
           "provider": "服务商",
           "exportFile": "导出文件",
-          "import": "导入",
-          "firstMaxJobLinks": "（前 {MAX_JOB_LINKS, number} 个）",
+          "previewRows": "预览 {count, plural, one {# 行} other {# 行}}",
+          "previewImport": "预览导入",
+          "rows": "{count, plural, one {# 行} other {# 行}}",
+          "rowsFirst": "{count, plural, one {# 行} other {# 行}}（前 {MAX_JOB_LINKS, number} 行）",
           "chooseAnotherFile": "选择其他文件",
           "chooseFile": "选择文件"
         },
         "importLinksStep": {
           "importingFromNameIsntAvailable": "暂不支持从 {name} 导入。",
           "qrdxReadsYourLinksTo": "QRdx 会读取您的链接以便导入。令牌经加密存储，您可随时在设置中断开连接。",
-          "signInWith": "登录方式",
+          "signInWith": "使用 {name} 登录",
+          "valueSelected": "已选择 {count, plural, one {# 个链接} other {# 个链接}}",
           "afterSigningInYouCome": "登录后会直接返回此处，供您选择链接。",
           "orPasteAKey": "或粘贴密钥",
           "connect": "连接",
           "openName": "打开 {name}",
           "connectingNameIsntAvailableRight": "目前无法连接 {name}。请在 {name2} 中将链接导出为 CSV，然后改用“其他服务商 (CSV)”。",
           "allProviders": "所有服务商",
-          "valueSelected": "已选择 {value} 项",
           "previewImport": "预览导入",
           "allDomains": "全部域名",
           "allTags": "全部标签",
@@ -6395,8 +6918,8 @@
           "folderName": "文件夹名称",
           "yourDomain": "你的域名",
           "nothingToImport": "没有可导入的内容",
-          "importTheFirstValue": "导入前 {value} 个",
-          "importValue": "导入 {value}",
+          "importTheFirstValue": "导入前 {count, plural, one {# 个二维码} other {# 个二维码}}",
+          "importValue": "导入 {count, plural, one {# 个二维码} other {# 个二维码}}",
           "keepTheirsOnThatDomain": "短链后缀会保留在你选择的域名上，因此在其 DNS 迁移到 QRdx 后，已印刷的二维码可再次使用。",
           "everyBackHalfIsKept": "所有后缀都会保留在 qrdx.dev 上。",
           "keepingBackHalvesIsPart": "保留短链后缀包含在 {slugPlans} 中。",
@@ -6411,9 +6934,9 @@
           "forProvidersWithoutApiAccess": "适用于没有 API 访问权限的服务商。上传 CSV，检查各列，然后预览并导入。",
           "alreadyUsingTheQrdxCsv": "已经在使用 QRdx CSV 模板？<link>导入 CSV</link>",
           "recentImports": "最近的导入",
-          "valueValue2Created": "{value} · 已创建 {value2}",
+          "valueValue2Created": "{value} · 已创建 {count, plural, one {# 个二维码} other {# 个二维码}}",
+          "valuePointingToQrdx": "{count, plural, one {# 个指向 QRdx 的旧链接} other {# 个指向 QRdx 的旧链接}}",
           "resumeProcessedTotal": "继续 {processed, number}/{total, number}",
-          "valuePointingToQrdx": " · {value} 个指向 QRdx",
           "open": "打开",
           "checking": "检查中…",
           "connected": "已连接",
@@ -6424,19 +6947,19 @@
         },
         "importRedirectsStep": {
           "summary": "摘要",
-          "undoValue": "撤销 {value}",
-          "update": "更新",
-          "in": "在",
+          "undoValue": "撤销 {count, plural, one {# 个链接} other {# 个链接}}",
+          "valueRestored": "已恢复 {count, plural, one {# 个链接} other {# 个链接}}",
+          "valueNowOpenQrdx": "{count, plural, one {# 个链接现在会打开 QRdx} other {# 个链接现在会打开 QRdx}}",
+          "dryRunValueWouldChange": "试运行 <span>· {count, plural, one {将更改 # 个链接} other {将更改 # 个链接}}</span>",
+          "updateLinksIn": "更新 {name} 中的 {count, plural, one {# 个链接} other {# 个链接}}",
+          "oldLinksAlreadyPoint": "{count, plural, one {# 个旧链接已指向 QRdx。} other {# 个旧链接已指向 QRdx。}}",
           "importsFromNameHaveEnded": "{name} 的导入已结束。",
           "qrdxNoLongerChangesName": "QRdx 不再更改 {name} 的链接。撤销会将原始目标地址恢复到你的 {name2} 账号中（已随本次导入保存）。QRdx 二维码会保留。",
           "thisChangesLinksInYour": "这会更改你的 {name} 账号中的链接。",
           "eachOldLinkWillOpen": "每个旧链接将打开对应的新 QRdx 二维码，再将访问者送到同一目标地址，因此已印刷的二维码仍可使用，其扫描也会显示在 QRdx 中。{name} 仍会先记录一次点击。撤销会恢复原始目标地址（已随本次导入保存）。",
           "listingTheChanges": "正在列出更改…",
-          "dryRunValueWouldChange": "试运行 <span>· {value} 项将更改</span>",
           "iUnderstandTheseNameLinks": "我了解在我撤销之前，这些 {name} 链接将指向 QRdx。",
           "updateProgress": "更新进度",
-          "valueRestored": "已恢复 {value}",
-          "valueNowOpenQrdx": "{value} 现在会打开 QRdx",
           "restoringOriginalDestinations": "正在恢复原始目标地址…",
           "updatingLinksInName": "正在更新 {name} 中的链接…",
           "everyOldNameLinkHas": "每个旧的 {name} 链接都已恢复为原始目标地址。",
@@ -6459,7 +6982,9 @@
           "keepMyPrintedCodesWorking": "让我已印刷的二维码继续可用",
           "optionalPointEachOldName": "可选。将每个旧的 {name} 链接指向对应的新 QRdx 二维码，这样已印刷的二维码仍可使用，其扫描也会显示在 QRdx 中。你会先看到每一项更改，也可以撤销。",
           "pointYourOldCodesAt": "将旧二维码指向 QRdx",
-          "codesLiveOnItsOwn": "二维码位于其自有域名下，因此 QRdx 无法更改。请对每个旧二维码执行以下操作：",
+          "oldProviderCodesLiveOnItsDomain": "你的旧服务商的二维码位于其自有域名下，因此 QRdx 无法更改。对每个旧二维码：",
+          "providerCodesLiveOnItsDomain": "{name} 的二维码位于其自有域名下，因此 QRdx 无法更改。对每个旧二维码：",
+          "oldLinksPointToQrdx": "{count, plural, one {# 个旧的 {name} 链接} other {# 个旧的 {name} 链接}}指向 QRdx",
           "backHalvesOnBackhalfdomain": "{backHalfDomain} 上的后缀",
           "attachCodes": "关联二维码",
           "notesOnEachCodeSay": "每个二维码上的备注会说明其来源、旧链接和原始创建日期。重新运行此导入会跳过所有已导入的内容。",
@@ -6470,24 +6995,27 @@
           "importingFromName": "正在从 {name} 导入…",
           "importPaused": "导入已暂停",
           "waitingWaitingSForThe": "正在等待 {waiting, number} 秒以应对速率限制，然后继续…",
-          "valueCreatedSoFarIn": "已创建 {value} 个，每批 50 个。即使重试，每个链接也只会导入一次。",
+          "valueCreatedSoFarIn": "已创建 {count, plural, one {# 个二维码} other {# 个二维码}}，每批 50 个。每个链接只会导入一次，即使重试也一样。",
           "manage": "管理",
           "reviewChanges": "查看更改",
-          "yourOldProviders": "你之前的服务商",
           "theCodesAreOnBackhalfdomain": "二维码位于 {backHalfDomain}。只要其 DNS 指向 QRdx 并在“域名”页面通过验证，其上的旧链接即可恢复使用。",
           "afterBackhalfdomainPointsToQrdx": "{backHalfDomain} 指向 QRdx 并在“域名”页面通过验证后，请关联这些二维码，这样 {backHalfDomain2}/'<'back-half'>' 就能打开它们。",
           "other": "其他"
         },
         "moveWorkspaceDialog": {
           "moveToAnotherWorkspace": "移动到其他工作区",
-          "keepsItsShortLinkSo": "保留其短链接，因此已印刷的副本仍可继续使用。其扫描记录和历史会一并迁移；文件夹和标签留在此处。",
+          "keepsItsShortLinkSo": "<strong>{name}</strong> 会保留其短链接，因此已印刷的二维码仍可使用。其扫描记录和历史会随之移动；文件夹和标签则留在此处。",
           "loadingWorkspaces": "正在加载工作区",
           "youreNotInAnotherWorkspace": "你不在其他可添加二维码的工作区中。你作为查看者或账单成员的工作区不会列出。",
           "cancel": "取消",
           "moveCode": "移动二维码",
           "workspaces": "工作区",
           "open": "打开",
-          "movedToName": "已移动到 {name}"
+          "movedToName": "已移动到 {name}",
+          "movedSameLink": "短链接、扫描记录和历史均保持不变。",
+          "movedFolderStayed": "短链接、扫描记录和历史均保持不变。其文件夹仍留在此处。",
+          "movedTagsStayed": "短链接、扫描记录和历史均保持不变。{count, plural, one {# 个标签} other {# 个标签}}仍留在此处。",
+          "movedFolderAndTagsStayed": "短链接、扫描记录和历史均保持不变。其文件夹和 {count, plural, one {# 个标签} other {# 个标签}}仍留在此处。"
         },
         "newCodeDialog": {
           "template": "模板",
@@ -6529,8 +7057,8 @@
           "bytesBytes": "{bytes, number} 字节",
           "fits": "可写入",
           "theLinkNeedsBytesBytes": "该链接需要 {bytes, number} 字节。如果之后要写入更长的链接，NTAG215 和 NTAG216 的容量更充裕。",
-          "openThisPageInChrome": "在已开启 NFC 的 Android 手机上用 Chrome 打开此页面，点按“写入 NFC 标签”，并将",
-          "againstTheBackOfThe": "贴近手机背面。在 iPhone 上，请使用 NFC 写入应用。",
+          "writeItTag": "请在已开启 NFC 的 Android 手机上用 Chrome 打开此页面，点按“写入 NFC 标签”，然后将标签贴近手机背面。在 iPhone 上，请使用 NFC 写入应用。",
+          "writeItCard": "请在已开启 NFC 的 Android 手机上用 Chrome 打开此页面，点按“写入 NFC 标签”，然后将卡片贴近手机背面。在 iPhone 上，请使用 NFC 写入应用。",
           "analyticsCountsTapsAndScans": "数据分析会分别统计轻触和扫描次数。",
           "downloadTheQrCode": "下载二维码",
           "androidPhonesWithNfcOn": "支持 NFC 且已开启 NFC 的 Android 手机，以及 iPhone XS 或更新机型，标签碰到手机时即可打开链接，无需应用。标签会始终跟随二维码：在 QRdx 中更改它指向的位置，你写入的每个标签都会随之更新。",
@@ -6648,7 +7176,11 @@
           "editTag": "编辑标签",
           "createTag": "创建标签",
           "tags": "标签",
-          "tagsForValue": "{value} 的标签"
+          "tagsForValue": "{count, plural, one {# 个二维码} other {# 个二维码}}的标签",
+          "tagsSaved": "标签已保存",
+          "updatedTagsOn": "已更新 {count, plural, one {# 个二维码} other {# 个二维码}}的标签",
+          "tagSaved": "标签已保存",
+          "deletedTag": "已删除标签“{name}”"
         },
         "usage": {
           "unlimitedUsage": "{count, plural, one {# 个活跃动态二维码} other {# 个活跃动态二维码}} · {plan} 套餐，不限二维码数量",
@@ -6706,7 +7238,9 @@
           "linkCopied": "链接已复制",
           "couldntCopyTheLink": "无法复制链接。",
           "notUsedYet": "尚未使用",
-          "usedByValue": "使用方:{value}"
+          "usedByPagesAndCodes": "被 {pages, plural, one {# 个页面} other {# 个页面}} · {codes, plural, one {# 个二维码} other {# 个二维码}}使用",
+          "usedByPages": "被 {pages, plural, one {# 个页面} other {# 个页面}}使用",
+          "usedByCodes": "被 {codes, plural, one {# 个二维码} other {# 个二维码}}使用"
         }
       },
       "loading": {
@@ -6975,8 +7509,8 @@
           "cancel": "取消",
           "save": "保存",
           "deleteName": "删除 {name}？",
-          "qrCodesYouAlreadyMade": "你之前用此主题制作的二维码外观不变，此操作只会移除已保存的主题",
           "deleteTheme": "删除主题",
+          "deleteThemeTeam": "你已用此主题制作的二维码会保持原有外观。此操作只会为此工作区中的所有人移除已保存的主题。",
           "updateTheTagsForName": "更新“{name}”的标签。",
           "saveTags": "保存标签",
           "openNameInThePlayground": "在 Playground 中打开 {name}",
@@ -6986,8 +7520,7 @@
           "removeAsDefault": "取消默认",
           "setAsWorkspaceDefault": "设为工作区默认",
           "setAsDefault": "设为默认",
-          "forEveryoneInThisWorkspace": "，对此工作区内的所有人生效",
-          "itIsAlsoRemovedFrom": "该主题也会从社区中移除。",
+          "itIsAlsoRemovedFrom": "它也会从社区中移除。",
           "upgrade": "升级",
           "themeRenamed": "主题已重命名",
           "couldNotRenameTheTheme": "无法重命名主题，请重试。",
@@ -7090,7 +7623,14 @@
           "removeHostname": "移除 {hostname}？",
           "cancel": "取消",
           "removeHostname2": "移除 {hostname}",
-          "shortLinksLookLikeHttps": "短链接形如 https://{hostname}/aB3dE5f · 已被 {value} 使用",
+          "shortLinksLookLikeHttps": "短链接形如 https://{hostname}/aB3dE5f · 被 {count, plural, one {# 个二维码} other {# 个二维码}}使用",
+          "youveAddedValueTheMost": "你已添加 {count, plural, one {# 个域名} other {# 个域名}}，已达到当前套餐的上限。移除一个后才能再添加。",
+          "providerCanAddRecords": "你的 DNS 托管在 {provider}，它可以为你添加这些记录。",
+          "yourProviderCanAddRecords": "你的 DNS 服务商可以为你添加这些记录。",
+          "approveAtProvider": "在 {provider} 批准更改后，再返回此处。",
+          "approveAtYourProvider": "在你的 DNS 服务商处批准更改后，再返回此处。",
+          "removeDomainInUse": "{count, plural, one {# 个二维码正在使用} other {# 个二维码正在使用}}此域名。使用 {hostname} 链接印刷的二维码将失效，这些二维码会改用其 {defaultHost}/q/… 链接。在该域名上选定的自定义后缀，如果在 {defaultHost} 上可用则会保留；其余的会获得新的后缀。",
+          "removeDomainUnused": "{hostname} 上的短链接将失效。",
           "addTheseRecordsAtYour": "请在你的 DNS 服务商处添加这些记录，然后点击“验证”。",
           "checkDns": "检查 DNS",
           "verify": "验证",
@@ -7105,7 +7645,6 @@
           "addDomain": "添加域名",
           "aSubdomainSuchAsGo": "建议使用 go. 或 qr. 之类的子域名：你的主网站不受影响。",
           "addingDomainsNeedsProOr": "添加域名需要 Pro 或 Business。",
-          "youveAddedValueTheMost": "你已添加 {value} 个，已达到当前套餐的上限。请先移除一个再添加。",
           "removing": "正在移除…",
           "removeDomain": "移除域名",
           "addTheDnsRecordsShown": "请添加所示的 DNS 记录，然后点击“验证”。",

@@ -7,7 +7,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { BlogList } from "@/components/sections/blog/blog-list";
 import { Breadcrumbs } from "@/components/sections/breadcrumbs";
-import { blogAuthorsSource } from "@/lib/source";
+import { blogAuthorsSource } from "@/lib/content-source";
 import { buildTimeParams } from "@/lib/static-params";
 import { getMDXComponents } from "@/mdx-components";
 import {

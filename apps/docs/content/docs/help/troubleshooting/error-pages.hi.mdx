@@ -1,0 +1,47 @@
+---
+title: "स्कैन करने पर एरर पेज दिखता है"
+description: "हर QR कोड एरर पेज का क्या मतलब है, \"QR code not found\" से लेकर \"This campaign has ended\" तक, और उसे कैसे ठीक करें।"
+---
+
+जब कोई डायनेमिक QR कोड अपनी डेस्टिनेशन नहीं खोल पाता, तो स्कैन करने वालों को एक छोटा पेज दिखता है। यहाँ बताया गया है कि हर पेज का क्या मतलब है।
+
+## "QR code not found" [#qr-code-not-found]
+
+यह 404 पेज है: शॉर्ट लिंक किसी भी कोड का नहीं है।
+
+- कोड **हमेशा के लिए डिलीट** कर दिया गया था।
+- कोड प्रिंट होने के बाद उसका **back-half** या **डोमेन** बदल दिया गया।
+- जिस अकाउंट का यह कोड था, वह डिलीट हो गया।
+- लिंक हाथ से टाइप किया गया और उसमें गलती हो गई। शॉर्ट लिंक में बड़े और छोटे अक्षर अलग माने जाते हैं।
+
+डिलीट किया हुआ कोड वापस नहीं आ सकता। अगर आपने back-half बदला है, तो **Edit link** से उसे वापस पहले जैसा कर दें।
+
+## "This QR code is no longer active" [#this-qr-code-is-no-longer-active]
+
+कोड **आर्काइव** किया हुआ है या **ट्रैश** में है। **Codes** में **Unarchive** या **Restore** चुनें। देखें [कोड आर्काइव, डिलीट और रिस्टोर करें](/docs/help/dynamic-codes/archive-and-delete)।
+
+QRdx हानिकारक साइटों से जुड़े कोड भी बंद कर देता है।
+
+## "This campaign is paused", "hasn't started yet" या "has ended" [#this-campaign-is-paused-hasnt-started-yet-or-has-ended]
+
+ये कोड की अपनी सेटिंग्स से आते हैं: पॉज़, शुरू या खत्म होने की तारीख, या स्कैन की सीमा। इन्हें **Access & schedule** में बदलें। देखें [कोड को पॉज़, शेड्यूल या लिमिट करें](/docs/help/dynamic-codes/pause-schedule-limit)।
+
+## "This QR code is password protected" [#this-qr-code-is-password-protected]
+
+कोड पर पासवर्ड लगा है। पासवर्ड डालें और **Continue** पर क्लिक करें। देखें [कोड को पासवर्ड से सुरक्षित करें](/docs/help/dynamic-codes/password)।
+
+## "Too many requests" [#too-many-requests]
+
+एक ही नेटवर्क से कुछ सेकंड में बहुत सारे QR कोड खोले गए। थोड़ी देर रुकें और फिर से स्कैन करें।
+
+## "This domain isn't connected yet" [#this-domain-isnt-connected-yet]
+
+कोड एक कस्टम डोमेन इस्तेमाल करता है, जिसका DNS सेटअप पूरा नहीं हुआ है। अपने डैशबोर्ड में **Domains** पेज पर डोमेन जाँचें।
+
+## किसी पेज पर "This page could not be found" [#this-page-could-not-be-found-on-a-page]
+
+`/p/…` पर बना मोबाइल पेज यह तब दिखाता है, जब पेज डिलीट हो गया हो या पता गलत टाइप हुआ हो।
+
+## "This form isn't accepting responses right now" [#this-form-isnt-accepting-responses-right-now]
+
+वर्कस्पेस अपनी मासिक फ़ॉर्म रिस्पॉन्स सीमा तक पहुँच गया है। देखें [फ़ॉर्म से जवाब इकट्ठा करें](/docs/help/pages-and-forms/forms#monthly-limits)।

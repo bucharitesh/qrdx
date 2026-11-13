@@ -81,15 +81,15 @@ export function MoveToWorkspaceDialog({
         return;
       }
       const { target, leftBehind } = result.data;
-      const behind = [
-        leftBehind.folder && "its folder",
-        leftBehind.tags > 0 &&
-          `${leftBehind.tags} tag${leftBehind.tags === 1 ? "" : "s"}`,
-      ].filter(Boolean);
       toast.success(t("movedToName", { name: target.name }), {
-        description: `Same short link, scans and history.${
-          behind.length > 0 ? ` ${behind.join(" and ")} stayed here.` : ""
-        }`,
+        description:
+          leftBehind.folder && leftBehind.tags > 0
+            ? t("movedFolderAndTagsStayed", { count: leftBehind.tags })
+            : leftBehind.folder
+              ? t("movedFolderStayed")
+              : leftBehind.tags > 0
+                ? t("movedTagsStayed", { count: leftBehind.tags })
+                : t("movedSameLink"),
         action: {
           label: t("open"),
           onClick: () => router.push(workspaceHref(target.slug, "/codes")),
@@ -108,8 +108,12 @@ export function MoveToWorkspaceDialog({
         <DialogHeader>
           <DialogTitle>{t("moveToAnotherWorkspace")}</DialogTitle>
           <DialogDescription className="text-pretty">
-            <span className="text-foreground font-medium">{name}</span>{" "}
-            {t("keepsItsShortLinkSo")}
+            {t.rich("keepsItsShortLinkSo", {
+              name,
+              strong: (chunks) => (
+                <span className="text-foreground font-medium">{chunks}</span>
+              ),
+            })}
           </DialogDescription>
         </DialogHeader>
 

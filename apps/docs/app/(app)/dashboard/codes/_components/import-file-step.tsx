@@ -38,7 +38,7 @@ import {
   type FileProviderId,
 } from "@/lib/migrate/providers";
 import { MAX_JOB_LINKS, type SourceLink } from "@/lib/migrate/types";
-import { Note, plural, StepLayout } from "./import-shared";
+import { Note, StepLayout } from "./import-shared";
 
 const NONE = "none";
 
@@ -161,8 +161,9 @@ export function FileStep({
             disabled={!file || missingDestination || links.length === 0}
             onClick={() => onContinue(links)}
           >
-            {t("preview")}{" "}
-            {links.length > 0 ? plural(links.length, "row") : t("import")}
+            {links.length > 0
+              ? t("previewRows", { count: links.length })
+              : t("previewImport")}
             <ArrowRight />
           </Button>
         </>
@@ -238,8 +239,10 @@ export function FileStep({
               <span className="font-medium">{file.name}</span>
               <span className="text-muted-foreground">
                 {" "}
-                · {plural(file.rows.length, "row")}
-                {file.truncated ? t("firstMaxJobLinks", { MAX_JOB_LINKS }) : ""}
+                ·{" "}
+                {file.truncated
+                  ? t("rowsFirst", { count: file.rows.length, MAX_JOB_LINKS })
+                  : t("rows", { count: file.rows.length })}
               </span>
             </p>
           ) : (

@@ -1,0 +1,181 @@
+---
+title: "QR Code"
+description: "Un QR code con stile e accessibile, con pulsanti di download. Colori, gradienti, pattern, loghi e template di cornice provengono dalla libreria qrdx."
+icon: QrCode
+---
+
+<ComponentLinks name="qr-code" />
+
+<ComponentPreview name="qr-code-demo" />
+
+## Installazione [#installation]
+
+<InstallationTabs name="qr-code" />
+
+## Utilizzo [#usage]
+
+```tsx
+import { QrCode } from "@/components/qr-code";
+```
+
+```tsx
+<QrCode value="https://qrdx.dev" />
+```
+
+Il codice viene renderizzato come SVG con un nome accessibile, quindi resta nitido a qualsiasi dimensione e gli screen reader annunciano a cosa rimanda.
+
+## Esempi [#examples]
+
+### Dimensioni [#sizes]
+
+`size` imposta larghezza e altezza a schermo in pixel. I download usano `downloadSize`, quindi un codice piccolo nella pagina esporta comunque un file pronto per la stampa.
+
+<ComponentPreview name="qr-code-sizes" />
+
+### Colori [#colors]
+
+`fgColor` e `bgColor` accettano qualsiasi colore CSS. `eyeColor` e `dotColor` colorano separatamente i tre occhi agli angoli. Mantieni i moduli più scuri dello sfondo, così ogni lettore riesce a leggere il codice.
+
+<ComponentPreview name="qr-code-colors" />
+
+### Gradienti [#gradients]
+
+Passa un gradiente qrdx al posto di un colore: `linear` con un `angle`, oppure `radial`. I gradienti vengono mantenuti nei download PNG, SVG e PDF.
+
+<ComponentPreview name="qr-code-gradient" />
+
+### Pattern [#patterns]
+
+`bodyPattern` definisce la forma dei moduli dati, `cornerEyePattern` le cornici degli angoli e `cornerEyeDotPattern` i punti al loro interno. Vedi i [pattern](/docs/features/patterns) per tutte le forme.
+
+<ComponentPreview name="qr-code-patterns" />
+
+### Logo [#logo]
+
+`logo` inserisce un'immagine al centro e libera i moduli sottostanti. Usa il livello di correzione errori `H` così il codice si scansiona anche con una parte coperta. Un data URL mantiene il logo nei download; un'immagine remota richiede gli header CORS.
+
+<ComponentPreview name="qr-code-logo" />
+
+### Template di cornice [#frame-templates]
+
+`templateId` disegna intorno al codice un [template](/docs/features/templates) qrdx. Abbinalo a `caption` per una call to action sotto la cornice.
+
+<ComponentPreview name="qr-code-template" />
+
+### Formati di download [#download-formats]
+
+`downloadFormats` sceglie i pulsanti: `png`, `jpg`, `svg` e `pdf`. L'esportazione in PDF richiede il pacchetto opzionale `jspdf` (`npm install jspdf`). Passa `[]` per nascondere i pulsanti.
+
+<ComponentPreview name="qr-code-downloads" />
+
+Per un unico menu con formati e dimensioni, usa [QR Code Download](/docs/components/qr-code-download).
+
+### Modalità scura [#dark-mode]
+
+Lo sfondo bianco predefinito è la scelta più sicura nei temi scuri: moduli scuri su un riquadro chiaro vengono letti da ogni lettore. Per seguire invece il tema, imposta `fgColor="currentColor"` e uno sfondo trasparente. In modalità scura il codice risulta invertito: le fotocamere dei telefoni lo leggono, ma alcuni scanner più datati no.
+
+<ComponentPreview name="qr-code-dark-mode" />
+
+## In una pagina Next.js [#in-a-nextjs-page]
+
+`QrCode` è un Client Component (il suo file inizia con `"use client"` a causa dei pulsanti di download), quindi una pagina Server Component può importarlo e passargli dati del server come props:
+
+```tsx title="app/menu/page.tsx"
+import { QrCode } from "@/components/qr-code";
+
+export default function MenuPage() {
+  return (
+    <QrCode
+      value="https://example.com/menu"
+      caption="Scan to see the menu"
+      filename="menu-qr"
+    />
+  );
+}
+```
+
+Il codice stesso viene comunque renderizzato sul server, quindi è presente nell'HTML della pagina prima che i pulsanti diventino interattivi. Per saperne di più sul rendering dei codici nell'App Router, vedi [QR code in Next.js](/docs/nextjs).
+
+## Qualsiasi contenuto, non solo link [#any-content-not-only-links]
+
+`value` viene codificato esattamente come lo passi, quindi funziona qualsiasi payload QR: una rete Wi-Fi, un biglietto da visita, `mailto:`, `tel:` o testo semplice. Imposta `label` in modo che gli screen reader annuncino cosa fa il codice invece del payload grezzo, che per il Wi-Fi include la password.
+
+```tsx title="components/guest-wifi.tsx"
+import { QrCode } from "@/components/qr-code";
+
+export function GuestWifi() {
+  return (
+    <QrCode
+      value="WIFI:T:WPA;S:Cafe Guest;P:sunshine123;;"
+      label="QR code to join the Cafe Guest Wi-Fi"
+      caption="Cafe Guest Wi-Fi"
+    />
+  );
+}
+```
+
+Per costruire il payload da un modulo, usa [Wi-Fi QR Code](/docs/components/wifi-qr-code) oppure [vCard QR Code](/docs/components/vcard-qr-code), che gestiscono per te l'escape dei caratteri speciali.
+
+## Un valore da un campo di input [#a-value-from-an-input]
+
+```tsx title="components/link-qr-code.tsx"
+"use client";
+
+import { useState } from "react";
+import { QrCode } from "@/components/qr-code";
+
+export function LinkQrCode() {
+  const [value, setValue] = useState("https://example.com");
+  return (
+    <div className="grid justify-items-center gap-4">
+      <input
+        aria-label="Link"
+        className="w-full rounded-md border px-3 py-2"
+        value={value}
+        onChange={(event) => setValue(event.target.value)}
+      />
+      {value ? <QrCode value={value} downloadFormats={[]} /> : null}
+    </div>
+  );
+}
+```
+
+`downloadFormats={[]}` nasconde i pulsanti mentre l'utente sta ancora scrivendo; mostrali quando il valore è definitivo.
+
+## Download pronti per la stampa [#print-ready-downloads]
+
+```tsx title="components/table-code.tsx"
+import { QrCode } from "@/components/qr-code";
+
+export function TableCode() {
+  return (
+    <QrCode
+      value="https://example.com/order?table=12"
+      level="H"
+      margin={4}
+      downloadFormats={["svg", "png", "pdf"]}
+      downloadSize={2048}
+      filename="table-12"
+    />
+  );
+}
+```
+
+- **SVG** si ridimensiona senza sfocature, quindi è il file migliore per una tipografia o uno strumento di design.
+- **PNG** con `downloadSize={2048}` stampa nitido fino a circa 17 cm (6,8 pollici) di larghezza a 300 pixel per pollice. `downloadSize` accetta da 50 a 5000 pixel.
+- **PDF** richiede il pacchetto opzionale `jspdf` (`npm install jspdf`).
+- `filename` assegna il nome al file senza estensione: `table-12.svg`, `table-12.png`.
+
+## Verifica che si scansioni [#make-sure-it-scans]
+
+- **Contrasto.** Moduli scuri su sfondo chiaro vengono letti da ogni lettore. Un codice chiaro su sfondo scuro funziona con la maggior parte delle fotocamere dei telefoni, ma non con alcuni scanner più datati.
+- **Zona di rispetto.** `margin` vale 2 moduli per impostazione predefinita. Usa 4 quando il codice si trova su una foto, su un motivo o su una pagina scura.
+- **Loghi.** Usa `level="H"` con un `logo`, così il codice resiste ai moduli coperti dal logo.
+- **Dimensione di stampa.** Un link breve scansionato da circa 25 cm richiede un codice largo circa 2,5 cm; il [calcolatore della dimensione di stampa](/tools/print-size) ricava i valori per altre distanze.
+- **Provalo.** Scansiona il codice finito con alcuni telefoni, oppure carica un'immagine nel [verificatore di scansione](/tools/scan-checker).
+
+## Riferimento API [#api-reference]
+
+<auto-type-table path="../../../registry/qrdx/qr-code.tsx" type="{ [K in keyof QrCodeProps as K extends keyof ComponentProps<'figure'> ? never : K]: QrCodeProps[K] }" />
+
+Qualsiasi altra prop, come `className`, viene passata al `<figure>` che fa da contenitore.

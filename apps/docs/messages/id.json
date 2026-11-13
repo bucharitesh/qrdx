@@ -184,6 +184,7 @@
       "pageTemplates": "Templat halaman",
       "pricing": "Harga",
       "guarantee": "Jaminan Never-Hostage",
+      "enterprise": "Enterprise",
       "slackBot": "Bot Slack",
       "telegramBot": "Bot Telegram",
       "discordBot": "Bot Discord",
@@ -227,6 +228,7 @@
       "refunds": "Pengembalian dana",
       "affiliateTerms": "Ketentuan afiliasi",
       "security": "Keamanan",
+      "securityPolicy": "Kebijakan keamanan",
       "allComparisons": "Semua perbandingan"
     }
   },
@@ -509,7 +511,9 @@
       "inr": "Harga dalam ₹ untuk India.",
       "usd": "Harga dalam US$.",
       "showInr": "Di India? Lihat harga dalam ₹",
-      "showUsd": "Tampilkan harga dalam US$"
+      "showUsd": "Tampilkan harga dalam US$",
+      "eur": "Harga dalam € untuk UE dan EEA.",
+      "showEur": "Di UE atau EEA? Lihat harga dalam €"
     },
     "price": {
       "forever": "selamanya",
@@ -553,6 +557,13 @@
       "guide": "Panduan self-hosting"
     },
     "footnote": "Polar menangani checkout sebagai merchant of record; pajak lokal dapat ditambahkan saat checkout. Pelanggan di India ditagih dalam ₹, selain itu dalam US$.",
+    "footnoteEur": "Polar menangani pembayaran sebagai merchant of record; pajak lokal dapat ditambahkan saat pembayaran. Pelanggan di India ditagih dalam ₹, pelanggan di UE dan EEA dalam €, dan pelanggan lainnya dalam US$.",
+    "offers": {
+      "moneyBack": "Garansi uang kembali {days, number} hari untuk pembayaran pertama Anda.",
+      "moneyBackLink": "Cara kerja pengembalian dana",
+      "nonprofit": "Organisasi nirlaba atau amal? Diskon {percent, number}% untuk Pro dan Business.",
+      "nonprofitLink": "Minta kode"
+    },
     "values": {
       "unlimited": "Tanpa batas",
       "days": "{count, plural, other {# hari}}",
@@ -700,6 +711,10 @@
           "question": "Apa yang terjadi jika saya berhenti berlangganan?",
           "answer": "Tidak ada yang rusak. Paket Anda tetap aktif hingga akhir periode yang sudah Anda bayar, lalu akun Anda pindah ke Gratis. Setiap kode QR dinamis tetap mengalihkan dan setiap pemindaian tetap dihitung: itulah Jaminan Never-Hostage kami. Di paket Gratis, Anda tidak dapat membuat lebih dari batas yang diizinkan paket Gratis, dan analitik menampilkan 90 hari terakhir."
         },
+        "refund": {
+          "question": "Bisakah uang saya dikembalikan?",
+          "answer": "Bisa. Pembayaran pertama Anda untuk Pro atau Business, bulanan maupun tahunan, disertai garansi uang kembali {days, number} hari: kirim email ke support@qrdx.dev dari alamat email akun Anda dalam {days, number} hari setelah pembayaran, dan kami akan mengembalikan dana sepenuhnya tanpa banyak pertanyaan. Garansi ini berlaku satu kali per pelanggan. Setelah itu, kode Anda tetap berfungsi di paket Gratis."
+        },
         "paymentFails": {
           "question": "Apa yang terjadi jika pembayaran gagal?",
           "answer": "Kode Anda tetap berfungsi. Jika langganan berakhir, akun Anda mengikuti batas paket Gratis, sama seperti jika Anda berhenti berlangganan. Kami tidak pernah menjeda kode, menampilkan iklan, atau mengarahkan pemindai Anda ke halaman QRdx karena urusan penagihan."
@@ -712,6 +727,10 @@
           "question": "Mengapa harga ditampilkan dalam ₹?",
           "answer": "Pengunjung dari India melihat harga dalam rupee India: Pro seharga {proMonthly} per bulan atau {proYearly} per tahun, Business {businessMonthly} per bulan atau {businessYearly} per tahun. Saat checkout, pelanggan di India ditagih dalam ₹ dan pelanggan lainnya dalam US$, apa pun mata uang yang Anda lihat saat menjelajah. Gunakan tombol pengalih di atas daftar paket untuk mengubah mata uang tampilan."
         },
+        "currencies": {
+          "question": "Mengapa harga tampil dalam ₹ atau €?",
+          "answer": "Harga ditampilkan dalam mata uang negara tempat Anda berada. Di India, Pro seharga {proMonthly} per bulan atau {proYearly} per tahun, dan Business {businessMonthly} per bulan atau {businessYearly} per tahun. Di UE dan EEA, Pro seharga {proMonthlyEur} per bulan atau {proYearlyEur} per tahun, dan Business {businessMonthlyEur} per bulan atau {businessYearlyEur} per tahun. Di tempat lain harganya dalam US$. Pembayaran ditagih dalam mata uang negara Anda, apa pun mata uang yang Anda lihat saat menjelajah. Gunakan pengalih di atas paket untuk mengubah mata uang tampilan."
+        },
         "switchPlans": {
           "question": "Bisakah saya mengganti paket atau periode penagihan nanti?",
           "answer": "Bisa. Buka Kelola langganan di pengaturan Anda untuk mengubah atau membatalkan paket di portal penagihan Polar. Beralih ke paket yang lebih kecil tidak akan menonaktifkan kode, halaman, atau domain yang sudah ada."
@@ -723,6 +742,10 @@
         "selfHost": {
           "question": "Bisakah saya hosting sendiri?",
           "answer": "Bisa. QRdx bersumber terbuka di bawah AGPL-3.0. Jalankan dengan database Postgres Anda sendiri dengan mengikuti panduan self-hosting; batas paket didefinisikan dalam satu file yang dapat Anda ubah untuk instans Anda."
+        },
+        "nonprofit": {
+          "question": "Apakah ada diskon untuk organisasi nirlaba?",
+          "answer": "Ada. Organisasi nirlaba dan lembaga amal terdaftar mendapat diskon {percent, number}% untuk Pro atau Business, bulanan maupun tahunan. Ceritakan tentang organisasi Anda melalui tautan nirlaba di bawah paket. Biasanya kami membalas dalam beberapa hari, dengan kode diskon untuk dimasukkan saat pembayaran."
         },
         "billing": {
           "question": "Siapa yang mengurus penagihan dan pajak?",
@@ -748,6 +771,131 @@
       "close": "Tutup",
       "signIn": "Masuk untuk meminta faktur",
       "signInNote": "Kami mengirim faktur untuk workspace akun Anda, jadi masuk terlebih dahulu."
+    },
+    "nonprofit": {
+      "title": "Diskon untuk nirlaba",
+      "description": "Organisasi nirlaba dan lembaga amal terdaftar mendapat diskon {percent, number}% untuk Pro atau Business, bulanan maupun tahunan. Ceritakan tentang organisasi Anda dan kami akan mengirim kode diskon lewat email untuk dimasukkan saat pembayaran.",
+      "organization": "Nama organisasi",
+      "country": "Negara",
+      "registration": "Nomor registrasi atau tautan",
+      "registrationHint": "Nomor Anda di daftar lembaga amal atau organisasi nirlaba, atau tautan ke entri Anda di daftar publik.",
+      "contactEmail": "Email kontak",
+      "plan": "Paket",
+      "reply": "Biasanya kami membalas dalam beberapa hari. Tidak ada biaya sampai Anda melakukan pembayaran.",
+      "submit": "Kirim permintaan",
+      "sending": "Mengirim…",
+      "sentTitle": "Permintaan terkirim",
+      "sent": "Kami akan membalas ke {email}, biasanya dalam beberapa hari. Jika organisasi Anda memenuhi syarat, balasan tersebut berisi kode diskon untuk dimasukkan saat pembayaran.",
+      "close": "Tutup",
+      "failed": "Terjadi kesalahan. Kirim email ke {email} saja."
+    },
+    "enterprise": {
+      "name": "Enterprise",
+      "tagline": "Untuk perusahaan yang membutuhkan kontrak dan tinjauan keamanan",
+      "price": "Khusus",
+      "priceNote": "Kontrak tahunan, dibayar dengan faktur",
+      "cta": "Hubungi kami",
+      "lead": "Semua fitur Business, ditambah:",
+      "adds": {
+        "contract": "Kontrak tahunan, dibayar dengan faktur",
+        "replies": "Balasan dalam {hours, plural, other {# jam kerja}} saat kode berhenti berfungsi",
+        "review": "Jawaban untuk tinjauan keamanan Anda",
+        "selfHost": "SSO dan log audit di server Anda sendiri"
+      },
+      "security": "Keamanan di QRdx"
+    }
+  },
+  "docs": {
+    "meta": {
+      "titleSuffix": "Dokumen QRdx"
+    },
+    "breadcrumb": {
+      "home": "Beranda",
+      "docs": "Dokumen"
+    },
+    "untranslated": {
+      "title": "Halaman ini belum diterjemahkan",
+      "body": "Anda sedang membaca versi bahasa Inggris."
+    },
+    "client": {
+      "actions": {
+        "copyMarkdown": "Salin Markdown",
+        "open": "Buka",
+        "openIn": "Buka di {app}",
+        "askPrompt": "Baca {url}, saya ingin mengajukan pertanyaan tentang isinya."
+      },
+      "search": {
+        "jumpTo": "Langsung ke <page>{name}</page>"
+      },
+      "language": {
+        "label": "Bahasa dokumen",
+        "note": "Dokumen tersedia dalam bahasa-bahasa ini. Bahasa lainnya akan membaca dokumen berbahasa Inggris."
+      }
+    },
+    "help": {
+      "search": "Cari bantuan dan dokumen",
+      "stillStuck": {
+        "title": "Masih kesulitan?",
+        "body": "Ceritakan apa yang ingin Anda lakukan dan apa yang terjadi. Sertakan tautan pendek kode tersebut jika terkait dengan sebuah kode.",
+        "widget": "Widget dukungan di qrdx.dev, setelah Anda mengizinkan cookie Fungsionalitas.",
+        "github": "Laporkan bug di GitHub",
+        "contact": "Semua cara menghubungi kami"
+      }
+    },
+    "notFound": {
+      "title": "Halaman ini tidak ada di dokumen",
+      "body": "Halaman ini mungkin telah dipindahkan atau diganti namanya. Cari di dokumen, atau mulai dari salah satu berikut.",
+      "places": {
+        "gettingStarted": {
+          "title": "Memulai",
+          "description": "Desain dan unduh kode pertama Anda."
+        },
+        "dynamic": {
+          "title": "Kode QR dinamis",
+          "description": "Tautan pendek yang bisa diubah setelah dicetak."
+        },
+        "restApi": {
+          "title": "REST API",
+          "description": "Buat dan kelola kode dari aplikasi Anda sendiri."
+        },
+        "components": {
+          "title": "Komponen",
+          "description": "Komponen React dan shadcn/ui untuk kode QR."
+        }
+      }
+    },
+    "ui": {
+      "search": "Cari",
+      "searchPlaceholder": "Cari",
+      "openSearch": "Buka Pencarian",
+      "closeSearch": "Tutup Pencarian",
+      "noResults": "Tidak ada hasil",
+      "searchFailed": "Pencarian gagal",
+      "onThisPage": "Di halaman ini",
+      "noHeadings": "Tanpa Judul",
+      "tableOfContents": "Daftar Isi",
+      "lastUpdated": "Terakhir diperbarui pada",
+      "previousPage": "Halaman Sebelumnya",
+      "nextPage": "Halaman Berikutnya",
+      "copyCode": "Salin Teks",
+      "copiedCode": "Teks Disalin",
+      "copyAnchor": "Salin Tautan Anchor",
+      "copiedAnchor": "Tautan Anchor Disalin",
+      "copyLink": "Salin Tautan",
+      "copiedLink": "Tautan Disalin",
+      "toggleMenu": "Buka/Tutup Menu",
+      "toggleTheme": "Ganti Tema",
+      "themeLight": "Terang",
+      "themeDark": "Gelap",
+      "themeSystem": "Sistem",
+      "openSidebar": "Buka Sidebar",
+      "closeSidebar": "Tutup Sidebar",
+      "collapseSidebar": "Ciutkan Sidebar",
+      "typeTableProp": "Prop",
+      "typeTableType": "Tipe",
+      "typeTableDefault": "Default",
+      "typeTableParameters": "Parameter",
+      "typeTableReturns": "Nilai Kembali"
     }
   },
   "common": {
@@ -1289,7 +1437,16 @@
       "browsersQuestion": "Browser apa yang didukung?",
       "browsersAnswer": "Browser modern apa pun dengan akses kamera: Chrome, Edge, Safari, dan Firefox di ponsel maupun komputer. Browser dengan pembaca barcode bawaan (Chrome di Android dan macOS) menggunakannya langsung; yang lain mengunduh dekoder open-source (ZXing, dikompilasi ke WebAssembly, sekitar 1 MB dari CDN jsDelivr) saat pertama kali Anda memindai. Kamera memerlukan halaman https dan izin Anda.",
       "installQuestion": "Bisakah saya memasang pemindai sebagai aplikasi?",
-      "installAnswer": "Bisa. Gunakan opsi Pasang atau Tambahkan ke Layar Utama di browser Anda pada halaman ini untuk mendapatkan ikon pemindai yang langsung membuka kamera."
+      "installAnswer": "Ya. Di Chrome, Edge, atau Samsung Internet, ketuk Install app di bawah pemindai, atau gunakan opsi Instal bawaan browser Anda. Di iPhone dan iPad, ketuk Add to Home Screen di bawah pemindai untuk melihat langkah-langkahnya. Aplikasi ini langsung terbuka ke pemindai di jendelanya sendiri, berfungsi secara offline setelah Anda melakukan pemindaian dengannya, dan menyimpan riwayatnya di perangkat Anda.",
+      "shareQuestion": "Bisakah saya memindai kode QR dari tangkapan layar?",
+      "shareAnswer": "Ya. Beralih ke Image, lalu pilih, seret, atau tempel tangkapan layar tersebut. Di Android, setelah pemindai terpasang, Anda juga dapat membagikan tangkapan layar atau foto ke QRdx Scanner dari aplikasi mana pun: aplikasi akan terbuka dan membaca kodenya di perangkat Anda. Gambar yang dibagikan tidak diunggah maupun disimpan."
+    },
+    "app": {
+      "name": "QRdx Scanner",
+      "shortName": "QRdx Scanner",
+      "description": "Pindai kode QR dan barcode dengan kamera Anda atau dari tangkapan layar. Gambar dibaca di perangkat Anda, dan tautan diperiksa sebelum dibuka.",
+      "cameraShortcut": "Pindai dengan kamera",
+      "imageShortcut": "Pindai dari gambar"
     }
   },
   "scanner": {
@@ -1374,7 +1531,8 @@
       "drop": "Letakkan gambar di sini, pilih file, atau tempel",
       "dropHelp": "Tangkapan layar dan foto dapat digunakan, dengan beberapa kode per gambar.",
       "choose": "Pilih gambar",
-      "paste": "Tempel gambar"
+      "paste": "Tempel gambar",
+      "shareMissing": "Gambar yang dibagikan tidak masuk. Pilih gambarnya di sini."
     },
     "result": {
       "starts": "Mulai",
@@ -1485,6 +1643,19 @@
       "copy": "Salin tautan",
       "retry": "Coba lagi",
       "report": "Laporkan kode ini"
+    },
+    "install": {
+      "install": "Instal aplikasi",
+      "iosButton": "Tambah ke Layar Utama",
+      "iosTitle": "Tambahkan pemindai ke Layar Utama Anda",
+      "iosShare": "Ketuk Bagikan. Di Safari pada iPhone, tombolnya ada di menu di samping alamat.",
+      "iosAdd": "Geser ke atas dan pilih Tambah ke Layar Utama.",
+      "iosConfirm": "Biarkan Buka sebagai Aplikasi Web tetap aktif, lalu ketuk Tambah.",
+      "macButton": "Tambah ke Dock",
+      "macTitle": "Tambahkan pemindai ke Dock Anda",
+      "macAdd": "Di bilah menu, pilih File, lalu Tambah ke Dock.",
+      "macConfirm": "Klik Tambah.",
+      "after": "Aplikasi langsung terbuka di pemindai dalam jendelanya sendiri, dan dapat digunakan secara offline setelah Anda memindai satu kode dengannya."
     }
   },
   "scanPages": {
@@ -1757,7 +1928,8 @@
           "choices": "Pilih dari opsi yang tersedia",
           "choice": "Pilih salah satu opsi",
           "invalid": "Nilai tidak valid"
-        }
+        },
+        "checkAnswer": "Jawaban ini perlu diperiksa lagi."
       }
     }
   },
@@ -1859,6 +2031,36 @@
       "savedDescription": "Temukan di bagian Barcode pada dasbor Anda.",
       "open": "Buka",
       "save": "Simpan ke dasbor"
+    },
+    "issues": {
+      "enterDigits": "Masukkan {short} digit, atau semua {length} digit beserta digit pemeriksa.",
+      "digitsOnly": "{label} hanya menerima angka.",
+      "checkDigitAdded": "Digit pemeriksa {check} ditambahkan.",
+      "wrongCheckDigit": "Digit pemeriksa seharusnya {expected}, bukan {given}. Periksa nomornya, atau hilangkan digit terakhir dan digit itu akan dihitung otomatis.",
+      "wrongLength": "{label} membutuhkan {short} atau {length} digit; nomor ini memiliki {count, plural, other {# digit}}.",
+      "upceEnter": "Masukkan 6 hingga 8 digit, atau UPC-A 12 digit untuk diperpendek.",
+      "upceSystem": "Hanya nomor UPC-A yang diawali 0 atau 1 yang memiliki bentuk UPC-E. Gunakan UPC-A.",
+      "upceNoForm": "Nomor UPC-A ini tidak memiliki bentuk UPC-E: hanya nomor dengan angka nol di posisi yang tepat yang dapat diperpendek. Gunakan UPC-A.",
+      "shortenedFromUpca": "Diperpendek dari UPC-A {upca}.",
+      "numberSystemAssumed": "Sistem angka 0 diasumsikan.",
+      "upceLength": "UPC-E membutuhkan 6, 7, atau 8 digit (atau UPC-A 12 digit); nomor ini memiliki {count, plural, other {# digit}}.",
+      "upceStart": "Nomor UPC-E diawali dengan sistem angka 0 atau 1.",
+      "enterText": "Masukkan teks yang akan dikodekan.",
+      "tooLong": "{label} di sini menerima hingga {max, number} karakter; ini memiliki {count, number}.",
+      "code128Chars": "Code 128 di sini menerima huruf ASCII biasa, angka, spasi, dan simbol. Tidak diizinkan: {chars}",
+      "code39Chars": "Code 39 hanya menerima huruf kapital, angka, spasi, dan - . $ / + %. Tidak diizinkan: {chars}",
+      "code39Lowercase": "Code 39 tidak mendukung huruf kecil. Gunakan huruf kapital, atau Code 128 untuk campuran huruf besar dan kecil.",
+      "gs1Enter": "Masukkan Application Identifier dalam tanda kurung beserta nilainya, mis. (01)09501101530003.",
+      "gs1Start": "Mulailah dengan Application Identifier dalam tanda kurung, mis. (01) untuk GTIN, lalu nilainya.",
+      "gs1Brackets": "Tanda kurung tidak berpasangan: tulis setiap AI sebagai (angka), diikuti nilainya.",
+      "gs1BadAi": "“({ai})” bukan Application Identifier: AI terdiri dari 2 hingga 4 digit.",
+      "gs1NoValue": "AI ({ai}) tidak memiliki nilai setelahnya.",
+      "gs1BadChars": "AI ({ai}) memiliki karakter yang tidak diizinkan GS1: {chars}",
+      "gs1Ai": "AI ({ai}): {inner}",
+      "gs1TooLong": "GS1-128 menampung hingga {max} karakter AI dan data; ini memiliki {count}. Bagi menjadi dua barcode.",
+      "unknownFormat": "Format barcode tidak dikenal.",
+      "space": "spasi",
+      "lineBreak": "jeda baris"
     }
   },
   "guarantee": {
@@ -1902,9 +2104,322 @@
         "outcome": "Anda mendapat pemberitahuan minimal 12 bulan, waktu untuk mengekspor semuanya, dan panduan terdokumentasi untuk menjalankan aplikasi open source di server Anda sendiri."
       }
     },
+    "moneyBackTitle": "Jaminan uang kembali",
+    "moneyBack": "Pembayaran pertama Anda untuk Pro atau Business, bulanan maupun tahunan, disertai jaminan uang kembali selama {days, number} hari. Jika paket ini tidak cocok untuk Anda, kirim email ke <mail>{email}</mail> dalam {days, number} hari setelah pembayaran dan kami akan mengembalikan dana Anda sepenuhnya, tanpa pertanyaan. Jaminan ini berlaku satu kali per pelanggan, dan kode Anda tetap berfungsi di paket Gratis setelahnya.",
+    "moneyBackLink": "Baca kebijakan pengembalian dana",
     "exceptionTitle": "Satu-satunya pengecualian: penyalahgunaan",
     "exception": "Kami menonaktifkan kode hanya jika melanggar <terms>ketentuan layanan</terms> kami, misalnya mengarah ke phishing atau malware. Itu keputusan keamanan yang diambil setelah laporan atau peninjauan, bukan karena penagihan. Siapa pun dapat <report>melaporkan kode</report>.",
     "questions": "Ada pertanyaan tentang jaminan ini? Kirim email ke <mail>{email}</mail>. Terakhir diperbarui <time>{date, date, long}</time>."
+  },
+  "enterprise": {
+    "metaTitle": "QRdx Enterprise: SSO, Log Audit, Kontrak, dan Waktu Balasan",
+    "metaDescription": "QRdx untuk tim besar: single sign-on, log audit dengan ekspor CSV, peran, domain khusus, dan portal klien, dengan kontrak tahunan, waktu balasan tertulis, dan pembayaran melalui faktur.",
+    "crumb": "Enterprise",
+    "title": "QRdx untuk tim enterprise",
+    "intro1": "Untuk perusahaan yang menempatkan kode QR pada kemasan, papan petunjuk, dan kampanye di banyak tim, merek, atau klien, serta membutuhkan single sign-on, jejak audit, dan kontrak sebelum menggunakannya secara luas.",
+    "intro2": "Enterprise adalah paket Business dengan kontrak: waktu balasan tertulis, pembayaran melalui faktur, dan jawaban untuk peninjauan keamanan Anda.",
+    "contactCta": "Hubungi kami",
+    "securityCta": "Cara kami menangani keamanan",
+    "whoTitle": "Untuk siapa",
+    "who": {
+      "brands": {
+        "title": "Merek dan peritel",
+        "body": "Kode pada kemasan, menu, dan papan petunjuk di banyak lokasi, dikelola beberapa tim yang masing-masing membutuhkan akses sendiri."
+      },
+      "agencies": {
+        "title": "Agensi",
+        "body": "Satu ruang kerja per klien, portal hanya-baca untuk setiap klien, dan halaman statistik dengan branding mereka."
+      },
+      "security": {
+        "title": "Tim IT dan keamanan",
+        "body": "Vendor yang memasukkan pengguna melalui penyedia identitas Anda, mencatat siapa mengubah apa, dan menjawab kuesioner keamanan Anda."
+      }
+    },
+    "featuresTitle": "Yang Anda dapatkan",
+    "featuresIntro": "Semua yang ada di paket Business. Setiap item sudah berfungsi di qrdx.dev saat ini.",
+    "features": {
+      "sso": {
+        "title": "Single sign-on",
+        "body": "OIDC atau SAML 2.0 untuk domain email Anda, dibuktikan dengan catatan DNS. Jika diwajibkan, penyedia identitas Anda menjadi satu-satunya jalur masuk untuk domain tersebut."
+      },
+      "auditLog": {
+        "title": "Log audit",
+        "body": "Siapa yang mengubah kode, halaman, anggota, domain, kunci API, atau pengaturan mana, dan kapan. Saring datanya, ekspor hingga {rows, number} baris sebagai CSV, dan simpan riwayat selama {days, number} hari."
+      },
+      "roles": {
+        "title": "Peran dan verifikasi dua langkah",
+        "body": "Pemilik, admin, anggota, anggota penagihan, dan penampil hanya-baca. Ruang kerja dapat mewajibkan verifikasi dua langkah bagi semua orang di dalamnya."
+      },
+      "seats": {
+        "title": "Ruang kerja dan kursi",
+        "body": "Anggota tanpa batas, dengan ruang kerja terpisah untuk setiap tim, merek, atau klien, serta peran tersendiri di masing-masing."
+      },
+      "domains": {
+        "title": "Domain khusus",
+        "body": "Tautan pendek dan halaman yang di-hosting pada hingga {count, number} domain milik Anda sendiri."
+      },
+      "clients": {
+        "title": "Portal klien dan statistik bermerek",
+        "body": "Portal hanya-baca tempat klien melihat folder yang Anda bagikan kepada mereka, dan halaman statistik dengan branding mereka tanpa logo QRdx."
+      },
+      "api": {
+        "title": "API dan pembuatan massal",
+        "body": "{requests, number} permintaan API per hari, hingga {batch, number} kode dalam satu panggilan API, dan impor CSV hingga {importRows, number} baris."
+      },
+      "export": {
+        "title": "Data Anda, dapat diekspor",
+        "body": "Unduh semua isi akun Anda sebagai ZIP, dan ekspor pemindaian, respons formulir, serta log audit sebagai CSV."
+      }
+    },
+    "contractTitle": "Tambahan dari kontrak",
+    "contractIntro": "Selain paket Business:",
+    "contract": {
+      "replies": {
+        "title": "Waktu balasan tertulis",
+        "body": "Dalam {outage, plural, other {# jam kerja}} saat kode atau halaman yang di-hosting berhenti berfungsi, dan dalam {other, plural, other {# hari kerja}} untuk hal lainnya."
+      },
+      "invoice": {
+        "title": "Kontrak tahunan, dibayar dengan faktur",
+        "body": "Bayar melalui transfer bank, bukan kartu, dengan data perusahaan, ID pajak, dan nomor pesanan pembelian Anda tercantum pada faktur."
+      },
+      "review": {
+        "title": "Jawaban untuk tinjauan keamanan Anda",
+        "body": "Kami mengisi kuesioner keamanan Anda dan mengirimkan salinan Data Processing Addendum yang sudah ditandatangani."
+      },
+      "selfHost": {
+        "title": "Single sign-on dan log audit saat Anda hosting sendiri",
+        "body": "QRdx bersifat open source, tetapi single sign-on dan log audit berada di bawah lisensi komersial QRdx. Perjanjian Enterprise memungkinkan Anda menjalankannya di server sendiri dengan kunci lisensi."
+      }
+    },
+    "limitsNote": "Di qrdx.dev, workspace Enterprise memiliki batas yang sama dengan paket Business. Jika Anda membutuhkan lebih banyak untuk sesuatu, sampaikan di formulir.",
+    "repliesTitle": "Waktu balasan",
+    "replies": {
+      "when": "Kapan",
+      "enterprise": "Enterprise",
+      "business": "Business",
+      "outage": "Kode atau halaman yang di-hosting berhenti berfungsi",
+      "other": "Hal lainnya",
+      "hours": "Dalam {count, plural, other {# jam kerja}}",
+      "days": "Dalam {count, plural, other {# hari kerja}}"
+    },
+    "repliesNote": "Jam kerja adalah Senin sampai Jumat, waktu India. Ini adalah waktu balasan: QRdx tidak menawarkan jaminan uptime.",
+    "buyTitle": "Cara membeli",
+    "buy": {
+      "ask": {
+        "title": "Beri tahu kebutuhan Anda",
+        "body": "Gunakan formulir di bawah atau kirim email ke {email}. Sebutkan ukuran tim Anda dan hal apa pun yang diminta tinjauan keamanan Anda."
+      },
+      "quote": {
+        "title": "Dapatkan jawaban dan harga",
+        "body": "Kami membalas lewat email dengan jawaban atas pertanyaan Anda dan harga tahunan."
+      },
+      "sign": {
+        "title": "Tanda tangani dan bayar dengan faktur",
+        "body": "Setelah kontrak ditandatangani, kami memindahkan workspace Anda ke paket Business dan mengirimkan faktur."
+      }
+    },
+    "formTitle": "Hubungi kami",
+    "formIntro": "Ceritakan tentang tim Anda dan kebutuhan Anda. Kami membalas lewat email.",
+    "form": {
+      "name": "Nama",
+      "email": "Email kerja",
+      "company": "Perusahaan",
+      "teamSize": "Ukuran tim",
+      "teamSizePlaceholder": "Pilih ukuran",
+      "sizes": {
+        "1-10": "1 sampai 10 orang",
+        "11-50": "11 sampai 50 orang",
+        "51-200": "51 sampai 200 orang",
+        "201-1000": "201 sampai 1.000 orang",
+        "1000+": "Lebih dari 1.000 orang"
+      },
+      "need": "Apa yang Anda butuhkan?",
+      "needPlaceholder": "Contoh: single sign-on untuk 300 orang, faktur tahunan, kuesioner keamanan kami",
+      "submit": "Kirim",
+      "sending": "Mengirim…",
+      "sentTitle": "Pesan terkirim",
+      "sent": "Terima kasih. Kami akan membalas ke {email}.",
+      "privacy": "Kami hanya menggunakan data ini untuk membalas Anda. Lihat <privacy>kebijakan privasi</privacy> kami.",
+      "errors": {
+        "name": "Masukkan nama Anda.",
+        "email": "Masukkan alamat email kerja yang valid.",
+        "company": "Masukkan nama perusahaan Anda.",
+        "teamSize": "Pilih ukuran tim Anda.",
+        "need": "Ceritakan kebutuhan Anda.",
+        "rateLimited": "Anda sudah mengirim beberapa pesan. Kami akan membalas pesan tersebut, atau kirim email ke {email}.",
+        "check": "Selesaikan pemeriksaan di atas tombol, lalu kirim lagi.",
+        "notSent": "Pesan Anda tidak dapat terkirim. Kirim email ke {email} saja.",
+        "unavailable": "Formulir ini tidak tersedia di sini. Kirim email ke {email} saja.",
+        "unknown": "Terjadi kesalahan. Kirim email ke {email} saja."
+      }
+    },
+    "orEmail": "Lebih suka email? Tulis ke <mail>{email}</mail>.",
+    "relatedTitle": "Baca lebih lanjut",
+    "related": {
+      "security": "Keamanan di QRdx",
+      "dpa": "Data Processing Addendum",
+      "subprocessors": "Subprosesor",
+      "pricing": "Harga"
+    }
+  },
+  "security": {
+    "metaTitle": "Keamanan di QRdx: Proses Masuk, Penyimpanan Data, dan Pelaporan Masalah",
+    "metaDescription": "Cara QRdx melindungi akun dan data: HTTPS dengan HSTS, kebijakan keamanan konten, passkey dan verifikasi dua langkah, single sign-on, log audit, pemeriksaan tautan, lokasi penyimpanan data, serta cara melaporkan kerentanan.",
+    "crumb": "Keamanan",
+    "title": "Keamanan di QRdx",
+    "intro1": "Apa yang dilakukan QRdx untuk melindungi akun, kode, dan data pengunjung Anda. Setiap poin menjelaskan sesuatu yang berjalan di qrdx.dev saat ini, dan kodenya bersifat open source, sehingga Anda dapat memeriksanya sendiri.",
+    "intro2": "QRdx tidak memiliki sertifikasi SOC 2 atau HIPAA, maupun sertifikasi keamanan lainnya, dan tidak menjanjikannya.",
+    "reportCta": "Laporkan kerentanan",
+    "enterpriseCta": "Tinjauan keamanan? Hubungi kami",
+    "sections": {
+      "transport": {
+        "title": "Koneksi dan browser",
+        "items": {
+          "https": {
+            "title": "HTTPS di mana-mana",
+            "body": "Setiap halaman dan panggilan API disajikan melalui HTTPS, dan browser diminta untuk terus memakai HTTPS bagi qrdx.dev selama dua tahun (HSTS)."
+          },
+          "csp": {
+            "title": "Kebijakan keamanan konten",
+            "body": "Halaman QRdx sendiri membatasi skrip, frame, dan koneksi yang boleh dimuat. Halaman yang menampilkan data akun Anda mendapatkan nonce baru pada setiap permintaan, sehingga skrip yang disusupkan ke dalamnya tidak berjalan."
+          },
+          "framing": {
+            "title": "Tidak dapat di-frame situs lain",
+            "body": "Halaman QRdx sendiri tidak dapat ditampilkan di dalam frame situs lain, dan layar tempat Anda menyetujui aplikasi sama sekali tidak dapat di-frame. Browser juga diminta untuk tidak menebak jenis file."
+          }
+        }
+      },
+      "signIn": {
+        "title": "Proses masuk",
+        "items": {
+          "passwords": {
+            "title": "Tanpa kata sandi",
+            "body": "Anda masuk dengan Google, GitHub, atau kode email sekali pakai{passkeys, select, yes {, atau dengan passkey} other {}}. QRdx tidak menyimpan kata sandi yang bisa bocor."
+          },
+          "twoFactor": {
+            "title": "Verifikasi dua langkah",
+            "body": "Langkah kedua dengan aplikasi autentikator{passkeys, select, yes { atau passkey} other {}}, dengan kode cadangan jika Anda tidak dapat menggunakannya. Workspace di Business dapat mewajibkannya bagi setiap anggota."
+          },
+          "confirm": {
+            "title": "Konfirmasi bahwa ini Anda",
+            "body": "Perubahan keamanan, kunci API dan webhook baru, perubahan peran, serta penghapusan workspace meminta Anda mengonfirmasi bahwa ini memang Anda, meskipun sudah masuk. Konfirmasi berlaku selama 10 menit."
+          },
+          "alerts": {
+            "title": "Notifikasi masuk baru",
+            "body": "Kami mengirim email kepada Anda saat browser atau perangkat masuk ke akun Anda untuk pertama kalinya, dan saat pengaturan verifikasi dua langkah Anda berubah."
+          },
+          "sessions": {
+            "title": "Sesi masuk yang berakhir",
+            "body": "Sesi masuk berlaku paling lama 30 hari, dan lebih singkat jika Anda berhenti menggunakannya. Sesi yang dipakai dari negara baru dan browser baru harus mengonfirmasi bahwa ini Anda, dan Anda dapat mengeluarkan semua perangkat lain sekaligus."
+          }
+        }
+      },
+      "workspaces": {
+        "title": "Workspace dan tim",
+        "items": {
+          "sso": {
+            "title": "Single sign-on",
+            "body": "OIDC atau SAML 2.0 di Business, untuk domain email yang Anda buktikan dengan record DNS. Respons SAML harus ditandatangani dengan SHA-256 atau yang lebih kuat. Saat workspace mewajibkannya, setiap jalur masuk lain ditutup untuk domain tersebut dan sesi berlaku paling lama 24 jam."
+          },
+          "roles": {
+            "title": "Peran",
+            "body": "Pemilik, admin, anggota, penagihan, dan penampil. Hanya pemilik dan admin yang dapat mengelola orang, domain, dan pengaturan, sedangkan anggota penagihan dan penampil tidak dapat mengubah kode."
+          },
+          "auditLog": {
+            "title": "Log audit",
+            "body": "Di Business, pemilik dan admin dapat melihat siapa yang mengubah kode, halaman, anggota, domain, kunci API, atau pengaturan tertentu, dan dapat mengekspornya sebagai CSV. Baris disimpan selama {days, number} hari."
+          },
+          "staff": {
+            "title": "Akses staf",
+            "body": "Hanya akun staf QRdx yang dapat membuka alat admin, dan setiap tindakan staf di sana dicatat dalam log audit."
+          }
+        }
+      },
+      "secrets": {
+        "title": "Kunci dan rahasia",
+        "items": {
+          "hashed": {
+            "title": "Kunci dan token ter-hash",
+            "body": "Kunci API dan token akses OAuth hanya disimpan sebagai hash SHA-256, sehingga salinan basis data tidak mengungkapkannya. Kata sandi pada kode yang dilindungi juga disimpan sebagai hash."
+          },
+          "encrypted": {
+            "title": "Token integrasi terenkripsi",
+            "body": "Token untuk alat yang Anda hubungkan, seperti Google Drive atau Slack, dienkripsi dengan AES-256-GCM."
+          },
+          "webhooks": {
+            "title": "Webhook bertanda tangan",
+            "body": "Setiap endpoint webhook memiliki rahasianya sendiri, dan setiap payload ditandatangani dengannya, sehingga server Anda dapat memastikan payload tersebut berasal dari QRdx."
+          }
+        }
+      },
+      "abuse": {
+        "title": "Penyalahgunaan dan keamanan tautan",
+        "items": {
+          "linkChecks": {
+            "title": "Pemeriksaan tautan",
+            "body": "Saat tujuan kode dinamis diatur, QRdx memeriksanya dengan daftar situs malware dan phishing milik Google Web Risk dan menolak yang ditandai. Tujuan yang tidak sempat diperiksa tepat waktu akan diperiksa ulang, dan kodenya dinonaktifkan jika ditandai."
+          },
+          "rateLimits": {
+            "title": "Pembatasan laju",
+            "body": "API, server MCP, formulir, dan endpoint publik lainnya dibatasi lajunya per kunci, akun, atau alamat IP."
+          },
+          "bots": {
+            "title": "Pemeriksaan bot pada formulir",
+            "body": "Formulir publik menggunakan Cloudflare Turnstile dan kolom tersembunyi yang hanya diisi oleh bot."
+          },
+          "reports": {
+            "title": "Melaporkan kode berbahaya",
+            "body": "Siapa pun dapat <report>melaporkan kode QR</report> yang mengarah ke phishing, malware, atau penipuan. Kode yang melanggar aturan akan dinonaktifkan."
+          }
+        }
+      },
+      "storage": {
+        "title": "Lokasi penyimpanan data",
+        "items": {
+          "hosting": {
+            "title": "Hosting",
+            "body": "Aplikasi berjalan di Vercel. Fungsi servernya berjalan di Washington, D.C., Amerika Serikat, di balik jaringan edge global Vercel."
+          },
+          "database": {
+            "title": "Basis data",
+            "body": "Akun, kode, pemindaian, dan respons formulir disimpan di basis data Neon Postgres di AWS US East (N. Virginia). Neon <neon>mengenkripsi data saat disimpan</neon> dengan AES-256 dan menyimpan cadangan terenkripsi."
+          },
+          "files": {
+            "title": "File yang diunggah",
+            "body": "File yang Anda unggah disimpan di Cloudflare R2, di wilayah Asia-Pasifik."
+          },
+          "scans": {
+            "title": "Data pemindaian",
+            "body": "Alamat IP pemindai tidak pernah disimpan. Pengunjung unik dihitung dengan hash yang berubah setiap hari."
+          }
+        }
+      },
+      "yourData": {
+        "title": "Data Anda dan urusan dokumennya",
+        "items": {
+          "export": {
+            "title": "Ekspor",
+            "body": "Unduh semua yang disimpan QRdx tentang akun Anda sebagai ZIP dari Pengaturan, lalu ekspor data pemindaian, respons formulir, dan log audit sebagai CSV."
+          },
+          "delete": {
+            "title": "Penghapusan",
+            "body": "Hapus kode, halaman, file, dan respons formulir kapan saja, atau hapus seluruh akun Anda. Data yang dihapus dapat tetap berada di riwayat pemulihan penyedia basis data untuk waktu singkat."
+          },
+          "dpa": {
+            "title": "Addendum Pemrosesan Data",
+            "body": "<dpa>DPA</dpa> merupakan bagian dari Ketentuan untuk setiap pelanggan dan mencakup Klausul Kontrak Standar. Minta salinan yang sudah ditandatangani jika Anda membutuhkannya."
+          },
+          "subprocessors": {
+            "title": "Subprosesor",
+            "body": "<list>Daftar subprosesor</list> menyebutkan setiap layanan yang menangani data pribadi untuk QRdx, fungsinya, dan lokasinya. Kami memperbaruinya paling lambat 30 hari sebelum layanan baru mulai digunakan."
+          }
+        }
+      }
+    },
+    "reportTitle": "Laporkan kerentanan",
+    "report": "Kirim email ke <mail>{email}</mail> dengan subjek yang diawali [security], dan mohon jangan mempostingnya di isu GitHub publik. <policy>Kebijakan keamanan</policy> kami mencakup ruang lingkup dan safe harbor, dan <txt>security.txt</txt> memuat detail kontak yang sama.",
+    "reviewTitle": "Sedang melakukan tinjauan keamanan?",
+    "review": "Kirimkan kuesioner Anda kepada kami. Kontrak <enterprise>Enterprise</enterprise> mencakup jawaban untuk tinjauan Anda dan DPA yang sudah ditandatangani."
   },
   "templates": {
     "metaTitle": "Template Halaman Arahan Kode QR dengan Demo Langsung",
@@ -4805,6 +5320,23 @@
         "page": {
           "yourProfileHowYouSign": "Profil Anda, cara Anda masuk, tempat Anda masuk, dan data Anda.",
           "profileSecurity": "Profil & keamanan"
+        },
+        "deletion": {
+          "counts": {
+            "codes": "{count, plural, other {# kode}}",
+            "pages": "{count, plural, other {# halaman yang di-hosting}}",
+            "files": "{count, plural, other {# file}}",
+            "domains": "{count, plural, other {# domain kustom}}"
+          },
+          "workspaceEmpty": "Ruang kerja pribadi Anda dihapus, beserta tema, pengaturan, dan integrasi Anda.",
+          "workspaceWith": "Ruang kerja pribadi Anda dihapus, beserta {list}-nya, serta pemindaian, tema, webhook, dan integrasi Anda.",
+          "workspaceWithCodes": "Ruang kerja pribadi Anda dihapus, beserta {list}-nya, serta pemindaian, tema, webhook, dan integrasi Anda. Kode QR yang sudah dicetak akan menampilkan halaman \"Kode QR tidak ditemukan\".",
+          "teamPromote": "{team}: {who} ({role, select, owner {pemilik} admin {admin} billing {penagihan} viewer {pelihat} other {anggota}}) menjadi pemilik dan mengambil alih apa yang Anda buat di ruang kerja, sehingga kodenya tetap berfungsi.",
+          "teamStays": "{team}: apa yang Anda buat di ruang kerja tetap berada di sana, atas nama {who}.",
+          "teamDeleted": "{team}: Anda satu-satunya anggota, jadi ruang kerja dan kontennya dihapus.",
+          "subscriptionCancelled": "Langganan {plan} Anda langsung dibatalkan.",
+          "signedOut": "Anda keluar di semua perangkat.",
+          "subscriptionBlocker": "Langganan {plan} Anda saat ini tidak dapat dibatalkan dari sini. Batalkan terlebih dahulu di Pengaturan → Paket & penggunaan, atau kirim email ke support@qrdx.dev."
         }
       },
       "affiliate": {
@@ -4892,7 +5424,8 @@
           "appsYouveAllowedToUse": "Aplikasi yang Anda izinkan untuk menggunakan akun QRdx Anda melalui API. Cabut akses untuk langsung mengeluarkan aplikasi.",
           "authorizedApps": "Aplikasi resmi",
           "noApiPermissions": "Tanpa izin API",
-          "lastActiveLastactiveat": " · terakhir aktif {lastActiveAt}",
+          "authorizedOn": "Diotorisasi {authorizedAt}",
+          "authorizedLastActive": "Diotorisasi {authorizedAt} · terakhir aktif {lastActiveAt}",
           "revoking": "Mencabut…",
           "nameCanNoLongerUse": "{name} tidak dapat lagi menggunakan akun Anda"
         }
@@ -5470,7 +6003,13 @@
           "selectLabel": "Pilih {label}",
           "actionsForLabel": "Tindakan untuk {label}",
           "emptyTheTrash": "Kosongkan tempat sampah?",
-          "deleteValueForGood": "Hapus {value} secara permanen?",
+          "deleteValueForGood": "Hapus permanen {count, plural, other {# barcode}}?",
+          "movedToTrash": "{count, plural, other {# barcode}} dipindahkan ke tempat sampah",
+          "movedToTrashSkipped": "{count, plural, other {# barcode}} dipindahkan ke tempat sampah. {skipped, number} yang dibuat orang lain tidak dipindahkan: hanya pemilik dan admin yang dapat menghapusnya.",
+          "restored": "{count, plural, other {# barcode}} dipulihkan",
+          "movedToFolder": "{count, plural, other {# barcode}} dipindahkan ke {name}",
+          "tookOutOfFolders": "{count, plural, other {# barcode}} dikeluarkan dari folder",
+          "deletedForGood": "{count, plural, other {# barcode}} dihapus permanen",
           "deleting": "Menghapus...",
           "edit": "Edit",
           "open": "Buka",
@@ -5530,7 +6069,12 @@
             "rowsSentOf": "{sent} dari {total} baris terkirim",
             "createdCount": "{created} dibuat",
             "createdWithProblems": "{created} dibuat · {rowErrors} bermasalah",
-            "valueCouldntBeSent": "{value} tidak dapat dikirim",
+            "valueCouldntBeSent": "{count, plural, other {# baris}} tidak dapat dikirim",
+            "retryValue": "Coba lagi {count, plural, other {# baris}}",
+            "codesCount": "{count, plural, other {# kode}}",
+            "codesIntoFolder": "{count, plural, other {# kode}}, ke dalam {folder}",
+            "codesTagged": "{count, plural, other {# kode}}, dengan tag {tags}",
+            "codesIntoFolderTagged": "{count, plural, other {# kode}}, ke dalam {folder}, dengan tag {tags}",
             "retryThemNothingIsMade": "Coba lagi; tidak ada yang dibuat dua kali.",
             "pause": "Jeda",
             "resume": "Lanjutkan",
@@ -5542,7 +6086,6 @@
             "paused": "Dijeda",
             "theRequestDidntGoThrough": "Permintaan tidak berhasil.",
             "retryAndContinue": "Coba lagi dan lanjutkan",
-            "retryValue": "Coba lagi {value}",
             "finishWithWhatsMade": "Selesai dengan yang sudah dibuat",
             "stop": "Hentikan"
           },
@@ -5560,7 +6103,13 @@
             "downloadImages": "Unduh gambar",
             "imagesProgress": "Progres gambar",
             "imageFormat": "Format gambar",
-            "createdValue": "{value} dibuat",
+            "createdValue": "{count, plural, other {# kode}} dibuat",
+            "zipParts": "Disimpan sebagai {parts, number} file ZIP (batch besar dibagi menjadi bagian sekitar 500 MB; codes.csv ada di bagian terakhir).",
+            "imagesMissing": "{count, plural, one {# gambar tidak dapat dirender dan hilang.} other {# gambar tidak dapat dirender dan hilang.}}",
+            "zipFailed": "ZIP tidak dapat dibuat.",
+            "rowsNotImported": "{count, plural, one {# baris tidak dapat diimpor.} other {# baris tidak dapat diimpor.}}",
+            "rowsNotSent": "{count, plural, one {# baris tidak terkirim (impor berakhir lebih awal).} other {# baris tidak terkirim (impor berakhir lebih awal).}}",
+            "rowsSkipped": "{count, plural, one {# baris bermasalah di dalam file dilewati.} other {# baris bermasalah di dalam file dilewati.}}",
             "noCodesWereCreated": "Tidak ada kode yang dibuat",
             "everyRowWasImported": "Semua baris telah diimpor."
           },
@@ -5579,7 +6128,13 @@
             "chooseTheColumnWithThe": "Pilih kolom yang berisi URL tujuan.",
             "n3Organize": "3. Atur",
             "n4Review": "4. Tinjau",
-            "valueWithProblems": "{value} bermasalah",
+            "valueWithProblems": "{count, plural, one {# baris} other {# baris}} bermasalah",
+            "importValue": "Impor {count, plural, one {# kode} other {# kode}}",
+            "rowsAndColumns": "{rows, plural, one {# baris} other {# baris}} · {columns, plural, one {# kolom} other {# kolom}}",
+            "validRows": "{count, plural, one {# baris valid} other {# baris valid}}",
+            "needsHeaderAndRows": "File memerlukan baris header dan setidaknya satu baris kode.",
+            "columnNumber": "Kolom {number}",
+            "fileTooLarge": "Ukuran file melebihi {size} MB.",
             "problemsCsv": "CSV masalah",
             "line": "Baris",
             "destination": "Tujuan",
@@ -5591,7 +6146,6 @@
             "showingTheFirstPreviewRows": "Menampilkan {PREVIEW_ROWS, number} baris pertama dari {length} baris. Setiap baris diperiksa.",
             "upgradeToImportTheseCodes": "Tingkatkan paket untuk mengimpor kode ini",
             "seePlans": "Lihat paket",
-            "importValue": "Impor {value}",
             "removeFile": "Hapus file",
             "bulkImportIsAValue": "Impor massal adalah fitur {value}",
             "bulkImportIsntOnYour": "Impor massal tidak tersedia di paket Anda",
@@ -5601,6 +6155,43 @@
             "auto": "otomatis",
             "rowsWithProblemsAreSkipped": "Baris bermasalah dilewati.",
             "sentImportChunkSizeAt": "Dikirim {IMPORT_CHUNK_SIZE} sekaligus; Anda dapat menjeda dan melanjutkan."
+          },
+          "issues": {
+            "destinationMissing": "URL tujuan belum diisi",
+            "destinationTooLong": "URL tujuan terlalu panjang",
+            "destinationNotUrl": "Tujuan harus berupa URL lengkap yang diawali dengan https://",
+            "destinationProtocol": "Hanya tujuan http:// dan https:// yang dapat digunakan",
+            "destinationCredentials": "Tujuan dengan nama pengguna atau kata sandi tidak diizinkan",
+            "destinationShortLink": "Kode QR dinamis tidak dapat mengarah ke tautan pendek QRdx lainnya",
+            "destinationRejected": "URL tujuan ini tidak dapat digunakan",
+            "titleTooLong": "Judul lebih dari {max, number} karakter",
+            "folderDepth": "Folder dapat disarangkan hingga {max, number} tingkat",
+            "folderNameTooLong": "Nama folder dapat berisi hingga {max, number} karakter",
+            "tooManyTags": "Hingga {max, number} tag per kode",
+            "tooManyTagsWithBatch": "Hingga {max, number} tag per kode, termasuk tag yang berlaku untuk semua kode",
+            "tagNameTooLong": "Nama tag dapat berisi hingga {max, number} karakter",
+            "slugReserved": "Back-half ini sudah dicadangkan",
+            "slugLength": "Back-half: gunakan {min} hingga {max} karakter.",
+            "slugCharacters": "Back-half: gunakan hanya huruf, angka, - dan _.",
+            "slugDash": "Back-half: tidak boleh diawali atau diakhiri dengan tanda hubung.",
+            "slugDuplicate": "Back-half ini muncul lebih awal di dalam file",
+            "slugTaken": "Back-half ini sudah digunakan",
+            "slugNotOnPlan": "Back-half kustom tersedia di {plans}"
+          },
+          "reasons": {
+            "imported": "Sudah diimpor",
+            "duplicate": "Kode QRdx dengan tujuan ini sudah ada",
+            "selectedTwice": "Dipilih dua kali",
+            "qrdx": "Sudah mengarah ke tautan pendek QRdx",
+            "limit": "Melebihi batas kode aktif paket Anda",
+            "providerEnded": "Impor dari {provider} telah berakhir",
+            "backHalfShape": "Back-half QRdx terdiri dari 3 hingga 64 huruf, angka, - atau _, sehingga yang ini tidak dapat dipertahankan.",
+            "backHalfReservedDomain": "Back-half ini dicadangkan di {domain}.",
+            "backHalfReservedShared": "Back-half ini dicadangkan di qrdx.dev.",
+            "backHalfReservedSharedAddDomain": "Back-half ini dicadangkan di qrdx.dev. Tambahkan {domain} di halaman Domain agar tetap dapat dipakai di sana.",
+            "backHalfTakenDomain": "Kode lain di {domain} sudah menggunakan back-half ini.",
+            "backHalfTakenShared": "Kode QRdx lain sudah menggunakan back-half ini di qrdx.dev.",
+            "backHalfRepeated": "Tautan lain yang dipilih memiliki back-half yang sama."
           }
         },
         "analyticsExtra": {
@@ -6011,7 +6602,14 @@
           "onlyTeamOwnersAndAdmins": "Hanya pemilik dan admin tim yang dapat menghapus kode yang dibuat orang lain.",
           "downloadFailedPleaseTryAgain": "Unduhan gagal. Silakan coba lagi.",
           "shortLinkCopied": "Tautan pendek disalin",
-          "couldntCopyTheShortLink": "Tidak dapat menyalin tautan pendek"
+          "couldntCopyTheShortLink": "Tidak dapat menyalin tautan pendek",
+          "removedFromFavorites": "Dihapus dari favorit",
+          "addedToFavorites": "Ditambahkan ke favorit",
+          "copyCreated": "Salinan dibuat",
+          "copyOpensSamePage": "Tautan pendek baru {link}. Tautan ini membuka halaman arahan yang sama.",
+          "copyScansFromZero": "Tautan pendek baru {link}. Pemindaian dimulai dari nol.",
+          "movedToTrash": "Dipindahkan ke sampah",
+          "codeRestored": "Kode dipulihkan"
         },
         "codeOptions": {
           "on": "(aktif)",
@@ -6075,7 +6673,19 @@
           "svgImagesZip": "Gambar SVG (ZIP)",
           "more": "Lainnya",
           "moveToTrash": "Pindahkan ke sampah",
-          "deleteValueForever": "Hapus {value} secara permanen?",
+          "preparingValue": "Menyiapkan {count, plural, one {# kode QR} other {# kode QR}}...",
+          "downloadedValueAsValue2": "{count, plural, one {# kode QR} other {# kode QR}} diunduh sebagai {value2}",
+          "deleteValueForever": "Hapus {count, plural, one {# kode} other {# kode}} secara permanen?",
+          "allSelectedOthersSkipped": "Semua kode yang dipilih dibuat oleh anggota tim lain dan dilewati: hanya pemilik dan admin yang dapat menghapusnya.",
+          "movedToTrash": "{count, plural, one {# kode} other {# kode}} dipindahkan ke sampah",
+          "deletedForever": "{count, plural, one {# kode} other {# kode}} dihapus secara permanen",
+          "othersSkipped": "{count, plural, one {# kode yang dibuat oleh anggota tim lain dilewati} other {# kode yang dibuat oleh anggota tim lain dilewati}}: hanya pemilik dan admin yang dapat menghapusnya.",
+          "trashScansNote": "Pemindaian menampilkan halaman “tidak lagi aktif” hingga Anda memulihkannya.",
+          "restoredCodes": "{count, plural, one {# kode} other {# kode}} dipulihkan",
+          "archivedCodes": "{count, plural, one {# kode} other {# kode}} diarsipkan",
+          "unarchivedCodes": "{count, plural, one {# kode} other {# kode}} dikeluarkan dari arsip",
+          "pausedCodes": "{count, plural, one {# kode} other {# kode}} dijeda",
+          "resumedCodes": "{count, plural, one {# kode} other {# kode}} dilanjutkan",
           "theirScanAndVersionHistory": "Riwayat pemindaian dan versinya akan dihapus, dan salinan cetak akan menampilkan halaman \"Kode QR tidak ditemukan\". Tindakan ini tidak dapat dibatalkan.",
           "cancel": "Batal",
           "bulkActions": "Tindakan massal",
@@ -6091,11 +6701,8 @@
           "failedCouldntBeRendered": "{failed, number} tidak dapat dirender.",
           "scansRedirectAgain": "Pemindaian dialihkan kembali.",
           "scansGoToEachCodes": "Pemindaian diarahkan ke URL cadangan setiap kode, atau halaman \"dijeda\" yang netral.",
-          "allSelectedOthersSkipped": "Semua yang dipilih {OTHERS_SKIPPED}",
-          "preparingValue": "Menyiapkan {value}...",
           "renderingFinishedOfTotal": "Merender {finished, number} dari {total, number}...",
           "theQrCodesCouldntBe": "Kode QR tidak dapat dirender.",
-          "downloadedValueAsValue2": "{value} diunduh sebagai {value2}",
           "downloadFailedPleaseTryAgain": "Unduhan gagal. Silakan coba lagi."
         },
         "codesTable": {
@@ -6132,7 +6739,9 @@
           "clearAll": "Hapus semua",
           "codesWithAllOfThese": "Kode dengan semua tag ini",
           "emptyTheTrash": "Kosongkan sampah?",
-          "valueAndTheirScanHistory": "{value} beserta riwayat pemindaiannya dihapus selamanya. Salinan cetak akan menampilkan halaman “Kode QR tidak ditemukan”. Tindakan ini tidak dapat dibatalkan.",
+          "valueAndTheirScanHistory": "{count, plural, one {# kode} other {# kode}} beserta riwayat pemindaiannya dihapus selamanya. Salinan cetak akan menampilkan halaman “Kode QR tidak ditemukan”. Tindakan ini tidak dapat dibatalkan.",
+          "codeCount": "{count, plural, one {# kode} other {# kode}}",
+          "deletedForever": "{count, plural, one {# kode} other {# kode}} dihapus selamanya",
           "cancel": "Batal",
           "editName": "Edit {name}",
           "deleteName": "Hapus {name}",
@@ -6192,7 +6801,12 @@
           "springCampaign": "Kampanye musim semi",
           "save": "Simpan",
           "createFolder": "Buat folder",
-          "itsCodesAndSubfoldersMoved": "Kode dan subfolder di dalamnya dipindahkan ke {target}."
+          "itsCodesAndSubfoldersMoved": "Kode dan subfolder di dalamnya dipindahkan ke {target}.",
+          "movedToFolder": "{count, plural, one {# kode} other {# kode}} dipindahkan ke “{name}”",
+          "movedOutOfFolders": "{count, plural, one {# kode} other {# kode}} dipindahkan ke luar folder",
+          "theTopLevel": "tingkat teratas",
+          "deletedFolder": "“{name}” dihapus",
+          "folderRenamed": "Nama folder diubah"
         },
         "importDialog": {
           "import": "Impor",
@@ -6226,22 +6840,24 @@
           "theOldShortLinkOr": "Tautan pendek lama (atau ID kode) membuat unggahan ulang file yang sama melewati kode yang sudah diimpor, dan dipakai dalam pemetaan tautan lama ke baru.",
           "provider": "Penyedia",
           "exportFile": "File ekspor",
-          "import": "impor",
-          "firstMaxJobLinks": " ({MAX_JOB_LINKS, number} pertama)",
+          "previewRows": "Pratinjau {count, plural, one {# baris} other {# baris}}",
+          "previewImport": "Pratinjau impor",
+          "rows": "{count, plural, one {# baris} other {# baris}}",
+          "rowsFirst": "{count, plural, one {# baris} other {# baris}} ({MAX_JOB_LINKS, number} pertama)",
           "chooseAnotherFile": "Pilih file lain",
           "chooseFile": "Pilih file"
         },
         "importLinksStep": {
           "importingFromNameIsntAvailable": "Impor dari {name} belum tersedia.",
           "qrdxReadsYourLinksTo": "QRdx membaca tautan Anda untuk mengimpornya. Token disimpan terenkripsi; putuskan koneksi kapan saja di Pengaturan.",
-          "signInWith": "Masuk dengan",
+          "signInWith": "Masuk dengan {name}",
+          "valueSelected": "{count, plural, one {# tautan} other {# tautan}} dipilih",
           "afterSigningInYouCome": "Setelah masuk, Anda langsung kembali ke sini untuk memilih tautan Anda.",
           "orPasteAKey": "atau tempel kunci",
           "connect": "Hubungkan",
           "openName": "Buka {name}",
           "connectingNameIsntAvailableRight": "Menghubungkan {name} sedang tidak tersedia. Ekspor tautan Anda sebagai CSV dari {name2} dan gunakan \"Penyedia lain (CSV)\" sebagai gantinya.",
           "allProviders": "Semua penyedia",
-          "valueSelected": "{value} dipilih",
           "previewImport": "Pratinjau impor",
           "allDomains": "Semua domain",
           "allTags": "Semua tag",
@@ -6302,8 +6918,8 @@
           "folderName": "Nama folder",
           "yourDomain": "Domain Anda",
           "nothingToImport": "Tidak ada yang diimpor",
-          "importTheFirstValue": "Impor {value} pertama",
-          "importValue": "Impor {value}",
+          "importTheFirstValue": "Impor {count, plural, one {# kode} other {# kode}} pertama",
+          "importValue": "Impor {count, plural, one {# kode} other {# kode}}",
           "keepTheirsOnThatDomain": "Back-half tetap berada di domain yang Anda pilih, sehingga kode yang sudah dicetak berfungsi lagi setelah DNS-nya dipindahkan ke QRdx.",
           "everyBackHalfIsKept": "Semua back-half dipertahankan di qrdx.dev.",
           "keepingBackHalvesIsPart": "Mempertahankan back-half termasuk dalam {slugPlans}.",
@@ -6318,9 +6934,9 @@
           "forProvidersWithoutApiAccess": "Untuk penyedia tanpa akses API. Unggah CSV, periksa kolomnya, lalu pratinjau dan impor.",
           "alreadyUsingTheQrdxCsv": "Sudah memakai templat CSV QRdx? <link>Impor CSV</link>",
           "recentImports": "Impor terbaru",
-          "valueValue2Created": "{value} · {value2} dibuat",
+          "valueValue2Created": "{value} · {count, plural, one {# kode} other {# kode}} dibuat",
+          "valuePointingToQrdx": "{count, plural, one {# tautan lama} other {# tautan lama}} mengarah ke QRdx",
           "resumeProcessedTotal": "Lanjutkan {processed, number}/{total, number}",
-          "valuePointingToQrdx": " · {value} mengarah ke QRdx",
           "open": "Buka",
           "checking": "Memeriksa…",
           "connected": "Terhubung",
@@ -6331,19 +6947,19 @@
         },
         "importRedirectsStep": {
           "summary": "Ringkasan",
-          "undoValue": "Urungkan {value}",
-          "update": "Perbarui",
-          "in": "dalam",
+          "undoValue": "Urungkan {count, plural, one {# tautan} other {# tautan}}",
+          "valueRestored": "{count, plural, one {# tautan} other {# tautan}} dipulihkan",
+          "valueNowOpenQrdx": "{count, plural, one {# tautan kini membuka} other {# tautan kini membuka}} QRdx",
+          "dryRunValueWouldChange": "Uji coba <span>· {count, plural, one {# tautan akan berubah} other {# tautan akan berubah}}</span>",
+          "updateLinksIn": "Perbarui {count, plural, one {# tautan} other {# tautan}} di {name}",
+          "oldLinksAlreadyPoint": "{count, plural, one {# tautan lama sudah mengarah} other {# tautan lama sudah mengarah}} ke QRdx.",
           "importsFromNameHaveEnded": "Impor dari {name} telah berakhir.",
           "qrdxNoLongerChangesName": "QRdx tidak lagi mengubah tautan {name}. Urungkan akan mengembalikan tujuan asli ke akun {name2} Anda (tujuan tersebut disimpan bersama impor ini). Kode QRdx tetap ada.",
           "thisChangesLinksInYour": "Ini mengubah tautan di akun {name} Anda.",
           "eachOldLinkWillOpen": "Setiap tautan lama akan membuka kode QRdx barunya, yang mengarahkan pengunjung ke tujuan yang sama, sehingga kode cetak tetap berfungsi dan pemindaiannya muncul di QRdx. {name} tetap mencatat klik terlebih dahulu. Urungkan akan mengembalikan tujuan asli (tujuan tersebut disimpan bersama impor ini).",
           "listingTheChanges": "Mendaftar perubahan…",
-          "dryRunValueWouldChange": "Uji coba <span>· {value} akan berubah</span>",
           "iUnderstandTheseNameLinks": "Saya memahami bahwa tautan {name} ini akan mengarah ke QRdx sampai saya membatalkannya.",
           "updateProgress": "Progres pembaruan",
-          "valueRestored": "{value} dipulihkan",
-          "valueNowOpenQrdx": "{value} kini membuka QRdx",
           "restoringOriginalDestinations": "Memulihkan tujuan asli…",
           "updatingLinksInName": "Memperbarui tautan di {name}…",
           "everyOldNameLinkHas": "Setiap tautan {name} lama memiliki tujuan aslinya.",
@@ -6366,7 +6982,9 @@
           "keepMyPrintedCodesWorking": "Jaga kode cetak saya tetap berfungsi",
           "optionalPointEachOldName": "Opsional. Arahkan setiap tautan {name} lama ke kode QRdx barunya, agar kode yang sudah dicetak tetap berfungsi dan pemindaiannya muncul di QRdx. Anda akan melihat setiap perubahan terlebih dahulu dan dapat membatalkannya.",
           "pointYourOldCodesAt": "Arahkan kode lama Anda ke QRdx",
-          "codesLiveOnItsOwn": "kode berada di domainnya sendiri, sehingga QRdx tidak dapat mengubahnya. Untuk setiap kode lama:",
+          "oldProviderCodesLiveOnItsDomain": "Kode dari penyedia lama Anda berada di domainnya sendiri, sehingga QRdx tidak dapat mengubahnya. Untuk setiap kode lama:",
+          "providerCodesLiveOnItsDomain": "Kode dari {name} berada di domainnya sendiri, sehingga QRdx tidak dapat mengubahnya. Untuk setiap kode lama:",
+          "oldLinksPointToQrdx": "{count, plural, one {# tautan {name} lama mengarah} other {# tautan {name} lama mengarah}} ke QRdx",
           "backHalvesOnBackhalfdomain": "Back-half di {backHalfDomain}",
           "attachCodes": "Lampirkan kode",
           "notesOnEachCodeSay": "Catatan pada setiap kode menyebutkan asalnya, tautan lamanya, dan tanggal pembuatan aslinya. Menjalankan ulang impor ini akan melewati semua yang sudah diimpor.",
@@ -6377,24 +6995,27 @@
           "importingFromName": "Mengimpor dari {name}…",
           "importPaused": "Impor dijeda",
           "waitingWaitingSForThe": "Menunggu {waiting, number} detik karena batas laju, lalu melanjutkan…",
-          "valueCreatedSoFarIn": "{value} dibuat sejauh ini, dalam kelompok berisi 50. Setiap tautan diimpor sekali saja, meskipun Anda mencoba lagi.",
+          "valueCreatedSoFarIn": "{count, plural, one {# kode} other {# kode}} telah dibuat sejauh ini, dalam kelompok berisi 50. Setiap tautan diimpor sekali, meskipun Anda mencoba lagi.",
           "manage": "Kelola",
           "reviewChanges": "Tinjau perubahan",
-          "yourOldProviders": "Penyedia lama Anda",
           "theCodesAreOnBackhalfdomain": "Kode berada di {backHalfDomain}. Tautan lama di domain tersebut berfungsi kembali begitu DNS-nya mengarah ke QRdx dan terverifikasi di halaman Domain.",
           "afterBackhalfdomainPointsToQrdx": "Setelah {backHalfDomain} mengarah ke QRdx dan terverifikasi di halaman Domain, hubungkan kode agar {backHalfDomain2}/'<'back-half'>' membukanya.",
           "other": "Lainnya"
         },
         "moveWorkspaceDialog": {
           "moveToAnotherWorkspace": "Pindahkan ke ruang kerja lain",
-          "keepsItsShortLinkSo": "mempertahankan tautan pendeknya, sehingga salinan cetak tetap berfungsi. Pemindaian dan riwayatnya ikut berpindah; folder dan tag-nya tetap di sini.",
+          "keepsItsShortLinkSo": "<strong>{name}</strong> tetap memakai tautan pendeknya, sehingga salinan cetaknya tetap berfungsi. Pemindaian dan riwayatnya ikut pindah; folder dan tagnya tetap di sini.",
           "loadingWorkspaces": "Memuat ruang kerja",
           "youreNotInAnotherWorkspace": "Anda tidak berada di ruang kerja lain tempat Anda dapat menambahkan kode. Ruang kerja tempat Anda hanya dapat melihat atau menjadi anggota penagihan tidak ditampilkan.",
           "cancel": "Batal",
           "moveCode": "Pindahkan kode",
           "workspaces": "Ruang kerja",
           "open": "Buka",
-          "movedToName": "Dipindahkan ke {name}"
+          "movedToName": "Dipindahkan ke {name}",
+          "movedSameLink": "Tautan pendek, pemindaian, dan riwayat tetap sama.",
+          "movedFolderStayed": "Tautan pendek, pemindaian, dan riwayat tetap sama. Foldernya tetap di sini.",
+          "movedTagsStayed": "Tautan pendek, pemindaian, dan riwayat tetap sama. {count, plural, one {# tag} other {# tag}} tetap di sini.",
+          "movedFolderAndTagsStayed": "Tautan pendek, pemindaian, dan riwayat tetap sama. Folder dan {count, plural, one {# tag} other {# tag}} miliknya tetap di sini."
         },
         "newCodeDialog": {
           "template": "Templat",
@@ -6436,8 +7057,8 @@
           "bytesBytes": "{bytes, number} byte",
           "fits": "Muat",
           "theLinkNeedsBytesBytes": "Tautan ini membutuhkan {bytes, number} byte. NTAG215 dan NTAG216 menyisakan ruang jika Anda nanti menulis tautan yang lebih panjang.",
-          "openThisPageInChrome": "Buka halaman ini di Chrome pada ponsel Android dengan NFC aktif, ketuk Write to NFC tag, lalu tempelkan",
-          "againstTheBackOfThe": "ke bagian belakang ponsel. Di iPhone, gunakan aplikasi penulis NFC.",
+          "writeItTag": "Buka halaman ini di Chrome pada ponsel Android dengan NFC aktif, ketuk Tulis ke tag NFC, lalu tempelkan tag ke bagian belakang ponsel. Di iPhone, gunakan aplikasi penulis NFC.",
+          "writeItCard": "Buka halaman ini di Chrome pada ponsel Android dengan NFC aktif, ketuk Tulis ke tag NFC, lalu tempelkan kartu ke bagian belakang ponsel. Di iPhone, gunakan aplikasi penulis NFC.",
           "analyticsCountsTapsAndScans": "Analitik menghitung ketukan dan pemindaian secara terpisah.",
           "downloadTheQrCode": "Unduh kode QR",
           "androidPhonesWithNfcOn": "Ponsel Android dengan NFC aktif dan iPhone XS atau yang lebih baru membuka tautan saat tag disentuhkan ke ponsel, tanpa aplikasi. Tag tetap mengikuti kode: ubah tujuannya di QRdx dan setiap tag yang sudah Anda tulis ikut berubah.",
@@ -6555,7 +7176,11 @@
           "editTag": "Edit tag",
           "createTag": "Buat tag",
           "tags": "Tag",
-          "tagsForValue": "Tag untuk {value}"
+          "tagsForValue": "Tag untuk {count, plural, one {# kode} other {# kode}}",
+          "tagsSaved": "Tag disimpan",
+          "updatedTagsOn": "Tag diperbarui pada {count, plural, one {# kode} other {# kode}}",
+          "tagSaved": "Tag disimpan",
+          "deletedTag": "Tag “{name}” dihapus"
         },
         "usage": {
           "unlimitedUsage": "{count, plural, other {# kode dinamis aktif}} · paket {plan}, kode tanpa batas",
@@ -6613,7 +7238,9 @@
           "linkCopied": "Tautan disalin",
           "couldntCopyTheLink": "Tidak dapat menyalin tautan.",
           "notUsedYet": "Belum digunakan",
-          "usedByValue": "Digunakan oleh {value}"
+          "usedByPagesAndCodes": "Digunakan oleh {pages, plural, one {# halaman} other {# halaman}} · {codes, plural, one {# kode} other {# kode}}",
+          "usedByPages": "Digunakan oleh {pages, plural, one {# halaman} other {# halaman}}",
+          "usedByCodes": "Digunakan oleh {codes, plural, one {# kode} other {# kode}}"
         }
       },
       "loading": {
@@ -6882,8 +7509,8 @@
           "cancel": "Batal",
           "save": "Simpan",
           "deleteName": "Hapus {name}?",
-          "qrCodesYouAlreadyMade": "Kode QR yang sudah Anda buat dengan tema ini tetap mempertahankan tampilannya. Ini hanya menghapus tema yang tersimpan",
           "deleteTheme": "Hapus tema",
+          "deleteThemeTeam": "Kode QR yang sudah Anda buat dengan tema ini tetap mempertahankan tampilannya. Ini hanya menghapus tema tersimpan untuk semua orang di ruang kerja ini.",
           "updateTheTagsForName": "Perbarui tag untuk \"{name}\".",
           "saveTags": "Simpan tag",
           "openNameInThePlayground": "Buka {name} di Playground",
@@ -6893,8 +7520,7 @@
           "removeAsDefault": "Hapus sebagai default",
           "setAsWorkspaceDefault": "Jadikan default ruang kerja",
           "setAsDefault": "Jadikan default",
-          "forEveryoneInThisWorkspace": " untuk semua orang di ruang kerja ini",
-          "itIsAlsoRemovedFrom": " Tema ini juga dihapus dari komunitas.",
+          "itIsAlsoRemovedFrom": "Tema ini juga dihapus dari komunitas.",
           "upgrade": "Tingkatkan",
           "themeRenamed": "Nama tema diubah",
           "couldNotRenameTheTheme": "Tidak dapat mengganti nama tema. Silakan coba lagi.",
@@ -6997,7 +7623,14 @@
           "removeHostname": "Hapus {hostname}?",
           "cancel": "Batal",
           "removeHostname2": "Hapus {hostname}",
-          "shortLinksLookLikeHttps": "Tautan pendek terlihat seperti https://{hostname}/aB3dE5f · digunakan oleh {value}",
+          "shortLinksLookLikeHttps": "Tautan pendek berbentuk https://{hostname}/aB3dE5f · digunakan oleh {count, plural, one {# kode} other {# kode}}",
+          "youveAddedValueTheMost": "Anda telah menambahkan {count, plural, one {# domain} other {# domain}}, jumlah maksimum yang termasuk dalam paket Anda. Hapus satu untuk menambahkan yang lain.",
+          "providerCanAddRecords": "DNS Anda ada di {provider}, yang dapat menambahkan rekaman ini untuk Anda.",
+          "yourProviderCanAddRecords": "Penyedia DNS Anda dapat menambahkan rekaman ini untuk Anda.",
+          "approveAtProvider": "Anda menyetujui perubahan di {provider}, lalu kembali ke sini.",
+          "approveAtYourProvider": "Anda menyetujui perubahan di penyedia DNS Anda, lalu kembali ke sini.",
+          "removeDomainInUse": "{count, plural, one {# kode menggunakan} other {# kode menggunakan}} domain ini. Kode QR yang dicetak dengan tautan {hostname} akan berhenti berfungsi, dan kodenya beralih ke tautan {defaultHost}/q/… miliknya. Bagian akhir tautan yang dipilih di domain tetap dipakai jika masih tersedia di {defaultHost}; sisanya mendapat yang baru.",
+          "removeDomainUnused": "Tautan pendek di {hostname} berhenti berfungsi.",
           "addTheseRecordsAtYour": "Tambahkan catatan ini di penyedia DNS Anda, lalu klik Verifikasi.",
           "checkDns": "Periksa DNS",
           "verify": "Verifikasi",
@@ -7012,7 +7645,6 @@
           "addDomain": "Tambah domain",
           "aSubdomainSuchAsGo": "Subdomain seperti go. atau qr. paling cocok: situs web utama Anda tetap di tempatnya.",
           "addingDomainsNeedsProOr": "Menambahkan domain memerlukan Pro atau Business.",
-          "youveAddedValueTheMost": "Anda telah menambahkan {value}, jumlah maksimum yang disertakan paket Anda. Hapus satu untuk menambahkan yang lain.",
           "removing": "Menghapus...",
           "removeDomain": "Hapus domain",
           "addTheDnsRecordsShown": "Tambahkan catatan DNS yang ditampilkan, lalu klik Verifikasi.",

@@ -1,0 +1,187 @@
+---
+title: "डायनेमिक QR कोड"
+description: "QR कोड एक बार प्रिंट करें, बाद में बदलें कि वह कहाँ ले जाता है, और देखें कि उसे कितनी बार स्कैन किया गया।"
+icon: QrCode
+---
+
+डायनेमिक QR कोड में आपका अंतिम URL नहीं, बल्कि एक छोटा लिंक होता है, जैसे `https://qrdx.dev/q/aB3dE5f`। इसे स्कैन करने पर यह छोटा लिंक खुलता है, जो आपके तय किए गए डेस्टिनेशन पर रीडायरेक्ट कर देता है। आप डेस्टिनेशन कभी भी बदल सकते हैं, इसलिए प्रिंट किए गए कोड कभी पुराने नहीं होते, और हर स्कैन गिना जाता है।
+
+Playground और `qrdx` लाइब्रेरी से बने स्टैटिक QR कोड फ़्री और अनलिमिटेड रहते हैं। डायनेमिक कोड के लिए QRdx अकाउंट ज़रूरी है।
+
+## डायनेमिक कोड बनाएँ [#create-a-dynamic-code]
+
+- **डैशबोर्ड:** [डैशबोर्ड](/dashboard) खोलें, **New code** पर क्लिक करें, डेस्टिनेशन URL और चाहें तो एक टाइटल डालें। कोड को PNG, WebP या SVG में डाउनलोड करें।
+- **Playground:** **URL** कंटेंट टाइप चुनें, अपना लिंक डालें और **Make it dynamic** चालू करें। QR कोड छोटे लिंक पर स्विच हो जाता है और आपका डिज़ाइन वैसा ही रहता है। अगर आप बाद में URL बदलते हैं, तो डेस्टिनेशन अपडेट करने के लिए **Point it to the new URL** पर क्लिक करें। **Save design to code** मौजूदा डिज़ाइन को कोड के साथ सेव कर देता है।
+
+डेस्टिनेशन `http://` या `https://` लिंक होने चाहिए। यूज़रनेम या पासवर्ड वाले लिंक, और दूसरे QRdx छोटे लिंक पर जाने वाले लिंक स्वीकार नहीं किए जाते।
+
+## कस्टम बैक-हाफ़ [#custom-back-halves]
+
+हर कोड को 7 अक्षरों का एक रैंडम बैक-हाफ़ मिलता है, यानी `/q/` के बाद वाला हिस्सा। Pro और Business पर आप इसकी जगह अपना बैक-हाफ़ चुन सकते हैं, जैसे `https://qrdx.dev/q/spring-menu`: कोड बनाते या एडिट करते समय **Custom back-half** भरें, और टाइप करते समय डायलॉग बताता रहता है कि वह उपलब्ध है या नहीं।
+
+- 3 से 64 अक्षर: अक्षर, अंक, `-` और `_`, और शुरुआत या अंत में `-` नहीं।
+- बैक-हाफ़ केस-सेंसिटिव होते हैं, जनरेट किए गए बैक-हाफ़ की तरह: `Spring-Menu` और `spring-menu` दो अलग लिंक हैं।
+- `qrdx.dev` पर बैक-हाफ़ पूरे QRdx में यूनिक होना चाहिए, और QRdx के पेज जैसे दिखने वाले शब्द (`admin`, `api`, `docs`, `login`, `pricing`, `settings`, ...) रिज़र्व हैं।
+- अपने [कस्टम डोमेन](/docs/custom-domains) पर इसे सिर्फ़ उसी डोमेन पर यूनिक होना चाहिए, और सिर्फ़ `api`, `p` और `q` रिज़र्व हैं, इसलिए `go.yourbrand.com/pricing` काम करता है। ऐसा बैक-हाफ़ डोमेन का होता है: उसका कोई `qrdx.dev/q/` लिंक नहीं होता।
+- कोड का बैक-हाफ़ बदलने से उसका लिंक बदल जाता है: पुराने बैक-हाफ़ से प्रिंट हुए QR कोड काम करना बंद कर देते हैं, इसलिए कोड दोबारा डाउनलोड करें।
+
+## कोड मैनेज करें [#manage-codes]
+
+डैशबोर्ड से आप ये कर सकते हैं:
+
+- **Edit link:** डेस्टिनेशन या टाइटल बदलें। प्रिंट किया गया कोड काम करता रहता है और अगले स्कैन पर नया डेस्टिनेशन खोलता है।
+- **Change type:** वेबसाइट लिंक को [होस्टेड पेज](/docs/landing-pages) में बदलें, पेज को वापस लिंक में, या एक पेज को दूसरे पेज टाइप में। छोटा लिंक और स्कैन वैसे ही रहते हैं। देखें [प्रिंट किया गया कोड क्या खोले, यह बदलें](/docs/help/dynamic-codes/change-the-type)।
+- **Edit design in playground:** कोड को एडिटर में खोलता है, जो अब भी उसके छोटे लिंक से जुड़ा रहता है।
+- **Archive:** कोड को रीस्टोर करने तक छोटा लिंक "no longer active" पेज दिखाता है। आर्काइव किए गए कोड आपके प्लान की सीमा में नहीं गिने जाते।
+- **Move to trash:** छोटा लिंक "no longer active" पेज (HTTP 410) दिखाता है और कोड आपके प्लान में गिना जाना बंद हो जाता है। उसे **Trash** से रीस्टोर करें, या वहीं से हमेशा के लिए डिलीट करें, जिससे उसकी स्कैन हिस्ट्री भी हट जाती है; तब छोटा लिंक "QR code not found" पेज दिखाता है। API से डिलीट करना (`DELETE /v1/codes/{id}`) तुरंत स्थायी होता है।
+- **Duplicate:** डेस्टिनेशन, डिज़ाइन, फ़ोल्डर, टैग और नोट्स को एक नए कोड में कॉपी करता है, जिसका नया छोटा लिंक होता है और कोई स्कैन नहीं होता।
+- **Version history:** हर बदलाव कोड के पेज पर दर्ज होता है; किसी वर्शन को रीस्टोर करने से पहले मौजूदा सेटिंग सेव हो जाती हैं, इसलिए रीस्टोर को वापस पलटा जा सकता है।
+
+## कोड व्यवस्थित करें [#organize-codes]
+
+- **फ़ोल्डर:** 5 स्तर तक नेस्ट कर सकते हैं। कोड को फ़ोल्डर पर ड्रैग करें या **Move to folder** इस्तेमाल करें। फ़ोल्डर डिलीट करने पर उसके कोड और सबफ़ोल्डर एक स्तर ऊपर चले जाते हैं।
+- **टैग:** कई टैग से फ़िल्टर करने पर वे कोड दिखते हैं जिनमें वे सभी टैग हों।
+- **पसंदीदा और नोट्स:** कोड को स्टार करें और निजी नोट्स रखें; नोट्स सर्च किए जा सकते हैं।
+- **सर्च** टाइटल, डेस्टिनेशन, नोट्स, टैग और बैक-हाफ़ में खोजता है (किसी कोड को ढूँढने के लिए उसका छोटा लिंक पेस्ट करें)।
+- **बल्क एक्शन:** कोड चुनकर उन्हें मूव, टैग, पॉज़, आर्काइव, पसंदीदा, ट्रैश करें, या PNG, WebP या SVG फ़ाइलों के ZIP के रूप में डाउनलोड करें।
+- **CSV इम्पोर्ट:** **Codes → Import** एक CSV से {facts.importRows} तक डायनेमिक कोड बनाता है (डेस्टिनेशन, टाइटल, फ़ोल्डर, टैग, और `slug` कॉलम में वैकल्पिक कस्टम बैक-हाफ़), और हर कोड को एक फ़ोल्डर में रख सकता है व सभी में टैग जोड़ सकता है। लंबे इम्पोर्ट को पॉज़ किया जा सकता है, और रीलोड या कनेक्शन टूटने के बाद वह बिना कोई कोड दोबारा बनाए आगे बढ़ता है। अंत में एक रिज़ल्ट CSV (हर पंक्ति का छोटा लिंक) और कोड का PNG या SVG में ZIP मिलता है। एक से ज़्यादा पंक्तियाँ इम्पोर्ट करने और कस्टम बैक-हाफ़ के लिए Pro चाहिए।
+
+कोड उसी वर्कस्पेस के होते हैं जिसमें वे बनाए गए हैं। वर्कस्पेस का हर सदस्य उन्हें बना और एडिट कर सकता है; सदस्य अपने कोड डिलीट कर सकते हैं, और ओनर व एडमिन वर्कस्पेस का कोई भी कोड डिलीट कर सकते हैं।
+
+<Callout type="info">
+  कोड कभी बंद नहीं होते: प्लान डाउनग्रेड करने से मौजूदा कोड बंद नहीं होते। सीमा से ज़्यादा होने पर भी आप कोड एडिट और आर्काइव कर सकते हैं, बस सीमा के नीचे आने तक नए कोड बना या रीस्टोर नहीं कर सकते।
+</Callout>
+
+## प्लान [#plans]
+
+| | फ़्री | Pro | Business |
+| --- | --- | --- | --- |
+| सक्रिय डायनेमिक कोड | 10 | अनलिमिटेड | अनलिमिटेड |
+| स्कैन | अनलिमिटेड | अनलिमिटेड | अनलिमिटेड |
+| स्कैन हिस्ट्री | 90 दिन | 3 साल | अनलिमिटेड |
+| API से बल्क क्रिएशन | नहीं | प्रति रिक्वेस्ट {facts.apiBatchCodes} तक | प्रति रिक्वेस्ट {facts.apiBatchCodes} तक |
+
+वर्कस्पेस के कोड उसके ओनर्स के सबसे अच्छे प्लान का इस्तेमाल करते हैं। हर प्लान में और क्या-क्या शामिल है, यह जानने के लिए [प्लान और सीमाएँ](/docs/plans-and-limits) देखें।
+
+## स्कैन एनालिटिक्स [#scan-analytics]
+
+हर कोड का एक एनालिटिक्स पेज होता है, जिसमें पिछले 7, 30 या 90 दिन, 1 साल या 3 साल के स्कैन समय के साथ, यूनिक विज़िटर, टॉप देश और शहर, डिवाइस, ऑपरेटिंग सिस्टम, ब्राउज़र और रेफ़रर दिखते हैं (आपके प्लान की हिस्ट्री तक सीमित)। चुनी गई अवधि के स्कैन आप CSV के रूप में एक्सपोर्ट कर सकते हैं।
+
+हर स्कैन के लिए यह दर्ज होता है:
+
+- समय (UTC), और देश, क्षेत्र और शहर, जब होस्टिंग प्लेटफ़ॉर्म उन्हें दे (qrdx.dev पर Vercel के geo हेडर)
+- डिवाइस टाइप, ऑपरेटिंग सिस्टम और ब्राउज़र, जो user agent से पहचाने जाते हैं
+- रेफ़रर का सिर्फ़ होस्ट नाम, पूरा URL कभी नहीं। ज़्यादातर QR स्कैन में रेफ़रर नहीं होता।
+- एक विज़िटर हैश: IP एड्रेस, user agent और दिन का सॉल्ट वाला SHA-256। यह हर दिन के यूनिक विज़िटर गिनता है; IP एड्रेस खुद कभी स्टोर नहीं किया जाता।
+- Pro और Business पर, जब कोड [सटीक लोकेशन माँगता है](/docs/precise-location) और स्कैन करने वाला अनुमति देता है: उनकी लोकेशन 3 दशमलव स्थान तक राउंड की हुई (लगभग 100 मीटर) और उनके ब्राउज़र द्वारा बताई गई सटीकता
+
+जाने-पहचाने बॉट, लिंक प्रीव्यू और ब्राउज़र प्रीफ़ेच नहीं गिने जाते।
+
+## REST API [#rest-api]
+
+`https://api.qrdx.dev/v1/codes` के तहत कोड्स को programmatically मैनेज करें। Requests को [API key](/docs/developers/api-keys) या OAuth access token (`Authorization: Bearer <key or token>`) से authenticate किया जाता है, जिसमें `codes:read` या `codes:write` scope हो; इसे पाने का तरीका [REST API](/docs/developers/rest-api) में देखें। एक key उसी workspace पर काम करती है जिसमें उसे बनाया गया था; token वाली requests आपके अपने workspace पर काम करती हैं। साइन-इन किए हुए ब्राउज़र सेशन से आई requests भी चलती हैं और उस workspace पर काम करती हैं जिसे आपने डैशबोर्ड में आख़िरी बार खोला था।
+
+| Method | Path | विवरण |
+| --- | --- | --- |
+| `GET` | `/v1/codes` | कोड्स की सूची। Query: `status` (`active`, `archived`, `all`), `q`, `limit` (≤ 100), `offset` |
+| `POST` | `/v1/codes` | एक कोड बनाएँ, या 100 तक का array (array के लिए Pro चाहिए)। Body: `destinationUrl`, वैकल्पिक `title`, `style`, `domainId` और `slug` |
+| `GET` | `/v1/codes/{id}` | एक कोड पाएँ |
+| `PATCH` | `/v1/codes/{id}` | `destinationUrl`, `title`, `style`, `domainId` ([कस्टम डोमेन](/docs/custom-domains)), `slug` या `archived` अपडेट करें, या `kind` को `redirect` और `page` के बीच बदलें |
+| `DELETE` | `/v1/codes/{id}` | कोड और उसके स्कैन डिलीट करें |
+| `GET` | `/v1/codes/{id}/scans` | `range` (`7d`, `30d`, `90d`, `365d`, `1095d`; आपके प्लान की हिस्ट्री तक सीमित) के लिए analytics। अलग-अलग स्कैन के लिए `limit` (≤ 500) जोड़ें, और अगले पेज के लिए `before` (आख़िरी `scannedAt`) जोड़ें |
+
+कोड बनाएँ:
+
+```bash
+curl https://api.qrdx.dev/v1/codes \
+  -H "Authorization: Bearer $QRDX_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"destinationUrl": "https://example.com/menu", "title": "Spring menu"}'
+```
+
+```json
+{
+  "data": {
+    "id": "cm3x...",
+    "slug": "aB3dE5f",
+    "shortLink": "https://qrdx.dev/q/aB3dE5f",
+    "defaultShortLink": "https://qrdx.dev/q/aB3dE5f",
+    "domain": null,
+    "destinationUrl": "https://example.com/menu",
+    "title": "Spring menu",
+    "contentType": "url",
+    "kind": "redirect",
+    "pageId": null,
+    "status": "active",
+    "style": null,
+    "scanCount": 0,
+    "lastScannedAt": null,
+    "archivedAt": null,
+    "createdAt": "2026-10-31T12:00:00.000Z",
+    "updatedAt": "2026-10-31T12:00:00.000Z",
+    "organizationId": null
+  }
+}
+```
+
+back-half चुनने के लिए `slug` दें (Pro और Business; नियमों के लिए [कस्टम back-halves](#custom-back-halves) देखें)। `domainId` देने पर उसकी जाँच उसी डोमेन पर होती है, नहीं तो `qrdx.dev` पर:
+
+```bash
+curl https://api.qrdx.dev/v1/codes \
+  -H "Authorization: Bearer $QRDX_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"destinationUrl": "https://example.com/menu", "slug": "spring-menu"}'
+```
+
+तब response में `"slug": "spring-menu"` और `"shortLink": "https://qrdx.dev/q/spring-menu"` होता है। कस्टम डोमेन पर चुने गए back-half में `"defaultShortLink": null` होता है, क्योंकि वह सिर्फ़ उसी डोमेन पर मौजूद है। array में हर `slug` अलग होना चाहिए।
+
+### एक request में कई कोड [#many-codes-in-one-request]
+
+Pro और Business पर {facts.apiBatchCodes} कोड तक का array भेजें। जनरेट किए गए back-halves batch में कभी दोहराए नहीं जाते और मौजूदा कोड्स से नहीं टकराते। जिन लिंक को Google Web Risk समय पर चेक नहीं कर पाता, उन्हें batch बनने के कुछ देर बाद दोबारा चेक किया जाता है, और जिस कोड का लिंक उसकी सूची में मिले उसे बंद कर दिया जाता है ([लिंक की सुरक्षा जाँच](/docs/code-controls#safety-checks-on-links))। batch या तो पूरा बनता है या बिल्कुल नहीं: अगर किसी row में समस्या है (अमान्य destination, लिया हुआ या reserved `slug`, असुरक्षित लिंक), तो कुछ भी नहीं बनता और error का `data.details` हर समस्या को `index` के साथ बताता है, यानी array में row की जगह (0 से शुरू)।
+
+`Idempotency-Key` header भेजें, जिसकी value उस batch के लिए अनोखी हो, जैसे UUID। अगर request टाइम आउट हो जाए या कनेक्शन टूट जाए, तो वही request उसी key के साथ दोबारा भेजें: आपको पहली कोशिश में बने कोड्स वापस मिलते हैं, साथ में `Idempotent-Replayed: true` header होता है, और बीच में कटी कोशिश बिना कोई कोड दो बार बनाए पूरी हो जाती है।
+
+```bash
+curl https://api.qrdx.dev/v1/codes \
+  -H "Authorization: Bearer $QRDX_TOKEN" \
+  -H "Content-Type: application/json" \
+  -H "Idempotency-Key: 6f1c2a9e-spring-tables" \
+  -H "Prefer: return=minimal" \
+  -d '[{"destinationUrl": "https://example.com/table/1", "title": "Table 1"},
+       {"destinationUrl": "https://example.com/table/2", "title": "Table 2"}]'
+```
+
+हर कोड अपने डिज़ाइन के साथ लौटता है। जब आपके workspace की डिफ़ॉल्ट थीम में लोगो एम्बेड हो, तो बड़े batch में यह काफ़ी बढ़ जाता है: हर कोड को `style` के बिना पाने के लिए `Prefer: return=minimal` भेजें (उसकी id, slug, लिंक, destination, title, status और बनने का समय)। जिस batch का response 4 MB में नहीं समाएगा, उसे कुछ भी बनने से पहले `PAYLOAD_TOO_LARGE` के साथ मना कर दिया जाता है।
+
+destination बदलें:
+
+```bash
+curl -X PATCH https://api.qrdx.dev/v1/codes/cm3x... \
+  -H "Authorization: Bearer $QRDX_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"destinationUrl": "https://example.com/summer-menu"}'
+```
+
+`style` में वही डिज़ाइन फ़ील्ड लगते हैं जो Playground में हैं (`fgColor`, `bgColor`, `bodyPattern`, `cornerEyePattern`, `level`, ...)। लोगो के लिए `logoIcon`<IfAvailable feature="fileStorage"> या अपलोड की गई फ़ाइल का `logoFileId`</IfAvailable> भेजें ([कोड की style में लोगो](/docs/developers/rest-api#code-logos))। `shortLink` को अपने QR code में एन्कोड करें, जैसे [`qrdx` लाइब्रेरी](/docs/getting-started) या [Image API](/docs/developers/image-api) से।
+
+Errors एक ही JSON आकार में आते हैं, `{ "code": "...", "message": "...", "status": 400 }`, और जब कोई पेज समाधान समझाता हो तो एक `docs` लिंक भी होता है:
+
+| Status | Code | कब |
+| --- | --- | --- |
+| 400 | `VALIDATION_ERROR`, `INVALID_SLUG` | अमान्य body या query (ब्योरा `data` में, batch में `index` के साथ), या ऐसा `slug` जो नियम तोड़ता हो या reserved हो |
+| 401 | `UNAUTHORIZED`, `INVALID_TOKEN` | `Authorization: Bearer` token नहीं है, या अमान्य, expired या revoked है ([token पाएँ](/docs/developers/rest-api#get-an-access-token)) |
+| 402 | `LIMIT_REACHED`, `PLAN_REQUIRED` | आपके प्लान की active कोड सीमा से ज़्यादा, या Pro के बिना bulk creation या कस्टम `slug` |
+| 403 | `INSUFFICIENT_SCOPE`, `FORBIDDEN` | ज़रूरी scope के बिना token, या ऐसा workspace role जो यह नहीं कर सकता |
+| 404 | `NOT_FOUND` | कोड मौजूद नहीं है या आपका नहीं है, या ऐसा कोई endpoint नहीं है |
+| 409 | `SLUG_TAKEN` | कोई दूसरा कोड पहले से वही `slug` इस्तेमाल करता है (`qrdx.dev` पर, या कस्टम डोमेन पर) |
+| 429 | `RATE_LIMITED` | बहुत ज़्यादा requests; `Retry-After` header के बाद दोबारा कोशिश करें |
+
+## सेल्फ-होस्टिंग [#self-hosting]
+
+डायनेमिक QR कोड सेल्फ-होस्टेड instances पर भी काम करते हैं:
+
+- `NEXT_PUBLIC_SHORT_LINK_BASE_URL` short links का origin तय करता है। डिफ़ॉल्ट रूप से यह आपका app URL होता है।
+- `SCAN_HASH_SALT` visitor hashes के लिए गुप्त salt तय करता है। इसके बिना, एक salt `BETTER_AUTH_SECRET` से बनाया जाता है।
+- देश, क्षेत्र और शहर Vercel के geo headers से आते हैं। Cloudflare के पीछे सिर्फ़ देश उपलब्ध है (`CF-IPCountry`); बाकी जगह लोकेशन अज्ञात दिखती है।
+- जब स्कैन करने वाले ने लोकेशन शेयर नहीं की हो, तो Area rules Vercel के IP coordinates (`x-vercel-ip-latitude`, `x-vercel-ip-longitude`) इस्तेमाल करते हैं। बाकी जगह वे सिर्फ़ उन स्कैन से मेल खाते हैं जिनमें लोकेशन शेयर की गई हो।
+- Upstash Redis कॉन्फ़िगर होने पर rate limits लागू होती हैं।

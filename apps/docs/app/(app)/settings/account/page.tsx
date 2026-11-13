@@ -7,11 +7,9 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { ConfirmIdentityProvider } from "@/components/confirm-identity/provider";
 import { CONFIRM_RETURN_PARAM } from "@/lib/account/confirmation";
-import {
-  describeDeletionPlan,
-  planAccountDeletion,
-} from "@/lib/account/deletion";
+import { planAccountDeletion } from "@/lib/account/deletion";
 import { loadDeletionFacts } from "@/lib/account/deletion-server";
+import { describeDeletionPlan } from "@/lib/account/deletion-summary";
 import { configuredSocialProviders } from "@/lib/account/linked-sign-ins-server";
 import { toSessionViews } from "@/lib/account/sessions";
 import {
@@ -22,7 +20,7 @@ import {
 } from "@/lib/account/sign-in-methods";
 import { getMyCommunityProfile } from "@/lib/community/profiles";
 import { CommunityUnavailableError } from "@/lib/community/store";
-import { getAppTranslations } from "@/lib/i18n/app-locale";
+import { getAppLocale, getAppTranslations } from "@/lib/i18n/app-locale";
 import { signInPath } from "@/lib/safe-redirect";
 import { scanGeo } from "@/lib/scans";
 import { isStorageConfigured } from "@/lib/storage/r2";
@@ -175,7 +173,11 @@ export default async function AccountPage({
         <DataExportSection />
 
         <DangerZoneSection
-          summary={describeDeletionPlan(planAccountDeletion(facts))}
+          summary={describeDeletionPlan(
+            planAccountDeletion(facts),
+            await getAppTranslations("app.settings.account.deletion"),
+            await getAppLocale(),
+          )}
         />
       </div>
     </ConfirmIdentityProvider>

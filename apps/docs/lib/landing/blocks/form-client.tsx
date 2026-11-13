@@ -438,9 +438,28 @@ function FieldInput({
   }
 }
 
+/**
+ * The fields the API flagged, with this block's translated message for each:
+ * the browser runs the same checks (form-fields.tsx) on the same answers, so
+ * its message is the API's in the visitor's language. A field only the API
+ * flagged gets the general one.
+ */
+export function serverFieldErrors(
+  flagged: readonly string[],
+  local: ReturnType<typeof validateAnswers>,
+  fallback: string,
+): Record<string, string> {
+  const messages = local.success ? {} : local.errors;
+  return Object.fromEntries(
+    flagged.map((id) => [id, messages[id] ?? fallback]),
+  );
+}
+
 /** QRdx's words in the form, translated by the block ("{…}" templates). */
 export interface FormClientText {
   errors: FormErrorText;
+  /** A field the API flagged that the browser's checks passed */
+  checkAnswer: string;
   /** "{score} of {max} stars" */
   starsOf: string;
   sending: string;
@@ -578,17 +597,23 @@ export function FormClient({
         setStatus({ kind: "sent" });
         return;
       }
+      // The API answers in English with a code; the visitor sees this
+      // block's own (translated) words for it, never the API's message.
       const data = (await response.json().catch(() => null)) as {
         code?: string;
-        message?: string;
         data?: { fields?: Record<string, string> };
       } | null;
       turnstile.reset();
       if (data?.code === "FORM_CLOSED") {
         setStatus({ kind: "closed" });
       } else if (data?.data?.fields) {
-        setErrors(data.data.fields);
-        focusFirstError(data.data.fields);
+        const fieldErrors = serverFieldErrors(
+          Object.keys(data.data.fields),
+          validateAnswers(fields, values, text.errors),
+          text.checkAnswer,
+        );
+        setErrors(fieldErrors);
+        focusFirstError(fieldErrors);
         setStatus({ kind: "idle" });
       } else {
         setStatus({
@@ -596,7 +621,11 @@ export function FormClient({
           message:
             response.status === 429
               ? text.tooMany
-              : (response.status === 400 && data?.message) || text.couldntSend,
+              : data?.code === "EMPTY_RESPONSE"
+                ? text.answerOne
+                : data?.code === "VERIFICATION_FAILED"
+                  ? text.securityCheck
+                  : text.couldntSend,
         });
       }
     } catch {

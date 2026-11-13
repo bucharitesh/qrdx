@@ -1,0 +1,23 @@
+{
+  "$schema": "../../../.source/json-schema/docs.meta.json",
+  "title": "हेल्प",
+  "description": "QRdx इस्तेमाल करने वाले हर किसी के लिए जवाब",
+  "icon": "LifeBuoy",
+  "root": true,
+  "pages": [
+    "index",
+    "getting-started",
+    "designing",
+    "dynamic-codes",
+    "pages-and-forms",
+    "account-and-billing",
+    "teams",
+    "domains",
+    "troubleshooting",
+    "privacy-and-security",
+    "---और मदद---",
+    "contact",
+    "whats-new",
+    "[चेंजलॉग](/changelogs)"
+  ]
+}

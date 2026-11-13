@@ -31,6 +31,7 @@ import {
   type RetiredProviderId,
   retiredMessage,
 } from "./providers";
+import { type MigrateReason, migrateReasonText } from "./reasons";
 import type {
   ChunkResult,
   CodeRef,
@@ -343,13 +344,17 @@ export async function runJobChunk(
   // (and were finished above); the links still waiting are skipped, so the
   // job closes and its summary and undo stay available.
   if (isRetiredProvider(job.provider)) {
-    const reason = `Imports from ${providerName(job.provider)} have ended`;
+    const reasonCode: MigrateReason = {
+      code: "providerEnded",
+      values: { provider: providerName(job.provider) },
+    };
+    const reason = migrateReasonText(reasonCode);
     const waiting = nextChunk(job, Number.POSITIVE_INFINITY);
     const keys = new Set(
       waiting.map((index) => (job.items[index] as JobItem).key),
     );
     const skipped = new Map<string, Partial<JobItem>>(
-      [...keys].map((key) => [key, { status: "skipped", reason }]),
+      [...keys].map((key) => [key, { status: "skipped", reason, reasonCode }]),
     );
     job = applyChunk(job, skipped, deps.now());
     await saveJob(deps, scope, jobs, job);
@@ -376,7 +381,8 @@ export async function runJobChunk(
     if (existing) {
       results.set(item.key, {
         status: "skipped",
-        reason: "Already imported",
+        reason: migrateReasonText({ code: "imported" }),
+        reasonCode: { code: "imported" },
         codeId: existing.id,
         newLink: existing.shortLink,
       });
@@ -390,7 +396,8 @@ export async function runJobChunk(
     for (const item of todo.slice(usage.remaining)) {
       results.set(item.key, {
         status: "skipped",
-        reason: "Over your plan's active-code limit",
+        reason: migrateReasonText({ code: "limit" }),
+        reasonCode: { code: "limit" },
       });
     }
     todo = todo.slice(0, usage.remaining);

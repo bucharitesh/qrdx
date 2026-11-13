@@ -1,0 +1,215 @@
+---
+title: "패턴"
+description: "데이터 모듈, 모서리 눈, 눈 점의 모양을 바꿔 보세요."
+icon: Grid3x3
+---
+
+QR 코드 요소의 모양을 바꿔 독특한 디자인을 만들어 보세요. 모든 옵션이 실시간으로 그려지고 브라우저에서 디코딩되는 모습은 [모양, 눈, 프레임](/docs/styles)에서 확인할 수 있어요.
+
+## 본체 패턴 [#body-patterns]
+
+데이터 점의 모양을 제어합니다. 본체 패턴은 {facts.bodyPatterns}가지가 있습니다.
+
+- 클래식: `square`, `small-square`, `horizontal-line`, `vertical-line`, `octagon`
+- 둥근 모양: `circle`(기본값), `circle-large`, `rounded`, `liquid`, `liquid-horizontal`, `liquid-vertical`, `random-dots`
+- 장식: `classy`, `classy-rounded`, `leaf`, `diamond`, `hexagon`
+- 재미있는 모양: `mosaic`, `plus`, `star`, `heart`, `pacman`, `circle-mixed`
+
+`liquid`, `classy`, `classy-rounded`는 이웃한 모듈을 하나의 매끄러운 윤곽으로 이어 줍니다(`liquid-horizontal`과 `liquid-vertical`은 행 또는 열 방향으로만 이어 줍니다). `random-dots`와 `mosaic`은 모듈마다 모양이 달라지지만, 같은 값에는 항상 같은 코드를 그립니다. 정렬 패턴은 어떤 패턴을 쓰든 항상 꽉 찬 사각형으로 그려지므로 디코더가 안정적으로 찾을 수 있습니다.
+
+```tsx
+import { QRCode } from 'qrdx';
+
+<QRCode value="https://example.com" bodyPattern="circle" size={256} />
+<QRCode value="https://example.com" bodyPattern="liquid" size={256} />
+<QRCode value="https://example.com" bodyPattern="classy-rounded" size={256} />
+```
+
+### 모듈 크기 [#module-scale]
+
+`moduleScale`(0.5~1, 기본값 1)은 각 데이터 모듈을 중심을 기준으로 줄여 더 가볍고 간격이 넓은 느낌을 줍니다. 연결형 패턴은 대신 선이 얇아집니다. 각 패턴은 테스트에서 디코딩되는 가장 작은 크기까지만 줄어들며(예: `circle`은 0.95, `classy`는 0.7, `MODULE_SCALE_FLOOR` 참고), 정렬 패턴은 원래 크기를 유지합니다.
+
+```tsx
+<QRCode value="https://example.com" bodyPattern="liquid" moduleScale={0.8} />
+```
+
+## 모서리 눈 패턴 [#corner-eye-patterns]
+
+모서리 마커의 모양을 제어합니다. 모서리 눈 패턴은 {facts.eyeShapes}가지가 있습니다(React 컴포넌트의 기본값은 `gear`, CLI의 기본값은 `square`): `square`, `rounded`, `extra-rounded`, `squircle`, `cushion`, `bevel`, `octagon`, `leaf`, `leaf-reverse`, `drop`, `petal`, `shield`, `gear`, `circle`, `diya`, `message`, `pointy`.
+
+`leaf`, `leaf-reverse`, `drop`, `petal`은 세 개의 눈이 각각 코드의 해당 모서리를 향하도록 돌려 줍니다. `circle` 눈은 일부 스캐너 앱에서 인식되지 않을 수 있으며, [스캔 점수](/docs/utilities)가 이에 대해 경고합니다.
+
+```tsx
+<QRCode value="https://example.com" cornerEyePattern="square" />
+<QRCode value="https://example.com" cornerEyePattern="leaf" />
+<QRCode value="https://example.com" cornerEyePattern="squircle" />
+```
+
+## 모서리 눈 점 패턴 [#corner-eye-dot-patterns]
+
+각 모서리 마커 안쪽 점을 제어합니다. 모서리 눈 점 패턴은 {facts.eyeCentres}가지가 있습니다(React 컴포넌트의 기본값은 `circle`, CLI의 기본값은 `square`): `square`, `rounded`, `extra-rounded`, `circle`, `squircle`, `octagon`, `hexagon`, `dots`, `leaf`, `leaf-reverse`, `drop`, `drop-reverse`, `plus`, `cross-rounded`, `flower`, `heart`, `message`, `message-reverse`, `diya`, `diya-reverse`, `rounded-triangle`.
+
+```tsx
+<QRCode value="https://example.com" cornerEyeDotPattern="square" />
+<QRCode value="https://example.com" cornerEyeDotPattern="flower" />
+<QRCode value="https://example.com" cornerEyeDotPattern="heart" />
+```
+
+### 피해야 할 조합과 제외된 모양 [#pairs-to-avoid-and-retired-shapes]
+
+`square` 눈 옆의 `diamond` 본체, `rounded` 옆의 `pacman`, `square` 또는 `rounded` 눈 옆의 `small-square`는 가까이서 스캔해도 인식되지 않습니다. Playground에서는 이 조합을 허용하지 않으며, `WEAK_BODY_EYES`로 제공되고, `getStylePairRisk(props)`는 스캔 점수에 표시되는 경고를 반환합니다.
+
+모서리가 각진 눈(`square`, `rounded`, `extra-rounded` 등 대부분) 안의 `circle` 중심은 선명한 렌더링(화면, PNG 내보내기, 대형 인쇄물)에서 엄격한 디코더가 인식하지 못할 수 있습니다. jsQR은 일부 크기에서 인식하지 못하고 zbar는 읽어 냅니다. 꽉 찬 본체(`square`, `liquid`, `classy`, `classy-rounded`)는 대체로 여전히 읽히며, `gear`, `circle`, `octagon` 눈은 영향을 받지 않습니다. 스캔 점수가 이를 경고하지만(`style-pair`) 그래도 선택할 수는 있습니다. 이 조합은 `WEAK_SHARP_DOT_EYES`(및 `SHARP_DOT_EYE_SAFE_BODIES`)로 제공되며, `rounded` 중심을 쓰면 문제를 피할 수 있습니다.
+
+`curly` 눈과 `diamond`, `star`, `banner` 중심은 안정적으로 스캔되지 않아 제외되었습니다. 이 모양으로 저장한 디자인은 계속 렌더링되지만 더 이상 제공되거나 목록에 표시되지 않습니다([제외된 모양](/docs/styles#retired-shapes) 참고).
+
+## 원형 코드 [#circle-codes]
+
+`shape="circle"`은 코드를 원판 안에 넣고 나머지 부분을 같은 점 모양의 장식 모듈로 채웁니다. 실제 코드 주위에는 `margin` 모듈(최소 3)만큼의 밝은 링이 유지되며, 스캐너는 가운데 코드만 읽습니다. 원판이 코드보다 크므로 같은 스캔 거리를 원한다면 조금 더 크게 인쇄하세요. 인쇄 크기 계산기는 원판 전체를 기준으로 계산합니다.
+
+```tsx
+<QRCode value="https://example.com" shape="circle" bodyPattern="rounded" />
+```
+
+디코딩 테스트에서 원형 코드는 꽉 찬 점 모양(`square`, `rounded`, `classy`, `liquid`)일 때 정사각형 코드와 똑같이 읽혔습니다. Playground에서는 **Design → Frame → Shaped code → Dot circle**에 있어요.
+
+{/* Heart and custom shapes (feat/heart-silhouette-shapes) */}
+
+## 하트 코드 [#heart-codes]
+
+`shape="heart"`는 원형 코드와 같은 방식으로 동작하며 모양만 하트입니다. 실제 코드는 최소 3모듈의 밝은 링과 함께 하트 가운데에 놓이고, 하트의 나머지는 장식 모듈로 채워집니다. 하트에서 코드가 차지하는 부분은 원보다 작으므로, 같은 스캔 거리를 원한다면 하트 코드를 정사각형 코드보다 크게 인쇄하세요. 스캔 점수도 이를 반영하여, 같은 크기에서 하트 코드는 원형 코드보다 낮은 점수를 받습니다.
+
+```tsx
+<QRCode value="https://example.com" shape="heart" bodyPattern="rounded" />
+```
+
+Playground에서 모양 코드는 프레임을 대신합니다. 모양을 고르면 프레임이 해제되고, 프레임을 고르면 모양이 해제됩니다. 모든 프레임은 코드 아래에 밝은 판을 칠하므로 윤곽이 가려지기 때문입니다. 둘 다 전달하면 엔진은 `frame`과 함께 `shape`도 그립니다.
+
+디코딩 테스트에서 하트 코드는 모든 꽉 찬 점 모양, `square`, `rounded`, `gear` 눈, 그리고 기본 스타일에서 읽혔으며, zbar도 선명한 렌더링에서 읽어 냅니다.
+
+## 사용자 지정 모양 [#custom-shapes]
+
+`shape`에는 실루엣도 사용할 수 있습니다. 직접 가져온 이미지를 따라 만든 작은 격자(한 변 최대 64칸)입니다. 코드는 모양에서 가장 넓은 가운데 부분에 놓이고, 나머지는 장식 모듈로 채워집니다. 격자만 저장되며 이미지는 저장되지 않습니다.
+
+```tsx
+import { getQRSilhouetteFit, loadQRSilhouette, QRCode } from "qrdx";
+
+const shape = await loadQRSilhouette(file); // a PNG, JPEG or SVG, in the browser
+const fit = getQRSilhouetteFit(shape);
+if (!fit.ok) throw new Error(fit.message);
+
+<QRCode value="https://example.com" shape={shape} />;
+```
+
+`loadQRSilhouette`는 이미지를 캔버스에 그린 뒤 투명도를 사용하며, 이미지가 불투명하면 어두운 정도를 사용합니다(어두운 배경 위의 밝은 모양도 가능). 서버에서는 디코딩된 픽셀을 `createQRSilhouette`에 전달하세요. `getQRSilhouetteit`이 아니라 `getQRSilhouetteFit`은 가는 별, 막대, 링처럼 너무 얇아서 여백을 포함한 코드를 담을 수 없는 모양을 거부합니다. 거부된 모양은 정사각형 코드로 그려집니다.
+
+Playground에서 **Design → Frame → Shaped code → Silhouette**을 선택하고 PNG, JPEG 또는 SVG를 업로드하세요(하트는 그곳에서 **Heart**입니다). 모양은 업로드한 로고처럼 디자인에 함께 저장됩니다. 공유 링크, 커뮤니티 항목, 코드 스니펫, AI 채팅에서는 대신 정사각형 코드가 사용됩니다.
+
+{/* end heart and custom shapes */}
+
+## 눈별 색상 [#per-eye-colors]
+
+`eyeColor`와 `dotColor`는 세 눈 모두에 색을 적용합니다. `eyeColors`는 이를 눈별(`topLeft`, `topRight`, `bottomLeft`)로 덮어쓰며, 각각 `outer`(프레임)와 `inner`(점)의 색상 또는 그라디언트를 지정할 수 있습니다.
+
+```tsx
+<QRCode
+  value="https://example.com"
+  eyeColor="#111827"
+  eyeColors={{
+    topLeft: { outer: "#dc2626", inner: "#1d4ed8" },
+    topRight: { outer: "#16a34a" },
+  }}
+/>
+```
+
+모든 눈이 배경과 대비되도록 어둡게 유지하세요. 디코더는 세 개의 눈으로 코드를 찾습니다. 스캔 점수는 각 눈의 색상 대비를 개별적으로 확인합니다.
+
+Playground에서 **Design → Eye colors**는 각 눈의 프레임과 중심 색상을 설정하고, **Design → Dot size**는 현재 점 모양이 허용하는 범위 안에서 `moduleScale`을 설정합니다.
+
+## 패턴 조합 [#combine-patterns]
+
+여러 패턴을 섞어 독특한 디자인을 만들어 보세요.
+
+```tsx
+<QRCode
+  value="https://example.com"
+  bodyPattern="rounded"
+  cornerEyePattern="circle"
+  cornerEyeDotPattern="circle"
+  size={256}
+/>
+```
+
+## 성능 [#performance]
+
+### 빠른 패턴 [#fast-patterns]
+- `circle` — 뛰어난 성능
+- `square` — 매우 빠름
+
+### 중간 패턴 [#medium-patterns]
+- `rounded` — 균형이 좋음
+- `diamond` — 보통
+
+### 복잡한 패턴 [#complex-patterns]
+- `pacman` — 처리량이 더 많음
+- `circle-mixed` — 복잡도가 가변적
+
+## 패턴 선택 [#pattern-selection]
+
+### 브랜드 아이덴티티용 [#for-brand-identity]
+```tsx
+// Minimal, professional
+<QRCode
+  value="https://example.com"
+  bodyPattern="rounded"
+  cornerEyePattern="square"
+/>
+
+// Modern, tech-focused
+<QRCode
+  value="https://example.com"
+  bodyPattern="circle"
+  cornerEyePattern="rounded"
+/>
+```
+
+### 마케팅용 [#for-marketing]
+```tsx
+// Eye-catching
+<QRCode
+  value="https://example.com"
+  bodyPattern="liquid"
+  cornerEyePattern="leaf"
+  cornerEyeDotPattern="leaf"
+/>
+
+// Elegant
+<QRCode
+  value="https://example.com"
+  bodyPattern="diamond"
+  cornerEyePattern="rounded"
+/>
+```
+
+### 인쇄용 [#for-print]
+```tsx
+// High contrast
+<QRCode
+  value="https://example.com"
+  bodyPattern="square"
+  cornerEyePattern="square"
+/>
+
+// Smooth, professional
+<QRCode
+  value="https://example.com"
+  bodyPattern="rounded"
+  cornerEyePattern="rounded"
+/>
+```
+
+## 다음 단계 [#next-steps]
+
+- [색상 및 그라디언트](/docs/features/colors-gradients) — 패턴에 색상 추가
+- [템플릿](/docs/features/templates) — 미리 구성된 패턴
+- [로고](/docs/features/logos) — 패턴과 로고 조합

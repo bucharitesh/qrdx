@@ -48,7 +48,7 @@ import {
   flattenFolderTree,
   MAX_FOLDER_NAME,
 } from "@/app/(app)/dashboard/codes/_lib/organize-shared";
-import { plural, useOrganizeAction } from "./use-organize-action";
+import { useOrganizeAction } from "./use-organize-action";
 
 /** Folders from props, or loaded when a dialog opens outside the list. */
 export function useFolders(open: boolean, initial?: FolderRow[]) {
@@ -98,7 +98,7 @@ export function FolderNameDialog({
     if (mode.type === "rename") {
       const done = await run(
         () => renameCodeFolder({ id: mode.folder.id, name }),
-        { success: "Folder renamed" },
+        { success: t("folderRenamed") },
       );
       if (done !== null) onOpenChange(false);
       return;
@@ -174,12 +174,12 @@ export function DeleteFolderDialog({
 }) {
   const t = useTranslations("app.dashboard.codes.folderDialogs");
   const { run, isPending } = useOrganizeAction();
-  const target = parentName ? `"${parentName}"` : "the top level";
+  const target = parentName ? `“${parentName}”` : t("theTopLevel");
 
   const remove = async () => {
     if (!folder) return;
     const result = await run(() => deleteCodeFolder({ id: folder.id }), {
-      success: `Deleted "${folder.name}"`,
+      success: t("deletedFolder", { name: folder.name }),
       description: t("itsCodesAndSubfoldersMoved", { target }),
     });
     if (result) {
@@ -241,7 +241,9 @@ export function MoveToFolderDialog({
   const move = async (folderId: string | null, name: string | null) => {
     const result = await run(() => moveQrCodes({ ids, folderId }), {
       success: ({ updated }) =>
-        `Moved ${plural(updated, "code")} to ${name ? `"${name}"` : "no folder"}`,
+        name
+          ? t("movedToFolder", { count: updated, name })
+          : t("movedOutOfFolders", { count: updated }),
     });
     if (result) {
       onOpenChange(false);

@@ -10,8 +10,8 @@ import { BlogTocMobile } from "@/components/sections/blog/blog-toc-mobile";
 import { Breadcrumbs } from "@/components/sections/breadcrumbs";
 import { SectionHeader } from "@/components/sections/section-header";
 import { type ResolvedAuthor, resolveAuthors } from "@/lib/blog-authors";
+import { blogSource } from "@/lib/content-source";
 import { brandedTitle, seoOverride } from "@/lib/seo-overrides";
-import { blogSource } from "@/lib/source";
 import { buildTimeParams } from "@/lib/static-params";
 import { getMDXComponents } from "@/mdx-components";
 import {

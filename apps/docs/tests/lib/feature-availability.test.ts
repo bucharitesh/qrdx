@@ -71,6 +71,8 @@ const EVERYTHING: Record<string, string> = {
   TELEGRAM_WEBHOOK_SECRET: FAKE,
   TELEGRAM_BOT_USERNAME: FAKE,
   POLAR_WEBHOOK_SECRET: FAKE,
+  // A flag, not a secret: euro prices show only when it's "1" or "true".
+  NEXT_PUBLIC_QRDX_EUR_PRICES: "1",
 };
 
 /** What each feature needs on Vercel in production, by variable name. */
@@ -114,9 +116,42 @@ const NEEDS: Record<FeatureId, string[]> = {
   ],
   affiliates: ["POLAR_WEBHOOK_SECRET"],
   invoiceRequests: ["RESEND_API_KEY", "EMAIL_FROM"],
+  enterpriseRequests: ["RESEND_API_KEY", "EMAIL_FROM"],
+  eurPrices: ["NEXT_PUBLIC_QRDX_EUR_PRICES"],
+  nonprofitDiscounts: ["RESEND_API_KEY", "EMAIL_FROM"],
 };
 
 const vercelProd = { onVercel: true, production: true };
+
+describe("euro prices wait for the flag", () => {
+  const on = (value: string | undefined) =>
+    computeFeatures(ctx({ NEXT_PUBLIC_QRDX_EUR_PRICES: value }, vercelProd))
+      .eurPrices;
+
+  it("is on only for 1 or true, anywhere", () => {
+    expect(on("1")).toBe(true);
+    expect(on("true")).toBe(true);
+    expect(on("0")).toBe(false);
+    expect(on("false")).toBe(false);
+    expect(on(undefined)).toBe(false);
+  });
+});
+
+describe("non-profit discount requests run only where QRdx itself does", () => {
+  const email = { RESEND_API_KEY: FAKE, EMAIL_FROM: FAKE };
+  const on = (env: Record<string, string>) =>
+    computeFeatures(ctx({ ...email, ...env }, vercelProd)).nonprofitDiscounts;
+
+  it("is on for qrdx.dev with email, off on a self-hosted copy", () => {
+    expect(on({ NEXT_PUBLIC_APP_URL: "https://qrdx.dev" })).toBe(true);
+    expect(on({ NEXT_PUBLIC_APP_URL: "https://qr.example.org" })).toBe(false);
+    expect(
+      computeFeatures(
+        ctx({ NEXT_PUBLIC_APP_URL: "https://qrdx.dev" }, vercelProd),
+      ).nonprofitDiscounts,
+    ).toBe(false);
+  });
+});
 
 describe("the affiliate program runs only where QRdx itself does", () => {
   const polar = { POLAR_WEBHOOK_SECRET: FAKE };
@@ -540,7 +575,7 @@ describe("a production-like deployment", () => {
     }
   });
 
-  it("leaves out adding custom domains, the spam check, the media pickers and the chat bots", () => {
+  it("leaves out adding custom domains, the spam check, the media pickers, the chat bots and euro prices", () => {
     expect(FEATURE_IDS.filter((id) => !features[id])).toEqual([
       "customDomains",
       "domainConnect",
@@ -550,6 +585,8 @@ describe("a production-like deployment", () => {
       "slackBot",
       "discordBot",
       "telegramBot",
+      // Off until the EUR prices exist in Polar and the flag is set.
+      "eurPrices",
     ]);
   });
 

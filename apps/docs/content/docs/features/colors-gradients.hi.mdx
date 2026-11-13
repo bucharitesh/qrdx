@@ -1,0 +1,174 @@
+---
+title: "रंग और ग्रेडिएंट"
+description: "सॉलिड रंग या लीनियर और रेडियल ग्रेडिएंट इस्तेमाल करें, और कंट्रास्ट जाँचें ताकि कोड स्कैन होते रहें।"
+icon: Palette
+---
+
+रंग और ग्रेडिएंट लगाकर अपने ब्रांड के QR कोड बनाएँ।
+
+## सॉलिड रंग [#solid-colors]
+
+```tsx
+import { QRCode } from 'qrdx';
+
+<QRCode
+  value="https://example.com"
+  size={256}
+  fgColor="#1a56db"
+  bgColor="#f9fafb"
+  eyeColor="#0d47a1"
+  dotColor="#3b82f6"
+/>
+```
+
+सपोर्ट किए जाने वाले फ़ॉर्मैट: `#hex`, `rgb()`, `rgba()`, `hsl()`, `hsla()`, नामित रंग
+
+`eyeColors` हर आई का रंग अलग से सेट करता है (`topLeft`, `topRight`, `bottomLeft`, हर एक में `outer` और `inner` रंग या ग्रेडिएंट); देखें [पैटर्न](/docs/features/patterns#per-eye-colors)।
+
+### पारदर्शी बैकग्राउंड [#transparent-background]
+
+`bgColor="transparent"` कोई बैकग्राउंड नहीं लगाता, इसलिए PNG और SVG डाउनलोड आर-पार दिखने वाले होते हैं और PDF व EPS फ़ाइलों में बैकग्राउंड फ़िल नहीं होता। कोड को हल्की, सादी सतह पर रखें: डिकोडर को मॉड्यूल के बीच की हल्की जगह चाहिए।
+
+## लीनियर ग्रेडिएंट [#linear-gradients]
+
+```tsx
+import { QRCodeCanvas } from 'qrdx';
+
+<QRCodeCanvas
+  value="https://example.com"
+  size={256}
+  fgColor={{
+    type: 'linear',
+    stops: [
+      { offset: 0, color: '#667eea' },
+      { offset: 1, color: '#764ba2' }
+    ],
+    x1: 0, y1: 0,
+    x2: 1, y2: 1
+  }}
+/>
+```
+
+### ग्रेडिएंट की दिशाएँ [#gradient-directions]
+
+- **हॉरिज़ॉन्टल**: `x1: 0, y1: 0, x2: 1, y2: 0`
+- **वर्टिकल**: `x1: 0, y1: 0, x2: 0, y2: 1`
+- **डायगोनल**: `x1: 0, y1: 0, x2: 1, y2: 1`
+
+### मल्टी-स्टॉप ग्रेडिएंट [#multi-stop-gradients]
+
+```tsx
+<QRCodeCanvas
+  value="https://example.com"
+  size={256}
+  fgColor={{
+    type: 'linear',
+    stops: [
+      { offset: 0, color: '#667eea' },
+      { offset: 0.3, color: '#764ba2' },
+      { offset: 0.7, color: '#f093fb' },
+      { offset: 1, color: '#f5576c' }
+    ],
+    x1: 0, y1: 0, x2: 1, y2: 1
+  }}
+/>
+```
+
+## रेडियल ग्रेडिएंट [#radial-gradients]
+
+```tsx
+<QRCodeCanvas
+  value="https://example.com"
+  size={256}
+  fgColor={{
+    type: 'radial',
+    stops: [
+      { offset: 0, color: '#ff6b6b' },
+      { offset: 1, color: '#4ecdc4' }
+    ],
+    cx: 0.5, cy: 0.5,
+    r: 0.5
+  }}
+/>
+```
+
+## रंग यूटिलिटी [#color-utilities]
+
+### कंट्रास्ट जाँचें [#check-contrast]
+
+```tsx
+import { getContrastRatio, getContrastLevel } from 'qrdx';
+
+const ratio = getContrastRatio('#000000', '#ffffff');
+// Returns: 21
+
+const level = getContrastLevel(ratio);
+// Returns: { level: 'AAA', warning: false, message: 'Excellent contrast' }
+```
+
+### कंट्रास्ट के दिशानिर्देश [#contrast-guidelines]
+
+- **न्यूनतम**: 3.0:1 अनुपात
+- **सुझाया गया**: 4.5:1 या उससे ज़्यादा
+- **उत्कृष्ट**: 7.0:1 या उससे ज़्यादा
+
+{/* Angular gradients, see-through colors and image fills (paint picker) */}
+
+## एंगुलर ग्रेडिएंट [#angular-gradients]
+
+एंगुलर ग्रेडिएंट जिस चीज़ को भरता है उसके केंद्र के चारों ओर घड़ी की दिशा में घूमता है, जैसे CSS `conic-gradient`। `angle` वह जगह है जहाँ से घुमाव शुरू होता है, ऊपर से घड़ी की दिशा में डिग्री में। ऑफ़सेट पूरे चक्कर में 0 से 100 तक चलते हैं।
+
+```tsx
+<QRCode
+  value="https://example.com"
+  fgColor={{
+    type: "angular",
+    angle: 30,
+    stops: [
+      { color: "#1d4ed8", offset: 0 },
+      { color: "#7c3aed", offset: 50 },
+      { color: "#1d4ed8", offset: 100 },
+    ],
+  }}
+/>
+```
+
+SVG में कोनिक ग्रेडिएंट नहीं होता, इसलिए कोड पतली फाँकों का एक पंखा बनाता है, जिनमें लगभग दो रंग-स्तर का अंतर होता है। PDF और EPS भी यही फाँकें बनाते हैं।
+
+## पारदर्शी रंग [#see-through-colors]
+
+रंगों और ग्रेडिएंट स्टॉप में अल्फ़ा हो सकता है, जैसे `#1d4ed8cc` या `rgba(29, 78, 216, 0.8)`। SVG इसे `fill-opacity` और `stop-opacity` के रूप में लिखता है, और PDF इसे बनाए रखता है। EPS में पारदर्शिता नहीं होती, इसलिए पारदर्शी रंग को बैकग्राउंड के साथ मिला दिया जाता है। स्कैन जाँच पारदर्शी रंग को वैसे ही परखती है जैसा वह बैकग्राउंड पर दिखता है।
+
+## इमेज फ़िल [#image-fills]
+
+इमेज फ़िल बैकग्राउंड, डॉट या आई में एक तस्वीर भरता है। तस्वीर पूरे कोड पर बिछाई जाती है, इसलिए जो डॉट और आई एक ही तस्वीर साझा करते हैं उनमें एक ही तस्वीर दिखती है।
+
+```tsx
+<QRCode
+  value="https://example.com"
+  fgColor={{
+    type: "image",
+    src: "data:image/jpeg;base64,…",
+    fit: "cover", // or "contain", "tile"
+    position: "center",
+    scale: 1,
+    opacity: 0.45,
+    underlay: "#000000",
+  }}
+/>
+```
+
+- `src` खुद तस्वीर है, जैसे लोगो में होती है। QRdx इमेज फ़िल (कोड, थीम और REST API में) सिर्फ़ base64 `data:image` URL (PNG, JPEG, WebP या GIF) के रूप में सेव करता है, जो अधिकतम 1.5 MB का हो; लिंक वाली तस्वीर स्वीकार नहीं की जाती। PNG और JPEG हर एक्सपोर्ट में एम्बेड होते हैं, और सर्वर कभी कोई लिंक नहीं खींचते।
+- `underlay` तस्वीर के नीचे का सॉलिड रंग है। `opacity` उसे दिखने देती है: काले के ऊपर यह डॉट के लिए फ़ोटो को गहरा करता है, और सफ़ेद के ऊपर बैकग्राउंड के लिए उसे हल्का करता है।
+- तस्वीर की बारीकियाँ कैमरे को शोर जैसी लगती हैं, इसलिए स्कैन जाँच ज़्यादा कंट्रास्ट माँगती है: डॉट या आई में 7:1, उनके पीछे 12:1 (`SCAN_IMAGE_CONTRAST_MIN`)। यह तस्वीर को उसके सबसे हल्के और सबसे गहरे दसवें हिस्से से नापती है (`getImageTones`)। एडिटर में "Make it scannable" अंडरले के ऊपर वह अपारदर्शिता ढूँढ देता है जो जाँच पास करती है।
+- SVG, PNG और PDF इमेज फ़िल रखते हैं। EPS नहीं रख सकता ([डाउनलोड](/docs/features/downloads#eps))।
+
+इमेज फ़िल लोगो की तरह चलते हैं। वे एडिटर में, सेव किए गए कोड में और सेव की गई थीम में डिज़ाइन के साथ रहते हैं। वे `?style=` लिंक, प्रकाशित कम्युनिटी स्टाइल, Get code स्निपेट या चैट के संदर्भ में नहीं जाते: वहाँ हर इमेज फ़िल की जगह उसका अंडरले रंग आ जाता है। इमेज API (`GET /v1/qr`) और MCP सर्वर अभी इन्हें नहीं लेते। `POST /v1/codes` और `PATCH /v1/codes/{id}` इन्हें सिर्फ़ `data:image` URL के रूप में लेते हैं, और बाकी हर चीज़ पर 400 लौटाते हैं; तस्वीरों के लिए अभी अपलोड की गई फ़ाइल की id नहीं है।
+
+एंगुलर ग्रेडिएंट और इमेज फ़िल qrdx सोर्स में हैं और अगली npm रिलीज़ के साथ आएँगे। npm पर qrdx 0.0.46 में ये नहीं हैं।
+
+## अगले कदम [#next-steps]
+
+- [लोगो](/docs/features/logos) — रंगीन QR कोड में लोगो जोड़ें
+- [पैटर्न](/docs/features/patterns) — रंगों को पैटर्न के साथ मिलाएँ
+- [डाउनलोड](/docs/features/downloads) — रंगीन QR कोड एक्सपोर्ट करें

@@ -1,0 +1,180 @@
+---
+title: "유틸리티"
+description: "qrdx에서 내보내는 색상, 대비, 크기 검증, 기능 감지 헬퍼입니다."
+icon: Wrench
+---
+
+색상, 대비, QR 코드 처리를 위한 헬퍼 함수입니다.
+
+## 색상 유틸리티 [#color-utilities]
+
+### getSolidColor [#getsolidcolor]
+
+모든 색상 설정에서 단색을 추출합니다:
+
+```tsx
+import { getSolidColor } from 'qrdx';
+
+const color = getSolidColor({
+  type: 'linear',
+  stops: [
+    { offset: 0, color: '#ff6b6b' },
+    { offset: 1, color: '#4ecdc4' }
+  ],
+  x1: 0, y1: 0, x2: 1, y2: 1
+});
+// Returns: "#ff6b6b"
+```
+
+### hexToRgb [#hextorgb]
+
+hex 값을 RGB로 변환합니다:
+
+```tsx
+import { hexToRgb } from 'qrdx';
+
+const rgb = hexToRgb('#ff6b6b');
+// Returns: { r: 255, g: 107, b: 107 }
+```
+
+## 대비 확인 [#contrast-checking]
+
+### getContrastRatio [#getcontrastratio]
+
+WCAG 대비율을 계산합니다:
+
+```tsx
+import { getContrastRatio } from 'qrdx';
+
+const ratio = getContrastRatio('#000000', '#ffffff');
+// Returns: 21
+```
+
+### getContrastLevel [#getcontrastlevel]
+
+대비 평가 결과를 가져옵니다:
+
+```tsx
+import { getContrastLevel } from 'qrdx';
+
+const level = getContrastLevel(4.5);
+// Returns: { level: 'AA', warning: false, message: 'Good contrast' }
+```
+
+**대비 가이드라인:**
+- **`AAA` (7.0 이상)** — 매우 좋은 대비
+- **`AA` (4.5 – 7.0)** — 좋은 대비
+- **`AA Large` (3.0 – 4.5)** — 낮은 대비, `warning: true`, 스캔이 어려울 수 있음
+- **`Fail` (3.0 미만)** — 권장하지 않음, `warning: true`
+
+### getLuminance [#getluminance]
+
+상대 휘도를 계산합니다:
+
+```tsx
+import { getLuminance } from 'qrdx';
+
+const luminance = getLuminance(255, 255, 255);
+// Returns: 1.0 (white)
+```
+
+## 검증 [#validation]
+
+### validateSize [#validatesize]
+
+다운로드 크기를 검증합니다:
+
+```tsx
+import { validateSize } from 'qrdx';
+
+const validation = validateSize(512, 512);
+if (validation.isValid) {
+  console.log("Valid size");
+} else {
+  console.error(validation.error);
+}
+```
+
+## 기능 감지 [#feature-detection]
+
+### SUPPORTS_PATH2D [#supports_path2d]
+
+Path2D 지원 여부를 확인합니다:
+
+```tsx
+import { SUPPORTS_PATH2D } from 'qrdx';
+
+if (SUPPORTS_PATH2D) {
+  // Use optimized rendering
+} else {
+  // Use fallback
+}
+```
+
+## 예시: 대비 검사기 [#example-contrast-checker]
+
+```tsx
+import { getContrastRatio, getContrastLevel } from 'qrdx';
+import { useState } from 'react';
+
+export default function ContrastChecker() {
+  const [fgColor, setFgColor] = useState('#000000');
+  const [bgColor, setBgColor] = useState('#ffffff');
+
+  const ratio = getContrastRatio(fgColor, bgColor);
+  const level = getContrastLevel(ratio);
+
+  return (
+    <div>
+      <input
+        type="color"
+        value={fgColor}
+        onChange={(e) => setFgColor(e.target.value)}
+      />
+      <input
+        type="color"
+        value={bgColor}
+        onChange={(e) => setBgColor(e.target.value)}
+      />
+      <p>Ratio: {ratio.toFixed(2)}:1</p>
+      <p>Level: {level.level}</p>
+      <p>{level.message}</p>
+    </div>
+  );
+}
+```
+
+## 예시: 크기 계산기 [#example-size-calculator]
+
+```tsx
+import { validateSize } from 'qrdx';
+import { useState } from 'react';
+
+export default function SizeCalculator() {
+  const [width, setWidth] = useState(512);
+  const [height, setHeight] = useState(512);
+
+  const validation = validateSize(width, height);
+
+  return (
+    <div>
+      <input
+        type="number"
+        value={width}
+        onChange={(e) => setWidth(Number(e.target.value))}
+      />
+      <input
+        type="number"
+        value={height}
+        onChange={(e) => setHeight(Number(e.target.value))}
+      />
+      <p>{validation.isValid ? 'Valid' : validation.error}</p>
+    </div>
+  );
+}
+```
+
+## 다음 단계 [#next-steps]
+
+- [사용법](/docs/usage) — QR 코드에 유틸리티 적용하기
+- [API 레퍼런스](/docs/api-reference) — 전체 유틸리티 레퍼런스

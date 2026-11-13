@@ -2,10 +2,10 @@ import { cn } from "@repo/design-system/lib/utils";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { getLegalPageImage, legalSource } from "@/lib/content-source";
 import { isPathAvailable } from "@/lib/feature-availability";
 import { createMetadata } from "@/lib/metadata";
 import { seoOverride } from "@/lib/seo-overrides";
-import { getLegalPageImage, legalSource } from "@/lib/source";
 import { buildTimeParams } from "@/lib/static-params";
 import { getMDXComponents } from "@/mdx-components";
 

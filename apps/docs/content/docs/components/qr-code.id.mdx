@@ -1,0 +1,181 @@
+---
+title: "QR Code"
+description: "Kode QR bergaya yang mudah diakses, lengkap dengan tombol unduh. Warna, gradasi, pola, logo, dan templat bingkai berasal dari pustaka qrdx."
+icon: QrCode
+---
+
+<ComponentLinks name="qr-code" />
+
+<ComponentPreview name="qr-code-demo" />
+
+## Instalasi [#installation]
+
+<InstallationTabs name="qr-code" />
+
+## Penggunaan [#usage]
+
+```tsx
+import { QrCode } from "@/components/qr-code";
+```
+
+```tsx
+<QrCode value="https://qrdx.dev" />
+```
+
+Kode ini dirender sebagai SVG dengan nama yang dapat diakses, sehingga tetap tajam di ukuran berapa pun dan pembaca layar mengumumkan tautan yang dituju.
+
+## Contoh [#examples]
+
+### Ukuran [#sizes]
+
+`size` menentukan lebar dan tinggi di layar dalam piksel. Unduhan menggunakan `downloadSize`, sehingga kode kecil di halaman tetap menghasilkan file siap cetak.
+
+<ComponentPreview name="qr-code-sizes" />
+
+### Warna [#colors]
+
+`fgColor` dan `bgColor` menerima warna CSS apa pun. `eyeColor` dan `dotColor` mewarnai tiga mata di sudut secara terpisah. Jaga agar modul lebih gelap daripada latar belakang agar semua pemindai dapat membaca kodenya.
+
+<ComponentPreview name="qr-code-colors" />
+
+### Gradasi [#gradients]
+
+Berikan gradasi qrdx sebagai ganti warna: `linear` dengan `angle`, atau `radial`. Gradasi ikut terbawa ke unduhan PNG, SVG, dan PDF.
+
+<ComponentPreview name="qr-code-gradient" />
+
+### Pola [#patterns]
+
+`bodyPattern` membentuk modul data, `cornerEyePattern` membentuk bingkai sudut, dan `cornerEyeDotPattern` membentuk titik di dalamnya. Lihat [pola](/docs/features/patterns) untuk semua bentuk.
+
+<ComponentPreview name="qr-code-patterns" />
+
+### Logo [#logo]
+
+`logo` menempatkan gambar di tengah dan mengosongkan modul di belakangnya. Gunakan tingkat koreksi kesalahan `H` agar kode tetap dapat dipindai meski sebagian tertutup. Data URL mempertahankan logo di unduhan; gambar jarak jauh memerlukan header CORS.
+
+<ComponentPreview name="qr-code-logo" />
+
+### Templat bingkai [#frame-templates]
+
+`templateId` menggambar [templat](/docs/features/templates) qrdx di sekeliling kode. Padukan dengan `caption` untuk ajakan bertindak di bawah bingkai.
+
+<ComponentPreview name="qr-code-template" />
+
+### Format unduhan [#download-formats]
+
+`downloadFormats` menentukan tombol: `png`, `jpg`, `svg`, dan `pdf`. Ekspor PDF memerlukan paket opsional `jspdf` (`npm install jspdf`). Berikan `[]` untuk menyembunyikan tombol.
+
+<ComponentPreview name="qr-code-downloads" />
+
+Untuk satu menu dengan format dan ukuran, gunakan [QR Code Download](/docs/components/qr-code-download).
+
+### Mode gelap [#dark-mode]
+
+Latar belakang putih bawaan adalah pilihan paling aman di tema gelap: modul gelap pada ubin terang dapat dipindai oleh semua pembaca. Untuk mengikuti tema, atur `fgColor="currentColor"` dan latar belakang transparan. Kode akan terbalik di mode gelap, yang terbaca oleh kamera ponsel tetapi tidak oleh sebagian pemindai lama.
+
+<ComponentPreview name="qr-code-dark-mode" />
+
+## Di halaman Next.js [#in-a-nextjs-page]
+
+`QrCode` adalah Client Component (filenya diawali `"use client"` karena tombol unduh), sehingga halaman Server Component dapat mengimpornya dan meneruskan data server sebagai props:
+
+```tsx title="app/menu/page.tsx"
+import { QrCode } from "@/components/qr-code";
+
+export default function MenuPage() {
+  return (
+    <QrCode
+      value="https://example.com/menu"
+      caption="Scan to see the menu"
+      filename="menu-qr"
+    />
+  );
+}
+```
+
+Kodenya sendiri tetap dirender di server, jadi sudah ada di HTML halaman sebelum tombol dapat digunakan. Untuk info lebih lanjut tentang merender kode di App Router, lihat [Kode QR di Next.js](/docs/nextjs).
+
+## Konten apa pun, bukan hanya tautan [#any-content-not-only-links]
+
+`value` dienkode persis seperti yang Anda berikan, sehingga payload QR apa pun dapat digunakan: jaringan Wi-Fi, kartu kontak, `mailto:`, `tel:`, atau teks biasa. Atur `label` agar pembaca layar mengumumkan fungsi kode tersebut, bukan payload mentahnya, yang untuk Wi-Fi mencakup kata sandi.
+
+```tsx title="components/guest-wifi.tsx"
+import { QrCode } from "@/components/qr-code";
+
+export function GuestWifi() {
+  return (
+    <QrCode
+      value="WIFI:T:WPA;S:Cafe Guest;P:sunshine123;;"
+      label="QR code to join the Cafe Guest Wi-Fi"
+      caption="Cafe Guest Wi-Fi"
+    />
+  );
+}
+```
+
+Untuk membuat payload dari formulir, gunakan [Wi-Fi QR Code](/docs/components/wifi-qr-code) atau [vCard QR Code](/docs/components/vcard-qr-code), yang meng-escape karakter khusus untuk Anda.
+
+## Nilai dari input [#a-value-from-an-input]
+
+```tsx title="components/link-qr-code.tsx"
+"use client";
+
+import { useState } from "react";
+import { QrCode } from "@/components/qr-code";
+
+export function LinkQrCode() {
+  const [value, setValue] = useState("https://example.com");
+  return (
+    <div className="grid justify-items-center gap-4">
+      <input
+        aria-label="Link"
+        className="w-full rounded-md border px-3 py-2"
+        value={value}
+        onChange={(event) => setValue(event.target.value)}
+      />
+      {value ? <QrCode value={value} downloadFormats={[]} /> : null}
+    </div>
+  );
+}
+```
+
+`downloadFormats={[]}` menyembunyikan tombol saat seseorang masih mengetik; tampilkan setelah nilainya final.
+
+## Unduhan siap cetak [#print-ready-downloads]
+
+```tsx title="components/table-code.tsx"
+import { QrCode } from "@/components/qr-code";
+
+export function TableCode() {
+  return (
+    <QrCode
+      value="https://example.com/order?table=12"
+      level="H"
+      margin={4}
+      downloadFormats={["svg", "png", "pdf"]}
+      downloadSize={2048}
+      filename="table-12"
+    />
+  );
+}
+```
+
+- **SVG** dapat diskalakan ke ukuran berapa pun tanpa buram, sehingga menjadi file terbaik untuk percetakan atau alat desain.
+- **PNG** dengan `downloadSize={2048}` tercetak tajam hingga lebar sekitar 17 cm (6,8 inci) pada 300 piksel per inci. `downloadSize` menerima 50 hingga 5000 piksel.
+- **PDF** memerlukan paket opsional `jspdf` (`npm install jspdf`).
+- `filename` menamai file tanpa ekstensinya: `table-12.svg`, `table-12.png`.
+
+## Pastikan kode dapat dipindai [#make-sure-it-scans]
+
+- **Kontras.** Modul gelap pada latar belakang terang dapat dipindai oleh semua pembaca. Kode terang pada latar belakang gelap berfungsi di sebagian besar kamera ponsel, tetapi tidak di beberapa pemindai lama.
+- **Zona tenang.** `margin` secara bawaan 2 modul. Gunakan 4 saat kode berada di atas foto, pola, atau halaman gelap.
+- **Logo.** Gunakan `level="H"` dengan `logo`, agar kode tetap terbaca meski modulnya tertutup logo.
+- **Ukuran cetak.** Tautan pendek yang dipindai dari jarak sekitar 25 cm memerlukan kode selebar sekitar 2,5 cm; [kalkulator ukuran cetak](/tools/print-size) menghitungnya untuk jarak lain.
+- **Uji.** Pindai kode yang sudah jadi dengan beberapa ponsel, atau unggah gambar ke [pemeriksa pemindaian](/tools/scan-checker).
+
+## Referensi API [#api-reference]
+
+<auto-type-table path="../../../registry/qrdx/qr-code.tsx" type="{ [K in keyof QrCodeProps as K extends keyof ComponentProps<'figure'> ? never : K]: QrCodeProps[K] }" />
+
+Prop lain apa pun, seperti `className`, diteruskan ke `<figure>` pembungkus.

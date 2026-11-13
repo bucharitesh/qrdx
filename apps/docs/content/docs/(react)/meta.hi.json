@@ -1,0 +1,23 @@
+{
+  "$schema": "../../../.source/json-schema/docs.meta.json",
+  "title": "React लाइब्रेरी",
+  "description": "qrdx कंपोनेंट और shadcn रजिस्ट्री",
+  "icon": "Code",
+  "root": true,
+  "pages": [
+    "---शुरू करें---",
+    "../getting-started",
+    "../usage",
+    "../nextjs",
+    "---स्टाइलिंग और एक्सपोर्ट---",
+    "../styles",
+    "...../features",
+    "---कंपोनेंट---",
+    "../developers/shadcn",
+    "...../components",
+    "---रेफ़रेंस---",
+    "../api-reference",
+    "../utilities",
+    "../qr-detection"
+  ]
+}

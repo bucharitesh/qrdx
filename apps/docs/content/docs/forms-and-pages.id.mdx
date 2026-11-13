@@ -1,0 +1,127 @@
+---
+title: "Menu, kupon, acara, dan formulir"
+description: "Jenis halaman yang di-hosting untuk restoran, penawaran, acara, dan unduhan aplikasi, serta formulir yang mengumpulkan masukan ke kotak masuk tanggapan."
+icon: ClipboardList
+---
+
+Kode QR dinamis dapat membuka halaman yang di-hosting, bukan situs web. Selain daftar tautan, halaman bisnis, dan vCard, QRdx memiliki lima jenis halaman untuk kebutuhan cetak yang umum. Masing-masing dimulai dari templat yang dapat Anda ubah blok demi blok di editor halaman, dengan pratinjau ponsel langsung.
+
+| Jenis halaman | Dibuat untuk | Blok awal |
+| --- | --- | --- |
+| **Menu** | Kafe, restoran, bar | Menu, Wi-Fi, jam buka, peta |
+| **Kupon** | Diskon dan hadiah gratis | Kupon dengan barcode dan tombol Redeem |
+| **Acara** | Pesta, konferensi, webinar | Acara dengan tambah ke kalender |
+| **Unduh aplikasi** | Satu kode untuk semua toko aplikasi | Unduh aplikasi |
+| **Masukan & formulir** | Ulasan, survei NPS, pendaftaran | Formulir, tautan ulasan |
+
+Setiap blok di bawah ini juga dapat ditambahkan ke halaman lain mana pun.
+
+## Menu [#menu]
+
+Blok **Menu** berisi daftar bagian (Hidangan pembuka, Hidangan utama, ...) beserta item-itemnya. Setiap item dapat memiliki deskripsi, harga, catatan setelah harga ("per gelas", "Harga pasar"), foto, lencana singkat ("Pilihan koki"), dan:
+
+- **Label diet:** vegetarian, vegan, bebas gluten, bebas susu, halal, kosher, pedas, organik.
+- **Alergen:** 14 alergen yang wajib dicantumkan oleh pelaku usaha makanan di UE dan Inggris (gluten, krustasea, telur, ikan, kacang tanah, kedelai, susu, kacang pohon, seledri, mustard, wijen, sulfit, lupin, moluska), ditampilkan sebagai "Mengandung: …".
+- **Habis:** item tetap ada di menu, tampak redup, dan ditandai habis.
+
+Semua harga dalam satu menu menggunakan mata uang yang Anda pilih. Jika ada dua bagian atau lebih, chip pintasan di bagian atas akan melompat ke tiap bagian. Satu menu dapat memuat hingga 30 bagian dan 300 item.
+
+Blok **Wi-Fi** menampilkan nama jaringan dan kata sandi dengan tombol salin. Ponsel tidak dapat terhubung ke jaringan dari halaman web, jadi tamu menyalin kata sandi lalu menempelkannya di pengaturan Wi-Fi. Siapa pun yang membuka halaman dapat melihat kata sandi tersebut.
+
+## Kupon [#coupon]
+
+Blok **Kupon** menampilkan judul, kode dengan tombol salin, dan, secara opsional, barcode yang dapat dipindai kasir Anda:
+
+- **Code 128** mengodekan hingga 48 huruf, angka, dan simbol (tanpa aksen atau emoji).
+- **EAN-13** menerima 12 digit (QRdx menambahkan digit pemeriksa) atau seluruh 13 digit. Nomor yang diawali 20–29 dicadangkan untuk penggunaan di dalam toko, yang cocok untuk kode kupon.
+
+Secara default, barcode mengodekan kode kupon; atur **Nilai barcode** untuk mengodekan hal lain, misalnya nomor point-of-sale Anda.
+
+**Berlaku mulai** dan **Berlaku hingga** adalah hari kalender. Kupon dianggap sudah dimulai ketika hari pertamanya telah dimulai di mana pun di dunia, dan dianggap kedaluwarsa hanya setelah hari terakhirnya berakhir di mana pun, sehingga tidak ada yang melihat "kedaluwarsa" lebih awal karena zona waktunya. Kupon yang kedaluwarsa tetap terlihat dan ditandai kedaluwarsa.
+
+Aktifkan **Tombol Redeem** untuk menghitung penukaran: pengunjung menunjukkan layar kepada staf Anda lalu mengetuk **Redeem sekarang**. Halaman kemudian menampilkan "Sudah ditukar" beserta waktunya di ponsel tersebut, dan jumlahnya muncul di layar [Tanggapan](#responses) halaman. Fitur ini tidak dapat mencegah kode yang sama ditampilkan di ponsel lain, jadi anggap sebagai penghitung, bukan kunci.
+
+## Acara [#event]
+
+Blok **Acara** menampilkan tanggal dan waktu, lokasi dan alamat (dengan tautan **Buka di Peta**), tautan online, penyelenggara, dan tombol seperti **Dapatkan tiket**. Waktu dimasukkan dalam zona waktu acara dan ditampilkan kepada pengunjung dalam zona waktu tersebut, misalnya "7:00 – 10:00 PM GMT+1". Acara sepanjang hari dan beberapa hari didukung; tanpa waktu selesai, acara berlangsung selama satu jam.
+
+**Tambah ke kalender** menawarkan Google Calendar, Apple Calendar (berkas `.ics`), Outlook.com, dan Yahoo Calendar. Unduhan `.ics` disajikan dari alamat halaman Anda, sehingga juga berfungsi di [domain kustom](/docs/custom-domains); di pratinjau editor, fitur ini dinonaktifkan hingga halaman dipublikasikan. Setelah acara selesai, blok akan menyatakannya dan menyembunyikan tombol kalender.
+
+## Unduh aplikasi [#app-download]
+
+Blok **Unduh aplikasi** menerima tautan App Store (`apps.apple.com`), tautan Google Play (`play.google.com`), dan situs web. Toko milik pengunjung ditampilkan lebih dulu: pengguna iPhone dan iPad melihat tombol App Store di atas, pengguna Android melihat Google Play, dan lainnya melihat situs web Anda. Tautan lainnya tetap ada di bawahnya, sehingga tidak ada yang buntu.
+
+## Formulir [#forms]
+
+Blok **Formulir** mengumpulkan jawaban. Pertanyaan dapat berupa:
+
+| Jenis | Pengunjung menjawab dengan |
+| --- | --- |
+| Teks | Jawaban singkat atau panjang (Anda menentukan panjang maksimum) |
+| Email | Alamat email |
+| Telepon | Nomor telepon |
+| Peringkat bintang | Bintang, dari 3 hingga 10 (Anda yang memilih; default 5) |
+| NPS | Skor 0–10 untuk "seberapa besar kemungkinan Anda merekomendasikan kami" |
+| Pilihan | Satu opsi, atau beberapa opsi jika **Izinkan beberapa jawaban** aktif |
+| Kotak centang | Sebuah centang, misalnya persetujuan untuk dihubungi |
+
+Tandai pertanyaan sebagai **Wajib** agar harus dijawab. Pengunjung melihat pesan kesalahan di samping pertanyaan, serta pesan terima kasih yang Anda tulis setelah mengirim. Tanyakan hanya yang Anda perlukan, dan jelaskan bagaimana Anda akan menggunakan detail kontak.
+
+Perlindungan spam sudah tersedia: kolom tersembunyi yang hanya diisi bot, dan batas seberapa sering satu perangkat dapat mengirim formulir. Jika server memiliki kunci [Cloudflare Turnstile](#cloudflare-turnstile), formulir juga menjalankan pemeriksaan tak terlihat dari Turnstile.
+
+### Tautan ulasan [#review-links]
+
+Blok **Tautan ulasan** menampilkan tombol "Ulas kami di Google" (serta Tripadvisor, Yelp, Facebook, Trustpilot, atau situs lain). Blok ini ditampilkan kepada setiap pengunjung, apa pun jawaban mereka di formulir. Situs ulasan, termasuk Google, tidak mengizinkan penampilan tautan ulasan hanya kepada orang yang memberi Anda nilai tinggi, sehingga QRdx tidak pernah menyembunyikannya berdasarkan peringkat.
+
+Di Google Business Profile, pilih **Minta ulasan** untuk menyalin tautan ulasan Anda.
+
+## Tanggapan [#responses]
+
+Buka halaman di **Dasbor → Halaman & formulir** lalu pilih **Tanggapan** (atau buka `/dashboard/<workspace>/pages/<page id>/responses`). Tanggapan diurutkan dari yang terbaru, 25 per layar, dengan waktu (UTC), kode yang dipindai pengunjung, dan setiap jawaban. Alamat email dan nomor telepon berupa tautan.
+
+- **Beberapa formulir di satu halaman:** tab menyaring berdasarkan formulir.
+- **Ekspor CSV:** satu baris per tanggapan dan satu kolom per pertanyaan. Kolom mengikuti pertanyaan saat ini, lalu pertanyaan yang telah Anda hapus tetapi masih memiliki jawaban. Mengganti nama pertanyaan tetap mempertahankan kolomnya.
+- **Hapus:** pilih tanggapan, atau gunakan tombol tempat sampah pada satu tanggapan. Penghapusan tidak dapat dibatalkan. Anggota dapat menghapus tanggapan pada halaman yang mereka buat; pemilik dan admin dapat menghapus pada halaman mana pun di ruang kerja.
+
+Tanggapan merupakan bagian dari halaman. Menghapus halaman akan menghapus tanggapannya.
+
+### Batas bulanan [#monthly-limits]
+
+| Paket | Tanggapan per bulan |
+| --- | --- |
+| Gratis | 50 |
+| Pro | 1.000 |
+| Business | 10.000 |
+
+Batas ini menghitung tanggapan yang diterima semua halaman di ruang kerja, per bulan kalender (UTC), dan dimulai ulang pada tanggal 1. Layar Tanggapan menunjukkan berapa banyak yang telah Anda gunakan.
+
+Ketika batas tercapai, formulir menampilkan "Formulir ini sedang tidak menerima tanggapan" dan mempertahankan apa yang telah diketik pengunjung. Tanggapan yang sudah Anda miliki tidak pernah dihapus atau disembunyikan, pada paket apa pun, termasuk setelah penurunan paket.
+
+## Aturan akses [#access-rules]
+
+Formulir dan berkas kalender mengikuti [kontrol kode](/docs/code-controls) halaman: saat kode dijeda, dijadwalkan untuk nanti, kedaluwarsa, atau melewati batas pemindaian, formulirnya berhenti menerima tanggapan dan berkas `.ics` tidak disajikan. Pada halaman yang dilindungi kata sandi, keduanya berfungsi setelah pengunjung memasukkan kata sandi.
+
+## Notifikasi dan webhook [#notifications-and-webhooks]
+
+Setiap tanggapan mengirim peristiwa `form.submitted` beserta jawabannya. Gunakan untuk [notifikasi email atau Slack/Discord](/docs/notifications) dan [webhook](/docs/webhooks) (Zapier, Make, server Anda sendiri).
+
+## Privasi [#privacy]
+
+Jawaban disimpan bersama halaman di ruang kerja Anda. QRdx tidak menyimpan alamat IP pengunjung bersama tanggapan: setiap tanggapan hanya menyimpan hash bergaram dari alamat IP dan browser untuk hari itu, yang tidak dapat dikembalikan menjadi salah satunya.
+
+## Hosting mandiri [#self-hosting]
+
+### Cloudflare Turnstile [#cloudflare-turnstile]
+
+Atur kedua variabel untuk melindungi formulir dengan [Cloudflare Turnstile](https://developers.cloudflare.com/turnstile/):
+
+```bash
+NEXT_PUBLIC_TURNSTILE_SITE_KEY=0x4AAAAAAA...
+TURNSTILE_SECRET_KEY=0x4AAAAAAA...
+```
+
+Jika hanya salah satu yang diatur, Turnstile tetap nonaktif. Skrip Turnstile dimuat saat pengunjung pertama kali menyentuh formulir, bukan bersama halaman, dan berjalan tanpa terlihat kecuali Cloudflare memerlukan klik dari pengunjung. Jika Cloudflare tidak dapat dijangkau, tanggapan tetap diterima sehingga Anda tidak pernah kehilangan masukan; perlindungan spam lainnya tetap berlaku.
+
+### Domain kustom [#custom-domains]
+
+Pada [domain kustom](/docs/custom-domains) yang terverifikasi, endpoint formulir (`/api/forms/...`) dan berkas kalender (`/api/calendar/...`) disajikan berdampingan dengan halaman Anda, sehingga formulir dan tambah ke kalender berfungsi di sana tanpa penyiapan tambahan.

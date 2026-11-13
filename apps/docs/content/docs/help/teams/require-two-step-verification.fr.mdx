@@ -1,0 +1,48 @@
+---
+title: "Exiger la vérification en deux étapes"
+description: "Obligez tous les membres d'un espace de travail à activer la vérification en deux étapes avant de pouvoir y accéder. Inclus dans le plan Business."
+---
+
+Les propriétaires et les administrateurs peuvent exiger que tous les membres d'un espace de travail utilisent la [vérification en deux étapes](/docs/help/privacy-and-security/two-step-verification). Un membre qui ne l'a pas activée ne peut alors pas accéder à l'espace de travail tant qu'il ne l'a pas fait. Accéder à la messagerie de quelqu'un ne suffit donc pas pour entrer dans votre espace de travail.
+
+L'obligation de vérification en deux étapes fait partie du plan **Business**. Un espace de travail en bénéficie lorsqu'un de ses propriétaires ou l'un des membres chargés de la facturation est sur Business. Consultez [Places et limites des espaces de travail](/docs/help/teams/seats).
+
+## L'activer [#turn-it-on]
+
+1. Activez d'abord la vérification en deux étapes sur votre propre compte, dans **Paramètres** → **Profil et sécurité**. Vous ne pouvez pas l'exiger sans l'avoir vous-même.
+2. Dans l'espace de travail, allez dans **Paramètres** → **Équipe**.
+3. Sous **Vérification en deux étapes**, activez **Exiger la vérification en deux étapes**.
+4. Si certains membres ne l'ont pas encore activée, QRdx vous indique combien ils sont et vous demande confirmation avant de continuer.
+5. [Confirmez que c'est bien vous](/docs/help/privacy-and-security/two-step-verification#confirm-its-you).
+
+Seuls les propriétaires et les administrateurs peuvent la modifier, et son activation ou sa désactivation nécessite de confirmer que c'est bien vous.
+
+Aucun e-mail n'est envoyé. Les membres sans vérification en deux étapes l'apprennent la prochaine fois qu'ils ouvrent l'espace de travail.
+
+## Voir qui l'a activée [#see-who-has-it-on]
+
+Sur la page **Paramètres** → **Équipe**, les propriétaires et les administrateurs voient si la vérification en deux étapes est **Activée** ou **Désactivée** pour chaque membre. Sur un téléphone, l'information s'affiche sous l'adresse e-mail de chaque personne.
+
+## Ce que voient les membres qui ne l'ont pas activée [#what-members-without-it-see]
+
+Lorsqu'ils ouvrent l'espace de travail, ils voient qu'il exige la vérification en deux étapes, avec un bouton **Activer la vérification en deux étapes**. Il les amène à **Paramètres** → **Profil et sécurité**, et une fois la vérification activée, **Retour à** l'espace de travail les ramène à la page où ils se trouvaient.
+
+D'ici là, ils ne peuvent rien voir ni modifier dans cet espace de travail. Leurs autres espaces de travail fonctionnent normalement.
+
+Cela inclut ce que l'espace de travail leur envoie. Leurs alertes par e-mail, le résumé hebdomadaire et les alertes Slack ou Discord correspondantes s'arrêtent, et ils ne peuvent pas en ajouter de nouvelles. Les synchronisations qu'ils ont configurées pour envoyer les données de l'espace de travail vers d'autres outils sont mises en pause. Les alertes reprennent dès que la vérification en deux étapes est activée ; une synchronisation en pause doit être réactivée.
+
+Si quelqu'un désactive la vérification en deux étapes par la suite, l'espace de travail se referme pour lui jusqu'à ce qu'il la réactive. Cela vaut aussi pour les propriétaires et les administrateurs.
+
+## Clés API [#api-keys]
+
+Les clés API créées dans l'espace de travail continuent de fonctionner pour la personne qui les a créées, avec ou sans vérification en deux étapes. La vérification en deux étapes protège la connexion, et une clé est un identifiant à part entière. Personne ne peut créer de nouvelle clé dans l'espace de travail sans pouvoir y accéder, et les propriétaires et les administrateurs peuvent voir et révoquer les clés de tous les membres dans **Paramètres** → **Développeurs** de l'espace de travail.
+
+Les applications connectées au compte d'une personne via OAuth ne fonctionnent que dans l'espace de travail personnel de cette personne : elles n'atteignent donc jamais un espace de travail d'équipe.
+
+## Si l'espace de travail quitte Business [#if-the-workspace-leaves-business]
+
+L'obligation cesse de s'appliquer et le paramètre apparaît comme désactivé. Si l'espace de travail repasse sur Business, elle s'applique de nouveau.
+
+## La désactiver [#turn-it-off]
+
+Sur la page **Paramètres** → **Équipe**, désactivez **Exiger la vérification en deux étapes** et confirmez que c'est bien vous. Les membres sans vérification en deux étapes peuvent de nouveau accéder immédiatement à l'espace de travail.

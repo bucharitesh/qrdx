@@ -1,0 +1,45 @@
+---
+title: "Cosa registra QRdx quando qualcuno fa una scansione"
+description: "I dati che registra la scansione di un codice dinamico, cosa non memorizza mai e per quanto tempo vengono conservati."
+---
+
+Solo i codici dinamici registrano le scansioni. Un QR code statico contiene direttamente i tuoi contenuti e non passa mai da QRdx.
+
+## Cosa registra una scansione [#what-a-scan-records]
+
+- Paese, regione e città, ricavati dalla rete.
+- Tipo di dispositivo, sistema operativo e browser.
+- Il sito di provenienza, se presente.
+- La lingua del browser.
+- Quale versione ha visto il visitatore, se è in corso un test A/B.
+- Un hash giornaliero con salt dell'indirizzo di rete e del browser, così un visitatore viene contato una sola volta al giorno.
+- La sua posizione, arrotondata a circa 100 m, solo se il proprietario del codice ha attivato la [posizione precisa](/docs/precise-location) e chi ha fatto la scansione l'ha consentita nel proprio browser. Se rifiuta, non viene memorizzato nulla.
+
+## Cosa non viene mai memorizzato [#what-it-never-stores]
+
+QRdx non memorizza mai l'indirizzo IP di chi fa la scansione. L'hash qui sopra non può essere riconvertito in un indirizzo IP e cambia ogni giorno.
+
+I bot e le anteprime dei link non vengono registrati.
+
+## Per quanto tempo vengono conservate le scansioni [#how-long-scans-are-kept]
+
+Le scansioni vengono conservate finché esiste il codice. Il tuo piano stabilisce quanto indietro puoi vederle: 90 giorni con Gratuito, 3 anni con Pro e senza limiti con Business.
+
+Eliminando un codice, ne elimini per sempre anche le scansioni.
+
+## Cookie per chi fa la scansione [#cookies-for-people-who-scan]
+
+Le pagine che vedono le persone che fanno la scansione, come i link brevi e le pagine mobile, non mostrano un banner dei cookie e non caricano gli analytics di QRdx né il widget di assistenza.
+
+QRdx vi imposta due cookie. Uno ricorda per 6 ore la password corretta di un codice. L'altro collega per 15 minuti una pagina ospitata alla scansione che l'ha aperta, solo quando il codice richiede la posizione precisa, così la posizione condivisa da chi scansiona viene aggiunta a quella scansione. Con i piani a pagamento, i proprietari delle pagine possono aggiungere alle proprie pagine i propri pixel di analytics.
+
+## Lo scanner di QR code [#the-qr-code-scanner]
+
+Lo [scanner di QRdx](/scan) conserva la cronologia delle scansioni solo sul tuo dispositivo.
+
+## Maggiori dettagli [#more-detail]
+
+- [Informativa sulla privacy](/legal/privacy-policy)
+- [Informativa sui cookie](/legal/cookie-policy)
+- [Subresponsabili del trattamento](/legal/subprocessors)
+- [Accordo sul trattamento dei dati](/legal/dpa)
