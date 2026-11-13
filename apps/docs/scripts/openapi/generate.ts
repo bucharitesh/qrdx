@@ -1,6 +1,5 @@
 // Writes the REST API's OpenAPI document (lib/openapi/document.ts) to
-// packages/docs-assets/openapi.json (what the docs read) and a byte-for-byte
-// copy to public/openapi.json, served at qrdx.dev/openapi.json and
+// public/openapi.json, served at qrdx.dev/openapi.json and
 // api.qrdx.dev/openapi.json, then the API reference pages built from it
 // (content/docs/developers/api) and the errors page (scripts/openapi/pages.ts).
 // Run after changing a /v1 route, its schemas or lib/openapi:
@@ -8,24 +7,18 @@
 //   bun run openapi:generate
 //
 // tests/api/openapi.test.ts fails while the committed files are stale.
+// packages/docs-assets/openapi.json isn't written here: it's an uncommitted
+// copy that `bun run openapi:export` makes for the apps that read it.
 //
 // Modules resolve as in the Vitest suites (scripts/openapi/tsconfig.json:
 // "server-only" is a stub, qrdx is its source), with the suites' fake
 // environment, so nothing connects to a database or any other service.
 import { spawnSync } from "node:child_process";
-import { copyFileSync, writeFileSync } from "node:fs";
+import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 const root = join(__dirname, "..", "..");
-const OPENAPI_PATH = join(
-  root,
-  "..",
-  "..",
-  "packages",
-  "docs-assets",
-  "openapi.json",
-);
-const SERVED_PATH = join(root, "public", "openapi.json");
+const OPENAPI_PATH = join(root, "public", "openapi.json");
 const ultracitePath = join(
   root,
   "..",
@@ -74,11 +67,8 @@ async function main() {
     stdio: "inherit",
   });
   if (fixed.status !== 0) {
-    throw new Error(
-      "ultracite fix failed on packages/docs-assets/openapi.json",
-    );
+    throw new Error("ultracite fix failed on public/openapi.json");
   }
-  copyFileSync(OPENAPI_PATH, SERVED_PATH);
 
   // The pages render the file just written (lib/api-reference imports it).
   const { apiReference } = await import("@/lib/api-reference");
@@ -98,7 +88,7 @@ async function main() {
   }
 
   console.log(
-    `Wrote packages/docs-assets/openapi.json and public/openapi.json (${operations} operations, ${
+    `Wrote public/openapi.json (${operations} operations, ${
       Object.keys(document.components?.schemas ?? {}).length
     } schemas), content/docs/developers/api and errors.mdx.`,
   );

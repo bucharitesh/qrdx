@@ -17,6 +17,7 @@
     "test:e2e:passkeys": "tsx e2e/passkeys.e2e.ts",
     "registry:build": "tsx ../../packages/docs-assets/registry/build.ts --out public/r",
     "openapi:generate": "tsx --tsconfig scripts/openapi/tsconfig.json scripts/openapi/generate.ts",
+    "openapi:export": "tsx scripts/openapi/export.ts",
     "facts:snapshot": "tsx scripts/facts-snapshot.ts",
     "postinstall": "fumadocs-mdx",
     "format": "ultracite fix",
