@@ -11,6 +11,7 @@ import {
 import {
   Add,
   ArrowDown2,
+  Barcode,
   Brush2,
   DocumentText1,
   DocumentUpload,
@@ -68,6 +69,10 @@ export function CreateMenu() {
           <DropdownMenuItem onSelect={() => create("form")}>
             <TaskSquare aria-hidden />
             {t("form")}
+          </DropdownMenuItem>
+          <DropdownMenuItem onSelect={() => create("barcode")}>
+            <Barcode aria-hidden />
+            {t("barcode")}
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem asChild>

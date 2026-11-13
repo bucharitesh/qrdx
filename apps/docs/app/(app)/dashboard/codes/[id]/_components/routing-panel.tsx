@@ -82,6 +82,9 @@ import {
 } from "@/lib/scan-location/geo";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
 
+/** Above the code builder's dialog (z-[99]), which shows this panel too. */
+const MENU_LAYER = "z-[120]";
+
 // ─── Shared by the routing, UTM and pixels panels ───────────────────────────
 
 export type MarketingSettingsPromise = Promise<
@@ -783,7 +786,7 @@ function GeofenceEditor({
           >
             <SelectValue />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className={MENU_LAYER}>
             <SelectItem value="m">m</SelectItem>
             <SelectItem value="km">{t("km")}</SelectItem>
           </SelectContent>
@@ -951,7 +954,7 @@ function ConditionEditor({
             >
               <SelectValue />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className={MENU_LAYER}>
               <SelectItem value="first">{t("theFirst")}</SelectItem>
               <SelectItem value="after">{t("everyScanAfter")}</SelectItem>
             </SelectContent>
@@ -1239,7 +1242,7 @@ function RuleCard({
               {t("addCondition")}
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="start">
+          <DropdownMenuContent align="start" className={MENU_LAYER}>
             {CONDITION_TYPES.map((type) => (
               <DropdownMenuItem
                 key={type}
@@ -1275,7 +1278,7 @@ function RuleCard({
             >
               <SelectValue />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className={MENU_LAYER}>
               <SelectItem value="redirect">{t("sendToAUrl")}</SelectItem>
               <SelectItem value="split">{t("splitBetweenUrlsAB")}</SelectItem>
             </SelectContent>
@@ -1398,7 +1401,7 @@ function RuleTester({ codeId, rules }: { codeId: string; rules: DraftRule[] }) {
               <SelectTrigger className="w-full" id={`${id}-device`}>
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className={MENU_LAYER}>
                 {DEVICES.map((device) => (
                   <SelectItem key={device.value} value={device.value}>
                     {device.label}
@@ -1413,7 +1416,7 @@ function RuleTester({ codeId, rules }: { codeId: string; rules: DraftRule[] }) {
               <SelectTrigger className="w-full" id={`${id}-os`}>
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className={MENU_LAYER}>
                 {OS_OPTIONS.map((os) => (
                   <SelectItem key={os} value={os}>
                     {os}
@@ -1680,7 +1683,7 @@ function RoutingEditor({
               {t("addRule")}
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="start">
+          <DropdownMenuContent align="start" className={MENU_LAYER}>
             <DropdownMenuLabel>{t("startFrom")}</DropdownMenuLabel>
             <DropdownMenuSeparator />
             {PRESETS.map((preset) => (

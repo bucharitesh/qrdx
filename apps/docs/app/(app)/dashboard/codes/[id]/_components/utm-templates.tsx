@@ -151,7 +151,8 @@ export function UtmTemplatesMenuBody({
             <ArrowDown2 className="text-muted-foreground" />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="start" className="w-72">
+        {/* Above the code builder's dialog (z-[99]), which shows this panel too */}
+        <DropdownMenuContent align="start" className="z-[120] w-72">
           <DropdownMenuLabel className="text-muted-foreground text-xs font-normal">
             {templates.length > 0
               ? t("fillInFromATemplate")

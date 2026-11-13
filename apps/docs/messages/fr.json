@@ -4370,6 +4370,110 @@
         "moreFrameOptions": "Plus d’options de cadre"
       }
     },
+    "partInline": {
+      "parts": {
+        "eyes": {
+          "edit": "Éditer les yeux",
+          "options": "Options des yeux",
+          "random": "Yeux aléatoires",
+          "more": "Autres options des yeux"
+        },
+        "dots": {
+          "edit": "Éditer les points",
+          "options": "Options des points",
+          "random": "Points aléatoires",
+          "more": "Autres options de points"
+        },
+        "logo": {
+          "edit": "Éditer le logo",
+          "options": "Options du logo",
+          "random": "Logo aléatoire",
+          "more": "Autres options du logo"
+        },
+        "background": {
+          "edit": "Éditer l’arrière-plan",
+          "options": "Options d’arrière-plan",
+          "random": "Arrière-plan aléatoire",
+          "more": "Autres options d’arrière-plan",
+          "editShape": "Modifier la forme"
+        },
+        "frame": {
+          "edit": "Éditer le cadre",
+          "options": "Options du cadre",
+          "random": "Cadre aléatoire",
+          "more": "Autres options du cadre"
+        }
+      },
+      "items": {
+        "outerShape": "Forme extérieure",
+        "centerShape": "Forme centrale",
+        "eyeColor": "Couleur des yeux",
+        "centerColor": "Couleur du centre",
+        "pattern": "Motif",
+        "dotColor": "Couleur des points",
+        "dotSize": "Taille des points",
+        "logo": "Logo",
+        "quickIcons": "Icônes rapides",
+        "logoSize": "Taille du logo",
+        "hideLogo": "Masquer le logo",
+        "backgroundColor": "Couleur d’arrière-plan",
+        "padding": "Marge",
+        "frameStyle": "Style de cadre",
+        "frameColor": "Couleur du cadre",
+        "whichEyes": "Quels yeux",
+        "allEyes": "Tous les yeux",
+        "thisEye": "Cet œil",
+        "thisEyesColor": "Couleur de cet œil",
+        "thisEyesCenterColor": "Couleur du centre de cet œil",
+        "shapesChangeAllThreeEyes": "Les formes modifient les trois yeux.",
+        "sameAsTheOthers": "Comme les autres",
+        "eyesWithTheirOwnColor": "Les yeux dotés de leur propre couleur la conservent. Choisissez Cet œil pour en modifier un.",
+        "logoShapeAndPlate": "Forme et fond du logo",
+        "clearSpace": "Espace libre",
+        "content": "Contenu",
+        "codeShape": "Forme du code",
+        "errorCorrection": "Correction d’erreurs"
+      },
+      "random": "Aléatoire",
+      "moreOptions": "Plus d’options",
+      "sheet": {
+        "changesShowOnTheCode": "Les modifications s’affichent sur le code au fur et à mesure. « Terminé » les conserve.",
+        "done": "Terminé"
+      },
+      "content": {
+        "link": "Lien",
+        "text": "Texte",
+        "theCodeKeepsItsContent": "Le code conserve son contenu tant que ceci n’est pas valide.",
+        "scansOpenHost": "Le scan ouvre {host}",
+        "textHint": "Le code affiche ce texte lors du scan.",
+        "editedInTheContentTab": "Ce type de contenu a son propre formulaire dans l’onglet Contenu.",
+        "openTheContentTab": "Ouvrir l’onglet Contenu"
+      },
+      "codeShape": {
+        "codeShape": "Forme du code",
+        "names": {
+          "square": "Carré",
+          "circle": "Cercle",
+          "heart": "Cœur"
+        },
+        "aCircleOrHeartTakes": "Un cercle ou un cœur remplace le cadre."
+      },
+      "errorCorrection": {
+        "theLogoRaisesItToLevel": "Pour l’instant, le logo le porte au niveau {level}."
+      },
+      "handles": {
+        "moveLogo": "Déplacer le logo",
+        "dragOrUseTheArrowKeys": "Faites-le glisser ou utilisez les touches fléchées. Maj le déplace plus loin. Suppr le masque.",
+        "logoSize": "Taille du logo",
+        "percentOfTheCode": "{value, number} % du code",
+        "padding": "Marge",
+        "modules": "{count, plural, one {# module} other {# modules}}",
+        "dragToChangeThePadding": "Faites glisser vers l’intérieur ou l’extérieur pour modifier la marge"
+      },
+      "drop": {
+        "dropToUseAsLogo": "Déposez pour utiliser comme logo"
+      }
+    },
     "gradientPicker": {
       "pickASolidColorA": "Choisissez une couleur unie, un dégradé ou un échantillon pour {label}."
     },
@@ -4619,6 +4723,7 @@
         "actions": "Actions",
         "themeAppearance": "Thème et apparence",
         "patternCustomization": "Personnalisation du motif",
+        "preview": "Aperçu",
         "help": "Aide"
       },
       "shortcuts": {
@@ -4640,7 +4745,11 @@
         "cycleCornerEyePatterns": "Changer le motif des yeux",
         "cycleInternalEyePatterns": "Changer le motif des yeux internes",
         "cycleFrames": "Changer de cadre",
-        "showThisShortcutsDialog": "Afficher les raccourcis"
+        "showThisShortcutsDialog": "Afficher les raccourcis",
+        "editAPartOfTheCode": "Modifier la partie du code sous le pointeur ou ciblée",
+        "randomLookForThatPart": "Style aléatoire pour cette partie",
+        "hideTheFocusedLogo": "Masquer le logo ciblé",
+        "moveTheLogoWhileEditing": "Déplacer le logo pendant sa modification"
       }
     },
     "soundSwitch": {
@@ -5272,7 +5381,8 @@
           "afterYouSignInPasskeyOrApp": "Après votre connexion, QRdx vous demande votre clé d’accès ou un code de votre application d’authentification. Un code de secours fonctionne aussi.",
           "afterYouSignInPasskey": "Après votre connexion, QRdx vous demande votre clé d’accès. Un code de secours fonctionne aussi.",
           "afterYouSignInApp": "Après votre connexion, QRdx vous demande un code de votre application d’authentification. Un code de secours fonctionne aussi.",
-          "afterYouSignInQrdx2": "Après votre connexion, QRdx demande un code de secours."
+          "afterYouSignInQrdx2": "Après votre connexion, QRdx demande un code de secours.",
+          "passkeySpotlight": "Une clé d’accès peut désormais servir de seconde étape, à la place d’un code d’authentification."
         },
         "twoFactorSetupDialog": {
           "stepStepnumberOfLength": "Étape {stepNumber, number} sur {length, number}",
@@ -5907,7 +6017,6 @@
           "youHaveViewOnlyAccess": "Vous avez un accès en lecture seule : vous pouvez télécharger ce code-barres, mais pas le modifier.",
           "planBarcodesAreStaticThey": "Forfait {plan}. Les codes-barres sont statiques : ils n’expirent jamais et fonctionnent avec tous les forfaits.",
           "noBarcodesYet": "Aucun code-barres",
-          "newBarcode": "Nouveau code-barres",
           "openTheFreeGenerator": "Ouvrir le générateur gratuit",
           "barcodesInTheTrashDont": "Les codes-barres de la corbeille ne comptent pas dans votre offre. Restaurez-les ou supprimez-les définitivement.",
           "showAllBarcodes": "Afficher tous les codes-barres",
@@ -5922,13 +6031,6 @@
           "noBarcodesMatchQ": "Aucun code-barres ne correspond à « {q} ».",
           "noBarcodesHereYet": "Aucun code-barres pour le moment.",
           "noBarcodesMatchTheseFilters": "Aucun code-barres ne correspond à ces filtres."
-        },
-        "new": {
-          "page": {
-            "allBarcodes": "Tous les codes-barres",
-            "newBarcode": "Nouveau code-barres",
-            "pickTheTypeEnterThe": "Choisissez le type, saisissez le numéro ou le texte, puis enregistrez-le pour le modifier et le télécharger à nouveau plus tard."
-          }
         },
         "barcodeActions": {
           "duplicate": "Dupliquer",
@@ -5947,11 +6049,34 @@
           "fixTheHighlightedInputTo": "Corrigez le champ en surbrillance pour enregistrer.",
           "unsavedChanges": "Modifications non enregistrées",
           "allChangesSaved": "Toutes les modifications sont enregistrées",
-          "notSavedYet": "Pas encore enregistré",
           "saveChanges": "Enregistrer les modifications",
-          "saveBarcode": "Enregistrer le code-barres",
           "couldntSaveTheBarcode": "Impossible d’enregistrer le code-barres",
           "barcodeSaved": "Code-barres enregistré"
+        },
+        "barcodeBuilder": {
+          "newBarcode": "Nouveau code-barres",
+          "pickTheTypeEnterThe": "Choisissez le type, saisissez le numéro ou le texte, puis enregistrez-le pour le modifier et le télécharger à nouveau plus tard.",
+          "yourBarcodeIsSaved": "Votre code-barres est enregistré",
+          "downloadItNowOrOpen": "Téléchargez-le maintenant, ou rouvrez-le plus tard depuis Codes-barres pour le modifier et le télécharger à nouveau.",
+          "design": "Design",
+          "back": "Retour",
+          "close": "Fermer",
+          "value": "Valeur",
+          "valueCopied": "Valeur copiée",
+          "type": "Type",
+          "title": "Titre",
+          "openTheBarcode": "Ouvrir le code-barres",
+          "foldersDidntLoad": "Les dossiers n’ont pas chargé : ce code-barres est donc enregistré sans dossier.",
+          "couldntReachQrdx": "Impossible de joindre QRdx. Vérifiez votre connexion et réessayez.",
+          "fixTheHighlightedInputTo": "Corrigez le champ en surbrillance pour enregistrer.",
+          "saveBarcode": "Enregistrer le code-barres",
+          "saving": "Enregistrement...",
+          "createAnother": "En créer un autre",
+          "done": "Terminé",
+          "closeWithoutSaving": "Fermer sans enregistrer ?",
+          "thisBarcodeIsntSavedYet": "Ce code-barres n’est pas encore enregistré : ce que vous avez saisi sera perdu.",
+          "keepEditing": "Continuer à modifier",
+          "discard": "Abandonner"
         },
         "barcodesHeader": {
           "barcodes": "Codes-barres :",
@@ -7865,6 +7990,7 @@
         "newDynamicQrCode": "Nouveau QR code dynamique",
         "newLandingPage": "Nouvelle landing page",
         "newForm": "Nouveau formulaire",
+        "newBarcode": "Nouveau code-barres",
         "importCodesFromACsv": "Importer des codes depuis un CSV",
         "inviteATeammate": "Inviter un collègue",
         "connectADomain": "Connecter un domaine",
@@ -7875,6 +8001,7 @@
         "dynamicQrCode": "QR code dynamique",
         "landingPage": "Landing page",
         "form": "Formulaire",
+        "barcode": "Code-barres",
         "importCodes": "Importer des codes",
         "openTheEditor": "Ouvrir l’éditeur",
         "newDynamicQrCode": "Nouveau QR code dynamique",
@@ -7897,7 +8024,19 @@
         "new": "Nouveau",
         "whatsNew": "Nouveautés",
         "newFeaturesAndFixesIn": "Nouvelles fonctionnalités et corrections dans QRdx.",
-        "seeAllUpdates": "Voir toutes les nouveautés"
+        "seeAllUpdates": "Voir toutes les nouveautés",
+        "newFeatures": "Nouveautés",
+        "dismissTitle": "Fermer {title}",
+        "previousUpdate": "Mise à jour précédente",
+        "nextUpdate": "Mise à jour suivante",
+        "positionOfTotal": "{position, number} sur {total, number}",
+        "readOnTheChangelog": "Lire le journal des modifications",
+        "tryIt": "Essayer",
+        "close": "Fermer"
+      },
+      "spotlight": {
+        "new": "Nouveau",
+        "gotIt": "Compris"
       }
     },
     "workspaces": {

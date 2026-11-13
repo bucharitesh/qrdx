@@ -4370,6 +4370,110 @@
         "moreFrameOptions": "More frame options"
       }
     },
+    "partInline": {
+      "parts": {
+        "eyes": {
+          "edit": "Edit eyes",
+          "options": "Eye options",
+          "random": "Random eyes",
+          "more": "More eye options"
+        },
+        "dots": {
+          "edit": "Edit dots",
+          "options": "Dot options",
+          "random": "Random dots",
+          "more": "More dot options"
+        },
+        "logo": {
+          "edit": "Edit logo",
+          "options": "Logo options",
+          "random": "Random logo",
+          "more": "More logo options"
+        },
+        "background": {
+          "edit": "Edit background",
+          "options": "Background options",
+          "random": "Random background",
+          "more": "More background options",
+          "editShape": "Edit code shape"
+        },
+        "frame": {
+          "edit": "Edit frame",
+          "options": "Frame options",
+          "random": "Random frame",
+          "more": "More frame options"
+        }
+      },
+      "items": {
+        "outerShape": "Outer shape",
+        "centerShape": "Center shape",
+        "eyeColor": "Eye color",
+        "centerColor": "Center color",
+        "pattern": "Pattern",
+        "dotColor": "Dot color",
+        "dotSize": "Dot size",
+        "logo": "Logo",
+        "quickIcons": "Quick icons",
+        "logoSize": "Logo size",
+        "hideLogo": "Hide logo",
+        "backgroundColor": "Background color",
+        "padding": "Padding",
+        "frameStyle": "Frame style",
+        "frameColor": "Frame color",
+        "whichEyes": "Which eyes",
+        "allEyes": "All eyes",
+        "thisEye": "This eye",
+        "thisEyesColor": "This eye's color",
+        "thisEyesCenterColor": "This eye's center color",
+        "shapesChangeAllThreeEyes": "Shapes change all three eyes.",
+        "sameAsTheOthers": "Same as the others",
+        "eyesWithTheirOwnColor": "Eyes with a color of their own keep it. Choose This eye to change one.",
+        "logoShapeAndPlate": "Logo shape and plate",
+        "clearSpace": "Clear space",
+        "content": "Content",
+        "codeShape": "Code shape",
+        "errorCorrection": "Error correction"
+      },
+      "random": "Random",
+      "moreOptions": "More options",
+      "sheet": {
+        "changesShowOnTheCode": "Changes show on the code as you make them. Done keeps them.",
+        "done": "Done"
+      },
+      "content": {
+        "link": "Link",
+        "text": "Text",
+        "theCodeKeepsItsContent": "The code keeps its content until this is valid.",
+        "scansOpenHost": "Scans open {host}",
+        "textHint": "The code shows this text when scanned.",
+        "editedInTheContentTab": "This kind of content has its own form in the Content tab.",
+        "openTheContentTab": "Open the Content tab"
+      },
+      "codeShape": {
+        "codeShape": "Code shape",
+        "names": {
+          "square": "Square",
+          "circle": "Circle",
+          "heart": "Heart"
+        },
+        "aCircleOrHeartTakes": "A circle or heart takes the place of a frame."
+      },
+      "errorCorrection": {
+        "theLogoRaisesItToLevel": "The logo raises it to level {level} for now."
+      },
+      "handles": {
+        "moveLogo": "Move logo",
+        "dragOrUseTheArrowKeys": "Drag it, or use the arrow keys. Shift moves it further. Delete hides it.",
+        "logoSize": "Logo size",
+        "percentOfTheCode": "{value, number}% of the code",
+        "padding": "Padding",
+        "modules": "{count, plural, one {# module} other {# modules}}",
+        "dragToChangeThePadding": "Drag in or out to change the padding"
+      },
+      "drop": {
+        "dropToUseAsLogo": "Drop to use as logo"
+      }
+    },
     "gradientPicker": {
       "pickASolidColorA": "Pick a solid color, a gradient or a swatch for {label}."
     },
@@ -4619,6 +4723,7 @@
         "actions": "Actions",
         "themeAppearance": "Theme & Appearance",
         "patternCustomization": "Pattern Customization",
+        "preview": "Preview",
         "help": "Help"
       },
       "shortcuts": {
@@ -4640,7 +4745,11 @@
         "cycleCornerEyePatterns": "Cycle corner eye patterns",
         "cycleInternalEyePatterns": "Cycle internal eye patterns",
         "cycleFrames": "Cycle frames",
-        "showThisShortcutsDialog": "Show this shortcuts dialog"
+        "showThisShortcutsDialog": "Show this shortcuts dialog",
+        "editAPartOfTheCode": "Edit the part of the code under the pointer or focused",
+        "randomLookForThatPart": "Random look for that part",
+        "hideTheFocusedLogo": "Hide the focused logo",
+        "moveTheLogoWhileEditing": "Move the logo while it's edited"
       }
     },
     "soundSwitch": {
@@ -5272,7 +5381,8 @@
           "afterYouSignInPasskeyOrApp": "After you sign in, QRdx asks for your passkey or a code from your authenticator app. A backup code works too.",
           "afterYouSignInPasskey": "After you sign in, QRdx asks for your passkey. A backup code works too.",
           "afterYouSignInApp": "After you sign in, QRdx asks for a code from your authenticator app. A backup code works too.",
-          "afterYouSignInQrdx2": "After you sign in, QRdx asks for a backup code."
+          "afterYouSignInQrdx2": "After you sign in, QRdx asks for a backup code.",
+          "passkeySpotlight": "A passkey can now be your second step, instead of an authenticator code."
         },
         "twoFactorSetupDialog": {
           "stepStepnumberOfLength": "Step {stepNumber, number} of {length, number}",
@@ -5907,7 +6017,6 @@
           "youHaveViewOnlyAccess": "You have view-only access: download this barcode, but it can't be changed.",
           "planBarcodesAreStaticThey": "{plan} plan. Barcodes are static: they never expire and work on every plan.",
           "noBarcodesYet": "No barcodes yet",
-          "newBarcode": "New barcode",
           "openTheFreeGenerator": "Open the free generator",
           "barcodesInTheTrashDont": "Barcodes in the trash don't count toward your plan. Restore them, or delete them for good.",
           "showAllBarcodes": "Show all barcodes",
@@ -5922,13 +6031,6 @@
           "noBarcodesMatchQ": "No barcodes match \"{q}\".",
           "noBarcodesHereYet": "No barcodes here yet.",
           "noBarcodesMatchTheseFilters": "No barcodes match these filters."
-        },
-        "new": {
-          "page": {
-            "allBarcodes": "All barcodes",
-            "newBarcode": "New barcode",
-            "pickTheTypeEnterThe": "Pick the type, enter the number or text, and save it to edit and download again later."
-          }
         },
         "barcodeActions": {
           "duplicate": "Duplicate",
@@ -5947,11 +6049,34 @@
           "fixTheHighlightedInputTo": "Fix the highlighted input to save.",
           "unsavedChanges": "Unsaved changes",
           "allChangesSaved": "All changes saved",
-          "notSavedYet": "Not saved yet",
           "saveChanges": "Save changes",
-          "saveBarcode": "Save barcode",
           "couldntSaveTheBarcode": "Couldn't save the barcode",
           "barcodeSaved": "Barcode saved"
+        },
+        "barcodeBuilder": {
+          "newBarcode": "New barcode",
+          "pickTheTypeEnterThe": "Pick the type, enter the number or text, and save it to edit and download again later.",
+          "yourBarcodeIsSaved": "Your barcode is saved",
+          "downloadItNowOrOpen": "Download it now, or open it later from Barcodes to edit and download again.",
+          "design": "Design",
+          "back": "Back",
+          "close": "Close",
+          "value": "Value",
+          "valueCopied": "Value copied",
+          "type": "Type",
+          "title": "Title",
+          "openTheBarcode": "Open the barcode",
+          "foldersDidntLoad": "Folders didn't load, so this barcode is saved without one.",
+          "couldntReachQrdx": "Couldn't reach QRdx. Check your connection and try again.",
+          "fixTheHighlightedInputTo": "Fix the highlighted input to save.",
+          "saveBarcode": "Save barcode",
+          "saving": "Saving...",
+          "createAnother": "Create another",
+          "done": "Done",
+          "closeWithoutSaving": "Close without saving?",
+          "thisBarcodeIsntSavedYet": "This barcode isn't saved yet, so what you entered will be lost.",
+          "keepEditing": "Keep editing",
+          "discard": "Discard"
         },
         "barcodesHeader": {
           "barcodes": "Barcodes:",
@@ -7865,6 +7990,7 @@
         "newDynamicQrCode": "New dynamic QR code",
         "newLandingPage": "New landing page",
         "newForm": "New form",
+        "newBarcode": "New barcode",
         "importCodesFromACsv": "Import codes from a CSV file",
         "inviteATeammate": "Invite a teammate",
         "connectADomain": "Connect a domain",
@@ -7875,6 +8001,7 @@
         "dynamicQrCode": "Dynamic QR code",
         "landingPage": "Landing page",
         "form": "Form",
+        "barcode": "Barcode",
         "importCodes": "Import codes",
         "openTheEditor": "Open the editor",
         "newDynamicQrCode": "New dynamic QR code",
@@ -7897,7 +8024,19 @@
         "new": "New",
         "whatsNew": "What's new",
         "newFeaturesAndFixesIn": "New features and fixes in QRdx.",
-        "seeAllUpdates": "See all updates"
+        "seeAllUpdates": "See all updates",
+        "newFeatures": "New features",
+        "dismissTitle": "Dismiss {title}",
+        "previousUpdate": "Previous update",
+        "nextUpdate": "Next update",
+        "positionOfTotal": "{position, number} of {total, number}",
+        "readOnTheChangelog": "Read on the changelog",
+        "tryIt": "Try it",
+        "close": "Close"
+      },
+      "spotlight": {
+        "new": "New",
+        "gotIt": "Got it"
       }
     },
     "workspaces": {

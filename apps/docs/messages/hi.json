@@ -4370,6 +4370,110 @@
         "moreFrameOptions": "फ़्रेम के और विकल्प"
       }
     },
+    "partInline": {
+      "parts": {
+        "eyes": {
+          "edit": "आइज़ बदलें",
+          "options": "आइज़ के विकल्प",
+          "random": "रैंडम आइज़",
+          "more": "आइज़ के और विकल्प"
+        },
+        "dots": {
+          "edit": "डॉट्स बदलें",
+          "options": "डॉट के विकल्प",
+          "random": "रैंडम डॉट्स",
+          "more": "डॉट के और विकल्प"
+        },
+        "logo": {
+          "edit": "लोगो बदलें",
+          "options": "लोगो के विकल्प",
+          "random": "रैंडम लोगो",
+          "more": "लोगो के और विकल्प"
+        },
+        "background": {
+          "edit": "बैकग्राउंड बदलें",
+          "options": "बैकग्राउंड के विकल्प",
+          "random": "रैंडम बैकग्राउंड",
+          "more": "बैकग्राउंड के और विकल्प",
+          "editShape": "कोड का आकार बदलें"
+        },
+        "frame": {
+          "edit": "फ़्रेम बदलें",
+          "options": "फ़्रेम के विकल्प",
+          "random": "रैंडम फ़्रेम",
+          "more": "फ़्रेम के और विकल्प"
+        }
+      },
+      "items": {
+        "outerShape": "बाहरी शेप",
+        "centerShape": "बीच की शेप",
+        "eyeColor": "आइज़ का रंग",
+        "centerColor": "बीच का रंग",
+        "pattern": "पैटर्न",
+        "dotColor": "डॉट का रंग",
+        "dotSize": "डॉट का साइज़",
+        "logo": "लोगो",
+        "quickIcons": "क्विक आइकन",
+        "logoSize": "लोगो का साइज़",
+        "hideLogo": "लोगो छिपाएँ",
+        "backgroundColor": "बैकग्राउंड का रंग",
+        "padding": "पैडिंग",
+        "frameStyle": "फ़्रेम स्टाइल",
+        "frameColor": "फ़्रेम का रंग",
+        "whichEyes": "कौन सी आँखें",
+        "allEyes": "सभी आँखें",
+        "thisEye": "यह आँख",
+        "thisEyesColor": "इस आँख का रंग",
+        "thisEyesCenterColor": "इस आँख के बीच का रंग",
+        "shapesChangeAllThreeEyes": "आकार बदलने से तीनों आँखें बदलती हैं।",
+        "sameAsTheOthers": "बाकी जैसा ही",
+        "eyesWithTheirOwnColor": "जिन आँखों का अपना रंग है, वे उसे रखती हैं। किसी एक को बदलने के लिए \"यह आँख\" चुनें।",
+        "logoShapeAndPlate": "लोगो का आकार और प्लेट",
+        "clearSpace": "खाली जगह",
+        "content": "कंटेंट",
+        "codeShape": "कोड का आकार",
+        "errorCorrection": "एरर करेक्शन"
+      },
+      "random": "रैंडम",
+      "moreOptions": "और विकल्प",
+      "sheet": {
+        "changesShowOnTheCode": "आप जो बदलाव करते हैं, वे कोड पर तुरंत दिखते हैं। पूरा होने पर “पूरा हुआ” दबाएँ, बदलाव सेव रहेंगे।",
+        "done": "पूरा हुआ"
+      },
+      "content": {
+        "link": "लिंक",
+        "text": "टेक्स्ट",
+        "theCodeKeepsItsContent": "जब तक यह सही नहीं होता, कोड में पुराना कंटेंट ही रहेगा।",
+        "scansOpenHost": "स्कैन करने पर {host} खुलेगा",
+        "textHint": "स्कैन करने पर कोड यह टेक्स्ट दिखाता है।",
+        "editedInTheContentTab": "इस तरह के कंटेंट का अपना फ़ॉर्म कंटेंट टैब में है।",
+        "openTheContentTab": "कंटेंट टैब खोलें"
+      },
+      "codeShape": {
+        "codeShape": "कोड का आकार",
+        "names": {
+          "square": "चौकोर",
+          "circle": "गोल",
+          "heart": "दिल"
+        },
+        "aCircleOrHeartTakes": "गोल या दिल का आकार फ़्रेम की जगह लेता है।"
+      },
+      "errorCorrection": {
+        "theLogoRaisesItToLevel": "लोगो की वजह से अभी यह लेवल {level} पर है।"
+      },
+      "handles": {
+        "moveLogo": "लोगो हिलाएँ",
+        "dragOrUseTheArrowKeys": "इसे ड्रैग करें या ऐरो कीज़ इस्तेमाल करें। Shift दबाने पर यह और आगे खिसकता है। Delete दबाने पर छिप जाता है।",
+        "logoSize": "लोगो का साइज़",
+        "percentOfTheCode": "कोड का {value, number}%",
+        "padding": "पैडिंग",
+        "modules": "{count, plural, one {# मॉड्यूल} other {# मॉड्यूल}}",
+        "dragToChangeThePadding": "पैडिंग बदलने के लिए अंदर या बाहर की ओर ड्रैग करें"
+      },
+      "drop": {
+        "dropToUseAsLogo": "लोगो के रूप में इस्तेमाल करने के लिए यहाँ छोड़ें"
+      }
+    },
     "gradientPicker": {
       "pickASolidColorA": "{label} के लिए सॉलिड रंग, ग्रेडिएंट या स्वैच चुनें।"
     },
@@ -4619,6 +4723,7 @@
         "actions": "एक्शन",
         "themeAppearance": "थीम और लुक",
         "patternCustomization": "पैटर्न कस्टमाइज़ेशन",
+        "preview": "प्रीव्यू",
         "help": "मदद"
       },
       "shortcuts": {
@@ -4640,7 +4745,11 @@
         "cycleCornerEyePatterns": "कॉर्नर आई पैटर्न बदलें",
         "cycleInternalEyePatterns": "इंटरनल आई पैटर्न बदलें",
         "cycleFrames": "फ़्रेम बदलें",
-        "showThisShortcutsDialog": "शॉर्टकट की यह विंडो दिखाएँ"
+        "showThisShortcutsDialog": "शॉर्टकट की यह विंडो दिखाएँ",
+        "editAPartOfTheCode": "पॉइंटर के नीचे या फ़ोकस वाले कोड हिस्से को एडिट करें",
+        "randomLookForThatPart": "उस हिस्से का रैंडम लुक",
+        "hideTheFocusedLogo": "फ़ोकस वाला लोगो छिपाएँ",
+        "moveTheLogoWhileEditing": "एडिट करते समय लोगो को खिसकाएँ"
       }
     },
     "soundSwitch": {
@@ -5272,7 +5381,8 @@
           "afterYouSignInPasskeyOrApp": "साइन इन करने के बाद QRdx आपसे आपकी passkey या आपके authenticator app का कोड माँगता है। बैकअप कोड भी चलता है।",
           "afterYouSignInPasskey": "साइन इन करने के बाद QRdx आपसे आपकी passkey माँगता है। बैकअप कोड भी चलता है।",
           "afterYouSignInApp": "साइन इन करने के बाद QRdx आपसे आपके authenticator app का कोड माँगता है। बैकअप कोड भी चलता है।",
-          "afterYouSignInQrdx2": "साइन इन करने के बाद QRdx बैकअप कोड मांगता है।"
+          "afterYouSignInQrdx2": "साइन इन करने के बाद QRdx बैकअप कोड मांगता है।",
+          "passkeySpotlight": "अब आप authenticator कोड की जगह passkey को अपना दूसरा स्टेप बना सकते हैं।"
         },
         "twoFactorSetupDialog": {
           "stepStepnumberOfLength": "स्टेप {stepNumber, number} / {length, number}",
@@ -5907,7 +6017,6 @@
           "youHaveViewOnlyAccess": "आपके पास सिर्फ़ देखने का एक्सेस है: इस बारकोड को डाउनलोड कर सकते हैं, पर बदल नहीं सकते।",
           "planBarcodesAreStaticThey": "{plan} प्लान। बारकोड स्टैटिक होते हैं: ये कभी एक्सपायर नहीं होते और हर प्लान पर काम करते हैं।",
           "noBarcodesYet": "अभी कोई बारकोड नहीं",
-          "newBarcode": "नया बारकोड",
           "openTheFreeGenerator": "फ़्री जनरेटर खोलें",
           "barcodesInTheTrashDont": "ट्रैश में रखे बारकोड आपके प्लान की गिनती में नहीं आते। उन्हें रिस्टोर करें या हमेशा के लिए डिलीट कर दें।",
           "showAllBarcodes": "सभी बारकोड दिखाएँ",
@@ -5922,13 +6031,6 @@
           "noBarcodesMatchQ": "\"{q}\" से कोई बारकोड नहीं मिला।",
           "noBarcodesHereYet": "यहाँ अभी कोई बारकोड नहीं है।",
           "noBarcodesMatchTheseFilters": "इन फ़िल्टर से कोई बारकोड नहीं मिला।"
-        },
-        "new": {
-          "page": {
-            "allBarcodes": "सभी बारकोड",
-            "newBarcode": "नया बारकोड",
-            "pickTheTypeEnterThe": "टाइप चुनें, नंबर या टेक्स्ट डालें और सेव करें, ताकि बाद में उसे फिर से एडिट और डाउनलोड कर सकें।"
-          }
         },
         "barcodeActions": {
           "duplicate": "डुप्लिकेट करें",
@@ -5947,11 +6049,34 @@
           "fixTheHighlightedInputTo": "सेव करने के लिए हाइलाइट किया गया इनपुट ठीक करें।",
           "unsavedChanges": "बदलाव सेव नहीं हुए",
           "allChangesSaved": "सभी बदलाव सेव हो गए",
-          "notSavedYet": "अभी सेव नहीं हुआ",
           "saveChanges": "बदलाव सेव करें",
-          "saveBarcode": "बारकोड सेव करें",
           "couldntSaveTheBarcode": "बारकोड सेव नहीं हो सका",
           "barcodeSaved": "बारकोड सेव हो गया"
+        },
+        "barcodeBuilder": {
+          "newBarcode": "नया बारकोड",
+          "pickTheTypeEnterThe": "टाइप चुनें, नंबर या टेक्स्ट डालें और सेव करें, ताकि बाद में उसे फिर से एडिट और डाउनलोड कर सकें।",
+          "yourBarcodeIsSaved": "आपका बारकोड सेव हो गया",
+          "downloadItNowOrOpen": "इसे अभी डाउनलोड करें, या बाद में बारकोड से खोलकर बदलाव करें और फिर डाउनलोड करें।",
+          "design": "डिज़ाइन",
+          "back": "वापस",
+          "close": "बंद करें",
+          "value": "वैल्यू",
+          "valueCopied": "वैल्यू कॉपी हो गई",
+          "type": "टाइप",
+          "title": "शीर्षक",
+          "openTheBarcode": "बारकोड खोलें",
+          "foldersDidntLoad": "फ़ोल्डर लोड नहीं हुए, इसलिए यह बारकोड बिना फ़ोल्डर के सेव हुआ है।",
+          "couldntReachQrdx": "QRdx तक नहीं पहुँच सके। अपना कनेक्शन जाँचें और फिर कोशिश करें।",
+          "fixTheHighlightedInputTo": "सेव करने के लिए हाइलाइट किया गया इनपुट ठीक करें।",
+          "saveBarcode": "बारकोड सेव करें",
+          "saving": "सेव हो रहा है...",
+          "createAnother": "एक और बनाएँ",
+          "done": "हो गया",
+          "closeWithoutSaving": "बिना सेव किए बंद करें?",
+          "thisBarcodeIsntSavedYet": "यह बारकोड अभी सेव नहीं हुआ है, इसलिए आपने जो डाला है वह खो जाएगा।",
+          "keepEditing": "एडिट करते रहें",
+          "discard": "छोड़ दें"
         },
         "barcodesHeader": {
           "barcodes": "बारकोड:",
@@ -7865,6 +7990,7 @@
         "newDynamicQrCode": "नया डायनेमिक QR कोड",
         "newLandingPage": "नया लैंडिंग पेज",
         "newForm": "नया फ़ॉर्म",
+        "newBarcode": "नया बारकोड",
         "importCodesFromACsv": "CSV फ़ाइल से कोड इंपोर्ट करें",
         "inviteATeammate": "टीममेट को इनवाइट करें",
         "connectADomain": "डोमेन कनेक्ट करें",
@@ -7875,6 +8001,7 @@
         "dynamicQrCode": "डायनेमिक QR कोड",
         "landingPage": "लैंडिंग पेज",
         "form": "फ़ॉर्म",
+        "barcode": "बारकोड",
         "importCodes": "कोड इंपोर्ट करें",
         "openTheEditor": "एडिटर खोलें",
         "newDynamicQrCode": "नया डायनेमिक QR कोड",
@@ -7897,7 +8024,19 @@
         "new": "नया",
         "whatsNew": "नया क्या है",
         "newFeaturesAndFixesIn": "QRdx के नए फ़ीचर और फ़िक्स।",
-        "seeAllUpdates": "सभी अपडेट देखें"
+        "seeAllUpdates": "सभी अपडेट देखें",
+        "newFeatures": "नए फ़ीचर",
+        "dismissTitle": "{title} बंद करें",
+        "previousUpdate": "पिछला अपडेट",
+        "nextUpdate": "अगला अपडेट",
+        "positionOfTotal": "{total, number} में से {position, number}",
+        "readOnTheChangelog": "चेंजलॉग में पढ़ें",
+        "tryIt": "आज़माएँ",
+        "close": "बंद करें"
+      },
+      "spotlight": {
+        "new": "नया",
+        "gotIt": "समझ गया"
       }
     },
     "workspaces": {

@@ -418,7 +418,8 @@ export function AccountSourcePicker({
               <ArrowDown2 aria-hidden className="size-3.5" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="start">
+          {/* Above the code builder's dialog (z-[99]) too */}
+          <DropdownMenuContent align="start" className="z-[120]">
             <DropdownMenuLabel className="text-muted-foreground text-xs font-normal">
               {t("yourAccounts")}
             </DropdownMenuLabel>

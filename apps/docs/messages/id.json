@@ -4370,6 +4370,110 @@
         "moreFrameOptions": "Opsi bingkai lainnya"
       }
     },
+    "partInline": {
+      "parts": {
+        "eyes": {
+          "edit": "Edit mata",
+          "options": "Opsi mata",
+          "random": "Mata acak",
+          "more": "Opsi mata lainnya"
+        },
+        "dots": {
+          "edit": "Edit titik",
+          "options": "Opsi titik",
+          "random": "Titik acak",
+          "more": "Opsi titik lainnya"
+        },
+        "logo": {
+          "edit": "Edit logo",
+          "options": "Opsi logo",
+          "random": "Logo acak",
+          "more": "Opsi logo lainnya"
+        },
+        "background": {
+          "edit": "Edit latar",
+          "options": "Opsi latar",
+          "random": "Latar acak",
+          "more": "Opsi latar lainnya",
+          "editShape": "Ubah bentuk kode"
+        },
+        "frame": {
+          "edit": "Edit bingkai",
+          "options": "Opsi bingkai",
+          "random": "Bingkai acak",
+          "more": "Opsi bingkai lainnya"
+        }
+      },
+      "items": {
+        "outerShape": "Bentuk luar",
+        "centerShape": "Bentuk tengah",
+        "eyeColor": "Warna mata",
+        "centerColor": "Warna tengah",
+        "pattern": "Pola",
+        "dotColor": "Warna titik",
+        "dotSize": "Ukuran titik",
+        "logo": "Logo",
+        "quickIcons": "Ikon cepat",
+        "logoSize": "Ukuran logo",
+        "hideLogo": "Sembunyikan logo",
+        "backgroundColor": "Warna latar",
+        "padding": "Padding",
+        "frameStyle": "Gaya bingkai",
+        "frameColor": "Warna bingkai",
+        "whichEyes": "Mata yang mana",
+        "allEyes": "Semua mata",
+        "thisEye": "Mata ini",
+        "thisEyesColor": "Warna mata ini",
+        "thisEyesCenterColor": "Warna tengah mata ini",
+        "shapesChangeAllThreeEyes": "Bentuk mengubah ketiga mata.",
+        "sameAsTheOthers": "Sama seperti lainnya",
+        "eyesWithTheirOwnColor": "Mata dengan warna sendiri tetap mempertahankannya. Pilih Mata ini untuk mengubah salah satunya.",
+        "logoShapeAndPlate": "Bentuk dan alas logo",
+        "clearSpace": "Ruang kosong",
+        "content": "Konten",
+        "codeShape": "Bentuk kode",
+        "errorCorrection": "Koreksi kesalahan"
+      },
+      "random": "Acak",
+      "moreOptions": "Opsi lainnya",
+      "sheet": {
+        "changesShowOnTheCode": "Perubahan langsung tampil pada kode saat Anda membuatnya. Selesai akan menyimpannya.",
+        "done": "Selesai"
+      },
+      "content": {
+        "link": "Tautan",
+        "text": "Teks",
+        "theCodeKeepsItsContent": "Kode mempertahankan kontennya sampai input ini valid.",
+        "scansOpenHost": "Pemindaian membuka {host}",
+        "textHint": "Kode menampilkan teks ini saat dipindai.",
+        "editedInTheContentTab": "Jenis konten ini memiliki formulirnya sendiri di tab Konten.",
+        "openTheContentTab": "Buka tab Konten"
+      },
+      "codeShape": {
+        "codeShape": "Bentuk kode",
+        "names": {
+          "square": "Persegi",
+          "circle": "Lingkaran",
+          "heart": "Hati"
+        },
+        "aCircleOrHeartTakes": "Lingkaran atau hati menggantikan bingkai."
+      },
+      "errorCorrection": {
+        "theLogoRaisesItToLevel": "Untuk saat ini, logo menaikkannya ke level {level}."
+      },
+      "handles": {
+        "moveLogo": "Pindahkan logo",
+        "dragOrUseTheArrowKeys": "Seret, atau gunakan tombol panah. Shift menggesernya lebih jauh. Delete menyembunyikannya.",
+        "logoSize": "Ukuran logo",
+        "percentOfTheCode": "{value, number}% dari kode",
+        "padding": "Padding",
+        "modules": "{count, plural, other {# modul}}",
+        "dragToChangeThePadding": "Seret ke dalam atau ke luar untuk mengubah padding"
+      },
+      "drop": {
+        "dropToUseAsLogo": "Lepas untuk dipakai sebagai logo"
+      }
+    },
     "gradientPicker": {
       "pickASolidColorA": "Pilih warna solid, gradien, atau sampel warna untuk {label}."
     },
@@ -4619,6 +4723,7 @@
         "actions": "Tindakan",
         "themeAppearance": "Tema & Tampilan",
         "patternCustomization": "Kustomisasi Pola",
+        "preview": "Pratinjau",
         "help": "Bantuan"
       },
       "shortcuts": {
@@ -4640,7 +4745,11 @@
         "cycleCornerEyePatterns": "Ganti pola mata sudut",
         "cycleInternalEyePatterns": "Ganti pola mata dalam",
         "cycleFrames": "Ganti bingkai",
-        "showThisShortcutsDialog": "Tampilkan dialog pintasan ini"
+        "showThisShortcutsDialog": "Tampilkan dialog pintasan ini",
+        "editAPartOfTheCode": "Edit bagian kode yang berada di bawah penunjuk atau yang sedang difokuskan",
+        "randomLookForThatPart": "Tampilan acak untuk bagian itu",
+        "hideTheFocusedLogo": "Sembunyikan logo yang difokuskan",
+        "moveTheLogoWhileEditing": "Geser logo saat sedang diedit"
       }
     },
     "soundSwitch": {
@@ -5272,7 +5381,8 @@
           "afterYouSignInPasskeyOrApp": "Setelah Anda masuk, QRdx akan meminta passkey atau kode dari aplikasi autentikator Anda. Kode cadangan juga dapat digunakan.",
           "afterYouSignInPasskey": "Setelah Anda masuk, QRdx akan meminta passkey Anda. Kode cadangan juga dapat digunakan.",
           "afterYouSignInApp": "Setelah Anda masuk, QRdx akan meminta kode dari aplikasi autentikator Anda. Kode cadangan juga dapat digunakan.",
-          "afterYouSignInQrdx2": "Setelah Anda masuk, QRdx meminta kode cadangan."
+          "afterYouSignInQrdx2": "Setelah Anda masuk, QRdx meminta kode cadangan.",
+          "passkeySpotlight": "Sekarang passkey dapat menjadi langkah kedua Anda, sebagai pengganti kode autentikator."
         },
         "twoFactorSetupDialog": {
           "stepStepnumberOfLength": "Langkah {stepNumber, number} dari {length, number}",
@@ -5907,7 +6017,6 @@
           "youHaveViewOnlyAccess": "Anda hanya memiliki akses lihat: Anda dapat mengunduh barcode ini, tetapi tidak dapat mengubahnya.",
           "planBarcodesAreStaticThey": "Paket {plan}. Barcode bersifat statis: tidak pernah kedaluwarsa dan berfungsi di semua paket.",
           "noBarcodesYet": "Belum ada barcode",
-          "newBarcode": "Barcode baru",
           "openTheFreeGenerator": "Buka generator gratis",
           "barcodesInTheTrashDont": "Barcode di tempat sampah tidak dihitung dalam paket Anda. Pulihkan, atau hapus secara permanen.",
           "showAllBarcodes": "Tampilkan semua barcode",
@@ -5922,13 +6031,6 @@
           "noBarcodesMatchQ": "Tidak ada barcode yang cocok dengan \"{q}\".",
           "noBarcodesHereYet": "Belum ada barcode di sini.",
           "noBarcodesMatchTheseFilters": "Tidak ada barcode yang cocok dengan filter ini."
-        },
-        "new": {
-          "page": {
-            "allBarcodes": "Semua barcode",
-            "newBarcode": "Barcode baru",
-            "pickTheTypeEnterThe": "Pilih jenisnya, masukkan angka atau teks, lalu simpan agar bisa diedit dan diunduh lagi nanti."
-          }
         },
         "barcodeActions": {
           "duplicate": "Duplikat",
@@ -5947,11 +6049,34 @@
           "fixTheHighlightedInputTo": "Perbaiki input yang disorot untuk menyimpan.",
           "unsavedChanges": "Perubahan belum disimpan",
           "allChangesSaved": "Semua perubahan tersimpan",
-          "notSavedYet": "Belum disimpan",
           "saveChanges": "Simpan perubahan",
-          "saveBarcode": "Simpan barcode",
           "couldntSaveTheBarcode": "Barcode tidak dapat disimpan",
           "barcodeSaved": "Barcode tersimpan"
+        },
+        "barcodeBuilder": {
+          "newBarcode": "Barcode baru",
+          "pickTheTypeEnterThe": "Pilih jenisnya, masukkan angka atau teks, lalu simpan agar bisa diedit dan diunduh lagi nanti.",
+          "yourBarcodeIsSaved": "Barcode Anda tersimpan",
+          "downloadItNowOrOpen": "Unduh sekarang, atau buka nanti dari Barcode untuk mengedit dan mengunduh lagi.",
+          "design": "Desain",
+          "back": "Kembali",
+          "close": "Tutup",
+          "value": "Nilai",
+          "valueCopied": "Nilai disalin",
+          "type": "Jenis",
+          "title": "Judul",
+          "openTheBarcode": "Buka barcode",
+          "foldersDidntLoad": "Folder gagal dimuat, jadi barcode ini disimpan tanpa folder.",
+          "couldntReachQrdx": "Tidak dapat terhubung ke QRdx. Periksa koneksi Anda dan coba lagi.",
+          "fixTheHighlightedInputTo": "Perbaiki input yang disorot untuk menyimpan.",
+          "saveBarcode": "Simpan barcode",
+          "saving": "Menyimpan...",
+          "createAnother": "Buat lagi",
+          "done": "Selesai",
+          "closeWithoutSaving": "Tutup tanpa menyimpan?",
+          "thisBarcodeIsntSavedYet": "Barcode ini belum disimpan, jadi data yang Anda masukkan akan hilang.",
+          "keepEditing": "Lanjut mengedit",
+          "discard": "Buang"
         },
         "barcodesHeader": {
           "barcodes": "Barcode:",
@@ -7865,6 +7990,7 @@
         "newDynamicQrCode": "Kode QR dinamis baru",
         "newLandingPage": "Landing page baru",
         "newForm": "Formulir baru",
+        "newBarcode": "Barcode baru",
         "importCodesFromACsv": "Impor kode dari file CSV",
         "inviteATeammate": "Undang anggota tim",
         "connectADomain": "Hubungkan domain",
@@ -7875,6 +8001,7 @@
         "dynamicQrCode": "Kode QR dinamis",
         "landingPage": "Landing page",
         "form": "Formulir",
+        "barcode": "Barcode",
         "importCodes": "Impor kode",
         "openTheEditor": "Buka editor",
         "newDynamicQrCode": "Kode QR dinamis baru",
@@ -7897,7 +8024,19 @@
         "new": "Baru",
         "whatsNew": "Yang baru",
         "newFeaturesAndFixesIn": "Fitur baru dan perbaikan di QRdx.",
-        "seeAllUpdates": "Lihat semua pembaruan"
+        "seeAllUpdates": "Lihat semua pembaruan",
+        "newFeatures": "Fitur baru",
+        "dismissTitle": "Tutup {title}",
+        "previousUpdate": "Pembaruan sebelumnya",
+        "nextUpdate": "Pembaruan berikutnya",
+        "positionOfTotal": "{position, number} dari {total, number}",
+        "readOnTheChangelog": "Baca di changelog",
+        "tryIt": "Coba",
+        "close": "Tutup"
+      },
+      "spotlight": {
+        "new": "Baru",
+        "gotIt": "Mengerti"
       }
     },
     "workspaces": {

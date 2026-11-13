@@ -13,6 +13,7 @@ import { cn } from "@repo/design-system/lib/utils";
 import { Setting4 } from "iconsax-reactjs";
 import { useTranslations } from "next-intl";
 import { useId, useRef, useState } from "react";
+import { useHideFeaturebaseLauncher } from "@/lib/featurebase-launcher";
 import { FrameTextSize } from "../control-sections/frame-fields";
 import {
   charactersLeft,
@@ -58,6 +59,8 @@ export function FrameTextSheet({
   onMoreOptions: () => void;
 }) {
   const t = useTranslations("editor.frameInline.frameTextSheet");
+  // Featurebase's launcher would sit over Done
+  useHideFeaturebaseLauncher();
   const inputId = useId();
   const counterId = useId();
   const inputRef = useRef<HTMLInputElement>(null);

@@ -4370,6 +4370,110 @@
         "moreFrameOptions": "프레임 옵션 더 보기"
       }
     },
+    "partInline": {
+      "parts": {
+        "eyes": {
+          "edit": "눈 편집",
+          "options": "눈 옵션",
+          "random": "눈 무작위",
+          "more": "눈 옵션 더 보기"
+        },
+        "dots": {
+          "edit": "점 편집",
+          "options": "점 옵션",
+          "random": "점 무작위",
+          "more": "점 옵션 더 보기"
+        },
+        "logo": {
+          "edit": "로고 편집",
+          "options": "로고 옵션",
+          "random": "로고 무작위",
+          "more": "로고 옵션 더 보기"
+        },
+        "background": {
+          "edit": "배경 편집",
+          "options": "배경 옵션",
+          "random": "배경 무작위",
+          "more": "배경 옵션 더 보기",
+          "editShape": "코드 모양 편집"
+        },
+        "frame": {
+          "edit": "프레임 편집",
+          "options": "프레임 옵션",
+          "random": "프레임 무작위",
+          "more": "프레임 옵션 더 보기"
+        }
+      },
+      "items": {
+        "outerShape": "바깥 모양",
+        "centerShape": "중앙 모양",
+        "eyeColor": "눈 색상",
+        "centerColor": "중앙 색상",
+        "pattern": "패턴",
+        "dotColor": "점 색상",
+        "dotSize": "점 크기",
+        "logo": "로고",
+        "quickIcons": "빠른 아이콘",
+        "logoSize": "로고 크기",
+        "hideLogo": "로고 숨기기",
+        "backgroundColor": "배경 색상",
+        "padding": "여백",
+        "frameStyle": "프레임 스타일",
+        "frameColor": "프레임 색상",
+        "whichEyes": "적용할 눈 선택",
+        "allEyes": "모든 눈",
+        "thisEye": "이 눈만",
+        "thisEyesColor": "이 눈의 색상",
+        "thisEyesCenterColor": "이 눈의 중앙 색상",
+        "shapesChangeAllThreeEyes": "모양은 세 눈 모두에 적용돼요.",
+        "sameAsTheOthers": "다른 눈과 동일",
+        "eyesWithTheirOwnColor": "고유한 색상이 있는 눈은 그 색상을 유지해요. 하나만 바꾸려면 '이 눈만'을 선택하세요.",
+        "logoShapeAndPlate": "로고 모양 및 배경판",
+        "clearSpace": "여백",
+        "content": "콘텐츠",
+        "codeShape": "코드 모양",
+        "errorCorrection": "오류 정정"
+      },
+      "random": "무작위",
+      "moreOptions": "옵션 더 보기",
+      "sheet": {
+        "changesShowOnTheCode": "변경 사항은 적용하는 즉시 코드에 표시돼요. 완료를 누르면 그대로 유지돼요.",
+        "done": "완료"
+      },
+      "content": {
+        "link": "링크",
+        "text": "텍스트",
+        "theCodeKeepsItsContent": "올바른 값이 입력될 때까지 코드는 기존 콘텐츠를 유지해요.",
+        "scansOpenHost": "스캔하면 {host}(으)로 이동해요",
+        "textHint": "스캔하면 코드에 이 텍스트가 표시돼요.",
+        "editedInTheContentTab": "이 유형의 콘텐츠는 콘텐츠 탭에 전용 양식이 있어요.",
+        "openTheContentTab": "콘텐츠 탭 열기"
+      },
+      "codeShape": {
+        "codeShape": "코드 모양",
+        "names": {
+          "square": "사각형",
+          "circle": "원형",
+          "heart": "하트"
+        },
+        "aCircleOrHeartTakes": "원형이나 하트 모양은 프레임을 대체해요."
+      },
+      "errorCorrection": {
+        "theLogoRaisesItToLevel": "로고 때문에 지금은 레벨 {level}(으)로 높아져요."
+      },
+      "handles": {
+        "moveLogo": "로고 이동",
+        "dragOrUseTheArrowKeys": "드래그하거나 방향키를 사용하세요. Shift 키를 누르면 더 멀리 이동해요. Delete 키를 누르면 숨겨져요.",
+        "logoSize": "로고 크기",
+        "percentOfTheCode": "코드의 {value, number}%",
+        "padding": "여백",
+        "modules": "{count, plural, other {모듈 #개}}",
+        "dragToChangeThePadding": "안쪽이나 바깥쪽으로 드래그해 여백을 조절해요"
+      },
+      "drop": {
+        "dropToUseAsLogo": "여기에 놓아 로고로 사용"
+      }
+    },
     "gradientPicker": {
       "pickASolidColorA": "{label}에 사용할 단색, 그라데이션 또는 견본을 선택하세요."
     },
@@ -4619,6 +4723,7 @@
         "actions": "작업",
         "themeAppearance": "테마 및 외관",
         "patternCustomization": "패턴 사용자 지정",
+        "preview": "미리보기",
         "help": "도움말"
       },
       "shortcuts": {
@@ -4640,7 +4745,11 @@
         "cycleCornerEyePatterns": "모서리 눈 패턴 순환",
         "cycleInternalEyePatterns": "내부 눈 패턴 순환",
         "cycleFrames": "프레임 순환",
-        "showThisShortcutsDialog": "단축키 대화상자 표시"
+        "showThisShortcutsDialog": "단축키 대화상자 표시",
+        "editAPartOfTheCode": "포인터가 가리키거나 포커스된 QR 코드 부분 편집",
+        "randomLookForThatPart": "해당 부분을 무작위 스타일로 변경",
+        "hideTheFocusedLogo": "포커스된 로고 숨기기",
+        "moveTheLogoWhileEditing": "편집 중에 로고 이동하기"
       }
     },
     "soundSwitch": {
@@ -5272,7 +5381,8 @@
           "afterYouSignInPasskeyOrApp": "로그인하면 QRdx가 패스키 또는 인증 앱의 코드를 요청해요. 백업 코드도 사용할 수 있어요.",
           "afterYouSignInPasskey": "로그인하면 QRdx가 패스키를 요청해요. 백업 코드도 사용할 수 있어요.",
           "afterYouSignInApp": "로그인하면 QRdx가 인증 앱의 코드를 요청해요. 백업 코드도 사용할 수 있어요.",
-          "afterYouSignInQrdx2": "로그인하면 QRdx에서 백업 코드를 요청해요."
+          "afterYouSignInQrdx2": "로그인하면 QRdx에서 백업 코드를 요청해요.",
+          "passkeySpotlight": "이제 인증 앱 코드 대신 패스키를 두 번째 인증 단계로 사용할 수 있어요."
         },
         "twoFactorSetupDialog": {
           "stepStepnumberOfLength": "{length, number}단계 중 {stepNumber, number}단계",
@@ -5907,7 +6017,6 @@
           "youHaveViewOnlyAccess": "보기 전용 권한이에요. 이 바코드를 다운로드할 수는 있지만 변경할 수는 없어요.",
           "planBarcodesAreStaticThey": "{plan} 플랜이에요. 바코드는 정적이라 만료되지 않으며 모든 플랜에서 사용할 수 있어요.",
           "noBarcodesYet": "아직 바코드가 없어요",
-          "newBarcode": "새 바코드",
           "openTheFreeGenerator": "무료 생성기 열기",
           "barcodesInTheTrashDont": "휴지통에 있는 바코드는 플랜 사용량에 포함되지 않아요. 복원하거나 완전히 삭제하세요.",
           "showAllBarcodes": "모든 바코드 보기",
@@ -5922,13 +6031,6 @@
           "noBarcodesMatchQ": "\"{q}\"와(과) 일치하는 바코드가 없어요.",
           "noBarcodesHereYet": "아직 바코드가 없어요.",
           "noBarcodesMatchTheseFilters": "이 필터와 일치하는 바코드가 없어요."
-        },
-        "new": {
-          "page": {
-            "allBarcodes": "모든 바코드",
-            "newBarcode": "새 바코드",
-            "pickTheTypeEnterThe": "유형을 고르고 숫자나 텍스트를 입력한 뒤 저장하면 나중에 다시 편집하고 다운로드할 수 있어요."
-          }
         },
         "barcodeActions": {
           "duplicate": "복제",
@@ -5947,11 +6049,34 @@
           "fixTheHighlightedInputTo": "저장하려면 강조 표시된 입력란을 수정해 주세요.",
           "unsavedChanges": "저장하지 않은 변경 사항",
           "allChangesSaved": "모든 변경 사항 저장됨",
-          "notSavedYet": "아직 저장되지 않았어요",
           "saveChanges": "변경 사항 저장",
-          "saveBarcode": "바코드 저장",
           "couldntSaveTheBarcode": "바코드를 저장하지 못했어요",
           "barcodeSaved": "바코드를 저장했어요"
+        },
+        "barcodeBuilder": {
+          "newBarcode": "새 바코드",
+          "pickTheTypeEnterThe": "유형을 고르고 숫자나 텍스트를 입력한 뒤 저장하면 나중에 다시 편집하고 다운로드할 수 있어요.",
+          "yourBarcodeIsSaved": "바코드를 저장했어요",
+          "downloadItNowOrOpen": "지금 다운로드하거나, 나중에 바코드 메뉴에서 열어 편집하고 다시 다운로드할 수 있어요.",
+          "design": "디자인",
+          "back": "뒤로",
+          "close": "닫기",
+          "value": "값",
+          "valueCopied": "값을 복사했어요",
+          "type": "유형",
+          "title": "제목",
+          "openTheBarcode": "바코드 열기",
+          "foldersDidntLoad": "폴더를 불러오지 못해 폴더 없이 이 바코드를 저장했어요.",
+          "couldntReachQrdx": "QRdx에 연결할 수 없어요. 연결 상태를 확인한 후 다시 시도해 주세요.",
+          "fixTheHighlightedInputTo": "저장하려면 강조 표시된 입력을 수정해 주세요.",
+          "saveBarcode": "바코드 저장",
+          "saving": "저장 중...",
+          "createAnother": "하나 더 만들기",
+          "done": "완료",
+          "closeWithoutSaving": "저장하지 않고 닫을까요?",
+          "thisBarcodeIsntSavedYet": "이 바코드는 아직 저장되지 않아서 입력한 내용이 사라져요.",
+          "keepEditing": "계속 편집",
+          "discard": "버리기"
         },
         "barcodesHeader": {
           "barcodes": "바코드:",
@@ -7865,6 +7990,7 @@
         "newDynamicQrCode": "새 동적 QR 코드",
         "newLandingPage": "새 랜딩 페이지",
         "newForm": "새 양식",
+        "newBarcode": "새 바코드",
         "importCodesFromACsv": "CSV 파일에서 코드 가져오기",
         "inviteATeammate": "팀원 초대하기",
         "connectADomain": "도메인 연결하기",
@@ -7875,6 +8001,7 @@
         "dynamicQrCode": "동적 QR 코드",
         "landingPage": "랜딩 페이지",
         "form": "양식",
+        "barcode": "바코드",
         "importCodes": "코드 가져오기",
         "openTheEditor": "편집기 열기",
         "newDynamicQrCode": "새 동적 QR 코드",
@@ -7897,7 +8024,19 @@
         "new": "신규",
         "whatsNew": "새로운 소식",
         "newFeaturesAndFixesIn": "QRdx의 새로운 기능과 수정 사항이에요.",
-        "seeAllUpdates": "모든 업데이트 보기"
+        "seeAllUpdates": "모든 업데이트 보기",
+        "newFeatures": "새로운 기능",
+        "dismissTitle": "{title} 닫기",
+        "previousUpdate": "이전 업데이트",
+        "nextUpdate": "다음 업데이트",
+        "positionOfTotal": "{total, number}개 중 {position, number}번째",
+        "readOnTheChangelog": "변경 내역에서 읽어보기",
+        "tryIt": "사용해 보기",
+        "close": "닫기"
+      },
+      "spotlight": {
+        "new": "신규",
+        "gotIt": "확인했어요"
       }
     },
     "workspaces": {

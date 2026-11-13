@@ -4370,6 +4370,110 @@
         "moreFrameOptions": "Mais opções da moldura"
       }
     },
+    "partInline": {
+      "parts": {
+        "eyes": {
+          "edit": "Editar olhos",
+          "options": "Opções dos olhos",
+          "random": "Olhos aleatórios",
+          "more": "Mais opções dos olhos"
+        },
+        "dots": {
+          "edit": "Editar pontos",
+          "options": "Opções dos pontos",
+          "random": "Pontos aleatórios",
+          "more": "Mais opções dos pontos"
+        },
+        "logo": {
+          "edit": "Editar logo",
+          "options": "Opções do logo",
+          "random": "Logo aleatório",
+          "more": "Mais opções do logo"
+        },
+        "background": {
+          "edit": "Editar fundo",
+          "options": "Opções do fundo",
+          "random": "Fundo aleatório",
+          "more": "Mais opções do fundo",
+          "editShape": "Editar formato do código"
+        },
+        "frame": {
+          "edit": "Editar moldura",
+          "options": "Opções da moldura",
+          "random": "Moldura aleatória",
+          "more": "Mais opções da moldura"
+        }
+      },
+      "items": {
+        "outerShape": "Forma externa",
+        "centerShape": "Forma central",
+        "eyeColor": "Cor do olho",
+        "centerColor": "Cor do centro",
+        "pattern": "Padrão",
+        "dotColor": "Cor do ponto",
+        "dotSize": "Tamanho do ponto",
+        "logo": "Logo",
+        "quickIcons": "Ícones rápidos",
+        "logoSize": "Tamanho do logo",
+        "hideLogo": "Ocultar logo",
+        "backgroundColor": "Cor do fundo",
+        "padding": "Margem interna",
+        "frameStyle": "Estilo da moldura",
+        "frameColor": "Cor da moldura",
+        "whichEyes": "Quais olhos",
+        "allEyes": "Todos os olhos",
+        "thisEye": "Este olho",
+        "thisEyesColor": "Cor deste olho",
+        "thisEyesCenterColor": "Cor do centro deste olho",
+        "shapesChangeAllThreeEyes": "Os formatos mudam os três olhos.",
+        "sameAsTheOthers": "Igual aos outros",
+        "eyesWithTheirOwnColor": "Olhos com cor própria mantêm a cor. Escolha Este olho para mudar um deles.",
+        "logoShapeAndPlate": "Formato e base do logo",
+        "clearSpace": "Espaço livre",
+        "content": "Conteúdo",
+        "codeShape": "Formato do código",
+        "errorCorrection": "Correção de erros"
+      },
+      "random": "Aleatório",
+      "moreOptions": "Mais opções",
+      "sheet": {
+        "changesShowOnTheCode": "As alterações aparecem no código conforme você faz. Concluir as mantém.",
+        "done": "Concluir"
+      },
+      "content": {
+        "link": "Link",
+        "text": "Texto",
+        "theCodeKeepsItsContent": "O código mantém o conteúdo até que este seja válido.",
+        "scansOpenHost": "A leitura abre {host}",
+        "textHint": "O código mostra este texto quando é lido.",
+        "editedInTheContentTab": "Este tipo de conteúdo tem um formulário próprio na aba Conteúdo.",
+        "openTheContentTab": "Abrir a aba Conteúdo"
+      },
+      "codeShape": {
+        "codeShape": "Formato do código",
+        "names": {
+          "square": "Quadrado",
+          "circle": "Círculo",
+          "heart": "Coração"
+        },
+        "aCircleOrHeartTakes": "Um círculo ou coração substitui a moldura."
+      },
+      "errorCorrection": {
+        "theLogoRaisesItToLevel": "Por enquanto, o logo eleva para o nível {level}."
+      },
+      "handles": {
+        "moveLogo": "Mover logo",
+        "dragOrUseTheArrowKeys": "Arraste ou use as setas do teclado. Shift move mais longe. Delete oculta.",
+        "logoSize": "Tamanho do logo",
+        "percentOfTheCode": "{value, number}% do código",
+        "padding": "Margem",
+        "modules": "{count, plural, one {# módulo} other {# módulos}}",
+        "dragToChangeThePadding": "Arraste para dentro ou para fora para mudar a margem"
+      },
+      "drop": {
+        "dropToUseAsLogo": "Solte para usar como logo"
+      }
+    },
     "gradientPicker": {
       "pickASolidColorA": "Escolha uma cor sólida, um gradiente ou uma amostra para {label}."
     },
@@ -4619,6 +4723,7 @@
         "actions": "Ações",
         "themeAppearance": "Tema e aparência",
         "patternCustomization": "Personalização do padrão",
+        "preview": "Prévia",
         "help": "Ajuda"
       },
       "shortcuts": {
@@ -4640,7 +4745,11 @@
         "cycleCornerEyePatterns": "Alternar padrões dos olhos externos",
         "cycleInternalEyePatterns": "Alternar padrões dos olhos internos",
         "cycleFrames": "Alternar molduras",
-        "showThisShortcutsDialog": "Mostrar este diálogo de atalhos"
+        "showThisShortcutsDialog": "Mostrar este diálogo de atalhos",
+        "editAPartOfTheCode": "Editar a parte do código sob o ponteiro ou em foco",
+        "randomLookForThatPart": "Visual aleatório para essa parte",
+        "hideTheFocusedLogo": "Ocultar o logo em foco",
+        "moveTheLogoWhileEditing": "Mover o logo durante a edição"
       }
     },
     "soundSwitch": {
@@ -5272,7 +5381,8 @@
           "afterYouSignInPasskeyOrApp": "Depois de entrar, o QRdx pede sua passkey ou um código do seu app autenticador. Um código de backup também funciona.",
           "afterYouSignInPasskey": "Depois de entrar, o QRdx pede sua passkey. Um código de backup também funciona.",
           "afterYouSignInApp": "Depois de entrar, o QRdx pede um código do seu app autenticador. Um código de backup também funciona.",
-          "afterYouSignInQrdx2": "Depois que você entrar, o QRdx pede um código de backup."
+          "afterYouSignInQrdx2": "Depois que você entrar, o QRdx pede um código de backup.",
+          "passkeySpotlight": "Agora uma passkey pode ser seu segundo passo, no lugar de um código do autenticador."
         },
         "twoFactorSetupDialog": {
           "stepStepnumberOfLength": "Etapa {stepNumber, number} de {length, number}",
@@ -5907,7 +6017,6 @@
           "youHaveViewOnlyAccess": "Você tem acesso somente para visualização: pode baixar este código de barras, mas não alterá-lo.",
           "planBarcodesAreStaticThey": "Plano {plan}. Os códigos de barras são estáticos: nunca expiram e funcionam em todos os planos.",
           "noBarcodesYet": "Nenhum código de barras ainda",
-          "newBarcode": "Novo código de barras",
           "openTheFreeGenerator": "Abrir o gerador grátis",
           "barcodesInTheTrashDont": "Códigos de barras na lixeira não contam no seu plano. Restaure-os ou exclua de vez.",
           "showAllBarcodes": "Mostrar todos os códigos de barras",
@@ -5922,13 +6031,6 @@
           "noBarcodesMatchQ": "Nenhum código de barras corresponde a \"{q}\".",
           "noBarcodesHereYet": "Nenhum código de barras por aqui ainda.",
           "noBarcodesMatchTheseFilters": "Nenhum código de barras corresponde a esses filtros."
-        },
-        "new": {
-          "page": {
-            "allBarcodes": "Todos os códigos de barras",
-            "newBarcode": "Novo código de barras",
-            "pickTheTypeEnterThe": "Escolha o tipo, digite o número ou o texto e salve para editar e baixar de novo depois."
-          }
         },
         "barcodeActions": {
           "duplicate": "Duplicar",
@@ -5947,11 +6049,34 @@
           "fixTheHighlightedInputTo": "Corrija o campo destacado para salvar.",
           "unsavedChanges": "Alterações não salvas",
           "allChangesSaved": "Todas as alterações salvas",
-          "notSavedYet": "Ainda não salvo",
           "saveChanges": "Salvar alterações",
-          "saveBarcode": "Salvar código de barras",
           "couldntSaveTheBarcode": "Não foi possível salvar o código de barras",
           "barcodeSaved": "Código de barras salvo"
+        },
+        "barcodeBuilder": {
+          "newBarcode": "Novo código de barras",
+          "pickTheTypeEnterThe": "Escolha o tipo, digite o número ou o texto e salve para editar e baixar de novo depois.",
+          "yourBarcodeIsSaved": "Seu código de barras foi salvo",
+          "downloadItNowOrOpen": "Baixe agora ou abra depois em Códigos de barras para editar e baixar de novo.",
+          "design": "Design",
+          "back": "Voltar",
+          "close": "Fechar",
+          "value": "Valor",
+          "valueCopied": "Valor copiado",
+          "type": "Tipo",
+          "title": "Título",
+          "openTheBarcode": "Abrir o código de barras",
+          "foldersDidntLoad": "As pastas não carregaram, então este código de barras foi salvo sem pasta.",
+          "couldntReachQrdx": "Não foi possível acessar o QRdx. Verifique sua conexão e tente de novo.",
+          "fixTheHighlightedInputTo": "Corrija o campo destacado para salvar.",
+          "saveBarcode": "Salvar código de barras",
+          "saving": "Salvando...",
+          "createAnother": "Criar outro",
+          "done": "Concluir",
+          "closeWithoutSaving": "Fechar sem salvar?",
+          "thisBarcodeIsntSavedYet": "Este código de barras ainda não foi salvo, então o que você digitou será perdido.",
+          "keepEditing": "Continuar editando",
+          "discard": "Descartar"
         },
         "barcodesHeader": {
           "barcodes": "Códigos de barras:",
@@ -7865,6 +7990,7 @@
         "newDynamicQrCode": "Novo QR code dinâmico",
         "newLandingPage": "Nova landing page",
         "newForm": "Novo formulário",
+        "newBarcode": "Novo código de barras",
         "importCodesFromACsv": "Importar códigos de um CSV",
         "inviteATeammate": "Convidar um colega",
         "connectADomain": "Conectar um domínio",
@@ -7875,6 +8001,7 @@
         "dynamicQrCode": "QR code dinâmico",
         "landingPage": "Landing page",
         "form": "Formulário",
+        "barcode": "Código de barras",
         "importCodes": "Importar códigos",
         "openTheEditor": "Abrir o editor",
         "newDynamicQrCode": "Novo QR code dinâmico",
@@ -7897,7 +8024,19 @@
         "new": "Novo",
         "whatsNew": "Novidades",
         "newFeaturesAndFixesIn": "Novos recursos e correções no QRdx.",
-        "seeAllUpdates": "Ver todas as atualizações"
+        "seeAllUpdates": "Ver todas as atualizações",
+        "newFeatures": "Novidades",
+        "dismissTitle": "Dispensar {title}",
+        "previousUpdate": "Novidade anterior",
+        "nextUpdate": "Próxima novidade",
+        "positionOfTotal": "{position, number} de {total, number}",
+        "readOnTheChangelog": "Leia no changelog",
+        "tryIt": "Testar",
+        "close": "Fechar"
+      },
+      "spotlight": {
+        "new": "Novo",
+        "gotIt": "Entendi"
       }
     },
     "workspaces": {

@@ -4370,6 +4370,110 @@
         "moreFrameOptions": "その他のフレーム設定"
       }
     },
+    "partInline": {
+      "parts": {
+        "eyes": {
+          "edit": "目を編集",
+          "options": "目のオプション",
+          "random": "目をランダム",
+          "more": "目のその他の設定"
+        },
+        "dots": {
+          "edit": "ドットを編集",
+          "options": "ドットのオプション",
+          "random": "ドットをランダム",
+          "more": "ドットのその他の設定"
+        },
+        "logo": {
+          "edit": "ロゴを編集",
+          "options": "ロゴのオプション",
+          "random": "ロゴをランダム",
+          "more": "ロゴのその他の設定"
+        },
+        "background": {
+          "edit": "背景を編集",
+          "options": "背景のオプション",
+          "random": "背景をランダム",
+          "more": "背景のその他の設定",
+          "editShape": "コードの形を編集"
+        },
+        "frame": {
+          "edit": "フレームを編集",
+          "options": "フレームのオプション",
+          "random": "フレームをランダム",
+          "more": "フレームのその他の設定"
+        }
+      },
+      "items": {
+        "outerShape": "外側の形",
+        "centerShape": "中心の形",
+        "eyeColor": "目の色",
+        "centerColor": "中心の色",
+        "pattern": "パターン",
+        "dotColor": "ドットの色",
+        "dotSize": "ドットのサイズ",
+        "logo": "ロゴ",
+        "quickIcons": "クイックアイコン",
+        "logoSize": "ロゴのサイズ",
+        "hideLogo": "ロゴを非表示",
+        "backgroundColor": "背景色",
+        "padding": "余白",
+        "frameStyle": "フレームのスタイル",
+        "frameColor": "フレームの色",
+        "whichEyes": "対象のアイ",
+        "allEyes": "すべてのアイ",
+        "thisEye": "このアイ",
+        "thisEyesColor": "このアイの色",
+        "thisEyesCenterColor": "このアイの中心の色",
+        "shapesChangeAllThreeEyes": "形は3つのアイすべてに反映されます。",
+        "sameAsTheOthers": "他と同じ",
+        "eyesWithTheirOwnColor": "独自の色を設定したアイはその色のままです。変更するには「このアイ」を選択してください。",
+        "logoShapeAndPlate": "ロゴの形とプレート",
+        "clearSpace": "余白",
+        "content": "内容",
+        "codeShape": "コードの形",
+        "errorCorrection": "誤り訂正"
+      },
+      "random": "ランダム",
+      "moreOptions": "その他の設定",
+      "sheet": {
+        "changesShowOnTheCode": "変更は操作するとすぐにコードへ反映されます。「完了」を押すと変更が保持されます。",
+        "done": "完了"
+      },
+      "content": {
+        "link": "リンク",
+        "text": "テキスト",
+        "theCodeKeepsItsContent": "有効な内容になるまで、コードは現在の内容を保持します。",
+        "scansOpenHost": "スキャンすると{host}が開きます",
+        "textHint": "スキャンすると、このテキストが表示されます。",
+        "editedInTheContentTab": "この種類の内容には、「内容」タブに専用のフォームがあります。",
+        "openTheContentTab": "「内容」タブを開く"
+      },
+      "codeShape": {
+        "codeShape": "コードの形",
+        "names": {
+          "square": "四角",
+          "circle": "円",
+          "heart": "ハート"
+        },
+        "aCircleOrHeartTakes": "円またはハートを選ぶと、フレームの代わりになります。"
+      },
+      "errorCorrection": {
+        "theLogoRaisesItToLevel": "現在はロゴの影響でレベル{level}に引き上げられています。"
+      },
+      "handles": {
+        "moveLogo": "ロゴを移動",
+        "dragOrUseTheArrowKeys": "ドラッグするか、矢印キーで動かせます。Shiftキーを押すとさらに大きく動きます。Deleteキーで非表示になります。",
+        "logoSize": "ロゴのサイズ",
+        "percentOfTheCode": "コードの{value, number}%",
+        "padding": "余白",
+        "modules": "{count, plural, other {#モジュール}}",
+        "dragToChangeThePadding": "内側または外側にドラッグして余白を変更します"
+      },
+      "drop": {
+        "dropToUseAsLogo": "ドロップしてロゴとして使用します"
+      }
+    },
     "gradientPicker": {
       "pickASolidColorA": "{label}の単色、グラデーション、またはスウォッチを選択します。"
     },
@@ -4619,6 +4723,7 @@
         "actions": "操作",
         "themeAppearance": "テーマと外観",
         "patternCustomization": "パターンのカスタマイズ",
+        "preview": "プレビュー",
         "help": "ヘルプ"
       },
       "shortcuts": {
@@ -4640,7 +4745,11 @@
         "cycleCornerEyePatterns": "コーナーアイのパターンを切り替え",
         "cycleInternalEyePatterns": "内側アイのパターンを切り替え",
         "cycleFrames": "フレームを切り替え",
-        "showThisShortcutsDialog": "ショートカット一覧を表示"
+        "showThisShortcutsDialog": "ショートカット一覧を表示",
+        "editAPartOfTheCode": "ポインターの下またはフォーカス中のコードの部分を編集します",
+        "randomLookForThatPart": "その部分をランダムなデザインにします",
+        "hideTheFocusedLogo": "フォーカス中のロゴを非表示にします",
+        "moveTheLogoWhileEditing": "編集中のロゴを移動します"
       }
     },
     "soundSwitch": {
@@ -5272,7 +5381,8 @@
           "afterYouSignInPasskeyOrApp": "サインイン後、QRdxからパスキーまたは認証アプリのコードの入力を求められます。バックアップコードも使用できます。",
           "afterYouSignInPasskey": "サインイン後、QRdxからパスキーの入力を求められます。バックアップコードも使用できます。",
           "afterYouSignInApp": "サインイン後、QRdxから認証アプリのコードの入力を求められます。バックアップコードも使用できます。",
-          "afterYouSignInQrdx2": "サインイン後、QRdxからバックアップコードの入力を求められます。"
+          "afterYouSignInQrdx2": "サインイン後、QRdxからバックアップコードの入力を求められます。",
+          "passkeySpotlight": "認証アプリのコードの代わりに、パスキーを2段階目の認証として使えるようになりました。"
         },
         "twoFactorSetupDialog": {
           "stepStepnumberOfLength": "ステップ {stepNumber, number}/{length, number}",
@@ -5907,7 +6017,6 @@
           "youHaveViewOnlyAccess": "閲覧のみの権限です。このバーコードはダウンロードできますが、変更はできません。",
           "planBarcodesAreStaticThey": "{plan}プラン。バーコードは静的なので、期限切れになることはなく、どのプランでも使えます。",
           "noBarcodesYet": "バーコードはまだありません",
-          "newBarcode": "新規バーコード",
           "openTheFreeGenerator": "無料ジェネレーターを開く",
           "barcodesInTheTrashDont": "ゴミ箱内のバーコードはプランの対象数にカウントされません。復元するか、完全に削除してください。",
           "showAllBarcodes": "すべてのバーコードを表示",
@@ -5922,13 +6031,6 @@
           "noBarcodesMatchQ": "「{q}」に一致するバーコードはありません。",
           "noBarcodesHereYet": "バーコードはまだありません。",
           "noBarcodesMatchTheseFilters": "これらのフィルターに一致するバーコードはありません。"
-        },
-        "new": {
-          "page": {
-            "allBarcodes": "すべてのバーコード",
-            "newBarcode": "新規バーコード",
-            "pickTheTypeEnterThe": "種類を選び、番号またはテキストを入力して保存すると、あとから編集やダウンロードができます。"
-          }
         },
         "barcodeActions": {
           "duplicate": "複製",
@@ -5947,11 +6049,34 @@
           "fixTheHighlightedInputTo": "保存するには、強調表示された入力を修正してください。",
           "unsavedChanges": "未保存の変更があります",
           "allChangesSaved": "すべての変更を保存しました",
-          "notSavedYet": "まだ保存されていません",
           "saveChanges": "変更を保存",
-          "saveBarcode": "バーコードを保存",
           "couldntSaveTheBarcode": "バーコードを保存できませんでした",
           "barcodeSaved": "バーコードを保存しました"
+        },
+        "barcodeBuilder": {
+          "newBarcode": "新規バーコード",
+          "pickTheTypeEnterThe": "種類を選び、番号またはテキストを入力して保存すると、あとから編集やダウンロードができます。",
+          "yourBarcodeIsSaved": "バーコードを保存しました",
+          "downloadItNowOrOpen": "今すぐダウンロードするか、後で「バーコード」から開いて編集し、あらためてダウンロードできます。",
+          "design": "デザイン",
+          "back": "戻る",
+          "close": "閉じる",
+          "value": "値",
+          "valueCopied": "値をコピーしました",
+          "type": "タイプ",
+          "title": "タイトル",
+          "openTheBarcode": "バーコードを開く",
+          "foldersDidntLoad": "フォルダを読み込めなかったため、このバーコードはフォルダなしで保存されました。",
+          "couldntReachQrdx": "QRdxに接続できませんでした。接続を確認して、もう一度お試しください。",
+          "fixTheHighlightedInputTo": "保存するには、強調表示された入力を修正してください。",
+          "saveBarcode": "バーコードを保存",
+          "saving": "保存中...",
+          "createAnother": "続けて作成",
+          "done": "完了",
+          "closeWithoutSaving": "保存せずに閉じますか？",
+          "thisBarcodeIsntSavedYet": "このバーコードはまだ保存されていないため、入力した内容は失われます。",
+          "keepEditing": "編集を続ける",
+          "discard": "破棄"
         },
         "barcodesHeader": {
           "barcodes": "バーコード:",
@@ -7865,6 +7990,7 @@
         "newDynamicQrCode": "新規動的QRコード",
         "newLandingPage": "新規ランディングページ",
         "newForm": "新規フォーム",
+        "newBarcode": "新規バーコード",
         "importCodesFromACsv": "CSVファイルからコードをインポート",
         "inviteATeammate": "チームメンバーを招待",
         "connectADomain": "ドメインを接続",
@@ -7875,6 +8001,7 @@
         "dynamicQrCode": "動的QRコード",
         "landingPage": "ランディングページ",
         "form": "フォーム",
+        "barcode": "バーコード",
         "importCodes": "コードをインポート",
         "openTheEditor": "エディタを開く",
         "newDynamicQrCode": "新規動的QRコード",
@@ -7897,7 +8024,19 @@
         "new": "新着",
         "whatsNew": "新着情報",
         "newFeaturesAndFixesIn": "QRdxの新機能と修正です。",
-        "seeAllUpdates": "すべてのアップデートを見る"
+        "seeAllUpdates": "すべてのアップデートを見る",
+        "newFeatures": "新機能",
+        "dismissTitle": "{title}を閉じる",
+        "previousUpdate": "前のお知らせ",
+        "nextUpdate": "次のお知らせ",
+        "positionOfTotal": "{position, number}/{total, number}",
+        "readOnTheChangelog": "変更履歴で読む",
+        "tryIt": "試してみる",
+        "close": "閉じる"
+      },
+      "spotlight": {
+        "new": "新着",
+        "gotIt": "了解"
       }
     },
     "workspaces": {

@@ -116,7 +116,8 @@ export function DraftControls({
           <ArrowDown2 aria-hidden className="size-3" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-72">
+      {/* Above the code builder's dialog (z-[99]) */}
+      <DropdownMenuContent align="end" className="z-[120] w-72">
         <DropdownMenuLabel className="text-muted-foreground text-xs font-normal">
           {t("restoreADraft")}
         </DropdownMenuLabel>
