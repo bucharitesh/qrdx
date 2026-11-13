@@ -286,6 +286,13 @@
       "secondary": "Lire la documentation",
       "sceneLabel": "Dessin animé du fonctionnement de QRdx : un écran de studio conçoit et stylise un QR code, une imprimante l'imprime sur une carte, un bras robotisé place la carte sur un convoyeur, un téléphone fixé à un portique scanne chaque carte à son passage, le scan est transmis à un panneau d'analyse qui ajoute une nouvelle barre, et une grande carte QR code dynamique change son lien de destination sans être réimprimée"
     },
+    "customers": {
+      "eyebrow": "Utilisé par",
+      "readStory": "Lire l’histoire",
+      "lines": {
+        "flam": "Flam crée ses QR codes à son image avec QRdx."
+      }
+    },
     "editor": {
       "eyebrow": "Essayez avec votre lien",
       "description": "Le même moteur de rendu que le Playground, en direct pendant que vous saisissez.",
@@ -772,6 +779,21 @@
       "signIn": "Connectez-vous pour demander une facture",
       "signInNote": "Nous envoyons la facture pour l’espace de travail de votre compte : connectez-vous d’abord."
     },
+    "enterprise": {
+      "name": "Enterprise",
+      "tagline": "Pour les entreprises qui ont besoin d’un contrat et d’une revue de sécurité",
+      "price": "Sur mesure",
+      "priceNote": "Contrat annuel, payé sur facture",
+      "cta": "Nous contacter",
+      "lead": "Tout Business, plus :",
+      "adds": {
+        "contract": "Un contrat annuel, payé sur facture",
+        "replies": "Réponse sous {hours, plural, one {# heure ouvrée} other {# heures ouvrées}} quand des codes cessent de fonctionner",
+        "review": "Des réponses pour votre revue de sécurité",
+        "selfHost": "SSO et journal d’audit sur votre propre serveur"
+      },
+      "security": "La sécurité chez QRdx"
+    },
     "nonprofit": {
       "title": "Réduction pour associations",
       "description": "Les associations et organismes caritatifs enregistrés bénéficient de {percent, number} % de réduction sur Pro ou Business, en mensuel comme en annuel. Présentez-nous votre organisation et nous vous enverrons par e-mail un code de réduction à saisir au moment du paiement.",
@@ -788,21 +810,6 @@
       "sent": "Nous répondrons à {email}, généralement sous quelques jours. Si votre organisation est éligible, la réponse contiendra un code de réduction à saisir au moment du paiement.",
       "close": "Fermer",
       "failed": "Une erreur s’est produite. Écrivez plutôt à {email}."
-    },
-    "enterprise": {
-      "name": "Enterprise",
-      "tagline": "Pour les entreprises qui ont besoin d’un contrat et d’une revue de sécurité",
-      "price": "Sur mesure",
-      "priceNote": "Contrat annuel, payé sur facture",
-      "cta": "Nous contacter",
-      "lead": "Tout Business, plus :",
-      "adds": {
-        "contract": "Un contrat annuel, payé sur facture",
-        "replies": "Réponse sous {hours, plural, one {# heure ouvrée} other {# heures ouvrées}} quand des codes cessent de fonctionner",
-        "review": "Des réponses pour votre revue de sécurité",
-        "selfHost": "SSO et journal d’audit sur votre propre serveur"
-      },
-      "security": "La sécurité chez QRdx"
     }
   },
   "docs": {
