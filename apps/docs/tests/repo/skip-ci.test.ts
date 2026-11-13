@@ -1,7 +1,7 @@
-// Vercel's ignored build step (scripts/skip-ci.js): only production,
-// staging and preview/ branches build; [skip ci] skips everything. Vercel
-// doesn't create deployments for other branches at all (vercel.json
-// git.deploymentEnabled), which the last test checks.
+// Vercel's ignored build step (scripts/skip-ci.js): only production (main)
+// builds; [skip ci] skips everything. Vercel doesn't create deployments for
+// any other branch at all (vercel.json git.deploymentEnabled), which the last
+// tests check.
 import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { describe, expect, it } from "vitest";
@@ -15,7 +15,7 @@ const { shouldSkip } = require("../../scripts/skip-ci.js") as {
 };
 
 describe("skip-ci", () => {
-  it("builds production and staging", () => {
+  it("builds production", () => {
     expect(
       shouldSkip({
         message: "Merge release",
@@ -23,20 +23,15 @@ describe("skip-ci", () => {
         branch: "main",
       }).skip,
     ).toBe(false);
-    expect(
-      shouldSkip({ message: "feat: x", env: "preview", branch: "staging" })
-        .skip,
-    ).toBe(false);
   });
 
-  it("skips pull request previews except on preview/ branches", () => {
-    expect(
-      shouldSkip({ message: "feat: x", env: "preview", branch: "feat/x" }).skip,
-    ).toBe(true);
-    expect(
-      shouldSkip({ message: "feat: x", env: "preview", branch: "preview/x" })
-        .skip,
-    ).toBe(false);
+  it("skips staging and every preview", () => {
+    for (const branch of ["staging", "preview/x", "feat/x"]) {
+      expect(
+        shouldSkip({ message: "feat: x", env: "preview", branch }).skip,
+        branch,
+      ).toBe(true);
+    }
   });
 
   it("skips anything with [skip ci], production included", () => {
@@ -84,14 +79,15 @@ describe("vercel.json git.deploymentEnabled", () => {
     }
   });
 
-  it("deploys main, staging and preview/ branches", () => {
-    for (const branch of ["main", "staging", "preview/x", "preview/a/b"]) {
-      expect(deploys(branch), branch).toBe(true);
-    }
+  it("deploys main", () => {
+    expect(deploys("main")).toBe(true);
   });
 
   it("creates no deployment for any other branch", () => {
     for (const branch of [
+      "staging",
+      "preview/x",
+      "preview/a/b",
       "feat/x",
       "fix/y",
       "docs/z",
