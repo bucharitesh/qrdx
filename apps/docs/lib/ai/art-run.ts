@@ -45,13 +45,23 @@ import { logError } from "@/lib/shared";
 // and MCP) it's made here first, and the paint gets the time left.
 
 /** Everything a request does must end by then; the routes allow 60 s. */
-const REQUEST_BUDGET_MS = 55_000;
-/** Kept back from the model calls for the scan check and least blend. */
-const BLEND_RESERVE_MS = 10_000;
+const REQUEST_BUDGET_MS = 56_000;
+/**
+ * Kept back from the model calls for the scan check and least blend (3-6 s
+ * measured, and the least blend stops itself at 8 s).
+ */
+const BLEND_RESERVE_MS = 8000;
 /** How long the scene's picture may take within one request. */
 const INLINE_PICTURE_TIMEOUT_MS = 25_000;
 /** A paint call with less time than this left isn't started. */
 const MIN_PAINT_MS = 20_000;
+
+const sceneTimeout = () =>
+  new HttpError(
+    504,
+    "AI_ART_TIMEOUT",
+    "Making the picture and painting the code into it took too long. No AI credit was used, please try again, or use code mode, which is faster.",
+  );
 
 /** The bytes of an uploaded (base64) data: URL. */
 const dataUrlBytes = (url: string) =>
@@ -129,14 +139,9 @@ export async function runArt({
         signal,
         timeoutMs: Math.min(INLINE_PICTURE_TIMEOUT_MS, timeLeft()),
       });
-      if (timeLeft() < MIN_PAINT_MS) {
-        throw new HttpError(
-          504,
-          "AI_ART_TIMEOUT",
-          "Making the picture took too long to leave time for painting the code into it. No AI credit was used, please try again, or use code mode, which is faster.",
-        );
-      }
+      if (timeLeft() < MIN_PAINT_MS) throw sceneTimeout();
     }
+    const inlineScene = request.mode === "scene" && !request.picture;
     const shared = {
       text: request.text,
       prompt: composed.prompt,
@@ -149,9 +154,15 @@ export async function runArt({
       signal,
       timeoutMs: timeLeft(),
     };
-    variant = picture
-      ? await generatePictureVariant({ ...shared, picture })
-      : await generateArtVariant(shared);
+    try {
+      variant = picture
+        ? await generatePictureVariant({ ...shared, picture })
+        : await generateArtVariant(shared);
+    } catch (error) {
+      const timedOut =
+        error instanceof HttpError && error.code === "AI_ART_TIMEOUT";
+      throw inlineScene && timedOut ? sceneTimeout() : error;
+    }
   } catch (error) {
     await releaseArtCredits(usageIds).catch((releaseError) =>
       logError(releaseError as Error, { action: "releaseArtCredits" }),
