@@ -4,11 +4,11 @@ description: "デザイン済みのフレームテンプレートをQRコード�
 icon: LayoutTemplate
 ---
 
-プロフェッショナルなQRコードのスタイルをすぐに適用できます。
+QRコードを既成のアートワーク、または独自のアートワークで囲みます。
 
 ## テンプレートとは [#what-are-templates]
 
-テンプレートは、色、パターン、ビジュアルスタイルを組み合わせた、すぐに使えるパッケージです。
+テンプレートは、コードの周囲に描かれるSVGアートワークです。ボックス、枠線、バッジなどがあります。テンプレートは `children` としてコードを受け取り、自身の描画の内側に配置します。色、パターン、ロゴは引き続き `QRCode` のpropsで指定するため、どのスタイルでもテンプレートを使えます。
 
 ## 利用可能なテンプレート [#available-templates]
 
@@ -29,7 +29,7 @@ import { QRCode } from 'qrdx';
 ```
 
 ### Standard Box [#standard-box]
-すっきりと整った構造のデザインです。
+すっきりと整ったデザインです。
 
 ```tsx
 <QRCode value="https://example.com" templateId="StandardBox" size={256} />
@@ -50,7 +50,7 @@ import { QRCode } from 'qrdx';
 ```
 
 ### Halloween [#halloween]
-ハロウィンの季節限定テーマです。
+ハロウィンをテーマにした季節限定のデザインです。
 
 ```tsx
 <QRCode value="https://example.com" templateId="Halloween" size={256} />
@@ -58,15 +58,19 @@ import { QRCode } from 'qrdx';
 
 ## テンプレートのカスタマイズ [#customize-templates]
 
-テンプレートの既定値を上書きします。
+組み込みテンプレートは、アートワークを `fgColor` で描画します。パターンやロゴなどそれ以外の設定は、通常どおりコードに対して行います。
 
 ```tsx
 <QRCode
   value="https://example.com"
   templateId="Arrow"
-  fgColor="#your-brand-color"
-  hideLogo={false}
-  logo="/your-logo.png"
+  fgColor="#1a56db"
+  imageSettings={{
+    src: "/your-logo.png",
+    width: 48,
+    height: 48,
+    excavate: true,
+  }}
   size={512}
 />
 ```
@@ -92,44 +96,56 @@ const ids = getTemplateIds();
 
 ## カスタムテンプレート [#custom-templates]
 
-独自のテンプレートを作成できます。
+独自のテンプレートは `TemplateDefinition` として作成します。`wrapper` は `children` としてコードを受け取り、描画するSVGを返します。描画領域は300×300のキャンバスで、コードも同じサイズで渡されます。アートワーク用の余白を確保するには、コードを縮小してください。`props` には、コードの `fgColor` と `bgColor` が含まれます。
+
+次の例では、コードの周りにリングを描きます。
 
 ```tsx
-const brandTemplate = {
-  id: 'brand-template',
-  name: 'Brand Template',
-  colors: {
-    fgColor: '#1a56db',
-    bgColor: '#ffffff',
-    eyeColor: '#0d47a1',
-    dotColor: '#3b82f6'
-  },
-  bodyPattern: 'rounded',
-  cornerEyePattern: 'rounded',
-  cornerEyeDotPattern: 'rounded'
+import { QRCode, type TemplateDefinition } from "qrdx";
+
+const ringTemplate: TemplateDefinition = {
+  id: "ring",
+  name: "Ring",
+  wrapper: (children, props) => (
+    <svg viewBox="0 0 300 300" width="300" height="300" xmlns="http://www.w3.org/2000/svg">
+      <circle
+        cx="150"
+        cy="150"
+        r="140"
+        fill="none"
+        stroke={props?.fgColor ?? "#000000"}
+        strokeWidth="8"
+      />
+      {/* The code at half size, centered */}
+      <g transform="translate(75, 75) scale(0.5)">{children}</g>
+    </svg>
+  ),
 };
 
 <QRCode
   value="https://example.com"
-  customTemplate={brandTemplate}
+  customTemplate={ringTemplate}
+  fgColor="#1a56db"
   size={256}
 />
 ```
 
+コードは、人がスマートフォンをかざす距離からスキャンできる大きさに保ち、アートワークとの間に明るい余白を残してください。結果は[スキャンスコア](/docs/features/frames#will-it-scan)で確認できます。
+
 ## テンプレートを使う場面 [#when-to-use-templates]
 
-- **ブランドの一貫性** — すべてのQRコードのスタイルをそろえられます
-- **簡単なセットアップ** — プロ品質の仕上がりをすばやく得られます
-- **季節のキャンペーン** — テーマに合ったテンプレートを使えます
-- **一括生成** — 統一したスタイルを適用できます
+- **ブランドの一貫性** — すべてのQRコードを統一できます
+- **簡単セットアップ** — プロ品質の仕上がりをすばやく得られます
+- **季節キャンペーン** — テーマ別のテンプレートを使えます
+- **一括生成** — 一貫したスタイルを適用できます
 
 ## テンプレート選択ガイド [#template-selection-guide]
 
-| テンプレート | 適した用途 | 雰囲気 |
+| テンプレート | 最適な用途 | 雰囲気 |
 |----------|----------|------|
-| Default | プロフェッショナル | ニュートラル |
+| Default | ビジネス | ニュートラル |
 | Arrow | テック、モダン | ダイナミック |
-| Standard Box | 企業向け | プロフェッショナル |
+| Standard Box | 企業 | プロフェッショナル |
 | Square Border | フォーマル | 構造的 |
 | Striked Box | マーケティング | エネルギッシュ |
 | Halloween | 季節限定 | 楽しい |
@@ -137,5 +153,5 @@ const brandTemplate = {
 ## 次のステップ [#next-steps]
 
 - [パターン](/docs/features/patterns) — パターンの詳細なカスタマイズ
-- [カラーとグラデーション](/docs/features/colors-gradients) — 高度な色設定
+- [色とグラデーション](/docs/features/colors-gradients) — 高度な色設定
 - [ロゴ](/docs/features/logos) — テンプレートにロゴを追加

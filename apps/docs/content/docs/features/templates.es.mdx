@@ -4,16 +4,16 @@ description: "Aplica plantillas de marco prediseñadas a un código QR o registr
 icon: LayoutTemplate
 ---
 
-Aplica estilos profesionales a tus códigos QR al instante.
+Envuelve un código QR en un diseño listo para usar o en uno propio.
 
 ## ¿Qué son las plantillas? [#what-are-templates]
 
-Las plantillas combinan colores, patrones y estilos visuales en paquetes listos para usar.
+Una plantilla es un diseño SVG dibujado alrededor del código: un recuadro, un borde, una insignia. Recibe el código como `children` y lo coloca dentro de su propio dibujo. Los colores, los patrones y los logotipos se mantienen en las props de `QRCode`, así que una plantilla funciona con cualquier estilo.
 
 ## Plantillas disponibles [#available-templates]
 
 ### Default [#default]
-Clásico en blanco y negro.
+Blanco y negro clásico.
 
 ```tsx
 import { QRCode } from 'qrdx';
@@ -36,7 +36,7 @@ Diseño limpio y estructurado.
 ```
 
 ### Square Border [#square-border]
-Diseño con borde y límites definidos.
+Diseño con borde y contornos definidos.
 
 ```tsx
 <QRCode value="https://example.com" templateId="SquareBorder" size={256} />
@@ -58,15 +58,19 @@ Tema estacional de Halloween.
 
 ## Personalizar plantillas [#customize-templates]
 
-Reemplaza los valores predeterminados de una plantilla:
+Las plantillas integradas dibujan su diseño con `fgColor`. Todo lo demás, como los patrones y un logotipo, se configura en el código de la forma habitual:
 
 ```tsx
 <QRCode
   value="https://example.com"
   templateId="Arrow"
-  fgColor="#your-brand-color"
-  hideLogo={false}
-  logo="/your-logo.png"
+  fgColor="#1a56db"
+  imageSettings={{
+    src: "/your-logo.png",
+    width: 48,
+    height: 48,
+    excavate: true,
+  }}
   size={512}
 />
 ```
@@ -92,42 +96,54 @@ const ids = getTemplateIds();
 
 ## Plantillas personalizadas [#custom-templates]
 
-Crea tus propias plantillas:
+Escribe tu propia plantilla como un `TemplateDefinition`. Su `wrapper` recibe el código como `children` y devuelve el SVG que se va a dibujar. Dibuja sobre un lienzo de 300 por 300, y el código llega también con ese tamaño, así que redúcelo para dejar espacio a tu diseño. `props` incluye los valores `fgColor` y `bgColor` del código.
+
+Este ejemplo dibuja un anillo alrededor del código:
 
 ```tsx
-const brandTemplate = {
-  id: 'brand-template',
-  name: 'Brand Template',
-  colors: {
-    fgColor: '#1a56db',
-    bgColor: '#ffffff',
-    eyeColor: '#0d47a1',
-    dotColor: '#3b82f6'
-  },
-  bodyPattern: 'rounded',
-  cornerEyePattern: 'rounded',
-  cornerEyeDotPattern: 'rounded'
+import { QRCode, type TemplateDefinition } from "qrdx";
+
+const ringTemplate: TemplateDefinition = {
+  id: "ring",
+  name: "Ring",
+  wrapper: (children, props) => (
+    <svg viewBox="0 0 300 300" width="300" height="300" xmlns="http://www.w3.org/2000/svg">
+      <circle
+        cx="150"
+        cy="150"
+        r="140"
+        fill="none"
+        stroke={props?.fgColor ?? "#000000"}
+        strokeWidth="8"
+      />
+      {/* The code at half size, centered */}
+      <g transform="translate(75, 75) scale(0.5)">{children}</g>
+    </svg>
+  ),
 };
 
 <QRCode
   value="https://example.com"
-  customTemplate={brandTemplate}
+  customTemplate={ringTemplate}
+  fgColor="#1a56db"
   size={256}
 />
 ```
 
+Mantén el código lo bastante grande para que se pueda escanear desde la distancia a la que la gente sostendrá el teléfono, y deja un espacio claro entre el código y tu diseño. Comprueba el resultado con la [puntuación de escaneo](/docs/features/frames#will-it-scan).
+
 ## Cuándo usar plantillas [#when-to-use-templates]
 
-- **Coherencia de marca** — Asegura que todos los códigos QR sean iguales
+- **Coherencia de marca** — Asegura que todos los códigos QR combinen
 - **Configuración rápida** — Obtén resultados profesionales en poco tiempo
 - **Campañas estacionales** — Usa plantillas temáticas
-- **Generación por lotes** — Aplica estilos consistentes
+- **Generación por lotes** — Aplica estilos uniformes
 
-## Guía para elegir una plantilla [#template-selection-guide]
+## Guía de selección de plantillas [#template-selection-guide]
 
 | Plantilla | Ideal para | Ambiente |
 |----------|----------|------|
-| Default | Profesional | Neutral |
+| Default | Profesional | Neutro |
 | Arrow | Tecnología, moderno | Dinámico |
 | Standard Box | Corporativo | Profesional |
 | Square Border | Formal | Estructurado |

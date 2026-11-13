@@ -1,19 +1,19 @@
 ---
 title: "템플릿"
-description: "미리 디자인된 프레임 템플릿을 QR 코드에 적용하거나 직접 만든 템플릿을 등록하세요."
+description: "미리 디자인된 프레임 템플릿을 QR 코드에 적용하거나, 직접 만든 템플릿을 등록하세요."
 icon: LayoutTemplate
 ---
 
-전문적인 QR 코드 스타일을 즉시 적용해 보세요.
+완성된 아트워크 또는 직접 만든 아트워크로 QR 코드를 감싸 보세요.
 
 ## 템플릿이란? [#what-are-templates]
 
-템플릿은 색상, 패턴, 시각 스타일을 바로 쓸 수 있는 하나의 패키지로 묶은 것입니다.
+템플릿은 코드 주위에 그려지는 SVG 아트워크입니다. 상자, 테두리, 배지 같은 것이 해당합니다. 템플릿은 코드를 `children`으로 받아 자신의 그림 안에 배치합니다. 색상, 패턴, 로고는 `QRCode` props에 그대로 남아 있으므로 템플릿은 어떤 스타일과도 함께 쓸 수 있습니다.
 
 ## 사용 가능한 템플릿 [#available-templates]
 
 ### Default [#default]
-클래식한 흑백 스타일입니다.
+클래식한 흑백 디자인입니다.
 
 ```tsx
 import { QRCode } from 'qrdx';
@@ -43,7 +43,7 @@ import { QRCode } from 'qrdx';
 ```
 
 ### Striked Box [#striked-box]
-대각선 요소가 들어간 역동적인 디자인입니다.
+대각선 요소가 있는 역동적인 디자인입니다.
 
 ```tsx
 <QRCode value="https://example.com" templateId="StrikedBox" size={256} />
@@ -58,15 +58,19 @@ import { QRCode } from 'qrdx';
 
 ## 템플릿 사용자 지정 [#customize-templates]
 
-템플릿 기본값을 덮어쓸 수 있습니다.
+기본 제공 템플릿은 `fgColor`로 아트워크를 그립니다. 패턴이나 로고 같은 나머지 요소는 평소처럼 코드에 설정합니다.
 
 ```tsx
 <QRCode
   value="https://example.com"
   templateId="Arrow"
-  fgColor="#your-brand-color"
-  hideLogo={false}
-  logo="/your-logo.png"
+  fgColor="#1a56db"
+  imageSettings={{
+    src: "/your-logo.png",
+    width: 48,
+    height: 48,
+    excavate: true,
+  }}
   size={512}
 />
 ```
@@ -92,40 +96,52 @@ const ids = getTemplateIds();
 
 ## 사용자 지정 템플릿 [#custom-templates]
 
-나만의 템플릿을 만들 수 있습니다.
+직접 만든 템플릿은 `TemplateDefinition`으로 작성합니다. `wrapper`는 코드를 `children`으로 받아, 그려야 할 SVG를 반환합니다. 300×300 캔버스에 그려지고 코드도 같은 크기로 전달되므로, 아트워크를 넣을 공간이 생기도록 코드를 줄여서 배치하세요. `props`에는 코드의 `fgColor`와 `bgColor`가 들어 있습니다.
+
+다음 예시는 코드 주위에 링을 그립니다.
 
 ```tsx
-const brandTemplate = {
-  id: 'brand-template',
-  name: 'Brand Template',
-  colors: {
-    fgColor: '#1a56db',
-    bgColor: '#ffffff',
-    eyeColor: '#0d47a1',
-    dotColor: '#3b82f6'
-  },
-  bodyPattern: 'rounded',
-  cornerEyePattern: 'rounded',
-  cornerEyeDotPattern: 'rounded'
+import { QRCode, type TemplateDefinition } from "qrdx";
+
+const ringTemplate: TemplateDefinition = {
+  id: "ring",
+  name: "Ring",
+  wrapper: (children, props) => (
+    <svg viewBox="0 0 300 300" width="300" height="300" xmlns="http://www.w3.org/2000/svg">
+      <circle
+        cx="150"
+        cy="150"
+        r="140"
+        fill="none"
+        stroke={props?.fgColor ?? "#000000"}
+        strokeWidth="8"
+      />
+      {/* The code at half size, centered */}
+      <g transform="translate(75, 75) scale(0.5)">{children}</g>
+    </svg>
+  ),
 };
 
 <QRCode
   value="https://example.com"
-  customTemplate={brandTemplate}
+  customTemplate={ringTemplate}
+  fgColor="#1a56db"
   size={256}
 />
 ```
 
+사람들이 휴대폰을 들고 스캔할 거리에서도 인식되도록 코드를 충분히 크게 유지하고, 코드와 아트워크 사이에 밝은 여백을 두세요. 결과는 [스캔 점수](/docs/features/frames#will-it-scan)로 확인하세요.
+
 ## 템플릿을 사용하면 좋은 경우 [#when-to-use-templates]
 
-- **브랜드 일관성** — 모든 QR 코드의 스타일을 통일합니다
+- **브랜드 일관성** — 모든 QR 코드를 동일한 스타일로 맞춥니다
 - **빠른 설정** — 전문적인 결과물을 빠르게 얻습니다
-- **시즌 캠페인** — 테마 템플릿을 활용합니다
+- **시즌 캠페인** — 테마 템플릿을 사용합니다
 - **일괄 생성** — 일관된 스타일을 적용합니다
 
 ## 템플릿 선택 가이드 [#template-selection-guide]
 
-| 템플릿 | 추천 용도 | 분위기 |
+| 템플릿 | 적합한 용도 | 분위기 |
 |----------|----------|------|
 | Default | 비즈니스 | 중립적 |
 | Arrow | 기술, 모던 | 역동적 |
@@ -137,5 +153,5 @@ const brandTemplate = {
 ## 다음 단계 [#next-steps]
 
 - [패턴](/docs/features/patterns) — 패턴 상세 사용자 지정
-- [색상 및 그라데이션](/docs/features/colors-gradients) — 고급 색상 설정
+- [색상 및 그라디언트](/docs/features/colors-gradients) — 고급 색상
 - [로고](/docs/features/logos) — 템플릿에 로고 추가
