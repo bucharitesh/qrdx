@@ -10,7 +10,7 @@ import { requireAdmin } from "../_lib/guard";
 import { adminMetadata } from "../_lib/metadata";
 import { parseAdminSearch } from "../_lib/rules";
 import { safeLoad } from "../_lib/safe";
-import { runAdminSearch } from "../_lib/search";
+import { runAdminSearch, type SearchGroup, seeAllHref } from "../_lib/search";
 
 export const generateMetadata = adminMetadata("Admin · Search");
 
@@ -18,16 +18,28 @@ const userHref = (id: string) => `/admin/users/${encodeURIComponent(id)}`;
 
 function Group({
   title,
-  count,
+  group,
+  seeAll,
   children,
 }: {
   title: string;
-  count: number;
+  group: SearchGroup<unknown>;
+  /** The paged list with every match, linked when more matched than show. */
+  seeAll?: string;
   children: ReactNode;
 }) {
+  const count = group.rows.length;
   return (
-    <Section title={`${title} (${count === 8 ? "8+" : count})`}>
+    <Section title={`${title} (${group.more ? `${count}+` : count})`}>
       {count === 0 ? <Empty>No matches.</Empty> : <Rows>{children}</Rows>}
+      {group.more && seeAll && (
+        <Link
+          className="mt-3 inline-block text-sm underline-offset-4 hover:underline"
+          href={seeAll}
+        >
+          See all →
+        </Link>
+      )}
     </Section>
   );
 }
@@ -71,8 +83,12 @@ export default async function AdminSearchPage({
       ) : (
         <div className="grid gap-4 lg:grid-cols-2">
           {search.kinds.includes("user") && (
-            <Group count={loaded.data.users.length} title="Users">
-              {loaded.data.users.map((row) => (
+            <Group
+              group={loaded.data.users}
+              seeAll={seeAllHref(search, "users")}
+              title="Users"
+            >
+              {loaded.data.users.rows.map((row) => (
                 <Row
                   key={row.id}
                   meta={`${row.name} · joined ${formatDate(row.createdAt)}`}
@@ -94,8 +110,12 @@ export default async function AdminSearchPage({
             </Group>
           )}
           {search.kinds.includes("code") && (
-            <Group count={loaded.data.codes.length} title="Codes">
-              {loaded.data.codes.map((row) => (
+            <Group
+              group={loaded.data.codes}
+              seeAll={seeAllHref(search, "codes")}
+              title="Codes"
+            >
+              {loaded.data.codes.rows.map((row) => (
                 <Row
                   key={row.id}
                   meta={
@@ -134,8 +154,12 @@ export default async function AdminSearchPage({
             </Group>
           )}
           {search.kinds.includes("page") && (
-            <Group count={loaded.data.pages.length} title="Hosted pages">
-              {loaded.data.pages.map((row) => (
+            <Group
+              group={loaded.data.pages}
+              seeAll={seeAllHref(search, "pages")}
+              title="Hosted pages"
+            >
+              {loaded.data.pages.rows.map((row) => (
                 <Row
                   key={row.id}
                   meta={
@@ -166,8 +190,8 @@ export default async function AdminSearchPage({
             </Group>
           )}
           {search.kinds.includes("team") && (
-            <Group count={loaded.data.teams.length} title="Teams">
-              {loaded.data.teams.map((row) => (
+            <Group group={loaded.data.teams} title="Teams">
+              {loaded.data.teams.rows.map((row) => (
                 <Row
                   key={row.id}
                   meta={
@@ -202,8 +226,8 @@ export default async function AdminSearchPage({
             </Group>
           )}
           {search.kinds.includes("app") && (
-            <Group count={loaded.data.apps.length} title="OAuth apps">
-              {loaded.data.apps.map((row) => (
+            <Group group={loaded.data.apps} title="OAuth apps">
+              {loaded.data.apps.rows.map((row) => (
                 <Row
                   key={row.id}
                   meta={
