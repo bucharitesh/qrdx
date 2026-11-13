@@ -7,6 +7,7 @@ import type {
 } from "@repo/integrations/src/integrations/mailchimp/types";
 import type { FormMapping } from "@repo/integrations/src/sinks/mapping";
 import { workspaceRequestHeaders } from "@/components/workspace-provider";
+import type { CursorPage } from "@/lib/keyset-cursor";
 import type { ScopedFormPage } from "./data";
 import {
   isIntegrationsMock,
@@ -181,7 +182,12 @@ export async function exportToSheet(
 export interface SinkViewData {
   sync: SyncState | null;
   settings: Record<string, unknown>;
+  /** The first page of form pages, most recently updated first */
   pages: ScopedFormPage[];
+  /** Where the next page of `pages` starts (loadSinkPages); null when that's all */
+  pagesCursor: string | null;
+  /** The pages the sync is limited to, wherever they sit in the list */
+  selectedPages: ScopedFormPage[];
   workspaceId: string | null;
 }
 
@@ -202,6 +208,8 @@ function mockView(provider: string): SinkViewData {
         syncLabel: "All codes",
       },
       pages: [],
+      pagesCursor: null,
+      selectedPages: [],
       workspaceId: null,
     };
   }
@@ -228,6 +236,11 @@ function mockView(provider: string): SinkViewData {
           }
         : { pageIds: null, forms: {} },
     pages: MOCK_FORM_PAGES,
+    pagesCursor: null,
+    selectedPages:
+      provider === "mailchimp"
+        ? MOCK_FORM_PAGES.filter((page) => page.id === "page_spring")
+        : [],
     workspaceId: null,
   };
 }
@@ -235,6 +248,29 @@ function mockView(provider: string): SinkViewData {
 export async function loadSinkView(provider: string): Promise<SinkViewData> {
   if (isIntegrationsMock()) return mockView(provider);
   return request(`/api/integrations/sync/${provider}`);
+}
+
+/** More of the workspace's form pages, or the first ones matching `q`. */
+export async function loadSinkPages(
+  provider: string,
+  { cursor, q }: { cursor?: string | null; q?: string } = {},
+): Promise<CursorPage<ScopedFormPage>> {
+  if (isIntegrationsMock()) {
+    const term = (q ?? "").trim().toLowerCase();
+    return {
+      items: MOCK_FORM_PAGES.filter((page) =>
+        (page.title ?? "").toLowerCase().includes(term),
+      ),
+      nextCursor: null,
+    };
+  }
+  const params = new URLSearchParams();
+  if (cursor) params.set("cursor", cursor);
+  if (q) params.set("q", q);
+  const query = params.toString();
+  return request(
+    `/api/integrations/sync/${provider}/pages${query ? `?${query}` : ""}`,
+  );
 }
 
 export async function saveSink(
