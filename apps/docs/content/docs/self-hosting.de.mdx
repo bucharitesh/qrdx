@@ -1,25 +1,25 @@
 ---
-title: "Self-Hosting-Leitfaden"
-description: "Betreibe deine eigene QRdx-Web-App, inklusive dynamischer QR-Codes und gehosteter Seiten, mit Docker Compose oder Node.js."
+title: "Self-Hosting-Anleitung"
+description: "Betreibe deine eigene QRdx-Web-App, einschließlich dynamischer QR-Codes und gehosteter Seiten, mit Docker Compose oder Node.js."
 icon: Server
 ---
 
-QRdx steht unter der AGPL-3.0-Lizenz, und du kannst die Web-App (QR-Editor, Konten, Zwei-Faktor-Authentifizierung und Passkeys, dynamische Codes und gehostete Seiten, Teams, gespeicherte Themes, Community-Galerie und diese Docs) auf deinem eigenen Server betreiben. Ausgenommen sind Single Sign-on für Workspaces und das Audit-Log des Workspace: Sie liegen in den kommerziell lizenzierten `ee/`-Ordnern und bleiben deaktiviert, solange du keinen Lizenzschlüssel (`QRDX_EE_LICENSE`) setzt. Für den Einsatz in der Produktion brauchst du eine schriftliche Vereinbarung mit QRdx; siehe [LICENSING.md](https://github.com/bucharitesh/qrdx/blob/main/LICENSING.md). Für die [`qrdx`-React-Bibliothek](/docs/getting-started) und die CLI brauchst du das alles nicht. Sie laufen überall ohne Backend.
+QRdx steht unter der AGPL-3.0-Lizenz, und du kannst die Web-App (QR-Editor, Konten, Zwei-Faktor-Authentifizierung und Passkeys, dynamische Codes und gehostete Seiten, Teams, gespeicherte Themes, Community-Galerie und diese Dokumentation) auf deinem eigenen Server betreiben. Ausgenommen sind Single Sign-on für Workspaces und das Audit-Log des Workspaces: Sie liegen in den kommerziell lizenzierten `ee/`-Ordnern und bleiben deaktiviert, solange du keinen Lizenzschlüssel (`QRDX_EE_LICENSE`) setzt. Für den Produktiveinsatz brauchst du dafür eine schriftliche Vereinbarung mit QRdx; siehe [LICENSING.md](https://github.com/bucharitesh/qrdx/blob/main/LICENSING.md). Für die [`qrdx`-React-Bibliothek](/docs/getting-started) oder die CLI brauchst du nichts davon. Sie laufen überall ohne Backend, unter der MIT-Lizenz. [Open Source bei QRdx](/open-source-qr-code-generator) listet jeden Teil des Repositorys mit seiner Lizenz auf.
 
 <Callout type="warn">
-  Das Docker-Setup ist neu. Wenn etwas nicht funktioniert, [öffne bitte ein Issue](https://github.com/bucharitesh/qrdx/issues).
+  Das Docker-Setup ist neu. Wenn etwas nicht funktioniert, [eröffne bitte ein Issue](https://github.com/bucharitesh/qrdx/issues).
 </Callout>
 
 ## Voraussetzungen [#requirements]
 
 - Docker mit Compose v2 und BuildKit (Docker Desktop und die aktuelle Docker Engine enthalten beides) oder Node.js 22 (22.22.3 oder neuer) und [Bun](https://bun.com/docs/installation) 1.4 für die manuelle Einrichtung
 - Mindestens 8 GB Arbeitsspeicher für Docker, während das Image gebaut wird
-- Eine Möglichkeit zur Anmeldung, damit Konten angelegt werden können: eine GitHub- oder Google-OAuth-App oder [Resend](https://resend.com) für E-Mail-Anmeldecodes. Codes werden nur per E-Mail verschickt, wenn `NEXT_PUBLIC_APP_URL` nicht `localhost` ist. `bun run dev` gibt sie stattdessen im Terminal aus, das Docker-Image tut das aber nicht. Für einen lokalen Docker-Test brauchst du daher die Anmeldung über GitHub oder Google.
-- Postgres: der in `docker-compose.yml` enthaltene Container oder eine [Neon](https://neon.tech)-Datenbank
+- Eine Möglichkeit zur Anmeldung, damit Konten erstellt werden können: eine GitHub- oder Google-OAuth-App oder [Resend](https://resend.com) für E-Mail-Anmeldecodes. Codes werden nur per E-Mail verschickt, wenn `NEXT_PUBLIC_APP_URL` nicht `localhost` ist. `bun run dev` gibt sie stattdessen im Terminal aus, das Docker-Image tut das aber nicht, daher brauchst du für einen lokalen Docker-Test die Anmeldung über GitHub oder Google.
+- Postgres: den in `docker-compose.yml` enthaltenen Container oder eine [Neon](https://neon.tech)-Datenbank
 
 ### So funktioniert die Datenbankverbindung [#how-the-database-connection-works]
 
-Die App spricht über den Serverless-HTTP-Treiber von Neon mit Postgres.
+Die App spricht über den serverlosen HTTP-Treiber von Neon mit Postgres.
 
 - **Neon:** funktioniert direkt. Setze `DATABASE_URL` auf deinen Neon-Verbindungsstring.
 - **Normales Postgres:** braucht einen Neon-kompatiblen HTTP-Proxy davor. `docker-compose.yml` startet einen ([local-neon-http-proxy](https://github.com/TimoWilhelm/local-neon-http-proxy)) und setzt `DATABASE_HTTP_ENDPOINT`, damit die App ihre Abfragen dorthin sendet.
@@ -44,12 +44,12 @@ cp apps/docs/.env.example .env
 Bearbeite `.env`:
 
 - `BETTER_AUTH_SECRET`: erzeuge einen Wert mit `openssl rand -base64 32`
-- `NEXT_PUBLIC_APP_URL`: die öffentliche URL deiner Instanz, zum Beispiel `https://qr.example.com`. Für einen lokalen Test lässt du `http://localhost:3000` stehen.
-- `BETTER_AUTH_URL`: entkommentiere die Zeile und verwende denselben Wert
+- `NEXT_PUBLIC_APP_URL`: die öffentliche URL deiner Instanz, zum Beispiel `https://qr.example.com`. Für einen lokalen Test bleibt es bei `http://localhost:3000`.
+- `BETTER_AUTH_URL`: entferne das Kommentarzeichen und verwende denselben Wert
 - `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET`: aus einer [GitHub-OAuth-App](https://github.com/settings/developers) mit der Callback-URL `<your url>/api/auth/callback/github`
 - oder `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET`: aus einem [Google-OAuth-Client](https://console.cloud.google.com/apis/credentials) mit der Redirect-URI `<your url>/api/auth/callback/google`
 
-`DATABASE_URL` musst du nicht setzen. Compose verbindet die App mit dem eigenen Postgres-Container. Um das Datenbankpasswort zu ändern, setze `POSTGRES_PASSWORD` vor dem ersten Start.
+`DATABASE_URL` musst du nicht setzen. Compose richtet die App auf ihren eigenen Postgres-Container aus. Um das Datenbankpasswort zu ändern, setze `POSTGRES_PASSWORD` vor dem ersten Start.
 
 ### 3. Stack starten [#3-start-the-stack]
 
@@ -57,7 +57,7 @@ Bearbeite `.env`:
 docker compose up -d --build
 ```
 
-Dadurch wird das Image gebaut, Postgres und der Proxy werden gestartet, der einmalige Service `migrate` (`drizzle-kit push`) läuft durch, und danach startet die App auf Port 3000. Der erste Build dauert einige Minuten.
+Dadurch wird das Image gebaut, Postgres und der Proxy werden gestartet, der einmalige Dienst `migrate` (`drizzle-kit push`) läuft, und danach startet die App auf Port 3000. Der erste Build dauert einige Minuten.
 
 ```bash
 docker compose ps                    # migrate should show "exited (0)"
@@ -70,7 +70,7 @@ docker compose logs -f migrate app   # follow the schema sync and the app
 
 ### 5. Ersten Admin anlegen [#5-create-your-first-admin]
 
-Trage die E-Mail-Adresse des soeben erstellten Kontos in `.env` ein:
+Trage die E-Mail-Adresse des gerade erstellten Kontos in `.env` ein:
 
 ```bash
 ADMIN_EMAILS=you@example.com
@@ -86,14 +86,14 @@ docker compose up -d app
 
 ## Neon oder eine andere verwaltete Datenbank verwenden [#using-neon-or-another-managed-database]
 
-Du kannst das mitgelieferte Postgres überspringen und nur das App-Image starten:
+Du kannst das mitgelieferte Postgres weglassen und nur das App-Image starten:
 
 ```bash
 docker build -t qrdx --build-arg NEXT_PUBLIC_APP_URL=https://qr.example.com .
 docker run -d --env-file .env -p 3000:3000 qrdx
 ```
 
-Setze `DATABASE_URL` in `.env` auf deinen Neon-Verbindungsstring und lass `DATABASE_HTTP_ENDPOINT` ungesetzt. Wende das Schema einmal an (und nach jedem Update erneut), und zwar mit dem Migrator-Image:
+Setze `DATABASE_URL` in `.env` auf deinen Neon-Verbindungsstring und lasse `DATABASE_HTTP_ENDPOINT` ungesetzt. Wende das Schema einmal an (und nach jedem Update erneut), und zwar mit dem Migrator-Image:
 
 ```bash
 docker build --target migrator -t qrdx-migrate .
@@ -113,14 +113,14 @@ bun run db:push                                          # apply the schema
 bun run --filter docs dev                                # http://localhost:3000
 ```
 
-Für die Produktion baust du die App und startest sie:
+Baue die App für die Produktion und starte sie:
 
 ```bash
 bun x turbo build --filter=docs
 bun run --filter docs start
 ```
 
-`bun run db:push` verbindet sich mit dem Neon-Treiber und braucht daher eine Neon-Datenbank. Wenn du stattdessen das Docker-Postgres für die lokale Entwicklung nutzen willst, starte es mit `docker compose up -d db db-proxy`, wende das Schema mit `docker compose run --rm migrate` an und setze Folgendes in `apps/docs/.env.local`:
+`bun run db:push` verbindet sich über den Neon-Treiber und braucht daher eine Neon-Datenbank. Um stattdessen das Docker-Postgres für die lokale Entwicklung zu nutzen, starte es mit `docker compose up -d db db-proxy`, wende das Schema mit `docker compose run --rm migrate` an und setze Folgendes in `apps/docs/.env.local`:
 
 ```bash
 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/qrdx
@@ -129,7 +129,7 @@ DATABASE_HTTP_ENDPOINT=http://localhost:4444/sql
 
 ## Umgebungsvariablen [#environment-variables]
 
-[`apps/docs/.env.example`](https://github.com/bucharitesh/qrdx/blob/main/apps/docs/.env.example) listet jede Variable mit einem kurzen Hinweis, wo du sie bekommst.
+[`apps/docs/.env.example`](https://github.com/bucharitesh/qrdx/blob/main/apps/docs/.env.example) listet jede Variable mit einem kurzen Hinweis auf, woher du sie bekommst.
 
 ### Minimum [#minimum]
 
@@ -139,58 +139,58 @@ DATABASE_HTTP_ENDPOINT=http://localhost:4444/sql
 | `DATABASE_URL` | Postgres-Verbindungsstring (wird von Compose gesetzt) |
 | `BETTER_AUTH_SECRET` | Signiert Sitzungen und Cookies |
 
-Füge einen OAuth-Anbieter (GitHub oder Google) oder Resend für Anmeldecodes per E-Mail hinzu, damit sich Leute anmelden können.
+Füge einen OAuth-Anbieter (GitHub oder Google) oder Resend für E-Mail-Anmeldecodes hinzu, damit sich Leute anmelden können.
 
 ### Optionale Dienste [#optional-services]
 
-| Dienst | Variablen | Ohne den Dienst |
+| Dienst | Variablen | Ohne ihn |
 | --- | --- | --- |
 | GitHub-Anmeldung | `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET` | Die Anmeldung mit GitHub ist nicht verfügbar |
 | Google-Anmeldung | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | Die Anmeldung mit Google ist nicht verfügbar |
 | Auth-Basis-URL | `BETTER_AUTH_URL` | Wird aus jeder Anfrage abgeleitet, mit einer Warnung in den Logs |
 | Admin-Bereich | `ADMIN_EMAILS`, `ADMIN_USER_IDS` | Niemand kann `/admin` öffnen |
 | Single Sign-on für Workspaces | `QRDX_EE_LICENSE` | Single Sign-on bleibt aus: kein **Sign in with SSO**, keine SSO-Einstellungen, und die zugehörigen Anmelderouten existieren nicht. SSO liegt in den `ee/`-Ordnern unter der kommerziellen QRdx-Lizenz, daher braucht der Produktiveinsatz eine schriftliche Vereinbarung mit QRdx. Siehe [Single Sign-on](/docs/help/teams/single-sign-on) |
-| Audit-Log für Workspaces | `QRDX_EE_LICENSE` | Das Audit-Log bleibt aus: Es wird nichts aufgezeichnet, und es gibt kein **Einstellungen** → **Audit-Log**. Wie Single Sign-on liegt es in den `ee/`-Ordnern unter der kommerziellen QRdx-Lizenz. Die Einträge werden {facts.auditLogRetentionDays} Tage aufbewahrt; der tägliche Lauf von `/api/cron/webhooks` löscht ältere. Siehe [Audit-Log](/docs/help/teams/audit-log) |
+| Audit-Log für Workspaces | `QRDX_EE_LICENSE` | Das Audit-Log bleibt aus: Nichts wird aufgezeichnet, und es gibt kein **Settings** → **Audit log**. Wie Single Sign-on liegt es in den `ee/`-Ordnern unter der kommerziellen QRdx-Lizenz. Die Einträge werden {facts.auditLogRetentionDays} Tage aufbewahrt; der tägliche Lauf von `/api/cron/webhooks` löscht ältere. Siehe [Audit-Log](/docs/help/teams/audit-log) |
 | KI-Themes, Prompt-Verbesserung und KI-QR-Art (Vercel AI Gateway) | `AI_GATEWAY_API_KEY` | KI-Anfragen schlagen fehl, und die KI-Seiten verschwinden aus Navigation und Sitemap. Der Editor funktioniert normal. Erstelle den Schlüssel in deinem eigenen Vercel-Konto (AI Gateway, API keys); die Nutzung wird über das AI-Gateway-Guthaben dieses Kontos abgerechnet, und deine App muss nicht auf Vercel laufen. Das Modell für jede Aufgabe wird in `apps/docs/lib/ai/models.ts` festgelegt |
-| Ursprung der Kurzlinks | `NEXT_PUBLIC_SHORT_LINK_BASE_URL` | [Dynamische Codes](/docs/dynamic-qr-codes#self-hosting) verwenden `NEXT_PUBLIC_APP_URL` |
+| Ursprung der Kurzlinks | `NEXT_PUBLIC_SHORT_LINK_BASE_URL` | [Dynamische Codes](/docs/dynamic-qr-codes#self-hosting) nutzen `NEXT_PUBLIC_APP_URL` |
 | Salt für Scan-Datenschutz | `SCAN_HASH_SALT` | Wird aus `BETTER_AUTH_SECRET` abgeleitet |
-| Dateispeicher (Cloudflare R2) | `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`, `R2_PUBLIC_BASE_URL` | Uploads sind aus; Seiten können weiterhin auf Dateien verlinken, die anderswo gehostet sind. Siehe [Dateien](/docs/files#set-up-storage-self-hosting) |
-| E-Mail (Resend) | `RESEND_API_KEY`, `EMAIL_FROM` | E-Mails werden übersprungen und geloggt, daher können keine Anmeldecodes per E-Mail gesendet werden; Team-Einladungen nutzen kopierbare Links. Siehe [Benachrichtigungen](/docs/notifications#self-hosting) |
-| Eigene Domains auf Vercel | `VERCEL_API_TOKEN`, `VERCEL_PROJECT_ID`, `VERCEL_TEAM_ID` | Lass sie außerhalb von Vercel ungesetzt: Domains werden dann mit einem DNS-`TXT`-Eintrag verifiziert. Siehe [Eigene Domains](/docs/custom-domains#self-hosting) |
-| DNS-Einrichtung mit einem Klick (Domain Connect) | `DOMAIN_CONNECT_PROVIDER_ID`, `DOMAIN_CONNECT_SERVICE_ID`, `DOMAIN_CONNECT_PRIVATE_KEY` | Kein **Set up with …**-Button: Die Leute tragen DNS-Einträge selbst ein. Erfordert ein eigenes Domain-Connect-Template, das jeder DNS-Anbieter akzeptiert, und den zugehörigen öffentlichen Schlüssel im DNS. Siehe [Eigene Domains](/docs/custom-domains#self-hosting) |
+| Dateispeicher (Cloudflare R2) | `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`, `R2_PUBLIC_BASE_URL` | Uploads sind aus; Seiten können weiterhin auf Dateien verlinken, die woanders gehostet sind. Siehe [Dateien](/docs/files#set-up-storage-self-hosting) |
+| E-Mail (Resend) | `RESEND_API_KEY`, `EMAIL_FROM` | E-Mails werden übersprungen und protokolliert, daher können keine E-Mail-Anmeldecodes gesendet werden; Team-Einladungen nutzen kopierbare Links. Siehe [Benachrichtigungen](/docs/notifications#self-hosting) |
+| Eigene Domains auf Vercel | `VERCEL_API_TOKEN`, `VERCEL_PROJECT_ID`, `VERCEL_TEAM_ID` | Außerhalb von Vercel nicht setzen: Domains werden dann mit einem DNS-`TXT`-Eintrag verifiziert. Siehe [Eigene Domains](/docs/custom-domains#self-hosting) |
+| DNS-Einrichtung mit einem Klick (Domain Connect) | `DOMAIN_CONNECT_PROVIDER_ID`, `DOMAIN_CONNECT_SERVICE_ID`, `DOMAIN_CONNECT_PRIVATE_KEY` | Kein Button **Set up with …**: Die Leute tragen DNS-Einträge selbst ein. Erfordert ein eigenes Domain-Connect-Template, das jeder DNS-Anbieter akzeptiert, und dessen öffentlichen Schlüssel im DNS. Siehe [Eigene Domains](/docs/custom-domains#self-hosting) |
 | Geplante Jobs | `CRON_SECRET` | In Produktion weigern sich der wöchentliche Digest und die Webhook-Wiederholungsjobs zu laufen, und Audit-Log-Einträge, die älter als {facts.auditLogRetentionDays} Tage sind, werden nicht gelöscht |
-| Linksicherheit (Google Web Risk) | `WEB_RISK_API_KEY` | Ziele werden nur mit den Offline-Regeln geprüft. Siehe [Code-Kontrollen](/docs/code-controls) |
-| Spam-Schutz für Formulare (Cloudflare Turnstile) | `NEXT_PUBLIC_TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY` | Formulare verlassen sich auf den eingebauten Honeypot und die Rate Limits |
-| Zahlungen (Polar) | `POLAR_ACCESS_TOKEN`, `POLAR_WEBHOOK_SECRET`, `NEXT_PUBLIC_QRDX_PRO_MONTHLY_PRODUCT_ID`, `NEXT_PUBLIC_QRDX_PRO_YEARLY_PRODUCT_ID`, `NEXT_PUBLIC_QRDX_BUSINESS_MONTHLY_PRODUCT_ID`, `NEXT_PUBLIC_QRDX_BUSINESS_YEARLY_PRODUCT_ID` | Upgrades funktionieren nicht (Tarife ohne Produkt-ID zeigen „Coming soon“), und jedes Konto nutzt die Limits von Kostenlos |
-| Euro-Preise | `NEXT_PUBLIC_QRDX_EUR_PRICES=1`, erst setzen, wenn jedes Produkt oben in Polar einen EUR-Preis hat | Besucher aus der EU und dem EWR sehen Preise in US$ und zahlen in US$ |
-| Affiliate-Programm | Keine: Es läuft nur auf qrdx.dev | Aus: Das Affiliate-Programm von QRdx und seine [Bedingungen](/legal/affiliate-terms) sind für qrdx.dev geschrieben, daher hat eine selbst gehostete Kopie keine Seite **/affiliates**, keine Bewerbungen, kein **Einstellungen** → **Affiliate-Programm**, und Empfehlungslinks führen zur Startseite. |
+| Link-Sicherheit (Google Web Risk) | `WEB_RISK_API_KEY` | Ziele werden nur anhand der Offline-Regeln geprüft. Siehe [Code-Kontrollen](/docs/code-controls) |
+| Spam-Prüfung für Formulare (Cloudflare Turnstile) | `NEXT_PUBLIC_TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY` | Formulare verlassen sich auf den eingebauten Honeypot und Rate Limits |
+| Zahlungen (Polar) | `POLAR_ACCESS_TOKEN`, `POLAR_WEBHOOK_SECRET`, `NEXT_PUBLIC_QRDX_PRO_MONTHLY_PRODUCT_ID`, `NEXT_PUBLIC_QRDX_PRO_YEARLY_PRODUCT_ID`, `NEXT_PUBLIC_QRDX_BUSINESS_MONTHLY_PRODUCT_ID`, `NEXT_PUBLIC_QRDX_BUSINESS_YEARLY_PRODUCT_ID` | Ein Upgrade funktioniert nicht (Tarife ohne Produkt-ID zeigen „Coming soon“), und jedes Konto nutzt die Limits von Kostenlos |
+| Euro-Preise | `NEXT_PUBLIC_QRDX_EUR_PRICES=1`, nur setzen, wenn jedes der obigen Produkte in Polar einen EUR-Preis hat | Besucher aus der EU und dem EWR sehen US$-Preise und werden auch in US$ belastet |
+| Partnerprogramm | Keine: Es läuft nur auf qrdx.dev | Aus: Das Partnerprogramm von QRdx und seine [Bedingungen](/legal/affiliate-terms) sind für qrdx.dev geschrieben, daher hat eine selbst gehostete Kopie keine Seite **/affiliates**, keine Bewerbungen, kein **Settings** → **Affiliate program**, und Empfehlungslinks führen zur Startseite. |
 | Dub-Kurzlinks | `DUB_CLIENT_ID`, `DUB_CLIENT_SECRET`, `DUB_REDIRECT_URI`, `INTEGRATION_ENCRYPTION_KEY` | Die Dub-Integration lässt sich nicht verbinden |
 | Google Drive | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_DRIVE_REDIRECT_URI`, `INTEGRATION_ENCRYPTION_KEY` | Die Google-Drive-Integration lässt sich nicht verbinden |
-| Bitly, Dropbox, OneDrive, Box, Notion | `BITLY_CLIENT_ID`/`_SECRET`, `DROPBOX_CLIENT_ID`/`_SECRET`, `MICROSOFT_CLIENT_ID`/`_SECRET`, `BOX_CLIENT_ID`/`_SECRET`, `NOTION_CLIENT_ID`/`_SECRET`, `INTEGRATION_ENCRYPTION_KEY` | Diese Integration zeigt „Not configured“ (Bitly verbindet sich weiterhin mit eingefügten Zugriffstokens). Rebrandly und Short.io brauchen keine Variablen. Siehe [Kurzlinks und Dateiauswahl](/docs/short-links-and-file-pickers#self-hosting) |
-| Slack-Bot | `SLACK_CLIENT_ID`, `SLACK_CLIENT_SECRET`, `SLACK_SIGNING_SECRET`, in Produktion zusätzlich `INTEGRATION_ENCRYPTION_KEY` | Kein Slack-Bot: Seine Routen und die Link-Seite antworten mit 404, und die Einstellungen bieten ihn nicht an. Erstelle deine eigene Slack-App aus [`plugins/slack/manifest.json`](https://github.com/bucharitesh/qrdx/tree/main/plugins/slack), wie es die README beschreibt. Siehe [Slack-Bot](/docs/slack-bot#self-hosting) |
+| Bitly, Dropbox, OneDrive, Box, Notion | `BITLY_CLIENT_ID`/`_SECRET`, `DROPBOX_CLIENT_ID`/`_SECRET`, `MICROSOFT_CLIENT_ID`/`_SECRET`, `BOX_CLIENT_ID`/`_SECRET`, `NOTION_CLIENT_ID`/`_SECRET`, `INTEGRATION_ENCRYPTION_KEY` | Diese Integration zeigt „Not configured“ (Bitly lässt sich weiterhin mit eingefügten Zugriffstokens verbinden). Rebrandly und Short.io brauchen keine Variablen. Siehe [Kurzlinks und Dateiauswahl](/docs/short-links-and-file-pickers#self-hosting) |
+| Slack-Bot | `SLACK_CLIENT_ID`, `SLACK_CLIENT_SECRET`, `SLACK_SIGNING_SECRET`, plus `INTEGRATION_ENCRYPTION_KEY` in Produktion | Kein Slack-Bot: Seine Routen und die Link-Seite antworten mit 404, und Settings bietet ihn nicht an. Erstelle deine eigene Slack-App aus [`plugins/slack/manifest.json`](https://github.com/bucharitesh/qrdx/tree/main/plugins/slack), wie es die README beschreibt. Siehe [Slack-Bot](/docs/slack-bot#self-hosting) |
 | Discord-Bot | `DISCORD_APPLICATION_ID`, `DISCORD_PUBLIC_KEY` | Kein Discord-Bot: Sein Interactions-Endpunkt antwortet mit `404`, und er fehlt im Integrationsverzeichnis. Registriere deine eigene Discord-App, wie es [`plugins/discord/README.md`](https://github.com/bucharitesh/qrdx/tree/main/plugins/discord) beschreibt |
 | Telegram-Bot | `TELEGRAM_BOT_TOKEN`, `TELEGRAM_WEBHOOK_SECRET`, `TELEGRAM_BOT_USERNAME` | Kein Telegram-Bot: Seine Routen antworten mit 404, und die Website listet ihn nicht auf. Erstelle deinen eigenen Bot mit @BotFather und führe `plugins/telegram/scripts/setup.mjs` aus. Siehe [Telegram-Bot](/docs/telegram-bot#self-hosting) |
 | Rate Limiting (Upstash) | `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN` (oder die Vercel-KV-Namen `KV_REST_API_URL`, `KV_REST_API_TOKEN`) | Kein Rate Limiting. In Produktion empfohlen. |
 | Analytics (PostHog, nach Cookie-Einwilligung) | `NEXT_PUBLIC_POSTHOG_KEY`, `NEXT_PUBLIC_POSTHOG_HOST` | Keine Produkt-Analytics |
 | Analytics (Umami, ohne Cookies) | `NEXT_PUBLIC_UMAMI_WEBSITE_ID`, `NEXT_PUBLIC_UMAMI_SCRIPT_URL` | Keine Besuchszahlen |
 | Feedback-Widget | `NEXT_PUBLIC_FEATUREBASE_APP_ID` | Das Widget lädt nicht |
-| Docs-Extras | `GITHUB_TOKEN` | Stern-Zahlen können an GitHub-Rate-Limits stoßen |
+| Extras für die Docs | `GITHUB_TOKEN` | Stern-Zahlen können in GitHub-Rate-Limits laufen |
 
-`INTEGRATION_ENCRYPTION_KEY` muss in Produktion gesetzt sein, sobald du eine Integration aktivierst, weil er die gespeicherten Tokens verschlüsselt.
+`INTEGRATION_ENCRYPTION_KEY` muss in Produktion gesetzt sein, sobald du eine Integration aktivierst, weil damit die gespeicherten Tokens verschlüsselt werden.
 
 <Callout>
-  `NEXT_PUBLIC_*`-Werte werden beim Build in das Browser-Bundle eingebettet. Baue nach einer Änderung mit `docker compose up -d --build` neu.
+  `NEXT_PUBLIC_*`-Werte werden beim Build in das Browser-Bundle eingebettet. Nachdem du einen geändert hast, baue mit `docker compose up -d --build` neu.
 </Callout>
 
-## Reverse-Proxy und HTTPS [#reverse-proxy-and-https]
+## Reverse Proxy und HTTPS [#reverse-proxy-and-https]
 
-Stelle die App hinter einen Reverse-Proxy wie Caddy, nginx oder Traefik, der TLS terminiert, und gib Port 3000 nicht direkt ins Internet frei. Rate Limiting, die Sicherheits-E-Mails und das [Audit-Log](/docs/help/teams/audit-log) lesen die Client-IP aus `X-Real-IP` und danach aus der ersten Adresse in `X-Forwarded-For`. Der Proxy muss diese Header also setzen, und die App darf nur über ihn erreichbar sein. Lass den Proxy `X-Real-IP` auf die Adresse setzen, von der er die Verbindung erhalten hat (in nginx: `proxy_set_header X-Real-IP $remote_addr;`). Ein Proxy, der `X-Forwarded-For` nur ergänzt, erlaubt es einem Client, eine beliebige Adresse an die erste Stelle zu setzen.
+Stelle die App hinter einen Reverse Proxy wie Caddy, nginx oder Traefik, der TLS terminiert, und gib Port 3000 nicht direkt ins Internet frei. Rate Limiting, die Sicherheits-E-Mails und das [Audit-Log](/docs/help/teams/audit-log) lesen die Client-IP aus `X-Real-IP` und danach aus der ersten Adresse in `X-Forwarded-For`. Der Proxy muss diese Header also setzen, und die App darf nur über ihn erreichbar sein. Lass den Proxy `X-Real-IP` auf die Adresse setzen, von der er die Verbindung erhalten hat (in nginx: `proxy_set_header X-Real-IP $remote_addr;`). Ein Proxy, der `X-Forwarded-For` nur ergänzt, lässt einen Client beliebige Adressen an die erste Stelle setzen.
 
 Sobald HTTPS eingerichtet ist, ändere `NEXT_PUBLIC_APP_URL` und `BETTER_AUTH_URL` auf die `https://`-URL, aktualisiere die OAuth-Callback-URLs und baue neu.
 
 ### Content-Security-Policy [#content-security-policy]
 
-Produktions-Builds senden auf den eigenen Seiten von QRdx eine Content-Security-Policy: Angemeldete Seiten erhalten pro Anfrage eine frische Script-Nonce, vorgerenderte Seiten eine Allowlist von Script-Hosts. Gehostete Seiten (`/p`) erhalten eine lockere Policy, weil sie die Pixel der Besitzer ausführen und Medien von überall einbetten. Wenn dein Reverse-Proxy ebenfalls `Content-Security-Policy` setzt, erzwingen Browser beide, lass sie dort also weg. Setze `CSP_REPORT_ONLY=1` (beim Build und zur Laufzeit), um die Policy nur als Report-Only zu senden, während du ein neues Setup prüfst; Verstöße werden von `/api/csp-report` geloggt. Füge `CSP_HTTPS=1` hinzu, wenn du außerhalb von Vercel über HTTPS auslieferst, damit Browser jede `http://`-Ressource hochstufen.
+Produktions-Builds senden auf den eigenen Seiten von QRdx eine Content-Security-Policy: Angemeldete Seiten erhalten pro Anfrage eine neue Script-Nonce, vorgerenderte Seiten eine Allowlist von Script-Hosts. Gehostete Seiten (`/p`) erhalten eine lockere Policy, weil sie die Pixel des Eigentümers ausführen und Medien von überall einbetten. Wenn dein Reverse Proxy ebenfalls `Content-Security-Policy` setzt, erzwingen Browser beide, lass sie dort also weg. Setze `CSP_REPORT_ONLY=1` (beim Build und zur Laufzeit), um die Policy nur als Report-Only zu senden, während du ein neues Setup prüfst; Verstöße werden von `/api/csp-report` protokolliert. Füge `CSP_HTTPS=1` hinzu, wenn du außerhalb von Vercel über HTTPS auslieferst, damit Browser jede `http://`-Ressource hochstufen.
 
 ## Aktualisieren [#updating]
 
@@ -200,26 +200,26 @@ Sichere zuerst die Datenbank:
 docker compose exec db pg_dump -U postgres qrdx > qrdx-backup.sql
 ```
 
-Dann ziehe die Änderungen und baue neu. Der `migrate`-Service gleicht das Schema erneut ab, bevor die App startet.
+Danach ziehe die Änderungen und baue neu. Der Dienst `migrate` gleicht das Schema erneut ab, bevor die App startet.
 
 ```bash
 git pull
 docker compose up -d --build
 ```
 
-Führe bei der manuellen Einrichtung `git pull`, `bun install` und `bun run db:push` aus und baue dann neu.
+Für das manuelle Setup führe `git pull`, `bun install` und `bun run db:push` aus und baue dann neu.
 
 Wenn eine Schemaänderung Daten löschen würde, fragt `drizzle-kit push` nach einer Bestätigung. Führe in diesem Fall `docker compose run --rm migrate` in einem Terminal aus, um die Änderungen zu prüfen und zu bestätigen.
 
 ## Fehlerbehebung [#troubleshooting]
 
-- **„Invalid environment variables“ beim Start:** Das Log nennt jede fehlende oder ungültige Variable. Optionale Variablen müssen auskommentiert sein und dürfen nicht auf einen leeren Wert gesetzt werden.
-- **„BETTER_AUTH_SECRET is missing“ oder „You are using the default secret“:** Setze `BETTER_AUTH_SECRET` und erstelle den Container neu.
-- **OAuth-Fehler `redirect_uri` mismatch:** Die Callback-URL in deiner OAuth-App muss genau `<NEXT_PUBLIC_APP_URL>/api/auth/callback/<github|google>` lauten. Setze `BETTER_AUTH_URL` auf dieselbe Basis-URL.
+- **„Invalid environment variables" beim Start:** Das Log nennt jede fehlende oder ungültige Variable. Optionale Variablen müssen auskommentiert sein und dürfen nicht mit einem leeren Wert gesetzt werden.
+- **„BETTER_AUTH_SECRET is missing" oder „You are using the default secret":** Setze `BETTER_AUTH_SECRET` und erstelle den Container neu.
+- **OAuth-`redirect_uri` stimmt nicht überein:** Die Callback-URL in deiner OAuth-App muss exakt `<NEXT_PUBLIC_APP_URL>/api/auth/callback/<github|google>` lauten. Setze `BETTER_AUTH_URL` auf dieselbe Basis-URL.
 - **Die App erreicht die Datenbank nicht (`fetch failed`):** Bei reinem Postgres muss `DATABASE_HTTP_ENDPOINT` auf den laufenden Proxy zeigen. Prüfe `docker compose ps db-proxy`.
-- **`migrate` wird nie fertig:** `drizzle-kit push` wartet auf eine Bestätigung. Siehe [Aktualisieren](#updating).
+- **`migrate` wird nie fertig:** `drizzle-kit push` wartet auf eine Bestätigung. Siehe [Updates](#updating).
 - **Ein geänderter `NEXT_PUBLIC_*`-Wert hat keine Wirkung:** Baue das Image neu.
-- **Port 4444 wird bereits verwendet:** Ändere die Port-Zuordnung von `db-proxy` in `docker-compose.yml`. Nur die lokale Entwicklung auf dem Host nutzt ihn.
-- **„the --mount option requires BuildKit“:** Dein Docker hat kein BuildKit. Installiere das `buildx`-Plugin oder aktualisiere Docker.
-- **Der Build bricht mit `Killed` oder Exit-Code 137 ab:** Docker hat keinen Arbeitsspeicher mehr. Gib Docker mindestens 8 GB (Docker Desktop: Settings → Resources) und führe `docker compose up -d --build` erneut aus.
-- **„sign-in code email is off for this deployment“:** E-Mail-Codes werden nicht versendet, solange `NEXT_PUBLIC_APP_URL` auf `localhost` steht. Nutze für einen lokalen Test die Anmeldung mit GitHub oder Google.
+- **Port 4444 ist bereits belegt:** Ändere die Port-Zuordnung von `db-proxy` in `docker-compose.yml`. Nur die lokale Entwicklung auf dem Host verwendet ihn.
+- **„the --mount option requires BuildKit":** Dein Docker hat kein BuildKit. Installiere das `buildx`-Plugin oder aktualisiere Docker.
+- **Der Build bricht mit `Killed` oder Exit-Code 137 ab:** Docker hatte nicht genug Arbeitsspeicher. Gib Docker mindestens 8 GB (Docker Desktop: Settings → Resources) und führe `docker compose up -d --build` erneut aus.
+- **„sign-in code email is off for this deployment":** E-Mail-Codes werden nicht versendet, solange `NEXT_PUBLIC_APP_URL` auf `localhost` steht. Nutze für einen lokalen Test die Anmeldung mit GitHub oder Google.
