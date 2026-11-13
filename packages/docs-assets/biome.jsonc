@@ -1,0 +1,59 @@
+{
+  "root": false,
+  "$schema": "https://biomejs.dev/schemas/2.6.4/schema.json",
+  // Not the root config: these files moved here from apps/docs and keep its
+  // rules (apps/docs/biome.jsonc). The registry sources are published as
+  // written (qrdx.dev/r/*.json), so the root formatter's ES5 trailing commas
+  // and class sorting would change what shadcn/ui projects install.
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
+  "files": {
+    "ignoreUnknown": true,
+    "includes": ["**", "!node_modules"]
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "preset": "recommended",
+      "suspicious": {
+        "noExplicitAny": "off",
+        "noArrayIndexKey": "off"
+      },
+      "a11y": {
+        "noSvgWithoutTitle": "off"
+      },
+      "style": {
+        "noNonNullAssertion": "off",
+        "noParameterProperties": "off"
+      },
+      "performance": {
+        "noImgElement": "off",
+        "noDynamicNamespaceImportAccess": "off"
+      }
+    },
+    "domains": {
+      "next": "recommended",
+      "react": "recommended"
+    }
+  },
+  "markdown": {
+    "formatter": {
+      "enabled": false
+    }
+  },
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  }
+}

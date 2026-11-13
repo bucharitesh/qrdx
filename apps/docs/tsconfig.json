@@ -3,6 +3,7 @@
   "compilerOptions": {
     "allowArbitraryExtensions": true,
     "paths": {
+      "@/registry/*": ["../../packages/docs-assets/registry/*"],
       "@/*": ["./*"],
       "@repo/*": ["../../packages/*"]
     }
