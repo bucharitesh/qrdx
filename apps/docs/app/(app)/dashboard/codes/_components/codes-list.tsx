@@ -1,7 +1,7 @@
 "use client";
 
 import { toast } from "@repo/design-system";
-import { Play, Star, Close as X } from "@repo/design-system/components/icons";
+import { Play, Star } from "@repo/design-system/components/icons";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -12,20 +12,12 @@ import {
   AlertDialogTitle,
 } from "@repo/design-system/components/ui/alert-dialog";
 import { Button } from "@repo/design-system/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuTrigger,
-} from "@repo/design-system/components/ui/dropdown-menu";
+import { DropdownMenuItem } from "@repo/design-system/components/ui/dropdown-menu";
 import {
   ArchiveBox as Archive,
   DirectboxSend as ArchiveRestore,
   Import as Download,
   FolderAdd as FolderInput,
-  More as MoreHorizontal,
   Pause,
   ArrowRotateLeft as RotateCcw,
   Tag2 as Tags,
@@ -42,11 +34,13 @@ import {
   trashQrCodes,
 } from "@/actions/bulk-codes";
 import {
-  ListShortcuts,
-  SelectionStatus,
   type ShortcutRow,
   useListSelection,
 } from "@/app/(app)/dashboard/_components/list-selection";
+import {
+  SelectionBar,
+  type SelectionBarAction,
+} from "@/app/(app)/dashboard/_components/selection-bar";
 import {
   BULK_KEYS,
   type BulkAction,
@@ -60,7 +54,6 @@ import type {
 } from "@/app/(app)/dashboard/codes/_lib/organize-shared";
 import type { QrCodeListItem } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import { useOptimisticCodeList } from "@/components/code-builder/use-optimistic-codes";
-import { TooltipWrapper } from "@/components/tooltip-wrapper";
 import { useCan } from "@/components/workspace-provider";
 import { CodesCards } from "./codes-cards";
 import { CodesTable } from "./codes-table";
@@ -248,181 +241,133 @@ export function CodesList({
   const allPaused = selectedCodes.every((code) => code.pausedAt);
   const allFavorite = selectedCodes.every((code) => code.isFavorite);
 
+  const actions: SelectionBarAction[] =
+    status === "trash"
+      ? canWrite
+        ? [
+            {
+              id: "restore",
+              label: t("restore"),
+              icon: <RotateCcw />,
+              kbd: hint("restore"),
+              priority: 60,
+              onSelect: () => void restore(),
+            },
+            {
+              id: "purge",
+              label: t("deleteForever"),
+              icon: <Trash2 />,
+              kbd: hint("trash"),
+              priority: 50,
+              destructive: true,
+              onSelect: () => setDialog("purge"),
+            },
+          ]
+        : []
+      : [
+          ...(canWrite
+            ? [
+                {
+                  id: "move",
+                  label: t("move"),
+                  title: t("moveToFolder"),
+                  icon: <FolderInput />,
+                  kbd: hint("move"),
+                  priority: 60,
+                  onSelect: () => setDialog("move"),
+                },
+                {
+                  id: "tags",
+                  label: t("tag"),
+                  title: t("tags"),
+                  icon: <Tags />,
+                  kbd: hint("tags"),
+                  priority: 50,
+                  onSelect: () => setDialog("tags"),
+                },
+              ]
+            : []),
+          {
+            id: "download",
+            label: t("download"),
+            icon: <Download />,
+            priority: 40,
+            menu: (
+              <>
+                <DropdownMenuItem onSelect={() => zip("png")}>
+                  {t("pngImagesZip")}
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => zip("webp")}>
+                  {t("webpImagesZip")}
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => zip("svg")}>
+                  {t("svgImagesZip")}
+                </DropdownMenuItem>
+              </>
+            ),
+          },
+          ...(canWrite
+            ? [
+                {
+                  id: "archive",
+                  label: status === "archived" ? t("unarchive") : t("archive"),
+                  icon:
+                    status === "archived" ? <ArchiveRestore /> : <Archive />,
+                  kbd: hint("archive"),
+                  priority: 30,
+                  onSelect: () => void toggleArchived(),
+                },
+                {
+                  id: "pause",
+                  label: allPaused ? t("resume") : t("pause"),
+                  icon: allPaused ? <Play /> : <Pause />,
+                  priority: 20,
+                  onSelect: () =>
+                    void run(
+                      () => setQrCodesPaused({ ids, paused: !allPaused }),
+                      {
+                        success: ({ updated }) =>
+                          allPaused
+                            ? t("resumedCodes", { count: updated })
+                            : t("pausedCodes", { count: updated }),
+                        description: allPaused
+                          ? t("scansRedirectAgain")
+                          : t("scansGoToEachCodes"),
+                      },
+                    ),
+                },
+                {
+                  id: "favorite",
+                  label: allFavorite
+                    ? t("removeFromFavorites")
+                    : t("addToFavorites"),
+                  icon: <Star />,
+                  priority: 10,
+                  onSelect: () =>
+                    void run(
+                      () => setQrCodesFavorite({ ids, favorite: !allFavorite }),
+                      {
+                        success: allFavorite
+                          ? "Removed from favorites"
+                          : "Added to favorites",
+                      },
+                    ),
+                },
+                {
+                  id: "trash",
+                  label: t("moveToTrash"),
+                  icon: <Trash2 />,
+                  kbd: hint("trash"),
+                  priority: 25,
+                  destructive: true,
+                  onSelect: () => void trash(),
+                },
+              ]
+            : []),
+        ];
+
   return (
     <div className="space-y-2" ref={listRef}>
-      <SelectionStatus count={count} noun={["code", "codes"]} />
-      {count > 0 && (
-        <div
-          aria-label={t("bulkActions")}
-          className="bg-background/95 supports-[backdrop-filter]:bg-background/80 sticky top-2 z-10 flex flex-wrap items-center gap-1 rounded-lg border p-1.5 shadow-sm backdrop-blur"
-          role="toolbar"
-        >
-          <span className="px-2 text-sm font-medium tabular-nums">
-            {t("countSelected", { count })}
-          </span>
-          <TooltipWrapper kbd="Esc" label={t("clearSelection")}>
-            <Button
-              aria-label={t("clearSelection")}
-              onClick={clear}
-              size="icon-sm"
-              variant="ghost"
-            >
-              <X />
-            </Button>
-          </TooltipWrapper>
-          <div className="bg-border mx-1 h-5 w-px" />
-          {status === "trash" ? (
-            canWrite && (
-              <>
-                <TooltipWrapper kbd={hint("restore")} label={t("restore")}>
-                  <Button
-                    disabled={busy}
-                    onClick={restore}
-                    size="sm"
-                    variant="ghost"
-                  >
-                    <RotateCcw />
-                    {t("restore")}
-                  </Button>
-                </TooltipWrapper>
-                <TooltipWrapper kbd={hint("trash")} label={t("deleteForever")}>
-                  <Button
-                    disabled={busy}
-                    onClick={() => setDialog("purge")}
-                    size="sm"
-                    variant="ghost"
-                  >
-                    <Trash2 />
-                    {t("deleteForever")}
-                  </Button>
-                </TooltipWrapper>
-              </>
-            )
-          ) : (
-            <>
-              {canWrite && (
-                <>
-                  <TooltipWrapper kbd={hint("move")} label={t("moveToFolder")}>
-                    <Button
-                      disabled={busy}
-                      onClick={() => setDialog("move")}
-                      size="sm"
-                      variant="ghost"
-                    >
-                      <FolderInput />
-                      {t("move")}
-                    </Button>
-                  </TooltipWrapper>
-                  <TooltipWrapper kbd={hint("tags")} label={t("tags")}>
-                    <Button
-                      disabled={busy}
-                      onClick={() => setDialog("tags")}
-                      size="sm"
-                      variant="ghost"
-                    >
-                      <Tags />
-                      {t("tag")}
-                    </Button>
-                  </TooltipWrapper>
-                </>
-              )}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button disabled={busy} size="sm" variant="ghost">
-                    <Download />
-                    {t("download")}
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="start">
-                  <DropdownMenuItem onSelect={() => zip("png")}>
-                    {t("pngImagesZip")}
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onSelect={() => zip("webp")}>
-                    {t("webpImagesZip")}
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onSelect={() => zip("svg")}>
-                    {t("svgImagesZip")}
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-              {canWrite && (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button disabled={busy} size="sm" variant="ghost">
-                      <MoreHorizontal />
-                      {t("more")}
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="start" className="w-52">
-                    <DropdownMenuItem
-                      onSelect={() =>
-                        run(
-                          () => setQrCodesPaused({ ids, paused: !allPaused }),
-                          {
-                            success: ({ updated }) =>
-                              allPaused
-                                ? t("resumedCodes", { count: updated })
-                                : t("pausedCodes", { count: updated }),
-                            description: allPaused
-                              ? t("scansRedirectAgain")
-                              : t("scansGoToEachCodes"),
-                          },
-                        )
-                      }
-                    >
-                      {allPaused ? <Play /> : <Pause />}
-                      {allPaused ? t("resume") : t("pause")}
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onSelect={() =>
-                        run(
-                          () =>
-                            setQrCodesFavorite({ ids, favorite: !allFavorite }),
-                          {
-                            success: allFavorite
-                              ? "Removed from favorites"
-                              : "Added to favorites",
-                          },
-                        )
-                      }
-                    >
-                      <Star />
-                      {allFavorite
-                        ? t("removeFromFavorites")
-                        : t("addToFavorites")}
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onSelect={toggleArchived}>
-                      {status === "archived" ? <ArchiveRestore /> : <Archive />}
-                      {status === "archived" ? t("unarchive") : t("archive")}
-                      {keyboardShortcuts && (
-                        <DropdownMenuShortcut>
-                          {hint("archive")}
-                        </DropdownMenuShortcut>
-                      )}
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onSelect={trash} variant="destructive">
-                      <Trash2 />
-                      {t("moveToTrash")}
-                      {keyboardShortcuts && (
-                        <DropdownMenuShortcut>
-                          {hint("trash")}
-                        </DropdownMenuShortcut>
-                      )}
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              )}
-            </>
-          )}
-          {keyboardShortcuts && (
-            <div className="ml-auto">
-              <ListShortcuts actions={shortcutRows} />
-            </div>
-          )}
-        </div>
-      )}
-
       {display.view === "cards" ? (
         <CodesCards
           codes={codes}
@@ -484,6 +429,18 @@ export function CodesList({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <SelectionBar
+        actions={actions}
+        clearLabel={t("clearSelection")}
+        count={count}
+        countLabel={t("countSelected", { count })}
+        disabled={busy}
+        label={t("bulkActions")}
+        noun={["code", "codes"]}
+        onClear={clear}
+        shortcuts={keyboardShortcuts ? shortcutRows : undefined}
+      />
     </div>
   );
 }
