@@ -11,6 +11,7 @@ import {
 } from "@repo/design-system/components/ui/table";
 import Link from "next/link";
 import { SettingsHeader } from "@/app/(app)/settings/components/settings-header";
+import { loadPage } from "@/lib/paging";
 import { SHORT_LINK_BASE } from "@/lib/short-links";
 import { Pager } from "../_components/pager";
 import { EmptyRow } from "../_components/stat-card";
@@ -51,8 +52,10 @@ export default async function AdminCodesPage({
     params.kind === "page" || params.kind === "redirect"
       ? params.kind
       : undefined;
-  const page = parsePage(params.page);
-  const { codes, total } = await listDynamicCodes({ q, status, kind, page });
+  const { codes, total, page } = await loadPage(
+    parsePage(params.page),
+    (page) => listDynamicCodes({ q, status, kind, page }),
+  );
 
   return (
     <div className="space-y-4">

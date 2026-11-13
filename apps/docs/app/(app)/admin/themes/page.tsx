@@ -9,6 +9,7 @@ import {
 } from "@repo/design-system/components/ui/table";
 import Link from "next/link";
 import { SettingsHeader } from "@/app/(app)/settings/components/settings-header";
+import { loadPage } from "@/lib/paging";
 import { Pager } from "../_components/pager";
 import { RemoveThemeButton } from "../_components/remove-theme-button";
 import { EmptyRow } from "../_components/stat-card";
@@ -32,8 +33,10 @@ export default async function AdminThemesPage({
   await requireAdmin();
   const params = await searchParams;
   const view: ThemeView = params.view === "saved" ? "saved" : "community";
-  const page = parsePage(params.page);
-  const { themes, total } = await listThemes({ view, page });
+  const { themes, total, page } = await loadPage(
+    parsePage(params.page),
+    (page) => listThemes({ view, page }),
+  );
 
   return (
     <div className="space-y-4">

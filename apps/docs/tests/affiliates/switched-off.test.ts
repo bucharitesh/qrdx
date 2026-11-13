@@ -152,7 +152,9 @@ describe("on a self-hosted copy (its own domain, Polar set)", () => {
     const { default: AffiliateSettingsPage } = await import(
       "@/app/(app)/settings/affiliate/page"
     );
-    await expect(AffiliateSettingsPage()).rejects.toThrow("NEXT_NOT_FOUND");
+    await expect(
+      AffiliateSettingsPage({ searchParams: Promise.resolve({}) }),
+    ).rejects.toThrow("NEXT_NOT_FOUND");
     for (const path of [
       "/affiliates",
       "/settings/affiliate",
