@@ -24,7 +24,7 @@ Release notes for earlier versions are at [qrdx.dev/changelog](https://qrdx.dev/
   - qrdx 0.0.51 and older reject specs that use these.
 - **Fix: see-through backgrounds under ticket, polaroid, phone, chat-bubble, tag, sticker and envelope.** These frames lie under the code, and with a transparent background the code used to sit on the frame color. They now paint a white plate under the code, like every custom frame. Banners, borders, bubbles, circle, badge, focus, menu-card and gradient-border stay see-through.
 - The gradient border's left inner edge is no longer 0.6 px thicker than its right one (its old color strips overlapped into the light area). The circle frame's two dots are two shapes in the SVG instead of one path.
-- The engine bundle (`dist/index.mjs`) is about 6 KB larger minified (265,248 to 271,304 bytes) and 0.3 KB larger gzipped: the 19 specs are a little more data than the code they replace.
+- The engine bundles are about 5.6 KB larger minified (`dist/index.mjs` 273,981 to 279,617 bytes, `dist/core.mjs` 273,192 to 278,828) and at most 0.3 KB larger gzipped: the 19 specs are a little more data than the code they replace.
 
 ## 0.0.51
 
