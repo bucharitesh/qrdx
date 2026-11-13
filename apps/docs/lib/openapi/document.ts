@@ -73,8 +73,9 @@ import {
 
 // The OpenAPI 3.1 document of the REST API (/v1), built from the zod schemas
 // the routes validate with (request side) and lib/openapi/schemas (response
-// side). scripts/openapi/generate.ts writes it to public/openapi.json;
-// tests/api/openapi.test.ts fails when that file is stale or a /v1 route has
+// side). scripts/openapi/generate.ts writes it to
+// packages/docs-assets/openapi.json and its served copy, public/openapi.json;
+// tests/api/openapi.test.ts fails when either is stale or a /v1 route has
 // no operation here. Script and test only (see lib/openapi/schemas).
 
 type Document = OpenAPIV3_1.Document;

@@ -1,10 +1,11 @@
-// The REST API's OpenAPI document (public/openapi.json, written by
-// `bun run openapi:generate` from lib/openapi/document.ts) stays complete and
-// current: every /v1 route handler has an operation, the committed file is
-// exactly what the generator builds from today's schemas, the reference pages
-// (content/docs/developers/api) match it, and the errors catalogue
-// (lib/openapi/errors.ts, content/docs/developers/errors.mdx) covers every
-// error code the API code can throw.
+// The REST API's OpenAPI document (packages/docs-assets/openapi.json and its
+// served copy public/openapi.json, written by `bun run openapi:generate` from
+// lib/openapi/document.ts) stays complete and current: every /v1 route
+// handler has an operation, the committed file is exactly what the generator
+// builds from today's schemas, the served copy has the same bytes, the
+// reference pages (content/docs/developers/api) match it, and the errors
+// catalogue (lib/openapi/errors.ts, content/docs/developers/errors.mdx)
+// covers every error code the API code can throw.
 import { readdirSync, readFileSync } from "node:fs";
 import { join, relative, sep } from "node:path";
 import { describe, expect, it } from "vitest";
@@ -19,6 +20,7 @@ import {
 
 const root = join(import.meta.dirname, "..", "..");
 const read = (path: string) => readFileSync(join(root, path), "utf8");
+const OPENAPI_DOCUMENT = "../../packages/docs-assets/openapi.json";
 
 type Json = Record<string, any>;
 const document = JSON.parse(JSON.stringify(buildOpenApiDocument())) as Json;
@@ -81,9 +83,13 @@ function deref(value: Json): Json {
 }
 
 describe("OpenAPI document", () => {
-  it("public/openapi.json is exactly what the generator builds (run `bun run openapi:generate`)", () => {
-    const committed = JSON.parse(read("public/openapi.json"));
+  it("packages/docs-assets/openapi.json is exactly what the generator builds (run `bun run openapi:generate`)", () => {
+    const committed = JSON.parse(read(OPENAPI_DOCUMENT));
     expect(committed).toEqual(document);
+  });
+
+  it("public/openapi.json, served at /openapi.json, is a byte-for-byte copy (run `bun run openapi:generate`)", () => {
+    expect(read("public/openapi.json") === read(OPENAPI_DOCUMENT)).toBe(true);
   });
 
   it("has an operation for every /v1 route handler, and no others", () => {
