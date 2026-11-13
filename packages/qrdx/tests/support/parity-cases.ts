@@ -436,6 +436,7 @@ export function parityCases(
     "SquareBorder",
     "StrikedBox",
     "Halloween",
+    "DotRing",
   ]) {
     add(`template ${templateId}`, {
       templateId,
@@ -451,6 +452,29 @@ export function parityCases(
   });
   add("template with a logo", {
     templateId: "StandardBox",
+    level: "H",
+    imageSettings: { src: LOGO, width: 48, height: 48, excavate: true },
+  });
+  // Dot ring: text on the ring, colors and strokes, a caller's logo
+  add("dot ring template with custom props", {
+    templateId: "DotRing",
+    level: "H",
+    bodyPattern: "circle-large",
+    customProps: {
+      customText: "Scan <me> & see",
+      textPosition: "bottom",
+      textRotation: 12,
+      textColor: "#fde047",
+      fontSize: 28,
+      fontWeight: 700,
+      fontLetterSpacing: 2,
+      outerCircleColor: "#1e3a8a",
+      strokeWidth: 3,
+      innerStrokeColor: "#fde047",
+    },
+  });
+  add("dot ring template with a logo", {
+    templateId: "DotRing",
     level: "H",
     imageSettings: { src: LOGO, width: 48, height: 48, excavate: true },
   });

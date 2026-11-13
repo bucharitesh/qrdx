@@ -291,7 +291,7 @@ const CASES: [string, QRSVGOptions][] = [
       },
     },
   ],
-  ["built-in template", { value: VALUE, templateId: "FlamQR" }],
+  ["built-in template", { value: VALUE, templateId: "DotRing" }],
   [
     "custom template written with h",
     {
@@ -364,7 +364,7 @@ describe("attributes and properties", () => {
       "corner-eye-pattern": "gear",
       "corner-eye-dot-pattern": "circle",
       margin: "4",
-      "template-id": "FlamQR",
+      "template-id": "DotRing",
       "module-scale": "0.8",
       "auto-level": "",
       shape: "circle",
@@ -381,7 +381,7 @@ describe("attributes and properties", () => {
       cornerEyePattern: "gear",
       cornerEyeDotPattern: "circle",
       margin: 4,
-      templateId: "FlamQR",
+      templateId: "DotRing",
       moduleScale: 0.8,
       autoLevel: true,
       shape: "circle",

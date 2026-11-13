@@ -393,7 +393,9 @@ SVG draws an image fill as a `<pattern>`, and PDF embeds the picture once. EPS r
 
 ## Templates
 
-Built-in `templateId` values: `default`, `Arrow`, `StandardBox`, `SquareBorder`, `StrikedBox`, `Halloween` (case-sensitive). `getTemplateIds()`, `getAllTemplates()` and `getTemplate(id)` list them at runtime.
+Built-in `templateId` values: `default`, `Arrow`, `StandardBox`, `SquareBorder`, `StrikedBox`, `Halloween`, `DotRing` (case-sensitive). `getTemplateIds()`, `getAllTemplates()` and `getTemplate(id)` list them at runtime.
+
+`DotRing` is a round code: the code in a disc of dots (a different set for every link, the same for the same link) inside a dark ring with text along it. Its settings go in `customProps` (`DotRingProps`): `customText`, `textPosition` (`"top"` or `"bottom"`), `textRotation`, `textColor`, `fontFamily`, `fontWeight`, `fontSize`, `fontLetterSpacing`, `outerCircleColor` (the ring), and `strokeWidth` and `strokeColor` (both edges of the ring; `innerStrokeWidth`, `innerStrokeColor`, `outerStrokeWidth` and `outerStrokeColor` for one edge). The text is SVG text: PDF and EPS print it in Helvetica Bold, and `getQRAsPNG` needs a font on the machine, as frame labels do.
 
 A custom template wraps the QR content (a 300×300 SVG) in your own SVG:
 
