@@ -16,19 +16,17 @@ describe("wall images", () => {
     vi.unstubAllEnvs();
   });
 
-  it("list no paths in next dev, which would rewrite its prerender manifest", () => {
+  it("list no paths, in builds or next dev: each renders on its first request", () => {
     // next dev rewrites .next/dev/prerender-manifest.json without a lock
     // whenever a route lists paths; 40 parallel image requests corrupted it.
+    // Builds leave them to request time too (lib/static-params.ts).
     vi.stubEnv("NODE_ENV", "development");
     expect(generateStaticParams()).toEqual([]);
     vi.stubEnv("NODE_ENV", "production");
-    expect(generateStaticParams()).toHaveLength(WALL_TILES.length);
+    expect(generateStaticParams()).toEqual([]);
   });
 
-  it("prerender one file per tile", () => {
-    expect(generateStaticParams()).toEqual(
-      WALL_TILES.map((tile) => ({ file: `${tile.id}.svg` })),
-    );
+  it("serve one file per tile", () => {
     for (const tile of WALL_TILES) {
       expect(galleryImage(tile).src).toBe(`/gallery/${tile.id}.svg`);
     }

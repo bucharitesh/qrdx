@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { docsIndex } from "@/lib/docs-index";
 import { getLLMText } from "@/lib/get-llm-text";
-import { buildTimeParams } from "@/lib/static-params";
+import { onDemandParams } from "@/lib/static-params";
 
 export const revalidate = false;
 
@@ -28,7 +28,8 @@ export async function GET(
   });
 }
 
-// Unknown pages answer notFound() above (lib/static-params.ts).
+// None at build: each page renders on its first request and is cached
+// (lib/static-params.ts). Unknown pages answer notFound() above.
 export function generateStaticParams() {
-  return buildTimeParams(() => docsIndex().generateParams());
+  return onDemandParams();
 }

@@ -1,13 +1,14 @@
 import { ogSize, renderPageOgImage } from "@/app/og/brand";
-import { localeParams, requireLocaleParam } from "@/lib/i18n/static-params";
+import { requireLocaleParam } from "@/lib/i18n/static-params";
 import { placements } from "@/lib/seo-content";
+import { onDemandParams } from "@/lib/static-params";
 
 export const alt = "Where to put a QR code, and how big to print it";
 export const size = ogSize;
 export const contentType = "image/png";
 
 export function generateStaticParams() {
-  return localeParams();
+  return onDemandParams();
 }
 
 export default async function Image({

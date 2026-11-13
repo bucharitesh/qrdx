@@ -6,8 +6,8 @@ import {
 } from "@/lib/docs-index";
 import { getLLMText } from "@/lib/get-llm-text";
 import { DEFAULT_LOCALE, LOCALE_INFO } from "@/lib/i18n/config";
-import { DOCS_LOCALES, docsLocaleFromSegment } from "@/lib/i18n/docs";
-import { buildTimeParams } from "@/lib/static-params";
+import { docsLocaleFromSegment } from "@/lib/i18n/docs";
+import { onDemandParams } from "@/lib/static-params";
 
 export const revalidate = false;
 
@@ -45,18 +45,8 @@ export async function GET(
   });
 }
 
-// Translated pages; the English fallbacks render on first request.
+// None at build: each page renders on its first request and is cached
+// (lib/static-params.ts). Unknown pages answer notFound() above.
 export function generateStaticParams() {
-  return buildTimeParams(() =>
-    DOCS_LOCALES.filter((locale) => locale !== DEFAULT_LOCALE).flatMap(
-      (locale) =>
-        localizedDocsIndex()
-          .getPages(locale)
-          .filter(isTranslatedPage)
-          .map((page) => ({
-            lang: LOCALE_INFO[locale].segment,
-            slug: page.slugs,
-          })),
-    ),
-  );
+  return onDemandParams();
 }

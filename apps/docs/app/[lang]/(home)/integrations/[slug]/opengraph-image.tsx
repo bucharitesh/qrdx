@@ -1,24 +1,22 @@
 import {
   getCatalogEntry,
   getCatalogRedirect,
-  getIntegrationCatalog,
 } from "@repo/integrations/src/catalog";
 import { notFound } from "next/navigation";
 import { ogSize, renderPageOgImage } from "@/app/og/brand";
 import { getFeatures } from "@/lib/feature-availability";
 import { configuredEntry } from "@/lib/feature-availability-rules";
-import { requireLocaleParam, withLocaleParams } from "@/lib/i18n/static-params";
+import { requireLocaleParam } from "@/lib/i18n/static-params";
 import { getIntegrationAvailability } from "@/lib/integration-availability";
 import { isVisible } from "@/lib/integration-availability-rules";
+import { onDemandParams } from "@/lib/static-params";
 
 export const alt = "A QRdx integration";
 export const size = ogSize;
 export const contentType = "image/png";
 
 export function generateStaticParams() {
-  return withLocaleParams(() =>
-    getIntegrationCatalog().map((entry) => ({ slug: entry.slug })),
-  );
+  return onDemandParams();
 }
 
 // Same rule as the page: moved entries and ones this deployment hides get none.

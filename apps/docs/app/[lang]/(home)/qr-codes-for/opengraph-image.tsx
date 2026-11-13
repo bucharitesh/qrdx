@@ -1,13 +1,14 @@
 import { ogSize, renderPageOgImage } from "@/app/og/brand";
-import { localeParams, requireLocaleParam } from "@/lib/i18n/static-params";
+import { requireLocaleParam } from "@/lib/i18n/static-params";
 import { industries } from "@/lib/seo-content";
+import { onDemandParams } from "@/lib/static-params";
 
 export const alt = "QR code ideas by industry";
 export const size = ogSize;
 export const contentType = "image/png";
 
 export function generateStaticParams() {
-  return localeParams();
+  return onDemandParams();
 }
 
 export default async function Image({
