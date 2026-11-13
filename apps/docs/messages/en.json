@@ -4401,7 +4401,7 @@
         "label": "Label",
         "pickAFrameFirst": "Pick a frame first",
         "none": "None",
-        "takesDotColor": "This frame takes the color of the code's dots.",
+        "takesDotColor": "It takes the color of the code's dots.",
         "alsoHasTemplate": "This design also has the {name} frame inside this one. Picking another frame replaces both.",
         "templateKeepsSize": "This frame fits the code inside it, so the downloaded image keeps the size you choose."
       },

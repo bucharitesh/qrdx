@@ -4401,7 +4401,7 @@
         "label": "Texto",
         "pickAFrameFirst": "Escolha uma moldura primeiro",
         "none": "Nenhuma",
-        "takesDotColor": "Esta moldura usa a cor dos pontos do código.",
+        "takesDotColor": "Usa a cor dos pontos do código.",
         "alsoHasTemplate": "Este design também tem a moldura {name} dentro desta. Ao escolher outra moldura, as duas são substituídas.",
         "templateKeepsSize": "Esta moldura ajusta o código dentro dela, então a imagem baixada mantém o tamanho que você escolher."
       },
