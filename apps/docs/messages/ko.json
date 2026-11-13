@@ -7572,7 +7572,6 @@
           "page": {
             "webhooks": "Webhooks",
             "recentDeliveries": "최근 전송 내역",
-            "theLast50KeptFor": "최근 50개를 30일간 보관합니다. 실패한 전송은 대기 시간을 늘려 가며 최대 {MAX_DELIVERY_ATTEMPTS, number}번 다시 시도합니다.",
             "endpointDeliveries": "엔드포인트 전송 내역",
             "filterDeliveries": "전송 기록 필터",
             "active": "활성",

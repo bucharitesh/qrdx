@@ -7572,7 +7572,6 @@
           "page": {
             "webhooks": "Webhooks",
             "recentDeliveries": "Entregas recentes",
-            "theLast50KeptFor": "As últimas 50, mantidas por 30 dias. Entregas com falha são repetidas até {MAX_DELIVERY_ATTEMPTS, number} vezes, com esperas cada vez maiores.",
             "endpointDeliveries": "Entregas do endpoint",
             "filterDeliveries": "Filtrar envios",
             "active": "Ativo",

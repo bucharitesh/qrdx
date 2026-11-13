@@ -4,8 +4,10 @@ import { cn } from "@repo/design-system/lib/utils";
 import { ArrowLeft } from "iconsax-reactjs";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { ListPagination } from "@/app/(app)/dashboard/_components/list-pagination";
 import { PageHeader } from "@/app/(app)/dashboard/_components/page-header";
+import { takePage } from "@/app/(app)/dashboard/_lib/list-paging";
 import { requireDashboardScope } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import { DELIVERY_STATUS_LABELS } from "@/app/(app)/dashboard/webhooks/_lib/format";
 import { DeliveriesTable } from "@/app/(app)/dashboard/webhooks/[id]/_components/deliveries-table";
@@ -24,6 +26,7 @@ import {
   MAX_DELIVERY_ATTEMPTS,
 } from "@/lib/events/types";
 import { getAppTranslations } from "@/lib/i18n/app-locale";
+import { parsePage } from "@/lib/paging";
 import { workspaceHref } from "@/lib/workspace-paths";
 
 export const metadata: Metadata = {
@@ -33,8 +36,14 @@ export const metadata: Metadata = {
 
 type Props = {
   params: Promise<{ workspace: string; id: string }>;
-  searchParams: Promise<{ status?: string }>;
+  searchParams: Promise<{ status?: string; page?: string | string[] }>;
 };
+
+/**
+ * Deliveries a page. A busy endpoint keeps thousands for 30 days, so the
+ * list pages without counting them: one extra row says whether there's more.
+ */
+const PAGE_SIZE = 50;
 
 const FILTERS: (DeliveryStatus | "all")[] = [
   "all",
@@ -48,13 +57,15 @@ export default async function WebhookDeliveriesPage({
   searchParams,
 }: Props) {
   const t = await getAppTranslations("app.dashboard.settings.webhooks.page");
+  const tp = await getAppTranslations("app.dashboard.paging");
   const scope = await requireDashboardScope();
   const { workspace, id } = await params;
   const list = workspaceHref(workspace, "/settings/webhooks");
-  const { status: rawStatus } = await searchParams;
+  const { status: rawStatus, page: rawPage } = await searchParams;
   const status = FILTERS.includes(rawStatus as DeliveryStatus)
     ? (rawStatus as DeliveryStatus | "all")
     : "all";
+  const page = parsePage(rawPage);
 
   let endpoint: Awaited<ReturnType<typeof getEndpoint>>;
   try {
@@ -63,14 +74,26 @@ export default async function WebhookDeliveriesPage({
     if (error instanceof HttpError && error.status === 404) notFound();
     throw error;
   }
-  const [deliveries, { allowed }] = await Promise.all([
+  const [read, { allowed }] = await Promise.all([
     listDeliveries(scope, endpoint.id, {
       status: status === "all" ? undefined : status,
+      limit: PAGE_SIZE + 1,
+      offset: (page - 1) * PAGE_SIZE,
     }),
     webhookPlan(scope),
   ]);
+  const { rows: deliveries, hasMore } = takePage(read, PAGE_SIZE);
   const canManage = canManageWebhooks(scope);
   const base = `${list}/${encodeURIComponent(endpoint.id)}`;
+  const href = (target: number) => {
+    const params = new URLSearchParams();
+    if (status !== "all") params.set("status", status);
+    if (target > 1) params.set("page", String(target));
+    const query = params.toString();
+    return query ? `${base}?${query}` : base;
+  };
+  // Past the end (an old link; deliveries pruned since): the newest page.
+  if (page > 1 && deliveries.length === 0) redirect(href(1));
 
   return (
     <div className="space-y-6">
@@ -115,7 +138,7 @@ export default async function WebhookDeliveriesPage({
           <div className="space-y-1">
             <h2 className="text-base font-semibold">{t("recentDeliveries")}</h2>
             <p className="text-muted-foreground text-sm">
-              {t("theLast50KeptFor", { MAX_DELIVERY_ATTEMPTS })}
+              {t("keptFor30Days", { MAX_DELIVERY_ATTEMPTS })}
             </p>
           </div>
           <nav
@@ -132,6 +155,7 @@ export default async function WebhookDeliveriesPage({
                     : "hover:bg-muted",
                 )}
                 href={filter === "all" ? base : `${base}?status=${filter}`}
+                scroll={false}
                 key={filter}
               >
                 {filter === "all" ? t("all") : DELIVERY_STATUS_LABELS[filter]}
@@ -142,6 +166,16 @@ export default async function WebhookDeliveriesPage({
         <DeliveriesTable
           canRetry={canManage && allowed}
           deliveries={deliveries}
+        />
+        <ListPagination
+          labels={{
+            navigation: tp("navigation"),
+            previous: tp("newer"),
+            next: tp("older"),
+          }}
+          nextHref={hasMore ? href(page + 1) : null}
+          previousHref={page > 1 ? href(page - 1) : null}
+          summary={tp("page", { page })}
         />
       </section>
     </div>

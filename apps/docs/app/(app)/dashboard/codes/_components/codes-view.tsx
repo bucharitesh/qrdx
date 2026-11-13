@@ -11,6 +11,11 @@ import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import Link from "next/link";
 import { getUserSettings } from "@/actions/user-settings";
+import { ListPagination } from "@/app/(app)/dashboard/_components/list-pagination";
+import {
+  pageSizeMenu,
+  TABLE_PAGE_SIZES,
+} from "@/app/(app)/dashboard/_lib/list-paging";
 import { codeOptionPlansFor } from "@/app/(app)/dashboard/codes/_lib/code-option-plans";
 import {
   DISPLAY_COOKIES,
@@ -24,6 +29,7 @@ import {
 import {
   type CodesFilters,
   codesHref,
+  codesQueryOf,
   isUnfiltered,
   parseCodesFilters,
 } from "@/app/(app)/dashboard/codes/_lib/organize-shared";
@@ -35,6 +41,7 @@ import {
 import { getDomainOptions } from "@/app/(app)/dashboard/domains/_lib/domains";
 import { HairlineFigure } from "@/components/mockups/hairline";
 import { getAppTranslations } from "@/lib/i18n/app-locale";
+import { loadPage } from "@/lib/paging";
 import { can } from "@/lib/permissions";
 import { playgroundHref } from "@/lib/playground-links";
 import { getScanSparklines } from "@/lib/scans";
@@ -50,8 +57,6 @@ export const codesMetadata: Metadata = {
   title: "Dynamic QR codes",
   robots: { index: false, follow: false },
 };
-
-const PAGE_SIZE = 25;
 
 type SearchParams = Record<string, string | string[] | undefined>;
 
@@ -77,6 +82,7 @@ export async function CodesView({
   searchParams: Promise<SearchParams>;
 }) {
   const t = await getAppTranslations("app.dashboard.codes.codesView");
+  const tp = await getAppTranslations("app.dashboard.paging");
   const scope = await requireDashboardScope();
   const filters = parseCodesFilters(await searchParams);
 
@@ -100,26 +106,27 @@ export async function CodesView({
     tags: filters.tags.filter((id) => tags.some((row) => row.id === id)),
   };
 
-  const { codes, total } = await listCodes(scope, {
-    status: effective.status,
-    q: effective.q || undefined,
-    folderId:
-      effective.folder === "none" ? null : (effective.folder ?? undefined),
-    tagIds: effective.tags,
-    favorites: effective.favorites,
-    sort: effective.sort,
-    limit: PAGE_SIZE,
-    offset: (effective.page - 1) * PAGE_SIZE,
-  });
+  const pageSize = effective.size;
+  // Past the last page (an old link, codes deleted since): the last page.
+  const { codes, total, page } = await loadPage(
+    effective.page,
+    (page) =>
+      listCodes(scope, {
+        ...codesQueryOf(effective),
+        limit: pageSize,
+        offset: (page - 1) * pageSize,
+      }),
+    pageSize,
+  );
   const sparklines = Object.fromEntries(
     await getScanSparklines(codes.map((code) => code.id)),
   );
 
-  const pageCount = Math.max(1, Math.ceil(total / PAGE_SIZE));
-  const page = Math.min(effective.page, pageCount);
+  const pageCount = Math.max(1, Math.ceil(total / pageSize));
   const isEmpty = total === 0 && isUnfiltered(effective);
+  const shown: CodesFilters = { ...effective, page };
   const href = (patch: Partial<CodesFilters>) =>
-    codesHref(basePath, effective, patch);
+    codesHref(basePath, shown, patch);
 
   const [domainOptions, cookieStore] = await Promise.all([
     getDomainOptions(scope).catch(() => null),
@@ -245,45 +252,28 @@ export async function CodesView({
                 />
               )}
 
-              {pageCount > 1 && (
-                <div className="flex items-center justify-between gap-2 text-sm">
-                  <span className="text-muted-foreground">
-                    {t("pagePageOfPagecountTotal", {
-                      page,
-                      pageCount,
-                      total: formatNumber(total),
-                    })}
-                  </span>
-                  <div className="flex gap-2">
-                    <Button
-                      asChild={page > 1}
-                      disabled={page <= 1}
-                      size="sm"
-                      variant="outline"
-                    >
-                      {page > 1 ? (
-                        <Link href={href({ page: page - 1 })}>
-                          {t("previous")}
-                        </Link>
-                      ) : (
-                        t("previous")
-                      )}
-                    </Button>
-                    <Button
-                      asChild={page < pageCount}
-                      disabled={page >= pageCount}
-                      size="sm"
-                      variant="outline"
-                    >
-                      {page < pageCount ? (
-                        <Link href={href({ page: page + 1 })}>{t("next")}</Link>
-                      ) : (
-                        t("next")
-                      )}
-                    </Button>
-                  </div>
-                </div>
-              )}
+              <ListPagination
+                labels={{
+                  navigation: tp("navigation"),
+                  previous: t("previous"),
+                  next: t("next"),
+                  pageSize: tp("rowsPerPage"),
+                }}
+                nextHref={page < pageCount ? href({ page: page + 1 }) : null}
+                previousHref={page > 1 ? href({ page: page - 1 }) : null}
+                sizes={pageSizeMenu({
+                  options: TABLE_PAGE_SIZES,
+                  value: pageSize,
+                  total,
+                  label: (count) => tp("perPage", { count }),
+                  href: (size) => href({ size }),
+                })}
+                summary={t("pagePageOfPagecountTotal", {
+                  page,
+                  pageCount,
+                  total: formatNumber(total),
+                })}
+              />
             </div>
           )}
         </div>
