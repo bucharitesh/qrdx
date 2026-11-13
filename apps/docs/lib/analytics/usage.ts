@@ -113,6 +113,7 @@ export function recordUsage(
 
 /** The /v1 route groups counted, one per top-level path segment. */
 export type ApiRouteGroup =
+  | "art"
   | "barcode"
   | "barcodes"
   | "codes"
