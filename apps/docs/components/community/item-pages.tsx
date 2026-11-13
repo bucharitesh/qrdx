@@ -1,5 +1,5 @@
-// Long community lists (the official frame library alone is hundreds of
-// frames) are shown a page at a time, so a page never draws every design.
+// Long community lists (the official frame library alone is a long one) are
+// shown a page at a time, so a page never draws every design.
 // A server component: the links keep the page's other parameters.
 
 import { cn } from "@repo/design-system/lib/utils";
