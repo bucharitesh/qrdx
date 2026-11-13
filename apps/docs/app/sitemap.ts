@@ -246,6 +246,18 @@ function entries(): Entry[] {
       priority: 0.7,
     },
     {
+      url: url("/dynamic-qr-code"),
+      lastModified: pageDate("/dynamic-qr-code"),
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    {
+      url: url("/open-source-qr-code-generator"),
+      lastModified: pageDate("/open-source-qr-code-generator"),
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
+    {
       url: url("/plugins"),
       lastModified: pageDate("/plugins"),
       changeFrequency: "monthly",
