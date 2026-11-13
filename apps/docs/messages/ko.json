@@ -1437,7 +1437,16 @@
       "browsersQuestion": "어떤 브라우저를 지원하나요?",
       "browsersAnswer": "카메라를 사용할 수 있는 최신 브라우저라면 모두 가능합니다. 휴대폰과 컴퓨터의 Chrome, Edge, Safari, Firefox가 해당됩니다. 바코드 리더가 내장된 브라우저(Android와 macOS의 Chrome)는 이를 바로 사용하고, 그 밖의 브라우저는 처음 스캔할 때 오픈 소스 디코더(WebAssembly로 컴파일된 ZXing, jsDelivr CDN에서 약 1 MB)를 다운로드합니다. 카메라를 쓰려면 https 페이지와 사용자의 허용이 필요합니다.",
       "installQuestion": "스캐너를 앱으로 설치할 수 있나요?",
-      "installAnswer": "네. 이 페이지에서 브라우저의 설치 또는 홈 화면에 추가 옵션을 사용하면, 카메라가 바로 열리는 스캐너 아이콘을 만들 수 있습니다."
+      "installAnswer": "네, 가능해요. Chrome, Edge, Samsung Internet에서는 스캐너 아래의 앱 설치를 누르거나 브라우저에 있는 설치 옵션을 사용하세요. iPhone과 iPad에서는 스캐너 아래의 홈 화면에 추가를 눌러 방법을 확인하세요. 앱은 별도 창에서 스캐너로 바로 열리고, 한 번 스캔한 뒤에는 오프라인에서도 작동하며, 기록은 기기에 보관돼요.",
+      "shareQuestion": "스크린샷으로 QR 코드를 스캔할 수 있나요?",
+      "shareAnswer": "네, 가능해요. 이미지로 전환한 다음 스크린샷을 선택하거나 끌어다 놓거나 붙여넣으세요. Android에서는 스캐너를 설치하면 어떤 앱에서든 스크린샷이나 사진을 QRdx Scanner로 공유할 수도 있어요. 앱이 열리고 기기에서 코드를 읽어요. 공유한 이미지는 업로드되거나 보관되지 않아요."
+    },
+    "app": {
+      "name": "QRdx Scanner",
+      "shortName": "QRdx Scanner",
+      "description": "카메라나 스크린샷으로 QR 코드와 바코드를 스캔하세요. 이미지는 기기에서 읽고, 링크는 열기 전에 확인해요.",
+      "cameraShortcut": "카메라로 스캔",
+      "imageShortcut": "이미지에서 스캔"
     }
   },
   "scanner": {
@@ -1522,7 +1531,8 @@
       "drop": "이미지를 여기에 놓거나 파일을 선택하거나 붙여넣으세요",
       "dropHelp": "스크린샷과 사진도 가능하며, 이미지 한 장에 코드가 여러 개 있어도 돼요.",
       "choose": "이미지 선택",
-      "paste": "이미지 붙여넣기"
+      "paste": "이미지 붙여넣기",
+      "shareMissing": "공유한 이미지가 도착하지 않았어요. 여기에서 직접 선택해 주세요."
     },
     "result": {
       "starts": "시작",
@@ -1633,6 +1643,19 @@
       "copy": "링크 복사",
       "retry": "다시 시도",
       "report": "이 코드 신고"
+    },
+    "install": {
+      "install": "앱 설치",
+      "iosButton": "홈 화면에 추가",
+      "iosTitle": "스캐너를 홈 화면에 추가하세요",
+      "iosShare": "공유를 탭하세요. iPhone의 Safari에서는 주소 옆 메뉴에 있어요.",
+      "iosAdd": "위로 스와이프한 다음 홈 화면에 추가를 선택하세요.",
+      "iosConfirm": "웹 앱으로 열기를 켠 상태로 두고 추가를 탭하세요.",
+      "macButton": "Dock에 추가",
+      "macTitle": "스캐너를 Dock에 추가하세요",
+      "macAdd": "메뉴 막대에서 파일을 선택한 다음 Dock에 추가를 선택하세요.",
+      "macConfirm": "추가를 클릭하세요.",
+      "after": "스캐너가 별도의 창에서 바로 열리고, 이 스캐너로 코드를 한 번 스캔하고 나면 오프라인에서도 작동해요."
     }
   },
   "scanPages": {

@@ -1437,7 +1437,16 @@
       "browsersQuestion": "Which browsers are supported?",
       "browsersAnswer": "Any modern browser with camera access: Chrome, Edge, Safari and Firefox on phones and computers. Browsers with a built-in barcode reader (Chrome on Android and macOS) use it directly; others download an open-source decoder (ZXing, compiled to WebAssembly, about 1 MB from the jsDelivr CDN) the first time you scan. The camera needs an https page and your permission.",
       "installQuestion": "Can I install the scanner as an app?",
-      "installAnswer": "Yes. Use your browser's Install or Add to Home Screen option on this page to get a scanner icon that opens straight to the camera."
+      "installAnswer": "Yes. In Chrome, Edge or Samsung Internet, tap Install app under the scanner, or use the browser's own Install option. On iPhone and iPad, tap Add to Home Screen under the scanner for the steps. The app opens straight to the scanner in its own window, works offline once you've scanned with it, and keeps its history on your device.",
+      "shareQuestion": "Can I scan a QR code from a screenshot?",
+      "shareAnswer": "Yes. Switch to Image and choose, drop or paste the screenshot. On Android, once the scanner is installed, you can also share a screenshot or photo to QRdx Scanner from any app: it opens and reads the code on your device. Shared images aren't uploaded or kept."
+    },
+    "app": {
+      "name": "QRdx Scanner",
+      "shortName": "QRdx Scanner",
+      "description": "Scan QR codes and barcodes with your camera or from a screenshot. Images are read on your device, and links are checked before they open.",
+      "cameraShortcut": "Scan with camera",
+      "imageShortcut": "Scan from image"
     }
   },
   "scanner": {
@@ -1522,7 +1531,8 @@
       "drop": "Drop images here, choose files or paste",
       "dropHelp": "Screenshots and photos work, with several codes per image.",
       "choose": "Choose images",
-      "paste": "Paste image"
+      "paste": "Paste image",
+      "shareMissing": "The shared image didn't arrive. Choose it here instead."
     },
     "result": {
       "starts": "Starts",
@@ -1633,6 +1643,19 @@
       "copy": "Copy link",
       "retry": "Try again",
       "report": "Report this code"
+    },
+    "install": {
+      "install": "Install app",
+      "iosButton": "Add to Home Screen",
+      "iosTitle": "Add the scanner to your Home Screen",
+      "iosShare": "Tap Share. In Safari on iPhone, it's in the menu next to the address.",
+      "iosAdd": "Swipe up and choose Add to Home Screen.",
+      "iosConfirm": "Leave Open as Web App on, then tap Add.",
+      "macButton": "Add to Dock",
+      "macTitle": "Add the scanner to your Dock",
+      "macAdd": "In the menu bar, choose File, then Add to Dock.",
+      "macConfirm": "Click Add.",
+      "after": "It opens straight to the scanner in its own window, and works offline once you've scanned a code with it."
     }
   },
   "scanPages": {

@@ -1437,7 +1437,16 @@
       "browsersQuestion": "Quels navigateurs sont pris en charge ?",
       "browsersAnswer": "Tout navigateur récent avec accès à la caméra : Chrome, Edge, Safari et Firefox sur téléphone et ordinateur. Les navigateurs dotés d'un lecteur de codes-barres intégré (Chrome sur Android et macOS) l'utilisent directement ; les autres téléchargent un décodeur open source (ZXing, compilé en WebAssembly, environ 1 Mo depuis le CDN jsDelivr) lors de votre premier scan. La caméra nécessite une page en https et votre autorisation.",
       "installQuestion": "Puis-je installer le scanner comme une application ?",
-      "installAnswer": "Oui. Utilisez l'option Installer ou Ajouter à l'écran d'accueil de votre navigateur sur cette page pour obtenir une icône de scanner qui s'ouvre directement sur la caméra."
+      "installAnswer": "Oui. Dans Chrome, Edge ou Samsung Internet, appuyez sur Installer l’application sous le scanner, ou utilisez l’option d’installation du navigateur. Sur iPhone et iPad, appuyez sur Ajouter à l’écran d’accueil sous le scanner pour voir les étapes. L’application s’ouvre directement sur le scanner dans sa propre fenêtre, fonctionne hors ligne une fois que vous avez effectué un scan avec elle, et conserve son historique sur votre appareil.",
+      "shareQuestion": "Puis-je scanner un QR code à partir d’une capture d’écran ?",
+      "shareAnswer": "Oui. Passez à Image, puis choisissez, déposez ou collez la capture d’écran. Sur Android, une fois le scanner installé, vous pouvez aussi partager une capture d’écran ou une photo vers QRdx Scanner depuis n’importe quelle application : il s’ouvre et lit le code sur votre appareil. Les images partagées ne sont ni envoyées ni conservées."
+    },
+    "app": {
+      "name": "QRdx Scanner",
+      "shortName": "QRdx Scanner",
+      "description": "Scannez des QR codes et des codes-barres avec votre caméra ou à partir d’une capture d’écran. Les images sont lues sur votre appareil et les liens sont vérifiés avant leur ouverture.",
+      "cameraShortcut": "Scan par caméra",
+      "imageShortcut": "Scan depuis une image"
     }
   },
   "scanner": {
@@ -1522,7 +1531,8 @@
       "drop": "Déposez des images ici, choisissez des fichiers ou collez",
       "dropHelp": "Les captures d'écran et les photos fonctionnent, avec plusieurs codes par image.",
       "choose": "Choisir des images",
-      "paste": "Coller une image"
+      "paste": "Coller une image",
+      "shareMissing": "L’image partagée n’est pas arrivée. Choisissez-la ici à la place."
     },
     "result": {
       "starts": "Début",
@@ -1633,6 +1643,19 @@
       "copy": "Copier le lien",
       "retry": "Réessayer",
       "report": "Signaler ce code"
+    },
+    "install": {
+      "install": "Installer l’app",
+      "iosButton": "Sur l’écran d’accueil",
+      "iosTitle": "Ajoutez le scanner à votre écran d’accueil",
+      "iosShare": "Touchez Partager. Dans Safari sur iPhone, ce bouton se trouve dans le menu à côté de l’adresse.",
+      "iosAdd": "Faites défiler vers le haut, puis choisissez Sur l’écran d’accueil.",
+      "iosConfirm": "Laissez activée l’option Ouvrir comme app web, puis touchez Ajouter.",
+      "macButton": "Ajouter au Dock",
+      "macTitle": "Ajoutez le scanner à votre Dock",
+      "macAdd": "Dans la barre des menus, choisissez Fichier, puis Ajouter au Dock.",
+      "macConfirm": "Cliquez sur Ajouter.",
+      "after": "Il s’ouvre directement sur le scanner dans sa propre fenêtre et fonctionne hors ligne une fois que vous avez scanné un code avec."
     }
   },
   "scanPages": {

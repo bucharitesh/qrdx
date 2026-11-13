@@ -263,7 +263,7 @@ export function buildLlmsTxt(input: LlmsTxtInput): string {
       title: "QR code scanner",
       url: "/scan",
       description:
-        "Scan with a camera or from an image, with a safe-link preview",
+        "Scan with a camera or from an image, with a safe-link preview; installs as an app that works offline and, on Android, scans screenshots shared to it",
     },
     {
       title: "Scan checker",
