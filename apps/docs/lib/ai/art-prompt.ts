@@ -88,9 +88,9 @@ export const ART_WRITER_INSTRUCTIONS = [
 const MODE_GUIDANCE: Record<ArtMode, string> = {
   code: "The picture is painted into the squares of the QR code itself, so choose a scene full of texture and clear light and dark areas, not one small subject on a plain background.",
   scene:
-    "The QR code is painted into something inside a full picture, so describe a scene with one large, fairly flat surface near the middle, such as a tiled floor, a quilt, a mosaic wall or a field of flowers.",
+    "A picture is painted first, then the QR code is painted into its middle, in its own colors, so describe one scene with a clear subject near the middle and rich light and shadow there.",
   photo:
-    "The QR code is painted into the attached photo. Describe what matters in it (the main subject, the setting, the colors and the light) so the artwork keeps it, then the mood it should have.",
+    "The QR code is painted into the middle of the attached photo, in its own colors. Describe what matters in it (the main subject, the setting, the colors and the light) so the artwork keeps it, then the mood it should have.",
 };
 
 export interface WriteArtPromptInput {

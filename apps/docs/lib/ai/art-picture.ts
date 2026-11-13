@@ -1,33 +1,42 @@
 import "server-only";
 
-// Prototype, measured by scripts/ai/art-eval-picture.ts and not used by the
-// app yet: "picture first" scene and photo art. The picture comes first (the
-// user's photo, or one text-to-image call from the description), then the
-// code is painted into a square of it:
-// - "paint": the code-mode treatment on that square alone. The model gets
-//   the control code and the square of the picture, and repaints the
-//   picture as the code, so the modules are made of the picture's own
-//   content. The result goes back into the picture at exactly that square,
-//   feathered at the seam; everything around it stays the picture's pixels.
-// - "extend": the other way round. Code mode paints the code from the
-//   description, the code's square is shrunk into the middle of a canvas,
-//   the model extends the picture outward, and the code's own pixels go
-//   back in the middle so it scans as painted.
-// Either way the result then takes the usual scan check and least blend.
+// Scene and photo modes: the picture first, then the code painted into it.
+// The picture is the user's photo, or one text-to-image call from the
+// description (scene mode, at low quality: it looks the same once the code
+// is in). Then the code-mode treatment runs on the square where the code
+// goes: the model gets the control code and that square of the picture,
+// and repaints the picture as the code, so the modules are made of the
+// picture's own content. Only the code and a thin ring of its margin go
+// back into the picture, feathered at the seam; everything around it stays
+// the picture's own pixels. Then the usual scan check and least blend
+// (./art-image.ts deliverVariant), lightening in the picture's own colors.
+// Measured by scripts/ai/art-eval-picture.ts.
 
 import { generateImage, generateText, NoImageGeneratedError } from "ai";
 import { type DecodedImage, QRCodeSVG } from "qrdx";
 import { createElement } from "react";
-import { ART_IMAGE_SIZE } from "@/components/sections/ai-art/config";
-import { serializeQrSvg } from "@/lib/qr-render";
-import { encodePng, type ModuleGrid } from "./art-blend";
+import sharp from "sharp";
 import {
+  type AIArtVariant,
+  ART_IMAGE_SIZE,
+  ART_PHOTO_MAX_BYTES,
+} from "@/components/sections/ai-art/config";
+import { serializeQrSvg } from "@/lib/qr-render";
+import {
+  type BlendStyle,
+  encodePng,
+  type ModuleGrid,
+  SCENE_BLEND_STYLE,
+} from "./art-blend";
+import {
+  ART_MODEL_TIMEOUT_MS,
   type ArtImageModel,
   type ArtModelImage,
-  buildArtPrompt,
   type ControlImage,
   callModel,
   controlProps,
+  deliverVariant,
+  gatewayArtModel,
   readModelImage,
   renderPng,
 } from "./art-image";
@@ -52,13 +61,19 @@ export interface PictureRequest {
 /** One text-to-image call (tests and the eval pass others). */
 export type PictureModel = (request: PictureRequest) => Promise<ArtModelImage>;
 
+/**
+ * The scene's picture quality on GPT Image 2: "low" was the fastest (about
+ * 14 s) and looked the same once the code was painted in; "medium" was slower.
+ */
+export const PICTURE_QUALITY = "low";
+
 /** The art model as a text-to-image model; `quality` for GPT Image 2. */
 export function pictureModelFor(
   choice: ArtModelChoice = AI_MODELS.art,
-  { quality }: { quality?: "low" | "medium" | "high" } = {},
+  { quality = PICTURE_QUALITY }: { quality?: "low" | "medium" | "high" } = {},
 ): PictureModel {
   const options = artProviderOptions(choice);
-  if (quality) {
+  if (choice.model.startsWith("openai/")) {
     options.openai = { ...(options.openai ?? {}), quality };
   }
   if (choice.output === "files") {
@@ -233,6 +248,12 @@ function pasteFeathered(
 
 // ── Paint ──────────────────────────────────────────────────────────────────
 
+/** Extra rules per art model, as in code mode (./art-image.ts). */
+const MODEL_RULES: Record<string, string> = {
+  "openai/gpt-image-2":
+    "- Don't zoom, crop or re-center: the code covers exactly the same pixels as in the first image.",
+};
+
 /** The instruction for painting the code into the picture's square. */
 export function buildPaintPrompt({
   prompt,
@@ -258,7 +279,7 @@ export function buildPaintPrompt({
     "- Draw the three large finder patterns and the small alignment square crisp, at exactly their current size, in the picture's darkest tone: a solid dark ring, a clean light ring and a solid dark center, with straight edges.",
     "- Every dark module must stay clearly darker than the light modules next to it. Paint the picture into the modules themselves, through color, shading and light, so the dark and light pattern stays intact. Keep detail inside a module soft, without fine speckles or thin lines of the opposite tone.",
     "- The border around the code is part of the picture: continue the second image there, matching its edges, a little lighter and calmer. Don't paint a plain, pale or white frame.",
-    "- Don't zoom, crop or re-center: the code covers exactly the same pixels as in the first image.",
+    ...(MODEL_RULES[model] ? [MODEL_RULES[model] as string] : []),
     withReference
       ? "- No text, letters, signatures or watermarks."
       : "- No text, letters, logos, signatures or watermarks.",
@@ -277,7 +298,6 @@ export function buildPaintPrompt({
     );
   }
   if (negativePrompt) lines.push(`Avoid: ${sentence(negativePrompt)}.`);
-  void model;
   return lines.join("\n");
 }
 
@@ -286,21 +306,9 @@ export interface PictureArt {
   art: { png: Uint8Array; pixels: DecodedImage };
   /** Where the code is in `art`, for the scan check and blend */
   control: ControlImage;
-  /** The model's answers, in order */
-  raw: ArtModelImage[];
-  /** Per call, in ms */
-  latencies: number[];
+  /** The model's answer */
+  raw: ArtModelImage;
 }
-
-const timed = async <T>(
-  run: () => Promise<T>,
-  latencies: number[],
-): Promise<T> => {
-  const started = performance.now();
-  const result = await run();
-  latencies.push(Math.round(performance.now() - started));
-  return result;
-};
 
 /**
  * "paint": the code painted into `picture` (ART_IMAGE_SIZE square) at
@@ -320,10 +328,10 @@ export async function paintIntoPicture({
   keepModules = PAINT_KEEP_MODULES,
   featherModules = PAINT_FEATHER_MODULES,
   reference,
-  model,
+  model = gatewayArtModel,
   modelId = AI_MODELS.art.model,
   signal,
-  timeoutMs = 45_000,
+  timeoutMs = ART_MODEL_TIMEOUT_MS,
 }: {
   text: string;
   prompt: string;
@@ -342,7 +350,7 @@ export async function paintIntoPicture({
   keepModules?: number;
   featherModules?: number;
   reference?: Uint8Array;
-  model: ArtImageModel;
+  model?: ArtImageModel;
   modelId?: string;
   signal: AbortSignal;
   timeoutMs?: number;
@@ -353,27 +361,22 @@ export async function paintIntoPicture({
     SIZE,
   );
   const control = await renderPaintControl(text, margin);
-  const latencies: number[] = [];
-  const raw = await timed(
-    () =>
-      callModel(
-        model,
-        {
-          prompt: buildPaintPrompt({
-            prompt,
-            negativePrompt,
-            visibility,
-            creativity,
-            withReference: Boolean(reference),
-            model: modelId,
-          }),
-          images: [control, encodePng(area), ...(reference ? [reference] : [])],
-          seed,
-        },
-        signal,
-        timeoutMs,
-      ),
-    latencies,
+  const raw = await callModel(
+    model,
+    {
+      prompt: buildPaintPrompt({
+        prompt,
+        negativePrompt,
+        visibility,
+        creativity,
+        withReference: Boolean(reference),
+        model: modelId,
+      }),
+      images: [control, encodePng(area), ...(reference ? [reference] : [])],
+      seed,
+    },
+    signal,
+    timeoutMs,
   );
   const painted = await resize((await readModelImage(raw)).pixels, square.side);
   // Only the code and `keepModules` of its margin; the picture beyond.
@@ -400,40 +403,90 @@ export async function paintIntoPicture({
       grid,
       mode: "scene",
     },
-    raw: [raw],
-    latencies,
+    raw,
   };
 }
 
-/** "extend": the instruction for painting the picture out from the middle. */
-export function buildExtendPrompt(prompt: string): string {
-  return [
-    `The first image is a square picture in the middle of a flat grey canvas. Extend the picture outward so it fills the whole canvas seamlessly, edge to edge, continuing its scene: ${sentence(prompt)}.`,
-    "Don't change anything inside the middle square: keep it exactly as it is, at the same pixels and size.",
-    "Continue its colors, light and perspective out to the edges, so the middle square reads as part of one picture, not a panel or a frame.",
-    "No text, letters, logos, signatures or watermarks.",
-  ].join("\n");
-}
+// ── The picture ────────────────────────────────────────────────────────────
+
+/** The configured art model, as the scene's text-to-image model. */
+export const gatewayPictureModel: PictureModel = pictureModelFor();
+
+/** JPEG qualities tried in turn until the picture fits ART_PHOTO_MAX_BYTES. */
+const PICTURE_JPEG_QUALITIES = [88, 80, 70];
 
 /**
- * "extend": code mode from the description, then the picture extended out
- * from the code's square, with the code's own pixels put back.
+ * The scene's picture from the description: one low-quality text-to-image
+ * call, as a JPEG of at most ART_PHOTO_MAX_BYTES (the model answers with a
+ * PNG near 2 MB; the JPEG keeps the sealed picture inside the request body
+ * a photo may already use). Errors read like the art call's (no credit used).
  */
-export async function extendFromCode({
+export async function makeScenePicture({
+  prompt,
+  negativePrompt,
+  seed,
+  signal,
+  timeoutMs,
+  model = gatewayPictureModel,
+}: {
+  prompt: string;
+  negativePrompt?: string;
+  seed: number;
+  signal: AbortSignal;
+  timeoutMs: number;
+  model?: PictureModel;
+}): Promise<Uint8Array> {
+  const image = await callModel(
+    ({ prompt: text, seed: s, abortSignal }) =>
+      model({ prompt: text, seed: s, abortSignal }),
+    {
+      prompt: buildPicturePrompt({ prompt, negativePrompt }),
+      images: [],
+      seed,
+    },
+    signal,
+    timeoutMs,
+  );
+  const square = sharp(image.data).resize(SIZE, SIZE, { fit: "cover" });
+  for (const quality of PICTURE_JPEG_QUALITIES) {
+    const jpeg = await square
+      .clone()
+      .jpeg({ quality, mozjpeg: true })
+      .toBuffer();
+    if (jpeg.length <= ART_PHOTO_MAX_BYTES) return new Uint8Array(jpeg);
+  }
+  throw new Error("The scene's picture is too large even as a JPEG");
+}
+
+// ── One variant ────────────────────────────────────────────────────────────
+
+const mediaTypeOf = (bytes: Uint8Array) =>
+  bytes[0] === 0xff && bytes[1] === 0xd8 ? "image/jpeg" : "image/png";
+
+/**
+ * One scene- or photo-mode image, verified to decode to `text`: the code
+ * painted into `picture` (the scene's picture, or the photo's bytes), then
+ * the scan check and least blend. Throws an HttpError that says no credit
+ * was used when nothing scannable came back.
+ */
+export async function generatePictureVariant({
   text,
   prompt,
   negativePrompt,
   visibility,
   creativity,
   seed,
-  codeControl,
-  region = PICTURE_REGION,
-  margin = 1,
-  featherModules = 0.6,
-  model,
-  modelId = AI_MODELS.art.model,
+  reference,
+  picture,
+  control,
   signal,
-  timeoutMs = 45_000,
+  model,
+  modelId,
+  timeoutMs,
+  region,
+  keepModules,
+  featherModules,
+  blendStyle = SCENE_BLEND_STYLE,
 }: {
   text: string;
   prompt: string;
@@ -441,94 +494,56 @@ export async function extendFromCode({
   visibility: number;
   creativity: number;
   seed: number;
-  codeControl: ControlImage;
-  region?: PictureRegion;
-  margin?: number;
-  featherModules?: number;
-  model: ArtImageModel;
-  modelId?: string;
+  /** An uploaded PNG/JPEG data URL (never a remote URL) */
+  reference?: string;
+  /** The picture (PNG or JPEG bytes); never stored or logged */
+  picture: Uint8Array;
+  /** The code's control (renderControlImage), for its module map */
+  control: ControlImage;
   signal: AbortSignal;
+  model?: ArtImageModel;
+  modelId?: string;
   timeoutMs?: number;
-}): Promise<PictureArt> {
-  void text;
-  const latencies: number[] = [];
-  const code = await timed(
-    () =>
-      callModel(
-        model,
-        {
-          prompt: buildArtPrompt({
-            prompt,
-            negativePrompt,
-            visibility,
-            creativity,
-            withReference: false,
-            model: modelId,
-          }),
-          images: [codeControl.png],
-          seed,
-        },
-        signal,
-        timeoutMs,
+  /** The eval tries others */
+  region?: PictureRegion;
+  keepModules?: number;
+  featherModules?: number;
+  blendStyle?: BlendStyle;
+}): Promise<AIArtVariant> {
+  // Square at the delivered size (the client crops photos square).
+  const { pixels } = await readModelImage({
+    data: picture,
+    mediaType: mediaTypeOf(picture),
+  });
+  const painted = await paintIntoPicture({
+    text,
+    prompt,
+    negativePrompt,
+    visibility,
+    creativity,
+    seed,
+    picture: pixels,
+    codeControl: control,
+    ...(region && { region }),
+    ...(keepModules !== undefined && { keepModules }),
+    ...(featherModules !== undefined && { featherModules }),
+    ...(reference && {
+      reference: new Uint8Array(
+        Buffer.from(reference.slice(reference.indexOf(",") + 1), "base64"),
       ),
-    latencies,
-  );
-  const codePixels = (await readModelImage(code)).pixels;
-  // The code's square with `margin` modules of its border.
-  const { left, top, pitch } = codeControl.grid;
-  const from = Math.round(left - margin * pitch);
-  const fromTop = Math.round(top - margin * pitch);
-  const side = Math.round((codeControl.modules + 2 * margin) * pitch);
-  const { square, grid } = paintGeometry(codeControl.modules, region, margin);
-  const middle = await resize(
-    crop(codePixels, from, fromTop, side),
-    square.side,
-  );
-  // The canvas the model extends: flat grey, the code's square in the middle.
-  const canvas = new Uint8Array(SIZE * SIZE * 4);
-  for (let i = 0; i < canvas.length; i += 4) {
-    canvas[i] = 128;
-    canvas[i + 1] = 128;
-    canvas[i + 2] = 128;
-    canvas[i + 3] = 255;
-  }
-  const seeded = pasteFeathered(
-    { width: SIZE, height: SIZE, data: canvas },
-    middle,
-    square,
-    0,
-  );
-  const extended = await timed(
-    () =>
-      callModel(
-        model,
-        {
-          prompt: buildExtendPrompt(prompt),
-          images: [encodePng(seeded)],
-          seed,
-        },
-        signal,
-        timeoutMs,
-      ),
-    latencies,
-  );
-  const outside = (await readModelImage(extended)).pixels;
-  const pixels = pasteFeathered(
-    outside,
-    middle,
-    square,
-    featherModules * grid.pitch,
-  );
-  return {
-    art: { png: encodePng(pixels), pixels },
-    control: {
-      png: codeControl.png,
-      modules: codeControl.modules,
-      map: codeControl.map,
-      grid,
-      mode: "scene",
-    },
-    raw: [code, extended],
-    latencies,
-  };
+    }),
+    ...(model && { model }),
+    ...(modelId && { modelId }),
+    ...(timeoutMs !== undefined && { timeoutMs }),
+    signal,
+  });
+  return deliverVariant({
+    text,
+    art: painted.art,
+    control: painted.control,
+    visibility,
+    seed,
+    signal,
+    blendStyle,
+  });
 }

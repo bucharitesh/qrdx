@@ -3304,9 +3304,9 @@
       "code": "Code",
       "scene": "Scene",
       "photo": "Photo",
-      "codeDescription": "The code is the picture: the art fills its modules, on a plain border.",
-      "sceneDescription": "A full picture with the code built into something in it, such as a building's windows or a tiled floor.",
-      "photoDescription": "Your photo, with the code painted into it.",
+      "codeDescription": "The code is the picture: the art fills its modules, on a plain border. The quickest.",
+      "sceneDescription": "A picture is painted from your description, then the code is painted into its middle, in the picture's own colors. Takes a little longer.",
+      "photoDescription": "Your photo, with the code painted into its middle in the photo's own colors. Takes a little longer.",
       "dropAPhoto": "Drop a photo or choose one",
       "photoHint": "PNG, JPG or WebP. It's cropped square and resized in your browser, sent with your prompt to make the art, and QRdx doesn't keep it.",
       "choosePhoto": "Choose a photo",
@@ -3327,7 +3327,7 @@
       "examples": {
         "eyebrow": "Scene and photo modes",
         "title": "Put the code inside a picture",
-        "description": "Scene mode paints a whole picture and builds the code into something in it: a wall, a garden, a row of windows. Photo mode paints the code into a photo you upload. These came from the same pipeline you use, and each one scans and opens this page.",
+        "description": "Scene mode paints a picture from your description first, then paints the code into its middle, so the picture runs right up to and through the code. Photo mode does the same with a photo you upload. These came from the same pipeline you use, and each one scans and opens this page.",
         "scene": "Scene",
         "photo": "Photo",
         "caption": {
@@ -3350,7 +3350,9 @@
           "neon-city": "AI QR art in scene mode: a city street at night, with the QR code made of lit and dark windows",
           "photo-dog": "AI QR art in photo mode: a golden dog in a sunny park, with the QR code painted over it"
         }
-      }
+      },
+      "paintingPicture": "Painting the picture…",
+      "paintingCode": "Painting the code into it…"
     }
   },
   "compare": {

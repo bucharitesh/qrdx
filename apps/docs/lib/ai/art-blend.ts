@@ -440,11 +440,15 @@ export const CODE_BLEND_STYLE: BlendStyle = {
   minFit: 0.6,
 };
 
-/** Scenes and photos, from scripts/ai/art-eval.ts. */
+/**
+ * Scenes and photos (the code painted into a picture), from
+ * scripts/ai/art-eval-picture.ts: without a ring, 7 of 12 scenes needed the
+ * Image QR blend; this thin one needed none.
+ */
 export const SCENE_BLEND_STYLE: BlendStyle = {
   keepColor: true,
-  ringFull: 0.5,
-  ringFade: 1,
+  ringFull: 0.3,
+  ringFade: 0.8,
   ringLight: 0.75,
   ringClean: 1,
   wideSearch: true,

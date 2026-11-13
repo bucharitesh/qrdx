@@ -25,6 +25,7 @@ import {
   StatusDot,
 } from "@/components/sections/ai-art/ai-art-result";
 import type { AIArtRun } from "@/components/sections/ai-art/ai-art-run";
+import { useArtModeProgress } from "@/components/sections/ai-art/art-mode-progress";
 import {
   type AIArtVariant,
   ART_PRINT_SIZE,
@@ -315,6 +316,7 @@ export function ArtCanvas() {
 
   if (!shown.visible) return null;
   const { result, variant, generating } = shown;
+  const progress = useArtModeProgress(useArtSessionStore);
   const check = results[selected];
   const back = () => setCanvasOpen(false);
 
@@ -374,11 +376,12 @@ export function ArtCanvas() {
             <div className="bg-background/80 absolute inset-0 flex flex-col items-center justify-center gap-2 p-4 text-center backdrop-blur-sm">
               <Spinner className="size-5" />
               <p className="text-sm font-medium">
-                {shown.pendingVariations > 1
-                  ? t("generatingVariations", {
-                      count: shown.pendingVariations,
-                    })
-                  : t("generatingYourArtwork")}
+                {progress ??
+                  (shown.pendingVariations > 1
+                    ? t("generatingVariations", {
+                        count: shown.pendingVariations,
+                      })
+                    : t("generatingYourArtwork"))}
               </p>
               {!isMobile && (
                 <p className="text-muted-foreground max-w-60 text-xs text-pretty">

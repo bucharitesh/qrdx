@@ -36,6 +36,7 @@ import type {
   AIArtRequest,
   AIArtResult,
   AIArtVariant,
+  ArtPictureResult,
 } from "./config";
 import { prepareReferenceImage } from "./image-utils";
 
@@ -169,6 +170,37 @@ export function useAIArtRun({ store, onSignedOut }: UseAIArtRunOptions) {
     return (await response.json()) as AIArtResult;
   };
 
+  /** Scene mode's first step: its picture, sealed by the server. */
+  const requestPicture = async (
+    request: AIArtRequest,
+    signal: AbortSignal,
+  ): Promise<ArtPictureResult> => {
+    if (mock && devArtMock) {
+      return (await devArtMock.load()).mockArtPicture(request, signal);
+    }
+    const response = await apiFetch("/api/ai/art/picture", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...workspaceRequestHeaders(),
+      },
+      body: JSON.stringify({
+        text: request.text,
+        prompt: request.prompt,
+        negativePrompt: request.negativePrompt,
+        style: request.style,
+      }),
+      signal,
+    });
+    if (!response.ok) {
+      const parsed = MyErrorResponseSchema.safeParse(
+        await response.json().catch(() => null),
+      );
+      throw new ArtRequestError(parsed.success ? parsed.data : {});
+    }
+    return (await response.json()) as ArtPictureResult;
+  };
+
   const generate = async (
     request: AIArtRequest,
     seeds: number[],
@@ -180,7 +212,12 @@ export function useAIArtRun({ store, onSignedOut }: UseAIArtRunOptions) {
       return null;
     }
 
-    const outcome = await runAIArt(store, { requestImage }, request, seeds);
+    const outcome = await runAIArt(
+      store,
+      { requestImage, requestPicture },
+      request,
+      seeds,
+    );
     if (outcome.status === "aborted") {
       if (outcome.reason === "cleared") {
         toast("Your content changed, so the art stopped", {
@@ -217,6 +254,7 @@ export function useAIArtRun({ store, onSignedOut }: UseAIArtRunOptions) {
         reference: Boolean(request.reference),
         preset: meta.preset ?? undefined,
         look: request.style,
+        mode: request.mode ?? "code",
       });
     }
     return outcome;

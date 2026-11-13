@@ -27,7 +27,9 @@ export { ART_MODEL_ID, ART_USAGE_MODEL_IDS } from "./art-models";
 /**
  * JSON body: prompts plus an optional downsized reference image and, in
  * photo mode, the photo, both base64 (4/3 of their bytes). About 2.2 MB at
- * most, well under Vercel's 4.5 MB request limit.
+ * most, well under Vercel's 4.5 MB request limit. Scene mode's sealed
+ * picture (ART_PICTURE_SEAL_MAX_LENGTH) takes the photo's place, so it fits
+ * the same room: no request carries both.
  */
 export const MAX_ART_REQUEST_BODY_BYTES =
   32 * 1024 +
@@ -159,6 +161,21 @@ function exhaustedError(credits: AIArtCredits, requested: number) {
     : new SubscriptionRequiredError(`${message} Upgrade for more.`, {
         creditsRemaining: credits.remaining,
       });
+}
+
+/**
+ * Throws what reserveArtCredits would when the scope has no image left this
+ * month, without reserving one: scene mode's picture step checks this, and
+ * the credit is reserved (and used only on delivery) by the paint step.
+ */
+export async function assertArtCreditsLeft(
+  scope: ArtScope,
+): Promise<AIArtCredits> {
+  const credits = await getArtCredits(scope);
+  if (credits.remaining !== null && credits.remaining < 1) {
+    throw exhaustedError(credits, 1);
+  }
+  return credits;
 }
 
 /**
