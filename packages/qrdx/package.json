@@ -1,13 +1,14 @@
 {
   "name": "qrdx",
   "version": "0.0.50",
-  "description": "Customizable QR code generator for React: SVG and canvas rendering, dot and eye patterns, gradients, logos, frames, Logo QR and Image QR art, PNG/JPG/WebP/SVG/PDF/EPS export, a scan score and QR scanning.",
+  "description": "Customizable QR code generator for React and plain JavaScript: SVG and canvas rendering, dot and eye patterns, gradients, logos, frames, Logo QR and Image QR art, PNG/JPG/WebP/SVG/PDF/EPS export, a scan score and QR scanning.",
   "keywords": [
     "qr-code",
     "qrcode",
     "qr-code-generator",
     "react-qr-code",
     "react",
+    "vanilla-js",
     "svg",
     "typescript",
     "qr-scanner",
@@ -32,6 +33,8 @@
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/src/index.d.ts",
+  "unpkg": "./dist/vanilla.browser.mjs",
+  "jsdelivr": "./dist/vanilla.browser.mjs",
   "exports": {
     ".": {
       "import": {
@@ -41,6 +44,26 @@
       "require": {
         "types": "./dist/src/index.d.ts",
         "default": "./dist/index.js"
+      }
+    },
+    "./core": {
+      "import": {
+        "types": "./dist/src/core.d.ts",
+        "default": "./dist/core.mjs"
+      },
+      "require": {
+        "types": "./dist/src/core.d.ts",
+        "default": "./dist/core.js"
+      }
+    },
+    "./vanilla": {
+      "import": {
+        "types": "./dist/src/vanilla.d.ts",
+        "default": "./dist/vanilla.mjs"
+      },
+      "require": {
+        "types": "./dist/src/vanilla.d.ts",
+        "default": "./dist/vanilla.js"
       }
     },
     "./node": {
@@ -55,11 +78,11 @@
     },
     "./types": {
       "import": {
-        "types": "./dist/types/index.d.ts",
+        "types": "./dist/types/public.d.ts",
         "default": "./dist/types/index.mjs"
       },
       "require": {
-        "types": "./dist/types/index.d.ts",
+        "types": "./dist/types/public.d.ts",
         "default": "./dist/types/index.js"
       }
     },
@@ -80,6 +103,7 @@
     "prepublishOnly": "node -e \"if(!(process.env.npm_config_user_agent||'').startsWith('bun/')){console.error('Publish through the Publish workflow, or with bun publish, which replaces workspace ranges with real versions.');process.exit(1)}\" && bun run build && bun run test && node scripts/readme-catalogue.mjs --check"
   },
   "dependencies": {
+    "csstype": "^3.2.3",
     "jsqr": "^1.4.0",
     "zod": "^4.6.7"
   },
@@ -89,6 +113,7 @@
     "@types/node": "26.6.6",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
+    "jsdom": "28.1.0",
     "jspdf": "^4.2.1",
     "next": "16.4.3",
     "react": "^19.3.1",
@@ -109,6 +134,12 @@
       "optional": true
     },
     "jspdf": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
       "optional": true
     },
     "sharp": {

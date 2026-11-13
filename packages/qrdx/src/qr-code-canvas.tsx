@@ -11,7 +11,7 @@
  * SPDX-License-Identifier: ISC
  */
 import { type JSX, useEffect, useRef, useState } from "react";
-import type { QRPropsCanvas } from "../types";
+import type { QRPropsCanvas } from "../types/react";
 import qrcodegen from "./codegen";
 import {
   DEFAULT_BGCOLOR,

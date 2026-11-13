@@ -1,10 +1,12 @@
+/** @jsxImportSource ./jsx */
 /** biome-ignore-all lint/style/noMagicNumbers: logo geometry */
 // The center logo as SVG: an optional plate behind it and a crop to its
 // shape (imageSettings.shape and .plate). Everything is plain SVG (a filled
 // shape, a <clipPath> and an <image>), which the PDF and EPS exporters
 // draw too: their painters clip to the same outline.
-import type { JSX } from "react";
+
 import type { ImageSettings, LogoShape } from "../types";
+import type { QRNode } from "./jsx/runtime";
 import { hashString } from "./shapes";
 import { fmt } from "./utils/fmt";
 
@@ -25,7 +27,7 @@ function shapeElement(
   shape: LogoShape,
   box: Box,
   props: Record<string, string> = {}
-): JSX.Element {
+): QRNode {
   if (shape === "circle") {
     return (
       <circle
@@ -65,7 +67,7 @@ function inset(box: Box, share: number): Box {
 export function renderLogo(
   settings: Pick<ImageSettings, "src" | "shape" | "plate">,
   box: Box
-): JSX.Element {
+): QRNode {
   const shape = settings.shape ?? "square";
   const plate = settings.plate;
   const imageBox = plate ? inset(box, LOGO_PLATE_INSET) : box;

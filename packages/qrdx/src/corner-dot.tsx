@@ -1,6 +1,8 @@
-import type { JSX } from "react";
+/** @jsxImportSource ./jsx */
+
 import type { CornerEyeDotPattern } from "../types/corner-dot";
 import type { EyeCorner } from "./corner-eye";
+import type { QRNode } from "./jsx/runtime";
 import {
   circlePath,
   heartPath,
@@ -31,7 +33,7 @@ export function generateCornerDotPath(
   radius: number,
   pattern: CornerEyeDotPattern = "circle",
   corner: EyeCorner = "top-left"
-): JSX.Element {
+): QRNode {
   const size = radius * 2;
   const halfSize = radius;
   // One finder module (the dot is 3 × 3 modules)

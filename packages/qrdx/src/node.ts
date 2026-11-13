@@ -5,10 +5,10 @@
 // library for the browser doesn't try to link a native module. Import it
 // from "qrdx/node", never from "qrdx", when you want a PNG on a server.
 
+// It draws with qrdx/core (built as dist/core, which this entry imports), so
+// it needs neither react nor react-dom.
 import type { QRProps } from "../types";
-import { DEFAULT_SIZE } from "./constants";
-import { withQRSize } from "./download";
-import { getQRAsSVGDataUri } from "./index";
+import { DEFAULT_SIZE, getQRAsSVGDataUri, withQRSize } from "./core";
 import {
   loadLogoForRasterizer,
   type RasterLogo,

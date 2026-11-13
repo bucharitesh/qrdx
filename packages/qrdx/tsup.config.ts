@@ -1,3 +1,4 @@
+import { dirname, relative, resolve } from "node:path";
 import { defineConfig, type Options } from "tsup";
 
 // esbuild's Plugin type, via tsup (esbuild is tsup's dependency, not ours).
@@ -53,6 +54,58 @@ const frameDataExternal = (extension: ".js" | ".mjs"): Plugin => ({
   },
 });
 
+// qrdx/core (dist/core) is the one React-free engine: qrdx/vanilla, qrdx/node
+// and the framework adapters import it rather than bundling their own copy,
+// so an app that uses two of them loads the engine once. Each of these
+// entries may bundle only its own modules (`own`); any other import of the
+// engine is an error, since it would be a second copy of the engine.
+const sharedCore = (extension: ".js" | ".mjs", own: string[]): Plugin => ({
+  name: "qrdx-shared-core",
+  setup(build) {
+    build.onResolve({ filter: /^\.\.?\// }, (args) => {
+      if (args.kind === "entry-point") {
+        return;
+      }
+      if (/^\.\/(core|engine)$/.test(args.path)) {
+        return { path: `./core${extension}`, external: true };
+      }
+      const target = relative(
+        resolve("src"),
+        resolve(dirname(args.importer), args.path)
+      );
+      if (own.includes(target)) {
+        return;
+      }
+      return {
+        errors: [
+          {
+            text: `${relative(".", args.importer)} imports ${args.path}; import the engine from "./core" instead`,
+          },
+        ],
+      };
+    });
+  },
+});
+
+// zod's `locales` namespace (every language's error messages, about 260 KB
+// minified) is left out of the no-bundler browser file: the schemas use the
+// English messages, which zod imports on its own, and the file never exposes
+// `z`, so nothing can reach the other languages.
+const dropZodLocales: Plugin = {
+  name: "qrdx-drop-zod-locales",
+  setup(build) {
+    build.onResolve({ filter: /\/locales\/index\.js$/ }, (args) =>
+      /[\\/]zod[\\/]/.test(args.importer)
+        ? { path: "zod-locales", namespace: "qrdx-empty" }
+        : undefined
+    );
+    build.onLoad({ filter: /.*/, namespace: "qrdx-empty" }, () => ({
+      contents: "export {};",
+      loader: "js",
+    }));
+  },
+};
+
 // The configs below build in parallel, so dist/ is cleaned by the "build"
 // script rather than with tsup's `clean` (which would race the other entries).
 export default defineConfig([
@@ -90,19 +143,69 @@ export default defineConfig([
     // tree-shaking pass would strip it, so rely on esbuild's tree-shaking here.
     treeshake: false,
   },
-  // ── Node-only PNG entry (qrdx/node) ─────────────────────────────────────
+  // ── React-free engine (qrdx/core) ───────────────────────────────────────
+  {
+    ...shared,
+    entry: { core: "src/core.ts" },
+    format: ["esm"],
+    treeshake: true,
+    esbuildPlugins: [frameDataExternal(".mjs")],
+  },
+  {
+    ...shared,
+    entry: { core: "src/core.ts" },
+    format: ["cjs"],
+    treeshake: true,
+    esbuildPlugins: [frameDataExternal(".js")],
+  },
+  // ── Plain JavaScript API (qrdx/vanilla), on the shared core ─────────────
+  {
+    ...shared,
+    entry: { vanilla: "src/vanilla.ts" },
+    format: ["esm"],
+    treeshake: true,
+    esbuildPlugins: [sharedCore(".mjs", ["vanilla-api"])],
+  },
+  {
+    ...shared,
+    entry: { vanilla: "src/vanilla.ts" },
+    format: ["cjs"],
+    treeshake: true,
+    esbuildPlugins: [sharedCore(".js", ["vanilla-api"])],
+  },
+  // ── qrdx/vanilla as one file for <script type="module">, no bundler ─────
+  // zod is inlined; jspdf and jsqr stay on-demand imports (an import map
+  // provides them), and the official frame library's data is left out.
+  {
+    ...shared,
+    entry: { "vanilla.browser": "src/vanilla-browser.ts" },
+    format: ["esm"],
+    platform: "browser",
+    treeshake: true,
+    noExternal: ["zod"],
+    esbuildPlugins: [dropZodLocales],
+  },
+  // ── Node-only PNG entry (qrdx/node), on the shared core ─────────────────
   // The native rasterizers live here alone, so the main entry never
   // mentions them and browser bundlers never see an import() to follow.
   {
     ...shared,
     entry: { node: "src/node.ts" },
-    format: ["cjs", "esm"],
+    format: ["esm"],
     treeshake: true,
+    esbuildPlugins: [sharedCore(".mjs", ["rasterize"])],
+  },
+  {
+    ...shared,
+    entry: { node: "src/node.ts" },
+    format: ["cjs"],
+    treeshake: true,
+    esbuildPlugins: [sharedCore(".js", ["rasterize"])],
   },
   // ── qrdx/types (schemas + helpers, no React) ────────────────────────────
   {
     ...shared,
-    entry: { "types/index": "types/index.ts" },
+    entry: { "types/index": "types/public.ts" },
     format: ["cjs", "esm"],
     treeshake: true,
   },
