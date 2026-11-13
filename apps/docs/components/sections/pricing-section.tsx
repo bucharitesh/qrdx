@@ -11,7 +11,7 @@ import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Card } from "@repo/design-system/components/ui/card";
 import { cn } from "@repo/design-system/lib/utils";
-import { Book1, Driver } from "iconsax-reactjs";
+import { Book1, Code1, Driver } from "iconsax-reactjs";
 import { useLocale, useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { createCheckout } from "@/actions/checkout";
@@ -516,6 +516,12 @@ export function PricingSection({
               <LocaleLink href="/docs/self-hosting">
                 <Book1 aria-hidden />
                 {t("selfHost.guide")}
+              </LocaleLink>
+            </Button>
+            <Button asChild size="sm" variant="ghost">
+              <LocaleLink href="/open-source-qr-code-generator">
+                <Code1 aria-hidden />
+                {t("selfHost.openSource")}
               </LocaleLink>
             </Button>
             <Button asChild size="sm" variant="ghost">
