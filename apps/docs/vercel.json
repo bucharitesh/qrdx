@@ -4,9 +4,7 @@
   "git": {
     "deploymentEnabled": {
       "**": false,
-      "main": true,
-      "staging": true,
-      "preview/**": true
+      "main": true
     }
   },
   "ignoreCommand": "node scripts/skip-ci.js",

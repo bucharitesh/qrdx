@@ -121,7 +121,10 @@ const OPTION_KEYS: readonly OptionKey[] = [
 const LEVELS = new Set(["L", "M", "Q", "H"]);
 const DEFAULT_LABEL = "QR code";
 const ELEMENT_MARK: unique symbol = Symbol.for("qrdx.code-element");
-const CUSTOM_ELEMENT_NAME = /^[a-z][a-z0-9._-]*-[a-z0-9._-]*$/;
+// Lowercase letter first and at least one hyphen. Written as dash-led
+// segments that can't contain a dash, so there's one way to match and no
+// quadratic backtracking on long names full of hyphens.
+const CUSTOM_ELEMENT_NAME = /^[a-z][a-z0-9._]*(?:-[a-z0-9._]*)+$/;
 
 /** The shadow root's stylesheet. */
 export const QRDX_CODE_STYLES =

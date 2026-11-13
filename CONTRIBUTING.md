@@ -47,7 +47,7 @@ You don't need a database or any environment variables to work on the React libr
 
    In `apps/docs/.env.local`, set the three required values (`NEXT_PUBLIC_APP_URL`, `DATABASE_URL`, `BETTER_AUTH_SECRET`). To sign in locally, also add a [GitHub OAuth app](https://github.com/settings/developers) with the callback URL `http://localhost:3000/api/auth/callback/github`. Every other variable is optional, and `apps/docs/.env.example` explains each one. It's the only env file you need: the database scripts (`bun run db:push` and the other `db:*` scripts) read `DATABASE_URL` from it too.
 
-   The app checks its environment when it starts (`next dev`, `next build` and a production server): if a required value is missing, or a value is set but invalid, it stops and names the variable. The schema is `apps/docs/env.ts`, which extends the `keys.ts` of `packages/auth`, `packages/config`, `packages/database`, `packages/next-config` and `packages/rate-limit`. A new variable goes in the `keys.ts` of the package that reads it, or in `apps/docs/env.ts` if only the app does, and in `apps/docs/.env.example`; server code reads it from `env` (`import { env } from "@/env"`) or the package's `keys()` rather than from `process.env`.
+   The app checks its environment when it starts (`next dev`, `next build` and a production server): if a required value is missing, or a value is set but invalid, it stops and names the variable. The schema is `apps/docs/env.ts`, which extends the `keys.ts` of `packages/analytics`, `packages/auth`, `packages/config`, `packages/database`, `packages/next-config` and `packages/rate-limit`. A new variable goes in the `keys.ts` of the package that reads it, or in `apps/docs/env.ts` if only the app does, and in `apps/docs/.env.example`; server code reads it from `env` (`import { env } from "@/env"`) or the package's `keys()` rather than from `process.env`.
 
 4. **Set up the database**
 
@@ -94,6 +94,7 @@ You don't need a database or any environment variables to work on the React libr
 | `packages/integrations`, `packages/integration-kit` | The integrations catalogue (`src/catalog`), the connected-account integrations (`src/integrations`) and the shared integration types |
 | `packages/config` | Platform constants: the brand, the hosted service's URLs, contact emails, social links and limits shared across the app (its README says what belongs there) |
 | `packages/availability` | Which built-in features a deployment can offer (custom domains, AI, storage, email, the bots), decided from which variables are set; the app passes its environment in (its README says how the app and `/zone/availability.json` use it) |
+| `packages/analytics` | The cookie banner and preferences, `track()`, and the browser-side tools consent gates (PostHog, Umami, Featurebase); its README says what an app passes in |
 | `packages/i18n` | The languages (`config.ts`), which pages exist in each (`localized-paths.json`) and their URLs, the docs' languages, sidebar labels, search and SEO rules, and a copy of the docs' messages (its README says what's where) |
 | `packages/rate-limit` | Upstash-based rate limiting |
 | `packages/next-config`, `packages/typescript-config` | Shared Next.js config and env keys, shared tsconfig presets |
@@ -102,7 +103,7 @@ You don't need a database or any environment variables to work on the React libr
 
 ## Checks before you open a pull request
 
-CI (`.github/workflows/ci.yml`) runs these on every pull request and on every push to `main`. Pushes to `staging` don't run it again: every change reaches `staging` through a pull request that already did. Both branches require the job to pass before anything merges.
+CI (`.github/workflows/ci.yml`) runs these on every pull request and on every push to `staging` and `main`. Both branches require the job to pass before anything merges. A push to `staging` runs the full suite in the background after each merge. A release pull request into `main`, and the push to `main` it creates, hold the same code, so they reuse that result instead of testing it again (`scripts/ci-reuse-check.sh` compares git trees; it waits up to 20 minutes for a staging run that's still going, and falls back to the full suite when nothing matches). Manual runs always test everything.
 
 ```bash
 bun x turbo build --filter=qrdx --filter=@qrdx/cli   # the docs app and CLI use qrdx's build output; the CLI tests run its dist/index.js
@@ -113,7 +114,7 @@ bun run test                        # every package's tests, through turbo
 bun run lint:ci                     # ultracite check: Biome's lint and format rules over the whole repository
 ```
 
-A pull request into `staging` tests only the packages it changes and the packages that depend on them (`turbo test --affected`). A content-only change runs the docs app's tests and skips the engine's; a change to `packages/qrdx` runs the engine, the CLI and the docs app. Release pull requests into `main`, pushes to `main` and manual runs test everything. Turbo's cache (`.turbo/cache`, kept between runs with `actions/cache`) replays any task whose inputs haven't changed, and the job's summary lists what was replayed and what ran.
+A pull request into `staging` tests only the packages it changes and the packages that depend on them (`turbo test --affected`). A content-only change runs the docs app's tests and skips the engine's; a change to `packages/qrdx` runs the engine, the CLI and the docs app. Pushes to `staging` and `main`, release pull requests into `main` and manual runs test everything, unless an earlier full run already passed on the identical code (see above). Turbo's cache (`.turbo/cache`, kept between runs with `actions/cache`) replays any task whose inputs haven't changed, and the job's summary lists what was replayed and what ran.
 
 The official frames (`packages/qrdx/src/frames/official`, hundreds of them) all get their spec, color, layout and generator checks and one crisp decode on every run, but the slow scan checks (the phone-camera model at three distances, 160 and 320 px, the scan score, zbar, PDF and EPS) only go to a sample: the hand-made frames, one frame per layout, and a set that rotates daily so every frame comes round (`packages/qrdx/scripts/official-frames/sample.mjs`). To scan every frame, as the weekly and release `Frame scan` workflow does, set `QRDX_FULL_FRAME_SCAN=1`:
 

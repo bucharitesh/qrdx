@@ -20,6 +20,7 @@ const nodeList = deploymentEnv("scripts/run-node-tests.mjs");
 // The app's env.ts and the package keys it extends.
 const SCHEMAS = [
   "env.ts",
+  "../../packages/analytics/keys.ts",
   "../../packages/auth/keys.ts",
   "../../packages/config/keys.ts",
   "../../packages/database/keys.ts",

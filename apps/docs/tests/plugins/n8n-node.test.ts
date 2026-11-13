@@ -25,10 +25,7 @@ interface Parameter {
 }
 
 const openapi = JSON.parse(
-  readFileSync(
-    join(import.meta.dirname, "../../../../packages/docs-assets/openapi.json"),
-    "utf8",
-  ),
+  readFileSync(join(import.meta.dirname, "../../public/openapi.json"), "utf8"),
 ) as {
   servers: { url: string }[];
   paths: Record<string, { get?: { parameters?: Parameter[] } }>;
