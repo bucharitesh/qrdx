@@ -1,0 +1,164 @@
+name: Docs deploy
+
+# Builds the docs site (apps/docs-site) on GitHub's runner and deploys the
+# prebuilt output to its own Vercel project, whose Git deployments are off
+# (apps/docs-site/vercel.json). Runs when a push to main changes something
+# the docs build reads, or by hand (production or a preview).
+#
+# Needs the repository variables DOCS_VERCEL_ORG_ID and DOCS_VERCEL_PROJECT_ID
+# (the project's Settings → General), and the secret VERCEL_TOKEN. The
+# project's Root Directory is apps/docs-site; its environment holds
+# NEXT_PUBLIC_APP_URL, MAIN_ZONE_URL and the analytics ids
+# (apps/docs-site/.env.example).
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - apps/docs-site/**
+      - .github/workflows/docs-deploy.yml
+      # The content, its message catalogs and recorded dates, which stay in
+      # the main app's folder for now
+      - apps/docs/content/docs/**
+      - apps/docs/messages/**
+      - apps/docs/lib/seo-file-dates.json
+      # The product facts snapshot (apps/docs/lib/product-facts.ts and what
+      # it reads)
+      - apps/docs/lib/product-facts.ts
+      - apps/docs/lib/product-facts-snapshot.ts
+      - apps/docs/scripts/facts-snapshot.ts
+      - apps/docs/lib/format-count.ts
+      - apps/docs/lib/pricing.ts
+      - apps/docs/lib/scan-history.ts
+      - apps/docs/lib/affiliates/terms.ts
+      - apps/docs/lib/ai/art-models.ts
+      - apps/docs/lib/barcode/formats.ts
+      - apps/docs/lib/brand-logos/catalog.generated.ts
+      - apps/docs/lib/landing/page-type-ids.ts
+      - apps/docs/lib/i18n/config.ts
+      - apps/docs/ee/audit-log/limits.ts
+      - apps/docs/types/content-type-ids.ts
+      - apps/docs/components/sections/ai-art/preset-meta.ts
+      # The engine the docs' live examples render with, and the packages the
+      # docs site imports
+      - packages/qrdx/**
+      - packages/availability/**
+      - packages/analytics/**
+      - packages/config/**
+      - packages/design-system/**
+      - packages/docs-assets/**
+      - packages/i18n/**
+      - packages/integrations/**
+      - packages/next-config/**
+      - packages/typescript-config/**
+      - bun.lock
+      - package.json
+  workflow_dispatch:
+    inputs:
+      target:
+        description: Vercel environment to deploy to
+        type: choice
+        options:
+          - production
+          - preview
+        default: production
+
+# One deploy per target at a time: a newer one waits for the running one
+# instead of racing it.
+concurrency:
+  group: docs-deploy-${{ github.event_name == 'workflow_dispatch' && inputs.target || 'production' }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  TARGET: ${{ github.event_name == 'workflow_dispatch' && inputs.target || 'production' }}
+  VERCEL_ORG_ID: ${{ vars.DOCS_VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ vars.DOCS_VERCEL_PROJECT_ID }}
+  # Pinned so a CLI release can't change a deploy unannounced.
+  VERCEL_CLI: vercel@65.15.0
+  NEXT_TELEMETRY_DISABLED: 1
+
+jobs:
+  deploy:
+    name: Build and deploy the docs site
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        shell: bash
+    steps:
+      # Full history: each page's "Last updated" date and the sitemap's
+      # lastmod come from git, and a shallow clone would date every page
+      # to its oldest commit.
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      # Bun installs the dependencies (the version pinned in package.json
+      # "packageManager"); Node 22 runs the build.
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: package.json
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Restore Bun cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ hashFiles('bun.lock') }}
+          restore-keys: |
+            bun-${{ runner.os }}-
+
+      - name: Check the Vercel settings
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          missing=()
+          [ -n "$VERCEL_ORG_ID" ] || missing+=("variable DOCS_VERCEL_ORG_ID")
+          [ -n "$VERCEL_PROJECT_ID" ] || missing+=("variable DOCS_VERCEL_PROJECT_ID")
+          [ -n "$VERCEL_TOKEN" ] || missing+=("secret VERCEL_TOKEN")
+          if [ ${#missing[@]} -gt 0 ]; then
+            echo "::error::Set the repository ${missing[*]} to deploy the docs site."
+            exit 1
+          fi
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      # The docs import the engine from packages/qrdx/dist.
+      - name: Build qrdx
+        run: bun run --filter qrdx build:inplace
+
+      - name: Pull the project settings and environment
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: bun x "$VERCEL_CLI" pull --yes --environment="$TARGET" --token="$VERCEL_TOKEN"
+
+      # A production build stops when it can't read the main app's
+      # /zone/availability.json (apps/docs-site/scripts/zone-inputs.mjs)
+      # rather than hide every feature that needs setup.
+      - name: Build
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          DOCS_REQUIRE_AVAILABILITY: ${{ env.TARGET == 'production' && '1' || '0' }}
+        run: |
+          prod=()
+          [ "$TARGET" = "production" ] && prod=(--prod)
+          bun x "$VERCEL_CLI" build "${prod[@]}" --token="$VERCEL_TOKEN"
+
+      - name: Deploy
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          prod=()
+          [ "$TARGET" = "production" ] && prod=(--prod)
+          url="$(bun x "$VERCEL_CLI" deploy --prebuilt "${prod[@]}" --token="$VERCEL_TOKEN")"
+          echo "Deployed the docs site ($TARGET): $url" | tee -a "$GITHUB_STEP_SUMMARY"
