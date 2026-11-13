@@ -84,7 +84,7 @@ Gérez vos codes par programmation à l'adresse `https://api.qrdx.dev/v1/codes`.
 | Méthode | Chemin | Description |
 | --- | --- | --- |
 | `GET` | `/v1/codes` | Liste les codes. Paramètres de requête : `status` (`active`, `archived`, `all`), `q`, `limit` (≤ 100), `offset` |
-| `POST` | `/v1/codes` | Crée un code, ou un tableau de 100 codes maximum (les tableaux nécessitent Pro). Corps : `destinationUrl`, et en option `title`, `style`, `domainId` et `slug` |
+| `POST` | `/v1/codes` | Crée un code, ou un tableau de {facts.apiBatchCodes} codes maximum (les tableaux nécessitent Pro). Corps : `destinationUrl`, et en option `title`, `style`, `domainId` et `slug` |
 | `GET` | `/v1/codes/{id}` | Récupère un code |
 | `PATCH` | `/v1/codes/{id}` | Modifie `destinationUrl`, `title`, `style`, `domainId` ([domaines personnalisés](/docs/custom-domains)), `slug` ou `archived`, ou fait passer `kind` de `redirect` à `page` et inversement |
 | `DELETE` | `/v1/codes/{id}` | Supprime un code et ses scans |
