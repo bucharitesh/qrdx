@@ -2,6 +2,14 @@
 // client component that can't read lib/plans). English: the signed-in app
 // isn't translated yet. Client-safe, so the catalog stays out of its bundle.
 import type { PaidPlan } from "@/lib/pricing";
+import { SCAN_HISTORY_DAYS, scanHistoryLabel } from "@/lib/scan-history";
+
+/** "Unlimited analytics history", or "1 year of analytics history". */
+function historyLine(days: number): string {
+  if (!Number.isFinite(days)) return "Unlimited analytics history";
+  const label = scanHistoryLabel(days);
+  return `${label.charAt(0).toUpperCase()}${label.slice(1)} of analytics history`;
+}
 
 /**
  * The pricing page lists every limit; this is the short version. Custom
@@ -14,7 +22,7 @@ export function buildUpgradeHighlights(
   return {
     pro: [
       "Unlimited dynamic codes and landing pages",
-      "3 years of analytics history",
+      historyLine(SCAN_HISTORY_DAYS.pro),
       domains ? "5 custom domains and teams of up to 3" : "Teams of up to 3",
       "Unlimited saved themes, shared with your team",
       "Smart routing, A/B tests, UTM tags and pixels",
