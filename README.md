@@ -153,7 +153,7 @@ You can run the whole web app yourself, dynamic codes and hosted pages included,
 
 ```bash
 git clone https://github.com/bucharitesh/qrdx.git && cd qrdx
-cp .env.example .env   # set BETTER_AUTH_SECRET and a sign-in method
+cp apps/docs/.env.example .env   # set BETTER_AUTH_SECRET and a sign-in method
 docker compose up -d --build
 ```
 

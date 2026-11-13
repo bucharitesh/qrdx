@@ -1,7 +1,7 @@
 // Runs the node:test suites that live next to the code (*.test.ts/tsx outside
 // tests/ and e2e/, which belong to Vitest). Files whose "Run:" header uses
 // --conditions=react-server get that condition, as their headers document.
-// Dummy env values satisfy lib/env; nothing connects to a database or any
+// Dummy env values satisfy env.ts; nothing connects to a database or any
 // external service.
 import { spawnSync } from "node:child_process";
 import { readdirSync, readFileSync } from "node:fs";
@@ -34,7 +34,7 @@ function find(dir, out = []) {
 // inside `turbo build` with production values, which changed media URLs,
 // keys and gating. Same list as vitest.config.ts.
 const DEPLOYMENT_ENV =
-  /^(VERCEL|DOMAIN_CONNECT_|NEXT_PUBLIC_|KV_|UPSTASH_|REDIS_|POLAR_|RESEND_|EMAIL_|GOOGLE_|GITHUB_|R2_|DUB_|BITLY_|DROPBOX_|SLACK_|DISCORD_|HUBSPOT_|MAILCHIMP_|NOTION_|BOX_|MICROSOFT_|CALENDLY_|STRIPE_|SHOPIFY_|WEB_RISK_|GSC_|GROQ_|AI_|YOUTUBE_|SPOTIFY_|TELEGRAM_|CSP_|CRON_|ADMIN_|INTEGRATION_|SCAN_HASH|TURNSTILE_|POSTHOG_|UMAMI_|DATABASE_|PG|POSTGRES_|NEON_|BETTER_AUTH_|QRDX_|SHORT_LINK|BASE_URL)/;
+  /^(VERCEL|ANALYZE|NEXT_OUTPUT|NEXT_RUNTIME|DOMAIN_CONNECT_|NEXT_PUBLIC_|KV_|UPSTASH_|REDIS_|POLAR_|RESEND_|EMAIL_|GOOGLE_|GITHUB_|R2_|DUB_|BITLY_|DROPBOX_|SLACK_|DISCORD_|HUBSPOT_|MAILCHIMP_|NOTION_|BOX_|MICROSOFT_|CALENDLY_|STRIPE_|SHOPIFY_|WEB_RISK_|GSC_|GROQ_|AI_|YOUTUBE_|SPOTIFY_|TELEGRAM_|CSP_|CRON_|ADMIN_|INTEGRATION_|SCAN_HASH|TURNSTILE_|POSTHOG_|UMAMI_|DATABASE_|PG|POSTGRES_|NEON_|BETTER_AUTH_|QRDX_|SHORT_LINK|BASE_URL)/;
 const baseEnv = Object.fromEntries(
   Object.entries(process.env).filter(([key]) => !DEPLOYMENT_ENV.test(key)),
 );
@@ -43,6 +43,7 @@ const baseEnv = Object.fromEntries(
 const env = {
   ...baseEnv,
   NODE_ENV: "test",
+  NEXT_PUBLIC_APP_URL: "https://qrdx.dev",
   DATABASE_URL: "postgres://test@127.0.0.1:1/test",
   BETTER_AUTH_SECRET: "test-secret-for-unsubscribe-tokens",
   VERCEL_API_TOKEN: "test-token",

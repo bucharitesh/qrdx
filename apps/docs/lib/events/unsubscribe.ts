@@ -1,6 +1,7 @@
 import "server-only";
 
 import { createHash, createHmac, timingSafeEqual } from "node:crypto";
+import { env } from "@/env";
 import { baseUrl } from "@/lib/metadata";
 import { isNotificationEvent, type NotificationEvent } from "./types";
 
@@ -15,9 +16,7 @@ let cachedKey: Buffer | null = null;
 
 function signingKey(): Buffer {
   cachedKey ??= createHash("sha256")
-    .update(
-      `qrdx:unsubscribe:${process.env.BETTER_AUTH_SECRET ?? "development"}`,
-    )
+    .update(`qrdx:unsubscribe:${env.BETTER_AUTH_SECRET}`)
     .digest();
   return cachedKey;
 }

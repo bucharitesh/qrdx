@@ -17,16 +17,26 @@ function deploymentEnv(path: string): RegExp {
 
 const vitestList = deploymentEnv("vitest.config.ts");
 const nodeList = deploymentEnv("scripts/run-node-tests.mjs");
-const appVars = [
-  ...read("lib/env.ts").matchAll(/^\s{4}([A-Z][A-Z0-9_]+):\s*z\./gm),
-].map((m) => m[1] as string);
+// The app's env.ts and the package keys it extends.
+const SCHEMAS = [
+  "env.ts",
+  "../../packages/auth/keys.ts",
+  "../../packages/database/keys.ts",
+  "../../packages/next-config/keys.ts",
+  "../../packages/rate-limit/keys.ts",
+];
+const appVars = SCHEMAS.flatMap((path) =>
+  [...read(path).matchAll(/^\s+([A-Z][A-Z0-9_]+):\s*z\./gm)].map(
+    (m) => m[1] as string,
+  ),
+);
 
 describe("hermetic test env", () => {
   it("strips the same variables in vitest and the node test runner", () => {
     expect(nodeList.source).toBe(vitestList.source);
   });
 
-  it.each([...new Set(appVars)])("strips %s from lib/env.ts", (name) => {
+  it.each([...new Set(appVars)])("strips %s from the env schemas", (name) => {
     expect(vitestList.test(name)).toBe(true);
   });
 });

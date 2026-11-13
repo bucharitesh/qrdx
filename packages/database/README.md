@@ -62,13 +62,7 @@ bun run --filter @repo/database studio
 
 ## Environment Variables
 
-Create a `.env` file with:
-
-```env
-DATABASE_URL=postgresql://user:password@host:port/database
-```
-
-See `.env.example` for reference.
+The package reads `DATABASE_URL` (and `DATABASE_HTTP_ENDPOINT` for plain Postgres behind the Neon HTTP proxy) through `keys.ts`. The `db:*` scripts read them from the app's `apps/docs/.env.local` unless `DATABASE_URL` is already set in the shell, so there is no separate env file here. [`apps/docs/.env.example`](../../apps/docs/.env.example) explains both.
 
 
 

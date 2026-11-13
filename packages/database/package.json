@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.2.0",
+    "@repo/next-config": "workspace:*",
     "@t3-oss/env-nextjs": "^0.13.11",
     "drizzle-orm": "^0.45.4",
     "server-only": "^0.0.1",

@@ -1,6 +1,6 @@
 import "server-only";
 import { createPrivateKey, type KeyObject, sign } from "node:crypto";
-import { env } from "@/lib/env";
+import { env } from "@/env";
 import { cached, withTimeout } from "./cache";
 import { weekOfDay } from "./weeks";
 

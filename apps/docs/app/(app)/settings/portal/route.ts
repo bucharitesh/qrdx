@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { env } from "@/lib/env";
+import { env } from "@/env";
 import { isBillingConfigured, polar } from "@/lib/polar";
 import { getCurrentUserId } from "@/lib/shared";
 import { PORTAL_RETURN_PATH, resolvePortalRedirect } from "./_lib/portal";

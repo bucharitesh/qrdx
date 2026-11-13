@@ -3,7 +3,7 @@
 import Script from "next/script";
 import { useTheme } from "next-themes";
 import { useEffect, useRef } from "react";
-import { env } from "@/lib/env";
+import { env } from "@/env";
 import { useFeaturebaseLauncherHidden } from "@/lib/featurebase-launcher";
 
 type FeaturebaseFn = ((...args: unknown[]) => void) & { q?: unknown[] };

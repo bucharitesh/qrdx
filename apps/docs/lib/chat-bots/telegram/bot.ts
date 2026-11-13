@@ -2,6 +2,7 @@ import "server-only";
 
 import { createHash, timingSafeEqual } from "node:crypto";
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
+import { env } from "@/env";
 import { recordUsage } from "@/lib/analytics/usage";
 import {
   applyChoice,
@@ -36,7 +37,6 @@ import {
   TOO_LONG_TEXT,
   textReply,
 } from "@/lib/chat-bots/telegram/replies";
-import { env } from "@/lib/env";
 import { isFeatureAvailable } from "@/lib/feature-availability";
 import { logError } from "@/lib/log-error";
 

@@ -1,6 +1,7 @@
 // Tests the scope/permission rules for saved themes (no database: only the
-// pure helpers run). Needs a dummy DATABASE_URL because lib/env validates on import:
+// pure helpers run). Needs a dummy DATABASE_URL because env.ts validates on import:
 //   cd apps/docs && DATABASE_URL=postgres://test@127.0.0.1:1/test \
+//     NEXT_PUBLIC_APP_URL=https://qrdx.dev BETTER_AUTH_SECRET=test-secret \
 //     npx tsx --conditions=react-server --test app/(app)/dashboard/themes/_lib/themes.test.ts
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";

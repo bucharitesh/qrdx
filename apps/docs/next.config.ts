@@ -43,18 +43,12 @@ const cspReporting = reportingEndpoints(cspOptions);
 
 // QRdx's own hosts (as in proxy.ts), plus a self-hosted app URL: customers'
 // custom domains never get the app policy.
-const appHostname = (() => {
-  try {
-    return new URL(process.env.NEXT_PUBLIC_APP_URL ?? "").hostname;
-  } catch {
-    return null;
-  }
-})();
+const appHostname = new URL(env.NEXT_PUBLIC_APP_URL).hostname;
 const PLATFORM_HOSTS = [
   "(?:.+\\.)?(?:qrdx\\.dev|vercel\\.app)",
   "localhost",
   "127\\.0\\.0\\.1",
-  ...(appHostname ? [appHostname.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")] : []),
+  appHostname.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
 ].join("|");
 
 /** An Accept header that lists text/markdown (rewrites to the Markdown versions). */
@@ -84,7 +78,7 @@ const cspHeaders = cspEnabled
 let nextConfig: NextConfig = {
   ...config,
   // Opt-in for Docker / self-hosting: NEXT_OUTPUT=standalone bun run build
-  output: process.env.NEXT_OUTPUT === "standalone" ? "standalone" : undefined,
+  output: env.NEXT_OUTPUT,
   reactStrictMode: true,
   // `next build` type-checks the app without its tests. Some tests import
   // files from outside the app (plugins/*, .github/scripts) that a Docker
@@ -97,7 +91,7 @@ let nextConfig: NextConfig = {
   // so Vercel would only repeat it. Docker and local builds still check.
   typescript: {
     tsconfigPath: "tsconfig.build.json",
-    ignoreBuildErrors: process.env.VERCEL === "1",
+    ignoreBuildErrors: env.VERCEL === "1",
   },
   // `next dev` prints every server action call with its arguments. Those
   // include secrets typed into settings (an SSO client secret, 2FA and email
@@ -128,7 +122,7 @@ let nextConfig: NextConfig = {
     //   anywhere, and the server only applies them when Node runs with
     //   source maps on, which this app doesn't). `next dev` and local builds
     //   keep both.
-    ...(process.env.VERCEL === "1" && {
+    ...(env.VERCEL === "1" && {
       turbopackFileSystemCacheForBuild: false,
       turbopackSourceMaps: false,
     }),

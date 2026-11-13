@@ -70,8 +70,8 @@ vi.mock("@/lib/plans", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/plans")>()),
   getPlanForScope: async () => state.plan,
 }));
-vi.mock("@/lib/env", async (importOriginal) => {
-  const original = await importOriginal<typeof import("@/lib/env")>();
+vi.mock("@/env", async (importOriginal) => {
+  const original = await importOriginal<typeof import("@/env")>();
   return {
     ...original,
     env: new Proxy(original.env, {

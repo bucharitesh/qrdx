@@ -1,6 +1,7 @@
 // Upload verification and delivery against a mocked S3 client and fetch: no
-// network, no database. Needs dummy env values (lib/env validates on import):
+// network, no database. Needs dummy env values (env.ts validates on import):
 //   cd apps/docs && DATABASE_URL=postgres://test@127.0.0.1:1/test \
+//     NEXT_PUBLIC_APP_URL=https://qrdx.dev BETTER_AUTH_SECRET=test-secret \
 //     R2_ACCOUNT_ID=test R2_ACCESS_KEY_ID=test R2_SECRET_ACCESS_KEY=test R2_BUCKET=test-bucket \
 //     npx tsx --conditions=react-server --test lib/files/storage.test.ts
 import assert from "node:assert/strict";

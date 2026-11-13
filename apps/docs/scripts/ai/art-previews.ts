@@ -291,6 +291,9 @@ async function main() {
     if (!(maxCost && maxCost > 0)) fail("--max-cost is required for paid runs");
   }
   process.env.DATABASE_URL = "postgres://art-previews@127.0.0.1:1/none";
+  // The app's other required variables; nothing here signs or links anything.
+  process.env.NEXT_PUBLIC_APP_URL ??= "https://qrdx.dev";
+  process.env.BETTER_AUTH_SECRET ??= "art-previews-placeholder-not-a-secret";
 
   const [pipeline, config, presets, providers] = await Promise.all([
     import("../../lib/ai/art-image"),

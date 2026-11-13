@@ -38,7 +38,7 @@ cd qrdx
 ### 2. Umgebung konfigurieren [#2-configure-the-environment]
 
 ```bash
-cp .env.example .env
+cp apps/docs/.env.example .env
 ```
 
 Bearbeite `.env`:
@@ -107,8 +107,7 @@ git clone https://github.com/bucharitesh/qrdx.git
 cd qrdx
 bun install
 
-cp .env.example apps/docs/.env.local                    # then edit it
-echo 'DATABASE_URL=<your connection string>' > packages/database/.env
+cp apps/docs/.env.example apps/docs/.env.local          # then edit it
 
 bun run db:push                                          # apply the schema
 bun run --filter docs dev                                # http://localhost:3000
@@ -130,7 +129,7 @@ DATABASE_HTTP_ENDPOINT=http://localhost:4444/sql
 
 ## Umgebungsvariablen [#environment-variables]
 
-[`.env.example`](https://github.com/bucharitesh/qrdx/blob/main/.env.example) listet jede Variable mit einem kurzen Hinweis, wo du sie bekommst.
+[`apps/docs/.env.example`](https://github.com/bucharitesh/qrdx/blob/main/apps/docs/.env.example) listet jede Variable mit einem kurzen Hinweis, wo du sie bekommst.
 
 ### Minimum [#minimum]
 
