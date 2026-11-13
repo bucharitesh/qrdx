@@ -7987,23 +7987,6 @@
         },
         "newCodeButton": {
           "newDynamicCode": "नया डायनेमिक कोड"
-        },
-        "setupChecklist": {
-          "done": "(हो गया)",
-          "create": "बनाएँ",
-          "start": "शुरू करें",
-          "design": "डिज़ाइन करें",
-          "invite": "बुलाएँ",
-          "connect": "जोड़ें",
-          "getSetUp": "सेटअप करें",
-          "doneOfLengthDone": "{length, number} में से {done, number} पूरे",
-          "hide": "छिपाएँ",
-          "setupTasksDone": "पूरे हुए सेटअप कार्य",
-          "createADynamicQrCode": "डायनेमिक QR कोड बनाएँ",
-          "makeALandingPageOr": "लैंडिंग पेज या फ़ॉर्म बनाएँ",
-          "saveAThemeWithYour": "अपने लोगो और रंगों के साथ थीम सेव करें",
-          "inviteATeammate": "किसी टीममेट को बुलाएँ",
-          "connectACustomDomain": "कस्टम डोमेन कनेक्ट करें"
         }
       },
       "listSelection": {
@@ -8356,6 +8339,22 @@
       "spotlight": {
         "new": "नया",
         "gotIt": "समझ गया"
+      },
+      "setupGuide": {
+        "getSetUp": "सेटअप करें",
+        "doneOfLengthDone": "{length, number} में से {done, number} पूरे",
+        "setupTasksDone": "पूरे हुए सेटअप कार्य",
+        "done": "(हो गया)",
+        "create": "बनाएँ",
+        "start": "शुरू करें",
+        "design": "डिज़ाइन करें",
+        "invite": "बुलाएँ",
+        "connect": "जोड़ें",
+        "createADynamicQrCode": "डायनेमिक QR कोड बनाएँ",
+        "makeALandingPageOr": "लैंडिंग पेज या फ़ॉर्म बनाएँ",
+        "saveAThemeWithYour": "अपने लोगो और रंगों के साथ थीम सेव करें",
+        "inviteATeammate": "किसी टीममेट को बुलाएँ",
+        "connectACustomDomain": "कस्टम डोमेन कनेक्ट करें"
       }
     },
     "workspaces": {

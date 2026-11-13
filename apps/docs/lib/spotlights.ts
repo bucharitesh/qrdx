@@ -9,6 +9,10 @@ export const SPOTLIGHT_IDS = [
   // Settings → Profile & security → Two-step verification → Add passkey
   // (changelog v0.4.0: a passkey can be your second step).
   "passkey-second-step",
+  // Not a spotlight: the app's "Get set up" launcher
+  // (components/app-shell/setup-guide.tsx), once dismissed. It's a one-time
+  // guide the account remembers the same way.
+  "setup-guide",
 ] as const;
 
 export type SpotlightId = (typeof SPOTLIGHT_IDS)[number];

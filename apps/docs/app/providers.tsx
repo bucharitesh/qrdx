@@ -19,6 +19,20 @@ import type { PublicAvailability } from "@/lib/feature-availability-rules";
 import { ChatProvider } from "@/lib/hooks/use-chat-context";
 import { QueryProvider } from "@/lib/query-client";
 
+/**
+ * Toasts sit bottom right. The app's "Get set up" launcher
+ * (components/app-shell/setup-guide.tsx) sets --setup-guide-toast-clearance
+ * on <body> while it's on screen, so they stack above it (and above its
+ * panel while that's open); elsewhere it's unset and sonner's own offsets
+ * (24px, 16px on phones) apply.
+ */
+const TOASTER = {
+  offset: { bottom: "max(24px, var(--setup-guide-toast-clearance, 0px))" },
+  mobileOffset: {
+    bottom: "max(16px, var(--setup-guide-toast-clearance, 0px))",
+  },
+};
+
 export function Provider({
   availability,
   children,
@@ -30,7 +44,7 @@ export function Provider({
   const nonce = useCspNonce();
   return (
     <AvailabilityProvider value={availability}>
-      <DesignSystemProvider nonce={nonce}>
+      <DesignSystemProvider nonce={nonce} toaster={TOASTER}>
         <NuqsAdapter>
           <QueryProvider>
             <ChatProvider>

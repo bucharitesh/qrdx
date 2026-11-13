@@ -7987,23 +7987,6 @@
         },
         "newCodeButton": {
           "newDynamicCode": "New dynamic code"
-        },
-        "setupChecklist": {
-          "done": "(done)",
-          "create": "Create",
-          "start": "Start",
-          "design": "Design",
-          "invite": "Invite",
-          "connect": "Connect",
-          "getSetUp": "Get set up",
-          "doneOfLengthDone": "{done, number} of {length, number} done",
-          "hide": "Hide",
-          "setupTasksDone": "Setup tasks done",
-          "createADynamicQrCode": "Create a dynamic QR code",
-          "makeALandingPageOr": "Make a landing page or form",
-          "saveAThemeWithYour": "Save a theme with your logo and colors",
-          "inviteATeammate": "Invite a teammate",
-          "connectACustomDomain": "Connect a custom domain"
         }
       },
       "listSelection": {
@@ -8356,6 +8339,26 @@
       "spotlight": {
         "new": "New",
         "gotIt": "Got it"
+      },
+      "setupGuide": {
+        "getSetUp": "Get set up",
+        "launcherLabel": "Get set up: {done, number} of {length, number} done",
+        "doneOfLengthDone": "{done, number} of {length, number} done",
+        "doneOfLengthShort": "{done, number}/{length, number}",
+        "setupTasksDone": "Setup tasks done",
+        "collapse": "Collapse",
+        "dismissGuide": "Dismiss guide",
+        "done": "(done)",
+        "create": "Create",
+        "start": "Start",
+        "design": "Design",
+        "invite": "Invite",
+        "connect": "Connect",
+        "createADynamicQrCode": "Create a dynamic QR code",
+        "makeALandingPageOr": "Make a landing page or form",
+        "saveAThemeWithYour": "Save a theme with your logo and colors",
+        "inviteATeammate": "Invite a teammate",
+        "connectACustomDomain": "Connect a custom domain"
       }
     },
     "workspaces": {
