@@ -1,6 +1,6 @@
 # qrdx
 
-Customizable QR codes for React: SVG and canvas rendering, dot and eye patterns, gradients, logos, call-to-action frames, Logo QR and Image QR art, PNG/JPG/WebP/SVG/PDF/EPS export, print-ready files, a scan score and QR scanning.
+Customizable QR codes for React and plain JavaScript: SVG and canvas rendering, dot and eye patterns, gradients, logos, call-to-action frames, Logo QR and Image QR art, PNG/JPG/WebP/SVG/PDF/EPS export, print-ready files, a scan score and QR scanning.
 
 It powers the [QRdx](https://qrdx.dev) QR code generator. Docs: [qrdx.dev/docs](https://qrdx.dev/docs) · CLI: [`@qrdx/cli`](https://www.npmjs.com/package/@qrdx/cli) · No-code: [image API](https://qrdx.dev/docs/developers/image-api) and [MCP server](https://qrdx.dev/docs/developers/mcp)
 
@@ -11,7 +11,7 @@ npm install qrdx
 # or: pnpm add qrdx / yarn add qrdx
 ```
 
-`react` and `react-dom` (18 or newer) are peer dependencies. PDF export also needs the optional `jspdf` peer, and PNG export in Node (`getQRAsPNG`, imported from `qrdx/node`) needs one of the optional rasterizer peers (`@resvg/resvg-js` draws the SVG — logos included — the way browsers do; `sharp` also works):
+`react` and `react-dom` (18 or newer) are optional peer dependencies: the React components need them, and [`qrdx/vanilla` and `qrdx/core`](#without-react-qrdxvanilla-and-qrdxcore) don't. PDF export also needs the optional `jspdf` peer, and PNG export in Node (`getQRAsPNG`, imported from `qrdx/node`) needs one of the optional rasterizer peers (`@resvg/resvg-js` draws the SVG — logos included — the way browsers do; `sharp` also works):
 
 ```bash
 npm install jspdf
@@ -125,6 +125,81 @@ import { QRCodeCanvas } from "qrdx";
 />;
 ```
 
+## Without React (`qrdx/vanilla` and `qrdx/core`)
+
+The engine under the React components is also published without React. `qrdx/core` draws the same SVG as `QRCodeSVG`, byte for byte, and has every export, download, print and scan-score function the main entry has. `qrdx/vanilla` adds `createQRCode`, which draws a code into an element and keeps it up to date. Neither imports `react` or `react-dom`.
+
+### In a page
+
+```js
+import { createQRCode } from "qrdx/vanilla";
+
+const qr = createQRCode("#qr", {
+  value: "https://example.com",
+  size: 256,
+  bodyPattern: "rounded",
+  frame: { style: "banner-bottom", text: "Scan me" },
+  "aria-label": "QR code for example.com",
+});
+
+qr.update({ fgColor: "#1d4ed8" }); // merges, redraws only when the markup changes
+qr.toSVGString(); // the SVG markup
+await qr.toDataURL("png", { size: 1024 }); // "png", "jpg", "webp", "svg", "pdf" or "eps"
+await qr.download({ format: "svg", filename: "menu.svg" });
+qr.destroy(); // removes the <svg>
+```
+
+`createQRCode(element, options)` takes an element or a CSS selector, and every option `QRCodeSVG` takes. Attributes such as `className`, `style` or `aria-label` go on the `<svg>`. It builds the `<svg>` with `createElementNS`, so no HTML is parsed. `qr.svg` is the element and `qr.options` the current options; `update` merges new options in (pass `undefined` to drop one).
+
+### Without a bundler
+
+`dist/vanilla.browser.mjs` is the same API as one ES module, for a `<script type="module">` served from a CDN:
+
+```html
+<div id="qr"></div>
+<script type="module">
+  import { createQRCode } from "https://cdn.jsdelivr.net/npm/qrdx/dist/vanilla.browser.mjs";
+
+  createQRCode("#qr", { value: "https://example.com", size: 256 });
+</script>
+```
+
+Add `@` and a version after `qrdx` in the URL to pin one. The file leaves out the official frame library's data (`OFFICIAL_FRAMES`, `getOfficialFrame`, `OFFICIAL_FRAME_INDEX`); import those from `dist/frames-official.mjs` and `dist/frames-index.mjs` next to it. PDF export and the scan score load `jspdf` and `jsqr` when they run, so a page that uses them maps both with an import map:
+
+```html
+<script type="importmap">
+  {
+    "imports": {
+      "jspdf": "https://cdn.jsdelivr.net/npm/jspdf@4/+esm",
+      "jsqr": "https://cdn.jsdelivr.net/npm/jsqr@1/+esm"
+    }
+  }
+</script>
+```
+
+### Markup, DOM nodes and other frameworks
+
+```ts
+import {
+  createQRCodeTree,
+  renderToDOM,
+  renderToString,
+  resolveQRCodeProps,
+  toHyperscript,
+  toSVGString,
+} from "qrdx/core";
+
+toSVGString({ value: "https://example.com" }); // what <QRCodeSVG> renders, in Node or a browser
+const tree = createQRCodeTree({ value: "https://example.com" }); // plain { type, props, key } nodes
+renderToString(tree); // the same markup
+renderToDOM(tree); // a DocumentFragment
+// Another framework's elements (Vue's or Preact's h), with DOM attribute names
+toHyperscript(tree, (type, attributes, children, key) => h(type, { ...attributes, key }, children));
+toSVGString(resolveQRCodeProps({ value: "https://example.com", logo: "/logo.png" })); // what <QRCode> renders
+```
+
+`getQRAsSVGNode(props)` is `getQRAsSVG` without React (it resolves to a tree). [docs/adapters.md](./docs/adapters.md) describes how a framework wrapper should use the core.
+
 ## Patterns
 
 See every option drawn live at [qrdx.dev/docs/styles](https://qrdx.dev/docs/styles).
@@ -217,6 +292,8 @@ const Framed: TemplateDefinition<{ label?: string }> = {
 
 <QRCodeSVG value="https://example.com" customTemplate={Framed} customProps={{ label: "Scan me" }} />;
 ```
+
+A wrapper gets React elements and returns them when a React component draws the code. With `qrdx/core` or `qrdx/vanilla` it gets the core's plain nodes instead, and a wrapper written with JSX still works as long as it uses no hooks. `h(type, props, ...children)` writes a wrapper without JSX that works in both; import it from the entry that draws the code (`qrdx` for the React components).
 
 ## Frames (call to action)
 
