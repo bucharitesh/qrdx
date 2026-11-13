@@ -2,6 +2,18 @@
 
 Release notes for earlier versions are at [qrdx.dev/changelog](https://qrdx.dev/changelog).
 
+## Unreleased
+
+### Web component (`qrdx/element`)
+
+- **`<qrdx-code>`**, a custom element on `qrdx/core`, for plain HTML and frameworks that render DOM elements (tested in React 19 and Vue 3). Simple options are attributes (`value`, `size`, `level`, `fg-color`, `bg-color`, `eye-color`, `dot-color`, `body-pattern`, `corner-eye-pattern`, `corner-eye-dot-pattern`, `margin`, `template-id`, `module-scale`, `auto-level`, `shape`); object options are properties (`frame`, gradients, `imageSettings`, `eyeColors`, `art`, `customTemplate`, `customProps`), or all at once in `props`, which also reads JSON from its attribute. Changes are batched into one redraw per microtask, and a redraw that changes nothing leaves the page alone.
+- The code is drawn in an open shadow root, styled from outside with `::part(svg)`. The `<svg>` has `role="img"` and an `aria-label` from the `label` attribute, or "QR code": never the value, which can be private.
+- `toSVGString()`, `toDataURL(format, { size, quality })` and `download({ format, filename, size, quality })` export the code. A code that can't be drawn fires a cancelable `qrdx-error` event.
+- `defineQRdxCode(tagName = "qrdx-code")` registers it, and importing `qrdx/element` registers nothing. `qrdx/element/define` registers `<qrdx-code>` on import (listed in `sideEffects`, so bundlers keep it). On a server, importing it and calling `defineQRdxCode` are safe.
+- `toQRdxCodeHTML(options, { tagName, label })` writes server markup: the element with the code already drawn in a declarative shadow root, so it shows before any script runs.
+- `dist/element-define.browser.mjs` registers the element from a CDN with no bundler; it loads `dist/element.browser.mjs`, one module with the engine inside (the official frame library's data stays in `dist/frames-official.mjs`).
+- Types: `QRdxCodeElement`, `QRdxCodeOptions`, `QRdxCodeProperties`, `QRdxCodeAttributes`, `QRdxCodeJSXProps` (for a React or Preact JSX declaration) and an `HTMLElementTagNameMap` entry for `qrdx-code`.
+
 ## 0.0.51
 
 ### React-free core and plain JavaScript
