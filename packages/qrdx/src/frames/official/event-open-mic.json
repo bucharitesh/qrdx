@@ -1,0 +1,94 @@
+{
+  "id": "event-open-mic",
+  "name": "Open mic",
+  "description": "A solid card with a round badge holding a microphone on its top edge.",
+  "category": "use-case",
+  "collection": "events",
+  "contentTypes": ["url"],
+  "tags": ["music", "events", "open mic", "sign up"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1830
+    },
+    "qr": {
+      "x": 120,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 150,
+        "width": 1240,
+        "height": 1680,
+        "radius": 64,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 620,
+        "cy": 150,
+        "r": 150,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 620,
+        "cy": 150,
+        "r": 120,
+        "fill": "background"
+      },
+      {
+        "type": "path",
+        "d": "M620 88.4L620 88.4A22.4 22.4 0 0 1 642.4 110.8L642.4 141.6A22.4 22.4 0 0 1 620 164L620 164A22.4 22.4 0 0 1 597.6 141.6L597.6 110.8A22.4 22.4 0 0 1 620 88.4Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M659.2 138.8A39.2 39.2 0 0 1 580.8 138.8L589.2 138.8A30.8 30.8 0 0 0 650.8 138.8ZM615.8 178L624.2 178L624.2 203.2L615.8 203.2ZM596.2 203.2L643.8 203.2A4.2 4.2 0 0 1 648 207.4L648 207.4A4.2 4.2 0 0 1 643.8 211.6L596.2 211.6A4.2 4.2 0 0 1 592 207.4L592 207.4A4.2 4.2 0 0 1 596.2 203.2Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Sign up to perform",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1540,
+          "width": 1040,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Open mic night",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1710,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

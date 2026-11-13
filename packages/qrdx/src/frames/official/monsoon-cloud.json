@@ -1,0 +1,114 @@
+{
+  "id": "monsoon-cloud",
+  "name": "Rain cloud",
+  "description": "A light card with a rain cloud and a solid label band, in rain blue.",
+  "category": "seasonal",
+  "collection": "seasons",
+  "occasion": "monsoon",
+  "contentTypes": [],
+  "tags": ["monsoon", "rainy season", "rain", "cloud", "sale"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1770
+    },
+    "qr": {
+      "x": 120,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#1e3a5f",
+      "text": "#ffffff",
+      "accent": "#7dd3fc"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "frame",
+        "hole": {
+          "x": 20,
+          "y": 20,
+          "width": 1200,
+          "height": 1730,
+          "radius": 38
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 250,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 60,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M572.4 96.4A22.4 22.4 0 1 1 617.2 96.4A22.4 22.4 0 1 1 572.4 96.4ZM596.2 82.4A29.4 29.4 0 1 1 655 82.4A29.4 29.4 0 1 1 596.2 82.4ZM631.2 99.2A19.6 19.6 0 1 1 670.4 99.2A19.6 19.6 0 1 1 631.2 99.2ZM585 93.6L657.8 93.6A12.6 12.6 0 0 1 670.4 106.2L670.4 106.2A12.6 12.6 0 0 1 657.8 118.8L585 118.8A12.6 12.6 0 0 1 572.4 106.2L572.4 106.2A12.6 12.6 0 0 1 585 93.6Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M591.88 133.6L586.84 150.4L581.48 148.8L586.52 132ZM614.28 133.6L606.72 158.8L601.36 157.2L608.92 132ZM636.68 133.6L631.64 150.4L626.28 148.8L631.32 132ZM656.28 130.8L649.56 153.2L644.2 151.6L650.92 129.2ZM603.08 158.8L599.72 170L594.36 168.4L597.72 157.2ZM633.88 158.8L630.52 170L625.16 168.4L628.52 157.2Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Rainy day offers",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1550,
+          "width": 1040,
+          "height": 190
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan me",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 180,
+          "width": 960,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

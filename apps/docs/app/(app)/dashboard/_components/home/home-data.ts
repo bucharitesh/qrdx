@@ -7,16 +7,9 @@ import {
   getCodeUsage,
   listCodes,
 } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
-import { getDomainsOverview } from "@/app/(app)/dashboard/domains/_lib/domains";
 import { getPageUsage } from "@/app/(app)/dashboard/pages/_lib/landing-pages";
-import {
-  getTeam,
-  listPendingInvitations,
-  listTeamMembers,
-} from "@/app/(app)/dashboard/team/_lib/queries";
-import { countThemesInScope } from "@/app/(app)/dashboard/themes/_lib/queries";
-import { getCustomDomainMode } from "@/lib/feature-availability";
-import { getPlanLimits, type Plan } from "@/lib/plans";
+import { getTeam } from "@/app/(app)/dashboard/team/_lib/queries";
+import type { Plan } from "@/lib/plans";
 import type { ActiveScope } from "@/lib/scope";
 
 export interface RecentCode {
@@ -28,11 +21,6 @@ export interface RecentCode {
   paused: boolean;
 }
 
-export interface SetupTask {
-  id: "code" | "page" | "theme" | "team" | "domain";
-  done: boolean;
-}
-
 export interface HomeData {
   plan: Plan;
   /** The workspace's name */
@@ -42,7 +30,6 @@ export interface HomeData {
   /** Every scan of the workspace's codes (archived included, trash not) */
   totalScans: number;
   recent: RecentCode[];
-  tasks: SetupTask[];
 }
 
 function codesWhere(scope: ActiveScope): SQL {
@@ -62,49 +49,21 @@ async function totalScans(scope: ActiveScope): Promise<number> {
   return Number(row?.total ?? 0);
 }
 
-async function teamSize(organizationId: string): Promise<number> {
-  const [members, pending] = await Promise.all([
-    listTeamMembers(organizationId),
-    listPendingInvitations(organizationId),
-  ]);
-  return members.length + pending.length;
-}
-
-/** Home: counts, the newest codes and the setup checklist, from real data. */
+/**
+ * Home: counts and the newest codes, from real data. The setup checklist
+ * is the app shell's launcher now (lib/setup-guide-server.ts).
+ */
 export async function getHomeData(scope: ActiveScope): Promise<HomeData> {
-  const [codeUsage, pageUsage, scans, recent, themes, team] = await Promise.all(
-    [
-      getCodeUsage(scope),
-      getPageUsage(scope),
-      totalScans(scope),
-      listCodes(scope, { limit: 5, sort: "newest" }),
-      countThemesInScope(scope),
-      getTeam(scope.organizationId),
-    ],
-  );
-  const plan = codeUsage.plan;
-  const limits = getPlanLimits(plan);
-
-  const tasks: SetupTask[] = [
-    { id: "code", done: codeUsage.used > 0 || recent.total > 0 },
-    { id: "page", done: pageUsage.used > 0 },
-    { id: "theme", done: themes > 0 },
-  ];
-  // Plan-dependent tasks appear only where the plan includes them.
-  if (limits.teams) {
-    tasks.push({
-      id: "team",
-      // Someone besides you, invited or joined.
-      done: (await teamSize(scope.organizationId)) > 1,
-    });
-  }
-  if (limits.customDomains > 0 && getCustomDomainMode() !== "disabled") {
-    const domains = await getDomainsOverview(scope);
-    tasks.push({ id: "domain", done: domains.domains.length > 0 });
-  }
+  const [codeUsage, pageUsage, scans, recent, team] = await Promise.all([
+    getCodeUsage(scope),
+    getPageUsage(scope),
+    totalScans(scope),
+    listCodes(scope, { limit: 5, sort: "newest" }),
+    getTeam(scope.organizationId),
+  ]);
 
   return {
-    plan,
+    plan: codeUsage.plan,
     teamName: team?.name ?? null,
     codes: { used: codeUsage.used, limit: codeUsage.limit },
     pages: pageUsage.used,
@@ -117,6 +76,5 @@ export async function getHomeData(scope: ActiveScope): Promise<HomeData> {
       status: code.status,
       paused: code.pausedAt !== null,
     })),
-    tasks,
   };
 }

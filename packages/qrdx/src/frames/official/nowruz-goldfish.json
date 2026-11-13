@@ -1,0 +1,71 @@
+{
+  "id": "nowruz-goldfish",
+  "name": "Nowruz goldfish",
+  "description": "An arched card, like a window, with a goldfish, in lapis blue and sprout green.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "nowruz",
+  "contentTypes": [],
+  "tags": ["nowruz", "persian new year", "spring", "goldfish", "haft-sin"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1880
+    },
+    "qr": {
+      "x": 160,
+      "y": 470,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#1e40af",
+      "text": "#ffffff",
+      "accent": "#86efac"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M0 660A660 660 0 0 1 1320 660L1320 1840Q1320 1880 1280 1880L40 1880Q0 1880 0 1840Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M50 660A610 610 0 0 1 1270 660L1270 1830L50 1830ZM62 660L62 1818L1258 1818L1258 660A598 598 0 0 0 62 660Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.35
+        }
+      },
+      {
+        "type": "path",
+        "d": "M603 240C618 210 660 204 681 225L720 198C711 222 711 258 720 282L681 255C660 276 618 270 603 240Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M639 216L657 195L666 216ZM618.6 234A5.4 5.4 0 1 1 629.4 234A5.4 5.4 0 1 1 618.6 234ZM594.6 210A5.4 5.4 0 1 1 605.4 210A5.4 5.4 0 1 1 594.6 210ZM605.1 192A3.9 3.9 0 1 1 612.9 192A3.9 3.9 0 1 1 605.1 192Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Happy Nowruz",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1610,
+          "width": 1040,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,123 @@
+{
+  "id": "green-ribbon",
+  "name": "Green ribbon",
+  "description": "A thin double border with an awareness ribbon, a small divider and the label, in green.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "mental-health-day",
+  "contentTypes": [],
+  "tags": [
+    "world mental health day",
+    "mental health",
+    "october 10",
+    "ribbon",
+    "support"
+  ],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1830
+    },
+    "qr": {
+      "x": 160,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#166534",
+      "text": "#ffffff",
+      "accent": "#86efac"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1320,
+        "height": 1830,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 30,
+        "y": 30,
+        "width": 1260,
+        "height": 1770,
+        "fill": "frame",
+        "hole": {
+          "x": 40,
+          "y": 40,
+          "width": 1240,
+          "height": 1750
+        }
+      },
+      {
+        "type": "rect",
+        "x": 60,
+        "y": 60,
+        "width": 1200,
+        "height": 1710,
+        "fill": "frame",
+        "hole": {
+          "x": 64,
+          "y": 64,
+          "width": 1192,
+          "height": 1702
+        }
+      },
+      {
+        "type": "path",
+        "d": "M621.86 204.71L662.46 131.91L677.14 140.09L636.54 212.89ZM662.29 132.25L664.6 127.64L665.88 124.07L666.48 121.16L666.57 118.91L666.32 117.25L665.88 116.05L665.3 115.15L664.58 114.41L663.68 113.8L662.59 113.32L661.34 113.01L660 112.9L658.66 113.01L657.41 113.32L656.32 113.8L655.42 114.41L654.7 115.15L654.12 116.05L653.68 117.25L653.43 118.91L653.52 121.16L654.12 124.07L655.4 127.64L657.71 132.25L642.69 139.75L639.98 134.3L637.96 128.68L636.85 123.28L636.65 118.09L637.38 113.19L639.02 108.7L641.47 104.79L644.57 101.59L648.11 99.14L651.95 97.43L655.94 96.43L660 96.1L664.06 96.43L668.05 97.43L671.89 99.14L675.43 101.59L678.53 104.79L680.98 108.7L682.62 113.19L683.35 118.09L683.15 123.28L682.04 128.68L680.02 134.3L677.31 139.75ZM657.54 131.91L698.14 204.71L683.46 212.89L642.86 140.09Z",
+        "fill": "frame"
+      },
+      {
+        "type": "line",
+        "x1": 470,
+        "y1": 1570,
+        "x2": 850,
+        "y2": 1570,
+        "width": 6,
+        "fill": "frame"
+      },
+      {
+        "type": "polygon",
+        "points": [[660, 1550], [680, 1570], [660, 1590], [640, 1570]],
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for support",
+        "color": "frame",
+        "box": {
+          "x": 180,
+          "y": 1610,
+          "width": 960,
+          "height": 160
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "World Mental Health Day",
+        "color": "frame",
+        "box": {
+          "x": 180,
+          "y": 225,
+          "width": 960,
+          "height": 100
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

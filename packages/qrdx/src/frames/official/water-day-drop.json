@@ -1,0 +1,81 @@
+{
+  "id": "water-day-drop",
+  "name": "Water drop",
+  "description": "A solid card with a water drop over the code and the label underneath, in deep blue and water blue.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "world-water-day",
+  "contentTypes": [],
+  "tags": ["world water day", "water", "march 22"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#075985",
+      "text": "#ffffff",
+      "accent": "#7dd3fc"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M620 47C635.75 86.6 665 107 665 134A45 45 0 0 1 575 134C575 107 604.25 86.6 620 47Z",
+        "fill": "accent"
+      },
+      {
+        "type": "path",
+        "d": "M596 146C597.19 138.97 594.49 124.12 590 113C580.85 126.59 583.55 141.44 596 146Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "World Water Day",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan to save water",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

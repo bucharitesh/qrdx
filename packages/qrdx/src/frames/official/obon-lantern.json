@@ -1,0 +1,81 @@
+{
+  "id": "obon-lantern",
+  "name": "Bon lantern",
+  "description": "A solid card with a paper lantern over the code and the label underneath, in indigo and lantern orange.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "obon",
+  "contentTypes": [],
+  "tags": ["obon", "bon festival", "japan", "lantern", "bon odori"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#2e2a4f",
+      "text": "#ffffff",
+      "accent": "#f08c3a"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M579.5 110A40.5 51 0 1 1 660.5 110A40.5 51 0 1 1 579.5 110Z",
+        "fill": "accent"
+      },
+      {
+        "type": "path",
+        "d": "M587.89 81.2L652.11 81.2L652.11 84.8L587.89 84.8ZM583.19 94.7L656.81 94.7L656.81 98.3L583.19 98.3ZM581.75 108.2L658.25 108.2L658.25 111.8L581.75 111.8ZM583.19 121.7L656.81 121.7L656.81 125.3L583.19 125.3ZM587.89 135.2L652.11 135.2L652.11 138.8L587.89 138.8ZM599 53L641 53A3 3 0 0 1 644 56L644 62A3 3 0 0 1 641 65L599 65A3 3 0 0 1 596 62L596 56A3 3 0 0 1 599 53ZM599 155L641 155A3 3 0 0 1 644 158L644 164A3 3 0 0 1 641 167L599 167A3 3 0 0 1 596 164L596 158A3 3 0 0 1 599 155ZM622.25 38L622.25 53L617.75 53L617.75 38Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for the Bon dance",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Obon",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

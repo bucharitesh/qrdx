@@ -1,0 +1,85 @@
+{
+  "id": "camp-map",
+  "name": "Campground map",
+  "description": "A wide card: the code on one side, a tent and the label on the other.",
+  "category": "use-case",
+  "collection": "places",
+  "contentTypes": ["url"],
+  "tags": ["campsite", "outdoors", "map", "camping"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 2000,
+      "height": 1040
+    },
+    "qr": {
+      "x": 120,
+      "y": 120,
+      "size": 800,
+      "padding": 64,
+      "radius": 19.2
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 2000,
+        "height": 1040,
+        "radius": 72,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.9
+        }
+      },
+      {
+        "type": "path",
+        "d": "M1120 181.6L1199.2 314.8L1040.8 314.8ZM1094.8 314.8L1145.2 314.8L1120 239.2Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M1122.7 163.6L1122.7 185.2L1117.3 185.2L1117.3 163.6ZM1121.8 163.6L1148.8 171.7L1121.8 179.8ZM1038.1 314.8L1201.9 314.8A4.5 4.5 0 0 1 1206.4 319.3L1206.4 319.3A4.5 4.5 0 0 1 1201.9 323.8L1038.1 323.8A4.5 4.5 0 0 1 1033.6 319.3L1033.6 319.3A4.5 4.5 0 0 1 1038.1 314.8Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Campground map",
+        "color": "frame",
+        "box": {
+          "x": 1030,
+          "y": 400,
+          "width": 860,
+          "height": 190
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan to find your pitch",
+        "color": "frame",
+        "box": {
+          "x": 1030,
+          "y": 610,
+          "width": 860,
+          "height": 100
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

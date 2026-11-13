@@ -8,7 +8,9 @@ Add a "Scan me" frame, check that a design scans before you ship it, and export 
 
 ## Call-to-action frames
 
-The `frame` prop draws a frame with a short label around the code. It works on `QRCode`, `QRCodeSVG`, `QRCodeCanvas`, `getQRAsSVG`, `getQRData` and all download helpers.
+Every frame QRdx draws is a frame spec: a small JSON description of shapes, labels and colors. One engine draws every spec, so a frame looks the same in SVG, PNG, PDF and EPS. QRdx has {facts.frames} frames: {facts.frameStyles} built-in frames and {facts.officialFrames} [official frames](#official-frames). You can also make your own or pick one from the [community](/community/frames).
+
+The `frame` prop draws one around the code. It works on `QRCode`, `QRCodeSVG`, `QRCodeCanvas`, `getQRAsSVG`, `getQRData` and all download helpers.
 
 ```tsx
 import { QRCode } from "qrdx";
@@ -21,9 +23,13 @@ import { QRCode } from "qrdx";
 
 The frame is added **around** the code: the output gets bigger, and the QR modules and quiet zone are never covered, so scannability is unchanged. A light gap in the code's background color separates the code from the frame.
 
+### Built-in frames
+
+A built-in frame is named by its `style`. The options fill its spec's labels and colors:
+
 | Option | Default | Notes |
 | --- | --- | --- |
-| `style` | — | One of the {facts.frameStyles} styles below, or `none` (`FRAME_STYLES`) |
+| `style` | — | One of the {facts.frameStyles} built-in frames below, or `none` (`FRAME_STYLES`) |
 | `text` | `"Scan me"` | Up to 24 characters. Pass `""` to hide the label |
 | `color` | `#000000` | Frame color (`gradient-border`: start color, default violet) |
 | `textColor` | white on the frame, `color` on light areas | Label color |
@@ -31,12 +37,31 @@ The frame is added **around** the code: the output gets bigger, and the QR modul
 | `secondaryColor` | `#db2777` | End color of `gradient-border` |
 | `fontScale` | `1` | Label size from 0.5 to 1.5; labels still shrink to fit |
 
-Styles:
+The built-in frames, by `style`:
 
 - Banners and borders: `banner-bottom`, `banner-top`, `banner-top-bottom`, `border`, `rounded-border`, `gradient-border`, `focus` (corner brackets)
 - Bubbles: `speech-bubble`, `speech-bubble-top`, `chat-bubble`
 - Badges: `circle` (text set around a ring), `badge` (ribbon), `sticker` (die-cut with a shadow)
 - Objects: `polaroid`, `phone`, `ticket`, `tag` (hang tag with a hole), `envelope`, `menu-card`
+
+Each of these names stands for a spec in the engine, and the names stay valid for good. Saved designs, image API links, CLI flags and code that use them keep drawing the same frame. Frames that drop their label's row when there's no label, such as the borders, still do.
+
+`BUILT_IN_FRAMES` lists them with their names and specs (`BUILT_IN_FRAME_SPECS` has the specs by style). `frameSpecOf` returns the spec any frame draws, and `getFrameColors` the colors it paints with:
+
+```tsx
+import { BUILT_IN_FRAMES, frameSpecOf, getFrameColors } from "qrdx";
+
+BUILT_IN_FRAMES.map((frame) => frame.name); // ["Banner", "Top banner", …]
+
+// A built-in style's spec, or a custom frame's own
+const ticket = frameSpecOf({ style: "ticket" });
+
+// The frame's options, else its spec's defaults
+getFrameColors({ style: "border", color: "#1e3a8a" });
+// { frame: "#1e3a8a", text: "#1e3a8a", accent: "#1e3a8a" }
+```
+
+To change more than the labels and colors, start a custom frame from a built-in spec: `{ style: "custom", spec: frameSpecOf({ style: "ticket" }) }` draws the same ticket, and you can edit its shapes.
 
 See them all, decoded in your browser, in [Shapes, eyes and frames](/docs/styles#frames). Every frame is plain shapes and text with opaque colors, so SVG, PNG, PDF and EPS exports match (the gradient border is drawn as fine solid color steps, and the circle frame's curved letters are rotated text in every format).
 
@@ -55,7 +80,13 @@ import { getFrameDimensions } from "qrdx";
 getFrameDimensions(400, { style: "banner-bottom" }); // { width: 496, height: 568 }
 ```
 
-`FRAME_STYLES`, `frameSchema` (zod) and the `QRFrame` / `FrameStyle` types are also exported from `qrdx/types` for server-side validation.
+`FRAME_STYLES`, `frameSchema` (zod) and the `QRFrame` / `FrameStyle` types are also exported from `qrdx/types` for server-side validation. `GRADIENT_FRAME_DEFAULTS` (the gradient border's default colors) and `FRAME_GAP_RATIO` are still exported for code that used them; each frame's own gap is its spec's padding (`getFrameGapRatio`).
+
+### In the playground
+
+**Design → Frame** has one picker for every frame. The **Classic** group holds the built-in frames, next to the shaped codes, the official frames and the frames you saved. Every frame is edited the same way: its label, second line, colors and text size, plus icons on frames that have them. A design with a built-in frame keeps its `style` name, so links, image URLs and code snippets stay short.
+
+The **Shaped codes** group puts the code itself in a shape: a circle or a heart of decorative dots, or a shape you upload ([`shape`](/docs/features/patterns#circle-codes)). A shaped code takes the place of a frame: picking one clears the frame, and picking a frame clears the shape.
 
 ### In the CLI
 
@@ -65,9 +96,25 @@ qrdx generate "https://example.com/menu" --frame banner-bottom --frame-text "Sca
 
 `--frame-color` and `--frame-text-color` take hex colors. Passing text or colors without `--frame` uses `banner-bottom`.
 
+### Frame specs
+
+A frame spec is JSON with `kind: "qrdx.frame"`, `version: 1`, an `artboard` size, a `qr` box where the code goes, default `colors`, the `shapes` painted behind the code and the `labels`. Shapes are rects (with an optional hole), circles and rings, ellipses, polygons, paths, lines and built-in icons. They're filled with a theme token (`frame`, `text`, `accent`, `background`), a hex color, a mix of two, or a gradient. A spec holds no markup, links or images. Check one you didn't write with `frameSpecSchema` or `getFrameSpecIssues` from `qrdx/types` before you store it. The engine checks it again before drawing.
+
+The built-in frames brought these optional fields. Specs without them draw as before:
+
+| Field | What it does |
+| --- | --- |
+| `labels[].collapse` | `{ y, height }`. When the label shows no text, the band from `y` to `y + height` is cut out: rows below it move up and the artwork gets shorter. Shapes wholly inside the band are left out, and shapes that cross it get shorter. A band can't cross the code, its padding or another band. |
+| `qr.plate` | `"opaque"` (the default) or `"background"`. The engine paints a plate in the code's background color under the code. When that background is see-through, `"opaque"` paints the plate and `background` fills white, so artwork never shows through the quiet zone. `"background"` keeps them see-through and leaves the plate out. It's allowed only when nothing but `background` fills, or a ring whose hole holds the plate, lies under the plate. |
+| `colors.text` | A hex color, or a mix of `frame`, `accent`, `background` and hex colors, such as `{ "mix": ["frame", "accent"], "amount": 0.5 }` for the gradient border's label. It's the default; `textColor` still wins. |
+
+A text label's row may also reach into the plate's padding, as long as it stays off the code and its capitals stay out of the padding at the largest text size (`fontScale` 1.5). The border frames set their label right under the code this way.
+
+qrdx 0.0.51 and older reject specs that use these fields or put a label row in the padding, so update the engine before you draw such a spec elsewhere.
+
 ## Official frames
 
-On top of the built-in styles, QRdx has {facts.officialFrames} official frames: ready-made designs for calls to action, restaurants and cafes, shops and packaging, beauty and wellness, events and weddings, hotels and travel, real estate, cars and parking, health and education, sports and fitness, business and social, and nonprofits and community groups. {facts.seasonalFrames} of them are for holidays and seasons, from Lunar New Year, Holi, Eid and Diwali to Hanukkah, Easter, Thanksgiving and Christmas. Each one is a frame spec with labels and colors you can change, released under CC0, and each is tested to scan at phone distances.
+On top of the built-in frames, QRdx has {facts.officialFrames} official frames: ready-made designs for calls to action, restaurants and cafes, shops and packaging, beauty and wellness, events and weddings, hotels and travel, real estate, cars and parking, health and education, sports and fitness, business and social, and nonprofits and community groups. {facts.seasonalFrames} of them are for holidays and seasons, from Lunar New Year, Holi, Eid and Diwali to Hanukkah, Easter, Thanksgiving and Christmas. Each one is a frame spec with labels and colors you can change, released under CC0, and each is tested to scan at phone distances.
 
 In the [playground](/playground), open **Frame** and then **More**. Search by name, use or holiday, or pick a group. Frames for the holidays and seasons coming up are listed first. You'll also find them in the [community](/community/frames), published by @qrdx.
 

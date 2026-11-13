@@ -4391,18 +4391,11 @@
         }
       },
       "frameControls": {
-        "customise": "Personnaliser",
         "importSvg": "Importer un SVG",
         "publishFrame": "Publier le cadre",
         "theFrameIsAddedAround": "Le cadre est ajouté autour du code : l’image téléchargée est donc plus grande et le code reste scannable.",
         "label": "Libellé",
-        "secondLine": "Deuxième ligne",
-        "leaveEmptyForNoLabel": "Laissez vide pour aucun libellé",
         "pickAFrameFirst": "Choisissez d’abord un cadre",
-        "frameColor": "Couleur du cadre",
-        "textColor": "Couleur du texte",
-        "endColor": "Couleur de fin",
-        "optionalEGYourWebsite": "Facultatif, p. ex. votre site web",
         "none": "Aucun"
       },
       "frameFields": {
@@ -4421,13 +4414,14 @@
         "filterFrames": "Filtrer les cadres",
         "labelFrames": "Cadres {label}",
         "commonFrames": "Cadres courants",
-        "everyFrameBuiltInStyles": "Tous les cadres : styles intégrés, cadres officiels de QRdx et cadres que vous avez enregistrés. Un clic sur un cadre l’applique immédiatement.",
+        "everyFrameBuiltInStyles": "Tous les cadres : les cadres classiques, les codes à forme, les cadres officiels de QRdx et ceux que vous avez enregistrés. Un clic sur un cadre l’applique immédiatement.",
         "less": "Moins",
         "all": "Tous",
         "noFramesMatchQuery": "Aucun cadre ne correspond à « {query} ».",
         "loadingFrames": "Chargement des cadres…",
         "comingUp": "Bientôt",
-        "builtIn": "Intégrés",
+        "classic": "Classiques",
+        "shapedCodes": "Codes à forme",
         "saved": "Enregistrés",
         "results": "Résultats"
       },
@@ -7987,23 +7981,6 @@
         },
         "newCodeButton": {
           "newDynamicCode": "Nouveau code dynamique"
-        },
-        "setupChecklist": {
-          "done": "(terminé)",
-          "create": "Créer",
-          "start": "Démarrer",
-          "design": "Créer",
-          "invite": "Inviter",
-          "connect": "Connecter",
-          "getSetUp": "Prise en main",
-          "doneOfLengthDone": "{done, number} sur {length, number} terminées",
-          "hide": "Masquer",
-          "setupTasksDone": "Tâches terminées",
-          "createADynamicQrCode": "Créer un QR code dynamique",
-          "makeALandingPageOr": "Créer une page de destination ou un formulaire",
-          "saveAThemeWithYour": "Enregistrer un thème avec votre logo et vos couleurs",
-          "inviteATeammate": "Inviter un coéquipier",
-          "connectACustomDomain": "Connecter un domaine personnalisé"
         }
       },
       "listSelection": {
@@ -8356,6 +8333,26 @@
       "spotlight": {
         "new": "Nouveau",
         "gotIt": "Compris"
+      },
+      "setupGuide": {
+        "getSetUp": "Prise en main",
+        "launcherLabel": "Prise en main : {done, number} sur {length, number} terminées",
+        "doneOfLengthDone": "{done, number} sur {length, number} terminées",
+        "doneOfLengthShort": "{done, number}/{length, number}",
+        "setupTasksDone": "Tâches terminées",
+        "collapse": "Réduire",
+        "dismissGuide": "Masquer le guide",
+        "done": "(terminé)",
+        "create": "Créer",
+        "start": "Démarrer",
+        "design": "Créer",
+        "invite": "Inviter",
+        "connect": "Connecter",
+        "createADynamicQrCode": "Créer un QR code dynamique",
+        "makeALandingPageOr": "Créer une page de destination ou un formulaire",
+        "saveAThemeWithYour": "Enregistrer un thème avec votre logo et vos couleurs",
+        "inviteATeammate": "Inviter un coéquipier",
+        "connectACustomDomain": "Connecter un domaine personnalisé"
       }
     },
     "workspaces": {

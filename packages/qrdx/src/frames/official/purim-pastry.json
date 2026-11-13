@@ -1,0 +1,71 @@
+{
+  "id": "purim-pastry",
+  "name": "Hamantaschen",
+  "description": "An arched card, like a window, with a filled triangle pastry, in purple and yellow.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "purim",
+  "contentTypes": [],
+  "tags": ["purim", "jewish holiday", "costumes", "pastry"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1880
+    },
+    "qr": {
+      "x": 160,
+      "y": 470,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#5b21b6",
+      "text": "#ffffff",
+      "accent": "#facc15"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M0 660A660 660 0 0 1 1320 660L1320 1840Q1320 1880 1280 1880L40 1880Q0 1880 0 1840Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M50 660A610 610 0 0 1 1270 660L1270 1830L50 1830ZM62 660L62 1818L1258 1818L1258 660A598 598 0 0 0 62 660Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.35
+        }
+      },
+      {
+        "type": "path",
+        "d": "M660 177Q669 177 720 276Q723 291 708 291L612 291Q597 291 600 276Q651 177 660 177Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M660 279L639.22 243L680.78 243Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Chag Purim Sameach",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1610,
+          "width": 1040,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

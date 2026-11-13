@@ -4391,18 +4391,11 @@
         }
       },
       "frameControls": {
-        "customise": "自定义",
         "importSvg": "导入 SVG",
         "publishFrame": "发布边框",
         "theFrameIsAddedAround": "边框会添加在二维码外围，因此下载的图片尺寸会变大，二维码本身仍可正常扫描。",
         "label": "标签",
-        "secondLine": "第二行",
-        "leaveEmptyForNoLabel": "留空则不显示标签",
         "pickAFrameFirst": "请先选择边框",
-        "frameColor": "边框颜色",
-        "textColor": "文字颜色",
-        "endColor": "结束颜色",
-        "optionalEGYourWebsite": "选填，例如你的网站",
         "none": "无"
       },
       "frameFields": {
@@ -4421,13 +4414,14 @@
         "filterFrames": "筛选边框",
         "labelFrames": "{label}边框",
         "commonFrames": "常用边框",
-        "everyFrameBuiltInStyles": "所有边框：内置样式、QRdx 官方边框和你保存的边框。选择后立即应用。",
+        "everyFrameBuiltInStyles": "所有边框：经典边框、异形二维码、QRdx 官方边框，以及你保存的边框。选择后会立即应用。",
         "less": "收起",
         "all": "全部",
         "noFramesMatchQuery": "没有与“{query}”匹配的边框。",
         "loadingFrames": "正在加载边框…",
         "comingUp": "即将推出",
-        "builtIn": "内置",
+        "classic": "经典",
+        "shapedCodes": "异形二维码",
         "saved": "已保存",
         "results": "结果"
       },
@@ -7987,23 +7981,6 @@
         },
         "newCodeButton": {
           "newDynamicCode": "新建动态码"
-        },
-        "setupChecklist": {
-          "done": "（已完成）",
-          "create": "创建",
-          "start": "开始",
-          "design": "设计",
-          "invite": "邀请",
-          "connect": "连接",
-          "getSetUp": "完成设置",
-          "doneOfLengthDone": "已完成 {done, number}/{length, number} 项",
-          "hide": "隐藏",
-          "setupTasksDone": "已完成的设置任务",
-          "createADynamicQrCode": "创建动态二维码",
-          "makeALandingPageOr": "制作落地页或表单",
-          "saveAThemeWithYour": "保存包含您的徽标和颜色的主题",
-          "inviteATeammate": "邀请一位团队成员",
-          "connectACustomDomain": "连接自定义域名"
         }
       },
       "listSelection": {
@@ -8356,6 +8333,26 @@
       "spotlight": {
         "new": "新",
         "gotIt": "知道了"
+      },
+      "setupGuide": {
+        "getSetUp": "完成设置",
+        "launcherLabel": "开始设置：已完成 {done, number}/{length, number}",
+        "doneOfLengthDone": "已完成 {done, number}/{length, number} 项",
+        "doneOfLengthShort": "{done, number}/{length, number}",
+        "setupTasksDone": "已完成的设置任务",
+        "collapse": "收起",
+        "dismissGuide": "关闭指南",
+        "done": "（已完成）",
+        "create": "创建",
+        "start": "开始",
+        "design": "设计",
+        "invite": "邀请",
+        "connect": "连接",
+        "createADynamicQrCode": "创建动态二维码",
+        "makeALandingPageOr": "制作落地页或表单",
+        "saveAThemeWithYour": "保存包含您的徽标和颜色的主题",
+        "inviteATeammate": "邀请一位团队成员",
+        "connectACustomDomain": "连接自定义域名"
       }
     },
     "workspaces": {

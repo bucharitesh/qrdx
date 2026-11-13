@@ -1,0 +1,100 @@
+{
+  "id": "festa-della-repubblica",
+  "name": "Festa della Repubblica",
+  "description": "Flag colors in a band over the code, in green, white and red.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "festa-della-repubblica",
+  "contentTypes": [],
+  "tags": ["festa della repubblica", "italy", "june 2", "national day"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1760
+    },
+    "qr": {
+      "x": 120,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#0b5132",
+      "text": "#ffffff",
+      "accent": "#cd212a"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 24,
+        "y": 24,
+        "width": 1192,
+        "height": 276,
+        "radius": 36,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 24,
+        "y": 24,
+        "width": 398.33,
+        "height": 276,
+        "fill": "#009246"
+      },
+      {
+        "type": "rect",
+        "x": 421.33,
+        "y": 24,
+        "width": 398.33,
+        "height": 276,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 818.67,
+        "y": 24,
+        "width": 397.33,
+        "height": 276,
+        "fill": "accent"
+      },
+      {
+        "type": "path",
+        "d": "M24 24L60 24A36 36 0 0 0 24 60Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M1216 24L1180 24A36 36 0 0 1 1216 60Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Festa della Repubblica",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1530,
+          "width": 1040,
+          "height": 180
+        }
+      }
+    ]
+  }
+}

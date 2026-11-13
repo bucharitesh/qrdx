@@ -1,0 +1,92 @@
+{
+  "id": "event-retirement",
+  "name": "Retirement send-off",
+  "description": "The label between two short rules under the code and an hourglass.",
+  "category": "use-case",
+  "collection": "events",
+  "contentTypes": ["url"],
+  "tags": ["celebration", "events", "retirement"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 40,
+        "fill": "background"
+      },
+      {
+        "type": "line",
+        "x1": 60,
+        "y1": 1610,
+        "x2": 220,
+        "y2": 1610,
+        "width": 10,
+        "fill": "frame"
+      },
+      {
+        "type": "line",
+        "x1": 1020,
+        "y1": 1610,
+        "x2": 1180,
+        "y2": 1610,
+        "width": 10,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M582.8 44.8L657.2 44.8A3.6 3.6 0 0 1 660.8 48.4L660.8 50.8A3.6 3.6 0 0 1 657.2 54.4L582.8 54.4A3.6 3.6 0 0 1 579.2 50.8L579.2 48.4A3.6 3.6 0 0 1 582.8 44.8ZM582.8 145.6L657.2 145.6A3.6 3.6 0 0 1 660.8 149.2L660.8 151.6A3.6 3.6 0 0 1 657.2 155.2L582.8 155.2A3.6 3.6 0 0 1 579.2 151.6L579.2 149.2A3.6 3.6 0 0 1 582.8 145.6ZM588.8 56.8L651.2 56.8C651.2 83.2 627.2 92.8 627.2 100C627.2 107.2 651.2 116.8 651.2 143.2L588.8 143.2C588.8 116.8 612.8 107.2 612.8 100C612.8 92.8 588.8 83.2 588.8 56.8Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Happy retirement",
+        "color": "frame",
+        "box": {
+          "x": 260,
+          "y": 1530,
+          "width": 720,
+          "height": 160
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan for the send-off",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 180,
+          "width": 960,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

@@ -1,0 +1,122 @@
+{
+  "id": "seollal-knot",
+  "name": "Seollal knot",
+  "description": "A thin double border with a lucky knot, a small divider and the label, in deep blue and red.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "lunar-new-year",
+  "contentTypes": [],
+  "tags": ["lunar new year", "seollal", "korea"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1830
+    },
+    "qr": {
+      "x": 160,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#1e3a8a",
+      "text": "#ffffff",
+      "accent": "#e11d48"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1320,
+        "height": 1830,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 30,
+        "y": 30,
+        "width": 1260,
+        "height": 1770,
+        "fill": "frame",
+        "hole": {
+          "x": 40,
+          "y": 40,
+          "width": 1240,
+          "height": 1750
+        }
+      },
+      {
+        "type": "rect",
+        "x": 60,
+        "y": 60,
+        "width": 1200,
+        "height": 1710,
+        "fill": "frame",
+        "hole": {
+          "x": 64,
+          "y": 64,
+          "width": 1192,
+          "height": 1702
+        }
+      },
+      {
+        "type": "path",
+        "d": "M665.94 94.42L701.58 130.06A8.4 8.4 45 0 1 701.58 141.94L665.94 177.58A8.4 8.4 45 0 1 654.06 177.58L618.42 141.94A8.4 8.4 45 0 1 618.42 130.06L654.06 94.42A8.4 8.4 45 0 1 665.94 94.42ZM662.97 111.25A4.2 4.2 45 0 0 657.03 111.25L635.25 133.03A4.2 4.2 45 0 0 635.25 138.97L657.03 160.75A4.2 4.2 45 0 0 662.97 160.75L684.75 138.97A4.2 4.2 45 0 0 684.75 133.03Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M657.2 180.8L662.8 180.8A1.4 1.4 0 0 1 664.2 182.2L664.2 190.6A1.4 1.4 0 0 1 662.8 192L657.2 192A1.4 1.4 0 0 1 655.8 190.6L655.8 182.2A1.4 1.4 0 0 1 657.2 180.8ZM648.8 192L671.2 192L676.8 217.2L643.2 217.2Z",
+        "fill": "accent"
+      },
+      {
+        "type": "line",
+        "x1": 470,
+        "y1": 1570,
+        "x2": 850,
+        "y2": 1570,
+        "width": 6,
+        "fill": "frame"
+      },
+      {
+        "type": "polygon",
+        "points": [[660, 1550], [680, 1570], [660, 1590], [640, 1570]],
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Happy Seollal",
+        "color": "frame",
+        "box": {
+          "x": 180,
+          "y": 1610,
+          "width": 960,
+          "height": 160
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan me",
+        "color": "frame",
+        "box": {
+          "x": 180,
+          "y": 225,
+          "width": 960,
+          "height": 100
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

@@ -1,0 +1,88 @@
+{
+  "id": "monsoon-boots",
+  "name": "Rain boots sticker",
+  "description": "A die-cut sticker with a thick outline and an offset shadow and a pair of rain boots, in monsoon green and yellow.",
+  "category": "seasonal",
+  "collection": "seasons",
+  "occasion": "monsoon",
+  "contentTypes": [],
+  "tags": ["monsoon", "rainy season", "rain", "boots", "sticker"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1750
+    },
+    "qr": {
+      "x": 110,
+      "y": 370,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#14532d",
+      "text": "#ffffff",
+      "accent": "#fde047"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 50,
+        "y": 50,
+        "width": 1270,
+        "height": 1700,
+        "radius": 110,
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1270,
+        "height": 1700,
+        "radius": 110,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 36,
+        "y": 36,
+        "width": 1198,
+        "height": 1628,
+        "radius": 80,
+        "fill": "background"
+      },
+      {
+        "type": "path",
+        "d": "M561.4 92.4L599.8 92.4L599.8 172.4C619 172.4 635 182 635 198L635 210.8L561.4 210.8ZM564.6 204.4L631.8 204.4A3.2 3.2 0 0 1 635 207.6L635 210.8A3.2 3.2 0 0 1 631.8 214L564.6 214A3.2 3.2 0 0 1 561.4 210.8L561.4 207.6A3.2 3.2 0 0 1 564.6 204.4ZM628.6 210.8L695.8 210.8A3.2 3.2 0 0 1 699 214L699 217.2A3.2 3.2 0 0 1 695.8 220.4L628.6 220.4A3.2 3.2 0 0 1 625.4 217.2L625.4 214A3.2 3.2 0 0 1 628.6 210.8Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M625.4 92.4L663.8 92.4L663.8 172.4C683 172.4 699 182 699 198L699 210.8L625.4 210.8ZM625.4 98.8L663.8 98.8L663.8 108.4L625.4 108.4Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Rainy day",
+        "color": "frame",
+        "box": {
+          "x": 100,
+          "y": 1490,
+          "width": 1070,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

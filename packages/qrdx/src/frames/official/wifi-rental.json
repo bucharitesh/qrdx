@@ -1,0 +1,91 @@
+{
+  "id": "wifi-rental",
+  "name": "Holiday rental Wi-Fi",
+  "description": "A house with a roof and chimney around the code and a Wi-Fi symbol.",
+  "category": "use-case",
+  "collection": "places",
+  "contentTypes": ["wifi"],
+  "tags": ["wifi", "rental", "guests"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1400,
+      "height": 1960
+    },
+    "qr": {
+      "x": 200,
+      "y": 580,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 1000,
+        "y": 60,
+        "width": 120,
+        "height": 260,
+        "radius": 8,
+        "fill": "frame"
+      },
+      {
+        "type": "polygon",
+        "points": [
+          [700, 0],
+          [1400, 460],
+          [1340, 460],
+          [1340, 1960],
+          [60, 1960],
+          [60, 460],
+          [0, 460]
+        ],
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.88
+        }
+      },
+      {
+        "type": "polygon",
+        "points": [
+          [700, 0],
+          [1400, 460],
+          [1340, 460],
+          [700, 56],
+          [60, 460],
+          [0, 460]
+        ],
+        "fill": "frame"
+      },
+      {
+        "type": "icon",
+        "icon": "wifi",
+        "x": 640,
+        "y": 240,
+        "size": 120,
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Wi-Fi for your stay",
+        "color": "frame",
+        "box": {
+          "x": 160,
+          "y": 1710,
+          "width": 1080,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,98 @@
+{
+  "id": "garden-plant-label",
+  "name": "Plant label",
+  "description": "A folder tab on top carrying the label and a potted cactus.",
+  "category": "use-case",
+  "collection": "places",
+  "contentTypes": ["url"],
+  "tags": ["park", "outdoors", "botanical garden", "plants"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1560
+    },
+    "qr": {
+      "x": 120,
+      "y": 290,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#8a8a8a"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1000,
+        "height": 220,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 170,
+        "width": 1240,
+        "height": 1390,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 170,
+        "width": 200,
+        "height": 100,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M890 54.4L890 54.4A12 12 0 0 1 902 66.4L902 112A12 12 0 0 1 890 124L890 124A12 12 0 0 1 878 112L878 66.4A12 12 0 0 1 890 54.4ZM879.2 106L857.88 103.95L856.4 80.8L868.4 80.8L866.92 96.05L879.2 94ZM856.4 80.8A6 6 0 1 1 868.4 80.8A6 6 0 1 1 856.4 80.8ZM900.8 84.4L913.08 86.45L911.6 71.2L923.6 71.2L922.12 94.35L900.8 96.4ZM911.6 71.2A6 6 0 1 1 923.6 71.2A6 6 0 1 1 911.6 71.2Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M864.8 119.2L915.2 119.2A3.6 3.6 0 0 1 918.8 122.8L918.8 126.4A3.6 3.6 0 0 1 915.2 130L864.8 130A3.6 3.6 0 0 1 861.2 126.4L861.2 122.8A3.6 3.6 0 0 1 864.8 119.2ZM866 130L914 130L909.2 154L870.8 154Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Plant guide",
+        "color": "text",
+        "box": {
+          "x": 60,
+          "y": 25,
+          "width": 740,
+          "height": 150
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan for plant facts",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 1400,
+          "width": 1000,
+          "height": 100
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

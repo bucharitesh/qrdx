@@ -1,0 +1,72 @@
+{
+  "id": "navratri-lamp",
+  "name": "Navratri lamp",
+  "description": "An arched card, like a window, with a diya lamp, in magenta and saffron.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "navratri",
+  "contentTypes": [],
+  "tags": ["navratri", "dussehra", "durga puja", "festival", "diya", "lamp"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1880
+    },
+    "qr": {
+      "x": 160,
+      "y": 470,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#8e1b5b",
+      "text": "#ffffff",
+      "accent": "#f6a400"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M0 660A660 660 0 0 1 1320 660L1320 1840Q1320 1880 1280 1880L40 1880Q0 1880 0 1840Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M50 660A610 610 0 0 1 1270 660L1270 1830L50 1830ZM62 660L62 1818L1258 1818L1258 660A598 598 0 0 0 62 660Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.35
+        }
+      },
+      {
+        "type": "path",
+        "d": "M603 258L717 258C714 285 690 300 660 300C630 300 606 285 603 258ZM603 258L594 249L618 255ZM663 213C665.36 222 669.75 232.2 669.75 236.25A6.75 6.75 0 0 1 656.25 236.25C656.25 232.2 660.64 222 663 213Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M663 189C668.25 207 678 225 678 234A15 15 0 0 1 648 234C648 225 657.75 207 663 189Z",
+        "fill": "accent",
+        "fillRule": "evenodd"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Shubh Navratri",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1610,
+          "width": 1040,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

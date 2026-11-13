@@ -1,0 +1,82 @@
+{
+  "id": "event-hackathon",
+  "name": "Hackathon",
+  "description": "A dark card with a bright hairline tube around the code and a laptop.",
+  "category": "use-case",
+  "collection": "events",
+  "contentTypes": ["url"],
+  "tags": ["conference", "events", "hackathon", "tech"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1760
+    },
+    "qr": {
+      "x": 120,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#ececec"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 40,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 60,
+        "y": 260,
+        "width": 1120,
+        "height": 1240,
+        "radius": 60,
+        "fill": "accent",
+        "hole": {
+          "x": 72,
+          "y": 272,
+          "width": 1096,
+          "height": 1216,
+          "radius": 50
+        }
+      },
+      {
+        "type": "path",
+        "d": "M573.5 99L666.5 99A7.5 7.5 0 0 1 674 106.5L674 166.5A7.5 7.5 0 0 1 666.5 174L573.5 174A7.5 7.5 0 0 1 566 166.5L566 106.5A7.5 7.5 0 0 1 573.5 99ZM578 108A3 3 0 0 0 575 111L575 162A3 3 0 0 0 578 165L662 165A3 3 0 0 0 665 162L665 111A3 3 0 0 0 662 108L578 108ZM551 180L689 180L680 198L560 198Z",
+        "fill": "accent"
+      },
+      {
+        "type": "path",
+        "d": "M610.25 183A2.25 2.25 0 0 0 608 185.25L608 185.25A2.25 2.25 0 0 0 610.25 187.5L629.75 187.5A2.25 2.25 0 0 0 632 185.25L632 185.25A2.25 2.25 0 0 0 629.75 183L610.25 183Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Join the hackathon",
+        "color": "accent",
+        "box": {
+          "x": 100,
+          "y": 1520,
+          "width": 1040,
+          "height": 180
+        }
+      }
+    ]
+  }
+}
