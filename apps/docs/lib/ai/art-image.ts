@@ -19,6 +19,7 @@ import { createElement } from "react";
 import {
   type AIArtVariant,
   ART_IMAGE_SIZE,
+  type ArtMode,
 } from "@/components/sections/ai-art/config";
 import { HttpError } from "@/lib/error-response";
 import { rasterizeImage, serializeQrSvg } from "@/lib/qr-render";
@@ -637,6 +638,10 @@ export async function generateArtVariant({
   seed: number;
   /** An uploaded PNG/JPEG data URL (never a remote URL) */
   reference?: string;
+  /** How the code sits in the artwork (config.ts ART_MODES); "code" when unset */
+  mode?: ArtMode;
+  /** Photo mode: the uploaded PNG/JPEG data URL the code is painted into */
+  photo?: string;
   control: ControlImage;
   signal: AbortSignal;
   model?: ArtImageModel;

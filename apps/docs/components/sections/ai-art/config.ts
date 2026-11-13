@@ -100,9 +100,25 @@ export const artReferenceSchema = z
     { message: "Reference image is too large" },
   );
 
+// ── Modes ─────────────────────────────────────────────────────────────────
+
+/**
+ * How the code sits in the artwork:
+ * - "code": the code is the whole picture, with the art painted into its
+ *   modules and a plain quiet zone (the original mode)
+ * - "scene": a full-bleed picture with the code painted into something in it
+ * - "photo": the user's own photo, with the code painted into it
+ */
+export const ART_MODES = ["code", "scene", "photo"] as const;
+export type ArtMode = (typeof ART_MODES)[number];
+export const DEFAULT_ART_MODE: ArtMode = "code";
+
+/** Longest quick-look id (the looks themselves are in ./styles.ts). */
+export const ART_STYLE_ID_MAX_LENGTH = 40;
+
 // ── Requests and responses ────────────────────────────────────────────────
 
-export const aiArtRequestSchema = z.object({
+const aiArtRequestFields = z.object({
   text: z
     .string()
     .trim()
@@ -133,8 +149,34 @@ export const aiArtRequestSchema = z.object({
   /** One image per request; variations send one request per seed. */
   seed: z.number().int().min(0).max(ART_MAX_SEED).optional(),
   reference: artReferenceSchema.optional(),
+  mode: z.enum(ART_MODES).default(DEFAULT_ART_MODE),
+  /** A quick look (./styles.ts) combined with the description */
+  style: z.string().trim().max(ART_STYLE_ID_MAX_LENGTH).optional(),
+  /** Photo mode: the uploaded picture the code is painted into */
+  photo: artReferenceSchema.optional(),
 });
+
+export const aiArtRequestSchema = aiArtRequestFields.superRefine(
+  (request, ctx) => {
+    if (request.mode === "photo" && !request.photo) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["photo"],
+        message: "Add a photo to paint the code into",
+      });
+    }
+    if (request.mode !== "photo" && request.photo) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["photo"],
+        message: "A photo is only used in photo mode",
+      });
+    }
+  },
+);
 export type AIArtRequest = z.input<typeof aiArtRequestSchema>;
+/** A request after validation, defaults filled in. */
+export type ParsedAIArtRequest = z.output<typeof aiArtRequestSchema>;
 
 export interface AIArtVariant {
   /** The PNG or JPEG itself, as a data: URL (nothing is stored) */
@@ -176,6 +218,8 @@ export interface AIArtCreditsResponse {
 /** One generated image (POST /api/ai/art). */
 export interface AIArtResult {
   variant: AIArtVariant;
+  /** How the code sits in the artwork */
+  mode: ArtMode;
   /** Exactly what the QR code encodes, for the client-side scan score. */
   text: string;
   visibility: number;

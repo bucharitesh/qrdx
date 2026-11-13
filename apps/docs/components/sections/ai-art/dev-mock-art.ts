@@ -9,8 +9,13 @@
 // Image QR all run on it for real.
 
 import { getQRAsSVGDataUri } from "qrdx";
-import type { AIArtCreditsResponse, AIArtRequest, AIArtResult } from "./config";
-import { ART_IMAGE_SIZE } from "./config";
+import {
+  type AIArtCreditsResponse,
+  type AIArtRequest,
+  type AIArtResult,
+  ART_IMAGE_SIZE,
+  DEFAULT_ART_MODE,
+} from "./config";
 
 const MOCK_DELAY_MS = 1200;
 
@@ -82,6 +87,7 @@ export async function mockArtImage(
       blend: "none",
       blendStrength: 0,
     },
+    mode: request.mode ?? DEFAULT_ART_MODE,
     text: request.text,
     visibility,
     creativity: request.creativity ?? 45,
