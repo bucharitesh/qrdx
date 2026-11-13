@@ -11,6 +11,7 @@ const read = (path: string) => readFileSync(join(ROOT, path), "utf8");
 
 const SCHEMAS = [
   "env.ts",
+  "../../packages/analytics/keys.ts",
   "../../packages/auth/keys.ts",
   "../../packages/config/keys.ts",
   "../../packages/database/keys.ts",

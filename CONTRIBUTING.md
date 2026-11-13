@@ -47,7 +47,7 @@ You don't need a database or any environment variables to work on the React libr
 
    In `apps/docs/.env.local`, set the three required values (`NEXT_PUBLIC_APP_URL`, `DATABASE_URL`, `BETTER_AUTH_SECRET`). To sign in locally, also add a [GitHub OAuth app](https://github.com/settings/developers) with the callback URL `http://localhost:3000/api/auth/callback/github`. Every other variable is optional, and `apps/docs/.env.example` explains each one. It's the only env file you need: the database scripts (`bun run db:push` and the other `db:*` scripts) read `DATABASE_URL` from it too.
 
-   The app checks its environment when it starts (`next dev`, `next build` and a production server): if a required value is missing, or a value is set but invalid, it stops and names the variable. The schema is `apps/docs/env.ts`, which extends the `keys.ts` of `packages/auth`, `packages/config`, `packages/database`, `packages/next-config` and `packages/rate-limit`. A new variable goes in the `keys.ts` of the package that reads it, or in `apps/docs/env.ts` if only the app does, and in `apps/docs/.env.example`; server code reads it from `env` (`import { env } from "@/env"`) or the package's `keys()` rather than from `process.env`.
+   The app checks its environment when it starts (`next dev`, `next build` and a production server): if a required value is missing, or a value is set but invalid, it stops and names the variable. The schema is `apps/docs/env.ts`, which extends the `keys.ts` of `packages/analytics`, `packages/auth`, `packages/config`, `packages/database`, `packages/next-config` and `packages/rate-limit`. A new variable goes in the `keys.ts` of the package that reads it, or in `apps/docs/env.ts` if only the app does, and in `apps/docs/.env.example`; server code reads it from `env` (`import { env } from "@/env"`) or the package's `keys()` rather than from `process.env`.
 
 4. **Set up the database**
 
@@ -94,6 +94,7 @@ You don't need a database or any environment variables to work on the React libr
 | `packages/integrations`, `packages/integration-kit` | The integrations catalogue (`src/catalog`), the connected-account integrations (`src/integrations`) and the shared integration types |
 | `packages/config` | Platform constants: the brand, the hosted service's URLs, contact emails, social links and limits shared across the app (its README says what belongs there) |
 | `packages/availability` | Which built-in features a deployment can offer (custom domains, AI, storage, email, the bots), decided from which variables are set; the app passes its environment in (its README says how the app and `/zone/availability.json` use it) |
+| `packages/analytics` | The cookie banner and preferences, `track()`, and the browser-side tools consent gates (PostHog, Umami, Featurebase); its README says what an app passes in |
 | `packages/rate-limit` | Upstash-based rate limiting |
 | `packages/next-config`, `packages/typescript-config` | Shared Next.js config and env keys, shared tsconfig presets |
 | `plugins/chrome`, `plugins/figma`, `plugins/raycast`, `plugins/canva` | The Chrome extension, Figma plugin, Raycast extension and Canva app |
