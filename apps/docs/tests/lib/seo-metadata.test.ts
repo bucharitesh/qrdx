@@ -85,7 +85,10 @@ describe("SEO overrides", () => {
       const slug = /^\/docs\/components\/(.+)$/.exec(url)?.[1];
       if (!slug || !seo.title) continue;
       const name = seo.title.split(" ")[0] as string;
-      const file = readFileSync(join(APP, `registry/qrdx/${slug}.tsx`), "utf8");
+      const file = readFileSync(
+        join(APP, `../../packages/docs-assets/registry/qrdx/${slug}.tsx`),
+        "utf8",
+      );
       expect(file).toContain(`export function ${name}(`);
     }
   });

@@ -56,6 +56,17 @@ Release notes for earlier versions are at [qrdx.dev/changelog](https://qrdx.dev/
 - The gradient border's left inner edge is no longer 0.6 px thicker than its right one (its old color strips overlapped into the light area). The circle frame's two dots are two shapes in the SVG instead of one path.
 - The engine bundles are about 5.6 KB larger minified (`dist/index.mjs` 273,981 to 279,617 bytes, `dist/core.mjs` 273,192 to 278,828) and at most 0.3 KB larger gzipped: the 19 specs are a little more data than the code they replace.
 
+### Dot ring template
+
+- **`templateId="DotRing"`** ("Dot Ring") is a round code: the code in a disc of dots inside a dark ring, with a line of text along the ring. A hash of the code's content picks which dots show, so every link gets a ring of its own and the same link always gets the same one.
+- Its settings go in `customProps`, typed as **`DotRingProps`**: `customText`, `textPosition` (`"top"` or `"bottom"`), `textRotation`, `textColor`, `fontFamily`, `fontWeight`, `fontSize`, `fontLetterSpacing`, `outerCircleColor` and `strokeWidth`/`strokeColor` (with `inner…`/`outer…` versions for one edge of the ring). The default text, "Scan the QR code" four times round, closes the ring with an even gap.
+- The text is SVG text, one letter per `<text>`, in the system font stack by default, so it shows in SVG, PNG, PDF and EPS (PDF and EPS print Helvetica Bold). `getQRAsPNG` needs a font on the machine, as frame labels do.
+- Codes more than 49 modules across keep a band of six modules clear of dots, so long links still scan when printed small. Tested at every level for short, typical and long links with jsQR and zbar.
+
+### Scan score
+
+- The scan score (`getScanScore`, `getScanScoreFromPixels`) now tests a code in a template at the size the template draws it. It used to treat the whole template artwork as the code, so every template scored low; the code inside a template is often half the artwork or less.
+
 ## 0.0.51
 
 ### Vue (`qrdx/vue`)

@@ -19,12 +19,27 @@ export const TEMPLATES: Record<string, TemplateDefinition<any>> = {
   SquareBorder: templates.SquareBorder,
   StrikedBox: templates.StrikedBox,
   Halloween: templates.Halloween,
+  DotRing: templates.DotRing,
+};
+
+// Earlier ids that still draw their template, so designs saved with them keep
+// working. getTemplateIds and getAllTemplates leave them out.
+const TEMPLATE_ALIASES: Record<string, string> = {
+  FlamQR: "DotRing",
 };
 
 // Utility functions
 export const getTemplate = (
   templateId: string
-): TemplateDefinition<any> | undefined => TEMPLATES[templateId];
+): TemplateDefinition<any> | undefined => {
+  if (Object.hasOwn(TEMPLATES, templateId)) {
+    return TEMPLATES[templateId];
+  }
+  const alias = Object.hasOwn(TEMPLATE_ALIASES, templateId)
+    ? TEMPLATE_ALIASES[templateId]
+    : undefined;
+  return alias ? TEMPLATES[alias] : undefined;
+};
 
 export const getAllTemplates = (): TemplateDefinition<any>[] =>
   Object.values(TEMPLATES);

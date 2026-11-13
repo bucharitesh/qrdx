@@ -9,6 +9,7 @@ import { describe, expect, it, vi } from "vitest";
 import { getQRAsPNG } from "../src/node";
 import { decodePng } from "../src/utils/png";
 import type { QRProps } from "../types";
+import { lightOnTopOfRing } from "./support/dot-ring";
 import { createImage, decodeQR, toPng } from "./support/raster";
 
 vi.mock("@resvg/resvg-js", () => {
@@ -58,5 +59,36 @@ describe("getQRAsPNG through sharp", () => {
     expect([image.data[mid], image.data[mid + 1], image.data[mid + 2]]).toEqual(
       [255, 0, 0]
     );
+  });
+
+  it("draws the dot ring template and, with a font, its text", async () => {
+    const value = "https://example.com/card?id=12345&src=print";
+    const bytes = await getQRAsPNG(
+      { value, templateId: "DotRing", customProps: { customText: "SCAN ME" } },
+      { size: 593 }
+    );
+    const decoded = await decodePng(bytes);
+    if (!decoded) {
+      throw new Error("the PNG doesn't decode");
+    }
+    const image = {
+      data: new Uint8ClampedArray(decoded.data),
+      width: decoded.width,
+      height: decoded.height,
+    };
+    expect(decodeQR(image)).toBe(value);
+    // Text needs a font on the machine, as for frame labels
+    const sharp = (await import("sharp")).default;
+    const probe = await sharp(
+      new TextEncoder().encode(
+        '<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><text x="4" y="32" font-size="32" font-family="sans-serif">M</text></svg>'
+      )
+    )
+      .raw()
+      .toBuffer();
+    const hasFonts = probe.some((v, index) => index % 4 === 3 && v > 0);
+    if (hasFonts) {
+      expect(await lightOnTopOfRing(bytes)).toBeGreaterThan(300);
+    }
   });
 });
