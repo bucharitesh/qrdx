@@ -5,8 +5,8 @@ import { RootProvider } from "fumadocs-ui/provider/base";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { DocsFrameworkProvider } from "@/components/docs/docs-framework-provider";
-import { DocsLocaleMenu } from "@/components/docs/docs-locale-menu";
 import { DocsProductLinks } from "@/components/docs/docs-product-links";
+import { DocsSidebarFooter } from "@/components/docs/docs-sidebar-footer";
 import CustomSearchDialog from "@/components/search";
 import { JsonLd } from "@/components/sections/tools/json-ld";
 import { docsTabs, filterPageTree, mapLinkNodes } from "@/lib/docs-tree";
@@ -87,7 +87,10 @@ export default async function Layout({
                   </>
                 ),
               }}
-              sidebar={{ footer: <DocsLocaleMenu /> }}
+              // One footer bar: the language menu and the theme switch
+              // (DocsSidebarFooter), so the built-in switch is off.
+              sidebar={{ footer: <DocsSidebarFooter /> }}
+              themeSwitch={{ enabled: false }}
             >
               <JsonLd data={organizationSchema} />
               {/* Neutral light from the top right (the old image was a blue glow).
