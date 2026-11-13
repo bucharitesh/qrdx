@@ -11,7 +11,6 @@
     "./docs-search": "./docs-search.ts",
     "./docs-seo": "./docs-seo.ts",
     "./messages": "./messages.ts",
-    "./messages/*.json": "./messages/*.json",
     "./paths": "./paths.ts",
     "./localized-paths.json": "./localized-paths.json",
     "./review": "./review.ts",

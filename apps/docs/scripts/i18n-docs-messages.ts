@@ -2,9 +2,8 @@
 //
 // Writes the docs' namespaces of every catalog (messages/<locale>.json) to
 // packages/i18n/messages/<locale>.json, the copy another app (the docs site)
-// loads through @repo/i18n/messages. i18n:translate and i18n:extract do it
-// after they save; run this after editing a catalog by hand. i18n:check
-// fails while the copy is out of date (lib/i18n/docs-messages.ts).
+// loads through @repo/i18n/docs-messages. That app runs it right before it
+// builds or starts; the copy isn't committed (lib/i18n/docs-messages.ts).
 import { DOCS_MESSAGES_DIR } from "@repo/i18n/messages";
 import { writeDocsMessages } from "@/lib/i18n/docs-messages";
 

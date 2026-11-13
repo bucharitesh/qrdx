@@ -64,7 +64,6 @@ import {
   contentEnglish,
 } from "@/lib/i18n/content-sources";
 import { hasDocs } from "@/lib/i18n/docs";
-import { writeDocsMessages } from "@/lib/i18n/docs-messages";
 import { numberMismatch, shapeMismatch } from "@/lib/i18n/icu";
 
 const MESSAGES = path.join(__dirname, "../messages");
@@ -495,17 +494,13 @@ async function translateJobs(
 
 // ---- The UI catalog -------------------------------------------------------
 
-/**
- * Saves the catalog and its review entries, in English key order, and the
- * docs' copy of their namespaces (lib/i18n/docs-messages.ts).
- */
+/** Saves the catalog and its review entries, in English key order. */
 function saveUi(
   locale: TranslatedLocale,
   catalog: Map<string, string>,
   review: ReviewFile,
 ) {
   writeJson(`${locale}.json`, unflatten(catalog, english));
-  writeDocsMessages([locale]);
   const ordered: ReviewFile = {};
   for (const key of source.keys()) {
     const entry = review[key];
@@ -740,9 +735,6 @@ function recordSpend() {
 }
 
 async function main() {
-  // The docs' copy of their namespaces follows the catalogs as they are now
-  // (English edited by hand too), then each save below (lib/i18n/docs-messages.ts).
-  if (!DRY) writeDocsMessages();
   if (RECORD) {
     for (const locale of locales) record(locale);
     return;
