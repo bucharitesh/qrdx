@@ -353,11 +353,15 @@ export default function BarcodeBuilderModal({
                   <BarcodeDownloads state={generator} />
                 </div>
               ) : (
-                // No height of its own (h-0): the dialog keeps one size
-                // while the barcode above changes, and this scrolls.
-                <div className="h-0 min-h-0 flex-1 overflow-y-auto border-t">
-                  <div className="space-y-5 p-4">
-                    <BarcodeStyleFields state={generator} />
+                // Fills what the preview leaves and scrolls. Positioned
+                // absolutely, its content adds nothing to the dialog's
+                // height, so the dialog keeps one size while the barcode
+                // above appears, changes or goes.
+                <div className="relative min-h-0 flex-1 border-t">
+                  <div className="absolute inset-0 overflow-y-auto">
+                    <div className="space-y-5 p-4">
+                      <BarcodeStyleFields state={generator} />
+                    </div>
                   </div>
                 </div>
               )}
@@ -366,6 +370,7 @@ export default function BarcodeBuilderModal({
         }
         closeLabel={t("close")}
         contentRef={contentRef}
+        fixedHeight
         description={
           phase === "success"
             ? t("downloadItNowOrOpen")

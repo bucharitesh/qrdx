@@ -49,6 +49,7 @@ export function BuilderShell({
   footerStart,
   footerEnd,
   footerHidden,
+  fixedHeight,
   children,
 }: {
   open: boolean;
@@ -70,6 +71,11 @@ export function BuilderShell({
   /** The footer's buttons */
   footerEnd?: ReactNode;
   footerHidden?: boolean;
+  /**
+   * Wide screens: the body keeps its set height whatever its columns hold
+   * (they scroll), instead of growing with the taller one.
+   */
+  fixedHeight?: boolean;
   /** The form, or what replaces it */
   children: ReactNode;
 }) {
@@ -117,6 +123,9 @@ export function BuilderShell({
             "grid min-h-0 flex-1",
             aside &&
               "md:h-[min(38rem,calc(100dvh-12rem))] md:grid-cols-[minmax(0,1fr)_21rem]",
+            // flex-1's 0% basis lets the content set the height; an auto
+            // basis takes the height above.
+            aside && fixedHeight && "md:flex-auto",
           )}
         >
           <div className="min-h-0 overflow-y-auto px-4 py-4 sm:px-5">
