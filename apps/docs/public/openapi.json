@@ -4325,8 +4325,8 @@
                   },
                   "photo": {
                     "type": "string",
-                    "maxLength": 819232,
-                    "description": "Photo mode only: your picture as a PNG or JPEG `data:` URL, downsized to about 512 px. It goes to the model and is discarded."
+                    "maxLength": 1398134,
+                    "description": "Photo mode only: your picture as a PNG or JPEG `data:` URL, cropped square and downsized to about 1024 px (at most 1 MB). It goes to the model and is discarded."
                   }
                 },
                 "description": "Send exactly one of `text` and `code`."

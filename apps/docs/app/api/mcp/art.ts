@@ -130,7 +130,7 @@ const artInput = z.object({
     .string()
     .optional()
     .describe(
-      "Photo mode: your picture as a PNG or JPEG data: URL (data:image/jpeg;base64,…), downsized to about 512 px. It goes to the model and is discarded.",
+      "Photo mode: your picture as a PNG or JPEG data: URL (data:image/jpeg;base64,…), cropped square and downsized to about 1024 px (at most 1 MB). It goes to the model and is discarded.",
     ),
   reference: z
     .string()

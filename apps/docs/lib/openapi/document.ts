@@ -1763,7 +1763,7 @@ const ART_FIELD_DESCRIPTIONS: Record<string, string> = {
   style:
     "A quick look by its id, combined with your `prompt`. The [AI art API docs](https://qrdx.dev/docs/developers/ai-art-api#quick-looks) list them.",
   photo:
-    "Photo mode only: your picture as a PNG or JPEG `data:` URL, downsized to about 512 px. It goes to the model and is discarded.",
+    "Photo mode only: your picture as a PNG or JPEG `data:` URL, cropped square and downsized to about 1024 px (at most 1 MB). It goes to the model and is discarded.",
 };
 
 function artRequestBody(c: SchemaCollector): JsonSchema {

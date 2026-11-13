@@ -184,7 +184,7 @@ describe("POST /api/ai/art/describe", () => {
       [{ mode: "photo", photo: "https://example.com/me.png" }, 400],
       [{ hint: "x".repeat(401) }, 400],
       ["not json", 400],
-      [{ hint: "x".repeat(2_000_000) }, 413],
+      [{ hint: "x".repeat(3_000_000) }, 413],
     ];
     for (const [body, status] of cases) {
       const response = await describeArt(body);
