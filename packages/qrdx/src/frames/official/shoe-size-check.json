@@ -1,0 +1,95 @@
+{
+  "id": "shoe-size-check",
+  "name": "Shoe size check",
+  "description": "A shelf strip with a card hanging under it and a sneaker.",
+  "category": "use-case",
+  "collection": "shopping",
+  "contentTypes": ["url"],
+  "tags": ["retail", "shop", "shoes", "sizes"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1500,
+      "height": 1900
+    },
+    "qr": {
+      "x": 250,
+      "y": 540,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1500,
+        "height": 150,
+        "radius": 16,
+        "fill": "accent"
+      },
+      {
+        "type": "rect",
+        "x": 680,
+        "y": 140,
+        "width": 140,
+        "height": 100,
+        "radius": 8,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.55
+        }
+      },
+      {
+        "type": "rect",
+        "x": 130,
+        "y": 220,
+        "width": 1240,
+        "height": 1680,
+        "radius": 44,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M687 387L687 363C687 351 696 345 708 348L735 354C747 345 753 330 762 324L774 321C780 336 789 354 804 363C816 369 819 376.5 819 387ZM693.75 393L812.25 393A9.75 9.75 0 0 1 822 402.75L822 402.75A9.75 9.75 0 0 1 812.25 412.5L693.75 412.5A9.75 9.75 0 0 1 684 402.75L684 402.75A9.75 9.75 0 0 1 693.75 393ZM748.7 357.2L759.2 346.7A2.4 2.4 0 0 1 755.8 343.3L745.3 353.8A2.4 2.4 0 0 1 748.7 357.2ZM760.7 364.7L771.2 354.2A2.4 2.4 0 0 1 767.8 350.8L757.3 361.3A2.4 2.4 0 0 1 760.7 364.7ZM772.56 370.82L783.06 361.82A2.4 2.4 0 0 1 779.94 358.18L769.44 367.18A2.4 2.4 0 0 1 772.56 370.82Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Check your size",
+        "color": "text",
+        "box": {
+          "x": 200,
+          "y": 1660,
+          "width": 1100,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "In stock online",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 20,
+          "width": 1260,
+          "height": 110
+        }
+      }
+    ]
+  }
+}

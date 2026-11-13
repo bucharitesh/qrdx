@@ -1,0 +1,147 @@
+{
+  "id": "scan-me-banner",
+  "name": "Banner",
+  "description": "A wide vinyl banner with eyelets in its corners.",
+  "category": "use-case",
+  "collection": "call-to-action",
+  "contentTypes": [],
+  "tags": ["call to action", "banner"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 2000,
+      "height": 1140
+    },
+    "qr": {
+      "x": 190,
+      "y": 170,
+      "size": 800,
+      "padding": 64,
+      "radius": 19.2
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M114.95 105.05L4.95 -4.95A7 7 0 0 1 -4.95 4.95L105.05 114.95A7 7 0 0 1 114.95 105.05Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.4
+        }
+      },
+      {
+        "type": "path",
+        "d": "M1894.95 114.95L2004.95 4.95A7 7 0 0 1 1995.05 -4.95L1885.05 105.05A7 7 0 0 1 1894.95 114.95Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.4
+        }
+      },
+      {
+        "type": "path",
+        "d": "M105.05 1025.05L-4.95 1135.05A7 7 0 0 1 4.95 1144.95L114.95 1034.95A7 7 0 0 1 105.05 1025.05Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.4
+        }
+      },
+      {
+        "type": "path",
+        "d": "M1885.05 1034.95L1995.05 1144.95A7 7 0 0 1 2004.95 1135.05L1894.95 1025.05A7 7 0 0 1 1885.05 1034.95Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.4
+        }
+      },
+      {
+        "type": "rect",
+        "x": 40,
+        "y": 40,
+        "width": 1920,
+        "height": 1060,
+        "radius": 14,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 110,
+        "cy": 110,
+        "r": 30,
+        "hole": 15,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.55
+        }
+      },
+      {
+        "type": "circle",
+        "cx": 1890,
+        "cy": 110,
+        "r": 30,
+        "hole": 15,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.55
+        }
+      },
+      {
+        "type": "circle",
+        "cx": 110,
+        "cy": 1030,
+        "r": 30,
+        "hole": 15,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.55
+        }
+      },
+      {
+        "type": "circle",
+        "cx": 1890,
+        "cy": 1030,
+        "r": 30,
+        "hole": 15,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.55
+        }
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan me",
+        "color": "text",
+        "box": {
+          "x": 1110,
+          "y": 400,
+          "width": 720,
+          "height": 190
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Point your camera here",
+        "color": "text",
+        "box": {
+          "x": 1110,
+          "y": 610,
+          "width": 720,
+          "height": 100
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

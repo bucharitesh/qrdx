@@ -2,6 +2,34 @@
 
 Release notes for earlier versions are at [qrdx.dev/changelog](https://qrdx.dev/changelog).
 
+## Unreleased
+
+### Vue (`qrdx/vue`)
+
+- **`qrdx/vue`** has Vue 3 versions of `QRCode` and `QRCodeSVG`, with the React components' props and the same SVG. They're render functions over the core (`createQRCodeTree`, then `toHyperscript` into Vue's `h`), so they render on the server with `vue/server-renderer` and hydrate without a mismatch, in Nuxt too. `class`, `style`, other attributes and listeners go on the `<svg>`, and Vue updates it in place when a prop changes.
+- **`useQRCode(props)`** takes `QRCode`'s props as an object, a ref, a reactive object or a getter, and returns the SVG markup as a computed ref (it works in SSR), the resolved `options`, `toDataURL` and `download`.
+- Everything in `qrdx/core` is re-exported. The entry imports the engine from `qrdx/core`, so it adds under 1 KB gzipped of its own.
+- `vue` 3.3 or newer is an optional peer dependency, so installing `qrdx` never installs Vue. TypeScript checks the components' props with Vue 3.4.20 or newer.
+
+## 0.0.51
+
+### React-free core and plain JavaScript
+
+- **`qrdx/core`** is the whole engine without React: everything the main entry exports except the React components (`QRCode`, `QRCodeSVG`, `QRCodeCanvas`, and `getQRAsSVG`, which returns a React element). `toSVGString(props)` returns exactly the markup `<QRCodeSVG>` renders, in Node or a browser. `createQRCodeTree(props)` builds the code as plain `{ type, props, key }` nodes, which `renderToString`, `renderToDOM` (built with `createElementNS`) and `toHyperscript` (another framework's elements, with DOM attribute names) turn into markup, DOM nodes or virtual DOM. `toSVGElement(props)` returns an `<svg>` element, `resolveQRCodeProps(props)` resolves `QRCode`'s logo API, and `getQRAsSVGNode(props)` is `getQRAsSVG` without React.
+- **`qrdx/vanilla`** adds `createQRCode(element, options)` to the core: it draws a code into an element or CSS selector and returns `update`, `toSVGString`, `toDataURL`, `download` and `destroy`. `dist/vanilla.browser.mjs` is the same API as one ES module for `<script type="module">` without a bundler (the official frame library's data ships next to it in `dist/frames-official.mjs`).
+- `react` and `react-dom` are now optional peer dependencies. The React components still need them; `qrdx/core`, `qrdx/vanilla` and `qrdx/node` don't import either.
+- The React components draw through the same renderer, building React elements directly, so their markup is unchanged byte for byte (a parity test compares over 500 prop combinations, every official frame among them). `getQRAsSVGDataUri`, and the downloads, print PDF and EPS, the scan score and `qrdx/node`'s PNG built on it, no longer load `react-dom/server`.
+- `qrdx/node` now imports the engine from `qrdx/core`, so it's a few kilobytes on its own and needs neither `react` nor `react-dom`.
+- `h(type, props, ...children)` writes a custom template without JSX. A template `wrapper` gets React elements in the React components and the core's nodes elsewhere (`TemplateNode`).
+- Types: `QRSVGOptions` (props plus root `<svg>` attributes) and `QRStyle` (the same type as React's `CSSProperties`, from `csstype`) are new. `QRPropsSVG` and `QRPropsCanvas` are unchanged and still exported from `qrdx` and `qrdx/types`.
+
+### Frame library: industries and everyday uses
+
+- **303 more official frames** for the places people print codes: more calls to action (FAQ, translations, large print, waitlists, checklists, transcripts), restaurants and cafes, shops and packaging, clinics and schools, and business (portfolios, reports, visitor sign-in, quotes, insurance claims, staff rotas and more). Each has its own purpose, label and look, and decodes at phone distances, scores Great and reads with zbar, like every official frame.
+- **Five new collections:** `beauty-wellness`, `real-estate`, `automotive` ("Cars & parking"), `sports-fitness` and `nonprofit` ("Nonprofits & community"). `OfficialFrameCollection` and `OFFICIAL_FRAME_COLLECTIONS` include them, so code with a case or a `Record` for every collection needs the new ids.
+- The property frames and `sign-rider` move from `places` to `real-estate`, and the gym frames from `health-learning` to `sports-fitness`. Their ids, names and specs are unchanged.
+- New shapes: yard signs with a rider, signs on posts, sidewalk A-frame boards, shelf talkers, clipboards, team shirts, vinyl banners with eyelets, bone-shaped pet tags, collection jars, EV chargers, folded-corner and stacked cards, a cloud bubble and a big side arrow, plus about a hundred new drawings (food, shop goods, sports gear, cars, salon tools, community symbols).
+
 ## 0.0.50
 
 ### PNG in Node

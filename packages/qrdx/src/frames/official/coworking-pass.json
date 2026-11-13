@@ -1,0 +1,89 @@
+{
+  "id": "coworking-pass",
+  "name": "Coworking pass",
+  "description": "A ticket with side notches, a perforated line and a stub for the label and a laptop.",
+  "category": "use-case",
+  "collection": "business",
+  "contentTypes": ["url"],
+  "tags": ["business", "coworking", "desk"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1820
+    },
+    "qr": {
+      "x": 120,
+      "y": 300,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M64 0L1176 0A64 64 0 0 1 1240 64L1240 1380A60 60 0 0 0 1240 1500L1240 1756A64 64 0 0 1 1176 1820L64 1820A64 64 0 0 1 0 1756L0 1500A60 60 0 0 0 0 1380L0 64A64 64 0 0 1 64 0Z",
+        "fill": "frame"
+      },
+      {
+        "type": "line",
+        "x1": 100,
+        "y1": 1440,
+        "x2": 1140,
+        "y2": 1440,
+        "width": 10,
+        "dash": [36, 24],
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.55
+        }
+      },
+      {
+        "type": "path",
+        "d": "M573.5 69L666.5 69A7.5 7.5 0 0 1 674 76.5L674 136.5A7.5 7.5 0 0 1 666.5 144L573.5 144A7.5 7.5 0 0 1 566 136.5L566 76.5A7.5 7.5 0 0 1 573.5 69ZM578 78A3 3 0 0 0 575 81L575 132A3 3 0 0 0 578 135L662 135A3 3 0 0 0 665 132L665 81A3 3 0 0 0 662 78L578 78ZM551 150L689 150L680 168L560 168Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M610.25 153A2.25 2.25 0 0 0 608 155.25L608 155.25A2.25 2.25 0 0 0 610.25 157.5L629.75 157.5A2.25 2.25 0 0 0 632 155.25L632 155.25A2.25 2.25 0 0 0 629.75 153L610.25 153Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Get a day pass",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1490,
+          "width": 1040,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Coworking",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1675,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

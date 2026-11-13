@@ -1,17 +1,22 @@
 import type { ThemeProviderProps } from "next-themes";
+import type { ComponentProps } from "react";
 import { Toaster } from "./components/ui/sonner";
 import { TooltipProvider } from "./components/ui/tooltip";
 import { ThemeProvider } from "./providers/theme";
 
-type DesignSystemProviderProperties = ThemeProviderProps & {};
+type DesignSystemProviderProperties = ThemeProviderProps & {
+  /** Props for the app's one toaster (its offsets, for example) */
+  toaster?: ComponentProps<typeof Toaster>;
+};
 
 export const DesignSystemProvider = ({
   children,
+  toaster,
   ...properties
 }: DesignSystemProviderProperties) => (
   <ThemeProvider {...properties}>
     <TooltipProvider>{children}</TooltipProvider>
-    <Toaster />
+    <Toaster {...toaster} />
   </ThemeProvider>
 );
 

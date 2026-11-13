@@ -1,0 +1,77 @@
+{
+  "id": "late-night-menu",
+  "name": "Late-night menu",
+  "description": "A dark card with a bright hairline tube around the code and a crescent moon.",
+  "category": "use-case",
+  "collection": "food-drink",
+  "contentTypes": ["url"],
+  "tags": ["restaurant", "food", "late night"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1760
+    },
+    "qr": {
+      "x": 120,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#ececec"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 40,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 60,
+        "y": 260,
+        "width": 1120,
+        "height": 1240,
+        "radius": 60,
+        "fill": "accent",
+        "hole": {
+          "x": 72,
+          "y": 272,
+          "width": 1096,
+          "height": 1216,
+          "radius": 50
+        }
+      },
+      {
+        "type": "path",
+        "d": "M645.64 99.02A60 60 0 1 0 645.64 200.98A51 51 0 0 1 645.64 99.02Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Late-night menu",
+        "color": "accent",
+        "box": {
+          "x": 100,
+          "y": 1520,
+          "width": 1040,
+          "height": 180
+        }
+      }
+    ]
+  }
+}

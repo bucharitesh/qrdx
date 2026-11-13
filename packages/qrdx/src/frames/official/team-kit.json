@@ -1,0 +1,85 @@
+{
+  "id": "team-kit",
+  "name": "Team kit",
+  "description": "A team shirt with the code on its chest and trim on the collar and cuffs.",
+  "category": "use-case",
+  "collection": "sports-fitness",
+  "contentTypes": ["url"],
+  "tags": ["sports", "fitness", "team", "kit"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1800,
+      "height": 1790
+    },
+    "qr": {
+      "x": 400,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M690 0L1110 0L1550 130L1800 470L1580 640L1530 560L1530 1790L270 1790L270 560L220 640L0 470L250 130Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M300 600L1500 600L1500 1760L300 1760Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.9
+        }
+      },
+      {
+        "type": "path",
+        "d": "M690 0Q900 220 1110 0Z",
+        "fill": "background"
+      },
+      {
+        "type": "path",
+        "d": "M690 0Q900 220 1110 0L1040 0Q900 140 760 0Z",
+        "fill": "accent"
+      },
+      {
+        "type": "polygon",
+        "points": [[0, 470], [220, 640], [257.1, 580.64], [41.47, 413.6]],
+        "fill": "accent"
+      },
+      {
+        "type": "polygon",
+        "points": [
+          [1800, 470],
+          [1580, 640],
+          [1542.9, 580.64],
+          [1758.53, 413.6]
+        ],
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Get the team kit",
+        "color": "frame",
+        "box": {
+          "x": 340,
+          "y": 1540,
+          "width": 1120,
+          "height": 190
+        }
+      }
+    ]
+  }
+}

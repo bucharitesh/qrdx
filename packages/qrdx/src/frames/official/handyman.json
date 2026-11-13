@@ -1,0 +1,130 @@
+{
+  "id": "handyman",
+  "name": "Handyman",
+  "description": "A card with a stitched dashed edge and a hammer.",
+  "category": "use-case",
+  "collection": "real-estate",
+  "contentTypes": ["calcom", "url"],
+  "tags": ["real estate", "property", "handyman", "repairs"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1750
+    },
+    "qr": {
+      "x": 120,
+      "y": 390,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1750,
+        "radius": 80,
+        "fill": "frame"
+      },
+      {
+        "type": "line",
+        "x1": 86,
+        "y1": 36,
+        "x2": 1154,
+        "y2": 36,
+        "width": 8,
+        "cap": "round",
+        "dash": [26, 18],
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.5
+        }
+      },
+      {
+        "type": "line",
+        "x1": 1204,
+        "y1": 86,
+        "x2": 1204,
+        "y2": 1664,
+        "width": 8,
+        "cap": "round",
+        "dash": [26, 18],
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.5
+        }
+      },
+      {
+        "type": "line",
+        "x1": 1154,
+        "y1": 1714,
+        "x2": 86,
+        "y2": 1714,
+        "width": 8,
+        "cap": "round",
+        "dash": [26, 18],
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.5
+        }
+      },
+      {
+        "type": "line",
+        "x1": 36,
+        "y1": 1664,
+        "x2": 36,
+        "y2": 86,
+        "width": 8,
+        "cap": "round",
+        "dash": [26, 18],
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.5
+        }
+      },
+      {
+        "type": "path",
+        "d": "M602.14 61.58L655.11 89.74L663.46 99.62L656.7 112.33L643.85 110.93L590.87 82.77C584.51 79.39 586.9 69.78 593.39 67.8ZM625.9 98.67L625.9 98.67A7.2 7.2 28 0 1 628.88 108.41L600.71 161.39A7.2 7.2 28 0 1 590.97 164.37L590.97 164.37A7.2 7.2 28 0 1 588 154.63L616.17 101.65A7.2 7.2 28 0 1 625.9 98.67Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Book a handyman",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1510,
+          "width": 1040,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Small jobs done right",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 190,
+          "width": 960,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

@@ -6,8 +6,9 @@ import {
   DEFAULT_MARGIN,
   ERROR_LEVEL_MAP,
 } from "../../src/constants";
+import { QRCodeSVG } from "../../src/qr-code-svg";
 import { getLayoutMargin } from "../../src/qr-shape";
-import { QRCodeSVG, resolveErrorLevel } from "../../src/utils";
+import { resolveErrorLevel } from "../../src/utils";
 import { parseSvgMarkup, type SvgNode } from "../../src/utils/svg-geometry";
 import type { QRProps } from "../../types";
 import {

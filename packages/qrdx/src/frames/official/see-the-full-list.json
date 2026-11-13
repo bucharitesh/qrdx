@@ -1,0 +1,107 @@
+{
+  "id": "see-the-full-list",
+  "name": "Full list",
+  "description": "A thin double border with a document, a small divider and the label.",
+  "category": "use-case",
+  "collection": "call-to-action",
+  "contentTypes": [],
+  "tags": ["call to action", "list", "details"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1830
+    },
+    "qr": {
+      "x": 160,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1320,
+        "height": 1830,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 30,
+        "y": 30,
+        "width": 1260,
+        "height": 1770,
+        "fill": "frame",
+        "hole": {
+          "x": 40,
+          "y": 40,
+          "width": 1240,
+          "height": 1750
+        }
+      },
+      {
+        "type": "rect",
+        "x": 60,
+        "y": 60,
+        "width": 1200,
+        "height": 1710,
+        "fill": "frame",
+        "hole": {
+          "x": 64,
+          "y": 64,
+          "width": 1192,
+          "height": 1702
+        }
+      },
+      {
+        "type": "path",
+        "d": "M615.2 88.4L671.2 88.4L707.6 124.8L707.6 211.6L615.2 211.6ZM632.7 108A3.5 3.5 0 0 0 629.2 111.5L629.2 111.5A3.5 3.5 0 0 0 632.7 115L656.5 115A3.5 3.5 0 0 0 660 111.5L660 111.5A3.5 3.5 0 0 0 656.5 108L632.7 108ZM632.7 141.6A3.5 3.5 0 0 0 629.2 145.1L629.2 145.1A3.5 3.5 0 0 0 632.7 148.6L690.1 148.6A3.5 3.5 0 0 0 693.6 145.1L693.6 145.1A3.5 3.5 0 0 0 690.1 141.6L632.7 141.6ZM632.7 158.4A3.5 3.5 0 0 0 629.2 161.9L629.2 161.9A3.5 3.5 0 0 0 632.7 165.4L690.1 165.4A3.5 3.5 0 0 0 693.6 161.9L693.6 161.9A3.5 3.5 0 0 0 690.1 158.4L632.7 158.4ZM632.7 175.2A3.5 3.5 0 0 0 629.2 178.7L629.2 178.7A3.5 3.5 0 0 0 632.7 182.2L690.1 182.2A3.5 3.5 0 0 0 693.6 178.7L693.6 178.7A3.5 3.5 0 0 0 690.1 175.2L632.7 175.2ZM632.7 192A3.5 3.5 0 0 0 629.2 195.5L629.2 195.5A3.5 3.5 0 0 0 632.7 199L662.1 199A3.5 3.5 0 0 0 665.6 195.5L665.6 195.5A3.5 3.5 0 0 0 662.1 192L632.7 192Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M707.6 124.8L671.2 124.8L671.2 88.4Z",
+        "fill": "accent"
+      },
+      {
+        "type": "line",
+        "x1": 470,
+        "y1": 1570,
+        "x2": 850,
+        "y2": 1570,
+        "width": 6,
+        "fill": "frame"
+      },
+      {
+        "type": "polygon",
+        "points": [[660, 1550], [680, 1570], [660, 1590], [640, 1570]],
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "See the full list",
+        "color": "frame",
+        "box": {
+          "x": 180,
+          "y": 1610,
+          "width": 960,
+          "height": 160
+        }
+      }
+    ]
+  }
+}

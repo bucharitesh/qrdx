@@ -1,10 +1,10 @@
 ---
 title: "Tarife und Limits"
-description: "Was Kostenlos, Pro und Business enthalten, wie Limits für jeden Workspace gelten und was passiert, wenn du downgradest oder kündigst."
+description: "Was Kostenlos, Pro und Business enthalten, wie die Limits für jeden Workspace gelten und was passiert, wenn du downgradest oder kündigst."
 icon: Gauge
 ---
 
-QRdx hat drei Tarife. Statische QR-Codes aus dem Playground und der `qrdx`-Bibliothek sind in allen Tarifen kostenlos und unbegrenzt, ganz ohne Konto. Die Preise vergleichst du auf der [Preisseite](/pricing).
+QRdx hat drei Tarife. Statische QR-Codes aus dem Playground und der `qrdx`-Bibliothek sind in allen Tarifen kostenlos und unbegrenzt, ohne Konto. Die Preise vergleichst du auf der [Preisseite](/pricing).
 
 | | Kostenlos | Pro | Business |
 | --- | --- | --- | --- |
@@ -17,7 +17,7 @@ In der EU und im EWR kostet Pro €5/Monat oder €48/Jahr und Business €15/Mo
 
 </IfAvailable>
 
-Besucher aus Indien sehen die Preise in Rupien. Den Checkout übernimmt [Polar](https://polar.sh). Dort wird in der Währung deines Landes abgerechnet, und lokale Steuern werden hinzugefügt, wo sie anfallen. Auf deine erste Zahlung für einen kostenpflichtigen Tarif gibt es eine {facts.moneyBackDays}-Tage-Geld-zurück-Garantie: siehe [Erstattungen und Kündigungen](/legal/refunds).
+Besucher aus Indien sehen die Preise in Rupien. Den Checkout übernimmt [Polar](https://polar.sh). Dort wird in der Währung des Landes abgerechnet, in dem du dich befindest, und lokale Steuern werden hinzugefügt, wo sie anfallen. Für deine erste Zahlung für einen kostenpflichtigen Tarif gilt eine Geld-zurück-Garantie von {facts.moneyBackDays} Tagen: siehe [Erstattungen und Kündigungen](/legal/refunds).
 
 <IfAvailable feature="invoiceRequests">
 
@@ -32,7 +32,7 @@ Ein Jahr Business kannst du auch per Banküberweisung bezahlen: siehe [Zahlung p
 | Dynamische QR-Codes | 10 | Unbegrenzt | Unbegrenzt |
 | Scans | Unbegrenzt | Unbegrenzt | Unbegrenzt |
 | Gehostete Landingpages | 3, mit Footer „Made with QRdx“ | Unbegrenzt, ohne Footer | Unbegrenzt, White-Label, eigenes CSS |
-| Analytics-Verlauf | 90 Tage | 3 Jahre | Unbegrenzt |
+| Analytics-Verlauf | {facts.freeScanHistoryYears} Jahr | Unbegrenzt | Unbegrenzt |
 | Eigene Domains | Keine | 5 | 25 |
 | Eigene Back-Halves (`qrdx.dev/q/spring-menu`) | Nein | Ja | Ja |
 | Mitglieder pro Workspace | 1 (nur du) | 3 | Unbegrenzt |
@@ -45,43 +45,45 @@ Ein Jahr Business kannst du auch per Banküberweisung bezahlen: siehe [Zahlung p
 | Webhooks, Zapier und Slack | Nein | Nein | Ja |
 | OAuth-Apps ([Integration bauen](/docs/developers/build-an-integration)) | 1 | 5 | 25 |
 | Dateispeicher (größte Datei) | 50 MB (10 MB) | 5 GB (100 MB) | 50 GB (250 MB) |
-| Formularantworten pro Monat | 50 | 1,000 | 10,000 |
-| API-Anfragen pro Tag | 1,000 | 10,000, plus Massenerstellung | 100,000, plus Massenerstellung |
-| KI-Art-Bilder pro Monat | 3 | 30 | 150, gemeinsam pro Workspace |
+| Formularantworten pro Monat | 50 | 1.000 | 10.000 |
+| API-Anfragen pro Tag | 1.000 | 10.000, plus Massenerstellung | 100.000, plus Massenerstellung |
+| KI-Art-Bilder pro Monat | 3 | 30 | 150, pro Workspace gebündelt |
 | KI-Theme-Generierungen | 5 insgesamt | Unbegrenzt | Unbegrenzt |
 | Gespeicherte Themes | 10 | Unbegrenzt, mit einem Workspace teilbar | Unbegrenzt, mit einem Workspace teilbar |
-| Gespeicherte [Barcodes](/docs/developers/barcode-api#saved-barcodes) | 1,000 | 10,000 | 100,000 |
-| [Statistikseiten im Kunden-Branding](/docs/client-reports) | Nein | Ja, mit einem kleinen „Made with QRdx“ | Ja, White-Label, mit deiner eigenen Domain möglich |
+| Gespeicherte [Barcodes](/docs/developers/barcode-api#saved-barcodes) | 1.000 | 10.000 | 100.000 |
+| [Statistikseiten im Kunden-Branding](/docs/client-reports) | Nein | Ja, mit einem kleinen „Made with QRdx“ | Ja, White-Label, mit deiner eigenen Domain nutzbar |
 | [Kundenportal](/docs/client-portal) | Nein | Nein | Ja |
 
-Nur aktive dynamische QR-Codes zählen zum Code-Limit, archivierte nicht. Scans zählen nie zu irgendeinem Limit, und kein Tarif pausiert einen Code wegen Traffic. Die einzigen Scan-Limits sind die, die du selbst für einen Code festlegst.
+Der Analytics-Verlauf begrenzt nur, wie weit du zurückschauen kannst. Scans werden so lange gespeichert, wie ihr Code existiert. Nach einem Upgrade werden die älteren also wieder angezeigt.
+
+Nur aktive dynamische Codes zählen zum Code-Limit: archivierte Codes nicht. Scans zählen nie zu irgendeinem Limit, und kein Tarif pausiert einen Code wegen Traffic. Die einzigen Scan-Limits sind die, die du selbst für einen Code festlegst.
 
 Das API-Kontingent gilt pro Workspace und wird um 00:00 UTC zurückgesetzt. Jede Anfrage, die zählt, liefert `X-RateLimit-Limit`, `X-RateLimit-Remaining` und `X-RateLimit-Reset`, damit du den Verbrauch im Blick behältst. Die Limits pro Minute findest du in der [REST API](/docs/developers/rest-api).
 
 ## Workspaces [#workspaces]
 
-Limits gelten für jeden [Workspace](/docs/teams) einzeln, und ein Workspace nutzt den besten Tarif unter seinen Inhabern und [Abrechnungsmitgliedern](/docs/teams#roles). Jeder bekommt einen eigenen Workspace, der automatisch mit dir als Inhaber erstellt wird und deshalb deinen Tarif nutzt. In jedem anderen Workspace gibt ein Inhaber mit Business allen darin die Business-Limits; Mitglieder brauchen kein eigenes Abo.
+Limits gelten für jeden [Workspace](/docs/teams) einzeln, und ein Workspace nutzt den besten Tarif unter seinen Inhabern und [Abrechnungsmitgliedern](/docs/teams#roles). Jeder bekommt einen eigenen Workspace, der automatisch mit ihm als Inhaber angelegt wird und daher seinen Tarif nutzt. In jedem anderen Workspace gibt ein Inhaber mit Business allen darin die Business-Limits; Mitglieder brauchen kein eigenes Abo.
 
-Für weitere Workspaces brauchst du Pro oder Business. Ein Workspace, dessen Inhaber und Abrechnungsmitglieder im Tarif Kostenlos sind, hat 1 Platz (nur du), mit Pro bis zu 3 und mit Business unbegrenzt viele. Plätze sind Mitglieder, Inhaber eingeschlossen, plus ausstehende Einladungen. Widerrufe also eine Einladung, die du nicht mehr brauchst, um ihren Platz freizugeben. Ändert sich der Tarif der Inhaber, bleiben die aktuellen Mitglieder erhalten; nur neue Einladungen werden blockiert.
+Für weitere Workspaces brauchst du Pro oder Business. Ein Workspace, dessen Inhaber und Abrechnungsmitglieder Kostenlos nutzen, hat 1 Platz (nur du), mit Pro bis zu 3 und mit Business unbegrenzt viele. Plätze sind Mitglieder, Inhaber eingeschlossen, plus ausstehende Einladungen. Widerrufe also eine Einladung, die du nicht mehr brauchst, um den Platz freizugeben. Wenn sich der Tarif der Inhaber ändert, bleiben die aktuellen Mitglieder; nur neue Einladungen werden blockiert.
 
 ## Limit überschritten, Downgrade und Kündigung [#going-over-a-limit-downgrading-and-cancelling]
 
 <Callout type="info">
-  Limits verhindern nur Neues. Bestehende Codes leiten in jedem Tarif weiter, auch nach einem Downgrade, einer fehlgeschlagenen Zahlung oder einer Kündigung. Das ist die [Never-Hostage-Garantie](/guarantee).
+  Limits stoppen nur neue Dinge. Bestehende Codes leiten in jedem Tarif weiter, auch nach einem Downgrade, einer fehlgeschlagenen Zahlung oder einer Kündigung. Das ist die [Never-Hostage-Garantie](/guarantee).
 </Callout>
 
-- **Limit überschritten:** Du kannst nichts Neues erstellen, bis du wieder darunter bist. Bestehendes kannst du weiterhin bearbeiten, archivieren und exportieren.
-- **Tägliches API-Kontingent überschritten:** API-Aufrufe erhalten bis 00:00 UTC `429`. Deine Codes leiten weiter, und die Website funktioniert weiter.
+- **Limit überschritten:** Du kannst nichts Neues erstellen, bis du wieder darunter liegst. Bestehende Inhalte kannst du weiterhin bearbeiten, archivieren und exportieren.
+- **Tägliches API-Kontingent überschritten:** API-Aufrufe erhalten bis 00:00 UTC `429`. Deine Codes leiten weiter und die Website funktioniert weiter.
 - **Downgrade:** Codes, Landingpages und verifizierte eigene Domains funktionieren weiter. Analytics zeigen den Verlauf, den dein neuer Tarif enthält.
 - **Kündigung:** Dein Tarif bleibt bis zum Ende des bezahlten Zeitraums aktiv, danach wechselt dein Konto zu Kostenlos.
 - **Fehlgeschlagene Zahlung:** Sobald das Abo ausläuft, ist es dasselbe wie eine Kündigung. Nichts wird pausiert.
 
-Codes, die aus einem von dir gewählten Grund enden, etwa wegen eines Ablaufdatums, einer Pause oder eines Scan-Limits, leiten Scanner auf deine Fallback-URL oder auf eine neutrale Seite „Diese Kampagne ist beendet“, nie auf eine QRdx-Seite.
+Codes, die aus einem von dir gewählten Grund enden, etwa durch ein Ablaufdatum, eine Pause oder ein Scan-Limit, leiten Scanner auf deine Fallback-URL oder auf eine neutrale Seite „Diese Kampagne ist beendet“ weiter, nie auf eine QRdx-Seite.
 
 ## Abrechnung [#billing]
 
-Ein Upgrade machst du auf der [Preisseite](/pricing). Um den Tarif zu wechseln, zwischen monatlich und jährlich umzuschalten, deine Karte zu aktualisieren oder zu kündigen, öffne in deinen Einstellungen **Abo verwalten**. Das führt dich zum Polar-Abrechnungsportal. Ein Abo deckt dein Konto ab. Solange du eines hast, laufen Tarifwechsel über das Portal statt über einen neuen Checkout.
+Ein Upgrade machst du auf der [Preisseite](/pricing). Um den Tarif zu wechseln, zwischen monatlich und jährlich umzuschalten, deine Karte zu aktualisieren oder zu kündigen, öffne in deinen Einstellungen **Abo verwalten**. Das führt dich zum Polar-Abrechnungsportal. Ein Abo deckt dein Konto ab. Solange du eines hast, laufen Tarifwechsel daher über das Portal statt über einen neuen Checkout.
 
 ## Self-Hosting [#self-hosting]
 
-Eine [selbst gehostete](/docs/self-hosting) Instanz nutzt dieselben Tarife. Die Limits sind in einer einzigen Datei definiert, `apps/docs/lib/plans.ts`, die du für deine Instanz ändern kannst. Ohne konfiguriertes Polar sind Upgrades nicht verfügbar, und jedes Konto nutzt die Limits von Kostenlos.
+Eine [selbst gehostete](/docs/self-hosting) Instanz nutzt dieselben Tarife. Die Limits sind in einer einzigen Datei definiert, `apps/docs/lib/plans.ts`, die du für deine Instanz ändern kannst. Ohne konfiguriertes Polar sind Upgrades nicht verfügbar und jedes Konto nutzt die Limits von Kostenlos.

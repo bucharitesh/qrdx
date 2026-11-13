@@ -1,0 +1,94 @@
+{
+  "id": "scent-finder",
+  "name": "Scent finder",
+  "description": "A solid card with a round badge holding a perfume bottle on its top edge.",
+  "category": "use-case",
+  "collection": "shopping",
+  "contentTypes": ["url"],
+  "tags": ["retail", "shop", "perfume", "fragrance"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1830
+    },
+    "qr": {
+      "x": 120,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 150,
+        "width": 1240,
+        "height": 1680,
+        "radius": 64,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 620,
+        "cy": 150,
+        "r": 150,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 620,
+        "cy": 150,
+        "r": 120,
+        "fill": "background"
+      },
+      {
+        "type": "path",
+        "d": "M594.8 138.8L645.2 138.8A16.8 16.8 0 0 1 662 155.6L662 194.8A16.8 16.8 0 0 1 645.2 211.6L594.8 211.6A16.8 16.8 0 0 1 578 194.8L578 155.6A16.8 16.8 0 0 1 594.8 138.8ZM607.4 110.8L632.6 110.8A4.2 4.2 0 0 1 636.8 115L636.8 130.4A4.2 4.2 0 0 1 632.6 134.6L607.4 134.6A4.2 4.2 0 0 1 603.2 130.4L603.2 115A4.2 4.2 0 0 1 607.4 110.8ZM601.8 161.2A5.6 5.6 0 0 0 596.2 166.8L596.2 186.4A5.6 5.6 0 0 0 601.8 192L638.2 192A5.6 5.6 0 0 0 643.8 186.4L643.8 166.8A5.6 5.6 0 0 0 638.2 161.2L601.8 161.2Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M561.2 108A12.6 12.6 0 1 1 586.4 108A12.6 12.6 0 1 1 561.2 108ZM584.25 112.76A2.1 2.1 0 0 0 585.75 108.84L603.95 115.84A2.1 2.1 0 0 0 602.45 119.76L584.25 112.76Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Find your scent",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1540,
+          "width": 1040,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Take the quiz",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1710,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

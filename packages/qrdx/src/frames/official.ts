@@ -1,8 +1,8 @@
 // QRdx's official frames: call-to-action styles, holidays and seasons from
-// around the world, and frames for restaurants, shops, events, places,
-// health and learning, and business. Each is a frame spec with editable
-// labels and theme colors (CC0 1.0), checked to decode at phone distances and
-// to score Great (tests/official-frames/). Apply one with
+// around the world, and frames for restaurants, shops, beauty, events,
+// places, real estate, cars, health and learning, sports, business and
+// nonprofits. Each is a frame spec with editable labels and theme colors
+// (CC0 1.0), checked to decode at phone distances and to score Great (tests/official-frames/). Apply one with
 // `frame: { style: "custom", spec: frame.spec }`.
 //
 // The frames live in ./official/<id>.json; ./catalogue/ is generated from

@@ -1,0 +1,104 @@
+{
+  "id": "refill-reminder",
+  "name": "Refill reminder",
+  "description": "A folder tab on top carrying the label and a calendar.",
+  "category": "use-case",
+  "collection": "health-learning",
+  "contentTypes": ["url"],
+  "tags": ["healthcare", "clinic", "pharmacy", "reminder"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1560
+    },
+    "qr": {
+      "x": 120,
+      "y": 290,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1000,
+        "height": 220,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 170,
+        "width": 1240,
+        "height": 1390,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 170,
+        "width": 200,
+        "height": 100,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M849.2 59.2L930.8 59.2A9.6 9.6 0 0 1 940.4 68.8L940.4 143.2A9.6 9.6 0 0 1 930.8 152.8L849.2 152.8A9.6 9.6 0 0 1 839.6 143.2L839.6 68.8A9.6 9.6 0 0 1 849.2 59.2ZM852.8 85.6A3.6 3.6 0 0 0 849.2 89.2L849.2 139.6A3.6 3.6 0 0 0 852.8 143.2L927.2 143.2A3.6 3.6 0 0 0 930.8 139.6L930.8 89.2A3.6 3.6 0 0 0 927.2 85.6Z",
+        "fill": "text",
+        "fillRule": "evenodd"
+      },
+      {
+        "type": "path",
+        "d": "M866 47.2L866 47.2A4.8 4.8 0 0 1 870.8 52L870.8 66.4A4.8 4.8 0 0 1 866 71.2L866 71.2A4.8 4.8 0 0 1 861.2 66.4L861.2 52A4.8 4.8 0 0 1 866 47.2ZM914 47.2L914 47.2A4.8 4.8 0 0 1 918.8 52L918.8 66.4A4.8 4.8 0 0 1 914 71.2L914 71.2A4.8 4.8 0 0 1 909.2 66.4L909.2 52A4.8 4.8 0 0 1 914 47.2Z",
+        "fill": "accent"
+      },
+      {
+        "type": "path",
+        "d": "M899.6 112L916.4 112A2.4 2.4 0 0 1 918.8 114.4L918.8 131.2A2.4 2.4 0 0 1 916.4 133.6L899.6 133.6A2.4 2.4 0 0 1 897.2 131.2L897.2 114.4A2.4 2.4 0 0 1 899.6 112Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Refill reminders",
+        "color": "text",
+        "box": {
+          "x": 60,
+          "y": 25,
+          "width": 740,
+          "height": 150
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Never run out",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 1400,
+          "width": 1000,
+          "height": 100
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

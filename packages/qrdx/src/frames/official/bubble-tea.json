@@ -1,0 +1,81 @@
+{
+  "id": "bubble-tea",
+  "name": "Bubble tea",
+  "description": "A die-cut sticker with a thick outline and an offset shadow and a bubble tea.",
+  "category": "use-case",
+  "collection": "food-drink",
+  "contentTypes": ["url"],
+  "tags": ["restaurant", "food", "bubble tea", "boba"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1750
+    },
+    "qr": {
+      "x": 110,
+      "y": 370,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 50,
+        "y": 50,
+        "width": 1270,
+        "height": 1700,
+        "radius": 110,
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1270,
+        "height": 1700,
+        "radius": 110,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 36,
+        "y": 36,
+        "width": 1198,
+        "height": 1628,
+        "radius": 80,
+        "fill": "background"
+      },
+      {
+        "type": "path",
+        "d": "M593.4 129.2L676.6 129.2L667 220.4L603 220.4ZM591 114.8L679 114.8A5.6 5.6 0 0 1 684.6 120.4L684.6 120.4A5.6 5.6 0 0 1 679 126L591 126A5.6 5.6 0 0 1 585.4 120.4L585.4 120.4A5.6 5.6 0 0 1 591 114.8ZM598.2 114.8C598.2 90.8 671.8 90.8 671.8 114.8ZM610.36 204.4A7.04 7.04 0 1 0 624.44 204.4A7.04 7.04 0 1 0 610.36 204.4ZM627.96 207.6A7.04 7.04 0 1 0 642.04 207.6A7.04 7.04 0 1 0 627.96 207.6ZM645.56 204.4A7.04 7.04 0 1 0 659.64 204.4A7.04 7.04 0 1 0 645.56 204.4ZM618.36 190A7.04 7.04 0 1 0 632.44 190A7.04 7.04 0 1 0 618.36 190ZM637.56 190A7.04 7.04 0 1 0 651.64 190A7.04 7.04 0 1 0 637.56 190ZM659.76 73.85L648.56 169.85L637.44 168.55L648.64 72.55Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Order bubble tea",
+        "color": "frame",
+        "box": {
+          "x": 100,
+          "y": 1490,
+          "width": 1070,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

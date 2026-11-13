@@ -1,0 +1,74 @@
+{
+  "id": "request-maintenance",
+  "name": "Maintenance request",
+  "description": "A solid card with a wrench over the code and the label underneath.",
+  "category": "use-case",
+  "collection": "business",
+  "contentTypes": ["url"],
+  "tags": ["business", "facilities", "maintenance"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M575.34 57.12L580.67 54.88L586.32 53.66L592.1 53.49L597.82 54.38L603.27 56.31L608.28 59.19L612.68 62.94L616.32 67.44L619.08 72.52L620.86 78.02L621.6 83.76L621.29 89.53L619.92 95.15L617.55 100.43L614.25 105.18L610.15 109.25L605.36 112.5L600.07 114.82L594.44 116.13L588.66 116.4L582.93 115.6L577.45 113.77L572.39 110.96L567.93 107.28L564.22 102.85L561.38 97.81L559.51 92.34L558.67 86.62L558.89 80.84L560.17 75.2L572.55 84.87L587.01 67.64ZM618.71 95.21L671.56 139.56A10.5 10.5 40 0 1 672.86 154.35L672.86 154.35A10.5 10.5 40 0 1 658.06 155.65L605.21 111.29A10.5 10.5 40 0 1 603.91 96.5L603.91 96.5A10.5 10.5 40 0 1 618.71 95.21ZM660.22 143.75A4.5 4.5 40 1 0 667.11 149.53A4.5 4.5 40 1 0 660.22 143.75Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Request maintenance",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Something broken?",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

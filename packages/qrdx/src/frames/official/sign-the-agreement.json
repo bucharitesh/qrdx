@@ -1,0 +1,120 @@
+{
+  "id": "sign-the-agreement",
+  "name": "Sign the agreement",
+  "description": "A clipboard with the code on its sheet of paper and a document.",
+  "category": "use-case",
+  "collection": "business",
+  "contentTypes": ["url"],
+  "tags": ["business", "contract", "e-signature"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1890
+    },
+    "qr": {
+      "x": 160,
+      "y": 480,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 90,
+        "width": 1320,
+        "height": 1800,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 60,
+        "y": 200,
+        "width": 1200,
+        "height": 1630,
+        "radius": 12,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 60,
+        "y": 200,
+        "width": 1200,
+        "height": 14,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.75
+        }
+      },
+      {
+        "type": "path",
+        "d": "M470 20L850 20A40 40 0 0 1 890 60L890 150A40 40 0 0 1 850 190L470 190A40 40 0 0 1 430 150L430 60A40 40 0 0 1 470 20ZM626 85A34 34 0 1 0 694 85A34 34 0 1 0 626 85Z",
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.3
+        }
+      },
+      {
+        "type": "path",
+        "d": "M191.6 262.2L239.6 262.2L270.8 293.4L270.8 367.8L191.6 367.8ZM206.6 279A3 3 0 0 0 203.6 282L203.6 282A3 3 0 0 0 206.6 285L227 285A3 3 0 0 0 230 282L230 282A3 3 0 0 0 227 279L206.6 279ZM206.6 307.8A3 3 0 0 0 203.6 310.8L203.6 310.8A3 3 0 0 0 206.6 313.8L255.8 313.8A3 3 0 0 0 258.8 310.8L258.8 310.8A3 3 0 0 0 255.8 307.8L206.6 307.8ZM206.6 322.2A3 3 0 0 0 203.6 325.2L203.6 325.2A3 3 0 0 0 206.6 328.2L255.8 328.2A3 3 0 0 0 258.8 325.2L258.8 325.2A3 3 0 0 0 255.8 322.2L206.6 322.2ZM206.6 336.6A3 3 0 0 0 203.6 339.6L203.6 339.6A3 3 0 0 0 206.6 342.6L255.8 342.6A3 3 0 0 0 258.8 339.6L258.8 339.6A3 3 0 0 0 255.8 336.6L206.6 336.6ZM206.6 351A3 3 0 0 0 203.6 354L203.6 354A3 3 0 0 0 206.6 357L231.8 357A3 3 0 0 0 234.8 354L234.8 354A3 3 0 0 0 231.8 351L206.6 351Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M270.8 293.4L239.6 293.4L239.6 262.2Z",
+        "fill": "accent"
+      },
+      {
+        "type": "rect",
+        "x": 160,
+        "y": 392,
+        "width": 1000,
+        "height": 8,
+        "radius": 4,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.7
+        }
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Sign the agreement",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 1600,
+          "width": 1040,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Takes two minutes",
+        "color": "frame",
+        "box": {
+          "x": 330,
+          "y": 260,
+          "width": 830,
+          "height": 110
+        },
+        "align": "start"
+      }
+    ]
+  }
+}

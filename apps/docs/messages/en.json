@@ -287,6 +287,13 @@
       "secondary": "Read the docs",
       "sceneLabel": "Animated drawing of the QRdx flow: a studio screen designs and styles a QR code, a printer prints it on a card, a robot arm places the card on a conveyor, a phone on a gate scans each card as it passes, the scan travels to an analytics panel that adds a new bar, and a large dynamic QR card swaps its destination link without being reprinted"
     },
+    "customers": {
+      "eyebrow": "Used by",
+      "readStory": "Read the story",
+      "lines": {
+        "flam": "Flam makes its branded QR codes with QRdx."
+      }
+    },
     "editor": {
       "eyebrow": "Try it with your link",
       "description": "Same renderer as the playground, live as you type.",
@@ -400,7 +407,7 @@
       "analytics": {
         "eyebrow": "Analytics",
         "title": "See every scan",
-        "description": "Scans over time, countries, devices, browsers and referrers for every dynamic code. Free accounts keep {days, number} days.",
+        "description": "Scans over time, countries, devices, browsers and referrers for every dynamic code. Free accounts keep {years, plural, one {# year} other {# years}} of history, and paid plans keep all of it.",
         "link": "How scan analytics work"
       },
       "bulk": {
@@ -444,7 +451,7 @@
       "items": {
         "free": {
           "question": "Is QRdx really free? Are there hidden limits?",
-          "answer": "Yes. Creating, customizing and downloading static QR codes is free and needs no account: unlimited codes, every design option ({bodyPatterns, number} body patterns, {eyeShapes, number} corner-eye shapes and {eyeCentres, number} eye centers, gradients, logos, frames and Logo QR or Image QR art), and PNG, JPG, SVG, PDF and EPS downloads. There are no watermarks and no ads. Static codes store your content in the code itself, so they never expire and have no scan limits. A free account adds 10 dynamic QR codes, 3 hosted pages, 90 days of scan analytics, 10 saved themes and 5 AI theme generations; Pro ({proMonthly}/mo or {proYearly}/yr) and Business ({businessMonthly}/mo or {businessYearly}/yr) raise those limits."
+          "answer": "Yes. Creating, customizing and downloading static QR codes is free and needs no account: unlimited codes, every design option ({bodyPatterns, number} body patterns, {eyeShapes, number} corner-eye shapes and {eyeCentres, number} eye centers, gradients, logos, frames and Logo QR or Image QR art), and PNG, JPG, SVG, PDF and EPS downloads. There are no watermarks and no ads. Static codes store your content in the code itself, so they never expire and have no scan limits. A free account adds 10 dynamic QR codes, 3 hosted pages, {historyYears, plural, one {# year} other {# years}} of scan analytics, 10 saved themes and 5 AI theme generations; Pro ({proMonthly}/mo or {proYearly}/yr) and Business ({businessMonthly}/mo or {businessYearly}/yr) raise those limits."
         },
         "signup": {
           "question": "Do I need to sign up or create an account?",
@@ -452,7 +459,7 @@
         },
         "dynamic": {
           "question": "Does QRdx support dynamic QR codes and scan analytics?",
-          "answer": "Yes. A dynamic code encodes a short link, so you can change where it points after printing, and every scan is counted with country, device and browser analytics. A code can open a website or a hosted mobile page (link list, menu, vCard, coupon, event, form, PDF, gallery, audio or video). Pro and Business add smart routing by device, country, language or time, A/B tests, UTM tags, passwords, expiry dates and scan limits. Free accounts get 10 active dynamic codes with 90 days of history; Pro and Business are unlimited with longer history."
+          "answer": "Yes. A dynamic code encodes a short link, so you can change where it points after printing, and every scan is counted with country, device and browser analytics. A code can open a website or a hosted mobile page (link list, menu, vCard, coupon, event, form, PDF, gallery, audio or video). Pro and Business add smart routing by device, country, language or time, A/B tests, UTM tags, passwords, expiry dates and scan limits. Free accounts get 10 active dynamic codes with {historyYears, plural, one {# year} other {# years}} of history; Pro and Business are unlimited and keep your full scan history."
         },
         "guarantee": {
           "question": "Will my QR codes stop working if I stop paying?",
@@ -476,7 +483,7 @@
         },
         "paidPlans": {
           "question": "What do I get with Pro or Business?",
-          "answer": "Pro ({proMonthly}/mo or {proYearly}/yr) adds unlimited dynamic codes and hosted pages, 3 years of analytics, {customDomains, select, yes {5 custom domains, } other {}}teams of up to 3, smart routing, A/B tests, UTM tags, pixels, email alerts and a weekly digest, and link controls such as passwords and expiry dates. Business ({businessMonthly}/mo or {businessYearly}/yr) adds white-label pages with custom CSS, unlimited analytics history, {customDomains, select, yes {25 custom domains, } other {}}unlimited team members, conversion tracking, webhooks and Slack or Discord alerts. Creating, customizing and downloading static QR codes stays free."
+          "answer": "Pro ({proMonthly}/mo or {proYearly}/yr) adds unlimited dynamic codes and hosted pages, your full scan history, {customDomains, select, yes {5 custom domains, } other {}}teams of up to 3, smart routing, A/B tests, UTM tags, pixels, email alerts and a weekly digest, and link controls such as passwords and expiry dates. Business ({businessMonthly}/mo or {businessYearly}/yr) adds white-label pages with custom CSS, {customDomains, select, yes {25 custom domains, } other {}}unlimited team members, conversion tracking, webhooks and Slack or Discord alerts. Creating, customizing and downloading static QR codes stays free."
         }
       }
     }
@@ -496,8 +503,8 @@
     },
     "extras": {
       "unlimitedDynamic": "unlimited dynamic codes",
-      "longerAnalytics": "longer analytics",
-      "analyticsHistory": "analytics history",
+      "longerAnalytics": "your full scan history",
+      "analyticsHistory": "full analytics history",
       "customDomains": "custom domains",
       "teams": "teams"
     },
@@ -711,7 +718,7 @@
       "items": {
         "cancel": {
           "question": "What happens if I cancel?",
-          "answer": "Nothing breaks. Your plan stays active until the end of the period you paid for, then your account moves to Free. Every dynamic code keeps redirecting and every scan is still counted: that's our Never-Hostage Guarantee. On Free you can't create more than the Free limits allow, and analytics show the last 90 days."
+          "answer": "Nothing breaks. Your plan stays active until the end of the period you paid for, then your account moves to Free. Every dynamic code keeps redirecting and every scan is still counted: that's our Never-Hostage Guarantee. On Free you can't create more than the Free limits allow, and analytics show the last {historyYears, plural, one {year} other {# years}}. Older scans are kept, so they come back if you upgrade again."
         },
         "refund": {
           "question": "Can I get my money back?",
@@ -2884,7 +2891,7 @@
     "crumb": "Dynamic QR code generator",
     "title": "Free dynamic QR code generator",
     "intro1": "A dynamic QR code holds a short link instead of your URL. You can change where it points after it's printed, and QRdx counts every scan.",
-    "intro2": "Free accounts get {count, number} dynamic codes with unlimited scans and {days, number} days of scan history. There's no trial period, and the codes keep working whether or not you ever pay.",
+    "intro2": "Free accounts get {count, number} dynamic codes with unlimited scans and {years, plural, one {# year} other {# years}} of scan history. There's no trial period, and the codes keep working whether or not you ever pay.",
     "facts": {
       "free": "{count, number} free dynamic codes",
       "scans": "Unlimited scans on every plan",
@@ -2922,7 +2929,7 @@
       },
       "analytics": {
         "title": "Scan analytics",
-        "body": "See scans over time, unique visitors, countries and cities, devices, browsers and the hours people scan, and export them as CSV. IP addresses are never stored. Free accounts keep {days, number} days of history."
+        "body": "See scans over time, unique visitors, countries and cities, devices, browsers and the hours people scan, and export them as CSV. IP addresses are never stored. Free accounts keep {years, plural, one {# year} other {# years}} of history, and paid plans keep all of it."
       },
       "pages": {
         "title": "Hosted mobile pages",
@@ -2955,7 +2962,7 @@
     "freeItems": {
       "codes": "{count, number} active dynamic codes (archived codes don't count)",
       "scans": "Unlimited scans that are never paused",
-      "history": "{days, number} days of scan history",
+      "history": "{years, plural, one {# year} other {# years}} of scan history",
       "pages": "{pages, number} hosted pages",
       "organize": "Editing, pausing, folders, tags and version history",
       "api": "The REST API, with {perDay, number} requests a day"
@@ -2989,7 +2996,7 @@
     "faqTitle": "Dynamic QR code questions",
     "faq": {
       "freeQuestion": "Can I make a dynamic QR code for free?",
-      "freeAnswer": "Yes. A free QRdx account includes {count, number} active dynamic codes with unlimited scans and {days, number} days of scan history, with no trial period. Archived codes don't count toward the limit, and paid plans remove it.",
+      "freeAnswer": "Yes. A free QRdx account includes {count, number} active dynamic codes with unlimited scans and {years, plural, one {# year} other {# years}} of scan history, with no trial period. Archived codes don't count toward the limit, and paid plans remove it.",
       "expireQuestion": "Do dynamic QR codes expire?",
       "expireAnswer": "Not on QRdx. A code keeps redirecting until you pause, archive or delete it, or until an end date or scan limit you set yourself. That holds on every plan, Free included, and after a downgrade, a failed payment or a cancellation. The one exception is abuse: a code that points to phishing or malware is disabled.",
       "editQuestion": "Can I edit a QR code after it's printed?",
@@ -6629,7 +6636,6 @@
           "scansPerDayLastDays": "Scans per day, last {days, number} days (UTC)",
           "botsAndLinkPreviewsAre": "Bots and link previews are not counted. Countries and cities come from the visitor's IP address, which is never stored; precise locations only from scanners who chose to share them.",
           "dateRange": "Date range",
-          "valueKeepsValue2OfScan": "{value} keeps {value2} of scan history",
           "totalScans": "Total scans",
           "scansInRange": "Scans in range",
           "uniqueVisitors": "Unique visitors",
@@ -7981,23 +7987,6 @@
         },
         "newCodeButton": {
           "newDynamicCode": "New dynamic code"
-        },
-        "setupChecklist": {
-          "done": "(done)",
-          "create": "Create",
-          "start": "Start",
-          "design": "Design",
-          "invite": "Invite",
-          "connect": "Connect",
-          "getSetUp": "Get set up",
-          "doneOfLengthDone": "{done, number} of {length, number} done",
-          "hide": "Hide",
-          "setupTasksDone": "Setup tasks done",
-          "createADynamicQrCode": "Create a dynamic QR code",
-          "makeALandingPageOr": "Make a landing page or form",
-          "saveAThemeWithYour": "Save a theme with your logo and colors",
-          "inviteATeammate": "Invite a teammate",
-          "connectACustomDomain": "Connect a custom domain"
         }
       },
       "listSelection": {
@@ -8350,6 +8339,26 @@
       "spotlight": {
         "new": "New",
         "gotIt": "Got it"
+      },
+      "setupGuide": {
+        "getSetUp": "Get set up",
+        "launcherLabel": "Get set up: {done, number} of {length, number} done",
+        "doneOfLengthDone": "{done, number} of {length, number} done",
+        "doneOfLengthShort": "{done, number}/{length, number}",
+        "setupTasksDone": "Setup tasks done",
+        "collapse": "Collapse",
+        "dismissGuide": "Dismiss guide",
+        "done": "(done)",
+        "create": "Create",
+        "start": "Start",
+        "design": "Design",
+        "invite": "Invite",
+        "connect": "Connect",
+        "createADynamicQrCode": "Create a dynamic QR code",
+        "makeALandingPageOr": "Make a landing page or form",
+        "saveAThemeWithYour": "Save a theme with your logo and colors",
+        "inviteATeammate": "Invite a teammate",
+        "connectACustomDomain": "Connect a custom domain"
       }
     },
     "workspaces": {

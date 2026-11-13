@@ -40,7 +40,9 @@ import {
 // frames you saved), with search, a chip per group and a "Coming up" group
 // of the frames for the holidays and seasons ahead. Official frames load
 // a collection at a time as their tiles scroll into view; until then a tile
-// keeps the frame's shape as a placeholder.
+// keeps the frame's shape as a placeholder. The library is over a thousand
+// frames, so the catalog mounts its tiles a page at a time as it scrolls,
+// and search runs on a deferred copy of the query to keep typing smooth.
 
 export const OFFICIAL_PREFIX = "official:";
 
@@ -91,6 +93,48 @@ function useSeen(ref: React.RefObject<Element | null>, onSeen: () => void) {
       seen.delete(element);
     };
   }, [ref]);
+}
+
+/** The scrolling element around `element` (null: the viewport). */
+function scrollParent(element: Element | null): Element | null {
+  for (let el = element?.parentElement; el; el = el.parentElement) {
+    const { overflowY } = getComputedStyle(el);
+    if (overflowY === "auto" || overflowY === "scroll") return el;
+  }
+  return null;
+}
+
+/** Tiles mounted at first, and added each time the end comes near. */
+const TILE_PAGE = 60;
+
+/**
+ * Calls `onNear` when it comes within a few rows of the scrolling area's
+ * visible part. Remount it (a new key) to check again after more tiles load.
+ */
+function MoreTiles({ onNear }: { onNear: () => void }) {
+  const ref = React.useRef<HTMLDivElement>(null);
+  const callback = React.useRef(onNear);
+  callback.current = onNear;
+  React.useEffect(() => {
+    const element = ref.current;
+    if (!element) return;
+    if (typeof IntersectionObserver === "undefined") {
+      callback.current();
+      return;
+    }
+    const watcher = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          watcher.disconnect();
+          callback.current();
+        }
+      },
+      { root: scrollParent(element), rootMargin: "600px 0px" },
+    );
+    watcher.observe(element);
+    return () => watcher.disconnect();
+  }, []);
+  return <div aria-hidden className="h-px" ref={ref} />;
 }
 
 /** The shape of a frame that hasn't loaded yet. */
@@ -312,7 +356,13 @@ export function FramePicker({
     choices.filter((choice) => choice.id !== "none").length + officialCount;
 
   // ── Catalog contents ────────────────────────────────────────────────────
-  const terms = words(query);
+  // Typing stays responsive: the filtering and the tiles follow a beat later
+  const deferredQuery = React.useDeferredValue(query);
+  const terms = words(deferredQuery);
+  const searchText = React.useMemo(
+    () => new Map((index ?? []).map((entry) => [entry.id, entryText(entry)])),
+    [index],
+  );
   const sections: Section[] = React.useMemo(() => {
     const builtIn = choices.filter((choice) => choice.group !== "saved");
     const saved = choices.filter((choice) => choice.group === "saved");
@@ -360,7 +410,7 @@ export function FramePicker({
         if (filter !== ALL && section.id !== filter) continue;
         for (const item of section.items) {
           const text = item.entry
-            ? entryText(item.entry)
+            ? (searchText.get(item.entry.id) ?? entryText(item.entry))
             : `${nameOf(item.id)} ${item.id} ${byId.get(item.id)?.keywords ?? ""}`.toLowerCase();
           if (matches(text, terms)) found.set(item.id, item);
         }
@@ -373,6 +423,22 @@ export function FramePicker({
     return sections.filter((section) => section.id === filter);
   })();
   const resultCount = shown.reduce((sum, s) => sum + s.items.length, 0);
+
+  // Mount the first tiles only, and more as the list scrolls (a new search
+  // or group starts again from the top)
+  const view = `${open}|${filter}|${terms.join(" ")}`;
+  const [mounted, setMounted] = React.useState({ view, count: TILE_PAGE });
+  const tileLimit = mounted.view === view ? mounted.count : TILE_PAGE;
+  const showMoreTiles = () =>
+    setMounted({ view, count: tileLimit + TILE_PAGE });
+  let budget = tileLimit;
+  const mountedSections = shown
+    .map((section) => {
+      const items = section.items.slice(0, Math.max(0, budget));
+      budget -= items.length;
+      return { ...section, items };
+    })
+    .filter((section) => section.items.length > 0);
 
   React.useEffect(() => {
     if (!(open && inPanel)) return;
@@ -526,7 +592,7 @@ export function FramePicker({
           )}
           id={gridId}
         >
-          {shown.map((section) => (
+          {mountedSections.map((section) => (
             <section aria-label={section.label} key={section.id}>
               {(shown.length > 1 || section.id === COMING_UP) && (
                 <h4 className="text-muted-foreground mb-2 flex items-baseline justify-between text-xs font-medium">
@@ -562,6 +628,9 @@ export function FramePicker({
               </OptionGrid>
             </section>
           ))}
+          {resultCount > tileLimit && (
+            <MoreTiles key={tileLimit} onNear={showMoreTiles} />
+          )}
         </div>
       ) : (
         <div className="text-muted-foreground flex flex-col items-center gap-2 py-6 text-center text-xs">

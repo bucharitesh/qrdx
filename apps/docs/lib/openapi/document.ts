@@ -44,6 +44,7 @@ import { WEBHOOK_EVENTS, type WebhookEvent } from "@/lib/events/types";
 import { baseUrl } from "@/lib/metadata";
 import { OAUTH_SCOPE_INFO, OAUTH_SCOPES } from "@/lib/oauth-scopes";
 import { qrOptionsSchema } from "@/lib/qr-render";
+import { SCAN_HISTORY_DAYS, scanHistoryLabel } from "@/lib/scan-history";
 import { SHORT_LINK_BASE } from "@/lib/short-links";
 import { API_ERRORS, type ApiErrorCode, type ApiErrorInfo } from "./errors";
 import {
@@ -1026,7 +1027,7 @@ Its short link stops working, and this can't be undone. To pause a code and keep
         security: security("codes:read"),
         description: `Scan analytics of a code for a range of days.
 
-Totals, a daily series and the top countries, cities, devices, systems, browsers and referrers. \`sources\` splits the scans into QR scans and NFC taps (visits through the code's \`nfcLink\`), and each listed scan has its \`source\`. The range is clamped to how long the plan keeps analytics. With \`limit\` above 0 the response also lists individual scans, newest first: pass the response's \`nextBefore\` as \`before\` for the next page.
+Totals, a daily series and the top countries, cities, devices, systems, browsers and referrers. \`sources\` splits the scans into QR scans and NFC taps (visits through the code's \`nfcLink\`), and each listed scan has its \`source\`. The range is clamped to how far back the plan's analytics reach: ${scanHistoryLabel(SCAN_HISTORY_DAYS.free)} on Free, the whole history on Pro and Business (\`retentionDays\` is then null). With \`limit\` above 0 the response also lists individual scans, newest first: pass the response's \`nextBefore\` as \`before\` for the next page.
 
 On Pro and Business, \`preciseLocations\` lists the locations scanners chose to share (rounded to about 100 m) for codes that ask for them, and each scan has \`latitude\`, \`longitude\`, \`locationAccuracyM\` and \`locationSource\`. On Free, \`preciseLocations\` is null and those fields are null. More in [Precise location and geofencing](${docs("precise-location")}).`,
         parameters: c.parameters(scansQuerySchema, "query", {
@@ -1044,7 +1045,7 @@ On Pro and Business, \`preciseLocations\` lists the locations scanners chose to 
                 data: {
                   codeId: exampleCode.id,
                   range: "7d",
-                  retentionDays: 30,
+                  retentionDays: SCAN_HISTORY_DAYS.free,
                   from: "2026-01-06T00:00:00.000Z",
                   days: 7,
                   total: 42,

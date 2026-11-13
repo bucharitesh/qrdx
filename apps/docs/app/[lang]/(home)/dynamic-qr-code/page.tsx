@@ -38,6 +38,7 @@ import { playgroundHref } from "@/lib/playground-links";
 import { PLAN_NAMES } from "@/lib/pricing";
 import { PRODUCT_FACTS } from "@/lib/product-facts";
 import { MAX_RULES } from "@/lib/redirect/routing";
+import { scanHistoryLabel } from "@/lib/scan-history";
 import { organizationId } from "@/lib/seo-schema";
 import { SHORT_LINK_BASE } from "@/lib/short-links";
 
@@ -127,7 +128,8 @@ export default async function DynamicQrCodePage() {
   const shortHost = new URL(SHORT_LINK_BASE).host;
   const values = {
     count: FREE.dynamicCodes,
-    days: FREE.analyticsRetentionDays,
+    // Free's scan history in years (lib/scan-history.ts)
+    years: PRODUCT_FACTS.freeScanHistoryYears,
     pages: FREE.landingPages,
     perDay: FREE.apiRequestsPerDay,
     types: PRODUCT_FACTS.hostedPageTypes,
@@ -223,7 +225,7 @@ export default async function DynamicQrCodePage() {
           featureList: [
             `${FREE.dynamicCodes} dynamic QR codes on the free plan, with unlimited scans`,
             "Change a code's destination after printing",
-            `Scan analytics with ${FREE.analyticsRetentionDays} days of history on the free plan`,
+            `Scan analytics with ${scanHistoryLabel(FREE.analyticsRetentionDays)} of history on the free plan`,
             "Hosted mobile pages: link lists, menus, contact cards, coupons, events and forms",
             "Smart routing by device, country, language, time and scan count, A/B splits and UTM parameters",
             "Passwords, start and end dates, scan limits and fallback URLs",

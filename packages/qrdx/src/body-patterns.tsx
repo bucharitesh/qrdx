@@ -1,7 +1,9 @@
+/** @jsxImportSource ./jsx */
 /** biome-ignore-all lint/style/noMagicNumbers: module geometry */
-import type { JSX } from "react";
+
 import type { BodyPattern, Modules } from "../types";
 import { MODULE_SCALE_MAX, MODULE_SCALE_MIN } from "../types/qr";
+import type { QRNode } from "./jsx/runtime";
 import {
   circlePath,
   hash2,
@@ -277,7 +279,7 @@ export function renderShapedBody(
     /** Decorative modules (a circle code's ring): no finders or alignment */
     plain?: boolean;
   }
-): JSX.Element[] {
+): QRNode[] {
   const { margin, pixelSize: cell, pattern } = options;
   const scale = clampModuleScale(options.scale, pattern);
   const size = modules.length;
@@ -378,7 +380,7 @@ export function renderShapedBody(
     }
   }
 
-  const elements: JSX.Element[] = [];
+  const elements: QRNode[] = [];
   if (shapes.length > 0) {
     elements.push(<path d={shapes.join("")} key="modules" />);
   }

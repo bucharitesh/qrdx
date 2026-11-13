@@ -1,0 +1,82 @@
+{
+  "id": "get-it-delivered",
+  "name": "Get it delivered",
+  "description": "A wide card: the code on one side, a delivery truck and the label on the other.",
+  "category": "use-case",
+  "collection": "shopping",
+  "contentTypes": ["url"],
+  "tags": ["retail", "shop", "delivery"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 2000,
+      "height": 1040
+    },
+    "qr": {
+      "x": 120,
+      "y": 120,
+      "size": 800,
+      "padding": 64,
+      "radius": 19.2
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 2000,
+        "height": 1040,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M1044.4 199.6L1132.6 199.6A7.2 7.2 0 0 1 1139.8 206.8L1139.8 289.6A7.2 7.2 0 0 1 1132.6 296.8L1044.4 296.8A7.2 7.2 0 0 1 1037.2 289.6L1037.2 206.8A7.2 7.2 0 0 1 1044.4 199.6ZM1143.4 228.4L1174 228.4L1199.2 259L1199.2 296.8L1143.4 296.8ZM1152.4 259L1186.6 259L1170.4 237.4L1152.4 237.4Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M1053.4 300.4A19.8 19.8 0 1 1 1093 300.4A19.8 19.8 0 1 1 1053.4 300.4ZM1150.6 300.4A19.8 19.8 0 1 1 1190.2 300.4A19.8 19.8 0 1 1 1150.6 300.4ZM1065.1 300.4A8.1 8.1 0 1 0 1081.3 300.4A8.1 8.1 0 1 0 1065.1 300.4ZM1162.3 300.4A8.1 8.1 0 1 0 1178.5 300.4A8.1 8.1 0 1 0 1162.3 300.4Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Get it delivered",
+        "color": "text",
+        "box": {
+          "x": 1030,
+          "y": 400,
+          "width": 860,
+          "height": 190
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan to order",
+        "color": "text",
+        "box": {
+          "x": 1030,
+          "y": 610,
+          "width": 860,
+          "height": 100
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

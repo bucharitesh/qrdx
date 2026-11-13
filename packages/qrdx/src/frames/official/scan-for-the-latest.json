@@ -1,0 +1,74 @@
+{
+  "id": "scan-for-the-latest",
+  "name": "What's new board",
+  "description": "A sidewalk A-frame board with a handle slot and splayed feet.",
+  "category": "use-case",
+  "collection": "call-to-action",
+  "contentTypes": [],
+  "tags": ["call to action", "news", "updates"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1600,
+      "height": 1950
+    },
+    "qr": {
+      "x": 300,
+      "y": 450,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M100 0L1500 0L1600 1830L1430 1830L1450 1950L1340 1950L1320 1830L280 1830L260 1950L150 1950L170 1830L0 1830ZM690 50A40 40 0 0 0 650 90L650 90A40 40 0 0 0 690 130L910 130A40 40 0 0 0 950 90L950 90A40 40 0 0 0 910 50Z",
+        "fill": "frame",
+        "fillRule": "evenodd"
+      },
+      {
+        "type": "path",
+        "d": "M172.35 140L1427.65 140L1516.17 1760L83.83 1760Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.9
+        }
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "What's new this week",
+        "color": "frame",
+        "box": {
+          "x": 220,
+          "y": 1570,
+          "width": 1160,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Changes every week",
+        "color": "frame",
+        "box": {
+          "x": 260,
+          "y": 200,
+          "width": 1080,
+          "height": 120
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

@@ -1,0 +1,102 @@
+{
+  "id": "car-detailing",
+  "name": "Car detailing",
+  "description": "A light card with the front of a car and a pill-shaped button under the code.",
+  "category": "use-case",
+  "collection": "automotive",
+  "contentTypes": ["calcom", "url"],
+  "tags": ["cars", "parking", "detailing", "valet"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1760
+    },
+    "qr": {
+      "x": 120,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 64,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 64,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.82
+        },
+        "hole": {
+          "x": 12,
+          "y": 12,
+          "width": 1216,
+          "height": 1736,
+          "radius": 54
+        }
+      },
+      {
+        "type": "path",
+        "d": "M581 70C583.6 60.9 588.8 57 596.6 57L643.4 57C651.2 57 656.4 60.9 659 70L666.8 90.8L675.9 89.5L675.9 99.9L669.4 101.2L672 106.4L672 132.4L568 132.4L568 106.4L570.6 101.2L564.1 99.9L564.1 89.5L573.2 90.8ZM577.1 129.8L590.1 129.8A3.9 3.9 0 0 1 594 133.7L594 144.1A3.9 3.9 0 0 1 590.1 148L577.1 148A3.9 3.9 0 0 1 573.2 144.1L573.2 133.7A3.9 3.9 0 0 1 577.1 129.8ZM649.9 129.8L662.9 129.8A3.9 3.9 0 0 1 666.8 133.7L666.8 144.1A3.9 3.9 0 0 1 662.9 148L649.9 148A3.9 3.9 0 0 1 646 144.1L646 133.7A3.9 3.9 0 0 1 649.9 129.8ZM583.6 88.2L656.4 88.2L648.6 64.8L591.4 64.8ZM577.1 110.3A7.8 7.8 0 1 0 592.7 110.3A7.8 7.8 0 1 0 577.1 110.3ZM647.3 110.3A7.8 7.8 0 1 0 662.9 110.3A7.8 7.8 0 1 0 647.3 110.3ZM605.7 106.4A2.6 2.6 0 0 0 603.1 109L603.1 115.5A2.6 2.6 0 0 0 605.7 118.1L634.3 118.1A2.6 2.6 0 0 0 636.9 115.5L636.9 109A2.6 2.6 0 0 0 634.3 106.4L605.7 106.4Z",
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 170,
+        "y": 1520,
+        "width": 900,
+        "height": 180,
+        "radius": 90,
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Book a detail",
+        "color": "text",
+        "box": {
+          "x": 230,
+          "y": 1520,
+          "width": 780,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Inside and out",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 180,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

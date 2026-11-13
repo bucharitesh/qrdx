@@ -524,6 +524,24 @@ function integrationsCover() {
   ].join("");
 }
 
+// Three round codes from one design: the same ring and text, and a
+// different scatter of dots around each code, because each link seeds its own.
+function flamCover() {
+  const cam = camera(240, 152, 1.08);
+  const spots: [number, number, string][] = [
+    [-58, 40, "c1"],
+    [-8, -6, "c2"],
+    [42, -52, "c3"],
+  ];
+  return [
+    plinth(cam, -78, -78, 78, 78),
+    glow(cam, [-8, 0, 40], 92, 48),
+    ...spots.map(([x, y, id]) =>
+      signRight(cam, [x, y, 0], 54, 54, { id, caption: false }),
+    ),
+  ].join("");
+}
+
 // --- Existing posts: inline figures ------------------------------------------------
 
 // A plain-words prompt turning into three code styles.
@@ -932,5 +950,6 @@ export const SCENES: Record<BlogArtId, () => string> = {
   bestFreeScanLimits,
   bestFreePersonas,
   understandingErrors,
+  flamCover,
   understandingPipeline,
 };

@@ -1,6 +1,6 @@
 # qrdx
 
-Customizable QR codes for React: SVG and canvas rendering, dot and eye patterns, gradients, logos, call-to-action frames, Logo QR and Image QR art, PNG/JPG/WebP/SVG/PDF/EPS export, print-ready files, a scan score and QR scanning.
+Customizable QR codes for React and plain JavaScript: SVG and canvas rendering, dot and eye patterns, gradients, logos, call-to-action frames, Logo QR and Image QR art, PNG/JPG/WebP/SVG/PDF/EPS export, print-ready files, a scan score and QR scanning.
 
 It powers the [QRdx](https://qrdx.dev) QR code generator. Docs: [qrdx.dev/docs](https://qrdx.dev/docs) · CLI: [`@qrdx/cli`](https://www.npmjs.com/package/@qrdx/cli) · No-code: [image API](https://qrdx.dev/docs/developers/image-api) and [MCP server](https://qrdx.dev/docs/developers/mcp)
 
@@ -11,7 +11,7 @@ npm install qrdx
 # or: pnpm add qrdx / yarn add qrdx
 ```
 
-`react` and `react-dom` (18 or newer) are peer dependencies. PDF export also needs the optional `jspdf` peer, and PNG export in Node (`getQRAsPNG`, imported from `qrdx/node`) needs one of the optional rasterizer peers (`@resvg/resvg-js` draws the SVG — logos included — the way browsers do; `sharp` also works):
+`react` and `react-dom` (18 or newer) are optional peer dependencies: the React components need them, and [`qrdx/vanilla` and `qrdx/core`](#without-react-qrdxvanilla-and-qrdxcore) don't. PDF export also needs the optional `jspdf` peer, and PNG export in Node (`getQRAsPNG`, imported from `qrdx/node`) needs one of the optional rasterizer peers (`@resvg/resvg-js` draws the SVG — logos included — the way browsers do; `sharp` also works):
 
 ```bash
 npm install jspdf
@@ -125,6 +125,112 @@ import { QRCodeCanvas } from "qrdx";
 />;
 ```
 
+## Without React (`qrdx/vanilla` and `qrdx/core`)
+
+The engine under the React components is also published without React. `qrdx/core` draws the same SVG as `QRCodeSVG`, byte for byte, and has every export, download, print and scan-score function the main entry has. `qrdx/vanilla` adds `createQRCode`, which draws a code into an element and keeps it up to date. Neither imports `react` or `react-dom`.
+
+### In a page
+
+```js
+import { createQRCode } from "qrdx/vanilla";
+
+const qr = createQRCode("#qr", {
+  value: "https://example.com",
+  size: 256,
+  bodyPattern: "rounded",
+  frame: { style: "banner-bottom", text: "Scan me" },
+  "aria-label": "QR code for example.com",
+});
+
+qr.update({ fgColor: "#1d4ed8" }); // merges, redraws only when the markup changes
+qr.toSVGString(); // the SVG markup
+await qr.toDataURL("png", { size: 1024 }); // "png", "jpg", "webp", "svg", "pdf" or "eps"
+await qr.download({ format: "svg", filename: "menu.svg" });
+qr.destroy(); // removes the <svg>
+```
+
+`createQRCode(element, options)` takes an element or a CSS selector, and every option `QRCodeSVG` takes. Attributes such as `className`, `style` or `aria-label` go on the `<svg>`. It builds the `<svg>` with `createElementNS`, so no HTML is parsed. `qr.svg` is the element and `qr.options` the current options; `update` merges new options in (pass `undefined` to drop one).
+
+### Without a bundler
+
+`dist/vanilla.browser.mjs` is the same API as one ES module, for a `<script type="module">` served from a CDN:
+
+```html
+<div id="qr"></div>
+<script type="module">
+  import { createQRCode } from "https://cdn.jsdelivr.net/npm/qrdx/dist/vanilla.browser.mjs";
+
+  createQRCode("#qr", { value: "https://example.com", size: 256 });
+</script>
+```
+
+Add `@` and a version after `qrdx` in the URL to pin one. The file leaves out the official frame library's data (`OFFICIAL_FRAMES`, `getOfficialFrame`, `OFFICIAL_FRAME_INDEX`); import those from `dist/frames-official.mjs` and `dist/frames-index.mjs` next to it. PDF export and the scan score load `jspdf` and `jsqr` when they run, so a page that uses them maps both with an import map:
+
+```html
+<script type="importmap">
+  {
+    "imports": {
+      "jspdf": "https://cdn.jsdelivr.net/npm/jspdf@4/+esm",
+      "jsqr": "https://cdn.jsdelivr.net/npm/jsqr@1/+esm"
+    }
+  }
+</script>
+```
+
+### Markup, DOM nodes and other frameworks
+
+```ts
+import {
+  createQRCodeTree,
+  renderToDOM,
+  renderToString,
+  resolveQRCodeProps,
+  toHyperscript,
+  toSVGString,
+} from "qrdx/core";
+
+toSVGString({ value: "https://example.com" }); // what <QRCodeSVG> renders, in Node or a browser
+const tree = createQRCodeTree({ value: "https://example.com" }); // plain { type, props, key } nodes
+renderToString(tree); // the same markup
+renderToDOM(tree); // a DocumentFragment
+// Another framework's elements (Vue's or Preact's h), with DOM attribute names
+toHyperscript(tree, (type, attributes, children, key) => h(type, { ...attributes, key }, children));
+toSVGString(resolveQRCodeProps({ value: "https://example.com", logo: "/logo.png" })); // what <QRCode> renders
+```
+
+`getQRAsSVGNode(props)` is `getQRAsSVG` without React (it resolves to a tree). [docs/adapters.md](./docs/adapters.md) describes how a framework wrapper should use the core.
+
+## Vue (`qrdx/vue`)
+
+`qrdx/vue` has Vue 3 versions of `QRCode` and `QRCodeSVG`, with the React components' props and the same SVG, and a `useQRCode` composable. `vue` 3.3 or newer is an optional peer dependency; TypeScript checks the components' props with Vue 3.4.20 or newer.
+
+```vue
+<script setup lang="ts">
+import { QRCode, useQRCode } from "qrdx/vue";
+import { ref } from "vue";
+
+const url = ref("https://example.com");
+const { download } = useQRCode(() => ({ value: url.value, size: 256 }));
+</script>
+
+<template>
+  <QRCode
+    :value="url"
+    :size="256"
+    body-pattern="rounded"
+    :frame="{ style: 'banner-bottom', text: 'Scan me' }"
+    class="qr"
+  />
+  <button type="button" @click="download({ format: 'svg' })">Download</button>
+</template>
+```
+
+- Write props in kebab-case or camelCase. A flag such as `auto-level` needs no value. `class`, `style`, `aria-label`, other attributes and listeners go on the `<svg>` (the frame's outer `<svg>` when there is a frame).
+- When a prop changes, Vue updates the `<svg>` in place.
+- Both components render on the server with `vue/server-renderer` and hydrate without a mismatch. In Nuxt they work in server-rendered pages and inside `<ClientOnly>`.
+- `useQRCode(props)` takes `QRCode`'s props as an object, a ref, a reactive object or a getter. It returns `svg` (the markup as a computed ref, which works in SSR too), `options`, `toDataURL(format, { size, quality })` and `download({ format, filename, size, quality })`.
+- Everything in `qrdx/core` is re-exported. Its `h`, for custom templates, is the core's, not Vue's.
+
 ## Patterns
 
 See every option drawn live at [qrdx.dev/docs/styles](https://qrdx.dev/docs/styles).
@@ -218,6 +324,8 @@ const Framed: TemplateDefinition<{ label?: string }> = {
 <QRCodeSVG value="https://example.com" customTemplate={Framed} customProps={{ label: "Scan me" }} />;
 ```
 
+A wrapper gets React elements and returns them when a React component draws the code. With `qrdx/core` or `qrdx/vanilla` it gets the core's plain nodes instead, and a wrapper written with JSX still works as long as it uses no hooks. `h(type, props, ...children)` writes a wrapper without JSX that works in both; import it from the entry that draws the code (`qrdx` for the React components).
+
 ## Frames (call to action)
 
 `frame` draws a "Scan me" style frame around any code (`QRCode`, `QRCodeSVG`, `QRCodeCanvas`, `getQRAsSVG`, `getQRData` and the download helpers). The frame is added around the code, so the output grows; the modules and quiet zone are not touched.
@@ -281,7 +389,7 @@ const spec: FrameSpec = {
 
 **Validation.** `frameSpecSchema` (zod) checks every field and the hard limits in `FRAME_SPEC_LIMITS`: artboard sides of 50 to 2000 units, at most 3 decimals per number, 64 shapes, 8 labels, 256 points per polygon, 16,000 characters per path, 2,000 segments in all, 32 KB of JSON, a code at least half the artboard's shorter side and padding of at least 4% of the code. `getFrameSpecIssues(spec)` lists problems as text. Drawing an invalid spec throws a `FrameSpecError` instead of leaving the frame out.
 
-**Official frames.** `OFFICIAL_FRAMES` is QRdx's frame library: call-to-action styles (tabs, ribbons, speech bubbles, tickets, stamps, badges, phones, arrows and more), holidays and seasons from around the world, and frames for restaurants and cafes, shops and packaging, events and weddings, hotels, travel and homes, health, fitness and learning, and business and social. Each has an `id`, `name`, `description`, `collection`, an `occasion` when it is seasonal (such as `"diwali"` or `"summer"`), suggested `contentTypes` and `tags`, and is released under CC0 1.0. `getOfficialFrame(id)` returns one. `OFFICIAL_FRAME_COLLECTIONS` lists the groups in picker order, and `OFFICIAL_FRAME_COUNT` and `OFFICIAL_FRAME_COUNTS` count them. `OFFICIAL_FRAME_INDEX` lists every frame without its spec (id, name, collection, occasion, tags, the artboard's width-to-height `ratio` and `frameSpecHash(spec)`, which tells an unchanged copy of a frame apart from an edited one), so a picker can search and lay out the whole library before loading any spec. Ids never change. `BUILT_IN_FRAME_SPECS` has `banner-bottom`, `rounded-border`, `circle` and `ticket` written as specs, as starting points.
+**Official frames.** `OFFICIAL_FRAMES` is QRdx's frame library: call-to-action styles (tabs, ribbons, speech bubbles, tickets, stamps, badges, phones, arrows and more), holidays and seasons from around the world, and frames for restaurants and cafes, shops and packaging, beauty and wellness, events and weddings, hotels and travel, real estate, cars and parking, health and learning, sports and fitness, business and social, and nonprofits and community groups. Each has an `id`, `name`, `description`, `collection`, an `occasion` when it is seasonal (such as `"diwali"` or `"summer"`), suggested `contentTypes` and `tags`, and is released under CC0 1.0. `getOfficialFrame(id)` returns one. `OFFICIAL_FRAME_COLLECTIONS` lists the groups in picker order, and `OFFICIAL_FRAME_COUNT` and `OFFICIAL_FRAME_COUNTS` count them. `OFFICIAL_FRAME_INDEX` lists every frame without its spec (id, name, collection, occasion, tags, the artboard's width-to-height `ratio` and `frameSpecHash(spec)`, which tells an unchanged copy of a frame apart from an edited one), so a picker can search and lay out the whole library before loading any spec. Ids never change. `BUILT_IN_FRAME_SPECS` has `banner-bottom`, `rounded-border`, `circle` and `ticket` written as specs, as starting points.
 
 ```ts
 import { getOfficialFrame } from "qrdx";

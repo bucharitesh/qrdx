@@ -1,19 +1,19 @@
 ---
 title: "Template"
-description: "Applica template di cornice già pronti a un QR code, oppure registra i tuoi."
+description: "Applica template di cornice predefiniti a un QR code, oppure registra i tuoi."
 icon: LayoutTemplate
 ---
 
-Applica subito stili professionali ai tuoi QR code.
+Racchiudi un QR code in una grafica già pronta, oppure nella tua.
 
-## Cosa sono i template? [#what-are-templates]
+## Che cosa sono i template? [#what-are-templates]
 
-I template combinano colori, pattern e stili visivi in pacchetti pronti all'uso.
+Un template è una grafica SVG disegnata attorno al codice: un riquadro, un bordo, un badge. Riceve il codice come `children` e lo posiziona all'interno del proprio disegno. Colori, pattern e loghi restano nelle prop di `QRCode`, quindi un template funziona con qualsiasi stile.
 
 ## Template disponibili [#available-templates]
 
 ### Default [#default]
-Bianco e nero classico.
+Classico in bianco e nero.
 
 ```tsx
 import { QRCode } from 'qrdx';
@@ -58,15 +58,19 @@ Tema stagionale di Halloween.
 
 ## Personalizzare i template [#customize-templates]
 
-Sovrascrivi i valori predefiniti del template:
+I template integrati disegnano la loro grafica con `fgColor`. Tutto il resto, come i pattern e un logo, si imposta sul codice come al solito:
 
 ```tsx
 <QRCode
   value="https://example.com"
   templateId="Arrow"
-  fgColor="#your-brand-color"
-  hideLogo={false}
-  logo="/your-logo.png"
+  fgColor="#1a56db"
+  imageSettings={{
+    src: "/your-logo.png",
+    width: 48,
+    height: 48,
+    excavate: true,
+  }}
   size={512}
 />
 ```
@@ -92,29 +96,41 @@ const ids = getTemplateIds();
 
 ## Template personalizzati [#custom-templates]
 
-Crea i tuoi template:
+Scrivi il tuo template come `TemplateDefinition`. Il suo `wrapper` riceve il codice come `children` e restituisce l'SVG da disegnare. Disegna su una tela di 300 per 300 e anche il codice arriva con queste dimensioni, quindi riducilo per lasciare spazio alla tua grafica. `props` contiene `fgColor` e `bgColor` del codice.
+
+Questo esempio disegna un anello attorno al codice:
 
 ```tsx
-const brandTemplate = {
-  id: 'brand-template',
-  name: 'Brand Template',
-  colors: {
-    fgColor: '#1a56db',
-    bgColor: '#ffffff',
-    eyeColor: '#0d47a1',
-    dotColor: '#3b82f6'
-  },
-  bodyPattern: 'rounded',
-  cornerEyePattern: 'rounded',
-  cornerEyeDotPattern: 'rounded'
+import { QRCode, type TemplateDefinition } from "qrdx";
+
+const ringTemplate: TemplateDefinition = {
+  id: "ring",
+  name: "Ring",
+  wrapper: (children, props) => (
+    <svg viewBox="0 0 300 300" width="300" height="300" xmlns="http://www.w3.org/2000/svg">
+      <circle
+        cx="150"
+        cy="150"
+        r="140"
+        fill="none"
+        stroke={props?.fgColor ?? "#000000"}
+        strokeWidth="8"
+      />
+      {/* The code at half size, centered */}
+      <g transform="translate(75, 75) scale(0.5)">{children}</g>
+    </svg>
+  ),
 };
 
 <QRCode
   value="https://example.com"
-  customTemplate={brandTemplate}
+  customTemplate={ringTemplate}
+  fgColor="#1a56db"
   size={256}
 />
 ```
+
+Mantieni il codice abbastanza grande da poter essere scansionato dalla distanza a cui le persone terranno il telefono e lascia uno spazio chiaro tra il codice e la tua grafica. Controlla il risultato con il [punteggio di scansione](/docs/features/frames#will-it-scan).
 
 ## Quando usare i template [#when-to-use-templates]
 
@@ -125,16 +141,16 @@ const brandTemplate = {
 
 ## Guida alla scelta del template [#template-selection-guide]
 
-| Template | Ideale per | Mood |
+| Template | Ideale per | Atmosfera |
 |----------|----------|------|
-| Default | Professionale | Neutro |
-| Arrow | Tecnologia, moderno | Dinamico |
+| Default | Professionale | Neutra |
+| Arrow | Tecnologia, moderno | Dinamica |
 | Standard Box | Aziendale | Professionale |
-| Square Border | Formale | Strutturato |
-| Striked Box | Marketing | Energico |
+| Square Border | Formale | Strutturata |
+| Striked Box | Marketing | Energica |
 | Halloween | Stagionale | Divertente |
 
-## Prossimi passi [#next-steps]
+## Passi successivi [#next-steps]
 
 - [Pattern](/docs/features/patterns) — Personalizzazione dettagliata dei pattern
 - [Colori e gradienti](/docs/features/colors-gradients) — Colori avanzati

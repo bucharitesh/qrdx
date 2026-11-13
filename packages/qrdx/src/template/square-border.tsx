@@ -1,3 +1,4 @@
+/** @jsxImportSource ../jsx */
 import type { TemplateDefinition } from "../../types";
 
 export const SquareBorder: TemplateDefinition = {

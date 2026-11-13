@@ -1,14 +1,14 @@
 ---
 title: "टेम्पलेट"
-description: "QR कोड पर पहले से डिज़ाइन किए गए फ़्रेम टेम्पलेट लगाएँ, या अपना खुद का रजिस्टर करें।"
+description: "QR कोड पर पहले से डिज़ाइन किए गए फ़्रेम टेम्पलेट लगाएँ, या अपना टेम्पलेट रजिस्टर करें।"
 icon: LayoutTemplate
 ---
 
-प्रोफ़ेशनल QR कोड स्टाइल तुरंत लगाएँ।
+QR कोड को तैयार आर्टवर्क में लपेटें, या अपने खुद के आर्टवर्क में।
 
 ## टेम्पलेट क्या होते हैं? [#what-are-templates]
 
-टेम्पलेट रंग, पैटर्न और विज़ुअल स्टाइल को एक साथ जोड़कर इस्तेमाल के लिए तैयार पैकेज बनाते हैं।
+टेम्पलेट कोड के चारों ओर बना SVG आर्टवर्क होता है: जैसे बॉक्स, बॉर्डर या बैज। यह कोड को `children` के रूप में लेता है और उसे अपनी ड्रॉइंग के अंदर रखता है। रंग, पैटर्न और लोगो `QRCode` props पर ही रहते हैं, इसलिए टेम्पलेट किसी भी स्टाइल के साथ काम करता है।
 
 ## उपलब्ध टेम्पलेट [#available-templates]
 
@@ -22,7 +22,7 @@ import { QRCode } from 'qrdx';
 ```
 
 ### Arrow [#arrow]
-मॉडर्न ज्योमेट्रिक डिज़ाइन।
+मॉडर्न ज्यामितीय डिज़ाइन।
 
 ```tsx
 <QRCode value="https://example.com" templateId="Arrow" size={256} />
@@ -36,7 +36,7 @@ import { QRCode } from 'qrdx';
 ```
 
 ### Square Border [#square-border]
-स्पष्ट किनारों वाला बॉर्डर डिज़ाइन।
+साफ़ किनारों वाला बॉर्डर डिज़ाइन।
 
 ```tsx
 <QRCode value="https://example.com" templateId="SquareBorder" size={256} />
@@ -50,7 +50,7 @@ import { QRCode } from 'qrdx';
 ```
 
 ### Halloween [#halloween]
-हैलोवीन की सीज़नल थीम।
+हैलोवीन के मौसम की थीम।
 
 ```tsx
 <QRCode value="https://example.com" templateId="Halloween" size={256} />
@@ -58,15 +58,19 @@ import { QRCode } from 'qrdx';
 
 ## टेम्पलेट कस्टमाइज़ करें [#customize-templates]
 
-टेम्पलेट की डिफ़ॉल्ट सेटिंग बदलें:
+बिल्ट-इन टेम्पलेट अपना आर्टवर्क `fgColor` में बनाते हैं। बाकी सब कुछ, जैसे पैटर्न और लोगो, हमेशा की तरह कोड पर सेट किया जाता है:
 
 ```tsx
 <QRCode
   value="https://example.com"
   templateId="Arrow"
-  fgColor="#your-brand-color"
-  hideLogo={false}
-  logo="/your-logo.png"
+  fgColor="#1a56db"
+  imageSettings={{
+    src: "/your-logo.png",
+    width: 48,
+    height: 48,
+    excavate: true,
+  }}
   size={512}
 />
 ```
@@ -92,40 +96,52 @@ const ids = getTemplateIds();
 
 ## कस्टम टेम्पलेट [#custom-templates]
 
-अपने खुद के टेम्पलेट बनाएँ:
+अपना टेम्पलेट `TemplateDefinition` के रूप में लिखें। इसका `wrapper` कोड को `children` के रूप में लेता है और ड्रॉ करने के लिए SVG लौटाता है। यह 300 गुणा 300 के कैनवास पर बनता है, और कोड भी उसी साइज़ में आता है, इसलिए अपने आर्टवर्क के लिए जगह छोड़ने हेतु उसे छोटा करें। `props` में कोड के `fgColor` और `bgColor` होते हैं।
+
+यह टेम्पलेट कोड के चारों ओर एक रिंग बनाता है:
 
 ```tsx
-const brandTemplate = {
-  id: 'brand-template',
-  name: 'Brand Template',
-  colors: {
-    fgColor: '#1a56db',
-    bgColor: '#ffffff',
-    eyeColor: '#0d47a1',
-    dotColor: '#3b82f6'
-  },
-  bodyPattern: 'rounded',
-  cornerEyePattern: 'rounded',
-  cornerEyeDotPattern: 'rounded'
+import { QRCode, type TemplateDefinition } from "qrdx";
+
+const ringTemplate: TemplateDefinition = {
+  id: "ring",
+  name: "Ring",
+  wrapper: (children, props) => (
+    <svg viewBox="0 0 300 300" width="300" height="300" xmlns="http://www.w3.org/2000/svg">
+      <circle
+        cx="150"
+        cy="150"
+        r="140"
+        fill="none"
+        stroke={props?.fgColor ?? "#000000"}
+        strokeWidth="8"
+      />
+      {/* The code at half size, centered */}
+      <g transform="translate(75, 75) scale(0.5)">{children}</g>
+    </svg>
+  ),
 };
 
 <QRCode
   value="https://example.com"
-  customTemplate={brandTemplate}
+  customTemplate={ringTemplate}
+  fgColor="#1a56db"
   size={256}
 />
 ```
 
+कोड को इतना बड़ा रखें कि लोग जहाँ से फ़ोन पकड़ेंगे वहाँ से वह स्कैन हो सके, और उसके व मौजूद आर्टवर्क के बीच हल्की खाली जगह छोड़ें। नतीजे को [स्कैन स्कोर](/docs/features/frames#will-it-scan) से जाँचें।
+
 ## टेम्पलेट कब इस्तेमाल करें [#when-to-use-templates]
 
-- **ब्रांड में एकरूपता** — सभी QR कोड एक जैसे दिखें
+- **ब्रांड में एकरूपता** — सुनिश्चित करें कि सभी QR कोड एक जैसे दिखें
 - **तेज़ सेटअप** — प्रोफ़ेशनल नतीजे जल्दी पाएँ
 - **सीज़नल कैंपेन** — थीम वाले टेम्पलेट इस्तेमाल करें
 - **बैच जनरेशन** — एक जैसी स्टाइल लगाएँ
 
 ## टेम्पलेट चुनने की गाइड [#template-selection-guide]
 
-| टेम्पलेट | किसके लिए सबसे अच्छा | मूड |
+| टेम्पलेट | किसके लिए बेहतर | मूड |
 |----------|----------|------|
 | Default | प्रोफ़ेशनल | न्यूट्रल |
 | Arrow | टेक, मॉडर्न | डायनेमिक |

@@ -255,7 +255,10 @@ export const scanAnalyticsSchema = named(
     retentionDays: z
       .number()
       .int()
-      .describe("How far back the plan keeps analytics"),
+      .nullable()
+      .describe(
+        "How far back the plan's analytics reach, in days; null when the plan keeps the whole history",
+      ),
     from: dateTime("Start of the range (00:00 UTC)"),
     days: z.number().int(),
     total: z.number().int().describe("Scans in the range"),
