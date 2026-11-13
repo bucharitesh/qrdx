@@ -1,0 +1,70 @@
+{
+  "id": "juice-bar",
+  "name": "Juice bar",
+  "description": "An arched card, like a window, with a piece of fruit.",
+  "category": "use-case",
+  "collection": "food-drink",
+  "contentTypes": ["url"],
+  "tags": ["restaurant", "food", "juice", "smoothie"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1880
+    },
+    "qr": {
+      "x": 160,
+      "y": 470,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M0 660A660 660 0 0 1 1320 660L1320 1840Q1320 1880 1280 1880L40 1880Q0 1880 0 1840Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M50 660A610 610 0 0 1 1270 660L1270 1830L50 1830ZM62 660L62 1818L1258 1818L1258 660A598 598 0 0 0 62 660Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.35
+        }
+      },
+      {
+        "type": "path",
+        "d": "M660 214.5C675 199.5 717 202.5 717 244.5C717 280.5 690 307.5 672 304.5C666 303 654 303 648 304.5C630 307.5 603 280.5 603 244.5C603 202.5 645 199.5 660 214.5ZM663.69 209.15A3.75 3.75 0 0 0 656.31 207.85L660.81 182.35A3.75 3.75 0 0 0 668.19 183.65L663.69 209.15Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M667.5 196.5C673.5 177 694.5 174 708 180C699 196.5 679.5 202.5 667.5 196.5Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Build your juice",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1610,
+          "width": 1040,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

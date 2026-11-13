@@ -1,0 +1,74 @@
+{
+  "id": "car-for-sale",
+  "name": "Car for sale",
+  "description": "A solid card with the front of a car over the code and the label underneath.",
+  "category": "use-case",
+  "collection": "automotive",
+  "contentTypes": ["url"],
+  "tags": ["cars", "parking", "for sale", "used cars"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M575 80C578 69.5 584 65 593 65L647 65C656 65 662 69.5 665 80L674 104L684.5 102.5L684.5 114.5L677 116L680 122L680 152L560 152L560 122L563 116L555.5 114.5L555.5 102.5L566 104ZM570.5 149L585.5 149A4.5 4.5 0 0 1 590 153.5L590 165.5A4.5 4.5 0 0 1 585.5 170L570.5 170A4.5 4.5 0 0 1 566 165.5L566 153.5A4.5 4.5 0 0 1 570.5 149ZM654.5 149L669.5 149A4.5 4.5 0 0 1 674 153.5L674 165.5A4.5 4.5 0 0 1 669.5 170L654.5 170A4.5 4.5 0 0 1 650 165.5L650 153.5A4.5 4.5 0 0 1 654.5 149ZM578 101L662 101L653 74L587 74ZM570.5 126.5A9 9 0 1 0 588.5 126.5A9 9 0 1 0 570.5 126.5ZM651.5 126.5A9 9 0 1 0 669.5 126.5A9 9 0 1 0 651.5 126.5ZM603.5 122A3 3 0 0 0 600.5 125L600.5 132.5A3 3 0 0 0 603.5 135.5L636.5 135.5A3 3 0 0 0 639.5 132.5L639.5 125A3 3 0 0 0 636.5 122L603.5 122Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "This car is for sale",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan for details",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

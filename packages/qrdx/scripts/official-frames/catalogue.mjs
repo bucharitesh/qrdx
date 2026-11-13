@@ -1,5 +1,11 @@
 // The new official frames: id, name, layout, labels, motif and colors.
 // Descriptions are written from the layout, the motif and the colors.
+import {
+  addIndustryFrames,
+  INDUSTRY_LAYOUT_PLAIN,
+  INDUSTRY_LAYOUT_WORDS,
+  INDUSTRY_MOTIF_WORDS,
+} from "./catalogue-industries.mjs";
 
 const MONO = { frame: "#111111", text: "#ffffff", accent: "#111111", word: "" };
 const SOFT = { frame: "#111111", text: "#ffffff", accent: "#8a8a8a", word: "" };
@@ -377,6 +383,7 @@ const LAYOUT = {
   jarLabel:
     "A wide label with curved top and bottom edges, the code beside {m}",
   flagBand: "Flag colors in a band over the code{mw}",
+  ...INDUSTRY_LAYOUT_WORDS,
 };
 
 const MOTIF_WORDS = {
@@ -557,6 +564,7 @@ const MOTIF_WORDS = {
   "icon:tree": "a fir tree",
   "icon:sparkle": "a sparkle",
   "icon:gift": "a gift",
+  ...INDUSTRY_MOTIF_WORDS,
 };
 
 /** Phrases for layouts whose {m} slot is empty (no motif). */
@@ -576,6 +584,7 @@ const LAYOUT_PLAIN = {
   doubleLine: "A thin double border with a small divider and the label",
   shield: "A shield with a banner across the bottom",
   jarLabel: "A wide label with curved top and bottom edges",
+  ...INDUSTRY_LAYOUT_PLAIN,
 };
 
 /** Motifs a layout draws when the entry names none. */
@@ -3891,7 +3900,7 @@ f(
   ["directions"],
   ["location", "url"]
 );
-section("places", undefined, ["real estate", "property"], ["url"]);
+section("real-estate", undefined, ["real estate", "property"], ["url"]);
 f(
   "property-for-sale",
   "For sale sign",
@@ -4057,7 +4066,7 @@ f(
   MONO,
   ["vet", "pets"]
 );
-section("health-learning", undefined, ["fitness", "gym"], ["url"]);
+section("sports-fitness", undefined, ["fitness", "gym"], ["url"]);
 f(
   "fitness-schedule",
   "Class schedule",
@@ -4648,3 +4657,6 @@ f(
   MONO,
   ["launch", "announcement"]
 );
+
+// Industries and everyday uses (catalogue-industries.mjs)
+addIndustryFrames({ section, f });

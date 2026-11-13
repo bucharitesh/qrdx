@@ -1,0 +1,108 @@
+{
+  "id": "join-the-webinar",
+  "name": "Webinar",
+  "description": "A light card with a laptop and a pill-shaped button under the code.",
+  "category": "use-case",
+  "collection": "business",
+  "contentTypes": ["url"],
+  "tags": ["business", "webinar", "online"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1760
+    },
+    "qr": {
+      "x": 120,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 64,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 64,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.82
+        },
+        "hole": {
+          "x": 12,
+          "y": 12,
+          "width": 1216,
+          "height": 1736,
+          "radius": 54
+        }
+      },
+      {
+        "type": "path",
+        "d": "M579.7 51.8L660.3 51.8A6.5 6.5 0 0 1 666.8 58.3L666.8 110.3A6.5 6.5 0 0 1 660.3 116.8L579.7 116.8A6.5 6.5 0 0 1 573.2 110.3L573.2 58.3A6.5 6.5 0 0 1 579.7 51.8ZM583.6 59.6A2.6 2.6 0 0 0 581 62.2L581 106.4A2.6 2.6 0 0 0 583.6 109L656.4 109A2.6 2.6 0 0 0 659 106.4L659 62.2A2.6 2.6 0 0 0 656.4 59.6L583.6 59.6ZM560.2 122L679.8 122L672 137.6L568 137.6Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M611.55 124.6A1.95 1.95 0 0 0 609.6 126.55L609.6 126.55A1.95 1.95 0 0 0 611.55 128.5L628.45 128.5A1.95 1.95 0 0 0 630.4 126.55L630.4 126.55A1.95 1.95 0 0 0 628.45 124.6L611.55 124.6Z",
+        "fill": "accent"
+      },
+      {
+        "type": "rect",
+        "x": 170,
+        "y": 1520,
+        "width": 900,
+        "height": 180,
+        "radius": 90,
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Join the webinar",
+        "color": "text",
+        "box": {
+          "x": 230,
+          "y": 1520,
+          "width": 780,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Live online",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 180,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

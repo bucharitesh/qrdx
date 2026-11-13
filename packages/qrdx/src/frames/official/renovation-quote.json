@@ -1,0 +1,80 @@
+{
+  "id": "renovation-quote",
+  "name": "Renovation quote",
+  "description": "A solid card with a paint roller over the code and the label underneath.",
+  "category": "use-case",
+  "collection": "real-estate",
+  "contentTypes": ["url"],
+  "tags": ["real estate", "property", "renovation", "decorating"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M573.5 50L642.5 50A13.5 13.5 0 0 1 656 63.5L656 75.5A13.5 13.5 0 0 1 642.5 89L573.5 89A13.5 13.5 0 0 1 560 75.5L560 63.5A13.5 13.5 0 0 1 573.5 50ZM656 65.75L678.76 67.65L677.81 106.95L621.64 116.37L623.75 131L616.25 131L618.36 109.63L673.19 101.05L672.24 71.35L656 73.25ZM620 128L620 128A10.5 10.5 0 0 1 630.5 138.5L630.5 168.5A10.5 10.5 0 0 1 620 179L620 179A10.5 10.5 0 0 1 609.5 168.5L609.5 138.5A10.5 10.5 0 0 1 620 128Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M574.25 62A2.25 2.25 0 0 0 572 64.25L572 64.25A2.25 2.25 0 0 0 574.25 66.5L641.75 66.5A2.25 2.25 0 0 0 644 64.25L644 64.25A2.25 2.25 0 0 0 641.75 62L574.25 62Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Get a renovation quote",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Painting and decorating",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

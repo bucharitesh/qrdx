@@ -1,0 +1,79 @@
+{
+  "id": "run-club",
+  "name": "Run club",
+  "description": "A card with its top corner folded down and a sneaker.",
+  "category": "use-case",
+  "collection": "sports-fitness",
+  "contentTypes": ["url"],
+  "tags": ["sports", "fitness", "running", "club"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1770
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M0 0L1000 0L1240 240L1240 1770L0 1770Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M1000 0L1000 220L1020 240L1240 240Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.6
+        }
+      },
+      {
+        "type": "path",
+        "d": "M77 177L77 153C77 141 86 135 98 138L125 144C137 135 143 120 152 114L164 111C170 126 179 144 194 153C206 159 209 166.5 209 177ZM83.75 183L202.25 183A9.75 9.75 0 0 1 212 192.75L212 192.75A9.75 9.75 0 0 1 202.25 202.5L83.75 202.5A9.75 9.75 0 0 1 74 192.75L74 192.75A9.75 9.75 0 0 1 83.75 183ZM138.7 147.2L149.2 136.7A2.4 2.4 0 0 1 145.8 133.3L135.3 143.8A2.4 2.4 0 0 1 138.7 147.2ZM150.7 154.7L161.2 144.2A2.4 2.4 0 0 1 157.8 140.8L147.3 151.3A2.4 2.4 0 0 1 150.7 154.7ZM162.56 160.82L173.06 151.82A2.4 2.4 0 0 1 169.94 148.18L159.44 157.18A2.4 2.4 0 0 1 162.56 160.82Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Join the run club",
+        "color": "text",
+        "box": {
+          "x": 90,
+          "y": 1530,
+          "width": 1060,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "All paces welcome",
+        "color": "text",
+        "box": {
+          "x": 260,
+          "y": 100,
+          "width": 700,
+          "height": 100
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

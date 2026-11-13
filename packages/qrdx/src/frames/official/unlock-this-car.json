@@ -1,0 +1,82 @@
+{
+  "id": "unlock-this-car",
+  "name": "Car sharing",
+  "description": "A wide card: the code on one side, a car key and the label on the other.",
+  "category": "use-case",
+  "collection": "automotive",
+  "contentTypes": ["url"],
+  "tags": ["cars", "parking", "car sharing"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 2000,
+      "height": 1040
+    },
+    "qr": {
+      "x": 120,
+      "y": 120,
+      "size": 800,
+      "padding": 64,
+      "radius": 19.2
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 2000,
+        "height": 1040,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M1076.8 228.4L1102 228.4A25.2 25.2 0 0 1 1127.2 253.6L1127.2 300.4A25.2 25.2 0 0 1 1102 325.6L1076.8 325.6A25.2 25.2 0 0 1 1051.6 300.4L1051.6 253.6A25.2 25.2 0 0 1 1076.8 228.4ZM1123.6 264.4L1188.4 264.4L1199.2 275.2L1188.4 286L1174 286L1168.6 278.8L1159.6 286L1145.2 286L1139.8 278.8L1130.8 286L1123.6 286ZM1078.6 257.2A10.8 10.8 0 1 0 1100.2 257.2A10.8 10.8 0 1 0 1078.6 257.2ZM1078.6 295A10.8 10.8 0 1 0 1100.2 295A10.8 10.8 0 1 0 1078.6 295ZM1064.2 199.6A25.2 25.2 0 1 1 1114.6 199.6A25.2 25.2 0 1 1 1064.2 199.6ZM1073.2 199.6A16.2 16.2 0 1 0 1105.6 199.6A16.2 16.2 0 1 0 1073.2 199.6Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M1082.2 314.8L1096.6 314.8A1.8 1.8 0 0 1 1098.4 316.6L1098.4 316.6A1.8 1.8 0 0 1 1096.6 318.4L1082.2 318.4A1.8 1.8 0 0 1 1080.4 316.6L1080.4 316.6A1.8 1.8 0 0 1 1082.2 314.8Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Unlock this car",
+        "color": "text",
+        "box": {
+          "x": 1030,
+          "y": 400,
+          "width": 860,
+          "height": 190
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Car sharing",
+        "color": "text",
+        "box": {
+          "x": 1030,
+          "y": 610,
+          "width": 860,
+          "height": 100
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

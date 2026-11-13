@@ -1,0 +1,107 @@
+{
+  "id": "podcast",
+  "name": "Podcast",
+  "description": "A phone with the code on its screen and a microphone.",
+  "category": "use-case",
+  "collection": "business",
+  "contentTypes": ["url"],
+  "tags": ["business", "podcast", "audio"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1360,
+      "height": 2000
+    },
+    "qr": {
+      "x": 180,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1360,
+        "height": 2000,
+        "radius": 190,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 60,
+        "y": 60,
+        "width": 1240,
+        "height": 1880,
+        "radius": 150,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 550,
+        "y": 76,
+        "width": 260,
+        "height": 64,
+        "radius": 32,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M680 197.2L680 197.2A19.2 19.2 0 0 1 699.2 216.4L699.2 242.8A19.2 19.2 0 0 1 680 262L680 262A19.2 19.2 0 0 1 660.8 242.8L660.8 216.4A19.2 19.2 0 0 1 680 197.2Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M713.6 240.4A33.6 33.6 0 0 1 646.4 240.4L653.6 240.4A26.4 26.4 0 0 0 706.4 240.4ZM676.4 274L683.6 274L683.6 295.6L676.4 295.6ZM659.6 295.6L700.4 295.6A3.6 3.6 0 0 1 704 299.2L704 299.2A3.6 3.6 0 0 1 700.4 302.8L659.6 302.8A3.6 3.6 0 0 1 656 299.2L656 299.2A3.6 3.6 0 0 1 659.6 295.6Z",
+        "fill": "accent"
+      },
+      {
+        "type": "rect",
+        "x": 510,
+        "y": 1880,
+        "width": 340,
+        "height": 18,
+        "radius": 9,
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Listen to our podcast",
+        "color": "frame",
+        "box": {
+          "x": 160,
+          "y": 1550,
+          "width": 1040,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "New episodes weekly",
+        "color": "frame",
+        "box": {
+          "x": 180,
+          "y": 1735,
+          "width": 1000,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

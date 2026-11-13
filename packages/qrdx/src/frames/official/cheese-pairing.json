@@ -1,0 +1,91 @@
+{
+  "id": "cheese-pairing",
+  "name": "Cheese pairing",
+  "description": "A wide label with curved top and bottom edges, the code beside a wedge of cheese.",
+  "category": "use-case",
+  "collection": "food-drink",
+  "contentTypes": ["url"],
+  "tags": ["restaurant", "food", "cheese", "deli"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 2000,
+      "height": 1400
+    },
+    "qr": {
+      "x": 200,
+      "y": 300,
+      "size": 800,
+      "padding": 64,
+      "radius": 19.2
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M0 100Q1000 0 2000 100L2000 1300Q1000 1400 0 1300Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.88
+        }
+      },
+      {
+        "type": "path",
+        "d": "M40 150Q1000 50 1960 150L1960 162Q1000 62 40 162Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M40 1238Q1000 1338 1960 1238L1960 1250Q1000 1350 40 1250Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M1130.8 527.6L1289.2 455.6L1289.2 542L1130.8 542ZM1165.9 524A8.1 8.1 0 1 0 1182.1 524A8.1 8.1 0 1 0 1165.9 524ZM1209.1 509.6A11.7 11.7 0 1 0 1232.5 509.6A11.7 11.7 0 1 0 1209.1 509.6ZM1255.9 488A8.1 8.1 0 1 0 1272.1 488A8.1 8.1 0 1 0 1255.9 488ZM1249.6 524A7.2 7.2 0 1 0 1264 524A7.2 7.2 0 1 0 1249.6 524ZM1198.3 533A4.5 4.5 0 1 0 1207.3 533A4.5 4.5 0 1 0 1198.3 533Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M1130.8 520.4L1260.4 437.6L1289.2 448.4Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for pairing tips",
+        "color": "frame",
+        "box": {
+          "x": 1110,
+          "y": 640,
+          "width": 800,
+          "height": 170
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Aged cheese",
+        "color": "frame",
+        "box": {
+          "x": 1110,
+          "y": 830,
+          "width": 800,
+          "height": 100
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

@@ -1,0 +1,92 @@
+{
+  "id": "car-service",
+  "name": "Car service",
+  "description": "A folder tab on top carrying the label and a wrench.",
+  "category": "use-case",
+  "collection": "automotive",
+  "contentTypes": ["calcom", "url"],
+  "tags": ["cars", "parking", "garage", "service"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1560
+    },
+    "qr": {
+      "x": 120,
+      "y": 290,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1000,
+        "height": 220,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 170,
+        "width": 1240,
+        "height": 1390,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 170,
+        "width": 200,
+        "height": 100,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M854.27 57.69L858.54 55.91L863.06 54.93L867.68 54.79L872.25 55.51L876.62 57.04L880.63 59.35L884.15 62.36L887.06 65.95L889.26 70.02L890.69 74.42L891.28 79.01L891.03 83.63L889.94 88.12L888.04 92.34L885.4 96.14L882.12 99.4L878.29 102L874.05 103.86L869.55 104.91L864.93 105.12L860.34 104.48L855.96 103.01L851.91 100.77L848.34 97.83L845.37 94.28L843.1 90.25L841.61 85.87L840.94 81.29L841.11 76.67L842.13 72.16L852.04 79.9L863.61 66.11ZM888.96 88.17L931.25 123.65A8.4 8.4 40 0 1 932.29 135.48L932.29 135.48A8.4 8.4 40 0 1 920.45 136.52L878.17 101.04A8.4 8.4 40 0 1 877.13 89.2L877.13 89.2A8.4 8.4 40 0 1 888.96 88.17ZM922.17 127A3.6 3.6 40 1 0 927.69 131.63A3.6 3.6 40 1 0 922.17 127Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Book a service",
+        "color": "text",
+        "box": {
+          "x": 60,
+          "y": 25,
+          "width": 740,
+          "height": 150
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Oil, tires and brakes",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 1400,
+          "width": 1000,
+          "height": 100
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

@@ -1,0 +1,84 @@
+{
+  "id": "sofa-fabric",
+  "name": "Sofa fabric",
+  "description": "A card with its top corner folded down and a sofa.",
+  "category": "use-case",
+  "collection": "shopping",
+  "contentTypes": ["url"],
+  "tags": ["retail", "shop", "furniture", "sofa"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1770
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M0 0L1000 0L1240 240L1240 1770L0 1770Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M18 18L992.62 18L1222 247.38L1222 1752L18 1752Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.9
+        }
+      },
+      {
+        "type": "path",
+        "d": "M1000 0L1000 220L1020 240L1240 240Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M107 114L173 114A15 15 0 0 1 188 129L188 144A15 15 0 0 1 173 159L107 159A15 15 0 0 1 92 144L92 129A15 15 0 0 1 107 114ZM84.5 138L87.5 138A13.5 13.5 0 0 1 101 151.5L101 181.5A13.5 13.5 0 0 1 87.5 195L84.5 195A13.5 13.5 0 0 1 71 181.5L71 151.5A13.5 13.5 0 0 1 84.5 138ZM192.5 138L195.5 138A13.5 13.5 0 0 1 209 151.5L209 181.5A13.5 13.5 0 0 1 195.5 195L192.5 195A13.5 13.5 0 0 1 179 181.5L179 151.5A13.5 13.5 0 0 1 192.5 138ZM110 162L170 162A6 6 0 0 1 176 168L176 183A6 6 0 0 1 170 189L110 189A6 6 0 0 1 104 183L104 168A6 6 0 0 1 110 162ZM83 195L87.5 195A3 3 0 0 1 90.5 198L90.5 207A3 3 0 0 1 87.5 210L83 210A3 3 0 0 1 80 207L80 198A3 3 0 0 1 83 195ZM192.5 195L197 195A3 3 0 0 1 200 198L200 207A3 3 0 0 1 197 210L192.5 210A3 3 0 0 1 189.5 207L189.5 198A3 3 0 0 1 192.5 195Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Order in your fabric",
+        "color": "frame",
+        "box": {
+          "x": 90,
+          "y": 1530,
+          "width": 1060,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Sizes and colors",
+        "color": "frame",
+        "box": {
+          "x": 260,
+          "y": 100,
+          "width": 700,
+          "height": 100
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "id": "garden-plot",
+  "name": "Community garden",
+  "description": "A solid card with a sprout over the code and the label underneath.",
+  "category": "use-case",
+  "collection": "nonprofit",
+  "contentTypes": ["url"],
+  "tags": ["nonprofit", "community", "community garden"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M624.5 176L624.5 172.41L624.5 168.83L624.5 165.27L624.5 161.72L624.5 158.19L624.5 154.67L624.5 151.17L624.5 147.68L624.5 144.21L624.5 140.75L624.5 137.31L624.5 133.88L624.5 130.47L624.5 127.07L624.5 123.69L624.5 120.32L624.5 116.97L624.5 113.63L624.5 110.31L624.5 107A4.5 4.5 0 0 1 615.5 107L615.5 110.31L615.5 113.63L615.5 116.97L615.5 120.32L615.5 123.69L615.5 127.07L615.5 130.47L615.5 133.88L615.5 137.31L615.5 140.75L615.5 144.21L615.5 147.68L615.5 151.17L615.5 154.67L615.5 158.19L615.5 161.72L615.5 165.27L615.5 168.83L615.5 172.41L615.5 176A4.5 4.5 0 0 1 624.5 176ZM620 113C618.49 91.87 594.19 75.67 566 77C565.63 118.51 589.93 134.71 620 113ZM620 104C654.56 126.15 678.86 107.25 674 62C642.39 60.36 618.09 79.26 620 104Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Get a garden plot",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Community garden",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

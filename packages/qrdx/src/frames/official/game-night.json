@@ -1,0 +1,79 @@
+{
+  "id": "game-night",
+  "name": "Game night",
+  "description": "A speech bubble around the code with a game controller and the label inside.",
+  "category": "use-case",
+  "collection": "shopping",
+  "contentTypes": ["url"],
+  "tags": ["retail", "shop", "games", "game store"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1820
+    },
+    "qr": {
+      "x": 120,
+      "y": 360,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1670,
+        "radius": 90,
+        "fill": "frame"
+      },
+      {
+        "type": "polygon",
+        "points": [[130, 1660], [310, 1660], [80, 1820]],
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M594.7 78L645.3 78C662.9 78 670.6 93.4 670.6 111C670.6 128.6 661.8 137.4 653 137.4C644.2 137.4 639.8 126.4 635.4 119.8L604.6 119.8C600.2 126.4 595.8 137.4 587 137.4C578.2 137.4 569.4 128.6 569.4 111C569.4 93.4 577.1 78 594.7 78ZM590.3 96.7L583.7 96.7L583.7 103.3L590.3 103.3L590.3 109.9L596.9 109.9L596.9 103.3L603.5 103.3L603.5 96.7L596.9 96.7L596.9 90.1L590.3 90.1ZM639.8 92.3A4.4 4.4 0 1 0 648.6 92.3A4.4 4.4 0 1 0 639.8 92.3ZM649.7 100A4.4 4.4 0 1 0 658.5 100A4.4 4.4 0 1 0 649.7 100ZM639.8 107.7A4.4 4.4 0 1 0 648.6 107.7A4.4 4.4 0 1 0 639.8 107.7ZM629.9 100A4.4 4.4 0 1 0 638.7 100A4.4 4.4 0 1 0 629.9 100Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Join game night",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1465,
+          "width": 1040,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "All welcome",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 170,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

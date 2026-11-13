@@ -1,0 +1,80 @@
+{
+  "id": "student-portal",
+  "name": "Student portal",
+  "description": "A solid card with an ID badge over the code and the label underneath.",
+  "category": "use-case",
+  "collection": "health-learning",
+  "contentTypes": ["url"],
+  "tags": ["education", "school", "students", "portal"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M581 56L659 56A12 12 0 0 1 671 68L671 164A12 12 0 0 1 659 176L581 176A12 12 0 0 1 569 164L569 68A12 12 0 0 1 581 56ZM608.75 66.5A3.75 3.75 0 0 0 605 70.25L605 70.25A3.75 3.75 0 0 0 608.75 74L631.25 74A3.75 3.75 0 0 0 635 70.25L635 70.25A3.75 3.75 0 0 0 631.25 66.5L608.75 66.5ZM605 101A15 15 0 1 0 635 101A15 15 0 1 0 605 101ZM647 143C647 119 593 119 593 143ZM596 155A3 3 0 0 0 593 158L593 158A3 3 0 0 0 596 161L644 161A3 3 0 0 0 647 158L647 158A3 3 0 0 0 644 155L596 155Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M595.12 32.88L616.12 53.88L611.88 58.12L590.88 37.12ZM649.12 37.12L628.12 58.12L623.88 53.88L644.88 32.88Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Your student portal",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Grades and timetable",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

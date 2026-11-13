@@ -1,0 +1,93 @@
+{
+  "id": "race-photos",
+  "name": "Race photos",
+  "description": "A phone with the code on its screen and a camera.",
+  "category": "use-case",
+  "collection": "sports-fitness",
+  "contentTypes": ["url"],
+  "tags": ["sports", "fitness", "race", "photos"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1360,
+      "height": 2000
+    },
+    "qr": {
+      "x": 180,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1360,
+        "height": 2000,
+        "radius": 190,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 26,
+        "y": 26,
+        "width": 1308,
+        "height": 1948,
+        "radius": 150,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 550,
+        "y": 56,
+        "width": 260,
+        "height": 64,
+        "radius": 32,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M639.2 223.6L720.8 223.6A12 12 0 0 1 732.8 235.6L732.8 286A12 12 0 0 1 720.8 298L639.2 298A12 12 0 0 1 627.2 286L627.2 235.6A12 12 0 0 1 639.2 223.6ZM663.2 209.2L696.8 209.2A4.8 4.8 0 0 1 701.6 214L701.6 223.6A4.8 4.8 0 0 1 696.8 228.4L663.2 228.4A4.8 4.8 0 0 1 658.4 223.6L658.4 214A4.8 4.8 0 0 1 663.2 209.2ZM653.6 260.8A26.4 26.4 0 1 0 706.4 260.8A26.4 26.4 0 1 0 653.6 260.8ZM663.2 260.8A16.8 16.8 0 1 1 696.8 260.8A16.8 16.8 0 1 1 663.2 260.8Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M711.2 233.2L718.4 233.2A2.4 2.4 0 0 1 720.8 235.6L720.8 238A2.4 2.4 0 0 1 718.4 240.4L711.2 240.4A2.4 2.4 0 0 1 708.8 238L708.8 235.6A2.4 2.4 0 0 1 711.2 233.2Z",
+        "fill": "accent"
+      },
+      {
+        "type": "rect",
+        "x": 510,
+        "y": 1910,
+        "width": 340,
+        "height": 18,
+        "radius": 9,
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Get your race photos",
+        "color": "frame",
+        "box": {
+          "x": 160,
+          "y": 1550,
+          "width": 1040,
+          "height": 180
+        }
+      }
+    ]
+  }
+}

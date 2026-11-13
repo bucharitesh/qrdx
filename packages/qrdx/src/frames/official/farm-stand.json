@@ -1,0 +1,109 @@
+{
+  "id": "farm-stand",
+  "name": "Farm stand",
+  "description": "A sign on two posts with a carrot in a round badge on top.",
+  "category": "use-case",
+  "collection": "food-drink",
+  "contentTypes": ["upi", "paypal", "url"],
+  "tags": ["restaurant", "food", "farm", "produce", "honesty box"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1940
+    },
+    "qr": {
+      "x": 120,
+      "y": 400,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 250,
+        "y": 1720,
+        "width": 56,
+        "height": 220,
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.25
+        }
+      },
+      {
+        "type": "rect",
+        "x": 934,
+        "y": 1720,
+        "width": 56,
+        "height": 220,
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.25
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 48,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 26,
+        "y": 26,
+        "width": 1188,
+        "height": 1688,
+        "radius": 28,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.9
+        }
+      },
+      {
+        "type": "circle",
+        "cx": 620,
+        "cy": 170,
+        "r": 125,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M591.5 152C591.5 141.5 648.5 141.5 648.5 152C644 188 629 224 620 240.5C611 224 596 188 591.5 152ZM600.01 172.2L613.51 175.2A2.25 2.25 0 0 1 614.49 170.8L600.99 167.8A2.25 2.25 0 0 1 600.01 172.2ZM628.12 190.16L638.62 187.16A2.25 2.25 0 0 1 637.38 182.84L626.88 185.84A2.25 2.25 0 0 1 628.12 190.16ZM611.88 208.16L622.38 211.16A2.25 2.25 0 0 1 623.62 206.84L613.12 203.84A2.25 2.25 0 0 1 611.88 208.16Z",
+        "fill": "background"
+      },
+      {
+        "type": "path",
+        "d": "M620 143C604.58 142.44 591.08 124.89 590 104C609.92 110.41 623.42 127.96 620 143ZM620 143C608.75 133.21 610.1 112.96 623 98C633.8 114.54 632.45 134.79 620 143ZM620 143C617.84 127.77 632.69 111.57 653 107C650.21 127.63 635.36 143.83 620 143Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.5
+        }
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan to pay",
+        "color": "frame",
+        "box": {
+          "x": 90,
+          "y": 1520,
+          "width": 1060,
+          "height": 180
+        }
+      }
+    ]
+  }
+}

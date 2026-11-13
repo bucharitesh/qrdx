@@ -1,0 +1,94 @@
+{
+  "id": "makeup-artist",
+  "name": "Makeup artist",
+  "description": "A solid card with a round badge holding a makeup brush on its top edge.",
+  "category": "use-case",
+  "collection": "beauty-wellness",
+  "contentTypes": ["calcom", "url"],
+  "tags": ["beauty", "wellness", "makeup"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1830
+    },
+    "qr": {
+      "x": 120,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 150,
+        "width": 1240,
+        "height": 1680,
+        "radius": 64,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 620,
+        "cy": 150,
+        "r": 150,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 620,
+        "cy": 150,
+        "r": 120,
+        "fill": "background"
+      },
+      {
+        "type": "path",
+        "d": "M620.59 117.35C630.09 96.87 647 90.93 654.13 95.39C661.25 99.84 663.33 117.64 649.08 135.16ZM611.24 142.88L630.24 154.75L590.62 207.58L581.12 201.65Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M623.86 122.69L642.85 134.56A2.8 2.8 32 0 1 643.74 138.42L635.58 151.48A2.8 2.8 32 0 1 631.72 152.37L612.73 140.5A2.8 2.8 32 0 1 611.84 136.64L620 123.58A2.8 2.8 32 0 1 623.86 122.69Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Book a makeup artist",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1540,
+          "width": 1040,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Weddings and events",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1710,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

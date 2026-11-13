@@ -32,7 +32,7 @@ const shared: Options = {
   },
 };
 
-// The official frame library (hundreds of specs) and its index are built as
+// The official frame library (every spec) and its index are built as
 // modules of their own; the main entry re-exports them, so a bundler that
 // skips unused side-effect-free modules never ships the data to an app that
 // doesn't use it (the playground loads it on demand instead).

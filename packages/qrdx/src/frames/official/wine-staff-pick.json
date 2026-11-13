@@ -1,0 +1,100 @@
+{
+  "id": "wine-staff-pick",
+  "name": "Wine shelf talker",
+  "description": "A shelf strip with a card hanging under it and a wine glass.",
+  "category": "use-case",
+  "collection": "food-drink",
+  "contentTypes": ["url"],
+  "tags": ["restaurant", "food", "wine shop", "shelf"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1500,
+      "height": 1900
+    },
+    "qr": {
+      "x": 250,
+      "y": 540,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1500,
+        "height": 150,
+        "radius": 16,
+        "fill": "accent"
+      },
+      {
+        "type": "rect",
+        "x": 680,
+        "y": 140,
+        "width": 140,
+        "height": 100,
+        "radius": 8,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.55
+        }
+      },
+      {
+        "type": "rect",
+        "x": 130,
+        "y": 220,
+        "width": 1240,
+        "height": 1680,
+        "radius": 44,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M714 297L786 297C789 336 774 363 750 363C726 363 711 336 714 297ZM745.5 360L754.5 360L754.5 411L745.5 411ZM717 426C720 414 738 411 750 411C762 411 780 414 783 426Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M716.4 324L783.6 324C781.5 345 768 354 750 354C732 354 718.5 345 716.4 324Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Read the tasting notes",
+        "color": "text",
+        "box": {
+          "x": 200,
+          "y": 1660,
+          "width": 1100,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Staff pick",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 20,
+          "width": 1260,
+          "height": 110
+        }
+      }
+    ]
+  }
+}

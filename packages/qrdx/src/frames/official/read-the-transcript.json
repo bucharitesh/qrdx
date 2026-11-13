@@ -1,0 +1,142 @@
+{
+  "id": "read-the-transcript",
+  "name": "Transcript",
+  "description": "A card with a document and a ribbon banner with folded tails across the bottom.",
+  "category": "use-case",
+  "collection": "call-to-action",
+  "contentTypes": [],
+  "tags": ["call to action", "accessibility", "transcript"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1440,
+      "height": 1800
+    },
+    "qr": {
+      "x": 220,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 100,
+        "y": 0,
+        "width": 1240,
+        "height": 1640,
+        "radius": 56,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 100,
+        "y": 0,
+        "width": 1240,
+        "height": 1640,
+        "radius": 56,
+        "fill": "frame",
+        "hole": {
+          "x": 118,
+          "y": 18,
+          "width": 1204,
+          "height": 1604,
+          "radius": 40
+        }
+      },
+      {
+        "type": "polygon",
+        "points": [[0, 1580], [170, 1580], [170, 1800], [0, 1800], [70, 1690]],
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.25
+        }
+      },
+      {
+        "type": "polygon",
+        "points": [
+          [1440, 1580],
+          [1270, 1580],
+          [1270, 1800],
+          [1440, 1800],
+          [1370, 1690]
+        ],
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.25
+        }
+      },
+      {
+        "type": "polygon",
+        "points": [[100, 1730], [170, 1800], [170, 1730]],
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.55
+        }
+      },
+      {
+        "type": "polygon",
+        "points": [[1340, 1730], [1270, 1800], [1270, 1730]],
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.55
+        }
+      },
+      {
+        "type": "rect",
+        "x": 100,
+        "y": 1510,
+        "width": 1240,
+        "height": 220,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M681.6 52.2L729.6 52.2L760.8 83.4L760.8 157.8L681.6 157.8ZM696.6 69A3 3 0 0 0 693.6 72L693.6 72A3 3 0 0 0 696.6 75L717 75A3 3 0 0 0 720 72L720 72A3 3 0 0 0 717 69L696.6 69ZM696.6 97.8A3 3 0 0 0 693.6 100.8L693.6 100.8A3 3 0 0 0 696.6 103.8L745.8 103.8A3 3 0 0 0 748.8 100.8L748.8 100.8A3 3 0 0 0 745.8 97.8L696.6 97.8ZM696.6 112.2A3 3 0 0 0 693.6 115.2L693.6 115.2A3 3 0 0 0 696.6 118.2L745.8 118.2A3 3 0 0 0 748.8 115.2L748.8 115.2A3 3 0 0 0 745.8 112.2L696.6 112.2ZM696.6 126.6A3 3 0 0 0 693.6 129.6L693.6 129.6A3 3 0 0 0 696.6 132.6L745.8 132.6A3 3 0 0 0 748.8 129.6L748.8 129.6A3 3 0 0 0 745.8 126.6L696.6 126.6ZM696.6 141A3 3 0 0 0 693.6 144L693.6 144A3 3 0 0 0 696.6 147L721.8 147A3 3 0 0 0 724.8 144L724.8 144A3 3 0 0 0 721.8 141L696.6 141Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M760.8 83.4L729.6 83.4L729.6 52.2Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Read the transcript",
+        "color": "text",
+        "box": {
+          "x": 180,
+          "y": 1530,
+          "width": 1080,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "For this audio",
+        "color": "frame",
+        "box": {
+          "x": 240,
+          "y": 185,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

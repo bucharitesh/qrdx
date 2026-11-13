@@ -3,7 +3,7 @@
   "name": "Workout timer",
   "description": "A solid card with a round badge holding a stopwatch on its top edge.",
   "category": "use-case",
-  "collection": "health-learning",
+  "collection": "sports-fitness",
   "contentTypes": ["url"],
   "tags": ["fitness", "gym", "tracking"],
   "license": "CC0-1.0",
