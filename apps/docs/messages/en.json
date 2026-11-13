@@ -3298,6 +3298,32 @@
       "followsYourPrompt": "Follows your prompt",
       "interpretsFreely": "Interprets freely",
       "generateVariations": "{count, plural, one {Generate QR art} other {Generate # variations}}"
+    },
+    "artModes": {
+      "mode": "Mode",
+      "code": "Code",
+      "scene": "Scene",
+      "photo": "Photo",
+      "codeDescription": "The code is the picture: the art fills its modules, on a plain border.",
+      "sceneDescription": "A full picture with the code built into something in it, such as a building's windows or a tiled floor.",
+      "photoDescription": "Your photo, with the code painted into it.",
+      "dropAPhoto": "Drop a photo or choose one",
+      "photoHint": "PNG, JPG or WebP. It's cropped square and resized in your browser, sent with your prompt to make the art, and QRdx doesn't keep it.",
+      "choosePhoto": "Choose a photo",
+      "yourPhoto": "Your photo",
+      "crop": "Crop",
+      "left": "Left",
+      "right": "Right",
+      "top": "Top",
+      "bottom": "Bottom",
+      "croppedSquare": "Cropped square for the art.",
+      "replace": "Replace",
+      "remove": "Remove",
+      "couldntUseThisPhoto": "Couldn't use this photo",
+      "unsupportedFormat": "Unsupported image format",
+      "usePngJpgWebp": "Use a PNG, JPG or WebP image.",
+      "photoTooLarge": "Photo is too large",
+      "photosUpTo": "Photos can be up to {size} MB."
     }
   },
   "compare": {

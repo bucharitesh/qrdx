@@ -8,8 +8,10 @@ import {
 } from "@/components/sections/ai-art/ai-art-run";
 import type { AIArtRequest } from "@/components/sections/ai-art/config";
 import {
+  ART_MODES,
   ART_PROMPT_MIN_LENGTH,
   ART_TEXT_MAX_LENGTH,
+  DEFAULT_ART_MODE,
   seedsForRun,
 } from "@/components/sections/ai-art/config";
 import { findArtLook } from "@/components/sections/ai-art/looks";
@@ -32,12 +34,16 @@ export const promptIsUsable = (prompt: string): boolean => {
   return length === 0 || length >= ART_PROMPT_MIN_LENGTH;
 };
 
-/** The form can run: content to paint, a usable prompt and seed. */
+/**
+ * The form can run: content to paint, a usable prompt and seed and, in
+ * photo mode, a photo.
+ */
 export function canGenerate(payload: string, draft: AIArtDraft): boolean {
   return (
     artPayloadIssue(payload) === null &&
     promptIsUsable(draft.prompt) &&
-    !seedIsInvalid(draft.seed, draft.seedLocked, ART_SUPPORTS_SEED)
+    !seedIsInvalid(draft.seed, draft.seedLocked, ART_SUPPORTS_SEED) &&
+    (draft.mode !== "photo" || Boolean(draft.photo))
   );
 }
 
@@ -56,6 +62,8 @@ export function artRequestFor(
     visibility: draft.visibility,
     creativity: draft.creativity,
     ...(draft.reference && { reference: draft.reference }),
+    ...(draft.mode !== DEFAULT_ART_MODE && { mode: draft.mode }),
+    ...(draft.mode === "photo" && draft.photo && { photo: draft.photo }),
   };
 }
 
@@ -73,11 +81,12 @@ export interface AIArtGenerateIntent {
   draft: AIArtDraft;
 }
 
+/** The photo stays behind: it's never stored, so it's added again after sign-in. */
 export function artGenerateIntent(
   payload: string,
   draft: AIArtDraft,
 ): AIArtGenerateIntent {
-  return { text: payload.trim(), draft };
+  return { text: payload.trim(), draft: { ...draft, photo: null } };
 }
 
 function isDraft(value: unknown): value is AIArtDraft {
@@ -103,6 +112,7 @@ export function parseArtGenerateIntent(
   if (!value || typeof value !== "object") return null;
   const intent = value as Record<string, unknown>;
   if (typeof intent.text !== "string" || !isDraft(intent.draft)) return null;
+  const stored: unknown = intent.draft.mode;
   return {
     text: intent.text,
     draft: {
@@ -112,6 +122,8 @@ export function parseArtGenerateIntent(
         ? (intent.draft.look as AIArtDraft["look"])
         : null,
       referenceIsLogo: intent.draft.referenceIsLogo === true,
+      mode: ART_MODES.find((mode) => mode === stored) ?? DEFAULT_ART_MODE,
+      photo: null,
     },
   };
 }
