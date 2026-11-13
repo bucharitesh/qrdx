@@ -1,5 +1,6 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
+import { SHADCN_REGISTRY_URL } from "@repo/config";
 import { toConsumerSource } from "@/registry/transform";
 import registry from "@/registry.json";
 
@@ -14,7 +15,7 @@ export interface RegistryItem {
 
 const items = registry.items as RegistryItem[];
 
-export const REGISTRY_URL = "https://qrdx.dev/r";
+export const REGISTRY_URL = SHADCN_REGISTRY_URL;
 
 export function getRegistryItem(name: string): RegistryItem {
   const item = items.find((entry) => entry.name === name);

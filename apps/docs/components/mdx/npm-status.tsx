@@ -1,5 +1,6 @@
 import "server-only";
 
+import { API_BASE_URL } from "@repo/config";
 import { Callout } from "fumadocs-ui/components/callout";
 import type { ReactNode } from "react";
 import { LocaleLink as Link } from "@/components/i18n/locale-link";
@@ -14,10 +15,8 @@ import { playgroundHref } from "@/lib/playground-links";
 // Styled here too: the changelog renders the notice outside docs prose.
 const LINK = "font-medium text-foreground underline underline-offset-4";
 
-const EPS_EXAMPLE =
-  'curl -o qr.eps "https://api.qrdx.dev/v1/qr?data=https://example.com&format=eps"';
-const WEBP_EXAMPLE =
-  'curl -o qr.webp "https://api.qrdx.dev/v1/qr?data=https://example.com&format=webp"';
+const EPS_EXAMPLE = `curl -o qr.eps "${API_BASE_URL}/qr?data=https://example.com&format=eps"`;
+const WEBP_EXAMPLE = `curl -o qr.webp "${API_BASE_URL}/qr?data=https://example.com&format=webp"`;
 
 /** The first releases with everything but WebP export (it came next). */
 const BEFORE_WEBP: Record<PublishedPackage, string> = {

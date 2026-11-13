@@ -6,10 +6,10 @@
 // English catalog. Client components import ./savings or
 // ./upgrade-highlights instead.
 
+import { AI_REQUEST_FREE_TIER_LIMIT } from "@repo/config";
 import { createTranslator } from "next-intl";
 import { AUDIT_RETENTION_DAYS } from "@/ee/audit-log/limits";
 import { listNames } from "@/lib/availability-copy";
-import { AI_REQUEST_FREE_TIER_LIMIT } from "@/lib/constants";
 import type { Locale } from "@/lib/i18n/config";
 import type { Messages } from "@/lib/i18n/messages";
 import type { PlanLimits } from "@/lib/plans";

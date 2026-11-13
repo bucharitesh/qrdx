@@ -1,6 +1,7 @@
 import "server-only";
 
 import { isOwnWorkspaceOf } from "@repo/auth/own-workspace-id";
+import { AI_REQUEST_FREE_TIER_LIMIT } from "@repo/config";
 import { database as db } from "@repo/database";
 import { subscription as subscriptionTable } from "@repo/database/schema";
 import { eq } from "drizzle-orm";
@@ -16,7 +17,6 @@ import { countThemesInScope } from "@/app/(app)/dashboard/themes/_lib/queries";
 import { getFormResponseUsage } from "@/app/api/forms/_lib/responses";
 import { getArtCredits } from "@/lib/ai/art";
 import { getCheckoutOpen } from "@/lib/checkout-availability";
-import { AI_REQUEST_FREE_TIER_LIMIT } from "@/lib/constants";
 import {
   getCustomDomainMode,
   isFeatureAvailable,

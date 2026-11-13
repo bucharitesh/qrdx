@@ -1,10 +1,5 @@
-import { env } from "@/env";
+import { appOrigin } from "@repo/config/origins";
 import { AFFILIATE_LINK_PREFIX } from "./terms";
-
-/** The app's own origin, from NEXT_PUBLIC_APP_URL. */
-function appOrigin(): string {
-  return new URL(env.NEXT_PUBLIC_APP_URL).origin;
-}
 
 /** "https://qrdx.dev/r/ana-diaz-4k2p" */
 export function referralLink(code: string): string {

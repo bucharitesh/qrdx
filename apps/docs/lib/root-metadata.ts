@@ -1,3 +1,4 @@
+import { GITHUB_PROFILE_URL, X_HANDLE } from "@repo/config";
 import type { Metadata, Viewport } from "next";
 import {
   baseUrl,
@@ -40,7 +41,7 @@ export function rootMetadata({
     description,
     applicationName: siteName,
     keywords: siteKeywords,
-    authors: [{ name: "Ritesh Bucha", url: "https://github.com/bucharitesh" }],
+    authors: [{ name: "Ritesh Bucha", url: GITHUB_PROFILE_URL }],
     creator: "Ritesh Bucha",
     openGraph: {
       siteName,
@@ -49,7 +50,7 @@ export function rootMetadata({
     },
     twitter: {
       card: "summary_large_image",
-      creator: "@bucha_ritesh",
+      creator: X_HANDLE,
     },
     icons: siteIcons,
     manifest: "/site.webmanifest",

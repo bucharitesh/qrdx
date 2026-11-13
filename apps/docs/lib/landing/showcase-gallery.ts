@@ -1,3 +1,4 @@
+import { CANONICAL_HOST, CANONICAL_ORIGIN } from "@repo/config";
 import { getFrameLayout, isFrameActive, OFFICIAL_FRAMES } from "qrdx";
 import type {
   ColorConfig,
@@ -124,7 +125,7 @@ export interface WallTile {
   caution?: string;
 }
 
-const SITE = "https://qrdx.dev";
+const SITE = CANONICAL_ORIGIN;
 /** 555-0100 to 555-0199 are reserved for fictional use in North America. */
 const SAMPLE_PHONE = "+1 415 555 0132";
 const SAMPLE_GREETING = "Hello from QRdx";
@@ -134,7 +135,7 @@ const SAMPLE_GREETING = "Hello from QRdx";
  * content type is for (its own account or an obvious placeholder handle).
  */
 export const SAMPLE_HOSTS = [
-  "qrdx.dev",
+  CANONICAL_HOST,
   "wa.me",
   "www.google.com",
   "search.google.com",

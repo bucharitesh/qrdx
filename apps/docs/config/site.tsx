@@ -1,4 +1,5 @@
 /** biome-ignore-all lint/a11y/noSvgWithoutTitle: false positive */
+import { BRAND_NAME, GITHUB_REPO_URL, SUPPORT_EMAIL } from "@repo/config";
 import { Bot, GithubLogo } from "@repo/design-system/components/icons";
 import { cn } from "@repo/design-system/lib/utils";
 import {
@@ -90,7 +91,7 @@ export const Highlight = ({
 };
 
 export const siteConfig = {
-  name: "QRdx",
+  name: BRAND_NAME,
   description:
     "Free, open-source QR code generator. Custom patterns, gradients, logos and frames, with PNG, JPG, SVG, PDF and EPS downloads and no signup. Plus dynamic codes, hosted pages and scan analytics.",
   cta: "Try the Playground",
@@ -104,8 +105,8 @@ export const siteConfig = {
     "QR Code API",
   ],
   links: {
-    email: "support@qrdx.dev",
-    github: "https://github.com/bucharitesh/qrdx",
+    email: SUPPORT_EMAIL,
+    github: GITHUB_REPO_URL,
   },
   nav: {
     // Top-level header entries. `href` is the group's hub (used on mobile);
@@ -235,7 +236,7 @@ export const siteConfig = {
           },
           {
             key: "github",
-            href: "https://github.com/bucharitesh/qrdx",
+            href: GITHUB_REPO_URL,
             icon: GithubLogo,
             external: true,
           },
@@ -828,7 +829,7 @@ export const siteConfig = {
         { id: 5, key: "industries", url: "/qr-codes-for" },
         { id: 6, key: "placements", url: "/qr-codes-on" },
         { id: 9, key: "affiliates", url: "/affiliates" },
-        { id: 4, key: "contact", url: "mailto:support@qrdx.dev" },
+        { id: 4, key: "contact", url: `mailto:${SUPPORT_EMAIL}` },
         { id: 10, key: "security", url: "/security" },
         {
           id: 7,

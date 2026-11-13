@@ -4,8 +4,9 @@
 // used to post to GitHub Discussions from a server action here; that path was
 // disabled and has been removed, so nothing on the site writes to GitHub.
 
-export const repo = "qrdx";
-export const owner = "bucharitesh";
+import { GITHUB_OWNER, GITHUB_REPO } from "@repo/config";
+export const repo = GITHUB_REPO;
+export const owner = GITHUB_OWNER;
 
 interface GitHubIssueUrlParams {
   owner: string;

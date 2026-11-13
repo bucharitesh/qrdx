@@ -1,3 +1,4 @@
+import { CANONICAL_ORIGIN } from "@repo/config";
 import type { IntegrationCatalogEntry } from "../types";
 
 // QRdx bots in chat apps: QR codes made in a chat, no QRdx account needed.
@@ -36,7 +37,7 @@ export const chatApps: IntegrationCatalogEntry[] = [
     primaryAction: {
       type: "link",
       label: "Add to Discord",
-      href: "https://qrdx.dev/api/integrations/discord/install",
+      href: `${CANONICAL_ORIGIN}/api/integrations/discord/install`,
     },
     secondaryAction: {
       type: "link",
@@ -113,7 +114,7 @@ export const chatApps: IntegrationCatalogEntry[] = [
     primaryAction: {
       type: "link",
       label: "Open in Telegram",
-      href: "https://qrdx.dev/api/integrations/telegram/open",
+      href: `${CANONICAL_ORIGIN}/api/integrations/telegram/open`,
     },
     secondaryAction: {
       type: "link",

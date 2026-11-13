@@ -1,5 +1,6 @@
 "use server";
 
+import { ENTERPRISE_EMAIL } from "@repo/config";
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import { HttpError } from "@/lib/error-response";
 import {
@@ -82,7 +83,7 @@ export async function requestInvoiceAction(
     return {
       ok: false,
       code: "UNKNOWN_ERROR",
-      error: "Something went wrong. Email enterprise@qrdx.dev instead.",
+      error: `Something went wrong. Email ${ENTERPRISE_EMAIL} instead.`,
     };
   }
 }

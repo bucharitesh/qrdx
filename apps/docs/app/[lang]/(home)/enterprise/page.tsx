@@ -1,3 +1,4 @@
+import { MAX_CODES_PER_REQUEST, MAX_IMPORT_ROWS } from "@repo/config";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   ArrowRight,
@@ -27,7 +28,6 @@ import {
   AUDIT_EXPORT_MAX_ROWS,
   AUDIT_RETENTION_DAYS,
 } from "@/ee/audit-log/limits";
-import { MAX_CODES_PER_REQUEST, MAX_IMPORT_ROWS } from "@/lib/bulk-limits";
 import {
   BUSINESS_REPLY_BUSINESS_DAYS,
   ENTERPRISE_EMAIL,

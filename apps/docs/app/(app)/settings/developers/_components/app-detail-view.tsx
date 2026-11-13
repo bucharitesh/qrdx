@@ -1,3 +1,4 @@
+import { SUPPORT_EMAIL } from "@repo/config";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
@@ -20,8 +21,6 @@ import { AppCredentials } from "./app-credentials";
 import { AuthorizeExample } from "./authorize-example";
 import { formatDate } from "./format";
 import { AppDangerZone, EditOAuthApp } from "./manage-app";
-
-const SUPPORT_EMAIL = "support@qrdx.dev";
 
 function listingMailto(
   app: { name: string; clientId: string },

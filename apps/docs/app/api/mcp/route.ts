@@ -1,3 +1,4 @@
+import { CANONICAL_ORIGIN, MCP_HOST } from "@repo/config";
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import { createMcpHandler } from "mcp-handler";
 import { handleError } from "@/lib/error-response";
@@ -55,8 +56,8 @@ function browserVisit(req: Request): Response | null {
   }
   // On mcp.qrdx.dev, /mcp is this endpoint, so the page lives on qrdx.dev.
   const page =
-    new URL(req.url).hostname === "mcp.qrdx.dev"
-      ? "https://qrdx.dev/mcp"
+    new URL(req.url).hostname === MCP_HOST
+      ? `${CANONICAL_ORIGIN}/mcp`
       : new URL("/mcp", req.url).toString();
   return Response.redirect(page, 307);
 }

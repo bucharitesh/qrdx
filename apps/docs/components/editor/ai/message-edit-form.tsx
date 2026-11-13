@@ -1,6 +1,11 @@
 /** biome-ignore-all lint/suspicious/noArrayIndexKey: false positive */
 
 import {
+  AI_PROMPT_CHARACTER_LIMIT,
+  MAX_IMAGE_FILE_SIZE,
+  MAX_IMAGE_FILES,
+} from "@repo/config";
+import {
   Tick as Check,
   Close as X,
 } from "@repo/design-system/components/icons";
@@ -11,11 +16,6 @@ import { useTranslations } from "next-intl";
 import { useMemo, useReducer, useState } from "react";
 import { HorizontalScrollArea } from "@/components/horizontal-scroll-area";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
-import {
-  AI_PROMPT_CHARACTER_LIMIT,
-  MAX_IMAGE_FILE_SIZE,
-  MAX_IMAGE_FILES,
-} from "@/lib/constants";
 import { useDocumentDragAndDropIntent } from "@/lib/hooks/use-document-drag-and-drop-intent";
 import { useImageUpload } from "@/lib/hooks/use-image-upload";
 import { imageUploadReducer } from "@/lib/hooks/use-image-upload-reducer";

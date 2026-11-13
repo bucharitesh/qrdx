@@ -3,6 +3,7 @@
 // Live Logo QR and Image QR examples (vector art modes from the qrdx library,
 // no AI). Each card opens the playground's Art tab on its mode and look.
 
+import { CANONICAL_ORIGIN } from "@repo/config";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Card } from "@repo/design-system/components/ui/card";
 import { cn } from "@repo/design-system/lib/utils";
@@ -24,7 +25,7 @@ import {
 import { packStyleParam } from "@/lib/playground-style-pack";
 import { artPlaygroundHref } from "./config";
 
-const VALUE = "https://qrdx.dev";
+const VALUE = CANONICAL_ORIGIN;
 
 // Samples from public/images/art-samples (the editor's Art tab offers
 // the same ones), styled in lib/landing/showcase-styles.ts.

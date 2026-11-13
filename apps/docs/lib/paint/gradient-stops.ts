@@ -2,13 +2,12 @@
 // in the array while dragged (so the selected index stays put); the color at
 // an offset blends neighbours the way the engine and CSS do (premultiplied
 // sRGB), so a new stop lands on the color already there.
+import { MAX_GRADIENT_STOPS } from "@repo/config";
 import type { GradientStop } from "qrdx/types";
 import { clamp, parseColorString, type RGBA, round, toHex } from "./color-math";
 
 /** Fewest stops a gradient keeps (the engine needs two). */
 export const MIN_STOPS = 2;
-/** Most stops the picker adds (the API and style links take 16). */
-export const MAX_STOPS = 16;
 
 const BLACK: RGBA = { r: 0, g: 0, b: 0, a: 1 };
 
@@ -48,13 +47,13 @@ export function colorAtOffset(stops: GradientStop[], offset: number): RGBA {
 
 /**
  * A new stop at `offset`, colored as the gradient is there. Returns the
- * stops and the new stop's index, or null at MAX_STOPS.
+ * stops and the new stop's index, or null at MAX_GRADIENT_STOPS.
  */
 export function addStop(
   stops: GradientStop[],
   offset: number,
 ): { stops: GradientStop[]; index: number } | null {
-  if (stops.length >= MAX_STOPS) return null;
+  if (stops.length >= MAX_GRADIENT_STOPS) return null;
   const at = round(clamp(offset, 0, 100), 1);
   const color = toHex(colorAtOffset(stops, at));
   return { stops: [...stops, { color, offset: at }], index: stops.length };

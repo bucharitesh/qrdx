@@ -33,7 +33,7 @@ import {
   createFilenameAllocator,
   sanitizeFilename,
 } from "@/components/sections/tools/bulk-utils";
-import { formatCount } from "@/lib/bulk-limits";
+import { formatCount } from "@/lib/format-count";
 import { soundEvent } from "@/lib/sound/emit";
 import { createZipParts, saveBlob } from "@/lib/zip-stream";
 import {

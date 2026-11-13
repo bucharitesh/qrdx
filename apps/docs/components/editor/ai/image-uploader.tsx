@@ -1,10 +1,10 @@
+import { MAX_IMAGE_FILE_SIZE, MAX_IMAGE_FILES } from "@repo/config";
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
 import { GalleryAdd as ImagePlus } from "iconsax-reactjs";
 import { useTranslations } from "next-intl";
 import type { ComponentProps } from "react";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
-import { MAX_IMAGE_FILE_SIZE, MAX_IMAGE_FILES } from "@/lib/constants";
 import { ALLOWED_IMAGE_TYPES } from "@/utils/ai/image-upload";
 
 interface ImageUploaderProps extends ComponentProps<typeof Button> {

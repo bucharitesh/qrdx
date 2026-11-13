@@ -1,4 +1,5 @@
 import { keys as auth } from "@repo/auth/keys";
+import { keys as config } from "@repo/config/keys";
 import { keys as database } from "@repo/database/keys";
 import {
   onValidationError,
@@ -18,7 +19,7 @@ import { z } from "zod";
 // Template with every variable explained: apps/docs/.env.example.
 export const env = validateTogether(() =>
   createEnv({
-    extends: [auth(), core(), database(), rateLimit()],
+    extends: [auth(), config(), core(), database(), rateLimit()],
     server: {
       // AI - Vercel AI Gateway (AI themes, prompt enhancement and AI QR art;
       // models per task in lib/ai/models.ts)
@@ -158,8 +159,6 @@ export const env = validateTogether(() =>
       NEXT_PUBLIC_QRDX_EUR_PRICES: z.string().min(1).optional(),
       // Cloudflare Turnstile on public forms (spam protection off without it)
       NEXT_PUBLIC_TURNSTILE_SITE_KEY: z.string().min(1).optional(),
-      // Origin for default short links (falls back to the site URL)
-      NEXT_PUBLIC_SHORT_LINK_BASE_URL: z.url().optional(),
     },
     runtimeEnv: {
       AI_GATEWAY_API_KEY: process.env.AI_GATEWAY_API_KEY,
@@ -237,8 +236,6 @@ export const env = validateTogether(() =>
       NEXT_PUBLIC_QRDX_EUR_PRICES: process.env.NEXT_PUBLIC_QRDX_EUR_PRICES,
       NEXT_PUBLIC_TURNSTILE_SITE_KEY:
         process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY,
-      NEXT_PUBLIC_SHORT_LINK_BASE_URL:
-        process.env.NEXT_PUBLIC_SHORT_LINK_BASE_URL,
     },
     emptyStringAsUndefined: true,
     onValidationError,

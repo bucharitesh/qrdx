@@ -1,6 +1,7 @@
 import "server-only";
 
 import https from "node:https";
+import { CANONICAL_ORIGIN } from "@repo/config";
 import {
   createGuardedLookup,
   fetchBlockReason,
@@ -14,8 +15,7 @@ import type { HttpResult } from "./discovery";
 
 const TIMEOUT_MS = 4000;
 const MAX_BODY_BYTES = 64 * 1024;
-const USER_AGENT =
-  "QRdx-DomainConnect/1.0 (+https://qrdx.dev/docs/custom-domains)";
+const USER_AGENT = `QRdx-DomainConnect/1.0 (+${CANONICAL_ORIGIN}/docs/custom-domains)`;
 
 const lookup = createGuardedLookup();
 

@@ -1,5 +1,6 @@
 import "server-only";
 import { createPrivateKey, type KeyObject, sign } from "node:crypto";
+import { CANONICAL_HOST } from "@repo/config";
 import { env } from "@/env";
 import { cached, withTimeout } from "./cache";
 import { weekOfDay } from "./weeks";
@@ -10,7 +11,7 @@ import { weekOfDay } from "./weeks";
 // is queried. Nothing about the key or the token is ever logged or shown.
 // Cached for 6 hours per server instance; a failure for 5 minutes.
 
-export const GSC_PROPERTY = "sc-domain:qrdx.dev";
+export const GSC_PROPERTY = `sc-domain:${CANONICAL_HOST}`;
 export const GSC_SCOPE = "https://www.googleapis.com/auth/webmasters.readonly";
 /** Fixed, whatever the key file says: the signed JWT only ever goes here. */
 export const GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token";

@@ -1,6 +1,7 @@
 // CSV import of dynamic codes: column mapping and per-row checks shared by
 // the browser preview and the server (which re-checks everything).
 
+import { IMPORT_CHUNK_ROWS } from "@repo/config";
 import {
   MAX_FOLDER_DEPTH,
   MAX_FOLDER_NAME,
@@ -9,7 +10,6 @@ import {
   splitFolderPath,
   splitTagNames,
 } from "@/app/(app)/dashboard/codes/_lib/organize-shared";
-import { IMPORT_CHUNK_ROWS } from "@/lib/bulk-limits";
 import {
   CUSTOM_SLUG_MAX,
   CUSTOM_SLUG_MIN,
@@ -17,7 +17,7 @@ import {
   slugProblem,
 } from "@/lib/short-links";
 
-export { MAX_IMPORT_ROWS } from "@/lib/bulk-limits";
+export { MAX_IMPORT_ROWS } from "@repo/config";
 /** Rows per create request (under the API's MAX_CODES_PER_REQUEST). */
 export const IMPORT_CHUNK_SIZE = IMPORT_CHUNK_ROWS;
 /** Rows per preview request: each stays well under the 2 MB action body limit. */

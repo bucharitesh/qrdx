@@ -2,6 +2,7 @@ import "server-only";
 
 import { ownWorkspaceId } from "@repo/auth/own-workspace-id";
 import { auth } from "@repo/auth/server";
+import { SUPPORT_EMAIL } from "@repo/config";
 import {
   barcode,
   brandKit,
@@ -273,7 +274,7 @@ async function deletePolarCustomer(userId: string, subscribed: boolean) {
     if (subscribed) {
       logError(error as Error, { action: "deleteAccount.cancelSubscription" });
       throw new AccountDeletionError(
-        "We couldn't cancel your subscription, so your account wasn't deleted. Please try again in a few minutes, or email support@qrdx.dev.",
+        `We couldn't cancel your subscription, so your account wasn't deleted. Please try again in a few minutes, or email ${SUPPORT_EMAIL}.`,
       );
     }
     logError(error as Error, { action: "deleteAccount.deletePolarCustomer" });

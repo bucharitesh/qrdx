@@ -1,3 +1,10 @@
+import {
+  API_BASE_URL,
+  CANONICAL_ORIGIN,
+  NPM_CLI_URL,
+  NPM_LIBRARY_URL,
+  SHADCN_REGISTRY_URL,
+} from "@repo/config";
 import type { IntegrationCatalogEntry } from "../types";
 
 export const developers: IntegrationCatalogEntry[] = [
@@ -26,7 +33,7 @@ export const developers: IntegrationCatalogEntry[] = [
     secondaryAction: {
       type: "copy",
       label: "Copy example",
-      text: `curl https://api.qrdx.dev/v1/codes \\\n  -H "Authorization: Bearer $QRDX_TOKEN" \\\n  -H "Content-Type: application/json" \\\n  -d '{"destinationUrl": "https://example.com/menu", "title": "Spring menu"}'`,
+      text: `curl ${API_BASE_URL}/codes \\\n  -H "Authorization: Bearer $QRDX_TOKEN" \\\n  -H "Content-Type: application/json" \\\n  -d '{"destinationUrl": "https://example.com/menu", "title": "Spring menu"}'`,
       toast: "Example copied",
     },
     steps: [
@@ -39,7 +46,7 @@ export const developers: IntegrationCatalogEntry[] = [
         snippet: {
           label: "Terminal",
           language: "bash",
-          code: `curl https://api.qrdx.dev/v1/codes \\\n  -H "Authorization: Bearer $QRDX_TOKEN" \\\n  -H "Content-Type: application/json" \\\n  -d '{"destinationUrl": "https://example.com/menu", "title": "Spring menu"}'`,
+          code: `curl ${API_BASE_URL}/codes \\\n  -H "Authorization: Bearer $QRDX_TOKEN" \\\n  -H "Content-Type: application/json" \\\n  -d '{"destinationUrl": "https://example.com/menu", "title": "Spring menu"}'`,
         },
       },
       {
@@ -91,7 +98,7 @@ export const developers: IntegrationCatalogEntry[] = [
     primaryAction: {
       type: "copy",
       label: "Copy image URL",
-      text: "https://api.qrdx.dev/v1/qr?data=https://example.com&size=512",
+      text: `${API_BASE_URL}/qr?data=https://example.com&size=512`,
       toast: "Image URL copied",
     },
     secondaryAction: {
@@ -105,7 +112,7 @@ export const developers: IntegrationCatalogEntry[] = [
         snippet: {
           label: "README.md",
           language: "text",
-          code: "![QR code](https://api.qrdx.dev/v1/qr?data=https://github.com/you/repo)",
+          code: `![QR code](${API_BASE_URL}/qr?data=https://github.com/you/repo)`,
         },
       },
       {
@@ -113,7 +120,7 @@ export const developers: IntegrationCatalogEntry[] = [
         snippet: {
           label: "index.html",
           language: "html",
-          code: `<img\n  src="https://api.qrdx.dev/v1/qr?data=https://qrdx.dev&size=256&fg=155dfc"\n  width="256" height="256" alt="QR code for qrdx.dev"\n/>`,
+          code: `<img\n  src="${API_BASE_URL}/qr?data=${CANONICAL_ORIGIN}&size=256&fg=155dfc"\n  width="256" height="256" alt="QR code for qrdx.dev"\n/>`,
         },
       },
       {
@@ -154,7 +161,7 @@ export const developers: IntegrationCatalogEntry[] = [
     logo: { type: "feature", icon: "CommandSquare" },
     plan: "no-account",
     builtBy: "QRdx",
-    website: "https://www.npmjs.com/package/@qrdx/cli",
+    website: NPM_CLI_URL,
     primaryAction: {
       type: "copy",
       label: "Copy command",
@@ -164,7 +171,7 @@ export const developers: IntegrationCatalogEntry[] = [
     secondaryAction: {
       type: "link",
       label: "View on npm",
-      href: "https://www.npmjs.com/package/@qrdx/cli",
+      href: NPM_CLI_URL,
     },
     steps: [
       {
@@ -180,7 +187,7 @@ export const developers: IntegrationCatalogEntry[] = [
         snippet: {
           label: "Terminal",
           language: "bash",
-          code: 'npx @qrdx/cli generate "https://qrdx.dev" \\\n  --body circle --eye rounded --fg "#1a1a2e" \\\n  --frame banner-bottom --frame-text "Scan me" \\\n  -o qr.png --size 2048 --level H',
+          code: `npx @qrdx/cli generate "${CANONICAL_ORIGIN}" \\\n  --body circle --eye rounded --fg "#1a1a2e" \\\n  --frame banner-bottom --frame-text "Scan me" \\\n  -o qr.png --size 2048 --level H`,
         },
       },
       {
@@ -222,7 +229,7 @@ export const developers: IntegrationCatalogEntry[] = [
     logo: { type: "image", src: "/integrations/react.svg" },
     plan: "no-account",
     builtBy: "QRdx",
-    website: "https://www.npmjs.com/package/qrdx",
+    website: NPM_LIBRARY_URL,
     docs: "/docs/getting-started",
     primaryAction: {
       type: "copy",
@@ -301,7 +308,7 @@ export const developers: IntegrationCatalogEntry[] = [
     primaryAction: {
       type: "copy",
       label: "Copy command",
-      text: "npx shadcn@latest add https://qrdx.dev/r/qr-code.json",
+      text: `npx shadcn@latest add ${SHADCN_REGISTRY_URL}/qr-code.json`,
       toast: "Command copied — run it in your project",
     },
     secondaryAction: {
@@ -316,7 +323,7 @@ export const developers: IntegrationCatalogEntry[] = [
         snippet: {
           label: "Terminal",
           language: "bash",
-          code: "npx shadcn@latest add https://qrdx.dev/r/qr-code.json",
+          code: `npx shadcn@latest add ${SHADCN_REGISTRY_URL}/qr-code.json`,
         },
       },
       {
@@ -324,7 +331,7 @@ export const developers: IntegrationCatalogEntry[] = [
         snippet: {
           label: "share-card.tsx",
           language: "tsx",
-          code: `import { QrCode } from "@/components/qr-code";\n\n<QrCode value="https://qrdx.dev" size={180} caption="Scan to open qrdx.dev" />`,
+          code: `import { QrCode } from "@/components/qr-code";\n\n<QrCode value="${CANONICAL_ORIGIN}" size={180} caption="Scan to open qrdx.dev" />`,
         },
       },
       {
@@ -332,7 +339,7 @@ export const developers: IntegrationCatalogEntry[] = [
         snippet: {
           label: "Terminal",
           language: "bash",
-          code: "npx shadcn@latest add https://qrdx.dev/r/qr-code-scanner.json",
+          code: `npx shadcn@latest add ${SHADCN_REGISTRY_URL}/qr-code-scanner.json`,
         },
       },
     ],

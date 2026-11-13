@@ -17,7 +17,7 @@ import {
   RefreshCircle as Retry,
 } from "iconsax-reactjs";
 import { useTranslations } from "next-intl";
-import { formatCount } from "@/lib/bulk-limits";
+import { formatCount } from "@/lib/format-count";
 import { type ImportJob, jobProgress } from "../_lib/job";
 
 /** "3:42 PM", or with the day when it isn't today. */

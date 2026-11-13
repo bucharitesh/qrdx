@@ -2,16 +2,18 @@
 // an hour, so visitors never hit GitHub's 60-requests-an-hour anonymous limit
 // (which made the pill fall back to "Star" for busy networks).
 
-const REPO = "bucharitesh/qrdx";
-
+import { GITHUB_REPO_SLUG } from "@repo/config";
 export const revalidate = 3600;
 
 export async function GET() {
   try {
-    const res = await fetch(`https://api.github.com/repos/${REPO}`, {
-      headers: { Accept: "application/vnd.github+json" },
-      next: { revalidate },
-    });
+    const res = await fetch(
+      `https://api.github.com/repos/${GITHUB_REPO_SLUG}`,
+      {
+        headers: { Accept: "application/vnd.github+json" },
+        next: { revalidate },
+      },
+    );
     if (!res.ok) return stars(null);
     const data: { stargazers_count?: number } = await res.json();
     return stars(data.stargazers_count ?? null);
