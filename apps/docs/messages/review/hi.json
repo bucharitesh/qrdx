@@ -26183,12 +26183,28 @@
     "source": "359c897644fa",
     "status": "machine"
   },
+  "app.shell.setupGuide.launcherLabel": {
+    "source": "b7c0c7c31b4f",
+    "status": "machine"
+  },
   "app.shell.setupGuide.doneOfLengthDone": {
     "source": "179059a52a15",
     "status": "machine"
   },
+  "app.shell.setupGuide.doneOfLengthShort": {
+    "source": "0594fae3e732",
+    "status": "machine"
+  },
   "app.shell.setupGuide.setupTasksDone": {
     "source": "71d73e3562de",
+    "status": "machine"
+  },
+  "app.shell.setupGuide.collapse": {
+    "source": "be6eb1fc3b05",
+    "status": "machine"
+  },
+  "app.shell.setupGuide.dismissGuide": {
+    "source": "3986028d181d",
     "status": "machine"
   },
   "app.shell.setupGuide.done": {
