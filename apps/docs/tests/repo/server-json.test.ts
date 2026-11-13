@@ -40,10 +40,10 @@ describe("server.json", () => {
       isRequired: false,
       isSecret: true,
     });
-    // Only the save tools need it.
+    // Only the save tools and AI art need it.
     expect(
       MCP_TOOLS.filter((tool) => tool.needsKey).map((t) => t.name),
-    ).toEqual(["save_template", "save_barcode"]);
+    ).toEqual(["save_template", "save_barcode", "generate_ai_art"]);
   });
 
   it("lists every barcode format the server draws", () => {

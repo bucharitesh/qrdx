@@ -76,7 +76,7 @@ describe("MCP Apps: the QR card", () => {
     expect(message.result.capabilities.resources).toBeDefined();
     expect(message.result.capabilities.tools).toBeDefined();
     expect(message.result.serverInfo).toEqual(MCP_SERVER_INFO);
-    expect(MCP_SERVER_INFO.version).toBe("1.2.0");
+    expect(MCP_SERVER_INFO.version).toBe("1.3.0");
   });
 
   it("links exactly the QR-producing tools to the card", async () => {

@@ -2638,7 +2638,7 @@
     "setupUrl": "Server URL",
     "toolsEyebrow": "Tools",
     "toolsTitle": "What your assistant can call",
-    "toolsDescription": "{count, number} tools. All but save_template and save_barcode are read-only and need no key: they render images, format text and read the public community. Full parameters are in the <link>MCP server docs</link>.",
+    "toolsDescription": "{count, number} tools. All but save_template, save_barcode and generate_ai_art are read-only and need no key: they render images, format text and read the public community. Full parameters are in the <link>MCP server docs</link>.",
     "toolNoKey": "No key",
     "toolNeedsKey": "Needs an API key",
     "faqTitle": "MCP server FAQ",
