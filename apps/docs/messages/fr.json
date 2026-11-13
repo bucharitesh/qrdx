@@ -1510,6 +1510,11 @@
       "after": "Il s’ouvre directement sur le scanner dans sa propre fenêtre et fonctionne hors ligne une fois que vous avez scanné un code avec."
     }
   },
+  "scannerApp": {
+    "share": "Partager",
+    "scanInstructions": "Pointez l’appareil photo vers un QR code ou un code-barres",
+    "cameraBlocked": "L’accès à l’appareil photo est désactivé pour QRdx Scanner. Activez-le dans les Réglages, ou scannez plutôt une image."
+  },
   "scanPages": {
     "reportAbuse": "Signaler un abus",
     "privacy": "Confidentialité",

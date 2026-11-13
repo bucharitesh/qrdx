@@ -1603,6 +1603,11 @@
       "after": "它会在独立窗口中直接打开扫描器，并且在你用它扫描过一次二维码后即可离线使用。"
     }
   },
+  "scannerApp": {
+    "share": "分享",
+    "scanInstructions": "将摄像头对准二维码或条形码",
+    "cameraBlocked": "QRdx Scanner 的相机权限已关闭。请在设置中开启，或改为扫描图片。"
+  },
   "scanPages": {
     "reportAbuse": "举报滥用",
     "privacy": "隐私",

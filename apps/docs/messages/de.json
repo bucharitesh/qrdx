@@ -1510,6 +1510,11 @@
       "after": "Er öffnet sich direkt als Scanner in einem eigenen Fenster und funktioniert offline, sobald du damit einen Code gescannt hast."
     }
   },
+  "scannerApp": {
+    "share": "Teilen",
+    "scanInstructions": "Richte die Kamera auf einen QR-Code oder Barcode",
+    "cameraBlocked": "Der Kamerazugriff für QRdx Scanner ist ausgeschaltet. Aktiviere ihn in den Einstellungen oder scanne stattdessen ein Bild."
+  },
   "scanPages": {
     "reportAbuse": "Missbrauch melden",
     "privacy": "Datenschutz",
