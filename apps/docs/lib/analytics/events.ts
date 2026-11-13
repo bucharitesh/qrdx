@@ -97,6 +97,8 @@ export interface AnalyticsEvents {
     locked_seed: boolean;
     reference: boolean;
     preset?: string;
+    /** The quick look (components/sections/ai-art/looks.ts) */
+    look?: string;
   };
   prompt_enhance_started: {
     length: number;
