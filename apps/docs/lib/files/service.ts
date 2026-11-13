@@ -4,6 +4,7 @@ import { database as db, fileAsset, landingPage, qrCode } from "@repo/database";
 import cuid from "cuid";
 import {
   and,
+  count,
   desc,
   eq,
   gt,
@@ -18,6 +19,11 @@ import {
 } from "drizzle-orm";
 import { z } from "zod";
 import { HttpError } from "@/lib/error-response";
+import {
+  type CursorPage,
+  decodeKeyset,
+  toCursorPage,
+} from "@/lib/keyset-cursor";
 import { noteLimitUsage } from "@/lib/limit-notices";
 import { baseUrl } from "@/lib/metadata";
 import { can } from "@/lib/permissions";
@@ -41,6 +47,7 @@ import {
   displayFilename,
   FILE_ID_PATTERN,
   FILE_KIND_LABELS,
+  FILE_KINDS,
   type FileKind,
   type FileView,
   filePath,
@@ -78,8 +85,6 @@ import { verifyStoredObject } from "./verify";
  * rule that expires `staging/` after a day for the rest.
  */
 const STALE_PENDING_MS = 2 * 60 * 60 * 1000;
-const LIST_LIMIT = 500;
-const PICKER_LIMIT = 200;
 const CLEANUP_BATCH = 20;
 
 export const fileIdSchema = z
@@ -322,15 +327,46 @@ export async function getStorageOverview(
   };
 }
 
-/** Ready and blocked files of the workspace, newest first. */
-export async function listFiles(
+/** Files a page of the Files list and the file library loads. */
+export const FILES_PAGE_SIZE = 50;
+const MAX_FILES_PAGE = 200;
+
+/**
+ * created_at to the millisecond: what a cursor can carry (a JS Date). The
+ * database's now() keeps microseconds, and ordering and comparing on the
+ * same truncated value keeps two files made within one millisecond from
+ * being skipped between pages.
+ */
+const createdMs = sql<Date>`date_trunc('milliseconds', ${fileAsset.createdAt})`;
+
+/**
+ * A cursor's time as created_at holds it: UTC wall time, the way Drizzle
+ * writes a Date to a timestamp column. Compared with an expression rather
+ * than the column, a bare Date would reach the driver as local time with an
+ * offset that a timestamp without time zone drops.
+ */
+const cursorTime = (at: Date) => sql<Date>`${at.toISOString()}::timestamp`;
+
+/**
+ * One page of the workspace's files, newest first, after `cursor` (from the
+ * previous page). Ready and blocked files, or ready ones only for pickers.
+ */
+export async function listFilesPage(
   scope: ActiveScope,
   {
     kind,
     readyOnly = false,
-    limit = LIST_LIMIT,
-  }: { kind?: FileKind; readyOnly?: boolean; limit?: number } = {},
-): Promise<FileView[]> {
+    cursor,
+    limit = FILES_PAGE_SIZE,
+  }: {
+    kind?: FileKind;
+    readyOnly?: boolean;
+    cursor?: string | null;
+    limit?: number;
+  } = {},
+): Promise<CursorPage<FileView>> {
+  const size = Math.min(Math.max(1, Math.floor(limit)), MAX_FILES_PAGE);
+  const after = decodeKeyset(cursor);
   const rows = await db
     .select()
     .from(fileAsset)
@@ -341,16 +377,47 @@ export async function listFiles(
           ? eq(fileAsset.status, "ready")
           : inArray(fileAsset.status, ["ready", "blocked"]),
         kind ? inArray(fileAsset.mime, mimesForKind(kind)) : undefined,
+        after
+          ? or(
+              lt(createdMs, cursorTime(after.at)),
+              and(
+                eq(createdMs, cursorTime(after.at)),
+                lt(fileAsset.id, after.id),
+              ),
+            )
+          : undefined,
       ),
     )
-    .orderBy(desc(fileAsset.createdAt))
-    .limit(Math.min(limit, LIST_LIMIT));
-  return rows.map((row) => toView(row, scope));
+    .orderBy(desc(createdMs), desc(fileAsset.id))
+    .limit(size + 1);
+  return toCursorPage(
+    rows,
+    size,
+    (row) => ({ at: row.createdAt, id: row.id }),
+    (row) => toView(row, scope),
+  );
 }
 
-/** Ready files for the page editor's picker. */
-export function listPickerFiles(scope: ActiveScope, kind?: FileKind) {
-  return listFiles(scope, { kind, readyOnly: true, limit: PICKER_LIMIT });
+/** How many ready and blocked files of each kind the workspace has. */
+export async function countFilesByKind(
+  scope: ActiveScope,
+): Promise<Record<FileKind, number>> {
+  const rows = await db
+    .select({ mime: fileAsset.mime, total: count() })
+    .from(fileAsset)
+    .where(
+      and(scopeWhere(scope), inArray(fileAsset.status, ["ready", "blocked"])),
+    )
+    .groupBy(fileAsset.mime);
+  const counts = Object.fromEntries(
+    FILE_KINDS.map((kind) => [kind, 0]),
+  ) as Record<FileKind, number>;
+  for (const row of rows) {
+    // Anything stored under an older type lists as a PDF (toView does too).
+    const kind = isAllowedMime(row.mime) ? kindForMime(row.mime) : "pdf";
+    counts[kind] += row.total;
+  }
+  return counts;
 }
 
 /**

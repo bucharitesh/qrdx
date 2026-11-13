@@ -7322,7 +7322,6 @@
           "open": "Buka",
           "replaceFile": "Ganti file…",
           "delete": "Hapus",
-          "showingThe500NewestFiles": "Menampilkan 500 file terbaru.",
           "deleteFilename": "Hapus {filename}?",
           "thisFileIsValueThey": "File ini {value}. Halaman tersebut akan menampilkan \"File tidak tersedia\".",
           "andValueMore": "dan {value, number} lainnya",

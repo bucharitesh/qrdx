@@ -7322,7 +7322,6 @@
           "open": "खोलें",
           "replaceFile": "फ़ाइल बदलें…",
           "delete": "हटाएँ",
-          "showingThe500NewestFiles": "सबसे नई 500 फ़ाइलें दिखाई जा रही हैं।",
           "deleteFilename": "{filename} हटाएँ?",
           "thisFileIsValueThey": "यह फ़ाइल {value} है। इनमें इसके बजाय \"File unavailable\" दिखेगा।",
           "andValueMore": "और {value, number} और",

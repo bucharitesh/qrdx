@@ -52,11 +52,12 @@ import {
   Export as Upload,
 } from "iconsax-reactjs";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { type DragEvent, useRef, useState, useTransition } from "react";
-import { deleteFileAction } from "@/actions/files";
+import { deleteFileAction, loadFilesAction } from "@/actions/files";
 import { UpgradeButton } from "@/app/(app)/dashboard/team/_components/small-actions";
+import { LoadMore } from "@/components/load-more";
 import { useCan, useWorkspaceHref } from "@/components/workspace-provider";
 import { FileKindIcon } from "@/lib/files/components/file-kind-icon";
 import {
@@ -75,7 +76,9 @@ import {
   formatsForKinds,
 } from "@/lib/files/types";
 import { uploadFile } from "@/lib/files/upload-client";
+import { useCursorList } from "@/lib/hooks/use-cursor-list";
 import type { Translator } from "@/lib/i18n/translator";
+import type { CursorPage } from "@/lib/keyset-cursor";
 import { soundEvent } from "@/lib/sound/emit";
 
 export interface FileRow extends FileView {
@@ -84,6 +87,9 @@ export interface FileRow extends FileView {
 }
 
 type Filter = "all" | FileKind;
+
+/** Most files one reload reads again (after an upload or delete). */
+const MAX_RELOAD = 200;
 
 const dateFormat = new Intl.DateTimeFormat("en-US", {
   month: "short",
@@ -160,14 +166,26 @@ function UsageCard({
   );
 }
 
+/**
+ * The workspace's files, newest first, loading more as you scroll. The kind
+ * tabs live in the URL (?kind=), so the server renders each kind's first
+ * page and counts every kind; later pages come from loadFilesAction.
+ */
 export function FilesManager({
-  files,
+  first,
+  counts,
+  kind,
   overview,
   canUpgrade,
   canManageAll,
   isTeam,
 }: {
-  files: FileRow[];
+  /** The first page for `kind` */
+  first: CursorPage<FileRow>;
+  /** Files of each kind in the whole workspace */
+  counts: Record<FileKind, number>;
+  /** The kind shown; null for every kind */
+  kind: FileKind | null;
   overview: StorageOverview;
   canUpgrade: boolean;
   canManageAll: boolean;
@@ -176,9 +194,23 @@ export function FilesManager({
   const t = useTranslations("app.dashboard.files.filesManager");
   const inWorkspace = useWorkspaceHref();
   const router = useRouter();
+  const pathname = usePathname();
   const inputRef = useRef<HTMLInputElement>(null);
   const replaceRef = useRef<HTMLInputElement>(null);
-  const [filter, setFilter] = useState<Filter>("all");
+  const filter: Filter = kind ?? "all";
+  const [, startFilter] = useTransition();
+  const list = useCursorList({
+    first,
+    resetKey: filter,
+    keyOf: (file) => file.id,
+    errorMessage: t("couldntLoadMoreFiles"),
+    load: async (cursor) => {
+      const result = await loadFilesAction({ kind, cursor });
+      if (!result.success) throw new Error(result.error.message);
+      return result.data;
+    },
+  });
+  const files = list.items;
   const [dragging, setDragging] = useState(false);
   const [replacing, setReplacing] = useState<FileRow | null>(null);
   const [deleting, setDeleting] = useState<FileRow | null>(null);
@@ -188,22 +220,43 @@ export function FilesManager({
   // or deletes (lib/permissions.ts; the server refuses them too).
   const canWrite = useCan("content.write");
 
-  const counts = new Map<Filter, number>([["all", files.length]]);
-  for (const file of files)
-    counts.set(file.kind, (counts.get(file.kind) ?? 0) + 1);
-  const visible =
-    filter === "all" ? files : files.filter((file) => file.kind === filter);
+  const total = FILE_KINDS.reduce((sum, item) => sum + counts[item], 0);
 
-  async function uploadMany(list: File[]) {
-    if (list.length === 0) return;
-    const uploaded = await upload(list);
+  function showKind(next: Filter) {
+    startFilter(() =>
+      router.replace(next === "all" ? pathname : `${pathname}?kind=${next}`, {
+        scroll: false,
+      }),
+    );
+  }
+
+  /**
+   * After an upload, a replace or a delete: the storage meter and counts
+   * from the server, and the rows loaded so far read again from the top
+   * (so the list keeps its length and nobody loses their place).
+   */
+  async function reload() {
+    router.refresh();
+    const result = await loadFilesAction({
+      kind,
+      limit: Math.min(
+        Math.max(files.length, first.items.length, 1),
+        MAX_RELOAD,
+      ),
+    });
+    if (result.success) list.replace(result.data);
+  }
+
+  async function uploadMany(picked: File[]) {
+    if (picked.length === 0) return;
+    const uploaded = await upload(picked);
     if (uploaded.length > 0) {
       toast.success(
         uploaded.length === 1
           ? t("uploadedFilename", { filename: uploaded[0]?.filename })
           : t("uploadedLengthFiles", { length: uploaded.length }),
       );
-      router.refresh();
+      await reload();
     }
   }
 
@@ -218,7 +271,7 @@ export function FilesManager({
       toast.success(t("fileReplacedPagesUsingIt"), {
         id: toastId,
       });
-      router.refresh();
+      await reload();
     } catch (error) {
       toast.error((error as Error).message || t("replaceFailed"), {
         id: toastId,
@@ -235,7 +288,8 @@ export function FilesManager({
       if (result.success) {
         toast.success(t("deletedFilename", { filename: file.filename }));
         setDeleting(null);
-        router.refresh();
+        list.update((items) => items.filter((item) => item.id !== file.id));
+        await reload();
       } else {
         toast.error(result.error.message);
       }
@@ -328,7 +382,7 @@ export function FilesManager({
         type="file"
       />
 
-      {files.length === 0 ? (
+      {total === 0 ? (
         <Empty className="border">
           <EmptyHeader>
             <EmptyMedia variant="icon">
@@ -345,23 +399,23 @@ export function FilesManager({
       ) : (
         <div className="space-y-3">
           <Tabs
-            onValueChange={(value) => setFilter(value as Filter)}
+            onValueChange={(value) => showKind(value as Filter)}
             value={filter}
           >
             <TabsList className="flex-wrap">
               <TabsTrigger value="all">
-                {t("allValue", { value: counts.get("all") ?? 0 })}
+                {t("allValue", { value: total })}
               </TabsTrigger>
-              {FILE_KINDS.filter((kind) => counts.get(kind)).map((kind) => (
-                <TabsTrigger key={kind} value={kind}>
-                  {FILE_KIND_LABELS[kind]} ({counts.get(kind)})
+              {FILE_KINDS.filter((item) => counts[item] > 0).map((item) => (
+                <TabsTrigger key={item} value={item}>
+                  {FILE_KIND_LABELS[item]} ({counts[item]})
                 </TabsTrigger>
               ))}
             </TabsList>
           </Tabs>
 
           <ul className="divide-y rounded-lg border">
-            {visible.map((file) => {
+            {files.map((file) => {
               const canManage = canWrite && (canManageAll || file.mine);
               const blocked = file.status === "blocked";
               return (
@@ -471,11 +525,22 @@ export function FilesManager({
               );
             })}
           </ul>
-          {files.length >= 500 && (
-            <p className="text-muted-foreground text-xs">
-              {t("showingThe500NewestFiles")}
-            </p>
-          )}
+          <LoadMore
+            count={files.length}
+            error={list.error}
+            hasMore={list.hasMore}
+            labels={{
+              loadMore: t("loadMoreFiles"),
+              loading: t("loadingMoreFiles"),
+              retry: t("tryAgain"),
+              end:
+                files.length > first.items.length
+                  ? t("allFilesShown")
+                  : undefined,
+            }}
+            loading={list.loading}
+            onLoadMore={list.loadMore}
+          />
           {blockedNotice(files)}
         </div>
       )}
