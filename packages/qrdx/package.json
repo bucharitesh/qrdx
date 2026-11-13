@@ -140,6 +140,16 @@
         "types": "./dist/src/solid.d.ts",
         "default": "./dist/solid.js"
       }
+    },
+    "./angular": {
+      "import": {
+        "types": "./dist/src/angular.d.ts",
+        "default": "./dist/angular.mjs"
+      },
+      "require": {
+        "types": "./dist/src/angular.d.ts",
+        "default": "./dist/angular.js"
+      }
     }
   },
   "files": [
@@ -178,7 +188,14 @@
     "vue": "^3.5.45",
     "preact": "^11.2.0",
     "preact-render-to-string": "^6.8.3",
-    "solid-js": "^1.9.19"
+    "solid-js": "^1.9.19",
+    "@angular/common": "21.2.26",
+    "@angular/compiler": "21.2.26",
+    "@angular/compiler-cli": "21.2.26",
+    "@angular/core": "21.2.26",
+    "@angular/platform-browser": "21.2.26",
+    "@angular/platform-server": "21.2.26",
+    "rxjs": "^7.8.2"
   },
   "peerDependencies": {
     "@resvg/resvg-js": "^2.6.2",
@@ -188,7 +205,8 @@
     "sharp": ">=0.34.0",
     "vue": ">=3.3.0",
     "preact": ">=10.0.0",
-    "solid-js": "^1.8.0"
+    "solid-js": "^1.8.0",
+    "@angular/core": ">=20.0.0"
   },
   "peerDependenciesMeta": {
     "@resvg/resvg-js": {
@@ -213,6 +231,9 @@
       "optional": true
     },
     "solid-js": {
+      "optional": true
+    },
+    "@angular/core": {
       "optional": true
     }
   },
