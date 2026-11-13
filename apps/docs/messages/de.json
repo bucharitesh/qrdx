@@ -8342,8 +8342,12 @@
       },
       "setupGuide": {
         "getSetUp": "Einrichten",
+        "launcherLabel": "Einrichtung: {done, number} von {length, number} erledigt",
         "doneOfLengthDone": "{done, number} von {length, number} erledigt",
+        "doneOfLengthShort": "{done, number}/{length, number}",
         "setupTasksDone": "Erledigte Aufgaben",
+        "collapse": "Einklappen",
+        "dismissGuide": "Guide schließen",
         "done": "(erledigt)",
         "create": "Erstellen",
         "start": "Starten",
