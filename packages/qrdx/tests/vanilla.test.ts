@@ -3,6 +3,7 @@
 // it up to date, exports it and cleans up after itself. The built no-bundler
 // file (dist/vanilla.browser.mjs) is checked the same way when it exists.
 import { existsSync } from "node:fs";
+import { URL as NodeURL } from "node:url";
 import { afterEach, describe, expect, it, it as test, vi } from "vitest";
 import * as vanilla from "../src/vanilla";
 import type { QRSVGOptions } from "../types";
@@ -46,7 +47,9 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
-const builtFile = new URL("../dist/vanilla.browser.mjs", import.meta.url);
+// Node's URL: under jsdom, Vite rewrites `new URL(path, import.meta.url)`
+// to an http: URL that the file system can't find.
+const builtFile = new NodeURL("../dist/vanilla.browser.mjs", import.meta.url);
 
 describe.each([
   ["source", async () => vanilla],
