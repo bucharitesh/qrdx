@@ -10,12 +10,16 @@ Files the docs render and the main app serves, kept outside `apps/docs` so anoth
 | `registry/examples/*` | The live examples on the component docs pages, and `examples/index.tsx`, which loads each one on its own | By hand |
 | `registry/ui/*`, `registry/lib/utils.ts` | Aliases to `@repo/design-system`, standing in for a project's shadcn/ui components and `cn` | By hand |
 | `registry/outputs.ts`, `registry/build.ts` | What `/r/<name>.json` contains, and the script that writes it to a folder | |
+| `pattern-catalog.ts` | Every body pattern, eye, eye centre and frame the engine has, with its picker category, popularity and scan risk (the style pickers, the docs catalogue and presets). `apps/docs/lib/pattern-catalog.ts` re-exports it | By hand, when the engine adds a value (tsc fails until it's listed) |
+| `qr-catalog-tiles.ts` | The tiles of the docs style catalogue (`/docs/styles`): each option on plain square shapes. `apps/docs/components/docs/qr-catalog-tiles.ts` re-exports it | From `pattern-catalog.ts` |
 
 ```ts
 import openapi from "@repo/docs-assets/openapi.json";
 import registry from "@repo/docs-assets/registry.json";
 import { examples } from "@repo/docs-assets/registry/examples";
 import { toConsumerSource, toTargetPath } from "@repo/docs-assets/registry/transform";
+import { BODY_CATALOG } from "@repo/docs-assets/pattern-catalog";
+import { tilesFor } from "@repo/docs-assets/qr-catalog-tiles";
 ```
 
 ## Served copies
