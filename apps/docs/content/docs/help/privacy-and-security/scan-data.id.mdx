@@ -12,30 +12,30 @@ Hanya kode dinamis yang mencatat pemindaian. Kode statis menyimpan konten Anda s
 - Situs perujuk, jika ada.
 - Bahasa browser.
 - Versi mana yang dilihat pengunjung, jika uji A/B sedang berjalan.
-- Hash harian dengan salt dari alamat jaringan dan browser, sehingga satu pengunjung dihitung sekali per hari.
+- Hash harian yang diberi salt dari alamat jaringan dan browser, sehingga satu pengunjung dihitung sekali per hari.
 - Lokasi mereka, dibulatkan hingga sekitar 100 m, hanya jika pemilik kode mengaktifkan [lokasi presisi](/docs/precise-location) dan pemindai mengizinkannya di browser mereka. Tidak ada yang disimpan jika mereka menolak.
 
 ## Apa yang tidak pernah disimpan [#what-it-never-stores]
 
-QRdx tidak pernah menyimpan alamat IP pemindai. Hash di atas tidak dapat dikembalikan menjadi alamat IP, dan berubah setiap hari.
+QRdx tidak pernah menyimpan alamat IP pemindai. Hash di atas tidak dapat dikembalikan menjadi alamat IP, dan nilainya berubah setiap hari.
 
 Bot dan pratinjau tautan tidak dicatat.
 
 ## Berapa lama pemindaian disimpan [#how-long-scans-are-kept]
 
-Pemindaian disimpan selama kode tersebut ada. Paket Anda menentukan seberapa jauh ke belakang Anda dapat melihatnya: 90 hari di Gratis, 3 tahun di Pro, dan tanpa batas di Business.
+Pemindaian disimpan selama kode tersebut ada. Paket Anda menentukan seberapa jauh ke belakang Anda dapat melihatnya: {facts.freeScanHistoryYears} tahun di paket Gratis, dan seluruhnya di Pro dan Business.
 
-Menghapus kode berarti menghapus pemindaiannya secara permanen.
+Menghapus kode secara permanen juga menghapus pemindaiannya.
 
-## Cookie untuk orang yang melakukan pemindaian [#cookies-for-people-who-scan]
+## Cookie untuk orang yang memindai [#cookies-for-people-who-scan]
 
 Halaman yang dilihat pemindai Anda, seperti tautan pendek dan halaman seluler, tidak menampilkan banner cookie dan tidak memuat analitik atau widget dukungan QRdx.
 
-QRdx mengatur dua cookie di sana. Satu mengingat kata sandi kode yang benar selama 6 jam. Yang lain menghubungkan halaman yang di-hosting dengan pemindaian yang membukanya selama 15 menit, hanya ketika kode meminta lokasi presisi, sehingga lokasi yang dibagikan pemindai ditambahkan ke pemindaian tersebut. Pemilik halaman dapat menambahkan piksel analitik mereka sendiri ke halaman mereka pada paket berbayar.
+QRdx menetapkan dua cookie di sana. Satu mengingat kata sandi kode yang benar selama 6 jam. Satunya lagi menghubungkan halaman yang di-hosting dengan pemindaian yang membukanya selama 15 menit, hanya ketika kode meminta lokasi presisi, sehingga lokasi yang dibagikan pemindai ditambahkan ke pemindaian tersebut. Pemilik halaman dapat menambahkan piksel analitik mereka sendiri ke halaman mereka pada paket berbayar.
 
 ## Pemindai kode QR [#the-qr-code-scanner]
 
-[Pemindai QRdx](/scan) menyimpan riwayat pemindaian Anda hanya di perangkat Anda. Bingkai kamera dan gambar dibaca di perangkat Anda dan tidak pernah diunggah, termasuk tangkapan layar yang Anda bagikan ke pemindai terpasang di Android. Untuk memeriksa tautan sebelum dibuka, hanya alamatnya yang dikirim untuk diperiksa, dan QRdx tidak menyimpannya.
+[Pemindai QRdx](/scan) menyimpan riwayat pemindaian Anda hanya di perangkat Anda. Bingkai kamera dan gambar dibaca di perangkat Anda dan tidak pernah diunggah, termasuk tangkapan layar yang Anda bagikan ke pemindai yang terpasang di Android. Untuk memeriksa tautan sebelum dibuka, hanya alamatnya yang dikirim untuk diperiksa, dan QRdx tidak menyimpannya.
 
 ## Detail lebih lanjut [#more-detail]
 
