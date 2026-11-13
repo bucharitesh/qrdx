@@ -25023,66 +25023,6 @@
     "source": "fbd99af4f3c0",
     "status": "machine"
   },
-  "app.dashboard.home.setupChecklist.done": {
-    "source": "891db1376d80",
-    "status": "machine"
-  },
-  "app.dashboard.home.setupChecklist.create": {
-    "source": "4759498ac2a7",
-    "status": "machine"
-  },
-  "app.dashboard.home.setupChecklist.start": {
-    "source": "e4bb9f1ece9a",
-    "status": "machine"
-  },
-  "app.dashboard.home.setupChecklist.design": {
-    "source": "0072e6b93494",
-    "status": "machine"
-  },
-  "app.dashboard.home.setupChecklist.invite": {
-    "source": "1fd9ae1607aa",
-    "status": "machine"
-  },
-  "app.dashboard.home.setupChecklist.connect": {
-    "source": "1a2303ede074",
-    "status": "machine"
-  },
-  "app.dashboard.home.setupChecklist.getSetUp": {
-    "source": "359c897644fa",
-    "status": "machine"
-  },
-  "app.dashboard.home.setupChecklist.doneOfLengthDone": {
-    "source": "179059a52a15",
-    "status": "machine"
-  },
-  "app.dashboard.home.setupChecklist.hide": {
-    "source": "ac20a57bfde0",
-    "status": "machine"
-  },
-  "app.dashboard.home.setupChecklist.setupTasksDone": {
-    "source": "71d73e3562de",
-    "status": "machine"
-  },
-  "app.dashboard.home.setupChecklist.createADynamicQrCode": {
-    "source": "e74d87cf6a11",
-    "status": "machine"
-  },
-  "app.dashboard.home.setupChecklist.makeALandingPageOr": {
-    "source": "3f70b7a19037",
-    "status": "machine"
-  },
-  "app.dashboard.home.setupChecklist.saveAThemeWithYour": {
-    "source": "baf037f07ec7",
-    "status": "machine"
-  },
-  "app.dashboard.home.setupChecklist.inviteATeammate": {
-    "source": "3e14c44747ea",
-    "status": "machine"
-  },
-  "app.dashboard.home.setupChecklist.connectACustomDomain": {
-    "source": "4a828dd8faac",
-    "status": "machine"
-  },
   "app.dashboard.listSelection.keyboardShortcuts": {
     "source": "e9bef0b0f3c2",
     "status": "machine"
@@ -26237,6 +26177,62 @@
   },
   "app.shell.spotlight.gotIt": {
     "source": "5ad3dbd1242a",
+    "status": "machine"
+  },
+  "app.shell.setupGuide.getSetUp": {
+    "source": "359c897644fa",
+    "status": "machine"
+  },
+  "app.shell.setupGuide.doneOfLengthDone": {
+    "source": "179059a52a15",
+    "status": "machine"
+  },
+  "app.shell.setupGuide.setupTasksDone": {
+    "source": "71d73e3562de",
+    "status": "machine"
+  },
+  "app.shell.setupGuide.done": {
+    "source": "891db1376d80",
+    "status": "machine"
+  },
+  "app.shell.setupGuide.create": {
+    "source": "4759498ac2a7",
+    "status": "machine"
+  },
+  "app.shell.setupGuide.start": {
+    "source": "e4bb9f1ece9a",
+    "status": "machine"
+  },
+  "app.shell.setupGuide.design": {
+    "source": "0072e6b93494",
+    "status": "machine"
+  },
+  "app.shell.setupGuide.invite": {
+    "source": "1fd9ae1607aa",
+    "status": "machine"
+  },
+  "app.shell.setupGuide.connect": {
+    "source": "1a2303ede074",
+    "status": "machine"
+  },
+  "app.shell.setupGuide.createADynamicQrCode": {
+    "source": "e74d87cf6a11",
+    "status": "machine"
+  },
+  "app.shell.setupGuide.makeALandingPageOr": {
+    "source": "3f70b7a19037",
+    "status": "machine"
+  },
+  "app.shell.setupGuide.saveAThemeWithYour": {
+    "source": "baf037f07ec7",
+    "status": "machine"
+  },
+  "app.shell.setupGuide.inviteATeammate": {
+    "source": "3e14c44747ea",
+    "status": "machine"
+  },
+  "app.shell.setupGuide.connectACustomDomain": {
+    "source": "4a828dd8faac",
     "status": "machine"
   },
   "app.workspaces.createWorkspaceDialog.createAWorkspace": {

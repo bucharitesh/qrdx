@@ -7987,23 +7987,6 @@
         },
         "newCodeButton": {
           "newDynamicCode": "Nouveau code dynamique"
-        },
-        "setupChecklist": {
-          "done": "(terminé)",
-          "create": "Créer",
-          "start": "Démarrer",
-          "design": "Créer",
-          "invite": "Inviter",
-          "connect": "Connecter",
-          "getSetUp": "Prise en main",
-          "doneOfLengthDone": "{done, number} sur {length, number} terminées",
-          "hide": "Masquer",
-          "setupTasksDone": "Tâches terminées",
-          "createADynamicQrCode": "Créer un QR code dynamique",
-          "makeALandingPageOr": "Créer une page de destination ou un formulaire",
-          "saveAThemeWithYour": "Enregistrer un thème avec votre logo et vos couleurs",
-          "inviteATeammate": "Inviter un coéquipier",
-          "connectACustomDomain": "Connecter un domaine personnalisé"
         }
       },
       "listSelection": {
@@ -8356,6 +8339,22 @@
       "spotlight": {
         "new": "Nouveau",
         "gotIt": "Compris"
+      },
+      "setupGuide": {
+        "getSetUp": "Prise en main",
+        "doneOfLengthDone": "{done, number} sur {length, number} terminées",
+        "setupTasksDone": "Tâches terminées",
+        "done": "(terminé)",
+        "create": "Créer",
+        "start": "Démarrer",
+        "design": "Créer",
+        "invite": "Inviter",
+        "connect": "Connecter",
+        "createADynamicQrCode": "Créer un QR code dynamique",
+        "makeALandingPageOr": "Créer une page de destination ou un formulaire",
+        "saveAThemeWithYour": "Enregistrer un thème avec votre logo et vos couleurs",
+        "inviteATeammate": "Inviter un coéquipier",
+        "connectACustomDomain": "Connecter un domaine personnalisé"
       }
     },
     "workspaces": {

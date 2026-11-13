@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-/** A workspace's Home: counts, newest codes and the setup checklist. */
+/** A workspace's Home: counts and the newest codes. */
 export default async function DashboardPage({
   params,
 }: {

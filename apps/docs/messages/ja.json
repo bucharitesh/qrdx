@@ -7987,23 +7987,6 @@
         },
         "newCodeButton": {
           "newDynamicCode": "新しい動的コード"
-        },
-        "setupChecklist": {
-          "done": "（完了）",
-          "create": "作成",
-          "start": "開始",
-          "design": "デザイン",
-          "invite": "招待",
-          "connect": "接続",
-          "getSetUp": "初期設定",
-          "doneOfLengthDone": "{length, number}件中{done, number}件完了",
-          "hide": "非表示",
-          "setupTasksDone": "完了した設定タスク",
-          "createADynamicQrCode": "動的QRコードを作成",
-          "makeALandingPageOr": "ランディングページまたはフォームを作成",
-          "saveAThemeWithYour": "ロゴと色を設定したテーマを保存",
-          "inviteATeammate": "チームメンバーを招待",
-          "connectACustomDomain": "カスタムドメインを接続"
         }
       },
       "listSelection": {
@@ -8356,6 +8339,22 @@
       "spotlight": {
         "new": "新着",
         "gotIt": "了解"
+      },
+      "setupGuide": {
+        "getSetUp": "初期設定",
+        "doneOfLengthDone": "{length, number}件中{done, number}件完了",
+        "setupTasksDone": "完了した設定タスク",
+        "done": "（完了）",
+        "create": "作成",
+        "start": "開始",
+        "design": "デザイン",
+        "invite": "招待",
+        "connect": "接続",
+        "createADynamicQrCode": "動的QRコードを作成",
+        "makeALandingPageOr": "ランディングページまたはフォームを作成",
+        "saveAThemeWithYour": "ロゴと色を設定したテーマを保存",
+        "inviteATeammate": "チームメンバーを招待",
+        "connectACustomDomain": "カスタムドメインを接続"
       }
     },
     "workspaces": {

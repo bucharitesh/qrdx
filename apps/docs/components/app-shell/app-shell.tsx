@@ -10,6 +10,7 @@ import { getChangelogFeed } from "@/lib/changelog-feed-server";
 import { AppFrame } from "./app-frame";
 import { CreateProvider } from "./create-actions";
 import { SpotlightProvider } from "./feature-spotlight";
+import { SetupGuide } from "./setup-guide";
 import { getShellData, getShellLimitWarnings } from "./shell-data";
 import { WhatsNewProvider } from "./whats-new";
 
@@ -46,6 +47,8 @@ export async function AppShell({ children }: { children: ReactNode }) {
               <AppFrame limitWarnings={limitWarnings} shell={shell}>
                 {children}
               </AppFrame>
+              {/* "Get set up", bottom right: loads its own tasks. */}
+              <SetupGuide />
             </CreateProvider>
             {/* The card a LIMIT_REACHED answer opens (components/limits). */}
             <LimitDialogHost />
