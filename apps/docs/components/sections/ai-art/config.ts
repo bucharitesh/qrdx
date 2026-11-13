@@ -84,22 +84,42 @@ const base64Bytes = (payload: string) =>
   Math.floor((payload.length * 3) / 4) -
   (payload.endsWith("==") ? 2 : payload.endsWith("=") ? 1 : 0);
 
+/** An uploaded PNG/JPEG data: URL of at most `maxBytes`. */
+const uploadedImageSchema = (maxBytes: number, what: string) =>
+  z
+    .string()
+    .max(Math.ceil((maxBytes * 4) / 3) + 32)
+    .refine((value) => REFERENCE_DATA_URL.test(value), {
+      message: `${what} must be an uploaded PNG or JPG`,
+    })
+    .refine(
+      (value) => base64Bytes(value.slice(value.indexOf(",") + 1)) <= maxBytes,
+      { message: `${what} is too large` },
+    );
+
 /**
  * Reference images are only accepted as uploaded PNG/JPEG data: URLs, never
  * remote URLs, so the server never fetches anything a user points it at.
  */
-export const artReferenceSchema = z
-  .string()
-  .max(Math.ceil((ART_REFERENCE_MAX_BYTES * 4) / 3) + 32)
-  .refine((value) => REFERENCE_DATA_URL.test(value), {
-    message: "Reference image must be an uploaded PNG or JPG",
-  })
-  .refine(
-    (value) =>
-      base64Bytes(value.slice(value.indexOf(",") + 1)) <=
-      ART_REFERENCE_MAX_BYTES,
-    { message: "Reference image is too large" },
-  );
+export const artReferenceSchema = uploadedImageSchema(
+  ART_REFERENCE_MAX_BYTES,
+  "Reference image",
+);
+
+// ── Photo (photo mode) ────────────────────────────────────────────────────
+
+/**
+ * Photo mode's photo: cropped square and downsized to this side in the
+ * browser, as JPEG (image-utils.ts preparePhotoImage), so it arrives at the
+ * size the art is made at. Never stored or logged: it goes to the model and
+ * is dropped.
+ */
+export const ART_PHOTO_MAX_SIDE = 1024;
+/** Largest photo the client sends; a 1024 px JPEG is usually far smaller. */
+export const ART_PHOTO_MAX_BYTES = 1024 * 1024;
+
+/** Photo mode's photo, as an uploaded PNG/JPEG data: URL. */
+export const artPhotoSchema = uploadedImageSchema(ART_PHOTO_MAX_BYTES, "Photo");
 
 // ── Modes ─────────────────────────────────────────────────────────────────
 
@@ -191,7 +211,7 @@ const aiArtRequestFields = z.object({
   /** A quick look (./looks.ts) combined with the description */
   style: artLookIdSchema.optional(),
   /** Photo mode: the uploaded picture the code is painted into */
-  photo: artReferenceSchema.optional(),
+  photo: artPhotoSchema.optional(),
 });
 
 export const aiArtRequestSchema = aiArtRequestFields.superRefine(checkPhoto);
