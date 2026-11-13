@@ -3,6 +3,8 @@
 // it up to date, exports it and cleans up after itself. The built no-bundler
 // file (dist/vanilla.browser.mjs) is checked the same way when it exists.
 import { existsSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { afterEach, describe, expect, it, it as test, vi } from "vitest";
 import * as vanilla from "../src/vanilla";
 import type { QRSVGOptions } from "../types";
@@ -46,7 +48,13 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
-const builtFile = new URL("../dist/vanilla.browser.mjs", import.meta.url);
+// A path, not `new URL(…, import.meta.url)`: under the jsdom environment Vite
+// rewrites that pattern to an http:// asset URL, and the built file's checks
+// would be skipped
+const builtFile = join(
+  dirname(fileURLToPath(import.meta.url)),
+  "../dist/vanilla.browser.mjs"
+);
 
 describe.each([
   ["source", async () => vanilla],
@@ -54,7 +62,9 @@ describe.each([
     "dist/vanilla.browser.mjs",
     async () =>
       existsSync(builtFile)
-        ? ((await import(/* @vite-ignore */ builtFile.href)) as typeof vanilla)
+        ? ((await import(
+            /* @vite-ignore */ pathToFileURL(builtFile).href
+          )) as typeof vanilla)
         : null,
   ],
 ] as const)("createQRCode (%s)", (_label, load) => {
