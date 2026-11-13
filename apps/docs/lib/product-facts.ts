@@ -56,6 +56,7 @@ import { BRAND_LOGO_COUNT } from "./brand-logos/catalog.generated";
 import { TRANSLATED_LOCALES } from "./i18n/config";
 import { PAGE_TYPE_IDS } from "./landing/page-type-ids";
 import { MONEY_BACK_DAYS, NONPROFIT_DISCOUNT_PERCENT } from "./pricing";
+import { FREE_SCAN_HISTORY_YEARS } from "./scan-history";
 
 export const PRODUCT_FACTS = {
   /** Shapes for the data modules (`bodyPattern`). */
@@ -131,6 +132,11 @@ export const PRODUCT_FACTS = {
   moneyBackDays: MONEY_BACK_DAYS,
   /** The non-profit discount, as copy writes it: "50" (followed by "%"). */
   nonprofitDiscountPercent: NONPROFIT_DISCOUNT_PERCENT,
+  /**
+   * Years of scan history Free shows (lib/scan-history.ts): "1", followed by
+   * "year". Pro and Business keep all of it, which copy writes as words.
+   */
+  freeScanHistoryYears: FREE_SCAN_HISTORY_YEARS,
 } as const;
 
 export type ProductFact = keyof typeof PRODUCT_FACTS;
