@@ -1,0 +1,80 @@
+{
+  "id": "wifi-venue",
+  "name": "Venue Wi-Fi",
+  "description": "A dark card with a bright hairline tube around the code and a Wi-Fi symbol.",
+  "category": "use-case",
+  "collection": "places",
+  "contentTypes": ["wifi"],
+  "tags": ["wifi", "events", "venue"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1760
+    },
+    "qr": {
+      "x": 120,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#ececec"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 40,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 60,
+        "y": 260,
+        "width": 1120,
+        "height": 1240,
+        "radius": 60,
+        "fill": "accent",
+        "hole": {
+          "x": 72,
+          "y": 272,
+          "width": 1096,
+          "height": 1216,
+          "radius": 50
+        }
+      },
+      {
+        "type": "icon",
+        "icon": "wifi",
+        "x": 545,
+        "y": 75,
+        "size": 150,
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Event Wi-Fi",
+        "color": "accent",
+        "box": {
+          "x": 100,
+          "y": 1520,
+          "width": 1040,
+          "height": 180
+        }
+      }
+    ]
+  }
+}

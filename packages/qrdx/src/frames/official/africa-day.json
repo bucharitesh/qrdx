@@ -1,0 +1,110 @@
+{
+  "id": "africa-day",
+  "name": "Africa Day",
+  "description": "A light card with a globe and a solid label band, in green and gold.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "africa-day",
+  "contentTypes": [],
+  "tags": ["africa day", "may 25", "africa"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1770
+    },
+    "qr": {
+      "x": 120,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#14532d",
+      "text": "#ffffff",
+      "accent": "#facc15"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "frame",
+        "hole": {
+          "x": 20,
+          "y": 20,
+          "width": 1200,
+          "height": 1730,
+          "radius": 38
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 250,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 60,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M555.6 102A64.4 64.4 0 1 1 684.4 102A64.4 64.4 0 1 1 555.6 102ZM564 102A56 56 0 1 0 676 102A56 56 0 1 0 564 102ZM594.8 102A25.2 60.2 0 1 1 645.2 102A25.2 60.2 0 1 1 594.8 102ZM601.8 102A18.2 56 0 1 0 638.2 102A18.2 56 0 1 0 601.8 102ZM561.2 97.8L678.8 97.8L678.8 106.2L561.2 106.2ZM562.49 85.89L569.46 83.27L576.46 81.01L583.56 79.09L590.75 77.52L598 76.29L605.31 75.41L612.64 74.88L620 74.7L627.36 74.88L634.69 75.41L642 76.29L649.25 77.52L656.44 79.09L663.54 81.01L670.54 83.27L677.51 85.89L679.97 79.34L672.85 76.66L665.53 74.3L658.1 72.29L650.59 70.65L643 69.36L635.36 68.44L627.69 67.88L620 67.7L612.31 67.88L604.64 68.44L597 69.36L589.41 70.65L581.9 72.29L574.47 74.3L567.15 76.66L560.03 79.34ZM677.51 118.11L670.54 120.73L663.54 122.99L656.44 124.91L649.25 126.48L642 127.71L634.69 128.59L627.36 129.12L620 129.3L612.64 129.12L605.31 128.59L598 127.71L590.75 126.48L583.56 124.91L576.46 122.99L569.46 120.73L562.49 118.11L560.03 124.66L567.15 127.34L574.47 129.7L581.9 131.71L589.41 133.35L597 134.64L604.64 135.56L612.31 136.12L620 136.3L627.69 136.12L635.36 135.56L643 134.64L650.59 133.35L658.1 131.71L665.53 129.7L672.85 127.34L679.97 124.66Z",
+        "fill": "frame",
+        "fillRule": "evenodd"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Happy Africa Day",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1550,
+          "width": 1040,
+          "height": 190
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan me",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 180,
+          "width": 960,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

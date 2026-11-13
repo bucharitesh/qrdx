@@ -1,0 +1,113 @@
+{
+  "id": "aquarium-feeding",
+  "name": "Aquarium feeding times",
+  "description": "A light card with a tropical fish and a solid label band.",
+  "category": "use-case",
+  "collection": "places",
+  "contentTypes": ["url"],
+  "tags": ["zoo", "aquarium", "animals"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1770
+    },
+    "qr": {
+      "x": 120,
+      "y": 390,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "frame",
+        "hole": {
+          "x": 20,
+          "y": 20,
+          "width": 1200,
+          "height": 1730,
+          "radius": 38
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 250,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 190,
+        "width": 1240,
+        "height": 60,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M564 1572C578 1546.8 606 1535.6 628.4 1544L642.4 1510.4L648 1555.2C656.4 1560.8 659.2 1566.4 659.2 1572C659.2 1577.6 656.4 1583.2 648 1588.8L642.4 1633.6L628.4 1600C606 1608.4 578 1597.2 564 1572ZM575.9 1566.4A4.9 4.9 0 1 0 585.7 1566.4A4.9 4.9 0 1 0 575.9 1566.4ZM600.4 1545.25L597.6 1598.45L603.2 1598.75L606 1545.55ZM620 1545.4L620 1598.6L625.6 1598.6L625.6 1545.4Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M656.4 1572L684.4 1549.6L678.8 1572L684.4 1594.4Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for feeding times",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 30,
+          "width": 1040,
+          "height": 190
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Aquarium",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 1650,
+          "width": 960,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

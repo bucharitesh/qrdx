@@ -1,0 +1,77 @@
+{
+  "id": "lantern-festival-riddles",
+  "name": "Lantern riddles",
+  "description": "An arched card, like a window, with a round paper lantern, in lantern red and gold.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "lantern-festival",
+  "contentTypes": [],
+  "tags": ["lantern festival", "yuanxiao", "lanterns", "riddles", "lantern"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1880
+    },
+    "qr": {
+      "x": 160,
+      "y": 470,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#a61b29",
+      "text": "#ffffff",
+      "accent": "#f6c344"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M0 660A660 660 0 0 1 1320 660L1320 1840Q1320 1880 1280 1880L40 1880Q0 1880 0 1840Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M50 660A610 610 0 0 1 1270 660L1270 1830L50 1830ZM62 660L62 1818L1258 1818L1258 660A598 598 0 0 0 62 660Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.35
+        }
+      },
+      {
+        "type": "path",
+        "d": "M657.75 168L662.25 168L662.25 186L657.75 186ZM645 183L675 183A3 3 0 0 1 678 186L678 192A3 3 0 0 1 675 195L645 195A3 3 0 0 1 642 192L642 186A3 3 0 0 1 645 183ZM645 285L675 285A3 3 0 0 1 678 288L678 294A3 3 0 0 1 675 297L645 297A3 3 0 0 1 642 294L642 288A3 3 0 0 1 645 285ZM658.5 297L661.5 297A1.5 1.5 0 0 1 663 298.5L663 310.5A1.5 1.5 0 0 1 661.5 312L658.5 312A1.5 1.5 0 0 1 657 310.5L657 298.5A1.5 1.5 0 0 1 658.5 297ZM651 303L669 303L672 315L648 315Z",
+        "fill": "accent"
+      },
+      {
+        "type": "path",
+        "d": "M606 240A54 46.5 0 1 1 714 240A54 46.5 0 1 1 606 240Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M633 240A27 46.5 0 1 1 687 240A27 46.5 0 1 1 633 240ZM637.5 240A22.5 43.5 0 1 0 682.5 240A22.5 43.5 0 1 0 637.5 240ZM657.75 193.5L662.25 193.5L662.25 286.5L657.75 286.5Z",
+        "fill": "accent",
+        "fillRule": "evenodd"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for the riddles",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1610,
+          "width": 1040,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

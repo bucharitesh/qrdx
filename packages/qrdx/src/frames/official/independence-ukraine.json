@@ -1,0 +1,92 @@
+{
+  "id": "independence-ukraine",
+  "name": "Ukrainian Independence Day",
+  "description": "Flag colors in a band over the code, in blue and yellow.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "independence-day",
+  "contentTypes": [],
+  "tags": ["independence day", "national day", "ukraine", "august 24"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1760
+    },
+    "qr": {
+      "x": 120,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#0b3a7e",
+      "text": "#ffffff",
+      "accent": "#ffd700"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 24,
+        "y": 24,
+        "width": 1192,
+        "height": 276,
+        "radius": 36,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 24,
+        "y": 24,
+        "width": 1192,
+        "height": 139,
+        "fill": "#0057b7"
+      },
+      {
+        "type": "rect",
+        "x": 24,
+        "y": 162,
+        "width": 1192,
+        "height": 138,
+        "fill": "accent"
+      },
+      {
+        "type": "path",
+        "d": "M24 24L60 24A36 36 0 0 0 24 60Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M1216 24L1180 24A36 36 0 0 1 1216 60Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Happy Independence Day",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1530,
+          "width": 1040,
+          "height": 180
+        }
+      }
+    ]
+  }
+}

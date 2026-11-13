@@ -1,0 +1,109 @@
+{
+  "id": "kindness-day",
+  "name": "Kindness heart",
+  "description": "A light card with two hearts and a pill-shaped button under the code, in teal and pink.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "kindness-day",
+  "contentTypes": [],
+  "tags": ["world kindness day", "kindness", "november 13", "heart"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1760
+    },
+    "qr": {
+      "x": 120,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#0f766e",
+      "text": "#ffffff",
+      "accent": "#fda4af"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 64,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 64,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.82
+        },
+        "hole": {
+          "x": 12,
+          "y": 12,
+          "width": 1216,
+          "height": 1736,
+          "radius": 54
+        }
+      },
+      {
+        "type": "path",
+        "d": "M607 137.65C598.94 127.98 565.89 105.41 566.7 86.07C567.51 65.11 598.94 61.89 607 82.84C615.06 61.89 646.49 65.11 647.3 86.07C648.11 105.41 615.06 127.98 607 137.65Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M648.6 97.46C643.92 91.84 624.73 78.74 625.2 67.5C625.67 55.34 643.92 53.46 648.6 65.63C653.28 53.46 671.53 55.34 672 67.5C672.47 78.74 653.28 91.84 648.6 97.46Z",
+        "fill": "accent"
+      },
+      {
+        "type": "rect",
+        "x": 170,
+        "y": 1520,
+        "width": 900,
+        "height": 180,
+        "radius": 90,
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Pass it on",
+        "color": "text",
+        "box": {
+          "x": 230,
+          "y": 1520,
+          "width": 780,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "World Kindness Day",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 180,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

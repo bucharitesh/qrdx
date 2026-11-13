@@ -1,0 +1,81 @@
+{
+  "id": "yoga-day-lotus",
+  "name": "Yoga Day lotus",
+  "description": "A solid card with a lotus over the code and the label underneath, in saffron and peach.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "yoga-day",
+  "contentTypes": [],
+  "tags": ["international day of yoga", "yoga", "june 21", "lotus"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#c2410c",
+      "text": "#ffffff",
+      "accent": "#fed7aa"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M620 155C645.74 135.2 645.74 90.65 620 56C594.26 90.65 594.26 135.2 620 155ZM617 158C623.31 135.34 605.76 100.24 578 80C566.8 119.72 584.35 154.82 617 158ZM623 158C655.65 154.82 673.2 119.72 662 80C634.24 100.24 616.69 135.34 623 158ZM614 161C609.26 142.03 582.26 124.48 554 122C562.84 154.36 589.84 171.91 614 161ZM626 161C650.16 171.91 677.16 154.36 686 122C657.74 124.48 630.74 142.03 626 161Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M572 164C599 173 641 173 668 164L665 173C638 182 602 182 575 173Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for class times",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "International Yoga Day",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

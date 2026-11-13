@@ -1,0 +1,101 @@
+{
+  "id": "puthandu-sun",
+  "name": "Puthandu sun",
+  "description": "A solid card with a round badge holding a sun on its top edge, in clay and gold.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "sinhala-tamil-new-year",
+  "contentTypes": [],
+  "tags": [
+    "sinhala and tamil new year",
+    "avurudu",
+    "puthandu",
+    "april",
+    "tamil new year"
+  ],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1830
+    },
+    "qr": {
+      "x": 120,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#8c3b0c",
+      "text": "#ffffff",
+      "accent": "#e9b949"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 150,
+        "width": 1240,
+        "height": 1680,
+        "radius": 64,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 620,
+        "cy": 150,
+        "r": 150,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 620,
+        "cy": 150,
+        "r": 120,
+        "fill": "background"
+      },
+      {
+        "type": "path",
+        "d": "M589.2 150A30.8 30.8 0 1 1 650.8 150A30.8 30.8 0 1 1 589.2 150Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M615.8 110.8L624.2 110.8L620 85.6ZM635.96 113.95L643.24 118.15L652.2 94.23ZM651.85 126.76L656.05 134.04L675.77 117.8ZM659.2 145.8L659.2 154.2L684.4 150ZM656.05 165.96L651.85 173.24L675.77 182.2ZM643.24 181.85L635.96 186.05L652.2 205.77ZM624.2 189.2L615.8 189.2L620 214.4ZM604.04 186.05L596.76 181.85L587.8 205.77ZM588.15 173.24L583.95 165.96L564.23 182.2ZM580.8 154.2L580.8 145.8L555.6 150ZM583.95 134.04L588.15 126.76L564.23 117.8ZM596.76 118.15L604.04 113.95L587.8 94.23Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for our greetings",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1540,
+          "width": 1040,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Happy Puthandu",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1710,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

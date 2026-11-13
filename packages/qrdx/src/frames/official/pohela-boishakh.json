@@ -1,0 +1,120 @@
+{
+  "id": "pohela-boishakh",
+  "name": "Noboborsho sun",
+  "description": "A light card with a sun and a solid label band, in red and white.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "pohela-boishakh",
+  "contentTypes": [],
+  "tags": [
+    "pohela boishakh",
+    "bengali new year",
+    "april 14",
+    "new year",
+    "sun"
+  ],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1770
+    },
+    "qr": {
+      "x": 120,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#b91c1c",
+      "text": "#ffffff",
+      "accent": "#fde2e2"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "frame",
+        "hole": {
+          "x": 20,
+          "y": 20,
+          "width": 1200,
+          "height": 1730,
+          "radius": 38
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 250,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 60,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M589.2 102A30.8 30.8 0 1 1 650.8 102A30.8 30.8 0 1 1 589.2 102Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M615.8 62.8L624.2 62.8L620 37.6ZM635.96 65.95L643.24 70.15L652.2 46.23ZM651.85 78.76L656.05 86.04L675.77 69.8ZM659.2 97.8L659.2 106.2L684.4 102ZM656.05 117.96L651.85 125.24L675.77 134.2ZM643.24 133.85L635.96 138.05L652.2 157.77ZM624.2 141.2L615.8 141.2L620 166.4ZM604.04 138.05L596.76 133.85L587.8 157.77ZM588.15 125.24L583.95 117.96L564.23 134.2ZM580.8 106.2L580.8 97.8L555.6 102ZM583.95 86.04L588.15 78.76L564.23 69.8ZM596.76 70.15L604.04 65.95L587.8 46.23Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Shubho Noboborsho",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1550,
+          "width": 1040,
+          "height": 190
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan me",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 180,
+          "width": 960,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

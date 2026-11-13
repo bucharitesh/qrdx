@@ -1,0 +1,81 @@
+{
+  "id": "teachers-day-apple",
+  "name": "Teachers' Day card",
+  "description": "A solid card with a piece of fruit over the code and the label underneath, in navy and red.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "teachers-day",
+  "contentTypes": [],
+  "tags": ["world teachers' day", "teachers", "october 5", "apple", "school"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#1f3a5f",
+      "text": "#ffffff",
+      "accent": "#e11d48"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M620 84.5C635 69.5 677 72.5 677 114.5C677 150.5 650 177.5 632 174.5C626 173 614 173 608 174.5C590 177.5 563 150.5 563 114.5C563 72.5 605 69.5 620 84.5ZM623.69 79.15A3.75 3.75 0 0 0 616.31 77.85L620.81 52.35A3.75 3.75 0 0 0 628.19 53.65L623.69 79.15Z",
+        "fill": "accent"
+      },
+      {
+        "type": "path",
+        "d": "M627.5 66.5C633.5 47 654.5 44 668 50C659 66.5 639.5 72.5 627.5 66.5Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Happy Teachers' Day",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan me",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

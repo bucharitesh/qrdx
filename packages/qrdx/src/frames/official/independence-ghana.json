@@ -1,0 +1,105 @@
+{
+  "id": "independence-ghana",
+  "name": "Ghana Independence Day",
+  "description": "Flag colors in a band over the code and a star, in black, red, gold and green.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "ghana-independence-day",
+  "contentTypes": [],
+  "tags": ["independence day", "national day", "ghana", "march 6"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1760
+    },
+    "qr": {
+      "x": 120,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#fcd116"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 24,
+        "y": 24,
+        "width": 1192,
+        "height": 276,
+        "radius": 36,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 24,
+        "y": 24,
+        "width": 1192,
+        "height": 93,
+        "fill": "#ce1126"
+      },
+      {
+        "type": "rect",
+        "x": 24,
+        "y": 116,
+        "width": 1192,
+        "height": 93,
+        "fill": "accent"
+      },
+      {
+        "type": "rect",
+        "x": 24,
+        "y": 208,
+        "width": 1192,
+        "height": 92,
+        "fill": "#006b3f"
+      },
+      {
+        "type": "path",
+        "d": "M24 24L60 24A36 36 0 0 0 24 60Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M1216 24L1180 24A36 36 0 0 1 1216 60Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M620 123.3L630.05 150.87L659.37 151.91L636.26 169.98L644.33 198.19L620 181.8L595.67 198.19L603.74 169.98L580.63 151.91L609.95 150.87Z",
+        "fill": "#111111"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Happy Independence Day",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1530,
+          "width": 1040,
+          "height": 180
+        }
+      }
+    ]
+  }
+}

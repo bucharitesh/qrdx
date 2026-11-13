@@ -1,0 +1,89 @@
+{
+  "id": "summer-watermelon",
+  "name": "Watermelon sticker",
+  "description": "A die-cut sticker with a thick outline and an offset shadow and a slice of watermelon, in rind green and melon pink.",
+  "category": "seasonal",
+  "collection": "seasons",
+  "occasion": "summer",
+  "contentTypes": [],
+  "tags": ["summer", "sun", "watermelon", "sticker"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1750
+    },
+    "qr": {
+      "x": 110,
+      "y": 370,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#166534",
+      "text": "#ffffff",
+      "accent": "#fb7185"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 50,
+        "y": 50,
+        "width": 1270,
+        "height": 1700,
+        "radius": 110,
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1270,
+        "height": 1700,
+        "radius": 110,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 36,
+        "y": 36,
+        "width": 1198,
+        "height": 1628,
+        "radius": 80,
+        "fill": "background"
+      },
+      {
+        "type": "path",
+        "d": "M561.4 127.6A73.6 73.6 0 0 0 708.6 127.6Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M575.8 127.6A59.2 59.2 0 0 0 694.2 127.6ZM603 141.2C604.23 144.56 606.52 146.77 606.52 148.88A3.52 3.52 0 0 1 599.48 148.88C599.48 146.77 601.77 144.56 603 141.2ZM625.4 154C626.63 157.36 628.92 159.57 628.92 161.68A3.52 3.52 0 0 1 621.88 161.68C621.88 159.57 624.17 157.36 625.4 154ZM647.8 154C649.03 157.36 651.32 159.57 651.32 161.68A3.52 3.52 0 0 1 644.28 161.68C644.28 159.57 646.57 157.36 647.8 154ZM670.2 141.2C671.43 144.56 673.72 146.77 673.72 148.88A3.52 3.52 0 0 1 666.68 148.88C666.68 146.77 668.97 144.56 670.2 141.2ZM635 134.8C636.23 138.16 638.52 140.37 638.52 142.48A3.52 3.52 0 0 1 631.48 142.48C631.48 140.37 633.77 138.16 635 134.8Z",
+        "fill": "accent",
+        "fillRule": "evenodd"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "One in a melon",
+        "color": "frame",
+        "box": {
+          "x": 100,
+          "y": 1490,
+          "width": 1070,
+          "height": 170
+        }
+      }
+    ]
+  }
+}
