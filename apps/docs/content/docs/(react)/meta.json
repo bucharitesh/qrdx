@@ -10,6 +10,8 @@
     "../usage",
     "../nextjs",
     "../vanilla-js",
+    "../preact",
+    "../solid",
     "---Styling and export---",
     "../styles",
     "...../features",
