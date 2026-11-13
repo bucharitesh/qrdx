@@ -84,7 +84,7 @@ getFrameDimensions(400, { style: "banner-bottom" }); // { width: 496, height: 56
 
 ### In the playground
 
-**Design → Frame** has one picker for every frame. The **Classic** group holds the built-in frames, next to the shaped codes, the official frames and the frames you saved. Every frame is edited the same way: its label, second line, colors and text size, plus icons on frames that have them. A design with a built-in frame keeps its `style` name, so links, image URLs and code snippets stay short.
+**Design → Frame** has one picker for every frame. The **Classic** group holds the built-in frames and the [templates](/docs/features/templates) (Arrow, Standard Box and the rest), next to the shaped codes, the official frames and the frames you saved. Picking any of them replaces the one before. Every frame is edited the same way: its label, second line, colors and text size, plus icons on frames that have them. A design with a built-in frame keeps its `style` name, so links, image URLs and code snippets stay short.
 
 The **Shaped codes** group puts the code itself in a shape: a circle or a heart of decorative dots, or a shape you upload ([`shape`](/docs/features/patterns#circle-codes)). A shaped code takes the place of a frame: picking one clears the frame, and picking a frame clears the shape.
 
@@ -100,12 +100,13 @@ qrdx generate "https://example.com/menu" --frame banner-bottom --frame-text "Sca
 
 A frame spec is JSON with `kind: "qrdx.frame"`, `version: 1`, an `artboard` size, a `qr` box where the code goes, default `colors`, the `shapes` painted behind the code and the `labels`. Shapes are rects (with an optional hole), circles and rings, ellipses, polygons, paths, lines and built-in icons. They're filled with a theme token (`frame`, `text`, `accent`, `background`), a hex color, a mix of two, or a gradient. A spec holds no markup, links or images. Check one you didn't write with `frameSpecSchema` or `getFrameSpecIssues` from `qrdx/types` before you store it. The engine checks it again before drawing.
 
-The built-in frames brought these optional fields. Specs without them draw as before:
+The built-in frames and templates brought these optional fields. Specs without them draw as before:
 
 | Field | What it does |
 | --- | --- |
 | `labels[].collapse` | `{ y, height }`. When the label shows no text, the band from `y` to `y + height` is cut out: rows below it move up and the artwork gets shorter. Shapes wholly inside the band are left out, and shapes that cross it get shorter. A band can't cross the code, its padding or another band. |
-| `qr.plate` | `"opaque"` (the default) or `"background"`. The engine paints a plate in the code's background color under the code. When that background is see-through, `"opaque"` paints the plate and `background` fills white, so artwork never shows through the quiet zone. `"background"` keeps them see-through and leaves the plate out. It's allowed only when nothing but `background` fills, or a ring whose hole holds the plate, lies under the plate. |
+| `qr.plate` | `"opaque"` (the default), `"background"` or `"none"`. The engine paints a plate in the code's background color under the code. When that background is see-through, `"opaque"` paints the plate and `background` fills white, so artwork never shows through the quiet zone. `"background"` keeps them see-through and leaves the plate out. It's allowed only when nothing but `background` fills, or a ring whose hole holds the plate, lies under the plate. `"none"` paints no plate at all, so the code's own background and margin are its only light space, and `qr.padding` may be under 4%. The templates use it. |
+| `stroke` | `{ color, width }` on a rect, circle, ellipse, polygon or path: an outline centered on the shape's edge, drawn after its fill, at most 10% of the artboard's shorter side. The Halloween template outlines its pumpkin with it. |
 | `colors.text` | A hex color, or a mix of `frame`, `accent`, `background` and hex colors, such as `{ "mix": ["frame", "accent"], "amount": 0.5 }` for the gradient border's label. It's the default; `textColor` still wins. |
 
 A text label's row may also reach into the plate's padding, as long as it stays off the code and its capitals stay out of the padding at the largest text size (`fontScale` 1.5). The border frames set their label right under the code this way.

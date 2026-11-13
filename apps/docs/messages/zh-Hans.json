@@ -4373,7 +4373,6 @@
         "frame": "外框",
         "padding": "边距",
         "errorCorrection": "纠错级别",
-        "border": "边框",
         "none": "无"
       },
       "dotSizeSection": {
@@ -4554,7 +4553,6 @@
       },
       "patternControls": {
         "customizeOuterAndCenter": "自定义外圈与中心",
-        "border": "边框",
         "higherLevelsSurviveScratchesAnd": "更高级别可承受划痕和徽标遮挡，但会增加点的数量。添加徽标时请使用 H。",
         "dotShape": "点形状",
         "dotShapes": "点形状",

@@ -94,7 +94,7 @@ const src = `https://api.qrdx.dev/v1/qr?data=${encodeURIComponent(link)}&style=$
 | `dot` | `square` | Shape of the dot inside each corner eye |
 | `level` | `Q` | Error correction: `L` (~7%), `M` (~15%), `Q` (~25%) or `H` (~30%) |
 | `margin` | `4` | Quiet zone around the code in modules, `0` to `16` |
-| `template` | none | Decorative border template |
+| `template` | none | A [frame drawn as a template](/docs/features/templates): the whole image is `size` wide, with the code smaller inside it |
 | `frame` | none | A built-in call-to-action [frame](/docs/features/frames), such as `banner-bottom`, `speech-bubble` or `circle` (any of the {facts.frameStyles} built-in frames, each drawn from its frame spec) |
 | `frameText` | `Scan me` | The frame's label, up to 24 characters. Also relabels the frame of a `style` or `item` |
 | `style` | none | The editor's whole design as JSON; see [Styles](#style) |
@@ -115,7 +115,7 @@ With a frame, `size` is the width of the code itself and the frame adds to the i
 | `bgColor`, `fgColor`, `eyeColor`, `dotColor` | A color (hex such as `#155dfc`, `rgb()`, `hsl()` or a color name), or a gradient: `{ "type": "linear", "angle": 45, "stops": [...] }` or `{ "type": "radial", "stops": [...] }`, with 2 to 8 stops of `{ "color", "offset" }` (offset 0 to 100) |
 | `bodyPattern`, `cornerEyePattern`, `cornerEyeDotPattern` | The [pattern values](#pattern-values) |
 | `level`, `margin` | As the parameters above (`margin` 0 to 16) |
-| `templateId` | A border template, `default` for none |
+| `templateId` | A frame drawn as a template, `default` for none |
 | `frame` | A built-in frame, `{ "style": "banner-bottom", "text": "Scan me", "color": "#155dfc", "textColor": "#ffffff" }`, or a custom one, `{ "style": "custom", "spec": { … } }`, with a frame spec from the [community](#community-items) or a custom frame made in the playground's Frame section. Specs are checked against the engine's frame-spec rules (no markup, links or images; at most 32 KB) |
 | `eyeColors` | Colors per eye, over `eyeColor` and `dotColor`: `{ "topLeft": { "outer": "#b91c1c", "inner": "#1d4ed8" }, "topRight": …, "bottomLeft": … }`, each a color or a gradient |
 | `moduleScale` | Size of each dot, `0.5` to `1` (default `1`) |

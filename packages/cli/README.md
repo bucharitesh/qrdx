@@ -47,7 +47,7 @@ qrdx generate <data> [options]
 | `--logo` | | — | Center logo image URL (use with `--level H`) |
 | `--no-logo` | | — | Skip the logo prompt in interactive mode |
 | `--margin` | | `0` | Quiet zone margin (modules) |
-| `--template` | | — | Decorative template: `Arrow` `StandardBox` `SquareBorder` `StrikedBox` `Halloween` |
+| `--template` | | — | A frame drawn as a template (the whole file is `--size`, the code smaller inside it): `Arrow` `StandardBox` `SquareBorder` `StrikedBox` `Halloween` |
 | `--frame` | | — | Call-to-action frame: <!-- catalogue:FRAME_STYLES -->`none`, `banner-bottom`, `banner-top`, `border`, `rounded-border`, `speech-bubble`, `banner-top-bottom`, `speech-bubble-top`, `chat-bubble`, `circle`, `polaroid`, `phone`, `ticket`, `badge`, `envelope`, `tag`, `menu-card`, `sticker`, `gradient-border`, `focus`<!-- /catalogue --> |
 | `--frame-text` | | `Scan me` | Frame label, up to 24 characters (`""` hides it) |
 | `--frame-color` | | `#000000` | Frame color (hex) |
@@ -87,7 +87,7 @@ qrdx generate "https://qrdx.dev" \
 qrdx generate "https://qrdx.dev" -o gradient.svg \
   --fg '{"type":"linear","stops":[{"color":"#6366f1","offset":0},{"color":"#ec4899","offset":100}],"angle":135}'
 
-# Template
+# A frame drawn as a template
 qrdx generate "https://qrdx.dev" --template Arrow -o arrow.svg
 
 # "Scan me" frame
@@ -140,7 +140,7 @@ Each gradient needs at least 2 stops; `offset` is a percentage from 0 to 100.
 
 ## Interactive mode
 
-When run in a TTY without an output path or data, `qrdx generate` starts a guided prompt flow: data, output path, then optional customizations (patterns, colors, template, logo, margin). In CI (`CI=true`) or when stdin/stdout is not a TTY it never prompts.
+When run in a TTY without an output path or data, `qrdx generate` starts a guided prompt flow: data, output path, then optional customizations (patterns, colors, frame, logo, margin). In CI (`CI=true`) or when stdin/stdout is not a TTY it never prompts.
 
 ## Requirements
 
