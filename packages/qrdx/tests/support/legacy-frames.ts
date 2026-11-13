@@ -1,9 +1,10 @@
 /** biome-ignore-all lint/style/noMagicNumbers: frame proportions */
-// Layouts for the frame styles added after the original five. Each returns
-// plain shapes (rects, polygons, path data) and labels, so the SVG, canvas,
-// PDF and EPS outputs draw the same artwork. Colors are always opaque (tints
-// are mixed, not layered with transparency) because EPS has no transparency.
-import type { FrameStyle, QRFrame } from "../types";
+// The engine's classic frame layouts as they were hand-written up to qrdx
+// 0.0.51 (src/frame.tsx and src/frame-styles.ts), kept here unchanged as
+// the reference the built-in frame specs (src/frames/builtin) are proven
+// against in tests/frame-spec-parity.test.ts. Nothing ships this code.
+
+import { DEFAULT_BGCOLOR } from "../../src/constants";
 import type {
   FrameBox,
   FrameLabel,
@@ -11,12 +12,31 @@ import type {
   FramePath,
   FramePolygon,
   FrameRect,
-} from "./frame";
-import { circlePath, type Point, roundedRectPath } from "./shapes";
-import { compact, roundTo } from "./utils/fmt";
-import { parseColor } from "./utils/parse-color";
+} from "../../src/frame";
+import {
+  arcLabels,
+  estimateTextEm,
+  mixFrameColors,
+} from "../../src/frame-text";
+import { circlePath, type Point, roundedRectPath } from "../../src/shapes";
+import { getSolidColor } from "../../src/utils/color";
+import { compact, roundTo } from "../../src/utils/fmt";
+import type { ColorConfig } from "../../types";
+import {
+  DEFAULT_FRAME_TEXT,
+  FRAME_FONT_SCALE_MAX,
+  FRAME_FONT_SCALE_MIN,
+  FRAME_TEXT_MAX_LENGTH,
+  type FrameStyle,
+  type QRFrame,
+} from "../../types/frame";
 
-export const SHAPED_FRAME_STYLES = [
+/** Light gap between the code and the frame, as a share of the code width */
+const FRAME_GAP_RATIO = 0.08;
+const DEFAULT_FRAME_COLOR = "#000000";
+const DEFAULT_BANNER_TEXT_COLOR = "#FFFFFF";
+
+const SHAPED_FRAME_STYLES = [
   "banner-top-bottom",
   "speech-bubble-top",
   "chat-bubble",
@@ -33,68 +53,31 @@ export const SHAPED_FRAME_STYLES = [
   "focus",
 ] as const satisfies readonly FrameStyle[];
 
-export type ShapedFrameStyle = (typeof SHAPED_FRAME_STYLES)[number];
+type ShapedFrameStyle = (typeof SHAPED_FRAME_STYLES)[number];
 
-export function isShapedFrameStyle(
-  style: FrameStyle
-): style is ShapedFrameStyle {
+function isShapedFrameStyle(style: FrameStyle): style is ShapedFrameStyle {
   return (SHAPED_FRAME_STYLES as readonly string[]).includes(style);
 }
 
-/** Default colors of "gradient-border" when `color` / `secondaryColor` are unset. */
-export const GRADIENT_FRAME_DEFAULTS = { from: "#7c3aed", to: "#db2777" };
+const GRADIENT_FRAME_DEFAULTS = { from: "#7c3aed", to: "#db2777" };
 
 const WHITE = "#FFFFFF";
 
-// ── Text measuring ────────────────────────────────────────────────────────
-
-/** Rough em width of one character in a bold sans-serif. */
-export function charEm(char: string): number {
-  if (char === " ") {
-    return 0.3;
-  }
-  if (/[MWmw@%]/.test(char)) {
-    return 0.92;
-  }
-  if (/[A-Z0-9#&]/.test(char)) {
-    return 0.72;
-  }
-  if (/[il.,:;!'|1]/.test(char)) {
-    return 0.32;
-  }
-  return 0.6;
+function getFrameText(frame: QRFrame): string {
+  return (frame.text ?? DEFAULT_FRAME_TEXT)
+    .trim()
+    .slice(0, FRAME_TEXT_MAX_LENGTH);
 }
 
-// Rough em widths for a bold sans-serif, used to fit labels without
-// measuring text (measuring needs a DOM).
-export function estimateTextEm(text: string): number {
-  let em = 0;
-  for (const char of text) {
-    em += charEm(char);
-  }
-  return Math.max(em, 1);
+function getFrameSecondaryText(frame: QRFrame): string {
+  return (frame.secondaryText ?? "").trim().slice(0, FRAME_TEXT_MAX_LENGTH);
 }
 
-// ── Color ─────────────────────────────────────────────────────────────────
-
-const hex = (value: number) =>
-  Math.round(Math.min(255, Math.max(0, value)))
-    .toString(16)
-    .padStart(2, "0");
-
-/**
- * Opaque mix of two colors (`amount` 0 = `from`, 1 = `to`). Frames use solid
- * tints instead of transparency, because EPS has no transparency.
- */
-export function mixFrameColors(
-  from: string,
-  to: string,
-  amount: number
-): string {
-  const a = parseColor(from) ?? { r: 0, g: 0, b: 0, a: 1 };
-  const b = parseColor(to) ?? { r: 255, g: 255, b: 255, a: 1 };
-  const t = Math.min(1, Math.max(0, amount));
-  return `#${hex(a.r + (b.r - a.r) * t)}${hex(a.g + (b.g - a.g) * t)}${hex(a.b + (b.b - a.b) * t)}`;
+function clampFontScale(scale: number | undefined): number {
+  if (scale === undefined || !Number.isFinite(scale)) {
+    return 1;
+  }
+  return Math.min(FRAME_FONT_SCALE_MAX, Math.max(FRAME_FONT_SCALE_MIN, scale));
 }
 
 // ── Shape helpers ─────────────────────────────────────────────────────────
@@ -307,58 +290,6 @@ const chatBubble: Layout = (ctx) => {
     color,
   };
 };
-
-/**
- * Letters of `text` set along a circle of `radius` around (cx, cy): over the
- * top reading clockwise, or along the bottom reading left to right, upright.
- */
-export function arcLabels(
-  text: string,
-  cx: number,
-  cy: number,
-  radius: number,
-  fontSize: number,
-  where: "top" | "bottom",
-  color: string,
-  /** The frame text the letters draw (FrameLabel.field) */
-  field: string
-): FrameLabel[] {
-  const chars = [...text];
-  const spacing = fontSize * 0.08;
-  const widths = chars.map((char) => charEm(char) * fontSize);
-  const total =
-    widths.reduce((sum, width) => sum + width, 0) +
-    spacing * Math.max(0, chars.length - 1);
-  // Center the capitals on `radius`: the baseline sits half a cap height in
-  // from the outside of the glyphs.
-  const baseline =
-    where === "top" ? radius - fontSize * 0.35 : radius + fontSize * 0.35;
-  const labels: FrameLabel[] = [];
-  let offset = 0;
-  chars.forEach((char, index) => {
-    const width = widths[index] as number;
-    const along = (offset + width / 2) / baseline;
-    offset += width + spacing;
-    if (char.trim() === "") {
-      return;
-    }
-    const angle =
-      where === "top"
-        ? -Math.PI / 2 - total / 2 / baseline + along
-        : Math.PI / 2 + total / 2 / baseline - along;
-    labels.push({
-      text: char,
-      x: cx + baseline * Math.cos(angle),
-      y: cy + baseline * Math.sin(angle),
-      fontSize,
-      maxWidth: fontSize * 2,
-      color,
-      rotate: (angle * 180) / Math.PI + (where === "top" ? 90 : -90),
-      field,
-    });
-  });
-  return labels;
-}
 
 const circle: Layout = (ctx) => {
   const { size, gap, color, background, frame, fontScale } = ctx;
@@ -1077,7 +1008,7 @@ const focus: Layout = (ctx) => {
   };
 };
 
-export const SHAPED_FRAMES: Record<ShapedFrameStyle, Layout> = {
+const SHAPED_FRAMES: Record<ShapedFrameStyle, Layout> = {
   "banner-top-bottom": bannerTopBottom,
   "speech-bubble-top": speechBubbleTop,
   "chat-bubble": chatBubble,
@@ -1093,3 +1024,238 @@ export const SHAPED_FRAMES: Record<ShapedFrameStyle, Layout> = {
   "gradient-border": gradientBorder,
   focus,
 };
+
+function makeLabel(
+  text: string,
+  centerX: number,
+  centerY: number,
+  rowHeight: number,
+  maxWidth: number,
+  color: string,
+  fontScale: number,
+  field: string
+): FrameLabel | null {
+  if (!text) {
+    return null;
+  }
+  const fontSize = Math.min(
+    rowHeight * 0.52 * fontScale,
+    maxWidth / estimateTextEm(text)
+  );
+  return {
+    text,
+    x: centerX,
+    // Cap height of a sans-serif is ~0.7em, so this centers capitals.
+    y: centerY + fontSize * 0.35,
+    fontSize,
+    maxWidth,
+    color,
+    field,
+  };
+}
+
+/**
+ * Computes where the frame shapes, label and QR code go for a code of `size`
+ * pixels. The QR code keeps its full size; the frame is added around it.
+ * A "custom" frame is drawn from its spec (throws a FrameSpecError when the
+ * spec is invalid).
+ */
+export function legacyFrameLayout(
+  size: number,
+  frame: QRFrame,
+  bgColor?: ColorConfig
+): FrameLayout {
+  const color = frame.color || DEFAULT_FRAME_COLOR;
+  const background = getSolidColor(bgColor, DEFAULT_BGCOLOR);
+  const text = getFrameText(frame);
+
+  const gap = size * FRAME_GAP_RATIO;
+  const border = size * 0.04;
+  const band = size * 0.22;
+  const width = size + 2 * (border + gap);
+  const innerWidth = width - 2 * border;
+  const labelWidth = innerWidth - 2 * gap;
+  const qrX = border + gap;
+  const fontScale = clampFontScale(frame.fontScale);
+  const fitLabel = (
+    label: string,
+    centerX: number,
+    centerY: number,
+    rowHeight: number,
+    maxWidth: number,
+    labelColor: string,
+    field = "text"
+  ) =>
+    makeLabel(
+      label,
+      centerX,
+      centerY,
+      rowHeight,
+      maxWidth,
+      labelColor,
+      fontScale,
+      field
+    );
+
+  if (isShapedFrameStyle(frame.style)) {
+    return SHAPED_FRAMES[frame.style]({
+      size,
+      frame,
+      color,
+      background,
+      text,
+      secondaryText: getFrameSecondaryText(frame),
+      gap,
+      border,
+      band,
+      fontScale,
+      fitLabel,
+    });
+  }
+
+  switch (frame.style) {
+    case "banner-top": {
+      const innerHeight = size + 2 * gap;
+      return {
+        width,
+        height: band + innerHeight + border,
+        qrX,
+        qrY: band + gap,
+        qrSize: size,
+        shapes: [
+          rect(border, band, innerWidth, innerHeight, 0, background),
+          ring(
+            box(0, 0, width, band + innerHeight + border, 0),
+            box(border, band, innerWidth, innerHeight, 0),
+            color
+          ),
+        ],
+        label: fitLabel(
+          text,
+          width / 2,
+          band / 2,
+          band,
+          labelWidth,
+          frame.textColor || DEFAULT_BANNER_TEXT_COLOR
+        ),
+        squareEdges: true,
+        color,
+      };
+    }
+
+    case "border":
+    case "rounded-border": {
+      const rowHeight = text ? size * 0.18 : 0;
+      const innerHeight = size + (text ? gap + rowHeight : 2 * gap);
+      const height = innerHeight + 2 * border;
+      const radius = frame.style === "rounded-border" ? size * 0.1 : 0;
+      const innerRadius = Math.max(radius - border, 0);
+      return {
+        width,
+        height,
+        qrX,
+        qrY: border + gap,
+        qrSize: size,
+        shapes: [
+          rect(
+            border,
+            border,
+            innerWidth,
+            innerHeight,
+            innerRadius,
+            background
+          ),
+          ring(
+            box(0, 0, width, height, radius),
+            box(border, border, innerWidth, innerHeight, innerRadius),
+            color
+          ),
+        ],
+        label: fitLabel(
+          text,
+          width / 2,
+          border + gap + size + rowHeight / 2,
+          rowHeight,
+          labelWidth,
+          frame.textColor || color
+        ),
+        squareEdges: radius === 0,
+        color,
+      };
+    }
+
+    case "speech-bubble": {
+      const radius = size * 0.07;
+      const innerRadius = Math.max(radius - border, 0);
+      const spacing = size * 0.025;
+      const pointer = size * 0.08;
+      const bubbleY = width + spacing + pointer;
+      return {
+        width,
+        height: bubbleY + band,
+        qrX,
+        qrY: border + gap,
+        qrSize: size,
+        shapes: [
+          rect(border, border, innerWidth, innerWidth, innerRadius, background),
+          ring(
+            box(0, 0, width, width, radius),
+            box(border, border, innerWidth, innerWidth, innerRadius),
+            color
+          ),
+          {
+            type: "polygon",
+            points: [
+              // Base dips into the bubble so no hairline shows between them
+              [width / 2 - pointer, bubbleY + pointer / 2],
+              [width / 2, width + spacing],
+              [width / 2 + pointer, bubbleY + pointer / 2],
+            ],
+            fill: color,
+          },
+          rect(0, bubbleY, width, band, band / 2, color),
+        ],
+        label: fitLabel(
+          text,
+          width / 2,
+          bubbleY + band / 2,
+          band,
+          labelWidth,
+          frame.textColor || DEFAULT_BANNER_TEXT_COLOR
+        ),
+        squareEdges: false,
+        color,
+      };
+    }
+
+    default: {
+      // banner-bottom
+      const innerHeight = size + 2 * gap;
+      return {
+        width,
+        height: border + innerHeight + band,
+        qrX,
+        qrY: border + gap,
+        qrSize: size,
+        shapes: [
+          rect(border, border, innerWidth, innerHeight, 0, background),
+          ring(
+            box(0, 0, width, border + innerHeight + band, 0),
+            box(border, border, innerWidth, innerHeight, 0),
+            color
+          ),
+        ],
+        label: fitLabel(
+          text,
+          width / 2,
+          border + innerHeight + band / 2,
+          band,
+          labelWidth,
+          frame.textColor || DEFAULT_BANNER_TEXT_COLOR
+        ),
+        squareEdges: true,
+        color,
+      };
+    }
+  }
+}

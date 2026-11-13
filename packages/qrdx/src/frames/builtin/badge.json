@@ -1,0 +1,108 @@
+{
+  "kind": "qrdx.frame",
+  "version": 1,
+  "artboard": {
+    "width": 1600,
+    "height": 1470
+  },
+  "qr": {
+    "x": 300,
+    "y": 120,
+    "size": 1000,
+    "padding": 70,
+    "radius": 10,
+    "plate": "background"
+  },
+  "colors": {
+    "frame": "#000000",
+    "text": "#FFFFFF"
+  },
+  "shapes": [
+    {
+      "type": "polygon",
+      "points": [[0, 1250], [190, 1250], [190, 1470], [0, 1470], [50.4, 1360]],
+      "fill": {
+        "mix": ["frame", "#000000"],
+        "amount": 0.28
+      }
+    },
+    {
+      "type": "polygon",
+      "points": [
+        [1600, 1250],
+        [1549.6, 1360],
+        [1600, 1470],
+        [1410, 1470],
+        [1410, 1250]
+      ],
+      "fill": {
+        "mix": ["frame", "#000000"],
+        "amount": 0.28
+      }
+    },
+    {
+      "type": "polygon",
+      "points": [[90, 1420], [170, 1470], [90, 1470]],
+      "fill": {
+        "mix": ["frame", "#000000"],
+        "amount": 0.5
+      }
+    },
+    {
+      "type": "polygon",
+      "points": [[1510, 1420], [1510, 1470], [1430, 1470]],
+      "fill": {
+        "mix": ["frame", "#000000"],
+        "amount": 0.5
+      }
+    },
+    {
+      "type": "rect",
+      "x": 220,
+      "y": 40,
+      "width": 1160,
+      "height": 1160,
+      "radius": 20,
+      "fill": "background"
+    },
+    {
+      "type": "rect",
+      "x": 180,
+      "y": 0,
+      "width": 1240,
+      "height": 1240,
+      "radius": 60,
+      "fill": "frame",
+      "hole": {
+        "x": 220,
+        "y": 40,
+        "width": 1160,
+        "height": 1160,
+        "radius": 20
+      }
+    },
+    {
+      "type": "rect",
+      "x": 90,
+      "y": 1200,
+      "width": 1420,
+      "height": 220,
+      "fill": "frame"
+    }
+  ],
+  "labels": [
+    {
+      "type": "text",
+      "id": "cta",
+      "slot": "primary",
+      "text": "Scan me",
+      "color": "text",
+      "box": {
+        "x": 170,
+        "y": 1200,
+        "width": 1260,
+        "height": 220
+      }
+    }
+  ]
+}

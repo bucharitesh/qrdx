@@ -1,10 +1,10 @@
 ---
 title: "CLI"
-description: "Genera códigos QR con estilo en SVG, PNG, WebP o EPS vectorial desde tu terminal o tu CI con la herramienta de línea de comandos @qrdx/cli, uno por uno o un CSV completo con qrdx batch."
+description: "Genera códigos QR con estilo en SVG, PNG, WebP o EPS vectorial desde tu terminal o tu CI con la herramienta de línea de comandos @qrdx/cli, uno a uno o desde un CSV completo con qrdx batch."
 icon: Terminal
 ---
 
-`@qrdx/cli` genera los mismos códigos QR que el Playground y la [biblioteca `qrdx`](/docs/getting-started) desde la línea de comandos. Nunca hace preguntas en scripts ni en CI, y cuando ejecutas `qrdx generate` sin argumentos en una terminal, te pide el contenido y las opciones paso a paso.
+`@qrdx/cli` genera desde la línea de comandos los mismos códigos QR que el Playground y la [biblioteca `qrdx`](/docs/getting-started). Nunca pide datos en scripts ni en CI, y cuando ejecutas `qrdx generate` sin argumentos en una terminal, te pregunta el contenido y las opciones paso a paso.
 
 <NpmStatus package="@qrdx/cli" />
 
@@ -19,20 +19,20 @@ npm install -g @qrdx/cli
 qrdx generate "https://example.com" -o qr.png --size 1024
 ```
 
-Requiere Node.js 22 o posterior. La salida en PNG y WebP usa [sharp](https://sharp.pixelplumbing.com), una dependencia opcional que npm instala donde tu plataforma lo permite; SVG y EPS funcionan sin ella. El paquete `qrdx` de npm es la biblioteca de React: la CLI solo está en `@qrdx/cli`.
+Necesita Node.js 22 o posterior. La salida en PNG y WebP usa [sharp](https://sharp.pixelplumbing.com), una dependencia opcional que npm instala donde tu plataforma lo permite; SVG y EPS funcionan sin ella. El paquete `qrdx` de npm es la biblioteca de React: la CLI solo está en `@qrdx/cli`.
 
 ## Formatos de salida [#output-formats]
 
 La extensión del archivo determina el formato; usa `--format` cuando el nombre del archivo no tenga extensión.
 
-| Formato | Úsalo para | Qué significa `--size` |
+| Formato | Úsalo para | `--size` significa |
 | --- | --- | --- |
 | `.svg` | Páginas web, herramientas de diseño, escalar sin pérdida | Ancho en píxeles (por defecto 512) |
 | `.png` | Documentos, presentaciones, cualquier lugar que necesite una imagen | Ancho en píxeles |
 | `.webp` | Sitios web: los píxeles del PNG, sin pérdida, en un archivo más pequeño | Ancho en píxeles |
 | `.eps` | Imprentas, Illustrator, InDesign | Ancho en puntos (72 por pulgada, así que `144` son 2 pulgadas) |
 
-Los archivos EPS son PostScript vectorial. Los logotipos PNG y JPEG se incrustan tal cual; los demás formatos de logotipo se convierten con sharp si está instalado y, si no, se omiten con una advertencia.
+Los archivos EPS son PostScript vectorial. Los logos PNG y JPEG se incrustan tal cual; los demás formatos de logo se convierten con sharp si está instalado y, si no, se omiten con una advertencia.
 
 ## Opciones [#options]
 
@@ -43,22 +43,22 @@ Los archivos EPS son PostScript vectorial. Los logotipos PNG y JPEG se incrustan
 | `--size` | `512` | Tamaño de salida (ver arriba) |
 | `-l`, `--level` | `Q` | Corrección de errores: `L`, `M`, `Q` o `H` |
 | `--body` | `square` | [Patrón](/docs/features/patterns) de los módulos de datos |
-| `--eye` | `square` | Patrón del ojo de las esquinas |
-| `--dot` | `square` | Patrón del punto del ojo de las esquinas |
+| `--eye` | `square` | Patrón de los ojos de las esquinas |
+| `--dot` | `square` | Patrón del punto de los ojos de las esquinas |
 | `--fg`, `--bg` | `#000000`, `#ffffff` | Primer plano y fondo: un color hexadecimal o un degradado en JSON |
-| `--eye-color`, `--dot-color` | `--fg` | Colores del ojo y del punto del ojo de las esquinas |
-| `--logo` | | URL de la imagen del logotipo central (úsalo con `--level H`) |
+| `--eye-color`, `--dot-color` | `--fg` | Colores de los ojos de las esquinas y de sus puntos |
+| `--logo` | | URL de la imagen del logo central (úsalo con `--level H`) |
 | `--margin` | `0` | Zona de silencio, en módulos |
 | `--template` | | `Arrow`, `StandardBox`, `SquareBorder`, `StrikedBox` o `Halloween` |
-| `--frame` | | [Marco](/docs/features/frames) con llamada a la acción: cualquiera de los {facts.frameStyles} estilos de marco, como `banner-bottom`, `rounded-border`, `circle`, `sticker` o `phone` (consulta [todos](/docs/styles#frames)) |
+| `--frame` | | [Marco](/docs/features/frames) con llamada a la acción: cualquiera de los {facts.frameStyles} marcos incluidos, como `banner-bottom`, `rounded-border`, `circle`, `sticker` o `phone` (consulta [todos](/docs/styles#frames)) |
 | `--frame-text` | `Scan me` | Etiqueta del marco, hasta 24 caracteres |
 | `--frame-color`, `--frame-text-color` | | Colores del marco y de la etiqueta (hexadecimal) |
 
-`qrdx --help` muestra todos los nombres de patrones. Los valores no válidos terminan con el código `1` y un mensaje que lista los valores aceptados.
+`qrdx --help` muestra el nombre de todos los patrones. Los valores no válidos terminan con el código `1` y un mensaje que enumera los valores aceptados.
 
 ## Muchos códigos desde un CSV [#many-codes-from-a-csv]
 
-`qrdx batch` escribe en una carpeta un código QR estático por cada fila de un archivo CSV:
+`qrdx batch` escribe un código QR estático por cada fila de un archivo CSV en una carpeta:
 
 ```bash
 qrdx batch products.csv -o codes --format png --size 1024 --body circle
@@ -70,14 +70,14 @@ Lee las mismas columnas que el [generador masivo](/tools/bulk): el contenido, de
 | --- | --- | --- |
 | `-o`, `--out` | `qr-codes` | Carpeta para los códigos |
 | `--format` | `svg` | `svg`, `png` o `eps` |
-| `--value-column` | se deduce | Columna con el contenido de cada código |
-| `--name-column` | se deduce | Columna con los nombres de archivo |
+| `--value-column` | detectada | Columna con el contenido de cada código |
+| `--name-column` | detectada | Columna con los nombres de archivo |
 | `--no-header` | | La primera fila es un código, no nombres de columna |
 | `--jobs` | `4` para SVG, `8` en los demás casos | Códigos generados a la vez |
 
-Todas las opciones de estilo anteriores se aplican a todos los códigos. El CSV se lee como un flujo y cada código se guarda en cuanto se genera, así que el comando no tiene límite de filas: en un portátil, 10.000 códigos SVG tardaron unos 40 segundos y usaron menos de 200 MB de memoria. No se sube nada y no hace falta cuenta. Las filas que no se pueden codificar se omiten y se listan con el motivo en `errors.csv`, dentro de la carpeta de salida.
+Todas las opciones de estilo anteriores se aplican a todos los códigos. El CSV se lee como un flujo y cada código se guarda en cuanto se genera, así que el comando no tiene límite de filas: en un portátil, 10.000 códigos SVG tardaron unos 40 segundos y usaron menos de 200 MB de memoria. No se sube nada y no hace falta una cuenta. Las filas que no se pueden codificar se omiten y se enumeran con el motivo en `errors.csv`, dentro de la carpeta de salida.
 
-Para imprimir [códigos dinámicos](/docs/dynamic-qr-codes) en masa, créalos primero (con la importación CSV del panel o con la API) y ejecuta `qrdx batch` sobre el CSV de resultados que te da la importación, con `--value-column short_link`.
+Para imprimir [códigos dinámicos](/docs/dynamic-qr-codes) de forma masiva, créalos primero (con la importación de CSV del panel o la API) y ejecuta `qrdx batch` sobre el CSV de resultados que te da la importación, con `--value-column short_link`.
 
 ## Ejemplos [#examples]
 
@@ -106,4 +106,4 @@ Para imprimir un [código QR dinámico](/docs/dynamic-qr-codes), pasa su enlace 
 
 ## Úsalo desde un agente de programación con IA [#use-it-from-an-ai-coding-agent]
 
-La [skill `generate-qr`](https://github.com/bucharitesh/qrdx/tree/main/skills/generate-qr) del repositorio enseña a agentes como Claude Code a llamar a la CLI. Para los agentes que admiten MCP, el [servidor MCP](/docs/developers/mcp) no necesita ninguna instalación.
+La [skill `generate-qr`](https://github.com/bucharitesh/qrdx/tree/main/skills/generate-qr) del repositorio enseña a agentes como Claude Code a llamar a la CLI. Para los agentes compatibles con MCP, el [servidor MCP](/docs/developers/mcp) no necesita instalación alguna.

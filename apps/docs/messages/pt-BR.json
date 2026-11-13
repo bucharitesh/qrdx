@@ -4391,18 +4391,11 @@
         }
       },
       "frameControls": {
-        "customise": "Personalizar",
         "importSvg": "Importar SVG",
         "publishFrame": "Publicar moldura",
         "theFrameIsAddedAround": "A moldura é adicionada ao redor do código, então a imagem baixada fica maior e o código continua legível na leitura.",
         "label": "Texto",
-        "secondLine": "Segunda linha",
-        "leaveEmptyForNoLabel": "Deixe vazio para não ter texto",
         "pickAFrameFirst": "Escolha uma moldura primeiro",
-        "frameColor": "Cor da moldura",
-        "textColor": "Cor do texto",
-        "endColor": "Cor final",
-        "optionalEGYourWebsite": "Opcional, ex.: seu site",
         "none": "Nenhuma"
       },
       "frameFields": {
@@ -4421,13 +4414,14 @@
         "filterFrames": "Filtrar molduras",
         "labelFrames": "Molduras: {label}",
         "commonFrames": "Molduras comuns",
-        "everyFrameBuiltInStyles": "Todos os frames: estilos nativos, os frames oficiais do QRdx e os que você salvou. Ao escolher um, ele é aplicado na hora.",
+        "everyFrameBuiltInStyles": "Todas as molduras: as clássicas, os códigos com formas, as molduras oficiais do QRdx e as que você salvou. Ao escolher uma, ela é aplicada na hora.",
         "less": "Menos",
         "all": "Todos",
         "noFramesMatchQuery": "Nenhum frame corresponde a \"{query}\".",
         "loadingFrames": "Carregando frames…",
         "comingUp": "Em breve",
-        "builtIn": "Nativos",
+        "classic": "Clássicas",
+        "shapedCodes": "Códigos com forma",
         "saved": "Salvos",
         "results": "Resultados"
       },
