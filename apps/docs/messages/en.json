@@ -6380,6 +6380,7 @@
           "barcodes2": "barcodes"
         },
         "barcodesList": {
+          "move": "Move",
           "noFolder": "No folder",
           "makeFoldersUnderCodesBarcodes": "Make folders under Codes; barcodes share them.",
           "emptyTrash": "Empty trash",
@@ -7729,7 +7730,10 @@
             "deleting": "Deleting…",
             "delete": "Delete",
             "responseDeleted": "Response deleted",
-            "deletedResponsesDeleted": "{deleted, number} responses deleted"
+            "deletedResponsesDeleted": "{deleted, number} responses deleted",
+            "countSelected": "{count, number} selected",
+            "clearSelection": "Clear selection",
+            "bulkActions": "Bulk actions"
           }
         },
         "pageListControls": {
@@ -8008,7 +8012,9 @@
         "move": "Move",
         "nextOrPreviousRow": "Next or previous row",
         "extendTheSelection": "Extend the selection",
-        "withASelection": "With a selection"
+        "withASelection": "With a selection",
+        "more": "More",
+        "moreActions": "More actions"
       },
       "domains": {
         "dnsRecords": {

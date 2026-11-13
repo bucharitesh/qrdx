@@ -8,7 +8,6 @@ import { useTranslations } from "next-intl";
 // keys select nothing (lib/permissions.ts; deleteLandingPages refuses them).
 
 import { toast } from "@repo/design-system";
-import { Close as X } from "@repo/design-system/components/icons";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -42,11 +41,10 @@ import {
   LIST_ROW_FOCUS,
   LIST_TABLE_ROW_FOCUS,
   type ListSelectionApi,
-  ListShortcuts,
-  SelectionStatus,
   useListSelection,
   useModKey,
 } from "@/app/(app)/dashboard/_components/list-selection";
+import { SelectionBar } from "@/app/(app)/dashboard/_components/selection-bar";
 import {
   BULK_KEYS,
   type BulkAction,
@@ -159,48 +157,31 @@ export function PagesSelection({
   return (
     <PagesSelectionContext.Provider value={{ selection, deletable }}>
       <div className="space-y-2" ref={listRef}>
-        <SelectionStatus count={count} noun={["page", "pages"]} />
-        {count > 0 && (
-          <div
-            aria-label={t("bulkActions")}
-            className="bg-background/95 supports-[backdrop-filter]:bg-background/80 sticky top-2 z-10 flex flex-wrap items-center gap-1 rounded-lg border p-1.5 shadow-sm backdrop-blur"
-            role="toolbar"
-          >
-            <span className="px-2 text-sm font-medium tabular-nums">
-              {t("countSelected", { count })}
-            </span>
-            <TooltipWrapper kbd="Esc" label={t("clearSelection")}>
-              <Button
-                aria-label={t("clearSelection")}
-                onClick={clear}
-                size="icon-sm"
-                variant="ghost"
-              >
-                <X />
-              </Button>
-            </TooltipWrapper>
-            <div className="bg-border mx-1 h-5 w-px" />
-            <TooltipWrapper kbd={deleteHint} label={t("delete")}>
-              <Button
-                disabled={isPending}
-                onClick={() => setConfirm(true)}
-                size="sm"
-                variant="ghost"
-              >
-                <Trash2 />
-                {t("delete")}
-              </Button>
-            </TooltipWrapper>
-            {keyboardShortcuts && (
-              <div className="ml-auto">
-                <ListShortcuts
-                  actions={[{ label: t("delete"), keys: [deleteHint] }]}
-                />
-              </div>
-            )}
-          </div>
-        )}
         {children}
+        <SelectionBar
+          actions={[
+            {
+              id: "trash",
+              label: t("delete"),
+              icon: <Trash2 />,
+              kbd: deleteHint,
+              destructive: true,
+              onSelect: () => setConfirm(true),
+            },
+          ]}
+          clearLabel={t("clearSelection")}
+          count={count}
+          countLabel={t("countSelected", { count })}
+          disabled={isPending}
+          label={t("bulkActions")}
+          noun={["page", "pages"]}
+          onClear={clear}
+          shortcuts={
+            keyboardShortcuts
+              ? [{ label: t("delete"), keys: [deleteHint] }]
+              : undefined
+          }
+        />
       </div>
 
       <AlertDialog onOpenChange={setConfirm} open={confirm}>
