@@ -123,7 +123,7 @@ const {
   reserveAIRequest,
   validateSubscriptionAndUsage,
 } = await import("@/lib/subscription");
-const { AI_REQUEST_FREE_TIER_LIMIT } = await import("@/lib/constants");
+const { AI_REQUEST_FREE_TIER_LIMIT } = await import("@repo/config");
 const { SubscriptionRequiredError } = await import("@/types/errors");
 
 const USER = "user-1";

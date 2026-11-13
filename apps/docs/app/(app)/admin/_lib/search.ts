@@ -26,14 +26,29 @@ import type { ParsedSearch, SearchKind } from "./rules";
 // bounded query; fuzzy (ILIKE) matching needs 2+ characters, and destination
 // matching 3+, so a stray letter never scans every code.
 
-const LIMIT = 8;
+/** Rows shown per group. Each query reads one more, to know there are more. */
+export const SEARCH_GROUP_LIMIT = 8;
 const escapeLike = (value: string) => value.replace(/[\\%_]/g, "\\$&");
 const contains = (value: string) => `%${escapeLike(value)}%`;
 
-function searchUsers(search: ParsedSearch) {
+export interface SearchGroup<T> {
+  rows: T[];
+  /** More matched than are shown. */
+  more: boolean;
+}
+
+/** The first SEARCH_GROUP_LIMIT of up to one more rows. */
+export function capped<T>(rows: T[]): SearchGroup<T> {
+  return {
+    rows: rows.slice(0, SEARCH_GROUP_LIMIT),
+    more: rows.length > SEARCH_GROUP_LIMIT,
+  };
+}
+
+async function searchUsers(search: ParsedSearch) {
   const { term } = search;
   const fuzzy = term.length >= 2;
-  return db
+  const rows = await db
     .select({
       id: user.id,
       email: user.email,
@@ -50,8 +65,9 @@ function searchUsers(search: ParsedSearch) {
         fuzzy && !search.email ? ilike(user.name, contains(term)) : undefined,
       ),
     )
-    .orderBy(desc(user.createdAt))
-    .limit(LIMIT);
+    .orderBy(desc(user.createdAt), desc(user.id))
+    .limit(SEARCH_GROUP_LIMIT + 1);
+  return capped(rows);
 }
 
 function codeMatch(search: ParsedSearch, pagesOnly: boolean): SQL | undefined {
@@ -85,8 +101,8 @@ const codeColumns = {
 };
 
 /** Page codes are left to the pages group when both are searched. */
-function searchCodes(search: ParsedSearch, withPages: boolean) {
-  return db
+async function searchCodes(search: ParsedSearch, withPages: boolean) {
+  const rows = await db
     .select(codeColumns)
     .from(qrCode)
     .innerJoin(user, eq(user.id, qrCode.userId))
@@ -96,14 +112,15 @@ function searchCodes(search: ParsedSearch, withPages: boolean) {
         withPages ? eq(qrCode.kind, "redirect") : undefined,
       ),
     )
-    .orderBy(desc(qrCode.createdAt))
-    .limit(LIMIT);
+    .orderBy(desc(qrCode.createdAt), desc(qrCode.id))
+    .limit(SEARCH_GROUP_LIMIT + 1);
+  return capped(rows);
 }
 
 /** Hosted pages are codes of kind "page"; their slug is the /p/<slug> path. */
-function searchPages(search: ParsedSearch) {
+async function searchPages(search: ParsedSearch) {
   const { term, slug } = search;
-  return db
+  const rows = await db
     .select({ ...codeColumns, pageTitle: landingPage.title })
     .from(qrCode)
     .innerJoin(user, eq(user.id, qrCode.userId))
@@ -119,13 +136,14 @@ function searchPages(search: ParsedSearch) {
         ),
       ),
     )
-    .orderBy(desc(qrCode.createdAt))
-    .limit(LIMIT);
+    .orderBy(desc(qrCode.createdAt), desc(qrCode.id))
+    .limit(SEARCH_GROUP_LIMIT + 1);
+  return capped(rows);
 }
 
 async function searchTeams(search: ParsedSearch) {
   const { term } = search;
-  const teams = await db
+  const found = await db
     .select({
       id: organization.id,
       name: organization.name,
@@ -140,47 +158,56 @@ async function searchTeams(search: ParsedSearch) {
         term.length >= 2 ? ilike(organization.name, contains(term)) : undefined,
       ),
     )
-    .orderBy(desc(organization.createdAt))
-    .limit(LIMIT);
-  if (teams.length === 0) return [];
+    .orderBy(desc(organization.createdAt), desc(organization.id))
+    .limit(SEARCH_GROUP_LIMIT + 1);
+  const { rows: teams, more } = capped(found);
 
   const ids = teams.map((team) => team.id);
-  const [members, owners] = await Promise.all([
-    db
-      .select({ organizationId: member.organizationId, total: count() })
-      .from(member)
-      .where(inArray(member.organizationId, ids))
-      .groupBy(member.organizationId),
-    db
-      .select({
-        organizationId: member.organizationId,
-        role: member.role,
-        userId: user.id,
-        email: user.email,
-      })
-      .from(member)
-      .innerJoin(user, eq(user.id, member.userId))
-      .where(
-        and(inArray(member.organizationId, ids), ilike(member.role, "%owner%")),
-      ),
-  ]);
+  const [members, owners] = ids.length
+    ? await Promise.all([
+        db
+          .select({ organizationId: member.organizationId, total: count() })
+          .from(member)
+          .where(inArray(member.organizationId, ids))
+          .groupBy(member.organizationId),
+        db
+          .select({
+            organizationId: member.organizationId,
+            role: member.role,
+            userId: user.id,
+            email: user.email,
+          })
+          .from(member)
+          .innerJoin(user, eq(user.id, member.userId))
+          .where(
+            and(
+              inArray(member.organizationId, ids),
+              ilike(member.role, "%owner%"),
+            ),
+          ),
+      ])
+    : [[], []];
   const totals = new Map(members.map((row) => [row.organizationId, row.total]));
-  return teams.map((team) => ({
-    ...team,
-    members: totals.get(team.id) ?? 0,
-    owners: owners
-      // The LIKE above is a prefilter; " owner" or "co-owner" is no owner.
-      .filter(
-        (row) =>
-          row.organizationId === team.id && strongestRole(row.role) === "owner",
-      )
-      .map((row) => ({ id: row.userId, email: row.email })),
-  }));
+  return {
+    more,
+    rows: teams.map((team) => ({
+      ...team,
+      members: totals.get(team.id) ?? 0,
+      owners: owners
+        // The LIKE above is a prefilter; " owner" or "co-owner" is no owner.
+        .filter(
+          (row) =>
+            row.organizationId === team.id &&
+            strongestRole(row.role) === "owner",
+        )
+        .map((row) => ({ id: row.userId, email: row.email })),
+    })),
+  };
 }
 
-function searchApps(search: ParsedSearch) {
+async function searchApps(search: ParsedSearch) {
   const { term } = search;
-  return db
+  const rows = await db
     .select({
       id: oauthApp.id,
       name: oauthApp.name,
@@ -202,13 +229,15 @@ function searchApps(search: ParsedSearch) {
           : undefined,
       ),
     )
-    .orderBy(desc(oauthApp.createdAt))
-    .limit(LIMIT);
+    .orderBy(desc(oauthApp.createdAt), desc(oauthApp.id))
+    .limit(SEARCH_GROUP_LIMIT + 1);
+  return capped(rows);
 }
 
 export type AdminSearchResults = Awaited<ReturnType<typeof runAdminSearch>>;
 
-const skip = <T>(): Promise<T[]> => Promise.resolve([]);
+const skip = <T>(): Promise<SearchGroup<T>> =>
+  Promise.resolve({ rows: [], more: false });
 
 export async function runAdminSearch(search: ParsedSearch) {
   const wants = (kind: SearchKind) => search.kinds.includes(kind);
@@ -220,4 +249,27 @@ export async function runAdminSearch(search: ParsedSearch) {
     wants("app") ? searchApps(search) : skip<never>(),
   ]);
   return { users, codes, pages, teams, apps };
+}
+
+/**
+ * The paged admin list that shows every match of a group, when there is
+ * one: users and codes (and hosted pages, which are codes of kind page)
+ * have a list with the same `q` search. Teams and OAuth apps have none.
+ */
+export function seeAllHref(
+  search: ParsedSearch,
+  group: "users" | "codes" | "pages",
+): string {
+  const q = search.slug ?? search.term;
+  if (group === "users") {
+    return `/admin/users?${new URLSearchParams({ q: search.term })}`;
+  }
+  const kind =
+    group === "pages"
+      ? "page"
+      : // The codes group leaves page codes to the pages group.
+        search.kinds.includes("page")
+        ? "redirect"
+        : undefined;
+  return `/admin/codes?${new URLSearchParams({ q, ...(kind && { kind }) })}`;
 }

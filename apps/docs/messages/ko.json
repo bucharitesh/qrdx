@@ -7322,7 +7322,6 @@
           "open": "열기",
           "replaceFile": "파일 교체…",
           "delete": "삭제",
-          "showingThe500NewestFiles": "최신 파일 500개를 표시하고 있어요.",
           "deleteFilename": "{filename} 파일을 삭제할까요?",
           "thisFileIsValueThey": "이 파일은 {value}. 해당 페이지에는 대신 \"파일을 사용할 수 없음\"이 표시됩니다.",
           "andValueMore": "외 {value, number}개",
@@ -7572,7 +7571,6 @@
           "page": {
             "webhooks": "Webhooks",
             "recentDeliveries": "최근 전송 내역",
-            "theLast50KeptFor": "최근 50개를 30일간 보관합니다. 실패한 전송은 대기 시간을 늘려 가며 최대 {MAX_DELIVERY_ATTEMPTS, number}번 다시 시도합니다.",
             "endpointDeliveries": "엔드포인트 전송 내역",
             "filterDeliveries": "전송 기록 필터",
             "active": "활성",

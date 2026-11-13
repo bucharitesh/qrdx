@@ -4,14 +4,12 @@
 // production hosts, so nothing published carries a localhost or preview
 // address; a self-hosted copy on its own domain gets its own paths. The rule
 // is the one lib/mcp-clients.ts applies to the MCP server URL.
+import { API_BASE_URL } from "@repo/config";
 import {
   MCP_PUBLIC_URL,
   type McpDeployment,
   mcpServerUrl,
 } from "@/lib/mcp-clients";
-
-/** The hosted REST API (api.qrdx.dev/v1 → /api/v1, see next.config.ts). */
-export const API_PUBLIC_URL = "https://api.qrdx.dev/v1";
 
 /** True when `origin` is (or stands in for) the hosted service. */
 export function isOfficialOrigin(
@@ -27,7 +25,7 @@ export function apiBaseUrl(
   deployment?: McpDeployment,
 ): string {
   return isOfficialOrigin(origin, deployment)
-    ? API_PUBLIC_URL
+    ? API_BASE_URL
     : new URL("/api/v1", origin).toString();
 }
 

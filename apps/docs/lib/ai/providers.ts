@@ -1,7 +1,7 @@
 import "server-only";
 
 import { createGateway, type LanguageModel } from "ai";
-import { env } from "@/lib/env";
+import { env } from "@/env";
 import { HttpError } from "@/lib/error-response";
 import { AI_MODELS, type AITextTask } from "./models";
 

@@ -7322,7 +7322,6 @@
           "open": "開く",
           "replaceFile": "ファイルを置き換え…",
           "delete": "削除",
-          "showingThe500NewestFiles": "最新の500件のファイルを表示しています。",
           "deleteFilename": "{filename}を削除しますか？",
           "thisFileIsValueThey": "このファイルは{value}です。代わりに「ファイルは利用できません」と表示されます。",
           "andValueMore": "ほか{value, number}件",
@@ -7572,7 +7571,6 @@
           "page": {
             "webhooks": "Webhook",
             "recentDeliveries": "最近の配信",
-            "theLast50KeptFor": "直近50件を30日間保存します。配信に失敗した場合は、待ち時間を徐々に延ばしながら最大 {MAX_DELIVERY_ATTEMPTS, number} 回再試行します。",
             "endpointDeliveries": "エンドポイントの配信",
             "filterDeliveries": "配信を絞り込む",
             "active": "有効",

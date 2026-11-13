@@ -1,6 +1,6 @@
 import "server-only";
 
-import { env } from "@/lib/env";
+import { env } from "@/env";
 import { isBillingConfigured, polar } from "@/lib/polar";
 import { cached, withTimeout } from "./cache";
 import { polarCustomerUrl } from "./rules";

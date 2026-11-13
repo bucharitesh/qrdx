@@ -84,7 +84,7 @@ icon: QrCode
 | 方法 | 路径 | 说明 |
 | --- | --- | --- |
 | `GET` | `/v1/codes` | 列出二维码。查询参数:`status`(`active`、`archived`、`all`)、`q`、`limit`(≤ 100)、`offset` |
-| `POST` | `/v1/codes` | 创建一个二维码,或一次创建最多 100 个的数组(数组需要 Pro)。请求体:`destinationUrl`,可选的 `title`、`style`、`domainId` 和 `slug` |
+| `POST` | `/v1/codes` | 创建一个二维码,或一次创建最多 {facts.apiBatchCodes} 个的数组(数组需要 Pro)。请求体:`destinationUrl`,可选的 `title`、`style`、`domainId` 和 `slug` |
 | `GET` | `/v1/codes/{id}` | 获取一个二维码 |
 | `PATCH` | `/v1/codes/{id}` | 更新 `destinationUrl`、`title`、`style`、`domainId`([自定义域名](/docs/custom-domains))、`slug` 或 `archived`,或在 `redirect` 与 `page` 之间切换 `kind` |
 | `DELETE` | `/v1/codes/{id}` | 删除二维码及其扫描记录 |

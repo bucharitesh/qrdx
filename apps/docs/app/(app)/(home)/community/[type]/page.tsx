@@ -2,6 +2,7 @@ import { Button } from "@repo/design-system/components/ui/button";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { OFFICIAL_FRAME_COLLECTIONS } from "qrdx";
 import { Suspense } from "react";
 import { BrowseLayout } from "@/components/community/browse-layout";
@@ -13,31 +14,38 @@ import {
   SortMenu,
 } from "@/components/community/browse-sidebar";
 import { CommunityTabs } from "@/components/community/community-tabs";
-import { ItemGrid } from "@/components/community/item-card";
-import {
-  ItemPages,
-  pageOf,
-  pageParam,
-} from "@/components/community/item-pages";
+import { cardKey, ItemCard } from "@/components/community/item-card";
+import { ItemPages } from "@/components/community/item-pages";
+import { InfiniteList } from "@/components/infinite/infinite-list";
 import { HairlineFigure } from "@/components/mockups/hairline";
 import { COLLECTION_MIN_ITEMS } from "@/lib/community/bundles";
-import { findOfficialFrame } from "@/lib/community/catalog";
 import { hasCollections, hasKits, hasTemplates } from "@/lib/community/home";
 import { LICENSE_SHORT } from "@/lib/community/licence";
-import { listFrames, listItems } from "@/lib/community/queries";
 import {
-  type CommunityItemCard,
   type CommunityItemType,
   TYPE_LABELS,
-  TYPE_SEGMENTS,
   typeFromSegment,
 } from "@/lib/community/types";
-import { viewerId } from "@/lib/community/viewer";
 import { createMetadata } from "@/lib/metadata";
+import { pageSlice, parsePage } from "@/lib/paging";
 import { playgroundHref } from "@/lib/playground-links";
 import { dashboardEntry } from "@/lib/workspace-paths";
 import { CommunityThemesContent } from "../_components/community-themes-content";
+import { loadCommunityGalleryPage } from "../actions";
 import { COPY } from "./copy";
+import {
+  type Filter,
+  type GalleryQuery,
+  type GalleryType,
+  galleryCards,
+  galleryHref,
+  galleryListKey,
+  galleryPerPage,
+  groupOf,
+  groupsApply as groupsApplyTo,
+  parseGalleryQuery,
+  type Sort,
+} from "./gallery";
 
 export async function generateMetadata({
   params,
@@ -58,11 +66,6 @@ export async function generateMetadata({
   };
 }
 
-type Filter = "all" | "official" | "community" | "mine" | "saved";
-type Sort = "popular" | "newest" | "oldest";
-
-const FILTERS = ["all", "official", "community", "mine", "saved"] as const;
-
 export default async function CommunityTypePage({
   params,
   searchParams,
@@ -72,17 +75,10 @@ export default async function CommunityTypePage({
 }) {
   const type = typeFromSegment((await params).type);
   if (!type) notFound();
-  const query = await searchParams;
-  const filter: Filter =
-    FILTERS.find((option) => option === query.from) ?? "all";
-  const sort: Sort =
-    query.sort === "newest" || query.sort === "oldest" ? query.sort : "popular";
+  const search = await searchParams;
   // Official frames come in groups (holidays, seasons, uses): ?group=<id>
-  const group =
-    OFFICIAL_FRAME_COLLECTIONS.find((item) => item.id === query.group)?.id ??
-    null;
-  const tag = typeof query.tag === "string" ? query.tag : null;
-  const page = pageParam(query.page);
+  const query = type === "theme" ? null : parseGalleryQuery(type, search);
+  const page = parsePage(search.page);
   const [showCollections, showTemplates, showKits] = await Promise.all([
     hasCollections(),
     hasTemplates(),
@@ -114,20 +110,13 @@ export default async function CommunityTypePage({
       />
 
       <div className="mx-6">
-        {type === "theme" ? (
+        {query ? (
+          <TypeBrowse page={page} query={query} />
+        ) : (
           // nuqs reads search params; without a boundary the whole page renders client-side
           <Suspense fallback={<div className="min-h-[60vh] w-full" />}>
             <CommunityThemesContent />
           </Suspense>
-        ) : (
-          <TypeBrowse
-            filter={filter}
-            group={type === "frame" ? group : null}
-            page={page}
-            sort={sort}
-            tag={type === "frame" ? null : tag}
-            type={type}
-          />
         )}
       </div>
     </main>
@@ -141,8 +130,6 @@ const TAB_OF = {
   "page-template": "templates",
   kit: "kits",
 } as const satisfies Record<CommunityItemType, string>;
-
-type GalleryType = Exclude<CommunityItemType, "theme">;
 
 const EMPTY: Record<
   GalleryType,
@@ -243,82 +230,39 @@ const SORT_LABELS: Record<Sort, string> = {
   oldest: "Oldest",
 };
 
+/** Gallery cards drawn with their design in the HTML: the first row. */
+const EAGER_CARDS = 3;
+
 async function TypeBrowse({
-  type,
-  filter,
-  sort,
-  group,
-  tag,
+  query,
   page: requestedPage,
 }: {
-  type: GalleryType;
-  filter: Filter;
-  sort: Sort;
-  /** An official frame collection (frames only) */
-  group: string | null;
-  /** A tag (not frames: theirs are one-offs, they have groups) */
-  tag: string | null;
+  query: GalleryQuery;
   page: number;
 }) {
+  const { type, filter, sort, tag } = query;
   const many = TYPE_LABELS[type].many.toLowerCase();
-  const base = `/community/${TYPE_SEGMENTS[type]}`;
   const personal = filter === "mine" || filter === "saved";
   // Groups hold official frames only.
-  const groupsApply =
-    type === "frame" && (filter === "all" || filter === "official");
-  const activeGroup = groupsApply ? group : null;
+  const groupsApply = groupsApplyTo(query);
+  const activeGroup = groupsApply ? query.group : null;
 
-  const link = (
-    next: Partial<{
-      from: Filter;
-      sort: Sort;
-      group: string | null;
-      tag: string | null;
-      page: number;
-    }>,
-  ) => {
-    const params = new URLSearchParams();
-    const nextFrom = next.from ?? filter;
-    const nextSort = next.sort ?? sort;
-    const nextGroup = next.group === undefined ? activeGroup : next.group;
-    const nextTag = next.tag === undefined ? tag : next.tag;
-    // A new filter starts at the first page
-    const nextPage = next.page ?? 1;
-    if (nextFrom !== "all") params.set("from", nextFrom);
-    if (nextSort !== "popular") params.set("sort", nextSort);
-    if (nextGroup && (nextFrom === "all" || nextFrom === "official")) {
-      params.set("group", nextGroup);
-    }
-    if (nextTag) params.set("tag", nextTag);
-    if (nextPage > 1) params.set("page", String(nextPage));
-    const search = params.toString();
-    return search ? `${base}?${search}` : base;
-  };
+  const link = ({
+    from,
+    ...next
+  }: Partial<{
+    from: Filter;
+    sort: Sort;
+    group: string | null;
+    tag: string | null;
+    page: number;
+  }>) => galleryHref(query, { ...next, filter: from });
 
-  const userId = personal ? await viewerId() : null;
-  const official =
-    filter === "official" ? true : filter === "community" ? false : undefined;
-  const cards =
-    personal && !userId
-      ? []
-      : type === "frame"
-        ? await listFrames({
-            official,
-            sort,
-            createdBy: filter === "mine" ? (userId ?? undefined) : undefined,
-            savedBy: filter === "saved" ? (userId ?? undefined) : undefined,
-          })
-        : await listItems({
-            type,
-            official,
-            sort,
-            createdBy: filter === "mine" ? (userId ?? undefined) : undefined,
-            savedBy: filter === "saved" ? (userId ?? undefined) : undefined,
-            limit: 200,
-          });
+  const [{ cards, shown, userId }, t] = await Promise.all([
+    galleryCards(query),
+    getTranslations("community.itemPages"),
+  ]);
 
-  const groupOf = (card: CommunityItemCard) =>
-    card.isOfficial ? findOfficialFrame(card.slug)?.collection : undefined;
   const groupCounts = new Map<string, number>();
   const tagCounts = new Map<string, number>();
   for (const card of cards) {
@@ -334,12 +278,18 @@ async function TypeBrowse({
     .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
     .slice(0, 30);
 
-  const shown = cards.filter(
-    (card) =>
-      (!activeGroup || groupOf(card) === activeGroup) &&
-      (!tag || card.tags.includes(tag)),
+  const { page, pages, items, nextPage } = pageSlice(
+    shown,
+    requestedPage,
+    galleryPerPage(type),
   );
-  const { page, pages, items } = pageOf(shown, requestedPage);
+  // What the list's later pages load with (./gallery.ts parses it again).
+  const listParams: Record<string, string> = {
+    ...(filter !== "all" && { from: filter }),
+    ...(sort !== "popular" && { sort }),
+    ...(activeGroup && { group: activeGroup }),
+    ...(tag && { tag }),
+  };
 
   const filters: { value: Filter; label: string }[] = [
     { value: "all", label: `All ${many}` },
@@ -425,11 +375,36 @@ async function TypeBrowse({
     >
       {items.length > 0 ? (
         <>
-          <ItemGrid cards={items} className={GALLERY_GRID} />
-          <ItemPages
-            href={(next) => link({ page: next })}
-            page={page}
-            pages={pages}
+          {/* A numbered page after the first (a crawler's, or a shared
+              link): the way back. The list loads the pages after it. */}
+          {page > 1 && (
+            <ItemPages
+              href={(next) => link({ page: next })}
+              next={false}
+              page={page}
+              pages={pages}
+            />
+          )}
+          <InfiniteList
+            className={GALLERY_GRID}
+            href={link({})}
+            initialItems={items.map((card, index) => ({
+              key: cardKey(card),
+              node: (
+                <ItemCard
+                  card={card}
+                  eager={page === 1 && index < EAGER_CARDS}
+                />
+              ),
+            }))}
+            labels={{
+              loadMore: t("loadMore"),
+              loading: t("loading"),
+              failed: t("failed"),
+            }}
+            listKey={`${galleryListKey(query)}@${page}`}
+            loadPage={loadCommunityGalleryPage.bind(null, type, listParams)}
+            nextPage={nextPage}
           />
         </>
       ) : personal && !userId ? (

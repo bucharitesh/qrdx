@@ -8,6 +8,11 @@ import {
 } from "@repo/design-system/components/ui/empty";
 import { Barcode } from "iconsax-reactjs";
 import { getUserSettings } from "@/actions/user-settings";
+import { ListPagination } from "@/app/(app)/dashboard/_components/list-pagination";
+import {
+  GRID_PAGE_SIZES,
+  pageSizeMenu,
+} from "@/app/(app)/dashboard/_lib/list-paging";
 import { formatNumber } from "@/app/(app)/dashboard/codes/_components/format";
 import { listFolders } from "@/app/(app)/dashboard/codes/_lib/organize";
 import { requireDashboardScope } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
@@ -19,6 +24,7 @@ import {
   listBarcodes,
 } from "@/lib/barcodes/service";
 import { getAppTranslations } from "@/lib/i18n/app-locale";
+import { loadPage } from "@/lib/paging";
 import { can } from "@/lib/permissions";
 import { PLAN_NAMES } from "@/lib/pricing";
 import { workspaceHref } from "@/lib/workspace-paths";
@@ -34,8 +40,6 @@ import { BarcodesList } from "./barcodes-list";
 import { BarcodesToolbar } from "./barcodes-toolbar";
 import { NewBarcodeButton } from "./new-barcode-button";
 
-const PAGE_SIZE = 24;
-
 /**
  * Saved barcodes: static EAN, UPC, Code 128, Data Matrix and other barcodes
  * kept to edit and download again. Filters live in the URL; a card opens
@@ -50,6 +54,7 @@ export async function BarcodesListView({
   searchParams: Record<string, string | string[] | undefined>;
 }) {
   const t = await getAppTranslations("app.dashboard.barcodes.page");
+  const tp = await getAppTranslations("app.dashboard.paging");
   const scope = await requireDashboardScope();
   const basePath = workspaceHref(slug, "/barcodes");
   const filters = parseBarcodesFilters(searchParams);
@@ -70,23 +75,29 @@ export async function BarcodesListView({
         ? filters.folder
         : null,
   };
-  const { barcodes, total } = await listBarcodes(scope, {
-    status: effective.status,
-    q: effective.q || undefined,
-    format: effective.format ?? undefined,
-    folderId: effective.folder ?? undefined,
-    limit: PAGE_SIZE,
-    offset: (effective.page - 1) * PAGE_SIZE,
-  });
+  const pageSize = effective.size;
+  // Past the last page (an old link, barcodes deleted since): the last page.
+  const { barcodes, total, page } = await loadPage(
+    effective.page,
+    (page) =>
+      listBarcodes(scope, {
+        status: effective.status,
+        q: effective.q || undefined,
+        format: effective.format ?? undefined,
+        folderId: effective.folder ?? undefined,
+        limit: pageSize,
+        offset: (page - 1) * pageSize,
+      }),
+    pageSize,
+  );
   const folderNames = new Map(folders.map((row) => [row.id, row.name]));
   const cards = barcodes.map((view) => toBarcodeCard(scope, view, folderNames));
   const canWrite = can(scope.role, "content.write");
-  const pageCount = Math.max(1, Math.ceil(total / PAGE_SIZE));
-  const page = Math.min(effective.page, pageCount);
+  const pageCount = Math.max(1, Math.ceil(total / pageSize));
   const brandNew =
     usage.used === 0 && trashCount === 0 && effective.status === "active";
   const href = (patch: Partial<typeof effective>) =>
-    barcodesHref(basePath, effective, patch);
+    barcodesHref(basePath, { ...effective, page }, patch);
 
   return (
     <div className="space-y-5">
@@ -173,43 +184,28 @@ export async function BarcodesListView({
               status={effective.status}
             />
           )}
-          {pageCount > 1 && (
-            <div className="flex items-center justify-between gap-2 text-sm">
-              <span className="text-muted-foreground">
-                {t("pagePageOfPagecountTotal", {
-                  page,
-                  pageCount,
-                  total: formatNumber(total),
-                })}
-              </span>
-              <div className="flex gap-2">
-                <Button
-                  asChild={page > 1}
-                  disabled={page <= 1}
-                  size="sm"
-                  variant="outline"
-                >
-                  {page > 1 ? (
-                    <Link href={href({ page: page - 1 })}>{t("previous")}</Link>
-                  ) : (
-                    t("previous")
-                  )}
-                </Button>
-                <Button
-                  asChild={page < pageCount}
-                  disabled={page >= pageCount}
-                  size="sm"
-                  variant="outline"
-                >
-                  {page < pageCount ? (
-                    <Link href={href({ page: page + 1 })}>{t("next")}</Link>
-                  ) : (
-                    t("next")
-                  )}
-                </Button>
-              </div>
-            </div>
-          )}
+          <ListPagination
+            labels={{
+              navigation: tp("navigation"),
+              previous: t("previous"),
+              next: t("next"),
+              pageSize: tp("rowsPerPage"),
+            }}
+            nextHref={page < pageCount ? href({ page: page + 1 }) : null}
+            previousHref={page > 1 ? href({ page: page - 1 }) : null}
+            sizes={pageSizeMenu({
+              options: GRID_PAGE_SIZES,
+              value: pageSize,
+              total,
+              label: (count) => tp("perPage", { count }),
+              href: (size) => href({ size }),
+            })}
+            summary={t("pagePageOfPagecountTotal", {
+              page,
+              pageCount,
+              total: formatNumber(total),
+            })}
+          />
         </div>
       )}
     </div>

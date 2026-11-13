@@ -7322,7 +7322,6 @@
           "open": "Apri",
           "replaceFile": "Sostituisci file…",
           "delete": "Elimina",
-          "showingThe500NewestFiles": "Sono mostrati i 500 file più recenti.",
           "deleteFilename": "Eliminare {filename}?",
           "thisFileIsValueThey": "Questo file è {value}. Al suo posto mostreranno \"File non disponibile\".",
           "andValueMore": "e altri {value, number}",
@@ -7572,7 +7571,6 @@
           "page": {
             "webhooks": "Webhook",
             "recentDeliveries": "Consegne recenti",
-            "theLast50KeptFor": "Le ultime 50, conservate per 30 giorni. Le consegne non riuscite vengono ritentate fino a {MAX_DELIVERY_ATTEMPTS, number} volte con attese sempre più lunghe.",
             "endpointDeliveries": "Consegne dell’endpoint",
             "filterDeliveries": "Filtra le consegne",
             "active": "Attivo",

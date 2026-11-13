@@ -7322,7 +7322,6 @@
           "open": "Öffnen",
           "replaceFile": "Datei ersetzen…",
           "delete": "Löschen",
-          "showingThe500NewestFiles": "Es werden die 500 neuesten Dateien angezeigt.",
           "deleteFilename": "{filename} löschen?",
           "thisFileIsValueThey": "Diese Datei ist {value}. Stattdessen wird dort „Datei nicht verfügbar“ angezeigt.",
           "andValueMore": "und {value, number} weitere",
@@ -7572,7 +7571,6 @@
           "page": {
             "webhooks": "Webhooks",
             "recentDeliveries": "Letzte Zustellungen",
-            "theLast50KeptFor": "Die letzten 50, 30 Tage lang gespeichert. Fehlgeschlagene Zustellungen werden bis zu {MAX_DELIVERY_ATTEMPTS, number} Mal mit wachsenden Wartezeiten wiederholt.",
             "endpointDeliveries": "Endpunkt-Zustellungen",
             "filterDeliveries": "Zustellungen filtern",
             "active": "Aktiv",

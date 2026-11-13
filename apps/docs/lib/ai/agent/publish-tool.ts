@@ -1,5 +1,6 @@
 import "server-only";
 
+import { MAX_TAGS_PER_THEME } from "@repo/config";
 import { type JSONValue, type Tool, tool } from "ai";
 import z from "zod";
 import {
@@ -10,7 +11,7 @@ import {
   draftProblem,
 } from "@/lib/community/draft";
 import { MIN_GATE_SCORE } from "@/lib/community/scan-samples";
-import { COMMUNITY_THEME_TAGS, MAX_TAGS_PER_THEME } from "@/lib/constants";
+import { COMMUNITY_THEME_TAGS } from "@/lib/constants";
 import { isGreat } from "@/lib/qr-design/repair";
 import type { AgentContext } from "./tools";
 

@@ -1,6 +1,6 @@
 import "server-only";
 
-import { env } from "@/lib/env";
+import { env } from "@/env";
 
 /**
  * Google Web Risk lookups (uris.search) for destination URLs. Cached per

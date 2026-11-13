@@ -7,6 +7,7 @@ import {
 } from "@repo/design-system/components/ui/card";
 import Link from "next/link";
 import { SettingsHeader } from "@/app/(app)/settings/components/settings-header";
+import { loadPage } from "@/lib/paging";
 import { abuseReasonLabel } from "@/lib/safety/abuse-reasons";
 import { isNewAccount } from "@/lib/safety/velocity";
 import { Pager } from "../_components/pager";
@@ -170,9 +171,10 @@ export default async function AdminAbusePage({
   const status: AbuseStatusFilter = isStatus(params.status)
     ? params.status
     : "open";
-  const page = parsePage(params.page);
-  const [{ reports, total }, openCount] = await Promise.all([
-    listAbuseReports({ status, page }),
+  const [{ reports, total, page }, openCount] = await Promise.all([
+    loadPage(parsePage(params.page), (page) =>
+      listAbuseReports({ status, page }),
+    ),
     countOpenAbuseReports(),
   ]);
 

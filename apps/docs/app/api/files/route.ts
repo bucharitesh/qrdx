@@ -5,24 +5,40 @@ import {
   assertStorageConfigured,
   createUpload,
   createUploadSchema,
-  listPickerFiles,
+  FILES_PAGE_SIZE,
+  listFilesPage,
 } from "@/lib/files/service";
 import { FILE_KINDS } from "@/lib/files/types";
 import { parseWithSchema, readJsonBody } from "@/lib/request-guards";
 
-const listQuerySchema = z.object({ kind: z.enum(FILE_KINDS).optional() });
+const listQuerySchema = z.object({
+  kind: z.enum(FILE_KINDS).optional(),
+  /** `nextCursor` from the previous page; omit for the first */
+  cursor: z.string().max(160).optional(),
+  limit: z.coerce.number().int().min(1).max(100).default(FILES_PAGE_SIZE),
+});
 
-/** Ready files of the active workspace (`?kind=pdf|image|audio|video`), newest first. */
+/**
+ * Ready files of the active workspace (`?kind=pdf|image|audio|video`),
+ * newest first, a page at a time: `{ data, nextCursor }`, and
+ * `?cursor=<nextCursor>` for the page after (null after the last).
+ */
 export async function GET(req: Request) {
   try {
     assertStorageConfigured();
     const scope = await resolveUploadScope(req, { write: false });
-    const { kind } = parseWithSchema(
+    const { kind, cursor, limit } = parseWithSchema(
       listQuerySchema,
       Object.fromEntries(new URL(req.url).searchParams),
     );
+    const page = await listFilesPage(scope, {
+      kind,
+      readyOnly: true,
+      cursor,
+      limit,
+    });
     return Response.json(
-      { data: await listPickerFiles(scope, kind) },
+      { data: page.items, nextCursor: page.nextCursor },
       { headers: NO_STORE },
     );
   } catch (error) {

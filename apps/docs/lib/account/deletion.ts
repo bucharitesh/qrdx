@@ -12,6 +12,7 @@
  * deleted with your account.
  */
 
+import { SUPPORT_EMAIL } from "@repo/config";
 export const DELETE_CONFIRMATION = "delete";
 
 export function isDeleteConfirmed(text: string): boolean {
@@ -159,7 +160,7 @@ export function planAccountDeletion(facts: DeletionFacts): DeletionPlan {
   const blockers: string[] = [];
   if (facts.subscription && !facts.billingConfigured) {
     blockers.push(
-      `Your ${facts.subscription.planName} subscription can't be cancelled from here right now. Cancel it under Settings → Plan & usage first, or email support@qrdx.dev.`,
+      `Your ${facts.subscription.planName} subscription can't be cancelled from here right now. Cancel it under Settings → Plan & usage first, or email ${SUPPORT_EMAIL}.`,
     );
   }
 

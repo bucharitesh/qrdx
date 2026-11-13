@@ -49,6 +49,35 @@ function Mono({ children }: { children: React.ReactNode }) {
   return <span className="font-mono text-xs">{children}</span>;
 }
 
+/**
+ * Under a section that stops at its limit: says so when more exist, and
+ * links to the admin list that shows the rest when there is one.
+ */
+function ShowingLatest({
+  count,
+  more,
+  href,
+}: {
+  count: number;
+  more: boolean;
+  href?: string;
+}) {
+  if (!more) return null;
+  return (
+    <p className="text-muted-foreground pt-2 text-xs">
+      Showing the latest {formatNumber(count)}.
+      {href && (
+        <>
+          {" "}
+          <Link className="underline-offset-4 hover:underline" href={href}>
+            See all →
+          </Link>
+        </>
+      )}
+    </p>
+  );
+}
+
 // ─── Sign-in ─────────────────────────────────────────────────────────────────
 
 export function SignInSection({ profile }: { profile: UserProfile }) {
@@ -511,6 +540,15 @@ export async function PagesSection({ userId }: { userId: string }) {
           ))}
         </Rows>
       )}
+      {total > pages.length && (
+        // Hosted pages are served by codes of kind page: that list has them all.
+        <Link
+          className="text-sm underline-offset-4 hover:underline"
+          href={`/admin/codes?${new URLSearchParams({ kind: "page", q: userId })}`}
+        >
+          See all hosted pages →
+        </Link>
+      )}
     </div>
   );
 }
@@ -576,7 +614,7 @@ export async function LibrarySection({ userId }: { userId: string }) {
 export async function WebhooksSection({ userId }: { userId: string }) {
   const loaded = await safeLoad("webhooks", () => loadWebhooks(userId));
   if (!loaded.ok) return <LoadFailed />;
-  const { endpoints, deliveries, stats } = loaded.data;
+  const { endpoints, more, deliveries, stats } = loaded.data;
   if (endpoints.length === 0) return <Empty>No webhook endpoints.</Empty>;
   const statsByEndpoint = new Map(stats.map((row) => [row.endpointId, row]));
   const urlById = new Map(endpoints.map((row) => [row.id, row.url]));
@@ -605,6 +643,7 @@ export async function WebhooksSection({ userId }: { userId: string }) {
           );
         })}
       </Rows>
+      <ShowingLatest count={endpoints.length} more={more} />
       {deliveries.length > 0 && (
         <>
           <SubHeading>Recent deliveries (failures first)</SubHeading>
@@ -671,56 +710,59 @@ export async function WebhooksSection({ userId }: { userId: string }) {
 export async function IntegrationsSection({ userId }: { userId: string }) {
   const loaded = await safeLoad("integrations", () => loadIntegrations(userId));
   if (!loaded.ok) return <LoadFailed />;
-  if (loaded.data.length === 0)
-    return <Empty>No connected integrations.</Empty>;
+  const { rows, more } = loaded.data;
+  if (rows.length === 0) return <Empty>No connected integrations.</Empty>;
 
   return (
-    <Rows>
-      {loaded.data.map((row) => (
-        <Row
-          actions={
-            <AdminAction
-              action="disconnectIntegration"
-              confirmLabel="Disconnect"
-              description={`Same as the user's own Disconnect: the ${row.provider} token is revoked where possible and the connection is deleted. They can connect again.`}
-              destructive
-              input={{ integrationId: row.id }}
-              label="Disconnect"
-              success={`${row.provider} disconnected`}
-              title={`Disconnect ${row.provider}`}
-              variant="ghost"
-            />
-          }
-          key={row.id}
-          meta={
-            <>
-              Connected {formatDate(row.createdAt)} · last used{" "}
-              {formatAgo(row.lastSyncAt)}
-              {row.expiresAt &&
-                ` · token ${row.expiresAt.getTime() < Date.now() ? "expired" : "expires"} ${formatDateTime(row.expiresAt)}`}
-              {row.sync && (
-                <span className="block">
-                  Sync {row.sync.enabled ? row.sync.status : "off"} ·{" "}
-                  {formatNumber(row.sync.delivered)} sent · last success{" "}
-                  {formatAgo(row.sync.lastSuccessAt)}
-                  {row.sync.lastError && ` · ${row.sync.lastError}`}
-                </span>
-              )}
-            </>
-          }
-          title={
-            <>
-              {row.provider}
-              <Badge
-                variant={row.status === "error" ? "destructive" : "outline"}
-              >
-                {row.status}
-              </Badge>
-            </>
-          }
-        />
-      ))}
-    </Rows>
+    <div>
+      <Rows>
+        {rows.map((row) => (
+          <Row
+            actions={
+              <AdminAction
+                action="disconnectIntegration"
+                confirmLabel="Disconnect"
+                description={`Same as the user's own Disconnect: the ${row.provider} token is revoked where possible and the connection is deleted. They can connect again.`}
+                destructive
+                input={{ integrationId: row.id }}
+                label="Disconnect"
+                success={`${row.provider} disconnected`}
+                title={`Disconnect ${row.provider}`}
+                variant="ghost"
+              />
+            }
+            key={row.id}
+            meta={
+              <>
+                Connected {formatDate(row.createdAt)} · last used{" "}
+                {formatAgo(row.lastSyncAt)}
+                {row.expiresAt &&
+                  ` · token ${row.expiresAt.getTime() < Date.now() ? "expired" : "expires"} ${formatDateTime(row.expiresAt)}`}
+                {row.sync && (
+                  <span className="block">
+                    Sync {row.sync.enabled ? row.sync.status : "off"} ·{" "}
+                    {formatNumber(row.sync.delivered)} sent · last success{" "}
+                    {formatAgo(row.sync.lastSuccessAt)}
+                    {row.sync.lastError && ` · ${row.sync.lastError}`}
+                  </span>
+                )}
+              </>
+            }
+            title={
+              <>
+                {row.provider}
+                <Badge
+                  variant={row.status === "error" ? "destructive" : "outline"}
+                >
+                  {row.status}
+                </Badge>
+              </>
+            }
+          />
+        ))}
+      </Rows>
+      <ShowingLatest count={rows.length} more={more} />
+    </div>
   );
 }
 
@@ -729,7 +771,7 @@ export async function IntegrationsSection({ userId }: { userId: string }) {
 export async function OAuthSection({ userId }: { userId: string }) {
   const loaded = await safeLoad("oauth", () => loadOAuthApps(userId));
   if (!loaded.ok) return <LoadFailed />;
-  const { owned, authorized } = loaded.data;
+  const { owned, moreOwned, authorized } = loaded.data;
 
   return (
     <div>
@@ -799,6 +841,7 @@ export async function OAuthSection({ userId }: { userId: string }) {
           ))}
         </Rows>
       )}
+      <ShowingLatest count={owned.length} more={moreOwned} />
       <SubHeading>Apps with access to their account</SubHeading>
       {authorized.length === 0 ? (
         <Empty>None.</Empty>
@@ -937,18 +980,22 @@ export async function ScansSection({ userId }: { userId: string }) {
 export async function SessionsSection({ userId }: { userId: string }) {
   const loaded = await safeLoad("sessions", () => loadSessions(userId));
   if (!loaded.ok) return <LoadFailed />;
-  if (loaded.data.length === 0) return <Empty>Signed out everywhere.</Empty>;
+  const { rows, more } = loaded.data;
+  if (rows.length === 0) return <Empty>Signed out everywhere.</Empty>;
 
   return (
-    <Rows>
-      {loaded.data.map((row) => (
-        <Row
-          key={row.id}
-          meta={`Active ${formatAgo(row.updatedAt)} · signed in ${formatDate(row.createdAt)} · expires ${formatDate(row.expiresAt)}${row.impersonatedBy ? " · impersonation" : ""}`}
-          title={row.device}
-        />
-      ))}
-    </Rows>
+    <div>
+      <Rows>
+        {rows.map((row) => (
+          <Row
+            key={row.id}
+            meta={`Active ${formatAgo(row.updatedAt)} · signed in ${formatDate(row.createdAt)} · expires ${formatDate(row.expiresAt)}${row.impersonatedBy ? " · impersonation" : ""}`}
+            title={row.device}
+          />
+        ))}
+      </Rows>
+      <ShowingLatest count={rows.length} more={more} />
+    </div>
   );
 }
 
@@ -991,40 +1038,44 @@ export async function AbuseSection({
 }) {
   const loaded = await safeLoad("abuse", () => loadAbuseReports(userId, email));
   if (!loaded.ok) return <LoadFailed />;
-  if (loaded.data.length === 0) return <Empty>No reports involve them.</Empty>;
+  const { rows, more } = loaded.data;
+  if (rows.length === 0) return <Empty>No reports involve them.</Empty>;
 
   return (
-    <Rows>
-      {loaded.data.map((report) => (
-        <Row
-          key={report.id}
-          meta={
-            <>
-              {formatDateTime(report.createdAt)} ·{" "}
-              {report.codeOwnerId === userId
-                ? "about their code"
-                : report.reporterEmail === email
-                  ? "filed by them"
-                  : "about their page"}
-              {report.url && (
-                <span className="block truncate">{report.url}</span>
-              )}
-            </>
-          }
-          title={
-            <>
-              {abuseReasonLabel(report.reason)}
-              {report.codeSlug && <Mono>/q/{report.codeSlug}</Mono>}
-              <Badge
-                variant={report.status === "open" ? "destructive" : "outline"}
-              >
-                {report.status}
-              </Badge>
-            </>
-          }
-        />
-      ))}
-    </Rows>
+    <div>
+      <Rows>
+        {rows.map((report) => (
+          <Row
+            key={report.id}
+            meta={
+              <>
+                {formatDateTime(report.createdAt)} ·{" "}
+                {report.codeOwnerId === userId
+                  ? "about their code"
+                  : report.reporterEmail === email
+                    ? "filed by them"
+                    : "about their page"}
+                {report.url && (
+                  <span className="block truncate">{report.url}</span>
+                )}
+              </>
+            }
+            title={
+              <>
+                {abuseReasonLabel(report.reason)}
+                {report.codeSlug && <Mono>/q/{report.codeSlug}</Mono>}
+                <Badge
+                  variant={report.status === "open" ? "destructive" : "outline"}
+                >
+                  {report.status}
+                </Badge>
+              </>
+            }
+          />
+        ))}
+      </Rows>
+      <ShowingLatest count={rows.length} more={more} />
+    </div>
   );
 }
 
@@ -1033,35 +1084,45 @@ export async function AbuseSection({
 export async function AuditSection({ userId }: { userId: string }) {
   const loaded = await safeLoad("audit", () => loadAuditTrail(userId));
   if (!loaded.ok) return <LoadFailed />;
-  if (loaded.data.length === 0) return <Empty>No admin actions yet.</Empty>;
+  const { rows, more } = loaded.data;
+  if (rows.length === 0) return <Empty>No admin actions yet.</Empty>;
 
   return (
-    <Rows>
-      {loaded.data.map((entry) => {
-        const metadata = entry.metadata ?? {};
-        const reason =
-          typeof metadata.reason === "string" ? metadata.reason : null;
-        return (
-          <Row
-            key={entry.id}
-            meta={
-              <>
-                {formatDateTime(entry.createdAt)} · by{" "}
-                <Link
-                  className="hover:underline"
-                  href={userLink(entry.actorUserId)}
-                >
-                  {String(metadata.actorEmail ?? entry.actorUserId)}
-                </Link>
-                {entry.targetType !== "user" &&
-                  ` · ${entry.targetType} ${entry.targetId ?? ""}`}
-                {reason && <span className="block">“{reason}”</span>}
-              </>
-            }
-            title={<Mono>{entry.action}</Mono>}
-          />
-        );
-      })}
-    </Rows>
+    <div>
+      <Rows>
+        {rows.map((entry) => {
+          const metadata = entry.metadata ?? {};
+          const reason =
+            typeof metadata.reason === "string" ? metadata.reason : null;
+          return (
+            <Row
+              key={entry.id}
+              meta={
+                <>
+                  {formatDateTime(entry.createdAt)} · by{" "}
+                  <Link
+                    className="hover:underline"
+                    href={userLink(entry.actorUserId)}
+                  >
+                    {String(metadata.actorEmail ?? entry.actorUserId)}
+                  </Link>
+                  {entry.targetType !== "user" &&
+                    ` · ${entry.targetType} ${entry.targetId ?? ""}`}
+                  {reason && <span className="block">“{reason}”</span>}
+                </>
+              }
+              title={<Mono>{entry.action}</Mono>}
+            />
+          );
+        })}
+      </Rows>
+      {/* The audit log's search by user id lists the same entries (and any
+          actions they took themselves, as an admin). */}
+      <ShowingLatest
+        count={rows.length}
+        href={`/admin/audit-log?${new URLSearchParams({ q: userId })}`}
+        more={more}
+      />
+    </div>
   );
 }

@@ -1,6 +1,6 @@
 import "server-only";
 
-import { env } from "@/lib/env";
+import { env } from "@/env";
 
 /**
  * Cloudflare Turnstile verification for public forms. Off unless both

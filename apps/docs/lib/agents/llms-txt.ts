@@ -4,6 +4,7 @@
 // link is absolute, and pages for features this deployment can't offer are
 // left out. Pure: app/llms.txt/route.ts passes in the content-collection
 // pages and what this deployment offers; tests/lib/agents.test.ts checks it.
+import { CANONICAL_ORIGIN, GITHUB_REPO_URL } from "@repo/config";
 import {
   buildHighlights,
   type PricingOptions,
@@ -94,7 +95,7 @@ export function buildLlmsTxt(input: LlmsTxtInput): string {
   const mcpUrl = mcpServerUrl(origin);
   const api = apiBaseUrl(origin);
   const exampleImage = imageApiUrl(origin, {
-    data: "https://qrdx.dev",
+    data: CANONICAL_ORIGIN,
     format: "svg",
   });
   const npmNote = ({ name, repo, published }: NpmRelease) =>
@@ -118,6 +119,11 @@ export function buildLlmsTxt(input: LlmsTxtInput): string {
   ].join("\n");
 
   const product = links([
+    {
+      title: "Dynamic QR code generator",
+      url: "/dynamic-qr-code",
+      description: `What dynamic codes do on each plan: ${input.limits.free.dynamicCodes} free with unlimited scans, editing after printing, scan analytics, hosted pages, smart routing and the REST API`,
+    },
     {
       title: "Dynamic QR codes",
       url: "/docs/dynamic-qr-codes",
@@ -242,8 +248,14 @@ export function buildLlmsTxt(input: LlmsTxtInput): string {
     { title: "Changelog", url: "/changelogs" },
     {
       title: "Source code",
-      url: "https://github.com/bucharitesh/qrdx",
+      url: GITHUB_REPO_URL,
       description: "The whole platform, open source and self-hostable",
+    },
+    {
+      title: "Open source",
+      url: "/open-source-qr-code-generator",
+      description:
+        "What's in the repository and under which license (AGPL-3.0 app; MIT library, CLI and plugins; commercial ee/ folders), and the ways to run it",
     },
   ]);
 
@@ -461,7 +473,7 @@ export function buildLlmsTxt(input: LlmsTxtInput): string {
     ...input.legal,
     {
       title: "Licence (the app is AGPL-3.0)",
-      url: "https://github.com/bucharitesh/qrdx/blob/main/LICENSE",
+      url: `${GITHUB_REPO_URL}/blob/main/LICENSE`,
     },
     {
       title: "Licence of the qrdx library and @qrdx/cli (MIT)",

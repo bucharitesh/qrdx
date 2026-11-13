@@ -1,3 +1,9 @@
+import {
+  API_HOST,
+  CANONICAL_HOST,
+  CANONICAL_ORIGIN,
+  MCP_HOST,
+} from "@repo/config";
 import { config, withAnalyzer } from "@repo/next-config";
 import { createMDX } from "fumadocs-mdx/next";
 import type { NextConfig } from "next";
@@ -43,18 +49,12 @@ const cspReporting = reportingEndpoints(cspOptions);
 
 // QRdx's own hosts (as in proxy.ts), plus a self-hosted app URL: customers'
 // custom domains never get the app policy.
-const appHostname = (() => {
-  try {
-    return new URL(process.env.NEXT_PUBLIC_APP_URL ?? "").hostname;
-  } catch {
-    return null;
-  }
-})();
+const appHostname = new URL(env.NEXT_PUBLIC_APP_URL).hostname;
 const PLATFORM_HOSTS = [
   "(?:.+\\.)?(?:qrdx\\.dev|vercel\\.app)",
   "localhost",
   "127\\.0\\.0\\.1",
-  ...(appHostname ? [appHostname.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")] : []),
+  appHostname.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
 ].join("|");
 
 /** An Accept header that lists text/markdown (rewrites to the Markdown versions). */
@@ -84,7 +84,7 @@ const cspHeaders = cspEnabled
 let nextConfig: NextConfig = {
   ...config,
   // Opt-in for Docker / self-hosting: NEXT_OUTPUT=standalone bun run build
-  output: process.env.NEXT_OUTPUT === "standalone" ? "standalone" : undefined,
+  output: env.NEXT_OUTPUT,
   reactStrictMode: true,
   // `next build` type-checks the app without its tests. Some tests import
   // files from outside the app (plugins/*, .github/scripts) that a Docker
@@ -97,7 +97,7 @@ let nextConfig: NextConfig = {
   // so Vercel would only repeat it. Docker and local builds still check.
   typescript: {
     tsconfigPath: "tsconfig.build.json",
-    ignoreBuildErrors: process.env.VERCEL === "1",
+    ignoreBuildErrors: env.VERCEL === "1",
   },
   // `next dev` prints every server action call with its arguments. Those
   // include secrets typed into settings (an SSO client secret, 2FA and email
@@ -128,7 +128,7 @@ let nextConfig: NextConfig = {
     //   anywhere, and the server only applies them when Node runs with
     //   source maps on, which this app doesn't). `next dev` and local builds
     //   keep both.
-    ...(process.env.VERCEL === "1" && {
+    ...(env.VERCEL === "1" && {
       turbopackFileSystemCacheForBuild: false,
       turbopackSourceMaps: false,
     }),
@@ -206,7 +206,7 @@ let nextConfig: NextConfig = {
       },
       ...cspHeaders,
       // The API and MCP hosts serve machine endpoints, never pages to index.
-      ...["api.qrdx.dev", "mcp.qrdx.dev"].map((host) => ({
+      ...[API_HOST, MCP_HOST].map((host) => ({
         source: "/:path*",
         has: [{ type: "host" as const, value: host }],
         headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
@@ -265,8 +265,8 @@ let nextConfig: NextConfig = {
       // One host for search engines: www goes to the apex.
       {
         source: "/:path*",
-        has: [{ type: "host", value: "www.qrdx.dev" }],
-        destination: "https://qrdx.dev/:path*",
+        has: [{ type: "host", value: `www.${CANONICAL_HOST}` }],
+        destination: `${CANONICAL_ORIGIN}/:path*`,
         permanent: true,
       },
       // skipTrailingSlashRedirect (for the PostHog proxy) leaves "/pricing/"
@@ -281,15 +281,15 @@ let nextConfig: NextConfig = {
         // Except the endpoint, its Server Card and the discovery documents.
         source:
           "/:path((?!mcp$|mcp/server-card$|api/mcp$|api/mcp/server-card$|\\.well-known/|_next/).*)",
-        has: [{ type: "host", value: "mcp.qrdx.dev" }],
-        destination: "https://qrdx.dev/mcp",
+        has: [{ type: "host", value: MCP_HOST }],
+        destination: `${CANONICAL_ORIGIN}/mcp`,
         permanent: false,
       },
       // api.qrdx.dev/openapi.json is the API's OpenAPI document (public/).
       {
         source: "/:path((?!v1(?:/|$)|openapi\\.json$|\\.well-known/|_next/).*)",
-        has: [{ type: "host", value: "api.qrdx.dev" }],
-        destination: "https://qrdx.dev/docs/developers/rest-api",
+        has: [{ type: "host", value: API_HOST }],
+        destination: `${CANONICAL_ORIGIN}/docs/developers/rest-api`,
         permanent: false,
       },
       // /help, /support and moved docs pages (lib/docs-redirects.ts), on
@@ -320,20 +320,20 @@ let nextConfig: NextConfig = {
         },
         {
           source: "/mcp",
-          has: [{ type: "host", value: "mcp.qrdx.dev" }],
+          has: [{ type: "host", value: MCP_HOST }],
           destination: "/api/mcp",
         },
         // The MCP Server Card at <endpoint>/server-card (SEP-2127).
         {
           source: "/mcp/server-card",
-          has: [{ type: "host", value: "mcp.qrdx.dev" }],
+          has: [{ type: "host", value: MCP_HOST }],
           destination: "/api/mcp/server-card",
         },
         // api.qrdx.dev/v1/... is the public REST API (same routes as
         // qrdx.dev/api/v1/..., which keeps working).
         {
           source: "/v1/:path*",
-          has: [{ type: "host", value: "api.qrdx.dev" }],
+          has: [{ type: "host", value: API_HOST }],
           destination: "/api/v1/:path*",
         },
         // Markdown for agents that ask for it (Accept: text/markdown): the

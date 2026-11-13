@@ -20,6 +20,16 @@
 // so CI and Vercel failed at install. These files only depend on zod.
 
 import {
+  DESIGN_QR_REQUESTS_PER_MINUTE,
+  MAX_BULK_TOOL_ROWS,
+  MAX_CODES_PER_REQUEST,
+  MAX_IMPORT_ROWS,
+  MCP_REQUESTS_PER_MINUTE,
+  NEW_PAID_ACCOUNT_CODES_PER_HOUR,
+  QR_IMAGE_REQUESTS_PER_MINUTE,
+} from "@repo/config";
+import { formatCount } from "@/lib/format-count";
+import {
   OFFICIAL_FRAME_COUNT,
   OFFICIAL_FRAME_COUNTS,
 } from "../../../packages/qrdx/src/frames/catalogue/counts";
@@ -43,21 +53,9 @@ import {
 import { ART_MODEL_LABEL } from "./ai/art-models";
 import { BARCODE_FORMATS } from "./barcode/formats";
 import { BRAND_LOGO_COUNT } from "./brand-logos/catalog.generated";
-import {
-  formatCount,
-  MAX_BULK_TOOL_ROWS,
-  MAX_CODES_PER_REQUEST,
-  MAX_IMPORT_ROWS,
-  NEW_PAID_ACCOUNT_CODES_PER_HOUR,
-} from "./bulk-limits";
 import { TRANSLATED_LOCALES } from "./i18n/config";
 import { PAGE_TYPE_IDS } from "./landing/page-type-ids";
 import { MONEY_BACK_DAYS, NONPROFIT_DISCOUNT_PERCENT } from "./pricing";
-import {
-  DESIGN_QR_REQUESTS_PER_MINUTE,
-  MCP_REQUESTS_PER_MINUTE,
-  QR_IMAGE_REQUESTS_PER_MINUTE,
-} from "./public-api-limits";
 
 export const PRODUCT_FACTS = {
   /** Shapes for the data modules (`bodyPattern`). */
@@ -112,7 +110,7 @@ export const PRODUCT_FACTS = {
   affiliateMinPayoutUsd: AFFILIATE_MIN_PAYOUT_LABEL,
   /** Days of notice before the affiliate terms change: "30". */
   affiliateTermsNoticeDays: AFFILIATE_TERMS_NOTICE_DAYS,
-  // Large batches (lib/bulk-limits.ts), as copy writes them ("1,000").
+  // Large batches (@repo/config limits.ts), as copy writes them ("1,000").
   /** Dynamic codes in one POST /v1/codes request. */
   apiBatchCodes: formatCount(MAX_CODES_PER_REQUEST),
   /** Rows in one dashboard CSV import. */
@@ -121,7 +119,7 @@ export const PRODUCT_FACTS = {
   bulkToolRows: formatCount(MAX_BULK_TOOL_ROWS),
   /** Codes an hour a new account may create in a paid workspace. */
   newPaidAccountHourlyCodes: formatCount(NEW_PAID_ACCOUNT_CODES_PER_HOUR),
-  // Keyless endpoints' per-IP limits (lib/public-api-limits.ts).
+  // Keyless endpoints' per-IP limits (@repo/config limits.ts).
   /** Image API (GET /v1/qr) requests a minute per IP address. */
   imageApiPerMinute: QR_IMAGE_REQUESTS_PER_MINUTE,
   /** MCP server requests a minute per IP address. */

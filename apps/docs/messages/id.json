@@ -7322,7 +7322,6 @@
           "open": "Buka",
           "replaceFile": "Ganti file…",
           "delete": "Hapus",
-          "showingThe500NewestFiles": "Menampilkan 500 file terbaru.",
           "deleteFilename": "Hapus {filename}?",
           "thisFileIsValueThey": "File ini {value}. Halaman tersebut akan menampilkan \"File tidak tersedia\".",
           "andValueMore": "dan {value, number} lainnya",
@@ -7572,7 +7571,6 @@
           "page": {
             "webhooks": "Webhook",
             "recentDeliveries": "Pengiriman terbaru",
-            "theLast50KeptFor": "50 terakhir, disimpan selama 30 hari. Pengiriman yang gagal dicoba ulang hingga {MAX_DELIVERY_ATTEMPTS, number} kali dengan jeda yang makin lama.",
             "endpointDeliveries": "Pengiriman endpoint",
             "filterDeliveries": "Filter pengiriman",
             "active": "Aktif",

@@ -1,4 +1,4 @@
-import { AI_REQUEST_FREE_TIER_LIMIT, MAX_FREE_THEMES } from "@/lib/constants";
+import { AI_REQUEST_FREE_TIER_LIMIT, MAX_FREE_THEMES } from "@repo/config";
 
 type Feature = {
   description: string;

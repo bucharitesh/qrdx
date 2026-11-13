@@ -7322,7 +7322,6 @@
           "open": "打开",
           "replaceFile": "替换文件…",
           "delete": "删除",
-          "showingThe500NewestFiles": "显示最新的 500 个文件。",
           "deleteFilename": "删除 {filename}？",
           "thisFileIsValueThey": "此文件{value}。它们将改为显示“文件不可用”。",
           "andValueMore": "以及另外 {value, number} 个",
@@ -7572,7 +7571,6 @@
           "page": {
             "webhooks": "Webhooks",
             "recentDeliveries": "最近的投递记录",
-            "theLast50KeptFor": "保留最近 50 条，保存 30 天。投递失败时最多重试 {MAX_DELIVERY_ATTEMPTS, number} 次，每次等待时间逐渐变长。",
             "endpointDeliveries": "端点投递记录",
             "filterDeliveries": "筛选投递记录",
             "active": "已启用",

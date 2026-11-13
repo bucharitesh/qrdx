@@ -2,6 +2,7 @@
 // tokens, chat payloads, digest helpers, REST hooks input). No network, no
 // database: the HTTP transport is replaced and fetch throws if anything tries.
 //   cd apps/docs && DATABASE_URL=postgres://test@127.0.0.1:1/test RESEND_API_KEY= \
+//     NEXT_PUBLIC_APP_URL=https://qrdx.dev \
 //     BETTER_AUTH_SECRET=test-secret-for-unsubscribe-tokens \
 //     npx tsx --conditions=react-server --test lib/events/events.test.ts
 import assert from "node:assert/strict";

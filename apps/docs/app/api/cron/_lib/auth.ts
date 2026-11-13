@@ -1,7 +1,7 @@
 import "server-only";
 
 import { timingSafeEqual } from "node:crypto";
-import { env } from "@/lib/env";
+import { env } from "@/env";
 
 /**
  * Vercel Cron and the GitHub Actions webhook worker send

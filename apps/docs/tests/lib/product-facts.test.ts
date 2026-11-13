@@ -2,6 +2,11 @@
 // through `{facts.<name>}` tokens, so they can't drift from the playground.
 import { readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
+import {
+  MAX_BULK_TOOL_ROWS,
+  MAX_CODES_PER_REQUEST,
+  MAX_IMPORT_ROWS,
+} from "@repo/config";
 import { remarkLLMs } from "fumadocs-core/mdx-plugins/remark-llms";
 import { OFFICIAL_FRAMES } from "qrdx";
 import {
@@ -16,11 +21,6 @@ import { describe, expect, it } from "vitest";
 import { AI_ART_PRESETS } from "@/components/sections/ai-art/presets";
 import { BARCODE_FORMATS } from "@/lib/barcode/formats";
 import { BRAND_LOGO_COUNT } from "@/lib/brand-logos/catalog.generated";
-import {
-  MAX_BULK_TOOL_ROWS,
-  MAX_CODES_PER_REQUEST,
-  MAX_IMPORT_ROWS,
-} from "@/lib/bulk-limits";
 import { TRANSLATED_LOCALES } from "@/lib/i18n/config";
 import { PAGE_TYPE_IDS } from "@/lib/landing/page-type-ids";
 import {
@@ -81,7 +81,7 @@ describe("PRODUCT_FACTS", () => {
       affiliateHoldDays: 45,
       affiliateMinPayoutUsd: "US$25",
       affiliateTermsNoticeDays: 30,
-      // lib/bulk-limits.ts
+      // @repo/config limits.ts
       apiBatchCodes: MAX_CODES_PER_REQUEST.toLocaleString("en-US"),
       importRows: MAX_IMPORT_ROWS.toLocaleString("en-US"),
       bulkToolRows: MAX_BULK_TOOL_ROWS.toLocaleString("en-US"),

@@ -1,5 +1,6 @@
 "use client";
 
+import { MAX_IMAGE_FILES } from "@repo/config";
 import { cn } from "@repo/design-system/lib/utils";
 import { useTranslations } from "next-intl";
 import { AIChatFormBody } from "@/components/editor/ai/ai-chat-form-body";
@@ -10,7 +11,6 @@ import { ImageUploader } from "@/components/editor/ai/image-uploader";
 import { COMPOSER_PLACEHOLDERS } from "@/components/editor/ai/prompt-suggestions";
 import { ShineBorder } from "@/components/editor/ai/shine-border";
 import ThemePresetSelect from "@/components/editor/qr-preset-select";
-import { MAX_IMAGE_FILES } from "@/lib/constants";
 import { useAIChatForm } from "@/lib/hooks/use-ai-chat-form";
 import { useAIEnhancePrompt } from "@/lib/hooks/use-ai-enhance-prompt";
 import { useGuards } from "@/lib/hooks/use-gaurds";

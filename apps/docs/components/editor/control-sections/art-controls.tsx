@@ -1,5 +1,6 @@
 "use client";
 
+import { CANONICAL_ORIGIN, MAX_LOGO_FILE_SIZE } from "@repo/config";
 import { toast } from "@repo/design-system";
 import {
   Spinner as LoaderCircle,
@@ -39,7 +40,7 @@ import {
   useGradeLabels,
 } from "@/components/editor/scan-score";
 import { useEditorValue } from "@/components/editor/style-scope";
-import { DEFAULT_QR_LOGO, MAX_LOGO_FILE_SIZE } from "@/lib/constants";
+import { DEFAULT_QR_LOGO } from "@/lib/constants";
 import { soundEvent } from "@/lib/sound/emit";
 import { useArtSessionStore } from "@/store/art-session-store";
 import type { QRStyle } from "@/types/theme";
@@ -581,7 +582,7 @@ function ArtScanScore({ art, style }: { art: QRArt; style: QRStyle }) {
   const qrProps = React.useMemo(
     () => ({
       ...getQRData({
-        value: value || "https://qrdx.dev",
+        value: value || CANONICAL_ORIGIN,
         fgColor: style.fgColor,
         bgColor: style.bgColor,
         eyeColor: style.eyeColor,

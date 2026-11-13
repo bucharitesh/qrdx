@@ -1,5 +1,6 @@
 "use client";
 
+import { CANONICAL_ORIGIN } from "@repo/config";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
@@ -83,7 +84,7 @@ export function PrintSizeCalculator() {
   const [distance, setDistance] = useState("1");
   const [unit, setUnit] = useState<DistanceUnit>("m");
   const [source, setSource] = useState<"content" | "version">("content");
-  const [content, setContent] = useState("https://qrdx.dev");
+  const [content, setContent] = useState(CANONICAL_ORIGIN);
   const [versionInput, setVersionInput] = useState("3");
   const [ecc, setEcc] = useState<EccLevel>("Q");
 

@@ -1,6 +1,7 @@
 // Run: cd apps/docs && DATABASE_URL=postgres://test@127.0.0.1:1/test \
+//   NEXT_PUBLIC_APP_URL=https://qrdx.dev BETTER_AUTH_SECRET=test-secret \
 //   npx tsx --conditions=react-server --test lib/redirect/routing.test.ts
-// (no database connection is made; the URL only satisfies lib/env)
+// (no database connection is made; the values only satisfy env.ts)
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { preferredLanguage, visitorHash } from "@/lib/scans";

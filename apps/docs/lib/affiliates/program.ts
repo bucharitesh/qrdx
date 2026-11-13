@@ -12,15 +12,26 @@ import cuid from "cuid";
 import {
   and,
   count,
+  countDistinct,
   desc,
   eq,
   inArray,
-  isNotNull,
   isNull,
   lte,
+  not,
+  notInArray,
   or,
+  type SQL,
   sql,
+  sum,
 } from "drizzle-orm";
+import {
+  clampPage,
+  loadPage,
+  offsetOf,
+  PAGE_SIZE,
+  type Paged,
+} from "@/lib/paging";
 import { isMissingTableError, noteMissingTables } from "./missing-table";
 import {
   type AffiliateStatus,
@@ -298,21 +309,85 @@ export interface CommissionView {
 
 type CommissionRow = Omit<CommissionView, "status"> & { status: string };
 
+const emptyTotals = (): MoneyTotals => ({ pending: {}, payable: {}, paid: {} });
+
 function addTo(target: ByCurrency, currency: string, amount: number) {
   const key = currency.toLowerCase();
   target[key] = (target[key] ?? 0) + amount;
 }
 
+/** The totals of commission rows in hand (commissionTotals sums the same in SQL). */
 export function totalsOf(
   rows: readonly CommissionRow[],
   now: Date,
 ): MoneyTotals {
-  const totals: MoneyTotals = { pending: {}, payable: {}, paid: {} };
+  const totals = emptyTotals();
   for (const row of rows) {
     const status = effectiveCommissionStatus(row, now);
     if (status === "void") continue;
     addTo(totals[status], row.currency, row.amount);
   }
+  return totals;
+}
+
+/**
+ * effectiveCommissionStatus as SQL: which commissions count as on hold,
+ * payable and paid at `now`. Void ones are in none of them.
+ */
+function commissionBuckets(now: Date): Record<keyof MoneyTotals, SQL> {
+  const payable = and(
+    inArray(affiliateCommission.status, ["pending", "approved"]),
+    isNull(affiliateCommission.payoutId),
+    lte(affiliateCommission.availableAt, now),
+  ) as SQL;
+  return {
+    payable,
+    pending: and(
+      notInArray(affiliateCommission.status, ["paid", "void"]),
+      not(payable),
+    ) as SQL,
+    paid: eq(affiliateCommission.status, "paid"),
+  };
+}
+
+const BUCKETS = ["pending", "payable", "paid"] as const;
+
+/**
+ * Pending, payable and paid totals per affiliate, summed in the database
+ * (a row per affiliate and currency) instead of from every commission.
+ */
+async function commissionTotals(
+  affiliateIds: readonly string[],
+  now: Date,
+): Promise<Map<string, MoneyTotals>> {
+  const totals = new Map<string, MoneyTotals>();
+  if (affiliateIds.length === 0) return totals;
+  const buckets = commissionBuckets(now);
+  const results = await Promise.all(
+    BUCKETS.map((bucket) =>
+      db
+        .select({
+          affiliateId: affiliateCommission.affiliateId,
+          currency: affiliateCommission.currency,
+          amount: sum(affiliateCommission.amount),
+        })
+        .from(affiliateCommission)
+        .where(
+          and(
+            inArray(affiliateCommission.affiliateId, [...affiliateIds]),
+            buckets[bucket],
+          ),
+        )
+        .groupBy(affiliateCommission.affiliateId, affiliateCommission.currency),
+    ),
+  );
+  BUCKETS.forEach((bucket, index) => {
+    for (const row of results[index] ?? []) {
+      const own = totals.get(row.affiliateId) ?? emptyTotals();
+      addTo(own[bucket], row.currency, Number(row.amount ?? 0));
+      totals.set(row.affiliateId, own);
+    }
+  });
   return totals;
 }
 
@@ -331,42 +406,103 @@ const commissionColumns = {
   referredUserId: affiliateCommission.referredUserId,
 };
 
+// Newest payment first; the id keeps payments made at the same moment in
+// one order, so paging never repeats or skips one.
+const commissionOrder = [
+  desc(affiliateCommission.orderPaidAt),
+  desc(affiliateCommission.id),
+];
+
+/** Every commission (the data export has them all; the pages page them). */
 async function commissionsOf(affiliateId: string): Promise<CommissionRow[]> {
   return db
     .select(commissionColumns)
     .from(affiliateCommission)
     .where(eq(affiliateCommission.affiliateId, affiliateId))
-    .orderBy(desc(affiliateCommission.orderPaidAt));
+    .orderBy(...commissionOrder);
+}
+
+/** One page of an affiliate's commissions, newest payment first. */
+async function commissionPage(
+  affiliateId: string,
+  page: number,
+  now: Date,
+): Promise<Paged<CommissionView>> {
+  const own = eq(affiliateCommission.affiliateId, affiliateId);
+  const loaded = await loadPage(page, async (target) => {
+    const [rows, [counted]] = await Promise.all([
+      db
+        .select(commissionColumns)
+        .from(affiliateCommission)
+        .where(own)
+        .orderBy(...commissionOrder)
+        .limit(PAGE_SIZE)
+        .offset(offsetOf(target)),
+      db.select({ total: count() }).from(affiliateCommission).where(own),
+    ]);
+    return { rows, total: Number(counted?.total ?? 0) };
+  });
+  return {
+    ...loaded,
+    rows: loaded.rows.map((commission) => ({
+      ...commission,
+      status: effectiveCommissionStatus(commission, now),
+    })),
+  };
 }
 
 export type PayoutRow = typeof affiliatePayout.$inferSelect;
 
+/** About one a month, so not paged. */
 async function payoutsOf(affiliateId: string): Promise<PayoutRow[]> {
   return db
     .select()
     .from(affiliatePayout)
     .where(eq(affiliatePayout.affiliateId, affiliateId))
-    .orderBy(desc(affiliatePayout.paidAt));
+    .orderBy(desc(affiliatePayout.paidAt), desc(affiliatePayout.id));
 }
 
-async function referralCounts(affiliateId: string) {
-  const [signUps] = await db
-    .select({ total: count() })
+interface ReferralCounts {
+  signUps: number;
+  payingCustomers: number;
+}
+
+/** Sign-ups and paying customers per affiliate, counted in one query. */
+async function referralCounts(
+  affiliateIds: readonly string[],
+): Promise<Map<string, ReferralCounts>> {
+  if (affiliateIds.length === 0) return new Map();
+  const rows = await db
+    .select({
+      affiliateId: affiliateReferral.affiliateId,
+      signUps: count(),
+      payingCustomers: count(affiliateReferral.firstPaidAt),
+    })
     .from(affiliateReferral)
-    .where(eq(affiliateReferral.affiliateId, affiliateId));
-  const [paying] = await db
-    .select({ total: count() })
-    .from(affiliateReferral)
-    .where(
-      and(
-        eq(affiliateReferral.affiliateId, affiliateId),
-        isNotNull(affiliateReferral.firstPaidAt),
-      ),
-    );
-  return {
-    signUps: Number(signUps?.total ?? 0),
-    payingCustomers: Number(paying?.total ?? 0),
-  };
+    .where(inArray(affiliateReferral.affiliateId, [...affiliateIds]))
+    .groupBy(affiliateReferral.affiliateId);
+  return new Map(
+    rows.map((row) => [
+      row.affiliateId,
+      {
+        signUps: Number(row.signUps),
+        payingCustomers: Number(row.payingCustomers),
+      },
+    ]),
+  );
+}
+
+/** Referral counts and money totals for some affiliates, read in parallel. */
+async function affiliateFigures(affiliateIds: readonly string[], now: Date) {
+  const [counts, totals] = await Promise.all([
+    referralCounts(affiliateIds),
+    commissionTotals(affiliateIds, now),
+  ]);
+  return (id: string): ReferralCounts & { totals: MoneyTotals } => ({
+    signUps: counts.get(id)?.signUps ?? 0,
+    payingCustomers: counts.get(id)?.payingCustomers ?? 0,
+    totals: totals.get(id) ?? emptyTotals(),
+  });
 }
 
 // ─── The affiliate's dashboard ──────────────────────────────────────────────
@@ -376,8 +512,9 @@ export interface AffiliateDashboard {
   clicks: number;
   signUps: number;
   payingCustomers: number;
+  /** Over every commission, not only the page shown. */
   totals: MoneyTotals;
-  commissions: CommissionView[];
+  commissions: Paged<CommissionView>;
   payouts: PayoutRow[];
 }
 
@@ -385,6 +522,7 @@ export interface AffiliateDashboard {
 export async function loadAffiliateDashboard(
   userId: string,
   now = new Date(),
+  { page = 1 }: { page?: number } = {},
 ): Promise<Loaded<AffiliateDashboard>> {
   return whenReady(async () => {
     const row = await getAffiliateForUser(userId);
@@ -393,34 +531,26 @@ export async function loadAffiliateDashboard(
       clicks: row?.clickCount ?? 0,
       signUps: 0,
       payingCustomers: 0,
-      totals: { pending: {}, payable: {}, paid: {} },
-      commissions: [],
+      totals: emptyTotals(),
+      commissions: { rows: [], total: 0, page: 1 },
       payouts: [],
     };
     if (!row || row.status === "pending" || row.status === "rejected") {
       return empty;
     }
-    const [counts, commissions, payouts] = await Promise.all([
-      referralCounts(row.id),
-      commissionsOf(row.id),
+    const [figures, commissions, payouts] = await Promise.all([
+      affiliateFigures([row.id], now),
+      commissionPage(row.id, page, now),
       payoutsOf(row.id),
     ]);
-    return {
-      ...empty,
-      ...counts,
-      totals: totalsOf(commissions, now),
-      commissions: commissions.map((commission) => ({
-        ...commission,
-        status: effectiveCommissionStatus(commission, now),
-      })),
-      payouts,
-    };
+    return { ...empty, ...figures(row.id), commissions, payouts };
   });
 }
 
 // ─── Admin ──────────────────────────────────────────────────────────────────
 
-export interface AdminAffiliateRow {
+/** An affiliate as the admin lists show them. */
+export interface AdminAffiliateSummary {
   id: string;
   userId: string;
   email: string;
@@ -435,119 +565,174 @@ export interface AdminAffiliateRow {
   createdAt: Date;
   approvedAt: Date | null;
   statusNote: string | null;
+}
+
+/** With their referrals and what they're owed. */
+export interface AdminAffiliateRow extends AdminAffiliateSummary {
   signUps: number;
   payingCustomers: number;
   totals: MoneyTotals;
 }
 
-/** Every affiliate with what's owed, newest first (applications included). */
+const adminAffiliateColumns = {
+  id: affiliate.id,
+  userId: affiliate.userId,
+  email: user.email,
+  name: user.name,
+  status: affiliate.status,
+  code: affiliate.code,
+  previousCode: affiliate.previousCode,
+  paypalEmail: affiliate.paypalEmail,
+  paypalEmailChangedAt: affiliate.paypalEmailChangedAt,
+  application: affiliate.application,
+  clickCount: affiliate.clickCount,
+  createdAt: affiliate.createdAt,
+  approvedAt: affiliate.approvedAt,
+  statusNote: affiliate.statusNote,
+};
+
+/** Approved and suspended: the affiliates table, with its money columns. */
+const ACTIVE_STATUSES: AffiliateStatus[] = ["approved", "suspended"];
+
+export interface AdminAffiliateList {
+  stats: {
+    /** Applications waiting (pending). */
+    applications: number;
+    approved: number;
+    /** Approved or suspended, with something past its hold and unpaid. */
+    withPayableBalance: number;
+    /** Sign-ups referred by every affiliate listed. */
+    signUps: number;
+  };
+  applications: Paged<AdminAffiliateSummary>;
+  /** Approved and suspended, with their figures. */
+  affiliates: Paged<AdminAffiliateRow>;
+  rejected: Paged<AdminAffiliateSummary>;
+}
+
+/**
+ * /admin/affiliates: applications, affiliates and rejected applications,
+ * each newest first and paged on its own. The counts and money come from
+ * SQL aggregates, for the affiliates on the page only.
+ */
 export async function listAffiliatesForAdmin(
   now = new Date(),
-): Promise<Loaded<AdminAffiliateRow[]>> {
+  pages: { applications?: number; affiliates?: number; rejected?: number } = {},
+): Promise<Loaded<AdminAffiliateList>> {
   return whenReady(async () => {
-    const rows = await db
-      .select({
-        id: affiliate.id,
-        userId: affiliate.userId,
-        email: user.email,
-        name: user.name,
-        status: affiliate.status,
-        code: affiliate.code,
-        previousCode: affiliate.previousCode,
-        paypalEmail: affiliate.paypalEmail,
-        paypalEmailChangedAt: affiliate.paypalEmailChangedAt,
-        application: affiliate.application,
-        clickCount: affiliate.clickCount,
-        createdAt: affiliate.createdAt,
-        approvedAt: affiliate.approvedAt,
-        statusNote: affiliate.statusNote,
-      })
-      .from(affiliate)
-      .innerJoin(user, eq(user.id, affiliate.userId))
-      .orderBy(desc(affiliate.createdAt));
-    if (rows.length === 0) return [];
-    const ids = rows.map((row) => row.id);
-    const [commissions, referrals] = await Promise.all([
+    const [byStatus, [payable], [referred]] = await Promise.all([
       db
-        .select({
-          affiliateId: affiliateCommission.affiliateId,
-          ...commissionColumns,
-        })
+        .select({ status: affiliate.status, total: count() })
+        .from(affiliate)
+        .innerJoin(user, eq(user.id, affiliate.userId))
+        .groupBy(affiliate.status),
+      db
+        .select({ total: countDistinct(affiliateCommission.affiliateId) })
         .from(affiliateCommission)
-        .where(inArray(affiliateCommission.affiliateId, ids)),
-      db
-        .select({
-          affiliateId: affiliateReferral.affiliateId,
-          firstPaidAt: affiliateReferral.firstPaidAt,
-        })
-        .from(affiliateReferral)
-        .where(inArray(affiliateReferral.affiliateId, ids)),
-    ]);
-    return rows.map((row) => {
-      const own = referrals.filter((ref) => ref.affiliateId === row.id);
-      return {
-        ...row,
-        status: row.status as AffiliateStatus,
-        signUps: own.length,
-        payingCustomers: own.filter((ref) => ref.firstPaidAt).length,
-        totals: totalsOf(
-          commissions.filter((c) => c.affiliateId === row.id),
-          now,
+        .innerJoin(affiliate, eq(affiliate.id, affiliateCommission.affiliateId))
+        .innerJoin(user, eq(user.id, affiliate.userId))
+        .where(
+          and(
+            inArray(affiliate.status, ACTIVE_STATUSES),
+            commissionBuckets(now).payable,
+          ),
         ),
+      db
+        .select({ total: count() })
+        .from(affiliateReferral)
+        .innerJoin(affiliate, eq(affiliate.id, affiliateReferral.affiliateId))
+        .innerJoin(user, eq(user.id, affiliate.userId)),
+    ]);
+    const statusTotal = (statuses: readonly string[]) =>
+      byStatus
+        .filter((row) => statuses.includes(row.status))
+        .reduce((total, row) => total + Number(row.total), 0);
+
+    // The same FROM, join and status filter as the counts above, so a page
+    // past the end is clamped to the last one that has rows.
+    const section = async (
+      statuses: AffiliateStatus[],
+      requested = 1,
+    ): Promise<Paged<AdminAffiliateSummary>> => {
+      const total = statusTotal(statuses);
+      const page = clampPage(requested, total);
+      if (total === 0) return { rows: [], total, page };
+      const rows = await db
+        .select(adminAffiliateColumns)
+        .from(affiliate)
+        .innerJoin(user, eq(user.id, affiliate.userId))
+        .where(inArray(affiliate.status, statuses))
+        .orderBy(desc(affiliate.createdAt), desc(affiliate.id))
+        .limit(PAGE_SIZE)
+        .offset(offsetOf(page));
+      return {
+        rows: rows.map((row) => ({
+          ...row,
+          status: row.status as AffiliateStatus,
+        })),
+        total,
+        page,
       };
-    });
+    };
+
+    const [applications, active, rejected] = await Promise.all([
+      section(["pending"], pages.applications),
+      section(ACTIVE_STATUSES, pages.affiliates),
+      section(["rejected"], pages.rejected),
+    ]);
+    const figuresOf = await affiliateFigures(
+      active.rows.map((row) => row.id),
+      now,
+    );
+    return {
+      stats: {
+        applications: applications.total,
+        approved: statusTotal(["approved"]),
+        withPayableBalance: Number(payable?.total ?? 0),
+        signUps: Number(referred?.total ?? 0),
+      },
+      applications,
+      affiliates: {
+        ...active,
+        rows: active.rows.map((row) => ({ ...row, ...figuresOf(row.id) })),
+      },
+      rejected,
+    };
   });
 }
 
 export interface AdminAffiliateDetail {
   affiliate: AdminAffiliateRow;
-  commissions: CommissionView[];
+  /** One page; the totals on `affiliate` cover every commission. */
+  commissions: Paged<CommissionView>;
   payouts: PayoutRow[];
 }
 
 export async function loadAffiliateForAdmin(
   affiliateId: string,
   now = new Date(),
+  { page = 1 }: { page?: number } = {},
 ): Promise<Loaded<AdminAffiliateDetail | null>> {
   return whenReady(async () => {
     const [row] = await db
-      .select({
-        id: affiliate.id,
-        userId: affiliate.userId,
-        email: user.email,
-        name: user.name,
-        status: affiliate.status,
-        code: affiliate.code,
-        previousCode: affiliate.previousCode,
-        paypalEmail: affiliate.paypalEmail,
-        paypalEmailChangedAt: affiliate.paypalEmailChangedAt,
-        application: affiliate.application,
-        clickCount: affiliate.clickCount,
-        createdAt: affiliate.createdAt,
-        approvedAt: affiliate.approvedAt,
-        statusNote: affiliate.statusNote,
-      })
+      .select(adminAffiliateColumns)
       .from(affiliate)
       .innerJoin(user, eq(user.id, affiliate.userId))
       .where(eq(affiliate.id, affiliateId))
       .limit(1);
     if (!row) return null;
-    const [counts, commissions, payouts] = await Promise.all([
-      referralCounts(row.id),
-      commissionsOf(row.id),
+    const [figures, commissions, payouts] = await Promise.all([
+      affiliateFigures([row.id], now),
+      commissionPage(row.id, page, now),
       payoutsOf(row.id),
     ]);
     return {
       affiliate: {
         ...row,
         status: row.status as AffiliateStatus,
-        ...counts,
-        totals: totalsOf(commissions, now),
+        ...figures(row.id),
       },
-      commissions: commissions.map((commission) => ({
-        ...commission,
-        status: effectiveCommissionStatus(commission, now),
-      })),
+      commissions,
       payouts,
     };
   });

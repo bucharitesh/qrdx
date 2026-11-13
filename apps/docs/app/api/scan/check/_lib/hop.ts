@@ -1,6 +1,7 @@
 import http from "node:http";
 import https from "node:https";
 import type { LookupFunction } from "node:net";
+import { CANONICAL_ORIGIN } from "@repo/config";
 import { createGuardedLookup } from "./ssrf";
 
 export interface HopResponse {
@@ -25,8 +26,7 @@ export class HopError extends Error {
   }
 }
 
-const USER_AGENT =
-  "Mozilla/5.0 (compatible; QRdxLinkCheck/1.0; +https://qrdx.dev/scan)";
+const USER_AGENT = `Mozilla/5.0 (compatible; QRdxLinkCheck/1.0; +${CANONICAL_ORIGIN}/scan)`;
 
 function classify(error: unknown): HopError {
   if (error instanceof HopError) return error;

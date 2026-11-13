@@ -1,6 +1,7 @@
+import { GITHUB_REPO_URL } from "@repo/config";
 import type { IntegrationCatalogEntry } from "../types";
 
-const REPO = "https://github.com/bucharitesh/qrdx";
+const REPO = GITHUB_REPO_URL;
 
 /** The extension's Chrome Web Store listing (live since 2026-11). */
 export const CHROME_WEB_STORE_URL =

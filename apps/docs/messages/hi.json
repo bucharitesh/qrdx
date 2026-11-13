@@ -7322,7 +7322,6 @@
           "open": "खोलें",
           "replaceFile": "फ़ाइल बदलें…",
           "delete": "हटाएँ",
-          "showingThe500NewestFiles": "सबसे नई 500 फ़ाइलें दिखाई जा रही हैं।",
           "deleteFilename": "{filename} हटाएँ?",
           "thisFileIsValueThey": "यह फ़ाइल {value} है। इनमें इसके बजाय \"File unavailable\" दिखेगा।",
           "andValueMore": "और {value, number} और",
@@ -7572,7 +7571,6 @@
           "page": {
             "webhooks": "Webhooks",
             "recentDeliveries": "हाल की डिलीवरी",
-            "theLast50KeptFor": "पिछली 50, 30 दिन तक रखी जाती हैं। फ़ेल हुई डिलीवरी को बढ़ते अंतराल के साथ {MAX_DELIVERY_ATTEMPTS, number} बार तक दोबारा भेजा जाता है।",
             "endpointDeliveries": "एंडपॉइंट डिलीवरी",
             "filterDeliveries": "डिलीवरी फ़िल्टर करें",
             "active": "सक्रिय",

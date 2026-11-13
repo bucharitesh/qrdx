@@ -1,5 +1,10 @@
-// The Barcodes list's filters, kept in the URL (?q=&format=&folder=&status=&page=),
-// and what each card shows. Pure and client-safe.
+// The Barcodes list's filters, kept in the URL
+// (?q=&format=&folder=&status=&size=&page=), and what each card shows. Pure
+// and client-safe.
+import {
+  GRID_PAGE_SIZES,
+  parsePageSize,
+} from "@/app/(app)/dashboard/_lib/list-paging";
 import {
   buildFolderTree,
   type FolderRow,
@@ -7,6 +12,7 @@ import {
 } from "@/app/(app)/dashboard/codes/_lib/organize-shared";
 import { type BarcodeFormatId, isBarcodeFormatId } from "@/lib/barcode/formats";
 import type { BarcodeStatus } from "@/lib/barcodes/schema";
+import { parsePage } from "@/lib/paging";
 
 export interface BarcodesFilters {
   q: string;
@@ -15,6 +21,8 @@ export interface BarcodesFilters {
   folder: string | null;
   status: BarcodeStatus;
   page: number;
+  /** Cards per page, one of GRID_PAGE_SIZES */
+  size: number;
 }
 
 type SearchParams = Record<string, string | string[] | undefined>;
@@ -25,13 +33,13 @@ const one = (value: string | string[] | undefined) =>
 export function parseBarcodesFilters(params: SearchParams): BarcodesFilters {
   const format = one(params.format);
   const folder = one(params.folder).trim().slice(0, 64);
-  const page = Number.parseInt(one(params.page), 10);
   return {
     q: one(params.q).trim().slice(0, 200),
     format: isBarcodeFormatId(format) ? format : null,
     folder: folder || null,
     status: one(params.status) === "trash" ? "trash" : "active",
-    page: Number.isFinite(page) && page > 1 ? Math.min(page, 10_000) : 1,
+    page: parsePage(params.page),
+    size: parsePageSize(params.size, GRID_PAGE_SIZES),
   };
 }
 
@@ -40,13 +48,15 @@ export function barcodesHref(
   filters: BarcodesFilters,
   patch: Partial<BarcodesFilters>,
 ): string {
-  // Changing a filter starts again on the first page.
+  // Changing a filter (or the page size) starts again on the first page;
+  // the page size is kept.
   const next = { ...filters, page: 1, ...patch };
   const search = new URLSearchParams();
   if (next.status === "trash") search.set("status", "trash");
   if (next.folder) search.set("folder", next.folder);
   if (next.format) search.set("format", next.format);
   if (next.q) search.set("q", next.q);
+  if (next.size !== GRID_PAGE_SIZES[0]) search.set("size", String(next.size));
   if (next.page > 1) search.set("page", String(next.page));
   const query = search.toString();
   return query ? `${basePath}?${query}` : basePath;

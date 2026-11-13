@@ -1,5 +1,5 @@
 import { createPolar, type Polar } from "@polar-sh/sdk/2026-10";
-import { env } from "@/lib/env";
+import { env } from "@/env";
 
 // Every call is gated on isBillingConfigured, so the empty fallback token is
 // never sent. Request and response fields are snake_case since SDK 1.0.
