@@ -3331,24 +3331,24 @@
         "scene": "Scene",
         "photo": "Photo",
         "caption": {
-          "painted-townhouses": "Painted townhouses, the code across their facades",
-          "lighthouse": "A lighthouse on a grassy headland",
+          "lighthouse": "A lighthouse on a headland, the code across its cliff and sea",
+          "painted-townhouses": "Painted townhouses, their colors running through the code",
           "photo-mountain": "A mountain lake photo at sunset",
-          "venice-canals": "A canal house in Venice",
-          "cottage-garden": "A thatched cottage in a flower garden",
+          "botanical-watercolor": "A watercolor of wildflowers and ferns",
+          "venice-canals": "A canal in Venice, the code over the water and walls",
           "photo-latte": "A latte photo on a wooden table",
-          "neon-city": "A city street at night in the rain",
-          "photo-dog": "A photo of a dog in a park"
+          "zen-garden": "A Japanese garden with cherry blossoms and koi",
+          "photo-dog": "A studio photo of a golden retriever"
         },
         "alt": {
-          "painted-townhouses": "AI QR art in scene mode: a row of painted townhouses, with the QR code built into their facades",
-          "lighthouse": "AI QR art in scene mode: a lighthouse on a headland by the sea, with the QR code laid into the grass and stone",
-          "photo-mountain": "AI QR art in photo mode: a mountain lake at sunset, with the QR code painted over the peak and its reflection",
-          "venice-canals": "AI QR art in scene mode: a canal house in Venice, with the QR code built into its stone wall",
-          "cottage-garden": "AI QR art in scene mode: a thatched cottage in a flower garden, with the QR code built into its wall",
-          "photo-latte": "AI QR art in photo mode: a latte on a wooden table, with the QR code painted into the table and the cup",
-          "neon-city": "AI QR art in scene mode: a city street at night, with the QR code made of lit and dark windows",
-          "photo-dog": "AI QR art in photo mode: a golden dog in a sunny park, with the QR code painted over it"
+          "lighthouse": "AI QR art in scene mode: a lighthouse on a grassy headland by the sea, with the QR code painted into the middle of the picture in its blues and greens",
+          "painted-townhouses": "AI QR art in scene mode: a row of painted townhouses, with the QR code painted into the middle of the picture in their pink, yellow and blue",
+          "photo-mountain": "AI QR art in photo mode: a mountain lake at sunset, with the QR code painted over the peak and its reflection in the photo's colors",
+          "botanical-watercolor": "AI QR art in scene mode: a watercolor of wildflowers and ferns, with the QR code painted into its middle in the flowers' colors",
+          "venice-canals": "AI QR art in scene mode: a canal in Venice with a gondola, with the QR code painted into the middle of the picture in its warm stone colors",
+          "photo-latte": "AI QR art in photo mode: a latte on a wooden table, with the QR code painted into the cup and the table",
+          "zen-garden": "AI QR art in scene mode: a Japanese garden with cherry blossoms, a lantern and koi, with the QR code painted into the middle of the picture",
+          "photo-dog": "AI QR art in photo mode: a golden retriever on a plain background, with the QR code painted over its face in its own colors"
         }
       },
       "paintingPicture": "Painting the picture…",
