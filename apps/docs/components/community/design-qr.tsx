@@ -1,5 +1,6 @@
 "use client";
 
+import { CANONICAL_ORIGIN } from "@repo/config";
 import { cn } from "@repo/design-system/lib/utils";
 import { QRCode } from "qrdx";
 import { DEFAULT_QR_LOGO } from "@/lib/constants";
@@ -9,7 +10,7 @@ import type { ThemeStyles } from "@/types/theme";
 /** A community design drawn with `value` (in the browser; nothing is sent). */
 export function DesignQr({
   style,
-  value = "https://qrdx.dev/community",
+  value = `${CANONICAL_ORIGIN}/community`,
   className,
 }: {
   style: ThemeStyles;

@@ -1,5 +1,6 @@
 "use client";
 
+import { CANONICAL_HOST } from "@repo/config";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   Crop,
@@ -275,7 +276,7 @@ function CodeShapeMenu({
               {...(id !== "square" && { shape: id })}
               size={40}
               style={{ maxHeight: "100%", maxWidth: "100%" }}
-              value="qrdx.dev"
+              value={CANONICAL_HOST}
             />
           </CompactTile>
         ))}

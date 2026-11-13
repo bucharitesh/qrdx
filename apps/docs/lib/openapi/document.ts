@@ -1,3 +1,4 @@
+import { API_BASE_URL, CANONICAL_ORIGIN, GITHUB_REPO_URL } from "@repo/config";
 import type { OpenAPIV3_1 } from "fumadocs-openapi";
 import { z } from "zod";
 import {
@@ -83,9 +84,7 @@ type Response = JsonSchema;
 type Ref = { $ref: string };
 type OAuthScope = (typeof OAUTH_SCOPES)[number];
 
-/** The public API host; the same routes also answer at qrdx.dev/api/v1. */
-export const API_SERVER_URL = "https://api.qrdx.dev/v1";
-const SITE = "https://qrdx.dev";
+const SITE = CANONICAL_ORIGIN;
 const docs = (path: string) => `${SITE}/docs/${path}`;
 
 const COMPONENT_REF = "#/components/schemas/";
@@ -578,7 +577,7 @@ function operations(c: SchemaCollector): Record<string, JsonSchema> {
             eye: "Shape of the corner eye frames",
             dot: "Shape of the dot inside each corner eye",
           },
-          { data: "https://qrdx.dev", format: "svg" },
+          { data: CANONICAL_ORIGIN, format: "svg" },
         ),
         responses: {
           "200": {
@@ -1732,7 +1731,7 @@ Printed barcodes keep working either way: they're static.`,
 
 const DESCRIPTION = `Create and manage dynamic QR codes, read scan analytics, report conversions and subscribe to events over HTTP.
 
-- **Base URL:** \`${API_SERVER_URL}\`. The same routes answer at \`${SITE}/api/v1\`.
+- **Base URL:** \`${API_BASE_URL}\`. The same routes answer at \`${SITE}/api/v1\`.
 - **Auth:** an API key, \`Authorization: Bearer qrdx_…\` ([create one](${docs("developers/api-keys")})), or an OAuth 2.0 access token in the same header for apps that act for other people ([OAuth](${docs("developers/rest-api#get-an-access-token")})). A key acts on the workspace it was created in, with its creator's role there; a token acts on its user's own workspace. The image APIs (\`GET /qr\`, \`GET /barcode\`) need neither.
 - **Errors:** \`{ "code", "message", "status" }\`, plus \`docs\` when a page explains the fix ([every code](${docs("developers/errors")})).
 - **Limits:** a daily quota per workspace (1,000 requests on Free, 10,000 on Pro, 100,000 on Business), reported in \`X-RateLimit-*\` headers, plus per-minute limits. Over a limit you get \`429\` with \`Retry-After\`.`;
@@ -1794,10 +1793,10 @@ export function buildOpenApiDocument(): Document {
       contact: { name: "QRdx", url: `${SITE}/docs/developers/quickstart` },
       license: {
         name: "AGPL-3.0",
-        url: "https://github.com/bucharitesh/qrdx/blob/main/LICENSE",
+        url: `${GITHUB_REPO_URL}/blob/main/LICENSE`,
       },
     },
-    servers: [{ url: API_SERVER_URL, description: "QRdx API" }],
+    servers: [{ url: API_BASE_URL, description: "QRdx API" }],
     externalDocs: {
       description: "Quickstart: your first request in 2 minutes",
       url: docs("developers/quickstart"),

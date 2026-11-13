@@ -49,7 +49,7 @@ import { MAX_TAGS_PER_CODE } from "@/app/(app)/dashboard/codes/_lib/organize-sha
 import type { ImportPreview } from "@/app/(app)/dashboard/codes/import/_lib/import";
 import { useShowLimit } from "@/components/limits/limit-dialog";
 import { track } from "@/lib/analytics";
-import { formatCount } from "@/lib/bulk-limits";
+import { formatCount } from "@/lib/format-count";
 import { PLAN_NAMES, type Plan } from "@/lib/pricing";
 import { soundEvent } from "@/lib/sound/emit";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";

@@ -6,6 +6,15 @@
 // Facts only. No ratings or reviews until real ones exist on G2 or
 // Capterra, and `sameAs` lists only profiles that exist today: add Product
 // Hunt, AlternativeTo or Wikidata URLs once they're live.
+import {
+  CANONICAL_HOST,
+  GITHUB_PROFILE_URL,
+  GITHUB_REPO_URL,
+  NPM_CLI_URL,
+  NPM_LIBRARY_URL,
+  SUPPORT_EMAIL,
+  X_PROFILE_URL,
+} from "@repo/config";
 import { CHROME_WEB_STORE_URL } from "@repo/integrations/src/catalog/entries/plugins";
 import { baseUrl, siteName } from "@/lib/metadata";
 
@@ -19,7 +28,7 @@ export const founderSchema = {
   "@id": url("/#founder"),
   name: "Ritesh Bucha",
   url: url("/blog/authors/ritesh-bucha"),
-  sameAs: ["https://github.com/bucharitesh", "https://x.com/bucha_ritesh"],
+  sameAs: [GITHUB_PROFILE_URL, X_PROFILE_URL],
 };
 
 /**
@@ -27,7 +36,7 @@ export const founderSchema = {
  * a blockchain and a Japanese QR product, so the domain and what QRdx does
  * tell them apart.
  */
-export const webSiteAlternateNames = ["QRdx QR code generator", "qrdx.dev"];
+export const webSiteAlternateNames = ["QRdx QR code generator", CANONICAL_HOST];
 
 export const organizationSchema = {
   "@context": "https://schema.org",
@@ -35,7 +44,7 @@ export const organizationSchema = {
   "@id": organizationId,
   name: siteName,
   // Another product is called QRDX; the domain tells them apart.
-  alternateName: "qrdx.dev",
+  alternateName: CANONICAL_HOST,
   url: url("/"),
   logo: {
     "@type": "ImageObject",
@@ -45,14 +54,14 @@ export const organizationSchema = {
   },
   description:
     "Open-source QR code platform: a free QR code generator, dynamic QR codes with hosted pages and scan analytics, and developer tools.",
-  email: "support@qrdx.dev",
+  email: SUPPORT_EMAIL,
   // The GitHub repository was created on 30 Oct 2025.
   foundingDate: "2025",
   founder: founderSchema,
   sameAs: [
-    "https://github.com/bucharitesh/qrdx",
-    "https://www.npmjs.com/package/qrdx",
-    "https://www.npmjs.com/package/@qrdx/cli",
+    GITHUB_REPO_URL,
+    NPM_LIBRARY_URL,
+    NPM_CLI_URL,
     CHROME_WEB_STORE_URL,
     // The official MCP Registry's record and Glama's page for the MCP server.
     "https://registry.modelcontextprotocol.io/v0/servers/io.github.bucharitesh%2Fqrdx/versions/latest",
@@ -61,6 +70,6 @@ export const organizationSchema = {
   contactPoint: {
     "@type": "ContactPoint",
     contactType: "customer support",
-    email: "support@qrdx.dev",
+    email: SUPPORT_EMAIL,
   },
 };

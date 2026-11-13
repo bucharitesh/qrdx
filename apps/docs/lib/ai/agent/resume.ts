@@ -1,6 +1,7 @@
 import "server-only";
 
 import { createHash, createHmac, timingSafeEqual } from "node:crypto";
+import { env } from "@/env";
 import type { ChatMessage } from "@/types/ai";
 
 // A run that stops for the user (a question to answer, a change to approve)
@@ -15,7 +16,7 @@ import type { ChatMessage } from "@/types/ai";
 export const RESUME_TTL_MS = 30 * 60 * 1000;
 
 function secret(label: string): Buffer {
-  return createHmac("sha256", process.env.BETTER_AUTH_SECRET ?? "development")
+  return createHmac("sha256", env.BETTER_AUTH_SECRET)
     .update(`qrdx:ai-agent:${label}`)
     .digest();
 }

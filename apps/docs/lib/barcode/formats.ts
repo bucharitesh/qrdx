@@ -3,6 +3,7 @@
 // renderer: lib/product-facts.ts counts BARCODE_FORMATS, and the page imports
 // this module without loading bwip-js (lib/barcode/render.ts does that).
 
+import { CANONICAL_ORIGIN } from "@repo/config";
 export type BarcodeFormatId =
   | "ean13"
   | "ean8"
@@ -151,7 +152,7 @@ export const BARCODE_FORMATS: readonly BarcodeFormat[] = [
     label: "Data Matrix",
     kind: "2d",
     summary: "Small square 2D code for parts and labels",
-    example: "https://qrdx.dev",
+    example: CANONICAL_ORIGIN,
     inputHint: "Any text up to 1,000 characters.",
     quietZone: { min: 1, default: 2 },
     maxLength: 1000,

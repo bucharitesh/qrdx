@@ -1,5 +1,6 @@
 "use client";
 
+import { CANONICAL_ORIGIN } from "@repo/config";
 import { motion } from "framer-motion";
 import { MagicStar } from "iconsax-reactjs";
 import { QRCodeSVG } from "qrdx";
@@ -68,7 +69,7 @@ export function AIThemeGenerator() {
           transition={{ duration: 0.3 }}
         >
           <QRCodeSVG
-            value="https://qrdx.dev"
+            value={CANONICAL_ORIGIN}
             size={120}
             fgColor={currentTheme.fgColor}
             bgColor={currentTheme.bgColor}

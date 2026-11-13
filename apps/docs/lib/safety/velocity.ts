@@ -1,16 +1,14 @@
 import "server-only";
 
 import { hasAdminRole } from "@repo/auth/admin";
+import { NEW_PAID_ACCOUNT_CODES_PER_HOUR } from "@repo/config";
 import { abuseReport, database as db, qrCode, user } from "@repo/database";
 import cuid from "cuid";
 import { and, asc, count, eq, gte } from "drizzle-orm";
 import { after } from "next/server";
 import { cache } from "react";
-import {
-  formatCount,
-  NEW_PAID_ACCOUNT_CODES_PER_HOUR,
-} from "@/lib/bulk-limits";
 import { HttpError } from "@/lib/error-response";
+import { formatCount } from "@/lib/format-count";
 
 /**
  * Abuse defences for young accounts, where most phishing comes from: a cap on
@@ -21,7 +19,7 @@ import { HttpError } from "@/lib/error-response";
 
 export const NEW_ACCOUNT_DAYS = 7;
 export const NEW_ACCOUNT_CODES_PER_HOUR = 30;
-/** In a paid workspace (lib/bulk-limits.ts). */
+/** In a paid workspace (@repo/config limits.ts). */
 export { NEW_PAID_ACCOUNT_CODES_PER_HOUR };
 
 const HOUR_MS = 60 * 60_000;

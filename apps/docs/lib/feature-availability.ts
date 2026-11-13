@@ -1,6 +1,6 @@
 import "server-only";
 
-import { env } from "@/lib/env";
+import { env } from "@/env";
 import {
   type CustomDomainMode,
   computeFeatures,
@@ -20,19 +20,11 @@ import {
  */
 export function featureContext(): FeatureContext {
   return {
-    env: {
-      ...(env as Readonly<Record<string, string | undefined>>),
-      // Validated by @repo/next-config and Better Auth, not lib/env; passkeys
-      // read them (feature-availability-rules.ts).
-      BETTER_AUTH_URL: process.env.BETTER_AUTH_URL,
-      NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
-      // The licence key for ee/ features (workspace SSO, the audit log), read the same way
-      // by packages/auth/ee-license.ts.
-      QRDX_EE_LICENSE: process.env.QRDX_EE_LICENSE,
-      // Previews of the qrdx.dev project: the affiliate program runs where
-      // QRdx itself does (feature-availability-rules.ts, lib/mcp-clients.ts).
-      VERCEL_PROJECT_PRODUCTION_URL: process.env.VERCEL_PROJECT_PRODUCTION_URL,
-    },
+    // The app's variables and the packages' it extends: among them
+    // BETTER_AUTH_URL (passkeys) and QRDX_EE_LICENSE (ee/ features) from
+    // @repo/auth, and the app URL and VERCEL_PROJECT_PRODUCTION_URL (where
+    // the affiliate program runs) from @repo/next-config.
+    env: { ...(env as Readonly<Record<string, string | undefined>>) },
     onVercel: Boolean(process.env.VERCEL),
     production: process.env.NODE_ENV === "production",
   };

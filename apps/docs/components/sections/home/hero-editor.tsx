@@ -1,5 +1,6 @@
 "use client";
 
+import { CANONICAL_ORIGIN } from "@repo/config";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Card } from "@repo/design-system/components/ui/card";
 import { Input } from "@repo/design-system/components/ui/input";
@@ -41,7 +42,7 @@ export function HeroEditor() {
     value: key,
     label: key === "banner" ? FRAMES.banner.label : t(`frames.${key}`),
   }));
-  const [value, setValue] = useState("https://qrdx.dev");
+  const [value, setValue] = useState(CANONICAL_ORIGIN);
   const [styleKey, setStyleKey] = useState<StyleKey>("rounded");
   const [frameKey, setFrameKey] = useState<FrameKey>("banner");
 

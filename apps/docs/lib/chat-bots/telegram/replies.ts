@@ -1,6 +1,7 @@
 import "server-only";
 
 import { createHash } from "node:crypto";
+import { CANONICAL_ORIGIN } from "@repo/config";
 import { z } from "zod";
 import { isOfficialOrigin } from "@/lib/agents/hosts";
 import {
@@ -58,7 +59,7 @@ export const TELEGRAM_PHOTO_SIZES: readonly number[] = [
 ];
 
 /** The hosted site, which stands in for local dev and previews (lib/agents/hosts.ts). */
-const OFFICIAL_SITE = "https://qrdx.dev";
+const OFFICIAL_SITE = CANONICAL_ORIGIN;
 
 // ── Updates ─────────────────────────────────────────────────────────────────
 // Only the fields the bot reads; everything else Telegram sends is dropped.

@@ -7,9 +7,9 @@
 // domains, version history, webhooks) are stubbed.
 import { createHash } from "node:crypto";
 import { ownWorkspaceId } from "@repo/auth/own-workspace-id";
+import { MAX_CODES_PER_REQUEST } from "@repo/config";
 import { NextRequest } from "next/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { MAX_CODES_PER_REQUEST } from "@/lib/bulk-limits";
 import { fakeDb } from "../support/fake-db";
 
 const state = vi.hoisted(() => ({

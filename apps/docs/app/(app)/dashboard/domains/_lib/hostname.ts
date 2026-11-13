@@ -1,3 +1,4 @@
+import { CANONICAL_HOST } from "@repo/config";
 import { baseUrl } from "@/lib/metadata";
 import { SHORT_LINK_BASE } from "@/lib/short-links";
 
@@ -26,7 +27,7 @@ function toHostname(value: string | undefined): string | null {
 /** QRdx's own hosts: they and their subdomains are never custom domains. */
 const OWN_HOSTS: ReadonlySet<string> = new Set(
   [
-    "qrdx.dev",
+    CANONICAL_HOST,
     baseUrl.hostname,
     toHostname(SHORT_LINK_BASE),
     toHostname(process.env.NEXT_PUBLIC_APP_URL),

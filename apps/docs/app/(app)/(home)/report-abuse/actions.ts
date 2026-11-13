@@ -1,5 +1,6 @@
 "use server";
 
+import { SUPPORT_EMAIL } from "@repo/config";
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import { headers } from "next/headers";
 import { z } from "zod";
@@ -83,8 +84,7 @@ export async function submitAbuseReport(
     if (!(short.success && daily.success)) {
       return {
         status: "error",
-        message:
-          "You've sent several reports in a short time. Please try again later, or email support@qrdx.dev.",
+        message: `You've sent several reports in a short time. Please try again later, or email ${SUPPORT_EMAIL}.`,
       };
     }
   } catch {
@@ -115,8 +115,7 @@ export async function submitAbuseReport(
     console.error("Saving an abuse report failed:", error);
     return {
       status: "error",
-      message:
-        "We couldn't save your report. Please try again, or email support@qrdx.dev.",
+      message: `We couldn't save your report. Please try again, or email ${SUPPORT_EMAIL}.`,
     };
   }
   return { status: "success" };

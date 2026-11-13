@@ -3,7 +3,7 @@ import { isReservedEmailAddress } from "@/lib/email/reserved-address";
 
 const sent: { to: string[] }[] = [];
 
-vi.mock("@/lib/env", () => ({
+vi.mock("@/env", () => ({
   env: { RESEND_API_KEY: "re_test", EMAIL_FROM: "QRdx <hi@qrdx.dev>" },
 }));
 vi.mock("@/lib/delivery-guard", () => ({

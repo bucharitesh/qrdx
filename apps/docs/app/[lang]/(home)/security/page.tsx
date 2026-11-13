@@ -1,3 +1,4 @@
+import { SUPPORT_EMAIL } from "@repo/config";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   ArrowRight,
@@ -51,8 +52,6 @@ export async function generateMetadata(): Promise<Metadata> {
 
 const LINK =
   "font-medium text-foreground underline decoration-foreground/30 underline-offset-4 transition-colors hover:decoration-foreground";
-
-const REPORT_EMAIL = "support@qrdx.dev";
 
 const NEON_SECURITY = "https://neon.com/docs/security/security-overview";
 
@@ -249,11 +248,11 @@ export default async function SecurityPage() {
           </h2>
           <p className="text-sm leading-relaxed text-muted-foreground">
             {t.rich("report", {
-              email: REPORT_EMAIL,
+              email: SUPPORT_EMAIL,
               mail: (chunks) => (
                 <a
                   className={LINK}
-                  href={`mailto:${REPORT_EMAIL}?subject=${encodeURIComponent("[security] ")}`}
+                  href={`mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent("[security] ")}`}
                 >
                   {chunks}
                 </a>

@@ -4,6 +4,7 @@ import http, { type IncomingMessage } from "node:http";
 import https from "node:https";
 import type { LookupFunction } from "node:net";
 import zlib from "node:zlib";
+import { CANONICAL_ORIGIN } from "@repo/config";
 import {
   createGuardedLookup,
   fetchBlockReason,
@@ -22,8 +23,7 @@ const MAX_REDIRECTS = 3;
 /** Titles sit in <head>; this is plenty and keeps the download tiny. */
 const MAX_BYTES = 48 * 1024;
 
-const USER_AGENT =
-  "Mozilla/5.0 (compatible; QRdxLinkPreview/1.0; +https://qrdx.dev/scan)";
+const USER_AGENT = `Mozilla/5.0 (compatible; QRdxLinkPreview/1.0; +${CANONICAL_ORIGIN}/scan)`;
 
 const guardedLookup = createGuardedLookup();
 

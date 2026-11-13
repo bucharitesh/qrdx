@@ -2,12 +2,12 @@
 /** biome-ignore-all lint/suspicious/noArrayIndexKey: false positive */
 "use client";
 
+import { AI_PROMPT_CHARACTER_LIMIT } from "@repo/config";
 import { cn } from "@repo/design-system/lib/utils";
 import type { JSONContent } from "@tiptap/react";
 import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
 import { HorizontalScrollArea } from "@/components/horizontal-scroll-area";
-import { AI_PROMPT_CHARACTER_LIMIT } from "@/lib/constants";
 import { DragAndDropImageUploader } from "./drag-and-drop-image-uploader";
 import { UploadedImagePreview } from "./uploaded-image-preview";
 

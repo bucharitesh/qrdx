@@ -24,6 +24,7 @@ import { and, eq, gt } from "drizzle-orm";
 import { cookies, headers } from "next/headers";
 import { after } from "next/server";
 import { z } from "zod";
+import { env } from "@/env";
 import {
   addressKey,
   addressMayRequestCode,
@@ -634,12 +635,7 @@ interface StoredCode {
 }
 
 function codeKey(): string {
-  const secret = process.env.BETTER_AUTH_SECRET;
-  if (secret) return secret;
-  if (process.env.NODE_ENV === "production") {
-    throw new Error("BETTER_AUTH_SECRET is required for confirmation codes");
-  }
-  return "qrdx-dev-confirmation-codes";
+  return env.BETTER_AUTH_SECRET;
 }
 
 /** HMAC of the code, bound to the session it was sent for. */

@@ -5,7 +5,9 @@
 // and stripped of links, emails, phone numbers, @mentions and markup before
 // anyone sees it, and the server checks it again when the person publishes
 // (lib/community/publish.ts cleanDetails). Safe to import anywhere.
-import { COMMUNITY_THEME_TAGS, MAX_TAGS_PER_THEME } from "@/lib/constants";
+
+import { MAX_TAGS_PER_THEME } from "@repo/config";
+import { COMMUNITY_THEME_TAGS } from "@/lib/constants";
 import { textProblem, untrustedText } from "./text";
 
 /** Shorter than the dialog allows: a draft is a starting point. */

@@ -4,15 +4,12 @@
  * integrations pages; keep the exports stable.
  */
 
+import { isQrdxHost, MCP_ENDPOINT } from "@repo/config";
 export const MCP_SERVER_NAME = "qrdx";
 export const MCP_PATH = "/api/mcp";
 
 /** The hosted service's public endpoint (mcp.qrdx.dev/mcp → /api/mcp, see next.config.ts). */
-export const MCP_PUBLIC_URL = "https://mcp.qrdx.dev/mcp";
-
-/** qrdx.dev and its subdomains (www, mcp, api). */
-const isQrdxHost = (host: string) =>
-  host === "qrdx.dev" || host.endsWith(".qrdx.dev");
+export const MCP_PUBLIC_URL = MCP_ENDPOINT;
 
 /** This machine: `next dev` or a production build started locally. */
 export function isLocalHost(host: string): boolean {

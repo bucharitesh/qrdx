@@ -1,3 +1,4 @@
+import { BRAND_NAME, CANONICAL_ORIGIN } from "@repo/config";
 import type { Metadata } from "next";
 
 export const baseUrl =
@@ -6,10 +7,10 @@ export const baseUrl =
     : new URL(
         process.env.VERCEL_PROJECT_PRODUCTION_URL
           ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-          : (process.env.NEXT_PUBLIC_APP_URL ?? "https://qrdx.dev"),
+          : (process.env.NEXT_PUBLIC_APP_URL ?? CANONICAL_ORIGIN),
       );
 
-export const siteName = "QRdx";
+export const siteName = BRAND_NAME;
 
 // Brand first: "qrdx" is the site's biggest search query.
 export const siteTitle =

@@ -1,6 +1,7 @@
 // Offline URL heuristics and the Web Risk client against a mocked fetch (no
-// network, no database). lib/env validates on import, hence the dummy values:
+// network, no database). env.ts validates on import, hence the dummy values:
 //   cd apps/docs && DATABASE_URL=postgres://test@127.0.0.1:1/test \
+//     NEXT_PUBLIC_APP_URL=https://qrdx.dev BETTER_AUTH_SECRET=test-secret \
 //     npx tsx --conditions=react-server --test lib/safety/safety.test.ts
 import assert from "node:assert/strict";
 import { before, beforeEach, describe, it } from "node:test";

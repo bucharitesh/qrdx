@@ -1,6 +1,7 @@
 // Tests lib/custom-domains.ts against a mocked fetch and DNS resolver (no
-// network). Needs dummy env values because lib/env validates on import:
+// network). Needs dummy env values because env.ts validates on import:
 //   cd apps/docs && DATABASE_URL=postgres://test@127.0.0.1:1/test \
+//     NEXT_PUBLIC_APP_URL=https://qrdx.dev BETTER_AUTH_SECRET=test-secret \
 //     VERCEL_API_TOKEN=test-token VERCEL_PROJECT_ID=prj_test VERCEL_TEAM_ID=team_test \
 //     npx tsx --conditions=react-server --test app/(app)/dashboard/domains/_lib/custom-domains.test.ts
 import assert from "node:assert/strict";

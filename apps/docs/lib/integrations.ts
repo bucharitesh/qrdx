@@ -4,7 +4,7 @@
  */
 
 import { getIntegrationConfigWithEnv } from "@repo/integrations/src/registry/loader";
-import { env } from "./env";
+import { env } from "@/env";
 
 // Re-export core functionality from new package
 // Re-export Dub client

@@ -7,7 +7,7 @@ import {
 } from "@repo/integrations";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { env } from "@/lib/env";
+import { env } from "@/env";
 import { getAppTranslations } from "@/lib/i18n/app-locale";
 import {
   getIntegrationAvailability,

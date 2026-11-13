@@ -1,5 +1,6 @@
 import "server-only";
 
+import { SUPPORT_EMAIL } from "@repo/config";
 import { z } from "zod";
 import { sendEmail } from "@/lib/email/send";
 import {
@@ -23,7 +24,7 @@ import {
 // Only on qrdx.dev (feature "nonprofitDiscounts").
 
 /** Where requests go: QRdx support, who also handles refunds. */
-export const NONPROFIT_REQUEST_TO = "support@qrdx.dev";
+export const NONPROFIT_REQUEST_TO = SUPPORT_EMAIL;
 
 export const nonprofitOffer = () =>
   `${NONPROFIT_DISCOUNT_PERCENT}% off ${PAID_PLANS.map((plan) => PLAN_NAMES[plan]).join(" or ")}`;

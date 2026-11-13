@@ -1,5 +1,6 @@
 "use client";
 
+import { CANONICAL_ORIGIN } from "@repo/config";
 import { toast } from "@repo/design-system";
 import {
   LinkedinLogo,
@@ -50,7 +51,7 @@ function useOmittedNote(parts: OmittedPart[]): string | null {
   return `${note.charAt(0).toUpperCase()}${note.slice(1)}`;
 }
 
-const SAMPLE_VALUE = "https://qrdx.dev";
+const SAMPLE_VALUE = CANONICAL_ORIGIN;
 
 // Real marks, filling the box like the X and LinkedIn logos beside them.
 const FacebookMark = brandIcon("facebook", { inset: 0 });

@@ -1,7 +1,7 @@
 import "server-only";
 
 import { createHash, createHmac, timingSafeEqual } from "node:crypto";
-import { env } from "@/lib/env";
+import { env } from "@/env";
 
 // The short-lived link between a scan (its qr_scan row, created by /q/<slug>)
 // and the location the scanner may share a moment later: the location step
@@ -23,7 +23,7 @@ function tokenKey(): Buffer {
   if (!key) {
     key = createHash("sha256")
       .update(
-        `qrdx:scan-location:${env.SCAN_HASH_SALT ?? process.env.BETTER_AUTH_SECRET ?? "development"}`,
+        `qrdx:scan-location:${env.SCAN_HASH_SALT ?? env.BETTER_AUTH_SECRET}`,
       )
       .digest();
   }

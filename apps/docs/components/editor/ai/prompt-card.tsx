@@ -1,5 +1,6 @@
 "use client";
 
+import { CANONICAL_HOST } from "@repo/config";
 import { cn } from "@repo/design-system/lib/utils";
 import { QRCodeSVG } from "qrdx";
 import type { ThemeStyles } from "@/types/theme";
@@ -46,7 +47,7 @@ export function PromptCard({
           level="L"
           margin={1}
           size={44}
-          value="qrdx.dev"
+          value={CANONICAL_HOST}
         />
       </span>
       <span className="min-w-0">

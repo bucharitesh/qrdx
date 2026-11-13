@@ -5,6 +5,7 @@
 // billing details (actions/invoice-requests.ts) and the invoice is arranged
 // by hand. Shown only where invoice requests are offered (qrdx.dev).
 
+import { ENTERPRISE_EMAIL } from "@repo/config";
 import { Spinner } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
@@ -76,7 +77,7 @@ export function InvoiceRequestDialog({
       soundEvent("success");
       setSentTo(fields.billingEmail.trim());
     } catch {
-      setError("Something went wrong. Email enterprise@qrdx.dev instead.");
+      setError(`Something went wrong. Email ${ENTERPRISE_EMAIL} instead.`);
     } finally {
       setBusy(false);
     }

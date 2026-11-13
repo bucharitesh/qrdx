@@ -1,9 +1,9 @@
 import "server-only";
 
+import { MAX_FREE_THEMES } from "@repo/config";
 import { database as db, member } from "@repo/database";
 import { and, eq, like, or } from "drizzle-orm";
 import { cache } from "react";
-import { MAX_FREE_THEMES } from "./constants";
 import { holdsPlanRole } from "./permissions";
 import { type Plan, planForProductId } from "./pricing";
 import { getMyActiveSubscription } from "./subscription";

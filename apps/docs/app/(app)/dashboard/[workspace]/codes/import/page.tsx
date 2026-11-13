@@ -1,3 +1,4 @@
+import { MAX_IMPORT_ROWS } from "@repo/config";
 import { Button } from "@repo/design-system/components/ui/button";
 import { ArrowLeft } from "iconsax-reactjs";
 import type { Metadata } from "next";
@@ -9,7 +10,7 @@ import {
   requireDashboardScope,
 } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import { ImportWizard } from "@/app/(app)/dashboard/codes/import/_components/import-wizard";
-import { formatCount, MAX_IMPORT_ROWS } from "@/lib/bulk-limits";
+import { formatCount } from "@/lib/format-count";
 import { getAppTranslations } from "@/lib/i18n/app-locale";
 import { plansWith } from "@/lib/plans";
 import { workspaceHref } from "@/lib/workspace-paths";

@@ -8,7 +8,7 @@ import {
 } from "@repo/integrations";
 import { getIntegrationCatalog } from "@repo/integrations/src/catalog";
 import { and, eq, inArray } from "drizzle-orm";
-import { env } from "@/lib/env";
+import { env } from "@/env";
 import { featureContext, getFeatures } from "@/lib/feature-availability";
 import {
   featureForCatalogSlug,
