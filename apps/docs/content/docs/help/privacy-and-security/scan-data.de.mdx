@@ -1,41 +1,41 @@
 ---
 title: "Was QRdx aufzeichnet, wenn jemand scannt"
-description: "Welche Daten der Scan eines dynamischen Codes aufzeichnet, was nie gespeichert wird und wie lange die Daten aufbewahrt werden."
+description: "Welche Daten der Scan eines dynamischen QR-Codes erfasst, was nie gespeichert wird und wie lange die Daten aufbewahrt werden."
 ---
 
-Nur dynamische Codes zeichnen Scans auf. Ein statischer Code enthält deinen Inhalt direkt und läuft nie über QRdx.
+Nur dynamische Codes zeichnen Scans auf. Ein statischer QR-Code enthält deine Inhalte direkt und läuft nie über QRdx.
 
-## Was ein Scan aufzeichnet [#what-a-scan-records]
+## Was ein Scan erfasst [#what-a-scan-records]
 
 - Land, Region und Stadt, ermittelt aus dem Netzwerk.
 - Gerätetyp, Betriebssystem und Browser.
 - Die verweisende Website, falls es eine gibt.
 - Die Sprache des Browsers.
-- Welche Version die Person gesehen hat, falls ein A/B-Test läuft.
-- Ein täglicher, gesalzener Hash aus Netzwerkadresse und Browser, damit eine Person pro Tag nur einmal zählt.
-- Der Standort, auf etwa 100 m gerundet, nur wenn der Inhaber des Codes den [genauen Standort](/docs/precise-location) aktiviert hat und die scannende Person ihn im Browser erlaubt hat. Wenn sie ablehnt, wird nichts gespeichert.
+- Welche Version der Besucher gesehen hat, falls ein A/B-Test läuft.
+- Ein täglich wechselnder, gesalzener Hash aus Netzwerkadresse und Browser, sodass ein Besucher pro Tag nur einmal gezählt wird.
+- Der Standort, auf etwa 100 m gerundet, nur wenn der Inhaber des Codes den [genauen Standort](/docs/precise-location) aktiviert hat und der Scannende ihn im Browser erlaubt hat. Lehnt er ab, wird nichts gespeichert.
 
 ## Was nie gespeichert wird [#what-it-never-stores]
 
-QRdx speichert nie die IP-Adresse der scannenden Person. Der oben genannte Hash lässt sich nicht in sie zurückverwandeln und ändert sich jeden Tag.
+QRdx speichert nie die IP-Adresse des Scannenden. Aus dem oben genannten Hash lässt sie sich nicht zurückrechnen, und er ändert sich jeden Tag.
 
 Bots und Link-Vorschauen werden nicht aufgezeichnet.
 
 ## Wie lange Scans aufbewahrt werden [#how-long-scans-are-kept]
 
-Scans werden so lange aufbewahrt, wie der Code existiert. Dein Tarif bestimmt, wie weit du sie zurückverfolgen kannst: 90 Tage bei Kostenlos, 3 Jahre bei Pro und unbegrenzt bei Business.
+Scans werden so lange aufbewahrt, wie der Code existiert. Dein Tarif bestimmt, wie weit zurück du sie sehen kannst: {facts.freeScanHistoryYears} Jahr bei Kostenlos und alle bei Pro und Business.
 
 Wenn du einen Code endgültig löschst, werden auch seine Scans endgültig gelöscht.
 
 ## Cookies für Personen, die scannen [#cookies-for-people-who-scan]
 
-Seiten, die deine Scannenden sehen, wie Kurzlinks und mobile Seiten, zeigen kein Cookie-Banner und laden weder die Analytics noch das Support-Widget von QRdx.
+Seiten, die deine Scannenden sehen, etwa Kurzlinks und mobile Seiten, zeigen kein Cookie-Banner und laden weder die Analyse noch das Support-Widget von QRdx.
 
-QRdx setzt dort zwei Cookies. Eines merkt sich ein korrektes Code-Passwort für 6 Stunden. Das andere verknüpft eine gehostete Seite 15 Minuten lang mit dem Scan, der sie geöffnet hat, und nur wenn der Code den genauen Standort abfragt, damit der Standort, den eine scannende Person teilt, zu diesem Scan hinzugefügt wird. Seiteninhaber können in kostenpflichtigen Tarifen eigene Analytics-Pixel in ihre Seiten einbauen.
+QRdx setzt dort zwei Cookies. Eines merkt sich ein korrektes Code-Passwort für 6 Stunden. Das andere verknüpft eine gehostete Seite 15 Minuten lang mit dem Scan, der sie geöffnet hat, und zwar nur, wenn der Code den genauen Standort abfragt, damit der vom Scannenden geteilte Standort zu diesem Scan hinzugefügt wird. Seiteninhaber können in bezahlten Tarifen eigene Analyse-Pixel in ihre Seiten einbauen.
 
 ## Der QR-Code-Scanner [#the-qr-code-scanner]
 
-Der [QRdx-Scanner](/scan) speichert deinen Scan-Verlauf nur auf deinem Gerät. Kamerabilder und Bilder werden auf deinem Gerät gelesen und nie hochgeladen, auch Screenshots, die du an den installierten Scanner unter Android teilst. Wenn du einen Link prüfst, bevor er geöffnet wird, wird nur seine Adresse zur Prüfung gesendet, und QRdx speichert sie nicht.
+Der [QRdx-Scanner](/scan) speichert deinen Scan-Verlauf nur auf deinem Gerät. Kamerabilder und Bilder werden auf deinem Gerät gelesen und nie hochgeladen, auch Screenshots nicht, die du auf Android an den installierten Scanner teilst. Wenn du einen Link prüfst, bevor er sich öffnet, wird nur seine Adresse zur Prüfung gesendet, und QRdx speichert sie nicht.
 
 ## Weitere Details [#more-detail]
 

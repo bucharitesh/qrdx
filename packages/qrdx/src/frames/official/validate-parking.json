@@ -1,0 +1,91 @@
+{
+  "id": "validate-parking",
+  "name": "Parking validation",
+  "description": "A wide ticket: the code on the left, a perforated stub with a parking sign on the right.",
+  "category": "use-case",
+  "collection": "automotive",
+  "contentTypes": ["url"],
+  "tags": ["cars", "parking", "validation"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 2000,
+      "height": 1040
+    },
+    "qr": {
+      "x": 120,
+      "y": 120,
+      "size": 800,
+      "padding": 64,
+      "radius": 19.2
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M56 0L1044 0A56 56 0 0 0 1156 0L1944 0A56 56 0 0 1 2000 56L2000 984A56 56 0 0 1 1944 1040L1156 1040A56 56 0 0 0 1044 1040L56 1040A56 56 0 0 1 0 984L0 56A56 56 0 0 1 56 0Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.88
+        }
+      },
+      {
+        "type": "path",
+        "d": "M1156 0L1944 0A56 56 0 0 1 2000 56L2000 984A56 56 0 0 1 1944 1040L1156 1040A56 56 0 0 1 1100 984L1100 56A56 56 0 0 1 1156 0Z",
+        "fill": "frame"
+      },
+      {
+        "type": "line",
+        "x1": 1100,
+        "y1": 110,
+        "x2": 1100,
+        "y2": 930,
+        "width": 10,
+        "dash": [34, 24],
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.5
+        }
+      },
+      {
+        "type": "path",
+        "d": "M1498 216L1602 216A32 32 0 0 1 1634 248L1634 352A32 32 0 0 1 1602 384L1498 384A32 32 0 0 1 1466 352L1466 248A32 32 0 0 1 1498 216ZM1518 356L1544 356L1544 320L1562 320C1590 320 1604 302 1604 282C1604 264 1590 244 1562 244L1518 244ZM1544 266L1560 266C1572 266 1578 274 1578 282C1578 292 1572 298 1560 298L1544 298Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Validate your parking",
+        "color": "text",
+        "box": {
+          "x": 1150,
+          "y": 500,
+          "width": 800,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Show at the exit",
+        "color": "text",
+        "box": {
+          "x": 1150,
+          "y": 690,
+          "width": 800,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

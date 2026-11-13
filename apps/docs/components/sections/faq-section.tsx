@@ -30,6 +30,7 @@ function faqValues(locale: Locale) {
     bodyPatterns: PRODUCT_FACTS.bodyPatterns,
     eyeShapes: PRODUCT_FACTS.eyeShapes,
     eyeCentres: PRODUCT_FACTS.eyeCentres,
+    historyYears: PRODUCT_FACTS.freeScanHistoryYears,
     proMonthly: usd("pro", "month"),
     proYearly: usd("pro", "year"),
     businessMonthly: usd("business", "month"),

@@ -406,7 +406,7 @@
       "analytics": {
         "eyebrow": "Statistiques",
         "title": "Voyez chaque scan",
-        "description": "Scans dans le temps, pays, appareils, navigateurs et sources de trafic pour chaque code dynamique. Les comptes gratuits conservent {days, number} jours.",
+        "description": "Scans dans le temps, pays, appareils, navigateurs et sites référents pour chaque code dynamique. Les comptes gratuits conservent {years, plural, one {# an} other {# ans}} d’historique, et les offres payantes conservent tout.",
         "link": "Fonctionnement des statistiques de scan"
       },
       "bulk": {
@@ -450,7 +450,7 @@
       "items": {
         "free": {
           "question": "QRdx est-il vraiment gratuit ? Y a-t-il des limites cachées ?",
-          "answer": "Oui. Créer, personnaliser et télécharger des QR codes statiques est gratuit et ne nécessite aucun compte : codes illimités, toutes les options de design ({bodyPatterns, number} motifs de corps, {eyeShapes, number} formes d'yeux de coin et {eyeCentres, number} centres d'œil, dégradés, logos, cadres et créations Logo QR ou Image QR), et téléchargements en PNG, JPG, SVG, PDF et EPS. Il n'y a ni filigrane ni publicité. Les codes statiques stockent votre contenu dans le code lui-même : ils n'expirent donc jamais et n'ont aucune limite de scans. Un compte gratuit ajoute 10 QR codes dynamiques, 3 pages hébergées, 90 jours d'analyses de scans, 10 thèmes enregistrés et 5 générations de thèmes par IA ; Pro ({proMonthly}/mois ou {proYearly}/an) et Business ({businessMonthly}/mois ou {businessYearly}/an) relèvent ces limites."
+          "answer": "Oui. Créer, personnaliser et télécharger des QR codes statiques est gratuit et ne nécessite aucun compte : codes illimités, toutes les options de design ({bodyPatterns, number} motifs de corps, {eyeShapes, number} formes d’yeux de coin et {eyeCentres, number} centres d’œil, dégradés, logos, cadres et créations Logo QR ou Image QR), et téléchargements en PNG, JPG, SVG, PDF et EPS. Il n’y a ni filigrane ni publicité. Les codes statiques stockent votre contenu dans le code lui-même : ils n’expirent donc jamais et n’ont aucune limite de scans. Un compte gratuit ajoute 10 QR codes dynamiques, 3 pages hébergées, {historyYears, plural, one {# an} other {# ans}} d’analyses de scans, 10 thèmes enregistrés et 5 générations de thèmes par IA ; Pro ({proMonthly}/mois ou {proYearly}/an) et Business ({businessMonthly}/mois ou {businessYearly}/an) repoussent ces limites."
         },
         "signup": {
           "question": "Dois-je m'inscrire ou créer un compte ?",
@@ -458,7 +458,7 @@
         },
         "dynamic": {
           "question": "QRdx prend-il en charge les QR codes dynamiques et les analyses de scans ?",
-          "answer": "Oui. Un QR code dynamique encode un lien court : vous pouvez donc changer sa destination après impression, et chaque scan est comptabilisé avec des analyses par pays, appareil et navigateur. Un code peut ouvrir un site web ou une page mobile hébergée (liste de liens, menu, vCard, coupon, événement, formulaire, PDF, galerie, audio ou vidéo). Pro et Business ajoutent le routage intelligent selon l'appareil, le pays, la langue ou l'heure, des tests A/B, des balises UTM, des mots de passe, des dates d'expiration et des limites de scans. Les comptes gratuits disposent de 10 QR codes dynamiques actifs avec 90 jours d'historique ; Pro et Business sont illimités avec un historique plus long."
+          "answer": "Oui. Un code dynamique encode un lien court : vous pouvez donc modifier sa destination après l’impression, et chaque scan est comptabilisé avec des statistiques par pays, appareil et navigateur. Un code peut ouvrir un site web ou une page mobile hébergée (liste de liens, menu, vCard, coupon, événement, formulaire, PDF, galerie, audio ou vidéo). Pro et Business ajoutent le routage intelligent selon l’appareil, le pays, la langue ou l’heure, les tests A/B, les balises UTM, les mots de passe, les dates d’expiration et les limites de scans. Les comptes gratuits disposent de 10 codes dynamiques actifs avec {historyYears, plural, one {# an} other {# ans}} d’historique ; Pro et Business sont illimités et conservent tout votre historique de scans."
         },
         "guarantee": {
           "question": "Mes QR codes cesseront-ils de fonctionner si j'arrête de payer ?",
@@ -482,7 +482,7 @@
         },
         "paidPlans": {
           "question": "Que comprennent Pro et Business ?",
-          "answer": "Pro ({proMonthly}/mois ou {proYearly}/an) ajoute des QR codes dynamiques et des pages hébergées en nombre illimité, 3 ans d'analyses, {customDomains, select, yes {5 domaines personnalisés, } other {}}des équipes jusqu'à 3 membres, le routage intelligent, des tests A/B, des balises UTM, des pixels, des alertes e-mail et un résumé hebdomadaire, ainsi que des contrôles de lien tels que les mots de passe et les dates d'expiration. Business ({businessMonthly}/mois ou {businessYearly}/an) ajoute des pages en marque blanche avec CSS personnalisé, un historique d'analyses illimité, {customDomains, select, yes {25 domaines personnalisés, } other {}}des membres d'équipe en nombre illimité, le suivi des conversions, des webhooks et des alertes Slack ou Discord. Créer, personnaliser et télécharger des QR codes statiques reste gratuit."
+          "answer": "Pro ({proMonthly}/mois ou {proYearly}/an) ajoute des codes dynamiques et des pages hébergées illimités, tout votre historique de scans, {customDomains, select, yes {5 domaines personnalisés, } other {}}des équipes jusqu’à 3 personnes, le routage intelligent, les tests A/B, les balises UTM, les pixels, les alertes par e-mail et un résumé hebdomadaire, ainsi que des contrôles de lien comme les mots de passe et les dates d’expiration. Business ({businessMonthly}/mois ou {businessYearly}/an) ajoute des pages en marque blanche avec CSS personnalisé, {customDomains, select, yes {25 domaines personnalisés, } other {}}des membres d’équipe illimités, le suivi des conversions, les webhooks et les alertes Slack ou Discord. Créer, personnaliser et télécharger des QR codes statiques reste gratuit."
         }
       }
     }
@@ -502,8 +502,8 @@
     },
     "extras": {
       "unlimitedDynamic": "des codes dynamiques illimités",
-      "longerAnalytics": "des statistiques plus longues",
-      "analyticsHistory": "l'historique des statistiques",
+      "longerAnalytics": "l’historique complet de vos scans",
+      "analyticsHistory": "historique complet des analyses",
       "customDomains": "des domaines personnalisés",
       "teams": "des équipes"
     },
@@ -716,7 +716,7 @@
       "items": {
         "cancel": {
           "question": "Que se passe-t-il si je résilie ?",
-          "answer": "Rien ne s'arrête. Votre forfait reste actif jusqu'à la fin de la période payée, puis votre compte passe à Gratuit. Chaque QR code dynamique continue de rediriger et chaque scan est toujours comptabilisé : c'est notre Garantie Never-Hostage. Avec Gratuit, vous ne pouvez pas créer plus que ce que permettent les limites du forfait Gratuit, et les statistiques couvrent les 90 derniers jours."
+          "answer": "Rien ne casse. Votre plan reste actif jusqu’à la fin de la période payée, puis votre compte passe au plan Gratuit. Chaque QR code dynamique continue de rediriger et chaque scan est toujours comptabilisé : c’est notre Garantie Never-Hostage. Avec le plan Gratuit, vous ne pouvez pas créer plus que ne le permettent ses limites, et les statistiques couvrent {historyYears, plural, one {la dernière année} other {les # dernières années}}. Les scans plus anciens sont conservés : ils réapparaissent si vous repassez à un plan supérieur."
         },
         "refund": {
           "question": "Puis-je être remboursé ?",
@@ -6345,7 +6345,6 @@
           "scansPerDayLastDays": "Scans par jour, {days, number} derniers jours (UTC)",
           "botsAndLinkPreviewsAre": "Les robots et les aperçus de liens ne sont pas comptés. Les pays et les villes proviennent de l’adresse IP du visiteur, qui n’est jamais stockée ; les positions précises proviennent uniquement des personnes qui ont choisi de les partager.",
           "dateRange": "Période",
-          "valueKeepsValue2OfScan": "{value} conserve {value2} d’historique des scans",
           "totalScans": "Total des scans",
           "scansInRange": "Scans sur la période",
           "uniqueVisitors": "Visiteurs uniques",

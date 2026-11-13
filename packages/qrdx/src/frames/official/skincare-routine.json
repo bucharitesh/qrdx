@@ -1,0 +1,85 @@
+{
+  "id": "skincare-routine",
+  "name": "Skincare routine",
+  "description": "A card with its top corner folded down and a dropper bottle.",
+  "category": "use-case",
+  "collection": "beauty-wellness",
+  "contentTypes": ["url"],
+  "tags": ["beauty", "wellness", "skincare"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1770
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M0 0L1000 0L1240 240L1240 1770L0 1770Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M1000 0L1000 220L1020 240L1240 240Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.6
+        }
+      },
+      {
+        "type": "path",
+        "d": "M117.5 141L162.5 141A15 15 0 0 1 177.5 156L177.5 201A15 15 0 0 1 162.5 216L117.5 216A15 15 0 0 1 102.5 201L102.5 156A15 15 0 0 1 117.5 141ZM123.5 126L156.5 126A3 3 0 0 1 159.5 129L159.5 135A3 3 0 0 1 156.5 138L123.5 138A3 3 0 0 1 120.5 135L120.5 129A3 3 0 0 1 123.5 126ZM120.5 162A4.5 4.5 0 0 0 116 166.5L116 190.5A4.5 4.5 0 0 0 120.5 195L159.5 195A4.5 4.5 0 0 0 164 190.5L164 166.5A4.5 4.5 0 0 0 159.5 162L120.5 162Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M140 84L140 84A12 12 0 0 1 152 96L152 111A12 12 0 0 1 140 123L140 123A12 12 0 0 1 128 111L128 96A12 12 0 0 1 140 84Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Your skincare routine",
+        "color": "text",
+        "box": {
+          "x": 90,
+          "y": 1530,
+          "width": 1060,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Morning and night",
+        "color": "text",
+        "box": {
+          "x": 260,
+          "y": 100,
+          "width": 700,
+          "height": 100
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

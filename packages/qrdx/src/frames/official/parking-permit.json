@@ -1,0 +1,74 @@
+{
+  "id": "parking-permit",
+  "name": "Parking permit",
+  "description": "A solid card with a parking sign over the code and the label underneath.",
+  "category": "use-case",
+  "collection": "automotive",
+  "contentTypes": ["url"],
+  "tags": ["cars", "parking", "permit"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M581 47L659 47A24 24 0 0 1 683 71L683 149A24 24 0 0 1 659 173L581 173A24 24 0 0 1 557 149L557 71A24 24 0 0 1 581 47ZM596 152L615.5 152L615.5 125L629 125C650 125 660.5 111.5 660.5 96.5C660.5 83 650 68 629 68L596 68ZM615.5 84.5L627.5 84.5C636.5 84.5 641 90.5 641 96.5C641 104 636.5 108.5 627.5 108.5L615.5 108.5Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Get a parking permit",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Residents",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

@@ -1,0 +1,115 @@
+{
+  "id": "watch-repair",
+  "name": "Watch repair",
+  "description": "A thin double border with a wristwatch, a small divider and the label.",
+  "category": "use-case",
+  "collection": "shopping",
+  "contentTypes": ["url"],
+  "tags": ["retail", "shop", "watches", "repair"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1830
+    },
+    "qr": {
+      "x": 160,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1320,
+        "height": 1830,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 30,
+        "y": 30,
+        "width": 1260,
+        "height": 1770,
+        "fill": "frame",
+        "hole": {
+          "x": 40,
+          "y": 40,
+          "width": 1240,
+          "height": 1750
+        }
+      },
+      {
+        "type": "rect",
+        "x": 60,
+        "y": 60,
+        "width": 1200,
+        "height": 1710,
+        "fill": "frame",
+        "hole": {
+          "x": 64,
+          "y": 64,
+          "width": 1192,
+          "height": 1702
+        }
+      },
+      {
+        "type": "path",
+        "d": "M619.4 150A40.6 40.6 0 1 1 700.6 150A40.6 40.6 0 1 1 619.4 150ZM627.8 150A32.2 32.2 0 1 0 692.2 150A32.2 32.2 0 1 0 627.8 150ZM648.8 85.6L671.2 85.6A7 7 0 0 1 678.2 92.6L678.2 106.6A7 7 0 0 1 671.2 113.6L648.8 113.6A7 7 0 0 1 641.8 106.6L641.8 92.6A7 7 0 0 1 648.8 85.6ZM648.8 186.4L671.2 186.4A7 7 0 0 1 678.2 193.4L678.2 207.4A7 7 0 0 1 671.2 214.4L648.8 214.4A7 7 0 0 1 641.8 207.4L641.8 193.4A7 7 0 0 1 648.8 186.4ZM702 143L706.2 143A2.8 2.8 0 0 1 709 145.8L709 154.2A2.8 2.8 0 0 1 706.2 157L702 157A2.8 2.8 0 0 1 699.2 154.2L699.2 145.8A2.8 2.8 0 0 1 702 143ZM662.8 150A2.8 2.8 0 0 0 657.2 150L657.2 126.2A2.8 2.8 0 0 0 662.8 126.2L662.8 150ZM658.5 152.36A2.8 2.8 0 0 0 661.5 147.64L676.9 157.44A2.8 2.8 0 0 0 673.9 162.16L658.5 152.36ZM655.1 150A4.9 4.9 0 1 1 664.9 150A4.9 4.9 0 1 1 655.1 150Z",
+        "fill": "frame"
+      },
+      {
+        "type": "line",
+        "x1": 470,
+        "y1": 1570,
+        "x2": 850,
+        "y2": 1570,
+        "width": 6,
+        "fill": "frame"
+      },
+      {
+        "type": "polygon",
+        "points": [[660, 1550], [680, 1570], [660, 1590], [640, 1570]],
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Book a battery change",
+        "color": "frame",
+        "box": {
+          "x": 180,
+          "y": 1610,
+          "width": 960,
+          "height": 160
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Watch repairs",
+        "color": "frame",
+        "box": {
+          "x": 180,
+          "y": 225,
+          "width": 960,
+          "height": 100
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

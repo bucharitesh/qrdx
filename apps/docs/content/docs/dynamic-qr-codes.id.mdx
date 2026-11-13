@@ -1,25 +1,25 @@
 ---
 title: "Kode QR dinamis"
-description: "Cetak kode QR sekali saja, ubah tujuannya kapan pun, dan lihat seberapa sering kode tersebut dipindai."
+description: "Cetak kode QR sekali saja, ubah tujuannya kapan pun, dan lihat seberapa sering kode itu dipindai."
 icon: QrCode
 ---
 
-Kode QR dinamis menyandikan tautan pendek seperti `https://qrdx.dev/q/aB3dE5f`, bukan URL tujuan akhir Anda. Pemindaian kode ini membuka tautan pendek, yang kemudian mengalihkan ke tujuan yang Anda tetapkan. Anda dapat mengubah tujuan kapan saja, sehingga kode yang sudah dicetak tidak pernah kedaluwarsa, dan setiap pemindaian dihitung.
+Kode QR dinamis menyandikan tautan pendek seperti `https://qrdx.dev/q/aB3dE5f`, bukan URL tujuan akhir Anda. Pemindaian kode ini membuka tautan pendek tersebut, yang lalu dialihkan ke tujuan yang Anda tetapkan. Anda dapat mengubah tujuan kapan saja, sehingga kode yang sudah dicetak tidak pernah usang, dan setiap pemindaian dihitung.
 
 Kode QR statis dari Playground dan pustaka `qrdx` tetap gratis dan tanpa batas. Kode dinamis memerlukan akun QRdx.
 
 ## Membuat kode dinamis [#create-a-dynamic-code]
 
-- **Dasbor:** buka [Dasbor](/dashboard), klik **New code**, masukkan URL tujuan dan judul (opsional). Unduh kode sebagai PNG, WebP, atau SVG.
-- **Playground:** pilih jenis konten **URL**, masukkan tautan Anda, lalu aktifkan **Make it dynamic**. Kode QR berubah menjadi tautan pendek dan desain Anda tetap dipertahankan. Jika Anda mengedit URL setelahnya, klik **Point it to the new URL** untuk memperbarui tujuan. **Save design to code** menyimpan desain saat ini bersama kode.
+- **Dasbor:** buka [Dasbor](/dashboard), klik **New code**, lalu masukkan URL tujuan dan judul (opsional). Unduh kode dalam format PNG, WebP, atau SVG.
+- **Playground:** pilih jenis konten **URL**, masukkan tautan Anda, lalu aktifkan **Make it dynamic**. Kode QR beralih ke tautan pendek dan desain Anda tetap dipertahankan. Jika Anda mengedit URL setelahnya, klik **Point it to the new URL** untuk memperbarui tujuan. **Save design to code** menyimpan desain saat ini bersama kode.
 
 Tujuan harus berupa tautan `http://` atau `https://`. Tautan dengan nama pengguna atau kata sandi, serta tautan ke tautan pendek QRdx lainnya, akan ditolak.
 
 ## Back-half kustom [#custom-back-halves]
 
-Setiap kode mendapat back-half acak sepanjang 7 karakter, yaitu bagian setelah `/q/`. Di Pro dan Business Anda dapat memilih sendiri, misalnya `https://qrdx.dev/q/spring-menu`: isi **Custom back-half** saat membuat atau mengedit kode, dan dialog akan memberi tahu saat Anda mengetik apakah back-half tersebut masih tersedia.
+Setiap kode mendapat back-half acak sepanjang 7 karakter, yaitu bagian setelah `/q/`. Di Pro dan Business, Anda dapat memilih sendiri, misalnya `https://qrdx.dev/q/spring-menu`: isi **Custom back-half** saat membuat atau mengedit kode, dan dialog akan memberi tahu saat Anda mengetik apakah nama itu masih tersedia.
 
-- 3 sampai 64 karakter: huruf, angka, `-` dan `_`, tidak diawali atau diakhiri dengan `-`.
+- 3 sampai 64 karakter: huruf, angka, `-`, dan `_`, tidak diawali atau diakhiri dengan `-`.
 - Back-half peka huruf besar/kecil, seperti yang dibuat otomatis: `Spring-Menu` dan `spring-menu` adalah dua tautan yang berbeda.
 - Di `qrdx.dev`, back-half bersifat unik di seluruh QRdx, dan kata-kata yang terbaca sebagai halaman QRdx (`admin`, `api`, `docs`, `login`, `pricing`, `settings`, ...) dicadangkan.
 - Di [domain kustom](/docs/custom-domains) Anda sendiri, back-half hanya perlu unik di domain tersebut, dan hanya `api`, `p`, dan `q` yang dicadangkan, sehingga `go.yourbrand.com/pricing` dapat digunakan. Back-half seperti ini milik domain tersebut: tidak ada tautan `qrdx.dev/q/` untuknya.
@@ -31,25 +31,25 @@ Dari dasbor Anda dapat:
 
 - **Edit link:** mengubah tujuan atau judul. Kode yang sudah dicetak tetap berfungsi dan membuka tujuan baru pada pemindaian berikutnya.
 - **Change type:** mengubah tautan situs web menjadi [halaman yang di-hosting](/docs/landing-pages), halaman kembali menjadi tautan, atau halaman menjadi jenis halaman lain. Tautan pendek dan data pemindaian tetap ada. Lihat [Mengubah apa yang dibuka kode yang sudah dicetak](/docs/help/dynamic-codes/change-the-type).
-- **Edit design in playground:** membuka kode di editor, tetap terhubung ke tautan pendeknya.
+- **Edit design in playground:** membuka kode di editor, tetap terikat ke tautan pendeknya.
 - **Archive:** tautan pendek menampilkan halaman "tidak aktif lagi" sampai Anda memulihkan kode. Kode yang diarsipkan tidak dihitung dalam batas paket Anda.
 - **Move to trash:** tautan pendek menampilkan halaman "tidak aktif lagi" (HTTP 410) dan kode tidak lagi dihitung dalam paket Anda. Pulihkan dari **Trash**, atau hapus permanen di sana, yang juga menghapus riwayat pemindaiannya; setelah itu tautan pendek menampilkan halaman "QR code not found". Penghapusan melalui API (`DELETE /v1/codes/{id}`) langsung bersifat permanen.
 - **Duplicate:** menyalin tujuan, desain, folder, tag, dan catatan ke kode baru dengan tautan pendek baru dan tanpa data pemindaian.
-- **Version history:** setiap perubahan dicatat di halaman kode; memulihkan sebuah versi akan menyimpan pengaturan saat ini terlebih dahulu, sehingga pemulihan dapat dibatalkan.
+- **Version history:** setiap perubahan dicatat di halaman kode; memulihkan versi akan menyimpan pengaturan saat ini terlebih dahulu, sehingga pemulihan dapat dibatalkan.
 
 ## Mengatur kode [#organize-codes]
 
-- **Folder:** dapat bersarang hingga 5 tingkat. Seret kode ke sebuah folder atau gunakan **Move to folder**. Menghapus folder memindahkan kode dan subfolder di dalamnya naik satu tingkat.
+- **Folder:** dapat bersarang hingga 5 tingkat. Seret kode ke folder atau gunakan **Move to folder**. Menghapus folder memindahkan kode dan subfolder di dalamnya naik satu tingkat.
 - **Tag:** filter berdasarkan beberapa tag untuk melihat kode yang memiliki semuanya.
 - **Favorit dan catatan:** beri bintang pada kode dan simpan catatan pribadi; catatan dapat dicari.
 - **Pencarian** mencakup judul, tujuan, catatan, tag, dan back-half (tempel tautan pendek untuk menemukan kodenya).
-- **Aksi massal:** pilih kode untuk dipindahkan, diberi tag, dijeda, diarsipkan, difavoritkan, dibuang ke sampah, atau diunduh sebagai ZIP berisi file PNG, WebP, atau SVG.
-- **Impor CSV:** **Codes → Import** membuat hingga {facts.importRows} kode dinamis dari satu CSV (tujuan, judul, folder, tag, back-half kustom opsional di kolom `slug`), dan dapat memasukkan semua kode ke satu folder serta menambahkan tag ke semuanya. Impor yang panjang dapat dijeda, dan akan dilanjutkan setelah halaman dimuat ulang atau koneksi terputus tanpa membuat kode ganda. Hasil akhirnya berupa CSV hasil (tautan pendek setiap baris) dan ZIP berisi kode dalam format PNG atau SVG. Mengimpor lebih dari satu baris, serta back-half kustom, memerlukan Pro.
+- **Aksi massal:** pilih kode untuk dipindahkan, diberi tag, dijeda, diarsipkan, dijadikan favorit, dibuang ke tempat sampah, atau diunduh sebagai ZIP berisi file PNG, WebP, atau SVG.
+- **Impor CSV:** **Codes → Import** membuat hingga {facts.importRows} kode dinamis dari satu file CSV (tujuan, judul, folder, tag, dan back-half kustom opsional di kolom `slug`), serta dapat memasukkan semua kode ke satu folder dan menambahkan tag ke semuanya. Impor yang panjang dapat dijeda, dan akan dilanjutkan setelah halaman dimuat ulang atau koneksi terputus tanpa membuat kode ganda. Impor diakhiri dengan CSV hasil (tautan pendek tiap baris) dan ZIP berisi kode dalam format PNG atau SVG. Mengimpor lebih dari satu baris, serta back-half kustom, memerlukan Pro.
 
-Kode menjadi milik workspace tempat kode tersebut dibuat. Setiap anggota workspace dapat membuat dan mengeditnya; anggota dapat menghapus kode miliknya sendiri, sedangkan pemilik dan admin dapat menghapus kode mana pun di workspace.
+Kode menjadi milik workspace tempat kode itu dibuat. Setiap anggota workspace dapat membuat dan mengedit kode; anggota dapat menghapus kode miliknya sendiri, sedangkan pemilik dan admin dapat menghapus kode apa pun di workspace.
 
 <Callout type="info">
-  Kode tidak pernah mati: menurunkan paket Anda tidak pernah menonaktifkan kode yang sudah ada. Jika melebihi batas, Anda tetap dapat mengedit dan mengarsipkan kode, hanya saja tidak dapat membuat atau memulihkan kode lagi sampai jumlahnya di bawah batas.
+  Kode tidak pernah mati: menurunkan paket Anda tidak pernah menonaktifkan kode yang sudah ada. Jika melebihi batas, Anda tetap dapat mengedit dan mengarsipkan kode, hanya saja tidak dapat membuat atau memulihkan kode lagi sampai jumlahnya kembali di bawah batas.
 </Callout>
 
 ## Paket [#plans]
@@ -58,33 +58,33 @@ Kode menjadi milik workspace tempat kode tersebut dibuat. Setiap anggota workspa
 | --- | --- | --- | --- |
 | Kode dinamis aktif | 10 | Tanpa batas | Tanpa batas |
 | Pemindaian | Tanpa batas | Tanpa batas | Tanpa batas |
-| Riwayat pemindaian | 90 hari | 3 tahun | Tanpa batas |
+| Riwayat pemindaian | {facts.freeScanHistoryYears} tahun | Tanpa batas | Tanpa batas |
 | Pembuatan massal melalui API | Tidak | Hingga {facts.apiBatchCodes} per permintaan | Hingga {facts.apiBatchCodes} per permintaan |
 
-Kode dalam sebuah workspace menggunakan paket terbaik di antara para pemiliknya. Lihat [Paket dan batas](/docs/plans-and-limits) untuk semua hal lain yang disertakan setiap paket.
+Kode dalam sebuah workspace menggunakan paket terbaik di antara para pemiliknya. Lihat [Paket dan batasan](/docs/plans-and-limits) untuk semua fitur lain yang disertakan di setiap paket.
 
 ## Analitik pemindaian [#scan-analytics]
 
-Setiap kode memiliki halaman analitik dengan pemindaian dari waktu ke waktu, pengunjung unik, negara dan kota teratas, perangkat, sistem operasi, browser, dan perujuk untuk 7, 30, atau 90 hari terakhir, 1 tahun, atau 3 tahun (dibatasi oleh riwayat paket Anda). Anda dapat mengekspor pemindaian pada rentang yang dipilih sebagai CSV.
+Setiap kode memiliki halaman analitik dengan pemindaian dari waktu ke waktu, pengunjung unik, negara dan kota teratas, perangkat, sistem operasi, browser, dan perujuk untuk 7, 30, atau 90 hari terakhir, 1 tahun, atau 3 tahun (dibatasi oleh riwayat paket Anda). Anda dapat mengekspor pemindaian dalam rentang yang dipilih sebagai CSV.
 
 Hal yang dicatat untuk setiap pemindaian:
 
-- Waktu (UTC), serta negara, wilayah, dan kota jika disediakan oleh platform hosting (header geo Vercel di qrdx.dev)
+- Waktu (UTC), serta negara, wilayah, dan kota jika platform hosting menyediakannya (header geo Vercel di qrdx.dev)
 - Jenis perangkat, sistem operasi, dan browser, yang dideteksi dari user agent
 - Hanya nama host perujuk, tidak pernah URL lengkapnya. Sebagian besar pemindaian QR tidak memiliki perujuk.
 - Hash pengunjung: SHA-256 dengan salt dari alamat IP, user agent, dan hari. Hash ini menghitung pengunjung unik per hari; alamat IP itu sendiri tidak pernah disimpan.
-- Di Pro dan Business, ketika kode [meminta lokasi presisi](/docs/precise-location) dan pemindai mengizinkannya: lokasi mereka dibulatkan hingga 3 angka desimal (sekitar 100 m) dan akurasi yang dilaporkan browser mereka
+- Di Pro dan Business, ketika kode [meminta lokasi yang tepat](/docs/precise-location) dan pemindai mengizinkannya: lokasi mereka dibulatkan ke 3 angka desimal (sekitar 100 m) beserta akurasi yang dilaporkan browser mereka
 
 Bot yang dikenal, pratinjau tautan, dan prefetch browser tidak dihitung.
 
 ## REST API [#rest-api]
 
-Kelola kode secara terprogram di `https://api.qrdx.dev/v1/codes`. Permintaan diautentikasi dengan [kunci API](/docs/developers/api-keys) atau token akses OAuth (`Authorization: Bearer <key or token>`) yang memiliki cakupan `codes:read` atau `codes:write`; lihat [REST API](/docs/developers/rest-api) untuk cara mendapatkannya. Kunci bekerja pada workspace tempat kunci itu dibuat; permintaan dengan token bekerja pada workspace Anda sendiri. Permintaan dari sesi browser yang sedang masuk juga berfungsi dan bekerja pada workspace yang terakhir Anda buka di dasbor.
+Kelola kode secara terprogram melalui `https://api.qrdx.dev/v1/codes`. Permintaan diautentikasi dengan [kunci API](/docs/developers/api-keys) atau token akses OAuth (`Authorization: Bearer <key or token>`) yang memiliki cakupan `codes:read` atau `codes:write`; lihat [REST API](/docs/developers/rest-api) untuk cara mendapatkannya. Kunci bertindak pada workspace tempat kunci itu dibuat; permintaan dengan token bertindak pada workspace Anda sendiri. Permintaan dari sesi browser yang sedang masuk juga berfungsi dan bertindak pada workspace yang terakhir Anda buka di dasbor.
 
 | Metode | Path | Deskripsi |
 | --- | --- | --- |
 | `GET` | `/v1/codes` | Menampilkan daftar kode. Query: `status` (`active`, `archived`, `all`), `q`, `limit` (≤ 100), `offset` |
-| `POST` | `/v1/codes` | Membuat satu kode, atau array hingga {facts.apiBatchCodes} kode (array memerlukan Pro). Body: `destinationUrl`, opsional `title`, `style`, `domainId`, dan `slug` |
+| `POST` | `/v1/codes` | Membuat satu kode, atau array berisi hingga {facts.apiBatchCodes} kode (array memerlukan Pro). Body: `destinationUrl`, opsional `title`, `style`, `domainId`, dan `slug` |
 | `GET` | `/v1/codes/{id}` | Mengambil satu kode |
 | `PATCH` | `/v1/codes/{id}` | Memperbarui `destinationUrl`, `title`, `style`, `domainId` ([domain kustom](/docs/custom-domains)), `slug`, atau `archived`, atau mengubah `kind` antara `redirect` dan `page` |
 | `DELETE` | `/v1/codes/{id}` | Menghapus kode beserta pemindaiannya |
@@ -133,13 +133,13 @@ curl https://api.qrdx.dev/v1/codes \
   -d '{"destinationUrl": "https://example.com/menu", "slug": "spring-menu"}'
 ```
 
-Respons kemudian berisi `"slug": "spring-menu"` dan `"shortLink": "https://qrdx.dev/q/spring-menu"`. Back-half yang dipilih pada domain kustom memiliki `"defaultShortLink": null`, karena hanya ada di domain tersebut. Dalam array, setiap `slug` harus berbeda.
+Respons kemudian berisi `"slug": "spring-menu"` dan `"shortLink": "https://qrdx.dev/q/spring-menu"`. Back-half yang dipilih pada domain kustom memiliki `"defaultShortLink": null`, karena hanya ada pada domain itu. Dalam array, setiap `slug` harus berbeda.
 
 ### Banyak kode dalam satu permintaan [#many-codes-in-one-request]
 
-Di Pro dan Business, kirim array hingga {facts.apiBatchCodes} kode. Back-half yang dibuat otomatis tidak pernah berulang dalam satu batch dan tidak bentrok dengan kode yang sudah ada. Tautan yang tidak sempat diperiksa Google Web Risk tepat waktu akan diperiksa ulang tak lama setelah batch dibuat, dan kode yang tautannya terdaftar akan dinonaktifkan ([pemeriksaan keamanan](/docs/code-controls#safety-checks-on-links)). Batch bersifat semua atau tidak sama sekali: jika ada baris yang bermasalah (tujuan tidak valid, `slug` yang sudah dipakai atau dicadangkan, tautan tidak aman), tidak ada kode yang dibuat dan `data.details` pada error mencantumkan setiap masalah berdasarkan `index`, yaitu posisi baris dalam array (mulai dari 0).
+Di Pro dan Business, kirim array berisi hingga {facts.apiBatchCodes} kode. Back-half yang dihasilkan tidak pernah berulang dalam batch dan tidak bentrok dengan kode yang sudah ada. Tautan yang tidak sempat diperiksa Google Web Risk tepat waktu akan dicek ulang tidak lama setelah batch dibuat, dan kode yang tautannya terdaftar akan dinonaktifkan ([pemeriksaan keamanan](/docs/code-controls#safety-checks-on-links)). Batch bersifat semua atau tidak sama sekali: jika ada baris yang bermasalah (tujuan tidak valid, `slug` yang sudah dipakai atau dicadangkan, tautan tidak aman), tidak ada kode yang dibuat dan `data.details` pada error mencantumkan setiap masalah berdasarkan `index`, yaitu posisi baris dalam array (mulai dari 0).
 
-Kirim header `Idempotency-Key` dengan nilai yang unik untuk batch tersebut, misalnya UUID. Jika permintaan kehabisan waktu atau koneksi terputus, kirim kembali permintaan yang sama dengan kunci yang sama: Anda akan mendapatkan kode yang dibuat pada percobaan pertama, dengan header `Idempotent-Replayed: true`, dan percobaan yang terhenti di tengah jalan akan diselesaikan tanpa membuat kode ganda.
+Kirim header `Idempotency-Key` dengan nilai unik untuk batch, seperti UUID. Jika permintaan kehabisan waktu atau koneksi terputus, kirim ulang permintaan yang sama dengan kunci yang sama: Anda akan menerima kode yang dibuat percobaan pertama, dengan header `Idempotent-Replayed: true`, dan percobaan yang terhenti di tengah akan diselesaikan tanpa membuat kode ganda.
 
 ```bash
 curl https://api.qrdx.dev/v1/codes \
@@ -151,7 +151,7 @@ curl https://api.qrdx.dev/v1/codes \
        {"destinationUrl": "https://example.com/table/2", "title": "Table 2"}]'
 ```
 
-Setiap kode dikembalikan beserta desainnya. Jika tema default workspace Anda menyematkan logo, ukurannya bertambah besar pada batch yang banyak: kirim `Prefer: return=minimal` untuk mendapatkan setiap kode tanpa `style` (id, slug, tautan, tujuan, judul, status, dan waktu pembuatannya). Batch yang responsnya tidak muat dalam 4 MB akan ditolak dengan `PAYLOAD_TOO_LARGE` sebelum ada kode yang dibuat.
+Setiap kode dikembalikan beserta desainnya. Jika tema default workspace Anda menyematkan logo, ukurannya bertambah pada batch besar: kirim `Prefer: return=minimal` untuk mendapatkan setiap kode tanpa `style` (id, slug, tautan, tujuan, judul, status, dan waktu pembuatannya). Batch yang responsnya tidak muat dalam 4 MB ditolak dengan `PAYLOAD_TOO_LARGE` sebelum ada kode yang dibuat.
 
 Ubah tujuan:
 
@@ -162,9 +162,9 @@ curl -X PATCH https://api.qrdx.dev/v1/codes/cm3x... \
   -d '{"destinationUrl": "https://example.com/summer-menu"}'
 ```
 
-`style` menerima kolom desain yang sama dengan Playground (`fgColor`, `bgColor`, `bodyPattern`, `cornerEyePattern`, `level`, ...). Untuk logo, kirim `logoIcon`<IfAvailable feature="fileStorage"> atau `logoFileId` dari file yang diunggah</IfAvailable> ([logo dalam gaya kode](/docs/developers/rest-api#code-logos)). Encode `shortLink` ke dalam kode QR Anda, misalnya dengan [pustaka `qrdx`](/docs/getting-started) atau [Image API](/docs/developers/image-api).
+`style` menerima kolom desain yang sama dengan Playground (`fgColor`, `bgColor`, `bodyPattern`, `cornerEyePattern`, `level`, ...). Untuk logo, kirim `logoIcon`<IfAvailable feature="fileStorage"> atau `logoFileId` dari file yang diunggah</IfAvailable> ([logo dalam style kode](/docs/developers/rest-api#code-logos)). Enkode `shortLink` dalam kode QR Anda, misalnya dengan [pustaka `qrdx`](/docs/getting-started) atau [Image API](/docs/developers/image-api).
 
-Error menggunakan satu bentuk JSON, `{ "code": "...", "message": "...", "status": 400 }`, ditambah tautan `docs` jika ada halaman yang menjelaskan solusinya:
+Error menggunakan satu bentuk JSON, `{ "code": "...", "message": "...", "status": 400 }`, ditambah tautan `docs` bila ada halaman yang menjelaskan solusinya:
 
 | Status | Kode | Kapan |
 | --- | --- | --- |
@@ -173,15 +173,15 @@ Error menggunakan satu bentuk JSON, `{ "code": "...", "message": "...", "status"
 | 402 | `LIMIT_REACHED`, `PLAN_REQUIRED` | Melebihi batas kode aktif paket Anda, atau pembuatan massal atau `slug` kustom tanpa Pro |
 | 403 | `INSUFFICIENT_SCOPE`, `FORBIDDEN` | Token tanpa cakupan yang diperlukan, atau peran workspace yang tidak dapat melakukan ini |
 | 404 | `NOT_FOUND` | Kode tidak ada atau bukan milik Anda, atau endpoint tersebut tidak ada |
-| 409 | `SLUG_TAKEN` | Kode lain sudah memakai `slug` itu (di `qrdx.dev`, atau di domain kustom) |
+| 409 | `SLUG_TAKEN` | Kode lain sudah menggunakan `slug` itu (di `qrdx.dev`, atau di domain kustom) |
 | 429 | `RATE_LIMITED` | Terlalu banyak permintaan; coba lagi setelah waktu pada header `Retry-After` |
 
-## Self-hosting [#self-hosting]
+## Hosting mandiri [#self-hosting]
 
-Kode dinamis juga berfungsi pada instans self-hosted:
+Kode dinamis juga berfungsi pada instans yang di-hosting sendiri:
 
-- `NEXT_PUBLIC_SHORT_LINK_BASE_URL` menetapkan origin tautan pendek. Nilai bawaannya adalah URL aplikasi Anda.
-- `SCAN_HASH_SALT` menetapkan salt rahasia untuk hash pengunjung. Tanpa ini, salt diturunkan dari `BETTER_AUTH_SECRET`.
+- `NEXT_PUBLIC_SHORT_LINK_BASE_URL` menentukan origin tautan pendek. Nilai default-nya adalah URL aplikasi Anda.
+- `SCAN_HASH_SALT` menentukan salt rahasia untuk hash pengunjung. Tanpanya, salt diturunkan dari `BETTER_AUTH_SECRET`.
 - Negara, wilayah, dan kota berasal dari header geo Vercel. Di balik Cloudflare hanya negara yang tersedia (`CF-IPCountry`); di tempat lain lokasi ditampilkan sebagai tidak diketahui.
-- Aturan area menggunakan koordinat IP Vercel (`x-vercel-ip-latitude`, `x-vercel-ip-longitude`) saat pemindai tidak membagikan lokasi. Di tempat lain, aturan ini hanya cocok dengan pemindaian yang membagikan lokasi.
-- Pembatasan laju berlaku jika Upstash Redis dikonfigurasi.
+- Aturan area menggunakan koordinat IP Vercel (`x-vercel-ip-latitude`, `x-vercel-ip-longitude`) ketika pemindai tidak membagikan lokasi. Di tempat lain, aturan itu hanya cocok dengan pemindaian yang membagikan lokasi.
+- Pembatasan laju berlaku ketika Upstash Redis dikonfigurasi.

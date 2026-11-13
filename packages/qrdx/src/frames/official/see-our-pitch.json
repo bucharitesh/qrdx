@@ -1,0 +1,85 @@
+{
+  "id": "see-our-pitch",
+  "name": "Pitch deck",
+  "description": "A wide card: the code on one side, a rocket and the label on the other.",
+  "category": "use-case",
+  "collection": "business",
+  "contentTypes": ["pdf", "url"],
+  "tags": ["business", "startup", "investors"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 2000,
+      "height": 1040
+    },
+    "qr": {
+      "x": 120,
+      "y": 120,
+      "size": 800,
+      "padding": 64,
+      "radius": 19.2
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 2000,
+        "height": 1040,
+        "radius": 72,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.9
+        }
+      },
+      {
+        "type": "path",
+        "d": "M1120 167.2C1148.8 188.8 1159.6 228.4 1156 275.2L1084 275.2C1080.4 228.4 1091.2 188.8 1120 167.2ZM1085.8 242.8L1085.8 286L1055.2 304L1055.2 278.8ZM1154.2 242.8L1184.8 278.8L1184.8 304L1154.2 286ZM1105.6 217.6A14.4 14.4 0 1 0 1134.4 217.6A14.4 14.4 0 1 0 1105.6 217.6Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M1138 289.6C1138 311.2 1127.2 322 1120 336.4C1112.8 322 1102 311.2 1102 289.6Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "See our pitch",
+        "color": "frame",
+        "box": {
+          "x": 1030,
+          "y": 400,
+          "width": 860,
+          "height": 190
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Investors and partners",
+        "color": "frame",
+        "box": {
+          "x": 1030,
+          "y": 610,
+          "width": 860,
+          "height": 100
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

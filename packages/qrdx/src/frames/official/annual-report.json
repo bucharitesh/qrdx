@@ -1,0 +1,85 @@
+{
+  "id": "annual-report",
+  "name": "Annual report",
+  "description": "A card with its top corner folded down and a bar chart.",
+  "category": "use-case",
+  "collection": "business",
+  "contentTypes": ["pdf", "url"],
+  "tags": ["business", "report", "investors"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1770
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M0 0L1000 0L1240 240L1240 1770L0 1770Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M1000 0L1000 220L1020 240L1240 240Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.6
+        }
+      },
+      {
+        "type": "path",
+        "d": "M86 162L104 162A3 3 0 0 1 107 165L107 207A3 3 0 0 1 104 210L86 210A3 3 0 0 1 83 207L83 165A3 3 0 0 1 86 162ZM125 141L143 141A3 3 0 0 1 146 144L146 207A3 3 0 0 1 143 210L125 210A3 3 0 0 1 122 207L122 144A3 3 0 0 1 125 141ZM164 120L182 120A3 3 0 0 1 185 123L185 207A3 3 0 0 1 182 210L164 210A3 3 0 0 1 161 207L161 123A3 3 0 0 1 164 120ZM77 213L203 213A3 3 0 0 1 206 216L206 217.5A3 3 0 0 1 203 220.5L77 220.5A3 3 0 0 1 74 217.5L74 216A3 3 0 0 1 77 213Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M81.92 146.77A3.38 3.38 0 0 0 78.08 141.23L118.28 113.7L147.85 125.83L182.61 90.61A3.38 3.38 0 0 0 187.39 95.39L150.15 132.17L119.72 120.3L81.92 146.77ZM170 90L197 81L191 108Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Read our report",
+        "color": "text",
+        "box": {
+          "x": 90,
+          "y": 1530,
+          "width": 1060,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Results at a glance",
+        "color": "text",
+        "box": {
+          "x": 260,
+          "y": 100,
+          "width": 700,
+          "height": 100
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

@@ -406,7 +406,7 @@
       "analytics": {
         "eyebrow": "Analitik",
         "title": "Lihat setiap pemindaian",
-        "description": "Pemindaian dari waktu ke waktu, negara, perangkat, browser, dan perujuk untuk setiap kode dinamis. Akun Gratis menyimpan data selama {days, number} hari.",
+        "description": "Pemindaian dari waktu ke waktu, negara, perangkat, browser, dan perujuk untuk setiap kode dinamis. Akun gratis menyimpan riwayat selama {years, plural, other {# tahun}}, dan paket berbayar menyimpan seluruhnya.",
         "link": "Cara kerja analitik pemindaian"
       },
       "bulk": {
@@ -450,7 +450,7 @@
       "items": {
         "free": {
           "question": "Apakah QRdx benar-benar gratis? Apakah ada batasan tersembunyi?",
-          "answer": "Ya. Membuat, menyesuaikan, dan mengunduh kode QR statis gratis dan tanpa akun: kode tanpa batas, semua opsi desain ({bodyPatterns, number} pola badan, {eyeShapes, number} bentuk mata sudut, dan {eyeCentres, number} pusat mata, gradasi, logo, bingkai, serta seni Logo QR atau Image QR), dan unduhan PNG, JPG, SVG, PDF, dan EPS. Tanpa tanda air dan tanpa iklan. Kode statis menyimpan konten Anda di dalam kode itu sendiri, sehingga tidak pernah kedaluwarsa dan tidak memiliki batas pemindaian. Akun gratis menambahkan 10 kode QR dinamis, 3 halaman yang di-hosting, 90 hari analitik pemindaian, 10 tema tersimpan, dan 5 pembuatan tema dengan AI; Pro ({proMonthly}/bln atau {proYearly}/thn) dan Business ({businessMonthly}/bln atau {businessYearly}/thn) meningkatkan batas tersebut."
+          "answer": "Ya. Membuat, menyesuaikan, dan mengunduh kode QR statis gratis dan tidak memerlukan akun: kode tanpa batas, semua opsi desain ({bodyPatterns, number} pola isi, {eyeShapes, number} bentuk mata sudut, dan {eyeCentres, number} pusat mata, gradasi, logo, bingkai, serta karya Logo QR atau Image QR), dan unduhan PNG, JPG, SVG, PDF, dan EPS. Tidak ada watermark dan tidak ada iklan. Kode statis menyimpan konten Anda di dalam kodenya sendiri, sehingga tidak pernah kedaluwarsa dan tidak memiliki batas pemindaian. Akun gratis menambahkan 10 kode QR dinamis, 3 halaman yang di-hosting, analitik pemindaian selama {historyYears, plural, other {# tahun}}, 10 tema tersimpan, dan 5 pembuatan tema dengan AI; Pro ({proMonthly}/bln atau {proYearly}/thn) dan Business ({businessMonthly}/bln atau {businessYearly}/thn) meningkatkan batas tersebut."
         },
         "signup": {
           "question": "Apakah saya perlu mendaftar atau membuat akun?",
@@ -458,7 +458,7 @@
         },
         "dynamic": {
           "question": "Apakah QRdx mendukung kode QR dinamis dan analitik pemindaian?",
-          "answer": "Ya. Kode dinamis menyandikan tautan pendek, sehingga Anda dapat mengubah tujuannya setelah dicetak, dan setiap pemindaian dihitung lengkap dengan analitik negara, perangkat, dan browser. Satu kode dapat membuka situs web atau halaman seluler yang di-hosting (daftar tautan, menu, vCard, kupon, acara, formulir, PDF, galeri, audio, atau video). Pro dan Business menambahkan pengalihan cerdas berdasarkan perangkat, negara, bahasa, atau waktu, uji A/B, tag UTM, kata sandi, tanggal kedaluwarsa, dan batas pemindaian. Akun gratis mendapat 10 kode dinamis aktif dengan riwayat 90 hari; Pro dan Business tanpa batas dengan riwayat yang lebih panjang."
+          "answer": "Ya. Kode dinamis menyandikan tautan pendek, sehingga Anda dapat mengubah tujuannya setelah dicetak, dan setiap pemindaian dihitung dengan analitik negara, perangkat, dan browser. Sebuah kode dapat membuka situs web atau halaman seluler yang di-hosting (daftar tautan, menu, vCard, kupon, acara, formulir, PDF, galeri, audio, atau video). Pro dan Business menambahkan perutean cerdas berdasarkan perangkat, negara, bahasa, atau waktu, A/B tests, tag UTM, kata sandi, tanggal kedaluwarsa, dan batas pemindaian. Akun gratis mendapatkan 10 kode dinamis aktif dengan riwayat selama {historyYears, plural, other {# tahun}}; Pro dan Business tanpa batas dan menyimpan seluruh riwayat pemindaian Anda."
         },
         "guarantee": {
           "question": "Apakah kode QR saya akan berhenti berfungsi jika saya berhenti membayar?",
@@ -482,7 +482,7 @@
         },
         "paidPlans": {
           "question": "Apa yang saya dapatkan dengan Pro atau Business?",
-          "answer": "Pro ({proMonthly}/bln atau {proYearly}/thn) menambahkan kode QR dinamis dan halaman yang di-hosting tanpa batas, analitik selama 3 tahun, {customDomains, select, yes {5 domain kustom, } other {}}tim hingga 3 anggota, smart routing, A/B test, tag UTM, piksel, peringatan email dan ringkasan mingguan, serta kontrol tautan seperti kata sandi dan tanggal kedaluwarsa. Business ({businessMonthly}/bln atau {businessYearly}/thn) menambahkan halaman white-label dengan CSS kustom, riwayat analitik tanpa batas, {customDomains, select, yes {25 domain kustom, } other {}}anggota tim tanpa batas, pelacakan konversi, webhook, dan peringatan Slack atau Discord. Membuat, menyesuaikan, dan mengunduh kode QR statis tetap gratis."
+          "answer": "Pro ({proMonthly}/bln atau {proYearly}/thn) menambahkan kode dinamis dan halaman yang di-hosting tanpa batas, seluruh riwayat pemindaian Anda, {customDomains, select, yes {5 domain kustom, } other {}}tim hingga 3 orang, perutean cerdas, A/B tests, tag UTM, piksel, notifikasi email dan ringkasan mingguan, serta kontrol tautan seperti kata sandi dan tanggal kedaluwarsa. Business ({businessMonthly}/bln atau {businessYearly}/thn) menambahkan halaman white-label dengan CSS kustom, {customDomains, select, yes {25 domain kustom, } other {}}anggota tim tanpa batas, pelacakan konversi, webhook, dan notifikasi Slack atau Discord. Membuat, menyesuaikan, dan mengunduh kode QR statis tetap gratis."
         }
       }
     }
@@ -502,8 +502,8 @@
     },
     "extras": {
       "unlimitedDynamic": "kode dinamis tanpa batas",
-      "longerAnalytics": "analitik lebih panjang",
-      "analyticsHistory": "riwayat analitik",
+      "longerAnalytics": "seluruh riwayat pemindaian Anda",
+      "analyticsHistory": "riwayat analitik lengkap",
       "customDomains": "domain kustom",
       "teams": "tim"
     },
@@ -716,7 +716,7 @@
       "items": {
         "cancel": {
           "question": "Apa yang terjadi jika saya berhenti berlangganan?",
-          "answer": "Tidak ada yang rusak. Paket Anda tetap aktif hingga akhir periode yang sudah Anda bayar, lalu akun Anda pindah ke Gratis. Setiap kode QR dinamis tetap mengalihkan dan setiap pemindaian tetap dihitung: itulah Jaminan Never-Hostage kami. Di paket Gratis, Anda tidak dapat membuat lebih dari batas yang diizinkan paket Gratis, dan analitik menampilkan 90 hari terakhir."
+          "answer": "Tidak ada yang rusak. Paket Anda tetap aktif hingga akhir periode yang sudah Anda bayar, lalu akun Anda beralih ke Gratis. Setiap kode QR dinamis tetap mengarahkan pengunjung dan setiap pemindaian tetap dihitung: itulah Jaminan Never-Hostage kami. Di paket Gratis, Anda tidak dapat membuat lebih dari batas yang diizinkan paket Gratis, dan analitik menampilkan data {historyYears, plural, other {# tahun}} terakhir. Pemindaian yang lebih lama tetap disimpan, sehingga akan muncul kembali jika Anda meningkatkan paket lagi."
         },
         "refund": {
           "question": "Bisakah uang saya dikembalikan?",
@@ -6345,7 +6345,6 @@
           "scansPerDayLastDays": "Pemindaian per hari, {days, number} hari terakhir (UTC)",
           "botsAndLinkPreviewsAre": "Bot dan pratinjau tautan tidak dihitung. Negara dan kota berasal dari alamat IP pengunjung, yang tidak pernah disimpan; lokasi presisi hanya berasal dari pemindai yang memilih untuk membagikannya.",
           "dateRange": "Rentang tanggal",
-          "valueKeepsValue2OfScan": "{value} menyimpan {value2} riwayat pemindaian",
           "totalScans": "Total pemindaian",
           "scansInRange": "Pemindaian dalam rentang",
           "uniqueVisitors": "Pengunjung unik",

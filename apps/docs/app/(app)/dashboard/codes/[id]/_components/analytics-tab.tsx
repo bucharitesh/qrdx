@@ -70,7 +70,7 @@ const toItems = (
     count: row.count,
   }));
 
-/** "3 years of scan history", "every scan" (lib/plans.ts). */
+/** "1 year of scan history", "every scan" (lib/scan-history.ts). */
 function retentionText(
   days: number,
   t: Translator<"app.dashboard.codes.analyticsTab">,
@@ -87,13 +87,22 @@ function retentionText(
 const planKeeping = (days: number) =>
   PLANS.find((plan) => PLAN_LIMITS[plan].analyticsRetentionDays >= days);
 
-/** "Pro keeps 3 years of scan history and Business keeps every scan." */
+/**
+ * "Pro keeps every scan." Each longer history once, under the cheapest plan
+ * that has it: Business keeping the same as Pro isn't repeated.
+ */
 function upgradeRetentionText(
   retentionDays: number,
   t: Translator<"app.dashboard.codes.analyticsTab">,
 ): string {
   const longer = PLANS.filter(
-    (plan) => PLAN_LIMITS[plan].analyticsRetentionDays > retentionDays,
+    (plan, index) =>
+      PLAN_LIMITS[plan].analyticsRetentionDays > retentionDays &&
+      PLANS.slice(0, index).every(
+        (cheaper) =>
+          PLAN_LIMITS[cheaper].analyticsRetentionDays !==
+          PLAN_LIMITS[plan].analyticsRetentionDays,
+      ),
   ).map((plan) =>
     t("valueKeepsValue2", {
       value: PLAN_NAMES[plan],
@@ -172,9 +181,13 @@ export async function AnalyticsTab({
                 size="sm"
                 title={
                   keeping
-                    ? t("valueKeepsValue2OfScan", {
+                    ? // "Pro keeps every scan": the plan's whole reach, not just this range.
+                      t("valueKeepsValue2", {
                         value: PLAN_NAMES[keeping],
-                        value2: scanRangeLabel(key),
+                        value2: retentionText(
+                          PLAN_LIMITS[keeping].analyticsRetentionDays,
+                          t,
+                        ),
                       })
                     : undefined
                 }

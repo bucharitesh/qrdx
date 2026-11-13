@@ -224,7 +224,9 @@ export const SCAN_RANGES = {
   "30d": 30,
   "90d": 90,
   "365d": 365,
-  // Pro keeps 3 years; Business keeps everything (lib/plans).
+  // Each plan's reach is in lib/scan-history (Pro and Business: everything).
+  // Scans started in October 2026, so 3 years covers every workspace's
+  // whole history until late 2029; a longer range is needed before then.
   "1095d": 1095,
 } as const;
 

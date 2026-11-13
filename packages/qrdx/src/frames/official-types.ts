@@ -9,10 +9,15 @@ export type OfficialFrameCollection =
   | "seasons"
   | "food-drink"
   | "shopping"
+  | "beauty-wellness"
   | "events"
   | "places"
+  | "real-estate"
+  | "automotive"
   | "health-learning"
-  | "business";
+  | "sports-fitness"
+  | "business"
+  | "nonprofit";
 
 export interface OfficialFrame {
   /** Stable id (also the file name). Never renamed or reused. */

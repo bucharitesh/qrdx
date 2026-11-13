@@ -1,0 +1,80 @@
+{
+  "id": "large-print",
+  "name": "Large print",
+  "description": "A solid card with an eye over the code and the label underneath.",
+  "category": "use-case",
+  "collection": "call-to-action",
+  "contentTypes": [],
+  "tags": ["call to action", "accessibility", "large print"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M551 110C581 63.5 659 63.5 689 110C659 156.5 581 156.5 551 110ZM591.5 110A28.5 28.5 0 1 0 648.5 110A28.5 28.5 0 1 0 591.5 110ZM605 110A15 15 0 1 1 635 110A15 15 0 1 1 605 110Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M623.75 101A5.25 5.25 0 1 0 634.25 101A5.25 5.25 0 1 0 623.75 101Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Large print version",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Easier to read",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

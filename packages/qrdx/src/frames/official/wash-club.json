@@ -1,0 +1,81 @@
+{
+  "id": "wash-club",
+  "name": "Wash club",
+  "description": "A die-cut sticker with a thick outline and an offset shadow and a car.",
+  "category": "use-case",
+  "collection": "automotive",
+  "contentTypes": ["url"],
+  "tags": ["cars", "parking", "car wash", "membership"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1750
+    },
+    "qr": {
+      "x": 110,
+      "y": 370,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 50,
+        "y": 50,
+        "width": 1270,
+        "height": 1700,
+        "radius": 110,
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1270,
+        "height": 1700,
+        "radius": 110,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 36,
+        "y": 36,
+        "width": 1198,
+        "height": 1628,
+        "radius": 80,
+        "fill": "background"
+      },
+      {
+        "type": "path",
+        "d": "M564.6 172.4L564.6 153.2C564.6 143.6 571 140.4 580.6 138.8L599.8 135.6L615.8 114.8C619 111.6 622.2 110 628.6 110L663.8 110C670.2 110 673.4 111.6 676.6 116.4L689.4 135.6L699 138.8C705.4 140.4 708.6 146.8 708.6 153.2L708.6 172.4L694.2 172.4A20.8 20.8 0 0 0 652.6 172.4L617.4 172.4A20.8 20.8 0 0 0 575.8 172.4ZM607.8 134L643 134L643 118L622.2 118ZM649.4 134L678.2 134L667 118L649.4 118ZM656.6 175.6A16.8 16.8 0 1 1 690.2 175.6A16.8 16.8 0 1 1 656.6 175.6ZM667 175.6A6.4 6.4 0 1 0 679.8 175.6A6.4 6.4 0 1 0 667 175.6ZM579.8 175.6A16.8 16.8 0 1 1 613.4 175.6A16.8 16.8 0 1 1 579.8 175.6ZM590.2 175.6A6.4 6.4 0 1 0 603 175.6A6.4 6.4 0 1 0 590.2 175.6ZM698.2 145.2L703 145.2A2.4 2.4 0 0 1 705.4 147.6L705.4 149.2A2.4 2.4 0 0 1 703 151.6L698.2 151.6A2.4 2.4 0 0 1 695.8 149.2L695.8 147.6A2.4 2.4 0 0 1 698.2 145.2Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Join the wash club",
+        "color": "frame",
+        "box": {
+          "x": 100,
+          "y": 1490,
+          "width": 1070,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

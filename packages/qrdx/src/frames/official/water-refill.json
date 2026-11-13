@@ -1,0 +1,95 @@
+{
+  "id": "water-refill",
+  "name": "Water refill",
+  "description": "A sign on two posts with water drops in a round badge on top.",
+  "category": "use-case",
+  "collection": "food-drink",
+  "contentTypes": ["location", "url"],
+  "tags": ["restaurant", "food", "water", "refill"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1940
+    },
+    "qr": {
+      "x": 120,
+      "y": 400,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 250,
+        "y": 1720,
+        "width": 56,
+        "height": 220,
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.25
+        }
+      },
+      {
+        "type": "rect",
+        "x": 934,
+        "y": 1720,
+        "width": 56,
+        "height": 220,
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.25
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 48,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 620,
+        "cy": 170,
+        "r": 125,
+        "fill": "background"
+      },
+      {
+        "type": "path",
+        "d": "M596 123.5C603.88 144.2 618.5 156.5 618.5 170A22.5 22.5 0 0 1 573.5 170C573.5 156.5 588.13 144.2 596 123.5ZM647 116C652.51 130.4 662.75 138.8 662.75 148.25A15.75 15.75 0 0 1 631.25 148.25C631.25 138.8 641.49 130.4 647 116Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M641 183.5C646.25 197 656 204.5 656 213.5A15 15 0 0 1 626 213.5C626 204.5 635.75 197 641 183.5Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Refill your bottle",
+        "color": "text",
+        "box": {
+          "x": 90,
+          "y": 1520,
+          "width": 1060,
+          "height": 180
+        }
+      }
+    ]
+  }
+}

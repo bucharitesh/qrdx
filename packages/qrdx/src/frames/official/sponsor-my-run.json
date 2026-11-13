@@ -1,0 +1,136 @@
+{
+  "id": "sponsor-my-run",
+  "name": "Sponsor my run",
+  "description": "A card with a sneaker and a ribbon banner with folded tails across the bottom.",
+  "category": "use-case",
+  "collection": "nonprofit",
+  "contentTypes": ["upi", "paypal", "url"],
+  "tags": ["nonprofit", "community", "sponsorship", "charity run"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1440,
+      "height": 1800
+    },
+    "qr": {
+      "x": 220,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 100,
+        "y": 0,
+        "width": 1240,
+        "height": 1640,
+        "radius": 56,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 100,
+        "y": 0,
+        "width": 1240,
+        "height": 1640,
+        "radius": 56,
+        "fill": "frame",
+        "hole": {
+          "x": 118,
+          "y": 18,
+          "width": 1204,
+          "height": 1604,
+          "radius": 40
+        }
+      },
+      {
+        "type": "polygon",
+        "points": [[0, 1580], [170, 1580], [170, 1800], [0, 1800], [70, 1690]],
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.25
+        }
+      },
+      {
+        "type": "polygon",
+        "points": [
+          [1440, 1580],
+          [1270, 1580],
+          [1270, 1800],
+          [1440, 1800],
+          [1370, 1690]
+        ],
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.25
+        }
+      },
+      {
+        "type": "polygon",
+        "points": [[100, 1730], [170, 1800], [170, 1730]],
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.55
+        }
+      },
+      {
+        "type": "polygon",
+        "points": [[1340, 1730], [1270, 1800], [1270, 1730]],
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.55
+        }
+      },
+      {
+        "type": "rect",
+        "x": 100,
+        "y": 1510,
+        "width": 1240,
+        "height": 220,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M669.6 126.6L669.6 107.4C669.6 97.8 676.8 93 686.4 95.4L708 100.2C717.6 93 722.4 81 729.6 76.2L739.2 73.8C744 85.8 751.2 100.2 763.2 107.4C772.8 112.2 775.2 118.2 775.2 126.6ZM675 131.4L769.8 131.4A7.8 7.8 0 0 1 777.6 139.2L777.6 139.2A7.8 7.8 0 0 1 769.8 147L675 147A7.8 7.8 0 0 1 667.2 139.2L667.2 139.2A7.8 7.8 0 0 1 675 131.4ZM718.96 102.76L727.36 94.36A1.92 1.92 0 0 1 724.64 91.64L716.24 100.04A1.92 1.92 0 0 1 718.96 102.76ZM728.56 108.76L736.96 100.36A1.92 1.92 0 0 1 734.24 97.64L725.84 106.04A1.92 1.92 0 0 1 728.56 108.76ZM738.05 113.66L746.45 106.46A1.92 1.92 0 0 1 743.95 103.54L735.55 110.74A1.92 1.92 0 0 1 738.05 113.66Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Sponsor my run",
+        "color": "text",
+        "box": {
+          "x": 180,
+          "y": 1530,
+          "width": 1080,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Charity run",
+        "color": "frame",
+        "box": {
+          "x": 240,
+          "y": 185,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

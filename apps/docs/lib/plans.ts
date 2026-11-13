@@ -6,6 +6,7 @@ import { and, eq, like, or } from "drizzle-orm";
 import { cache } from "react";
 import { holdsPlanRole } from "./permissions";
 import { type Plan, planForProductId } from "./pricing";
+import { SCAN_HISTORY_DAYS } from "./scan-history";
 import { getMyActiveSubscription } from "./subscription";
 
 /**
@@ -41,9 +42,17 @@ export interface PlanLimits {
   storageBytes: number;
   /** Largest single upload, in bytes */
   maxFileBytes: number;
-  /** How far back scan analytics can be queried */
+  /**
+   * How far back scan analytics can be queried (lib/scan-history.ts). Only
+   * a read limit: scans are kept as long as their code exists.
+   */
   analyticsRetentionDays: number;
-  /** Raw scans older than this may be rolled up into daily counts */
+  /**
+   * Planned, not built: raw scans older than this may one day be rolled up
+   * into daily counts. Nothing reads it today, and nothing deletes or rolls
+   * up scans by age or plan, so it isn't advertised. It never exceeds a
+   * higher plan's, and covers the whole window of a plan with a finite one.
+   */
   rawScanRetentionDays: number;
   customDomains: number;
   /** Choose a code's back-half (qrdx.dev/q/spring-menu) instead of a generated one */
@@ -138,8 +147,8 @@ export const PLAN_LIMITS: Record<Plan, PlanLimits> = {
     customCss: false,
     storageBytes: 50 * MB,
     maxFileBytes: 10 * MB,
-    analyticsRetentionDays: 90,
-    rawScanRetentionDays: 90,
+    analyticsRetentionDays: SCAN_HISTORY_DAYS.free,
+    rawScanRetentionDays: 365,
     customDomains: 0,
     customSlugs: false,
     teams: false,
@@ -179,8 +188,9 @@ export const PLAN_LIMITS: Record<Plan, PlanLimits> = {
     customCss: false,
     storageBytes: 5 * GB,
     maxFileBytes: 100 * MB,
-    analyticsRetentionDays: 3 * 365,
-    rawScanRetentionDays: 3 * 365,
+    analyticsRetentionDays: SCAN_HISTORY_DAYS.pro,
+    // Same planned threshold as Business: both keep the whole history.
+    rawScanRetentionDays: 395,
     customDomains: 5,
     customSlugs: true,
     teams: true,
@@ -221,7 +231,7 @@ export const PLAN_LIMITS: Record<Plan, PlanLimits> = {
     customCss: true,
     storageBytes: 50 * GB,
     maxFileBytes: 250 * MB,
-    analyticsRetentionDays: UNLIMITED,
+    analyticsRetentionDays: SCAN_HISTORY_DAYS.business,
     // Planned: ~13 months raw, then daily rollups. Not built, so not advertised.
     rawScanRetentionDays: 395,
     customDomains: 25,

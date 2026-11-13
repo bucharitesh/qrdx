@@ -110,7 +110,10 @@ function zbar(file: string): boolean {
   const run = spawnSync("zbarimg", ["--quiet", "--raw", file], {
     encoding: "utf8",
   });
-  return run.status === 0 && run.stdout.split("\n").includes(PAYLOAD);
+  // One decoded value per line; a pass needs a line that is exactly PAYLOAD.
+  return (
+    run.status === 0 && run.stdout.split("\n").some((line) => line === PAYLOAD)
+  );
 }
 
 const passes = (a: Attempt) =>

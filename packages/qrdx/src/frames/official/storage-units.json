@@ -1,0 +1,79 @@
+{
+  "id": "storage-units",
+  "name": "Storage units",
+  "description": "A wide card: the code on one side, a padlock and the label on the other.",
+  "category": "use-case",
+  "collection": "real-estate",
+  "contentTypes": ["url"],
+  "tags": ["real estate", "property", "storage"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 2000,
+      "height": 1040
+    },
+    "qr": {
+      "x": 120,
+      "y": 120,
+      "size": 800,
+      "padding": 64,
+      "radius": 19.2
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 2000,
+        "height": 1040,
+        "radius": 72,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.9
+        }
+      },
+      {
+        "type": "path",
+        "d": "M1073.2 250L1073.2 221.02L1074.1 212.07L1076.76 203.29L1081.09 195.2L1086.91 188.11L1094 182.29L1102.09 177.96L1110.87 175.3L1120 174.4L1129.13 175.3L1137.91 177.96L1146 182.29L1153.09 188.11L1158.91 195.2L1163.24 203.29L1165.9 212.07L1166.76 220.32L1166.8 221.2L1166.8 250L1148.8 250L1148.8 221.2L1148.84 222.08L1148.25 215.58L1146.61 210.18L1143.95 205.2L1140.36 200.84L1136 197.25L1131.02 194.59L1125.62 192.95L1120 192.4L1114.38 192.95L1108.98 194.59L1104 197.25L1099.64 200.84L1096.05 205.2L1093.39 210.18L1091.75 215.58L1091.2 221.38L1091.2 250ZM1073.2 242.8L1166.8 242.8A18 18 0 0 1 1184.8 260.8L1184.8 311.2A18 18 0 0 1 1166.8 329.2L1073.2 329.2A18 18 0 0 1 1055.2 311.2L1055.2 260.8A18 18 0 0 1 1073.2 242.8ZM1107.4 307.6L1132.6 307.6L1128.1 278.8A12.6 12.6 0 1 0 1111.9 278.8Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Rent a storage unit",
+        "color": "frame",
+        "box": {
+          "x": 1030,
+          "y": 400,
+          "width": 860,
+          "height": 190
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Sizes and prices",
+        "color": "frame",
+        "box": {
+          "x": 1030,
+          "y": 610,
+          "width": 860,
+          "height": 100
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

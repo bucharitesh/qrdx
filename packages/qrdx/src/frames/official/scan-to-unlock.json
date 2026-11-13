@@ -1,0 +1,107 @@
+{
+  "id": "scan-to-unlock",
+  "name": "Unlock",
+  "description": "A light card with a padlock and a solid label band.",
+  "category": "use-case",
+  "collection": "call-to-action",
+  "contentTypes": [],
+  "tags": ["call to action", "members", "exclusive"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1770
+    },
+    "qr": {
+      "x": 120,
+      "y": 390,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "frame",
+        "hole": {
+          "x": 20,
+          "y": 20,
+          "width": 1200,
+          "height": 1730,
+          "radius": 38
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 250,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 190,
+        "width": 1240,
+        "height": 60,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M583.6 1572L583.6 1549.46L584.3 1542.5L586.37 1535.67L589.73 1529.38L594.26 1523.86L599.78 1519.33L606.07 1515.97L612.9 1513.9L620 1513.2L627.1 1513.9L633.93 1515.97L640.22 1519.33L645.74 1523.86L650.27 1529.38L653.63 1535.67L655.7 1542.5L656.37 1548.91L656.4 1549.6L656.4 1572L642.4 1572L642.4 1549.6L642.43 1550.29L641.97 1545.23L640.69 1541.03L638.62 1537.16L635.84 1533.76L632.44 1530.98L628.57 1528.91L624.37 1527.63L620 1527.2L615.63 1527.63L611.43 1528.91L607.56 1530.98L604.16 1533.76L601.38 1537.16L599.31 1541.03L598.03 1545.23L597.6 1549.74L597.6 1572ZM583.6 1566.4L656.4 1566.4A14 14 0 0 1 670.4 1580.4L670.4 1619.6A14 14 0 0 1 656.4 1633.6L583.6 1633.6A14 14 0 0 1 569.6 1619.6L569.6 1580.4A14 14 0 0 1 583.6 1566.4ZM610.2 1616.8L629.8 1616.8L626.3 1594.4A9.8 9.8 0 1 0 613.7 1594.4Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan to unlock",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 30,
+          "width": 1040,
+          "height": 190
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Members only",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 1650,
+          "width": 960,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

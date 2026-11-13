@@ -14,6 +14,13 @@ Release notes for earlier versions are at [qrdx.dev/changelog](https://qrdx.dev/
 - `h(type, props, ...children)` writes a custom template without JSX. A template `wrapper` gets React elements in the React components and the core's nodes elsewhere (`TemplateNode`).
 - Types: `QRSVGOptions` (props plus root `<svg>` attributes) and `QRStyle` (the same type as React's `CSSProperties`, from `csstype`) are new. `QRPropsSVG` and `QRPropsCanvas` are unchanged and still exported from `qrdx` and `qrdx/types`.
 
+### Frame library: industries and everyday uses
+
+- **303 more official frames** for the places people print codes: more calls to action (FAQ, translations, large print, waitlists, checklists, transcripts), restaurants and cafes, shops and packaging, clinics and schools, and business (portfolios, reports, visitor sign-in, quotes, insurance claims, staff rotas and more). Each has its own purpose, label and look, and decodes at phone distances, scores Great and reads with zbar, like every official frame.
+- **Five new collections:** `beauty-wellness`, `real-estate`, `automotive` ("Cars & parking"), `sports-fitness` and `nonprofit` ("Nonprofits & community"). `OfficialFrameCollection` and `OFFICIAL_FRAME_COLLECTIONS` include them, so code with a case or a `Record` for every collection needs the new ids.
+- The property frames and `sign-rider` move from `places` to `real-estate`, and the gym frames from `health-learning` to `sports-fitness`. Their ids, names and specs are unchanged.
+- New shapes: yard signs with a rider, signs on posts, sidewalk A-frame boards, shelf talkers, clipboards, team shirts, vinyl banners with eyelets, bone-shaped pet tags, collection jars, EV chargers, folded-corner and stacked cards, a cloud bubble and a big side arrow, plus about a hundred new drawings (food, shop goods, sports gear, cars, salon tools, community symbols).
+
 ## 0.0.50
 
 ### PNG in Node
