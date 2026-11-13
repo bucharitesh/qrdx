@@ -5,6 +5,7 @@ import {
   MCP_HOST,
 } from "@repo/config";
 import { config, withAnalyzer } from "@repo/next-config";
+import { docsZoneRewrites } from "@repo/next-config/docs-zone";
 import { createMDX } from "fumadocs-mdx/next";
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
@@ -14,6 +15,7 @@ import {
   docsEnglishRewrites,
   docsMarkdownAcceptRewrites,
   docsMarkdownRewrites,
+  translatedDocsSegments,
 } from "@/lib/i18n/docs";
 import { englishRedirects, englishRewrites } from "@/lib/i18n/routing";
 import {
@@ -59,6 +61,23 @@ const PLATFORM_HOSTS = [
 
 /** An Accept header that lists text/markdown (rewrites to the Markdown versions). */
 const MARKDOWN_ACCEPT = "(?:.*[,\\s])?text/markdown(?:[;,\\s].*)?";
+
+/** What makes a request one for Markdown: the header, on QRdx's own hosts. */
+const MARKDOWN_REQUEST = {
+  has: [
+    { type: "header" as const, key: "accept", value: MARKDOWN_ACCEPT },
+    { type: "host" as const, value: `(?:${PLATFORM_HOSTS})` },
+  ],
+  missing: [{ type: "host" as const, value: "(?:api|mcp)\\.qrdx\\.dev" }],
+};
+
+// The docs site (apps/docs-site) at DOCS_ZONE_URL serves the docs: their
+// URLs are proxied there, ahead of every rule below
+// (@repo/next-config/docs-zone). Unset, this app serves its own copy.
+const docsZone = docsZoneRewrites(env.DOCS_ZONE_URL, {
+  translatedSegments: translatedDocsSegments(),
+  markdown: MARKDOWN_REQUEST,
+});
 
 /** Headers that put the app policy on prerendered pages (nonce routes: proxy.ts). */
 const cspHeaders = cspEnabled
@@ -321,6 +340,9 @@ let nextConfig: NextConfig = {
       // must win over the /mcp marketing page, hence beforeFiles.
       beforeFiles: [
         ...base.beforeFiles,
+        // The docs site, when DOCS_ZONE_URL is set (above): first, so the
+        // docs' own rules below never see those URLs.
+        ...docsZone,
         // Community profiles live at /community/@handle; a folder named
         // @handle would be a parallel route slot, so they render from
         // app/(app)/(home)/community/u/[handle].
@@ -357,16 +379,7 @@ let nextConfig: NextConfig = {
           { source: "/docs/:path+", destination: "/llms.mdx/:path+" },
           // Translated docs pages (/es/docs/...): app/docs-md.
           ...docsMarkdownAcceptRewrites(),
-        ].map((rule) => ({
-          ...rule,
-          has: [
-            { type: "header" as const, key: "accept", value: MARKDOWN_ACCEPT },
-            { type: "host" as const, value: `(?:${PLATFORM_HOSTS})` },
-          ],
-          missing: [
-            { type: "host" as const, value: "(?:api|mcp)\\.qrdx\\.dev" },
-          ],
-        })),
+        ].map((rule) => ({ ...rule, ...MARKDOWN_REQUEST })),
         // Translated pages live in app/[lang]; English is [lang]=en behind
         // its unprefixed URL (lib/i18n/routing.ts). After the Markdown
         // rewrites, which answer agents for / and /pricing first.

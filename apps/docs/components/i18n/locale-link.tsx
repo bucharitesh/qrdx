@@ -1,8 +1,10 @@
 "use client";
 
+import { isDocsPagePath } from "@repo/next-config/docs-zone";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { type ComponentProps, useMemo } from "react";
+import { translatedDocsSegments } from "@/lib/i18n/docs";
 import { useLocalizeHref } from "@/lib/i18n/use-localize-href";
 
 // Internal links that keep the visitor's language. Everything reachable from
@@ -14,16 +16,44 @@ import { useLocalizeHref } from "@/lib/i18n/use-localize-href";
 
 export { useLocalizeHref } from "@/lib/i18n/use-localize-href";
 
+const DOCS_SEGMENTS = translatedDocsSegments();
+
+type LinkProps = ComponentProps<typeof Link>;
+
+/** The props a plain <a> takes: next/link's own ones left out. */
+function anchorProps({
+  as: _as,
+  replace: _replace,
+  scroll: _scroll,
+  shallow: _shallow,
+  passHref: _passHref,
+  prefetch: _prefetch,
+  locale: _locale,
+  legacyBehavior: _legacyBehavior,
+  onNavigate: _onNavigate,
+  transitionTypes: _transitionTypes,
+  ...props
+}: Omit<LinkProps, "href">) {
+  return props;
+}
+
 /**
  * next/link that keeps the visitor's language: on /es pages, a link to
  * /pricing goes to /es/pricing. Pages that aren't translated keep their
  * English URL (lib/i18n/paths.ts).
+ *
+ * Docs pages get a plain <a>: the docs are moving to an app of their own
+ * behind the same URLs (the docs zone, @repo/next-config/docs-zone), and a
+ * link from one app into the other must load the page in full. Until the
+ * move that only skips a client-side navigation.
  */
-export function LocaleLink({ href, ...props }: ComponentProps<typeof Link>) {
+export function LocaleLink({ href, ...props }: LinkProps) {
   const localize = useLocalizeHref();
-  return (
-    <Link href={typeof href === "string" ? localize(href) : href} {...props} />
-  );
+  const target = typeof href === "string" ? localize(href) : href;
+  if (typeof target === "string" && isDocsPagePath(target, DOCS_SEGMENTS)) {
+    return <a href={target} {...anchorProps(props)} />;
+  }
+  return <Link href={target} {...props} />;
 }
 
 type Router = ReturnType<typeof useRouter>;

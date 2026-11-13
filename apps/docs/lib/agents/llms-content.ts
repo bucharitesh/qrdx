@@ -3,6 +3,7 @@ import "server-only";
 import { getCatalogBySurface } from "@repo/integrations/src/catalog";
 import type { PricingOptions } from "@/components/sections/pricing/plan-content";
 import { blogSource, compareSource, legalSource } from "@/lib/content-source";
+import { docsZoneManifest } from "@/lib/docs-zone-manifest";
 import {
   isFeatureAvailable,
   isPathAvailable,
@@ -53,9 +54,12 @@ function legalPages() {
 
 /** The /llms.txt body for this deployment. */
 export async function llmsTxt(): Promise<string> {
-  const [libraryVersion, cliVersion] = await Promise.all([
+  const [libraryVersion, cliVersion, docsZone] = await Promise.all([
     getPublishedVersion("qrdx"),
     getPublishedVersion("@qrdx/cli"),
+    // The docs site's sections when DOCS_ZONE_URL is set (it serves the
+    // docs then); else this app's own copy of the docs.
+    docsZoneManifest(),
   ]);
 
   // Third-party integrations this deployment offers; AI assistants,
@@ -89,10 +93,12 @@ export async function llmsTxt(): Promise<string> {
     offered: pricingOptions(),
     showsPath: isPathAvailable,
     limits: PLAN_LIMITS,
-    docs: docsSections().map((section) => ({
-      title: section.title,
-      pages: section.pages.map(pageLink),
-    })),
+    docs:
+      docsZone?.sections ??
+      docsSections().map((section) => ({
+        title: section.title,
+        pages: section.pages.map(pageLink),
+      })),
     blog,
     compare: compareSource.getPages().map(pageLink),
     legal: legalPages().map(pageLink),
