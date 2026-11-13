@@ -1,0 +1,89 @@
+{
+  "id": "wifi-waiting-room",
+  "name": "Waiting room Wi-Fi",
+  "description": "A light card with a Wi-Fi symbol and a pill-shaped button under the code.",
+  "category": "use-case",
+  "collection": "places",
+  "contentTypes": ["wifi"],
+  "tags": ["wifi", "waiting room"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1760
+    },
+    "qr": {
+      "x": 120,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 64,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.9
+        }
+      },
+      {
+        "type": "icon",
+        "icon": "wifi",
+        "x": 555,
+        "y": 31,
+        "size": 130,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 170,
+        "y": 1520,
+        "width": 900,
+        "height": 180,
+        "radius": 90,
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Wi-Fi while you wait",
+        "color": "text",
+        "box": {
+          "x": 230,
+          "y": 1520,
+          "width": 780,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan to connect",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 180,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

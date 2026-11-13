@@ -1,0 +1,120 @@
+{
+  "id": "muertos-papel-picado",
+  "name": "Papel picado",
+  "description": "A light card with papel picado banners and a solid label band, in magenta and marigold.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "day-of-the-dead",
+  "contentTypes": [],
+  "tags": [
+    "day of the dead",
+    "dia de muertos",
+    "mexico",
+    "november",
+    "papel picado"
+  ],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1770
+    },
+    "qr": {
+      "x": 120,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#9d174d",
+      "text": "#ffffff",
+      "accent": "#f59e0b"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "frame",
+        "hole": {
+          "x": 20,
+          "y": 20,
+          "width": 1200,
+          "height": 1730,
+          "radius": 38
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 250,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 60,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M558.4 55.8L594.8 55.8L594.8 128.6L588.73 137L582.67 128.6L576.6 137L570.53 128.6L564.47 137L558.4 128.6ZM569.6 78.2A7 7 0 1 0 583.6 78.2A7 7 0 1 0 569.6 78.2ZM571 106.2L575.2 100.6L571 95L566.8 100.6ZM582.2 106.2L586.4 100.6L582.2 95L578 100.6ZM601.8 60L638.2 60L638.2 132.8L632.13 141.2L626.07 132.8L620 141.2L613.93 132.8L607.87 141.2L601.8 132.8ZM613 82.4A7 7 0 1 0 627 82.4A7 7 0 1 0 613 82.4ZM614.4 110.4L618.6 104.8L614.4 99.2L610.2 104.8ZM625.6 110.4L629.8 104.8L625.6 99.2L621.4 104.8ZM645.2 55.8L681.6 55.8L681.6 128.6L675.53 137L669.47 128.6L663.4 137L657.33 128.6L651.27 137L645.2 128.6ZM656.4 78.2A7 7 0 1 0 670.4 78.2A7 7 0 1 0 656.4 78.2ZM657.8 106.2L662 100.6L657.8 95L653.6 100.6ZM669 106.2L673.2 100.6L669 95L664.8 100.6Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M553.27 49.84L559.24 51.43L565.41 52.84L571.78 54.09L578.34 55.18L585.05 56.09L591.88 56.84L598.82 57.43L605.84 57.85L612.91 58.1L620 58.18L627.09 58.1L634.16 57.85L641.18 57.43L648.12 56.84L654.95 56.09L661.66 55.18L668.22 54.09L674.59 52.84L680.76 51.43L686.73 49.84L687.67 53.36L681.64 54.96L675.35 56.4L668.86 57.68L662.2 58.78L655.4 59.71L648.47 60.47L641.44 61.06L634.33 61.48L627.18 61.74L620 61.82L612.82 61.74L605.67 61.48L598.56 61.06L591.53 60.47L584.6 59.71L577.8 58.78L571.14 57.68L564.65 56.4L558.36 54.96L552.33 53.36Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for the program",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1550,
+          "width": 1040,
+          "height": 190
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Día de Muertos",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 180,
+          "width": 960,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

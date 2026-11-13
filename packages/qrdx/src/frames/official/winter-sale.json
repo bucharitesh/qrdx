@@ -1,0 +1,120 @@
+{
+  "id": "winter-sale",
+  "name": "Winter sale bands",
+  "description": "Bands over and under the code: the note on top, the label below, in red and snow.",
+  "category": "seasonal",
+  "collection": "seasons",
+  "occasion": "winter",
+  "contentTypes": [],
+  "tags": ["winter", "snow", "sale"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1700
+    },
+    "qr": {
+      "x": 120,
+      "y": 350,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#7f1d1d",
+      "text": "#ffffff",
+      "accent": "#e2e8f0"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1700,
+        "radius": 56,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1700,
+        "radius": 56,
+        "fill": "frame",
+        "hole": {
+          "x": 20,
+          "y": 0,
+          "width": 1200,
+          "height": 1700
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 230,
+        "radius": 56,
+        "fill": "accent"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 174,
+        "width": 1240,
+        "height": 56,
+        "fill": "accent"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1470,
+        "width": 1240,
+        "height": 230,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1470,
+        "width": 1240,
+        "height": 56,
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for the winter sale",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1500,
+          "width": 1040,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Winter sale",
+        "color": "frame",
+        "box": {
+          "x": 100,
+          "y": 50,
+          "width": 1040,
+          "height": 130
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

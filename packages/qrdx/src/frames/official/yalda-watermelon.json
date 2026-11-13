@@ -1,0 +1,72 @@
+{
+  "id": "yalda-watermelon",
+  "name": "Yalda watermelon",
+  "description": "An arched card, like a window, with a slice of watermelon, in pomegranate red and amber.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "yalda",
+  "contentTypes": [],
+  "tags": ["yalda night", "shab-e yalda", "winter solstice", "watermelon"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1880
+    },
+    "qr": {
+      "x": 160,
+      "y": 470,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#5b0e1e",
+      "text": "#ffffff",
+      "accent": "#f2a541"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M0 660A660 660 0 0 1 1320 660L1320 1840Q1320 1880 1280 1880L40 1880Q0 1880 0 1840Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M50 660A610 610 0 0 1 1270 660L1270 1830L50 1830ZM62 660L62 1818L1258 1818L1258 660A598 598 0 0 0 62 660Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.35
+        }
+      },
+      {
+        "type": "path",
+        "d": "M591 219A69 69 0 0 0 729 219Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M604.5 219A55.5 55.5 0 0 0 715.5 219ZM630 231.75C631.16 234.9 633.3 236.97 633.3 238.95A3.3 3.3 0 0 1 626.7 238.95C626.7 236.97 628.85 234.9 630 231.75ZM651 243.75C652.16 246.9 654.3 248.97 654.3 250.95A3.3 3.3 0 0 1 647.7 250.95C647.7 248.97 649.85 246.9 651 243.75ZM672 243.75C673.16 246.9 675.3 248.97 675.3 250.95A3.3 3.3 0 0 1 668.7 250.95C668.7 248.97 670.85 246.9 672 243.75ZM693 231.75C694.16 234.9 696.3 236.97 696.3 238.95A3.3 3.3 0 0 1 689.7 238.95C689.7 236.97 691.85 234.9 693 231.75ZM660 225.75C661.16 228.9 663.3 230.97 663.3 232.95A3.3 3.3 0 0 1 656.7 232.95C656.7 230.97 658.85 228.9 660 225.75Z",
+        "fill": "accent",
+        "fillRule": "evenodd"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Happy Yalda",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1610,
+          "width": 1040,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

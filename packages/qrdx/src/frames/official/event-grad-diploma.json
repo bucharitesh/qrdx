@@ -1,0 +1,126 @@
+{
+  "id": "event-grad-diploma",
+  "name": "Diploma ribbon",
+  "description": "A card with a rolled diploma and a ribbon banner with folded tails across the bottom.",
+  "category": "use-case",
+  "collection": "events",
+  "contentTypes": ["url"],
+  "tags": ["graduation", "events", "ceremony"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1440,
+      "height": 1800
+    },
+    "qr": {
+      "x": 220,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#8a8a8a"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 100,
+        "y": 0,
+        "width": 1240,
+        "height": 1640,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "polygon",
+        "points": [[0, 1580], [170, 1580], [170, 1800], [0, 1800], [70, 1690]],
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.25
+        }
+      },
+      {
+        "type": "polygon",
+        "points": [
+          [1440, 1580],
+          [1270, 1580],
+          [1270, 1800],
+          [1440, 1800],
+          [1370, 1690]
+        ],
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.25
+        }
+      },
+      {
+        "type": "polygon",
+        "points": [[100, 1730], [170, 1800], [170, 1730]],
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.55
+        }
+      },
+      {
+        "type": "polygon",
+        "points": [[1340, 1730], [1270, 1800], [1270, 1730]],
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.55
+        }
+      },
+      {
+        "type": "rect",
+        "x": 100,
+        "y": 1510,
+        "width": 1240,
+        "height": 220,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M678.09 100.61L754.94 81.45A13.2 13.2 -14 0 1 770.94 91.06L770.94 91.06A13.2 13.2 -14 0 1 761.33 107.06L684.48 126.22A13.2 13.2 -14 0 1 668.48 116.61L668.48 116.61A13.2 13.2 -14 0 1 678.09 100.61ZM752.31 95.71A6 6 -14 1 0 763.96 92.8A6 6 -14 1 0 752.31 95.71ZM708.08 91.9A1.2 1.2 -14 0 0 707.2 93.35L713.59 118.97A1.2 1.2 -14 0 0 715.04 119.84L716.21 119.55A1.2 1.2 -14 0 0 717.08 118.1L710.69 92.48A1.2 1.2 -14 0 0 709.24 91.61ZM723.21 88.12A1.2 1.2 -14 0 0 722.34 89.58L728.72 115.19A1.2 1.2 -14 0 0 730.18 116.07L731.34 115.78A1.2 1.2 -14 0 0 732.22 114.32L725.83 88.71A1.2 1.2 -14 0 0 724.38 87.83Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M712.44 89.57L719.43 87.83A2.4 2.4 -14 0 1 722.34 89.58L728.72 115.19A2.4 2.4 -14 0 1 726.98 118.1L719.99 119.84A2.4 2.4 -14 0 1 717.08 118.1L710.69 92.48A2.4 2.4 -14 0 1 712.44 89.57ZM718.25 117.8L722.9 116.64L722.88 146.33L716.49 140.5ZM722.9 116.64L727.56 115.48L739.77 134.7L736.86 142.85Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for the ceremony",
+        "color": "text",
+        "box": {
+          "x": 180,
+          "y": 1530,
+          "width": 1080,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Graduation day",
+        "color": "text",
+        "box": {
+          "x": 240,
+          "y": 185,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

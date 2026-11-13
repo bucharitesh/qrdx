@@ -1,0 +1,114 @@
+{
+  "id": "tet-apricot",
+  "name": "Apricot blossom",
+  "description": "A light card with a plum blossom and a solid label band, in red and apricot yellow.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "lunar-new-year",
+  "contentTypes": [],
+  "tags": ["lunar new year", "tet", "vietnam", "blossom"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1770
+    },
+    "qr": {
+      "x": 120,
+      "y": 390,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#b91c1c",
+      "text": "#ffffff",
+      "accent": "#facc15"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "frame",
+        "hole": {
+          "x": 20,
+          "y": 20,
+          "width": 1200,
+          "height": 1730,
+          "radius": 38
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 250,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 190,
+        "width": 1240,
+        "height": 60,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M592 1538.4A28 28 0 1 1 648 1538.4A28 28 0 1 1 592 1538.4ZM623.96 1561.62A28 28 0 1 1 679.96 1561.62A28 28 0 1 1 623.96 1561.62ZM611.75 1599.18A28 28 0 1 1 667.75 1599.18A28 28 0 1 1 611.75 1599.18ZM572.25 1599.18A28 28 0 1 1 628.25 1599.18A28 28 0 1 1 572.25 1599.18ZM560.04 1561.62A28 28 0 1 1 616.04 1561.62A28 28 0 1 1 560.04 1561.62Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M606 1572A14 14 0 1 1 634 1572A14 14 0 1 1 606 1572Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for our Tet hours",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 30,
+          "width": 1040,
+          "height": 190
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Happy Tet",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 1650,
+          "width": 960,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

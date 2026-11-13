@@ -1,0 +1,99 @@
+{
+  "id": "transit-report",
+  "name": "Report a transit issue",
+  "description": "A speech bubble around the code with a train and the label inside.",
+  "category": "use-case",
+  "collection": "places",
+  "contentTypes": ["url"],
+  "tags": ["transit", "travel", "report", "feedback"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1820
+    },
+    "qr": {
+      "x": 120,
+      "y": 360,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1670,
+        "radius": 90,
+        "fill": "frame"
+      },
+      {
+        "type": "polygon",
+        "points": [[530, 1660], [710, 1660], [620, 1820]],
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 22,
+        "y": 22,
+        "width": 1196,
+        "height": 1626,
+        "radius": 70,
+        "fill": "background"
+      },
+      {
+        "type": "polygon",
+        "points": [[562, 1640], [678, 1640], [620, 1768]],
+        "fill": "background"
+      },
+      {
+        "type": "path",
+        "d": "M587 137.4L587 78C587 56 653 56 653 78L653 137.4ZM602.4 71.4A6.6 6.6 0 0 0 595.8 78L595.8 91.2A6.6 6.6 0 0 0 602.4 97.8L637.6 97.8A6.6 6.6 0 0 0 644.2 91.2L644.2 78A6.6 6.6 0 0 0 637.6 71.4ZM593.6 118.7A5.5 5.5 0 1 0 604.6 118.7A5.5 5.5 0 1 0 593.6 118.7ZM635.4 118.7A5.5 5.5 0 1 0 646.4 118.7A5.5 5.5 0 1 0 635.4 118.7Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M607.02 141.84L593.82 156.14L588.98 151.66L602.18 137.36ZM637.82 137.36L651.02 151.66L646.18 156.14L632.98 141.84ZM594.7 133L645.3 133A3.3 3.3 0 0 1 648.6 136.3L648.6 137.4A3.3 3.3 0 0 1 645.3 140.7L594.7 140.7A3.3 3.3 0 0 1 591.4 137.4L591.4 136.3A3.3 3.3 0 0 1 594.7 133Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Report an issue",
+        "color": "frame",
+        "box": {
+          "x": 100,
+          "y": 1465,
+          "width": 1040,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Help us fix it fast",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 170,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

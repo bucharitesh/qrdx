@@ -1,0 +1,89 @@
+{
+  "id": "harvest-hay",
+  "name": "Hay bale",
+  "description": "A wide card: the code on one side, a round hay bale and the label on the other, in barn red and amber.",
+  "category": "seasonal",
+  "collection": "seasons",
+  "occasion": "harvest",
+  "contentTypes": [],
+  "tags": ["harvest", "farm", "autumn", "pick your own"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 2000,
+      "height": 1040
+    },
+    "qr": {
+      "x": 120,
+      "y": 120,
+      "size": 800,
+      "padding": 64,
+      "radius": 19.2
+    },
+    "colors": {
+      "frame": "#7f1d1d",
+      "text": "#ffffff",
+      "accent": "#f59e0b"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 2000,
+        "height": 1040,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M1055.2 214L1141.6 214A14.4 14.4 0 0 1 1156 228.4L1156 296.8A14.4 14.4 0 0 1 1141.6 311.2L1055.2 311.2A14.4 14.4 0 0 1 1040.8 296.8L1040.8 228.4A14.4 14.4 0 0 1 1055.2 214Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M1107.4 262.6A48.6 48.6 0 1 1 1204.6 262.6A48.6 48.6 0 1 1 1107.4 262.6ZM1121.8 262.6A34.2 34.2 0 1 0 1190.2 262.6A34.2 34.2 0 1 0 1121.8 262.6ZM1136.2 262.6A19.8 19.8 0 1 1 1175.8 262.6A19.8 19.8 0 1 1 1136.2 262.6ZM1148.8 262.6A7.2 7.2 0 1 0 1163.2 262.6A7.2 7.2 0 1 0 1148.8 262.6Z",
+        "fill": "accent",
+        "fillRule": "evenodd"
+      },
+      {
+        "type": "path",
+        "d": "M1069.6 214L1076.8 214L1076.8 311.2L1069.6 311.2ZM1098.4 214L1105.6 214L1105.6 311.2L1098.4 311.2Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Pick your own",
+        "color": "text",
+        "box": {
+          "x": 1030,
+          "y": 400,
+          "width": 860,
+          "height": 190
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan for opening times",
+        "color": "text",
+        "box": {
+          "x": 1030,
+          "y": 610,
+          "width": 860,
+          "height": 100
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

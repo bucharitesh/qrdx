@@ -1,0 +1,124 @@
+{
+  "id": "museum-artist-note",
+  "name": "Artist note",
+  "description": "A thin double border with a framed picture, a small divider and the label.",
+  "category": "use-case",
+  "collection": "places",
+  "contentTypes": ["url"],
+  "tags": ["museum", "culture", "gallery", "art"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1830
+    },
+    "qr": {
+      "x": 160,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1320,
+        "height": 1830,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.93
+        }
+      },
+      {
+        "type": "rect",
+        "x": 30,
+        "y": 30,
+        "width": 1260,
+        "height": 1770,
+        "fill": "frame",
+        "hole": {
+          "x": 40,
+          "y": 40,
+          "width": 1240,
+          "height": 1750
+        }
+      },
+      {
+        "type": "rect",
+        "x": 60,
+        "y": 60,
+        "width": 1200,
+        "height": 1710,
+        "fill": "frame",
+        "hole": {
+          "x": 64,
+          "y": 64,
+          "width": 1192,
+          "height": 1702
+        }
+      },
+      {
+        "type": "path",
+        "d": "M605.4 110.8L714.6 110.8A4.2 4.2 0 0 1 718.8 115L718.8 199A4.2 4.2 0 0 1 714.6 203.2L605.4 203.2A4.2 4.2 0 0 1 601.2 199L601.2 115A4.2 4.2 0 0 1 605.4 110.8ZM615.2 123.4A1.4 1.4 0 0 0 613.8 124.8L613.8 189.2A1.4 1.4 0 0 0 615.2 190.6L704.8 190.6A1.4 1.4 0 0 0 706.2 189.2L706.2 124.8A1.4 1.4 0 0 0 704.8 123.4ZM627.82 110.18L660 88.75L692.18 110.18L689.42 114.22L660 93.65L630.58 114.22ZM655.1 91.2A4.9 4.9 0 1 1 664.9 91.2A4.9 4.9 0 1 1 655.1 91.2Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M619.4 185L646 150L661.4 168.2L675.4 155.6L700.6 185ZM674 140.2A8.4 8.4 0 1 1 690.8 140.2A8.4 8.4 0 1 1 674 140.2Z",
+        "fill": "accent"
+      },
+      {
+        "type": "line",
+        "x1": 470,
+        "y1": 1570,
+        "x2": 850,
+        "y2": 1570,
+        "width": 6,
+        "fill": "frame"
+      },
+      {
+        "type": "polygon",
+        "points": [[660, 1550], [680, 1570], [660, 1590], [640, 1570]],
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "About the artist",
+        "color": "frame",
+        "box": {
+          "x": 180,
+          "y": 1610,
+          "width": 960,
+          "height": 160
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan to read more",
+        "color": "frame",
+        "box": {
+          "x": 180,
+          "y": 225,
+          "width": 960,
+          "height": 100
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

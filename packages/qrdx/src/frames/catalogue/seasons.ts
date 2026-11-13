@@ -2,33 +2,65 @@
 // Do not edit: change the frame files or the generator, then run it again.
 import type { OfficialFrame } from "../official";
 import autumnAcorn from "../official/autumn-acorn.json";
+import autumnApplePicking from "../official/autumn-apple-picking.json";
 import autumnHills from "../official/autumn-hills.json";
 import autumnMaple from "../official/autumn-maple.json";
+import autumnMushroom from "../official/autumn-mushroom.json";
 import autumnOak from "../official/autumn-oak.json";
+import autumnPumpkinPatch from "../official/autumn-pumpkin-patch.json";
 import autumnWheat from "../official/autumn-wheat.json";
+import hanamiArch from "../official/hanami-arch.json";
+import hanamiPicnic from "../official/hanami-picnic.json";
+import hanamiSakura from "../official/hanami-sakura.json";
+import harvestBasket from "../official/harvest-basket.json";
+import harvestCorn from "../official/harvest-corn.json";
+import harvestHay from "../official/harvest-hay.json";
+import harvestMarket from "../official/harvest-market.json";
+import monsoonBoots from "../official/monsoon-boots.json";
+import monsoonChai from "../official/monsoon-chai.json";
+import monsoonCloud from "../official/monsoon-cloud.json";
+import monsoonPaperBoat from "../official/monsoon-paper-boat.json";
+import monsoonUmbrella from "../official/monsoon-umbrella.json";
+import schoolBackpack from "../official/school-backpack.json";
 import schoolBook from "../official/school-book.json";
+import schoolBusRoutes from "../official/school-bus-routes.json";
 import schoolCalendar from "../official/school-calendar.json";
+import schoolLunchMenu from "../official/school-lunch-menu.json";
 import schoolNotebook from "../official/school-notebook.json";
 import schoolPalette from "../official/school-palette.json";
 import schoolPencil from "../official/school-pencil.json";
 import schoolRuler from "../official/school-ruler.json";
+import schoolUniform from "../official/school-uniform.json";
+import schoolWelcomeApple from "../official/school-welcome-apple.json";
 import springBlossom from "../official/spring-blossom.json";
 import springButterfly from "../official/spring-butterfly.json";
+import springCleaning from "../official/spring-cleaning.json";
 import springDaisy from "../official/spring-daisy.json";
+import springShowers from "../official/spring-showers.json";
 import springSprout from "../official/spring-sprout.json";
 import springTulip from "../official/spring-tulip.json";
+import springWateringCan from "../official/spring-watering-can.json";
+import summerCamp from "../official/summer-camp.json";
 import summerIcePop from "../official/summer-ice-pop.json";
 import summerPalm from "../official/summer-palm.json";
 import summerParasol from "../official/summer-parasol.json";
+import summerPool from "../official/summer-pool.json";
+import summerReading from "../official/summer-reading.json";
 import summerShell from "../official/summer-shell.json";
 import summerSunScene from "../official/summer-sun-scene.json";
+import summerSunglasses from "../official/summer-sunglasses.json";
+import summerWatermelon from "../official/summer-watermelon.json";
 import summerWaves from "../official/summer-waves.json";
 import winter from "../official/winter.json";
 import winterCocoa from "../official/winter-cocoa.json";
 import winterCrystal from "../official/winter-crystal.json";
+import winterLiftPass from "../official/winter-lift-pass.json";
 import winterMitten from "../official/winter-mitten.json";
 import winterPeaks from "../official/winter-peaks.json";
+import winterSale from "../official/winter-sale.json";
+import winterSkating from "../official/winter-skating.json";
 import winterSnowSeal from "../official/winter-snow-seal.json";
+import winterSnowman from "../official/winter-snowman.json";
 
 /** The official frames in the "seasons" collection. */
 const frames = [
@@ -60,6 +92,38 @@ const frames = [
   autumnAcorn,
   autumnHills,
   autumnWheat,
+  monsoonUmbrella,
+  monsoonCloud,
+  monsoonPaperBoat,
+  monsoonBoots,
+  monsoonChai,
+  harvestBasket,
+  harvestHay,
+  harvestCorn,
+  harvestMarket,
+  hanamiSakura,
+  hanamiArch,
+  hanamiPicnic,
+  summerSunglasses,
+  summerWatermelon,
+  summerCamp,
+  summerReading,
+  summerPool,
+  winterSnowman,
+  winterSkating,
+  winterLiftPass,
+  winterSale,
+  springWateringCan,
+  springCleaning,
+  springShowers,
+  autumnApplePicking,
+  autumnMushroom,
+  autumnPumpkinPatch,
+  schoolBackpack,
+  schoolBusRoutes,
+  schoolWelcomeApple,
+  schoolLunchMenu,
+  schoolUniform,
 ] as unknown as readonly OfficialFrame[];
 
 export default frames;

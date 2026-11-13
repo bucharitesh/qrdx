@@ -1,0 +1,81 @@
+{
+  "id": "beach-info-sticker",
+  "name": "Beach info sticker",
+  "description": "A die-cut sticker with a thick outline and an offset shadow and a beach umbrella.",
+  "category": "use-case",
+  "collection": "places",
+  "contentTypes": ["url"],
+  "tags": ["beach", "outdoors", "information"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1750
+    },
+    "qr": {
+      "x": 110,
+      "y": 370,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 50,
+        "y": 50,
+        "width": 1270,
+        "height": 1700,
+        "radius": 110,
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1270,
+        "height": 1700,
+        "radius": 110,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 36,
+        "y": 36,
+        "width": 1198,
+        "height": 1628,
+        "radius": 80,
+        "fill": "background"
+      },
+      {
+        "type": "path",
+        "d": "M564.6 143.6A70.4 64 0 0 1 705.4 143.6A11.73 9.6 0 0 0 681.93 143.6A11.73 9.6 0 0 0 658.47 143.6A11.73 9.6 0 0 0 635 143.6A11.73 9.6 0 0 0 611.53 143.6A11.73 9.6 0 0 0 588.07 143.6A11.73 9.6 0 0 0 564.6 143.6ZM635 134L635 134A3.2 3.2 0 0 1 638.2 137.2L638.2 217.2A3.2 3.2 0 0 1 635 220.4L635 220.4A3.2 3.2 0 0 1 631.8 217.2L631.8 137.2A3.2 3.2 0 0 1 635 134ZM657.4 217.2A12.8 12.8 0 0 1 631.8 217.2L638.2 217.2A6.4 6.4 0 0 0 651 217.2Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Beach info",
+        "color": "frame",
+        "box": {
+          "x": 100,
+          "y": 1490,
+          "width": 1070,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

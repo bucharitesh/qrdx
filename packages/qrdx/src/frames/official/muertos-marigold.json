@@ -1,0 +1,87 @@
+{
+  "id": "muertos-marigold",
+  "name": "Cempasúchil",
+  "description": "A solid card with a marigold over the code and the label underneath, in deep purple and marigold.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "day-of-the-dead",
+  "contentTypes": [],
+  "tags": [
+    "day of the dead",
+    "dia de muertos",
+    "mexico",
+    "november",
+    "marigold"
+  ],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#3b0a45",
+      "text": "#ffffff",
+      "accent": "#f28c28"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M692 110L682.46 118.22L689.55 128.63L678.2 134.11L682.35 146L669.98 148.35L670.91 160.91L658.35 159.98L656 172.35L644.11 168.2L638.63 179.55L628.22 172.46L620 182L611.78 172.46L601.37 179.55L595.89 168.2L584 172.35L581.65 159.98L569.09 160.91L570.02 148.35L557.65 146L561.8 134.11L550.45 128.63L557.54 118.22L548 110L557.54 101.78L550.45 91.37L561.8 85.89L557.65 74L570.02 71.65L569.09 59.09L581.65 60.02L584 47.65L595.89 51.8L601.37 40.45L611.78 47.54L620 38L628.22 47.54L638.63 40.45L644.11 51.8L656 47.65L658.35 60.02L670.91 59.09L669.98 71.65L682.35 74L678.2 85.89L689.55 91.37L682.46 101.78ZM605 110A15 15 0 1 1 635 110A15 15 0 1 1 605 110Z",
+        "fill": "accent"
+      },
+      {
+        "type": "path",
+        "d": "M667.76 114.79L657.3 121.39L662.29 132.7L650.1 134.8L650.38 147.16L638.32 144.43L633.85 155.96L623.75 148.82L615.21 157.76L608.61 147.3L597.3 152.29L595.2 140.1L582.84 140.38L585.57 128.32L574.04 123.85L581.18 113.75L572.24 105.21L582.7 98.61L577.71 87.3L589.9 85.2L589.62 72.84L601.68 75.57L606.15 64.04L616.25 71.18L624.79 62.24L631.39 72.7L642.7 67.71L644.8 79.9L657.16 79.62L654.43 91.68L665.96 96.15L658.82 106.25Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Día de Muertos",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan me",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

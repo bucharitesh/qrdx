@@ -8342,8 +8342,12 @@
       },
       "setupGuide": {
         "getSetUp": "सेटअप करें",
+        "launcherLabel": "सेटअप करें: {length, number} में से {done, number} पूरे",
         "doneOfLengthDone": "{length, number} में से {done, number} पूरे",
+        "doneOfLengthShort": "{done, number}/{length, number}",
         "setupTasksDone": "पूरे हुए सेटअप कार्य",
+        "collapse": "छोटा करें",
+        "dismissGuide": "गाइड बंद करें",
         "done": "(हो गया)",
         "create": "बनाएँ",
         "start": "शुरू करें",

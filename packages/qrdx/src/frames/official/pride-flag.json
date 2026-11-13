@@ -1,0 +1,124 @@
+{
+  "id": "pride-flag",
+  "name": "Pride flag",
+  "description": "Flag colors in a band over the code, in black and rainbow.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "pride",
+  "contentTypes": [],
+  "tags": ["pride", "pride month", "lgbtq", "june", "rainbow", "flag"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1760
+    },
+    "qr": {
+      "x": 120,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#e40303"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 24,
+        "y": 24,
+        "width": 1192,
+        "height": 276,
+        "radius": 36,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 24,
+        "y": 24,
+        "width": 1192,
+        "height": 47,
+        "fill": "#e40303"
+      },
+      {
+        "type": "rect",
+        "x": 24,
+        "y": 70,
+        "width": 1192,
+        "height": 47,
+        "fill": "#ff8c00"
+      },
+      {
+        "type": "rect",
+        "x": 24,
+        "y": 116,
+        "width": 1192,
+        "height": 47,
+        "fill": "#ffed00"
+      },
+      {
+        "type": "rect",
+        "x": 24,
+        "y": 162,
+        "width": 1192,
+        "height": 47,
+        "fill": "#008026"
+      },
+      {
+        "type": "rect",
+        "x": 24,
+        "y": 208,
+        "width": 1192,
+        "height": 47,
+        "fill": "#004dff"
+      },
+      {
+        "type": "rect",
+        "x": 24,
+        "y": 254,
+        "width": 1192,
+        "height": 46,
+        "fill": "#750787"
+      },
+      {
+        "type": "path",
+        "d": "M24 24L60 24A36 36 0 0 0 24 60Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M1216 24L1180 24A36 36 0 0 1 1216 60Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Happy Pride",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1530,
+          "width": 1040,
+          "height": 180
+        }
+      }
+    ]
+  }
+}

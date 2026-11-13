@@ -1,0 +1,83 @@
+{
+  "id": "environment-day",
+  "name": "Environment Day sticker",
+  "description": "A die-cut sticker with a thick outline and an offset shadow and a leaf, in green and lime.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "environment-day",
+  "contentTypes": [],
+  "tags": ["world environment day", "environment", "june 5", "leaf", "sticker"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1750
+    },
+    "qr": {
+      "x": 110,
+      "y": 370,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#166534",
+      "text": "#ffffff",
+      "accent": "#a3e635"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 50,
+        "y": 50,
+        "width": 1270,
+        "height": 1700,
+        "radius": 110,
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1270,
+        "height": 1700,
+        "radius": 110,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 36,
+        "y": 36,
+        "width": 1198,
+        "height": 1628,
+        "radius": 80,
+        "fill": "background"
+      },
+      {
+        "type": "path",
+        "d": "M577.4 210.8C645.79 230.01 699.07 175.29 695.8 89.2C623.41 101.62 570.13 156.34 577.4 210.8ZM579.87 212.83L584.05 207.75L588.26 202.72L592.52 197.75L596.82 192.82L601.18 187.94L605.58 183.11L610.03 178.33L614.53 173.59L619.07 168.9L623.66 164.26L628.3 159.67L632.99 155.13L637.73 150.63L642.51 146.18L647.34 141.78L652.22 137.42L657.15 133.12L662.12 128.86L667.15 124.65L672.23 120.47A3.2 3.2 0 0 1 668.17 115.53L663.06 119.72L657.99 123.97L652.96 128.28L647.99 132.63L643.06 137.02L638.18 141.47L633.34 145.96L628.56 150.51L623.82 155.1L619.14 159.74L614.5 164.42L609.91 169.16L605.36 173.94L600.87 178.78L596.42 183.66L592.03 188.59L587.68 193.56L583.37 198.59L579.12 203.66L574.93 208.77A3.2 3.2 0 0 1 579.87 212.83Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "World Environment Day",
+        "color": "frame",
+        "box": {
+          "x": 100,
+          "y": 1490,
+          "width": 1070,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

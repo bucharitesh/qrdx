@@ -1,0 +1,109 @@
+{
+  "id": "purim-mask",
+  "name": "Purim mask",
+  "description": "A light card with a masquerade mask and a solid label band, in purple and yellow.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "purim",
+  "contentTypes": [],
+  "tags": ["purim", "jewish holiday", "costumes", "mask", "costume"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1770
+    },
+    "qr": {
+      "x": 120,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#5b21b6",
+      "text": "#ffffff",
+      "accent": "#facc15"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "frame",
+        "hole": {
+          "x": 20,
+          "y": 20,
+          "width": 1200,
+          "height": 1730,
+          "radius": 38
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 250,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 60,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M561.2 79.6C592 71.2 648 71.2 678.8 79.6C678.8 110.4 662 130 639.6 124.4C628.4 121.6 625.6 110.4 620 110.4C614.4 110.4 611.6 121.6 600.4 124.4C578 130 561.2 110.4 561.2 79.6ZM580.8 96.4A12.6 8.4 0 1 0 606 96.4A12.6 8.4 0 1 0 580.8 96.4ZM634 96.4A12.6 8.4 0 1 0 659.2 96.4A12.6 8.4 0 1 0 634 96.4Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Happy Purim",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1550,
+          "width": 1040,
+          "height": 190
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan me",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 180,
+          "width": 960,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

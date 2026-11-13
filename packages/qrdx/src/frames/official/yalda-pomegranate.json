@@ -1,0 +1,81 @@
+{
+  "id": "yalda-pomegranate",
+  "name": "Yalda pomegranate",
+  "description": "A solid card with a pomegranate over the code and the label underneath, in pomegranate red and amber.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "yalda",
+  "contentTypes": [],
+  "tags": ["yalda night", "shab-e yalda", "winter solstice", "pomegranate"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#5b0e1e",
+      "text": "#ffffff",
+      "accent": "#f2a541"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M569 122A51 51 0 1 1 671 122A51 51 0 1 1 569 122ZM602 77L605 56L612.5 68L620 50L627.5 68L635 56L638 77Z",
+        "fill": "accent"
+      },
+      {
+        "type": "path",
+        "d": "M629 65C640.94 70.36 658.49 62.26 668 47C647.7 38.89 630.15 46.99 629 65ZM593.6 119A5.4 6.9 0 1 1 604.4 119A5.4 6.9 0 1 1 593.6 119ZM608.6 110A5.4 6.9 0 1 1 619.4 110A5.4 6.9 0 1 1 608.6 110ZM599.6 137A5.4 6.9 0 1 1 610.4 137A5.4 6.9 0 1 1 599.6 137ZM617.6 128A5.4 6.9 0 1 1 628.4 128A5.4 6.9 0 1 1 617.6 128Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Shab-e Yalda",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan me",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

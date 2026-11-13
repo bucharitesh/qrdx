@@ -1,0 +1,81 @@
+{
+  "id": "pride-rainbow",
+  "name": "Pride rainbow",
+  "description": "A solid card with a rainbow over the code and the label underneath, in violet and pink.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "pride",
+  "contentTypes": [],
+  "tags": ["pride", "pride month", "lgbtq", "june", "rainbow"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#4c1d95",
+      "text": "#ffffff",
+      "accent": "#f472b6"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M551 155A69 69 0 0 1 689 155L674 155A54 54 0 0 0 566 155Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M572 155A48 48 0 0 1 668 155L653 155A33 33 0 0 0 587 155Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Love is love",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Happy Pride",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}
