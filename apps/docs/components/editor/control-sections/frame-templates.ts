@@ -8,6 +8,7 @@ import {
   type AnyQRFrame,
   BUILT_IN_FRAMES,
   getAllTemplates,
+  getTemplate,
   type TemplateDefinition,
 } from "qrdx";
 import type { QRStyle } from "@/types/theme";
@@ -20,18 +21,24 @@ export const TEMPLATE_PREFIX = "template:";
  * The templates the picker shows: every one but "default", which draws no
  * artwork (no frame is the None tile).
  */
-export const FRAME_TEMPLATES: TemplateDefinition<Record<string, unknown>>[] =
-  getAllTemplates().filter((template) => template.id !== "default");
+export const FRAME_TEMPLATES: TemplateDefinition<Record<string, unknown>>[] = [
+  // Once each: an alias id draws the same definition as its template
+  ...new Map(
+    getAllTemplates()
+      .filter((template) => template.id !== "default")
+      .map((template) => [template.id, template]),
+  ).values(),
+];
 
-const BY_ID = new Map(
-  FRAME_TEMPLATES.map((template) => [template.id, template]),
-);
-
-/** The template a style draws, if it draws one with artwork. */
+/**
+ * The template a style draws, if it draws one with artwork (an alias id
+ * finds its template).
+ */
 export function templateOf(
   style: Partial<QRStyle>,
 ): TemplateDefinition<Record<string, unknown>> | undefined {
-  return style.templateId ? BY_ID.get(style.templateId) : undefined;
+  const template = style.templateId ? getTemplate(style.templateId) : undefined;
+  return template && template.id !== "default" ? template : undefined;
 }
 
 /** `style` without a template. */
