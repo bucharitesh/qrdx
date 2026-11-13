@@ -16,26 +16,21 @@ describe("sample code images", () => {
     vi.unstubAllEnvs();
   });
 
-  it("list no paths in next dev, which would rewrite its prerender manifest", () => {
+  it("list no paths, in builds or next dev: each renders on its first request", () => {
     // next dev rewrites .next/dev/prerender-manifest.json without a lock
     // whenever a route lists paths; parallel image requests corrupted it.
+    // Builds leave them to request time too (lib/static-params.ts).
     vi.stubEnv("NODE_ENV", "development");
     expect(generateStaticParams()).toEqual([]);
     vi.stubEnv("NODE_ENV", "production");
-    expect(generateStaticParams()).toHaveLength(ALL_PAGE_CODES.length);
+    expect(generateStaticParams()).toEqual([]);
   });
 
-  it("render every code on request, as next dev does", async () => {
+  it("render every code on request", async () => {
     // With no static paths, dynamicParams must stay at its default (true)
-    // or next dev would answer 404 for every image.
+    // or every image would answer 404.
     const route = await import("@/app/sample-codes/[file]/route");
     expect("dynamicParams" in route).toBe(false);
-  });
-
-  it("prerender one file per code", () => {
-    expect(generateStaticParams()).toEqual(
-      ALL_PAGE_CODES.map((code) => ({ file: `${code.id}.svg` })),
-    );
   });
 
   it.each(ALL_PAGE_CODES.map((code) => [code.id, code] as const))(

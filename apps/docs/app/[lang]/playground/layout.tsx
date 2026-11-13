@@ -6,7 +6,8 @@ import { EDITOR_CONTENT, EDITOR_CONTENT_RULES } from "@/lib/i18n/content-rules";
 import { PLAYGROUND_NAMESPACES } from "@/lib/i18n/playground";
 
 // /playground in every language (lib/i18n/localized-paths.json), each one
-// prerendered: nothing here reads the request. Shared theme links
+// static: nothing here reads the request (English is prerendered, the other
+// languages are cached after their first request). Shared theme links
 // (/playground/<themeId>) stay unprefixed in app/(app)/playground.
 export default async function PlaygroundLayout({
   children,

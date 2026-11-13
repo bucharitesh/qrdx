@@ -10,7 +10,7 @@ import { PLAYGROUND_NAMESPACES } from "@/lib/i18n/playground";
 // Shared theme links, /playground/<themeId>: one URL for every language, so
 // the editor speaks the language the visitor last picked (the language
 // menu's cookie). These pages render per request anyway (the theme comes
-// from the database); /playground itself is prerendered per language in
+// from the database); /playground itself is static per language in
 // app/[lang]/playground.
 export default async function SharedThemeLayout({
   children,
