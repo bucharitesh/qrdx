@@ -1,9 +1,7 @@
 "use client";
 
-import { Close } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
-import { cn } from "@repo/design-system/lib/utils";
 import { SearchNormal1 } from "iconsax-reactjs";
 import { useTranslations } from "next-intl";
 import {
@@ -27,22 +25,18 @@ import {
   viewerHemisphere,
 } from "@/lib/frames/occasions";
 import { useFrameLibrary } from "@/lib/frames/use-frame-library";
-import { CompactTile, OptionGrid, OptionTile } from "./option-tiles";
-import {
-  offsetBeyond,
-  SidePanel,
-  useInsideSidePanel,
-  useSidePanelSide,
-} from "./side-panel";
+import { OptionGrid, OptionTile } from "./option-tiles";
+import { useInsideSidePanel } from "./side-panel";
 
-// The frame picker: a row of common frames, and "More" for the whole
-// library (the classic frames, shaped codes, QRdx's official frames and the
-// frames you saved), with search, a chip per group and a "Coming up" group
-// of the frames for the holidays and seasons ahead. Official frames load
-// a collection at a time as their tiles scroll into view; until then a tile
-// keeps the frame's shape as a placeholder. The library is over a thousand
-// frames, so the catalog mounts its tiles a page at a time as it scrolls,
-// and search runs on a deferred copy of the query to keep typing smooth.
+// The frame picker: the whole library at once (the classic frames, shaped
+// codes, QRdx's official frames and the frames you saved), with search, an
+// action beside it (the Frame panel's Upload SVG), a chip per group and a
+// "Coming up" group of the frames for the holidays and seasons ahead. It
+// opens on the current choice. Official frames load a collection at a time
+// as their tiles scroll into view; until then a tile keeps the frame's
+// shape as a placeholder. The library is over a thousand frames, so the
+// catalog mounts its tiles a page at a time as it scrolls, and search runs
+// on a deferred copy of the query to keep typing smooth.
 
 export const OFFICIAL_PREFIX = "official:";
 
@@ -110,6 +104,13 @@ function scrollParent(element: Element | null): Element | null {
 
 /** Tiles mounted at first, and added each time the end comes near. */
 const TILE_PAGE = 60;
+
+/**
+ * The picker opens on the current choice: in the whole library when it's
+ * within this many tiles of the top, otherwise in its own group (so the
+ * pages mounted to reach it stay few).
+ */
+const OPEN_WITHIN = TILE_PAGE * 3;
 
 /**
  * Calls `onNear` when it comes within a few rows of the scrolling area's
@@ -227,78 +228,111 @@ interface Section {
   items: { id: string; entry?: OfficialFrameIndexEntry }[];
 }
 
+/**
+ * Where the picker opens to show `value`: the group to filter by (ALL for
+ * the whole library) and how many tiles to mount so its tile is among
+ * them. Null when there's nothing to show: no frame (the library opens at
+ * the top, on what's coming up) or a choice that isn't a tile.
+ */
+export function openingPlace(
+  sections: readonly Pick<Section, "id" | "items">[],
+  value: string,
+): { filter: string; count: number } | null {
+  if (value === "none") return null;
+  const pages = (at: number) =>
+    Math.max(1, Math.ceil((at + 1) / TILE_PAGE)) * TILE_PAGE;
+  let at = 0;
+  for (const section of sections) {
+    const i = section.items.findIndex((item) => item.id === value);
+    if (i >= 0) {
+      at += i;
+      if (at < OPEN_WITHIN) return { filter: ALL, count: pages(at) };
+      break;
+    }
+    at += section.items.length;
+  }
+  // Far down the library: open its own group (not "Coming up", which
+  // only repeats frames from the collections)
+  const own = sections.find(
+    (section) =>
+      section.id !== COMING_UP &&
+      section.items.some((item) => item.id === value),
+  );
+  if (!own) return null;
+  const i = own.items.findIndex((item) => item.id === value);
+  return { filter: own.id, count: pages(i) };
+}
+
 export function FramePicker({
   value,
   choices,
-  featured,
   onPick,
   preview,
   active,
   currentName,
+  action,
 }: {
   /** The current choice: a FrameChoice id or "official:<id>" */
   value: string;
   choices: FrameChoice[];
-  /** Ids shown in the compact row; the current choice always joins them */
-  featured: string[];
   onPick: (id: string, frame: AnyQRFrame) => void;
   /** The preview drawing of a frame (fills a tile's white well) */
   preview: (frame: AnyQRFrame, id: string) => React.ReactNode;
   /** The picker is on screen: load what its tiles need */
   active: boolean;
-  /** Name shown over the row for the current choice */
+  /** Name shown over the library for the current choice */
   currentName: string;
+  /** Shown beside the search field (the Frame panel's Upload SVG) */
+  action?: React.ReactNode;
 }) {
   const t = useTranslations("editor.controlSections.framePicker");
   const inPanel = useInsideSidePanel();
-  const side = useSidePanelSide();
-  const [open, setOpen] = React.useState(false);
-  const [sideOffset, setSideOffset] = React.useState(28);
   const [query, setQuery] = React.useState("");
   const [filter, setFilter] = React.useState(ALL);
-  const [upcoming, setUpcoming] = React.useState<string[]>([]);
+  // Null until worked out in the browser (below)
+  const [upcoming, setUpcoming] = React.useState<string[] | null>(null);
   const browserId = React.useId();
-  const moreRef = React.useRef<HTMLButtonElement>(null);
   const searchRef = React.useRef<HTMLInputElement>(null);
-  const rootRef = React.useRef<HTMLDivElement>(null);
+  const chipsRef = React.useRef<HTMLDivElement>(null);
   const [loadingId, setLoadingId] = React.useState<string | null>(null);
+  const [indexFailed, setIndexFailed] = React.useState(false);
 
   // Re-render as the library loads; the index once the picker is on screen
-  useFrameLibrary({ withIndex: active || open });
+  useFrameLibrary({ withIndex: active });
   const index = peekFrameIndex();
+  React.useEffect(() => {
+    if (!active) return;
+    let live = true;
+    loadFrameIndex().catch(() => {
+      if (live) setIndexFailed(true);
+    });
+    return () => {
+      live = false;
+    };
+  }, [active]);
 
   const byId = React.useMemo(
     () => new Map(choices.map((choice) => [choice.id, choice])),
     [choices],
   );
 
-  // The compact row's official tiles need their collections
+  // The current choice's official frame, for its tile
   React.useEffect(() => {
     if (!active) return;
-    for (const id of [...featured, value]) {
-      const official = officialId(id);
-      if (official) loadOfficialFrame(official).catch(() => {});
-    }
-  }, [active, featured, value]);
+    const official = officialId(value);
+    if (official) loadOfficialFrame(official).catch(() => {});
+  }, [active, value]);
 
   // What's coming up depends on today and where the viewer is: worked out
   // in the browser, after the static page has hydrated.
   React.useEffect(() => {
-    if (!open) return;
+    if (!active) return;
     setUpcoming(
       upcomingOccasions(new Date(), viewerHemisphere()).map(
         (occasion) => occasion.id,
       ),
     );
-  }, [open]);
-
-  const openCatalog = (next: boolean) => {
-    const tile = moreRef.current?.getBoundingClientRect();
-    const row = rootRef.current?.getBoundingClientRect();
-    if (next && tile && row) setSideOffset(offsetBeyond(side, tile, row, 28));
-    if (next) loadFrameIndex().catch(() => {});
-    setOpen(next);
-  };
+  }, [active]);
 
   const pick = (id: string) => {
     const choice = byId.get(id);
@@ -346,15 +380,6 @@ export function FramePicker({
     return <Placeholder ratio={0.72} />;
   };
 
-  // The row: featured, with the current choice swapped in
-  const known = (id: string) =>
-    byId.has(id) ||
-    Boolean(officialId(id) && peekIndexEntry(officialId(id) ?? ""));
-  const row =
-    featured.includes(value) || !known(value)
-      ? featured
-      : [...featured.slice(0, -1), value];
-
   const officialCount = index?.length ?? 0;
   // "None" is a choice, not a frame; shaped codes are tiles, not frames
   const frameTotal =
@@ -384,7 +409,7 @@ export function FramePicker({
       list.push({ id: `${OFFICIAL_PREFIX}${entry.id}`, entry });
       byCollection.set(entry.collection, list);
     }
-    const order = new Map(upcoming.map((id, i) => [id, i]));
+    const order = new Map((upcoming ?? []).map((id, i) => [id, i]));
     const comingUp = entries
       .filter((entry) => entry.occasion && order.has(entry.occasion))
       .sort(
@@ -442,7 +467,9 @@ export function FramePicker({
 
   // Mount the first tiles only, and more as the list scrolls (a new search
   // or group starts again from the top)
-  const view = `${open}|${filter}|${terms.join(" ")}`;
+  const viewOf = (group: string, searched: string[]) =>
+    `${group}|${searched.join(" ")}`;
+  const view = viewOf(filter, terms);
   const [mounted, setMounted] = React.useState({ view, count: TILE_PAGE });
   const tileLimit = mounted.view === view ? mounted.count : TILE_PAGE;
   const showMoreTiles = () =>
@@ -456,19 +483,62 @@ export function FramePicker({
     })
     .filter((section) => section.items.length > 0);
 
+  // Opening the panel puts search under the cursor (not on touch screens,
+  // where focus would pop the keyboard)
   React.useEffect(() => {
-    if (!(open && inPanel)) return;
+    if (!(active && inPanel)) return;
     if (window.matchMedia("(pointer: fine)").matches) {
       searchRef.current?.focus({ preventScroll: true });
     }
-  }, [open, inPanel]);
-
-  const closeInline = () => {
-    setOpen(false);
-    moreRef.current?.focus();
-  };
+  }, [active, inPanel]);
 
   const gridId = `${browserId}-grid`;
+
+  // Open on the current choice, once the groups above it have settled (the
+  // library's index and what's coming up): mount the tiles down to it, or
+  // open its own group when it's far down, then scroll it into view. Only
+  // on opening: a tile picked later is already in view.
+  const settled =
+    active && upcoming !== null && (Boolean(index) || indexFailed);
+  const [placed, setPlaced] = React.useState(false);
+  const scrolled = React.useRef(false);
+  React.useEffect(() => {
+    if (placed || !settled) return;
+    setPlaced(true);
+    // Not if the viewer has already searched or picked a group
+    if (query !== "" || filter !== ALL) return;
+    const place = openingPlace(sections, value);
+    if (!place) return;
+    setFilter(place.filter);
+    setMounted({ view: viewOf(place.filter, []), count: place.count });
+  });
+  React.useEffect(() => {
+    if (!placed || scrolled.current) return;
+    scrolled.current = true;
+    if (value === "none") return;
+    // The group it opened in, among the chips
+    const bar = chipsRef.current;
+    const chip = bar?.querySelector<HTMLElement>('button[aria-pressed="true"]');
+    if (bar && chip && filter !== ALL) {
+      bar.scrollLeft +=
+        chip.getBoundingClientRect().left -
+        bar.getBoundingClientRect().left -
+        16;
+    }
+    const grid = document.getElementById(gridId);
+    const tile = grid?.querySelector<HTMLElement>(
+      'button[aria-pressed="true"]',
+    );
+    if (!(grid && tile)) return;
+    // Scroll the grid only (scrollIntoView would move the page too)
+    const box = grid.getBoundingClientRect();
+    const at = tile.getBoundingClientRect();
+    grid.scrollTop = Math.max(
+      0,
+      grid.scrollTop + at.top - box.top - (box.height - at.height) / 2,
+    );
+  });
+
   const focusGrid = () => {
     const root = document.getElementById(gridId);
     const target =
@@ -476,45 +546,6 @@ export function FramePicker({
       root?.querySelector<HTMLButtonElement>("fieldset button");
     target?.focus();
   };
-
-  const moreTile = (
-    <button
-      aria-controls={inPanel ? browserId : undefined}
-      aria-expanded={open}
-      aria-haspopup={inPanel ? undefined : "dialog"}
-      aria-label={t("moreFrames")}
-      className={cn(
-        "group bg-muted/40 text-muted-foreground hover:text-foreground relative flex aspect-square min-w-0 flex-col items-center justify-center gap-0 rounded-[14px] border p-1 text-center transition-[background-color,border-color,transform] outline-none active:scale-[0.96] hover:border-foreground/20 hover:bg-accent/40 focus-visible:border-foreground/30 focus-visible:ring-ring/40 focus-visible:ring-[3px]",
-        open && "border-foreground/30 bg-accent text-foreground",
-      )}
-      onClick={
-        inPanel
-          ? () => {
-              if (open) closeInline();
-              else openCatalog(true);
-            }
-          : undefined
-      }
-      ref={moreRef}
-      title={
-        officialCount > 0
-          ? t("allTotalFrames", { total: frameTotal })
-          : t("allFrames")
-      }
-      type="button"
-    >
-      <span className="text-sm font-semibold tabular-nums leading-none">
-        {inPanel && open
-          ? t("less")
-          : officialCount > 0
-            ? `+${total - row.length}`
-            : t("all")}
-      </span>
-      {!(inPanel && open) && (
-        <span className="mt-1 text-[10px] leading-none">{t("more")}</span>
-      )}
-    </button>
-  );
 
   const chips = [
     { id: ALL, label: t("all"), count: total },
@@ -525,14 +556,16 @@ export function FramePicker({
     })),
   ];
 
-  const catalog = (
-    <div className="space-y-2.5" id={inPanel ? browserId : undefined}>
-      <div
-        className={cn(
-          "space-y-2.5",
-          !inPanel && "bg-popover sticky top-0 z-10 -mx-3 px-3 pb-1",
-        )}
-      >
+  return (
+    <div className="space-y-2.5">
+      <div className="flex items-baseline justify-between gap-3 text-xs">
+        <span className="text-muted-foreground font-medium">{t("frame")}</span>
+        <span className="text-foreground min-w-0 truncate font-medium">
+          {currentName}
+        </span>
+      </div>
+
+      <div className="space-y-2.5">
         <div className="flex items-center gap-1.5">
           <div className="relative min-w-0 flex-1">
             <SearchNormal1
@@ -559,22 +592,13 @@ export function FramePicker({
               value={query}
             />
           </div>
-          {inPanel && (
-            <Button
-              aria-label={t("closeFrames")}
-              onClick={closeInline}
-              size="icon-sm"
-              type="button"
-              variant="ghost"
-            >
-              <Close />
-            </Button>
-          )}
+          {action}
         </div>
 
         <div
           aria-label={t("filterFrames")}
           className="no-scrollbar -mx-2.5 flex gap-0.5 overflow-x-auto px-2.5 [mask-image:linear-gradient(to_right,transparent,black_10px,black_calc(100%-16px),transparent)]"
+          ref={chipsRef}
           role="toolbar"
         >
           {chips.map((chip) => (
@@ -604,10 +628,7 @@ export function FramePicker({
 
       {resultCount > 0 ? (
         <div
-          className={cn(
-            "-mx-1 space-y-4 px-1 pt-1 pb-1",
-            inPanel && "max-h-[24rem] overflow-y-auto overscroll-contain",
-          )}
+          className="-mx-1 max-h-[24rem] space-y-4 overflow-y-auto overscroll-contain px-1 pt-1 pb-1"
           id={gridId}
         >
           {mountedSections.map((section) => (
@@ -615,7 +636,7 @@ export function FramePicker({
               {(shown.length > 1 || section.id === COMING_UP) && (
                 <h4 className="text-muted-foreground mb-2 flex items-baseline justify-between text-xs font-medium">
                   <span>{section.label}</span>
-                  {section.id === COMING_UP && upcoming.length > 0 && (
+                  {section.id === COMING_UP && upcoming && (
                     <span className="truncate pl-3 font-normal">
                       {upcoming
                         .slice(0, 3)
@@ -626,12 +647,7 @@ export function FramePicker({
                   )}
                 </h4>
               )}
-              <OptionGrid
-                className={
-                  inPanel ? undefined : "grid-cols-4 @[25rem]:grid-cols-5"
-                }
-                label={t("labelFrames", { label: section.label })}
-              >
+              <OptionGrid label={t("labelFrames", { label: section.label })}>
                 {section.items.map((item) => (
                   <OptionTile
                     hint={loadingId === item.id ? "Loading…" : undefined}
@@ -668,60 +684,6 @@ export function FramePicker({
               {t("showAll")}
             </Button>
           )}
-        </div>
-      )}
-    </div>
-  );
-
-  return (
-    <div ref={rootRef}>
-      <div className="mb-2 flex items-baseline justify-between gap-3 text-xs">
-        <span className="text-muted-foreground font-medium">{t("frame")}</span>
-        <span className="text-foreground min-w-0 truncate font-medium">
-          {currentName}
-        </span>
-      </div>
-
-      <OptionGrid columns={6} label={t("commonFrames")}>
-        {row.map((id) => (
-          <CompactTile
-            key={id}
-            name={nameOf(id)}
-            onSelect={() => pick(id)}
-            selected={value === id}
-          >
-            {tilePreview(id)}
-          </CompactTile>
-        ))}
-        {inPanel ? (
-          moreTile
-        ) : (
-          <SidePanel
-            description={t("everyFrameBuiltInStyles")}
-            initialFocus={searchRef}
-            onOpenChange={openCatalog}
-            open={open}
-            sideOffset={sideOffset}
-            title={t("frame")}
-            trigger={moreTile}
-          >
-            {catalog}
-          </SidePanel>
-        )}
-      </OptionGrid>
-
-      {inPanel && open && (
-        // biome-ignore lint/a11y/noStaticElementInteractions: Escape closes the browser from anywhere inside it.
-        <div
-          className="bg-muted/30 animate-in fade-in-0 slide-in-from-top-1 mt-2 rounded-xl border p-2.5 duration-200 motion-reduce:animate-none"
-          onKeyDown={(event) => {
-            if (event.key === "Escape") {
-              event.stopPropagation();
-              closeInline();
-            }
-          }}
-        >
-          {catalog}
         </div>
       )}
     </div>

@@ -4395,7 +4395,7 @@
         }
       },
       "frameControls": {
-        "importSvg": "SVG 가져오기",
+        "uploadSvg": "SVG 업로드",
         "publishFrame": "프레임 게시",
         "theFrameIsAddedAround": "프레임은 코드 바깥쪽에 추가되므로 다운로드한 이미지는 더 커지고, 코드 자체는 계속 스캔할 수 있어요.",
         "label": "라벨",
@@ -4409,20 +4409,12 @@
         "textSize": "텍스트 크기"
       },
       "framePicker": {
-        "more": "더 보기",
         "showAll": "모두 보기",
         "frame": "프레임",
-        "moreFrames": "프레임 더 보기",
-        "allTotalFrames": "프레임 {total, number}개 모두 보기",
-        "allFrames": "모든 프레임",
         "searchFrames": "프레임 검색",
         "searchTotalFrames": "프레임 {total, number}개 검색",
-        "closeFrames": "프레임 닫기",
         "filterFrames": "프레임 필터",
         "labelFrames": "{label} 프레임",
-        "commonFrames": "자주 쓰는 프레임",
-        "everyFrameBuiltInStyles": "모든 프레임: 클래식 프레임, 모양 코드, QRdx 공식 프레임, 그리고 저장한 프레임이 있어요. 하나를 고르면 바로 적용돼요.",
-        "less": "간략히",
         "all": "전체",
         "noFramesMatchQuery": "\"{query}\"에 맞는 프레임이 없어요.",
         "loadingFrames": "프레임 불러오는 중…",

@@ -4395,7 +4395,7 @@
         }
       },
       "frameControls": {
-        "importSvg": "SVGを読み込む",
+        "uploadSvg": "SVGをアップロード",
         "publishFrame": "フレームを公開",
         "theFrameIsAddedAround": "フレームはコードの周囲に追加されるため、ダウンロードする画像は大きくなりますが、コード自体はスキャンできる状態のままです。",
         "label": "ラベル",
@@ -4409,20 +4409,12 @@
         "textSize": "文字サイズ"
       },
       "framePicker": {
-        "more": "もっと見る",
         "showAll": "すべて表示",
         "frame": "フレーム",
-        "moreFrames": "その他のフレーム",
-        "allTotalFrames": "全{total, number}個のフレーム",
-        "allFrames": "すべてのフレーム",
         "searchFrames": "フレームを検索",
         "searchTotalFrames": "{total, number}個のフレームを検索",
-        "closeFrames": "フレームを閉じる",
         "filterFrames": "フレームを絞り込む",
         "labelFrames": "{label}のフレーム",
-        "commonFrames": "よく使うフレーム",
-        "everyFrameBuiltInStyles": "すべてのフレーム：クラシックフレーム、シェイプ型コード、QRdx公式フレーム、保存したフレームです。選ぶとすぐに適用されます。",
-        "less": "折りたたむ",
         "all": "すべて",
         "noFramesMatchQuery": "「{query}」に一致するフレームはありません。",
         "loadingFrames": "フレームを読み込み中…",

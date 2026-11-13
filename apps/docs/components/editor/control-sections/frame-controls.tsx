@@ -82,14 +82,6 @@ export function frameName(frame: AnyQRFrame | undefined, none: string) {
   return getBuiltInFrame(frame.style)?.name ?? none;
 }
 
-const FEATURED = [
-  NONE,
-  "banner-bottom",
-  "rounded-border",
-  `${OFFICIAL_PREFIX}wifi-card`,
-  `${SHAPE_PREFIX}circle`,
-];
-
 /** Frames saved from the community, for the signed-in picker. */
 function useSavedFrames() {
   const { data: session } = authClient.useSession();
@@ -104,8 +96,9 @@ function useSavedFrames() {
 /**
  * The frame picker on its own: the built-in frames (the classic ones and
  * the templates), the shaped codes, the official library and the frames you
- * saved. One choice at a time: picking a frame, template or shaped code
- * replaces the one before. A built-in frame keeps the text and colors
+ * saved, with Upload SVG beside the search (an SVG of your own becomes a
+ * custom frame). One choice at a time: picking a frame, template or shaped
+ * code replaces the one before. A built-in frame keeps the text and colors
  * chosen so far; a ready-made frame comes as its tile shows it. Pass
  * `shapes` when the shaped code panel is shown elsewhere (FrameControls);
  * on its own the picker shows the panel under it.
@@ -124,9 +117,13 @@ export function FrameStylePicker({
   const frame: AnyQRFrame = style.frame ?? { style: "none" };
   const custom = frame.style === "custom" ? frame : null;
   const { data: saved = [] } = useSavedFrames();
+  const { checkValidSession } = useSessionGuard();
+  const [importOpen, setImportOpen] = useState(false);
+  // The dialog loads on first open, then stays mounted (for its exit)
+  const [importUsed, setImportUsed] = useState(false);
 
-  // A frame takes the place of a shaped code (frame-shapes.tsx) or a
-  // template (frame-templates.ts)
+  // A frame (a picked or an uploaded one) takes the place of a shaped code
+  // (frame-shapes.tsx) or a template (frame-templates.ts)
   const setFrame = (next: AnyQRFrame) =>
     setStyle({ ...withoutTemplate(withoutShape(style)), frame: next });
   const shape = frameShapeOf(style) ?? shapes.current;
@@ -248,10 +245,25 @@ export function FrameStylePicker({
   return (
     <>
       <FramePicker
+        action={
+          <Button
+            className="shrink-0"
+            onClick={() => {
+              if (!checkValidSession("signin")) return;
+              setImportUsed(true);
+              setImportOpen(true);
+            }}
+            size="sm"
+            type="button"
+            variant="outline"
+          >
+            <DocumentUpload aria-hidden className="size-4" />
+            {t("uploadSvg")}
+          </Button>
+        }
         active={active}
         choices={pickerChoices}
         currentName={currentName}
-        featured={FEATURED}
         onPick={pick}
         preview={(option, id) =>
           id.startsWith(TEMPLATE_PREFIX) ? (
@@ -292,6 +304,16 @@ export function FrameStylePicker({
       {given ? null : (
         <div className="mt-3 space-y-3 empty:hidden">{own.panel}</div>
       )}
+      {importUsed && (
+        <ImportFrameDialog
+          onImported={(imported) => {
+            setFrame({ style: "custom", spec: imported });
+            soundEvent("tick");
+          }}
+          onOpenChange={setImportOpen}
+          open={importOpen}
+        />
+      )}
     </>
   );
 }
@@ -308,17 +330,14 @@ export function FrameControls() {
   // Inside a collapsed section the picker waits (nothing is on screen)
   const section = useContext(SectionContext);
   const active = section ? section.isExpanded : true;
-  const [importOpen, setImportOpen] = useState(false);
   const [publishOpen, setPublishOpen] = useState(false);
-  // The dialogs load on first open, then stay mounted (for their exit)
-  const [dialogs, setDialogs] = useState({ import: false, publish: false });
+  // The dialog loads on first open, then stays mounted (for its exit)
+  const [publishUsed, setPublishUsed] = useState(false);
 
-  // Editing a frame's fields keeps it as it is; a new frame (an imported
-  // one) takes the place of a shaped code and a template
+  // Editing a frame's fields keeps it as it is (a new frame, picked or
+  // uploaded, comes from FrameStylePicker)
   const setFrame = (next: AnyQRFrame) =>
     setStyle({ ...withoutShape(style), frame: next });
-  const replaceFrame = (next: AnyQRFrame) =>
-    setStyle({ ...withoutTemplate(withoutShape(style)), frame: next });
   const shaped = frameShapeOf(style) !== null || shapes.current !== null;
   const template = templateOf(style);
 
@@ -347,36 +366,21 @@ export function FrameControls() {
         !shaped && <NoFrameFields />
       )}
 
-      <div className="flex flex-wrap gap-2">
+      {custom && (
         <Button
           onClick={() => {
             if (!checkValidSession("signin")) return;
-            setDialogs((used) => ({ ...used, import: true }));
-            setImportOpen(true);
+            setPublishUsed(true);
+            setPublishOpen(true);
           }}
           size="sm"
           type="button"
           variant="outline"
         >
-          <DocumentUpload aria-hidden className="size-4" />
-          {t("importSvg")}
+          <Global aria-hidden className="size-4" />
+          {t("publishFrame")}
         </Button>
-        {custom && (
-          <Button
-            onClick={() => {
-              if (!checkValidSession("signin")) return;
-              setDialogs((used) => ({ ...used, publish: true }));
-              setPublishOpen(true);
-            }}
-            size="sm"
-            type="button"
-            variant="outline"
-          >
-            <Global aria-hidden className="size-4" />
-            {t("publishFrame")}
-          </Button>
-        )}
-      </div>
+      )}
 
       {!(template && !spec) && (
         <p className="text-muted-foreground text-xs">
@@ -384,17 +388,7 @@ export function FrameControls() {
         </p>
       )}
 
-      {dialogs.import && (
-        <ImportFrameDialog
-          onImported={(imported) => {
-            replaceFrame({ style: "custom", spec: imported });
-            soundEvent("tick");
-          }}
-          onOpenChange={setImportOpen}
-          open={importOpen}
-        />
-      )}
-      {custom && dialogs.publish && (
+      {custom && publishUsed && (
         <PublishFrameDialog
           frame={custom}
           onOpenChange={setPublishOpen}
