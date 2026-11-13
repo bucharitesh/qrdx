@@ -51,10 +51,12 @@ The image API reports query parameters as `{ "param", "message" }` instead of `{
 | 400 | `TOO_MANY_CODES` | More than 1,000 codes in one request. The body schema normally rejects this first, as `VALIDATION_ERROR`. | Send at most 1,000 codes per request. |
 | 400 | `DOMAIN_NOT_VERIFIED` | `domainId` points to a custom domain that isn't verified yet. | Finish verifying the domain on the Domains page, or leave `domainId` out. |
 | 400 | `SID_REQUIRED` | A conversion without the `qrdx_sid` of the scan (from the browser), or without `sid` or `code` (from a server). | Send the `qrdx_sid` the short link added to your page URL, or, with an API key or token, the code id as `code`. |
+| 400 | `AI_ART_TEXT_TOO_LONG` | `text` is too long for AI art (more than 300 characters). | Send a dynamic code's id as `code` instead: the art encodes its short link, which is short and stays editable. |
 | 401 | `UNAUTHORIZED` | No credentials: the request has no `Authorization: Bearer` header (and no QRdx browser session). | Send an API key as `Authorization: Bearer <key>`; create one in Settings → API keys & apps. OAuth access tokens go in the same header. |
 | 401 | `INVALID_TOKEN` | The API key or access token is unknown, revoked or expired (access tokens last one hour), or the key's creator was banned or left the key's workspace. | Check that you sent the whole key, or create a new one. For an access token, get a new one with your refresh token, or send the user through authorization again. |
 | 402 | `PLAN_REQUIRED` | The feature isn't on the workspace's plan: bulk creation, custom back-halves and custom domains need Pro; conversions and hooks need Business. | Upgrade the workspace, or leave the feature out of the request. |
 | 402 | `LIMIT_REACHED` | The workspace has as many active dynamic codes as its plan includes (10 on Free). | Archive a code (archived codes don't count) or upgrade to Pro for unlimited codes. |
+| 402 | `AI_ART_CREDITS_EXHAUSTED` | The workspace has used this month's AI art images (Free and Pro). Nothing was charged for the request. | Wait for the allowance to reset on the 1st of the month (UTC), or upgrade for more images. |
 | 403 | `INSUFFICIENT_SCOPE` | The API key or token is valid but lacks the scope this endpoint needs. | Create a key with the scope named in the message (a key's scopes can't be changed). For an OAuth app, add the scope and ask for it when the user authorizes. |
 | 403 | `FORBIDDEN` | The caller may not do this: a workspace member deleting a code someone else created, a member managing hooks, or a browser-session write from another site. An API key can do only what its creator's role in its workspace allows. | Ask a workspace owner or admin, or call the API with an API key from your server. |
 | 403 | `CONFIRMATION_REQUIRED` | Creating a hook with a signed-in browser session needs a recent "Confirm it's you". API keys and OAuth tokens aren't asked. | Confirm it's you in QRdx, then try again within 10 minutes, or create the hook with an API key from your server. |
@@ -64,12 +66,20 @@ The image API reports query parameters as `{ "param", "message" }` instead of `{
 | 404 | `INVALID_SID` | The `qrdx_sid` is unknown or older than 30 days, the attribution window. | Send the `qrdx_sid` of a recent scan, or report the conversion by code id from your server. |
 | 409 | `SLUG_TAKEN` | Another code already uses that back-half on that domain. For an array, `data.details` lists each taken one by `index`, and nothing is created. | Choose another back-half. |
 | 413 | `PAYLOAD_TOO_LARGE` | The body is over the endpoint's limit: 4 MB for codes, 16 KB for hooks, 8 KB for conversions. Also a batch of codes whose response (each code with its design) would be over 4 MB; nothing is created. | Send a smaller body. For codes, a large inline logo is the usual cause; for a batch, send `Prefer: return=minimal` or fewer codes. |
+| 413 | `AI_ART_IMAGE_TOO_LARGE` | The `photo` or `reference` image is over the AI art size limit (the message says which). | Downsize the image (about 512 px on its longest side) and send it again as a PNG or JPEG data URL. |
 | 415 | `UNSUPPORTED_MEDIA_TYPE` | A write without `Content-Type: application/json`. | Send a JSON body with `Content-Type: application/json`. |
 | 422 | `UNSAFE_DESTINATION` | Google Web Risk flags the destination URL (malware, phishing or unwanted software). For an array, `data.details` lists each flagged row by `index`, and nothing is created. | Use another destination. If the flag is wrong, ask Google to review the site. |
 | 429 | `RATE_LIMITED` | Too many requests: a per-minute limit (only `Retry-After` is set) or the workspace's daily quota (`Retry-After` plus `X-RateLimit-*`). | Wait `Retry-After` seconds. For the daily quota, wait for 00:00 UTC or upgrade the plan. |
+| 429 | `AI_ART_CREDITS_EXHAUSTED` | A Business workspace has used this month's AI art images, which the whole team shares. | Wait for the allowance to reset on the 1st of the month (UTC). |
+| 429 | `AI_ART_DAILY_LIMIT` | The key's creator has made 25 AI art images today (UTC), a safety cap on top of the monthly allowance. | Try again tomorrow (UTC). |
 | 500 | `INTERNAL_ERROR` | Something failed on QRdx's side. It has been logged. | Try again in a moment. If it keeps happening, report it with the time of the request. |
+| 502 | `AI_ART_FAILED` | The image model failed, declined the prompt or returned an image QRdx couldn't read. No AI art credit was used. | Try again, or reword the prompt. The message says what happened. |
+| 502 | `AI_ART_UNSCANNABLE` | The model's image couldn't be made to scan within the QR visibility you chose. No AI art credit was used. | Try again with a higher `visibility`, or another seed. |
 | 503 | `SLUG_UNAVAILABLE` | No free short-link slug could be reserved in time. | Send the same request again. |
+| 503 | `AI_ART_BUSY` | The image model is over capacity right now. No AI art credit was used. | Wait a minute and try again. |
+| 503 | `AI_NOT_CONFIGURED` | AI art isn't set up on this deployment (a self-hosted instance without `AI_GATEWAY_API_KEY`). | Use the hosted QRdx API, or set up Vercel AI Gateway on your instance. |
 | 503 | `UNAVAILABLE` | Custom domains aren't set up on this deployment (a self-hosted instance without them). | Leave `domainId` out, or configure custom domains on your instance. |
+| 504 | `AI_ART_TIMEOUT` | The image model took too long, and QRdx stopped waiting before the request's one-minute limit. No AI art credit was used. | Try again. Calls usually take 15 to 45 seconds. |
 
 ## Retrying
 
