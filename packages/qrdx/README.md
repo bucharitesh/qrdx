@@ -200,6 +200,37 @@ toSVGString(resolveQRCodeProps({ value: "https://example.com", logo: "/logo.png"
 
 `getQRAsSVGNode(props)` is `getQRAsSVG` without React (it resolves to a tree). [docs/adapters.md](./docs/adapters.md) describes how a framework wrapper should use the core.
 
+## Angular (`qrdx/angular`)
+
+A standalone component, `<qrdx-qr-code>`, for Angular 20 and newer. It takes `QRCode`'s props as signal inputs (`value` is required) and draws the same SVG, on the server too: with `@angular/ssr` the server's HTML holds the code and hydrates without errors. `@angular/core` is an optional peer dependency.
+
+```ts
+import { Component } from "@angular/core";
+import { QRCode } from "qrdx/angular";
+
+@Component({
+  selector: "app-menu-code",
+  imports: [QRCode],
+  template: `
+    <qrdx-qr-code
+      #qr
+      value="https://example.com"
+      [size]="240"
+      bodyPattern="rounded"
+      [frame]="{ style: 'banner-bottom', text: 'Scan me' }"
+      [svgStyle]="{ maxWidth: '100%', height: 'auto' }"
+    />
+    <button type="button" (click)="qr.download({ format: 'svg' })">Download</button>
+  `,
+})
+export class MenuCode {}
+```
+
+- The code redraws when an input changes, and only when its markup does. `style` is `svgStyle` (styles for the `<svg>`); attributes on `<qrdx-qr-code>` stay on it.
+- `download(options)` and `toDataURL(format, options)` export the code as in `qrdx/vanilla`; `markup()`, `options()` and `svg` are the markup, the resolved props and the `<svg>` element.
+- Everything in `qrdx/core` is exported from `qrdx/angular` too.
+- It ships compiled in Angular's partial mode, like other Angular libraries, and the Angular CLI links it when it builds the app.
+
 ## Patterns
 
 See every option drawn live at [qrdx.dev/docs/styles](https://qrdx.dev/docs/styles).
