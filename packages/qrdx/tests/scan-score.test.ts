@@ -144,9 +144,12 @@ describe("getScanScore", () => {
     expect(
       getTemplateCodeShare({ value: VALUE, templateId: "Halloween" })
     ).toBeCloseTo(0.38, 6);
+    expect(
+      getTemplateCodeShare({ value: VALUE, templateId: "DotRing" })
+    ).toBeCloseTo(300 / 593, 6);
     // So a code that scans well on its own scores well in a template too
     // (it used to be tested as if it filled the artwork, and failed)
-    for (const templateId of ["Arrow", "Halloween"]) {
+    for (const templateId of ["Arrow", "Halloween", "DotRing"]) {
       const result = await getScanScore({ ...PLAIN, templateId });
       const passed = (id: string) =>
         result.checks.find((c) => c.id === id)?.passed;
