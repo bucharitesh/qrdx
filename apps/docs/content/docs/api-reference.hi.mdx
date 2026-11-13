@@ -1,18 +1,18 @@
 ---
 title: "लाइब्रेरी API रेफ़रेंस"
-description: "qrdx React लाइब्रेरी से एक्सपोर्ट होने वाले सभी कॉम्पोनेंट, फ़ंक्शन और टाइप। HTTP एंडपॉइंट के लिए REST API देखें।"
+description: "qrdx React लाइब्रेरी से एक्सपोर्ट होने वाला हर कंपोनेंट, फ़ंक्शन और टाइप। HTTP एंडपॉइंट के लिए REST API देखें।"
 icon: Code
 ---
 
-सभी `qrdx` कॉम्पोनेंट, फ़ंक्शन और टाइप का पूरा रेफ़रेंस।
+सभी `qrdx` कंपोनेंट, फ़ंक्शन और टाइप का पूरा रेफ़रेंस।
 
 <NpmStatus package="qrdx" />
 
-## कॉम्पोनेंट [#components]
+## कंपोनेंट [#components]
 
 ### QRCode [#qrcode]
 
-QR कोड रेंडर करने वाला मुख्य कॉम्पोनेंट।
+QR कोड रेंडर करने वाला मुख्य कंपोनेंट।
 
 ```tsx
 import { QRCode } from 'qrdx';
@@ -29,28 +29,28 @@ import { QRCode } from 'qrdx';
 
 | Prop | टाइप | डिफ़ॉल्ट | विवरण |
 |------|------|---------|-------------|
-| `value` | `string` | **ज़रूरी** | एन्कोड किया जाने वाला URL या टेक्स्ट |
+| `value` | `string` | **ज़रूरी** | एन्कोड करने के लिए URL या टेक्स्ट |
 | `size` | `number` | `128` | पिक्सल में साइज़ |
 | `scale` | `number` | `1` | स्केल मल्टीप्लायर |
 | `fgColor` | `ColorConfig` | `#000000` | QR कोड का रंग |
 | `bgColor` | `ColorConfig` | `#ffffff` | बैकग्राउंड का रंग |
-| `eyeColor` | `ColorConfig` | `fgColor` | कोने के मार्कर का रंग |
+| `eyeColor` | `ColorConfig` | `fgColor` | कॉर्नर मार्कर का रंग |
 | `dotColor` | `ColorConfig` | `fgColor` | हर कॉर्नर आई के अंदर वाले डॉट का रंग |
 | `bodyPattern` | `BodyPattern` | `'circle'` | डेटा डॉट का पैटर्न |
-| `cornerEyePattern` | `CornerEyePattern` | `'gear'` | कोने के मार्कर का पैटर्न |
-| `cornerEyeDotPattern` | `CornerEyeDotPattern` | `'circle'` | कोने के डॉट का पैटर्न |
-| `hideLogo` | `boolean` | `false` | लोगो छिपाएँ। `logo` सेट किए बिना कोई लोगो नहीं बनता |
+| `cornerEyePattern` | `CornerEyePattern` | `'gear'` | कॉर्नर मार्कर का पैटर्न |
+| `cornerEyeDotPattern` | `CornerEyeDotPattern` | `'circle'` | कॉर्नर डॉट का पैटर्न |
+| `hideLogo` | `boolean` | `false` | लोगो छिपाएँ। `logo` सेट न हो तो कोई लोगो नहीं बनता |
 | `logo` | `string` | — | लोगो का URL |
 | `templateId` | `string` | `'default'` | टेम्पलेट ID |
 | `customTemplate` | `TemplateDefinition` | — | कस्टम टेम्पलेट |
 | `level` | `ErrorLevel` | `'Q'` | एरर करेक्शन |
-| `autoLevel` | `boolean` | `false` | लोगो कोड के 7% से ज़्यादा हिस्से को ढके तो `level` को H तक बढ़ाएँ (`AUTO_LEVEL_LOGO_COVERAGE`) |
+| `autoLevel` | `boolean` | `false` | लोगो कोड के 7% से ज़्यादा हिस्से को ढके तो `level` को H पर ले जाएँ (`AUTO_LEVEL_LOGO_COVERAGE`) |
 | `margin` | `number` | `0` | मॉड्यूल में मार्जिन |
-| `imageSettings` | `ImageSettings` | — | लोगो की सेटिंग |
-| `eyeColors` | `EyeColors` | — | `topLeft`, `topRight` और `bottomLeft` के लिए हर आई के `outer` / `inner` रंग; हर एक `eyeColor` / `dotColor` को ओवरराइड करता है |
-| `moduleScale` | `number` | `1` | डेटा मॉड्यूल का साइज़, 0.5 से 1। हर पैटर्न उस सबसे छोटे साइज़ पर रुकता है जिस पर कोड अभी भी स्कैन होता है (`MODULE_SCALE_FLOOR`) |
+| `imageSettings` | `ImageSettings` | — | लोगो सेटिंग |
+| `eyeColors` | `EyeColors` | — | `topLeft`, `topRight` और `bottomLeft` के लिए अलग-अलग `outer` / `inner` रंग; हर एक `eyeColor` / `dotColor` को ओवरराइड करता है |
+| `moduleScale` | `number` | `1` | डेटा मॉड्यूल का साइज़, 0.5 से 1। हर पैटर्न उस सबसे छोटे साइज़ पर रुकता है जिस पर कोड अब भी स्कैन होता है (`MODULE_SCALE_FLOOR`) |
 | `frame` | `QRFrame` | — | कॉल-टू-एक्शन फ़्रेम; देखें [फ़्रेम और प्रिंट](/docs/features/frames) |
-| `art` | `QRArt` | — | लोगो या फ़ोटो को मॉड्यूल में ब्लेंड करें (Logo QR, Image QR); देखें [Art QR](/docs/features/art-qr) |
+| `art` | `QRArt` | — | लोगो या फ़ोटो को मॉड्यूल में मिलाएँ (Logo QR, Image QR); देखें [Art QR](/docs/features/art-qr) |
 | `frameLabelMarkers` | `boolean` | `false` | एडिटर के लिए: हर फ़्रेम लेबल `<text>` पर `data-qrdx-frame-label` (`"text"`, `"secondaryText"` या स्पेक लेबल की id) लगाता है। डाउनलोड और एक्सपोर्ट में यह कभी शामिल नहीं होता |
 
 सभी {facts.bodyPatterns} बॉडी पैटर्न, {facts.eyeShapes} आई, {facts.eyeCentres} आई सेंटर और {facts.frameStyles} फ़्रेम स्टाइल [शेप, आई और फ़्रेम](/docs/styles) में लाइव दिखाए गए हैं।
@@ -102,7 +102,7 @@ downloadQRCode(
 
 ### getQRCodeDataUrl [#getqrcodedataurl]
 
-data URL के रूप में पाएँ।
+डेटा URL के रूप में पाएँ।
 
 ```tsx
 getQRCodeDataUrl(
@@ -115,7 +115,7 @@ getQRCodeDataUrl(
 
 ### getQRAsWebP [#getqraswebp]
 
-कोड को WebP `Blob` के रूप में देता है, और `quality` सेट न हो तो लॉसलेस होता है। जहाँ ब्राउज़र WebP एन्कोड नहीं कर सकता (Safari), वहाँ qrdx का बिल्ट-इन लॉसलेस एन्कोडर इसे बनाता है। `canvasToWebP(canvas, options)` किसी भी canvas के लिए यही करता है, और `encodeWebPLossless(rgba, width, height)` बिना DOM के RGBA पिक्सल एन्कोड करता है।
+कोड को WebP `Blob` के रूप में देता है; `quality` सेट न हो तो लॉसलेस। जहाँ ब्राउज़र WebP एन्कोड नहीं कर सकता (Safari), वहाँ qrdx का बिल्ट-इन लॉसलेस एन्कोडर इसे बनाता है। `canvasToWebP(canvas, options)` किसी भी canvas के लिए यही करता है, और `encodeWebPLossless(rgba, width, height)` बिना DOM के RGBA पिक्सल एन्कोड करता है।
 
 ```tsx
 getQRAsWebP(
@@ -145,18 +145,19 @@ getSVGString(qrProps: QRProps): Promise<string>
 
 ## प्रिंट और स्कैन फ़ंक्शन [#print-and-scan-functions]
 
-इनके उदाहरण सहित विवरण संबंधित फ़ीचर पेज पर हैं।
+इनके उदाहरण संबंधित फ़ीचर पेजों पर दिए गए हैं।
 
 | फ़ंक्शन | क्या करता है | डॉक्स |
 |----------|--------------|------|
-| `getQRAsSVG(props)` | कोड का SVG मार्कअप, उसके फ़्रेम सहित | [फ़्रेम](/docs/features/frames) |
-| `getQRAsPrintPDF`, `downloadPrintPDF` | सटीक भौतिक साइज़ का वेक्टर PDF, ब्लीड, क्रॉप मार्क और CMYK के साथ (`jspdf` ज़रूरी है) | [प्रिंट-रेडी एक्सपोर्ट](/docs/features/frames#print-ready-export) |
-| `downloadPrintSVG` | सटीक भौतिक साइज़ का प्रिंट-रेडी SVG | [प्रिंट-रेडी एक्सपोर्ट](/docs/features/frames#print-ready-export) |
+| `getQRAsSVG(props)` | कोड का SVG मार्कअप, उसके फ़्रेम समेत | [फ़्रेम](/docs/features/frames) |
+| `getQRAsPrintPDF`, `downloadPrintPDF` | सटीक फ़िज़िकल साइज़ पर वेक्टर PDF, bleed, क्रॉप मार्क और CMYK के साथ (`jspdf` चाहिए) | [प्रिंट-रेडी एक्सपोर्ट](/docs/features/frames#print-ready-export) |
+| `downloadPrintSVG` | सटीक फ़िज़िकल साइज़ पर प्रिंट-रेडी SVG | [प्रिंट-रेडी एक्सपोर्ट](/docs/features/frames#print-ready-export) |
 | `getQRAsEPS`, `downloadPrintEPS` | प्रिंट शॉप और डिज़ाइन टूल के लिए वेक्टर EPS | [डाउनलोड](/docs/features/downloads) |
-| `getScanScore(props)` | अनुमान लगाता है कि कोई डिज़ाइन कितनी भरोसेमंद तरह से स्कैन होता है | [क्या यह स्कैन होगा?](/docs/features/frames#will-it-scan) |
+| `getScanScore(props)` | अनुमान लगाता है कि कोई डिज़ाइन कितने भरोसे से स्कैन होता है | [क्या यह स्कैन होगा?](/docs/features/frames#will-it-scan) |
 | `getImageScanScore(image)` | आपके पास पहले से मौजूद QR कोड इमेज को स्कोर करता है (सिर्फ़ ब्राउज़र में) | [क्या यह स्कैन होगा?](/docs/features/frames#will-it-scan) |
-| `scanQRPixels(pixels, expected)` | जाँचता है कि कच्चे RGBA पिक्सल `expected` में डिकोड होते हैं, धुंधले और छोटे करने पर भी; Node में चलता है | — |
-| `getStylePairRisk(...)` | आई और पैटर्न के उन जोड़ों के बारे में चेतावनी देता है जिन्हें कुछ स्कैनर नहीं पढ़ पाते | [पैटर्न](/docs/features/patterns) |
+| `getQRAsPNG(props, { size })` | सादे Node में PNG बाइट, बिना DOM के। इसे `qrdx/node` से इंपोर्ट करें; इसके लिए `@resvg/resvg-js` या `sharp` इंस्टॉल होना चाहिए | — |
+| `scanQRPixels(pixels, expected)` | जाँचता है कि कच्चे RGBA पिक्सल डिकोड होकर `expected` देते हैं, धुंधला और छोटा करने पर भी; Node में चलता है | — |
+| `getStylePairRisk(...)` | उन आई और पैटर्न जोड़ियों के बारे में चेतावनी देता है जिन्हें कुछ स्कैनर नहीं पढ़ पाते | [पैटर्न](/docs/features/patterns) |
 
 ## डिटेक्शन फ़ंक्शन [#detection-functions]
 
@@ -174,7 +175,7 @@ handleImageLoad(
 
 ### downloadImageWithBoundingBox [#downloadimagewithboundingbox]
 
-बाउंडिंग बॉक्स के साथ डिबग करें।
+बाउंडिंग बॉक्स के साथ डीबग करें।
 
 ```tsx
 downloadImageWithBoundingBox(
@@ -188,7 +189,7 @@ downloadImageWithBoundingBox(
 
 ### getTemplate [#gettemplate]
 
-कोई ख़ास टेम्पलेट पाएँ।
+कोई खास टेम्पलेट पाएँ।
 
 ```tsx
 getTemplate(templateId: string): TemplateDefinition | undefined
@@ -392,9 +393,9 @@ try {
 ```
 
 आम एरर:
-- अमान्य इमेज URL
+- गलत इमेज URL
 - नेटवर्क फ़ेल होना
-- अमान्य साइज़ पैरामीटर
+- गलत साइज़ पैरामीटर
 - Canvas कॉन्टेक्स्ट उपलब्ध न होना
 
 ## ब्राउज़र सपोर्ट [#browser-support]
