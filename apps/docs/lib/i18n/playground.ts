@@ -4,14 +4,35 @@
 // list names everything its children read.
 import { CHROME_NAMESPACES } from "./messages";
 
+/**
+ * The code builder (components/code-builder/code-builder-host.tsx): the New
+ * code dialog, the code and barcode builders and the dashboard panels they
+ * reuse. The editor mounts it on /playground, and the app's create menu
+ * opens it on every signed-in page.
+ */
+export const CODE_BUILDER_NAMESPACES = [
+  "codeBuilder",
+  "app.dashboard.codes.newCodeDialog",
+  "app.dashboard.codes.codeOptions",
+  "app.dashboard.codes.codeQr",
+  "app.dashboard.codes.domainPicker",
+  "app.dashboard.codes.lifecyclePanelForm",
+  "app.dashboard.codes.pixelsPanel",
+  "app.dashboard.codes.routingPanel",
+  "app.dashboard.codes.slugField",
+  "app.dashboard.codes.utmPanel",
+  "app.dashboard.codes.utmTemplates",
+  "app.dashboard.barcodes.barcodeBuilder",
+  "app.dashboard.barcodes.barcodeEditor",
+  "barcodeTool",
+  // The New code dialog previews hosted-page templates (lib/landing/demo.ts).
+  "scanPages.hosted",
+] as const;
+
 /** The whole editor: /playground, shared theme links, the dashboard. */
 export const EDITOR_NAMESPACES = [
   "editor",
-  "codeBuilder",
-  // The code builder over the editor reuses the dashboard's code panels.
-  "app.dashboard.codes.routingPanel",
-  "app.dashboard.codes.utmTemplates",
-  "app.dashboard.codes.codeOptions",
+  ...CODE_BUILDER_NAMESPACES,
   "app.shell.whatsNew",
   "playground",
   "scanChecker",
@@ -64,23 +85,12 @@ export const AI_ART_STUDIO_NAMESPACES = [
  */
 export const APP_NAMESPACES = [
   ...CHROME_NAMESPACES,
-  "barcodeTool",
   "templateDemo",
+  // Includes the code builder, which the create menu opens on every page.
   ...EDITOR_NAMESPACES,
-  // The app's frame: sidebar, workspace switcher, command menu, and the
-  // New code dialog and new-barcode modal its create menu opens on every
-  // page.
+  // The app's frame: sidebar, workspace switcher, command menu.
   "app.shell",
   "app.workspaces",
-  "app.dashboard.barcodes.barcodeBuilder",
-  "app.dashboard.barcodes.barcodeEditor",
-  "app.dashboard.codes.newCodeDialog",
-  "app.dashboard.codes.codeQr",
-  "app.dashboard.codes.domainPicker",
-  "app.dashboard.codes.lifecyclePanelForm",
-  "app.dashboard.codes.pixelsPanel",
-  "app.dashboard.codes.slugField",
-  "app.dashboard.codes.utmPanel",
 ] as const;
 
 /** The dashboard: the app and its own pages. */
@@ -90,8 +100,7 @@ export const DASHBOARD_NAMESPACES = [
   // Workspace settings (dashboard/<slug>/settings) use the account
   // settings' developer components.
   "app.settings.developers",
-  // Hosted-page blocks in the page editor's preview and the template picker.
-  "scanPages.hosted",
+  // The page editor's footer (hosted blocks come with the code builder).
   "scanPages.reportAbuse",
 ] as const;
 

@@ -20,7 +20,7 @@ const shared: Options = {
   outDir: "dist",
   sourcemap: true,
   dts: false, // Declarations are emitted by tsc (see the "build" script)
-  external: ["react", "react-dom", "jsqr", "jspdf"],
+  external: ["react", "react-dom", "jsqr", "jspdf", "@resvg/resvg-js", "sharp"],
   splitting: false,
   minify: true,
   esbuildOptions(options) {
@@ -89,6 +89,15 @@ export default defineConfig([
     // esbuild keeps the entry's "use client" directive, but tsup's rollup
     // tree-shaking pass would strip it, so rely on esbuild's tree-shaking here.
     treeshake: false,
+  },
+  // ── Node-only PNG entry (qrdx/node) ─────────────────────────────────────
+  // The native rasterizers live here alone, so the main entry never
+  // mentions them and browser bundlers never see an import() to follow.
+  {
+    ...shared,
+    entry: { node: "src/node.ts" },
+    format: ["cjs", "esm"],
+    treeshake: true,
   },
   // ── qrdx/types (schemas + helpers, no React) ────────────────────────────
   {

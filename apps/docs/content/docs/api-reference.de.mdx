@@ -1,10 +1,10 @@
 ---
 title: "API-Referenz der Bibliothek"
-description: "Alle Komponenten, Funktionen und Typen, die die React-Bibliothek qrdx exportiert. Informationen zu den HTTP-Endpunkten findest du in der REST API."
+description: "Alle Komponenten, Funktionen und Typen, die die React-Bibliothek qrdx exportiert. Informationen zu HTTP-Endpunkten findest du in der REST API."
 icon: Code
 ---
 
-Vollständige Referenz aller `qrdx`-Komponenten, -Funktionen und -Typen.
+Vollständige Referenz zu allen `qrdx`-Komponenten, -Funktionen und -Typen.
 
 <NpmStatus package="qrdx" />
 
@@ -39,19 +39,19 @@ import { QRCode } from 'qrdx';
 | `bodyPattern` | `BodyPattern` | `'circle'` | Muster der Datenpunkte |
 | `cornerEyePattern` | `CornerEyePattern` | `'gear'` | Muster der Eckmarkierungen |
 | `cornerEyeDotPattern` | `CornerEyeDotPattern` | `'circle'` | Muster des Eckpunkts |
-| `hideLogo` | `boolean` | `false` | Blendet das Logo aus. Ohne gesetztes `logo` wird kein Logo gezeichnet |
+| `hideLogo` | `boolean` | `false` | Blendet das Logo aus. Es wird kein Logo gezeichnet, solange `logo` nicht gesetzt ist |
 | `logo` | `string` | — | Logo-URL |
-| `templateId` | `string` | `'default'` | Template-ID |
-| `customTemplate` | `TemplateDefinition` | — | Eigenes Template |
+| `templateId` | `string` | `'default'` | Vorlagen-ID |
+| `customTemplate` | `TemplateDefinition` | — | Eigene Vorlage |
 | `level` | `ErrorLevel` | `'Q'` | Fehlerkorrektur |
-| `autoLevel` | `boolean` | `false` | Erhöht `level` auf H, wenn das Logo mehr als 7 % des Codes abdeckt (`AUTO_LEVEL_LOGO_COVERAGE`) |
+| `autoLevel` | `boolean` | `false` | Hebt `level` auf H an, wenn das Logo mehr als 7 % des Codes bedeckt (`AUTO_LEVEL_LOGO_COVERAGE`) |
 | `margin` | `number` | `0` | Rand in Modulen |
 | `imageSettings` | `ImageSettings` | — | Logo-Einstellungen |
 | `eyeColors` | `EyeColors` | — | Farben `outer` / `inner` pro Auge für `topLeft`, `topRight` und `bottomLeft`; jede überschreibt `eyeColor` / `dotColor` |
 | `moduleScale` | `number` | `1` | Größe der Datenmodule, 0.5 bis 1. Jedes Muster hört bei der kleinsten Größe auf, die sich noch scannen lässt (`MODULE_SCALE_FLOOR`) |
 | `frame` | `QRFrame` | — | Rahmen mit Handlungsaufforderung; siehe [Rahmen & Druck](/docs/features/frames) |
 | `art` | `QRArt` | — | Blendet ein Logo oder Foto in die Module ein (Logo QR, Image QR); siehe [Art QR](/docs/features/art-qr) |
-| `frameLabelMarkers` | `boolean` | `false` | Für Editoren: markiert jedes Rahmenlabel `<text>` mit `data-qrdx-frame-label` (`"text"`, `"secondaryText"` oder die ID eines Spec-Labels). Downloads und Exporte enthalten das Attribut nie |
+| `frameLabelMarkers` | `boolean` | `false` | Für Editoren: Markiert jedes Rahmenlabel `<text>` mit `data-qrdx-frame-label` (`"text"`, `"secondaryText"` oder die ID eines Spec-Labels). Downloads und Exporte enthalten es nie |
 
 Alle {facts.bodyPatterns} Körpermuster, {facts.eyeShapes} Augen, {facts.eyeCentres} Augenzentren und {facts.frameStyles} Rahmenstile siehst du live unter [Formen, Augen und Rahmen](/docs/styles).
 
@@ -115,7 +115,7 @@ getQRCodeDataUrl(
 
 ### getQRAsWebP [#getqraswebp]
 
-Der Code als WebP-`Blob`, verlustfrei, sofern `quality` nicht gesetzt ist. Wenn der Browser WebP nicht codieren kann (Safari), übernimmt das der integrierte verlustfreie Encoder von qrdx. `canvasToWebP(canvas, options)` macht dasselbe für jedes beliebige Canvas, und `encodeWebPLossless(rgba, width, height)` codiert RGBA-Pixel ohne DOM.
+Der Code als WebP-`Blob`, verlustfrei, sofern `quality` nicht gesetzt ist. Wenn der Browser WebP nicht codieren kann (Safari), übernimmt das der integrierte verlustfreie Encoder von qrdx. `canvasToWebP(canvas, options)` macht dasselbe für jedes Canvas, und `encodeWebPLossless(rgba, width, height)` codiert RGBA-Pixel ohne DOM.
 
 ```tsx
 getQRAsWebP(
@@ -143,18 +143,19 @@ SVG-Markup abrufen.
 getSVGString(qrProps: QRProps): Promise<string>
 ```
 
-## Druck- und Scan-Funktionen [#print-and-scan-functions]
+## Funktionen für Druck und Scan [#print-and-scan-functions]
 
-Diese sind mit Beispielen auf den jeweiligen Funktionsseiten dokumentiert.
+Diese Funktionen sind mit Beispielen auf ihren Feature-Seiten dokumentiert.
 
 | Funktion | Was sie macht | Docs |
 |----------|--------------|------|
-| `getQRAsSVG(props)` | SVG-Markup für einen Code, einschließlich seines Rahmens | [Rahmen](/docs/features/frames) |
+| `getQRAsSVG(props)` | SVG-Markup für einen Code, einschließlich Rahmen | [Rahmen](/docs/features/frames) |
 | `getQRAsPrintPDF`, `downloadPrintPDF` | Vektor-PDF in exakter physischer Größe, mit Beschnitt, Schnittmarken und CMYK (benötigt `jspdf`) | [Druckfertiger Export](/docs/features/frames#print-ready-export) |
 | `downloadPrintSVG` | Druckfertiges SVG in exakter physischer Größe | [Druckfertiger Export](/docs/features/frames#print-ready-export) |
 | `getQRAsEPS`, `downloadPrintEPS` | Vektor-EPS für Druckereien und Design-Tools | [Downloads](/docs/features/downloads) |
 | `getScanScore(props)` | Schätzt, wie zuverlässig sich ein Design scannen lässt | [Lässt er sich scannen?](/docs/features/frames#will-it-scan) |
 | `getImageScanScore(image)` | Bewertet ein QR-Code-Bild, das du bereits hast (nur im Browser) | [Lässt er sich scannen?](/docs/features/frames#will-it-scan) |
+| `getQRAsPNG(props, { size })` | PNG-Bytes in reinem Node, ohne DOM. Importiere sie aus `qrdx/node`; dafür muss `@resvg/resvg-js` oder `sharp` installiert sein | — |
 | `scanQRPixels(pixels, expected)` | Prüft, ob rohe RGBA-Pixel zu `expected` decodiert werden, auch unscharf und verkleinert; läuft in Node | — |
 | `getStylePairRisk(...)` | Warnt vor Kombinationen aus Auge und Muster, die manche Scanner nicht erkennen | [Muster](/docs/features/patterns) |
 
@@ -184,11 +185,11 @@ downloadImageWithBoundingBox(
 ): void
 ```
 
-## Template-Funktionen [#template-functions]
+## Vorlagenfunktionen [#template-functions]
 
 ### getTemplate [#gettemplate]
 
-Ein bestimmtes Template abrufen.
+Eine bestimmte Vorlage abrufen.
 
 ```tsx
 getTemplate(templateId: string): TemplateDefinition | undefined
@@ -196,7 +197,7 @@ getTemplate(templateId: string): TemplateDefinition | undefined
 
 ### getAllTemplates [#getalltemplates]
 
-Alle Templates abrufen.
+Alle Vorlagen abrufen.
 
 ```tsx
 getAllTemplates(): TemplateDefinition[]
@@ -204,7 +205,7 @@ getAllTemplates(): TemplateDefinition[]
 
 ### getTemplateIds [#gettemplateids]
 
-Template-IDs abrufen.
+Vorlagen-IDs abrufen.
 
 ```tsx
 getTemplateIds(): string[]
@@ -239,7 +240,7 @@ SUPPORTS_PATH2D: boolean
 
 ## Typen [#types]
 
-### Kerntypen [#core-types]
+### Basistypen [#core-types]
 
 ```tsx
 type QRProps = {
@@ -381,7 +382,7 @@ const ERROR_LEVELS = {
 
 ## Fehlerbehandlung [#error-handling]
 
-Verpacke asynchrone Funktionen in try-catch:
+Umschließe asynchrone Funktionen mit try-catch:
 
 ```tsx
 try {
