@@ -2,14 +2,7 @@
 
 Release notes for earlier versions are at [qrdx.dev/changelog](https://qrdx.dev/changelog).
 
-## Unreleased
-
-### Vue (`qrdx/vue`)
-
-- **`qrdx/vue`** has Vue 3 versions of `QRCode` and `QRCodeSVG`, with the React components' props and the same SVG. They're render functions over the core (`createQRCodeTree`, then `toHyperscript` into Vue's `h`), so they render on the server with `vue/server-renderer` and hydrate without a mismatch, in Nuxt too. `class`, `style`, other attributes and listeners go on the `<svg>`, and Vue updates it in place when a prop changes.
-- **`useQRCode(props)`** takes `QRCode`'s props as an object, a ref, a reactive object or a getter, and returns the SVG markup as a computed ref (it works in SSR), the resolved `options`, `toDataURL` and `download`.
-- Everything in `qrdx/core` is re-exported. The entry imports the engine from `qrdx/core`, so it adds under 1 KB gzipped of its own.
-- `vue` 3.3 or newer is an optional peer dependency, so installing `qrdx` never installs Vue. TypeScript checks the components' props with Vue 3.4.20 or newer.
+## 0.0.52
 
 ### Web component (`qrdx/element`)
 
@@ -64,6 +57,13 @@ Release notes for earlier versions are at [qrdx.dev/changelog](https://qrdx.dev/
 - The engine bundles are about 5.6 KB larger minified (`dist/index.mjs` 273,981 to 279,617 bytes, `dist/core.mjs` 273,192 to 278,828) and at most 0.3 KB larger gzipped: the 19 specs are a little more data than the code they replace.
 
 ## 0.0.51
+
+### Vue (`qrdx/vue`)
+
+- **`qrdx/vue`** has Vue 3 versions of `QRCode` and `QRCodeSVG`, with the React components' props and the same SVG. They're render functions over the core (`createQRCodeTree`, then `toHyperscript` into Vue's `h`), so they render on the server with `vue/server-renderer` and hydrate without a mismatch, in Nuxt too. `class`, `style`, other attributes and listeners go on the `<svg>`, and Vue updates it in place when a prop changes.
+- **`useQRCode(props)`** takes `QRCode`'s props as an object, a ref, a reactive object or a getter, and returns the SVG markup as a computed ref (it works in SSR), the resolved `options`, `toDataURL` and `download`.
+- Everything in `qrdx/core` is re-exported. The entry imports the engine from `qrdx/core`, so it adds under 1 KB gzipped of its own.
+- `vue` 3.3 or newer is an optional peer dependency, so installing `qrdx` never installs Vue. TypeScript checks the components' props with Vue 3.4.20 or newer.
 
 ### React-free core and plain JavaScript
 
