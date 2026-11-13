@@ -84,7 +84,7 @@ Playground और `qrdx` लाइब्रेरी से बने स्ट�
 | Method | Path | विवरण |
 | --- | --- | --- |
 | `GET` | `/v1/codes` | कोड्स की सूची। Query: `status` (`active`, `archived`, `all`), `q`, `limit` (≤ 100), `offset` |
-| `POST` | `/v1/codes` | एक कोड बनाएँ, या 100 तक का array (array के लिए Pro चाहिए)। Body: `destinationUrl`, वैकल्पिक `title`, `style`, `domainId` और `slug` |
+| `POST` | `/v1/codes` | एक कोड बनाएँ, या {facts.apiBatchCodes} तक का array (array के लिए Pro चाहिए)। Body: `destinationUrl`, वैकल्पिक `title`, `style`, `domainId` और `slug` |
 | `GET` | `/v1/codes/{id}` | एक कोड पाएँ |
 | `PATCH` | `/v1/codes/{id}` | `destinationUrl`, `title`, `style`, `domainId` ([कस्टम डोमेन](/docs/custom-domains)), `slug` या `archived` अपडेट करें, या `kind` को `redirect` और `page` के बीच बदलें |
 | `DELETE` | `/v1/codes/{id}` | कोड और उसके स्कैन डिलीट करें |

@@ -84,7 +84,7 @@ Playground와 `qrdx` 라이브러리에서 만드는 정적 QR 코드는 계속 
 | Method | Path | Description |
 | --- | --- | --- |
 | `GET` | `/v1/codes` | 코드 목록을 가져옵니다. 쿼리: `status`(`active`, `archived`, `all`), `q`, `limit`(≤ 100), `offset` |
-| `POST` | `/v1/codes` | 코드를 하나 만들거나 최대 100개의 배열로 만듭니다(배열은 Pro 필요). 본문: `destinationUrl`, 선택 항목 `title`, `style`, `domainId`, `slug` |
+| `POST` | `/v1/codes` | 코드를 하나 만들거나 최대 {facts.apiBatchCodes}개의 배열로 만듭니다(배열은 Pro 필요). 본문: `destinationUrl`, 선택 항목 `title`, `style`, `domainId`, `slug` |
 | `GET` | `/v1/codes/{id}` | 코드 하나를 가져옵니다 |
 | `PATCH` | `/v1/codes/{id}` | `destinationUrl`, `title`, `style`, `domainId`([사용자 지정 도메인](/docs/custom-domains)), `slug`, `archived`를 수정하거나 `kind`를 `redirect`와 `page` 사이에서 전환합니다 |
 | `DELETE` | `/v1/codes/{id}` | 코드와 해당 스캔 기록을 삭제합니다 |

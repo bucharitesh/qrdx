@@ -84,7 +84,7 @@ Gestiona los códigos mediante programación en `https://api.qrdx.dev/v1/codes`.
 | Método | Ruta | Descripción |
 | --- | --- | --- |
 | `GET` | `/v1/codes` | Lista los códigos. Query: `status` (`active`, `archived`, `all`), `q`, `limit` (≤ 100), `offset` |
-| `POST` | `/v1/codes` | Crea un código, o un array de hasta 100 (los arrays requieren Pro). Body: `destinationUrl`, y opcionalmente `title`, `style`, `domainId` y `slug` |
+| `POST` | `/v1/codes` | Crea un código, o un array de hasta {facts.apiBatchCodes} (los arrays requieren Pro). Body: `destinationUrl`, y opcionalmente `title`, `style`, `domainId` y `slug` |
 | `GET` | `/v1/codes/{id}` | Obtiene un código |
 | `PATCH` | `/v1/codes/{id}` | Actualiza `destinationUrl`, `title`, `style`, `domainId` ([dominios personalizados](/docs/custom-domains)), `slug` o `archived`, o cambia `kind` entre `redirect` y `page` |
 | `DELETE` | `/v1/codes/{id}` | Elimina un código y sus escaneos |

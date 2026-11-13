@@ -84,7 +84,7 @@ Verwalte Codes programmatisch unter `https://api.qrdx.dev/v1/codes`. Anfragen we
 | Methode | Pfad | Beschreibung |
 | --- | --- | --- |
 | `GET` | `/v1/codes` | Codes auflisten. Query: `status` (`active`, `archived`, `all`), `q`, `limit` (≤ 100), `offset` |
-| `POST` | `/v1/codes` | Einen Code oder ein Array mit bis zu 100 Codes erstellen (Arrays erfordern Pro). Body: `destinationUrl`, optional `title`, `style`, `domainId` und `slug` |
+| `POST` | `/v1/codes` | Einen Code oder ein Array mit bis zu {facts.apiBatchCodes} Codes erstellen (Arrays erfordern Pro). Body: `destinationUrl`, optional `title`, `style`, `domainId` und `slug` |
 | `GET` | `/v1/codes/{id}` | Einen Code abrufen |
 | `PATCH` | `/v1/codes/{id}` | `destinationUrl`, `title`, `style`, `domainId` ([eigene Domains](/docs/custom-domains)), `slug` oder `archived` aktualisieren, oder `kind` zwischen `redirect` und `page` wechseln |
 | `DELETE` | `/v1/codes/{id}` | Einen Code und seine Scans löschen |
