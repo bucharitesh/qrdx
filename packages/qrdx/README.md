@@ -200,6 +200,37 @@ toSVGString(resolveQRCodeProps({ value: "https://example.com", logo: "/logo.png"
 
 `getQRAsSVGNode(props)` is `getQRAsSVG` without React (it resolves to a tree). [docs/adapters.md](./docs/adapters.md) describes how a framework wrapper should use the core.
 
+## Vue (`qrdx/vue`)
+
+`qrdx/vue` has Vue 3 versions of `QRCode` and `QRCodeSVG`, with the React components' props and the same SVG, and a `useQRCode` composable. `vue` 3.3 or newer is an optional peer dependency; TypeScript checks the components' props with Vue 3.4.20 or newer.
+
+```vue
+<script setup lang="ts">
+import { QRCode, useQRCode } from "qrdx/vue";
+import { ref } from "vue";
+
+const url = ref("https://example.com");
+const { download } = useQRCode(() => ({ value: url.value, size: 256 }));
+</script>
+
+<template>
+  <QRCode
+    :value="url"
+    :size="256"
+    body-pattern="rounded"
+    :frame="{ style: 'banner-bottom', text: 'Scan me' }"
+    class="qr"
+  />
+  <button type="button" @click="download({ format: 'svg' })">Download</button>
+</template>
+```
+
+- Write props in kebab-case or camelCase. A flag such as `auto-level` needs no value. `class`, `style`, `aria-label`, other attributes and listeners go on the `<svg>` (the frame's outer `<svg>` when there is a frame).
+- When a prop changes, Vue updates the `<svg>` in place.
+- Both components render on the server with `vue/server-renderer` and hydrate without a mismatch. In Nuxt they work in server-rendered pages and inside `<ClientOnly>`.
+- `useQRCode(props)` takes `QRCode`'s props as an object, a ref, a reactive object or a getter. It returns `svg` (the markup as a computed ref, which works in SSR too), `options`, `toDataURL(format, { size, quality })` and `download({ format, filename, size, quality })`.
+- Everything in `qrdx/core` is re-exported. Its `h`, for custom templates, is the core's, not Vue's.
+
 ## Patterns
 
 See every option drawn live at [qrdx.dev/docs/styles](https://qrdx.dev/docs/styles).
