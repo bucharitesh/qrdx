@@ -511,7 +511,9 @@
       "inr": "Harga dalam ₹ untuk India.",
       "usd": "Harga dalam US$.",
       "showInr": "Di India? Lihat harga dalam ₹",
-      "showUsd": "Tampilkan harga dalam US$"
+      "showUsd": "Tampilkan harga dalam US$",
+      "eur": "Harga dalam € untuk UE dan EEA.",
+      "showEur": "Di UE atau EEA? Lihat harga dalam €"
     },
     "price": {
       "forever": "selamanya",
@@ -555,6 +557,13 @@
       "guide": "Panduan self-hosting"
     },
     "footnote": "Polar menangani checkout sebagai merchant of record; pajak lokal dapat ditambahkan saat checkout. Pelanggan di India ditagih dalam ₹, selain itu dalam US$.",
+    "footnoteEur": "Polar menangani pembayaran sebagai merchant of record; pajak lokal dapat ditambahkan saat pembayaran. Pelanggan di India ditagih dalam ₹, pelanggan di UE dan EEA dalam €, dan pelanggan lainnya dalam US$.",
+    "offers": {
+      "moneyBack": "Garansi uang kembali {days, number} hari untuk pembayaran pertama Anda.",
+      "moneyBackLink": "Cara kerja pengembalian dana",
+      "nonprofit": "Organisasi nirlaba atau amal? Diskon {percent, number}% untuk Pro dan Business.",
+      "nonprofitLink": "Minta kode"
+    },
     "values": {
       "unlimited": "Tanpa batas",
       "days": "{count, plural, other {# hari}}",
@@ -702,6 +711,10 @@
           "question": "Apa yang terjadi jika saya berhenti berlangganan?",
           "answer": "Tidak ada yang rusak. Paket Anda tetap aktif hingga akhir periode yang sudah Anda bayar, lalu akun Anda pindah ke Gratis. Setiap kode QR dinamis tetap mengalihkan dan setiap pemindaian tetap dihitung: itulah Jaminan Never-Hostage kami. Di paket Gratis, Anda tidak dapat membuat lebih dari batas yang diizinkan paket Gratis, dan analitik menampilkan 90 hari terakhir."
         },
+        "refund": {
+          "question": "Bisakah uang saya dikembalikan?",
+          "answer": "Bisa. Pembayaran pertama Anda untuk Pro atau Business, bulanan maupun tahunan, disertai garansi uang kembali {days, number} hari: kirim email ke support@qrdx.dev dari alamat email akun Anda dalam {days, number} hari setelah pembayaran, dan kami akan mengembalikan dana sepenuhnya tanpa banyak pertanyaan. Garansi ini berlaku satu kali per pelanggan. Setelah itu, kode Anda tetap berfungsi di paket Gratis."
+        },
         "paymentFails": {
           "question": "Apa yang terjadi jika pembayaran gagal?",
           "answer": "Kode Anda tetap berfungsi. Jika langganan berakhir, akun Anda mengikuti batas paket Gratis, sama seperti jika Anda berhenti berlangganan. Kami tidak pernah menjeda kode, menampilkan iklan, atau mengarahkan pemindai Anda ke halaman QRdx karena urusan penagihan."
@@ -714,6 +727,10 @@
           "question": "Mengapa harga ditampilkan dalam ₹?",
           "answer": "Pengunjung dari India melihat harga dalam rupee India: Pro seharga {proMonthly} per bulan atau {proYearly} per tahun, Business {businessMonthly} per bulan atau {businessYearly} per tahun. Saat checkout, pelanggan di India ditagih dalam ₹ dan pelanggan lainnya dalam US$, apa pun mata uang yang Anda lihat saat menjelajah. Gunakan tombol pengalih di atas daftar paket untuk mengubah mata uang tampilan."
         },
+        "currencies": {
+          "question": "Mengapa harga tampil dalam ₹ atau €?",
+          "answer": "Harga ditampilkan dalam mata uang negara tempat Anda berada. Di India, Pro seharga {proMonthly} per bulan atau {proYearly} per tahun, dan Business {businessMonthly} per bulan atau {businessYearly} per tahun. Di UE dan EEA, Pro seharga {proMonthlyEur} per bulan atau {proYearlyEur} per tahun, dan Business {businessMonthlyEur} per bulan atau {businessYearlyEur} per tahun. Di tempat lain harganya dalam US$. Pembayaran ditagih dalam mata uang negara Anda, apa pun mata uang yang Anda lihat saat menjelajah. Gunakan pengalih di atas paket untuk mengubah mata uang tampilan."
+        },
         "switchPlans": {
           "question": "Bisakah saya mengganti paket atau periode penagihan nanti?",
           "answer": "Bisa. Buka Kelola langganan di pengaturan Anda untuk mengubah atau membatalkan paket di portal penagihan Polar. Beralih ke paket yang lebih kecil tidak akan menonaktifkan kode, halaman, atau domain yang sudah ada."
@@ -725,6 +742,10 @@
         "selfHost": {
           "question": "Bisakah saya hosting sendiri?",
           "answer": "Bisa. QRdx bersumber terbuka di bawah AGPL-3.0. Jalankan dengan database Postgres Anda sendiri dengan mengikuti panduan self-hosting; batas paket didefinisikan dalam satu file yang dapat Anda ubah untuk instans Anda."
+        },
+        "nonprofit": {
+          "question": "Apakah ada diskon untuk organisasi nirlaba?",
+          "answer": "Ada. Organisasi nirlaba dan lembaga amal terdaftar mendapat diskon {percent, number}% untuk Pro atau Business, bulanan maupun tahunan. Ceritakan tentang organisasi Anda melalui tautan nirlaba di bawah paket. Biasanya kami membalas dalam beberapa hari, dengan kode diskon untuk dimasukkan saat pembayaran."
         },
         "billing": {
           "question": "Siapa yang mengurus penagihan dan pajak?",
@@ -750,6 +771,23 @@
       "close": "Tutup",
       "signIn": "Masuk untuk meminta faktur",
       "signInNote": "Kami mengirim faktur untuk workspace akun Anda, jadi masuk terlebih dahulu."
+    },
+    "nonprofit": {
+      "title": "Diskon untuk nirlaba",
+      "description": "Organisasi nirlaba dan lembaga amal terdaftar mendapat diskon {percent, number}% untuk Pro atau Business, bulanan maupun tahunan. Ceritakan tentang organisasi Anda dan kami akan mengirim kode diskon lewat email untuk dimasukkan saat pembayaran.",
+      "organization": "Nama organisasi",
+      "country": "Negara",
+      "registration": "Nomor registrasi atau tautan",
+      "registrationHint": "Nomor Anda di daftar lembaga amal atau organisasi nirlaba, atau tautan ke entri Anda di daftar publik.",
+      "contactEmail": "Email kontak",
+      "plan": "Paket",
+      "reply": "Biasanya kami membalas dalam beberapa hari. Tidak ada biaya sampai Anda melakukan pembayaran.",
+      "submit": "Kirim permintaan",
+      "sending": "Mengirim…",
+      "sentTitle": "Permintaan terkirim",
+      "sent": "Kami akan membalas ke {email}, biasanya dalam beberapa hari. Jika organisasi Anda memenuhi syarat, balasan tersebut berisi kode diskon untuk dimasukkan saat pembayaran.",
+      "close": "Tutup",
+      "failed": "Terjadi kesalahan. Kirim email ke {email} saja."
     },
     "enterprise": {
       "name": "Enterprise",
@@ -2043,6 +2081,9 @@
         "outcome": "Anda mendapat pemberitahuan minimal 12 bulan, waktu untuk mengekspor semuanya, dan panduan terdokumentasi untuk menjalankan aplikasi open source di server Anda sendiri."
       }
     },
+    "moneyBackTitle": "Jaminan uang kembali",
+    "moneyBack": "Pembayaran pertama Anda untuk Pro atau Business, bulanan maupun tahunan, disertai jaminan uang kembali selama {days, number} hari. Jika paket ini tidak cocok untuk Anda, kirim email ke <mail>{email}</mail> dalam {days, number} hari setelah pembayaran dan kami akan mengembalikan dana Anda sepenuhnya, tanpa pertanyaan. Jaminan ini berlaku satu kali per pelanggan, dan kode Anda tetap berfungsi di paket Gratis setelahnya.",
+    "moneyBackLink": "Baca kebijakan pengembalian dana",
     "exceptionTitle": "Satu-satunya pengecualian: penyalahgunaan",
     "exception": "Kami menonaktifkan kode hanya jika melanggar <terms>ketentuan layanan</terms> kami, misalnya mengarah ke phishing atau malware. Itu keputusan keamanan yang diambil setelah laporan atau peninjauan, bukan karena penagihan. Siapa pun dapat <report>melaporkan kode</report>.",
     "questions": "Ada pertanyaan tentang jaminan ini? Kirim email ke <mail>{email}</mail>. Terakhir diperbarui <time>{date, date, long}</time>."
