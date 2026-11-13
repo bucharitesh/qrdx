@@ -36,6 +36,8 @@ const REACT_FREE = [
   "node.js",
   "vue.mjs",
   "vue.js",
+  "angular.mjs",
+  "angular.js",
 ];
 
 describe("React-free bundles", () => {
@@ -54,6 +56,8 @@ describe("React-free bundles", () => {
     ["vanilla.js", ["./core.js"]],
     ["node.mjs", ["./core.mjs", "@resvg/resvg-js", "sharp"]],
     ["node.js", ["./core.js", "@resvg/resvg-js", "sharp"]],
+    ["angular.mjs", ["./core.mjs", "@angular/core"]],
+    ["angular.js", ["./core.js", "@angular/core"]],
     ["vue.mjs", ["./core.mjs", "vue"]],
     ["vue.js", ["./core.js", "vue"]],
   ])("%s takes the engine from dist/core", (file, allowed) => {
@@ -122,6 +126,8 @@ describe("<qrdx-code> bundles", () => {
     expect(code).not.toMatch(/\bfrom\s*["']/);
     expect(code).not.toMatch(/allergen-info/);
     expect(code).toMatch(/\bdefineQRdxCode\b/);
+  });
+});
 
 // qrdx/preact and qrdx/solid: the engine from dist/core, the framework from
 // the app, and nothing else (no React, no copy of the engine)
