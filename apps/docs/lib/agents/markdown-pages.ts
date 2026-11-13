@@ -19,6 +19,7 @@ import {
   type PricingOptions,
   priceRow,
 } from "@/components/sections/pricing/plan-content";
+import { ENTERPRISE_ADDS } from "@/lib/enterprise";
 import {
   claudeCodeCommand,
   claudeConnectorUrl,
@@ -28,7 +29,10 @@ import {
   vscodeInstallRedirectUrl,
 } from "@/lib/mcp-clients";
 import {
+  EUR_PRICES,
   formatPrice,
+  localPricesNote,
+  MONEY_BACK_DAYS,
   PAID_PLANS,
   type PaidPlan,
   PLAN_NAMES,
@@ -80,7 +84,7 @@ export function pricingMarkdown({
   const price = (plan: Plan) => {
     if (plan === "free") return formatPrice(0, "USD");
     const paid = PRICING[plan as PaidPlan];
-    return `${formatPrice(paid.month.amounts.USD, "USD")} a month or ${formatPrice(paid.year.amounts.USD, "USD")} a year (in India ${formatPrice(paid.month.amounts.INR, "INR")} or ${formatPrice(paid.year.amounts.INR, "INR")})`;
+    return `${formatPrice(paid.month.amounts.USD, "USD")} a month or ${formatPrice(paid.year.amounts.USD, "USD")} a year (${localPricesNote(plan as PaidPlan)})`;
   };
 
   const plans = PLANS.map(
@@ -90,11 +94,18 @@ export function pricingMarkdown({
 
   const header = `| Feature | ${PLANS.map((plan) => PLAN_NAMES[plan]).join(" | ")} |\n| --- | ${PLANS.map(() => "---").join(" | ")} |`;
   const inr = priceRow("INR");
+  const eur = priceRow("EUR");
   const table = buildComparison(limits, "USD", offered)
     .map((group) => {
       const rows =
         group.title === "Price"
-          ? [...group.rows, { ...inr, feature: "Price in India" }]
+          ? [
+              ...group.rows,
+              { ...inr, feature: "Price in India" },
+              ...(EUR_PRICES
+                ? [{ ...eur, feature: "Price in the EU and EEA" }]
+                : []),
+            ]
           : group.rows;
       return [
         `| **${group.title}** | ${PLANS.map(() => "").join(" | ")} |`,
@@ -108,7 +119,7 @@ export function pricingMarkdown({
 
   return `${[
     "# QRdx pricing",
-    `> ${buildPricingIntro(offered)} Customers in India are charged in rupees, everyone else in US dollars.`,
+    `> ${buildPricingIntro(offered)} Customers in India are charged in rupees, ${EUR_PRICES ? "customers in the EU and EEA in euros, " : ""}everyone else in US dollars. The first payment for a paid plan comes with a ${MONEY_BACK_DAYS}-day money-back guarantee.`,
     `URL: ${abs("/pricing")}`,
     "## Plans",
     plans,
@@ -121,6 +132,8 @@ export function pricingMarkdown({
     "## More",
     [
       `- [Plans and limits](${abs("/docs/plans-and-limits")}): what happens at each limit`,
+      `- [Enterprise](${abs("/enterprise")}): custom price, the Business plan under a contract. Adds: ${ENTERPRISE_ADDS.join("; ")}`,
+      `- [Security](${abs("/security")}): how QRdx protects accounts and data`,
       `- [Help with billing](${abs("/docs/help")})`,
       `- [Site index for LLMs](${abs("/llms.txt")})`,
     ].join("\n"),

@@ -60,6 +60,7 @@ export function QRCodeCanvas(props: QRPropsCanvas) {
     eyeColors: _eyeColors,
     moduleScale: _moduleScale,
     frameLabelMarkers: _frameLabelMarkers,
+    partMarkers: _partMarkers,
     autoLevel,
     shape,
     ...otherProps

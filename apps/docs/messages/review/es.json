@@ -427,6 +427,10 @@
     "source": "cc813935fc0f",
     "status": "machine"
   },
+  "footer.links.enterprise": {
+    "source": "3fbe5ed156f1",
+    "status": "machine"
+  },
   "footer.links.slackBot": {
     "source": "12355a7a269d",
     "status": "machine"
@@ -597,6 +601,10 @@
   },
   "footer.links.security": {
     "source": "8f6fb4eb7f42",
+    "status": "machine"
+  },
+  "footer.links.securityPolicy": {
+    "source": "5929ef9641ba",
     "status": "machine"
   },
   "footer.links.allComparisons": {
@@ -1275,6 +1283,14 @@
     "source": "10b749bd2aed",
     "status": "machine"
   },
+  "pricing.currency.eur": {
+    "source": "d82a1e0b8cd0",
+    "status": "machine"
+  },
+  "pricing.currency.showEur": {
+    "source": "78712d1708c1",
+    "status": "machine"
+  },
   "pricing.price.forever": {
     "source": "2070f725ff1c",
     "status": "machine"
@@ -1385,6 +1401,26 @@
   },
   "pricing.footnote": {
     "source": "11d50baa54d6",
+    "status": "machine"
+  },
+  "pricing.footnoteEur": {
+    "source": "d8f9ab4a96a2",
+    "status": "machine"
+  },
+  "pricing.offers.moneyBack": {
+    "source": "ed4f6b1fc384",
+    "status": "machine"
+  },
+  "pricing.offers.moneyBackLink": {
+    "source": "6da9e675b1a7",
+    "status": "machine"
+  },
+  "pricing.offers.nonprofit": {
+    "source": "01db7e5d7bed",
+    "status": "machine"
+  },
+  "pricing.offers.nonprofitLink": {
+    "source": "b3592d56a8a1",
     "status": "machine"
   },
   "pricing.values.unlimited": {
@@ -1847,6 +1883,14 @@
     "source": "8bf967e25bf1",
     "status": "machine"
   },
+  "pricing.faq.items.refund.question": {
+    "source": "895d605d64ef",
+    "status": "machine"
+  },
+  "pricing.faq.items.refund.answer": {
+    "source": "17aedeffc3df",
+    "status": "machine"
+  },
   "pricing.faq.items.paymentFails.question": {
     "source": "2fa2244fbaa4",
     "status": "machine"
@@ -1871,6 +1915,14 @@
     "source": "4fd441009e6e",
     "status": "machine"
   },
+  "pricing.faq.items.currencies.question": {
+    "source": "8729b9a52324",
+    "status": "machine"
+  },
+  "pricing.faq.items.currencies.answer": {
+    "source": "023e1d65fb1e",
+    "status": "machine"
+  },
   "pricing.faq.items.switchPlans.question": {
     "source": "261e87b59bcc",
     "status": "machine"
@@ -1893,6 +1945,14 @@
   },
   "pricing.faq.items.selfHost.answer": {
     "source": "8c5477b33a21",
+    "status": "machine"
+  },
+  "pricing.faq.items.nonprofit.question": {
+    "source": "0310d979de93",
+    "status": "machine"
+  },
+  "pricing.faq.items.nonprofit.answer": {
+    "source": "e0e0f2a339c7",
     "status": "machine"
   },
   "pricing.faq.items.billing.question": {
@@ -1969,6 +2029,110 @@
   },
   "pricing.invoice.signInNote": {
     "source": "c6d5bfba58c3",
+    "status": "machine"
+  },
+  "pricing.nonprofit.title": {
+    "source": "3b5b3393411a",
+    "status": "machine"
+  },
+  "pricing.nonprofit.description": {
+    "source": "f8a9c7301484",
+    "status": "machine"
+  },
+  "pricing.nonprofit.organization": {
+    "source": "9a807d52ba21",
+    "status": "machine"
+  },
+  "pricing.nonprofit.country": {
+    "source": "701d021d08c5",
+    "status": "machine"
+  },
+  "pricing.nonprofit.registration": {
+    "source": "b275b25afa7b",
+    "status": "machine"
+  },
+  "pricing.nonprofit.registrationHint": {
+    "source": "c2d17b86aae5",
+    "status": "machine"
+  },
+  "pricing.nonprofit.contactEmail": {
+    "source": "6d7fce11ae00",
+    "status": "machine"
+  },
+  "pricing.nonprofit.plan": {
+    "source": "fa8ed0bdabdd",
+    "status": "machine"
+  },
+  "pricing.nonprofit.reply": {
+    "source": "acd8b0c281ca",
+    "status": "machine"
+  },
+  "pricing.nonprofit.submit": {
+    "source": "3a69f897298e",
+    "status": "machine"
+  },
+  "pricing.nonprofit.sending": {
+    "source": "b8ed5279e897",
+    "status": "machine"
+  },
+  "pricing.nonprofit.sentTitle": {
+    "source": "a73f99f6bfc8",
+    "status": "machine"
+  },
+  "pricing.nonprofit.sent": {
+    "source": "45a1e02a6386",
+    "status": "machine"
+  },
+  "pricing.nonprofit.close": {
+    "source": "7d9eb7acb13e",
+    "status": "machine"
+  },
+  "pricing.nonprofit.failed": {
+    "source": "1342d6313653",
+    "status": "machine"
+  },
+  "pricing.enterprise.name": {
+    "source": "3fbe5ed156f1",
+    "status": "machine"
+  },
+  "pricing.enterprise.tagline": {
+    "source": "fb21e317df5c",
+    "status": "machine"
+  },
+  "pricing.enterprise.price": {
+    "source": "494ca78f7374",
+    "status": "machine"
+  },
+  "pricing.enterprise.priceNote": {
+    "source": "52a4bdbf7c72",
+    "status": "machine"
+  },
+  "pricing.enterprise.cta": {
+    "source": "47aaf31b83d6",
+    "status": "machine"
+  },
+  "pricing.enterprise.lead": {
+    "source": "244263497096",
+    "status": "machine"
+  },
+  "pricing.enterprise.adds.contract": {
+    "source": "74140e63fec3",
+    "status": "machine"
+  },
+  "pricing.enterprise.adds.replies": {
+    "source": "1e55867de73b",
+    "status": "machine"
+  },
+  "pricing.enterprise.adds.review": {
+    "source": "cbd0d74fe76f",
+    "status": "machine"
+  },
+  "pricing.enterprise.adds.selfHost": {
+    "source": "c13894e74f3b",
+    "status": "machine"
+  },
+  "pricing.enterprise.security": {
+    "source": "b1a805be3ecd",
     "status": "machine"
   },
   "docs.meta.titleSuffix": {
@@ -3924,7 +4088,35 @@
     "status": "machine"
   },
   "scan.faq.installAnswer": {
-    "source": "cbe2ebaa90bb",
+    "source": "091b8ebef4c4",
+    "status": "machine"
+  },
+  "scan.faq.shareQuestion": {
+    "source": "e0dfa04b1b8d",
+    "status": "machine"
+  },
+  "scan.faq.shareAnswer": {
+    "source": "7922050c6e51",
+    "status": "machine"
+  },
+  "scan.app.name": {
+    "source": "9771ae5e5dbc",
+    "status": "machine"
+  },
+  "scan.app.shortName": {
+    "source": "9771ae5e5dbc",
+    "status": "machine"
+  },
+  "scan.app.description": {
+    "source": "36ecf2381124",
+    "status": "machine"
+  },
+  "scan.app.cameraShortcut": {
+    "source": "2164cf918656",
+    "status": "machine"
+  },
+  "scan.app.imageShortcut": {
+    "source": "2425b41a216a",
     "status": "machine"
   },
   "scanner.kinds.url": {
@@ -4217,6 +4409,10 @@
   },
   "scanner.image.paste": {
     "source": "aad0d55385fb",
+    "status": "machine"
+  },
+  "scanner.image.shareMissing": {
+    "source": "79ab2d2790b5",
     "status": "machine"
   },
   "scanner.result.starts": {
@@ -4593,6 +4789,50 @@
   },
   "scanner.link.report": {
     "source": "f5bd5f711903",
+    "status": "machine"
+  },
+  "scanner.install.install": {
+    "source": "ac5837f30e8d",
+    "status": "machine"
+  },
+  "scanner.install.iosButton": {
+    "source": "e1090dd0b826",
+    "status": "machine"
+  },
+  "scanner.install.iosTitle": {
+    "source": "397f839608e9",
+    "status": "machine"
+  },
+  "scanner.install.iosShare": {
+    "source": "b0ab5866ee41",
+    "status": "machine"
+  },
+  "scanner.install.iosAdd": {
+    "source": "4a8932f85906",
+    "status": "machine"
+  },
+  "scanner.install.iosConfirm": {
+    "source": "5196510c934e",
+    "status": "machine"
+  },
+  "scanner.install.macButton": {
+    "source": "75abc35bff7b",
+    "status": "machine"
+  },
+  "scanner.install.macTitle": {
+    "source": "9e48e2d8be90",
+    "status": "machine"
+  },
+  "scanner.install.macAdd": {
+    "source": "aedceba1a68e",
+    "status": "machine"
+  },
+  "scanner.install.macConfirm": {
+    "source": "483b253f63b3",
+    "status": "machine"
+  },
+  "scanner.install.after": {
+    "source": "3ee48cb78ef2",
     "status": "machine"
   },
   "scanPages.reportAbuse": {
@@ -5967,6 +6207,18 @@
     "source": "8b7b5245ac0c",
     "status": "machine"
   },
+  "guarantee.moneyBackTitle": {
+    "source": "2197d8b81a9b",
+    "status": "machine"
+  },
+  "guarantee.moneyBack": {
+    "source": "88055c875609",
+    "status": "machine"
+  },
+  "guarantee.moneyBackLink": {
+    "source": "54bd838dbc15",
+    "status": "machine"
+  },
   "guarantee.exceptionTitle": {
     "source": "1c9ec99f6cf8",
     "status": "machine"
@@ -5977,6 +6229,678 @@
   },
   "guarantee.questions": {
     "source": "bed70e84c27c",
+    "status": "machine"
+  },
+  "enterprise.metaTitle": {
+    "source": "ba8d80b3e11b",
+    "status": "machine"
+  },
+  "enterprise.metaDescription": {
+    "source": "47c0dbccc8c7",
+    "status": "machine"
+  },
+  "enterprise.crumb": {
+    "source": "3fbe5ed156f1",
+    "status": "machine"
+  },
+  "enterprise.title": {
+    "source": "e0b734809ddf",
+    "status": "machine"
+  },
+  "enterprise.intro1": {
+    "source": "42098b124f64",
+    "status": "machine"
+  },
+  "enterprise.intro2": {
+    "source": "4ea31911d946",
+    "status": "machine"
+  },
+  "enterprise.contactCta": {
+    "source": "47aaf31b83d6",
+    "status": "machine"
+  },
+  "enterprise.securityCta": {
+    "source": "d75dbab0c686",
+    "status": "machine"
+  },
+  "enterprise.whoTitle": {
+    "source": "60c3907ec269",
+    "status": "machine"
+  },
+  "enterprise.who.brands.title": {
+    "source": "65e543d4e0dc",
+    "status": "machine"
+  },
+  "enterprise.who.brands.body": {
+    "source": "c1f03ef6817a",
+    "status": "machine"
+  },
+  "enterprise.who.agencies.title": {
+    "source": "3b8797f648d8",
+    "status": "machine"
+  },
+  "enterprise.who.agencies.body": {
+    "source": "2f83ff647e70",
+    "status": "machine"
+  },
+  "enterprise.who.security.title": {
+    "source": "33d2e347bf8d",
+    "status": "machine"
+  },
+  "enterprise.who.security.body": {
+    "source": "f300729315fb",
+    "status": "machine"
+  },
+  "enterprise.featuresTitle": {
+    "source": "41a1acbef296",
+    "status": "machine"
+  },
+  "enterprise.featuresIntro": {
+    "source": "bef1c9c40f61",
+    "status": "machine"
+  },
+  "enterprise.features.sso.title": {
+    "source": "3bc44ac28dcd",
+    "status": "machine"
+  },
+  "enterprise.features.sso.body": {
+    "source": "56f4b420464a",
+    "status": "machine"
+  },
+  "enterprise.features.auditLog.title": {
+    "source": "e4d36f9a4e22",
+    "status": "machine"
+  },
+  "enterprise.features.auditLog.body": {
+    "source": "0610b7909354",
+    "status": "machine"
+  },
+  "enterprise.features.roles.title": {
+    "source": "adb94651dea4",
+    "status": "machine"
+  },
+  "enterprise.features.roles.body": {
+    "source": "d9e93d43e62a",
+    "status": "machine"
+  },
+  "enterprise.features.seats.title": {
+    "source": "56465b948842",
+    "status": "machine"
+  },
+  "enterprise.features.seats.body": {
+    "source": "c728595a6343",
+    "status": "machine"
+  },
+  "enterprise.features.domains.title": {
+    "source": "e4351f23dd28",
+    "status": "machine"
+  },
+  "enterprise.features.domains.body": {
+    "source": "01600d4cbf22",
+    "status": "machine"
+  },
+  "enterprise.features.clients.title": {
+    "source": "824c4811da5c",
+    "status": "machine"
+  },
+  "enterprise.features.clients.body": {
+    "source": "155fcde336b9",
+    "status": "machine"
+  },
+  "enterprise.features.api.title": {
+    "source": "cbb045bcf6d5",
+    "status": "machine"
+  },
+  "enterprise.features.api.body": {
+    "source": "41e178e0d753",
+    "status": "machine"
+  },
+  "enterprise.features.export.title": {
+    "source": "5e3aa8abf5e1",
+    "status": "machine"
+  },
+  "enterprise.features.export.body": {
+    "source": "45a43e7702f2",
+    "status": "machine"
+  },
+  "enterprise.contractTitle": {
+    "source": "190eec512a10",
+    "status": "machine"
+  },
+  "enterprise.contractIntro": {
+    "source": "bcb0e24321db",
+    "status": "machine"
+  },
+  "enterprise.contract.replies.title": {
+    "source": "581f1e088a18",
+    "status": "machine"
+  },
+  "enterprise.contract.replies.body": {
+    "source": "3c60b034c115",
+    "status": "machine"
+  },
+  "enterprise.contract.invoice.title": {
+    "source": "74140e63fec3",
+    "status": "machine"
+  },
+  "enterprise.contract.invoice.body": {
+    "source": "020597e61743",
+    "status": "machine"
+  },
+  "enterprise.contract.review.title": {
+    "source": "cbd0d74fe76f",
+    "status": "machine"
+  },
+  "enterprise.contract.review.body": {
+    "source": "2d15cb242f46",
+    "status": "machine"
+  },
+  "enterprise.contract.selfHost.title": {
+    "source": "5b4655e8e804",
+    "status": "machine"
+  },
+  "enterprise.contract.selfHost.body": {
+    "source": "42e6f874036d",
+    "status": "machine"
+  },
+  "enterprise.limitsNote": {
+    "source": "190e10a846b5",
+    "status": "machine"
+  },
+  "enterprise.repliesTitle": {
+    "source": "e399e8ca0cf3",
+    "status": "machine"
+  },
+  "enterprise.replies.when": {
+    "source": "cf9c7aa24a26",
+    "status": "machine"
+  },
+  "enterprise.replies.enterprise": {
+    "source": "3fbe5ed156f1",
+    "status": "machine"
+  },
+  "enterprise.replies.business": {
+    "source": "76f68a75f01e",
+    "status": "machine"
+  },
+  "enterprise.replies.outage": {
+    "source": "921fbb5e07e6",
+    "status": "machine"
+  },
+  "enterprise.replies.other": {
+    "source": "cd6c5f59d15c",
+    "status": "machine"
+  },
+  "enterprise.replies.hours": {
+    "source": "a10cc41369f9",
+    "status": "machine"
+  },
+  "enterprise.replies.days": {
+    "source": "c5f85a16d66c",
+    "status": "machine"
+  },
+  "enterprise.repliesNote": {
+    "source": "ea86713858aa",
+    "status": "machine"
+  },
+  "enterprise.buyTitle": {
+    "source": "7f2469b30362",
+    "status": "machine"
+  },
+  "enterprise.buy.ask.title": {
+    "source": "f5cc85390482",
+    "status": "machine"
+  },
+  "enterprise.buy.ask.body": {
+    "source": "01a578b888da",
+    "status": "machine"
+  },
+  "enterprise.buy.quote.title": {
+    "source": "b58fbf45341d",
+    "status": "machine"
+  },
+  "enterprise.buy.quote.body": {
+    "source": "a1c1a9364eb3",
+    "status": "machine"
+  },
+  "enterprise.buy.sign.title": {
+    "source": "05df38c676cb",
+    "status": "machine"
+  },
+  "enterprise.buy.sign.body": {
+    "source": "071331f7eb5b",
+    "status": "machine"
+  },
+  "enterprise.formTitle": {
+    "source": "1d1d94fb5397",
+    "status": "machine"
+  },
+  "enterprise.formIntro": {
+    "source": "31278da32614",
+    "status": "machine"
+  },
+  "enterprise.form.name": {
+    "source": "dcd1d5223f73",
+    "status": "machine"
+  },
+  "enterprise.form.email": {
+    "source": "932f815786ae",
+    "status": "machine"
+  },
+  "enterprise.form.company": {
+    "source": "de4743c87973",
+    "status": "machine"
+  },
+  "enterprise.form.teamSize": {
+    "source": "62bc7da1d31a",
+    "status": "machine"
+  },
+  "enterprise.form.teamSizePlaceholder": {
+    "source": "1546cecb3fb2",
+    "status": "machine"
+  },
+  "enterprise.form.sizes.1-10": {
+    "source": "31b8ffcc7a36",
+    "status": "machine"
+  },
+  "enterprise.form.sizes.11-50": {
+    "source": "96ca1d5540d4",
+    "status": "machine"
+  },
+  "enterprise.form.sizes.51-200": {
+    "source": "e9231acc548e",
+    "status": "machine"
+  },
+  "enterprise.form.sizes.201-1000": {
+    "source": "34dd110d6c74",
+    "status": "machine"
+  },
+  "enterprise.form.sizes.1000+": {
+    "source": "aa9084662986",
+    "status": "machine"
+  },
+  "enterprise.form.need": {
+    "source": "52c6a4f68307",
+    "status": "machine"
+  },
+  "enterprise.form.needPlaceholder": {
+    "source": "03373b2dfdbb",
+    "status": "machine"
+  },
+  "enterprise.form.submit": {
+    "source": "f6f4688ff23d",
+    "status": "machine"
+  },
+  "enterprise.form.sending": {
+    "source": "b8ed5279e897",
+    "status": "machine"
+  },
+  "enterprise.form.sentTitle": {
+    "source": "0a1f2fbcba7a",
+    "status": "machine"
+  },
+  "enterprise.form.sent": {
+    "source": "c10f2016b6a9",
+    "status": "machine"
+  },
+  "enterprise.form.privacy": {
+    "source": "6dc467d2a40c",
+    "status": "machine"
+  },
+  "enterprise.form.errors.name": {
+    "source": "a480220a0f59",
+    "status": "machine"
+  },
+  "enterprise.form.errors.email": {
+    "source": "e57dd3309d28",
+    "status": "machine"
+  },
+  "enterprise.form.errors.company": {
+    "source": "4a5f71fb2f8c",
+    "status": "machine"
+  },
+  "enterprise.form.errors.teamSize": {
+    "source": "413cf8c080bf",
+    "status": "machine"
+  },
+  "enterprise.form.errors.need": {
+    "source": "6a09f1a9f79d",
+    "status": "machine"
+  },
+  "enterprise.form.errors.rateLimited": {
+    "source": "4f4556467963",
+    "status": "machine"
+  },
+  "enterprise.form.errors.check": {
+    "source": "dac96971ca0b",
+    "status": "machine"
+  },
+  "enterprise.form.errors.notSent": {
+    "source": "a6a6398ffb0b",
+    "status": "machine"
+  },
+  "enterprise.form.errors.unavailable": {
+    "source": "c446ef20266c",
+    "status": "machine"
+  },
+  "enterprise.form.errors.unknown": {
+    "source": "1342d6313653",
+    "status": "machine"
+  },
+  "enterprise.orEmail": {
+    "source": "ca9eb342c102",
+    "status": "machine"
+  },
+  "enterprise.relatedTitle": {
+    "source": "83b794145c0c",
+    "status": "machine"
+  },
+  "enterprise.related.security": {
+    "source": "b1a805be3ecd",
+    "status": "machine"
+  },
+  "enterprise.related.dpa": {
+    "source": "ba0d6a897ca4",
+    "status": "machine"
+  },
+  "enterprise.related.subprocessors": {
+    "source": "4fd685570eae",
+    "status": "machine"
+  },
+  "enterprise.related.pricing": {
+    "source": "dfe95783edfe",
+    "status": "machine"
+  },
+  "security.metaTitle": {
+    "source": "894d7ea469e0",
+    "status": "machine"
+  },
+  "security.metaDescription": {
+    "source": "4d198d5b5711",
+    "status": "machine"
+  },
+  "security.crumb": {
+    "source": "8f6fb4eb7f42",
+    "status": "machine"
+  },
+  "security.title": {
+    "source": "b1a805be3ecd",
+    "status": "machine"
+  },
+  "security.intro1": {
+    "source": "23dc63fcec28",
+    "status": "machine"
+  },
+  "security.intro2": {
+    "source": "5962fe3a976c",
+    "status": "machine"
+  },
+  "security.reportCta": {
+    "source": "3805db21012a",
+    "status": "machine"
+  },
+  "security.enterpriseCta": {
+    "source": "ce2a4460459e",
+    "status": "machine"
+  },
+  "security.sections.transport.title": {
+    "source": "7d837a55a61c",
+    "status": "machine"
+  },
+  "security.sections.transport.items.https.title": {
+    "source": "5ba50a1456b9",
+    "status": "machine"
+  },
+  "security.sections.transport.items.https.body": {
+    "source": "2f23353f64d2",
+    "status": "machine"
+  },
+  "security.sections.transport.items.csp.title": {
+    "source": "3c661467d580",
+    "status": "machine"
+  },
+  "security.sections.transport.items.csp.body": {
+    "source": "32f8535de7c6",
+    "status": "machine"
+  },
+  "security.sections.transport.items.framing.title": {
+    "source": "9282f71bb61e",
+    "status": "machine"
+  },
+  "security.sections.transport.items.framing.body": {
+    "source": "d3675f0e0c95",
+    "status": "machine"
+  },
+  "security.sections.signIn.title": {
+    "source": "824a1d703ce6",
+    "status": "machine"
+  },
+  "security.sections.signIn.items.passwords.title": {
+    "source": "12efecf8b86f",
+    "status": "machine"
+  },
+  "security.sections.signIn.items.passwords.body": {
+    "source": "0b8e1710aaf0",
+    "status": "machine"
+  },
+  "security.sections.signIn.items.twoFactor.title": {
+    "source": "7c0ff7eab32d",
+    "status": "machine"
+  },
+  "security.sections.signIn.items.twoFactor.body": {
+    "source": "34d72598a225",
+    "status": "machine"
+  },
+  "security.sections.signIn.items.confirm.title": {
+    "source": "6176eec272e8",
+    "status": "machine"
+  },
+  "security.sections.signIn.items.confirm.body": {
+    "source": "786d4b16fe1e",
+    "status": "machine"
+  },
+  "security.sections.signIn.items.alerts.title": {
+    "source": "98caea2b703d",
+    "status": "machine"
+  },
+  "security.sections.signIn.items.alerts.body": {
+    "source": "eeb68397239a",
+    "status": "machine"
+  },
+  "security.sections.signIn.items.sessions.title": {
+    "source": "0bfe5e5292fc",
+    "status": "machine"
+  },
+  "security.sections.signIn.items.sessions.body": {
+    "source": "ba1f8139d0f8",
+    "status": "machine"
+  },
+  "security.sections.workspaces.title": {
+    "source": "bda7f646246a",
+    "status": "machine"
+  },
+  "security.sections.workspaces.items.sso.title": {
+    "source": "3bc44ac28dcd",
+    "status": "machine"
+  },
+  "security.sections.workspaces.items.sso.body": {
+    "source": "a8161189f882",
+    "status": "machine"
+  },
+  "security.sections.workspaces.items.roles.title": {
+    "source": "c25337055464",
+    "status": "machine"
+  },
+  "security.sections.workspaces.items.roles.body": {
+    "source": "e6b64984ade8",
+    "status": "machine"
+  },
+  "security.sections.workspaces.items.auditLog.title": {
+    "source": "e4d36f9a4e22",
+    "status": "machine"
+  },
+  "security.sections.workspaces.items.auditLog.body": {
+    "source": "ba81cdf1796e",
+    "status": "machine"
+  },
+  "security.sections.workspaces.items.staff.title": {
+    "source": "75860b315d60",
+    "status": "machine"
+  },
+  "security.sections.workspaces.items.staff.body": {
+    "source": "cc01e4b189e7",
+    "status": "machine"
+  },
+  "security.sections.secrets.title": {
+    "source": "a535d2b73199",
+    "status": "machine"
+  },
+  "security.sections.secrets.items.hashed.title": {
+    "source": "781dca79e4ee",
+    "status": "machine"
+  },
+  "security.sections.secrets.items.hashed.body": {
+    "source": "04a53752bfcc",
+    "status": "machine"
+  },
+  "security.sections.secrets.items.encrypted.title": {
+    "source": "300324cbd920",
+    "status": "machine"
+  },
+  "security.sections.secrets.items.encrypted.body": {
+    "source": "8fe1724a0310",
+    "status": "machine"
+  },
+  "security.sections.secrets.items.webhooks.title": {
+    "source": "45ca11ddb2a4",
+    "status": "machine"
+  },
+  "security.sections.secrets.items.webhooks.body": {
+    "source": "8509a1451943",
+    "status": "machine"
+  },
+  "security.sections.abuse.title": {
+    "source": "f9adabdd950f",
+    "status": "machine"
+  },
+  "security.sections.abuse.items.linkChecks.title": {
+    "source": "46aadf7e9cd9",
+    "status": "machine"
+  },
+  "security.sections.abuse.items.linkChecks.body": {
+    "source": "2dc96fea3c6b",
+    "status": "machine"
+  },
+  "security.sections.abuse.items.rateLimits.title": {
+    "source": "6ed021f7e822",
+    "status": "machine"
+  },
+  "security.sections.abuse.items.rateLimits.body": {
+    "source": "36c11233c272",
+    "status": "machine"
+  },
+  "security.sections.abuse.items.bots.title": {
+    "source": "f350e8588b0c",
+    "status": "machine"
+  },
+  "security.sections.abuse.items.bots.body": {
+    "source": "37fffb86ed6d",
+    "status": "machine"
+  },
+  "security.sections.abuse.items.reports.title": {
+    "source": "7b2bf935fc22",
+    "status": "machine"
+  },
+  "security.sections.abuse.items.reports.body": {
+    "source": "5437fc33d0a5",
+    "status": "machine"
+  },
+  "security.sections.storage.title": {
+    "source": "488a4d15a92c",
+    "status": "machine"
+  },
+  "security.sections.storage.items.hosting.title": {
+    "source": "b4ec9bba800b",
+    "status": "machine"
+  },
+  "security.sections.storage.items.hosting.body": {
+    "source": "f2e4bccde657",
+    "status": "machine"
+  },
+  "security.sections.storage.items.database.title": {
+    "source": "fa7fe67124e9",
+    "status": "machine"
+  },
+  "security.sections.storage.items.database.body": {
+    "source": "7f95d032e29f",
+    "status": "machine"
+  },
+  "security.sections.storage.items.files.title": {
+    "source": "3c4d5d917f9b",
+    "status": "machine"
+  },
+  "security.sections.storage.items.files.body": {
+    "source": "4510b7135cbb",
+    "status": "machine"
+  },
+  "security.sections.storage.items.scans.title": {
+    "source": "7e4e852d0f81",
+    "status": "machine"
+  },
+  "security.sections.storage.items.scans.body": {
+    "source": "978edb24eee4",
+    "status": "machine"
+  },
+  "security.sections.yourData.title": {
+    "source": "2fc3ec06cd72",
+    "status": "machine"
+  },
+  "security.sections.yourData.items.export.title": {
+    "source": "3664895579f0",
+    "status": "machine"
+  },
+  "security.sections.yourData.items.export.body": {
+    "source": "5ef74c5eaf9e",
+    "status": "machine"
+  },
+  "security.sections.yourData.items.delete.title": {
+    "source": "3f1e41fa5f7f",
+    "status": "machine"
+  },
+  "security.sections.yourData.items.delete.body": {
+    "source": "9fe1fad3a544",
+    "status": "machine"
+  },
+  "security.sections.yourData.items.dpa.title": {
+    "source": "ba0d6a897ca4",
+    "status": "machine"
+  },
+  "security.sections.yourData.items.dpa.body": {
+    "source": "781c4e81a8c8",
+    "status": "machine"
+  },
+  "security.sections.yourData.items.subprocessors.title": {
+    "source": "4fd685570eae",
+    "status": "machine"
+  },
+  "security.sections.yourData.items.subprocessors.body": {
+    "source": "81258a30ec34",
+    "status": "machine"
+  },
+  "security.reportTitle": {
+    "source": "3805db21012a",
+    "status": "machine"
+  },
+  "security.report": {
+    "source": "0c3e807903f7",
+    "status": "machine"
+  },
+  "security.reviewTitle": {
+    "source": "d69bedb763c4",
+    "status": "machine"
+  },
+  "security.review": {
+    "source": "f5f999c23247",
     "status": "machine"
   },
   "templates.metaTitle": {
@@ -12123,6 +13047,302 @@
     "source": "84853fb7f0ef",
     "status": "machine"
   },
+  "editor.partInline.parts.eyes.edit": {
+    "source": "691e8fbf5f47",
+    "status": "machine"
+  },
+  "editor.partInline.parts.eyes.options": {
+    "source": "27bbc0a2ebf6",
+    "status": "machine"
+  },
+  "editor.partInline.parts.eyes.random": {
+    "source": "28d8de9fd9e9",
+    "status": "machine"
+  },
+  "editor.partInline.parts.eyes.more": {
+    "source": "2cfe63824ded",
+    "status": "machine"
+  },
+  "editor.partInline.parts.dots.edit": {
+    "source": "0c5f54d7380b",
+    "status": "machine"
+  },
+  "editor.partInline.parts.dots.options": {
+    "source": "109fc933304c",
+    "status": "machine"
+  },
+  "editor.partInline.parts.dots.random": {
+    "source": "e07c46fdfdc3",
+    "status": "machine"
+  },
+  "editor.partInline.parts.dots.more": {
+    "source": "fdb192df70c2",
+    "status": "machine"
+  },
+  "editor.partInline.parts.logo.edit": {
+    "source": "134a1450f00b",
+    "status": "machine"
+  },
+  "editor.partInline.parts.logo.options": {
+    "source": "7d59ee50382b",
+    "status": "machine"
+  },
+  "editor.partInline.parts.logo.random": {
+    "source": "b430f59a36c2",
+    "status": "machine"
+  },
+  "editor.partInline.parts.logo.more": {
+    "source": "530b7838757e",
+    "status": "machine"
+  },
+  "editor.partInline.parts.background.edit": {
+    "source": "75dbca49b6f4",
+    "status": "machine"
+  },
+  "editor.partInline.parts.background.options": {
+    "source": "21e8489c64d9",
+    "status": "machine"
+  },
+  "editor.partInline.parts.background.random": {
+    "source": "c1eed655ecfe",
+    "status": "machine"
+  },
+  "editor.partInline.parts.background.more": {
+    "source": "d738160c6b99",
+    "status": "machine"
+  },
+  "editor.partInline.parts.background.editShape": {
+    "source": "0f6d760059b8",
+    "status": "machine"
+  },
+  "editor.partInline.parts.frame.edit": {
+    "source": "83af8e9e4bf6",
+    "status": "machine"
+  },
+  "editor.partInline.parts.frame.options": {
+    "source": "83f066591c5a",
+    "status": "machine"
+  },
+  "editor.partInline.parts.frame.random": {
+    "source": "0e26e0660dd9",
+    "status": "machine"
+  },
+  "editor.partInline.parts.frame.more": {
+    "source": "84853fb7f0ef",
+    "status": "machine"
+  },
+  "editor.partInline.items.outerShape": {
+    "source": "f215b634a3aa",
+    "status": "machine"
+  },
+  "editor.partInline.items.centerShape": {
+    "source": "5aefcf3ebc59",
+    "status": "machine"
+  },
+  "editor.partInline.items.eyeColor": {
+    "source": "2816702f68ad",
+    "status": "machine"
+  },
+  "editor.partInline.items.centerColor": {
+    "source": "99df89fac615",
+    "status": "machine"
+  },
+  "editor.partInline.items.pattern": {
+    "source": "4288ade73ff9",
+    "status": "machine"
+  },
+  "editor.partInline.items.dotColor": {
+    "source": "f762f73563fb",
+    "status": "machine"
+  },
+  "editor.partInline.items.dotSize": {
+    "source": "97c5bc43ff30",
+    "status": "machine"
+  },
+  "editor.partInline.items.logo": {
+    "source": "d707dc2f1936",
+    "status": "machine"
+  },
+  "editor.partInline.items.quickIcons": {
+    "source": "4f438e913206",
+    "status": "machine"
+  },
+  "editor.partInline.items.logoSize": {
+    "source": "1483ec4e73dc",
+    "status": "machine"
+  },
+  "editor.partInline.items.hideLogo": {
+    "source": "4b2d07b23ba4",
+    "status": "machine"
+  },
+  "editor.partInline.items.backgroundColor": {
+    "source": "3e314dafdf7c",
+    "status": "machine"
+  },
+  "editor.partInline.items.padding": {
+    "source": "ee0d7af0bffd",
+    "status": "machine"
+  },
+  "editor.partInline.items.frameStyle": {
+    "source": "84b161a43043",
+    "status": "machine"
+  },
+  "editor.partInline.items.frameColor": {
+    "source": "2d7228cc6b77",
+    "status": "machine"
+  },
+  "editor.partInline.items.whichEyes": {
+    "source": "f01982f48c03",
+    "status": "machine"
+  },
+  "editor.partInline.items.allEyes": {
+    "source": "6dd43284a407",
+    "status": "machine"
+  },
+  "editor.partInline.items.thisEye": {
+    "source": "be88e7e92763",
+    "status": "machine"
+  },
+  "editor.partInline.items.thisEyesColor": {
+    "source": "3df8cea82992",
+    "status": "machine"
+  },
+  "editor.partInline.items.thisEyesCenterColor": {
+    "source": "b18eff2ab4f2",
+    "status": "machine"
+  },
+  "editor.partInline.items.shapesChangeAllThreeEyes": {
+    "source": "2ec9e6c3e0e7",
+    "status": "machine"
+  },
+  "editor.partInline.items.sameAsTheOthers": {
+    "source": "c20b8a1de631",
+    "status": "machine"
+  },
+  "editor.partInline.items.eyesWithTheirOwnColor": {
+    "source": "a4e225b42367",
+    "status": "machine"
+  },
+  "editor.partInline.items.logoShapeAndPlate": {
+    "source": "848f74c90181",
+    "status": "machine"
+  },
+  "editor.partInline.items.clearSpace": {
+    "source": "5921f132532e",
+    "status": "machine"
+  },
+  "editor.partInline.items.content": {
+    "source": "47bd29075f8b",
+    "status": "machine"
+  },
+  "editor.partInline.items.codeShape": {
+    "source": "6f591585fbae",
+    "status": "machine"
+  },
+  "editor.partInline.items.errorCorrection": {
+    "source": "c7bdad567af2",
+    "status": "machine"
+  },
+  "editor.partInline.random": {
+    "source": "67bc484430fe",
+    "status": "machine"
+  },
+  "editor.partInline.moreOptions": {
+    "source": "bc79cdffbaa8",
+    "status": "machine"
+  },
+  "editor.partInline.sheet.changesShowOnTheCode": {
+    "source": "83ba360b3742",
+    "status": "machine"
+  },
+  "editor.partInline.sheet.done": {
+    "source": "11a6767d5674",
+    "status": "machine"
+  },
+  "editor.partInline.content.link": {
+    "source": "a6a32dbc5618",
+    "status": "machine"
+  },
+  "editor.partInline.content.text": {
+    "source": "71988c4d8e08",
+    "status": "machine"
+  },
+  "editor.partInline.content.theCodeKeepsItsContent": {
+    "source": "e3eea635dbc5",
+    "status": "machine"
+  },
+  "editor.partInline.content.scansOpenHost": {
+    "source": "89d886d47495",
+    "status": "machine"
+  },
+  "editor.partInline.content.textHint": {
+    "source": "c910e35a6a23",
+    "status": "machine"
+  },
+  "editor.partInline.content.editedInTheContentTab": {
+    "source": "61df96171e51",
+    "status": "machine"
+  },
+  "editor.partInline.content.openTheContentTab": {
+    "source": "d63bfc89400f",
+    "status": "machine"
+  },
+  "editor.partInline.codeShape.codeShape": {
+    "source": "6f591585fbae",
+    "status": "machine"
+  },
+  "editor.partInline.codeShape.names.square": {
+    "source": "c11092bc0861",
+    "status": "machine"
+  },
+  "editor.partInline.codeShape.names.circle": {
+    "source": "b93d3bcecff5",
+    "status": "machine"
+  },
+  "editor.partInline.codeShape.names.heart": {
+    "source": "770af9d18037",
+    "status": "machine"
+  },
+  "editor.partInline.codeShape.aCircleOrHeartTakes": {
+    "source": "ac2030d88592",
+    "status": "machine"
+  },
+  "editor.partInline.errorCorrection.theLogoRaisesItToLevel": {
+    "source": "b84208d7c5bf",
+    "status": "machine"
+  },
+  "editor.partInline.handles.moveLogo": {
+    "source": "d27a74e88bfc",
+    "status": "machine"
+  },
+  "editor.partInline.handles.dragOrUseTheArrowKeys": {
+    "source": "56e4952aafe1",
+    "status": "machine"
+  },
+  "editor.partInline.handles.logoSize": {
+    "source": "1483ec4e73dc",
+    "status": "machine"
+  },
+  "editor.partInline.handles.percentOfTheCode": {
+    "source": "227aab7c91cd",
+    "status": "machine"
+  },
+  "editor.partInline.handles.padding": {
+    "source": "ee0d7af0bffd",
+    "status": "machine"
+  },
+  "editor.partInline.handles.modules": {
+    "source": "a11fcc63bcde",
+    "status": "machine"
+  },
+  "editor.partInline.handles.dragToChangeThePadding": {
+    "source": "36445054fae4",
+    "status": "machine"
+  },
+  "editor.partInline.drop.dropToUseAsLogo": {
+    "source": "18b3a562cd9e",
+    "status": "machine"
+  },
   "editor.gradientPicker.pickASolidColorA": {
     "source": "af7f9357f50f",
     "status": "machine"
@@ -12895,6 +14115,10 @@
     "source": "4353ae15ce2a",
     "status": "machine"
   },
+  "editor.keyboardShortcutsModal.categories.preview": {
+    "source": "324b134f57c7",
+    "status": "machine"
+  },
   "editor.keyboardShortcutsModal.categories.help": {
     "source": "b79cac926e0b",
     "status": "machine"
@@ -12973,6 +14197,22 @@
   },
   "editor.keyboardShortcutsModal.shortcuts.showThisShortcutsDialog": {
     "source": "ddefcf6aec3e",
+    "status": "machine"
+  },
+  "editor.keyboardShortcutsModal.shortcuts.editAPartOfTheCode": {
+    "source": "cfddc2b2d6c6",
+    "status": "machine"
+  },
+  "editor.keyboardShortcutsModal.shortcuts.randomLookForThatPart": {
+    "source": "70db48fdf358",
+    "status": "machine"
+  },
+  "editor.keyboardShortcutsModal.shortcuts.hideTheFocusedLogo": {
+    "source": "1f1218678b8a",
+    "status": "machine"
+  },
+  "editor.keyboardShortcutsModal.shortcuts.moveTheLogoWhileEditing": {
+    "source": "4e8217755d57",
     "status": "machine"
   },
   "editor.soundSwitch.sounds": {

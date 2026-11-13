@@ -184,6 +184,7 @@
       "pageTemplates": "Templat halaman",
       "pricing": "Harga",
       "guarantee": "Jaminan Never-Hostage",
+      "enterprise": "Enterprise",
       "slackBot": "Bot Slack",
       "telegramBot": "Bot Telegram",
       "discordBot": "Bot Discord",
@@ -227,6 +228,7 @@
       "refunds": "Pengembalian dana",
       "affiliateTerms": "Ketentuan afiliasi",
       "security": "Keamanan",
+      "securityPolicy": "Kebijakan keamanan",
       "allComparisons": "Semua perbandingan"
     }
   },
@@ -509,7 +511,9 @@
       "inr": "Harga dalam ₹ untuk India.",
       "usd": "Harga dalam US$.",
       "showInr": "Di India? Lihat harga dalam ₹",
-      "showUsd": "Tampilkan harga dalam US$"
+      "showUsd": "Tampilkan harga dalam US$",
+      "eur": "Harga dalam € untuk UE dan EEA.",
+      "showEur": "Di UE atau EEA? Lihat harga dalam €"
     },
     "price": {
       "forever": "selamanya",
@@ -553,6 +557,13 @@
       "guide": "Panduan self-hosting"
     },
     "footnote": "Polar menangani checkout sebagai merchant of record; pajak lokal dapat ditambahkan saat checkout. Pelanggan di India ditagih dalam ₹, selain itu dalam US$.",
+    "footnoteEur": "Polar menangani pembayaran sebagai merchant of record; pajak lokal dapat ditambahkan saat pembayaran. Pelanggan di India ditagih dalam ₹, pelanggan di UE dan EEA dalam €, dan pelanggan lainnya dalam US$.",
+    "offers": {
+      "moneyBack": "Garansi uang kembali {days, number} hari untuk pembayaran pertama Anda.",
+      "moneyBackLink": "Cara kerja pengembalian dana",
+      "nonprofit": "Organisasi nirlaba atau amal? Diskon {percent, number}% untuk Pro dan Business.",
+      "nonprofitLink": "Minta kode"
+    },
     "values": {
       "unlimited": "Tanpa batas",
       "days": "{count, plural, other {# hari}}",
@@ -700,6 +711,10 @@
           "question": "Apa yang terjadi jika saya berhenti berlangganan?",
           "answer": "Tidak ada yang rusak. Paket Anda tetap aktif hingga akhir periode yang sudah Anda bayar, lalu akun Anda pindah ke Gratis. Setiap kode QR dinamis tetap mengalihkan dan setiap pemindaian tetap dihitung: itulah Jaminan Never-Hostage kami. Di paket Gratis, Anda tidak dapat membuat lebih dari batas yang diizinkan paket Gratis, dan analitik menampilkan 90 hari terakhir."
         },
+        "refund": {
+          "question": "Bisakah uang saya dikembalikan?",
+          "answer": "Bisa. Pembayaran pertama Anda untuk Pro atau Business, bulanan maupun tahunan, disertai garansi uang kembali {days, number} hari: kirim email ke support@qrdx.dev dari alamat email akun Anda dalam {days, number} hari setelah pembayaran, dan kami akan mengembalikan dana sepenuhnya tanpa banyak pertanyaan. Garansi ini berlaku satu kali per pelanggan. Setelah itu, kode Anda tetap berfungsi di paket Gratis."
+        },
         "paymentFails": {
           "question": "Apa yang terjadi jika pembayaran gagal?",
           "answer": "Kode Anda tetap berfungsi. Jika langganan berakhir, akun Anda mengikuti batas paket Gratis, sama seperti jika Anda berhenti berlangganan. Kami tidak pernah menjeda kode, menampilkan iklan, atau mengarahkan pemindai Anda ke halaman QRdx karena urusan penagihan."
@@ -712,6 +727,10 @@
           "question": "Mengapa harga ditampilkan dalam ₹?",
           "answer": "Pengunjung dari India melihat harga dalam rupee India: Pro seharga {proMonthly} per bulan atau {proYearly} per tahun, Business {businessMonthly} per bulan atau {businessYearly} per tahun. Saat checkout, pelanggan di India ditagih dalam ₹ dan pelanggan lainnya dalam US$, apa pun mata uang yang Anda lihat saat menjelajah. Gunakan tombol pengalih di atas daftar paket untuk mengubah mata uang tampilan."
         },
+        "currencies": {
+          "question": "Mengapa harga tampil dalam ₹ atau €?",
+          "answer": "Harga ditampilkan dalam mata uang negara tempat Anda berada. Di India, Pro seharga {proMonthly} per bulan atau {proYearly} per tahun, dan Business {businessMonthly} per bulan atau {businessYearly} per tahun. Di UE dan EEA, Pro seharga {proMonthlyEur} per bulan atau {proYearlyEur} per tahun, dan Business {businessMonthlyEur} per bulan atau {businessYearlyEur} per tahun. Di tempat lain harganya dalam US$. Pembayaran ditagih dalam mata uang negara Anda, apa pun mata uang yang Anda lihat saat menjelajah. Gunakan pengalih di atas paket untuk mengubah mata uang tampilan."
+        },
         "switchPlans": {
           "question": "Bisakah saya mengganti paket atau periode penagihan nanti?",
           "answer": "Bisa. Buka Kelola langganan di pengaturan Anda untuk mengubah atau membatalkan paket di portal penagihan Polar. Beralih ke paket yang lebih kecil tidak akan menonaktifkan kode, halaman, atau domain yang sudah ada."
@@ -723,6 +742,10 @@
         "selfHost": {
           "question": "Bisakah saya hosting sendiri?",
           "answer": "Bisa. QRdx bersumber terbuka di bawah AGPL-3.0. Jalankan dengan database Postgres Anda sendiri dengan mengikuti panduan self-hosting; batas paket didefinisikan dalam satu file yang dapat Anda ubah untuk instans Anda."
+        },
+        "nonprofit": {
+          "question": "Apakah ada diskon untuk organisasi nirlaba?",
+          "answer": "Ada. Organisasi nirlaba dan lembaga amal terdaftar mendapat diskon {percent, number}% untuk Pro atau Business, bulanan maupun tahunan. Ceritakan tentang organisasi Anda melalui tautan nirlaba di bawah paket. Biasanya kami membalas dalam beberapa hari, dengan kode diskon untuk dimasukkan saat pembayaran."
         },
         "billing": {
           "question": "Siapa yang mengurus penagihan dan pajak?",
@@ -748,6 +771,38 @@
       "close": "Tutup",
       "signIn": "Masuk untuk meminta faktur",
       "signInNote": "Kami mengirim faktur untuk workspace akun Anda, jadi masuk terlebih dahulu."
+    },
+    "nonprofit": {
+      "title": "Diskon untuk nirlaba",
+      "description": "Organisasi nirlaba dan lembaga amal terdaftar mendapat diskon {percent, number}% untuk Pro atau Business, bulanan maupun tahunan. Ceritakan tentang organisasi Anda dan kami akan mengirim kode diskon lewat email untuk dimasukkan saat pembayaran.",
+      "organization": "Nama organisasi",
+      "country": "Negara",
+      "registration": "Nomor registrasi atau tautan",
+      "registrationHint": "Nomor Anda di daftar lembaga amal atau organisasi nirlaba, atau tautan ke entri Anda di daftar publik.",
+      "contactEmail": "Email kontak",
+      "plan": "Paket",
+      "reply": "Biasanya kami membalas dalam beberapa hari. Tidak ada biaya sampai Anda melakukan pembayaran.",
+      "submit": "Kirim permintaan",
+      "sending": "Mengirim…",
+      "sentTitle": "Permintaan terkirim",
+      "sent": "Kami akan membalas ke {email}, biasanya dalam beberapa hari. Jika organisasi Anda memenuhi syarat, balasan tersebut berisi kode diskon untuk dimasukkan saat pembayaran.",
+      "close": "Tutup",
+      "failed": "Terjadi kesalahan. Kirim email ke {email} saja."
+    },
+    "enterprise": {
+      "name": "Enterprise",
+      "tagline": "Untuk perusahaan yang membutuhkan kontrak dan tinjauan keamanan",
+      "price": "Khusus",
+      "priceNote": "Kontrak tahunan, dibayar dengan faktur",
+      "cta": "Hubungi kami",
+      "lead": "Semua fitur Business, ditambah:",
+      "adds": {
+        "contract": "Kontrak tahunan, dibayar dengan faktur",
+        "replies": "Balasan dalam {hours, plural, other {# jam kerja}} saat kode berhenti berfungsi",
+        "review": "Jawaban untuk tinjauan keamanan Anda",
+        "selfHost": "SSO dan log audit di server Anda sendiri"
+      },
+      "security": "Keamanan di QRdx"
     }
   },
   "docs": {
@@ -1382,7 +1437,16 @@
       "browsersQuestion": "Browser apa yang didukung?",
       "browsersAnswer": "Browser modern apa pun dengan akses kamera: Chrome, Edge, Safari, dan Firefox di ponsel maupun komputer. Browser dengan pembaca barcode bawaan (Chrome di Android dan macOS) menggunakannya langsung; yang lain mengunduh dekoder open-source (ZXing, dikompilasi ke WebAssembly, sekitar 1 MB dari CDN jsDelivr) saat pertama kali Anda memindai. Kamera memerlukan halaman https dan izin Anda.",
       "installQuestion": "Bisakah saya memasang pemindai sebagai aplikasi?",
-      "installAnswer": "Bisa. Gunakan opsi Pasang atau Tambahkan ke Layar Utama di browser Anda pada halaman ini untuk mendapatkan ikon pemindai yang langsung membuka kamera."
+      "installAnswer": "Ya. Di Chrome, Edge, atau Samsung Internet, ketuk Install app di bawah pemindai, atau gunakan opsi Instal bawaan browser Anda. Di iPhone dan iPad, ketuk Add to Home Screen di bawah pemindai untuk melihat langkah-langkahnya. Aplikasi ini langsung terbuka ke pemindai di jendelanya sendiri, berfungsi secara offline setelah Anda melakukan pemindaian dengannya, dan menyimpan riwayatnya di perangkat Anda.",
+      "shareQuestion": "Bisakah saya memindai kode QR dari tangkapan layar?",
+      "shareAnswer": "Ya. Beralih ke Image, lalu pilih, seret, atau tempel tangkapan layar tersebut. Di Android, setelah pemindai terpasang, Anda juga dapat membagikan tangkapan layar atau foto ke QRdx Scanner dari aplikasi mana pun: aplikasi akan terbuka dan membaca kodenya di perangkat Anda. Gambar yang dibagikan tidak diunggah maupun disimpan."
+    },
+    "app": {
+      "name": "QRdx Scanner",
+      "shortName": "QRdx Scanner",
+      "description": "Pindai kode QR dan barcode dengan kamera Anda atau dari tangkapan layar. Gambar dibaca di perangkat Anda, dan tautan diperiksa sebelum dibuka.",
+      "cameraShortcut": "Pindai dengan kamera",
+      "imageShortcut": "Pindai dari gambar"
     }
   },
   "scanner": {
@@ -1467,7 +1531,8 @@
       "drop": "Letakkan gambar di sini, pilih file, atau tempel",
       "dropHelp": "Tangkapan layar dan foto dapat digunakan, dengan beberapa kode per gambar.",
       "choose": "Pilih gambar",
-      "paste": "Tempel gambar"
+      "paste": "Tempel gambar",
+      "shareMissing": "Gambar yang dibagikan tidak masuk. Pilih gambarnya di sini."
     },
     "result": {
       "starts": "Mulai",
@@ -1578,6 +1643,19 @@
       "copy": "Salin tautan",
       "retry": "Coba lagi",
       "report": "Laporkan kode ini"
+    },
+    "install": {
+      "install": "Instal aplikasi",
+      "iosButton": "Tambah ke Layar Utama",
+      "iosTitle": "Tambahkan pemindai ke Layar Utama Anda",
+      "iosShare": "Ketuk Bagikan. Di Safari pada iPhone, tombolnya ada di menu di samping alamat.",
+      "iosAdd": "Geser ke atas dan pilih Tambah ke Layar Utama.",
+      "iosConfirm": "Biarkan Buka sebagai Aplikasi Web tetap aktif, lalu ketuk Tambah.",
+      "macButton": "Tambah ke Dock",
+      "macTitle": "Tambahkan pemindai ke Dock Anda",
+      "macAdd": "Di bilah menu, pilih File, lalu Tambah ke Dock.",
+      "macConfirm": "Klik Tambah.",
+      "after": "Aplikasi langsung terbuka di pemindai dalam jendelanya sendiri, dan dapat digunakan secara offline setelah Anda memindai satu kode dengannya."
     }
   },
   "scanPages": {
@@ -2026,9 +2104,322 @@
         "outcome": "Anda mendapat pemberitahuan minimal 12 bulan, waktu untuk mengekspor semuanya, dan panduan terdokumentasi untuk menjalankan aplikasi open source di server Anda sendiri."
       }
     },
+    "moneyBackTitle": "Jaminan uang kembali",
+    "moneyBack": "Pembayaran pertama Anda untuk Pro atau Business, bulanan maupun tahunan, disertai jaminan uang kembali selama {days, number} hari. Jika paket ini tidak cocok untuk Anda, kirim email ke <mail>{email}</mail> dalam {days, number} hari setelah pembayaran dan kami akan mengembalikan dana Anda sepenuhnya, tanpa pertanyaan. Jaminan ini berlaku satu kali per pelanggan, dan kode Anda tetap berfungsi di paket Gratis setelahnya.",
+    "moneyBackLink": "Baca kebijakan pengembalian dana",
     "exceptionTitle": "Satu-satunya pengecualian: penyalahgunaan",
     "exception": "Kami menonaktifkan kode hanya jika melanggar <terms>ketentuan layanan</terms> kami, misalnya mengarah ke phishing atau malware. Itu keputusan keamanan yang diambil setelah laporan atau peninjauan, bukan karena penagihan. Siapa pun dapat <report>melaporkan kode</report>.",
     "questions": "Ada pertanyaan tentang jaminan ini? Kirim email ke <mail>{email}</mail>. Terakhir diperbarui <time>{date, date, long}</time>."
+  },
+  "enterprise": {
+    "metaTitle": "QRdx Enterprise: SSO, Log Audit, Kontrak, dan Waktu Balasan",
+    "metaDescription": "QRdx untuk tim besar: single sign-on, log audit dengan ekspor CSV, peran, domain khusus, dan portal klien, dengan kontrak tahunan, waktu balasan tertulis, dan pembayaran melalui faktur.",
+    "crumb": "Enterprise",
+    "title": "QRdx untuk tim enterprise",
+    "intro1": "Untuk perusahaan yang menempatkan kode QR pada kemasan, papan petunjuk, dan kampanye di banyak tim, merek, atau klien, serta membutuhkan single sign-on, jejak audit, dan kontrak sebelum menggunakannya secara luas.",
+    "intro2": "Enterprise adalah paket Business dengan kontrak: waktu balasan tertulis, pembayaran melalui faktur, dan jawaban untuk peninjauan keamanan Anda.",
+    "contactCta": "Hubungi kami",
+    "securityCta": "Cara kami menangani keamanan",
+    "whoTitle": "Untuk siapa",
+    "who": {
+      "brands": {
+        "title": "Merek dan peritel",
+        "body": "Kode pada kemasan, menu, dan papan petunjuk di banyak lokasi, dikelola beberapa tim yang masing-masing membutuhkan akses sendiri."
+      },
+      "agencies": {
+        "title": "Agensi",
+        "body": "Satu ruang kerja per klien, portal hanya-baca untuk setiap klien, dan halaman statistik dengan branding mereka."
+      },
+      "security": {
+        "title": "Tim IT dan keamanan",
+        "body": "Vendor yang memasukkan pengguna melalui penyedia identitas Anda, mencatat siapa mengubah apa, dan menjawab kuesioner keamanan Anda."
+      }
+    },
+    "featuresTitle": "Yang Anda dapatkan",
+    "featuresIntro": "Semua yang ada di paket Business. Setiap item sudah berfungsi di qrdx.dev saat ini.",
+    "features": {
+      "sso": {
+        "title": "Single sign-on",
+        "body": "OIDC atau SAML 2.0 untuk domain email Anda, dibuktikan dengan catatan DNS. Jika diwajibkan, penyedia identitas Anda menjadi satu-satunya jalur masuk untuk domain tersebut."
+      },
+      "auditLog": {
+        "title": "Log audit",
+        "body": "Siapa yang mengubah kode, halaman, anggota, domain, kunci API, atau pengaturan mana, dan kapan. Saring datanya, ekspor hingga {rows, number} baris sebagai CSV, dan simpan riwayat selama {days, number} hari."
+      },
+      "roles": {
+        "title": "Peran dan verifikasi dua langkah",
+        "body": "Pemilik, admin, anggota, anggota penagihan, dan penampil hanya-baca. Ruang kerja dapat mewajibkan verifikasi dua langkah bagi semua orang di dalamnya."
+      },
+      "seats": {
+        "title": "Ruang kerja dan kursi",
+        "body": "Anggota tanpa batas, dengan ruang kerja terpisah untuk setiap tim, merek, atau klien, serta peran tersendiri di masing-masing."
+      },
+      "domains": {
+        "title": "Domain khusus",
+        "body": "Tautan pendek dan halaman yang di-hosting pada hingga {count, number} domain milik Anda sendiri."
+      },
+      "clients": {
+        "title": "Portal klien dan statistik bermerek",
+        "body": "Portal hanya-baca tempat klien melihat folder yang Anda bagikan kepada mereka, dan halaman statistik dengan branding mereka tanpa logo QRdx."
+      },
+      "api": {
+        "title": "API dan pembuatan massal",
+        "body": "{requests, number} permintaan API per hari, hingga {batch, number} kode dalam satu panggilan API, dan impor CSV hingga {importRows, number} baris."
+      },
+      "export": {
+        "title": "Data Anda, dapat diekspor",
+        "body": "Unduh semua isi akun Anda sebagai ZIP, dan ekspor pemindaian, respons formulir, serta log audit sebagai CSV."
+      }
+    },
+    "contractTitle": "Tambahan dari kontrak",
+    "contractIntro": "Selain paket Business:",
+    "contract": {
+      "replies": {
+        "title": "Waktu balasan tertulis",
+        "body": "Dalam {outage, plural, other {# jam kerja}} saat kode atau halaman yang di-hosting berhenti berfungsi, dan dalam {other, plural, other {# hari kerja}} untuk hal lainnya."
+      },
+      "invoice": {
+        "title": "Kontrak tahunan, dibayar dengan faktur",
+        "body": "Bayar melalui transfer bank, bukan kartu, dengan data perusahaan, ID pajak, dan nomor pesanan pembelian Anda tercantum pada faktur."
+      },
+      "review": {
+        "title": "Jawaban untuk tinjauan keamanan Anda",
+        "body": "Kami mengisi kuesioner keamanan Anda dan mengirimkan salinan Data Processing Addendum yang sudah ditandatangani."
+      },
+      "selfHost": {
+        "title": "Single sign-on dan log audit saat Anda hosting sendiri",
+        "body": "QRdx bersifat open source, tetapi single sign-on dan log audit berada di bawah lisensi komersial QRdx. Perjanjian Enterprise memungkinkan Anda menjalankannya di server sendiri dengan kunci lisensi."
+      }
+    },
+    "limitsNote": "Di qrdx.dev, workspace Enterprise memiliki batas yang sama dengan paket Business. Jika Anda membutuhkan lebih banyak untuk sesuatu, sampaikan di formulir.",
+    "repliesTitle": "Waktu balasan",
+    "replies": {
+      "when": "Kapan",
+      "enterprise": "Enterprise",
+      "business": "Business",
+      "outage": "Kode atau halaman yang di-hosting berhenti berfungsi",
+      "other": "Hal lainnya",
+      "hours": "Dalam {count, plural, other {# jam kerja}}",
+      "days": "Dalam {count, plural, other {# hari kerja}}"
+    },
+    "repliesNote": "Jam kerja adalah Senin sampai Jumat, waktu India. Ini adalah waktu balasan: QRdx tidak menawarkan jaminan uptime.",
+    "buyTitle": "Cara membeli",
+    "buy": {
+      "ask": {
+        "title": "Beri tahu kebutuhan Anda",
+        "body": "Gunakan formulir di bawah atau kirim email ke {email}. Sebutkan ukuran tim Anda dan hal apa pun yang diminta tinjauan keamanan Anda."
+      },
+      "quote": {
+        "title": "Dapatkan jawaban dan harga",
+        "body": "Kami membalas lewat email dengan jawaban atas pertanyaan Anda dan harga tahunan."
+      },
+      "sign": {
+        "title": "Tanda tangani dan bayar dengan faktur",
+        "body": "Setelah kontrak ditandatangani, kami memindahkan workspace Anda ke paket Business dan mengirimkan faktur."
+      }
+    },
+    "formTitle": "Hubungi kami",
+    "formIntro": "Ceritakan tentang tim Anda dan kebutuhan Anda. Kami membalas lewat email.",
+    "form": {
+      "name": "Nama",
+      "email": "Email kerja",
+      "company": "Perusahaan",
+      "teamSize": "Ukuran tim",
+      "teamSizePlaceholder": "Pilih ukuran",
+      "sizes": {
+        "1-10": "1 sampai 10 orang",
+        "11-50": "11 sampai 50 orang",
+        "51-200": "51 sampai 200 orang",
+        "201-1000": "201 sampai 1.000 orang",
+        "1000+": "Lebih dari 1.000 orang"
+      },
+      "need": "Apa yang Anda butuhkan?",
+      "needPlaceholder": "Contoh: single sign-on untuk 300 orang, faktur tahunan, kuesioner keamanan kami",
+      "submit": "Kirim",
+      "sending": "Mengirim…",
+      "sentTitle": "Pesan terkirim",
+      "sent": "Terima kasih. Kami akan membalas ke {email}.",
+      "privacy": "Kami hanya menggunakan data ini untuk membalas Anda. Lihat <privacy>kebijakan privasi</privacy> kami.",
+      "errors": {
+        "name": "Masukkan nama Anda.",
+        "email": "Masukkan alamat email kerja yang valid.",
+        "company": "Masukkan nama perusahaan Anda.",
+        "teamSize": "Pilih ukuran tim Anda.",
+        "need": "Ceritakan kebutuhan Anda.",
+        "rateLimited": "Anda sudah mengirim beberapa pesan. Kami akan membalas pesan tersebut, atau kirim email ke {email}.",
+        "check": "Selesaikan pemeriksaan di atas tombol, lalu kirim lagi.",
+        "notSent": "Pesan Anda tidak dapat terkirim. Kirim email ke {email} saja.",
+        "unavailable": "Formulir ini tidak tersedia di sini. Kirim email ke {email} saja.",
+        "unknown": "Terjadi kesalahan. Kirim email ke {email} saja."
+      }
+    },
+    "orEmail": "Lebih suka email? Tulis ke <mail>{email}</mail>.",
+    "relatedTitle": "Baca lebih lanjut",
+    "related": {
+      "security": "Keamanan di QRdx",
+      "dpa": "Data Processing Addendum",
+      "subprocessors": "Subprosesor",
+      "pricing": "Harga"
+    }
+  },
+  "security": {
+    "metaTitle": "Keamanan di QRdx: Proses Masuk, Penyimpanan Data, dan Pelaporan Masalah",
+    "metaDescription": "Cara QRdx melindungi akun dan data: HTTPS dengan HSTS, kebijakan keamanan konten, passkey dan verifikasi dua langkah, single sign-on, log audit, pemeriksaan tautan, lokasi penyimpanan data, serta cara melaporkan kerentanan.",
+    "crumb": "Keamanan",
+    "title": "Keamanan di QRdx",
+    "intro1": "Apa yang dilakukan QRdx untuk melindungi akun, kode, dan data pengunjung Anda. Setiap poin menjelaskan sesuatu yang berjalan di qrdx.dev saat ini, dan kodenya bersifat open source, sehingga Anda dapat memeriksanya sendiri.",
+    "intro2": "QRdx tidak memiliki sertifikasi SOC 2 atau HIPAA, maupun sertifikasi keamanan lainnya, dan tidak menjanjikannya.",
+    "reportCta": "Laporkan kerentanan",
+    "enterpriseCta": "Tinjauan keamanan? Hubungi kami",
+    "sections": {
+      "transport": {
+        "title": "Koneksi dan browser",
+        "items": {
+          "https": {
+            "title": "HTTPS di mana-mana",
+            "body": "Setiap halaman dan panggilan API disajikan melalui HTTPS, dan browser diminta untuk terus memakai HTTPS bagi qrdx.dev selama dua tahun (HSTS)."
+          },
+          "csp": {
+            "title": "Kebijakan keamanan konten",
+            "body": "Halaman QRdx sendiri membatasi skrip, frame, dan koneksi yang boleh dimuat. Halaman yang menampilkan data akun Anda mendapatkan nonce baru pada setiap permintaan, sehingga skrip yang disusupkan ke dalamnya tidak berjalan."
+          },
+          "framing": {
+            "title": "Tidak dapat di-frame situs lain",
+            "body": "Halaman QRdx sendiri tidak dapat ditampilkan di dalam frame situs lain, dan layar tempat Anda menyetujui aplikasi sama sekali tidak dapat di-frame. Browser juga diminta untuk tidak menebak jenis file."
+          }
+        }
+      },
+      "signIn": {
+        "title": "Proses masuk",
+        "items": {
+          "passwords": {
+            "title": "Tanpa kata sandi",
+            "body": "Anda masuk dengan Google, GitHub, atau kode email sekali pakai{passkeys, select, yes {, atau dengan passkey} other {}}. QRdx tidak menyimpan kata sandi yang bisa bocor."
+          },
+          "twoFactor": {
+            "title": "Verifikasi dua langkah",
+            "body": "Langkah kedua dengan aplikasi autentikator{passkeys, select, yes { atau passkey} other {}}, dengan kode cadangan jika Anda tidak dapat menggunakannya. Workspace di Business dapat mewajibkannya bagi setiap anggota."
+          },
+          "confirm": {
+            "title": "Konfirmasi bahwa ini Anda",
+            "body": "Perubahan keamanan, kunci API dan webhook baru, perubahan peran, serta penghapusan workspace meminta Anda mengonfirmasi bahwa ini memang Anda, meskipun sudah masuk. Konfirmasi berlaku selama 10 menit."
+          },
+          "alerts": {
+            "title": "Notifikasi masuk baru",
+            "body": "Kami mengirim email kepada Anda saat browser atau perangkat masuk ke akun Anda untuk pertama kalinya, dan saat pengaturan verifikasi dua langkah Anda berubah."
+          },
+          "sessions": {
+            "title": "Sesi masuk yang berakhir",
+            "body": "Sesi masuk berlaku paling lama 30 hari, dan lebih singkat jika Anda berhenti menggunakannya. Sesi yang dipakai dari negara baru dan browser baru harus mengonfirmasi bahwa ini Anda, dan Anda dapat mengeluarkan semua perangkat lain sekaligus."
+          }
+        }
+      },
+      "workspaces": {
+        "title": "Workspace dan tim",
+        "items": {
+          "sso": {
+            "title": "Single sign-on",
+            "body": "OIDC atau SAML 2.0 di Business, untuk domain email yang Anda buktikan dengan record DNS. Respons SAML harus ditandatangani dengan SHA-256 atau yang lebih kuat. Saat workspace mewajibkannya, setiap jalur masuk lain ditutup untuk domain tersebut dan sesi berlaku paling lama 24 jam."
+          },
+          "roles": {
+            "title": "Peran",
+            "body": "Pemilik, admin, anggota, penagihan, dan penampil. Hanya pemilik dan admin yang dapat mengelola orang, domain, dan pengaturan, sedangkan anggota penagihan dan penampil tidak dapat mengubah kode."
+          },
+          "auditLog": {
+            "title": "Log audit",
+            "body": "Di Business, pemilik dan admin dapat melihat siapa yang mengubah kode, halaman, anggota, domain, kunci API, atau pengaturan tertentu, dan dapat mengekspornya sebagai CSV. Baris disimpan selama {days, number} hari."
+          },
+          "staff": {
+            "title": "Akses staf",
+            "body": "Hanya akun staf QRdx yang dapat membuka alat admin, dan setiap tindakan staf di sana dicatat dalam log audit."
+          }
+        }
+      },
+      "secrets": {
+        "title": "Kunci dan rahasia",
+        "items": {
+          "hashed": {
+            "title": "Kunci dan token ter-hash",
+            "body": "Kunci API dan token akses OAuth hanya disimpan sebagai hash SHA-256, sehingga salinan basis data tidak mengungkapkannya. Kata sandi pada kode yang dilindungi juga disimpan sebagai hash."
+          },
+          "encrypted": {
+            "title": "Token integrasi terenkripsi",
+            "body": "Token untuk alat yang Anda hubungkan, seperti Google Drive atau Slack, dienkripsi dengan AES-256-GCM."
+          },
+          "webhooks": {
+            "title": "Webhook bertanda tangan",
+            "body": "Setiap endpoint webhook memiliki rahasianya sendiri, dan setiap payload ditandatangani dengannya, sehingga server Anda dapat memastikan payload tersebut berasal dari QRdx."
+          }
+        }
+      },
+      "abuse": {
+        "title": "Penyalahgunaan dan keamanan tautan",
+        "items": {
+          "linkChecks": {
+            "title": "Pemeriksaan tautan",
+            "body": "Saat tujuan kode dinamis diatur, QRdx memeriksanya dengan daftar situs malware dan phishing milik Google Web Risk dan menolak yang ditandai. Tujuan yang tidak sempat diperiksa tepat waktu akan diperiksa ulang, dan kodenya dinonaktifkan jika ditandai."
+          },
+          "rateLimits": {
+            "title": "Pembatasan laju",
+            "body": "API, server MCP, formulir, dan endpoint publik lainnya dibatasi lajunya per kunci, akun, atau alamat IP."
+          },
+          "bots": {
+            "title": "Pemeriksaan bot pada formulir",
+            "body": "Formulir publik menggunakan Cloudflare Turnstile dan kolom tersembunyi yang hanya diisi oleh bot."
+          },
+          "reports": {
+            "title": "Melaporkan kode berbahaya",
+            "body": "Siapa pun dapat <report>melaporkan kode QR</report> yang mengarah ke phishing, malware, atau penipuan. Kode yang melanggar aturan akan dinonaktifkan."
+          }
+        }
+      },
+      "storage": {
+        "title": "Lokasi penyimpanan data",
+        "items": {
+          "hosting": {
+            "title": "Hosting",
+            "body": "Aplikasi berjalan di Vercel. Fungsi servernya berjalan di Washington, D.C., Amerika Serikat, di balik jaringan edge global Vercel."
+          },
+          "database": {
+            "title": "Basis data",
+            "body": "Akun, kode, pemindaian, dan respons formulir disimpan di basis data Neon Postgres di AWS US East (N. Virginia). Neon <neon>mengenkripsi data saat disimpan</neon> dengan AES-256 dan menyimpan cadangan terenkripsi."
+          },
+          "files": {
+            "title": "File yang diunggah",
+            "body": "File yang Anda unggah disimpan di Cloudflare R2, di wilayah Asia-Pasifik."
+          },
+          "scans": {
+            "title": "Data pemindaian",
+            "body": "Alamat IP pemindai tidak pernah disimpan. Pengunjung unik dihitung dengan hash yang berubah setiap hari."
+          }
+        }
+      },
+      "yourData": {
+        "title": "Data Anda dan urusan dokumennya",
+        "items": {
+          "export": {
+            "title": "Ekspor",
+            "body": "Unduh semua yang disimpan QRdx tentang akun Anda sebagai ZIP dari Pengaturan, lalu ekspor data pemindaian, respons formulir, dan log audit sebagai CSV."
+          },
+          "delete": {
+            "title": "Penghapusan",
+            "body": "Hapus kode, halaman, file, dan respons formulir kapan saja, atau hapus seluruh akun Anda. Data yang dihapus dapat tetap berada di riwayat pemulihan penyedia basis data untuk waktu singkat."
+          },
+          "dpa": {
+            "title": "Addendum Pemrosesan Data",
+            "body": "<dpa>DPA</dpa> merupakan bagian dari Ketentuan untuk setiap pelanggan dan mencakup Klausul Kontrak Standar. Minta salinan yang sudah ditandatangani jika Anda membutuhkannya."
+          },
+          "subprocessors": {
+            "title": "Subprosesor",
+            "body": "<list>Daftar subprosesor</list> menyebutkan setiap layanan yang menangani data pribadi untuk QRdx, fungsinya, dan lokasinya. Kami memperbaruinya paling lambat 30 hari sebelum layanan baru mulai digunakan."
+          }
+        }
+      }
+    },
+    "reportTitle": "Laporkan kerentanan",
+    "report": "Kirim email ke <mail>{email}</mail> dengan subjek yang diawali [security], dan mohon jangan mempostingnya di isu GitHub publik. <policy>Kebijakan keamanan</policy> kami mencakup ruang lingkup dan safe harbor, dan <txt>security.txt</txt> memuat detail kontak yang sama.",
+    "reviewTitle": "Sedang melakukan tinjauan keamanan?",
+    "review": "Kirimkan kuesioner Anda kepada kami. Kontrak <enterprise>Enterprise</enterprise> mencakup jawaban untuk tinjauan Anda dan DPA yang sudah ditandatangani."
   },
   "templates": {
     "metaTitle": "Template Halaman Arahan Kode QR dengan Demo Langsung",
@@ -3979,6 +4370,110 @@
         "moreFrameOptions": "Opsi bingkai lainnya"
       }
     },
+    "partInline": {
+      "parts": {
+        "eyes": {
+          "edit": "Edit mata",
+          "options": "Opsi mata",
+          "random": "Mata acak",
+          "more": "Opsi mata lainnya"
+        },
+        "dots": {
+          "edit": "Edit titik",
+          "options": "Opsi titik",
+          "random": "Titik acak",
+          "more": "Opsi titik lainnya"
+        },
+        "logo": {
+          "edit": "Edit logo",
+          "options": "Opsi logo",
+          "random": "Logo acak",
+          "more": "Opsi logo lainnya"
+        },
+        "background": {
+          "edit": "Edit latar",
+          "options": "Opsi latar",
+          "random": "Latar acak",
+          "more": "Opsi latar lainnya",
+          "editShape": "Ubah bentuk kode"
+        },
+        "frame": {
+          "edit": "Edit bingkai",
+          "options": "Opsi bingkai",
+          "random": "Bingkai acak",
+          "more": "Opsi bingkai lainnya"
+        }
+      },
+      "items": {
+        "outerShape": "Bentuk luar",
+        "centerShape": "Bentuk tengah",
+        "eyeColor": "Warna mata",
+        "centerColor": "Warna tengah",
+        "pattern": "Pola",
+        "dotColor": "Warna titik",
+        "dotSize": "Ukuran titik",
+        "logo": "Logo",
+        "quickIcons": "Ikon cepat",
+        "logoSize": "Ukuran logo",
+        "hideLogo": "Sembunyikan logo",
+        "backgroundColor": "Warna latar",
+        "padding": "Padding",
+        "frameStyle": "Gaya bingkai",
+        "frameColor": "Warna bingkai",
+        "whichEyes": "Mata yang mana",
+        "allEyes": "Semua mata",
+        "thisEye": "Mata ini",
+        "thisEyesColor": "Warna mata ini",
+        "thisEyesCenterColor": "Warna tengah mata ini",
+        "shapesChangeAllThreeEyes": "Bentuk mengubah ketiga mata.",
+        "sameAsTheOthers": "Sama seperti lainnya",
+        "eyesWithTheirOwnColor": "Mata dengan warna sendiri tetap mempertahankannya. Pilih Mata ini untuk mengubah salah satunya.",
+        "logoShapeAndPlate": "Bentuk dan alas logo",
+        "clearSpace": "Ruang kosong",
+        "content": "Konten",
+        "codeShape": "Bentuk kode",
+        "errorCorrection": "Koreksi kesalahan"
+      },
+      "random": "Acak",
+      "moreOptions": "Opsi lainnya",
+      "sheet": {
+        "changesShowOnTheCode": "Perubahan langsung tampil pada kode saat Anda membuatnya. Selesai akan menyimpannya.",
+        "done": "Selesai"
+      },
+      "content": {
+        "link": "Tautan",
+        "text": "Teks",
+        "theCodeKeepsItsContent": "Kode mempertahankan kontennya sampai input ini valid.",
+        "scansOpenHost": "Pemindaian membuka {host}",
+        "textHint": "Kode menampilkan teks ini saat dipindai.",
+        "editedInTheContentTab": "Jenis konten ini memiliki formulirnya sendiri di tab Konten.",
+        "openTheContentTab": "Buka tab Konten"
+      },
+      "codeShape": {
+        "codeShape": "Bentuk kode",
+        "names": {
+          "square": "Persegi",
+          "circle": "Lingkaran",
+          "heart": "Hati"
+        },
+        "aCircleOrHeartTakes": "Lingkaran atau hati menggantikan bingkai."
+      },
+      "errorCorrection": {
+        "theLogoRaisesItToLevel": "Untuk saat ini, logo menaikkannya ke level {level}."
+      },
+      "handles": {
+        "moveLogo": "Pindahkan logo",
+        "dragOrUseTheArrowKeys": "Seret, atau gunakan tombol panah. Shift menggesernya lebih jauh. Delete menyembunyikannya.",
+        "logoSize": "Ukuran logo",
+        "percentOfTheCode": "{value, number}% dari kode",
+        "padding": "Padding",
+        "modules": "{count, plural, other {# modul}}",
+        "dragToChangeThePadding": "Seret ke dalam atau ke luar untuk mengubah padding"
+      },
+      "drop": {
+        "dropToUseAsLogo": "Lepas untuk dipakai sebagai logo"
+      }
+    },
     "gradientPicker": {
       "pickASolidColorA": "Pilih warna solid, gradien, atau sampel warna untuk {label}."
     },
@@ -4228,6 +4723,7 @@
         "actions": "Tindakan",
         "themeAppearance": "Tema & Tampilan",
         "patternCustomization": "Kustomisasi Pola",
+        "preview": "Pratinjau",
         "help": "Bantuan"
       },
       "shortcuts": {
@@ -4249,7 +4745,11 @@
         "cycleCornerEyePatterns": "Ganti pola mata sudut",
         "cycleInternalEyePatterns": "Ganti pola mata dalam",
         "cycleFrames": "Ganti bingkai",
-        "showThisShortcutsDialog": "Tampilkan dialog pintasan ini"
+        "showThisShortcutsDialog": "Tampilkan dialog pintasan ini",
+        "editAPartOfTheCode": "Edit bagian kode yang berada di bawah penunjuk atau yang sedang difokuskan",
+        "randomLookForThatPart": "Tampilan acak untuk bagian itu",
+        "hideTheFocusedLogo": "Sembunyikan logo yang difokuskan",
+        "moveTheLogoWhileEditing": "Geser logo saat sedang diedit"
       }
     },
     "soundSwitch": {

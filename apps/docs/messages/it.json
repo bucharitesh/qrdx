@@ -184,6 +184,7 @@
       "pageTemplates": "Modelli di pagina",
       "pricing": "Prezzi",
       "guarantee": "Garanzia Never-Hostage",
+      "enterprise": "Enterprise",
       "slackBot": "Bot Slack",
       "telegramBot": "Bot Telegram",
       "discordBot": "Bot Discord",
@@ -227,6 +228,7 @@
       "refunds": "Rimborsi",
       "affiliateTerms": "Termini affiliazione",
       "security": "Sicurezza",
+      "securityPolicy": "Policy di sicurezza",
       "allComparisons": "Tutti i confronti"
     }
   },
@@ -509,7 +511,9 @@
       "inr": "Prezzi in ₹ per l'India.",
       "usd": "Prezzi in US$.",
       "showInr": "Sei in India? Vedi i prezzi in ₹",
-      "showUsd": "Mostra i prezzi in US$"
+      "showUsd": "Mostra i prezzi in US$",
+      "eur": "Prezzi in € per l’UE e lo SEE.",
+      "showEur": "Sei nell’UE o nello SEE? Vedi i prezzi in €"
     },
     "price": {
       "forever": "per sempre",
@@ -553,6 +557,13 @@
       "guide": "Guida al self-hosting"
     },
     "footnote": "Polar gestisce il pagamento come merchant of record; al pagamento possono essere aggiunte le imposte locali. Ai clienti in India l'addebito avviene in ₹, a tutti gli altri in US$.",
+    "footnoteEur": "Polar gestisce il pagamento come merchant of record; al checkout possono essere aggiunte le imposte locali. Ai clienti in India viene addebitato in ₹, a quelli nell’UE e nello SEE in €, a tutti gli altri in US$.",
+    "offers": {
+      "moneyBack": "Garanzia di rimborso di {days, number} giorni sul tuo primo pagamento.",
+      "moneyBackLink": "Come funzionano i rimborsi",
+      "nonprofit": "Non profit o associazione benefica? {percent, number}% di sconto su Pro e Business.",
+      "nonprofitLink": "Richiedi un codice"
+    },
     "values": {
       "unlimited": "Illimitato",
       "days": "{count, plural, one {# giorno} other {# giorni}}",
@@ -700,6 +711,10 @@
           "question": "Cosa succede se disdico?",
           "answer": "Non si rompe nulla. Il tuo piano resta attivo fino alla fine del periodo che hai pagato, poi il tuo account passa a Gratuito. Ogni QR code dinamico continua a reindirizzare e ogni scansione viene ancora conteggiata: è la nostra Garanzia Never-Hostage. Con il piano Gratuito non puoi creare più di quanto consentano i limiti Gratuito, e le analisi mostrano gli ultimi 90 giorni."
         },
+        "refund": {
+          "question": "Posso essere rimborsato?",
+          "answer": "Sì. Il tuo primo pagamento per Pro o Business, mensile o annuale, include una garanzia di rimborso di {days, number} giorni: scrivi a support@qrdx.dev dall’indirizzo email del tuo account entro {days, number} giorni dal pagamento e ti rimborsiamo l’intero importo, senza fare domande. Vale una volta per cliente. Dopo il rimborso i tuoi codici continuano a funzionare con il piano Gratuito."
+        },
         "paymentFails": {
           "question": "Cosa succede se un pagamento non va a buon fine?",
           "answer": "I tuoi codici continuano a funzionare. Se l'abbonamento scade, il tuo account passa ai limiti del piano Gratuito, esattamente come se lo avessi annullato. Non mettiamo mai in pausa i codici, non mostriamo pubblicità e non mandiamo chi effettua la scansione a una pagina di QRdx a causa della fatturazione."
@@ -712,6 +727,10 @@
           "question": "Perché vedo i prezzi in ₹?",
           "answer": "I visitatori dall'India vedono i prezzi in rupie indiane: Pro costa {proMonthly} al mese o {proYearly} all'anno, Business {businessMonthly} al mese o {businessYearly} all'anno. Al checkout i clienti in India pagano in ₹ e tutti gli altri in US$, indipendentemente dalla valuta con cui hai navigato. Usa l'interruttore sopra i piani per cambiare la valuta visualizzata."
         },
+        "currencies": {
+          "question": "Perché vedo i prezzi in ₹ o in €?",
+          "answer": "I prezzi vengono mostrati nella valuta del paese in cui ti trovi. In India, Pro costa {proMonthly} al mese o {proYearly} all’anno e Business {businessMonthly} al mese o {businessYearly} all’anno. Nell’UE e nello SEE, Pro costa {proMonthlyEur} al mese o {proYearlyEur} all’anno e Business {businessMonthlyEur} al mese o {businessYearlyEur} all’anno. Ovunque altrove è in US$. Al checkout l’addebito avviene nella valuta del tuo paese, qualunque sia la valuta con cui hai navigato. Usa l’interruttore sopra i piani per cambiare la valuta visualizzata."
+        },
         "switchPlans": {
           "question": "Posso cambiare piano o periodo di fatturazione in seguito?",
           "answer": "Sì. Apri Gestisci abbonamento nelle impostazioni per cambiare o annullare il tuo piano nel portale di fatturazione di Polar. Passare a un piano inferiore non disattiva mai i codici, le pagine o i domini esistenti."
@@ -723,6 +742,10 @@
         "selfHost": {
           "question": "Posso ospitarlo da solo?",
           "answer": "Sì. QRdx è open source con licenza AGPL-3.0. Eseguilo con il tuo database Postgres seguendo la guida all'auto-hosting; i limiti dei piani sono definiti in un unico file che puoi modificare per la tua istanza."
+        },
+        "nonprofit": {
+          "question": "Avete uno sconto per le organizzazioni non profit?",
+          "answer": "Sì. Le organizzazioni non profit e le associazioni benefiche registrate ottengono il {percent, number}% di sconto su Pro o Business, mensile o annuale. Raccontaci della tua organizzazione con il link per le non profit sotto i piani. Di solito rispondiamo entro pochi giorni, con un codice sconto da inserire al checkout."
         },
         "billing": {
           "question": "Chi gestisce fatturazione e tasse?",
@@ -748,6 +771,38 @@
       "close": "Chiudi",
       "signIn": "Accedi per richiedere una fattura",
       "signInNote": "Inviamo la fattura per il workspace del tuo account, quindi accedi prima."
+    },
+    "nonprofit": {
+      "title": "Sconto per non profit",
+      "description": "Le organizzazioni non profit e le associazioni benefiche registrate ottengono il {percent, number}% di sconto su Pro o Business, mensile o annuale. Raccontaci della tua organizzazione e ti invieremo via email un codice sconto da inserire al checkout.",
+      "organization": "Nome dell’organizzazione",
+      "country": "Paese",
+      "registration": "Numero di registrazione o link",
+      "registrationHint": "Il tuo numero in un registro di enti benefici o non profit, oppure un link alla tua voce in un registro pubblico.",
+      "contactEmail": "Email di contatto",
+      "plan": "Piano",
+      "reply": "Di solito rispondiamo entro pochi giorni. Non verrà addebitato nulla finché non completi il pagamento.",
+      "submit": "Invia richiesta",
+      "sending": "Invio in corso…",
+      "sentTitle": "Richiesta inviata",
+      "sent": "Risponderemo a {email}, di solito entro pochi giorni. Se la tua organizzazione ha i requisiti, la risposta includerà un codice sconto da inserire al checkout.",
+      "close": "Chiudi",
+      "failed": "Qualcosa è andato storto. Scrivi invece a {email}."
+    },
+    "enterprise": {
+      "name": "Enterprise",
+      "tagline": "Per le aziende che hanno bisogno di un contratto e di una revisione di sicurezza",
+      "price": "Su misura",
+      "priceNote": "Contratto annuale, pagato con fattura",
+      "cta": "Contattaci",
+      "lead": "Tutto quello che c’è in Business, più:",
+      "adds": {
+        "contract": "Un contratto annuale, pagato con fattura",
+        "replies": "Risposte entro {hours, plural, one {# ora lavorativa} other {# ore lavorative}} quando i codici smettono di funzionare",
+        "review": "Risposte per la tua revisione di sicurezza",
+        "selfHost": "SSO e audit log sul tuo server"
+      },
+      "security": "La sicurezza in QRdx"
     }
   },
   "docs": {
@@ -1382,7 +1437,16 @@
       "browsersQuestion": "Quali browser sono supportati?",
       "browsersAnswer": "Qualsiasi browser moderno con accesso alla fotocamera: Chrome, Edge, Safari e Firefox su telefoni e computer. I browser con un lettore di codici a barre integrato (Chrome su Android e macOS) lo usano direttamente; gli altri scaricano un decodificatore open source (ZXing, compilato in WebAssembly, circa 1 MB dalla CDN jsDelivr) la prima volta che scansioni. La fotocamera richiede una pagina https e il tuo permesso.",
       "installQuestion": "Posso installare lo scanner come app?",
-      "installAnswer": "Sì. Usa l'opzione Installa o Aggiungi a schermata Home del browser su questa pagina per avere un'icona dello scanner che si apre direttamente sulla fotocamera."
+      "installAnswer": "Sì. In Chrome, Edge o Samsung Internet, tocca Installa app sotto lo scanner oppure usa l’opzione Installa del browser. Su iPhone e iPad, tocca Aggiungi alla schermata Home sotto lo scanner per vedere i passaggi. L’app si apre direttamente sullo scanner in una finestra tutta sua, funziona offline dopo che hai fatto una scansione con essa e conserva la cronologia sul tuo dispositivo.",
+      "shareQuestion": "Posso scansionare un QR code da uno screenshot?",
+      "shareAnswer": "Sì. Passa a Immagine e scegli, trascina o incolla lo screenshot. Su Android, una volta installato lo scanner, puoi anche condividere uno screenshot o una foto con QRdx Scanner da qualsiasi app: si apre e legge il codice sul tuo dispositivo. Le immagini condivise non vengono caricate né conservate."
+    },
+    "app": {
+      "name": "QRdx Scanner",
+      "shortName": "QRdx Scanner",
+      "description": "Scansiona QR code e codici a barre con la fotocamera o da uno screenshot. Le immagini vengono lette sul tuo dispositivo e i link vengono controllati prima di aprirsi.",
+      "cameraShortcut": "Scansiona con la fotocamera",
+      "imageShortcut": "Scansiona da immagine"
     }
   },
   "scanner": {
@@ -1467,7 +1531,8 @@
       "drop": "Trascina qui le immagini, scegli i file o incolla",
       "dropHelp": "Vanno bene screenshot e foto, anche con più codici per immagine.",
       "choose": "Scegli immagini",
-      "paste": "Incolla immagine"
+      "paste": "Incolla immagine",
+      "shareMissing": "L’immagine condivisa non è arrivata. Scegli­la qui."
     },
     "result": {
       "starts": "Inizio",
@@ -1578,6 +1643,19 @@
       "copy": "Copia link",
       "retry": "Riprova",
       "report": "Segnala questo codice"
+    },
+    "install": {
+      "install": "Installa l’app",
+      "iosButton": "Aggiungi alla schermata Home",
+      "iosTitle": "Aggiungi lo scanner alla schermata Home",
+      "iosShare": "Tocca Condividi. In Safari su iPhone si trova nel menu accanto all’indirizzo.",
+      "iosAdd": "Scorri verso l’alto e scegli Aggiungi alla schermata Home.",
+      "iosConfirm": "Lascia attivo Apri come app web, poi tocca Aggiungi.",
+      "macButton": "Aggiungi al Dock",
+      "macTitle": "Aggiungi lo scanner al Dock",
+      "macAdd": "Nella barra dei menu scegli File, poi Aggiungi al Dock.",
+      "macConfirm": "Fai clic su Aggiungi.",
+      "after": "Si apre direttamente sullo scanner in una finestra tutta sua e funziona offline dopo che con esso hai eseguito la scansione di un codice."
     }
   },
   "scanPages": {
@@ -2026,9 +2104,322 @@
         "outcome": "Ricevi un preavviso di almeno 12 mesi, il tempo di esportare tutto e un percorso documentato per far funzionare l'app open source sul tuo server."
       }
     },
+    "moneyBackTitle": "Garanzia di rimborso",
+    "moneyBack": "Il tuo primo pagamento per Pro o Business, mensile o annuale, è coperto da una garanzia di rimborso di {days, number} giorni. Se il piano non fa per te, scrivi a <mail>{email}</mail> entro {days, number} giorni dal pagamento e ti rimborsiamo tutto, senza fare domande. Vale una sola volta per cliente e, dopo il rimborso, i tuoi codici continuano a funzionare con il piano Gratuito.",
+    "moneyBackLink": "Leggi la politica di rimborso",
     "exceptionTitle": "L'unica eccezione: gli abusi",
     "exception": "Disattiviamo un codice solo quando viola i nostri <terms>termini di servizio</terms>, per esempio se punta a phishing o malware. È una decisione di sicurezza presa dopo una segnalazione o una verifica, mai una decisione legata ai pagamenti. Chiunque può <report>segnalare un codice</report>.",
     "questions": "Domande sulla garanzia? Scrivi a <mail>{email}</mail>. Ultimo aggiornamento: <time>{date, date, long}</time>."
+  },
+  "enterprise": {
+    "metaTitle": "QRdx Enterprise: SSO, audit log, contratti e tempi di risposta",
+    "metaDescription": "QRdx per i team più grandi: single sign-on, audit log con esportazione CSV, ruoli, domini personalizzati e portale clienti, con contratto annuale, tempi di risposta scritti e pagamento tramite fattura.",
+    "crumb": "Enterprise",
+    "title": "QRdx per i team enterprise",
+    "intro1": "Per le aziende che mettono QR code su confezioni, insegne e campagne in molti team, marchi o clienti, e che prima del lancio hanno bisogno di single sign-on, di una traccia di audit e di un contratto.",
+    "intro2": "Enterprise è il piano Business con un contratto attorno: tempi di risposta scritti, pagamento tramite fattura e risposte per la tua verifica di sicurezza.",
+    "contactCta": "Contattaci",
+    "securityCta": "Come gestiamo la sicurezza",
+    "whoTitle": "A chi è rivolto",
+    "who": {
+      "brands": {
+        "title": "Marchi e rivenditori",
+        "body": "Codici su confezioni, menu e insegne in tanti luoghi, gestiti da più team che hanno bisogno ciascuno del proprio accesso."
+      },
+      "agencies": {
+        "title": "Agenzie",
+        "body": "Uno spazio di lavoro per ogni cliente, un portale in sola lettura per ciascuno e pagine di statistiche con il loro marchio."
+      },
+      "security": {
+        "title": "Team IT e sicurezza",
+        "body": "Un fornitore che fa accedere le persone tramite il tuo identity provider, registra chi ha cambiato cosa e risponde al tuo questionario di sicurezza."
+      }
+    },
+    "featuresTitle": "Cosa ottieni",
+    "featuresIntro": "Tutto ciò che include il piano Business. Ogni voce funziona già oggi su qrdx.dev.",
+    "features": {
+      "sso": {
+        "title": "Single sign-on",
+        "body": "OIDC o SAML 2.0 per il dominio della tua email, verificato con un record DNS. Se lo rendi obbligatorio, il tuo identity provider diventa l’unico modo di accedere per quel dominio."
+      },
+      "auditLog": {
+        "title": "Audit log",
+        "body": "Chi ha modificato quale codice, pagina, membro, dominio, chiave API o impostazione, e quando. Puoi filtrarlo, esportare fino a {rows, number} righe in CSV e conservare {days, number} giorni di cronologia."
+      },
+      "roles": {
+        "title": "Ruoli e verifica in due passaggi",
+        "body": "Proprietari, amministratori, membri, membri con accesso alla fatturazione e visualizzatori in sola lettura. Gli spazi di lavoro possono richiedere la verifica in due passaggi a tutti i loro membri."
+      },
+      "seats": {
+        "title": "Spazi di lavoro e postazioni",
+        "body": "Membri illimitati, con uno spazio di lavoro separato per ogni team, marchio o cliente e ruoli propri in ciascuno."
+      },
+      "domains": {
+        "title": "Domini personalizzati",
+        "body": "Link brevi e pagine ospitate su un massimo di {count, number} domini di tua proprietà."
+      },
+      "clients": {
+        "title": "Portale clienti e statistiche con il tuo marchio",
+        "body": "Un portale in sola lettura in cui i clienti vedono le cartelle che condividi con loro e pagine di statistiche con il loro marchio, senza il marchio QRdx."
+      },
+      "api": {
+        "title": "API e creazione in blocco",
+        "body": "{requests, number} richieste API al giorno, fino a {batch, number} codici in una sola chiamata API e importazioni CSV fino a {importRows, number} righe."
+      },
+      "export": {
+        "title": "I tuoi dati, esportabili",
+        "body": "Scarica tutto ciò che c’è nel tuo account in un file ZIP ed esporta scansioni, risposte dei moduli e audit log in CSV."
+      }
+    },
+    "contractTitle": "Cosa aggiunge il contratto",
+    "contractIntro": "In più rispetto al piano Business:",
+    "contract": {
+      "replies": {
+        "title": "Tempi di risposta scritti",
+        "body": "Entro {outage, plural, one {# ora lavorativa} other {# ore lavorative}} quando i tuoi codici o le tue pagine ospitate smettono di funzionare, ed entro {other, plural, one {# giorno lavorativo} other {# giorni lavorativi}} per tutto il resto."
+      },
+      "invoice": {
+        "title": "Contratto annuale, pagato con fattura",
+        "body": "Paga con bonifico bancario invece che con carta, con i dati della tua azienda, la partita IVA e il numero dell’ordine d’acquisto in fattura."
+      },
+      "review": {
+        "title": "Risposte per la tua verifica di sicurezza",
+        "body": "Compiliamo il tuo questionario di sicurezza e ti inviamo una copia firmata del Data Processing Addendum."
+      },
+      "selfHost": {
+        "title": "Single sign-on e audit log se ospiti tu QRdx",
+        "body": "QRdx è open source, ma il single sign-on e l’audit log sono coperti dalla licenza commerciale di QRdx. Con un accordo Enterprise puoi usarli sul tuo server con una chiave di licenza."
+      }
+    },
+    "limitsNote": "Su qrdx.dev, gli spazi di lavoro Enterprise hanno i limiti del piano Business. Se ti serve di più di qualcosa, scrivilo nel modulo.",
+    "repliesTitle": "Tempi di risposta",
+    "replies": {
+      "when": "Quando",
+      "enterprise": "Enterprise",
+      "business": "Business",
+      "outage": "I tuoi codici o le tue pagine ospitate smettono di funzionare",
+      "other": "Tutto il resto",
+      "hours": "Entro {count, plural, one {# ora lavorativa} other {# ore lavorative}}",
+      "days": "Entro {count, plural, one {# giorno lavorativo} other {# giorni lavorativi}}"
+    },
+    "repliesNote": "L’orario lavorativo va dal lunedì al venerdì, ora indiana. Sono tempi di risposta: QRdx non offre una garanzia di uptime.",
+    "buyTitle": "Come acquistare",
+    "buy": {
+      "ask": {
+        "title": "Dicci di cosa hai bisogno",
+        "body": "Usa il modulo qui sotto o scrivi a {email}. Indica la dimensione del tuo team e tutto ciò che richiede la tua verifica di sicurezza."
+      },
+      "quote": {
+        "title": "Ricevi risposte e un prezzo",
+        "body": "Ti rispondiamo via email con le risposte alle tue domande e un prezzo annuale."
+      },
+      "sign": {
+        "title": "Firma e paga con fattura",
+        "body": "Dopo la firma del contratto, passiamo il tuo spazio di lavoro al piano Business e ti inviamo la fattura."
+      }
+    },
+    "formTitle": "Parla con noi",
+    "formIntro": "Raccontaci del tuo team e di cosa hai bisogno. Ti rispondiamo via email.",
+    "form": {
+      "name": "Nome",
+      "email": "Email di lavoro",
+      "company": "Azienda",
+      "teamSize": "Dimensione team",
+      "teamSizePlaceholder": "Scegli una dimensione",
+      "sizes": {
+        "1-10": "Da 1 a 10 persone",
+        "11-50": "Da 11 a 50 persone",
+        "51-200": "Da 51 a 200 persone",
+        "201-1000": "Da 201 a 1.000 persone",
+        "1000+": "Più di 1.000 persone"
+      },
+      "need": "Di cosa hai bisogno?",
+      "needPlaceholder": "Ad esempio: single sign-on per 300 persone, una fattura annuale, il nostro questionario sulla sicurezza",
+      "submit": "Invia",
+      "sending": "Invio in corso…",
+      "sentTitle": "Messaggio inviato",
+      "sent": "Grazie. Ti risponderemo a {email}.",
+      "privacy": "Usiamo questi dati solo per risponderti. Leggi la nostra <privacy>informativa sulla privacy</privacy>.",
+      "errors": {
+        "name": "Inserisci il tuo nome.",
+        "email": "Inserisci un indirizzo email di lavoro valido.",
+        "company": "Inserisci il nome della tua azienda.",
+        "teamSize": "Scegli la dimensione del tuo team.",
+        "need": "Dicci di cosa hai bisogno.",
+        "rateLimited": "Hai già inviato diversi messaggi. Risponderemo a quelli, oppure scrivi a {email}.",
+        "check": "Completa il controllo sopra il pulsante e invia di nuovo.",
+        "notSent": "Non siamo riusciti a inviare il tuo messaggio. Scrivi a {email}.",
+        "unavailable": "Questo modulo non è disponibile qui. Scrivi a {email}.",
+        "unknown": "Qualcosa è andato storto. Scrivi a {email}."
+      }
+    },
+    "orEmail": "Preferisci l’email? Scrivi a <mail>{email}</mail>.",
+    "relatedTitle": "Approfondisci",
+    "related": {
+      "security": "La sicurezza di QRdx",
+      "dpa": "Data Processing Addendum",
+      "subprocessors": "Subresponsabili",
+      "pricing": "Prezzi"
+    }
+  },
+  "security": {
+    "metaTitle": "Sicurezza su QRdx: accesso, archiviazione dei dati e segnalazione di problemi",
+    "metaDescription": "Come QRdx protegge account e dati: HTTPS con HSTS, una content security policy, passkey e verifica in due passaggi, single sign-on, un registro di audit, controlli sui link, dove sono archiviati i dati e come segnalare una vulnerabilità.",
+    "crumb": "Sicurezza",
+    "title": "Sicurezza su QRdx",
+    "intro1": "Cosa fa QRdx per proteggere il tuo account, i tuoi codici e i dati dei tuoi visitatori. Ogni punto descrive qualcosa che oggi funziona su qrdx.dev, e il codice è open source, quindi puoi verificarlo.",
+    "intro2": "QRdx non ha la certificazione SOC 2 o HIPAA, né alcuna altra certificazione di sicurezza, e non ne promette una.",
+    "reportCta": "Segnala una vulnerabilità",
+    "enterpriseCta": "Verifica di sicurezza? Contattaci",
+    "sections": {
+      "transport": {
+        "title": "Connessioni e browser",
+        "items": {
+          "https": {
+            "title": "HTTPS ovunque",
+            "body": "Ogni pagina e ogni chiamata API viene servita tramite HTTPS, e ai browser viene indicato di continuare a usare HTTPS per qrdx.dev per due anni (HSTS)."
+          },
+          "csp": {
+            "title": "Content security policy",
+            "body": "Le pagine di QRdx limitano quali script, frame e connessioni possono caricare. Le pagine che mostrano i dati del tuo account ricevono un nonce nuovo a ogni richiesta, quindi uno script iniettato al loro interno non viene eseguito."
+          },
+          "framing": {
+            "title": "Nessun frame da altri siti",
+            "body": "Le pagine di QRdx non possono essere mostrate dentro il frame di un altro sito, e la schermata in cui approvi un’app non può essere inserita in un frame in nessun caso. Inoltre, ai browser viene indicato di non indovinare il tipo dei file."
+          }
+        }
+      },
+      "signIn": {
+        "title": "Accesso",
+        "items": {
+          "passwords": {
+            "title": "Nessuna password",
+            "body": "Accedi con Google, GitHub o un codice monouso via email{passkeys, select, yes {, oppure con una passkey} other {}}. QRdx non conserva password che possano essere divulgate."
+          },
+          "twoFactor": {
+            "title": "Verifica in due passaggi",
+            "body": "Un secondo passaggio con un’app di autenticazione{passkeys, select, yes { o una passkey} other {}}, con codici di backup per quando non puoi usarla. Gli spazi di lavoro su Business possono richiederla a ogni membro."
+          },
+          "confirm": {
+            "title": "Conferma la tua identità",
+            "body": "Modifiche alla sicurezza, nuove chiavi API e webhook, cambi di ruolo ed eliminazione di uno spazio di lavoro ti chiedono di confermare la tua identità, anche se hai già effettuato l’accesso. Una conferma dura 10 minuti."
+          },
+          "alerts": {
+            "title": "Avvisi di nuovo accesso",
+            "body": "Ti inviamo un’email quando un browser o un dispositivo accede al tuo account per la prima volta, e quando cambiano le impostazioni della verifica in due passaggi."
+          },
+          "sessions": {
+            "title": "Accessi che scadono",
+            "body": "Un accesso dura al massimo 30 giorni, e meno se smetti di usarlo. Se viene usato da un nuovo paese e da un nuovo browser, deve confermare la tua identità, e puoi uscire da tutti gli altri dispositivi in una volta sola."
+          }
+        }
+      },
+      "workspaces": {
+        "title": "Spazi di lavoro e team",
+        "items": {
+          "sso": {
+            "title": "Single sign-on",
+            "body": "OIDC o SAML 2.0 su Business, per un dominio email che dimostri con un record DNS. Le risposte SAML devono essere firmate con SHA-256 o più sicuro. Quando uno spazio di lavoro lo richiede, ogni altro modo di accedere è chiuso per quel dominio e le sessioni durano al massimo 24 ore."
+          },
+          "roles": {
+            "title": "Ruoli",
+            "body": "Proprietario, admin, membro, fatturazione e visualizzatore. Solo proprietari e admin gestiscono persone, domini e impostazioni, mentre i membri con ruolo fatturazione e i visualizzatori non possono modificare i codici."
+          },
+          "auditLog": {
+            "title": "Registro audit",
+            "body": "Con Business, proprietari e admin vedono chi ha modificato quale codice, pagina, membro, dominio, chiave API o impostazione, e possono esportare il registro in CSV. Le righe vengono conservate per {days, number} giorni."
+          },
+          "staff": {
+            "title": "Accesso dello staff",
+            "body": "Solo gli account dello staff di QRdx possono aprire gli strumenti di amministrazione, e ogni azione dello staff lì dentro viene registrata in un registro audit."
+          }
+        }
+      },
+      "secrets": {
+        "title": "Chiavi e segreti",
+        "items": {
+          "hashed": {
+            "title": "Chiavi e token con hash",
+            "body": "Le chiavi API e i token di accesso OAuth vengono salvati solo come hash SHA-256, quindi una copia del database non li rivela. Anche le password dei codici protetti sono salvate come hash."
+          },
+          "encrypted": {
+            "title": "Token di integrazione cifrati",
+            "body": "I token degli strumenti che colleghi, come Google Drive o Slack, sono cifrati con AES-256-GCM."
+          },
+          "webhooks": {
+            "title": "Webhook firmati",
+            "body": "Ogni endpoint webhook ha un proprio segreto e ogni payload viene firmato con quello, così il tuo server può verificare che provenga da QRdx."
+          }
+        }
+      },
+      "abuse": {
+        "title": "Abusi e sicurezza dei link",
+        "items": {
+          "linkChecks": {
+            "title": "Controlli sui link",
+            "body": "Quando viene impostata la destinazione di un QR code dinamico, QRdx la confronta con le liste di Google Web Risk di siti di malware e phishing e rifiuta quelle segnalate. Una destinazione che non è stato possibile controllare in tempo viene ricontrollata, e il suo codice viene disattivato se risulta segnalata."
+          },
+          "rateLimits": {
+            "title": "Limiti di richieste",
+            "body": "L’API, il server MCP, i moduli e gli altri endpoint pubblici hanno limiti di richieste per chiave, account o indirizzo IP."
+          },
+          "bots": {
+            "title": "Controlli anti-bot nei moduli",
+            "body": "I moduli pubblici usano Cloudflare Turnstile e campi nascosti che vengono compilati solo dai bot."
+          },
+          "reports": {
+            "title": "Segnalare codici dannosi",
+            "body": "Chiunque può <report>segnalare un QR code</report> che porta a phishing, malware o truffe. I codici che violano le regole vengono disattivati."
+          }
+        }
+      },
+      "storage": {
+        "title": "Dove sono archiviati i dati",
+        "items": {
+          "hosting": {
+            "title": "Hosting",
+            "body": "L’app gira su Vercel. Le sue funzioni server vengono eseguite a Washington, D.C., negli Stati Uniti, dietro la rete edge globale di Vercel."
+          },
+          "database": {
+            "title": "Database",
+            "body": "Account, codici, scansioni e risposte dei moduli sono conservati in un database Neon Postgres in AWS US East (N. Virginia). Neon <neon>cifra i dati a riposo</neon> con AES-256 e conserva backup cifrati."
+          },
+          "files": {
+            "title": "File caricati",
+            "body": "I file che carichi sono archiviati in Cloudflare R2, nella sua regione Asia-Pacifico."
+          },
+          "scans": {
+            "title": "Dati di scansione",
+            "body": "Gli indirizzi IP di chi effettua la scansione non vengono mai salvati. I visitatori unici vengono contati con un hash che cambia ogni giorno."
+          }
+        }
+      },
+      "yourData": {
+        "title": "I tuoi dati e la parte burocratica",
+        "items": {
+          "export": {
+            "title": "Esportazione",
+            "body": "Scarica da Impostazioni tutto ciò che QRdx conserva sul tuo account in un file ZIP, ed esporta in CSV le scansioni, le risposte dei moduli e l’audit log."
+          },
+          "delete": {
+            "title": "Eliminazione",
+            "body": "Puoi eliminare in qualsiasi momento codici, pagine, file e risposte dei moduli, oppure l’intero account. I dati eliminati possono restare per un breve periodo nella cronologia di ripristino del provider del database."
+          },
+          "dpa": {
+            "title": "Data Processing Addendum",
+            "body": "Il <dpa>DPA</dpa> fa parte dei Termini per ogni cliente e include le Clausole contrattuali standard. Se ti serve, chiedi una copia firmata."
+          },
+          "subprocessors": {
+            "title": "Subresponsabili",
+            "body": "L’<list>elenco dei subresponsabili</list> indica ogni servizio che tratta dati personali per conto di QRdx, cosa fa e dove. Lo aggiorniamo almeno 30 giorni prima che ne inizi uno nuovo."
+          }
+        }
+      }
+    },
+    "reportTitle": "Segnala una vulnerabilità",
+    "report": "Scrivi a <mail>{email}</mail> con un oggetto che inizi con [security] e, per favore, non pubblicare la segnalazione in una issue pubblica su GitHub. La nostra <policy>politica di sicurezza</policy> descrive ambito e safe harbor, e <txt>security.txt</txt> riporta gli stessi contatti.",
+    "reviewTitle": "Stai facendo una verifica di sicurezza?",
+    "review": "Mandaci il tuo questionario. I contratti <enterprise>Enterprise</enterprise> includono le risposte per la tua verifica e un DPA firmato."
   },
   "templates": {
     "metaTitle": "Template di landing page per QR code con demo dal vivo",
@@ -3979,6 +4370,110 @@
         "moreFrameOptions": "Altre opzioni cornice"
       }
     },
+    "partInline": {
+      "parts": {
+        "eyes": {
+          "edit": "Modifica occhi",
+          "options": "Opzioni occhi",
+          "random": "Occhi casuali",
+          "more": "Altre opzioni occhi"
+        },
+        "dots": {
+          "edit": "Modifica punti",
+          "options": "Opzioni punti",
+          "random": "Punti casuali",
+          "more": "Altre opzioni punti"
+        },
+        "logo": {
+          "edit": "Modifica logo",
+          "options": "Opzioni logo",
+          "random": "Logo casuale",
+          "more": "Altre opzioni logo"
+        },
+        "background": {
+          "edit": "Modifica sfondo",
+          "options": "Opzioni sfondo",
+          "random": "Sfondo casuale",
+          "more": "Altre opzioni sfondo",
+          "editShape": "Modifica forma del codice"
+        },
+        "frame": {
+          "edit": "Modifica cornice",
+          "options": "Opzioni cornice",
+          "random": "Cornice casuale",
+          "more": "Altre opzioni cornice"
+        }
+      },
+      "items": {
+        "outerShape": "Forma esterna",
+        "centerShape": "Forma centrale",
+        "eyeColor": "Colore occhi",
+        "centerColor": "Colore centro",
+        "pattern": "Motivo",
+        "dotColor": "Colore punti",
+        "dotSize": "Dimensione punti",
+        "logo": "Logo",
+        "quickIcons": "Icone rapide",
+        "logoSize": "Dimensione logo",
+        "hideLogo": "Nascondi logo",
+        "backgroundColor": "Colore sfondo",
+        "padding": "Margine",
+        "frameStyle": "Stile cornice",
+        "frameColor": "Colore cornice",
+        "whichEyes": "Quali occhi",
+        "allEyes": "Tutti gli occhi",
+        "thisEye": "Questo occhio",
+        "thisEyesColor": "Colore di questo occhio",
+        "thisEyesCenterColor": "Colore del centro di questo occhio",
+        "shapesChangeAllThreeEyes": "Le forme cambiano tutti e tre gli occhi.",
+        "sameAsTheOthers": "Come gli altri",
+        "eyesWithTheirOwnColor": "Gli occhi con un colore proprio lo mantengono. Scegli Questo occhio per cambiarne uno.",
+        "logoShapeAndPlate": "Forma e base del logo",
+        "clearSpace": "Spazio libero",
+        "content": "Contenuto",
+        "codeShape": "Forma del codice",
+        "errorCorrection": "Correzione errori"
+      },
+      "random": "Casuale",
+      "moreOptions": "Altre opzioni",
+      "sheet": {
+        "changesShowOnTheCode": "Le modifiche si vedono sul codice mentre le fai. Con Fine le mantieni.",
+        "done": "Fine"
+      },
+      "content": {
+        "link": "Link",
+        "text": "Testo",
+        "theCodeKeepsItsContent": "Il codice mantiene il suo contenuto finché questo non è valido.",
+        "scansOpenHost": "Le scansioni aprono {host}",
+        "textHint": "Il codice mostra questo testo quando viene scansionato.",
+        "editedInTheContentTab": "Questo tipo di contenuto ha un modulo dedicato nella scheda Contenuto.",
+        "openTheContentTab": "Apri la scheda Contenuto"
+      },
+      "codeShape": {
+        "codeShape": "Forma del codice",
+        "names": {
+          "square": "Quadrato",
+          "circle": "Cerchio",
+          "heart": "Cuore"
+        },
+        "aCircleOrHeartTakes": "Un cerchio o un cuore prende il posto della cornice."
+      },
+      "errorCorrection": {
+        "theLogoRaisesItToLevel": "Per ora il logo lo porta al livello {level}."
+      },
+      "handles": {
+        "moveLogo": "Sposta logo",
+        "dragOrUseTheArrowKeys": "Trascinalo o usa i tasti freccia. Maiusc lo sposta più lontano. Canc lo nasconde.",
+        "logoSize": "Dimensione logo",
+        "percentOfTheCode": "{value, number}% del codice",
+        "padding": "Margine",
+        "modules": "{count, plural, one {# modulo} other {# moduli}}",
+        "dragToChangeThePadding": "Trascina verso l’interno o l’esterno per cambiare il margine"
+      },
+      "drop": {
+        "dropToUseAsLogo": "Rilascia per usarlo come logo"
+      }
+    },
     "gradientPicker": {
       "pickASolidColorA": "Scegli un colore pieno, un gradiente o un campione per {label}."
     },
@@ -4228,6 +4723,7 @@
         "actions": "Azioni",
         "themeAppearance": "Tema e aspetto",
         "patternCustomization": "Personalizzazione pattern",
+        "preview": "Anteprima",
         "help": "Aiuto"
       },
       "shortcuts": {
@@ -4249,7 +4745,11 @@
         "cycleCornerEyePatterns": "Cambia occhi angolari",
         "cycleInternalEyePatterns": "Cambia occhi interni",
         "cycleFrames": "Cambia cornice",
-        "showThisShortcutsDialog": "Mostra questa finestra scorciatoie"
+        "showThisShortcutsDialog": "Mostra questa finestra scorciatoie",
+        "editAPartOfTheCode": "Modifica la parte del codice sotto il puntatore o con il focus",
+        "randomLookForThatPart": "Aspetto casuale per quella parte",
+        "hideTheFocusedLogo": "Nascondi il logo selezionato",
+        "moveTheLogoWhileEditing": "Sposta il logo mentre lo modifichi"
       }
     },
     "soundSwitch": {

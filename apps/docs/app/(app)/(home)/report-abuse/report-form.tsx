@@ -13,9 +13,9 @@ import {
 import { Textarea } from "@repo/design-system/components/ui/textarea";
 import { TickCircle } from "iconsax-reactjs";
 import { useActionState, useEffect, useState } from "react";
+import { TurnstileWidget } from "@/components/safety/turnstile-widget";
 import { ABUSE_REASONS } from "@/lib/safety/abuse-reasons";
 import { type ReportFormState, submitAbuseReport } from "./actions";
-import { TurnstileWidget } from "./turnstile-widget";
 
 const initialState: ReportFormState = { status: "idle" };
 

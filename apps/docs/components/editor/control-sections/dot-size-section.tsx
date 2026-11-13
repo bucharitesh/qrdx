@@ -21,24 +21,14 @@ interface DotSizeSectionProps {
  * Size of each data dot (moduleScale). Every dot shape stops at the
  * smallest size it still scans at, so the range depends on the shape.
  */
-export function DotSizeSection({
+export function DotSizeControl({
   style,
   onChange,
-  expanded,
-}: DotSizeSectionProps) {
+}: Omit<DotSizeSectionProps, "expanded">) {
   const t = useTranslations("editor.controlSections.dotSizeSection");
-  const pattern = style.bodyPattern ?? "circle";
-  const floor = Math.round((MODULE_SCALE_FLOOR[pattern] ?? 1) * 100);
-  const value = Math.max(floor, Math.round((style.moduleScale ?? 1) * 100));
-  const fixed = floor >= 100;
-
+  const { pattern, floor, value, fixed } = dotSize(style);
   return (
-    <ControlSection
-      expanded={expanded}
-      section="dot-size"
-      summary={`${value}%`}
-      title={t("dotSize")}
-    >
+    <>
       <div className="space-y-2.5">
         <div className="flex items-center justify-between text-sm">
           <span className="text-muted-foreground">{t("sizeOfEachDot")}</span>
@@ -65,6 +55,34 @@ export function DotSizeSection({
               floor,
             })}
       </p>
+    </>
+  );
+}
+
+/** The dot size shown (percent) and the smallest the shape allows. */
+export function dotSize(style: Partial<QRStyle>) {
+  const pattern = style.bodyPattern ?? "circle";
+  const floor = Math.round((MODULE_SCALE_FLOOR[pattern] ?? 1) * 100);
+  const value = Math.max(floor, Math.round((style.moduleScale ?? 1) * 100));
+  return { pattern, floor, value, fixed: floor >= 100 };
+}
+
+export function DotSizeSection({
+  style,
+  onChange,
+  expanded,
+}: DotSizeSectionProps) {
+  const t = useTranslations("editor.controlSections.dotSizeSection");
+  const { value } = dotSize(style);
+
+  return (
+    <ControlSection
+      expanded={expanded}
+      section="dot-size"
+      summary={`${value}%`}
+      title={t("dotSize")}
+    >
+      <DotSizeControl onChange={onChange} style={style} />
     </ControlSection>
   );
 }

@@ -16,6 +16,7 @@ import { baseUrl, defaultOgImage, siteName } from "@/lib/metadata";
 import { PLAN_LIMITS } from "@/lib/plans";
 import {
   BILLING_INTERVALS,
+  EUR_COUNTRIES,
   PAID_PLANS,
   type PaidPlan,
   PLAN_NAMES,
@@ -84,6 +85,13 @@ const offers = [
           // Rupee prices are shown and charged to customers in India only.
           ...(currency === "INR" && {
             eligibleRegion: { "@type": "Country", name: "IN" },
+          }),
+          // Euro prices (when on): the EU and EEA only.
+          ...(currency === "EUR" && {
+            eligibleRegion: [...EUR_COUNTRIES].map((name) => ({
+              "@type": "Country",
+              name,
+            })),
           }),
         };
       }),

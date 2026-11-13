@@ -159,6 +159,11 @@ const SURFACES: Record<string, string> = {
   toolHero: "the hero at the top of the tools and landing pages",
   guarantee:
     "the Never-Hostage Guarantee page: what happens to QR codes when a plan ends",
+  // Enterprise pages lane
+  enterprise:
+    "the Enterprise page for larger companies: single sign-on, audit log, roles, a yearly contract with written reply times (never an uptime promise), payment by invoice, security reviews and a contact form",
+  security:
+    "the Security page: how QRdx protects accounts and data (HTTPS, content security policy, sign-in, single sign-on, audit log, keys, link checks, where data is stored) and how to report a vulnerability; precise and factual, no certification claims",
   tools:
     "the free tools hub and its tools: bulk CSV generator, print size calculator, scan checker",
   scan: "the free online QR code and barcode scanner (camera and image upload)",

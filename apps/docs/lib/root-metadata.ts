@@ -7,6 +7,16 @@ import {
   siteTitle,
 } from "@/lib/metadata";
 
+/** The site's favicons and Home Screen icon (the scanner swaps the latter). */
+export const siteIcons = {
+  icon: [
+    { url: "/favicon.ico", sizes: "any" },
+    { url: "/favicon.svg", type: "image/svg+xml" },
+    { url: "/favicon-96x96.png", sizes: "96x96", type: "image/png" },
+  ],
+  apple: "/apple-touch-icon.png",
+} satisfies Metadata["icons"];
+
 /**
  * Both root layouts' metadata (app/(app) in English, app/[lang] per
  * locale). No canonical or og:url here: every child would inherit them;
@@ -41,14 +51,7 @@ export function rootMetadata({
       card: "summary_large_image",
       creator: "@bucha_ritesh",
     },
-    icons: {
-      icon: [
-        { url: "/favicon.ico", sizes: "any" },
-        { url: "/favicon.svg", type: "image/svg+xml" },
-        { url: "/favicon-96x96.png", sizes: "96x96", type: "image/png" },
-      ],
-      apple: "/apple-touch-icon.png",
-    },
+    icons: siteIcons,
     manifest: "/site.webmanifest",
   };
 }

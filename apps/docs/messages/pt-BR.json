@@ -184,6 +184,7 @@
       "pageTemplates": "Modelos de página",
       "pricing": "Preços",
       "guarantee": "Garantia Never-Hostage",
+      "enterprise": "Enterprise",
       "slackBot": "Bot do Slack",
       "telegramBot": "Bot do Telegram",
       "discordBot": "Bot do Discord",
@@ -227,6 +228,7 @@
       "refunds": "Reembolsos",
       "affiliateTerms": "Termos de afiliados",
       "security": "Segurança",
+      "securityPolicy": "Política de segurança",
       "allComparisons": "Todas as comparações"
     }
   },
@@ -509,7 +511,9 @@
       "inr": "Preços em ₹ para a Índia.",
       "usd": "Preços em US$.",
       "showInr": "Na Índia? Veja os preços em ₹",
-      "showUsd": "Ver preços em US$"
+      "showUsd": "Ver preços em US$",
+      "eur": "Preços em € para a UE e o EEE.",
+      "showEur": "Na UE ou no EEE? Veja os preços em €"
     },
     "price": {
       "forever": "para sempre",
@@ -553,6 +557,13 @@
       "guide": "Guia de auto-hospedagem"
     },
     "footnote": "A Polar cuida do pagamento como merchant of record; impostos locais podem ser adicionados no checkout. Clientes na Índia são cobrados em ₹, e os demais em US$.",
+    "footnoteEur": "A Polar cuida do checkout como merchant of record; impostos locais podem ser adicionados no checkout. Clientes na Índia pagam em ₹, clientes na UE e no EEE em € e todos os outros em US$.",
+    "offers": {
+      "moneyBack": "Garantia de reembolso de {days, number} dias no seu primeiro pagamento.",
+      "moneyBackLink": "Como funcionam os reembolsos",
+      "nonprofit": "É uma organização sem fins lucrativos ou de caridade? {percent, number}% de desconto no Pro e no Business.",
+      "nonprofitLink": "Peça um código"
+    },
     "values": {
       "unlimited": "Ilimitado",
       "days": "{count, plural, one {# dia} other {# dias}}",
@@ -700,6 +711,10 @@
           "question": "O que acontece se eu cancelar?",
           "answer": "Nada quebra. Seu plano continua ativo até o fim do período que você pagou, e depois sua conta passa para o Grátis. Todo QR code dinâmico continua redirecionando e toda leitura continua sendo contada: essa é a nossa Garantia Never-Hostage. No Grátis, você não pode criar além do que os limites do plano Grátis permitem, e as análises mostram os últimos 90 dias."
         },
+        "refund": {
+          "question": "Posso pedir meu dinheiro de volta?",
+          "answer": "Sim. Seu primeiro pagamento do Pro ou do Business, mensal ou anual, vem com garantia de reembolso de {days, number} dias: envie um e-mail para support@qrdx.dev usando o e-mail da sua conta em até {days, number} dias após pagar e devolvemos o valor total, sem perguntas. Vale uma vez por cliente. Depois disso, seus códigos continuam funcionando no plano Grátis."
+        },
         "paymentFails": {
           "question": "O que acontece se um pagamento falhar?",
           "answer": "Seus códigos continuam funcionando. Se a assinatura vencer, sua conta passa a seguir os limites do plano Grátis, exatamente como se você tivesse cancelado. Nunca pausamos códigos, exibimos anúncios nem enviamos quem lê seus códigos para uma página do QRdx por causa de cobrança."
@@ -712,6 +727,10 @@
           "question": "Por que vejo os preços em ₹?",
           "answer": "Visitantes da Índia veem os preços em rupias indianas: o Pro custa {proMonthly} por mês ou {proYearly} por ano, e o Business {businessMonthly} por mês ou {businessYearly} por ano. No checkout, clientes da Índia pagam em ₹ e todos os outros em US$, seja qual for a moeda em que você navegou. Use o seletor acima dos planos para mudar a moeda exibida."
         },
+        "currencies": {
+          "question": "Por que vejo preços em ₹ ou €?",
+          "answer": "Os preços aparecem na moeda do país onde você está. Na Índia, o Pro custa {proMonthly} por mês ou {proYearly} por ano e o Business {businessMonthly} por mês ou {businessYearly} por ano. Na UE e no EEE, o Pro custa {proMonthlyEur} por mês ou {proYearlyEur} por ano e o Business {businessMonthlyEur} por mês ou {businessYearlyEur} por ano. Em todos os outros lugares, é em US$. O checkout cobra na moeda do seu país, não importa em qual moeda você navegou. Use o seletor acima dos planos para mudar a moeda exibida."
+        },
         "switchPlans": {
           "question": "Posso trocar de plano ou de período de cobrança depois?",
           "answer": "Pode. Abra Gerenciar assinatura nas suas configurações para alterar ou cancelar seu plano no portal de cobrança da Polar. Mudar para um plano menor nunca desativa códigos, páginas ou domínios que já existem."
@@ -723,6 +742,10 @@
         "selfHost": {
           "question": "Posso hospedar por conta própria?",
           "answer": "Pode. O QRdx é open source sob a AGPL-3.0. Rode com seu próprio banco de dados Postgres seguindo o guia de hospedagem própria; os limites dos planos ficam definidos em um único arquivo que você pode alterar na sua instância."
+        },
+        "nonprofit": {
+          "question": "Vocês têm desconto para organizações sem fins lucrativos?",
+          "answer": "Sim. Organizações sem fins lucrativos e de caridade registradas têm {percent, number}% de desconto no Pro ou no Business, mensal ou anual. Conte sobre sua organização pelo link para organizações sem fins lucrativos abaixo dos planos. Geralmente respondemos em poucos dias, com um código de desconto para usar no checkout."
         },
         "billing": {
           "question": "Quem cuida da cobrança e dos impostos?",
@@ -748,6 +771,38 @@
       "close": "Fechar",
       "signIn": "Entre para pedir uma fatura",
       "signInNote": "Enviamos a fatura para o workspace da sua conta, então entre primeiro."
+    },
+    "nonprofit": {
+      "title": "Desconto para ONGs",
+      "description": "Organizações sem fins lucrativos e de caridade registradas têm {percent, number}% de desconto no Pro ou no Business, mensal ou anual. Conte sobre sua organização e enviaremos por e-mail um código de desconto para usar no checkout.",
+      "organization": "Nome da organização",
+      "country": "País",
+      "registration": "Número de registro ou link",
+      "registrationHint": "Seu número em um registro de organizações de caridade ou sem fins lucrativos, ou um link para o seu cadastro em um registro público.",
+      "contactEmail": "E-mail de contato",
+      "plan": "Plano",
+      "reply": "Geralmente respondemos em poucos dias. Nada é cobrado até você fazer o checkout.",
+      "submit": "Enviar pedido",
+      "sending": "Enviando…",
+      "sentTitle": "Pedido enviado",
+      "sent": "Vamos responder para {email}, geralmente em poucos dias. Se a sua organização se qualificar, a resposta traz um código de desconto para usar no checkout.",
+      "close": "Fechar",
+      "failed": "Algo deu errado. Envie um e-mail para {email}."
+    },
+    "enterprise": {
+      "name": "Enterprise",
+      "tagline": "Para empresas que precisam de contrato e de uma revisão de segurança",
+      "price": "Sob medida",
+      "priceNote": "Contrato anual, pago por boleto ou fatura",
+      "cta": "Fale conosco",
+      "lead": "Tudo do Business, mais:",
+      "adds": {
+        "contract": "Contrato anual, pago por fatura",
+        "replies": "Respostas em até {hours, plural, one {# hora útil} other {# horas úteis}} quando os códigos param de funcionar",
+        "review": "Respostas para a sua revisão de segurança",
+        "selfHost": "SSO e log de auditoria no seu próprio servidor"
+      },
+      "security": "Segurança no QRdx"
     }
   },
   "docs": {
@@ -1382,7 +1437,16 @@
       "browsersQuestion": "Quais navegadores são compatíveis?",
       "browsersAnswer": "Qualquer navegador moderno com acesso à câmera: Chrome, Edge, Safari e Firefox em celulares e computadores. Navegadores com leitor de código de barras integrado (Chrome no Android e no macOS) usam esse leitor diretamente; os outros baixam um decodificador de código aberto (ZXing, compilado para WebAssembly, cerca de 1 MB, pela CDN jsDelivr) na primeira leitura. A câmera exige uma página https e a sua permissão.",
       "installQuestion": "Posso instalar o leitor como um app?",
-      "installAnswer": "Sim. Use a opção Instalar ou Adicionar à tela inicial do seu navegador nesta página para ter um ícone do leitor que abre direto na câmera."
+      "installAnswer": "Sim. No Chrome, no Edge ou no Samsung Internet, toque em Instalar app abaixo do leitor, ou use a opção de instalação do próprio navegador. No iPhone e no iPad, toque em Adicionar à Tela de Início abaixo do leitor para ver os passos. O app abre direto no leitor, em uma janela própria, funciona offline depois que você fez uma leitura com ele e guarda o histórico no seu dispositivo.",
+      "shareQuestion": "Posso ler um QR code a partir de uma captura de tela?",
+      "shareAnswer": "Sim. Mude para Imagem e escolha, solte ou cole a captura de tela. No Android, com o leitor instalado, você também pode compartilhar uma captura de tela ou foto com o QRdx Scanner a partir de qualquer app: ele abre e lê o código no seu dispositivo. As imagens compartilhadas não são enviadas nem guardadas."
+    },
+    "app": {
+      "name": "QRdx Scanner",
+      "shortName": "QRdx Scanner",
+      "description": "Leia QR codes e códigos de barras com a câmera ou a partir de uma captura de tela. As imagens são lidas no seu dispositivo e os links são verificados antes de abrir.",
+      "cameraShortcut": "Ler com a câmera",
+      "imageShortcut": "Ler a partir de imagem"
     }
   },
   "scanner": {
@@ -1467,7 +1531,8 @@
       "drop": "Solte imagens aqui, escolha arquivos ou cole",
       "dropHelp": "Capturas de tela e fotos funcionam, com vários códigos por imagem.",
       "choose": "Escolher imagens",
-      "paste": "Colar imagem"
+      "paste": "Colar imagem",
+      "shareMissing": "A imagem compartilhada não chegou. Escolha ela aqui."
     },
     "result": {
       "starts": "Início",
@@ -1578,6 +1643,19 @@
       "copy": "Copiar link",
       "retry": "Tentar de novo",
       "report": "Denunciar este código"
+    },
+    "install": {
+      "install": "Instalar app",
+      "iosButton": "Adicionar à Tela de Início",
+      "iosTitle": "Adicione o leitor à sua Tela de Início",
+      "iosShare": "Toque em Compartilhar. No Safari do iPhone, ele fica no menu ao lado do endereço.",
+      "iosAdd": "Deslize para cima e escolha Adicionar à Tela de Início.",
+      "iosConfirm": "Deixe Abrir como App da Web ativado e toque em Adicionar.",
+      "macButton": "Adicionar ao Dock",
+      "macTitle": "Adicione o leitor ao seu Dock",
+      "macAdd": "Na barra de menus, escolha Arquivo e depois Adicionar ao Dock.",
+      "macConfirm": "Clique em Adicionar.",
+      "after": "Ele abre direto no leitor, em uma janela própria, e funciona offline depois que você ler um código com ele."
     }
   },
   "scanPages": {
@@ -2026,9 +2104,322 @@
         "outcome": "Você recebe um aviso com pelo menos 12 meses de antecedência, tempo para exportar tudo e um caminho documentado para rodar o app de código aberto no seu próprio servidor."
       }
     },
+    "moneyBackTitle": "Garantia de reembolso",
+    "moneyBack": "O primeiro pagamento do plano Pro ou Business, mensal ou anual, tem garantia de reembolso de {days, number} dias. Se o plano não for o ideal para você, envie um e-mail para <mail>{email}</mail> até {days, number} dias após o pagamento e devolvemos o valor integral, sem perguntas. A garantia vale uma vez por cliente, e depois disso seus códigos continuam funcionando no plano Grátis.",
+    "moneyBackLink": "Leia a política de reembolso",
     "exceptionTitle": "A única exceção: abuso",
     "exception": "Só desativamos um código quando ele viola nossos <terms>termos de serviço</terms>, por exemplo ao apontar para phishing ou malware. É uma decisão de segurança, tomada após uma denúncia ou uma análise, nunca por motivo de cobrança. Qualquer pessoa pode <report>denunciar um código</report>.",
     "questions": "Dúvidas sobre a garantia? Escreva para <mail>{email}</mail>. Última atualização em <time>{date, date, long}</time>."
+  },
+  "enterprise": {
+    "metaTitle": "QRdx Enterprise: SSO, log de auditoria, contratos e prazos de resposta",
+    "metaDescription": "QRdx para equipes maiores: login único, log de auditoria com exportação em CSV, papéis, domínios próprios e portal do cliente, com contrato anual, prazos de resposta por escrito e pagamento por boleto ou fatura.",
+    "crumb": "Enterprise",
+    "title": "QRdx para equipes enterprise",
+    "intro1": "Para empresas que usam QR codes em embalagens, placas e campanhas em várias equipes, marcas ou clientes, e precisam de login único, trilha de auditoria e contrato antes de colocá-los em uso.",
+    "intro2": "O Enterprise é o plano Business com um contrato em volta: prazos de resposta por escrito, pagamento por fatura e respostas para a sua revisão de segurança.",
+    "contactCta": "Fale conosco",
+    "securityCta": "Como tratamos a segurança",
+    "whoTitle": "Para quem é",
+    "who": {
+      "brands": {
+        "title": "Marcas e varejistas",
+        "body": "Códigos em embalagens, cardápios e placas em vários lugares, geridos por várias equipes que precisam de acesso próprio."
+      },
+      "agencies": {
+        "title": "Agências",
+        "body": "Um workspace por cliente, um portal somente leitura para cada cliente e páginas de estatísticas com a marca dele."
+      },
+      "security": {
+        "title": "Equipes de TI e segurança",
+        "body": "Um fornecedor que autentica as pessoas pelo seu provedor de identidade, registra quem mudou o quê e responde ao seu questionário de segurança."
+      }
+    },
+    "featuresTitle": "O que você recebe",
+    "featuresIntro": "Tudo o que está no plano Business. Cada item já funciona hoje no qrdx.dev.",
+    "features": {
+      "sso": {
+        "title": "Login único (SSO)",
+        "body": "OIDC ou SAML 2.0 para o domínio do seu e-mail, comprovado com um registro DNS. Se você exigir, seu provedor de identidade passa a ser a única forma de entrar nesse domínio."
+      },
+      "auditLog": {
+        "title": "Log de auditoria",
+        "body": "Quem alterou qual código, página, membro, domínio, chave de API ou configuração, e quando. Filtre, exporte até {rows, number} linhas em CSV e guarde {days, number} dias de histórico."
+      },
+      "roles": {
+        "title": "Papéis e verificação em duas etapas",
+        "body": "Proprietários, administradores, membros, membros de cobrança e visualizadores somente leitura. Os workspaces podem exigir verificação em duas etapas de todos que fazem parte deles."
+      },
+      "seats": {
+        "title": "Workspaces e assentos",
+        "body": "Membros ilimitados, com um workspace separado para cada equipe, marca ou cliente, e papéis próprios em cada um."
+      },
+      "domains": {
+        "title": "Domínios próprios",
+        "body": "Links curtos e páginas hospedadas em até {count, number} domínios seus."
+      },
+      "clients": {
+        "title": "Portal do cliente e estatísticas com sua marca",
+        "body": "Um portal somente leitura em que os clientes veem as pastas que você compartilha com eles, e páginas de estatísticas com a marca deles, sem a marca QRdx."
+      },
+      "api": {
+        "title": "API e criação em massa",
+        "body": "{requests, number} requisições de API por dia, até {batch, number} códigos em uma única chamada de API e importações de CSV com até {importRows, number} linhas."
+      },
+      "export": {
+        "title": "Seus dados, exportáveis",
+        "body": "Baixe tudo o que está na sua conta em um ZIP e exporte leituras, respostas de formulários e o log de auditoria em CSV."
+      }
+    },
+    "contractTitle": "O que o contrato inclui",
+    "contractIntro": "Além do plano Business:",
+    "contract": {
+      "replies": {
+        "title": "Prazos de resposta por escrito",
+        "body": "Em até {outage, plural, one {# hora útil} other {# horas úteis}} quando seus códigos ou páginas hospedadas param de funcionar, e em até {other, plural, one {# dia útil} other {# dias úteis}} para todo o resto."
+      },
+      "invoice": {
+        "title": "Contrato anual, pago por boleto ou fatura",
+        "body": "Pague por transferência bancária em vez de cartão, com os dados da sua empresa, o CNPJ ou ID fiscal e o número do pedido de compra na fatura."
+      },
+      "review": {
+        "title": "Respostas para sua análise de segurança",
+        "body": "Preenchemos o seu questionário de segurança e enviamos uma cópia assinada do Data Processing Addendum."
+      },
+      "selfHost": {
+        "title": "Login único e log de auditoria na hospedagem própria",
+        "body": "O QRdx é de código aberto, mas o login único e o log de auditoria estão sob a licença comercial do QRdx. Com um contrato Enterprise, você pode rodá-los no seu próprio servidor com uma chave de licença."
+      }
+    },
+    "limitsNote": "No qrdx.dev, os workspaces Enterprise têm os limites do plano Business. Se você precisar de mais de alguma coisa, avise no formulário.",
+    "repliesTitle": "Prazos de resposta",
+    "replies": {
+      "when": "Quando",
+      "enterprise": "Enterprise",
+      "business": "Business",
+      "outage": "Seus códigos ou páginas hospedadas param de funcionar",
+      "other": "Todo o resto",
+      "hours": "Em até {count, plural, one {# hora útil} other {# horas úteis}}",
+      "days": "Em até {count, plural, one {# dia útil} other {# dias úteis}}"
+    },
+    "repliesNote": "O horário comercial é de segunda a sexta, no horário da Índia. Esses são prazos de resposta: o QRdx não oferece garantia de disponibilidade.",
+    "buyTitle": "Como contratar",
+    "buy": {
+      "ask": {
+        "title": "Conte o que você precisa",
+        "body": "Use o formulário abaixo ou envie um e-mail para {email}. Informe o tamanho da sua equipe e tudo o que a sua análise de segurança exigir."
+      },
+      "quote": {
+        "title": "Receba respostas e um preço",
+        "body": "Respondemos por e-mail com as respostas às suas dúvidas e um preço anual."
+      },
+      "sign": {
+        "title": "Assine e pague por fatura",
+        "body": "Depois que o contrato for assinado, mudamos seu workspace para o plano Business e enviamos a fatura."
+      }
+    },
+    "formTitle": "Fale com a gente",
+    "formIntro": "Conte sobre sua equipe e o que você precisa. Respondemos por e-mail.",
+    "form": {
+      "name": "Nome",
+      "email": "E-mail corporativo",
+      "company": "Empresa",
+      "teamSize": "Tamanho da equipe",
+      "teamSizePlaceholder": "Escolha um tamanho",
+      "sizes": {
+        "1-10": "1 a 10 pessoas",
+        "11-50": "11 a 50 pessoas",
+        "51-200": "51 a 200 pessoas",
+        "201-1000": "201 a 1.000 pessoas",
+        "1000+": "Mais de 1.000 pessoas"
+      },
+      "need": "Do que você precisa?",
+      "needPlaceholder": "Por exemplo: login único para 300 pessoas, fatura anual, nosso questionário de segurança",
+      "submit": "Enviar",
+      "sending": "Enviando…",
+      "sentTitle": "Mensagem enviada",
+      "sent": "Obrigado. Vamos responder para {email}.",
+      "privacy": "Usamos esses dados só para responder a você. Veja nossa <privacy>política de privacidade</privacy>.",
+      "errors": {
+        "name": "Digite seu nome.",
+        "email": "Digite um e-mail corporativo válido.",
+        "company": "Digite o nome da sua empresa.",
+        "teamSize": "Escolha o tamanho da sua equipe.",
+        "need": "Conte do que você precisa.",
+        "rateLimited": "Você já enviou algumas mensagens. Vamos responder a elas, ou escreva para {email}.",
+        "check": "Conclua a verificação acima do botão e envie de novo.",
+        "notSent": "Não foi possível enviar sua mensagem. Escreva para {email}.",
+        "unavailable": "Este formulário não está disponível aqui. Escreva para {email}.",
+        "unknown": "Algo deu errado. Escreva para {email}."
+      }
+    },
+    "orEmail": "Prefere e-mail? Escreva para <mail>{email}</mail>.",
+    "relatedTitle": "Saiba mais",
+    "related": {
+      "security": "Segurança no QRdx",
+      "dpa": "Termo de Processamento de Dados",
+      "subprocessors": "Subprocessadores",
+      "pricing": "Preços"
+    }
+  },
+  "security": {
+    "metaTitle": "Segurança no QRdx: login, armazenamento de dados e como reportar problemas",
+    "metaDescription": "Como o QRdx protege contas e dados: HTTPS com HSTS, política de segurança de conteúdo, passkeys e verificação em duas etapas, login único, log de auditoria, verificação de links, onde os dados ficam armazenados e como reportar uma vulnerabilidade.",
+    "crumb": "Segurança",
+    "title": "Segurança no QRdx",
+    "intro1": "O que o QRdx faz para proteger sua conta, seus códigos e os dados dos seus visitantes. Cada item descreve algo que já roda no qrdx.dev hoje, e o código é aberto, então você pode conferir.",
+    "intro2": "O QRdx não tem certificação SOC 2, HIPAA nem qualquer outra certificação de segurança, e não promete ter.",
+    "reportCta": "Reportar uma vulnerabilidade",
+    "enterpriseCta": "Revisão de segurança? Fale conosco",
+    "sections": {
+      "transport": {
+        "title": "Conexões e navegadores",
+        "items": {
+          "https": {
+            "title": "HTTPS em todo lugar",
+            "body": "Todas as páginas e chamadas de API são servidas por HTTPS, e os navegadores são instruídos a continuar usando HTTPS no qrdx.dev por dois anos (HSTS)."
+          },
+          "csp": {
+            "title": "Política de segurança de conteúdo",
+            "body": "As páginas do próprio QRdx limitam quais scripts, frames e conexões podem carregar. As páginas que mostram os dados da sua conta recebem um nonce novo a cada requisição, então um script injetado nelas não é executado."
+          },
+          "framing": {
+            "title": "Sem frames de outros sites",
+            "body": "As páginas do próprio QRdx não podem ser exibidas dentro do frame de outro site, e a tela em que você aprova um app não pode ser exibida em frame de jeito nenhum. Os navegadores também são instruídos a não adivinhar tipos de arquivo."
+          }
+        }
+      },
+      "signIn": {
+        "title": "Login",
+        "items": {
+          "passwords": {
+            "title": "Sem senhas",
+            "body": "Você entra com Google, GitHub ou um código de uso único por e-mail{passkeys, select, yes {, ou com uma passkey} other {}}. O QRdx não guarda senhas que possam vazar."
+          },
+          "twoFactor": {
+            "title": "Verificação em duas etapas",
+            "body": "Uma segunda etapa com um app autenticador{passkeys, select, yes { ou uma passkey} other {}}, com códigos de backup para quando você não puder usá-lo. Workspaces no Business podem exigir isso de todos os membros."
+          },
+          "confirm": {
+            "title": "Confirme que é você",
+            "body": "Alterações de segurança, novas chaves de API e webhooks, mudanças de função e a exclusão de um workspace pedem que você confirme que é você, mesmo com o login ativo. Uma confirmação dura 10 minutos."
+          },
+          "alerts": {
+            "title": "Alertas de novo login",
+            "body": "Enviamos um e-mail quando um navegador ou dispositivo entra na sua conta pela primeira vez e quando as configurações da sua verificação em duas etapas mudam."
+          },
+          "sessions": {
+            "title": "Logins que expiram",
+            "body": "Um login dura no máximo 30 dias, e menos se você parar de usá-lo. Um login usado a partir de um novo país e um novo navegador precisa confirmar que é você, e você pode sair de todos os outros dispositivos de uma vez."
+          }
+        }
+      },
+      "workspaces": {
+        "title": "Workspaces e equipes",
+        "items": {
+          "sso": {
+            "title": "Login único",
+            "body": "OIDC ou SAML 2.0 no Business, para um domínio de e-mail que você comprova com um registro DNS. As respostas SAML precisam ser assinadas com SHA-256 ou mais forte. Quando um workspace exige o login único, todas as outras formas de entrada ficam fechadas para esse domínio e as sessões duram no máximo 24 horas."
+          },
+          "roles": {
+            "title": "Funções",
+            "body": "Proprietário, admin, membro, cobrança e visualizador. Só proprietários e admins gerenciam pessoas, domínios e configurações, e os membros de cobrança e os visualizadores não podem alterar códigos."
+          },
+          "auditLog": {
+            "title": "Log de auditoria",
+            "body": "No Business, proprietários e admins veem quem alterou qual código, página, membro, domínio, chave de API ou configuração, e podem exportar tudo em CSV. Os registros são mantidos por {days, number} dias."
+          },
+          "staff": {
+            "title": "Acesso da equipe",
+            "body": "Só contas da equipe da QRdx podem abrir as ferramentas de administração, e toda ação da equipe nelas fica registrada em um log de auditoria."
+          }
+        }
+      },
+      "secrets": {
+        "title": "Chaves e segredos",
+        "items": {
+          "hashed": {
+            "title": "Chaves e tokens com hash",
+            "body": "As chaves de API e os tokens de acesso OAuth são armazenados apenas como hashes SHA-256, então uma cópia do banco de dados não os revela. As senhas dos códigos protegidos também são armazenadas como hashes."
+          },
+          "encrypted": {
+            "title": "Tokens de integração criptografados",
+            "body": "Os tokens das ferramentas que você conecta, como Google Drive ou Slack, são criptografados com AES-256-GCM."
+          },
+          "webhooks": {
+            "title": "Webhooks assinados",
+            "body": "Cada endpoint de webhook tem seu próprio segredo, e cada payload é assinado com ele, para o seu servidor conferir que veio da QRdx."
+          }
+        }
+      },
+      "abuse": {
+        "title": "Abuso e segurança de links",
+        "items": {
+          "linkChecks": {
+            "title": "Verificação de links",
+            "body": "Quando o destino de um código dinâmico é definido, a QRdx o confere nas listas de sites de malware e phishing do Google Web Risk e recusa os sinalizados. Um destino que não deu para verificar a tempo é verificado de novo, e o código dele é desativado se for sinalizado."
+          },
+          "rateLimits": {
+            "title": "Limites de requisições",
+            "body": "A API, o servidor MCP, os formulários e outros endpoints públicos têm limite de requisições por chave, conta ou endereço IP."
+          },
+          "bots": {
+            "title": "Verificação de bots nos formulários",
+            "body": "Os formulários públicos usam Cloudflare Turnstile e campos ocultos que só bots preenchem."
+          },
+          "reports": {
+            "title": "Denúncia de códigos nocivos",
+            "body": "Qualquer pessoa pode <report>denunciar um QR code</report> que leve a phishing, malware ou golpe. Códigos que violam as regras são desativados."
+          }
+        }
+      },
+      "storage": {
+        "title": "Onde os dados ficam armazenados",
+        "items": {
+          "hosting": {
+            "title": "Hospedagem",
+            "body": "O app roda na Vercel. As funções de servidor ficam em Washington, D.C., nos Estados Unidos, atrás da rede de borda global da Vercel."
+          },
+          "database": {
+            "title": "Banco de dados",
+            "body": "Contas, códigos, leituras e respostas de formulários ficam em um banco de dados Neon Postgres na AWS US East (N. Virginia). A Neon <neon>criptografa os dados em repouso</neon> com AES-256 e mantém backups criptografados."
+          },
+          "files": {
+            "title": "Arquivos enviados",
+            "body": "Os arquivos que você envia ficam armazenados no Cloudflare R2, na região Ásia-Pacífico."
+          },
+          "scans": {
+            "title": "Dados de leitura",
+            "body": "Os endereços IP de quem faz a leitura nunca são armazenados. Os visitantes únicos são contados com um hash que muda todo dia."
+          }
+        }
+      },
+      "yourData": {
+        "title": "Seus dados e a papelada",
+        "items": {
+          "export": {
+            "title": "Exportação",
+            "body": "Baixe tudo o que o QRdx guarda sobre a sua conta em um ZIP nas Configurações e exporte leituras, respostas de formulários e o log de auditoria em CSV."
+          },
+          "delete": {
+            "title": "Exclusão",
+            "body": "Exclua códigos, páginas, arquivos e respostas de formulários quando quiser, ou a conta inteira. Os dados excluídos podem permanecer por pouco tempo no histórico de recuperação do provedor do banco de dados."
+          },
+          "dpa": {
+            "title": "Adendo de Processamento de Dados",
+            "body": "O <dpa>DPA</dpa> faz parte dos Termos para todos os clientes e inclui as Cláusulas Contratuais Padrão. Peça uma cópia assinada se precisar."
+          },
+          "subprocessors": {
+            "title": "Subprocessadores",
+            "body": "A <list>lista de subprocessadores</list> informa todos os serviços que tratam dados pessoais para o QRdx, o que cada um faz e onde. Atualizamos a lista pelo menos 30 dias antes de um novo começar a operar."
+          }
+        }
+      }
+    },
+    "reportTitle": "Reporte uma vulnerabilidade",
+    "report": "Envie um e-mail para <mail>{email}</mail> com um assunto que comece com [security] e, por favor, não publique isso em uma issue pública do GitHub. Nossa <policy>política de segurança</policy> traz o escopo e o safe harbor, e o <txt>security.txt</txt> tem os mesmos dados de contato.",
+    "reviewTitle": "Fazendo uma revisão de segurança?",
+    "review": "Envie seu questionário para a gente. Os contratos <enterprise>Enterprise</enterprise> incluem respostas para a sua revisão e um DPA assinado."
   },
   "templates": {
     "metaTitle": "Modelos de landing page para QR code com demos ao vivo",
@@ -3979,6 +4370,110 @@
         "moreFrameOptions": "Mais opções da moldura"
       }
     },
+    "partInline": {
+      "parts": {
+        "eyes": {
+          "edit": "Editar olhos",
+          "options": "Opções dos olhos",
+          "random": "Olhos aleatórios",
+          "more": "Mais opções dos olhos"
+        },
+        "dots": {
+          "edit": "Editar pontos",
+          "options": "Opções dos pontos",
+          "random": "Pontos aleatórios",
+          "more": "Mais opções dos pontos"
+        },
+        "logo": {
+          "edit": "Editar logo",
+          "options": "Opções do logo",
+          "random": "Logo aleatório",
+          "more": "Mais opções do logo"
+        },
+        "background": {
+          "edit": "Editar fundo",
+          "options": "Opções do fundo",
+          "random": "Fundo aleatório",
+          "more": "Mais opções do fundo",
+          "editShape": "Editar formato do código"
+        },
+        "frame": {
+          "edit": "Editar moldura",
+          "options": "Opções da moldura",
+          "random": "Moldura aleatória",
+          "more": "Mais opções da moldura"
+        }
+      },
+      "items": {
+        "outerShape": "Forma externa",
+        "centerShape": "Forma central",
+        "eyeColor": "Cor do olho",
+        "centerColor": "Cor do centro",
+        "pattern": "Padrão",
+        "dotColor": "Cor do ponto",
+        "dotSize": "Tamanho do ponto",
+        "logo": "Logo",
+        "quickIcons": "Ícones rápidos",
+        "logoSize": "Tamanho do logo",
+        "hideLogo": "Ocultar logo",
+        "backgroundColor": "Cor do fundo",
+        "padding": "Margem interna",
+        "frameStyle": "Estilo da moldura",
+        "frameColor": "Cor da moldura",
+        "whichEyes": "Quais olhos",
+        "allEyes": "Todos os olhos",
+        "thisEye": "Este olho",
+        "thisEyesColor": "Cor deste olho",
+        "thisEyesCenterColor": "Cor do centro deste olho",
+        "shapesChangeAllThreeEyes": "Os formatos mudam os três olhos.",
+        "sameAsTheOthers": "Igual aos outros",
+        "eyesWithTheirOwnColor": "Olhos com cor própria mantêm a cor. Escolha Este olho para mudar um deles.",
+        "logoShapeAndPlate": "Formato e base do logo",
+        "clearSpace": "Espaço livre",
+        "content": "Conteúdo",
+        "codeShape": "Formato do código",
+        "errorCorrection": "Correção de erros"
+      },
+      "random": "Aleatório",
+      "moreOptions": "Mais opções",
+      "sheet": {
+        "changesShowOnTheCode": "As alterações aparecem no código conforme você faz. Concluir as mantém.",
+        "done": "Concluir"
+      },
+      "content": {
+        "link": "Link",
+        "text": "Texto",
+        "theCodeKeepsItsContent": "O código mantém o conteúdo até que este seja válido.",
+        "scansOpenHost": "A leitura abre {host}",
+        "textHint": "O código mostra este texto quando é lido.",
+        "editedInTheContentTab": "Este tipo de conteúdo tem um formulário próprio na aba Conteúdo.",
+        "openTheContentTab": "Abrir a aba Conteúdo"
+      },
+      "codeShape": {
+        "codeShape": "Formato do código",
+        "names": {
+          "square": "Quadrado",
+          "circle": "Círculo",
+          "heart": "Coração"
+        },
+        "aCircleOrHeartTakes": "Um círculo ou coração substitui a moldura."
+      },
+      "errorCorrection": {
+        "theLogoRaisesItToLevel": "Por enquanto, o logo eleva para o nível {level}."
+      },
+      "handles": {
+        "moveLogo": "Mover logo",
+        "dragOrUseTheArrowKeys": "Arraste ou use as setas do teclado. Shift move mais longe. Delete oculta.",
+        "logoSize": "Tamanho do logo",
+        "percentOfTheCode": "{value, number}% do código",
+        "padding": "Margem",
+        "modules": "{count, plural, one {# módulo} other {# módulos}}",
+        "dragToChangeThePadding": "Arraste para dentro ou para fora para mudar a margem"
+      },
+      "drop": {
+        "dropToUseAsLogo": "Solte para usar como logo"
+      }
+    },
     "gradientPicker": {
       "pickASolidColorA": "Escolha uma cor sólida, um gradiente ou uma amostra para {label}."
     },
@@ -4228,6 +4723,7 @@
         "actions": "Ações",
         "themeAppearance": "Tema e aparência",
         "patternCustomization": "Personalização do padrão",
+        "preview": "Prévia",
         "help": "Ajuda"
       },
       "shortcuts": {
@@ -4249,7 +4745,11 @@
         "cycleCornerEyePatterns": "Alternar padrões dos olhos externos",
         "cycleInternalEyePatterns": "Alternar padrões dos olhos internos",
         "cycleFrames": "Alternar molduras",
-        "showThisShortcutsDialog": "Mostrar este diálogo de atalhos"
+        "showThisShortcutsDialog": "Mostrar este diálogo de atalhos",
+        "editAPartOfTheCode": "Editar a parte do código sob o ponteiro ou em foco",
+        "randomLookForThatPart": "Visual aleatório para essa parte",
+        "hideTheFocusedLogo": "Ocultar o logo em foco",
+        "moveTheLogoWhileEditing": "Mover o logo durante a edição"
       }
     },
     "soundSwitch": {
