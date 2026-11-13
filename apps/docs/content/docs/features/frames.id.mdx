@@ -4,11 +4,11 @@ description: "Bingkai ajakan bertindak, pustaka bingkai resmi, skor \"Apakah bis
 icon: Frame
 ---
 
-Tambahkan bingkai "Scan me", pastikan desain bisa dipindai sebelum dirilis, dan ekspor file vektor dengan ukuran fisik yang tepat.
+Tambahkan bingkai "Scan me", pastikan desain bisa dipindai sebelum Anda merilisnya, dan ekspor file vektor dengan ukuran fisik yang tepat.
 
 ## Bingkai ajakan bertindak [#call-to-action-frames]
 
-Setiap bingkai yang digambar QRdx adalah spesifikasi bingkai: deskripsi JSON singkat berisi bentuk, label, dan warna. Satu mesin menggambar setiap spesifikasi, sehingga bingkai tampil sama dalam SVG, PNG, PDF, dan EPS. QRdx memiliki {facts.frames} bingkai: {facts.frameStyles} bingkai bawaan dan {facts.officialFrames} [bingkai resmi](#official-frames). Anda juga bisa membuat bingkai sendiri atau memilih salah satu dari [komunitas](/community/frames).
+Setiap bingkai yang digambar QRdx adalah spesifikasi bingkai: deskripsi JSON kecil berisi bentuk, label, dan warna. Satu mesin menggambar setiap spesifikasi, sehingga bingkai tampil sama di SVG, PNG, PDF, dan EPS. QRdx memiliki {facts.frames} bingkai: {facts.frameStyles} bingkai bawaan dan {facts.officialFrames} [bingkai resmi](#official-frames). Anda juga dapat membuat bingkai sendiri atau memilih salah satu dari [komunitas](/community/frames).
 
 Prop `frame` menggambar bingkai di sekeliling kode. Prop ini berfungsi pada `QRCode`, `QRCodeSVG`, `QRCodeCanvas`, `getQRAsSVG`, `getQRData`, dan semua helper unduhan.
 
@@ -21,32 +21,32 @@ import { QRCode } from "qrdx";
 />
 ```
 
-Bingkai ditambahkan **di sekeliling** kode: hasil keluaran menjadi lebih besar, dan modul QR serta zona tenang tidak pernah tertutup, sehingga keterpindaian tidak berubah. Celah terang dengan warna latar kode memisahkan kode dari bingkai.
+Bingkai ditambahkan **di sekeliling** kode: keluaran menjadi lebih besar, dan modul QR serta zona tenang tidak pernah tertutup, sehingga kemudahan pemindaian tidak berubah. Celah terang dengan warna latar kode memisahkan kode dari bingkai.
 
 ### Bingkai bawaan [#built-in-frames]
 
-Bingkai bawaan diberi nama menurut `style`-nya. Opsi-opsi ini mengisi label dan warna pada spesifikasinya:
+Bingkai bawaan dinamai berdasarkan `style`-nya. Opsi-opsi ini mengisi label dan warna pada spesifikasinya:
 
 | Opsi | Default | Catatan |
 | --- | --- | --- |
 | `style` | — | Salah satu dari {facts.frameStyles} bingkai bawaan di bawah, atau `none` (`FRAME_STYLES`) |
-| `text` | `"Scan me"` | Maksimal 24 karakter. Berikan `""` untuk menyembunyikan label |
+| `text` | `"Scan me"` | Hingga 24 karakter. Berikan `""` untuk menyembunyikan label |
 | `color` | `#000000` | Warna bingkai (`gradient-border`: warna awal, default ungu) |
 | `textColor` | putih pada bingkai, `color` pada area terang | Warna label |
-| `secondaryText` | tidak ada | Label kedua, maksimal 24 karakter: pita bawah `banner-top-bottom`, busur bawah `circle`, footer `menu-card` |
+| `secondaryText` | tidak ada | Label kedua, hingga 24 karakter: pita bawah `banner-top-bottom`, busur bawah `circle`, footer `menu-card` |
 | `secondaryColor` | `#db2777` | Warna akhir `gradient-border` |
-| `fontScale` | `1` | Ukuran label dari 0.5 sampai 1.5; label tetap mengecil agar muat |
+| `fontScale` | `1` | Ukuran label dari 0,5 hingga 1,5; label tetap mengecil agar muat |
 
-Bingkai bawaan, menurut `style`:
+Bingkai bawaan, berdasarkan `style`:
 
-- Banner dan border: `banner-bottom`, `banner-top`, `banner-top-bottom`, `border`, `rounded-border`, `gradient-border`, `focus` (siku di sudut)
+- Spanduk dan tepi: `banner-bottom`, `banner-top`, `banner-top-bottom`, `border`, `rounded-border`, `gradient-border`, `focus` (siku di sudut)
 - Gelembung: `speech-bubble`, `speech-bubble-top`, `chat-bubble`
 - Lencana: `circle` (teks tersusun mengelilingi cincin), `badge` (pita), `sticker` (potongan die-cut dengan bayangan)
-- Objek: `polaroid`, `phone`, `ticket`, `tag` (label gantung dengan lubang), `envelope`, `menu-card`
+- Objek: `polaroid`, `phone`, `ticket`, `tag` (tag gantung dengan lubang), `envelope`, `menu-card`
 
-Setiap nama ini mewakili satu spesifikasi di mesin, dan namanya tetap berlaku selamanya. Desain tersimpan, tautan image API, flag CLI, dan kode yang memakainya akan tetap menggambar bingkai yang sama. Bingkai yang menghilangkan baris labelnya saat tidak ada label, seperti border, tetap berperilaku demikian.
+Setiap nama ini mewakili sebuah spesifikasi di mesin, dan namanya tetap berlaku selamanya. Desain tersimpan, tautan image API, flag CLI, dan kode yang menggunakannya akan terus menggambar bingkai yang sama. Bingkai yang menghilangkan baris labelnya saat tidak ada label, seperti bingkai tepi, tetap melakukannya.
 
-`BUILT_IN_FRAMES` mencantumkannya beserta nama dan spesifikasinya (`BUILT_IN_FRAME_SPECS` berisi spesifikasi menurut style). `frameSpecOf` mengembalikan spesifikasi yang digambar oleh bingkai apa pun, dan `getFrameColors` mengembalikan warna yang dipakainya:
+`BUILT_IN_FRAMES` mencantumkannya beserta nama dan spesifikasinya (`BUILT_IN_FRAME_SPECS` memuat spesifikasi berdasarkan style). `frameSpecOf` mengembalikan spesifikasi yang digambar oleh bingkai mana pun, dan `getFrameColors` mengembalikan warna yang digunakannya:
 
 ```tsx
 import { BUILT_IN_FRAMES, frameSpecOf, getFrameColors } from "qrdx";
@@ -61,9 +61,9 @@ getFrameColors({ style: "border", color: "#1e3a8a" });
 // { frame: "#1e3a8a", text: "#1e3a8a", accent: "#1e3a8a" }
 ```
 
-Untuk mengubah lebih dari sekadar label dan warna, mulailah bingkai kustom dari spesifikasi bawaan: `{ style: "custom", spec: frameSpecOf({ style: "ticket" }) }` menggambar tiket yang sama, dan Anda bisa mengedit bentuknya.
+Untuk mengubah lebih dari sekadar label dan warna, mulailah bingkai kustom dari spesifikasi bawaan: `{ style: "custom", spec: frameSpecOf({ style: "ticket" }) }` menggambar tiket yang sama, dan Anda dapat mengedit bentuknya.
 
-Lihat semuanya, didekode di browser Anda, di [Bentuk, mata, dan bingkai](/docs/styles#frames). Setiap bingkai hanya berupa bentuk dan teks dengan warna buram, sehingga ekspor SVG, PNG, PDF, dan EPS identik (border gradien digambar sebagai langkah warna solid yang halus, dan huruf melengkung pada bingkai circle adalah teks yang diputar di setiap format).
+Lihat semuanya, didekode di browser Anda, di [Bentuk, mata, dan bingkai](/docs/styles#frames). Setiap bingkai hanya terdiri dari bentuk dan teks dengan warna opak, sehingga ekspor SVG, PNG, PDF, dan EPS sama persis (gradient border digambar sebagai langkah warna solid yang halus, dan huruf melengkung pada bingkai circle adalah teks yang diputar di semua format).
 
 ```tsx
 <QRCode
@@ -72,7 +72,7 @@ Lihat semuanya, didekode di browser Anda, di [Bentuk, mata, dan bingkai](/docs/s
 />
 ```
 
-Label memakai susunan font sistem, sehingga tidak ada yang diunduh. Karena hasil keluaran membesar, gunakan `getFrameDimensions(size, frame)` saat Anda memerlukan lebar dan tinggi akhir:
+Label menggunakan system font stack, jadi tidak ada yang diunduh. Karena keluaran bertambah besar, gunakan `getFrameDimensions(size, frame)` saat Anda membutuhkan lebar dan tinggi akhir:
 
 ```ts
 import { getFrameDimensions } from "qrdx";
@@ -80,13 +80,13 @@ import { getFrameDimensions } from "qrdx";
 getFrameDimensions(400, { style: "banner-bottom" }); // { width: 496, height: 568 }
 ```
 
-`FRAME_STYLES`, `frameSchema` (zod), dan tipe `QRFrame` / `FrameStyle` juga diekspor dari `qrdx/types` untuk validasi di sisi server. `GRADIENT_FRAME_DEFAULTS` (warna default border gradien) dan `FRAME_GAP_RATIO` masih diekspor untuk kode yang memakainya; celah setiap bingkai adalah padding pada spesifikasinya (`getFrameGapRatio`).
+`FRAME_STYLES`, `frameSchema` (zod), serta tipe `QRFrame` / `FrameStyle` juga diekspor dari `qrdx/types` untuk validasi di sisi server. `GRADIENT_FRAME_DEFAULTS` (warna default gradient border) dan `FRAME_GAP_RATIO` tetap diekspor untuk kode yang menggunakannya; celah setiap bingkai adalah padding pada spesifikasinya (`getFrameGapRatio`).
 
 ### Di playground [#in-the-playground]
 
-**Desain → Bingkai** memiliki satu pemilih untuk semua bingkai. Grup **Klasik** berisi bingkai bawaan, bersama kode berbentuk, bingkai resmi, dan bingkai yang Anda simpan. Setiap bingkai diedit dengan cara yang sama: label, baris kedua, warna, dan ukuran teks, plus ikon pada bingkai yang memilikinya. Desain dengan bingkai bawaan mempertahankan nama `style`-nya, sehingga tautan, URL gambar, dan cuplikan kode tetap singkat.
+**Design → Frame** memiliki satu pemilih untuk setiap bingkai. Grup **Classic** berisi bingkai bawaan dan [templat](/docs/features/templates) (Arrow, Standard Box, dan lainnya), bersama kode berbentuk, bingkai resmi, dan bingkai yang Anda simpan. Memilih salah satunya akan menggantikan yang sebelumnya. Setiap bingkai diedit dengan cara yang sama: label, baris kedua, warna, dan ukuran teksnya, ditambah ikon pada bingkai yang memilikinya. Desain dengan bingkai bawaan mempertahankan nama `style`-nya, sehingga tautan, URL gambar, dan cuplikan kode tetap singkat.
 
-Grup **Kode berbentuk** menempatkan kode itu sendiri dalam sebuah bentuk: lingkaran atau hati dari titik-titik dekoratif, atau bentuk yang Anda unggah ([`shape`](/docs/features/patterns#circle-codes)). Kode berbentuk menggantikan bingkai: memilihnya menghapus bingkai, dan memilih bingkai menghapus bentuk.
+Grup **Shaped codes** menempatkan kode itu sendiri dalam sebuah bentuk: lingkaran atau hati dari titik dekoratif, atau bentuk yang Anda unggah ([`shape`](/docs/features/patterns#circle-codes)). Kode berbentuk menggantikan bingkai: memilihnya menghapus bingkai, dan memilih bingkai menghapus bentuk.
 
 ### Di CLI [#in-the-cli]
 
@@ -94,29 +94,30 @@ Grup **Kode berbentuk** menempatkan kode itu sendiri dalam sebuah bentuk: lingka
 qrdx generate "https://example.com/menu" --frame banner-bottom --frame-text "Scan for the menu" -o menu.png
 ```
 
-`--frame-color` dan `--frame-text-color` menerima warna hex. Memberikan teks atau warna tanpa `--frame` memakai `banner-bottom`.
+`--frame-color` dan `--frame-text-color` menerima warna hex. Memberikan teks atau warna tanpa `--frame` akan menggunakan `banner-bottom`.
 
 ### Spesifikasi bingkai [#frame-specs]
 
-Spesifikasi bingkai adalah JSON dengan `kind: "qrdx.frame"`, `version: 1`, ukuran `artboard`, kotak `qr` tempat kode berada, `colors` default, `shapes` yang digambar di belakang kode, dan `labels`. Bentuknya berupa persegi panjang (dengan lubang opsional), lingkaran dan cincin, elips, poligon, path, garis, dan ikon bawaan. Bentuk-bentuk ini diisi dengan token tema (`frame`, `text`, `accent`, `background`), warna hex, campuran dua warna, atau gradien. Spesifikasi tidak berisi markup, tautan, atau gambar. Periksa spesifikasi yang tidak Anda tulis sendiri dengan `frameSpecSchema` atau `getFrameSpecIssues` dari `qrdx/types` sebelum menyimpannya. Mesin memeriksanya lagi sebelum menggambar.
+Spesifikasi bingkai adalah JSON dengan `kind: "qrdx.frame"`, `version: 1`, ukuran `artboard`, kotak `qr` tempat kode diletakkan, `colors` default, `shapes` yang digambar di belakang kode, dan `labels`. Bentuknya berupa rect (dengan lubang opsional), lingkaran dan cincin, elips, poligon, path, garis, dan ikon bawaan. Bentuk-bentuk ini diisi dengan token tema (`frame`, `text`, `accent`, `background`), warna hex, campuran dua warna, atau gradien. Spesifikasi tidak memuat markup, tautan, atau gambar. Periksa spesifikasi yang tidak Anda tulis sendiri dengan `frameSpecSchema` atau `getFrameSpecIssues` dari `qrdx/types` sebelum menyimpannya. Mesin memeriksanya lagi sebelum menggambar.
 
-Bingkai bawaan membawa beberapa field opsional ini. Spesifikasi tanpa field tersebut digambar seperti sebelumnya:
+Bingkai dan templat bawaan memperkenalkan field opsional berikut. Spesifikasi tanpa field ini digambar seperti sebelumnya:
 
 | Field | Fungsi |
 | --- | --- |
-| `labels[].collapse` | `{ y, height }`. Saat label tidak menampilkan teks, pita dari `y` sampai `y + height` dipotong: baris di bawahnya naik dan gambar menjadi lebih pendek. Bentuk yang seluruhnya berada di dalam pita dihilangkan, dan bentuk yang melintasinya menjadi lebih pendek. Sebuah pita tidak boleh melintasi kode, padding-nya, atau pita lain. |
-| `qr.plate` | `"opaque"` (default) atau `"background"`. Mesin menggambar pelat dengan warna latar kode di bawah kode. Saat latar itu transparan, `"opaque"` menggambar pelat dan `background` mengisi putih, sehingga gambar tidak pernah terlihat melalui zona tenang. `"background"` membuatnya tetap transparan dan tidak menggambar pelat. Ini hanya diizinkan bila di bawah pelat hanya ada isian `background`, atau cincin yang lubangnya menampung pelat. |
-| `colors.text` | Warna hex, atau campuran `frame`, `accent`, `background`, dan warna hex, seperti `{ "mix": ["frame", "accent"], "amount": 0.5 }` untuk label border gradien. Ini adalah default; `textColor` tetap diutamakan. |
+| `labels[].collapse` | `{ y, height }`. Saat label tidak menampilkan teks, pita dari `y` hingga `y + height` dipotong: baris di bawahnya naik dan gambar menjadi lebih pendek. Bentuk yang seluruhnya berada di dalam pita dihilangkan, dan bentuk yang melintasinya menjadi lebih pendek. Pita tidak boleh melintasi kode, padding-nya, atau pita lain. |
+| `qr.plate` | `"opaque"` (default), `"background"`, atau `"none"`. Mesin menggambar pelat dengan warna latar kode di bawah kode. Saat latar itu transparan, `"opaque"` menggambar pelat dan `background` diisi putih, sehingga gambar tidak pernah tampak melalui zona tenang. `"background"` membuatnya tetap transparan dan tidak menggambar pelat. Opsi ini hanya diizinkan jika di bawah pelat hanya ada isian `background`, atau cincin yang lubangnya memuat pelat. `"none"` tidak menggambar pelat sama sekali, sehingga latar dan margin kode itu sendiri menjadi satu-satunya ruang terang, dan `qr.padding` boleh di bawah 4%. Templat menggunakannya. |
+| `stroke` | `{ color, width }` pada rect, circle, ellipse, polygon, atau path: garis tepi yang berpusat pada sisi bentuk, digambar setelah isiannya, paling besar 10% dari sisi terpendek artboard. Templat Halloween memberi garis tepi pada labunya dengan field ini. |
+| `colors.text` | Warna hex, atau campuran `frame`, `accent`, `background`, dan warna hex, seperti `{ "mix": ["frame", "accent"], "amount": 0.5 }` untuk label gradient border. Ini adalah default; `textColor` tetap diutamakan. |
 
-Baris label teks juga boleh masuk ke padding pelat, selama tetap berada di luar kode dan huruf kapitalnya tetap di luar padding pada ukuran teks terbesar (`fontScale` 1.5). Bingkai border menempatkan labelnya tepat di bawah kode dengan cara ini.
+Baris label teks juga boleh masuk ke padding pelat, selama tetap berada di luar kode dan huruf kapitalnya tetap di luar padding pada ukuran teks terbesar (`fontScale` 1.5). Bingkai tepi menempatkan labelnya tepat di bawah kode dengan cara ini.
 
-qrdx 0.0.51 dan yang lebih lama menolak spesifikasi yang memakai field ini atau menaruh baris label di padding, jadi perbarui mesin sebelum Anda menggambar spesifikasi seperti itu di tempat lain.
+qrdx 0.0.51 dan yang lebih lama menolak spesifikasi yang menggunakan field ini atau menempatkan baris label di dalam padding, jadi perbarui mesin sebelum Anda menggambar spesifikasi seperti itu di tempat lain.
 
 ## Bingkai resmi [#official-frames]
 
-Selain bingkai bawaan, QRdx memiliki {facts.officialFrames} bingkai resmi: desain siap pakai untuk ajakan bertindak, restoran dan kafe, toko dan kemasan, kecantikan dan kesehatan, acara dan pernikahan, hotel dan perjalanan, properti, mobil dan parkir, kesehatan dan pendidikan, olahraga dan kebugaran, bisnis dan sosial, serta nirlaba dan kelompok komunitas. {facts.seasonalFrames} di antaranya untuk hari raya dan musim, dari Tahun Baru Imlek, Holi, Idulfitri, dan Diwali hingga Hanukkah, Paskah, Thanksgiving, dan Natal. Masing-masing adalah spesifikasi bingkai dengan label dan warna yang dapat Anda ubah, dirilis di bawah CC0, dan masing-masing diuji agar bisa dipindai pada jarak ponsel.
+Selain bingkai bawaan, QRdx memiliki {facts.officialFrames} bingkai resmi: desain siap pakai untuk ajakan bertindak, restoran dan kafe, toko dan kemasan, kecantikan dan kesehatan, acara dan pernikahan, hotel dan perjalanan, properti, mobil dan parkir, kesehatan dan pendidikan, olahraga dan kebugaran, bisnis dan sosial, serta nirlaba dan kelompok komunitas. {facts.seasonalFrames} di antaranya untuk hari raya dan musim, dari Tahun Baru Imlek, Holi, Idulfitri, dan Diwali hingga Hanukkah, Paskah, Thanksgiving, dan Natal. Masing-masing adalah spesifikasi bingkai dengan label dan warna yang dapat Anda ubah, dirilis di bawah CC0, dan diuji agar dapat dipindai pada jarak ponsel.
 
-Di [playground](/playground), buka **Bingkai** lalu **Lainnya**. Cari menurut nama, kegunaan, atau hari raya, atau pilih satu grup. Bingkai untuk hari raya dan musim yang akan datang ditampilkan paling awal. Anda juga akan menemukannya di [komunitas](/community/frames), diterbitkan oleh @qrdx.
+Di [playground](/playground), buka **Frame** lalu **More**. Cari berdasarkan nama, kegunaan, atau hari raya, atau pilih grup. Bingkai untuk hari raya dan musim yang akan datang dicantumkan lebih dulu. Anda juga akan menemukannya di [komunitas](/community/frames), diterbitkan oleh @qrdx.
 
 Mesin mengekspornya sebagai `OFFICIAL_FRAMES`:
 
@@ -133,7 +134,7 @@ const diwali = getOfficialFrame("diwali-diya"); // undefined for an unknown id
 )}
 ```
 
-`OFFICIAL_FRAME_INDEX` mencantumkan setiap bingkai tanpa spesifikasinya, sehingga pemilih dapat menampilkan seluruh pustaka dan memuat spesifikasi hanya saat diperlukan. Di [image API](/docs/developers/image-api#community-items) dan [server MCP](/docs/developers/mcp), gunakan bingkai resmi sebagai item komunitas, misalnya `item=frame:diwali-diya`.
+`OFFICIAL_FRAME_INDEX` mencantumkan setiap bingkai tanpa spesifikasinya, sehingga pemilih dapat menampilkan seluruh pustaka dan memuat spesifikasi hanya saat dibutuhkan. Di [image API](/docs/developers/image-api#community-items) dan [server MCP](/docs/developers/mcp), gunakan bingkai resmi sebagai item komunitas, seperti `item=frame:diwali-diya`.
 
 ## Apakah bisa dipindai? [#will-it-scan]
 
@@ -153,17 +154,17 @@ const { score, grade, checks } = await getScanScore({
 
 Yang diperiksa:
 
-- **Dekode pada 96, 160, dan 320 px.** Desain dirender pada setiap lebar, diberi keburaman dan penurunan kontras seperti kamera, lalu didekode beberapa kali pada skala yang sedikit berbeda.
-- **Kontras** antara setiap warna kode (termasuk titik gradasi, warna mata, dan warna titik) dengan latar belakang, serta apakah kode berwarna gelap di atas latar terang.
-- **Cakupan logo** dibandingkan dengan yang dapat dipulihkan oleh tingkat koreksi kesalahan.
-- **Zona tenang**: margin, ditambah celah yang ditambahkan oleh bingkai.
-- **Risiko bentuk mata**: mata `circle` mungkin tidak terbaca oleh beberapa aplikasi pemindai (dan mata `curly` yang sudah dihentikan, jika desain tersimpan masih memakainya, gagal pada dekoder yang ketat).
-- **Pasangan gaya** (`style-pair`): bentuk yang gagal bersamaan dalam pengujian dekode kami, seperti titik `small-square` di samping mata persegi, dan bagian tengah yang sudah dihentikan dalam desain tersimpan (lihat `getStylePairRisk`).
+- **Decoding pada 96, 160, dan 320 px.** Desain dirender pada setiap lebar, diberi blur dan penurunan kontras seperti kamera, lalu didekode beberapa kali pada skala yang sedikit berbeda.
+- **Kontras** antara setiap warna kode (termasuk titik gradien, warna mata, dan warna titik) dan latar belakang, serta apakah kode berwarna gelap di atas latar terang.
+- **Cakupan logo** dibandingkan dengan jumlah yang dapat dipulihkan oleh tingkat koreksi kesalahan.
+- **Quiet zone**: margin, ditambah celah yang ditambahkan oleh bingkai.
+- **Risiko bentuk mata**: mata `circle` mungkin tidak terbaca oleh beberapa aplikasi pemindai (dan mata `curly` yang sudah dihentikan, jika desain tersimpan masih memakainya, gagal pada decoder yang ketat).
+- **Pasangan gaya** (`style-pair`): bentuk yang sama-sama gagal dalam uji decoding kami, misalnya titik `small-square` di samping mata persegi, dan pusat yang sudah dihentikan pada desain tersimpan (lihat `getStylePairRisk`).
 
-`getImageScanScore(fileOrImage)` melakukan hal yang sama untuk gambar yang sudah ada: fungsi ini mengembalikan isi yang didekode beserta pemeriksaan dekode, kontras, polaritas, zona tenang, dan resolusi yang diukur dari piksel. [Pemeriksa pemindaian](/tools/scan-checker) dibangun di atasnya.
+`getImageScanScore(fileOrImage)` melakukan hal yang sama untuk gambar yang sudah ada: fungsi ini mengembalikan isi yang didekode beserta pemeriksaan decoding, kontras, polaritas, quiet zone, dan resolusi yang diukur dari piksel. [Pemeriksa pemindaian](/tools/scan-checker) dibangun di atasnya.
 
 <Callout type="info">
-  Skor ini adalah heuristik yang dibangun di atas satu dekoder sumber terbuka. Aplikasi kamera ponsel sering kali lebih toleran, jadi anggap skor ini sebagai panduan dan uji pindai cetakan yang penting.
+  Skor ini adalah heuristik yang dibangun di atas satu decoder open source. Aplikasi kamera ponsel sering kali lebih toleran, jadi anggap skor ini sebagai panduan dan uji pemindaian cetakan yang penting.
 </Callout>
 
 ## Ekspor siap cetak [#print-ready-export]
@@ -190,11 +191,11 @@ layout.trimWidth; // finished width in mm, frame included
 layout.maxScanDistance; // 400 (mm)
 ```
 
-- `size` adalah lebar kode; bingkai menambah ukuran akhirnya.
-- Dengan bleed, latar belakang (atau warna bingkai persegi) meluas melewati tepi potong sehingga pemotongan tidak menyisakan garis putih. Tanda potong berada di luar bleed.
-- `colorMode: "cmyk"` memakai konversi sederhana (`rgbToCmyk`: K = 1 − max(R, G, B), tanpa profil ICC; hitam murni dicetak hanya dengan K). Minta konversi dengan manajemen warna dari percetakan Anda jika warna merek yang tepat itu penting.
-- Gradasi linear dan radial dicetak sebagai shading yang halus di PDF, dalam CMYK jika PDF-nya CMYK; SVG cetak tetap menyimpannya tetapi tetap RGB.
+- `size` adalah lebar kode; bingkai menambah ukuran akhir.
+- Dengan bleed, latar belakang (atau warna bingkai persegi) meluas melewati tepi potong sehingga hasil pemotongan tidak menyisakan garis putih tipis. Tanda potong berada di luar bleed.
+- `colorMode: "cmyk"` memakai konversi sederhana (`rgbToCmyk`: K = 1 − max(R, G, B), tanpa profil ICC; hitam murni dicetak hanya dengan K). Minta konversi dengan manajemen warna dari percetakan Anda jika warna merek yang tepat penting.
+- Gradien linear dan radial dicetak sebagai shading yang halus di PDF, dalam CMYK jika PDF-nya CMYK; SVG cetak tetap menyimpannya tetapi tetap RGB.
 - Teks bingkai di PDF memakai Helvetica Bold, sehingga karakter di luar Latin-1 mungkin tidak dirender. Gunakan SVG untuk aksara lain.
 - `getQRAsPrintPDF` dan `getQRAsPrintPDFBuffer` mengembalikan file alih-alih mengunduhnya, dan juga berfungsi di Node.
 
-**Seberapa besar ukuran cetaknya:** kode dapat dipindai dari jarak sekitar sepuluh kali lebarnya, jadi ukuran ≈ jarak pemindaian ÷ 10 (lebar 2 cm untuk 20 cm). Kode yang lebih padat memerlukan ukuran lebih besar; [kalkulator ukuran cetak](/tools/print-size) memperhitungkan hal itu.
+**Seberapa besar mencetaknya:** kode dapat dipindai dari jarak sekitar sepuluh kali lebarnya, jadi ukuran ≈ jarak pemindaian ÷ 10 (lebar 2 cm untuk 20 cm). Kode yang lebih padat memerlukan ukuran lebih besar; [kalkulator ukuran cetak](/tools/print-size) memperhitungkan hal itu.

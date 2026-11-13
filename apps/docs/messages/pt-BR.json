@@ -4400,7 +4400,10 @@
         "theFrameIsAddedAround": "A moldura é adicionada ao redor do código, então a imagem baixada fica maior e o código continua legível na leitura.",
         "label": "Texto",
         "pickAFrameFirst": "Escolha uma moldura primeiro",
-        "none": "Nenhuma"
+        "none": "Nenhuma",
+        "takesDotColor": "Esta moldura usa a cor dos pontos do código.",
+        "alsoHasTemplate": "Este design também tem a moldura {name} dentro desta. Ao escolher outra moldura, as duas são substituídas.",
+        "templateKeepsSize": "Esta moldura ajusta o código dentro dela, então a imagem baixada mantém o tamanho que você escolher."
       },
       "frameFields": {
         "textSize": "Tamanho do texto"

@@ -4400,7 +4400,10 @@
         "theFrameIsAddedAround": "El marco se añade alrededor del código, por lo que la imagen descargada es más grande y el código sigue siendo escaneable.",
         "label": "Etiqueta",
         "pickAFrameFirst": "Elige un marco primero",
-        "none": "Ninguno"
+        "none": "Ninguno",
+        "takesDotColor": "Este marco toma el color de los puntos del código.",
+        "alsoHasTemplate": "Este diseño también incluye el marco {name} dentro de este. Si eliges otro marco, se reemplazan ambos.",
+        "templateKeepsSize": "Este marco ajusta el código en su interior, así que la imagen descargada mantiene el tamaño que elijas."
       },
       "frameFields": {
         "textSize": "Tamaño del texto"

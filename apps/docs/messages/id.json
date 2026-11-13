@@ -4400,7 +4400,10 @@
         "theFrameIsAddedAround": "Bingkai ditambahkan di sekeliling kode, sehingga gambar yang diunduh menjadi lebih besar dan kodenya sendiri tetap dapat dipindai.",
         "label": "Label",
         "pickAFrameFirst": "Pilih bingkai terlebih dahulu",
-        "none": "Tidak ada"
+        "none": "Tidak ada",
+        "takesDotColor": "Bingkai ini mengikuti warna titik-titik kode.",
+        "alsoHasTemplate": "Desain ini juga memiliki bingkai {name} di dalam bingkai ini. Memilih bingkai lain akan mengganti keduanya.",
+        "templateKeepsSize": "Bingkai ini menyesuaikan kode di dalamnya, sehingga gambar yang diunduh tetap berukuran sesuai pilihan Anda."
       },
       "frameFields": {
         "textSize": "Ukuran teks"

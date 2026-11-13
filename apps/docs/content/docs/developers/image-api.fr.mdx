@@ -94,7 +94,7 @@ const src = `https://api.qrdx.dev/v1/qr?data=${encodeURIComponent(link)}&style=$
 | `dot` | `square` | Forme du point au centre de chaque œil d'angle |
 | `level` | `Q` | Correction d'erreur : `L` (~7 %), `M` (~15 %), `Q` (~25 %) ou `H` (~30 %) |
 | `margin` | `4` | Zone de silence autour du code, en modules, de `0` à `16` |
-| `template` | aucun | Modèle de bordure décorative |
+| `template` | aucun | Un [cadre dessiné comme modèle](/docs/features/templates) : l'image entière fait `size` de large, avec le code plus petit à l'intérieur |
 | `frame` | aucun | Un [cadre](/docs/features/frames) d'appel à l'action intégré, tel que `banner-bottom`, `speech-bubble` ou `circle` (l'un des {facts.frameStyles} cadres intégrés, chacun dessiné à partir de sa spécification de cadre) |
 | `frameText` | `Scan me` | Le libellé du cadre, jusqu'à 24 caractères. Renomme aussi le cadre d'un `style` ou d'un `item` |
 | `style` | aucun | Tout le design de l'éditeur en JSON ; voir [Styles](#style) |
@@ -115,7 +115,7 @@ Avec un cadre, `size` correspond à la largeur du code lui-même et le cadre s'a
 | `bgColor`, `fgColor`, `eyeColor`, `dotColor` | Une couleur (hexadécimal comme `#155dfc`, `rgb()`, `hsl()` ou un nom de couleur), ou un dégradé : `{ "type": "linear", "angle": 45, "stops": [...] }` ou `{ "type": "radial", "stops": [...] }`, avec 2 à 8 arrêts de la forme `{ "color", "offset" }` (offset de 0 à 100) |
 | `bodyPattern`, `cornerEyePattern`, `cornerEyeDotPattern` | Les [valeurs de motif](#pattern-values) |
 | `level`, `margin` | Comme les paramètres ci-dessus (`margin` de 0 à 16) |
-| `templateId` | Un modèle de bordure, `default` pour aucun |
+| `templateId` | Un cadre dessiné comme modèle, `default` pour aucun |
 | `frame` | Un cadre intégré, `{ "style": "banner-bottom", "text": "Scan me", "color": "#155dfc", "textColor": "#ffffff" }`, ou un cadre personnalisé, `{ "style": "custom", "spec": { … } }`, avec une spécification de cadre issue de la [communauté](#community-items) ou d'un cadre personnalisé créé dans la section Cadre du Playground. Les spécifications sont vérifiées selon les règles de spécification de cadre du moteur (ni balisage, ni liens, ni images ; 32 Ko au maximum) |
 | `eyeColors` | Couleurs par œil, prioritaires sur `eyeColor` et `dotColor` : `{ "topLeft": { "outer": "#b91c1c", "inner": "#1d4ed8" }, "topRight": …, "bottomLeft": … }`, chacune étant une couleur ou un dégradé |
 | `moduleScale` | Taille de chaque point, de `0.5` à `1` (par défaut `1`) |

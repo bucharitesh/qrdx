@@ -4,13 +4,13 @@ description: "Cornici con invito all'azione, la libreria di cornici ufficiali, u
 icon: Frame
 ---
 
-Aggiungi una cornice "Scan me", controlla che un design si scansioni prima di pubblicarlo ed esporta un file vettoriale con una dimensione fisica esatta.
+Aggiungi una cornice "Scan me", verifica che un design si scansioni prima di pubblicarlo ed esporta un file vettoriale a una dimensione fisica esatta.
 
 ## Cornici con invito all'azione [#call-to-action-frames]
 
-Ogni cornice che QRdx disegna è una specifica di cornice: una piccola descrizione JSON di forme, etichette e colori. Un unico motore disegna ogni specifica, quindi una cornice ha lo stesso aspetto in SVG, PNG, PDF e EPS. QRdx ha {facts.frames} cornici: {facts.frameStyles} cornici integrate e {facts.officialFrames} [cornici ufficiali](#official-frames). Puoi anche crearne una tua o sceglierne una dalla [community](/community/frames).
+Ogni cornice disegnata da QRdx è una specifica di cornice: una piccola descrizione JSON di forme, etichette e colori. Un unico motore disegna ogni specifica, quindi una cornice ha lo stesso aspetto in SVG, PNG, PDF ed EPS. QRdx ha {facts.frames} cornici: {facts.frameStyles} cornici integrate e {facts.officialFrames} [cornici ufficiali](#official-frames). Puoi anche crearne una tua o sceglierne una dalla [community](/community/frames).
 
-La prop `frame` ne disegna una attorno al codice. Funziona su `QRCode`, `QRCodeSVG`, `QRCodeCanvas`, `getQRAsSVG`, `getQRData` e su tutti gli helper di download.
+La prop `frame` disegna una cornice attorno al codice. Funziona su `QRCode`, `QRCodeSVG`, `QRCodeCanvas`, `getQRAsSVG`, `getQRData` e su tutti gli helper di download.
 
 ```tsx
 import { QRCode } from "qrdx";
@@ -21,7 +21,7 @@ import { QRCode } from "qrdx";
 />
 ```
 
-La cornice viene aggiunta **attorno** al codice: l'output diventa più grande, e i moduli QR e la zona di rispetto non vengono mai coperti, quindi la leggibilità alla scansione non cambia. Un leggero spazio nel colore di sfondo del codice separa il codice dalla cornice.
+La cornice viene aggiunta **attorno** al codice: l'output diventa più grande e i moduli QR e la zona di quiete non vengono mai coperti, quindi la leggibilità non cambia. Uno spazio chiaro del colore di sfondo del codice separa il codice dalla cornice.
 
 ### Cornici integrate [#built-in-frames]
 
@@ -35,16 +35,16 @@ Una cornice integrata si identifica con il suo `style`. Le opzioni riempiono le 
 | `textColor` | bianco sulla cornice, `color` sulle aree chiare | Colore dell'etichetta |
 | `secondaryText` | nessuno | Seconda etichetta, fino a 24 caratteri: la fascia inferiore di `banner-top-bottom`, l'arco inferiore di `circle`, il piè di pagina di `menu-card` |
 | `secondaryColor` | `#db2777` | Colore finale di `gradient-border` |
-| `fontScale` | `1` | Dimensione dell'etichetta da 0.5 a 1.5; le etichette si restringono comunque per adattarsi |
+| `fontScale` | `1` | Dimensione dell'etichetta da 0,5 a 1,5; le etichette si riducono comunque per adattarsi |
 
 Le cornici integrate, per `style`:
 
-- Banner e bordi: `banner-bottom`, `banner-top`, `banner-top-bottom`, `border`, `rounded-border`, `gradient-border`, `focus` (parentesi agli angoli)
+- Banner e bordi: `banner-bottom`, `banner-top`, `banner-top-bottom`, `border`, `rounded-border`, `gradient-border`, `focus` (angoli a staffa)
 - Fumetti: `speech-bubble`, `speech-bubble-top`, `chat-bubble`
 - Badge: `circle` (testo disposto attorno a un anello), `badge` (nastro), `sticker` (fustellato con ombra)
 - Oggetti: `polaroid`, `phone`, `ticket`, `tag` (cartellino con foro), `envelope`, `menu-card`
 
-Ognuno di questi nomi corrisponde a una specifica nel motore, e i nomi restano validi per sempre. I design salvati, i link dell'Image API, i flag della CLI e il codice che li usano continuano a disegnare la stessa cornice. Le cornici che eliminano la riga della loro etichetta quando non c'è etichetta, come i bordi, continuano a farlo.
+Ognuno di questi nomi corrisponde a una specifica nel motore e i nomi restano validi per sempre. I design salvati, i link dell'Image API, i flag della CLI e il codice che li usano continuano a disegnare la stessa cornice. Le cornici che eliminano la riga dell'etichetta quando non c'è testo, come i bordi, continuano a farlo.
 
 `BUILT_IN_FRAMES` le elenca con nomi e specifiche (`BUILT_IN_FRAME_SPECS` ha le specifiche per stile). `frameSpecOf` restituisce la specifica che una qualsiasi cornice disegna, e `getFrameColors` i colori con cui dipinge:
 
@@ -61,9 +61,9 @@ getFrameColors({ style: "border", color: "#1e3a8a" });
 // { frame: "#1e3a8a", text: "#1e3a8a", accent: "#1e3a8a" }
 ```
 
-Per modificare qualcosa in più di etichette e colori, parti da una specifica integrata per creare una cornice personalizzata: `{ style: "custom", spec: frameSpecOf({ style: "ticket" }) }` disegna lo stesso biglietto, e puoi modificarne le forme.
+Per cambiare più delle etichette e dei colori, parti da una cornice personalizzata basata su una specifica integrata: `{ style: "custom", spec: frameSpecOf({ style: "ticket" }) }` disegna lo stesso biglietto e puoi modificarne le forme.
 
-Vedile tutte, decodificate nel tuo browser, in [Forme, occhi e cornici](/docs/styles#frames). Ogni cornice è fatta di semplici forme e testo con colori opachi, quindi le esportazioni in SVG, PNG, PDF e EPS coincidono (il bordo sfumato è disegnato con sottili passaggi di colore pieno, e le lettere curve della cornice circle sono testo ruotato in ogni formato).
+Vedile tutte, decodificate nel tuo browser, in [Forme, occhi e cornici](/docs/styles#frames). Ogni cornice è fatta solo di forme semplici e testo con colori opachi, quindi le esportazioni SVG, PNG, PDF ed EPS coincidono (il bordo sfumato è disegnato con sottili passaggi di colore pieno e le lettere curve della cornice circle sono testo ruotato in ogni formato).
 
 ```tsx
 <QRCode
@@ -84,9 +84,9 @@ getFrameDimensions(400, { style: "banner-bottom" }); // { width: 496, height: 56
 
 ### Nel Playground [#in-the-playground]
 
-**Design → Cornice** ha un unico selettore per tutte le cornici. Il gruppo **Classiche** contiene le cornici integrate, accanto ai codici sagomati, alle cornici ufficiali e alle cornici che hai salvato. Ogni cornice si modifica allo stesso modo: etichetta, seconda riga, colori e dimensione del testo, più le icone sulle cornici che le hanno. Un design con una cornice integrata mantiene il nome del suo `style`, così link, URL delle immagini e snippet di codice restano brevi.
+**Design → Cornice** ha un unico selettore per tutte le cornici. Il gruppo **Classiche** contiene le cornici integrate e i [template](/docs/features/templates) (Arrow, Standard Box e gli altri), accanto ai codici sagomati, alle cornici ufficiali e alle cornici che hai salvato. Sceglierne una sostituisce la precedente. Ogni cornice si modifica allo stesso modo: etichetta, seconda riga, colori e dimensione del testo, più le icone sulle cornici che le hanno. Un design con una cornice integrata mantiene il nome del suo `style`, così link, URL delle immagini e snippet di codice restano brevi.
 
-Il gruppo **Codici sagomati** mette il codice stesso in una forma: un cerchio o un cuore di punti decorativi, oppure una forma che carichi tu ([`shape`](/docs/features/patterns#circle-codes)). Un codice sagomato prende il posto di una cornice: sceglierne uno elimina la cornice, e sceglierne una elimina la forma.
+Il gruppo **Codici sagomati** dà una forma al codice stesso: un cerchio o un cuore di punti decorativi, oppure una forma che carichi tu ([`shape`](/docs/features/patterns#circle-codes)). Un codice sagomato prende il posto di una cornice: sceglierne uno rimuove la cornice e scegliere una cornice rimuove la forma.
 
 ### Nella CLI [#in-the-cli]
 
@@ -94,29 +94,30 @@ Il gruppo **Codici sagomati** mette il codice stesso in una forma: un cerchio o 
 qrdx generate "https://example.com/menu" --frame banner-bottom --frame-text "Scan for the menu" -o menu.png
 ```
 
-`--frame-color` e `--frame-text-color` accettano colori esadecimali. Se passi testo o colori senza `--frame`, viene usato `banner-bottom`.
+`--frame-color` e `--frame-text-color` accettano colori esadecimali. Se passi testo o colori senza `--frame`, viene usata `banner-bottom`.
 
 ### Specifiche di cornice [#frame-specs]
 
-Una specifica di cornice è un JSON con `kind: "qrdx.frame"`, `version: 1`, una dimensione `artboard`, un riquadro `qr` in cui va il codice, `colors` predefiniti, le `shapes` dipinte dietro il codice e le `labels`. Le forme sono rettangoli (con un foro facoltativo), cerchi e anelli, ellissi, poligoni, tracciati, linee e icone integrate. Sono riempite con un token del tema (`frame`, `text`, `accent`, `background`), un colore esadecimale, un mix di due, o un gradiente. Una specifica non contiene markup, link o immagini. Controlla una specifica che non hai scritto tu con `frameSpecSchema` o `getFrameSpecIssues` da `qrdx/types` prima di salvarla. Il motore la ricontrolla prima di disegnarla.
+Una specifica di cornice è un JSON con `kind: "qrdx.frame"`, `version: 1`, una dimensione `artboard`, un riquadro `qr` dove va il codice, i `colors` predefiniti, le `shapes` dipinte dietro il codice e le `labels`. Le forme sono rettangoli (con un foro opzionale), cerchi e anelli, ellissi, poligoni, tracciati, linee e icone integrate. Si riempiono con un token del tema (`frame`, `text`, `accent`, `background`), un colore esadecimale, una miscela di due, oppure un gradiente. Una specifica non contiene markup, link né immagini. Controlla con `frameSpecSchema` o `getFrameSpecIssues` da `qrdx/types` una specifica che non hai scritto tu prima di salvarla. Il motore la ricontrolla prima di disegnarla.
 
-Le cornici integrate hanno introdotto questi campi facoltativi. Le specifiche che non li usano si disegnano come prima:
+Le cornici integrate e i template hanno introdotto questi campi opzionali. Le specifiche che non li usano vengono disegnate come prima:
 
 | Campo | Cosa fa |
 | --- | --- |
-| `labels[].collapse` | `{ y, height }`. Quando l'etichetta non mostra testo, la fascia da `y` a `y + height` viene rimossa: le righe sotto salgono e la grafica diventa più bassa. Le forme interamente dentro la fascia vengono omesse, e quelle che la attraversano si accorciano. Una fascia non può attraversare il codice, il suo padding o un'altra fascia. |
-| `qr.plate` | `"opaque"` (predefinito) o `"background"`. Il motore dipinge sotto il codice una base nel colore di sfondo del codice. Quando quello sfondo è trasparente, `"opaque"` dipinge la base e `background` riempie di bianco, così la grafica non si vede mai attraverso la zona di rispetto. `"background"` li mantiene trasparenti e omette la base. È consentito solo quando sotto la base c'è soltanto un riempimento `background`, oppure un anello il cui foro contiene la base. |
-| `colors.text` | Un colore esadecimale, o un mix di `frame`, `accent`, `background` e colori esadecimali, come `{ "mix": ["frame", "accent"], "amount": 0.5 }` per l'etichetta del bordo sfumato. È il valore predefinito; `textColor` ha comunque la precedenza. |
+| `labels[].collapse` | `{ y, height }`. Quando l'etichetta non mostra testo, la fascia da `y` a `y + height` viene rimossa: le righe sotto salgono e la grafica diventa più corta. Le forme interamente dentro la fascia vengono omesse e quelle che la attraversano si accorciano. Una fascia non può attraversare il codice, il suo padding o un'altra fascia. |
+| `qr.plate` | `"opaque"` (predefinito), `"background"` o `"none"`. Il motore dipinge una piastra del colore di sfondo del codice sotto il codice. Quando quello sfondo è trasparente, `"opaque"` dipinge la piastra e `background` riempie di bianco, così la grafica non traspare mai nella zona di quiete. `"background"` li mantiene trasparenti e omette la piastra. È consentito solo quando sotto la piastra ci sono soltanto riempimenti `background`, oppure un anello il cui foro contiene la piastra. `"none"` non dipinge alcuna piastra, quindi lo sfondo e il margine del codice sono il suo unico spazio chiaro, e `qr.padding` può essere inferiore al 4%. I template lo usano. |
+| `stroke` | `{ color, width }` su un rettangolo, cerchio, ellisse, poligono o tracciato: un contorno centrato sul bordo della forma, disegnato dopo il riempimento, al massimo il 10% del lato più corto dell'artboard. Il template Halloween lo usa per contornare la zucca. |
+| `colors.text` | Un colore esadecimale, oppure una miscela di `frame`, `accent`, `background` e colori esadecimali, come `{ "mix": ["frame", "accent"], "amount": 0.5 }` per l'etichetta del bordo sfumato. È il valore predefinito; `textColor` ha comunque la precedenza. |
 
-La riga di un'etichetta di testo può anche entrare nel padding della base, purché resti fuori dal codice e le sue maiuscole restino fuori dal padding alla massima dimensione del testo (`fontScale` 1.5). Le cornici con bordo posizionano la loro etichetta subito sotto il codice in questo modo.
+La riga di un'etichetta di testo può anche entrare nel padding della piastra, purché resti fuori dal codice e le sue maiuscole restino fuori dal padding alla dimensione massima del testo (`fontScale` 1.5). I bordi posizionano così la loro etichetta subito sotto il codice.
 
-qrdx 0.0.51 e precedenti rifiutano le specifiche che usano questi campi o che mettono una riga di etichetta nel padding, quindi aggiorna il motore prima di disegnare altrove una specifica di questo tipo.
+qrdx 0.0.51 e precedenti rifiutano le specifiche che usano questi campi o che mettono una riga di etichetta nel padding, quindi aggiorna il motore prima di disegnare una tale specifica altrove.
 
 ## Cornici ufficiali [#official-frames]
 
-Oltre alle cornici integrate, QRdx ha {facts.officialFrames} cornici ufficiali: design già pronti per inviti all'azione, ristoranti e caffè, negozi e confezioni, bellezza e benessere, eventi e matrimoni, hotel e viaggi, immobiliare, auto e parcheggi, salute e istruzione, sport e fitness, aziende e social, organizzazioni non profit e gruppi di comunità. {facts.seasonalFrames} di queste sono dedicate a festività e stagioni, dal Capodanno lunare a Holi, Eid e Diwali, fino a Hanukkah, Pasqua, Ringraziamento e Natale. Ognuna è una specifica di cornice con etichette e colori modificabili, rilasciata con licenza CC0, e ognuna è testata per scansionarsi alle distanze tipiche dello smartphone.
+Oltre alle cornici integrate, QRdx ha {facts.officialFrames} cornici ufficiali: design pronti per inviti all'azione, ristoranti e caffè, negozi e packaging, bellezza e benessere, eventi e matrimoni, hotel e viaggi, immobiliare, auto e parcheggi, salute e istruzione, sport e fitness, aziende e social, e organizzazioni non profit e gruppi di comunità. {facts.seasonalFrames} di esse sono dedicate a festività e stagioni, dal Capodanno lunare, Holi, Eid e Diwali fino a Hanukkah, Pasqua, Thanksgiving e Natale. Ognuna è una specifica di cornice con etichette e colori che puoi cambiare, rilasciata con licenza CC0, e ognuna è testata per scansionarsi alle distanze tipiche del telefono.
 
-Nel [Playground](/playground), apri **Cornice** e poi **Altre**. Cerca per nome, uso o festività, oppure scegli un gruppo. Le cornici per le festività e le stagioni in arrivo sono elencate per prime. Le trovi anche nella [community](/community/frames), pubblicate da @qrdx.
+Nel [Playground](/playground), apri **Cornice** e poi **Altro**. Cerca per nome, uso o festività, oppure scegli un gruppo. Le cornici per le festività e le stagioni in arrivo sono elencate per prime. Le trovi anche nella [community](/community/frames), pubblicate da @qrdx.
 
 Il motore le esporta come `OFFICIAL_FRAMES`:
 
@@ -133,11 +134,11 @@ const diwali = getOfficialFrame("diwali-diya"); // undefined for an unknown id
 )}
 ```
 
-`OFFICIAL_FRAME_INDEX` elenca ogni cornice senza la sua specifica, così un selettore può mostrare l'intera libreria e caricare le specifiche solo quando servono. Nell'[Image API](/docs/developers/image-api#community-items) e nel [server MCP](/docs/developers/mcp), usa una cornice ufficiale come elemento della community, ad esempio `item=frame:diwali-diya`.
+`OFFICIAL_FRAME_INDEX` elenca ogni cornice senza la sua specifica, così un selettore può mostrare l'intera libreria e caricare le specifiche solo quando servono. Nella [Image API](/docs/developers/image-api#community-items) e nel [server MCP](/docs/developers/mcp), usa una cornice ufficiale come elemento della community, ad esempio `item=frame:diwali-diya`.
 
 ## Si riuscirà a scansionare? [#will-it-scan]
 
-`getScanScore` stima quanto in modo affidabile un design viene letto in scansione. Viene eseguito nel browser e carica [jsQR](https://github.com/cozmo/jsQR) solo quando serve.
+`getScanScore` stima quanto in modo affidabile un design viene letto in scansione. Funziona nel browser e carica [jsQR](https://github.com/cozmo/jsQR) solo quando serve.
 
 ```ts
 import { getScanScore } from "qrdx";
@@ -157,13 +158,13 @@ Cosa controlla:
 - **Contrasto** tra ogni colore del codice (inclusi i punti di arresto del gradiente e i colori di occhi e punti) e lo sfondo, e se il codice è scuro su chiaro.
 - **Copertura del logo** rispetto a ciò che il livello di correzione degli errori è in grado di recuperare.
 - **Zona di rispetto**: il margine, più lo spazio aggiunto da una cornice.
-- **Rischio della forma degli occhi**: gli occhi `circle` potrebbero non essere riconosciuti da alcune app di scansione (e gli occhi `curly`, ormai ritirati, se un design salvato li usa ancora, non vengono letti dai decodificatori rigorosi).
-- **Coppie di stili** (`style-pair`): forme che falliscono insieme nei nostri test di decodifica, come i punti `small-square` accanto a occhi quadrati, e i centri ritirati nei design salvati (vedi `getStylePairRisk`).
+- **Rischio della forma degli occhi**: gli occhi `circle` possono non essere riconosciuti da alcune app di scansione (e gli occhi `curly`, ormai ritirati, se un design salvato li usa ancora, non vengono letti dai decoder rigorosi).
+- **Abbinamenti di stile** (`style-pair`): forme che insieme falliscono nei nostri test di decodifica, come i punti `small-square` accanto a occhi quadrati, e i centri ritirati nei design salvati (vedi `getStylePairRisk`).
 
-`getImageScanScore(fileOrImage)` fa lo stesso per un'immagine esistente: restituisce il contenuto decodificato più i controlli di decodifica, contrasto, polarità, zona di rispetto e risoluzione misurati dai pixel. Il [controllo scansione](/tools/scan-checker) si basa su di esso.
+`getImageScanScore(fileOrImage)` fa lo stesso per un'immagine esistente: restituisce il contenuto decodificato più i controlli di decodifica, contrasto, polarità, zona di rispetto e risoluzione, misurati a partire dai pixel. Il [controllo scansione](/tools/scan-checker) si basa su questa funzione.
 
 <Callout type="info">
-  Il punteggio è un'euristica basata su un solo decodificatore open source. Le app fotocamera degli smartphone spesso sono più tolleranti, quindi usalo come guida e prova a scansionare le stampe importanti.
+  Il punteggio è un'euristica basata su un solo decoder open source. Le app fotocamera degli smartphone sono spesso più tolleranti, quindi usalo come indicazione e prova a scansionare le stampe importanti.
 </Callout>
 
 ## Esportazione pronta per la stampa [#print-ready-export]
@@ -192,9 +193,9 @@ layout.maxScanDistance; // 400 (mm)
 
 - `size` è la larghezza del codice; una cornice si aggiunge alla dimensione finale.
 - Con l'abbondanza, lo sfondo (o il colore di una cornice quadrata) si estende oltre il bordo di taglio, così il taglio non lascia strisce bianche. I segni di taglio si trovano fuori dall'abbondanza.
-- `colorMode: "cmyk"` usa una conversione semplice (`rgbToCmyk`: K = 1 − max(R, G, B), nessun profilo ICC; il nero puro viene stampato solo con K). Chiedi al tuo tipografo una conversione con gestione del colore quando i colori esatti del brand sono importanti.
-- I gradienti lineari e radiali vengono stampati come sfumature morbide nel PDF, in CMYK quando il PDF è CMYK; l'SVG di stampa li mantiene ma resta in RGB.
-- Il testo della cornice nel PDF usa Helvetica Bold, quindi i caratteri fuori da Latin-1 potrebbero non essere visualizzati. Usa l'SVG per altri alfabeti.
-- `getQRAsPrintPDF` e `getQRAsPrintPDFBuffer` restituiscono il file invece di scaricarlo e funzionano anche in Node.
+- `colorMode: "cmyk"` usa una conversione semplice (`rgbToCmyk`: K = 1 − max(R, G, B), nessun profilo ICC; il nero puro viene stampato solo con K). Se i colori del brand devono essere esatti, chiedi al tipografo una conversione con gestione del colore.
+- I gradienti lineari e radiali vengono stampati come sfumature continue nel PDF, in CMYK quando il PDF è CMYK; l'SVG di stampa li mantiene ma resta in RGB.
+- Il testo della cornice nel PDF usa Helvetica Bold, quindi i caratteri fuori da Latin-1 potrebbero non essere visualizzati. Per altri alfabeti usa l'SVG.
+- `getQRAsPrintPDF` e `getQRAsPrintPDFBuffer` restituiscono il file invece di scaricarlo, e funzionano anche in Node.
 
-**Quanto grande stampare:** un codice si scansiona da una distanza pari a circa dieci volte la sua larghezza, quindi dimensione ≈ distanza di scansione ÷ 10 (2 cm di larghezza per 20 cm). I codici più densi richiedono più spazio; il [calcolatore delle dimensioni di stampa](/tools/print-size) ne tiene conto.
+**Quanto grande stampare:** un codice si scansiona da una distanza pari a circa dieci volte la sua larghezza, quindi dimensione ≈ distanza di scansione ÷ 10 (2 cm di larghezza per 20 cm). I codici più densi richiedono più spazio; il [calcolatore della dimensione di stampa](/tools/print-size) ne tiene conto.

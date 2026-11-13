@@ -4400,7 +4400,10 @@
         "theFrameIsAddedAround": "Der Rahmen wird um den Code herum hinzugefügt. Dadurch wird das heruntergeladene Bild größer und der Code selbst bleibt scanbar.",
         "label": "Text",
         "pickAFrameFirst": "Wähle zuerst einen Rahmen",
-        "none": "Keiner"
+        "none": "Keiner",
+        "takesDotColor": "Dieser Rahmen übernimmt die Farbe der Punkte des Codes.",
+        "alsoHasTemplate": "Dieses Design enthält auch den Rahmen {name}. Wenn du einen anderen Rahmen wählst, werden beide ersetzt.",
+        "templateKeepsSize": "Dieser Rahmen passt sich dem Code darin an, sodass das heruntergeladene Bild die von dir gewählte Größe behält."
       },
       "frameFields": {
         "textSize": "Textgröße"

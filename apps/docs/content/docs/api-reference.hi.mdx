@@ -41,8 +41,8 @@ import { QRCode } from 'qrdx';
 | `cornerEyeDotPattern` | `CornerEyeDotPattern` | `'circle'` | कॉर्नर डॉट का पैटर्न |
 | `hideLogo` | `boolean` | `false` | लोगो छिपाएँ। `logo` सेट न हो तो कोई लोगो नहीं बनता |
 | `logo` | `string` | — | लोगो का URL |
-| `templateId` | `string` | `'default'` | टेम्पलेट ID |
-| `customTemplate` | `TemplateDefinition` | — | कस्टम टेम्पलेट |
+| `templateId` | `string` | `'default'` | [टेम्पलेट के रूप में बना फ़्रेम](/docs/features/templates) (`'Arrow'`, `'StandardBox'`, …): पूरा आर्टवर्क `size` चौड़ा होता है |
+| `customTemplate` | `TemplateDefinition` | — | कोड में बनाया गया आपका अपना फ़्रेम (`templateId` से पहले लागू होता है) |
 | `level` | `ErrorLevel` | `'Q'` | एरर करेक्शन |
 | `autoLevel` | `boolean` | `false` | जब लोगो कोड के 7% से ज़्यादा हिस्से को ढके (`AUTO_LEVEL_LOGO_COVERAGE`), तब `level` को H तक बढ़ा देता है |
 | `margin` | `number` | `0` | मॉड्यूल में मार्जिन |

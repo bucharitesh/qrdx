@@ -94,7 +94,7 @@ const src = `https://api.qrdx.dev/v1/qr?data=${encodeURIComponent(link)}&style=$
 | `dot` | `square` | हर कॉर्नर आई के अंदर के डॉट का आकार |
 | `level` | `Q` | एरर करेक्शन: `L` (~7%), `M` (~15%), `Q` (~25%) या `H` (~30%) |
 | `margin` | `4` | कोड के चारों ओर खाली जगह (quiet zone), मॉड्यूल में, `0` से `16` |
-| `template` | none | सजावटी बॉर्डर टेम्पलेट |
+| `template` | none | [टेम्पलेट के रूप में बना फ़्रेम](/docs/features/templates): पूरी इमेज `size` चौड़ी होती है और कोड उसके अंदर छोटा होता है |
 | `frame` | none | एक बिल्ट-इन कॉल-टू-एक्शन [फ़्रेम](/docs/features/frames), जैसे `banner-bottom`, `speech-bubble` या `circle` ({facts.frameStyles} बिल्ट-इन फ़्रेम में से कोई भी, हर एक अपने frame spec से बना) |
 | `frameText` | `Scan me` | फ़्रेम का लेबल, अधिकतम 24 अक्षर। यह `style` या `item` के फ़्रेम का लेबल भी बदल देता है |
 | `style` | none | एडिटर का पूरा डिज़ाइन JSON के रूप में; देखें [Styles](#style) |
@@ -115,7 +115,7 @@ const src = `https://api.qrdx.dev/v1/qr?data=${encodeURIComponent(link)}&style=$
 | `bgColor`, `fgColor`, `eyeColor`, `dotColor` | एक रंग (hex जैसे `#155dfc`, `rgb()`, `hsl()` या रंग का नाम), या एक ग्रेडिएंट: `{ "type": "linear", "angle": 45, "stops": [...] }` या `{ "type": "radial", "stops": [...] }`, जिसमें `{ "color", "offset" }` के 2 से 8 stop हों (offset 0 से 100) |
 | `bodyPattern`, `cornerEyePattern`, `cornerEyeDotPattern` | [पैटर्न वैल्यू](#pattern-values) |
 | `level`, `margin` | ऊपर दिए पैरामीटर जैसे (`margin` 0 से 16) |
-| `templateId` | एक बॉर्डर टेम्पलेट, कोई नहीं के लिए `default` |
+| `templateId` | टेम्पलेट के रूप में बना फ़्रेम, कोई नहीं के लिए `default` |
 | `frame` | एक बिल्ट-इन फ़्रेम, `{ "style": "banner-bottom", "text": "Scan me", "color": "#155dfc", "textColor": "#ffffff" }`, या एक कस्टम फ़्रेम, `{ "style": "custom", "spec": { … } }`, जिसमें [कम्युनिटी](#community-items) से लिया गया या Playground के Frame सेक्शन में बनाया गया frame spec हो। Spec की जाँच इंजन के frame-spec नियमों से होती है (कोई मार्कअप, लिंक या इमेज नहीं; अधिकतम 32 KB) |
 | `eyeColors` | हर आई के अलग रंग, जो `eyeColor` और `dotColor` पर लागू होते हैं: `{ "topLeft": { "outer": "#b91c1c", "inner": "#1d4ed8" }, "topRight": …, "bottomLeft": … }`, हर एक रंग या ग्रेडिएंट |
 | `moduleScale` | हर डॉट का आकार, `0.5` से `1` (डिफ़ॉल्ट `1`) |
