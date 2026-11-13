@@ -8342,8 +8342,12 @@
       },
       "setupGuide": {
         "getSetUp": "시작하기",
+        "launcherLabel": "시작하기: {length, number}단계 중 {done, number}단계 완료",
         "doneOfLengthDone": "{length, number}개 중 {done, number}개 완료",
+        "doneOfLengthShort": "{done, number}/{length, number}",
         "setupTasksDone": "완료한 설정 작업",
+        "collapse": "접기",
+        "dismissGuide": "가이드 닫기",
         "done": "(완료)",
         "create": "만들기",
         "start": "시작",

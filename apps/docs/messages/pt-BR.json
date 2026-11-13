@@ -8342,8 +8342,12 @@
       },
       "setupGuide": {
         "getSetUp": "Configuração",
+        "launcherLabel": "Configure sua conta: {done, number} de {length, number} concluídas",
         "doneOfLengthDone": "{done, number} de {length, number} concluídas",
+        "doneOfLengthShort": "{done, number}/{length, number}",
         "setupTasksDone": "Tarefas concluídas",
+        "collapse": "Recolher",
+        "dismissGuide": "Dispensar guia",
         "done": "(concluído)",
         "create": "Criar",
         "start": "Começar",

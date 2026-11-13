@@ -8342,8 +8342,12 @@
       },
       "setupGuide": {
         "getSetUp": "完成设置",
+        "launcherLabel": "开始设置：已完成 {done, number}/{length, number}",
         "doneOfLengthDone": "已完成 {done, number}/{length, number} 项",
+        "doneOfLengthShort": "{done, number}/{length, number}",
         "setupTasksDone": "已完成的设置任务",
+        "collapse": "收起",
+        "dismissGuide": "关闭指南",
         "done": "（已完成）",
         "create": "创建",
         "start": "开始",
