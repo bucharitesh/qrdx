@@ -2,7 +2,14 @@
 
 Release notes for earlier versions are at [qrdx.dev/changelog](https://qrdx.dev/changelog).
 
-## Unreleased
+## 0.0.50
+
+### PNG in Node
+
+- **`getQRAsPNG(props, { size, loadExternalLogos })`** from the new **`qrdx/node`** entry returns PNG bytes in plain Node, with no DOM. It needs one of two optional peers, loaded only when it runs: `@resvg/resvg-js`, which draws embedded logos the way browsers do, or `sharp`, whose renderer skips embedded images, so the logo is composited onto the pixels afterwards. With neither installed, the error says what to install. Thanks to @AndreIsraelAO (#405).
+- The browser entry never mentions either package, so apps that bundle `qrdx` for the browser don't try to load a native module.
+- Logos: a data URL always works. An http(s) URL is fetched, and a local path read, only with `loadExternalLogos: true`, capped at 1 MB, with no redirects and a timeout, so a server that passes a caller's `imageSettings.src` through can't be made to fetch internal URLs or read its own files.
+- `@qrdx/cli` 0.0.8 renders PNG through `getQRAsPNG` and encodes WebP from those PNG bytes, so the two formats match pixel for pixel.
 
 ### Part markers
 

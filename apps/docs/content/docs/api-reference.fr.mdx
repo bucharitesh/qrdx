@@ -1,6 +1,6 @@
 ---
 title: "Référence de l'API de la bibliothèque"
-description: "Tous les composants, fonctions et types exportés par la bibliothèque React qrdx. Pour les endpoints HTTP, consultez la REST API."
+description: "Tous les composants, fonctions et types exportés par la bibliothèque React qrdx. Pour les points de terminaison HTTP, consultez la REST API."
 icon: Code
 ---
 
@@ -27,7 +27,7 @@ import { QRCode } from 'qrdx';
 
 #### Props [#props]
 
-| Prop | Type | Valeur par défaut | Description |
+| Prop | Type | Par défaut | Description |
 |------|------|---------|-------------|
 | `value` | `string` | **obligatoire** | URL ou texte à encoder |
 | `size` | `number` | `128` | Taille en pixels |
@@ -38,7 +38,7 @@ import { QRCode } from 'qrdx';
 | `dotColor` | `ColorConfig` | `fgColor` | Couleur du point à l'intérieur de chaque œil d'angle |
 | `bodyPattern` | `BodyPattern` | `'circle'` | Motif des points de données |
 | `cornerEyePattern` | `CornerEyePattern` | `'gear'` | Motif des repères d'angle |
-| `cornerEyeDotPattern` | `CornerEyeDotPattern` | `'circle'` | Motif du point des repères d'angle |
+| `cornerEyeDotPattern` | `CornerEyeDotPattern` | `'circle'` | Motif du point d'angle |
 | `hideLogo` | `boolean` | `false` | Masque le logo. Aucun logo n'est dessiné tant que `logo` n'est pas défini |
 | `logo` | `string` | — | URL du logo |
 | `templateId` | `string` | `'default'` | ID du modèle |
@@ -47,13 +47,13 @@ import { QRCode } from 'qrdx';
 | `autoLevel` | `boolean` | `false` | Passe `level` à H lorsque le logo couvre plus de 7 % du code (`AUTO_LEVEL_LOGO_COVERAGE`) |
 | `margin` | `number` | `0` | Marge en modules |
 | `imageSettings` | `ImageSettings` | — | Réglages du logo |
-| `eyeColors` | `EyeColors` | — | Couleurs `outer` / `inner` propres à chaque œil (`topLeft`, `topRight` et `bottomLeft`) ; chacune remplace `eyeColor` / `dotColor` |
-| `moduleScale` | `number` | `1` | Taille des modules de données, de 0.5 à 1. Chaque motif s'arrête à la plus petite taille qui reste scannable (`MODULE_SCALE_FLOOR`) |
+| `eyeColors` | `EyeColors` | — | Couleurs `outer` / `inner` propres à chaque œil pour `topLeft`, `topRight` et `bottomLeft` ; chacune remplace `eyeColor` / `dotColor` |
+| `moduleScale` | `number` | `1` | Taille des modules de données, de 0.5 à 1. Chaque motif s'arrête à la plus petite taille encore scannable (`MODULE_SCALE_FLOOR`) |
 | `frame` | `QRFrame` | — | Cadre d'appel à l'action ; voir [Cadres et impression](/docs/features/frames) |
 | `art` | `QRArt` | — | Fond un logo ou une photo dans les modules (Logo QR, Image QR) ; voir [QR artistique](/docs/features/art-qr) |
-| `frameLabelMarkers` | `boolean` | `false` | Pour les éditeurs : marque chaque libellé de cadre `<text>` avec `data-qrdx-frame-label` (`"text"`, `"secondaryText"` ou l'id du libellé d'une spécification). Les téléchargements et les exports ne l'incluent jamais |
+| `frameLabelMarkers` | `boolean` | `false` | Pour les éditeurs : marque chaque libellé de cadre `<text>` avec `data-qrdx-frame-label` (`"text"`, `"secondaryText"` ou l'id d'un libellé de spécification). Les téléchargements et exports ne l'incluent jamais |
 
-Les {facts.bodyPatterns} motifs de corps, {facts.eyeShapes} yeux, {facts.eyeCentres} centres d'œil et {facts.frameStyles} styles de cadre sont présentés en direct dans [Formes, yeux et cadres](/docs/styles).
+Les {facts.bodyPatterns} motifs de corps, {facts.eyeShapes} yeux, {facts.eyeCentres} centres d'œil et {facts.frameStyles} styles de cadre sont tous présentés en direct dans [Formes, yeux et cadres](/docs/styles).
 
 ### QRCodeCanvas [#qrcodecanvas]
 
@@ -102,7 +102,7 @@ downloadQRCode(
 
 ### getQRCodeDataUrl [#getqrcodedataurl]
 
-Récupère le code sous forme d'URL de données.
+Obtient une URL de données.
 
 ```tsx
 getQRCodeDataUrl(
@@ -115,7 +115,7 @@ getQRCodeDataUrl(
 
 ### getQRAsWebP [#getqraswebp]
 
-Le code sous forme de `Blob` WebP, sans perte sauf si `quality` est défini. Lorsque le navigateur ne peut pas encoder en WebP (Safari), l'encodeur sans perte intégré à qrdx s'en charge. `canvasToWebP(canvas, options)` fait de même pour n'importe quel canvas, et `encodeWebPLossless(rgba, width, height)` encode des pixels RGBA sans DOM.
+Le code sous forme de `Blob` WebP, sans perte sauf si `quality` est défini. Lorsque le navigateur ne peut pas encoder en WebP (Safari), l'encodeur sans perte intégré de qrdx s'en charge. `canvasToWebP(canvas, options)` fait de même pour n'importe quel canvas, et `encodeWebPLossless(rgba, width, height)` encode des pixels RGBA sans DOM.
 
 ```tsx
 getQRAsWebP(
@@ -137,7 +137,7 @@ copyQRCodeToClipboard(
 
 ### getSVGString [#getsvgstring]
 
-Récupère le balisage SVG.
+Obtient le balisage SVG.
 
 ```tsx
 getSVGString(qrProps: QRProps): Promise<string>
@@ -145,24 +145,25 @@ getSVGString(qrProps: QRProps): Promise<string>
 
 ## Fonctions d'impression et de scan [#print-and-scan-functions]
 
-Ces fonctions sont documentées avec des exemples sur les pages de leurs fonctionnalités.
+Elles sont documentées avec des exemples sur leurs pages de fonctionnalités.
 
 | Fonction | Ce qu'elle fait | Documentation |
 |----------|--------------|------|
 | `getQRAsSVG(props)` | Balisage SVG d'un code, cadre compris | [Cadres](/docs/features/frames) |
-| `getQRAsPrintPDF`, `downloadPrintPDF` | PDF vectoriel à une taille physique exacte, avec fond perdu, traits de coupe et CMYK (nécessite `jspdf`) | [Export prêt pour l'impression](/docs/features/frames#print-ready-export) |
-| `downloadPrintSVG` | SVG prêt pour l'impression à une taille physique exacte | [Export prêt pour l'impression](/docs/features/frames#print-ready-export) |
+| `getQRAsPrintPDF`, `downloadPrintPDF` | PDF vectoriel à une taille physique exacte, avec fond perdu, traits de coupe et CMJN (nécessite `jspdf`) | [Export prêt à imprimer](/docs/features/frames#print-ready-export) |
+| `downloadPrintSVG` | SVG prêt à imprimer à une taille physique exacte | [Export prêt à imprimer](/docs/features/frames#print-ready-export) |
 | `getQRAsEPS`, `downloadPrintEPS` | EPS vectoriel pour les imprimeurs et les outils de design | [Téléchargements](/docs/features/downloads) |
-| `getScanScore(props)` | Estime la fiabilité du scan d'un design | [Sera-t-il scannable ?](/docs/features/frames#will-it-scan) |
-| `getImageScanScore(image)` | Évalue une image de QR code que vous avez déjà (navigateur uniquement) | [Sera-t-il scannable ?](/docs/features/frames#will-it-scan) |
-| `scanQRPixels(pixels, expected)` | Vérifie que des pixels RGBA bruts se décodent en `expected`, y compris lorsqu'ils sont floutés et réduits ; fonctionne dans Node | — |
-| `getStylePairRisk(...)` | Avertit des associations d'yeux et de motifs que certains scanners ne lisent pas | [Motifs](/docs/features/patterns) |
+| `getScanScore(props)` | Estime la fiabilité de scan d'un design | [Sera-t-il scannable ?](/docs/features/frames#will-it-scan) |
+| `getImageScanScore(image)` | Note une image de QR code que vous possédez déjà (navigateur uniquement) | [Sera-t-il scannable ?](/docs/features/frames#will-it-scan) |
+| `getQRAsPNG(props, { size })` | Octets PNG en Node pur, sans DOM. Importez-la depuis `qrdx/node` ; `@resvg/resvg-js` ou `sharp` doit être installé | — |
+| `scanQRPixels(pixels, expected)` | Vérifie que des pixels RGBA bruts se décodent en `expected`, y compris après flou et réduction ; s'exécute dans Node | — |
+| `getStylePairRisk(...)` | Avertit des associations d'yeux et de motifs que certains lecteurs ratent | [Motifs](/docs/features/patterns) |
 
 ## Fonctions de détection [#detection-functions]
 
 ### handleImageLoad [#handleimageload]
 
-Détecte les QR codes dans des images.
+Détecte les QR codes à partir d'images.
 
 ```tsx
 handleImageLoad(
@@ -188,7 +189,7 @@ downloadImageWithBoundingBox(
 
 ### getTemplate [#gettemplate]
 
-Récupère un modèle précis.
+Obtient un modèle précis.
 
 ```tsx
 getTemplate(templateId: string): TemplateDefinition | undefined
@@ -196,7 +197,7 @@ getTemplate(templateId: string): TemplateDefinition | undefined
 
 ### getAllTemplates [#getalltemplates]
 
-Récupère tous les modèles.
+Obtient tous les modèles.
 
 ```tsx
 getAllTemplates(): TemplateDefinition[]
@@ -204,7 +205,7 @@ getAllTemplates(): TemplateDefinition[]
 
 ### getTemplateIds [#gettemplateids]
 
-Récupère les ID des modèles.
+Obtient les ID des modèles.
 
 ```tsx
 getTemplateIds(): string[]
@@ -231,7 +232,7 @@ validateSize(width: number, height: number): {
 }
 ```
 
-### Détection des fonctionnalités [#feature-detection]
+### Détection de fonctionnalités [#feature-detection]
 
 ```tsx
 SUPPORTS_PATH2D: boolean
@@ -239,7 +240,7 @@ SUPPORTS_PATH2D: boolean
 
 ## Types [#types]
 
-### Types de base [#core-types]
+### Types principaux [#core-types]
 
 ```tsx
 type QRProps = {
@@ -413,6 +414,6 @@ Fonctionne dans les environnements Node.js :
 - Autres frameworks Node.js
 
 Certaines fonctionnalités nécessitent des API de navigateur :
-- Opérations sur canvas
-- Clipboard API
-- File API
+- Opérations canvas
+- API Clipboard
+- API File
