@@ -29,7 +29,10 @@ export interface ParityCase {
 }
 
 const VALUE = "https://qrdx.dev/q/Ab3dE9x?utm=campaign";
-const FIXTURES = new URL("../fixtures/art/", import.meta.url);
+// Through a variable, so Vite leaves the URL alone under jsdom (it rewrites
+// `new URL("…", import.meta.url)` into a served asset URL there)
+const HERE = import.meta.url;
+const FIXTURES = new URL("../fixtures/art/", HERE);
 
 const LOGO = `data:image/svg+xml,${encodeURIComponent(
   '<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64"><rect width="64" height="64" rx="12" fill="#1d4ed8"/><circle cx="32" cy="32" r="18" fill="#fbbf24"/></svg>'
