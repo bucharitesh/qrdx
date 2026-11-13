@@ -11,6 +11,21 @@ Release notes for earlier versions are at [qrdx.dev/changelog](https://qrdx.dev/
 - Everything in `qrdx/core` is re-exported. The entry imports the engine from `qrdx/core`, so it adds under 1 KB gzipped of its own.
 - `vue` 3.3 or newer is an optional peer dependency, so installing `qrdx` never installs Vue. TypeScript checks the components' props with Vue 3.4.20 or newer.
 
+### One frame system
+
+- **Every built-in frame is a frame spec.** The 19 styles in `FRAME_STYLES` (all but `none`) are now JSON specs in `src/frames/builtin`, drawn by the same code as official and custom frames. The hand-written layouts in `frame.tsx` and `frame-styles.ts` are gone. A parity test renders every built-in against the old layouts in SVG, canvas, PDF and EPS, with and without labels, with brand colors and at `fontScale` 0.5 and 1.5; sizes, code boxes and labels match to 0.02 px.
+- **Nothing changes for frame options.** `{ style: "banner-bottom", text, color, textColor, secondaryText, secondaryColor, fontScale }` is accepted for good and draws the same frame. `FRAME_STYLES`, `frameStyleSchema` and `QRFrame` stay as they are.
+- **New exports:** `BUILT_IN_FRAMES` (each built-in frame's `style`, `name`, `tags`, `labelOn` and `spec`), `getBuiltInFrame(style)`, `frameSpecOf(frame)` (the spec any frame draws), `getFrameColors(frame)` and `getFrameSpecColors(spec, frame)` (the frame, text and accent colors it paints with). `BUILT_IN_FRAME_SPECS` now has every built-in style, not four. `GRADIENT_FRAME_DEFAULTS` (now read from the gradient border's spec), `mixFrameColors` and `FRAME_GAP_RATIO` are still exported. `getFrameGapRatio` returns each frame's spec padding.
+- **New spec fields**, all optional (specs without them draw as before):
+  - `labels[].collapse: { y, height }` cuts a band out of the artwork when the label shows no text. Rows below it move up and shapes wholly inside it are left out. The borders use it to drop their label row.
+  - `qr.plate: "opaque" | "background"`. With `"background"`, a see-through background stays see-through and the plate is left out. It's allowed only when nothing but `background` fills, or a ring whose hole holds the plate, lies under the plate.
+  - `colors.text` can be a mix of `frame`, `accent`, `background` and hex colors, such as `{ mix: ["frame", "accent"], amount: 0.5 }`.
+  - A text label's row may reach into the plate's padding, as long as it stays off the code and its capitals stay out of the padding at `fontScale` 1.5.
+  - qrdx 0.0.51 and older reject specs that use these.
+- **Fix: see-through backgrounds under ticket, polaroid, phone, chat-bubble, tag, sticker and envelope.** These frames lie under the code, and with a transparent background the code used to sit on the frame color. They now paint a white plate under the code, like every custom frame. Banners, borders, bubbles, circle, badge, focus, menu-card and gradient-border stay see-through.
+- The gradient border's left inner edge is no longer 0.6 px thicker than its right one (its old color strips overlapped into the light area). The circle frame's two dots are two shapes in the SVG instead of one path.
+- The engine bundle (`dist/index.mjs`) is about 6 KB larger minified (265,248 to 271,304 bytes) and 0.3 KB larger gzipped: the 19 specs are a little more data than the code they replace.
+
 ## 0.0.51
 
 ### React-free core and plain JavaScript

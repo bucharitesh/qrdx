@@ -1,0 +1,78 @@
+{
+  "kind": "qrdx.frame",
+  "version": 1,
+  "artboard": {
+    "width": 1420,
+    "height": 1590
+  },
+  "qr": {
+    "x": 195,
+    "y": 195,
+    "size": 1000,
+    "padding": 80
+  },
+  "colors": {
+    "frame": "#000000",
+    "text": "#FFFFFF"
+  },
+  "shapes": [
+    {
+      "type": "rect",
+      "x": 30,
+      "y": 30,
+      "width": 1390,
+      "height": 1560,
+      "radius": 155,
+      "fill": {
+        "mix": ["frame", "#FFFFFF"],
+        "amount": 0.7
+      }
+    },
+    {
+      "type": "rect",
+      "x": 0,
+      "y": 0,
+      "width": 1390,
+      "height": 1560,
+      "radius": 155,
+      "fill": "#FFFFFF"
+    },
+    {
+      "type": "rect",
+      "x": 25,
+      "y": 25,
+      "width": 1340,
+      "height": 1510,
+      "radius": 130,
+      "fill": "frame"
+    },
+    {
+      "type": "rect",
+      "x": 95,
+      "y": 95,
+      "width": 1200,
+      "height": 1200,
+      "radius": 40,
+      "fill": "background"
+    }
+  ],
+  "labels": [
+    {
+      "type": "text",
+      "id": "cta",
+      "slot": "primary",
+      "text": "Scan me",
+      "color": "text",
+      "box": {
+        "x": 175,
+        "y": 1295,
+        "width": 1040,
+        "height": 240
+      },
+      "collapse": {
+        "y": 1365,
+        "height": 170
+      }
+    }
+  ]
+}

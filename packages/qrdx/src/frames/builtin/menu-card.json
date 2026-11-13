@@ -1,0 +1,108 @@
+{
+  "kind": "qrdx.frame",
+  "version": 1,
+  "artboard": {
+    "width": 1260,
+    "height": 1460
+  },
+  "qr": {
+    "x": 130,
+    "y": 260,
+    "size": 1000,
+    "padding": 46,
+    "plate": "background"
+  },
+  "colors": {
+    "frame": "#000000"
+  },
+  "shapes": [
+    {
+      "type": "rect",
+      "x": 0,
+      "y": 0,
+      "width": 1260,
+      "height": 1460,
+      "radius": 30,
+      "fill": "background"
+    },
+    {
+      "type": "rect",
+      "x": 0,
+      "y": 0,
+      "width": 1260,
+      "height": 1460,
+      "radius": 30,
+      "fill": "frame",
+      "hole": {
+        "x": 22,
+        "y": 22,
+        "width": 1216,
+        "height": 1416,
+        "radius": 8
+      }
+    },
+    {
+      "type": "rect",
+      "x": 45,
+      "y": 45,
+      "width": 1170,
+      "height": 1370,
+      "fill": "frame",
+      "hole": {
+        "x": 53,
+        "y": 53,
+        "width": 1154,
+        "height": 1354
+      }
+    },
+    {
+      "type": "rect",
+      "x": 378,
+      "y": 181,
+      "width": 504,
+      "height": 8,
+      "fill": "frame"
+    },
+    {
+      "type": "polygon",
+      "points": [[630, 163], [652, 185], [630, 207], [608, 185]],
+      "fill": "frame"
+    }
+  ],
+  "labels": [
+    {
+      "type": "text",
+      "id": "title",
+      "slot": "primary",
+      "text": "Scan me",
+      "color": "text",
+      "box": {
+        "x": 130,
+        "y": 30,
+        "width": 1000,
+        "height": 170
+      },
+      "collapse": {
+        "y": 84,
+        "height": 130
+      }
+    },
+    {
+      "type": "text",
+      "id": "footer",
+      "slot": "secondary",
+      "text": "",
+      "color": "text",
+      "box": {
+        "x": 130,
+        "y": 1270,
+        "width": 1000,
+        "height": 160
+      },
+      "collapse": {
+        "y": 1306,
+        "height": 70
+      }
+    }
+  ]
+}
