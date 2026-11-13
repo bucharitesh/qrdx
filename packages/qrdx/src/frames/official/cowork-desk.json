@@ -1,0 +1,82 @@
+{
+  "id": "cowork-desk",
+  "name": "Desk booking",
+  "description": "A wide card: the code on one side, a laptop and the label on the other.",
+  "category": "use-case",
+  "collection": "places",
+  "contentTypes": ["url"],
+  "tags": ["coworking", "office", "booking", "desk"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 2000,
+      "height": 1040
+    },
+    "qr": {
+      "x": 120,
+      "y": 120,
+      "size": 800,
+      "padding": 64,
+      "radius": 19.2
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 2000,
+        "height": 1040,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M1071.4 185.2L1168.6 185.2A9 9 0 0 1 1177.6 194.2L1177.6 262.6A9 9 0 0 1 1168.6 271.6L1071.4 271.6A9 9 0 0 1 1062.4 262.6L1062.4 194.2A9 9 0 0 1 1071.4 185.2ZM1076.8 196A3.6 3.6 0 0 0 1073.2 199.6L1073.2 257.2A3.6 3.6 0 0 0 1076.8 260.8L1163.2 260.8A3.6 3.6 0 0 0 1166.8 257.2L1166.8 199.6A3.6 3.6 0 0 0 1163.2 196ZM1058.8 271.6L1181.2 271.6A3.6 3.6 0 0 1 1184.8 275.2L1184.8 278.8A3.6 3.6 0 0 1 1181.2 282.4L1058.8 282.4A3.6 3.6 0 0 1 1055.2 278.8L1055.2 275.2A3.6 3.6 0 0 1 1058.8 271.6ZM1040.8 286L1199.2 286L1184.8 307.6L1055.2 307.6ZM1108.3 289.6A2.7 2.7 0 0 0 1105.6 292.3L1105.6 292.3A2.7 2.7 0 0 0 1108.3 295L1131.7 295A2.7 2.7 0 0 0 1134.4 292.3L1134.4 292.3A2.7 2.7 0 0 0 1131.7 289.6Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M1108.15 216.55L1094.8 228.4L1108.15 240.25L1103.05 245.35L1087.6 228.4L1103.05 211.45ZM1136.95 211.45L1152.4 228.4L1136.95 245.35L1131.85 240.25L1145.2 228.4L1131.85 216.55Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Book a desk",
+        "color": "text",
+        "box": {
+          "x": 1030,
+          "y": 400,
+          "width": 860,
+          "height": 190
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan to reserve",
+        "color": "text",
+        "box": {
+          "x": 1030,
+          "y": 610,
+          "width": 860,
+          "height": 100
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

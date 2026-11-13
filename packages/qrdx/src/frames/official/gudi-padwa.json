@@ -1,0 +1,81 @@
+{
+  "id": "gudi-padwa",
+  "name": "Gudi",
+  "description": "A solid card with a gudi over the code and the label underneath, in mango-leaf green and yellow.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "ugadi",
+  "contentTypes": [],
+  "tags": ["ugadi", "gudi padwa", "new year", "spring", "gudi"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#3f6212",
+      "text": "#ffffff",
+      "accent": "#facc15"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M623.75 71L623.75 182L616.25 182L616.25 71ZM599 68C599 44 641 44 641 68L635 74L605 74ZM593.9 80A5.1 5.1 0 1 1 604.1 80A5.1 5.1 0 1 1 593.9 80ZM604.4 83A5.1 5.1 0 1 1 614.6 83A5.1 5.1 0 1 1 604.4 83ZM614.9 80A5.1 5.1 0 1 1 625.1 80A5.1 5.1 0 1 1 614.9 80ZM625.4 83A5.1 5.1 0 1 1 635.6 83A5.1 5.1 0 1 1 625.4 83ZM635.9 80A5.1 5.1 0 1 1 646.1 80A5.1 5.1 0 1 1 635.9 80Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M602 74L638 74L653 134C638 125 629 137 620 128C611 137 602 125 587 134Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Happy Gudi Padwa",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan me",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

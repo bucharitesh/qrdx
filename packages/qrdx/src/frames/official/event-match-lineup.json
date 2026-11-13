@@ -1,0 +1,66 @@
+{
+  "id": "event-match-lineup",
+  "name": "Match lineup",
+  "description": "A shield with a soccer ball and a banner across the bottom.",
+  "category": "use-case",
+  "collection": "events",
+  "contentTypes": ["url"],
+  "tags": ["sports", "match day", "events", "soccer", "lineup"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1500,
+      "height": 1860
+    },
+    "qr": {
+      "x": 250,
+      "y": 360,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#2b2b2b",
+      "text": "#ffffff",
+      "accent": "#b5b5b5"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M0 60Q750 -40 1500 60L1500 1400C1500 1600 1080 1780 750 1860C420 1780 0 1600 0 1400Z",
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 80,
+        "y": 1480,
+        "width": 1340,
+        "height": 190,
+        "radius": 20,
+        "fill": "accent"
+      },
+      {
+        "type": "path",
+        "d": "M687 160A63 63 0 1 1 813 160A63 63 0 1 1 687 160ZM694 160A56 56 0 1 0 806 160A56 56 0 1 0 694 160ZM750 140.4L768.64 153.94L761.52 175.86L738.48 175.86L731.36 153.94ZM747.55 140.4L747.55 116.6L752.45 116.6L752.45 140.4ZM750 120.8L735.35 110.16L742.32 103.12L757.68 103.12L764.65 110.16ZM767.88 151.61L790.52 144.26L792.03 148.92L769.4 156.27ZM787.28 147.89L792.88 130.67L801.73 135.12L806.47 149.72L801.93 158.53ZM763.5 174.42L777.49 193.67L773.53 196.55L759.54 177.3ZM773.04 191.71L791.14 191.71L789.65 201.51L777.22 210.53L767.45 208.93ZM740.46 177.3L726.47 196.55L722.51 193.67L736.5 174.42ZM726.96 191.71L732.55 208.93L722.78 210.53L710.35 201.51L708.86 191.71ZM730.6 156.27L707.97 148.92L709.48 144.26L732.12 151.61ZM712.72 147.89L698.07 158.53L693.53 149.72L698.27 135.12L707.12 130.67Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for the lineup",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 1490,
+          "width": 1220,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

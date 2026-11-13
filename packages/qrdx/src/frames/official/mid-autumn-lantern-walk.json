@@ -1,0 +1,96 @@
+{
+  "id": "mid-autumn-lantern-walk",
+  "name": "Lantern walk",
+  "description": "A ticket with side notches, a perforated line and a stub for the label and a round paper lantern, in lantern red and gold.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "mid-autumn",
+  "contentTypes": [],
+  "tags": ["mid-autumn festival", "moon festival", "mooncakes", "lantern"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1820
+    },
+    "qr": {
+      "x": 120,
+      "y": 300,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#7f1d1d",
+      "text": "#ffffff",
+      "accent": "#f4b942"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M64 0L1176 0A64 64 0 0 1 1240 64L1240 1380A60 60 0 0 0 1240 1500L1240 1756A64 64 0 0 1 1176 1820L64 1820A64 64 0 0 1 0 1756L0 1500A60 60 0 0 0 0 1380L0 64A64 64 0 0 1 64 0Z",
+        "fill": "frame"
+      },
+      {
+        "type": "line",
+        "x1": 100,
+        "y1": 1440,
+        "x2": 1140,
+        "y2": 1440,
+        "width": 10,
+        "dash": [36, 24],
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.55
+        }
+      },
+      {
+        "type": "path",
+        "d": "M617.75 48L622.25 48L622.25 66L617.75 66ZM605 63L635 63A3 3 0 0 1 638 66L638 72A3 3 0 0 1 635 75L605 75A3 3 0 0 1 602 72L602 66A3 3 0 0 1 605 63ZM605 165L635 165A3 3 0 0 1 638 168L638 174A3 3 0 0 1 635 177L605 177A3 3 0 0 1 602 174L602 168A3 3 0 0 1 605 165ZM618.5 177L621.5 177A1.5 1.5 0 0 1 623 178.5L623 190.5A1.5 1.5 0 0 1 621.5 192L618.5 192A1.5 1.5 0 0 1 617 190.5L617 178.5A1.5 1.5 0 0 1 618.5 177ZM611 183L629 183L632 195L608 195Z",
+        "fill": "accent"
+      },
+      {
+        "type": "path",
+        "d": "M566 120A54 46.5 0 1 1 674 120A54 46.5 0 1 1 566 120Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M593 120A27 46.5 0 1 1 647 120A27 46.5 0 1 1 593 120ZM597.5 120A22.5 43.5 0 1 0 642.5 120A22.5 43.5 0 1 0 597.5 120ZM617.75 73.5L622.25 73.5L622.25 166.5L617.75 166.5Z",
+        "fill": "accent",
+        "fillRule": "evenodd"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Lantern walk",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1490,
+          "width": 1040,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan for the route",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1675,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

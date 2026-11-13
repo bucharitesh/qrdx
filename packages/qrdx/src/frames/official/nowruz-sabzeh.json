@@ -1,0 +1,81 @@
+{
+  "id": "nowruz-sabzeh",
+  "name": "Sabzeh",
+  "description": "A solid card with a dish of sprouted wheat over the code and the label underneath, in turquoise and saffron.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "nowruz",
+  "contentTypes": [],
+  "tags": ["nowruz", "persian new year", "spring", "sabzeh", "haft-sin"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#0f766e",
+      "text": "#ffffff",
+      "accent": "#f6c344"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M575 146C578.94 130.96 573.54 99.57 563 76.25C560.86 101.75 566.26 133.14 575 146ZM584 146C588.46 130.18 584.14 96.43 574.4 71C571.38 98.07 575.7 131.82 584 146ZM593 146C597.97 129.37 594.73 93.26 585.8 65.75C581.91 94.41 585.15 130.53 593 146ZM602 146C607.46 128.54 605.3 90.06 597.2 60.5C592.46 90.79 594.62 129.26 602 146ZM611 146C616.95 127.68 615.87 86.84 608.6 55.25C603.01 87.18 604.09 128.02 611 146ZM620 146C626.43 126.8 626.43 83.6 620 50C613.57 83.6 613.57 126.8 620 146ZM629 146C635.91 128.02 636.99 87.18 631.4 55.25C624.13 86.84 623.05 127.68 629 146ZM638 146C645.38 129.26 647.54 90.79 642.8 60.5C634.7 90.06 632.54 128.54 638 146ZM647 146C654.85 130.53 658.09 94.41 654.2 65.75C645.27 93.26 642.03 129.37 647 146ZM656 146C664.3 131.82 668.62 98.07 665.6 71C655.86 96.43 651.54 130.18 656 146ZM665 146C673.74 133.14 679.14 101.75 677 76.25C666.46 99.57 661.06 130.96 665 146Z",
+        "fill": "accent"
+      },
+      {
+        "type": "path",
+        "d": "M563 140L677 140C674 161 653 173 620 173C587 173 566 161 563 140ZM587 110L653 110A3 3 0 0 1 656 113L656 117.5A3 3 0 0 1 653 120.5L587 120.5A3 3 0 0 1 584 117.5L584 113A3 3 0 0 1 587 110ZM656 114.5L677 101L674 125Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Nowruz Mobarak",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan me",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

@@ -1,0 +1,81 @@
+{
+  "id": "school-backpack",
+  "name": "Backpack",
+  "description": "A solid card with a backpack over the code and the label underneath, in navy and school-bus yellow.",
+  "category": "seasonal",
+  "collection": "seasons",
+  "occasion": "back-to-school",
+  "contentTypes": [],
+  "tags": ["back to school", "school", "backpack"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#1e3a8a",
+      "text": "#ffffff",
+      "accent": "#f2b705"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M599 68L641 68A27 27 0 0 1 668 95L668 146A27 27 0 0 1 641 173L599 173A27 27 0 0 1 572 146L572 95A27 27 0 0 1 599 68ZM599 68A21 21 0 0 1 641 68L632 68A12 12 0 0 0 608 68Z",
+        "fill": "accent"
+      },
+      {
+        "type": "path",
+        "d": "M600.5 122L639.5 122A10.5 10.5 0 0 1 650 132.5L650 150.5A10.5 10.5 0 0 1 639.5 161L600.5 161A10.5 10.5 0 0 1 590 150.5L590 132.5A10.5 10.5 0 0 1 600.5 122ZM594.5 95L645.5 95A4.5 4.5 0 0 1 650 99.5L650 99.5A4.5 4.5 0 0 1 645.5 104L594.5 104A4.5 4.5 0 0 1 590 99.5L590 99.5A4.5 4.5 0 0 1 594.5 95Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Ready for school",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan for the checklist",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

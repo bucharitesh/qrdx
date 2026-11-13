@@ -1,0 +1,114 @@
+{
+  "id": "summer-sunglasses",
+  "name": "Sunglasses",
+  "description": "A light card with a pair of sunglasses and a solid label band, in pool blue and yellow.",
+  "category": "seasonal",
+  "collection": "seasons",
+  "occasion": "summer",
+  "contentTypes": [],
+  "tags": ["summer", "sun", "sunglasses", "hours"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1770
+    },
+    "qr": {
+      "x": 120,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#0e7490",
+      "text": "#ffffff",
+      "accent": "#fde047"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "frame",
+        "hole": {
+          "x": 20,
+          "y": 20,
+          "width": 1200,
+          "height": 1730,
+          "radius": 38
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 250,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 60,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M575.2 82.4L594.8 82.4A16.8 16.8 0 0 1 611.6 99.2L611.6 104.8A16.8 16.8 0 0 1 594.8 121.6L575.2 121.6A16.8 16.8 0 0 1 558.4 104.8L558.4 99.2A16.8 16.8 0 0 1 575.2 82.4ZM645.2 82.4L664.8 82.4A16.8 16.8 0 0 1 681.6 99.2L681.6 104.8A16.8 16.8 0 0 1 664.8 121.6L645.2 121.6A16.8 16.8 0 0 1 628.4 104.8L628.4 99.2A16.8 16.8 0 0 1 645.2 82.4ZM608.8 88L631.2 88L631.2 93.6L608.8 93.6ZM559.1 89.26L550.7 75.26L554.9 72.74L563.3 86.74ZM676.7 86.74L685.1 72.74L689.3 75.26L680.9 89.26Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M570.52 108.83L584.52 92.03L588.28 95.17L574.28 111.97ZM640.52 108.83L654.52 92.03L658.28 95.17L644.28 111.97Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for summer hours",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1550,
+          "width": 1040,
+          "height": 190
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Hello sunshine",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 180,
+          "width": 960,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

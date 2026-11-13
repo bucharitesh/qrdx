@@ -1,0 +1,74 @@
+{
+  "id": "event-party-hat",
+  "name": "Party hat",
+  "description": "A solid card with a party hat over the code and the label underneath.",
+  "category": "use-case",
+  "collection": "events",
+  "contentTypes": ["url"],
+  "tags": ["birthday", "party", "events", "rsvp"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M620 50L665 167L575 167ZM602.63 101L637.37 101L632.75 89L607.25 89ZM589.94 134L650.06 134L645.44 122L594.56 122ZM608 48.5A12 12 0 1 1 632 48.5A12 12 0 1 1 608 48.5ZM574.25 164L665.75 164A5.25 5.25 0 0 1 671 169.25L671 169.25A5.25 5.25 0 0 1 665.75 174.5L574.25 174.5A5.25 5.25 0 0 1 569 169.25L569 169.25A5.25 5.25 0 0 1 574.25 164Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Join the celebration",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "It's my birthday",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

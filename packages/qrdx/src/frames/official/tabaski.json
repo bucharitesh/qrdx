@@ -1,0 +1,114 @@
+{
+  "id": "tabaski",
+  "name": "Tabaski",
+  "description": "A light card with a crescent and star and a solid label band, in indigo and gold.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "eid-al-adha",
+  "contentTypes": [],
+  "tags": ["eid al-adha", "eid", "tabaski", "west africa"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1770
+    },
+    "qr": {
+      "x": 120,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#1e3a8a",
+      "text": "#ffffff",
+      "accent": "#e0b13a"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "frame",
+        "hole": {
+          "x": 20,
+          "y": 20,
+          "width": 1200,
+          "height": 1730,
+          "radius": 38
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 250,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 60,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M634.7 57.21A53.2 53.2 0 1 0 634.7 146.79A44.8 44.8 0 0 1 634.7 57.21Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M656.4 68.4L661.01 81.66L675.04 81.94L663.86 90.42L667.92 103.86L656.4 95.84L644.88 103.86L648.94 90.42L637.76 81.94L651.79 81.66Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Bonne fête de Tabaski",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1550,
+          "width": 1040,
+          "height": 190
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan me",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 180,
+          "width": 960,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

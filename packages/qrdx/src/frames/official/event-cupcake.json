@@ -1,0 +1,81 @@
+{
+  "id": "event-cupcake",
+  "name": "Cupcake sticker",
+  "description": "A die-cut sticker with a thick outline and an offset shadow and a cupcake.",
+  "category": "use-case",
+  "collection": "events",
+  "contentTypes": ["url"],
+  "tags": ["birthday", "party", "events", "cupcake"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1750
+    },
+    "qr": {
+      "x": 110,
+      "y": 370,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 50,
+        "y": 50,
+        "width": 1270,
+        "height": 1700,
+        "radius": 110,
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1270,
+        "height": 1700,
+        "radius": 110,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 36,
+        "y": 36,
+        "width": 1198,
+        "height": 1628,
+        "radius": 80,
+        "fill": "background"
+      },
+      {
+        "type": "path",
+        "d": "M582.2 143.6A20.8 20.8 0 1 1 623.8 143.6A20.8 20.8 0 1 1 582.2 143.6ZM646.2 143.6A20.8 20.8 0 1 1 687.8 143.6A20.8 20.8 0 1 1 646.2 143.6ZM606.2 127.6A28.8 28.8 0 1 1 663.8 127.6A28.8 28.8 0 1 1 606.2 127.6ZM599.8 140.4L670.2 140.4A9.6 9.6 0 0 1 679.8 150L679.8 150A9.6 9.6 0 0 1 670.2 159.6L599.8 159.6A9.6 9.6 0 0 1 590.2 150L590.2 150A9.6 9.6 0 0 1 599.8 140.4ZM635 82.8C638.36 90.48 644.6 93.04 644.6 98.8A9.6 9.6 0 0 1 625.4 98.8C625.4 93.04 631.64 90.48 635 82.8ZM590.2 159.6L679.8 159.6L667 220.4L603 220.4ZM613.4 214L618.2 214L610.52 166L605.72 166ZM626.2 214L631 214L628.44 166L623.64 166ZM639 214L643.8 214L646.36 166L641.56 166ZM651.8 214L656.6 214L664.28 166L659.48 166Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Make a wish",
+        "color": "frame",
+        "box": {
+          "x": 100,
+          "y": 1490,
+          "width": 1070,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

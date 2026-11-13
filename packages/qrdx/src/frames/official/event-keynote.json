@@ -1,0 +1,74 @@
+{
+  "id": "event-keynote",
+  "name": "Keynote speaker",
+  "description": "A solid card with a lectern with a microphone over the code and the label underneath.",
+  "category": "use-case",
+  "collection": "events",
+  "contentTypes": ["url"],
+  "tags": ["conference", "events", "speaker"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M569 86L671 86L662 104L578 104ZM608 104L632 104A3 3 0 0 1 635 107L635 161A3 3 0 0 1 632 164L608 164A3 3 0 0 1 605 161L605 107A3 3 0 0 1 608 104ZM588.5 164L651.5 164A4.5 4.5 0 0 1 656 168.5L656 171.5A4.5 4.5 0 0 1 651.5 176L588.5 176A4.5 4.5 0 0 1 584 171.5L584 168.5A4.5 4.5 0 0 1 588.5 164ZM626.63 86.37L641.63 54.87L646.37 57.13L631.37 88.63ZM639.5 50A7.5 9 0 1 1 654.5 50A7.5 9 0 1 1 639.5 50Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for the speakers",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Keynote",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}
