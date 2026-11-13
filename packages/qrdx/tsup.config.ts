@@ -1,3 +1,6 @@
+import { execFile } from "node:child_process";
+import { readFileSync } from "node:fs";
+import { copyFile, mkdir, readFile } from "node:fs/promises";
 import { dirname, relative, resolve } from "node:path";
 import { defineConfig, type Options } from "tsup";
 
@@ -87,6 +90,65 @@ const sharedCore = (extension: ".js" | ".mjs", own: string[]): Plugin => ({
   },
 });
 
+// qrdx/angular has to reach an app compiled in Angular's partial mode,
+// which the app's Angular CLI then links: a decorated class on its own
+// would need the JIT compiler at runtime. So ngc compiles src/angular.ts
+// (tsconfig.angular.json) while the other entries build, esbuild bundles
+// its output in place of the source like any adapter, and ngc's .d.ts,
+// which carries the component's declaration for the app's compiler, goes
+// to dist/src (tsconfig.build.json leaves the file to ngc). ngc runs once
+// for both formats.
+const NGC_OUT = "node_modules/.cache/qrdx-angular";
+let ngcRun: Promise<void> | undefined;
+const compileAngular = () => {
+  ngcRun ??= new Promise<void>((done, fail) => {
+    const cli = "node_modules/@angular/compiler-cli";
+    const { bin } = JSON.parse(readFileSync(`${cli}/package.json`, "utf8"));
+    execFile(
+      process.execPath,
+      [
+        resolve(cli, bin.ngc),
+        ...["-p", "tsconfig.angular.json", "--inlineSourceMap"],
+        // so esbuild maps the bundle back to src/angular.ts
+        ...["--sourceRoot", `${resolve(".")}/`],
+      ],
+      (error, stdout, stderr) =>
+        error ? fail(new Error(`ngc failed\n${stdout}${stderr}`)) : done()
+    );
+  }).then(async () => {
+    await mkdir("dist/src", { recursive: true });
+    await copyFile(`${NGC_OUT}/src/angular.d.ts`, "dist/src/angular.d.ts");
+  });
+  return ngcRun;
+};
+const angularPartial: Plugin = {
+  name: "qrdx-angular-partial",
+  setup(build) {
+    build.onLoad({ filter: /[\\/]src[\\/]angular\.ts$/ }, async () => {
+      await compileAngular();
+      return {
+        contents: await readFile(`${NGC_OUT}/src/angular.js`, "utf8"),
+        loader: "js",
+        resolveDir: resolve("src"),
+      };
+    });
+  },
+};
+
+// Unminified, with "ɵ" written as is: the app's Angular CLI finds the
+// partial declarations by searching the file's text for "ɵɵngDeclare".
+const angular: Options = {
+  ...shared,
+  entry: { angular: "src/angular.ts" },
+  treeshake: true,
+  minify: false,
+  external: [...(shared.external ?? []), "@angular/core"],
+  esbuildOptions(options, context) {
+    shared.esbuildOptions?.(options, context);
+    options.charset = "utf8";
+  },
+};
+
 // zod's `locales` namespace (every language's error messages, about 260 KB
 // minified) is left out of the no-bundler browser file: the schemas use the
 // English messages, which zod imports on its own, and the file never exposes
@@ -172,6 +234,17 @@ export default defineConfig([
     format: ["cjs"],
     treeshake: true,
     esbuildPlugins: [sharedCore(".js", ["vanilla-api"])],
+  },
+  // ── Angular component (qrdx/angular), on the shared core ──────────────
+  {
+    ...angular,
+    format: ["esm"],
+    esbuildPlugins: [angularPartial, sharedCore(".mjs", [])],
+  },
+  {
+    ...angular,
+    format: ["cjs"],
+    esbuildPlugins: [angularPartial, sharedCore(".js", [])],
   },
   // ── qrdx/vanilla as one file for <script type="module">, no bundler ─────
   // zod is inlined; jspdf and jsqr stay on-demand imports (an import map
