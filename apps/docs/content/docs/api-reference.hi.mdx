@@ -1,0 +1,418 @@
+---
+title: "लाइब्रेरी API रेफ़रेंस"
+description: "qrdx React लाइब्रेरी से एक्सपोर्ट होने वाले सभी कॉम्पोनेंट, फ़ंक्शन और टाइप। HTTP एंडपॉइंट के लिए REST API देखें।"
+icon: Code
+---
+
+सभी `qrdx` कॉम्पोनेंट, फ़ंक्शन और टाइप का पूरा रेफ़रेंस।
+
+<NpmStatus package="qrdx" />
+
+## कॉम्पोनेंट [#components]
+
+### QRCode [#qrcode]
+
+QR कोड रेंडर करने वाला मुख्य कॉम्पोनेंट।
+
+```tsx
+import { QRCode } from 'qrdx';
+
+<QRCode
+  value="https://example.com"
+  size={256}
+  fgColor="#000000"
+  bgColor="#ffffff"
+/>
+```
+
+#### Props [#props]
+
+| Prop | टाइप | डिफ़ॉल्ट | विवरण |
+|------|------|---------|-------------|
+| `value` | `string` | **ज़रूरी** | एन्कोड किया जाने वाला URL या टेक्स्ट |
+| `size` | `number` | `128` | पिक्सल में साइज़ |
+| `scale` | `number` | `1` | स्केल मल्टीप्लायर |
+| `fgColor` | `ColorConfig` | `#000000` | QR कोड का रंग |
+| `bgColor` | `ColorConfig` | `#ffffff` | बैकग्राउंड का रंग |
+| `eyeColor` | `ColorConfig` | `fgColor` | कोने के मार्कर का रंग |
+| `dotColor` | `ColorConfig` | `fgColor` | हर कॉर्नर आई के अंदर वाले डॉट का रंग |
+| `bodyPattern` | `BodyPattern` | `'circle'` | डेटा डॉट का पैटर्न |
+| `cornerEyePattern` | `CornerEyePattern` | `'gear'` | कोने के मार्कर का पैटर्न |
+| `cornerEyeDotPattern` | `CornerEyeDotPattern` | `'circle'` | कोने के डॉट का पैटर्न |
+| `hideLogo` | `boolean` | `false` | लोगो छिपाएँ। `logo` सेट किए बिना कोई लोगो नहीं बनता |
+| `logo` | `string` | — | लोगो का URL |
+| `templateId` | `string` | `'default'` | टेम्पलेट ID |
+| `customTemplate` | `TemplateDefinition` | — | कस्टम टेम्पलेट |
+| `level` | `ErrorLevel` | `'Q'` | एरर करेक्शन |
+| `autoLevel` | `boolean` | `false` | लोगो कोड के 7% से ज़्यादा हिस्से को ढके तो `level` को H तक बढ़ाएँ (`AUTO_LEVEL_LOGO_COVERAGE`) |
+| `margin` | `number` | `0` | मॉड्यूल में मार्जिन |
+| `imageSettings` | `ImageSettings` | — | लोगो की सेटिंग |
+| `eyeColors` | `EyeColors` | — | `topLeft`, `topRight` और `bottomLeft` के लिए हर आई के `outer` / `inner` रंग; हर एक `eyeColor` / `dotColor` को ओवरराइड करता है |
+| `moduleScale` | `number` | `1` | डेटा मॉड्यूल का साइज़, 0.5 से 1। हर पैटर्न उस सबसे छोटे साइज़ पर रुकता है जिस पर कोड अभी भी स्कैन होता है (`MODULE_SCALE_FLOOR`) |
+| `frame` | `QRFrame` | — | कॉल-टू-एक्शन फ़्रेम; देखें [फ़्रेम और प्रिंट](/docs/features/frames) |
+| `art` | `QRArt` | — | लोगो या फ़ोटो को मॉड्यूल में ब्लेंड करें (Logo QR, Image QR); देखें [Art QR](/docs/features/art-qr) |
+| `frameLabelMarkers` | `boolean` | `false` | एडिटर के लिए: हर फ़्रेम लेबल `<text>` पर `data-qrdx-frame-label` (`"text"`, `"secondaryText"` या स्पेक लेबल की id) लगाता है। डाउनलोड और एक्सपोर्ट में यह कभी शामिल नहीं होता |
+
+सभी {facts.bodyPatterns} बॉडी पैटर्न, {facts.eyeShapes} आई, {facts.eyeCentres} आई सेंटर और {facts.frameStyles} फ़्रेम स्टाइल [शेप, आई और फ़्रेम](/docs/styles) में लाइव दिखाए गए हैं।
+
+### QRCodeCanvas [#qrcodecanvas]
+
+Canvas पर आधारित रेंडरिंग।
+
+```tsx
+import { QRCodeCanvas } from 'qrdx';
+
+<QRCodeCanvas
+  value="https://example.com"
+  size={512}
+  fgColor="#000000"
+/>
+```
+
+### QRCodeSVG [#qrcodesvg]
+
+SVG पर आधारित रेंडरिंग।
+
+```tsx
+import { QRCodeSVG } from 'qrdx';
+
+<QRCodeSVG
+  value="https://example.com"
+  size={512}
+/>
+```
+
+## डाउनलोड फ़ंक्शन [#download-functions]
+
+### downloadQRCode [#downloadqrcode]
+
+QR कोड को कई फ़ॉर्मैट में डाउनलोड करें।
+
+```tsx
+downloadQRCode(
+  qrProps: QRProps,
+  options: {
+    format: 'png' | 'jpg' | 'webp' | 'svg' | 'pdf' | 'eps';
+    size: { width: number; height: number };
+    filename?: string;
+    quality?: number; // WebP only: 0 to 1 for lossy; lossless when left out
+  }
+): Promise<void>
+```
+
+### getQRCodeDataUrl [#getqrcodedataurl]
+
+data URL के रूप में पाएँ।
+
+```tsx
+getQRCodeDataUrl(
+  qrProps: QRProps,
+  format: DownloadFormat,
+  size: DownloadSize,
+  options?: { quality?: number } // WebP only
+): Promise<string>
+```
+
+### getQRAsWebP [#getqraswebp]
+
+कोड को WebP `Blob` के रूप में देता है, और `quality` सेट न हो तो लॉसलेस होता है। जहाँ ब्राउज़र WebP एन्कोड नहीं कर सकता (Safari), वहाँ qrdx का बिल्ट-इन लॉसलेस एन्कोडर इसे बनाता है। `canvasToWebP(canvas, options)` किसी भी canvas के लिए यही करता है, और `encodeWebPLossless(rgba, width, height)` बिना DOM के RGBA पिक्सल एन्कोड करता है।
+
+```tsx
+getQRAsWebP(
+  qrProps: QRProps,
+  options?: { quality?: number }
+): Promise<Blob>
+```
+
+### copyQRCodeToClipboard [#copyqrcodetoclipboard]
+
+क्लिपबोर्ड पर कॉपी करें।
+
+```tsx
+copyQRCodeToClipboard(
+  qrProps: QRProps,
+  size?: DownloadSize
+): Promise<void>
+```
+
+### getSVGString [#getsvgstring]
+
+SVG मार्कअप पाएँ।
+
+```tsx
+getSVGString(qrProps: QRProps): Promise<string>
+```
+
+## प्रिंट और स्कैन फ़ंक्शन [#print-and-scan-functions]
+
+इनके उदाहरण सहित विवरण संबंधित फ़ीचर पेज पर हैं।
+
+| फ़ंक्शन | क्या करता है | डॉक्स |
+|----------|--------------|------|
+| `getQRAsSVG(props)` | कोड का SVG मार्कअप, उसके फ़्रेम सहित | [फ़्रेम](/docs/features/frames) |
+| `getQRAsPrintPDF`, `downloadPrintPDF` | सटीक भौतिक साइज़ का वेक्टर PDF, ब्लीड, क्रॉप मार्क और CMYK के साथ (`jspdf` ज़रूरी है) | [प्रिंट-रेडी एक्सपोर्ट](/docs/features/frames#print-ready-export) |
+| `downloadPrintSVG` | सटीक भौतिक साइज़ का प्रिंट-रेडी SVG | [प्रिंट-रेडी एक्सपोर्ट](/docs/features/frames#print-ready-export) |
+| `getQRAsEPS`, `downloadPrintEPS` | प्रिंट शॉप और डिज़ाइन टूल के लिए वेक्टर EPS | [डाउनलोड](/docs/features/downloads) |
+| `getScanScore(props)` | अनुमान लगाता है कि कोई डिज़ाइन कितनी भरोसेमंद तरह से स्कैन होता है | [क्या यह स्कैन होगा?](/docs/features/frames#will-it-scan) |
+| `getImageScanScore(image)` | आपके पास पहले से मौजूद QR कोड इमेज को स्कोर करता है (सिर्फ़ ब्राउज़र में) | [क्या यह स्कैन होगा?](/docs/features/frames#will-it-scan) |
+| `scanQRPixels(pixels, expected)` | जाँचता है कि कच्चे RGBA पिक्सल `expected` में डिकोड होते हैं, धुंधले और छोटे करने पर भी; Node में चलता है | — |
+| `getStylePairRisk(...)` | आई और पैटर्न के उन जोड़ों के बारे में चेतावनी देता है जिन्हें कुछ स्कैनर नहीं पढ़ पाते | [पैटर्न](/docs/features/patterns) |
+
+## डिटेक्शन फ़ंक्शन [#detection-functions]
+
+### handleImageLoad [#handleimageload]
+
+इमेज से QR कोड डिटेक्ट करें।
+
+```tsx
+handleImageLoad(
+  imgElement: HTMLImageElement,
+  size: number,
+  returnFullData?: boolean
+): Promise<string | any>
+```
+
+### downloadImageWithBoundingBox [#downloadimagewithboundingbox]
+
+बाउंडिंग बॉक्स के साथ डिबग करें।
+
+```tsx
+downloadImageWithBoundingBox(
+  imgElement: HTMLImageElement,
+  boundingBox: { x: number; y: number }[],
+  filename: string
+): void
+```
+
+## टेम्पलेट फ़ंक्शन [#template-functions]
+
+### getTemplate [#gettemplate]
+
+कोई ख़ास टेम्पलेट पाएँ।
+
+```tsx
+getTemplate(templateId: string): TemplateDefinition | undefined
+```
+
+### getAllTemplates [#getalltemplates]
+
+सभी टेम्पलेट पाएँ।
+
+```tsx
+getAllTemplates(): TemplateDefinition[]
+```
+
+### getTemplateIds [#gettemplateids]
+
+टेम्पलेट ID पाएँ।
+
+```tsx
+getTemplateIds(): string[]
+```
+
+## यूटिलिटी फ़ंक्शन [#utility-functions]
+
+### रंग और कंट्रास्ट [#color--contrast]
+
+```tsx
+getSolidColor(colorConfig: ColorConfig, fallback?: string): string
+getContrastRatio(color1: string, color2: string): number
+getContrastLevel(ratio: number): ContrastLevel
+getLuminance(r: number, g: number, b: number): number
+hexToRgb(hex: string): { r: number; g: number; b: number }
+```
+
+### वैलिडेशन [#validation]
+
+```tsx
+validateSize(width: number, height: number): {
+  isValid: boolean;
+  error?: string;
+}
+```
+
+### फ़ीचर डिटेक्शन [#feature-detection]
+
+```tsx
+SUPPORTS_PATH2D: boolean
+```
+
+## टाइप [#types]
+
+### कोर टाइप [#core-types]
+
+```tsx
+type QRProps = {
+  value: string;
+  size?: number;
+  level?: ErrorLevel;
+  bgColor?: ColorConfig;
+  fgColor?: ColorConfig;
+  margin?: number;
+  imageSettings?: ImageSettings;
+  // ...
+};
+
+type ColorConfig =
+  | string
+  | { type: 'solid'; color: string }
+  | LinearGradient
+  | RadialGradient;
+
+type ErrorLevel = 'L' | 'M' | 'Q' | 'H';
+```
+
+### पैटर्न टाइप [#pattern-types]
+
+```tsx
+// The arrays BODY_PATTERN, CORNER_EYE_PATTERNS, CORNER_EYE_DOT_PATTERNS and
+// FRAME_STYLES (and their zod schemas) are exported from 'qrdx/types'.
+
+type BodyPattern =
+  | 'circle' | 'circle-large' | 'square' | 'diamond' | 'circle-mixed'
+  | 'pacman' | 'rounded' | 'small-square' | 'vertical-line'
+  | 'horizontal-line' | 'liquid' | 'liquid-horizontal' | 'liquid-vertical'
+  | 'classy' | 'classy-rounded' | 'leaf' | 'plus' | 'hexagon' | 'star'
+  | 'heart' | 'random-dots' | 'mosaic' | 'octagon';
+
+type CornerEyePattern =
+  | 'square' | 'rounded' | 'gear' | 'circle' | 'diya' | 'extra-rounded'
+  | 'message' | 'pointy' | 'leaf' | 'drop' | 'octagon' | 'bevel'
+  | 'squircle' | 'cushion' | 'shield' | 'petal' | 'leaf-reverse';
+
+type CornerEyeDotPattern =
+  | 'square' | 'rounded' | 'circle' | 'message' | 'message-reverse'
+  | 'diya' | 'diya-reverse' | 'rounded-triangle' | 'leaf' | 'drop' | 'plus'
+  | 'cross-rounded' | 'hexagon' | 'octagon' | 'flower' | 'heart'
+  | 'squircle' | 'dots' | 'extra-rounded' | 'leaf-reverse' | 'drop-reverse';
+
+// Retired (deprecated) values still render for saved designs but are not
+// offered: RETIRED_CORNER_EYE_PATTERNS, RETIRED_CORNER_EYE_DOT_PATTERNS.
+
+type EyeColors = {
+  topLeft?: { outer?: ColorConfig; inner?: ColorConfig };
+  topRight?: { outer?: ColorConfig; inner?: ColorConfig };
+  bottomLeft?: { outer?: ColorConfig; inner?: ColorConfig };
+};
+
+type QRFrame = {
+  style: FrameStyle; // "none" or a frame, see FRAME_STYLES
+  text?: string; // up to 24 characters, default "Scan me"
+  color?: string;
+  textColor?: string;
+  secondaryText?: string; // banner-top-bottom, circle, menu-card
+  secondaryColor?: string; // gradient-border end color
+  fontScale?: number; // 0.5 to 1.5
+};
+```
+
+### डाउनलोड टाइप [#download-types]
+
+```tsx
+type DownloadFormat = 'png' | 'jpg' | 'webp' | 'svg' | 'pdf' | 'eps';
+
+type DownloadSize = {
+  width: number;
+  height: number;
+};
+
+const PRESET_SIZES: Record<string, DownloadSize> = {
+  small: { width: 200, height: 200 },
+  medium: { width: 400, height: 400 },
+  large: { width: 800, height: 800 },
+  xlarge: { width: 1200, height: 1200 },
+  '2xl': { width: 1600, height: 1600 },
+  '3xl': { width: 2000, height: 2000 },
+};
+```
+
+### ग्रेडिएंट टाइप [#gradient-types]
+
+```tsx
+type LinearGradient = {
+  type: 'linear';
+  stops: GradientStop[];
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+};
+
+type RadialGradient = {
+  type: 'radial';
+  stops: GradientStop[];
+  cx: number;
+  cy: number;
+  r: number;
+};
+
+type GradientStop = {
+  offset: number;
+  color: string;
+};
+```
+
+### इमेज सेटिंग [#image-settings]
+
+```tsx
+type ImageSettings = {
+  src: string;
+  height: number;
+  width: number;
+  excavate?: boolean;
+  x?: number;
+  y?: number;
+  /** Extra clear space around the logo when excavating, in pixels */
+  padding?: number;
+  opacity?: number;
+};
+```
+
+## एरर करेक्शन लेवल [#error-correction-levels]
+
+```tsx
+const ERROR_LEVELS = {
+  L: 'Low (~7%)',
+  M: 'Medium (~15%)',
+  Q: 'Quartile (~25%)',
+  H: 'High (~30%)',
+} as const;
+```
+
+## एरर हैंडलिंग [#error-handling]
+
+async फ़ंक्शन को try-catch में रखें:
+
+```tsx
+try {
+  await downloadQRCode(props, options);
+} catch (error) {
+  console.error('Failed:', error);
+}
+```
+
+आम एरर:
+- अमान्य इमेज URL
+- नेटवर्क फ़ेल होना
+- अमान्य साइज़ पैरामीटर
+- Canvas कॉन्टेक्स्ट उपलब्ध न होना
+
+## ब्राउज़र सपोर्ट [#browser-support]
+
+- Chrome 90+
+- Firefox 88+
+- Safari 14+
+- Edge 90+
+
+## सर्वर सपोर्ट [#server-support]
+
+Node.js एनवायरनमेंट में काम करता है:
+- Next.js
+- Remix
+- Express.js
+- अन्य Node.js फ़्रेमवर्क
+
+कुछ फ़ीचर के लिए ब्राउज़र API चाहिए:
+- Canvas ऑपरेशन
+- Clipboard API
+- File API

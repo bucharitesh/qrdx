@@ -1,0 +1,89 @@
+---
+title: "Workspaces und Teams"
+description: "Jeder hat einen eigenen Workspace. Mit Pro oder Business kannst du weitere erstellen, Personen per E-Mail oder Beitrittslink einladen und die Rollen Inhaber, Admin, Mitglied, Abrechnung oder Betrachter vergeben."
+icon: Users
+---
+
+Alles, was du in QRdx erstellst, gehört zu einem Workspace: dynamische QR-Codes und [gehostete Seiten](/docs/landing-pages), [Dateien](/docs/files), [eigene Domains](/docs/custom-domains), Ordner und Tags, Formularantworten, [Webhooks](/docs/webhooks) und API-Schlüssel. Gespeicherte Designs gehören dir, und Inhaber und Admins können Kopien mit einem Workspace teilen, damit alle Mitglieder mit denselben Farben gestalten. Jede Dashboard-Seite enthält den Workspace in ihrer URL (`/dashboard/<workspace>/…`). Den Workspace wechselst du mit dem Workspace-Umschalter unten in der Seitenleiste (auf dem Smartphone im Menü). Du bleibst dabei im selben Bereich, zum Beispiel Codes oder Einstellungen → Domains, des gewählten Workspace.
+
+## Dein eigener Workspace [#your-own-workspace]
+
+Jedes Konto hat einen eigenen Workspace, der automatisch erstellt wird und dir als Inhaber gehört. Er nutzt deinen Tarif. Du kannst ihn umbenennen und seine URL ändern, aber du kannst ihn weder verlassen noch löschen: Er verschwindet, wenn du [dein Konto löschst](/docs/help/account-and-billing/delete-your-account). Mit Pro oder Business kannst du Personen in ihn einladen oder ihn für dich behalten und für jedes Team oder jeden Kunden einen eigenen Workspace erstellen.
+
+## Weiteren Workspace erstellen [#create-another-workspace]
+
+Zum Erstellen weiterer Workspaces brauchst du Pro oder Business. Jeder kann einem Workspace beitreten, zu dem er eingeladen wurde, auch Personen im Tarif Kostenlos.
+
+1. Öffne den Workspace-Umschalter und klicke auf **Workspace erstellen**.
+2. Gib einen **Workspace-Namen** und eine **Workspace-URL** ein (3 bis 48 Kleinbuchstaben, Zahlen und Bindestriche). QRdx prüft schon beim Tippen, ob die URL frei ist. Einige Wörter, etwa `codes` und `settings`, sind reserviert.
+3. Klicke auf **Workspace erstellen**. Er öffnet sich mit dir als Inhaber.
+
+## Personen einladen [#invite-people]
+
+Inhaber und Admins laden Personen unter [Einstellungen → Team](/dashboard?to=settings/team) ein:
+
+1. Gib die E-Mail-Adresse der Person ein und wähle eine Rolle: **Admin**, **Mitglied** oder **Betrachter**. Inhaber können auch jemanden als **Abrechnung** einladen.
+2. QRdx schickt ihnen eine Einladung per E-Mail. Jede Einladung hat außerdem einen Link, den du kopieren und selbst verschicken kannst.
+3. Sie öffnen den Link, melden sich mit der eingeladenen E-Mail-Adresse an und klicken auf **Einladung annehmen**. Danach öffnet sich der Workspace für sie.
+
+Wenn du jemanden als Admin einlädst, musst du zuerst [bestätigen, dass du es bist](/docs/help/privacy-and-security/two-step-verification#confirm-its-you), es sei denn, du hast das in diesem Browser in den letzten 10 Minuten getan.
+
+Einladungen laufen nach 48 Stunden ab und funktionieren nur für die E-Mail-Adresse, an die sie gesendet wurden, sodass ein weitergeleiteter Link nicht von jemand anderem genutzt werden kann. Ausstehende Einladungen belegen einen Platz, bis sie angenommen werden. Widerrufe daher Einladungen, die du nicht mehr brauchst.
+
+## Beitrittslink [#join-link]
+
+Ein Beitrittslink ist ein Link für das ganze Team: Wer angemeldet ist und ihn öffnet, tritt dem Workspace bei, solange freie Plätze vorhanden sind. Inhaber und Admins verwalten ihn unter [Einstellungen → Team](/dashboard?to=settings/team), mit Pro und Business:
+
+1. Wähle die Rolle, die Personen beim Beitritt erhalten (standardmäßig **Mitglied**; nie Inhaber, und nur Inhaber können einen **Abrechnung**-Link erstellen), und klicke auf **Beitrittslink erstellen**. Bei einem Link, der Personen als Admins hinzufügt, musst du zuerst [bestätigen, dass du es bist](/docs/help/privacy-and-security/two-step-verification#confirm-its-you).
+2. Kopiere den Link und teile ihn. Aus Sicherheitsgründen wird er nur einmal angezeigt; QRdx speichert einen Fingerabdruck davon, nicht den Link selbst.
+3. Verloren oder an die falsche Stelle gelangt? Klicke auf **Link zurücksetzen**: Der alte Link funktioniert nicht mehr, und du bekommst einen neuen. **Deaktivieren** stoppt ihn endgültig.
+
+Personen, die nicht angemeldet sind, melden sich zuerst an und kehren dann zum Link zurück. Wer bereits Mitglied ist, bekommt einen entsprechenden Hinweis. Sind alle Plätze belegt, ist kein Beitritt mehr möglich, bis wieder ein Platz frei ist.
+
+## Rollen [#roles]
+
+| | Betrachter | Abrechnung | Mitglied | Admin | Inhaber |
+| --- | --- | --- | --- | --- | --- |
+| Codes, Seiten und Analysen ansehen | Ja | Ja | Ja | Ja | Ja |
+| Codes und Seiten erstellen und bearbeiten, Dateien hochladen | Nein | Nein | Ja | Ja | Ja |
+| Codes, Dateien und Formularantworten löschen | Nein | Nein | Eigene | Alle | Alle |
+| API-Schlüssel erstellen | Nein | Nein | Ja | Ja | Ja |
+| Gespeicherte Designs mit dem Workspace teilen | Nein | Nein | Nein | Ja | Ja |
+| Personen einladen und entfernen, Rollen ändern | Nein | Nein | Nein | Ja | Ja |
+| Workspace umbenennen, URL und Logo ändern | Nein | Nein | Nein | Ja | Ja |
+| Eigene Domains hinzufügen, verifizieren und entfernen | Nein | Nein | Nein | Ja | Ja |
+| Webhook-Endpunkte verwalten und Signing Secrets ansehen | Nein | Nein | Nein | Ja | Ja |
+| Tarif des Workspace upgraden | Nein | Ja | Nein | Nein | Ja |
+| OAuth-Apps erstellen und ändern | Nein | Nein | Nein | Nein | Ja |
+| Jemanden zum Inhaber oder zum Abrechnungsmitglied machen | Nein | Nein | Nein | Nein | Ja |
+| Workspace löschen | Nein | Nein | Nein | Nein | Ja |
+
+Betrachter und Abrechnungsmitglieder können nur lesen: Sie können im Workspace nichts erstellen, bearbeiten oder löschen, und ein API-Schlüssel kann nicht mehr als die Rolle seines Erstellers. Mitglieder können Webhook-Endpunkte und deren Zustellprotokolle sehen und die verifizierten Domains des Workspace für ihre Codes verwenden. [Benachrichtigungseinstellungen](/docs/notifications) sind persönlich: Jedes Mitglied wählt für jeden Workspace seine eigenen Benachrichtigungen.
+
+## Tarife und Plätze [#plans-and-seats]
+
+Ein Workspace nutzt den besten Tarif unter seinen Inhabern und Abrechnungsmitgliedern. Ist also eine dieser Personen auf Business, bekommt der ganze Workspace die Business-Limits, und Mitglieder brauchen kein eigenes Abo. Dafür ist die Rolle **Abrechnung** gedacht: für jemanden, der für den Workspace bezahlt, ohne ihn zu verwalten. Limits wie dynamische Codes, Seiten, Speicherplatz und Formularantworten werden pro Workspace gezählt. Siehe [Tarife und Limits](/docs/plans-and-limits).
+
+Plätze sind Mitglieder, Inhaber eingeschlossen, plus ausstehende Einladungen: 1 (nur du), wenn die Inhaber und Abrechnungsmitglieder auf Kostenlos sind, bis zu 3 mit Pro und unbegrenzt mit Business. Ändert sich ihr Tarif, bleiben die aktuellen Mitglieder erhalten und jeder Code funktioniert weiter; nur neue Einladungen und neue Elemente über dem Limit werden blockiert.
+
+## Workspace umbenennen, verlassen oder löschen [#rename-leave-or-delete-a-workspace]
+
+Das findest du im Workspace unter [Einstellungen → Allgemein](/dashboard?to=settings).
+
+- **Umbenennen:** Inhaber und Admins ändern Namen und URL. Links zur alten URL funktionieren nicht mehr; gedruckte Codes ändern sich nicht.
+- **Logo:** Inhaber und Admins laden ein Logo hoch (wenn der Dateispeicher auf dem Server eingerichtet ist) oder nutzen eine https-Bild-URL. Es erscheint im Workspace-Umschalter; ohne Logo zeigt der Umschalter den ersten Buchstaben des Namens.
+- **Verlassen:** Klicke im Gefahrenbereich auf **Workspace verlassen**. Der letzte Inhaber kann nicht gehen: Mache zuerst ein anderes Mitglied zum Inhaber oder lösche den Workspace. Niemand kann seinen eigenen Workspace verlassen.
+- **Mitglied entfernen:** unter [Einstellungen → Team](/dashboard?to=settings/team). Die Codes und Seiten, die die Person erstellt hat, bleiben im Workspace. Niemand kann aus dem eigenen Workspace entfernt werden. Beim Entfernen einer Person, wie auch beim Ändern ihrer Rolle, musst du zuerst [bestätigen, dass du es bist](/docs/help/privacy-and-security/two-step-verification#confirm-its-you).
+- **Workspace löschen:** nur Inhaber, und nie der eigene Workspace einer Person. Du bestätigst, indem du die Workspace-URL eingibst, und QRdx bittet dich zu bestätigen, dass du es bist. Nichts hört auf zu funktionieren: Codes, Seiten, Dateien, Domains und andere Elemente wandern in den eigenen Workspace der Person, die sie erstellt hat. Die API-Schlüssel des Workspace werden mit ihm gelöscht.
+
+## Code in einen anderen Workspace verschieben [#move-a-code-to-another-workspace]
+
+Wähle im **⋯**-Menü des Codes auf der Seite Codes **In Workspace verschieben...** und such einen Workspace aus, in dem du Codes erstellen darfst. Der Kurzlink bleibt gleich, gedruckte Codes funktionieren also weiter, und die Scans und der Versionsverlauf ziehen mit um. Ordner und Tags bleiben zurück, weil sie zum alten Workspace gehören.
+
+- Mitglieder können die Codes verschieben, die sie erstellt haben; Inhaber und Admins jeden Code.
+- Der Tarif des anderen Workspace muss Platz für einen weiteren aktiven Code haben. Archivierte Codes zählen nicht.
+- Ein Code, dessen Link auf einer eigenen Domain liegt, kann nicht verschoben werden, weil die Domain zum alten Workspace gehört und der gedruckte Link nicht mehr funktionieren würde. Codes, die eine gehostete Seite öffnen, bleiben bei ihrer Seite.
+
+## API-Zugriff [#api-access]
+
+Anfragen an die [REST API](/docs/developers/rest-api) mit einem OAuth-Zugriffstoken wirken auf den eigenen Workspace des Token-Inhabers. Ein [API-Schlüssel](/docs/developers/api-keys) wirkt auf den Workspace, in dem er erstellt wurde, mit deiner Rolle dort. Anfragen aus einer angemeldeten Browser-Sitzung wirken auf den Workspace, der in dieser Sitzung zuletzt geöffnet wurde.

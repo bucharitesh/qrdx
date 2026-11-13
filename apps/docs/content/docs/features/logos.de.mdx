@@ -1,0 +1,166 @@
+---
+title: "Logos"
+description: "Füge ein Logo in die Mitte eines QR-Codes ein, ohne dass der Scan darunter leidet."
+icon: Image
+---
+
+Füge Marken-Logos zu QR-Codes hinzu und behalte dabei die Scanbarkeit.
+
+## Einfaches Logo [#basic-logo]
+
+```tsx
+import { QRCode } from 'qrdx';
+
+<QRCode
+  value="https://example.com"
+  size={512}
+  hideLogo={false}
+  logo="https://example.com/logo.png"
+  level="Q"
+/>
+```
+
+Verwende bei Logos immer eine höhere Fehlerkorrektur (`Q` oder `H`).
+
+## Größe, Freiraum und Position [#size-clear-space-and-position]
+
+`logoOptions` legt das Logo in Einheiten an, die nicht von der Render-Größe abhängen, bei `QRCode` und in `getQRData`:
+
+- `size`: die Breite des Logos als Anteil an der Breite des Codes, `0.1` bis `0.3` (Standard `0.25`). In unseren Decodiertests wird selbst Stufe H über 25 % nicht mehr gelesen.
+- `padding`: Freiraum um das Logo, `0` bis `2` Module.
+- `x` und `y`: Position des Logo-Mittelpunkts im Code, `0` bis `1` (Standard `0.5`, die Mitte). Das Logo bleibt immer innerhalb des Codes.
+
+```tsx
+<QRCode
+  value="https://example.com"
+  logo="https://example.com/logo.png"
+  level="H"
+  logoOptions={{ size: 0.2, padding: 1, x: 0.6, y: 0.55 }}
+/>
+```
+
+`QRCode` und `getQRData` zeichnen nie ein Logo, das größer ist, als der Code reparieren kann. Ein Logo (mit seinem Freiraum) zerstört jedes Codewort, das es berührt, und jeder Fehlerkorrektur-Block kann nur eine begrenzte Anzahl reparieren. Deshalb zählen sie die zerstörten Codewörter Block für Block und verkleinern das Logo, bis der schlechteste Block höchstens 60 % seiner Reparaturkapazität verbraucht (dasselbe Budget wie beim Logo-QR-Badge). Kleine Codes fassen weniger: Bei Stufe Q passt in einen kurzen Link ein Logo von etwa 13–17 % der Breite, bei Stufe H oder kürzerem Inhalt ist mehr Platz. `getLogoSizeLimit(props)` gibt die größte Größe für einen Code zurück, und der Scan-Score prüft dieselbe Zählung. Rohe `imageSettings` bei `QRCodeSVG`, `QRCodeCanvas` und `getQRAsSVG` erhalten dieselbe Begrenzung: Ein Logo, das passt, wird wie angegeben gezeichnet, ein größeres wird um seinen eigenen Mittelpunkt herum verkleinert.
+
+Halte ein verschobenes Logo von den drei Eck-Augen und dem kleinen Quadrat nahe der unteren rechten Ecke fern (dem Alignment-Muster, mit dem Decoder Perspektivverzerrung korrigieren). Der Scan-Score lässt ein Logo durchfallen, das eines davon verdeckt.
+
+Im Playground gibt es unter **Design → Logo options** dieselben Regler, dazu **Raise error correction for big logos** (`autoLevel`).
+
+## Form, Platte und Hintergrund [#shape-plate-and-background]
+
+- `shape`: schneidet das Logo zu auf `"square"` (wie hochgeladen, Standard), `"rounded"` (abgerundete Ecken) oder `"circle"` (Kreis).
+- `plate`: eine einfarbige Fläche in derselben Form hinter dem Logo; das Logo sitzt eingerückt darauf.
+
+```tsx
+<QRCode
+  value="https://example.com"
+  logo="/logo.png"
+  level="H"
+  logoOptions={{ size: 0.22, shape: "circle", plate: "#ffffff" }}
+/>
+```
+
+Der Zuschnitt ist ein SVG-Clip-Path. Das Druck-PDF und EPS beschneiden entlang derselben Kontur, sodass jedes Download-Format gleich aussieht. EPS kennt keine Transparenz, daher werden transparente Bereiche eines Logos dort weiß gedruckt.
+
+Liegt ein hochgeladenes Logo auf einem einfarbigen Kasten (häufig bei JPEGs), bietet der Playground **Remove background** an. Haben alle vier Ecken dieselbe Farbe, wird diese Farbe von den Rändern nach innen entfernt, sodass dieselbe Farbe im Inneren des Motivs (zum Beispiel weiße Buchstaben) erhalten bleibt. Im Code gibt `removeLogoBackground(src)` im Browser das bereinigte PNG als Data-URL zurück, und `removeLogoBackdrop(pixels)` macht dasselbe mit RGBA-Pixeln an beliebiger Stelle.
+
+## Erweiterte Steuerung [#advanced-control]
+
+```tsx
+import { QRCodeCanvas } from 'qrdx';
+
+<QRCodeCanvas
+  value="https://example.com"
+  size={512}
+  imageSettings={{
+    src: "https://example.com/logo.png",
+    height: 80,
+    width: 80,
+    excavate: true,
+    x: 216,
+    y: 216,
+    opacity: 0.9
+  }}
+  level="Q"
+/>
+```
+
+## Richtwerte zur Größe [#size-guidelines]
+
+- **256px QR**: 32–48px Logo
+- **512px QR**: 64–96px Logo
+- **1024px QR**: 128–192px Logo
+
+Halte Logos zwischen 10–30 % der Größe des QR-Codes.
+
+## Logo-Aussparung [#logo-excavation]
+
+### Was sie bewirkt [#what-it-does]
+
+Die Aussparung entfernt QR-Module unter dem Logo, damit der Code besser gescannt wird.
+
+```tsx
+<QRCodeCanvas
+  value="https://example.com"
+  size={512}
+  imageSettings={{
+    src: "/logo.png",
+    height: 80,
+    width: 80,
+    excavate: true  // Recommended for most logos
+  }}
+/>
+```
+
+### Freiraum und Fehlerkorrektur [#clear-space-and-error-correction]
+
+`padding` (in denselben Pixeln wie `width` und `height`) räumt zusätzliche Module rund um das Logo frei, damit seine Kanten den Code nie berühren. `autoLevel` erhöht die Fehlerkorrektur auf H, sobald der freigeräumte Bereich mehr als 7 % des Codes abdeckt, damit auch ein größeres Logo lesbar bleibt. Standardmäßig ist es aus, damit bestehende Codes ihre Stufe behalten.
+
+```tsx
+<QRCodeSVG
+  value="https://example.com"
+  size={512}
+  autoLevel
+  imageSettings={{ src: "/logo.png", height: 110, width: 110, excavate: true, padding: 8 }}
+/>
+```
+
+Das Logo behält seine Pixelgröße unabhängig vom `margin` (Versionen bis 0.0.46 verkleinerten es, wenn der Rand wuchs).
+
+### Wann verwenden [#when-to-use]
+
+- ✅ Logos mit einfarbigem Hintergrund
+- ✅ Logos, die den Scan stören könnten
+- ❌ Transparente Logos (optional)
+- ⚠️ Teste den Scan immer auf echten Geräten
+
+## Logo-Formate [#logo-formats]
+
+- **PNG** — Am besten für Transparenz
+- **JPG** — Gut für Fotos
+- **SVG** — Skalierbar, kann aber Ladeprobleme verursachen
+- **WebP** — Modernes Format, gute Kompression
+
+## Berechnung der Mitte [#center-calculation]
+
+```tsx
+const qrSize = 512;
+const logoSize = 80;
+const position = {
+  x: (qrSize - logoSize) / 2,  // 216
+  y: (qrSize - logoSize) / 2   // 216
+};
+```
+
+## Best Practices [#best-practices]
+
+1. Verwende das PNG-Format mit Transparenz
+2. Aktiviere die Aussparung bei Logos mit festem Hintergrund
+3. Verwende die Fehlerkorrektur `Q` oder `H`
+4. Halte die Logo-Größe moderat (10–30 %)
+5. Teste den Scan auf den Zielgeräten
+
+## Nächste Schritte [#next-steps]
+
+- [Downloads](/docs/features/downloads) — QR-Codes mit Logos exportieren
+- [Vorlagen](/docs/features/templates) — Logos mit Vorlagen kombinieren
+- [Farben & Verläufe](/docs/features/colors-gradients) — Logos mit Farben gestalten

@@ -1,0 +1,106 @@
+---
+title: "Dateien"
+description: "Lade PDFs, Bilder, Audio und Video für deine gehosteten Seiten hoch und richte den Dateispeicher ein, wenn du selbst hostest."
+icon: FolderOpen
+---
+
+Gehostete Seiten können Dateien zeigen, die du zu QRdx hochlädst: eine Speisekarte oder Broschüre als PDF, eine Fotogalerie, Musik oder einen Podcast oder ein Video. Hochgeladene Dateien findest du unter **Dashboard → Dateien**. Sie gehören zum Workspace, in dem du sie hochlädst, und jede hat einen festen Link, der weiter funktioniert, wenn du die Datei ersetzt.
+
+## Was du hochladen kannst [#what-you-can-upload]
+
+| Art | Formate |
+| --- | --- |
+| PDF | PDF |
+| Bilder | JPEG, PNG, WebP, GIF, AVIF |
+| Audio | MP3, M4A, AAC, Ogg, WAV |
+| Video | MP4, WebM, MOV |
+
+MP4 mit H.264-Video läuft in jedem Browser. MOV-Dateien von Smartphones lassen sich meist ebenfalls abspielen, konvertiere sie aber in MP4, falls ein Browser eine Datei nicht abspielen kann. SVG, HTML, Archive und Office-Dokumente können nicht hochgeladen werden, damit nichts aus dem Speicher Code im Browser eines Besuchers ausführen kann.
+
+Jeder Upload wird geprüft, bevor er verwendet wird: Seine Größe muss mit der angekündigten übereinstimmen, und seine ersten Bytes müssen wirklich zu einer Datei dieses Typs gehören (eine in `.pdf` umbenannte HTML-Seite wird abgelehnt). Abgelehnte Uploads werden aus dem Speicher gelöscht und als **Blockiert** aufgelistet.
+
+## Limits pro Plan [#limits-per-plan]
+
+| Plan | Speicher pro Workspace | Größte Datei |
+| --- | --- | --- |
+| Kostenlos | 50 MB | 10 MB |
+| Pro | 5 GB | 100 MB |
+| Business | 50 GB | 250 MB |
+
+Ein Workspace nutzt den besten Plan unter seinen Inhabern. Die Limits stoppen nur neue Uploads: Nach einem Downgrade oder wenn ein Workspace über seinem Speicherlimit liegt, werden alle bereits hochgeladenen Dateien weiterhin auf jeder Seite ausgeliefert, die sie verwendet. Lösche Dateien, die du nicht mehr brauchst (oder wechsle auf einen höheren Plan), um neue hochzuladen.
+
+## Dateien auf einer Seite verwenden [#use-files-on-a-page]
+
+Fünf Blöcke zeigen Dateien. Jeder kann eine hochgeladene Datei oder einen Link zu einer anderswo gehosteten Datei verwenden:
+
+- **PDF** zeigt das Dokument auf Tablets und Computern direkt an, mit den Buttons **PDF öffnen** (Vollbildansicht auf Smartphones) und **Herunterladen**.
+- **Galerie** zeigt Fotos in einem Raster mit 1–3 Spalten. Ein Tipp auf ein Foto öffnet es im Vollbild; wische oder nutze die Pfeiltasten, um zu blättern.
+- **Audio** spielt Titel mit Cover und Playlist ab; der nächste Titel startet, wenn einer endet. Ein Download-Button ist optional.
+- **Videodatei** spielt ein hochgeladenes MP4 oder WebM ab, optional stumm in einer Schleife wie ein GIF. Für YouTube, Vimeo oder Loom nutze stattdessen den Block **Video**: Er bettet das Video ein, ohne etwas von YouTube zu laden, bis jemand auf Play tippt.
+- **Downloads** listet Dateien auf, die man speichern kann, jede mit eigener Beschriftung.
+
+Die Seitentypen **PDF**, **Bilder**, **MP3 / Audio** und **Video** unter **Neuer Code** starten schon mit diesen Blöcken.
+
+Wähle in einem Block **Hochladen**, um eine Datei von deinem Gerät hinzuzufügen, **Aus deinen Dateien**, um eine früher hochgeladene wiederzuverwenden, oder füge einen Link ein.
+
+## Datei ersetzen oder löschen [#replace-or-delete-a-file]
+
+Öffne **Dashboard → Dateien** und nutze das Menü neben einer Datei:
+
+- **Link kopieren** kopiert den eigenen Link der Datei (`https://qrdx.dev/api/files/<id>`). Du kannst ihn auch als Ziel eines dynamischen QR-Codes verwenden.
+- **Datei ersetzen** lädt neuen Inhalt hinter demselben Link hoch, zum Beispiel die Speisekarte der nächsten Saison. Seiten und Codes, die die Datei verwenden, zeigen die neue Version innerhalb einer Minute. Eine Datei kann nur durch eine Datei derselben Art ersetzt werden (ein PDF durch ein PDF).
+- **Löschen** entfernt die Datei endgültig. Wenn Seiten oder Codes sie noch verwenden, listet QRdx diese zuerst auf; nach dem Löschen zeigen diese Seiten an der Stelle der Datei „Datei nicht verfügbar“.
+
+Mitglieder können die Dateien ersetzen und löschen, die sie selbst hochgeladen haben; Inhaber und Admins können alle Dateien im Workspace verwalten.
+
+## Gemeldete Dateien [#reported-files]
+
+Jede gehostete Seite hat einen Link **Missbrauch melden**. Wenn eine Datei gegen die Regeln verstößt oder ein Urheberrechtsinhaber ihre Entfernung verlangt, kann QRdx sie blockieren. Eine blockierte Datei wird innerhalb einer Minute auf keiner Seite und über ihren QRdx-Link nicht mehr ausgeliefert (Seiten zeigen „Datei nicht verfügbar“), und identische Kopien davon (bis 25 MB) können nicht erneut hochgeladen werden.
+
+## Speicher einrichten (Self-Hosting) [#set-up-storage-self-hosting]
+
+Datei-Uploads nutzen [Cloudflare R2](https://developers.cloudflare.com/r2/). Ohne R2 zeigt die Seite „Dateien“ die Meldung „Speicher auf diesem Server nicht konfiguriert“, die Upload-API antwortet mit `503`, und Blöcke können weiterhin Links zu anderswo gehosteten Dateien verwenden.
+
+1. Öffne im Cloudflare-Dashboard **R2** und erstelle einen Bucket, zum Beispiel `qrdx-files`.
+2. Erstelle unter **R2 → Manage API tokens** einen Token mit **Object Read & Write** für diesen Bucket.
+3. Setze diese Umgebungsvariablen und starte neu:
+
+   ```bash
+   R2_ACCOUNT_ID=your-cloudflare-account-id
+   R2_ACCESS_KEY_ID=token-access-key-id
+   R2_SECRET_ACCESS_KEY=token-secret-access-key
+   R2_BUCKET=qrdx-files
+   # Optional: serve files from a public bucket URL or custom domain
+   R2_PUBLIC_BASE_URL=https://files.example.com
+   ```
+
+4. Füge dem Bucket eine CORS-Richtlinie hinzu (**Settings → CORS policy**). Browser laden direkt zu R2 hoch, daher muss der Bucket `PUT`-Anfragen mit einem `Content-Type`-Header vom Origin deiner App akzeptieren:
+
+   ```json
+   [
+     {
+       "AllowedOrigins": ["https://qrdx.example.com", "http://localhost:3000"],
+       "AllowedMethods": ["PUT", "GET", "HEAD"],
+       "AllowedHeaders": ["Content-Type"],
+       "ExposeHeaders": ["ETag"],
+       "MaxAgeSeconds": 3600
+     }
+   ]
+   ```
+
+   Ersetze `https://qrdx.example.com` durch den Origin, über den man dein Dashboard öffnet (Schema und Host, ohne abschließenden Schrägstrich). Behalte `http://localhost:3000` nur, wenn du von einem lokalen Entwicklungsserver hochlädst.
+
+### Öffentliche Dateien oder vorsignierte Links [#public-files-or-presigned-links]
+
+Besucher öffnen Dateien immer über `/api/files/<id>`, das auf das gespeicherte Objekt weiterleitet:
+
+- Ist `R2_PUBLIC_BASE_URL` gesetzt (eine mit dem Bucket verbundene eigene Domain oder seine `r2.dev`-URL, die Cloudflare mit Ratenbegrenzung versieht und nur zum Testen empfiehlt), leitet es auf die öffentliche URL weiter. Objektschlüssel enthalten eine zufällige ID, daher lassen sich Dateien weder auflisten noch erraten.
+- Ohne diese Variable bleibt der Bucket privat, und jede Weiterleitung ist ein vorsignierter Link, der nach einer Stunde abläuft.
+
+In beiden Fällen wird eine ersetzte, gelöschte oder blockierte Datei innerhalb einer Minute nicht mehr über ihren QRdx-Link ausgeliefert. Eine blockierte Datei verschwindet außerdem sofort von ihrer öffentlichen URL: Ihr Objekt wird zu einem `quarantine/`-Schlüssel mit zufälligem Anteil verschoben (aufbewahrt, damit ein Admin es wiederherstellen kann), und ihr QRdx-Link antwortet mit `410 Gone`.
+
+Browser laden zu einem `staging/`-Schlüssel hoch. Sobald der Upload geprüft ist, kopiert QRdx genau die geprüfte Version an den eigenen Schlüssel der Datei, sodass ein noch gültiger Upload-Link eine geprüfte Datei nicht ersetzen kann.
+
+<Callout type="info">
+  Ein Upload, der nie abgeschlossen wird, zählt nach zwei Stunden nicht mehr zum Speicher und wird beim nächsten Upload in diesen Workspace bereinigt. Füge dem Bucket eine Object-Lifecycle-Regel hinzu (**Settings → Object lifecycle rules**), die Objekte mit dem Präfix `staging/` nach einem Tag löscht, damit auch Reste abgebrochener Uploads verschwinden.
+</Callout>

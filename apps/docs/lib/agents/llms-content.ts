@@ -2,6 +2,7 @@ import "server-only";
 
 import { getCatalogBySurface } from "@repo/integrations/src/catalog";
 import type { PricingOptions } from "@/components/sections/pricing/plan-content";
+import { blogSource, compareSource, legalSource } from "@/lib/content-source";
 import {
   isFeatureAvailable,
   isPathAvailable,
@@ -12,7 +13,6 @@ import { filterVisible } from "@/lib/integration-availability-rules";
 import { baseUrl } from "@/lib/metadata";
 import { getPublishedVersion } from "@/lib/npm-version";
 import { PLAN_LIMITS } from "@/lib/plans";
-import { blogSource, compareSource, legalSource } from "@/lib/source";
 import cliPackage from "../../../../packages/cli/package.json";
 import qrdxPackage from "../../../../packages/qrdx/package.json";
 import { docsSections } from "./docs-pages";

@@ -1,0 +1,47 @@
+---
+title: "Pemindaian menampilkan halaman error"
+description: "Arti setiap halaman error kode QR, mulai dari \"QR code not found\" hingga \"This campaign has ended\", dan cara memperbaikinya."
+---
+
+Ketika kode QR dinamis tidak dapat membuka tujuannya, pemindai akan melihat halaman singkat. Berikut arti masing-masing halaman.
+
+## "QR code not found" [#qr-code-not-found]
+
+Ini adalah halaman 404: tautan pendek tidak dimiliki oleh kode mana pun.
+
+- Kode telah **dihapus permanen**.
+- **Back-half** atau **domain** kode diubah setelah kode dicetak.
+- Akun pemilik kode telah dihapus.
+- Tautan diketik manual dan ada kesalahan. Tautan pendek peka huruf besar/kecil.
+
+Kode yang sudah dihapus tidak dapat dikembalikan. Jika Anda mengubah back-half, kembalikan dengan **Edit link**.
+
+## "This QR code is no longer active" [#this-qr-code-is-no-longer-active]
+
+Kode tersebut **diarsipkan** atau berada di **tempat sampah**. Pilih **Unarchive** atau **Restore** di **Codes**. Lihat [Mengarsipkan, menghapus, dan memulihkan kode](/docs/help/dynamic-codes/archive-and-delete).
+
+QRdx juga menonaktifkan kode yang menaut ke situs berbahaya.
+
+## "This campaign is paused", "hasn't started yet" atau "has ended" [#this-campaign-is-paused-hasnt-started-yet-or-has-ended]
+
+Halaman ini muncul dari pengaturan kode itu sendiri: jeda, tanggal mulai atau berakhir, atau batas pemindaian. Ubah pengaturan tersebut di **Access & schedule**. Lihat [Menjeda, menjadwalkan, atau membatasi kode](/docs/help/dynamic-codes/pause-schedule-limit).
+
+## "This QR code is password protected" [#this-qr-code-is-password-protected]
+
+Kode ini memiliki kata sandi. Masukkan kata sandi lalu klik **Continue**. Lihat [Melindungi kode dengan kata sandi](/docs/help/dynamic-codes/password).
+
+## "Too many requests" [#too-many-requests]
+
+Satu jaringan membuka banyak kode QR dalam beberapa detik. Tunggu sebentar lalu lakukan pemindaian lagi.
+
+## "This domain isn't connected yet" [#this-domain-isnt-connected-yet]
+
+Kode menggunakan domain kustom yang pengaturan DNS-nya belum selesai. Periksa domain di halaman **Domains** pada dasbor Anda.
+
+## "This page could not be found" pada sebuah halaman [#this-page-could-not-be-found-on-a-page]
+
+Halaman seluler di `/p/…` menampilkan pesan ini ketika halaman telah dihapus atau alamatnya salah ketik.
+
+## "This form isn't accepting responses right now" [#this-form-isnt-accepting-responses-right-now]
+
+Workspace telah mencapai batas respons formulir bulanan. Lihat [Kumpulkan jawaban dengan formulir](/docs/help/pages-and-forms/forms#monthly-limits).

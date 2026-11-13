@@ -1,0 +1,61 @@
+---
+title: "API-Schlüssel"
+description: "Erstelle in Einstellungen → API-Schlüssel & Apps einen API-Schlüssel mit dem Präfix qrdx_ und rufe damit die REST API auf. Scopes, Workspaces und Rollen, Ablauf, letzte Nutzung und Widerruf."
+icon: LockKeyhole
+---
+
+Mit einem API-Schlüssel können deine eigenen Server, Skripte und CI-Jobs die [REST API](/docs/developers/rest-api) ohne OAuth-Ablauf aufrufen. Sende ihn im `Authorization`-Header:
+
+```bash
+curl https://api.qrdx.dev/v1/codes -H "Authorization: Bearer $QRDX_API_KEY"
+```
+
+Jeder Endpunkt, der ein OAuth-Zugriffstoken akzeptiert, akzeptiert im selben Header auch einen Schlüssel, und die [Image API](/docs/developers/image-api) braucht keines von beidem. Wenn dein Produkt im Namen anderer QRdx-Nutzer handelt, verwende stattdessen eine [OAuth-App](/docs/developers/build-an-integration), damit jede Person sie selbst freigibt.
+
+## Schlüssel erstellen [#create-a-key]
+
+1. Öffne [Einstellungen → API-Schlüssel & Apps](/dashboard?to=settings/developers&new=1) in dem Workspace, für den der Schlüssel gedacht ist. Der Link öffnet den Workspace, den du zuletzt benutzt hast; einen anderen wählst du im Workspace-Umschalter.
+2. Wähle **Schlüssel erstellen**. Benenne ihn nach dem Ort, an dem er laufen soll, wähle seinen Zugriff und, wenn du möchtest, ein Ablaufdatum. Ein Schlüssel funktioniert auch ohne dich, deshalb bittet QRdx dich zuerst, [zu bestätigen, dass du es bist](/docs/help/privacy-and-security/two-step-verification#confirm-its-you), es sei denn, du hast das in diesem Browser in den letzten 10 Minuten getan.
+3. Kopiere den Schlüssel. Er wird nur einmal angezeigt: QRdx speichert nur einen Hash davon, deshalb kann er nicht erneut angezeigt werden. Im selben Dialog findest du eine curl-Anfrage mit dem Schlüssel und der API-Adresse dieser Website, die du direkt einfügen kannst.
+
+Ein Schlüssel besteht aus `qrdx_` gefolgt von 40 Buchstaben und Ziffern. In Listen wird nur der Anfang angezeigt, etwa `qrdx_7KpQ2m…`, damit du Schlüssel unterscheiden kannst.
+
+## Zugriff [#access]
+
+Schlüssel verwenden dieselben Scopes wie OAuth-Apps. Wähle beim Erstellen des Schlüssels eine von drei Optionen:
+
+| Zugriff | Scopes | Erlaubt |
+| --- | --- | --- |
+| Voller Zugriff | `profile:read`, `themes:read`, `codes:read`, `codes:write` | Alles, was die API kann |
+| Nur Lesen | `profile:read`, `themes:read`, `codes:read` | Codes, Scan-Analysen, Designs und das Profil lesen |
+| Benutzerdefiniert | Die, die du auswählst | Was diese Scopes erlauben ([die Scope-Liste](/docs/developers/rest-api#get-an-access-token)) |
+
+`codes:write` erlaubt auch alles, was `codes:read` erlaubt. Die Scopes eines Schlüssels lassen sich später nicht ändern; erstelle stattdessen einen neuen Schlüssel. Eine Anfrage außerhalb der Scopes des Schlüssels erhält `403 INSUFFICIENT_SCOPE`, und die Meldung nennt den benötigten Scope.
+
+## Workspaces und Rollen [#workspaces-and-roles]
+
+Ein Schlüssel gehört zu dem Workspace, der beim Erstellen geöffnet war, und handelt dort als du:
+
+- Der Schlüssel arbeitet mit den Codes, Scans, Hooks und Designs dieses Workspace, im Rahmen des Tarifs und des [Tageskontingents](/docs/developers/rest-api#rate-limits) des Workspace.
+- Er darf alles, was du im Workspace darfst, bemessen an deiner [Rolle](/docs/teams) zum Zeitpunkt jeder Anfrage. In deinem eigenen Workspace bist du der Inhaber. Ändert sich deine Rolle, ändern sich auch die Rechte des Schlüssels; verlässt du den Workspace, funktioniert der Schlüssel nicht mehr, und wenn du einen Workspace löschst, werden auch seine Schlüssel gelöscht.
+
+Jedes Mitglied eines Workspace kann Schlüssel erstellen. Inhaber und Admins sehen alle Schlüssel im Workspace und können jeden davon widerrufen; Mitglieder sehen und widerrufen nur ihre eigenen. `GET /v1/me` gibt das Profil der Person zurück, die den Schlüssel erstellt hat.
+
+## Ablauf, letzte Nutzung und Widerruf [#revoke]
+
+- **Ablauf.** Ein Schlüssel läuft nie ab oder nach 30 Tagen, 90 Tagen oder 1 Jahr. Ein abgelaufener Schlüssel erhält `401 INVALID_TOKEN` und bleibt in der Liste, als **Abgelaufen** markiert, bis du ihn widerrufst.
+- **Letzte Nutzung.** Die Liste zeigt das Datum, an dem sich der Schlüssel zuletzt bei einer Anfrage authentifiziert hat.
+- **Widerruf.** Wähle neben einem Schlüssel **Widerrufen**. Ab dann erhalten Anfragen mit diesem Schlüssel `401 INVALID_TOKEN`. Ein Widerruf lässt sich nicht rückgängig machen.
+
+Jede Person kann pro Workspace bis zu 25 aktive Schlüssel haben. Widerrufene und abgelaufene Schlüssel zählen nicht mit.
+
+## Schlüssel sicher aufbewahren [#keep-keys-safe]
+
+- Bewahre einen Schlüssel auf einem Server auf: in einer Umgebungsvariable oder einem Secret Manager. Lege ihn nie in einer Webseite, einer mobilen App, einem Prompt oder einem Repository ab.
+- Verwende pro Ausführungsort einen eigenen Schlüssel, damit du einen widerrufen kannst, ohne die anderen zu beeinträchtigen.
+- Gib Skripten, die nur Berichte erstellen, einen Schlüssel mit Nur-Lesen-Zugriff, und kurzlebigen Jobs einen Schlüssel, der abläuft.
+- Wenn ein Schlüssel offengelegt wurde, widerrufe ihn und erstelle einen neuen. Am Präfix `qrdx_` lassen sich Schlüssel in Code und Logs leicht finden.
+
+## Self-Hosting [#self-hosting]
+
+Eine [selbst gehostete](/docs/self-hosting) Instanz braucht die Tabelle `api_key` in ihrer Datenbank. Sie wird bei der üblichen Schema-Synchronisierung nach einem Update angelegt (mit Docker über den Service `migrate`, sonst mit `bun run db:push`; siehe [Aktualisieren](/docs/self-hosting)). Solange die Tabelle fehlt, meldet Einstellungen → API-Schlüssel & Apps, dass API-Schlüssel nicht verfügbar sind, und die API weist Schlüssel mit `401` ab. Ihre API liegt unter `/api/v1` auf der eigenen Domain; diese Adresse trägt der Dialog für neue Schlüssel ein.

@@ -1,0 +1,47 @@
+---
+title: "Ein Scan zeigt eine Fehlerseite"
+description: "Was die einzelnen QR-Code-Fehlerseiten bedeuten, von „QR-Code nicht gefunden“ bis „Diese Kampagne ist beendet“, und wie du sie behebst."
+---
+
+Wenn ein dynamischer QR-Code sein Ziel nicht öffnen kann, sehen Scannende eine kurze Seite. Hier steht, was die einzelnen Seiten bedeuten.
+
+## „QR-Code nicht gefunden“ [#qr-code-not-found]
+
+Das ist eine 404-Seite: Der Kurzlink gehört zu keinem Code.
+
+- Der Code wurde **endgültig gelöscht**.
+- Der **Back-Half** oder die **Domain** des Codes wurde nach dem Druck geändert.
+- Das Konto, dem er gehörte, wurde gelöscht.
+- Der Link wurde von Hand mit einem Tippfehler eingegeben. Bei Kurzlinks wird zwischen Groß- und Kleinschreibung unterschieden.
+
+Ein gelöschter Code lässt sich nicht wiederherstellen. Wenn du den Back-Half geändert hast, setze ihn mit **Link bearbeiten** wieder zurück.
+
+## „Dieser QR-Code ist nicht mehr aktiv“ [#this-qr-code-is-no-longer-active]
+
+Der Code ist **archiviert** oder im **Papierkorb**. Wähle unter **Codes** die Option **Archivierung aufheben** oder **Wiederherstellen**. Siehe [Codes archivieren, löschen und wiederherstellen](/docs/help/dynamic-codes/archive-and-delete).
+
+QRdx deaktiviert außerdem Codes, die auf schädliche Websites verweisen.
+
+## „Diese Kampagne ist pausiert“, „hat noch nicht begonnen“ oder „ist beendet“ [#this-campaign-is-paused-hasnt-started-yet-or-has-ended]
+
+Diese Meldungen kommen von den eigenen Einstellungen des Codes: einer Pause, einem Start- oder Enddatum oder einem Scan-Limit. Ändere sie unter **Zugriff & Zeitplan**. Siehe [Einen Code pausieren, planen oder begrenzen](/docs/help/dynamic-codes/pause-schedule-limit).
+
+## „Dieser QR-Code ist passwortgeschützt“ [#this-qr-code-is-password-protected]
+
+Der Code hat ein Passwort. Gib es ein und klicke auf **Weiter**. Siehe [Einen Code mit einem Passwort schützen](/docs/help/dynamic-codes/password).
+
+## „Zu viele Anfragen“ [#too-many-requests]
+
+Ein Netzwerk hat innerhalb weniger Sekunden sehr viele QR-Codes geöffnet. Warte einen Moment und scanne erneut.
+
+## „Diese Domain ist noch nicht verbunden“ [#this-domain-isnt-connected-yet]
+
+Der Code nutzt eine eigene Domain, deren DNS-Einrichtung noch nicht abgeschlossen ist. Prüfe die Domain auf der Seite **Domains** in deinem Dashboard.
+
+## „Diese Seite wurde nicht gefunden“ bei einer Seite [#this-page-could-not-be-found-on-a-page]
+
+Eine mobile Seite unter `/p/…` zeigt das an, wenn die Seite gelöscht wurde oder die Adresse falsch eingegeben wurde.
+
+## „Dieses Formular nimmt derzeit keine Antworten an“ [#this-form-isnt-accepting-responses-right-now]
+
+Der Workspace hat sein monatliches Limit für Formularantworten erreicht. Siehe [Antworten mit einem Formular sammeln](/docs/help/pages-and-forms/forms#monthly-limits).

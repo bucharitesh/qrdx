@@ -1,0 +1,60 @@
+---
+title: "Produktseiten und GS1 Digital Link"
+description: "Zutaten, Nährwerte, Zertifizierungen und Pflegehinweise für ein Produkt hinter einem QR-Code auf der Verpackung, mit GS1 Digital Link auf deiner eigenen Domain."
+icon: Package
+---
+
+Eine **Product**-Seite ist eine gehostete Seite für einen Code, der auf Verpackungen, Etiketten oder Anhängern gedruckt wird. Sie enthält, wofür auf der Verpackung kein Platz ist: die vollständige Zutatenliste, Allergene, eine Nährwerttabelle, Zertifizierungen sowie Pflege- und Recyclinghinweise. Wie bei jeder [gehosteten Seite](/docs/landing-pages) kannst du sie nach dem Druck ändern und jeden Scan sehen.
+
+## Produktseite erstellen [#create-a-product-page]
+
+1. Klicke auf **New code** und wähle **Product**, oder auf **New page** unter [Pages & forms](/dashboard?to=pages).
+2. Wähle eine Vorlage:
+   - **Food**: Zutaten, Allergene und eine Nährwerttabelle.
+   - **Wine & drinks**: Zutaten und Energie pro 100 ml, ein E-Label für eine Flasche.
+   - **Beauty & care**: die vollständige Zutatenliste, Anwendung, Warnhinweise.
+   - **Product passport**: Materialien, Herstellungsort, Pflege, Reparatur und Lebensende.
+3. Ersetze den Beispieltext, die Zahlen und das Foto durch die Angaben zu deinem Produkt und klicke dann auf **Publish**.
+
+## Der Block „Product details“ [#the-product-details-block]
+
+| Teil | Was angezeigt wird |
+| --- | --- |
+| Zertifizierungen und Labels | Kurze Labels wie „Bio-zertifiziert“ oder „Recycelbare Verpackung“. Der Editor schlägt gängige vor. Nenne nur Labels, die dein Produkt tatsächlich trägt. |
+| Zutaten oder Materialien | Reiner Text, Zeilenumbrüche bleiben erhalten |
+| Allergene | Die 14 Allergene, die Lebensmittelunternehmen in der EU und im Vereinigten Königreich angeben müssen, angezeigt als „Enthält: …“, plus ein Hinweis wie „Kann Spuren von Erdnüssen enthalten“ |
+| Nährwerte | Eine Tabelle: worauf sich die Werte beziehen („Pro 100 g“), dann jeder Nährstoff mit seiner Menge. Zeilen können eingerückt werden („davon Zucker“). Zeilen ohne Menge werden ausgeblendet. |
+| Weitere Informationen | Abschnitte, die sich per Tippen öffnen: Pflege, Recycling, Warnhinweise, Herkunft oder alles andere |
+| GTIN | Die Nummer unter dem Strichcode des Produkts (8, 12, 13 oder 14 Ziffern). QRdx prüft die Prüfziffer. Wird unter den Details angezeigt, sofern du es nicht ausschaltest. |
+
+Der Block **Details** (Bezeichnungen und Werte, als Liste oder Kacheln) passt zu den Fakten rund ums Produkt: Nettogewicht, Herkunft, Alkoholgehalt, Größe.
+
+<IfAvailable feature="customDomains" title="GS1 Digital Link">
+
+## GS1 Digital Link [#gs1-digital-link]
+
+[GS1 Digital Link](https://www.gs1.org/standards/gs1-digital-link) ist der GS1-Standard für QR-Codes auf Produkten: Der Code enthält eine Webadresse mit der GTIN des Produkts, etwa `https://go.yourbrand.com/01/09506000134352`. So kann derselbe Code deine Seite öffnen und die GTIN tragen, die ein Kassenscanner liest.
+
+Wenn der QR-Code einer Produktseite deine [eigene Domain](/docs/custom-domains) nutzt und die Seite eine GTIN hat, öffnet diese Adresse die Seite:
+
+- `https://<your domain>/01/<GTIN>` öffnet die Produktseite und zählt einen Scan ihres Codes, genau wie der Kurzlink des Codes. Auch die Code-Einstellungen (Passwort, Zeitplan, Scan-Limit, Pause) gelten.
+- Nach der GTIN können in dieser Reihenfolge eine Charge oder ein Los (`/10/<lot>`), eine Seriennummer (`/21/<serial>`) und eine Produktvariante für Verbraucher (`/22/<variant>`) folgen. Sie werden akzeptiert, und dieselbe Seite öffnet sich.
+- Eine GTIN mit falscher Prüfziffer oder Teile in der falschen Reihenfolge zeigen statt einer Seite „This product link isn't valid“ an.
+
+So nutzt du es:
+
+1. Verschiebe den Code der Produktseite auf deine eigene Domain (**Edit link** am Code).
+2. Gib die GTIN im Block **Product details** der Seite ein und veröffentliche sie. Der Block zeigt dann den GS1 Digital Link mit einer Kopieren-Schaltfläche.
+3. Erstelle den QR-Code für deine Verpackung aus diesem Link. Der Kurzlink des Codes funktioniert weiterhin.
+
+Eine GTIN öffnet pro Domain eine Produktseite. Wird sie bereits von einer anderen Seite mit einem Code auf derselben Domain verwendet, nennt dir das Veröffentlichen diese Seite, damit du eine der beiden ändern kannst.
+
+### Nur auf deiner eigenen Domain [#only-on-your-own-domain]
+
+Auf der gemeinsamen Adresse von QRdx (`qrdx.dev`) nutzen Produktseiten ihren normalen Kurzlink, und GTINs öffnen nie eine Seite. Jeder kann ein QRdx-Konto erstellen. Eine gemeinsame GTIN-Suche würde es daher einer Person erlauben, die Produktnummer einer fremden Marke für sich zu beanspruchen. Auf deiner eigenen Domain können nur die Seiten deines Workspace antworten.
+
+</IfAvailable>
+
+## Tarife [#plans]
+
+Produktseiten zählen als gehostete Seiten und unterliegen denselben [Tariflimits](/docs/plans-and-limits) wie jeder andere Seitentyp. GS1 Digital Link benötigt eine [eigene Domain](/docs/custom-domains), die in Pro und Business enthalten ist.

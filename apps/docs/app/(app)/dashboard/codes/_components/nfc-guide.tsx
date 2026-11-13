@@ -90,10 +90,7 @@ export function NfcGuide({
           <p className="text-xs">{t("theLinkNeedsBytesBytes", { bytes })}</p>
         </Section>
         <Section title={t("writeIt")}>
-          <p>
-            {t("openThisPageInChrome")} {businessCard ? t("card") : t("tag")}{" "}
-            {t("againstTheBackOfThe")}
-          </p>
+          <p>{businessCard ? t("writeItCard") : t("writeItTag")}</p>
         </Section>
         <Section
           title={businessCard ? t("printTheQrCodeOn") : t("addTheQrCode")}

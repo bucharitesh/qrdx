@@ -1,0 +1,88 @@
+---
+title: "Pusat bantuan"
+description: "Jawaban untuk membuat kode QR, kode dinamis, halaman, penagihan, dan akun Anda. Tanpa perlu kode."
+icon: LifeBuoy
+---
+
+import { HelpSearch, StillStuck } from "@/components/docs/help-home";
+
+<HelpSearch />
+
+## Pertanyaan umum [#common-questions]
+
+- [Buat kode QR pertama Anda](/docs/help/getting-started/first-qr-code)
+- [Statis atau dinamis, mana yang Anda perlukan?](/docs/help/getting-started/static-vs-dynamic)
+- [Ubah tujuan sebuah kode](/docs/help/dynamic-codes/change-the-link)
+- [Kode tidak bisa dipindai](/docs/help/troubleshooting/wont-scan)
+- [Unduh dan cetak kode QR](/docs/help/getting-started/download-and-print)
+- [Apa yang terjadi pada kode Anda jika Anda berhenti membayar](/docs/help/account-and-billing/never-hostage)
+- [Batalkan langganan Anda](/docs/help/account-and-billing/cancel)
+- [Pemindaian menampilkan halaman error](/docs/help/troubleshooting/error-pages)
+
+## Telusuri berdasarkan topik [#browse-by-topic]
+
+<Cards>
+  <Card
+    icon={<Rocket />}
+    href="/docs/help/getting-started/first-qr-code"
+    title="Memulai"
+    description="Buat, unduh, dan cetak kode pertama Anda. Statis atau dinamis."
+  />
+  <Card
+    icon={<Palette />}
+    href="/docs/help/designing/colors-and-contrast"
+    title="Desain"
+    description="Warna, logo, bingkai, dan seni, serta kode yang selalu bisa dipindai."
+  />
+  <Card
+    icon={<QrCode />}
+    href="/docs/help/dynamic-codes/create"
+    title="Kode dinamis"
+    description="Ubah tautan, lihat pemindaian, jeda, lindungi, dan arahkan kode."
+  />
+  <Card
+    icon={<PanelsTopLeft />}
+    href="/docs/help/pages-and-forms/create-a-page"
+    title="Halaman dan formulir"
+    description="Halaman seluler dan formulir, di-hosting oleh QRdx."
+  />
+  <Card
+    icon={<CreditCard />}
+    href="/docs/help/account-and-billing/plans"
+    title="Akun dan penagihan"
+    description="Paket, faktur, pembatalan, data Anda, dan akun Anda."
+  />
+  <Card
+    icon={<Users />}
+    href="/docs/help/teams/create-and-invite"
+    title="Workspace dan tim"
+    description="Buat workspace, undang orang, peran, dan kursi."
+  />
+  <IfAvailable path="/docs/help/domains/custom-domains">
+    <Card
+      icon={<Globe />}
+      href="/docs/help/domains/custom-domains"
+      title="Domain"
+      description="Tautan pendek pada domain milik Anda."
+    />
+  </IfAvailable>
+  <Card
+    icon={<TriangleAlert />}
+    href="/docs/help/troubleshooting/wont-scan"
+    title="Pemecahan masalah"
+    description="Kode yang tidak bisa dipindai, halaman yang salah, halaman error, dan email yang tidak masuk."
+  />
+  <Card
+    icon={<ShieldCheck />}
+    href="/docs/help/privacy-and-security/scan-data"
+    title="Privasi dan keamanan"
+    description="Apa yang dicatat oleh pemindaian, keamanan akun, dan pelaporan penyalahgunaan."
+  />
+</Cards>
+
+## Lainnya [#more]
+
+- [Yang baru dan yang akan datang](/docs/help/whats-new), serta [changelog](/changelogs) lengkap.
+- Sedang membangun sesuatu? Tab [Developer](/docs/developers) berisi REST API, webhook, MCP, dan CLI.
+
+<StillStuck />

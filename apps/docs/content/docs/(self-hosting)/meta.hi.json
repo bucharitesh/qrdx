@@ -1,0 +1,8 @@
+{
+  "$schema": "../../../.source/json-schema/docs.meta.json",
+  "title": "सेल्फ़-होस्टिंग",
+  "description": "QRdx को अपने सर्वर पर चलाएँ",
+  "icon": "Server",
+  "root": true,
+  "pages": ["../self-hosting"]
+}

@@ -1,0 +1,72 @@
+---
+title: "shadcn/ui रजिस्ट्री"
+description: "shadcn/ui प्रोजेक्ट्स के लिए आठ QR कोड कंपोनेंट, जो qrdx लाइब्रेरी पर बने हैं। एक ही कमांड से इंस्टॉल करें और कोड के मालिक बनें।"
+icon: Blocks
+---
+
+QRdx [`qrdx`](https://www.npmjs.com/package/qrdx) लाइब्रेरी पर बने QR कोड कंपोनेंट की एक [shadcn/ui](https://ui.shadcn.com) रजिस्ट्री पब्लिश करता है। shadcn CLI सोर्स कोड को आपके प्रोजेक्ट में कॉपी कर देता है, इसलिए कोड आपका अपना होता है और आप उसे बदल सकते हैं।
+
+<NpmStatus package="qrdx" />
+
+<PackageManagerTabs command="npx shadcn@latest add https://qrdx.dev/r/qr-code.json" />
+
+हर कंपोनेंट का अपना पेज है, जिसमें लाइव प्रीव्यू, सोर्स कोड, इंस्टॉलेशन के स्टेप, उदाहरण और API रेफ़रेंस मिलता है।
+
+[Playground में आज़माएँ](/playground?open=code&lang=shadcn): वहाँ कोई कोड स्टाइल करें, फिर उसे रजिस्ट्री के QR Code कंपोनेंट के लिए कॉपी करें।
+
+## कंपोनेंट [#components]
+
+<Cards>
+  <Card title="QR Code" href="/docs/components/qr-code" icon={<QrCode />}>
+    स्टाइल किया हुआ, एक्सेसिबल QR कोड, जिसमें डाउनलोड बटन, रंग, ग्रेडिएंट, पैटर्न, लोगो और फ़्रेम टेम्पलेट हैं।
+  </Card>
+  <Card title="QR Code Card" href="/docs/components/qr-code-card" icon={<Frame />}>
+    एक कार्ड, जिसमें "Scan me" फ़्रेम में कोड, एक टाइटल, एक विवरण और एक्शन के लिए जगह होती है।
+  </Card>
+  <Card title="QR Code Download" href="/docs/components/qr-code-download" icon={<Download />}>
+    एक मेन्यू, जो आपके चुने हुए साइज़ में PNG, SVG, JPG या PDF एक्सपोर्ट करता है, या इमेज कॉपी करता है।
+  </Card>
+  <Card title="QR Code Share Dialog" href="/docs/components/qr-code-share-dialog" icon={<Webhook />}>
+    एक डायलॉग, जिसमें किसी लिंक का कोड, कॉपी बटन, PNG डाउनलोड और नेटिव शेयर शीट होती है।
+  </Card>
+  <Card title="QR Code Generator" href="/docs/components/qr-code-generator" icon={<Sparkles />}>
+    एक टेक्स्ट इनपुट, जिसमें लाइव प्रीव्यू, स्टाइल प्रीसेट और डाउनलोड बटन हैं।
+  </Card>
+  <Card title="QR Code Scanner" href="/docs/components/qr-code-scanner" icon={<Scan />}>
+    एक ड्रॉप ज़ोन, जो ब्राउज़र में किसी इमेज से QR कोड पढ़ता है।
+  </Card>
+  <Card title="Wi-Fi QR Code" href="/docs/components/wifi-qr-code" icon={<Globe />}>
+    एक कोड, जो Wi-Fi नेटवर्क से जोड़ता है, और जिसमें एस्केप किया हुआ पेलोड बनाने वाला बिल्डर है।
+  </Card>
+  <Card title="vCard QR Code" href="/docs/components/vcard-qr-code" icon={<Users />}>
+    एक कोड, जो कॉन्टैक्ट कार्ड सेव करता है, और जिसमें vCard 3.0 बिल्डर है।
+  </Card>
+</Cards>
+
+## क्या इंस्टॉल होता है [#what-gets-installed]
+
+हर कंपोनेंट `components/` में एक अकेली फ़ाइल होता है। CLI `qrdx` भी इंस्टॉल करता है (साथ में `lucide-react`, जिसे कुछ कंपोनेंट आइकन के लिए इस्तेमाल करते हैं) और वे shadcn/ui कंपोनेंट भी जोड़ देता है जिन पर यह बना है, जैसे `button`, `card`, `dialog`, `dropdown-menu` या `input`।
+
+पूरा इंडेक्स [`https://qrdx.dev/r/registry.json`](https://qrdx.dev/r/registry.json) पर है।
+
+## रजिस्ट्री नेमस्पेस का इस्तेमाल [#using-the-registry-namespace]
+
+छोटे नाम से इंस्टॉल करने के लिए, रजिस्ट्री को अपनी `components.json` में जोड़ें:
+
+```json
+{
+  "registries": {
+    "@qrdx": "https://qrdx.dev/r/{name}.json"
+  }
+}
+```
+
+फिर नाम से एक या कई कंपोनेंट जोड़ें:
+
+<PackageManagerTabs command="npx shadcn@latest add @qrdx/qr-code @qrdx/qr-code-download @qrdx/qr-code-share-dialog" />
+
+## स्टाइलिंग [#styling]
+
+कंपोनेंट Tailwind क्लास और shadcn/ui के स्टैंडर्ड थीम टोकन (`bg-card`, `border`, `text-muted-foreground`, `ring-ring`) इस्तेमाल करते हैं, और आपके अपने Button, Card, Dialog और Input पर चलते हैं, इसलिए वे आपकी थीम और डार्क मोड को फ़ॉलो करते हैं। QR कोड में डिफ़ॉल्ट रूप से हल्का बैकग्राउंड रहता है, क्योंकि हल्की टाइल पर गहरे मॉड्यूल हर रीडर से स्कैन हो जाते हैं।
+
+PDF डाउनलोड के लिए वैकल्पिक `jspdf` पैकेज चाहिए (`npm install jspdf`)।

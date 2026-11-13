@@ -1,0 +1,88 @@
+---
+title: "Centre d'aide"
+description: "Des réponses pour créer des QR codes, des QR codes dynamiques, des pages, gérer la facturation et votre compte. Aucun code requis."
+icon: LifeBuoy
+---
+
+import { HelpSearch, StillStuck } from "@/components/docs/help-home";
+
+<HelpSearch />
+
+## Questions fréquentes [#common-questions]
+
+- [Créer votre premier QR code](/docs/help/getting-started/first-qr-code)
+- [Statique ou dynamique : lequel vous faut-il ?](/docs/help/getting-started/static-vs-dynamic)
+- [Modifier la destination d'un code](/docs/help/dynamic-codes/change-the-link)
+- [Un code ne se scanne pas](/docs/help/troubleshooting/wont-scan)
+- [Télécharger et imprimer un QR code](/docs/help/getting-started/download-and-print)
+- [Ce qu'il advient de vos codes si vous cessez de payer](/docs/help/account-and-billing/never-hostage)
+- [Résilier votre abonnement](/docs/help/account-and-billing/cancel)
+- [Un scan affiche une page d'erreur](/docs/help/troubleshooting/error-pages)
+
+## Parcourir par thème [#browse-by-topic]
+
+<Cards>
+  <Card
+    icon={<Rocket />}
+    href="/docs/help/getting-started/first-qr-code"
+    title="Premiers pas"
+    description="Créez, téléchargez et imprimez votre premier code. Statique ou dynamique."
+  />
+  <Card
+    icon={<Palette />}
+    href="/docs/help/designing/colors-and-contrast"
+    title="Personnalisation"
+    description="Couleurs, logos, cadres et visuels, et des codes qui se scannent toujours."
+  />
+  <Card
+    icon={<QrCode />}
+    href="/docs/help/dynamic-codes/create"
+    title="QR codes dynamiques"
+    description="Modifiez le lien, consultez les scans, mettez en pause, protégez et redirigez vos codes."
+  />
+  <Card
+    icon={<PanelsTopLeft />}
+    href="/docs/help/pages-and-forms/create-a-page"
+    title="Pages et formulaires"
+    description="Pages mobiles et formulaires, hébergés par QRdx."
+  />
+  <Card
+    icon={<CreditCard />}
+    href="/docs/help/account-and-billing/plans"
+    title="Compte et facturation"
+    description="Forfaits, factures, résiliation, vos données et votre compte."
+  />
+  <Card
+    icon={<Users />}
+    href="/docs/help/teams/create-and-invite"
+    title="Espaces de travail et équipes"
+    description="Créez des espaces de travail, invitez des personnes, gérez les rôles et les places."
+  />
+  <IfAvailable path="/docs/help/domains/custom-domains">
+    <Card
+      icon={<Globe />}
+      href="/docs/help/domains/custom-domains"
+      title="Domaines"
+      description="Des liens courts sur un domaine qui vous appartient."
+    />
+  </IfAvailable>
+  <Card
+    icon={<TriangleAlert />}
+    href="/docs/help/troubleshooting/wont-scan"
+    title="Dépannage"
+    description="Codes qui ne se scannent pas, mauvaises pages, pages d'erreur et e-mails manquants."
+  />
+  <Card
+    icon={<ShieldCheck />}
+    href="/docs/help/privacy-and-security/scan-data"
+    title="Confidentialité et sécurité"
+    description="Ce qu'enregistre un scan, la sécurité du compte et le signalement d'abus."
+  />
+</Cards>
+
+## Pour aller plus loin [#more]
+
+- [Nouveautés et prochaines étapes](/docs/help/whats-new), ainsi que le [journal des modifications](/changelogs) complet.
+- Vous développez quelque chose ? L'onglet [Développeurs](/docs/developers) présente la REST API, les webhooks, MCP et la CLI.
+
+<StillStuck />

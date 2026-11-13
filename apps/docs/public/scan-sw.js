@@ -1,9 +1,22 @@
-// QRdx scanner service worker. Registered with scope "/scan" by the scanner
-// page, so it only ever controls /scan. It keeps the scanner's page shell and
-// static assets for offline use. API responses are never cached.
+// QRdx scanner service worker. The scanner page registers it once per
+// language, scoped to that language's scanner (/scan, /hi/scan …: see
+// lib/scanner-app.ts), so it only ever controls the scanner. It keeps that
+// page and its static assets for offline use, and receives images shared to
+// the installed app. API responses are never cached, and no other page of
+// the site (the dashboard, the editor, the docs) is ever touched.
 
-const CACHE = "qrdx-scan-v1";
-const SHELL = "/scan";
+// Bump to drop every cached page and asset on the next visit.
+const VERSION = "v2";
+// "/scan" or "/hi/scan": the scope this copy was registered with.
+const SHELL = new URL(self.registration.scope).pathname.replace(/\/$/, "");
+const CACHE = `qrdx-scan-${VERSION}:${SHELL}`;
+// Shared images wait here until the page reads (and deletes) them. Must
+// match SHARE_CACHE, SHARE_FIELD and SHARED_HASH in lib/scanner-app.ts.
+const SHARE_CACHE = "qrdx-scan-shared";
+const SHARE_FIELD = "images";
+const SHARE_PATH = `${SHELL}/share`;
+const SHARED_URL = `${SHELL}#shared`;
+const MAX_SHARED = 20;
 const MAX_ASSETS = 120;
 // The WebAssembly decoder used by browsers without a built-in BarcodeDetector.
 const DECODER_PREFIX = "https://fastly.jsdelivr.net/npm/zxing-wasm@";
@@ -13,11 +26,20 @@ const sameOrigin = (url) => url.origin === self.location.origin;
 const isImmutable = (url) =>
   (sameOrigin(url) && url.pathname.startsWith("/_next/static/")) ||
   url.href.startsWith(DECODER_PREFIX);
+// Icons and manifests: what the installed app shows while offline.
 const isIcon = (url) =>
   sameOrigin(url) &&
-  /^\/(favicon[^/]*|site\.webmanifest|web-app-manifest-[^/]+\.png|apple-touch-icon\.png)$/.test(
-    url.pathname,
-  );
+  (url.pathname === `${SHELL}/manifest.webmanifest` ||
+    url.pathname.startsWith("/app-icons/scanner/") ||
+    /^\/(favicon[^/]*|site\.webmanifest|web-app-manifest-[^/]+\.png|apple-touch-icon\.png)$/.test(
+      url.pathname,
+    ));
+
+/** This scope's caches from earlier versions; the English scope also owns v1. */
+const isOldCache = (name) =>
+  name !== CACHE &&
+  ((name.startsWith("qrdx-scan-v") && name.endsWith(`:${SHELL}`)) ||
+    (SHELL === "/scan" && name === "qrdx-scan-v1"));
 
 /** Same-origin static asset URLs referenced by the shell HTML. */
 function assetsIn(html) {
@@ -62,6 +84,39 @@ async function cacheShell(response) {
   await trim(cache);
 }
 
+/**
+ * The share target: keeps the shared images for the page, then opens the
+ * scanner. Nothing is uploaded and nothing goes in the URL.
+ */
+async function receiveShare(request) {
+  try {
+    const form = await request.formData();
+    const images = form
+      .getAll(SHARE_FIELD)
+      .filter(
+        (file) =>
+          typeof file === "object" &&
+          typeof file.type === "string" &&
+          file.type.startsWith("image/"),
+      )
+      .slice(0, MAX_SHARED);
+    await caches.delete(SHARE_CACHE);
+    const cache = await caches.open(SHARE_CACHE);
+    const stamp = Date.now();
+    await Promise.all(
+      images.map((image, index) =>
+        cache.put(
+          `${SHELL}/shared/${stamp}-${index}`,
+          new Response(image, { headers: { "Content-Type": image.type } }),
+        ),
+      ),
+    );
+  } catch {
+    // The page says the image didn't arrive and offers the picker.
+  }
+  return Response.redirect(new URL(SHARED_URL, self.location.origin).href, 303);
+}
+
 self.addEventListener("install", (event) => {
   event.waitUntil(
     fetch(SHELL, { cache: "reload" })
@@ -77,9 +132,7 @@ self.addEventListener("activate", (event) => {
       .keys()
       .then((names) =>
         Promise.all(
-          names
-            .filter((name) => name.startsWith("qrdx-scan-") && name !== CACHE)
-            .map((name) => caches.delete(name)),
+          names.filter(isOldCache).map((name) => caches.delete(name)),
         ),
       )
       .then(() => self.clients.claim()),
@@ -88,13 +141,19 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("fetch", (event) => {
   const { request } = event;
-  if (request.method !== "GET") return;
   const url = new URL(request.url);
+
+  if (request.method === "POST" && sameOrigin(url)) {
+    if (url.pathname === SHARE_PATH) event.respondWith(receiveShare(request));
+    return;
+  }
+  if (request.method !== "GET") return;
 
   // API responses (link checks) always go to the network and are never cached.
   if (sameOrigin(url) && url.pathname.startsWith("/api/")) return;
 
-  // The scanner page: network first, the cached shell when offline.
+  // The scanner page: network first (so an update shows on the next
+  // launch), the cached copy when offline.
   if (
     request.mode === "navigate" &&
     sameOrigin(url) &&
@@ -108,7 +167,11 @@ self.addEventListener("fetch", (event) => {
           }
           return response;
         })
-        .catch(async () => (await caches.match(SHELL)) ?? Response.error()),
+        .catch(
+          async () =>
+            (await caches.match(SHELL, { cacheName: CACHE })) ??
+            Response.error(),
+        ),
     );
     return;
   }
@@ -126,7 +189,11 @@ self.addEventListener("fetch", (event) => {
           }
           return response;
         })
-        .catch(async () => (await caches.match(request)) ?? Response.error()),
+        .catch(
+          async () =>
+            (await caches.match(request, { cacheName: CACHE })) ??
+            Response.error(),
+        ),
     );
     return;
   }

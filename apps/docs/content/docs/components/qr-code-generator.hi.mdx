@@ -1,0 +1,64 @@
+---
+title: "QR Code Generator"
+description: "लाइव QR कोड प्रीव्यू, स्टाइल प्रीसेट और डाउनलोड बटन वाला एक टेक्स्ट इनपुट।"
+icon: Sparkles
+---
+
+<ComponentLinks name="qr-code-generator" />
+
+<ComponentPreview name="qr-code-generator-demo" />
+
+## इंस्टॉलेशन [#installation]
+
+<InstallationTabs name="qr-code-generator" />
+
+## उपयोग [#usage]
+
+```tsx
+import { QrCodeGenerator } from "@/components/qr-code-generator";
+```
+
+```tsx
+<QrCodeGenerator defaultValue="https://example.com" />
+```
+
+आप जैसे-जैसे टाइप करते हैं, प्रीव्यू अपडेट होता रहता है। हर प्रीसेट बटन अपनी स्टाइल का एक छोटा सैंपल दिखाता है, और डाउनलोड चुने गए प्रीसेट के साथ 1024 पिक्सल पर होते हैं।
+
+## उदाहरण [#examples]
+
+### कस्टम प्रीसेट [#custom-presets]
+
+बिल्ट-इन प्रीसेट की जगह अपने खुद के प्रीसेट इस्तेमाल करें। एक प्रीसेट में `id`, `name` और `style` होता है, और `style` में कोई भी qrdx ऑप्शन हो सकता है, जैसे ग्रेडिएंट, लोगो और एरर करेक्शन `level`।
+
+<ComponentPreview name="qr-code-generator-presets" />
+
+बिल्ट-इन प्रीसेट `QR_CODE_PRESETS` के नाम से एक्सपोर्ट किए गए हैं, इसलिए आप इन्हें बढ़ा सकते हैं:
+
+```tsx
+import { QR_CODE_PRESETS, QrCodeGenerator } from "@/components/qr-code-generator";
+
+<QrCodeGenerator
+  presets={[
+    ...QR_CODE_PRESETS,
+    { id: "brand", name: "Brand", style: { fgColor: "#155DFC" } },
+  ]}
+/>
+```
+
+### नतीजा सेव करना [#saving-the-result]
+
+`onChange` हर बदलाव पर टेक्स्ट और चुना गया प्रीसेट बताता है, जैसे यूज़र की पसंद को स्टोर करने के लिए:
+
+```tsx
+<QrCodeGenerator
+  onChange={({ value, preset }) => saveDraft({ value, style: preset.style })}
+/>
+```
+
+## API रेफ़रेंस [#api-reference]
+
+<auto-type-table path="../../../registry/qrdx/qr-code-generator.tsx" type="{ [K in keyof QrCodeGeneratorProps as K extends keyof ComponentProps<'div'> ? never : K]: QrCodeGeneratorProps[K] }" />
+
+### QrCodePreset [#qrcodepreset]
+
+<auto-type-table path="../../../registry/qrdx/qr-code-generator.tsx" name="QrCodePreset" />

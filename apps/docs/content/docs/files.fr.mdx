@@ -1,0 +1,106 @@
+---
+title: "Fichiers"
+description: "Importez des PDF, des images, de l'audio et de la vidéo pour vos pages hébergées, et configurez le stockage des fichiers lorsque vous auto-hébergez QRdx."
+icon: FolderOpen
+---
+
+Les pages hébergées peuvent afficher des fichiers que vous importez dans QRdx : un menu ou une brochure en PDF, une galerie de photos, de la musique ou un podcast, ou une vidéo. Les fichiers importés se trouvent dans **Tableau de bord → Fichiers**, appartiennent à l'espace de travail dans lequel vous les importez, et chacun possède un lien stable qui continue de fonctionner quand vous remplacez le fichier.
+
+## Ce que vous pouvez importer [#what-you-can-upload]
+
+| Type | Formats |
+| --- | --- |
+| PDF | PDF |
+| Images | JPEG, PNG, WebP, GIF, AVIF |
+| Audio | MP3, M4A, AAC, Ogg, WAV |
+| Vidéo | MP4, WebM, MOV |
+
+Le format MP4 avec vidéo H.264 se lit dans tous les navigateurs. Les fichiers MOV issus de téléphones se lisent généralement aussi, mais convertissez-les en MP4 si un navigateur ne parvient pas à en lire un. Les fichiers SVG, HTML, les archives et les documents bureautiques ne peuvent pas être importés, afin que rien de ce qui est servi depuis le stockage ne puisse exécuter de code dans le navigateur d'un visiteur.
+
+Chaque import est vérifié avant d'être utilisé : sa taille doit correspondre à celle annoncée, et ses premiers octets doivent réellement correspondre à un fichier de son type (une page HTML renommée en `.pdf` est rejetée). Les imports rejetés sont supprimés du stockage et affichés comme **Bloqués**.
+
+## Limites par offre [#limits-per-plan]
+
+| Offre | Stockage par espace de travail | Plus gros fichier |
+| --- | --- | --- |
+| Gratuit | 50 Mo | 10 Mo |
+| Pro | 5 Go | 100 Mo |
+| Business | 50 Go | 250 Mo |
+
+Un espace de travail bénéficie de la meilleure offre parmi ses propriétaires. Les limites ne font qu'empêcher les nouveaux imports : après un passage à une offre inférieure, ou lorsqu'un espace de travail dépasse son stockage, chaque fichier déjà importé continue d'être servi sur toutes les pages qui l'utilisent. Supprimez les fichiers dont vous n'avez plus besoin (ou passez à une offre supérieure) pour en importer de nouveaux.
+
+## Utiliser des fichiers dans une page [#use-files-on-a-page]
+
+Cinq blocs affichent des fichiers. Chacun peut utiliser un fichier importé ou un lien vers un fichier hébergé ailleurs :
+
+- **PDF** affiche le document directement dans la page sur tablette et ordinateur, avec les boutons **Ouvrir le PDF** (visionneuse plein écran sur téléphone) et **Télécharger**.
+- **Galerie** affiche les photos dans une grille de 1 à 3 colonnes. Toucher une photo l'ouvre en plein écran ; faites glisser ou utilisez les flèches du clavier pour parcourir.
+- **Audio** lit des pistes avec pochette et liste de lecture ; la piste suivante démarre à la fin de la précédente. Un bouton de téléchargement est facultatif.
+- **Fichier vidéo** lit un fichier MP4 ou WebM que vous importez, éventuellement en boucle et sans son comme un GIF. Pour YouTube, Vimeo ou Loom, utilisez plutôt le bloc **Vidéo** : il intègre la vidéo sans rien charger depuis YouTube tant que personne n'appuie sur lecture.
+- **Téléchargements** liste des fichiers que les visiteurs peuvent enregistrer, chacun avec son propre libellé.
+
+Les types de page **PDF**, **Images**, **MP3 / Audio** et **Vidéo** dans **Nouveau code** démarrent avec ces blocs déjà en place.
+
+Dans un bloc, choisissez **Importer** pour ajouter un fichier depuis votre appareil, **Depuis vos fichiers** pour réutiliser un fichier déjà importé, ou collez un lien.
+
+## Remplacer ou supprimer un fichier [#replace-or-delete-a-file]
+
+Ouvrez **Tableau de bord → Fichiers** et utilisez le menu à côté d'un fichier :
+
+- **Copier le lien** copie le lien propre au fichier (`https://qrdx.dev/api/files/<id>`). Vous pouvez aussi l'utiliser comme destination d'un QR code dynamique.
+- **Remplacer le fichier** importe un nouveau contenu derrière le même lien, par exemple le menu de la saison suivante. Les pages et les codes qui utilisent le fichier affichent la nouvelle version en moins d'une minute. Un fichier ne peut être remplacé que par un fichier du même type (un PDF par un PDF).
+- **Supprimer** supprime définitivement le fichier. Si des pages ou des codes l'utilisent encore, QRdx les liste d'abord ; après la suppression, ces pages affichent « Fichier indisponible » à l'emplacement du fichier.
+
+Les membres peuvent remplacer et supprimer les fichiers qu'ils ont importés ; les propriétaires et les administrateurs peuvent gérer tous les fichiers de l'espace de travail.
+
+## Fichiers signalés [#reported-files]
+
+Chaque page hébergée comporte un lien **Signaler un abus**. Si un fichier enfreint les règles ou si un titulaire de droits d'auteur demande son retrait, QRdx peut le bloquer. Un fichier bloqué cesse d'être servi sur toutes les pages et via son lien QRdx en moins d'une minute (les pages affichent « Fichier indisponible »), et ses copies identiques (jusqu'à 25 Mo) ne peuvent plus être importées.
+
+## Configurer le stockage (auto-hébergement) [#set-up-storage-self-hosting]
+
+L'import de fichiers utilise [Cloudflare R2](https://developers.cloudflare.com/r2/). Sans lui, la page Fichiers affiche « Stockage non configuré sur ce serveur », l'API d'import répond `503`, et les blocs peuvent toujours utiliser des liens vers des fichiers hébergés ailleurs.
+
+1. Dans le tableau de bord Cloudflare, ouvrez **R2** et créez un bucket, par exemple `qrdx-files`.
+2. Sous **R2 → Manage API tokens**, créez un jeton avec **Object Read & Write** sur ce bucket.
+3. Définissez ces variables d'environnement, puis redémarrez :
+
+   ```bash
+   R2_ACCOUNT_ID=your-cloudflare-account-id
+   R2_ACCESS_KEY_ID=token-access-key-id
+   R2_SECRET_ACCESS_KEY=token-secret-access-key
+   R2_BUCKET=qrdx-files
+   # Optional: serve files from a public bucket URL or custom domain
+   R2_PUBLIC_BASE_URL=https://files.example.com
+   ```
+
+4. Ajoutez une politique CORS au bucket (**Settings → CORS policy**). Les navigateurs importent directement vers R2, donc le bucket doit accepter les requêtes `PUT` avec un en-tête `Content-Type` depuis l'origine de votre application :
+
+   ```json
+   [
+     {
+       "AllowedOrigins": ["https://qrdx.example.com", "http://localhost:3000"],
+       "AllowedMethods": ["PUT", "GET", "HEAD"],
+       "AllowedHeaders": ["Content-Type"],
+       "ExposeHeaders": ["ETag"],
+       "MaxAgeSeconds": 3600
+     }
+   ]
+   ```
+
+   Remplacez `https://qrdx.example.com` par l'origine que vous utilisez pour ouvrir votre tableau de bord (schéma et hôte, sans barre oblique finale). Gardez `http://localhost:3000` uniquement si vous importez depuis un serveur de développement local.
+
+### Fichiers publics ou liens présignés [#public-files-or-presigned-links]
+
+Les visiteurs ouvrent toujours les fichiers via `/api/files/<id>`, qui redirige vers l'objet stocké :
+
+- Si `R2_PUBLIC_BASE_URL` est défini (un domaine personnalisé relié au bucket, ou son URL `r2.dev`, que Cloudflare limite en débit et recommande uniquement pour les tests), la redirection mène vers l'URL publique. Les clés d'objet contiennent un identifiant aléatoire, donc les fichiers ne peuvent être ni listés ni devinés.
+- Sinon, le bucket reste privé et chaque redirection est un lien présigné qui expire au bout d'une heure.
+
+Dans les deux cas, un fichier remplacé, supprimé ou bloqué cesse d'être servi via son lien QRdx en moins d'une minute. Un fichier bloqué quitte aussi immédiatement son URL publique : son objet est déplacé vers une clé `quarantine/` comportant une partie aléatoire (conservé pour qu'un administrateur puisse le restaurer), et son lien QRdx répond `410 Gone`.
+
+Les navigateurs importent vers une clé `staging/`. Une fois l'import vérifié, QRdx copie exactement la version vérifiée vers la clé propre du fichier, de sorte qu'un lien d'import encore valide ne puisse pas remplacer un fichier vérifié.
+
+<Callout type="info">
+  Un import qui ne se termine jamais cesse de compter dans le stockage au bout de deux heures et est nettoyé la prochaine fois que quelqu'un importe un fichier dans cet espace de travail. Ajoutez au bucket une règle de cycle de vie des objets (**Settings → Object lifecycle rules**) qui supprime au bout d'un jour les objets ayant le préfixe `staging/`, afin que les restes des imports abandonnés disparaissent aussi.
+</Callout>

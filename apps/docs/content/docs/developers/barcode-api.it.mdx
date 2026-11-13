@@ -1,0 +1,163 @@
+---
+title: "Barcode API"
+description: "Crea immagini di codici a barre EAN, UPC, Code 128, Data Matrix e altri da un URL, senza chiave API, e conserva i codici a barre in un workspace con la REST API."
+icon: Barcode
+---
+
+`GET https://api.qrdx.dev/v1/barcode` restituisce l'immagine di un codice a barre. Tutto sta nella query string, quindi l'URL è l'immagine: puoi inserirlo in un tag `<img>`, in un feed di prodotti o in un modello di etichetta. Disegna gli stessi formati {facts.barcodeFormats} del [generatore di codici a barre](/barcode-generator), con le stesse regole, e restituisce lo stesso SVG.
+
+```html
+<img
+  src="https://api.qrdx.dev/v1/barcode?format=ean13&data=590123412345"
+  alt="EAN-13 barcode 5901234123457"
+/>
+```
+
+A quel numero manca una cifra, quindi viene aggiunta la cifra di controllo (7). Se invii tutte e 13 le cifre, la cifra di controllo viene verificata: se è sbagliata ottieni `400` con l'indicazione di quale dovrebbe essere.
+
+Non servono né un account né una chiave API. Per conservare i codici a barre nel tuo workspace e modificarli in seguito, usa i [codici a barre salvati](#saved-barcodes).
+
+## Esempi [#examples]
+
+Un PNG a 3 pixel per modulo (metti l'URL tra virgolette così la shell mantiene la `&`):
+
+```bash
+curl -o box.png "https://api.qrdx.dev/v1/barcode?format=ean13&data=5901234123457&type=png&scale=3"
+```
+
+Un PDF vettoriale di un'etichetta logistica GS1-128, con le parentesi attorno a ogni Application Identifier:
+
+```bash
+curl -o pallet.pdf "https://api.qrdx.dev/v1/barcode?format=gs1-128&type=pdf&data=(01)09501101530003(17)261231(10)AB-123"
+```
+
+Codifica i valori che contengono `&`, `#`, `+` o spazi, ad esempio con `encodeURIComponent` in JavaScript.
+
+Un'etichetta da scaffale Code 128 in blu scuro, senza il testo sotto le barre, ruotata di 90°:
+
+```txt
+https://api.qrdx.dev/v1/barcode?format=code128&data=SHELF-A12&fg=1e3a8a&text=false&rotate=90
+```
+
+Un Data Matrix con un margine più ampio:
+
+```txt
+https://api.qrdx.dev/v1/barcode?format=datamatrix&data=SN-0042-7781&quietZone=4
+```
+
+## Parametri [#parameters]
+
+| Parametro | Predefinito | Descrizione |
+| --- | --- | --- |
+| `format` | obbligatorio | Il tipo di codice a barre; vedi [Formati](#formats). Maiuscole e trattini non contano: funziona anche `EAN-13` |
+| `data` | obbligatorio | Il numero o il testo da codificare, fino a 1.000 caratteri (meno per la maggior parte dei formati lineari) |
+| `type` | `svg` | `svg`, `png`, `jpg`, `webp`, `avif`, `pdf` o `eps` |
+| `scale` | `4` | Pixel per modulo in PNG, JPG, WebP e AVIF, da `1` a `10` |
+| `height` | dipende dal formato | Altezza delle barre dei codici a barre lineari in millimetri alla dimensione vettoriale, da `5` a `60` (23 per EAN-13) |
+| `quietZone` | il minimo del formato | Margine vuoto in moduli: su ogni lato nei codici a barre lineari (da `0` a `20`), tutto intorno nei codici 2D (da `0` a `10`) |
+| `text` | `true` | Stampa le cifre o il testo sotto i codici a barre lineari |
+| `fg` | `000000` | Barre e testo, in esadecimale |
+| `bg` | `ffffff` | Sfondo, in esadecimale |
+| `rotate` | `0` | Rotazione in senso orario: `0`, `90`, `180` o `270` |
+
+Scrivi i colori senza il `#`, oppure codificalo come `%23`.
+
+## Formati [#formats]
+
+| `format` | Codice a barre | Accetta |
+| --- | --- | --- |
+| `ean13` | EAN-13 | 12 cifre (cifra di controllo aggiunta) o 13 (verificata) |
+| `ean8` | EAN-8 | 7 cifre o 8 |
+| `upca` | UPC-A | 11 cifre o 12 |
+| `upce` | UPC-E | Da 6 a 8 cifre, oppure un UPC-A di 12 cifre che si può abbreviare |
+| `itf14` | ITF-14 | 13 cifre o 14 |
+| `gs1-128` | GS1-128 | Application Identifier tra parentesi con i relativi valori; cifre di controllo di GTIN e SSCC aggiunte o verificate; fino a 48 caratteri di dati |
+| `code128` | Code 128 | Fino a 80 caratteri ASCII stampabili |
+| `code39` | Code 39 | Fino a 40 maiuscole, cifre, spazi e `- . $ / + %` |
+| `datamatrix` | Data Matrix | Qualsiasi testo fino a 1.000 caratteri |
+| `pdf417` | PDF417 | Qualsiasi testo fino a 1.000 caratteri |
+| `aztec` | Aztec | Qualsiasi testo fino a 1.000 caratteri |
+
+I numeri retail (EAN, UPC, ITF-14, il GTIN di GS1-128) vengono concessi in licenza alle aziende da GS1. L'API disegna qualsiasi numero valido; non li emette né li registra.
+
+## Dimensioni [#sizes]
+
+PNG, JPG, WebP e AVIF hanno `scale` pixel per modulo, cioè la larghezza della barra più stretta. Una cella 2D è larga due moduli.
+
+SVG, PDF e EPS sono vettoriali a un punto per modulo (0,353 mm), quindi un EAN-13 con i valori predefiniti viene stampato a circa il 107% della sua dimensione nominale. Scala i file vettoriali nel tuo layout; per i codici a barre retail, resta tra l'80% e il 200% e non tagliare l'altezza delle barre.
+
+## Risposte [#responses]
+
+Una richiesta riuscita restituisce il file con:
+
+- `Content-Type` del tipo di file. EPS arriva come download (`Content-Disposition: attachment`); gli altri si aprono inline con un nome file come `ean13-5901234123457.png`
+- `Cache-Control: public, max-age=31536000, immutable`: la stessa query restituisce sempre gli stessi byte
+- `Access-Control-Allow-Origin: *`, così puoi usare `fetch` da qualsiasi sito web
+
+Un parametro mancante o non valido, o un valore che il formato non può contenere, restituisce `400` e indica il problema:
+
+```json
+{
+  "code": "VALIDATION_ERROR",
+  "message": "Invalid query parameters",
+  "data": {
+    "details": [
+      {
+        "param": "data",
+        "message": "EAN-13: The check digit should be 7, not 8. Check the number, or leave the last digit off and it's worked out for you."
+      }
+    ]
+  },
+  "status": 400
+}
+```
+
+## Tieni il valore fuori dall'URL [#keep-the-value-out-of-the-url]
+
+`POST https://api.qrdx.dev/v1/barcode` accetta gli stessi campi in JSON e restituisce lo stesso file, senza cache. Usalo quando il valore non deve finire nei log, nella cronologia o nelle cache come può succedere con un URL:
+
+```bash
+curl -o label.png https://api.qrdx.dev/v1/barcode \
+  -H "Content-Type: application/json" \
+  -d '{"format":"datamatrix","data":"Internal note 42","type":"png"}'
+```
+
+In JSON, `text` è un booleano e `scale`, `height`, `quietZone` e `rotate` sono numeri.
+
+## Codici a barre salvati [#saved-barcodes]
+
+Con una [chiave API](/docs/developers/api-keys), la REST API conserva i codici a barre nel workspace della chiave, dove compaiono sotto **Barcodes** nella dashboard. Gli scope sono gli stessi dei codici: `codes:read` per elencare e scaricare, `codes:write` per modificare.
+
+```bash
+curl https://api.qrdx.dev/v1/barcodes \
+  -H "Authorization: Bearer $QRDX_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"format":"ean13","value":"590123412345","title":"Spring box"}'
+```
+
+| Endpoint | Cosa fa |
+| --- | --- |
+| [`GET /v1/barcodes`](/docs/developers/api/list-barcodes) | Li elenca, dal più recentemente modificato; filtra con `q`, `format`, `folderId`, `status=trash` |
+| [`POST /v1/barcodes`](/docs/developers/api/create-barcode) | Ne salva uno. `options` accetta `foreground`, `background`, `showText`, `barHeightMm`, `quietZone`, `scale` e `rotation` |
+| [`GET /v1/barcodes/{id}`](/docs/developers/api/get-barcode) | Un codice a barre |
+| [`PATCH /v1/barcodes/{id}`](/docs/developers/api/update-barcode) | Ne modifica titolo, formato, valore, opzioni o cartella |
+| [`DELETE /v1/barcodes/{id}`](/docs/developers/api/delete-barcode) | Lo sposta nel cestino; `?permanent=true` lo elimina definitivamente |
+| [`GET /v1/barcodes/{id}/image`](/docs/developers/api/get-saved-barcode-image) | Il file, disegnato come salvato: `type` e `scale` come sopra |
+
+Ogni codice a barre salvato ha un `imageUrl`: la stessa immagine di `GET /v1/barcode`, che chiunque abbia il link può caricare. L'endpoint `/image` è privato e richiede la chiave.
+
+Tutti i piani permettono di salvare codici a barre: fino a 1.000 con Gratuito, 10.000 con Pro e 100.000 con Business, cestino escluso. Queste richieste contano per la quota giornaliera di API del workspace e inviano gli header `X-RateLimit-*`, come la [REST API](/docs/developers/rest-api).
+
+## MCP [#mcp]
+
+Il [server MCP](/docs/developers/mcp) offre `generate_barcode`, che verifica il valore e restituisce un PNG con gli URL delle immagini, e `save_barcode`, che salva nel workspace della chiave API usata dalla connessione.
+
+## Limiti [#limits]
+
+- **Limite di richieste:** 300 richieste al minuto per indirizzo IP per `GET` e `POST /v1/barcode`, come per l'[Image API dei QR code](/docs/developers/image-api). Oltre il limite ricevi `429` con un header `Retry-After`. I codici a barre salvati seguono i limiti al minuto e la quota giornaliera della REST API.
+- **Dimensione dell'immagine:** le immagini raster hanno al massimo 6.000 pixel per lato. Abbassa `scale` per i valori lunghi.
+- **Nessun controllo della scansione qui.** Il [generatore di codici a barre](/barcode-generator) decodifica ciò che disegna prima del download; l'API disegna ciò che chiedi. Stampa una prova e scansionala con i lettori che dovranno leggerla.
+
+## Self-hosting [#self-hosting]
+
+Gli endpoint fanno parte dell'app web QRdx, quindi un'istanza [self-hosted](/docs/self-hosting) li serve su `/api/v1/barcode` e `/api/v1/barcodes` nel tuo dominio.

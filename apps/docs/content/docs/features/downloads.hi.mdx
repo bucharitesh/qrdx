@@ -1,0 +1,234 @@
+---
+title: "डाउनलोड"
+description: "QR कोड को PNG, JPG, WebP, SVG, PDF या वेक्टर EPS में एक्सपोर्ट करें, उन्हें क्लिपबोर्ड पर कॉपी करें या data URL पाएँ।"
+icon: Download
+---
+
+QR कोड को PNG, JPG, WebP, SVG, PDF या EPS में एक्सपोर्ट करें।
+
+## क्विक डाउनलोड [#quick-download]
+
+```tsx
+import { downloadQRCode, PRESET_SIZES } from 'qrdx';
+
+await downloadQRCode(
+  {
+    value: "https://example.com",
+    size: 1024,
+    fgColor: "#000000",
+    bgColor: "#ffffff",
+  },
+  {
+    format: "png",
+    size: PRESET_SIZES.large,
+    filename: "my-qrcode.png"
+  }
+);
+```
+
+## सपोर्टेड फ़ॉर्मेट [#supported-formats]
+
+### PNG [#png]
+वेब के लिए सबसे अच्छा, ट्रांसपेरेंसी सपोर्ट करता है।
+
+```tsx
+await downloadQRCode(
+  { value: "https://example.com", size: 512 },
+  {
+    format: "png",
+    size: { width: 512, height: 512 },
+    filename: "qrcode.png"
+  }
+);
+```
+
+### JPG [#jpg]
+छोटी फ़ाइलें, सिर्फ़ ठोस बैकग्राउंड के लिए।
+
+```tsx
+await downloadQRCode(
+  { value: "https://example.com", size: 512 },
+  { format: "jpg", size: { width: 512, height: 512 }, filename: "qrcode.jpg" }
+);
+```
+
+### WebP [#webp]
+PNG जैसे ही पिक्सल, लेकिन छोटी फ़ाइल में, वेबसाइटों के लिए। WebP डिफ़ॉल्ट रूप से लॉसलेस होता है, इसलिए मॉड्यूल के किनारे सटीक रहते हैं, और ट्रांसपेरेंट बैकग्राउंड ट्रांसपेरेंट ही रहता है।
+
+```tsx
+await downloadQRCode(
+  { value: "https://example.com", size: 512 },
+  { format: "webp", size: { width: 512, height: 512 }, filename: "qrcode.webp" }
+);
+```
+
+जहाँ ब्राउज़र का canvas लॉसलेस WebP लिख सकता है (Chrome और Edge में ऐसा होता है), वहाँ फ़ाइल ब्राउज़र बनाता है। जहाँ ऐसा नहीं हो सकता, वहाँ qrdx बाइट्स जाँचता है और एक छोटे बिल्ट-इन लॉसलेस एन्कोडर से पिक्सल खुद एन्कोड करता है। Safari ऐसा ही एक ब्राउज़र है: WebP माँगने पर वह PNG लौटाता है। दोनों स्थितियों में `.webp` फ़ाइल हमेशा WebP ही होती है।
+
+`quality` (0 से 1) इसके बजाय एक छोटी लॉसी फ़ाइल माँगता है, जहाँ ब्राउज़र इसे सपोर्ट करता है। लॉसी WebP मॉड्यूल के किनारों और रंगों को नरम कर देता है, इसलिए जिन कोड को दूर से स्कैन होना है उनके लिए डिफ़ॉल्ट रखें। `getQRAsWebP` फ़ाइल को `Blob` के रूप में लौटाता है:
+
+```tsx
+import { getQRAsWebP } from "qrdx";
+
+const lossless = await getQRAsWebP({ value: "https://example.com", size: 1024 });
+const lossy = await getQRAsWebP({ value: "https://example.com", size: 1024 }, { quality: 0.9 });
+```
+
+### SVG [#svg]
+प्रिंट के लिए बेहतरीन, असीमित रूप से स्केलेबल।
+
+```tsx
+await downloadQRCode(
+  { value: "https://example.com", size: 512 },
+  { format: "svg", size: { width: 512, height: 512 }, filename: "qrcode.svg" }
+);
+```
+
+### PDF [#pdf]
+प्रोफ़ेशनल दस्तावेज़ों के लिए आदर्श। PDF एक्सपोर्ट के लिए वैकल्पिक `jspdf` पैकेज चाहिए (`npm i jspdf`); इसके बिना PDF डाउनलोड साफ़ एरर देते हैं।
+
+```tsx
+await downloadQRCode(
+  { value: "https://example.com", size: 1024 },
+  { format: "pdf", size: { width: 1024, height: 1024 }, filename: "qrcode.pdf" }
+);
+```
+
+### EPS [#eps]
+प्रिंट शॉप और डिज़ाइन टूल (Illustrator, CorelDRAW, InDesign) के लिए वेक्टर PostScript। किसी अतिरिक्त पैकेज की ज़रूरत नहीं है। यहाँ `size.width` पॉइंट में है (72 प्रति इंच), इसलिए यह फ़ाइल 512 pt चौड़ी है:
+
+```tsx
+await downloadQRCode(
+  { value: "https://example.com", size: 512 },
+  { format: "eps", size: { width: 512, height: 512 }, filename: "qrcode.eps" }
+);
+```
+
+सटीक भौतिक साइज़ के लिए `getQRAsEPS` इस्तेमाल करें। यह EPS को स्ट्रिंग के रूप में लौटाता है: कोड `sizeMm` चौड़ा होता है (डिफ़ॉल्ट 50 mm), और फ़्रेम इसमें जुड़ जाता है।
+
+```tsx
+import { getQRAsEPS } from "qrdx";
+
+const eps = await getQRAsEPS(
+  { value: "https://example.com" },
+  { sizeMm: 40, bleedMm: 3, colorMode: "cmyk" }
+);
+```
+
+EPS में ट्रांसपेरेंसी और क्रॉप मार्क नहीं होते। लीनियर और रेडियल ग्रेडिएंट स्मूथ PostScript Level 3 शेडिंग के रूप में प्रिंट होते हैं। PNG और JPEG लोगो एम्बेड किए जाते हैं।
+
+{/* Angular gradients, see-through colors and image fills (paint picker) */}
+एंगुलर ग्रेडिएंट पतले वेज की पंखे जैसी शृंखला के रूप में प्रिंट होते हैं। आर-पार दिखने वाले रंग बैकग्राउंड के साथ मिलाए जाते हैं, और बैकग्राउंड सफ़ेद कागज़ के साथ। EPS [इमेज फ़िल](/docs/features/colors-gradients#image-fills) नहीं रख सकता: `getQRAsEPS` `EPS_IMAGE_FILL_REASON` के साथ एरर देता है, और डाउनलोड डायलॉग इसके बजाय PDF, SVG और PNG का विकल्प देता है।
+
+## प्रीसेट साइज़ [#preset-sizes]
+
+```tsx
+import { PRESET_SIZES } from 'qrdx';
+
+PRESET_SIZES.small    // 200x200
+PRESET_SIZES.medium   // 400x400
+PRESET_SIZES.large    // 800x800
+PRESET_SIZES.xlarge   // 1200x1200
+PRESET_SIZES["2xl"]   // 1600x1600
+PRESET_SIZES["3xl"]   // 2000x2000
+```
+
+### साइज़ के सुझाव [#size-recommendations]
+
+- **Small (200px)** — सोशल मीडिया थंबनेल
+- **Medium (400px)** — सामान्य वेब इस्तेमाल
+- **Large (800px)** — हाई-क्वालिटी वेब
+- **X-Large (1200px)** — प्रिंट सामग्री
+- **2X-Large (1600px)** — बड़े फ़ॉर्मेट की प्रिंटिंग
+- **3X-Large (2000px)** — अधिकतम क्वालिटी
+
+## एडवांस्ड विकल्प [#advanced-options]
+
+### Data URL पाएँ [#get-data-url]
+
+```tsx
+import { getQRCodeDataUrl } from 'qrdx';
+
+const dataUrl = await getQRCodeDataUrl(
+  { value: "https://example.com", size: 512 },
+  "png",
+  { width: 512, height: 512 }
+);
+```
+
+### क्लिपबोर्ड पर कॉपी करें [#copy-to-clipboard]
+
+```tsx
+import { copyQRCodeToClipboard } from 'qrdx';
+
+await copyQRCodeToClipboard(
+  { value: "https://example.com" },
+  { width: 512, height: 512 }
+);
+```
+
+### SVG स्ट्रिंग पाएँ [#get-svg-string]
+
+```tsx
+import { getSVGString } from 'qrdx';
+
+const svgString = await getSVGString({
+  value: "https://example.com",
+  size: 512
+});
+```
+
+## बैच डाउनलोड [#batch-downloads]
+
+कई QR कोड एक साथ डाउनलोड करें:
+
+```tsx
+const qrCodes = [
+  {
+    props: { value: "https://example.com", size: 512 },
+    options: { format: "png", size: { width: 512, height: 512 }, filename: "site.png" }
+  },
+  {
+    props: { value: "tel:+1234567890", size: 512 },
+    options: { format: "svg", size: { width: 512, height: 512 }, filename: "phone.svg" }
+  }
+];
+
+for (const qr of qrCodes) {
+  await downloadQRCode(qr.props, qr.options);
+}
+```
+
+## एरर हैंडलिंग [#error-handling]
+
+```tsx
+try {
+  await downloadQRCode(
+    { value: "https://example.com", size: 512 },
+    { format: "png", size: { width: 512, height: 512 }, filename: "qr.png" }
+  );
+} catch (error) {
+  console.error("Download failed:", error);
+}
+```
+
+## फ़ॉर्मेट चुनना [#format-selection]
+
+- **PNG** — सबसे अच्छी क्वालिटी, बड़ी फ़ाइलें, ट्रांसपेरेंसी
+- **JPG** — छोटी फ़ाइलें, ट्रांसपेरेंसी नहीं
+- **WebP** — PNG जैसी क्वालिटी और ट्रांसपेरेंसी, छोटी फ़ाइल में, वेबसाइटों के लिए
+- **SVG** — स्केलेबल, छोटी फ़ाइलें, वेब/प्रिंट
+- **PDF** — प्रोफ़ेशनल दस्तावेज़, बड़ी फ़ाइलें
+- **EPS** — प्रिंट शॉप और डिज़ाइन टूल के लिए वेक्टर प्रिंट फ़ाइलें
+
+## साइज़ ऑप्टिमाइज़ेशन [#size-optimization]
+
+- **वेब इस्तेमाल** — 256-512px, PNG या WebP
+- **प्रिंट** — 1024px+, PDF या PNG
+- **मोबाइल** — 256px, ऑप्टिमाइज़्ड
+- **ईमेल** — 200-300px, संतुलित
+
+## अगले कदम [#next-steps]
+
+- [इस्तेमाल](/docs/usage) — बुनियादी जनरेशन सीखें
+- [टेम्पलेट](/docs/features/templates) — स्टाइल किए हुए QR कोड डाउनलोड करें
+- [API रेफ़रेंस](/docs/api-reference) — पूरा डाउनलोड API

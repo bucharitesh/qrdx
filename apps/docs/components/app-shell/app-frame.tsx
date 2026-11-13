@@ -44,9 +44,12 @@ export function AppFrame({
   }, []);
 
   return (
-    <div className="flex min-h-svh flex-col">
+    // From md up the frame is exactly the screen: the top bar and sidebar stay
+    // put and only the page scrolls, inside <main>. Phones scroll the window
+    // (the sidebar is a sheet there).
+    <div className="flex min-h-svh flex-col md:h-svh md:overflow-hidden">
       <AppTopBar limitWarnings={limitWarnings} shell={shell} />
-      <div className="flex flex-1">
+      <div className="flex flex-1 md:min-h-0">
         <aside
           className={cn(
             "bg-sidebar border-sidebar-border hidden shrink-0 border-r transition-[width] duration-200 ease-out motion-reduce:transition-none md:block",
@@ -54,8 +57,8 @@ export function AppFrame({
           )}
           data-state={collapsed ? "collapsed" : "expanded"}
         >
-          {/* Fills the screen under the top bar and stays while the page scrolls. */}
-          <div className="sticky top-0 h-[calc(100svh-3rem)]">
+          {/* Full height under the top bar; its links scroll inside it. */}
+          <div className="h-full">
             <AppSidebar
               collapsed={collapsed}
               limitWarnings={limitWarnings}
@@ -64,7 +67,10 @@ export function AppFrame({
             />
           </div>
         </aside>
-        <main className="min-w-0 flex-1 px-4 py-5 md:px-8 md:py-8">
+        <main
+          className="min-w-0 flex-1 px-4 py-5 md:overflow-y-auto md:overscroll-contain md:px-8 md:py-8"
+          data-app-scroll=""
+        >
           <div className="mx-auto w-full max-w-6xl">{children}</div>
         </main>
       </div>

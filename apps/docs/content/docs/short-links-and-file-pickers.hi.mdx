@@ -1,0 +1,95 @@
+---
+title: "शॉर्ट लिंक और फ़ाइल पिकर"
+description: "अपने Bitly, Rebrandly या Short.io अकाउंट से QR कोड के लिंक को छोटा करें, या Dropbox का शेयर लिंक एन्कोड करें।"
+icon: Blocks
+---
+
+[Settings → Integrations](/settings/integrations) में कोई अकाउंट कनेक्ट करें, और वह QR एडिटर के **URL** टाइप में, **Website address** फ़ील्ड के पास **Use a link from…** मेन्यू में दिखने लगता है। **Your accounts** के नीचे हर सर्विस बताती है कि वह क्या करती है:
+
+- **Shorten**: Bitly, Rebrandly या Short.io। **Create new** में नया लिंक बनाएँ, या **Use existing** में अपना कोई मौजूदा लिंक चुनें। QR कोड वही शॉर्ट लिंक एन्कोड करता है, इसलिए आप बाद में उस सर्विस में बदल सकते हैं कि वह कहाँ ले जाए, और वह क्लिक भी गिनती है।
+- **File**: Dropbox<IfAvailable integration="onedrive">, OneDrive</IfAvailable><IfAvailable integration="box">, Box</IfAvailable><IfAvailable integration="notion">, Notion</IfAvailable>। ब्राउज़ या सर्च करें, फिर कोई फ़ाइल या फ़ोल्डर चुनें। QRdx उस आइटम का शेयर लिंक बनाता है और QR कोड उसे एन्कोड करता है।
+
+जो सर्विस आपने अभी कनेक्ट नहीं की हैं, वे उसी मेन्यू में सबसे नीचे **Connect an account** के पीछे मिलेंगी।
+
+होस्टेड पेज भी क्लाउड फ़ाइलें इस्तेमाल कर सकते हैं: PDF, ऑडियो, वीडियो और डाउनलोड ब्लॉक में अपलोड बटन के बगल में **From Dropbox**<IfAvailable integration="onedrive">, **From OneDrive**</IfAvailable><IfAvailable integration="box">, **From Box**</IfAvailable> मिलता है।
+
+इंटीग्रेशन आपके यूज़र अकाउंट के होते हैं। टोकन और API कुंजियाँ एन्क्रिप्ट करके रखी जाती हैं, और आप कभी भी डिस्कनेक्ट कर सकते हैं।
+
+## शॉर्ट लिंक [#short-links]
+
+| सर्विस | कनेक्ट कैसे करें | डोमेन | Back-half |
+| --- | --- | --- | --- |
+| Bitly | Bitly से साइन इन करें, या कोई जेनेरिक एक्सेस टोकन पेस्ट करें (Settings → Developer settings → API) | bit.ly और आपके ब्रांडेड डोमेन | Bitly तय करता है |
+| Rebrandly | API कुंजी पेस्ट करें (Account → API keys) | rebrand.ly और आपके ब्रांडेड डोमेन | आपका अपना slashtag, या रैंडम |
+| Short.io | सीक्रेट API कुंजी पेस्ट करें (Integrations & API → API) | आपके Short.io डोमेन | आपका अपना पाथ, या रैंडम |
+
+हर इंटीग्रेशन के सेटिंग पेज पर आपके डोमेन दिखते हैं, और आप नए लिंक के लिए डिफ़ॉल्ट डोमेन चुन सकते हैं। फिर भी हर लिंक के लिए कोई दूसरा डोमेन चुन सकते हैं।
+
+<Callout type="info" title="बाद में डेस्टिनेशन बदलना">
+लिंक QRdx बनाता है; वह कहाँ ले जाए, यह Bitly, Rebrandly या Short.io में बदला जाता है। Bitly में लिंक का डेस्टिनेशन सिर्फ़ पेड प्लान ही बदल सकते हैं।
+</Callout>
+
+अगर आप चाहते हैं कि डेस्टिनेशन QRdx में ही एडिट हो सके और स्कैन एनालिटिक्स भी मिले, तो इसकी जगह [डायनेमिक QR कोड](/docs/dynamic-qr-codes) इस्तेमाल करें।
+
+## फ़ाइल पिकर [#file-pickers]
+
+**Dropbox** एक शेयर्ड लिंक एन्कोड करता है (नया बनाया गया, या मौजूदा लिंक दोबारा इस्तेमाल किया गया)। लिंक वाला कोई भी व्यक्ति उसे खोल सकता है, जब तक आपकी टीम सिर्फ़ टीम लिंक की अनुमति न देती हो।
+
+<IfAvailable integration="onedrive">
+
+**OneDrive** सिर्फ़ देखने वाला शेयरिंग लिंक एन्कोड करता है। लिंक वाला कोई भी व्यक्ति उसे खोल सकता है; जहाँ आपके एडमिन ने "Anyone" लिंक बंद किए हैं, वहाँ सिर्फ़ आपका संगठन खोल सकता है।
+
+</IfAvailable>
+
+<IfAvailable integration="box">
+
+**Box** आइटम का शेयर्ड लिंक एन्कोड करता है, जो "People with the link" पर सेट होता है। लिंक वाला कोई भी व्यक्ति उसे खोल सकता है; जहाँ आपके एडमिन ने इसे ज़रूरी किया है, वहाँ सिर्फ़ आपकी कंपनी खोल सकती है।
+
+</IfAvailable>
+
+<IfAvailable integration="notion">
+
+**Notion** पेज का "Publish to web" लिंक एन्कोड करता है। पेज पब्लिश होने के बाद कोई भी उसे खोल सकता है।
+
+</IfAvailable>
+
+जब लिंक सबके लिए नहीं खुल सकता, तो QRdx चुनते ही आपको यह बता देता है, ताकि प्रिंट किया हुआ कोड लोगों को साइन-इन पेज पर न भेजे।
+
+<IfAvailable integration="notion">
+
+**Notion पेज।** QRdx सिर्फ़ वही पेज देख पाता है जो आप उसके साथ शेयर करते हैं: कनेक्ट करते समय Notion पूछता है कि कौन से पेज। बाद में और जोड़ने के लिए, Notion में पेज खोलें, **•••** → **Connections** पर क्लिक करें और QRdx जोड़ें (या दोबारा कनेक्ट करके उन्हें चुनें)।
+
+Notion का API किसी पेज को पब्लिश नहीं कर सकता। उसे खुद पब्लिश करें (**Share** → **Publish** → **Publish to web**), फिर उसे दोबारा चुनें ताकि QRdx पब्लिक लिंक इस्तेमाल करे।
+
+</IfAvailable>
+
+### होस्टेड पेज पर फ़ाइलें [#files-on-hosted-pages]
+
+Dropbox<IfAvailable integration="box"> और Box</IfAvailable> के लिए, पेज ब्लॉक को फ़ाइल का सीधा लिंक मिलता है, ताकि ऑडियो और वीडियो प्लेयर और PDF व्यूअर उसे लोड कर सकें।<IfAvailable integration="onedrive"> OneDrive के शेयरिंग लिंक OneDrive के व्यूअर में खुलते हैं, इसलिए ब्लॉक उन्हें लिंक के रूप में दिखाता है।</IfAvailable>
+
+## डिस्कनेक्ट करना [#disconnecting]
+
+डिस्कनेक्ट करने पर सेव किया हुआ टोकन डिलीट हो जाता है। Dropbox<IfAvailable integration="box">, Box</IfAvailable><IfAvailable integration="notion">, Notion</IfAvailable> के लिए QRdx उस सर्विस के साथ टोकन रद्द (revoke) भी करता है। Bitly, Rebrandly और Short.io के लिए, अगर आप कुंजी अब इस्तेमाल नहीं करते तो उसे उस सर्विस में भी डिलीट कर दें<IfAvailable integration="onedrive">; OneDrive के लिए, अपने Microsoft अकाउंट की ऐप परमिशन से QRdx को हटा दें</IfAvailable>।
+
+आपके पहले से बनाए QR कोड चलते रहते हैं: उनमें शॉर्ट लिंक या शेयर लिंक होता है, आपका टोकन नहीं।
+
+## सेल्फ़-होस्टिंग [#self-hosting]
+
+Rebrandly और Short.io के लिए सर्वर पर कुछ नहीं चाहिए। बाकी के लिए हर सर्विस में एक ऐप चाहिए, जिसका क्लाइंट ID और सीक्रेट एनवायरनमेंट में हो; इनके बिना इंटीग्रेशन "Not configured" दिखाता है। Bitly इनके बिना भी पेस्ट किए गए एक्सेस टोकन से काम करता है।
+
+| इंटीग्रेशन | वेरिएबल | Redirect URI |
+| --- | --- | --- |
+| Bitly (साइन-इन) | `BITLY_CLIENT_ID`, `BITLY_CLIENT_SECRET` | `<app url>/api/integrations/bitly/callback` |
+| Dropbox | `DROPBOX_CLIENT_ID`, `DROPBOX_CLIENT_SECRET` | `<app url>/api/integrations/dropbox/callback` |
+| OneDrive | `MICROSOFT_CLIENT_ID`, `MICROSOFT_CLIENT_SECRET` | `<app url>/api/integrations/onedrive/callback` |
+| Box | `BOX_CLIENT_ID`, `BOX_CLIENT_SECRET` | `<app url>/api/integrations/box/callback` |
+| Notion | `NOTION_CLIENT_ID`, `NOTION_CLIENT_SECRET` | `<app url>/api/integrations/notion/callback` |
+
+`<app url>` डेवलपमेंट में `http://localhost:3000` होता है, और बाकी जगह आपका प्रोडक्शन URL। हर इंटीग्रेशन को प्रोडक्शन में `INTEGRATION_ENCRYPTION_KEY` भी चाहिए, जो सेव किए गए टोकन और कुंजियों को एन्क्रिप्ट करती है।
+
+माँगे जाने वाले स्कोप:
+
+- **Dropbox:** `account_info.read`, `files.metadata.read`, `sharing.read`, `sharing.write`
+- **OneDrive:** `offline_access`, `Files.ReadWrite` (शेयरिंग लिंक बनाने के लिए Microsoft Graph को write एक्सेस चाहिए)
+- **Box:** Read and write all files and folders (`root_readwrite`)
+- **Bitly, Notion:** कोई स्कोप नहीं; Notion यूज़र से पूछता है कि कौन से पेज शेयर करने हैं

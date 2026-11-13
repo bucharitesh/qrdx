@@ -4,8 +4,8 @@ import { BlogList } from "@/components/sections/blog/blog-list";
 import { Breadcrumbs } from "@/components/sections/breadcrumbs";
 import { SectionHeader } from "@/components/sections/section-header";
 import { isCategorySlug, SLUG_TO_CATEGORY } from "@/lib/blog-constants";
+import { blogCategoriesSource } from "@/lib/content-source";
 import { createMetadata } from "@/lib/metadata";
-import { blogCategoriesSource } from "@/lib/source";
 import { buildTimeParams } from "@/lib/static-params";
 import {
   getPublishedPosts,

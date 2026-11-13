@@ -1,0 +1,60 @@
+---
+title: "QR Code Card"
+description: "\"Scan me\" फ़्रेम में QR कोड वाला एक कार्ड, जिसमें टाइटल, डिस्क्रिप्शन और एक्शन के लिए जगह है।"
+icon: Frame
+---
+
+<ComponentLinks name="qr-code-card" />
+
+<ComponentPreview name="qr-code-card-demo" />
+
+## इंस्टॉलेशन [#installation]
+
+<InstallationTabs name="qr-code-card" />
+
+## इस्तेमाल [#usage]
+
+```tsx
+import { QrCodeCard } from "@/components/qr-code-card";
+```
+
+```tsx
+<QrCodeCard
+  value="https://example.com/menu"
+  title="Our menu"
+  description="Scan to see today's specials."
+/>
+```
+
+children के रूप में आप जो भी पास करते हैं, वह कार्ड के फ़ुटर में रेंडर होता है, जैसे कॉपी बटन या [डाउनलोड मेन्यू](/docs/components/qr-code-download)।
+
+## उदाहरण [#examples]
+
+### फ़्रेम [#frames]
+
+`frame` कॉल टू एक्शन को कोड के नीचे (`"bottom"`) या ऊपर (`"top"`) रखता है, या फ़्रेम को हटा देता है (`"none"`)। `cta` लेबल बदलता है, और `frameClassName` फ़्रेम की स्टाइल बदलता है, जैसे आपके ब्रांड कलर के साथ।
+
+<ComponentPreview name="qr-code-card-frames" />
+
+फ़्रेम डिफ़ॉल्ट रूप से आपकी थीम के `foreground` और `background` कलर इस्तेमाल करता है, इसलिए यह लाइट और डार्क मोड दोनों में साफ़ पढ़ा जा सकता है। कोड का बैकग्राउंड हमेशा हल्का रहता है, जिसे हर स्कैनर पढ़ लेता है।
+
+### कोड की स्टाइलिंग [#styling-the-code]
+
+`qr` कोई भी qrdx स्टाइल ऑप्शन लेता है: `fgColor`, `bgColor`, ग्रेडिएंट, `bodyPattern`, कॉर्नर पैटर्न, `logo` और `templateId`।
+
+```tsx
+<QrCodeCard
+  value="https://example.com"
+  qr={{
+    fgColor: "#155DFC",
+    bodyPattern: "rounded",
+    cornerEyePattern: "extra-rounded",
+  }}
+/>
+```
+
+## API रेफ़रेंस [#api-reference]
+
+<auto-type-table path="../../../registry/qrdx/qr-code-card.tsx" type="{ [K in keyof QrCodeCardProps as K extends Exclude<keyof ComponentProps<'div'>, 'title' | 'children'> ? never : K]: QrCodeCardProps[K] }" />
+
+`className` जैसा कोई भी दूसरा प्रॉप [Card](https://ui.shadcn.com/docs/components/card) को पास कर दिया जाता है।

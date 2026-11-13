@@ -1,0 +1,58 @@
+---
+title: "Passkey"
+description: "Masuk dengan sidik jari, wajah, atau kunci layar Anda, gunakan passkey sebagai langkah kedua, serta ganti nama atau hapus passkey yang tidak lagi Anda gunakan."
+---
+
+Passkey memastikan bahwa itu benar-benar Anda melalui sidik jari, wajah, kunci layar perangkat, atau kunci keamanan. Passkey disimpan di perangkat atau pengelola kata sandi Anda, dan hanya berfungsi di situs resmi QRdx, sehingga situs tiruan tidak dapat mengambilnya.
+
+Passkey memiliki dua fungsi di QRdx:
+
+- untuk masuk sendiri, dengan **Continue with passkey** di halaman masuk;
+- sebagai langkah kedua [verifikasi dua langkah](/docs/help/privacy-and-security/two-step-verification) setelah Anda masuk dengan kode email, Google, atau GitHub<IfAvailable feature="sso"> (atau single sign-on workspace Anda)</IfAvailable>.
+
+Passkey juga [mengonfirmasi bahwa itu Anda](/docs/help/privacy-and-security/two-step-verification#confirm-its-you) sebelum perubahan pada keamanan akun Anda, dengan verifikasi dua langkah aktif atau nonaktif. Ini berguna jika Anda tidak bisa mengakses email.
+
+## Tambahkan passkey [#add-a-passkey]
+
+1. Buka **Settings** → **Profile & security**.
+2. Di bawah **Two-step verification**, klik **Add passkey**, lalu konfirmasi bahwa itu Anda.
+3. Pertahankan nama yang disarankan (browser dan sistem Anda, seperti "Chrome on macOS") atau ketik nama sendiri, lalu klik **Continue**.
+4. Browser Anda menanyakan tempat menyimpan passkey dan memeriksa sidik jari, wajah, atau kunci layar Anda.
+
+Jika verifikasi dua langkah nonaktif, menambahkan passkey akan mengaktifkannya, dan QRdx menampilkan 10 kode cadangan untuk Anda simpan. Kode ini membantu Anda masuk saat Anda tidak memiliki passkey.
+
+Passkey harus memeriksa bahwa itu Anda setiap kali digunakan. Ponsel, komputer, dan pengelola kata sandi melakukannya dengan sidik jari, wajah, atau kunci layar Anda. Kunci keamanan memerlukan PIN yang diatur di dalamnya.
+
+QRdx mengirim email ke alamat akun Anda setiap kali passkey ditambahkan atau dihapus.
+
+## Masuk dengan passkey [#sign-in-with-a-passkey]
+
+Di halaman masuk, klik **Continue with passkey**, di bagian bawah pilihan cara masuk, lalu pilih passkey Anda. Masuk dengan passkey dihitung sebagai kedua langkah, jadi QRdx tidak meminta hal lain.
+
+Kolom email tidak menyarankan passkey: gunakan tombolnya.
+
+Passkey digunakan untuk masuk ke akun tempat passkey itu ditambahkan. Passkey tidak dapat membuat akun: jika Anda baru di QRdx, masuklah terlebih dahulu dengan Google, GitHub, atau kode email, lalu tambahkan passkey.
+
+## Gunakan passkey sebagai langkah kedua [#use-a-passkey-as-your-second-step]
+
+Jika verifikasi dua langkah aktif, masuklah dengan cara yang biasa Anda gunakan. Perintah passkey di browser Anda lalu terbuka sendiri; konfirmasikan bahwa itu Anda dan Anda pun masuk. Beberapa browser baru membuka perintah tersebut setelah diklik: jika begitu, klik **Continue with passkey**.
+
+Tidak punya passkey di dekat Anda? Klik **Use an authenticator code** (jika Anda sudah menyiapkan aplikasi autentikator) atau **Use a backup code**.
+
+Jika Anda menambahkan passkey sebelum passkey dapat menjadi langkah kedua dan verifikasi dua langkah nonaktif, Settings menampilkan **Your passkey is ready to be your second step**. Klik **Turn on** untuk menggunakannya dengan cara itu: konfirmasikan bahwa itu Anda, verifikasi dengan passkey, lalu simpan kode cadangan Anda.
+
+## Passkey tersinkron dan terikat perangkat [#synced-and-device-bound-passkeys]
+
+Passkey tersinkron dicadangkan ke pengelola kata sandi atau keychain cloud, seperti iCloud Keychain atau Google Password Manager. Passkey ini berfungsi di setiap perangkat yang masuk ke akun tersebut.
+
+Passkey terikat perangkat tetap berada di satu ponsel, komputer, atau kunci keamanan yang membuatnya. Untuk masuk di tempat lain, gunakan metode masuk lain atau tambahkan juga passkey di perangkat tersebut.
+
+## Ganti nama atau hapus passkey [#rename-or-remove-a-passkey]
+
+Di bawah **Two-step verification**, buka menu di samping passkey dan klik **Rename** atau **Remove**, lalu konfirmasi bahwa itu Anda. Passkey yang dihapus langsung berhenti berfungsi di QRdx. Perangkat atau pengelola kata sandi Anda mungkin masih menampilkannya sampai Anda menghapusnya di sana juga.
+
+Jika passkey itu satu-satunya langkah kedua Anda, menghapusnya akan menonaktifkan verifikasi dua langkah. QRdx memberi tahu Anda sebelum Anda mengonfirmasi.
+
+Kehilangan perangkat yang menyimpan passkey? Masuklah dengan cara lain dan hapus passkey tersebut.
+
+Anda selalu bisa masuk dengan kode yang dikirim ke email, jadi menghapus passkey terakhir tidak akan membuat Anda terkunci.

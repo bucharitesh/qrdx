@@ -67,15 +67,12 @@ import { CodesTable } from "./codes-table";
 import { MoveToFolderDialog } from "./folder-dialogs";
 import { useListDisplay } from "./list-display";
 import { TagsDialog } from "./tag-dialogs";
-import { plural, useOrganizeAction } from "./use-organize-action";
+import { useOrganizeAction } from "./use-organize-action";
 import {
   downloadCodesZip,
   ZIP_FORMAT_LABELS,
   type ZipFormat,
 } from "./zip-download";
-
-const OTHERS_SKIPPED =
-  "codes created by other team members were skipped: only owners and admins can delete them.";
 
 const hint = (action: BulkAction) => keyLabel(BULK_KEYS[action]);
 
@@ -143,36 +140,32 @@ export function CodesList({
   const trash = async () => {
     const result = await run(() => trashQrCodes({ ids }), {
       success: ({ updated }) =>
-        updated > 0 ? `Moved ${plural(updated, "code")} to trash` : null,
+        updated > 0 ? t("movedToTrash", { count: updated }) : null,
       description: ({ skipped }) =>
         skipped > 0
-          ? `${skipped} ${OTHERS_SKIPPED}`
-          : "Scans show a 'no longer active' page until you restore them.",
+          ? t("othersSkipped", { count: skipped })
+          : t("trashScansNote"),
       undo: () => restoreQrCodes({ ids }),
     });
-    if (result?.updated === 0)
-      toast.error(t("allSelectedOthersSkipped", { OTHERS_SKIPPED }));
+    if (result?.updated === 0) toast.error(t("allSelectedOthersSkipped"));
     done(result);
   };
 
   const purge = async () => {
     const result = await run(() => purgeQrCodes({ ids }), {
       success: ({ updated }) =>
-        updated > 0 ? `Deleted ${plural(updated, "code")} forever` : null,
+        updated > 0 ? t("deletedForever", { count: updated }) : null,
       description: ({ skipped }) =>
-        skipped > 0 ? `${skipped} ${OTHERS_SKIPPED}` : null,
+        skipped > 0 ? t("othersSkipped", { count: skipped }) : null,
     });
-    if (result?.updated === 0)
-      toast.error(t("allSelectedOthersSkipped", { OTHERS_SKIPPED }));
+    if (result?.updated === 0) toast.error(t("allSelectedOthersSkipped"));
     setDialog(null);
     done(result);
   };
 
   const zip = async (format: ZipFormat) => {
     setZipping(true);
-    const toastId = toast.loading(
-      t("preparingValue", { value: plural(count, "QR code") }),
-    );
+    const toastId = toast.loading(t("preparingValue", { count }));
     try {
       const { saved, failed } = await downloadCodesZip(
         selectedCodes,
@@ -187,7 +180,7 @@ export function CodesList({
       } else {
         toast.success(
           t("downloadedValueAsValue2", {
-            value: plural(saved, "QR code"),
+            count: saved,
             value2: ZIP_FORMAT_LABELS[format],
           }),
           {
@@ -207,7 +200,7 @@ export function CodesList({
 
   const restore = () =>
     run(() => restoreQrCodes({ ids }), {
-      success: ({ updated }) => `Restored ${plural(updated, "code")}`,
+      success: ({ updated }) => t("restoredCodes", { count: updated }),
     }).then(done);
 
   const toggleArchived = () =>
@@ -220,8 +213,8 @@ export function CodesList({
       {
         success: ({ updated }) =>
           status === "archived"
-            ? `Unarchived ${plural(updated, "code")}`
-            : `Archived ${plural(updated, "code")}`,
+            ? t("unarchivedCodes", { count: updated })
+            : t("archivedCodes", { count: updated }),
       },
     ).then(done);
 
@@ -367,7 +360,9 @@ export function CodesList({
                           () => setQrCodesPaused({ ids, paused: !allPaused }),
                           {
                             success: ({ updated }) =>
-                              `${allPaused ? "Resumed" : "Paused"} ${plural(updated, "code")}`,
+                              allPaused
+                                ? t("resumedCodes", { count: updated })
+                                : t("pausedCodes", { count: updated }),
                             description: allPaused
                               ? t("scansRedirectAgain")
                               : t("scansGoToEachCodes"),
@@ -473,7 +468,7 @@ export function CodesList({
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              {t("deleteValueForever", { value: plural(count, "code") })}
+              {t("deleteValueForever", { count })}
             </AlertDialogTitle>
             <AlertDialogDescription>
               {t("theirScanAndVersionHistory")}

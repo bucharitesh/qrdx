@@ -1,0 +1,418 @@
+---
+title: "라이브러리 API 레퍼런스"
+description: "qrdx React 라이브러리가 내보내는 모든 컴포넌트, 함수, 타입을 정리했습니다. HTTP 엔드포인트는 REST API를 참고하세요."
+icon: Code
+---
+
+`qrdx`의 모든 컴포넌트, 함수, 타입에 대한 전체 레퍼런스입니다.
+
+<NpmStatus package="qrdx" />
+
+## 컴포넌트 [#components]
+
+### QRCode [#qrcode]
+
+QR 코드를 렌더링하는 메인 컴포넌트입니다.
+
+```tsx
+import { QRCode } from 'qrdx';
+
+<QRCode
+  value="https://example.com"
+  size={256}
+  fgColor="#000000"
+  bgColor="#ffffff"
+/>
+```
+
+#### Props [#props]
+
+| Prop | 타입 | 기본값 | 설명 |
+|------|------|---------|-------------|
+| `value` | `string` | **필수** | 인코딩할 URL 또는 텍스트 |
+| `size` | `number` | `128` | 픽셀 단위 크기 |
+| `scale` | `number` | `1` | 배율 |
+| `fgColor` | `ColorConfig` | `#000000` | QR 코드 색상 |
+| `bgColor` | `ColorConfig` | `#ffffff` | 배경색 |
+| `eyeColor` | `ColorConfig` | `fgColor` | 모서리 마커 색상 |
+| `dotColor` | `ColorConfig` | `fgColor` | 각 모서리 눈 안쪽 점의 색상 |
+| `bodyPattern` | `BodyPattern` | `'circle'` | 데이터 점 패턴 |
+| `cornerEyePattern` | `CornerEyePattern` | `'gear'` | 모서리 마커 패턴 |
+| `cornerEyeDotPattern` | `CornerEyeDotPattern` | `'circle'` | 모서리 점 패턴 |
+| `hideLogo` | `boolean` | `false` | 로고를 숨깁니다. `logo`를 설정하지 않으면 로고는 그려지지 않습니다 |
+| `logo` | `string` | — | 로고 URL |
+| `templateId` | `string` | `'default'` | 템플릿 ID |
+| `customTemplate` | `TemplateDefinition` | — | 사용자 지정 템플릿 |
+| `level` | `ErrorLevel` | `'Q'` | 오류 정정 |
+| `autoLevel` | `boolean` | `false` | 로고가 코드의 7%를 넘게 가리면 `level`을 H로 올립니다 (`AUTO_LEVEL_LOGO_COVERAGE`) |
+| `margin` | `number` | `0` | 모듈 단위 여백 |
+| `imageSettings` | `ImageSettings` | — | 로고 설정 |
+| `eyeColors` | `EyeColors` | — | `topLeft`, `topRight`, `bottomLeft` 각각의 눈별 `outer` / `inner` 색상이며, 각각 `eyeColor` / `dotColor`보다 우선합니다 |
+| `moduleScale` | `number` | `1` | 데이터 모듈 크기, 0.5~1. 각 패턴은 스캔이 가능한 가장 작은 크기에서 멈춥니다 (`MODULE_SCALE_FLOOR`) |
+| `frame` | `QRFrame` | — | 행동 유도 프레임. [프레임 및 인쇄](/docs/features/frames) 참고 |
+| `art` | `QRArt` | — | 로고나 사진을 모듈에 섞어 넣습니다 (Logo QR, Image QR). [아트 QR](/docs/features/art-qr) 참고 |
+| `frameLabelMarkers` | `boolean` | `false` | 편집기용: 각 프레임 라벨 `<text>`에 `data-qrdx-frame-label`(`"text"`, `"secondaryText"` 또는 사양 라벨의 id)을 표시합니다. 다운로드와 내보내기에는 포함되지 않습니다 |
+
+{facts.bodyPatterns}가지 본문 패턴, {facts.eyeShapes}가지 눈 모양, {facts.eyeCentres}가지 눈 중심, {facts.frameStyles}가지 프레임 스타일은 [모양, 눈, 프레임](/docs/styles)에서 실시간으로 볼 수 있습니다.
+
+### QRCodeCanvas [#qrcodecanvas]
+
+캔버스 기반 렌더링입니다.
+
+```tsx
+import { QRCodeCanvas } from 'qrdx';
+
+<QRCodeCanvas
+  value="https://example.com"
+  size={512}
+  fgColor="#000000"
+/>
+```
+
+### QRCodeSVG [#qrcodesvg]
+
+SVG 기반 렌더링입니다.
+
+```tsx
+import { QRCodeSVG } from 'qrdx';
+
+<QRCodeSVG
+  value="https://example.com"
+  size={512}
+/>
+```
+
+## 다운로드 함수 [#download-functions]
+
+### downloadQRCode [#downloadqrcode]
+
+QR 코드를 여러 형식으로 다운로드합니다.
+
+```tsx
+downloadQRCode(
+  qrProps: QRProps,
+  options: {
+    format: 'png' | 'jpg' | 'webp' | 'svg' | 'pdf' | 'eps';
+    size: { width: number; height: number };
+    filename?: string;
+    quality?: number; // WebP only: 0 to 1 for lossy; lossless when left out
+  }
+): Promise<void>
+```
+
+### getQRCodeDataUrl [#getqrcodedataurl]
+
+데이터 URL로 가져옵니다.
+
+```tsx
+getQRCodeDataUrl(
+  qrProps: QRProps,
+  format: DownloadFormat,
+  size: DownloadSize,
+  options?: { quality?: number } // WebP only
+): Promise<string>
+```
+
+### getQRAsWebP [#getqraswebp]
+
+코드를 WebP `Blob`으로 반환하며, `quality`를 설정하지 않으면 무손실입니다. 브라우저가 WebP를 인코딩할 수 없는 경우(Safari)에는 qrdx에 내장된 무손실 인코더가 만듭니다. `canvasToWebP(canvas, options)`는 어떤 캔버스에서든 같은 작업을 하고, `encodeWebPLossless(rgba, width, height)`는 DOM 없이 RGBA 픽셀을 인코딩합니다.
+
+```tsx
+getQRAsWebP(
+  qrProps: QRProps,
+  options?: { quality?: number }
+): Promise<Blob>
+```
+
+### copyQRCodeToClipboard [#copyqrcodetoclipboard]
+
+클립보드에 복사합니다.
+
+```tsx
+copyQRCodeToClipboard(
+  qrProps: QRProps,
+  size?: DownloadSize
+): Promise<void>
+```
+
+### getSVGString [#getsvgstring]
+
+SVG 마크업을 가져옵니다.
+
+```tsx
+getSVGString(qrProps: QRProps): Promise<string>
+```
+
+## 인쇄 및 스캔 함수 [#print-and-scan-functions]
+
+이 함수들은 각 기능 페이지에서 예제와 함께 설명합니다.
+
+| 함수 | 기능 | 문서 |
+|----------|--------------|------|
+| `getQRAsSVG(props)` | 프레임을 포함한 코드의 SVG 마크업 | [프레임](/docs/features/frames) |
+| `getQRAsPrintPDF`, `downloadPrintPDF` | 정확한 실제 크기의 벡터 PDF. 블리드, 재단선, CMYK 지원 (`jspdf` 필요) | [인쇄용 내보내기](/docs/features/frames#print-ready-export) |
+| `downloadPrintSVG` | 정확한 실제 크기의 인쇄용 SVG | [인쇄용 내보내기](/docs/features/frames#print-ready-export) |
+| `getQRAsEPS`, `downloadPrintEPS` | 인쇄소와 디자인 도구용 벡터 EPS | [다운로드](/docs/features/downloads) |
+| `getScanScore(props)` | 디자인이 얼마나 안정적으로 스캔되는지 추정합니다 | [스캔될까요?](/docs/features/frames#will-it-scan) |
+| `getImageScanScore(image)` | 이미 가지고 있는 QR 코드 이미지를 평가합니다 (브라우저 전용) | [스캔될까요?](/docs/features/frames#will-it-scan) |
+| `scanQRPixels(pixels, expected)` | 원시 RGBA 픽셀이 `expected`로 디코딩되는지 확인하며, 흐리게 하거나 축소한 경우도 확인합니다. Node에서 실행됩니다 | — |
+| `getStylePairRisk(...)` | 일부 스캐너가 인식하지 못하는 눈과 패턴 조합을 경고합니다 | [패턴](/docs/features/patterns) |
+
+## 감지 함수 [#detection-functions]
+
+### handleImageLoad [#handleimageload]
+
+이미지에서 QR 코드를 감지합니다.
+
+```tsx
+handleImageLoad(
+  imgElement: HTMLImageElement,
+  size: number,
+  returnFullData?: boolean
+): Promise<string | any>
+```
+
+### downloadImageWithBoundingBox [#downloadimagewithboundingbox]
+
+바운딩 박스로 디버그합니다.
+
+```tsx
+downloadImageWithBoundingBox(
+  imgElement: HTMLImageElement,
+  boundingBox: { x: number; y: number }[],
+  filename: string
+): void
+```
+
+## 템플릿 함수 [#template-functions]
+
+### getTemplate [#gettemplate]
+
+특정 템플릿을 가져옵니다.
+
+```tsx
+getTemplate(templateId: string): TemplateDefinition | undefined
+```
+
+### getAllTemplates [#getalltemplates]
+
+모든 템플릿을 가져옵니다.
+
+```tsx
+getAllTemplates(): TemplateDefinition[]
+```
+
+### getTemplateIds [#gettemplateids]
+
+템플릿 ID를 가져옵니다.
+
+```tsx
+getTemplateIds(): string[]
+```
+
+## 유틸리티 함수 [#utility-functions]
+
+### 색상 및 대비 [#color--contrast]
+
+```tsx
+getSolidColor(colorConfig: ColorConfig, fallback?: string): string
+getContrastRatio(color1: string, color2: string): number
+getContrastLevel(ratio: number): ContrastLevel
+getLuminance(r: number, g: number, b: number): number
+hexToRgb(hex: string): { r: number; g: number; b: number }
+```
+
+### 유효성 검사 [#validation]
+
+```tsx
+validateSize(width: number, height: number): {
+  isValid: boolean;
+  error?: string;
+}
+```
+
+### 기능 감지 [#feature-detection]
+
+```tsx
+SUPPORTS_PATH2D: boolean
+```
+
+## 타입 [#types]
+
+### 핵심 타입 [#core-types]
+
+```tsx
+type QRProps = {
+  value: string;
+  size?: number;
+  level?: ErrorLevel;
+  bgColor?: ColorConfig;
+  fgColor?: ColorConfig;
+  margin?: number;
+  imageSettings?: ImageSettings;
+  // ...
+};
+
+type ColorConfig =
+  | string
+  | { type: 'solid'; color: string }
+  | LinearGradient
+  | RadialGradient;
+
+type ErrorLevel = 'L' | 'M' | 'Q' | 'H';
+```
+
+### 패턴 타입 [#pattern-types]
+
+```tsx
+// The arrays BODY_PATTERN, CORNER_EYE_PATTERNS, CORNER_EYE_DOT_PATTERNS and
+// FRAME_STYLES (and their zod schemas) are exported from 'qrdx/types'.
+
+type BodyPattern =
+  | 'circle' | 'circle-large' | 'square' | 'diamond' | 'circle-mixed'
+  | 'pacman' | 'rounded' | 'small-square' | 'vertical-line'
+  | 'horizontal-line' | 'liquid' | 'liquid-horizontal' | 'liquid-vertical'
+  | 'classy' | 'classy-rounded' | 'leaf' | 'plus' | 'hexagon' | 'star'
+  | 'heart' | 'random-dots' | 'mosaic' | 'octagon';
+
+type CornerEyePattern =
+  | 'square' | 'rounded' | 'gear' | 'circle' | 'diya' | 'extra-rounded'
+  | 'message' | 'pointy' | 'leaf' | 'drop' | 'octagon' | 'bevel'
+  | 'squircle' | 'cushion' | 'shield' | 'petal' | 'leaf-reverse';
+
+type CornerEyeDotPattern =
+  | 'square' | 'rounded' | 'circle' | 'message' | 'message-reverse'
+  | 'diya' | 'diya-reverse' | 'rounded-triangle' | 'leaf' | 'drop' | 'plus'
+  | 'cross-rounded' | 'hexagon' | 'octagon' | 'flower' | 'heart'
+  | 'squircle' | 'dots' | 'extra-rounded' | 'leaf-reverse' | 'drop-reverse';
+
+// Retired (deprecated) values still render for saved designs but are not
+// offered: RETIRED_CORNER_EYE_PATTERNS, RETIRED_CORNER_EYE_DOT_PATTERNS.
+
+type EyeColors = {
+  topLeft?: { outer?: ColorConfig; inner?: ColorConfig };
+  topRight?: { outer?: ColorConfig; inner?: ColorConfig };
+  bottomLeft?: { outer?: ColorConfig; inner?: ColorConfig };
+};
+
+type QRFrame = {
+  style: FrameStyle; // "none" or a frame, see FRAME_STYLES
+  text?: string; // up to 24 characters, default "Scan me"
+  color?: string;
+  textColor?: string;
+  secondaryText?: string; // banner-top-bottom, circle, menu-card
+  secondaryColor?: string; // gradient-border end color
+  fontScale?: number; // 0.5 to 1.5
+};
+```
+
+### 다운로드 타입 [#download-types]
+
+```tsx
+type DownloadFormat = 'png' | 'jpg' | 'webp' | 'svg' | 'pdf' | 'eps';
+
+type DownloadSize = {
+  width: number;
+  height: number;
+};
+
+const PRESET_SIZES: Record<string, DownloadSize> = {
+  small: { width: 200, height: 200 },
+  medium: { width: 400, height: 400 },
+  large: { width: 800, height: 800 },
+  xlarge: { width: 1200, height: 1200 },
+  '2xl': { width: 1600, height: 1600 },
+  '3xl': { width: 2000, height: 2000 },
+};
+```
+
+### 그라디언트 타입 [#gradient-types]
+
+```tsx
+type LinearGradient = {
+  type: 'linear';
+  stops: GradientStop[];
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+};
+
+type RadialGradient = {
+  type: 'radial';
+  stops: GradientStop[];
+  cx: number;
+  cy: number;
+  r: number;
+};
+
+type GradientStop = {
+  offset: number;
+  color: string;
+};
+```
+
+### 이미지 설정 [#image-settings]
+
+```tsx
+type ImageSettings = {
+  src: string;
+  height: number;
+  width: number;
+  excavate?: boolean;
+  x?: number;
+  y?: number;
+  /** Extra clear space around the logo when excavating, in pixels */
+  padding?: number;
+  opacity?: number;
+};
+```
+
+## 오류 정정 레벨 [#error-correction-levels]
+
+```tsx
+const ERROR_LEVELS = {
+  L: 'Low (~7%)',
+  M: 'Medium (~15%)',
+  Q: 'Quartile (~25%)',
+  H: 'High (~30%)',
+} as const;
+```
+
+## 오류 처리 [#error-handling]
+
+비동기 함수는 try-catch로 감싸세요.
+
+```tsx
+try {
+  await downloadQRCode(props, options);
+} catch (error) {
+  console.error('Failed:', error);
+}
+```
+
+자주 발생하는 오류:
+- 잘못된 이미지 URL
+- 네트워크 오류
+- 잘못된 크기 매개변수
+- 캔버스 컨텍스트를 사용할 수 없음
+
+## 브라우저 지원 [#browser-support]
+
+- Chrome 90+
+- Firefox 88+
+- Safari 14+
+- Edge 90+
+
+## 서버 지원 [#server-support]
+
+Node.js 환경에서 동작합니다.
+- Next.js
+- Remix
+- Express.js
+- 기타 Node.js 프레임워크
+
+일부 기능에는 브라우저 API가 필요합니다.
+- 캔버스 작업
+- Clipboard API
+- File API

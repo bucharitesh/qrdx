@@ -1,0 +1,162 @@
+---
+title: "Authentification unique (SSO)"
+description: "Permettez à votre équipe de se connecter à QRdx avec le fournisseur d'identité de votre entreprise, via OIDC ou SAML 2.0. Inclus dans le forfait Business."
+---
+
+L'authentification unique permet aux personnes de votre entreprise de se connecter à QRdx via votre fournisseur d'identité, plutôt qu'avec un code envoyé par e-mail, Google ou GitHub. Vous configurez une connexion pour un domaine de messagerie, vous prouvez que vous en êtes propriétaire, puis les personnes de ce domaine se voient proposer l'authentification unique lorsqu'elles saisissent leur adresse e-mail professionnelle pour se connecter. En se connectant ainsi, elles deviennent membres de votre espace de travail. Vous pouvez aussi [l'exiger](#require-single-sign-on) : votre fournisseur d'identité est alors le seul moyen de se connecter pour ce domaine.
+
+L'authentification unique fait partie du forfait **Business**. Un espace de travail en bénéficie lorsque l'un de ses propriétaires ou membres chargés de la facturation est abonné à Business. Voir [Places et limites de l'espace de travail](/docs/help/teams/seats).
+
+L'authentification unique est une fonctionnalité Business soumise à la licence commerciale de QRdx. Un serveur QRdx auto-hébergé a besoin d'une clé de licence (`QRDX_EE_LICENSE`) pour l'activer ; voir [Auto-hébergement](/docs/self-hosting#optional-services).
+
+## Avant de commencer [#before-you-start]
+
+- Vous devez être **propriétaire** ou **administrateur** de l'espace de travail.
+- Vous devez pouvoir ajouter un enregistrement DNS pour votre domaine de messagerie, par exemple `acme.com`.
+- Configurer, modifier, vérifier ou supprimer la connexion, ainsi qu'exiger l'authentification unique, nécessite d'abord de [confirmer votre identité](/docs/help/privacy-and-security/two-step-verification#confirm-its-you) : avec votre passkey ou un code de vérification en deux étapes, ou, si la vérification en deux étapes est désactivée, avec un code que nous vous envoyons par e-mail ou, pour une connexion OIDC, en vous reconnectant via celle-ci. Une seule confirmation couvre vos modifications pendant les 10 minutes suivantes.
+
+QRdx utilise les paramètres OIDC et SAML 2.0 standard que demandent les fournisseurs d'identité. Les étapes ci-dessous listent les valeurs ; l'endroit où les coller dépend de votre fournisseur.
+
+## Configurer avec OIDC [#set-up-with-oidc]
+
+1. Dans l'espace de travail, allez dans **Paramètres** → **Authentification unique**. **OIDC** est sélectionné.
+2. Dans votre fournisseur d'identité, créez une application web (client OIDC) pour QRdx et ajoutez l'**URI de redirection** affichée sur la page comme redirection autorisée.
+3. De retour dans QRdx, renseignez :
+   - **Domaine de messagerie** : le domaine de votre entreprise, par exemple `acme.com`.
+   - **URL de l'émetteur** : l'émetteur (issuer) de votre fournisseur. QRdx lit le reste dans `<issuer>/.well-known/openid-configuration`, l'émetteur doit donc correspondre exactement à ce document.
+   - **ID client** et **Secret client** de l'application que vous avez créée.
+4. Cliquez sur **Enregistrer la connexion**.
+
+QRdx demande les scopes `openid`, `email` et `profile` et utilise PKCE. L'émetteur doit être accessible en HTTPS depuis Internet ; les fournisseurs d'identité situés sur un réseau privé ne sont pas pris en charge.
+
+## Configurer avec SAML 2.0 [#set-up-with-saml-20]
+
+1. Dans l'espace de travail, allez dans **Paramètres** → **Authentification unique** et choisissez **SAML 2.0**.
+2. Dans votre fournisseur d'identité, créez une application SAML pour QRdx avec les valeurs affichées sur la page :
+   - **URL du service consommateur d'assertions (ACS)**
+   - **ID d'entité (audience)**
+   - **URL des métadonnées**, si votre fournisseur peut lire les paramètres de QRdx depuis une URL
+3. Envoyez l'adresse e-mail de la personne comme **NameID** (format e-mail) ou comme attribut nommé `email`. Pour son nom, envoyez `givenName` et `surname` (ou `firstName` et `lastName`, ou les noms X.500 `urn:oid:2.5.4.42` et `urn:oid:2.5.4.4`), ou un nom d'affichage (`displayName`, `name` ou `urn:oid:2.16.840.1.113730.3.1.241`). Sans nom, QRdx utilise la partie de l'adresse située avant le @.
+4. De retour dans QRdx, saisissez votre **Domaine de messagerie** et collez le **XML de métadonnées** de votre fournisseur. Vous pouvez aussi cliquer sur **Saisir les détails à la place** et renseigner l'**URL de connexion (URL SSO)**, l'**ID d'entité** du fournisseur et son **certificat de signature**.
+5. Cliquez sur **Enregistrer la connexion**.
+
+Votre fournisseur doit signer ses réponses et fournir une URL de connexion HTTP-Redirect. QRdx rejette les réponses sans signature valide ou sans durées de validité (`NotBefore` et `NotOnOrAfter`).
+
+Les signatures doivent utiliser SHA-256 ou un algorithme plus robuste. QRdx rejette les réponses signées ou hachées avec SHA-1 ; si votre fournisseur est configuré avec SHA-1 pour l'application QRdx, passez-le à SHA-256.
+
+QRdx ne signe pas ses demandes de connexion. Si votre fournisseur est configuré pour exiger des demandes signées de la part de l'application QRdx, désactivez cette option, sinon il refuse les personnes avant qu'elles puissent se connecter.
+
+## Vérifier votre domaine [#verify-your-domain]
+
+Personne ne peut se connecter via la connexion tant que vous n'avez pas prouvé que vous êtes propriétaire du domaine.
+
+1. Sous **Vérifier** sur la page Authentification unique, copiez le **Nom** et la **Valeur** de l'enregistrement TXT.
+2. Ajoutez l'enregistrement TXT chez votre fournisseur DNS.
+3. Cliquez sur **Vérifier**. Les nouveaux enregistrements peuvent mettre quelques minutes, parfois plus, à apparaître. Si QRdx ne trouve pas encore l'enregistrement, il l'indique ; patientez et réessayez.
+
+La valeur de vérification est valide pendant 7 jours. Si elle expire, rechargez la page pour en obtenir une nouvelle et mettez l'enregistrement à jour.
+
+Un domaine vérifié couvre aussi ses sous-domaines : `acme.com` couvre donc également `eu.acme.com`. Un domaine ne peut être vérifié pour l'authentification unique que dans un seul espace de travail. Si un autre espace de travail l'a déjà vérifié, ou a vérifié un domaine qui le recoupe, QRdx vous en informe lorsque vous enregistrez ou vérifiez.
+
+## Ce que voit votre équipe [#what-your-team-sees]
+
+1. Sur la page de connexion, les personnes saisissent leur e-mail professionnel et cliquent sur **M'envoyer un code par e-mail**, comme pour toute connexion par e-mail.
+2. Avant d'envoyer un code, QRdx vérifie le domaine de l'adresse. Pour votre domaine vérifié, il indique que votre entreprise se connecte avec l'authentification unique et propose **Continuer avec SSO**. Aucun code n'est envoyé à moins qu'elles n'en demandent un.
+3. **Continuer avec SSO** les envoie vers votre fournisseur d'identité, puis les ramène dans QRdx, connectées et dans votre espace de travail.
+
+Elles peuvent choisir **M'envoyer un code par e-mail** à la place, sauf si vous [exigez l'authentification unique](#require-single-sign-on). **Se connecter avec SSO**, sous le champ e-mail, fonctionne aussi : il demande leur e-mail professionnel et les envoie directement vers votre fournisseur d'identité.
+
+QRdx ne propose l'authentification unique que lorsque le domaine est vérifié et que l'espace de travail est sur Business. La vérification porte uniquement sur le domaine, elle ne révèle donc jamais si une personne possède un compte QRdx.
+
+Si une personne a activé la [vérification en deux étapes](/docs/help/privacy-and-security/two-step-verification), QRdx lui demande tout de même sa seconde étape après sa connexion via votre fournisseur d'identité, sauf si elle a choisi de ne plus l'être sur cet appareil. C'est également le cas lorsque l'authentification unique est exigée.
+
+Chaque connexion SSO s'assure que la personne fait partie de votre espace de travail :
+
+- Une personne qui n'est pas membre rejoint l'espace avec le rôle que vous choisissez sous **Nouveaux membres** : **Membre** (par défaut) ou **Lecteur**.
+- Une personne ayant une invitation en attente pour l'espace de travail le rejoint avec le rôle de l'invitation, et l'invitation est marquée comme acceptée.
+- Les membres conservent leur rôle. Vous pouvez modifier le rôle de chacun sur la page **Équipe**.
+
+Cela inclut les personnes que vous avez retirées de l'espace de travail : elles le rejoignent à nouveau la prochaine fois qu'elles se connectent avec SSO.
+
+Si une personne a déjà un compte QRdx avec la même adresse e-mail, la connexion avec SSO utilise ce compte. Elle conserve son propre espace de travail et tout ce qu'il contient.
+
+QRdx ne connecte une personne via votre connexion que si l'adresse envoyée par votre fournisseur appartient à votre domaine vérifié. Ses autres moyens de connexion, comme un code par e-mail envoyé à la même adresse, continuent de fonctionner, sauf si vous exigez l'authentification unique.
+
+Les adresses e-mail doivent être vérifiées dans votre fournisseur d'identité. S'il indique à QRdx qu'une adresse n'est pas vérifiée (la revendication `email_verified` d'OIDC, ou un attribut SAML `email_verified` ou `emailVerified`, défini sur false), QRdx ne connecte pas la personne, ne crée pas de compte pour elle et ne lie aucun compte existant. Elle voit un message demandant à votre administrateur de vérifier les adresses dans le fournisseur. Si votre fournisseur ne précise rien, QRdx lui fait confiance pour votre domaine vérifié.
+
+Se déconnecter de QRdx ne déconnecte personne de votre fournisseur d'identité. Tant que la personne y reste connectée, sa prochaine connexion SSO se fait directement, sans demander son mot de passe. Sur un ordinateur partagé, déconnectez-vous aussi de votre fournisseur d'identité.
+
+## Ouvrir QRdx depuis votre fournisseur d'identité [#open-qrdx-from-your-identity-provider]
+
+Avec une connexion SAML, les personnes peuvent aussi partir de votre fournisseur d'identité : en cliquant sur l'application QRdx dans son tableau de bord d'applications, elles se connectent à QRdx sans passer par la page de connexion de QRdx. On parle souvent de connexion initiée par le fournisseur d'identité (IdP-initiated).
+
+Dans votre fournisseur d'identité, ouvrez l'application SAML que vous avez créée pour QRdx et vérifiez qu'elle s'affiche pour les personnes dans le tableau de bord d'applications et qu'elle autorise la connexion lancée depuis le fournisseur d'identité. Les personnes arrivent sur le tableau de bord de votre espace de travail. QRdx ignore tout **RelayState** envoyé par l'application : une connexion que QRdx n'a pas demandée ne choisit donc jamais la page qui s'ouvre.
+
+Les mêmes règles s'appliquent que lorsque la connexion démarre sur QRdx : le domaine doit être vérifié, l'espace de travail doit être sur Business, et la réponse doit être signée avec SHA-256 ou un algorithme plus fort. QRdx exige aussi :
+
+- une seule assertion, avec un ID, non chiffrée ;
+- une date d'expiration sur l'assertion (`NotOnOrAfter` dans son `Conditions`), que la plupart des fournisseurs d'identité envoient par défaut.
+
+Chaque réponse ne connecte qu'une seule fois. Si la même réponse arrive de nouveau, QRdx la refuse et demande à la personne de se reconnecter. Si une personne a activé la vérification en deux étapes, QRdx lui demande d'abord sa seconde étape, puis la dirige vers le tableau de bord.
+
+Une connexion depuis le tableau de bord d'applications ne compte pas comme une [confirmation de votre identité](/docs/help/privacy-and-security/two-step-verification#confirm-its-you), sauf si la personne a répondu à sa seconde étape, car QRdx ne l'a pas demandée. Avant une modification qui l'exige, la personne confirme comme d'habitude.
+
+Une connexion OIDC démarre toujours sur QRdx. Pour placer QRdx dans le tableau de bord d'applications de votre fournisseur d'identité, ajoutez-le sous forme de lien vers la page de connexion de QRdx.
+
+## Exiger l'authentification unique [#require-single-sign-on]
+
+Une fois votre domaine vérifié, vous pouvez faire de votre fournisseur d'identité le seul moyen d'accès pour les personnes de ce domaine. Sur la page **Single sign-on**, activez **Require single sign-on for** votre domaine. Cela couvre aussi les sous-domaines, comme la connexion.
+
+Tant que cette option est activée, pour une adresse de votre domaine :
+
+- Les codes par e-mail, Google et GitHub ne les connectent pas<IfAvailable feature="passkeys">, pas plus que **Continue with passkey**</IfAvailable>. Elles voient que leur entreprise exige l'authentification unique, et **Continue with SSO**.
+- Leur [vérification en deux étapes](/docs/help/privacy-and-security/two-step-verification) s'applique toujours après leur connexion via votre fournisseur d'identité.<IfAvailable feature="passkeys"> Une clé d'accès (passkey) fonctionne toujours comme seconde étape.</IfAvailable>
+- Une connexion dure 24 heures au maximum. Ensuite, la personne repasse par votre fournisseur d'identité ; quelqu'un que vous retirez de l'application ne peut donc plus se connecter à QRdx et est déconnecté en moins d'un jour.
+- Leur adresse e-mail QRdx ne peut pas être remplacée par une adresse extérieure, et l'adresse de personne d'autre ne peut être remplacée par une adresse de votre domaine. La connexion par authentification unique est le seul moyen pour une adresse de ce domaine d'accéder à QRdx.
+
+L'activer déconnecte tous les membres de votre domaine des sessions qui n'ont pas démarré par authentification unique, et celles qui l'ont fait prennent fin 24 heures après cette connexion. Personne ne reçoit d'e-mail à ce sujet ; on leur demande de se connecter avec SSO la prochaine fois.
+
+**Les propriétaires conservent leurs autres moyens de connexion.** Rien de tout cela ne s'applique aux propriétaires de l'espace de travail : ils peuvent toujours utiliser un code par e-mail, Google ou GitHub<IfAvailable feature="passkeys">, ou une clé d'accès (passkey)</IfAvailable>, leurs sessions ne sont pas écourtées, et ils peuvent changer leur adresse e-mail. Ainsi, un problème avec votre fournisseur d'identité ne peut pas bloquer tout le monde hors de ce paramètre. Réservez le rôle de propriétaire aux quelques personnes qui en ont besoin.
+
+Pour l'activer :
+
+- Vous devez être **propriétaire** ou **administrateur** sur le forfait Business, avec un domaine vérifié, et on vous demandera de [confirmer votre identité](/docs/help/privacy-and-security/two-step-verification#confirm-its-you).
+- Si vous êtes administrateur avec une adresse du domaine, connectez-vous d'abord par authentification unique. Sinon, l'activer vous déconnecterait, et se connecter ainsi montre que la connexion fonctionne.
+
+Le désactiver, supprimer la connexion ou quitter le forfait Business pour l'espace de travail met fin à cette exigence. Les personnes conservent leurs sessions et peuvent de nouveau utiliser leurs autres moyens de connexion. Cela peut prendre jusqu'à une minute pour atteindre tous les serveurs QRdx : une personne qui se connecte autrement pendant cette minute peut être aussitôt déconnectée, et pourra se reconnecter une minute plus tard.
+
+L'authentification unique concerne la connexion. Les clés API ne sont pas des connexions, donc l'exiger ne les bloque pas ; en revanche, retirer quelqu'un sur la page **Team** arrête les clés API qu'il a créées pour l'espace de travail.
+
+## Retirer quelqu'un définitivement [#remove-someone-for-good]
+
+Comme chaque connexion SSO réajoute la personne, la retirer sur la page **Team** ne suffit pas à elle seule :
+
+1. Dans votre fournisseur d'identité, retirez-la de l'application QRdx (ou désactivez son compte), afin qu'il ne puisse plus la connecter à QRdx.
+2. Retirez-la ensuite sur la page **Team**. La boîte de dialogue de retrait vous le rappelle lorsque l'adresse de la personne appartient à votre domaine vérifié.
+
+Si vous [exigez l'authentification unique](#require-single-sign-on), l'étape 1 la déconnecte aussi de QRdx en moins de 24 heures. Retirez-la aussi sur la page **Team**, pour qu'elle ne soit plus membre et que ses clés API pour l'espace de travail cessent de fonctionner.
+
+Retirer quelqu'un de l'espace de travail ne supprime pas son compte QRdx. Sauf si l'authentification unique est exigée pour son adresse, la personne peut toujours se connecter à son propre espace de travail avec un code par e-mail, Google ou GitHub.
+
+## Modifier ou supprimer la connexion [#change-or-remove-the-connection]
+
+- **Replace secret** (OIDC) ou **Replace certificate** (SAML) met à jour la connexion lorsque vous les renouvelez chez votre fournisseur d'identité. Une connexion SAML configurée à partir d'un XML de métadonnées se modifie en la supprimant puis en la configurant à nouveau.
+- **Remove** désactive l'authentification unique et cesse de l'exiger. Tout le monde reste dans l'espace de travail et peut se connecter avec un code par e-mail, Google ou GitHub.
+
+## Si le forfait change [#if-the-plan-changes]
+
+Si l'espace de travail n'est plus sur Business, personne ne peut se connecter avec SSO, y compris en cours de connexion, et l'authentification unique n'est plus exigée. Les personnes voient un message et peuvent se connecter autrement. La connexion et ses paramètres sont conservés : ils refonctionnent dès que l'espace de travail repasse sur Business, et vous pouvez toujours la supprimer.
+
+## Ce qui n'est pas pris en charge [#what-isnt-supported]
+
+- Le provisionnement et la suppression automatiques (SCIM). Retirer quelqu'un de votre fournisseur d'identité ne le retire pas de l'espace de travail. Sans [authentification unique exigée](#require-single-sign-on), cela ne met pas non plus fin à ses sessions QRdx ; retirez-le aussi sur la page **Team** (voir [Retirer quelqu'un définitivement](#remove-someone-for-good)).
+- Les rôles ou groupes de votre fournisseur d'identité. Tout le monde rejoint l'espace avec le rôle défini sous **New members**.
+- Plus d'une connexion, ou plus d'un domaine, par espace de travail.
+- La connexion lancée depuis votre fournisseur d'identité avec une connexion OIDC (elle fonctionne avec SAML : voir [Ouvrir QRdx depuis votre fournisseur d'identité](#open-qrdx-from-your-identity-provider)), la déconnexion unique SAML (single logout) et les assertions chiffrées.
+- Les fournisseurs d'identité qui ne sont pas accessibles depuis Internet.
+
+## Voir aussi [#related]
+
+- [Rôles d'équipe](/docs/help/teams/roles)
+- [Places et limites de l'espace de travail](/docs/help/teams/seats)
+- [Créer un espace de travail et inviter des personnes](/docs/help/teams/create-and-invite)

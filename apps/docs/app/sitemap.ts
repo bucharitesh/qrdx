@@ -4,6 +4,14 @@ import { BARCODE_FORMAT_PAGES } from "@/app/[lang]/(home)/barcode-generator/[for
 import { CHAT_BOTS } from "@/components/sections/chat-bots/bots";
 import { isArtAvailable } from "@/lib/ai/art-availability";
 import { SLUG_TO_CATEGORY } from "@/lib/blog-constants";
+import {
+  blogAuthorsSource,
+  blogSource,
+  changelogSource,
+  compareSource,
+  legalSource,
+} from "@/lib/content-source";
+import { docsIndex, docsPageLocales } from "@/lib/docs-index";
 import { isPathAvailable } from "@/lib/feature-availability";
 import { docsSitemapEntries } from "@/lib/i18n/docs-seo";
 import { isLocalizedPath } from "@/lib/i18n/paths";
@@ -30,15 +38,6 @@ import {
   QR_TYPES_SOURCE,
   seoGroupSource,
 } from "@/lib/seo-page-sources";
-import {
-  blogAuthorsSource,
-  blogSource,
-  changelogSource,
-  compareSource,
-  docsPageLocales,
-  legalSource,
-  source,
-} from "@/lib/source";
 
 export const revalidate = false;
 
@@ -168,6 +167,16 @@ function entries(): Entry[] {
       changeFrequency: "yearly",
       priority: 0.6,
     },
+    ...localizedEntries("/enterprise", {
+      lastModified: pageDate("/enterprise"),
+      changeFrequency: "monthly",
+      priority: 0.7,
+    }),
+    ...localizedEntries("/security", {
+      lastModified: pageDate("/security"),
+      changeFrequency: "monthly",
+      priority: 0.6,
+    }),
     ...(isPathAvailable("/affiliates")
       ? [
           {
@@ -262,7 +271,7 @@ function entries(): Entry[] {
     // Docs for features this deployment can't offer (custom domains) are
     // left out; the pages stay up for existing users. Translations a native
     // reviewer signed off follow their English page (lib/i18n/docs-seo.ts).
-    ...source
+    ...docsIndex()
       .getPages()
       .filter((page) => isPathAvailable(page.url))
       .flatMap((page) =>

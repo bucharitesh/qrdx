@@ -1,0 +1,91 @@
+---
+title: "Jaga keamanan akun Anda"
+description: "Cara kerja proses masuk, verifikasi dua langkah, passkey, pemeriksaan saat sesi masuk digunakan dari tempat baru, email yang dikirim QRdx tentang keamanan akun Anda, berapa lama sesi masuk bertahan, mengeluarkan perangkat lain, dan cara melaporkan masalah keamanan."
+---
+
+## Tanpa kata sandi yang bisa bocor [#no-password-to-leak]
+
+QRdx tidak memakai kata sandi. Anda masuk dengan Google, GitHub, atau kode sekali pakai yang dikirim ke email Anda<IfAvailable feature="passkeys">, atau dengan passkey</IfAvailable>.<IfAvailable feature="sso"> Jika ruang kerja Anda memakai paket Business, ruang kerja itu juga dapat mengizinkan Anda masuk dengan [single sign-on](/docs/help/teams/single-sign-on) perusahaan Anda, atau mewajibkannya.</IfAvailable>
+
+Artinya, akun email Anda serta akun Google atau GitHub Anda menjadi kunci menuju QRdx. Aktifkan juga verifikasi dua langkah untuk akun-akun tersebut.
+
+<IfAvailable feature="sso" id="if-your-company-requires-single-sign-on" title="Jika perusahaan Anda mewajibkan single sign-on">
+Ruang kerja Business dapat [mewajibkan single sign-on](/docs/help/teams/single-sign-on#require-single-sign-on) untuk domain email perusahaannya. Jika alamat Anda memakai domain itu:
+
+- Anda masuk hanya dengan single sign-on: kode email, Google, atau GitHub<IfAvailable feature="passkeys">, atau **Continue with passkey**,</IfAvailable> tidak akan memasukkan Anda;
+- verifikasi dua langkah tetap berlaku setelah halaman masuk perusahaan Anda<IfAvailable feature="passkeys">, dan passkey tetap dapat menjadi langkah kedua Anda</IfAvailable>;
+- setiap sesi masuk bertahan paling lama 24 jam, lalu Anda masuk lagi dengan single sign-on;
+- email QRdx Anda tidak dapat diganti ke alamat di luar domain tersebut.
+
+Saat ruang kerja mengaktifkannya, Anda dikeluarkan dari sesi yang tidak dimulai dengan single sign-on. Pemilik ruang kerja tetap memiliki cara masuk lainnya, sehingga masalah pada halaman masuk perusahaan tidak mengunci semua orang.
+</IfAvailable>
+
+## Aktifkan verifikasi dua langkah [#turn-on-two-step-verification]
+
+[Verifikasi dua langkah](/docs/help/privacy-and-security/two-step-verification) membuat QRdx meminta langkah kedua setelah Anda masuk, dengan cara masuk apa pun: <IfAvailable feature="passkeys">passkey Anda atau </IfAvailable>kode dari aplikasi autentikator. Orang yang berhasil masuk ke email atau akun Google Anda tetap tidak bisa masuk ke QRdx tanpanya. Anda mendapat 10 kode cadangan untuk saat Anda tidak dapat menyelesaikan langkah kedua. Mengaktifkannya akan mengeluarkan semua browser atau perangkat lain yang masuk ke akun Anda, sehingga masing-masing harus masuk lagi dengan langkah kedua.
+
+<IfAvailable feature="passkeys" id="add-a-passkey" title="Tambahkan passkey">
+[Passkey](/docs/help/privacy-and-security/passkeys) memastikan itu Anda lewat sidik jari, wajah, atau kunci layar Anda. Passkey hanya berfungsi di situs resmi QRdx, sehingga situs tiruan tidak dapat mengambilnya. Passkey dapat memasukkan Anda sendiri lewat **Continue with passkey**, atau menjadi langkah kedua Anda. Menambahkan passkey saat verifikasi dua langkah nonaktif akan mengaktifkannya, dan perangkat Anda yang lain akan dikeluarkan.
+</IfAvailable>
+
+## Perubahan meminta Anda memastikan itu Anda [#changes-ask-you-to-confirm-its-you]
+
+Sebelum perubahan pada keamanan akun Anda, QRdx meminta Anda [memastikan itu Anda](/docs/help/privacy-and-security/two-step-verification#confirm-its-you), meskipun Anda sudah masuk: mengganti alamat email, menghapus akun, mengaktifkan atau menonaktifkan verifikasi dua langkah, kode cadangan baru, mengubah metode langkah kedua, atau menautkan atau melepas tautan Google atau GitHub. Hal yang sama berlaku untuk membuat API key atau client secret aplikasi OAuth, menyetujui aplikasi yang meminta akses ke akun Anda, menambahkan webhook atau mengubah URL-nya, menampilkan atau merotasi signing secret webhook, menambahkan webhook notifikasi Slack atau Discord atau menghubungkan integrasi yang mengirim pemindaian atau jawaban formulir Anda ke alat lain, dan, di ruang kerja, menghapusnya, mengubah peran seseorang, mengeluarkan anggota, atau mengundang admin.<IfAvailable feature="sso"> Hal yang sama juga berlaku untuk perubahan pada koneksi single sign-on ruang kerja, dan mewajibkan single sign-on.</IfAvailable>
+
+Saat verifikasi dua langkah aktif, Anda memastikannya dengan <IfAvailable feature="passkeys">passkey Anda, </IfAvailable>kode autentikator, atau kode cadangan, bukan dengan kode yang dikirim lewat email. Tanpa verifikasi dua langkah, Anda dapat memakai kode 6 digit yang dikirim QRdx ke email Anda<IfAvailable feature="passkeys">, passkey Anda jika punya,</IfAvailable> atau masuk lagi dengan akun Google atau GitHub yang sudah Anda tautkan<IfAvailable feature="sso"> (atau single sign-on ruang kerja Anda, jika memakai OIDC)</IfAvailable>. Konfirmasi berlaku selama 10 menit di browser tersebut.
+
+Mengganti alamat email juga memerlukan kode yang dikirim ke alamat baru. Setelahnya Anda dikeluarkan dari semua tempat lain, dan alamat lama menerima email yang memberi tahu bahwa alamat telah diganti. Kehilangan akses ke email Anda? Lihat [apa yang harus dilakukan](/docs/help/account-and-billing/sign-in#lost-access-to-your-email).
+
+## Sesi masuk yang digunakan dari tempat baru [#a-sign-in-used-somewhere-new]
+
+Saat Anda masuk, QRdx mencatat negara tempat Anda masuk dan browser Anda, misalnya "Chrome on macOS". Jika sesi masuk itu kemudian digunakan dari negara yang berbeda dan browser yang berbeda, QRdx meminta Anda [memastikan itu Anda](/docs/help/privacy-and-security/two-step-verification#confirm-its-you) sebelum Anda dapat melakukan hal lain di akun Anda. Sebelum Anda melakukannya, browser itu diperlakukan sebagai sudah keluar di semua tempat lain di QRdx. Jadi orang yang menyalin sesi masuk Anda dari browser Anda tidak dapat memakainya dari jauh kecuali ia juga dapat memastikan itu Anda.
+
+QRdx hanya bertanya bila keduanya berubah. Bepergian dengan browser yang sama, atau memperbarui browser atau sistem Anda, tidak dihitung. Setelah Anda mengonfirmasi, QRdx mencatat negara dan browser baru untuk sesi masuk itu. Anda juga dapat keluar lalu masuk lagi.
+
+Ini pemeriksaan tambahan, bukan jaminan: sesi masuk yang disalin lalu digunakan dari negara Anda sendiri, atau dari jenis browser yang sama, tidak akan ditanyai. QRdx hanya mengetahui negara bila penyedia hosting-nya menyediakannya, dan bila tidak, pemeriksaan ini tidak berjalan. Untuk mengakhiri sesi masuk yang tidak Anda kenali, [keluarkan perangkat lain](#sign-out-other-devices).
+
+## Email tentang keamanan akun Anda [#emails-about-your-accounts-security]
+
+Kami mengirim email ke alamat akun Anda ketika:
+
+- sebuah browser atau perangkat masuk ke akun Anda untuk pertama kali;
+- verifikasi dua langkah diaktifkan atau dinonaktifkan, aplikasi autentikator<IfAvailable feature="passkeys"> atau passkey</IfAvailable> ditambahkan atau dihapus, atau kode cadangan baru dibuat;
+- sebuah kode cadangan digunakan, untuk masuk atau untuk memastikan itu Anda, beserta jumlah kode yang tersisa;
+- dukungan diminta menonaktifkan verifikasi dua langkah Anda, dengan hari saat hal itu terjadi dan cara menghentikannya, serta saat permintaan itu dibatalkan;
+- alamat email Anda diganti (dikirim ke alamat lama).
+
+Setiap email menyebutkan apa yang terjadi, di perangkat dan browser mana (misalnya "Chrome on macOS"), kira-kira di mana, dari alamat IP mana, dan kapan. **Review security** membuka pengaturan keamanan Anda. Jika itu bukan Anda, ikuti langkah di email dan hubungi dukungan.
+
+Email yang berisi kode, seperti kode masuk dan kode untuk memastikan itu Anda, menyebutkan kira-kira dari mana kode itu diminta. QRdx tidak akan pernah meminta kode lewat telepon, obrolan, atau email: jangan berikan kode kepada siapa pun.
+
+### Sesi masuk baru [#new-sign-ins]
+
+QRdx mengenali browser lewat cookie yang dipasangnya saat Anda selesai masuk. Saat browser atau perangkat tanpa cookie itu masuk ke akun Anda, Anda menerima email. Jika verifikasi dua langkah aktif, email dikirim setelah langkah kedua selesai.
+
+Masuk lagi di browser yang sudah dikenali QRdx tidak mengirim email, begitu pula saat akun Anda dibuat. Jika Anda menghapus cookie atau memakai jendela pribadi, sesi masuk berikutnya di sana dianggap baru.
+
+Setiap browser baru mendapat emailnya sendiri, hingga 10 per hari, sehingga lonjakan sesi masuk tidak membanjiri kotak masuk Anda. Setiap sesi masuk tetap tampil di **Sessions**. QRdx mengingat 50 browser yang paling baru Anda gunakan, dan melupakan browser yang tidak masuk selama 400 hari.
+
+<IfAvailable feature="sso">
+Satu pengecualian: saat Anda masuk lewat penyedia identitas SAML ruang kerja Anda dan verifikasi dua langkah nonaktif, QRdx tidak dapat mengenali browser pada kunjungan berikutnya, sehingga email ini tidak dikirim.
+</IfAvailable>
+
+## Berapa lama Anda tetap masuk [#how-long-you-stay-signed-in]
+
+Sesi masuk bertahan hingga 30 hari. Setelah itu, QRdx meminta Anda masuk lagi di browser tersebut, seberapa sering pun Anda menggunakannya. Jika Anda tidak memakai QRdx di sebuah browser selama sekitar seminggu, Anda dikeluarkan di sana lebih cepat.
+
+## Keluarkan perangkat lain [#sign-out-other-devices]
+
+Buka **Settings** → **Profile & security**. Di bawah **Sessions**, keluarkan satu perangkat, atau klik **Sign out everywhere else**. Ini tidak pernah meminta Anda memastikan itu Anda, sehingga dapat dilakukan langsung.
+
+Mengaktifkan verifikasi dua langkah juga mengeluarkan semua perangkat lain. Jika dukungan menonaktifkannya untuk Anda, yang [menunggu 7 hari](/docs/help/privacy-and-security/two-step-verification#lost-your-phone-and-your-backup-codes), semua perangkat dikeluarkan pada hari itu, termasuk perangkat yang sedang Anda gunakan.<IfAvailable feature="sso"> Jika perusahaan Anda mulai mewajibkan single sign-on, Anda dikeluarkan dari sesi yang tidak dimulai dengan single sign-on, dan sesi single sign-on bertahan paling lama 24 jam.</IfAvailable>
+
+## Hapus aplikasi yang Anda hubungkan [#remove-apps-you-connected]
+
+Jika Anda mengizinkan aplikasi lain menggunakan akun QRdx Anda, aplikasi itu tercantum di **Settings** → **Authorized apps**. Hapus aplikasi yang tidak Anda gunakan. Aplikasi tetap berfungsi setelah Anda keluar, sehingga menyetujui aplikasi meminta Anda memastikan itu Anda.
+
+## Laporkan masalah keamanan [#report-a-security-problem]
+
+Kirim email ke [support@qrdx.dev](mailto:support@qrdx.dev) dengan subjek yang diawali `[security]`. Mohon jangan mempostingnya di isu GitHub publik. Lihat [kebijakan keamanan](/legal/security).
+
+Kode QR yang berbahaya bukan bug keamanan: [laporkan](/docs/help/privacy-and-security/report-abuse) melalui halaman tersebut.

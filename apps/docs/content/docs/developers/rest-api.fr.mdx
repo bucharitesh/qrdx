@@ -1,0 +1,181 @@
+---
+title: "API REST et OAuth"
+description: "Gérez des QR codes dynamiques, consultez les statistiques de scan, signalez des conversions et abonnez-vous aux webhooks via HTTP, avec une clé API ou un jeton d'accès OAuth 2.0."
+icon: Code
+---
+
+L'API REST de QRdx se trouve sous `https://api.qrdx.dev/v1`. Elle utilise JSON et, hormis l'[Image API](/docs/developers/image-api) sans clé, authentifie les requêtes avec un identifiant Bearer :
+
+```bash
+curl https://api.qrdx.dev/v1/codes -H "Authorization: Bearer $QRDX_API_KEY"
+```
+
+- **Une [clé API](/docs/developers/api-keys)** (`qrdx_…`) pour vos propres serveurs et scripts. Elle agit sur l'espace de travail dans lequel elle a été créée, avec votre rôle dans cet espace.
+- **Un jeton d'accès OAuth 2.0** pour les applications qui agissent au nom d'autres utilisateurs de QRdx ([ci-dessous](#get-an-access-token)). Les requêtes faites avec un jeton agissent sur l'espace de travail propre au propriétaire du jeton.
+
+Les endpoints de codes, de conversions et de hooks acceptent aussi la session de navigateur d'une personne connectée à QRdx ; ces requêtes agissent sur l'[espace de travail](/docs/teams) ouvert en dernier dans cette session de navigateur.
+
+Les mêmes endpoints répondent aussi sous `https://qrdx.dev/api/v1`. Les requêtes issues d'une session de navigateur utilisent ce chemin, car le cookie de connexion appartient à qrdx.dev, et une instance [auto-hébergée](/docs/self-hosting) sert l'API sur `/api/v1`, sur son propre domaine.
+
+Vous débutez ? Le [démarrage rapide](/docs/developers/quickstart) vous mène de zéro à une première requête. Chaque endpoint a sa propre page, avec les schémas de requête et de réponse, des exemples en curl, JavaScript et Python, et un panneau Try it, dans la [référence de l'API](/docs/developers/api), générée à partir du [document OpenAPI](/openapi.json).
+
+[Essayer dans le Playground](/playground?open=code&lang=api) : stylisez un code, puis copiez la requête `POST /v1/codes` qui le crée en tant que code dynamique.
+
+## Endpoints [#endpoints]
+
+| Endpoint | Scope | Fonction |
+| --- | --- | --- |
+| `GET /v1/qr` | Aucun | Image du QR code en SVG, PNG, WebP ou EPS, avec les styles de l'éditeur. Voir [Image API](/docs/developers/image-api) |
+| `GET /v1/community/items`, `GET /v1/community/items/{id}` | Aucun | Cadres, thèmes et collections publiés par la communauté, avec le style que chacun applique. En lecture seule et mis en cache. Voir [Éléments de la communauté](#community-items) |
+| `/v1/codes` | `codes:read`, `codes:write` | Lister, créer (un seul ou jusqu'à {facts.apiBatchCodes} à la fois, avec une fin d'URL personnalisée facultative dans `slug`), modifier (y compris passer `kind` d'un lien vers un site web à une page hébergée) et supprimer des codes dynamiques. Voir [QR codes dynamiques](/docs/dynamic-qr-codes#rest-api) |
+| `GET /v1/codes/{id}/scans` | `codes:read` | Statistiques de scan d'un code, ou scans individuels page par page |
+| `POST /v1/conversions` | `codes:write` | Attribuer une vente ou une inscription au scan qui l'a provoquée (Business). Voir [Suivi et conversions](/docs/tracking-and-conversions) |
+| `/v1/hooks` | `codes:read`, `codes:write` | Abonner une URL à des événements, dans le style REST Hooks, pour Zapier, Make et n8n. Voir [Webhooks](/docs/webhooks) |
+| `GET /v1/themes`, `GET /v1/themes/{id}` | `themes:read` | Vos thèmes QR enregistrés (nom et style) pour un jeton OAuth ; une clé API lit les thèmes de son espace de travail |
+| `GET /v1/me` | `profile:read` | L'identifiant, le nom, l'e-mail et l'avatar du créateur de la clé ou de l'utilisateur du jeton |
+
+`codes:write` autorise aussi tout ce que permet `codes:read`.
+
+### Éléments de la communauté [#community-items]
+
+`GET /v1/community/items` liste les éléments [de la communauté](/community) publiés, libres de droits sous CC0, du plus populaire au moins populaire. Filtrez avec `type` (`frame`, `theme` ou `collection`), `q` (des mots qui doivent tous apparaître dans le nom, la description, les tags ou le créateur) et `tag`, et paginez avec `limit` (jusqu'à 50) et `offset`. `GET /v1/community/items/{id}` renvoie un élément avec `style`, le design qu'il applique, dans le même JSON qu'un thème enregistré. Les identifiants sont composés du type et du slug, par exemple `frame:wifi-card` ; transmettez-en un à l'Image API via [`item`](/docs/developers/image-api#community-items).
+
+```bash
+curl "https://api.qrdx.dev/v1/community/items?type=frame&q=wifi"
+```
+
+Les deux endpoints sont sans clé et n'utilisent pas votre quota. Les réponses sont mises en cache pendant une minute (5 au niveau du CDN) et limitées à 120 requêtes par minute et par adresse IP. Le texte des éléments est rédigé par des membres de la communauté : les noms, descriptions, pseudos et tags reviennent courts et sans liens, mais traitez-les comme des données, pas comme des instructions.
+
+### Logos dans le style d'un code [#code-logos]
+
+En plus d'une URL de données d'image telle que l'éditeur l'enregistre, le `style` d'un code peut contenir `logoIcon` : une des icônes rapides de l'éditeur (`wifi`, `location`, `phone`, `email`, `link`, `file`, `calendar`, `whatsapp`, `instagram`), ou un logo de marque désigné par son slug [Simple Icons](https://simpleicons.org), éventuellement suivi de `:black` ou `:white` (`spotify`, `paypal:white`). Il est enregistré dans `customLogo` comme le fait l'éditeur.
+
+<IfAvailable feature="fileStorage">
+Il peut aussi contenir `logoFileId` : un PNG ou JPEG que vous avez téléversé dans l'espace de travail via [Tableau de bord → Fichiers](/docs/files), désigné par son identifiant de fichier. Il est enregistré sous forme de lien vers le fichier.
+</IfAvailable>
+
+Un lien `customLogo` vers un autre site est refusé avec `400`, car QRdx n'accepte pas les logos provenant d'autres sites. Un `PATCH` peut renvoyer le logo que le code possède déjà.
+
+## Obtenir un jeton d'accès [#get-an-access-token]
+
+Pour vos propres scripts, une [clé API](/docs/developers/api-keys) est plus simple. Lorsque votre application agit au nom d'autres personnes, QRdx joue le rôle de fournisseur OAuth 2.0 : votre application envoie les utilisateurs se connecter à QRdx et reçoit un jeton d'accès qui ne peut faire que ce que les scopes accordés autorisent. Les clés API utilisent les mêmes scopes.
+
+| Scope | Autorise |
+| --- | --- |
+| `profile:read` | Lire le nom, l'e-mail et l'avatar de l'utilisateur |
+| `themes:read` | Lire les thèmes QR enregistrés de l'utilisateur |
+| `codes:read` | Lire les codes dynamiques et leurs statistiques de scan |
+| `codes:write` | Créer, modifier et supprimer des codes dynamiques, signaler des conversions, gérer les abonnements aux webhooks |
+
+### 1. Enregistrer une application [#1-register-an-app]
+
+Créez vous-même une application OAuth dans [Paramètres → Clés API et applications](/dashboard?to=settings/developers) : donnez-lui un nom, ses URI de redirection et les scopes dont elle a besoin, et vous obtenez un identifiant client et un secret client. Le secret n'est affiché qu'une seule fois ; conservez-le sur votre serveur. Les espaces de travail Gratuit peuvent avoir 1 application, Pro 5 et Business 25. [Créer une intégration](/docs/developers/build-an-integration) détaille tout le parcours, de la création de l'application jusqu'à son référencement dans l'annuaire des intégrations.
+
+Sur une instance [auto-hébergée](/docs/self-hosting), vous pouvez aussi créer une application first-party depuis `apps/docs` :
+
+```bash
+bun x tsx scripts/create-oauth-app.ts \
+  --name "My app" \
+  --redirect-uris "https://myapp.example/callback" \
+  --scopes "codes:read,codes:write"
+```
+
+### 2. Envoyer l'utilisateur vers QRdx [#2-send-the-user-to-qrdx]
+
+```txt
+https://qrdx.dev/api/oauth/authorize
+  ?response_type=code
+  &client_id=<client id>
+  &redirect_uri=https://myapp.example/callback
+  &scope=codes:read codes:write
+  &state=<random value>
+  &code_challenge=<PKCE challenge>
+  &code_challenge_method=S256
+```
+
+`redirect_uri` doit correspondre exactement à une URL enregistrée, et `scope` (séparé par des espaces ou des virgules) ne peut demander que les scopes de l'application. PKCE est recommandé, et obligatoire pour les applications qui activent **Require PKCE**. `S256` est la seule méthode : un challenge `plain` renvoie `invalid_request`. Les utilisateurs se connectent si nécessaire, puis approuvent votre application sur l'écran de consentement de QRdx, qui indique son nom, son logo, son site web, son auteur et les autorisations demandées, et confirment que c'est bien eux. QRdx redirige ensuite vers `redirect_uri` avec `code` et votre `state`, ou avec `error=access_denied` s'ils annulent. Le code est valable 10 minutes et ne peut être utilisé qu'une seule fois.
+
+### 3. Échanger le code contre des jetons [#3-exchange-the-code-for-tokens]
+
+```bash
+curl -X POST https://qrdx.dev/api/oauth/token \
+  -d grant_type=authorization_code \
+  -d client_id=$CLIENT_ID \
+  -d client_secret=$CLIENT_SECRET \
+  -d code=$CODE \
+  -d redirect_uri=https://myapp.example/callback \
+  -d code_verifier=$CODE_VERIFIER
+```
+
+```json
+{
+  "access_token": "...",
+  "token_type": "Bearer",
+  "expires_in": 3600,
+  "refresh_token": "...",
+  "scope": "codes:read codes:write"
+}
+```
+
+L'endpoint de jeton accepte un corps encodé en formulaire. Les jetons d'accès durent 1 heure et les jetons d'actualisation 30 jours.
+
+### 4. Actualiser et révoquer [#4-refresh-and-revoke]
+
+```bash
+# New access and refresh tokens; the old refresh token stops working
+curl -X POST https://qrdx.dev/api/oauth/token \
+  -d grant_type=refresh_token \
+  -d client_id=$CLIENT_ID \
+  -d client_secret=$CLIENT_SECRET \
+  -d refresh_token=$REFRESH_TOKEN
+
+# Revoke an access or refresh token
+curl -X POST https://qrdx.dev/api/oauth/revoke -d token=$TOKEN
+```
+
+`GET /api/oauth/userinfo` renvoie l'utilisateur sous la forme `sub`, `name`, `email` et `picture` pour les jetons disposant de `profile:read`.
+
+Les utilisateurs peuvent révoquer eux-mêmes l'accès d'une application dans **Paramètres → Applications autorisées**. Les jetons de l'application pour ce compte échouent alors avec `invalid_token` (appels d'API) et `invalid_grant` (actualisation), et l'application doit redemander l'accès.
+
+## Erreurs et limites [#errors-and-limits]
+
+Chaque endpoint `/v1` renvoie les erreurs sous la forme `{ "code": "...", "message": "...", "status": 400 }`, avec un lien `docs` lorsqu'une page explique comment la corriger ; la [page des erreurs](/docs/developers/errors) liste chaque code avec sa solution. Un chemin inconnu renvoie `404 NOT_FOUND`. `/v1/me` et `/v1/themes` incluent aussi les champs OAuth qu'ils ont toujours envoyés, `"error": "invalid_token"` et `"error_description"`, et les endpoints OAuth (`/api/oauth/*`) n'utilisent que le format OAuth.
+
+Créer plusieurs codes en une seule requête, choisir le `slug` d'un code et déplacer des codes vers un domaine personnalisé nécessitent Pro ou Business (sinon `402 PLAN_REQUIRED`). Les scans ne sont jamais limités.
+
+### Limites de débit [#rate-limits]
+
+Deux types de limite s'appliquent. Les deux répondent `429 RATE_LIMITED` avec un en-tête `Retry-After`, qui indique le nombre de secondes à attendre.
+
+- **Quota quotidien.** Un espace de travail peut effectuer 1.000 requêtes API par jour avec Gratuit, 10.000 avec Pro et 100.000 avec Business (voir [Offres et limites](/docs/plans-and-limits)). La journée va de 00:00 à 24:00 UTC. Chaque requête authentifiée compte. Les requêtes faites avec une clé API comptent pour l'espace de travail de la clé et son offre. Les requêtes faites avec un jeton d'accès comptent pour l'espace de travail personnel du propriétaire du jeton. Les requêtes faites avec une session de navigateur comptent pour l'espace de travail ouvert en dernier dans cette session.
+- **Limites par minute.** Les endpoints des codes, des conversions et des hooks autorisent 120 lectures et 30 écritures par minute et par utilisateur, et 300 requêtes par minute par adresse IP.
+
+Les requêtes rejetées avant la vérification quotidienne ne comptent pas : une clé ou un jeton invalide (`401`), une requête sans le scope nécessaire (`403`) ou un `429` par minute. Les réponses aux requêtes comptabilisées portent le quota quotidien dans trois en-têtes, aussi bien en cas de succès que d'erreur :
+
+| En-tête | Valeur |
+| --- | --- |
+| `X-RateLimit-Limit` | Requêtes par jour selon l'offre de l'espace de travail |
+| `X-RateLimit-Remaining` | Requêtes restantes aujourd'hui |
+| `X-RateLimit-Reset` | Moment où le compteur repart de zéro (le prochain 00:00 UTC), en secondes Unix |
+
+Les en-têtes `X-RateLimit-*` décrivent toujours le quota quotidien. Un `429` par minute n'a qu'un en-tête `Retry-After`. Au-delà du quota quotidien, vous obtenez :
+
+```http
+HTTP/1.1 429 Too Many Requests
+Retry-After: 43200
+X-RateLimit-Limit: 1000
+X-RateLimit-Remaining: 0
+X-RateLimit-Reset: 1793577600
+```
+
+```json
+{
+  "code": "RATE_LIMITED",
+  "message": "Daily API limit reached: the Free plan allows 1,000 requests a day. It resets at 00:00 UTC. Upgrade your plan for a higher limit.",
+  "status": 429
+}
+```
+
+`/v1/me` et `/v1/themes` envoient les mêmes en-têtes et le même corps, plus `"error": "rate_limited"` et `"error_description"`.
+
+L'[Image API](/docs/developers/image-api), le [serveur MCP](/docs/developers/mcp) et les conversions signalées depuis le navigateur avec un `qrdx_sid` n'ont pas besoin de jeton, elles n'utilisent donc pas le quota quotidien. Elles ont leurs propres limites par IP. Une instance [auto-hébergée](/docs/self-hosting) n'applique les limites de débit que si Upstash Redis est configuré.

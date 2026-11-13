@@ -6,7 +6,7 @@
 // after a network error) never makes its codes twice. Pure functions only:
 // tests/dashboard/import-job.test.ts covers them.
 import type { ThemeStyles } from "@/types/theme";
-import type { ImportRowInput } from "./csv";
+import type { ImportIssue, ImportRowInput } from "./csv";
 
 /** Bump when the stored shape changes: older saved jobs are dropped. */
 export const IMPORT_JOB_VERSION = 1;
@@ -18,6 +18,8 @@ export interface JobRowResult {
   line: number;
   ok: boolean;
   message?: string;
+  /** Why the row wasn't imported, as codes (../_lib/csv.ts) */
+  issues?: ImportIssue[];
   code?: { id: string; slug: string; shortLink: string };
 }
 

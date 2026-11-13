@@ -1,0 +1,64 @@
+---
+title: "Generatore di QR code"
+description: "Un campo di testo con anteprima del QR code in tempo reale, preset di stile e pulsanti di download."
+icon: Sparkles
+---
+
+<ComponentLinks name="qr-code-generator" />
+
+<ComponentPreview name="qr-code-generator-demo" />
+
+## Installazione [#installation]
+
+<InstallationTabs name="qr-code-generator" />
+
+## Utilizzo [#usage]
+
+```tsx
+import { QrCodeGenerator } from "@/components/qr-code-generator";
+```
+
+```tsx
+<QrCodeGenerator defaultValue="https://example.com" />
+```
+
+L'anteprima si aggiorna mentre scrivi. Ogni pulsante di preset mostra un piccolo esempio del suo stile e i download usano il preset selezionato a 1024 pixel.
+
+## Esempi [#examples]
+
+### Preset personalizzati [#custom-presets]
+
+Sostituisci i preset integrati con i tuoi. Un preset è composto da un `id`, un `name` e uno `style` con qualsiasi opzione di qrdx, inclusi gradienti, loghi e il `level` di correzione degli errori.
+
+<ComponentPreview name="qr-code-generator-presets" />
+
+I preset integrati sono esportati come `QR_CODE_PRESETS`, quindi puoi estenderli:
+
+```tsx
+import { QR_CODE_PRESETS, QrCodeGenerator } from "@/components/qr-code-generator";
+
+<QrCodeGenerator
+  presets={[
+    ...QR_CODE_PRESETS,
+    { id: "brand", name: "Brand", style: { fgColor: "#155DFC" } },
+  ]}
+/>
+```
+
+### Salvare il risultato [#saving-the-result]
+
+`onChange` restituisce il testo e il preset selezionato a ogni modifica, ad esempio per memorizzare la scelta dell'utente:
+
+```tsx
+<QrCodeGenerator
+  onChange={({ value, preset }) => saveDraft({ value, style: preset.style })}
+/>
+```
+
+## Riferimento API [#api-reference]
+
+<auto-type-table path="../../../registry/qrdx/qr-code-generator.tsx" type="{ [K in keyof QrCodeGeneratorProps as K extends keyof ComponentProps<'div'> ? never : K]: QrCodeGeneratorProps[K] }" />
+
+### QrCodePreset [#qrcodepreset]
+
+<auto-type-table path="../../../registry/qrdx/qr-code-generator.tsx" name="QrCodePreset" />

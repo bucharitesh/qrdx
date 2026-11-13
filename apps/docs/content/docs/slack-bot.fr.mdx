@@ -1,0 +1,107 @@
+---
+title: "Bot Slack"
+description: "Créez et personnalisez des QR codes dans Slack avec /qr, une mention, un message direct ou un raccourci de message, et obtenez des codes suivis une fois votre compte QRdx associé."
+icon: Bot
+---
+
+QRdx propose une application Slack qui crée des QR codes directement dans Slack. Toute personne d'un espace de travail Slack où le bot est installé peut créer un code à partir d'un lien ou d'un texte quelconque. Celles et ceux qui associent leur compte QRdx peuvent aussi créer des codes suivis (dynamiques), qui comptent les scans et peuvent pointer ailleurs par la suite.
+
+<IfAvailable feature="slackBot" id="add-the-bot-to-slack" title="Ajouter le bot à Slack">
+
+1. Dans QRdx, ouvrez [Paramètres → Intégrations → Slack](/settings/integrations/slack) et cliquez sur **Ajouter le bot à Slack**. Tout compte QRdx peut le faire, quel que soit le forfait.
+2. Choisissez l'espace de travail Slack et validez. Le bot demande à voir sa commande slash, les mentions qui le concernent et ses messages directs, ainsi qu'à publier des messages.
+3. Vous revenez à la page des paramètres, qui liste les espaces de travail Slack auxquels vous avez ajouté le bot.
+
+La même application Slack publie aussi des [alertes](/docs/notifications#slack-and-discord) dans un canal. Ajouter le bot n'active pas les alertes, et ajouter des alertes n'ajoute pas le bot.
+
+</IfAvailable>
+
+<IfAvailable feature="slackBot" id="make-a-qr-code" title="Créer un QR code">
+
+| Où | Que faire | Où le code apparaît |
+| --- | --- | --- |
+| N'importe quel canal | `/qr` suivi d'un lien ou d'un texte | Dans le canal |
+| Un canal où se trouve le bot | Mentionnez le bot avec un lien ou un texte | Dans le fil de discussion |
+| Les messages directs du bot | Envoyez un lien ou un texte | Dans le message direct |
+| N'importe quel message | **Plus d'actions** → **Créer un QR code** | Dans le fil du message |
+
+Chaque réponse est une image de QR code avec le contenu en dessous, trois boutons et les menus de style décrits plus bas. Les boutons sont **Télécharger en PNG** (1024 pixels), **Télécharger en SVG** et **Ouvrir dans l'éditeur**, où vous pouvez poursuivre la personnalisation. Un lien ouvre l'éditeur avec ce lien déjà renseigné ; un texte ouvre un éditeur vide, car un texte ne devient jamais un lien.
+
+Le raccourci crée un code à partir de la première adresse web du message, ou de tout son texte s'il n'en contient pas. Si le bot n'est pas dans ce canal, vous seul voyez le code, et une note vous invite à ajouter l'application au canal.
+
+`/qr` seul, ou `/qr help`, affiche les commandes. Si le contenu est trop long pour un QR code, une courte explication remplace l'image, visible par vous seul.
+
+</IfAvailable>
+
+<IfAvailable feature="slackBot" id="style-your-code" title="Personnaliser votre code">
+
+Sous chaque code se trouvent quatre menus : **Aspect**, **Couleur**, **Cadre** et **Logo**. Faites un choix et le code change sur place, avec de nouveaux liens de téléchargement. Chaque choix s'applique au code dans son état actuel. Seule la personne qui a créé le code peut le modifier. Quand quelqu'un d'autre fait un choix, Slack lui affiche une note visible par elle seule, et le code reste inchangé.
+
+Les aspects sont une sélection des designs intégrés à l'éditeur qui restent lisibles en petit, et **Simple** revient au noir sur blanc. Une couleur applique cette couleur à tout le code, sur fond blanc. Les cadres ajoutent une étiquette « Scan me », et les logos sont les icônes rapides de l'éditeur.
+
+Vous pouvez aussi personnaliser un code dès sa création en ajoutant des options après le lien ou le texte, avec les mêmes noms que dans la [CLI QRdx](/docs/developers/cli) :
+
+```text
+/qr qrdx.dev --look modern --fg 0051ff --frame banner-bottom --frame-text "Scan me"
+```
+
+Tout ce qui précède la première option est le contenu. L'aspect est appliqué en premier, puis les autres options par-dessus, si bien que `--look royal --fg 0051ff` conserve les formes de Royal en bleu. Les options fonctionnent aussi dans les mentions et les messages directs. Si une option ou une valeur est incorrecte, le bot vous le signale en privé et liste les valeurs acceptées.
+
+| Option | Ce qu'elle modifie | Valeurs |
+| --- | --- | --- |
+| `--look` | Le design complet, à partir d'un des préréglages de l'éditeur | `plain`, `classic`, `modern`, `royal`, `folio`, `caffeine`, `retro`, `bordeaux`, `blossom` |
+| `--fg` (ou `--color`) | Les points, et les yeux des coins sauf si vous les définissez aussi | Une couleur hexadécimale comme `0051ff`, ou `black`, `blue`, `green`, `red`, `purple`, `orange` |
+| `--bg` | L'arrière-plan | Les mêmes que pour `--fg` |
+| `--eye-color` | Les trois yeux des coins | Les mêmes que pour `--fg` |
+| `--dot-color` | Les centres des yeux des coins | Les mêmes que pour `--fg` |
+| `--body` | La forme des points | N'importe laquelle des {facts.bodyPatterns} formes de points de l'éditeur, comme `rounded`, `circle` ou `classy` |
+| `--eye` | La forme des yeux des coins | N'importe laquelle des {facts.eyeShapes} formes d'yeux, comme `square`, `rounded` ou `gear` |
+| `--dot` | La forme des centres des yeux | N'importe laquelle des {facts.eyeCentres} formes de centres, comme `square`, `rounded` ou `circle` |
+| `--frame` | Un cadre autour du code | `none` ou l'un des {facts.frameStyles} cadres intégrés, comme `banner-bottom`, `banner-top`, `speech-bubble` ou `polaroid` |
+| `--frame-text` | L'étiquette du cadre, 24 caractères maximum | N'importe quel texte, entre guillemets s'il contient des espaces. Sans `--frame`, il s'affiche sur une bannière sous le code |
+| `--template` | Une bordure décorative | `Arrow`, `StandardBox`, `SquareBorder`, `StrikedBox` ou `Halloween` |
+| `--logo` | Une icône au centre | `link`, `wifi`, `location`, `phone`, `email`, `whatsapp`, `instagram`, `file`, `calendar` ou `none` |
+
+Avant la publication d'un code personnalisé, QRdx le vérifie avec le même score de scan que l'éditeur. Lorsqu'un design serait difficile à lire pour les téléphones, QRdx l'ajuste (couleurs plus foncées, formes plus simples ou correction d'erreur renforcée) et l'indique sous le code. Si cela ne suffit toujours pas, généralement parce que le contenu est long, vous obtenez le code en noir sur blanc, avec une note. Un code personnalisé créé avec `/qr` arrive un instant après l'envoi de la commande, le temps de la vérification.
+
+**Ouvrir dans l'éditeur** ouvre l'éditeur avec le même design : couleurs, formes, cadre et bordure. L'icône du logo n'est pas transmise dans le lien, choisissez-la à nouveau dans l'éditeur.
+
+Les codes créés avec le raccourci et visibles par vous seul n'ont pas de menus, et les codes suivis gardent le design simple.
+
+</IfAvailable>
+
+<IfAvailable feature="slackBot" id="tracked-codes" title="Codes suivis">
+
+Un code simple contient le lien lui-même. Un code suivi contient un lien court (`https://qrdx.dev/q/<slug>`) qui redirige vers votre lien : QRdx compte ainsi ses scans et vous pouvez changer sa destination. Pour en créer depuis Slack, associez une fois votre compte QRdx :
+
+1. Exécutez `/qr link`. Un bouton visible par vous seul ouvre QRdx. Il fonctionne pendant 10 minutes.
+2. Connectez-vous à QRdx si on vous le demande. Cliquez ensuite sur **Se connecter avec Slack** et connectez-vous avec le même compte Slack que celui qui a exécuté `/qr link`. Slack ne transmet à QRdx que votre utilisateur et votre espace de travail Slack, et QRdx vérifie qu'ils correspondent. Si vous vous connectez à Slack avec un autre compte, rien n'est associé.
+3. Choisissez l'espace de travail QRdx où iront vos codes suivis et cliquez sur **Confirmer**. QRdx vous demande d'abord de [confirmer votre identité](/docs/help/privacy-and-security/two-step-verification#confirm-its-you), car l'association permet à ce compte Slack de créer des codes dans votre espace de travail.
+4. De retour dans Slack, le bot vous envoie un message direct indiquant le compte et l'espace de travail QRdx auxquels vous êtes associé. Si ce n'est pas vous qui avez fait l'association, exécutez `/qr unlink`.
+5. Exécutez `/qr track` suivi d'un lien commençant par `https://` ou `http://`. Vous pouvez aussi mentionner le bot avec `track` et un lien.
+
+Le code apparaît dans le canal avec son lien court et le nom de l'espace de travail QRdx où il se trouve. Le bouton **Ouvrir dans QRdx**, qui mène au code dans votre tableau de bord, arrive dans un message distinct visible par vous seul. Le code porte le nom du site du lien suivi de « from Slack », et vous le retrouvez parmi les codes de l'espace de travail comme n'importe quel autre.
+
+Les codes suivis obéissent aux mêmes règles que les codes créés dans le tableau de bord : votre rôle doit permettre de créer des codes, un espace de travail qui exige la vérification en deux étapes impose qu'elle soit activée sur votre compte, et la limite de votre forfait pour les QR codes dynamiques actifs s'applique. Lorsque vous atteignez la limite, le bot l'indique et renvoie vers les forfaits. Ces contrôles ont lieu à chaque fois : si vous quittez un espace de travail ou perdez l'accès, l'association cesse de fonctionner.
+
+Chaque compte Slack a une association par espace de travail Slack. Lorsque vous exécutez `/qr link` pour un compte Slack déjà associé, la page indique à quel espace de travail QRdx il est associé, et si c'est dans un autre compte QRdx. Le bouton devient alors **Remplacer l'association**, et rien ne change tant que vous n'avez pas cliqué dessus. `/qr unlink` supprime une association, tout comme **Dissocier** sous **Comptes Slack associés** dans [Paramètres → Intégrations → Slack](/settings/integrations/slack).
+
+Les propriétaires et les administrateurs d'un espace de travail QRdx voient tous les comptes Slack qui y sont associés dans [Paramètres → Clés API et applications](/dashboard?to=settings/developers) : l'espace de travail Slack, l'identifiant de l'utilisateur Slack, le membre au nom duquel il agit et la date d'association. **Révoquer** y supprime une association. Si l'espace de travail dispose du [journal d'audit](/docs/help/teams/audit-log), les codes créés avec `/qr track` affichent le nom du membre « via Slack », avec les identifiants de l'utilisateur et de l'espace de travail Slack, et la révocation d'une association y est également consignée.
+
+</IfAvailable>
+
+## Ce que le bot conserve [#what-the-bot-keeps]
+
+Le bot ne lit un message que lorsque quelqu'un exécute `/qr`, mentionne le bot, lui écrit directement ou utilise le raccourci sur ce message. Il ne stocke jamais le texte des messages. Les images de QR code proviennent de l'[Image API](/docs/developers/image-api) de QRdx, que Slack charge depuis le lien du message : rien n'est donc téléversé.
+
+Pour chaque espace de travail Slack, QRdx conserve son identifiant et son nom, l'identifiant utilisateur Slack du bot, le jeton du bot (chiffré) et le compte QRdx qui l'a ajouté. Pour chaque compte Slack lié, il conserve l'identifiant utilisateur Slack, votre compte QRdx et l'espace de travail que vous avez choisi. La connexion avec Slack pour lier un compte n'ajoute rien à cela : QRdx compare l'utilisateur et l'espace de travail Slack, puis oublie la connexion.<IfAvailable feature="slackBot"> Vos comptes Slack liés figurent dans votre [export de données](/docs/help/account-and-billing/export-your-data).</IfAvailable>
+
+<IfAvailable feature="slackBot" id="remove-the-bot" title="Supprimer le bot">
+
+Dans Slack, ouvrez la page de l'application et choisissez **Remove App** (ou demandez à un administrateur Slack de le faire). QRdx supprime alors le jeton du bot de cet espace de travail Slack ainsi que tous les liens de comptes Slack créés à cet endroit. Les codes déjà créés restent dans QRdx, et les codes suivis continuent de fonctionner.
+
+</IfAvailable>
+
+## Auto-hébergement [#self-hosting]
+
+Le bot utilise la même application Slack que les alertes « Add to Slack », avec son secret de signature en plus. Définissez `SLACK_CLIENT_ID`, `SLACK_CLIENT_SECRET` et `SLACK_SIGNING_SECRET`, ainsi que `INTEGRATION_ENCRYPTION_KEY` en production, qui chiffre les jetons du bot. Sans ces variables, les pages et les points d'accès du bot n'existent pas. `plugins/slack/manifest.json` dans le dépôt est le manifeste de l'application, et `plugins/slack/README.md` explique pas à pas comment créer l'application à partir de celui-ci. Le manifeste inclut la portée utilisateur `openid` et l'URL de redirection `/api/integrations/slack/link/callback`, dont Sign in with Slack a besoin lorsque quelqu'un lie son compte.

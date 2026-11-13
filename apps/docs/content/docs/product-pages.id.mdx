@@ -1,0 +1,60 @@
+---
+title: "Halaman produk dan GS1 Digital Link"
+description: "Bahan, nutrisi, sertifikasi, dan perawatan untuk produk di balik kode QR pada kemasan, dengan GS1 Digital Link di domain Anda sendiri."
+icon: Package
+---
+
+Halaman **Produk** adalah halaman yang di-hosting untuk kode yang dicetak pada kemasan, label, atau hang tag. Halaman ini memuat hal-hal yang tidak muat di kemasan: daftar bahan lengkap, alergen, tabel nutrisi, sertifikasi, serta petunjuk perawatan dan daur ulang. Seperti setiap [halaman yang di-hosting](/docs/landing-pages), Anda dapat mengubahnya setelah dicetak dan melihat setiap pemindaian.
+
+## Membuat halaman produk [#create-a-product-page]
+
+1. Klik **Kode baru** lalu pilih **Produk**, atau **Halaman baru** di [Halaman & formulir](/dashboard?to=pages).
+2. Pilih templat:
+   - **Makanan**: bahan, alergen, dan tabel nutrisi.
+   - **Anggur & minuman**: bahan dan energi per 100 ml, label elektronik untuk botol.
+   - **Kecantikan & perawatan**: daftar bahan lengkap, cara pemakaian, peringatan.
+   - **Paspor produk**: material, tempat pembuatan, perawatan, perbaikan, dan akhir masa pakai.
+3. Ganti teks contoh, angka, dan foto dengan milik produk Anda, lalu klik **Terbitkan**.
+
+## Blok Detail produk [#the-product-details-block]
+
+| Bagian | Yang ditampilkan |
+| --- | --- |
+| Sertifikasi dan label | Label singkat seperti "Organik bersertifikat" atau "Kemasan dapat didaur ulang". Editor menyarankan label yang umum. Cantumkan hanya label yang benar-benar dimiliki produk Anda. |
+| Bahan atau material | Teks biasa, jeda baris dipertahankan |
+| Alergen | 14 alergen yang wajib dicantumkan oleh pelaku usaha makanan di UE dan Inggris, ditampilkan sebagai "Mengandung: …", ditambah catatan seperti "Mungkin mengandung jejak kacang tanah" |
+| Nutrisi | Sebuah tabel: nilai tersebut per berapa ("Per 100 g"), lalu setiap nutrisi beserta jumlahnya. Baris dapat dibuat menjorok ("di antaranya gula"). Baris tanpa jumlah disembunyikan. |
+| Informasi lainnya | Bagian yang terbuka saat diketuk: perawatan, daur ulang, peringatan, asal, atau hal lain |
+| GTIN | Nomor di bawah barcode produk (8, 12, 13, atau 14 digit). QRdx memeriksa digit pemeriksanya. Ditampilkan di bawah detail kecuali Anda menonaktifkannya. |
+
+Blok **Detail** (label dan nilai, sebagai daftar atau kotak) cocok untuk fakta di sekitarnya: berat bersih, asal, kadar alkohol, ukuran.
+
+<IfAvailable feature="customDomains" title="GS1 Digital Link">
+
+## GS1 Digital Link [#gs1-digital-link]
+
+[GS1 Digital Link](https://www.gs1.org/standards/gs1-digital-link) adalah standar GS1 untuk kode QR pada produk: kode memuat alamat web dengan GTIN produk, misalnya `https://go.yourbrand.com/01/09506000134352`, sehingga kode yang sama dapat membuka halaman Anda dan membawa GTIN yang dibaca pemindai di kasir.
+
+Jika kode QR halaman produk menggunakan [domain khusus](/docs/custom-domains) Anda dan halaman tersebut memiliki GTIN, alamat itu akan membuka halaman:
+
+- `https://<your domain>/01/<GTIN>` membuka halaman produk dan menghitung satu pemindaian kodenya, persis seperti tautan pendek kode. Kontrol kode (kata sandi, jadwal, batas pemindaian, jeda) juga berlaku.
+- Batch atau lot (`/10/<lot>`), nomor seri (`/21/<serial>`), dan varian produk konsumen (`/22/<variant>`) dapat mengikuti GTIN, dengan urutan tersebut. Semuanya diterima, dan halaman yang sama terbuka.
+- GTIN dengan digit pemeriksa yang salah, atau bagian dengan urutan yang salah, menampilkan "Tautan produk ini tidak valid" alih-alih sebuah halaman.
+
+Untuk menggunakannya:
+
+1. Pindahkan kode halaman produk ke domain khusus Anda (**Edit tautan** pada kode).
+2. Masukkan GTIN di blok **Detail produk** pada halaman lalu terbitkan. Blok tersebut kemudian menampilkan GS1 Digital Link dengan tombol salin.
+3. Buat kode QR untuk kemasan Anda dari tautan itu. Tautan pendek kode tetap berfungsi juga.
+
+Satu GTIN membuka satu halaman produk per domain. Jika halaman lain dengan kode pada domain yang sama sudah menggunakannya, saat menerbitkan akan ditunjukkan halaman mana, sehingga Anda dapat mengubah salah satunya.
+
+### Hanya di domain Anda sendiri [#only-on-your-own-domain]
+
+Pada alamat bersama QRdx (`qrdx.dev`), halaman produk menggunakan tautan pendek biasa dan GTIN tidak pernah membuka halaman. Siapa pun dapat membuat akun QRdx, jadi pencarian GTIN bersama akan memungkinkan satu orang mengklaim nomor produk merek lain. Di domain Anda sendiri, hanya halaman di workspace Anda yang dapat menjawab.
+
+</IfAvailable>
+
+## Paket [#plans]
+
+Halaman produk dihitung sebagai halaman yang di-hosting, dengan [batas paket](/docs/plans-and-limits) yang sama seperti jenis halaman lainnya. GS1 Digital Link membutuhkan [domain khusus](/docs/custom-domains), yang termasuk dalam Pro dan Business.

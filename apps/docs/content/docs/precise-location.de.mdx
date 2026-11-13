@@ -1,0 +1,78 @@
+---
+title: "Genauer Standort und Geofencing"
+description: "Bitte Personen, die einen dynamischen QR-Code scannen, ihren Standort zu teilen, sieh auf etwa 100 m genau, wo gescannt wurde, und leite Scans nach Gebiet weiter."
+icon: MapPin
+---
+
+Jeder [dynamische QR-Code](/docs/dynamic-qr-codes) erfasst Land, Region und Stadt jedes Scans anhand des Netzwerks. Mit Pro und Business kannst du Scannende außerdem bitten, ihren genauen Standort zu teilen. Wer zustimmt, erscheint in den Analysen des Codes als Punkt, der auf etwa 100 m gerundet ist, und mit [Smart Routing](/docs/smart-routing) kannst du sie je nach Standort an unterschiedliche Ziele schicken.
+
+Die Abfrage ist für jeden Code ausgeschaltet, bis du sie aktivierst, und jede scannende Person entscheidet selbst in ihrem Browser.
+
+## Aktivieren [#turn-it-on]
+
+Öffne den Code im [Dashboard](/dashboard?to=codes), wechsle zum Tab **Einstellungen** und aktiviere im Bereich **Genauer Standort** die Option **Scannende nach dem genauen Standort fragen**. Das funktioniert für Codes, die einen Website-Link öffnen, und für Codes, die eine gehostete Seite öffnen.
+
+Mit der [REST API](/docs/developers/rest-api) sendest du `PATCH /v1/codes/{id}` mit `{"preciseLocation": true}`. Codes geben die Einstellung im Feld `preciseLocation` zurück.
+
+## Was Scannende sehen [#what-scanners-see]
+
+**Codes, die einen Website-Link öffnen**, zeigen vor dem Öffnen des Links einen kurzen Schritt „Standort teilen?“ mit **Erlauben** und **Überspringen**. „Erlauben“ öffnet die Standortabfrage des Browsers. Der Schritt hindert niemanden daran, deinen Link zu erreichen:
+
+- „Überspringen“ öffnet den Link sofort.
+- Wenn die scannende Person im Browser ablehnt oder der Browser keinen Standort findet, wird der Link geöffnet.
+- Liegt 8 Sekunden nach dem Tippen auf „Erlauben“ kein Standort vor, wird der Link trotzdem geöffnet.
+- Ein Browser, der für die Website schon abgelehnt hat, überspringt den Schritt von selbst, und einer, der schon zugestimmt hat, teilt den Standort ohne zweiten Tipp.
+- Ohne JavaScript wird der Link sofort geöffnet.
+
+Der Schritt nennt die Website, auf der die scannende Person landet, und verlinkt auf die Datenschutzerklärung.
+
+**Codes, die eine gehostete Seite öffnen**, öffnen die Seite wie gewohnt sofort. Sobald sie geladen ist, fragt der Browser auf der Seite nach dem Standort. Die Seite wartet nie auf eine Antwort. Gefragt wird nur direkt nach einem Scan, nie, wenn jemand die Adresse der Seite direkt öffnet.
+
+Ist die Einstellung ausgeschaltet, ändert sich nichts: Scans führen ohne zusätzlichen Schritt direkt zum Ziel.
+
+## Was gespeichert wird [#whats-stored]
+
+Wenn jemand zustimmt, rundet der Browser den Standort vor dem Senden auf 3 Dezimalstellen (etwa 100 m). QRdx rundet ihn vor dem Speichern beim Scan noch einmal, zusammen mit der vom Browser gemeldeten Genauigkeit. Exakte Positionen erreichen QRdx nie.
+
+Wenn jemand überspringt oder ablehnt, wird nichts gespeichert. Der Scan wird trotzdem gezählt, mit Land, Region und Stadt aus dem Netzwerk wie immer.
+
+Genaue Standorte werden so lange aufbewahrt wie die übrigen Scans des Codes, und dein Tarif bestimmt, wie weit zurück du sie sehen kannst. Siehe [Was QRdx beim Scannen erfasst](/docs/help/privacy-and-security/scan-data).
+
+## In den Analysen [#in-analytics]
+
+Der Tab **Analysen** des Codes enthält neben den IP-basierten Ländern und Städten eine Karte **Genaue Standorte**. Sie zeigt, wie vielen Scannenden die Frage gestellt wurde, wie viele ihren Standort geteilt haben und wie hoch der Anteil ist, dazu jeden geteilten Punkt mit Anzahl der Scans, durchschnittlicher Genauigkeit und letztem Scan. Du kannst die Tabelle nach jeder dieser Spalten sortieren und einen Punkt in OpenStreetMap öffnen, um zu sehen, wo er liegt.
+
+Der CSV-Export enthält die Spalten `latitude`, `longitude`, `location_accuracy_m` und `location_source`. `location_source` ist `gps` bei einem geteilten Standort, `ip`, wenn der Code gefragt hat, die scannende Person aber nichts geteilt hat, und leer, wenn der Code nicht gefragt hat. [`GET /v1/codes/{id}/scans`](/docs/developers/api/get-code-scans) liefert dieselben Felder pro Scan sowie eine Zusammenfassung `preciseLocations`.
+
+Geteilte Analyse-Links (**Analysen teilen** im Menü eines Codes) zeigen nie genaue Standorte. Sie bleiben auf Länderebene.
+
+## Scans nach Gebiet weiterleiten [#route-scans-by-area]
+
+Füge im Bereich **Smart Routing** des Codes eine Regel mit der Bedingung **Gebiet** hinzu: ein Mittelpunkt und ein Radius zwischen 100 m und 500 km. Den Mittelpunkt erhältst du, indem du in einer Karten-App mit der rechten Maustaste auf einen Ort klickst und seine Koordinaten kopierst (zum Beispiel `40.7580, -73.9855`), oder du nutzt **Meinen Standort verwenden**, wenn du vor Ort bist. **Auf Karte prüfen** öffnet den Punkt in OpenStreetMap.
+
+QRdx prüft das Gebiet mit dem besten Standort, der für diesen Scan vorliegt:
+
+1. Der Standort, den die scannende Person im Schritt geteilt hat, wenn der genaue Standort aktiviert ist und sie zugestimmt hat.
+2. Andernfalls der ungefähre Standort ihrer IP-Adresse. Auf qrdx.dev stammt er aus der IP-Geolokalisierung von Vercel und ist meist der Mittelpunkt der Stadt oder Gegend der scannenden Person, eignet sich also für Radien von mehreren Kilometern. Er wird zum Weiterleiten des Scans verwendet und nie gespeichert.
+
+Wenn keines von beiden vorliegt, passen Gebietsbedingungen nicht, „ist nicht“-Gebietsbedingungen dagegen schon. Selbst gehostete Kopien, die nicht auf Vercel laufen, haben keine IP-Koordinaten, daher funktionieren Gebietsregeln dort nur mit geteilten Standorten.
+
+**Regeln testen** hat ein Feld **Standort**, damit du prüfen kannst, wohin ein Scan von einem beliebigen Punkt aus führen würde.
+
+### Nur innerhalb eines Gebiets [#only-inside-an-area]
+
+Um etwas nur Personen an einem bestimmten Ort zu zeigen, etwa an einem Veranstaltungsort oder in einem Geschäft:
+
+1. Füge eine Regel mit einer Gebietsbedingung um den Ort hinzu und setze ihre URL auf den Inhalt für Personen vor Ort.
+2. Setze das Hauptziel des Codes auf eine Seite für alle anderen, zum Beispiel eine, die sagt, dass das Angebot nur vor Ort verfügbar ist.
+
+Aktiviere außerdem den genauen Standort, damit ein von der scannenden Person geteilter Standort auf etwa 100 m genau entscheidet. Ohne ihn entscheidet der IP-Standort, der nur auf Stadtebene genau ist.
+
+Browser erlauben es, den Standort zu fälschen, daher ist eine Gebietsregel keine Zugriffskontrolle. Nutze ein [Passwort](/docs/code-controls) für alles, was privat bleiben muss.
+
+## Gut zu wissen [#good-to-know]
+
+- Bots, Link-Vorschauen und HEAD-Requests sehen den Schritt nie; sie erhalten die übliche Weiterleitung.
+- Codes mit Passwort zeigen den Schritt nicht: Nach Eingabe des richtigen Passworts führt der Scan direkt zum Ziel.
+- A/B-Test-Zahlen für eine Aufteilung hinter einer Gebietsbedingung sind Schätzungen, weil Scans nicht speichern, welchen Standort die Regel verwendet hat.
+- Wenn dein Workspace auf Kostenlos wechselt, fragt QRdx nicht mehr nach genauen Standorten. Gespeicherte Gebietsregeln funktionieren weiter mit dem IP-Standort, und das Ausschalten der Einstellung erfordert nie einen Tarif.

@@ -1,0 +1,53 @@
+---
+title: "Envoyer les scans vers différents liens"
+description: "Dirigez chaque scan selon l'appareil, le pays, la zone, la langue ou l'heure, et lancez des tests A/B grâce au routage intelligent."
+---
+
+Le routage intelligent envoie chaque scan d'un QR code dynamique vers un lien différent, selon les règles que vous définissez. Réservé aux offres Pro et Business.
+
+## Ajouter une règle [#add-a-rule]
+
+1. Ouvrez le code depuis **Codes**.
+2. Sous **Paramètres**, ouvrez **Routage intelligent**.
+3. Cliquez sur **Ajouter une règle**, ou partez d'un modèle.
+4. Choisissez une condition et le lien que les scans correspondants ouvrent.
+5. Cliquez sur **Enregistrer les règles**.
+
+Les scans qui ne correspondent à aucune règle ouvrent la destination habituelle du code.
+
+## Conditions disponibles [#conditions-you-can-use]
+
+Appareil, système d'exploitation, pays, région, zone, langue, heure de la journée, plage de dates et nombre de scans. Chaque condition peut aussi être inversée avec **n'est pas**.
+
+Une **zone** est un point associé à un rayon. Elle utilise la position partagée par la personne qui scanne lorsque la [localisation précise](/docs/precise-location) est activée, et sinon la position approximative de son réseau.
+
+Une règle peut comporter jusqu'à 8 conditions. Un code peut avoir jusqu'à 20 règles.
+
+## Modèles [#templates]
+
+- **Lien d'application intelligent** : les iPhone vers l'App Store, les téléphones Android vers Google Play.
+- **Pays** et **Langue du visiteur**.
+- **Heures d'ouverture**.
+- **Plage de dates** pour une campagne.
+- **Premiers scans** : un lien différent pour les premiers scans.
+- **Dans une zone** : un lien différent pour les scans effectués près d'un lieu.
+- **Répartition A/B** : répartit les scans entre 5 versions au maximum.
+
+## La première règle correspondante l'emporte [#the-first-matching-rule-wins]
+
+Les règles sont vérifiées de haut en bas. Placez les règles les plus spécifiques en premier.
+
+Cliquez sur **Tester vos règles** pour voir où irait un scan avant d'enregistrer.
+
+## Tests A/B [#ab-tests]
+
+Une répartition A/B envoie chaque visiteur vers une version. Un même visiteur voit la même version pendant le reste de la journée. La page du code indique comment les scans se répartissent entre les versions.
+
+## Après un passage à une offre inférieure [#after-a-downgrade]
+
+Les règles enregistrées continuent de fonctionner.
+
+## À lire aussi [#related]
+
+- [Guide du routage intelligent](/docs/smart-routing)
+- [Un code ouvre la mauvaise page](/docs/help/troubleshooting/wrong-destination)

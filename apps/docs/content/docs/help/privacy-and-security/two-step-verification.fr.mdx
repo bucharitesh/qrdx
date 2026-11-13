@@ -1,0 +1,133 @@
+---
+title: "Vérification en deux étapes"
+description: "Ajoutez une seconde étape à chaque connexion avec une clé d'accès ou une application d'authentification, conservez des codes de secours et retrouvez l'accès si vous perdez votre téléphone."
+---
+
+La vérification en deux étapes (aussi appelée 2FA) ajoute une seconde étape à la connexion. Après vous être connecté avec un code reçu par e-mail, Google ou GitHub<IfAvailable feature="sso"> (ou l'authentification unique de votre espace de travail)</IfAvailable>, QRdx vous demande <IfAvailable feature="passkeys">votre clé d'accès ou </IfAvailable>un code à 6 chiffres généré par une application d'authentification. Une personne qui accède à votre messagerie ou à votre compte Google ne peut donc pas entrer dans QRdx sans cette étape.
+
+<IfAvailable feature="passkeys">
+Une [clé d'accès](/docs/help/privacy-and-security/passkeys) vérifie que c'est bien vous grâce à votre empreinte digitale, votre visage, le verrouillage de l'écran ou une clé de sécurité. Elle ne fonctionne que sur le site officiel de QRdx : un site imitant QRdx ne peut donc pas la récupérer.
+</IfAvailable>
+
+Une application d'authentification convient aussi : toute application qui affiche des codes à 6 chiffres renouvelés toutes les 30 secondes, y compris la fonction de code à usage unique de la plupart des gestionnaires de mots de passe. QRdx n'envoie pas de codes de seconde étape par e-mail ni par SMS.
+
+Vous pouvez configurer les deux et utiliser celui que vous avez sous la main au moment de la connexion.
+
+## Activer la vérification [#turn-it-on]
+
+1. Allez dans **Paramètres** → **Profil et sécurité**.
+2. Sous **Vérification en deux étapes**, cliquez sur **Activer**, puis [confirmez votre identité](#confirm-its-you).
+3. Configurez votre seconde étape<IfAvailable feature="passkeys"> : choisissez **Clé d'accès** ou **Application d'authentification**</IfAvailable>, comme décrit ci-dessous.
+4. Enregistrez vos 10 codes de secours. Copiez-les ou téléchargez-les dans un fichier texte, et conservez-les en lieu sûr, par exemple dans un gestionnaire de mots de passe. QRdx ne les affiche qu'une seule fois. Cochez **J'ai enregistré mes codes de secours** et cliquez sur **Terminé**.
+
+<IfAvailable feature="passkeys">
+Pour une clé d'accès, gardez le nom proposé (votre navigateur et votre système, par exemple « Chrome on macOS ») ou saisissez le vôtre, cliquez sur **Continuer**, puis laissez votre navigateur enregistrer la clé d'accès.
+</IfAvailable>
+
+Pour une application d'authentification, scannez le QR code avec l'application, ou saisissez la clé affichée en dessous. Entrez le code à 6 chiffres affiché par l'application et cliquez sur **Vérifier**.
+
+La vérification en deux étapes est maintenant activée, et tous les autres navigateurs ou appareils connectés à votre compte sont déconnectés. Chacun doit se reconnecter, cette fois avec la seconde étape. Le navigateur dans lequel vous l'avez activée reste connecté.<IfAvailable feature="passkeys"> Pour ajouter l'autre méthode plus tard, utilisez la même section. Vous conservez les codes de secours existants, et personne n'est déconnecté.</IfAvailable>
+
+<IfAvailable feature="passkeys">
+Si vous avez ajouté une clé d'accès avant que la vérification en deux étapes puisse en utiliser une, les paramètres affichent **Votre clé d'accès est prête à devenir votre seconde étape**. Cliquez sur **Activer**, confirmez votre identité, vérifiez que c'est bien vous avec cette clé d'accès, puis enregistrez vos codes de secours. Cela déconnecte aussi vos autres appareils.
+</IfAvailable>
+
+Nous envoyons un e-mail à l'adresse de votre compte chaque fois que la vérification en deux étapes est activée ou désactivée, qu'une méthode est ajoutée ou supprimée, que de nouveaux codes de secours sont générés ou qu'un code de secours est utilisé. Nous en envoyons aussi un lorsque le support est sollicité pour désactiver la vérification en deux étapes à votre place.
+
+## Se connecter avec la vérification [#sign-in-with-it]
+
+Connectez-vous comme d'habitude. QRdx vous demande ensuite la seconde étape.
+
+<IfAvailable feature="passkeys">
+Si vous avez une clé d'accès, la fenêtre de clé d'accès de votre navigateur s'ouvre d'elle-même. Certains navigateurs ne l'ouvrent qu'après un clic : cliquez alors sur **Continuer avec une clé d'accès**. Si vous avez fermé la fenêtre ou si elle a expiré, réessayez ou choisissez une autre méthode.
+</IfAvailable>
+
+Sous l'étape, **Utiliser un code d'authentification** et **Utiliser un code de secours** permettent de passer aux autres méthodes dont vous disposez. QRdx mémorise la dernière méthode utilisée dans ce navigateur et la propose en premier la fois suivante.
+
+Les codes d'authentification changent toutes les 30 secondes : si l'un d'eux est refusé, attendez le suivant.
+
+Chaque étape de connexion autorise 5 codes erronés<IfAvailable feature="passkeys">, et une clé d'accès dont la vérification échoue compte pour un</IfAvailable>. Ensuite, recommencez la connexion. Après 10 codes erronés d'affilée, QRdx n'accepte plus de codes pour votre compte pendant 15 minutes.
+
+L'étape expire au bout de 10 minutes. Si c'est le cas, reconnectez-vous.
+
+## Codes de secours [#backup-codes]
+
+Un code de secours remplace votre seconde étape lorsque vous n'avez pas votre téléphone<IfAvailable feature="passkeys"> ou votre clé d'accès</IfAvailable>. À la seconde étape, cliquez sur **Utiliser un code de secours** et saisissez-en un. Les codes ressemblent à `ABCDE-FGH23` : des lettres majuscules et les chiffres de 2 à 9, sans 0, O, 1 ni I pour éviter les confusions. Vous pouvez les saisir en minuscules, avec ou sans le tiret. Chaque code ne fonctionne qu'une fois.
+
+Chaque fois qu'un code de secours est utilisé, pour se connecter ou pour confirmer votre identité, nous envoyons un e-mail à l'adresse de votre compte en indiquant combien de codes il vous reste. Si ce n'était pas vous, quelqu'un possède vos codes de secours : contactez immédiatement le support.
+
+Les paramètres indiquent combien de codes il vous reste. Quand il n'en reste que 2 ou moins, générez-en de nouveaux : cliquez sur **Nouveaux codes** et confirmez votre identité. Vos anciens codes cessent de fonctionner.
+
+## Appareils de confiance [#trusted-devices]
+
+À la seconde étape, cochez **Ne plus demander sur cet appareil pendant 30 jours** pour ignorer cette étape sur ce navigateur pendant 30 jours. Utilisez cette option uniquement sur un appareil qui vous appartient. Désactiver la vérification en deux étapes supprime tous les appareils de confiance.
+
+## Quelles connexions la demandent [#which-sign-ins-ask-for-it]
+
+Toutes : codes reçus par e-mail, Google et GitHub<IfAvailable feature="sso">, et authentification unique de l'espace de travail</IfAvailable>. Cela inclut une nouvelle connexion dans un navigateur où vous êtes déjà connecté.
+
+<IfAvailable feature="passkeys">
+La connexion avec **Continuer avec une clé d'accès** fait exception. Une connexion par clé d'accès utilise déjà deux facteurs, l'appareil et votre empreinte digitale, votre visage ou le verrouillage de l'écran : QRdx ne demande donc pas de seconde étape. QRdx n'accepte que les clés d'accès qui vous vérifient de cette manière.
+</IfAvailable>
+
+## Modifier vos méthodes [#change-your-methods]
+
+Dans **Paramètres** → **Profil et sécurité**, sous **Vérification en deux étapes**, configurez ou supprimez l'application d'authentification<IfAvailable feature="passkeys">, et ajoutez, renommez ou supprimez des clés d'accès</IfAvailable>. Chaque modification vous demande de confirmer votre identité.
+
+Si vous supprimez votre dernière méthode, la vérification en deux étapes se désactive et vos codes de secours cessent de fonctionner. QRdx vous en avertit avant que vous confirmiez.
+
+## Confirmer votre identité [#confirm-its-you]
+
+Avant toute modification touchant à la sécurité de votre compte, QRdx vous demande de confirmer votre identité, même si vous êtes connecté. Cela concerne :
+
+- la modification de votre adresse e-mail ;
+- la suppression de votre compte ;
+- l'activation ou la désactivation de la vérification en deux étapes, et la génération de nouveaux codes de secours ;
+- l'ajout ou la suppression de l'application d'authentification<IfAvailable feature="passkeys">, ainsi que l'ajout, le renommage ou la suppression d'une clé d'accès</IfAvailable> ;
+- l'association ou la dissociation d'un compte Google ou GitHub ;
+- la création d'une clé d'API, la création d'une application OAuth ou la génération d'un nouveau secret client pour celle-ci ;
+- l'autorisation d'une application qui demande à utiliser votre compte QRdx, sur l'écran **Autoriser** ;
+- l'ajout d'un point de terminaison webhook, la modification de l'URL d'un point de terminaison, et l'affichage ou la rotation de son secret de signature ;
+- l'ajout d'un webhook de notification Slack ou Discord, ou la connexion d'une intégration qui envoie vos scans ou les réponses de vos formulaires vers un autre outil ;
+- dans un espace de travail : sa suppression, la modification du rôle d'un membre, la suppression d'un membre, l'invitation d'un administrateur par e-mail ou avec un lien d'invitation, et le fait d'[exiger la vérification en deux étapes](/docs/help/teams/require-two-step-verification) ou de ne plus l'exiger.
+
+<IfAvailable feature="sso">
+C'est aussi le cas pour la création, la modification, la vérification ou la suppression de la connexion d'authentification unique d'un espace de travail, ou pour l'obligation d'utiliser l'authentification unique.
+</IfAvailable>
+
+Lorsque la vérification en deux étapes est activée, confirmez avec <IfAvailable feature="passkeys">votre clé d'accès, </IfAvailable>un code de votre application d'authentification ou un code de secours (qui est alors consommé). QRdx ne propose pas de code envoyé par e-mail ici : accéder à votre messagerie ne suffit donc pas pour modifier votre sécurité.
+
+Lorsqu'elle est désactivée, confirmez avec l'une de ces méthodes :
+
+- un code à 6 chiffres que QRdx vous envoie par e-mail ;
+- une nouvelle connexion avec un compte Google ou GitHub que vous avez associé<IfAvailable feature="sso">, ou avec l'authentification unique de votre espace de travail lorsqu'elle utilise OIDC</IfAvailable>.
+
+<IfAvailable feature="passkeys">
+Votre clé d'accès fonctionne aussi, si vous en avez une.
+</IfAvailable>
+
+Se reconnecter vous mène à cette connexion, où l'on vous demande de choisir votre compte ou de vous y connecter, puis vous ramène sur la même page. Votre modification n'est pas enregistrée pendant votre absence : refaites-la à votre retour. Utilisez le compte que vous avez associé : QRdx ne vous fera pas passer à un autre compte et n'en créera pas.
+
+Ainsi, si vous n'avez pas accès à votre messagerie, vous pouvez quand même confirmer votre identité d'une autre manière. Si aucune n'est possible, consultez [Accès perdu à votre messagerie](/docs/help/account-and-billing/sign-in#lost-access-to-your-email).
+
+Une confirmation dure 10 minutes dans ce navigateur : plusieurs modifications à la suite ne la demandent donc qu'une fois.
+
+Se connecter compte aussi comme une confirmation, pendant 10 minutes dans ce navigateur. Lorsque la vérification en deux étapes est activée, cela ne vaut que pour une connexion où vous avez répondu à la seconde étape<IfAvailable feature="passkeys"> ou utilisé **Continuer avec une clé d'accès**</IfAvailable>, pas pour une connexion où un appareil de confiance l'a ignorée.<IfAvailable feature="sso"> Ouvrir QRdx depuis le tableau de bord d'applications de votre fournisseur d'identité ne compte pas non plus, sauf si vous avez répondu à votre seconde étape.</IfAvailable>
+
+Déconnecter vos autres appareils ne demande jamais de confirmation : si quelqu'un d'autre a accédé à votre compte, vous pouvez le déconnecter immédiatement.
+
+## Le désactiver [#turn-it-off]
+
+Allez dans **Paramètres** → **Profil et sécurité**, cliquez sur **Désactiver** sous **Vérification en deux étapes**, puis confirmez que c'est bien vous. Vos codes de secours, ainsi que la configuration de votre application d'authentification si vous en avez une, sont supprimés.
+
+Si un espace de travail dont vous faites partie [exige la vérification en deux étapes](/docs/help/teams/require-two-step-verification), vous ne pouvez plus y accéder tant que vous ne l'avez pas réactivée.
+
+## Vous avez perdu votre téléphone et vos codes de secours [#lost-your-phone-and-your-backup-codes]
+
+Si vous avez encore <IfAvailable feature="passkeys">une clé d'accès, </IfAvailable>votre application d'authentification ou un code de secours, connectez-vous avec l'un d'eux et modifiez vos méthodes dans Paramètres.
+
+Si vous avez perdu tous les moyens de réaliser la seconde étape, écrivez à [support@qrdx.dev](mailto:support@qrdx.dev) depuis l'adresse e-mail de votre compte et expliquez-nous ce qui s'est passé. La personne qui nous écrit n'est peut-être pas vous : une fois que nous avons confirmé que la demande provient bien de cette adresse, la désactivation par le support est différée de 7 jours :
+
+- **Nous envoyons un e-mail à cette adresse le jour même.** D'ici là, rien ne change, et vous restez connecté là où vous l'êtes.
+- **Si vous n'êtes pas à l'origine de la demande, annulez-la.** Connectez-vous avec votre application d'authentification ou un code de secours : cela l'annule.<IfAvailable feature="passkeys"> Se connecter avec une clé d'accès ne l'annule pas, car la réinitialisation concerne un appareil perdu et une clé d'accès peut s'y trouver.</IfAvailable> Vous pouvez aussi cliquer sur **Annuler** sous **Vérification en deux étapes** dans **Paramètres** → **Profil et sécurité** et [confirmer que c'est bien vous](#confirm-its-you), ou répondre à l'e-mail. Nous vous envoyons un e-mail lorsque la demande est annulée.
+- **Ce jour-là, la vérification en deux étapes est désactivée.** La configuration de votre application d'authentification, vos codes de secours et vos appareils de confiance sont supprimés,<IfAvailable feature="passkeys"> vos clés d'accès sont conservées,</IfAvailable> votre compte est déconnecté sur tous les appareils, et nous vous en informons par e-mail. Connectez-vous ensuite comme d'habitude et réactivez-la.

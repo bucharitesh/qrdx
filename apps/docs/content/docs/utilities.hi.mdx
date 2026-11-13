@@ -1,0 +1,180 @@
+---
+title: "यूटिलिटीज़"
+description: "qrdx द्वारा एक्सपोर्ट किए जाने वाले कलर, कंट्रास्ट, साइज़ वैलिडेशन और फ़ीचर डिटेक्शन हेल्पर।"
+icon: Wrench
+---
+
+कलर, कंट्रास्ट और QR कोड प्रोसेसिंग के लिए हेल्पर फ़ंक्शन।
+
+## कलर यूटिलिटीज़ [#color-utilities]
+
+### getSolidColor [#getsolidcolor]
+
+किसी भी कलर कॉन्फ़िग से सॉलिड कलर निकालें:
+
+```tsx
+import { getSolidColor } from 'qrdx';
+
+const color = getSolidColor({
+  type: 'linear',
+  stops: [
+    { offset: 0, color: '#ff6b6b' },
+    { offset: 1, color: '#4ecdc4' }
+  ],
+  x1: 0, y1: 0, x2: 1, y2: 1
+});
+// Returns: "#ff6b6b"
+```
+
+### hexToRgb [#hextorgb]
+
+hex को RGB में बदलें:
+
+```tsx
+import { hexToRgb } from 'qrdx';
+
+const rgb = hexToRgb('#ff6b6b');
+// Returns: { r: 255, g: 107, b: 107 }
+```
+
+## कंट्रास्ट जाँच [#contrast-checking]
+
+### getContrastRatio [#getcontrastratio]
+
+WCAG कंट्रास्ट रेशियो निकालें:
+
+```tsx
+import { getContrastRatio } from 'qrdx';
+
+const ratio = getContrastRatio('#000000', '#ffffff');
+// Returns: 21
+```
+
+### getContrastLevel [#getcontrastlevel]
+
+कंट्रास्ट का आकलन पाएँ:
+
+```tsx
+import { getContrastLevel } from 'qrdx';
+
+const level = getContrastLevel(4.5);
+// Returns: { level: 'AA', warning: false, message: 'Good contrast' }
+```
+
+**कंट्रास्ट दिशानिर्देश:**
+- **`AAA` (7.0 और उससे ऊपर)** — बेहतरीन कंट्रास्ट
+- **`AA` (4.5 – 7.0)** — अच्छा कंट्रास्ट
+- **`AA Large` (3.0 – 4.5)** — कम कंट्रास्ट, `warning: true`, स्कैन करना मुश्किल हो सकता है
+- **`Fail` (3.0 से नीचे)** — सुझाया नहीं जाता, `warning: true`
+
+### getLuminance [#getluminance]
+
+रिलेटिव ल्यूमिनेंस निकालें:
+
+```tsx
+import { getLuminance } from 'qrdx';
+
+const luminance = getLuminance(255, 255, 255);
+// Returns: 1.0 (white)
+```
+
+## वैलिडेशन [#validation]
+
+### validateSize [#validatesize]
+
+डाउनलोड के डाइमेंशन वैलिडेट करें:
+
+```tsx
+import { validateSize } from 'qrdx';
+
+const validation = validateSize(512, 512);
+if (validation.isValid) {
+  console.log("Valid size");
+} else {
+  console.error(validation.error);
+}
+```
+
+## फ़ीचर डिटेक्शन [#feature-detection]
+
+### SUPPORTS_PATH2D [#supports_path2d]
+
+Path2D सपोर्ट की जाँच करें:
+
+```tsx
+import { SUPPORTS_PATH2D } from 'qrdx';
+
+if (SUPPORTS_PATH2D) {
+  // Use optimized rendering
+} else {
+  // Use fallback
+}
+```
+
+## उदाहरण: कंट्रास्ट चेकर [#example-contrast-checker]
+
+```tsx
+import { getContrastRatio, getContrastLevel } from 'qrdx';
+import { useState } from 'react';
+
+export default function ContrastChecker() {
+  const [fgColor, setFgColor] = useState('#000000');
+  const [bgColor, setBgColor] = useState('#ffffff');
+
+  const ratio = getContrastRatio(fgColor, bgColor);
+  const level = getContrastLevel(ratio);
+
+  return (
+    <div>
+      <input
+        type="color"
+        value={fgColor}
+        onChange={(e) => setFgColor(e.target.value)}
+      />
+      <input
+        type="color"
+        value={bgColor}
+        onChange={(e) => setBgColor(e.target.value)}
+      />
+      <p>Ratio: {ratio.toFixed(2)}:1</p>
+      <p>Level: {level.level}</p>
+      <p>{level.message}</p>
+    </div>
+  );
+}
+```
+
+## उदाहरण: साइज़ कैलकुलेटर [#example-size-calculator]
+
+```tsx
+import { validateSize } from 'qrdx';
+import { useState } from 'react';
+
+export default function SizeCalculator() {
+  const [width, setWidth] = useState(512);
+  const [height, setHeight] = useState(512);
+
+  const validation = validateSize(width, height);
+
+  return (
+    <div>
+      <input
+        type="number"
+        value={width}
+        onChange={(e) => setWidth(Number(e.target.value))}
+      />
+      <input
+        type="number"
+        value={height}
+        onChange={(e) => setHeight(Number(e.target.value))}
+      />
+      <p>{validation.isValid ? 'Valid' : validation.error}</p>
+    </div>
+  );
+}
+```
+
+## अगले कदम [#next-steps]
+
+- [उपयोग](/docs/usage) — QR कोड पर यूटिलिटीज़ लागू करें
+- [API रेफ़रेंस](/docs/api-reference) — यूटिलिटीज़ का पूरा रेफ़रेंस

@@ -1,0 +1,180 @@
+---
+title: "Utilitas"
+description: "Fungsi bantu untuk warna, kontras, validasi ukuran, dan deteksi fitur yang diekspor oleh qrdx."
+icon: Wrench
+---
+
+Fungsi bantu untuk warna, kontras, dan pemrosesan kode QR.
+
+## Utilitas Warna [#color-utilities]
+
+### getSolidColor [#getsolidcolor]
+
+Ambil warna solid dari konfigurasi warna apa pun:
+
+```tsx
+import { getSolidColor } from 'qrdx';
+
+const color = getSolidColor({
+  type: 'linear',
+  stops: [
+    { offset: 0, color: '#ff6b6b' },
+    { offset: 1, color: '#4ecdc4' }
+  ],
+  x1: 0, y1: 0, x2: 1, y2: 1
+});
+// Returns: "#ff6b6b"
+```
+
+### hexToRgb [#hextorgb]
+
+Konversi hex ke RGB:
+
+```tsx
+import { hexToRgb } from 'qrdx';
+
+const rgb = hexToRgb('#ff6b6b');
+// Returns: { r: 255, g: 107, b: 107 }
+```
+
+## Pemeriksaan Kontras [#contrast-checking]
+
+### getContrastRatio [#getcontrastratio]
+
+Hitung rasio kontras WCAG:
+
+```tsx
+import { getContrastRatio } from 'qrdx';
+
+const ratio = getContrastRatio('#000000', '#ffffff');
+// Returns: 21
+```
+
+### getContrastLevel [#getcontrastlevel]
+
+Dapatkan penilaian kontras:
+
+```tsx
+import { getContrastLevel } from 'qrdx';
+
+const level = getContrastLevel(4.5);
+// Returns: { level: 'AA', warning: false, message: 'Good contrast' }
+```
+
+**Panduan Kontras:**
+- **`AAA` (7,0 ke atas)** — Kontras sangat baik
+- **`AA` (4,5 – 7,0)** — Kontras baik
+- **`AA Large` (3,0 – 4,5)** — Kontras rendah, `warning: true`, mungkin sulit dipindai
+- **`Fail` (di bawah 3,0)** — Tidak disarankan, `warning: true`
+
+### getLuminance [#getluminance]
+
+Hitung luminansi relatif:
+
+```tsx
+import { getLuminance } from 'qrdx';
+
+const luminance = getLuminance(255, 255, 255);
+// Returns: 1.0 (white)
+```
+
+## Validasi [#validation]
+
+### validateSize [#validatesize]
+
+Validasi dimensi unduhan:
+
+```tsx
+import { validateSize } from 'qrdx';
+
+const validation = validateSize(512, 512);
+if (validation.isValid) {
+  console.log("Valid size");
+} else {
+  console.error(validation.error);
+}
+```
+
+## Deteksi Fitur [#feature-detection]
+
+### SUPPORTS_PATH2D [#supports_path2d]
+
+Periksa dukungan Path2D:
+
+```tsx
+import { SUPPORTS_PATH2D } from 'qrdx';
+
+if (SUPPORTS_PATH2D) {
+  // Use optimized rendering
+} else {
+  // Use fallback
+}
+```
+
+## Contoh: Pemeriksa Kontras [#example-contrast-checker]
+
+```tsx
+import { getContrastRatio, getContrastLevel } from 'qrdx';
+import { useState } from 'react';
+
+export default function ContrastChecker() {
+  const [fgColor, setFgColor] = useState('#000000');
+  const [bgColor, setBgColor] = useState('#ffffff');
+
+  const ratio = getContrastRatio(fgColor, bgColor);
+  const level = getContrastLevel(ratio);
+
+  return (
+    <div>
+      <input
+        type="color"
+        value={fgColor}
+        onChange={(e) => setFgColor(e.target.value)}
+      />
+      <input
+        type="color"
+        value={bgColor}
+        onChange={(e) => setBgColor(e.target.value)}
+      />
+      <p>Ratio: {ratio.toFixed(2)}:1</p>
+      <p>Level: {level.level}</p>
+      <p>{level.message}</p>
+    </div>
+  );
+}
+```
+
+## Contoh: Kalkulator Ukuran [#example-size-calculator]
+
+```tsx
+import { validateSize } from 'qrdx';
+import { useState } from 'react';
+
+export default function SizeCalculator() {
+  const [width, setWidth] = useState(512);
+  const [height, setHeight] = useState(512);
+
+  const validation = validateSize(width, height);
+
+  return (
+    <div>
+      <input
+        type="number"
+        value={width}
+        onChange={(e) => setWidth(Number(e.target.value))}
+      />
+      <input
+        type="number"
+        value={height}
+        onChange={(e) => setHeight(Number(e.target.value))}
+      />
+      <p>{validation.isValid ? 'Valid' : validation.error}</p>
+    </div>
+  );
+}
+```
+
+## Langkah Berikutnya [#next-steps]
+
+- [Penggunaan](/docs/usage) — Terapkan utilitas pada kode QR
+- [Referensi API](/docs/api-reference) — Referensi utilitas lengkap
