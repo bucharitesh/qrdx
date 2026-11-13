@@ -21,6 +21,7 @@ import {
   ART_QR_VISIBILITY,
   ART_TEXT_MAX_LENGTH,
 } from "@/components/sections/ai-art/config";
+import { ART_LOOK_IDS, ART_LOOKS } from "@/components/sections/ai-art/looks";
 import { assertArtConfigured } from "@/lib/ai/art";
 import { HttpError } from "@/lib/error-response";
 import { getPlanLimits } from "@/lib/plans";
@@ -81,7 +82,7 @@ const artInput = z.object({
     .max(ART_PROMPT_MAX_LENGTH)
     .optional()
     .describe(
-      `The artwork to paint, in plain words (up to ${ART_PROMPT_MAX_LENGTH} characters), such as "a koi pond at dusk, ink and watercolor".`,
+      `The artwork to paint, in plain words (up to ${ART_PROMPT_MAX_LENGTH} characters), such as "a koi pond at dusk". Leave it out and QRdx writes one for the mode, look and photo; the result then says what it wrote.`,
     ),
   negativePrompt: z
     .string()
@@ -95,11 +96,10 @@ const artInput = z.object({
       'How the code sits in the art: "code" (default; the art painted into the code\'s modules), "scene" (a full-bleed picture with the code painted into something in it) or "photo" (your photo with the code painted into it; needs photo).',
     ),
   style: z
-    .string()
-    .max(40)
+    .enum(ART_LOOK_IDS)
     .optional()
     .describe(
-      "A quick look by id, combined with the prompt (the AI art docs list them)",
+      `A quick look, added to the prompt: ${ART_LOOKS.map((look) => `${look.id} (${look.label})`).join(", ")}`,
     ),
   visibility: z
     .number()
@@ -197,7 +197,10 @@ export function registerArtTools(server: McpServer) {
         const { data, credits } = serializeArt(result, code);
         const { imageUrl, ...details } = data;
         const { bytes, mediaType } = artImageBytes(imageUrl);
-        const summary = `AI QR art, ${data.width}x${data.height}px, ${data.mode} mode, seed ${data.seed}. It scans to ${data.text}${code ? ` (the short link of code ${code.id})` : ""}: checked by QRdx's scan check. Made to scan: ${BLEND_NOTE[data.blend]}.${creditsLine(credits)} Docs: ${ART_API_DOCS}`;
+        const written = data.writtenPrompt
+          ? ` Description written for you: ${data.writtenPrompt}`
+          : "";
+        const summary = `AI QR art, ${data.width}x${data.height}px, ${data.mode} mode, seed ${data.seed}. It scans to ${data.text}${code ? ` (the short link of code ${code.id})` : ""}: checked by QRdx's scan check. Made to scan: ${BLEND_NOTE[data.blend]}.${written}${creditsLine(credits)} Docs: ${ART_API_DOCS}`;
         return {
           content: [
             text(summary),

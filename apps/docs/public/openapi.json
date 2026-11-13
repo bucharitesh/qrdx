@@ -4265,9 +4265,8 @@
                   },
                   "prompt": {
                     "type": "string",
-                    "minLength": 3,
                     "maxLength": 400,
-                    "description": "The artwork to paint, in plain words."
+                    "description": "The artwork to paint, in plain words, at least 3 characters when sent. Leave it out and QRdx writes one for the mode, look and photo you sent; the response then includes it as `writtenPrompt`."
                   },
                   "negativePrompt": {
                     "type": "string",
@@ -4307,7 +4306,21 @@
                   },
                   "style": {
                     "type": "string",
-                    "maxLength": 40,
+                    "enum": [
+                      "watercolor",
+                      "oil-painting",
+                      "anime",
+                      "cartoon",
+                      "pixel-art",
+                      "pop-art",
+                      "charcoal",
+                      "ink",
+                      "cyberpunk",
+                      "fantasy",
+                      "photographic",
+                      "low-poly",
+                      "papercut"
+                    ],
                     "description": "A quick look by its id, combined with your `prompt`. The [AI art API docs](https://qrdx.dev/docs/developers/ai-art-api#quick-looks) list them."
                   },
                   "photo": {
@@ -4316,7 +4329,6 @@
                     "description": "Photo mode only: your picture as a PNG or JPEG `data:` URL, downsized to about 512 px. It goes to the model and is discarded."
                   }
                 },
-                "required": ["prompt"],
                 "description": "Send exactly one of `text` and `code`."
               },
               "examples": {
@@ -5673,6 +5685,10 @@
             "minimum": -9007199254740991,
             "maximum": 9007199254740991,
             "description": "The creativity used"
+          },
+          "writtenPrompt": {
+            "description": "The description QRdx wrote for you, when you left out `prompt`",
+            "type": "string"
           }
         },
         "required": [

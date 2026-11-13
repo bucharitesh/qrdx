@@ -12,6 +12,7 @@ import {
   ART_TEXT_MAX_LENGTH,
   seedsForRun,
 } from "@/components/sections/ai-art/config";
+import { findArtLook } from "@/components/sections/ai-art/looks";
 import { ART_SUPPORTS_SEED } from "@/lib/ai/art-models";
 import type { AIArtDraft } from "@/store/art-session-store";
 
@@ -25,11 +26,17 @@ export function artPayloadIssue(payload: string): ArtPayloadIssue {
   return null;
 }
 
-/** The form can run: content to paint, a prompt and a usable seed. */
+/** A typed prompt is long enough, or blank (one is written for you). */
+export const promptIsUsable = (prompt: string): boolean => {
+  const length = prompt.trim().length;
+  return length === 0 || length >= ART_PROMPT_MIN_LENGTH;
+};
+
+/** The form can run: content to paint, a usable prompt and seed. */
 export function canGenerate(payload: string, draft: AIArtDraft): boolean {
   return (
     artPayloadIssue(payload) === null &&
-    draft.prompt.trim().length >= ART_PROMPT_MIN_LENGTH &&
+    promptIsUsable(draft.prompt) &&
     !seedIsInvalid(draft.seed, draft.seedLocked, ART_SUPPORTS_SEED)
   );
 }
@@ -41,7 +48,8 @@ export function artRequestFor(
 ): AIArtRequest {
   return {
     text: payload.trim(),
-    prompt: draft.prompt.trim(),
+    ...(draft.prompt.trim() && { prompt: draft.prompt.trim() }),
+    ...(draft.look && { style: draft.look }),
     ...(draft.negativePrompt.trim() && {
       negativePrompt: draft.negativePrompt.trim(),
     }),
@@ -99,6 +107,10 @@ export function parseArtGenerateIntent(
     text: intent.text,
     draft: {
       ...intent.draft,
+      // Intents saved before looks have none.
+      look: findArtLook(intent.draft.look as string | undefined)
+        ? (intent.draft.look as AIArtDraft["look"])
+        : null,
       referenceIsLogo: intent.draft.referenceIsLogo === true,
     },
   };

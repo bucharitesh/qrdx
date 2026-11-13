@@ -218,6 +218,8 @@ describe("errors catalogue", () => {
     // POST /v1/art (lib/ai/art-run.ts): credits, limits and the image model
     "lib/ai/art.ts",
     "lib/ai/art-image.ts",
+    // A missing prompt is written for you (writeArtPrompt)
+    "lib/ai/art-prompt.ts",
   ];
   const errorsIn = (files: string[]) =>
     new Set(

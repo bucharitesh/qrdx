@@ -14,6 +14,8 @@ import {
   type AIArtRequest,
   type AIArtResult,
   ART_IMAGE_SIZE,
+  type ArtDescribeRequest,
+  type ArtDescribeResult,
   DEFAULT_ART_MODE,
 } from "./config";
 
@@ -111,4 +113,23 @@ export function mockArtCredits(): AIArtCreditsResponse {
       ).toISOString(),
     },
   };
+}
+
+/** Stand-in descriptions for "Write one for me", one per press in turn. */
+const MOCK_DESCRIPTIONS = [
+  "a lighthouse on a rocky coast at dusk, waves catching the last warm light",
+  "a quiet koi pond in the rain, lily pads and ripples under a gray sky",
+  "a mountain village in the snow at night, lit windows glowing gold",
+];
+let mockDescriptionTurn = 0;
+
+/** A fake /api/ai/art/describe response: the hint kept, else a stand-in. */
+export async function mockArtDescription(
+  request: ArtDescribeRequest,
+  signal?: AbortSignal,
+): Promise<ArtDescribeResult> {
+  await wait(MOCK_DELAY_MS / 2, signal ?? new AbortController().signal);
+  const stand = MOCK_DESCRIPTIONS[mockDescriptionTurn++ % 3] ?? "";
+  const hint = request.hint?.trim();
+  return { prompt: hint ? `${hint}, ${stand}` : stand };
 }

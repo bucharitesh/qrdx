@@ -70,6 +70,7 @@ const routes = {
   "/api/generate-qr-theme": await import("@/app/api/generate-qr-theme/route"),
   "/api/ai/art": await import("@/app/api/ai/art/route"),
   "/api/v1/art": await import("@/app/api/v1/art/route"),
+  "/api/ai/art/describe": await import("@/app/api/ai/art/describe/route"),
 };
 const mcp = await import("@/app/api/mcp/route");
 const KEY = `qrdx_${"a".repeat(40)}`;
