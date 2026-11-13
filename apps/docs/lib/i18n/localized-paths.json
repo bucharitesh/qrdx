@@ -25,6 +25,8 @@
     "/plugins",
     "/mcp",
     "/qr-code-api",
+    "/dynamic-qr-code",
+    "/open-source-qr-code-generator",
     "/ai",
     "/ai/art",
     "/compare",

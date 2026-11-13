@@ -125,9 +125,10 @@ export const siteConfig = {
             icon: PenTool2,
             featured: true,
           },
+          // The landing page; it links the dynamic codes docs.
           {
             key: "dynamicCodes",
-            href: "/docs/dynamic-qr-codes",
+            href: "/dynamic-qr-code",
             icon: Routing2,
           },
           {
@@ -775,7 +776,7 @@ export const siteConfig = {
       key: "product",
       links: [
         { id: 1, key: "playground", url: "/playground" },
-        { id: 2, key: "dynamicCodes", url: "/docs/dynamic-qr-codes" },
+        { id: 2, key: "dynamicCodes", url: "/dynamic-qr-code" },
         { id: 3, key: "aiThemes", url: "/ai" },
         { id: 4, key: "communityThemes", url: "/community" },
         { id: 7, key: "pageTemplates", url: "/templates" },
@@ -816,6 +817,7 @@ export const siteConfig = {
         { id: 4, key: "shadcn", url: "/docs/developers/shadcn" },
         { id: 7, key: "plugins", url: "/plugins" },
         { id: 5, key: "selfHosting", url: "/docs/self-hosting" },
+        { id: 11, key: "openSource", url: "/open-source-qr-code-generator" },
       ],
     },
     {
