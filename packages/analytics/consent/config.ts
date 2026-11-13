@@ -14,7 +14,7 @@ export const CONSENT_CATEGORIES = [
  * choose.
  *
  * Keeping no server-side record of the choice is deliberate, and the cookie
- * policy says so (content/legal/cookie-policy.mdx). `acknowledgeNoRecords`
+ * policy says so (apps/docs/content/legal/cookie-policy.mdx). `acknowledgeNoRecords`
  * hides c15t's development-only console warning about it. Production builds
  * never print it. A server-side consent log would need a c15t backend.
  */
@@ -34,7 +34,7 @@ export const consentConfig = defineConsentConfig({
     ],
   }),
   // PostHog cookies and storage keys (ph_<token>_posthog, …), and the
-  // analytics-consent mirror for server-side events (lib/analytics).
+  // analytics-consent mirror for server-side events (../config.ts).
   clearOnRevocation: {
     measurement: {
       cookies: ["ph_*", "qrdx_analytics"],
