@@ -4395,7 +4395,7 @@
         }
       },
       "frameControls": {
-        "importSvg": "Impor SVG",
+        "uploadSvg": "Unggah SVG",
         "publishFrame": "Publikasikan bingkai",
         "theFrameIsAddedAround": "Bingkai ditambahkan di sekeliling kode, sehingga gambar yang diunduh menjadi lebih besar dan kodenya sendiri tetap dapat dipindai.",
         "label": "Label",
@@ -4409,20 +4409,12 @@
         "textSize": "Ukuran teks"
       },
       "framePicker": {
-        "more": "Lainnya",
         "showAll": "Lihat semua",
         "frame": "Bingkai",
-        "moreFrames": "Bingkai lainnya",
-        "allTotalFrames": "Semua {total, number} bingkai",
-        "allFrames": "Semua bingkai",
         "searchFrames": "Cari bingkai",
         "searchTotalFrames": "Cari {total, number} bingkai",
-        "closeFrames": "Tutup bingkai",
         "filterFrames": "Filter bingkai",
         "labelFrames": "Bingkai {label}",
-        "commonFrames": "Bingkai umum",
-        "everyFrameBuiltInStyles": "Semua bingkai: bingkai klasik, kode berbentuk, bingkai resmi QRdx, dan bingkai yang Anda simpan. Cukup pilih satu, lalu langsung diterapkan.",
-        "less": "Lebih sedikit",
         "all": "Semua",
         "noFramesMatchQuery": "Tidak ada bingkai yang cocok dengan \"{query}\".",
         "loadingFrames": "Memuat bingkai…",

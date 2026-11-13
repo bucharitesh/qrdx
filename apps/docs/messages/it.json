@@ -4395,7 +4395,7 @@
         }
       },
       "frameControls": {
-        "importSvg": "Importa SVG",
+        "uploadSvg": "Carica SVG",
         "publishFrame": "Pubblica cornice",
         "theFrameIsAddedAround": "La cornice viene aggiunta attorno al codice, quindi l’immagine scaricata diventa più grande e il codice resta leggibile alla scansione.",
         "label": "Etichetta",
@@ -4409,20 +4409,12 @@
         "textSize": "Dimensione testo"
       },
       "framePicker": {
-        "more": "Altre",
         "showAll": "Mostra tutte",
         "frame": "Cornice",
-        "moreFrames": "Altre cornici",
-        "allTotalFrames": "Tutte le {total, number} cornici",
-        "allFrames": "Tutte le cornici",
         "searchFrames": "Cerca cornici",
         "searchTotalFrames": "Cerca tra {total, number} cornici",
-        "closeFrames": "Chiudi cornici",
         "filterFrames": "Filtra cornici",
         "labelFrames": "Cornici {label}",
-        "commonFrames": "Cornici comuni",
-        "everyFrameBuiltInStyles": "Tutte le cornici: quelle classiche, i codici sagomati, le cornici ufficiali di QRdx e quelle che hai salvato. Se ne scegli una, viene applicata subito.",
-        "less": "Meno",
         "all": "Tutte",
         "noFramesMatchQuery": "Nessuna cornice per \"{query}\".",
         "loadingFrames": "Caricamento cornici…",

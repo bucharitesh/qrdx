@@ -949,8 +949,7 @@ const DESIGN_GROUPS = [
   "Eye style",
   "Outer eye shape",
   "Inner eye shape",
-  "Border",
-  "Frame",
+  "Classic frames",
   "Error correction",
 ];
 
@@ -958,8 +957,13 @@ const DESIGN_GROUPS = [
 // group's aria-label) appears after opening its section, then "More …"
 // (and, for the separate eye shapes, "Customize outer and center"). Eyes and
 // Frame open beside the panel, and "More" opens the catalog beside it too
-// (in place when it's already inside a side panel); see testSidePanels.
-const GROUP_OPENERS: Record<string, { section: string; buttons: string[] }> = {
+// (in place when it's already inside a side panel); see testSidePanels. The
+// Frame panel shows its whole library at once; its Classic chip narrows it
+// to the built-in frames and templates, so every one of their tiles mounts.
+const GROUP_OPENERS: Record<
+  string,
+  { section: string; buttons: string[]; chip?: string }
+> = {
   "Dot shape": { section: "dots", buttons: ["more dot shapes"] },
   "Eye style": { section: "eyes", buttons: ["more eye styles"] },
   "Outer eye shape": {
@@ -970,8 +974,7 @@ const GROUP_OPENERS: Record<string, { section: string; buttons: string[] }> = {
     section: "eyes",
     buttons: ["customize outer and center", "more center shapes"],
   },
-  Border: { section: "frame", buttons: [] },
-  Frame: { section: "frame", buttons: ["more frames"] },
+  "Classic frames": { section: "frame", buttons: [], chip: "classic" },
   "Error correction": { section: "error correction", buttons: [] },
 };
 
@@ -987,6 +990,13 @@ async function revealGroup(page: Page, group: string) {
     await page.evaluate(
       `(label) => { const b = [...document.querySelectorAll('button[aria-expanded="false"]')].find((el) => __e2e.name(el).startsWith(label)); if (b) __e2e.click(b); return true; }`,
       label,
+    );
+    await sleep(300);
+  }
+  if (opener.chip) {
+    await page.evaluate(
+      `(chip) => { const b = [...document.querySelectorAll('[role=toolbar] button[aria-pressed="false"]')].find((el) => __e2e.name(el).startsWith(chip)); if (b) __e2e.click(b); return true; }`,
+      opener.chip,
     );
     await sleep(300);
   }
@@ -1244,6 +1254,47 @@ async function testSidePanels(page: Page) {
     !state.open && (state.focus ?? "").startsWith("eyes"),
     `open ${state.open}, focus ${state.focus}`,
   );
+
+  // The Frame panel opens on its whole library: search (focused), Upload
+  // SVG beside it, and no row of common frames to expand.
+  await page.evaluate(
+    `() => { const b = [...document.querySelectorAll("h3 > button")].find((el) => __e2e.name(el).startsWith("frame")); __e2e.click(b); return true; }`,
+  );
+  await sleep(700);
+  state = await sidePanel(page, "Classic frames", "frame");
+  const frameParts = (await page.evaluate(`() => {
+    const panel = [...document.querySelectorAll('[role="dialog"]')].find(__e2e.visible);
+    const search = panel && panel.querySelector('input[type="search"]');
+    const row = search && search.parentElement && search.parentElement.parentElement;
+    const buttons = panel ? [...panel.querySelectorAll("button")] : [];
+    return {
+      search: Boolean(search),
+      uploadBesideSearch: Boolean(row && [...row.querySelectorAll(":scope > button")].some((b) => __e2e.name(b) === "upload svg")),
+      uploads: buttons.filter((b) => __e2e.name(b) === "upload svg" || __e2e.name(b) === "import svg").length,
+      more: buttons.some((b) => __e2e.name(b).startsWith("more frames")),
+    };
+  }`)) as {
+    search: boolean;
+    uploadBesideSearch: boolean;
+    uploads: number;
+    more: boolean;
+  };
+  record(
+    area,
+    "the Frame panel opens on the whole library, search focused",
+    Boolean(state.open && state.beside && frameParts.search) &&
+      state.focus === "search frames",
+    JSON.stringify(state),
+  );
+  record(
+    area,
+    "Upload SVG is the one upload button, beside the search, with no More tile",
+    frameParts.uploadBesideSearch &&
+      frameParts.uploads === 1 &&
+      !frameParts.more,
+    JSON.stringify(frameParts),
+  );
+  await pressEscape(page);
 
   if (original)
     await pick(page, "Common dot shapes", original).catch(() => undefined);

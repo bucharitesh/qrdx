@@ -4395,7 +4395,7 @@
         }
       },
       "frameControls": {
-        "importSvg": "SVG importieren",
+        "uploadSvg": "SVG hochladen",
         "publishFrame": "Rahmen veröffentlichen",
         "theFrameIsAddedAround": "Der Rahmen wird um den Code herum hinzugefügt. Dadurch wird das heruntergeladene Bild größer und der Code selbst bleibt scanbar.",
         "label": "Text",
@@ -4409,20 +4409,12 @@
         "textSize": "Textgröße"
       },
       "framePicker": {
-        "more": "Mehr",
         "showAll": "Alle zeigen",
         "frame": "Rahmen",
-        "moreFrames": "Mehr Rahmen",
-        "allTotalFrames": "Alle {total, number} Rahmen",
-        "allFrames": "Alle Rahmen",
         "searchFrames": "Rahmen suchen",
         "searchTotalFrames": "{total, number} Rahmen durchsuchen",
-        "closeFrames": "Rahmen schließen",
         "filterFrames": "Rahmen filtern",
         "labelFrames": "{label}-Rahmen",
-        "commonFrames": "Gängige Rahmen",
-        "everyFrameBuiltInStyles": "Alle Rahmen: die klassischen Rahmen, Formcodes, die offiziellen Rahmen von QRdx und deine gespeicherten Rahmen. Ein Klick darauf wendet den Rahmen sofort an.",
-        "less": "Weniger",
         "all": "Alle",
         "noFramesMatchQuery": "Keine Rahmen für „{query}“ gefunden.",
         "loadingFrames": "Rahmen werden geladen …",

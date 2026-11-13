@@ -13091,8 +13091,8 @@
     "source": "f5a57b969150",
     "status": "machine"
   },
-  "editor.controlSections.frameControls.importSvg": {
-    "source": "88575ae0c628",
+  "editor.controlSections.frameControls.uploadSvg": {
+    "source": "25be4dcf4b6f",
     "status": "machine"
   },
   "editor.controlSections.frameControls.publishFrame": {
@@ -13131,28 +13131,12 @@
     "source": "d68761cc1eb2",
     "status": "machine"
   },
-  "editor.controlSections.framePicker.more": {
-    "source": "d47d7cb0e4f8",
-    "status": "machine"
-  },
   "editor.controlSections.framePicker.showAll": {
     "source": "2150d8df37e4",
     "status": "machine"
   },
   "editor.controlSections.framePicker.frame": {
     "source": "d0b50e064a4f",
-    "status": "machine"
-  },
-  "editor.controlSections.framePicker.moreFrames": {
-    "source": "40c979613836",
-    "status": "machine"
-  },
-  "editor.controlSections.framePicker.allTotalFrames": {
-    "source": "f7d30aed62b4",
-    "status": "machine"
-  },
-  "editor.controlSections.framePicker.allFrames": {
-    "source": "5fcbddfb6256",
     "status": "machine"
   },
   "editor.controlSections.framePicker.searchFrames": {
@@ -13163,28 +13147,12 @@
     "source": "47673afc88b7",
     "status": "machine"
   },
-  "editor.controlSections.framePicker.closeFrames": {
-    "source": "d31d0c2f9088",
-    "status": "machine"
-  },
   "editor.controlSections.framePicker.filterFrames": {
     "source": "42d8c95ad102",
     "status": "machine"
   },
   "editor.controlSections.framePicker.labelFrames": {
     "source": "800e6f3afaaf",
-    "status": "machine"
-  },
-  "editor.controlSections.framePicker.commonFrames": {
-    "source": "ca35ed18a577",
-    "status": "machine"
-  },
-  "editor.controlSections.framePicker.everyFrameBuiltInStyles": {
-    "source": "7753c9ce4374",
-    "status": "machine"
-  },
-  "editor.controlSections.framePicker.less": {
-    "source": "ae5239ec63f2",
     "status": "machine"
   },
   "editor.controlSections.framePicker.all": {

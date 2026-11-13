@@ -4395,7 +4395,7 @@
         }
       },
       "frameControls": {
-        "importSvg": "Import SVG",
+        "uploadSvg": "Upload SVG",
         "publishFrame": "Publish frame",
         "theFrameIsAddedAround": "The frame is added around the code, so the downloaded image gets bigger and the code itself stays scannable.",
         "label": "Label",
@@ -4409,20 +4409,12 @@
         "textSize": "Text size"
       },
       "framePicker": {
-        "more": "More",
         "showAll": "Show all",
         "frame": "Frame",
-        "moreFrames": "More frames",
-        "allTotalFrames": "All {total, number} frames",
-        "allFrames": "All frames",
         "searchFrames": "Search frames",
         "searchTotalFrames": "Search {total, number} frames",
-        "closeFrames": "Close frames",
         "filterFrames": "Filter frames",
         "labelFrames": "{label} frames",
-        "commonFrames": "Common frames",
-        "everyFrameBuiltInStyles": "Every frame: the classic frames, shaped codes, QRdx's official frames and the frames you saved. Picking one applies it right away.",
-        "less": "Less",
         "all": "All",
         "noFramesMatchQuery": "No frames match \"{query}\".",
         "loadingFrames": "Loading frames…",

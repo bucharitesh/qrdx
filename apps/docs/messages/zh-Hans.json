@@ -4395,7 +4395,7 @@
         }
       },
       "frameControls": {
-        "importSvg": "导入 SVG",
+        "uploadSvg": "上传 SVG",
         "publishFrame": "发布边框",
         "theFrameIsAddedAround": "边框会添加在二维码外围，因此下载的图片尺寸会变大，二维码本身仍可正常扫描。",
         "label": "标签",
@@ -4409,20 +4409,12 @@
         "textSize": "文字大小"
       },
       "framePicker": {
-        "more": "更多",
         "showAll": "显示全部",
         "frame": "边框",
-        "moreFrames": "更多边框",
-        "allTotalFrames": "全部 {total, number} 个边框",
-        "allFrames": "全部边框",
         "searchFrames": "搜索边框",
         "searchTotalFrames": "在 {total, number} 个边框中搜索",
-        "closeFrames": "关闭边框",
         "filterFrames": "筛选边框",
         "labelFrames": "{label}边框",
-        "commonFrames": "常用边框",
-        "everyFrameBuiltInStyles": "所有边框：经典边框、异形二维码、QRdx 官方边框，以及你保存的边框。选择后会立即应用。",
-        "less": "收起",
         "all": "全部",
         "noFramesMatchQuery": "没有与“{query}”匹配的边框。",
         "loadingFrames": "正在加载边框…",

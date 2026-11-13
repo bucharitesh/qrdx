@@ -4395,7 +4395,7 @@
         }
       },
       "frameControls": {
-        "importSvg": "Importer un SVG",
+        "uploadSvg": "Importer un SVG",
         "publishFrame": "Publier le cadre",
         "theFrameIsAddedAround": "Le cadre est ajouté autour du code : l’image téléchargée est donc plus grande et le code reste scannable.",
         "label": "Libellé",
@@ -4409,20 +4409,12 @@
         "textSize": "Taille du texte"
       },
       "framePicker": {
-        "more": "Plus",
         "showAll": "Tout afficher",
         "frame": "Cadre",
-        "moreFrames": "Plus de cadres",
-        "allTotalFrames": "Les {total, number} cadres",
-        "allFrames": "Tous les cadres",
         "searchFrames": "Rechercher un cadre",
         "searchTotalFrames": "Rechercher parmi {total, number} cadres",
-        "closeFrames": "Fermer les cadres",
         "filterFrames": "Filtrer les cadres",
         "labelFrames": "Cadres {label}",
-        "commonFrames": "Cadres courants",
-        "everyFrameBuiltInStyles": "Tous les cadres : les cadres classiques, les codes à forme, les cadres officiels de QRdx et ceux que vous avez enregistrés. Un clic sur un cadre l’applique immédiatement.",
-        "less": "Moins",
         "all": "Tous",
         "noFramesMatchQuery": "Aucun cadre ne correspond à « {query} ».",
         "loadingFrames": "Chargement des cadres…",

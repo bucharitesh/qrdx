@@ -4395,7 +4395,7 @@
         }
       },
       "frameControls": {
-        "importSvg": "Importar SVG",
+        "uploadSvg": "Enviar SVG",
         "publishFrame": "Publicar moldura",
         "theFrameIsAddedAround": "A moldura é adicionada ao redor do código, então a imagem baixada fica maior e o código continua legível na leitura.",
         "label": "Texto",
@@ -4409,20 +4409,12 @@
         "textSize": "Tamanho do texto"
       },
       "framePicker": {
-        "more": "Mais",
         "showAll": "Ver todas",
         "frame": "Moldura",
-        "moreFrames": "Mais molduras",
-        "allTotalFrames": "Todas as {total, number} molduras",
-        "allFrames": "Todas as molduras",
         "searchFrames": "Buscar molduras",
         "searchTotalFrames": "Buscar entre {total, number} molduras",
-        "closeFrames": "Fechar molduras",
         "filterFrames": "Filtrar molduras",
         "labelFrames": "Molduras: {label}",
-        "commonFrames": "Molduras comuns",
-        "everyFrameBuiltInStyles": "Todas as molduras: as clássicas, os códigos com formas, as molduras oficiais do QRdx e as que você salvou. Ao escolher uma, ela é aplicada na hora.",
-        "less": "Menos",
         "all": "Todos",
         "noFramesMatchQuery": "Nenhum frame corresponde a \"{query}\".",
         "loadingFrames": "Carregando frames…",
