@@ -1,3 +1,6 @@
+import { execFile } from "node:child_process";
+import { readFileSync } from "node:fs";
+import { copyFile, mkdir, readFile } from "node:fs/promises";
 import { dirname, relative, resolve } from "node:path";
 import { defineConfig, type Options } from "tsup";
 
@@ -87,6 +90,65 @@ const sharedCore = (extension: ".js" | ".mjs", own: string[]): Plugin => ({
   },
 });
 
+// qrdx/angular has to reach an app compiled in Angular's partial mode,
+// which the app's Angular CLI then links: a decorated class on its own
+// would need the JIT compiler at runtime. So ngc compiles src/angular.ts
+// (tsconfig.angular.json) while the other entries build, esbuild bundles
+// its output in place of the source like any adapter, and ngc's .d.ts,
+// which carries the component's declaration for the app's compiler, goes
+// to dist/src (tsconfig.build.json leaves the file to ngc). ngc runs once
+// for both formats.
+const NGC_OUT = "node_modules/.cache/qrdx-angular";
+let ngcRun: Promise<void> | undefined;
+const compileAngular = () => {
+  ngcRun ??= new Promise<void>((done, fail) => {
+    const cli = "node_modules/@angular/compiler-cli";
+    const { bin } = JSON.parse(readFileSync(`${cli}/package.json`, "utf8"));
+    execFile(
+      process.execPath,
+      [
+        resolve(cli, bin.ngc),
+        ...["-p", "tsconfig.angular.json", "--inlineSourceMap"],
+        // so esbuild maps the bundle back to src/angular.ts
+        ...["--sourceRoot", `${resolve(".")}/`],
+      ],
+      (error, stdout, stderr) =>
+        error ? fail(new Error(`ngc failed\n${stdout}${stderr}`)) : done()
+    );
+  }).then(async () => {
+    await mkdir("dist/src", { recursive: true });
+    await copyFile(`${NGC_OUT}/src/angular.d.ts`, "dist/src/angular.d.ts");
+  });
+  return ngcRun;
+};
+const angularPartial: Plugin = {
+  name: "qrdx-angular-partial",
+  setup(build) {
+    build.onLoad({ filter: /[\\/]src[\\/]angular\.ts$/ }, async () => {
+      await compileAngular();
+      return {
+        contents: await readFile(`${NGC_OUT}/src/angular.js`, "utf8"),
+        loader: "js",
+        resolveDir: resolve("src"),
+      };
+    });
+  },
+};
+
+// Unminified, with "ɵ" written as is: the app's Angular CLI finds the
+// partial declarations by searching the file's text for "ɵɵngDeclare".
+const angular: Options = {
+  ...shared,
+  entry: { angular: "src/angular.ts" },
+  treeshake: true,
+  minify: false,
+  external: [...(shared.external ?? []), "@angular/core"],
+  esbuildOptions(options, context) {
+    shared.esbuildOptions?.(options, context);
+    options.charset = "utf8";
+  },
+};
+
 // zod's `locales` namespace (every language's error messages, about 260 KB
 // minified) is left out of the no-bundler browser file: the schemas use the
 // English messages, which zod imports on its own, and the file never exposes
@@ -102,6 +164,29 @@ const dropZodLocales: Plugin = {
     build.onLoad({ filter: /.*/, namespace: "qrdx-empty" }, () => ({
       contents: "export {};",
       loader: "js",
+    }));
+  },
+};
+
+// qrdx/element/define registers <qrdx-code> and re-exports qrdx/element: it
+// imports the built element file rather than a copy of the class.
+const elementExternal = (file: string): Plugin => ({
+  name: "qrdx-element-external",
+  setup(build) {
+    build.onResolve({ filter: /^\.\/element$/ }, () => ({
+      path: `./${file}`,
+      external: true,
+    }));
+  },
+});
+
+// The no-bundler <qrdx-code> file takes the engine from src/engine.ts, the
+// core without the official frame library's data (as vanilla.browser does).
+const coreWithoutFrameData: Plugin = {
+  name: "qrdx-core-without-frame-data",
+  setup(build) {
+    build.onResolve({ filter: /^\.\/core$/ }, () => ({
+      path: resolve("src/engine.ts"),
     }));
   },
 };
@@ -173,6 +258,37 @@ export default defineConfig([
     treeshake: true,
     esbuildPlugins: [sharedCore(".js", ["vanilla-api"])],
   },
+  // ── qrdx/preact and qrdx/solid, on the shared core ──────────────────────
+  // Neither file has JSX: Preact's elements come from its `h`, and Solid's
+  // components return DOM nodes or ssr() markup, so no Solid compiler runs.
+  // The framework stays an import of the app's own copy (optional peers).
+  {
+    ...shared,
+    entry: { preact: "src/preact.ts", solid: "src/solid.ts" },
+    format: ["esm"],
+    treeshake: true,
+    external: [...(shared.external ?? []), "preact", /^solid-js(\/|$)/],
+    esbuildPlugins: [sharedCore(".mjs", [])],
+  },
+  {
+    ...shared,
+    entry: { preact: "src/preact.ts", solid: "src/solid.ts" },
+    format: ["cjs"],
+    treeshake: true,
+    external: [...(shared.external ?? []), "preact", /^solid-js(\/|$)/],
+    esbuildPlugins: [sharedCore(".js", [])],
+  },
+  // ── Angular component (qrdx/angular), on the shared core ──────────────
+  {
+    ...angular,
+    format: ["esm"],
+    esbuildPlugins: [angularPartial, sharedCore(".mjs", [])],
+  },
+  {
+    ...angular,
+    format: ["cjs"],
+    esbuildPlugins: [angularPartial, sharedCore(".js", [])],
+  },
   // ── qrdx/vanilla as one file for <script type="module">, no bundler ─────
   // zod is inlined; jspdf and jsqr stay on-demand imports (an import map
   // provides them), and the official frame library's data is left out.
@@ -184,6 +300,55 @@ export default defineConfig([
     treeshake: true,
     noExternal: ["zod"],
     esbuildPlugins: [dropZodLocales],
+  },
+  // ── <qrdx-code> custom element (qrdx/element), on the shared core ───────
+  {
+    ...shared,
+    entry: { element: "src/element.ts" },
+    format: ["esm"],
+    treeshake: true,
+    esbuildPlugins: [sharedCore(".mjs", [])],
+  },
+  {
+    ...shared,
+    entry: { element: "src/element.ts" },
+    format: ["cjs"],
+    treeshake: true,
+    esbuildPlugins: [sharedCore(".js", [])],
+  },
+  {
+    ...shared,
+    entry: { "element-define": "src/element-define.ts" },
+    format: ["esm"],
+    treeshake: true,
+    esbuildPlugins: [elementExternal("element.mjs"), sharedCore(".mjs", [])],
+  },
+  {
+    ...shared,
+    entry: { "element-define": "src/element-define.ts" },
+    format: ["cjs"],
+    treeshake: true,
+    esbuildPlugins: [elementExternal("element.js"), sharedCore(".js", [])],
+  },
+  // ── <qrdx-code> as one file for <script type="module">, no bundler ──────
+  // Like vanilla.browser: zod inlined, jspdf and jsqr on demand, no official
+  // frame data. element-define.browser registers the tag from it.
+  {
+    ...shared,
+    entry: { "element.browser": "src/element.ts" },
+    format: ["esm"],
+    platform: "browser",
+    treeshake: true,
+    noExternal: ["zod"],
+    esbuildPlugins: [coreWithoutFrameData, dropZodLocales],
+  },
+  {
+    ...shared,
+    entry: { "element-define.browser": "src/element-define.ts" },
+    format: ["esm"],
+    platform: "browser",
+    treeshake: true,
+    esbuildPlugins: [elementExternal("element.browser.mjs")],
   },
   // ── Node-only PNG entry (qrdx/node), on the shared core ─────────────────
   // The native rasterizers live here alone, so the main entry never

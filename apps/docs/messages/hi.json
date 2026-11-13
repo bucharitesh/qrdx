@@ -4391,18 +4391,11 @@
         }
       },
       "frameControls": {
-        "customise": "कस्टमाइज़ करें",
         "importSvg": "SVG इंपोर्ट करें",
         "publishFrame": "फ़्रेम पब्लिश करें",
         "theFrameIsAddedAround": "फ़्रेम कोड के चारों ओर जुड़ता है, इसलिए डाउनलोड की गई इमेज बड़ी हो जाती है और कोड खुद स्कैन होने लायक रहता है।",
         "label": "लेबल",
-        "secondLine": "दूसरी लाइन",
-        "leaveEmptyForNoLabel": "लेबल न चाहिए तो खाली छोड़ें",
         "pickAFrameFirst": "पहले फ़्रेम चुनें",
-        "frameColor": "फ़्रेम का रंग",
-        "textColor": "टेक्स्ट का रंग",
-        "endColor": "आखिरी रंग",
-        "optionalEGYourWebsite": "वैकल्पिक, जैसे आपकी वेबसाइट",
         "none": "कोई नहीं"
       },
       "frameFields": {
@@ -4421,13 +4414,14 @@
         "filterFrames": "फ़्रेम फ़िल्टर करें",
         "labelFrames": "{label} फ़्रेम",
         "commonFrames": "आम फ़्रेम",
-        "everyFrameBuiltInStyles": "सभी फ़्रेम: बिल्ट-इन स्टाइल, QRdx के आधिकारिक फ़्रेम और आपके सेव किए हुए फ़्रेम। कोई एक चुनते ही वह तुरंत लागू हो जाता है।",
+        "everyFrameBuiltInStyles": "सभी फ़्रेम: क्लासिक फ़्रेम, शेप वाले कोड, QRdx के आधिकारिक फ़्रेम और आपके सेव किए हुए फ़्रेम। कोई एक चुनते ही वह तुरंत लागू हो जाता है।",
         "less": "कम",
         "all": "सभी",
         "noFramesMatchQuery": "\"{query}\" से कोई फ़्रेम नहीं मिला।",
         "loadingFrames": "फ़्रेम लोड हो रहे हैं…",
         "comingUp": "जल्द आ रहे हैं",
-        "builtIn": "बिल्ट-इन",
+        "classic": "क्लासिक",
+        "shapedCodes": "शेप वाले कोड",
         "saved": "सेव किए गए",
         "results": "नतीजे"
       },

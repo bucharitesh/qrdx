@@ -316,8 +316,7 @@ export function FrameTextOverlay({
   if (disabled) return null;
 
   const liveFrame = frame;
-  const tweaks =
-    session && liveFrame ? frameTweaks(liveFrame, session.label.fill) : null;
+  const tweaks = session && liveFrame ? frameTweaks(liveFrame) : null;
   const root = rootRef.current;
 
   return (

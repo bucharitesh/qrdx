@@ -1,6 +1,6 @@
 ---
 title: "库 API 参考"
-description: "qrdx React 库导出的所有组件、函数和类型。HTTP 端点请参阅 REST API。"
+description: "qrdx React 库导出的所有组件、函数和类型。如需了解 HTTP 端点,请参阅 REST API。"
 icon: Code
 ---
 
@@ -30,30 +30,30 @@ import { QRCode } from 'qrdx';
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|---------|-------------|
 | `value` | `string` | **必填** | 要编码的 URL 或文本 |
-| `size` | `number` | `128` | 尺寸，单位为像素 |
+| `size` | `number` | `128` | 尺寸,单位为像素 |
 | `scale` | `number` | `1` | 缩放倍数 |
 | `fgColor` | `ColorConfig` | `#000000` | 二维码颜色 |
 | `bgColor` | `ColorConfig` | `#ffffff` | 背景颜色 |
-| `eyeColor` | `ColorConfig` | `fgColor` | 定位角颜色 |
-| `dotColor` | `ColorConfig` | `fgColor` | 每个定位角内部圆点的颜色 |
+| `eyeColor` | `ColorConfig` | `fgColor` | 角标记颜色 |
+| `dotColor` | `ColorConfig` | `fgColor` | 每个角标记内部圆点的颜色 |
 | `bodyPattern` | `BodyPattern` | `'circle'` | 数据点图案 |
-| `cornerEyePattern` | `CornerEyePattern` | `'gear'` | 定位角图案 |
-| `cornerEyeDotPattern` | `CornerEyeDotPattern` | `'circle'` | 定位角圆点图案 |
-| `hideLogo` | `boolean` | `false` | 隐藏徽标。除非设置了 `logo`，否则不会绘制任何徽标 |
+| `cornerEyePattern` | `CornerEyePattern` | `'gear'` | 角标记图案 |
+| `cornerEyeDotPattern` | `CornerEyeDotPattern` | `'circle'` | 角标记圆点图案 |
+| `hideLogo` | `boolean` | `false` | 隐藏徽标。除非设置了 `logo`,否则不会绘制徽标 |
 | `logo` | `string` | — | 徽标 URL |
 | `templateId` | `string` | `'default'` | 模板 ID |
 | `customTemplate` | `TemplateDefinition` | — | 自定义模板 |
 | `level` | `ErrorLevel` | `'Q'` | 纠错等级 |
-| `autoLevel` | `boolean` | `false` | 当徽标覆盖超过二维码 7% 的面积（`AUTO_LEVEL_LOGO_COVERAGE`）时，将 `level` 提升为 H |
-| `margin` | `number` | `0` | 边距，单位为模块 |
+| `autoLevel` | `boolean` | `false` | 当徽标覆盖超过 7% 的二维码面积(`AUTO_LEVEL_LOGO_COVERAGE`)时,将 `level` 提升到 H |
+| `margin` | `number` | `0` | 边距,单位为模块 |
 | `imageSettings` | `ImageSettings` | — | 徽标设置 |
-| `eyeColors` | `EyeColors` | — | 为 `topLeft`、`topRight` 和 `bottomLeft` 分别设置 `outer` / `inner` 颜色；各自覆盖 `eyeColor` / `dotColor` |
-| `moduleScale` | `number` | `1` | 数据模块大小，范围 0.5 到 1。每种图案最小只会缩小到仍可扫描的尺寸（`MODULE_SCALE_FLOOR`） |
-| `frame` | `QRFrame` | — | 行动号召边框；参阅[边框与打印](/docs/features/frames) |
-| `art` | `QRArt` | — | 将徽标或照片融入模块中（Logo QR、Image QR）；参阅[艺术二维码](/docs/features/art-qr) |
-| `frameLabelMarkers` | `boolean` | `false` | 供编辑器使用：用 `data-qrdx-frame-label` 标记每个边框标签 `<text>`（取值为 `"text"`、`"secondaryText"` 或某个规格标签的 id）。下载和导出的文件不会包含该标记 |
+| `eyeColors` | `EyeColors` | — | 为 `topLeft`、`topRight` 和 `bottomLeft` 分别设置 `outer` / `inner` 颜色;各自覆盖 `eyeColor` / `dotColor` |
+| `moduleScale` | `number` | `1` | 数据模块大小,范围 0.5 到 1。每种图案会在仍可扫描的最小尺寸处停止缩小(`MODULE_SCALE_FLOOR`) |
+| `frame` | `QRFrame` | — | 行动号召边框;参见[边框与印刷](/docs/features/frames) |
+| `art` | `QRArt` | — | 将徽标或照片融入模块中(Logo QR、Image QR);参见[艺术二维码](/docs/features/art-qr) |
+| `frameLabelMarkers` | `boolean` | `false` | 供编辑器使用:为每个边框标签 `<text>` 添加 `data-qrdx-frame-label` 标记(`"text"`、`"secondaryText"` 或某个规格标签的 id)。下载和导出的文件不会包含该标记 |
 
-所有 {facts.bodyPatterns} 种主体图案、{facts.eyeShapes} 种定位角、{facts.eyeCentres} 种定位角中心和 {facts.frameStyles} 种边框样式都可在[形状、定位角与边框](/docs/styles)中实时查看。
+所有 {facts.bodyPatterns} 种主体图案、{facts.eyeShapes} 种角标记、{facts.eyeCentres} 种角标记中心和 {facts.frameStyles} 种内置边框都可在[图案、角标记与边框](/docs/styles)中实时查看。
 
 ### QRCodeCanvas [#qrcodecanvas]
 
@@ -115,7 +115,7 @@ getQRCodeDataUrl(
 
 ### getQRAsWebP [#getqraswebp]
 
-以 WebP `Blob` 形式返回二维码，除非设置了 `quality`，否则为无损。如果浏览器无法编码 WebP（Safari），则由 qrdx 内置的无损编码器生成。`canvasToWebP(canvas, options)` 可对任意画布执行同样的操作，`encodeWebPLossless(rgba, width, height)` 则无需 DOM 即可编码 RGBA 像素。
+以 WebP `Blob` 形式返回二维码,除非设置了 `quality`,否则为无损。如果浏览器无法编码 WebP(Safari),则由 qrdx 内置的无损编码器生成。`canvasToWebP(canvas, options)` 可对任意 canvas 执行同样的操作,`encodeWebPLossless(rgba, width, height)` 则无需 DOM 即可编码 RGBA 像素。
 
 ```tsx
 getQRAsWebP(
@@ -149,15 +149,15 @@ getSVGString(qrProps: QRProps): Promise<string>
 
 | 函数 | 作用 | 文档 |
 |----------|--------------|------|
-| `getQRAsSVG(props)` | 返回二维码的 SVG 标记，包含其边框 | [边框](/docs/features/frames) |
-| `getQRAsPrintPDF`、`downloadPrintPDF` | 按精确物理尺寸生成矢量 PDF，含出血、裁切标记和 CMYK（需要 `jspdf`） | [可直接印刷的导出](/docs/features/frames#print-ready-export) |
-| `downloadPrintSVG` | 按精确物理尺寸生成可直接印刷的 SVG | [可直接印刷的导出](/docs/features/frames#print-ready-export) |
+| `getQRAsSVG(props)` | 返回二维码的 SVG 标记,包含其边框 | [边框](/docs/features/frames) |
+| `getQRAsPrintPDF`、`downloadPrintPDF` | 按精确物理尺寸输出矢量 PDF,支持出血、裁切标记和 CMYK(需要 `jspdf`) | [可直接印刷的导出](/docs/features/frames#print-ready-export) |
+| `downloadPrintSVG` | 按精确物理尺寸输出可直接印刷的 SVG | [可直接印刷的导出](/docs/features/frames#print-ready-export) |
 | `getQRAsEPS`、`downloadPrintEPS` | 面向印刷厂和设计工具的矢量 EPS | [下载](/docs/features/downloads) |
-| `getScanScore(props)` | 估算某个设计的扫描可靠程度 | [能扫出来吗？](/docs/features/frames#will-it-scan) |
-| `getImageScanScore(image)` | 为你已有的二维码图片打分（仅限浏览器） | [能扫出来吗？](/docs/features/frames#will-it-scan) |
-| `getQRAsPNG(props, { size })` | 在纯 Node 中生成 PNG 字节，无需 DOM。请从 `qrdx/node` 导入；需要安装 `@resvg/resvg-js` 或 `sharp` | — |
-| `scanQRPixels(pixels, expected)` | 检查原始 RGBA 像素能否解码为 `expected`，模糊和缩小后同样检查；可在 Node 中运行 | — |
-| `getStylePairRisk(...)` | 对部分扫描器可能识别不了的定位角与图案组合发出警告 | [图案](/docs/features/patterns) |
+| `getScanScore(props)` | 估算某个设计的扫描可靠程度 | [能扫描吗?](/docs/features/frames#will-it-scan) |
+| `getImageScanScore(image)` | 为你已有的二维码图片打分(仅限浏览器) | [能扫描吗?](/docs/features/frames#will-it-scan) |
+| `getQRAsPNG(props, { size })` | 在纯 Node 中生成 PNG 字节,无需 DOM。请从 `qrdx/node` 导入;需要安装 `@resvg/resvg-js` 或 `sharp` | — |
+| `scanQRPixels(pixels, expected)` | 检查原始 RGBA 像素能否解码为 `expected`,模糊和缩小后同样检查;可在 Node 中运行 | — |
+| `getStylePairRisk(...)` | 对某些扫描器可能识别不了的角标记与图案组合发出警告 | [图案](/docs/features/patterns) |
 
 ## 检测函数 [#detection-functions]
 
@@ -268,6 +268,8 @@ type ErrorLevel = 'L' | 'M' | 'Q' | 'H';
 ```tsx
 // The arrays BODY_PATTERN, CORNER_EYE_PATTERNS, CORNER_EYE_DOT_PATTERNS and
 // FRAME_STYLES (and their zod schemas) are exported from 'qrdx/types'.
+// FRAME_STYLES names the built-in frames; each is a frame spec in
+// BUILT_IN_FRAMES (from 'qrdx').
 
 type BodyPattern =
   | 'circle' | 'circle-large' | 'square' | 'diamond' | 'circle-mixed'
@@ -297,7 +299,7 @@ type EyeColors = {
 };
 
 type QRFrame = {
-  style: FrameStyle; // "none" or a frame, see FRAME_STYLES
+  style: FrameStyle; // "none" or a built-in frame, see FRAME_STYLES
   text?: string; // up to 24 characters, default "Scan me"
   color?: string;
   textColor?: string;
@@ -382,7 +384,7 @@ const ERROR_LEVELS = {
 
 ## 错误处理 [#error-handling]
 
-用 try-catch 包裹异步函数：
+用 try-catch 包裹异步函数:
 
 ```tsx
 try {
@@ -392,7 +394,7 @@ try {
 }
 ```
 
-常见错误：
+常见错误:
 - 无效的图片 URL
 - 网络故障
 - 无效的尺寸参数
@@ -407,13 +409,13 @@ try {
 
 ## 服务端支持 [#server-support]
 
-可在 Node.js 环境中运行：
+可在 Node.js 环境中运行:
 - Next.js
 - Remix
 - Express.js
 - 其他 Node.js 框架
 
-部分功能需要浏览器 API：
+部分功能需要浏览器 API:
 - Canvas 操作
 - Clipboard API
 - File API
