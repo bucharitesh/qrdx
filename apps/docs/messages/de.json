@@ -1437,7 +1437,16 @@
       "browsersQuestion": "Welche Browser werden unterstützt?",
       "browsersAnswer": "Jeder moderne Browser mit Kamerazugriff: Chrome, Edge, Safari und Firefox auf Smartphones und Computern. Browser mit eingebautem Barcode-Reader (Chrome unter Android und macOS) nutzen ihn direkt; andere laden beim ersten Scan einen Open-Source-Decoder herunter (ZXing, zu WebAssembly kompiliert, etwa 1 MB vom jsDelivr-CDN). Die Kamera braucht eine https-Seite und deine Erlaubnis.",
       "installQuestion": "Kann ich den Scanner als App installieren?",
-      "installAnswer": "Ja. Nutze auf dieser Seite die Option „Installieren“ oder „Zum Home-Bildschirm hinzufügen“ deines Browsers, um ein Scanner-Symbol zu erhalten, das direkt die Kamera öffnet."
+      "installAnswer": "Ja. In Chrome, Edge oder Samsung Internet tippst du unter dem Scanner auf „App installieren“ oder nutzt die Installieren-Option des Browsers. Auf iPhone und iPad tippst du unter dem Scanner auf „Zum Home-Bildschirm“, dort findest du die Schritte. Die App öffnet sich direkt im Scanner in einem eigenen Fenster, funktioniert offline, sobald du damit gescannt hast, und speichert ihren Verlauf auf deinem Gerät.",
+      "shareQuestion": "Kann ich einen QR-Code aus einem Screenshot scannen?",
+      "shareAnswer": "Ja. Wechsle zu „Bild“ und wähle den Screenshot aus, zieh ihn hinein oder füge ihn ein. Auf Android kannst du, sobald der Scanner installiert ist, außerdem aus jeder App einen Screenshot oder ein Foto an QRdx Scanner teilen: Die App öffnet sich und liest den Code auf deinem Gerät. Geteilte Bilder werden weder hochgeladen noch gespeichert."
+    },
+    "app": {
+      "name": "QRdx Scanner",
+      "shortName": "QRdx Scanner",
+      "description": "Scanne QR-Codes und Barcodes mit der Kamera oder aus einem Screenshot. Bilder werden auf deinem Gerät gelesen, und Links werden geprüft, bevor sie sich öffnen.",
+      "cameraShortcut": "Mit Kamera scannen",
+      "imageShortcut": "Aus Bild scannen"
     }
   },
   "scanner": {
@@ -1522,7 +1531,8 @@
       "drop": "Bilder hierher ziehen, Dateien auswählen oder einfügen",
       "dropHelp": "Screenshots und Fotos funktionieren, auch mit mehreren Codes pro Bild.",
       "choose": "Bilder auswählen",
-      "paste": "Bild einfügen"
+      "paste": "Bild einfügen",
+      "shareMissing": "Das geteilte Bild ist nicht angekommen. Wähle es stattdessen hier aus."
     },
     "result": {
       "starts": "Beginn",
@@ -1633,6 +1643,19 @@
       "copy": "Link kopieren",
       "retry": "Erneut versuchen",
       "report": "Code melden"
+    },
+    "install": {
+      "install": "App installieren",
+      "iosButton": "Zum Home-Bildschirm",
+      "iosTitle": "Füge den Scanner zu deinem Home-Bildschirm hinzu",
+      "iosShare": "Tippe auf Teilen. In Safari auf dem iPhone findest du es im Menü neben der Adresse.",
+      "iosAdd": "Wische nach oben und wähle „Zum Home-Bildschirm“.",
+      "iosConfirm": "Lass „Als Web-App öffnen“ aktiviert und tippe dann auf „Hinzufügen“.",
+      "macButton": "Zum Dock hinzufügen",
+      "macTitle": "Füge den Scanner zu deinem Dock hinzu",
+      "macAdd": "Wähle in der Menüleiste „Ablage“ und dann „Zum Dock hinzufügen“.",
+      "macConfirm": "Klicke auf „Hinzufügen“.",
+      "after": "Er öffnet sich direkt als Scanner in einem eigenen Fenster und funktioniert offline, sobald du damit einen Code gescannt hast."
     }
   },
   "scanPages": {
