@@ -286,6 +286,13 @@
       "secondary": "Doku lesen",
       "sceneLabel": "Animierte Zeichnung des QRdx-Ablaufs: Ein Studio-Bildschirm gestaltet einen QR-Code, ein Drucker druckt ihn auf eine Karte, ein Roboterarm legt die Karte auf ein Förderband, ein Smartphone an einem Tor scannt jede Karte beim Vorbeifahren, der Scan wandert zu einem Analyse-Panel, das einen neuen Balken hinzufügt, und eine große dynamische QR-Karte tauscht ihren Ziel-Link aus, ohne neu gedruckt zu werden"
     },
+    "customers": {
+      "eyebrow": "Genutzt von",
+      "readStory": "Zur Story",
+      "lines": {
+        "flam": "Flam erstellt seine QR-Codes im eigenen Branding mit QRdx."
+      }
+    },
     "editor": {
       "eyebrow": "Probier es mit deinem Link",
       "description": "Derselbe Renderer wie im Playground, live während du tippst.",
@@ -772,6 +779,21 @@
       "signIn": "Melde dich an, um eine Rechnung anzufordern",
       "signInNote": "Wir stellen die Rechnung für den Workspace deines Kontos aus, also melde dich zuerst an."
     },
+    "enterprise": {
+      "name": "Enterprise",
+      "tagline": "Für Unternehmen, die einen Vertrag und eine Sicherheitsprüfung brauchen",
+      "price": "Individuell",
+      "priceNote": "Jahresvertrag, Zahlung per Rechnung",
+      "cta": "Kontakt aufnehmen",
+      "lead": "Alles aus Business, plus:",
+      "adds": {
+        "contract": "Ein Jahresvertrag, Zahlung per Rechnung",
+        "replies": "Antwort innerhalb von {hours, plural, one {# Geschäftsstunde} other {# Geschäftsstunden}}, wenn Codes nicht mehr funktionieren",
+        "review": "Antworten für deine Sicherheitsprüfung",
+        "selfHost": "SSO und Audit-Log auf deinem eigenen Server"
+      },
+      "security": "Sicherheit bei QRdx"
+    },
     "nonprofit": {
       "title": "Non-Profit-Rabatt",
       "description": "Eingetragene Non-Profit-Organisationen und gemeinnützige Einrichtungen bekommen {percent, number} % Rabatt auf Pro oder Business, monatlich oder jährlich. Erzähl uns von deiner Organisation, dann schicken wir dir per E-Mail einen Rabattcode für den Checkout.",
@@ -788,21 +810,6 @@
       "sent": "Wir antworten an {email}, meist innerhalb weniger Tage. Wenn deine Organisation infrage kommt, enthält die Antwort einen Rabattcode für den Checkout.",
       "close": "Schließen",
       "failed": "Etwas ist schiefgelaufen. Schreib stattdessen an {email}."
-    },
-    "enterprise": {
-      "name": "Enterprise",
-      "tagline": "Für Unternehmen, die einen Vertrag und eine Sicherheitsprüfung brauchen",
-      "price": "Individuell",
-      "priceNote": "Jahresvertrag, Zahlung per Rechnung",
-      "cta": "Kontakt aufnehmen",
-      "lead": "Alles aus Business, plus:",
-      "adds": {
-        "contract": "Ein Jahresvertrag, Zahlung per Rechnung",
-        "replies": "Antwort innerhalb von {hours, plural, one {# Geschäftsstunde} other {# Geschäftsstunden}}, wenn Codes nicht mehr funktionieren",
-        "review": "Antworten für deine Sicherheitsprüfung",
-        "selfHost": "SSO und Audit-Log auf deinem eigenen Server"
-      },
-      "security": "Sicherheit bei QRdx"
     }
   },
   "docs": {

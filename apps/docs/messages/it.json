@@ -286,6 +286,13 @@
       "secondary": "Leggi la documentazione",
       "sceneLabel": "Disegno animato del flusso di QRdx: una schermata di studio progetta e personalizza un QR code, una stampante lo stampa su un cartoncino, un braccio robotico appoggia il cartoncino su un nastro trasportatore, un telefono su un varco esegue la scansione di ogni cartoncino che passa, la scansione arriva a un pannello di statistiche che aggiunge una nuova barra, e un grande cartoncino con QR code dinamico cambia il link di destinazione senza essere ristampato"
     },
+    "customers": {
+      "eyebrow": "Usato da",
+      "readStory": "Leggi la storia",
+      "lines": {
+        "flam": "Flam crea i suoi QR code personalizzati con QRdx."
+      }
+    },
     "editor": {
       "eyebrow": "Provalo con il tuo link",
       "description": "Lo stesso renderer del Playground, in tempo reale mentre scrivi.",
@@ -772,6 +779,21 @@
       "signIn": "Accedi per richiedere una fattura",
       "signInNote": "Inviamo la fattura per il workspace del tuo account, quindi accedi prima."
     },
+    "enterprise": {
+      "name": "Enterprise",
+      "tagline": "Per le aziende che hanno bisogno di un contratto e di una revisione di sicurezza",
+      "price": "Su misura",
+      "priceNote": "Contratto annuale, pagato con fattura",
+      "cta": "Contattaci",
+      "lead": "Tutto quello che c’è in Business, più:",
+      "adds": {
+        "contract": "Un contratto annuale, pagato con fattura",
+        "replies": "Risposte entro {hours, plural, one {# ora lavorativa} other {# ore lavorative}} quando i codici smettono di funzionare",
+        "review": "Risposte per la tua revisione di sicurezza",
+        "selfHost": "SSO e audit log sul tuo server"
+      },
+      "security": "La sicurezza in QRdx"
+    },
     "nonprofit": {
       "title": "Sconto per non profit",
       "description": "Le organizzazioni non profit e le associazioni benefiche registrate ottengono il {percent, number}% di sconto su Pro o Business, mensile o annuale. Raccontaci della tua organizzazione e ti invieremo via email un codice sconto da inserire al checkout.",
@@ -788,21 +810,6 @@
       "sent": "Risponderemo a {email}, di solito entro pochi giorni. Se la tua organizzazione ha i requisiti, la risposta includerà un codice sconto da inserire al checkout.",
       "close": "Chiudi",
       "failed": "Qualcosa è andato storto. Scrivi invece a {email}."
-    },
-    "enterprise": {
-      "name": "Enterprise",
-      "tagline": "Per le aziende che hanno bisogno di un contratto e di una revisione di sicurezza",
-      "price": "Su misura",
-      "priceNote": "Contratto annuale, pagato con fattura",
-      "cta": "Contattaci",
-      "lead": "Tutto quello che c’è in Business, più:",
-      "adds": {
-        "contract": "Un contratto annuale, pagato con fattura",
-        "replies": "Risposte entro {hours, plural, one {# ora lavorativa} other {# ore lavorative}} quando i codici smettono di funzionare",
-        "review": "Risposte per la tua revisione di sicurezza",
-        "selfHost": "SSO e audit log sul tuo server"
-      },
-      "security": "La sicurezza in QRdx"
     }
   },
   "docs": {
