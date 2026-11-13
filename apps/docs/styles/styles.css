@@ -136,3 +136,15 @@ g.main:has(> g.plot) > rect {
   :is(h1, h2, .font-display, .tracking-tight, .tracking-tighter) {
   letter-spacing: normal;
 }
+
+/*
+ * The installed scanner (lib/scanner-app.ts) opens /scan in its own window.
+ * There the scanner comes first: the page's hero, guide, FAQ and footer stay
+ * on the website. The header stays, for languages and the rest of QRdx.
+ */
+@media (display-mode: standalone) {
+  main[data-scanner-app] > :not([data-scanner-tool]),
+  main[data-scanner-app] ~ * {
+    display: none;
+  }
+}

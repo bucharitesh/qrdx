@@ -1437,7 +1437,16 @@
       "browsersQuestion": "Browser apa yang didukung?",
       "browsersAnswer": "Browser modern apa pun dengan akses kamera: Chrome, Edge, Safari, dan Firefox di ponsel maupun komputer. Browser dengan pembaca barcode bawaan (Chrome di Android dan macOS) menggunakannya langsung; yang lain mengunduh dekoder open-source (ZXing, dikompilasi ke WebAssembly, sekitar 1 MB dari CDN jsDelivr) saat pertama kali Anda memindai. Kamera memerlukan halaman https dan izin Anda.",
       "installQuestion": "Bisakah saya memasang pemindai sebagai aplikasi?",
-      "installAnswer": "Bisa. Gunakan opsi Pasang atau Tambahkan ke Layar Utama di browser Anda pada halaman ini untuk mendapatkan ikon pemindai yang langsung membuka kamera."
+      "installAnswer": "Ya. Di Chrome, Edge, atau Samsung Internet, ketuk Install app di bawah pemindai, atau gunakan opsi Instal bawaan browser Anda. Di iPhone dan iPad, ketuk Add to Home Screen di bawah pemindai untuk melihat langkah-langkahnya. Aplikasi ini langsung terbuka ke pemindai di jendelanya sendiri, berfungsi secara offline setelah Anda melakukan pemindaian dengannya, dan menyimpan riwayatnya di perangkat Anda.",
+      "shareQuestion": "Bisakah saya memindai kode QR dari tangkapan layar?",
+      "shareAnswer": "Ya. Beralih ke Image, lalu pilih, seret, atau tempel tangkapan layar tersebut. Di Android, setelah pemindai terpasang, Anda juga dapat membagikan tangkapan layar atau foto ke QRdx Scanner dari aplikasi mana pun: aplikasi akan terbuka dan membaca kodenya di perangkat Anda. Gambar yang dibagikan tidak diunggah maupun disimpan."
+    },
+    "app": {
+      "name": "QRdx Scanner",
+      "shortName": "QRdx Scanner",
+      "description": "Pindai kode QR dan barcode dengan kamera Anda atau dari tangkapan layar. Gambar dibaca di perangkat Anda, dan tautan diperiksa sebelum dibuka.",
+      "cameraShortcut": "Pindai dengan kamera",
+      "imageShortcut": "Pindai dari gambar"
     }
   },
   "scanner": {
@@ -1522,7 +1531,8 @@
       "drop": "Letakkan gambar di sini, pilih file, atau tempel",
       "dropHelp": "Tangkapan layar dan foto dapat digunakan, dengan beberapa kode per gambar.",
       "choose": "Pilih gambar",
-      "paste": "Tempel gambar"
+      "paste": "Tempel gambar",
+      "shareMissing": "Gambar yang dibagikan tidak masuk. Pilih gambarnya di sini."
     },
     "result": {
       "starts": "Mulai",
@@ -1633,6 +1643,19 @@
       "copy": "Salin tautan",
       "retry": "Coba lagi",
       "report": "Laporkan kode ini"
+    },
+    "install": {
+      "install": "Instal aplikasi",
+      "iosButton": "Tambah ke Layar Utama",
+      "iosTitle": "Tambahkan pemindai ke Layar Utama Anda",
+      "iosShare": "Ketuk Bagikan. Di Safari pada iPhone, tombolnya ada di menu di samping alamat.",
+      "iosAdd": "Geser ke atas dan pilih Tambah ke Layar Utama.",
+      "iosConfirm": "Biarkan Buka sebagai Aplikasi Web tetap aktif, lalu ketuk Tambah.",
+      "macButton": "Tambah ke Dock",
+      "macTitle": "Tambahkan pemindai ke Dock Anda",
+      "macAdd": "Di bilah menu, pilih File, lalu Tambah ke Dock.",
+      "macConfirm": "Klik Tambah.",
+      "after": "Aplikasi langsung terbuka di pemindai dalam jendelanya sendiri, dan dapat digunakan secara offline setelah Anda memindai satu kode dengannya."
     }
   },
   "scanPages": {
