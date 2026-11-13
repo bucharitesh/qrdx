@@ -1,6 +1,6 @@
 {
   "$schema": "../../../.source/json-schema/docs.meta.json",
-  "title": "Pengembang",
+  "title": "Developer",
   "description": "REST API, webhook, MCP, dan CLI",
   "icon": "Terminal",
   "root": true,
@@ -16,6 +16,7 @@
     "build-an-integration",
     "---Alat---",
     "image-api",
+    "google-chart-api",
     "barcode-api",
     "mcp",
     "ai-agents",

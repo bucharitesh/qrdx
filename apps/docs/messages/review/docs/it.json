@@ -4,7 +4,7 @@
     "status": "machine"
   },
   "(react)/meta.json": {
-    "source": "f39f7612dd28",
+    "source": "079cea1b5c15",
     "status": "machine"
   },
   "(self-hosting)/meta.json": {
@@ -52,7 +52,7 @@
     "status": "machine"
   },
   "components/qr-code.mdx": {
-    "source": "9dc032d49d03",
+    "source": "f9407df848c9",
     "status": "machine"
   },
   "components/vcard-qr-code.mdx": {
@@ -95,6 +95,10 @@
     "source": "eaf24098059d",
     "status": "machine"
   },
+  "developers/google-chart-api.mdx": {
+    "source": "496a16e11c25",
+    "status": "machine"
+  },
   "developers/image-api.mdx": {
     "source": "adb6c5eaf03d",
     "status": "machine"
@@ -108,7 +112,7 @@
     "status": "machine"
   },
   "developers/meta.json": {
-    "source": "19c0a1c8ead7",
+    "source": "98ff392ec155",
     "status": "machine"
   },
   "developers/n8n.mdx": {
@@ -184,11 +188,11 @@
     "status": "machine"
   },
   "help/account-and-billing/cancel.mdx": {
-    "source": "42ca138b8ad5",
+    "source": "b70874971f92",
     "status": "machine"
   },
   "help/account-and-billing/change-plan.mdx": {
-    "source": "0a6d993ff76c",
+    "source": "fa70d24f521b",
     "status": "machine"
   },
   "help/account-and-billing/delete-your-account.mdx": {
@@ -200,15 +204,19 @@
     "status": "machine"
   },
   "help/account-and-billing/invoices.mdx": {
-    "source": "32ced6762159",
+    "source": "148c07f2ab68",
     "status": "machine"
   },
   "help/account-and-billing/meta.json": {
-    "source": "e8069c442747",
+    "source": "bf9b1f4e1b9e",
     "status": "machine"
   },
   "help/account-and-billing/never-hostage.mdx": {
     "source": "71b7da0290bd",
+    "status": "machine"
+  },
+  "help/account-and-billing/nonprofit-discount.mdx": {
+    "source": "b35320fba669",
     "status": "machine"
   },
   "help/account-and-billing/pay-by-invoice.mdx": {
@@ -224,7 +232,7 @@
     "status": "machine"
   },
   "help/contact.mdx": {
-    "source": "045c7d5b1881",
+    "source": "3ea00d8b91ca",
     "status": "machine"
   },
   "help/designing/art.mdx": {
@@ -431,6 +439,10 @@
     "source": "06fa10cc4a4a",
     "status": "machine"
   },
+  "nextjs.mdx": {
+    "source": "a96f3f261b41",
+    "status": "machine"
+  },
   "nfc.mdx": {
     "source": "e6a4ec36f404",
     "status": "machine"
@@ -440,7 +452,7 @@
     "status": "machine"
   },
   "plans-and-limits.mdx": {
-    "source": "8c805d953dc7",
+    "source": "51d954106182",
     "status": "machine"
   },
   "precise-location.mdx": {
@@ -456,7 +468,7 @@
     "status": "machine"
   },
   "self-hosting.mdx": {
-    "source": "d53496d2103e",
+    "source": "c0dbbb91d50d",
     "status": "machine"
   },
   "short-links-and-file-pickers.mdx": {

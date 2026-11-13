@@ -52,6 +52,7 @@ import {
 } from "./bulk-limits";
 import { TRANSLATED_LOCALES } from "./i18n/config";
 import { PAGE_TYPE_IDS } from "./landing/page-type-ids";
+import { MONEY_BACK_DAYS, NONPROFIT_DISCOUNT_PERCENT } from "./pricing";
 import {
   DESIGN_QR_REQUESTS_PER_MINUTE,
   MCP_REQUESTS_PER_MINUTE,
@@ -127,6 +128,11 @@ export const PRODUCT_FACTS = {
   mcpPerMinute: MCP_REQUESTS_PER_MINUTE,
   /** design_qr calls a minute per IP address. */
   designQrPerMinute: DESIGN_QR_REQUESTS_PER_MINUTE,
+  // Pricing offers (lib/pricing.ts), for the refund policy, help and compare pages.
+  /** Days to ask for a full refund of the first payment for a paid plan: "30". */
+  moneyBackDays: MONEY_BACK_DAYS,
+  /** The non-profit discount, as copy writes it: "50" (followed by "%"). */
+  nonprofitDiscountPercent: NONPROFIT_DISCOUNT_PERCENT,
 } as const;
 
 export type ProductFact = keyof typeof PRODUCT_FACTS;
