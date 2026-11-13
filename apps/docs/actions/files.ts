@@ -4,9 +4,13 @@ import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { assertAdmin } from "@/app/(app)/admin/_lib/guard";
+import type { FileRow } from "@/app/(app)/dashboard/files/_components/files-manager";
+import { loadFileRows } from "@/app/(app)/dashboard/files/_lib/rows";
 import { HttpError } from "@/lib/error-response";
 import { type AdminFileView, setFileBlocked } from "@/lib/files/admin";
 import { deleteFile, fileIdSchema } from "@/lib/files/service";
+import { FILE_KINDS } from "@/lib/files/types";
+import type { CursorPage } from "@/lib/keyset-cursor";
 import { assertCan } from "@/lib/permissions-server";
 import { enforceRateLimits } from "@/lib/request-guards";
 import { type ActiveScope, getActiveScope } from "@/lib/scope";
@@ -114,6 +118,44 @@ export async function deleteFileAction(
     const { id, force } = parse(deleteSchema, input);
     return deleteFile(scope, id, { force });
   });
+}
+
+const readLimiter = createRateLimiter({
+  limiter: slidingWindow(120, "60 s"),
+});
+
+const loadSchema = z.object({
+  kind: z.enum(FILE_KINDS).nullish(),
+  /** From the previous page; omit for the first */
+  cursor: z.string().max(160).nullish(),
+  limit: z.number().int().min(1).max(200).optional(),
+});
+
+/**
+ * The Files list as it scrolls: the next page after `cursor`, or the first
+ * `limit` files again after an upload or delete. Any member who can open
+ * the workspace can read it, as the page itself.
+ */
+export async function loadFilesAction(
+  input: z.input<typeof loadSchema>,
+): Promise<FileActionResult<CursorPage<FileRow>>> {
+  try {
+    const scope = await getActiveScope();
+    await enforceRateLimits([
+      { limiter: readLimiter, key: `files:list:user:${scope.userId}` },
+    ]);
+    const { kind, cursor, limit } = parse(loadSchema, input);
+    return {
+      success: true,
+      data: await loadFileRows(scope, {
+        kind: kind ?? undefined,
+        cursor: cursor ?? null,
+        limit,
+      }),
+    };
+  } catch (error) {
+    return failure(error, "loadFiles");
+  }
 }
 
 const blockSchema = z.object({

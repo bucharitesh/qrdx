@@ -7322,7 +7322,6 @@
           "open": "開く",
           "replaceFile": "ファイルを置き換え…",
           "delete": "削除",
-          "showingThe500NewestFiles": "最新の500件のファイルを表示しています。",
           "deleteFilename": "{filename}を削除しますか？",
           "thisFileIsValueThey": "このファイルは{value}です。代わりに「ファイルは利用できません」と表示されます。",
           "andValueMore": "ほか{value, number}件",

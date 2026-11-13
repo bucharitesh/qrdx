@@ -19,6 +19,7 @@ import {
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
+import { LoadMore } from "@/components/load-more";
 import { HairlineFigure } from "@/components/mockups/hairline";
 import { playgroundHref } from "@/lib/playground-links";
 import { UpgradeButton } from "../../team/_components/small-actions";
@@ -68,25 +69,47 @@ function sortThemes(themes: SavedTheme[], option: SortOption) {
   });
 }
 
+/** Cards drawn at a time: each one renders a full QR code. */
+const GRID_STEP = 24;
+
+/**
+ * Themes in a grid, drawn a batch at a time as you scroll (every card
+ * renders a QR code). Give it a new `key` when the search or sort changes
+ * so it starts again from the first batch.
+ */
 function ThemeGrid({
   themes,
   workspace,
   canCopyToTeam,
+  showMoreLabel,
 }: {
   themes: SavedTheme[];
   workspace: "personal" | "team";
   canCopyToTeam: boolean;
+  /** "Show more themes" */
+  showMoreLabel: string;
 }) {
+  const [shown, setShown] = useState(GRID_STEP);
+  const visible = themes.slice(0, shown);
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-      {themes.map((theme) => (
-        <ThemeCard
-          canCopyToTeam={canCopyToTeam}
-          key={theme.id}
-          theme={theme}
-          workspace={workspace}
-        />
-      ))}
+    <div className="space-y-2">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {visible.map((theme) => (
+          <ThemeCard
+            canCopyToTeam={canCopyToTeam}
+            key={theme.id}
+            theme={theme}
+            workspace={workspace}
+          />
+        ))}
+      </div>
+      <LoadMore
+        count={visible.length}
+        hasMore={shown < themes.length}
+        labels={{ loadMore: showMoreLabel }}
+        loading={false}
+        onLoadMore={() => setShown((count) => count + GRID_STEP)}
+      />
     </div>
   );
 }
@@ -192,6 +215,8 @@ export function ThemesManager({
             <>
               <ThemeGrid
                 canCopyToTeam={false}
+                key={`team:${query}:${sort}`}
+                showMoreLabel={t("showMoreThemes")}
                 themes={shownTeam}
                 workspace={workspace}
               />
@@ -247,6 +272,8 @@ export function ThemesManager({
           {shownPersonal.length > 0 ? (
             <ThemeGrid
               canCopyToTeam={canCopyToTeam}
+              key={`personal:${query}:${sort}`}
+              showMoreLabel={t("showMoreThemes")}
               themes={shownPersonal}
               workspace={workspace}
             />
