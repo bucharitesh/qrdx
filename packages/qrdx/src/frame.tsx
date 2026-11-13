@@ -1,6 +1,5 @@
+/** @jsxImportSource ./jsx */
 /** biome-ignore-all lint/style/noMagicNumbers: frame proportions */
-import type { ReactElement, SVGProps } from "react";
-import React from "react";
 import type { ColorConfig } from "../types";
 import {
   DEFAULT_FRAME_TEXT,
@@ -16,6 +15,7 @@ import {
   isShapedFrameStyle,
   SHAPED_FRAMES,
 } from "./frame-styles";
+import { cloneElement, type QRNode } from "./jsx/runtime";
 import { getSolidColor } from "./utils/color";
 import { compact, roundTo } from "./utils/fmt";
 
@@ -496,16 +496,17 @@ function renderShape(shape: FrameShape, key: number) {
  * is nested as-is at its offset, so its modules are untouched.
  */
 export function wrapWithFrame(
-  qrElement: ReactElement<SVGProps<SVGSVGElement>>,
+  qrElement: QRNode,
   options: {
     size: number;
     frame: AnyQRFrame;
     bgColor?: ColorConfig;
-    svgProps?: SVGProps<SVGSVGElement>;
+    /** Attributes for the outer <svg> (React's names: className, style…) */
+    svgProps?: Record<string, unknown>;
     /** Mark each label with FRAME_LABEL_ATTRIBUTE (its `field`), for editors */
     markLabels?: boolean;
   }
-): ReactElement {
+): QRNode {
   const { size, frame, bgColor, svgProps, markLabels } = options;
   const layout = getFrameLayout(size, frame, bgColor);
   const labels = frameLabels(layout);
@@ -523,7 +524,7 @@ export function wrapWithFrame(
       <g data-qrdx-frame={frame.style}>
         {layout.shapes.map((shape, index) => renderShape(shape, index))}
       </g>
-      {React.cloneElement(qrElement, {
+      {cloneElement(qrElement, {
         x: round(layout.qrX),
         y: round(layout.qrY),
         width: size,
