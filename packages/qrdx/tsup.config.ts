@@ -202,6 +202,24 @@ export default defineConfig([
     treeshake: true,
     esbuildPlugins: [sharedCore(".js", ["rasterize"])],
   },
+  // ── Vue 3 components (qrdx/vue), on the shared core ─────────────────────
+  // A render function, not a .vue file, so no Vue compiler is needed here.
+  {
+    ...shared,
+    entry: { vue: "src/vue.ts" },
+    format: ["esm"],
+    treeshake: true,
+    external: [...(shared.external ?? []), "vue"],
+    esbuildPlugins: [sharedCore(".mjs", [])],
+  },
+  {
+    ...shared,
+    entry: { vue: "src/vue.ts" },
+    format: ["cjs"],
+    treeshake: true,
+    external: [...(shared.external ?? []), "vue"],
+    esbuildPlugins: [sharedCore(".js", [])],
+  },
   // ── qrdx/types (schemas + helpers, no React) ────────────────────────────
   {
     ...shared,
