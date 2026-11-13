@@ -54,7 +54,7 @@ interface CardFeature {
 const cards: CardFeature[] = [
   { demo: "scan-score", key: "scanScore", href: "/tools/scan-checker" },
   { demo: "print-size", key: "printSize", href: "/tools/print-size" },
-  { demo: "dynamic", key: "dynamic", href: "/docs/dynamic-qr-codes" },
+  { demo: "dynamic", key: "dynamic", href: "/dynamic-qr-code" },
   {
     demo: "analytics",
     key: "analytics",

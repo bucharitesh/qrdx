@@ -1,0 +1,25 @@
+import { ogSize, renderPageOgImage } from "@/app/og/brand";
+import { localeParams, requireLocaleParam } from "@/lib/i18n/static-params";
+
+export const alt = "QRdx, the open source QR code generator";
+export const size = ogSize;
+export const contentType = "image/png";
+
+export function generateStaticParams() {
+  return localeParams();
+}
+
+export default async function Image({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}) {
+  await requireLocaleParam(params);
+  return renderPageOgImage({
+    label: "Open source",
+    title: "Open source QR code generator",
+    description:
+      "The app is AGPL-3.0, the React library and CLI are MIT. Use qrdx.dev or run your own copy.",
+    footer: "github.com/bucharitesh/qrdx · Docker or Node.js",
+  });
+}

@@ -119,6 +119,11 @@ export function buildLlmsTxt(input: LlmsTxtInput): string {
 
   const product = links([
     {
+      title: "Dynamic QR code generator",
+      url: "/dynamic-qr-code",
+      description: `What dynamic codes do on each plan: ${input.limits.free.dynamicCodes} free with unlimited scans, editing after printing, scan analytics, hosted pages, smart routing and the REST API`,
+    },
+    {
       title: "Dynamic QR codes",
       url: "/docs/dynamic-qr-codes",
       description: `Short links you can point somewhere else after printing, with scan analytics, folders, tags, version history and trash; a CSV import of up to ${PRODUCT_FACTS.importRows} codes and API batches of up to ${PRODUCT_FACTS.apiBatchCodes} (with an Idempotency-Key) on paid plans`,
@@ -244,6 +249,12 @@ export function buildLlmsTxt(input: LlmsTxtInput): string {
       title: "Source code",
       url: "https://github.com/bucharitesh/qrdx",
       description: "The whole platform, open source and self-hostable",
+    },
+    {
+      title: "Open source",
+      url: "/open-source-qr-code-generator",
+      description:
+        "What's in the repository and under which license (AGPL-3.0 app; MIT library, CLI and plugins; commercial ee/ folders), and the ways to run it",
     },
   ]);
 
