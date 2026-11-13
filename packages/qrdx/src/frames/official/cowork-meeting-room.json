@@ -1,0 +1,107 @@
+{
+  "id": "cowork-meeting-room",
+  "name": "Meeting room booking",
+  "description": "A light card with a bold side bar and left-aligned text and a calendar.",
+  "category": "use-case",
+  "collection": "places",
+  "contentTypes": ["url"],
+  "tags": ["coworking", "office", "booking", "meeting room"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1300,
+      "height": 1620
+    },
+    "qr": {
+      "x": 180,
+      "y": 140,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1300,
+        "height": 1620,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.92
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 40,
+        "height": 1620,
+        "fill": "accent"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1300,
+        "height": 1620,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.82
+        },
+        "hole": {
+          "x": 0,
+          "y": 8,
+          "width": 1292,
+          "height": 1604
+        }
+      },
+      {
+        "type": "icon",
+        "icon": "calendar",
+        "x": 1055,
+        "y": 1315,
+        "size": 150,
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Book this room",
+        "color": "frame",
+        "box": {
+          "x": 180,
+          "y": 1270,
+          "width": 1000,
+          "height": 170
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Meeting room",
+        "color": "frame",
+        "box": {
+          "x": 180,
+          "y": 1450,
+          "width": 1000,
+          "height": 90
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

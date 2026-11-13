@@ -1,0 +1,88 @@
+{
+  "id": "park-dog-rules",
+  "name": "Dog park rules",
+  "description": "A solid card with a round badge holding a paw print on its top edge.",
+  "category": "use-case",
+  "collection": "places",
+  "contentTypes": ["url"],
+  "tags": ["park", "outdoors", "dogs", "rules"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1830
+    },
+    "qr": {
+      "x": 120,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 150,
+        "width": 1240,
+        "height": 1680,
+        "radius": 64,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 620,
+        "cy": 150,
+        "r": 150,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 620,
+        "cy": 150,
+        "r": 120,
+        "fill": "background"
+      },
+      {
+        "type": "path",
+        "d": "M620 144.4C642.4 144.4 662 169.6 659.2 189.2C656.4 206 636.8 203.2 620 203.2C603.2 203.2 583.6 206 580.8 189.2C578 169.6 597.6 144.4 620 144.4ZM562.6 141.6A12.6 16.8 0 1 1 587.8 141.6A12.6 16.8 0 1 1 562.6 141.6ZM586.4 113.6A14 18.2 0 1 1 614.4 113.6A14 18.2 0 1 1 586.4 113.6ZM625.6 113.6A14 18.2 0 1 1 653.6 113.6A14 18.2 0 1 1 625.6 113.6ZM652.2 141.6A12.6 16.8 0 1 1 677.4 141.6A12.6 16.8 0 1 1 652.2 141.6Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Dog park",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1540,
+          "width": 1040,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan for the rules",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1710,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

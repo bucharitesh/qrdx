@@ -1,0 +1,114 @@
+{
+  "id": "camp-fire-rules",
+  "name": "Campfire rules",
+  "description": "The label between two short rules under the code and a bonfire.",
+  "category": "use-case",
+  "collection": "places",
+  "contentTypes": ["url"],
+  "tags": ["campsite", "outdoors", "safety", "camping"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 40,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 40,
+        "fill": "frame",
+        "hole": {
+          "x": 16,
+          "y": 16,
+          "width": 1208,
+          "height": 1708,
+          "radius": 28
+        }
+      },
+      {
+        "type": "line",
+        "x1": 60,
+        "y1": 1610,
+        "x2": 220,
+        "y2": 1610,
+        "width": 10,
+        "fill": "frame"
+      },
+      {
+        "type": "line",
+        "x1": 1020,
+        "y1": 1610,
+        "x2": 1180,
+        "y2": 1610,
+        "width": 10,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M620 47.2C634.4 66.4 653.6 80.8 651.2 107.2C650 124 636.8 136 620 136C603.2 136 590 124 588.8 107.2C587.6 90.4 600.8 80.8 605.6 66.4C610.4 78.4 612.8 85.6 617.6 88C622.4 76 622.4 61.6 620 47.2Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M620 98.8C624.2 109.6 632 115.6 632 122.8A12 12 0 0 1 608 122.8C608 115.6 615.8 109.6 620 98.8ZM575.19 147.02L661.59 123.02L664.81 134.58L578.41 158.58ZM578.41 123.02L664.81 147.02L661.59 158.58L575.19 134.58Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Campfire rules",
+        "color": "frame",
+        "box": {
+          "x": 260,
+          "y": 1530,
+          "width": 720,
+          "height": 160
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan before you light up",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 180,
+          "width": 960,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

@@ -98,6 +98,14 @@ export function SpotlightProvider({
   );
 }
 
+/**
+ * The spotlights the person has seen and how to mark one; null until this
+ * browser's copy is read (and outside the app shell).
+ */
+export function useSpotlightsSeen(): SpotlightValue | null {
+  return useContext(SpotlightContext);
+}
+
 // The spotlights waiting on this page, in the order they mounted: only the
 // first one shows; the next shows once it's dismissed.
 let waiting: readonly string[] = [];

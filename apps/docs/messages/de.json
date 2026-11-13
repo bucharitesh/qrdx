@@ -4391,18 +4391,11 @@
         }
       },
       "frameControls": {
-        "customise": "Anpassen",
         "importSvg": "SVG importieren",
         "publishFrame": "Rahmen veröffentlichen",
         "theFrameIsAddedAround": "Der Rahmen wird um den Code herum hinzugefügt. Dadurch wird das heruntergeladene Bild größer und der Code selbst bleibt scanbar.",
         "label": "Text",
-        "secondLine": "Zweite Zeile",
-        "leaveEmptyForNoLabel": "Leer lassen für keinen Text",
         "pickAFrameFirst": "Wähle zuerst einen Rahmen",
-        "frameColor": "Rahmenfarbe",
-        "textColor": "Textfarbe",
-        "endColor": "Endfarbe",
-        "optionalEGYourWebsite": "Optional, z. B. deine Website",
         "none": "Keiner"
       },
       "frameFields": {
@@ -4421,13 +4414,14 @@
         "filterFrames": "Rahmen filtern",
         "labelFrames": "{label}-Rahmen",
         "commonFrames": "Gängige Rahmen",
-        "everyFrameBuiltInStyles": "Alle Rahmen: integrierte Stile, die offiziellen Rahmen von QRdx und deine gespeicherten Rahmen. Ein Klick wendet den Rahmen sofort an.",
+        "everyFrameBuiltInStyles": "Alle Rahmen: die klassischen Rahmen, Formcodes, die offiziellen Rahmen von QRdx und deine gespeicherten Rahmen. Ein Klick darauf wendet den Rahmen sofort an.",
         "less": "Weniger",
         "all": "Alle",
         "noFramesMatchQuery": "Keine Rahmen für „{query}“ gefunden.",
         "loadingFrames": "Rahmen werden geladen …",
         "comingUp": "Demnächst",
-        "builtIn": "Integriert",
+        "classic": "Klassisch",
+        "shapedCodes": "Formcodes",
         "saved": "Gespeichert",
         "results": "Ergebnisse"
       },
@@ -7987,23 +7981,6 @@
         },
         "newCodeButton": {
           "newDynamicCode": "Neuer dynamischer Code"
-        },
-        "setupChecklist": {
-          "done": "(erledigt)",
-          "create": "Erstellen",
-          "start": "Starten",
-          "design": "Gestalten",
-          "invite": "Einladen",
-          "connect": "Verbinden",
-          "getSetUp": "Einrichten",
-          "doneOfLengthDone": "{done, number} von {length, number} erledigt",
-          "hide": "Ausblenden",
-          "setupTasksDone": "Erledigte Aufgaben",
-          "createADynamicQrCode": "Dynamischen QR-Code erstellen",
-          "makeALandingPageOr": "Landingpage oder Formular erstellen",
-          "saveAThemeWithYour": "Speichere ein Theme mit deinem Logo und deinen Farben",
-          "inviteATeammate": "Teammitglied einladen",
-          "connectACustomDomain": "Eigene Domain verbinden"
         }
       },
       "listSelection": {
@@ -8356,6 +8333,26 @@
       "spotlight": {
         "new": "Neu",
         "gotIt": "Verstanden"
+      },
+      "setupGuide": {
+        "getSetUp": "Einrichten",
+        "launcherLabel": "Einrichtung: {done, number} von {length, number} erledigt",
+        "doneOfLengthDone": "{done, number} von {length, number} erledigt",
+        "doneOfLengthShort": "{done, number}/{length, number}",
+        "setupTasksDone": "Erledigte Aufgaben",
+        "collapse": "Einklappen",
+        "dismissGuide": "Guide schließen",
+        "done": "(erledigt)",
+        "create": "Erstellen",
+        "start": "Starten",
+        "design": "Gestalten",
+        "invite": "Einladen",
+        "connect": "Verbinden",
+        "createADynamicQrCode": "Dynamischen QR-Code erstellen",
+        "makeALandingPageOr": "Landingpage oder Formular erstellen",
+        "saveAThemeWithYour": "Speichere ein Theme mit deinem Logo und deinen Farben",
+        "inviteATeammate": "Teammitglied einladen",
+        "connectACustomDomain": "Eigene Domain verbinden"
       }
     },
     "workspaces": {

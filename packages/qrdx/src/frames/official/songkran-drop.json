@@ -1,0 +1,90 @@
+{
+  "id": "songkran-drop",
+  "name": "Songkran sticker",
+  "description": "A die-cut sticker with a thick outline and an offset shadow and a water drop, in pink and sky blue.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "songkran",
+  "contentTypes": [],
+  "tags": [
+    "songkran",
+    "thai new year",
+    "water festival",
+    "april",
+    "water",
+    "sticker"
+  ],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1750
+    },
+    "qr": {
+      "x": 110,
+      "y": 370,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#be185d",
+      "text": "#ffffff",
+      "accent": "#7dd3fc"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 50,
+        "y": 50,
+        "width": 1270,
+        "height": 1700,
+        "radius": 110,
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1270,
+        "height": 1700,
+        "radius": 110,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 36,
+        "y": 36,
+        "width": 1198,
+        "height": 1628,
+        "radius": 80,
+        "fill": "background"
+      },
+      {
+        "type": "path",
+        "d": "M635 82.8C651.8 125.04 683 146.8 683 175.6A48 48 0 0 1 587 175.6C587 146.8 618.2 125.04 635 82.8ZM609.4 188.4C610.67 180.9 607.79 165.06 603 153.2C593.24 167.7 596.12 183.54 609.4 188.4Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Sawasdee Pi Mai",
+        "color": "frame",
+        "box": {
+          "x": 100,
+          "y": 1490,
+          "width": 1070,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

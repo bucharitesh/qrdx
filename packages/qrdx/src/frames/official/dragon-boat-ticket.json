@@ -1,0 +1,98 @@
+{
+  "id": "dragon-boat-ticket",
+  "name": "Race day ticket",
+  "description": "A wide ticket: the code on the left, a perforated stub with a dragon boat on the right, in jade and gold.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "dragon-boat-festival",
+  "contentTypes": [],
+  "tags": ["dragon boat festival", "duanwu", "boat race", "ticket"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 2000,
+      "height": 1040
+    },
+    "qr": {
+      "x": 120,
+      "y": 120,
+      "size": 800,
+      "padding": 64,
+      "radius": 19.2
+    },
+    "colors": {
+      "frame": "#0f5e4f",
+      "text": "#ffffff",
+      "accent": "#e0b13a"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M56 0L1044 0A56 56 0 0 0 1156 0L1944 0A56 56 0 0 1 2000 56L2000 984A56 56 0 0 1 1944 1040L1156 1040A56 56 0 0 0 1044 1040L56 1040A56 56 0 0 1 0 984L0 56A56 56 0 0 1 56 0Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.88
+        }
+      },
+      {
+        "type": "path",
+        "d": "M1156 0L1944 0A56 56 0 0 1 2000 56L2000 984A56 56 0 0 1 1944 1040L1156 1040A56 56 0 0 1 1100 984L1100 56A56 56 0 0 1 1156 0Z",
+        "fill": "frame"
+      },
+      {
+        "type": "line",
+        "x1": 1100,
+        "y1": 110,
+        "x2": 1100,
+        "y2": 930,
+        "width": 10,
+        "dash": [34, 24],
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.5
+        }
+      },
+      {
+        "type": "path",
+        "d": "M1470 316L1626 316C1634 304 1638 288 1634 272C1646 284 1650 312 1634 332C1610 348 1510 348 1486 336ZM1470 320C1458 292 1462 268 1474 252L1498 244L1488 260L1506 264L1484 274C1480 292 1484 304 1490 320Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M1502.8 288A7.2 7.2 0 1 1 1517.2 288A7.2 7.2 0 1 1 1502.8 288ZM1506.51 295.33L1524.51 363.33L1519.49 364.67L1501.49 296.67ZM1522.8 288A7.2 7.2 0 1 1 1537.2 288A7.2 7.2 0 1 1 1522.8 288ZM1526.51 295.33L1544.51 363.33L1539.49 364.67L1521.49 296.67ZM1542.8 288A7.2 7.2 0 1 1 1557.2 288A7.2 7.2 0 1 1 1542.8 288ZM1546.51 295.33L1564.51 363.33L1559.49 364.67L1541.49 296.67ZM1562.8 288A7.2 7.2 0 1 1 1577.2 288A7.2 7.2 0 1 1 1562.8 288ZM1566.51 295.33L1584.51 363.33L1579.49 364.67L1561.49 296.67ZM1582.8 288A7.2 7.2 0 1 1 1597.2 288A7.2 7.2 0 1 1 1582.8 288ZM1586.51 295.33L1604.51 363.33L1599.49 364.67L1581.49 296.67ZM1602.8 288A7.2 7.2 0 1 1 1617.2 288A7.2 7.2 0 1 1 1602.8 288ZM1606.51 295.33L1624.51 363.33L1619.49 364.67L1601.49 296.67Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan to enter",
+        "color": "text",
+        "box": {
+          "x": 1150,
+          "y": 500,
+          "width": 800,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Race day",
+        "color": "text",
+        "box": {
+          "x": 1150,
+          "y": 690,
+          "width": 800,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

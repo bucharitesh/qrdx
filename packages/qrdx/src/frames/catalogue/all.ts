@@ -4,6 +4,7 @@ import type { OfficialFrame } from "../official";
 import addEngraving from "../official/add-engraving.json";
 import addToCalendar from "../official/add-to-calendar.json";
 import adoptMe from "../official/adopt-me.json";
+import africaDay from "../official/africa-day.json";
 import aftercareGuide from "../official/aftercare-guide.json";
 import allergenInfo from "../official/allergen-info.json";
 import alterations from "../official/alterations.json";
@@ -13,6 +14,7 @@ import appDownload from "../official/app-download.json";
 import appInstall from "../official/app-install.json";
 import appPhone from "../official/app-phone.json";
 import appPhoneDark from "../official/app-phone-dark.json";
+import aquariumFeeding from "../official/aquarium-feeding.json";
 import archeryLesson from "../official/archery-lesson.json";
 import arrivalGuide from "../official/arrival-guide.json";
 import arrowTag from "../official/arrow-tag.json";
@@ -22,10 +24,14 @@ import assemblyGuide from "../official/assembly-guide.json";
 import attendance from "../official/attendance.json";
 import audioGuide from "../official/audio-guide.json";
 import autumnAcorn from "../official/autumn-acorn.json";
+import autumnApplePicking from "../official/autumn-apple-picking.json";
 import autumnHills from "../official/autumn-hills.json";
 import autumnMaple from "../official/autumn-maple.json";
+import autumnMushroom from "../official/autumn-mushroom.json";
 import autumnOak from "../official/autumn-oak.json";
+import autumnPumpkinPatch from "../official/autumn-pumpkin-patch.json";
 import autumnWheat from "../official/autumn-wheat.json";
+import avuruduPot from "../official/avurudu-pot.json";
 import badmintonSession from "../official/badminton-session.json";
 import bakeSale from "../official/bake-sale.json";
 import bakeryBoard from "../official/bakery-board.json";
@@ -40,6 +46,9 @@ import barberBooking from "../official/barber-booking.json";
 import bathRitual from "../official/bath-ritual.json";
 import bathroomShowroom from "../official/bathroom-showroom.json";
 import batteryCheck from "../official/battery-check.json";
+import beachConditions from "../official/beach-conditions.json";
+import beachInfoSticker from "../official/beach-info-sticker.json";
+import beachLifeguard from "../official/beach-lifeguard.json";
 import beautyRewards from "../official/beauty-rewards.json";
 import becomeAMember from "../official/become-a-member.json";
 import bikeService from "../official/bike-service.json";
@@ -60,6 +69,8 @@ import blackFridayBolt from "../official/black-friday-bolt.json";
 import blackFridayBurst from "../official/black-friday-burst.json";
 import blackFridayTab from "../official/black-friday-tab.json";
 import blackFridayTag from "../official/black-friday-tag.json";
+import bloodDonorDrop from "../official/blood-donor-drop.json";
+import bloodDonorSticker from "../official/blood-donor-sticker.json";
 import bookACall from "../official/book-a-call.json";
 import bookACleaning from "../official/book-a-cleaning.json";
 import bookAConsultation from "../official/book-a-consultation.json";
@@ -67,6 +78,8 @@ import bookACourt from "../official/book-a-court.json";
 import bookAFacial from "../official/book-a-facial.json";
 import bookAMassage from "../official/book-a-massage.json";
 import bookAVaccine from "../official/book-a-vaccine.json";
+import bookDayArch from "../official/book-day-arch.json";
+import bookDayList from "../official/book-day-list.json";
 import bookNow from "../official/book-now.json";
 import bookThisRoom from "../official/book-this-room.json";
 import boxingClass from "../official/boxing-class.json";
@@ -87,10 +100,16 @@ import cafeMenuBoard from "../official/cafe-menu-board.json";
 import cafeSteam from "../official/cafe-steam.json";
 import cafeWifi from "../official/cafe-wifi.json";
 import callAServer from "../official/call-a-server.json";
+import campCheckIn from "../official/camp-check-in.json";
+import campFireRules from "../official/camp-fire-rules.json";
+import campMap from "../official/camp-map.json";
 import carDetailing from "../official/car-detailing.json";
 import carDetails from "../official/car-details.json";
 import carForSale from "../official/car-for-sale.json";
 import carService from "../official/car-service.json";
+import carnivalMask from "../official/carnival-mask.json";
+import carnivalPass from "../official/carnival-pass.json";
+import carnivalPlume from "../official/carnival-plume.json";
 import carpool from "../official/carpool.json";
 import cateringOrder from "../official/catering-order.json";
 import chargingPrices from "../official/charging-prices.json";
@@ -101,6 +120,8 @@ import checkSymptoms from "../official/check-symptoms.json";
 import cheesePairing from "../official/cheese-pairing.json";
 import chessClub from "../official/chess-club.json";
 import chessLessons from "../official/chess-lessons.json";
+import childrensDayCarp from "../official/childrens-day-carp.json";
+import childrensDaySticker from "../official/childrens-day-sticker.json";
 import chooseYourPlan from "../official/choose-your-plan.json";
 import chooseYourWash from "../official/choose-your-wash.json";
 import christmas from "../official/christmas.json";
@@ -115,6 +136,9 @@ import christmasSnowTab from "../official/christmas-snow-tab.json";
 import christmasStarSeal from "../official/christmas-star-seal.json";
 import christmasTree from "../official/christmas-tree.json";
 import christmasWreath from "../official/christmas-wreath.json";
+import chuseokGiftTag from "../official/chuseok-gift-tag.json";
+import chuseokMoon from "../official/chuseok-moon.json";
+import chuseokSongpyeon from "../official/chuseok-songpyeon.json";
 import circleBadgeTop from "../official/circle-badge-top.json";
 import cleanBeauty from "../official/clean-beauty.json";
 import clickAndCollect from "../official/click-and-collect.json";
@@ -127,6 +151,8 @@ import consultationForm from "../official/consultation-form.json";
 import continuedOnline from "../official/continued-online.json";
 import cookieBox from "../official/cookie-box.json";
 import cookingClass from "../official/cooking-class.json";
+import coworkDesk from "../official/cowork-desk.json";
+import coworkMeetingRoom from "../official/cowork-meeting-room.json";
 import coworkingPass from "../official/coworking-pass.json";
 import cricketClub from "../official/cricket-club.json";
 import cupcakeOrder from "../official/cupcake-order.json";
@@ -153,9 +179,17 @@ import donateFood from "../official/donate-food.json";
 import donationJar from "../official/donation-jar.json";
 import donutShop from "../official/donut-shop.json";
 import doubleBorder from "../official/double-border.json";
+import dragonBoatRace from "../official/dragon-boat-race.json";
+import dragonBoatTicket from "../official/dragon-boat-ticket.json";
+import dragonBoatZongzi from "../official/dragon-boat-zongzi.json";
 import dressFitting from "../official/dress-fitting.json";
 import drivingLessons from "../official/driving-lessons.json";
 import dumplingHouse from "../official/dumpling-house.json";
+import durgaPujaLotus from "../official/durga-puja-lotus.json";
+import dussehraSeal from "../official/dussehra-seal.json";
+import earthDayGlobe from "../official/earth-day-globe.json";
+import earthDayPledge from "../official/earth-day-pledge.json";
+import earthDayRecycle from "../official/earth-day-recycle.json";
 import easterBunting from "../official/easter-bunting.json";
 import easterButterfly from "../official/easter-butterfly.json";
 import easterCorners from "../official/easter-corners.json";
@@ -180,25 +214,73 @@ import eidFitrBorder from "../official/eid-fitr-border.json";
 import eidFitrGift from "../official/eid-fitr-gift.json";
 import eidFitrLantern from "../official/eid-fitr-lantern.json";
 import eidFitrSeal from "../official/eid-fitr-seal.json";
+import enkutatashDaisy from "../official/enkutatash-daisy.json";
+import enkutatashSeal from "../official/enkutatash-seal.json";
+import environmentDay from "../official/environment-day.json";
 import eventAgenda from "../official/event-agenda.json";
+import eventAnniversary from "../official/event-anniversary.json";
 import eventAnnouncement from "../official/event-announcement.json";
+import eventAwards from "../official/event-awards.json";
+import eventBabyGifts from "../official/event-baby-gifts.json";
+import eventBabyShower from "../official/event-baby-shower.json";
 import eventBadge from "../official/event-badge.json";
+import eventBirthAnnouncement from "../official/event-birth-announcement.json";
 import eventBirthday from "../official/event-birthday.json";
+import eventBookFair from "../official/event-book-fair.json";
+import eventBooth from "../official/event-booth.json";
 import eventCheckIn from "../official/event-check-in.json";
 import eventCinema from "../official/event-cinema.json";
 import eventComedy from "../official/event-comedy.json";
 import eventConcert from "../official/event-concert.json";
+import eventCraftFair from "../official/event-craft-fair.json";
+import eventCupcake from "../official/event-cupcake.json";
+import eventEngagement from "../official/event-engagement.json";
 import eventExhibit from "../official/event-exhibit.json";
 import eventFestival from "../official/event-festival.json";
+import eventFilmFestival from "../official/event-film-festival.json";
+import eventFoodFestival from "../official/event-food-festival.json";
+import eventFunRun from "../official/event-fun-run.json";
+import eventGala from "../official/event-gala.json";
+import eventGameNight from "../official/event-game-night.json";
+import eventGradDiploma from "../official/event-grad-diploma.json";
+import eventGradParty from "../official/event-grad-party.json";
+import eventGradSeal from "../official/event-grad-seal.json";
+import eventGradStream from "../official/event-grad-stream.json";
+import eventGuestBook from "../official/event-guest-book.json";
+import eventHackathon from "../official/event-hackathon.json";
+import eventKeynote from "../official/event-keynote.json";
 import eventLivestream from "../official/event-livestream.json";
+import eventMatchLineup from "../official/event-match-lineup.json";
+import eventMeetup from "../official/event-meetup.json";
+import eventMemorial from "../official/event-memorial.json";
+import eventMilestone from "../official/event-milestone.json";
+import eventNightMarket from "../official/event-night-market.json";
+import eventOpenMic from "../official/event-open-mic.json";
 import eventParty from "../official/event-party.json";
+import eventPartyHat from "../official/event-party-hat.json";
 import eventPhotos from "../official/event-photos.json";
+import eventProm from "../official/event-prom.json";
+import eventQuince from "../official/event-quince.json";
 import eventRace from "../official/event-race.json";
 import eventRaffle from "../official/event-raffle.json";
+import eventRetirement from "../official/event-retirement.json";
+import eventReunion from "../official/event-reunion.json";
+import eventRunnerTracker from "../official/event-runner-tracker.json";
 import eventSaveTheDate from "../official/event-save-the-date.json";
+import eventSeasonTicket from "../official/event-season-ticket.json";
+import eventSessionFeedback from "../official/event-session-feedback.json";
+import eventSetlist from "../official/event-setlist.json";
+import eventShortFilms from "../official/event-short-films.json";
+import eventSlides from "../official/event-slides.json";
+import eventSpeakerQa from "../official/event-speaker-qa.json";
 import eventSports from "../official/event-sports.json";
+import eventTalentShow from "../official/event-talent-show.json";
 import eventTheatre from "../official/event-theatre.json";
 import eventTicket from "../official/event-ticket.json";
+import eventTourMerch from "../official/event-tour-merch.json";
+import eventTournament from "../official/event-tournament.json";
+import eventTrivia from "../official/event-trivia.json";
+import eventWorkshop from "../official/event-workshop.json";
 import eventWristband from "../official/event-wristband.json";
 import eyeExam from "../official/eye-exam.json";
 import eyewearTryOn from "../official/eyewear-try-on.json";
@@ -211,6 +293,11 @@ import fathersDayTie from "../official/fathers-day-tie.json";
 import fathersDayTrophy from "../official/fathers-day-trophy.json";
 import feedbackBubble from "../official/feedback-bubble.json";
 import feedbackSurvey from "../official/feedback-survey.json";
+import festaDellaRepubblica from "../official/festa-della-repubblica.json";
+import festaJuninaBonfire from "../official/festa-junina-bonfire.json";
+import festaJuninaCorn from "../official/festa-junina-corn.json";
+import festaJuninaFlags from "../official/festa-junina-flags.json";
+import fiestasPatriasChile from "../official/fiestas-patrias-chile.json";
 import findACharger from "../official/find-a-charger.json";
 import findADoctor from "../official/find-a-doctor.json";
 import findItInStore from "../official/find-it-in-store.json";
@@ -228,14 +315,21 @@ import fitnessYoga from "../official/fitness-yoga.json";
 import folderTab from "../official/folder-tab.json";
 import folderTabArrow from "../official/folder-tab-arrow.json";
 import followUs from "../official/follow-us.json";
+import foodDayWheat from "../official/food-day-wheat.json";
 import foodSupport from "../official/food-support.json";
 import foodTruck from "../official/food-truck.json";
 import foodTruckLocation from "../official/food-truck-location.json";
+import freedomDaySouthAfrica from "../official/freedom-day-south-africa.json";
 import furnishedRental from "../official/furnished-rental.json";
 import gameNight from "../official/game-night.json";
+import ganeshMarigold from "../official/ganesh-marigold.json";
+import ganeshModak from "../official/ganesh-modak.json";
+import ganeshPandal from "../official/ganesh-pandal.json";
 import gardenDesign from "../official/garden-design.json";
+import gardenPlantLabel from "../official/garden-plant-label.json";
 import gardenPlot from "../official/garden-plot.json";
 import geoCorners from "../official/geo-corners.json";
+import germanUnityDay from "../official/german-unity-day.json";
 import getAQuote from "../official/get-a-quote.json";
 import getItDelivered from "../official/get-it-delivered.json";
 import getStartedRocket from "../official/get-started-rocket.json";
@@ -247,7 +341,9 @@ import giveBlood from "../official/give-blood.json";
 import givingJar from "../official/giving-jar.json";
 import golfScorecard from "../official/golf-scorecard.json";
 import grandOpening from "../official/grand-opening.json";
+import greenRibbon from "../official/green-ribbon.json";
 import grillMenu from "../official/grill-menu.json";
+import gudiPadwa from "../official/gudi-padwa.json";
 import halfCircle from "../official/half-circle.json";
 import halloween from "../official/halloween.json";
 import halloweenBat from "../official/halloween-bat.json";
@@ -257,6 +353,9 @@ import halloweenMoon from "../official/halloween-moon.json";
 import halloweenPumpkin from "../official/halloween-pumpkin.json";
 import halloweenSeal from "../official/halloween-seal.json";
 import halloweenWeb from "../official/halloween-web.json";
+import hanamiArch from "../official/hanami-arch.json";
+import hanamiPicnic from "../official/hanami-picnic.json";
+import hanamiSakura from "../official/hanami-sakura.json";
 import handWashing from "../official/hand-washing.json";
 import handyman from "../official/handyman.json";
 import hangTag from "../official/hang-tag.json";
@@ -268,6 +367,14 @@ import hanukkahCandles from "../official/hanukkah-candles.json";
 import hanukkahGift from "../official/hanukkah-gift.json";
 import hanukkahMenorah from "../official/hanukkah-menorah.json";
 import hanukkahStar from "../official/hanukkah-star.json";
+import hariRayaHaji from "../official/hari-raya-haji.json";
+import hariRayaKetupat from "../official/hari-raya-ketupat.json";
+import hariRayaOpenHouse from "../official/hari-raya-open-house.json";
+import hariRayaPelita from "../official/hari-raya-pelita.json";
+import harvestBasket from "../official/harvest-basket.json";
+import harvestCorn from "../official/harvest-corn.json";
+import harvestHay from "../official/harvest-hay.json";
+import harvestMarket from "../official/harvest-market.json";
 import healthAppointment from "../official/health-appointment.json";
 import healthCheckIn from "../official/health-check-in.json";
 import healthDental from "../official/health-dental.json";
@@ -277,6 +384,9 @@ import healthPharmacy from "../official/health-pharmacy.json";
 import healthPortal from "../official/health-portal.json";
 import healthWaitingRoom from "../official/health-waiting-room.json";
 import hearItSpoken from "../official/hear-it-spoken.json";
+import hijriNewYear from "../official/hijri-new-year.json";
+import hijriNewYearStamp from "../official/hijri-new-year-stamp.json";
+import historicMarker from "../official/historic-marker.json";
 import holiBands from "../official/holi-bands.json";
 import holiBunting from "../official/holi-bunting.json";
 import holiCorners from "../official/holi-corners.json";
@@ -284,6 +394,9 @@ import holiSplash from "../official/holi-splash.json";
 import holiSticker from "../official/holi-sticker.json";
 import homeValuation from "../official/home-valuation.json";
 import homeworkHelp from "../official/homework-help.json";
+import hostelCheckIn from "../official/hostel-check-in.json";
+import hostelHouseRules from "../official/hostel-house-rules.json";
+import hostelLocalTips from "../official/hostel-local-tips.json";
 import hotShave from "../official/hot-shave.json";
 import hotelBed from "../official/hotel-bed.json";
 import hotelBreakfast from "../official/hotel-breakfast.json";
@@ -297,24 +410,47 @@ import howItWorks from "../official/how-it-works.json";
 import howToApply from "../official/how-to-apply.json";
 import iceCreamShop from "../official/ice-cream-shop.json";
 import impactReport from "../official/impact-report.json";
+import independenceArgentina from "../official/independence-argentina.json";
+import independenceBangladesh from "../official/independence-bangladesh.json";
 import independenceBrazil from "../official/independence-brazil.json";
 import independenceCanada from "../official/independence-canada.json";
+import independenceColombia from "../official/independence-colombia.json";
 import independenceFireworks from "../official/independence-fireworks.json";
 import independenceFrance from "../official/independence-france.json";
+import independenceGhana from "../official/independence-ghana.json";
 import independenceIndia from "../official/independence-india.json";
+import independenceIndonesia from "../official/independence-indonesia.json";
 import independenceMexico from "../official/independence-mexico.json";
+import independenceNigeria from "../official/independence-nigeria.json";
+import independencePakistan from "../official/independence-pakistan.json";
+import independencePeru from "../official/independence-peru.json";
+import independencePoland from "../official/independence-poland.json";
+import independenceUkraine from "../official/independence-ukraine.json";
 import independenceUs from "../official/independence-us.json";
 import independenceUsFireworks from "../official/independence-us-fireworks.json";
 import intakeForms from "../official/intake-forms.json";
+import intiRaymiSun from "../official/inti-raymi-sun.json";
+import jamhuriDay from "../official/jamhuri-day.json";
+import janmashtamiFeather from "../official/janmashtami-feather.json";
+import janmashtamiFlute from "../official/janmashtami-flute.json";
 import joinALeague from "../official/join-a-league.json";
 import joinTheCleanup from "../official/join-the-cleanup.json";
 import joinTheWaitlist from "../official/join-the-waitlist.json";
 import joinTheWebinar from "../official/join-the-webinar.json";
 import juiceBar from "../official/juice-bar.json";
+import juneteenthSeal from "../official/juneteenth-seal.json";
+import juneteenthStar from "../official/juneteenth-star.json";
 import kidsHaircuts from "../official/kids-haircuts.json";
 import kidsMenu from "../official/kids-menu.json";
+import kindnessDay from "../official/kindness-day.json";
+import kingsDayCrown from "../official/kings-day-crown.json";
+import kwanzaaBands from "../official/kwanzaa-bands.json";
+import kwanzaaHarvest from "../official/kwanzaa-harvest.json";
+import kwanzaaKinara from "../official/kwanzaa-kinara.json";
 import landscapeLight from "../official/landscape-light.json";
 import landscapePanel from "../official/landscape-panel.json";
+import lanternFestivalRiddles from "../official/lantern-festival-riddles.json";
+import lanternFestivalTangyuan from "../official/lantern-festival-tangyuan.json";
 import largePrint from "../official/large-print.json";
 import lashBar from "../official/lash-bar.json";
 import lastChance from "../official/last-chance.json";
@@ -322,9 +458,17 @@ import lateNightMenu from "../official/late-night-menu.json";
 import learnMoreCard from "../official/learn-more-card.json";
 import learnTheSigns from "../official/learn-the-signs.json";
 import libraryCard from "../official/library-card.json";
+import libraryCatalog from "../official/library-catalog.json";
+import libraryEbooks from "../official/library-ebooks.json";
+import libraryHours from "../official/library-hours.json";
 import liveScores from "../official/live-scores.json";
+import lohriBonfire from "../official/lohri-bonfire.json";
+import lohriDhol from "../official/lohri-dhol.json";
 import lostAndFound from "../official/lost-and-found.json";
 import lostPetTag from "../official/lost-pet-tag.json";
+import loyKrathongFloat from "../official/loy-krathong-float.json";
+import loyKrathongMoon from "../official/loy-krathong-moon.json";
+import loyKrathongProgram from "../official/loy-krathong-program.json";
 import lunarBanner from "../official/lunar-banner.json";
 import lunarBlossom from "../official/lunar-blossom.json";
 import lunarCoin from "../official/lunar-coin.json";
@@ -333,6 +477,10 @@ import lunarLantern from "../official/lunar-lantern.json";
 import lunarRedEnvelope from "../official/lunar-red-envelope.json";
 import makeAClaim from "../official/make-a-claim.json";
 import makeupArtist from "../official/makeup-artist.json";
+import mardiGrasSeal from "../official/mardi-gras-seal.json";
+import marinaWelcome from "../official/marina-welcome.json";
+import maslenitsaPancakes from "../official/maslenitsa-pancakes.json";
+import maslenitsaSun from "../official/maslenitsa-sun.json";
 import mathPractice from "../official/math-practice.json";
 import mealPlan from "../official/meal-plan.json";
 import meetTheMaker from "../official/meet-the-maker.json";
@@ -345,14 +493,38 @@ import menuCloche from "../official/menu-cloche.json";
 import menuCutlery from "../official/menu-cutlery.json";
 import menuNoodles from "../official/menu-noodles.json";
 import menuPizza from "../official/menu-pizza.json";
+import midAutumnGift from "../official/mid-autumn-gift.json";
+import midAutumnLanternWalk from "../official/mid-autumn-lantern-walk.json";
+import midAutumnMooncake from "../official/mid-autumn-mooncake.json";
+import midAutumnRabbit from "../official/mid-autumn-rabbit.json";
+import midAutumnSeal from "../official/mid-autumn-seal.json";
+import monsoonBoots from "../official/monsoon-boots.json";
+import monsoonChai from "../official/monsoon-chai.json";
+import monsoonCloud from "../official/monsoon-cloud.json";
+import monsoonPaperBoat from "../official/monsoon-paper-boat.json";
+import monsoonUmbrella from "../official/monsoon-umbrella.json";
 import mortgageCalculator from "../official/mortgage-calculator.json";
 import mothersDayBrunch from "../official/mothers-day-brunch.json";
 import mothersDayDaisy from "../official/mothers-day-daisy.json";
 import mothersDayPhoto from "../official/mothers-day-photo.json";
 import mothersDayTulip from "../official/mothers-day-tulip.json";
 import movingChecklist from "../official/moving-checklist.json";
+import muertosMarigold from "../official/muertos-marigold.json";
+import muertosOfrenda from "../official/muertos-ofrenda.json";
+import muertosPan from "../official/muertos-pan.json";
+import muertosPapelPicado from "../official/muertos-papel-picado.json";
+import muertosSeal from "../official/muertos-seal.json";
+import museumArtistNote from "../official/museum-artist-note.json";
+import museumExhibitLabel from "../official/museum-exhibit-label.json";
+import museumGalleryMap from "../official/museum-gallery-map.json";
+import museumTicket from "../official/museum-ticket.json";
 import musicLessons from "../official/music-lessons.json";
 import nailStudio from "../official/nail-studio.json";
+import nationalDayBelgium from "../official/national-day-belgium.json";
+import nationalDaySingapore from "../official/national-day-singapore.json";
+import navratriDandiya from "../official/navratri-dandiya.json";
+import navratriGarbaPass from "../official/navratri-garba-pass.json";
+import navratriLamp from "../official/navratri-lamp.json";
 import neighborhoodGuide from "../official/neighborhood-guide.json";
 import neonTube from "../official/neon-tube.json";
 import newYear from "../official/new-year.json";
@@ -363,13 +535,29 @@ import newYearSeal from "../official/new-year-seal.json";
 import newYearSkyline from "../official/new-year-skyline.json";
 import newYearSparkle from "../official/new-year-sparkle.json";
 import newYearToast from "../official/new-year-toast.json";
+import nowruzGoldfish from "../official/nowruz-goldfish.json";
+import nowruzParty from "../official/nowruz-party.json";
+import nowruzSabzeh from "../official/nowruz-sabzeh.json";
+import nowruzSeal from "../official/nowruz-seal.json";
 import nutritionFacts from "../official/nutrition-facts.json";
+import obonLantern from "../official/obon-lantern.json";
+import obonSign from "../official/obon-sign.json";
+import oceanDayWaves from "../official/ocean-day-waves.json";
+import onamBoatRace from "../official/onam-boat-race.json";
+import onamKasavu from "../official/onam-kasavu.json";
+import onamPookalam from "../official/onam-pookalam.json";
+import onamSadya from "../official/onam-sadya.json";
 import onlineClass from "../official/online-class.json";
 import openAnAccount from "../official/open-an-account.json";
 import openHouseSignIn from "../official/open-house-sign-in.json";
 import orderAtTable from "../official/order-at-table.json";
 import orderHereTab from "../official/order-here-tab.json";
 import orderPickup from "../official/order-pickup.json";
+import orthodoxChristmasCandle from "../official/orthodox-christmas-candle.json";
+import orthodoxChristmasStar from "../official/orthodox-christmas-star.json";
+import orthodoxEasterArch from "../official/orthodox-easter-arch.json";
+import orthodoxEasterPysanka from "../official/orthodox-easter-pysanka.json";
+import orthodoxEasterSeal from "../official/orthodox-easter-seal.json";
 import packAuthentic from "../official/pack-authentic.json";
 import packCare from "../official/pack-care.json";
 import packEco from "../official/pack-eco.json";
@@ -381,8 +569,15 @@ import packReorder from "../official/pack-reorder.json";
 import packUnboxing from "../official/pack-unboxing.json";
 import packVideoGuide from "../official/pack-video-guide.json";
 import packWarranty from "../official/pack-warranty.json";
+import pancakeDay from "../official/pancake-day.json";
 import parcelRoom from "../official/parcel-room.json";
 import parentMeeting from "../official/parent-meeting.json";
+import parkBenchWalks from "../official/park-bench-walks.json";
+import parkDogRules from "../official/park-dog-rules.json";
+import parkMap from "../official/park-map.json";
+import parkPlayground from "../official/park-playground.json";
+import parkReport from "../official/park-report.json";
+import parkingFindCar from "../official/parking-find-car.json";
 import parkingPermit from "../official/parking-permit.json";
 import passoverArch from "../official/passover-arch.json";
 import passoverBorder from "../official/passover-border.json";
@@ -401,6 +596,7 @@ import payTap from "../official/pay-tap.json";
 import payTips from "../official/pay-tips.json";
 import payWallet from "../official/pay-wallet.json";
 import payYourRent from "../official/pay-your-rent.json";
+import peaceDayDove from "../official/peace-day-dove.json";
 import permissionForm from "../official/permission-form.json";
 import personalTrainer from "../official/personal-trainer.json";
 import phoneButton from "../official/phone-button.json";
@@ -408,20 +604,32 @@ import phoneOutline from "../official/phone-outline.json";
 import phoneScreen from "../official/phone-screen.json";
 import physioExercises from "../official/physio-exercises.json";
 import pickYourOwn from "../official/pick-your-own.json";
+import pinkRibbon from "../official/pink-ribbon.json";
+import pinkRibbonSeal from "../official/pink-ribbon-seal.json";
 import plantATree from "../official/plant-a-tree.json";
 import plantBasedMenu from "../official/plant-based-menu.json";
 import plantCare from "../official/plant-care.json";
 import podcast from "../official/podcast.json";
+import pohelaBoishakh from "../official/pohela-boishakh.json";
+import pohelaBoishakhMela from "../official/pohela-boishakh-mela.json";
 import polaroidCaption from "../official/polaroid-caption.json";
 import polaroidPhoto from "../official/polaroid-photo.json";
 import pollingPlace from "../official/polling-place.json";
+import pongalOffers from "../official/pongal-offers.json";
+import pongalPot from "../official/pongal-pot.json";
+import pongalSun from "../official/pongal-sun.json";
 import poolTimetable from "../official/pool-timetable.json";
 import portfolioCard from "../official/portfolio-card.json";
+import posadasCandle from "../official/posadas-candle.json";
+import posadasPinata from "../official/posadas-pinata.json";
 import postageStamp from "../official/postage-stamp.json";
 import postageStampLight from "../official/postage-stamp-light.json";
 import preOrderBread from "../official/pre-order-bread.json";
 import pressKit from "../official/press-kit.json";
 import priceList from "../official/price-list.json";
+import prideFlag from "../official/pride-flag.json";
+import prideHeart from "../official/pride-heart.json";
+import prideRainbow from "../official/pride-rainbow.json";
 import privacyNotice from "../official/privacy-notice.json";
 import productInfo from "../official/product-info.json";
 import propertyFloorPlan from "../official/property-floor-plan.json";
@@ -432,14 +640,22 @@ import propertyKey from "../official/property-key.json";
 import propertyOpenHouse from "../official/property-open-house.json";
 import propertyRent from "../official/property-rent.json";
 import propertyVirtualTour from "../official/property-virtual-tour.json";
+import purimMask from "../official/purim-mask.json";
+import purimPastry from "../official/purim-pastry.json";
+import puthanduSun from "../official/puthandu-sun.json";
 import questionsCloud from "../official/questions-cloud.json";
 import raceEntry from "../official/race-entry.json";
 import racePhotos from "../official/race-photos.json";
+import rakhiEnvelope from "../official/rakhi-envelope.json";
+import rakhiGiftTag from "../official/rakhi-gift-tag.json";
+import rakhiThread from "../official/rakhi-thread.json";
 import ramadanCrescent from "../official/ramadan-crescent.json";
+import ramadanDates from "../official/ramadan-dates.json";
 import ramadanHanging from "../official/ramadan-hanging.json";
 import ramadanIftarMenu from "../official/ramadan-iftar-menu.json";
 import ramadanLantern from "../official/ramadan-lantern.json";
 import ramadanSeal from "../official/ramadan-seal.json";
+import ramadanSuhoor from "../official/ramadan-suhoor.json";
 import rateYourMeal from "../official/rate-your-meal.json";
 import rateYourRide from "../official/rate-your-ride.json";
 import readASample from "../official/read-a-sample.json";
@@ -451,6 +667,7 @@ import readTheTranscript from "../official/read-the-transcript.json";
 import readingChallenge from "../official/reading-challenge.json";
 import rebookVisit from "../official/rebook-visit.json";
 import recipeCard from "../official/recipe-card.json";
+import redRibbon from "../official/red-ribbon.json";
 import refillReminder from "../official/refill-reminder.json";
 import registerInterest from "../official/register-interest.json";
 import registerProduct from "../official/register-product.json";
@@ -462,6 +679,8 @@ import rentalCarGuide from "../official/rental-car-guide.json";
 import reportAProblem from "../official/report-a-problem.json";
 import reportARepair from "../official/report-a-repair.json";
 import reportAStreetIssue from "../official/report-a-street-issue.json";
+import republicDayIndia from "../official/republic-day-india.json";
+import republicDayIndiaBands from "../official/republic-day-india-bands.json";
 import requestMaintenance from "../official/request-maintenance.json";
 import residentPortal from "../official/resident-portal.json";
 import restaurantBooking from "../official/restaurant-booking.json";
@@ -478,18 +697,26 @@ import reviewRibbon from "../official/review-ribbon.json";
 import reviewStar from "../official/review-star.json";
 import reviewThumb from "../official/review-thumb.json";
 import reviewUs from "../official/review-us.json";
+import reyesCrown from "../official/reyes-crown.json";
+import reyesRosca from "../official/reyes-rosca.json";
 import ribbonBanner from "../official/ribbon-banner.json";
 import ribbonBannerSolid from "../official/ribbon-banner-solid.json";
 import ribbonSparkle from "../official/ribbon-sparkle.json";
 import ringSize from "../official/ring-size.json";
 import roadsideHelp from "../official/roadside-help.json";
 import rosetteBadge from "../official/rosette-badge.json";
+import roshHashanahApple from "../official/rosh-hashanah-apple.json";
+import roshHashanahHoney from "../official/rosh-hashanah-honey.json";
+import roshHashanahShofar from "../official/rosh-hashanah-shofar.json";
 import roundBadge from "../official/round-badge.json";
 import roundBadgeLight from "../official/round-badge-light.json";
 import rsvpCard from "../official/rsvp-card.json";
 import runClub from "../official/run-club.json";
 import safetyInformation from "../official/safety-information.json";
 import salonPrices from "../official/salon-prices.json";
+import sankrantiKite from "../official/sankranti-kite.json";
+import sankrantiSky from "../official/sankranti-sky.json";
+import sankrantiSticker from "../official/sankranti-sticker.json";
 import saveContact from "../official/save-contact.json";
 import saveForLater from "../official/save-for-later.json";
 import scallopedBadge from "../official/scalloped-badge.json";
@@ -525,13 +752,18 @@ import scanToVote from "../official/scan-to-vote.json";
 import scanToWatch from "../official/scan-to-watch.json";
 import scentFinder from "../official/scent-finder.json";
 import scholarships from "../official/scholarships.json";
+import schoolBackpack from "../official/school-backpack.json";
 import schoolBook from "../official/school-book.json";
+import schoolBusRoutes from "../official/school-bus-routes.json";
 import schoolCalendar from "../official/school-calendar.json";
+import schoolLunchMenu from "../official/school-lunch-menu.json";
 import schoolNotebook from "../official/school-notebook.json";
 import schoolPalette from "../official/school-palette.json";
 import schoolPencil from "../official/school-pencil.json";
 import schoolRuler from "../official/school-ruler.json";
 import schoolSupplyList from "../official/school-supply-list.json";
+import schoolUniform from "../official/school-uniform.json";
+import schoolWelcomeApple from "../official/school-welcome-apple.json";
 import scienceFair from "../official/science-fair.json";
 import seasonSchedule from "../official/season-schedule.json";
 import seeMoreStack from "../official/see-more-stack.json";
@@ -539,9 +771,12 @@ import seeOurPitch from "../official/see-our-pitch.json";
 import seeTheFullList from "../official/see-the-full-list.json";
 import seeTheMap from "../official/see-the-map.json";
 import sendFlowers from "../official/send-flowers.json";
+import seollalKnot from "../official/seollal-knot.json";
 import serviceTimes from "../official/service-times.json";
 import shadeFinder from "../official/shade-finder.json";
+import shamElNessim from "../official/sham-el-nessim.json";
 import shoeSizeCheck from "../official/shoe-size-check.json";
+import shogatsuKadomatsu from "../official/shogatsu-kadomatsu.json";
 import shopAwning from "../official/shop-awning.json";
 import shopBag from "../official/shop-bag.json";
 import shopCart from "../official/shop-cart.json";
@@ -580,6 +815,10 @@ import socialMusic from "../official/social-music.json";
 import socialNewsletter from "../official/social-newsletter.json";
 import socialVideo from "../official/social-video.json";
 import sofaFabric from "../official/sofa-fabric.json";
+import songkranBands from "../official/songkran-bands.json";
+import songkranBowl from "../official/songkran-bowl.json";
+import songkranDrop from "../official/songkran-drop.json";
+import songkranWaves from "../official/songkran-waves.json";
 import spaGift from "../official/spa-gift.json";
 import spaMenu from "../official/spa-menu.json";
 import speechBubbleOver from "../official/speech-bubble-over.json";
@@ -590,9 +829,12 @@ import sponsorMyRun from "../official/sponsor-my-run.json";
 import sportsCamp from "../official/sports-camp.json";
 import springBlossom from "../official/spring-blossom.json";
 import springButterfly from "../official/spring-butterfly.json";
+import springCleaning from "../official/spring-cleaning.json";
 import springDaisy from "../official/spring-daisy.json";
+import springShowers from "../official/spring-showers.json";
 import springSprout from "../official/spring-sprout.json";
 import springTulip from "../official/spring-tulip.json";
+import springWateringCan from "../official/spring-watering-can.json";
 import stPatricksClover from "../official/st-patricks-clover.json";
 import stPatricksHorseshoe from "../official/st-patricks-horseshoe.json";
 import stPatricksPub from "../official/st-patricks-pub.json";
@@ -611,14 +853,20 @@ import stitchedLight from "../official/stitched-light.json";
 import storageUnits from "../official/storage-units.json";
 import studentPortal from "../official/student-portal.json";
 import styleGallery from "../official/style-gallery.json";
+import summerCamp from "../official/summer-camp.json";
 import summerIcePop from "../official/summer-ice-pop.json";
 import summerPalm from "../official/summer-palm.json";
 import summerParasol from "../official/summer-parasol.json";
+import summerPool from "../official/summer-pool.json";
+import summerReading from "../official/summer-reading.json";
 import summerShell from "../official/summer-shell.json";
 import summerSunScene from "../official/summer-sun-scene.json";
+import summerSunglasses from "../official/summer-sunglasses.json";
+import summerWatermelon from "../official/summer-watermelon.json";
 import summerWaves from "../official/summer-waves.json";
 import sushiMenu from "../official/sushi-menu.json";
 import swimLessons from "../official/swim-lessons.json";
+import tabaski from "../official/tabaski.json";
 import tableNumber from "../official/table-number.json";
 import tableTennis from "../official/table-tennis.json";
 import tableTent from "../official/table-tent.json";
@@ -626,15 +874,21 @@ import takeACloserLook from "../official/take-a-closer-look.json";
 import takeoutOrder from "../official/takeout-order.json";
 import talkToSomeone from "../official/talk-to-someone.json";
 import talkToTheAgent from "../official/talk-to-the-agent.json";
+import tanabataStars from "../official/tanabata-stars.json";
+import tanabataWishes from "../official/tanabata-wishes.json";
 import tapOrScanBand from "../official/tap-or-scan-band.json";
 import teaMenu from "../official/tea-menu.json";
 import teaTime from "../official/tea-time.json";
+import teachersDayApple from "../official/teachers-day-apple.json";
+import teachersDayNote from "../official/teachers-day-note.json";
 import teamJersey from "../official/team-jersey.json";
 import teamKit from "../official/team-kit.json";
 import teeTime from "../official/tee-time.json";
 import tennisCourt from "../official/tennis-court.json";
 import testDrive from "../official/test-drive.json";
 import testResults from "../official/test-results.json";
+import tetApricot from "../official/tet-apricot.json";
+import tetBanhChung from "../official/tet-banh-chung.json";
 import thanksgivingAcorn from "../official/thanksgiving-acorn.json";
 import thanksgivingLeaf from "../official/thanksgiving-leaf.json";
 import thanksgivingPumpkin from "../official/thanksgiving-pumpkin.json";
@@ -648,6 +902,13 @@ import townHall from "../official/town-hall.json";
 import toyFinder from "../official/toy-finder.json";
 import traceYourCoffee from "../official/trace-your-coffee.json";
 import tradeItIn from "../official/trade-it-in.json";
+import transitBikeShare from "../official/transit-bike-share.json";
+import transitBusArrivals from "../official/transit-bus-arrivals.json";
+import transitFare from "../official/transit-fare.json";
+import transitFerry from "../official/transit-ferry.json";
+import transitNextTrains from "../official/transit-next-trains.json";
+import transitReport from "../official/transit-report.json";
+import transitTrainTimetable from "../official/transit-train-timetable.json";
 import travelBoardingPass from "../official/travel-boarding-pass.json";
 import travelCityGuide from "../official/travel-city-guide.json";
 import travelCompass from "../official/travel-compass.json";
@@ -658,10 +919,14 @@ import travelTour from "../official/travel-tour.json";
 import travelTrail from "../official/travel-trail.json";
 import tryTheDemo from "../official/try-the-demo.json";
 import twoBands from "../official/two-bands.json";
+import ugadiLeaves from "../official/ugadi-leaves.json";
 import underlineBold from "../official/underline-bold.json";
 import underlineLeft from "../official/underline-left.json";
 import unlockThisCar from "../official/unlock-this-car.json";
 import uploadReceipts from "../official/upload-receipts.json";
+import vaisakhiBands from "../official/vaisakhi-bands.json";
+import vaisakhiDhol from "../official/vaisakhi-dhol.json";
+import vaisakhiWheat from "../official/vaisakhi-wheat.json";
 import valentineArrow from "../official/valentine-arrow.json";
 import valentineBands from "../official/valentine-bands.json";
 import valentineDinner from "../official/valentine-dinner.json";
@@ -670,18 +935,26 @@ import valentineHearts from "../official/valentine-hearts.json";
 import valentineLetter from "../official/valentine-letter.json";
 import validateParking from "../official/validate-parking.json";
 import vehicleHistory from "../official/vehicle-history.json";
+import vesakCandle from "../official/vesak-candle.json";
+import vesakLantern from "../official/vesak-lantern.json";
+import vesakLotus from "../official/vesak-lotus.json";
+import vesakSeal from "../official/vesak-seal.json";
 import viewfinder from "../official/viewfinder.json";
 import viewfinderNote from "../official/viewfinder-note.json";
 import virtualTryOn from "../official/virtual-try-on.json";
 import visitingHours from "../official/visiting-hours.json";
+import visitorInfo from "../official/visitor-info.json";
 import visitorMap from "../official/visitor-map.json";
 import visitorSignIn from "../official/visitor-sign-in.json";
+import visitorTownMap from "../official/visitor-town-map.json";
+import visitorWildlife from "../official/visitor-wildlife.json";
 import volunteer from "../official/volunteer.json";
 import voteForUs from "../official/vote-for-us.json";
 import walkInQueue from "../official/walk-in-queue.json";
 import washClub from "../official/wash-club.json";
 import watchRepair from "../official/watch-repair.json";
 import watchTheExperiment from "../official/watch-the-experiment.json";
+import waterDayDrop from "../official/water-day-drop.json";
 import waterRefill from "../official/water-refill.json";
 import waveBand from "../official/wave-band.json";
 import weddingInvitation from "../official/wedding-invitation.json";
@@ -698,13 +971,21 @@ import wellnessRetreat from "../official/wellness-retreat.json";
 import whatsInside from "../official/whats-inside.json";
 import wholesale from "../official/wholesale.json";
 import wifiBubble from "../official/wifi-bubble.json";
+import wifiCafeCup from "../official/wifi-cafe-cup.json";
 import wifiCard from "../official/wifi-card.json";
 import wifiCircleTop from "../official/wifi-circle-top.json";
 import wifiCorners from "../official/wifi-corners.json";
+import wifiCowork from "../official/wifi-cowork.json";
+import wifiHostelBoard from "../official/wifi-hostel-board.json";
+import wifiLibrary from "../official/wifi-library.json";
+import wifiReception from "../official/wifi-reception.json";
+import wifiRental from "../official/wifi-rental.json";
 import wifiSeal from "../official/wifi-seal.json";
 import wifiSticker from "../official/wifi-sticker.json";
 import wifiTab from "../official/wifi-tab.json";
 import wifiTile from "../official/wifi-tile.json";
+import wifiVenue from "../official/wifi-venue.json";
+import wifiWaitingRoom from "../official/wifi-waiting-room.json";
 import wifiWide from "../official/wifi-wide.json";
 import windowQuote from "../official/window-quote.json";
 import winePairings from "../official/wine-pairings.json";
@@ -713,15 +994,26 @@ import wineryTasting from "../official/winery-tasting.json";
 import winter from "../official/winter.json";
 import winterCocoa from "../official/winter-cocoa.json";
 import winterCrystal from "../official/winter-crystal.json";
+import winterLiftPass from "../official/winter-lift-pass.json";
 import winterMitten from "../official/winter-mitten.json";
 import winterPeaks from "../official/winter-peaks.json";
+import winterSale from "../official/winter-sale.json";
+import winterSkating from "../official/winter-skating.json";
 import winterSnowSeal from "../official/winter-snow-seal.json";
+import winterSnowman from "../official/winter-snowman.json";
+import womensDayMimosa from "../official/womens-day-mimosa.json";
+import womensDaySeal from "../official/womens-day-seal.json";
+import yaldaPoem from "../official/yalda-poem.json";
+import yaldaPomegranate from "../official/yalda-pomegranate.json";
+import yaldaWatermelon from "../official/yalda-watermelon.json";
 import yardSignComingSoon from "../official/yard-sign-coming-soon.json";
 import yardSignForSale from "../official/yard-sign-for-sale.json";
 import yardSignSold from "../official/yard-sign-sold.json";
 import yardSignViewing from "../official/yard-sign-viewing.json";
+import yogaDayLotus from "../official/yoga-day-lotus.json";
 import yourPrescription from "../official/your-prescription.json";
 import youthClub from "../official/youth-club.json";
+import zooAnimalFacts from "../official/zoo-animal-facts.json";
 
 /** Every official frame, in catalogue order. */
 // A plain array literal (no call), so bundlers drop it when it's unused.
@@ -1447,4 +1739,296 @@ export const OFFICIAL_FRAME_LIST = [
   chessClub,
   gardenPlot,
   becomeAMember,
+  pongalPot,
+  pongalSun,
+  pongalOffers,
+  lohriBonfire,
+  lohriDhol,
+  sankrantiKite,
+  sankrantiSky,
+  sankrantiSticker,
+  vaisakhiWheat,
+  vaisakhiDhol,
+  vaisakhiBands,
+  onamPookalam,
+  onamBoatRace,
+  onamSadya,
+  onamKasavu,
+  navratriDandiya,
+  navratriGarbaPass,
+  navratriLamp,
+  durgaPujaLotus,
+  dussehraSeal,
+  ganeshModak,
+  ganeshMarigold,
+  ganeshPandal,
+  rakhiThread,
+  rakhiEnvelope,
+  rakhiGiftTag,
+  janmashtamiFlute,
+  janmashtamiFeather,
+  gudiPadwa,
+  ugadiLeaves,
+  republicDayIndia,
+  republicDayIndiaBands,
+  pohelaBoishakh,
+  pohelaBoishakhMela,
+  independenceBangladesh,
+  avuruduPot,
+  puthanduSun,
+  independencePakistan,
+  independenceIndonesia,
+  nationalDaySingapore,
+  independenceUkraine,
+  independenceArgentina,
+  independenceColombia,
+  independencePeru,
+  nationalDayBelgium,
+  songkranBowl,
+  songkranDrop,
+  songkranWaves,
+  songkranBands,
+  loyKrathongFloat,
+  loyKrathongMoon,
+  loyKrathongProgram,
+  vesakLantern,
+  vesakLotus,
+  vesakSeal,
+  vesakCandle,
+  hariRayaKetupat,
+  hariRayaOpenHouse,
+  hariRayaPelita,
+  hariRayaHaji,
+  tabaski,
+  tetBanhChung,
+  tetApricot,
+  seollalKnot,
+  midAutumnMooncake,
+  midAutumnRabbit,
+  midAutumnLanternWalk,
+  midAutumnSeal,
+  midAutumnGift,
+  chuseokSongpyeon,
+  chuseokMoon,
+  chuseokGiftTag,
+  dragonBoatRace,
+  dragonBoatZongzi,
+  dragonBoatTicket,
+  lanternFestivalRiddles,
+  lanternFestivalTangyuan,
+  tanabataWishes,
+  tanabataStars,
+  obonLantern,
+  obonSign,
+  childrensDayCarp,
+  childrensDaySticker,
+  shogatsuKadomatsu,
+  nowruzSabzeh,
+  nowruzGoldfish,
+  nowruzParty,
+  nowruzSeal,
+  yaldaPomegranate,
+  yaldaWatermelon,
+  yaldaPoem,
+  hijriNewYear,
+  hijriNewYearStamp,
+  ramadanDates,
+  ramadanSuhoor,
+  roshHashanahApple,
+  roshHashanahHoney,
+  roshHashanahShofar,
+  purimMask,
+  purimPastry,
+  enkutatashDaisy,
+  enkutatashSeal,
+  kwanzaaKinara,
+  kwanzaaHarvest,
+  kwanzaaBands,
+  juneteenthStar,
+  juneteenthSeal,
+  africaDay,
+  shamElNessim,
+  independenceGhana,
+  independenceNigeria,
+  jamhuriDay,
+  freedomDaySouthAfrica,
+  muertosMarigold,
+  muertosPapelPicado,
+  muertosPan,
+  muertosOfrenda,
+  muertosSeal,
+  carnivalMask,
+  carnivalPlume,
+  mardiGrasSeal,
+  carnivalPass,
+  reyesRosca,
+  reyesCrown,
+  posadasPinata,
+  posadasCandle,
+  festaJuninaFlags,
+  festaJuninaBonfire,
+  festaJuninaCorn,
+  intiRaymiSun,
+  fiestasPatriasChile,
+  orthodoxEasterPysanka,
+  orthodoxEasterArch,
+  orthodoxEasterSeal,
+  orthodoxChristmasStar,
+  orthodoxChristmasCandle,
+  maslenitsaPancakes,
+  maslenitsaSun,
+  pancakeDay,
+  germanUnityDay,
+  independencePoland,
+  festaDellaRepubblica,
+  kingsDayCrown,
+  womensDayMimosa,
+  womensDaySeal,
+  earthDayGlobe,
+  earthDayPledge,
+  earthDayRecycle,
+  environmentDay,
+  waterDayDrop,
+  oceanDayWaves,
+  bookDayArch,
+  bookDayList,
+  yogaDayLotus,
+  peaceDayDove,
+  prideFlag,
+  prideRainbow,
+  prideHeart,
+  pinkRibbon,
+  pinkRibbonSeal,
+  redRibbon,
+  greenRibbon,
+  bloodDonorDrop,
+  bloodDonorSticker,
+  teachersDayApple,
+  teachersDayNote,
+  kindnessDay,
+  foodDayWheat,
+  monsoonUmbrella,
+  monsoonCloud,
+  monsoonPaperBoat,
+  monsoonBoots,
+  monsoonChai,
+  harvestBasket,
+  harvestHay,
+  harvestCorn,
+  harvestMarket,
+  hanamiSakura,
+  hanamiArch,
+  hanamiPicnic,
+  summerSunglasses,
+  summerWatermelon,
+  summerCamp,
+  summerReading,
+  summerPool,
+  winterSnowman,
+  winterSkating,
+  winterLiftPass,
+  winterSale,
+  springWateringCan,
+  springCleaning,
+  springShowers,
+  autumnApplePicking,
+  autumnMushroom,
+  autumnPumpkinPatch,
+  schoolBackpack,
+  schoolBusRoutes,
+  schoolWelcomeApple,
+  schoolLunchMenu,
+  schoolUniform,
+  eventGradSeal,
+  eventGradDiploma,
+  eventGradParty,
+  eventGradStream,
+  eventKeynote,
+  eventSpeakerQa,
+  eventSessionFeedback,
+  eventSlides,
+  eventBooth,
+  eventWorkshop,
+  eventHackathon,
+  eventMeetup,
+  eventSetlist,
+  eventTourMerch,
+  eventOpenMic,
+  eventFilmFestival,
+  eventShortFilms,
+  eventBookFair,
+  eventCraftFair,
+  eventNightMarket,
+  eventFoodFestival,
+  eventCupcake,
+  eventPartyHat,
+  eventGuestBook,
+  eventMilestone,
+  eventBabyShower,
+  eventBabyGifts,
+  eventBirthAnnouncement,
+  eventQuince,
+  eventMatchLineup,
+  eventSeasonTicket,
+  eventTournament,
+  eventFunRun,
+  eventRunnerTracker,
+  eventTrivia,
+  eventGameNight,
+  eventGala,
+  eventAwards,
+  eventProm,
+  eventTalentShow,
+  eventRetirement,
+  eventAnniversary,
+  eventEngagement,
+  eventReunion,
+  eventMemorial,
+  museumExhibitLabel,
+  museumGalleryMap,
+  museumTicket,
+  museumArtistNote,
+  historicMarker,
+  libraryCatalog,
+  libraryEbooks,
+  libraryHours,
+  transitBusArrivals,
+  transitTrainTimetable,
+  transitNextTrains,
+  transitFerry,
+  transitBikeShare,
+  transitReport,
+  transitFare,
+  parkingFindCar,
+  parkMap,
+  parkDogRules,
+  parkPlayground,
+  parkReport,
+  parkBenchWalks,
+  gardenPlantLabel,
+  beachConditions,
+  beachLifeguard,
+  beachInfoSticker,
+  campCheckIn,
+  campMap,
+  campFireRules,
+  coworkDesk,
+  coworkMeetingRoom,
+  hostelCheckIn,
+  hostelHouseRules,
+  hostelLocalTips,
+  visitorInfo,
+  visitorWildlife,
+  visitorTownMap,
+  marinaWelcome,
+  zooAnimalFacts,
+  aquariumFeeding,
+  wifiCafeCup,
+  wifiReception,
+  wifiRental,
+  wifiWaitingRoom,
+  wifiLibrary,
+  wifiVenue,
+  wifiHostelBoard,
+  wifiCowork,
 ] as unknown as readonly OfficialFrame[];

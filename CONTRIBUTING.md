@@ -93,6 +93,7 @@ You don't need a database or any environment variables to work on the React libr
 | `packages/design-system` | Shared UI components (shadcn/ui), icons, styles and fonts |
 | `packages/integrations`, `packages/integration-kit` | The integrations catalogue (`src/catalog`), the connected-account integrations (`src/integrations`) and the shared integration types |
 | `packages/config` | Platform constants: the brand, the hosted service's URLs, contact emails, social links and limits shared across the app (its README says what belongs there) |
+| `packages/availability` | Which built-in features a deployment can offer (custom domains, AI, storage, email, the bots), decided from which variables are set; the app passes its environment in (its README says how the app and `/zone/availability.json` use it) |
 | `packages/rate-limit` | Upstash-based rate limiting |
 | `packages/next-config`, `packages/typescript-config` | Shared Next.js config and env keys, shared tsconfig presets |
 | `plugins/chrome`, `plugins/figma`, `plugins/raycast`, `plugins/canva` | The Chrome extension, Figma plugin, Raycast extension and Canva app |
@@ -256,7 +257,7 @@ Docs pages follow the same `review`: a list can name docs paths (`"/docs/help"`)
 - Use a [Conventional Commits](https://www.conventionalcommits.org/) style title, for example `feat(editor): add frame presets` or `fix(cli): handle missing sharp`.
 - Fill in the pull request template. For UI changes, include before and after screenshots at 1440 px and 390 px wide, in light and dark mode.
 - Keep secrets out of code, tests, screenshots and logs: no `.env` values, tokens or session cookies. Tests use the fakes in `apps/docs/tests/support/`.
-- Copy on the site goes live as written, so no placeholders or "TBD". Product counts come from code (`apps/docs/lib/product-facts.ts` and the catalogues), not typed by hand.
+- Copy on the site goes live as written, so no placeholders or "TBD". Product counts come from code (`apps/docs/lib/product-facts.ts` and the catalogues), not typed by hand. When you change one, or anything one counts, run `bun run --filter docs facts:snapshot` and commit `packages/config/facts.generated.json`, the copy that apps outside the main app read through `@repo/config/facts`; a test fails until you do.
 - Update the docs (`apps/docs/content/docs`) or package READMEs when you change behavior or public APIs.
 - Make sure the checks above pass. A maintainer reviews every pull request before it's merged.
 

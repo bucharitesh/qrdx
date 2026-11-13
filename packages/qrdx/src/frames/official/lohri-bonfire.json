@@ -1,0 +1,81 @@
+{
+  "id": "lohri-bonfire",
+  "name": "Lohri bonfire",
+  "description": "A solid card with a bonfire over the code and the label underneath, in ember red and amber.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "lohri",
+  "contentTypes": [],
+  "tags": ["lohri", "punjab", "january", "bonfire"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#7c2d12",
+      "text": "#ffffff",
+      "accent": "#f59e0b"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M620 44C638 68 662 86 659 119C657.5 140 641 155 620 155C599 155 582.5 140 581 119C579.5 98 596 86 602 68C608 83 611 92 617 95C623 80 623 62 620 44Z",
+        "fill": "accent"
+      },
+      {
+        "type": "path",
+        "d": "M620 108.5C625.25 122 635 129.5 635 138.5A15 15 0 0 1 605 138.5C605 129.5 614.75 122 620 108.5ZM563.99 168.77L671.99 138.77L676.01 153.23L568.01 183.23ZM568.01 138.77L676.01 168.77L671.99 183.23L563.99 153.23Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Happy Lohri",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan me",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

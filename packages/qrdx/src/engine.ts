@@ -76,12 +76,23 @@ export {
 } from "./frame-import";
 export {
   FrameSpecError,
+  type FrameSpecOptions,
   getCustomFrameLayout,
+  getFrameSpecColors,
   getFrameSpecGapRatio,
   resolveFrameSpec,
 } from "./frame-spec";
-export { GRADIENT_FRAME_DEFAULTS, mixFrameColors } from "./frame-styles";
-export { BUILT_IN_FRAME_SPECS } from "./frames/builtin";
+export { mixFrameColors } from "./frame-text";
+export {
+  BUILT_IN_FRAME_SPECS,
+  BUILT_IN_FRAMES,
+  type BuiltInFrame,
+  type BuiltInFrameStyle,
+  frameSpecOf,
+  GRADIENT_FRAME_DEFAULTS,
+  getBuiltInFrame,
+  getFrameColors,
+} from "./frames/builtin";
 export {
   OFFICIAL_FRAME_COUNT,
   OFFICIAL_FRAME_COUNTS,

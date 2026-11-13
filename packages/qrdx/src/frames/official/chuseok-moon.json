@@ -1,0 +1,99 @@
+{
+  "id": "chuseok-moon",
+  "name": "Harvest moon hills",
+  "description": "Rolling hills under the code and a full moon in the sky, in chestnut and harvest gold.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "chuseok",
+  "contentTypes": [],
+  "tags": [
+    "chuseok",
+    "korean thanksgiving",
+    "harvest festival",
+    "moon",
+    "hours"
+  ],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1820
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#5b3a1a",
+      "text": "#ffffff",
+      "accent": "#f2c14e"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1820,
+        "radius": 56,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.88
+        }
+      },
+      {
+        "type": "path",
+        "d": "M854 170A76 76 0 1 1 1006 170A76 76 0 1 1 854 170ZM890.1 151A13.3 13.3 0 1 0 916.7 151A13.3 13.3 0 1 0 890.1 151ZM931.9 192.8A17.1 17.1 0 1 0 966.1 192.8A17.1 17.1 0 1 0 931.9 192.8ZM949 139.6A7.6 7.6 0 1 0 964.2 139.6A7.6 7.6 0 1 0 949 139.6Z",
+        "fill": "accent"
+      },
+      {
+        "type": "path",
+        "d": "M0 1330C300 1190 600 1430 1240 1270L1240 1764Q1240 1820 1184 1820L56 1820Q0 1820 0 1764Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.45
+        }
+      },
+      {
+        "type": "path",
+        "d": "M0 1530C380 1420 820 1610 1240 1480L1240 1764Q1240 1820 1184 1820L56 1820Q0 1820 0 1764Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for holiday hours",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1600,
+          "width": 1040,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Chuseok",
+        "color": "frame",
+        "box": {
+          "x": 100,
+          "y": 120,
+          "width": 640,
+          "height": 110
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

@@ -4391,18 +4391,11 @@
         }
       },
       "frameControls": {
-        "customise": "カスタマイズ",
         "importSvg": "SVGを読み込む",
         "publishFrame": "フレームを公開",
         "theFrameIsAddedAround": "フレームはコードの周囲に追加されるため、ダウンロードする画像は大きくなりますが、コード自体はスキャンできる状態のままです。",
         "label": "ラベル",
-        "secondLine": "2行目",
-        "leaveEmptyForNoLabel": "ラベルなしにする場合は空欄にします",
         "pickAFrameFirst": "先にフレームを選んでください",
-        "frameColor": "フレームの色",
-        "textColor": "文字色",
-        "endColor": "終了色",
-        "optionalEGYourWebsite": "任意、例：ご自身のウェブサイト",
         "none": "なし"
       },
       "frameFields": {
@@ -4421,13 +4414,14 @@
         "filterFrames": "フレームを絞り込む",
         "labelFrames": "{label}のフレーム",
         "commonFrames": "よく使うフレーム",
-        "everyFrameBuiltInStyles": "すべてのフレーム：標準スタイル、QRdx公式フレーム、保存したフレームを表示します。選択するとすぐに適用されます。",
+        "everyFrameBuiltInStyles": "すべてのフレーム：クラシックフレーム、シェイプ型コード、QRdx公式フレーム、保存したフレームです。選ぶとすぐに適用されます。",
         "less": "折りたたむ",
         "all": "すべて",
         "noFramesMatchQuery": "「{query}」に一致するフレームはありません。",
         "loadingFrames": "フレームを読み込み中…",
         "comingUp": "近日公開",
-        "builtIn": "標準",
+        "classic": "クラシック",
+        "shapedCodes": "シェイプ型コード",
         "saved": "保存済み",
         "results": "検索結果"
       },
@@ -7987,23 +7981,6 @@
         },
         "newCodeButton": {
           "newDynamicCode": "新しい動的コード"
-        },
-        "setupChecklist": {
-          "done": "（完了）",
-          "create": "作成",
-          "start": "開始",
-          "design": "デザイン",
-          "invite": "招待",
-          "connect": "接続",
-          "getSetUp": "初期設定",
-          "doneOfLengthDone": "{length, number}件中{done, number}件完了",
-          "hide": "非表示",
-          "setupTasksDone": "完了した設定タスク",
-          "createADynamicQrCode": "動的QRコードを作成",
-          "makeALandingPageOr": "ランディングページまたはフォームを作成",
-          "saveAThemeWithYour": "ロゴと色を設定したテーマを保存",
-          "inviteATeammate": "チームメンバーを招待",
-          "connectACustomDomain": "カスタムドメインを接続"
         }
       },
       "listSelection": {
@@ -8356,6 +8333,26 @@
       "spotlight": {
         "new": "新着",
         "gotIt": "了解"
+      },
+      "setupGuide": {
+        "getSetUp": "初期設定",
+        "launcherLabel": "セットアップ：{length, number}件中{done, number}件完了",
+        "doneOfLengthDone": "{length, number}件中{done, number}件完了",
+        "doneOfLengthShort": "{done, number}/{length, number}",
+        "setupTasksDone": "完了した設定タスク",
+        "collapse": "折りたたむ",
+        "dismissGuide": "ガイドを閉じる",
+        "done": "（完了）",
+        "create": "作成",
+        "start": "開始",
+        "design": "デザイン",
+        "invite": "招待",
+        "connect": "接続",
+        "createADynamicQrCode": "動的QRコードを作成",
+        "makeALandingPageOr": "ランディングページまたはフォームを作成",
+        "saveAThemeWithYour": "ロゴと色を設定したテーマを保存",
+        "inviteATeammate": "チームメンバーを招待",
+        "connectACustomDomain": "カスタムドメインを接続"
       }
     },
     "workspaces": {

@@ -1,0 +1,44 @@
+/*
+ * The "Get set up" launcher's corner (setup-guide.tsx): bottom right of the
+ * app, above the phone's home indicator.
+ *
+ * A list's floating selection bar (bottom centre, full width on phones)
+ * marks its layer data-selection-bar="open" while rows are selected. The
+ * launcher then sits above it, at every width, so the two never overlap.
+ * The bar's height comes from --selection-bar-height when something sets
+ * it (on <body> or above), else 3rem.
+ */
+.corner {
+  position: fixed;
+  right: 1rem;
+  bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+  /* Under the top bar (z-40) and every dialog, sheet and menu (z-50). */
+  z-index: 30;
+  transition: bottom 200ms ease-out;
+}
+
+:global(body:has([data-selection-bar="open"])) .corner {
+  bottom: calc(
+    1rem +
+    env(safe-area-inset-bottom, 0px) +
+    var(--selection-bar-height, 3rem) +
+    0.75rem
+  );
+}
+
+@media (min-width: 768px) {
+  .corner {
+    right: 1.5rem;
+    bottom: 1.5rem;
+  }
+
+  :global(body:has([data-selection-bar="open"])) .corner {
+    bottom: calc(1.5rem + var(--selection-bar-height, 3rem) + 0.75rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .corner {
+    transition: none;
+  }
+}

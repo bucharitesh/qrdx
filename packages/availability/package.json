@@ -1,0 +1,26 @@
+{
+  "name": "@repo/availability",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    ".": "./index.ts",
+    "./deployment": "./deployment.ts",
+    "./flags": "./flags.ts",
+    "./workspace-pattern": "./workspace-pattern.ts"
+  },
+  "scripts": {
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "dependencies": {
+    "@repo/auth": "workspace:*",
+    "@repo/config": "workspace:*"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "typescript": "^6.0.3"
+  },
+  "engines": {
+    "node": ">=22.22.3"
+  }
+}

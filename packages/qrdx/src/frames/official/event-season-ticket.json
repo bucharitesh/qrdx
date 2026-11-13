@@ -1,0 +1,89 @@
+{
+  "id": "event-season-ticket",
+  "name": "Season ticket",
+  "description": "A ticket with side notches, a perforated line and a stub for the label and a whistle.",
+  "category": "use-case",
+  "collection": "events",
+  "contentTypes": ["url"],
+  "tags": ["sports", "match day", "events", "tickets", "fixtures"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1820
+    },
+    "qr": {
+      "x": 120,
+      "y": 300,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M64 0L1176 0A64 64 0 0 1 1240 64L1240 1380A60 60 0 0 0 1240 1500L1240 1756A64 64 0 0 1 1176 1820L64 1820A64 64 0 0 1 0 1756L0 1500A60 60 0 0 0 0 1380L0 64A64 64 0 0 1 64 0Z",
+        "fill": "frame"
+      },
+      {
+        "type": "line",
+        "x1": 100,
+        "y1": 1440,
+        "x2": 1140,
+        "y2": 1440,
+        "width": 10,
+        "dash": [36, 24],
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.55
+        }
+      },
+      {
+        "type": "path",
+        "d": "M569 135A39 39 0 1 1 647 135A39 39 0 1 1 569 135ZM614 96L680 96A6 6 0 0 1 686 102L686 117A6 6 0 0 1 680 123L614 123A6 6 0 0 1 608 117L608 102A6 6 0 0 1 614 96ZM594.5 135A13.5 13.5 0 1 0 621.5 135A13.5 13.5 0 1 0 594.5 135ZM627.5 103.5A1.5 1.5 0 0 0 626 105L626 114A1.5 1.5 0 0 0 627.5 115.5L639.5 115.5A1.5 1.5 0 0 0 641 114L641 105A1.5 1.5 0 0 0 639.5 103.5L627.5 103.5Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M552.5 90A13.5 13.5 0 1 1 579.5 90A13.5 13.5 0 1 1 552.5 90ZM558.5 90A7.5 7.5 0 1 0 573.5 90A7.5 7.5 0 1 0 558.5 90Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Season ticket",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1490,
+          "width": 1040,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan for the fixtures",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1675,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

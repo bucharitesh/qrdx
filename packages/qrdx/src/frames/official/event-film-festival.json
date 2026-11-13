@@ -1,0 +1,92 @@
+{
+  "id": "event-film-festival",
+  "name": "Film festival pass",
+  "description": "A ticket with side notches, a perforated line and a stub for the label and a box of popcorn.",
+  "category": "use-case",
+  "collection": "events",
+  "contentTypes": ["url"],
+  "tags": ["festival", "events", "film", "cinema"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1820
+    },
+    "qr": {
+      "x": 120,
+      "y": 300,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M64 0L1176 0A64 64 0 0 1 1240 64L1240 1380A60 60 0 0 0 1240 1500L1240 1756A64 64 0 0 1 1176 1820L64 1820A64 64 0 0 1 0 1756L0 1500A60 60 0 0 0 0 1380L0 64A64 64 0 0 1 64 0Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.88
+        }
+      },
+      {
+        "type": "line",
+        "x1": 100,
+        "y1": 1440,
+        "x2": 1140,
+        "y2": 1440,
+        "width": 10,
+        "dash": [36, 24],
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.5
+        }
+      },
+      {
+        "type": "path",
+        "d": "M573.5 90A16.5 16.5 0 1 1 606.5 90A16.5 16.5 0 1 1 573.5 90ZM591.5 76.5A18 18 0 1 1 627.5 76.5A18 18 0 1 1 591.5 76.5ZM614 76.5A18 18 0 1 1 650 76.5A18 18 0 1 1 614 76.5ZM633.5 90A16.5 16.5 0 1 1 666.5 90A16.5 16.5 0 1 1 633.5 90ZM582.5 105A16.5 16.5 0 1 1 615.5 105A16.5 16.5 0 1 1 582.5 105ZM602 94.5A18 18 0 1 1 638 94.5A18 18 0 1 1 602 94.5ZM624.5 105A16.5 16.5 0 1 1 657.5 105A16.5 16.5 0 1 1 624.5 105Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M575 108L665 108L651.5 187.5L588.5 187.5ZM601.1 181.5L613.7 181.5L611 114L593 114ZM626.3 181.5L638.9 181.5L647 114L629 114Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for screenings",
+        "color": "frame",
+        "box": {
+          "x": 100,
+          "y": 1490,
+          "width": 1040,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Film festival",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 1675,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

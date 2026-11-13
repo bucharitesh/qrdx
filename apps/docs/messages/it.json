@@ -4391,18 +4391,11 @@
         }
       },
       "frameControls": {
-        "customise": "Personalizza",
         "importSvg": "Importa SVG",
         "publishFrame": "Pubblica cornice",
         "theFrameIsAddedAround": "La cornice viene aggiunta attorno al codice, quindi l’immagine scaricata diventa più grande e il codice resta leggibile alla scansione.",
         "label": "Etichetta",
-        "secondLine": "Seconda riga",
-        "leaveEmptyForNoLabel": "Lascia vuoto per nessuna etichetta",
         "pickAFrameFirst": "Scegli prima una cornice",
-        "frameColor": "Colore cornice",
-        "textColor": "Colore testo",
-        "endColor": "Colore finale",
-        "optionalEGYourWebsite": "Facoltativo, es. il tuo sito",
         "none": "Nessuna"
       },
       "frameFields": {
@@ -4421,13 +4414,14 @@
         "filterFrames": "Filtra cornici",
         "labelFrames": "Cornici {label}",
         "commonFrames": "Cornici comuni",
-        "everyFrameBuiltInStyles": "Tutte le cornici: stili integrati, le cornici ufficiali di QRdx e quelle che hai salvato. Se ne scegli una, viene applicata subito.",
+        "everyFrameBuiltInStyles": "Tutte le cornici: quelle classiche, i codici sagomati, le cornici ufficiali di QRdx e quelle che hai salvato. Se ne scegli una, viene applicata subito.",
         "less": "Meno",
         "all": "Tutte",
         "noFramesMatchQuery": "Nessuna cornice per \"{query}\".",
         "loadingFrames": "Caricamento cornici…",
         "comingUp": "In arrivo",
-        "builtIn": "Integrate",
+        "classic": "Classiche",
+        "shapedCodes": "Codici sagomati",
         "saved": "Salvate",
         "results": "Risultati"
       },
@@ -7987,23 +7981,6 @@
         },
         "newCodeButton": {
           "newDynamicCode": "Nuovo codice dinamico"
-        },
-        "setupChecklist": {
-          "done": "(fatto)",
-          "create": "Crea",
-          "start": "Inizia",
-          "design": "Progetta",
-          "invite": "Invita",
-          "connect": "Collega",
-          "getSetUp": "Configura",
-          "doneOfLengthDone": "{done, number} di {length, number} completati",
-          "hide": "Nascondi",
-          "setupTasksDone": "Attività completate",
-          "createADynamicQrCode": "Crea un QR code dinamico",
-          "makeALandingPageOr": "Crea una landing page o un modulo",
-          "saveAThemeWithYour": "Salva un tema con il tuo logo e i tuoi colori",
-          "inviteATeammate": "Invita un collega",
-          "connectACustomDomain": "Collega un dominio personalizzato"
         }
       },
       "listSelection": {
@@ -8356,6 +8333,26 @@
       "spotlight": {
         "new": "Novità",
         "gotIt": "Ho capito"
+      },
+      "setupGuide": {
+        "getSetUp": "Configura",
+        "launcherLabel": "Per iniziare: {done, number} di {length, number} completati",
+        "doneOfLengthDone": "{done, number} di {length, number} completati",
+        "doneOfLengthShort": "{done, number}/{length, number}",
+        "setupTasksDone": "Attività completate",
+        "collapse": "Comprimi",
+        "dismissGuide": "Chiudi la guida",
+        "done": "(fatto)",
+        "create": "Crea",
+        "start": "Inizia",
+        "design": "Progetta",
+        "invite": "Invita",
+        "connect": "Collega",
+        "createADynamicQrCode": "Crea un QR code dinamico",
+        "makeALandingPageOr": "Crea una landing page o un modulo",
+        "saveAThemeWithYour": "Salva un tema con il tuo logo e i tuoi colori",
+        "inviteATeammate": "Invita un collega",
+        "connectACustomDomain": "Collega un dominio personalizzato"
       }
     },
     "workspaces": {

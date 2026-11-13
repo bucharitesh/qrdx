@@ -1,6 +1,6 @@
 // Samples a theme from the building blocks in ./blocks. Pure and seeded: the
 // same random sequence always composes the same theme.
-import { GRADIENT_FRAME_DEFAULTS, mixFrameColors } from "qrdx";
+import { getFrameColors } from "qrdx";
 import type {
   BodyPattern,
   ColorConfig,
@@ -66,10 +66,10 @@ export const EYE_CONTRAST = 3;
 /** Frame label vs what it sits on (the frame, or the code's background) */
 export const FRAME_TEXT_CONTRAST = 4.5;
 
-// The engine's frame layouts (packages/qrdx/src/frame.tsx, frame-styles.ts)
-// set most labels on the frame color, but some (border, rounded-border,
-// phone, focus, gradient-border, menu-card: the catalog's textOnLight) set
-// them on the code's own background, so the label has to read on that.
+// Most frames set their label on the frame color, but some (border,
+// rounded-border, phone, focus, gradient-border, menu-card: the engine
+// catalogue's labelOn "background", the catalog's textOnLight) set it on
+// the code's own background, so the label has to read on that.
 const LABEL_ON_BACKGROUND = new Set<FrameStyle>(
   FRAME_CATALOG.filter((frame) => frame.textOnLight).map(
     (frame) => frame.value,
@@ -92,19 +92,15 @@ export function frameLabelBackdrop(styles: ThemeStyles): ColorConfig {
   return styles.bgColor ?? "#FFFFFF";
 }
 
-/** The label color the engine draws: textColor, else each style's default. */
+/** The label color the engine draws: textColor, else its spec's default. */
 function frameLabelColor(frame: ThemeFrame): string {
-  if (frame.textColor) return frame.textColor;
-  if (frame.style === "gradient-border") {
-    return mixFrameColors(
-      frame.color || GRADIENT_FRAME_DEFAULTS.from,
-      frame.secondaryColor || GRADIENT_FRAME_DEFAULTS.to,
-      0.5,
-    );
-  }
-  return labelOnBackground(frame.style)
-    ? frame.color || DEFAULT_FRAME_COLOR
-    : DEFAULT_BAND_LABEL;
+  return (
+    getFrameColors(frame)?.text ??
+    frame.textColor ??
+    (labelOnBackground(frame.style)
+      ? frame.color || DEFAULT_FRAME_COLOR
+      : DEFAULT_BAND_LABEL)
+  );
 }
 
 /**

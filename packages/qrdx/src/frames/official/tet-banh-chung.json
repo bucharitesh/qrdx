@@ -1,0 +1,81 @@
+{
+  "id": "tet-banh-chung",
+  "name": "Banh chung",
+  "description": "A solid card with a square rice cake tied with string over the code and the label underneath, in red and apricot yellow.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "lunar-new-year",
+  "contentTypes": [],
+  "tags": ["lunar new year", "tet", "vietnam"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#b91c1c",
+      "text": "#ffffff",
+      "accent": "#facc15"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M576.5 59L663.5 59A7.5 7.5 0 0 1 671 66.5L671 153.5A7.5 7.5 0 0 1 663.5 161L576.5 161A7.5 7.5 0 0 1 569 153.5L569 66.5A7.5 7.5 0 0 1 576.5 59Z",
+        "fill": "accent"
+      },
+      {
+        "type": "path",
+        "d": "M605.38 59L605.38 161L598.63 161L598.63 59ZM641.38 59L641.38 161L634.63 161L634.63 59ZM569 88.63L671 88.63L671 95.38L569 95.38ZM569 124.63L671 124.63L671 131.38L569 131.38ZM620 53L602 38L605 56ZM620 53L635 56L638 38Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Happy Tet",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan me",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

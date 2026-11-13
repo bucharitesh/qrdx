@@ -1,14 +1,16 @@
 ---
 title: "フレームと印刷"
-description: "行動喚起フレーム、公式フレームライブラリ、「スキャンできる?」スコア、印刷用PDFエクスポートを紹介します。"
+description: "行動喚起フレーム、公式フレームライブラリ、「スキャンできる？」スコア、印刷用PDFエクスポートについて説明します。"
 icon: Frame
 ---
 
-「Scan me」フレームを追加し、公開前にデザインがスキャンできるかを確認して、正確な物理サイズのベクターファイルを書き出せます。
+「Scan me」フレームを追加し、公開前にデザインがスキャンできるかを確認し、正確な物理サイズのベクターファイルをエクスポートします。
 
 ## 行動喚起フレーム [#call-to-action-frames]
 
-`frame` プロパティを使うと、コードの周囲に短いラベル付きのフレームを描画できます。`QRCode`、`QRCodeSVG`、`QRCodeCanvas`、`getQRAsSVG`、`getQRData` と、すべてのダウンロードヘルパーで使えます。
+QRdxが描画するフレームはすべてフレーム仕様です。図形、ラベル、色を記述した小さなJSONです。すべての仕様を1つのエンジンで描画するため、フレームはSVG、PNG、PDF、EPSのどれでも同じ見た目になります。QRdxには{facts.frames}個のフレームがあります。内訳は、{facts.frameStyles}個の組み込みフレームと{facts.officialFrames}個の[公式フレーム](#official-frames)です。独自のフレームを作ることも、[コミュニティ](/community/frames)から選ぶこともできます。
+
+`frame` プロパティを指定すると、コードの周囲にフレームを描画します。`QRCode`、`QRCodeSVG`、`QRCodeCanvas`、`getQRAsSVG`、`getQRData` と、すべてのダウンロードヘルパーで使えます。
 
 ```tsx
 import { QRCode } from "qrdx";
@@ -19,26 +21,49 @@ import { QRCode } from "qrdx";
 />
 ```
 
-フレームはコードの**外側**に追加されます。出力サイズは大きくなりますが、QRのモジュールとクワイエットゾーンが隠れることはないため、スキャンのしやすさは変わりません。コードの背景色の細い隙間が、コードとフレームを区切ります。
+フレームはコードの**外側**に追加されます。出力は大きくなりますが、QRのモジュールとクワイエットゾーンが隠れることはないため、スキャンのしやすさは変わりません。コードとフレームの間には、コードの背景色の明るい余白が入ります。
 
-| Option | Default | Notes |
+### 組み込みフレーム [#built-in-frames]
+
+組み込みフレームは `style` で指定します。オプションで、仕様のラベルと色を設定します。
+
+| オプション | デフォルト | 備考 |
 | --- | --- | --- |
-| `style` | — | 下記の{facts.frameStyles}種類のスタイルのいずれか、または `none`（`FRAME_STYLES`） |
+| `style` | — | 下記の{facts.frameStyles}個の組み込みフレームのいずれか、または `none`（`FRAME_STYLES`） |
 | `text` | `"Scan me"` | 最大24文字。ラベルを非表示にするには `""` を渡します |
-| `color` | `#000000` | フレームの色（`gradient-border` では開始色。デフォルトは紫） |
-| `textColor` | フレーム上は白、明るい領域では `color` | ラベルの色 |
-| `secondaryText` | なし | 2つ目のラベル（最大24文字）。`banner-top-bottom` の下部バンド、`circle` の下側の弧、`menu-card` のフッターに使われます |
+| `color` | `#000000` | フレームの色（`gradient-border` では開始色で、デフォルトは紫） |
+| `textColor` | フレーム上では白、明るい領域では `color` | ラベルの色 |
+| `secondaryText` | なし | 2つ目のラベル（最大24文字）。`banner-top-bottom` の下部バンド、`circle` の下側の弧、`menu-card` のフッターに入ります |
 | `secondaryColor` | `#db2777` | `gradient-border` の終了色 |
 | `fontScale` | `1` | ラベルのサイズ（0.5〜1.5）。ラベルは収まるように縮小されます |
 
-スタイル:
+`style` ごとの組み込みフレームは次のとおりです。
 
-- バナーと枠線: `banner-bottom`、`banner-top`、`banner-top-bottom`、`border`、`rounded-border`、`gradient-border`、`focus`（角のブラケット）
-- 吹き出し: `speech-bubble`、`speech-bubble-top`、`chat-bubble`
-- バッジ: `circle`（リングに沿って配置したテキスト）、`badge`（リボン）、`sticker`（影付きのダイカット）
-- オブジェクト: `polaroid`、`phone`、`ticket`、`tag`（穴の開いた下げ札）、`envelope`、`menu-card`
+- バナーと枠線：`banner-bottom`、`banner-top`、`banner-top-bottom`、`border`、`rounded-border`、`gradient-border`、`focus`（四隅のブラケット）
+- 吹き出し：`speech-bubble`、`speech-bubble-top`、`chat-bubble`
+- バッジ：`circle`（リングに沿って配置した文字）、`badge`（リボン）、`sticker`（影付きの型抜き）
+- オブジェクト：`polaroid`、`phone`、`ticket`、`tag`（穴の開いたぶら下げ札）、`envelope`、`menu-card`
 
-すべてのスタイルは、ブラウザー上でデコードした状態で [Shapes, eyes and frames](/docs/styles#frames) で確認できます。どのフレームも不透明な色の単純な図形とテキストでできているため、SVG、PNG、PDF、EPSのどの書き出しでも同じ見た目になります（グラデーション枠は細かい単色の段階で描画され、円形フレームの曲線状の文字は、どの形式でも回転したテキストです）。
+これらの名前はそれぞれエンジン内の仕様に対応しており、この名前はずっと有効です。これらを使用している保存済みデザイン、image APIのリンク、CLIフラグ、コードは、これまでと同じフレームを描画し続けます。枠線のように、ラベルがないときにラベルの行を省くフレームも、引き続き省きます。
+
+`BUILT_IN_FRAMES` は名前と仕様を一覧にします（`BUILT_IN_FRAME_SPECS` は `style` ごとの仕様です）。`frameSpecOf` はフレームが描画する仕様を返し、`getFrameColors` は描画に使う色を返します。
+
+```tsx
+import { BUILT_IN_FRAMES, frameSpecOf, getFrameColors } from "qrdx";
+
+BUILT_IN_FRAMES.map((frame) => frame.name); // ["Banner", "Top banner", …]
+
+// A built-in style's spec, or a custom frame's own
+const ticket = frameSpecOf({ style: "ticket" });
+
+// The frame's options, else its spec's defaults
+getFrameColors({ style: "border", color: "#1e3a8a" });
+// { frame: "#1e3a8a", text: "#1e3a8a", accent: "#1e3a8a" }
+```
+
+ラベルと色以外も変更したい場合は、組み込みの仕様からカスタムフレームを始めます。`{ style: "custom", spec: frameSpecOf({ style: "ticket" }) }` は同じチケットを描画し、その図形を編集できます。
+
+すべてのフレームは、[シェイプ、アイ、フレーム](/docs/styles#frames)でご覧いただけます。ブラウザー上でデコードして確認できます。どのフレームも、不透明な色の単純な図形とテキストだけでできているため、SVG、PNG、PDF、EPSのエクスポート結果は一致します（グラデーションの枠線は細かい単色のステップで描画され、`circle` フレームの曲線状の文字はどの形式でも回転したテキストです）。
 
 ```tsx
 <QRCode
@@ -47,7 +72,7 @@ import { QRCode } from "qrdx";
 />
 ```
 
-ラベルにはシステムのフォントスタックを使うため、ダウンロードは発生しません。出力サイズは大きくなるので、最終的な幅と高さが必要な場合は `getFrameDimensions(size, frame)` を使ってください。
+ラベルにはシステムのフォントスタックを使うため、ダウンロードは発生しません。出力サイズが大きくなるため、最終的な幅と高さが必要なときは `getFrameDimensions(size, frame)` を使います。
 
 ```ts
 import { getFrameDimensions } from "qrdx";
@@ -55,23 +80,45 @@ import { getFrameDimensions } from "qrdx";
 getFrameDimensions(400, { style: "banner-bottom" }); // { width: 496, height: 568 }
 ```
 
-`FRAME_STYLES`、`frameSchema`（zod）、`QRFrame` / `FrameStyle` 型は `qrdx/types` からもエクスポートされており、サーバー側の検証に使えます。
+`FRAME_STYLES`、`frameSchema`（zod）、`QRFrame` / `FrameStyle` 型は、サーバー側の検証用に `qrdx/types` からもエクスポートされています。`GRADIENT_FRAME_DEFAULTS`（グラデーション枠線のデフォルト色）と `FRAME_GAP_RATIO` も、これらを使っていたコードのために引き続きエクスポートされています。各フレームの余白は、その仕様のパディングです（`getFrameGapRatio`）。
 
-### CLIでの使い方 [#in-the-cli]
+### Playgroundでの操作 [#in-the-playground]
+
+**デザイン → フレーム** には、すべてのフレームを選べるピッカーが1つあります。**クラシック** グループには組み込みフレームがあり、その隣に、シェイプ付きコード、公式フレーム、保存したフレームが並びます。どのフレームも同じ方法で編集できます。ラベル、2行目、色、テキストサイズを設定でき、アイコンのあるフレームではアイコンも設定できます。組み込みフレームを使ったデザインは `style` 名を保持するため、リンク、画像URL、コードスニペットは短いままです。
+
+**シェイプ付きコード** グループでは、コード自体を図形にします。装飾的なドットによる円やハート、またはアップロードした図形です（[`shape`](/docs/features/patterns#circle-codes)）。シェイプ付きコードはフレームの代わりになります。シェイプを選ぶとフレームが解除され、フレームを選ぶとシェイプが解除されます。
+
+### CLIでの操作 [#in-the-cli]
 
 ```bash
 qrdx generate "https://example.com/menu" --frame banner-bottom --frame-text "Scan for the menu" -o menu.png
 ```
 
-`--frame-color` と `--frame-text-color` には16進カラーを指定します。`--frame` なしでテキストや色を渡した場合は `banner-bottom` が使われます。
+`--frame-color` と `--frame-text-color` には16進数カラーを指定します。`--frame` なしでテキストや色を渡すと、`banner-bottom` が使われます。
+
+### フレーム仕様 [#frame-specs]
+
+フレーム仕様は、`kind: "qrdx.frame"`、`version: 1`、`artboard` サイズ、コードを置く `qr` ボックス、デフォルトの `colors`、コードの背後に描画される `shapes`、そして `labels` を持つJSONです。図形には、矩形（任意で穴付き）、円とリング、楕円、多角形、パス、線、組み込みアイコンがあります。塗りには、テーマトークン（`frame`、`text`、`accent`、`background`）、16進数カラー、2色のミックス、またはグラデーションを使えます。仕様にマークアップ、リンク、画像は含まれません。自分で書いていない仕様は、保存する前に `qrdx/types` の `frameSpecSchema` または `getFrameSpecIssues` で確認してください。エンジンも描画の前に再度確認します。
+
+組み込みフレームでは、次のオプションフィールドが追加されました。これらを持たない仕様は、従来どおり描画されます。
+
+| フィールド | 説明 |
+| --- | --- |
+| `labels[].collapse` | `{ y, height }`。ラベルにテキストがないとき、`y` から `y + height` までの帯が切り取られます。その下の行は上に移動し、アートワークは短くなります。帯の内側に完全に収まる図形は省かれ、帯をまたぐ図形は短くなります。帯は、コード、そのパディング、ほかの帯をまたげません。 |
+| `qr.plate` | `"opaque"`（デフォルト）または `"background"`。エンジンは、コードの下にコードの背景色のプレートを描画します。その背景が透明な場合、`"opaque"` はプレートを描画し、`background` の塗りは白になるため、クワイエットゾーンからアートワークが透けることはありません。`"background"` は透明のままにし、プレートを描画しません。プレートの下にあるのが `background` の塗りだけか、穴がプレートを収めるリングだけの場合にのみ指定できます。 |
+| `colors.text` | 16進数カラー、または `frame`、`accent`、`background`、16進数カラーのミックス。たとえば、グラデーション枠線のラベルには `{ "mix": ["frame", "accent"], "amount": 0.5 }` を使います。これはデフォルト値で、`textColor` が優先されます。 |
+
+テキストラベルの行は、コードに重ならず、最大のテキストサイズ（`fontScale` 1.5）でも大文字がパディングに入らない限り、プレートのパディングにかかってもかまいません。枠線フレームは、この方法でラベルをコードのすぐ下に配置しています。
+
+qrdx 0.0.51以前では、これらのフィールドを使う仕様や、ラベルの行をパディングに置く仕様は拒否されます。そのような仕様をほかの環境で描画する前に、エンジンを更新してください。
 
 ## 公式フレーム [#official-frames]
 
-組み込みスタイルに加えて、QRdxには{facts.officialFrames}種類の公式フレームがあります。行動喚起、レストランとカフェ、店舗とパッケージ、イベントと結婚式、ホテル、旅行と不動産、健康、フィットネスと教育、ビジネスとソーシャルなど、用途別に作られたデザインです。そのうち{facts.seasonalFrames}種類は祝日と季節向けで、旧正月、ホーリー、イード、ディワリから、ハヌカ、イースター、感謝祭、クリスマスまでそろっています。どれもラベルと色を変更できるフレーム仕様で、CC0で公開されており、スマートフォンで読み取る距離でスキャンできることをテスト済みです。
+組み込みフレームに加えて、QRdxには{facts.officialFrames}個の公式フレームがあります。行動喚起、レストランとカフェ、店舗とパッケージ、美容とウェルネス、イベントと結婚式、ホテルと旅行、不動産、車と駐車場、医療と教育、スポーツとフィットネス、ビジネスとソーシャル、非営利団体と地域コミュニティ向けに作られた、すぐ使えるデザインです。そのうち{facts.seasonalFrames}個は祝日と季節向けで、旧正月、ホーリー、イード、ディワリから、ハヌカ、イースター、感謝祭、クリスマスまでをカバーしています。それぞれが、変更可能なラベルと色を持つフレーム仕様で、CC0で公開されており、スマートフォンで読み取る距離でスキャンできることをテスト済みです。
 
-[Playground](/playground) で **Frame**、続けて **More** を開きます。名前、用途、祝日で検索するか、グループを選んでください。これから迎える祝日や季節のフレームが先頭に表示されます。[コミュニティ](/community/frames)でも、@qrdx が公開したフレームを見つけられます。
+[Playground](/playground)で、**フレーム**、**その他** の順に開きます。名前、用途、祝日で検索するか、グループを選びます。近づいている祝日や季節のフレームが先頭に表示されます。@qrdxが公開している[コミュニティ](/community/frames)でも見つかります。
 
-エンジンは、これらを `OFFICIAL_FRAMES` としてエクスポートしています。
+エンジンはこれらを `OFFICIAL_FRAMES` としてエクスポートします。
 
 ```tsx
 import { getOfficialFrame, QRCode } from "qrdx";
@@ -86,11 +133,11 @@ const diwali = getOfficialFrame("diwali-diya"); // undefined for an unknown id
 )}
 ```
 
-`OFFICIAL_FRAME_INDEX` は、仕様を含めずにすべてのフレームを一覧にしたものです。ピッカーでライブラリ全体を表示し、仕様は必要になったときだけ読み込めます。[Image API](/docs/developers/image-api#community-items) と [MCP server](/docs/developers/mcp) では、公式フレームをコミュニティアイテムとして使えます。たとえば `item=frame:diwali-diya` のように指定します。
+`OFFICIAL_FRAME_INDEX` は、仕様を除いたすべてのフレームを一覧にします。そのため、ピッカーでライブラリ全体を表示し、仕様は必要になったときだけ読み込めます。[Image API](/docs/developers/image-api#community-items)と[MCPサーバー](/docs/developers/mcp)では、公式フレームをコミュニティアイテムとして指定します。たとえば `item=frame:diwali-diya` のように指定します。
 
-## スキャンできる? [#will-it-scan]
+## スキャンできるか確認する [#will-it-scan]
 
-`getScanScore` は、デザインがどれだけ確実にスキャンできるかを推定します。ブラウザー上で動作し、必要に応じて [jsQR](https://github.com/cozmo/jsQR) を読み込みます。
+`getScanScore` は、デザインがどれだけ確実にスキャンできるかを推定します。ブラウザ上で実行され、必要に応じて [jsQR](https://github.com/cozmo/jsQR) を読み込みます。
 
 ```ts
 import { getScanScore } from "qrdx";
@@ -104,24 +151,24 @@ const { score, grade, checks } = await getScanScore({
 // checks: [{ id, passed, message, fix? }]
 ```
 
-チェック内容:
+チェックする項目は次のとおりです。
 
-- **96px、160px、320pxでのデコード。** デザインをそれぞれの幅で描画し、カメラのようなぼかしとコントラストの低下を加えたうえで、わずかに異なる倍率で数回デコードします。
-- **コントラスト。** コードのすべての色（グラデーションの色stop、アイや ドットの色を含む）と背景とのコントラスト、およびコードが明るい背景に暗い色で描かれているかどうか。
-- **ロゴの占有率。** エラー訂正レベルで復元できる範囲との比較。
-- **クワイエットゾーン。** マージンに、フレームによって加わる隙間を足したもの。
-- **アイの形状のリスク。** `circle` のアイは、一部のスキャナーアプリで読み取れないことがあります（廃止された `curly` のアイも、保存済みのデザインがまだ使っている場合は、厳密なデコーダーで失敗します）。
-- **スタイルの組み合わせ**（`style-pair`）。当社のデコードテストで一緒に使うと失敗する形状の組み合わせです。たとえば、四角いアイの隣に `small-square` のドットを置いた場合や、保存済みデザインに残っている廃止済みの中心部などです（`getStylePairRisk` を参照）。
+- **96px、160px、320pxでのデコード**：各幅でデザインをレンダリングし、カメラで撮影したようなぼかしとコントラストの低下を加えたうえで、少しずつ異なる縮尺で数回デコードします。
+- **コントラスト**：コードのすべての色（グラデーションのストップ、アイの色、ドットの色を含む）と背景とのコントラスト、およびコードが明るい背景に暗い色になっているかどうか。
+- **ロゴの占有率**：エラー訂正レベルで復元できる範囲との比較。
+- **クワイエットゾーン**：マージンに、フレームが加える余白を足したもの。
+- **アイの形状によるリスク**：`circle` のアイは、一部のスキャナーアプリで読み取れない場合があります（また、廃止された `curly` のアイは、保存済みのデザインで使われていると、厳密なデコーダーでは読み取れません）。
+- **スタイルの組み合わせ**（`style-pair`）：`small-square` のドットと四角いアイの組み合わせなど、デコードテストで一緒に失敗する形状や、保存済みデザインに残っている廃止済みのセンターです（`getStylePairRisk` を参照）。
 
-`getImageScanScore(fileOrImage)` は、既存の画像に対して同じ処理を行います。デコードされた内容に加えて、ピクセルから測定したデコード、コントラスト、極性、クワイエットゾーン、解像度のチェック結果を返します。[スキャンチェッカー](/tools/scan-checker)はこの関数をもとに作られています。
+`getImageScanScore(fileOrImage)` は、既存の画像に対して同じ処理を行います。デコードした内容に加え、ピクセルから測定したデコード、コントラスト、極性、クワイエットゾーン、解像度のチェック結果を返します。[スキャンチェッカー](/tools/scan-checker)はこの関数を基に作られています。
 
 <Callout type="info">
-  このスコアは、1つのオープンソースデコーダーに基づくヒューリスティックです。スマートフォンのカメラアプリのほうが寛容なことも多いため、目安として扱い、重要な印刷物は実際にスキャンして確認してください。
+  このスコアは、1つのオープンソースデコーダーを基にしたヒューリスティックです。スマートフォンのカメラアプリのほうが寛容な場合も多いため、目安として使い、重要な印刷物ではテストスキャンを行ってください。
 </Callout>
 
 ## 印刷用エクスポート [#print-ready-export]
 
-`downloadPrintPDF` は、正確な物理サイズのベクターPDFを書き出します。モジュール、アイ、フレームはベクターパスです（ロゴはラスター画像のままです）。
+`downloadPrintPDF` は、正確な物理サイズのベクターPDFを書き出します。モジュール、アイ、フレームはベクターパスになります（ロゴはラスター画像のままです）。
 
 ```ts
 import { downloadPrintPDF, downloadPrintSVG, getPrintLayout } from "qrdx";
@@ -144,10 +191,10 @@ layout.maxScanDistance; // 400 (mm)
 ```
 
 - `size` はコードの幅です。フレームを付けると、仕上がりサイズはその分大きくなります。
-- 裁ち落としを付けると、背景（または四角いフレームの色）が仕上がり線の外側まで広がるため、断裁しても白い隙間が残りません。トンボは裁ち落としの外側に置かれます。
-- `colorMode: "cmyk"` は簡易的な変換（`rgbToCmyk`: K = 1 − max(R, G, B)、ICCプロファイルなし。純粋な黒はKのみで印刷されます）を使います。ブランドカラーを正確に再現したい場合は、印刷会社にカラーマネジメント済みの変換を依頼してください。
-- 線形グラデーションと放射グラデーションは、PDF内で滑らかなシェーディングとして印刷されます。PDFがCMYKの場合はCMYKになります。印刷用SVGでもグラデーションは保持されますが、RGBのままです。
-- PDF内のフレームテキストにはHelvetica Boldを使うため、Latin-1以外の文字は表示されないことがあります。ほかの文字体系にはSVGを使ってください。
-- `getQRAsPrintPDF` と `getQRAsPrintPDFBuffer` は、ダウンロードせずにファイルを返します。Nodeでも動作します。
+- 裁ち落としを付けると、背景（または四角いフレームの色）が断ち落とし線の外側まで広がるため、裁断しても白い隙間が出ません。トンボは裁ち落としの外側に配置されます。
+- `colorMode: "cmyk"` は簡易的な変換を使います（`rgbToCmyk`：K = 1 − max(R, G, B)、ICCプロファイルなし。純粋な黒はKのみで印刷されます）。ブランドカラーを正確に再現したい場合は、印刷会社にカラーマネジメントされた変換を依頼してください。
+- 線形グラデーションと放射状グラデーションは、PDF内で滑らかなシェーディングとして印刷されます。PDFがCMYKの場合はCMYKになります。印刷用SVGでもグラデーションは保持されますが、RGBのままです。
+- PDF内のフレームのテキストにはHelvetica Boldが使われるため、Latin-1以外の文字は表示されない場合があります。ほかの文字体系にはSVGを使用してください。
+- `getQRAsPrintPDF` と `getQRAsPrintPDFBuffer` は、ダウンロードせずにファイルを返します。Node上でも動作します。
 
-**印刷サイズの目安:** コードは、幅のおよそ10倍の距離からスキャンできます。つまり、サイズ ≈ スキャン距離 ÷ 10 です（20cmの距離なら幅2cm）。密度の高いコードにはもっと大きなサイズが必要です。[印刷サイズ計算ツール](/tools/print-size)では、その点も考慮されます。
+**印刷サイズの目安：** コードは、幅のおよそ10倍の距離からスキャンできます。つまり、サイズ ≈ スキャン距離 ÷ 10 です（20 cm離れるなら幅2 cm）。密度の高いコードにはより大きなサイズが必要です。[印刷サイズ計算ツール](/tools/print-size)はこの点も考慮します。

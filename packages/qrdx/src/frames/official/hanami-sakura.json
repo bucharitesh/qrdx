@@ -1,0 +1,81 @@
+{
+  "id": "hanami-sakura",
+  "name": "Sakura",
+  "description": "A solid card with a cherry blossom over the code and the label underneath, in plum and blossom pink.",
+  "category": "seasonal",
+  "collection": "seasons",
+  "occasion": "cherry-blossom",
+  "contentTypes": [],
+  "tags": ["cherry blossom", "hanami", "sakura", "spring", "map"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#831843",
+      "text": "#ffffff",
+      "accent": "#f9a8d4"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M620 113C602 98 597.5 71 609.5 56L620 65L630.5 56C642.5 71 638 98 620 113ZM620 113C628.7 91.25 652.99 78.62 670.97 85.4L665.65 98.17L677.45 105.37C666.9 121.42 639.83 125.48 620 113ZM620 113C643.38 114.56 662.89 133.75 662 152.94L648.21 151.83L645.01 165.29C626.48 160.2 614.25 135.72 620 113ZM620 113C625.75 135.72 613.52 160.2 594.99 165.29L591.79 151.83L578 152.94C577.11 133.75 596.62 114.56 620 113ZM620 113C600.17 125.48 573.1 121.42 562.55 105.37L574.35 98.17L569.03 85.4C587.01 78.62 611.3 91.25 620 113Z",
+        "fill": "accent"
+      },
+      {
+        "type": "path",
+        "d": "M609.5 113A10.5 10.5 0 1 1 630.5 113A10.5 10.5 0 1 1 609.5 113ZM627.86 97.22A3.6 3.6 0 1 1 635.06 97.22A3.6 3.6 0 1 1 627.86 97.22ZM634.95 119.03A3.6 3.6 0 1 1 642.15 119.03A3.6 3.6 0 1 1 634.95 119.03ZM616.4 132.5A3.6 3.6 0 1 1 623.6 132.5A3.6 3.6 0 1 1 616.4 132.5ZM597.85 119.03A3.6 3.6 0 1 1 605.05 119.03A3.6 3.6 0 1 1 597.85 119.03ZM604.94 97.22A3.6 3.6 0 1 1 612.14 97.22A3.6 3.6 0 1 1 604.94 97.22Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Hanami",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan for the bloom map",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}
