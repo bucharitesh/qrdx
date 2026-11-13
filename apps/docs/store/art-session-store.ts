@@ -17,6 +17,7 @@ import {
   ART_QR_VISIBILITY,
 } from "@/components/sections/ai-art/config";
 import type { ScanCheckResult } from "@/components/sections/ai-art/image-utils";
+import type { ArtLookId } from "@/components/sections/ai-art/looks";
 import type { AIArtPreset } from "@/components/sections/ai-art/presets";
 import { useQREditorStore } from "@/store/editor-store";
 
@@ -27,6 +28,8 @@ export type ArtTabMode = "off" | QRArtMode | "ai";
 export interface AIArtDraft {
   presetId: string | null;
   prompt: string;
+  /** A quick look added to the prompt (looks.ts) */
+  look: ArtLookId | null;
   negativePrompt: string;
   visibility: number;
   creativity: number;
@@ -42,6 +45,7 @@ export interface AIArtDraft {
 export const DEFAULT_AI_ART_DRAFT: AIArtDraft = {
   presetId: null,
   prompt: "",
+  look: null,
   negativePrompt: "",
   visibility: ART_QR_VISIBILITY.default,
   creativity: ART_CREATIVITY.default,
@@ -66,7 +70,10 @@ export interface ArtSessionStore extends AIArtRunState {
 
   draft: AIArtDraft;
   updateDraft: (patch: Partial<AIArtDraft>) => void;
-  /** Fills the prompt from a style preset (presets.ts) */
+  /**
+   * Fills the prompt from a style preset (presets.ts) and resets the look:
+   * a preset carries its own style
+   */
   applyStylePreset: (preset: AIArtPreset) => void;
   /**
    * Generate, pressed signed out, waiting to run once signed in (the
@@ -113,6 +120,7 @@ export const useArtSessionStore = create<ArtSessionStore>()((set, get) => ({
         ...get().draft,
         presetId: preset.id,
         prompt: preset.prompt,
+        look: null,
         negativePrompt: preset.negativePrompt ?? "",
       },
     }),

@@ -1751,7 +1751,8 @@ const DESCRIPTION = `Create and manage dynamic QR codes, read scan analytics, re
 /** What each field of POST /art's body does (a field that's gone throws). */
 const ART_FIELD_DESCRIPTIONS: Record<string, string> = {
   text: `What the code encodes: a link or text, up to ${ART_TEXT_MAX_LENGTH} characters. Send this or \`code\`.`,
-  prompt: "The artwork to paint, in plain words.",
+  prompt:
+    "The artwork to paint, in plain words, at least 3 characters when sent. Leave it out and QRdx writes one for the mode, look and photo you sent; the response then includes it as `writtenPrompt`.",
   negativePrompt: "What to keep out of the picture.",
   visibility: `QR visibility, ${ART_QR_VISIBILITY.min} to ${ART_QR_VISIBILITY.max} in steps of ${ART_QR_VISIBILITY.step}: higher shows the code more clearly, lower favors the picture.`,
   creativity: `${ART_CREATIVITY.min} follows the prompt literally, ${ART_CREATIVITY.max} interprets it freely.`,
@@ -1789,10 +1790,12 @@ function artRequestBody(c: SchemaCollector): JsonSchema {
   for (const name of Object.keys(ART_FIELD_DESCRIPTIONS)) {
     if (!(name in properties)) throw new Error(`No art field "${name}".`);
   }
+  const { required: _, ...rest } = base;
+  const required = (base.required ?? []).filter((name) => name !== "text");
   return {
-    ...base,
+    ...rest,
     properties,
-    required: (base.required ?? []).filter((name) => name !== "text"),
+    ...(required.length > 0 && { required }),
     description: "Send exactly one of `text` and `code`.",
   };
 }

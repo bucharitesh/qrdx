@@ -54,7 +54,7 @@ import { aiGateway } from "./providers";
 /** Light border around the control code, in modules (the spec minimum is 4). */
 const CONTROL_QUIET_ZONE_MODULES = 6;
 /** Stays under the route's maxDuration, leaving time for the scan check. */
-const ART_MODEL_TIMEOUT_MS = 45_000;
+export const ART_MODEL_TIMEOUT_MS = 45_000;
 /** How long the least-blend search may take before the Image QR fallback. */
 const LEAST_BLEND_BUDGET_MS = 8000;
 /** Largest image a response carries (Vercel caps responses at 4.5 MB). */

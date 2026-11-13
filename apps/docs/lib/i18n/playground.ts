@@ -77,6 +77,7 @@ export const AI_ART_STUDIO_NAMESPACES = [
   "aiArt.aiArtStudio",
   "aiArt.aiArtResult",
   "aiArt.aiArtPresetGallery",
+  "editor.art.artLooks",
 ] as const;
 
 /**

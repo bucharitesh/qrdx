@@ -41,7 +41,7 @@ Get a code's `id` from [`GET /v1/codes`](/docs/developers/api/list-codes) or whe
 | --- | --- | --- |
 | `text` | | What the code encodes. Send this or `code` |
 | `code` | | A dynamic code's `id`, in place of `text` |
-| `prompt` | | The artwork to paint, in plain words |
+| `prompt` | written for you | The artwork to paint, in plain words; see [A prompt written for you](#written-prompt) |
 | `mode` | `code` | How the code sits in the art; see [Modes](#modes) |
 | `style` | | A quick look's id, combined with your prompt; see [Quick looks](#quick-looks) |
 | `negativePrompt` | | What to keep out of the picture |
@@ -65,7 +65,27 @@ The [API reference](/docs/developers/api/create-art) has the full schema.
 
 ## Quick looks [#quick-looks]
 
-A quick look is a ready-made style, such as a medium or a mood, that QRdx combines with your own `prompt`. Send its id as `style`. The looks are the ones offered as chips in the [AI art studio](/ai/art) and the playground's Art tab.
+A quick look is a ready-made style, such as a medium or a mood, that QRdx adds to your own `prompt`: `"a koi pond in the rain"` with `"style": "watercolor"` paints the koi pond as a watercolor. Send its id as `style`; any other value is a `400 VALIDATION_ERROR`. The looks are the ones offered as chips in the [AI art studio](/ai/art) and the playground's Art tab, and they work in every mode.
+
+| `style` | Look |
+| --- | --- |
+| `watercolor` | Watercolor |
+| `oil-painting` | Oil painting |
+| `anime` | Anime |
+| `cartoon` | Cartoon |
+| `pixel-art` | Pixel art |
+| `pop-art` | Pop art |
+| `charcoal` | Charcoal |
+| `ink` | Ink |
+| `cyberpunk` | Cyberpunk |
+| `fantasy` | Fantasy |
+| `photographic` | Photographic |
+| `low-poly` | Low poly |
+| `papercut` | Papercut |
+
+## A prompt written for you [#written-prompt]
+
+`prompt` is optional. Leave it out and QRdx first writes one for the `mode`, `style` and `photo` you sent: one concrete scene with a subject, a setting and the light, or in photo mode a description of what's in your photo so the art keeps it. Writing it uses no extra AI art image. The response then includes what was written as `writtenPrompt`, so you can send it again, edited, next time. If the writing fails, you get `502 AI_ART_DESCRIBE_FAILED` and no image is used.
 
 ## Response
 
@@ -98,6 +118,7 @@ A quick look is a ready-made style, such as a medium or a mood, that QRdx combin
 - `imageUrl` is a 1024 px square PNG as a `data:` URL. QRdx doesn't keep a copy, so save it.
 - `text` is exactly what the image scans to. QRdx decoded it before answering.
 - `blend` says how the image was made to scan: `none` (the model's image as drawn), `least` (the finder squares, quiet zone and modules strengthened just enough, on the model's image) or `image-qr` (redrawn as an Image QR code, the last resort). `blendStrength` goes from `0` (as drawn) to `1` (Image QR).
+- `writtenPrompt` is there only when you left out `prompt`: the description QRdx wrote for you.
 - `credits` is the workspace's allowance after this image.
 
 To get the PNG itself instead of JSON, add `?format=png` or send `Accept: image/png`. The seed, mode, blend and images left then come as the `X-QRdx-Seed`, `X-QRdx-Mode`, `X-QRdx-Blend`, `X-QRdx-Blend-Strength` and `X-QRdx-Credits-Remaining` headers.
@@ -133,6 +154,7 @@ Errors have the API's usual shape (`code`, `message`, `status`); [Errors](/docs/
 | 429 | `AI_ART_DAILY_LIMIT` | Try again tomorrow (UTC) |
 | 502 | `AI_ART_FAILED` | The model failed or declined the prompt. Try again or reword it |
 | 502 | `AI_ART_UNSCANNABLE` | Try again with a higher `visibility` or another seed |
+| 502 | `AI_ART_DESCRIBE_FAILED` | No `prompt` was sent and writing one failed. Try again or send your own |
 | 503 | `AI_ART_BUSY` | The model is busy. Wait a minute and try again |
 | 503 | `AI_NOT_CONFIGURED` | AI art isn't set up on this server (self-hosted) |
 | 504 | `AI_ART_TIMEOUT` | The model took too long. Try again |

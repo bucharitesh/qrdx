@@ -216,6 +216,7 @@ export function useAIArtRun({ store, onSignedOut }: UseAIArtRunOptions) {
         locked_seed: Boolean(meta.lockedSeed),
         reference: Boolean(request.reference),
         preset: meta.preset ?? undefined,
+        look: request.style,
       });
     }
     return outcome;
