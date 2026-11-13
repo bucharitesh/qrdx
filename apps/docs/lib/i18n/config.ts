@@ -191,8 +191,3 @@ export function localeFromSegment(
   if (!segment) return undefined;
   return LOCALES.find((locale) => LOCALE_INFO[locale].segment === segment);
 }
-
-/** The `[lang]` values that are prerendered (every locale, English too). */
-export const LOCALE_SEGMENTS = LOCALES.map(
-  (locale) => LOCALE_INFO[locale].segment,
-);

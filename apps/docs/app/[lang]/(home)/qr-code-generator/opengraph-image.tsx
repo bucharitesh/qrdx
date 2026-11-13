@@ -1,13 +1,14 @@
 import { ogSize, renderPageOgImage } from "@/app/og/brand";
-import { localeParams, requireLocaleParam } from "@/lib/i18n/static-params";
+import { requireLocaleParam } from "@/lib/i18n/static-params";
 import { QR_TYPES } from "@/lib/qr-types-content";
+import { onDemandParams } from "@/lib/static-params";
 
 export const alt = "Every QR code type QRdx makes";
 export const size = ogSize;
 export const contentType = "image/png";
 
 export function generateStaticParams() {
-  return localeParams();
+  return onDemandParams();
 }
 
 export default async function Image({
