@@ -7572,7 +7572,6 @@
           "page": {
             "webhooks": "Webhook",
             "recentDeliveries": "Pengiriman terbaru",
-            "theLast50KeptFor": "50 terakhir, disimpan selama 30 hari. Pengiriman yang gagal dicoba ulang hingga {MAX_DELIVERY_ATTEMPTS, number} kali dengan jeda yang makin lama.",
             "endpointDeliveries": "Pengiriman endpoint",
             "filterDeliveries": "Filter pengiriman",
             "active": "Aktif",

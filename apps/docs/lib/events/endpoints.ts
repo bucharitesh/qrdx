@@ -462,10 +462,18 @@ export async function retryDelivery(
   return toSendResult(deliveryId, result);
 }
 
+/**
+ * An endpoint's deliveries, newest first. The id breaks ties, so paging with
+ * `offset` never skips or repeats a delivery made in the same instant.
+ */
 export async function listDeliveries(
   scope: ActiveScope,
   endpointId: string,
-  { status, limit = 50 }: { status?: DeliveryStatus; limit?: number } = {},
+  {
+    status,
+    limit = 50,
+    offset = 0,
+  }: { status?: DeliveryStatus; limit?: number; offset?: number } = {},
 ): Promise<WebhookDeliveryView[]> {
   await findEndpoint(scope, endpointId);
   const rows = await db
@@ -477,8 +485,9 @@ export async function listDeliveries(
         status ? eq(webhookDelivery.status, status) : undefined,
       ),
     )
-    .orderBy(desc(webhookDelivery.createdAt))
-    .limit(limit);
+    .orderBy(desc(webhookDelivery.createdAt), desc(webhookDelivery.id))
+    .limit(limit)
+    .offset(offset);
   return rows.map((row) => ({
     id: row.id,
     event: row.event,

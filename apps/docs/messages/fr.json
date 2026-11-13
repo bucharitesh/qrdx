@@ -7572,7 +7572,6 @@
           "page": {
             "webhooks": "Webhooks",
             "recentDeliveries": "Livraisons récentes",
-            "theLast50KeptFor": "Les 50 dernières, conservées 30 jours. Les livraisons échouées sont retentées jusqu’à {MAX_DELIVERY_ATTEMPTS, number} fois, avec des délais d’attente croissants.",
             "endpointDeliveries": "Livraisons du point de terminaison",
             "filterDeliveries": "Filtrer les envois",
             "active": "Actif",

@@ -7640,7 +7640,8 @@
           "archived": "Archived",
           "disabled": "Disabled",
           "noQrCodeYet": "No QR code yet",
-          "pageLinkCopied": "Page link copied"
+          "pageLinkCopied": "Page link copied",
+          "pagePageOfPagecountTotal": "Page {page, number} of {pageCount, number} · {total} pages"
         },
         "responses": {
           "page": {
@@ -7824,7 +7825,6 @@
           "page": {
             "webhooks": "Webhooks",
             "recentDeliveries": "Recent deliveries",
-            "theLast50KeptFor": "The last 50, kept for 30 days. Failed deliveries are retried up to {MAX_DELIVERY_ATTEMPTS, number} times with growing waits.",
             "endpointDeliveries": "Endpoint deliveries",
             "filterDeliveries": "Filter deliveries",
             "active": "Active",
@@ -7840,7 +7840,8 @@
             "onlyTeamOwnersAndAdmins": "Only team owners and admins can add, change or test endpoints.",
             "sendScansNewAndChanged": "Send scans, new and changed codes, and form responses to your own server, Zapier or Make.",
             "thisTeamsPlanNoLonger": "This team's plan no longer includes webhooks.",
-            "yourPlanNoLongerIncludes": "Your plan no longer includes webhooks."
+            "yourPlanNoLongerIncludes": "Your plan no longer includes webhooks.",
+            "keptFor30Days": "Newest first, kept for 30 days. Failed deliveries are retried up to {MAX_DELIVERY_ATTEMPTS, number} times with growing waits."
           }
         }
       },
@@ -8210,6 +8211,17 @@
           "notDeliveredError": "Not delivered: {error}",
           "endpointDeleted": "Endpoint deleted"
         }
+      },
+      "paging": {
+        "navigation": "Pagination",
+        "previous": "Previous",
+        "next": "Next",
+        "rowsPerPage": "Rows per page",
+        "perPage": "{count, number} per page",
+        "page": "Page {page, number}",
+        "pageOf": "Page {page, number} of {pageCount, number}",
+        "newer": "Newer",
+        "older": "Older"
       }
     },
     "shell": {
