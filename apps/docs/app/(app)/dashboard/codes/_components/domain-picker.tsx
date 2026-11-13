@@ -83,7 +83,8 @@ export function DomainPicker({
         <SelectTrigger className="w-full" id="code-domain">
           <SelectValue />
         </SelectTrigger>
-        <SelectContent>
+        {/* Above the code builder's dialog (z-[99]), which shows this picker */}
+        <SelectContent className="z-[120]">
           <SelectItem value={DEFAULT_VALUE}>
             {t("defaulthostQDefault", { defaultHost: options.defaultHost })}
           </SelectItem>

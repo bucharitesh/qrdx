@@ -633,7 +633,8 @@ export function BarcodeContentFields({
             {/* Just the name; the list shows what each one is for. */}
             <SelectValue>{format.label}</SelectValue>
           </SelectTrigger>
-          <SelectContent>
+          {/* Above the new-barcode modal (z-[99]) too */}
+          <SelectContent className="z-[120]">
             <SelectGroup>
               <SelectLabel>{t("linear")}</SelectLabel>
               {LINEAR.map((item) => (
@@ -1007,7 +1008,8 @@ export function BarcodeDownloads({
             <ArrowDown2 aria-hidden className="size-3.5 opacity-70" />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-64">
+        {/* Above the new-barcode modal (z-[99]) too */}
+        <DropdownMenuContent align="end" className="z-[120] w-64">
           <DropdownMenuLabel>{t("moreFormats")}</DropdownMenuLabel>
           <DropdownMenuSeparator />
           {MORE_FILES.map((type) => (

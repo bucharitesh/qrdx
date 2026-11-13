@@ -7,6 +7,11 @@
 // unsaved changes can ask first.
 
 import { Close } from "@repo/design-system/components/icons";
+import {
+  AlertDialogContent,
+  AlertDialogOverlay,
+  AlertDialogPortal,
+} from "@repo/design-system/components/ui/alert-dialog";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Kbd } from "@repo/design-system/components/ui/kbd";
 import {
@@ -16,7 +21,13 @@ import {
   ResponsiveDialogTitle,
 } from "@repo/design-system/components/ui/revola";
 import { cn } from "@repo/design-system/lib/utils";
-import { type ReactNode, type RefObject, useEffect, useRef } from "react";
+import {
+  type ComponentProps,
+  type ReactNode,
+  type RefObject,
+  useEffect,
+  useRef,
+} from "react";
 import {
   type BuilderShortcut,
   resolveBuilderShortcut,
@@ -133,6 +144,25 @@ export function BuilderShell({
         </div>
       </ResponsiveDialogContent>
     </ResponsiveDialog>
+  );
+}
+
+/**
+ * A confirm over the builder ("Close without saving?"). The design system's
+ * alert dialog sits at z-50, under the builder's dialog (z-[99]), so this
+ * one and a dimmed layer of its own go above it.
+ */
+export function BuilderAlertContent({
+  className,
+  ...props
+}: ComponentProps<typeof AlertDialogContent>) {
+  return (
+    <>
+      <AlertDialogPortal>
+        <AlertDialogOverlay className="z-[120]" />
+      </AlertDialogPortal>
+      <AlertDialogContent className={cn("z-[121]", className)} {...props} />
+    </>
   );
 }
 

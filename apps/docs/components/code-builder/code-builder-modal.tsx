@@ -14,7 +14,6 @@ import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
-  AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
@@ -105,6 +104,7 @@ import { BuilderOptionBar, BuilderOptionsOn } from "./builder-options";
 import { FolderField, TagsField } from "./builder-organize";
 import { BuilderPreview } from "./builder-preview";
 import {
+  BuilderAlertContent,
   BuilderShell,
   BuilderSubmitKey,
   useBuilderShortcuts,
@@ -1531,7 +1531,7 @@ export default function CodeBuilderModal({
         }}
         open={confirm === "close"}
       >
-        <AlertDialogContent>
+        <BuilderAlertContent>
           <AlertDialogHeader>
             <AlertDialogTitle>{t("closeWithoutSaving")}</AlertDialogTitle>
             <AlertDialogDescription>
@@ -1557,7 +1557,7 @@ export default function CodeBuilderModal({
               </AlertDialogAction>
             )}
           </AlertDialogFooter>
-        </AlertDialogContent>
+        </BuilderAlertContent>
       </AlertDialog>
 
       <AlertDialog
@@ -1566,7 +1566,7 @@ export default function CodeBuilderModal({
         }}
         open={typeof confirm === "object" && confirm !== null}
       >
-        <AlertDialogContent>
+        <BuilderAlertContent>
           <AlertDialogHeader>
             <AlertDialogTitle>{t("thisDesignMayNotScan")}</AlertDialogTitle>
             <AlertDialogDescription>
@@ -1589,7 +1589,7 @@ export default function CodeBuilderModal({
               {editing ? t("saveAnyway") : t("createAnyway")}
             </AlertDialogAction>
           </AlertDialogFooter>
-        </AlertDialogContent>
+        </BuilderAlertContent>
       </AlertDialog>
     </>
   );
