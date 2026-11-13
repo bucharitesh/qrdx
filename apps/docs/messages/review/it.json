@@ -13083,10 +13083,6 @@
     "source": "f5a57b969150",
     "status": "machine"
   },
-  "editor.controlSections.frameControls.customise": {
-    "source": "1bed90804c20",
-    "status": "machine"
-  },
   "editor.controlSections.frameControls.importSvg": {
     "source": "88575ae0c628",
     "status": "machine"
@@ -13103,32 +13099,8 @@
     "source": "0e66373f45dc",
     "status": "machine"
   },
-  "editor.controlSections.frameControls.secondLine": {
-    "source": "c8b588f708d6",
-    "status": "machine"
-  },
-  "editor.controlSections.frameControls.leaveEmptyForNoLabel": {
-    "source": "664c33884a79",
-    "status": "machine"
-  },
   "editor.controlSections.frameControls.pickAFrameFirst": {
     "source": "4aede128d746",
-    "status": "machine"
-  },
-  "editor.controlSections.frameControls.frameColor": {
-    "source": "2d7228cc6b77",
-    "status": "machine"
-  },
-  "editor.controlSections.frameControls.textColor": {
-    "source": "4a69d0166046",
-    "status": "machine"
-  },
-  "editor.controlSections.frameControls.endColor": {
-    "source": "da2d25d0b723",
-    "status": "machine"
-  },
-  "editor.controlSections.frameControls.optionalEGYourWebsite": {
-    "source": "f7f267b95bd4",
     "status": "machine"
   },
   "editor.controlSections.frameControls.none": {
@@ -13188,7 +13160,7 @@
     "status": "machine"
   },
   "editor.controlSections.framePicker.everyFrameBuiltInStyles": {
-    "source": "40954525a2f2",
+    "source": "7753c9ce4374",
     "status": "machine"
   },
   "editor.controlSections.framePicker.less": {
@@ -13211,8 +13183,12 @@
     "source": "b743c760826c",
     "status": "machine"
   },
-  "editor.controlSections.framePicker.builtIn": {
-    "source": "1f43948106d1",
+  "editor.controlSections.framePicker.classic": {
+    "source": "ae25d6481fc1",
+    "status": "machine"
+  },
+  "editor.controlSections.framePicker.shapedCodes": {
+    "source": "85014cc1a454",
     "status": "machine"
   },
   "editor.controlSections.framePicker.saved": {

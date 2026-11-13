@@ -4,7 +4,7 @@ description: "Générez des QR codes stylisés en SVG, PNG, WebP ou EPS vectorie
 icon: Terminal
 ---
 
-`@qrdx/cli` génère depuis la ligne de commande les mêmes QR codes que le Playground et la [bibliothèque `qrdx`](/docs/getting-started). Il n'affiche jamais d'invite dans les scripts et la CI, et lorsque vous exécutez `qrdx generate` sans argument dans un terminal, il vous demande le contenu et les options étape par étape.
+`@qrdx/cli` génère en ligne de commande les mêmes QR codes que le Playground et la [bibliothèque `qrdx`](/docs/getting-started). Il n'affiche jamais d'invite dans les scripts et la CI, et lorsque vous exécutez `qrdx generate` sans argument dans un terminal, il vous demande pas à pas le contenu et les options.
 
 <NpmStatus package="@qrdx/cli" />
 
@@ -19,18 +19,18 @@ npm install -g @qrdx/cli
 qrdx generate "https://example.com" -o qr.png --size 1024
 ```
 
-Il nécessite Node.js 22 ou version ultérieure. La sortie PNG et WebP utilise [sharp](https://sharp.pixelplumbing.com), une dépendance optionnelle que npm installe lorsque votre plateforme le permet ; SVG et EPS fonctionnent sans elle. Le paquet npm `qrdx` est la bibliothèque React : la CLI se trouve uniquement dans `@qrdx/cli`.
+Il nécessite Node.js 22 ou une version ultérieure. La sortie PNG et WebP utilise [sharp](https://sharp.pixelplumbing.com), une dépendance facultative que npm installe lorsque votre plateforme la prend en charge ; SVG et EPS fonctionnent sans elle. Le paquet npm `qrdx` est la bibliothèque React : la CLI se trouve uniquement dans `@qrdx/cli`.
 
 ## Formats de sortie [#output-formats]
 
-L'extension du fichier détermine le format, ou utilisez `--format` lorsque le nom du fichier n'en a pas.
+L'extension du fichier détermine le format ; utilisez `--format` si le nom du fichier n'en a pas.
 
 | Format | Usage | Signification de `--size` |
 | --- | --- | --- |
 | `.svg` | Pages web, outils de design, mise à l'échelle sans perte | Largeur en pixels (512 par défaut) |
 | `.png` | Documents, présentations, partout où une image est nécessaire | Largeur en pixels |
 | `.webp` | Sites web : les pixels du PNG, sans perte, dans un fichier plus léger | Largeur en pixels |
-| `.eps` | Imprimeurs, Illustrator, InDesign | Largeur en points (72 par pouce, donc `144` fait 2 pouces) |
+| `.eps` | Imprimeurs, Illustrator, InDesign | Largeur en points (72 par pouce, donc `144` correspond à 2 pouces) |
 
 Les fichiers EPS sont du PostScript vectoriel. Les logos PNG et JPEG sont intégrés tels quels ; les autres formats de logo sont convertis avec sharp s'il est installé, sinon ils sont omis avec un avertissement.
 
@@ -50,11 +50,11 @@ Les fichiers EPS sont du PostScript vectoriel. Les logos PNG et JPEG sont intég
 | `--logo` | | URL de l'image du logo central (à utiliser avec `--level H`) |
 | `--margin` | `0` | Zone de silence, en modules |
 | `--template` | | `Arrow`, `StandardBox`, `SquareBorder`, `StrikedBox` ou `Halloween` |
-| `--frame` | | [Cadre](/docs/features/frames) d'appel à l'action : l'un des {facts.frameStyles} styles de cadre, comme `banner-bottom`, `rounded-border`, `circle`, `sticker` ou `phone` (voir [tous les styles](/docs/styles#frames)) |
+| `--frame` | | [Cadre](/docs/features/frames) d'appel à l'action : l'un des {facts.frameStyles} cadres intégrés, comme `banner-bottom`, `rounded-border`, `circle`, `sticker` ou `phone` (voir [la liste complète](/docs/styles#frames)) |
 | `--frame-text` | `Scan me` | Libellé du cadre, 24 caractères maximum |
 | `--frame-color`, `--frame-text-color` | | Couleurs du cadre et du libellé (hexadécimal) |
 
-`qrdx --help` liste tous les noms de motifs. Les valeurs non valides se terminent par le code `1` et un message indiquant les valeurs acceptées.
+`qrdx --help` liste tous les noms de motifs. Les valeurs invalides provoquent une sortie avec le code `1` et un message indiquant les valeurs acceptées.
 
 ## Plusieurs codes à partir d'un CSV [#many-codes-from-a-csv]
 
@@ -73,11 +73,11 @@ Il lit les mêmes colonnes que le [générateur en masse](/tools/bulk) : le cont
 | `--value-column` | deviné | Colonne contenant le contenu de chaque code |
 | `--name-column` | deviné | Colonne contenant les noms de fichiers |
 | `--no-header` | | La première ligne est un code, pas des noms de colonnes |
-| `--jobs` | `4` pour SVG, `8` sinon | Codes générés simultanément |
+| `--jobs` | `4` pour SVG, `8` sinon | Nombre de codes générés simultanément |
 
-Toutes les options de style ci-dessus s'appliquent à tous les codes. Le CSV est lu en flux et chaque code est enregistré dès qu'il est créé, la commande n'a donc aucune limite de lignes : sur un ordinateur portable, 10.000 codes SVG ont pris environ 40 secondes et moins de 200 Mo de mémoire. Rien n'est envoyé et aucun compte n'est nécessaire. Les lignes qui ne peuvent pas être encodées sont ignorées et listées avec la raison dans `errors.csv` dans le dossier de sortie.
+Toutes les options de style ci-dessus s'appliquent à tous les codes. Le CSV est lu en flux et chaque code est enregistré dès qu'il est créé, donc la commande n'a pas de limite de lignes : sur un ordinateur portable, 10.000 codes SVG ont pris environ 40 secondes et moins de 200 Mo de mémoire. Rien n'est envoyé et aucun compte n'est nécessaire. Les lignes qui ne peuvent pas être encodées sont ignorées et listées avec la raison dans `errors.csv`, dans le dossier de sortie.
 
-Pour imprimer des [QR codes dynamiques](/docs/dynamic-qr-codes) en masse, créez-les d'abord (l'import CSV du tableau de bord ou l'API) et exécutez `qrdx batch` sur le CSV de résultats que fournit l'import, avec `--value-column short_link`.
+Pour imprimer des [QR codes dynamiques](/docs/dynamic-qr-codes) en masse, créez-les d'abord (import CSV du tableau de bord ou API) puis exécutez `qrdx batch` sur le CSV de résultats fourni par l'import, avec `--value-column short_link`.
 
 ## Exemples [#examples]
 
@@ -102,8 +102,8 @@ qrdx generate "https://example.com/menu" --frame banner-bottom --frame-text "Sca
 qrdx generate "WIFI:T:WPA;S:MyNetwork;P:MyPassword;;" -o wifi.svg
 ```
 
-Pour imprimer un [QR code dynamique](/docs/dynamic-qr-codes), passez son lien court (`https://qrdx.dev/q/<slug>`) comme données.
+Pour imprimer un [QR code dynamique](/docs/dynamic-qr-codes), transmettez son lien court (`https://qrdx.dev/q/<slug>`) comme données.
 
-## L'utiliser depuis un agent de code IA [#use-it-from-an-ai-coding-agent]
+## L'utiliser depuis un agent de codage IA [#use-it-from-an-ai-coding-agent]
 
-Le [skill `generate-qr`](https://github.com/bucharitesh/qrdx/tree/main/skills/generate-qr) du dépôt apprend à des agents comme Claude Code à appeler la CLI. Pour les agents qui prennent en charge MCP, le [serveur MCP](/docs/developers/mcp) ne nécessite aucune installation.
+La [compétence `generate-qr`](https://github.com/bucharitesh/qrdx/tree/main/skills/generate-qr) du dépôt apprend à des agents comme Claude Code à appeler la CLI. Pour les agents compatibles avec MCP, le [serveur MCP](/docs/developers/mcp) ne nécessite aucune installation.

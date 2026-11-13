@@ -4391,18 +4391,11 @@
         }
       },
       "frameControls": {
-        "customise": "Customise",
         "importSvg": "Import SVG",
         "publishFrame": "Publish frame",
         "theFrameIsAddedAround": "The frame is added around the code, so the downloaded image gets bigger and the code itself stays scannable.",
         "label": "Label",
-        "secondLine": "Second line",
-        "leaveEmptyForNoLabel": "Leave empty for no label",
         "pickAFrameFirst": "Pick a frame first",
-        "frameColor": "Frame color",
-        "textColor": "Text color",
-        "endColor": "End color",
-        "optionalEGYourWebsite": "Optional, e.g. your website",
         "none": "None"
       },
       "frameFields": {
@@ -4421,13 +4414,14 @@
         "filterFrames": "Filter frames",
         "labelFrames": "{label} frames",
         "commonFrames": "Common frames",
-        "everyFrameBuiltInStyles": "Every frame: built-in styles, QRdx's official frames and the frames you saved. Picking one applies it right away.",
+        "everyFrameBuiltInStyles": "Every frame: the classic frames, shaped codes, QRdx's official frames and the frames you saved. Picking one applies it right away.",
         "less": "Less",
         "all": "All",
         "noFramesMatchQuery": "No frames match \"{query}\".",
         "loadingFrames": "Loading frames…",
         "comingUp": "Coming up",
-        "builtIn": "Built-in",
+        "classic": "Classic",
+        "shapedCodes": "Shaped codes",
         "saved": "Saved",
         "results": "Results"
       },

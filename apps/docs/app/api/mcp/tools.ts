@@ -1,9 +1,9 @@
 import type { McpServer } from "@modelcontextprotocol/server";
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
+import { BUILT_IN_FRAMES } from "qrdx";
 import {
   CORNER_EYE_DOT_PATTERNS,
   CORNER_EYE_PATTERNS,
-  FRAME_STYLES,
   FRAME_TEXT_MAX_LENGTH,
 } from "qrdx/types";
 import { z } from "zod";
@@ -209,9 +209,7 @@ const generateInput = z.object({
       "A community theme or frame by id (search_community), such as frame:wifi-card; style and the flat options win over it",
     ),
   frame: z
-    .enum(
-      FRAME_STYLES.filter((style) => style !== "none") as [string, ...string[]],
-    )
+    .enum(BUILT_IN_FRAMES.map((frame) => frame.style) as [string, ...string[]])
     .optional()
     .describe("A built-in call-to-action frame"),
   frameText: z
@@ -623,7 +621,7 @@ export function registerQrTools(server: McpServer) {
           JSON.stringify(
             {
               ...getQrStyleCatalog(),
-              frames: FRAME_STYLES.filter((style) => style !== "none"),
+              frames: BUILT_IN_FRAMES.map((frame) => frame.style),
               frameTextMaxLength: FRAME_TEXT_MAX_LENGTH,
               logoIcons: LOGO_ICON_IDS,
               brandLogos: brandLogoOptions(),

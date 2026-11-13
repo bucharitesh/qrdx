@@ -29,7 +29,7 @@ import { QRCode } from 'qrdx';
 
 | Prop | Tipe | Default | Deskripsi |
 |------|------|---------|-----------|
-| `value` | `string` | **wajib** | URL atau teks yang akan dienkode |
+| `value` | `string` | **wajib** | URL atau teks yang akan di-encode |
 | `size` | `number` | `128` | Ukuran dalam piksel |
 | `scale` | `number` | `1` | Pengali skala |
 | `fgColor` | `ColorConfig` | `#000000` | Warna kode QR |
@@ -41,23 +41,23 @@ import { QRCode } from 'qrdx';
 | `cornerEyeDotPattern` | `CornerEyeDotPattern` | `'circle'` | Pola titik sudut |
 | `hideLogo` | `boolean` | `false` | Sembunyikan logo. Tidak ada logo yang digambar kecuali `logo` diatur |
 | `logo` | `string` | — | URL logo |
-| `templateId` | `string` | `'default'` | ID templat |
-| `customTemplate` | `TemplateDefinition` | — | Templat kustom |
+| `templateId` | `string` | `'default'` | ID template |
+| `customTemplate` | `TemplateDefinition` | — | Template kustom |
 | `level` | `ErrorLevel` | `'Q'` | Koreksi kesalahan |
 | `autoLevel` | `boolean` | `false` | Naikkan `level` ke H saat logo menutupi lebih dari 7% kode (`AUTO_LEVEL_LOGO_COVERAGE`) |
 | `margin` | `number` | `0` | Margin dalam modul |
 | `imageSettings` | `ImageSettings` | — | Pengaturan logo |
 | `eyeColors` | `EyeColors` | — | Warna `outer` / `inner` per mata untuk `topLeft`, `topRight`, dan `bottomLeft`; masing-masing menimpa `eyeColor` / `dotColor` |
-| `moduleScale` | `number` | `1` | Ukuran modul data, 0,5 hingga 1. Setiap pola berhenti di ukuran terkecil yang masih bisa dipindai (`MODULE_SCALE_FLOOR`) |
+| `moduleScale` | `number` | `1` | Ukuran modul data, 0,5 sampai 1. Setiap pola berhenti pada ukuran terkecil yang masih dapat dipindai (`MODULE_SCALE_FLOOR`) |
 | `frame` | `QRFrame` | — | Bingkai ajakan bertindak; lihat [Bingkai & cetak](/docs/features/frames) |
-| `art` | `QRArt` | — | Padukan logo atau foto ke dalam modul (Logo QR, Image QR); lihat [Art QR](/docs/features/art-qr) |
+| `art` | `QRArt` | — | Memadukan logo atau foto ke dalam modul (Logo QR, Image QR); lihat [Art QR](/docs/features/art-qr) |
 | `frameLabelMarkers` | `boolean` | `false` | Untuk editor: menandai setiap label bingkai `<text>` dengan `data-qrdx-frame-label` (`"text"`, `"secondaryText"`, atau id label spesifikasi). Unduhan dan ekspor tidak pernah menyertakannya |
 
-Semua {facts.bodyPatterns} pola badan, {facts.eyeShapes} mata, {facts.eyeCentres} pusat mata, dan {facts.frameStyles} gaya bingkai ditampilkan langsung di [Bentuk, mata, dan bingkai](/docs/styles).
+Semua {facts.bodyPatterns} pola badan, {facts.eyeShapes} mata, {facts.eyeCentres} pusat mata, dan {facts.frameStyles} bingkai bawaan ditampilkan langsung di [Bentuk, mata, dan bingkai](/docs/styles).
 
 ### QRCodeCanvas [#qrcodecanvas]
 
-Rendering berbasis canvas.
+Perenderan berbasis canvas.
 
 ```tsx
 import { QRCodeCanvas } from 'qrdx';
@@ -71,7 +71,7 @@ import { QRCodeCanvas } from 'qrdx';
 
 ### QRCodeSVG [#qrcodesvg]
 
-Rendering berbasis SVG.
+Perenderan berbasis SVG.
 
 ```tsx
 import { QRCodeSVG } from 'qrdx';
@@ -82,7 +82,7 @@ import { QRCodeSVG } from 'qrdx';
 />
 ```
 
-## Fungsi unduh [#download-functions]
+## Fungsi Unduhan [#download-functions]
 
 ### downloadQRCode [#downloadqrcode]
 
@@ -115,7 +115,7 @@ getQRCodeDataUrl(
 
 ### getQRAsWebP [#getqraswebp]
 
-Kode sebagai `Blob` WebP, lossless kecuali `quality` diatur. Jika browser tidak bisa mengenkode WebP (Safari), encoder lossless bawaan qrdx yang membuatnya. `canvasToWebP(canvas, options)` melakukan hal yang sama untuk canvas apa pun, dan `encodeWebPLossless(rgba, width, height)` mengenkode piksel RGBA tanpa DOM.
+Kode sebagai `Blob` WebP, lossless kecuali `quality` diatur. Jika browser tidak dapat meng-encode WebP (Safari), encoder lossless bawaan qrdx yang membuatnya. `canvasToWebP(canvas, options)` melakukan hal yang sama untuk canvas apa pun, dan `encodeWebPLossless(rgba, width, height)` meng-encode piksel RGBA tanpa DOM.
 
 ```tsx
 getQRAsWebP(
@@ -145,21 +145,21 @@ getSVGString(qrProps: QRProps): Promise<string>
 
 ## Fungsi cetak dan pemindaian [#print-and-scan-functions]
 
-Fungsi-fungsi ini didokumentasikan beserta contohnya di halaman fitur masing-masing.
+Fungsi-fungsi ini didokumentasikan dengan contoh di halaman fiturnya masing-masing.
 
 | Fungsi | Kegunaan | Dokumen |
 |--------|----------|---------|
 | `getQRAsSVG(props)` | Markup SVG untuk sebuah kode, termasuk bingkainya | [Bingkai](/docs/features/frames) |
-| `getQRAsPrintPDF`, `downloadPrintPDF` | PDF vektor pada ukuran fisik yang tepat, dengan bleed, tanda potong, dan CMYK (memerlukan `jspdf`) | [Ekspor siap cetak](/docs/features/frames#print-ready-export) |
+| `getQRAsPrintPDF`, `downloadPrintPDF` | PDF vektor pada ukuran fisik yang tepat, dengan bleed, crop mark, dan CMYK (memerlukan `jspdf`) | [Ekspor siap cetak](/docs/features/frames#print-ready-export) |
 | `downloadPrintSVG` | SVG siap cetak pada ukuran fisik yang tepat | [Ekspor siap cetak](/docs/features/frames#print-ready-export) |
 | `getQRAsEPS`, `downloadPrintEPS` | EPS vektor untuk percetakan dan alat desain | [Unduhan](/docs/features/downloads) |
 | `getScanScore(props)` | Memperkirakan seberapa andal sebuah desain dapat dipindai | [Apakah bisa dipindai?](/docs/features/frames#will-it-scan) |
 | `getImageScanScore(image)` | Menilai gambar kode QR yang sudah Anda miliki (hanya di browser) | [Apakah bisa dipindai?](/docs/features/frames#will-it-scan) |
 | `getQRAsPNG(props, { size })` | Byte PNG di Node biasa, tanpa DOM. Impor dari `qrdx/node`; memerlukan `@resvg/resvg-js` atau `sharp` terpasang | — |
-| `scanQRPixels(pixels, expected)` | Memeriksa bahwa piksel RGBA mentah terdekode menjadi `expected`, juga saat diburamkan dan diperkecil; berjalan di Node | — |
-| `getStylePairRisk(...)` | Memperingatkan tentang pasangan mata dan pola yang terlewat oleh sebagian pemindai | [Pola](/docs/features/patterns) |
+| `scanQRPixels(pixels, expected)` | Memeriksa apakah piksel RGBA mentah ter-decode menjadi `expected`, juga saat diburamkan dan diperkecil; berjalan di Node | — |
+| `getStylePairRisk(...)` | Memperingatkan tentang pasangan mata dan pola yang terlewat oleh beberapa pemindai | [Pola](/docs/features/patterns) |
 
-## Fungsi deteksi [#detection-functions]
+## Fungsi Deteksi [#detection-functions]
 
 ### handleImageLoad [#handleimageload]
 
@@ -175,7 +175,7 @@ handleImageLoad(
 
 ### downloadImageWithBoundingBox [#downloadimagewithboundingbox]
 
-Debug dengan kotak pembatas.
+Debug dengan bounding box.
 
 ```tsx
 downloadImageWithBoundingBox(
@@ -185,11 +185,11 @@ downloadImageWithBoundingBox(
 ): void
 ```
 
-## Fungsi templat [#template-functions]
+## Fungsi Template [#template-functions]
 
 ### getTemplate [#gettemplate]
 
-Dapatkan templat tertentu.
+Dapatkan template tertentu.
 
 ```tsx
 getTemplate(templateId: string): TemplateDefinition | undefined
@@ -197,7 +197,7 @@ getTemplate(templateId: string): TemplateDefinition | undefined
 
 ### getAllTemplates [#getalltemplates]
 
-Dapatkan semua templat.
+Dapatkan semua template.
 
 ```tsx
 getAllTemplates(): TemplateDefinition[]
@@ -205,15 +205,15 @@ getAllTemplates(): TemplateDefinition[]
 
 ### getTemplateIds [#gettemplateids]
 
-Dapatkan ID templat.
+Dapatkan ID template.
 
 ```tsx
 getTemplateIds(): string[]
 ```
 
-## Fungsi utilitas [#utility-functions]
+## Fungsi Utilitas [#utility-functions]
 
-### Warna & kontras [#color--contrast]
+### Warna & Kontras [#color--contrast]
 
 ```tsx
 getSolidColor(colorConfig: ColorConfig, fallback?: string): string
@@ -232,7 +232,7 @@ validateSize(width: number, height: number): {
 }
 ```
 
-### Deteksi fitur [#feature-detection]
+### Deteksi Fitur [#feature-detection]
 
 ```tsx
 SUPPORTS_PATH2D: boolean
@@ -240,7 +240,7 @@ SUPPORTS_PATH2D: boolean
 
 ## Tipe [#types]
 
-### Tipe inti [#core-types]
+### Tipe Inti [#core-types]
 
 ```tsx
 type QRProps = {
@@ -263,11 +263,13 @@ type ColorConfig =
 type ErrorLevel = 'L' | 'M' | 'Q' | 'H';
 ```
 
-### Tipe pola [#pattern-types]
+### Tipe Pola [#pattern-types]
 
 ```tsx
 // The arrays BODY_PATTERN, CORNER_EYE_PATTERNS, CORNER_EYE_DOT_PATTERNS and
 // FRAME_STYLES (and their zod schemas) are exported from 'qrdx/types'.
+// FRAME_STYLES names the built-in frames; each is a frame spec in
+// BUILT_IN_FRAMES (from 'qrdx').
 
 type BodyPattern =
   | 'circle' | 'circle-large' | 'square' | 'diamond' | 'circle-mixed'
@@ -297,7 +299,7 @@ type EyeColors = {
 };
 
 type QRFrame = {
-  style: FrameStyle; // "none" or a frame, see FRAME_STYLES
+  style: FrameStyle; // "none" or a built-in frame, see FRAME_STYLES
   text?: string; // up to 24 characters, default "Scan me"
   color?: string;
   textColor?: string;
@@ -307,7 +309,7 @@ type QRFrame = {
 };
 ```
 
-### Tipe unduhan [#download-types]
+### Tipe Unduhan [#download-types]
 
 ```tsx
 type DownloadFormat = 'png' | 'jpg' | 'webp' | 'svg' | 'pdf' | 'eps';
@@ -327,7 +329,7 @@ const PRESET_SIZES: Record<string, DownloadSize> = {
 };
 ```
 
-### Tipe gradien [#gradient-types]
+### Tipe Gradien [#gradient-types]
 
 ```tsx
 type LinearGradient = {
@@ -353,7 +355,7 @@ type GradientStop = {
 };
 ```
 
-### Pengaturan gambar [#image-settings]
+### Pengaturan Gambar [#image-settings]
 
 ```tsx
 type ImageSettings = {
@@ -369,7 +371,7 @@ type ImageSettings = {
 };
 ```
 
-## Level koreksi kesalahan [#error-correction-levels]
+## Level Koreksi Kesalahan [#error-correction-levels]
 
 ```tsx
 const ERROR_LEVELS = {
@@ -380,7 +382,7 @@ const ERROR_LEVELS = {
 } as const;
 ```
 
-## Penanganan kesalahan [#error-handling]
+## Penanganan Kesalahan [#error-handling]
 
 Bungkus fungsi async dengan try-catch:
 
@@ -398,14 +400,14 @@ Kesalahan umum:
 - Parameter ukuran tidak valid
 - Konteks canvas tidak tersedia
 
-## Dukungan browser [#browser-support]
+## Dukungan Browser [#browser-support]
 
 - Chrome 90+
 - Firefox 88+
 - Safari 14+
 - Edge 90+
 
-## Dukungan server [#server-support]
+## Dukungan Server [#server-support]
 
 Berfungsi di lingkungan Node.js:
 - Next.js

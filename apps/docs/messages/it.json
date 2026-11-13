@@ -4391,18 +4391,11 @@
         }
       },
       "frameControls": {
-        "customise": "Personalizza",
         "importSvg": "Importa SVG",
         "publishFrame": "Pubblica cornice",
         "theFrameIsAddedAround": "La cornice viene aggiunta attorno al codice, quindi l’immagine scaricata diventa più grande e il codice resta leggibile alla scansione.",
         "label": "Etichetta",
-        "secondLine": "Seconda riga",
-        "leaveEmptyForNoLabel": "Lascia vuoto per nessuna etichetta",
         "pickAFrameFirst": "Scegli prima una cornice",
-        "frameColor": "Colore cornice",
-        "textColor": "Colore testo",
-        "endColor": "Colore finale",
-        "optionalEGYourWebsite": "Facoltativo, es. il tuo sito",
         "none": "Nessuna"
       },
       "frameFields": {
@@ -4421,13 +4414,14 @@
         "filterFrames": "Filtra cornici",
         "labelFrames": "Cornici {label}",
         "commonFrames": "Cornici comuni",
-        "everyFrameBuiltInStyles": "Tutte le cornici: stili integrati, le cornici ufficiali di QRdx e quelle che hai salvato. Se ne scegli una, viene applicata subito.",
+        "everyFrameBuiltInStyles": "Tutte le cornici: quelle classiche, i codici sagomati, le cornici ufficiali di QRdx e quelle che hai salvato. Se ne scegli una, viene applicata subito.",
         "less": "Meno",
         "all": "Tutte",
         "noFramesMatchQuery": "Nessuna cornice per \"{query}\".",
         "loadingFrames": "Caricamento cornici…",
         "comingUp": "In arrivo",
-        "builtIn": "Integrate",
+        "classic": "Classiche",
+        "shapedCodes": "Codici sagomati",
         "saved": "Salvate",
         "results": "Risultati"
       },

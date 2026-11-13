@@ -1,36 +1,36 @@
 ---
-title: "도형, 눈, 프레임"
-description: "모든 본문 패턴, 눈 프레임, 눈 중심, 행동 유도 프레임을 qrdx 렌더러로 실시간으로 그리고 브라우저에서 디코딩해 보여드려요."
+title: "모양, 눈, 프레임"
+description: "모든 본문 패턴, 눈 프레임, 눈 중심, 행동 유도 프레임을 qrdx 렌더러가 실시간으로 그리고 브라우저에서 바로 디코딩합니다."
 icon: Grid3x3
 ---
 
 import { QrCatalog } from "@/components/docs/qr-catalog";
 
-아래의 모든 스타일은 다운로드 이미지와 같은 렌더러로 그려지며, 옵션 이름과 복사해서 쓸 수 있는 API 값이 함께 표시됩니다. 각 타일은 바로 이 브라우저에서 [jsQR](https://github.com/cozmo/jsQR)로 하나씩 디코딩하므로, **Scans** 배지는 약속이 아니라 실시간 결과입니다.
+아래의 모든 스타일은 다운로드 파일과 같은 렌더러로 그립니다. 옵션 이름과 복사해서 쓸 수 있는 API 값도 함께 보여 드려요. 각 타일은 [jsQR](https://github.com/cozmo/jsQR)로 지금 이 브라우저에서 하나씩 디코딩하므로, **스캔** 배지는 약속이 아니라 실시간 결과입니다.
 
-모든 스타일은 패키지에서도 테스트합니다(`packages/qrdx/tests/catalog-*.test.ts`). 각 값은 휴대폰 카메라 모델(대비 손실과 모듈 4분의 1 크기의 흐림)을 거쳐 모듈당 4, 6, 9픽셀에서, 다른 모든 본문, 눈, 중심과 함께, 오류 정정 수준 L, M, Q, H에서, 148 px와 1024 px에서, 어두운 배경 위의 밝은 코드로, 브랜드 색상과 중앙 로고를 적용한 상태로 디코딩됩니다. ZXing과 sharp 렌더에서도 확인했습니다. 일부 조합은 함께 쓰면 인식률이 낮습니다. [피해야 할 조합](#pairs-to-avoid)을 참고하세요.
+모든 스타일은 패키지(`packages/qrdx/tests/catalog-*.test.ts`)에서도 테스트합니다. 각 값은 휴대폰 카메라 모델(대비 손실과 모듈 4분의 1 크기의 흐림)을 거쳐, 모듈당 4, 6, 9픽셀에서, 다른 모든 본문·눈·중심과 짝지은 상태로, 오류 정정 L, M, Q, H에서, 148px와 1024px에서, 어두운 배경 위 밝은 코드로, 브랜드 색상과 중앙 로고를 적용한 상태로 디코딩됩니다. ZXing과 sharp 렌더링으로도 확인했습니다. 일부 조합은 함께 쓰면 약합니다. [피해야 할 조합](#pairs-to-avoid)을 참고하세요.
 
 ## 본문 패턴 [#body-patterns]
 
-데이터 모듈의 모양입니다(`bodyPattern`). 연결형 스타일(`liquid`, `classy`)은 이웃한 모듈을 하나의 윤곽으로 합칩니다. `random-dots`와 `mosaic`은 모듈마다 달라지지만 결정적이어서, 같은 값은 항상 같은 코드를 그립니다.
+데이터 모듈의 모양입니다(`bodyPattern`). 연결형 스타일(`liquid`, `classy`)은 이웃한 모듈을 하나의 윤곽으로 합칩니다. `random-dots`와 `mosaic`은 모듈마다 달라지지만 결정적입니다. 같은 값이면 항상 같은 코드가 그려집니다.
 
 <QrCatalog kind="body" />
 
 ## 눈 프레임 [#eye-frames]
 
-코드 모서리 세 곳에 있는 마커의 바깥 고리입니다(`cornerEyePattern`). `leaf`, `leaf-reverse`, `drop`, `petal`은 각 눈이 코드의 모서리를 향하도록 회전시킵니다. 각 타일은 눈과 권장 중심을 짝지어 보여줍니다.
+세 모서리 마커의 바깥 고리입니다(`cornerEyePattern`). `leaf`, `leaf-reverse`, `drop`, `petal`은 각 눈이 코드의 모서리를 향하도록 돌립니다. 각 타일은 눈과 권장 중심을 함께 보여 줍니다.
 
 <QrCatalog kind="eye" />
 
 ## 눈 중심 [#eye-centers]
 
-각 모서리 마커의 속이 찬 중심입니다(`cornerEyeDotPattern`). 사각형 눈 안에 표시됩니다.
+각 모서리 마커의 채워진 중심입니다(`cornerEyeDotPattern`). 사각형 눈 안에 표시됩니다.
 
 <QrCatalog kind="dot" />
 
 ## 프레임 [#frames]
 
-행동 유도 프레임은 코드 주위에 그려지므로 코드와 여백(quiet zone)은 가려지지 않고, 다운로드한 이미지가 그에 맞춰 커집니다. 모든 프레임은 `text`(최대 24자), `color`, `textColor`, `fontScale`(0.5에서 1.5)을 받습니다. `banner-top-bottom`, `circle`, `menu-card`는 `secondaryText`도 표시하며, `gradient-border`는 `color`에서 `secondaryColor`까지 그라데이션으로 이어집니다.
+행동 유도 프레임은 코드 둘레에 그려지므로 코드와 여백은 절대 가려지지 않고, 다운로드한 이미지는 프레임에 맞게 커집니다. 아래의 기본 제공 프레임은 모두 프레임 사양이며, [공식 및 커뮤니티 프레임](/docs/features/frames)과 같은 엔진으로 그립니다. 모든 프레임은 `text`(최대 24자), `color`, `textColor`, `fontScale`(0.5~1.5)을 받습니다. `banner-top-bottom`, `circle`, `menu-card`는 `secondaryText`도 표시하고, `gradient-border`는 `color`에서 `secondaryColor`로 이어집니다.
 
 <QrCatalog kind="frame" />
 
@@ -48,12 +48,12 @@ import { QRCode } from "qrdx";
 
 ## 피해야 할 조합 [#pairs-to-avoid]
 
-단독으로는 스캔되는 도형도 함께 쓰면 디코딩 테스트에서 실패하는 조합이 몇 가지 있습니다. Playground에서는 이런 조합을 함께 선택할 수 없고, 스캔 점수가 경고해 줍니다(`style-pair`).
+단독으로는 스캔되는 모양이라도 일부 조합은 디코딩 테스트에서 함께 쓰면 실패합니다. Playground에서는 이런 조합을 함께 고를 수 없고, 스캔 점수가 경고(`style-pair`)를 표시합니다.
 
-- `diamond` 본문과 `square` 눈, `pacman`과 `rounded`, `small-square`와 `square` 또는 `rounded` 눈(가까이에서 인식 실패)
+- `square` 눈 옆의 `diamond` 본문, `rounded` 옆의 `pacman`, `square` 또는 `rounded` 눈 옆의 `small-square`(가까이서 인식되지 않음)
 
-`circle` 눈은 테스트하는 두 디코더(jsQR와 ZXing) 모두에서 읽히지만 **caution**으로 표시됩니다. 일부 스캐너 앱은 인식하지 못할 수 있습니다. 이 조합은 패키지에 `WEAK_BODY_EYES`로 포함되어 있고, `getStylePairRisk(props)`는 스타일에 대한 경고를 반환합니다.
+`circle` 눈은 테스트하는 두 디코더(jsQR과 ZXing) 모두에서 읽히지만 **주의**로 표시됩니다. 일부 스캐너 앱에서는 인식하지 못합니다. 이 조합은 패키지에 `WEAK_BODY_EYES`로 포함되어 있으며, `getStylePairRisk(props)`는 해당 스타일의 경고를 반환합니다.
 
-## 제거된 도형 [#retired-shapes]
+## 제거된 모양 [#retired-shapes]
 
-`curly` 눈과 `diamond`, `star`, `banner` 중심은 안정적으로 스캔되지 않아 제거했습니다. 대부분의 Android 스캐너가 쓰는 디코더인 ZXing은 휴대폰 거리에서 curly 눈과 diamond, star 중심을 인식하지 못하고, jsQR은 모든 sharp 렌더에서 banner 중심을 인식하지 못합니다. 이 스타일로 저장한 코드는 이전과 똑같이 불러오고 렌더링되며, Image API도 기존 링크에는 계속 그려 주지만, 선택기, 프리셋, AI 테마에서는 더 이상 제공하지 않습니다. 이름은 지원 중단된 값으로만 남아 있습니다(`RETIRED_CORNER_EYE_PATTERNS`, `RETIRED_CORNER_EYE_DOT_PATTERNS`).
+`curly` 눈과 `diamond`, `star`, `banner` 중심은 안정적으로 스캔되지 않아 제거했습니다. 대부분의 Android 스캐너에 쓰이는 디코더인 ZXing은 휴대폰 거리에서 curly 눈과 diamond, star 중심을 인식하지 못하고, jsQR은 선명한 렌더링 모두에서 banner 중심을 인식하지 못합니다. 이 모양으로 저장한 코드는 전과 똑같이 불러오고 렌더링되며, 기존 링크에는 Image API도 계속 그려 주지만, 어떤 선택기와 프리셋, AI 테마에서도 제공하지 않습니다. 이름은 지원 중단된 값(`RETIRED_CORNER_EYE_PATTERNS`, `RETIRED_CORNER_EYE_DOT_PATTERNS`)으로만 남아 있습니다.

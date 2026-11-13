@@ -17,6 +17,7 @@ import {
   type CornerEyeDotPattern,
   type CornerEyePattern,
   type FrameStyle,
+  getBuiltInFrame,
   type PickableCornerEyeDotPattern,
   type PickableCornerEyePattern,
   WEAK_BODY_EYES,
@@ -67,9 +68,9 @@ export interface FrameMeta {
   popularity: number | null;
   /** Frames are drawn around the code, so none affects scanning */
   scanRisk: "ok";
-  /** Shows `secondaryText` (a second line) */
+  /** Shows `secondaryText` (a second line): its spec has a secondary label */
   secondLine: boolean;
-  /** Default label color is the frame color (else white on the frame) */
+  /** The label sits on the code's background (BuiltInFrame.labelOn) */
   textOnLight: boolean;
 }
 
@@ -295,147 +296,32 @@ const DOTS: Record<PickableCornerEyeDotPattern, Base> = {
   },
 };
 
-const FRAMES: Record<FrameStyle, Omit<FrameMeta, "value" | "scanRisk">> = {
-  none: {
-    label: "None",
-    category: "Classic",
-    popularity: null,
-    secondLine: false,
-    textOnLight: false,
-  },
-  "banner-bottom": {
-    label: "Banner",
-    category: "Classic",
-    popularity: 1,
-    secondLine: false,
-    textOnLight: false,
-  },
-  "rounded-border": {
-    label: "Rounded",
-    category: "Rounded",
-    popularity: 2,
-    secondLine: false,
-    textOnLight: true,
-  },
-  "speech-bubble": {
-    label: "Bubble",
-    category: "Rounded",
-    popularity: 3,
-    secondLine: false,
-    textOnLight: false,
-  },
-  border: {
-    label: "Border",
-    category: "Classic",
-    popularity: 4,
-    secondLine: false,
-    textOnLight: true,
-  },
-  "banner-top": {
-    label: "Top banner",
-    category: "Classic",
-    popularity: 5,
-    secondLine: false,
-    textOnLight: false,
-  },
-  circle: {
-    label: "Circle",
-    category: "Rounded",
-    popularity: 6,
-    secondLine: true,
-    textOnLight: false,
-  },
-  sticker: {
-    label: "Sticker",
-    category: "Decorative",
-    popularity: 7,
-    secondLine: false,
-    textOnLight: false,
-  },
-  phone: {
-    label: "Phone",
-    category: "Playful",
-    popularity: 8,
-    secondLine: false,
-    textOnLight: true,
-  },
-  "banner-top-bottom": {
-    label: "Two banners",
-    category: "Classic",
-    popularity: null,
-    secondLine: true,
-    textOnLight: false,
-  },
-  focus: {
-    label: "Focus",
-    category: "Classic",
-    popularity: null,
-    secondLine: false,
-    textOnLight: true,
-  },
-  "speech-bubble-top": {
-    label: "Bubble top",
-    category: "Rounded",
-    popularity: null,
-    secondLine: false,
-    textOnLight: false,
-  },
-  "chat-bubble": {
-    label: "Chat",
-    category: "Rounded",
-    popularity: null,
-    secondLine: false,
-    textOnLight: false,
-  },
-  "gradient-border": {
-    label: "Gradient",
-    category: "Decorative",
-    popularity: null,
-    secondLine: false,
-    textOnLight: true,
-  },
-  badge: {
-    label: "Ribbon",
-    category: "Decorative",
-    popularity: null,
-    secondLine: false,
-    textOnLight: false,
-  },
-  polaroid: {
-    label: "Polaroid",
-    category: "Decorative",
-    popularity: null,
-    secondLine: false,
-    textOnLight: false,
-  },
-  ticket: {
-    label: "Ticket",
-    category: "Playful",
-    popularity: null,
-    secondLine: false,
-    textOnLight: false,
-  },
-  tag: {
-    label: "Tag",
-    category: "Playful",
-    popularity: null,
-    secondLine: false,
-    textOnLight: false,
-  },
-  envelope: {
-    label: "Envelope",
-    category: "Playful",
-    popularity: null,
-    secondLine: false,
-    textOnLight: false,
-  },
-  "menu-card": {
-    label: "Menu card",
-    category: "Playful",
-    popularity: null,
-    secondLine: true,
-    textOnLight: true,
-  },
+// Where each frame sits in the pickers. The name, the second line and what
+// the label sits on come from the engine's catalogue (qrdx BUILT_IN_FRAMES).
+const FRAME_RANKS: Record<
+  FrameStyle,
+  Pick<FrameMeta, "category" | "popularity">
+> = {
+  none: { category: "Classic", popularity: null },
+  "banner-bottom": { category: "Classic", popularity: 1 },
+  "rounded-border": { category: "Rounded", popularity: 2 },
+  "speech-bubble": { category: "Rounded", popularity: 3 },
+  border: { category: "Classic", popularity: 4 },
+  "banner-top": { category: "Classic", popularity: 5 },
+  circle: { category: "Rounded", popularity: 6 },
+  sticker: { category: "Decorative", popularity: 7 },
+  phone: { category: "Playful", popularity: 8 },
+  "banner-top-bottom": { category: "Classic", popularity: null },
+  focus: { category: "Classic", popularity: null },
+  "speech-bubble-top": { category: "Rounded", popularity: null },
+  "chat-bubble": { category: "Rounded", popularity: null },
+  "gradient-border": { category: "Decorative", popularity: null },
+  badge: { category: "Decorative", popularity: null },
+  polaroid: { category: "Decorative", popularity: null },
+  ticket: { category: "Playful", popularity: null },
+  tag: { category: "Playful", popularity: null },
+  envelope: { category: "Playful", popularity: null },
+  "menu-card": { category: "Playful", popularity: null },
 };
 
 const compact = (failsWith: FailsWith): FailsWith =>
@@ -477,11 +363,19 @@ export const DOT_CATALOG: PatternMeta<CornerEyeDotPattern>[] =
     failsWith: compact({ eye: [...(WEAK_DOT_EYES[value] ?? [])] }),
   }));
 
-export const FRAME_CATALOG: FrameMeta[] = FRAME_STYLES.map((value) => ({
-  value,
-  ...FRAMES[value],
-  scanRisk: "ok",
-}));
+export const FRAME_CATALOG: FrameMeta[] = FRAME_STYLES.map((value) => {
+  const frame = getBuiltInFrame(value);
+  return {
+    value,
+    label: frame?.name ?? "None",
+    ...FRAME_RANKS[value],
+    scanRisk: "ok",
+    secondLine: Boolean(
+      frame?.spec.labels.some((label) => label.slot === "secondary"),
+    ),
+    textOnLight: frame?.labelOn === "background",
+  };
+});
 
 /** The most popular options of a catalog, in rank order. */
 export function popular<T extends { popularity: number | null }>(
