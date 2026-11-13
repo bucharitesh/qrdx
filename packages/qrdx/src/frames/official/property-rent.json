@@ -3,7 +3,7 @@
   "name": "For rent",
   "description": "Bands over and under the code: the note on top, the label below.",
   "category": "use-case",
-  "collection": "places",
+  "collection": "real-estate",
   "contentTypes": ["url"],
   "tags": ["real estate", "property", "rental"],
   "license": "CC0-1.0",

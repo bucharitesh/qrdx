@@ -1,0 +1,92 @@
+{
+  "id": "start-a-return",
+  "name": "Start a return",
+  "description": "A folder tab on top carrying the label and a return arrow.",
+  "category": "use-case",
+  "collection": "shopping",
+  "contentTypes": ["url"],
+  "tags": ["retail", "shop", "returns"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1560
+    },
+    "qr": {
+      "x": 120,
+      "y": 290,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1000,
+        "height": 220,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 170,
+        "width": 1240,
+        "height": 1390,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 170,
+        "width": 200,
+        "height": 100,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M917 148L917 95.25L916.64 91.14L915.59 87.2L913.86 83.5L911.53 80.16L908.64 77.27L905.3 74.94L901.6 73.21L897.66 72.16L893.6 71.8L889.54 72.16L885.6 73.21L881.9 74.94L878.56 77.27L875.67 80.16L873.34 83.5L871.61 87.2L870.56 91.14L870.2 95.37L870.2 107.2L857 107.2L857 95.03L857.56 88.84L859.21 82.68L861.9 76.9L865.56 71.67L870.07 67.16L875.3 63.5L881.08 60.81L887.24 59.16L893.6 58.6L899.96 59.16L906.12 60.81L911.9 63.5L917.13 67.16L921.64 71.67L925.3 76.9L927.99 82.68L929.64 88.84L930.2 95.15L930.2 148ZM845.6 104.8L881.6 104.8L863.6 128.8Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Start a return",
+        "color": "text",
+        "box": {
+          "x": 60,
+          "y": 25,
+          "width": 740,
+          "height": 150
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "No printer needed",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 1400,
+          "width": 1000,
+          "height": 100
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "id": "bath-ritual",
+  "name": "Bath ritual",
+  "description": "An arched card, like a window, with a bathtub.",
+  "category": "use-case",
+  "collection": "beauty-wellness",
+  "contentTypes": ["url"],
+  "tags": ["beauty", "wellness", "bath", "self-care"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1880
+    },
+    "qr": {
+      "x": 160,
+      "y": 470,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M0 660A660 660 0 0 1 1320 660L1320 1840Q1320 1880 1280 1880L40 1880Q0 1880 0 1840Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.9
+        }
+      },
+      {
+        "type": "path",
+        "d": "M50 660A610 610 0 0 1 1270 660L1270 1830L50 1830ZM62 660L62 1818L1258 1818L1258 660A598 598 0 0 0 62 660Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M594 243L726 243L726 255C726 279 708 291 684 291L636 291C612 291 594 279 594 255ZM611.25 243A3.75 3.75 0 0 0 603.75 243L603.75 200.93L604.95 194.97L608.36 189.86L613.47 186.45L619.5 185.25L625.53 186.45L630.64 189.86L634.05 194.97L635.24 200.75L635.25 210A3.75 3.75 0 0 0 627.75 210L627.76 201.25L627.12 197.84L625.33 195.17L622.66 193.38L619.5 192.75L616.34 193.38L613.67 195.17L611.88 197.84L611.25 201.07L611.25 243ZM618 291L624 291A3 3 0 0 1 627 294L627 303A3 3 0 0 1 624 306L618 306A3 3 0 0 1 615 303L615 294A3 3 0 0 1 618 291ZM696 291L702 291A3 3 0 0 1 705 294L705 303A3 3 0 0 1 702 306L696 306A3 3 0 0 1 693 303L693 294A3 3 0 0 1 696 291Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M645 228A9 9 0 1 1 663 228A9 9 0 1 1 645 228ZM663 219A12 12 0 1 1 687 219A12 12 0 1 1 663 219ZM690 229.5A9 9 0 1 1 708 229.5A9 9 0 1 1 690 229.5Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Your bath ritual",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 1610,
+          "width": 1040,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

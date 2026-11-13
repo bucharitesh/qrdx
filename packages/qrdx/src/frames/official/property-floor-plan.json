@@ -3,7 +3,7 @@
   "name": "Floor plans",
   "description": "A light card with an apartment building and a solid label band.",
   "category": "use-case",
-  "collection": "places",
+  "collection": "real-estate",
   "contentTypes": ["url"],
   "tags": ["real estate", "property", "floor plans", "apartments"],
   "license": "CC0-1.0",

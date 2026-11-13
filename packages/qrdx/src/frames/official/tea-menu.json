@@ -1,0 +1,70 @@
+{
+  "id": "tea-menu",
+  "name": "Tea menu",
+  "description": "An arched card, like a window, with a teapot.",
+  "category": "use-case",
+  "collection": "food-drink",
+  "contentTypes": ["url"],
+  "tags": ["restaurant", "food", "tea", "cafe"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1880
+    },
+    "qr": {
+      "x": 160,
+      "y": 470,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M0 660A660 660 0 0 1 1320 660L1320 1840Q1320 1880 1280 1880L40 1880Q0 1880 0 1840Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.9
+        }
+      },
+      {
+        "type": "path",
+        "d": "M50 660A610 610 0 0 1 1270 660L1270 1830L50 1830ZM62 660L62 1818L1258 1818L1258 660A598 598 0 0 0 62 660Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M615 259.5A45 39 0 1 1 705 259.5A45 39 0 1 1 615 259.5ZM621 258C606 255 597 240 592.5 225L604.5 220.5C609 235.5 616.5 243 625.5 244.5ZM711.21 233.32A24 24 0 0 1 711.21 279.68L708.49 269.54A13.5 13.5 0 0 0 708.49 243.46Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M631.5 216C634.5 199.5 685.5 199.5 688.5 216ZM652.5 193.5A7.5 7.5 0 1 1 667.5 193.5A7.5 7.5 0 1 1 652.5 193.5Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for the tea menu",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 1610,
+          "width": 1040,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

@@ -22,6 +22,8 @@ import {
 } from "./lib.mjs";
 import { motif } from "./motifs.mjs";
 
+export * from "./layouts-industries.mjs";
+
 const F = "frame";
 const T = "text";
 const AC = "accent";

@@ -1,0 +1,121 @@
+{
+  "id": "window-quote",
+  "name": "Window quote",
+  "description": "A thin double border with a window, a small divider and the label.",
+  "category": "use-case",
+  "collection": "real-estate",
+  "contentTypes": ["url"],
+  "tags": ["real estate", "property", "windows", "doors"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1830
+    },
+    "qr": {
+      "x": 160,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1320,
+        "height": 1830,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 30,
+        "y": 30,
+        "width": 1260,
+        "height": 1770,
+        "fill": "frame",
+        "hole": {
+          "x": 40,
+          "y": 40,
+          "width": 1240,
+          "height": 1750
+        }
+      },
+      {
+        "type": "rect",
+        "x": 60,
+        "y": 60,
+        "width": 1200,
+        "height": 1710,
+        "fill": "frame",
+        "hole": {
+          "x": 64,
+          "y": 64,
+          "width": 1192,
+          "height": 1702
+        }
+      },
+      {
+        "type": "path",
+        "d": "M618 88.4L702 88.4A8.4 8.4 0 0 1 710.4 96.8L710.4 194.8A8.4 8.4 0 0 1 702 203.2L618 203.2A8.4 8.4 0 0 1 609.6 194.8L609.6 96.8A8.4 8.4 0 0 1 618 88.4ZM620.8 96.8A2.8 2.8 0 0 0 618 99.6L618 141.6A2.8 2.8 0 0 0 620.8 144.4L654.4 144.4A2.8 2.8 0 0 0 657.2 141.6L657.2 99.6A2.8 2.8 0 0 0 654.4 96.8L620.8 96.8ZM665.6 96.8A2.8 2.8 0 0 0 662.8 99.6L662.8 141.6A2.8 2.8 0 0 0 665.6 144.4L699.2 144.4A2.8 2.8 0 0 0 702 141.6L702 99.6A2.8 2.8 0 0 0 699.2 96.8L665.6 96.8ZM620.8 150A2.8 2.8 0 0 0 618 152.8L618 192A2.8 2.8 0 0 0 620.8 194.8L654.4 194.8A2.8 2.8 0 0 0 657.2 192L657.2 152.8A2.8 2.8 0 0 0 654.4 150L620.8 150ZM665.6 150A2.8 2.8 0 0 0 662.8 152.8L662.8 192A2.8 2.8 0 0 0 665.6 194.8L699.2 194.8A2.8 2.8 0 0 0 702 192L702 152.8A2.8 2.8 0 0 0 699.2 150L665.6 150Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M604 203.2L716 203.2A2.8 2.8 0 0 1 718.8 206L718.8 210.2A2.8 2.8 0 0 1 716 213L604 213A2.8 2.8 0 0 1 601.2 210.2L601.2 206A2.8 2.8 0 0 1 604 203.2Z",
+        "fill": "accent"
+      },
+      {
+        "type": "line",
+        "x1": 470,
+        "y1": 1570,
+        "x2": 850,
+        "y2": 1570,
+        "width": 6,
+        "fill": "frame"
+      },
+      {
+        "type": "polygon",
+        "points": [[660, 1550], [680, 1570], [660, 1590], [640, 1570]],
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Get a window quote",
+        "color": "frame",
+        "box": {
+          "x": 180,
+          "y": 1610,
+          "width": 960,
+          "height": 160
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Doors and windows",
+        "color": "frame",
+        "box": {
+          "x": 180,
+          "y": 225,
+          "width": 960,
+          "height": 100
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

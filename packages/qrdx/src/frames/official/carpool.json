@@ -1,0 +1,79 @@
+{
+  "id": "carpool",
+  "name": "Carpool",
+  "description": "A speech bubble around the code with the front of a car and the label inside.",
+  "category": "use-case",
+  "collection": "automotive",
+  "contentTypes": ["url"],
+  "tags": ["cars", "parking", "carpool", "commute"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1820
+    },
+    "qr": {
+      "x": 120,
+      "y": 360,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1670,
+        "radius": 90,
+        "fill": "frame"
+      },
+      {
+        "type": "polygon",
+        "points": [[130, 1660], [310, 1660], [80, 1820]],
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M587 78C589.2 70.3 593.6 67 600.2 67L639.8 67C646.4 67 650.8 70.3 653 78L659.6 95.6L667.3 94.5L667.3 103.3L661.8 104.4L664 108.8L664 130.8L576 130.8L576 108.8L578.2 104.4L572.7 103.3L572.7 94.5L580.4 95.6ZM583.7 128.6L594.7 128.6A3.3 3.3 0 0 1 598 131.9L598 140.7A3.3 3.3 0 0 1 594.7 144L583.7 144A3.3 3.3 0 0 1 580.4 140.7L580.4 131.9A3.3 3.3 0 0 1 583.7 128.6ZM645.3 128.6L656.3 128.6A3.3 3.3 0 0 1 659.6 131.9L659.6 140.7A3.3 3.3 0 0 1 656.3 144L645.3 144A3.3 3.3 0 0 1 642 140.7L642 131.9A3.3 3.3 0 0 1 645.3 128.6ZM589.2 93.4L650.8 93.4L644.2 73.6L595.8 73.6ZM583.7 112.1A6.6 6.6 0 1 0 596.9 112.1A6.6 6.6 0 1 0 583.7 112.1ZM643.1 112.1A6.6 6.6 0 1 0 656.3 112.1A6.6 6.6 0 1 0 643.1 112.1ZM607.9 108.8A2.2 2.2 0 0 0 605.7 111L605.7 116.5A2.2 2.2 0 0 0 607.9 118.7L632.1 118.7A2.2 2.2 0 0 0 634.3 116.5L634.3 111A2.2 2.2 0 0 0 632.1 108.8L607.9 108.8Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Join the carpool",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1465,
+          "width": 1040,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Share the ride",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 170,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

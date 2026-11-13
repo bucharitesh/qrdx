@@ -1,0 +1,115 @@
+{
+  "id": "sushi-menu",
+  "name": "Sushi menu",
+  "description": "A thin double border with a piece of sushi, a small divider and the label.",
+  "category": "use-case",
+  "collection": "food-drink",
+  "contentTypes": ["url"],
+  "tags": ["restaurant", "food", "sushi", "japanese"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1830
+    },
+    "qr": {
+      "x": 160,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1320,
+        "height": 1830,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 30,
+        "y": 30,
+        "width": 1260,
+        "height": 1770,
+        "fill": "frame",
+        "hole": {
+          "x": 40,
+          "y": 40,
+          "width": 1240,
+          "height": 1750
+        }
+      },
+      {
+        "type": "rect",
+        "x": 60,
+        "y": 60,
+        "width": 1200,
+        "height": 1710,
+        "fill": "frame",
+        "hole": {
+          "x": 64,
+          "y": 64,
+          "width": 1192,
+          "height": 1702
+        }
+      },
+      {
+        "type": "path",
+        "d": "M630.6 162.6L689.4 162.6A21 21 0 0 1 710.4 183.6L710.4 183.6A21 21 0 0 1 689.4 204.6L630.6 204.6A21 21 0 0 1 609.6 183.6L609.6 183.6A21 21 0 0 1 630.6 162.6ZM601.2 147.2C606.8 113.6 674 102.4 721.6 127.6L718.8 141.6C674 133.2 634.8 138.8 604 158.4ZM627 130.22L634 142.82A2.52 2.52 0 0 1 638.4 140.38L631.4 127.78A2.52 2.52 0 0 1 627 130.22ZM655 123.22L662 135.82A2.52 2.52 0 0 1 666.4 133.38L659.4 120.78A2.52 2.52 0 0 1 655 123.22ZM681.82 124.72L687.42 133.12A2.38 2.38 0 0 1 691.38 130.48L685.78 122.08A2.38 2.38 0 0 1 681.82 124.72Z",
+        "fill": "frame"
+      },
+      {
+        "type": "line",
+        "x1": 470,
+        "y1": 1570,
+        "x2": 850,
+        "y2": 1570,
+        "width": 6,
+        "fill": "frame"
+      },
+      {
+        "type": "polygon",
+        "points": [[660, 1550], [680, 1570], [660, 1590], [640, 1570]],
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "See the sushi menu",
+        "color": "frame",
+        "box": {
+          "x": 180,
+          "y": 1610,
+          "width": 960,
+          "height": 160
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Fresh every day",
+        "color": "frame",
+        "box": {
+          "x": 180,
+          "y": 225,
+          "width": 960,
+          "height": 100
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

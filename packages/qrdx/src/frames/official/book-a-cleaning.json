@@ -1,0 +1,92 @@
+{
+  "id": "book-a-cleaning",
+  "name": "Cleaning service",
+  "description": "A light card with water drops and a pill-shaped button under the code.",
+  "category": "use-case",
+  "collection": "business",
+  "contentTypes": ["calcom", "url"],
+  "tags": ["business", "cleaning"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1760
+    },
+    "qr": {
+      "x": 120,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 64,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.9
+        }
+      },
+      {
+        "type": "path",
+        "d": "M599.2 55.7C606.03 73.64 618.7 84.3 618.7 96A19.5 19.5 0 0 1 579.7 96C579.7 84.3 592.38 73.64 599.2 55.7ZM643.4 49.2C648.18 61.68 657.05 68.96 657.05 77.15A13.65 13.65 0 0 1 629.75 77.15C629.75 68.96 638.62 61.68 643.4 49.2Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M638.2 107.7C642.75 119.4 651.2 125.9 651.2 133.7A13 13 0 0 1 625.2 133.7C625.2 125.9 633.65 119.4 638.2 107.7Z",
+        "fill": "accent"
+      },
+      {
+        "type": "rect",
+        "x": 170,
+        "y": 1520,
+        "width": 900,
+        "height": 180,
+        "radius": 90,
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Book a cleaning",
+        "color": "text",
+        "box": {
+          "x": 230,
+          "y": 1520,
+          "width": 780,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Home and office",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 180,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

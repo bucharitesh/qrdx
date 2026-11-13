@@ -33,12 +33,22 @@ const COLLECTION_LOADERS: Record<
     import("../../../../packages/qrdx/src/frames/catalogue/food-drink"),
   shopping: () =>
     import("../../../../packages/qrdx/src/frames/catalogue/shopping"),
+  "beauty-wellness": () =>
+    import("../../../../packages/qrdx/src/frames/catalogue/beauty-wellness"),
   events: () => import("../../../../packages/qrdx/src/frames/catalogue/events"),
   places: () => import("../../../../packages/qrdx/src/frames/catalogue/places"),
+  "real-estate": () =>
+    import("../../../../packages/qrdx/src/frames/catalogue/real-estate"),
+  automotive: () =>
+    import("../../../../packages/qrdx/src/frames/catalogue/automotive"),
   "health-learning": () =>
     import("../../../../packages/qrdx/src/frames/catalogue/health-learning"),
+  "sports-fitness": () =>
+    import("../../../../packages/qrdx/src/frames/catalogue/sports-fitness"),
   business: () =>
     import("../../../../packages/qrdx/src/frames/catalogue/business"),
+  nonprofit: () =>
+    import("../../../../packages/qrdx/src/frames/catalogue/nonprofit"),
 };
 
 const loadIndexModule = () =>

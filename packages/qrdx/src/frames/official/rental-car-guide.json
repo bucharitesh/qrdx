@@ -1,0 +1,115 @@
+{
+  "id": "rental-car-guide",
+  "name": "Rental car guide",
+  "description": "A thin double border with the front of a car, a small divider and the label.",
+  "category": "use-case",
+  "collection": "automotive",
+  "contentTypes": ["url"],
+  "tags": ["cars", "parking", "car rental", "guide"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1830
+    },
+    "qr": {
+      "x": 160,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1320,
+        "height": 1830,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 30,
+        "y": 30,
+        "width": 1260,
+        "height": 1770,
+        "fill": "frame",
+        "hole": {
+          "x": 40,
+          "y": 40,
+          "width": 1240,
+          "height": 1750
+        }
+      },
+      {
+        "type": "rect",
+        "x": 60,
+        "y": 60,
+        "width": 1200,
+        "height": 1710,
+        "fill": "frame",
+        "hole": {
+          "x": 64,
+          "y": 64,
+          "width": 1192,
+          "height": 1702
+        }
+      },
+      {
+        "type": "path",
+        "d": "M618 122C620.8 112.2 626.4 108 634.8 108L685.2 108C693.6 108 699.2 112.2 702 122L710.4 144.4L720.2 143L720.2 154.2L713.2 155.6L716 161.2L716 189.2L604 189.2L604 161.2L606.8 155.6L599.8 154.2L599.8 143L609.6 144.4ZM613.8 186.4L627.8 186.4A4.2 4.2 0 0 1 632 190.6L632 201.8A4.2 4.2 0 0 1 627.8 206L613.8 206A4.2 4.2 0 0 1 609.6 201.8L609.6 190.6A4.2 4.2 0 0 1 613.8 186.4ZM692.2 186.4L706.2 186.4A4.2 4.2 0 0 1 710.4 190.6L710.4 201.8A4.2 4.2 0 0 1 706.2 206L692.2 206A4.2 4.2 0 0 1 688 201.8L688 190.6A4.2 4.2 0 0 1 692.2 186.4ZM620.8 141.6L699.2 141.6L690.8 116.4L629.2 116.4ZM613.8 165.4A8.4 8.4 0 1 0 630.6 165.4A8.4 8.4 0 1 0 613.8 165.4ZM689.4 165.4A8.4 8.4 0 1 0 706.2 165.4A8.4 8.4 0 1 0 689.4 165.4ZM644.6 161.2A2.8 2.8 0 0 0 641.8 164L641.8 171A2.8 2.8 0 0 0 644.6 173.8L675.4 173.8A2.8 2.8 0 0 0 678.2 171L678.2 164A2.8 2.8 0 0 0 675.4 161.2L644.6 161.2Z",
+        "fill": "frame"
+      },
+      {
+        "type": "line",
+        "x1": 470,
+        "y1": 1570,
+        "x2": 850,
+        "y2": 1570,
+        "width": 6,
+        "fill": "frame"
+      },
+      {
+        "type": "polygon",
+        "points": [[660, 1550], [680, 1570], [660, 1590], [640, 1570]],
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Rental car guide",
+        "color": "frame",
+        "box": {
+          "x": 180,
+          "y": 1610,
+          "width": 960,
+          "height": 160
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Controls and tips",
+        "color": "frame",
+        "box": {
+          "x": 180,
+          "y": 225,
+          "width": 960,
+          "height": 100
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

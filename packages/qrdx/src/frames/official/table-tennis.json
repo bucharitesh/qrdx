@@ -1,0 +1,116 @@
+{
+  "id": "table-tennis",
+  "name": "Table tennis",
+  "description": "A light card with a table tennis paddle and a solid label band.",
+  "category": "use-case",
+  "collection": "sports-fitness",
+  "contentTypes": ["calcom", "url"],
+  "tags": ["sports", "fitness", "table tennis"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1770
+    },
+    "qr": {
+      "x": 120,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.92
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "frame",
+        "hole": {
+          "x": 20,
+          "y": 20,
+          "width": 1200,
+          "height": 1730,
+          "radius": 38
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 250,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 60,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M564.88 118.55A44.8 44.8 -38 1 1 635.48 63.39A44.8 44.8 -38 1 1 564.88 118.55ZM624.94 124.93L627.14 123.2A5.6 5.6 -38 0 1 635 124.17L652.24 146.23A5.6 5.6 -38 0 1 651.28 154.09L649.07 155.82A5.6 5.6 -38 0 1 641.21 154.85L623.97 132.79A5.6 5.6 -38 0 1 624.94 124.93Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M653.6 57.2A11.2 11.2 0 1 1 676 57.2A11.2 11.2 0 1 1 653.6 57.2Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Book a table",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1550,
+          "width": 1040,
+          "height": 190
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Table tennis",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 180,
+          "width": 960,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

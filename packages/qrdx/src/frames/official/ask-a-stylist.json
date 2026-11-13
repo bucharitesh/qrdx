@@ -1,0 +1,112 @@
+{
+  "id": "ask-a-stylist",
+  "name": "Ask a stylist",
+  "description": "Two chat bubbles: a light one with the note and a solid one with the label.",
+  "category": "use-case",
+  "collection": "shopping",
+  "contentTypes": ["url"],
+  "tags": ["retail", "shop", "styling", "fashion"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1750
+    },
+    "qr": {
+      "x": 120,
+      "y": 360,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 900,
+        "height": 200,
+        "radius": 70,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.86
+        }
+      },
+      {
+        "type": "polygon",
+        "points": [[120, 198], [260, 198], [90, 270]],
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.86
+        }
+      },
+      {
+        "type": "rect",
+        "x": 300,
+        "y": 1510,
+        "width": 940,
+        "height": 220,
+        "radius": 80,
+        "fill": "frame"
+      },
+      {
+        "type": "polygon",
+        "points": [[980, 1512], [1120, 1512], [1180, 1430]],
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 40,
+        "y": 260,
+        "width": 1160,
+        "height": 1200,
+        "radius": 56,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.95
+        }
+      },
+      {
+        "type": "path",
+        "d": "M163.28 1596.33L163.65 1592.49L164.6 1589.56L166.03 1586.94L167.85 1584.48L169.97 1582.07L172.22 1579.58L174.43 1576.87L176.39 1573.78L177.78 1570.15L178.27 1566.41L178.26 1565.48L177.55 1561.27L175.38 1557.01L171.99 1553.62L167.73 1551.45L163 1550.7L158.27 1551.45L154.01 1553.62L150.62 1557.01L148.45 1561.27L147.74 1565.48A3.3 3.3 0 0 1 154.26 1566.52L154.73 1563.31L155.96 1560.89L157.89 1558.96L160.31 1557.73L163 1557.3L165.69 1557.73L168.11 1558.96L170.04 1560.89L171.27 1563.31L171.74 1566.52L171.73 1565.59L171.38 1568.56L170.49 1570.8L169.09 1573L167.22 1575.27L165.03 1577.68L162.71 1580.35L160.45 1583.4L158.52 1586.99L157.19 1591.19L156.72 1595.67A3.3 3.3 0 0 1 163.28 1596.33ZM99.65 1664.65L160 1602.75L220.35 1659.35L97 1658.25L97 1665.75L225.65 1664.65L160 1595.25L94.35 1659.35Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Ask a stylist",
+        "color": "text",
+        "box": {
+          "x": 360,
+          "y": 1530,
+          "width": 820,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Need a second opinion?",
+        "color": "frame",
+        "box": {
+          "x": 60,
+          "y": 40,
+          "width": 780,
+          "height": 120
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

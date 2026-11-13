@@ -1,0 +1,91 @@
+{
+  "id": "whats-inside",
+  "name": "Ingredients",
+  "description": "A wide label with curved top and bottom edges, the code beside a dropper bottle.",
+  "category": "use-case",
+  "collection": "beauty-wellness",
+  "contentTypes": ["url"],
+  "tags": ["beauty", "wellness", "skincare", "ingredients"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 2000,
+      "height": 1400
+    },
+    "qr": {
+      "x": 200,
+      "y": 300,
+      "size": 800,
+      "padding": 64,
+      "radius": 19.2
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M0 100Q1000 0 2000 100L2000 1300Q1000 1400 0 1300Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.88
+        }
+      },
+      {
+        "type": "path",
+        "d": "M40 150Q1000 50 1960 150L1960 162Q1000 62 40 162Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M40 1238Q1000 1338 1960 1238L1960 1250Q1000 1350 40 1250Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M1183 459.2L1237 459.2A18 18 0 0 1 1255 477.2L1255 531.2A18 18 0 0 1 1237 549.2L1183 549.2A18 18 0 0 1 1165 531.2L1165 477.2A18 18 0 0 1 1183 459.2ZM1190.2 441.2L1229.8 441.2A3.6 3.6 0 0 1 1233.4 444.8L1233.4 452A3.6 3.6 0 0 1 1229.8 455.6L1190.2 455.6A3.6 3.6 0 0 1 1186.6 452L1186.6 444.8A3.6 3.6 0 0 1 1190.2 441.2ZM1186.6 484.4A5.4 5.4 0 0 0 1181.2 489.8L1181.2 518.6A5.4 5.4 0 0 0 1186.6 524L1233.4 524A5.4 5.4 0 0 0 1238.8 518.6L1238.8 489.8A5.4 5.4 0 0 0 1233.4 484.4L1186.6 484.4Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M1210 390.8L1210 390.8A14.4 14.4 0 0 1 1224.4 405.2L1224.4 423.2A14.4 14.4 0 0 1 1210 437.6L1210 437.6A14.4 14.4 0 0 1 1195.6 423.2L1195.6 405.2A14.4 14.4 0 0 1 1210 390.8Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "What's inside",
+        "color": "frame",
+        "box": {
+          "x": 1110,
+          "y": 640,
+          "width": 800,
+          "height": 170
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Full ingredients",
+        "color": "frame",
+        "box": {
+          "x": 1110,
+          "y": 830,
+          "width": 800,
+          "height": 100
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

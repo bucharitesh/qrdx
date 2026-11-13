@@ -1,0 +1,79 @@
+{
+  "id": "report-a-repair",
+  "name": "Report a repair",
+  "description": "A card with its top corner folded down and a wrench.",
+  "category": "use-case",
+  "collection": "real-estate",
+  "contentTypes": ["url"],
+  "tags": ["real estate", "property", "repairs", "tenants"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1770
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M0 0L1000 0L1240 240L1240 1770L0 1770Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M1000 0L1000 220L1020 240L1240 240Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.6
+        }
+      },
+      {
+        "type": "path",
+        "d": "M95.34 97.12L100.67 94.88L106.32 93.66L112.1 93.49L117.82 94.38L123.27 96.31L128.28 99.19L132.68 102.94L136.32 107.44L139.08 112.52L140.86 118.02L141.6 123.76L141.29 129.53L139.92 135.15L137.55 140.43L134.25 145.18L130.15 149.25L125.36 152.5L120.07 154.82L114.44 156.13L108.66 156.4L102.93 155.6L97.45 153.77L92.39 150.96L87.93 147.28L84.22 142.85L81.38 137.81L79.51 132.34L78.67 126.62L78.89 120.84L80.17 115.2L92.55 124.87L107.01 107.64ZM138.71 135.21L191.56 179.56A10.5 10.5 40 0 1 192.86 194.35L192.86 194.35A10.5 10.5 40 0 1 178.06 195.65L125.21 151.29A10.5 10.5 40 0 1 123.91 136.5L123.91 136.5A10.5 10.5 40 0 1 138.71 135.21ZM180.22 183.75A4.5 4.5 40 1 0 187.11 189.53A4.5 4.5 40 1 0 180.22 183.75Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Report a repair",
+        "color": "text",
+        "box": {
+          "x": 90,
+          "y": 1530,
+          "width": 1060,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Tenants",
+        "color": "text",
+        "box": {
+          "x": 260,
+          "y": 100,
+          "width": 700,
+          "height": 100
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

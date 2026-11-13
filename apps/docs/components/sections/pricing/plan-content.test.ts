@@ -29,8 +29,8 @@ const base: PlanLimits = {
   customCss: false,
   storageBytes: 50 * MB,
   maxFileBytes: 10 * MB,
-  analyticsRetentionDays: 90,
-  rawScanRetentionDays: 90,
+  analyticsRetentionDays: 365,
+  rawScanRetentionDays: 365,
   customDomains: 0,
   customSlugs: false,
   teams: false,
@@ -72,8 +72,8 @@ const LIMITS: PlanLimitsByPlan = {
     landingPageBadge: false,
     storageBytes: 5 * GB,
     maxFileBytes: 100 * MB,
-    analyticsRetentionDays: 3 * 365,
-    rawScanRetentionDays: 3 * 365,
+    analyticsRetentionDays: UNLIMITED,
+    rawScanRetentionDays: 395,
     customDomains: 5,
     customSlugs: true,
     teams: true,
@@ -195,8 +195,8 @@ describe("buildComparison", () => {
       business: "50 GB (250 MB per file)",
     });
     assert.deepEqual(findRow("Analytics history"), {
-      free: "90 days",
-      pro: "3 years",
+      free: "1 year",
+      pro: "Unlimited",
       business: "Unlimited",
     });
     assert.deepEqual(findRow("Saved themes"), {
@@ -313,6 +313,21 @@ describe("buildHighlights", () => {
     assert.ok(!highlights.pro.some((line) => /single sign-on/i.test(line)));
   });
 
+  it("says how much scan history each plan keeps, once", () => {
+    const highlights = buildHighlights(LIMITS);
+    assert.ok(highlights.free.includes("1 year of analytics history"));
+    assert.ok(highlights.pro.includes("Unlimited analytics history"));
+    // The Business card starts "Everything in Pro": the same history isn't repeated.
+    assert.ok(!highlights.business.some((line) => /history/i.test(line)));
+    // A plan keeping more than Pro would say so.
+    const longer = buildHighlights({
+      ...LIMITS,
+      pro: { ...LIMITS.pro, analyticsRetentionDays: 3 * 365 },
+    });
+    assert.ok(longer.pro.includes("3 years of analytics history"));
+    assert.ok(longer.business.includes("Unlimited analytics history"));
+  });
+
   it("only sells AI art where it's available", () => {
     const art = (lines: string[]) =>
       lines.some((line) => line.includes("AI art"));
@@ -370,15 +385,15 @@ describe("features this deployment can't offer", () => {
   it("builds the pricing intro and description from what's offered", () => {
     assert.equal(
       buildPricingIntro(),
-      "Static QR codes are free forever. Paid plans add unlimited dynamic codes, longer analytics, custom domains and teams.",
+      "Static QR codes are free forever. Paid plans add unlimited dynamic codes, your full scan history, custom domains and teams.",
     );
     assert.equal(
       buildPricingIntro({ customDomains: false }),
-      "Static QR codes are free forever. Paid plans add unlimited dynamic codes, longer analytics and teams.",
+      "Static QR codes are free forever. Paid plans add unlimited dynamic codes, your full scan history and teams.",
     );
     assert.match(
       buildPricingDescription(),
-      /analytics history, custom domains and teams/,
+      /full analytics history, custom domains and teams/,
     );
     assert.doesNotMatch(
       buildPricingDescription({ customDomains: false }),
@@ -395,5 +410,11 @@ describe("features this deployment can't offer", () => {
     assert.ok(off.every((line) => !/custom domain/i.test(line)));
     assert.ok(off.includes("Teams of up to 3"));
     assert.ok(off.includes("Unlimited team members"));
+  });
+
+  it("names Pro's scan history in the upgrade dialog", () => {
+    assert.ok(
+      buildUpgradeHighlights().pro.includes("Unlimited analytics history"),
+    );
   });
 });

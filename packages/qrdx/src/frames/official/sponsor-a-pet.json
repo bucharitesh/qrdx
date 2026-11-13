@@ -1,0 +1,102 @@
+{
+  "id": "sponsor-a-pet",
+  "name": "Sponsor a pet",
+  "description": "A light card with a paw print and a pill-shaped button under the code.",
+  "category": "use-case",
+  "collection": "nonprofit",
+  "contentTypes": ["upi", "paypal", "url"],
+  "tags": ["nonprofit", "community", "animal shelter", "sponsorship"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1760
+    },
+    "qr": {
+      "x": 120,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 64,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 64,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.82
+        },
+        "hole": {
+          "x": 12,
+          "y": 12,
+          "width": 1216,
+          "height": 1736,
+          "radius": 54
+        }
+      },
+      {
+        "type": "path",
+        "d": "M620 90.8C640.8 90.8 659 114.2 656.4 132.4C653.8 148 635.6 145.4 620 145.4C604.4 145.4 586.2 148 583.6 132.4C581 114.2 599.2 90.8 620 90.8ZM566.7 88.2A11.7 15.6 0 1 1 590.1 88.2A11.7 15.6 0 1 1 566.7 88.2ZM588.8 62.2A13 16.9 0 1 1 614.8 62.2A13 16.9 0 1 1 588.8 62.2ZM625.2 62.2A13 16.9 0 1 1 651.2 62.2A13 16.9 0 1 1 625.2 62.2ZM649.9 88.2A11.7 15.6 0 1 1 673.3 88.2A11.7 15.6 0 1 1 649.9 88.2Z",
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 170,
+        "y": 1520,
+        "width": 900,
+        "height": 180,
+        "radius": 90,
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Sponsor a pet",
+        "color": "text",
+        "box": {
+          "x": 230,
+          "y": 1520,
+          "width": 780,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Animal shelter",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 180,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

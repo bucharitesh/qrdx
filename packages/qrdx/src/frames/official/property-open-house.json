@@ -3,7 +3,7 @@
   "name": "Open house",
   "description": "A solid card with a front door over the code and the label underneath.",
   "category": "use-case",
-  "collection": "places",
+  "collection": "real-estate",
   "contentTypes": ["url"],
   "tags": ["real estate", "property", "open house"],
   "license": "CC0-1.0",

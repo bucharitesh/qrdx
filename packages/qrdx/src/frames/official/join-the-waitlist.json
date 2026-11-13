@@ -1,0 +1,102 @@
+{
+  "id": "join-the-waitlist",
+  "name": "Waitlist",
+  "description": "A light card with an hourglass and a pill-shaped button under the code.",
+  "category": "use-case",
+  "collection": "call-to-action",
+  "contentTypes": [],
+  "tags": ["call to action", "waitlist", "queue"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1760
+    },
+    "qr": {
+      "x": 120,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 64,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 64,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.82
+        },
+        "hole": {
+          "x": 12,
+          "y": 12,
+          "width": 1216,
+          "height": 1736,
+          "radius": 54
+        }
+      },
+      {
+        "type": "path",
+        "d": "M579.7 36.2L660.3 36.2A3.9 3.9 0 0 1 664.2 40.1L664.2 42.7A3.9 3.9 0 0 1 660.3 46.6L579.7 46.6A3.9 3.9 0 0 1 575.8 42.7L575.8 40.1A3.9 3.9 0 0 1 579.7 36.2ZM579.7 145.4L660.3 145.4A3.9 3.9 0 0 1 664.2 149.3L664.2 151.9A3.9 3.9 0 0 1 660.3 155.8L579.7 155.8A3.9 3.9 0 0 1 575.8 151.9L575.8 149.3A3.9 3.9 0 0 1 579.7 145.4ZM586.2 49.2L653.8 49.2C653.8 77.8 627.8 88.2 627.8 96C627.8 103.8 653.8 114.2 653.8 142.8L586.2 142.8C586.2 114.2 612.2 103.8 612.2 96C612.2 88.2 586.2 77.8 586.2 49.2Z",
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 170,
+        "y": 1520,
+        "width": 900,
+        "height": 180,
+        "radius": 90,
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Join the waitlist",
+        "color": "text",
+        "box": {
+          "x": 230,
+          "y": 1520,
+          "width": 780,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "We'll text you",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 180,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

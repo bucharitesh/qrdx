@@ -1,0 +1,110 @@
+{
+  "id": "read-the-reviews",
+  "name": "Product reviews",
+  "description": "A card with two more stacked behind it and a thumbs-up.",
+  "category": "use-case",
+  "collection": "shopping",
+  "contentTypes": ["url"],
+  "tags": ["retail", "shop", "reviews"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1340,
+      "height": 1860
+    },
+    "qr": {
+      "x": 120,
+      "y": 400,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 100,
+        "y": 100,
+        "width": 1240,
+        "height": 1760,
+        "radius": 48,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.75
+        }
+      },
+      {
+        "type": "rect",
+        "x": 50,
+        "y": 50,
+        "width": 1240,
+        "height": 1760,
+        "radius": 48,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.45
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 48,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 16,
+        "y": 16,
+        "width": 1208,
+        "height": 1728,
+        "radius": 34,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.92
+        }
+      },
+      {
+        "type": "path",
+        "d": "M592 111.6L614.4 66.8C625.6 61.2 636.8 66.8 634 83.6L628.4 106L667.6 106C681.6 106 684.4 120 678.8 128.4L664.8 170.4C662 178.8 653.6 181.6 645.2 181.6L592 181.6ZM562.6 111.6L579.4 111.6A4.2 4.2 0 0 1 583.6 115.8L583.6 177.4A4.2 4.2 0 0 1 579.4 181.6L562.6 181.6A4.2 4.2 0 0 1 558.4 177.4L558.4 115.8A4.2 4.2 0 0 1 562.6 111.6Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Read the reviews",
+        "color": "frame",
+        "box": {
+          "x": 90,
+          "y": 1520,
+          "width": 1060,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "What buyers say",
+        "color": "frame",
+        "box": {
+          "x": 120,
+          "y": 210,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

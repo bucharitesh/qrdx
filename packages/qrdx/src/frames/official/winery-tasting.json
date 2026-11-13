@@ -1,0 +1,94 @@
+{
+  "id": "winery-tasting",
+  "name": "Winery tasting",
+  "description": "A solid card with a round badge holding a bunch of grapes on its top edge.",
+  "category": "use-case",
+  "collection": "food-drink",
+  "contentTypes": ["url"],
+  "tags": ["restaurant", "food", "winery", "wine", "tasting"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1830
+    },
+    "qr": {
+      "x": 120,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 150,
+        "width": 1240,
+        "height": 1680,
+        "radius": 64,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 620,
+        "cy": 150,
+        "r": 150,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 620,
+        "cy": 150,
+        "r": 120,
+        "fill": "background"
+      },
+      {
+        "type": "path",
+        "d": "M579.4 133.2A14 14 0 1 1 607.4 133.2A14 14 0 1 1 579.4 133.2ZM606 133.2A14 14 0 1 1 634 133.2A14 14 0 1 1 606 133.2ZM632.6 133.2A14 14 0 1 1 660.6 133.2A14 14 0 1 1 632.6 133.2ZM592.7 157A14 14 0 1 1 620.7 157A14 14 0 1 1 592.7 157ZM619.3 157A14 14 0 1 1 647.3 157A14 14 0 1 1 619.3 157ZM606 180.8A14 14 0 1 1 634 180.8A14 14 0 1 1 606 180.8ZM606 203.2A14 14 0 1 1 634 203.2A14 14 0 1 1 606 203.2Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M623.11 118.29A3.15 3.15 0 0 0 616.89 117.31L621.09 90.71A3.15 3.15 0 0 0 627.31 91.69L623.11 118.29ZM627 102.4C634 85.6 656.4 82.8 670.4 92.6C662 108 639.6 112.2 627 102.4Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Book a tasting",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1540,
+          "width": 1040,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Vineyard tours",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1710,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

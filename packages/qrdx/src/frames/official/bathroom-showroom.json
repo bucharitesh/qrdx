@@ -1,0 +1,113 @@
+{
+  "id": "bathroom-showroom",
+  "name": "Bathroom showroom",
+  "description": "A light card with a bathtub and a solid label band.",
+  "category": "use-case",
+  "collection": "real-estate",
+  "contentTypes": ["url"],
+  "tags": ["real estate", "property", "bathroom", "showroom"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1770
+    },
+    "qr": {
+      "x": 120,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "frame",
+        "hole": {
+          "x": 20,
+          "y": 20,
+          "width": 1200,
+          "height": 1730,
+          "radius": 38
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 250,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 60,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M558.4 104.8L681.6 104.8L681.6 116C681.6 138.4 664.8 149.6 642.4 149.6L597.6 149.6C575.2 149.6 558.4 138.4 558.4 116ZM574.5 104.8A3.5 3.5 0 0 0 567.5 104.8L567.5 65.53L568.62 59.97L571.81 55.21L576.57 52.02L582.2 50.9L587.83 52.02L592.59 55.21L595.78 59.97L596.89 65.37L596.9 74A3.5 3.5 0 0 0 589.9 74L589.91 65.83L589.31 62.65L587.64 60.16L585.15 58.49L582.2 57.9L579.25 58.49L576.76 60.16L575.09 62.65L574.5 65.67L574.5 104.8ZM580.8 149.6L586.4 149.6A2.8 2.8 0 0 1 589.2 152.4L589.2 160.8A2.8 2.8 0 0 1 586.4 163.6L580.8 163.6A2.8 2.8 0 0 1 578 160.8L578 152.4A2.8 2.8 0 0 1 580.8 149.6ZM653.6 149.6L659.2 149.6A2.8 2.8 0 0 1 662 152.4L662 160.8A2.8 2.8 0 0 1 659.2 163.6L653.6 163.6A2.8 2.8 0 0 1 650.8 160.8L650.8 152.4A2.8 2.8 0 0 1 653.6 149.6Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M606 90.8A8.4 8.4 0 1 1 622.8 90.8A8.4 8.4 0 1 1 606 90.8ZM622.8 82.4A11.2 11.2 0 1 1 645.2 82.4A11.2 11.2 0 1 1 622.8 82.4ZM648 92.2A8.4 8.4 0 1 1 664.8 92.2A8.4 8.4 0 1 1 648 92.2Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Design your bathroom",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1550,
+          "width": 1040,
+          "height": 190
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Showroom",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 180,
+          "width": 960,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

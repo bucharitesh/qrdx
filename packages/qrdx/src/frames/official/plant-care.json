@@ -1,0 +1,84 @@
+{
+  "id": "plant-care",
+  "name": "Plant care",
+  "description": "A die-cut sticker with a thick outline and an offset shadow and a potted plant.",
+  "category": "use-case",
+  "collection": "shopping",
+  "contentTypes": ["url"],
+  "tags": ["retail", "shop", "plants", "garden center"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1750
+    },
+    "qr": {
+      "x": 110,
+      "y": 370,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 50,
+        "y": 50,
+        "width": 1270,
+        "height": 1700,
+        "radius": 110,
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1270,
+        "height": 1700,
+        "radius": 110,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 36,
+        "y": 36,
+        "width": 1198,
+        "height": 1628,
+        "radius": 80,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.9
+        }
+      },
+      {
+        "type": "path",
+        "d": "M595 169.2L675 169.2L665.4 222L604.6 222ZM635 150C612.24 155.34 589.2 135.18 583.8 105.2C614.24 106.58 637.28 126.74 635 150ZM635 150C615.99 135.28 615.99 102.16 635 76.4C654.01 102.16 654.01 135.28 635 150ZM635 150C632.72 126.74 655.76 106.58 686.2 105.2C680.8 135.18 657.76 155.34 635 150ZM591.8 153.2L678.2 153.2A4.8 4.8 0 0 1 683 158L683 161.2A4.8 4.8 0 0 1 678.2 166L591.8 166A4.8 4.8 0 0 1 587 161.2L587 158A4.8 4.8 0 0 1 591.8 153.2Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "How to care for me",
+        "color": "frame",
+        "box": {
+          "x": 100,
+          "y": 1490,
+          "width": 1070,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,85 @@
+{
+  "id": "lost-and-found",
+  "name": "Lost and found",
+  "description": "A speech bubble around the code with a magnifying glass and the label inside.",
+  "category": "use-case",
+  "collection": "business",
+  "contentTypes": ["url"],
+  "tags": ["business", "lost and found"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1820
+    },
+    "qr": {
+      "x": 120,
+      "y": 360,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1670,
+        "radius": 90,
+        "fill": "frame"
+      },
+      {
+        "type": "polygon",
+        "points": [[130, 1660], [310, 1660], [80, 1820]],
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M574.9 89A34.1 34.1 0 1 1 643.1 89A34.1 34.1 0 1 1 574.9 89ZM584.8 89A24.2 24.2 0 1 0 633.2 89A24.2 24.2 0 1 0 584.8 89ZM628.14 118.26A7.15 7.15 0 0 0 638.26 108.14L667.96 137.84A7.15 7.15 0 0 0 657.84 147.96L628.14 118.26Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M590.39 82.23A19.8 19.8 0 0 1 605.56 69.5L606.33 73.83A15.4 15.4 0 0 0 594.53 83.73Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Found something?",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1465,
+          "width": 1040,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Lost and found",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 170,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

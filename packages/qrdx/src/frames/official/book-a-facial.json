@@ -1,0 +1,108 @@
+{
+  "id": "book-a-facial",
+  "name": "Facial",
+  "description": "A light card with a lotus and a pill-shaped button under the code.",
+  "category": "use-case",
+  "collection": "beauty-wellness",
+  "contentTypes": ["calcom", "url"],
+  "tags": ["beauty", "wellness", "facial", "skin"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1760
+    },
+    "qr": {
+      "x": 120,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 64,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 64,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.82
+        },
+        "hole": {
+          "x": 12,
+          "y": 12,
+          "width": 1216,
+          "height": 1736,
+          "radius": 54
+        }
+      },
+      {
+        "type": "path",
+        "d": "M620 135C642.31 117.84 642.31 79.23 620 49.2C597.69 79.23 597.69 117.84 620 135ZM617.4 137.6C622.87 117.96 607.66 87.54 583.6 70C573.9 104.43 589.11 134.85 617.4 137.6ZM622.6 137.6C650.89 134.85 666.1 104.43 656.4 70C632.34 87.54 617.13 117.96 622.6 137.6ZM614.8 140.2C610.69 123.76 587.29 108.55 562.8 106.4C570.46 134.45 593.86 149.66 614.8 140.2ZM625.2 140.2C646.14 149.66 669.54 134.45 677.2 106.4C652.71 108.55 629.31 123.76 625.2 140.2Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M578.4 142.8C601.8 150.6 638.2 150.6 661.6 142.8L659 150.6C635.6 158.4 604.4 158.4 581 150.6Z",
+        "fill": "accent"
+      },
+      {
+        "type": "rect",
+        "x": 170,
+        "y": 1520,
+        "width": 900,
+        "height": 180,
+        "radius": 90,
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Book a facial",
+        "color": "text",
+        "box": {
+          "x": 230,
+          "y": 1520,
+          "width": 780,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Skin clinic",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 180,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}
