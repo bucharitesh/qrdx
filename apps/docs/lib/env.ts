@@ -134,6 +134,8 @@ export const env = createEnv({
     NEXT_PUBLIC_QRDX_PRO_YEARLY_PRODUCT_ID: z.string().min(1).optional(),
     NEXT_PUBLIC_QRDX_BUSINESS_MONTHLY_PRODUCT_ID: z.string().min(1).optional(),
     NEXT_PUBLIC_QRDX_BUSINESS_YEARLY_PRODUCT_ID: z.string().min(1).optional(),
+    // "1" once every product above has a EUR price in Polar (lib/pricing.ts)
+    NEXT_PUBLIC_QRDX_EUR_PRICES: z.string().min(1).optional(),
     // Cloudflare Turnstile on public forms (spam protection off without it)
     NEXT_PUBLIC_TURNSTILE_SITE_KEY: z.string().min(1).optional(),
     // Origin for default short links (falls back to the site URL)
@@ -212,6 +214,7 @@ export const env = createEnv({
       process.env.NEXT_PUBLIC_QRDX_BUSINESS_MONTHLY_PRODUCT_ID,
     NEXT_PUBLIC_QRDX_BUSINESS_YEARLY_PRODUCT_ID:
       process.env.NEXT_PUBLIC_QRDX_BUSINESS_YEARLY_PRODUCT_ID,
+    NEXT_PUBLIC_QRDX_EUR_PRICES: process.env.NEXT_PUBLIC_QRDX_EUR_PRICES,
     NEXT_PUBLIC_TURNSTILE_SITE_KEY: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY,
     NEXT_PUBLIC_SHORT_LINK_BASE_URL:
       process.env.NEXT_PUBLIC_SHORT_LINK_BASE_URL,

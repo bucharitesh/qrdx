@@ -511,7 +511,9 @@
       "inr": "Prix en ₹ pour l'Inde.",
       "usd": "Prix en US$.",
       "showInr": "En Inde ? Voir les prix en ₹",
-      "showUsd": "Afficher les prix en US$"
+      "showUsd": "Afficher les prix en US$",
+      "eur": "Prix en € pour l’UE et l’EEE.",
+      "showEur": "Dans l’UE ou l’EEE ? Voir les prix en €"
     },
     "price": {
       "forever": "à vie",
@@ -555,6 +557,13 @@
       "guide": "Guide d'auto-hébergement"
     },
     "footnote": "Polar gère le paiement en tant que merchant of record\\u00a0; des taxes locales peuvent s'ajouter au moment du paiement. Les clients en Inde sont facturés en ₹, tous les autres en US$.",
+    "footnoteEur": "Polar gère le paiement en tant que merchant of record ; des taxes locales peuvent s’ajouter au moment du paiement. Les clients en Inde sont facturés en ₹, ceux de l’UE et de l’EEE en €, et tous les autres en US$.",
+    "offers": {
+      "moneyBack": "Garantie de remboursement de {days, number} jours sur votre premier paiement.",
+      "moneyBackLink": "Fonctionnement des remboursements",
+      "nonprofit": "Association ou organisme caritatif ? {percent, number} % de réduction sur Pro et Business.",
+      "nonprofitLink": "Demander un code"
+    },
     "values": {
       "unlimited": "Illimité",
       "days": "{count, plural, one {# jour} other {# jours}}",
@@ -702,6 +711,10 @@
           "question": "Que se passe-t-il si je résilie ?",
           "answer": "Rien ne s'arrête. Votre forfait reste actif jusqu'à la fin de la période payée, puis votre compte passe à Gratuit. Chaque QR code dynamique continue de rediriger et chaque scan est toujours comptabilisé : c'est notre Garantie Never-Hostage. Avec Gratuit, vous ne pouvez pas créer plus que ce que permettent les limites du forfait Gratuit, et les statistiques couvrent les 90 derniers jours."
         },
+        "refund": {
+          "question": "Puis-je être remboursé ?",
+          "answer": "Oui. Votre premier paiement pour Pro ou Business, mensuel ou annuel, est couvert par une garantie de remboursement de {days, number} jours : écrivez à support@qrdx.dev depuis l’adresse e-mail de votre compte dans les {days, number} jours suivant le paiement et nous vous remboursons intégralement, sans poser de questions. Cette garantie s’applique une seule fois par client. Ensuite, vos codes continuent de fonctionner avec le plan Gratuit."
+        },
         "paymentFails": {
           "question": "Que se passe-t-il si un paiement échoue ?",
           "answer": "Vos codes continuent de fonctionner. Si l'abonnement prend fin, votre compte passe aux limites du plan Gratuit, exactement comme si vous aviez résilié. Nous ne mettons jamais vos codes en pause, n'affichons aucune publicité et n'envoyons jamais les personnes qui scannent vos codes vers une page QRdx à cause de la facturation."
@@ -714,6 +727,10 @@
           "question": "Pourquoi les prix s'affichent-ils en ₹ ?",
           "answer": "Les visiteurs en Inde voient les prix en roupies indiennes : Pro coûte {proMonthly} par mois ou {proYearly} par an, Business {businessMonthly} par mois ou {businessYearly} par an. Au paiement, les clients en Inde sont facturés en ₹ et tous les autres en US$, quelle que soit la devise utilisée pour naviguer. Utilisez le sélecteur au-dessus des plans pour changer la devise d'affichage."
         },
+        "currencies": {
+          "question": "Pourquoi les prix s’affichent-ils en ₹ ou en € ?",
+          "answer": "Les prix s’affichent dans la devise du pays où vous vous trouvez. En Inde, Pro coûte {proMonthly} par mois ou {proYearly} par an, et Business {businessMonthly} par mois ou {businessYearly} par an. Dans l’UE et l’EEE, Pro coûte {proMonthlyEur} par mois ou {proYearlyEur} par an, et Business {businessMonthlyEur} par mois ou {businessYearlyEur} par an. Partout ailleurs, les prix sont en US$. Le paiement est facturé dans la devise de votre pays, quelle que soit la devise affichée pendant votre navigation. Utilisez le sélecteur au-dessus des plans pour changer la devise d’affichage."
+        },
         "switchPlans": {
           "question": "Puis-je changer de plan ou de période de facturation plus tard ?",
           "answer": "Oui. Ouvrez Gérer l'abonnement dans vos paramètres pour modifier ou résilier votre plan dans le portail de facturation Polar. Passer à un plan inférieur ne désactive jamais les codes, pages ou domaines existants."
@@ -725,6 +742,10 @@
         "selfHost": {
           "question": "Puis-je l'héberger moi-même ?",
           "answer": "Oui. QRdx est open source sous licence AGPL-3.0. Exécutez-le avec votre propre base de données Postgres en suivant le guide d'auto-hébergement ; les limites des plans sont définies dans un seul fichier que vous pouvez modifier pour votre instance."
+        },
+        "nonprofit": {
+          "question": "Proposez-vous une réduction pour les associations ?",
+          "answer": "Oui. Les associations et organismes caritatifs enregistrés bénéficient de {percent, number} % de réduction sur Pro ou Business, en mensuel comme en annuel. Présentez-nous votre organisation via le lien dédié aux associations sous les plans. Nous répondons généralement sous quelques jours, avec un code de réduction à saisir au moment du paiement."
         },
         "billing": {
           "question": "Qui gère la facturation et les taxes ?",
@@ -750,6 +771,23 @@
       "close": "Fermer",
       "signIn": "Connectez-vous pour demander une facture",
       "signInNote": "Nous envoyons la facture pour l’espace de travail de votre compte : connectez-vous d’abord."
+    },
+    "nonprofit": {
+      "title": "Réduction pour associations",
+      "description": "Les associations et organismes caritatifs enregistrés bénéficient de {percent, number} % de réduction sur Pro ou Business, en mensuel comme en annuel. Présentez-nous votre organisation et nous vous enverrons par e-mail un code de réduction à saisir au moment du paiement.",
+      "organization": "Nom de l’organisation",
+      "country": "Pays",
+      "registration": "Numéro d’enregistrement ou lien",
+      "registrationHint": "Votre numéro dans un registre des associations ou des organismes caritatifs, ou un lien vers votre fiche dans un registre public.",
+      "contactEmail": "E-mail de contact",
+      "plan": "Plan",
+      "reply": "Nous répondons généralement sous quelques jours. Aucun montant n’est débité avant le paiement.",
+      "submit": "Envoyer la demande",
+      "sending": "Envoi en cours…",
+      "sentTitle": "Demande envoyée",
+      "sent": "Nous répondrons à {email}, généralement sous quelques jours. Si votre organisation est éligible, la réponse contiendra un code de réduction à saisir au moment du paiement.",
+      "close": "Fermer",
+      "failed": "Une erreur s’est produite. Écrivez plutôt à {email}."
     },
     "enterprise": {
       "name": "Enterprise",
@@ -2043,6 +2081,9 @@
         "outcome": "Vous bénéficiez d'un préavis d'au moins 12 mois, du temps nécessaire pour tout exporter et d'une procédure documentée pour faire fonctionner l'application open source sur votre propre serveur."
       }
     },
+    "moneyBackTitle": "Garantie de remboursement",
+    "moneyBack": "Votre premier paiement pour Pro ou Business, mensuel ou annuel, est couvert par une garantie de remboursement de {days, number} jours. Si le forfait ne vous convient pas, écrivez à <mail>{email}</mail> dans les {days, number} jours suivant le paiement et nous vous remboursons intégralement, sans poser de questions. Elle est valable une seule fois par client, et vos codes continuent ensuite de fonctionner avec le forfait Gratuit.",
+    "moneyBackLink": "Lire la politique de remboursement",
     "exceptionTitle": "La seule exception : les abus",
     "exception": "Nous ne désactivons un code que s'il enfreint nos <terms>conditions d'utilisation</terms>, par exemple en redirigeant vers du phishing ou des logiciels malveillants. C'est une décision de sécurité prise après un signalement ou un examen, jamais une décision de facturation. Chacun peut <report>signaler un code</report>.",
     "questions": "Des questions sur la garantie ? Écrivez à <mail>{email}</mail>. Dernière mise à jour : <time>{date, date, long}</time>."

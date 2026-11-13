@@ -15,6 +15,7 @@ import { claudeCodeCommand, mcpServerUrl } from "@/lib/mcp-clients";
 import type { PlanLimits } from "@/lib/plans";
 import {
   formatPrice,
+  localPricesNote,
   type PaidPlan,
   PLAN_NAMES,
   type Plan,
@@ -416,7 +417,7 @@ export function buildLlmsTxt(input: LlmsTxtInput): string {
   );
 
   const price = (plan: PaidPlan) =>
-    `${formatPrice(PRICING[plan].month.amounts.USD, "USD")} a month or ${formatPrice(PRICING[plan].year.amounts.USD, "USD")} a year (in India ${formatPrice(PRICING[plan].month.amounts.INR, "INR")} or ${formatPrice(PRICING[plan].year.amounts.INR, "INR")})`;
+    `${formatPrice(PRICING[plan].month.amounts.USD, "USD")} a month or ${formatPrice(PRICING[plan].year.amounts.USD, "USD")} a year (${localPricesNote(plan)})`;
   const highlights = buildHighlights(input.limits, offered);
   const planLine = (plan: Plan, cost: string, lead = "") => ({
     title: `${PLAN_NAMES[plan]} plan`,

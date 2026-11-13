@@ -1275,6 +1275,14 @@
     "source": "10b749bd2aed",
     "status": "machine"
   },
+  "pricing.currency.eur": {
+    "source": "d82a1e0b8cd0",
+    "status": "machine"
+  },
+  "pricing.currency.showEur": {
+    "source": "78712d1708c1",
+    "status": "machine"
+  },
   "pricing.price.forever": {
     "source": "2070f725ff1c",
     "status": "machine"
@@ -1385,6 +1393,26 @@
   },
   "pricing.footnote": {
     "source": "11d50baa54d6",
+    "status": "machine"
+  },
+  "pricing.footnoteEur": {
+    "source": "d8f9ab4a96a2",
+    "status": "machine"
+  },
+  "pricing.offers.moneyBack": {
+    "source": "ed4f6b1fc384",
+    "status": "machine"
+  },
+  "pricing.offers.moneyBackLink": {
+    "source": "6da9e675b1a7",
+    "status": "machine"
+  },
+  "pricing.offers.nonprofit": {
+    "source": "01db7e5d7bed",
+    "status": "machine"
+  },
+  "pricing.offers.nonprofitLink": {
+    "source": "b3592d56a8a1",
     "status": "machine"
   },
   "pricing.values.unlimited": {
@@ -1847,6 +1875,14 @@
     "source": "8bf967e25bf1",
     "status": "machine"
   },
+  "pricing.faq.items.refund.question": {
+    "source": "895d605d64ef",
+    "status": "machine"
+  },
+  "pricing.faq.items.refund.answer": {
+    "source": "17aedeffc3df",
+    "status": "machine"
+  },
   "pricing.faq.items.paymentFails.question": {
     "source": "2fa2244fbaa4",
     "status": "machine"
@@ -1871,6 +1907,14 @@
     "source": "4fd441009e6e",
     "status": "machine"
   },
+  "pricing.faq.items.currencies.question": {
+    "source": "8729b9a52324",
+    "status": "machine"
+  },
+  "pricing.faq.items.currencies.answer": {
+    "source": "023e1d65fb1e",
+    "status": "machine"
+  },
   "pricing.faq.items.switchPlans.question": {
     "source": "261e87b59bcc",
     "status": "machine"
@@ -1893,6 +1937,14 @@
   },
   "pricing.faq.items.selfHost.answer": {
     "source": "8c5477b33a21",
+    "status": "machine"
+  },
+  "pricing.faq.items.nonprofit.question": {
+    "source": "0310d979de93",
+    "status": "machine"
+  },
+  "pricing.faq.items.nonprofit.answer": {
+    "source": "e0e0f2a339c7",
     "status": "machine"
   },
   "pricing.faq.items.billing.question": {
@@ -1969,6 +2021,66 @@
   },
   "pricing.invoice.signInNote": {
     "source": "c6d5bfba58c3",
+    "status": "machine"
+  },
+  "pricing.nonprofit.title": {
+    "source": "3b5b3393411a",
+    "status": "machine"
+  },
+  "pricing.nonprofit.description": {
+    "source": "f8a9c7301484",
+    "status": "machine"
+  },
+  "pricing.nonprofit.organization": {
+    "source": "9a807d52ba21",
+    "status": "machine"
+  },
+  "pricing.nonprofit.country": {
+    "source": "701d021d08c5",
+    "status": "machine"
+  },
+  "pricing.nonprofit.registration": {
+    "source": "b275b25afa7b",
+    "status": "machine"
+  },
+  "pricing.nonprofit.registrationHint": {
+    "source": "c2d17b86aae5",
+    "status": "machine"
+  },
+  "pricing.nonprofit.contactEmail": {
+    "source": "6d7fce11ae00",
+    "status": "machine"
+  },
+  "pricing.nonprofit.plan": {
+    "source": "fa8ed0bdabdd",
+    "status": "machine"
+  },
+  "pricing.nonprofit.reply": {
+    "source": "acd8b0c281ca",
+    "status": "machine"
+  },
+  "pricing.nonprofit.submit": {
+    "source": "3a69f897298e",
+    "status": "machine"
+  },
+  "pricing.nonprofit.sending": {
+    "source": "b8ed5279e897",
+    "status": "machine"
+  },
+  "pricing.nonprofit.sentTitle": {
+    "source": "a73f99f6bfc8",
+    "status": "machine"
+  },
+  "pricing.nonprofit.sent": {
+    "source": "45a1e02a6386",
+    "status": "machine"
+  },
+  "pricing.nonprofit.close": {
+    "source": "7d9eb7acb13e",
+    "status": "machine"
+  },
+  "pricing.nonprofit.failed": {
+    "source": "1342d6313653",
     "status": "machine"
   },
   "docs.meta.titleSuffix": {
@@ -5965,6 +6077,18 @@
   },
   "guarantee.scenarios.shutdown.outcome": {
     "source": "8b7b5245ac0c",
+    "status": "machine"
+  },
+  "guarantee.moneyBackTitle": {
+    "source": "2197d8b81a9b",
+    "status": "machine"
+  },
+  "guarantee.moneyBack": {
+    "source": "88055c875609",
+    "status": "machine"
+  },
+  "guarantee.moneyBackLink": {
+    "source": "54bd838dbc15",
     "status": "machine"
   },
   "guarantee.exceptionTitle": {

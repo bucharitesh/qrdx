@@ -188,11 +188,11 @@
     "status": "machine"
   },
   "help/account-and-billing/cancel.mdx": {
-    "source": "42ca138b8ad5",
+    "source": "b70874971f92",
     "status": "machine"
   },
   "help/account-and-billing/change-plan.mdx": {
-    "source": "0a6d993ff76c",
+    "source": "fa70d24f521b",
     "status": "machine"
   },
   "help/account-and-billing/delete-your-account.mdx": {
@@ -204,15 +204,19 @@
     "status": "machine"
   },
   "help/account-and-billing/invoices.mdx": {
-    "source": "32ced6762159",
+    "source": "148c07f2ab68",
     "status": "machine"
   },
   "help/account-and-billing/meta.json": {
-    "source": "e8069c442747",
+    "source": "bf9b1f4e1b9e",
     "status": "machine"
   },
   "help/account-and-billing/never-hostage.mdx": {
     "source": "71b7da0290bd",
+    "status": "machine"
+  },
+  "help/account-and-billing/nonprofit-discount.mdx": {
+    "source": "b35320fba669",
     "status": "machine"
   },
   "help/account-and-billing/pay-by-invoice.mdx": {
@@ -228,7 +232,7 @@
     "status": "machine"
   },
   "help/contact.mdx": {
-    "source": "045c7d5b1881",
+    "source": "3ea00d8b91ca",
     "status": "machine"
   },
   "help/designing/art.mdx": {
@@ -448,7 +452,7 @@
     "status": "machine"
   },
   "plans-and-limits.mdx": {
-    "source": "8c805d953dc7",
+    "source": "51d954106182",
     "status": "machine"
   },
   "precise-location.mdx": {
@@ -464,7 +468,7 @@
     "status": "machine"
   },
   "self-hosting.mdx": {
-    "source": "d53496d2103e",
+    "source": "c0dbbb91d50d",
     "status": "machine"
   },
   "short-links-and-file-pickers.mdx": {
