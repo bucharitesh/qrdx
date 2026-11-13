@@ -207,6 +207,7 @@
       "shadcn": "shadcn/ui 注册表",
       "plugins": "插件",
       "selfHosting": "自托管",
+      "openSource": "开源",
       "github": "GitHub",
       "help": "帮助中心",
       "blog": "博客",
@@ -406,7 +407,7 @@
       "analytics": {
         "eyebrow": "数据分析",
         "title": "查看每一次扫描",
-        "description": "每个动态二维码都提供扫描量趋势、国家/地区、设备、浏览器和来源页面数据。免费版账户保留 {days, number} 天。",
+        "description": "每个动态二维码的扫描量随时间变化的趋势，以及国家、设备、浏览器和来源网站的数据。免费账户保留 {years, plural, one {# 年} other {# 年}}的历史记录，付费方案则保留全部记录。",
         "link": "扫描分析的工作方式"
       },
       "bulk": {
@@ -450,7 +451,7 @@
       "items": {
         "free": {
           "question": "QRdx 真的免费吗？有隐藏限制吗？",
-          "answer": "是的。创建、自定义和下载静态二维码完全免费，且无需账号：二维码数量不限，所有设计选项均可使用（{bodyPatterns, number} 种主体图案、{eyeShapes, number} 种定位点外框形状和 {eyeCentres, number} 种定位点中心、渐变、Logo、边框以及 Logo QR 或 Image QR 样式），并支持下载 PNG、JPG、SVG、PDF 和 EPS。没有水印，也没有广告。静态二维码把内容直接存储在码中，因此永不过期，也没有扫描次数限制。免费账号可额外获得 10 个动态二维码、3 个托管页面、90 天扫描分析、10 个已保存主题和 5 次 AI 主题生成；Pro（{proMonthly}/月或 {proYearly}/年）和 Business（{businessMonthly}/月或 {businessYearly}/年）可提高这些上限。"
+          "answer": "可以。创建、自定义和下载静态二维码完全免费，且无需账户：二维码数量不限，所有设计选项均可使用（{bodyPatterns, number} 种主体图案、{eyeShapes, number} 种角部定位点形状和 {eyeCentres, number} 种定位点中心、渐变、徽标、边框以及 Logo QR 或 Image QR 艺术码），并支持下载 PNG、JPG、SVG、PDF 和 EPS 格式。没有水印，也没有广告。静态二维码把内容直接存储在码中，因此永不过期，也没有扫描次数限制。免费账户另可使用 10 个动态二维码、3 个托管页面、{historyYears, plural, one {# 年} other {# 年}}的扫描分析、10 个已保存主题和 5 次 AI 主题生成；Pro（{proMonthly}/月或 {proYearly}/年）和 Business（{businessMonthly}/月或 {businessYearly}/年）可提高这些额度。"
         },
         "signup": {
           "question": "我需要注册或创建账号吗？",
@@ -458,7 +459,7 @@
         },
         "dynamic": {
           "question": "QRdx 支持动态二维码和扫描分析吗？",
-          "answer": "支持。动态二维码编码的是一个短链接，因此印刷后仍可更改它指向的位置，每次扫描都会被计数，并提供国家、设备和浏览器分析。二维码可以打开网站或移动端托管页面（链接列表、菜单、vCard、优惠券、活动、表单、PDF、图库、音频或视频）。Pro 和 Business 还增加按设备、国家、语言或时间的智能路由、A/B 测试、UTM 标签、密码、有效期和扫描次数限制。免费账号可使用 10 个活跃的动态二维码，保留 90 天历史记录；Pro 和 Business 不限数量，历史记录更长。"
+          "answer": "可以。动态二维码编码的是一个短链接，因此印刷之后你仍可以更改它指向的位置，每次扫描都会被统计，并提供国家、设备和浏览器分析。一个二维码可以打开网站，或打开移动端托管页面（链接列表、菜单、vCard、优惠券、活动、表单、PDF、图集、音频或视频）。Pro 和 Business 还提供按设备、国家、语言或时间进行的智能路由、A/B 测试、UTM 标签、密码、有效期和扫描次数限制。免费账户可拥有 10 个有效的动态二维码，并保留 {historyYears, plural, one {# 年} other {# 年}}的历史记录；Pro 和 Business 不限数量，并保留完整的扫描历史。"
         },
         "guarantee": {
           "question": "停止付费后，我的二维码会失效吗？",
@@ -482,7 +483,7 @@
         },
         "paidPlans": {
           "question": "Pro 或 Business 包含哪些功能？",
-          "answer": "Pro（{proMonthly}/月或 {proYearly}/年）可使用不限数量的动态二维码和托管页面、3 年的数据分析、{customDomains, select, yes {5 个自定义域名、} other {}}最多 3 人的团队、智能路由、A/B 测试、UTM 标签、像素、邮件提醒和每周摘要，以及密码和有效期等链接控制功能。Business（{businessMonthly}/月或 {businessYearly}/年）additionally 支持带自定义 CSS 的白标页面、不限时长的分析历史、{customDomains, select, yes {25 个自定义域名、} other {}}不限数量的团队成员、转化追踪、webhook，以及 Slack 或 Discord 提醒。创建、自定义和下载静态二维码仍然免费。"
+          "answer": "Pro（{proMonthly}/月或 {proYearly}/年）提供不限数量的动态二维码和托管页面、完整的扫描历史、{customDomains, select, yes {5 个自定义域名、} other {}}最多 3 人的团队、智能路由、A/B 测试、UTM 标签、像素、邮件提醒和每周摘要，以及密码和有效期等链接控制功能。Business（{businessMonthly}/月或 {businessYearly}/年）additionally 提供带自定义 CSS 的白标页面、{customDomains, select, yes {25 个自定义域名、} other {}}不限数量的团队成员、转化跟踪、webhook，以及 Slack 或 Discord 提醒。创建、自定义和下载静态二维码依然免费。"
         }
       }
     }
@@ -502,8 +503,8 @@
     },
     "extras": {
       "unlimitedDynamic": "无限数量的动态二维码",
-      "longerAnalytics": "更长的数据分析周期",
-      "analyticsHistory": "历史分析数据",
+      "longerAnalytics": "你的完整扫描历史",
+      "analyticsHistory": "完整的分析历史记录",
       "customDomains": "自定义域名",
       "teams": "团队"
     },
@@ -561,7 +562,8 @@
     "selfHost": {
       "title": "自托管",
       "description": "在您自己的服务器上运行开源应用，并使用您自己的 Postgres 数据库。方案限额集中在一个文件中，您可以为自己的实例修改。",
-      "guide": "自托管指南"
+      "guide": "自托管指南",
+      "openSource": "开源的内容"
     },
     "footnote": "Polar 作为商户代理（merchant of record）处理结账；结账时可能会加收当地税费。印度的客户以 ₹ 计费，其他客户以 US$ 计费。",
     "footnoteEur": "Polar 作为商户代理（merchant of record）处理结账；结账时可能会加收当地税费。印度的客户以 ₹ 计费，欧盟和欧洲经济区的客户以 € 计费，其他所有客户以 US$ 计费。",
@@ -716,7 +718,7 @@
       "items": {
         "cancel": {
           "question": "取消订阅会怎样？",
-          "answer": "不会有任何影响。你的套餐会保持有效，直到已付费周期结束，之后账号将转为免费版。所有动态二维码继续跳转，每次扫描仍会计数：这就是我们的 Never-Hostage 保障。在免费版中，你无法创建超出免费版限额的内容，分析数据只显示最近 90 天。"
+          "answer": "一切照常。你的套餐会在已付费周期结束前保持有效，之后账户将转为免费版。所有动态二维码仍会继续跳转，每次扫描也仍会被计入：这就是我们的 Never-Hostage 保障。在免费版中，你无法创建超出免费版限额的内容，分析数据显示最近 {historyYears, plural, one {一年} other {# 年}}的记录。更早的扫描记录会保留，再次升级后即可恢复显示。"
         },
         "refund": {
           "question": "可以退款吗？",
@@ -943,6 +945,8 @@
       "bulkDescription": "上传 CSV 文件，即可将所有二维码以 PNG、WebP 或 SVG 格式打包成一个 ZIP 文件下载，全程在浏览器中生成。",
       "printTitle": "要打印二维码？先确认尺寸",
       "printDescription": "根据扫描距离和二维码包含的数据量，计算最小打印尺寸。",
+      "dynamicTitle": "动态二维码生成器",
+      "dynamicDescription": "打印后仍可修改链接，并统计每一次扫描",
       "hostedTitle": "打开可编辑页面的二维码",
       "hostedDescription": "这些二维码会打开由 QRdx 为你托管的移动端页面，因此印刷后仍可修改内容并查看扫描情况。需要注册免费账号。",
       "menuTitle": "菜单二维码生成器",
@@ -2458,6 +2462,11 @@
       "viewLabel": "查看{name}演示",
       "view": "查看演示",
       "use": "使用模板"
+    },
+    "more": {
+      "load": "加载更多",
+      "loading": "加载中",
+      "failed": "这些模板未能加载。"
     }
   },
   "templateDemo": {
@@ -2874,6 +2883,254 @@
       "limitAnswer": "你会收到 429 响应，其中的 Retry-After 标头会告知何时可以重试。相同的 URL 会缓存一年，因此访问量大的页面上显示的图片通常直接来自缓存。",
       "aiQuestion": "AI 助手可以使用它吗？",
       "aiAnswer": "可以。QRdx MCP 服务器的 generate_qr_code 工具会返回这些图片链接，没有 MCP 的助手也可以自己把链接写成 Markdown 图片。"
+    }
+  },
+  "dynamicQrCode": {
+    "metaTitle": "免费动态二维码生成器：可编辑，可追踪扫描",
+    "metaDescription": "制作可在印刷后修改、并能追踪每一次扫描的动态二维码。免费账户可创建 {count, number} 个二维码，扫描次数不限，也没有时间限制。",
+    "crumb": "动态二维码生成器",
+    "title": "免费动态二维码生成器",
+    "intro1": "动态二维码中保存的是一个短链接，而不是你的网址。二维码印刷之后，你仍然可以更改它指向的地址，QRdx 会统计每一次扫描。",
+    "intro2": "免费账户可创建 {count, number} 个动态二维码，扫描次数不限，并保留 {years, plural, one {# 年} other {# 年}}的扫描记录。没有试用期，无论你是否付费，这些二维码都会继续有效。",
+    "facts": {
+      "free": "{count, number} 个免费动态二维码",
+      "scans": "所有方案均不限扫描次数",
+      "ads": "链接前没有广告",
+      "openSource": "开源"
+    },
+    "cta": "创建动态二维码",
+    "pricingCta": "比较方案",
+    "docsLink": "动态二维码文档",
+    "howEyebrow": "使用方式",
+    "howTitle": "可随时改指向的短链接",
+    "steps": {
+      "create": {
+        "title": "创建二维码",
+        "body": "在控制台中点击“新建二维码”，输入它要打开的页面。在 Playground 中，选择网址类型并开启“设为动态”。无论哪种方式，二维码都会获得类似 {example} 的短链接。"
+      },
+      "print": {
+        "title": "下载并打印",
+        "body": "可下载为 PNG、WebP 或 SVG，也可以先在 Playground 中设计样式。短链接比长网址所需的模块更少，因此二维码可以印得更小，依然能被扫描。"
+      },
+      "change": {
+        "title": "需要时随时修改",
+        "body": "修改目标地址后，下一次扫描就会打开新页面。每次扫描都会收到浏览器不会缓存的 302 重定向，因此上周扫描过的手机不会记住旧地址。"
+      }
+    },
+    "featuresEyebrow": "功能",
+    "featuresTitle": "动态二维码能做什么",
+    "featuresDescription": "编辑、数据分析和托管页面所有方案都包含。每张卡片都标明了包含该功能的方案。",
+    "planAll": "所有方案",
+    "planSome": "{plans} 可用",
+    "features": {
+      "edit": {
+        "title": "印刷后也能编辑",
+        "body": "无需重新印刷，即可更改目标地址、重命名二维码，或将其改为托管页面。每次更改都会记入该二维码的版本历史，你可以恢复旧版本。"
+      },
+      "analytics": {
+        "title": "扫描分析",
+        "body": "查看扫描量随时间的变化、独立访客、国家和城市、设备、浏览器以及人们扫描的时段，并可导出为 CSV。不会存储 IP 地址。免费账户保留 {years, plural, one {# 年} other {# 年}}的记录，付费方案则保留全部记录。"
+      },
+      "pages": {
+        "title": "托管移动页面",
+        "body": "让二维码指向由 QRdx 托管的页面，而不是网站：链接列表、菜单、联系人名片、优惠券、活动或表单，共有 {types, number} 种页面类型。免费版账户可使用 {pages, number} 个页面。"
+      },
+      "routing": {
+        "title": "智能路由",
+        "body": "将 iPhone 用户引导至 App Store，Android 手机用户引导至 Google Play，也可按国家、地区、语言、时间或扫描次数分流，每个二维码最多支持 {rules, number} 条规则。A/B 分流和 UTM 参数也包含在内。"
+      },
+      "controls": {
+        "title": "密码、定时和扫描次数限制",
+        "body": "可为二维码设置密码、起止日期或扫描次数上限，并选择已结束的二维码将用户带到哪里。所有套餐都可以暂停二维码。"
+      },
+      "slugs": {
+        "title": "{domains, select, yes {自定义后缀和域名} other {自定义后缀}}",
+        "body": "自行设置短链接的结尾，例如 {example}，而不是随机字符。{domains, select, yes {你还可以使用自己的域名来提供二维码服务，例如 go.yourbrand.com。} other {}}"
+      },
+      "tracking": {
+        "title": "像素代码与转化",
+        "body": "在二维码的托管页面上加载你的分析和再营销像素代码。{conversionPlans} 还提供转化追踪，将购买和注册与带来访客的那次扫描关联起来。"
+      },
+      "api": {
+        "title": "REST API 与批量创建",
+        "body": "通过你自己的代码创建和编辑二维码并读取扫描数据，免费版每天可发送 {perDay, number} 次 API 请求。付费套餐单次请求最多可创建 {batch} 个二维码，或从 CSV 导入最多 {rows} 个。"
+      }
+    },
+    "freeEyebrow": "免费版",
+    "freeTitle": "无需付费即可获得",
+    "freeDescription": "无需绑定银行卡，也没有试用期。只有在需要更多二维码或上述付费功能时再升级即可。",
+    "freeItems": {
+      "codes": "{count, number} 个有效的动态二维码（已归档的二维码不计入）",
+      "scans": "扫描次数不限，且不会被暂停",
+      "history": "{years, plural, one {# 年} other {# 年}}扫描历史记录",
+      "pages": "{pages, number} 个托管页面",
+      "organize": "编辑、暂停、文件夹、标签和版本历史",
+      "api": "REST API，每天 {perDay, number} 次请求"
+    },
+    "freeLink": "对比所有套餐",
+    "guaranteeEyebrow": "如果你停止付费",
+    "guaranteeTitle": "已印刷的二维码仍可使用",
+    "guaranteeBody": "根据 Never-Hostage 保障，所有套餐中的每个动态二维码都会持续跳转，即使降级、付款失败或取消订阅也一样。扫描不会被暂停，扫描者也不会看到广告或 QRdx 注册页面。超出限额只会使你无法创建新的二维码。",
+    "guaranteeLink": "阅读保障条款",
+    "openSourceBody": "跳转、数据分析以及应用的其余部分均为开源，你可以查看每次扫描时发生了什么，也可以在自己的服务器上运行。",
+    "openSourceLink": "开源与自托管",
+    "staticTitle": "何时静态二维码是更好的选择",
+    "staticBody": "只有链接可以做成动态的：动态二维码会打开网站或托管页面。Wi-Fi 登录信息、直接保存到手机的联系人名片以及银行付款码必须使用静态二维码，因为手机是直接从图案本身读取这些内容的。静态二维码免费且不限数量，也无需账户。",
+    "staticLink": "静态二维码生成器",
+    "blogLink": "静态与动态二维码的区别",
+    "moreTitle": "了解更多",
+    "more": {
+      "docsTitle": "动态二维码",
+      "docsBody": "详解自定义后缀、文件夹、CSV 导入和 API",
+      "routingTitle": "智能路由",
+      "routingBody": "规则、A/B 测试和 UTM 参数",
+      "controlsTitle": "二维码控制",
+      "controlsBody": "密码、定时、扫描次数限制和备用网址",
+      "trackingTitle": "追踪与转化",
+      "trackingBody": "数据分析、像素和转化追踪",
+      "domainsTitle": "自定义域名",
+      "domainsBody": "使用您自己的域名提供短链接",
+      "apiTitle": "REST API",
+      "apiBody": "通过您自己的代码创建和管理二维码"
+    },
+    "faqTitle": "动态二维码常见问题",
+    "faq": {
+      "freeQuestion": "可以免费制作动态二维码吗？",
+      "freeAnswer": "可以。免费的 QRdx 账户包含 {count, number} 个有效的动态二维码，扫描次数不限，并保留 {years, plural, one {# 年} other {# 年}}的扫描记录，没有试用期。已归档的二维码不计入上限，付费方案则没有此上限。",
+      "expireQuestion": "动态二维码会过期吗？",
+      "expireAnswer": "在 QRdx 上不会。二维码会一直跳转，直到您暂停、归档或删除它，或者到达您自己设置的结束日期或扫描次数上限。无论哪种方案都是如此，包括免费版，降级、付款失败或取消订阅之后也一样。唯一的例外是滥用：指向钓鱼网站或恶意软件的二维码会被停用。",
+      "editQuestion": "二维码印刷之后还能修改吗？",
+      "editAnswer": "只有动态二维码可以。它存放的是一个短链接，所以您在控制台中更改目标地址后，已印刷的二维码在下次扫描时就会打开新页面。静态二维码存放的是地址本身，要更改就需要重新印刷二维码。",
+      "trackQuestion": "如何追踪二维码的扫描情况？",
+      "trackAnswer": "把二维码设为动态即可。每个动态二维码都有一个分析页面，显示扫描量随时间的变化、独立访客、国家和城市、设备、操作系统、浏览器、来源页面和语言，您还可以将扫描记录导出为 CSV。QRdx 不会存储 IP 地址，也不会统计已知的机器人和链接预览。",
+      "typesQuestion": "Wi-Fi 或 vCard 二维码可以做成动态的吗？",
+      "typesAnswer": "不能直接做到，因为手机是从图案本身读取 Wi-Fi 和 vCard 信息的，而动态二维码只能打开链接。如果联系人信息之后需要更改，可以让动态二维码指向一个托管的联系人页面。Wi-Fi 则请使用静态二维码。",
+      "domainQuestion": "短链接可以使用我自己的域名吗？",
+      "domainAnswer": "可以，适用于 {plans}。这样二维码中存放的就是类似 go.yourbrand.com/menu 的链接，跳转和扫描分析的工作方式不变。您只需在 DNS 服务商处添加一条 DNS 记录，即可连接域名。",
+      "apiQuestion": "可以通过 API 创建动态二维码吗？",
+      "apiAnswer": "可以。REST API 可以创建和编辑二维码并读取其扫描数据，支持使用 API 密钥或 OAuth 访问令牌。免费账户每天可发送 {perDay, number} 次请求，付费方案单次请求最多可创建 {batch} 个二维码。",
+      "selfHostQuestion": "我可以在自己的服务器上运行动态二维码吗？",
+      "selfHostAnswer": "可以。QRdx 是开源的，自托管的副本可以在您自己的域名上运行动态二维码、托管页面和扫描分析。扫描位置取决于您的主机提供的请求头信息，自托管指南中对此有详细说明。"
+    }
+  },
+  "openSource": {
+    "metaTitle": "可自托管的开源二维码生成器",
+    "metaDescription": "QRdx 是托管在 GitHub 上的开源二维码生成器。应用采用 AGPL-3.0 许可,React 库和 CLI 采用 MIT 许可。可免费使用 qrdx.dev,也可以自行部署一份。",
+    "crumb": "开源",
+    "title": "开源二维码生成器",
+    "intro1": "QRdx 在 GitHub 上公开开发。运行 qrdx.dev 的网页应用包含编辑器、动态二维码、托管页面和扫描分析,采用 AGPL-3.0 许可。React 库、CLI 和插件采用 MIT 许可。",
+    "intro2": "你可以在 qrdx.dev 上免费使用,也可以自行部署一份,或者用这个库把二维码功能集成到你的应用中。",
+    "facts": {
+      "agpl": "AGPL-3.0 应用",
+      "mit": "MIT 许可的库和 CLI",
+      "selfHost": "可用 Docker 或 Node.js 自托管",
+      "noAccount": "静态二维码无需账号"
+    },
+    "githubCta": "在 GitHub 上查看",
+    "selfHostCta": "自托管指南",
+    "partsEyebrow": "仓库内容",
+    "partsTitle": "一个仓库,三种许可",
+    "partsDescription": "<link>LICENSING.md</link> 规定了每个文件夹的许可。未列在 MIT 或商业许可下的内容,一律采用 AGPL-3.0-or-later。",
+    "partsHeader": {
+      "part": "部分",
+      "folder": "文件夹",
+      "license": "许可"
+    },
+    "parts": {
+      "appName": "网页应用",
+      "appBody": "编辑器、账号、动态二维码、托管页面、扫描分析、各类 API、MCP 服务器和文档",
+      "libraryName": "qrdx 库",
+      "libraryBody": "用于渲染、导出二维码并为其评分的 React 组件,在 npm 上的包名为 qrdx",
+      "cliName": "@qrdx/cli",
+      "cliBody": "在终端或 CI 任务中生成带样式的二维码",
+      "pluginsName": "插件",
+      "pluginsBody": "Chrome 扩展、Figma、Raycast 和 Canva 插件,以及 plugins 文件夹中的其他插件",
+      "eeName": "Business 功能",
+      "eeBody": "工作区单点登录和工作区审计日志"
+    },
+    "eeLicense": "QRdx 商业许可",
+    "eeNote": "你可以阅读、测试 ee 文件夹中的代码并为其贡献代码,但要在生产环境中使用,需要与 QRdx 签订书面协议。在自托管实例上,除非设置了 QRDX_EE_LICENSE,否则这两项功能保持关闭,其余功能不受影响。",
+    "waysEyebrow": "使用方式",
+    "waysTitle": "选择你的运行方式",
+    "ways": {
+      "hostedTitle": "使用 qrdx.dev",
+      "hostedBody": "静态二维码免费，无需账号：在 Playground 中设计并下载即可。免费账号可额外获得 {count, number} 个动态二维码和 {pages, number} 个托管页面，付费方案则增加团队和营销功能。",
+      "hostedLink": "打开 Playground",
+      "hostedLink2": "查看价格",
+      "selfHostTitle": "运行你自己的副本",
+      "selfHostBody": "Docker Compose 会连同自带的 Postgres 数据库一起启动应用，你也可以用 Node.js 搭配 Neon 数据库运行。它需要三个环境变量和一种登录方式。AI、支付、文件存储、自定义域名和各项集成都是可选的。",
+      "selfHostLink": "自托管指南",
+      "libraryTitle": "把它集成到你的应用中",
+      "libraryBody": "qrdx 库在 React 中渲染二维码，使用与 Playground 相同的引擎；@qrdx/cli 则可在终端或 CI 任务中生成二维码。两者均采用 MIT 许可，因此闭源项目也可以使用。",
+      "libraryLink": "库文档",
+      "libraryLink2": "CLI 文档"
+    },
+    "runEyebrow": "快速开始",
+    "runTitle": "运行代码",
+    "runDescription": "在 .env 中设置一个密钥和一种登录方式，然后启动整套服务。首次 Docker 构建需要几分钟，并且至少需要 8 GB 内存。",
+    "runLabels": {
+      "docker": "使用 Docker Compose 自托管",
+      "library": "库与 CLI"
+    },
+    "runNotes": {
+      "signIn": "用户可通过 GitHub 或 Google OAuth 应用登录，也可使用经由 Resend 发送的邮箱验证码登录。",
+      "postgres": "Neon 可直接使用。普通 Postgres 需要与 Neon 兼容的 HTTP 代理，docker-compose.yml 已经运行了该代理。",
+      "limits": "未设置支付时，所有账号都使用免费版的限额。这些限额定义在 apps/docs/lib/plans.ts 这一个文件中，你可以为自己的实例修改它。"
+    },
+    "runLink": "阅读完整的自托管指南",
+    "licenseEyebrow": "许可证",
+    "licenseTitle": "许可证对你有哪些要求",
+    "licenses": {
+      "agplTitle": "应用（AGPL-3.0）",
+      "agplBody": "你可以运行、修改和托管它。如果你把修改后的版本作为网络服务运行，就必须按相同的许可证向其用户提供源代码。",
+      "mitTitle": "库、CLI 和插件（MIT）",
+      "mitBody": "可用于任何项目，包括闭源项目，前提是代码中保留版权和许可声明。qrdx 0.0.47 和 @qrdx/cli 0.0.5 之前的版本采用 AGPL-3.0-or-later 许可。",
+      "trademarkTitle": "名称与标志",
+      "trademarkBody": "QRdx 的名称和标志是商标。基于该代码构建的分支或公共服务需要使用自己的名称和标志；详情请见<link>商标政策</link>。"
+    },
+    "licenseNote": "以上为摘要，具体以代码仓库中的许可证文件为准。",
+    "contributeEyebrow": "参与贡献",
+    "contributeTitle": "一起来完善它",
+    "contributeBody": "欢迎提交错误报告、想法和 pull request。贡献指南介绍了本地环境搭建和需要运行的检查，标记为 good first issue 的问题体量较小、相对独立。有疑问可以到 GitHub Discussions 提问，安全问题请按照安全政策的说明私下报告。",
+    "contributeLinks": {
+      "contributing": "贡献指南",
+      "goodFirst": "新手友好问题",
+      "discussions": "讨论区",
+      "security": "安全政策"
+    },
+    "stackTitle": "技术栈",
+    "stackBody": "这是一个基于 Bun 和 Turborepo 的 monorepo：Next.js 应用搭配 React、TypeScript、Tailwind CSS、基于 Postgres 的 Drizzle、Better Auth 和 Vercel AI SDK。应用、测试和构建均运行在 Node.js 22 上。",
+    "moreTitle": "QRdx 更多内容",
+    "more": {
+      "dynamicTitle": "动态二维码",
+      "dynamicBody": "印刷后仍可修改，并查看每一次扫描",
+      "apiTitle": "免费二维码 API",
+      "apiBody": "一个 URL 即可获得二维码图片，无需密钥或注册",
+      "mcpTitle": "MCP server",
+      "mcpBody": "在 Claude、ChatGPT 或 Cursor 中生成二维码",
+      "compareTitle": "QRdx 与同类对比",
+      "compareBody": "与其他二维码工具的并排对比页面",
+      "guaranteeTitle": "Never-Hostage 保障",
+      "guaranteeBody": "如果你停止付费，或 QRdx 停止运营，你的二维码会怎样"
+    },
+    "faqTitle": "开源常见问题",
+    "faq": {
+      "openQuestion": "QRdx 真的是开源的吗？",
+      "openAnswer": "是的。源代码在 GitHub 上，Web 应用采用 AGPL-3.0-or-later 许可，qrdx 库、@qrdx/cli 和插件采用 MIT 许可。两项商业功能，即工作区单点登录和审计日志，位于 ee 文件夹中，适用 QRdx Commercial License：你可以阅读这部分代码，但用于生产环境需要与 QRdx 签订协议。",
+      "githubQuestion": "QRdx 在 GitHub 上的源代码在哪里？",
+      "githubAnswer": "在 github.com/bucharitesh/qrdx。这是一个 monorepo，包含 Web 应用、qrdx 库、CLI、插件和文档。",
+      "freeQuestion": "QRdx 可以免费自托管吗？",
+      "freeAnswer": "可以。无需支付许可费用，你只需承担自己的服务器和数据库成本。自托管实例可以运行动态二维码、托管页面和扫描分析。除非你拥有 QRdx 许可密钥，否则单点登录和审计日志不会启用。",
+      "needQuestion": "自托管 QRdx 需要准备什么？",
+      "needAnswer": "你需要 Docker 和 Compose v2，或者手动安装所需的 Node.js 22 和 Bun 1.4，以及一个 Postgres 数据库：可以使用 docker-compose.yml 启动的那个，也可以使用 Neon。请设置 NEXT_PUBLIC_APP_URL、DATABASE_URL 和 BETTER_AUTH_SECRET，并通过 GitHub 或 Google OAuth 应用，或通过 Resend 发送邮箱验证码，为用户提供登录方式。",
+      "closedQuestion": "可以在闭源应用中使用这个二维码库吗？",
+      "closedAnswer": "可以。qrdx 库和 @qrdx/cli 采用 MIT 许可，只要代码中保留许可声明，商业项目和闭源项目都可以使用。qrdx 0.0.47 和 @qrdx/cli 0.0.5 之前的版本采用 AGPL-3.0-or-later 许可。",
+      "changesQuestion": "我必须公开对应用所做的修改吗？",
+      "changesAnswer": "只有当你把修改后的版本作为网络服务运行时才需要：此时你必须按相同许可向该服务的用户提供其源代码。如果你打算基于该应用进行开发，请先确认 AGPL 是否适合你的项目。",
+      "nameQuestion": "我的分支可以叫 QRdx 吗？",
+      "nameAnswer": "不可以。基于该代码创建的分支或公开服务需要使用自己的名称和标志，并保留许可声明。以自己的名称为自己或所在组织运行 QRdx 则没有问题。详情请见商标政策。",
+      "shutdownQuestion": "如果 QRdx 停止运营，我在 qrdx.dev 上的二维码会怎么样？",
+      "shutdownAnswer": "Never-Hostage 保障承诺至少提前 12 个月通知，留出时间导出全部内容，并提供有文档说明的方法，让你在自己的服务器上运行这个开源应用。"
     }
   },
   "ai": {
@@ -4922,7 +5179,11 @@
         "filesUploadedToThisWorkspace": "上传到此工作区的文件。可在控制台 → 文件中管理。",
         "noLabelFilesYetUpload": "还没有{label}文件。请先上传一个。",
         "add": "添加",
-        "selected": "已选择"
+        "selected": "已选择",
+        "loadMore": "加载更多",
+        "loading": "加载中…",
+        "tryAgain": "重试",
+        "couldntLoadYourFiles": "无法加载你的文件。"
       },
       "sourceListEditor": {
         "thisBlockHoldsUpTo": "此模块最多可包含 {max, number} 项。",
@@ -5067,7 +5328,15 @@
       "previous": "上一页",
       "pagePageOfPages": "第 {page, number} 页，共 {pages, number} 页",
       "next": "下一页",
-      "pages": "页面"
+      "pages": "页面",
+      "loadMore": "加载更多",
+      "loading": "加载中",
+      "failed": "下一页未能加载。"
+    },
+    "more": {
+      "load": "加载更多",
+      "loading": "加载中",
+      "failed": "页面的这一部分未能加载。"
     },
     "licenceConfirm": {
       "licence": "许可协议："
@@ -5520,7 +5789,10 @@
           "commissions": "佣金",
           "suspended": "已停用",
           "approved": "已通过",
-          "notSet": "未设置"
+          "notSet": "未设置",
+          "pagePageOfPagecount": "第 {page, number} 页，共 {pageCount, number} 页",
+          "previous": "上一页",
+          "next": "下一页"
         }
       },
       "authorizedApps": {
@@ -5798,7 +6070,13 @@
           "dubLinkArchived": "Dub 链接已归档",
           "failedToUpdateDubLink": "更新 Dub 链接失败",
           "dubLinkUpdated": "Dub 链接已更新",
-          "unknown": "未知"
+          "unknown": "未知",
+          "couldntLoadLinks": "无法加载你的链接，请重试。",
+          "couldntLoadMoreLinks": "无法加载更多链接，请重试。",
+          "loadMoreLinks": "加载更多链接",
+          "loadingLinks": "正在加载链接…",
+          "tryAgain": "重试",
+          "thatsEveryLink": "已显示全部链接。"
         },
         "integrationDetail": {
           "connected": "已连接",
@@ -5860,7 +6138,13 @@
           "nameSyncIsOn": "{name} 同步已开启",
           "saved": "已保存",
           "couldntSave": "无法保存",
-          "retryFailed": "重试失败"
+          "retryFailed": "重试失败",
+          "searchPages": "按标题搜索页面",
+          "noPagesMatch": "没有匹配的含表单页面。",
+          "loadMorePages": "加载更多页面",
+          "loadingPages": "正在加载页面…",
+          "tryAgain": "重试",
+          "couldntLoadMorePages": "无法加载更多页面，请重试。"
         },
         "slackBotPanel": {
           "qrdxBot": "QRdx 机器人",
@@ -6010,7 +6294,13 @@
         "comparePicker": {
           "stopComparingValue": "停止对比 {value}",
           "addACodeToCompare": "添加要对比的二维码",
-          "upToMaxCompareCodes": "最多 {MAX_COMPARE, number} 个二维码"
+          "upToMaxCompareCodes": "最多 {MAX_COMPARE, number} 个二维码",
+          "searchCodes": "按标题、链接或目标地址搜索",
+          "mostScanned": "扫描次数最多",
+          "searching": "正在搜索…",
+          "noCodesMatch": "没有匹配的二维码。",
+          "couldntSearch": "无法搜索你的二维码，请重试。",
+          "typeToNarrow": "显示前 {count, number} 个，输入关键词可缩小范围。"
         },
         "timeZoneSwitch": {
           "currentShowUtc": "{current} · 显示 UTC",
@@ -6097,6 +6387,7 @@
           "barcodes2": "条形码"
         },
         "barcodesList": {
+          "move": "移动",
           "noFolder": "无文件夹",
           "makeFoldersUnderCodesBarcodes": "请在“二维码”下创建文件夹，条形码共用这些文件夹。",
           "emptyTrash": "清空回收站",
@@ -6345,7 +6636,6 @@
           "scansPerDayLastDays": "每日扫描次数，最近 {days, number} 天（UTC）",
           "botsAndLinkPreviewsAre": "机器人和链接预览不计入统计。国家和城市来自访客的 IP 地址，该地址不会被存储；精确位置仅来自选择分享位置的扫描者。",
           "dateRange": "日期范围",
-          "valueKeepsValue2OfScan": "{value} 保留 {value2} 的扫描历史",
           "totalScans": "扫描总数",
           "scansInRange": "所选时段扫描次数",
           "uniqueVisitors": "独立访客",
@@ -7356,7 +7646,12 @@
           "notUsedYet": "尚未使用",
           "usedByPagesAndCodes": "被 {pages, plural, one {# 个页面} other {# 个页面}} · {codes, plural, one {# 个二维码} other {# 个二维码}}使用",
           "usedByPages": "被 {pages, plural, one {# 个页面} other {# 个页面}}使用",
-          "usedByCodes": "被 {codes, plural, one {# 个二维码} other {# 个二维码}}使用"
+          "usedByCodes": "被 {codes, plural, one {# 个二维码} other {# 个二维码}}使用",
+          "loadMoreFiles": "加载更多文件",
+          "loadingMoreFiles": "正在加载文件…",
+          "tryAgain": "重试",
+          "couldntLoadMoreFiles": "无法加载更多文件，请重试。",
+          "allFilesShown": "已显示全部文件。"
         }
       },
       "loading": {
@@ -7394,7 +7689,8 @@
           "archived": "已归档",
           "disabled": "已停用",
           "noQrCodeYet": "暂无二维码",
-          "pageLinkCopied": "页面链接已复制"
+          "pageLinkCopied": "页面链接已复制",
+          "pagePageOfPagecountTotal": "第 {page, number} 页，共 {pageCount, number} 页 · {total} 个页面"
         },
         "responses": {
           "page": {
@@ -7440,7 +7736,10 @@
             "deleting": "正在删除…",
             "delete": "删除",
             "responseDeleted": "回复已删除",
-            "deletedResponsesDeleted": "已删除 {deleted, number} 条回复"
+            "deletedResponsesDeleted": "已删除 {deleted, number} 条回复",
+            "countSelected": "已选择 {count, number} 项",
+            "clearSelection": "清除选择",
+            "bulkActions": "批量操作"
           }
         },
         "pageListControls": {
@@ -7593,7 +7892,8 @@
             "onlyTeamOwnersAndAdmins": "只有团队所有者和管理员可以添加、更改或测试端点。",
             "sendScansNewAndChanged": "将扫描、新建和更改的二维码以及表单回复发送到您自己的服务器、Zapier 或 Make。",
             "thisTeamsPlanNoLonger": "此团队的套餐不再包含 Webhook。",
-            "yourPlanNoLongerIncludes": "您的套餐不再包含 Webhook。"
+            "yourPlanNoLongerIncludes": "您的套餐不再包含 Webhook。",
+            "keptFor30Days": "按时间倒序排列，保留 30 天。投递失败时最多重试 {MAX_DELIVERY_ATTEMPTS, number} 次，重试间隔逐渐延长。"
           }
         }
       },
@@ -7667,7 +7967,8 @@
           "yourThemes": "你的主题",
           "noSharedThemesYetUse": "还没有共享主题。请对下方你的某个主题使用“复制到此工作区”。",
           "noSharedThemesYetOwners": "还没有共享主题。所有者和管理员可以在此共享主题。",
-          "askAWorkspaceOwnerTo": "请联系工作区所有者升级。"
+          "askAWorkspaceOwnerTo": "请联系工作区所有者升级。",
+          "showMoreThemes": "显示更多主题"
         }
       },
       "home": {
@@ -7717,7 +8018,9 @@
         "move": "移动",
         "nextOrPreviousRow": "下一行或上一行",
         "extendTheSelection": "扩展选择范围",
-        "withASelection": "选中项目后"
+        "withASelection": "选中项目后",
+        "more": "更多",
+        "moreActions": "更多操作"
       },
       "domains": {
         "dnsRecords": {
@@ -7963,6 +8266,17 @@
           "notDeliveredError": "未送达：{error}",
           "endpointDeleted": "端点已删除"
         }
+      },
+      "paging": {
+        "navigation": "分页",
+        "previous": "上一页",
+        "next": "下一页",
+        "rowsPerPage": "每页行数",
+        "perPage": "每页 {count, number} 条",
+        "page": "第 {page, number} 页",
+        "pageOf": "第 {page, number} 页，共 {pageCount, number} 页",
+        "newer": "较新",
+        "older": "较早"
       }
     },
     "shell": {

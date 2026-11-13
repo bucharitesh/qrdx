@@ -1,0 +1,88 @@
+{
+  "id": "give-blood",
+  "name": "Give blood",
+  "description": "A solid card with a round badge holding a blood drop on its top edge.",
+  "category": "use-case",
+  "collection": "nonprofit",
+  "contentTypes": ["calcom", "url"],
+  "tags": ["nonprofit", "community", "blood drive"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1830
+    },
+    "qr": {
+      "x": 120,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 150,
+        "width": 1240,
+        "height": 1680,
+        "radius": 64,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 620,
+        "cy": 150,
+        "r": 150,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 620,
+        "cy": 150,
+        "r": 120,
+        "fill": "background"
+      },
+      {
+        "type": "path",
+        "d": "M620 85.6C635.68 124.24 664.8 142.72 664.8 169.6A44.8 44.8 0 0 1 575.2 169.6C575.2 142.72 604.32 124.24 620 85.6ZM614.4 164L600.4 164L600.4 175.2L614.4 175.2L614.4 189.2L625.6 189.2L625.6 175.2L639.6 175.2L639.6 164L625.6 164L625.6 150L614.4 150Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Give blood",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1540,
+          "width": 1040,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Book a slot",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1710,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

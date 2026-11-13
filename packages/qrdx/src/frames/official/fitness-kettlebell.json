@@ -3,7 +3,7 @@
   "name": "Kettlebell",
   "description": "A solid card with a kettlebell over the code and the label underneath.",
   "category": "use-case",
-  "collection": "health-learning",
+  "collection": "sports-fitness",
   "contentTypes": ["url"],
   "tags": ["fitness", "gym", "workout"],
   "license": "CC0-1.0",

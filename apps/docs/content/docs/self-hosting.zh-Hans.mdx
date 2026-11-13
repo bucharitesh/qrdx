@@ -4,7 +4,7 @@ description: "使用 Docker Compose 或 Node.js 运行你自己的 QRdx Web 应�
 icon: Server
 ---
 
-QRdx 采用 AGPL-3.0 许可证，你可以在自己的服务器上运行这个 Web 应用，包括二维码编辑器、账户、两步验证和通行密钥、动态二维码和托管页面、团队、已保存的主题、社区图库以及本文档。工作区单点登录和工作区审计日志属于例外：它们位于商业许可的 `ee/` 文件夹中，除非你设置了许可证密钥（`QRDX_EE_LICENSE`），否则保持关闭。在生产环境中使用它们需要与 QRdx 签订书面协议，详见 [LICENSING.md](https://github.com/bucharitesh/qrdx/blob/main/LICENSING.md)。使用 [`qrdx` React 库](/docs/getting-started)或 CLI 不需要以上任何内容，它们无需后端即可在任何地方运行。
+QRdx 采用 AGPL-3.0 许可，你可以在自己的服务器上运行 Web 应用（二维码编辑器、账户、两步验证和通行密钥、动态码和托管页面、团队、已保存的主题、社区图库以及本文档）。工作区单点登录和工作区审计日志除外：它们位于商业许可的 `ee/` 文件夹中，除非设置许可证密钥（`QRDX_EE_LICENSE`），否则保持关闭。在生产环境中使用它们需要与 QRdx 签订书面协议，详见 [LICENSING.md](https://github.com/bucharitesh/qrdx/blob/main/LICENSING.md)。使用 [`qrdx` React 库](/docs/getting-started)或 CLI 不需要这些。它们采用 MIT 许可，无需后端即可在任何地方运行。[QRdx 开源](/open-source-qr-code-generator)列出了代码仓库的各个部分及其许可证。
 
 <Callout type="warn">
   Docker 部署方式是新推出的。如果遇到问题，请[提交 issue](https://github.com/bucharitesh/qrdx/issues)。
@@ -12,23 +12,23 @@ QRdx 采用 AGPL-3.0 许可证，你可以在自己的服务器上运行这个 W
 
 ## 环境要求 [#requirements]
 
-- 安装了 Compose v2 和 BuildKit 的 Docker（Docker Desktop 和最新的 Docker Engine 均已包含两者）；手动部署则需要 Node.js 22（22.22.3 或更高版本）和 [Bun](https://bun.com/docs/installation) 1.4
+- 带有 Compose v2 和 BuildKit 的 Docker（Docker Desktop 和最新的 Docker Engine 均已包含），或者手动部署所需的 Node.js 22（22.22.3 或更高版本）和 [Bun](https://bun.com/docs/installation) 1.4
 - 构建镜像时，Docker 至少需要 8 GB 内存
-- 一种登录方式，用于创建账户：GitHub 或 Google OAuth 应用，或者使用 [Resend](https://resend.com) 发送邮箱登录验证码。只有当 `NEXT_PUBLIC_APP_URL` 不是 `localhost` 时才会通过邮件发送验证码。`bun run dev` 会改为在终端中打印验证码，但 Docker 镜像不会，因此在本地用 Docker 测试时需要使用 GitHub 或 Google 登录。
+- 一种登录方式，以便创建账户：GitHub 或 Google OAuth 应用，或用于邮件登录验证码的 [Resend](https://resend.com)。只有当 `NEXT_PUBLIC_APP_URL` 不是 `localhost` 时才会通过邮件发送验证码。`bun run dev` 会改为在终端中打印验证码，但 Docker 镜像不会，因此在本地用 Docker 测试时需要使用 GitHub 或 Google 登录。
 - Postgres：`docker-compose.yml` 中自带的容器，或 [Neon](https://neon.tech) 数据库
 
 ### 数据库连接的工作方式 [#how-the-database-connection-works]
 
-应用通过 Neon 的 serverless HTTP 驱动连接 Postgres。
+应用通过 Neon 的无服务器 HTTP 驱动连接 Postgres。
 
-- **Neon：** 可直接使用。将 `DATABASE_URL` 设置为你的 Neon 连接字符串即可。
-- **普通 Postgres：** 前面需要加一个与 Neon 兼容的 HTTP 代理。`docker-compose.yml` 中运行了一个这样的代理（[local-neon-http-proxy](https://github.com/TimoWilhelm/local-neon-http-proxy)），并设置了 `DATABASE_HTTP_ENDPOINT`，让应用把查询发送到该代理。
+- **Neon：** 可直接使用。将 `DATABASE_URL` 设置为你的 Neon 连接字符串。
+- **普通 Postgres：** 前面需要一个与 Neon 兼容的 HTTP 代理。`docker-compose.yml` 会运行一个（[local-neon-http-proxy](https://github.com/TimoWilhelm/local-neon-http-proxy)），并设置 `DATABASE_HTTP_ENDPOINT`，让应用把查询发送到该代理。
 
-数据库结构来自 `packages/database/schema.ts`，通过 `drizzle-kit push` 应用。
+数据库架构来自 `packages/database/schema.ts`，通过 `drizzle-kit push` 应用。
 
 ## 使用 Docker Compose 快速开始 [#quick-start-with-docker-compose]
 
-### 1. 克隆仓库 [#1-clone-the-repository]
+### 1. 克隆代码仓库 [#1-clone-the-repository]
 
 ```bash
 git clone https://github.com/bucharitesh/qrdx.git
@@ -43,11 +43,11 @@ cp apps/docs/.env.example .env
 
 编辑 `.env`：
 
-- `BETTER_AUTH_SECRET`：使用 `openssl rand -base64 32` 生成
-- `NEXT_PUBLIC_APP_URL`：你的实例的公开 URL，例如 `https://qr.example.com`。本地测试时保持 `http://localhost:3000`。
-- `BETTER_AUTH_URL`：取消注释并填入相同的值
+- `BETTER_AUTH_SECRET`：用 `openssl rand -base64 32` 生成
+- `NEXT_PUBLIC_APP_URL`：你的实例的公开 URL，例如 `https://qr.example.com`。本地测试请保持 `http://localhost:3000`。
+- `BETTER_AUTH_URL`：取消注释，并使用相同的值
 - `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET`：来自 [GitHub OAuth 应用](https://github.com/settings/developers)，回调 URL 为 `<your url>/api/auth/callback/github`
-- 或者 `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET`：来自 [Google OAuth 客户端](https://console.cloud.google.com/apis/credentials)，重定向 URI 为 `<your url>/api/auth/callback/google`
+- 或 `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET`：来自 [Google OAuth 客户端](https://console.cloud.google.com/apis/credentials)，重定向 URI 为 `<your url>/api/auth/callback/google`
 
 你不需要设置 `DATABASE_URL`。Compose 会让应用连接到它自己的 Postgres 容器。如需更改数据库密码，请在首次启动前设置 `POSTGRES_PASSWORD`。
 
@@ -66,11 +66,11 @@ docker compose logs -f migrate app   # follow the schema sync and the app
 
 ### 4. 创建第一个用户 [#4-create-your-first-user]
 
-在浏览器中打开 `NEXT_PUBLIC_APP_URL`，使用 GitHub、Google 或邮箱验证码登录。你的账户会在首次登录时创建。
+在浏览器中打开 `NEXT_PUBLIC_APP_URL`，使用 GitHub、Google 或邮件验证码登录。你的账户会在首次登录时创建。
 
 ### 5. 创建第一个管理员 [#5-create-your-first-admin]
 
-把你刚创建的账户的邮箱地址添加到 `.env` 中：
+将你刚创建的账户的邮箱地址添加到 `.env`：
 
 ```bash
 ADMIN_EMAILS=you@example.com
@@ -93,7 +93,7 @@ docker build -t qrdx --build-arg NEXT_PUBLIC_APP_URL=https://qr.example.com .
 docker run -d --env-file .env -p 3000:3000 qrdx
 ```
 
-在 `.env` 中将 `DATABASE_URL` 设置为你的 Neon 连接字符串，并且不要设置 `DATABASE_HTTP_ENDPOINT`。使用 migrator 镜像应用一次数据库结构（每次更新后也要再应用一次）：
+在 `.env` 中将 `DATABASE_URL` 设置为你的 Neon 连接字符串，并保持 `DATABASE_HTTP_ENDPOINT` 不设置。使用迁移镜像应用一次数据库架构（之后每次更新后再应用一次）：
 
 ```bash
 docker build --target migrator -t qrdx-migrate .
@@ -113,14 +113,14 @@ bun run db:push                                          # apply the schema
 bun run --filter docs dev                                # http://localhost:3000
 ```
 
-在生产环境中，请构建并启动应用：
+对于生产环境，构建并启动应用：
 
 ```bash
 bun x turbo build --filter=docs
 bun run --filter docs start
 ```
 
-`bun run db:push` 使用 Neon 的驱动连接，因此需要 Neon 数据库。如果想改用 Docker 中的 Postgres 进行本地开发，请用 `docker compose up -d db db-proxy` 启动它，用 `docker compose run --rm migrate` 应用数据库结构，并在 `apps/docs/.env.local` 中设置以下内容：
+`bun run db:push` 使用 Neon 的驱动连接，因此需要 Neon 数据库。如果想改用 Docker 中的 Postgres 进行本地开发，请用 `docker compose up -d db db-proxy` 启动它，用 `docker compose run --rm migrate` 应用数据库架构，并在 `apps/docs/.env.local` 中设置以下内容：
 
 ```bash
 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/qrdx
@@ -135,11 +135,11 @@ DATABASE_HTTP_ENDPOINT=http://localhost:4444/sql
 
 | 变量 | 用途 |
 | --- | --- |
-| `NEXT_PUBLIC_APP_URL` | 你的实例的公开 URL |
+| `NEXT_PUBLIC_APP_URL` | 实例的公开 URL |
 | `DATABASE_URL` | Postgres 连接字符串（由 Compose 设置） |
-| `BETTER_AUTH_SECRET` | 用于签名会话和 Cookie |
+| `BETTER_AUTH_SECRET` | 用于签署会话和 Cookie |
 
-请添加一个 OAuth 提供方（GitHub 或 Google），或添加用于邮箱登录验证码的 Resend，这样用户才能登录。
+请至少添加一个 OAuth 提供方（GitHub 或 Google），或配置 Resend 以发送邮件登录验证码，这样用户才能登录。
 
 ### 可选服务 [#optional-services]
 
@@ -147,50 +147,50 @@ DATABASE_HTTP_ENDPOINT=http://localhost:4444/sql
 | --- | --- | --- |
 | GitHub 登录 | `GITHUB_CLIENT_ID`、`GITHUB_CLIENT_SECRET` | 无法使用 GitHub 登录 |
 | Google 登录 | `GOOGLE_CLIENT_ID`、`GOOGLE_CLIENT_SECRET` | 无法使用 Google 登录 |
-| 认证基础 URL | `BETTER_AUTH_URL` | 根据每个请求推断，并在日志中给出警告 |
+| 认证基础 URL | `BETTER_AUTH_URL` | 从每个请求中推断，并在日志中给出警告 |
 | 管理面板 | `ADMIN_EMAILS`、`ADMIN_USER_IDS` | 任何人都无法打开 `/admin` |
-| 工作区单点登录 | `QRDX_EE_LICENSE` | 单点登录保持关闭：没有 **Sign in with SSO**，没有 SSO 设置，其登录路由也不存在。SSO 位于 `ee/` 文件夹中，适用 QRdx 商业许可，因此生产环境使用需要与 QRdx 签订书面协议。参见[单点登录](/docs/help/teams/single-sign-on) |
-| 工作区审计日志 | `QRDX_EE_LICENSE` | 审计日志保持关闭：不会记录任何内容，也没有 **Settings** → **Audit log**。与单点登录一样，它位于 `ee/` 文件夹中，适用 QRdx 商业许可。其记录保留 {facts.auditLogRetentionDays} 天；每天运行的 `/api/cron/webhooks` 会删除更早的记录。参见[审计日志](/docs/help/teams/audit-log) |
-| AI 主题、提示词优化和 AI 二维码艺术（Vercel AI Gateway） | `AI_GATEWAY_API_KEY` | AI 请求会失败，AI 页面会从导航和站点地图中消失。编辑器仍可正常使用。请在你自己的 Vercel 账户中创建该密钥（AI Gateway，API keys）；用量会从该账户的 AI Gateway 额度中扣费，你的应用不必运行在 Vercel 上。每个任务使用的模型在 `apps/docs/lib/ai/models.ts` 中设置 |
-| 短链接源站 | `NEXT_PUBLIC_SHORT_LINK_BASE_URL` | [动态码](/docs/dynamic-qr-codes#self-hosting)使用 `NEXT_PUBLIC_APP_URL` |
+| 工作区单点登录 | `QRDX_EE_LICENSE` | 单点登录保持关闭：没有 **Sign in with SSO**，没有 SSO 设置，其登录路由也不存在。SSO 位于 `ee/` 文件夹中，适用 QRdx 商业许可，因此用于生产环境需要与 QRdx 签订书面协议。参见[单点登录](/docs/help/teams/single-sign-on) |
+| 工作区审计日志 | `QRDX_EE_LICENSE` | 审计日志保持关闭：不记录任何内容，也没有 **设置** → **审计日志**。与单点登录一样，它位于 `ee/` 文件夹中，适用 QRdx 商业许可。其记录保留 {facts.auditLogRetentionDays} 天；`/api/cron/webhooks` 每天运行一次，会删除更早的记录。参见[审计日志](/docs/help/teams/audit-log) |
+| AI 主题、提示词增强和 AI 二维码艺术图（Vercel AI Gateway） | `AI_GATEWAY_API_KEY` | AI 请求会失败，AI 页面也会从导航和站点地图中移除。编辑器可正常使用。请在你自己的 Vercel 账户中创建密钥（AI Gateway，API keys）；用量会从该账户的 AI Gateway 额度中扣费，你的应用不必运行在 Vercel 上。每项任务使用的模型在 `apps/docs/lib/ai/models.ts` 中设置 |
+| 短链接源地址 | `NEXT_PUBLIC_SHORT_LINK_BASE_URL` | [动态二维码](/docs/dynamic-qr-codes#self-hosting)使用 `NEXT_PUBLIC_APP_URL` |
 | 扫描隐私盐值 | `SCAN_HASH_SALT` | 由 `BETTER_AUTH_SECRET` 派生 |
 | 文件存储（Cloudflare R2） | `R2_ACCOUNT_ID`、`R2_ACCESS_KEY_ID`、`R2_SECRET_ACCESS_KEY`、`R2_BUCKET`、`R2_PUBLIC_BASE_URL` | 上传功能关闭；页面仍可链接到托管在其他位置的文件。参见[文件](/docs/files#set-up-storage-self-hosting) |
-| 邮件（Resend） | `RESEND_API_KEY`、`EMAIL_FROM` | 邮件会被跳过并记录日志，因此无法发送邮箱登录验证码；团队邀请使用可复制的链接。参见[通知](/docs/notifications#self-hosting) |
-| Vercel 上的自定义域名 | `VERCEL_API_TOKEN`、`VERCEL_PROJECT_ID`、`VERCEL_TEAM_ID` | 不在 Vercel 上运行时请留空：此时通过 DNS `TXT` 记录验证域名。参见[自定义域名](/docs/custom-domains#self-hosting) |
-| 一键 DNS 设置（Domain Connect） | `DOMAIN_CONNECT_PROVIDER_ID`、`DOMAIN_CONNECT_SERVICE_ID`、`DOMAIN_CONNECT_PRIVATE_KEY` | 没有 **Set up with …** 按钮：用户需自行添加 DNS 记录。需要有你自己的、被各 DNS 提供商接受的 Domain Connect 模板，并将其公钥写入 DNS。参见[自定义域名](/docs/custom-domains#self-hosting) |
+| 邮件（Resend） | `RESEND_API_KEY`、`EMAIL_FROM` | 邮件会被跳过并记录到日志，因此无法发送邮件登录验证码；团队邀请改用可复制的链接。参见[通知](/docs/notifications#self-hosting) |
+| Vercel 上的自定义域名 | `VERCEL_API_TOKEN`、`VERCEL_PROJECT_ID`、`VERCEL_TEAM_ID` | 不在 Vercel 上运行时请不要设置：此时将通过 DNS `TXT` 记录验证域名。参见[自定义域名](/docs/custom-domains#self-hosting) |
+| 一键 DNS 设置（Domain Connect） | `DOMAIN_CONNECT_PROVIDER_ID`、`DOMAIN_CONNECT_SERVICE_ID`、`DOMAIN_CONNECT_PRIVATE_KEY` | 没有 **Set up with …** 按钮：用户需要自行添加 DNS 记录。需要你自己的 Domain Connect 模板并获得各 DNS 提供商接受，且其公钥需放在 DNS 中。参见[自定义域名](/docs/custom-domains#self-hosting) |
 | 定时任务 | `CRON_SECRET` | 在生产环境中，每周摘要和 webhook 重试任务会拒绝运行，且超过 {facts.auditLogRetentionDays} 天的审计日志记录不会被删除 |
 | 链接安全（Google Web Risk） | `WEB_RISK_API_KEY` | 仅通过离线规则检查目标地址。参见[二维码控制](/docs/code-controls) |
 | 表单垃圾信息检查（Cloudflare Turnstile） | `NEXT_PUBLIC_TURNSTILE_SITE_KEY`、`TURNSTILE_SECRET_KEY` | 表单依靠内置的蜜罐和速率限制 |
-| 支付（Polar） | `POLAR_ACCESS_TOKEN`、`POLAR_WEBHOOK_SECRET`、`NEXT_PUBLIC_QRDX_PRO_MONTHLY_PRODUCT_ID`、`NEXT_PUBLIC_QRDX_PRO_YEARLY_PRODUCT_ID`、`NEXT_PUBLIC_QRDX_BUSINESS_MONTHLY_PRODUCT_ID`、`NEXT_PUBLIC_QRDX_BUSINESS_YEARLY_PRODUCT_ID` | 无法升级（没有产品 ID 的套餐显示“Coming soon”），所有账户都使用免费版的限制 |
-| 欧元价格 | `NEXT_PUBLIC_QRDX_EUR_PRICES=1`，仅在上述每个产品在 Polar 中都有欧元价格后再设置 | 来自欧盟和欧洲经济区的访客看到并按美元（US$）价格付费 |
-| 联盟计划 | 无：它仅在 qrdx.dev 上运行 | 关闭：QRdx 的联盟计划及其[条款](/legal/affiliate-terms)是为 qrdx.dev 编写的，因此自托管的副本没有 **/affiliates** 页面，不接受申请，没有 **Settings** → **Affiliate program**，推荐链接会跳转到首页。 |
+| 支付（Polar） | `POLAR_ACCESS_TOKEN`、`POLAR_WEBHOOK_SECRET`、`NEXT_PUBLIC_QRDX_PRO_MONTHLY_PRODUCT_ID`、`NEXT_PUBLIC_QRDX_PRO_YEARLY_PRODUCT_ID`、`NEXT_PUBLIC_QRDX_BUSINESS_MONTHLY_PRODUCT_ID`、`NEXT_PUBLIC_QRDX_BUSINESS_YEARLY_PRODUCT_ID` | 无法升级（没有产品 ID 的套餐会显示“Coming soon”），所有账户都使用免费版的限制 |
+| 欧元价格 | `NEXT_PUBLIC_QRDX_EUR_PRICES=1`，仅在上述每个产品在 Polar 中都有欧元价格后再设置 | 来自欧盟和欧洲经济区的访客看到并被收取的是美元（US$）价格 |
+| 联盟计划 | 无：仅在 qrdx.dev 上运行 | 关闭：QRdx 的联盟计划及其[条款](/legal/affiliate-terms)是为 qrdx.dev 编写的，因此自托管副本没有 **/affiliates** 页面，不接受申请，没有 **设置** → **联盟计划**，推荐链接会跳转到首页。 |
 | Dub 短链接 | `DUB_CLIENT_ID`、`DUB_CLIENT_SECRET`、`DUB_REDIRECT_URI`、`INTEGRATION_ENCRYPTION_KEY` | 无法连接 Dub 集成 |
 | Google Drive | `GOOGLE_CLIENT_ID`、`GOOGLE_CLIENT_SECRET`、`GOOGLE_DRIVE_REDIRECT_URI`、`INTEGRATION_ENCRYPTION_KEY` | 无法连接 Google Drive 集成 |
-| Bitly、Dropbox、OneDrive、Box、Notion | `BITLY_CLIENT_ID`/`_SECRET`、`DROPBOX_CLIENT_ID`/`_SECRET`、`MICROSOFT_CLIENT_ID`/`_SECRET`、`BOX_CLIENT_ID`/`_SECRET`、`NOTION_CLIENT_ID`/`_SECRET`、`INTEGRATION_ENCRYPTION_KEY` | 该集成显示“Not configured”（Bitly 仍可通过粘贴访问令牌连接）。Rebrandly 和 Short.io 不需要变量。参见[短链接与文件选择器](/docs/short-links-and-file-pickers#self-hosting) |
-| Slack 机器人 | `SLACK_CLIENT_ID`、`SLACK_CLIENT_SECRET`、`SLACK_SIGNING_SECRET`，生产环境中另需 `INTEGRATION_ENCRYPTION_KEY` | 没有 Slack 机器人：其路由和链接页面返回 404，Settings 中也不提供该选项。请按其 README 的说明，使用 [`plugins/slack/manifest.json`](https://github.com/bucharitesh/qrdx/tree/main/plugins/slack) 创建你自己的 Slack 应用。参见 [Slack 机器人](/docs/slack-bot#self-hosting) |
-| Discord 机器人 | `DISCORD_APPLICATION_ID`、`DISCORD_PUBLIC_KEY` | 没有 Discord 机器人：其交互端点返回 `404`，且不会出现在集成目录中。请按 [`plugins/discord/README.md`](https://github.com/bucharitesh/qrdx/tree/main/plugins/discord) 的说明注册你自己的 Discord 应用 |
-| Telegram 机器人 | `TELEGRAM_BOT_TOKEN`、`TELEGRAM_WEBHOOK_SECRET`、`TELEGRAM_BOT_USERNAME` | 没有 Telegram 机器人：其路由返回 404，站点也不会列出它。请使用 @BotFather 创建你自己的机器人，并运行 `plugins/telegram/scripts/setup.mjs`。参见 [Telegram 机器人](/docs/telegram-bot#self-hosting) |
-| 速率限制（Upstash） | `UPSTASH_REDIS_REST_URL`、`UPSTASH_REDIS_REST_TOKEN`（或 Vercel KV 的名称 `KV_REST_API_URL`、`KV_REST_API_TOKEN`） | 无速率限制。建议在生产环境中配置。 |
-| 分析（PostHog，在 Cookie 同意之后） | `NEXT_PUBLIC_POSTHOG_KEY`、`NEXT_PUBLIC_POSTHOG_HOST` | 无产品分析 |
-| 分析（Umami，无 Cookie） | `NEXT_PUBLIC_UMAMI_WEBSITE_ID`、`NEXT_PUBLIC_UMAMI_SCRIPT_URL` | 无访问量统计 |
+| Bitly、Dropbox、OneDrive、Box、Notion | `BITLY_CLIENT_ID`/`_SECRET`、`DROPBOX_CLIENT_ID`/`_SECRET`、`MICROSOFT_CLIENT_ID`/`_SECRET`、`BOX_CLIENT_ID`/`_SECRET`、`NOTION_CLIENT_ID`/`_SECRET`、`INTEGRATION_ENCRYPTION_KEY` | 该集成显示“Not configured”（Bitly 仍可使用粘贴的访问令牌连接）。Rebrandly 和 Short.io 无需任何变量。参见[短链接和文件选择器](/docs/short-links-and-file-pickers#self-hosting) |
+| Slack 机器人 | `SLACK_CLIENT_ID`、`SLACK_CLIENT_SECRET`、`SLACK_SIGNING_SECRET`，生产环境中还需 `INTEGRATION_ENCRYPTION_KEY` | 没有 Slack 机器人：其路由和链接页面返回 404，设置中也不提供该选项。请按照 [`plugins/slack/manifest.json`](https://github.com/bucharitesh/qrdx/tree/main/plugins/slack) 的 README 说明创建你自己的 Slack 应用。参见 [Slack 机器人](/docs/slack-bot#self-hosting) |
+| Discord 机器人 | `DISCORD_APPLICATION_ID`、`DISCORD_PUBLIC_KEY` | 没有 Discord 机器人：其交互端点返回 `404`，且不会出现在集成目录中。请按照 [`plugins/discord/README.md`](https://github.com/bucharitesh/qrdx/tree/main/plugins/discord) 的说明注册你自己的 Discord 应用 |
+| Telegram 机器人 | `TELEGRAM_BOT_TOKEN`、`TELEGRAM_WEBHOOK_SECRET`、`TELEGRAM_BOT_USERNAME` | 没有 Telegram 机器人：其路由返回 404，站点也不会列出它。请通过 @BotFather 创建你自己的机器人，并运行 `plugins/telegram/scripts/setup.mjs`。参见 [Telegram 机器人](/docs/telegram-bot#self-hosting) |
+| 速率限制（Upstash） | `UPSTASH_REDIS_REST_URL`、`UPSTASH_REDIS_REST_TOKEN`（或 Vercel KV 的名称 `KV_REST_API_URL`、`KV_REST_API_TOKEN`） | 没有速率限制。建议在生产环境中配置。 |
+| 分析（PostHog，在 Cookie 同意后） | `NEXT_PUBLIC_POSTHOG_KEY`、`NEXT_PUBLIC_POSTHOG_HOST` | 没有产品分析 |
+| 分析（Umami，无 Cookie） | `NEXT_PUBLIC_UMAMI_WEBSITE_ID`、`NEXT_PUBLIC_UMAMI_SCRIPT_URL` | 没有访问次数统计 |
 | 反馈小组件 | `NEXT_PUBLIC_FEATUREBASE_APP_ID` | 小组件不会加载 |
-| 文档附加功能 | `GITHUB_TOKEN` | Star 数量可能受到 GitHub 速率限制 |
+| 文档附加功能 | `GITHUB_TOKEN` | Star 数量可能会触发 GitHub 的速率限制 |
 
-一旦启用某个集成，生产环境中就必须设置 `INTEGRATION_ENCRYPTION_KEY`，因为它用于加密已存储的令牌。
+只要启用任何集成，生产环境中就必须设置 `INTEGRATION_ENCRYPTION_KEY`，因为它用于加密已存储的令牌。
 
 <Callout>
-  `NEXT_PUBLIC_*` 的值会在构建时内联到浏览器包中。修改其中任何一个后，请使用 `docker compose up -d --build` 重新构建。
+  `NEXT_PUBLIC_*` 的值会在构建时内联到浏览器 bundle 中。修改其中任何一个后，请使用 `docker compose up -d --build` 重新构建。
 </Callout>
 
 ## 反向代理与 HTTPS [#reverse-proxy-and-https]
 
-请将应用部署在反向代理（如 Caddy、nginx 或 Traefik）之后，由代理终止 TLS，并且不要将 3000 端口直接暴露到互联网。速率限制、安全邮件和[审计日志](/docs/help/teams/audit-log)会先从 `X-Real-IP` 读取客户端 IP，再读取 `X-Forwarded-For` 中的第一个地址，因此代理必须设置这些请求头，并且应用只能通过代理访问。请让代理把 `X-Real-IP` 设置为它接收连接时的来源地址（在 nginx 中为 `proxy_set_header X-Real-IP $remote_addr;`）。如果代理只是向 `X-Forwarded-For` 追加地址，客户端就可以把任意地址放在最前面。
+请将应用放在反向代理（如 Caddy、nginx 或 Traefik）之后，由代理终止 TLS，且不要将 3000 端口直接暴露到互联网。速率限制、安全邮件和[审计日志](/docs/help/teams/audit-log)会先读取 `X-Real-IP`，再读取 `X-Forwarded-For` 中的第一个地址来获取客户端 IP，因此代理必须设置这些请求头，并且应用只能通过代理访问。请让代理把 `X-Real-IP` 设置为它收到连接的来源地址（在 nginx 中为 `proxy_set_header X-Real-IP $remote_addr;`）。如果代理只是向 `X-Forwarded-For` 追加地址，客户端就可以把任意地址放在最前面。
 
-HTTPS 设置完成后，请将 `NEXT_PUBLIC_APP_URL` 和 `BETTER_AUTH_URL` 改为 `https://` 开头的 URL，更新 OAuth 回调 URL，然后重新构建。
+HTTPS 设置完成后，请将 `NEXT_PUBLIC_APP_URL` 和 `BETTER_AUTH_URL` 改为 `https://` URL，更新 OAuth 回调 URL，然后重新构建。
 
 ### Content-Security-Policy [#content-security-policy]
 
-生产构建会在 QRdx 自身的页面上发送 Content-Security-Policy：已登录页面每次请求都会获得新的脚本 nonce，预渲染页面则使用脚本主机的允许列表。托管页面（`/p`）使用宽松的策略，因为它们会运行所有者的像素代码，并嵌入来自任意位置的媒体。如果你的反向代理也设置了 `Content-Security-Policy`，浏览器会同时执行两者，因此请不要在代理上设置。设置 `CSP_REPORT_ONLY=1`（构建时和运行时都要设置），可在检查新环境时以仅报告模式发送该策略；违规情况会由 `/api/csp-report` 记录。如果你在 Vercel 之外通过 HTTPS 提供服务，请添加 `CSP_HTTPS=1`，这样浏览器会升级所有 `http://` 资源。
+生产构建会在 QRdx 自己的页面上发送 Content-Security-Policy：已登录页面的每个请求都会获得新的脚本 nonce，预渲染页面则使用脚本主机的允许列表。托管页面（`/p`）使用宽松的策略，因为它们会运行所有者的像素代码，并嵌入来自任意位置的媒体。如果你的反向代理也设置了 `Content-Security-Policy`，浏览器会同时执行两者，因此请不要在代理处设置。设置 `CSP_REPORT_ONLY=1`（构建时和运行时都要设置）可让策略以仅报告模式发送，便于你检查新的配置；违规情况会由 `/api/csp-report` 记录。如果你在 Vercel 之外通过 HTTPS 提供服务，请添加 `CSP_HTTPS=1`，这样浏览器会升级所有 `http://` 资源。
 
 ## 更新 [#updating]
 
@@ -200,7 +200,7 @@ HTTPS 设置完成后，请将 `NEXT_PUBLIC_APP_URL` 和 `BETTER_AUTH_URL` 改�
 docker compose exec db pg_dump -U postgres qrdx > qrdx-backup.sql
 ```
 
-然后拉取并重新构建。`migrate` 服务会在应用启动前再次同步数据库结构。
+然后拉取并重新构建。应用启动前，`migrate` 服务会再次同步数据库架构。
 
 ```bash
 git pull
@@ -209,16 +209,16 @@ docker compose up -d --build
 
 对于手动安装，请运行 `git pull`、`bun install` 和 `bun run db:push`，然后重新构建。
 
-如果某次数据库结构变更会丢失数据，`drizzle-kit push` 会要求确认。这种情况下，请在终端中运行 `docker compose run --rm migrate`，以查看并确认这些变更。
+如果某次架构变更会丢弃数据，`drizzle-kit push` 会要求确认。这种情况下，请在终端中运行 `docker compose run --rm migrate`，以查看并确认这些变更。
 ## 故障排查 [#troubleshooting]
 
-- **启动时出现 "Invalid environment variables"：** 日志会列出每个缺失或无效的变量。可选变量必须注释掉，不能设置为空值。
-- **"BETTER_AUTH_SECRET is missing" 或 "You are using the default secret"：** 设置 `BETTER_AUTH_SECRET`，然后重新创建容器。
+- **启动时提示 "Invalid environment variables"：** 日志会列出每个缺失或无效的变量。可选变量必须注释掉，不能设置为空值。
+- **提示 "BETTER_AUTH_SECRET is missing" 或 "You are using the default secret"：** 设置 `BETTER_AUTH_SECRET`，然后重新创建容器。
 - **OAuth `redirect_uri` 不匹配：** OAuth 应用中的回调 URL 必须严格为 `<NEXT_PUBLIC_APP_URL>/api/auth/callback/<github|google>`。将 `BETTER_AUTH_URL` 设置为相同的基础 URL。
 - **应用无法连接数据库（`fetch failed`）：** 使用普通 Postgres 时，`DATABASE_HTTP_ENDPOINT` 必须指向正在运行的代理。请检查 `docker compose ps db-proxy`。
-- **`migrate` 一直不结束：** `drizzle-kit push` 正在等待确认。请参阅[更新](#updating)。
-- **修改后的 `NEXT_PUBLIC_*` 值没有生效：** 请重新构建镜像。
-- **端口 4444 已被占用：** 在 `docker-compose.yml` 中修改 `db-proxy` 的端口映射。只有在主机上进行本地开发时才会用到该端口。
-- **"the --mount option requires BuildKit"：** 你的 Docker 没有 BuildKit。请安装 `buildx` 插件，或更新 Docker。
-- **构建因 `Killed` 或退出码 137 而停止：** Docker 内存不足。请至少分配 8 GB（Docker Desktop：Settings → Resources），然后再次运行 `docker compose up -d --build`。
-- **"sign-in code email is off for this deployment"：** 当 `NEXT_PUBLIC_APP_URL` 为 `localhost` 时，不会发送邮件验证码。本地测试请使用 GitHub 或 Google 登录。
+- **`migrate` 一直不结束：** `drizzle-kit push` 正在等待确认。参见[更新](#updating)。
+- **修改 `NEXT_PUBLIC_*` 的值后没有生效：** 请重新构建镜像。
+- **端口 4444 已被占用：** 修改 `docker-compose.yml` 中 `db-proxy` 的端口映射。只有在主机上进行本地开发时才会用到该端口。
+- **提示 "the --mount option requires BuildKit"：** 你的 Docker 没有 BuildKit。请安装 `buildx` 插件，或更新 Docker。
+- **构建中途停止，出现 `Killed` 或退出码 137：** Docker 内存不足。请至少分配 8 GB（Docker Desktop：Settings → Resources），然后再次运行 `docker compose up -d --build`。
+- **提示 "sign-in code email is off for this deployment"：** 当 `NEXT_PUBLIC_APP_URL` 为 `localhost` 时，不会发送邮箱验证码。本地测试请使用 GitHub 或 Google 登录。

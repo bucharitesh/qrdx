@@ -1,0 +1,74 @@
+{
+  "id": "make-a-claim",
+  "name": "Insurance claim",
+  "description": "A solid card with a shield with a check mark over the code and the label underneath.",
+  "category": "use-case",
+  "collection": "business",
+  "contentTypes": ["url"],
+  "tags": ["business", "insurance", "claims"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M620 41L677 59L677 101C677 140 650 164 620 179C590 164 563 140 563 101L563 59ZM586.73 114.77L614.78 137.35L655.04 93.5A6.75 6.75 0 0 1 644.96 84.5L610.22 124.65L596.27 105.23A6.75 6.75 0 0 1 586.73 114.77Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Make a claim",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Insurance",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

@@ -104,7 +104,8 @@ export function FeatureRowsSection() {
   // Counts come from code (lib/plans, lib/product-facts), never the catalog.
   const cardValues = {
     count: FREE.dynamicCodes,
-    days: FREE.analyticsRetentionDays,
+    // Free's scan history in years (lib/scan-history.ts)
+    years: PRODUCT_FACTS.freeScanHistoryYears,
   };
   return (
     <section

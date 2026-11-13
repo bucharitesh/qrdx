@@ -1,0 +1,98 @@
+{
+  "id": "visitor-sign-in",
+  "name": "Visitor sign-in",
+  "description": "A folder tab on top carrying the label and an ID badge.",
+  "category": "use-case",
+  "collection": "business",
+  "contentTypes": ["url"],
+  "tags": ["business", "reception", "visitors"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1560
+    },
+    "qr": {
+      "x": 120,
+      "y": 290,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1000,
+        "height": 220,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 170,
+        "width": 1240,
+        "height": 1390,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 170,
+        "width": 200,
+        "height": 100,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M858.8 56.8L921.2 56.8A9.6 9.6 0 0 1 930.8 66.4L930.8 143.2A9.6 9.6 0 0 1 921.2 152.8L858.8 152.8A9.6 9.6 0 0 1 849.2 143.2L849.2 66.4A9.6 9.6 0 0 1 858.8 56.8ZM881 65.2A3 3 0 0 0 878 68.2L878 68.2A3 3 0 0 0 881 71.2L899 71.2A3 3 0 0 0 902 68.2L902 68.2A3 3 0 0 0 899 65.2L881 65.2ZM878 92.8A12 12 0 1 0 902 92.8A12 12 0 1 0 878 92.8ZM911.6 126.4C911.6 107.2 868.4 107.2 868.4 126.4ZM870.8 136A2.4 2.4 0 0 0 868.4 138.4L868.4 138.4A2.4 2.4 0 0 0 870.8 140.8L909.2 140.8A2.4 2.4 0 0 0 911.6 138.4L911.6 138.4A2.4 2.4 0 0 0 909.2 136L870.8 136Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M870.1 38.3L886.9 55.1L883.5 58.5L866.7 41.7ZM913.3 41.7L896.5 58.5L893.1 55.1L909.9 38.3Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Sign in as a visitor",
+        "color": "text",
+        "box": {
+          "x": 60,
+          "y": 25,
+          "width": 740,
+          "height": 150
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Reception",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 1400,
+          "width": 1000,
+          "height": 100
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

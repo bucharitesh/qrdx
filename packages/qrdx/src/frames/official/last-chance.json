@@ -1,0 +1,94 @@
+{
+  "id": "last-chance",
+  "name": "Last chance",
+  "description": "A die-cut sticker with a thick outline and an offset shadow and an hourglass.",
+  "category": "use-case",
+  "collection": "shopping",
+  "contentTypes": ["url"],
+  "tags": ["retail", "shop", "sale", "clearance"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1750
+    },
+    "qr": {
+      "x": 110,
+      "y": 370,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 50,
+        "y": 50,
+        "width": 1270,
+        "height": 1700,
+        "radius": 110,
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1270,
+        "height": 1700,
+        "radius": 110,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 36,
+        "y": 36,
+        "width": 1198,
+        "height": 1628,
+        "radius": 80,
+        "fill": "background"
+      },
+      {
+        "type": "path",
+        "d": "M585.4 76.4L684.6 76.4A4.8 4.8 0 0 1 689.4 81.2L689.4 84.4A4.8 4.8 0 0 1 684.6 89.2L585.4 89.2A4.8 4.8 0 0 1 580.6 84.4L580.6 81.2A4.8 4.8 0 0 1 585.4 76.4ZM585.4 210.8L684.6 210.8A4.8 4.8 0 0 1 689.4 215.6L689.4 218.8A4.8 4.8 0 0 1 684.6 223.6L585.4 223.6A4.8 4.8 0 0 1 580.6 218.8L580.6 215.6A4.8 4.8 0 0 1 585.4 210.8ZM593.4 92.4L676.6 92.4C676.6 127.6 644.6 140.4 644.6 150C644.6 159.6 676.6 172.4 676.6 207.6L593.4 207.6C593.4 172.4 625.4 159.6 625.4 150C625.4 140.4 593.4 127.6 593.4 92.4Z",
+        "fill": "frame"
+      },
+      {
+        "type": "polygon",
+        "points": [[1090, 1700], [1270, 1520], [1270, 1700]],
+        "fill": "background"
+      },
+      {
+        "type": "polygon",
+        "points": [[1090, 1700], [1270, 1520], [1080, 1510]],
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.6
+        }
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Last chance",
+        "color": "frame",
+        "box": {
+          "x": 100,
+          "y": 1490,
+          "width": 1070,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

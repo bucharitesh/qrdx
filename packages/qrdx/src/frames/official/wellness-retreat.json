@@ -1,0 +1,85 @@
+{
+  "id": "wellness-retreat",
+  "name": "Wellness retreat",
+  "description": "A wide card: the code on one side, a lotus and the label on the other.",
+  "category": "use-case",
+  "collection": "beauty-wellness",
+  "contentTypes": ["url"],
+  "tags": ["beauty", "wellness", "retreat"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 2000,
+      "height": 1040
+    },
+    "qr": {
+      "x": 120,
+      "y": 120,
+      "size": 800,
+      "padding": 64,
+      "radius": 19.2
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 2000,
+        "height": 1040,
+        "radius": 72,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.9
+        }
+      },
+      {
+        "type": "path",
+        "d": "M1120 304C1150.89 280.24 1150.89 226.78 1120 185.2C1089.11 226.78 1089.11 280.24 1120 304ZM1116.4 307.6C1123.98 280.41 1102.92 238.29 1069.6 214C1056.16 261.67 1077.22 303.79 1116.4 307.6ZM1123.6 307.6C1162.78 303.79 1183.84 261.67 1170.4 214C1137.08 238.29 1116.02 280.41 1123.6 307.6ZM1112.8 311.2C1107.11 288.44 1074.71 267.38 1040.8 264.4C1051.4 303.24 1083.8 324.3 1112.8 311.2ZM1127.2 311.2C1156.2 324.3 1188.6 303.24 1199.2 264.4C1165.29 267.38 1132.89 288.44 1127.2 311.2Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M1062.4 314.8C1094.8 325.6 1145.2 325.6 1177.6 314.8L1174 325.6C1141.6 336.4 1098.4 336.4 1066 325.6Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Plan your retreat",
+        "color": "frame",
+        "box": {
+          "x": 1030,
+          "y": 400,
+          "width": 860,
+          "height": 190
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Rest and reset",
+        "color": "frame",
+        "box": {
+          "x": 1030,
+          "y": 610,
+          "width": 860,
+          "height": 100
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

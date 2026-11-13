@@ -33,7 +33,7 @@ const shared: Options = {
   },
 };
 
-// The official frame library (hundreds of specs) and its index are built as
+// The official frame library (every spec) and its index are built as
 // modules of their own; the main entry re-exports them, so a bundler that
 // skips unused side-effect-free modules never ships the data to an app that
 // doesn't use it (the playground loads it on demand instead).
@@ -273,6 +273,24 @@ export default defineConfig([
     format: ["cjs"],
     treeshake: true,
     esbuildPlugins: [sharedCore(".js", ["rasterize"])],
+  },
+  // ── Vue 3 components (qrdx/vue), on the shared core ─────────────────────
+  // A render function, not a .vue file, so no Vue compiler is needed here.
+  {
+    ...shared,
+    entry: { vue: "src/vue.ts" },
+    format: ["esm"],
+    treeshake: true,
+    external: [...(shared.external ?? []), "vue"],
+    esbuildPlugins: [sharedCore(".mjs", [])],
+  },
+  {
+    ...shared,
+    entry: { vue: "src/vue.ts" },
+    format: ["cjs"],
+    treeshake: true,
+    external: [...(shared.external ?? []), "vue"],
+    esbuildPlugins: [sharedCore(".js", [])],
   },
   // ── qrdx/types (schemas + helpers, no React) ────────────────────────────
   {

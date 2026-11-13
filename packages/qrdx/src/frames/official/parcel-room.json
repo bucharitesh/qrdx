@@ -1,0 +1,98 @@
+{
+  "id": "parcel-room",
+  "name": "Parcel room",
+  "description": "A folder tab on top carrying the label and a parcel.",
+  "category": "use-case",
+  "collection": "real-estate",
+  "contentTypes": ["url"],
+  "tags": ["real estate", "property", "parcels", "building"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1560
+    },
+    "qr": {
+      "x": 120,
+      "y": 290,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1000,
+        "height": 220,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 170,
+        "width": 1240,
+        "height": 1390,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 170,
+        "width": 200,
+        "height": 100,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M839.6 78.4L887.6 102.4L887.6 155.2L839.6 131.2ZM892.4 102.4L940.4 78.4L940.4 131.2L892.4 155.2ZM890 49.6L940.4 73.6L890 97.6L839.6 73.6Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M864.8 61.6L915.2 85.6L915.2 95.2L864.8 71.2Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Collect your parcel",
+        "color": "text",
+        "box": {
+          "x": 60,
+          "y": 25,
+          "width": 740,
+          "height": 150
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Parcel room",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 1400,
+          "width": 1000,
+          "height": 100
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

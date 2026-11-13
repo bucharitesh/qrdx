@@ -1,0 +1,108 @@
+{
+  "id": "scan-for-the-checklist",
+  "name": "Checklist",
+  "description": "A clipboard with the code on its sheet of paper.",
+  "category": "use-case",
+  "collection": "call-to-action",
+  "contentTypes": [],
+  "tags": ["call to action", "checklist"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1890
+    },
+    "qr": {
+      "x": 160,
+      "y": 480,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 90,
+        "width": 1320,
+        "height": 1800,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 60,
+        "y": 200,
+        "width": 1200,
+        "height": 1630,
+        "radius": 12,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 60,
+        "y": 200,
+        "width": 1200,
+        "height": 14,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.75
+        }
+      },
+      {
+        "type": "path",
+        "d": "M470 20L850 20A40 40 0 0 1 890 60L890 150A40 40 0 0 1 850 190L470 190A40 40 0 0 1 430 150L430 60A40 40 0 0 1 470 20ZM626 85A34 34 0 1 0 694 85A34 34 0 1 0 626 85Z",
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.3
+        }
+      },
+      {
+        "type": "rect",
+        "x": 160,
+        "y": 392,
+        "width": 1000,
+        "height": 8,
+        "radius": 4,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.7
+        }
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Get the checklist",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 1600,
+          "width": 1040,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Step by step",
+        "color": "frame",
+        "box": {
+          "x": 160,
+          "y": 260,
+          "width": 1000,
+          "height": 110
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,98 @@
+{
+  "id": "add-to-calendar",
+  "name": "Add to calendar",
+  "description": "A light card with a calendar and a pill-shaped button under the code.",
+  "category": "use-case",
+  "collection": "call-to-action",
+  "contentTypes": [],
+  "tags": ["call to action", "calendar", "date"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1760
+    },
+    "qr": {
+      "x": 120,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 64,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.9
+        }
+      },
+      {
+        "type": "path",
+        "d": "M575.8 51.8L664.2 51.8A10.4 10.4 0 0 1 674.6 62.2L674.6 142.8A10.4 10.4 0 0 1 664.2 153.2L575.8 153.2A10.4 10.4 0 0 1 565.4 142.8L565.4 62.2A10.4 10.4 0 0 1 575.8 51.8ZM579.7 80.4A3.9 3.9 0 0 0 575.8 84.3L575.8 138.9A3.9 3.9 0 0 0 579.7 142.8L660.3 142.8A3.9 3.9 0 0 0 664.2 138.9L664.2 84.3A3.9 3.9 0 0 0 660.3 80.4Z",
+        "fill": "frame",
+        "fillRule": "evenodd"
+      },
+      {
+        "type": "path",
+        "d": "M594 38.8L594 38.8A5.2 5.2 0 0 1 599.2 44L599.2 59.6A5.2 5.2 0 0 1 594 64.8L594 64.8A5.2 5.2 0 0 1 588.8 59.6L588.8 44A5.2 5.2 0 0 1 594 38.8ZM646 38.8L646 38.8A5.2 5.2 0 0 1 651.2 44L651.2 59.6A5.2 5.2 0 0 1 646 64.8L646 64.8A5.2 5.2 0 0 1 640.8 59.6L640.8 44A5.2 5.2 0 0 1 646 38.8Z",
+        "fill": "accent"
+      },
+      {
+        "type": "path",
+        "d": "M630.4 109L648.6 109A2.6 2.6 0 0 1 651.2 111.6L651.2 129.8A2.6 2.6 0 0 1 648.6 132.4L630.4 132.4A2.6 2.6 0 0 1 627.8 129.8L627.8 111.6A2.6 2.6 0 0 1 630.4 109Z",
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 170,
+        "y": 1520,
+        "width": 900,
+        "height": 180,
+        "radius": 90,
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Add to your calendar",
+        "color": "text",
+        "box": {
+          "x": 230,
+          "y": 1520,
+          "width": 780,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Never miss a date",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 180,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

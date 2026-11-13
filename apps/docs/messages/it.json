@@ -207,6 +207,7 @@
       "shadcn": "Registry shadcn/ui",
       "plugins": "Plugin",
       "selfHosting": "Self-hosting",
+      "openSource": "Open source",
       "github": "GitHub",
       "help": "Centro assistenza",
       "blog": "Blog",
@@ -406,7 +407,7 @@
       "analytics": {
         "eyebrow": "Analytics",
         "title": "Vedi ogni scansione",
-        "description": "Scansioni nel tempo, paesi, dispositivi, browser e referrer per ogni QR code dinamico. Gli account gratuiti conservano {days, number} giorni.",
+        "description": "Scansioni nel tempo, paesi, dispositivi, browser e referrer per ogni codice dinamico. Gli account gratuiti conservano {years, plural, one {# anno} other {# anni}} di cronologia, mentre i piani a pagamento li conservano tutti.",
         "link": "Come funzionano le analytics"
       },
       "bulk": {
@@ -450,7 +451,7 @@
       "items": {
         "free": {
           "question": "QRdx è davvero gratuito? Ci sono limiti nascosti?",
-          "answer": "Sì. Creare, personalizzare e scaricare QR code statici è gratuito e non richiede un account: codici illimitati, tutte le opzioni di design ({bodyPatterns, number} motivi del corpo, {eyeShapes, number} forme degli occhi agli angoli e {eyeCentres, number} centri degli occhi, sfumature, loghi, cornici e grafiche Logo QR o Image QR) e download in PNG, JPG, SVG, PDF ed EPS. Non ci sono filigrane né pubblicità. I codici statici conservano i tuoi contenuti nel codice stesso, quindi non scadono mai e non hanno limiti di scansione. Un account gratuito aggiunge 10 QR code dinamici, 3 pagine ospitate, 90 giorni di statistiche sulle scansioni, 10 temi salvati e 5 generazioni di temi con l'AI; Pro ({proMonthly}/mese o {proYearly}/anno) e Business ({businessMonthly}/mese o {businessYearly}/anno) alzano questi limiti."
+          "answer": "Sì. Creare, personalizzare e scaricare QR code statici è gratuito e non richiede un account: codici illimitati, tutte le opzioni di design ({bodyPatterns, number} motivi del corpo, {eyeShapes, number} forme degli occhi agli angoli e {eyeCentres, number} centri degli occhi, gradienti, loghi, cornici e grafiche Logo QR o Image QR) e download in PNG, JPG, SVG, PDF ed EPS. Non ci sono filigrane né pubblicità. I codici statici memorizzano il tuo contenuto nel codice stesso, quindi non scadono mai e non hanno limiti di scansione. Un account gratuito aggiunge 10 QR code dinamici, 3 pagine ospitate, {historyYears, plural, one {# anno} other {# anni}} di statistiche sulle scansioni, 10 temi salvati e 5 generazioni di temi con l’AI; Pro ({proMonthly}/mese o {proYearly}/anno) e Business ({businessMonthly}/mese o {businessYearly}/anno) aumentano questi limiti."
         },
         "signup": {
           "question": "Devo registrarmi o creare un account?",
@@ -458,7 +459,7 @@
         },
         "dynamic": {
           "question": "QRdx supporta i QR code dinamici e le statistiche sulle scansioni?",
-          "answer": "Sì. Un codice dinamico contiene un link breve, quindi puoi cambiare la destinazione anche dopo la stampa, e ogni scansione viene conteggiata con statistiche su paese, dispositivo e browser. Un codice può aprire un sito web o una pagina mobile ospitata (elenco di link, menu, vCard, coupon, evento, modulo, PDF, galleria, audio o video). Pro e Business aggiungono il routing intelligente per dispositivo, paese, lingua od orario, test A/B, tag UTM, password, date di scadenza e limiti di scansione. Gli account gratuiti hanno 10 codici dinamici attivi con 90 giorni di storico; Pro e Business sono illimitati con uno storico più lungo."
+          "answer": "Sì. Un codice dinamico codifica un link breve, quindi puoi cambiare la destinazione anche dopo la stampa, e ogni scansione viene conteggiata con statistiche per paese, dispositivo e browser. Un codice può aprire un sito web o una pagina mobile ospitata (elenco di link, menu, vCard, coupon, evento, modulo, PDF, galleria, audio o video). Pro e Business aggiungono il routing intelligente per dispositivo, paese, lingua od orario, A/B test, tag UTM, password, date di scadenza e limiti di scansione. Gli account gratuiti hanno 10 codici dinamici attivi con {historyYears, plural, one {# anno} other {# anni}} di cronologia; Pro e Business sono illimitati e conservano tutta la cronologia delle scansioni."
         },
         "guarantee": {
           "question": "I miei QR code smetteranno di funzionare se smetto di pagare?",
@@ -482,7 +483,7 @@
         },
         "paidPlans": {
           "question": "Cosa ottengo con Pro o Business?",
-          "answer": "Pro ({proMonthly}/mese o {proYearly}/anno) aggiunge codici dinamici e pagine ospitate illimitati, 3 anni di statistiche, {customDomains, select, yes {5 domini personalizzati, } other {}}team fino a 3 persone, instradamento intelligente, A/B test, tag UTM, pixel, avvisi via email e un riepilogo settimanale, e controlli sui link come password e date di scadenza. Business ({businessMonthly}/mese o {businessYearly}/anno) aggiunge pagine white-label con CSS personalizzato, cronologia delle statistiche illimitata, {customDomains, select, yes {25 domini personalizzati, } other {}}membri del team illimitati, monitoraggio delle conversioni, webhook e avvisi su Slack o Discord. Creare, personalizzare e scaricare QR code statici resta gratuito."
+          "answer": "Pro ({proMonthly}/mese o {proYearly}/anno) aggiunge codici dinamici e pagine ospitate illimitati, la cronologia completa delle scansioni, {customDomains, select, yes {5 domini personalizzati, } other {}}team fino a 3 persone, routing intelligente, A/B test, tag UTM, pixel, avvisi via email e un riepilogo settimanale, oltre a controlli sui link come password e date di scadenza. Business ({businessMonthly}/mese o {businessYearly}/anno) aggiunge pagine white-label con CSS personalizzato, {customDomains, select, yes {25 domini personalizzati, } other {}}membri del team illimitati, tracciamento delle conversioni, webhook e avvisi su Slack o Discord. Creare, personalizzare e scaricare QR code statici resta gratuito."
         }
       }
     }
@@ -502,8 +503,8 @@
     },
     "extras": {
       "unlimitedDynamic": "QR code dinamici illimitati",
-      "longerAnalytics": "analisi più estese",
-      "analyticsHistory": "storico delle analisi",
+      "longerAnalytics": "tutto lo storico delle scansioni",
+      "analyticsHistory": "storico completo delle analisi",
       "customDomains": "domini personalizzati",
       "teams": "team"
     },
@@ -561,7 +562,8 @@
     "selfHost": {
       "title": "Self-hosting",
       "description": "Esegui l'app open source sul tuo server con il tuo database Postgres. I limiti dei piani sono in un unico file che puoi modificare per la tua istanza.",
-      "guide": "Guida al self-hosting"
+      "guide": "Guida al self-hosting",
+      "openSource": "Cosa è open source"
     },
     "footnote": "Polar gestisce il pagamento come merchant of record; al pagamento possono essere aggiunte le imposte locali. Ai clienti in India l'addebito avviene in ₹, a tutti gli altri in US$.",
     "footnoteEur": "Polar gestisce il pagamento come merchant of record; al checkout possono essere aggiunte le imposte locali. Ai clienti in India viene addebitato in ₹, a quelli nell’UE e nello SEE in €, a tutti gli altri in US$.",
@@ -716,7 +718,7 @@
       "items": {
         "cancel": {
           "question": "Cosa succede se disdico?",
-          "answer": "Non si rompe nulla. Il tuo piano resta attivo fino alla fine del periodo che hai pagato, poi il tuo account passa a Gratuito. Ogni QR code dinamico continua a reindirizzare e ogni scansione viene ancora conteggiata: è la nostra Garanzia Never-Hostage. Con il piano Gratuito non puoi creare più di quanto consentano i limiti Gratuito, e le analisi mostrano gli ultimi 90 giorni."
+          "answer": "Non si rompe niente. Il tuo piano resta attivo fino alla fine del periodo che hai pagato, poi il tuo account passa al piano Gratuito. Ogni QR code dinamico continua a reindirizzare e ogni scansione viene ancora conteggiata: è la nostra Garanzia Never-Hostage. Con il piano Gratuito non puoi creare più di quanto consentano i suoi limiti, e le statistiche mostrano {historyYears, plural, one {l’ultimo anno} other {gli ultimi # anni}}. Le scansioni più vecchie vengono conservate, quindi tornano visibili se fai di nuovo l’upgrade."
         },
         "refund": {
           "question": "Posso essere rimborsato?",
@@ -943,6 +945,8 @@
       "bulkDescription": "Carica un CSV e scarica tutti i codici in PNG, WebP o SVG in un unico file ZIP, generato interamente nel tuo browser.",
       "printTitle": "Stampi il tuo codice? Controlla la dimensione",
       "printDescription": "Calcola la dimensione minima di stampa in base alla distanza di scansione e alla quantità di dati contenuti nel codice.",
+      "dynamicTitle": "Generatore di QR code dinamici",
+      "dynamicDescription": "Modifica il link dopo la stampa e conta ogni scansione",
       "hostedTitle": "Codici che aprono una pagina modificabile",
       "hostedDescription": "Questi codici aprono una pagina mobile che QRdx ospita per te, così puoi modificarla dopo la stampa e vedere le scansioni. Serve un account gratuito.",
       "menuTitle": "Generatore di QR code per menu",
@@ -2458,6 +2462,11 @@
       "viewLabel": "Guarda la demo di {name}",
       "view": "Guarda la demo",
       "use": "Usa il template"
+    },
+    "more": {
+      "load": "Carica altri",
+      "loading": "Caricamento",
+      "failed": "Questi template non sono stati caricati."
     }
   },
   "templateDemo": {
@@ -2874,6 +2883,254 @@
       "limitAnswer": "Ricevi una risposta 429 con un header Retry-After che indica quando riprovare. Gli URL identici vengono messi in cache per un anno, quindi un’immagine mostrata in una pagina molto visitata di solito viene servita dalla cache.",
       "aiQuestion": "Può usarla un assistente AI?",
       "aiAnswer": "Sì. Lo strumento generate_qr_code del server MCP di QRdx restituisce questi URL di immagini, e un assistente senza MCP può scrivere l’URL da solo come immagine Markdown."
+    }
+  },
+  "dynamicQrCode": {
+    "metaTitle": "Generatore di QR code dinamici gratuito: modifica e monitora le scansioni",
+    "metaDescription": "Crea un QR code dinamico che puoi modificare dopo la stampa e monitora ogni scansione. Gli account gratuiti hanno {count, number} codici con scansioni illimitate e senza limiti di tempo.",
+    "crumb": "Generatore di QR code dinamici",
+    "title": "Generatore di QR code dinamici gratuito",
+    "intro1": "Un QR code dinamico contiene un link breve al posto del tuo URL. Puoi cambiare la destinazione anche dopo la stampa, e QRdx conta ogni scansione.",
+    "intro2": "Gli account gratuiti hanno {count, number} codici dinamici con scansioni illimitate e {years, plural, one {# anno} other {# anni}} di cronologia delle scansioni. Non c’è un periodo di prova, e i codici continuano a funzionare che tu paghi o no.",
+    "facts": {
+      "free": "{count, number} codici dinamici gratuiti",
+      "scans": "Scansioni illimitate su ogni piano",
+      "ads": "Nessuna pubblicità davanti al tuo link",
+      "openSource": "Open source"
+    },
+    "cta": "Crea un QR code dinamico",
+    "pricingCta": "Confronta i piani",
+    "docsLink": "Docs sui QR code dinamici",
+    "howEyebrow": "Come funziona",
+    "howTitle": "Un link breve che puoi far puntare altrove",
+    "steps": {
+      "create": {
+        "title": "Crea il codice",
+        "body": "Nella dashboard, clicca su Nuovo codice e inserisci la pagina da aprire. Nel Playground, scegli il tipo URL e attiva Rendilo dinamico. In entrambi i casi il codice riceve un link breve come {example}."
+      },
+      "print": {
+        "title": "Scaricalo e stampalo",
+        "body": "Scaricalo in PNG, WebP o SVG, oppure personalizzalo prima nel Playground. Un link breve richiede meno moduli di un URL lungo, quindi il codice si può stampare più piccolo e restare comunque leggibile."
+      },
+      "change": {
+        "title": "Cambialo quando serve",
+        "body": "Modifica la destinazione e la scansione successiva apre la nuova pagina. Ogni scansione riceve un redirect 302 che i browser non salvano in cache, quindi un telefono che ha fatto la scansione la settimana scorsa non ricorda il vecchio indirizzo."
+      }
+    },
+    "featuresEyebrow": "Funzionalità",
+    "featuresTitle": "Cosa può fare un codice dinamico",
+    "featuresDescription": "Modifica, statistiche e pagine ospitate sono incluse in ogni piano. Ogni scheda indica quali piani le includono.",
+    "planAll": "Ogni piano",
+    "planSome": "Con {plans}",
+    "features": {
+      "edit": {
+        "title": "Modifica dopo la stampa",
+        "body": "Cambia la destinazione, rinomina il codice o trasformalo in una pagina ospitata senza ristampare. Ogni modifica finisce nella cronologia delle versioni del codice, e puoi ripristinare una versione precedente."
+      },
+      "analytics": {
+        "title": "Analisi scansioni",
+        "body": "Vedi le scansioni nel tempo, i visitatori unici, paesi e città, dispositivi, browser e gli orari in cui le persone fanno la scansione, ed esportali in CSV. Gli indirizzi IP non vengono mai salvati. Gli account gratuiti conservano {years, plural, one {# anno} other {# anni}} di cronologia, i piani a pagamento la conservano tutta."
+      },
+      "pages": {
+        "title": "Pagine mobile ospitate",
+        "body": "Fai puntare un codice a una pagina ospitata da QRdx invece che a un sito web: un elenco di link, un menu, un biglietto da visita, un coupon, un evento o un modulo, tra {types, number} tipi di pagina. Gli account gratuiti hanno {pages, number} pagine."
+      },
+      "routing": {
+        "title": "Reindirizzamento smart",
+        "body": "Manda gli iPhone sull’App Store e gli smartphone Android su Google Play, oppure reindirizza per paese, area, lingua, orario o numero di scansioni, con fino a {rules, number} regole per codice. Test A/B e parametri UTM sono inclusi."
+      },
+      "controls": {
+        "title": "Password, pianificazioni e limiti di scansione",
+        "body": "Proteggi un codice con una password, imposta date di inizio e fine o un limite di scansioni e scegli dove mandare le persone quando il codice è terminato. Mettere in pausa un codice è possibile con ogni piano."
+      },
+      "slugs": {
+        "title": "{domains, select, yes {Il tuo slug e il tuo dominio} other {Il tuo slug}}",
+        "body": "Scegli la parte finale del link breve, come {example}, invece di una casuale.{domains, select, yes { Puoi anche servire i codici dal tuo dominio, come go.yourbrand.com.} other {}}"
+      },
+      "tracking": {
+        "title": "Pixel e conversioni",
+        "body": "Carica i tuoi pixel di analisi e retargeting sulla pagina ospitata di un codice. {conversionPlans} aggiunge il monitoraggio delle conversioni, che collega acquisti e iscrizioni alla scansione che ha portato il visitatore."
+      },
+      "api": {
+        "title": "REST API e creazione in blocco",
+        "body": "Crea e modifica i codici e leggi le loro scansioni dal tuo codice, con {perDay, number} richieste API al giorno nel piano Gratuito. I piani a pagamento creano fino a {batch} codici in una sola richiesta, o importano fino a {rows} righe da un CSV."
+      }
+    },
+    "freeEyebrow": "Piano Gratuito",
+    "freeTitle": "Cosa ottieni senza pagare",
+    "freeDescription": "Non serve una carta e non c’è un periodo di prova. Passa a un piano superiore solo se ti servono più codici o le funzioni a pagamento qui sopra.",
+    "freeItems": {
+      "codes": "{count, number} QR code dinamici attivi (i codici archiviati non contano)",
+      "scans": "Scansioni illimitate, mai messe in pausa",
+      "history": "{years, plural, one {# anno} other {# anni}} di cronologia delle scansioni",
+      "pages": "{pages, number} pagine ospitate",
+      "organize": "Modifica, pausa, cartelle, tag e cronologia delle versioni",
+      "api": "La REST API, con {perDay, number} richieste al giorno"
+    },
+    "freeLink": "Confronta tutti i piani",
+    "guaranteeEyebrow": "Se smetti di pagare",
+    "guaranteeTitle": "I codici stampati continuano a funzionare",
+    "guaranteeBody": "Con la Garanzia Never-Hostage, ogni QR code dinamico continua a reindirizzare con qualsiasi piano, anche dopo un downgrade, un pagamento non riuscito o una disdetta. Le scansioni non vengono mai messe in pausa e chi scansiona non vede mai una pubblicità o una pagina di iscrizione a QRdx. Superare un limite ti impedisce solo di creare nuovi codici.",
+    "guaranteeLink": "Leggi la garanzia",
+    "openSourceBody": "Il reindirizzamento, le analisi e il resto dell’app sono open source: puoi leggere cosa succede a ogni scansione oppure eseguirli sul tuo server.",
+    "openSourceLink": "Open source e self-hosting",
+    "staticTitle": "Quando un QR code statico è la scelta migliore",
+    "staticBody": "Solo i link possono essere dinamici: un QR code dinamico apre un sito web o una pagina ospitata. Gli accessi Wi-Fi, i biglietti da visita salvati direttamente sul telefono e i codici di pagamento bancario devono essere statici, perché il telefono li legge dal disegno stesso. I QR code statici sono gratuiti, illimitati e non richiedono un account.",
+    "staticLink": "Generatori di QR code statici",
+    "blogLink": "QR code statici e dinamici",
+    "moreTitle": "Approfondisci",
+    "more": {
+      "docsTitle": "QR code dinamici",
+      "docsBody": "Back-half, cartelle, importazione CSV e API nel dettaglio",
+      "routingTitle": "Instradamento smart",
+      "routingBody": "Regole, test A/B e parametri UTM",
+      "controlsTitle": "Controlli del codice",
+      "controlsBody": "Password, pianificazioni, limiti di scansioni e URL di riserva",
+      "trackingTitle": "Tracciamento e conversioni",
+      "trackingBody": "Analytics, pixel e tracciamento conversioni",
+      "domainsTitle": "Domini personalizzati",
+      "domainsBody": "Usa un dominio tuo per i link brevi",
+      "apiTitle": "REST API",
+      "apiBody": "Crea e gestisci i codici dal tuo codice"
+    },
+    "faqTitle": "Domande sui QR code dinamici",
+    "faq": {
+      "freeQuestion": "Posso creare un QR code dinamico gratis?",
+      "freeAnswer": "Sì. Un account QRdx gratuito include {count, number} codici dinamici attivi con scansioni illimitate e {years, plural, one {# anno} other {# anni}} di cronologia delle scansioni, senza periodo di prova. I codici archiviati non contano per il limite, e i piani a pagamento lo eliminano.",
+      "expireQuestion": "I QR code dinamici scadono?",
+      "expireAnswer": "Non su QRdx. Un codice continua a reindirizzare finché non lo metti in pausa, lo archivi o lo elimini, oppure fino a una data di fine o a un limite di scansioni che hai impostato tu. Vale per ogni piano, Gratuito compreso, e anche dopo un downgrade, un pagamento non riuscito o una cancellazione. L’unica eccezione è l’abuso: un codice che porta a phishing o malware viene disattivato.",
+      "editQuestion": "Posso modificare un QR code dopo che è stato stampato?",
+      "editAnswer": "Solo se è dinamico. Contiene un link breve, quindi cambi la destinazione nella dashboard e il codice stampato apre la nuova pagina alla scansione successiva. Un QR code statico contiene direttamente l’indirizzo, quindi per cambiarlo devi stampare un nuovo codice.",
+      "trackQuestion": "Come posso tracciare le scansioni di un QR code?",
+      "trackAnswer": "Rendi dinamico il codice. Ogni QR code dinamico ha una pagina di analytics con scansioni nel tempo, visitatori unici, paesi e città, dispositivi, sistemi operativi, browser, referrer e lingue, e puoi esportare le scansioni in CSV. QRdx non memorizza gli indirizzi IP e non conta i bot noti e le anteprime dei link.",
+      "typesQuestion": "Un QR code Wi-Fi o vCard può essere dinamico?",
+      "typesAnswer": "Non direttamente, perché il telefono legge i dati Wi-Fi e vCard dal motivo stesso del codice, mentre un codice dinamico può aprire solo un link. Per i dati di contatto che vuoi poter cambiare in seguito, fai puntare un QR code dinamico a una pagina di contatto ospitata. Per il Wi-Fi, usa un QR code statico.",
+      "domainQuestion": "Posso usare un mio dominio per i link brevi?",
+      "domainAnswer": "Sì, con {plans}. Il codice contiene quindi un link come go.yourbrand.com/menu, e i reindirizzamenti e le analytics delle scansioni funzionano allo stesso modo. Colleghi il dominio aggiungendo un record DNS presso il tuo provider DNS.",
+      "apiQuestion": "Posso creare QR code dinamici con un’API?",
+      "apiAnswer": "Sì. La REST API crea e modifica i codici e legge le loro scansioni, con una chiave API o un token di accesso OAuth. Gli account gratuiti hanno {perDay, number} richieste al giorno, e i piani a pagamento possono creare fino a {batch} codici in una sola richiesta.",
+      "selfHostQuestion": "Posso usare i QR code dinamici sul mio server?",
+      "selfHostAnswer": "Sì. QRdx è open source e una copia self-hosted gestisce QR code dinamici, pagine ospitate e analisi delle scansioni sul tuo dominio. La posizione delle scansioni dipende dagli header forniti dal tuo host, come spiega la guida al self-hosting."
+    }
+  },
+  "openSource": {
+    "metaTitle": "Generatore di QR code open source da ospitare in autonomia",
+    "metaDescription": "QRdx è un generatore di QR code open source su GitHub. L’app è AGPL-3.0, mentre la libreria React e la CLI sono MIT. Usa qrdx.dev gratis o avvia una tua copia.",
+    "crumb": "Open source",
+    "title": "Generatore di QR code open source",
+    "intro1": "QRdx è sviluppato in pubblico su GitHub. L’app web che fa funzionare qrdx.dev, con il suo editor, i codici dinamici, le pagine ospitate e le statistiche sulle scansioni, ha licenza AGPL-3.0. La libreria React, la CLI e i plugin sono MIT.",
+    "intro2": "Puoi usarlo gratis su qrdx.dev, avviare una tua copia oppure integrare i QR code nella tua app con la libreria.",
+    "facts": {
+      "agpl": "App AGPL-3.0",
+      "mit": "Libreria e CLI MIT",
+      "selfHost": "Self-hosting con Docker o Node.js",
+      "noAccount": "I codici statici non richiedono un account"
+    },
+    "githubCta": "Vedi su GitHub",
+    "selfHostCta": "Guida al self-hosting",
+    "partsEyebrow": "Cosa c’è nel repository",
+    "partsTitle": "Tre licenze in un unico repository",
+    "partsDescription": "<link>LICENSING.md</link> stabilisce la licenza di ogni cartella. Tutto ciò che non è elencato sotto MIT o sotto la licenza commerciale è AGPL-3.0-or-later.",
+    "partsHeader": {
+      "part": "Parte",
+      "folder": "Cartella",
+      "license": "Licenza"
+    },
+    "parts": {
+      "appName": "App web",
+      "appBody": "L’editor, gli account, i codici dinamici, le pagine ospitate, le statistiche sulle scansioni, le API, il server MCP e la documentazione",
+      "libraryName": "Libreria qrdx",
+      "libraryBody": "Componenti React che generano, esportano e valutano i QR code, su npm come qrdx",
+      "cliName": "@qrdx/cli",
+      "cliBody": "QR code personalizzati da terminale o da un job di CI",
+      "pluginsName": "Plugin",
+      "pluginsBody": "L’estensione per Chrome, i plugin per Figma, Raycast e Canva e il resto della cartella dei plugin",
+      "eeName": "Funzioni Business",
+      "eeBody": "Single sign-on dello spazio di lavoro e registro di controllo dello spazio di lavoro"
+    },
+    "eeLicense": "Licenza commerciale QRdx",
+    "eeNote": "Puoi leggere, provare e contribuire al codice nelle cartelle ee, ma per usarlo in produzione serve un accordo scritto con QRdx. In un’istanza self-hosted queste due funzioni restano disattivate finché non imposti QRDX_EE_LICENSE, e tutto il resto funziona anche senza.",
+    "waysEyebrow": "Come usarlo",
+    "waysTitle": "Scegli come eseguirlo",
+    "ways": {
+      "hostedTitle": "Usa qrdx.dev",
+      "hostedBody": "I QR code statici sono gratuiti e non richiedono un account: progettali nel Playground e scaricali. Un account gratuito aggiunge {count, number} codici dinamici e {pages, number} pagine ospitate, mentre i piani a pagamento aggiungono funzioni per team e marketing.",
+      "hostedLink": "Apri il Playground",
+      "hostedLink2": "Vedi i prezzi",
+      "selfHostTitle": "Esegui la tua copia",
+      "selfHostBody": "Docker Compose avvia l’app con il suo database Postgres, oppure puoi eseguirla con Node.js su un database Neon. Servono tre variabili d’ambiente e un metodo di accesso. IA, pagamenti, archiviazione dei file, domini personalizzati e integrazioni sono opzionali.",
+      "selfHostLink": "Guida al self-hosting",
+      "libraryTitle": "Integralo nella tua app",
+      "libraryBody": "La libreria qrdx genera QR code in React con lo stesso motore del Playground, e @qrdx/cli li crea da terminale o da un job CI. Entrambi sono MIT, quindi possono usarli anche i progetti closed source.",
+      "libraryLink": "Docs della libreria",
+      "libraryLink2": "Docs della CLI"
+    },
+    "runEyebrow": "Per iniziare",
+    "runTitle": "Esegui il codice",
+    "runDescription": "Imposta un secret e un metodo di accesso in .env, poi avvia lo stack. La prima build di Docker richiede diversi minuti e almeno 8 GB di memoria.",
+    "runLabels": {
+      "docker": "Self-hosting con Docker Compose",
+      "library": "Libreria e CLI"
+    },
+    "runNotes": {
+      "signIn": "Gli utenti accedono con un’app OAuth di GitHub o Google, oppure con codici via email inviati tramite Resend.",
+      "postgres": "Neon funziona direttamente. Con Postgres standard serve il proxy HTTP compatibile con Neon che docker-compose.yml avvia già.",
+      "limits": "Senza i pagamenti configurati, ogni account usa i limiti del piano Gratuito. Sono definiti in un solo file, apps/docs/lib/plans.ts, che puoi modificare per la tua istanza."
+    },
+    "runLink": "Leggi la guida completa al self-hosting",
+    "licenseEyebrow": "Licenze",
+    "licenseTitle": "Cosa ti chiedono le licenze",
+    "licenses": {
+      "agplTitle": "L’app (AGPL-3.0)",
+      "agplBody": "Puoi eseguirla, modificarla e ospitarla. Se esegui una versione modificata come servizio di rete, devi offrire il suo codice sorgente ai suoi utenti con la stessa licenza.",
+      "mitTitle": "Libreria, CLI e plugin (MIT)",
+      "mitBody": "Usali in qualsiasi progetto, anche closed source, purché l’avviso di copyright e di licenza restino con il codice. Le versioni precedenti a qrdx 0.0.47 e @qrdx/cli 0.0.5 erano AGPL-3.0-or-later.",
+      "trademarkTitle": "Nome e logo",
+      "trademarkBody": "Il nome e il logo QRdx sono marchi registrati. Un fork o un servizio pubblico creato a partire dal codice deve avere un nome e un logo propri; i dettagli sono nella <link>policy sui marchi</link>."
+    },
+    "licenseNote": "Questo è un riepilogo. Fanno fede i file di licenza nel repository.",
+    "contributeEyebrow": "Contribuisci",
+    "contributeTitle": "Aiutaci a costruirlo",
+    "contributeBody": "Segnalazioni di bug, idee e pull request sono benvenute. La guida al contributo spiega la configurazione locale e i controlli da eseguire, e le issue con l’etichetta good first issue sono piccole e autonome. Fai le tue domande in GitHub Discussions e segnala i problemi di sicurezza in privato, come descrive la policy di sicurezza.",
+    "contributeLinks": {
+      "contributing": "Guida al contributo",
+      "goodFirst": "Good first issue",
+      "discussions": "Discussions",
+      "security": "Policy di sicurezza"
+    },
+    "stackTitle": "Lo stack",
+    "stackBody": "Un monorepo Bun e Turborepo: un’app Next.js con React, TypeScript, Tailwind CSS, Drizzle su Postgres, Better Auth e Vercel AI SDK. L’app, i suoi test e le sue build girano su Node.js 22.",
+    "moreTitle": "Altro da QRdx",
+    "more": {
+      "dynamicTitle": "QR code dinamici",
+      "dynamicBody": "Modifica i codici dopo la stampa e guarda ogni scansione",
+      "apiTitle": "API QR code gratuita",
+      "apiBody": "Un’immagine QR code da un solo URL, senza chiave né registrazione",
+      "mcpTitle": "Server MCP",
+      "mcpBody": "Crea QR code da Claude, ChatGPT o Cursor",
+      "compareTitle": "QRdx a confronto",
+      "compareBody": "Pagine affiancate per altri strumenti per QR code",
+      "guaranteeTitle": "Garanzia Never-Hostage",
+      "guaranteeBody": "Cosa succede ai tuoi codici se smetti di pagare o se QRdx chiude"
+    },
+    "faqTitle": "Domande sull’open source",
+    "faq": {
+      "openQuestion": "QRdx è davvero open source?",
+      "openAnswer": "Sì. Il codice sorgente è su GitHub, l’app web è con licenza AGPL-3.0-or-later, mentre la libreria qrdx, @qrdx/cli e i plugin sono MIT. Due funzioni business, il single sign-on dello spazio di lavoro e l’audit log, si trovano nelle cartelle ee sotto la QRdx Commercial License: puoi leggere quel codice, ma per l’uso in produzione serve un accordo con QRdx.",
+      "githubQuestion": "Dove trovo il codice sorgente di QRdx su GitHub?",
+      "githubAnswer": "Su github.com/bucharitesh/qrdx. È un unico monorepo con l’app web, la libreria qrdx, la CLI, i plugin e la documentazione.",
+      "freeQuestion": "Posso ospitare QRdx gratis sul mio server?",
+      "freeAnswer": "Sì. Non c’è nessun costo di licenza: paghi solo il tuo server e il tuo database. Un’istanza self-hosted gestisce QR code dinamici, pagine ospitate e analisi delle scansioni. Il single sign-on e l’audit log restano disattivati se non hai una chiave di licenza QRdx.",
+      "needQuestion": "Cosa mi serve per ospitare QRdx sul mio server?",
+      "needAnswer": "Ti servono Docker con Compose v2, oppure Node.js 22 e Bun 1.4 per l’installazione manuale, e un database Postgres: quello avviato da docker-compose.yml, oppure Neon. Imposta NEXT_PUBLIC_APP_URL, DATABASE_URL e BETTER_AUTH_SECRET, e offri alle persone un modo per accedere con un’app OAuth di GitHub o Google, oppure con codici via email tramite Resend.",
+      "closedQuestion": "Posso usare la libreria per QR code in un’app closed source?",
+      "closedAnswer": "Sì. La libreria qrdx e @qrdx/cli sono con licenza MIT, quindi i progetti commerciali e closed source possono usarle purché l’avviso di licenza resti insieme al codice. Le versioni precedenti a qrdx 0.0.47 e @qrdx/cli 0.0.5 erano AGPL-3.0-or-later.",
+      "changesQuestion": "Devo pubblicare le mie modifiche all’app?",
+      "changesAnswer": "Solo quando esegui una versione modificata come servizio di rete: in quel caso devi offrire il suo codice sorgente ai suoi utenti con la stessa licenza. Se hai intenzione di sviluppare a partire dall’app, controlla prima che la AGPL sia adatta al tuo progetto.",
+      "nameQuestion": "Posso chiamare QRdx il mio fork?",
+      "nameAnswer": "No. Un fork o un servizio pubblico creato a partire dal codice ha bisogno di un nome e di un logo propri, e gli avvisi di licenza restano. Usare QRdx per te o per la tua organizzazione con il suo nome va bene. I dettagli sono nella policy sul marchio.",
+      "shutdownQuestion": "Che fine fanno i miei codici qrdx.dev se QRdx chiude?",
+      "shutdownAnswer": "La Garanzia Never-Hostage promette almeno 12 mesi di preavviso, il tempo per esportare tutto e un percorso documentato per eseguire l’app open source sul tuo server."
     }
   },
   "ai": {
@@ -4922,7 +5179,11 @@
         "filesUploadedToThisWorkspace": "File caricati in questo workspace. Gestiscili in Dashboard → File.",
         "noLabelFilesYetUpload": "Nessun {label}file per ora. Caricane prima uno.",
         "add": "Aggiungi",
-        "selected": "selezionati"
+        "selected": "selezionati",
+        "loadMore": "Carica altro",
+        "loading": "Caricamento…",
+        "tryAgain": "Riprova",
+        "couldntLoadYourFiles": "Impossibile caricare i tuoi file."
       },
       "sourceListEditor": {
         "thisBlockHoldsUpTo": "Questo blocco contiene fino a {max, number} elementi.",
@@ -5067,7 +5328,15 @@
       "previous": "Precedente",
       "pagePageOfPages": "Pagina {page, number} di {pages, number}",
       "next": "Successiva",
-      "pages": "Pagine"
+      "pages": "Pagine",
+      "loadMore": "Carica altri",
+      "loading": "Caricamento",
+      "failed": "La pagina successiva non si è caricata."
+    },
+    "more": {
+      "load": "Carica altri",
+      "loading": "Caricamento",
+      "failed": "Questa parte della pagina non si è caricata."
     },
     "licenceConfirm": {
       "licence": "Licenza:"
@@ -5520,7 +5789,10 @@
           "commissions": "Commissioni",
           "suspended": "Sospeso",
           "approved": "Approvato",
-          "notSet": "Non impostato"
+          "notSet": "Non impostato",
+          "pagePageOfPagecount": "Pagina {page, number} di {pageCount, number}",
+          "previous": "Indietro",
+          "next": "Avanti"
         }
       },
       "authorizedApps": {
@@ -5798,7 +6070,13 @@
           "dubLinkArchived": "Link Dub archiviato",
           "failedToUpdateDubLink": "Impossibile aggiornare il link Dub",
           "dubLinkUpdated": "Link Dub aggiornato",
-          "unknown": "Sconosciuto"
+          "unknown": "Sconosciuto",
+          "couldntLoadLinks": "Impossibile caricare i tuoi link. Riprova.",
+          "couldntLoadMoreLinks": "Impossibile caricare altri link. Riprova.",
+          "loadMoreLinks": "Carica altri link",
+          "loadingLinks": "Caricamento dei link…",
+          "tryAgain": "Riprova",
+          "thatsEveryLink": "Non ci sono altri link."
         },
         "integrationDetail": {
           "connected": "Connesso",
@@ -5860,7 +6138,13 @@
           "nameSyncIsOn": "Sync {name} attiva",
           "saved": "Salvato",
           "couldntSave": "Salvataggio non riuscito",
-          "retryFailed": "Riprova non riuscita"
+          "retryFailed": "Riprova non riuscita",
+          "searchPages": "Cerca pagine per titolo",
+          "noPagesMatch": "Nessuna pagina con modulo corrisponde.",
+          "loadMorePages": "Carica altre pagine",
+          "loadingPages": "Caricamento delle pagine…",
+          "tryAgain": "Riprova",
+          "couldntLoadMorePages": "Impossibile caricare altre pagine. Riprova."
         },
         "slackBotPanel": {
           "qrdxBot": "Bot QRdx",
@@ -6010,7 +6294,13 @@
         "comparePicker": {
           "stopComparingValue": "Smetti di confrontare {value}",
           "addACodeToCompare": "Aggiungi un codice da confrontare",
-          "upToMaxCompareCodes": "Fino a {MAX_COMPARE, number} codici"
+          "upToMaxCompareCodes": "Fino a {MAX_COMPARE, number} codici",
+          "searchCodes": "Cerca per titolo, link o destinazione",
+          "mostScanned": "Più scansionati",
+          "searching": "Ricerca in corso…",
+          "noCodesMatch": "Nessun codice corrisponde.",
+          "couldntSearch": "Impossibile cercare i tuoi codici. Riprova.",
+          "typeToNarrow": "Sono mostrati i primi {count, number}. Scrivi per restringere."
         },
         "timeZoneSwitch": {
           "currentShowUtc": "{current} · mostra UTC",
@@ -6097,6 +6387,7 @@
           "barcodes2": "barcode"
         },
         "barcodesList": {
+          "move": "Sposta",
           "noFolder": "Nessuna cartella",
           "makeFoldersUnderCodesBarcodes": "Crea le cartelle in Codici: i barcode le condividono.",
           "emptyTrash": "Svuota cestino",
@@ -6345,7 +6636,6 @@
           "scansPerDayLastDays": "Scansioni al giorno, ultimi {days, number} giorni (UTC)",
           "botsAndLinkPreviewsAre": "Bot e anteprime dei link non vengono conteggiati. Paesi e città derivano dall’indirizzo IP del visitatore, che non viene mai salvato; le posizioni precise solo da chi scansiona e ha scelto di condividerle.",
           "dateRange": "Intervallo di date",
-          "valueKeepsValue2OfScan": "{value} conserva {value2} di cronologia delle scansioni",
           "totalScans": "Scansioni totali",
           "scansInRange": "Scansioni nel periodo",
           "uniqueVisitors": "Visitatori unici",
@@ -7356,7 +7646,12 @@
           "notUsedYet": "Non ancora usato",
           "usedByPagesAndCodes": "Usato da {pages, plural, one {# pagina} other {# pagine}} · {codes, plural, one {# codice} other {# codici}}",
           "usedByPages": "Usato da {pages, plural, one {# pagina} other {# pagine}}",
-          "usedByCodes": "Usato da {codes, plural, one {# codice} other {# codici}}"
+          "usedByCodes": "Usato da {codes, plural, one {# codice} other {# codici}}",
+          "loadMoreFiles": "Carica altri file",
+          "loadingMoreFiles": "Caricamento dei file…",
+          "tryAgain": "Riprova",
+          "couldntLoadMoreFiles": "Impossibile caricare altri file. Riprova.",
+          "allFilesShown": "Non ci sono altri file."
         }
       },
       "loading": {
@@ -7394,7 +7689,8 @@
           "archived": "Archiviata",
           "disabled": "Disattivata",
           "noQrCodeYet": "Ancora nessun QR code",
-          "pageLinkCopied": "Link della pagina copiato"
+          "pageLinkCopied": "Link della pagina copiato",
+          "pagePageOfPagecountTotal": "Pagina {page, number} di {pageCount, number} · {total} pagine"
         },
         "responses": {
           "page": {
@@ -7440,7 +7736,10 @@
             "deleting": "Eliminazione…",
             "delete": "Elimina",
             "responseDeleted": "Risposta eliminata",
-            "deletedResponsesDeleted": "{deleted, number} risposte eliminate"
+            "deletedResponsesDeleted": "{deleted, number} risposte eliminate",
+            "countSelected": "{count, number} selezionati",
+            "clearSelection": "Deseleziona tutto",
+            "bulkActions": "Azioni di massa"
           }
         },
         "pageListControls": {
@@ -7593,7 +7892,8 @@
             "onlyTeamOwnersAndAdmins": "Solo i proprietari e gli amministratori del team possono aggiungere, modificare o testare gli endpoint.",
             "sendScansNewAndChanged": "Invia scansioni, codici nuovi e modificati e risposte dei moduli al tuo server, a Zapier o a Make.",
             "thisTeamsPlanNoLonger": "Il piano di questo team non include più i webhook.",
-            "yourPlanNoLongerIncludes": "Il tuo piano non include più i webhook."
+            "yourPlanNoLongerIncludes": "Il tuo piano non include più i webhook.",
+            "keptFor30Days": "Dal più recente, conservate per 30 giorni. Le consegne non riuscite vengono ritentate fino a {MAX_DELIVERY_ATTEMPTS, number} volte con attese sempre più lunghe."
           }
         }
       },
@@ -7667,7 +7967,8 @@
           "yourThemes": "I tuoi temi",
           "noSharedThemesYetUse": "Ancora nessun tema condiviso. Usa \"Copia in questo workspace\" su uno dei tuoi temi qui sotto.",
           "noSharedThemesYetOwners": "Ancora nessun tema condiviso. Proprietari e admin possono condividerli qui.",
-          "askAWorkspaceOwnerTo": "Chiedi a un proprietario di passare a un piano superiore."
+          "askAWorkspaceOwnerTo": "Chiedi a un proprietario di passare a un piano superiore.",
+          "showMoreThemes": "Mostra altri temi"
         }
       },
       "home": {
@@ -7717,7 +8018,9 @@
         "move": "Spostati",
         "nextOrPreviousRow": "Riga successiva o precedente",
         "extendTheSelection": "Estendi la selezione",
-        "withASelection": "Con una selezione"
+        "withASelection": "Con una selezione",
+        "more": "Altro",
+        "moreActions": "Altre azioni"
       },
       "domains": {
         "dnsRecords": {
@@ -7963,6 +8266,17 @@
           "notDeliveredError": "Non consegnato: {error}",
           "endpointDeleted": "Endpoint eliminato"
         }
+      },
+      "paging": {
+        "navigation": "Paginazione",
+        "previous": "Precedente",
+        "next": "Successiva",
+        "rowsPerPage": "Righe per pagina",
+        "perPage": "{count, number} per pagina",
+        "page": "Pagina {page, number}",
+        "pageOf": "Pagina {page, number} di {pageCount, number}",
+        "newer": "Più recenti",
+        "older": "Meno recenti"
       }
     },
     "shell": {

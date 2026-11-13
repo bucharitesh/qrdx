@@ -147,6 +147,14 @@ function analyticsHistory(
   return formatDays(limits.analyticsRetentionDays, copy);
 }
 
+/** "1 year of analytics history", or "Unlimited analytics history". */
+function historyHighlight(days: number, copy: PricingCopy): string {
+  const duration = formatDays(days, copy);
+  return Number.isFinite(days)
+    ? copy.t("highlights.historyOf", { duration })
+    : copy.t("highlights.history", { duration });
+}
+
 function teamMembers(limits: PlanLimits, _: Plan, copy: PricingCopy): string {
   if (!limits.teams) return copy.t("comparison.cells.noTeams");
   return formatCount(limits.teamMembers, copy);
@@ -481,9 +489,7 @@ export function buildHighlights(
       t("highlights.dynamicWithAnalytics", { count: count(free.dynamicCodes) }),
       t("highlights.unlimitedScans"),
       t("highlights.landingPages", { count: count(free.landingPages) }),
-      t("highlights.historyOf", {
-        duration: formatDays(free.analyticsRetentionDays, copy),
-      }),
+      historyHighlight(free.analyticsRetentionDays, copy),
       ...(storage
         ? [
             t("highlights.fileStorage", {
@@ -494,9 +500,7 @@ export function buildHighlights(
     ],
     pro: [
       t("highlights.unlimitedDynamic"),
-      t("highlights.historyOf", {
-        duration: formatDays(pro.analyticsRetentionDays, copy),
-      }),
+      historyHighlight(pro.analyticsRetentionDays, copy),
       ...(domains
         ? [t("highlights.customDomains", { count: count(pro.customDomains) })]
         : []),
@@ -509,9 +513,10 @@ export function buildHighlights(
     ],
     business: [
       t("highlights.whiteLabel"),
-      t("highlights.history", {
-        duration: formatDays(business.analyticsRetentionDays, copy),
-      }),
+      // The card starts "Everything in Pro": only a longer history is news.
+      ...(business.analyticsRetentionDays > pro.analyticsRetentionDays
+        ? [historyHighlight(business.analyticsRetentionDays, copy)]
+        : []),
       ...(domains
         ? [
             t("highlights.customDomains", {

@@ -1,0 +1,106 @@
+{
+  "id": "archery-lesson",
+  "name": "Archery lesson",
+  "description": "A light card with a bold side bar and left-aligned text and a target and dart.",
+  "category": "use-case",
+  "collection": "sports-fitness",
+  "contentTypes": ["calcom", "url"],
+  "tags": ["sports", "fitness", "archery"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1300,
+      "height": 1620
+    },
+    "qr": {
+      "x": 180,
+      "y": 140,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1300,
+        "height": 1620,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 40,
+        "height": 1620,
+        "fill": "accent"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1300,
+        "height": 1620,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.82
+        },
+        "hole": {
+          "x": 0,
+          "y": 8,
+          "width": 1292,
+          "height": 1604
+        }
+      },
+      {
+        "type": "path",
+        "d": "M1061 1390A69 69 0 1 1 1199 1390A69 69 0 1 1 1061 1390ZM1074.5 1390A55.5 55.5 0 1 0 1185.5 1390A55.5 55.5 0 1 0 1074.5 1390ZM1088 1390A42 42 0 1 1 1172 1390A42 42 0 1 1 1088 1390ZM1101.5 1390A28.5 28.5 0 1 0 1158.5 1390A28.5 28.5 0 1 0 1101.5 1390ZM1115 1390A15 15 0 1 1 1145 1390A15 15 0 1 1 1115 1390Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M1130.88 1384.88L1181.88 1333.88L1186.12 1338.12L1135.12 1389.12ZM1178 1330L1199 1318L1190 1342Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Try archery",
+        "color": "frame",
+        "box": {
+          "x": 180,
+          "y": 1270,
+          "width": 1000,
+          "height": 170
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Book a lesson",
+        "color": "frame",
+        "box": {
+          "x": 180,
+          "y": 1450,
+          "width": 1000,
+          "height": 90
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

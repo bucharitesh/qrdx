@@ -1,0 +1,80 @@
+{
+  "id": "check-symptoms",
+  "name": "Check symptoms",
+  "description": "A solid card with a thermometer over the code and the label underneath.",
+  "category": "use-case",
+  "collection": "health-learning",
+  "contentTypes": ["url"],
+  "tags": ["healthcare", "clinic", "symptoms", "triage"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M620 44L620 44A15 15 0 0 1 635 59L635 125A15 15 0 0 1 620 140L620 140A15 15 0 0 1 605 125L605 59A15 15 0 0 1 620 44ZM596 153.5A24 24 0 1 1 644 153.5A24 24 0 1 1 596 153.5ZM620 56A6 6 0 0 0 614 62L614 137A6 6 0 0 0 620 143L620 143A6 6 0 0 0 626 137L626 62A6 6 0 0 0 620 56L620 56ZM605.75 153.5A14.25 14.25 0 1 0 634.25 153.5A14.25 14.25 0 1 0 605.75 153.5ZM643.25 59L653.75 59A2.25 2.25 0 0 1 656 61.25L656 62A2.25 2.25 0 0 1 653.75 64.25L643.25 64.25A2.25 2.25 0 0 1 641 62L641 61.25A2.25 2.25 0 0 1 643.25 59ZM643.25 77L653.75 77A2.25 2.25 0 0 1 656 79.25L656 80A2.25 2.25 0 0 1 653.75 82.25L643.25 82.25A2.25 2.25 0 0 1 641 80L641 79.25A2.25 2.25 0 0 1 643.25 77ZM643.25 95L653.75 95A2.25 2.25 0 0 1 656 97.25L656 98A2.25 2.25 0 0 1 653.75 100.25L643.25 100.25A2.25 2.25 0 0 1 641 98L641 97.25A2.25 2.25 0 0 1 643.25 95ZM643.25 113L653.75 113A2.25 2.25 0 0 1 656 115.25L656 116A2.25 2.25 0 0 1 653.75 118.25L643.25 118.25A2.25 2.25 0 0 1 641 116L641 115.25A2.25 2.25 0 0 1 643.25 113Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M620 92L620 92A3.75 3.75 0 0 1 623.75 95.75L623.75 148.25A3.75 3.75 0 0 1 620 152L620 152A3.75 3.75 0 0 1 616.25 148.25L616.25 95.75A3.75 3.75 0 0 1 620 92ZM609.5 153.5A10.5 10.5 0 1 1 630.5 153.5A10.5 10.5 0 1 1 609.5 153.5Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Check your symptoms",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Before you visit",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

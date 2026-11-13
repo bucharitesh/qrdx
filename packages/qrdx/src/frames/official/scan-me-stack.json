@@ -1,0 +1,93 @@
+{
+  "id": "scan-me-stack",
+  "name": "Stacked cards",
+  "description": "A card with two more stacked behind it.",
+  "category": "use-case",
+  "collection": "call-to-action",
+  "contentTypes": [],
+  "tags": ["call to action", "cards"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1340,
+      "height": 1750
+    },
+    "qr": {
+      "x": 120,
+      "y": 290,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 100,
+        "y": 100,
+        "width": 1240,
+        "height": 1650,
+        "radius": 48,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.75
+        }
+      },
+      {
+        "type": "rect",
+        "x": 50,
+        "y": 50,
+        "width": 1240,
+        "height": 1650,
+        "radius": 48,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.45
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1650,
+        "radius": 48,
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan me",
+        "color": "text",
+        "box": {
+          "x": 90,
+          "y": 1410,
+          "width": 1060,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "There's more inside",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 60,
+          "width": 1000,
+          "height": 110
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

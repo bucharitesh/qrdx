@@ -1,0 +1,158 @@
+{
+  "id": "pick-your-own",
+  "name": "Pick your own",
+  "description": "A wide vinyl banner with eyelets in its corners and a piece of fruit.",
+  "category": "use-case",
+  "collection": "food-drink",
+  "contentTypes": ["url"],
+  "tags": ["restaurant", "food", "orchard", "farm"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 2000,
+      "height": 1140
+    },
+    "qr": {
+      "x": 190,
+      "y": 170,
+      "size": 800,
+      "padding": 64,
+      "radius": 19.2
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M114.95 105.05L4.95 -4.95A7 7 0 0 1 -4.95 4.95L105.05 114.95A7 7 0 0 1 114.95 105.05Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.4
+        }
+      },
+      {
+        "type": "path",
+        "d": "M1894.95 114.95L2004.95 4.95A7 7 0 0 1 1995.05 -4.95L1885.05 105.05A7 7 0 0 1 1894.95 114.95Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.4
+        }
+      },
+      {
+        "type": "path",
+        "d": "M105.05 1025.05L-4.95 1135.05A7 7 0 0 1 4.95 1144.95L114.95 1034.95A7 7 0 0 1 105.05 1025.05Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.4
+        }
+      },
+      {
+        "type": "path",
+        "d": "M1885.05 1034.95L1995.05 1144.95A7 7 0 0 1 2004.95 1135.05L1894.95 1025.05A7 7 0 0 1 1885.05 1034.95Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.4
+        }
+      },
+      {
+        "type": "rect",
+        "x": 40,
+        "y": 40,
+        "width": 1920,
+        "height": 1060,
+        "radius": 14,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 110,
+        "cy": 110,
+        "r": 30,
+        "hole": 15,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.55
+        }
+      },
+      {
+        "type": "circle",
+        "cx": 1890,
+        "cy": 110,
+        "r": 30,
+        "hole": 15,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.55
+        }
+      },
+      {
+        "type": "circle",
+        "cx": 110,
+        "cy": 1030,
+        "r": 30,
+        "hole": 15,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.55
+        }
+      },
+      {
+        "type": "circle",
+        "cx": 1890,
+        "cy": 1030,
+        "r": 30,
+        "hole": 15,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.55
+        }
+      },
+      {
+        "type": "path",
+        "d": "M1200 271.1C1217 254.1 1264.6 257.5 1264.6 305.1C1264.6 345.9 1234 376.5 1213.6 373.1C1206.8 371.4 1193.2 371.4 1186.4 373.1C1166 376.5 1135.4 345.9 1135.4 305.1C1135.4 257.5 1183 254.1 1200 271.1ZM1204.19 265.04A4.25 4.25 0 0 0 1195.81 263.56L1200.91 234.66A4.25 4.25 0 0 0 1209.29 236.14L1204.19 265.04Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M1208.5 250.7C1215.3 228.6 1239.1 225.2 1254.4 232C1244.2 250.7 1222.1 257.5 1208.5 250.7Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Pick your own",
+        "color": "text",
+        "box": {
+          "x": 1110,
+          "y": 470,
+          "width": 720,
+          "height": 190
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan for picking times",
+        "color": "text",
+        "box": {
+          "x": 1110,
+          "y": 680,
+          "width": 720,
+          "height": 100
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

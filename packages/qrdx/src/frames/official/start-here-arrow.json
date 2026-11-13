@@ -1,0 +1,79 @@
+{
+  "id": "start-here-arrow",
+  "name": "Big arrow, light",
+  "description": "A wide card with a big arrow pointing at the code and the label in its shaft.",
+  "category": "use-case",
+  "collection": "call-to-action",
+  "contentTypes": [],
+  "tags": ["call to action", "arrow"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 2000,
+      "height": 1040
+    },
+    "qr": {
+      "x": 120,
+      "y": 120,
+      "size": 800,
+      "padding": 64,
+      "radius": 19.2
+    },
+    "colors": {
+      "frame": "#1f1f1f",
+      "text": "#ffffff",
+      "accent": "#5a5a5a"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1040,
+        "height": 1040,
+        "radius": 60,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.9
+        }
+      },
+      {
+        "type": "path",
+        "d": "M1060 520L1360 190L1360 350L1960 350L1960 690L1360 690L1360 850Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Start here",
+        "color": "text",
+        "box": {
+          "x": 1360,
+          "y": 400,
+          "width": 560,
+          "height": 240
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan the code",
+        "color": "frame",
+        "box": {
+          "x": 1140,
+          "y": 70,
+          "width": 820,
+          "height": 110
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

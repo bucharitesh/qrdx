@@ -1,0 +1,88 @@
+{
+  "id": "plant-a-tree",
+  "name": "Plant a tree",
+  "description": "A wavy band under the code and a tree.",
+  "category": "use-case",
+  "collection": "nonprofit",
+  "contentTypes": ["url"],
+  "tags": ["nonprofit", "community", "trees", "environment"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1770
+    },
+    "qr": {
+      "x": 120,
+      "y": 360,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.9
+        }
+      },
+      {
+        "type": "path",
+        "d": "M0 1410C77.5 1360 232.5 1360 155 1410C213.75 1460 271.25 1460 310 1410C387.5 1360 542.5 1360 465 1410C523.75 1460 581.25 1460 620 1410C697.5 1360 852.5 1360 775 1410C833.75 1460 891.25 1460 930 1410C1007.5 1360 1162.5 1360 1085 1410C1143.75 1460 1201.25 1460 1240 1410L1240 1714Q1240 1770 1184 1770L56 1770Q0 1770 0 1714Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M588.8 88.4A31.2 31.2 0 1 1 651.2 88.4A31.2 31.2 0 1 1 588.8 88.4ZM574.4 105.2A21.6 21.6 0 1 1 617.6 105.2A21.6 21.6 0 1 1 574.4 105.2ZM622.4 105.2A21.6 21.6 0 1 1 665.6 105.2A21.6 21.6 0 1 1 622.4 105.2ZM598.4 112.4A21.6 21.6 0 1 1 641.6 112.4A21.6 21.6 0 1 1 598.4 112.4ZM617.6 117.2L622.4 117.2A3.6 3.6 0 0 1 626 120.8L626 156.8A3.6 3.6 0 0 1 622.4 160.4L617.6 160.4A3.6 3.6 0 0 1 614 156.8L614 120.8A3.6 3.6 0 0 1 617.6 117.2Z",
+        "fill": "accent"
+      },
+      {
+        "type": "path",
+        "d": "M589.4 159.2L650.6 159.2A3 3 0 0 1 653.6 162.2L653.6 162.2A3 3 0 0 1 650.6 165.2L589.4 165.2A3 3 0 0 1 586.4 162.2L586.4 162.2A3 3 0 0 1 589.4 159.2Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Plant a tree",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1540,
+          "width": 1040,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Join the planting day",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 190,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

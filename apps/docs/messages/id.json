@@ -207,6 +207,7 @@
       "shadcn": "Registry shadcn/ui",
       "plugins": "Plugin",
       "selfHosting": "Self-hosting",
+      "openSource": "Sumber terbuka",
       "github": "GitHub",
       "help": "Pusat bantuan",
       "blog": "Blog",
@@ -406,7 +407,7 @@
       "analytics": {
         "eyebrow": "Analitik",
         "title": "Lihat setiap pemindaian",
-        "description": "Pemindaian dari waktu ke waktu, negara, perangkat, browser, dan perujuk untuk setiap kode dinamis. Akun Gratis menyimpan data selama {days, number} hari.",
+        "description": "Pemindaian dari waktu ke waktu, negara, perangkat, browser, dan perujuk untuk setiap kode dinamis. Akun gratis menyimpan riwayat selama {years, plural, other {# tahun}}, dan paket berbayar menyimpan seluruhnya.",
         "link": "Cara kerja analitik pemindaian"
       },
       "bulk": {
@@ -450,7 +451,7 @@
       "items": {
         "free": {
           "question": "Apakah QRdx benar-benar gratis? Apakah ada batasan tersembunyi?",
-          "answer": "Ya. Membuat, menyesuaikan, dan mengunduh kode QR statis gratis dan tanpa akun: kode tanpa batas, semua opsi desain ({bodyPatterns, number} pola badan, {eyeShapes, number} bentuk mata sudut, dan {eyeCentres, number} pusat mata, gradasi, logo, bingkai, serta seni Logo QR atau Image QR), dan unduhan PNG, JPG, SVG, PDF, dan EPS. Tanpa tanda air dan tanpa iklan. Kode statis menyimpan konten Anda di dalam kode itu sendiri, sehingga tidak pernah kedaluwarsa dan tidak memiliki batas pemindaian. Akun gratis menambahkan 10 kode QR dinamis, 3 halaman yang di-hosting, 90 hari analitik pemindaian, 10 tema tersimpan, dan 5 pembuatan tema dengan AI; Pro ({proMonthly}/bln atau {proYearly}/thn) dan Business ({businessMonthly}/bln atau {businessYearly}/thn) meningkatkan batas tersebut."
+          "answer": "Ya. Membuat, menyesuaikan, dan mengunduh kode QR statis gratis dan tidak memerlukan akun: kode tanpa batas, semua opsi desain ({bodyPatterns, number} pola isi, {eyeShapes, number} bentuk mata sudut, dan {eyeCentres, number} pusat mata, gradasi, logo, bingkai, serta karya Logo QR atau Image QR), dan unduhan PNG, JPG, SVG, PDF, dan EPS. Tidak ada watermark dan tidak ada iklan. Kode statis menyimpan konten Anda di dalam kodenya sendiri, sehingga tidak pernah kedaluwarsa dan tidak memiliki batas pemindaian. Akun gratis menambahkan 10 kode QR dinamis, 3 halaman yang di-hosting, analitik pemindaian selama {historyYears, plural, other {# tahun}}, 10 tema tersimpan, dan 5 pembuatan tema dengan AI; Pro ({proMonthly}/bln atau {proYearly}/thn) dan Business ({businessMonthly}/bln atau {businessYearly}/thn) meningkatkan batas tersebut."
         },
         "signup": {
           "question": "Apakah saya perlu mendaftar atau membuat akun?",
@@ -458,7 +459,7 @@
         },
         "dynamic": {
           "question": "Apakah QRdx mendukung kode QR dinamis dan analitik pemindaian?",
-          "answer": "Ya. Kode dinamis menyandikan tautan pendek, sehingga Anda dapat mengubah tujuannya setelah dicetak, dan setiap pemindaian dihitung lengkap dengan analitik negara, perangkat, dan browser. Satu kode dapat membuka situs web atau halaman seluler yang di-hosting (daftar tautan, menu, vCard, kupon, acara, formulir, PDF, galeri, audio, atau video). Pro dan Business menambahkan pengalihan cerdas berdasarkan perangkat, negara, bahasa, atau waktu, uji A/B, tag UTM, kata sandi, tanggal kedaluwarsa, dan batas pemindaian. Akun gratis mendapat 10 kode dinamis aktif dengan riwayat 90 hari; Pro dan Business tanpa batas dengan riwayat yang lebih panjang."
+          "answer": "Ya. Kode dinamis menyandikan tautan pendek, sehingga Anda dapat mengubah tujuannya setelah dicetak, dan setiap pemindaian dihitung dengan analitik negara, perangkat, dan browser. Sebuah kode dapat membuka situs web atau halaman seluler yang di-hosting (daftar tautan, menu, vCard, kupon, acara, formulir, PDF, galeri, audio, atau video). Pro dan Business menambahkan perutean cerdas berdasarkan perangkat, negara, bahasa, atau waktu, A/B tests, tag UTM, kata sandi, tanggal kedaluwarsa, dan batas pemindaian. Akun gratis mendapatkan 10 kode dinamis aktif dengan riwayat selama {historyYears, plural, other {# tahun}}; Pro dan Business tanpa batas dan menyimpan seluruh riwayat pemindaian Anda."
         },
         "guarantee": {
           "question": "Apakah kode QR saya akan berhenti berfungsi jika saya berhenti membayar?",
@@ -482,7 +483,7 @@
         },
         "paidPlans": {
           "question": "Apa yang saya dapatkan dengan Pro atau Business?",
-          "answer": "Pro ({proMonthly}/bln atau {proYearly}/thn) menambahkan kode QR dinamis dan halaman yang di-hosting tanpa batas, analitik selama 3 tahun, {customDomains, select, yes {5 domain kustom, } other {}}tim hingga 3 anggota, smart routing, A/B test, tag UTM, piksel, peringatan email dan ringkasan mingguan, serta kontrol tautan seperti kata sandi dan tanggal kedaluwarsa. Business ({businessMonthly}/bln atau {businessYearly}/thn) menambahkan halaman white-label dengan CSS kustom, riwayat analitik tanpa batas, {customDomains, select, yes {25 domain kustom, } other {}}anggota tim tanpa batas, pelacakan konversi, webhook, dan peringatan Slack atau Discord. Membuat, menyesuaikan, dan mengunduh kode QR statis tetap gratis."
+          "answer": "Pro ({proMonthly}/bln atau {proYearly}/thn) menambahkan kode dinamis dan halaman yang di-hosting tanpa batas, seluruh riwayat pemindaian Anda, {customDomains, select, yes {5 domain kustom, } other {}}tim hingga 3 orang, perutean cerdas, A/B tests, tag UTM, piksel, notifikasi email dan ringkasan mingguan, serta kontrol tautan seperti kata sandi dan tanggal kedaluwarsa. Business ({businessMonthly}/bln atau {businessYearly}/thn) menambahkan halaman white-label dengan CSS kustom, {customDomains, select, yes {25 domain kustom, } other {}}anggota tim tanpa batas, pelacakan konversi, webhook, dan notifikasi Slack atau Discord. Membuat, menyesuaikan, dan mengunduh kode QR statis tetap gratis."
         }
       }
     }
@@ -502,8 +503,8 @@
     },
     "extras": {
       "unlimitedDynamic": "kode dinamis tanpa batas",
-      "longerAnalytics": "analitik lebih panjang",
-      "analyticsHistory": "riwayat analitik",
+      "longerAnalytics": "seluruh riwayat pemindaian Anda",
+      "analyticsHistory": "riwayat analitik lengkap",
       "customDomains": "domain kustom",
       "teams": "tim"
     },
@@ -561,7 +562,8 @@
     "selfHost": {
       "title": "Self-host",
       "description": "Jalankan aplikasi open-source di server Anda sendiri dengan database Postgres Anda sendiri. Batas paket ada dalam satu file yang dapat Anda ubah untuk instans Anda.",
-      "guide": "Panduan self-hosting"
+      "guide": "Panduan self-hosting",
+      "openSource": "Yang bersifat open source"
     },
     "footnote": "Polar menangani checkout sebagai merchant of record; pajak lokal dapat ditambahkan saat checkout. Pelanggan di India ditagih dalam ₹, selain itu dalam US$.",
     "footnoteEur": "Polar menangani pembayaran sebagai merchant of record; pajak lokal dapat ditambahkan saat pembayaran. Pelanggan di India ditagih dalam ₹, pelanggan di UE dan EEA dalam €, dan pelanggan lainnya dalam US$.",
@@ -716,7 +718,7 @@
       "items": {
         "cancel": {
           "question": "Apa yang terjadi jika saya berhenti berlangganan?",
-          "answer": "Tidak ada yang rusak. Paket Anda tetap aktif hingga akhir periode yang sudah Anda bayar, lalu akun Anda pindah ke Gratis. Setiap kode QR dinamis tetap mengalihkan dan setiap pemindaian tetap dihitung: itulah Jaminan Never-Hostage kami. Di paket Gratis, Anda tidak dapat membuat lebih dari batas yang diizinkan paket Gratis, dan analitik menampilkan 90 hari terakhir."
+          "answer": "Tidak ada yang rusak. Paket Anda tetap aktif hingga akhir periode yang sudah Anda bayar, lalu akun Anda beralih ke Gratis. Setiap kode QR dinamis tetap mengarahkan pengunjung dan setiap pemindaian tetap dihitung: itulah Jaminan Never-Hostage kami. Di paket Gratis, Anda tidak dapat membuat lebih dari batas yang diizinkan paket Gratis, dan analitik menampilkan data {historyYears, plural, other {# tahun}} terakhir. Pemindaian yang lebih lama tetap disimpan, sehingga akan muncul kembali jika Anda meningkatkan paket lagi."
         },
         "refund": {
           "question": "Bisakah uang saya dikembalikan?",
@@ -943,6 +945,8 @@
       "bulkDescription": "Unggah file CSV dan unduh setiap kode sebagai PNG, WebP, atau SVG dalam satu file ZIP, semuanya dibuat sepenuhnya di browser Anda.",
       "printTitle": "Mau mencetak kode? Periksa ukurannya",
       "printDescription": "Hitung ukuran cetak minimum berdasarkan jarak pemindaian dan jumlah data yang dimuat kode.",
+      "dynamicTitle": "Generator kode QR dinamis",
+      "dynamicDescription": "Ubah tautan setelah dicetak dan hitung setiap pemindaian",
       "hostedTitle": "Kode yang membuka halaman yang bisa Anda ubah",
       "hostedDescription": "Kode ini membuka halaman seluler yang di-hosting oleh QRdx untuk Anda, sehingga Anda bisa mengubahnya setelah dicetak dan melihat pemindaian. Kode ini memerlukan akun gratis.",
       "menuTitle": "Generator kode QR menu",
@@ -2458,6 +2462,11 @@
       "viewLabel": "Lihat demo {name}",
       "view": "Lihat demo",
       "use": "Gunakan template"
+    },
+    "more": {
+      "load": "Muat lagi",
+      "loading": "Memuat",
+      "failed": "Template ini gagal dimuat."
     }
   },
   "templateDemo": {
@@ -2874,6 +2883,254 @@
       "limitAnswer": "Anda akan menerima respons 429 dengan header Retry-After yang menyatakan kapan Anda bisa mencoba lagi. URL yang identik disimpan di cache selama setahun, sehingga gambar yang tampil di halaman yang ramai biasanya disajikan dari cache.",
       "aiQuestion": "Bisakah asisten AI menggunakannya?",
       "aiAnswer": "Ya. Alat generate_qr_code milik server MCP QRdx mengembalikan URL gambar ini, dan asisten tanpa MCP pun dapat menulis URL tersebut sendiri sebagai gambar Markdown."
+    }
+  },
+  "dynamicQrCode": {
+    "metaTitle": "Pembuat Kode QR Dinamis Gratis: Edit dan Lacak Pemindaian",
+    "metaDescription": "Buat kode QR dinamis yang bisa Anda edit setelah dicetak dan lacak setiap pemindaian. Akun gratis mendapat {count, number} kode dengan pemindaian tak terbatas dan tanpa batas waktu.",
+    "crumb": "Pembuat kode QR dinamis",
+    "title": "Pembuat kode QR dinamis gratis",
+    "intro1": "Kode QR dinamis berisi tautan pendek, bukan URL Anda. Anda bisa mengubah tujuannya setelah dicetak, dan QRdx menghitung setiap pemindaian.",
+    "intro2": "Akun gratis mendapat {count, number} kode dinamis dengan pemindaian tak terbatas dan riwayat pemindaian selama {years, plural, one {# tahun} other {# tahun}}. Tidak ada masa percobaan, dan kode tetap berfungsi baik Anda membayar maupun tidak.",
+    "facts": {
+      "free": "{count, number} kode dinamis gratis",
+      "scans": "Pemindaian tak terbatas di semua paket",
+      "ads": "Tanpa iklan sebelum tautan Anda",
+      "openSource": "Open source"
+    },
+    "cta": "Buat kode QR dinamis",
+    "pricingCta": "Bandingkan paket",
+    "docsLink": "Dokumentasi kode QR dinamis",
+    "howEyebrow": "Cara kerjanya",
+    "howTitle": "Tautan pendek yang bisa diarahkan ke tempat lain",
+    "steps": {
+      "create": {
+        "title": "Buat kodenya",
+        "body": "Di dasbor, klik Kode baru dan masukkan halaman yang harus dibuka. Di Playground, pilih tipe URL dan aktifkan Jadikan dinamis. Dengan cara mana pun, kode mendapat tautan pendek seperti {example}."
+      },
+      "print": {
+        "title": "Unduh dan cetak",
+        "body": "Unduh sebagai PNG, WebP, atau SVG, atau atur gayanya dulu di Playground. Tautan pendek membutuhkan lebih sedikit modul daripada URL panjang, sehingga kode bisa dicetak lebih kecil dan tetap bisa dipindai."
+      },
+      "change": {
+        "title": "Ubah saat diperlukan",
+        "body": "Edit tujuannya dan pemindaian berikutnya membuka halaman baru. Setiap pemindaian mendapat pengalihan 302 yang tidak disimpan dalam cache browser, sehingga ponsel yang memindai minggu lalu tidak mengingat alamat lama."
+      }
+    },
+    "featuresEyebrow": "Fitur",
+    "featuresTitle": "Kemampuan kode dinamis",
+    "featuresDescription": "Pengeditan, analitik, dan halaman yang di-hosting tersedia di setiap paket. Setiap kartu menyebutkan paket mana yang menyertakannya.",
+    "planAll": "Semua paket",
+    "planSome": "Di {plans}",
+    "features": {
+      "edit": {
+        "title": "Edit setelah dicetak",
+        "body": "Ubah tujuan, ganti nama kode, atau jadikan halaman yang di-hosting tanpa mencetak ulang. Setiap perubahan masuk ke riwayat versi kode, dan Anda bisa memulihkan versi lama."
+      },
+      "analytics": {
+        "title": "Analitik pemindaian",
+        "body": "Lihat pemindaian dari waktu ke waktu, pengunjung unik, negara dan kota, perangkat, browser, serta jam saat orang memindai, lalu ekspor sebagai CSV. Alamat IP tidak pernah disimpan. Akun gratis menyimpan riwayat {years, plural, one {# tahun} other {# tahun}}, dan paket berbayar menyimpan semuanya."
+      },
+      "pages": {
+        "title": "Halaman seluler yang di-hosting",
+        "body": "Arahkan kode ke halaman yang di-hosting QRdx, bukan ke situs web: daftar tautan, menu, kartu kontak, kupon, acara, atau formulir, dari {types, number} jenis halaman. Akun Gratis mendapatkan {pages, number} halaman."
+      },
+      "routing": {
+        "title": "Pengalihan cerdas",
+        "body": "Arahkan iPhone ke App Store dan ponsel Android ke Google Play, atau alihkan berdasarkan negara, wilayah, bahasa, waktu, atau jumlah pemindaian, dengan hingga {rules, number} aturan per kode. Pemisahan A/B dan parameter UTM sudah termasuk."
+      },
+      "controls": {
+        "title": "Kata sandi, jadwal, dan batas pemindaian",
+        "body": "Lindungi kode dengan kata sandi, beri tanggal mulai dan berakhir atau batas pemindaian, lalu pilih ke mana kode yang sudah berakhir mengarahkan orang. Menjeda kode tersedia di semua paket."
+      },
+      "slugs": {
+        "title": "{domains, select, yes {Back-half dan domain Anda sendiri} other {Back-half Anda sendiri}}",
+        "body": "Pilih bagian akhir tautan pendek, seperti {example}, bukan yang acak.{domains, select, yes { Anda juga dapat menyajikan kode dari domain Anda sendiri, misalnya go.yourbrand.com.} other {}}"
+      },
+      "tracking": {
+        "title": "Piksel dan konversi",
+        "body": "Muat piksel analitik dan retargeting Anda di halaman kode yang di-hosting. {conversionPlans} menambahkan pelacakan konversi, yang mengaitkan pembelian dan pendaftaran dengan pemindaian yang membawa pengunjung tersebut."
+      },
+      "api": {
+        "title": "REST API dan pembuatan massal",
+        "body": "Buat dan edit kode serta baca data pemindaiannya dari kode Anda sendiri, dengan {perDay, number} permintaan API per hari di paket Gratis. Paket berbayar dapat membuat hingga {batch} kode dalam satu permintaan, atau mengimpor hingga {rows} dari CSV."
+      }
+    },
+    "freeEyebrow": "Paket Gratis",
+    "freeTitle": "Yang Anda dapatkan tanpa membayar",
+    "freeDescription": "Anda tidak memerlukan kartu, dan tidak ada masa percobaan. Upgrade hanya jika Anda membutuhkan lebih banyak kode atau fitur berbayar di atas.",
+    "freeItems": {
+      "codes": "{count, number} kode dinamis aktif (kode yang diarsipkan tidak dihitung)",
+      "scans": "Pemindaian tanpa batas yang tidak pernah dijeda",
+      "history": "Riwayat pemindaian {years, plural, other {# tahun}}",
+      "pages": "{pages, number} halaman yang di-hosting",
+      "organize": "Pengeditan, penjedaan, folder, tag, dan riwayat versi",
+      "api": "REST API, dengan {perDay, number} permintaan per hari"
+    },
+    "freeLink": "Bandingkan semua paket",
+    "guaranteeEyebrow": "Jika Anda berhenti membayar",
+    "guaranteeTitle": "Kode yang dicetak tetap berfungsi",
+    "guaranteeBody": "Berdasarkan Jaminan Never-Hostage, setiap kode dinamis tetap mengalihkan di semua paket, termasuk setelah downgrade, pembayaran gagal, atau pembatalan. Pemindaian tidak pernah dijeda, dan pemindai tidak pernah melihat iklan atau halaman pendaftaran QRdx. Melewati batas hanya menghentikan Anda membuat kode baru.",
+    "guaranteeLink": "Baca jaminannya",
+    "openSourceBody": "Pengalihan, analitik, dan bagian aplikasi lainnya bersifat open source, sehingga Anda dapat melihat apa yang terjadi pada setiap pemindaian atau menjalankannya di server Anda sendiri.",
+    "openSourceLink": "Open source dan self-hosting",
+    "staticTitle": "Kapan kode statis menjadi pilihan yang lebih baik",
+    "staticBody": "Hanya tautan yang bisa dinamis: kode dinamis membuka situs web atau halaman yang di-hosting. Login Wi-Fi, kartu kontak yang langsung disimpan ke ponsel, dan kode pembayaran bank harus statis, karena ponsel membacanya dari pola kode itu sendiri. Kode statis gratis dan tanpa batas, serta tidak memerlukan akun.",
+    "staticLink": "Generator kode QR statis",
+    "blogLink": "Kode QR statis vs dinamis",
+    "moreTitle": "Baca selengkapnya",
+    "more": {
+      "docsTitle": "Kode QR dinamis",
+      "docsBody": "Back-half, folder, impor CSV, dan API secara rinci",
+      "routingTitle": "Perutean cerdas",
+      "routingBody": "Aturan, uji A/B, dan parameter UTM",
+      "controlsTitle": "Kontrol kode",
+      "controlsBody": "Kata sandi, jadwal, batas pemindaian, dan URL cadangan",
+      "trackingTitle": "Pelacakan dan konversi",
+      "trackingBody": "Analitik, piksel, dan pelacakan konversi",
+      "domainsTitle": "Domain kustom",
+      "domainsBody": "Sajikan tautan pendek dari domain milik Anda",
+      "apiTitle": "REST API",
+      "apiBody": "Buat dan kelola kode dari kode Anda sendiri"
+    },
+    "faqTitle": "Pertanyaan tentang kode QR dinamis",
+    "faq": {
+      "freeQuestion": "Bisakah saya membuat kode QR dinamis secara gratis?",
+      "freeAnswer": "Ya. Akun QRdx gratis mencakup {count, number} kode dinamis aktif dengan pemindaian tanpa batas dan riwayat pemindaian selama {years, plural, other {# tahun}}, tanpa masa percobaan. Kode yang diarsipkan tidak dihitung dalam batas ini, dan paket berbayar menghapus batas tersebut.",
+      "expireQuestion": "Apakah kode QR dinamis kedaluwarsa?",
+      "expireAnswer": "Tidak di QRdx. Kode terus mengalihkan sampai Anda menjeda, mengarsipkan, atau menghapusnya, atau sampai tanggal berakhir atau batas pemindaian yang Anda tetapkan sendiri. Ini berlaku di setiap paket, termasuk Gratis, dan setelah penurunan paket, pembayaran gagal, atau pembatalan. Satu-satunya pengecualian adalah penyalahgunaan: kode yang mengarah ke phishing atau malware akan dinonaktifkan.",
+      "editQuestion": "Bisakah saya mengedit kode QR setelah dicetak?",
+      "editAnswer": "Hanya kode dinamis. Kode ini menyimpan tautan pendek, sehingga Anda mengubah tujuan di dasbor dan kode yang sudah dicetak akan membuka halaman baru pada pemindaian berikutnya. Kode statis menyimpan alamatnya langsung, jadi mengubahnya berarti mencetak kode baru.",
+      "trackQuestion": "Bagaimana cara melacak pemindaian kode QR?",
+      "trackAnswer": "Jadikan kodenya dinamis. Setiap kode dinamis memiliki halaman analitik dengan pemindaian dari waktu ke waktu, pengunjung unik, negara dan kota, perangkat, sistem operasi, browser, perujuk, dan bahasa, dan Anda dapat mengekspor pemindaiannya sebagai CSV. QRdx tidak menyimpan alamat IP dan tidak menghitung bot yang dikenal maupun pratinjau tautan.",
+      "typesQuestion": "Bisakah kode QR Wi-Fi atau vCard menjadi dinamis?",
+      "typesAnswer": "Tidak secara langsung, karena ponsel membaca detail Wi-Fi dan vCard dari pola kodenya sendiri, sedangkan kode dinamis hanya dapat membuka tautan. Untuk detail kontak yang ingin Anda ubah nanti, arahkan kode dinamis ke halaman kontak yang di-hosting. Untuk Wi-Fi, gunakan kode statis.",
+      "domainQuestion": "Bisakah saya memakai domain sendiri untuk tautan pendek?",
+      "domainAnswer": "Ya, di {plans}. Kode kemudian menyimpan tautan seperti go.yourbrand.com/menu, dan pengalihan serta analitik pemindaian bekerja dengan cara yang sama. Anda menghubungkan domain dengan menambahkan catatan DNS di penyedia DNS Anda.",
+      "apiQuestion": "Bisakah saya membuat kode QR dinamis dengan API?",
+      "apiAnswer": "Ya. REST API membuat dan mengedit kode serta membaca pemindaiannya, dengan kunci API atau token akses OAuth. Akun gratis mendapat {perDay, number} permintaan per hari, dan paket berbayar dapat membuat hingga {batch} kode dalam satu permintaan.",
+      "selfHostQuestion": "Bisakah saya menjalankan kode QR dinamis di server saya sendiri?",
+      "selfHostAnswer": "Bisa. QRdx bersifat open source, dan salinan yang di-host sendiri menjalankan kode dinamis, halaman yang di-hosting, serta analitik pemindaian di domain Anda sendiri. Lokasi pemindaian bergantung pada header yang disediakan host Anda, yang dijelaskan dalam panduan self-hosting."
+    }
+  },
+  "openSource": {
+    "metaTitle": "Generator Kode QR Open Source yang Bisa Anda Host Sendiri",
+    "metaDescription": "QRdx adalah generator kode QR open source di GitHub. Aplikasinya berlisensi AGPL-3.0, sedangkan library React dan CLI-nya berlisensi MIT. Gunakan qrdx.dev secara gratis atau jalankan salinan Anda sendiri.",
+    "crumb": "Open source",
+    "title": "Generator kode QR open source",
+    "intro1": "QRdx dibangun secara terbuka di GitHub. Aplikasi web yang menjalankan qrdx.dev, lengkap dengan editor, kode dinamis, halaman yang di-hosting, dan analitik pemindaian, berlisensi AGPL-3.0. Library React, CLI, dan plugin-nya berlisensi MIT.",
+    "intro2": "Anda dapat menggunakannya secara gratis di qrdx.dev, menjalankan salinan sendiri, atau menyematkan kode QR ke aplikasi Anda dengan library-nya.",
+    "facts": {
+      "agpl": "Aplikasi AGPL-3.0",
+      "mit": "Library dan CLI MIT",
+      "selfHost": "Host sendiri dengan Docker atau Node.js",
+      "noAccount": "Kode statis tanpa akun"
+    },
+    "githubCta": "Lihat di GitHub",
+    "selfHostCta": "Panduan hosting sendiri",
+    "partsEyebrow": "Isi repositori",
+    "partsTitle": "Tiga lisensi dalam satu repositori",
+    "partsDescription": "<link>LICENSING.md</link> menentukan lisensi setiap folder. Semua yang tidak tercantum di bawah MIT atau lisensi komersial berlisensi AGPL-3.0-or-later.",
+    "partsHeader": {
+      "part": "Bagian",
+      "folder": "Folder",
+      "license": "Lisensi"
+    },
+    "parts": {
+      "appName": "Aplikasi web",
+      "appBody": "Editor, akun, kode dinamis, halaman yang di-hosting, analitik pemindaian, API, server MCP, dan dokumentasi",
+      "libraryName": "Library qrdx",
+      "libraryBody": "Komponen React untuk merender, mengekspor, dan menilai kode QR, tersedia di npm sebagai qrdx",
+      "cliName": "@qrdx/cli",
+      "cliBody": "Kode QR bergaya dari terminal atau tugas CI",
+      "pluginsName": "Plugin",
+      "pluginsBody": "Ekstensi Chrome, plugin Figma, Raycast, dan Canva, serta plugin lain di folder plugins",
+      "eeName": "Fitur Business",
+      "eeBody": "Single sign-on workspace dan log audit workspace"
+    },
+    "eeLicense": "Lisensi Komersial QRdx",
+    "eeNote": "Anda dapat membaca, menguji, dan berkontribusi pada kode di folder ee, tetapi penggunaannya di produksi memerlukan perjanjian tertulis dengan QRdx. Pada instans yang di-host sendiri, kedua fitur tersebut tetap nonaktif kecuali QRDX_EE_LICENSE diatur, dan semua fitur lainnya berfungsi tanpa keduanya.",
+    "waysEyebrow": "Cara menggunakannya",
+    "waysTitle": "Pilih cara menjalankannya",
+    "ways": {
+      "hostedTitle": "Gunakan qrdx.dev",
+      "hostedBody": "Kode QR statis gratis dan tidak memerlukan akun: rancang di Playground lalu unduh. Akun gratis menambahkan {count, number} kode dinamis dan {pages, number} halaman yang di-hosting, sedangkan paket berbayar menambahkan fitur untuk tim dan pemasaran.",
+      "hostedLink": "Buka Playground",
+      "hostedLink2": "Lihat harga",
+      "selfHostTitle": "Jalankan salinan sendiri",
+      "selfHostBody": "Docker Compose menjalankan aplikasi dengan database Postgres sendiri, atau Anda dapat menjalankannya dengan Node.js menggunakan database Neon. Aplikasi ini memerlukan tiga variabel lingkungan dan satu cara untuk masuk. AI, pembayaran, penyimpanan file, domain kustom, dan integrasi bersifat opsional.",
+      "selfHostLink": "Panduan self-hosting",
+      "libraryTitle": "Tanamkan ke aplikasi Anda",
+      "libraryBody": "Pustaka qrdx membuat kode QR di React dengan mesin yang sama seperti Playground, dan @qrdx/cli membuatnya dari terminal atau tugas CI. Keduanya berlisensi MIT, sehingga proyek closed-source pun dapat menggunakannya.",
+      "libraryLink": "Dokumentasi pustaka",
+      "libraryLink2": "Dokumentasi CLI"
+    },
+    "runEyebrow": "Mulai",
+    "runTitle": "Jalankan kodenya",
+    "runDescription": "Tetapkan secret dan metode masuk di .env, lalu jalankan stack. Build Docker pertama memakan waktu beberapa menit dan memerlukan memori minimal 8 GB.",
+    "runLabels": {
+      "docker": "Self-hosting dengan Docker Compose",
+      "library": "Pustaka dan CLI"
+    },
+    "runNotes": {
+      "signIn": "Pengguna masuk dengan aplikasi OAuth GitHub atau Google, atau dengan kode email yang dikirim melalui Resend.",
+      "postgres": "Neon dapat langsung digunakan. Postgres biasa memerlukan proxy HTTP yang kompatibel dengan Neon, yang sudah dijalankan oleh docker-compose.yml.",
+      "limits": "Tanpa pengaturan pembayaran, setiap akun memakai batas paket Gratis. Batas tersebut ditentukan dalam satu file, apps/docs/lib/plans.ts, yang dapat Anda ubah untuk instans Anda."
+    },
+    "runLink": "Baca panduan self-hosting lengkap",
+    "licenseEyebrow": "Lisensi",
+    "licenseTitle": "Apa yang diminta lisensi dari Anda",
+    "licenses": {
+      "agplTitle": "Aplikasi (AGPL-3.0)",
+      "agplBody": "Anda dapat menjalankan, mengubah, dan menghosting-nya. Jika Anda menjalankan versi yang dimodifikasi sebagai layanan jaringan, Anda wajib menyediakan kode sumbernya kepada penggunanya dengan lisensi yang sama.",
+      "mitTitle": "Pustaka, CLI, dan plugin (MIT)",
+      "mitBody": "Gunakan di proyek apa pun, termasuk closed-source, selama pemberitahuan hak cipta dan lisensi tetap menyertai kode. Rilis sebelum qrdx 0.0.47 dan @qrdx/cli 0.0.5 berlisensi AGPL-3.0-or-later.",
+      "trademarkTitle": "Nama dan logo",
+      "trademarkBody": "Nama dan logo QRdx adalah merek dagang. Fork atau layanan publik yang dibuat dari kode ini memerlukan nama dan logo sendiri; <link>kebijakan merek dagang</link> menjelaskan detailnya."
+    },
+    "licenseNote": "Ini hanyalah ringkasan. Yang berlaku adalah file lisensi di repositori.",
+    "contributeEyebrow": "Berkontribusi",
+    "contributeTitle": "Ikut membangunnya",
+    "contributeBody": "Laporan bug, ide, dan pull request sangat diterima. Panduan kontribusi membahas pengaturan lokal dan pemeriksaan yang perlu dijalankan, dan isu berlabel good first issue berukuran kecil dan mandiri. Ajukan pertanyaan di GitHub Discussions, dan laporkan masalah keamanan secara privat sebagaimana dijelaskan dalam kebijakan keamanan.",
+    "contributeLinks": {
+      "contributing": "Panduan kontribusi",
+      "goodFirst": "Good first issue",
+      "discussions": "Diskusi",
+      "security": "Kebijakan keamanan"
+    },
+    "stackTitle": "Teknologinya",
+    "stackBody": "Monorepo Bun dan Turborepo: aplikasi Next.js dengan React, TypeScript, Tailwind CSS, Drizzle di Postgres, Better Auth, dan Vercel AI SDK. Aplikasi, pengujian, dan build-nya berjalan di Node.js 22.",
+    "moreTitle": "Lainnya dari QRdx",
+    "more": {
+      "dynamicTitle": "Kode QR dinamis",
+      "dynamicBody": "Edit kode setelah dicetak dan lihat setiap pemindaian",
+      "apiTitle": "API kode QR gratis",
+      "apiBody": "Gambar kode QR dari satu URL, tanpa kunci atau pendaftaran",
+      "mcpTitle": "Server MCP",
+      "mcpBody": "Buat kode QR dari Claude, ChatGPT, atau Cursor",
+      "compareTitle": "QRdx dibandingkan",
+      "compareBody": "Halaman perbandingan berdampingan dengan alat kode QR lainnya",
+      "guaranteeTitle": "Jaminan Never-Hostage",
+      "guaranteeBody": "Apa yang terjadi pada kode Anda jika Anda berhenti membayar, atau jika QRdx tutup"
+    },
+    "faqTitle": "Pertanyaan seputar open source",
+    "faq": {
+      "openQuestion": "Apakah QRdx benar-benar open source?",
+      "openAnswer": "Ya. Kode sumbernya ada di GitHub, aplikasi webnya dilisensikan di bawah AGPL-3.0-or-later, dan pustaka qrdx, @qrdx/cli, serta plugin-nya berlisensi MIT. Dua fitur bisnis, single sign-on workspace dan log audit, berada di folder ee di bawah QRdx Commercial License: Anda dapat membaca kodenya, tetapi penggunaan di produksi memerlukan perjanjian dengan QRdx.",
+      "githubQuestion": "Di mana kode sumber QRdx di GitHub?",
+      "githubAnswer": "Di github.com/bucharitesh/qrdx. Semuanya ada dalam satu monorepo berisi aplikasi web, pustaka qrdx, CLI, plugin, dan dokumentasi.",
+      "freeQuestion": "Apakah QRdx gratis untuk di-host sendiri?",
+      "freeAnswer": "Ya. Tidak ada biaya lisensi; Anda hanya membayar server dan basis data Anda sendiri. Instans yang di-host sendiri menjalankan kode dinamis, halaman yang di-hosting, dan analitik pemindaian. Single sign-on dan log audit tetap nonaktif kecuali Anda memiliki kunci lisensi QRdx.",
+      "needQuestion": "Apa yang saya butuhkan untuk meng-host QRdx sendiri?",
+      "needAnswer": "Anda memerlukan Docker dengan Compose v2, atau Node.js 22 dan Bun 1.4 untuk pengaturan manual, serta basis data Postgres: yang dijalankan docker-compose.yml, atau Neon. Atur NEXT_PUBLIC_APP_URL, DATABASE_URL, dan BETTER_AUTH_SECRET, lalu sediakan cara bagi pengguna untuk masuk dengan aplikasi OAuth GitHub atau Google, atau dengan kode email melalui Resend.",
+      "closedQuestion": "Bolehkah saya memakai pustaka kode QR ini di aplikasi closed-source?",
+      "closedAnswer": "Boleh. Pustaka qrdx dan @qrdx/cli berlisensi MIT, sehingga proyek komersial dan closed-source dapat menggunakannya selama pemberitahuan lisensi tetap disertakan bersama kodenya. Rilis sebelum qrdx 0.0.47 dan @qrdx/cli 0.0.5 berlisensi AGPL-3.0-or-later.",
+      "changesQuestion": "Apakah saya harus mempublikasikan perubahan yang saya buat pada aplikasi?",
+      "changesAnswer": "Hanya jika Anda menjalankan versi yang dimodifikasi sebagai layanan jaringan: saat itu Anda wajib menyediakan kode sumbernya kepada penggunanya dengan lisensi yang sama. Jika Anda berencana membangun di atas aplikasi ini, pastikan dulu bahwa AGPL sesuai dengan proyek Anda.",
+      "nameQuestion": "Bolehkah fork saya bernama QRdx?",
+      "nameAnswer": "Tidak. Fork atau layanan publik yang dibuat dari kode ini harus memiliki nama dan logo sendiri, dan pemberitahuan lisensi tetap disertakan. Menjalankan QRdx untuk diri sendiri atau organisasi Anda dengan nama aslinya tidak masalah. Kebijakan merek dagang menjelaskan detailnya.",
+      "shutdownQuestion": "Apa yang terjadi pada kode qrdx.dev saya jika QRdx berhenti beroperasi?",
+      "shutdownAnswer": "Jaminan Never-Hostage menjanjikan pemberitahuan minimal 12 bulan sebelumnya, waktu untuk mengekspor semuanya, dan panduan terdokumentasi untuk menjalankan aplikasi open-source ini di server Anda sendiri."
     }
   },
   "ai": {
@@ -4922,7 +5179,11 @@
         "filesUploadedToThisWorkspace": "File yang diunggah ke workspace ini. Kelola di Dasbor → File.",
         "noLabelFilesYetUpload": "Belum ada file {label}. Unggah satu terlebih dahulu.",
         "add": "Tambah",
-        "selected": "dipilih"
+        "selected": "dipilih",
+        "loadMore": "Muat lainnya",
+        "loading": "Memuat…",
+        "tryAgain": "Coba lagi",
+        "couldntLoadYourFiles": "Gagal memuat file Anda."
       },
       "sourceListEditor": {
         "thisBlockHoldsUpTo": "Blok ini dapat menampung hingga {max, number} item.",
@@ -5067,7 +5328,15 @@
       "previous": "Sebelumnya",
       "pagePageOfPages": "Halaman {page, number} dari {pages, number}",
       "next": "Berikutnya",
-      "pages": "Halaman"
+      "pages": "Halaman",
+      "loadMore": "Muat lebih banyak",
+      "loading": "Memuat",
+      "failed": "Halaman berikutnya gagal dimuat."
+    },
+    "more": {
+      "load": "Muat lebih banyak",
+      "loading": "Memuat",
+      "failed": "Bagian halaman ini gagal dimuat."
     },
     "licenceConfirm": {
       "licence": "Lisensi:"
@@ -5520,7 +5789,10 @@
           "commissions": "Komisi",
           "suspended": "Ditangguhkan",
           "approved": "Disetujui",
-          "notSet": "Belum diatur"
+          "notSet": "Belum diatur",
+          "pagePageOfPagecount": "Halaman {page, number} dari {pageCount, number}",
+          "previous": "Sebelumnya",
+          "next": "Berikutnya"
         }
       },
       "authorizedApps": {
@@ -5798,7 +6070,13 @@
           "dubLinkArchived": "Tautan Dub diarsipkan",
           "failedToUpdateDubLink": "Gagal memperbarui tautan Dub",
           "dubLinkUpdated": "Tautan Dub diperbarui",
-          "unknown": "Tidak diketahui"
+          "unknown": "Tidak diketahui",
+          "couldntLoadLinks": "Tidak dapat memuat tautan Anda. Coba lagi.",
+          "couldntLoadMoreLinks": "Tidak dapat memuat tautan lainnya. Coba lagi.",
+          "loadMoreLinks": "Muat tautan lainnya",
+          "loadingLinks": "Memuat tautan…",
+          "tryAgain": "Coba lagi",
+          "thatsEveryLink": "Itulah semua tautan."
         },
         "integrationDetail": {
           "connected": "Terhubung",
@@ -5860,7 +6138,13 @@
           "nameSyncIsOn": "Sinkronisasi {name} aktif",
           "saved": "Tersimpan",
           "couldntSave": "Gagal menyimpan",
-          "retryFailed": "Coba lagi gagal"
+          "retryFailed": "Coba lagi gagal",
+          "searchPages": "Cari halaman berdasarkan judul",
+          "noPagesMatch": "Tidak ada halaman berformulir yang cocok.",
+          "loadMorePages": "Muat halaman lainnya",
+          "loadingPages": "Memuat halaman…",
+          "tryAgain": "Coba lagi",
+          "couldntLoadMorePages": "Tidak dapat memuat halaman lainnya. Coba lagi."
         },
         "slackBotPanel": {
           "qrdxBot": "Bot QRdx",
@@ -6010,7 +6294,13 @@
         "comparePicker": {
           "stopComparingValue": "Berhenti membandingkan {value}",
           "addACodeToCompare": "Tambah kode untuk dibandingkan",
-          "upToMaxCompareCodes": "Hingga {MAX_COMPARE, number} kode"
+          "upToMaxCompareCodes": "Hingga {MAX_COMPARE, number} kode",
+          "searchCodes": "Cari berdasarkan judul, tautan, atau tujuan",
+          "mostScanned": "Pemindaian terbanyak",
+          "searching": "Mencari…",
+          "noCodesMatch": "Tidak ada kode yang cocok.",
+          "couldntSearch": "Tidak dapat mencari kode Anda. Coba lagi.",
+          "typeToNarrow": "Menampilkan {count, number} pertama. Ketik untuk mempersempit."
         },
         "timeZoneSwitch": {
           "currentShowUtc": "{current} · tampilkan UTC",
@@ -6097,6 +6387,7 @@
           "barcodes2": "barcode"
         },
         "barcodesList": {
+          "move": "Pindahkan",
           "noFolder": "Tanpa folder",
           "makeFoldersUnderCodesBarcodes": "Buat folder di bagian Kode; barcode menggunakannya bersama.",
           "emptyTrash": "Kosongkan sampah",
@@ -6345,7 +6636,6 @@
           "scansPerDayLastDays": "Pemindaian per hari, {days, number} hari terakhir (UTC)",
           "botsAndLinkPreviewsAre": "Bot dan pratinjau tautan tidak dihitung. Negara dan kota berasal dari alamat IP pengunjung, yang tidak pernah disimpan; lokasi presisi hanya berasal dari pemindai yang memilih untuk membagikannya.",
           "dateRange": "Rentang tanggal",
-          "valueKeepsValue2OfScan": "{value} menyimpan {value2} riwayat pemindaian",
           "totalScans": "Total pemindaian",
           "scansInRange": "Pemindaian dalam rentang",
           "uniqueVisitors": "Pengunjung unik",
@@ -7356,7 +7646,12 @@
           "notUsedYet": "Belum digunakan",
           "usedByPagesAndCodes": "Digunakan oleh {pages, plural, one {# halaman} other {# halaman}} · {codes, plural, one {# kode} other {# kode}}",
           "usedByPages": "Digunakan oleh {pages, plural, one {# halaman} other {# halaman}}",
-          "usedByCodes": "Digunakan oleh {codes, plural, one {# kode} other {# kode}}"
+          "usedByCodes": "Digunakan oleh {codes, plural, one {# kode} other {# kode}}",
+          "loadMoreFiles": "Muat file lainnya",
+          "loadingMoreFiles": "Memuat file…",
+          "tryAgain": "Coba lagi",
+          "couldntLoadMoreFiles": "Tidak dapat memuat file lainnya. Coba lagi.",
+          "allFilesShown": "Itulah semua file."
         }
       },
       "loading": {
@@ -7394,7 +7689,8 @@
           "archived": "Diarsipkan",
           "disabled": "Nonaktif",
           "noQrCodeYet": "Belum ada kode QR",
-          "pageLinkCopied": "Tautan halaman disalin"
+          "pageLinkCopied": "Tautan halaman disalin",
+          "pagePageOfPagecountTotal": "Halaman {page, number} dari {pageCount, number} · {total} halaman"
         },
         "responses": {
           "page": {
@@ -7440,7 +7736,10 @@
             "deleting": "Menghapus…",
             "delete": "Hapus",
             "responseDeleted": "Respons dihapus",
-            "deletedResponsesDeleted": "{deleted, number} respons dihapus"
+            "deletedResponsesDeleted": "{deleted, number} respons dihapus",
+            "countSelected": "{count, number} dipilih",
+            "clearSelection": "Hapus pilihan",
+            "bulkActions": "Tindakan massal"
           }
         },
         "pageListControls": {
@@ -7593,7 +7892,8 @@
             "onlyTeamOwnersAndAdmins": "Hanya pemilik dan admin tim yang dapat menambah, mengubah, atau menguji endpoint.",
             "sendScansNewAndChanged": "Kirim pemindaian, kode baru dan yang diubah, serta respons formulir ke server Anda sendiri, Zapier, atau Make.",
             "thisTeamsPlanNoLonger": "Paket tim ini tidak lagi mencakup webhook.",
-            "yourPlanNoLongerIncludes": "Paket Anda tidak lagi mencakup webhook."
+            "yourPlanNoLongerIncludes": "Paket Anda tidak lagi mencakup webhook.",
+            "keptFor30Days": "Yang terbaru di atas, disimpan selama 30 hari. Pengiriman yang gagal dicoba ulang hingga {MAX_DELIVERY_ATTEMPTS, number} kali dengan jeda yang makin lama."
           }
         }
       },
@@ -7667,7 +7967,8 @@
           "yourThemes": "Tema Anda",
           "noSharedThemesYetUse": "Belum ada tema bersama. Gunakan \"Salin ke ruang kerja ini\" pada salah satu tema Anda di bawah.",
           "noSharedThemesYetOwners": "Belum ada tema bersama. Pemilik dan admin dapat membagikan tema di sini.",
-          "askAWorkspaceOwnerTo": "Minta pemilik ruang kerja untuk upgrade."
+          "askAWorkspaceOwnerTo": "Minta pemilik ruang kerja untuk upgrade.",
+          "showMoreThemes": "Tampilkan tema lainnya"
         }
       },
       "home": {
@@ -7717,7 +8018,9 @@
         "move": "Pindah",
         "nextOrPreviousRow": "Baris berikutnya atau sebelumnya",
         "extendTheSelection": "Perluas pilihan",
-        "withASelection": "Dengan pilihan aktif"
+        "withASelection": "Dengan pilihan aktif",
+        "more": "Lainnya",
+        "moreActions": "Tindakan lainnya"
       },
       "domains": {
         "dnsRecords": {
@@ -7963,6 +8266,17 @@
           "notDeliveredError": "Tidak terkirim: {error}",
           "endpointDeleted": "Endpoint dihapus"
         }
+      },
+      "paging": {
+        "navigation": "Penomoran halaman",
+        "previous": "Sebelumnya",
+        "next": "Berikutnya",
+        "rowsPerPage": "Baris per halaman",
+        "perPage": "{count, number} per halaman",
+        "page": "Halaman {page, number}",
+        "pageOf": "Halaman {page, number} dari {pageCount, number}",
+        "newer": "Lebih baru",
+        "older": "Lebih lama"
       }
     },
     "shell": {

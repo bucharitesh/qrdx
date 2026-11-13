@@ -1,0 +1,121 @@
+{
+  "id": "yard-sign-viewing",
+  "name": "Yard sign, viewings",
+  "description": "A yard sign hanging from the arm of a post and a key.",
+  "category": "use-case",
+  "collection": "real-estate",
+  "contentTypes": ["calcom", "url"],
+  "tags": ["real estate", "property", "viewing", "yard sign"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1500,
+      "height": 1970
+    },
+    "qr": {
+      "x": 365,
+      "y": 570,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 40,
+        "y": 0,
+        "width": 70,
+        "height": 1970,
+        "radius": 8,
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.25
+        }
+      },
+      {
+        "type": "rect",
+        "x": 40,
+        "y": 30,
+        "width": 1460,
+        "height": 70,
+        "radius": 12,
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.25
+        }
+      },
+      {
+        "type": "rect",
+        "x": 402,
+        "y": 96,
+        "width": 16,
+        "height": 100,
+        "radius": 6,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.45
+        }
+      },
+      {
+        "type": "rect",
+        "x": 1312,
+        "y": 96,
+        "width": 16,
+        "height": 100,
+        "radius": 6,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.45
+        }
+      },
+      {
+        "type": "rect",
+        "x": 230,
+        "y": 190,
+        "width": 1270,
+        "height": 1740,
+        "radius": 28,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 254,
+        "y": 214,
+        "width": 1222,
+        "height": 1692,
+        "radius": 14,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.9
+        }
+      },
+      {
+        "type": "path",
+        "d": "M790.2 380A37.4 37.4 0 1 1 865 380A37.4 37.4 0 1 1 790.2 380ZM812.3 380A15.3 15.3 0 1 0 842.9 380A15.3 15.3 0 1 0 812.3 380ZM861.6 373.2L936.4 373.2A3.4 3.4 0 0 1 939.8 376.6L939.8 383.4A3.4 3.4 0 0 1 936.4 386.8L861.6 386.8A3.4 3.4 0 0 1 858.2 383.4L858.2 376.6A3.4 3.4 0 0 1 861.6 373.2ZM914.3 386.8L924.5 386.8A1.7 1.7 0 0 1 926.2 388.5L926.2 408.9A1.7 1.7 0 0 1 924.5 410.6L914.3 410.6A1.7 1.7 0 0 1 912.6 408.9L912.6 388.5A1.7 1.7 0 0 1 914.3 386.8ZM890.5 386.8L900.7 386.8A1.7 1.7 0 0 1 902.4 388.5L902.4 402.1A1.7 1.7 0 0 1 900.7 403.8L890.5 403.8A1.7 1.7 0 0 1 888.8 402.1L888.8 388.5A1.7 1.7 0 0 1 890.5 386.8Z",
+        "fill": "frame",
+        "fillRule": "evenodd"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Book a viewing",
+        "color": "frame",
+        "box": {
+          "x": 300,
+          "y": 1700,
+          "width": 1130,
+          "height": 180
+        }
+      }
+    ]
+  }
+}

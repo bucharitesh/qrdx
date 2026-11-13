@@ -10,6 +10,7 @@ import {
   PRICING,
   type PricingCurrency,
 } from "@/lib/pricing";
+import { FREE_SCAN_HISTORY_YEARS } from "@/lib/scan-history";
 import { englishPricingCopy, type PricingCopy } from "./plan-content";
 
 type FaqKey = keyof Messages["pricing"]["faq"]["items"];
@@ -66,6 +67,8 @@ export function pricingFaqs(
     businessYearlyEur: amount("business", "year", "EUR"),
     days: MONEY_BACK_DAYS,
     percent: NONPROFIT_DISCOUNT_PERCENT,
+    // How far back Free's analytics reach, in years (lib/scan-history.ts)
+    historyYears: FREE_SCAN_HISTORY_YEARS,
   };
   return pricingFaqKeys(options).map((key) => ({
     question: copy.t(`faq.items.${key}.question`),

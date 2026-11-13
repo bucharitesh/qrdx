@@ -1,0 +1,101 @@
+{
+  "id": "book-a-consultation",
+  "name": "Consultation",
+  "description": "A card with two more stacked behind it and a calendar.",
+  "category": "use-case",
+  "collection": "business",
+  "contentTypes": ["calcom", "url"],
+  "tags": ["business", "consultation"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1340,
+      "height": 1860
+    },
+    "qr": {
+      "x": 120,
+      "y": 400,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 100,
+        "y": 100,
+        "width": 1240,
+        "height": 1760,
+        "radius": 48,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.75
+        }
+      },
+      {
+        "type": "rect",
+        "x": 50,
+        "y": 50,
+        "width": 1240,
+        "height": 1760,
+        "radius": 48,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.45
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 48,
+        "fill": "frame"
+      },
+      {
+        "type": "icon",
+        "icon": "calendar",
+        "x": 550,
+        "y": 50,
+        "size": 140,
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Book a consultation",
+        "color": "text",
+        "box": {
+          "x": 90,
+          "y": 1520,
+          "width": 1060,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Talk to an expert",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 210,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

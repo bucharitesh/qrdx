@@ -1,0 +1,95 @@
+{
+  "id": "rent-this-item",
+  "name": "Rent it",
+  "description": "A ticket with side notches, a perforated line and a stub for the label and a calendar.",
+  "category": "use-case",
+  "collection": "shopping",
+  "contentTypes": ["url"],
+  "tags": ["retail", "shop", "rental", "hire"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1820
+    },
+    "qr": {
+      "x": 120,
+      "y": 300,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M64 0L1176 0A64 64 0 0 1 1240 64L1240 1380A60 60 0 0 0 1240 1500L1240 1756A64 64 0 0 1 1176 1820L64 1820A64 64 0 0 1 0 1756L0 1500A60 60 0 0 0 0 1380L0 64A64 64 0 0 1 64 0Z",
+        "fill": "frame"
+      },
+      {
+        "type": "line",
+        "x1": 100,
+        "y1": 1440,
+        "x2": 1140,
+        "y2": 1440,
+        "width": 10,
+        "dash": [36, 24],
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.55
+        }
+      },
+      {
+        "type": "path",
+        "d": "M569 69L671 69A12 12 0 0 1 683 81L683 174A12 12 0 0 1 671 186L569 186A12 12 0 0 1 557 174L557 81A12 12 0 0 1 569 69ZM573.5 102A4.5 4.5 0 0 0 569 106.5L569 169.5A4.5 4.5 0 0 0 573.5 174L666.5 174A4.5 4.5 0 0 0 671 169.5L671 106.5A4.5 4.5 0 0 0 666.5 102Z",
+        "fill": "text",
+        "fillRule": "evenodd"
+      },
+      {
+        "type": "path",
+        "d": "M590 54L590 54A6 6 0 0 1 596 60L596 78A6 6 0 0 1 590 84L590 84A6 6 0 0 1 584 78L584 60A6 6 0 0 1 590 54ZM650 54L650 54A6 6 0 0 1 656 60L656 78A6 6 0 0 1 650 84L650 84A6 6 0 0 1 644 78L644 60A6 6 0 0 1 650 54Z",
+        "fill": "accent"
+      },
+      {
+        "type": "path",
+        "d": "M632 135L653 135A3 3 0 0 1 656 138L656 159A3 3 0 0 1 653 162L632 162A3 3 0 0 1 629 159L629 138A3 3 0 0 1 632 135Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Rent this item",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1490,
+          "width": 1040,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "By the day or week",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1675,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}
