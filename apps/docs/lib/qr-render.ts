@@ -119,7 +119,11 @@ export const qrOptionsSchema = z.object({
     .enum(QR_TEMPLATE_IDS)
     .optional()
     .describe(
-      "A built-in frame drawn as a template (Arrow, StandardBox, SquareBorder, StrikedBox, Halloween; default is none). Unlike `frame`, the whole artwork is `size` wide with the code smaller inside it",
+      `A built-in frame drawn as a template (${getTemplateIds()
+        .filter((id) => id !== "default")
+        .join(
+          ", ",
+        )}; default is none). Unlike \`frame\`, the whole artwork is \`size\` wide with the code smaller inside it`,
     ),
 });
 

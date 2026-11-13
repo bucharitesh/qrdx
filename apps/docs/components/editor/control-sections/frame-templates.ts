@@ -49,15 +49,16 @@ export function withoutTemplate<T extends Partial<QRStyle>>(style: T): T {
 }
 
 /**
- * Whether a template's artwork takes the code's dark color (it paints with
- * its spec's `frame` color; Striked Box and Halloween have colors of their
- * own).
+ * Whether a template's artwork takes the code's dark color: a spec template
+ * paints with its spec's `frame` color (Striked Box and Halloween have
+ * colors of their own), and a template drawn in code gets `fgColor` (Dot
+ * Ring's ring).
  */
 export function templateTakesCodeColor(
   template: TemplateDefinition<Record<string, unknown>>,
 ): boolean {
   const spec = template.spec;
-  if (!spec) return false;
+  if (!spec) return true;
   return spec.shapes.some(
     (shape) =>
       shape.fill === "frame" ||

@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import { getTemplateIds } from "qrdx";
 import { runBatch } from "./commands/batch";
 import { runGenerate } from "./commands/generate";
 
@@ -112,7 +113,9 @@ ${BOLD}Generate Options:${RESET}
   --margin            Quiet zone margin in modules  ${DIM}(default: 0)${RESET}
   --size              Output pixel size for SVG/PNG/WebP  ${DIM}(default: 512)${RESET}
   --template          A frame drawn as a template (the whole artwork is --size):
-                        ${DIM}Arrow, StandardBox, SquareBorder, StrikedBox, Halloween${RESET}
+                        ${DIM}${getTemplateIds()
+                          .filter((id) => id !== "default")
+                          .join(", ")}${RESET}
   --frame             Call-to-action frame (adds space around the code), e.g.:
                         ${DIM}none, banner-bottom, banner-top, rounded-border,${RESET}
                         ${DIM}speech-bubble, polaroid, phone, ticket, sticker${RESET}

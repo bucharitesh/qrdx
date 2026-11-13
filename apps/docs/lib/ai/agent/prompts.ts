@@ -7,10 +7,16 @@ const FRAME_TEMPLATE_IDS = getTemplateIds()
   .filter((id) => id !== "default")
   .join(", ");
 
-/** The templates whose artwork takes the dot color (their spec's frame color). */
+/**
+ * The templates whose artwork takes the dot color: their spec's frame color,
+ * or `fgColor` for those drawn in code.
+ */
 const DOT_COLORED_TEMPLATES = getAllTemplates()
-  .filter((template) =>
-    template.spec?.shapes.some((shape) => shape.fill === "frame"),
+  .filter(
+    (template) =>
+      template.id !== "default" &&
+      (!template.spec ||
+        template.spec.shapes.some((shape) => shape.fill === "frame")),
   )
   .map((template) => template.id)
   .join(", ");

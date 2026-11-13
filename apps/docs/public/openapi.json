@@ -268,7 +268,7 @@
             "name": "template",
             "in": "query",
             "required": false,
-            "description": "A built-in frame drawn as a template (Arrow, StandardBox, SquareBorder, StrikedBox, Halloween; default is none). Unlike `frame`, the whole artwork is `size` wide with the code smaller inside it",
+            "description": "A built-in frame drawn as a template (Arrow, StandardBox, SquareBorder, StrikedBox, Halloween, DotRing; default is none). Unlike `frame`, the whole artwork is `size` wide with the code smaller inside it",
             "schema": {
               "type": "string",
               "enum": [
