@@ -1,0 +1,45 @@
+---
+title: "코드를 스캔하면 엉뚱한 페이지가 열려요"
+description: "QR 코드가 오래된 링크나 예상과 다른 링크를 여는 이유와, 코드에 실제로 어떤 내용이 들어 있는지 확인하는 방법을 안내합니다."
+---
+
+## 먼저 코드에 무엇이 들어 있는지 확인하세요 [#first-see-what-the-code-holds]
+
+인쇄된 코드를 사진으로 찍어 [스캔 검사기](/tools/scan-checker)에 올려 보세요. 코드에 담긴 내용을 정확히 보여 줍니다.
+
+- 웹사이트 주소가 표시되면 **정적** 코드입니다.
+- `qrdx.dev/q/…` 같은 짧은 링크가 표시되면 **동적** 코드입니다.
+
+## 정적 코드 [#a-static-code]
+
+정적 코드는 링크를 코드 안에 직접 저장합니다. 인쇄한 뒤에는 바꿀 수 없습니다.
+
+동적 코드로 만들기 전에 코드를 다운로드했다면 이런 일이 생깁니다. 해결하려면 동적 버전을 인쇄하세요. [동적 QR 코드 만들기](/docs/help/dynamic-codes/create)를 참고하세요.
+
+## 동적 코드 [#a-dynamic-code]
+
+**Codes**에서 코드를 열고 아래 항목을 하나씩 확인하세요.
+
+### 새 목적지가 저장되지 않았어요 [#the-new-destination-wasnt-saved]
+
+Playground에서는 주소를 바꾸는 것만으로는 충분하지 않습니다. **Point it to the new address**를 클릭하세요. 대시보드에서는 **Edit link**와 **Save changes**를 사용하세요. [코드가 가리키는 곳 바꾸기](/docs/help/dynamic-codes/change-the-link)를 참고하세요.
+
+### 스마트 라우팅 규칙이 적용됐어요 [#a-smart-routing-rule-matched]
+
+규칙에 따라 기기나 국가별로 일부 스캔을 다른 곳으로 보낼 수 있습니다. 가장 먼저 일치하는 규칙이 적용됩니다. **Smart routing**을 열고 **Test your rules**를 클릭하세요.
+
+### A/B 테스트가 진행 중이에요 [#an-ab-test-is-running]
+
+방문자는 하루 동안 한 가지 버전만 봅니다. 다른 사람은 다른 페이지를 볼 수 있습니다.
+
+### 코드가 일시 중지되었거나 종료됐어요 [#the-code-is-paused-or-ended]
+
+일시 중지되거나 종료된 코드는 **Fallback URL**을 설정했다면 그 주소를 엽니다. **Access & schedule**을 확인하세요.
+
+### UTM 파라미터가 추가됐어요 [#utm-parameters-were-added]
+
+UTM 파라미터를 설정했다면 스캔할 때 `utm_` 태그가 붙은 링크가 열립니다. 정상적인 동작이며 페이지는 같습니다.
+
+## 그래도 이전 페이지가 보이나요? [#still-seeing-the-old-page]
+
+QRdx는 리디렉션을 캐시하지 않으므로 다음 스캔부터 새 목적지가 사용됩니다. 휴대폰에 페이지 자체의 이전 버전이 표시된다면 브라우저에서 새로고침하세요.

@@ -1,0 +1,141 @@
+---
+title: "Modèles"
+description: "Appliquez à un QR code des modèles de cadre prédéfinis, ou enregistrez les vôtres."
+icon: LayoutTemplate
+---
+
+Appliquez instantanément des styles de QR code professionnels.
+
+## Que sont les modèles ? [#what-are-templates]
+
+Les modèles réunissent couleurs, motifs et styles visuels dans des ensembles prêts à l'emploi.
+
+## Modèles disponibles [#available-templates]
+
+### Default [#default]
+Noir et blanc classique.
+
+```tsx
+import { QRCode } from 'qrdx';
+
+<QRCode value="https://example.com" templateId="default" size={256} />
+```
+
+### Arrow [#arrow]
+Design géométrique moderne.
+
+```tsx
+<QRCode value="https://example.com" templateId="Arrow" size={256} />
+```
+
+### Standard Box [#standard-box]
+Design net et structuré.
+
+```tsx
+<QRCode value="https://example.com" templateId="StandardBox" size={256} />
+```
+
+### Square Border [#square-border]
+Design encadré aux bords bien définis.
+
+```tsx
+<QRCode value="https://example.com" templateId="SquareBorder" size={256} />
+```
+
+### Striked Box [#striked-box]
+Design dynamique avec des éléments diagonaux.
+
+```tsx
+<QRCode value="https://example.com" templateId="StrikedBox" size={256} />
+```
+
+### Halloween [#halloween]
+Thème saisonnier d'Halloween.
+
+```tsx
+<QRCode value="https://example.com" templateId="Halloween" size={256} />
+```
+
+## Personnaliser les modèles [#customize-templates]
+
+Remplacez les valeurs par défaut d'un modèle :
+
+```tsx
+<QRCode
+  value="https://example.com"
+  templateId="Arrow"
+  fgColor="#your-brand-color"
+  hideLogo={false}
+  logo="/your-logo.png"
+  size={512}
+/>
+```
+
+## Registre de modèles [#template-registry]
+
+### Obtenir tous les modèles [#get-all-templates]
+
+```tsx
+import { getAllTemplates } from 'qrdx';
+
+const templates = getAllTemplates();
+```
+
+### Obtenir les identifiants des modèles [#get-template-ids]
+
+```tsx
+import { getTemplateIds } from 'qrdx';
+
+const ids = getTemplateIds();
+// Returns: ['default', 'Arrow', 'StandardBox', ...]
+```
+
+## Modèles personnalisés [#custom-templates]
+
+Créez vos propres modèles :
+
+```tsx
+const brandTemplate = {
+  id: 'brand-template',
+  name: 'Brand Template',
+  colors: {
+    fgColor: '#1a56db',
+    bgColor: '#ffffff',
+    eyeColor: '#0d47a1',
+    dotColor: '#3b82f6'
+  },
+  bodyPattern: 'rounded',
+  cornerEyePattern: 'rounded',
+  cornerEyeDotPattern: 'rounded'
+};
+
+<QRCode
+  value="https://example.com"
+  customTemplate={brandTemplate}
+  size={256}
+/>
+```
+
+## Quand utiliser les modèles [#when-to-use-templates]
+
+- **Cohérence de marque** — Assurez-vous que tous les QR codes sont harmonisés
+- **Configuration rapide** — Obtenez rapidement des résultats professionnels
+- **Campagnes saisonnières** — Utilisez des modèles thématiques
+- **Génération par lot** — Appliquez des styles cohérents
+
+## Guide de choix d'un modèle [#template-selection-guide]
+
+| Modèle | Idéal pour | Ambiance |
+|----------|----------|------|
+| Default | Usage professionnel | Neutre |
+| Arrow | Tech, moderne | Dynamique |
+| Standard Box | Entreprise | Professionnelle |
+| Square Border | Contexte formel | Structurée |
+| Striked Box | Marketing | Énergique |
+| Halloween | Saisonnier | Ludique |
+
+## Étapes suivantes [#next-steps]
+
+- [Motifs](/docs/features/patterns) — Personnalisation détaillée des motifs
+- [Couleurs et dégradés](/docs/features/colors-gradients) — Couleurs avancées
+- [Logos](/docs/features/logos) — Ajoutez des logos aux modèles

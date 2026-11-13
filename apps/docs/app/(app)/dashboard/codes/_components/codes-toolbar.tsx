@@ -64,7 +64,7 @@ import { useCan } from "@/components/workspace-provider";
 import { DisplayMenu, ListSearch } from "./display-menu";
 import { TagDot } from "./tag-chip";
 import { DeleteTagDialog, TagEditDialog } from "./tag-dialogs";
-import { plural, useOrganizeAction } from "./use-organize-action";
+import { useOrganizeAction } from "./use-organize-action";
 
 const STATUS_LABELS: Record<CodesStatus, string> = {
   active: "Active",
@@ -119,7 +119,7 @@ function ManageTagsDialog({
                     {tag.name}
                   </span>
                   <span className="text-muted-foreground text-xs tabular-nums">
-                    {plural(tag.codeCount, "code")}
+                    {t("codeCount", { count: tag.codeCount })}
                   </span>
                   <Button
                     aria-label={t("editName", { name: tag.name })}
@@ -204,7 +204,7 @@ export function CodesToolbar({
 
   const emptyTrash = async () => {
     await run(() => emptyQrCodeTrash(), {
-      success: ({ updated }) => `Deleted ${plural(updated, "code")} forever`,
+      success: ({ updated }) => t("deletedForever", { count: updated }),
     });
     setConfirmEmpty(false);
   };
@@ -478,9 +478,7 @@ export function CodesToolbar({
           <AlertDialogHeader>
             <AlertDialogTitle>{t("emptyTheTrash")}</AlertDialogTitle>
             <AlertDialogDescription>
-              {t("valueAndTheirScanHistory", {
-                value: plural(trashCount, "code"),
-              })}
+              {t("valueAndTheirScanHistory", { count: trashCount })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

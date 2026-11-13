@@ -1,0 +1,95 @@
+---
+title: "단축 링크와 파일 선택기"
+description: "직접 사용하는 Bitly, Rebrandly, Short.io 계정으로 QR 코드의 링크를 단축하거나 Dropbox 공유 링크를 인코딩하세요."
+icon: Blocks
+---
+
+[설정 → 연동](/settings/integrations)에서 계정을 연결하면 QR 편집기의 **URL** 유형에서 **웹사이트 주소** 필드 옆의 **링크 가져오기…** 메뉴에 표시됩니다. **내 계정** 아래에는 각 서비스가 하는 일이 나와 있습니다.
+
+- **단축**: Bitly, Rebrandly, Short.io. **새로 만들기**에서 링크를 만들거나 **기존 링크 사용**에서 이미 가진 링크를 선택합니다. QR 코드에는 해당 단축 링크가 인코딩되므로, 나중에 해당 서비스에서 링크가 가리키는 곳을 바꿀 수 있고 클릭 수도 집계됩니다.
+- **파일**: Dropbox<IfAvailable integration="onedrive">, OneDrive</IfAvailable><IfAvailable integration="box">, Box</IfAvailable><IfAvailable integration="notion">, Notion</IfAvailable>. 찾아보거나 검색한 다음 파일이나 폴더를 선택합니다. QRdx가 해당 항목의 공유 링크를 만들고 QR 코드에 그 링크를 인코딩합니다.
+
+아직 연결하지 않은 서비스는 같은 메뉴 하단의 **계정 연결**에서 연결할 수 있습니다.
+
+호스팅 페이지에서도 클라우드 파일을 사용할 수 있습니다. PDF, 오디오, 비디오, 다운로드 블록에는 업로드 버튼 옆에 **Dropbox에서 가져오기**<IfAvailable integration="onedrive">, **OneDrive에서 가져오기**</IfAvailable><IfAvailable integration="box">, **Box에서 가져오기**</IfAvailable>가 표시됩니다.
+
+연동은 사용자 계정에 속합니다. 토큰과 API 키는 암호화되어 저장되며 언제든지 연결을 해제할 수 있습니다.
+
+## 단축 링크 [#short-links]
+
+| 서비스 | 연결 방법 | 도메인 | 뒷부분 |
+| --- | --- | --- | --- |
+| Bitly | Bitly로 로그인하거나 일반 액세스 토큰을 붙여넣습니다 (Settings → Developer settings → API) | bit.ly 및 브랜드 도메인 | Bitly가 지정 |
+| Rebrandly | API 키를 붙여넣습니다 (Account → API keys) | rebrand.ly 및 브랜드 도메인 | 직접 정한 슬래시태그 또는 무작위 |
+| Short.io | 비밀 API 키를 붙여넣습니다 (Integrations & API → API) | 내 Short.io 도메인 | 직접 정한 경로 또는 무작위 |
+
+각 연동의 설정 페이지에서 도메인을 확인하고 새 링크의 기본 도메인을 고를 수 있습니다. 링크마다 다른 도메인을 선택할 수도 있습니다.
+
+<Callout type="info" title="나중에 목적지 변경하기">
+QRdx는 링크를 만들기만 하며, 링크가 가리키는 곳은 Bitly, Rebrandly, Short.io에서 수정합니다. Bitly는 유료 요금제에서만 링크의 목적지를 변경할 수 있습니다.
+</Callout>
+
+목적지를 QRdx에서 직접 수정하고 스캔 분석도 사용하고 싶다면 [동적 QR 코드](/docs/dynamic-qr-codes)를 사용하세요.
+
+## 파일 선택기 [#file-pickers]
+
+**Dropbox**는 공유 링크를 인코딩합니다. 링크를 새로 만들거나 기존 링크를 재사용합니다. 팀에서 팀 링크만 허용하는 경우를 제외하면, 링크가 있는 사람은 누구나 열 수 있습니다.
+
+<IfAvailable integration="onedrive">
+
+**OneDrive**는 보기 전용 공유 링크를 인코딩합니다. 링크가 있는 사람은 누구나 열 수 있지만, 관리자가 "모든 사용자" 링크를 끈 경우에는 조직 구성원만 열 수 있습니다.
+
+</IfAvailable>
+
+<IfAvailable integration="box">
+
+**Box**는 "링크가 있는 사용자"로 설정된 항목의 공유 링크를 인코딩합니다. 링크가 있는 사람은 누구나 열 수 있지만, 관리자가 요구하는 경우에는 회사 구성원만 열 수 있습니다.
+
+</IfAvailable>
+
+<IfAvailable integration="notion">
+
+**Notion**은 페이지의 "웹에 게시" 링크를 인코딩합니다. 페이지가 게시되면 누구나 열 수 있습니다.
+
+</IfAvailable>
+
+모든 사람이 링크를 열 수 있는 것은 아닐 때는 선택 직후 QRdx가 알려 주므로, 인쇄된 코드가 사람들을 로그인 페이지로 보내는 일을 막을 수 있습니다.
+
+<IfAvailable integration="notion">
+
+**Notion 페이지.** QRdx는 공유한 페이지만 볼 수 있습니다. Notion은 연결할 때 어떤 페이지를 공유할지 묻습니다. 나중에 더 추가하려면 Notion에서 페이지를 열고 **•••** → **연결**을 클릭해 QRdx를 추가하세요(또는 다시 연결하면서 페이지를 선택하세요).
+
+Notion의 API는 페이지를 게시할 수 없습니다. 직접 게시(**공유** → **게시** → **웹에 게시**)한 다음 페이지를 다시 선택해 QRdx가 공개 링크를 사용하게 하세요.
+
+</IfAvailable>
+
+### 호스팅 페이지의 파일 [#files-on-hosted-pages]
+
+Dropbox<IfAvailable integration="box">와 Box</IfAvailable>의 경우 페이지 블록이 파일로 연결되는 직접 링크를 받으므로 오디오 및 비디오 플레이어와 PDF 뷰어가 파일을 불러올 수 있습니다.<IfAvailable integration="onedrive"> OneDrive 공유 링크는 OneDrive 뷰어를 열기 때문에 블록에는 링크로 표시됩니다.</IfAvailable>
+
+## 연결 해제 [#disconnecting]
+
+연결을 해제하면 저장된 토큰이 삭제됩니다. Dropbox<IfAvailable integration="box">, Box</IfAvailable><IfAvailable integration="notion">, Notion</IfAvailable>의 경우 QRdx가 해당 서비스에서도 토큰을 취소합니다. Bitly, Rebrandly, Short.io는 더 이상 사용하지 않는다면 해당 서비스에서도 키를 삭제하세요<IfAvailable integration="onedrive">. OneDrive는 Microsoft 계정의 앱 권한에서 QRdx를 제거하세요</IfAvailable>.
+
+이미 만든 QR 코드는 계속 작동합니다. QR 코드에는 토큰이 아니라 단축 링크 또는 공유 링크가 들어 있기 때문입니다.
+
+## 셀프 호스팅 [#self-hosting]
+
+Rebrandly와 Short.io는 서버에 별도 설정이 필요 없습니다. 나머지는 각 서비스에 앱을 만들고 클라이언트 ID와 시크릿을 환경 변수로 설정해야 하며, 설정하지 않으면 연동에 "구성되지 않음"이라고 표시됩니다. Bitly는 설정이 없어도 붙여넣은 액세스 토큰으로 계속 사용할 수 있습니다.
+
+| 연동 | 변수 | 리디렉션 URI |
+| --- | --- | --- |
+| Bitly (로그인) | `BITLY_CLIENT_ID`, `BITLY_CLIENT_SECRET` | `<app url>/api/integrations/bitly/callback` |
+| Dropbox | `DROPBOX_CLIENT_ID`, `DROPBOX_CLIENT_SECRET` | `<app url>/api/integrations/dropbox/callback` |
+| OneDrive | `MICROSOFT_CLIENT_ID`, `MICROSOFT_CLIENT_SECRET` | `<app url>/api/integrations/onedrive/callback` |
+| Box | `BOX_CLIENT_ID`, `BOX_CLIENT_SECRET` | `<app url>/api/integrations/box/callback` |
+| Notion | `NOTION_CLIENT_ID`, `NOTION_CLIENT_SECRET` | `<app url>/api/integrations/notion/callback` |
+
+`<app url>`은 개발 환경에서는 `http://localhost:3000`이고, 그 외에는 프로덕션 URL입니다. 프로덕션에서는 모든 연동에 `INTEGRATION_ENCRYPTION_KEY`도 필요하며, 이 키로 저장된 토큰과 키를 암호화합니다.
+
+요청할 스코프:
+
+- **Dropbox:** `account_info.read`, `files.metadata.read`, `sharing.read`, `sharing.write`
+- **OneDrive:** `offline_access`, `Files.ReadWrite` (공유 링크를 만들려면 Microsoft Graph에 쓰기 권한이 필요합니다)
+- **Box:** 모든 파일과 폴더 읽기 및 쓰기 (`root_readwrite`)
+- **Bitly, Notion:** 스코프 없음. Notion은 사용자에게 공유할 페이지를 묻습니다

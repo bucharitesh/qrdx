@@ -1,0 +1,78 @@
+---
+title: "Posizione precisa e geofencing"
+description: "Chiedi a chi scansiona un QR code dinamico di condividere la propria posizione, scopri dove è stato scansionato con un'approssimazione di circa 100 m e instrada le scansioni in base all'area."
+icon: MapPin
+---
+
+Ogni [QR code dinamico](/docs/dynamic-qr-codes) registra paese, regione e città di ogni scansione a partire dalla rete. Con Pro e Business puoi anche chiedere a chi scansiona di condividere la propria posizione precisa. Le persone che acconsentono compaiono nelle statistiche del codice come punti arrotondati a circa 100 m, e lo [smart routing](/docs/smart-routing) può indirizzarle a destinazioni diverse a seconda di dove si trovano.
+
+La richiesta è disattivata per ogni codice finché non la attivi, e ogni persona decide per sé nel proprio browser.
+
+## Attivala [#turn-it-on]
+
+Apri il codice nella [dashboard](/dashboard?to=codes), vai alla scheda **Impostazioni** e attiva **Chiedi la posizione precisa a chi scansiona** nel pannello **Posizione precisa**. Funziona per i codici che aprono un link a un sito web e per quelli che aprono una pagina ospitata.
+
+Con la [REST API](/docs/developers/rest-api), invia `PATCH /v1/codes/{id}` con `{"preciseLocation": true}`. I codici riportano l'impostazione nel campo `preciseLocation`.
+
+## Cosa vede chi scansiona [#what-scanners-see]
+
+**I codici che aprono un link a un sito web** mostrano, prima dell'apertura del link, un breve passaggio "Condividere la tua posizione?" con **Consenti** e **Salta**. Consenti apre la richiesta di posizione del browser. Questo passaggio non impedisce mai a nessuno di raggiungere il tuo link:
+
+- Salta apre subito il link.
+- Se la persona rifiuta nel browser, o il browser non riesce a trovare la posizione, il link si apre.
+- Se la posizione non arriva entro 8 secondi dal tocco su Consenti, il link si apre comunque.
+- Un browser che ha già detto no per il sito salta il passaggio da solo, e uno che ha già detto sì condivide senza un secondo tocco.
+- Senza JavaScript, il link si apre subito.
+
+Il passaggio indica il sito su cui arriverà la persona e rimanda all'informativa sulla privacy.
+
+**I codici che aprono una pagina ospitata** aprono subito la pagina, come al solito. Una volta caricata, il browser chiede la posizione nella pagina; la pagina non aspetta mai una risposta. La richiesta compare solo subito dopo una scansione, mai quando qualcuno apre direttamente l'indirizzo della pagina.
+
+Quando l'impostazione è disattivata non cambia nulla: le scansioni vanno direttamente alla destinazione, senza passaggi aggiuntivi.
+
+## Cosa viene salvato [#whats-stored]
+
+Quando una persona acconsente, il suo browser arrotonda la posizione a 3 cifre decimali (circa 100 m) prima di inviarla, e QRdx la arrotonda di nuovo prima di salvarla con quella scansione, insieme alla precisione indicata dal browser. Le posizioni esatte non arrivano mai a QRdx.
+
+Non viene salvato nulla se la persona salta o rifiuta. La scansione viene comunque conteggiata, con paese, regione e città dalla rete come sempre.
+
+Le posizioni precise vengono conservate quanto le altre scansioni del codice, e il tuo piano stabilisce fino a quando puoi consultarle. Vedi [Cosa registra QRdx quando qualcuno scansiona](/docs/help/privacy-and-security/scan-data).
+
+## Nelle statistiche [#in-analytics]
+
+La scheda **Statistiche** del codice ha una scheda **Posizioni precise**, separata dai paesi e dalle città basati sull'IP. Mostra quante persone hanno ricevuto la richiesta, quante hanno condiviso la posizione e che percentuale rappresentano, poi ogni punto condiviso con il numero di scansioni, la precisione media e l'ultima scansione. Ordina la tabella per una qualsiasi di queste colonne e apri un punto in OpenStreetMap per vedere dove si trova.
+
+L'esportazione CSV include le colonne `latitude`, `longitude`, `location_accuracy_m` e `location_source`. `location_source` vale `gps` per una posizione condivisa, `ip` quando il codice l'ha chiesta ma la persona non l'ha condivisa, ed è vuoto quando il codice non l'ha chiesta. [`GET /v1/codes/{id}/scans`](/docs/developers/api/get-code-scans) restituisce gli stessi campi per ogni scansione, più un riepilogo `preciseLocations`.
+
+I link di statistiche condivisi (**Condividi statistiche** nel menu di un codice) non mostrano mai le posizioni precise. Restano a livello di paese.
+
+## Instrada le scansioni per area [#route-scans-by-area]
+
+Nel pannello **Smart routing** del codice, aggiungi una regola con una condizione **Area**: un punto centrale e un raggio compreso tra 100 m e 500 km. Per ottenere il centro, fai clic con il tasto destro su un luogo in un'app di mappe e copia le sue coordinate (per esempio `40.7580, -73.9855`), oppure usa **Usa la mia posizione** mentre sei sul posto. **Controlla su una mappa** apre il punto in OpenStreetMap.
+
+QRdx verifica l'area con la migliore posizione disponibile per quella scansione:
+
+1. La posizione condivisa dalla persona nel passaggio, quando la posizione precisa è attiva e la persona ha acconsentito.
+2. In caso contrario, la posizione approssimativa del suo indirizzo IP. Su qrdx.dev proviene dalla geolocalizzazione IP di Vercel ed è di solito il centro della città o della zona di chi scansiona, quindi è adatta a raggi di diversi chilometri. Viene usata per instradare la scansione e non viene mai salvata.
+
+Quando nessuna delle due è disponibile, le condizioni di area non corrispondono, mentre quelle di area "non è" sì. Le copie self-hosted che non girano su Vercel non hanno coordinate IP, quindi lì le regole di area funzionano solo con le posizioni condivise.
+
+**Prova le tue regole** ha un campo **Posizione**, così puoi verificare dove andrebbe una scansione da qualsiasi punto.
+
+### Solo all'interno di un'area [#only-inside-an-area]
+
+Per mostrare qualcosa solo a chi si trova in un luogo, come una sede o un negozio:
+
+1. Aggiungi una regola con una condizione Area intorno al luogo e imposta il suo URL sul contenuto per chi è presente.
+2. Imposta la destinazione principale del codice su una pagina per tutti gli altri, per esempio una che dice che l'offerta è disponibile solo sul posto.
+
+Attiva anche la posizione precisa, così decide la posizione condivisa dalla persona, con un'approssimazione di circa 100 m. Senza di essa decide la posizione IP, che è solo a livello di città.
+
+I browser permettono di falsificare la propria posizione, quindi una regola di area non è un controllo degli accessi. Usa una [password](/docs/code-controls) per tutto ciò che deve restare privato.
+
+## Da sapere [#good-to-know]
+
+- Bot, anteprime dei link e richieste HEAD non vedono mai il passaggio; ricevono il normale reindirizzamento.
+- I codici con password non mostrano il passaggio: dopo la password corretta, la scansione va direttamente alla destinazione.
+- I conteggi dei test A/B per una suddivisione dietro una condizione Area sono stime, perché le scansioni non salvano quale posizione ha usato la regola.
+- Se il tuo workspace passa a Gratuito, QRdx smette di chiedere le posizioni precise. Le regole di area salvate continuano a funzionare con la posizione IP, e disattivare l'impostazione non richiede mai un piano.

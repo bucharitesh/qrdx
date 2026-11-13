@@ -1,0 +1,69 @@
+---
+title: "Audit-Log"
+description: "Sieh, wer wann was in deinem Workspace geändert hat, filtere die Einträge und exportiere sie als CSV. Teil des Business-Plans."
+---
+
+Das Audit-Log ist eine Business-Funktion unter der kommerziellen QRdx-Lizenz. Ein selbst gehosteter QRdx-Server braucht einen Lizenzschlüssel (`QRDX_EE_LICENSE`), um es zu aktivieren; siehe [Self-Hosting](/docs/self-hosting#optional-services).
+
+<IfAvailable feature="auditLog">
+
+Das Audit-Log listet die Änderungen auf, die Personen in einem Workspace vornehmen: wer sie gemacht hat, was sich geändert hat und wann. Owner und Admins lesen es unter **Einstellungen** → **Audit-Log**, wo sie es filtern und als CSV-Datei exportieren können.
+
+## Wer es hat [#who-has-it]
+
+Das Audit-Log ist Teil des **Business**-Plans. Ein Workspace hat es, wenn einer seiner Owner oder Abrechnungsmitglieder auf Business ist. Siehe [Plätze und Workspace-Limits](/docs/help/teams/seats).
+
+Der Verlauf beginnt, sobald der Workspace Business hat. Änderungen davor oder während eines anderen Plans werden nicht aufgezeichnet. Verlässt der Workspace Business, endet die Aufzeichnung; die bereits gespeicherten Einträge bleiben, bis sie {facts.auditLogRetentionDays} Tage alt sind, und du siehst sie wieder, wenn der Workspace zu Business zurückkehrt.
+
+Nur **Owner** und **Admins** können das Audit-Log öffnen und exportieren. Mitglieder, Betrachter und Abrechnungsmitglieder können das nicht. Siehe [Rollen](/docs/help/teams/roles).
+
+## Was aufgezeichnet wird [#whats-recorded]
+
+Jeder Eintrag enthält die Uhrzeit, wer die Änderung gemacht hat, was geändert wurde und das Ziel (einen Code, eine Seite, eine Person, eine Domain). Wo es passt, speichert der Eintrag den alten und den neuen Wert, etwa das alte und das neue Ziel eines Codes. Klicke auf den Pfeil an einem Eintrag, um sie zu sehen.
+
+Wer die Änderung gemacht hat, ist eine Person oder ein API-Schlüssel oder eine App, die im Namen einer Person handelt. Bei Änderungen über die [REST API](/docs/developers/rest-api) mit einem API-Schlüssel steht der Name des Schlüssels; bei Änderungen über eine von dir autorisierte App steht der Name der App.<IfAvailable feature="slackBot"> Codes, die in Slack mit `/qr track` erstellt wurden, zeigen die verknüpfte Person „via Slack“, mit den IDs des Slack-Nutzers und des Slack-Workspace. Wenn ein Owner oder Admin die Verknüpfung eines Slack-Kontos in [Einstellungen → API-Schlüssel & Apps](/dashboard?to=settings/developers) widerruft, wird das unter Entwickler aufgezeichnet.</IfAvailable>
+
+Jeder Eintrag speichert außerdem die IP-Adresse und das Gerät der Anfrage, also Browser und System, etwa „Chrome on macOS“. Änderungen, die das System selbst vornimmt, etwa ein Planwechsel durch die Abrechnung, haben keins von beiden.
+
+Diese Änderungen werden aufgezeichnet:
+
+- **Codes:** erstellt (auch Importe und Kopien), Ziel geändert, umbenannt, Design geändert, Kurzlink geändert, Link-Steuerung geändert (Passwort ein oder aus, Start- und Enddatum, Scan-Limit, Fallback-URL), Routing-Regeln geändert, pausiert oder fortgesetzt, archiviert oder aus dem Archiv geholt, in den Papierkorb verschoben, wiederhergestellt, endgültig gelöscht, eine frühere Version wiederhergestellt, in einen anderen Ordner verschoben, in einen anderen Workspace oder aus einem anderen Workspace verschoben. Ordner und Tags erstellt, umbenannt oder gelöscht.
+- **Seiten:** erstellt, veröffentlicht, gelöscht.
+- **Team:** Einladungen gesendet und widerrufen, Personen, die per Einladung, Beitrittslink oder Single Sign-on beitreten, Rollenänderungen, entfernte Personen, ausgetretene Personen sowie der Beitrittslink ein-, umgestellt oder ausgeschaltet. Das wird unabhängig davon aufgezeichnet, wie die Änderung erfolgt ist, in QRdx oder über die API.
+- **Sicherheit:** „Zwei-Faktor-Verifizierung erzwingen“ und „Single Sign-on erzwingen“ ein- oder ausgeschaltet (beim Einschalten von Single Sign-on steht auch, wie viele Sitzungen dadurch abgemeldet wurden), Single Sign-on eingerichtet, geändert, verifiziert oder entfernt, die Rolle, die neue Personen bei der ersten Anmeldung per Single Sign-on erhalten, und Exporte des Audit-Logs.
+- **Entwickler:** API-Schlüssel erstellt und widerrufen (mit Name und Scopes), Apps autorisiert oder widerrufen, Webhook-Endpunkte hinzugefügt, geändert oder gelöscht und das Signing Secret eines Webhooks ersetzt. Bei einem Endpunkt speichert das Log nur den Server, etwa `https://hooks.zapier.com/…`, da der Rest einer Webhook-URL oft geheim ist.
+- **Domains:** eigene Domains hinzugefügt, verifiziert oder entfernt.
+- **Workspace:** Name oder URL geändert und der Wechsel des Workspace zu Business (aufgezeichnet als „Abrechnung“).
+
+Das Audit-Log speichert niemals einen API-Schlüssel, ein OAuth-Token, ein Passwort, Pfad oder Query einer Webhook-URL, ein Webhook-Signing-Secret oder ein Client Secret oder Zertifikat für Single Sign-on. Es hält fest, dass etwas erstellt, ersetzt oder entfernt wurde, nicht den Wert.
+
+Apps, die du autorisierst, handeln in deinem eigenen Workspace, deshalb wird das Autorisieren oder Widerrufen einer App dort aufgezeichnet.
+
+Das steht nicht im Audit-Log:
+
+- Scans, Formularantworten und Analysen, da sie keine Änderungen am Workspace sind (du findest sie unter Analysen und Antworten);
+- Änderungen an deinem eigenen Konto, etwa Name, E-Mail oder Zwei-Faktor-Verifizierung.
+
+## Das Log filtern [#filter-the-log]
+
+Die neuesten Änderungen stehen oben, jeweils 50 auf einmal. Klicke unten auf **Mehr laden**, um ältere zu sehen.
+
+- **Wer**: eine Person, samt den API-Schlüsseln und Apps, die für sie handeln.
+- **Kategorie**: Codes (mit Ordnern und Tags), Seiten, Team, Sicherheit, Entwickler, Domains oder Workspace.
+- **Von** und **Bis**: der erste und der letzte Tag, der angezeigt wird. Die Tage gelten in UTC; die Uhrzeiten an den Einträgen sind in deiner Zeitzone.
+
+## Als CSV exportieren [#export-as-csv]
+
+Klicke auf **CSV exportieren**, um herunterzuladen, was die Filter anzeigen, die neuesten zuerst. Ein Export enthält bis zu {facts.auditLogExportRows} Einträge. Für mehr exportierst du jeweils einen kürzeren Zeitraum.
+
+Die Datei hat eine Zeile pro Änderung: die Uhrzeit in UTC, die Kategorie, die Aktion, einen beschreibenden Satz, wer sie gemacht hat (und gegebenenfalls den API-Schlüssel oder die App), das Ziel, die IP-Adresse, das Gerät sowie den alten und den neuen Wert als JSON.
+
+Auch das Exportieren wird aufgezeichnet, mit den verwendeten Filtern.
+
+## Wie lange Einträge aufbewahrt werden [#how-long-entries-are-kept]
+
+Einträge werden {facts.auditLogRetentionDays} Tage aufbewahrt und dann gelöscht. Wenn du einen Workspace löschst, wird sein Audit-Log mitgelöscht.
+
+Die IP-Adressen und Geräte im Audit-Log sind personenbezogene Daten der Menschen, die im Workspace arbeiten. Die [Datenschutzerklärung](/legal/privacy-policy) beschreibt, wie QRdx damit umgeht.
+
+</IfAvailable>

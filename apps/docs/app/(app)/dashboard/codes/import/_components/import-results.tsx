@@ -25,7 +25,6 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import Papa from "papaparse";
 import { useEffect, useRef, useState } from "react";
-import { plural } from "@/app/(app)/dashboard/codes/_components/use-organize-action";
 import {
   createLogoCache,
   renderCodeImage,
@@ -43,6 +42,7 @@ import {
   jobProgress,
   resultRows,
 } from "../_lib/job";
+import { useImportIssueText } from "./import-issue-text";
 
 type ImageFormat = "png" | "svg";
 /** Images rendered at a time (each is a canvas draw). */
@@ -72,6 +72,7 @@ export function ImportResults({
   onReset: () => void;
 }) {
   const t = useTranslations("app.dashboard.codes.import.importResults");
+  const issueText = useImportIssueText();
   const progress = jobProgress(job);
   const failed = Object.values(job.results).filter((row) => !row.ok);
   const notes = Object.values(job.results).filter(
@@ -153,18 +154,14 @@ export function ImportResults({
       soundEvent("download");
       setZipNote(
         [
-          parts > 1 &&
-            `Saved as ${parts} ZIP files (large batches come in parts of about 500 MB; codes.csv is in the last).`,
-          failedImages > 0 &&
-            `${plural(failedImages, "image")} couldn't be drawn and ${failedImages === 1 ? "is" : "are"} missing.`,
+          parts > 1 && t("zipParts", { parts }),
+          failedImages > 0 && t("imagesMissing", { count: failedImages }),
         ]
           .filter(Boolean)
           .join(" ") || null,
       );
     } catch (error) {
-      setZipNote(
-        error instanceof Error ? error.message : "The ZIP couldn't be made.",
-      );
+      setZipNote(error instanceof Error ? error.message : t("zipFailed"));
       soundEvent("error");
     }
     setZipping(null);
@@ -176,17 +173,15 @@ export function ImportResults({
         {progress.created > 0 ? <CircleCheck /> : <CircleAlert />}
         <AlertTitle>
           {progress.created > 0
-            ? t("createdValue", { value: plural(progress.created, "code") })
+            ? t("createdValue", { count: progress.created })
             : t("noCodesWereCreated")}
         </AlertTitle>
         <AlertDescription>
           {[
-            failed.length > 0 &&
-              `${plural(failed.length, "row")} couldn't be imported.`,
-            notSent > 0 &&
-              `${plural(notSent, "row")} ${notSent === 1 ? "wasn't" : "weren't"} sent (the import ended early).`,
+            failed.length > 0 && t("rowsNotImported", { count: failed.length }),
+            notSent > 0 && t("rowsNotSent", { count: notSent }),
             job.skipped.length > 0 &&
-              `${plural(job.skipped.length, "row")} with problems in the file ${job.skipped.length === 1 ? "was" : "were"} skipped.`,
+              t("rowsSkipped", { count: job.skipped.length }),
           ]
             .filter(Boolean)
             .join(" ") || t("everyRowWasImported")}
@@ -200,7 +195,7 @@ export function ImportResults({
               <span className="text-muted-foreground">
                 {t("lineLine", { line: result.line })}
               </span>{" "}
-              {result.message}
+              {result.issues?.map(issueText).join(". ") ?? result.message}
             </li>
           ))}
         </ul>

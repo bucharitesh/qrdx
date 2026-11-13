@@ -1,0 +1,166 @@
+---
+title: "로고"
+description: "스캔이 깨지지 않도록 QR 코드 중앙에 로고를 추가하세요."
+icon: Image
+---
+
+스캔 가능성을 유지하면서 QR 코드에 브랜드 로고를 추가하세요.
+
+## 기본 로고 [#basic-logo]
+
+```tsx
+import { QRCode } from 'qrdx';
+
+<QRCode
+  value="https://example.com"
+  size={512}
+  hideLogo={false}
+  logo="https://example.com/logo.png"
+  level="Q"
+/>
+```
+
+로고를 사용할 때는 항상 더 높은 오류 정정 수준(`Q` 또는 `H`)을 사용하세요.
+
+## 크기, 여백, 위치 [#size-clear-space-and-position]
+
+`logoOptions`는 렌더링 크기와 관계없는 단위로 로고를 배치합니다. `QRCode`와 `getQRData`에서 사용할 수 있습니다.
+
+- `size`: QR 코드 너비에 대한 로고 너비의 비율이며, `0.1`부터 `0.3`까지입니다(기본값 `0.25`). 자체 디코딩 테스트에서는 H 수준에서도 25%를 넘으면 읽히지 않았습니다.
+- `padding`: 로고 주변의 여백이며, `0`부터 `2`모듈까지입니다.
+- `x`와 `y`: 코드 안에서 로고 중심이 놓이는 위치이며, `0`부터 `1`까지입니다(기본값 `0.5`, 가운데). 로고는 항상 코드 안에 머뭅니다.
+
+```tsx
+<QRCode
+  value="https://example.com"
+  logo="https://example.com/logo.png"
+  level="H"
+  logoOptions={{ size: 0.2, padding: 1, x: 0.6, y: 0.55 }}
+/>
+```
+
+`QRCode`와 `getQRData`는 코드가 복구할 수 있는 크기보다 큰 로고를 절대 그리지 않습니다. 로고(와 여백)는 닿는 모든 코드워드를 손상시키고, 오류 정정 블록마다 복구할 수 있는 개수가 정해져 있습니다. 그래서 블록별로 손상된 코드워드를 세어, 가장 불리한 블록이 복구 용량의 60% 이하만 사용하도록 로고를 줄입니다(Logo QR 배지와 같은 기준입니다). 작은 코드는 담을 수 있는 양이 적습니다. Q 수준에서 짧은 링크는 너비의 약 13~17% 크기의 로고까지 들어가며, H 수준이거나 내용이 더 짧으면 더 큰 로고를 넣을 수 있습니다. `getLogoSizeLimit(props)`는 해당 코드에서 허용되는 최대 크기를 반환하고, 스캔 점수도 같은 계산으로 확인합니다. `QRCodeSVG`, `QRCodeCanvas`, `getQRAsSVG`의 원시 `imageSettings`에도 같은 상한이 적용됩니다. 들어맞는 로고는 지정한 그대로 그리고, 더 큰 로고는 자신의 중심을 기준으로 줄입니다.
+
+이동한 로고가 세 모서리의 눈 모양 패턴과 오른쪽 아래 모서리 근처의 작은 사각형(디코더가 원근을 보정할 때 쓰는 정렬 패턴)을 가리지 않게 하세요. 이 중 하나라도 가리는 로고는 스캔 점수에서 실패로 처리됩니다.
+
+Playground에서는 **디자인 → 로고 옵션**에서 같은 설정을 쓸 수 있으며, **큰 로고에 맞춰 오류 정정 높이기**(`autoLevel`)도 있습니다.
+
+## 모양, 플레이트, 배경 [#shape-plate-and-background]
+
+- `shape`: 로고를 `"square"`(업로드한 그대로, 기본값), `"rounded"`(둥근 모서리), `"circle"`(원형)로 자릅니다.
+- `plate`: 로고 뒤에 같은 모양으로 그려지는 단색 배경입니다. 로고는 그 위에 안쪽으로 들어가 놓입니다.
+
+```tsx
+<QRCode
+  value="https://example.com"
+  logo="/logo.png"
+  level="H"
+  logoOptions={{ size: 0.22, shape: "circle", plate: "#ffffff" }}
+/>
+```
+
+자르기는 SVG 클립 경로로 처리됩니다. 인쇄용 PDF와 EPS도 같은 윤곽으로 잘리므로 모든 다운로드 형식이 똑같이 보입니다. EPS는 투명도를 지원하지 않아 로고의 투명한 부분은 흰색으로 인쇄됩니다.
+
+업로드한 로고가 단색 상자 위에 놓여 있다면(JPEG에서 흔합니다), Playground에서 **배경 제거**를 쓸 수 있습니다. 네 모서리가 같은 색이면 가장자리에서 안쪽으로 그 색을 지우므로, 로고 안쪽의 같은 색(예: 흰 글자)은 그대로 남습니다. 코드에서는 `removeLogoBackground(src)`가 브라우저에서 정리된 PNG를 데이터 URL로 반환하고, `removeLogoBackdrop(pixels)`는 어디서든 RGBA 픽셀에 같은 처리를 합니다.
+
+## 고급 제어 [#advanced-control]
+
+```tsx
+import { QRCodeCanvas } from 'qrdx';
+
+<QRCodeCanvas
+  value="https://example.com"
+  size={512}
+  imageSettings={{
+    src: "https://example.com/logo.png",
+    height: 80,
+    width: 80,
+    excavate: true,
+    x: 216,
+    y: 216,
+    opacity: 0.9
+  }}
+  level="Q"
+/>
+```
+
+## 크기 가이드라인 [#size-guidelines]
+
+- **256px QR**: 32-48px 로고
+- **512px QR**: 64-96px 로고
+- **1024px QR**: 128-192px 로고
+
+로고는 QR 코드 크기의 10-30% 사이로 유지하세요.
+
+## 로고 도려내기 [#logo-excavation]
+
+### 기능 [#what-it-does]
+
+도려내기는 더 나은 스캔을 위해 로고 아래의 QR 모듈을 제거합니다.
+
+```tsx
+<QRCodeCanvas
+  value="https://example.com"
+  size={512}
+  imageSettings={{
+    src: "/logo.png",
+    height: 80,
+    width: 80,
+    excavate: true  // Recommended for most logos
+  }}
+/>
+```
+
+### 여백과 오류 정정 [#clear-space-and-error-correction]
+
+`padding`(`width`, `height`와 같은 픽셀 단위)은 로고 주변의 모듈을 추가로 비워, 로고 가장자리가 코드에 닿지 않게 합니다. `autoLevel`은 비워진 영역이 코드의 7%를 넘으면 오류 정정을 H로 올려, 큰 로고도 읽히게 합니다. 기본값은 꺼짐이라 기존 코드는 수준이 그대로 유지됩니다.
+
+```tsx
+<QRCodeSVG
+  value="https://example.com"
+  size={512}
+  autoLevel
+  imageSettings={{ src: "/logo.png", height: 110, width: 110, excavate: true, padding: 8 }}
+/>
+```
+
+로고는 `margin`과 관계없이 픽셀 크기를 유지합니다(0.0.46 이하 릴리스에서는 마진이 커지면 로고가 작아졌습니다).
+
+### 사용하면 좋은 경우 [#when-to-use]
+
+- ✅ 단색 배경이 있는 로고
+- ✅ 스캔을 방해할 수 있는 로고
+- ❌ 투명 로고(선택 사항)
+- ⚠️ 항상 실제 기기에서 스캔을 테스트하세요
+
+## 로고 형식 [#logo-formats]
+
+- **PNG** — 투명도에 가장 적합
+- **JPG** — 사진에 적합
+- **SVG** — 확장 가능하지만 불러오기 문제가 생길 수 있음
+- **WebP** — 최신 형식, 압축률 우수
+
+## 중심 계산 [#center-calculation]
+
+```tsx
+const qrSize = 512;
+const logoSize = 80;
+const position = {
+  x: (qrSize - logoSize) / 2,  // 216
+  y: (qrSize - logoSize) / 2   // 216
+};
+```
+
+## 모범 사례 [#best-practices]
+
+1. 투명도가 있는 PNG 형식을 사용하세요
+2. 단색 로고에는 도려내기를 켜세요
+3. `Q` 또는 `H` 오류 정정을 사용하세요
+4. 로고 크기를 적절하게 유지하세요(10-30%)
+5. 대상 기기에서 스캔을 테스트하세요
+
+## 다음 단계 [#next-steps]
+
+- [다운로드](/docs/features/downloads) — 로고가 있는 QR 코드 내보내기
+- [템플릿](/docs/features/templates) — 로고와 템플릿 조합하기
+- [색상 및 그라데이션](/docs/features/colors-gradients) — 색상으로 로고 꾸미기

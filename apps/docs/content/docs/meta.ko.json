@@ -1,0 +1,12 @@
+{
+  "$schema": "../../.source/json-schema/docs.meta.json",
+  "title": "문서",
+  "pages": [
+    "index",
+    "help",
+    "(guides)",
+    "developers",
+    "(react)",
+    "(self-hosting)"
+  ]
+}

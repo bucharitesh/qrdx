@@ -1,0 +1,174 @@
+---
+title: "색상 및 그라디언트"
+description: "단색이나 선형·방사형 그라디언트를 사용하고, 대비를 확인해 코드가 계속 스캔되도록 하세요."
+icon: Palette
+---
+
+색상과 그라디언트를 적용해 브랜드에 맞는 QR 코드를 만드세요.
+
+## 단색 [#solid-colors]
+
+```tsx
+import { QRCode } from 'qrdx';
+
+<QRCode
+  value="https://example.com"
+  size={256}
+  fgColor="#1a56db"
+  bgColor="#f9fafb"
+  eyeColor="#0d47a1"
+  dotColor="#3b82f6"
+/>
+```
+
+지원 형식: `#hex`, `rgb()`, `rgba()`, `hsl()`, `hsla()`, 이름이 있는 색상
+
+`eyeColors`는 각 눈 모양을 개별적으로 설정합니다(`topLeft`, `topRight`, `bottomLeft`, 각각 `outer`와 `inner` 색상 또는 그라디언트 지정). [패턴](/docs/features/patterns#per-eye-colors)을 참고하세요.
+
+### 투명 배경 [#transparent-background]
+
+`bgColor="transparent"`는 배경을 칠하지 않으므로 PNG와 SVG로 다운로드하면 투명하고, PDF와 EPS 파일에는 배경 채우기가 없습니다. 코드는 밝고 단색인 바탕 위에 놓으세요. 디코더는 모듈 사이의 밝은 틈이 필요합니다.
+
+## 선형 그라디언트 [#linear-gradients]
+
+```tsx
+import { QRCodeCanvas } from 'qrdx';
+
+<QRCodeCanvas
+  value="https://example.com"
+  size={256}
+  fgColor={{
+    type: 'linear',
+    stops: [
+      { offset: 0, color: '#667eea' },
+      { offset: 1, color: '#764ba2' }
+    ],
+    x1: 0, y1: 0,
+    x2: 1, y2: 1
+  }}
+/>
+```
+
+### 그라디언트 방향 [#gradient-directions]
+
+- **가로**: `x1: 0, y1: 0, x2: 1, y2: 0`
+- **세로**: `x1: 0, y1: 0, x2: 0, y2: 1`
+- **대각선**: `x1: 0, y1: 0, x2: 1, y2: 1`
+
+### 다중 정지점 그라디언트 [#multi-stop-gradients]
+
+```tsx
+<QRCodeCanvas
+  value="https://example.com"
+  size={256}
+  fgColor={{
+    type: 'linear',
+    stops: [
+      { offset: 0, color: '#667eea' },
+      { offset: 0.3, color: '#764ba2' },
+      { offset: 0.7, color: '#f093fb' },
+      { offset: 1, color: '#f5576c' }
+    ],
+    x1: 0, y1: 0, x2: 1, y2: 1
+  }}
+/>
+```
+
+## 방사형 그라디언트 [#radial-gradients]
+
+```tsx
+<QRCodeCanvas
+  value="https://example.com"
+  size={256}
+  fgColor={{
+    type: 'radial',
+    stops: [
+      { offset: 0, color: '#ff6b6b' },
+      { offset: 1, color: '#4ecdc4' }
+    ],
+    cx: 0.5, cy: 0.5,
+    r: 0.5
+  }}
+/>
+```
+
+## 색상 유틸리티 [#color-utilities]
+
+### 대비 확인 [#check-contrast]
+
+```tsx
+import { getContrastRatio, getContrastLevel } from 'qrdx';
+
+const ratio = getContrastRatio('#000000', '#ffffff');
+// Returns: 21
+
+const level = getContrastLevel(ratio);
+// Returns: { level: 'AAA', warning: false, message: 'Excellent contrast' }
+```
+
+### 대비 가이드라인 [#contrast-guidelines]
+
+- **최소**: 3.0:1 비율
+- **권장**: 4.5:1 이상
+- **우수**: 7.0:1 이상
+
+{/* Angular gradients, see-through colors and image fills (paint picker) */}
+
+## 각도 그라디언트 [#angular-gradients]
+
+각도 그라디언트는 CSS `conic-gradient`처럼 채울 영역의 중심을 기준으로 시계 방향으로 색이 이어집니다. `angle`은 시작 위치이며, 위쪽에서 시계 방향으로 잰 각도(도)입니다. 오프셋은 한 바퀴를 기준으로 0에서 100까지입니다.
+
+```tsx
+<QRCode
+  value="https://example.com"
+  fgColor={{
+    type: "angular",
+    angle: 30,
+    stops: [
+      { color: "#1d4ed8", offset: 0 },
+      { color: "#7c3aed", offset: 50 },
+      { color: "#1d4ed8", offset: 100 },
+    ],
+  }}
+/>
+```
+
+SVG에는 원뿔형 그라디언트가 없으므로, 코드는 색상 단계가 약 두 단계씩 차이 나는 얇은 쐐기 모양을 부채꼴로 그립니다. PDF와 EPS도 같은 쐐기를 그립니다.
+
+## 투명 색상 [#see-through-colors]
+
+색상과 그라디언트 정지점에는 `#1d4ed8cc`나 `rgba(29, 78, 216, 0.8)`처럼 알파 값을 지정할 수 있습니다. SVG에서는 `fill-opacity`와 `stop-opacity`로 기록하고, PDF는 그대로 유지합니다. EPS는 투명도를 지원하지 않아 투명 색상을 배경과 섞습니다. 스캔 검사는 투명 색상을 배경 위에서 보이는 모습 기준으로 판단합니다.
+
+## 이미지 채우기 [#image-fills]
+
+이미지 채우기는 배경, 점 또는 눈 모양에 그림을 입힙니다. 그림은 코드 전체에 걸쳐 놓이므로, 같은 그림을 공유하는 점과 눈 모양에는 하나의 그림이 이어서 보입니다.
+
+```tsx
+<QRCode
+  value="https://example.com"
+  fgColor={{
+    type: "image",
+    src: "data:image/jpeg;base64,…",
+    fit: "cover", // or "contain", "tile"
+    position: "center",
+    scale: 1,
+    opacity: 0.45,
+    underlay: "#000000",
+  }}
+/>
+```
+
+- `src`는 로고처럼 그림 자체입니다. QRdx는 이미지 채우기(코드, 테마, REST API 모두)를 최대 1.5 MB의 base64 `data:image` URL(PNG, JPEG, WebP 또는 GIF)로만 저장하며, 링크로 지정한 그림은 거부됩니다. PNG와 JPEG는 모든 내보내기에 포함되고, 서버가 링크를 가져오는 일은 없습니다.
+- `underlay`는 그림 아래에 깔리는 단색입니다. `opacity`로 이 색이 비쳐 보이게 합니다. 검은색 위에서는 점에 쓸 사진이 어두워지고, 흰색 위에서는 배경에 쓸 사진이 밝아집니다.
+- 그림의 세부 묘사는 카메라에 노이즈로 읽히므로, 스캔 검사는 더 높은 대비를 요구합니다. 점이나 눈 모양에는 7:1, 그 뒤 배경에는 12:1입니다(`SCAN_IMAGE_CONTRAST_MIN`). 그림은 가장 밝은 10분의 1과 가장 어두운 10분의 1로 측정합니다(`getImageTones`). 에디터에서 "스캔 가능하게 만들기"를 누르면 검사를 통과하는 underlay 위의 불투명도를 찾아 줍니다.
+- SVG, PNG, PDF는 이미지 채우기를 지원합니다. EPS는 지원하지 않습니다([다운로드](/docs/features/downloads#eps)).
+
+이미지 채우기는 로고와 같은 방식으로 이동합니다. 에디터의 디자인, 저장된 코드, 저장된 테마에는 함께 남습니다. 하지만 `?style=` 링크, 게시된 커뮤니티 스타일, 코드 가져오기 스니펫, 채팅의 컨텍스트에는 들어가지 않으며, 이런 곳에서는 각 이미지 채우기가 underlay 색상으로 대체됩니다. Image API(`GET /v1/qr`)와 MCP 서버는 아직 이미지 채우기를 받지 않습니다. `POST /v1/codes`와 `PATCH /v1/codes/{id}`는 `data:image` URL로만 받고 그 외에는 400으로 응답합니다. 그림용 업로드 파일 ID는 아직 없습니다.
+
+각도 그라디언트와 이미지 채우기는 qrdx 소스에 있으며 다음 npm 릴리스에 포함됩니다. npm의 qrdx 0.0.46에는 포함되어 있지 않습니다.
+
+## 다음 단계 [#next-steps]
+
+- [로고](/docs/features/logos) — 색상이 있는 QR 코드에 로고 추가하기
+- [패턴](/docs/features/patterns) — 색상과 패턴 함께 사용하기
+- [다운로드](/docs/features/downloads) — 색상이 있는 QR 코드 내보내기

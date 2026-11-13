@@ -19,6 +19,7 @@ import type { ElementContent } from "hast";
 import rehypeKatex from "rehype-katex";
 import remarkMath from "remark-math";
 import { z } from "zod";
+import { docsIndex } from "./lib/docs-index-plugin";
 import { fillFactsDeep } from "./lib/product-facts";
 import { remarkNpmStatus } from "./lib/remark-npm-status";
 import { remarkProductFacts } from "./lib/remark-product-facts";
@@ -41,9 +42,9 @@ export const docs = defineDocs({
         _openapi: z.looseObject({}).optional(),
       })
       .transform(fillFactsDeep),
-    postprocess: {
-      includeProcessedMarkdown: true,
-    },
+    // No `postprocess.includeProcessedMarkdown`: each page's Markdown (the
+    // .md and llms routes) comes from the docs index (lib/docs-index.ts), so
+    // the compiled pages don't carry a copy.
   },
   meta: {
     schema: metaSchema.extend({
@@ -216,6 +217,9 @@ export default defineConfig({
     lastModified({
       versionControl: hasGit ? "git" : async () => undefined,
     }),
+    // .source/docs.ts, .source/content.ts and the docs index the route
+    // handlers read (lib/docs-index.ts), so the build compiles the docs once.
+    docsIndex({ collection: "docs" }),
   ],
   mdxOptions: {
     rehypeCodeOptions: {

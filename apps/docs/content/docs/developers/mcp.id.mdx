@@ -1,0 +1,223 @@
+---
+title: "Server MCP"
+description: "Biarkan Claude, Cursor, VS Code, dan alat AI lainnya membuat kode QR bergaya dengan server MCP QRdx."
+icon: Bot
+---
+
+QRdx menjalankan server [Model Context Protocol](https://modelcontextprotocol.io) publik di:
+
+```txt
+https://mcp.qrdx.dev/mcp
+```
+
+Gunakan URL ini di semua klien. Server yang sama juga merespons di `https://qrdx.dev/api/mcp`, dan [halaman koneksi](/mcp) menampilkan URL publik di qrdx.dev, di deployment pratinjau, dan di pengembangan lokal.
+
+Server ini memakai transport Streamable HTTP dan tidak menyimpan status sesi. Asisten AI Anda dapat memanggilnya untuk mendesain kode QR untuk jenis konten apa pun dengan skor pemindaian yang sudah diperiksa, merender kode QR, menampilkan daftar gaya yang tersedia, mencari bingkai dan tema komunitas, serta membuat payload dengan format yang benar untuk Wi-Fi, kontak, email, SMS, dan lokasi peta. Semua itu tidak memerlukan akun atau kunci API. Jika koneksi memakai kunci API QRdx, server ini juga dapat menyimpan desain ke tema Anda dan menggunakan logo yang Anda unggah (lihat [Gunakan kunci API](#use-an-api-key)).
+
+[Coba di playground](/playground?open=code&lang=mcp): atur gaya kode di sana, lalu salin sebagai argumen `design_qr` untuk asisten Anda.
+
+## Penyiapan [#setup]
+
+<Tabs items={["Claude Code", "Cursor", "VS Code", "Other clients"]}>
+  <Tab value="Claude Code">
+    ```bash
+    claude mcp add --transport http qrdx https://mcp.qrdx.dev/mcp
+    ```
+  </Tab>
+  <Tab value="Cursor">
+    Tambahkan server ke `~/.cursor/mcp.json` (semua proyek) atau `.cursor/mcp.json` (satu proyek):
+
+    ```json
+    {
+      "mcpServers": {
+        "qrdx": {
+          "url": "https://mcp.qrdx.dev/mcp"
+        }
+      }
+    }
+    ```
+  </Tab>
+  <Tab value="VS Code">
+    Tambahkan server ke `.vscode/mcp.json` di workspace Anda:
+
+    ```json
+    {
+      "servers": {
+        "qrdx": {
+          "type": "http",
+          "url": "https://mcp.qrdx.dev/mcp"
+        }
+      }
+    }
+    ```
+  </Tab>
+  <Tab value="Other clients">
+    Klien yang mendukung server jarak jauh (Streamable HTTP) hanya membutuhkan URL `https://mcp.qrdx.dev/mcp`. Untuk klien yang hanya menjalankan server stdio lokal, hubungkan dengan [`mcp-remote`](https://www.npmjs.com/package/mcp-remote):
+
+    ```json
+    {
+      "mcpServers": {
+        "qrdx": {
+          "command": "npx",
+          "args": ["-y", "mcp-remote", "https://mcp.qrdx.dev/mcp"]
+        }
+      }
+    }
+    ```
+  </Tab>
+</Tabs>
+
+Lalu minta apa yang Anda butuhkan, misalnya:
+
+- "Buat kode QR untuk https://example.com dengan warna biru merek kami, #155dfc, dengan modul membulat."
+- "Buat kode QR Wi-Fi untuk jaringan Office Guest dengan kata sandi correct-horse-battery."
+- "Buat kode QR kontak untuk Ada Lovelace, ada@example.com, lalu tambahkan ke README."
+- "Desain kode QR Wi-Fi untuk Cafe Guest dengan warna cokelat hangat dan bingkai Free Wi-Fi, lalu beri tahu saya skor pemindaiannya."
+- "Cari bingkai komunitas untuk menu restoran dan gunakan untuk https://example.com/menu."
+
+## Tool [#tools]
+
+| Tool | Fungsinya |
+|------|-----------|
+| `design_qr` | Merancang kode untuk jenis konten apa pun dengan gaya yang dipilih asisten Anda, atau dimulai dari tema bawaan atau item komunitas, memeriksa skor pemindaiannya, lalu memperbaiki gayanya sampai mencapai Great. Mengembalikan skor, perubahan yang dilakukan, JSON gaya, tautan playground, PNG, dan SVG. |
+| `list_options` | Mencantumkan setiap nilai yang diterima `design_qr`: jenis konten beserta kolomnya, warna dan gradien, bentuk, bingkai (dengan id bingkai resmi QRdx), border, ikon logo dan logo merek, tema bawaan, tingkat koreksi kesalahan, serta batasannya. |
+| `generate_qr_code` | Merender kode QR dengan gaya editor. Mengembalikan gambar PNG dan URL [Image API](/docs/developers/image-api) publik (SVG, PNG, WebP lossless, dan EPS vektor) yang siap dipakai untuk Markdown, HTML, atau cetak, ditambah markup SVG jika diminta. |
+| `list_qr_styles` | Mencantumkan pola badan, bentuk mata sudut dan titik mata, templat border, bingkai, ikon logo, tingkat koreksi kesalahan, nilai default, dan batasan. |
+| `search_community` | Mencari bingkai, tema, dan koleksi [komunitas](/community) yang telah dipublikasikan berdasarkan kata, jenis, atau tag. |
+| `get_community_item` | Satu item komunitas beserta gaya yang diterapkannya, siap dipakai untuk `design_qr` atau `generate_qr_code`. |
+| `save_template` | Menyimpan desain sebagai tema di ruang kerja Anda. Memerlukan [kunci API](#use-an-api-key). |
+| `generate_barcode` | Menggambar barcode EAN-13, UPC-A, UPC-E, EAN-8, ITF-14, GS1-128, Code 128, Code 39, Data Matrix, PDF417, atau Aztec setelah memeriksa nilainya (digit pemeriksa, panjang, karakter). Mengembalikan PNG dan URL [barcode API](/docs/developers/barcode-api) publik. |
+| `save_barcode` | Menyimpan barcode ke Barcodes di ruang kerja Anda. Memerlukan [kunci API](#use-an-api-key). |
+| `qr_payload_wifi` | Membuat payload jaringan `WIFI:` (WPA, WEP, atau terbuka, opsional tersembunyi) dengan karakter khusus yang sudah di-escape. |
+| `qr_payload_vcard` | Membuat kontak vCard 3.0 (RFC 2426): nama, organisasi, jabatan, telepon, email, situs web, alamat, dan catatan. |
+| `qr_payload_email` | Membuat tautan `mailto:` (RFC 6068) dengan cc, bcc, subjek, dan isi pesan opsional. |
+| `qr_payload_sms` | Membuat tautan `sms:` (RFC 5724) dengan pesan opsional, atau format lama `SMSTO:`. |
+| `qr_payload_geo` | Membuat lokasi `geo:` (RFC 5870) dari lintang dan bujur. |
+| `qr_payload_payment` | Membuat kode pembayaran bank: Pix BR Code, transfer kredit SEPA (EPC069-12), atau kode PayNow, PromptPay, atau VietQR (EMV, beserta CRC-nya). Kolomnya diperiksa seperti pada formulir Playground. |
+
+Tool payload mengembalikan string biasa. Asisten Anda kemudian meneruskannya sebagai `data` ke `generate_qr_code`.
+
+### design_qr [#design_qr]
+
+`design_qr` menerima konten berupa jenis dan kolomnya, dengan jenis dan pemeriksaan yang sama seperti formulir konten di editor (`list_options` mencantumkannya), serta gaya opsional:
+
+```json
+{
+  "content": { "type": "wifi", "ssid": "Cafe Guest", "password": "sunshine123", "encryption": "WPA" },
+  "style": {
+    "bgColor": "#FFF7ED",
+    "fgColor": "#9A3412",
+    "bodyPattern": "rounded",
+    "cornerEyePattern": "rounded",
+    "frame": { "style": "banner-bottom", "text": "Free Wi-Fi" }
+  }
+}
+```
+
+Opsi yang Anda lewatkan akan memakai nilai default (mata mengikuti warna titik, bentuk persegi, margin 4, koreksi kesalahan Q, tanpa bingkai). QRdx lalu menjalankan pemeriksaan pemindaian editor pada desain tersebut: merender kode, mendekodenya pada 96, 160, dan 320 px melalui model kamera ponsel, serta memeriksa kontras, zona tenang, bentuk mata, dan pasangan bentuk. Jika di bawah Great (85), QRdx memperbaiki gayanya hingga tiga kali dengan perubahan sesedikit mungkin (warna lebih gelap yang mempertahankan rona, bentuk mata yang lebih aman, koreksi kesalahan yang lebih rendah untuk konten panjang). Jika itu belum cukup, QRdx kembali ke kode klasik hitam di atas putih dengan bingkai Anda. Hasilnya menjelaskan apa yang diubah dan alasannya.
+
+Tidak ada model AI yang berjalan di sisi QRdx untuk `design_qr`: asisten Anda memilih gaya, lalu QRdx memvalidasi, memeriksa, dan memperbaikinya. Konten yang tidak valid (kata sandi WPA kurang dari 8 karakter, alamat email yang salah format) ditolak disertai alasannya. `design_qr` memiliki batas sendiri sebesar 20 panggilan per menit per alamat IP.
+
+Input lainnya:
+
+- **`preset`**: mulai dari tema bawaan berdasarkan id (`list_options` mencantumkannya). Opsi gaya yang Anda atur lebih diutamakan daripada tema tersebut.
+- **`community_item`**: mulai dari bingkai atau tema komunitas berdasarkan id, seperti `frame:wifi-card`. Item bingkai berada di atas kode klasik; opsi gaya Anda mengubah kode di bawahnya.
+- **Bingkai resmi**: bingkai resmi QRdx juga merupakan item komunitas. `list_options` mencantumkan id-nya per kelompok (hari raya, musim, dan kegunaan), sehingga `frame:diwali-diya` atau `frame:menu-cutlery` dapat dipakai sebagai `community_item`.
+- **Bingkai kustom**: `style.frame` dapat berupa `{ "style": "custom", "spec": … }` dengan spesifikasi bingkai, seperti milik bingkai komunitas dari `get_community_item`. Bingkai digambar dan dinilai apa adanya; perbaikan mengubah kode, tidak pernah bingkainya.
+- **`style.logo`**: ikon logo cepat (`wifi`, `location`, `phone`, `email`, `link`, `file`, `calendar`, `whatsapp`, atau `instagram`), atau logo merek berdasarkan slug [Simple Icons](https://simpleicons.org) (`spotify`, `paypal:white`). `list_options` mencantumkan slug merek populer.
+- **Opsi mesin**: `style.eyeColors` (warna `#RRGGBB` per mata), `moduleScale` (ukuran titik, `0.5` sampai `1`), `shape` (`circle` untuk kode bulat), `autoLevel`, dan `logoOptions` (ukuran logo, ruang kosong, posisi, pemangkasan, dan alas). Semuanya digambar dan dinilai sebagaimana diberikan; perbaikan tidak mengubahnya.
+
+<IfAvailable feature="fileStorage">
+`logo_file_id` menggambar logo yang Anda unggah ke QRdx, dengan [kunci API](#use-an-api-key).
+</IfAvailable>
+
+Logo dinilai berdasarkan modul yang ditutupinya, seperti di editor, sehingga perbaikan dapat menaikkan koreksi kesalahan ke H atau menghapus logo. Tanda QRdx yang ditampilkan editor secara default tidak digambar di sini.
+
+`qrdxStyle` pada hasil adalah desain dalam bentuk JSON gaya editor. Teruskan ke `save_template`, ke `generate_qr_code` sebagai `style` untuk merender desain yang sama pada ukuran lain, atau ke [`style`](/docs/developers/image-api#style) milik Image API. `playground_url` membuka desain di [Playground](/playground): URL itu hanya membawa gaya, tidak pernah logo atau kontennya, dan `playgroundLeftOut` menyebutkan apa yang tidak disertakan.
+
+### Input generate_qr_code [#generate_qr_code-inputs]
+
+Inputnya sesuai dengan [parameter Image API](/docs/developers/image-api#parameters): `data` (wajib), `size`, `fg`, `bg`, `eyeColor`, `dotColor`, `body`, `eye`, `dot`, `level`, `margin`, `template`, `frame`, `frameText`, `logoIcon`, `logoFileId`, `item` (id item komunitas), dan `style` (JSON gaya editor: gradien, bingkai kustom, dan lainnya, seperti yang dikembalikan `design_qr`). Opsi datar lebih diutamakan daripada `style`, dan `style` lebih diutamakan daripada `item`. Setel `include_svg` ke `true` untuk juga mendapatkan markup SVG sebagai teks, misalnya untuk menyimpan file `.svg`. Opsi ini nonaktif secara default karena markup sering berukuran 50 sampai 150 KB, yang akan memenuhi percakapan.
+
+`generate_qr_code` tidak memeriksa skor pemindaian; gunakan `design_qr` untuk itu. Kode dengan logo yang Anda unggah tidak memiliki URL gambar publik, karena Image API hanya menggambar logo tersebut untuk permintaan dengan kunci Anda.
+
+### Kartu QR [#qr-card]
+
+Di aplikasi yang mendukung [MCP Apps](https://modelcontextprotocol.io/extensions/apps/overview), `design_qr` dan `generate_qr_code` juga menampilkan kartu QR di obrolan. Kartu ini berisi kodenya, isi yang dikodekan (kode Wi-Fi menampilkan nama jaringan, tidak pernah kata sandinya), ukuran dan koreksi kesalahan atau skor pemindaian, serta tombol **Open in editor**. Tautan editor hanya membawa gaya, seperti `playground_url`.
+
+Tombol PNG dan SVG bergantung pada apa yang diizinkan aplikasi. Jika aplikasi dapat menyimpan file dari kartu, tombol itu menyimpannya. Jika tidak, tombol itu membuka URL Image API di browser Anda, sehingga kartu `design_qr` menampilkannya hanya di aplikasi yang dapat menyimpan file: kontennya tidak pernah masuk ke URL gambar. Aplikasi mungkin meminta Anda mengonfirmasi sebelum tautan dibuka.
+
+Aplikasi tanpa MCP Apps mendapatkan teks dan gambar yang sama seperti sebelumnya. Untuk pengembang klien:
+
+- Kartu ini adalah resource `ui://qrdx/qr-card` (`text/html;profile=mcp-app`), yang tercantum di `resources/list`. Kedua tool mengarah ke sana dengan `_meta.ui.resourceUri`.
+- Datanya datang di `_meta` hasil tool, di bawah `dev.qrdx/qr-card`, yang ditujukan untuk kartu dan bukan untuk model. Tool tidak mengembalikan `structuredContent`.
+- Kartu ini adalah satu file HTML dengan gaya dan skrip inline. Satu-satunya yang dimuatnya adalah gambar kode dari Image API (`https://api.qrdx.dev`, atau domain Anda sendiri jika di-host sendiri), dan content security policy-nya (`_meta.ui.csp.resourceDomains`) mengizinkan host itu saja.
+
+Jika Anda menghubungkan QRdx sebelum kartu ini ada, hapus konektor lalu tambahkan lagi, atau segarkan tool-nya, agar aplikasi mengambil metadata tool yang baru.
+
+### Komunitas [#community]
+
+`search_community` mencari bingkai, tema, dan koleksi [komunitas](/community) yang telah dipublikasikan, gratis di bawah CC0, berdasarkan kata (`q`), `type`, dan `tag`. `get_community_item` mengembalikan satu item beserta gaya yang diterapkannya; teruskan id-nya ke `design_qr` sebagai `community_item` atau ke `generate_qr_code` sebagai `item`. Data yang sama tersedia di REST API pada [`/v1/community/items`](/docs/developers/api/list-community-items).
+
+Teks item ditulis oleh anggota komunitas. Nama, deskripsi, handle, tag, dan label bingkai dikembalikan dalam bentuk singkat, dalam satu baris, dan tanpa tautan, email, atau markup, dan setiap hasil meminta agar semuanya diperlakukan sebagai data, bukan instruksi.
+
+## Gunakan kunci API [#use-an-api-key]
+
+Beberapa alat memerlukan [kunci API](/docs/developers/api-keys) QRdx pada koneksi, yang dikirim sebagai `Authorization: Bearer qrdx_…`:
+
+- **`save_template`** menyimpan desain sebagai tema, yang tercantum di Tema pada dasbor dan tersedia di editor. Alat ini memerlukan kunci dengan `codes:write`, yang dimiliki kunci **Akses penuh**. Kunci dari workspace Anda sendiri menyimpan ke tema Anda; kunci tim menyimpan ke tema bersama tim jika pembuatnya adalah owner atau admin dan paket tersebut memiliki tema tim. Setiap penyimpanan dihitung dalam batas tema tersimpan pada paket (lihat [Paket dan batas](/docs/plans-and-limits)); jika melebihi batas, alat mengembalikan galat `LIMIT_REACHED` (`402`) dari API. Tanpa kunci, alat mengembalikan galat `401` yang menjelaskan cara menambahkannya.
+- **`save_barcode`** menyimpan barcode (format, nilai, judul opsional, dan opsi gambar) ke workspace milik kunci, yang tercantum di Barcode pada dasbor. Alat ini memerlukan kunci dengan `codes:write`. Semua paket dapat menyimpan barcode, hingga 1.000 pada paket Gratis; jika melebihi batas, alat mengembalikan `LIMIT_REACHED` (`402`).
+<IfAvailable feature="fileStorage">
+- **Logo yang Anda unggah** di [Dasbor → File](/docs/files), berdasarkan id file (`logo_file_id` di `design_qr`, `logoFileId` di `generate_qr_code`): PNG atau JPEG hingga 1 MB. Kunci harus milik workspace yang memiliki file tersebut.
+</IfAvailable>
+
+<Tabs items={["Claude Code", "Cursor", "VS Code"]}>
+  <Tab value="Claude Code">
+    ```bash
+    claude mcp add --transport http qrdx https://mcp.qrdx.dev/mcp \
+      --header "Authorization: Bearer $QRDX_API_KEY"
+    ```
+  </Tab>
+  <Tab value="Cursor">
+    ```json
+    {
+      "mcpServers": {
+        "qrdx": {
+          "url": "https://mcp.qrdx.dev/mcp",
+          "headers": { "Authorization": "Bearer qrdx_…" }
+        }
+      }
+    }
+    ```
+  </Tab>
+  <Tab value="VS Code">
+    ```json
+    {
+      "servers": {
+        "qrdx": {
+          "type": "http",
+          "url": "https://mcp.qrdx.dev/mcp",
+          "headers": { "Authorization": "Bearer qrdx_…" }
+        }
+      }
+    }
+    ```
+  </Tab>
+</Tabs>
+
+Jangan simpan kunci di berkas konfigurasi yang dibagikan atau di-commit. Panggilan yang dilakukan dengan kunci dihitung dalam [kuota API](/docs/plans-and-limits) harian workspace; semua alat lainnya bekerja sama dengan atau tanpa kunci.
+
+## Privasi dan batas [#privacy-and-limits]
+
+- Alat-alat ini merender gambar, memeriksa desain, memformat teks, dan membaca komunitas publik. Hanya `save_template` dan `save_barcode` yang menulis sesuatu: tema atau barcode yang Anda minta untuk disimpan, di workspace milik kunci API. Server tidak menyimpan kode yang Anda buat.
+- URL gambar yang dikembalikan oleh `generate_qr_code` dan `generate_barcode` berisi data yang dikodekan. Jangan bagikan URL tersebut jika datanya bersifat pribadi, seperti kata sandi Wi-Fi.
+- Permintaan dibatasi 120 per menit per alamat IP, dan `design_qr` dibatasi 20. Dengan kunci, `save_template` juga dibatasi 30 per menit per pengguna.
+
+## Hosting mandiri dan pengembangan lokal [#self-hosting-and-local-development]
+
+Server MCP merupakan bagian dari aplikasi web QRdx, sehingga setiap instans menyajikannya di `/api/mcp`:
+
+- **Hosting mandiri.** Jika `NEXT_PUBLIC_APP_URL` adalah domain Anda sendiri, halaman sambungan, cuplikan, dan tautan instalasi menggunakan `https://<your-domain>/api/mcp`.
+- **Pengembangan lokal.** `bun run dev` menyajikannya di `http://localhost:3000/api/mcp`. Halaman sambungan tetap menampilkan URL publik dan menawarkan URL lokal sebagai petunjuk, sehingga Anda dapat mengarahkan klien ke mesin Anda untuk menguji perubahan pada server sebelum dirilis.
+
+Membuka `/api/mcp` di browser akan mengalihkan ke halaman sambungan. Klien MCP tidak pernah meminta HTML, sehingga mereka tetap menjangkau server seperti biasa.

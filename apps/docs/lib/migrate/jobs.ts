@@ -3,6 +3,7 @@
 // lib/migrate/server/records.ts stores them.
 
 import { z } from "zod";
+import { MIGRATE_REASON_CODES } from "./reasons";
 import type {
   ImportJob,
   ImportOptions,
@@ -40,6 +41,12 @@ const jobItemSchema = z.object({
   slugTarget: z.enum(["domain", "shared"]).optional(),
   status: z.enum(["pending", "created", "skipped", "failed"]),
   reason: z.string().max(500).optional(),
+  reasonCode: z
+    .object({
+      code: z.enum(MIGRATE_REASON_CODES),
+      values: z.record(z.string(), z.string().max(300)).optional(),
+    })
+    .optional(),
   codeId: z.string().max(64).optional(),
   newLink: z.string().max(4096).optional(),
   unfinished: z.boolean().optional(),

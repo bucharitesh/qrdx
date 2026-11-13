@@ -1,0 +1,106 @@
+---
+title: "Kode QR Art"
+description: "Padukan logo atau foto ke dalam modul kode QR yang dapat dipindai (vektor, tanpa AI), atau buat karya seni AI di sekeliling kode QR."
+icon: Sparkles
+---
+
+QRdx memiliki tiga cara untuk mengubah kode QR menjadi karya seni:
+
+| | Cara kerja | Output | Biaya |
+|---|---|---|---|
+| **Logo QR** | Modul di dalam bentuk logo Anda mengambil warna logo; sisanya memudar ke warna yang lebih terang | Vektor (SVG, PDF, EPS, PNG) | Gratis |
+| **Image QR** | Setiap modul menampilkan foto Anda di sekeliling kotak tengah yang menyimpan nilai sebenarnya (halftone) | Vektor (SVG, PDF, EPS, PNG) | Gratis |
+| **AI art** | Model gambar AI melukis ulang kode sebagai sebuah pemandangan, dan setiap gambar diverifikasi agar dapat dipindai | Gambar 1024 px, salinan cetak 2048 px | Kredit AI art |
+
+Logo QR dan Image QR digambar oleh pustaka `qrdx` itu sendiri, sehingga keduanya berfungsi secara offline, di editor, di server, dan di Node, dan hasilnya selalu berupa kode QR sungguhan: pola finder, timing, dan alignment tidak pernah diubah.
+
+## Di editor [#in-the-editor]
+
+Buka [playground](/playground?tab=art), masuk ke tab **Art**, lalu pilih **Logo QR** atau **Image QR**:
+
+1. Unggah logo atau foto (PNG, JPG, WebP atau SVG, hingga 1 MB). PNG atau SVG transparan menghasilkan Logo QR yang paling bersih.
+2. Atur **intensitas**: rendah mempertahankan tampilan kode yang polos, tinggi menampilkan lebih banyak gambar.
+3. Perhatikan **pemeriksaan pemindaian** di samping penggeser. Pemeriksaan ini mendekode kode art di browser Anda pada tiga ukuran, seperti [skor pemindaian](/docs/qr-detection) di pratinjau.
+
+Mengunggah gambar art mengatur koreksi kesalahan ke `H`, yang memberi ruang terbesar bagi art. Gambar tidak pernah meninggalkan browser Anda: hanya kisi warna kecil (lebar 64 atau 96 piksel) yang disimpan bersama desain.
+
+## Di kode [#in-code]
+
+Berikan prop `art` dengan sebuah mode, gambar yang telah disampel, dan intensitas opsional (0 hingga 1, bawaan 0.6):
+
+```tsx
+import { QRCodeSVG, loadQRArtImage } from 'qrdx';
+
+// Browser: sample an uploaded file, a data URL or an <img>
+const image = await loadQRArtImage(file, { mode: 'logo' });
+
+<QRCodeSVG
+  value="https://example.com"
+  size={512}
+  level="H"
+  art={{ mode: 'logo', image, intensity: 0.7 }}
+/>;
+```
+
+Di server atau di Node, dekode sendiri gambarnya lalu berikan piksel RGBA ke `createQRArtImage`:
+
+```ts
+import sharp from 'sharp';
+import { createQRArtImage } from 'qrdx';
+
+const { data, info } = await sharp('photo.jpg')
+  .ensureAlpha()
+  .raw()
+  .toBuffer({ resolveWithObject: true });
+
+const image = createQRArtImage(
+  { data, width: info.width, height: info.height },
+  { maxSize: 96 }
+);
+// art={{ mode: 'halftone', image, intensity: 0.8 }}
+```
+
+`art.image` adalah JSON biasa (`{ width, height, data }` dengan RGBA base64), sehingga Anda dapat menyimpannya bersama desain tersimpan dan merender kode yang sama di mana saja, secara sinkron, tanpa mengambil gambar lagi.
+
+| Opsi | Nilai | Catatan |
+|---|---|---|
+| `mode` | `logo`, `halftone` | `halftone` adalah "Image QR" di editor |
+| `image` | dari `loadQRArtImage` atau `createQRArtImage` | paling banyak 192 × 192 sampel |
+| `intensity` | `0` hingga `1` | bawaan `0.6`; `0` terlihat seperti kode polos |
+
+Art menggantikan pola badan; mata sudut tetap memakai `cornerEyePattern`, `cornerEyeDotPattern`, dan warnanya. Art menggunakan warna pertama dari gradien `fgColor`/`bgColor`, dan memerlukan latar depan gelap di atas latar belakang terang (dengan warna terbalik, tampilannya kembali menjadi polos).
+
+### Cara keterbacaan pemindaian dijaga [#how-scannability-is-kept]
+
+- **Logo QR**: modul gelap di dalam logo diwarnai ulang, tetapi hanya digelapkan hingga luminansi yang masih dibaca pemindai sebagai gelap; modul terang di dalam logo mendapat rona pucat yang tetap di atas ambang terang. Modul gelap di luar logo memudar menjadi abu-abu, tidak pernah lebih terang dari ambang gelap.
+- **Badge Logo QR**: setiap modul di bawah pelat dapat merusak satu codeword. Pelat diukur sehingga tidak ada blok koreksi kesalahan yang kehilangan lebih dari 60% codeword yang dapat diperbaikinya, sehingga sisanya tersedia untuk kamera. Intensitas memperbesar pelat hingga ukuran tersebut. Kode kecil mendapat logo yang lebih kecil, dan yang terkecil (versi 1, versi 2 pada L atau M, versi 3 pada L) tidak menggambar pelat.
+- **Image QR**: setiap modul dibagi menjadi kisi 3 × 3. Sel luar menampilkan foto, digelapkan atau diterangkan sesuai nilai modul, dan bagian tengah mempertahankan warna latar depan atau latar belakang yang tepat, yaitu tempat pemindai mengambil sampel.
+- Modul finder, timing, alignment, format, dan versi selalu digambar solid.
+
+Periksa desain apa pun dengan `getScanScore(props)` sebelum dicetak, dan ujilah dengan kamera ponsel sungguhan.
+
+## Mengekspor kode art [#exporting-art-codes]
+
+Kode art adalah bentuk vektor, sehingga setiap ekspor tetap tajam:
+
+```ts
+import { downloadQRCode, getQRAsEPS, getQRAsPrintPDF } from 'qrdx';
+
+await downloadQRCode(props, { format: 'svg', size: { width: 1024, height: 1024 } });
+const pdf = await getQRAsPrintPDF(props, { size: 40, unit: 'mm', colorMode: 'cmyk' });
+const eps = await getQRAsEPS(props, { sizeMm: 40, bleedMm: 3, colorMode: 'cmyk' });
+```
+
+`getQRAsEPS` menulis file EPSF-3.0 dengan `%%BoundingBox` dalam point dan setiap modul, mata, dan bingkai sebagai path PostScript. Seperti PDF cetak, ia mempertahankan gradien linear dan radial (sebagai shading PostScript Level 3) dan tidak memiliki transparansi. Logo PNG dan JPEG disematkan sebagai gambar; format logo lain dikonversi di browser dan dihilangkan di server. Teks bingkai memakai Helvetica, sehingga karakter di luar Latin-1 tercetak sebagai `?`. `svgToEPS(svg, { width })` mengonversi SVG apa pun yang dirender pustaka ini.
+
+CLI juga menulis EPS: `qrdx generate "https://example.com" -o qr.eps`.
+
+<IfAvailable feature="aiArt" title="AI art">
+
+[AI QR art](/ai/art) mengubah kode Anda menjadi sebuah pemandangan dengan {facts.artModel}, melalui Vercel AI Gateway. Anda mendapat {facts.aiArtStyles} preset gaya yang dapat dijelajahi per kategori atau dicari, masing-masing dengan pratinjau yang lolos pemeriksaan pemindaian. Ada juga hal-hal yang dihindari, penggeser **Visibilitas QR** (seberapa kuat model mengutamakan kode) dan penggeser **kreativitas** (seberapa bebas model membaca prompt Anda), 1 hingga 4 variasi per proses, dan gambar referensi opsional, seperti logo atau palet, yang warna dan bentuknya terbawa.
+
+Setiap gambar diperiksa di server sebelum Anda melihatnya. QRdx mengirim kode hitam-putih polos ke model (koreksi kesalahan H, modul persegi, zona tenang yang lebar) dan memintanya mempertahankan kisi modul, mata finder, dan zona tenang. Kemudian QRdx mendekode gambar model dengan jsQR, apa adanya dan melalui model kamera ponsel. Jika gagal, QRdx menemukan kisi modul di tempat model menggambarnya dan memperkuat kode pada gambar model itu sendiri sesedikit mungkin: pertama mata finder dan zona tenang, lalu modul, menaikkan kekuatan langkah demi langkah hingga gambar dapat dipindai, juga saat kode lebih kecil dalam pandangan kamera. Visibilitas QR menentukan seberapa jauh hal ini boleh dilakukan. Hanya jika itu tidak cukup, QRdx menggambar ulang gambar sebagai kode Image QR. Gambar yang tetap tidak terdekode ke konten Anda yang tepat tidak akan dikirimkan. Browser Anda kemudian menilai variasi dan memilih yang terbaik; unduh dalam 1024 px atau sebagai salinan cetak 2048 px (disampel ulang dan diperiksa lagi).
+
+Setiap gambar yang dikirimkan memakai satu kredit AI art: akun Gratis mendapat 3 per bulan, Pro 30, dan Business 150 yang dibagikan kepada semua orang di workspace. Gambar yang gagal atau tidak lolos pemeriksaan pemindaian tidak memakai kredit, dan salinan cetak gratis. AI art adalah gambar raster dan kontennya tetap, jadi untuk tautan yang dapat diedit, masukkan tautan pendek dari [kode QR dinamis](/docs/dynamic-qr-codes) ke dalamnya.
+
+</IfAvailable>

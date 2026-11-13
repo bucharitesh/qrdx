@@ -1,0 +1,60 @@
+---
+title: "QR 코드 카드"
+description: "\"Scan me\" 프레임 안의 QR 코드, 제목, 설명, 그리고 작업을 넣을 공간이 있는 카드입니다."
+icon: Frame
+---
+
+<ComponentLinks name="qr-code-card" />
+
+<ComponentPreview name="qr-code-card-demo" />
+
+## 설치 [#installation]
+
+<InstallationTabs name="qr-code-card" />
+
+## 사용법 [#usage]
+
+```tsx
+import { QrCodeCard } from "@/components/qr-code-card";
+```
+
+```tsx
+<QrCodeCard
+  value="https://example.com/menu"
+  title="Our menu"
+  description="Scan to see today's specials."
+/>
+```
+
+children으로 전달하는 내용은 카드 푸터에 렌더링됩니다. 예를 들어 복사 버튼이나 [다운로드 메뉴](/docs/components/qr-code-download)를 넣을 수 있어요.
+
+## 예제 [#examples]
+
+### 프레임 [#frames]
+
+`frame`은 행동 유도 문구를 코드 아래(`"bottom"`)나 위(`"top"`)에 배치하거나, 프레임을 아예 없앱니다(`"none"`). `cta`로 문구를 바꾸고, `frameClassName`으로 프레임 스타일을 바꿀 수 있습니다. 예를 들어 브랜드 색상을 적용할 수 있어요.
+
+<ComponentPreview name="qr-code-card-frames" />
+
+프레임은 기본적으로 테마의 `foreground`와 `background` 색상을 사용하므로 라이트 모드와 다크 모드에서 모두 잘 보입니다. 코드 자체는 밝은 배경을 유지하며, 모든 스캐너가 이를 읽을 수 있습니다.
+
+### 코드 스타일 지정 [#styling-the-code]
+
+`qr`은 qrdx의 모든 스타일 옵션을 받습니다. `fgColor`, `bgColor`, 그라데이션, `bodyPattern`, 모서리 패턴, `logo`, `templateId`가 해당됩니다.
+
+```tsx
+<QrCodeCard
+  value="https://example.com"
+  qr={{
+    fgColor: "#155DFC",
+    bodyPattern: "rounded",
+    cornerEyePattern: "extra-rounded",
+  }}
+/>
+```
+
+## API 레퍼런스 [#api-reference]
+
+<auto-type-table path="../../../registry/qrdx/qr-code-card.tsx" type="{ [K in keyof QrCodeCardProps as K extends Exclude<keyof ComponentProps<'div'>, 'title' | 'children'> ? never : K]: QrCodeCardProps[K] }" />
+
+`className`과 같은 다른 prop은 [Card](https://ui.shadcn.com/docs/components/card)로 전달됩니다.

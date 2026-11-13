@@ -9,6 +9,7 @@ import { siteConfig } from "@/config/site";
 import { isFeatureAvailable } from "@/lib/feature-availability";
 import { localizedMetadata } from "@/lib/i18n/metadata";
 import { requireLocale } from "@/lib/i18n/server";
+import { MONEY_BACK_DAYS } from "@/lib/pricing";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await requireLocale();
@@ -22,7 +23,7 @@ export async function generateMetadata(): Promise<Metadata> {
   });
 }
 
-const UPDATED = "2026-10-31";
+const UPDATED = "2026-11-13";
 
 const SCENARIOS = [
   "cancel",
@@ -136,6 +137,35 @@ export default async function GuaranteePage() {
             </div>
           ))}
         </dl>
+      </section>
+
+      {/* The money-back guarantee (content/legal/refunds.mdx) */}
+      <section
+        aria-labelledby="money-back"
+        className="w-full px-10 py-12 flex flex-col gap-3 max-w-3xl"
+      >
+        <h2
+          className="text-2xl font-medium tracking-tighter text-secondary-foreground"
+          id="money-back"
+        >
+          {t("moneyBackTitle")}
+        </h2>
+        <p className="leading-relaxed text-muted-foreground">
+          {t.rich("moneyBack", {
+            days: MONEY_BACK_DAYS,
+            email: siteConfig.links.email,
+            mail: (chunks) => (
+              <a className={LINK} href={`mailto:${siteConfig.links.email}`}>
+                {chunks}
+              </a>
+            ),
+          })}
+        </p>
+        <p className="text-sm">
+          <LocaleLink className={LINK} href="/legal/refunds">
+            {t("moneyBackLink")}
+          </LocaleLink>
+        </p>
       </section>
 
       <section

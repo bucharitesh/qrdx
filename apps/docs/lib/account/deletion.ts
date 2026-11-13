@@ -173,59 +173,10 @@ export function planAccountDeletion(facts: DeletionFacts): DeletionPlan {
   };
 }
 
-function plural(count: number, one: string, many = `${one}s`) {
-  return `${count.toLocaleString("en")} ${count === 1 ? one : many}`;
-}
-
-function listOf(items: string[]): string {
-  if (items.length <= 1) return items.join("");
-  return `${items.slice(0, -1).join(", ")} and ${items[items.length - 1]}`;
-}
-
 /** What deleting does, in plain sentences for the page and the dialog. */
 export interface DeletionSummary {
   blockers: string[];
   consequences: string[];
-}
-
-export function describeDeletionPlan(plan: DeletionPlan): DeletionSummary {
-  const { codes, pages, files, domains } = plan.personal;
-  const counted = [
-    codes > 0 ? plural(codes, "code") : null,
-    pages > 0 ? plural(pages, "hosted page") : null,
-    files > 0 ? plural(files, "file") : null,
-    domains > 0 ? plural(domains, "custom domain") : null,
-  ].filter((item): item is string => item !== null);
-
-  const consequences = [
-    counted.length > 0
-      ? `Your own workspace is deleted, with its ${listOf(counted)}, plus your scans, themes, webhooks and integrations.${codes > 0 ? ` Its printed QR codes show a "QR code not found" page.` : ""}`
-      : "Your own workspace is deleted, with your themes, settings and integrations.",
-  ];
-
-  for (const team of plan.teams) {
-    if (team.action === "hand-over") {
-      const who = team.successor.name || team.successor.email;
-      consequences.push(
-        team.promote
-          ? `${team.name}: ${who} (${roleLabel(team.successor.role)}) becomes an owner and takes over what you created in the workspace, so its codes keep working.`
-          : `${team.name}: what you created in the workspace stays with it, under ${who}.`,
-      );
-    } else if (team.action === "delete-team") {
-      consequences.push(
-        `${team.name}: you're the only member, so the workspace and its content are deleted.`,
-      );
-    }
-  }
-
-  if (plan.subscription) {
-    consequences.push(
-      `Your ${plan.subscription.planName} subscription is cancelled straight away.`,
-    );
-  }
-  consequences.push("You're signed out on every device.");
-
-  return { blockers: plan.blockers, consequences };
 }
 
 /**

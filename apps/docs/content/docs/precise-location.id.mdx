@@ -1,0 +1,78 @@
+---
+title: "Lokasi presisi dan geofencing"
+description: "Minta orang yang memindai kode QR dinamis untuk membagikan lokasi mereka, lihat di mana kode dipindai hingga akurasi sekitar 100 m, dan arahkan pemindaian berdasarkan area."
+icon: MapPin
+---
+
+Setiap [kode QR dinamis](/docs/dynamic-qr-codes) mencatat negara, wilayah, dan kota dari setiap pemindaian berdasarkan jaringan. Di Pro dan Business, Anda juga dapat meminta pemindai untuk membagikan lokasi presisi mereka. Orang yang mengizinkannya akan muncul di analitik kode sebagai titik yang dibulatkan hingga sekitar 100 m, dan [perutean cerdas](/docs/smart-routing) dapat mengarahkan mereka ke tujuan yang berbeda tergantung pada lokasi mereka.
+
+Permintaan ini nonaktif untuk setiap kode sampai Anda mengaktifkannya, dan setiap pemindai menentukan sendiri di browser mereka.
+
+## Aktifkan [#turn-it-on]
+
+Buka kode di [dasbor](/dashboard?to=codes), masuk ke tab **Settings**, lalu aktifkan **Ask scanners for precise location** di panel **Precise location**. Fitur ini berfungsi untuk kode yang membuka tautan situs web dan kode yang membuka halaman yang di-hosting.
+
+Dengan [REST API](/docs/developers/rest-api), kirim `PATCH /v1/codes/{id}` dengan `{"preciseLocation": true}`. Kode melaporkan pengaturan ini di kolom `preciseLocation`.
+
+## Yang dilihat pemindai [#what-scanners-see]
+
+**Kode yang membuka tautan situs web** menampilkan langkah singkat "Share your location?" sebelum tautan dibuka, dengan **Allow** dan **Skip**. Allow memunculkan permintaan lokasi bawaan browser. Langkah ini tidak pernah menghalangi siapa pun untuk menuju tautan Anda:
+
+- Skip langsung membuka tautan.
+- Jika pemindai menolak di browser, atau browser tidak dapat menemukan lokasi, tautan dibuka.
+- Jika tidak ada lokasi 8 detik setelah mereka mengetuk Allow, tautan tetap dibuka.
+- Browser yang sudah menolak untuk situs tersebut akan melewati langkah ini dengan sendirinya, dan browser yang sudah mengizinkan akan membagikan lokasi tanpa ketukan kedua.
+- Tanpa JavaScript, tautan langsung dibuka.
+
+Langkah ini menyebutkan situs tujuan pemindai, dan menautkan ke kebijakan privasi.
+
+**Kode yang membuka halaman yang di-hosting** langsung membuka halaman seperti biasa. Setelah halaman dimuat, browser meminta lokasi di halaman tersebut; halaman tidak pernah menunggu jawaban. Permintaan ini hanya muncul tepat setelah pemindaian, tidak pernah saat seseorang membuka alamat halaman secara langsung.
+
+Saat pengaturan nonaktif, tidak ada yang berubah: pemindaian langsung menuju tujuan tanpa langkah tambahan.
+
+## Yang disimpan [#whats-stored]
+
+Saat seseorang mengizinkan, browser mereka membulatkan lokasi hingga 3 angka desimal (sekitar 100 m) sebelum mengirimnya, dan QRdx membulatkannya lagi sebelum menyimpannya bersama pemindaian tersebut, beserta akurasi yang dilaporkan browser. Posisi persis tidak pernah sampai ke QRdx.
+
+Tidak ada yang disimpan saat seseorang melewati atau menolak. Pemindaian tetap dihitung, dengan negara, wilayah, dan kota dari jaringan seperti biasa.
+
+Lokasi presisi disimpan selama pemindaian lain dari kode tersebut, dan paket Anda menentukan seberapa jauh ke belakang Anda dapat melihatnya. Lihat [Yang dicatat QRdx saat seseorang memindai](/docs/help/privacy-and-security/scan-data).
+
+## Di analitik [#in-analytics]
+
+Tab **Analytics** pada kode memiliki kartu **Precise locations**, terpisah dari negara dan kota berbasis IP. Kartu ini menampilkan berapa banyak pemindai yang diminta, berapa banyak yang membagikan lokasi mereka dan berapa persentasenya, lalu setiap titik yang dibagikan beserta jumlah pemindaian, akurasi rata-rata, dan pemindaian terbaru. Urutkan tabel berdasarkan salah satu kolom tersebut, dan buka sebuah titik di OpenStreetMap untuk melihat lokasinya.
+
+Ekspor CSV memiliki kolom `latitude`, `longitude`, `location_accuracy_m`, dan `location_source`. `location_source` bernilai `gps` untuk lokasi yang dibagikan, `ip` saat kode meminta tetapi pemindai tidak membagikan, dan kosong saat kode tidak meminta. [`GET /v1/codes/{id}/scans`](/docs/developers/api/get-code-scans) mengembalikan kolom yang sama per pemindaian, ditambah ringkasan `preciseLocations`.
+
+Tautan analitik yang dibagikan (**Share analytics** di menu kode) tidak pernah menampilkan lokasi presisi. Tautan tersebut hanya sampai tingkat negara.
+
+## Arahkan pemindaian berdasarkan area [#route-scans-by-area]
+
+Di panel **Smart routing** pada kode, tambahkan aturan dengan kondisi **Area**: titik pusat dan radius antara 100 m hingga 500 km. Untuk mendapatkan titik pusat, klik kanan suatu tempat di aplikasi peta lalu salin koordinatnya (misalnya `40.7580, -73.9855`), atau gunakan **Use my location** saat Anda berada di sana. **Check on a map** membuka titik tersebut di OpenStreetMap.
+
+QRdx memeriksa area dengan lokasi terbaik yang dimilikinya untuk pemindaian tersebut:
+
+1. Lokasi yang dibagikan pemindai pada langkah tadi, saat lokasi presisi aktif dan mereka mengizinkannya.
+2. Jika tidak ada, perkiraan lokasi dari alamat IP mereka. Di qrdx.dev, ini berasal dari geolokasi IP Vercel dan biasanya berupa pusat kota atau area pemindai, sehingga cocok untuk radius beberapa kilometer. Lokasi ini digunakan untuk mengarahkan pemindaian dan tidak pernah disimpan.
+
+Jika keduanya tidak tersedia, kondisi area tidak cocok, sedangkan kondisi area "is not" cocok. Salinan yang dihosting sendiri dan tidak berjalan di Vercel tidak memiliki koordinat IP, sehingga aturan area di sana hanya berfungsi dengan lokasi yang dibagikan.
+
+**Test your rules** memiliki kolom **Location**, sehingga Anda dapat memeriksa ke mana pemindaian dari titik mana pun akan diarahkan.
+
+### Hanya di dalam area [#only-inside-an-area]
+
+Untuk menampilkan sesuatu hanya kepada orang yang berada di suatu tempat, seperti lokasi acara atau toko:
+
+1. Tambahkan aturan dengan kondisi Area di sekitar tempat tersebut, dan atur URL-nya ke konten untuk orang yang berada di sana.
+2. Atur tujuan utama kode ke halaman untuk semua orang lainnya, misalnya halaman yang menyatakan bahwa penawaran hanya tersedia di lokasi.
+
+Aktifkan juga lokasi presisi, agar lokasi yang dibagikan pemindai menjadi penentu, hingga akurasi sekitar 100 m. Tanpa itu, lokasi IP yang menentukan, yang hanya setingkat kota.
+
+Browser memungkinkan orang memalsukan lokasi mereka, jadi aturan area bukan kontrol akses. Gunakan [kata sandi](/docs/code-controls) untuk apa pun yang harus tetap privat.
+
+## Perlu diketahui [#good-to-know]
+
+- Bot, pratinjau tautan, dan permintaan HEAD tidak pernah melihat langkah ini; mereka mendapat pengalihan biasa.
+- Kode dengan kata sandi tidak menampilkan langkah ini: setelah kata sandi yang benar, pemindaian langsung menuju tujuan.
+- Jumlah pengujian A/B untuk pembagian di balik kondisi Area merupakan perkiraan, karena pemindaian tidak menyimpan lokasi mana yang digunakan aturan.
+- Jika workspace Anda pindah ke Gratis, QRdx berhenti meminta lokasi presisi. Aturan area yang tersimpan tetap berfungsi dengan lokasi IP, dan menonaktifkan pengaturan ini tidak memerlukan paket tertentu.

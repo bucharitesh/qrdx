@@ -1,0 +1,152 @@
+---
+title: "Grundlegende Nutzung"
+description: "Rendere einen QR-Code mit der QRCode-Komponente und passe dann Farben, Muster, Logo, Vorlage und Fehlerkorrektur an."
+icon: FileCode
+---
+
+Erstelle QR-Codes und passe sie an deine Anforderungen an.
+
+<NpmStatus package="qrdx" />
+
+## Einfacher QR-Code [#basic-qr-code]
+
+```tsx
+import { QRCode } from 'qrdx';
+
+<QRCode
+  value="https://example.com"
+  size={256}
+/>
+```
+
+## Farben anpassen [#customize-colors]
+
+```tsx
+<QRCode
+  value="https://example.com"
+  size={256}
+  fgColor="#1a56db"
+  bgColor="#ffffff"
+  eyeColor="#0d47a1"
+  dotColor="#3b82f6"
+/>
+```
+
+## Muster hinzufügen [#add-patterns]
+
+Wähle aus {facts.bodyPatterns} Körpermustern, {facts.eyeShapes} Mustern für die Eckaugen und {facts.eyeCentres} Mustern für die Eckaugenpunkte:
+
+```tsx
+<QRCode
+  value="https://example.com"
+  size={256}
+  bodyPattern="rounded"
+  cornerEyePattern="circle"
+/>
+```
+
+Es gibt {facts.bodyPatterns} Körpermuster, von `square`, `rounded` und `circle` bis hin zu verbundenen Stilen wie `liquid` und `classy` sowie verspielten Punkten wie `star` oder `heart`. Die vollständige Liste und die Optionen für Eckaugen und Augenpunkte findest du unter [Muster](/docs/features/patterns). Alle Varianten im Überblick siehst du unter [Formen, Augen und Rahmen](/docs/styles).
+
+## Logo hinzufügen [#add-a-logo]
+
+```tsx
+<QRCode
+  value="https://example.com"
+  size={512}
+  hideLogo={false}
+  logo="https://example.com/logo.png"
+  level="Q"
+/>
+```
+
+Verwende eine höhere Fehlerkorrektur (`Q` oder `H`), wenn du Logos hinzufügst.
+
+## Vorlagen verwenden [#use-templates]
+
+```tsx
+<QRCode
+  value="https://example.com"
+  templateId="Arrow"
+  size={256}
+/>
+```
+
+Verfügbare Vorlagen: `default`, `Arrow`, `StandardBox`, `SquareBorder`, `StrikedBox`, `Halloween`
+
+## Fehlerkorrektur [#error-correction]
+
+Wähle je nach Anwendungsfall:
+
+- **L (Low)** — ~7 % Korrektur, saubere Umgebungen
+- **M (Medium)** — ~15 % Korrektur, allgemeine Nutzung
+- **Q (Quartile)** — ~25 % Korrektur, mit Logos
+- **H (High)** — ~30 % Korrektur, maximale Widerstandsfähigkeit
+
+```tsx
+<QRCode
+  value="https://example.com"
+  level="Q"
+/>
+```
+
+## Komponentenvarianten [#component-variants]
+
+### QRCodeCanvas [#qrcodecanvas]
+
+Für erweiterte Anpassung mit Verläufen:
+
+```tsx
+import { QRCodeCanvas } from 'qrdx';
+
+<QRCodeCanvas
+  value="https://example.com"
+  size={512}
+  fgColor={{
+    type: 'linear',
+    stops: [
+      { offset: 0, color: '#667eea' },
+      { offset: 1, color: '#764ba2' }
+    ],
+    x1: 0, y1: 0, x2: 1, y2: 1
+  }}
+/>
+```
+
+### QRCodeSVG [#qrcodesvg]
+
+Für skalierbare Vektorgrafiken:
+
+```tsx
+import { QRCodeSVG } from 'qrdx';
+
+<QRCodeSVG
+  value="https://example.com"
+  size={512}
+/>
+```
+
+## Best Practices [#best-practices]
+
+### Hinweise zur Größe [#size-guidelines]
+
+- **128px** — Minimum für den Scan
+- **256-512px** — Empfohlen für das Web
+- **1024px+** — Hohe Qualität für den Druck
+
+### Fehlerkorrektur [#error-correction-1]
+
+- Verwende `Q` oder `H`, wenn du Logos hinzufügst
+- Verwende `M` für allgemeine Anwendungen
+- Verwende `L` nur in sauberen Umgebungen
+
+### Performance [#performance]
+
+- Verwende nach Möglichkeit einfarbige Flächen statt Verläufen
+- Wähle einfachere Muster für bessere Performance
+- Cache QR-Codes nach Möglichkeit serverseitig
+
+## Nächste Schritte [#next-steps]
+
+- [Farben & Verläufe](/docs/features/colors-gradients) — Erweiterte Farboptionen
+- [Vorlagen](/docs/features/templates) — Vorgefertigte Stile
+- [Downloads](/docs/features/downloads) — Exportoptionen

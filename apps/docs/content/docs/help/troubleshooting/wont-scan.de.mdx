@@ -1,0 +1,44 @@
+---
+title: "Ein Code lässt sich nicht scannen"
+description: "Warum ein QR-Code nicht gescannt wird und wie du jede Ursache behebst."
+---
+
+Wenn die Handykamera nicht auf deinen Code reagiert oder ihn nur manchmal liest, gehe diese Prüfungen der Reihe nach durch.
+
+Beginne mit dem **Scan-Score** unter der Vorschau im [Playground](/playground). Klicke darauf, um zu sehen, welche Prüfungen fehlschlagen. Siehe [Ein Design mit dem Scan-Score prüfen](/docs/help/designing/scan-score).
+
+Bei einem Code, der schon gedruckt ist, mache ein Foto und lade es in den [Scan-Checker](/tools/scan-checker). Er zeigt, was der Code enthält, und testet, wie gut er sich lesen lässt.
+
+## Häufige Ursachen [#common-causes]
+
+### Zu wenig Kontrast oder hell auf dunkel [#low-contrast-or-light-on-dark]
+
+Scanner suchen nach dunklen Quadraten auf hellem Hintergrund. Mache den Code dunkler oder den Hintergrund heller und vermeide helle Codes auf dunklem Hintergrund. Siehe [Farben wählen, die sich scannen lassen](/docs/help/designing/colors-and-contrast).
+
+### Ein Logo verdeckt zu viel [#a-logo-covers-too-much]
+
+Stelle **Fehlerkorrektur** im Tab **Design** auf **Hoch**. Siehe [Logo hinzufügen](/docs/help/designing/logos).
+
+### Ungewöhnliche Eye-Formen [#unusual-eye-shapes]
+
+Kreisförmige Eyes und Eyes mit geschwungenen Ecken werden von manchen Scanner-Apps nicht gelesen. Quadratische, abgerundete und Zahnrad-Eyes werden überall gelesen.
+
+### Kein freier Rand [#no-clear-border]
+
+Scanner brauchen leeren Raum um den Code. Stelle **Abstand** auf **Standard** oder **Groß** und lasse keine anderen Grafiken den Code berühren.
+
+### Zu klein gedruckt [#printed-too-small]
+
+Mache den Code etwa ein Zehntel so groß wie die Scan-Entfernung: 2 cm für eine Karte, die aus 20 cm gelesen wird, 10 cm für ein Poster, das aus 1 m gelesen wird. Der [Druckgrößen-Rechner](/tools/print-size) berechnet das für dich.
+
+### Zu viel Inhalt [#too-much-content]
+
+Ein statischer QR-Code mit viel Text wird dicht und ist klein schwer lesbar. Verwende stattdessen einen dynamischen QR-Code: Er enthält nur einen kurzen Link. Siehe [Statisch oder dynamisch](/docs/help/getting-started/static-vs-dynamic).
+
+### Der Druck selbst [#the-print-itself]
+
+Unscharfer Druck, glänzende Oberflächen, die Licht reflektieren, sowie gewölbte oder geknickte Flächen erschweren das Lesen der Codes. Drucke als Vektordatei (SVG, EPS oder ein PDF aus **Druckfertig**) und teste ein Exemplar, bevor du viele druckst.
+
+## Er wird gescannt, zeigt aber einen Fehler [#it-scans-but-shows-an-error]
+
+Wenn die Kamera den Code liest, du aber eine Seite wie „QR code not found“ siehst, lies [Ein Scan zeigt eine Fehlerseite](/docs/help/troubleshooting/error-pages).

@@ -1,0 +1,72 @@
+---
+title: "NFC-Tags und Visitenkarten"
+description: "Schreibe den Link eines dynamischen QR-Codes auf einen NFC-Tag oder eine NFC-Karte, zähle Taps getrennt von QR-Scans und lege eine vCard-Plus-Seite auf eine NFC-Visitenkarte."
+icon: Nfc
+---
+
+Jeder [dynamische QR-Code](/docs/dynamic-qr-codes) kann auch auf einen NFC-Tag. Du schreibst den NFC-Link des Codes auf einen Tag, Sticker oder eine Karte, und ein Smartphone, das ihn berührt, öffnet dasselbe Ziel wie der QR-Code. Taps erscheinen in den Analytics des Codes neben den QR-Scans und werden getrennt gezählt. Das funktioniert in jedem Tarif.
+
+QRdx verkauft, druckt oder versendet keine Tags oder Karten. Kaufe unbeschriebene bei einem beliebigen NFC-Anbieter und beschreibe sie selbst auf der Seite des Codes.
+
+## Der NFC-Link [#the-nfc-link]
+
+Der NFC-Link eines Codes ist sein Kurzlink mit angehängtem `?nfc`, zum Beispiel `https://qrdx.dev/q/aB3dE5f?nfc`, oder `https://go.example.com/menu?nfc` bei einer [eigenen Domain](/docs/custom-domains). Er läuft über dieselbe Weiterleitung wie der Kurzlink, daher gelten Smart Routing, Passwörter, Zeitpläne und Scan-Limits auch für Taps. Die Endung `?nfc` teilt den Analytics nur mit, dass der Besuch ein Tap war. Der QR-Code behält seinen eigenen Link, und bereits gedruckte Codes funktionieren genau wie zuvor.
+
+Um ihn zu finden, öffne den Code im [Dashboard](/dashboard?to=codes) und wähle auf dem Tab „Übersicht" **Mit NFC verwenden**. Die [REST API](/docs/developers/rest-api) liefert ihn bei jedem Code als `nfcLink`.
+
+## Tag auf Android beschreiben [#write-a-tag-on-android]
+
+Chrome auf Android kann Tags direkt von der NFC-Seite des Codes aus beschreiben:
+
+1. Aktiviere NFC in den Einstellungen des Smartphones.
+2. Öffne den Code in Chrome, wähle **Mit NFC verwenden** und tippe dann auf **Auf NFC-Tag schreiben**.
+3. Halte den Tag flach an die Rückseite des Smartphones, bis die Seite **Geschrieben** anzeigt.
+4. Halte den Tag zum Testen an das Smartphone. Er sollte den Link öffnen.
+
+Zum Schreiben von einer Webseite aus wird Web NFC benötigt, das nur Chrome auf Android bietet. Auf einem Computer zeigt die NFC-Seite stattdessen einen QR-Code: Scanne ihn mit dem Android-Smartphone, melde dich an und beschreibe den Tag dort.
+
+### Tag sperren [#locking-a-tag]
+
+Nachdem ein Tag beschrieben wurde, bietet die Seite an, ihn zu sperren, sofern der Browser das kann. Ein gesperrter Tag kann von niemandem mehr geändert oder gelöscht werden, auch nicht von dir. Sperre daher nur Tags, die dort liegen, wo Fremde sie überschreiben könnten, etwa ein Sticker auf einem Café-Tisch. Der Tag enthält den Link des Codes und nicht dessen Ziel, sodass du in QRdx weiterhin ändern kannst, wohin ein gesperrter Tag führt.
+
+## Tag auf dem iPhone beschreiben [#write-a-tag-on-iphone]
+
+Safari kann keine NFC-Tags beschreiben, nutze deshalb eine beliebige NFC-Writer-App aus dem App Store:
+
+1. Kopiere den NFC-Link von der NFC-Seite des Codes.
+2. Füge in der App einen URL-Eintrag hinzu (manche Apps nennen ihn Link oder URI) und füge den Link ein.
+3. Wähle „Schreiben" und halte die Oberseite des iPhones an den Tag, bis die App meldet, dass der Vorgang abgeschlossen ist.
+
+Zum Schreiben brauchst du ein iPhone 7 oder neuer mit iOS 13 oder neuer.
+
+## Welche Tags du kaufen solltest [#which-tags-to-buy]
+
+Achte auf einen NTAG213-, NTAG215- oder NTAG216-Chip. Sie gibt es als Sticker, Karten, Schlüsselanhänger und Armbänder.
+
+| Chip | Speicher |
+| --- | --- |
+| NTAG213 | 144 Bytes |
+| NTAG215 | 504 Bytes |
+| NTAG216 | 888 Bytes |
+
+Ein NFC-Link auf qrdx.dev braucht etwa 30 Bytes, daher passt er auf alle drei. Links mit langen eigenen Domains oder langen hinteren Teilen brauchen mehr; die NFC-Seite zeigt, wie viele Bytes dein Link braucht und auf welche Chips er passt.
+
+Android-Smartphones mit aktiviertem NFC sowie das iPhone XS oder neuer öffnen den Link eines Tags, sobald er das Smartphone berührt, ganz ohne App.
+
+## NFC-Visitenkarten [#nfc-business-cards]
+
+Eine [vCard-Plus-Seite](/docs/landing-pages) ist eine Kontaktseite mit einer Schaltfläche **Kontakt speichern** und eignet sich gut als NFC-Visitenkarte. Bei einem Code, der eine solche Seite öffnet, zeigt der Tab „Übersicht" **Diese Karte auf NFC legen**, und der Seiteneditor hat eine Schaltfläche **Auf NFC legen**. Beide öffnen dieselbe NFC-Seite mit einer Anleitung für Karten.
+
+1. Kaufe unbeschriebene NFC-Visitenkarten oder NFC-Sticker für Karten, die du schon hast.
+2. Drucke den QR-Code des Codes ebenfalls auf die Karte. Smartphones ohne NFC oder mit ausgeschaltetem NFC scannen ihn stattdessen.
+3. Schreibe den NFC-Link von der NFC-Seite des Codes auf jede Karte.
+
+Weil jede Karte den Link des Codes enthält, aktualisiert eine Änderung an der vCard-Plus-Seite in QRdx alle Karten, die du bereits verteilt hast.
+
+## Taps in den Analytics [#taps-in-analytics]
+
+Der Tab „Analytics" eines Codes zeigt **QR-Scans und NFC-Taps** für den gewählten Zeitraum, und die Gesamtwerte darüber zählen beides. Die Analytics-Seite des Workspace und geteilte Analytics-Seiten zeigen dieselbe Aufteilung.
+
+Der CSV-Export hat eine Spalte `source` mit `qr` oder `nfc` für jeden Scan. In der REST API enthalten [Scan-Analytics](/docs/developers/api/get-code-scans) `sources` mit beiden Zahlen und bei jedem aufgelisteten Scan ein `source`, und auch [Webhooks](/docs/webhooks) für `scan.created` enthalten `source`.
+
+Scans aus der Zeit vor den NFC-Links zählen als QR-Scans. Für Taps gelten dieselben Regeln wie für Scans: Bots und Link-Vorschauen werden nicht gezählt.

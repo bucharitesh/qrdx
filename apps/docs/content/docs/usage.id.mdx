@@ -1,0 +1,152 @@
+---
+title: "Penggunaan dasar"
+description: "Render kode QR dengan komponen QRCode, lalu ubah warna, pola, logo, templat, dan koreksi kesalahannya."
+icon: FileCode
+---
+
+Buat dan sesuaikan kode QR sesuai kebutuhan Anda.
+
+<NpmStatus package="qrdx" />
+
+## Kode QR Dasar [#basic-qr-code]
+
+```tsx
+import { QRCode } from 'qrdx';
+
+<QRCode
+  value="https://example.com"
+  size={256}
+/>
+```
+
+## Sesuaikan Warna [#customize-colors]
+
+```tsx
+<QRCode
+  value="https://example.com"
+  size={256}
+  fgColor="#1a56db"
+  bgColor="#ffffff"
+  eyeColor="#0d47a1"
+  dotColor="#3b82f6"
+/>
+```
+
+## Tambahkan Pola [#add-patterns]
+
+Pilih dari {facts.bodyPatterns} pola badan, {facts.eyeShapes} pola mata sudut, dan {facts.eyeCentres} pola titik mata sudut:
+
+```tsx
+<QRCode
+  value="https://example.com"
+  size={256}
+  bodyPattern="rounded"
+  cornerEyePattern="circle"
+/>
+```
+
+Tersedia {facts.bodyPatterns} pola badan, mulai dari `square`, `rounded`, dan `circle` hingga gaya `liquid` dan `classy` yang menyambung serta titik `star` atau `heart` yang playful. Lihat [Pola](/docs/features/patterns) untuk daftar lengkap serta opsi mata sudut dan titik mata, dan [Bentuk, mata, dan bingkai](/docs/styles) untuk melihat semuanya.
+
+## Tambahkan Logo [#add-a-logo]
+
+```tsx
+<QRCode
+  value="https://example.com"
+  size={512}
+  hideLogo={false}
+  logo="https://example.com/logo.png"
+  level="Q"
+/>
+```
+
+Gunakan koreksi kesalahan yang lebih tinggi (`Q` atau `H`) saat menambahkan logo.
+
+## Gunakan Templat [#use-templates]
+
+```tsx
+<QRCode
+  value="https://example.com"
+  templateId="Arrow"
+  size={256}
+/>
+```
+
+Templat yang tersedia: `default`, `Arrow`, `StandardBox`, `SquareBorder`, `StrikedBox`, `Halloween`
+
+## Koreksi Kesalahan [#error-correction]
+
+Pilih sesuai kasus penggunaan Anda:
+
+- **L (Low)** — koreksi ~7%, lingkungan bersih
+- **M (Medium)** — koreksi ~15%, penggunaan umum
+- **Q (Quartile)** — koreksi ~25%, untuk kode dengan logo
+- **H (High)** — koreksi ~30%, ketahanan maksimum
+
+```tsx
+<QRCode
+  value="https://example.com"
+  level="Q"
+/>
+```
+
+## Varian Komponen [#component-variants]
+
+### QRCodeCanvas [#qrcodecanvas]
+
+Untuk penyesuaian lanjutan dengan gradien:
+
+```tsx
+import { QRCodeCanvas } from 'qrdx';
+
+<QRCodeCanvas
+  value="https://example.com"
+  size={512}
+  fgColor={{
+    type: 'linear',
+    stops: [
+      { offset: 0, color: '#667eea' },
+      { offset: 1, color: '#764ba2' }
+    ],
+    x1: 0, y1: 0, x2: 1, y2: 1
+  }}
+/>
+```
+
+### QRCodeSVG [#qrcodesvg]
+
+Untuk grafik vektor yang dapat diskalakan:
+
+```tsx
+import { QRCodeSVG } from 'qrdx';
+
+<QRCodeSVG
+  value="https://example.com"
+  size={512}
+/>
+```
+
+## Praktik Terbaik [#best-practices]
+
+### Panduan Ukuran [#size-guidelines]
+
+- **128px** — Minimum untuk pemindaian
+- **256-512px** — Disarankan untuk web
+- **1024px+** — Kualitas tinggi untuk cetak
+
+### Koreksi Kesalahan [#error-correction-1]
+
+- Gunakan `Q` atau `H` saat menambahkan logo
+- Gunakan `M` untuk aplikasi umum
+- Gunakan `L` hanya di lingkungan yang bersih
+
+### Performa [#performance]
+
+- Gunakan warna solid daripada gradien jika memungkinkan
+- Pilih pola yang lebih sederhana untuk performa yang lebih baik
+- Cache kode QR di sisi server jika memungkinkan
+
+## Langkah Berikutnya [#next-steps]
+
+- [Warna & Gradien](/docs/features/colors-gradients) — Opsi warna lanjutan
+- [Templat](/docs/features/templates) — Gaya siap pakai
+- [Unduhan](/docs/features/downloads) — Opsi ekspor

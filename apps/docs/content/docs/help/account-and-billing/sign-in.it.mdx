@@ -1,0 +1,68 @@
+---
+title: "Metodi di accesso e indirizzo email"
+description: "Accedi con Google, GitHub o un codice via email, collega i metodi di accesso, cambia il tuo indirizzo email e scopri cosa fare se hai perso l'accesso alla tua email."
+---
+
+## Come accedere [#ways-to-sign-in]
+
+- **Google** o **GitHub**.
+- **Codice via email**: inserisci la tua email, poi digita il codice a 6 cifre che ti inviamo. Un codice vale 5 minuti.
+
+<IfAvailable feature="passkeys">
+Dopo aver [aggiunto una passkey](/docs/help/privacy-and-security/passkeys), puoi accedere anche con l'impronta digitale, il volto o il blocco schermo.
+</IfAvailable>
+
+La prima volta che accedi, QRdx crea il tuo account. Non c'è nessuna password da ricordare.
+
+Con Google o GitHub, QRdx crea l'account solo se hanno verificato il tuo indirizzo email. Se il tuo lì non è verificato, verificalo prima (GitHub elenca i tuoi indirizzi in **Settings** → **Emails**), oppure accedi con un codice via email.
+
+## Un account per il tuo indirizzo che non hai creato tu [#an-account-for-your-address-you-didnt-make]
+
+Se QRdx ha già un account per il tuo indirizzo e non l'hai creato tu, accedi con un codice via email. Una volta dimostrato che l'indirizzo è tuo, QRdx rimuove tutto ciò che la registrazione precedente potrebbe usare per rientrare o per continuare a ricevere i dati dell'account:
+
+- i suoi collegamenti a Google e GitHub, e ogni sessione;
+- la sua verifica in due passaggi e i dispositivi attendibili<IfAvailable feature="passkeys">, e le sue passkey</IfAvailable>;
+- le sue chiavi API e le app a cui ha consentito di usare l'account;
+- i webhook e gli avvisi Slack e Discord che ha configurato, e le sincronizzazioni configurate che inviano scansioni o risposte dei moduli a un altro strumento.
+
+Tutto il resto nell'account rimane, quindi controlla poi i suoi workspace e i relativi membri.
+
+## Collegare Google o GitHub [#link-google-or-github]
+
+Vai su **Settings** → **Profile & security** → **Sign-in methods**.
+
+- Il **codice via email** è sempre attivo.
+- Collega Google o GitHub per accedere con un clic. L'account deve usare lo stesso indirizzo email del tuo account QRdx.
+- Fai clic su **Unlink** per rimuoverne uno.
+
+## Cambiare il tuo indirizzo email [#change-your-email-address]
+
+1. Vai su **Settings** → **Profile & security**.
+2. Accanto a **Email**, fai clic su **Change** e [conferma la tua identità](/docs/help/privacy-and-security/two-step-verification#confirm-its-you).
+3. Inserisci il nuovo indirizzo e digita il codice che inviamo a quell'indirizzo.
+
+QRdx ti disconnette quindi da ogni altro dispositivo e browser, e il tuo vecchio indirizzo riceve un'email che avvisa che l'account è stato spostato, con un modo per contattare il supporto se non sei stato tu.
+
+## Accesso perso alla tua email [#lost-access-to-your-email]
+
+Se riesci ancora ad accedere a QRdx, cambia tu stesso la tua email, come descritto sopra. Per confermare la tua identità senza la tua casella di posta, usa <IfAvailable feature="passkeys">la tua passkey, </IfAvailable>un account Google o GitHub che hai collegato, oppure il tuo metodo di verifica in due passaggi, se è attivo. Hai già fatto il logout? Accedi prima con <IfAvailable feature="passkeys">la tua passkey o </IfAvailable>un account Google o GitHub collegato.
+
+Se nessuno di questi funziona, scrivi a [support@qrdx.dev](mailto:support@qrdx.dev) dall'indirizzo che vuoi usare. Spostare un account su un nuovo indirizzo è l'operazione più delicata che il supporto esegue, quindi:
+
+- **Ci serve una prova che l'account è tuo.** Ti chiederemo l'indirizzo email dell'account e una di queste cose:
+  - se hai pagato per QRdx, il numero di una delle tue [fatture](/docs/help/account-and-billing/invoices) e più o meno quando hai pagato;
+  - se un workspace del tuo account usa un proprio [dominio](/docs/help/domains/custom-domains), un record DNS che ti inviamo, da aggiungere a quel dominio.
+- **Avvisiamo il vecchio indirizzo e aspettiamo 7 giorni.** Se in quel periodo qualcuno risponde da quell'indirizzo dicendo di no, ci fermiamo.
+- **Poi spostiamo l'account.** Cambiamo la sua email con il nuovo indirizzo, lo disconnettiamo ovunque e scriviamo al vecchio indirizzo. Accedi con un codice inviato al nuovo indirizzo. La tua verifica in due passaggi, se è attiva, resta com'è.
+
+Se non riusciamo a confermare che l'account è tuo, non lo spostiamo, anche se questo lo lascia irraggiungibile. Consegnarlo alla persona sbagliata sarebbe peggio.
+
+Prima che il tuo vecchio indirizzo smetta di funzionare, aggiungi una passkey o collega Google o GitHub, così potrai sempre confermare la tua identità.
+
+## Disconnettersi dagli altri dispositivi [#sign-out-of-other-devices]
+
+In **Sessions**, dentro **Settings** → **Profile & security**, disconnetti un dispositivo, oppure fai clic su **Sign out everywhere else**.
+
+## Problemi di accesso [#trouble-signing-in]
+
+Consulta [I codici o le email di accesso non arrivano](/docs/help/troubleshooting/emails).

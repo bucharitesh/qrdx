@@ -404,4 +404,8 @@ const withNextIntl = createNextIntlPlugin({
   experimental: { createMessagesDeclaration: "./messages/en.json" },
 });
 
-export default withNextIntl(withMDX(nextConfig));
+// fumadocs-mdx writes .source (the compiled-content modules and the docs
+// index the route handlers read, lib/docs-index-plugin.ts) while the config
+// loads. withMDX's result is a promise of the config: outermost, so Next
+// waits for those files before it compiles anything.
+export default withMDX(withNextIntl(nextConfig));

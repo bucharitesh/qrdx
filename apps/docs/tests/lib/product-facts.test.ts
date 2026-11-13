@@ -89,6 +89,9 @@ describe("PRODUCT_FACTS", () => {
       imageApiPerMinute: 300,
       mcpPerMinute: 120,
       designQrPerMinute: 20,
+      // lib/pricing.ts
+      moneyBackDays: 30,
+      nonprofitDiscountPercent: 50,
     });
     expect(FRAME_STYLES).toContain("none");
     expect(STYLE_SUMMARY).toBe(

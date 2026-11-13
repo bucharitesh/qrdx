@@ -184,6 +184,7 @@
       "pageTemplates": "ページテンプレート",
       "pricing": "料金",
       "guarantee": "Never-Hostage保証",
+      "enterprise": "エンタープライズ",
       "slackBot": "Slackボット",
       "telegramBot": "Telegramボット",
       "discordBot": "Discordボット",
@@ -227,6 +228,7 @@
       "refunds": "返金",
       "affiliateTerms": "アフィリエイト規約",
       "security": "セキュリティ",
+      "securityPolicy": "セキュリティポリシー",
       "allComparisons": "比較一覧"
     }
   },
@@ -509,7 +511,9 @@
       "inr": "インド向けの₹表示価格です。",
       "usd": "US$表示の価格です。",
       "showInr": "インドの方はこちら：₹で表示",
-      "showUsd": "US$で価格を表示"
+      "showUsd": "US$で価格を表示",
+      "eur": "EUおよびEEA向けの価格を€で表示しています。",
+      "showEur": "EUまたはEEAにお住まいですか？価格を€で表示"
     },
     "price": {
       "forever": "ずっと無料",
@@ -553,6 +557,13 @@
       "guide": "セルフホストガイド"
     },
     "footnote": "決済はマーチャント・オブ・レコードであるPolarが処理します。現地の税金がチェックアウト時に加算される場合があります。インドのお客様への請求は₹、それ以外の国のお客様への請求はUS$です。",
+    "footnoteEur": "決済は販売代行業者（merchant of record）のPolarが処理します。現地の税金がチェックアウト時に加算される場合があります。インドのお客様は₹、EUおよびEEAのお客様は€、それ以外の方はUS$でのお支払いとなります。",
+    "offers": {
+      "moneyBack": "初回のお支払いには{days, number}日間の返金保証が付いています。",
+      "moneyBackLink": "返金の仕組み",
+      "nonprofit": "非営利団体・慈善団体の方は、ProとBusinessが{percent, number}%オフになります。",
+      "nonprofitLink": "コードを申請する"
+    },
     "values": {
       "unlimited": "無制限",
       "days": "{count, plural, other {#日}}",
@@ -700,6 +711,10 @@
           "question": "解約するとどうなりますか？",
           "answer": "何も壊れることはありません。プランはお支払い済みの期間の終了まで有効で、その後アカウントはフリーに移行します。動的QRコードはすべて転送を続け、スキャンもすべてカウントされます。これがNever-Hostage保証です。フリーではフリーの上限を超えて作成することはできず、アナリティクスには直近90日間が表示されます。"
         },
+        "refund": {
+          "question": "返金を受けられますか？",
+          "answer": "はい。ProまたはBusinessの初回のお支払いには、月払い・年払いを問わず{days, number}日間の返金保証が付いています。お支払いから{days, number}日以内に、アカウントのメールアドレスからsupport@qrdx.devまでメールをお送りください。理由はお尋ねせず、全額を返金します。返金はお一人につき1回までです。その後も、お作りになったコードはフリープランで引き続きご利用いただけます。"
+        },
         "paymentFails": {
           "question": "支払いに失敗するとどうなりますか？",
           "answer": "作成済みのコードはそのまま使えます。サブスクリプションが失効した場合は、解約した場合と同じようにアカウントはフリープランの上限に従います。請求を理由にコードを停止したり、広告を表示したり、スキャンした方をQRdxのページに誘導したりすることは一切ありません。"
@@ -712,6 +727,10 @@
           "question": "なぜ価格が₹で表示されるのですか？",
           "answer": "インドからのアクセスでは、価格がインドルピーで表示されます。Pro は月額 {proMonthly}、または年額 {proYearly}、Business は月額 {businessMonthly}、または年額 {businessYearly} です。決済では、どの通貨で閲覧していても、インドのお客様には₹、それ以外の方にはUS$で請求されます。表示通貨を変更するには、プランの上にあるスイッチをご利用ください。"
         },
+        "currencies": {
+          "question": "価格が₹や€で表示されるのはなぜですか？",
+          "answer": "価格は、お住まいの国の通貨で表示されます。インドでは、Proは月額{proMonthly}または年額{proYearly}、Businessは月額{businessMonthly}または年額{businessYearly}です。EUおよびEEAでは、Proは月額{proMonthlyEur}または年額{proYearlyEur}、Businessは月額{businessMonthlyEur}または年額{businessYearlyEur}です。それ以外の地域ではUS$です。閲覧時にどの通貨で表示していても、チェックアウトではお住まいの国の通貨で請求されます。表示する通貨を変更するには、プランの上にあるスイッチをお使いください。"
+        },
         "switchPlans": {
           "question": "あとからプランや請求期間を変更できますか？",
           "answer": "はい。設定の「サブスクリプションを管理」を開くと、Polarの請求ポータルでプランの変更や解約ができます。より小さいプランに変更しても、既存のコード、ページ、ドメインが無効になることはありません。"
@@ -723,6 +742,10 @@
         "selfHost": {
           "question": "セルフホストもできますか？",
           "answer": "はい。QRdxはAGPL-3.0のオープンソースです。セルフホスティングガイドに従い、ご自身のPostgresデータベースで実行できます。プランの上限は1つのファイルで定義されており、ご自身のインスタンス向けに変更できます。"
+        },
+        "nonprofit": {
+          "question": "非営利団体向けの割引はありますか？",
+          "answer": "はい。登録済みの非営利団体・慈善団体の方は、月払い・年払いを問わず、ProまたはBusinessが{percent, number}%オフになります。プランの下にある非営利団体向けのリンクから、団体について教えてください。通常は数日以内に、チェックアウト時に入力する割引コードを添えてご返信します。"
         },
         "billing": {
           "question": "請求と税金は誰が処理しますか？",
@@ -748,6 +771,38 @@
       "close": "閉じる",
       "signIn": "ログインして請求書を依頼する",
       "signInNote": "請求書はアカウントのワークスペース宛てに送付するため、先にログインしてください。"
+    },
+    "nonprofit": {
+      "title": "非営利団体向け割引",
+      "description": "登録済みの非営利団体・慈善団体の方は、月払い・年払いを問わず、ProまたはBusinessが{percent, number}%オフになります。団体について教えてください。チェックアウト時に入力する割引コードをメールでお送りします。",
+      "organization": "団体名",
+      "country": "国",
+      "registration": "登録番号またはリンク",
+      "registrationHint": "慈善団体または非営利団体の登録簿にある番号、または公的な登録簿に載っているページへのリンクをご入力ください。",
+      "contactEmail": "連絡先メールアドレス",
+      "plan": "プラン",
+      "reply": "通常は数日以内にご返信します。チェックアウトを完了するまで、料金は発生しません。",
+      "submit": "リクエストを送信",
+      "sending": "送信中…",
+      "sentTitle": "リクエストを送信しました",
+      "sent": "{email}宛てに、通常は数日以内にご返信します。団体が対象となる場合は、チェックアウト時に入力する割引コードをお送りします。",
+      "close": "閉じる",
+      "failed": "問題が発生しました。代わりに{email}までメールをお送りください。"
+    },
+    "enterprise": {
+      "name": "Enterprise",
+      "tagline": "契約とセキュリティレビューが必要な企業向け",
+      "price": "お見積もり",
+      "priceNote": "年間契約、請求書でお支払い",
+      "cta": "お問い合わせ",
+      "lead": "Businessのすべての機能に加えて：",
+      "adds": {
+        "contract": "年間契約、請求書でお支払い",
+        "replies": "コードが動作しなくなった場合、{hours, plural, other {#営業時間以内}}に返信",
+        "review": "セキュリティレビューへの回答",
+        "selfHost": "自社サーバーでのSSOと監査ログ"
+      },
+      "security": "QRdxのセキュリティ"
     }
   },
   "docs": {
@@ -1850,7 +1905,8 @@
           "choices": "選択肢から選んでください",
           "choice": "選択肢のいずれかを選んでください",
           "invalid": "無効な値です"
-        }
+        },
+        "checkAnswer": "この回答はもう一度ご確認ください。"
       }
     }
   },
@@ -1952,6 +2008,36 @@
       "savedDescription": "ダッシュボードの「バーコード」にあります。",
       "open": "開く",
       "save": "ダッシュボードに保存"
+    },
+    "issues": {
+      "enterDigits": "{short}桁の数字、またはチェックディジットを含む{length}桁すべてを入力してください。",
+      "digitsOnly": "{label}は数字のみ使用できます。",
+      "checkDigitAdded": "チェックディジット{check}を追加しました。",
+      "wrongCheckDigit": "チェックディジットは{given}ではなく{expected}になるはずです。番号をご確認ください。最後の桁を省くと、自動で計算されます。",
+      "wrongLength": "{label}には{short}桁または{length}桁の数字が必要です。現在は{count, plural, one {#桁} other {#桁}}です。",
+      "upceEnter": "6～8桁の数字、または短縮する12桁のUPC-Aを入力してください。",
+      "upceSystem": "UPC-E形式があるのは、0または1で始まるUPC-A番号だけです。代わりにUPC-Aをご利用ください。",
+      "upceNoForm": "このUPC-A番号にはUPC-E形式がありません。短縮できるのは、適切な位置にゼロが入っている番号だけです。代わりにUPC-Aをご利用ください。",
+      "shortenedFromUpca": "UPC-A {upca}から短縮しました。",
+      "numberSystemAssumed": "ナンバーシステム0とみなしました。",
+      "upceLength": "UPC-Eには6桁、7桁、8桁の数字(または12桁のUPC-A)が必要です。現在は{count, plural, one {#桁} other {#桁}}です。",
+      "upceStart": "UPC-E番号は、ナンバーシステム0または1で始まります。",
+      "enterText": "エンコードするテキストを入力してください。",
+      "tooLong": "ここでの{label}は最大{max, number}文字までです。現在は{count, number}文字です。",
+      "code128Chars": "ここでのCode 128では、ASCIIの英字、数字、スペース、記号を使用できます。使用できない文字:{chars}",
+      "code39Chars": "Code 39で使用できるのは、英大文字、数字、スペース、- . $ / + % のみです。使用できない文字:{chars}",
+      "code39Lowercase": "Code 39には英小文字がありません。大文字を使うか、大文字と小文字が混在する場合はCode 128をご利用ください。",
+      "gs1Enter": "アプリケーション識別子を括弧で囲み、続けて値を入力してください。例:(01)09501101530003",
+      "gs1Start": "括弧で囲んだアプリケーション識別子から始めてください。例:GTINなら(01)に続けて値を入力します。",
+      "gs1Brackets": "括弧の対応が合っていません。各AIは(数字)の形で書き、続けて値を入力してください。",
+      "gs1BadAi": "「({ai})」はアプリケーション識別子ではありません。AIは2～4桁の数字です。",
+      "gs1NoValue": "AI ({ai})の後に値がありません。",
+      "gs1BadChars": "AI ({ai})にGS1で使用できない文字が含まれています:{chars}",
+      "gs1Ai": "AI ({ai}):{inner}",
+      "gs1TooLong": "GS1-128に含められるAIとデータは最大{max}文字です。現在は{count}文字です。2つのバーコードに分けてください。",
+      "unknownFormat": "不明なバーコード形式です。",
+      "space": "スペース",
+      "lineBreak": "改行"
     }
   },
   "guarantee": {
@@ -1995,9 +2081,322 @@
         "outcome": "少なくとも12か月前に通知し、すべてをエクスポートする時間をご用意します。また、オープンソースのアプリをご自身のサーバーで運用するための手順も文書で提供します。"
       }
     },
+    "moneyBackTitle": "返金保証",
+    "moneyBack": "ProまたはBusinessの初回のお支払いは、月払い・年払いを問わず、{days, number}日間の返金保証の対象です。プランが合わなかった場合は、お支払いから{days, number}日以内に<mail>{email}</mail>までメールをお送りください。理由はお尋ねせず、全額を返金いたします。ご利用はお一人につき1回までで、返金後もコードはフリープランで引き続きご利用いただけます。",
+    "moneyBackLink": "返金ポリシーを読む",
     "exceptionTitle": "唯一の例外：不正利用",
     "exception": "コードを無効にするのは、フィッシングやマルウェアへ誘導するなど、<terms>利用規約</terms>に違反する場合に限ります。これは報告や審査を受けて行う安全上の判断であり、請求を理由にすることは決してありません。どなたでも<report>コードを報告</report>できます。",
     "questions": "保証に関するご質問は <mail>{email}</mail> までメールでお問い合わせください。最終更新日：<time>{date, date, long}</time>。"
+  },
+  "enterprise": {
+    "metaTitle": "QRdx Enterprise：SSO、監査ログ、契約、回答時間",
+    "metaDescription": "大規模チーム向けのQRdx：シングルサインオン、CSVエクスポートに対応した監査ログ、ロール、カスタムドメイン、クライアントポータルに加え、年間契約、書面での回答時間、請求書払いをご用意しています。",
+    "crumb": "Enterprise",
+    "title": "エンタープライズチーム向けのQRdx",
+    "intro1": "パッケージ、看板、キャンペーンなどでQRコードを使い、複数のチーム、ブランド、クライアントにまたがって運用する企業向けです。導入前にシングルサインオン、監査証跡、契約が必要な場合にご利用いただけます。",
+    "intro2": "EnterpriseはBusinessプランに契約を組み合わせたものです。書面での回答時間、請求書払い、セキュリティレビューへの回答が含まれます。",
+    "contactCta": "お問い合わせ",
+    "securityCta": "セキュリティへの取り組み",
+    "whoTitle": "こんな方に",
+    "who": {
+      "brands": {
+        "title": "ブランド・小売企業",
+        "body": "パッケージ、メニュー、看板など、さまざまな場所のコードを、それぞれ個別のアクセス権が必要な複数のチームで運用します。"
+      },
+      "agencies": {
+        "title": "代理店",
+        "body": "クライアントごとのワークスペース、クライアント向けの閲覧専用ポータル、クライアントのブランドに合わせた統計ページを用意できます。"
+      },
+      "security": {
+        "title": "IT・セキュリティチーム",
+        "body": "お客様のIDプロバイダー経由でサインインでき、誰が何を変更したかを記録し、セキュリティに関する質問票にもお答えするベンダーです。"
+      }
+    },
+    "featuresTitle": "ご利用いただける内容",
+    "featuresIntro": "Businessプランのすべての機能を含みます。各項目は現在qrdx.devでご利用いただけます。",
+    "features": {
+      "sso": {
+        "title": "シングルサインオン",
+        "body": "メールドメインに対してOIDCまたはSAML 2.0を利用でき、DNSレコードで所有を確認します。必須に設定すると、そのドメインではIDプロバイダーが唯一のサインイン方法になります。"
+      },
+      "auditLog": {
+        "title": "監査ログ",
+        "body": "どのコード、ページ、メンバー、ドメイン、APIキー、設定を、誰がいつ変更したかを記録します。絞り込みができ、最大{rows, number}行をCSVでエクスポートでき、{days, number}日分の履歴を保持します。"
+      },
+      "roles": {
+        "title": "ロールと2段階認証",
+        "body": "オーナー、管理者、メンバー、請求担当メンバー、閲覧専用ビューアーのロールがあります。ワークスペースでは、全員に2段階認証を必須にできます。"
+      },
+      "seats": {
+        "title": "ワークスペースとシート",
+        "body": "メンバー数は無制限です。チーム、ブランド、クライアントごとに別のワークスペースを作成でき、それぞれに独自のロールを設定できます。"
+      },
+      "domains": {
+        "title": "カスタムドメイン",
+        "body": "短縮リンクとホスト型ページを、最大{count, number}個の独自ドメインで利用できます。"
+      },
+      "clients": {
+        "title": "クライアントポータルとブランド統計",
+        "body": "クライアントは閲覧専用のポータルで、共有されたフォルダーを確認できます。統計ページはクライアントのブランドで表示され、QRdxのマークは入りません。"
+      },
+      "api": {
+        "title": "APIと一括作成",
+        "body": "1日あたり{requests, number}件のAPIリクエスト、1回のAPI呼び出しで最大{batch, number}件のコード、最大{importRows, number}行のCSVインポートに対応します。"
+      },
+      "export": {
+        "title": "データをエクスポート可能",
+        "body": "アカウント内のすべてのデータをZIPでダウンロードでき、スキャン、フォームの回答、監査ログはCSVでエクスポートできます。"
+      }
+    },
+    "contractTitle": "契約で追加される内容",
+    "contractIntro": "Businessプランに加えて、次の内容が含まれます。",
+    "contract": {
+      "replies": {
+        "title": "書面での返信時間",
+        "body": "コードやホスト型ページが動作しなくなった場合は{outage, plural, other {#営業時間}}以内、それ以外のお問い合わせは{other, plural, other {#営業日}}以内に返信します。"
+      },
+      "invoice": {
+        "title": "年間契約、請求書払い",
+        "body": "カードではなく銀行振込でお支払いいただけます。請求書には貴社の情報、税務ID、発注書番号を記載します。"
+      },
+      "review": {
+        "title": "セキュリティ審査にお答えします",
+        "body": "セキュリティに関する質問票にご記入し、署名済みのデータ処理補遺（DPA）の写しをお送りします。"
+      },
+      "selfHost": {
+        "title": "セルフホスト時のシングルサインオンと監査ログ",
+        "body": "QRdxはオープンソースですが、シングルサインオンと監査ログはQRdx商用ライセンスの対象です。Enterprise契約を結ぶと、ライセンスキーを使って自社のサーバーでこれらを実行できます。"
+      }
+    },
+    "limitsNote": "qrdx.devでは、EnterpriseワークスペースにBusinessプランと同じ制限が適用されます。より多くの上限が必要な場合は、フォームでお知らせください。",
+    "repliesTitle": "返信時間",
+    "replies": {
+      "when": "状況",
+      "enterprise": "Enterprise",
+      "business": "Business",
+      "outage": "コードやホスト型ページが動作しなくなった",
+      "other": "その他すべて",
+      "hours": "{count, plural, other {#営業時間}}以内",
+      "days": "{count, plural, other {#営業日}}以内"
+    },
+    "repliesNote": "営業時間はインド時間の月曜日から金曜日です。これは返信までの時間であり、QRdxは稼働率の保証を行っていません。",
+    "buyTitle": "ご購入の流れ",
+    "buy": {
+      "ask": {
+        "title": "ご要望をお知らせください",
+        "body": "下のフォームまたは{email}へメールでご連絡ください。チームの人数と、セキュリティ審査で求められている内容をお書き添えください。"
+      },
+      "quote": {
+        "title": "回答と価格をお届けします",
+        "body": "ご質問への回答と年間価格を、メールでお送りします。"
+      },
+      "sign": {
+        "title": "署名して請求書でお支払い",
+        "body": "契約の署名後、ワークスペースをBusinessプランに移行し、請求書をお送りします。"
+      }
+    },
+    "formTitle": "お問い合わせ",
+    "formIntro": "チームの状況とご要望をお知らせください。返信はメールでお送りします。",
+    "form": {
+      "name": "お名前",
+      "email": "勤務先メール",
+      "company": "会社名",
+      "teamSize": "チームの規模",
+      "teamSizePlaceholder": "規模を選択",
+      "sizes": {
+        "1-10": "1～10人",
+        "11-50": "11～50人",
+        "51-200": "51～200人",
+        "201-1000": "201～1,000人",
+        "1000+": "1,000人を超える"
+      },
+      "need": "ご要望をお聞かせください",
+      "needPlaceholder": "例：300人規模のシングルサインオン、年間契約の請求書払い、セキュリティ質問票への回答",
+      "submit": "送信",
+      "sending": "送信中…",
+      "sentTitle": "送信しました",
+      "sent": "ありがとうございます。{email} 宛に返信します。",
+      "privacy": "ご入力いただいた情報は、返信のためにのみ使用します。<privacy>プライバシーポリシー</privacy>をご覧ください。",
+      "errors": {
+        "name": "お名前を入力してください。",
+        "email": "有効な勤務先メールアドレスを入力してください。",
+        "company": "会社名を入力してください。",
+        "teamSize": "チームの規模を選択してください。",
+        "need": "ご要望を入力してください。",
+        "rateLimited": "すでに複数のメッセージを送信いただいています。そちらに返信しますので、お急ぎの場合は {email} までメールをお送りください。",
+        "check": "ボタンの上の確認を完了してから、もう一度送信してください。",
+        "notSent": "メッセージを送信できませんでした。代わりに {email} までメールをお送りください。",
+        "unavailable": "このフォームはここでは利用できません。代わりに {email} までメールをお送りください。",
+        "unknown": "問題が発生しました。代わりに {email} までメールをお送りください。"
+      }
+    },
+    "orEmail": "メールをご希望の場合は <mail>{email}</mail> までご連絡ください。",
+    "relatedTitle": "関連情報",
+    "related": {
+      "security": "QRdxのセキュリティ",
+      "dpa": "データ処理補遺",
+      "subprocessors": "サブプロセッサー",
+      "pricing": "料金"
+    }
+  },
+  "security": {
+    "metaTitle": "QRdxのセキュリティ：サインイン、データ保管、問題の報告",
+    "metaDescription": "QRdxがアカウントとデータを守る仕組み：HSTS付きHTTPS、コンテンツセキュリティポリシー、パスキーと2段階認証、シングルサインオン、監査ログ、リンクチェック、データの保管場所、脆弱性の報告方法をご紹介します。",
+    "crumb": "セキュリティ",
+    "title": "QRdxのセキュリティ",
+    "intro1": "QRdxがお客様のアカウント、QRコード、訪問者のデータを守るために行っていることです。各項目は現在qrdx.devで実際に動作している内容で、コードはオープンソースのため、ご自身で確認できます。",
+    "intro2": "QRdxはSOC 2やHIPAAをはじめ、いかなるセキュリティ認証も取得しておらず、取得を約束するものでもありません。",
+    "reportCta": "脆弱性を報告する",
+    "enterpriseCta": "セキュリティ審査のご相談はこちら",
+    "sections": {
+      "transport": {
+        "title": "接続とブラウザ",
+        "items": {
+          "https": {
+            "title": "常時HTTPS",
+            "body": "すべてのページとAPI呼び出しはHTTPSで配信され、ブラウザにはqrdx.devで2年間HTTPSを使い続けるよう通知しています（HSTS）。"
+          },
+          "csp": {
+            "title": "コンテンツセキュリティポリシー",
+            "body": "QRdx自身のページでは、読み込めるスクリプト、フレーム、接続を制限しています。アカウントのデータを表示するページではリクエストごとに新しいnonceを発行するため、挿入されたスクリプトは実行されません。"
+          },
+          "framing": {
+            "title": "他サイトによるフレーム表示を禁止",
+            "body": "QRdx自身のページは他サイトのフレーム内に表示できず、アプリを承認する画面はいかなる場合もフレーム内に表示できません。また、ブラウザにはファイルの種類を推測しないよう通知しています。"
+          }
+        }
+      },
+      "signIn": {
+        "title": "サインイン",
+        "items": {
+          "passwords": {
+            "title": "パスワード不要",
+            "body": "Google、GitHub、メールで届くワンタイムコード{passkeys, select, yes {、またはパスキー} other {}}でサインインします。QRdxはパスワードを保存しないため、漏えいすることもありません。"
+          },
+          "twoFactor": {
+            "title": "2段階認証",
+            "body": "認証アプリ{passkeys, select, yes {またはパスキー} other {}}による2つ目のステップで、使えないときのためのバックアップコードもあります。Businessのワークスペースでは、全メンバーに必須とすることもできます。"
+          },
+          "confirm": {
+            "title": "本人確認",
+            "body": "セキュリティ設定の変更、新しいAPIキーやWebhookの作成、ロールの変更、ワークスペースの削除では、サインイン中でも本人確認を求めます。確認の有効時間は10分です。"
+          },
+          "alerts": {
+            "title": "新規サインインの通知",
+            "body": "ブラウザやデバイスから初めてアカウントにサインインしたとき、および2段階認証の設定が変更されたときに、メールでお知らせします。"
+          },
+          "sessions": {
+            "title": "期限のあるサインイン",
+            "body": "サインインの有効期間は最長30日で、使わなければもっと短くなります。新しい国かつ新しいブラウザから使われたサインインは本人確認が必要で、他のすべてのデバイスを一括でサインアウトすることもできます。"
+          }
+        }
+      },
+      "workspaces": {
+        "title": "ワークスペースとチーム",
+        "items": {
+          "sso": {
+            "title": "シングルサインオン",
+            "body": "BusinessでOIDCまたはSAML 2.0を利用できます。DNSレコードで所有を証明したメールドメインが対象です。SAMLレスポンスにはSHA-256以上の強度の署名が必要です。ワークスペースで必須にすると、そのドメインの他のサインイン手段はすべて無効になり、セッションは最長24時間になります。"
+          },
+          "roles": {
+            "title": "ロール",
+            "body": "オーナー、管理者、メンバー、請求担当、閲覧者の5つです。ユーザー、ドメイン、設定を管理できるのはオーナーと管理者だけで、請求担当と閲覧者はコードを変更できません。"
+          },
+          "auditLog": {
+            "title": "監査ログ",
+            "body": "Businessでは、オーナーと管理者が、どのコード、ページ、メンバー、ドメイン、APIキー、設定を誰が変更したかを確認でき、CSVでエクスポートすることもできます。ログは{days, number}日間保存されます。"
+          },
+          "staff": {
+            "title": "スタッフのアクセス",
+            "body": "管理ツールを開けるのはQRdxのスタッフアカウントだけで、そこでのスタッフの操作はすべて監査ログに記録されます。"
+          }
+        }
+      },
+      "secrets": {
+        "title": "キーとシークレット",
+        "items": {
+          "hashed": {
+            "title": "ハッシュ化されたキーとトークン",
+            "body": "APIキーとOAuthアクセストークンはSHA-256ハッシュとしてのみ保存されるため、データベースのコピーからは内容がわかりません。保護されたコードのパスワードもハッシュとして保存されます。"
+          },
+          "encrypted": {
+            "title": "暗号化された連携トークン",
+            "body": "Google DriveやSlackなど、接続したツールのトークンはAES-256-GCMで暗号化されます。"
+          },
+          "webhooks": {
+            "title": "署名付きWebhook",
+            "body": "Webhookのエンドポイントごとに専用のシークレットがあり、すべてのペイロードがそれで署名されます。そのため、お使いのサーバーでQRdxから送信されたものかどうかを確認できます。"
+          }
+        }
+      },
+      "abuse": {
+        "title": "不正利用とリンクの安全性",
+        "items": {
+          "linkChecks": {
+            "title": "リンクチェック",
+            "body": "動的QRコードの宛先を設定すると、QRdxはGoogle Web Riskのマルウェアおよびフィッシングサイトのリストと照合し、該当した宛先は受け付けません。時間内に確認できなかった宛先は再度確認され、該当した場合はそのコードが無効になります。"
+          },
+          "rateLimits": {
+            "title": "レート制限",
+            "body": "API、MCPサーバー、フォーム、その他の公開エンドポイントには、キー、アカウント、IPアドレスごとにレート制限が設けられています。"
+          },
+          "bots": {
+            "title": "フォームのボット対策",
+            "body": "公開フォームではCloudflare Turnstileと、ボットだけが入力する非表示フィールドを使用しています。"
+          },
+          "reports": {
+            "title": "有害なコードの報告",
+            "body": "フィッシング、マルウェア、詐欺につながる<report>QRコードを報告</report>することは、誰でもできます。ルールに違反したコードは無効になります。"
+          }
+        }
+      },
+      "storage": {
+        "title": "データの保存場所",
+        "items": {
+          "hosting": {
+            "title": "ホスティング",
+            "body": "アプリはVercel上で動作しています。サーバー関数はアメリカのワシントンD.C.で実行され、Vercelのグローバルエッジネットワークを経由します。"
+          },
+          "database": {
+            "title": "データベース",
+            "body": "アカウント、コード、スキャン、フォームの回答は、AWS US East（バージニア北部）にあるNeon Postgresデータベースに保存されます。Neonは<neon>保存データをAES-256で暗号化</neon>し、暗号化されたバックアップを保持します。"
+          },
+          "files": {
+            "title": "アップロードしたファイル",
+            "body": "アップロードしたファイルは、Cloudflare R2のアジア太平洋リージョンに保存されます。"
+          },
+          "scans": {
+            "title": "スキャンデータ",
+            "body": "スキャンした端末のIPアドレスは保存されません。ユニークな訪問者は、毎日変わるハッシュで数えています。"
+          }
+        }
+      },
+      "yourData": {
+        "title": "お客様のデータと各種書類",
+        "items": {
+          "export": {
+            "title": "エクスポート",
+            "body": "QRdxがアカウントについて保持しているすべての情報を、設定からZIPでダウンロードできます。スキャン、フォームの回答、監査ログはCSVでエクスポートできます。"
+          },
+          "delete": {
+            "title": "削除",
+            "body": "コード、ページ、ファイル、フォームの回答は、いつでも削除できます。アカウント全体の削除も可能です。削除したデータは、データベースプロバイダーの復旧履歴に短期間残る場合があります。"
+          },
+          "dpa": {
+            "title": "データ処理補足契約",
+            "body": "<dpa>DPA</dpa>はすべてのお客様に適用される利用規約の一部で、標準契約条項を含みます。署名済みのコピーが必要な場合はお申し付けください。"
+          },
+          "subprocessors": {
+            "title": "サブプロセッサー",
+            "body": "<list>サブプロセッサー一覧</list>には、QRdxのために個人データを取り扱うすべてのサービスについて、その役割と所在地を記載しています。新しいサブプロセッサーの利用開始は、30日以上前に更新してお知らせします。"
+          }
+        }
+      }
+    },
+    "reportTitle": "脆弱性の報告",
+    "report": "件名を [security] で始めて、<mail>{email}</mail> 宛にメールをお送りください。GitHubの公開Issueには投稿しないでください。対象範囲とセーフハーバーについては<policy>セキュリティポリシー</policy>に記載しており、<txt>security.txt</txt>にも同じ連絡先を掲載しています。",
+    "reviewTitle": "セキュリティレビューを実施中ですか?",
+    "review": "質問票をお送りください。<enterprise>Enterprise</enterprise>契約には、レビュー用の回答と署名済みのDPAが含まれます。"
   },
   "templates": {
     "metaTitle": "ライブデモで試せるQRコード用ランディングページテンプレート",
@@ -4898,6 +5297,23 @@
         "page": {
           "yourProfileHowYouSign": "プロフィール、サインイン方法、サインイン中の場所、そしてデータの設定です。",
           "profileSecurity": "プロフィールとセキュリティ"
+        },
+        "deletion": {
+          "counts": {
+            "codes": "{count, plural, one {コード#件} other {コード#件}}",
+            "pages": "{count, plural, one {ホスト型ページ#件} other {ホスト型ページ#件}}",
+            "files": "{count, plural, one {ファイル#件} other {ファイル#件}}",
+            "domains": "{count, plural, one {カスタムドメイン#件} other {カスタムドメイン#件}}"
+          },
+          "workspaceEmpty": "ご自身のワークスペースは、テーマ、設定、連携とともに削除されます。",
+          "workspaceWith": "ご自身のワークスペースは、{list}に加えて、スキャン、テーマ、webhook、連携とともに削除されます。",
+          "workspaceWithCodes": "ご自身のワークスペースは、{list}に加えて、スキャン、テーマ、webhook、連携とともに削除されます。印刷済みのQRコードには「QRコードが見つかりません」というページが表示されます。",
+          "teamPromote": "{team}：{who}（{role, select, owner {オーナー} admin {管理者} billing {請求担当} viewer {閲覧者} other {メンバー}}）がオーナーになり、ワークスペースであなたが作成したものを引き継ぐため、コードは引き続き使えます。",
+          "teamStays": "{team}：ワークスペースであなたが作成したものは、{who}の管理下でそのまま残ります。",
+          "teamDeleted": "{team}：メンバーはあなただけのため、ワークスペースとその内容は削除されます。",
+          "subscriptionCancelled": "{plan}のサブスクリプションはただちに解約されます。",
+          "signedOut": "すべてのデバイスでサインアウトされます。",
+          "subscriptionBlocker": "現在、ここから{plan}のサブスクリプションを解約できません。先に「設定」→「プランと使用量」で解約するか、support@qrdx.dev までメールでご連絡ください。"
         }
       },
       "affiliate": {
@@ -4985,7 +5401,8 @@
           "appsYouveAllowedToUse": "APIを通じてQRdxアカウントの使用を許可したアプリです。アクセスを取り消すと、アプリはすぐにサインアウトされます。",
           "authorizedApps": "承認済みアプリ",
           "noApiPermissions": "APIの権限なし",
-          "lastActiveLastactiveat": " · 最終アクティブ：{lastActiveAt}",
+          "authorizedOn": "{authorizedAt}に承認",
+          "authorizedLastActive": "{authorizedAt}に承認 · 最終利用 {lastActiveAt}",
           "revoking": "取り消し中…",
           "nameCanNoLongerUse": "{name}はアカウントを使用できなくなります"
         }
@@ -5548,7 +5965,13 @@
           "selectLabel": "{label}を選択",
           "actionsForLabel": "{label}の操作",
           "emptyTheTrash": "ゴミ箱を空にしますか?",
-          "deleteValueForGood": "{value}を完全に削除しますか?",
+          "deleteValueForGood": "バーコード{count, plural, one {#件} other {#件}}を完全に削除しますか？",
+          "movedToTrash": "バーコード{count, plural, one {#件} other {#件}}をゴミ箱に移動しました",
+          "movedToTrashSkipped": "バーコード{count, plural, one {#件} other {#件}}をゴミ箱に移動しました。他のユーザーが作成した{skipped, number}件は残っています。削除できるのはオーナーと管理者のみです。",
+          "restored": "バーコード{count, plural, one {#件} other {#件}}を復元しました",
+          "movedToFolder": "バーコード{count, plural, one {#件} other {#件}}を{name}に移動しました",
+          "tookOutOfFolders": "バーコード{count, plural, one {#件} other {#件}}をフォルダから外しました",
+          "deletedForGood": "バーコード{count, plural, one {#件} other {#件}}を完全に削除しました",
           "deleting": "削除しています...",
           "edit": "編集",
           "open": "開く",
@@ -5608,7 +6031,12 @@
             "rowsSentOf": "{total}行中{sent}行を送信済み",
             "createdCount": "{created}件を作成",
             "createdWithProblems": "{created}件を作成 · {rowErrors}件に問題あり",
-            "valueCouldntBeSent": "{value}件を送信できませんでした",
+            "valueCouldntBeSent": "{count, plural, one {#行} other {#行}}を送信できませんでした",
+            "retryValue": "{count, plural, one {#行} other {#行}}を再試行",
+            "codesCount": "{count, plural, one {コード#件} other {コード#件}}",
+            "codesIntoFolder": "{count, plural, one {コード#件} other {コード#件}}、保存先：{folder}",
+            "codesTagged": "{count, plural, one {コード#件} other {コード#件}}、タグ：{tags}",
+            "codesIntoFolderTagged": "{count, plural, one {コード#件} other {コード#件}}、保存先：{folder}、タグ：{tags}",
             "retryThemNothingIsMade": "再試行してください。重複して作成されることはありません。",
             "pause": "一時停止",
             "resume": "再開",
@@ -5620,7 +6048,6 @@
             "paused": "一時停止中",
             "theRequestDidntGoThrough": "リクエストが完了しませんでした。",
             "retryAndContinue": "再試行して続行",
-            "retryValue": "{value}件を再試行",
             "finishWithWhatsMade": "作成済みの分で完了",
             "stop": "停止"
           },
@@ -5638,7 +6065,13 @@
             "downloadImages": "画像をダウンロード",
             "imagesProgress": "画像の進行状況",
             "imageFormat": "画像形式",
-            "createdValue": "作成済み: {value}",
+            "createdValue": "{count, plural, one {コード#件} other {コード#件}}を作成しました",
+            "zipParts": "{parts, number}個のZIPファイルとして保存しました（大きなバッチは約500 MBずつに分割され、codes.csvは最後のファイルに入っています）。",
+            "imagesMissing": "{count, plural, other {#枚の画像を描画できず、含まれていません。}}",
+            "zipFailed": "ZIPを作成できませんでした。",
+            "rowsNotImported": "{count, plural, other {#行をインポートできませんでした。}}",
+            "rowsNotSent": "{count, plural, other {#行は送信されませんでした（インポートが途中で終了しました）。}}",
+            "rowsSkipped": "{count, plural, other {ファイル内の問題がある#行をスキップしました。}}",
             "noCodesWereCreated": "作成されたコードはありません",
             "everyRowWasImported": "すべての行をインポートしました。"
           },
@@ -5657,7 +6090,13 @@
             "chooseTheColumnWithThe": "遷移先URLが入っている列を選択してください。",
             "n3Organize": "3. 整理",
             "n4Review": "4. 確認",
-            "valueWithProblems": "問題のある{value}",
+            "valueWithProblems": "{count, plural, other {#行}}に問題があります",
+            "importValue": "{count, plural, other {#件のコード}}をインポート",
+            "rowsAndColumns": "{rows, plural, other {#行}} · {columns, plural, other {#列}}",
+            "validRows": "{count, plural, other {有効な行：#行}}",
+            "needsHeaderAndRows": "ファイルには、ヘッダー行とコードの行が1行以上必要です。",
+            "columnNumber": "列 {number}",
+            "fileTooLarge": "ファイルが {size} MB を超えています。",
             "problemsCsv": "問題一覧CSV",
             "line": "行",
             "destination": "遷移先",
@@ -5669,7 +6108,6 @@
             "showingTheFirstPreviewRows": "{length}行のうち、先頭の{PREVIEW_ROWS, number}行を表示しています。すべての行がチェックされます。",
             "upgradeToImportTheseCodes": "これらのコードをインポートするにはアップグレードしてください",
             "seePlans": "プランを見る",
-            "importValue": "{value}をインポート",
             "removeFile": "ファイルを削除",
             "bulkImportIsAValue": "一括インポートは{value}の機能です",
             "bulkImportIsntOnYour": "現在のプランでは一括インポートを利用できません",
@@ -5679,6 +6117,43 @@
             "auto": "自動",
             "rowsWithProblemsAreSkipped": "問題のある行はスキップされます。",
             "sentImportChunkSizeAt": "{IMPORT_CHUNK_SIZE}件ずつ送信します。一時停止や再開もできます。"
+          },
+          "issues": {
+            "destinationMissing": "リンク先URLが指定されていません",
+            "destinationTooLong": "リンク先URLが長すぎます",
+            "destinationNotUrl": "リンク先は https:// で始まる完全なURLで指定してください",
+            "destinationProtocol": "リンク先に使用できるのは http:// と https:// のみです",
+            "destinationCredentials": "ユーザー名やパスワードを含むリンク先は使用できません",
+            "destinationShortLink": "動的QRコードのリンク先に別のQRdx短縮リンクは指定できません",
+            "destinationRejected": "このリンク先URLは使用できません",
+            "titleTooLong": "タイトルが{max, number}文字を超えています",
+            "folderDepth": "フォルダーの階層は最大{max, number}階層までです",
+            "folderNameTooLong": "フォルダー名は{max, number}文字までです",
+            "tooManyTags": "1つのコードにつきタグは{max, number}個までです",
+            "tooManyTagsWithBatch": "1つのコードにつきタグは{max, number}個までです(全コード共通のタグも含みます)",
+            "tagNameTooLong": "タグ名は{max, number}文字までです",
+            "slugReserved": "このバックハーフは予約されています",
+            "slugLength": "バックハーフは{min}～{max}文字で指定してください。",
+            "slugCharacters": "バックハーフには英字、数字、- と _ のみ使用できます。",
+            "slugDash": "バックハーフの先頭と末尾にハイフンは使用できません。",
+            "slugDuplicate": "このバックハーフはファイル内の前の行にも含まれています",
+            "slugTaken": "このバックハーフはすでに使用されています",
+            "slugNotOnPlan": "カスタムバックハーフは{plans}に含まれます"
+          },
+          "reasons": {
+            "imported": "インポート済み",
+            "duplicate": "このリンク先のQRdxコードはすでに存在します",
+            "selectedTwice": "重複して選択されています",
+            "qrdx": "すでにQRdx短縮リンクを指しています",
+            "limit": "プランの有効コード数の上限を超えます",
+            "providerEnded": "{provider}からのインポートは終了しました",
+            "backHalfShape": "QRdxのバックハーフは3～64文字の英字、数字、- または _ のため、これは引き継げません。",
+            "backHalfReservedDomain": "このバックハーフは{domain}で予約されています。",
+            "backHalfReservedShared": "このバックハーフはqrdx.devで予約されています。",
+            "backHalfReservedSharedAddDomain": "このバックハーフはqrdx.devで予約されています。引き続き使うには、ドメインページで{domain}を追加してください。",
+            "backHalfTakenDomain": "{domain} 上の別のコードで、このバックハーフがすでに使われています。",
+            "backHalfTakenShared": "qrdx.dev 上の別のQRdxコードで、このバックハーフがすでに使われています。",
+            "backHalfRepeated": "選択した別のリンクに、同じバックハーフが設定されています。"
           }
         },
         "analyticsExtra": {
@@ -6089,7 +6564,14 @@
           "onlyTeamOwnersAndAdmins": "他のユーザーが作成したコードを削除できるのは、チームのオーナーと管理者のみです。",
           "downloadFailedPleaseTryAgain": "ダウンロードに失敗しました。もう一度お試しください。",
           "shortLinkCopied": "短縮リンクをコピーしました",
-          "couldntCopyTheShortLink": "短縮リンクをコピーできませんでした"
+          "couldntCopyTheShortLink": "短縮リンクをコピーできませんでした",
+          "removedFromFavorites": "お気に入りから削除しました",
+          "addedToFavorites": "お気に入りに追加しました",
+          "copyCreated": "コピーを作成しました",
+          "copyOpensSamePage": "新しい短縮リンク {link}。同じランディングページが開きます。",
+          "copyScansFromZero": "新しい短縮リンク {link}。スキャン数は0から始まります。",
+          "movedToTrash": "ゴミ箱に移動しました",
+          "codeRestored": "コードを復元しました"
         },
         "codeOptions": {
           "on": "(オン)",
@@ -6153,7 +6635,19 @@
           "svgImagesZip": "SVG画像（ZIP）",
           "more": "その他",
           "moveToTrash": "ゴミ箱に移動",
-          "deleteValueForever": "{value}を完全に削除しますか？",
+          "preparingValue": "{count, plural, other {#個のQRコード}}を準備しています...",
+          "downloadedValueAsValue2": "{count, plural, other {#個のQRコード}}を{value2}でダウンロードしました",
+          "deleteValueForever": "{count, plural, other {#件のコード}}を完全に削除しますか？",
+          "allSelectedOthersSkipped": "選択したコードはすべて他のチームメンバーが作成したため、スキップされました。削除できるのはオーナーと管理者のみです。",
+          "movedToTrash": "{count, plural, other {#件のコード}}をゴミ箱に移動しました",
+          "deletedForever": "{count, plural, other {#件のコード}}を完全に削除しました",
+          "othersSkipped": "{count, plural, other {他のチームメンバーが作成した#件のコードをスキップしました}}：削除できるのはオーナーと管理者のみです。",
+          "trashScansNote": "復元するまで、スキャンすると「無効になりました」というページが表示されます。",
+          "restoredCodes": "{count, plural, other {#件のコード}}を復元しました",
+          "archivedCodes": "{count, plural, one {コード#件} other {コード#件}}をアーカイブしました",
+          "unarchivedCodes": "{count, plural, one {コード#件} other {コード#件}}のアーカイブを解除しました",
+          "pausedCodes": "{count, plural, one {コード#件} other {コード#件}}を一時停止しました",
+          "resumedCodes": "{count, plural, one {コード#件} other {コード#件}}を再開しました",
           "theirScanAndVersionHistory": "スキャン履歴とバージョン履歴は削除され、印刷済みのコードには「QRコードが見つかりません」というページが表示されます。この操作は元に戻せません。",
           "cancel": "キャンセル",
           "bulkActions": "一括操作",
@@ -6169,11 +6663,8 @@
           "failedCouldntBeRendered": "{failed, number}件を生成できませんでした。",
           "scansRedirectAgain": "スキャン時のリダイレクトが再開されます。",
           "scansGoToEachCodes": "スキャンすると、各コードのフォールバックURL、または中立的な「一時停止中」ページに移動します。",
-          "allSelectedOthersSkipped": "選択したコードはすべて{OTHERS_SKIPPED}",
-          "preparingValue": "{value}を準備中...",
           "renderingFinishedOfTotal": "{total, number}件中{finished, number}件を生成中...",
           "theQrCodesCouldntBe": "QRコードを生成できませんでした。",
-          "downloadedValueAsValue2": "{value}を{value2}でダウンロードしました",
           "downloadFailedPleaseTryAgain": "ダウンロードに失敗しました。もう一度お試しください。"
         },
         "codesTable": {
@@ -6210,7 +6701,9 @@
           "clearAll": "すべてクリア",
           "codesWithAllOfThese": "これらのタグをすべて持つコード",
           "emptyTheTrash": "ゴミ箱を空にしますか？",
-          "valueAndTheirScanHistory": "{value}とそのスキャン履歴は完全に削除されます。印刷物には「QRコードが見つかりません」というページが表示されます。この操作は元に戻せません。",
+          "valueAndTheirScanHistory": "{count, plural, one {#件のコード} other {#件のコード}}とそのスキャン履歴は完全に削除されます。印刷物には「QRコードが見つかりません」ページが表示されます。この操作は元に戻せません。",
+          "codeCount": "{count, plural, one {#件のコード} other {#件のコード}}",
+          "deletedForever": "{count, plural, one {コード#件} other {コード#件}}を完全に削除しました",
           "cancel": "キャンセル",
           "editName": "{name}を編集",
           "deleteName": "{name}を削除",
@@ -6270,7 +6763,12 @@
           "springCampaign": "春のキャンペーン",
           "save": "保存",
           "createFolder": "フォルダを作成",
-          "itsCodesAndSubfoldersMoved": "フォルダ内のコードとサブフォルダを{target}に移動しました。"
+          "itsCodesAndSubfoldersMoved": "フォルダ内のコードとサブフォルダを{target}に移動しました。",
+          "movedToFolder": "{count, plural, one {コード#件} other {コード#件}}を「{name}」に移動しました",
+          "movedOutOfFolders": "{count, plural, one {コード#件} other {コード#件}}をフォルダーなしに移動しました",
+          "theTopLevel": "最上位",
+          "deletedFolder": "「{name}」を削除しました",
+          "folderRenamed": "フォルダー名を変更しました"
         },
         "importDialog": {
           "import": "インポート",
@@ -6304,22 +6802,24 @@
           "theOldShortLinkOr": "以前の短縮リンク(またはコードID)は、同じファイルを再アップロードしたときにインポート済みのコードをスキップするために使われ、旧リンクと新リンクの対応表にも反映されます。",
           "provider": "プロバイダー",
           "exportFile": "エクスポートファイル",
-          "import": "インポート",
-          "firstMaxJobLinks": "(先頭の{MAX_JOB_LINKS, number}件)",
+          "previewRows": "{count, plural, one {#行} other {#行}}をプレビュー",
+          "previewImport": "インポートをプレビュー",
+          "rows": "{count, plural, one {#行} other {#行}}",
+          "rowsFirst": "{count, plural, one {#行} other {#行}}（先頭の{MAX_JOB_LINKS, number}行）",
           "chooseAnotherFile": "別のファイルを選択",
           "chooseFile": "ファイルを選択"
         },
         "importLinksStep": {
           "importingFromNameIsntAvailable": "{name}からのインポートにはまだ対応していません。",
           "qrdxReadsYourLinksTo": "QRdxはインポートのためにリンクを読み取ります。トークンは暗号化して保存され、設定からいつでも接続を解除できます。",
-          "signInWith": "ログインする:",
+          "signInWith": "{name}でサインイン",
+          "valueSelected": "{count, plural, one {#件のリンク} other {#件のリンク}}を選択中",
           "afterSigningInYouCome": "ログイン後はこの画面にそのまま戻り、リンクを選択できます。",
           "orPasteAKey": "またはキーを貼り付け",
           "connect": "接続",
           "openName": "{name}を開く",
           "connectingNameIsntAvailableRight": "現在、{name}への接続は利用できません。{name2}からリンクをCSVでエクスポートし、代わりに「その他のプロバイダー(CSV)」をご利用ください。",
           "allProviders": "すべてのプロバイダー",
-          "valueSelected": "{value}件を選択中",
           "previewImport": "インポートをプレビュー",
           "allDomains": "すべてのドメイン",
           "allTags": "すべてのタグ",
@@ -6380,8 +6880,8 @@
           "folderName": "フォルダ名",
           "yourDomain": "お使いのドメイン",
           "nothingToImport": "インポートするものがありません",
-          "importTheFirstValue": "最初の{value}件をインポート",
-          "importValue": "{value}をインポート",
+          "importTheFirstValue": "最初の{count, plural, one {#件のコード} other {#件のコード}}をインポート",
+          "importValue": "{count, plural, one {#件のコード} other {#件のコード}}をインポート",
           "keepTheirsOnThatDomain": "バックハーフは選択したドメインに残るため、DNSがQRdxに移った後は印刷済みのコードが再び使えるようになります。",
           "everyBackHalfIsKept": "すべてのバックハーフはqrdx.devで維持されます。",
           "keepingBackHalvesIsPart": "バックハーフの保持は{slugPlans}の機能です。",
@@ -6396,9 +6896,9 @@
           "forProvidersWithoutApiAccess": "API接続に対応していないプロバイダー向けです。CSVをアップロードして列を確認し、プレビューしてからインポートします。",
           "alreadyUsingTheQrdxCsv": "QRdxのCSVテンプレートをすでにお使いですか？<link>CSVをインポート</link>",
           "recentImports": "最近のインポート",
-          "valueValue2Created": "{value} · {value2} 件作成",
+          "valueValue2Created": "{value} · {count, plural, one {#件のコード} other {#件のコード}}を作成しました",
+          "valuePointingToQrdx": "QRdxを指す{count, plural, one {#件の古いリンク} other {#件の古いリンク}}",
           "resumeProcessedTotal": "再開 {processed, number}/{total, number}",
-          "valuePointingToQrdx": " · QRdxへ転送中 {value} 件",
           "open": "開く",
           "checking": "確認中…",
           "connected": "連携済み",
@@ -6409,19 +6909,19 @@
         },
         "importRedirectsStep": {
           "summary": "概要",
-          "undoValue": "{value}を元に戻す",
-          "update": "更新",
-          "in": "件中",
+          "undoValue": "{count, plural, one {#件のリンク} other {#件のリンク}}を元に戻す",
+          "valueRestored": "{count, plural, one {#件のリンク} other {#件のリンク}}を復元しました",
+          "valueNowOpenQrdx": "{count, plural, one {#件のリンクがQRdxを開くようになりました} other {#件のリンクがQRdxを開くようになりました}}",
+          "dryRunValueWouldChange": "ドライラン <span>· {count, plural, one {#件のリンクが変更されます} other {#件のリンクが変更されます}}</span>",
+          "updateLinksIn": "{name}内の{count, plural, one {#件のリンク} other {#件のリンク}}を更新",
+          "oldLinksAlreadyPoint": "{count, plural, one {#件の古いリンクはすでに} other {#件の古いリンクはすでに}}QRdxを指しています。",
           "importsFromNameHaveEnded": "{name}からのインポートは終了しました。",
           "qrdxNoLongerChangesName": "QRdxは今後{name}のリンクを変更しません。元に戻すと、元の宛先が{name2}アカウントに復元されます（このインポートと一緒に保存されています）。QRdxのコードはそのまま残ります。",
           "thisChangesLinksInYour": "この操作は{name}アカウント内のリンクを変更します。",
           "eachOldLinkWillOpen": "古いリンクはそれぞれ新しいQRdxのコードを開き、訪問者を同じ宛先に案内します。そのため、印刷済みのコードもそのまま使え、スキャンはQRdxに記録されます。ただし、{name}では先にクリックとして記録されます。元に戻すと、元の宛先が復元されます（このインポートと一緒に保存されています）。",
           "listingTheChanges": "変更内容を一覧にしています…",
-          "dryRunValueWouldChange": "ドライラン<span>・{value}件が変更されます</span>",
           "iUnderstandTheseNameLinks": "元に戻すまで、これらの{name}のリンクはQRdxを指すことを理解しました。",
           "updateProgress": "更新の進行状況",
-          "valueRestored": "{value}件を復元しました",
-          "valueNowOpenQrdx": "{value}件がQRdxを開くようになりました",
           "restoringOriginalDestinations": "元のリンク先を復元しています…",
           "updatingLinksInName": "{name}のリンクを更新しています…",
           "everyOldNameLinkHas": "{name}の以前のリンクはすべて、元のリンク先に戻っています。",
@@ -6444,7 +6944,9 @@
           "keepMyPrintedCodesWorking": "印刷済みのコードを使い続ける",
           "optionalPointEachOldName": "任意です。以前の{name}の各リンクを新しいQRdxのコードに向けることで、印刷済みのコードをそのまま使い続けられ、そのスキャンもQRdxに表示されます。変更内容は事前にすべて確認でき、元に戻すこともできます。",
           "pointYourOldCodesAt": "以前のコードをQRdxに向ける",
-          "codesLiveOnItsOwn": "のコードは独自のドメイン上にあるため、QRdxからは変更できません。以前のコードごとに、次の手順を行ってください。",
+          "oldProviderCodesLiveOnItsDomain": "以前のプロバイダーのコードは同社のドメイン上にあるため、QRdxでは変更できません。古いコードごとに次の操作を行ってください：",
+          "providerCodesLiveOnItsDomain": "{name}のコードは同社のドメイン上にあるため、QRdxでは変更できません。古いコードごとに次の操作を行ってください：",
+          "oldLinksPointToQrdx": "{count, plural, other {古い{name}のリンク#件がQRdxを指しています}}",
           "backHalvesOnBackhalfdomain": "{backHalfDomain}のバックハーフ",
           "attachCodes": "コードを添付",
           "notesOnEachCodeSay": "各コードのメモには、取得元、以前のリンク、元の作成日が記載されています。このインポートを再実行しても、インポート済みのものはすべてスキップされます。",
@@ -6455,24 +6957,27 @@
           "importingFromName": "{name}からインポート中…",
           "importPaused": "インポートを一時停止しました",
           "waitingWaitingSForThe": "レート制限のため{waiting, number}秒待ってから続行します…",
-          "valueCreatedSoFarIn": "これまでに{value}件作成しました（50件ずつのバッチ処理）。各リンクは、再試行しても一度だけインポートされます。",
+          "valueCreatedSoFarIn": "これまでに{count, plural, other {#件のコード}}を50件ずつまとめて作成しました。再試行しても、各リンクのインポートは1回だけです。",
           "manage": "管理",
           "reviewChanges": "変更を確認",
-          "yourOldProviders": "以前のプロバイダーの",
           "theCodesAreOnBackhalfdomain": "コードは{backHalfDomain}にあります。DNSがQRdxを指し、ドメインページで確認されると、このドメインの古いリンクがすぐにまた使えるようになります。",
           "afterBackhalfdomainPointsToQrdx": "{backHalfDomain}がQRdxを指し、ドメインページで確認されたら、コードを関連付けてください。{backHalfDomain2}/'<'back-half'>'で開けるようになります。",
           "other": "その他"
         },
         "moveWorkspaceDialog": {
           "moveToAnotherWorkspace": "別のワークスペースに移動",
-          "keepsItsShortLinkSo": "は短縮リンクがそのまま維持されるため、印刷済みのものも引き続き使えます。スキャンと履歴は一緒に移動し、フォルダーとタグはここに残ります。",
+          "keepsItsShortLinkSo": "<strong>{name}</strong>は短縮リンクがそのままなので、印刷済みのものも引き続き使えます。スキャン数と履歴も一緒に移動します。フォルダとタグはこのワークスペースに残ります。",
           "loadingWorkspaces": "ワークスペースを読み込み中",
           "youreNotInAnotherWorkspace": "コードを追加できる他のワークスペースに参加していません。閲覧者または請求担当メンバーのワークスペースは表示されません。",
           "cancel": "キャンセル",
           "moveCode": "コードを移動",
           "workspaces": "ワークスペース",
           "open": "開く",
-          "movedToName": "{name}に移動しました"
+          "movedToName": "{name}に移動しました",
+          "movedSameLink": "短縮リンク、スキャン、履歴は同じです。",
+          "movedFolderStayed": "短縮リンク、スキャン、履歴は同じです。フォルダはこのワークスペースに残りました。",
+          "movedTagsStayed": "短縮リンク、スキャン、履歴は同じです。{count, plural, other {#件のタグ}}はこのワークスペースに残りました。",
+          "movedFolderAndTagsStayed": "短縮リンク、スキャン、履歴は同じです。フォルダと{count, plural, other {#件のタグ}}はこのワークスペースに残りました。"
         },
         "newCodeDialog": {
           "template": "テンプレート",
@@ -6514,8 +7019,8 @@
           "bytesBytes": "{bytes, number}バイト",
           "fits": "収まる",
           "theLinkNeedsBytesBytes": "リンクには{bytes, number}バイト必要です。後でより長いリンクを書き込む場合は、NTAG215とNTAG216なら余裕があります。",
-          "openThisPageInChrome": "NFCをオンにしたAndroidスマートフォンのChromeでこのページを開き、「NFCタグに書き込む」をタップして、",
-          "againstTheBackOfThe": "をスマートフォンの背面にかざしてください。iPhoneではNFC書き込みアプリを使ってください。",
+          "writeItTag": "NFCをオンにしたAndroidスマートフォンのChromeでこのページを開き、「NFCタグに書き込む」をタップして、タグをスマートフォンの背面にかざしてください。iPhoneではNFC書き込みアプリをご利用ください。",
+          "writeItCard": "NFCをオンにしたAndroidスマートフォンのChromeでこのページを開き、「NFCタグに書き込む」をタップして、カードをスマートフォンの背面にかざしてください。iPhoneではNFC書き込みアプリをご利用ください。",
           "analyticsCountsTapsAndScans": "アナリティクスではタップとスキャンを別々に集計します。",
           "downloadTheQrCode": "QRコードをダウンロード",
           "androidPhonesWithNfcOn": "NFCがオンのAndroidスマートフォンやiPhone XS以降では、タグをスマートフォンにかざすだけでアプリなしでリンクが開きます。タグは常にQRコードに連動します。QRdxでリンク先を変更すると、書き込んだすべてのタグにも反映されます。",
@@ -6633,7 +7138,11 @@
           "editTag": "タグを編集",
           "createTag": "タグを作成",
           "tags": "タグ",
-          "tagsForValue": "{value}のタグ"
+          "tagsForValue": "{count, plural, other {#件のコード}}のタグ",
+          "tagsSaved": "タグを保存しました",
+          "updatedTagsOn": "{count, plural, other {#件のコード}}のタグを更新しました",
+          "tagSaved": "タグを保存しました",
+          "deletedTag": "タグ「{name}」を削除しました"
         },
         "usage": {
           "unlimitedUsage": "アクティブな動的QRコード{count, plural, one {#個} other {#個}}・{plan}プラン、コード数無制限",
@@ -6691,7 +7200,9 @@
           "linkCopied": "リンクをコピーしました",
           "couldntCopyTheLink": "リンクをコピーできませんでした。",
           "notUsedYet": "未使用",
-          "usedByValue": "{value}で使用中"
+          "usedByPagesAndCodes": "{pages, plural, other {#件のページ}}・{codes, plural, other {#件のコード}}で使用中",
+          "usedByPages": "{pages, plural, other {#件のページ}}で使用中",
+          "usedByCodes": "{codes, plural, other {#件のコード}}で使用中"
         }
       },
       "loading": {
@@ -6960,8 +7471,8 @@
           "cancel": "キャンセル",
           "save": "保存",
           "deleteName": "{name}を削除しますか？",
-          "qrCodesYouAlreadyMade": "このテーマで作成済みのQRコードの見た目は変わりません。削除されるのは保存済みのテーマのみです",
           "deleteTheme": "テーマを削除",
+          "deleteThemeTeam": "このテーマで作成済みのQRコードは見た目が変わりません。このワークスペースの全員から、保存済みのテーマが削除されるだけです。",
           "updateTheTagsForName": "「{name}」のタグを更新します。",
           "saveTags": "タグを保存",
           "openNameInThePlayground": "{name}をPlaygroundで開く",
@@ -6971,7 +7482,6 @@
           "removeAsDefault": "デフォルトを解除",
           "setAsWorkspaceDefault": "ワークスペースのデフォルトに設定",
           "setAsDefault": "デフォルトに設定",
-          "forEveryoneInThisWorkspace": "このワークスペースの全員に適用されます",
           "itIsAlsoRemovedFrom": "コミュニティからも削除されます。",
           "upgrade": "アップグレード",
           "themeRenamed": "テーマ名を変更しました",
@@ -7075,7 +7585,14 @@
           "removeHostname": "{hostname}を削除しますか？",
           "cancel": "キャンセル",
           "removeHostname2": "{hostname}を削除",
-          "shortLinksLookLikeHttps": "短縮リンクは https://{hostname}/aB3dE5f のようになります · 使用数：{value}",
+          "shortLinksLookLikeHttps": "短縮リンクは https://{hostname}/aB3dE5f の形式です・{count, plural, other {#件のコード}}で使用中",
+          "youveAddedValueTheMost": "ご利用のプランで追加できる上限の{count, plural, other {#件のドメイン}}を追加済みです。別のドメインを追加するには、どれか1つを削除してください。",
+          "providerCanAddRecords": "DNSは{provider}にあり、これらのレコードを代わりに追加できます。",
+          "yourProviderCanAddRecords": "DNSプロバイダーがこれらのレコードを代わりに追加できます。",
+          "approveAtProvider": "{provider}で変更を承認してから、こちらに戻ってください。",
+          "approveAtYourProvider": "DNSプロバイダーで変更を承認してから、こちらに戻ってください。",
+          "removeDomainInUse": "{count, plural, other {#件のコードが}}このドメインを使用しています。{hostname}のリンクで印刷したQRコードは使えなくなり、コードは{defaultHost}/q/…のリンクに切り替わります。ドメインで選んだバックハーフは、{defaultHost}で空いていればそのまま残り、それ以外は新しいものになります。",
+          "removeDomainUnused": "{hostname}の短縮リンクは使えなくなります。",
           "addTheseRecordsAtYour": "DNSプロバイダーでこれらのレコードを追加してから、［確認］をクリックしてください。",
           "checkDns": "DNSを確認",
           "verify": "確認",
@@ -7090,7 +7607,6 @@
           "addDomain": "ドメインを追加",
           "aSubdomainSuchAsGo": "go. や qr. などのサブドメインがおすすめです。メインのウェブサイトはそのまま変わりません。",
           "addingDomainsNeedsProOr": "ドメインの追加には ProまたはBusiness が必要です。",
-          "youveAddedValueTheMost": "ご利用のプランで追加できる上限の{value}件を追加済みです。別のドメインを追加するには、1件削除してください。",
           "removing": "削除中…",
           "removeDomain": "ドメインを削除",
           "addTheDnsRecordsShown": "表示されているDNSレコードを追加してから、［確認］をクリックしてください。",

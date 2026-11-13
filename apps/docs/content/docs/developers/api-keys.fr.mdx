@@ -1,0 +1,61 @@
+---
+title: "Clés API"
+description: "Créez une clé API qrdx_ dans Paramètres → Clés API et applications, puis appelez la REST API avec elle. Portées, espaces de travail et rôles, expiration, dernière utilisation et révocation."
+icon: LockKeyhole
+---
+
+Une clé API permet à vos propres serveurs, scripts et tâches CI d'appeler la [REST API](/docs/developers/rest-api) sans passer par un flux OAuth. Envoyez-la dans l'en-tête `Authorization` :
+
+```bash
+curl https://api.qrdx.dev/v1/codes -H "Authorization: Bearer $QRDX_API_KEY"
+```
+
+Tout endpoint qui accepte un jeton d'accès OAuth accepte une clé dans le même en-tête, et l'[Image API](/docs/developers/image-api) n'a besoin ni de l'un ni de l'autre. Lorsque votre produit agit pour le compte d'autres utilisateurs de QRdx, utilisez plutôt une [application OAuth](/docs/developers/build-an-integration) : chaque personne l'autorise ainsi elle-même.
+
+## Créer une clé [#create-a-key]
+
+1. Ouvrez [Paramètres → Clés API et applications](/dashboard?to=settings/developers&new=1) dans l'espace de travail auquel la clé est destinée. Le lien ouvre le dernier espace de travail utilisé ; choisissez-en un autre dans le sélecteur d'espace de travail.
+2. Choisissez **Créer une clé**. Donnez-lui un nom qui indique où elle sera utilisée, choisissez son accès et, si vous le souhaitez, sa date d'expiration. Une clé fonctionne sans vous : QRdx vous demande donc d'abord de [confirmer votre identité](/docs/help/privacy-and-security/two-step-verification#confirm-its-you), sauf si vous l'avez déjà fait dans ce navigateur au cours des 10 dernières minutes.
+3. Copiez la clé. Elle n'est affichée qu'une seule fois : QRdx n'en conserve qu'un hash, elle ne peut donc pas être affichée de nouveau. La même boîte de dialogue affiche une requête curl contenant la clé et l'adresse de l'API de ce site, prête à être collée.
+
+Une clé se compose de `qrdx_` suivi de 40 lettres et chiffres. Les listes n'en affichent que le début, par exemple `qrdx_7KpQ2m…`, pour que vous puissiez distinguer les clés.
+
+## Accès [#access]
+
+Les clés utilisent les mêmes portées que les applications OAuth. Choisissez l'une des trois options lors de la création de la clé :
+
+| Accès | Portées | Autorise |
+| --- | --- | --- |
+| Accès complet | `profile:read`, `themes:read`, `codes:read`, `codes:write` | Tout ce que fait l'API |
+| Lecture seule | `profile:read`, `themes:read`, `codes:read` | Lire les codes, les statistiques de scan, les thèmes et le profil |
+| Personnalisé | Celles que vous choisissez | Ce que ces portées autorisent ([la liste des portées](/docs/developers/rest-api#get-an-access-token)) |
+
+`codes:write` autorise aussi tout ce que permet `codes:read`. Les portées d'une clé ne peuvent pas être modifiées par la suite ; créez plutôt une nouvelle clé. Une requête en dehors des portées de la clé reçoit `403 INSUFFICIENT_SCOPE`, et le message indique la portée requise.
+
+## Espaces de travail et rôles [#workspaces-and-roles]
+
+Une clé appartient à l'espace de travail qui était ouvert lors de sa création, et y agit en votre nom :
+
+- La clé fonctionne avec les codes, les scans, les hooks et les thèmes de cet espace de travail, selon l'offre de l'espace de travail et son [quota quotidien](/docs/developers/rest-api#rate-limits).
+- Elle peut faire ce que vous pouvez faire dans l'espace de travail, selon votre [rôle](/docs/teams) au moment de chaque requête. Dans votre propre espace de travail, vous êtes propriétaire. Si votre rôle change, les droits de la clé changent avec lui ; si vous quittez l'espace de travail, la clé cesse de fonctionner, et la suppression d'un espace de travail supprime ses clés.
+
+Tous les membres d'un espace de travail peuvent créer des clés. Les propriétaires et les administrateurs voient toutes les clés de l'espace de travail et peuvent révoquer n'importe laquelle ; les membres ne voient et ne révoquent que les leurs. `GET /v1/me` renvoie le profil de la personne qui a créé la clé.
+
+## Expiration, dernière utilisation et révocation [#revoke]
+
+- **Expiration.** Une clé n'expire jamais, ou expire après 30 jours, 90 jours ou 1 an. Une clé expirée reçoit `401 INVALID_TOKEN` et reste dans la liste, marquée **Expirée**, jusqu'à ce que vous la révoquiez.
+- **Dernière utilisation.** La liste affiche la date à laquelle chaque clé a authentifié une requête pour la dernière fois.
+- **Révocation.** Choisissez **Révoquer** à côté d'une clé. À partir de là, les requêtes qui l'utilisent reçoivent `401 INVALID_TOKEN`. Une révocation est irréversible.
+
+Chaque personne peut avoir jusqu'à 25 clés actives dans chaque espace de travail. Les clés révoquées et expirées ne comptent pas.
+
+## Protéger vos clés [#keep-keys-safe]
+
+- Conservez une clé sur un serveur : dans une variable d'environnement ou un gestionnaire de secrets. Ne la placez jamais dans une page web, une application mobile, un prompt ou un dépôt.
+- Utilisez une clé par lieu d'exécution, afin de pouvoir en révoquer une sans casser les autres.
+- Donnez une clé en lecture seule aux scripts qui ne font que produire des rapports, et une clé qui expire aux tâches de courte durée.
+- Si une clé fuit, révoquez-la et créez-en une nouvelle. Le préfixe `qrdx_` permet de rechercher facilement les clés dans le code et les journaux.
+
+## Auto-hébergement [#self-hosting]
+
+Une instance [auto-hébergée](/docs/self-hosting) a besoin de la table `api_key` dans sa base de données, que crée la synchronisation habituelle du schéma après une mise à jour (le service `migrate` avec Docker, `bun run db:push` sinon ; voir [mise à jour](/docs/self-hosting)). Tant qu'elle n'existe pas, Paramètres → Clés API et applications indique que les clés API ne sont pas disponibles et l'API refuse les clés avec `401`. Son API se trouve à `/api/v1` sur son propre domaine, qui est l'adresse que la boîte de dialogue de nouvelle clé renseigne.
