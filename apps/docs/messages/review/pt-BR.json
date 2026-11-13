@@ -13115,6 +13115,18 @@
     "source": "dc937b598926",
     "status": "machine"
   },
+  "editor.controlSections.frameControls.takesDotColor": {
+    "source": "d82e32db793a",
+    "status": "machine"
+  },
+  "editor.controlSections.frameControls.alsoHasTemplate": {
+    "source": "9f6a4b56a0b8",
+    "status": "machine"
+  },
+  "editor.controlSections.frameControls.templateKeepsSize": {
+    "source": "e4fef3437820",
+    "status": "machine"
+  },
   "editor.controlSections.frameFields.textSize": {
     "source": "d68761cc1eb2",
     "status": "machine"

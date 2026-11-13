@@ -94,7 +94,7 @@ const src = `https://api.qrdx.dev/v1/qr?data=${encodeURIComponent(link)}&style=$
 | `dot` | `square` | 各アイの内側のドットの形 |
 | `level` | `Q` | 誤り訂正：`L`（約7%）、`M`（約15%）、`Q`（約25%）、`H`（約30%） |
 | `margin` | `4` | コードの周囲の余白（クワイエットゾーン）。モジュール単位で `0` から `16` |
-| `template` | なし | 装飾用の枠線テンプレート |
+| `template` | なし | [テンプレートとして描くフレーム](/docs/features/templates)。画像全体の幅が `size` になり、コードはその中に小さく収まります |
 | `frame` | なし | `banner-bottom`、`speech-bubble`、`circle` などの組み込みの行動喚起[フレーム](/docs/features/frames)（{facts.frameStyles}種類の組み込みフレームのいずれかで、それぞれフレーム仕様から描画されます） |
 | `frameText` | `Scan me` | フレームのラベル（24文字まで）。`style` や `item` のフレームのラベルも書き換えます |
 | `style` | なし | エディターのデザイン全体をJSONで指定します。[スタイル](#style)を参照 |
@@ -115,7 +115,7 @@ const src = `https://api.qrdx.dev/v1/qr?data=${encodeURIComponent(link)}&style=$
 | `bgColor`、`fgColor`、`eyeColor`、`dotColor` | 色（`#155dfc` のような16進数、`rgb()`、`hsl()`、色名）、またはグラデーション：`{ "type": "linear", "angle": 45, "stops": [...] }` または `{ "type": "radial", "stops": [...] }`。ストップは `{ "color", "offset" }` を2〜8個（offsetは0〜100） |
 | `bodyPattern`、`cornerEyePattern`、`cornerEyeDotPattern` | [パターン値](#pattern-values) |
 | `level`、`margin` | 上記のパラメーターと同じ（`margin` は0〜16） |
-| `templateId` | 枠線テンプレート。なしにするには `default` |
+| `templateId` | テンプレートとして描くフレーム。なしにする場合は `default` |
 | `frame` | 組み込みフレーム `{ "style": "banner-bottom", "text": "Scan me", "color": "#155dfc", "textColor": "#ffffff" }`、またはカスタムフレーム `{ "style": "custom", "spec": { … } }`。フレーム仕様は[コミュニティ](#community-items)のものか、Playgroundのフレームセクションで作成したカスタムフレームのものを使います。仕様はエンジンのフレーム仕様ルールで検証されます（マークアップ、リンク、画像は不可。32 KBまで） |
 | `eyeColors` | `eyeColor` と `dotColor` より優先される、アイごとの色：`{ "topLeft": { "outer": "#b91c1c", "inner": "#1d4ed8" }, "topRight": …, "bottomLeft": … }`。それぞれ色またはグラデーション |
 | `moduleScale` | 各ドットのサイズ。`0.5` から `1`（デフォルトは `1`） |

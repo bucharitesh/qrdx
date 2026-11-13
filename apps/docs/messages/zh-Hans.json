@@ -4400,7 +4400,10 @@
         "theFrameIsAddedAround": "边框会添加在二维码外围，因此下载的图片尺寸会变大，二维码本身仍可正常扫描。",
         "label": "标签",
         "pickAFrameFirst": "请先选择边框",
-        "none": "无"
+        "none": "无",
+        "takesDotColor": "此边框使用二维码圆点的颜色。",
+        "alsoHasTemplate": "此设计内还包含 {name} 边框。选择其他边框会同时替换这两个边框。",
+        "templateKeepsSize": "此边框会将二维码容纳在内部，因此下载的图片会保持你所选的尺寸。"
       },
       "frameFields": {
         "textSize": "文字大小"

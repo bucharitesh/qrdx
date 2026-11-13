@@ -59,7 +59,7 @@ QRdxにはSlack内でQRコードを作成するSlackアプリがあります。�
 | `--dot` | 目の中心の形 | {facts.eyeCentres}種類の中心形状のいずれか（`square`、`rounded`、`circle` など） |
 | `--frame` | コードを囲むフレーム | `none`、または{facts.frameStyles}種類の内蔵フレームのいずれか（`banner-bottom`、`banner-top`、`speech-bubble`、`polaroid` など） |
 | `--frame-text` | フレームのラベル（24文字まで） | 任意のテキスト。スペースを含む場合は引用符で囲みます。`--frame` がない場合は、コードの下のバナーに表示されます |
-| `--template` | 装飾的な枠線 | `Arrow`, `StandardBox`, `SquareBorder`, `StrikedBox`, `Halloween` |
+| `--template` | テンプレートとして描くフレーム | `Arrow`, `StandardBox`, `SquareBorder`, `StrikedBox`, `Halloween` |
 | `--logo` | 中央のアイコン | `link`, `wifi`, `location`, `phone`, `email`, `whatsapp`, `instagram`, `file`, `calendar`, `none` |
 
 スタイルを適用したコードは、投稿される前に、エディタと同じスキャンスコアでQRdxがチェックします。スマートフォンで読み取りにくいデザインの場合、QRdxは色を濃くする、形をシンプルにする、誤り訂正を強めるなどの調整を行い、その旨をコードの下に表示します。それでも十分でない場合（多くはコンテンツが長いときです）は、白地に黒のコードがメモ付きで届きます。`/qr` でスタイルを指定したコードは、チェックが終わってから投稿されるため、コマンドの送信から少し遅れて届きます。

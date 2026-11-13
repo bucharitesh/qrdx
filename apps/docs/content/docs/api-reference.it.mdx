@@ -41,8 +41,8 @@ import { QRCode } from 'qrdx';
 | `cornerEyeDotPattern` | `CornerEyeDotPattern` | `'circle'` | Motivo del punto d'angolo |
 | `hideLogo` | `boolean` | `false` | Nasconde il logo. Non viene disegnato alcun logo a meno che `logo` non sia impostato |
 | `logo` | `string` | — | URL del logo |
-| `templateId` | `string` | `'default'` | ID del template |
-| `customTemplate` | `TemplateDefinition` | — | Template personalizzato |
+| `templateId` | `string` | `'default'` | Una [cornice disegnata come template](/docs/features/templates) (`'Arrow'`, `'StandardBox'`, …): l'intera grafica è larga `size` |
+| `customTemplate` | `TemplateDefinition` | — | Una cornice che disegni nel codice (ha la precedenza su `templateId`) |
 | `level` | `ErrorLevel` | `'Q'` | Correzione degli errori |
 | `autoLevel` | `boolean` | `false` | Porta `level` a H quando il logo copre più del 7% del codice (`AUTO_LEVEL_LOGO_COVERAGE`) |
 | `margin` | `number` | `0` | Margine in moduli |

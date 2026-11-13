@@ -94,7 +94,7 @@ const src = `https://api.qrdx.dev/v1/qr?data=${encodeURIComponent(link)}&style=$
 | `dot` | `square` | Forma del punto dentro de cada ojo de las esquinas |
 | `level` | `Q` | Corrección de errores: `L` (~7%), `M` (~15%), `Q` (~25%) o `H` (~30%) |
 | `margin` | `4` | Zona de silencio alrededor del código, en módulos, de `0` a `16` |
-| `template` | ninguno | Plantilla de borde decorativo |
+| `template` | ninguno | Un [marco dibujado como plantilla](/docs/features/templates): toda la imagen mide `size` de ancho, con el código más pequeño dentro |
 | `frame` | ninguno | Un [marco](/docs/features/frames) integrado con llamada a la acción, como `banner-bottom`, `speech-bubble` o `circle` (cualquiera de los {facts.frameStyles} marcos integrados, cada uno dibujado a partir de su especificación de marco) |
 | `frameText` | `Scan me` | La etiqueta del marco, hasta 24 caracteres. También cambia la etiqueta del marco de un `style` o un `item` |
 | `style` | ninguno | El diseño completo del editor como JSON; consulta [Estilos](#style) |
@@ -115,7 +115,7 @@ Con un marco, `size` es el ancho del código en sí y el marco se suma a la imag
 | `bgColor`, `fgColor`, `eyeColor`, `dotColor` | Un color (hexadecimal como `#155dfc`, `rgb()`, `hsl()` o un nombre de color), o un degradado: `{ "type": "linear", "angle": 45, "stops": [...] }` o `{ "type": "radial", "stops": [...] }`, con de 2 a 8 paradas de `{ "color", "offset" }` (offset de 0 a 100) |
 | `bodyPattern`, `cornerEyePattern`, `cornerEyeDotPattern` | Los [valores de patrón](#pattern-values) |
 | `level`, `margin` | Igual que los parámetros anteriores (`margin` de 0 a 16) |
-| `templateId` | Una plantilla de borde, `default` para ninguna |
+| `templateId` | Un marco dibujado como plantilla, `default` para ninguno |
 | `frame` | Un marco integrado, `{ "style": "banner-bottom", "text": "Scan me", "color": "#155dfc", "textColor": "#ffffff" }`, o uno personalizado, `{ "style": "custom", "spec": { … } }`, con una especificación de marco de la [comunidad](#community-items) o un marco personalizado creado en la sección Marco del Playground. Las especificaciones se validan con las reglas de especificación de marcos del motor (sin marcado, enlaces ni imágenes; 32 KB como máximo) |
 | `eyeColors` | Colores por ojo, por encima de `eyeColor` y `dotColor`: `{ "topLeft": { "outer": "#b91c1c", "inner": "#1d4ed8" }, "topRight": …, "bottomLeft": … }`, cada uno un color o un degradado |
 | `moduleScale` | Tamaño de cada punto, de `0.5` a `1` (por defecto `1`) |

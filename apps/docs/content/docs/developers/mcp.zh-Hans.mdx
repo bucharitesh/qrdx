@@ -82,7 +82,7 @@ https://mcp.qrdx.dev/mcp
 | `design_qr` | 为任意内容类型设计二维码，样式由你的助手选定，也可以从内置主题或社区项目出发；检查其扫描评分，并修复样式直至评级为 Great。返回评分、所做的改动、样式 JSON、Playground 链接、PNG 和 SVG。 |
 | `list_options` | 列出 `design_qr` 接受的所有取值：内容类型及其字段、颜色和渐变、形状、边框样式（含 QRdx 官方边框的 id）、边框线、Logo 图标和品牌 Logo、内置主题、纠错等级以及限制。 |
 | `generate_qr_code` | 使用编辑器的样式渲染二维码。返回 PNG 图片和公开的 [Image API](/docs/developers/image-api) URL（SVG、PNG、无损 WebP 和矢量 EPS），可直接用于 Markdown、HTML 或印刷；需要时还可返回 SVG 标记。 |
-| `list_qr_styles` | 列出主体图案、码眼外框和码眼中心点形状、边框模板、边框样式、Logo 图标、纠错等级、默认值和限制。 |
+| `list_qr_styles` | 列出主体图案、码眼外框和码眼中心点形状、边框（内置样式和以模板绘制的边框）、Logo 图标、纠错等级、默认值和限制。 |
 | `search_community` | 按关键词、类型或标签查找已发布的[社区](/community)边框、主题和合集。 |
 | `get_community_item` | 获取一个社区项目及其应用的样式，可直接用于 `design_qr` 或 `generate_qr_code`。 |
 | `save_template` | 将设计保存为你工作区中的主题。需要 [API 密钥](#use-an-api-key)。 |

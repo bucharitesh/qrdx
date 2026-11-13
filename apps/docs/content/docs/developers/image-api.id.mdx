@@ -94,7 +94,7 @@ const src = `https://api.qrdx.dev/v1/qr?data=${encodeURIComponent(link)}&style=$
 | `dot` | `square` | Bentuk titik di dalam setiap mata sudut |
 | `level` | `Q` | Koreksi kesalahan: `L` (~7%), `M` (~15%), `Q` (~25%), atau `H` (~30%) |
 | `margin` | `4` | Zona tenang di sekitar kode dalam modul, `0` hingga `16` |
-| `template` | tidak ada | Templat border dekoratif |
+| `template` | tidak ada | [Bingkai yang digambar sebagai template](/docs/features/templates): seluruh gambar selebar `size`, dengan kode lebih kecil di dalamnya |
 | `frame` | tidak ada | [Bingkai](/docs/features/frames) ajakan bertindak bawaan, seperti `banner-bottom`, `speech-bubble`, atau `circle` (salah satu dari {facts.frameStyles} bingkai bawaan, masing-masing digambar dari spesifikasi bingkainya) |
 | `frameText` | `Scan me` | Label bingkai, hingga 24 karakter. Juga mengganti label bingkai pada `style` atau `item` |
 | `style` | tidak ada | Seluruh desain editor sebagai JSON; lihat [Gaya](#style) |
@@ -115,7 +115,7 @@ Dengan bingkai, `size` adalah lebar kode itu sendiri dan bingkai menambah ukuran
 | `bgColor`, `fgColor`, `eyeColor`, `dotColor` | Warna (hex seperti `#155dfc`, `rgb()`, `hsl()`, atau nama warna), atau gradien: `{ "type": "linear", "angle": 45, "stops": [...] }` atau `{ "type": "radial", "stops": [...] }`, dengan 2 hingga 8 stop berupa `{ "color", "offset" }` (offset 0 hingga 100) |
 | `bodyPattern`, `cornerEyePattern`, `cornerEyeDotPattern` | [Nilai pola](#pattern-values) |
 | `level`, `margin` | Sama seperti parameter di atas (`margin` 0 hingga 16) |
-| `templateId` | Templat border, `default` untuk tanpa border |
+| `templateId` | Bingkai yang digambar sebagai template, `default` untuk tanpa bingkai |
 | `frame` | Bingkai bawaan, `{ "style": "banner-bottom", "text": "Scan me", "color": "#155dfc", "textColor": "#ffffff" }`, atau bingkai kustom, `{ "style": "custom", "spec": { … } }`, dengan spesifikasi bingkai dari [komunitas](#community-items) atau bingkai kustom yang dibuat di bagian Bingkai pada Playground. Spesifikasi diperiksa terhadap aturan spesifikasi bingkai milik mesin (tanpa markup, tautan, atau gambar; maksimal 32 KB) |
 | `eyeColors` | Warna per mata, menimpa `eyeColor` dan `dotColor`: `{ "topLeft": { "outer": "#b91c1c", "inner": "#1d4ed8" }, "topRight": …, "bottomLeft": … }`, masing-masing berupa warna atau gradien |
 | `moduleScale` | Ukuran setiap titik, `0.5` hingga `1` (default `1`) |
