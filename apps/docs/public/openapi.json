@@ -4231,7 +4231,7 @@
             "oauth2": ["codes:write"]
           }
         ],
-        "description": "Paints a QR code into AI artwork from your description and checks that the image scans. Where the model's image doesn't scan as drawn, QRdx strengthens the code just enough, on the model's own pixels (`blend` says how). It's the same AI art as the playground's Art tab and the [AI art studio](https://qrdx.dev/ai/art).\n\n**Credits.** Each image uses one from the monthly AI art allowance of the workspace the key acts on, the same allowance as the app: 3 on Free, 30 on Pro and 150 on Business, shared by the team. A failed call is refunded. Each person can also make at most 25 a day. `credits` in the response shows what's left.\n\n**Timing.** A call takes about 15 to 45 seconds and gives up before a minute, without using a credit. Set your HTTP client's timeout to at least 60 seconds.\n\n**What it encodes.** Send `text`, or a dynamic code's `code` (its `id`) to encode its short link, so you can change where it goes later and its scans are counted. A code in another workspace is a `404`.\n\n**Response.** JSON with the image as a `data:` URL, or the PNG itself with `?format=png` or `Accept: image/png` (seed, mode and blend then come as `X-QRdx-Seed`, `X-QRdx-Mode`, `X-QRdx-Blend`, `X-QRdx-Blend-Strength` and `X-QRdx-Credits-Remaining` headers). Nothing is stored, and photos and reference images are discarded after the call. [AI art API](https://qrdx.dev/docs/developers/ai-art-api).\n\n**Scope:** `codes:write`, for API keys and OAuth tokens alike.",
+        "description": "Paints a QR code into AI artwork from your description and checks that the image scans. Where the model's image doesn't scan as drawn, QRdx strengthens the code just enough, on the model's own pixels (`blend` says how). It's the same AI art as the playground's Art tab and the [AI art studio](https://qrdx.dev/ai/art).\n\n**Credits.** Each image uses one from the monthly AI art allowance of the workspace the key acts on, the same allowance as the app: 3 on Free, 30 on Pro and 150 on Business, shared by the team. A failed call is refunded. Each person can also make at most 25 a day. `credits` in the response shows what's left.\n\n**Timing.** A call takes about 15 to 45 seconds in code mode, 25 to 45 in photo mode and 40 to 55 in scene mode (it makes its picture first), and gives up before a minute without using a credit: a scene that runs out of time answers `AI_ART_TIMEOUT`, so try again or use code mode. Set your HTTP client's timeout to at least 60 seconds.\n\n**What it encodes.** Send `text`, or a dynamic code's `code` (its `id`) to encode its short link, so you can change where it goes later and its scans are counted. A code in another workspace is a `404`.\n\n**Response.** JSON with the image as a `data:` URL, or the PNG itself with `?format=png` or `Accept: image/png` (seed, mode and blend then come as `X-QRdx-Seed`, `X-QRdx-Mode`, `X-QRdx-Blend`, `X-QRdx-Blend-Strength` and `X-QRdx-Credits-Remaining` headers). Nothing is stored, and photos and reference images are discarded after the call. [AI art API](https://qrdx.dev/docs/developers/ai-art-api).\n\n**Scope:** `codes:write`, for API keys and OAuth tokens alike.",
         "parameters": [
           {
             "name": "format",
@@ -4302,7 +4302,7 @@
                     "default": "code",
                     "type": "string",
                     "enum": ["code", "scene", "photo"],
-                    "description": "How the code sits in the art: `code` paints the art into the code's modules; `scene` paints a full-bleed picture with the code in something in it; `photo` paints the code into your `photo`."
+                    "description": "How the code sits in the art: `code` paints the art into the code's modules; `scene` paints a picture from the description first, then paints the code into its middle, so the picture runs through the code; `photo` does the same with your `photo` as the picture."
                   },
                   "style": {
                     "type": "string",
@@ -4327,6 +4327,11 @@
                     "type": "string",
                     "maxLength": 1398134,
                     "description": "Photo mode only: your picture as a PNG or JPEG `data:` URL, cropped square and downsized to about 1024 px (at most 1 MB). It goes to the model and is discarded."
+                  },
+                  "picture": {
+                    "type": "string",
+                    "maxLength": 1399126,
+                    "pattern": "^[A-Za-z0-9_-]+$"
                   }
                 },
                 "description": "Send exactly one of `text` and `code`."

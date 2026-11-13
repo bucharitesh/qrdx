@@ -1,6 +1,6 @@
 // The scene and photo examples on /ai/art: real images from the art
-// pipeline (scripts/ai/art-eval.ts --text <ART_MODE_EXAMPLES_TEXT>), saved
-// as small WebP in public/images/ai-art-scenes.
+// pipeline (scripts/ai/art-eval-picture.ts --text <ART_MODE_EXAMPLES_TEXT>),
+// saved as small WebP in public/images/ai-art-scenes.
 // tests/lib/ai-art-scene-examples.test.ts checks that each one still scans.
 
 import { CANONICAL_ORIGIN } from "@repo/config";
@@ -14,9 +14,9 @@ export interface ArtModeExample {
   id:
     | "lighthouse"
     | "painted-townhouses"
+    | "botanical-watercolor"
     | "venice-canals"
-    | "cottage-garden"
-    | "neon-city"
+    | "zen-garden"
     | "photo-mountain"
     | "photo-latte"
     | "photo-dog";
@@ -28,13 +28,13 @@ export interface ArtModeExample {
  * from the sample photos in public/images/art-samples/photos.
  */
 export const ART_MODE_EXAMPLES: readonly ArtModeExample[] = [
-  { id: "painted-townhouses", mode: "scene" },
   { id: "lighthouse", mode: "scene" },
+  { id: "painted-townhouses", mode: "scene" },
   { id: "photo-mountain", mode: "photo" },
+  { id: "botanical-watercolor", mode: "scene" },
   { id: "venice-canals", mode: "scene" },
-  { id: "cottage-garden", mode: "scene" },
   { id: "photo-latte", mode: "photo" },
-  { id: "neon-city", mode: "scene" },
+  { id: "zen-garden", mode: "scene" },
   { id: "photo-dog", mode: "photo" },
 ];
 
