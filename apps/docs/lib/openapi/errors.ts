@@ -217,6 +217,13 @@ export const API_ERRORS = [
     fix: "Try again with a higher `visibility`, or another seed.",
   },
   {
+    code: "AI_ART_DESCRIBE_FAILED",
+    status: 502,
+    meaning:
+      "You left out `prompt`, and the text model that writes one for you failed. No AI art credit was used.",
+    fix: "Try again, or send your own `prompt`.",
+  },
+  {
     code: "SLUG_UNAVAILABLE",
     status: 503,
     meaning: "No free short-link slug could be reserved in time.",

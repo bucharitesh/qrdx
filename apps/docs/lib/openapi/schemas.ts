@@ -667,6 +667,12 @@ export const artImageSchema = named(
       .describe("The dynamic code the art encodes, when you sent `code`"),
     visibility: z.number().int().describe("The QR visibility used"),
     creativity: z.number().int().describe("The creativity used"),
+    writtenPrompt: z
+      .string()
+      .optional()
+      .describe(
+        "The description QRdx wrote for you, when you left out `prompt`",
+      ),
   }),
 );
 

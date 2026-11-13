@@ -163,6 +163,8 @@ export interface ApiArtImage {
   code: ArtCode | null;
   visibility: number;
   creativity: number;
+  /** The description QRdx wrote, when the request had no prompt */
+  writtenPrompt?: string;
 }
 
 export function serializeArt(
@@ -183,6 +185,7 @@ export function serializeArt(
       code,
       visibility: result.visibility,
       creativity: result.creativity,
+      ...(result.writtenPrompt && { writtenPrompt: result.writtenPrompt }),
     },
     credits: result.credits,
   };

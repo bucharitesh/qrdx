@@ -2,7 +2,7 @@
 // (components/sections/ai-art/looks.ts), composing a look into the prompt and
 // writing a missing description (lib/ai/art-prompt.ts, with a fake model),
 // the request schemas, and the Art tab's form helpers. No network, no model.
-import { existsSync, readdirSync, statSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import sharp from "sharp";
 import { describe, expect, it, vi } from "vitest";
@@ -105,6 +105,24 @@ describe("the looks", () => {
       (file) => !findArtLook(file.replace(/\.webp$/, "")),
     );
     expect(stray).toEqual([]);
+  });
+
+  it("are listed, every one and in order, in the AI art API docs", () => {
+    const mdx = readFileSync(
+      join(import.meta.dirname, "../../content/docs/developers/ai-art-api.mdx"),
+      "utf8",
+    );
+    const section = mdx.slice(
+      mdx.indexOf("## Quick looks"),
+      mdx.indexOf("## A prompt written for you"),
+    );
+    const rows = [...section.matchAll(/^\| `([a-z-]+)` \| ([^|]+) \|$/gm)]
+      // The header row names the column `style`.
+      .filter(([, id]) => id !== "style")
+      .map(([, id, label]) => ({ id, label: label?.trim() }));
+    expect(rows).toEqual(
+      ART_LOOKS.map((look) => ({ id: look.id, label: look.label })),
+    );
   });
 
   it("each have a label in the catalog the chips read", () => {
