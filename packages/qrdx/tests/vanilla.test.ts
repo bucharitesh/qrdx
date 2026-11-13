@@ -46,7 +46,11 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
-const builtFile = new URL("../dist/vanilla.browser.mjs", import.meta.url);
+// Through a variable, so Vite leaves the URL alone under jsdom (it rewrites
+// `new URL("…", import.meta.url)` into a served asset URL there, which
+// existsSync never finds)
+const HERE = import.meta.url;
+const builtFile = new URL("../dist/vanilla.browser.mjs", HERE);
 
 describe.each([
   ["source", async () => vanilla],
