@@ -9,9 +9,11 @@ import {
   frameSpecSchema,
 } from "qrdx/types";
 import { z } from "zod";
+import type { serializeArt } from "@/app/api/v1/art/_lib/art";
 import type { serializeBarcode } from "@/app/api/v1/barcodes/_lib/serialize";
 import type { serializeCode } from "@/app/api/v1/codes/_lib/api";
 import type { serializeHook } from "@/app/api/v1/hooks/_lib/hooks";
+import { ART_MODES } from "@/components/sections/ai-art/config";
 import { BARCODE_FORMAT_IDS } from "@/lib/barcode/request";
 import { BARCODE_ROTATIONS } from "@/lib/barcode/style";
 import type { CommunityApiItem } from "@/lib/community/api";
@@ -605,6 +607,76 @@ const _barcodeMatches: Equals<
 > = true;
 void _barcodeMatches;
 
+// ─── AI art (POST /v1/art) ───────────────────────────────────────────────────
+
+export const artCreditsSchema = named(
+  "AIArtCredits",
+  z.object({
+    plan: z.enum(["free", "pro", "business"]),
+    limit: z
+      .number()
+      .int()
+      .nullable()
+      .describe("Images per calendar month (UTC) on the plan"),
+    used: z
+      .number()
+      .int()
+      .describe("Images made this month, this one included"),
+    remaining: z.number().int().nullable().describe("Images left this month"),
+    pooled: z
+      .boolean()
+      .describe("Shared by everyone in the workspace (Business)"),
+    resetsAt: z
+      .string()
+      .describe("When the allowance starts over, as an ISO date (UTC)"),
+  }),
+);
+
+export const artImageSchema = named(
+  "AIArtImage",
+  z.object({
+    imageUrl: z
+      .string()
+      .describe(
+        "The image, a 1024 px square PNG, as a `data:image/png;base64,…` URL. QRdx doesn't keep it.",
+      ),
+    width: z.number().int(),
+    height: z.number().int(),
+    seed: z
+      .number()
+      .int()
+      .describe("The seed, to send again for a similar image"),
+    mode: z.enum(ART_MODES).describe("How the code sits in the art"),
+    blend: z
+      .enum(["none", "least", "image-qr"])
+      .describe(
+        "How QRdx made it scan: `none` (the model's image as drawn), `least` (finders, quiet zone and modules strengthened just enough) or `image-qr` (redrawn as an Image QR code, the last resort)",
+      ),
+    blendStrength: z
+      .number()
+      .describe("How strong the blend is, 0 (as drawn) to 1 (Image QR)"),
+    text: z
+      .string()
+      .describe("Exactly what the image scans to, checked by QRdx"),
+    code: z
+      .object({
+        id: z.string(),
+        shortLink: z.string(),
+      })
+      .nullable()
+      .describe("The dynamic code the art encodes, when you sent `code`"),
+    visibility: z.number().int().describe("The QR visibility used"),
+    creativity: z.number().int().describe("The creativity used"),
+  }),
+);
+
+export const artResponseSchema = z.object({
+  data: artImageSchema,
+  credits: artCreditsSchema
+    .nullable()
+    .describe("The workspace's AI art allowance after this image"),
+});
+
 // ─── Drift checks (compile time) ────────────────────────────────────────────
 
 type Equals<A, B> =
@@ -652,7 +724,12 @@ const _communityItemMatches: Equals<
   z.output<typeof communityItemSchema>,
   CommunityApiItem
 > = true;
+const _artMatches: Equals<
+  z.output<typeof artResponseSchema>,
+  ReturnType<typeof serializeArt>
+> = true;
 void [
+  _artMatches,
   _preciseLocationsMatches,
   _codeMatches,
   _hookMatches,

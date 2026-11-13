@@ -215,6 +215,9 @@ describe("errors catalogue", () => {
     "lib/request-guards.ts",
     "lib/events/endpoints.ts",
     "lib/safety/destinations.ts",
+    // POST /v1/art (lib/ai/art-run.ts): credits, limits and the image model
+    "lib/ai/art.ts",
+    "lib/ai/art-image.ts",
   ];
   const errorsIn = (files: string[]) =>
     new Set(

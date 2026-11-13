@@ -37,6 +37,10 @@
       "description": "Static barcodes (EAN, UPC, Code 128, Data Matrix and more): keyless images, and barcodes saved to a workspace."
     },
     {
+      "name": "AI art",
+      "description": "QR codes painted into AI artwork, checked to scan, on the workspace's monthly AI art allowance."
+    },
+    {
       "name": "Scans",
       "description": "Scan analytics of a code."
     },
@@ -4213,6 +4217,242 @@
           }
         }
       }
+    },
+    "/art": {
+      "post": {
+        "operationId": "createArt",
+        "summary": "Generate AI QR art",
+        "tags": ["AI art"],
+        "security": [
+          {
+            "apiKey": []
+          },
+          {
+            "oauth2": ["codes:write"]
+          }
+        ],
+        "description": "Paints a QR code into AI artwork from your description and checks that the image scans. Where the model's image doesn't scan as drawn, QRdx strengthens the code just enough, on the model's own pixels (`blend` says how). It's the same AI art as the playground's Art tab and the [AI art studio](https://qrdx.dev/ai/art).\n\n**Credits.** Each image uses one from the monthly AI art allowance of the workspace the key acts on, the same allowance as the app: 3 on Free, 30 on Pro and 150 on Business, shared by the team. A failed call is refunded. Each person can also make at most 25 a day. `credits` in the response shows what's left.\n\n**Timing.** A call takes about 15 to 45 seconds and gives up before a minute, without using a credit. Set your HTTP client's timeout to at least 60 seconds.\n\n**What it encodes.** Send `text`, or a dynamic code's `code` (its `id`) to encode its short link, so you can change where it goes later and its scans are counted. A code in another workspace is a `404`.\n\n**Response.** JSON with the image as a `data:` URL, or the PNG itself with `?format=png` or `Accept: image/png` (seed, mode and blend then come as `X-QRdx-Seed`, `X-QRdx-Mode`, `X-QRdx-Blend`, `X-QRdx-Blend-Strength` and `X-QRdx-Credits-Remaining` headers). Nothing is stored, and photos and reference images are discarded after the call. [AI art API](https://qrdx.dev/docs/developers/ai-art-api).\n\n**Scope:** `codes:write`, for API keys and OAuth tokens alike.",
+        "parameters": [
+          {
+            "name": "format",
+            "in": "query",
+            "required": false,
+            "description": "`json` (default) or `png` for the image's bytes. `Accept: image/png` does the same.",
+            "schema": {
+              "type": "string",
+              "enum": ["json", "png"]
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "text": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 300,
+                    "description": "What the code encodes: a link or text, up to 300 characters. Send this or `code`."
+                  },
+                  "code": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64,
+                    "description": "The `id` of one of the workspace's dynamic codes, in place of `text`: the art encodes its short link, so you can change where it goes after printing and its scans are counted."
+                  },
+                  "prompt": {
+                    "type": "string",
+                    "minLength": 3,
+                    "maxLength": 400,
+                    "description": "The artwork to paint, in plain words."
+                  },
+                  "negativePrompt": {
+                    "type": "string",
+                    "maxLength": 300,
+                    "description": "What to keep out of the picture."
+                  },
+                  "visibility": {
+                    "default": 50,
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 100,
+                    "description": "QR visibility, 0 to 100 in steps of 5: higher shows the code more clearly, lower favors the picture."
+                  },
+                  "creativity": {
+                    "default": 45,
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 100,
+                    "description": "0 follows the prompt literally, 100 interprets it freely."
+                  },
+                  "seed": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 4294967295,
+                    "description": "Send a seed again for a similar image. Random when left out."
+                  },
+                  "reference": {
+                    "type": "string",
+                    "maxLength": 819232,
+                    "description": "A reference image for colors and shapes, such as a logo or a palette: a PNG or JPEG `data:` URL, downsized to about 512 px. It goes to the model and is discarded."
+                  },
+                  "mode": {
+                    "default": "code",
+                    "type": "string",
+                    "enum": ["code", "scene", "photo"],
+                    "description": "How the code sits in the art: `code` paints the art into the code's modules; `scene` paints a full-bleed picture with the code in something in it; `photo` paints the code into your `photo`."
+                  },
+                  "style": {
+                    "type": "string",
+                    "maxLength": 40,
+                    "description": "A quick look by its id, combined with your `prompt`. The [AI art API docs](https://qrdx.dev/docs/developers/ai-art-api#quick-looks) list them."
+                  },
+                  "photo": {
+                    "type": "string",
+                    "maxLength": 819232,
+                    "description": "Photo mode only: your picture as a PNG or JPEG `data:` URL, downsized to about 512 px. It goes to the model and is discarded."
+                  }
+                },
+                "required": ["prompt"],
+                "description": "Send exactly one of `text` and `code`."
+              },
+              "examples": {
+                "text": {
+                  "summary": "Art for a link",
+                  "value": {
+                    "text": "https://qrdx.dev",
+                    "prompt": "a koi pond at dusk, ink and watercolor"
+                  }
+                },
+                "code": {
+                  "summary": "Art for a dynamic code, as a scene",
+                  "value": {
+                    "code": "cm5code0spring0menu00001",
+                    "prompt": "a bistro chalkboard menu on a brick wall",
+                    "mode": "scene",
+                    "visibility": 60
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The image. `Cache-Control: no-store`.",
+            "headers": {
+              "X-RateLimit-Limit": {
+                "$ref": "#/components/headers/X-RateLimit-Limit"
+              },
+              "X-RateLimit-Remaining": {
+                "$ref": "#/components/headers/X-RateLimit-Remaining"
+              },
+              "X-RateLimit-Reset": {
+                "$ref": "#/components/headers/X-RateLimit-Reset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/AIArtImage"
+                    },
+                    "credits": {
+                      "anyOf": [
+                        {
+                          "$ref": "#/components/schemas/AIArtCredits"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ],
+                      "description": "The workspace's AI art allowance after this image"
+                    }
+                  },
+                  "required": ["data", "credits"]
+                },
+                "examples": {
+                  "art": {
+                    "value": {
+                      "data": {
+                        "imageUrl": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABAAAAAQACAIAAADwf7zU…",
+                        "width": 1024,
+                        "height": 1024,
+                        "seed": 2841337190,
+                        "mode": "code",
+                        "blend": "least",
+                        "blendStrength": 0.35,
+                        "text": "https://qrdx.dev/q/aB3dE5f",
+                        "code": {
+                          "id": "cm5code0spring0menu00001",
+                          "shortLink": "https://qrdx.dev/q/aB3dE5f"
+                        },
+                        "visibility": 50,
+                        "creativity": 45
+                      },
+                      "credits": {
+                        "plan": "pro",
+                        "limit": 30,
+                        "used": 7,
+                        "remaining": 23,
+                        "pooled": false,
+                        "resetsAt": "2026-02-01T00:00:00.000Z"
+                      }
+                    }
+                  }
+                }
+              },
+              "image/png": {
+                "schema": {
+                  "type": "string",
+                  "contentMediaType": "image/png"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400_ValidationError_AiArtTextTooLong"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401_Unauthorized_InvalidToken"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402_AiArtCreditsExhausted"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403_InsufficientScope_Forbidden_CodesWrite"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404_NotFound"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413_PayloadTooLarge_AiArtImageTooLarge"
+          },
+          "415": {
+            "$ref": "#/components/responses/Error415_UnsupportedMediaType"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429_RateLimited_AiArtCreditsExhausted_AiArtDailyLimit"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500_InternalError"
+          },
+          "502": {
+            "$ref": "#/components/responses/Error502_AiArtFailed_AiArtUnscannable"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503_AiArtBusy_AiNotConfigured"
+          },
+          "504": {
+            "$ref": "#/components/responses/Error504_AiArtTimeout"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -4264,6 +4504,42 @@
                       }
                     ]
                   }
+                }
+              }
+            }
+          }
+        }
+      },
+      "Error400_ValidationError_AiArtTextTooLong": {
+        "description": "`VALIDATION_ERROR`: The body, query or path failed validation. `data.details` lists each problem as `{ path, message }` (`{ param, message }` on the image API), with the row's `index` when the body is an array of codes.\n\n`AI_ART_TEXT_TOO_LONG`: `text` is too long for AI art (more than 300 characters).",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "examples": {
+              "VALIDATION_ERROR": {
+                "summary": "VALIDATION_ERROR",
+                "value": {
+                  "code": "VALIDATION_ERROR",
+                  "message": "Invalid request body",
+                  "status": 400,
+                  "data": {
+                    "details": [
+                      {
+                        "path": "destinationUrl",
+                        "message": "Enter a full URL, starting with https://"
+                      }
+                    ]
+                  }
+                }
+              },
+              "AI_ART_TEXT_TOO_LONG": {
+                "summary": "AI_ART_TEXT_TOO_LONG",
+                "value": {
+                  "code": "AI_ART_TEXT_TOO_LONG",
+                  "message": "text is too long for AI art (more than 300 characters).",
+                  "status": 400
                 }
               }
             }
@@ -4476,6 +4752,26 @@
                   "message": "Invalid API key: it doesn't exist, was revoked or has expired, or its creator left the workspace. Check that you copied the whole key, or create a new one at https://qrdx.dev/dashboard?to=settings/developers.",
                   "status": 401,
                   "docs": "https://qrdx.dev/docs/developers/api-keys"
+                }
+              }
+            }
+          }
+        }
+      },
+      "Error402_AiArtCreditsExhausted": {
+        "description": "`AI_ART_CREDITS_EXHAUSTED`: The workspace has used this month's AI art images (Free and Pro). Nothing was charged for the request.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "examples": {
+              "AI_ART_CREDITS_EXHAUSTED": {
+                "summary": "AI_ART_CREDITS_EXHAUSTED",
+                "value": {
+                  "code": "AI_ART_CREDITS_EXHAUSTED",
+                  "message": "The workspace has used this month's AI art images (Free and Pro). Nothing was charged for the request.",
+                  "status": 402
                 }
               }
             }
@@ -4867,6 +5163,34 @@
           }
         }
       },
+      "Error413_PayloadTooLarge_AiArtImageTooLarge": {
+        "description": "`PAYLOAD_TOO_LARGE`: The body is over the endpoint's limit: 4 MB for codes, 16 KB for hooks, 8 KB for conversions. Also a batch of codes whose response (each code with its design) would be over 4 MB; nothing is created.\n\n`AI_ART_IMAGE_TOO_LARGE`: The `photo` or `reference` image is over the AI art size limit (the message says which).",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "examples": {
+              "PAYLOAD_TOO_LARGE": {
+                "summary": "PAYLOAD_TOO_LARGE",
+                "value": {
+                  "code": "PAYLOAD_TOO_LARGE",
+                  "message": "The body is over the endpoint's limit: 4 MB for codes, 16 KB for hooks, 8 KB for conversions. Also a batch of codes whose response (each code with its design) would be over 4 MB; nothing is created.",
+                  "status": 413
+                }
+              },
+              "AI_ART_IMAGE_TOO_LARGE": {
+                "summary": "AI_ART_IMAGE_TOO_LARGE",
+                "value": {
+                  "code": "AI_ART_IMAGE_TOO_LARGE",
+                  "message": "The photo or reference image is over the AI art size limit (the message says which).",
+                  "status": 413
+                }
+              }
+            }
+          }
+        }
+      },
       "Error415_UnsupportedMediaType": {
         "description": "`UNSUPPORTED_MEDIA_TYPE`: A write without `Content-Type: application/json`.",
         "content": {
@@ -4934,6 +5258,64 @@
                 "value": {
                   "code": "RATE_LIMITED",
                   "message": "Daily API limit reached: the Free plan allows 1,000 requests a day. It resets at 00:00 UTC. Upgrade your plan for a higher limit.",
+                  "status": 429
+                }
+              },
+              "RATE_LIMITED_PER_MINUTE": {
+                "summary": "RATE_LIMITED (per-minute limit)",
+                "value": {
+                  "code": "RATE_LIMITED",
+                  "message": "Rate limit exceeded. Please try again later.",
+                  "status": 429
+                }
+              }
+            }
+          }
+        }
+      },
+      "Error429_RateLimited_AiArtCreditsExhausted_AiArtDailyLimit": {
+        "description": "`RATE_LIMITED`: Too many requests: a per-minute limit (only `Retry-After` is set) or the workspace's daily quota (`Retry-After` plus `X-RateLimit-*`).\n\n`AI_ART_CREDITS_EXHAUSTED`: A Business workspace has used this month's AI art images, which the whole team shares.\n\n`AI_ART_DAILY_LIMIT`: The key's creator has made 25 AI art images today (UTC), a safety cap on top of the monthly allowance.",
+        "headers": {
+          "Retry-After": {
+            "$ref": "#/components/headers/Retry-After"
+          },
+          "X-RateLimit-Limit": {
+            "$ref": "#/components/headers/X-RateLimit-Limit"
+          },
+          "X-RateLimit-Remaining": {
+            "$ref": "#/components/headers/X-RateLimit-Remaining"
+          },
+          "X-RateLimit-Reset": {
+            "$ref": "#/components/headers/X-RateLimit-Reset"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "examples": {
+              "RATE_LIMITED": {
+                "summary": "RATE_LIMITED",
+                "value": {
+                  "code": "RATE_LIMITED",
+                  "message": "Daily API limit reached: the Free plan allows 1,000 requests a day. It resets at 00:00 UTC. Upgrade your plan for a higher limit.",
+                  "status": 429
+                }
+              },
+              "AI_ART_CREDITS_EXHAUSTED": {
+                "summary": "AI_ART_CREDITS_EXHAUSTED",
+                "value": {
+                  "code": "AI_ART_CREDITS_EXHAUSTED",
+                  "message": "A Business workspace has used this month's AI art images, which the whole team shares.",
+                  "status": 429
+                }
+              },
+              "AI_ART_DAILY_LIMIT": {
+                "summary": "AI_ART_DAILY_LIMIT",
+                "value": {
+                  "code": "AI_ART_DAILY_LIMIT",
+                  "message": "The key's creator has made 25 AI art images today (UTC), a safety cap on top of the monthly allowance.",
                   "status": 429
                 }
               },
@@ -5037,6 +5419,62 @@
           }
         }
       },
+      "Error502_AiArtFailed_AiArtUnscannable": {
+        "description": "`AI_ART_FAILED`: The image model failed, declined the prompt or returned an image QRdx couldn't read. No AI art credit was used.\n\n`AI_ART_UNSCANNABLE`: The model's image couldn't be made to scan within the QR visibility you chose. No AI art credit was used.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "examples": {
+              "AI_ART_FAILED": {
+                "summary": "AI_ART_FAILED",
+                "value": {
+                  "code": "AI_ART_FAILED",
+                  "message": "The image model failed, declined the prompt or returned an image QRdx couldn't read. No AI art credit was used.",
+                  "status": 502
+                }
+              },
+              "AI_ART_UNSCANNABLE": {
+                "summary": "AI_ART_UNSCANNABLE",
+                "value": {
+                  "code": "AI_ART_UNSCANNABLE",
+                  "message": "The model's image couldn't be made to scan within the QR visibility you chose. No AI art credit was used.",
+                  "status": 502
+                }
+              }
+            }
+          }
+        }
+      },
+      "Error503_AiArtBusy_AiNotConfigured": {
+        "description": "`AI_ART_BUSY`: The image model is over capacity right now. No AI art credit was used.\n\n`AI_NOT_CONFIGURED`: AI art isn't set up on this deployment (a self-hosted instance without `AI_GATEWAY_API_KEY`).",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "examples": {
+              "AI_ART_BUSY": {
+                "summary": "AI_ART_BUSY",
+                "value": {
+                  "code": "AI_ART_BUSY",
+                  "message": "The image model is over capacity right now. No AI art credit was used.",
+                  "status": 503
+                }
+              },
+              "AI_NOT_CONFIGURED": {
+                "summary": "AI_NOT_CONFIGURED",
+                "value": {
+                  "code": "AI_NOT_CONFIGURED",
+                  "message": "AI art isn't set up on this deployment (a self-hosted instance without AI_GATEWAY_API_KEY).",
+                  "status": 503
+                }
+              }
+            }
+          }
+        }
+      },
       "Error503_SlugUnavailable_Unavailable": {
         "description": "`SLUG_UNAVAILABLE`: No free short-link slug could be reserved in time.\n\n`UNAVAILABLE`: Custom domains aren't set up on this deployment (a self-hosted instance without them).",
         "content": {
@@ -5059,6 +5497,26 @@
                   "code": "UNAVAILABLE",
                   "message": "Custom domains aren't set up on this deployment (a self-hosted instance without them).",
                   "status": 503
+                }
+              }
+            }
+          }
+        }
+      },
+      "Error504_AiArtTimeout": {
+        "description": "`AI_ART_TIMEOUT`: The image model took too long, and QRdx stopped waiting before the request's one-minute limit. No AI art credit was used.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "examples": {
+              "AI_ART_TIMEOUT": {
+                "summary": "AI_ART_TIMEOUT",
+                "value": {
+                  "code": "AI_ART_TIMEOUT",
+                  "message": "The image model took too long, and QRdx stopped waiting before the request's one-minute limit. No AI art credit was used.",
+                  "status": 504
                 }
               }
             }
@@ -5093,6 +5551,144 @@
       }
     },
     "schemas": {
+      "AIArtCredits": {
+        "type": "object",
+        "properties": {
+          "plan": {
+            "type": "string",
+            "enum": ["free", "pro", "business"]
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Images per calendar month (UTC) on the plan"
+          },
+          "used": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991,
+            "description": "Images made this month, this one included"
+          },
+          "remaining": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Images left this month"
+          },
+          "pooled": {
+            "type": "boolean",
+            "description": "Shared by everyone in the workspace (Business)"
+          },
+          "resetsAt": {
+            "type": "string",
+            "description": "When the allowance starts over, as an ISO date (UTC)"
+          }
+        },
+        "required": ["plan", "limit", "used", "remaining", "pooled", "resetsAt"]
+      },
+      "AIArtImage": {
+        "type": "object",
+        "properties": {
+          "imageUrl": {
+            "type": "string",
+            "description": "The image, a 1024 px square PNG, as a `data:image/png;base64,…` URL. QRdx doesn't keep it."
+          },
+          "width": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "height": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "seed": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991,
+            "description": "The seed, to send again for a similar image"
+          },
+          "mode": {
+            "type": "string",
+            "enum": ["code", "scene", "photo"],
+            "description": "How the code sits in the art"
+          },
+          "blend": {
+            "type": "string",
+            "enum": ["none", "least", "image-qr"],
+            "description": "How QRdx made it scan: `none` (the model's image as drawn), `least` (finders, quiet zone and modules strengthened just enough) or `image-qr` (redrawn as an Image QR code, the last resort)"
+          },
+          "blendStrength": {
+            "type": "number",
+            "description": "How strong the blend is, 0 (as drawn) to 1 (Image QR)"
+          },
+          "text": {
+            "type": "string",
+            "description": "Exactly what the image scans to, checked by QRdx"
+          },
+          "code": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "shortLink": {
+                    "type": "string"
+                  }
+                },
+                "required": ["id", "shortLink"]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The dynamic code the art encodes, when you sent `code`"
+          },
+          "visibility": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991,
+            "description": "The QR visibility used"
+          },
+          "creativity": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991,
+            "description": "The creativity used"
+          }
+        },
+        "required": [
+          "imageUrl",
+          "width",
+          "height",
+          "seed",
+          "mode",
+          "blend",
+          "blendStrength",
+          "text",
+          "code",
+          "visibility",
+          "creativity"
+        ]
+      },
       "Barcode": {
         "type": "object",
         "properties": {
