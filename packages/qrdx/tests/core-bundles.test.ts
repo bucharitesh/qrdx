@@ -68,3 +68,55 @@ describe("React-free bundles", () => {
     expect(code).toMatch(/\bcreateQRCode\b/);
   });
 });
+
+// <qrdx-code> (qrdx/element): the element takes the engine from dist/core,
+// the auto-define entry takes the element from its built file, and the
+// no-bundler pair stands alone.
+describe("<qrdx-code> bundles", () => {
+  const ELEMENT_FILES = [
+    "element.mjs",
+    "element.js",
+    "element-define.mjs",
+    "element-define.js",
+    "element.browser.mjs",
+    "element-define.browser.mjs",
+  ];
+
+  it.each(ELEMENT_FILES)("%s never imports react or react-dom", (file) => {
+    if (!existsSync(dist(file))) return;
+    const code = read(file);
+    for (const specifier of imports(code)) {
+      expect(specifier).not.toMatch(/^react(-dom)?(\/|$)/);
+    }
+    expect(code).not.toMatch(/react-dom/);
+  });
+
+  it.each([
+    ["element.mjs", ["./core.mjs"]],
+    ["element.js", ["./core.js"]],
+    ["element-define.mjs", ["./element.mjs"]],
+    ["element-define.js", ["./element.js"]],
+    ["element-define.browser.mjs", ["./element.browser.mjs"]],
+  ])("%s imports only %j", (file, allowed) => {
+    if (!existsSync(dist(file))) return;
+    expect(imports(read(file))).toEqual([...allowed].sort());
+  });
+
+  it("only the auto-define files register the element", () => {
+    for (const file of ["element.mjs", "element.js", "element.browser.mjs"]) {
+      if (!existsSync(dist(file))) continue;
+      // customElements.define runs inside defineQRdxCode only
+      expect(read(file)).not.toMatch(/defineQRdxCode\(\)/);
+    }
+  });
+
+  it("the no-bundler element file stands alone", () => {
+    if (!existsSync(dist("element.browser.mjs"))) return;
+    const code = read("element.browser.mjs");
+    // Only PDF export's on-demand jspdf, which a page maps itself
+    expect(imports(code)).toEqual(["jspdf"]);
+    expect(code).not.toMatch(/\bfrom\s*["']/);
+    expect(code).not.toMatch(/allergen-info/);
+    expect(code).toMatch(/\bdefineQRdxCode\b/);
+  });
+});

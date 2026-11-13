@@ -106,6 +106,29 @@ const dropZodLocales: Plugin = {
   },
 };
 
+// qrdx/element/define registers <qrdx-code> and re-exports qrdx/element: it
+// imports the built element file rather than a copy of the class.
+const elementExternal = (file: string): Plugin => ({
+  name: "qrdx-element-external",
+  setup(build) {
+    build.onResolve({ filter: /^\.\/element$/ }, () => ({
+      path: `./${file}`,
+      external: true,
+    }));
+  },
+});
+
+// The no-bundler <qrdx-code> file takes the engine from src/engine.ts, the
+// core without the official frame library's data (as vanilla.browser does).
+const coreWithoutFrameData: Plugin = {
+  name: "qrdx-core-without-frame-data",
+  setup(build) {
+    build.onResolve({ filter: /^\.\/core$/ }, () => ({
+      path: resolve("src/engine.ts"),
+    }));
+  },
+};
+
 // The configs below build in parallel, so dist/ is cleaned by the "build"
 // script rather than with tsup's `clean` (which would race the other entries).
 export default defineConfig([
@@ -184,6 +207,55 @@ export default defineConfig([
     treeshake: true,
     noExternal: ["zod"],
     esbuildPlugins: [dropZodLocales],
+  },
+  // ── <qrdx-code> custom element (qrdx/element), on the shared core ───────
+  {
+    ...shared,
+    entry: { element: "src/element.ts" },
+    format: ["esm"],
+    treeshake: true,
+    esbuildPlugins: [sharedCore(".mjs", [])],
+  },
+  {
+    ...shared,
+    entry: { element: "src/element.ts" },
+    format: ["cjs"],
+    treeshake: true,
+    esbuildPlugins: [sharedCore(".js", [])],
+  },
+  {
+    ...shared,
+    entry: { "element-define": "src/element-define.ts" },
+    format: ["esm"],
+    treeshake: true,
+    esbuildPlugins: [elementExternal("element.mjs"), sharedCore(".mjs", [])],
+  },
+  {
+    ...shared,
+    entry: { "element-define": "src/element-define.ts" },
+    format: ["cjs"],
+    treeshake: true,
+    esbuildPlugins: [elementExternal("element.js"), sharedCore(".js", [])],
+  },
+  // ── <qrdx-code> as one file for <script type="module">, no bundler ──────
+  // Like vanilla.browser: zod inlined, jspdf and jsqr on demand, no official
+  // frame data. element-define.browser registers the tag from it.
+  {
+    ...shared,
+    entry: { "element.browser": "src/element.ts" },
+    format: ["esm"],
+    platform: "browser",
+    treeshake: true,
+    noExternal: ["zod"],
+    esbuildPlugins: [coreWithoutFrameData, dropZodLocales],
+  },
+  {
+    ...shared,
+    entry: { "element-define.browser": "src/element-define.ts" },
+    format: ["esm"],
+    platform: "browser",
+    treeshake: true,
+    esbuildPlugins: [elementExternal("element.browser.mjs")],
   },
   // ── Node-only PNG entry (qrdx/node), on the shared core ─────────────────
   // The native rasterizers live here alone, so the main entry never
