@@ -1,4 +1,5 @@
 import { type InferPageType, loader } from "fumadocs-core/source";
+import { toFumadocsSource } from "fumadocs-mdx/runtime/server";
 import {
   blog,
   blogAuthors,
@@ -7,6 +8,7 @@ import {
   compare,
   legal,
 } from "@/.source/content";
+import { isHiddenCustomerStory } from "@/lib/customers";
 
 // The content other than the docs: legal pages, the changelog, comparisons
 // and the blog. Route handlers (Open Graph images, RSS, the sitemap, llms.txt)
@@ -29,9 +31,15 @@ export const compareSource = loader({
   source: compare.toFumadocsSource(),
 });
 
+// A customer story stays out of the blog until its customer is published in
+// lib/customers.ts: every blog page, list, feed and sitemap reads this source,
+// so it's as if the post weren't there (no page, no static params).
 export const blogSource = loader({
   baseUrl: "/blog",
-  source: blog.toFumadocsSource(),
+  source: toFumadocsSource(
+    blog.docs.filter((post) => !isHiddenCustomerStory(post.info.path)),
+    blog.meta,
+  ),
 });
 
 export const blogCategoriesSource = loader({
