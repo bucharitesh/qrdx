@@ -21,11 +21,7 @@ import { patterns as eyePatterns } from "@/components/playground/corner-eye-patt
 import { patterns as bodyPatterns } from "@/components/playground/pattern-selector";
 import { soundEvent } from "@/lib/sound/emit";
 import type { QRStyle } from "@/types/theme";
-import {
-  OptionGrid,
-  OptionTile,
-  ShapePicker,
-} from "./option-tiles";
+import { OptionGrid, OptionTile, ShapePicker } from "./option-tiles";
 import { pairBlocked, pairRisk } from "./pair-rules";
 import {
   BODY_CATEGORY,

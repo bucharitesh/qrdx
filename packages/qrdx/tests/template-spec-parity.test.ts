@@ -56,7 +56,9 @@ function both(id: string, legacy: TemplateDefinition, extra: Partial<QRProps>) {
 }
 
 const sizeOf = (svg: string) => {
-  const match = svg.match(/^<svg[^>]*?\bwidth="([\d.]+)"[^>]*?\bheight="([\d.]+)"/);
+  const match = svg.match(
+    /^<svg[^>]*?\bwidth="([\d.]+)"[^>]*?\bheight="([\d.]+)"/
+  );
   return match ? [Number(match[1]), Number(match[2])] : null;
 };
 

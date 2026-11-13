@@ -22,8 +22,8 @@ import {
   errorLevelSchema,
   FRAME_STYLES,
   FRAME_TEXT_MAX_LENGTH,
-  getFrameDimensions,
   getAllTemplates,
+  getFrameDimensions,
   getTemplateIds,
 } from "qrdx";
 import {

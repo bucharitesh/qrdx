@@ -339,11 +339,10 @@ export function FrameControls() {
           )}
         </>
       ) : template ? (
-        templateTakesCodeColor(template) && (
-          <p className="text-muted-foreground text-xs text-pretty">
-            {t("takesDotColor")}
-          </p>
-        )
+        <p className="text-muted-foreground text-xs text-pretty">
+          {t("templateKeepsSize")}
+          {templateTakesCodeColor(template) && ` ${t("takesDotColor")}`}
+        </p>
       ) : (
         !shaped && <NoFrameFields />
       )}
@@ -379,9 +378,11 @@ export function FrameControls() {
         )}
       </div>
 
-      <p className="text-muted-foreground text-xs">
-        {t("theFrameIsAddedAround")}
-      </p>
+      {!(template && !spec) && (
+        <p className="text-muted-foreground text-xs">
+          {t("theFrameIsAddedAround")}
+        </p>
+      )}
 
       {dialogs.import && (
         <ImportFrameDialog

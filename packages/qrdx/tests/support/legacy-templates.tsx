@@ -1,6 +1,5 @@
 /** @jsxImportSource ../../src/jsx */
 /** biome-ignore-all lint/style/noMagicNumbers: template artwork */
-/** biome-ignore-all lint/nursery/noSecrets: path data */
 // The built-in templates as they were hand-written up to qrdx 0.0.51
 // (src/template/*.tsx), kept here unchanged as the reference the template
 // frame specs (src/template/specs) are proven against in

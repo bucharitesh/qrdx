@@ -924,11 +924,18 @@ describe("spec fields the built-in templates use", () => {
 
   it("outlines a shape with a stroke in every output", async () => {
     expect(getFrameSpecIssues(stroked())).toEqual([]);
-    const layout = getFrameLayout(1000, custom(stroked(), { color: "#be123c" }));
+    const layout = getFrameLayout(
+      1000,
+      custom(stroked(), { color: "#be123c" })
+    );
     const ring = layout.shapes[0];
     expect(ring?.stroke).toBe("#be123c");
     expect(ring?.strokeWidth).toBeCloseTo(20);
-    const svg = renderSvg({ value: "stroke", size: 200, frame: custom(stroked()) });
+    const svg = renderSvg({
+      value: "stroke",
+      size: 200,
+      frame: custom(stroked()),
+    });
     expect(svg).toMatch(/stroke="#111111" stroke-width="4"/);
     // A canvas strokes it after its fill
     const calls: string[] = [];
@@ -977,7 +984,10 @@ describe("spec fields the built-in templates use", () => {
     expect(getFrameGapRatio(custom(spec))).toBeCloseTo(0.01);
     // Other plates still need 4%
     expect(
-      getFrameSpecIssues({ ...spec, qr: { ...spec.qr, plate: "opaque" } }).join()
+      getFrameSpecIssues({
+        ...spec,
+        qr: { ...spec.qr, plate: "opaque" },
+      }).join()
     ).toMatch(/at least 4%/);
   });
 });
