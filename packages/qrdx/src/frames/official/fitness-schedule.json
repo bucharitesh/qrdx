@@ -3,7 +3,7 @@
   "name": "Class schedule",
   "description": "A light card with a dumbbell and a solid label band.",
   "category": "use-case",
-  "collection": "health-learning",
+  "collection": "sports-fitness",
   "contentTypes": ["url"],
   "tags": ["fitness", "gym", "classes"],
   "license": "CC0-1.0",

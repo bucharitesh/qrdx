@@ -1,0 +1,124 @@
+{
+  "id": "tea-time",
+  "name": "Afternoon tea",
+  "description": "A thin double border with a teapot, a small divider and the label.",
+  "category": "use-case",
+  "collection": "food-drink",
+  "contentTypes": ["calcom", "url"],
+  "tags": ["restaurant", "food", "afternoon tea", "tea"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1830
+    },
+    "qr": {
+      "x": 160,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1320,
+        "height": 1830,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.93
+        }
+      },
+      {
+        "type": "rect",
+        "x": 30,
+        "y": 30,
+        "width": 1260,
+        "height": 1770,
+        "fill": "frame",
+        "hole": {
+          "x": 40,
+          "y": 40,
+          "width": 1240,
+          "height": 1750
+        }
+      },
+      {
+        "type": "rect",
+        "x": 60,
+        "y": 60,
+        "width": 1200,
+        "height": 1710,
+        "fill": "frame",
+        "hole": {
+          "x": 64,
+          "y": 64,
+          "width": 1192,
+          "height": 1702
+        }
+      },
+      {
+        "type": "path",
+        "d": "M618 168.2A42 36.4 0 1 1 702 168.2A42 36.4 0 1 1 618 168.2ZM623.6 166.8C609.6 164 601.2 150 597 136L608.2 131.8C612.4 145.8 619.4 152.8 627.8 154.2ZM707.8 143.76A22.4 22.4 0 0 1 707.8 187.04L705.26 177.57A12.6 12.6 0 0 0 705.26 153.23Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M633.4 127.6C636.2 112.2 683.8 112.2 686.6 127.6ZM653 106.6A7 7 0 1 1 667 106.6A7 7 0 1 1 653 106.6Z",
+        "fill": "accent"
+      },
+      {
+        "type": "line",
+        "x1": 470,
+        "y1": 1570,
+        "x2": 850,
+        "y2": 1570,
+        "width": 6,
+        "fill": "frame"
+      },
+      {
+        "type": "polygon",
+        "points": [[660, 1550], [680, 1570], [660, 1590], [640, 1570]],
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Book afternoon tea",
+        "color": "frame",
+        "box": {
+          "x": 180,
+          "y": 1610,
+          "width": 960,
+          "height": 160
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Tea room",
+        "color": "frame",
+        "box": {
+          "x": 180,
+          "y": 225,
+          "width": 960,
+          "height": 100
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

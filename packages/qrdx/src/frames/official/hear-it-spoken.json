@@ -1,0 +1,86 @@
+{
+  "id": "hear-it-spoken",
+  "name": "Language practice",
+  "description": "A speech bubble over the code holding the label.",
+  "category": "use-case",
+  "collection": "health-learning",
+  "contentTypes": ["url"],
+  "tags": ["education", "school", "languages", "pronunciation"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1670
+    },
+    "qr": {
+      "x": 120,
+      "y": 550,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 330,
+        "radius": 60,
+        "fill": "frame"
+      },
+      {
+        "type": "polygon",
+        "points": [[550, 328], [690, 328], [590, 410]],
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 430,
+        "width": 1240,
+        "height": 1240,
+        "radius": 64,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.9
+        }
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Hear it spoken",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 30,
+          "width": 1040,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Language practice",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 200,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

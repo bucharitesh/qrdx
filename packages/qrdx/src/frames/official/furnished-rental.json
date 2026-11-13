@@ -1,0 +1,101 @@
+{
+  "id": "furnished-rental",
+  "name": "Furnished rental",
+  "description": "A light card with a bold side bar and left-aligned text and a sofa.",
+  "category": "use-case",
+  "collection": "real-estate",
+  "contentTypes": ["url"],
+  "tags": ["real estate", "property", "furnished", "rental"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1300,
+      "height": 1620
+    },
+    "qr": {
+      "x": 180,
+      "y": 140,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1300,
+        "height": 1620,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 40,
+        "height": 1620,
+        "fill": "accent"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1300,
+        "height": 1620,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.82
+        },
+        "hole": {
+          "x": 0,
+          "y": 8,
+          "width": 1292,
+          "height": 1604
+        }
+      },
+      {
+        "type": "path",
+        "d": "M1097 1354L1163 1354A15 15 0 0 1 1178 1369L1178 1384A15 15 0 0 1 1163 1399L1097 1399A15 15 0 0 1 1082 1384L1082 1369A15 15 0 0 1 1097 1354ZM1074.5 1378L1077.5 1378A13.5 13.5 0 0 1 1091 1391.5L1091 1421.5A13.5 13.5 0 0 1 1077.5 1435L1074.5 1435A13.5 13.5 0 0 1 1061 1421.5L1061 1391.5A13.5 13.5 0 0 1 1074.5 1378ZM1182.5 1378L1185.5 1378A13.5 13.5 0 0 1 1199 1391.5L1199 1421.5A13.5 13.5 0 0 1 1185.5 1435L1182.5 1435A13.5 13.5 0 0 1 1169 1421.5L1169 1391.5A13.5 13.5 0 0 1 1182.5 1378ZM1100 1402L1160 1402A6 6 0 0 1 1166 1408L1166 1423A6 6 0 0 1 1160 1429L1100 1429A6 6 0 0 1 1094 1423L1094 1408A6 6 0 0 1 1100 1402ZM1073 1435L1077.5 1435A3 3 0 0 1 1080.5 1438L1080.5 1447A3 3 0 0 1 1077.5 1450L1073 1450A3 3 0 0 1 1070 1447L1070 1438A3 3 0 0 1 1073 1435ZM1182.5 1435L1187 1435A3 3 0 0 1 1190 1438L1190 1447A3 3 0 0 1 1187 1450L1182.5 1450A3 3 0 0 1 1179.5 1447L1179.5 1438A3 3 0 0 1 1182.5 1435Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "What's included",
+        "color": "frame",
+        "box": {
+          "x": 180,
+          "y": 1270,
+          "width": 1000,
+          "height": 170
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Furnished rental",
+        "color": "frame",
+        "box": {
+          "x": 180,
+          "y": 1450,
+          "width": 1000,
+          "height": 90
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

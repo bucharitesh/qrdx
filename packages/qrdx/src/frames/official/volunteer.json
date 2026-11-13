@@ -1,0 +1,74 @@
+{
+  "id": "volunteer",
+  "name": "Volunteer",
+  "description": "A solid card with a raised hand over the code and the label underneath.",
+  "category": "use-case",
+  "collection": "nonprofit",
+  "contentTypes": ["url"],
+  "tags": ["nonprofit", "community", "volunteering"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M605 107L638 107A21 21 0 0 1 659 128L659 152A21 21 0 0 1 638 173L605 173A21 21 0 0 1 584 152L584 128A21 21 0 0 1 605 107ZM593 62L593 62A7.5 7.5 0 0 1 600.5 69.5L600.5 114.5A7.5 7.5 0 0 1 593 122L593 122A7.5 7.5 0 0 1 585.5 114.5L585.5 69.5A7.5 7.5 0 0 1 593 62ZM611 47L611 47A7.5 7.5 0 0 1 618.5 54.5L618.5 111.5A7.5 7.5 0 0 1 611 119L611 119A7.5 7.5 0 0 1 603.5 111.5L603.5 54.5A7.5 7.5 0 0 1 611 47ZM629 50L629 50A7.5 7.5 0 0 1 636.5 57.5L636.5 111.5A7.5 7.5 0 0 1 629 119L629 119A7.5 7.5 0 0 1 621.5 111.5L621.5 57.5A7.5 7.5 0 0 1 629 50ZM647 65L647 65A7.5 7.5 0 0 1 654.5 72.5L654.5 114.5A7.5 7.5 0 0 1 647 122L647 122A7.5 7.5 0 0 1 639.5 114.5L639.5 72.5A7.5 7.5 0 0 1 647 65ZM596.97 134.3A9 9 0 0 0 583.03 145.7L556.03 112.7A9 9 0 0 0 569.97 101.3L596.97 134.3Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Volunteer with us",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Give an hour",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

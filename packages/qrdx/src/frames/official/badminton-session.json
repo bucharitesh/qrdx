@@ -1,0 +1,104 @@
+{
+  "id": "badminton-session",
+  "name": "Badminton",
+  "description": "A card with two more stacked behind it and a shuttlecock.",
+  "category": "use-case",
+  "collection": "sports-fitness",
+  "contentTypes": ["url"],
+  "tags": ["sports", "fitness", "badminton"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1340,
+      "height": 1860
+    },
+    "qr": {
+      "x": 120,
+      "y": 400,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 100,
+        "y": 100,
+        "width": 1240,
+        "height": 1760,
+        "radius": 48,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.75
+        }
+      },
+      {
+        "type": "rect",
+        "x": 50,
+        "y": 50,
+        "width": 1240,
+        "height": 1760,
+        "radius": 48,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.45
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 48,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M566.8 61.2L673.2 61.2L639.6 136.8L600.4 136.8ZM614.95 130.47L588.07 68.87L584.73 70.33L611.61 131.93ZM618.42 130.81L604.98 69.21L601.42 69.99L614.86 131.59ZM621.82 131.2L621.82 69.6L618.18 69.6L618.18 131.2ZM625.14 131.59L638.58 69.99L635.02 69.21L621.58 130.81ZM628.39 131.93L655.27 70.33L651.93 68.87L625.05 130.47ZM639.6 148A19.6 19.6 0 0 1 600.4 148Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M600.4 138.2L639.6 138.2A1.4 1.4 0 0 1 641 139.6L641 143.8A1.4 1.4 0 0 1 639.6 145.2L600.4 145.2A1.4 1.4 0 0 1 599 143.8L599 139.6A1.4 1.4 0 0 1 600.4 138.2Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Join a session",
+        "color": "text",
+        "box": {
+          "x": 90,
+          "y": 1520,
+          "width": 1060,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Badminton drop-in",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 210,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

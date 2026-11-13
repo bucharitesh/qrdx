@@ -38,6 +38,7 @@ import type {
 import type { ThemeStyles } from "@/types/theme";
 import {
   findOfficialFrame,
+  officialFrameCard,
   officialFrameCards,
   officialFrameDetail,
 } from "./catalog";
@@ -141,7 +142,17 @@ function itemsQuery() {
     .leftJoin(userTable, eq(userTable.id, communityProfile.userId));
 }
 
-function creatorOf(row: ItemRow): CommunityCreator {
+function creatorOf(
+  row: Pick<
+    ItemRow,
+    | "profileId"
+    | "profileKind"
+    | "handle"
+    | "displayName"
+    | "avatarUrl"
+    | "verifiedAt"
+  >,
+): CommunityCreator {
   const official = row.profileKind === "official";
   return {
     profileId: row.profileId,
@@ -333,6 +344,22 @@ export interface ListOptions {
   offset?: number;
 }
 
+function orderOf(options: Pick<ListOptions, "featured" | "sort">) {
+  if (options.featured) return [desc(communityItem.featuredAt)];
+  if (options.sort === "newest") {
+    return [desc(communityItem.publishedAt), asc(communityItem.id)];
+  }
+  if (options.sort === "oldest") {
+    return [asc(communityItem.publishedAt), asc(communityItem.id)];
+  }
+  return [
+    desc(communityItem.likeCount),
+    desc(communityItem.useCount),
+    desc(communityItem.publishedAt),
+    asc(communityItem.id),
+  ];
+}
+
 /** Published items of a type (database only). */
 export async function listItems(
   options: ListOptions,
@@ -367,21 +394,9 @@ export async function listItems(
         ),
       );
     }
-    const order = options.featured
-      ? [desc(communityItem.featuredAt)]
-      : options.sort === "newest"
-        ? [desc(communityItem.publishedAt), asc(communityItem.id)]
-        : options.sort === "oldest"
-          ? [asc(communityItem.publishedAt), asc(communityItem.id)]
-          : [
-              desc(communityItem.likeCount),
-              desc(communityItem.useCount),
-              desc(communityItem.publishedAt),
-              asc(communityItem.id),
-            ];
     const rows = (await itemsQuery()
       .where(and(...conditions))
-      .orderBy(...order)
+      .orderBy(...orderOf(options))
       .limit(options.limit ?? 48)
       .offset(options.offset ?? 0)) as ItemRow[];
     return toCards(rows);
@@ -404,15 +419,10 @@ export async function listFrames(
   ) {
     return listItems({ ...options, type: "frame", limit: 200 });
   }
-  // Official and member frames apart: the official library alone is
-  // hundreds of frames, which would crowd members' frames out of one list.
+  // Official and member frames apart: the official library is long enough
+  // to crowd members' frames out of one list.
   const [official, others] = await Promise.all([
-    listItems({
-      ...options,
-      type: "frame",
-      official: true,
-      limit: OFFICIAL_FRAME_COUNT + 100,
-    }),
+    seededOfficialFrames(options.sort),
     options.official
       ? Promise.resolve([])
       : listItems({ ...options, type: "frame", official: false, limit: 200 }),
@@ -420,6 +430,94 @@ export async function listFrames(
   const seeded = new Set(official.map((card) => card.slug));
   const missing = officialFrameCards().filter((card) => !seeded.has(card.slug));
   return [...official, ...missing, ...others];
+}
+
+// An official frame's row without its payload: its spec, name, description
+// and tags are the engine's (the seed copies them), so listing the library
+// reads a few fields a frame instead of every spec, and parses none.
+const OFFICIAL_ROW = {
+  id: communityItem.id,
+  slug: communityItem.slug,
+  version: communityItem.currentVersion,
+  likeCount: communityItem.likeCount,
+  saveCount: communityItem.saveCount,
+  useCount: communityItem.useCount,
+  publishedAt: communityItem.publishedAt,
+  profileId: communityProfile.id,
+  profileKind: communityProfile.kind,
+  handle: communityProfile.handle,
+  displayName: communityProfile.displayName,
+  avatarUrl: communityProfile.avatarUrl,
+  verifiedAt: communityProfile.verifiedAt,
+};
+
+type OfficialRow = Pick<
+  ItemRow,
+  | "id"
+  | "slug"
+  | "version"
+  | "likeCount"
+  | "saveCount"
+  | "useCount"
+  | "publishedAt"
+  | "profileId"
+  | "profileKind"
+  | "handle"
+  | "displayName"
+  | "avatarUrl"
+  | "verifiedAt"
+>;
+
+/** The seeded official frames, as cards built from the engine's catalogue. */
+async function seededOfficialFrames(
+  sort: ListSort | undefined,
+): Promise<CommunityItemCard[]> {
+  return guardedRead(async () => {
+    const rows = (await db
+      .select(OFFICIAL_ROW)
+      .from(communityItem)
+      .innerJoin(
+        communityProfile,
+        eq(communityProfile.id, communityItem.profileId),
+      )
+      .leftJoin(userTable, eq(userTable.id, communityProfile.userId))
+      .where(
+        and(
+          visible(),
+          eq(communityItem.type, "frame"),
+          eq(communityItem.isOfficial, true),
+        ),
+      )
+      .orderBy(...orderOf({ sort }))
+      .limit(OFFICIAL_FRAME_COUNT + 100)) as OfficialRow[];
+    const cards: CommunityItemCard[] = [];
+    const unknown: string[] = [];
+    for (const row of rows) {
+      const frame = findOfficialFrame(row.slug);
+      if (!frame) {
+        unknown.push(row.id);
+        continue;
+      }
+      cards.push({
+        ...officialFrameCard(frame),
+        id: row.id,
+        creator: creatorOf(row),
+        version: row.version,
+        likeCount: Number(row.likeCount),
+        saveCount: Number(row.saveCount),
+        useCount: Number(row.useCount),
+        publishedAt: row.publishedAt
+          ? new Date(row.publishedAt).toISOString()
+          : null,
+      });
+    }
+    if (unknown.length === 0) return cards;
+    // A row the engine has no frame for (none today): read it whole
+    const rest = (await itemsQuery().where(
+      and(visible(), inArray(communityItem.id, unknown)),
+    )) as ItemRow[];
+    return [...cards, ...(await toCards(rest))];
+  }, []);
 }
 
 /** One item page; frames fall back to the official catalogue. */

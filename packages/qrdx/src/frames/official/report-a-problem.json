@@ -1,0 +1,114 @@
+{
+  "id": "report-a-problem",
+  "name": "Report a problem",
+  "description": "A clipboard with the code on its sheet of paper and a flag.",
+  "category": "use-case",
+  "collection": "call-to-action",
+  "contentTypes": [],
+  "tags": ["call to action", "report", "issue"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1890
+    },
+    "qr": {
+      "x": 160,
+      "y": 480,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 90,
+        "width": 1320,
+        "height": 1800,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 60,
+        "y": 200,
+        "width": 1200,
+        "height": 1630,
+        "radius": 12,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 60,
+        "y": 200,
+        "width": 1200,
+        "height": 14,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.75
+        }
+      },
+      {
+        "type": "path",
+        "d": "M470 20L850 20A40 40 0 0 1 890 60L890 150A40 40 0 0 1 850 190L470 190A40 40 0 0 1 430 150L430 60A40 40 0 0 1 470 20ZM626 85A34 34 0 1 0 694 85A34 34 0 1 0 626 85Z",
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.3
+        }
+      },
+      {
+        "type": "path",
+        "d": "M191 262.2L191 262.2A4.2 4.2 0 0 1 195.2 266.4L195.2 366A4.2 4.2 0 0 1 191 370.2L191 370.2A4.2 4.2 0 0 1 186.8 366L186.8 266.4A4.2 4.2 0 0 1 191 262.2ZM200 267C222.8 257.4 242 279 275.6 267L275.6 319.8C242 331.8 222.8 310.2 200 319.8Z",
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 160,
+        "y": 392,
+        "width": 1000,
+        "height": 8,
+        "radius": 4,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.7
+        }
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Report a problem",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 1600,
+          "width": 1040,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Seen something wrong?",
+        "color": "frame",
+        "box": {
+          "x": 330,
+          "y": 260,
+          "width": 830,
+          "height": 110
+        },
+        "align": "start"
+      }
+    ]
+  }
+}

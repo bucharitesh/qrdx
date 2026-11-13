@@ -1,0 +1,94 @@
+{
+  "id": "clean-beauty",
+  "name": "Clean beauty",
+  "description": "A solid card with a round badge holding a leaf on its top edge.",
+  "category": "use-case",
+  "collection": "beauty-wellness",
+  "contentTypes": ["url"],
+  "tags": ["beauty", "wellness", "ingredients", "clean beauty"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1830
+    },
+    "qr": {
+      "x": 120,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 150,
+        "width": 1240,
+        "height": 1680,
+        "radius": 64,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 620,
+        "cy": 150,
+        "r": 150,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 620,
+        "cy": 150,
+        "r": 120,
+        "fill": "background"
+      },
+      {
+        "type": "path",
+        "d": "M569.6 203.2C629.44 220.01 676.06 172.13 673.2 96.8C609.86 107.67 563.24 155.55 569.6 203.2Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M571.76 204.98L575.42 200.53L579.1 196.13L582.83 191.78L586.59 187.47L590.4 183.2L594.26 178.97L598.15 174.79L602.08 170.64L606.06 166.54L610.08 162.48L614.14 158.46L618.24 154.48L622.39 150.55L626.57 146.66L630.8 142.8L635.07 138.99L639.38 135.23L643.73 131.5L648.13 127.82L652.58 124.16A2.8 2.8 0 0 1 649.02 119.84L644.55 123.51L640.11 127.23L635.72 130.99L631.36 134.8L627.05 138.65L622.78 142.54L618.55 146.47L614.37 150.44L610.22 154.46L606.12 158.52L602.06 162.62L598.04 166.77L594.07 170.95L590.14 175.18L586.25 179.45L582.4 183.76L578.59 188.12L574.83 192.51L571.11 196.95L567.44 201.42A2.8 2.8 0 0 1 571.76 204.98Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "What we use and why",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1540,
+          "width": 1040,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Clean beauty",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1710,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

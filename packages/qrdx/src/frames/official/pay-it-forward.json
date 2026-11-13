@@ -1,0 +1,102 @@
+{
+  "id": "pay-it-forward",
+  "name": "Pay it forward",
+  "description": "A light card with a hand holding a heart and a pill-shaped button under the code.",
+  "category": "use-case",
+  "collection": "food-drink",
+  "contentTypes": ["upi", "paypal", "url"],
+  "tags": ["restaurant", "food", "pay it forward", "giving"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1760
+    },
+    "qr": {
+      "x": 120,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 64,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 64,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.82
+        },
+        "hole": {
+          "x": 12,
+          "y": 12,
+          "width": 1216,
+          "height": 1736,
+          "radius": 54
+        }
+      },
+      {
+        "type": "path",
+        "d": "M562.8 111.6C573.2 109 586.2 109 596.6 111.6L625.2 119.4C634.3 122 633 133.7 623.9 132.4L608.3 131.1L635.6 137.6L666.8 122C674.6 118.1 681.1 127.2 674.6 132.4L640.8 153.2C633 157.1 625.2 157.1 617.4 155.8L562.8 148ZM625.2 97.04C620 90.8 598.68 76.24 599.2 63.76C599.72 50.24 620 48.16 625.2 61.68C630.4 48.16 650.68 50.24 651.2 63.76C651.72 76.24 630.4 90.8 625.2 97.04Z",
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 170,
+        "y": 1520,
+        "width": 900,
+        "height": 180,
+        "radius": 90,
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Pay it forward",
+        "color": "text",
+        "box": {
+          "x": 230,
+          "y": 1520,
+          "width": 780,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Buy a meal for someone",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 180,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

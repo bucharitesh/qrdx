@@ -3,7 +3,7 @@
   "name": "Virtual tour",
   "description": "A wide card: the code on one side, a play button and the label on the other.",
   "category": "use-case",
-  "collection": "places",
+  "collection": "real-estate",
   "contentTypes": ["url"],
   "tags": ["real estate", "property", "virtual tour", "video"],
   "license": "CC0-1.0",

@@ -1,0 +1,94 @@
+{
+  "id": "club-fees",
+  "name": "Club fees",
+  "description": "A wide ticket: the code on the left, a perforated stub with a payment card on the right.",
+  "category": "use-case",
+  "collection": "sports-fitness",
+  "contentTypes": ["upi", "paypal", "url"],
+  "tags": ["sports", "fitness", "club", "fees"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 2000,
+      "height": 1040
+    },
+    "qr": {
+      "x": 120,
+      "y": 120,
+      "size": 800,
+      "padding": 64,
+      "radius": 19.2
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M56 0L1044 0A56 56 0 0 0 1156 0L1944 0A56 56 0 0 1 2000 56L2000 984A56 56 0 0 1 1944 1040L1156 1040A56 56 0 0 0 1044 1040L56 1040A56 56 0 0 1 0 984L0 56A56 56 0 0 1 56 0Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M1156 0L1944 0A56 56 0 0 1 2000 56L2000 984A56 56 0 0 1 1944 1040L1156 1040A56 56 0 0 1 1100 984L1100 56A56 56 0 0 1 1156 0Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.88
+        }
+      },
+      {
+        "type": "line",
+        "x1": 1100,
+        "y1": 110,
+        "x2": 1100,
+        "y2": 930,
+        "width": 10,
+        "dash": [34, 24],
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.5
+        }
+      },
+      {
+        "type": "icon",
+        "icon": "card",
+        "x": 1450,
+        "y": 200,
+        "size": 200,
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Pay your club fees",
+        "color": "frame",
+        "box": {
+          "x": 1150,
+          "y": 500,
+          "width": 800,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Season membership",
+        "color": "frame",
+        "box": {
+          "x": 1150,
+          "y": 690,
+          "width": 800,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

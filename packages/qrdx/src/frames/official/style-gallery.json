@@ -1,0 +1,111 @@
+{
+  "id": "style-gallery",
+  "name": "Style gallery",
+  "description": "A card with two more stacked behind it and scissors.",
+  "category": "use-case",
+  "collection": "beauty-wellness",
+  "contentTypes": ["url"],
+  "tags": ["beauty", "wellness", "salon", "styles"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1340,
+      "height": 1860
+    },
+    "qr": {
+      "x": 120,
+      "y": 400,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 100,
+        "y": 100,
+        "width": 1240,
+        "height": 1760,
+        "radius": 48,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.75
+        }
+      },
+      {
+        "type": "rect",
+        "x": 50,
+        "y": 50,
+        "width": 1240,
+        "height": 1760,
+        "radius": 48,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.45
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 48,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 16,
+        "y": 16,
+        "width": 1208,
+        "height": 1728,
+        "radius": 34,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.92
+        }
+      },
+      {
+        "type": "path",
+        "d": "M558.4 153.6A22.4 22.4 0 1 1 603.2 153.6A22.4 22.4 0 1 1 558.4 153.6ZM568.2 153.6A12.6 12.6 0 1 0 593.4 153.6A12.6 12.6 0 1 0 568.2 153.6ZM636.8 153.6A22.4 22.4 0 1 1 681.6 153.6A22.4 22.4 0 1 1 636.8 153.6ZM646.6 153.6A12.6 12.6 0 1 0 671.8 153.6A12.6 12.6 0 1 0 646.6 153.6ZM596.33 140.35L660.73 61.95A5.6 5.6 0 0 1 652.07 54.85L587.67 133.25A5.6 5.6 0 0 1 596.33 140.35ZM652.33 133.25L587.93 54.85A5.6 5.6 0 0 1 579.27 61.95L643.67 140.35A5.6 5.6 0 0 1 652.33 133.25Z",
+        "fill": "frame",
+        "fillRule": "evenodd"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "See the style gallery",
+        "color": "frame",
+        "box": {
+          "x": 90,
+          "y": 1520,
+          "width": 1060,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Cuts and color",
+        "color": "frame",
+        "box": {
+          "x": 120,
+          "y": 210,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

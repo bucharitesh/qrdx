@@ -1,0 +1,103 @@
+{
+  "id": "rate-your-ride",
+  "name": "Rate your ride",
+  "description": "A round badge with a car inside the ring, the label set along its top and the note along its bottom.",
+  "category": "use-case",
+  "collection": "automotive",
+  "contentTypes": ["url"],
+  "tags": ["cars", "parking", "taxi", "rides"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 2000,
+      "height": 2000
+    },
+    "qr": {
+      "x": 500,
+      "y": 500,
+      "size": 1000,
+      "padding": 64,
+      "radius": 40
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "circle",
+        "cx": 1000,
+        "cy": 1000,
+        "r": 1000,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 1000,
+        "cy": 1000,
+        "r": 820,
+        "hole": 808,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.25
+        }
+      },
+      {
+        "type": "path",
+        "d": "M925.2 338.8L925.2 318.4C925.2 308.2 932 304.8 942.2 303.1L962.6 299.7L979.6 277.6C983 274.2 986.4 272.5 993.2 272.5L1030.6 272.5C1037.4 272.5 1040.8 274.2 1044.2 279.3L1057.8 299.7L1068 303.1C1074.8 304.8 1078.2 311.6 1078.2 318.4L1078.2 338.8L1062.9 338.8A22.1 22.1 0 0 0 1018.7 338.8L981.3 338.8A22.1 22.1 0 0 0 937.1 338.8ZM971.1 298L1008.5 298L1008.5 281L986.4 281ZM1015.3 298L1045.9 298L1034 281L1015.3 281ZM1022.95 342.2A17.85 17.85 0 1 1 1058.65 342.2A17.85 17.85 0 1 1 1022.95 342.2ZM1034 342.2A6.8 6.8 0 1 0 1047.6 342.2A6.8 6.8 0 1 0 1034 342.2ZM941.35 342.2A17.85 17.85 0 1 1 977.05 342.2A17.85 17.85 0 1 1 941.35 342.2ZM952.4 342.2A6.8 6.8 0 1 0 966 342.2A6.8 6.8 0 1 0 952.4 342.2Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M1067.15 309.9L1072.25 309.9A2.55 2.55 0 0 1 1074.8 312.45L1074.8 314.15A2.55 2.55 0 0 1 1072.25 316.7L1067.15 316.7A2.55 2.55 0 0 1 1064.6 314.15L1064.6 312.45A2.55 2.55 0 0 1 1067.15 309.9Z",
+        "fill": "accent"
+      },
+      {
+        "type": "polygon",
+        "points": [[95, 974], [121, 1000], [95, 1026], [69, 1000]],
+        "fill": "text"
+      },
+      {
+        "type": "polygon",
+        "points": [[1905, 974], [1931, 1000], [1905, 1026], [1879, 1000]],
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "curved",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Rate your ride",
+        "color": "text",
+        "curve": {
+          "cx": 1000,
+          "cy": 1000,
+          "radius": 905,
+          "side": "top",
+          "spread": 120
+        },
+        "fontSize": 92
+      },
+      {
+        "type": "curved",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Thanks for riding",
+        "color": "text",
+        "curve": {
+          "cx": 1000,
+          "cy": 1000,
+          "radius": 905,
+          "side": "bottom",
+          "spread": 110
+        },
+        "fontSize": 76,
+        "weight": "regular"
+      }
+    ]
+  }
+}

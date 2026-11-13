@@ -1,0 +1,79 @@
+{
+  "id": "save-for-later",
+  "name": "Save for later",
+  "description": "A card with its top corner folded down and a bookmark.",
+  "category": "use-case",
+  "collection": "call-to-action",
+  "contentTypes": [],
+  "tags": ["call to action", "bookmark"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1770
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M0 0L1000 0L1240 240L1240 1770L0 1770Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M1000 0L1000 220L1020 240L1240 240Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.6
+        }
+      },
+      {
+        "type": "path",
+        "d": "M101 84L179 84L179 217.5L140 186L101 217.5ZM134.71 121.72L120.03 122.51L131.44 131.78L127.66 145.99L140 138L152.34 145.99L148.56 131.78L159.97 122.51L145.29 121.72L140 108Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Save it for later",
+        "color": "text",
+        "box": {
+          "x": 90,
+          "y": 1530,
+          "width": 1060,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan to bookmark",
+        "color": "text",
+        "box": {
+          "x": 260,
+          "y": 100,
+          "width": 700,
+          "height": 100
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

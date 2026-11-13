@@ -1,0 +1,75 @@
+{
+  "id": "kids-haircuts",
+  "name": "Kids' haircuts",
+  "description": "A solid card with scissors over the code and the label underneath.",
+  "category": "use-case",
+  "collection": "beauty-wellness",
+  "contentTypes": ["calcom", "url"],
+  "tags": ["beauty", "wellness", "haircut", "kids"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M554 146A24 24 0 1 1 602 146A24 24 0 1 1 554 146ZM564.5 146A13.5 13.5 0 1 0 591.5 146A13.5 13.5 0 1 0 564.5 146ZM638 146A24 24 0 1 1 686 146A24 24 0 1 1 638 146ZM648.5 146A13.5 13.5 0 1 0 675.5 146A13.5 13.5 0 1 0 648.5 146ZM594.64 131.81L663.64 47.81A6 6 0 0 1 654.36 40.19L585.36 124.19A6 6 0 0 1 594.64 131.81ZM654.64 124.19L585.64 40.19A6 6 0 0 1 576.36 47.81L645.36 131.81A6 6 0 0 1 654.64 124.19Z",
+        "fill": "text",
+        "fillRule": "evenodd"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Book a kids' cut",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Little ones welcome",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

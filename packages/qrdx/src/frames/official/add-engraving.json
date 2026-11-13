@@ -1,0 +1,90 @@
+{
+  "id": "add-engraving",
+  "name": "Engraving",
+  "description": "A card with its top corner folded down and a pen nib.",
+  "category": "use-case",
+  "collection": "shopping",
+  "contentTypes": ["url"],
+  "tags": ["retail", "shop", "engraving", "personalized"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1770
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#8a8a8a"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M0 0L1000 0L1240 240L1240 1770L0 1770Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M18 18L992.62 18L1222 247.38L1222 1752L18 1752Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.9
+        }
+      },
+      {
+        "type": "path",
+        "d": "M1000 0L1000 220L1020 240L1240 240Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M110 96L170 96L183.5 141L140 220.5L96.5 141ZM131 144A9 9 0 1 0 149 144A9 9 0 1 0 131 144ZM140 154.5A2.4 2.4 0 0 0 137.6 156.9L137.6 203.1A2.4 2.4 0 0 0 140 205.5L140 205.5A2.4 2.4 0 0 0 142.4 203.1L142.4 156.9A2.4 2.4 0 0 0 140 154.5L140 154.5Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M110 79.5L170 79.5A4.5 4.5 0 0 1 174.5 84L174.5 88.5A4.5 4.5 0 0 1 170 93L110 93A4.5 4.5 0 0 1 105.5 88.5L105.5 84A4.5 4.5 0 0 1 110 79.5Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Add engraving",
+        "color": "frame",
+        "box": {
+          "x": 90,
+          "y": 1530,
+          "width": 1060,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Make it personal",
+        "color": "frame",
+        "box": {
+          "x": 260,
+          "y": 100,
+          "width": 700,
+          "height": 100
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

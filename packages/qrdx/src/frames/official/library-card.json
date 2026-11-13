@@ -1,0 +1,90 @@
+{
+  "id": "library-card",
+  "name": "Library card",
+  "description": "A card with its top corner folded down and an ID badge.",
+  "category": "use-case",
+  "collection": "health-learning",
+  "contentTypes": ["url"],
+  "tags": ["education", "school", "library"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1770
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M0 0L1000 0L1240 240L1240 1770L0 1770Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M18 18L992.62 18L1222 247.38L1222 1752L18 1752Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.9
+        }
+      },
+      {
+        "type": "path",
+        "d": "M1000 0L1000 220L1020 240L1240 240Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M101 96L179 96A12 12 0 0 1 191 108L191 204A12 12 0 0 1 179 216L101 216A12 12 0 0 1 89 204L89 108A12 12 0 0 1 101 96ZM128.75 106.5A3.75 3.75 0 0 0 125 110.25L125 110.25A3.75 3.75 0 0 0 128.75 114L151.25 114A3.75 3.75 0 0 0 155 110.25L155 110.25A3.75 3.75 0 0 0 151.25 106.5L128.75 106.5ZM125 141A15 15 0 1 0 155 141A15 15 0 1 0 125 141ZM167 183C167 159 113 159 113 183ZM116 195A3 3 0 0 0 113 198L113 198A3 3 0 0 0 116 201L164 201A3 3 0 0 0 167 198L167 198A3 3 0 0 0 164 195L116 195Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M115.12 72.88L136.12 93.88L131.88 98.12L110.88 77.12ZM169.12 77.12L148.12 98.12L143.88 93.88L164.88 72.88Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Get a library card",
+        "color": "frame",
+        "box": {
+          "x": 90,
+          "y": 1530,
+          "width": 1060,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Borrow books and more",
+        "color": "frame",
+        "box": {
+          "x": 260,
+          "y": 100,
+          "width": 700,
+          "height": 100
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

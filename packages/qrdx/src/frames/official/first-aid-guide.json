@@ -1,0 +1,109 @@
+{
+  "id": "first-aid-guide",
+  "name": "First aid",
+  "description": "A sign on two posts with a bandage in a round badge on top.",
+  "category": "use-case",
+  "collection": "health-learning",
+  "contentTypes": ["url"],
+  "tags": ["healthcare", "clinic", "first aid", "safety"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1940
+    },
+    "qr": {
+      "x": 120,
+      "y": 400,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 250,
+        "y": 1720,
+        "width": 56,
+        "height": 220,
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.25
+        }
+      },
+      {
+        "type": "rect",
+        "x": 934,
+        "y": 1720,
+        "width": 56,
+        "height": 220,
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.25
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 48,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 26,
+        "y": 26,
+        "width": 1188,
+        "height": 1688,
+        "radius": 28,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.9
+        }
+      },
+      {
+        "type": "circle",
+        "cx": 620,
+        "cy": 170,
+        "r": 125,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M570.47 176.31L634.82 122.32A27 27 -40 0 1 672.86 125.65L672.86 125.65A27 27 -40 0 1 669.53 163.69L605.18 217.68A27 27 -40 0 1 567.14 214.35L567.14 214.35A27 27 -40 0 1 570.47 176.31ZM578.17 205.1A3.6 3.6 -40 1 0 583.69 200.47A3.6 3.6 -40 1 0 578.17 205.1ZM656.31 139.53A3.6 3.6 -40 1 0 661.83 134.9A3.6 3.6 -40 1 0 656.31 139.53Z",
+        "fill": "background"
+      },
+      {
+        "type": "path",
+        "d": "M587.71 161.85L617.58 136.78A6 6 -40 0 1 626.04 137.52L653.03 169.7A6 6 -40 0 1 652.29 178.15L622.42 203.22A6 6 -40 0 1 613.96 202.48L586.97 170.3A6 6 -40 0 1 587.71 161.85ZM606.9 180.99A3.6 3.6 -40 1 0 612.42 176.36A3.6 3.6 -40 1 0 606.9 180.99ZM610.49 164.27A3.6 3.6 -40 1 0 616.01 159.64A3.6 3.6 -40 1 0 610.49 164.27ZM617.24 172.31A3.6 3.6 -40 1 0 622.76 167.69A3.6 3.6 -40 1 0 617.24 172.31ZM623.99 180.36A3.6 3.6 -40 1 0 629.51 175.73A3.6 3.6 -40 1 0 623.99 180.36ZM627.58 163.64A3.6 3.6 -40 1 0 633.1 159.01A3.6 3.6 -40 1 0 627.58 163.64Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.5
+        }
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "First aid guide",
+        "color": "frame",
+        "box": {
+          "x": 90,
+          "y": 1520,
+          "width": 1060,
+          "height": 180
+        }
+      }
+    ]
+  }
+}

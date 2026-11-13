@@ -1,0 +1,89 @@
+{
+  "id": "brewery-tour",
+  "name": "Brewery tour",
+  "description": "A ticket with side notches, a perforated line and a stub for the label and a beer mug.",
+  "category": "use-case",
+  "collection": "food-drink",
+  "contentTypes": ["calcom", "url"],
+  "tags": ["restaurant", "food", "brewery", "beer", "tour"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1820
+    },
+    "qr": {
+      "x": 120,
+      "y": 300,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M64 0L1176 0A64 64 0 0 1 1240 64L1240 1380A60 60 0 0 0 1240 1500L1240 1756A64 64 0 0 1 1176 1820L64 1820A64 64 0 0 1 0 1756L0 1500A60 60 0 0 0 0 1380L0 64A64 64 0 0 1 64 0Z",
+        "fill": "frame"
+      },
+      {
+        "type": "line",
+        "x1": 100,
+        "y1": 1440,
+        "x2": 1140,
+        "y2": 1440,
+        "width": 10,
+        "dash": [36, 24],
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.55
+        }
+      },
+      {
+        "type": "path",
+        "d": "M578 84L641 84A9 9 0 0 1 650 93L650 174A9 9 0 0 1 641 183L578 183A9 9 0 0 1 569 174L569 93A9 9 0 0 1 578 84ZM650 105A27 27 0 0 1 650 159L650 144A12 12 0 0 0 650 120Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M563 96C560 75 578 63 590 72C596 57 620 57 626 69C638 60 659 69 656 90L656 99L563 99Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Brewery tours",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1490,
+          "width": 1040,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan to book",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1675,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

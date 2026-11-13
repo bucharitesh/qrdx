@@ -1,0 +1,84 @@
+{
+  "id": "lost-pet-tag",
+  "name": "Lost pet tag",
+  "description": "A bone-shaped pet tag with a ring hole.",
+  "category": "use-case",
+  "collection": "nonprofit",
+  "contentTypes": ["vcard", "phone", "url"],
+  "tags": ["nonprofit", "community", "pets", "pet id"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1560,
+      "height": 1970
+    },
+    "qr": {
+      "x": 280,
+      "y": 460,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M200 190L1360 190A40 40 0 0 1 1400 230L1400 1770A40 40 0 0 1 1360 1810L200 1810A40 40 0 0 1 160 1770L160 230A40 40 0 0 1 200 190ZM0 220A220 220 0 1 1 440 220A220 220 0 1 1 0 220ZM1120 220A220 220 0 1 1 1560 220A220 220 0 1 1 1120 220ZM0 1750A220 220 0 1 1 440 1750A220 220 0 1 1 0 1750ZM1120 1750A220 220 0 1 1 1560 1750A220 220 0 1 1 1120 1750Z",
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 190,
+        "y": 230,
+        "width": 1180,
+        "height": 1540,
+        "radius": 30,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.9
+        }
+      },
+      {
+        "type": "circle",
+        "cx": 180,
+        "cy": 180,
+        "r": 45,
+        "fill": "background"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "If I'm lost, scan me",
+        "color": "frame",
+        "box": {
+          "x": 240,
+          "y": 1580,
+          "width": 1080,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Please help me home",
+        "color": "frame",
+        "box": {
+          "x": 280,
+          "y": 250,
+          "width": 1000,
+          "height": 110
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

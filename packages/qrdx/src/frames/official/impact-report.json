@@ -1,0 +1,90 @@
+{
+  "id": "impact-report",
+  "name": "Impact report",
+  "description": "A card with its top corner folded down and a leaf.",
+  "category": "use-case",
+  "collection": "business",
+  "contentTypes": ["pdf", "url"],
+  "tags": ["business", "sustainability", "report"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1770
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M0 0L1000 0L1240 240L1240 1770L0 1770Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M18 18L992.62 18L1222 247.38L1222 1752L18 1752Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.9
+        }
+      },
+      {
+        "type": "path",
+        "d": "M1000 0L1000 220L1020 240L1240 240Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M86 207C150.11 225.01 200.06 173.71 197 93C129.13 104.65 79.18 155.95 86 207Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M88.32 208.9L92.23 204.14L96.18 199.43L100.17 194.77L104.21 190.15L108.29 185.57L112.42 181.04L116.59 176.56L120.8 172.12L125.07 167.72L129.37 163.37L133.72 159.07L138.12 154.8L142.56 150.59L147.04 146.42L151.57 142.29L156.15 138.21L160.77 134.17L165.43 130.18L170.14 126.23L174.9 122.32A3 3 0 0 1 171.1 117.68L166.31 121.61L161.55 125.6L156.84 129.63L152.17 133.71L147.55 137.83L142.98 142L138.45 146.22L133.96 150.48L129.52 154.78L125.13 159.13L120.78 163.52L116.48 167.96L112.22 172.45L108 176.98L103.83 181.55L99.71 186.17L95.63 190.84L91.6 195.55L87.61 200.31L83.68 205.1A3 3 0 0 1 88.32 208.9Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Our impact report",
+        "color": "frame",
+        "box": {
+          "x": 90,
+          "y": 1530,
+          "width": 1060,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Sustainability",
+        "color": "frame",
+        "box": {
+          "x": 260,
+          "y": 100,
+          "width": 700,
+          "height": 100
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

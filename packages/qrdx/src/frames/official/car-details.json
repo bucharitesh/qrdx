@@ -1,0 +1,90 @@
+{
+  "id": "car-details",
+  "name": "Car details",
+  "description": "A card with its top corner folded down and a car.",
+  "category": "use-case",
+  "collection": "automotive",
+  "contentTypes": ["url"],
+  "tags": ["cars", "parking", "dealership", "used cars"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1770
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M0 0L1000 0L1240 240L1240 1770L0 1770Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M18 18L992.62 18L1222 247.38L1222 1752L18 1752Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.9
+        }
+      },
+      {
+        "type": "path",
+        "d": "M1000 0L1000 220L1020 240L1240 240Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M74 171L74 153C74 144 80 141 89 139.5L107 136.5L122 117C125 114 128 112.5 134 112.5L167 112.5C173 112.5 176 114 179 118.5L191 136.5L200 139.5C206 141 209 147 209 153L209 171L195.5 171A19.5 19.5 0 0 0 156.5 171L123.5 171A19.5 19.5 0 0 0 84.5 171ZM114.5 135L147.5 135L147.5 120L128 120ZM153.5 135L180.5 135L170 120L153.5 120ZM160.25 174A15.75 15.75 0 1 1 191.75 174A15.75 15.75 0 1 1 160.25 174ZM170 174A6 6 0 1 0 182 174A6 6 0 1 0 170 174ZM88.25 174A15.75 15.75 0 1 1 119.75 174A15.75 15.75 0 1 1 88.25 174ZM98 174A6 6 0 1 0 110 174A6 6 0 1 0 98 174Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M199.25 145.5L203.75 145.5A2.25 2.25 0 0 1 206 147.75L206 149.25A2.25 2.25 0 0 1 203.75 151.5L199.25 151.5A2.25 2.25 0 0 1 197 149.25L197 147.75A2.25 2.25 0 0 1 199.25 145.5Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "See this car's details",
+        "color": "frame",
+        "box": {
+          "x": 90,
+          "y": 1530,
+          "width": 1060,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Specs and price",
+        "color": "frame",
+        "box": {
+          "x": 260,
+          "y": 100,
+          "width": 700,
+          "height": 100
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

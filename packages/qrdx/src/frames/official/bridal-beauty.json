@@ -1,0 +1,80 @@
+{
+  "id": "bridal-beauty",
+  "name": "Bridal beauty",
+  "description": "A solid card with a gem over the code and the label underneath.",
+  "category": "use-case",
+  "collection": "beauty-wellness",
+  "contentTypes": ["calcom", "url"],
+  "tags": ["beauty", "wellness", "bridal", "wedding"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M581 62L659 62L686 95L620 173L554 95Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M581 62L599 95L620 62ZM620 62L641 95L659 62ZM554 95L599 95L620 173ZM641 95L686 95L620 173Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Book a bridal trial",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Bridal beauty",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

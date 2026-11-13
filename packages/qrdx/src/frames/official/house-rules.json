@@ -1,0 +1,121 @@
+{
+  "id": "house-rules",
+  "name": "House rules",
+  "description": "A clipboard with the code on its sheet of paper and a house.",
+  "category": "use-case",
+  "collection": "real-estate",
+  "contentTypes": ["url"],
+  "tags": ["real estate", "property", "vacation rental", "rules"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1890
+    },
+    "qr": {
+      "x": 160,
+      "y": 480,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 90,
+        "width": 1320,
+        "height": 1800,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 60,
+        "y": 200,
+        "width": 1200,
+        "height": 1630,
+        "radius": 12,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 60,
+        "y": 200,
+        "width": 1200,
+        "height": 14,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.75
+        }
+      },
+      {
+        "type": "path",
+        "d": "M470 20L850 20A40 40 0 0 1 890 60L890 150A40 40 0 0 1 850 190L470 190A40 40 0 0 1 430 150L430 60A40 40 0 0 1 470 20ZM626 85A34 34 0 1 0 694 85A34 34 0 1 0 626 85Z",
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.3
+        }
+      },
+      {
+        "type": "path",
+        "d": "M230 264.6L285.2 312.6L273.2 312.6L273.2 365.4L186.8 365.4L186.8 312.6L174.8 312.6ZM222.8 329.4A2.4 2.4 0 0 0 220.4 331.8L220.4 363A2.4 2.4 0 0 0 222.8 365.4L237.2 365.4A2.4 2.4 0 0 0 239.6 363L239.6 331.8A2.4 2.4 0 0 0 237.2 329.4ZM246.8 271.8L258.8 271.8L258.8 295.8L246.8 295.8Z",
+        "fill": "frame",
+        "fillRule": "evenodd"
+      },
+      {
+        "type": "path",
+        "d": "M198.8 322.2L210.8 322.2A2.4 2.4 0 0 1 213.2 324.6L213.2 336.6A2.4 2.4 0 0 1 210.8 339L198.8 339A2.4 2.4 0 0 1 196.4 336.6L196.4 324.6A2.4 2.4 0 0 1 198.8 322.2Z",
+        "fill": "accent"
+      },
+      {
+        "type": "rect",
+        "x": 160,
+        "y": 392,
+        "width": 1000,
+        "height": 8,
+        "radius": 4,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.7
+        }
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "House rules",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 1600,
+          "width": 1040,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Please read",
+        "color": "frame",
+        "box": {
+          "x": 330,
+          "y": 260,
+          "width": 830,
+          "height": 110
+        },
+        "align": "start"
+      }
+    ]
+  }
+}
