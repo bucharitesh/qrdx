@@ -23,6 +23,7 @@
  *     [--visibility 50] [--max-cost 2] [--mode scene] [--size 0.64] [--y 0.5] \
  *     [--presets zen-garden,neon-city] [--photos mountain,latte] [--photo-input composite] \
  *     [--blend '{"ringFull":1}'] (overrides the least blend's BlendStyle) \
+ *     [--text https://qrdx.dev/ai/art] (what the codes encode) \
  *     [--layout '{"light":null}'] (overrides SCENE_LAYOUT, or PHOTO_LAYOUT in photo mode)
  *   bun x tsx --conditions=react-server scripts/ai/art-eval.ts --replay ./art-eval-out
  *     (no key, no cost: the raw images saved by an earlier run stand in for
@@ -48,7 +49,9 @@ import type {
 } from "../../lib/ai/art-image";
 import type { ArtModelChoice } from "../../lib/ai/models";
 
-const TEXT = "https://qrdx.dev/q/Ab3dE9x";
+/** What the codes encode, unless --text says otherwise. */
+const DEFAULT_TEXT = "https://qrdx.dev/q/Ab3dE9x";
+let TEXT = DEFAULT_TEXT;
 /** A scene, a city at night and a painting style: three kinds of prompt. */
 const PRESET_IDS = ["zen-garden", "neon-city", "botanical-watercolor"];
 /** Photo mode's test photos (public/images/art-samples/photos) and what they show. */
@@ -318,8 +321,10 @@ async function main() {
       photos: { type: "string" },
       "photo-input": { type: "string" },
       blend: { type: "string" },
+      text: { type: "string" },
     },
   });
+  TEXT = values.text ?? DEFAULT_TEXT;
   const dryRun = values["dry-run"];
   const replay = values.replay ? resolve(values.replay) : null;
   // A replay keeps the earlier run's settings unless told otherwise.

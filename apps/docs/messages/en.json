@@ -3323,7 +3323,34 @@
       "unsupportedFormat": "Unsupported image format",
       "usePngJpgWebp": "Use a PNG, JPG or WebP image.",
       "photoTooLarge": "Photo is too large",
-      "photosUpTo": "Photos can be up to {size} MB."
+      "photosUpTo": "Photos can be up to {size} MB.",
+      "examples": {
+        "eyebrow": "Scene and photo modes",
+        "title": "Put the code inside a picture",
+        "description": "Scene mode paints a whole picture and builds the code into something in it: a wall, a garden, a row of windows. Photo mode paints the code into a photo you upload. These came from the same pipeline you use, and each one scans and opens this page.",
+        "scene": "Scene",
+        "photo": "Photo",
+        "caption": {
+          "painted-townhouses": "Painted townhouses, the code across their facades",
+          "lighthouse": "A lighthouse on a grassy headland",
+          "photo-mountain": "A mountain lake photo at sunset",
+          "venice-canals": "A canal house in Venice",
+          "cottage-garden": "A thatched cottage in a flower garden",
+          "photo-latte": "A latte photo on a wooden table",
+          "neon-city": "A city street at night in the rain",
+          "photo-dog": "A photo of a dog in a park"
+        },
+        "alt": {
+          "painted-townhouses": "AI QR art in scene mode: a row of painted townhouses, with the QR code built into their facades",
+          "lighthouse": "AI QR art in scene mode: a lighthouse on a headland by the sea, with the QR code laid into the grass and stone",
+          "photo-mountain": "AI QR art in photo mode: a mountain lake at sunset, with the QR code painted over the peak and its reflection",
+          "venice-canals": "AI QR art in scene mode: a canal house in Venice, with the QR code built into its stone wall",
+          "cottage-garden": "AI QR art in scene mode: a thatched cottage in a flower garden, with the QR code built into its wall",
+          "photo-latte": "AI QR art in photo mode: a latte on a wooden table, with the QR code painted into the table and the cup",
+          "neon-city": "AI QR art in scene mode: a city street at night, with the QR code made of lit and dark windows",
+          "photo-dog": "AI QR art in photo mode: a golden dog in a sunny park, with the QR code painted over it"
+        }
+      }
     }
   },
   "compare": {
