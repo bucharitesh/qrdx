@@ -1,6 +1,7 @@
 // Client-safe settings shared by the /ai/art page and /api/ai/art.
 import { z } from "zod";
 import { playgroundHref } from "@/lib/playground-links";
+import { ART_LOOK_IDS } from "./looks";
 
 /** The playground's Art tab (Logo QR, Image QR and, where it's set up, AI art). */
 export const ART_PLAYGROUND_HREF = playgroundHref({ tab: "art" });
@@ -113,8 +114,49 @@ export const ART_MODES = ["code", "scene", "photo"] as const;
 export type ArtMode = (typeof ART_MODES)[number];
 export const DEFAULT_ART_MODE: ArtMode = "code";
 
-/** Longest quick-look id (the looks themselves are in ./styles.ts). */
+/** Longest quick-look id (the looks themselves are in ./looks.ts). */
 export const ART_STYLE_ID_MAX_LENGTH = 40;
+
+/** A quick look (./looks.ts), combined with the description. */
+export const artLookIdSchema = z.enum(ART_LOOK_IDS, {
+  error: "Pick one of the listed looks",
+});
+
+/**
+ * The description of the artwork. Optional: a blank one is written for you
+ * (lib/ai/art-prompt.ts writeArtPrompt), but one that's typed needs a few
+ * words. Blank comes out as undefined.
+ */
+const artPromptSchema = z
+  .string()
+  .trim()
+  .max(ART_PROMPT_MAX_LENGTH)
+  .refine((value) => value === "" || value.length >= ART_PROMPT_MIN_LENGTH, {
+    message: "Describe the artwork in a few more words, or leave it blank",
+  })
+  .optional()
+  .transform((value) => value || undefined);
+
+/** Photo mode needs a photo, and only photo mode takes one. */
+function checkPhoto(
+  request: { mode: ArtMode; photo?: string },
+  ctx: z.RefinementCtx,
+) {
+  if (request.mode === "photo" && !request.photo) {
+    ctx.addIssue({
+      code: "custom",
+      path: ["photo"],
+      message: "Add a photo to paint the code into",
+    });
+  }
+  if (request.mode !== "photo" && request.photo) {
+    ctx.addIssue({
+      code: "custom",
+      path: ["photo"],
+      message: "A photo is only used in photo mode",
+    });
+  }
+}
 
 // ── Requests and responses ────────────────────────────────────────────────
 
@@ -124,11 +166,7 @@ const aiArtRequestFields = z.object({
     .trim()
     .min(1, "Enter a link or text to encode")
     .max(ART_TEXT_MAX_LENGTH),
-  prompt: z
-    .string()
-    .trim()
-    .min(ART_PROMPT_MIN_LENGTH, "Describe the artwork you want")
-    .max(ART_PROMPT_MAX_LENGTH),
+  prompt: artPromptSchema,
   negativePrompt: z
     .string()
     .trim()
@@ -150,33 +188,43 @@ const aiArtRequestFields = z.object({
   seed: z.number().int().min(0).max(ART_MAX_SEED).optional(),
   reference: artReferenceSchema.optional(),
   mode: z.enum(ART_MODES).default(DEFAULT_ART_MODE),
-  /** A quick look (./styles.ts) combined with the description */
-  style: z.string().trim().max(ART_STYLE_ID_MAX_LENGTH).optional(),
+  /** A quick look (./looks.ts) combined with the description */
+  style: artLookIdSchema.optional(),
   /** Photo mode: the uploaded picture the code is painted into */
   photo: artReferenceSchema.optional(),
 });
 
-export const aiArtRequestSchema = aiArtRequestFields.superRefine(
-  (request, ctx) => {
-    if (request.mode === "photo" && !request.photo) {
-      ctx.addIssue({
-        code: "custom",
-        path: ["photo"],
-        message: "Add a photo to paint the code into",
-      });
-    }
-    if (request.mode !== "photo" && request.photo) {
-      ctx.addIssue({
-        code: "custom",
-        path: ["photo"],
-        message: "A photo is only used in photo mode",
-      });
-    }
-  },
-);
+export const aiArtRequestSchema = aiArtRequestFields.superRefine(checkPhoto);
 export type AIArtRequest = z.input<typeof aiArtRequestSchema>;
 /** A request after validation, defaults filled in. */
 export type ParsedAIArtRequest = z.output<typeof aiArtRequestSchema>;
+
+/**
+ * "Write one for me" (POST /api/ai/art/describe): what the description is
+ * for. `hint` is whatever is in the description box already.
+ */
+export const artDescribeRequestSchema = z
+  .object({
+    mode: z.enum(ART_MODES).default(DEFAULT_ART_MODE),
+    style: artLookIdSchema.optional(),
+    photo: artReferenceSchema.optional(),
+    hint: z
+      .string()
+      .trim()
+      .max(ART_PROMPT_MAX_LENGTH)
+      .optional()
+      .transform((value) => value || undefined),
+  })
+  .superRefine(checkPhoto);
+export type ArtDescribeRequest = z.input<typeof artDescribeRequestSchema>;
+export type ParsedArtDescribeRequest = z.output<
+  typeof artDescribeRequestSchema
+>;
+
+/** POST /api/ai/art/describe's answer. */
+export interface ArtDescribeResult {
+  prompt: string;
+}
 
 export interface AIArtVariant {
   /** The PNG or JPEG itself, as a data: URL (nothing is stored) */
@@ -224,5 +272,7 @@ export interface AIArtResult {
   text: string;
   visibility: number;
   creativity: number;
+  /** The description QRdx wrote, when the request had none */
+  writtenPrompt?: string;
   credits: AIArtCredits | null;
 }
