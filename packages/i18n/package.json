@@ -1,0 +1,32 @@
+{
+  "name": "@repo/i18n",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    ".": "./index.ts",
+    "./config": "./config.ts",
+    "./docs": "./docs.ts",
+    "./docs-messages": "./docs-messages.ts",
+    "./docs-meta": "./docs-meta.ts",
+    "./docs-search": "./docs-search.ts",
+    "./docs-seo": "./docs-seo.ts",
+    "./messages": "./messages.ts",
+    "./messages/*.json": "./messages/*.json",
+    "./paths": "./paths.ts",
+    "./localized-paths.json": "./localized-paths.json",
+    "./review": "./review.ts",
+    "./routing": "./routing.ts"
+  },
+  "scripts": {
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "next": "16.4.3",
+    "typescript": "^6.0.3"
+  },
+  "engines": {
+    "node": ">=22.22.3"
+  }
+}

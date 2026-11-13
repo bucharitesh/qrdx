@@ -11,8 +11,8 @@ import {
 import { localeParams } from "@/lib/i18n/static-params";
 import { rootMetadata, rootViewport } from "@/lib/root-metadata";
 
-// The root layout for translated public pages (lib/i18n/localized-paths.json).
-// Builds prerender them in English: next.config.ts rewrites /pricing to
+// The root layout for translated public pages
+// (packages/i18n/localized-paths.json). Builds prerender them in English: next.config.ts rewrites /pricing to
 // /en/pricing, and /en/... redirects to the unprefixed URL. The other
 // languages render on their first request and are cached from then on
 // (lib/i18n/static-params.ts). Anything else in the first segment is a 404

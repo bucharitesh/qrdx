@@ -13,10 +13,11 @@
 //   mcp     the MCP endpoint initializes over POST, lists and calls its
 //           tools, sends browsers to /mcp and answers CORS preflights
 //   legal   the legal pages render, unknown paths are 404s (never 500s)
-//   i18n    every translated page (lib/i18n/localized-paths.json) answers in
-//           each language with its <html lang>, a self canonical and noindex
-//           while unreviewed; a sample loads in Chrome without console errors
-//           or hydration warnings; /en/... redirects to the English URL
+//   i18n    every translated page (packages/i18n/localized-paths.json)
+//           answers in each language with its <html lang>, a self canonical
+//           and noindex while unreviewed; a sample loads in Chrome without
+//           console errors or hydration warnings; /en/... redirects to the
+//           English URL
 //
 //   bun run --filter docs test:e2e:site           (E2E_BASE_URL defaults to :3000)
 //   E2E_SUITES=image,mcp bun run --filter docs test:e2e:site

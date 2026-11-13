@@ -39,6 +39,7 @@
         "@repo/config": "workspace:*",
         "@repo/database": "workspace:*",
         "@repo/design-system": "workspace:*",
+        "@repo/i18n": "workspace:*",
         "@repo/integration-kit": "workspace:*",
         "@repo/integrations": "workspace:*",
         "@repo/next-config": "workspace:*",
@@ -312,6 +313,15 @@
         "@types/react": "^19.3.0",
         "postcss": "^8.5.32",
         "tailwindcss": "^4.3.3",
+        "typescript": "^6.0.3",
+      },
+    },
+    "packages/i18n": {
+      "name": "@repo/i18n",
+      "version": "0.0.0",
+      "devDependencies": {
+        "@repo/typescript-config": "workspace:*",
+        "next": "16.4.3",
         "typescript": "^6.0.3",
       },
     },
@@ -1732,6 +1742,8 @@
     "@repo/database": ["@repo/database@workspace:packages/database"],
 
     "@repo/design-system": ["@repo/design-system@workspace:packages/design-system"],
+
+    "@repo/i18n": ["@repo/i18n@workspace:packages/i18n"],
 
     "@repo/integration-kit": ["@repo/integration-kit@workspace:packages/integration-kit"],
 

@@ -107,7 +107,7 @@ export const PRODUCT_FACTS = {
   contentTypes: CONTENT_TYPE_IDS.length,
   /** Brands in the logo gallery (Simple Icons), as copy writes it ("3,467"). */
   brandLogos: BRAND_LOGO_COUNT.toLocaleString("en-US"),
-  /** Languages the site has besides English (lib/i18n/config.ts), reviewed or not. */
+  /** Languages the site has besides English (packages/i18n/config.ts), reviewed or not. */
   translatedLanguages: TRANSLATED_LOCALES.length,
   // The affiliate program's terms (lib/affiliates/terms.ts), for the legal
   // and help pages; the code reads the same constants.
