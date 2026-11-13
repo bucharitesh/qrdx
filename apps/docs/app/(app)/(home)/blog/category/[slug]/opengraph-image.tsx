@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { ogSize, renderPageOgImage } from "@/app/og/brand";
 import { isCategorySlug, SLUG_TO_CATEGORY } from "@/lib/blog-constants";
 import { blogCategoriesSource } from "@/lib/content-source";
-import { buildTimeParams } from "@/lib/static-params";
+import { onDemandParams } from "@/lib/static-params";
 import { getPublishedPosts } from "../../_lib/posts";
 
 export const alt = "One category of the QRdx blog";
@@ -10,9 +10,7 @@ export const size = ogSize;
 export const contentType = "image/png";
 
 export function generateStaticParams() {
-  return buildTimeParams(() =>
-    Object.keys(SLUG_TO_CATEGORY).map((slug) => ({ slug })),
-  );
+  return onDemandParams();
 }
 
 export default async function Image({

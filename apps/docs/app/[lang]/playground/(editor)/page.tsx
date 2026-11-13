@@ -20,7 +20,7 @@ export async function generateMetadata(): Promise<Metadata> {
   });
 }
 
-// The bare playground is static: prerendered per language and served from
+// The bare playground is static: one cached page per language, served from
 // the CDN. Shared /playground/<themeId> links render per request in
 // app/(app)/playground/[...qrId]. The crawlable intro under the editor is
 // in ./layout.tsx.

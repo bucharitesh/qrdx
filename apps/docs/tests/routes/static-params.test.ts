@@ -1,8 +1,10 @@
 // Routes that prerender a fixed list of params (lib/static-params.ts): the
-// full list in production builds, none under `next dev` (where listing paths
+// full list in production and staging builds, English only for app/[lang],
+// none in other preview builds or under `next dev` (where listing paths
 // makes Next rewrite .next/dev/prerender-manifest.json without a lock, and
-// parallel cold loads corrupted it), `dynamicParams` left at its default so
-// dev can render them, and a 404 for any param that isn't in the list.
+// parallel cold loads corrupted it), none ever for OG images and Markdown
+// copies, `dynamicParams` left at its default so whatever isn't listed
+// renders on request, and a 404 for any param that isn't in the list.
 import { readdirSync, readFileSync } from "node:fs";
 import { join, relative } from "node:path";
 import { getIntegrationCatalog } from "@repo/integrations/src/catalog";
@@ -31,28 +33,19 @@ import * as industryImage from "@/app/[lang]/(home)/qr-codes-for/[slug]/opengrap
 import * as industryPage from "@/app/[lang]/(home)/qr-codes-for/[slug]/page";
 import * as placementImage from "@/app/[lang]/(home)/qr-codes-on/[slug]/opengraph-image";
 import * as placementPage from "@/app/[lang]/(home)/qr-codes-on/[slug]/page";
-import { LOCALE_SEGMENTS, type Locale } from "@/lib/i18n/config";
+import type { Locale } from "@/lib/i18n/config";
 import { docsI18n, docsUrl, translationLocale } from "@/lib/i18n/docs";
+import { localeParams } from "@/lib/i18n/static-params";
 import { listTemplates } from "@/lib/landing/templates";
 import { QR_TYPE_SLUGS } from "@/lib/qr-types-content";
 import { HOSTED_TYPE_SLUGS } from "@/lib/qr-types-content-hosted";
 import { industries, placements } from "@/lib/seo-content";
-import { buildTimeParams } from "@/lib/static-params";
-
-/** An OG image under app/[lang]: its params in every language. */
-const inLocales = <T extends Record<string, string>>(list: T[]) =>
-  LOCALE_SEGMENTS.flatMap((lang) => list.map((entry) => ({ ...entry, lang })));
+import { buildTimeParams, prerenderScope } from "@/lib/static-params";
 
 const APP = join(import.meta.dirname, "../../app");
 
 /** Static content types, then the codes that open a hosted page (PDF, business card). */
 const TYPE_SLUGS = [...QR_TYPE_SLUGS, ...HOSTED_TYPE_SLUGS];
-
-/**
- * Routes that list their params some other way, each fixed in its own PR:
- * the sample codes (#181).
- */
-const ELSEWHERE = ["sample-codes/[file]/route.ts"];
 
 /** Every route file under app/ that exports generateStaticParams. */
 function routesWithStaticParams(dir = APP, out: string[] = []): string[] {
@@ -71,26 +64,30 @@ function routesWithStaticParams(dir = APP, out: string[] = []): string[] {
   return out;
 }
 
-const ROUTES = routesWithStaticParams()
-  .filter((file) => !ELSEWHERE.includes(file))
-  .sort();
+const ROUTES = routesWithStaticParams().sort();
+
+/**
+ * OG images of pages with a dynamic segment, the docs as Markdown and the
+ * image files the engine draws.
+ */
+const ON_DEMAND = ROUTES.filter((file) =>
+  /(?:opengraph-image|twitter-image)\.tsx$|^og\/|^docs-md\/|^llms\.mdx\/|^(?:sample-codes|gallery|catalog|api\/brand-logos)\//.test(
+    file,
+  ),
+);
 
 interface ParamsRoute {
   generateStaticParams: () => Record<string, string>[];
 }
 
+// A page under [lang] lists its own segment; Next pairs it with each [lang]
+// the root layout lists (English only, localeParams).
 const QR_ROUTES: [string, ParamsRoute, Record<string, string>[]][] = [
   ["/qr-code-generator/[type]", typePage, TYPE_SLUGS.map((type) => ({ type }))],
-  ["its OG image", typeImage, inLocales(TYPE_SLUGS.map((type) => ({ type })))],
   [
     "/qr-codes-for/[slug]",
     industryPage,
     industries.items.map((item) => ({ slug: item.slug })),
-  ],
-  [
-    "its OG image",
-    industryImage,
-    inLocales(industries.items.map((item) => ({ slug: item.slug }))),
   ],
   [
     "/qr-codes-on/[slug]",
@@ -98,19 +95,9 @@ const QR_ROUTES: [string, ParamsRoute, Record<string, string>[]][] = [
     placements.items.map((item) => ({ slug: item.slug })),
   ],
   [
-    "its OG image",
-    placementImage,
-    inLocales(placements.items.map((item) => ({ slug: item.slug }))),
-  ],
-  [
     "/integrations/[slug]",
     integrationPage,
     getIntegrationCatalog().map((entry) => ({ slug: entry.slug })),
-  ],
-  [
-    "its OG image",
-    integrationImage,
-    inLocales(getIntegrationCatalog().map((entry) => ({ slug: entry.slug }))),
   ],
   [
     "/barcode-generator/[format]",
@@ -118,15 +105,19 @@ const QR_ROUTES: [string, ParamsRoute, Record<string, string>[]][] = [
     BARCODE_FORMAT_PAGES.map((page) => ({ format: page.slug })),
   ],
   [
-    "its OG image",
-    barcodeImage,
-    inLocales(BARCODE_FORMAT_PAGES.map((page) => ({ format: page.slug }))),
-  ],
-  [
     "/templates/[type]",
     templateTypePage,
     listTemplates().map((template) => ({ type: template.type })),
   ],
+];
+
+/** Their OG images: none at build, each rendered on its first request. */
+const QR_IMAGES: [string, ParamsRoute][] = [
+  ["/qr-code-generator/[type]", typeImage],
+  ["/qr-codes-for/[slug]", industryImage],
+  ["/qr-codes-on/[slug]", placementImage],
+  ["/integrations/[slug]", integrationImage],
+  ["/barcode-generator/[format]", barcodeImage],
 ];
 
 /** What notFound() throws (its digest), so a test can tell it from a crash. */
@@ -143,6 +134,30 @@ afterEach(() => {
   vi.unstubAllEnvs();
 });
 
+describe("prerenderScope", () => {
+  it("is English pages in production, local and CI builds", () => {
+    expect(prerenderScope("production", "production", "main")).toBe("english");
+    expect(prerenderScope("production", undefined, undefined)).toBe("english");
+  });
+
+  it("is English pages on staging, a preview that builds the production set", () => {
+    // The release pull request is checked against staging's build.
+    expect(prerenderScope("production", "preview", "staging")).toBe("english");
+  });
+
+  it("is minimal in other Vercel preview builds", () => {
+    expect(prerenderScope("production", "preview", "preview/x")).toBe(
+      "minimal",
+    );
+    expect(prerenderScope("production", "preview", undefined)).toBe("minimal");
+  });
+
+  it("is nothing under next dev, wherever it runs", () => {
+    expect(prerenderScope("development", undefined, undefined)).toBe("none");
+    expect(prerenderScope("development", "preview", "staging")).toBe("none");
+  });
+});
+
 describe("buildTimeParams", () => {
   it("lists nothing under next dev and never builds the list there", () => {
     const list = vi.fn(() => [{ slug: "a" }]);
@@ -151,6 +166,15 @@ describe("buildTimeParams", () => {
     expect(list).not.toHaveBeenCalled();
     vi.stubEnv("NODE_ENV", "production");
     expect(buildTimeParams(list)).toEqual([{ slug: "a" }]);
+  });
+});
+
+describe("localeParams", () => {
+  it("lists English only in builds and nothing under next dev", () => {
+    vi.stubEnv("NODE_ENV", "production");
+    expect(localeParams()).toEqual([{ lang: "en" }]);
+    vi.stubEnv("NODE_ENV", "development");
+    expect(localeParams()).toEqual([]);
   });
 });
 
@@ -182,17 +206,43 @@ describe("routes with a fixed param list", () => {
   });
 
   it.each(ROUTES)(
-    "%s lists its params through buildTimeParams, with dynamic params on",
+    "%s lists its params through lib/static-params.ts, with dynamic params on",
     (file) => {
       const source = readFileSync(join(APP, file), "utf8");
       // dynamicParams = false with no params in dev would 404 every page there.
       expect(source).not.toMatch(/export const dynamicParams/);
       expect(source).toMatch(
-        // lib/i18n/static-params.ts wraps it for the routes under [lang].
-        /export function generateStaticParams\(\) \{\s*return (?:buildTimeParams|withLocaleParams|localeParams)\(/,
+        // lib/i18n/static-params.ts has the [lang] list; the docs page takes
+        // its parent's params.
+        /export function generateStaticParams\([^)]*\) \{\s*return (?:buildTimeParams|localeParams|onDemandParams)\(/,
       );
     },
   );
+
+  it.each(ON_DEMAND)("%s prerenders nothing", (file) => {
+    const source = readFileSync(join(APP, file), "utf8");
+    expect(source).toMatch(
+      /export function generateStaticParams\(\) \{\s*return onDemandParams\(\);/,
+    );
+  });
+
+  it("include the OG images, Markdown copies and engine-drawn images", () => {
+    expect(ON_DEMAND).toEqual(
+      expect.arrayContaining([
+        "[lang]/(home)/pricing/opengraph-image.tsx",
+        "[lang]/(home)/qr-code-generator/[type]/opengraph-image.tsx",
+        "(app)/(home)/blog/[slug]/opengraph-image.tsx",
+        "og/docs/[...slug]/route.tsx",
+        "og/legal/[...slug]/route.tsx",
+        "docs-md/[lang]/[[...slug]]/route.ts",
+        "llms.mdx/[[...slug]]/route.ts",
+        "sample-codes/[file]/route.ts",
+        "gallery/[file]/route.ts",
+        "catalog/[file]/route.ts",
+        "api/brand-logos/[slug]/route.ts",
+      ]),
+    );
+  });
 
   it.each(QR_ROUTES)(
     "%s: every param in production, none in dev",
@@ -203,6 +253,11 @@ describe("routes with a fixed param list", () => {
       expect(route.generateStaticParams()).toEqual([]);
     },
   );
+
+  it.each(QR_IMAGES)("%s's OG image: none at build", (_name, route) => {
+    vi.stubEnv("NODE_ENV", "production");
+    expect(route.generateStaticParams()).toEqual([]);
+  });
 
   it("answer 404 for a param that isn't in the list", async () => {
     const params = (value: string) =>

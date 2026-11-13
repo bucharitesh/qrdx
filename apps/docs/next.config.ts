@@ -133,6 +133,16 @@ let nextConfig: NextConfig = {
       turbopackSourceMaps: false,
     }),
   },
+  // The workers that prerender pages ("Generating static pages") run with
+  // Node's --enable-source-maps and 50-frame stack traces by default, so
+  // each one keeps the source map of every server chunk it loads. Measured
+  // on a local build of all 8,547 pages (2026-11-14): off, the worker peaked
+  // at 2.7 GB instead of 3.1 GB and finished in 2.5 min instead of 3.0. Off
+  // everywhere, not only on Vercel: Vercel's build writes no maps (above),
+  // so there it only drops the longer stacks, while Docker and local builds
+  // have maps and run on whatever memory the machine has. Set it to true for
+  // a build that fails while prerendering, to read the error's source lines.
+  enablePrerenderSourceMaps: false,
   // Server code reads QRDX_HOME_NUMBERS as its build-time value
   // (lib/home-numbers/flag.ts). While it's off, the bundler drops the home
   // page's "QRdx in numbers" branch, client code included. Server only: it
