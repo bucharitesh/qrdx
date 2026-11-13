@@ -1,14 +1,19 @@
 name: CI
 
-# One run per pull request (its required check) and one per push to main,
-# so the exact code that ships is tested even when a release PR is merged
-# before its checks finish. Pushes to staging don't run CI: every change
-# reaches staging through a pull request that already ran it.
+# One run per pull request (its required check) and one per push to staging
+# and to main. Pull requests into staging test only what they change. Pushes
+# to staging test everything in the background after each merge, so by the
+# time staging is released the full suite has usually passed on that exact
+# code. A release pull request (staging -> main) and the push to main it
+# creates then reuse that result instead of testing the same tree again
+# (scripts/ci-reuse-check.sh); if the staging run is still going they wait
+# for it, and if nothing matches they run the full suite as before.
 on:
   pull_request:
   push:
     branches:
       - main
+      - staging
   workflow_dispatch:
 
 concurrency:
@@ -17,6 +22,8 @@ concurrency:
 
 permissions:
   contents: read
+  # Lets scripts/ci-reuse-check.sh look up earlier runs of this workflow.
+  actions: read
 
 env:
   # Placeholders so env validation passes during type generation and tests.
@@ -32,10 +39,11 @@ jobs:
   check:
     name: Typecheck, test, lint
     runs-on: ubuntu-latest
-    # The full suite (pushes to main, release pull requests) took 17.8 and
-    # 18.9 minutes on 2026-11-10, with the Test step at 15.5 and 16.7. 30
-    # keeps the guard against a hung job without cancelling a healthy run.
-    timeout-minutes: 30
+    # The full suite took 17.8 and 18.9 minutes on 2026-11-10, with the Test
+    # step at 15.5 and 16.7. A release run can first wait up to 20 minutes
+    # for a staging run of the same code, so 45 still guards against a hung
+    # job without cancelling a healthy one.
+    timeout-minutes: 45
     # An explicit bash shell runs with -eo pipefail, so a failing command
     # piped into tee still fails its step.
     defaults:
@@ -48,19 +56,35 @@ jobs:
         with:
           fetch-depth: 0
 
+      # Skips everything below when a full run of this exact tree already
+      # passed (see the note at the top). Manual runs always test everything.
+      - name: Reuse an earlier run of the same code
+        id: reuse
+        if: github.event_name != 'workflow_dispatch'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          # Release pull requests and pushes to main wait for a staging run
+          # of the same code that's still going; other runs only take a
+          # finished one.
+          CI_REUSE_WAIT_SECONDS: ${{ ((github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'pull_request' && github.base_ref == 'main')) && '1200' || '0' }}
+        run: bash scripts/ci-reuse-check.sh
+
       # Bun installs the dependencies (the version pinned in package.json
       # "packageManager"); Node 22 runs the builds, tests and tools.
       - name: Setup Bun
+        if: steps.reuse.outputs.hit != 'true'
         uses: oven-sh/setup-bun@v2
         with:
           bun-version-file: package.json
 
       - name: Setup Node
+        if: steps.reuse.outputs.hit != 'true'
         uses: actions/setup-node@v4
         with:
           node-version: 22
 
       - name: Restore Bun cache
+        if: steps.reuse.outputs.hit != 'true'
         uses: actions/cache@v4
         with:
           path: ~/.bun/install/cache
@@ -73,6 +97,7 @@ jobs:
       # of running again. Runs on main save caches every pull request can
       # read; each run saves its own entry under its commit.
       - name: Restore turbo cache
+        if: steps.reuse.outputs.hit != 'true'
         uses: actions/cache@v4
         with:
           path: .turbo/cache
@@ -82,17 +107,21 @@ jobs:
             turbo-${{ runner.os }}-
 
       - name: Install dependencies
+        if: steps.reuse.outputs.hit != 'true'
         run: bun install --frozen-lockfile
 
       # The docs app, CLI and CLI tests consume qrdx from its dist/ output,
       # and the CLI tests run the CLI's own dist/index.js.
       - name: Build qrdx and the CLI
+        if: steps.reuse.outputs.hit != 'true'
         run: bun x turbo build --filter=qrdx --filter=@qrdx/cli 2>&1 | tee -a "$RUNNER_TEMP/turbo.log"
 
       - name: Typecheck packages
+        if: steps.reuse.outputs.hit != 'true'
         run: bun run typecheck 2>&1 | tee -a "$RUNNER_TEMP/turbo.log"
 
       - name: Typecheck docs app
+        if: steps.reuse.outputs.hit != 'true'
         run: |
           (cd apps/docs && bun x next typegen)
           bun run typecheck:docs
@@ -100,6 +129,7 @@ jobs:
       # Every translated catalog against English: keys, ICU arguments, numbers,
       # review status (apps/docs/scripts/i18n-check.ts).
       - name: Check translations
+        if: steps.reuse.outputs.hit != 'true'
         run: bun run --filter docs i18n:check
 
       # Pull requests into staging test the packages they change and the
@@ -107,6 +137,7 @@ jobs:
       # to main and manual runs test everything. Branch protection requires
       # this job on every pull request; it passes when nothing is affected.
       - name: Test
+        if: steps.reuse.outputs.hit != 'true'
         env:
           TURBO_SCM_BASE: ${{ github.event_name == 'pull_request' && format('origin/{0}', github.base_ref) || '' }}
           AFFECTED: ${{ github.event_name == 'pull_request' && github.base_ref != 'main' }}
@@ -123,7 +154,7 @@ jobs:
       # Shows what came from the cache, so a pass that only replayed cached
       # results is visible.
       - name: Turbo cache report
-        if: always()
+        if: always() && steps.reuse.outputs.hit != 'true'
         run: |
           log="$RUNNER_TEMP/turbo.log"
           [ -f "$log" ] || exit 0
@@ -141,4 +172,5 @@ jobs:
       # Ultracite runs Biome (biome.jsonc) over the whole repo; findings show
       # as annotations on the pull request.
       - name: Lint (Ultracite)
+        if: steps.reuse.outputs.hit != 'true'
         run: bun run lint:ci --reporter=github
