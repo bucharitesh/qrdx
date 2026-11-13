@@ -27,5 +27,5 @@ A value goes here when it's a plain constant (or a pure function of one) that mo
 - Plan limits and anything that needs the database, the session or a plan lookup (`apps/docs/lib/plans.ts`).
 - Values only one screen uses, such as debounce delays, page sizes and tag lists.
 - Next.js configuration and the core environment keys, which live in `@repo/next-config`.
-- Modules that `apps/docs/next.config.ts` loads from below the app's root, such as `lib/security/csp.ts`: Next.js compiles the config with the `@repo/*` path rewritten for the app's root, so a nested file can't import a workspace package there. They keep their literals.
+- Modules that `apps/docs/next.config.ts` loads from below the app's root: Next.js compiles the config with the `@repo/*` path rewritten for the app's root, so a nested file can't import a workspace package there. They keep their literals. So does the Content-Security-Policy builder (`@repo/next-config/csp`): `@repo/next-config` sits below this package (this package depends on it).
 - The published packages (`packages/qrdx`, `packages/cli`, `plugins/*`) and the shadcn registry sources (`apps/docs/registry`) never import this package: they ship outside the monorepo, so they keep their own literals.

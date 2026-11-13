@@ -1,7 +1,7 @@
 import "server-only";
 
 import { readFile } from "node:fs/promises";
-import { join } from "node:path";
+import { ogFontPath } from "@repo/design-system/og/font-files";
 import { type Font, parse } from "opentype.js";
 import { logError } from "@/lib/log-error";
 
@@ -9,14 +9,15 @@ import { logError } from "@/lib/log-error";
 // the engine's SVG, and on Vercel that rasterizer has no fonts: a frame
 // label's <text> came out as a row of empty boxes. So before rasterizing,
 // each <text> becomes a <path> of its glyphs, in Geist (SIL OFL 1.1, the
-// files and licence in app/og/fonts), the shipped face closest to the
-// frame's system-ui stack. The rasterizer then needs no font at all.
+// files and licence in @repo/design-system/og/fonts), the shipped face
+// closest to the frame's system-ui stack. The rasterizer then needs no font
+// at all.
 //
 // Only SVGs with text change: anything else is returned as it is, so those
 // PNGs keep their exact bytes. SVG and EPS downloads never come through
 // here; they keep their <text>.
 
-/** The weights shipped (app/og/fonts), by the CSS weights they stand for. */
+/** The weights shipped (@repo/design-system/og/fonts), by the CSS weights they stand for. */
 const FACES = [
   { min: 650, file: "Geist-Bold.ttf" },
   { min: 550, file: "Geist-SemiBold.ttf" },
@@ -31,9 +32,9 @@ function fontFor(weight: number): Promise<Font> {
   const face = (FACES.find((each) => weight >= each.min) ?? FACES[0]).file;
   let font = fonts.get(face);
   if (!font) {
-    // Literal paths, so the build's file tracing ships the fonts with the
-    // functions that read them (next.config.ts lists them too).
-    font = readFile(join(process.cwd(), "app/og/fonts", face)).then((data) =>
+    // next.config.ts lists the files in outputFileTracingIncludes, so the
+    // build ships them with the functions that read them.
+    font = readFile(ogFontPath(face)).then((data) =>
       parse(
         data.buffer.slice(data.byteOffset, data.byteOffset + data.byteLength),
       ),
