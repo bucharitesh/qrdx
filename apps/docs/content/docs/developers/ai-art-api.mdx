@@ -51,7 +51,7 @@ Get a code's `id` from [`GET /v1/codes`](/docs/developers/api/list-codes) or whe
 | `reference` | | A reference image for colors and shapes, such as a logo or a palette |
 | `photo` | | Photo mode only: the picture to paint the code into |
 
-`reference` and `photo` are PNG or JPEG `data:` URLs (`data:image/jpeg;base64,…`), downsized to about 512 px on the longest side. They go to the model and are discarded: QRdx never stores or logs them. Larger images are refused with `413 AI_ART_IMAGE_TOO_LARGE`.
+`reference` and `photo` are PNG or JPEG `data:` URLs (`data:image/jpeg;base64,…`). Downsize a `reference` to about 512 px on its longest side (at most 600 KB), and crop a `photo` square at about 1024 px (at most 1 MB), the size the art is made at. They go to the model and are discarded: QRdx never stores or logs them. Larger images are refused with `413 AI_ART_IMAGE_TOO_LARGE`.
 
 The [API reference](/docs/developers/api/create-art) has the full schema.
 
