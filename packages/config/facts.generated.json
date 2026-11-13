@@ -20,7 +20,7 @@
     "eyeCentres": 21,
     "eyeShapes": 17,
     "frameStyles": 19,
-    "frames": 740,
+    "frames": 1032,
     "freeScanHistoryYears": 1,
     "hostedPageTypes": 21,
     "imageApiPerMinute": 300,
@@ -29,8 +29,8 @@
     "moneyBackDays": 30,
     "newPaidAccountHourlyCodes": "2,000",
     "nonprofitDiscountPercent": 50,
-    "officialFrames": 721,
-    "seasonalFrames": 143,
+    "officialFrames": 1013,
+    "seasonalFrames": 343,
     "translatedLanguages": 10
   },
   "styleSummary": "23 body patterns, 17 corner-eye shapes and 21 eye centers"
