@@ -68,3 +68,21 @@ describe("React-free bundles", () => {
     expect(code).toMatch(/\bcreateQRCode\b/);
   });
 });
+
+// qrdx/preact and qrdx/solid: the engine from dist/core, the framework from
+// the app, and nothing else (no React, no copy of the engine)
+describe("Preact and Solid adapters", () => {
+  it.each([
+    ["preact.mjs", ["./core.mjs", "preact"]],
+    ["preact.js", ["./core.js", "preact"]],
+    ["solid.mjs", ["./core.mjs", "solid-js", "solid-js/web"]],
+    ["solid.js", ["./core.js", "solid-js", "solid-js/web"]],
+  ])("%s imports only dist/core and its framework", (file, allowed) => {
+    if (!existsSync(dist(file))) return;
+    const code = read(file);
+    expect(imports(code)).toEqual([...allowed].sort());
+    expect(code).not.toMatch(/react-dom|renderToStaticMarkup/);
+    // A thin layer: the engine itself stays in dist/core
+    expect(code.length).toBeLessThan(2000);
+  });
+});
