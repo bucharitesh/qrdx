@@ -2,6 +2,15 @@
 
 Release notes for earlier versions are at [qrdx.dev/changelog](https://qrdx.dev/changelog).
 
+## Unreleased
+
+### Angular
+
+- **`qrdx/angular`** is a standalone Angular component, `<qrdx-qr-code>`, for Angular 20 and newer. It takes `QRCode`'s props as signal inputs (`value` is required; `style` is `svgStyle`, so the element's own `style` attribute still styles the element), draws the same SVG as `<QRCode>`, byte for byte, and redraws when an input changes the markup. No NgModule is needed.
+- It renders on the server with `@angular/ssr`, and the app hydrates the server's HTML without errors and without `ngSkipHydration`.
+- `download(options)` and `toDataURL(format, options)` export the code; `markup()`, `options()` and `svg` give its markup, its resolved props and the `<svg>` element. Everything in `qrdx/core` is exported from `qrdx/angular` too.
+- It ships compiled in Angular's partial mode, which the Angular CLI links when it builds an app. `@angular/core` is an optional peer dependency.
+
 ## 0.0.51
 
 ### React-free core and plain JavaScript
