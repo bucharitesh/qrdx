@@ -1,6 +1,6 @@
 ---
 title: How Flam built its branded QR codes with QRdx
-description: Flam makes its round, branded QR codes with qrdx, the open-source QRdx library. A custom template draws the ring, the curved text and a dot pattern of its own for every link.
+description: Flam makes its round, branded QR codes with qrdx, the open-source QRdx library. Every link gets its own ring of dots, and the codes still look like one family.
 date: "2026-11-13"
 author: ["ritesh-bucha"]
 category: Company News
@@ -13,57 +13,38 @@ related: ["introducing-qrdx", "qr-code-api-guide"]
 published: true
 ---
 
-Flam makes its branded QR codes with qrdx, the open-source React library behind QRdx. Its generator is a small Next.js app with a custom QRdx template. The template draws a round code: a dark ring with text set along it, and a scatter of dots around the code that is different for every link.
+Flam makes its branded QR codes with qrdx, the open-source library behind QRdx. Each code is round, sits inside a ring of text, and gets a pattern of dots that belongs to its link alone.
 
 ## Who Flam is
 
-[Flam](https://www.flamapp.ai) builds "AI models and products for interactive content". Its site sums the company up as "AI for the internet beyond videos" and lists three formats: Flicks, Airboards and Visual Agents.
+[Flam](https://www.flamapp.ai) builds "AI models and products for interactive content", with formats called Flicks, Airboards and Visual Agents.
 
 ## What Flam needed
 
-The generator, and the changes made to it since, show what Flam wanted from a QR code. It wanted a round code in its own style, inside a ring that carries a line of text. It wanted codes for many different links that still look like one family, so every code shares the ring and the text while each link gets its own pattern of dots. And it wanted files ready for print and design work: PNG, JPG and SVG at preset or custom sizes, PNGs with a transparent background, and text that keeps its font in every file.
+A QR code in its own style, not a stock square. Codes for many different links that still look like one family. And files ready for print and design: PNG, JPG and SVG, including PNGs with a transparent background.
 
-## What Flam built on QRdx
+## What Flam built
 
-The generator lives in Flam's own repository. It installs qrdx from npm and hands the library's `QRCode` component a template of its own. qrdx draws the code; the template draws everything around it:
+A small generator inside its own Next.js app, using qrdx and a custom template. qrdx draws the code, and the template draws everything around it: a dark ring with text along it, and a halo of dots seeded by the link. The template picks 240 of 297 dot positions for each link, which allows about 10<sup>61</sup> different rings, so two links practically never share one, and the same link always gets the same ring.
 
-- A round background and a thick outer ring, with their own colors and a stroke color and width.
-- A line of custom text along the ring, at the top or the bottom, centered automatically. Its font, size, weight, letter spacing and rotation are all settings.
-- Decorative dots between the code and the ring. The template picks which dots to draw from a hash of the code's URL, so every link gets its own pattern and the same link always gets the same one. It picks 240 of 297 dot positions, which allows about 10<sup>61</sup> different rings, so two links practically never share one.
-- An embedded font. Downloads carry the chosen font inside the SVG, so the text in a PNG matches the preview.
+The repository's first commit, on November 11, 2025, already held a working generator.
 
-Around the template sits the editor: a field for the link, an error-correction picker (Medium, Quartile or High), color pickers with transparency for the code, the background, the eyes and the dots, an optional logo, and a download panel for PNG, JPG and SVG at preset or custom sizes, with a button that copies the SVG.
+## Why QRdx
 
-## How it came together
+- **Full control.** A template is code, so the design is exactly Flam's, not a preset with a logo dropped in.
+- **One design everywhere.** The preview, the PNG, JPG and SVG downloads and the copied SVG all come from the same template.
+- **Nothing to pay per code.** The library is MIT-licensed and runs inside Flam's app, with no QRdx account, no calls to QRdx's servers and no limit on how many codes it makes.
 
-The template started in the QRdx repository at the end of October 2025. While it was there, the qrdx library gained two options for it: `customProps`, which carries a template's own settings, on November 7, and `customTemplate`, which lets an app pass in a template the library doesn't ship, on November 10. That let the template move out of the library and into Flam's app.
+## Make your own
 
-- November 11, 2025: qrdx 0.0.1 went up on npm, and Flam's repository was created the same day. Its first commit already holds the generator: the template, the editor, the download options and the error-correction picker.
-- November 13, 2025: a fix for the logo, and a move to qrdx 0.0.2-beta.2, which was published to npm that night.
-- December 10, 2025: the color pickers switched to RGBA, so any color can be partly or fully see-through.
-- January 16, 2026: PNG downloads with a transparent background.
-- February 20, 2026: downloads embed the chosen font, so text renders correctly in PNGs.
-
-## What QRdx gives Flam
-
-A QRdx template is an object with a `wrapper` function. The function receives the rendered code, the props you pass (your own included), and the code's URL and module size, and it returns the SVG that goes around the code. So Flam's ring, text and dots are Flam's own code, and QRdx takes care of the code in the middle.
-
-The preview, the PNG, JPG and SVG downloads and the copied SVG all get the same props and the same template, through qrdx's `QRCode`, `downloadQRCode` and `getSVGString`. When PNG text needed the embedded font, one change covered every download and the copied SVG.
-
-The qrdx library is MIT-licensed, so Flam can use it and change it inside its own product. The license asks only that the copyright notice stays with the code.
-
-Everything runs in Flam's own app. The library draws the codes inside Flam's Next.js app, with no QRdx account and no calls to QRdx's servers.
-
-## Round codes without a custom template
-
-Since Flam built its template, qrdx has gained two options that cover part of this look with no custom code: a circle shape, which fills a disc around the code with decorative dots seeded by the code's content, and a circle frame with text on its top and bottom arcs. The codes below use only those built-in options. They aren't Flam's codes, and Flam's template draws its ring its own way.
+QRdx now has this design built in as the **Dot Ring** template: the ring, the text along it, and a dot halo that's different for every link.
 
 <Figure
   src="/blog/flam/examples.webp"
-  alt="Three round QR codes side by side, each inside a ring with qrdx.dev on the bottom arc and Scan to open, Make your own or Read the docs on the top arc. The first two rings are black and the third is blue, and each code has its own scatter of dots around it."
+  alt="Three round QR codes side by side, each inside a ring with Scan the QR code running all the way round. Two rings are black and one is blue, and each code has a different halo of dots around it."
   width={1800}
   height={640}
-  caption="QRdx's circle shape and circle frame, for three qrdx.dev links. Each link gets its own scatter of dots."
+  caption="QRdx's Dot Ring template for three qrdx.dev links. Each link gets its own ring of dots."
 />
 
-Try the circle shape and the circle frame in the [playground](/playground). For a template of your own, start with the `customTemplate` prop and the `TemplateDefinition` type in the [library reference](/docs/api-reference).
+Pick Dot Ring in the [playground](/playground), or use `templateId="DotRing"` with the [qrdx library](/docs/getting-started).
