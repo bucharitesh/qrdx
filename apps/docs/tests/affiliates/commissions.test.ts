@@ -55,7 +55,7 @@ beforeEach(() => {
 });
 
 describe("a paid order from a referred customer", () => {
-  it("creates a pending commission of 30% of net_amount, payable 30 days later", async () => {
+  it("creates a pending commission of 30% of net_amount, payable 45 days later", async () => {
     const result = await paid();
     expect(result.status).toBe("created");
     expect(commissions()).toHaveLength(1);
@@ -75,7 +75,7 @@ describe("a paid order from a referred customer", () => {
     const orderPaidAt = row?.orderPaidAt as Date;
     const availableAt = row?.availableAt as Date;
     expect(orderPaidAt.toISOString()).toBe("2026-02-01T12:00:10.000Z");
-    expect(availableAt.getTime() - orderPaidAt.getTime()).toBe(30 * DAY);
+    expect(availableAt.getTime() - orderPaidAt.getTime()).toBe(45 * DAY);
     // The Polar customer id isn't kept on the commission (NIT: nothing
     // about the customer stays after they delete their account).
     expect(row).not.toHaveProperty("polarCustomerId");
@@ -366,7 +366,7 @@ describe("refunds and chargebacks", () => {
     ...overrides,
   });
 
-  it("a refund inside the 30 days voids the commission, keyed by the refund id", async () => {
+  it("a refund inside the 45 days voids the commission, keyed by the refund id", async () => {
     await paid();
     const result = await handleAffiliateWebhook(
       {
@@ -384,7 +384,7 @@ describe("refunds and chargebacks", () => {
     });
   });
 
-  it("a partial refund inside the 30 days voids it too", async () => {
+  it("a partial refund inside the 45 days voids it too", async () => {
     await paid();
     await handleAffiliateWebhook({
       type: "refund.created",
@@ -441,12 +441,12 @@ describe("refunds and chargebacks", () => {
     expect(commissions()[0]).toEqual(before);
   });
 
-  it("a refund after the 30 days leaves it payable", async () => {
+  it("a refund after the 45 days leaves it payable", async () => {
     await paid();
     expect(
       await handleAffiliateWebhook({
         type: "refund.created",
-        data: refund({ created_at: "2026-03-05T00:00:00Z" }),
+        data: refund({ created_at: "2026-03-20T00:00:00Z" }),
       }),
     ).toEqual({ status: "skipped", reason: "after_hold" });
     expect(commissions()[0]?.status).toBe("pending");
@@ -621,10 +621,10 @@ describe("the daily release", () => {
         `2026-02-0${i + 1}T00:00:00Z`,
       );
     }
-    // The last one is still on hold on 6 March; one was voided.
+    // The last one is still on hold on 21 March; one was voided.
     (commissions()[0] as Record<string, unknown>).status = "void";
     const released = await releaseHeldCommissions({
-      now: new Date("2026-03-06T12:00:00Z"),
+      now: new Date("2026-03-21T12:00:00Z"),
       batchSize: 2,
     });
     expect(released).toBe(3);

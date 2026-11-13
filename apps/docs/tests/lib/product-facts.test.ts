@@ -78,7 +78,7 @@ describe("PRODUCT_FACTS", () => {
       // lib/affiliates/terms.ts
       affiliateCommissionPercent: 30,
       affiliateCommissionMonths: 12,
-      affiliateHoldDays: 30,
+      affiliateHoldDays: 45,
       affiliateMinPayoutUsd: "US$25",
       affiliateTermsNoticeDays: 30,
       // lib/bulk-limits.ts
