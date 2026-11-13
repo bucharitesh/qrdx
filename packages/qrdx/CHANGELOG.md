@@ -2,14 +2,30 @@
 
 Release notes for earlier versions are at [qrdx.dev/changelog](https://qrdx.dev/changelog).
 
-## Unreleased
+## 0.0.52
 
-### Vue (`qrdx/vue`)
+### Web component (`qrdx/element`)
 
-- **`qrdx/vue`** has Vue 3 versions of `QRCode` and `QRCodeSVG`, with the React components' props and the same SVG. They're render functions over the core (`createQRCodeTree`, then `toHyperscript` into Vue's `h`), so they render on the server with `vue/server-renderer` and hydrate without a mismatch, in Nuxt too. `class`, `style`, other attributes and listeners go on the `<svg>`, and Vue updates it in place when a prop changes.
-- **`useQRCode(props)`** takes `QRCode`'s props as an object, a ref, a reactive object or a getter, and returns the SVG markup as a computed ref (it works in SSR), the resolved `options`, `toDataURL` and `download`.
-- Everything in `qrdx/core` is re-exported. The entry imports the engine from `qrdx/core`, so it adds under 1 KB gzipped of its own.
-- `vue` 3.3 or newer is an optional peer dependency, so installing `qrdx` never installs Vue. TypeScript checks the components' props with Vue 3.4.20 or newer.
+- **`<qrdx-code>`**, a custom element on `qrdx/core`, for plain HTML and frameworks that render DOM elements (tested in React 19 and Vue 3). Simple options are attributes (`value`, `size`, `level`, `fg-color`, `bg-color`, `eye-color`, `dot-color`, `body-pattern`, `corner-eye-pattern`, `corner-eye-dot-pattern`, `margin`, `template-id`, `module-scale`, `auto-level`, `shape`); object options are properties (`frame`, gradients, `imageSettings`, `eyeColors`, `art`, `customTemplate`, `customProps`), or all at once in `props`, which also reads JSON from its attribute. Changes are batched into one redraw per microtask, and a redraw that changes nothing leaves the page alone.
+- The code is drawn in an open shadow root, styled from outside with `::part(svg)`. The `<svg>` has `role="img"` and an `aria-label` from the `label` attribute, or "QR code": never the value, which can be private.
+- `toSVGString()`, `toDataURL(format, { size, quality })` and `download({ format, filename, size, quality })` export the code. A code that can't be drawn fires a cancelable `qrdx-error` event.
+- `defineQRdxCode(tagName = "qrdx-code")` registers it, and importing `qrdx/element` registers nothing. `qrdx/element/define` registers `<qrdx-code>` on import (listed in `sideEffects`, so bundlers keep it). On a server, importing it and calling `defineQRdxCode` are safe.
+- `toQRdxCodeHTML(options, { tagName, label })` writes server markup: the element with the code already drawn in a declarative shadow root, so it shows before any script runs.
+- `dist/element-define.browser.mjs` registers the element from a CDN with no bundler; it loads `dist/element.browser.mjs`, one module with the engine inside (the official frame library's data stays in `dist/frames-official.mjs`).
+- Types: `QRdxCodeElement`, `QRdxCodeOptions`, `QRdxCodeProperties`, `QRdxCodeAttributes`, `QRdxCodeJSXProps` (for a React or Preact JSX declaration) and an `HTMLElementTagNameMap` entry for `qrdx-code`.
+
+### Preact and SolidJS
+
+- **`qrdx/preact`** has `QRCodeSVG` and `QRCode` (with the `logo` shortcut) as Preact components, with the React components' props. They draw with Preact's own `h` through `toHyperscript`, so `preact/compat` isn't needed, and skip a render when no prop changed. `preact-render-to-string` writes `toSVGString`'s markup (Preact leaves `>` and `'` unescaped in text), and `hydrate` keeps the server's `<svg>`. `preact` 10 or later is an optional peer dependency (#330).
+- **`qrdx/solid`** has the same two components for SolidJS, written without JSX, so the package needs no Solid compiler. In the browser a component returns the `<svg>` element itself (built with `renderToDOM`) from a memo: Solid inserts it, swaps in a new one when a prop change alters the markup, and removes it on unmount. On a server it returns `toSVGString`'s markup with Solid's `data-hk` hydration key on the root, and `hydrate` adopts that element instead of drawing it again. `solid-js` 1.8 or later (1.x) is an optional peer dependency (#329).
+- Both entries import the engine from `qrdx/core`, so an app that also uses `qrdx/core` loads it once, and neither imports React.
+
+### Angular
+
+- **`qrdx/angular`** is a standalone Angular component, `<qrdx-qr-code>`, for Angular 20 and newer. It takes `QRCode`'s props as signal inputs (`value` is required; `style` is `svgStyle`, so the element's own `style` attribute still styles the element), draws the same SVG as `<QRCode>`, byte for byte, and redraws when an input changes the markup. No NgModule is needed.
+- It renders on the server with `@angular/ssr`, and the app hydrates the server's HTML without errors and without `ngSkipHydration`.
+- `download(options)` and `toDataURL(format, options)` export the code; `markup()`, `options()` and `svg` give its markup, its resolved props and the `<svg>` element. Everything in `qrdx/core` is exported from `qrdx/angular` too.
+- It ships compiled in Angular's partial mode, which the Angular CLI links when it builds an app. `@angular/core` is an optional peer dependency.
 
 ### Frame library: holidays, seasons, events and places
 
@@ -25,7 +41,29 @@ Release notes for earlier versions are at [qrdx.dev/changelog](https://qrdx.dev/
 - **Places** (25 to 71) adds museums, libraries, transit, parks, beaches, campsites, coworking spaces, hostels, visitor centers, marinas, zoos and aquariums, plus guest Wi-Fi frames for cafés, offices, rentals, waiting rooms, libraries, venues and hostels.
 - 96 new motifs, from kites and krathongs to buses and lifebuoys. Every new frame passes the same checks as the rest: it decodes at phone distances, scores Great and reads with zbar.
 
+### One frame system
+
+- **Every built-in frame is a frame spec.** The 19 styles in `FRAME_STYLES` (all but `none`) are now JSON specs in `src/frames/builtin`, drawn by the same code as official and custom frames. The hand-written layouts in `frame.tsx` and `frame-styles.ts` are gone. A parity test renders every built-in against the old layouts in SVG, canvas, PDF and EPS, with and without labels, with brand colors and at `fontScale` 0.5 and 1.5; sizes, code boxes and labels match to 0.02 px.
+- **Nothing changes for frame options.** `{ style: "banner-bottom", text, color, textColor, secondaryText, secondaryColor, fontScale }` is accepted for good and draws the same frame. `FRAME_STYLES`, `frameStyleSchema` and `QRFrame` stay as they are.
+- **New exports:** `BUILT_IN_FRAMES` (each built-in frame's `style`, `name`, `tags`, `labelOn` and `spec`), `getBuiltInFrame(style)`, `frameSpecOf(frame)` (the spec any frame draws), `getFrameColors(frame)` and `getFrameSpecColors(spec, frame)` (the frame, text and accent colors it paints with). `BUILT_IN_FRAME_SPECS` now has every built-in style, not four. `GRADIENT_FRAME_DEFAULTS` (now read from the gradient border's spec), `mixFrameColors` and `FRAME_GAP_RATIO` are still exported. `getFrameGapRatio` returns each frame's spec padding.
+- **New spec fields**, all optional (specs without them draw as before):
+  - `labels[].collapse: { y, height }` cuts a band out of the artwork when the label shows no text. Rows below it move up and shapes wholly inside it are left out. The borders use it to drop their label row.
+  - `qr.plate: "opaque" | "background"`. With `"background"`, a see-through background stays see-through and the plate is left out. It's allowed only when nothing but `background` fills, or a ring whose hole holds the plate, lies under the plate.
+  - `colors.text` can be a mix of `frame`, `accent`, `background` and hex colors, such as `{ mix: ["frame", "accent"], amount: 0.5 }`.
+  - A text label's row may reach into the plate's padding, as long as it stays off the code and its capitals stay out of the padding at `fontScale` 1.5.
+  - qrdx 0.0.51 and older reject specs that use these.
+- **Fix: see-through backgrounds under ticket, polaroid, phone, chat-bubble, tag, sticker and envelope.** These frames lie under the code, and with a transparent background the code used to sit on the frame color. They now paint a white plate under the code, like every custom frame. Banners, borders, bubbles, circle, badge, focus, menu-card and gradient-border stay see-through.
+- The gradient border's left inner edge is no longer 0.6 px thicker than its right one (its old color strips overlapped into the light area). The circle frame's two dots are two shapes in the SVG instead of one path.
+- The engine bundles are about 5.6 KB larger minified (`dist/index.mjs` 273,981 to 279,617 bytes, `dist/core.mjs` 273,192 to 278,828) and at most 0.3 KB larger gzipped: the 19 specs are a little more data than the code they replace.
+
 ## 0.0.51
+
+### Vue (`qrdx/vue`)
+
+- **`qrdx/vue`** has Vue 3 versions of `QRCode` and `QRCodeSVG`, with the React components' props and the same SVG. They're render functions over the core (`createQRCodeTree`, then `toHyperscript` into Vue's `h`), so they render on the server with `vue/server-renderer` and hydrate without a mismatch, in Nuxt too. `class`, `style`, other attributes and listeners go on the `<svg>`, and Vue updates it in place when a prop changes.
+- **`useQRCode(props)`** takes `QRCode`'s props as an object, a ref, a reactive object or a getter, and returns the SVG markup as a computed ref (it works in SSR), the resolved `options`, `toDataURL` and `download`.
+- Everything in `qrdx/core` is re-exported. The entry imports the engine from `qrdx/core`, so it adds under 1 KB gzipped of its own.
+- `vue` 3.3 or newer is an optional peer dependency, so installing `qrdx` never installs Vue. TypeScript checks the components' props with Vue 3.4.20 or newer.
 
 ### React-free core and plain JavaScript
 

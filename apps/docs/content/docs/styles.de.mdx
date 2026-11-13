@@ -1,6 +1,6 @@
 ---
 title: "Formen, Eyes und Rahmen"
-description: "Jedes Body-Muster, jeder Eye-Rahmen, jedes Eye-Zentrum und jeder Call-to-Action-Rahmen, live vom qrdx-Renderer gezeichnet und in deinem Browser dekodiert."
+description: "Alle Body-Muster, Eye-Rahmen, Eye-Zentren und Call-to-Action-Rahmen, live vom qrdx-Renderer gezeichnet und in deinem Browser dekodiert."
 icon: Grid3x3
 ---
 
@@ -8,7 +8,7 @@ import { QrCatalog } from "@/components/docs/qr-catalog";
 
 Jeder Stil unten wird vom selben Renderer gezeichnet wie deine Downloads, mit seinem Optionsnamen und dem API-Wert zum Kopieren. Jede Kachel wird direkt hier in deinem Browser mit [jsQR](https://github.com/cozmo/jsQR) dekodiert, eine nach der anderen. Das Badge **Scans** ist also ein Live-Ergebnis und kein Versprechen.
 
-Alle Stile werden außerdem im Paket getestet (`packages/qrdx/tests/catalog-*.test.ts`): Jeder Wert wird über ein Handykamera-Modell (Kontrastverlust und eine Unschärfe von einem Viertel Modul) bei 4, 6 und 9 Pixeln pro Modul dekodiert, neben jedem anderen Body, Eye und Zentrum, bei den Fehlerkorrekturstufen L, M, Q und H, bei 148 px und 1024 px, hell auf dunkel, mit Markenfarben und mit einem Logo in der Mitte. Zusätzlich wurden sie mit ZXing und in scharfen Renderings geprüft. Einige Kombinationen funktionieren zusammen nur schlecht, siehe [Kombinationen, die du vermeiden solltest](#pairs-to-avoid).
+Alle Stile werden außerdem im Paket getestet (`packages/qrdx/tests/catalog-*.test.ts`): Jeder Wert wird über ein Smartphone-Kameramodell (Kontrastverlust und ein Viertel Modul Unschärfe) bei 4, 6 und 9 Pixeln pro Modul dekodiert, neben jedem anderen Body, Eye und Zentrum, bei Fehlerkorrektur L, M, Q und H, bei 148 px und 1024 px, hell auf dunkel, mit Markenfarben und mit einem Logo in der Mitte. Zusätzlich wurden sie mit ZXing und in scharfen Renderings geprüft. Einige Kombinationen funktionieren zusammen nur schwach; siehe [Kombinationen, die du vermeiden solltest](#pairs-to-avoid).
 
 ## Body-Muster [#body-patterns]
 
@@ -30,7 +30,7 @@ Das ausgefüllte Zentrum jeder Eckmarkierung (`cornerEyeDotPattern`), hier inner
 
 ## Rahmen [#frames]
 
-Call-to-Action-Rahmen werden um den Code herum gezeichnet. Der Code und seine Ruhezone werden also nie verdeckt, und das heruntergeladene Bild wird entsprechend größer. Jeder Rahmen unterstützt `text` (bis zu 24 Zeichen), `color`, `textColor` und `fontScale` (0.5 bis 1.5). `banner-top-bottom`, `circle` und `menu-card` zeigen außerdem `secondaryText`. `gradient-border` verläuft von `color` zu `secondaryColor`.
+Call-to-Action-Rahmen werden um den Code gezeichnet, sodass der Code und seine Ruhezone nie verdeckt werden und das heruntergeladene Bild entsprechend größer wird. Jeder integrierte Rahmen unten ist eine Rahmenspezifikation und wird von derselben Engine gezeichnet wie die [offiziellen und Community-Rahmen](/docs/features/frames). Jeder Rahmen akzeptiert `text` (bis zu 24 Zeichen), `color`, `textColor` und `fontScale` (0.5 bis 1.5). `banner-top-bottom`, `circle` und `menu-card` zeigen zusätzlich `secondaryText`; `gradient-border` verläuft von `color` zu `secondaryColor`.
 
 <QrCatalog kind="frame" />
 
@@ -48,12 +48,12 @@ import { QRCode } from "qrdx";
 
 ## Kombinationen, die du vermeiden solltest [#pairs-to-avoid]
 
-Einige Kombinationen von Formen, die einzeln scannen, scheitern in unseren Dekodiertests gemeinsam. Der Playground lässt dich sie nicht zusammen auswählen, und der Scan-Score warnt davor (`style-pair`):
+Einige Formkombinationen, die einzeln gut scannen, scheitern in unseren Dekodiertests gemeinsam. Der Playground lässt dich sie nicht zusammen auswählen, und der Scan-Score warnt davor (`style-pair`):
 
-- `diamond`-Bodys neben `square`-Eyes, `pacman` neben `rounded` und `small-square` neben `square`- oder `rounded`-Eyes (aus der Nähe nicht erkannt).
+- `diamond`-Bodys neben `square`-Eyes, `pacman` neben `rounded` und `small-square` neben `square`- oder `rounded`-Eyes (aus der Nähe werden sie nicht erkannt).
 
-`circle`-Eyes werden von beiden Dekodern, die wir testen (jsQR und ZXing), gelesen, sind aber mit **Vorsicht** markiert: Einige Scanner-Apps erkennen sie nicht. Die Kombinationen sind im Paket als `WEAK_BODY_EYES` enthalten, und `getStylePairRisk(props)` gibt die Warnung für einen Stil zurück.
+`circle`-Eyes werden von beiden getesteten Dekodern (jsQR und ZXing) gelesen, sind aber mit **Vorsicht** markiert: Manche Scanner-Apps erkennen sie nicht. Die Kombinationen sind im Paket als `WEAK_BODY_EYES` enthalten, und `getStylePairRisk(props)` gibt die Warnung für einen Stil zurück.
 
-## Eingestellte Formen [#retired-shapes]
+## Entfernte Formen [#retired-shapes]
 
-`curly`-Eyes sowie `diamond`-, `star`- und `banner`-Zentren wurden entfernt, weil sie nicht zuverlässig scannen: ZXing (der Decoder in den meisten Android-Scannern) erkennt `curly`-Eyes sowie `diamond`- und `star`-Zentren bei üblichen Handyabständen nicht, und jsQR erkennt `banner`-Zentren in jedem scharfen Rendering nicht. Codes, die mit ihnen gespeichert wurden, werden weiterhin geladen und genau wie zuvor gerendert, und die Image API zeichnet sie für bestehende Links weiterhin. Aber keine Auswahl, keine Vorlage und kein KI-Theme bietet sie noch an, und ihre Namen bleiben nur als veraltete Werte erhalten (`RETIRED_CORNER_EYE_PATTERNS`, `RETIRED_CORNER_EYE_DOT_PATTERNS`).
+`curly`-Eyes sowie `diamond`-, `star`- und `banner`-Zentren wurden entfernt, weil sie nicht zuverlässig scannen: ZXing (der Decoder in den meisten Android-Scannern) erkennt `curly`-Eyes sowie `diamond`- und `star`-Zentren bei Smartphone-Abständen nicht, und jsQR erkennt `banner`-Zentren in jedem scharfen Rendering nicht. Mit ihnen gespeicherte Codes werden weiterhin geladen und genau wie zuvor gerendert, und die Image API zeichnet sie für bestehende Links weiterhin, aber kein Auswahlfeld, keine Vorlage und kein KI-Theme bietet sie noch an. Ihre Namen bleiben nur als veraltete Werte erhalten (`RETIRED_CORNER_EYE_PATTERNS`, `RETIRED_CORNER_EYE_DOT_PATTERNS`).

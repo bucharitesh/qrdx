@@ -4391,18 +4391,11 @@
         }
       },
       "frameControls": {
-        "customise": "Personalizar",
         "importSvg": "Importar SVG",
         "publishFrame": "Publicar marco",
         "theFrameIsAddedAround": "El marco se añade alrededor del código, por lo que la imagen descargada es más grande y el código sigue siendo escaneable.",
         "label": "Etiqueta",
-        "secondLine": "Segunda línea",
-        "leaveEmptyForNoLabel": "Déjalo vacío para no usar etiqueta",
         "pickAFrameFirst": "Elige un marco primero",
-        "frameColor": "Color del marco",
-        "textColor": "Color del texto",
-        "endColor": "Color final",
-        "optionalEGYourWebsite": "Opcional, p. ej. tu sitio web",
         "none": "Ninguno"
       },
       "frameFields": {
@@ -4421,13 +4414,14 @@
         "filterFrames": "Filtrar marcos",
         "labelFrames": "Marcos: {label}",
         "commonFrames": "Marcos comunes",
-        "everyFrameBuiltInStyles": "Todos los marcos: estilos integrados, los marcos oficiales de QRdx y los marcos que guardaste. Al elegir uno, se aplica de inmediato.",
+        "everyFrameBuiltInStyles": "Todos los marcos: los marcos clásicos, los códigos con forma, los marcos oficiales de QRdx y los marcos que guardaste. Al elegir uno, se aplica de inmediato.",
         "less": "Menos",
         "all": "Todos",
         "noFramesMatchQuery": "Ningún marco coincide con \"{query}\".",
         "loadingFrames": "Cargando marcos…",
         "comingUp": "Próximamente",
-        "builtIn": "Integrados",
+        "classic": "Clásicos",
+        "shapedCodes": "Códigos con forma",
         "saved": "Guardados",
         "results": "Resultados"
       },
