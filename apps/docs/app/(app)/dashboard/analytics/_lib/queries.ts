@@ -15,10 +15,12 @@ import {
   desc,
   eq,
   gte,
+  ilike,
   inArray,
   isNotNull,
   isNull,
   ne,
+  or,
   type SQL,
   sql,
   sum,
@@ -170,17 +172,60 @@ export interface CodeOption {
   slug: string;
 }
 
-/** Codes to pick from for comparisons, most scanned first. */
-export function listCodeOptions(
+/** Codes the compare picker offers at a time; typing finds the rest. */
+export const CODE_OPTIONS_LIMIT = 50;
+const MAX_SEARCH = 200;
+
+/** A pasted short link ("…/q/AbC123", "…/p/menu") searches by its back-half. */
+const SHORT_LINK_PATH = /\/[qp]\/([A-Za-z0-9_-]{1,64})(?:[/?#]|$)/;
+
+/** `%`, `_` and `\` match themselves. */
+const likePattern = (term: string) =>
+  `%${term.replace(/[\\%_]/g, (char) => `\\${char}`)}%`;
+
+/** Title, back-half or destination containing `term`. */
+function codeSearchWhere(term: string): SQL {
+  const slug = term.match(SHORT_LINK_PATH)?.[1] ?? term;
+  return or(
+    ilike(qrCode.title, likePattern(term)),
+    ilike(qrCode.slug, likePattern(slug)),
+    ilike(qrCode.destinationUrl, likePattern(term)),
+  ) as SQL;
+}
+
+/**
+ * Codes to pick from for comparisons, most scanned first: every code of the
+ * workspace (not in the trash), or with `q` those whose title, back-half or
+ * destination contains it. `more` says there are more than `limit` (the
+ * picker asks to type to narrow).
+ */
+export async function searchCodeOptions(
   scope: ActiveScope,
-  limit = 200,
+  { q, limit = CODE_OPTIONS_LIMIT }: { q?: string; limit?: number } = {},
+): Promise<{ options: CodeOption[]; more: boolean }> {
+  const term = q?.trim().slice(0, MAX_SEARCH);
+  const size = Math.min(Math.max(1, Math.floor(limit)), CODE_OPTIONS_LIMIT);
+  const rows = await db
+    .select({ id: qrCode.id, title: qrCode.title, slug: qrCode.slug })
+    .from(qrCode)
+    .where(
+      and(scopeCodesWhere(scope), term ? codeSearchWhere(term) : undefined),
+    )
+    .orderBy(desc(qrCode.scanCount), desc(qrCode.createdAt), desc(qrCode.id))
+    .limit(size + 1);
+  return { options: rows.slice(0, size), more: rows.length > size };
+}
+
+/** The workspace's codes among `ids` (the ones being compared, for labels). */
+export function codeOptionsByIds(
+  scope: ActiveScope,
+  ids: string[],
 ): Promise<CodeOption[]> {
+  if (ids.length === 0) return Promise.resolve([]);
   return db
     .select({ id: qrCode.id, title: qrCode.title, slug: qrCode.slug })
     .from(qrCode)
-    .where(scopeCodesWhere(scope))
-    .orderBy(desc(qrCode.scanCount), desc(qrCode.createdAt))
-    .limit(limit);
+    .where(and(scopeCodesWhere(scope), inArray(qrCode.id, ids)));
 }
 
 /** The ids that belong to the workspace, in the given order. */

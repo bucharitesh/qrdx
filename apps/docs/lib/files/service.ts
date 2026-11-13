@@ -5,7 +5,6 @@ import cuid from "cuid";
 import {
   and,
   count,
-  desc,
   eq,
   gt,
   inArray,
@@ -24,6 +23,7 @@ import {
   decodeKeyset,
   toCursorPage,
 } from "@/lib/keyset-cursor";
+import { keysetAfter, keysetOrder } from "@/lib/keyset-sql";
 import { noteLimitUsage } from "@/lib/limit-notices";
 import { baseUrl } from "@/lib/metadata";
 import { can } from "@/lib/permissions";
@@ -332,22 +332,6 @@ export const FILES_PAGE_SIZE = 50;
 const MAX_FILES_PAGE = 200;
 
 /**
- * created_at to the millisecond: what a cursor can carry (a JS Date). The
- * database's now() keeps microseconds, and ordering and comparing on the
- * same truncated value keeps two files made within one millisecond from
- * being skipped between pages.
- */
-const createdMs = sql<Date>`date_trunc('milliseconds', ${fileAsset.createdAt})`;
-
-/**
- * A cursor's time as created_at holds it: UTC wall time, the way Drizzle
- * writes a Date to a timestamp column. Compared with an expression rather
- * than the column, a bare Date would reach the driver as local time with an
- * offset that a timestamp without time zone drops.
- */
-const cursorTime = (at: Date) => sql<Date>`${at.toISOString()}::timestamp`;
-
-/**
  * One page of the workspace's files, newest first, after `cursor` (from the
  * previous page). Ready and blocked files, or ready ones only for pickers.
  */
@@ -377,18 +361,11 @@ export async function listFilesPage(
           ? eq(fileAsset.status, "ready")
           : inArray(fileAsset.status, ["ready", "blocked"]),
         kind ? inArray(fileAsset.mime, mimesForKind(kind)) : undefined,
-        after
-          ? or(
-              lt(createdMs, cursorTime(after.at)),
-              and(
-                eq(createdMs, cursorTime(after.at)),
-                lt(fileAsset.id, after.id),
-              ),
-            )
-          : undefined,
+        // created_at comes from now(), so it keeps microseconds.
+        keysetAfter(fileAsset.createdAt, fileAsset.id, after),
       ),
     )
-    .orderBy(desc(createdMs), desc(fileAsset.id))
+    .orderBy(...keysetOrder(fileAsset.createdAt, fileAsset.id))
     .limit(size + 1);
   return toCursorPage(
     rows,

@@ -6050,7 +6050,13 @@
           "dubLinkArchived": "Dub link archived",
           "failedToUpdateDubLink": "Failed to update Dub link",
           "dubLinkUpdated": "Dub link updated",
-          "unknown": "Unknown"
+          "unknown": "Unknown",
+          "couldntLoadLinks": "Couldn't load your links. Try again.",
+          "couldntLoadMoreLinks": "Couldn't load more links. Try again.",
+          "loadMoreLinks": "Load more links",
+          "loadingLinks": "Loading links…",
+          "tryAgain": "Try again",
+          "thatsEveryLink": "That's every link."
         },
         "integrationDetail": {
           "connected": "Connected",
@@ -6112,7 +6118,13 @@
           "nameSyncIsOn": "{name} sync is on",
           "saved": "Saved",
           "couldntSave": "Couldn't save",
-          "retryFailed": "Retry failed"
+          "retryFailed": "Retry failed",
+          "searchPages": "Search pages by title",
+          "noPagesMatch": "No pages with a form match.",
+          "loadMorePages": "Load more pages",
+          "loadingPages": "Loading pages…",
+          "tryAgain": "Try again",
+          "couldntLoadMorePages": "Couldn't load more pages. Try again."
         },
         "slackBotPanel": {
           "qrdxBot": "QRdx bot",
@@ -6262,7 +6274,13 @@
         "comparePicker": {
           "stopComparingValue": "Stop comparing {value}",
           "addACodeToCompare": "Add a code to compare",
-          "upToMaxCompareCodes": "Up to {MAX_COMPARE, number} codes"
+          "upToMaxCompareCodes": "Up to {MAX_COMPARE, number} codes",
+          "searchCodes": "Search by title, link or destination",
+          "mostScanned": "Most scanned",
+          "searching": "Searching…",
+          "noCodesMatch": "No codes match.",
+          "couldntSearch": "Couldn't search your codes. Try again.",
+          "typeToNarrow": "Showing the first {count, number}. Type to narrow."
         },
         "timeZoneSwitch": {
           "currentShowUtc": "{current} · show UTC",
