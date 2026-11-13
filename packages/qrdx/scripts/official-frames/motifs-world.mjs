@@ -894,27 +894,6 @@ add("pomegranate", "a pomegranate", ({ A, B, parts, leaf }) => {
 });
 
 // Jewish holidays
-add("apple", "an orchard fruit", ({ A, B, parts, leaf, band }) => {
-  const body = path()
-    .M(50, 30)
-    .C(40, 20, 14, 22, 14, 50)
-    .C(14, 74, 32, 92, 42, 90)
-    .C(46, 89, 54, 89, 58, 90)
-    .C(68, 92, 86, 74, 86, 50)
-    .C(86, 22, 60, 20, 50, 30)
-    .Z();
-  const top = path().poly(
-    band(
-      [
-        [50, 32],
-        [53, 10],
-      ],
-      4
-    )
-  );
-  leaf(top, [54, 20], [78, 8], 14, -2);
-  return parts(A(body), B(top));
-});
 
 add("honeyJar", "a jar of honey", ({ A, B, parts, teardrop }) => {
   const jar = path().rrect(22, 34, 56, 56, 14).rrect(28, 22, 44, 12, 3);
@@ -1441,59 +1420,6 @@ add("snowman", "a snowman", ({ A, B, parts }) => {
   return parts(A(body), B(hat), B(scarf));
 });
 
-add("sunglasses", "a pair of sunglasses", ({ A, B, parts, band }) => {
-  const frame = path()
-    .rrect(6, 36, 38, 28, 12)
-    .rrect(56, 36, 38, 28, 12)
-    .poly(
-      band(
-        [
-          [42, 42],
-          [58, 42],
-        ],
-        4
-      )
-    )
-    .poly(
-      band(
-        [
-          [8, 40],
-          [2, 30],
-        ],
-        3.5
-      )
-    )
-    .poly(
-      band(
-        [
-          [92, 40],
-          [98, 30],
-        ],
-        3.5
-      )
-    );
-  const shine = path()
-    .poly(
-      band(
-        [
-          [16, 56],
-          [26, 44],
-        ],
-        3.5
-      )
-    )
-    .poly(
-      band(
-        [
-          [66, 56],
-          [76, 44],
-        ],
-        3.5
-      )
-    );
-  return parts(A(frame), B(shine));
-});
-
 add("watermelon", "a slice of watermelon", ({ A, B, parts, teardrop }) => {
   const rind = path().M(4, 36).A(46, 46, 0, 0, 0, 96, 36).Z();
   const flesh = path().M(13, 36).A(37, 37, 0, 0, 0, 87, 36).Z();
@@ -1528,14 +1454,6 @@ add("wateringCan", "a watering can", ({ A, B, parts, band, teardrop }) => {
   teardrop(head, 86, 58, 9, 5);
   const bandP = path().rrect(22, 60, 46, 8);
   return parts(A(can), B(head), B(bandP));
-});
-
-add("backpack", "a backpack", ({ A, B, parts }) => {
-  const bag = path()
-    .rrect(18, 22, 64, 70, 18)
-    .add(ringArc(50, 22, 8, 14, 180, 360).c);
-  const pocket = path().rrect(30, 58, 40, 26, 7).rrect(30, 40, 40, 6, 3);
-  return parts(A(bag), B(pocket));
 });
 
 add("schoolBus", "a school bus", ({ A, B, parts }) => {
@@ -1709,109 +1627,6 @@ add("train", "a train", (h) => {
   return h.parts(h.A(body), h.B(rails));
 });
 
-add("bicycle", "a bicycle", (h) => {
-  const wheels = path();
-  h.ring(wheels, 24, 64, 21, 15);
-  h.ring(wheels, 76, 64, 21, 15);
-  const frame = path()
-    .poly(
-      h.band(
-        [
-          [24, 64],
-          [48, 64],
-        ],
-        5
-      )
-    )
-    .poly(
-      h.band(
-        [
-          [24, 64],
-          [42, 36],
-        ],
-        5
-      )
-    )
-    .poly(
-      h.band(
-        [
-          [48, 64],
-          [40, 28],
-        ],
-        5
-      )
-    )
-    .poly(
-      h.band(
-        [
-          [41, 36],
-          [68, 36],
-        ],
-        5
-      )
-    )
-    .poly(
-      h.band(
-        [
-          [48, 64],
-          [68, 36],
-        ],
-        5
-      )
-    )
-    .poly(
-      h.band(
-        [
-          [68, 34],
-          [76, 64],
-        ],
-        5
-      )
-    )
-    .poly(
-      h.band(
-        [
-          [68, 36],
-          [66, 24],
-        ],
-        5
-      )
-    )
-    .poly(
-      h.band(
-        [
-          [60, 23],
-          [74, 23],
-        ],
-        5
-      )
-    )
-    .rrect(30, 24, 18, 6, 3)
-    .circle(48, 64, 5);
-  return h.parts(h.A(wheels), h.B(frame));
-});
-
-add("parking", "a parking sign", (h) => {
-  const sign = path()
-    .rrect(10, 8, 80, 80, 16)
-    .M(36, 24)
-    .L(36, 74)
-    .L(48, 74)
-    .L(48, 59)
-    .L(56, 59)
-    .C(68, 59, 75, 51, 75, 41.5)
-    .C(75, 32, 68, 24, 56, 24)
-    .Z()
-    .M(48, 35)
-    .L(55, 35)
-    .C(60.5, 35, 63.5, 38, 63.5, 41.5)
-    .C(63.5, 45, 60.5, 48, 55, 48)
-    .L(48, 48)
-    .Z();
-  const post = path().rrect(45, 88, 10, 12, 2);
-  return h.parts(h.A(sign), h.B(post));
-});
-
 add("amphora", "an amphora", (h) => {
   const body = path()
     .M(40, 6)
@@ -1962,33 +1777,6 @@ add("binoculars", "binoculars", (h) => {
   return h.parts(h.A(p), h.B(strap));
 });
 
-add("signpost", "a signpost", (h) => {
-  const p = path()
-    .rrect(45, 6, 10, 90, 3)
-    .poly(
-      h.cw([
-        [18, 14],
-        [78, 14],
-        [92, 26],
-        [78, 38],
-        [18, 38],
-      ])
-    )
-    .circle(30, 26, 3, true)
-    .poly(
-      h.cw([
-        [82, 46],
-        [22, 46],
-        [8, 58],
-        [22, 70],
-        [82, 70],
-      ])
-    )
-    .circle(70, 58, 3, true);
-  const ground = path().rrect(30, 94, 40, 5, 2.5);
-  return h.parts(h.A(p), h.B(ground));
-});
-
 add("foldedMap", "a folded map", (h) => {
   const panels = path()
     .poly(
@@ -2074,44 +1862,6 @@ add("bunkBed", "a bunk bed", (h) => {
       )
     );
   return h.parts(h.A(p), h.B(pillows));
-});
-
-add("laptop", "a laptop", (h) => {
-  const p = path()
-    .rrect(18, 14, 64, 48, 5)
-    .rrect(24, 20, 52, 36, 2, true)
-    .rrect(14, 62, 72, 6, 2)
-    .poly(
-      h.cw([
-        [6, 70],
-        [94, 70],
-        [86, 82],
-        [14, 82],
-      ])
-    )
-    .rrect(42, 72, 16, 3, 1.5, true);
-  const code = path()
-    .poly(
-      h.band(
-        [
-          [42, 30],
-          [34, 38],
-          [42, 46],
-        ],
-        4
-      )
-    )
-    .poly(
-      h.band(
-        [
-          [58, 30],
-          [66, 38],
-          [58, 46],
-        ],
-        4
-      )
-    );
-  return h.parts(h.A(p), h.B(code));
 });
 
 add("anchor", "an anchor", (h) => {
@@ -2409,151 +2159,6 @@ add("onesie", "a baby bodysuit", (h) => {
   return h.parts(h.A(p), h.B(heart));
 });
 
-add("soccerBall", "a soccer ball", (h) => {
-  const p = path();
-  h.ring(p, 50, 50, 45, 40);
-  const center = regular(50, 50, 14, 5);
-  p.poly(h.cw(center));
-  for (let i = 0; i < 5; i++) {
-    const a = ((-90 + i * 72) * Math.PI) / 180;
-    const at = (r) => [50 + Math.cos(a) * r, 50 + Math.sin(a) * r];
-    p.poly(h.band([center[i], at(31)], 3.5));
-    // A patch where the seam meets the rim, cut off by the rim
-    const patch = regular(...at(39), 11, 5, (a * 180) / Math.PI + 180).map(
-      ([x, y]) => {
-        const d = Math.hypot(x - 50, y - 50);
-        return d > 41
-          ? [50 + ((x - 50) * 41) / d, 50 + ((y - 50) * 41) / d]
-          : [x, y];
-      }
-    );
-    p.poly(h.cw(patch));
-  }
-  return h.A(p);
-});
-
-add("basketball", "a basketball", (h) => {
-  const p = path().circle(50, 50, 45);
-  const w = 3.5;
-  const inside = (pts) =>
-    pts.filter(([x, y]) => Math.hypot(x - 50, y - 50) < 43);
-  p.poly(
-    hole(
-      h,
-      h.band(
-        [
-          [50, 5.5],
-          [50, 94.5],
-        ],
-        w
-      )
-    )
-  );
-  p.poly(hole(h, h.band(inside(arcPoints(-30, 50, 52, -70, 70, 40)), w)));
-  p.poly(hole(h, h.band(inside(arcPoints(130, 50, 52, 110, 250, 40)), w)));
-  for (const [x0, x1] of [
-    [5.5, 20.2],
-    [23.8, 48.2],
-    [51.8, 76.2],
-    [79.8, 94.5],
-  ]) {
-    p.poly(
-      hole(h, [
-        [x0, 48.2],
-        [x1, 48.2],
-        [x1, 51.8],
-        [x0, 51.8],
-      ])
-    );
-  }
-  return h.A(p);
-});
-
-add("whistle", "a whistle", (h) => {
-  const p = path()
-    .circle(40, 58, 26)
-    .rrect(40, 32, 54, 18, 4)
-    .rrect(30, 36, 14, 6, 2, true)
-    .circle(40, 58, 9, true);
-  const cord = path();
-  h.ring(cord, 14, 30, 9, 4.5);
-  return h.parts(h.A(p), h.B(cord));
-});
-
-add("sneaker", "a running shoe", (h) => {
-  const p = path()
-    .M(8, 72)
-    .L(8, 40)
-    .C(8, 30, 18, 28, 24, 32)
-    .C(30, 38, 38, 42, 46, 42)
-    .L(50, 34)
-    .C(60, 42, 72, 50, 84, 54)
-    .C(94, 57, 97, 66, 93, 72)
-    .Z()
-    .rrect(5, 72, 92, 11, 5);
-  const laces = path()
-    .poly(
-      h.band(
-        [
-          [48, 44],
-          [56, 38],
-        ],
-        3.5
-      )
-    )
-    .poly(
-      h.band(
-        [
-          [56, 49],
-          [64, 43],
-        ],
-        3.5
-      )
-    )
-    .poly(
-      h.band(
-        [
-          [64, 54],
-          [72, 48],
-        ],
-        3.5
-      )
-    )
-    .rrect(10, 76, 84, 3, 1.5);
-  return h.parts(h.A(p), h.B(laces));
-});
-
-add("cupcake", "a cupcake", (h) => {
-  const icing = path()
-    .circle(30, 46, 13)
-    .circle(70, 46, 13)
-    .circle(50, 36, 18)
-    .rrect(22, 44, 56, 12, 6);
-  h.teardrop(icing, 50, 16, 16, 12);
-  const top = [22, 56];
-  const wrapper = path().poly(
-    h.cw([
-      [top[0], top[1]],
-      [78, 56],
-      [70, 94],
-      [30, 94],
-    ])
-  );
-  for (const u of [1 / 5, 2 / 5, 3 / 5, 4 / 5]) {
-    const xt = 22 + 56 * u;
-    const xb = 30 + 40 * u;
-    wrapper.poly(
-      hole(h, [
-        [xt - 1.5, 60],
-        [xt + 1.5, 60],
-        [xb + 1.5, 90],
-        [xb - 1.5, 90],
-      ])
-    );
-  }
-  return h.parts(h.A(icing), h.B(wrapper));
-});
-
 add("partyHat", "a party hat", (h) => {
   const x = (y, side) => 50 + side * 30 * ((y - 10) / 78);
   const p = path().poly(
@@ -2848,23 +2453,6 @@ add("clapper", "a film clapperboard", (h) => {
       ])
     );
   return h.parts(h.A(board), h.B(path().add(turn(arm.c, -12, 10, 36))));
-});
-
-add("scoreboard", "a scoreboard", (h) => {
-  const p = path()
-    .rrect(8, 14, 84, 62, 8)
-    .rrect(16, 28, 28, 36, 4, true)
-    .rrect(56, 28, 28, 36, 4, true)
-    .circle(50, 40, 2.6, true)
-    .circle(50, 52, 2.6, true)
-    .rrect(22, 76, 8, 18, 2)
-    .rrect(70, 76, 8, 18, 2)
-    .rrect(30, 18, 40, 5, 2.5, true);
-  const digits = path()
-    .rrect(27.5, 34, 6, 24, 1.5)
-    .rrect(63, 34, 14, 24, 5)
-    .rrect(67.5, 38.5, 5, 15, 2.5, true);
-  return h.parts(h.A(p), h.B(digits));
 });
 
 add("babyBottle", "a baby bottle", (h) => {

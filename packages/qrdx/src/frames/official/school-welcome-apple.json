@@ -1,7 +1,7 @@
 {
   "id": "school-welcome-apple",
   "name": "Welcome back arch",
-  "description": "An arched card, like a window, with an orchard fruit, in chalkboard green and yellow.",
+  "description": "An arched card, like a window, with a piece of fruit, in chalkboard green and yellow.",
   "category": "seasonal",
   "collection": "seasons",
   "occasion": "back-to-school",
@@ -43,12 +43,12 @@
       },
       {
         "type": "path",
-        "d": "M660 210C645 195 606 198 606 240C606 276 633 303 648 300C654 298.5 666 298.5 672 300C687 303 714 276 714 240C714 198 675 195 660 210Z",
+        "d": "M660 214.5C675 199.5 717 202.5 717 244.5C717 280.5 690 307.5 672 304.5C666 303 654 303 648 304.5C630 307.5 603 280.5 603 244.5C603 202.5 645 199.5 660 214.5ZM663.69 209.15A3.75 3.75 0 0 0 656.31 207.85L660.81 182.35A3.75 3.75 0 0 0 668.19 183.65L663.69 209.15Z",
         "fill": "text"
       },
       {
         "type": "path",
-        "d": "M657.03 212.59L661.53 179.59L667.47 180.41L662.97 213.41ZM666 195C678.06 201.11 694.26 193.01 702 177C681.86 168.22 665.66 176.32 666 195Z",
+        "d": "M667.5 196.5C673.5 177 694.5 174 708 180C699 196.5 679.5 202.5 667.5 196.5Z",
         "fill": "accent"
       }
     ],

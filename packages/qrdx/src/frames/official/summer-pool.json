@@ -1,12 +1,12 @@
 {
   "id": "summer-pool",
-  "name": "Pool hours",
+  "name": "Pool rules",
   "description": "A solid card with a round badge holding a life ring on its top edge, in pool blue and yellow.",
   "category": "seasonal",
   "collection": "seasons",
   "occasion": "summer",
   "contentTypes": [],
-  "tags": ["summer", "sun", "pool", "hours"],
+  "tags": ["summer", "sun", "pool", "rules", "safety"],
   "license": "CC0-1.0",
   "spec": {
     "kind": "qrdx.frame",
@@ -67,7 +67,7 @@
         "type": "text",
         "id": "cta",
         "slot": "primary",
-        "text": "Scan for pool hours",
+        "text": "Scan for pool rules",
         "color": "text",
         "box": {
           "x": 100,

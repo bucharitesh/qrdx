@@ -3,7 +3,7 @@
   "name": "Find my car",
   "description": "An arrow-shaped tag pointing up at the code.",
   "category": "use-case",
-  "collection": "places",
+  "collection": "automotive",
   "contentTypes": ["url"],
   "tags": ["parking", "car park"],
   "license": "CC0-1.0",

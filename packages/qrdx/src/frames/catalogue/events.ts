@@ -28,7 +28,6 @@ import eventFoodFestival from "../official/event-food-festival.json";
 import eventFunRun from "../official/event-fun-run.json";
 import eventGala from "../official/event-gala.json";
 import eventGameNight from "../official/event-game-night.json";
-import eventGameScores from "../official/event-game-scores.json";
 import eventGradDiploma from "../official/event-grad-diploma.json";
 import eventGradParty from "../official/event-grad-party.json";
 import eventGradSeal from "../official/event-grad-seal.json";
@@ -54,7 +53,6 @@ import eventRetirement from "../official/event-retirement.json";
 import eventReunion from "../official/event-reunion.json";
 import eventRunnerTracker from "../official/event-runner-tracker.json";
 import eventSaveTheDate from "../official/event-save-the-date.json";
-import eventScoreboard from "../official/event-scoreboard.json";
 import eventSeasonTicket from "../official/event-season-ticket.json";
 import eventSessionFeedback from "../official/event-session-feedback.json";
 import eventSetlist from "../official/event-setlist.json";
@@ -145,9 +143,7 @@ const frames = [
   eventBirthAnnouncement,
   eventQuince,
   eventMatchLineup,
-  eventGameScores,
   eventSeasonTicket,
-  eventScoreboard,
   eventTournament,
   eventFunRun,
   eventRunnerTracker,
