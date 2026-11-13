@@ -24,6 +24,30 @@
       "dependsOn": ["build"],
       "outputs": []
     },
+    "docs-site#typecheck": {
+      "dependsOn": ["^build"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "$TURBO_ROOT$/apps/docs/**",
+        "!$TURBO_ROOT$/apps/docs/.next/**",
+        "!$TURBO_ROOT$/apps/docs/.source/**",
+        "!$TURBO_ROOT$/apps/docs/node_modules/**"
+      ],
+      "env": ["MAIN_ZONE_URL", "DOCS_REQUIRE_AVAILABILITY"],
+      "outputs": []
+    },
+    "docs-site#test": {
+      "dependsOn": ["^build"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "$TURBO_ROOT$/apps/docs/**",
+        "!$TURBO_ROOT$/apps/docs/.next/**",
+        "!$TURBO_ROOT$/apps/docs/.source/**",
+        "!$TURBO_ROOT$/apps/docs/node_modules/**"
+      ],
+      "env": ["MAIN_ZONE_URL", "DOCS_REQUIRE_AVAILABILITY"],
+      "outputs": []
+    },
     "typecheck": {
       "dependsOn": ["^build"],
       "outputs": []
