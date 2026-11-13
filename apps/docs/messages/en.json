@@ -1603,6 +1603,11 @@
       "after": "It opens straight to the scanner in its own window, and works offline once you've scanned a code with it."
     }
   },
+  "scannerApp": {
+    "share": "Share",
+    "scanInstructions": "Point the camera at a QR code or barcode",
+    "cameraBlocked": "Camera access is off for QRdx Scanner. Turn it on in Settings, or scan a picture instead."
+  },
   "scanPages": {
     "reportAbuse": "Report abuse",
     "privacy": "Privacy",

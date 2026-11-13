@@ -1603,6 +1603,11 @@
       "after": "スキャナーが専用ウィンドウですぐに開きます。コードを一度スキャンすれば、オフラインでも使えます。"
     }
   },
+  "scannerApp": {
+    "share": "共有",
+    "scanInstructions": "QRコードまたはバーコードにカメラを向けてください",
+    "cameraBlocked": "QRdx Scannerのカメラへのアクセスがオフになっています。設定でオンにするか、画像をスキャンしてください。"
+  },
   "scanPages": {
     "reportAbuse": "不正利用を報告",
     "privacy": "プライバシー",
