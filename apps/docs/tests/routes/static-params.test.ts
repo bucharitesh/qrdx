@@ -1,10 +1,10 @@
 // Routes that prerender a fixed list of params (lib/static-params.ts): the
-// full list in production builds, English only for app/[lang], none in
-// preview builds or under `next dev` (where listing paths makes Next rewrite
-// .next/dev/prerender-manifest.json without a lock, and parallel cold loads
-// corrupted it), none ever for OG images and Markdown copies,
-// `dynamicParams` left at its default so whatever isn't listed renders on
-// request, and a 404 for any param that isn't in the list.
+// full list in production and staging builds, English only for app/[lang],
+// none in other preview builds or under `next dev` (where listing paths
+// makes Next rewrite .next/dev/prerender-manifest.json without a lock, and
+// parallel cold loads corrupted it), none ever for OG images and Markdown
+// copies, `dynamicParams` left at its default so whatever isn't listed
+// renders on request, and a 404 for any param that isn't in the list.
 import { readdirSync, readFileSync } from "node:fs";
 import { join, relative } from "node:path";
 import { getIntegrationCatalog } from "@repo/integrations/src/catalog";
@@ -136,17 +136,25 @@ afterEach(() => {
 
 describe("prerenderScope", () => {
   it("is English pages in production, local and CI builds", () => {
-    expect(prerenderScope("production", "production")).toBe("english");
-    expect(prerenderScope("production", undefined)).toBe("english");
+    expect(prerenderScope("production", "production", "main")).toBe("english");
+    expect(prerenderScope("production", undefined, undefined)).toBe("english");
   });
 
-  it("is minimal in Vercel preview builds", () => {
-    expect(prerenderScope("production", "preview")).toBe("minimal");
+  it("is English pages on staging, a preview that builds the production set", () => {
+    // The release pull request is checked against staging's build.
+    expect(prerenderScope("production", "preview", "staging")).toBe("english");
+  });
+
+  it("is minimal in other Vercel preview builds", () => {
+    expect(prerenderScope("production", "preview", "preview/x")).toBe(
+      "minimal",
+    );
+    expect(prerenderScope("production", "preview", undefined)).toBe("minimal");
   });
 
   it("is nothing under next dev, wherever it runs", () => {
-    expect(prerenderScope("development", undefined)).toBe("none");
-    expect(prerenderScope("development", "preview")).toBe("none");
+    expect(prerenderScope("development", undefined, undefined)).toBe("none");
+    expect(prerenderScope("development", "preview", "staging")).toBe("none");
   });
 });
 

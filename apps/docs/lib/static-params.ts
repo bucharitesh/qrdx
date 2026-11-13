@@ -9,15 +9,19 @@ import { env } from "@/env";
  * searchParams or an uncached fetch). Unknown params call notFound(), so
  * they answer 404 either way.
  *
- * - "english": production, local and CI builds. The English pages and every
- *   route's own list (buildTimeParams); the other languages under app/[lang]
- *   (localeParams), the OG images, the Markdown copies and the generated
- *   image files (onDemandParams) render on request. Prerendering all of them
- *   (about 8,500 paths) ran Vercel's 8 GB Hobby build machine out of memory.
- * - "minimal": Vercel preview builds. Only the pages without a dynamic
+ * - "english": production, staging, local and CI builds. The English pages
+ *   and every route's own list (buildTimeParams); the other languages under
+ *   app/[lang] (localeParams), the OG images, the Markdown copies and the
+ *   generated image files (onDemandParams) render on request. Prerendering
+ *   all of them (about 8,500 paths) ran Vercel's 8 GB Hobby build machine
+ *   out of memory.
+ * - "minimal": Vercel preview builds other than staging (the preview/*
+ *   branches, apps/docs/vercel.json). Only the pages without a dynamic
  *   segment of their own, in English (the home page, /pricing, /blog...):
  *   previews build fast, and the few people who open one render what they
- *   visit.
+ *   visit. Staging deploys as a preview too, but builds the production set:
+ *   the release pull request is checked against it, so a page that fails to
+ *   prerender fails there, before production.
  * - "none": `next dev`, where listing paths corrupts the prerender manifest
  *   (buildTimeParams says how).
  */
@@ -26,9 +30,10 @@ export type PrerenderScope = "english" | "minimal" | "none";
 export function prerenderScope(
   nodeEnv: string | undefined = process.env.NODE_ENV,
   vercelEnv: string | undefined = env.VERCEL_ENV,
+  branch: string | undefined = env.VERCEL_GIT_COMMIT_REF,
 ): PrerenderScope {
   if (nodeEnv === "development") return "none";
-  if (vercelEnv === "preview") return "minimal";
+  if (vercelEnv === "preview" && branch !== "staging") return "minimal";
   return "english";
 }
 
