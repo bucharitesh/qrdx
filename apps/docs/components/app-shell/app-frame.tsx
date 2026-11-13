@@ -47,7 +47,17 @@ export function AppFrame({
     // From md up the frame is exactly the screen: the top bar and sidebar stay
     // put and only the page scrolls, inside <main>. Phones scroll the window
     // (the sidebar is a sheet there).
-    <div className="flex min-h-svh flex-col md:h-svh md:overflow-hidden">
+    // --app-sidebar-width: what the sidebar takes from md up, so fixed layers
+    // over the page (the lists' selection bar) centre on the page beside it.
+    <div
+      className={cn(
+        "flex min-h-svh flex-col md:h-svh md:overflow-hidden",
+        // The aside's w-14 and w-60, on the same spacing scale.
+        collapsed
+          ? "md:[--app-sidebar-width:--spacing(14)]"
+          : "md:[--app-sidebar-width:--spacing(60)]",
+      )}
+    >
       <AppTopBar limitWarnings={limitWarnings} shell={shell} />
       <div className="flex flex-1 md:min-h-0">
         <aside
@@ -67,8 +77,14 @@ export function AppFrame({
             />
           </div>
         </aside>
+        {/* With a list's selection bar open (dashboard/_components/
+            selection-bar.tsx), room underneath it, so the last row and the
+            pager scroll clear of the bar. */}
         <main
-          className="min-w-0 flex-1 px-4 py-5 md:overflow-y-auto md:overscroll-contain md:px-8 md:py-8"
+          className={cn(
+            "min-w-0 flex-1 px-4 py-5 md:overflow-y-auto md:overscroll-contain md:px-8 md:py-8",
+            "has-[[data-selection-bar=open]]:pb-[calc(env(safe-area-inset-bottom)+5.5rem)] md:has-[[data-selection-bar=open]]:pb-[calc(env(safe-area-inset-bottom)+6.5rem)]",
+          )}
           data-app-scroll=""
         >
           <div className="mx-auto w-full max-w-6xl">{children}</div>

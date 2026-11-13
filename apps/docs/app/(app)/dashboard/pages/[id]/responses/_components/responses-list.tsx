@@ -17,8 +17,19 @@ import { cn } from "@repo/design-system/lib/utils";
 import { Trash as Trash2 } from "iconsax-reactjs";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useId, useState, useTransition } from "react";
+import { useId, useMemo, useRef, useState, useTransition } from "react";
 import { deleteFormResponses } from "@/actions/form-responses";
+import {
+  LIST_ROW_FOCUS,
+  useListSelection,
+} from "@/app/(app)/dashboard/_components/list-selection";
+import { SelectionBar } from "@/app/(app)/dashboard/_components/selection-bar";
+import {
+  BULK_KEYS,
+  type BulkAction,
+  keyLabel,
+} from "@/app/(app)/dashboard/_lib/list-keys";
+import { useUserSettings } from "@/lib/hooks/use-user-settings";
 import {
   type FormAnswer,
   formatAnswerValue,
@@ -77,19 +88,34 @@ export function ResponsesList({
 }) {
   const t = useTranslations("app.dashboard.pages.responses.responsesList");
   const router = useRouter();
-  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const { settings } = useUserSettings();
+  const keyboardShortcuts = settings?.keyboardShortcuts ?? true;
   const [pendingDelete, setPendingDelete] = useState<string[] | null>(null);
   const [isPending, startTransition] = useTransition();
   const selectAllId = useId();
+  const listRef = useRef<HTMLDivElement>(null);
 
-  const allSelected = items.length > 0 && selected.size === items.length;
-  const toggle = (id: string, checked: boolean) =>
-    setSelected((current) => {
-      const next = new Set(current);
-      if (checked) next.add(id);
-      else next.delete(id);
-      return next;
-    });
+  // Selected with the checkboxes or the keys the other lists use
+  // (list-selection.tsx); only people who may delete get checkboxes.
+  const rows = useMemo(() => items.map((item) => item.id), [items]);
+  const order = useMemo(() => (canDelete ? rows : []), [canDelete, rows]);
+  const keyActions = useRef<Partial<Record<BulkAction, () => void>>>({});
+  const selection = useListSelection({
+    order,
+    rows,
+    listRef,
+    keyboardShortcuts,
+    actionsRef: keyActions,
+  });
+  const { count, selectedIds, clear } = selection;
+  const deleteHint = keyLabel(BULK_KEYS.trash);
+  // Delete opens the confirmation, like the button; nothing while it runs.
+  keyActions.current =
+    canDelete && !isPending
+      ? { trash: () => setPendingDelete(selectedIds) }
+      : {};
+
+  const allSelected = order.length > 0 && count === order.length;
 
   const confirmDelete = () => {
     const ids = pendingDelete;
@@ -105,42 +131,24 @@ export function ResponsesList({
           ? t("responseDeleted")
           : t("deletedResponsesDeleted", { deleted: result.data.deleted }),
       );
-      setSelected((current) => {
-        const next = new Set(current);
-        for (const id of ids) next.delete(id);
-        return next;
-      });
+      selection.setMany(ids, false);
       setPendingDelete(null);
       router.refresh();
     });
   };
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-3" ref={listRef}>
       {canDelete && (
-        <div className="flex min-h-9 items-center justify-between gap-3">
-          <div className="flex items-center gap-2 text-sm">
-            <Checkbox
-              checked={allSelected}
-              id={selectAllId}
-              onCheckedChange={(checked) =>
-                setSelected(
-                  checked ? new Set(items.map((item) => item.id)) : new Set(),
-                )
-              }
-            />
-            <label htmlFor={selectAllId}>{t("selectAllOnThisPage")}</label>
-          </div>
-          {selected.size > 0 && (
-            <Button
-              onClick={() => setPendingDelete([...selected])}
-              size="sm"
-              variant="outline"
-            >
-              <Trash2 />
-              {t("deleteSize", { size: selected.size })}
-            </Button>
-          )}
+        <div className="flex min-h-9 items-center gap-2 text-sm">
+          <Checkbox
+            checked={allSelected}
+            id={selectAllId}
+            onCheckedChange={(checked) =>
+              selection.setMany(order, checked === true)
+            }
+          />
+          <label htmlFor={selectAllId}>{t("selectAllOnThisPage")}</label>
         </div>
       )}
 
@@ -148,20 +156,19 @@ export function ResponsesList({
         {items.map((item) => (
           <li
             className={cn(
+              LIST_ROW_FOCUS,
               "bg-card rounded-lg border p-4",
-              selected.has(item.id) && "ring-primary/40 ring-2",
+              selection.isSelected(item.id) && "ring-primary/40 ring-2",
             )}
             key={item.id}
+            {...selection.rowProps(item.id)}
           >
             <div className="mb-3 flex items-start gap-3">
               {canDelete && (
                 <Checkbox
                   aria-label={t("selectResponse")}
-                  checked={selected.has(item.id)}
                   className="mt-0.5"
-                  onCheckedChange={(checked) =>
-                    toggle(item.id, checked === true)
-                  }
+                  {...selection.checkboxProps(item.id)}
                 />
               )}
               <div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-2 gap-y-1 text-sm">
@@ -206,6 +213,31 @@ export function ResponsesList({
           </li>
         ))}
       </ul>
+
+      <SelectionBar
+        actions={[
+          {
+            id: "trash",
+            label: t("delete"),
+            icon: <Trash2 />,
+            kbd: deleteHint,
+            destructive: true,
+            onSelect: () => setPendingDelete(selectedIds),
+          },
+        ]}
+        clearLabel={t("clearSelection")}
+        count={count}
+        countLabel={t("countSelected", { count })}
+        disabled={isPending}
+        label={t("bulkActions")}
+        noun={["response", "responses"]}
+        onClear={clear}
+        shortcuts={
+          keyboardShortcuts
+            ? [{ label: t("delete"), keys: [deleteHint] }]
+            : undefined
+        }
+      />
 
       <AlertDialog
         onOpenChange={(open) => !open && !isPending && setPendingDelete(null)}
