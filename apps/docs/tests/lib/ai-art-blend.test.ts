@@ -9,6 +9,7 @@ import {
 } from "qrdx";
 import { beforeAll, describe, expect, it } from "vitest";
 import {
+  CODE_BLEND_STYLE,
   correctArt,
   encodePng,
   findLeastBlend,
@@ -19,13 +20,16 @@ import {
   ModuleKind,
   moduleKinds,
   type PixelScan,
+  SCENE_BLEND_STYLE,
 } from "@/lib/ai/art-blend";
 import {
   type ControlImage,
   controlGrid,
   renderControlImage,
+  SCENE_LAYOUT,
+  sceneControl,
 } from "@/lib/ai/art-image";
-import { paintedArt, texturedArt } from "../support/ai-art-images";
+import { paintedArt, sceneArt, texturedArt } from "../support/ai-art-images";
 
 const TEXT = "https://qrdx.dev/q/Ab3dE9x";
 
@@ -106,6 +110,73 @@ describe("locateGrid", () => {
     expect(Math.abs(grid.pitch / expected.pitch - 1.04)).toBeLessThan(0.01);
     expect(Math.abs(grid.left - left)).toBeLessThan(size * 0.01);
     expect(Math.abs(grid.top - top)).toBeLessThan(size * 0.01);
+  });
+});
+
+describe("scenes", () => {
+  it("finds a scene's code the model moved and shrank, with the wide search", async () => {
+    // Drawn at half the image's width and low, though the control asked for
+    // 64% centered: the model's choice, as GPT Image 2 makes it.
+    const drawn = sceneControl(control, {
+      layout: { ...SCENE_LAYOUT, size: 0.42, x: 0.38, y: 0.7 },
+    });
+    const art = await pixelsOf(await sceneArt(drawn.png, { speckle: 40 }));
+    const expected = sceneControl(control).grid;
+    expect(locateGrid(art, control.map, expected).fit).toBeLessThan(0.6);
+    const grid = locateGrid(art, control.map, expected, { wide: true });
+    expect(grid.fit).toBeGreaterThan(0.9);
+    expect(Math.abs(grid.left - drawn.grid.left)).toBeLessThan(3);
+    expect(Math.abs(grid.top - drawn.grid.top)).toBeLessThan(3);
+    expect(Math.abs(grid.pitch / drawn.grid.pitch - 1)).toBeLessThan(0.02);
+  });
+
+  it("lightens light modules in the scene's own color, not toward white", async () => {
+    const scene = sceneControl(control);
+    const art = await pixelsOf(
+      await sceneArt(scene.png, { light: [90, 140, 200] }),
+    );
+    const grid = { ...scene.grid, fit: 1 };
+    const saturation = (style: typeof CODE_BLEND_STYLE) => {
+      const out = correctArt(art, control.map, grid, 1, style);
+      const { size, dark, kinds } = control.map;
+      let sum = 0;
+      let count = 0;
+      for (let i = 0; i < size * size; i++) {
+        if (dark[i] || kinds[i] !== ModuleKind.data) continue;
+        const x = Math.round(grid.left + ((i % size) + 0.5) * grid.pitch);
+        const y = Math.round(
+          grid.top + (Math.floor(i / size) + 0.5) * grid.pitch,
+        );
+        const p = (y * out.width + x) * 4;
+        const [r, g, b] = out.data.subarray(p, p + 3) as unknown as number[];
+        sum += Math.max(r!, g!, b!) - Math.min(r!, g!, b!);
+        count++;
+      }
+      return sum / count;
+    };
+    const kept = saturation(SCENE_BLEND_STYLE);
+    // The scene's blue (200 − 90 = 110 apart) mostly survives; toward white
+    // it fades.
+    expect(kept).toBeGreaterThan(70);
+    expect(kept).toBeGreaterThan(saturation(CODE_BLEND_STYLE) * 1.5);
+  });
+
+  it("touches less of the picture around the code than code mode's quiet zone", async () => {
+    const scene = sceneControl(control);
+    const art = await pixelsOf(await sceneArt(scene.png));
+    const grid = { ...scene.grid, fit: 1 };
+    const changeAround = (style: typeof CODE_BLEND_STYLE) => {
+      const out = correctArt(art, control.map, grid, 0.3, style);
+      // Two modules out from the code, left of it
+      const x = Math.round(grid.left - 2 * grid.pitch);
+      const y = Math.round(grid.top + 15 * grid.pitch);
+      const p = (y * out.width + x) * 4;
+      return Math.abs(
+        (out.data[p + 1] as number) - (art.data[p + 1] as number),
+      );
+    };
+    expect(changeAround(SCENE_BLEND_STYLE)).toBe(0);
+    expect(changeAround(CODE_BLEND_STYLE)).toBeGreaterThan(0);
   });
 });
 
