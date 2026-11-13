@@ -12,6 +12,8 @@
     "../vanilla-js",
     "../vue",
     "../web-component",
+    "../preact",
+    "../solid",
     "---Styling and export---",
     "../styles",
     "...../features",
