@@ -7,13 +7,23 @@
  * image: the model's raw image, what the pipeline delivers, and what the old
  * pipeline (Image QR blend whenever the raw image didn't scan) made of the
  * same raw image. With ffmpeg installed it also writes one sheet per model
- * and prompt: a row per seed, raw | old | new.
+ * and prompt: a row per seed, raw | old | new (raw | new in scene and photo
+ * modes). With ImageMagick, one contact sheet of every image too.
+ *
+ * Modes (--mode, default code): "code" paints the code itself; "scene" a
+ * full-bleed picture with the code in it (--size and --y place the code, as
+ * shares of the image); "photo" paints the code into each test photo
+ * (--photos, default: the repo's art samples in public/images/art-samples),
+ * sent as the control itself or as a second image (--photo-input).
  *
  * Usage (from apps/docs, with the engine built: bun run --filter qrdx build:inplace):
  *   AI_GATEWAY_API_KEY=... bun x tsx --conditions=react-server scripts/ai/art-eval.ts \
  *     [--n 4] [--models google/gemini-nano-banana-2.1,openai/gpt-image-2] \
  *     [--out ./art-eval-out] [--concurrency 2] [--timeout 45000] \
- *     [--visibility 50] [--max-cost 2]
+ *     [--visibility 50] [--max-cost 2] [--mode scene] [--size 0.64] [--y 0.5] \
+ *     [--presets zen-garden,neon-city] [--photos mountain,latte] [--photo-input composite] \
+ *     [--blend '{"ringFull":1}'] (overrides the least blend's BlendStyle) \
+ *     [--layout '{"light":null}'] (overrides SCENE_LAYOUT, or PHOTO_LAYOUT in photo mode)
  *   bun x tsx --conditions=react-server scripts/ai/art-eval.ts --replay ./art-eval-out
  *     (no key, no cost: the raw images saved by an earlier run stand in for
  *     the models, so a pipeline change can be compared on the same images)
@@ -41,9 +51,24 @@ import type { ArtModelChoice } from "../../lib/ai/models";
 const TEXT = "https://qrdx.dev/q/Ab3dE9x";
 /** A scene, a city at night and a painting style: three kinds of prompt. */
 const PRESET_IDS = ["zen-garden", "neon-city", "botanical-watercolor"];
+/** Photo mode's test photos (public/images/art-samples/photos) and what they show. */
+const PHOTOS: Record<string, string> = {
+  mountain:
+    "a snowy mountain peak at sunset, reflected in a still lake, deep blue sky and orange horizon",
+  latte:
+    "a latte with leaf art in a ceramic cup on a wooden cafe table, warm morning light",
+  flowers:
+    "a bright bouquet of spring flowers on a table by a window, soft daylight",
+  dog: "a happy golden dog sitting in a sunny park, green grass and trees behind",
+  portrait:
+    "a portrait of a smiling person outdoors, soft natural light, blurred city background",
+  sneaker: "a white sneaker on a plain studio background, clean product photo",
+};
+const PHOTO_DIR = "public/images/art-samples/photos";
 
 interface Attempt {
   model: string;
+  mode: string;
   prompt: string;
   seed: number;
   /** The model answered with an image */
@@ -132,7 +157,7 @@ async function pool<T>(
   );
 }
 
-/** One sheet per model and prompt: a row per seed, raw | old | new. */
+/** One sheet per model and prompt: a row per seed, raw | old | new (raw | new outside code mode). */
 function writeSheets(out: string, attempts: Attempt[]): string[] {
   const sheets: string[] = [];
   const groups = new Map<string, Attempt[]>();
@@ -148,10 +173,13 @@ function writeSheets(out: string, attempts: Attempt[]): string[] {
       .map((a) => {
         const stem = join(out, slug(model), `${prompt}-${a.seed}`);
         const raw = a.files.find((f) => f.includes("-raw."));
-        return [raw, `${stem}-old.png`, `${stem}-delivered.png`];
+        return a.mode === "code"
+          ? [raw, `${stem}-old.png`, `${stem}-delivered.png`]
+          : [raw, `${stem}-delivered.png`];
       })
       .filter((files) => files.every((f) => f && existsSync(f)));
     if (rows.length === 0) continue;
+    const columns = rows[0]?.length ?? 3;
     const inputs = rows.flat().flatMap((file) => ["-i", file as string]);
     const cell = 512;
     const scaled = rows
@@ -159,7 +187,10 @@ function writeSheets(out: string, attempts: Attempt[]): string[] {
       .map((_, i) => `[${i}]scale=${cell}:${cell}[c${i}]`)
       .join(";");
     const hstacks = rows
-      .map((_, r) => `[c${r * 3}][c${r * 3 + 1}][c${r * 3 + 2}]hstack=3[r${r}]`)
+      .map(
+        (_, r) =>
+          `${Array.from({ length: columns }, (_, c) => `[c${r * columns + c}]`).join("")}hstack=${columns}[r${r}]`,
+      )
       .join(";");
     const stack =
       rows.length === 1
@@ -187,10 +218,90 @@ function writeSheets(out: string, attempts: Attempt[]): string[] {
   return sheets;
 }
 
+/**
+ * One contact sheet of the run (ImageMagick): every delivered image, or the
+ * raw one where nothing was delivered, labeled with how it was made to scan.
+ */
+function writeContactSheet(
+  out: string,
+  mode: string,
+  attempts: Attempt[],
+): string | null {
+  const tiles = attempts
+    .filter((a) => a.responded)
+    .sort((a, b) =>
+      a.prompt === b.prompt
+        ? a.seed - b.seed
+        : a.prompt.localeCompare(b.prompt),
+    )
+    .flatMap((a) => {
+      const file =
+        a.files.find((f) => f.endsWith("-delivered.png")) ??
+        a.files.find((f) => f.includes("-raw."));
+      if (!file) return [];
+      const how = a.delivered
+        ? `${a.blend}${a.blend === "least" ? ` ${a.blendStrength}` : ""}${a.zbarDelivered ? " zbar" : ""}`
+        : "NOT DELIVERED";
+      return ["-label", `${a.prompt} #${a.seed}: ${how}`, file];
+    });
+  if (tiles.length === 0) return null;
+  const file = join(out, `contact-${mode}.png`);
+  // ImageMagick needs a font file for labels where fontconfig has none.
+  const font = [
+    "/System/Library/Fonts/Supplemental/Arial.ttf",
+    "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+  ].find((path) => existsSync(path));
+  const run = spawnSync(
+    "magick",
+    [
+      "montage",
+      ...tiles,
+      "-tile",
+      "4x",
+      "-geometry",
+      "320x320+6+6",
+      "-pointsize",
+      "13",
+      ...(font ? ["-font", font] : []),
+      file,
+    ],
+    { encoding: "utf8" },
+  );
+  if (run.status === 0) return file;
+  console.error(`magick montage failed for ${file}: ${run.stderr}`);
+  return null;
+}
+
+/** A test photo as the client would send it: 1024 px square JPEG, as a data URL. */
+function photoDataUrl(id: string, out: string): string {
+  const source = resolve(PHOTO_DIR, `${id}.webp`);
+  if (!existsSync(source)) fail(`No test photo ${source}`);
+  const file = join(out, `photo-${id}.jpg`);
+  const run = spawnSync(
+    "ffmpeg",
+    [
+      "-loglevel",
+      "error",
+      "-y",
+      "-i",
+      source,
+      "-vf",
+      "scale=1024:1024:flags=lanczos",
+      "-q:v",
+      "3",
+      file,
+    ],
+    { encoding: "utf8" },
+  );
+  if (run.status !== 0)
+    fail(`ffmpeg couldn't convert ${source}: ${run.stderr}`);
+  return `data:image/jpeg;base64,${readFileSync(file).toString("base64")}`;
+}
+
 async function main() {
   const { values } = parseArgs({
     options: {
-      n: { type: "string", default: "4" },
+      n: { type: "string" },
       models: { type: "string" },
       out: { type: "string" },
       concurrency: { type: "string", default: "2" },
@@ -199,12 +310,33 @@ async function main() {
       "max-cost": { type: "string" },
       replay: { type: "string" },
       "dry-run": { type: "boolean", default: false },
+      mode: { type: "string" },
+      size: { type: "string" },
+      y: { type: "string" },
+      layout: { type: "string" },
+      presets: { type: "string" },
+      photos: { type: "string" },
+      "photo-input": { type: "string" },
+      blend: { type: "string" },
     },
   });
-  const n = Number(values.n);
-  if (!(Number.isInteger(n) && n > 0)) fail("--n must be a positive integer");
   const dryRun = values["dry-run"];
   const replay = values.replay ? resolve(values.replay) : null;
+  // A replay keeps the earlier run's settings unless told otherwise.
+  const earlierSettings = (
+    replay && existsSync(join(replay, "results.json"))
+      ? JSON.parse(readFileSync(join(replay, "results.json"), "utf8"))
+      : {}
+  ) as {
+    mode?: string;
+    layout?: import("../../lib/ai/art-image").SceneLayout;
+    photoInput?: string;
+    prompts?: string[];
+    n?: number;
+    attempts?: { model: string }[];
+  };
+  const n = Number(values.n ?? earlierSettings.n ?? 4);
+  if (!(Number.isInteger(n) && n > 0)) fail("--n must be a positive integer");
   const maxCost = values["max-cost"] ? Number(values["max-cost"]) : null;
   if (maxCost !== null && !(maxCost > 0)) fail("--max-cost must be positive");
   if (!(dryRun || replay || process.env.AI_GATEWAY_API_KEY?.trim())) {
@@ -221,18 +353,47 @@ async function main() {
   // After the env is set: env.ts validates on import. (The pipeline decodes
   // with qrdx itself; importing "qrdx" here directly would take its ESM build,
   // which fails under the react-server condition.)
-  const [pipeline, models, config, presets, providers] = await Promise.all([
-    import("../../lib/ai/art-image"),
-    import("../../lib/ai/models"),
-    import("../../components/sections/ai-art/config"),
-    import("../../components/sections/ai-art/presets"),
-    import("../../lib/ai/providers"),
-  ]);
+  const [pipeline, models, config, presets, providers, blend] =
+    await Promise.all([
+      import("../../lib/ai/art-image"),
+      import("../../lib/ai/models"),
+      import("../../components/sections/ai-art/config"),
+      import("../../components/sections/ai-art/presets"),
+      import("../../lib/ai/providers"),
+      import("../../lib/ai/art-blend"),
+    ]);
   const visibility = values.visibility
     ? Number(values.visibility)
     : config.ART_QR_VISIBILITY.default;
+  const mode = (values.mode ?? earlierSettings.mode ?? "code") as
+    | "code"
+    | "scene"
+    | "photo";
+  if (!config.ART_MODES.includes(mode)) {
+    fail(`--mode must be one of ${config.ART_MODES.join(", ")}`);
+  }
+  const layout = {
+    ...(mode === "photo" ? pipeline.PHOTO_LAYOUT : pipeline.SCENE_LAYOUT),
+    ...earlierSettings.layout,
+    ...(values.size ? { size: Number(values.size) } : {}),
+    ...(values.y ? { y: Number(values.y) } : {}),
+    ...(values.layout ? (JSON.parse(values.layout) as object) : {}),
+  };
+  const blendOverride = values.blend
+    ? {
+        ...(mode === "code" ? blend.CODE_BLEND_STYLE : blend.SCENE_BLEND_STYLE),
+        ...(JSON.parse(values.blend) as object),
+      }
+    : null;
+  const photoInput = (values["photo-input"] ??
+    earlierSettings.photoInput ??
+    pipeline.PHOTO_INPUT) as import("../../lib/ai/art-image").PhotoInput;
 
-  const wanted = values.models?.split(",").map((id) => id.trim());
+  const wanted =
+    values.models?.split(",").map((id) => id.trim()) ??
+    (earlierSettings.attempts
+      ? [...new Set(earlierSettings.attempts.map((a) => a.model))]
+      : undefined);
   const candidates: ArtModelChoice[] = wanted
     ? wanted.map(
         (id) =>
@@ -242,11 +403,27 @@ async function main() {
           ),
       )
     : [...models.ART_EVAL_CANDIDATES];
-  const prompts = PRESET_IDS.map(
-    (id) =>
-      presets.AI_ART_PRESETS.find((preset) => preset.id === id) ??
-      fail(`Preset ${id} is gone; update PRESET_IDS`),
-  );
+  // Photo mode: one "prompt" per test photo, its description.
+  const photoIds =
+    values.photos?.split(",").map((id) => id.trim()) ??
+    (mode === "photo" && earlierSettings.prompts
+      ? earlierSettings.prompts
+      : ["mountain", "latte", "flowers", "dog"]);
+  const prompts: { id: string; prompt: string; negativePrompt?: string }[] =
+    mode === "photo"
+      ? photoIds.map((id) => ({
+          id,
+          prompt: PHOTOS[id] ?? fail(`No test photo ${id}`),
+        }))
+      : (
+          values.presets?.split(",").map((id) => id.trim()) ??
+          earlierSettings.prompts ??
+          PRESET_IDS
+        ).map(
+          (id) =>
+            presets.AI_ART_PRESETS.find((preset) => preset.id === id) ??
+            fail(`Preset ${id} is gone; update PRESET_IDS`),
+        );
 
   const out = resolve(
     values.out ??
@@ -260,7 +437,17 @@ async function main() {
   const zbarAvailable = hasTool("zbarimg", "--version");
 
   const control: ControlImage = await pipeline.renderControlImage(TEXT);
-  writeFileSync(join(out, "control.png"), control.png);
+  writeFileSync(
+    join(out, "control.png"),
+    mode === "code"
+      ? control.png
+      : pipeline.sceneControl(control, { layout }).png,
+  );
+  const photoUrls = new Map(
+    mode === "photo"
+      ? prompts.map(({ id }) => [id, photoDataUrl(id, out)] as const)
+      : [],
+  );
 
   const generationCost = async (id: string) => {
     if (dryRun || replay) return null;
@@ -270,8 +457,9 @@ async function main() {
       return null;
     }
   };
-  const fakeModel: ArtImageModel = async () => ({
-    data: control.png,
+  // The control it was sent, as the "artwork".
+  const fakeModel: ArtImageModel = async (request) => ({
+    data: request.images[0] as Uint8Array,
     mediaType: "image/png",
   });
   // A replay keeps the earlier run's latency and cost for each image.
@@ -296,15 +484,14 @@ async function main() {
   const replayModel =
     (model: string, prompt: string, seed: number): ArtImageModel =>
     async () => {
-      const file = join(
-        replay as string,
-        slug(model),
-        `${prompt}-${seed}-raw.png`,
+      const stem = join(replay as string, slug(model), `${prompt}-${seed}-raw`);
+      const ext = ["png", "jpg", "webp"].find((e) =>
+        existsSync(`${stem}.${e}`),
       );
-      if (!existsSync(file)) throw new Error(`No saved raw image: ${file}`);
+      if (!ext) throw new Error(`No saved raw image: ${stem}.png`);
       return {
-        data: new Uint8Array(readFileSync(file)),
-        mediaType: "image/png",
+        data: new Uint8Array(readFileSync(`${stem}.${ext}`)),
+        mediaType: `image/${ext.replace("jpg", "jpeg")}`,
       };
     };
 
@@ -314,7 +501,7 @@ async function main() {
     ),
   );
   console.log(
-    `${dryRun ? "Dry run: " : replay ? `Replay of ${replay}: ` : ""}${jobs.length} images (${candidates.length} models × ${prompts.length} prompts × ${n}), QR visibility ${visibility} → ${out}`,
+    `${dryRun ? "Dry run: " : replay ? `Replay of ${replay}: ` : ""}${jobs.length} images (${candidates.length} models × ${prompts.length} ${mode === "photo" ? "photos" : "prompts"} × ${n}), ${mode} mode${mode === "code" ? "" : ` (code ${layout.size} wide at y ${layout.y}${mode === "photo" ? `, photo as ${photoInput}` : ""})`}, QR visibility ${visibility} → ${out}`,
   );
 
   let spent = 0;
@@ -347,6 +534,7 @@ async function main() {
       mkdirSync(join(out, slug(choice.model)), { recursive: true });
       const attempt: Attempt = {
         model: choice.model,
+        mode,
         prompt: preset.id,
         seed,
         responded: false,
@@ -371,6 +559,11 @@ async function main() {
           creativity: config.ART_CREATIVITY.default,
           seed,
           control,
+          mode,
+          photo: photoUrls.get(preset.id),
+          layout,
+          photoInput,
+          ...(blendOverride ? { blendStyle: blendOverride } : {}),
           signal: new AbortController().signal,
           model: timed,
           modelId: choice.model,
@@ -403,14 +596,17 @@ async function main() {
           attempt.costUsd = earlier.costUsd;
         }
         if (attempt.costUsd !== null) spent += attempt.costUsd;
-        // The old pipeline on the same raw image: as drawn when it scanned,
-        // otherwise the Image QR blend.
-        const old = await pipeline.oldPipelineImage({
-          text: TEXT,
-          image: raw,
-          control,
-          visibility,
-        });
+        // The old pipeline on the same raw image (code mode): as drawn when
+        // it scanned, otherwise the Image QR blend.
+        const old =
+          mode === "code"
+            ? await pipeline.oldPipelineImage({
+                text: TEXT,
+                image: raw,
+                control,
+                visibility,
+              })
+            : null;
         if (old) {
           attempt.oldDelivered = true;
           const oldFile = `${stem}-old.png`;
@@ -451,10 +647,19 @@ async function main() {
       "mean least strength": strengths.length
         ? (strengths.reduce((s, v) => s + v, 0) / strengths.length).toFixed(2)
         : "n/a",
-      "old pipeline delivered": percent(
-        mine.filter((a) => a.oldDelivered).length,
+      mode,
+      "as drawn %": percent(
+        delivered.filter((a) => a.blend === "none").length,
         mine.length,
       ),
+      ...(mode === "code"
+        ? {
+            "old pipeline delivered": percent(
+              mine.filter((a) => a.oldDelivered).length,
+              mine.length,
+            ),
+          }
+        : {}),
       "zbarimg: raw / new / old": zbarAvailable
         ? `${mine.filter((a) => a.zbarRaw).length} / ${mine.filter((a) => a.zbarDelivered).length} / ${mine.filter((a) => a.zbarOld).length}`
         : "not installed",
@@ -479,18 +684,33 @@ async function main() {
   const sheets = hasTool("ffmpeg", "-version")
     ? writeSheets(out, attempts)
     : [];
+  const contact = hasTool("magick", "-version")
+    ? writeContactSheet(out, mode, attempts)
+    : null;
   const footer = [
     `Total reported cost: $${spent.toFixed(4)}${replay ? " (spent by the replayed run; this replay made no calls)" : ""}${stopped ? ` (stopped at --max-cost, ${stopped} images not made)` : ""}`,
     sheets.length
-      ? `Sheets (a row per seed: raw | old pipeline | delivered): ${sheets.map((s) => s.slice(out.length + 1)).join(", ")}`
+      ? `Sheets (a row per seed: raw | ${mode === "code" ? "old pipeline | " : ""}delivered): ${sheets.map((s) => s.slice(out.length + 1)).join(", ")}`
       : "",
+    contact ? `Contact sheet: ${contact.slice(out.length + 1)}` : "",
   ]
     .filter(Boolean)
     .join("\n");
   writeFileSync(
     join(out, "results.json"),
     JSON.stringify(
-      { text: TEXT, prompts: PRESET_IDS, n, visibility, spent, attempts },
+      {
+        text: TEXT,
+        mode,
+        layout: mode === "code" ? undefined : layout,
+        photoInput: mode === "photo" ? photoInput : undefined,
+        prompts: prompts.map((p) => p.id),
+        n,
+        visibility,
+        blend: blendOverride ?? undefined,
+        spent,
+        attempts,
+      },
       null,
       2,
     ),
