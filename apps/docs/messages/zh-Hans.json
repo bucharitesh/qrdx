@@ -286,6 +286,13 @@
       "secondary": "阅读文档",
       "sceneLabel": "QRdx 流程动画：设计工作室屏幕设计并美化二维码，打印机将其打印在卡片上，机械臂把卡片放到传送带上，闸机上的手机在每张卡片经过时进行扫描，扫描数据传到分析面板并新增一根柱状条，一张大型动态二维码卡片无需重新打印即可更换目标链接"
     },
+    "customers": {
+      "eyebrow": "使用者",
+      "readStory": "阅读案例",
+      "lines": {
+        "flam": "Flam 使用 QRdx 制作品牌二维码。"
+      }
+    },
     "editor": {
       "eyebrow": "用你的链接试试",
       "description": "与 Playground 使用相同的渲染器，输入时实时预览。",
@@ -772,6 +779,21 @@
       "signIn": "登录后申请发票",
       "signInNote": "发票会开给你账户的工作区，请先登录。"
     },
+    "enterprise": {
+      "name": "Enterprise",
+      "tagline": "适合需要合同和安全评审的企业",
+      "price": "定制",
+      "priceNote": "按年签约，凭发票付款",
+      "cta": "联系我们",
+      "lead": "包含 Business 的全部功能，另加：",
+      "adds": {
+        "contract": "按年签约，凭发票付款",
+        "replies": "二维码失效时，{hours, plural, other {# 个工作小时内回复}}",
+        "review": "解答您的安全评审问题",
+        "selfHost": "在您自己的服务器上使用 SSO 和审计日志"
+      },
+      "security": "QRdx 的安全措施"
+    },
     "nonprofit": {
       "title": "非营利组织折扣",
       "description": "已注册的非营利组织和慈善机构购买 Pro 或 Business，无论按月还是按年，都可享 {percent, number}% 折扣。请向我们介绍你的组织，我们会通过邮件发送可在结账时输入的折扣码。",
@@ -788,21 +810,6 @@
       "sent": "我们会回复到 {email}，通常在几天内。如果你的组织符合条件，回复中会附上可在结账时输入的折扣码。",
       "close": "关闭",
       "failed": "出错了。请改为发送邮件至 {email}。"
-    },
-    "enterprise": {
-      "name": "Enterprise",
-      "tagline": "适合需要合同和安全评审的企业",
-      "price": "定制",
-      "priceNote": "按年签约，凭发票付款",
-      "cta": "联系我们",
-      "lead": "包含 Business 的全部功能，另加：",
-      "adds": {
-        "contract": "按年签约，凭发票付款",
-        "replies": "二维码失效时，{hours, plural, other {# 个工作小时内回复}}",
-        "review": "解答您的安全评审问题",
-        "selfHost": "在您自己的服务器上使用 SSO 和审计日志"
-      },
-      "security": "QRdx 的安全措施"
     }
   },
   "docs": {

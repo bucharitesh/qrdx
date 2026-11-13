@@ -286,6 +286,13 @@
       "secondary": "Baca dokumentasi",
       "sceneLabel": "Gambar animasi alur QRdx: layar studio merancang dan menata gaya kode QR, printer mencetaknya pada sebuah kartu, lengan robot menaruh kartu itu di ban berjalan, ponsel di gerbang melakukan pemindaian setiap kartu yang lewat, hasil pemindaian dikirim ke panel analitik yang menambahkan satu batang baru, dan sebuah kartu kode QR dinamis berukuran besar mengganti tautan tujuannya tanpa dicetak ulang"
     },
+    "customers": {
+      "eyebrow": "Dipakai oleh",
+      "readStory": "Baca ceritanya",
+      "lines": {
+        "flam": "Flam membuat kode QR bermerek miliknya dengan QRdx."
+      }
+    },
     "editor": {
       "eyebrow": "Coba dengan tautan Anda",
       "description": "Renderer yang sama dengan Playground, langsung berubah saat Anda mengetik.",
@@ -772,6 +779,21 @@
       "signIn": "Masuk untuk meminta faktur",
       "signInNote": "Kami mengirim faktur untuk workspace akun Anda, jadi masuk terlebih dahulu."
     },
+    "enterprise": {
+      "name": "Enterprise",
+      "tagline": "Untuk perusahaan yang membutuhkan kontrak dan tinjauan keamanan",
+      "price": "Khusus",
+      "priceNote": "Kontrak tahunan, dibayar dengan faktur",
+      "cta": "Hubungi kami",
+      "lead": "Semua fitur Business, ditambah:",
+      "adds": {
+        "contract": "Kontrak tahunan, dibayar dengan faktur",
+        "replies": "Balasan dalam {hours, plural, other {# jam kerja}} saat kode berhenti berfungsi",
+        "review": "Jawaban untuk tinjauan keamanan Anda",
+        "selfHost": "SSO dan log audit di server Anda sendiri"
+      },
+      "security": "Keamanan di QRdx"
+    },
     "nonprofit": {
       "title": "Diskon untuk nirlaba",
       "description": "Organisasi nirlaba dan lembaga amal terdaftar mendapat diskon {percent, number}% untuk Pro atau Business, bulanan maupun tahunan. Ceritakan tentang organisasi Anda dan kami akan mengirim kode diskon lewat email untuk dimasukkan saat pembayaran.",
@@ -788,21 +810,6 @@
       "sent": "Kami akan membalas ke {email}, biasanya dalam beberapa hari. Jika organisasi Anda memenuhi syarat, balasan tersebut berisi kode diskon untuk dimasukkan saat pembayaran.",
       "close": "Tutup",
       "failed": "Terjadi kesalahan. Kirim email ke {email} saja."
-    },
-    "enterprise": {
-      "name": "Enterprise",
-      "tagline": "Untuk perusahaan yang membutuhkan kontrak dan tinjauan keamanan",
-      "price": "Khusus",
-      "priceNote": "Kontrak tahunan, dibayar dengan faktur",
-      "cta": "Hubungi kami",
-      "lead": "Semua fitur Business, ditambah:",
-      "adds": {
-        "contract": "Kontrak tahunan, dibayar dengan faktur",
-        "replies": "Balasan dalam {hours, plural, other {# jam kerja}} saat kode berhenti berfungsi",
-        "review": "Jawaban untuk tinjauan keamanan Anda",
-        "selfHost": "SSO dan log audit di server Anda sendiri"
-      },
-      "security": "Keamanan di QRdx"
     }
   },
   "docs": {

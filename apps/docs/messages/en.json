@@ -287,6 +287,13 @@
       "secondary": "Read the docs",
       "sceneLabel": "Animated drawing of the QRdx flow: a studio screen designs and styles a QR code, a printer prints it on a card, a robot arm places the card on a conveyor, a phone on a gate scans each card as it passes, the scan travels to an analytics panel that adds a new bar, and a large dynamic QR card swaps its destination link without being reprinted"
     },
+    "customers": {
+      "eyebrow": "Used by",
+      "readStory": "Read the story",
+      "lines": {
+        "flam": "Flam makes its branded QR codes with QRdx."
+      }
+    },
     "editor": {
       "eyebrow": "Try it with your link",
       "description": "Same renderer as the playground, live as you type.",

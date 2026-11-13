@@ -8,6 +8,7 @@ import { FeatureRowsSection } from "@/components/sections/home/feature-rows-sect
 import { GallerySection } from "@/components/sections/home/gallery-section";
 import { HomeNumbers } from "@/components/sections/home/numbers/home-numbers";
 import { UseCasesSection } from "@/components/sections/home/use-cases-section";
+import { UsedBySection } from "@/components/sections/home/used-by-section";
 import { isArtAvailable } from "@/lib/ai/art-availability";
 import { isFeatureAvailable } from "@/lib/feature-availability";
 import { localizedMetadata } from "@/lib/i18n/metadata";
@@ -175,6 +176,8 @@ export default async function Home() {
       />
       <main className="flex flex-col items-center justify-center divide-y divide-border min-h-screen w-full">
         <HeroSection />
+        {/* Off until a customer is published in lib/customers.ts. */}
+        <UsedBySection />
         <GallerySection />
         <UseCasesSection />
         <AsciiDivider />
