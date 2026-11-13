@@ -8,7 +8,12 @@ import { describe, expect, it } from "vitest";
 
 const require = createRequire(import.meta.url);
 const { shouldSkip } = require("../../scripts/skip-ci.js") as {
-  shouldSkip: (input: { message: string; env?: string; branch?: string }) => {
+  shouldSkip: (input: {
+    message: string;
+    env?: string;
+    branch?: string;
+    changedFiles?: string[] | null;
+  }) => {
     skip: boolean;
     reason: string;
   };
@@ -37,6 +42,34 @@ describe("skip-ci", () => {
       shouldSkip({ message: "feat: x", env: "preview", branch: "preview/x" })
         .skip,
     ).toBe(false);
+  });
+
+  it("skips a change to the docs site alone, production included", () => {
+    const production = {
+      message: "Merge release",
+      env: "production",
+      branch: "main",
+    };
+    expect(
+      shouldSkip({
+        ...production,
+        changedFiles: [
+          "apps/docs-site/app/robots.ts",
+          ".github/workflows/docs-deploy.yml",
+        ],
+      }).skip,
+    ).toBe(true);
+    // Anything else the main app might use builds.
+    for (const changedFiles of [
+      ["apps/docs-site/app/robots.ts", "apps/docs/content/docs/index.mdx"],
+      ["apps/docs-site/package.json", "bun.lock"],
+      ["packages/next-config/docs-zone.ts"],
+      // No previous deployment, or git couldn't tell.
+      [],
+      null,
+    ]) {
+      expect(shouldSkip({ ...production, changedFiles }).skip).toBe(false);
+    }
   });
 
   it("skips anything with [skip ci], production included", () => {
