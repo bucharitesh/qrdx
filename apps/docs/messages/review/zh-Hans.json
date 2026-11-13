@@ -26670,5 +26670,49 @@
   "codeBuilder.formBanner.upgrade": {
     "source": "7ec0261b8e8a",
     "status": "machine"
+  },
+  "app.shell.whatsNew.newFeatures": {
+    "source": "77c26dac9096",
+    "status": "machine"
+  },
+  "app.shell.whatsNew.dismissTitle": {
+    "source": "d4d093af8c7f",
+    "status": "machine"
+  },
+  "app.shell.whatsNew.previousUpdate": {
+    "source": "fa59c435bde3",
+    "status": "machine"
+  },
+  "app.shell.whatsNew.nextUpdate": {
+    "source": "2ae2d4056e8d",
+    "status": "machine"
+  },
+  "app.shell.whatsNew.positionOfTotal": {
+    "source": "dc277926a025",
+    "status": "machine"
+  },
+  "app.shell.whatsNew.readOnTheChangelog": {
+    "source": "2f8f4b221a0b",
+    "status": "machine"
+  },
+  "app.shell.whatsNew.tryIt": {
+    "source": "fe6951113784",
+    "status": "machine"
+  },
+  "app.shell.whatsNew.close": {
+    "source": "7d9eb7acb13e",
+    "status": "machine"
+  },
+  "app.shell.spotlight.new": {
+    "source": "18fdd549b2ed",
+    "status": "machine"
+  },
+  "app.shell.spotlight.gotIt": {
+    "source": "5ad3dbd1242a",
+    "status": "machine"
+  },
+  "app.settings.account.twoFactorSettings.passkeySpotlight": {
+    "source": "7ba7ffc49846",
+    "status": "machine"
   }
 }

@@ -35,6 +35,18 @@ export interface UserSettings {
    * (apps/docs/actions/changelog.ts). Written by the app only.
    */
   changelogSeenAt?: string;
+  /**
+   * "What's new": changelog entries the person is done with (a dismissed
+   * card, a closed announcement), newest last, at most 50. Written by the
+   * app only (apps/docs/actions/changelog.ts).
+   */
+  whatsNewDismissed?: string[];
+  /**
+   * Feature spotlights the person dismissed or used (ids from
+   * apps/docs/lib/spotlights.ts), newest last, at most 50. Written by the
+   * app only (apps/docs/actions/spotlights.ts).
+   */
+  spotlightsSeen?: string[];
 }
 
 export const page = pgTable("page", {

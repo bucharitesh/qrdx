@@ -5381,7 +5381,8 @@
           "afterYouSignInPasskeyOrApp": "Après votre connexion, QRdx vous demande votre clé d’accès ou un code de votre application d’authentification. Un code de secours fonctionne aussi.",
           "afterYouSignInPasskey": "Après votre connexion, QRdx vous demande votre clé d’accès. Un code de secours fonctionne aussi.",
           "afterYouSignInApp": "Après votre connexion, QRdx vous demande un code de votre application d’authentification. Un code de secours fonctionne aussi.",
-          "afterYouSignInQrdx2": "Après votre connexion, QRdx demande un code de secours."
+          "afterYouSignInQrdx2": "Après votre connexion, QRdx demande un code de secours.",
+          "passkeySpotlight": "Une clé d’accès peut désormais servir de seconde étape, à la place d’un code d’authentification."
         },
         "twoFactorSetupDialog": {
           "stepStepnumberOfLength": "Étape {stepNumber, number} sur {length, number}",
@@ -8006,7 +8007,19 @@
         "new": "Nouveau",
         "whatsNew": "Nouveautés",
         "newFeaturesAndFixesIn": "Nouvelles fonctionnalités et corrections dans QRdx.",
-        "seeAllUpdates": "Voir toutes les nouveautés"
+        "seeAllUpdates": "Voir toutes les nouveautés",
+        "newFeatures": "Nouveautés",
+        "dismissTitle": "Fermer {title}",
+        "previousUpdate": "Mise à jour précédente",
+        "nextUpdate": "Mise à jour suivante",
+        "positionOfTotal": "{position, number} sur {total, number}",
+        "readOnTheChangelog": "Lire le journal des modifications",
+        "tryIt": "Essayer",
+        "close": "Fermer"
+      },
+      "spotlight": {
+        "new": "Nouveau",
+        "gotIt": "Compris"
       }
     },
     "workspaces": {

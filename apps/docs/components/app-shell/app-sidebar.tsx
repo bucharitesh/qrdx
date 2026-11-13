@@ -48,6 +48,7 @@ import {
 import { isNavItemActive } from "./nav-config";
 import type { ShellData } from "./shell-data";
 import { useWhatsNew } from "./whats-new";
+import { WhatsNewCards } from "./whats-new-cards";
 
 // The focus ring is inset: the area panels clip their sides (they slide),
 // and an outside ring would be cut off there. Keyboard focus only.
@@ -422,8 +423,8 @@ function WhatsNewRow({
  * (nav-areas.ts) are the dashboard, Codes, Pages & forms and Settings; the
  * URL picks the open one, and changing it slides the panels sideways
  * (deeper from the right, back from the left; instant with reduced
- * motion). The collapse toggle, What's new and the workspace switcher stay
- * put in every area. `collapsed` turns it into an icon rail (desktop only).
+ * motion). The collapse toggle, What's new (with its feature cards) and the
+ * workspace switcher stay put in every area. `collapsed` turns it into an icon rail (desktop only).
  * Without shell data (signed out, or the lookup failed) only the account
  * settings are listed.
  */
@@ -554,6 +555,7 @@ export function AppSidebar({
           collapsed ? "items-center px-2" : "px-2.5",
         )}
       >
+        {!collapsed && <WhatsNewCards onNavigate={onNavigate} />}
         <WhatsNewRow collapsed={collapsed} onNavigate={onNavigate} />
         {shell && limitWarnings && (
           <Suspense fallback={null}>

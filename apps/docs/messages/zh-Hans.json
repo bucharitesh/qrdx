@@ -5381,7 +5381,8 @@
           "afterYouSignInPasskeyOrApp": "登录后，QRdx 会要求你提供通行密钥，或身份验证器应用中的验证码。使用备用码也可以。",
           "afterYouSignInPasskey": "登录后，QRdx 会要求你提供通行密钥。使用备用码也可以。",
           "afterYouSignInApp": "登录后，QRdx 会要求你输入身份验证器应用中的验证码。使用备用码也可以。",
-          "afterYouSignInQrdx2": "登录后，QRdx 会要求输入备用码。"
+          "afterYouSignInQrdx2": "登录后，QRdx 会要求输入备用码。",
+          "passkeySpotlight": "现在可以用通行密钥作为第二步验证，不必再输入验证器代码。"
         },
         "twoFactorSetupDialog": {
           "stepStepnumberOfLength": "第 {stepNumber, number} 步，共 {length, number} 步",
@@ -8006,7 +8007,19 @@
         "new": "新",
         "whatsNew": "新功能",
         "newFeaturesAndFixesIn": "QRdx 的新功能和修复。",
-        "seeAllUpdates": "查看全部更新"
+        "seeAllUpdates": "查看全部更新",
+        "newFeatures": "新功能",
+        "dismissTitle": "关闭{title}",
+        "previousUpdate": "上一条更新",
+        "nextUpdate": "下一条更新",
+        "positionOfTotal": "第 {position, number} 条，共 {total, number} 条",
+        "readOnTheChangelog": "在更新日志中阅读",
+        "tryIt": "试一试",
+        "close": "关闭"
+      },
+      "spotlight": {
+        "new": "新",
+        "gotIt": "知道了"
       }
     },
     "workspaces": {

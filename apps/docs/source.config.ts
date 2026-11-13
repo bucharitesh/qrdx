@@ -76,6 +76,30 @@ export const changelog = defineDocs({
           }),
         )
         .optional(),
+      /**
+       * A 16:9 picture (1600×900): a site path such as
+       * /changelog/<slug>/cover.webp, or a media key (lib/media.ts). Entries
+       * with one show as cards in the app's sidebar and on /changelogs.
+       */
+      image: z.string().optional(),
+      /** The picture in the dark theme */
+      imageDark: z.string().optional(),
+      /** What the picture shows */
+      imageAlt: z.string().optional(),
+      /** A clip's media key (/videos/…, served through lib/media.ts) */
+      video: z.string().optional(),
+      /** "Try it" in the app's modal; an in-app path */
+      cta: z
+        .object({
+          label: z.string().optional(),
+          href: z.string().regex(/^\/(?!\/)/, "an in-app path, like /settings"),
+        })
+        .optional(),
+      /**
+       * Opens the entry in the app once by itself, for people who joined
+       * before it (components/app-shell/whats-new.tsx). One per release.
+       */
+      announce: z.boolean().optional(),
     }),
   },
 });
