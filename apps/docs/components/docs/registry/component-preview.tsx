@@ -10,7 +10,7 @@ import { readRegistrySource } from "./registry-data";
 import { RegistryExample } from "./registry-example";
 
 interface ComponentPreviewProps {
-  /** File name in apps/docs/registry/examples, without extension. */
+  /** File name in packages/docs-assets/registry/examples, without extension. */
   name: string;
   /** Vertical placement of the example on the stage. */
   align?: "center" | "start";

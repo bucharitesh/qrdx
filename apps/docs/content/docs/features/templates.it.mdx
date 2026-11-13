@@ -1,19 +1,19 @@
 ---
 title: "Template"
-description: "Applica template di cornice predefiniti a un QR code, oppure registra i tuoi."
+description: "Applica template di cornice già pronti a un QR code, oppure registra i tuoi."
 icon: LayoutTemplate
 ---
 
-Racchiudi un QR code in una grafica già pronta, oppure nella tua.
+Avvolgi un QR code in una grafica già pronta, oppure nella tua.
 
 ## Che cosa sono i template? [#what-are-templates]
 
-Un template è una grafica SVG disegnata attorno al codice: un riquadro, un bordo, un badge. Riceve il codice come `children` e lo posiziona all'interno del proprio disegno. Colori, pattern e loghi restano nelle prop di `QRCode`, quindi un template funziona con qualsiasi stile.
+Un template è una grafica SVG disegnata attorno al codice: un riquadro, un bordo, un badge. Riceve il codice come `children` e lo inserisce nel proprio disegno. Colori, pattern e loghi restano nelle prop di `QRCode`, quindi un template funziona con qualsiasi stile.
 
 ## Template disponibili [#available-templates]
 
 ### Default [#default]
-Classico in bianco e nero.
+Classico bianco e nero.
 
 ```tsx
 import { QRCode } from 'qrdx';
@@ -56,9 +56,56 @@ Tema stagionale di Halloween.
 <QRCode value="https://example.com" templateId="Halloween" size={256} />
 ```
 
+### Dot Ring [#dot-ring]
+Un codice rotondo. Il codice sta in un disco di punti all'interno di un anello scuro, con una riga di testo disposta lungo l'anello. I punti visibili derivano da un hash del contenuto del codice, quindi ogni link ottiene un anello tutto suo e lo stesso link ottiene sempre lo stesso anello.
+
+```tsx
+<QRCode
+  value="https://example.com"
+  templateId="DotRing"
+  bodyPattern="circle-large"
+  size={512}
+/>
+```
+
+Le sue impostazioni vanno in `customProps` (di tipo `DotRingProps`):
+
+```tsx
+<QRCode
+  value="https://example.com"
+  templateId="DotRing"
+  customProps={{
+    customText: "Scan for the menu",
+    textPosition: "bottom",
+    textColor: "#fde047",
+    outerCircleColor: "#1e3a8a",
+  }}
+  size={512}
+/>
+```
+
+| Prop | Predefinito | Note |
+| --- | --- | --- |
+| `customText` | "Scan the QR code" ripetuto quattro volte attorno all'anello | Testo lungo l'anello. Le lettere che non entrano vengono omesse; `""` lascia l'anello vuoto |
+| `textPosition` | `"top"` | `"top"`: centrato in alto, con lettura in senso orario. `"bottom"`: centrato in basso, con lettura da sinistra a destra |
+| `textRotation` | `0` | Ruota il testo attorno al centro, in gradi |
+| `textColor` | `#ffffff` | Colore del testo |
+| `fontFamily` | stack di font di sistema | Famiglia di font CSS del testo |
+| `fontWeight` | `900` | Spessore del carattere |
+| `fontSize` | `32` | Nel disegno del template di 593 unità, dove il codice misura 300 di larghezza |
+| `fontLetterSpacing` | `3.5` | Spazio extra tra le lettere, nelle stesse unità |
+| `outerCircleColor` | `fgColor` | Colore dell'anello |
+| `strokeWidth`, `strokeColor` | `0`, `#000000` | Un contorno lungo entrambi i bordi dell'anello |
+| `outerStrokeWidth`, `outerStrokeColor` | `strokeWidth`, `strokeColor` | Solo il bordo esterno dell'anello |
+| `innerStrokeWidth`, `innerStrokeColor` | `strokeWidth`, `strokeColor` | Solo il bordo interno dell'anello |
+
+Un logo va al centro come su qualsiasi codice. I link lunghi (codici larghi più di 49 moduli) mantengono una fascia chiara tra il codice e i punti, così la scansione funziona anche quando vengono stampati in piccolo.
+
+Il testo è testo SVG nel font che scegli; quello predefinito è lo stack di font di sistema, quindi non viene scaricato nulla. I download SVG e PNG nel browser usano i font di chi visualizza. PDF ed EPS lo stampano in Helvetica Bold, quindi usa testo Latin-1. `getQRAsPNG` di `qrdx/node` richiede un font installato sul server, come le etichette delle cornici.
+
 ## Personalizzare i template [#customize-templates]
 
-I template integrati disegnano la loro grafica con `fgColor`. Tutto il resto, come i pattern e un logo, si imposta sul codice come al solito:
+I template integrati disegnano la loro grafica in `fgColor`. Tutto il resto, come i pattern e un logo, si imposta sul codice come al solito:
 
 ```tsx
 <QRCode
@@ -96,7 +143,7 @@ const ids = getTemplateIds();
 
 ## Template personalizzati [#custom-templates]
 
-Scrivi il tuo template come `TemplateDefinition`. Il suo `wrapper` riceve il codice come `children` e restituisce l'SVG da disegnare. Disegna su una tela di 300 per 300 e anche il codice arriva con queste dimensioni, quindi riducilo per lasciare spazio alla tua grafica. `props` contiene `fgColor` e `bgColor` del codice.
+Scrivi il tuo template come `TemplateDefinition`. Il suo `wrapper` riceve il codice come `children` e restituisce l'SVG da disegnare. Disegna su una tela di 300 per 300 e anche il codice arriva con quelle dimensioni, quindi ridimensionalo per lasciare spazio alla tua grafica. `props` contiene `fgColor` e `bgColor` del codice.
 
 Questo esempio disegna un anello attorno al codice:
 
@@ -149,8 +196,9 @@ Mantieni il codice abbastanza grande da poter essere scansionato dalla distanza 
 | Square Border | Formale | Strutturata |
 | Striked Box | Marketing | Energica |
 | Halloween | Stagionale | Divertente |
+| Dot Ring | Codici rotondi, poster, adesivi | Audace |
 
-## Passi successivi [#next-steps]
+## Prossimi passi [#next-steps]
 
 - [Pattern](/docs/features/patterns) — Personalizzazione dettagliata dei pattern
 - [Colori e gradienti](/docs/features/colors-gradients) — Colori avanzati

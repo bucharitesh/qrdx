@@ -277,7 +277,8 @@
                 "StandardBox",
                 "SquareBorder",
                 "StrikedBox",
-                "Halloween"
+                "Halloween",
+                "DotRing"
               ]
             }
           },
