@@ -1,25 +1,22 @@
-// The snapshot of lib/product-facts.ts that @repo/config/facts reads, for
-// apps that can't import this one (the docs site). scripts/facts-snapshot.ts
-// writes it (`bun run --filter docs facts:snapshot`) and
-// tests/lib/product-facts-snapshot.test.ts fails while the committed copy
-// differs from what this returns.
+// The snapshot of lib/product-facts.ts that another app (the docs site) reads
+// through @repo/config/facts. scripts/facts-snapshot.ts writes it
+// (`bun run --filter docs facts:snapshot`) right before that app builds; it
+// isn't committed, so it's always made from the current code.
 
+import type { FactsSnapshot } from "@repo/config/facts";
 import { PRODUCT_FACTS, STYLE_SUMMARY } from "@/lib/product-facts";
 
-/** Where the snapshot lives, from the repository root. */
-export const FACTS_SNAPSHOT_FILE = "packages/config/facts.generated.json";
-
-/** Keys in code point order, so moving a fact in the source doesn't churn the file. */
+/** Keys in code point order, so the file's layout doesn't depend on source order. */
 const sortedKeys = <T extends object>(record: T): T =>
   Object.fromEntries(
     Object.entries(record).sort(([a], [b]) => (a < b ? -1 : 1)),
   ) as T;
 
-/** The file's contents: two-space JSON with a trailing newline. */
+/** The snapshot's contents: two-space JSON with a trailing newline. */
 export function productFactsSnapshot(): string {
-  const snapshot = {
+  const snapshot: FactsSnapshot & { $comment: string } = {
     $comment:
-      "Written by `bun run --filter docs facts:snapshot` from apps/docs/lib/product-facts.ts. Don't edit it by hand.",
+      "Written by `bun run --filter docs facts:snapshot` from apps/docs/lib/product-facts.ts before the docs site builds. Not committed.",
     facts: sortedKeys(PRODUCT_FACTS),
     styleSummary: STYLE_SUMMARY,
   };
