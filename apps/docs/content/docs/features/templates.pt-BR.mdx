@@ -4,11 +4,11 @@ description: "Aplique templates de moldura pré-desenhados a um QR code ou regis
 icon: LayoutTemplate
 ---
 
-Aplique estilos profissionais de QR code instantaneamente.
+Envolva um QR code em uma arte pronta ou na sua própria.
 
 ## O que são templates? [#what-are-templates]
 
-Os templates combinam cores, padrões e estilos visuais em pacotes prontos para usar.
+Um template é uma arte em SVG desenhada ao redor do código: uma caixa, uma borda, um selo. Ele recebe o código como `children` e o posiciona dentro do próprio desenho. Cores, padrões e logos continuam nas props do `QRCode`, então um template funciona com qualquer estilo.
 
 ## Templates disponíveis [#available-templates]
 
@@ -56,17 +56,21 @@ Tema sazonal de Halloween.
 <QRCode value="https://example.com" templateId="Halloween" size={256} />
 ```
 
-## Personalizar templates [#customize-templates]
+## Personalize os templates [#customize-templates]
 
-Substitua os padrões do template:
+Os templates integrados desenham a arte em `fgColor`. Todo o resto, como padrões e logo, é definido no código normalmente:
 
 ```tsx
 <QRCode
   value="https://example.com"
   templateId="Arrow"
-  fgColor="#your-brand-color"
-  hideLogo={false}
-  logo="/your-logo.png"
+  fgColor="#1a56db"
+  imageSettings={{
+    src: "/your-logo.png",
+    width: 48,
+    height: 48,
+    excavate: true,
+  }}
   size={512}
 />
 ```
@@ -92,34 +96,46 @@ const ids = getTemplateIds();
 
 ## Templates personalizados [#custom-templates]
 
-Crie os seus próprios templates:
+Escreva seu próprio template como um `TemplateDefinition`. O `wrapper` dele recebe o código como `children` e retorna o SVG a ser desenhado. Ele desenha em um canvas de 300 por 300, e o código chega nesse mesmo tamanho, então reduza-o para deixar espaço para a sua arte. `props` traz o `fgColor` e o `bgColor` do código.
+
+Este desenha um anel ao redor do código:
 
 ```tsx
-const brandTemplate = {
-  id: 'brand-template',
-  name: 'Brand Template',
-  colors: {
-    fgColor: '#1a56db',
-    bgColor: '#ffffff',
-    eyeColor: '#0d47a1',
-    dotColor: '#3b82f6'
-  },
-  bodyPattern: 'rounded',
-  cornerEyePattern: 'rounded',
-  cornerEyeDotPattern: 'rounded'
+import { QRCode, type TemplateDefinition } from "qrdx";
+
+const ringTemplate: TemplateDefinition = {
+  id: "ring",
+  name: "Ring",
+  wrapper: (children, props) => (
+    <svg viewBox="0 0 300 300" width="300" height="300" xmlns="http://www.w3.org/2000/svg">
+      <circle
+        cx="150"
+        cy="150"
+        r="140"
+        fill="none"
+        stroke={props?.fgColor ?? "#000000"}
+        strokeWidth="8"
+      />
+      {/* The code at half size, centered */}
+      <g transform="translate(75, 75) scale(0.5)">{children}</g>
+    </svg>
+  ),
 };
 
 <QRCode
   value="https://example.com"
-  customTemplate={brandTemplate}
+  customTemplate={ringTemplate}
+  fgColor="#1a56db"
   size={256}
 />
 ```
 
+Mantenha o código grande o bastante para ser lido de onde as pessoas vão segurar o celular e deixe um espaço claro entre ele e a sua arte. Confira o resultado com a [pontuação de leitura](/docs/features/frames#will-it-scan).
+
 ## Quando usar templates [#when-to-use-templates]
 
 - **Consistência de marca** — Garanta que todos os QR codes combinem
-- **Configuração rápida** — Obtenha resultados profissionais rapidamente
+- **Configuração rápida** — Tenha resultados profissionais rapidamente
 - **Campanhas sazonais** — Use templates temáticos
 - **Geração em lote** — Aplique estilos consistentes
 

@@ -4,11 +4,11 @@ description: Apply pre-designed frame templates to a QR code, or register your o
 icon: LayoutTemplate
 ---
 
-Apply professional QR code styles instantly.
+Wrap a QR code in ready-made artwork, or in your own.
 
 ## What Are Templates?
 
-Templates combine colors, patterns, and visual styles into ready-to-use packages.
+A template is SVG artwork drawn around the code: a box, a border, a badge. It gets the code as `children` and places it inside its own drawing. Colors, patterns and logos stay on the `QRCode` props, so a template works with any style.
 
 ## Available Templates
 
@@ -58,15 +58,19 @@ Seasonal Halloween theme.
 
 ## Customize Templates
 
-Override template defaults:
+The built-in templates draw their artwork in `fgColor`. Everything else, such as patterns and a logo, is set on the code as usual:
 
 ```tsx
 <QRCode
   value="https://example.com"
   templateId="Arrow"
-  fgColor="#your-brand-color"
-  hideLogo={false}
-  logo="/your-logo.png"
+  fgColor="#1a56db"
+  imageSettings={{
+    src: "/your-logo.png",
+    width: 48,
+    height: 48,
+    excavate: true,
+  }}
   size={512}
 />
 ```
@@ -92,29 +96,41 @@ const ids = getTemplateIds();
 
 ## Custom Templates
 
-Create your own templates:
+Write your own template as a `TemplateDefinition`. Its `wrapper` gets the code as `children` and returns the SVG to draw. It draws on a 300 by 300 canvas, and the code arrives at that size too, so scale it down to leave room for your artwork. `props` carries the code's `fgColor` and `bgColor`.
+
+This one draws a ring around the code:
 
 ```tsx
-const brandTemplate = {
-  id: 'brand-template',
-  name: 'Brand Template',
-  colors: {
-    fgColor: '#1a56db',
-    bgColor: '#ffffff',
-    eyeColor: '#0d47a1',
-    dotColor: '#3b82f6'
-  },
-  bodyPattern: 'rounded',
-  cornerEyePattern: 'rounded',
-  cornerEyeDotPattern: 'rounded'
+import { QRCode, type TemplateDefinition } from "qrdx";
+
+const ringTemplate: TemplateDefinition = {
+  id: "ring",
+  name: "Ring",
+  wrapper: (children, props) => (
+    <svg viewBox="0 0 300 300" width="300" height="300" xmlns="http://www.w3.org/2000/svg">
+      <circle
+        cx="150"
+        cy="150"
+        r="140"
+        fill="none"
+        stroke={props?.fgColor ?? "#000000"}
+        strokeWidth="8"
+      />
+      {/* The code at half size, centered */}
+      <g transform="translate(75, 75) scale(0.5)">{children}</g>
+    </svg>
+  ),
 };
 
 <QRCode
   value="https://example.com"
-  customTemplate={brandTemplate}
+  customTemplate={ringTemplate}
+  fgColor="#1a56db"
   size={256}
 />
 ```
+
+Keep the code large enough to scan from where people will hold their phones, and leave a light gap between it and your artwork. Check the result with the [scan score](/docs/features/frames#will-it-scan).
 
 ## When to Use Templates
 

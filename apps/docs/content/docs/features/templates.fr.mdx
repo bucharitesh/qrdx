@@ -4,11 +4,11 @@ description: "Appliquez à un QR code des modèles de cadre prédéfinis, ou enr
 icon: LayoutTemplate
 ---
 
-Appliquez instantanément des styles de QR code professionnels.
+Entourez un QR code d'un habillage prêt à l'emploi, ou du vôtre.
 
 ## Que sont les modèles ? [#what-are-templates]
 
-Les modèles réunissent couleurs, motifs et styles visuels dans des ensembles prêts à l'emploi.
+Un modèle est un habillage SVG dessiné autour du code : une boîte, une bordure, un badge. Il reçoit le code en tant que `children` et le place à l'intérieur de son propre dessin. Les couleurs, les motifs et les logos restent définis dans les props de `QRCode`, de sorte qu'un modèle fonctionne avec n'importe quel style.
 
 ## Modèles disponibles [#available-templates]
 
@@ -36,7 +36,7 @@ Design net et structuré.
 ```
 
 ### Square Border [#square-border]
-Design encadré aux bords bien définis.
+Design bordé aux contours bien définis.
 
 ```tsx
 <QRCode value="https://example.com" templateId="SquareBorder" size={256} />
@@ -58,15 +58,19 @@ Thème saisonnier d'Halloween.
 
 ## Personnaliser les modèles [#customize-templates]
 
-Remplacez les valeurs par défaut d'un modèle :
+Les modèles intégrés dessinent leur habillage avec `fgColor`. Tout le reste, comme les motifs et un logo, se définit sur le code de la manière habituelle :
 
 ```tsx
 <QRCode
   value="https://example.com"
   templateId="Arrow"
-  fgColor="#your-brand-color"
-  hideLogo={false}
-  logo="/your-logo.png"
+  fgColor="#1a56db"
+  imageSettings={{
+    src: "/your-logo.png",
+    width: 48,
+    height: 48,
+    excavate: true,
+  }}
   size={512}
 />
 ```
@@ -81,7 +85,7 @@ import { getAllTemplates } from 'qrdx';
 const templates = getAllTemplates();
 ```
 
-### Obtenir les identifiants des modèles [#get-template-ids]
+### Obtenir les ID des modèles [#get-template-ids]
 
 ```tsx
 import { getTemplateIds } from 'qrdx';
@@ -92,45 +96,57 @@ const ids = getTemplateIds();
 
 ## Modèles personnalisés [#custom-templates]
 
-Créez vos propres modèles :
+Écrivez votre propre modèle sous la forme d'un `TemplateDefinition`. Son `wrapper` reçoit le code en tant que `children` et renvoie le SVG à dessiner. Il dessine sur un canevas de 300 par 300, et le code arrive lui aussi à cette taille : réduisez-le donc pour laisser de la place à votre habillage. `props` contient les valeurs `fgColor` et `bgColor` du code.
+
+Cet exemple dessine un anneau autour du code :
 
 ```tsx
-const brandTemplate = {
-  id: 'brand-template',
-  name: 'Brand Template',
-  colors: {
-    fgColor: '#1a56db',
-    bgColor: '#ffffff',
-    eyeColor: '#0d47a1',
-    dotColor: '#3b82f6'
-  },
-  bodyPattern: 'rounded',
-  cornerEyePattern: 'rounded',
-  cornerEyeDotPattern: 'rounded'
+import { QRCode, type TemplateDefinition } from "qrdx";
+
+const ringTemplate: TemplateDefinition = {
+  id: "ring",
+  name: "Ring",
+  wrapper: (children, props) => (
+    <svg viewBox="0 0 300 300" width="300" height="300" xmlns="http://www.w3.org/2000/svg">
+      <circle
+        cx="150"
+        cy="150"
+        r="140"
+        fill="none"
+        stroke={props?.fgColor ?? "#000000"}
+        strokeWidth="8"
+      />
+      {/* The code at half size, centered */}
+      <g transform="translate(75, 75) scale(0.5)">{children}</g>
+    </svg>
+  ),
 };
 
 <QRCode
   value="https://example.com"
-  customTemplate={brandTemplate}
+  customTemplate={ringTemplate}
+  fgColor="#1a56db"
   size={256}
 />
 ```
 
+Gardez le code assez grand pour qu'il soit scannable à la distance où les gens tiendront leur téléphone, et laissez un espace clair entre le code et votre habillage. Vérifiez le résultat avec le [score de scan](/docs/features/frames#will-it-scan).
+
 ## Quand utiliser les modèles [#when-to-use-templates]
 
-- **Cohérence de marque** — Assurez-vous que tous les QR codes sont harmonisés
-- **Configuration rapide** — Obtenez rapidement des résultats professionnels
+- **Cohérence de marque** — Assurez-vous que tous vos QR codes se ressemblent
+- **Configuration rapide** — Obtenez rapidement un résultat professionnel
 - **Campagnes saisonnières** — Utilisez des modèles thématiques
-- **Génération par lot** — Appliquez des styles cohérents
+- **Génération par lots** — Appliquez des styles cohérents
 
 ## Guide de choix d'un modèle [#template-selection-guide]
 
 | Modèle | Idéal pour | Ambiance |
 |----------|----------|------|
-| Default | Usage professionnel | Neutre |
+| Default | Professionnel | Neutre |
 | Arrow | Tech, moderne | Dynamique |
 | Standard Box | Entreprise | Professionnelle |
-| Square Border | Contexte formel | Structurée |
+| Square Border | Formel | Structurée |
 | Striked Box | Marketing | Énergique |
 | Halloween | Saisonnier | Ludique |
 
@@ -138,4 +154,4 @@ const brandTemplate = {
 
 - [Motifs](/docs/features/patterns) — Personnalisation détaillée des motifs
 - [Couleurs et dégradés](/docs/features/colors-gradients) — Couleurs avancées
-- [Logos](/docs/features/logos) — Ajoutez des logos aux modèles
+- [Logos](/docs/features/logos) — Ajouter des logos aux modèles
