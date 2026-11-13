@@ -200,6 +200,41 @@ toSVGString(resolveQRCodeProps({ value: "https://example.com", logo: "/logo.png"
 
 `getQRAsSVGNode(props)` is `getQRAsSVG` without React (it resolves to a tree). [docs/adapters.md](./docs/adapters.md) describes how a framework wrapper should use the core.
 
+## Web component (`qrdx/element`)
+
+`<qrdx-code>` is a custom element on `qrdx/core`: the same SVG as `QRCodeSVG`, in plain HTML or any framework that renders DOM elements (tested in React 19 and Vue 3). It needs no framework.
+
+```html
+<!-- From a CDN, no bundler: registers <qrdx-code> -->
+<script type="module" src="https://cdn.jsdelivr.net/npm/qrdx/dist/element-define.browser.mjs"></script>
+
+<qrdx-code value="https://example.com" size="256" body-pattern="rounded" label="Link to example.com"></qrdx-code>
+```
+
+```js
+import "qrdx/element/define"; // with a bundler: registers <qrdx-code>
+// or pick the tag name: import { defineQRdxCode } from "qrdx/element"; defineQRdxCode("brand-qr");
+
+const qr = document.querySelector("qrdx-code");
+qr.fgColor = { type: "linear", angle: 45, stops: [{ color: "#1d4ed8", offset: 0 }, { color: "#0f172a", offset: 100 }] };
+qr.frame = { style: "banner-bottom", text: "Scan me" };
+qr.props = { margin: 2 }; // every option at once; attributes and named properties win over it
+
+qr.toSVGString(); // the SVG markup
+await qr.toDataURL("png", { size: 1024 }); // "png", "jpg", "webp", "svg", "pdf" or "eps"
+await qr.download({ format: "svg", filename: "menu.svg" });
+```
+
+- **Attributes:** `value`, `size`, `level`, `fg-color`, `bg-color`, `eye-color`, `dot-color`, `body-pattern`, `corner-eye-pattern`, `corner-eye-dot-pattern`, `margin`, `template-id`, `module-scale`, `auto-level`, `shape`, `label`, and `props` (any other option as JSON). Each is also a property with the option's name (`qr.bodyPattern`). Object options (`frame`, gradients, `imageSettings`, `eyeColors`, `art`, `customTemplate`, `customProps`) are properties only.
+- **Updates** are batched: however many changes you make in a row, the code is redrawn once, in a microtask, and only if its markup changed. Properties set before the element is defined are picked up when it is.
+- **Shadow DOM:** the code is drawn in an open shadow root, so page CSS can't restyle its paths by accident. Style it from outside with `qrdx-code::part(svg)`.
+- **Accessibility:** the `<svg>` has `role="img"` and an `aria-label` from `label`, or "QR code". It never falls back to the value, which can hold a Wi-Fi password or contact details.
+- **Errors:** a code that can't be drawn (a value too long for a QR code) fires a `qrdx-error` event, and is logged unless a listener calls `preventDefault()`.
+- **Server rendering:** `toQRdxCodeHTML(options, { label })` returns the element with the code already drawn in a declarative shadow root, so it shows before any script runs. It runs in Node.
+- **Types:** `QRdxCodeElement`, `HTMLElementTagNameMap["qrdx-code"]`, and `QRdxCodeJSXProps` for declaring the element in React's or Preact's JSX (the docs have the snippet).
+
+The full guide, with React and Vue setup: [qrdx.dev/docs/web-component](https://qrdx.dev/docs/web-component).
+
 ## Patterns
 
 See every option drawn live at [qrdx.dev/docs/styles](https://qrdx.dev/docs/styles).
