@@ -14,6 +14,7 @@ import {
   gatewayError,
   imageModelResult,
   installFakeGateway,
+  textOnlyResult,
 } from "../support/fake-gateway";
 
 const FULL = ["profile:read", "themes:read", "codes:read", "codes:write"];
@@ -99,8 +100,12 @@ afterAll(() => {
 });
 
 /** Answers every model call with art painted over the code it was sent. */
+const WRITTEN = "A lantern-lit harbor at dusk, boats resting on still water.";
+
+/** The art model paints the control code; the text model writes WRITTEN. */
 function respondWithArt() {
   gateway.respondWith(async (call) => {
+    if (call.url.endsWith("/language-model")) return textOnlyResult(WRITTEN);
     const control = Buffer.from(
       (call.body.files as { data: string }[])[0]?.data ?? "",
       "base64",
@@ -469,6 +474,30 @@ async function tool(args: Record<string, unknown>, key?: string) {
   };
 }
 
+describe("POST /v1/art without a prompt", () => {
+  it("writes one, paints it and returns it as writtenPrompt", async () => {
+    respondWithArt();
+    const response = await post(body({ prompt: undefined, style: "ink" }));
+    expect(response.status).toBe(200);
+    const { data } = await response.json();
+    expect(data.writtenPrompt).toBe(WRITTEN);
+    expect(gateway.calls.map((call) => call.url.split("/").pop())).toEqual([
+      "language-model",
+      "image-model",
+    ]);
+    expect(usage()).toHaveLength(1);
+  });
+
+  it("leaves writtenPrompt out when a prompt was sent, and rejects unknown looks", async () => {
+    respondWithArt();
+    const { data } = await (await post(body())).json();
+    expect("writtenPrompt" in data).toBe(false);
+    const response = await post(body({ style: "sepia" }));
+    expect(response.status).toBe(400);
+    expect((await response.json()).code).toBe("VALIDATION_ERROR");
+  });
+});
+
 describe("MCP generate_ai_art", () => {
   it("without a key is a 401 tool error that says how to add one", async () => {
     const result = await tool(body());
@@ -509,6 +538,18 @@ describe("MCP generate_ai_art", () => {
       true,
     );
     expect(usage()).toHaveLength(1);
+  });
+
+  it("says what it wrote when the prompt was left out", async () => {
+    respondWithArt();
+    const result = await tool({ text: TEXT, seed: 11 }, KEY);
+    expect(result.isError).toBeFalsy();
+    expect(result.content[0]?.text).toContain(
+      `Description written for you: ${WRITTEN}`,
+    );
+    expect(JSON.parse(result.content[1]?.text ?? "{}").writtenPrompt).toBe(
+      WRITTEN,
+    );
   });
 
   it("encodes a dynamic code by id, and only the key's workspace's", async () => {

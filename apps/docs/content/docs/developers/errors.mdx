@@ -75,6 +75,7 @@ The image API reports query parameters as `{ "param", "message" }` instead of `{
 | 500 | `INTERNAL_ERROR` | Something failed on QRdx's side. It has been logged. | Try again in a moment. If it keeps happening, report it with the time of the request. |
 | 502 | `AI_ART_FAILED` | The image model failed, declined the prompt or returned an image QRdx couldn't read. No AI art credit was used. | Try again, or reword the prompt. The message says what happened. |
 | 502 | `AI_ART_UNSCANNABLE` | The model's image couldn't be made to scan within the QR visibility you chose. No AI art credit was used. | Try again with a higher `visibility`, or another seed. |
+| 502 | `AI_ART_DESCRIBE_FAILED` | You left out `prompt`, and the text model that writes one for you failed. No AI art credit was used. | Try again, or send your own `prompt`. |
 | 503 | `SLUG_UNAVAILABLE` | No free short-link slug could be reserved in time. | Send the same request again. |
 | 503 | `AI_ART_BUSY` | The image model is over capacity right now. No AI art credit was used. | Wait a minute and try again. |
 | 503 | `AI_NOT_CONFIGURED` | AI art isn't set up on this deployment (a self-hosted instance without `AI_GATEWAY_API_KEY`). | Use the hosted QRdx API, or set up Vercel AI Gateway on your instance. |
