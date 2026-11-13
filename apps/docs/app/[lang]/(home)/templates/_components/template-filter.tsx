@@ -2,7 +2,13 @@
 
 import { cn } from "@repo/design-system/lib/utils";
 import { useTranslations } from "next-intl";
-import { type ReactNode, useEffect, useRef, useState } from "react";
+import {
+  type ReactNode,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 
 export interface TemplateFilterType {
   type: string;
@@ -31,16 +37,33 @@ export function TemplateFilter({
 }) {
   const [active, setActive] = useState(ALL);
   const topRef = useRef<HTMLDivElement>(null);
+  // A section chosen by the URL's hash: once the others are hidden, the
+  // browser's jump to its anchor points past the end of the shorter page.
+  const revealHashed = useRef(false);
 
   useEffect(() => {
     const fromHash = () => {
       const hash = decodeURIComponent(window.location.hash.slice(1));
-      setActive(types.some((item) => item.type === hash) ? hash : ALL);
+      const next = types.some((item) => item.type === hash) ? hash : ALL;
+      revealHashed.current = next !== ALL;
+      setActive(next);
     };
     fromHash();
     window.addEventListener("hashchange", fromHash);
     return () => window.removeEventListener("hashchange", fromHash);
   }, [types]);
+
+  // After the other sections are hidden: back up to the chips, with the
+  // chosen section under them, as choosing a chip does.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: runs when the filter changes
+  useLayoutEffect(() => {
+    if (!revealHashed.current) return;
+    revealHashed.current = false;
+    const top = topRef.current;
+    if (top && top.getBoundingClientRect().top < 0) {
+      top.scrollIntoView({ block: "start" });
+    }
+  }, [active]);
 
   const select = (next: string) => {
     setActive(next);

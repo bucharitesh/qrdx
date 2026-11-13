@@ -2455,6 +2455,11 @@
       "viewLabel": "View the {name} demo",
       "view": "View demo",
       "use": "Use template"
+    },
+    "more": {
+      "load": "Load more",
+      "loading": "Loading",
+      "failed": "These templates didn't load."
     }
   },
   "templateDemo": {
@@ -5316,7 +5321,15 @@
       "previous": "Previous",
       "pagePageOfPages": "Page {page, number} of {pages, number}",
       "next": "Next",
-      "pages": "Pages"
+      "pages": "Pages",
+      "loadMore": "Load more",
+      "loading": "Loading",
+      "failed": "The next page didn't load."
+    },
+    "more": {
+      "load": "Load more",
+      "loading": "Loading",
+      "failed": "This part of the page didn't load."
     },
     "licenceConfirm": {
       "licence": "Licence:"

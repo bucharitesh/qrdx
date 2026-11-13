@@ -2,12 +2,14 @@ import { Button } from "@repo/design-system/components/ui/button";
 import { Brush2, Verify } from "iconsax-reactjs";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { CommunityTabs } from "@/components/community/community-tabs";
-import { ItemRow } from "@/components/community/item-card";
+import { DeferredRowCards } from "@/components/community/deferred-community";
+import { ItemRowShell } from "@/components/community/item-card";
 import { AsciiField, Backdrop, MeshGradient } from "@/components/fx";
 import { CommunityWall } from "@/components/showcase/community-wall";
 import { readsDatabaseWhileRendering } from "@/lib/build-without-database";
-import { getCommunityHome } from "@/lib/community/home";
+import { type CommunityHome, getCommunityHome } from "@/lib/community/home";
 import {
   COMMUNITY_LICENSE_NAME,
   COMMUNITY_LICENSE_URL,
@@ -33,7 +35,15 @@ export const metadata: Metadata = createMetadata({
 
 export default async function CommunityPage() {
   await readsDatabaseWhileRendering();
-  const home = await getCommunityHome();
+  const [home, t] = await Promise.all([
+    getCommunityHome(),
+    getTranslations("community.more"),
+  ]);
+  const labels = {
+    load: t("load"),
+    loading: t("loading"),
+    failed: t("failed"),
+  };
 
   return (
     <main className="w-full border-b">
@@ -89,39 +99,64 @@ export default async function CommunityPage() {
         showTemplates={home.templates.length > 0}
       />
 
-      <CommunityWall />
+      <CommunityWall labels={labels} />
 
+      {/* Under the wall, far from the first screen: each row's cards load
+          as it nears the screen (components/community/deferred-community). */}
       <div className="mx-auto max-w-6xl space-y-12 px-4 py-10 sm:px-6">
-        <ItemRow
-          badge={
-            <Verify aria-label="Verified" className="size-4" variant="Bold" />
-          }
-          cards={home.official}
-          href="/community/frames"
-          title="From QRdx"
-        />
-        <ItemRow cards={home.featured} title="Staff picks" />
-        <ItemRow
-          cards={home.collections}
-          href="/community/collections"
-          title="Collections"
-        />
-        <ItemRow
-          cards={home.themes}
-          href="/community/themes"
-          title="Popular themes"
-        />
-        <ItemRow
-          cards={home.fresh}
-          href="/community/frames?from=community"
-          title="New frames from the community"
-        />
-        <ItemRow
-          cards={home.templates}
-          href="/community/templates"
-          title="New page templates"
-        />
+        {ROWS.map((row) =>
+          home[row.name].length === 0 ? null : (
+            <ItemRowShell
+              badge={
+                row.verified ? (
+                  <Verify
+                    aria-label="Verified"
+                    className="size-4"
+                    variant="Bold"
+                  />
+                ) : undefined
+              }
+              href={row.href}
+              key={row.name}
+              title={row.title}
+            >
+              <DeferredRowCards
+                count={home[row.name].length}
+                labels={labels}
+                row={row.name}
+              />
+            </ItemRowShell>
+          ),
+        )}
       </div>
     </main>
   );
 }
+
+/** The overview's rows of cards, in order (lib/community/home.ts). */
+const ROWS: {
+  name: keyof CommunityHome;
+  title: string;
+  href?: string;
+  verified?: boolean;
+}[] = [
+  {
+    name: "official",
+    title: "From QRdx",
+    href: "/community/frames",
+    verified: true,
+  },
+  { name: "featured", title: "Staff picks" },
+  { name: "collections", title: "Collections", href: "/community/collections" },
+  { name: "themes", title: "Popular themes", href: "/community/themes" },
+  {
+    name: "fresh",
+    title: "New frames from the community",
+    href: "/community/frames?from=community",
+  },
+  {
+    name: "templates",
+    title: "New page templates",
+    href: "/community/templates",
+  },
+];
