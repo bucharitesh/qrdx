@@ -4,6 +4,7 @@
 // user needs from a "will it scan" check, not from the current weights.
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { getScanScore } from "../src/scan-score";
+import { getTemplateCodeShare } from "../src/template-placement";
 import type { QRProps } from "../types";
 import { installFakeDom } from "./support/fake-dom";
 import { capture } from "./support/qr";
@@ -129,6 +130,30 @@ describe("getScanScore", () => {
     expect(result.checks.find((check) => check.id === "polarity")?.passed).toBe(
       false
     );
+  });
+
+  it("tests a code in a template at the size the template draws it", async () => {
+    // Templates draw the code at a share of their artwork
+    expect(getTemplateCodeShare({ value: VALUE })).toBe(1);
+    expect(getTemplateCodeShare({ value: VALUE, templateId: "default" })).toBe(
+      0.95
+    );
+    expect(getTemplateCodeShare({ value: VALUE, templateId: "Arrow" })).toBe(
+      0.5
+    );
+    expect(
+      getTemplateCodeShare({ value: VALUE, templateId: "Halloween" })
+    ).toBeCloseTo(0.38, 6);
+    // So a code that scans well on its own scores well in a template too
+    // (it used to be tested as if it filled the artwork, and failed)
+    for (const templateId of ["Arrow", "Halloween"]) {
+      const result = await getScanScore({ ...PLAIN, templateId });
+      const passed = (id: string) =>
+        result.checks.find((c) => c.id === id)?.passed;
+      expect(result.grade, templateId).toBe("great");
+      expect(passed("decode-160"), templateId).toBe(true);
+      expect(passed("decode-320"), templateId).toBe(true);
+    }
   });
 
   it("flags a missing quiet zone", async () => {
