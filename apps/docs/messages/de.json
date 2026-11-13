@@ -4370,6 +4370,110 @@
         "moreFrameOptions": "Weitere Rahmenoptionen"
       }
     },
+    "partInline": {
+      "parts": {
+        "eyes": {
+          "edit": "Augen bearbeiten",
+          "options": "Augen-Optionen",
+          "random": "Zufällige Augen",
+          "more": "Mehr Augen-Optionen"
+        },
+        "dots": {
+          "edit": "Punkte bearbeiten",
+          "options": "Punkt-Optionen",
+          "random": "Zufällige Punkte",
+          "more": "Mehr Punkt-Optionen"
+        },
+        "logo": {
+          "edit": "Logo bearbeiten",
+          "options": "Logo-Optionen",
+          "random": "Zufälliges Logo",
+          "more": "Mehr Logo-Optionen"
+        },
+        "background": {
+          "edit": "Hintergrund bearbeiten",
+          "options": "Hintergrund-Optionen",
+          "random": "Zufälliger Hintergrund",
+          "more": "Mehr Hintergrund-Optionen",
+          "editShape": "Code-Form bearbeiten"
+        },
+        "frame": {
+          "edit": "Rahmen bearbeiten",
+          "options": "Rahmen-Optionen",
+          "random": "Zufälliger Rahmen",
+          "more": "Mehr Rahmen-Optionen"
+        }
+      },
+      "items": {
+        "outerShape": "Äußere Form",
+        "centerShape": "Innere Form",
+        "eyeColor": "Augenfarbe",
+        "centerColor": "Innenfarbe",
+        "pattern": "Muster",
+        "dotColor": "Punktfarbe",
+        "dotSize": "Punktgröße",
+        "logo": "Logo",
+        "quickIcons": "Schnellsymbole",
+        "logoSize": "Logogröße",
+        "hideLogo": "Logo ausblenden",
+        "backgroundColor": "Hintergrundfarbe",
+        "padding": "Abstand",
+        "frameStyle": "Rahmenstil",
+        "frameColor": "Rahmenfarbe",
+        "whichEyes": "Welche Augen",
+        "allEyes": "Alle Augen",
+        "thisEye": "Dieses Auge",
+        "thisEyesColor": "Farbe dieses Auges",
+        "thisEyesCenterColor": "Mittelfarbe dieses Auges",
+        "shapesChangeAllThreeEyes": "Formen ändern alle drei Augen.",
+        "sameAsTheOthers": "Wie die anderen",
+        "eyesWithTheirOwnColor": "Augen mit eigener Farbe behalten sie. Wähle „Dieses Auge“, um eines zu ändern.",
+        "logoShapeAndPlate": "Logo-Form und Unterlage",
+        "clearSpace": "Freiraum",
+        "content": "Inhalt",
+        "codeShape": "Code-Form",
+        "errorCorrection": "Fehlerkorrektur"
+      },
+      "random": "Zufall",
+      "moreOptions": "Mehr Optionen",
+      "sheet": {
+        "changesShowOnTheCode": "Änderungen siehst du sofort auf dem Code. Mit „Fertig“ übernimmst du sie.",
+        "done": "Fertig"
+      },
+      "content": {
+        "link": "Link",
+        "text": "Text",
+        "theCodeKeepsItsContent": "Der Code behält seinen Inhalt, bis die Eingabe gültig ist.",
+        "scansOpenHost": "Scans öffnen {host}",
+        "textHint": "Der Code zeigt diesen Text beim Scannen an.",
+        "editedInTheContentTab": "Für diese Art von Inhalt gibt es im Tab „Inhalt“ ein eigenes Formular.",
+        "openTheContentTab": "Tab „Inhalt“ öffnen"
+      },
+      "codeShape": {
+        "codeShape": "Code-Form",
+        "names": {
+          "square": "Quadrat",
+          "circle": "Kreis",
+          "heart": "Herz"
+        },
+        "aCircleOrHeartTakes": "Ein Kreis oder Herz ersetzt den Rahmen."
+      },
+      "errorCorrection": {
+        "theLogoRaisesItToLevel": "Das Logo erhöht sie vorerst auf Stufe {level}."
+      },
+      "handles": {
+        "moveLogo": "Logo verschieben",
+        "dragOrUseTheArrowKeys": "Zieh es oder nutze die Pfeiltasten. Mit Umschalt geht es weiter. Entf blendet es aus.",
+        "logoSize": "Logogröße",
+        "percentOfTheCode": "{value, number} % des Codes",
+        "padding": "Abstand",
+        "modules": "{count, plural, one {# Modul} other {# Module}}",
+        "dragToChangeThePadding": "Nach innen oder außen ziehen, um den Abstand zu ändern"
+      },
+      "drop": {
+        "dropToUseAsLogo": "Ablegen, um als Logo zu nutzen"
+      }
+    },
     "gradientPicker": {
       "pickASolidColorA": "Wähle für {label} eine einfarbige Farbe, einen Verlauf oder ein Farbfeld."
     },
@@ -4619,6 +4723,7 @@
         "actions": "Aktionen",
         "themeAppearance": "Theme & Darstellung",
         "patternCustomization": "Muster anpassen",
+        "preview": "Vorschau",
         "help": "Hilfe"
       },
       "shortcuts": {
@@ -4640,7 +4745,11 @@
         "cycleCornerEyePatterns": "Eckaugen-Muster durchschalten",
         "cycleInternalEyePatterns": "Innere Augenmuster durchschalten",
         "cycleFrames": "Rahmen durchschalten",
-        "showThisShortcutsDialog": "Dieses Kürzel-Fenster anzeigen"
+        "showThisShortcutsDialog": "Dieses Kürzel-Fenster anzeigen",
+        "editAPartOfTheCode": "Den Teil des Codes unter dem Mauszeiger oder mit Fokus bearbeiten",
+        "randomLookForThatPart": "Zufälliges Aussehen für diesen Teil",
+        "hideTheFocusedLogo": "Fokussiertes Logo ausblenden",
+        "moveTheLogoWhileEditing": "Logo während der Bearbeitung verschieben"
       }
     },
     "soundSwitch": {

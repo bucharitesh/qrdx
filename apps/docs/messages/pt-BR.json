@@ -4370,6 +4370,110 @@
         "moreFrameOptions": "Mais opções da moldura"
       }
     },
+    "partInline": {
+      "parts": {
+        "eyes": {
+          "edit": "Editar olhos",
+          "options": "Opções dos olhos",
+          "random": "Olhos aleatórios",
+          "more": "Mais opções dos olhos"
+        },
+        "dots": {
+          "edit": "Editar pontos",
+          "options": "Opções dos pontos",
+          "random": "Pontos aleatórios",
+          "more": "Mais opções dos pontos"
+        },
+        "logo": {
+          "edit": "Editar logo",
+          "options": "Opções do logo",
+          "random": "Logo aleatório",
+          "more": "Mais opções do logo"
+        },
+        "background": {
+          "edit": "Editar fundo",
+          "options": "Opções do fundo",
+          "random": "Fundo aleatório",
+          "more": "Mais opções do fundo",
+          "editShape": "Editar formato do código"
+        },
+        "frame": {
+          "edit": "Editar moldura",
+          "options": "Opções da moldura",
+          "random": "Moldura aleatória",
+          "more": "Mais opções da moldura"
+        }
+      },
+      "items": {
+        "outerShape": "Forma externa",
+        "centerShape": "Forma central",
+        "eyeColor": "Cor do olho",
+        "centerColor": "Cor do centro",
+        "pattern": "Padrão",
+        "dotColor": "Cor do ponto",
+        "dotSize": "Tamanho do ponto",
+        "logo": "Logo",
+        "quickIcons": "Ícones rápidos",
+        "logoSize": "Tamanho do logo",
+        "hideLogo": "Ocultar logo",
+        "backgroundColor": "Cor do fundo",
+        "padding": "Margem interna",
+        "frameStyle": "Estilo da moldura",
+        "frameColor": "Cor da moldura",
+        "whichEyes": "Quais olhos",
+        "allEyes": "Todos os olhos",
+        "thisEye": "Este olho",
+        "thisEyesColor": "Cor deste olho",
+        "thisEyesCenterColor": "Cor do centro deste olho",
+        "shapesChangeAllThreeEyes": "Os formatos mudam os três olhos.",
+        "sameAsTheOthers": "Igual aos outros",
+        "eyesWithTheirOwnColor": "Olhos com cor própria mantêm a cor. Escolha Este olho para mudar um deles.",
+        "logoShapeAndPlate": "Formato e base do logo",
+        "clearSpace": "Espaço livre",
+        "content": "Conteúdo",
+        "codeShape": "Formato do código",
+        "errorCorrection": "Correção de erros"
+      },
+      "random": "Aleatório",
+      "moreOptions": "Mais opções",
+      "sheet": {
+        "changesShowOnTheCode": "As alterações aparecem no código conforme você faz. Concluir as mantém.",
+        "done": "Concluir"
+      },
+      "content": {
+        "link": "Link",
+        "text": "Texto",
+        "theCodeKeepsItsContent": "O código mantém o conteúdo até que este seja válido.",
+        "scansOpenHost": "A leitura abre {host}",
+        "textHint": "O código mostra este texto quando é lido.",
+        "editedInTheContentTab": "Este tipo de conteúdo tem um formulário próprio na aba Conteúdo.",
+        "openTheContentTab": "Abrir a aba Conteúdo"
+      },
+      "codeShape": {
+        "codeShape": "Formato do código",
+        "names": {
+          "square": "Quadrado",
+          "circle": "Círculo",
+          "heart": "Coração"
+        },
+        "aCircleOrHeartTakes": "Um círculo ou coração substitui a moldura."
+      },
+      "errorCorrection": {
+        "theLogoRaisesItToLevel": "Por enquanto, o logo eleva para o nível {level}."
+      },
+      "handles": {
+        "moveLogo": "Mover logo",
+        "dragOrUseTheArrowKeys": "Arraste ou use as setas do teclado. Shift move mais longe. Delete oculta.",
+        "logoSize": "Tamanho do logo",
+        "percentOfTheCode": "{value, number}% do código",
+        "padding": "Margem",
+        "modules": "{count, plural, one {# módulo} other {# módulos}}",
+        "dragToChangeThePadding": "Arraste para dentro ou para fora para mudar a margem"
+      },
+      "drop": {
+        "dropToUseAsLogo": "Solte para usar como logo"
+      }
+    },
     "gradientPicker": {
       "pickASolidColorA": "Escolha uma cor sólida, um gradiente ou uma amostra para {label}."
     },
@@ -4619,6 +4723,7 @@
         "actions": "Ações",
         "themeAppearance": "Tema e aparência",
         "patternCustomization": "Personalização do padrão",
+        "preview": "Prévia",
         "help": "Ajuda"
       },
       "shortcuts": {
@@ -4640,7 +4745,11 @@
         "cycleCornerEyePatterns": "Alternar padrões dos olhos externos",
         "cycleInternalEyePatterns": "Alternar padrões dos olhos internos",
         "cycleFrames": "Alternar molduras",
-        "showThisShortcutsDialog": "Mostrar este diálogo de atalhos"
+        "showThisShortcutsDialog": "Mostrar este diálogo de atalhos",
+        "editAPartOfTheCode": "Editar a parte do código sob o ponteiro ou em foco",
+        "randomLookForThatPart": "Visual aleatório para essa parte",
+        "hideTheFocusedLogo": "Ocultar o logo em foco",
+        "moveTheLogoWhileEditing": "Mover o logo durante a edição"
       }
     },
     "soundSwitch": {

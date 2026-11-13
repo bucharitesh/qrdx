@@ -4370,6 +4370,110 @@
         "moreFrameOptions": "その他のフレーム設定"
       }
     },
+    "partInline": {
+      "parts": {
+        "eyes": {
+          "edit": "目を編集",
+          "options": "目のオプション",
+          "random": "目をランダム",
+          "more": "目のその他の設定"
+        },
+        "dots": {
+          "edit": "ドットを編集",
+          "options": "ドットのオプション",
+          "random": "ドットをランダム",
+          "more": "ドットのその他の設定"
+        },
+        "logo": {
+          "edit": "ロゴを編集",
+          "options": "ロゴのオプション",
+          "random": "ロゴをランダム",
+          "more": "ロゴのその他の設定"
+        },
+        "background": {
+          "edit": "背景を編集",
+          "options": "背景のオプション",
+          "random": "背景をランダム",
+          "more": "背景のその他の設定",
+          "editShape": "コードの形を編集"
+        },
+        "frame": {
+          "edit": "フレームを編集",
+          "options": "フレームのオプション",
+          "random": "フレームをランダム",
+          "more": "フレームのその他の設定"
+        }
+      },
+      "items": {
+        "outerShape": "外側の形",
+        "centerShape": "中心の形",
+        "eyeColor": "目の色",
+        "centerColor": "中心の色",
+        "pattern": "パターン",
+        "dotColor": "ドットの色",
+        "dotSize": "ドットのサイズ",
+        "logo": "ロゴ",
+        "quickIcons": "クイックアイコン",
+        "logoSize": "ロゴのサイズ",
+        "hideLogo": "ロゴを非表示",
+        "backgroundColor": "背景色",
+        "padding": "余白",
+        "frameStyle": "フレームのスタイル",
+        "frameColor": "フレームの色",
+        "whichEyes": "対象のアイ",
+        "allEyes": "すべてのアイ",
+        "thisEye": "このアイ",
+        "thisEyesColor": "このアイの色",
+        "thisEyesCenterColor": "このアイの中心の色",
+        "shapesChangeAllThreeEyes": "形は3つのアイすべてに反映されます。",
+        "sameAsTheOthers": "他と同じ",
+        "eyesWithTheirOwnColor": "独自の色を設定したアイはその色のままです。変更するには「このアイ」を選択してください。",
+        "logoShapeAndPlate": "ロゴの形とプレート",
+        "clearSpace": "余白",
+        "content": "内容",
+        "codeShape": "コードの形",
+        "errorCorrection": "誤り訂正"
+      },
+      "random": "ランダム",
+      "moreOptions": "その他の設定",
+      "sheet": {
+        "changesShowOnTheCode": "変更は操作するとすぐにコードへ反映されます。「完了」を押すと変更が保持されます。",
+        "done": "完了"
+      },
+      "content": {
+        "link": "リンク",
+        "text": "テキスト",
+        "theCodeKeepsItsContent": "有効な内容になるまで、コードは現在の内容を保持します。",
+        "scansOpenHost": "スキャンすると{host}が開きます",
+        "textHint": "スキャンすると、このテキストが表示されます。",
+        "editedInTheContentTab": "この種類の内容には、「内容」タブに専用のフォームがあります。",
+        "openTheContentTab": "「内容」タブを開く"
+      },
+      "codeShape": {
+        "codeShape": "コードの形",
+        "names": {
+          "square": "四角",
+          "circle": "円",
+          "heart": "ハート"
+        },
+        "aCircleOrHeartTakes": "円またはハートを選ぶと、フレームの代わりになります。"
+      },
+      "errorCorrection": {
+        "theLogoRaisesItToLevel": "現在はロゴの影響でレベル{level}に引き上げられています。"
+      },
+      "handles": {
+        "moveLogo": "ロゴを移動",
+        "dragOrUseTheArrowKeys": "ドラッグするか、矢印キーで動かせます。Shiftキーを押すとさらに大きく動きます。Deleteキーで非表示になります。",
+        "logoSize": "ロゴのサイズ",
+        "percentOfTheCode": "コードの{value, number}%",
+        "padding": "余白",
+        "modules": "{count, plural, other {#モジュール}}",
+        "dragToChangeThePadding": "内側または外側にドラッグして余白を変更します"
+      },
+      "drop": {
+        "dropToUseAsLogo": "ドロップしてロゴとして使用します"
+      }
+    },
     "gradientPicker": {
       "pickASolidColorA": "{label}の単色、グラデーション、またはスウォッチを選択します。"
     },
@@ -4619,6 +4723,7 @@
         "actions": "操作",
         "themeAppearance": "テーマと外観",
         "patternCustomization": "パターンのカスタマイズ",
+        "preview": "プレビュー",
         "help": "ヘルプ"
       },
       "shortcuts": {
@@ -4640,7 +4745,11 @@
         "cycleCornerEyePatterns": "コーナーアイのパターンを切り替え",
         "cycleInternalEyePatterns": "内側アイのパターンを切り替え",
         "cycleFrames": "フレームを切り替え",
-        "showThisShortcutsDialog": "ショートカット一覧を表示"
+        "showThisShortcutsDialog": "ショートカット一覧を表示",
+        "editAPartOfTheCode": "ポインターの下またはフォーカス中のコードの部分を編集します",
+        "randomLookForThatPart": "その部分をランダムなデザインにします",
+        "hideTheFocusedLogo": "フォーカス中のロゴを非表示にします",
+        "moveTheLogoWhileEditing": "編集中のロゴを移動します"
       }
     },
     "soundSwitch": {

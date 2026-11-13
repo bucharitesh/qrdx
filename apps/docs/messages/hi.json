@@ -4370,6 +4370,110 @@
         "moreFrameOptions": "फ़्रेम के और विकल्प"
       }
     },
+    "partInline": {
+      "parts": {
+        "eyes": {
+          "edit": "आइज़ बदलें",
+          "options": "आइज़ के विकल्प",
+          "random": "रैंडम आइज़",
+          "more": "आइज़ के और विकल्प"
+        },
+        "dots": {
+          "edit": "डॉट्स बदलें",
+          "options": "डॉट के विकल्प",
+          "random": "रैंडम डॉट्स",
+          "more": "डॉट के और विकल्प"
+        },
+        "logo": {
+          "edit": "लोगो बदलें",
+          "options": "लोगो के विकल्प",
+          "random": "रैंडम लोगो",
+          "more": "लोगो के और विकल्प"
+        },
+        "background": {
+          "edit": "बैकग्राउंड बदलें",
+          "options": "बैकग्राउंड के विकल्प",
+          "random": "रैंडम बैकग्राउंड",
+          "more": "बैकग्राउंड के और विकल्प",
+          "editShape": "कोड का आकार बदलें"
+        },
+        "frame": {
+          "edit": "फ़्रेम बदलें",
+          "options": "फ़्रेम के विकल्प",
+          "random": "रैंडम फ़्रेम",
+          "more": "फ़्रेम के और विकल्प"
+        }
+      },
+      "items": {
+        "outerShape": "बाहरी शेप",
+        "centerShape": "बीच की शेप",
+        "eyeColor": "आइज़ का रंग",
+        "centerColor": "बीच का रंग",
+        "pattern": "पैटर्न",
+        "dotColor": "डॉट का रंग",
+        "dotSize": "डॉट का साइज़",
+        "logo": "लोगो",
+        "quickIcons": "क्विक आइकन",
+        "logoSize": "लोगो का साइज़",
+        "hideLogo": "लोगो छिपाएँ",
+        "backgroundColor": "बैकग्राउंड का रंग",
+        "padding": "पैडिंग",
+        "frameStyle": "फ़्रेम स्टाइल",
+        "frameColor": "फ़्रेम का रंग",
+        "whichEyes": "कौन सी आँखें",
+        "allEyes": "सभी आँखें",
+        "thisEye": "यह आँख",
+        "thisEyesColor": "इस आँख का रंग",
+        "thisEyesCenterColor": "इस आँख के बीच का रंग",
+        "shapesChangeAllThreeEyes": "आकार बदलने से तीनों आँखें बदलती हैं।",
+        "sameAsTheOthers": "बाकी जैसा ही",
+        "eyesWithTheirOwnColor": "जिन आँखों का अपना रंग है, वे उसे रखती हैं। किसी एक को बदलने के लिए \"यह आँख\" चुनें।",
+        "logoShapeAndPlate": "लोगो का आकार और प्लेट",
+        "clearSpace": "खाली जगह",
+        "content": "कंटेंट",
+        "codeShape": "कोड का आकार",
+        "errorCorrection": "एरर करेक्शन"
+      },
+      "random": "रैंडम",
+      "moreOptions": "और विकल्प",
+      "sheet": {
+        "changesShowOnTheCode": "आप जो बदलाव करते हैं, वे कोड पर तुरंत दिखते हैं। पूरा होने पर “पूरा हुआ” दबाएँ, बदलाव सेव रहेंगे।",
+        "done": "पूरा हुआ"
+      },
+      "content": {
+        "link": "लिंक",
+        "text": "टेक्स्ट",
+        "theCodeKeepsItsContent": "जब तक यह सही नहीं होता, कोड में पुराना कंटेंट ही रहेगा।",
+        "scansOpenHost": "स्कैन करने पर {host} खुलेगा",
+        "textHint": "स्कैन करने पर कोड यह टेक्स्ट दिखाता है।",
+        "editedInTheContentTab": "इस तरह के कंटेंट का अपना फ़ॉर्म कंटेंट टैब में है।",
+        "openTheContentTab": "कंटेंट टैब खोलें"
+      },
+      "codeShape": {
+        "codeShape": "कोड का आकार",
+        "names": {
+          "square": "चौकोर",
+          "circle": "गोल",
+          "heart": "दिल"
+        },
+        "aCircleOrHeartTakes": "गोल या दिल का आकार फ़्रेम की जगह लेता है।"
+      },
+      "errorCorrection": {
+        "theLogoRaisesItToLevel": "लोगो की वजह से अभी यह लेवल {level} पर है।"
+      },
+      "handles": {
+        "moveLogo": "लोगो हिलाएँ",
+        "dragOrUseTheArrowKeys": "इसे ड्रैग करें या ऐरो कीज़ इस्तेमाल करें। Shift दबाने पर यह और आगे खिसकता है। Delete दबाने पर छिप जाता है।",
+        "logoSize": "लोगो का साइज़",
+        "percentOfTheCode": "कोड का {value, number}%",
+        "padding": "पैडिंग",
+        "modules": "{count, plural, one {# मॉड्यूल} other {# मॉड्यूल}}",
+        "dragToChangeThePadding": "पैडिंग बदलने के लिए अंदर या बाहर की ओर ड्रैग करें"
+      },
+      "drop": {
+        "dropToUseAsLogo": "लोगो के रूप में इस्तेमाल करने के लिए यहाँ छोड़ें"
+      }
+    },
     "gradientPicker": {
       "pickASolidColorA": "{label} के लिए सॉलिड रंग, ग्रेडिएंट या स्वैच चुनें।"
     },
@@ -4619,6 +4723,7 @@
         "actions": "एक्शन",
         "themeAppearance": "थीम और लुक",
         "patternCustomization": "पैटर्न कस्टमाइज़ेशन",
+        "preview": "प्रीव्यू",
         "help": "मदद"
       },
       "shortcuts": {
@@ -4640,7 +4745,11 @@
         "cycleCornerEyePatterns": "कॉर्नर आई पैटर्न बदलें",
         "cycleInternalEyePatterns": "इंटरनल आई पैटर्न बदलें",
         "cycleFrames": "फ़्रेम बदलें",
-        "showThisShortcutsDialog": "शॉर्टकट की यह विंडो दिखाएँ"
+        "showThisShortcutsDialog": "शॉर्टकट की यह विंडो दिखाएँ",
+        "editAPartOfTheCode": "पॉइंटर के नीचे या फ़ोकस वाले कोड हिस्से को एडिट करें",
+        "randomLookForThatPart": "उस हिस्से का रैंडम लुक",
+        "hideTheFocusedLogo": "फ़ोकस वाला लोगो छिपाएँ",
+        "moveTheLogoWhileEditing": "एडिट करते समय लोगो को खिसकाएँ"
       }
     },
     "soundSwitch": {

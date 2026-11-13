@@ -16,14 +16,12 @@ import {
   QR_IMAGE_KINDS,
 } from "@/components/editor/gradient-picker";
 import type { QRStyle } from "@/types/theme";
-
-/** True when at least one eye has its own color. */
-export function hasEyeColors(style: Partial<QRStyle>): boolean {
-  return EYE_POSITIONS.some(
-    (position) =>
-      style.eyeColors?.[position]?.outer || style.eyeColors?.[position]?.inner,
-  );
-}
+import {
+  eyeInnerColor,
+  eyeOuterColor,
+  hasEyeColors,
+  withEyeColor,
+} from "./eye-colors";
 
 interface EyeColorsSectionProps {
   /** The style with defaults filled in */
@@ -50,19 +48,11 @@ export function EyeColorsSection({
     part: keyof EyeColorOverride,
     color: ColorConfig,
   ) => {
-    onChange({
-      ...style.eyeColors,
-      [position]: { ...style.eyeColors?.[position], [part]: color },
-    });
+    onChange(withEyeColor(style.eyeColors, position, part, color));
   };
 
-  const outer = (position: EyePosition) =>
-    style.eyeColors?.[position]?.outer ?? style.eyeColor ?? style.fgColor;
-  const inner = (position: EyePosition) =>
-    style.eyeColors?.[position]?.inner ??
-    style.dotColor ??
-    style.eyeColor ??
-    style.fgColor;
+  const outer = (position: EyePosition) => eyeOuterColor(style, position);
+  const inner = (position: EyePosition) => eyeInnerColor(style, position);
 
   return (
     <ControlSection

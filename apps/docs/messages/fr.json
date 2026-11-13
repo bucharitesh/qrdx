@@ -4370,6 +4370,110 @@
         "moreFrameOptions": "Plus d’options de cadre"
       }
     },
+    "partInline": {
+      "parts": {
+        "eyes": {
+          "edit": "Éditer les yeux",
+          "options": "Options des yeux",
+          "random": "Yeux aléatoires",
+          "more": "Autres options des yeux"
+        },
+        "dots": {
+          "edit": "Éditer les points",
+          "options": "Options des points",
+          "random": "Points aléatoires",
+          "more": "Autres options de points"
+        },
+        "logo": {
+          "edit": "Éditer le logo",
+          "options": "Options du logo",
+          "random": "Logo aléatoire",
+          "more": "Autres options du logo"
+        },
+        "background": {
+          "edit": "Éditer l’arrière-plan",
+          "options": "Options d’arrière-plan",
+          "random": "Arrière-plan aléatoire",
+          "more": "Autres options d’arrière-plan",
+          "editShape": "Modifier la forme"
+        },
+        "frame": {
+          "edit": "Éditer le cadre",
+          "options": "Options du cadre",
+          "random": "Cadre aléatoire",
+          "more": "Autres options du cadre"
+        }
+      },
+      "items": {
+        "outerShape": "Forme extérieure",
+        "centerShape": "Forme centrale",
+        "eyeColor": "Couleur des yeux",
+        "centerColor": "Couleur du centre",
+        "pattern": "Motif",
+        "dotColor": "Couleur des points",
+        "dotSize": "Taille des points",
+        "logo": "Logo",
+        "quickIcons": "Icônes rapides",
+        "logoSize": "Taille du logo",
+        "hideLogo": "Masquer le logo",
+        "backgroundColor": "Couleur d’arrière-plan",
+        "padding": "Marge",
+        "frameStyle": "Style de cadre",
+        "frameColor": "Couleur du cadre",
+        "whichEyes": "Quels yeux",
+        "allEyes": "Tous les yeux",
+        "thisEye": "Cet œil",
+        "thisEyesColor": "Couleur de cet œil",
+        "thisEyesCenterColor": "Couleur du centre de cet œil",
+        "shapesChangeAllThreeEyes": "Les formes modifient les trois yeux.",
+        "sameAsTheOthers": "Comme les autres",
+        "eyesWithTheirOwnColor": "Les yeux dotés de leur propre couleur la conservent. Choisissez Cet œil pour en modifier un.",
+        "logoShapeAndPlate": "Forme et fond du logo",
+        "clearSpace": "Espace libre",
+        "content": "Contenu",
+        "codeShape": "Forme du code",
+        "errorCorrection": "Correction d’erreurs"
+      },
+      "random": "Aléatoire",
+      "moreOptions": "Plus d’options",
+      "sheet": {
+        "changesShowOnTheCode": "Les modifications s’affichent sur le code au fur et à mesure. « Terminé » les conserve.",
+        "done": "Terminé"
+      },
+      "content": {
+        "link": "Lien",
+        "text": "Texte",
+        "theCodeKeepsItsContent": "Le code conserve son contenu tant que ceci n’est pas valide.",
+        "scansOpenHost": "Le scan ouvre {host}",
+        "textHint": "Le code affiche ce texte lors du scan.",
+        "editedInTheContentTab": "Ce type de contenu a son propre formulaire dans l’onglet Contenu.",
+        "openTheContentTab": "Ouvrir l’onglet Contenu"
+      },
+      "codeShape": {
+        "codeShape": "Forme du code",
+        "names": {
+          "square": "Carré",
+          "circle": "Cercle",
+          "heart": "Cœur"
+        },
+        "aCircleOrHeartTakes": "Un cercle ou un cœur remplace le cadre."
+      },
+      "errorCorrection": {
+        "theLogoRaisesItToLevel": "Pour l’instant, le logo le porte au niveau {level}."
+      },
+      "handles": {
+        "moveLogo": "Déplacer le logo",
+        "dragOrUseTheArrowKeys": "Faites-le glisser ou utilisez les touches fléchées. Maj le déplace plus loin. Suppr le masque.",
+        "logoSize": "Taille du logo",
+        "percentOfTheCode": "{value, number} % du code",
+        "padding": "Marge",
+        "modules": "{count, plural, one {# module} other {# modules}}",
+        "dragToChangeThePadding": "Faites glisser vers l’intérieur ou l’extérieur pour modifier la marge"
+      },
+      "drop": {
+        "dropToUseAsLogo": "Déposez pour utiliser comme logo"
+      }
+    },
     "gradientPicker": {
       "pickASolidColorA": "Choisissez une couleur unie, un dégradé ou un échantillon pour {label}."
     },
@@ -4619,6 +4723,7 @@
         "actions": "Actions",
         "themeAppearance": "Thème et apparence",
         "patternCustomization": "Personnalisation du motif",
+        "preview": "Aperçu",
         "help": "Aide"
       },
       "shortcuts": {
@@ -4640,7 +4745,11 @@
         "cycleCornerEyePatterns": "Changer le motif des yeux",
         "cycleInternalEyePatterns": "Changer le motif des yeux internes",
         "cycleFrames": "Changer de cadre",
-        "showThisShortcutsDialog": "Afficher les raccourcis"
+        "showThisShortcutsDialog": "Afficher les raccourcis",
+        "editAPartOfTheCode": "Modifier la partie du code sous le pointeur ou ciblée",
+        "randomLookForThatPart": "Style aléatoire pour cette partie",
+        "hideTheFocusedLogo": "Masquer le logo ciblé",
+        "moveTheLogoWhileEditing": "Déplacer le logo pendant sa modification"
       }
     },
     "soundSwitch": {
