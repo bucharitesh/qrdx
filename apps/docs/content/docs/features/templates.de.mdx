@@ -1,19 +1,19 @@
 ---
-title: "Templates"
-description: "Wende vorgefertigte Rahmen-Templates auf einen QR-Code an oder registriere deine eigenen."
+title: "Vorlagen"
+description: "Wende vorgestaltete Rahmenvorlagen auf einen QR-Code an oder registriere deine eigenen."
 icon: LayoutTemplate
 ---
 
-Verpacke einen QR-Code in fertige Grafiken oder in deine eigenen.
+Setze einen QR-Code in ein fertiges Design, oder in dein eigenes.
 
-## Was sind Templates? [#what-are-templates]
+## Was sind Vorlagen? [#what-are-templates]
 
-Ein Template ist eine SVG-Grafik, die um den Code herum gezeichnet wird: eine Box, ein Rahmen, ein Badge. Es erhält den Code als `children` und platziert ihn innerhalb der eigenen Zeichnung. Farben, Muster und Logos bleiben in den `QRCode`-Props, sodass ein Template mit jedem Stil funktioniert.
+Eine Vorlage ist SVG-Grafik, die um den Code herum gezeichnet wird: ein Kasten, ein Rand, ein Badge. Sie erhält den Code als `children` und platziert ihn innerhalb ihrer eigenen Zeichnung. Farben, Muster und Logos bleiben in den `QRCode`-Props, deshalb funktioniert eine Vorlage mit jedem Stil.
 
-## Verfügbare Templates [#available-templates]
+## Verfügbare Vorlagen [#available-templates]
 
 ### Default [#default]
-Klassisch in Schwarz-Weiß.
+Klassisch in Schwarz und Weiß.
 
 ```tsx
 import { QRCode } from 'qrdx';
@@ -22,7 +22,7 @@ import { QRCode } from 'qrdx';
 ```
 
 ### Arrow [#arrow]
-Modernes geometrisches Design.
+Modernes, geometrisches Design.
 
 ```tsx
 <QRCode value="https://example.com" templateId="Arrow" size={256} />
@@ -36,7 +36,7 @@ Klares, strukturiertes Design.
 ```
 
 ### Square Border [#square-border]
-Design mit Rahmen und klar definierten Kanten.
+Design mit Rand und klar definierten Kanten.
 
 ```tsx
 <QRCode value="https://example.com" templateId="SquareBorder" size={256} />
@@ -50,15 +50,62 @@ Dynamisches Design mit diagonalen Elementen.
 ```
 
 ### Halloween [#halloween]
-Saisonales Halloween-Thema.
+Saisonales Halloween-Motiv.
 
 ```tsx
 <QRCode value="https://example.com" templateId="Halloween" size={256} />
 ```
 
-## Templates anpassen [#customize-templates]
+### Dot Ring [#dot-ring]
+Ein runder Code. Der Code sitzt in einer Scheibe aus Punkten innerhalb eines dunklen Rings, mit einer Textzeile entlang des Rings. Welche Punkte sichtbar sind, ergibt sich aus einem Hash des Code-Inhalts. So bekommt jeder Link seinen eigenen Ring, und derselbe Link bekommt immer denselben.
 
-Die integrierten Templates zeichnen ihre Grafik in `fgColor`. Alles andere, etwa Muster und ein Logo, stellst du wie gewohnt am Code ein:
+```tsx
+<QRCode
+  value="https://example.com"
+  templateId="DotRing"
+  bodyPattern="circle-large"
+  size={512}
+/>
+```
+
+Die Einstellungen kommen in `customProps` (typisiert als `DotRingProps`):
+
+```tsx
+<QRCode
+  value="https://example.com"
+  templateId="DotRing"
+  customProps={{
+    customText: "Scan for the menu",
+    textPosition: "bottom",
+    textColor: "#fde047",
+    outerCircleColor: "#1e3a8a",
+  }}
+  size={512}
+/>
+```
+
+| Prop | Standard | Hinweise |
+| --- | --- | --- |
+| `customText` | „Scan the QR code“ viermal rund um den Ring | Text entlang des Rings. Buchstaben, die nicht herumpassen, entfallen; `""` lässt den Ring leer |
+| `textPosition` | `"top"` | `"top"`: oben zentriert, im Uhrzeigersinn gelesen. `"bottom"`: unten zentriert entlang des Rings, von links nach rechts gelesen |
+| `textRotation` | `0` | Dreht den Text um die Mitte, in Grad |
+| `textColor` | `#ffffff` | Textfarbe |
+| `fontFamily` | System-Schriftenstapel | CSS-Schriftfamilie des Textes |
+| `fontWeight` | `900` | Schriftstärke |
+| `fontSize` | `32` | In der 593 Einheiten großen Zeichnung der Vorlage, in der der Code 300 breit ist |
+| `fontLetterSpacing` | `3.5` | Zusätzlicher Abstand zwischen den Buchstaben, in denselben Einheiten |
+| `outerCircleColor` | `fgColor` | Farbe des Rings |
+| `strokeWidth`, `strokeColor` | `0`, `#000000` | Eine Kontur an beiden Kanten des Rings |
+| `outerStrokeWidth`, `outerStrokeColor` | `strokeWidth`, `strokeColor` | Nur die Außenkante des Rings |
+| `innerStrokeWidth`, `innerStrokeColor` | `strokeWidth`, `strokeColor` | Nur die Innenkante des Rings |
+
+Ein Logo kommt wie bei jedem Code in die Mitte. Lange Links (Codes mit mehr als 49 Modulen Breite) behalten ein helles Band zwischen Code und Punkten, damit sie auch klein gedruckt noch scannen.
+
+Der Text ist SVG-Text in der von dir gewählten Schrift. Standard ist der System-Schriftenstapel, es wird also nichts heruntergeladen. SVG- und PNG-Downloads im Browser verwenden die Schriften des Betrachters. PDF und EPS drucken ihn in Helvetica Bold, verwende dort also Latin-1-Text. `getQRAsPNG` aus `qrdx/node` braucht eine auf dem Server installierte Schrift, genau wie Rahmenbeschriftungen.
+
+## Vorlagen anpassen [#customize-templates]
+
+Die integrierten Vorlagen zeichnen ihre Grafik in `fgColor`. Alles andere, etwa Muster und ein Logo, stellst du wie gewohnt am Code ein:
 
 ```tsx
 <QRCode
@@ -75,9 +122,9 @@ Die integrierten Templates zeichnen ihre Grafik in `fgColor`. Alles andere, etwa
 />
 ```
 
-## Template-Registry [#template-registry]
+## Vorlagenverzeichnis [#template-registry]
 
-### Alle Templates abrufen [#get-all-templates]
+### Alle Vorlagen abrufen [#get-all-templates]
 
 ```tsx
 import { getAllTemplates } from 'qrdx';
@@ -85,7 +132,7 @@ import { getAllTemplates } from 'qrdx';
 const templates = getAllTemplates();
 ```
 
-### Template-IDs abrufen [#get-template-ids]
+### Vorlagen-IDs abrufen [#get-template-ids]
 
 ```tsx
 import { getTemplateIds } from 'qrdx';
@@ -94,9 +141,9 @@ const ids = getTemplateIds();
 // Returns: ['default', 'Arrow', 'StandardBox', ...]
 ```
 
-## Eigene Templates [#custom-templates]
+## Eigene Vorlagen [#custom-templates]
 
-Schreibe dein eigenes Template als `TemplateDefinition`. Der `wrapper` erhält den Code als `children` und gibt das zu zeichnende SVG zurück. Er zeichnet auf einer Leinwand von 300 mal 300, und der Code kommt ebenfalls in dieser Größe an. Skaliere ihn also herunter, um Platz für deine Grafik zu lassen. `props` enthält `fgColor` und `bgColor` des Codes.
+Schreibe deine eigene Vorlage als `TemplateDefinition`. Ihr `wrapper` erhält den Code als `children` und gibt das zu zeichnende SVG zurück. Er zeichnet auf einer Fläche von 300 mal 300, und der Code kommt ebenfalls in dieser Größe an. Skaliere ihn also herunter, damit Platz für deine Grafik bleibt. `props` enthält `fgColor` und `bgColor` des Codes.
 
 Dieses Beispiel zeichnet einen Ring um den Code:
 
@@ -130,18 +177,18 @@ const ringTemplate: TemplateDefinition = {
 />
 ```
 
-Halte den Code groß genug, damit er aus der Entfernung gescannt werden kann, aus der Leute ihr Smartphone halten, und lass zwischen Code und Grafik einen hellen Abstand. Prüfe das Ergebnis mit dem [Scan-Score](/docs/features/frames#will-it-scan).
+Halte den Code groß genug, dass er aus der Entfernung scannt, aus der Leute ihr Handy halten, und lass zwischen ihm und deiner Grafik einen hellen Abstand. Prüfe das Ergebnis mit dem [Scan-Score](/docs/features/frames#will-it-scan).
 
-## Wann Templates sinnvoll sind [#when-to-use-templates]
+## Wann du Vorlagen verwenden solltest [#when-to-use-templates]
 
-- **Einheitliche Marke** — Sorge dafür, dass alle QR-Codes zusammenpassen
-- **Schneller Start** — Erhalte schnell professionelle Ergebnisse
-- **Saisonale Kampagnen** — Nutze Templates mit passendem Thema
+- **Markenkonsistenz** — Sorge dafür, dass alle QR-Codes zusammenpassen
+- **Schneller Start** — Erziele schnell professionelle Ergebnisse
+- **Saisonale Kampagnen** — Nutze thematische Vorlagen
 - **Stapelerzeugung** — Wende einheitliche Stile an
 
-## Hilfe bei der Template-Auswahl [#template-selection-guide]
+## Leitfaden zur Vorlagenauswahl [#template-selection-guide]
 
-| Template | Am besten für | Stimmung |
+| Vorlage | Am besten für | Stimmung |
 |----------|----------|------|
 | Default | Professionell | Neutral |
 | Arrow | Tech, modern | Dynamisch |
@@ -149,9 +196,10 @@ Halte den Code groß genug, damit er aus der Entfernung gescannt werden kann, au
 | Square Border | Formell | Strukturiert |
 | Striked Box | Marketing | Energiegeladen |
 | Halloween | Saisonal | Verspielt |
+| Dot Ring | Runde Codes, Poster, Sticker | Auffällig |
 
 ## Nächste Schritte [#next-steps]
 
-- [Muster](/docs/features/patterns) — Muster im Detail anpassen
+- [Muster](/docs/features/patterns) — Detaillierte Anpassung von Mustern
 - [Farben & Verläufe](/docs/features/colors-gradients) — Erweiterte Farben
-- [Logos](/docs/features/logos) — Logos zu Templates hinzufügen
+- [Logos](/docs/features/logos) — Logos zu Vorlagen hinzufügen

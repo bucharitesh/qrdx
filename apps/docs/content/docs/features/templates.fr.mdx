@@ -6,9 +6,9 @@ icon: LayoutTemplate
 
 Entourez un QR code d'un habillage prêt à l'emploi, ou du vôtre.
 
-## Que sont les modèles ? [#what-are-templates]
+## Qu'est-ce qu'un modèle ? [#what-are-templates]
 
-Un modèle est un habillage SVG dessiné autour du code : une boîte, une bordure, un badge. Il reçoit le code en tant que `children` et le place à l'intérieur de son propre dessin. Les couleurs, les motifs et les logos restent définis dans les props de `QRCode`, de sorte qu'un modèle fonctionne avec n'importe quel style.
+Un modèle est un habillage SVG dessiné autour du code : un encadré, une bordure, un badge. Il reçoit le code en tant que `children` et le place à l'intérieur de son propre dessin. Les couleurs, les motifs et les logos restent dans les props de `QRCode`, un modèle fonctionne donc avec n'importe quel style.
 
 ## Modèles disponibles [#available-templates]
 
@@ -56,9 +56,56 @@ Thème saisonnier d'Halloween.
 <QRCode value="https://example.com" templateId="Halloween" size={256} />
 ```
 
+### Dot Ring [#dot-ring]
+Un code rond. Le code est placé dans un disque de points à l'intérieur d'un anneau sombre, avec une ligne de texte courant le long de l'anneau. Les points visibles proviennent d'un hash du contenu du code : chaque lien obtient donc son propre anneau, et le même lien obtient toujours le même.
+
+```tsx
+<QRCode
+  value="https://example.com"
+  templateId="DotRing"
+  bodyPattern="circle-large"
+  size={512}
+/>
+```
+
+Ses réglages se placent dans `customProps` (typé `DotRingProps`) :
+
+```tsx
+<QRCode
+  value="https://example.com"
+  templateId="DotRing"
+  customProps={{
+    customText: "Scan for the menu",
+    textPosition: "bottom",
+    textColor: "#fde047",
+    outerCircleColor: "#1e3a8a",
+  }}
+  size={512}
+/>
+```
+
+| Prop | Valeur par défaut | Remarques |
+| --- | --- | --- |
+| `customText` | « Scan the QR code » répété quatre fois autour | Texte le long de l'anneau. Les lettres qui ne tiennent pas autour sont omises ; `""` laisse l'anneau vide |
+| `textPosition` | `"top"` | `"top"` : centré en haut, lu dans le sens horaire. `"bottom"` : centré en bas, lu de gauche à droite |
+| `textRotation` | `0` | Fait tourner le texte autour du centre, en degrés |
+| `textColor` | `#ffffff` | Couleur du texte |
+| `fontFamily` | pile de polices système | Famille de police CSS du texte |
+| `fontWeight` | `900` | Graisse de la police |
+| `fontSize` | `32` | Dans le dessin de 593 unités du modèle, où le code mesure 300 de large |
+| `fontLetterSpacing` | `3.5` | Espace supplémentaire entre les lettres, dans les mêmes unités |
+| `outerCircleColor` | `fgColor` | Couleur de l'anneau |
+| `strokeWidth`, `strokeColor` | `0`, `#000000` | Un contour sur les deux bords de l'anneau |
+| `outerStrokeWidth`, `outerStrokeColor` | `strokeWidth`, `strokeColor` | Le bord extérieur de l'anneau uniquement |
+| `innerStrokeWidth`, `innerStrokeColor` | `strokeWidth`, `strokeColor` | Le bord intérieur de l'anneau uniquement |
+
+Un logo se place au centre comme sur n'importe quel code. Les liens longs (codes de plus de 49 modules de large) conservent une bande claire entre le code et les points, afin de rester lisibles au scan même imprimés en petit.
+
+Le texte est du texte SVG dans la police que vous choisissez ; par défaut, il s'agit de la pile de polices système, donc rien n'est téléchargé. Les téléchargements SVG et PNG dans le navigateur utilisent les polices de l'utilisateur. PDF et EPS l'impriment en Helvetica Bold : utilisez donc du texte Latin-1 dans ce cas. `getQRAsPNG` de `qrdx/node` nécessite une police installée sur le serveur, comme les libellés de cadre.
+
 ## Personnaliser les modèles [#customize-templates]
 
-Les modèles intégrés dessinent leur habillage avec `fgColor`. Tout le reste, comme les motifs et un logo, se définit sur le code de la manière habituelle :
+Les modèles intégrés dessinent leur habillage avec `fgColor`. Tout le reste, comme les motifs et un logo, se règle sur le code de la manière habituelle :
 
 ```tsx
 <QRCode
@@ -75,7 +122,7 @@ Les modèles intégrés dessinent leur habillage avec `fgColor`. Tout le reste, 
 />
 ```
 
-## Registre de modèles [#template-registry]
+## Registre des modèles [#template-registry]
 
 ### Obtenir tous les modèles [#get-all-templates]
 
@@ -85,7 +132,7 @@ import { getAllTemplates } from 'qrdx';
 const templates = getAllTemplates();
 ```
 
-### Obtenir les ID des modèles [#get-template-ids]
+### Obtenir les identifiants des modèles [#get-template-ids]
 
 ```tsx
 import { getTemplateIds } from 'qrdx';
@@ -98,7 +145,7 @@ const ids = getTemplateIds();
 
 Écrivez votre propre modèle sous la forme d'un `TemplateDefinition`. Son `wrapper` reçoit le code en tant que `children` et renvoie le SVG à dessiner. Il dessine sur un canevas de 300 par 300, et le code arrive lui aussi à cette taille : réduisez-le donc pour laisser de la place à votre habillage. `props` contient les valeurs `fgColor` et `bgColor` du code.
 
-Cet exemple dessine un anneau autour du code :
+Celui-ci dessine un anneau autour du code :
 
 ```tsx
 import { QRCode, type TemplateDefinition } from "qrdx";
@@ -130,12 +177,12 @@ const ringTemplate: TemplateDefinition = {
 />
 ```
 
-Gardez le code assez grand pour qu'il soit scannable à la distance où les gens tiendront leur téléphone, et laissez un espace clair entre le code et votre habillage. Vérifiez le résultat avec le [score de scan](/docs/features/frames#will-it-scan).
+Gardez le code assez grand pour qu'il soit scannable depuis l'endroit où les gens tiendront leur téléphone, et laissez un espace clair entre lui et votre habillage. Vérifiez le résultat avec le [score de scan](/docs/features/frames#will-it-scan).
 
 ## Quand utiliser les modèles [#when-to-use-templates]
 
-- **Cohérence de marque** — Assurez-vous que tous vos QR codes se ressemblent
-- **Configuration rapide** — Obtenez rapidement un résultat professionnel
+- **Cohérence de marque** — Assurez-vous que tous les QR codes se ressemblent
+- **Mise en place rapide** — Obtenez rapidement des résultats professionnels
 - **Campagnes saisonnières** — Utilisez des modèles thématiques
 - **Génération par lots** — Appliquez des styles cohérents
 
@@ -143,12 +190,13 @@ Gardez le code assez grand pour qu'il soit scannable à la distance où les gens
 
 | Modèle | Idéal pour | Ambiance |
 |----------|----------|------|
-| Default | Professionnel | Neutre |
+| Default | Usage professionnel | Neutre |
 | Arrow | Tech, moderne | Dynamique |
 | Standard Box | Entreprise | Professionnelle |
-| Square Border | Formel | Structurée |
+| Square Border | Usage formel | Structurée |
 | Striked Box | Marketing | Énergique |
 | Halloween | Saisonnier | Ludique |
+| Dot Ring | Codes ronds, affiches, autocollants | Affirmée |
 
 ## Étapes suivantes [#next-steps]
 

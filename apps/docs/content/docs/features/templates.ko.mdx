@@ -1,14 +1,14 @@
 ---
 title: "템플릿"
-description: "미리 디자인된 프레임 템플릿을 QR 코드에 적용하거나, 직접 만든 템플릿을 등록하세요."
+description: "미리 디자인된 프레임 템플릿을 QR 코드에 적용하거나, 직접 만든 템플릿을 등록해 보세요."
 icon: LayoutTemplate
 ---
 
-완성된 아트워크 또는 직접 만든 아트워크로 QR 코드를 감싸 보세요.
+QR 코드를 기본 제공 디자인이나 직접 만든 디자인으로 감싸 보세요.
 
 ## 템플릿이란? [#what-are-templates]
 
-템플릿은 코드 주위에 그려지는 SVG 아트워크입니다. 상자, 테두리, 배지 같은 것이 해당합니다. 템플릿은 코드를 `children`으로 받아 자신의 그림 안에 배치합니다. 색상, 패턴, 로고는 `QRCode` props에 그대로 남아 있으므로 템플릿은 어떤 스타일과도 함께 쓸 수 있습니다.
+템플릿은 코드 주위에 그려지는 SVG 디자인입니다. 상자, 테두리, 배지 같은 요소가 여기에 해당합니다. 템플릿은 코드를 `children`으로 받아 자신의 그림 안쪽에 배치합니다. 색상, 패턴, 로고는 `QRCode` props에 그대로 두므로 어떤 스타일에서도 템플릿을 사용할 수 있습니다.
 
 ## 사용 가능한 템플릿 [#available-templates]
 
@@ -36,7 +36,7 @@ import { QRCode } from 'qrdx';
 ```
 
 ### Square Border [#square-border]
-모서리가 뚜렷한 테두리 디자인입니다.
+모서리가 분명한 테두리 디자인입니다.
 
 ```tsx
 <QRCode value="https://example.com" templateId="SquareBorder" size={256} />
@@ -50,15 +50,62 @@ import { QRCode } from 'qrdx';
 ```
 
 ### Halloween [#halloween]
-시즌 한정 할로윈 테마입니다.
+할로윈 시즌 테마입니다.
 
 ```tsx
 <QRCode value="https://example.com" templateId="Halloween" size={256} />
 ```
 
+### Dot Ring [#dot-ring]
+둥근 형태의 코드입니다. 어두운 링 안쪽의 점으로 된 원판 위에 코드가 놓이고, 링을 따라 한 줄의 텍스트가 배치됩니다. 어떤 점이 보일지는 코드 내용의 해시로 정해지므로 링크마다 고유한 링이 만들어지고, 같은 링크는 항상 같은 링을 얻습니다.
+
+```tsx
+<QRCode
+  value="https://example.com"
+  templateId="DotRing"
+  bodyPattern="circle-large"
+  size={512}
+/>
+```
+
+설정은 `customProps`에 넣습니다(타입은 `DotRingProps`).
+
+```tsx
+<QRCode
+  value="https://example.com"
+  templateId="DotRing"
+  customProps={{
+    customText: "Scan for the menu",
+    textPosition: "bottom",
+    textColor: "#fde047",
+    outerCircleColor: "#1e3a8a",
+  }}
+  size={512}
+/>
+```
+
+| Prop | 기본값 | 설명 |
+| --- | --- | --- |
+| `customText` | "Scan the QR code"를 링 둘레에 네 번 반복 | 링을 따라 배치되는 텍스트입니다. 링에 들어가지 않는 글자는 생략되며, `""`로 설정하면 링이 비어 있게 됩니다 |
+| `textPosition` | `"top"` | `"top"`: 위쪽 중앙에 배치되어 시계 방향으로 읽힙니다. `"bottom"`: 아래쪽 중앙을 따라 배치되어 왼쪽에서 오른쪽으로 읽힙니다 |
+| `textRotation` | `0` | 텍스트를 중심을 기준으로 회전합니다(단위: 도) |
+| `textColor` | `#ffffff` | 텍스트 색상 |
+| `fontFamily` | 시스템 글꼴 스택 | 텍스트의 CSS 글꼴 패밀리 |
+| `fontWeight` | `900` | 글꼴 굵기 |
+| `fontSize` | `32` | 템플릿의 593단위 그림 기준이며, 이 그림에서 코드의 너비는 300입니다 |
+| `fontLetterSpacing` | `3.5` | 글자 사이의 추가 간격이며, 같은 단위를 사용합니다 |
+| `outerCircleColor` | `fgColor` | 링 색상 |
+| `strokeWidth`, `strokeColor` | `0`, `#000000` | 링의 양쪽 가장자리를 따라 그려지는 선 |
+| `outerStrokeWidth`, `outerStrokeColor` | `strokeWidth`, `strokeColor` | 링의 바깥쪽 가장자리에만 적용됩니다 |
+| `innerStrokeWidth`, `innerStrokeColor` | `strokeWidth`, `strokeColor` | 링의 안쪽 가장자리에만 적용됩니다 |
+
+로고는 다른 코드와 마찬가지로 가운데에 넣습니다. 긴 링크(가로 49모듈을 넘는 코드)는 코드와 점 사이에 밝은 띠를 유지하므로, 작게 인쇄해도 스캔할 수 있습니다.
+
+텍스트는 선택한 글꼴로 그려지는 SVG 텍스트입니다. 기본값은 시스템 글꼴 스택이므로 내려받는 글꼴은 없습니다. 브라우저에서 SVG와 PNG를 다운로드하면 보는 사람의 글꼴이 사용됩니다. PDF와 EPS는 Helvetica Bold로 출력하므로 이 형식에서는 Latin-1 텍스트를 사용하세요. `qrdx/node`의 `getQRAsPNG`는 프레임 라벨과 마찬가지로 서버에 설치된 글꼴이 필요합니다.
+
 ## 템플릿 사용자 지정 [#customize-templates]
 
-기본 제공 템플릿은 `fgColor`로 아트워크를 그립니다. 패턴이나 로고 같은 나머지 요소는 평소처럼 코드에 설정합니다.
+기본 제공 템플릿은 `fgColor`로 디자인을 그립니다. 패턴이나 로고 같은 나머지 요소는 평소처럼 코드에 설정합니다.
 
 ```tsx
 <QRCode
@@ -96,9 +143,9 @@ const ids = getTemplateIds();
 
 ## 사용자 지정 템플릿 [#custom-templates]
 
-직접 만든 템플릿은 `TemplateDefinition`으로 작성합니다. `wrapper`는 코드를 `children`으로 받아, 그려야 할 SVG를 반환합니다. 300×300 캔버스에 그려지고 코드도 같은 크기로 전달되므로, 아트워크를 넣을 공간이 생기도록 코드를 줄여서 배치하세요. `props`에는 코드의 `fgColor`와 `bgColor`가 들어 있습니다.
+직접 만든 템플릿은 `TemplateDefinition`으로 작성합니다. `wrapper`는 코드를 `children`으로 받아 그릴 SVG를 반환합니다. 300×300 캔버스에 그리며 코드도 같은 크기로 전달되므로, 디자인을 넣을 공간이 생기도록 코드를 축소하세요. `props`에는 코드의 `fgColor`와 `bgColor`가 들어 있습니다.
 
-다음 예시는 코드 주위에 링을 그립니다.
+다음은 코드 둘레에 링을 그리는 예시입니다.
 
 ```tsx
 import { QRCode, type TemplateDefinition } from "qrdx";
@@ -130,12 +177,12 @@ const ringTemplate: TemplateDefinition = {
 />
 ```
 
-사람들이 휴대폰을 들고 스캔할 거리에서도 인식되도록 코드를 충분히 크게 유지하고, 코드와 아트워크 사이에 밝은 여백을 두세요. 결과는 [스캔 점수](/docs/features/frames#will-it-scan)로 확인하세요.
+사람들이 휴대폰을 들고 스캔할 거리에서도 인식되도록 코드를 충분히 크게 유지하고, 코드와 디자인 사이에 밝은 여백을 두세요. 결과는 [스캔 점수](/docs/features/frames#will-it-scan)로 확인하세요.
 
 ## 템플릿을 사용하면 좋은 경우 [#when-to-use-templates]
 
-- **브랜드 일관성** — 모든 QR 코드를 동일한 스타일로 맞춥니다
-- **빠른 설정** — 전문적인 결과물을 빠르게 얻습니다
+- **브랜드 일관성** — 모든 QR 코드를 통일합니다
+- **빠른 설정** — 전문적인 결과를 빠르게 얻습니다
 - **시즌 캠페인** — 테마 템플릿을 사용합니다
 - **일괄 생성** — 일관된 스타일을 적용합니다
 
@@ -146,12 +193,13 @@ const ringTemplate: TemplateDefinition = {
 | Default | 비즈니스 | 중립적 |
 | Arrow | 기술, 모던 | 역동적 |
 | Standard Box | 기업 | 전문적 |
-| Square Border | 공식적인 용도 | 구조적 |
+| Square Border | 공식 문서 | 구조적 |
 | Striked Box | 마케팅 | 활기찬 |
 | Halloween | 시즌 | 재미있는 |
+| Dot Ring | 둥근 코드, 포스터, 스티커 | 대담한 |
 
 ## 다음 단계 [#next-steps]
 
 - [패턴](/docs/features/patterns) — 패턴 상세 사용자 지정
-- [색상 및 그라디언트](/docs/features/colors-gradients) — 고급 색상
+- [색상 및 그라데이션](/docs/features/colors-gradients) — 고급 색상
 - [로고](/docs/features/logos) — 템플릿에 로고 추가
