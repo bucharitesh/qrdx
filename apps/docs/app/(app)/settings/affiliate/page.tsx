@@ -35,6 +35,7 @@ import {
 } from "@/lib/affiliates/terms";
 import { isFeatureAvailable } from "@/lib/feature-availability";
 import { getAppTranslations } from "@/lib/i18n/app-locale";
+import { clampPage, pageCountOf, parsePage } from "@/lib/paging";
 import { signInPath } from "@/lib/safe-redirect";
 import { SettingsHeader } from "../components/settings-header";
 import {
@@ -79,6 +80,44 @@ function Stat({ label, value }: { label: string; value: React.ReactNode }) {
   );
 }
 
+/** Previous / next under the commissions, once there's more than one page. */
+function CommissionsPager({ page, total }: { page: number; total: number }) {
+  const t = use(getAppTranslations("app.settings.affiliate.page"));
+  const pageCount = pageCountOf(total);
+  if (pageCount <= 1) return null;
+  const current = clampPage(page, total);
+  // Back to the table, not the top of the page.
+  const hrefFor = (target: number) =>
+    `/settings/affiliate${target > 1 ? `?page=${target}` : ""}#commissions`;
+  return (
+    <div className="flex items-center justify-between gap-2 pt-3 text-sm">
+      <span className="text-muted-foreground">
+        {t("pagePageOfPagecount", { page: current, pageCount })}
+      </span>
+      <div className="flex gap-2">
+        {current > 1 ? (
+          <Button asChild size="sm" variant="outline">
+            <Link href={hrefFor(current - 1)}>{t("previous")}</Link>
+          </Button>
+        ) : (
+          <Button disabled size="sm" variant="outline">
+            {t("previous")}
+          </Button>
+        )}
+        {current < pageCount ? (
+          <Button asChild size="sm" variant="outline">
+            <Link href={hrefFor(current + 1)}>{t("next")}</Link>
+          </Button>
+        ) : (
+          <Button disabled size="sm" variant="outline">
+            {t("next")}
+          </Button>
+        )}
+      </div>
+    </div>
+  );
+}
+
 const STATUS_LABELS = {
   pending: "On hold",
   payable: "Payable",
@@ -93,13 +132,21 @@ const VOID_LABELS: Record<string, string> = {
   admin: "Cancelled",
 };
 
-export default async function AffiliateSettingsPage() {
+export default async function AffiliateSettingsPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
   if (!isFeatureAvailable("affiliates")) notFound();
   const t = await getAppTranslations("app.settings.affiliate.page");
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session) redirect(signInPath("/settings/affiliate"));
 
-  const loaded = await loadAffiliateDashboard(session.user.id);
+  // ?page= pages the commissions table; the totals cover every commission.
+  const { page } = await searchParams;
+  const loaded = await loadAffiliateDashboard(session.user.id, new Date(), {
+    page: parsePage(page),
+  });
 
   return (
     <ConfirmIdentityProvider>
@@ -305,7 +352,7 @@ function Dashboard({ dashboard }: { dashboard: AffiliateDashboard }) {
         id="commissions"
         title={t("commissions")}
       >
-        {dashboard.commissions.length === 0 ? (
+        {dashboard.commissions.total === 0 ? (
           <p className="text-muted-foreground px-5 py-5 text-sm sm:px-6">
             {t("noCommissionsYetTheyAppear")}
           </p>
@@ -321,7 +368,7 @@ function Dashboard({ dashboard }: { dashboard: AffiliateDashboard }) {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {dashboard.commissions.slice(0, 100).map((commission) => (
+                {dashboard.commissions.rows.map((commission) => (
                   <TableRow key={commission.id}>
                     <TableCell>
                       {dateFormat.format(commission.orderPaidAt)}
@@ -353,6 +400,10 @@ function Dashboard({ dashboard }: { dashboard: AffiliateDashboard }) {
                 ))}
               </TableBody>
             </Table>
+            <CommissionsPager
+              page={dashboard.commissions.page}
+              total={dashboard.commissions.total}
+            />
           </div>
         )}
       </SettingsSection>

@@ -11,6 +11,7 @@ import {
 } from "@repo/design-system/components/ui/table";
 import Link from "next/link";
 import { SettingsHeader } from "@/app/(app)/settings/components/settings-header";
+import { loadPage } from "@/lib/paging";
 import { Pager } from "../_components/pager";
 import { EmptyRow } from "../_components/stat-card";
 import { formatDate, formatNumber } from "../_lib/format";
@@ -28,8 +29,10 @@ export default async function AdminUsersPage({
   await requireAdmin();
   const params = await searchParams;
   const q = typeof params.q === "string" ? params.q.slice(0, 200) : undefined;
-  const page = parsePage(params.page);
-  const { users, total } = await listUsers({ q, page });
+  const { users, total, page } = await loadPage(
+    parsePage(params.page),
+    (page) => listUsers({ q, page }),
+  );
 
   return (
     <div className="space-y-4">
