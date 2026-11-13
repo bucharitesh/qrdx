@@ -35,9 +35,12 @@ import {
 } from "drizzle-orm";
 import type { PgColumn, PgTable } from "drizzle-orm/pg-core";
 import { JOB_STORE_PROVIDER } from "@/lib/migrate/server/repo";
+import { offsetOf, PAGE_SIZE } from "@/lib/paging";
 import { type Plan, planForSubscriptionProduct } from "@/lib/plans";
 
-export const PAGE_SIZE = 25;
+// Paging lives in lib/paging (Settings → Affiliate program pages the same way).
+export { PAGE_SIZE, parsePage } from "@/lib/paging";
+
 // Same as lib/subscription.ts: these statuses grant a paid plan.
 const ENTITLED = ["active", "trialing"];
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -45,11 +48,6 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 export interface DailyPoint {
   date: string;
   count: number;
-}
-
-export function parsePage(value: string | string[] | undefined): number {
-  const page = Number.parseInt(String(value ?? "1"), 10);
-  return Number.isFinite(page) && page > 0 ? page : 1;
 }
 
 const daysAgo = (days: number) => new Date(Date.now() - days * DAY_MS);
@@ -164,9 +162,10 @@ export async function listUsers({ q, page }: { q?: string; page: number }) {
       })
       .from(user)
       .where(where)
-      .orderBy(desc(user.createdAt))
+      // The id breaks ties, so rows sharing a timestamp keep one order across pages.
+      .orderBy(desc(user.createdAt), desc(user.id))
       .limit(PAGE_SIZE)
-      .offset((page - 1) * PAGE_SIZE),
+      .offset(offsetOf(page)),
     db.select({ total: count() }).from(user).where(where),
   ]);
 
@@ -247,12 +246,16 @@ export async function listThemes({
         view === "community"
           ? desc(communityTheme.publishedAt)
           : desc(qrPreset.createdAt),
+        // One row per theme (community_theme.theme_id is unique).
+        desc(qrPreset.id),
       )
       .limit(PAGE_SIZE)
-      .offset((page - 1) * PAGE_SIZE),
+      .offset(offsetOf(page)),
+    // Same FROM, joins and WHERE as the rows, so the total counts what shows.
     db
       .select({ total: count() })
       .from(qrPreset)
+      .innerJoin(user, eq(user.id, qrPreset.userId))
       .leftJoin(communityTheme, eq(communityTheme.themeId, qrPreset.id))
       .where(where),
   ]);
@@ -362,9 +365,9 @@ export async function listSubscriptions({
       .from(subscription)
       .leftJoin(user, eq(user.id, subscription.userId))
       .where(where)
-      .orderBy(desc(subscription.createdAt))
+      .orderBy(desc(subscription.createdAt), desc(subscription.id))
       .limit(PAGE_SIZE)
-      .offset((page - 1) * PAGE_SIZE),
+      .offset(offsetOf(page)),
     db.select({ total: count() }).from(subscription).where(where),
   ]);
 
@@ -418,10 +421,15 @@ export async function listIntegrations({
       .from(integration)
       .innerJoin(user, eq(user.id, integration.userId))
       .where(where)
-      .orderBy(desc(integration.createdAt))
+      .orderBy(desc(integration.createdAt), desc(integration.id))
       .limit(PAGE_SIZE)
-      .offset((page - 1) * PAGE_SIZE),
-    db.select({ total: count() }).from(integration).where(where),
+      .offset(offsetOf(page)),
+    // Same FROM, join and WHERE as the rows, so the total counts what shows.
+    db
+      .select({ total: count() })
+      .from(integration)
+      .innerJoin(user, eq(user.id, integration.userId))
+      .where(where),
   ]);
   return { total, integrations: rows };
 }
@@ -433,16 +441,23 @@ export async function listAuditLog({
   q,
 }: {
   page: number;
-  /** An action ("user.ban", or a prefix like "user."), or a target / actor id */
+  /**
+   * An action ("user.ban", or a prefix like "user."), a target or actor id,
+   * or a user id named in the metadata as the subject or owner (what a user's
+   * admin page lists as their audit trail).
+   */
   q?: string;
 }) {
   const term = q?.trim();
+  const meta = sql`${adminAuditLog.metadata}::jsonb`;
   const where = term
     ? or(
         ilike(adminAuditLog.action, `${escapeLike(term)}%`),
         eq(adminAuditLog.targetId, term),
         eq(adminAuditLog.actorUserId, term),
-        sql`${adminAuditLog.metadata}::jsonb ->> 'subjectUserId' = ${term}`,
+        sql`${meta} ->> 'subjectUserId' = ${term}`,
+        sql`${meta} ->> 'ownerId' = ${term}`,
+        sql`${meta} ->> 'ownerUserId' = ${term}`,
       )
     : undefined;
   const [rows, [{ total }]] = await Promise.all([
@@ -460,9 +475,9 @@ export async function listAuditLog({
       .from(adminAuditLog)
       .leftJoin(user, eq(user.id, adminAuditLog.actorUserId))
       .where(where)
-      .orderBy(desc(adminAuditLog.createdAt))
+      .orderBy(desc(adminAuditLog.createdAt), desc(adminAuditLog.id))
       .limit(PAGE_SIZE)
-      .offset((page - 1) * PAGE_SIZE),
+      .offset(offsetOf(page)),
     db.select({ total: count() }).from(adminAuditLog).where(where),
   ]);
 
@@ -499,6 +514,10 @@ export async function listDynamicCodes({
     term && pattern
       ? or(
           eq(qrCode.slug, term),
+          // A slug's start too, as /admin/search matches it ("See all" lands here).
+          term.length >= 2
+            ? ilike(qrCode.slug, `${escapeLike(term)}%`)
+            : undefined,
           eq(qrCode.id, term),
           eq(qrCode.userId, term),
           ilike(qrCode.destinationUrl, pattern),
@@ -529,9 +548,10 @@ export async function listDynamicCodes({
       .from(qrCode)
       .innerJoin(user, eq(user.id, qrCode.userId))
       .where(where)
-      .orderBy(desc(qrCode.createdAt))
+      // Codes made in one batch share created_at: the id keeps their order.
+      .orderBy(desc(qrCode.createdAt), desc(qrCode.id))
       .limit(PAGE_SIZE)
-      .offset((page - 1) * PAGE_SIZE),
+      .offset(offsetOf(page)),
     db
       .select({ total: count() })
       .from(qrCode)

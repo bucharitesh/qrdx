@@ -357,6 +357,12 @@ export const qrPreset = pgTable(
   (table) => [
     index("qr_preset_user_id_idx").on(table.userId),
     index("qr_preset_organization_id_idx").on(table.organizationId),
+    // /admin/themes, newest first a page at a time
+    // (manual-sql/2026-11-13-paging-indexes.sql).
+    index("qr_preset_created_at_id_idx").on(
+      table.createdAt.desc(),
+      table.id.desc()
+    ),
   ]
 );
 
@@ -409,6 +415,12 @@ export const subscription = pgTable(
   (table) => [
     index("subscription_status_idx").on(table.status),
     index("subscription_user_id_idx").on(table.userId),
+    // /admin/subscriptions, newest first a page at a time
+    // (manual-sql/2026-11-13-paging-indexes.sql).
+    index("subscription_created_at_id_idx").on(
+      table.createdAt.desc(),
+      table.id.desc()
+    ),
   ]
 );
 
@@ -430,7 +442,15 @@ export const integration = pgTable(
     createdAt: timestamp("created_at").notNull(),
     updatedAt: timestamp("updated_at").notNull(),
   },
-  (table) => [index("integration_user_id_idx").on(table.userId)]
+  (table) => [
+    index("integration_user_id_idx").on(table.userId),
+    // /admin/integrations, newest first a page at a time
+    // (manual-sql/2026-11-13-paging-indexes.sql).
+    index("integration_created_at_id_idx").on(
+      table.createdAt.desc(),
+      table.id.desc()
+    ),
+  ]
 );
 
 // ─── The QRdx bot for Slack (apps/docs/lib/slack-bot) ───────────────────────
@@ -1158,6 +1178,13 @@ export const affiliateCommission = pgTable(
       table.availableAt
     ),
     index("affiliate_commission_payout_id_idx").on(table.payoutId),
+    // An affiliate's commissions a page at a time, newest payment first
+    // (manual-sql/2026-11-13-paging-indexes.sql).
+    index("affiliate_commission_affiliate_paid_idx").on(
+      table.affiliateId,
+      table.orderPaidAt.desc(),
+      table.id.desc()
+    ),
   ]
 );
 
@@ -1411,6 +1438,13 @@ export const qrCode = pgTable(
   },
   (table) => [
     index("qr_code_user_id_idx").on(table.userId),
+    // /admin/codes, newest first a page at a time; codes made in one batch
+    // share created_at, so the id orders them
+    // (manual-sql/2026-11-13-paging-indexes.sql).
+    index("qr_code_created_at_id_idx").on(
+      table.createdAt.desc(),
+      table.id.desc()
+    ),
     index("qr_code_organization_id_idx").on(table.organizationId),
     index("qr_code_domain_id_idx").on(table.domainId),
     index("qr_code_folder_id_idx").on(table.folderId),

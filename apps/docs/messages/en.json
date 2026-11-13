@@ -5765,7 +5765,10 @@
           "commissions": "Commissions",
           "suspended": "Suspended",
           "approved": "Approved",
-          "notSet": "Not set"
+          "notSet": "Not set",
+          "pagePageOfPagecount": "Page {page, number} of {pageCount, number}",
+          "previous": "Previous",
+          "next": "Next"
         }
       },
       "authorizedApps": {

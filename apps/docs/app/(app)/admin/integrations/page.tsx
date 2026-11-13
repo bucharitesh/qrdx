@@ -10,6 +10,7 @@ import {
 } from "@repo/design-system/components/ui/table";
 import Link from "next/link";
 import { SettingsHeader } from "@/app/(app)/settings/components/settings-header";
+import { loadPage } from "@/lib/paging";
 import { Pager } from "../_components/pager";
 import { EmptyRow, Section } from "../_components/stat-card";
 import { formatDate, formatDateTime, formatNumber } from "../_lib/format";
@@ -51,12 +52,10 @@ export default async function AdminIntegrationsPage({
     counts.some((row) => row.status === params.status)
       ? params.status
       : undefined;
-  const page = parsePage(params.page);
-  const { integrations, total } = await listIntegrations({
-    provider,
-    status,
-    page,
-  });
+  const { integrations, total, page } = await loadPage(
+    parsePage(params.page),
+    (page) => listIntegrations({ provider, status, page }),
+  );
   const statuses = [...new Set(counts.map((row) => row.status))];
 
   return (
