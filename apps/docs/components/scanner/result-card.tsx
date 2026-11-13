@@ -23,7 +23,7 @@ import {
   Wifi,
 } from "iconsax-reactjs";
 import { useLocale, useTranslations } from "next-intl";
-import { useMemo, useState } from "react";
+import { useContext, useMemo, useState } from "react";
 import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import { parseLinkUrl, playgroundHref } from "@/lib/playground-links";
 import { OpenButton } from "./confirm-open";
@@ -37,6 +37,7 @@ import {
   parseScan,
   type ScanKind,
 } from "./parse";
+import { ResultActions } from "./result-actions";
 import { CopyButton, FieldList, LinkButton } from "./ui";
 
 export const KIND_ICONS: Record<ScanKind, LucideIcon> = {
@@ -571,6 +572,7 @@ export function ResultCard({
 }) {
   const t = useTranslations("scanner");
   const parsed = useMemo(() => parseScan(value, format), [value, format]);
+  const actions = useContext(ResultActions);
   const Icon = KIND_ICONS[parsed.kind];
   return (
     <article className="flex min-w-0 flex-col gap-4 rounded-xl border bg-background p-4 md:p-5">
@@ -584,6 +586,11 @@ export function ResultCard({
           </h3>
           <p className="text-muted-foreground text-xs">{formatLabel(format)}</p>
         </div>
+        {actions && (
+          <div className="ml-auto flex shrink-0 items-center gap-1">
+            {actions({ value, format })}
+          </div>
+        )}
       </header>
       <Details parsed={parsed} />
       {parsed.kind !== "text" && (
