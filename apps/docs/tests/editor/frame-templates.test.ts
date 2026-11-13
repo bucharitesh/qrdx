@@ -39,7 +39,12 @@ describe("templates as frames", () => {
     const dotColored = FRAME_TEMPLATES.filter(templateTakesCodeColor).map(
       (template) => template.id,
     );
-    expect(dotColored).toEqual(["Arrow", "StandardBox", "SquareBorder"]);
+    expect(dotColored).toEqual([
+      "Arrow",
+      "StandardBox",
+      "SquareBorder",
+      "DotRing",
+    ]);
   });
 
   it("shows the Classic tile a design has", () => {

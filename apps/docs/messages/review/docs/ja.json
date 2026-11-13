@@ -12,7 +12,7 @@
     "status": "machine"
   },
   "api-reference.mdx": {
-    "source": "e4b61bbf6cbd",
+    "source": "255191322255",
     "status": "machine"
   },
   "client-portal.mdx": {
@@ -100,7 +100,7 @@
     "status": "machine"
   },
   "developers/image-api.mdx": {
-    "source": "e98d4597f9d5",
+    "source": "7728d1919cca",
     "status": "machine"
   },
   "developers/index.mdx": {
@@ -108,7 +108,7 @@
     "status": "machine"
   },
   "developers/mcp.mdx": {
-    "source": "9bd5a65015cb",
+    "source": "2b48d42ae8ae",
     "status": "machine"
   },
   "developers/meta.json": {
@@ -152,7 +152,7 @@
     "status": "machine"
   },
   "features/frames.mdx": {
-    "source": "fac4c55bbed6",
+    "source": "139fd4732faf",
     "status": "machine"
   },
   "features/logos.mdx": {
@@ -168,7 +168,7 @@
     "status": "machine"
   },
   "features/templates.mdx": {
-    "source": "f6017d11407f",
+    "source": "5aae499f17e1",
     "status": "machine"
   },
   "files.mdx": {
@@ -244,7 +244,7 @@
     "status": "machine"
   },
   "help/designing/frames.mdx": {
-    "source": "1c467722d531",
+    "source": "c421ff1ab246",
     "status": "machine"
   },
   "help/designing/logos.mdx": {
@@ -476,7 +476,7 @@
     "status": "machine"
   },
   "slack-bot.mdx": {
-    "source": "2f612b88f758",
+    "source": "11f954ed737f",
     "status": "machine"
   },
   "smart-routing.mdx": {
@@ -492,7 +492,7 @@
     "status": "machine"
   },
   "telegram-bot.mdx": {
-    "source": "561fc758806f",
+    "source": "d5013323bbc5",
     "status": "machine"
   },
   "tracking-and-conversions.mdx": {
@@ -500,7 +500,7 @@
     "status": "machine"
   },
   "usage.mdx": {
-    "source": "2111b24add8f",
+    "source": "5a1ec90c8d5d",
     "status": "machine"
   },
   "utilities.mdx": {

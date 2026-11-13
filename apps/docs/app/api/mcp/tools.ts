@@ -1,6 +1,6 @@
 import type { McpServer } from "@modelcontextprotocol/server";
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
-import { BUILT_IN_FRAMES } from "qrdx";
+import { BUILT_IN_FRAMES, getTemplateIds } from "qrdx";
 import {
   CORNER_EYE_DOT_PATTERNS,
   CORNER_EYE_PATTERNS,
@@ -190,7 +190,11 @@ const flatOptional = {
     .enum(QR_TEMPLATE_IDS)
     .optional()
     .describe(
-      "A built-in frame drawn as a template (Arrow, StandardBox, SquareBorder, StrikedBox, Halloween; default is none). Unlike `frame`, the whole artwork is `size` wide with the code smaller inside it",
+      `A built-in frame drawn as a template (${getTemplateIds()
+        .filter((id) => id !== "default")
+        .join(
+          ", ",
+        )}; default is none). Unlike \`frame\`, the whole artwork is \`size\` wide with the code smaller inside it`,
     ),
 };
 
