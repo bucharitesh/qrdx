@@ -96,6 +96,8 @@ export function cursorListReducer<T>(
 export interface CursorList<T> {
   items: T[];
   hasMore: boolean;
+  /** Where the next page starts (null after the last page) */
+  cursor: string | null;
   loading: boolean;
   /** The last load's error message; loading stops until `loadMore` is called again */
   error: string | null;
@@ -183,6 +185,7 @@ export function useCursorList<T>({
   return {
     items: state.items,
     hasMore: state.cursor !== null,
+    cursor: state.cursor,
     loading: state.loading,
     error: state.error,
     loadMore,
