@@ -346,14 +346,16 @@ export default function BarcodeBuilderModal({
           wide && (
             <>
               <div className="shrink-0 space-y-3 p-4">
-                <BarcodePreview state={generator} />
+                <BarcodePreview state={generator} variant="column" />
               </div>
               {phase === "success" ? (
                 <div className="px-4 pb-4">
                   <BarcodeDownloads state={generator} />
                 </div>
               ) : (
-                <div className="min-h-0 flex-1 overflow-y-auto border-t">
+                // No height of its own (h-0): the dialog keeps one size
+                // while the barcode above changes, and this scrolls.
+                <div className="h-0 min-h-0 flex-1 overflow-y-auto border-t">
                   <div className="space-y-5 p-4">
                     <BarcodeStyleFields state={generator} />
                   </div>
@@ -406,7 +408,11 @@ export default function BarcodeBuilderModal({
         title={phase === "success" ? t("yourBarcodeIsSaved") : t("newBarcode")}
         top={
           !wide && (
-            <BarcodePreview action={designButton} compact state={generator} />
+            <BarcodePreview
+              action={designButton}
+              state={generator}
+              variant="compact"
+            />
           )
         }
       >
