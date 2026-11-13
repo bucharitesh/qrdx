@@ -136,7 +136,7 @@
     "status": "machine"
   },
   "dynamic-qr-codes.mdx": {
-    "source": "587194efb22c",
+    "source": "339330d48a19",
     "status": "machine"
   },
   "features/art-qr.mdx": {
@@ -224,7 +224,7 @@
     "status": "machine"
   },
   "help/account-and-billing/plans.mdx": {
-    "source": "11e1c15a872d",
+    "source": "0e352e475150",
     "status": "machine"
   },
   "help/account-and-billing/sign-in.mdx": {
@@ -308,7 +308,7 @@
     "status": "machine"
   },
   "help/dynamic-codes/scans.mdx": {
-    "source": "a6459065128b",
+    "source": "7110d4575cf9",
     "status": "machine"
   },
   "help/getting-started/download-and-print.mdx": {
@@ -364,7 +364,7 @@
     "status": "machine"
   },
   "help/privacy-and-security/scan-data.mdx": {
-    "source": "b12d6389171e",
+    "source": "cecba3edab7f",
     "status": "machine"
   },
   "help/privacy-and-security/two-step-verification.mdx": {
@@ -452,7 +452,7 @@
     "status": "machine"
   },
   "plans-and-limits.mdx": {
-    "source": "51d954106182",
+    "source": "b80e821f6433",
     "status": "machine"
   },
   "precise-location.mdx": {
@@ -468,7 +468,7 @@
     "status": "machine"
   },
   "self-hosting.mdx": {
-    "source": "cf9f33da1ce4",
+    "source": "a8b465412f70",
     "status": "machine"
   },
   "short-links-and-file-pickers.mdx": {
