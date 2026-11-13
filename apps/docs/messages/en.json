@@ -3818,6 +3818,32 @@
           "halftone": "No AI: your photo becomes part of the code, in every format.",
           "ai": "AI paints a scene into your code. Every image is checked to scan."
         }
+      },
+      "artLooks": {
+        "look": "Look",
+        "lookChoices": "Looks",
+        "none": "None",
+        "looks": {
+          "watercolor": "Watercolor",
+          "oil-painting": "Oil painting",
+          "anime": "Anime",
+          "cartoon": "Cartoon",
+          "pixel-art": "Pixel art",
+          "pop-art": "Pop art",
+          "charcoal": "Charcoal",
+          "ink": "Ink",
+          "cyberpunk": "Cyberpunk",
+          "fantasy": "Fantasy",
+          "photographic": "Photographic",
+          "low-poly": "Low poly",
+          "papercut": "Papercut"
+        },
+        "lookHint": "A look is added to your description. Picking a style above resets it to None.",
+        "blankIsWritten": "Leave it blank and one is written for you when you generate. Writing one never uses a credit.",
+        "writeOneForMe": "Write one for me",
+        "writing": "Writing…",
+        "couldntWrite": "Couldn't write a description",
+        "checkConnection": "Check your connection and try again."
       }
     },
     "brandLogos": {
