@@ -1,16 +1,16 @@
 ---
-title: "Templat"
-description: "Terapkan templat bingkai yang sudah dirancang sebelumnya pada kode QR, atau daftarkan templat Anda sendiri."
+title: "Template"
+description: "Terapkan template bingkai yang sudah dirancang ke kode QR, atau daftarkan template Anda sendiri."
 icon: LayoutTemplate
 ---
 
-Terapkan gaya kode QR profesional secara instan.
+Bungkus kode QR dengan desain siap pakai, atau dengan desain Anda sendiri.
 
-## Apa Itu Templat? [#what-are-templates]
+## Apa Itu Template? [#what-are-templates]
 
-Templat menggabungkan warna, pola, dan gaya visual menjadi paket siap pakai.
+Template adalah karya seni SVG yang digambar di sekeliling kode: kotak, bingkai, atau lencana. Template menerima kode sebagai `children` dan menempatkannya di dalam gambarnya sendiri. Warna, pola, dan logo tetap diatur pada props `QRCode`, sehingga template dapat digunakan dengan gaya apa pun.
 
-## Templat yang Tersedia [#available-templates]
+## Template yang Tersedia [#available-templates]
 
 ### Default [#default]
 Hitam putih klasik.
@@ -29,7 +29,7 @@ Desain geometris modern.
 ```
 
 ### Standard Box [#standard-box]
-Desain bersih dan terstruktur.
+Desain rapi dan terstruktur.
 
 ```tsx
 <QRCode value="https://example.com" templateId="StandardBox" size={256} />
@@ -56,24 +56,28 @@ Tema Halloween musiman.
 <QRCode value="https://example.com" templateId="Halloween" size={256} />
 ```
 
-## Menyesuaikan Templat [#customize-templates]
+## Menyesuaikan Template [#customize-templates]
 
-Timpa pengaturan bawaan templat:
+Template bawaan menggambar karya seninya dengan `fgColor`. Hal lainnya, seperti pola dan logo, diatur pada kode seperti biasa:
 
 ```tsx
 <QRCode
   value="https://example.com"
   templateId="Arrow"
-  fgColor="#your-brand-color"
-  hideLogo={false}
-  logo="/your-logo.png"
+  fgColor="#1a56db"
+  imageSettings={{
+    src: "/your-logo.png",
+    width: 48,
+    height: 48,
+    excavate: true,
+  }}
   size={512}
 />
 ```
 
-## Registri Templat [#template-registry]
+## Registri Template [#template-registry]
 
-### Mendapatkan Semua Templat [#get-all-templates]
+### Mendapatkan Semua Template [#get-all-templates]
 
 ```tsx
 import { getAllTemplates } from 'qrdx';
@@ -81,7 +85,7 @@ import { getAllTemplates } from 'qrdx';
 const templates = getAllTemplates();
 ```
 
-### Mendapatkan ID Templat [#get-template-ids]
+### Mendapatkan ID Template [#get-template-ids]
 
 ```tsx
 import { getTemplateIds } from 'qrdx';
@@ -90,42 +94,54 @@ const ids = getTemplateIds();
 // Returns: ['default', 'Arrow', 'StandardBox', ...]
 ```
 
-## Templat Kustom [#custom-templates]
+## Template Kustom [#custom-templates]
 
-Buat templat Anda sendiri:
+Tulis template Anda sendiri sebagai `TemplateDefinition`. `wrapper`-nya menerima kode sebagai `children` dan mengembalikan SVG yang akan digambar. Template digambar pada kanvas 300 kali 300, dan kode juga tiba dengan ukuran tersebut, jadi perkecil kode agar ada ruang untuk desain Anda. `props` membawa `fgColor` dan `bgColor` dari kode.
+
+Contoh ini menggambar cincin di sekeliling kode:
 
 ```tsx
-const brandTemplate = {
-  id: 'brand-template',
-  name: 'Brand Template',
-  colors: {
-    fgColor: '#1a56db',
-    bgColor: '#ffffff',
-    eyeColor: '#0d47a1',
-    dotColor: '#3b82f6'
-  },
-  bodyPattern: 'rounded',
-  cornerEyePattern: 'rounded',
-  cornerEyeDotPattern: 'rounded'
+import { QRCode, type TemplateDefinition } from "qrdx";
+
+const ringTemplate: TemplateDefinition = {
+  id: "ring",
+  name: "Ring",
+  wrapper: (children, props) => (
+    <svg viewBox="0 0 300 300" width="300" height="300" xmlns="http://www.w3.org/2000/svg">
+      <circle
+        cx="150"
+        cy="150"
+        r="140"
+        fill="none"
+        stroke={props?.fgColor ?? "#000000"}
+        strokeWidth="8"
+      />
+      {/* The code at half size, centered */}
+      <g transform="translate(75, 75) scale(0.5)">{children}</g>
+    </svg>
+  ),
 };
 
 <QRCode
   value="https://example.com"
-  customTemplate={brandTemplate}
+  customTemplate={ringTemplate}
+  fgColor="#1a56db"
   size={256}
 />
 ```
 
-## Kapan Menggunakan Templat [#when-to-use-templates]
+Jaga agar kode cukup besar untuk dipindai dari jarak orang memegang ponselnya, dan sisakan celah terang antara kode dan desain Anda. Periksa hasilnya dengan [skor pemindaian](/docs/features/frames#will-it-scan).
+
+## Kapan Menggunakan Template [#when-to-use-templates]
 
 - **Konsistensi Merek** — Pastikan semua kode QR serasi
 - **Penyiapan Cepat** — Dapatkan hasil profesional dengan cepat
-- **Kampanye Musiman** — Gunakan templat bertema
+- **Kampanye Musiman** — Gunakan template bertema
 - **Pembuatan Massal** — Terapkan gaya yang konsisten
 
-## Panduan Memilih Templat [#template-selection-guide]
+## Panduan Memilih Template [#template-selection-guide]
 
-| Templat | Paling Cocok Untuk | Suasana |
+| Template | Paling Cocok Untuk | Suasana |
 |----------|----------|------|
 | Default | Profesional | Netral |
 | Arrow | Teknologi, modern | Dinamis |
@@ -136,6 +152,6 @@ const brandTemplate = {
 
 ## Langkah Berikutnya [#next-steps]
 
-- [Pola](/docs/features/patterns) — Penyesuaian pola secara mendetail
+- [Pola](/docs/features/patterns) — Penyesuaian pola secara rinci
 - [Warna & Gradien](/docs/features/colors-gradients) — Warna tingkat lanjut
-- [Logo](/docs/features/logos) — Tambahkan logo ke templat
+- [Logo](/docs/features/logos) — Tambahkan logo ke template

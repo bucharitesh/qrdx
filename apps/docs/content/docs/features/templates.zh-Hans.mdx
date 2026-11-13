@@ -4,16 +4,16 @@ description: "为二维码套用预先设计好的边框模板，或注册您自
 icon: LayoutTemplate
 ---
 
-即刻应用专业的二维码样式。
+用现成的图案，或您自己的图案，把二维码包起来。
 
 ## 什么是模板？ [#what-are-templates]
 
-模板把颜色、图案和视觉样式组合成开箱即用的方案。
+模板是围绕二维码绘制的 SVG 图案，例如方框、边框或徽章。它以 `children` 的形式接收二维码，并把二维码放进自己的图形中。颜色、图案样式和徽标仍然通过 `QRCode` 的属性设置，因此模板可以搭配任何样式使用。
 
 ## 可用模板 [#available-templates]
 
-### Default [#default]
-经典黑白配色。
+### 默认 [#default]
+经典黑白风格。
 
 ```tsx
 import { QRCode } from 'qrdx';
@@ -21,36 +21,36 @@ import { QRCode } from 'qrdx';
 <QRCode value="https://example.com" templateId="default" size={256} />
 ```
 
-### Arrow [#arrow]
+### 箭头 [#arrow]
 现代几何设计。
 
 ```tsx
 <QRCode value="https://example.com" templateId="Arrow" size={256} />
 ```
 
-### Standard Box [#standard-box]
+### 标准方框 [#standard-box]
 简洁、结构分明的设计。
 
 ```tsx
 <QRCode value="https://example.com" templateId="StandardBox" size={256} />
 ```
 
-### Square Border [#square-border]
-边缘清晰的带边框设计。
+### 方形边框 [#square-border]
+边缘清晰的边框设计。
 
 ```tsx
 <QRCode value="https://example.com" templateId="SquareBorder" size={256} />
 ```
 
-### Striked Box [#striked-box]
-带有斜线元素的动感设计。
+### 斜线方框 [#striked-box]
+带有斜向元素的动感设计。
 
 ```tsx
 <QRCode value="https://example.com" templateId="StrikedBox" size={256} />
 ```
 
-### Halloween [#halloween]
-应季的万圣节主题。
+### 万圣节 [#halloween]
+万圣节季节主题。
 
 ```tsx
 <QRCode value="https://example.com" templateId="Halloween" size={256} />
@@ -58,15 +58,19 @@ import { QRCode } from 'qrdx';
 
 ## 自定义模板 [#customize-templates]
 
-覆盖模板的默认设置：
+内置模板使用 `fgColor` 绘制其图案。其他内容，例如图案样式和徽标，仍然照常在二维码上设置：
 
 ```tsx
 <QRCode
   value="https://example.com"
   templateId="Arrow"
-  fgColor="#your-brand-color"
-  hideLogo={false}
-  logo="/your-logo.png"
+  fgColor="#1a56db"
+  imageSettings={{
+    src: "/your-logo.png",
+    width: 48,
+    height: 48,
+    excavate: true,
+  }}
   size={512}
 />
 ```
@@ -92,50 +96,62 @@ const ids = getTemplateIds();
 
 ## 自定义模板 [#custom-templates]
 
-创建您自己的模板：
+您可以把自己的模板写成 `TemplateDefinition`。它的 `wrapper` 以 `children` 的形式接收二维码，并返回要绘制的 SVG。模板在 300 × 300 的画布上绘制，二维码传入时也是这个尺寸，因此需要先将二维码缩小，为您的图案留出空间。`props` 中包含二维码的 `fgColor` 和 `bgColor`。
+
+下面这个示例在二维码周围绘制一个圆环：
 
 ```tsx
-const brandTemplate = {
-  id: 'brand-template',
-  name: 'Brand Template',
-  colors: {
-    fgColor: '#1a56db',
-    bgColor: '#ffffff',
-    eyeColor: '#0d47a1',
-    dotColor: '#3b82f6'
-  },
-  bodyPattern: 'rounded',
-  cornerEyePattern: 'rounded',
-  cornerEyeDotPattern: 'rounded'
+import { QRCode, type TemplateDefinition } from "qrdx";
+
+const ringTemplate: TemplateDefinition = {
+  id: "ring",
+  name: "Ring",
+  wrapper: (children, props) => (
+    <svg viewBox="0 0 300 300" width="300" height="300" xmlns="http://www.w3.org/2000/svg">
+      <circle
+        cx="150"
+        cy="150"
+        r="140"
+        fill="none"
+        stroke={props?.fgColor ?? "#000000"}
+        strokeWidth="8"
+      />
+      {/* The code at half size, centered */}
+      <g transform="translate(75, 75) scale(0.5)">{children}</g>
+    </svg>
+  ),
 };
 
 <QRCode
   value="https://example.com"
-  customTemplate={brandTemplate}
+  customTemplate={ringTemplate}
+  fgColor="#1a56db"
   size={256}
 />
 ```
+
+请确保二维码足够大，让人们在手持手机的距离上也能扫描，并在二维码与图案之间留出浅色间隙。您可以通过[扫描评分](/docs/features/frames#will-it-scan)检查结果。
 
 ## 何时使用模板 [#when-to-use-templates]
 
 - **品牌一致性** — 确保所有二维码风格统一
 - **快速设置** — 快速获得专业效果
 - **季节性活动** — 使用主题模板
-- **批量生成** — 应用统一的样式
+- **批量生成** — 套用统一的样式
 
 ## 模板选择指南 [#template-selection-guide]
 
-| 模板 | 最适合 | 风格 |
+| 模板 | 适用场景 | 风格 |
 |----------|----------|------|
-| Default | 专业场景 | 中性 |
-| Arrow | 科技、现代 | 动感 |
-| Standard Box | 企业 | 专业 |
-| Square Border | 正式场合 | 结构分明 |
-| Striked Box | 营销 | 活力 |
-| Halloween | 季节性 | 趣味 |
+| 默认 | 专业 | 中性 |
+| 箭头 | 科技、现代 | 动感 |
+| 标准方框 | 企业 | 专业 |
+| 方形边框 | 正式 | 结构化 |
+| 斜线方框 | 营销 | 活力 |
+| 万圣节 | 季节性 | 趣味 |
 
 ## 后续步骤 [#next-steps]
 
-- [图案](/docs/features/patterns) — 详细的图案自定义
+- [图案样式](/docs/features/patterns) — 详细的图案样式自定义
 - [颜色与渐变](/docs/features/colors-gradients) — 高级颜色设置
-- [Logo](/docs/features/logos) — 为模板添加 Logo
+- [徽标](/docs/features/logos) — 为模板添加徽标
