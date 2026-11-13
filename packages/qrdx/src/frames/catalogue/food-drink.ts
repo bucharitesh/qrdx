@@ -2,6 +2,7 @@
 // Do not edit: change the frame files or the generator, then run it again.
 import type { OfficialFrame } from "../official";
 import allergenInfo from "../official/allergen-info.json";
+import bakeryBoard from "../official/bakery-board.json";
 import bakeryCake from "../official/bakery-cake.json";
 import barBeer from "../official/bar-beer.json";
 import barBottle from "../official/bar-bottle.json";
@@ -9,14 +10,34 @@ import barCocktail from "../official/bar-cocktail.json";
 import barHappyHour from "../official/bar-happy-hour.json";
 import barTab from "../official/bar-tab.json";
 import barWine from "../official/bar-wine.json";
+import breweryTour from "../official/brewery-tour.json";
+import brunchMenu from "../official/brunch-menu.json";
+import bubbleTea from "../official/bubble-tea.json";
+import burgerOrder from "../official/burger-order.json";
 import cafeBean from "../official/cafe-bean.json";
 import cafeCup from "../official/cafe-cup.json";
 import cafeLoyalty from "../official/cafe-loyalty.json";
 import cafeMenuBoard from "../official/cafe-menu-board.json";
 import cafeSteam from "../official/cafe-steam.json";
 import cafeWifi from "../official/cafe-wifi.json";
+import callAServer from "../official/call-a-server.json";
+import cateringOrder from "../official/catering-order.json";
+import cheesePairing from "../official/cheese-pairing.json";
+import cookieBox from "../official/cookie-box.json";
+import cookingClass from "../official/cooking-class.json";
+import cupcakeOrder from "../official/cupcake-order.json";
+import donutShop from "../official/donut-shop.json";
+import dumplingHouse from "../official/dumpling-house.json";
+import farmStand from "../official/farm-stand.json";
+import farmersMarket from "../official/farmers-market.json";
+import fishMarket from "../official/fish-market.json";
 import foodTruck from "../official/food-truck.json";
+import foodTruckLocation from "../official/food-truck-location.json";
+import grillMenu from "../official/grill-menu.json";
 import iceCreamShop from "../official/ice-cream-shop.json";
+import juiceBar from "../official/juice-bar.json";
+import kidsMenu from "../official/kids-menu.json";
+import lateNightMenu from "../official/late-night-menu.json";
 import menuArch from "../official/menu-arch.json";
 import menuChalkboard from "../official/menu-chalkboard.json";
 import menuChef from "../official/menu-chef.json";
@@ -24,15 +45,33 @@ import menuCloche from "../official/menu-cloche.json";
 import menuCutlery from "../official/menu-cutlery.json";
 import menuNoodles from "../official/menu-noodles.json";
 import menuPizza from "../official/menu-pizza.json";
+import nutritionFacts from "../official/nutrition-facts.json";
 import orderAtTable from "../official/order-at-table.json";
 import orderHereTab from "../official/order-here-tab.json";
 import orderPickup from "../official/order-pickup.json";
 import payAtTable from "../official/pay-at-table.json";
+import payItForward from "../official/pay-it-forward.json";
+import pickYourOwn from "../official/pick-your-own.json";
+import plantBasedMenu from "../official/plant-based-menu.json";
+import preOrderBread from "../official/pre-order-bread.json";
 import rateYourMeal from "../official/rate-your-meal.json";
+import recipeCard from "../official/recipe-card.json";
 import restaurantBooking from "../official/restaurant-booking.json";
 import restaurantDelivery from "../official/restaurant-delivery.json";
+import restaurantGiftCard from "../official/restaurant-gift-card.json";
+import returnYourCup from "../official/return-your-cup.json";
+import splitTheBill from "../official/split-the-bill.json";
+import sushiMenu from "../official/sushi-menu.json";
 import tableNumber from "../official/table-number.json";
 import tableTent from "../official/table-tent.json";
+import takeoutOrder from "../official/takeout-order.json";
+import teaMenu from "../official/tea-menu.json";
+import teaTime from "../official/tea-time.json";
+import traceYourCoffee from "../official/trace-your-coffee.json";
+import waterRefill from "../official/water-refill.json";
+import winePairings from "../official/wine-pairings.json";
+import wineStaffPick from "../official/wine-staff-pick.json";
+import wineryTasting from "../official/winery-tasting.json";
 
 /** The official frames in the "food-drink" collection. */
 const frames = [
@@ -68,6 +107,45 @@ const frames = [
   barTab,
   restaurantBooking,
   restaurantDelivery,
+  burgerOrder,
+  sushiMenu,
+  donutShop,
+  cupcakeOrder,
+  teaMenu,
+  bakeryBoard,
+  wineryTasting,
+  fishMarket,
+  bubbleTea,
+  dumplingHouse,
+  farmStand,
+  pickYourOwn,
+  cookieBox,
+  cheesePairing,
+  brunchMenu,
+  takeoutOrder,
+  nutritionFacts,
+  recipeCard,
+  cateringOrder,
+  restaurantGiftCard,
+  foodTruckLocation,
+  plantBasedMenu,
+  kidsMenu,
+  winePairings,
+  traceYourCoffee,
+  breweryTour,
+  callAServer,
+  splitTheBill,
+  wineStaffPick,
+  cookingClass,
+  farmersMarket,
+  grillMenu,
+  waterRefill,
+  lateNightMenu,
+  payItForward,
+  preOrderBread,
+  returnYourCup,
+  teaTime,
+  juiceBar,
 ] as unknown as readonly OfficialFrame[];
 
 export default frames;

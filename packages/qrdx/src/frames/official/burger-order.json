@@ -1,0 +1,80 @@
+{
+  "id": "burger-order",
+  "name": "Burger order",
+  "description": "A solid card with a burger over the code and the label underneath.",
+  "category": "use-case",
+  "collection": "food-drink",
+  "contentTypes": ["url"],
+  "tags": ["restaurant", "food", "burger", "kiosk"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M560 95C560 63.5 590 50 620 50C650 50 680 63.5 680 95ZM566.75 122L673.25 122A9.75 9.75 0 0 1 683 131.75L683 131.75A9.75 9.75 0 0 1 673.25 141.5L566.75 141.5A9.75 9.75 0 0 1 557 131.75L557 131.75A9.75 9.75 0 0 1 566.75 122ZM574.25 147.5L665.75 147.5A11.25 11.25 0 0 1 677 158.75L677 158.75A11.25 11.25 0 0 1 665.75 170L574.25 170A11.25 11.25 0 0 1 563 158.75L563 158.75A11.25 11.25 0 0 1 574.25 147.5ZM591.2 71A4.8 2.85 0 1 0 600.8 71A4.8 2.85 0 1 0 591.2 71ZM615.2 63.5A4.8 2.85 0 1 0 624.8 63.5A4.8 2.85 0 1 0 615.2 63.5ZM639.2 71A4.8 2.85 0 1 0 648.8 71A4.8 2.85 0 1 0 639.2 71ZM603.2 81.5A4.8 2.85 0 1 0 612.8 81.5A4.8 2.85 0 1 0 603.2 81.5ZM627.2 81.5A4.8 2.85 0 1 0 636.8 81.5A4.8 2.85 0 1 0 627.2 81.5Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M557 101L683 101L683 110Q674 120.5 665 110Q656 120.5 647 110Q638 120.5 629 110Q620 120.5 611 110Q602 120.5 593 110Q584 120.5 575 110Q566 120.5 557 110Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Build your burger",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Order at the counter",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

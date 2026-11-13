@@ -1,0 +1,80 @@
+{
+  "id": "book-this-room",
+  "name": "Meeting room",
+  "description": "A solid card with a presentation board over the code and the label underneath.",
+  "category": "use-case",
+  "collection": "business",
+  "contentTypes": ["calcom", "url"],
+  "tags": ["business", "meeting room", "office"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M563 50L677 50A6 6 0 0 1 683 56L683 128A6 6 0 0 1 677 134L563 134A6 6 0 0 1 557 128L557 56A6 6 0 0 1 563 50ZM570.5 60.5A3 3 0 0 0 567.5 63.5L567.5 120.5A3 3 0 0 0 570.5 123.5L669.5 123.5A3 3 0 0 0 672.5 120.5L672.5 63.5A3 3 0 0 0 669.5 60.5L570.5 60.5ZM616.98 131.78A3.75 3.75 0 0 0 623.02 136.22L590.02 181.22A3.75 3.75 0 0 0 583.98 176.78L616.98 131.78ZM616.98 136.22A3.75 3.75 0 0 0 623.02 131.78L656.02 176.78A3.75 3.75 0 0 0 649.98 181.22L616.98 136.22ZM616.25 128A3.75 3.75 0 0 0 623.75 128L623.75 170A3.75 3.75 0 0 0 616.25 170L616.25 128ZM617 41L623 41A3 3 0 0 1 626 44L626 50A3 3 0 0 1 623 53L617 53A3 3 0 0 1 614 50L614 44A3 3 0 0 1 617 41Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M582.5 95L593 95A1.5 1.5 0 0 1 594.5 96.5L594.5 114.5A1.5 1.5 0 0 1 593 116L582.5 116A1.5 1.5 0 0 1 581 114.5L581 96.5A1.5 1.5 0 0 1 582.5 95ZM603.5 83L614 83A1.5 1.5 0 0 1 615.5 84.5L615.5 114.5A1.5 1.5 0 0 1 614 116L603.5 116A1.5 1.5 0 0 1 602 114.5L602 84.5A1.5 1.5 0 0 1 603.5 83ZM624.5 74L635 74A1.5 1.5 0 0 1 636.5 75.5L636.5 114.5A1.5 1.5 0 0 1 635 116L624.5 116A1.5 1.5 0 0 1 623 114.5L623 75.5A1.5 1.5 0 0 1 624.5 74ZM645.5 86L656 86A1.5 1.5 0 0 1 657.5 87.5L657.5 114.5A1.5 1.5 0 0 1 656 116L645.5 116A1.5 1.5 0 0 1 644 114.5L644 87.5A1.5 1.5 0 0 1 645.5 86Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Book this room",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Meeting room",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

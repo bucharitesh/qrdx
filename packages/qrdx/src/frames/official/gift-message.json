@@ -1,0 +1,85 @@
+{
+  "id": "gift-message",
+  "name": "Gift message",
+  "description": "A card with its top corner folded down and a bow.",
+  "category": "use-case",
+  "collection": "shopping",
+  "contentTypes": ["url"],
+  "tags": ["retail", "shop", "gift", "gift wrap"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1770
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M0 0L1000 0L1240 240L1240 1770L0 1770Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M1000 0L1000 220L1020 240L1240 240Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.6
+        }
+      },
+      {
+        "type": "path",
+        "d": "M140 150C125 129 92 108 83 126C77 141 89 168 140 150ZM140 150C191 168 203 141 197 126C188 108 155 129 140 150ZM134 153L113 201L128 195L137 207ZM146 153L143 207L152 195L167 201Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M137 138L143 138A7.5 7.5 0 0 1 150.5 145.5L150.5 154.5A7.5 7.5 0 0 1 143 162L137 162A7.5 7.5 0 0 1 129.5 154.5L129.5 145.5A7.5 7.5 0 0 1 137 138Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Send it as a gift",
+        "color": "text",
+        "box": {
+          "x": 90,
+          "y": 1530,
+          "width": 1060,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Add a message",
+        "color": "text",
+        "box": {
+          "x": 260,
+          "y": 100,
+          "width": 700,
+          "height": 100
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

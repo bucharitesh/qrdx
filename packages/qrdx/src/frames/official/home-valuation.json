@@ -1,0 +1,87 @@
+{
+  "id": "home-valuation",
+  "name": "Home valuation",
+  "description": "A die-cut sticker with a thick outline and an offset shadow and a house.",
+  "category": "use-case",
+  "collection": "real-estate",
+  "contentTypes": ["url"],
+  "tags": ["real estate", "property", "valuation", "selling"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1750
+    },
+    "qr": {
+      "x": 110,
+      "y": 370,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 50,
+        "y": 50,
+        "width": 1270,
+        "height": 1700,
+        "radius": 110,
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1270,
+        "height": 1700,
+        "radius": 110,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 36,
+        "y": 36,
+        "width": 1198,
+        "height": 1628,
+        "radius": 80,
+        "fill": "background"
+      },
+      {
+        "type": "path",
+        "d": "M635 82.8L708.6 146.8L692.6 146.8L692.6 217.2L577.4 217.2L577.4 146.8L561.4 146.8ZM625.4 169.2A3.2 3.2 0 0 0 622.2 172.4L622.2 214A3.2 3.2 0 0 0 625.4 217.2L644.6 217.2A3.2 3.2 0 0 0 647.8 214L647.8 172.4A3.2 3.2 0 0 0 644.6 169.2ZM657.4 92.4L673.4 92.4L673.4 124.4L657.4 124.4Z",
+        "fill": "frame",
+        "fillRule": "evenodd"
+      },
+      {
+        "type": "path",
+        "d": "M593.4 159.6L609.4 159.6A3.2 3.2 0 0 1 612.6 162.8L612.6 178.8A3.2 3.2 0 0 1 609.4 182L593.4 182A3.2 3.2 0 0 1 590.2 178.8L590.2 162.8A3.2 3.2 0 0 1 593.4 159.6Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "What's your home worth?",
+        "color": "frame",
+        "box": {
+          "x": 100,
+          "y": 1490,
+          "width": 1070,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

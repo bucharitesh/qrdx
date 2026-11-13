@@ -1,0 +1,142 @@
+{
+  "id": "sports-camp",
+  "name": "Sports camp",
+  "description": "A card with a trophy and a ribbon banner with folded tails across the bottom.",
+  "category": "use-case",
+  "collection": "sports-fitness",
+  "contentTypes": ["url"],
+  "tags": ["sports", "fitness", "camp", "kids"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1440,
+      "height": 1800
+    },
+    "qr": {
+      "x": 220,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 100,
+        "y": 0,
+        "width": 1240,
+        "height": 1640,
+        "radius": 56,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 100,
+        "y": 0,
+        "width": 1240,
+        "height": 1640,
+        "radius": 56,
+        "fill": "frame",
+        "hole": {
+          "x": 118,
+          "y": 18,
+          "width": 1204,
+          "height": 1604,
+          "radius": 40
+        }
+      },
+      {
+        "type": "polygon",
+        "points": [[0, 1580], [170, 1580], [170, 1800], [0, 1800], [70, 1690]],
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.25
+        }
+      },
+      {
+        "type": "polygon",
+        "points": [
+          [1440, 1580],
+          [1270, 1580],
+          [1270, 1800],
+          [1440, 1800],
+          [1370, 1690]
+        ],
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.25
+        }
+      },
+      {
+        "type": "polygon",
+        "points": [[100, 1730], [170, 1800], [170, 1730]],
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.55
+        }
+      },
+      {
+        "type": "polygon",
+        "points": [[1340, 1730], [1270, 1800], [1270, 1730]],
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.55
+        }
+      },
+      {
+        "type": "rect",
+        "x": 100,
+        "y": 1510,
+        "width": 1240,
+        "height": 220,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M688.8 54.6L751.2 54.6L751.2 81C751.2 105 736.8 117 720 117C703.2 117 688.8 105 688.8 81ZM688.8 94.2A18 18 0 0 1 688.8 58.2L688.8 65.4A10.8 10.8 0 0 0 688.8 87ZM751.2 58.2A18 18 0 0 1 751.2 94.2L751.2 87A10.8 10.8 0 0 0 751.2 65.4Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M714 114.6L726 114.6L726 136.2L714 136.2ZM698.4 136.2L741.6 136.2A2.4 2.4 0 0 1 744 138.6L744 143.4A2.4 2.4 0 0 1 741.6 145.8L698.4 145.8A2.4 2.4 0 0 1 696 143.4L696 138.6A2.4 2.4 0 0 1 698.4 136.2ZM692.4 145.8L747.6 145.8A3.6 3.6 0 0 1 751.2 149.4L751.2 154.2A3.6 3.6 0 0 1 747.6 157.8L692.4 157.8A3.6 3.6 0 0 1 688.8 154.2L688.8 149.4A3.6 3.6 0 0 1 692.4 145.8Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Sports camp",
+        "color": "text",
+        "box": {
+          "x": 180,
+          "y": 1530,
+          "width": 1080,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "For kids and teens",
+        "color": "frame",
+        "box": {
+          "x": 240,
+          "y": 185,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

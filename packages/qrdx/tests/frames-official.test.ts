@@ -6,6 +6,8 @@
 import { readdirSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
+import automotive from "../src/frames/catalogue/automotive";
+import beautyWellness from "../src/frames/catalogue/beauty-wellness";
 import business from "../src/frames/catalogue/business";
 import callToAction from "../src/frames/catalogue/call-to-action";
 import events from "../src/frames/catalogue/events";
@@ -13,9 +15,12 @@ import foodDrink from "../src/frames/catalogue/food-drink";
 import healthLearning from "../src/frames/catalogue/health-learning";
 import holidays from "../src/frames/catalogue/holidays";
 import { OFFICIAL_FRAME_INDEX } from "../src/frames/catalogue/index";
+import nonprofit from "../src/frames/catalogue/nonprofit";
 import places from "../src/frames/catalogue/places";
+import realEstate from "../src/frames/catalogue/real-estate";
 import seasons from "../src/frames/catalogue/seasons";
 import shopping from "../src/frames/catalogue/shopping";
+import sportsFitness from "../src/frames/catalogue/sports-fitness";
 import { OFFICIAL_FRAME_TAGS } from "../src/frames/catalogue/tags";
 import {
   frameSpecHash,
@@ -25,6 +30,7 @@ import {
   OFFICIAL_FRAME_COUNTS,
   OFFICIAL_FRAMES,
   type OfficialFrame,
+  type OfficialFrameCollection,
 } from "../src/frames/official";
 import type { QRProps } from "../types";
 import { compareImages, SAMPLE_PAYLOADS } from "./support/frames";
@@ -32,16 +38,21 @@ import { blocks } from "./support/official-frames";
 import { renderSvg } from "./support/qr";
 import { rasterizeSvg } from "./support/raster";
 
-const MODULES: Record<string, readonly OfficialFrame[]> = {
+const MODULES: Record<OfficialFrameCollection, readonly OfficialFrame[]> = {
   "call-to-action": callToAction,
   holidays,
   seasons,
   "food-drink": foodDrink,
   shopping,
+  "beauty-wellness": beautyWellness,
   events,
   places,
+  "real-estate": realEstate,
+  automotive,
   "health-learning": healthLearning,
+  "sports-fitness": sportsFitness,
   business,
+  nonprofit,
 };
 
 describe("the official frame catalogue", () => {

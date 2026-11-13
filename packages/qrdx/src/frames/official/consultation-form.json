@@ -1,0 +1,120 @@
+{
+  "id": "consultation-form",
+  "name": "Consultation form",
+  "description": "A clipboard with the code on its sheet of paper and a hand mirror.",
+  "category": "use-case",
+  "collection": "beauty-wellness",
+  "contentTypes": ["url"],
+  "tags": ["beauty", "wellness", "consultation", "forms"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1890
+    },
+    "qr": {
+      "x": 160,
+      "y": 480,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 90,
+        "width": 1320,
+        "height": 1800,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 60,
+        "y": 200,
+        "width": 1200,
+        "height": 1630,
+        "radius": 12,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 60,
+        "y": 200,
+        "width": 1200,
+        "height": 14,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.75
+        }
+      },
+      {
+        "type": "path",
+        "d": "M470 20L850 20A40 40 0 0 1 890 60L890 150A40 40 0 0 1 850 190L470 190A40 40 0 0 1 430 150L430 60A40 40 0 0 1 470 20ZM626 85A34 34 0 1 0 694 85A34 34 0 1 0 626 85Z",
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.3
+        }
+      },
+      {
+        "type": "path",
+        "d": "M192.8 299.4A37.2 39.6 0 1 1 267.2 299.4A37.2 39.6 0 1 1 192.8 299.4ZM201.2 299.4A28.8 31.2 0 1 0 258.8 299.4A28.8 31.2 0 1 0 201.2 299.4ZM228.8 334.2L231.2 334.2A7.2 7.2 0 0 1 238.4 341.4L238.4 363A7.2 7.2 0 0 1 231.2 370.2L228.8 370.2A7.2 7.2 0 0 1 221.6 363L221.6 341.4A7.2 7.2 0 0 1 228.8 334.2Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M204.8 299.4A25.2 27.6 0 1 1 255.2 299.4A25.2 27.6 0 1 1 204.8 299.4ZM217.04 292.44L231.44 278.04A2.04 2.04 0 0 1 228.56 275.16L214.16 289.56A2.04 2.04 0 0 1 217.04 292.44ZM219.44 304.44L241.04 282.84A2.04 2.04 0 0 1 238.16 279.96L216.56 301.56A2.04 2.04 0 0 1 219.44 304.44Z",
+        "fill": "accent"
+      },
+      {
+        "type": "rect",
+        "x": 160,
+        "y": 392,
+        "width": 1000,
+        "height": 8,
+        "radius": 4,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.7
+        }
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Your consultation form",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 1600,
+          "width": 1040,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Before your visit",
+        "color": "frame",
+        "box": {
+          "x": 330,
+          "y": 260,
+          "width": 830,
+          "height": 110
+        },
+        "align": "start"
+      }
+    ]
+  }
+}

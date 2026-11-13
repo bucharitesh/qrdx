@@ -1,0 +1,137 @@
+{
+  "id": "art-class",
+  "name": "Art lessons",
+  "description": "A card with a paint palette and a ribbon banner with folded tails across the bottom.",
+  "category": "use-case",
+  "collection": "health-learning",
+  "contentTypes": ["calcom", "url"],
+  "tags": ["education", "school", "art", "class"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1440,
+      "height": 1800
+    },
+    "qr": {
+      "x": 220,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 100,
+        "y": 0,
+        "width": 1240,
+        "height": 1640,
+        "radius": 56,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 100,
+        "y": 0,
+        "width": 1240,
+        "height": 1640,
+        "radius": 56,
+        "fill": "frame",
+        "hole": {
+          "x": 118,
+          "y": 18,
+          "width": 1204,
+          "height": 1604,
+          "radius": 40
+        }
+      },
+      {
+        "type": "polygon",
+        "points": [[0, 1580], [170, 1580], [170, 1800], [0, 1800], [70, 1690]],
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.25
+        }
+      },
+      {
+        "type": "polygon",
+        "points": [
+          [1440, 1580],
+          [1270, 1580],
+          [1270, 1800],
+          [1440, 1800],
+          [1370, 1690]
+        ],
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.25
+        }
+      },
+      {
+        "type": "polygon",
+        "points": [[100, 1730], [170, 1800], [170, 1730]],
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.55
+        }
+      },
+      {
+        "type": "polygon",
+        "points": [[1340, 1730], [1270, 1800], [1270, 1730]],
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.55
+        }
+      },
+      {
+        "type": "rect",
+        "x": 100,
+        "y": 1510,
+        "width": 1240,
+        "height": 220,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M720 54.6C756 54.6 775.2 81 772.8 107.4C770.4 129 748.8 131.4 739.2 129C727.2 126.6 724.8 138.6 729.6 148.2C734.4 157.8 720 157.8 712.8 155.4C684 150.6 667.2 131.4 667.2 105C667.2 76.2 688.8 54.6 720 54.6ZM685.2 107.4A8.4 8.4 0 1 0 702 107.4A8.4 8.4 0 1 0 685.2 107.4ZM692.4 81A8.4 8.4 0 1 0 709.2 81A8.4 8.4 0 1 0 692.4 81ZM718.8 73.8A8.4 8.4 0 1 0 735.6 73.8A8.4 8.4 0 1 0 718.8 73.8ZM742.8 90.6A8.4 8.4 0 1 0 759.6 90.6A8.4 8.4 0 1 0 742.8 90.6Z",
+        "fill": "frame",
+        "fillRule": "evenodd"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Book an art class",
+        "color": "text",
+        "box": {
+          "x": 180,
+          "y": 1530,
+          "width": 1080,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "All levels",
+        "color": "frame",
+        "box": {
+          "x": 240,
+          "y": 185,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

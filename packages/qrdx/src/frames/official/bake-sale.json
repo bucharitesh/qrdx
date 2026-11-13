@@ -1,0 +1,158 @@
+{
+  "id": "bake-sale",
+  "name": "Bake sale",
+  "description": "A wide vinyl banner with eyelets in its corners and a cupcake.",
+  "category": "use-case",
+  "collection": "nonprofit",
+  "contentTypes": ["upi", "paypal", "url"],
+  "tags": ["nonprofit", "community", "bake sale", "fundraising"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 2000,
+      "height": 1140
+    },
+    "qr": {
+      "x": 190,
+      "y": 170,
+      "size": 800,
+      "padding": 64,
+      "radius": 19.2
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M114.95 105.05L4.95 -4.95A7 7 0 0 1 -4.95 4.95L105.05 114.95A7 7 0 0 1 114.95 105.05Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.4
+        }
+      },
+      {
+        "type": "path",
+        "d": "M1894.95 114.95L2004.95 4.95A7 7 0 0 1 1995.05 -4.95L1885.05 105.05A7 7 0 0 1 1894.95 114.95Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.4
+        }
+      },
+      {
+        "type": "path",
+        "d": "M105.05 1025.05L-4.95 1135.05A7 7 0 0 1 4.95 1144.95L114.95 1034.95A7 7 0 0 1 105.05 1025.05Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.4
+        }
+      },
+      {
+        "type": "path",
+        "d": "M1885.05 1034.95L1995.05 1144.95A7 7 0 0 1 2004.95 1135.05L1894.95 1025.05A7 7 0 0 1 1885.05 1034.95Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.4
+        }
+      },
+      {
+        "type": "rect",
+        "x": 40,
+        "y": 40,
+        "width": 1920,
+        "height": 1060,
+        "radius": 14,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 66,
+        "y": 66,
+        "width": 1868,
+        "height": 1008,
+        "radius": 6,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.9
+        }
+      },
+      {
+        "type": "circle",
+        "cx": 110,
+        "cy": 110,
+        "r": 30,
+        "hole": 15,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 1890,
+        "cy": 110,
+        "r": 30,
+        "hole": 15,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 110,
+        "cy": 1030,
+        "r": 30,
+        "hole": 15,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 1890,
+        "cy": 1030,
+        "r": 30,
+        "hole": 15,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M1143.9 300A22.1 22.1 0 1 1 1188.1 300A22.1 22.1 0 1 1 1143.9 300ZM1211.9 300A22.1 22.1 0 1 1 1256.1 300A22.1 22.1 0 1 1 1211.9 300ZM1171.1 289.8A28.9 28.9 0 1 1 1228.9 289.8A28.9 28.9 0 1 1 1171.1 289.8ZM1177.9 262.6A22.1 18.7 0 1 1 1222.1 262.6A22.1 18.7 0 1 1 1177.9 262.6ZM1153.25 294.9L1246.75 294.9A9.35 9.35 0 0 1 1256.1 304.25L1256.1 304.25A9.35 9.35 0 0 1 1246.75 313.6L1153.25 313.6A9.35 9.35 0 0 1 1143.9 304.25L1143.9 304.25A9.35 9.35 0 0 1 1153.25 294.9ZM1150.7 320.4L1249.3 320.4L1235.7 374.8L1164.3 374.8ZM1173.35 329.35L1179.3 366.75A2.89 2.89 0 0 1 1185 365.85L1179.05 328.45A2.89 2.89 0 0 1 1173.35 329.35ZM1197.11 328.9L1197.11 366.3A2.89 2.89 0 0 1 1202.89 366.3L1202.89 328.9A2.89 2.89 0 0 1 1197.11 328.9ZM1220.95 328.45L1215 365.85A2.89 2.89 0 0 1 1220.7 366.75L1226.65 329.35A2.89 2.89 0 0 1 1220.95 328.45Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M1188.95 235.4A11.05 11.05 0 1 1 1211.05 235.4A11.05 11.05 0 1 1 1188.95 235.4ZM1204.57 228.77A2.21 2.21 0 0 0 1202.23 225.03L1215.83 216.53A2.21 2.21 0 0 0 1218.17 220.27L1204.57 228.77Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Bake sale",
+        "color": "frame",
+        "box": {
+          "x": 1110,
+          "y": 470,
+          "width": 720,
+          "height": 190
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Support the school",
+        "color": "frame",
+        "box": {
+          "x": 1110,
+          "y": 680,
+          "width": 720,
+          "height": 100
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

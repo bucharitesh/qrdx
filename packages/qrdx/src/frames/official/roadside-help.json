@@ -1,0 +1,92 @@
+{
+  "id": "roadside-help",
+  "name": "Roadside help",
+  "description": "A light card with a traffic cone and a pill-shaped button under the code.",
+  "category": "use-case",
+  "collection": "automotive",
+  "contentTypes": ["phone", "url"],
+  "tags": ["cars", "parking", "roadside", "breakdown"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1760
+    },
+    "qr": {
+      "x": 120,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 64,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.9
+        }
+      },
+      {
+        "type": "path",
+        "d": "M608.3 41.4L631.7 41.4L638.56 67.4L601.44 67.4ZM598.01 80.4L641.99 80.4L647.48 101.2L592.52 101.2ZM589.09 114.2L650.91 114.2L656.4 135L583.6 135ZM571.9 137.6L668.1 137.6A3.9 3.9 0 0 1 672 141.5L672 146.7A3.9 3.9 0 0 1 668.1 150.6L571.9 150.6A3.9 3.9 0 0 1 568 146.7L568 141.5A3.9 3.9 0 0 1 571.9 137.6Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M600.75 70L639.25 70L641.48 78.45L598.52 78.45ZM591.83 103.8L648.17 103.8L650.4 112.25L589.6 112.25Z",
+        "fill": "accent"
+      },
+      {
+        "type": "rect",
+        "x": 170,
+        "y": 1520,
+        "width": 900,
+        "height": 180,
+        "radius": 90,
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Call roadside help",
+        "color": "text",
+        "box": {
+          "x": 230,
+          "y": 1520,
+          "width": 780,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Breakdowns",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 180,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

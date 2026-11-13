@@ -1,0 +1,85 @@
+{
+  "id": "tee-time",
+  "name": "Tee time",
+  "description": "A wide card: the code on one side, a golf flag and the label on the other.",
+  "category": "use-case",
+  "collection": "sports-fitness",
+  "contentTypes": ["calcom", "url"],
+  "tags": ["sports", "fitness", "golf"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 2000,
+      "height": 1040
+    },
+    "qr": {
+      "x": 120,
+      "y": 120,
+      "size": 800,
+      "padding": 64,
+      "radius": 19.2
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 2000,
+        "height": 1040,
+        "radius": 72,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.9
+        }
+      },
+      {
+        "type": "path",
+        "d": "M1091.2 170.8L1091.2 170.8A5.4 5.4 0 0 1 1096.6 176.2L1096.6 313A5.4 5.4 0 0 1 1091.2 318.4L1091.2 318.4A5.4 5.4 0 0 1 1085.8 313L1085.8 176.2A5.4 5.4 0 0 1 1091.2 170.8ZM1096.6 174.4L1170.4 199.6L1096.6 224.8ZM1141.6 304A10.8 10.8 0 1 1 1163.2 304A10.8 10.8 0 1 1 1141.6 304Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M1044.4 325.6A75.6 10.8 0 1 1 1195.6 325.6A75.6 10.8 0 1 1 1044.4 325.6ZM1078.6 325.6A12.6 4.5 0 1 0 1103.8 325.6A12.6 4.5 0 1 0 1078.6 325.6Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Book a tee time",
+        "color": "frame",
+        "box": {
+          "x": 1030,
+          "y": 400,
+          "width": 860,
+          "height": 190
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Golf club",
+        "color": "frame",
+        "box": {
+          "x": 1030,
+          "y": 610,
+          "width": 860,
+          "height": 100
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

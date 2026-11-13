@@ -1,0 +1,120 @@
+{
+  "id": "permission-form",
+  "name": "Permission form",
+  "description": "A clipboard with the code on its sheet of paper and a pencil.",
+  "category": "use-case",
+  "collection": "health-learning",
+  "contentTypes": ["url"],
+  "tags": ["education", "school", "forms"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1890
+    },
+    "qr": {
+      "x": 160,
+      "y": 480,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 90,
+        "width": 1320,
+        "height": 1800,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 60,
+        "y": 200,
+        "width": 1200,
+        "height": 1630,
+        "radius": 12,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 60,
+        "y": 200,
+        "width": 1200,
+        "height": 14,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.75
+        }
+      },
+      {
+        "type": "path",
+        "d": "M470 20L850 20A40 40 0 0 1 890 60L890 150A40 40 0 0 1 850 190L470 190A40 40 0 0 1 430 150L430 60A40 40 0 0 1 470 20ZM626 85A34 34 0 1 0 694 85A34 34 0 1 0 626 85Z",
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.3
+        }
+      },
+      {
+        "type": "path",
+        "d": "M182 363L189.2 339L256.4 271.8L273.2 288.6L206 355.8Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M182 363L189.2 339L206 355.8ZM256.4 271.8L263.6 264.6L280.4 281.4L273.2 288.6Z",
+        "fill": "accent"
+      },
+      {
+        "type": "rect",
+        "x": 160,
+        "y": 392,
+        "width": 1000,
+        "height": 8,
+        "radius": 4,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.7
+        }
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Sign the permission form",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 1600,
+          "width": 1040,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Field trip",
+        "color": "frame",
+        "box": {
+          "x": 330,
+          "y": 260,
+          "width": 830,
+          "height": 110
+        },
+        "align": "start"
+      }
+    ]
+  }
+}

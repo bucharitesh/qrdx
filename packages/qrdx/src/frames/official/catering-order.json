@@ -1,0 +1,79 @@
+{
+  "id": "catering-order",
+  "name": "Catering",
+  "description": "A wide card: the code on one side, a fork and knife and the label on the other.",
+  "category": "use-case",
+  "collection": "food-drink",
+  "contentTypes": ["url"],
+  "tags": ["restaurant", "food", "catering", "events"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 2000,
+      "height": 1040
+    },
+    "qr": {
+      "x": 120,
+      "y": 120,
+      "size": 800,
+      "padding": 64,
+      "radius": 19.2
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 2000,
+        "height": 1040,
+        "radius": 72,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.9
+        }
+      },
+      {
+        "type": "path",
+        "d": "M1073.2 174.4L1073.2 174.4A3.6 3.6 0 0 1 1076.8 178L1076.8 221.2A3.6 3.6 0 0 1 1073.2 224.8L1073.2 224.8A3.6 3.6 0 0 1 1069.6 221.2L1069.6 178A3.6 3.6 0 0 1 1073.2 174.4ZM1087.6 174.4L1087.6 174.4A3.6 3.6 0 0 1 1091.2 178L1091.2 221.2A3.6 3.6 0 0 1 1087.6 224.8L1087.6 224.8A3.6 3.6 0 0 1 1084 221.2L1084 178A3.6 3.6 0 0 1 1087.6 174.4ZM1102 174.4L1102 174.4A3.6 3.6 0 0 1 1105.6 178L1105.6 221.2A3.6 3.6 0 0 1 1102 224.8L1102 224.8A3.6 3.6 0 0 1 1098.4 221.2L1098.4 178A3.6 3.6 0 0 1 1102 174.4ZM1066 221.2L1109.2 221.2C1109.2 239.2 1098.4 246.4 1094.8 250L1094.8 325.6Q1094.8 332.8 1087.6 332.8Q1080.4 332.8 1080.4 325.6L1080.4 250C1076.8 246.4 1066 239.2 1066 221.2ZM1145.2 174.4C1174 188.8 1174 232 1166.8 260.8L1156 260.8L1156 325.6Q1156 332.8 1148.8 332.8Q1141.6 332.8 1141.6 325.6L1141.6 178Q1141.6 172.6 1145.2 174.4Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Book our catering",
+        "color": "frame",
+        "box": {
+          "x": 1030,
+          "y": 400,
+          "width": 860,
+          "height": 190
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Menus and prices",
+        "color": "frame",
+        "box": {
+          "x": 1030,
+          "y": 610,
+          "width": 860,
+          "height": 100
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

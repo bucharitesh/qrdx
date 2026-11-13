@@ -1,0 +1,142 @@
+{
+  "id": "alterations",
+  "name": "Alterations",
+  "description": "A card with a spool of thread and a needle and a ribbon banner with folded tails across the bottom.",
+  "category": "use-case",
+  "collection": "shopping",
+  "contentTypes": ["calcom", "url"],
+  "tags": ["retail", "shop", "tailor", "alterations"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1440,
+      "height": 1800
+    },
+    "qr": {
+      "x": 220,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 100,
+        "y": 0,
+        "width": 1240,
+        "height": 1640,
+        "radius": 56,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 100,
+        "y": 0,
+        "width": 1240,
+        "height": 1640,
+        "radius": 56,
+        "fill": "frame",
+        "hole": {
+          "x": 118,
+          "y": 18,
+          "width": 1204,
+          "height": 1604,
+          "radius": 40
+        }
+      },
+      {
+        "type": "polygon",
+        "points": [[0, 1580], [170, 1580], [170, 1800], [0, 1800], [70, 1690]],
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.25
+        }
+      },
+      {
+        "type": "polygon",
+        "points": [
+          [1440, 1580],
+          [1270, 1580],
+          [1270, 1800],
+          [1440, 1800],
+          [1370, 1690]
+        ],
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.25
+        }
+      },
+      {
+        "type": "polygon",
+        "points": [[100, 1730], [170, 1800], [170, 1730]],
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.55
+        }
+      },
+      {
+        "type": "polygon",
+        "points": [[1340, 1730], [1270, 1800], [1270, 1730]],
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.55
+        }
+      },
+      {
+        "type": "rect",
+        "x": 100,
+        "y": 1510,
+        "width": 1240,
+        "height": 220,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M687.6 54.6L752.4 54.6A3.6 3.6 0 0 1 756 58.2L756 63A3.6 3.6 0 0 1 752.4 66.6L687.6 66.6A3.6 3.6 0 0 1 684 63L684 58.2A3.6 3.6 0 0 1 687.6 54.6ZM687.6 143.4L752.4 143.4A3.6 3.6 0 0 1 756 147L756 151.8A3.6 3.6 0 0 1 752.4 155.4L687.6 155.4A3.6 3.6 0 0 1 684 151.8L684 147A3.6 3.6 0 0 1 687.6 143.4ZM694.8 69L745.2 69A2.4 2.4 0 0 1 747.6 71.4L747.6 138.6A2.4 2.4 0 0 1 745.2 141L694.8 141A2.4 2.4 0 0 1 692.4 138.6L692.4 71.4A2.4 2.4 0 0 1 694.8 69ZM698.23 82.55L741.43 87.35L741.77 84.25L698.57 79.45ZM698.23 94.55L741.43 99.35L741.77 96.25L698.57 91.45ZM698.23 106.55L741.43 111.35L741.77 108.25L698.57 103.45ZM698.23 118.55L741.43 123.35L741.77 120.25L698.57 115.45ZM698.23 130.55L741.43 135.35L741.77 132.25L698.57 127.45Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M758.4 52.2L763.2 54.6L744 153L741.6 151.8ZM757.68 61.8A1.2 4.08 0 1 0 760.08 61.8A1.2 4.08 0 1 0 757.68 61.8Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Book an alteration",
+        "color": "text",
+        "box": {
+          "x": 180,
+          "y": 1530,
+          "width": 1080,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Tailoring",
+        "color": "frame",
+        "box": {
+          "x": 240,
+          "y": 185,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

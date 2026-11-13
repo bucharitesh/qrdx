@@ -1,0 +1,91 @@
+{
+  "id": "see-more-stack",
+  "name": "Stacked cards, light",
+  "description": "A card with two more stacked behind it.",
+  "category": "use-case",
+  "collection": "call-to-action",
+  "contentTypes": [],
+  "tags": ["call to action", "cards"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1340,
+      "height": 1600
+    },
+    "qr": {
+      "x": 120,
+      "y": 140,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 100,
+        "y": 100,
+        "width": 1240,
+        "height": 1500,
+        "radius": 48,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.75
+        }
+      },
+      {
+        "type": "rect",
+        "x": 50,
+        "y": 50,
+        "width": 1240,
+        "height": 1500,
+        "radius": 48,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.45
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1500,
+        "radius": 48,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 16,
+        "y": 16,
+        "width": 1208,
+        "height": 1468,
+        "radius": 34,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.92
+        }
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "There's more to see",
+        "color": "frame",
+        "box": {
+          "x": 90,
+          "y": 1260,
+          "width": 1060,
+          "height": 180
+        }
+      }
+    ]
+  }
+}

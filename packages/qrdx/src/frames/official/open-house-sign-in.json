@@ -1,0 +1,104 @@
+{
+  "id": "open-house-sign-in",
+  "name": "Open house sign-in",
+  "description": "A card with two more stacked behind it and a front door.",
+  "category": "use-case",
+  "collection": "real-estate",
+  "contentTypes": ["url"],
+  "tags": ["real estate", "property", "open house", "visitors"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1340,
+      "height": 1860
+    },
+    "qr": {
+      "x": 120,
+      "y": 400,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 100,
+        "y": 100,
+        "width": 1240,
+        "height": 1760,
+        "radius": 48,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.75
+        }
+      },
+      {
+        "type": "rect",
+        "x": 50,
+        "y": 50,
+        "width": 1240,
+        "height": 1760,
+        "radius": 48,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.45
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 48,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M580.8 184.4L580.8 97.6A39.2 39.2 0 0 1 659.2 97.6L659.2 184.4Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M635.4 139.6A7 7 0 1 1 649.4 139.6A7 7 0 1 1 635.4 139.6ZM599 94.8L641 94.8A4.2 4.2 0 0 1 645.2 99L645.2 124.2A4.2 4.2 0 0 1 641 128.4L599 128.4A4.2 4.2 0 0 1 594.8 124.2L594.8 99A4.2 4.2 0 0 1 599 94.8Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Open house sign-in",
+        "color": "text",
+        "box": {
+          "x": 90,
+          "y": 1520,
+          "width": 1060,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Welcome in",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 210,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}
