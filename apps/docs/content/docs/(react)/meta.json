@@ -10,6 +10,7 @@
     "../usage",
     "../nextjs",
     "../vanilla-js",
+    "../vue",
     "../web-component",
     "---Styling and export---",
     "../styles",

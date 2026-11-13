@@ -1,0 +1,109 @@
+{
+  "id": "polling-place",
+  "name": "Polling place",
+  "description": "A sign on two posts with a ballot box in a round badge on top.",
+  "category": "use-case",
+  "collection": "nonprofit",
+  "contentTypes": ["location", "url"],
+  "tags": ["nonprofit", "community", "voting", "election"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1940
+    },
+    "qr": {
+      "x": 120,
+      "y": 400,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 250,
+        "y": 1720,
+        "width": 56,
+        "height": 220,
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.25
+        }
+      },
+      {
+        "type": "rect",
+        "x": 934,
+        "y": 1720,
+        "width": 56,
+        "height": 220,
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.25
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 48,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 26,
+        "y": 26,
+        "width": 1188,
+        "height": 1688,
+        "radius": 28,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.9
+        }
+      },
+      {
+        "type": "circle",
+        "cx": 620,
+        "cy": 170,
+        "r": 125,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M566 170L674 170A6 6 0 0 1 680 176L680 230A6 6 0 0 1 674 236L566 236A6 6 0 0 1 560 230L560 176A6 6 0 0 1 566 170ZM590.75 180.5A3.75 3.75 0 0 0 587 184.25L587 184.25A3.75 3.75 0 0 0 590.75 188L649.25 188A3.75 3.75 0 0 0 653 184.25L653 184.25A3.75 3.75 0 0 0 649.25 180.5L590.75 180.5Z",
+        "fill": "background"
+      },
+      {
+        "type": "path",
+        "d": "M599 110L641 110A3 3 0 0 1 644 113L644 170A3 3 0 0 1 641 173L599 173A3 3 0 0 1 596 170L596 113A3 3 0 0 1 599 110ZM604.38 143.62L618.09 154.8L635.86 132.85A3 3 0 0 1 631.14 129.15L615.91 149.2L608.62 139.38A3 3 0 0 1 604.38 143.62Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.5
+        }
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Find your polling place",
+        "color": "frame",
+        "box": {
+          "x": 90,
+          "y": 1520,
+          "width": 1060,
+          "height": 180
+        }
+      }
+    ]
+  }
+}

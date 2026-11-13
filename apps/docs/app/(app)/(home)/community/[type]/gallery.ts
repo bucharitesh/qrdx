@@ -2,7 +2,10 @@ import "server-only";
 
 import { unstable_cache } from "next/cache";
 import { OFFICIAL_FRAME_COLLECTIONS } from "qrdx";
-import { findOfficialFrame } from "@/lib/community/catalog";
+import {
+  findOfficialFrame,
+  officialFramePreview,
+} from "@/lib/community/catalog";
 import { listFrames, listItems } from "@/lib/community/queries";
 import { COMMUNITY_TAG } from "@/lib/community/store";
 import {
@@ -158,14 +161,33 @@ async function listCards(
     : await listItems({ type, official, sort, createdBy, savedBy, limit: 200 });
 }
 
+// The data cache keeps items up to 2 MB, and the official frames' specs
+// alone come close to that: their cards are cached without previews, which
+// come back from the engine's catalogue after the cache is read.
+const officialFrameOf = (card: CommunityItemCard) =>
+  card.type === "frame" && card.isOfficial
+    ? findOfficialFrame(card.slug)
+    : undefined;
+
+const withoutOfficialPreviews = (cards: CommunityItemCard[]) =>
+  cards.map((card) =>
+    officialFrameOf(card) ? { ...card, preview: {} } : card,
+  );
+
+const withOfficialPreviews = (cards: CommunityItemCard[]) =>
+  cards.map((card) => {
+    const frame = officialFrameOf(card);
+    return frame ? { ...card, preview: officialFramePreview(frame) } : card;
+  });
+
 /**
  * A gallery's list for everyone (not "mine" or "saved"), cached for a
  * minute like the overview's (lib/community/home.ts): the page and each
  * page the list loads after it read the same list, not one query each.
  */
 const publicCards = unstable_cache(
-  (type: GalleryType, filter: Filter, sort: Sort) =>
-    listCards(type, filter, sort, null),
+  async (type: GalleryType, filter: Filter, sort: Sort) =>
+    withoutOfficialPreviews(await listCards(type, filter, sort, null)),
   ["community-gallery"],
   { revalidate: 60, tags: [COMMUNITY_TAG] },
 );
@@ -177,7 +199,9 @@ export async function galleryCards(query: GalleryQuery): Promise<GalleryCards> {
     ? userId
       ? await listCards(query.type, query.filter, query.sort, userId)
       : []
-    : await publicCards(query.type, query.filter, query.sort);
+    : withOfficialPreviews(
+        await publicCards(query.type, query.filter, query.sort),
+      );
   const activeGroup = groupsApply(query) ? query.group : null;
   const shown = cards.filter(
     (card) =>

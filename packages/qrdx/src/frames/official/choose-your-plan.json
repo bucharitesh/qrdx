@@ -1,0 +1,113 @@
+{
+  "id": "choose-your-plan",
+  "name": "New homes",
+  "description": "A light card with a floor plan and a solid label band.",
+  "category": "use-case",
+  "collection": "real-estate",
+  "contentTypes": ["url"],
+  "tags": ["real estate", "property", "new build", "floor plan"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1770
+    },
+    "qr": {
+      "x": 120,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "frame",
+        "hole": {
+          "x": 20,
+          "y": 20,
+          "width": 1200,
+          "height": 1730,
+          "radius": 38
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 250,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 60,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M564 43.2L676 43.2A2.8 2.8 0 0 1 678.8 46L678.8 158A2.8 2.8 0 0 1 676 160.8L564 160.8A2.8 2.8 0 0 1 561.2 158L561.2 46A2.8 2.8 0 0 1 564 43.2ZM569.6 152.4L670.4 152.4L670.4 51.6L569.6 51.6ZM611.6 48.8L620 48.8L620 96.4L611.6 96.4ZM566.8 107.6L603.2 107.6L603.2 116L566.8 116ZM634 110.4L673.2 110.4L673.2 118.8L634 118.8ZM611.6 132.8L620 132.8L620 155.2L611.6 155.2Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M603.2 92.2A23.8 23.8 0 0 1 627 116L622.8 116A19.6 19.6 0 0 0 603.2 96.4ZM608.8 118.8A25.2 25.2 0 0 1 634 93.6L634 97.8A21 21 0 0 0 613 118.8Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Choose your floor plan",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1550,
+          "width": 1040,
+          "height": 190
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "New homes",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 180,
+          "width": 960,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

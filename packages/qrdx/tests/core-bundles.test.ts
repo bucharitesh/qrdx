@@ -34,6 +34,8 @@ const REACT_FREE = [
   "vanilla.browser.mjs",
   "node.mjs",
   "node.js",
+  "vue.mjs",
+  "vue.js",
 ];
 
 describe("React-free bundles", () => {
@@ -52,6 +54,8 @@ describe("React-free bundles", () => {
     ["vanilla.js", ["./core.js"]],
     ["node.mjs", ["./core.mjs", "@resvg/resvg-js", "sharp"]],
     ["node.js", ["./core.js", "@resvg/resvg-js", "sharp"]],
+    ["vue.mjs", ["./core.mjs", "vue"]],
+    ["vue.js", ["./core.js", "vue"]],
   ])("%s takes the engine from dist/core", (file, allowed) => {
     if (!existsSync(dist(file))) return;
     expect(imports(read(file))).toEqual([...allowed].sort());

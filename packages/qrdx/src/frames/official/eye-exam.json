@@ -1,0 +1,70 @@
+{
+  "id": "eye-exam",
+  "name": "Eye exam",
+  "description": "An arched card, like a window, with an eye.",
+  "category": "use-case",
+  "collection": "health-learning",
+  "contentTypes": ["calcom", "url"],
+  "tags": ["healthcare", "clinic", "optician", "eye care"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1880
+    },
+    "qr": {
+      "x": 160,
+      "y": 470,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M0 660A660 660 0 0 1 1320 660L1320 1840Q1320 1880 1280 1880L40 1880Q0 1880 0 1840Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.9
+        }
+      },
+      {
+        "type": "path",
+        "d": "M50 660A610 610 0 0 1 1270 660L1270 1830L50 1830ZM62 660L62 1818L1258 1818L1258 660A598 598 0 0 0 62 660Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M591 240C621 193.5 699 193.5 729 240C699 286.5 621 286.5 591 240ZM631.5 240A28.5 28.5 0 1 0 688.5 240A28.5 28.5 0 1 0 631.5 240ZM645 240A15 15 0 1 1 675 240A15 15 0 1 1 645 240Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M663.75 231A5.25 5.25 0 1 0 674.25 231A5.25 5.25 0 1 0 663.75 231Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Book an eye exam",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 1610,
+          "width": 1040,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,116 @@
+{
+  "id": "get-the-brochure",
+  "name": "Brochure",
+  "description": "A card with two more stacked behind it and a document.",
+  "category": "use-case",
+  "collection": "business",
+  "contentTypes": ["pdf", "url"],
+  "tags": ["business", "brochure", "trade show"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1340,
+      "height": 1860
+    },
+    "qr": {
+      "x": 120,
+      "y": 400,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 100,
+        "y": 100,
+        "width": 1240,
+        "height": 1760,
+        "radius": 48,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.75
+        }
+      },
+      {
+        "type": "rect",
+        "x": 50,
+        "y": 50,
+        "width": 1240,
+        "height": 1760,
+        "radius": 48,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.45
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 48,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 16,
+        "y": 16,
+        "width": 1208,
+        "height": 1728,
+        "radius": 34,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.92
+        }
+      },
+      {
+        "type": "path",
+        "d": "M575.2 58.4L631.2 58.4L667.6 94.8L667.6 181.6L575.2 181.6ZM592.7 78A3.5 3.5 0 0 0 589.2 81.5L589.2 81.5A3.5 3.5 0 0 0 592.7 85L616.5 85A3.5 3.5 0 0 0 620 81.5L620 81.5A3.5 3.5 0 0 0 616.5 78L592.7 78ZM592.7 111.6A3.5 3.5 0 0 0 589.2 115.1L589.2 115.1A3.5 3.5 0 0 0 592.7 118.6L650.1 118.6A3.5 3.5 0 0 0 653.6 115.1L653.6 115.1A3.5 3.5 0 0 0 650.1 111.6L592.7 111.6ZM592.7 128.4A3.5 3.5 0 0 0 589.2 131.9L589.2 131.9A3.5 3.5 0 0 0 592.7 135.4L650.1 135.4A3.5 3.5 0 0 0 653.6 131.9L653.6 131.9A3.5 3.5 0 0 0 650.1 128.4L592.7 128.4ZM592.7 145.2A3.5 3.5 0 0 0 589.2 148.7L589.2 148.7A3.5 3.5 0 0 0 592.7 152.2L650.1 152.2A3.5 3.5 0 0 0 653.6 148.7L653.6 148.7A3.5 3.5 0 0 0 650.1 145.2L592.7 145.2ZM592.7 162A3.5 3.5 0 0 0 589.2 165.5L589.2 165.5A3.5 3.5 0 0 0 592.7 169L622.1 169A3.5 3.5 0 0 0 625.6 165.5L625.6 165.5A3.5 3.5 0 0 0 622.1 162L592.7 162Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M667.6 94.8L631.2 94.8L631.2 58.4Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Get the brochure",
+        "color": "frame",
+        "box": {
+          "x": 90,
+          "y": 1520,
+          "width": 1060,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Product sheet",
+        "color": "frame",
+        "box": {
+          "x": 120,
+          "y": 210,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

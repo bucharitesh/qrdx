@@ -1,37 +1,37 @@
 ---
 title: "Ce que QRdx enregistre lors d'un scan"
-description: "Les données qu'enregistre le scan d'un QR code dynamique, ce qui n'est jamais stocké et la durée de conservation."
+description: "Les données enregistrées lors du scan d'un code dynamique, ce qui n'est jamais stocké et la durée de conservation."
 ---
 
-Seuls les QR codes dynamiques enregistrent les scans. Un QR code statique contient directement votre contenu et ne passe jamais par QRdx.
+Seuls les codes dynamiques enregistrent les scans. Un code statique contient directement votre contenu et ne passe jamais par QRdx.
 
 ## Ce qu'un scan enregistre [#what-a-scan-records]
 
 - Le pays, la région et la ville, déduits du réseau.
 - Le type d'appareil, le système d'exploitation et le navigateur.
-- Le site référent, le cas échéant.
+- Le site référent, s'il y en a un.
 - La langue du navigateur.
 - La version que le visiteur a vue, si un test A/B est en cours.
-- Un hash quotidien salé de l'adresse réseau et du navigateur, afin qu'un visiteur ne soit compté qu'une fois par jour.
+- Un hachage quotidien salé de l'adresse réseau et du navigateur, afin qu'un visiteur ne soit compté qu'une fois par jour.
 - Sa position, arrondie à environ 100 m, uniquement si le propriétaire du code a activé la [localisation précise](/docs/precise-location) et que la personne qui scanne l'a autorisée dans son navigateur. Rien n'est stocké si elle refuse.
 
 ## Ce qui n'est jamais stocké [#what-it-never-stores]
 
-QRdx ne stocke jamais l'adresse IP de la personne qui scanne. Le hash ci-dessus ne permet pas de la retrouver, et il change chaque jour.
+QRdx ne stocke jamais l'adresse IP de la personne qui scanne. Le hachage ci-dessus ne permet pas de la retrouver, et il change chaque jour.
 
 Les robots et les aperçus de liens ne sont pas enregistrés.
 
 ## Durée de conservation des scans [#how-long-scans-are-kept]
 
-Les scans sont conservés aussi longtemps que le QR code existe. Votre offre détermine la période consultable : 90 jours avec Gratuit, 3 ans avec Pro et une durée illimitée avec Business.
+Les scans sont conservés tant que le code existe. Votre offre détermine jusqu'où vous pouvez remonter dans leur historique : {facts.freeScanHistoryYears} an avec l'offre Gratuit, et la totalité avec Pro et Business.
 
-Supprimer définitivement un QR code supprime définitivement ses scans.
+Supprimer définitivement un code supprime aussi ses scans.
 
 ## Cookies pour les personnes qui scannent [#cookies-for-people-who-scan]
 
-Les pages que voient les personnes qui scannent, comme les liens courts et les pages mobiles, n'affichent pas de bandeau de cookies et ne chargent ni les outils d'analyse de QRdx ni son widget d'assistance.
+Les pages que voient les personnes qui scannent, comme les liens courts et les pages mobiles, n'affichent pas de bannière de cookies et ne chargent ni les outils d'analyse de QRdx ni son widget d'assistance.
 
-QRdx y dépose deux cookies. L'un mémorise pendant 6 heures un mot de passe de QR code correct. L'autre relie une page hébergée au scan qui l'a ouverte pendant 15 minutes, uniquement lorsque le code demande la localisation précise, afin que la position partagée soit ajoutée à ce scan. Sur les offres payantes, les propriétaires de pages peuvent ajouter leurs propres pixels d'analyse à leurs pages.
+QRdx y dépose deux cookies. L'un mémorise pendant 6 heures le mot de passe correct d'un code. L'autre associe pendant 15 minutes une page hébergée au scan qui l'a ouverte, uniquement lorsque le code demande la localisation précise, afin que la position partagée soit ajoutée à ce scan. Avec les offres payantes, les propriétaires de pages peuvent ajouter leurs propres pixels d'analyse à leurs pages.
 
 ## Le scanner de QR code [#the-qr-code-scanner]
 

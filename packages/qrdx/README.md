@@ -200,6 +200,37 @@ toSVGString(resolveQRCodeProps({ value: "https://example.com", logo: "/logo.png"
 
 `getQRAsSVGNode(props)` is `getQRAsSVG` without React (it resolves to a tree). [docs/adapters.md](./docs/adapters.md) describes how a framework wrapper should use the core.
 
+## Vue (`qrdx/vue`)
+
+`qrdx/vue` has Vue 3 versions of `QRCode` and `QRCodeSVG`, with the React components' props and the same SVG, and a `useQRCode` composable. `vue` 3.3 or newer is an optional peer dependency; TypeScript checks the components' props with Vue 3.4.20 or newer.
+
+```vue
+<script setup lang="ts">
+import { QRCode, useQRCode } from "qrdx/vue";
+import { ref } from "vue";
+
+const url = ref("https://example.com");
+const { download } = useQRCode(() => ({ value: url.value, size: 256 }));
+</script>
+
+<template>
+  <QRCode
+    :value="url"
+    :size="256"
+    body-pattern="rounded"
+    :frame="{ style: 'banner-bottom', text: 'Scan me' }"
+    class="qr"
+  />
+  <button type="button" @click="download({ format: 'svg' })">Download</button>
+</template>
+```
+
+- Write props in kebab-case or camelCase. A flag such as `auto-level` needs no value. `class`, `style`, `aria-label`, other attributes and listeners go on the `<svg>` (the frame's outer `<svg>` when there is a frame).
+- When a prop changes, Vue updates the `<svg>` in place.
+- Both components render on the server with `vue/server-renderer` and hydrate without a mismatch. In Nuxt they work in server-rendered pages and inside `<ClientOnly>`.
+- `useQRCode(props)` takes `QRCode`'s props as an object, a ref, a reactive object or a getter. It returns `svg` (the markup as a computed ref, which works in SSR too), `options`, `toDataURL(format, { size, quality })` and `download({ format, filename, size, quality })`.
+- Everything in `qrdx/core` is re-exported. Its `h`, for custom templates, is the core's, not Vue's.
+
 ## Web component (`qrdx/element`)
 
 `<qrdx-code>` is a custom element on `qrdx/core`: the same SVG as `QRCodeSVG`, in plain HTML or any framework that renders DOM elements (tested in React 19 and Vue 3). It needs no framework.
@@ -393,7 +424,7 @@ const spec: FrameSpec = {
 
 **Validation.** `frameSpecSchema` (zod) checks every field and the hard limits in `FRAME_SPEC_LIMITS`: artboard sides of 50 to 2000 units, at most 3 decimals per number, 64 shapes, 8 labels, 256 points per polygon, 16,000 characters per path, 2,000 segments in all, 32 KB of JSON, a code at least half the artboard's shorter side and padding of at least 4% of the code. `getFrameSpecIssues(spec)` lists problems as text. Drawing an invalid spec throws a `FrameSpecError` instead of leaving the frame out.
 
-**Official frames.** `OFFICIAL_FRAMES` is QRdx's frame library: call-to-action styles (tabs, ribbons, speech bubbles, tickets, stamps, badges, phones, arrows and more), holidays and seasons from around the world, and frames for restaurants and cafes, shops and packaging, events and weddings, hotels, travel and homes, health, fitness and learning, and business and social. Each has an `id`, `name`, `description`, `collection`, an `occasion` when it is seasonal (such as `"diwali"` or `"summer"`), suggested `contentTypes` and `tags`, and is released under CC0 1.0. `getOfficialFrame(id)` returns one. `OFFICIAL_FRAME_COLLECTIONS` lists the groups in picker order, and `OFFICIAL_FRAME_COUNT` and `OFFICIAL_FRAME_COUNTS` count them. `OFFICIAL_FRAME_INDEX` lists every frame without its spec (id, name, collection, occasion, tags, the artboard's width-to-height `ratio` and `frameSpecHash(spec)`, which tells an unchanged copy of a frame apart from an edited one), so a picker can search and lay out the whole library before loading any spec. Ids never change. `BUILT_IN_FRAME_SPECS` has `banner-bottom`, `rounded-border`, `circle` and `ticket` written as specs, as starting points.
+**Official frames.** `OFFICIAL_FRAMES` is QRdx's frame library: call-to-action styles (tabs, ribbons, speech bubbles, tickets, stamps, badges, phones, arrows and more), holidays and seasons from around the world, and frames for restaurants and cafes, shops and packaging, beauty and wellness, events and weddings, hotels and travel, real estate, cars and parking, health and learning, sports and fitness, business and social, and nonprofits and community groups. Each has an `id`, `name`, `description`, `collection`, an `occasion` when it is seasonal (such as `"diwali"` or `"summer"`), suggested `contentTypes` and `tags`, and is released under CC0 1.0. `getOfficialFrame(id)` returns one. `OFFICIAL_FRAME_COLLECTIONS` lists the groups in picker order, and `OFFICIAL_FRAME_COUNT` and `OFFICIAL_FRAME_COUNTS` count them. `OFFICIAL_FRAME_INDEX` lists every frame without its spec (id, name, collection, occasion, tags, the artboard's width-to-height `ratio` and `frameSpecHash(spec)`, which tells an unchanged copy of a frame apart from an edited one), so a picker can search and lay out the whole library before loading any spec. Ids never change. `BUILT_IN_FRAME_SPECS` has `banner-bottom`, `rounded-border`, `circle` and `ticket` written as specs, as starting points.
 
 ```ts
 import { getOfficialFrame } from "qrdx";

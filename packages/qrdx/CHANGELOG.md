@@ -4,6 +4,13 @@ Release notes for earlier versions are at [qrdx.dev/changelog](https://qrdx.dev/
 
 ## Unreleased
 
+### Vue (`qrdx/vue`)
+
+- **`qrdx/vue`** has Vue 3 versions of `QRCode` and `QRCodeSVG`, with the React components' props and the same SVG. They're render functions over the core (`createQRCodeTree`, then `toHyperscript` into Vue's `h`), so they render on the server with `vue/server-renderer` and hydrate without a mismatch, in Nuxt too. `class`, `style`, other attributes and listeners go on the `<svg>`, and Vue updates it in place when a prop changes.
+- **`useQRCode(props)`** takes `QRCode`'s props as an object, a ref, a reactive object or a getter, and returns the SVG markup as a computed ref (it works in SSR), the resolved `options`, `toDataURL` and `download`.
+- Everything in `qrdx/core` is re-exported. The entry imports the engine from `qrdx/core`, so it adds under 1 KB gzipped of its own.
+- `vue` 3.3 or newer is an optional peer dependency, so installing `qrdx` never installs Vue. TypeScript checks the components' props with Vue 3.4.20 or newer.
+
 ### Web component (`qrdx/element`)
 
 - **`<qrdx-code>`**, a custom element on `qrdx/core`, for plain HTML and frameworks that render DOM elements (tested in React 19 and Vue 3). Simple options are attributes (`value`, `size`, `level`, `fg-color`, `bg-color`, `eye-color`, `dot-color`, `body-pattern`, `corner-eye-pattern`, `corner-eye-dot-pattern`, `margin`, `template-id`, `module-scale`, `auto-level`, `shape`); object options are properties (`frame`, gradients, `imageSettings`, `eyeColors`, `art`, `customTemplate`, `customProps`), or all at once in `props`, which also reads JSON from its attribute. Changes are batched into one redraw per microtask, and a redraw that changes nothing leaves the page alone.
@@ -25,6 +32,13 @@ Release notes for earlier versions are at [qrdx.dev/changelog](https://qrdx.dev/
 - `qrdx/node` now imports the engine from `qrdx/core`, so it's a few kilobytes on its own and needs neither `react` nor `react-dom`.
 - `h(type, props, ...children)` writes a custom template without JSX. A template `wrapper` gets React elements in the React components and the core's nodes elsewhere (`TemplateNode`).
 - Types: `QRSVGOptions` (props plus root `<svg>` attributes) and `QRStyle` (the same type as React's `CSSProperties`, from `csstype`) are new. `QRPropsSVG` and `QRPropsCanvas` are unchanged and still exported from `qrdx` and `qrdx/types`.
+
+### Frame library: industries and everyday uses
+
+- **303 more official frames** for the places people print codes: more calls to action (FAQ, translations, large print, waitlists, checklists, transcripts), restaurants and cafes, shops and packaging, clinics and schools, and business (portfolios, reports, visitor sign-in, quotes, insurance claims, staff rotas and more). Each has its own purpose, label and look, and decodes at phone distances, scores Great and reads with zbar, like every official frame.
+- **Five new collections:** `beauty-wellness`, `real-estate`, `automotive` ("Cars & parking"), `sports-fitness` and `nonprofit` ("Nonprofits & community"). `OfficialFrameCollection` and `OFFICIAL_FRAME_COLLECTIONS` include them, so code with a case or a `Record` for every collection needs the new ids.
+- The property frames and `sign-rider` move from `places` to `real-estate`, and the gym frames from `health-learning` to `sports-fitness`. Their ids, names and specs are unchanged.
+- New shapes: yard signs with a rider, signs on posts, sidewalk A-frame boards, shelf talkers, clipboards, team shirts, vinyl banners with eyelets, bone-shaped pet tags, collection jars, EV chargers, folded-corner and stacked cards, a cloud bubble and a big side arrow, plus about a hundred new drawings (food, shop goods, sports gear, cars, salon tools, community symbols).
 
 ## 0.0.50
 

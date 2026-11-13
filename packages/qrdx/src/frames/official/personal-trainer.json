@@ -1,0 +1,76 @@
+{
+  "id": "personal-trainer",
+  "name": "Personal trainer",
+  "description": "A wide card: the code on one side, a dumbbell and the label on the other.",
+  "category": "use-case",
+  "collection": "sports-fitness",
+  "contentTypes": ["calcom", "url"],
+  "tags": ["sports", "fitness", "personal training", "gym"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 2000,
+      "height": 1040
+    },
+    "qr": {
+      "x": 120,
+      "y": 120,
+      "size": 800,
+      "padding": 64,
+      "radius": 19.2
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 2000,
+        "height": 1040,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M1042.6 221.2L1049.8 221.2A5.4 5.4 0 0 1 1055.2 226.6L1055.2 273.4A5.4 5.4 0 0 1 1049.8 278.8L1042.6 278.8A5.4 5.4 0 0 1 1037.2 273.4L1037.2 226.6A5.4 5.4 0 0 1 1042.6 221.2ZM1066 203.2L1076.8 203.2A7.2 7.2 0 0 1 1084 210.4L1084 289.6A7.2 7.2 0 0 1 1076.8 296.8L1066 296.8A7.2 7.2 0 0 1 1058.8 289.6L1058.8 210.4A7.2 7.2 0 0 1 1066 203.2ZM1087.6 241L1152.4 241A3.6 3.6 0 0 1 1156 244.6L1156 255.4A3.6 3.6 0 0 1 1152.4 259L1087.6 259A3.6 3.6 0 0 1 1084 255.4L1084 244.6A3.6 3.6 0 0 1 1087.6 241ZM1163.2 203.2L1174 203.2A7.2 7.2 0 0 1 1181.2 210.4L1181.2 289.6A7.2 7.2 0 0 1 1174 296.8L1163.2 296.8A7.2 7.2 0 0 1 1156 289.6L1156 210.4A7.2 7.2 0 0 1 1163.2 203.2ZM1190.2 221.2L1197.4 221.2A5.4 5.4 0 0 1 1202.8 226.6L1202.8 273.4A5.4 5.4 0 0 1 1197.4 278.8L1190.2 278.8A5.4 5.4 0 0 1 1184.8 273.4L1184.8 226.6A5.4 5.4 0 0 1 1190.2 221.2Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Book a trainer",
+        "color": "text",
+        "box": {
+          "x": 1030,
+          "y": 400,
+          "width": 860,
+          "height": 190
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "One-to-one sessions",
+        "color": "text",
+        "box": {
+          "x": 1030,
+          "y": 610,
+          "width": 860,
+          "height": 100
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

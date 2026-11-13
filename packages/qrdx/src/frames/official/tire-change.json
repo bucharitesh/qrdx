@@ -1,0 +1,74 @@
+{
+  "id": "tire-change",
+  "name": "Tire change",
+  "description": "A solid card with a wheel over the code and the label underneath.",
+  "category": "use-case",
+  "collection": "automotive",
+  "contentTypes": ["calcom", "url"],
+  "tags": ["cars", "parking", "tires", "garage"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M551 110A69 69 0 1 1 689 110A69 69 0 1 1 551 110ZM564.5 110A55.5 55.5 0 1 0 675.5 110A55.5 55.5 0 1 0 564.5 110ZM575 110A45 45 0 1 1 665 110A45 45 0 1 1 575 110ZM584 110A36 36 0 1 0 656 110A36 36 0 1 0 584 110ZM615.5 98L615.5 69.5L624.5 69.5L624.5 98ZM630.02 102.01L657.13 93.21L659.91 101.76L632.8 110.57ZM630.69 117.06L647.45 140.12L640.16 145.41L623.41 122.35ZM616.59 122.35L599.84 145.41L592.55 140.12L609.31 117.06ZM607.2 110.57L580.09 101.76L582.87 93.21L609.98 102.01ZM606.5 110A13.5 13.5 0 1 1 633.5 110A13.5 13.5 0 1 1 606.5 110Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Book a tire change",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Tire shop",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

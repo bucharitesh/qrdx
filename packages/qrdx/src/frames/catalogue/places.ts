@@ -9,15 +9,6 @@ import hotelConcierge from "../official/hotel-concierge.json";
 import hotelHangerLight from "../official/hotel-hanger-light.json";
 import hotelKey from "../official/hotel-key.json";
 import hotelRoomService from "../official/hotel-room-service.json";
-import propertyFloorPlan from "../official/property-floor-plan.json";
-import propertyForSale from "../official/property-for-sale.json";
-import propertyHouse from "../official/property-house.json";
-import propertyHouseLight from "../official/property-house-light.json";
-import propertyKey from "../official/property-key.json";
-import propertyOpenHouse from "../official/property-open-house.json";
-import propertyRent from "../official/property-rent.json";
-import propertyVirtualTour from "../official/property-virtual-tour.json";
-import signRider from "../official/sign-rider.json";
 import travelBoardingPass from "../official/travel-boarding-pass.json";
 import travelCityGuide from "../official/travel-city-guide.json";
 import travelCompass from "../official/travel-compass.json";
@@ -40,7 +31,6 @@ import wifiWide from "../official/wifi-wide.json";
 const frames = [
   wifiCard,
   audioGuide,
-  signRider,
   wifiTile,
   wifiTab,
   wifiSeal,
@@ -64,14 +54,6 @@ const frames = [
   travelCityGuide,
   travelLuggage,
   travelDirections,
-  propertyForSale,
-  propertyHouse,
-  propertyHouseLight,
-  propertyOpenHouse,
-  propertyFloorPlan,
-  propertyVirtualTour,
-  propertyRent,
-  propertyKey,
 ] as unknown as readonly OfficialFrame[];
 
 export default frames;

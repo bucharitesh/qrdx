@@ -1,0 +1,115 @@
+{
+  "id": "privacy-notice",
+  "name": "Privacy notice",
+  "description": "A thin double border with a padlock, a small divider and the label.",
+  "category": "use-case",
+  "collection": "business",
+  "contentTypes": ["url"],
+  "tags": ["business", "privacy", "data"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1830
+    },
+    "qr": {
+      "x": 160,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1320,
+        "height": 1830,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 30,
+        "y": 30,
+        "width": 1260,
+        "height": 1770,
+        "fill": "frame",
+        "hole": {
+          "x": 40,
+          "y": 40,
+          "width": 1240,
+          "height": 1750
+        }
+      },
+      {
+        "type": "rect",
+        "x": 60,
+        "y": 60,
+        "width": 1200,
+        "height": 1710,
+        "fill": "frame",
+        "hole": {
+          "x": 64,
+          "y": 64,
+          "width": 1192,
+          "height": 1702
+        }
+      },
+      {
+        "type": "path",
+        "d": "M623.6 150L623.6 127.46L624.3 120.5L626.37 113.67L629.73 107.38L634.26 101.86L639.78 97.33L646.07 93.97L652.9 91.9L660 91.2L667.1 91.9L673.93 93.97L680.22 97.33L685.74 101.86L690.27 107.38L693.63 113.67L695.7 120.5L696.37 126.91L696.4 127.6L696.4 150L682.4 150L682.4 127.6L682.43 128.29L681.97 123.23L680.69 119.03L678.62 115.16L675.84 111.76L672.44 108.98L668.57 106.91L664.37 105.63L660 105.2L655.63 105.63L651.43 106.91L647.56 108.98L644.16 111.76L641.38 115.16L639.31 119.03L638.03 123.23L637.6 127.74L637.6 150ZM623.6 144.4L696.4 144.4A14 14 0 0 1 710.4 158.4L710.4 197.6A14 14 0 0 1 696.4 211.6L623.6 211.6A14 14 0 0 1 609.6 197.6L609.6 158.4A14 14 0 0 1 623.6 144.4ZM650.2 194.8L669.8 194.8L666.3 172.4A9.8 9.8 0 1 0 653.7 172.4Z",
+        "fill": "frame"
+      },
+      {
+        "type": "line",
+        "x1": 470,
+        "y1": 1570,
+        "x2": 850,
+        "y2": 1570,
+        "width": 6,
+        "fill": "frame"
+      },
+      {
+        "type": "polygon",
+        "points": [[660, 1550], [680, 1570], [660, 1590], [640, 1570]],
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Read our privacy notice",
+        "color": "frame",
+        "box": {
+          "x": 180,
+          "y": 1610,
+          "width": 960,
+          "height": 160
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Your data",
+        "color": "frame",
+        "box": {
+          "x": 180,
+          "y": 225,
+          "width": 960,
+          "height": 100
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

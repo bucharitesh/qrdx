@@ -49,10 +49,15 @@ export const COLLECTIONS = [
   "seasons",
   "food-drink",
   "shopping",
+  "beauty-wellness",
   "events",
   "places",
+  "real-estate",
+  "automotive",
   "health-learning",
+  "sports-fitness",
   "business",
+  "nonprofit",
 ];
 
 /** JSON with object keys sorted. */

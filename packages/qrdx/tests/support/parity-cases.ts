@@ -2,6 +2,8 @@
 // (tests/core-parity.test.ts): the React-free core must write the same SVG
 // as the React components, byte for byte, for each of them.
 import { readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { createElement } from "react";
 import { createQRArtImage } from "../../src/art";
 import { BUILT_IN_FRAME_SPECS } from "../../src/frames/builtin";
@@ -29,7 +31,12 @@ export interface ParityCase {
 }
 
 const VALUE = "https://qrdx.dev/q/Ab3dE9x?utm=campaign";
-const FIXTURES = new URL("../fixtures/art/", import.meta.url);
+// A path, not `new URL(…, import.meta.url)`: under the jsdom environment Vite
+// rewrites that pattern to an http:// asset URL, which readFileSync refuses.
+const FIXTURES = join(
+  dirname(fileURLToPath(import.meta.url)),
+  "../fixtures/art"
+);
 
 const LOGO = `data:image/svg+xml,${encodeURIComponent(
   '<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64"><rect width="64" height="64" rx="12" fill="#1d4ed8"/><circle cx="32" cy="32" r="18" fill="#fbbf24"/></svg>'
@@ -102,7 +109,7 @@ function syntheticPhoto(side: number) {
 let artImages: ReturnType<typeof makeArtImages> | null = null;
 function makeArtImages() {
   const logo = createQRArtImage(
-    rasterizeSvg(readFileSync(new URL("leaf.svg", FIXTURES), "utf8"), {
+    rasterizeSvg(readFileSync(join(FIXTURES, "leaf.svg"), "utf8"), {
       width: 256,
       background: null,
     }),

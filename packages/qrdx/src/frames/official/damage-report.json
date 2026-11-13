@@ -1,0 +1,114 @@
+{
+  "id": "damage-report",
+  "name": "Damage report",
+  "description": "A clipboard with the code on its sheet of paper and the front of a car.",
+  "category": "use-case",
+  "collection": "automotive",
+  "contentTypes": ["url"],
+  "tags": ["cars", "parking", "fleet", "inspection"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1890
+    },
+    "qr": {
+      "x": 160,
+      "y": 480,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 90,
+        "width": 1320,
+        "height": 1800,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 60,
+        "y": 200,
+        "width": 1200,
+        "height": 1630,
+        "radius": 12,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 60,
+        "y": 200,
+        "width": 1200,
+        "height": 14,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.75
+        }
+      },
+      {
+        "type": "path",
+        "d": "M470 20L850 20A40 40 0 0 1 890 60L890 150A40 40 0 0 1 850 190L470 190A40 40 0 0 1 430 150L430 60A40 40 0 0 1 470 20ZM626 85A34 34 0 1 0 694 85A34 34 0 1 0 626 85Z",
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.3
+        }
+      },
+      {
+        "type": "path",
+        "d": "M194 291C196.4 282.6 201.2 279 208.4 279L251.6 279C258.8 279 263.6 282.6 266 291L273.2 310.2L281.6 309L281.6 318.6L275.6 319.8L278 324.6L278 348.6L182 348.6L182 324.6L184.4 319.8L178.4 318.6L178.4 309L186.8 310.2ZM190.4 346.2L202.4 346.2A3.6 3.6 0 0 1 206 349.8L206 359.4A3.6 3.6 0 0 1 202.4 363L190.4 363A3.6 3.6 0 0 1 186.8 359.4L186.8 349.8A3.6 3.6 0 0 1 190.4 346.2ZM257.6 346.2L269.6 346.2A3.6 3.6 0 0 1 273.2 349.8L273.2 359.4A3.6 3.6 0 0 1 269.6 363L257.6 363A3.6 3.6 0 0 1 254 359.4L254 349.8A3.6 3.6 0 0 1 257.6 346.2ZM196.4 307.8L263.6 307.8L256.4 286.2L203.6 286.2ZM190.4 328.2A7.2 7.2 0 1 0 204.8 328.2A7.2 7.2 0 1 0 190.4 328.2ZM255.2 328.2A7.2 7.2 0 1 0 269.6 328.2A7.2 7.2 0 1 0 255.2 328.2ZM216.8 324.6A2.4 2.4 0 0 0 214.4 327L214.4 333A2.4 2.4 0 0 0 216.8 335.4L243.2 335.4A2.4 2.4 0 0 0 245.6 333L245.6 327A2.4 2.4 0 0 0 243.2 324.6L216.8 324.6Z",
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 160,
+        "y": 392,
+        "width": 1000,
+        "height": 8,
+        "radius": 4,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.7
+        }
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Report vehicle damage",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 1600,
+          "width": 1040,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Fleet check",
+        "color": "frame",
+        "box": {
+          "x": 330,
+          "y": 260,
+          "width": 830,
+          "height": 110
+        },
+        "align": "start"
+      }
+    ]
+  }
+}

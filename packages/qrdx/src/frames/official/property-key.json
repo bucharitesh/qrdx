@@ -3,7 +3,7 @@
   "name": "Keys",
   "description": "A solid card with a round badge holding a key on its top edge.",
   "category": "use-case",
-  "collection": "places",
+  "collection": "real-estate",
   "contentTypes": ["url"],
   "tags": ["real estate", "property", "move-in"],
   "license": "CC0-1.0",

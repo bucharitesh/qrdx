@@ -1,0 +1,88 @@
+{
+  "id": "open-an-account",
+  "name": "Open an account",
+  "description": "A solid card with a round badge holding a bank on its top edge.",
+  "category": "use-case",
+  "collection": "business",
+  "contentTypes": ["url"],
+  "tags": ["business", "bank", "account"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1830
+    },
+    "qr": {
+      "x": 120,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 150,
+        "width": 1240,
+        "height": 1680,
+        "radius": 64,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 620,
+        "cy": 150,
+        "r": 150,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 620,
+        "cy": 150,
+        "r": 120,
+        "fill": "background"
+      },
+      {
+        "type": "path",
+        "d": "M620 88.4L681.6 122L558.4 122ZM561.2 197.6L678.8 197.6A2.8 2.8 0 0 1 681.6 200.4L681.6 208.8A2.8 2.8 0 0 1 678.8 211.6L561.2 211.6A2.8 2.8 0 0 1 558.4 208.8L558.4 200.4A2.8 2.8 0 0 1 561.2 197.6ZM566.8 186.4L673.2 186.4A2.8 2.8 0 0 1 676 189.2L676 192A2.8 2.8 0 0 1 673.2 194.8L566.8 194.8A2.8 2.8 0 0 1 564 192L564 189.2A2.8 2.8 0 0 1 566.8 186.4ZM575.2 130.4L583.6 130.4A2.8 2.8 0 0 1 586.4 133.2L586.4 180.8A2.8 2.8 0 0 1 583.6 183.6L575.2 183.6A2.8 2.8 0 0 1 572.4 180.8L572.4 133.2A2.8 2.8 0 0 1 575.2 130.4ZM600.4 130.4L608.8 130.4A2.8 2.8 0 0 1 611.6 133.2L611.6 180.8A2.8 2.8 0 0 1 608.8 183.6L600.4 183.6A2.8 2.8 0 0 1 597.6 180.8L597.6 133.2A2.8 2.8 0 0 1 600.4 130.4ZM631.2 130.4L639.6 130.4A2.8 2.8 0 0 1 642.4 133.2L642.4 180.8A2.8 2.8 0 0 1 639.6 183.6L631.2 183.6A2.8 2.8 0 0 1 628.4 180.8L628.4 133.2A2.8 2.8 0 0 1 631.2 130.4ZM656.4 130.4L664.8 130.4A2.8 2.8 0 0 1 667.6 133.2L667.6 180.8A2.8 2.8 0 0 1 664.8 183.6L656.4 183.6A2.8 2.8 0 0 1 653.6 180.8L653.6 133.2A2.8 2.8 0 0 1 656.4 130.4Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Open an account",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1540,
+          "width": 1040,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Banking",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1710,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}
