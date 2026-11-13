@@ -7987,23 +7987,6 @@
         },
         "newCodeButton": {
           "newDynamicCode": "Kode dinamis baru"
-        },
-        "setupChecklist": {
-          "done": "(selesai)",
-          "create": "Buat",
-          "start": "Mulai",
-          "design": "Desain",
-          "invite": "Undang",
-          "connect": "Hubungkan",
-          "getSetUp": "Penyiapan",
-          "doneOfLengthDone": "{done, number} dari {length, number} selesai",
-          "hide": "Sembunyikan",
-          "setupTasksDone": "Tugas penyiapan selesai",
-          "createADynamicQrCode": "Buat kode QR dinamis",
-          "makeALandingPageOr": "Buat halaman arahan atau formulir",
-          "saveAThemeWithYour": "Simpan tema dengan logo dan warna Anda",
-          "inviteATeammate": "Undang anggota tim",
-          "connectACustomDomain": "Hubungkan domain khusus"
         }
       },
       "listSelection": {
@@ -8356,6 +8339,26 @@
       "spotlight": {
         "new": "Baru",
         "gotIt": "Mengerti"
+      },
+      "setupGuide": {
+        "getSetUp": "Penyiapan",
+        "launcherLabel": "Mulai atur: {done, number} dari {length, number} selesai",
+        "doneOfLengthDone": "{done, number} dari {length, number} selesai",
+        "doneOfLengthShort": "{done, number}/{length, number}",
+        "setupTasksDone": "Tugas penyiapan selesai",
+        "collapse": "Ciutkan",
+        "dismissGuide": "Tutup panduan",
+        "done": "(selesai)",
+        "create": "Buat",
+        "start": "Mulai",
+        "design": "Desain",
+        "invite": "Undang",
+        "connect": "Hubungkan",
+        "createADynamicQrCode": "Buat kode QR dinamis",
+        "makeALandingPageOr": "Buat halaman arahan atau formulir",
+        "saveAThemeWithYour": "Simpan tema dengan logo dan warna Anda",
+        "inviteATeammate": "Undang anggota tim",
+        "connectACustomDomain": "Hubungkan domain khusus"
       }
     },
     "workspaces": {

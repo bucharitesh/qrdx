@@ -1,0 +1,109 @@
+{
+  "id": "harvest-market",
+  "name": "Harvest market stall",
+  "description": "A shop front under a striped, scalloped awning, in barn red and amber.",
+  "category": "seasonal",
+  "collection": "seasons",
+  "occasion": "harvest",
+  "contentTypes": [],
+  "tags": ["harvest", "farm", "autumn", "market"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1820
+    },
+    "qr": {
+      "x": 160,
+      "y": 440,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#7f1d1d",
+      "text": "#ffffff",
+      "accent": "#f59e0b"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 40,
+        "y": 200,
+        "width": 1240,
+        "height": 1620,
+        "radius": 40,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M0 40L165 40L165 217.5A82.5 82.5 0 0 1 0 217.5Z",
+        "fill": "accent"
+      },
+      {
+        "type": "path",
+        "d": "M165 40L330 40L330 217.5A82.5 82.5 0 0 1 165 217.5Z",
+        "fill": "background"
+      },
+      {
+        "type": "path",
+        "d": "M330 40L495 40L495 217.5A82.5 82.5 0 0 1 330 217.5Z",
+        "fill": "accent"
+      },
+      {
+        "type": "path",
+        "d": "M495 40L660 40L660 217.5A82.5 82.5 0 0 1 495 217.5Z",
+        "fill": "background"
+      },
+      {
+        "type": "path",
+        "d": "M660 40L825 40L825 217.5A82.5 82.5 0 0 1 660 217.5Z",
+        "fill": "accent"
+      },
+      {
+        "type": "path",
+        "d": "M825 40L990 40L990 217.5A82.5 82.5 0 0 1 825 217.5Z",
+        "fill": "background"
+      },
+      {
+        "type": "path",
+        "d": "M990 40L1155 40L1155 217.5A82.5 82.5 0 0 1 990 217.5Z",
+        "fill": "accent"
+      },
+      {
+        "type": "path",
+        "d": "M1155 40L1320 40L1320 217.5A82.5 82.5 0 0 1 1155 217.5Z",
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1320,
+        "height": 60,
+        "radius": 30,
+        "fill": {
+          "mix": ["accent", "#000000"],
+          "amount": 0.25
+        }
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for the harvest",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1570,
+          "width": 1040,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

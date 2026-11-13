@@ -1,0 +1,81 @@
+{
+  "id": "juneteenth-star",
+  "name": "Juneteenth star",
+  "description": "A solid card with a star in a starburst over the code and the label underneath, in navy and red.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "juneteenth",
+  "contentTypes": [],
+  "tags": ["juneteenth", "june 19", "freedom", "star"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#1f2a5c",
+      "text": "#ffffff",
+      "accent": "#c8102e"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M620 39.5L633.98 57.84L655.25 48.95L658.18 71.82L681.05 74.75L672.16 96.02L690.5 110L672.16 123.98L681.05 145.25L658.18 148.18L655.25 171.05L633.98 162.16L620 180.5L606.02 162.16L584.75 171.05L581.82 148.18L558.95 145.25L567.84 123.98L549.5 110L567.84 96.02L558.95 74.75L581.82 71.82L584.75 48.95L606.02 57.84ZM608.35 66.53L590.75 59.34L588.18 78.18L569.34 80.75L576.53 98.35L561.5 110L576.53 121.65L569.34 139.25L588.18 141.82L590.75 160.66L608.35 153.47L620 168.5L631.65 153.47L649.25 160.66L651.82 141.82L670.66 139.25L663.47 121.65L678.5 110L663.47 98.35L670.66 80.75L651.82 78.18L649.25 59.34L631.65 66.53L620 51.5Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M620 77L628.82 100.86L654.24 101.88L634.27 117.64L641.16 142.12L620 128L598.84 142.12L605.73 117.64L585.76 101.88L611.18 100.86Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Happy Juneteenth",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan me",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

@@ -1,0 +1,81 @@
+{
+  "id": "event-cupcake",
+  "name": "Cupcake sticker",
+  "description": "A die-cut sticker with a thick outline and an offset shadow and a cupcake.",
+  "category": "use-case",
+  "collection": "events",
+  "contentTypes": ["url"],
+  "tags": ["birthday", "party", "events", "cupcake"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1750
+    },
+    "qr": {
+      "x": 110,
+      "y": 370,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 50,
+        "y": 50,
+        "width": 1270,
+        "height": 1700,
+        "radius": 110,
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1270,
+        "height": 1700,
+        "radius": 110,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 36,
+        "y": 36,
+        "width": 1198,
+        "height": 1628,
+        "radius": 80,
+        "fill": "background"
+      },
+      {
+        "type": "path",
+        "d": "M582.2 150A20.8 20.8 0 1 1 623.8 150A20.8 20.8 0 1 1 582.2 150ZM646.2 150A20.8 20.8 0 1 1 687.8 150A20.8 20.8 0 1 1 646.2 150ZM607.8 140.4A27.2 27.2 0 1 1 662.2 140.4A27.2 27.2 0 1 1 607.8 140.4ZM614.2 114.8A20.8 17.6 0 1 1 655.8 114.8A20.8 17.6 0 1 1 614.2 114.8ZM591 145.2L679 145.2A8.8 8.8 0 0 1 687.8 154L687.8 154A8.8 8.8 0 0 1 679 162.8L591 162.8A8.8 8.8 0 0 1 582.2 154L582.2 154A8.8 8.8 0 0 1 591 145.2ZM588.6 169.2L681.4 169.2L668.6 220.4L601.4 220.4ZM609.91 177.63L615.51 212.83A2.72 2.72 0 0 1 620.89 211.97L615.29 176.77A2.72 2.72 0 0 1 609.91 177.63ZM632.28 177.2L632.28 212.4A2.72 2.72 0 0 1 637.72 212.4L637.72 177.2A2.72 2.72 0 0 1 632.28 177.2ZM654.71 176.77L649.11 211.97A2.72 2.72 0 0 1 654.49 212.83L660.09 177.63A2.72 2.72 0 0 1 654.71 176.77ZM624.6 89.2A10.4 10.4 0 1 1 645.4 89.2A10.4 10.4 0 1 1 624.6 89.2ZM639.3 82.96A2.08 2.08 0 0 0 637.1 79.44L649.9 71.44A2.08 2.08 0 0 0 652.1 74.96L639.3 82.96Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Make a wish",
+        "color": "frame",
+        "box": {
+          "x": 100,
+          "y": 1490,
+          "width": 1070,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

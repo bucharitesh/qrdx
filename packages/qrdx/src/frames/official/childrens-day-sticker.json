@@ -1,0 +1,88 @@
+{
+  "id": "childrens-day-sticker",
+  "name": "Carp streamer sticker",
+  "description": "A die-cut sticker with a thick outline and an offset shadow and carp streamers, in blue and carp red.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "childrens-day",
+  "contentTypes": [],
+  "tags": ["children's day", "kodomo no hi", "may 5", "kids", "sticker"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1750
+    },
+    "qr": {
+      "x": 110,
+      "y": 370,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#1d4ed8",
+      "text": "#ffffff",
+      "accent": "#ef4444"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 50,
+        "y": 50,
+        "width": 1270,
+        "height": 1700,
+        "radius": 110,
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1270,
+        "height": 1700,
+        "radius": 110,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 36,
+        "y": 36,
+        "width": 1198,
+        "height": 1628,
+        "radius": 80,
+        "fill": "background"
+      },
+      {
+        "type": "path",
+        "d": "M577.4 86C625.4 70 667 76.4 679.8 89.2L702.2 73.2L692.6 102L702.2 130.8L679.8 114.8C667 127.6 625.4 134 577.4 118ZM577.4 156.4C616.76 143.28 650.87 148.53 661.37 159.02L679.74 145.9L671.86 169.52L679.74 193.14L661.37 180.02C650.87 190.51 616.76 195.76 577.4 182.64Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M574.6 76.4L574.6 226.8L567.4 226.8L567.4 76.4ZM563.8 76.4A7.2 7.2 0 1 1 578.2 76.4A7.2 7.2 0 1 1 563.8 76.4ZM572.6 102A4.8 16 0 1 1 582.2 102A4.8 16 0 1 1 572.6 102ZM587.8 94A5.6 5.6 0 1 1 599 94A5.6 5.6 0 1 1 587.8 94ZM573.4 169.52A4 12.8 0 1 1 581.4 169.52A4 12.8 0 1 1 573.4 169.52ZM585.4 163.6A4.8 4.8 0 1 1 595 163.6A4.8 4.8 0 1 1 585.4 163.6Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Children's Day",
+        "color": "frame",
+        "box": {
+          "x": 100,
+          "y": 1490,
+          "width": 1070,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

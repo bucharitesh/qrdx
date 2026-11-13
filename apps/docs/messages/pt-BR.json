@@ -7987,23 +7987,6 @@
         },
         "newCodeButton": {
           "newDynamicCode": "Novo código dinâmico"
-        },
-        "setupChecklist": {
-          "done": "(concluído)",
-          "create": "Criar",
-          "start": "Começar",
-          "design": "Personalizar",
-          "invite": "Convidar",
-          "connect": "Conectar",
-          "getSetUp": "Configuração",
-          "doneOfLengthDone": "{done, number} de {length, number} concluídas",
-          "hide": "Ocultar",
-          "setupTasksDone": "Tarefas concluídas",
-          "createADynamicQrCode": "Crie um QR code dinâmico",
-          "makeALandingPageOr": "Crie uma landing page ou formulário",
-          "saveAThemeWithYour": "Salve um tema com seu logo e suas cores",
-          "inviteATeammate": "Convide um colega de equipe",
-          "connectACustomDomain": "Conecte um domínio próprio"
         }
       },
       "listSelection": {
@@ -8356,6 +8339,26 @@
       "spotlight": {
         "new": "Novo",
         "gotIt": "Entendi"
+      },
+      "setupGuide": {
+        "getSetUp": "Configuração",
+        "launcherLabel": "Configure sua conta: {done, number} de {length, number} concluídas",
+        "doneOfLengthDone": "{done, number} de {length, number} concluídas",
+        "doneOfLengthShort": "{done, number}/{length, number}",
+        "setupTasksDone": "Tarefas concluídas",
+        "collapse": "Recolher",
+        "dismissGuide": "Dispensar guia",
+        "done": "(concluído)",
+        "create": "Criar",
+        "start": "Começar",
+        "design": "Personalizar",
+        "invite": "Convidar",
+        "connect": "Conectar",
+        "createADynamicQrCode": "Crie um QR code dinâmico",
+        "makeALandingPageOr": "Crie uma landing page ou formulário",
+        "saveAThemeWithYour": "Salve um tema com seu logo e suas cores",
+        "inviteATeammate": "Convide um colega de equipe",
+        "connectACustomDomain": "Conecte um domínio próprio"
       }
     },
     "workspaces": {

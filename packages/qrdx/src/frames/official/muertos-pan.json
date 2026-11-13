@@ -1,0 +1,78 @@
+{
+  "id": "muertos-pan",
+  "name": "Pan de muerto",
+  "description": "An arched card, like a window, with a pan de muerto, in deep purple and marigold.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "day-of-the-dead",
+  "contentTypes": [],
+  "tags": [
+    "day of the dead",
+    "dia de muertos",
+    "mexico",
+    "november",
+    "bread",
+    "bakery"
+  ],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1880
+    },
+    "qr": {
+      "x": 160,
+      "y": 470,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#3b0a45",
+      "text": "#ffffff",
+      "accent": "#f28c28"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M0 660A660 660 0 0 1 1320 660L1320 1840Q1320 1880 1280 1880L40 1880Q0 1880 0 1840Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M50 660A610 610 0 0 1 1270 660L1270 1830L50 1830ZM62 660L62 1818L1258 1818L1258 660A598 598 0 0 0 62 660Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.35
+        }
+      },
+      {
+        "type": "path",
+        "d": "M600 285C600 225 630 207 660 207C690 207 720 225 720 285Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M618.65 265.3L696.65 226.3L701.35 235.7L623.35 274.7ZM623.35 226.3L701.35 265.3L696.65 274.7L618.65 235.7ZM610.5 264A7.5 7.5 0 1 1 625.5 264A7.5 7.5 0 1 1 610.5 264ZM616.5 276A7.5 7.5 0 1 1 631.5 276A7.5 7.5 0 1 1 616.5 276ZM688.5 225A7.5 7.5 0 1 1 703.5 225A7.5 7.5 0 1 1 688.5 225ZM694.5 237A7.5 7.5 0 1 1 709.5 237A7.5 7.5 0 1 1 694.5 237ZM610.5 237A7.5 7.5 0 1 1 625.5 237A7.5 7.5 0 1 1 610.5 237ZM616.5 225A7.5 7.5 0 1 1 631.5 225A7.5 7.5 0 1 1 616.5 225ZM688.5 276A7.5 7.5 0 1 1 703.5 276A7.5 7.5 0 1 1 688.5 276ZM694.5 264A7.5 7.5 0 1 1 709.5 264A7.5 7.5 0 1 1 694.5 264ZM648 201A12 12 0 1 1 672 201A12 12 0 1 1 648 201Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Order pan de muerto",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1610,
+          "width": 1040,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,122 @@
+{
+  "id": "yalda-poem",
+  "name": "Hafez reading",
+  "description": "A thin double border with a pomegranate, a small divider and the label, in pomegranate red and amber.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "yalda",
+  "contentTypes": [],
+  "tags": ["yalda night", "shab-e yalda", "winter solstice", "poetry", "hafez"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1830
+    },
+    "qr": {
+      "x": 160,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#5b0e1e",
+      "text": "#ffffff",
+      "accent": "#f2a541"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1320,
+        "height": 1830,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 30,
+        "y": 30,
+        "width": 1260,
+        "height": 1770,
+        "fill": "frame",
+        "hole": {
+          "x": 40,
+          "y": 40,
+          "width": 1240,
+          "height": 1750
+        }
+      },
+      {
+        "type": "rect",
+        "x": 60,
+        "y": 60,
+        "width": 1200,
+        "height": 1710,
+        "fill": "frame",
+        "hole": {
+          "x": 64,
+          "y": 64,
+          "width": 1192,
+          "height": 1702
+        }
+      },
+      {
+        "type": "path",
+        "d": "M612.4 161.2A47.6 47.6 0 1 1 707.6 161.2A47.6 47.6 0 1 1 612.4 161.2ZM643.2 119.2L646 99.6L653 110.8L660 94L667 110.8L674 99.6L676.8 119.2Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M668.4 108C679.54 113 695.92 105.44 704.8 91.2C685.85 83.63 669.47 91.19 668.4 108ZM635.36 158.4A5.04 6.44 0 1 1 645.44 158.4A5.04 6.44 0 1 1 635.36 158.4ZM649.36 150A5.04 6.44 0 1 1 659.44 150A5.04 6.44 0 1 1 649.36 150ZM640.96 175.2A5.04 6.44 0 1 1 651.04 175.2A5.04 6.44 0 1 1 640.96 175.2ZM657.76 166.8A5.04 6.44 0 1 1 667.84 166.8A5.04 6.44 0 1 1 657.76 166.8Z",
+        "fill": "accent"
+      },
+      {
+        "type": "line",
+        "x1": 470,
+        "y1": 1570,
+        "x2": 850,
+        "y2": 1570,
+        "width": 6,
+        "fill": "frame"
+      },
+      {
+        "type": "polygon",
+        "points": [[660, 1550], [680, 1570], [660, 1590], [640, 1570]],
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for a Hafez poem",
+        "color": "frame",
+        "box": {
+          "x": 180,
+          "y": 1610,
+          "width": 960,
+          "height": 160
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Yalda night",
+        "color": "frame",
+        "box": {
+          "x": 180,
+          "y": 225,
+          "width": 960,
+          "height": 100
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

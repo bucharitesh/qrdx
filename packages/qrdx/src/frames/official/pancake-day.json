@@ -1,0 +1,114 @@
+{
+  "id": "pancake-day",
+  "name": "Pancake Day",
+  "description": "A light card with a stack of pancakes and a solid label band, in maple brown and butter yellow.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "pancake-day",
+  "contentTypes": [],
+  "tags": ["pancake day", "shrove tuesday", "pancakes", "menu"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1770
+    },
+    "qr": {
+      "x": 120,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#78350f",
+      "text": "#ffffff",
+      "accent": "#fbbf24"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "frame",
+        "hole": {
+          "x": 20,
+          "y": 20,
+          "width": 1200,
+          "height": 1730,
+          "radius": 38
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 250,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 60,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M566.8 144A53.2 12.6 0 1 1 673.2 144A53.2 12.6 0 1 1 566.8 144ZM566.8 130A53.2 12.6 0 1 1 673.2 130A53.2 12.6 0 1 1 566.8 130ZM566.8 116A53.2 12.6 0 1 1 673.2 116A53.2 12.6 0 1 1 566.8 116ZM566.8 102A53.2 12.6 0 1 1 673.2 102A53.2 12.6 0 1 1 566.8 102Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M608.8 82.4L631.2 82.4A2.8 2.8 0 0 1 634 85.2L634 93.6A2.8 2.8 0 0 1 631.2 96.4L608.8 96.4A2.8 2.8 0 0 1 606 93.6L606 85.2A2.8 2.8 0 0 1 608.8 82.4ZM578 99.2A42 7 0 1 1 662 99.2A42 7 0 1 1 578 99.2ZM583.6 103.4C585.32 109.28 588.5 115.16 588.5 118.1A4.9 4.9 0 0 1 578.7 118.1C578.7 115.16 581.89 109.28 583.6 103.4ZM653.6 107.6C655.31 114.32 658.5 122.16 658.5 125.1A4.9 4.9 0 0 1 648.7 125.1C648.7 122.16 651.89 114.32 653.6 107.6Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for the toppings",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1550,
+          "width": 1040,
+          "height": 190
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Pancake Day",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 180,
+          "width": 960,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

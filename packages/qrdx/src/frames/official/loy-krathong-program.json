@@ -1,0 +1,128 @@
+{
+  "id": "loy-krathong-program",
+  "name": "Loy Krathong program",
+  "description": "A thin double border with a krathong, a small divider and the label, in night blue and candle gold.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "loy-krathong",
+  "contentTypes": [],
+  "tags": [
+    "loy krathong",
+    "thailand",
+    "festival of lights",
+    "november",
+    "program"
+  ],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1830
+    },
+    "qr": {
+      "x": 160,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#1e1b4b",
+      "text": "#ffffff",
+      "accent": "#fbbf24"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1320,
+        "height": 1830,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 30,
+        "y": 30,
+        "width": 1260,
+        "height": 1770,
+        "fill": "frame",
+        "hole": {
+          "x": 40,
+          "y": 40,
+          "width": 1240,
+          "height": 1750
+        }
+      },
+      {
+        "type": "rect",
+        "x": 60,
+        "y": 60,
+        "width": 1200,
+        "height": 1710,
+        "fill": "frame",
+        "hole": {
+          "x": 64,
+          "y": 64,
+          "width": 1192,
+          "height": 1702
+        }
+      },
+      {
+        "type": "path",
+        "d": "M601.2 178C615.2 203.2 704.8 203.2 718.8 178ZM660 180.8C659.52 160.68 638.1 146.82 612.4 150C620.02 174.74 641.44 188.6 660 180.8ZM660 180.8C668.5 163.03 655.9 142.87 632 136C627.7 160.49 640.3 180.65 660 180.8ZM660 180.8C679.7 180.65 692.3 160.49 688 136C664.1 142.87 651.5 163.03 660 180.8ZM660 180.8C678.56 188.6 699.98 174.74 707.6 150C681.9 146.82 660.48 160.68 660 180.8ZM646 180.8C658.94 170.16 658.94 146.22 646 127.6C633.06 146.22 633.06 170.16 646 180.8ZM674 180.8C686.94 170.16 686.94 146.22 674 127.6C661.06 146.22 661.06 170.16 674 180.8Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M657.2 122L662.8 122A2.8 2.8 0 0 1 665.6 124.8L665.6 161.2A2.8 2.8 0 0 1 662.8 164L657.2 164A2.8 2.8 0 0 1 654.4 161.2L654.4 124.8A2.8 2.8 0 0 1 657.2 122ZM660 96.8C662.21 103.52 666.3 109.12 666.3 112.9A6.3 6.3 0 0 1 653.7 112.9C653.7 109.12 657.8 103.52 660 96.8Z",
+        "fill": "accent"
+      },
+      {
+        "type": "line",
+        "x1": 470,
+        "y1": 1570,
+        "x2": 850,
+        "y2": 1570,
+        "width": 6,
+        "fill": "frame"
+      },
+      {
+        "type": "polygon",
+        "points": [[660, 1550], [680, 1570], [660, 1590], [640, 1570]],
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for the program",
+        "color": "frame",
+        "box": {
+          "x": 180,
+          "y": 1610,
+          "width": 960,
+          "height": 160
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Loy Krathong",
+        "color": "frame",
+        "box": {
+          "x": 180,
+          "y": 225,
+          "width": 960,
+          "height": 100
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

@@ -13,7 +13,6 @@ import { PLAN_NAMES } from "@/lib/pricing";
 import { workspaceHref } from "@/lib/workspace-paths";
 import type { HomeData } from "./home-data";
 import { NewCodeButton } from "./new-code-button";
-import { SetupChecklist } from "./setup-checklist";
 
 const number = (value: number) => value.toLocaleString("en-US");
 
@@ -46,7 +45,10 @@ const STATUS_LABELS = {
   disabled: "Disabled",
 } as const;
 
-/** The app's front page: setup, the numbers that matter, the newest codes. */
+/**
+ * The app's front page: the numbers that matter and the newest codes. "Get
+ * set up" is the app shell's launcher (components/app-shell/setup-guide.tsx).
+ */
 export function HomeView({ data, slug }: { data: HomeData; slug: string }) {
   const t = use(getAppTranslations("app.dashboard.home.homeView"));
   const workspace = data.teamName ?? "Workspace";
@@ -63,8 +65,6 @@ export function HomeView({ data, slug }: { data: HomeData; slug: string }) {
       >
         <NewCodeButton />
       </PageHeader>
-
-      <SetupChecklist tasks={data.tasks} />
 
       <div className="grid grid-cols-3 gap-2 sm:gap-3">
         <Stat

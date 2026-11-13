@@ -1,0 +1,63 @@
+{
+  "id": "event-tour-merch",
+  "name": "Tour merch",
+  "description": "A price tag with a pointed top and an eyelet.",
+  "category": "use-case",
+  "collection": "events",
+  "contentTypes": ["url"],
+  "tags": ["music", "events", "concert", "merch"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1880
+    },
+    "qr": {
+      "x": 120,
+      "y": 520,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M620 0L1240 300L1240 1830L1190 1880L50 1880L0 1830L0 300ZM564 230A56 56 0 1 0 676 230A56 56 0 1 0 564 230Z",
+        "fill": "frame",
+        "fillRule": "evenodd"
+      },
+      {
+        "type": "circle",
+        "cx": 620,
+        "cy": 230,
+        "r": 86,
+        "hole": 60,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.3
+        }
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan to shop merch",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1640,
+          "width": 1040,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

@@ -215,10 +215,11 @@ describe("product counts in copy", () => {
       "call-to-action frames": PRODUCT_FACTS.frameStyles,
       frames: PRODUCT_FACTS.frames,
     };
+    // Counts may use a thousands separator ("1,032 frames")
     for (const match of readme.matchAll(
-      /\b(\d+) (body patterns|corner-eye shapes|eye centers|call-to-action frames|frames)\b/g,
+      /\b(\d{1,3}(?:,\d{3})+|\d+) (body patterns|corner-eye shapes|eye centers|call-to-action frames|frames)\b/g,
     )) {
-      expect(`${match[1]} ${match[2]}`).toBe(
+      expect(`${match[1].replaceAll(",", "")} ${match[2]}`).toBe(
         `${expected[match[2]]} ${match[2]}`,
       );
     }

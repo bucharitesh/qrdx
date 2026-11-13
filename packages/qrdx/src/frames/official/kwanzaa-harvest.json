@@ -1,0 +1,77 @@
+{
+  "id": "kwanzaa-harvest",
+  "name": "First fruits",
+  "description": "An arched card, like a window, with a basket of produce, in red, green and black.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "kwanzaa",
+  "contentTypes": [],
+  "tags": ["kwanzaa", "december", "celebration", "harvest", "program"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1880
+    },
+    "qr": {
+      "x": 160,
+      "y": 470,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#7f1d1d",
+      "text": "#ffffff",
+      "accent": "#15803d"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M0 660A660 660 0 0 1 1320 660L1320 1840Q1320 1880 1280 1880L40 1880Q0 1880 0 1840Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.9
+        }
+      },
+      {
+        "type": "path",
+        "d": "M50 660A610 610 0 0 1 1270 660L1270 1830L50 1830ZM62 660L62 1818L1258 1818L1258 660A598 598 0 0 0 62 660Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M613.5 237A19.5 19.5 0 1 1 652.5 237A19.5 19.5 0 1 1 613.5 237ZM640.5 225A22.5 22.5 0 1 1 685.5 225A22.5 22.5 0 1 1 640.5 225ZM672 240A18 18 0 1 1 708 240A18 18 0 1 1 672 240ZM663 204C675.02 208.82 683.12 200.72 681 186C670.52 188.12 662.42 196.22 663 204Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M600 243L720 243L705 303L615 303ZM610.5 264A1.5 1.5 0 0 0 609 265.5L609 268.5A1.5 1.5 0 0 0 610.5 270L709.5 270A1.5 1.5 0 0 0 711 268.5L711 265.5A1.5 1.5 0 0 0 709.5 264ZM615 282A1.5 1.5 0 0 0 613.5 283.5L613.5 286.5A1.5 1.5 0 0 0 615 288L705 288A1.5 1.5 0 0 0 706.5 286.5L706.5 283.5A1.5 1.5 0 0 0 705 282Z",
+        "fill": "accent",
+        "fillRule": "evenodd"
+      },
+      {
+        "type": "path",
+        "d": "M600 246A60 60 0 0 1 720 246L711 246A51 51 0 0 0 609 246Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for the program",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 1610,
+          "width": 1040,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

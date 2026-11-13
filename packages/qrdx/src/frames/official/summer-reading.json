@@ -1,0 +1,81 @@
+{
+  "id": "summer-reading",
+  "name": "Summer reading",
+  "description": "A solid card with a row of books over the code and the label underneath, in pool blue and yellow.",
+  "category": "seasonal",
+  "collection": "seasons",
+  "occasion": "summer",
+  "contentTypes": [],
+  "tags": ["summer", "sun", "books", "library"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#0e7490",
+      "text": "#ffffff",
+      "accent": "#fde047"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M563 74L582.5 74A3 3 0 0 1 585.5 77L585.5 164A3 3 0 0 1 582.5 167L563 167A3 3 0 0 1 560 164L560 77A3 3 0 0 1 563 74ZM561.5 89A1.5 1.5 0 0 0 560 90.5L560 93.5A1.5 1.5 0 0 0 561.5 95L584 95A1.5 1.5 0 0 0 585.5 93.5L585.5 90.5A1.5 1.5 0 0 0 584 89ZM561.5 146A1.5 1.5 0 0 0 560 147.5L560 150.5A1.5 1.5 0 0 0 561.5 152L584 152A1.5 1.5 0 0 0 585.5 150.5L585.5 147.5A1.5 1.5 0 0 0 584 146ZM593 56L617 56A3 3 0 0 1 620 59L620 164A3 3 0 0 1 617 167L593 167A3 3 0 0 1 590 164L590 59A3 3 0 0 1 593 56ZM591.5 71A1.5 1.5 0 0 0 590 72.5L590 77A1.5 1.5 0 0 0 591.5 78.5L618.5 78.5A1.5 1.5 0 0 0 620 77L620 72.5A1.5 1.5 0 0 0 618.5 71ZM591.5 149A1.5 1.5 0 0 0 590 150.5L590 155A1.5 1.5 0 0 0 591.5 156.5L618.5 156.5A1.5 1.5 0 0 0 620 155L620 150.5A1.5 1.5 0 0 0 618.5 149ZM627.5 83L644 83A3 3 0 0 1 647 86L647 164A3 3 0 0 1 644 167L627.5 167A3 3 0 0 1 624.5 164L624.5 86A3 3 0 0 1 627.5 83ZM626 98A1.5 1.5 0 0 0 624.5 99.5L624.5 102.5A1.5 1.5 0 0 0 626 104L645.5 104A1.5 1.5 0 0 0 647 102.5L647 99.5A1.5 1.5 0 0 0 645.5 98ZM678.52 78.43L694.38 82.98A3 3 16 0 1 696.44 86.69L672.46 170.32A3 3 16 0 1 668.74 172.37L652.88 167.83A3 3 16 0 1 650.83 164.12L674.81 80.49A3 3 16 0 1 678.52 78.43Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M554 167L686 167A3 3 0 0 1 689 170L689 174.5A3 3 0 0 1 686 177.5L554 177.5A3 3 0 0 1 551 174.5L551 170A3 3 0 0 1 554 167Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Summer reading list",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan for the list",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

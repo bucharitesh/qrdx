@@ -7987,23 +7987,6 @@
         },
         "newCodeButton": {
           "newDynamicCode": "新建动态码"
-        },
-        "setupChecklist": {
-          "done": "（已完成）",
-          "create": "创建",
-          "start": "开始",
-          "design": "设计",
-          "invite": "邀请",
-          "connect": "连接",
-          "getSetUp": "完成设置",
-          "doneOfLengthDone": "已完成 {done, number}/{length, number} 项",
-          "hide": "隐藏",
-          "setupTasksDone": "已完成的设置任务",
-          "createADynamicQrCode": "创建动态二维码",
-          "makeALandingPageOr": "制作落地页或表单",
-          "saveAThemeWithYour": "保存包含您的徽标和颜色的主题",
-          "inviteATeammate": "邀请一位团队成员",
-          "connectACustomDomain": "连接自定义域名"
         }
       },
       "listSelection": {
@@ -8356,6 +8339,26 @@
       "spotlight": {
         "new": "新",
         "gotIt": "知道了"
+      },
+      "setupGuide": {
+        "getSetUp": "完成设置",
+        "launcherLabel": "开始设置：已完成 {done, number}/{length, number}",
+        "doneOfLengthDone": "已完成 {done, number}/{length, number} 项",
+        "doneOfLengthShort": "{done, number}/{length, number}",
+        "setupTasksDone": "已完成的设置任务",
+        "collapse": "收起",
+        "dismissGuide": "关闭指南",
+        "done": "（已完成）",
+        "create": "创建",
+        "start": "开始",
+        "design": "设计",
+        "invite": "邀请",
+        "connect": "连接",
+        "createADynamicQrCode": "创建动态二维码",
+        "makeALandingPageOr": "制作落地页或表单",
+        "saveAThemeWithYour": "保存包含您的徽标和颜色的主题",
+        "inviteATeammate": "邀请一位团队成员",
+        "connectACustomDomain": "连接自定义域名"
       }
     },
     "workspaces": {

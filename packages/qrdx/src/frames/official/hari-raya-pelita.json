@@ -1,0 +1,77 @@
+{
+  "id": "hari-raya-pelita",
+  "name": "Pelita arch",
+  "description": "An arched card, like a window, with a lantern, in green and gold.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "eid-al-fitr",
+  "contentTypes": [],
+  "tags": ["eid al-fitr", "eid", "hari raya", "pelita", "lamp"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1880
+    },
+    "qr": {
+      "x": 160,
+      "y": 470,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#14532d",
+      "text": "#ffffff",
+      "accent": "#e9c46a"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M0 660A660 660 0 0 1 1320 660L1320 1840Q1320 1880 1280 1880L40 1880Q0 1880 0 1840Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.9
+        }
+      },
+      {
+        "type": "path",
+        "d": "M50 660A610 610 0 0 1 1270 660L1270 1830L50 1830ZM62 660L62 1818L1258 1818L1258 660A598 598 0 0 0 62 660Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M648 183A12 12 0 0 1 672 183L666 183A6 6 0 0 0 654 183ZM660 186L684 210L636 210ZM648 291L672 291A3 3 0 0 1 675 294L675 297A3 3 0 0 1 672 300L648 300A3 3 0 0 1 645 297L645 294A3 3 0 0 1 648 291ZM654 300L666 300L660 310.5Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M636 213L684 213L690 231L690 273L678 288L642 288L630 273L630 231ZM660 228C672 234 675 243 675 252L675 273L645 273L645 252C645 243 648 234 660 228Z",
+        "fill": "frame",
+        "fillRule": "evenodd"
+      },
+      {
+        "type": "path",
+        "d": "M660 234C669 238.5 670.5 246 670.5 252L670.5 268.5L649.5 268.5L649.5 252C649.5 246 651 238.5 660 234Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Maaf zahir dan batin",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 1610,
+          "width": 1040,
+          "height": 170
+        }
+      }
+    ]
+  }
+}
