@@ -399,7 +399,7 @@
       "analytics": {
         "eyebrow": "분석",
         "title": "모든 스캔을 확인하세요",
-        "description": "모든 동적 QR 코드의 기간별 스캔, 국가, 기기, 브라우저, 유입 경로를 볼 수 있어요. 무료 계정은 {days, number}일간 보관돼요.",
+        "description": "모든 동적 QR 코드의 시간대별 스캔, 국가, 기기, 브라우저, 유입 경로를 확인할 수 있어요. 무료 계정은 {years, plural, one {#년} other {#년}}치 기록을 보관하고, 유료 플랜은 전체 기록을 보관해요.",
         "link": "스캔 분석 방식 알아보기"
       },
       "bulk": {
@@ -443,7 +443,7 @@
       "items": {
         "free": {
           "question": "QRdx는 정말 무료인가요? 숨겨진 제한이 있나요?",
-          "answer": "네. 정적 QR 코드는 계정 없이 무료로 만들고, 꾸미고, 다운로드할 수 있어요. 코드 수 제한이 없고, 모든 디자인 옵션({bodyPatterns, number}가지 본체 패턴, {eyeShapes, number}가지 모서리 눈 모양, {eyeCentres, number}가지 눈 중심, 그라디언트, 로고, 프레임, Logo QR 또는 Image QR 아트)과 PNG, JPG, SVG, PDF, EPS 다운로드를 쓸 수 있어요. 워터마크와 광고는 없어요. 정적 코드는 콘텐츠를 코드 자체에 저장하므로 만료되지 않고 스캔 횟수 제한도 없어요. 무료 계정을 만들면 동적 QR 코드 10개, 호스팅 페이지 3개, 90일간의 스캔 분석, 저장 테마 10개, AI 테마 생성 5회가 추가돼요. Pro(월 {proMonthly} 또는 연 {proYearly})와 Business(월 {businessMonthly} 또는 연 {businessYearly})는 이 한도를 늘려 줘요."
+          "answer": "네. 정적 QR 코드는 계정 없이 무료로 만들고, 꾸미고, 다운로드할 수 있어요. 코드 수 제한이 없고, 모든 디자인 옵션(본체 패턴 {bodyPatterns, number}개, 모서리 눈 모양 {eyeShapes, number}개, 눈 중심 {eyeCentres, number}개, 그라데이션, 로고, 프레임, Logo QR 또는 Image QR 아트)을 쓸 수 있으며, PNG, JPG, SVG, PDF, EPS 다운로드도 가능해요. 워터마크와 광고는 없어요. 정적 QR 코드는 콘텐츠를 코드 자체에 저장하므로 만료되지 않고 스캔 횟수 제한도 없어요. 무료 계정을 만들면 동적 QR 코드 10개, 호스팅 페이지 3개, {historyYears, plural, one {#년} other {#년}}치 스캔 분석, 저장 가능한 테마 10개, AI 테마 생성 5회가 추가돼요. Pro(월 {proMonthly} 또는 연 {proYearly})와 Business(월 {businessMonthly} 또는 연 {businessYearly})는 이 한도를 더 늘려 줘요."
         },
         "signup": {
           "question": "가입하거나 계정을 만들어야 하나요?",
@@ -451,7 +451,7 @@
         },
         "dynamic": {
           "question": "QRdx는 동적 QR 코드와 스캔 분석을 지원하나요?",
-          "answer": "네. 동적 코드는 짧은 링크를 담고 있어서 인쇄한 뒤에도 연결 대상을 바꿀 수 있고, 모든 스캔은 국가, 기기, 브라우저별 분석과 함께 집계돼요. 코드 하나로 웹사이트나 호스팅 페이지(링크 목록, 메뉴, vCard, 쿠폰, 이벤트, 양식, PDF, 갤러리, 오디오, 비디오)를 열 수 있어요. Pro와 Business에서는 기기, 국가, 언어, 시간에 따른 스마트 라우팅, A/B 테스트, UTM 태그, 비밀번호, 만료일, 스캔 제한이 추가돼요. 무료 계정은 활성 동적 코드 10개와 90일간의 기록을 제공하고, Pro와 Business는 무제한이며 더 긴 기록을 제공해요."
+          "answer": "네. 동적 QR 코드는 짧은 링크를 담고 있어서 인쇄한 뒤에도 연결 대상을 바꿀 수 있고, 모든 스캔은 국가, 기기, 브라우저 분석과 함께 집계돼요. 코드 하나로 웹사이트 또는 모바일 호스팅 페이지(링크 목록, 메뉴, vCard, 쿠폰, 이벤트, 양식, PDF, 갤러리, 오디오, 동영상)를 열 수 있어요. Pro와 Business에서는 기기, 국가, 언어, 시간대별 스마트 라우팅, A/B 테스트, UTM 태그, 비밀번호, 만료일, 스캔 제한이 추가돼요. 무료 계정은 활성 동적 코드 10개와 {historyYears, plural, one {#년} other {#년}}치 기록을 제공해요. Pro와 Business는 무제한이며 전체 스캔 기록을 보관해요."
         },
         "guarantee": {
           "question": "결제를 중단하면 QR 코드가 작동하지 않나요?",
@@ -475,7 +475,7 @@
         },
         "paidPlans": {
           "question": "Pro나 Business에서는 무엇을 쓸 수 있나요?",
-          "answer": "Pro({proMonthly}/월 또는 {proYearly}/년)에서는 동적 QR 코드와 호스팅 페이지를 무제한으로 만들 수 있고, 3년간의 분석, {customDomains, select, yes {사용자 지정 도메인 5개, } other {}}최대 3명까지의 팀, 스마트 라우팅, A/B 테스트, UTM 태그, 픽셀, 이메일 알림과 주간 요약, 비밀번호와 만료일 같은 링크 제어 기능이 추가돼요. Business({businessMonthly}/월 또는 {businessYearly}/년)에서는 사용자 지정 CSS를 적용하는 화이트 라벨 페이지, 무제한 분석 기록, {customDomains, select, yes {사용자 지정 도메인 25개, } other {}}무제한 팀 멤버, 전환 추적, 웹훅, Slack 또는 Discord 알림이 추가돼요. 정적 QR 코드를 만들고, 꾸미고, 다운로드하는 것은 계속 무료예요."
+          "answer": "Pro(월 {proMonthly} 또는 연 {proYearly})에서는 무제한 동적 코드와 호스팅 페이지, 전체 스캔 기록, {customDomains, select, yes {사용자 지정 도메인 5개, } other {}}최대 3명의 팀, 스마트 라우팅, A/B 테스트, UTM 태그, 픽셀, 이메일 알림과 주간 요약, 비밀번호와 만료일 같은 링크 제어 기능이 추가돼요. Business(월 {businessMonthly} 또는 연 {businessYearly})에서는 사용자 지정 CSS를 쓰는 화이트 라벨 페이지, {customDomains, select, yes {사용자 지정 도메인 25개, } other {}}무제한 팀 구성원, 전환 추적, 웹훅, Slack 또는 Discord 알림이 추가돼요. 정적 QR 코드를 만들고, 꾸미고, 다운로드하는 일은 계속 무료예요."
         }
       }
     }
@@ -495,8 +495,8 @@
     },
     "extras": {
       "unlimitedDynamic": "무제한 동적 QR 코드",
-      "longerAnalytics": "더 긴 분석 기간",
-      "analyticsHistory": "분석 기록",
+      "longerAnalytics": "전체 스캔 기록",
+      "analyticsHistory": "전체 분석 기록",
       "customDomains": "맞춤 도메인",
       "teams": "팀"
     },
@@ -709,7 +709,7 @@
       "items": {
         "cancel": {
           "question": "해지하면 어떻게 되나요?",
-          "answer": "문제가 생기는 것은 없습니다. 플랜은 결제한 기간이 끝날 때까지 유지되고, 이후 계정이 무료 플랜으로 전환됩니다. 모든 동적 QR 코드는 계속 연결되고 모든 스캔도 계속 집계됩니다. 이것이 저희의 Never-Hostage 보장입니다. 무료 플랜에서는 무료 한도를 넘어 새로 만들 수 없으며, 분석은 최근 90일까지 볼 수 있습니다."
+          "answer": "아무 문제도 생기지 않아요. 결제한 기간이 끝날 때까지 플랜은 그대로 유지되고, 이후 계정은 무료로 전환돼요. 모든 동적 QR 코드는 계속 리디렉션되고 모든 스캔도 계속 집계돼요. 이것이 Never-Hostage 보장이에요. 무료 플랜에서는 무료 한도를 넘어 더 만들 수 없고, 분석은 최근 {historyYears, plural, one {#년} other {#년}} 기록만 보여줘요. 그 이전 스캔은 보관되어 있어서 다시 업그레이드하면 돌아와요."
         },
         "refund": {
           "question": "환불받을 수 있나요?",
@@ -772,6 +772,21 @@
       "signIn": "로그인하고 인보이스 요청하기",
       "signInNote": "인보이스는 계정의 워크스페이스 기준으로 보내드리니 먼저 로그인해 주세요."
     },
+    "enterprise": {
+      "name": "Enterprise",
+      "tagline": "계약과 보안 검토가 필요한 기업을 위한 플랜",
+      "price": "맞춤 견적",
+      "priceNote": "연간 계약, 청구서로 결제",
+      "cta": "문의하기",
+      "lead": "Business의 모든 기능에 더해:",
+      "adds": {
+        "contract": "청구서로 결제하는 연간 계약",
+        "replies": "코드가 작동하지 않을 때 {hours, plural, one {영업 # 시간} other {영업 # 시간}} 이내 답변",
+        "review": "보안 검토를 위한 답변 제공",
+        "selfHost": "자체 서버에서 SSO와 감사 로그 사용"
+      },
+      "security": "QRdx의 보안"
+    },
     "nonprofit": {
       "title": "비영리 단체 할인",
       "description": "등록된 비영리 단체와 자선 단체는 월간이든 연간이든 Pro 또는 Business를 {percent, number}% 할인받을 수 있어요. 단체에 대해 알려 주시면 결제 시 입력할 할인 코드를 이메일로 보내 드려요.",
@@ -788,21 +803,6 @@
       "sent": "{email} 주소로 보통 며칠 내에 답변드릴게요. 단체가 자격 요건을 충족하면 결제 시 입력할 할인 코드를 답변에 함께 보내 드려요.",
       "close": "닫기",
       "failed": "문제가 발생했어요. 대신 {email} 주소로 메일을 보내 주세요."
-    },
-    "enterprise": {
-      "name": "Enterprise",
-      "tagline": "계약과 보안 검토가 필요한 기업을 위한 플랜",
-      "price": "맞춤 견적",
-      "priceNote": "연간 계약, 청구서로 결제",
-      "cta": "문의하기",
-      "lead": "Business의 모든 기능에 더해:",
-      "adds": {
-        "contract": "청구서로 결제하는 연간 계약",
-        "replies": "코드가 작동하지 않을 때 {hours, plural, one {영업 # 시간} other {영업 # 시간}} 이내 답변",
-        "review": "보안 검토를 위한 답변 제공",
-        "selfHost": "자체 서버에서 SSO와 감사 로그 사용"
-      },
-      "security": "QRdx의 보안"
     }
   },
   "docs": {
@@ -6338,7 +6338,6 @@
           "scansPerDayLastDays": "일별 스캔 수, 최근 {days, number}일 (UTC)",
           "botsAndLinkPreviewsAre": "봇과 링크 미리보기는 집계하지 않아요. 국가와 도시는 방문자의 IP 주소를 기반으로 하며, IP 주소는 저장되지 않아요. 정확한 위치는 공유를 선택한 스캔 사용자의 경우에만 표시돼요.",
           "dateRange": "기간",
-          "valueKeepsValue2OfScan": "{value}은(는) 스캔 기록을 {value2} 보관해요",
           "totalScans": "총 스캔 수",
           "scansInRange": "기간 내 스캔",
           "uniqueVisitors": "고유 방문자",

@@ -399,7 +399,7 @@
       "analytics": {
         "eyebrow": "数据分析",
         "title": "查看每一次扫描",
-        "description": "每个动态二维码都提供扫描量趋势、国家/地区、设备、浏览器和来源页面数据。免费版账户保留 {days, number} 天。",
+        "description": "每个动态二维码的扫描量随时间变化的趋势，以及国家、设备、浏览器和来源网站的数据。免费账户保留 {years, plural, one {# 年} other {# 年}}的历史记录，付费方案则保留全部记录。",
         "link": "扫描分析的工作方式"
       },
       "bulk": {
@@ -443,7 +443,7 @@
       "items": {
         "free": {
           "question": "QRdx 真的免费吗？有隐藏限制吗？",
-          "answer": "是的。创建、自定义和下载静态二维码完全免费，且无需账号：二维码数量不限，所有设计选项均可使用（{bodyPatterns, number} 种主体图案、{eyeShapes, number} 种定位点外框形状和 {eyeCentres, number} 种定位点中心、渐变、Logo、边框以及 Logo QR 或 Image QR 样式），并支持下载 PNG、JPG、SVG、PDF 和 EPS。没有水印，也没有广告。静态二维码把内容直接存储在码中，因此永不过期，也没有扫描次数限制。免费账号可额外获得 10 个动态二维码、3 个托管页面、90 天扫描分析、10 个已保存主题和 5 次 AI 主题生成；Pro（{proMonthly}/月或 {proYearly}/年）和 Business（{businessMonthly}/月或 {businessYearly}/年）可提高这些上限。"
+          "answer": "可以。创建、自定义和下载静态二维码完全免费，且无需账户：二维码数量不限，所有设计选项均可使用（{bodyPatterns, number} 种主体图案、{eyeShapes, number} 种角部定位点形状和 {eyeCentres, number} 种定位点中心、渐变、徽标、边框以及 Logo QR 或 Image QR 艺术码），并支持下载 PNG、JPG、SVG、PDF 和 EPS 格式。没有水印，也没有广告。静态二维码把内容直接存储在码中，因此永不过期，也没有扫描次数限制。免费账户另可使用 10 个动态二维码、3 个托管页面、{historyYears, plural, one {# 年} other {# 年}}的扫描分析、10 个已保存主题和 5 次 AI 主题生成；Pro（{proMonthly}/月或 {proYearly}/年）和 Business（{businessMonthly}/月或 {businessYearly}/年）可提高这些额度。"
         },
         "signup": {
           "question": "我需要注册或创建账号吗？",
@@ -451,7 +451,7 @@
         },
         "dynamic": {
           "question": "QRdx 支持动态二维码和扫描分析吗？",
-          "answer": "支持。动态二维码编码的是一个短链接，因此印刷后仍可更改它指向的位置，每次扫描都会被计数，并提供国家、设备和浏览器分析。二维码可以打开网站或移动端托管页面（链接列表、菜单、vCard、优惠券、活动、表单、PDF、图库、音频或视频）。Pro 和 Business 还增加按设备、国家、语言或时间的智能路由、A/B 测试、UTM 标签、密码、有效期和扫描次数限制。免费账号可使用 10 个活跃的动态二维码，保留 90 天历史记录；Pro 和 Business 不限数量，历史记录更长。"
+          "answer": "可以。动态二维码编码的是一个短链接，因此印刷之后你仍可以更改它指向的位置，每次扫描都会被统计，并提供国家、设备和浏览器分析。一个二维码可以打开网站，或打开移动端托管页面（链接列表、菜单、vCard、优惠券、活动、表单、PDF、图集、音频或视频）。Pro 和 Business 还提供按设备、国家、语言或时间进行的智能路由、A/B 测试、UTM 标签、密码、有效期和扫描次数限制。免费账户可拥有 10 个有效的动态二维码，并保留 {historyYears, plural, one {# 年} other {# 年}}的历史记录；Pro 和 Business 不限数量，并保留完整的扫描历史。"
         },
         "guarantee": {
           "question": "停止付费后，我的二维码会失效吗？",
@@ -475,7 +475,7 @@
         },
         "paidPlans": {
           "question": "Pro 或 Business 包含哪些功能？",
-          "answer": "Pro（{proMonthly}/月或 {proYearly}/年）可使用不限数量的动态二维码和托管页面、3 年的数据分析、{customDomains, select, yes {5 个自定义域名、} other {}}最多 3 人的团队、智能路由、A/B 测试、UTM 标签、像素、邮件提醒和每周摘要，以及密码和有效期等链接控制功能。Business（{businessMonthly}/月或 {businessYearly}/年）additionally 支持带自定义 CSS 的白标页面、不限时长的分析历史、{customDomains, select, yes {25 个自定义域名、} other {}}不限数量的团队成员、转化追踪、webhook，以及 Slack 或 Discord 提醒。创建、自定义和下载静态二维码仍然免费。"
+          "answer": "Pro（{proMonthly}/月或 {proYearly}/年）提供不限数量的动态二维码和托管页面、完整的扫描历史、{customDomains, select, yes {5 个自定义域名、} other {}}最多 3 人的团队、智能路由、A/B 测试、UTM 标签、像素、邮件提醒和每周摘要，以及密码和有效期等链接控制功能。Business（{businessMonthly}/月或 {businessYearly}/年）additionally 提供带自定义 CSS 的白标页面、{customDomains, select, yes {25 个自定义域名、} other {}}不限数量的团队成员、转化跟踪、webhook，以及 Slack 或 Discord 提醒。创建、自定义和下载静态二维码依然免费。"
         }
       }
     }
@@ -495,8 +495,8 @@
     },
     "extras": {
       "unlimitedDynamic": "无限数量的动态二维码",
-      "longerAnalytics": "更长的数据分析周期",
-      "analyticsHistory": "历史分析数据",
+      "longerAnalytics": "你的完整扫描历史",
+      "analyticsHistory": "完整的分析历史记录",
       "customDomains": "自定义域名",
       "teams": "团队"
     },
@@ -709,7 +709,7 @@
       "items": {
         "cancel": {
           "question": "取消订阅会怎样？",
-          "answer": "不会有任何影响。你的套餐会保持有效，直到已付费周期结束，之后账号将转为免费版。所有动态二维码继续跳转，每次扫描仍会计数：这就是我们的 Never-Hostage 保障。在免费版中，你无法创建超出免费版限额的内容，分析数据只显示最近 90 天。"
+          "answer": "一切照常。你的套餐会在已付费周期结束前保持有效，之后账户将转为免费版。所有动态二维码仍会继续跳转，每次扫描也仍会被计入：这就是我们的 Never-Hostage 保障。在免费版中，你无法创建超出免费版限额的内容，分析数据显示最近 {historyYears, plural, one {一年} other {# 年}}的记录。更早的扫描记录会保留，再次升级后即可恢复显示。"
         },
         "refund": {
           "question": "可以退款吗？",
@@ -772,6 +772,21 @@
       "signIn": "登录后申请发票",
       "signInNote": "发票会开给你账户的工作区，请先登录。"
     },
+    "enterprise": {
+      "name": "Enterprise",
+      "tagline": "适合需要合同和安全评审的企业",
+      "price": "定制",
+      "priceNote": "按年签约，凭发票付款",
+      "cta": "联系我们",
+      "lead": "包含 Business 的全部功能，另加：",
+      "adds": {
+        "contract": "按年签约，凭发票付款",
+        "replies": "二维码失效时，{hours, plural, other {# 个工作小时内回复}}",
+        "review": "解答您的安全评审问题",
+        "selfHost": "在您自己的服务器上使用 SSO 和审计日志"
+      },
+      "security": "QRdx 的安全措施"
+    },
     "nonprofit": {
       "title": "非营利组织折扣",
       "description": "已注册的非营利组织和慈善机构购买 Pro 或 Business，无论按月还是按年，都可享 {percent, number}% 折扣。请向我们介绍你的组织，我们会通过邮件发送可在结账时输入的折扣码。",
@@ -788,21 +803,6 @@
       "sent": "我们会回复到 {email}，通常在几天内。如果你的组织符合条件，回复中会附上可在结账时输入的折扣码。",
       "close": "关闭",
       "failed": "出错了。请改为发送邮件至 {email}。"
-    },
-    "enterprise": {
-      "name": "Enterprise",
-      "tagline": "适合需要合同和安全评审的企业",
-      "price": "定制",
-      "priceNote": "按年签约，凭发票付款",
-      "cta": "联系我们",
-      "lead": "包含 Business 的全部功能，另加：",
-      "adds": {
-        "contract": "按年签约，凭发票付款",
-        "replies": "二维码失效时，{hours, plural, other {# 个工作小时内回复}}",
-        "review": "解答您的安全评审问题",
-        "selfHost": "在您自己的服务器上使用 SSO 和审计日志"
-      },
-      "security": "QRdx 的安全措施"
     }
   },
   "docs": {
@@ -6338,7 +6338,6 @@
           "scansPerDayLastDays": "每日扫描次数，最近 {days, number} 天（UTC）",
           "botsAndLinkPreviewsAre": "机器人和链接预览不计入统计。国家和城市来自访客的 IP 地址，该地址不会被存储；精确位置仅来自选择分享位置的扫描者。",
           "dateRange": "日期范围",
-          "valueKeepsValue2OfScan": "{value} 保留 {value2} 的扫描历史",
           "totalScans": "扫描总数",
           "scansInRange": "所选时段扫描次数",
           "uniqueVisitors": "独立访客",
