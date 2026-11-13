@@ -2,6 +2,9 @@
 @import "streamdown/styles.css";
 
 @source "../node_modules/streamdown/dist";
+/* The registry examples render on the component docs pages; they live in
+   @repo/docs-assets, outside the folder Tailwind scans by itself. */
+@source "../../../packages/docs-assets/registry";
 
 @import "fumadocs-ui/css/neutral.css";
 @import "fumadocs-ui/css/preset.css";
