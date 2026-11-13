@@ -11,10 +11,11 @@ npm install qrdx
 # or: pnpm add qrdx / yarn add qrdx
 ```
 
-`react` and `react-dom` (18 or newer) are peer dependencies. PDF export also needs the optional `jspdf` peer:
+`react` and `react-dom` (18 or newer) are peer dependencies. PDF export also needs the optional `jspdf` peer, and PNG export in Node (`getQRAsPNG`, imported from `qrdx/node`) needs one of the optional rasterizer peers (`@resvg/resvg-js` draws the SVG — logos included — the way browsers do; `sharp` also works):
 
 ```bash
 npm install jspdf
+npm install @resvg/resvg-js # or: npm install sharp
 ```
 
 ## Quick start
@@ -352,6 +353,7 @@ const props = { value: "https://example.com", bodyPattern: "rounded" as const };
 await downloadQRCode(props, { format: "png", size: PRESET_SIZES.large }); // png | jpg | webp | svg | pdf | eps
 await downloadQRCode(props, { format: "webp", size: PRESET_SIZES.large }); // lossless WebP
 const webp = await getQRAsWebP({ ...props, size: 1024 }); // a Blob; { quality: 0.9 } makes it lossy
+const png = await getQRAsPNG({ ...props, size: 1024 }); // PNG bytes, plain Node — import from "qrdx/node"
 await downloadQRCode(props, { format: "pdf", size: { width: 1200, height: 1200 }, filename: "qr.pdf" });
 const dataUrl = await getQRCodeDataUrl(props, "svg", { width: 512, height: 512 });
 await copyQRCodeToClipboard(props, { width: 512, height: 512 }); // PNG to the clipboard
@@ -359,6 +361,16 @@ const svgMarkup = await getSVGString(props);
 ```
 
 Sizes must be square and between 50 and 5000 pixels (`validateSize`); with a frame the file is larger by the frame. For `eps`, `size.width` is in PostScript points (72 per inch). When `props.size` is set, a logo laid out for that size is scaled with the export (`withQRSize`). PDF export loads `jspdf` on demand and throws a clear error if it is not installed; EPS needs no extra package.
+
+**PNG on a server.** `getQRAsPNG(props, { size })` returns PNG bytes and runs in plain Node without a DOM (handy where the browser helpers can't go). It lives behind its own subpath, so the browser bundle never sees the rasterizer:
+
+```js
+import { getQRAsPNG } from "qrdx/node";
+```
+
+It rasterizes the SVG the library renders with an optional peer dependency loaded only when the function is called: `@resvg/resvg-js` (recommended — it draws embedded logos the way browsers do, supporting PNG, JPEG, GIF, WebP and SVG images) or `sharp` (whose SVG renderer skips embedded images, so the logo is composited onto the pixels). Installing `qrdx` alone never pulls in a native module.
+
+Logos are conservative by default, since a library function that runs on servers shouldn't fetch or read on a caller's behalf: a `src` that is a **data URL** is always used, while **http(s) URLs and local paths are only loaded with `loadExternalLogos: true`** (fetches are capped at 1 MB and refuse redirects). A logo that isn't loaded or can't be is left out, like in the browser. Frame label text needs a font on the machine. The CLI passes `loadExternalLogos: true` for its PNG and WebP output, since the person running it picked the source.
 
 WebP is lossless by default, so module edges stay exact, and a transparent background stays transparent. `quality` (0 to 1, in `downloadQRCode` options or `getQRAsWebP`) asks for a smaller lossy file instead. The browser's canvas encodes it where it can; where it can't (Safari hands back a PNG for `image/webp`), QRdx encodes the pixels itself with a small built-in lossless encoder, so a `.webp` file is always WebP. `canvasToWebP(canvas)` does the same for any canvas, and `encodeWebPLossless(rgba, width, height)` encodes raw RGBA pixels without a DOM. Lower-level helpers: `getQRAsSVGDataUri(props)` and `getQRAsCanvas(props, mimeType, returnCanvas?)`.
 
