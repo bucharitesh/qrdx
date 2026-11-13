@@ -4373,7 +4373,6 @@
         "frame": "フレーム",
         "padding": "余白",
         "errorCorrection": "誤り訂正",
-        "border": "枠線",
         "none": "なし"
       },
       "dotSizeSection": {
@@ -4554,7 +4553,6 @@
       },
       "patternControls": {
         "customizeOuterAndCenter": "外側と中央をカスタマイズ",
-        "border": "枠線",
         "higherLevelsSurviveScratchesAnd": "レベルが高いほど傷やロゴに強くなりますが、ドットが増えます。ロゴを追加する場合はHを使用してください。",
         "dotShape": "ドットの形",
         "dotShapes": "ドットの形",

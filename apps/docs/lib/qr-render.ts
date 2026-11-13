@@ -118,7 +118,9 @@ export const qrOptionsSchema = z.object({
   template: z
     .enum(QR_TEMPLATE_IDS)
     .optional()
-    .describe("Decorative frame template"),
+    .describe(
+      "A built-in frame drawn as a template (Arrow, StandardBox, SquareBorder, StrikedBox, Halloween; default is none). Unlike `frame`, the whole artwork is `size` wide with the code smaller inside it",
+    ),
 });
 
 // Retired eye shapes (curly; diamond, star and banner centres) are not
@@ -215,7 +217,10 @@ const DOT_DESCRIPTIONS: Record<PickableCornerEyeDotPattern, string> = {
   "extra-rounded": "Square dot with very round corners",
 };
 
-/** Patterns, templates and limits, for the MCP `list_qr_styles` tool. */
+/**
+ * Patterns, the frames drawn as templates and limits, for the MCP
+ * `list_qr_styles` tool.
+ */
 export function getQrStyleCatalog() {
   return {
     body: BODY_PATTERN.map((id) => ({
@@ -230,10 +235,15 @@ export function getQrStyleCatalog() {
       id,
       description: DOT_DESCRIPTIONS[id] ?? id,
     })),
-    templates: getAllTemplates().map(({ id, name, description }) => ({
+    // Frames drawn as templates (`template`): the whole artwork is `size`
+    // wide, the code smaller inside it; "default" draws none
+    templates: getAllTemplates().map(({ id, name }) => ({
       id,
-      name,
-      description: description ?? name,
+      name: id === "default" ? "None" : name,
+      description:
+        id === "default"
+          ? "No frame"
+          : `The ${name} frame, drawn at the template's size: the whole artwork is size wide`,
     })),
     levels: [
       { id: "L", recovery: "~7%" },

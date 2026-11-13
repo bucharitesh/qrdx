@@ -111,7 +111,7 @@ ${BOLD}Generate Options:${RESET}
   --no-logo           Skip the logo prompt in interactive mode
   --margin            Quiet zone margin in modules  ${DIM}(default: 0)${RESET}
   --size              Output pixel size for SVG/PNG/WebP  ${DIM}(default: 512)${RESET}
-  --template          Decorative template wrapper:
+  --template          A frame drawn as a template (the whole artwork is --size):
                         ${DIM}Arrow, StandardBox, SquareBorder, StrikedBox, Halloween${RESET}
   --frame             Call-to-action frame (adds space around the code), e.g.:
                         ${DIM}none, banner-bottom, banner-top, rounded-border,${RESET}

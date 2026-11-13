@@ -4373,7 +4373,6 @@
         "frame": "फ़्रेम",
         "padding": "पैडिंग",
         "errorCorrection": "एरर करेक्शन",
-        "border": "बॉर्डर",
         "none": "कोई नहीं"
       },
       "dotSizeSection": {
@@ -4554,7 +4553,6 @@
       },
       "patternControls": {
         "customizeOuterAndCenter": "बाहरी और बीच का हिस्सा बदलें",
-        "border": "बॉर्डर",
         "higherLevelsSurviveScratchesAnd": "ऊँचे लेवल खरोंच और लोगो होने पर भी स्कैन होते हैं, लेकिन उनमें डॉट ज़्यादा होते हैं। लोगो जोड़ें तो H चुनें।",
         "dotShape": "डॉट का आकार",
         "dotShapes": "डॉट आकार",

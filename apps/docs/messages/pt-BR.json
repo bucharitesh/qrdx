@@ -4373,7 +4373,6 @@
         "frame": "Frame",
         "padding": "Margem",
         "errorCorrection": "Correção de erros",
-        "border": "Borda",
         "none": "Nenhuma"
       },
       "dotSizeSection": {
@@ -4554,7 +4553,6 @@
       },
       "patternControls": {
         "customizeOuterAndCenter": "Personalize externo e centro",
-        "border": "Borda",
         "higherLevelsSurviveScratchesAnd": "Níveis mais altos resistem a arranhões e logos, mas adicionam mais pontos. Use H ao adicionar um logo.",
         "dotShape": "Formato dos pontos",
         "dotShapes": "formatos de ponto",

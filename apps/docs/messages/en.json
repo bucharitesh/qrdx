@@ -4373,7 +4373,6 @@
         "frame": "Frame",
         "padding": "Padding",
         "errorCorrection": "Error correction",
-        "border": "Border",
         "none": "None"
       },
       "dotSizeSection": {
@@ -4401,7 +4400,9 @@
         "theFrameIsAddedAround": "The frame is added around the code, so the downloaded image gets bigger and the code itself stays scannable.",
         "label": "Label",
         "pickAFrameFirst": "Pick a frame first",
-        "none": "None"
+        "none": "None",
+        "takesDotColor": "This frame takes the color of the code's dots.",
+        "alsoHasTemplate": "This design also has the {name} frame inside this one. Picking another frame replaces both."
       },
       "frameFields": {
         "textSize": "Text size"
@@ -4554,7 +4555,6 @@
       },
       "patternControls": {
         "customizeOuterAndCenter": "Customize outer and center",
-        "border": "Border",
         "higherLevelsSurviveScratchesAnd": "Higher levels survive scratches and logos but add more dots. Use H when you add a logo.",
         "dotShape": "Dot shape",
         "dotShapes": "dot shapes",

@@ -4373,7 +4373,6 @@
         "frame": "프레임",
         "padding": "여백",
         "errorCorrection": "오류 정정",
-        "border": "테두리",
         "none": "없음"
       },
       "dotSizeSection": {
@@ -4554,7 +4553,6 @@
       },
       "patternControls": {
         "customizeOuterAndCenter": "바깥쪽과 중앙 맞춤 설정",
-        "border": "테두리",
         "higherLevelsSurviveScratchesAnd": "높은 수준일수록 긁힘이나 로고에 강하지만 점이 더 많아져요. 로고를 추가할 때는 H를 사용하세요.",
         "dotShape": "점 모양",
         "dotShapes": "점 모양",

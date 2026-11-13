@@ -4373,7 +4373,6 @@
         "frame": "Bingkai",
         "padding": "Padding",
         "errorCorrection": "Koreksi kesalahan",
-        "border": "Garis tepi",
         "none": "Tidak ada"
       },
       "dotSizeSection": {
@@ -4554,7 +4553,6 @@
       },
       "patternControls": {
         "customizeOuterAndCenter": "Sesuaikan bagian luar dan tengah",
-        "border": "Bingkai",
         "higherLevelsSurviveScratchesAnd": "Level yang lebih tinggi tahan terhadap goresan dan logo, tetapi menambah jumlah titik. Gunakan H saat Anda menambahkan logo.",
         "dotShape": "Bentuk titik",
         "dotShapes": "bentuk titik",

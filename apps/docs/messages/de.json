@@ -4373,7 +4373,6 @@
         "frame": "Rahmen",
         "padding": "Abstand",
         "errorCorrection": "Fehlerkorrektur",
-        "border": "Rand",
         "none": "Keine"
       },
       "dotSizeSection": {
@@ -4554,7 +4553,6 @@
       },
       "patternControls": {
         "customizeOuterAndCenter": "Außen und Mitte anpassen",
-        "border": "Rahmen",
         "higherLevelsSurviveScratchesAnd": "Höhere Stufen überstehen Kratzer und Logos, benötigen aber mehr Punkte. Nimm H, wenn du ein Logo hinzufügst.",
         "dotShape": "Punktform",
         "dotShapes": "Punktformen",

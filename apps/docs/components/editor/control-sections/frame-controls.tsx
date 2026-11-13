@@ -36,6 +36,13 @@ import {
   withoutShape,
 } from "./frame-shapes";
 import { carryFrameSettings, customFrameName } from "./frame-specs";
+import {
+  FRAME_TEMPLATES,
+  TEMPLATE_PREFIX,
+  templateOf,
+  templateTakesCodeColor,
+  withoutTemplate,
+} from "./frame-templates";
 import { FrameTextPresets } from "./frame-text-presets";
 
 // One picker for every frame: the engine's built-in frames (the classic
@@ -95,12 +102,13 @@ function useSavedFrames() {
 }
 
 /**
- * The frame picker on its own: the built-in frames, the shaped codes, the
- * official library and the frames you saved. A built-in frame keeps the
- * text and colors chosen so far; a ready-made frame comes as its tile shows
- * it; a shaped code takes the frame's place. Pass `shapes` when the shaped
- * code panel is shown elsewhere (FrameControls); on its own the picker
- * shows the panel under it.
+ * The frame picker on its own: the built-in frames (the classic ones and
+ * the templates), the shaped codes, the official library and the frames you
+ * saved. One choice at a time: picking a frame, template or shaped code
+ * replaces the one before. A built-in frame keeps the text and colors
+ * chosen so far; a ready-made frame comes as its tile shows it. Pass
+ * `shapes` when the shaped code panel is shown elsewhere (FrameControls);
+ * on its own the picker shows the panel under it.
  */
 export function FrameStylePicker({
   active = true,
@@ -117,13 +125,15 @@ export function FrameStylePicker({
   const custom = frame.style === "custom" ? frame : null;
   const { data: saved = [] } = useSavedFrames();
 
-  // A frame takes the place of a shaped code (frame-shapes.tsx)
+  // A frame takes the place of a shaped code (frame-shapes.tsx) or a
+  // template (frame-templates.ts)
   const setFrame = (next: AnyQRFrame) =>
-    setStyle({ ...withoutShape(style), frame: next });
+    setStyle({ ...withoutTemplate(withoutShape(style)), frame: next });
   const shape = frameShapeOf(style) ?? shapes.current;
+  const template = templateOf(style);
 
-  // The picker's own tiles: no frame, the built-in frames, the shaped
-  // codes, saved frames. Official frames come from the library
+  // The picker's own tiles: no frame, the built-in frames and templates,
+  // the shaped codes, saved frames. Official frames come from the library
   // (frame-picker.tsx).
   const choices = useMemo(() => {
     const list: FrameChoice[] = [
@@ -141,6 +151,15 @@ export function FrameStylePicker({
           frame: { style: item.style, text: "" },
           group: "built-in",
           keywords: `classic built-in ${item.tags.join(" ")}`,
+        }),
+      ),
+      ...FRAME_TEMPLATES.map(
+        (item): FrameChoice => ({
+          id: `${TEMPLATE_PREFIX}${item.id}`,
+          name: item.name,
+          frame: { style: "none" },
+          group: "built-in",
+          keywords: `classic built-in border ${item.id} ${item.description ?? ""}`,
         }),
       ),
       ...FRAME_SHAPE_IDS.map(
@@ -171,6 +190,10 @@ export function FrameStylePicker({
 
   const value = (() => {
     if (shape && frame.style === "none") return `${SHAPE_PREFIX}${shape}`;
+    // A legacy design with a template inside a frame shows its frame
+    if (template && frame.style === "none") {
+      return `${TEMPLATE_PREFIX}${template.id}`;
+    }
     if (!custom) return frame.style as string;
     if (official) return `${OFFICIAL_PREFIX}${official.id}`;
     const json = JSON.stringify(custom.spec);
@@ -200,6 +223,12 @@ export function FrameStylePicker({
       return;
     }
     soundEvent("tick");
+    if (id.startsWith(TEMPLATE_PREFIX)) {
+      // A template takes the place of the frame and of a shaped code
+      const { frame: _frame, ...rest } = withoutShape(style);
+      setStyle({ ...rest, templateId: id.slice(TEMPLATE_PREFIX.length) });
+      return;
+    }
     if (picked.style === "custom") {
       // A ready-made frame looks like its tile: its own labels and colors.
       setFrame(id === CUSTOM_ID && custom ? custom : picked);
@@ -210,9 +239,11 @@ export function FrameStylePicker({
   };
 
   const currentName =
-    shape && frame.style === "none"
-      ? shapes.names[shape]
-      : frameName(frame, t("none"));
+    frame.style !== "none"
+      ? frameName(frame, t("none"))
+      : shape
+        ? shapes.names[shape]
+        : (template?.name ?? t("none"));
 
   return (
     <>
@@ -223,7 +254,16 @@ export function FrameStylePicker({
         featured={FEATURED}
         onPick={pick}
         preview={(option, id) =>
-          id.startsWith(SHAPE_PREFIX) ? (
+          id.startsWith(TEMPLATE_PREFIX) ? (
+            <QRCodeSVG
+              bgColor="transparent"
+              fgColor={frame.color || "#000000"}
+              size={40}
+              style={{ maxHeight: "100%", maxWidth: "100%" }}
+              templateId={id.slice(TEMPLATE_PREFIX.length)}
+              value={CANONICAL_HOST}
+            />
+          ) : id.startsWith(SHAPE_PREFIX) ? (
             <ShapePreview
               id={id.slice(SHAPE_PREFIX.length) as FrameShapeId}
               silhouette={shapes.silhouette}
@@ -273,10 +313,14 @@ export function FrameControls() {
   // The dialogs load on first open, then stay mounted (for their exit)
   const [dialogs, setDialogs] = useState({ import: false, publish: false });
 
-  // A frame takes the place of a shaped code (frame-shapes.tsx)
+  // Editing a frame's fields keeps it as it is; a new frame (an imported
+  // one) takes the place of a shaped code and a template
   const setFrame = (next: AnyQRFrame) =>
     setStyle({ ...withoutShape(style), frame: next });
+  const replaceFrame = (next: AnyQRFrame) =>
+    setStyle({ ...withoutTemplate(withoutShape(style)), frame: next });
   const shaped = frameShapeOf(style) !== null || shapes.current !== null;
+  const template = templateOf(style);
 
   return (
     <div className="space-y-4">
@@ -285,7 +329,21 @@ export function FrameControls() {
       {shapes.panel}
 
       {spec ? (
-        <FrameSpecFields frame={frame} onChange={setFrame} spec={spec} />
+        <>
+          <FrameSpecFields frame={frame} onChange={setFrame} spec={spec} />
+          {template && (
+            // A design from before templates were frames, with both
+            <p className="text-muted-foreground text-xs text-pretty">
+              {t("alsoHasTemplate", { name: template.name })}
+            </p>
+          )}
+        </>
+      ) : template ? (
+        templateTakesCodeColor(template) && (
+          <p className="text-muted-foreground text-xs text-pretty">
+            {t("takesDotColor")}
+          </p>
+        )
       ) : (
         !shaped && <NoFrameFields />
       )}
@@ -328,7 +386,7 @@ export function FrameControls() {
       {dialogs.import && (
         <ImportFrameDialog
           onImported={(imported) => {
-            setFrame({ style: "custom", spec: imported });
+            replaceFrame({ style: "custom", spec: imported });
             soundEvent("tick");
           }}
           onOpenChange={setImportOpen}

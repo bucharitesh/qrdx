@@ -13035,10 +13035,6 @@
     "source": "c7bdad567af2",
     "status": "machine"
   },
-  "editor.controlSections.designControls.border": {
-    "source": "3b4bdff339e9",
-    "status": "machine"
-  },
   "editor.controlSections.designControls.none": {
     "source": "dc937b598926",
     "status": "machine"
@@ -13597,10 +13593,6 @@
   },
   "editor.controlSections.patternControls.customizeOuterAndCenter": {
     "source": "b779d19aaffb",
-    "status": "machine"
-  },
-  "editor.controlSections.patternControls.border": {
-    "source": "3b4bdff339e9",
     "status": "machine"
   },
   "editor.controlSections.patternControls.higherLevelsSurviveScratchesAnd": {
