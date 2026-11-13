@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { FrameSpec } from "./frame-spec";
 
 // Zod schemas
 export const baseTemplatePropsSchema = z.object({
@@ -54,6 +55,12 @@ export interface TemplateDefinition<TCustomProps = Record<string, never>> {
   id: string;
   name: string;
   description?: string;
+  /**
+   * The frame spec a built-in template draws its artwork from (they're all
+   * frames: `{ style: "custom", spec }` draws the same artwork as a frame).
+   * Templates that draw in code, like custom ones, have none.
+   */
+  spec?: FrameSpec;
   wrapper: (
     children: TemplateNode,
     props?: BaseTemplateProps & TCustomProps,

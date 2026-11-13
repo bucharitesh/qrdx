@@ -131,6 +131,10 @@ function specBackground(
   bgColor: ColorConfig | undefined
 ): { color: string; plate: boolean } {
   const background = getSolidColor(bgColor, DEFAULT_BGCOLOR);
+  if (spec.qr.plate === "none") {
+    // No plate: the code's own background and margin are its light space
+    return { color: background, plate: false };
+  }
   if (isOpaque(background)) {
     return { color: background, plate: true };
   }
@@ -440,10 +444,21 @@ function compileShape(
   resolve: Resolve
 ): FrameShape[] {
   const outline = outlineOf(shape, k);
+  const stroke =
+    "stroke" in shape && shape.stroke
+      ? {
+          stroke: resolve(shape.stroke.color),
+          strokeWidth: shape.stroke.width * k,
+        }
+      : undefined;
   if (typeof shape.fill === "object" && "gradient" in shape.fill) {
-    return gradientSteps(outline, shape.fill.gradient, resolve);
+    const steps = gradientSteps(outline, shape.fill.gradient, resolve);
+    // The outline goes over the steps, drawn once along the whole shape
+    return stroke
+      ? [...steps, { ...outline, fill: "none", ...stroke } as FrameShape]
+      : steps;
   }
-  return [{ ...outline, fill: resolve(shape.fill) } as FrameShape];
+  return [{ ...outline, fill: resolve(shape.fill), ...stroke } as FrameShape];
 }
 
 // ── Labels ─────────────────────────────────────────────────────────────────
