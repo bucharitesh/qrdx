@@ -1,0 +1,81 @@
+{
+  "id": "school-backpack",
+  "name": "Backpack",
+  "description": "A solid card with a backpack over the code and the label underneath, in navy and school-bus yellow.",
+  "category": "seasonal",
+  "collection": "seasons",
+  "occasion": "back-to-school",
+  "contentTypes": [],
+  "tags": ["back to school", "school", "backpack"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#1e3a8a",
+      "text": "#ffffff",
+      "accent": "#f2b705"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M596 71L644 71A24 24 0 0 1 668 95L668 152A24 24 0 0 1 644 176L596 176A24 24 0 0 1 572 152L572 95A24 24 0 0 1 596 71ZM599 72.5A21 21 0 0 1 641 72.5L632 72.5A12 12 0 0 0 608 72.5ZM584 102.13L656 102.13L656 96.88L584 96.88Z",
+        "fill": "accent"
+      },
+      {
+        "type": "path",
+        "d": "M599 119L641 119A9 9 0 0 1 650 128L650 152A9 9 0 0 1 641 161L599 161A9 9 0 0 1 590 152L590 128A9 9 0 0 1 599 119ZM602 136.25L638 136.25L638 131.75L602 131.75Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Ready for school",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan for first-day info",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

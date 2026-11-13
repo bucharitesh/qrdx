@@ -93,6 +93,7 @@ You don't need a database or any environment variables to work on the React libr
 | `packages/design-system` | Shared UI components (shadcn/ui), icons, styles and fonts |
 | `packages/integrations`, `packages/integration-kit` | The integrations catalogue (`src/catalog`), the connected-account integrations (`src/integrations`) and the shared integration types |
 | `packages/config` | Platform constants: the brand, the hosted service's URLs, contact emails, social links and limits shared across the app (its README says what belongs there) |
+| `packages/availability` | Which built-in features a deployment can offer (custom domains, AI, storage, email, the bots), decided from which variables are set; the app passes its environment in (its README says how the app and `/zone/availability.json` use it) |
 | `packages/rate-limit` | Upstash-based rate limiting |
 | `packages/next-config`, `packages/typescript-config` | Shared Next.js config and env keys, shared tsconfig presets |
 | `plugins/chrome`, `plugins/figma`, `plugins/raycast`, `plugins/canva` | The Chrome extension, Figma plugin, Raycast extension and Canva app |

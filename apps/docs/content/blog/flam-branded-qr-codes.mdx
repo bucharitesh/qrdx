@@ -29,7 +29,7 @@ The generator lives in Flam's own repository. It installs qrdx from npm and hand
 
 - A round background and a thick outer ring, with their own colors and a stroke color and width.
 - A line of custom text along the ring, at the top or the bottom, centered automatically. Its font, size, weight, letter spacing and rotation are all settings.
-- Decorative dots between the code and the ring. The template picks which dots to draw from a hash of the code's URL, so every link gets its own pattern and the same link always gets the same one.
+- Decorative dots between the code and the ring. The template picks which dots to draw from a hash of the code's URL, so every link gets its own pattern and the same link always gets the same one. It picks 240 of 297 dot positions, which allows about 10<sup>61</sup> different rings, so two links practically never share one.
 - An embedded font. Downloads carry the chosen font inside the SVG, so the text in a PNG matches the preview.
 
 Around the template sits the editor: a field for the link, an error-correction picker (Medium, Quartile or High), color pickers with transparency for the code, the background, the eyes and the dots, an optional logo, and a download panel for PNG, JPG and SVG at preset or custom sizes, with a button that copies the SVG.

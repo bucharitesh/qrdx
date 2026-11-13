@@ -32,7 +32,7 @@ export const CUSTOMERS: readonly Customer[] = [
     name: "Flam",
     logo: FlamLogo,
     storySlug: "flam-branded-qr-codes",
-    published: false,
+    published: true,
   },
 ];
 

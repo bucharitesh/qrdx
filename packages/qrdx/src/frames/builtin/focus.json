@@ -1,0 +1,88 @@
+{
+  "kind": "qrdx.frame",
+  "version": 1,
+  "artboard": {
+    "width": 1230,
+    "height": 1430
+  },
+  "qr": {
+    "x": 115,
+    "y": 115,
+    "size": 1000,
+    "padding": 70,
+    "plate": "background"
+  },
+  "colors": {
+    "frame": "#000000"
+  },
+  "shapes": [
+    {
+      "type": "rect",
+      "x": 0,
+      "y": 0,
+      "width": 1230,
+      "height": 1430,
+      "fill": "background"
+    },
+    {
+      "type": "polygon",
+      "points": [[0, 0], [200, 0], [200, 35], [35, 35], [35, 200], [0, 200]],
+      "fill": "frame"
+    },
+    {
+      "type": "polygon",
+      "points": [
+        [1230, 0],
+        [1030, 0],
+        [1030, 35],
+        [1195, 35],
+        [1195, 200],
+        [1230, 200]
+      ],
+      "fill": "frame"
+    },
+    {
+      "type": "polygon",
+      "points": [
+        [1230, 1230],
+        [1030, 1230],
+        [1030, 1195],
+        [1195, 1195],
+        [1195, 1030],
+        [1230, 1030]
+      ],
+      "fill": "frame"
+    },
+    {
+      "type": "polygon",
+      "points": [
+        [0, 1230],
+        [200, 1230],
+        [200, 1195],
+        [35, 1195],
+        [35, 1030],
+        [0, 1030]
+      ],
+      "fill": "frame"
+    }
+  ],
+  "labels": [
+    {
+      "type": "text",
+      "id": "cta",
+      "slot": "primary",
+      "text": "Scan me",
+      "color": "text",
+      "box": {
+        "x": 80,
+        "y": 1210,
+        "width": 1070,
+        "height": 200
+      },
+      "collapse": {
+        "y": 1230,
+        "height": 200
+      }
+    }
+  ]
+}

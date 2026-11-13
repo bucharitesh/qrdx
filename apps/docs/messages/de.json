@@ -1669,6 +1669,11 @@
       "after": "Er öffnet sich direkt als Scanner in einem eigenen Fenster und funktioniert offline, sobald du damit einen Code gescannt hast."
     }
   },
+  "scannerApp": {
+    "share": "Teilen",
+    "scanInstructions": "Richte die Kamera auf einen QR-Code oder Barcode",
+    "cameraBlocked": "Der Kamerazugriff für QRdx Scanner ist ausgeschaltet. Aktiviere ihn in den Einstellungen oder scanne stattdessen ein Bild."
+  },
   "scanPages": {
     "reportAbuse": "Missbrauch melden",
     "privacy": "Datenschutz",
@@ -4391,18 +4396,11 @@
         }
       },
       "frameControls": {
-        "customise": "Anpassen",
         "importSvg": "SVG importieren",
         "publishFrame": "Rahmen veröffentlichen",
         "theFrameIsAddedAround": "Der Rahmen wird um den Code herum hinzugefügt. Dadurch wird das heruntergeladene Bild größer und der Code selbst bleibt scanbar.",
         "label": "Text",
-        "secondLine": "Zweite Zeile",
-        "leaveEmptyForNoLabel": "Leer lassen für keinen Text",
         "pickAFrameFirst": "Wähle zuerst einen Rahmen",
-        "frameColor": "Rahmenfarbe",
-        "textColor": "Textfarbe",
-        "endColor": "Endfarbe",
-        "optionalEGYourWebsite": "Optional, z. B. deine Website",
         "none": "Keiner"
       },
       "frameFields": {
@@ -4421,13 +4419,14 @@
         "filterFrames": "Rahmen filtern",
         "labelFrames": "{label}-Rahmen",
         "commonFrames": "Gängige Rahmen",
-        "everyFrameBuiltInStyles": "Alle Rahmen: integrierte Stile, die offiziellen Rahmen von QRdx und deine gespeicherten Rahmen. Ein Klick wendet den Rahmen sofort an.",
+        "everyFrameBuiltInStyles": "Alle Rahmen: die klassischen Rahmen, Formcodes, die offiziellen Rahmen von QRdx und deine gespeicherten Rahmen. Ein Klick darauf wendet den Rahmen sofort an.",
         "less": "Weniger",
         "all": "Alle",
         "noFramesMatchQuery": "Keine Rahmen für „{query}“ gefunden.",
         "loadingFrames": "Rahmen werden geladen …",
         "comingUp": "Demnächst",
-        "builtIn": "Integriert",
+        "classic": "Klassisch",
+        "shapedCodes": "Formcodes",
         "saved": "Gespeichert",
         "results": "Ergebnisse"
       },

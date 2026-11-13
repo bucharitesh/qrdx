@@ -1,22 +1,24 @@
 // What a frame label in the playground preview edits. The engine marks each
 // label it draws with a field (data-qrdx-frame-label): "text" and
-// "secondaryText" on built-in frames, a spec label's id on custom ones. This
-// maps that marker to the frame option an edit writes, and applies edits
-// (text, size, colors, icon) the way the Design → Frame controls do. Pure:
-// nothing here renders or touches the store.
+// "secondaryText" on frames named by a built-in style, a spec label's id on
+// custom ones. Every frame draws a spec (qrdx frameSpecOf), so this finds
+// the spec label behind the marker, maps it to the frame option an edit
+// writes, and applies edits (text, size, colors, icon) the way the Design →
+// Frame controls do. Pure: nothing here renders or touches the store.
 import {
   type AnyQRFrame,
-  DEFAULT_FRAME_TEXT,
   FRAME_FONT_SCALE_MAX,
   FRAME_FONT_SCALE_MIN,
   FRAME_TEXT_MAX_LENGTH,
   type FrameSpecIcon,
-  GRADIENT_FRAME_DEFAULTS,
+  type FrameSpecLabel,
+  frameSpecOf,
   type QRCustomFrame,
   sanitizeFrameText,
 } from "qrdx";
 import {
-  customFrameColors,
+  frameColors,
+  labelOfSlot,
   specIcons,
   specTokens,
   swapSpecIcon,
@@ -42,7 +44,23 @@ export interface FrameTextTarget {
   value: string;
 }
 
-const BUILT_IN_NAMES = { text: "Label", secondaryText: "Second line" };
+const SLOT_NAMES = { text: "Label", secondaryText: "Second line" };
+
+/** The spec label a preview marker stands for. */
+function labelOfMarker(
+  frame: AnyQRFrame,
+  marker: string,
+): FrameSpecLabel | undefined {
+  const spec = frameSpecOf(frame);
+  if (!spec) return;
+  if (frame.style !== "custom") {
+    // A built-in style marks its labels with the frame option they show
+    if (marker === "text") return labelOfSlot(spec, "primary");
+    if (marker === "secondaryText") return labelOfSlot(spec, "secondary");
+    return;
+  }
+  return spec.labels.find((item) => item.id === marker);
+}
 
 /** The field a preview label edits, or null when the frame has no such label. */
 export function frameTextTarget(
@@ -50,39 +68,22 @@ export function frameTextTarget(
   marker: string,
 ): FrameTextTarget | null {
   if (!frame || frame.style === "none") return null;
-  if (frame.style !== "custom") {
-    if (marker === "text") {
-      return {
-        marker,
-        field: "text",
-        maxLength: FRAME_TEXT_MAX_LENGTH,
-        name: BUILT_IN_NAMES.text,
-        value: frame.text ?? DEFAULT_FRAME_TEXT,
-      };
-    }
-    if (marker === "secondaryText") {
-      return {
-        marker,
-        field: "secondaryText",
-        maxLength: FRAME_TEXT_MAX_LENGTH,
-        name: BUILT_IN_NAMES.secondaryText,
-        value: frame.secondaryText ?? "",
-      };
-    }
-    return null;
-  }
-  const label = frame.spec.labels.find((item) => item.id === marker);
+  const label = labelOfMarker(frame, marker);
   if (!label) return null;
   const maxLength = Math.min(
     label.maxLength ?? FRAME_TEXT_MAX_LENGTH,
     FRAME_TEXT_MAX_LENGTH,
   );
-  const base = { marker, labelId: label.id, maxLength };
+  const base = {
+    marker,
+    maxLength,
+    ...(frame.style === "custom" && { labelId: label.id }),
+  };
   if (label.slot === "primary") {
     return {
       ...base,
       field: "text",
-      name: BUILT_IN_NAMES.text,
+      name: SLOT_NAMES.text,
       value: frame.text ?? label.text,
     };
   }
@@ -90,7 +91,7 @@ export function frameTextTarget(
     return {
       ...base,
       field: "secondaryText",
-      name: BUILT_IN_NAMES.secondaryText,
+      name: SLOT_NAMES.secondaryText,
       value: frame.secondaryText ?? label.text,
     };
   }
@@ -164,35 +165,23 @@ export interface FrameTweaks {
 }
 
 /**
- * The values the menu shows. `drawnTextColor` is the label's fill in the
- * preview: a built-in frame's default text color depends on its style, so
- * the drawing is the source of truth until a color is picked.
+ * The values the menu shows: the frame's options, else its spec's defaults
+ * (every frame draws a spec, built-in styles included).
  */
-export function frameTweaks(
-  frame: AnyQRFrame,
-  drawnTextColor?: string | null,
-): FrameTweaks {
+export function frameTweaks(frame: AnyQRFrame): FrameTweaks {
   const fontScale = frame.fontScale ?? 1;
-  if (frame.style === "custom") {
-    const tokens = specTokens(frame.spec);
-    const colors = customFrameColors(frame);
-    return {
-      fontScale,
-      textColor: tokens.has("text") ? colors.text : null,
-      frameColor: tokens.has("frame") ? colors.frame : null,
-      icons: specIcons(frame.spec),
-    };
+  const spec = frameSpecOf(frame);
+  if (!spec) {
+    return { fontScale, textColor: null, frameColor: null, icons: [] };
   }
-  const frameColor =
-    frame.color ??
-    (frame.style === "gradient-border"
-      ? GRADIENT_FRAME_DEFAULTS.from
-      : "#000000");
+  const tokens = specTokens(spec);
+  const colors = frameColors(frame);
   return {
     fontScale,
-    textColor: frame.textColor ?? drawnTextColor ?? "#ffffff",
-    frameColor,
-    icons: [],
+    textColor: tokens.has("text") ? colors.text : null,
+    frameColor: tokens.has("frame") ? colors.frame : null,
+    // Icons are swapped in a custom frame's own spec
+    icons: frame.style === "custom" ? specIcons(spec) : [],
   };
 }
 

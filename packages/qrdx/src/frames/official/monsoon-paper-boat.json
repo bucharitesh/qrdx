@@ -1,0 +1,71 @@
+{
+  "id": "monsoon-paper-boat",
+  "name": "Paper boat",
+  "description": "An arched card, like a window, with a paper boat, in monsoon green and yellow.",
+  "category": "seasonal",
+  "collection": "seasons",
+  "occasion": "monsoon",
+  "contentTypes": [],
+  "tags": ["monsoon", "rainy season", "rain", "paper boat"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1880
+    },
+    "qr": {
+      "x": 160,
+      "y": 470,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#14532d",
+      "text": "#ffffff",
+      "accent": "#fde047"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M0 660A660 660 0 0 1 1320 660L1320 1840Q1320 1880 1280 1880L40 1880Q0 1880 0 1840Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M50 660A610 610 0 0 1 1270 660L1270 1830L50 1830ZM62 660L62 1818L1258 1818L1258 660A598 598 0 0 0 62 660Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.35
+        }
+      },
+      {
+        "type": "path",
+        "d": "M594 252L726 252L702 285L618 285ZM627 252L660 186L660 252Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M660 198L693 252L660 252ZM590.16 297.12L596.25 295.35L602.34 294.51L608.2 294.47L613.84 295.03L619.3 295.96L624.61 297.06L629.82 298.15L634.96 299.03L640.08 299.53L645.23 299.51L650.48 298.79L656.16 297.12L657.84 302.88L651.75 304.65L645.66 305.49L639.8 305.53L634.16 304.97L628.7 304.04L623.39 302.94L618.18 301.85L613.04 300.97L607.92 300.47L602.77 300.49L597.52 301.21L591.84 302.88ZM662.16 297.12L668.25 295.35L674.34 294.51L680.2 294.47L685.84 295.03L691.3 295.96L696.61 297.06L701.82 298.15L706.96 299.03L712.08 299.53L717.23 299.51L722.48 298.79L728.16 297.12L729.84 302.88L723.75 304.65L717.66 305.49L711.8 305.53L706.16 304.97L700.7 304.04L695.39 302.94L690.18 301.85L685.04 300.97L679.92 300.47L674.77 300.49L669.52 301.21L663.84 302.88Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Monsoon is here",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1610,
+          "width": 1040,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

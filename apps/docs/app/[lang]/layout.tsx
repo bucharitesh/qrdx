@@ -6,21 +6,19 @@ import { RootDocument } from "@/components/root-document";
 import {
   DEFAULT_LOCALE,
   LOCALE_INFO,
-  LOCALE_SEGMENTS,
   localeFromSegment,
 } from "@/lib/i18n/config";
+import { localeParams } from "@/lib/i18n/static-params";
 import { rootMetadata, rootViewport } from "@/lib/root-metadata";
-import { buildTimeParams } from "@/lib/static-params";
 
 // The root layout for translated public pages (lib/i18n/localized-paths.json).
-// Every locale is prerendered in builds, English included: next.config.ts
-// rewrites /pricing to /en/pricing, and /en/... redirects to the unprefixed
-// URL. Anything else in the first segment is a 404 from the pages
-// (lib/static-params.ts: dev lists no params, so dynamic params stay on).
+// Builds prerender them in English: next.config.ts rewrites /pricing to
+// /en/pricing, and /en/... redirects to the unprefixed URL. The other
+// languages render on their first request and are cached from then on
+// (lib/i18n/static-params.ts). Anything else in the first segment is a 404
+// from the pages (lib/static-params.ts: dynamic params stay on).
 export function generateStaticParams() {
-  return buildTimeParams(() =>
-    LOCALE_SEGMENTS.map((segment) => ({ lang: segment })),
-  );
+  return localeParams();
 }
 
 /**

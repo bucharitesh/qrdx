@@ -1,6 +1,7 @@
 import "server-only";
 
 import {
+  BUILT_IN_FRAMES,
   getAllTemplates,
   OFFICIAL_FRAME_COLLECTIONS,
   OFFICIAL_FRAMES,
@@ -11,7 +12,6 @@ import {
   CORNER_EYE_PATTERNS,
   customFrameSchema,
   EYE_POSITIONS,
-  FRAME_STYLES,
   FRAME_TEXT_MAX_LENGTH,
   type QRCustomFrame,
 } from "qrdx/types";
@@ -666,10 +666,14 @@ export function designOptions() {
       eyes: CORNER_EYE_PATTERNS,
       eyeCentres: CORNER_EYE_DOT_PATTERNS,
       frames: {
-        styles: FRAME_STYLES,
+        styles: ["none", ...BUILT_IN_FRAMES.map((frame) => frame.style)],
         textMaxLength: FRAME_TEXT_MAX_LENGTH,
-        fields:
-          "{ style, text, secondaryText (banner-top-bottom, circle, menu-card), color, textColor }",
+        fields: `{ style, text, secondaryText (${BUILT_IN_FRAMES.filter(
+          (frame) =>
+            frame.spec.labels.some((label) => label.slot === "secondary"),
+        )
+          .map((frame) => frame.style)
+          .join(", ")}), color, textColor }`,
         custom:
           '{ style: "custom", spec } with a frame spec, such as a community frame\'s style.frame from get_community_item. It is drawn as it is; repairs never change it.',
         official: officialFrameOptions(),

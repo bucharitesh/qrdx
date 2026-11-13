@@ -1,0 +1,116 @@
+{
+  "id": "jamhuri-day",
+  "name": "Jamhuri Day",
+  "description": "Flag colors in a band over the code, in black, red and green.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "jamhuri-day",
+  "contentTypes": [],
+  "tags": ["jamhuri day", "kenya", "december 12", "national day"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1760
+    },
+    "qr": {
+      "x": 120,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#bb0000"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 24,
+        "y": 24,
+        "width": 1192,
+        "height": 276,
+        "radius": 36,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 24,
+        "y": 24,
+        "width": 1192,
+        "height": 56.2,
+        "fill": "#111111"
+      },
+      {
+        "type": "rect",
+        "x": 24,
+        "y": 79.2,
+        "width": 1192,
+        "height": 56.2,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 24,
+        "y": 134.4,
+        "width": 1192,
+        "height": 56.2,
+        "fill": "accent"
+      },
+      {
+        "type": "rect",
+        "x": 24,
+        "y": 189.6,
+        "width": 1192,
+        "height": 56.2,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 24,
+        "y": 244.8,
+        "width": 1192,
+        "height": 55.2,
+        "fill": "#006600"
+      },
+      {
+        "type": "path",
+        "d": "M24 24L60 24A36 36 0 0 0 24 60Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M1216 24L1180 24A36 36 0 0 1 1216 60Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Happy Jamhuri Day",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1530,
+          "width": 1040,
+          "height": 180
+        }
+      }
+    ]
+  }
+}

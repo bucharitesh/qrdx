@@ -1,0 +1,66 @@
+{
+  "id": "red-ribbon",
+  "name": "Red ribbon",
+  "description": "An arched card, like a window, with an awareness ribbon, in red.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "world-aids-day",
+  "contentTypes": [],
+  "tags": ["world aids day", "red ribbon", "december 1", "ribbon", "awareness"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1880
+    },
+    "qr": {
+      "x": 160,
+      "y": 470,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#b91c1c",
+      "text": "#ffffff",
+      "accent": "#fecaca"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M0 660A660 660 0 0 1 1320 660L1320 1840Q1320 1880 1280 1880L40 1880Q0 1880 0 1840Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M50 660A610 610 0 0 1 1270 660L1270 1830L50 1830ZM62 660L62 1818L1258 1818L1258 660A598 598 0 0 0 62 660Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.35
+        }
+      },
+      {
+        "type": "path",
+        "d": "M619.14 298.62L662.64 220.62L678.36 229.38L634.86 307.38ZM662.45 220.98L664.93 216.04L666.3 212.21L666.94 209.1L667.04 206.69L666.77 204.91L666.3 203.63L665.68 202.66L664.91 201.87L663.94 201.21L662.77 200.7L661.43 200.37L660 200.25L658.57 200.37L657.23 200.7L656.06 201.21L655.09 201.87L654.32 202.66L653.7 203.63L653.23 204.91L652.96 206.69L653.06 209.1L653.7 212.21L655.07 216.04L657.55 220.98L641.45 229.02L638.54 223.18L636.39 217.16L635.2 211.37L634.98 205.81L635.76 200.56L637.52 195.75L640.14 191.56L643.46 188.13L647.26 185.51L651.37 183.68L655.65 182.6L660 182.25L664.35 182.6L668.63 183.68L672.74 185.51L676.54 188.13L679.86 191.56L682.48 195.75L684.24 200.56L685.02 205.81L684.8 211.37L683.61 217.16L681.46 223.18L678.55 229.02ZM657.36 220.62L700.86 298.62L685.14 307.38L641.64 229.38Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "World AIDS Day",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1610,
+          "width": 1040,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

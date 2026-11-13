@@ -1,0 +1,114 @@
+{
+  "id": "summer-sunglasses",
+  "name": "Sunglasses",
+  "description": "A light card with sunglasses and a solid label band, in pool blue and yellow.",
+  "category": "seasonal",
+  "collection": "seasons",
+  "occasion": "summer",
+  "contentTypes": [],
+  "tags": ["summer", "sun", "sunglasses", "hours"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1770
+    },
+    "qr": {
+      "x": 120,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#0e7490",
+      "text": "#ffffff",
+      "accent": "#fde047"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "frame",
+        "hole": {
+          "x": 20,
+          "y": 20,
+          "width": 1200,
+          "height": 1730,
+          "radius": 38
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 250,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 60,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M559.8 90.8L613 90.8C613 117.4 606 131.4 586.4 131.4C568.2 131.4 559.8 117.4 559.8 90.8ZM627 90.8L680.2 90.8C680.2 117.4 671.8 131.4 653.6 131.4C634 131.4 627 117.4 627 90.8ZM561.2 79.6L678.8 79.6A5.6 5.6 0 0 1 684.4 85.2L684.4 85.2A5.6 5.6 0 0 1 678.8 90.8L561.2 90.8A5.6 5.6 0 0 1 555.6 85.2L555.6 85.2A5.6 5.6 0 0 1 561.2 79.6Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M570.92 103.48A2.1 2.1 0 0 0 573.88 100.52L585.08 111.72A2.1 2.1 0 0 0 582.12 114.68L570.92 103.48ZM638.12 103.48A2.1 2.1 0 0 0 641.08 100.52L652.28 111.72A2.1 2.1 0 0 0 649.32 114.68L638.12 103.48Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for summer hours",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1550,
+          "width": 1040,
+          "height": 190
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Hello sunshine",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 180,
+          "width": 960,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

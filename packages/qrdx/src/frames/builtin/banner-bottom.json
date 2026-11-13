@@ -9,7 +9,8 @@
     "x": 120,
     "y": 120,
     "size": 1000,
-    "padding": 60
+    "padding": 70,
+    "plate": "background"
   },
   "colors": {
     "frame": "#000000",

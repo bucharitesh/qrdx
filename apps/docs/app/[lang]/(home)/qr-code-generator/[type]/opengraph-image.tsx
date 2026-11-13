@@ -1,24 +1,16 @@
 import { notFound } from "next/navigation";
 import { ogSize, renderPageOgImage } from "@/app/og/brand";
-import { requireLocaleParam, withLocaleParams } from "@/lib/i18n/static-params";
-import {
-  getQrType,
-  getQrTypeTitle,
-  QR_TYPE_SLUGS,
-} from "@/lib/qr-types-content";
-import {
-  getHostedQrType,
-  HOSTED_TYPE_SLUGS,
-} from "@/lib/qr-types-content-hosted";
+import { requireLocaleParam } from "@/lib/i18n/static-params";
+import { getQrType, getQrTypeTitle } from "@/lib/qr-types-content";
+import { getHostedQrType } from "@/lib/qr-types-content-hosted";
+import { onDemandParams } from "@/lib/static-params";
 
 export const alt = "A free QR code generator for one type of content";
 export const size = ogSize;
 export const contentType = "image/png";
 
 export function generateStaticParams() {
-  return withLocaleParams(() =>
-    [...QR_TYPE_SLUGS, ...HOSTED_TYPE_SLUGS].map((type) => ({ type })),
-  );
+  return onDemandParams();
 }
 
 export default async function Image({

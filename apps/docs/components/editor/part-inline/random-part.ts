@@ -7,19 +7,15 @@
 import { CANONICAL_ORIGIN } from "@repo/config";
 import {
   type AnyQRFrame,
+  BUILT_IN_FRAMES,
+  type BuiltInFrameStyle,
   type ColorConfig,
   getContrastRatio,
   getScanContrast,
   normalizeColorConfig,
   SCAN_CONTRAST_MIN,
 } from "qrdx";
-import {
-  BODY_PATTERN,
-  type BodyPattern,
-  EYE_POSITIONS,
-  FRAME_STYLES,
-  type FrameStyle,
-} from "qrdx/types";
+import { BODY_PATTERN, type BodyPattern, EYE_POSITIONS } from "qrdx/types";
 import { defaultThemeState } from "@/config/qr";
 import { LOGO_ICON_IDS } from "@/lib/qr-design/style";
 import type { QRStyle } from "@/types/theme";
@@ -244,9 +240,9 @@ export function randomBackground(
 
 // ── Frame ──────────────────────────────────────────────────────────────────
 
-/** The built-in frame styles Random picks from. */
-export const RANDOM_FRAME_STYLES = FRAME_STYLES.filter(
-  (style): style is Exclude<FrameStyle, "none"> => style !== "none",
+/** The built-in frames Random picks from (the engine's catalogue). */
+export const RANDOM_FRAME_STYLES: BuiltInFrameStyle[] = BUILT_IN_FRAMES.map(
+  (frame) => frame.style,
 );
 
 /** The frame's main text, wherever it keeps it. */

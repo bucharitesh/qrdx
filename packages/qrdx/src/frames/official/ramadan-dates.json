@@ -1,0 +1,81 @@
+{
+  "id": "ramadan-dates",
+  "name": "Iftar dates",
+  "description": "A solid card with a bowl of dates over the code and the label underneath, in date brown and gold.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "ramadan",
+  "contentTypes": [],
+  "tags": ["ramadan", "iftar", "dates", "menu"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#3b2a20",
+      "text": "#ffffff",
+      "accent": "#e0b84f"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M579.95 111.85A12.75 22.5 -38 1 1 600.05 96.15A12.75 22.5 -38 1 1 579.95 111.85ZM597.03 94.65A12.75 22.5 -12 1 1 621.97 89.35A12.75 22.5 -12 1 1 597.03 94.65ZM618.03 89.35A12.75 22.5 12 1 1 642.97 94.65A12.75 22.5 12 1 1 618.03 89.35ZM639.95 96.15A12.75 22.5 38 1 1 660.05 111.85A12.75 22.5 38 1 1 639.95 96.15Z",
+        "fill": "accent"
+      },
+      {
+        "type": "path",
+        "d": "M563 116L677 116C674 149 650 164 620 164C590 164 566 149 563 116ZM602 161L638 161A3 3 0 0 1 641 164L641 167A3 3 0 0 1 638 170L602 170A3 3 0 0 1 599 167L599 164A3 3 0 0 1 602 161Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Iftar is served",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan for the menu",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

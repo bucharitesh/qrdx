@@ -1,13 +1,14 @@
 import { ImageResponse } from "next/og";
 import { BrandOgImage, loadOgFonts, ogSize } from "@/app/og/brand";
-import { localeParams, requireLocaleParam } from "@/lib/i18n/static-params";
+import { requireLocaleParam } from "@/lib/i18n/static-params";
+import { onDemandParams } from "@/lib/static-params";
 
 export const alt = "QRdx plugins: QR codes in Chrome, Figma, Raycast and Canva";
 export const size = ogSize;
 export const contentType = "image/png";
 
 export function generateStaticParams() {
-  return localeParams();
+  return onDemandParams();
 }
 
 export default async function Image({

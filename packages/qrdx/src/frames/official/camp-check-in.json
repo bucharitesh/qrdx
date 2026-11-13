@@ -1,0 +1,74 @@
+{
+  "id": "camp-check-in",
+  "name": "Campsite check-in",
+  "description": "A solid card with a tent over the code and the label underneath.",
+  "category": "use-case",
+  "collection": "places",
+  "contentTypes": ["url"],
+  "tags": ["campsite", "outdoors", "check in", "camping"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M620 53L686 164L554 164ZM599 164L641 164L620 101ZM622.25 38L622.25 56L617.75 56L617.75 38ZM621.5 38L644 44.75L621.5 51.5ZM551.75 164L688.25 164A3.75 3.75 0 0 1 692 167.75L692 167.75A3.75 3.75 0 0 1 688.25 171.5L551.75 171.5A3.75 3.75 0 0 1 548 167.75L548 167.75A3.75 3.75 0 0 1 551.75 164Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Campsite check-in",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan when you arrive",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

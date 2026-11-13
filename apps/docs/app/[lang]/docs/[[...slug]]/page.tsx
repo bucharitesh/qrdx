@@ -27,7 +27,7 @@ import {
 } from "@/components/sections/tools/json-ld";
 import { owner, repo } from "@/lib/github";
 import { DEFAULT_LOCALE, LOCALE_INFO, type Locale } from "@/lib/i18n/config";
-import { DOCS_LOCALES, docsUrl } from "@/lib/i18n/docs";
+import { docsLocaleFromSegment, docsUrl } from "@/lib/i18n/docs";
 import { docsPageSeo } from "@/lib/i18n/docs-seo";
 import { requireDocsLocale } from "@/lib/i18n/docs-server";
 import { localizeHref, localizePath } from "@/lib/i18n/paths";
@@ -234,22 +234,27 @@ export default async function Page(
 }
 
 /**
- * Every page in every language with docs (a page that isn't translated
- * yet is prerendered too, as English with a note), as complete
- * { lang, slug } pairs. Next calls this once per [lang] the root layout
- * lists; a language without docs gets no pages of its own, so its docs
- * URLs answer 404. Unknown pages render notFound() above
- * (lib/static-params.ts).
+ * Every page in the language Next passes down: it calls this once per
+ * [lang] the root layout lists, which is English only
+ * (lib/i18n/static-params.ts). The translated docs render on their first
+ * request and are cached; a language without docs answers 404 there
+ * (requireDocsLocale), and so do unknown pages (notFound() above,
+ * lib/static-params.ts). Keep the list non-empty for every [lang] the
+ * layout lists: Next drops the whole route's list when one language
+ * returns no pages.
  */
-export function generateStaticParams() {
-  return buildTimeParams(() =>
-    DOCS_LOCALES.flatMap((locale) =>
-      localizedSource.getPages(locale).map((page) => ({
-        lang: LOCALE_INFO[locale].segment,
-        slug: page.slugs,
-      })),
-    ),
-  );
+export function generateStaticParams({
+  params,
+}: {
+  params: Awaited<LayoutProps<"/[lang]">["params"]>;
+}) {
+  return buildTimeParams(() => {
+    const locale = docsLocaleFromSegment(params.lang);
+    if (!locale) return [];
+    return localizedSource
+      .getPages(locale)
+      .map((page) => ({ slug: page.slugs }));
+  });
 }
 
 export async function generateMetadata(

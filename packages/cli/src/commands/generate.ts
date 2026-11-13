@@ -13,6 +13,7 @@ import type {
 } from "qrdx";
 import {
   BODY_PATTERN,
+  BUILT_IN_FRAMES,
   CORNER_EYE_DOT_PATTERNS,
   CORNER_EYE_PATTERNS,
   colorConfigSchema,
@@ -810,7 +811,15 @@ export async function runGenerate(
     if (flags.frame === undefined && !frame) {
       const res = await p.select<FrameStyle>({
         message: `Frame ${DIM}(call-to-action label around the code)${RESET}`,
-        options: FRAME_STYLES.map((style) => ({ value: style, label: style })),
+        // Every built-in frame, by its style name and its name
+        options: [
+          { value: "none" as FrameStyle, label: "none" },
+          ...BUILT_IN_FRAMES.map((item) => ({
+            value: item.style as FrameStyle,
+            label: item.style,
+            hint: item.name,
+          })),
+        ],
         initialValue: "none" as FrameStyle,
       });
       if (isCancel(res)) {

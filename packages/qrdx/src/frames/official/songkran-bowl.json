@@ -1,0 +1,81 @@
+{
+  "id": "songkran-bowl",
+  "name": "Songkran bowl",
+  "description": "A solid card with a bowl of water over the code and the label underneath, in water blue and yellow.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "songkran",
+  "contentTypes": [],
+  "tags": ["songkran", "thai new year", "water festival", "april", "water"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#0369a1",
+      "text": "#ffffff",
+      "accent": "#fbbf24"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M563 110L677 110C674 143 650 161 620 161C590 161 566 143 563 110ZM605 158L635 158A3 3 0 0 1 638 161L638 167A3 3 0 0 1 635 170L605 170A3 3 0 0 1 602 167L602 161A3 3 0 0 1 605 158Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M566 110A54 7.5 0 1 1 674 110A54 7.5 0 1 1 566 110ZM590 66.5C592.89 74.6 598.25 80.3 598.25 85.25A8.25 8.25 0 0 1 581.75 85.25C581.75 80.3 587.11 74.6 590 66.5ZM620 45.5C623.41 55.4 629.75 62.9 629.75 68.75A9.75 9.75 0 0 1 610.25 68.75C610.25 62.9 616.59 55.4 620 45.5ZM650 66.5C652.89 74.6 658.25 80.3 658.25 85.25A8.25 8.25 0 0 1 641.75 85.25C641.75 80.3 647.11 74.6 650 66.5Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Happy Songkran",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan me",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

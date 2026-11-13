@@ -1669,6 +1669,11 @@
       "after": "스캐너가 별도의 창에서 바로 열리고, 이 스캐너로 코드를 한 번 스캔하고 나면 오프라인에서도 작동해요."
     }
   },
+  "scannerApp": {
+    "share": "공유",
+    "scanInstructions": "QR 코드나 바코드에 카메라를 맞춰 주세요",
+    "cameraBlocked": "QRdx Scanner의 카메라 접근이 꺼져 있어요. 설정에서 켜거나 사진을 대신 스캔해 보세요."
+  },
   "scanPages": {
     "reportAbuse": "악용 신고",
     "privacy": "개인정보",
@@ -4391,18 +4396,11 @@
         }
       },
       "frameControls": {
-        "customise": "맞춤 설정",
         "importSvg": "SVG 가져오기",
         "publishFrame": "프레임 게시",
         "theFrameIsAddedAround": "프레임은 코드 바깥쪽에 추가되므로 다운로드한 이미지는 더 커지고, 코드 자체는 계속 스캔할 수 있어요.",
         "label": "라벨",
-        "secondLine": "두 번째 줄",
-        "leaveEmptyForNoLabel": "라벨이 필요 없으면 비워 두세요",
         "pickAFrameFirst": "먼저 프레임을 선택하세요",
-        "frameColor": "프레임 색상",
-        "textColor": "텍스트 색상",
-        "endColor": "끝 색상",
-        "optionalEGYourWebsite": "선택 사항, 예: 내 웹사이트",
         "none": "없음"
       },
       "frameFields": {
@@ -4421,13 +4419,14 @@
         "filterFrames": "프레임 필터",
         "labelFrames": "{label} 프레임",
         "commonFrames": "자주 쓰는 프레임",
-        "everyFrameBuiltInStyles": "모든 프레임: 기본 제공 스타일, QRdx 공식 프레임, 직접 저장한 프레임이 있어요. 하나를 고르면 바로 적용돼요.",
+        "everyFrameBuiltInStyles": "모든 프레임: 클래식 프레임, 모양 코드, QRdx 공식 프레임, 그리고 저장한 프레임이 있어요. 하나를 고르면 바로 적용돼요.",
         "less": "간략히",
         "all": "전체",
         "noFramesMatchQuery": "\"{query}\"에 맞는 프레임이 없어요.",
         "loadingFrames": "프레임 불러오는 중…",
         "comingUp": "곧 출시",
-        "builtIn": "기본 제공",
+        "classic": "클래식",
+        "shapedCodes": "모양 코드",
         "saved": "저장됨",
         "results": "검색 결과"
       },

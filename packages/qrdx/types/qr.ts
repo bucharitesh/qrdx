@@ -218,7 +218,7 @@ export interface QRProps {
   // Custom template definition - if provided, this will be used instead of looking up by templateId
   customTemplate?: TemplateDefinition<any>;
   // Generic custom props that can be used by any template
-  // Each template can define its own custom props type (e.g., FlamQRProps)
+  // Each template can define its own custom props type (e.g., DotRingProps)
   customProps?: Record<string, any>;
   // Frame around the code: a built-in style, or { style: "custom", spec }
   // (see types/frame-spec.ts); the rendered output grows to fit it

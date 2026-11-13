@@ -11,6 +11,7 @@
     "typecheck": "turbo typecheck --filter=!@repo/typescript-config",
     "typecheck:docs": "cd apps/docs && bun x tsc --noEmit",
     "typegen:docs": "node scripts/typegen-docs.mjs",
+    "sync:agent-plugin": "node scripts/sync-agent-plugin.mjs",
     "lint:ci": "ultracite check",
     "prepush": "bun run --filter qrdx build:inplace && bun run typecheck && bun run typegen:docs && bun run typecheck:docs && bun run --filter docs i18n:check && bun run lint:ci && bun run --filter @qrdx/cli build && bun run test",
     "prepush:quick": "bun run --filter qrdx build:inplace && bun run typecheck && bun run typegen:docs && bun run typecheck:docs && bun run --filter docs i18n:check && bun run lint:ci && bun run --filter @qrdx/cli build && TURBO_SCM_BASE=${TURBO_SCM_BASE:-origin/staging} turbo test --affected --only --concurrency=2",
@@ -49,6 +50,7 @@
   "packageManager": "bun@1.4.4",
   "workspaces": [
     "apps/*",
+    "!apps/scanner-mobile",
     "packages/*",
     "plugins/*"
   ],

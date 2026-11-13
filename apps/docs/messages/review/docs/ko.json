@@ -12,7 +12,7 @@
     "status": "machine"
   },
   "api-reference.mdx": {
-    "source": "d7b53be7df6f",
+    "source": "e4b61bbf6cbd",
     "status": "machine"
   },
   "client-portal.mdx": {
@@ -32,35 +32,35 @@
     "status": "machine"
   },
   "components/qr-code-card.mdx": {
-    "source": "d69a08f01029",
+    "source": "3226d01ca68f",
     "status": "machine"
   },
   "components/qr-code-download.mdx": {
-    "source": "d50f6275f526",
+    "source": "16bde8bed1b3",
     "status": "machine"
   },
   "components/qr-code-generator.mdx": {
-    "source": "378a4b369f75",
+    "source": "e3697dc4e163",
     "status": "machine"
   },
   "components/qr-code-scanner.mdx": {
-    "source": "639d25a0d8e1",
+    "source": "bf40cd66616f",
     "status": "machine"
   },
   "components/qr-code-share-dialog.mdx": {
-    "source": "6e986ab1cd95",
+    "source": "b3ff1b968bff",
     "status": "machine"
   },
   "components/qr-code.mdx": {
-    "source": "f9407df848c9",
+    "source": "2fd9f1a19c64",
     "status": "machine"
   },
   "components/vcard-qr-code.mdx": {
-    "source": "abaa0b546bbe",
+    "source": "8c649eff82e7",
     "status": "machine"
   },
   "components/wifi-qr-code.mdx": {
-    "source": "ba6ebf7d9510",
+    "source": "f9a1b956e488",
     "status": "machine"
   },
   "custom-domains.mdx": {
@@ -88,7 +88,7 @@
     "status": "machine"
   },
   "developers/cli.mdx": {
-    "source": "ce4d18504c6a",
+    "source": "01a37178580c",
     "status": "machine"
   },
   "developers/errors.mdx": {
@@ -100,7 +100,7 @@
     "status": "machine"
   },
   "developers/image-api.mdx": {
-    "source": "adb6c5eaf03d",
+    "source": "e98d4597f9d5",
     "status": "machine"
   },
   "developers/index.mdx": {
@@ -152,7 +152,7 @@
     "status": "machine"
   },
   "features/frames.mdx": {
-    "source": "984c29607483",
+    "source": "fac4c55bbed6",
     "status": "machine"
   },
   "features/logos.mdx": {
@@ -168,7 +168,7 @@
     "status": "machine"
   },
   "features/templates.mdx": {
-    "source": "29894891201f",
+    "source": "f6017d11407f",
     "status": "machine"
   },
   "files.mdx": {
@@ -244,7 +244,7 @@
     "status": "machine"
   },
   "help/designing/frames.mdx": {
-    "source": "b4f7a677f30e",
+    "source": "1c467722d531",
     "status": "machine"
   },
   "help/designing/logos.mdx": {
@@ -484,7 +484,7 @@
     "status": "machine"
   },
   "styles.mdx": {
-    "source": "d0ea089a62aa",
+    "source": "26fadbacd0e4",
     "status": "machine"
   },
   "teams.mdx": {

@@ -1,0 +1,114 @@
+{
+  "id": "spring-watering-can",
+  "name": "Watering can",
+  "description": "A light card with a watering can and a solid label band, in garden green and yellow.",
+  "category": "seasonal",
+  "collection": "seasons",
+  "occasion": "spring",
+  "contentTypes": [],
+  "tags": ["spring", "garden", "planting"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1770
+    },
+    "qr": {
+      "x": 120,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#365314",
+      "text": "#ffffff",
+      "accent": "#fcd34d"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "frame",
+        "hole": {
+          "x": 20,
+          "y": 20,
+          "width": 1200,
+          "height": 1730,
+          "radius": 38
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 250,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 60,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M590.6 88L635.4 88A9.8 9.8 0 0 1 645.2 97.8L645.2 139.8A9.8 9.8 0 0 1 635.4 149.6L590.6 149.6A9.8 9.8 0 0 1 580.8 139.8L580.8 97.8A9.8 9.8 0 0 1 590.6 88ZM638.94 106.94L672.54 73.34L679.46 80.26L645.86 113.86ZM580.8 90.8A25.2 25.2 0 0 1 631.2 90.8L622.8 90.8A16.8 16.8 0 0 0 589.2 90.8Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M671.8 62.8L680.2 62.8A4.2 4.2 0 0 1 684.4 67L684.4 81A4.2 4.2 0 0 1 680.2 85.2L671.8 85.2A4.2 4.2 0 0 1 667.6 81L667.6 67A4.2 4.2 0 0 1 671.8 62.8ZM678.8 95.7C680.03 99.48 682.3 102.7 682.3 104.8A3.5 3.5 0 0 1 675.3 104.8C675.3 102.7 677.58 99.48 678.8 95.7ZM687.2 106.9C688.43 110.68 690.7 113.9 690.7 116A3.5 3.5 0 0 1 683.7 116C683.7 113.9 685.98 110.68 687.2 106.9ZM670.4 106.9C671.63 110.68 673.9 113.9 673.9 116A3.5 3.5 0 0 1 666.9 116C666.9 113.9 669.18 110.68 670.4 106.9ZM580.8 116L645.2 116L645.2 127.2L580.8 127.2Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for planting tips",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1550,
+          "width": 1040,
+          "height": 190
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Spring planting",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 180,
+          "width": 960,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}
