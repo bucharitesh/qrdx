@@ -42,6 +42,7 @@ import {
   describeRequestFor,
   useArtPromptWriter,
 } from "@/components/sections/ai-art/art-look-write";
+import { ArtModePicker } from "@/components/sections/ai-art/art-mode-picker";
 import {
   type AIArtCredits,
   type AIArtRequest,
@@ -193,6 +194,15 @@ export function AIArtPanel({ style }: AIArtPanelProps) {
         issue={issue}
         onOpenContent={() => handleSetTab("content")}
         payload={payload}
+      />
+
+      <ArtModePicker
+        disabled={generating}
+        idPrefix="art-ai"
+        mode={draft.mode}
+        onModeChange={(mode) => updateDraft({ mode })}
+        onPhotoChange={(photo) => updateDraft({ photo })}
+        photo={draft.photo}
       />
 
       <div className="space-y-2">

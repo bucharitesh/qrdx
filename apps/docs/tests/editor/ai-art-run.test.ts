@@ -299,6 +299,43 @@ describe("the Art tab's AI art form", () => {
     expect(canGenerate("", draft)).toBe(false);
   });
 
+  it("sends scene and photo modes, the photo only in photo mode", () => {
+    const photo = "data:image/jpeg;base64,AAAA";
+    expect(artRequestFor(TEXT, { ...draft, mode: "scene", photo })).toEqual(
+      expect.objectContaining({ mode: "scene" }),
+    );
+    expect(
+      "photo" in artRequestFor(TEXT, { ...draft, mode: "scene", photo }),
+    ).toBe(false);
+    expect(artRequestFor(TEXT, { ...draft, mode: "photo", photo })).toEqual(
+      expect.objectContaining({ mode: "photo", photo }),
+    );
+    expect(canGenerate(TEXT, { ...draft, mode: "photo", photo: null })).toBe(
+      false,
+    );
+    expect(canGenerate(TEXT, { ...draft, mode: "photo", photo })).toBe(true);
+  });
+
+  it("never keeps the photo across sign-in, but keeps the mode", () => {
+    const photo = "data:image/jpeg;base64,AAAA";
+    const stored = JSON.parse(
+      JSON.stringify(
+        artGenerateIntent(TEXT, { ...draft, mode: "photo", photo }),
+      ),
+    );
+    expect(JSON.stringify(stored)).not.toContain(photo);
+    const intent = parseArtGenerateIntent(stored);
+    expect(intent?.draft.mode).toBe("photo");
+    expect(intent?.draft.photo).toBeNull();
+    // Waits for the photo to be added again.
+    if (intent) expect(shouldResumeArt(intent, TEXT)).toBe(false);
+    // An older stored draft, without a mode, is code mode.
+    const { mode: _mode, ...older } = stored.draft;
+    expect(
+      parseArtGenerateIntent({ text: TEXT, draft: older })?.draft.mode,
+    ).toBe("code");
+  });
+
   it("resumes after sign-in only for the content Generate was pressed for", () => {
     const stored = JSON.parse(JSON.stringify(artGenerateIntent(TEXT, draft)));
     const intent = parseArtGenerateIntent(stored);

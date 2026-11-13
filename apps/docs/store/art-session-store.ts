@@ -15,6 +15,8 @@ import {
 import {
   ART_CREATIVITY,
   ART_QR_VISIBILITY,
+  type ArtMode,
+  DEFAULT_ART_MODE,
 } from "@/components/sections/ai-art/config";
 import type { ScanCheckResult } from "@/components/sections/ai-art/image-utils";
 import type { ArtLookId } from "@/components/sections/ai-art/looks";
@@ -40,6 +42,10 @@ export interface AIArtDraft {
   reference: string | null;
   /** The reference is the editor's logo ("Use my logo as reference") */
   referenceIsLogo: boolean;
+  /** How the code sits in the artwork: the code itself, a scene or a photo */
+  mode: ArtMode;
+  /** Photo mode's photo (a JPEG data: URL); never kept across sign-in */
+  photo: string | null;
 }
 
 export const DEFAULT_AI_ART_DRAFT: AIArtDraft = {
@@ -54,6 +60,8 @@ export const DEFAULT_AI_ART_DRAFT: AIArtDraft = {
   seedLocked: false,
   reference: null,
   referenceIsLogo: false,
+  mode: DEFAULT_ART_MODE,
+  photo: null,
 };
 
 export interface ArtSessionStore extends AIArtRunState {
