@@ -7322,7 +7322,6 @@
           "open": "Apri",
           "replaceFile": "Sostituisci file…",
           "delete": "Elimina",
-          "showingThe500NewestFiles": "Sono mostrati i 500 file più recenti.",
           "deleteFilename": "Eliminare {filename}?",
           "thisFileIsValueThey": "Questo file è {value}. Al suo posto mostreranno \"File non disponibile\".",
           "andValueMore": "e altri {value, number}",

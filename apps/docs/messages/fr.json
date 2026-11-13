@@ -7322,7 +7322,6 @@
           "open": "Ouvrir",
           "replaceFile": "Remplacer le fichier…",
           "delete": "Supprimer",
-          "showingThe500NewestFiles": "Affichage des 500 fichiers les plus récents.",
           "deleteFilename": "Supprimer {filename} ?",
           "thisFileIsValueThey": "Ce fichier est {value}. Ils afficheront « Fichier indisponible » à la place.",
           "andValueMore": "et {value, number} de plus",

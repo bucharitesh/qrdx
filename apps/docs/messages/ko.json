@@ -7322,7 +7322,6 @@
           "open": "열기",
           "replaceFile": "파일 교체…",
           "delete": "삭제",
-          "showingThe500NewestFiles": "최신 파일 500개를 표시하고 있어요.",
           "deleteFilename": "{filename} 파일을 삭제할까요?",
           "thisFileIsValueThey": "이 파일은 {value}. 해당 페이지에는 대신 \"파일을 사용할 수 없음\"이 표시됩니다.",
           "andValueMore": "외 {value, number}개",

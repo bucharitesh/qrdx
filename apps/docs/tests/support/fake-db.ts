@@ -221,6 +221,14 @@ function evaluateSql(expr: SqlExpr, ctx: Ctx): unknown {
   match = text.match(/^\$0 is (not )?null$/i);
   if (match) return match[1] ? v(0) != null : v(0) == null;
   if (/^now\(\)$/i.test(text)) return new Date();
+  // ${isoString}::timestamp: a time sent as text (Postgres drops the "Z").
+  if (/^\$0::timestamp$/i.test(text)) return new Date(String(v(0)));
+  // date_trunc('milliseconds', ${timestamp}): the fake's dates already stop
+  // at milliseconds (Postgres keeps microseconds).
+  if (/^date_trunc\('milliseconds', \$0\)$/i.test(text)) {
+    const value = v(0);
+    return value instanceof Date ? new Date(value.getTime()) : value;
+  }
   if (text === "1" || text === "true") return text === "1" ? 1 : true;
   if (/^\$0$/.test(text)) return v(0);
   throw new Error(`fake-db: unsupported sql\`${text}\``);
@@ -611,7 +619,14 @@ function select(
                   if (result !== 0) return result;
                   continue;
                 }
-                throw new Error(`fake-db: unsupported orderBy sql ${text}`);
+                // Any other shape evaluateSql reads (it throws on the rest),
+                // such as desc(sql`date_trunc('milliseconds', ${col})`).
+                const result = compare(
+                  evaluateSql(expr, a.ctx),
+                  evaluateSql(expr, b.ctx),
+                );
+                if (result !== 0) return dir === "desc" ? -result : result;
+                continue;
               }
               const result = compare(
                 evaluate(expr, a.ctx),
