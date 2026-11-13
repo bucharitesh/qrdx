@@ -2154,7 +2154,7 @@ function holidays({ f, section, P }) {
   ]);
   f(
     "blood-donor-drop",
-    "Give blood",
+    "Blood Donor Day drop",
     "cardSolid",
     "Give blood",
     "Scan to book a donation",
@@ -2327,7 +2327,7 @@ function seasons({ f, section }) {
   );
   f(
     "harvest-market",
-    "Farmers market",
+    "Harvest market stall",
     "awning",
     "Scan for the harvest",
     undefined,
@@ -2416,13 +2416,13 @@ function seasons({ f, section }) {
   );
   f(
     "summer-pool",
-    "Pool hours",
+    "Pool rules",
     "circleTop",
-    "Scan for pool hours",
+    "Scan for pool rules",
     "Pool is open",
     { m: "lifebuoy" },
     W.summerPool,
-    ["pool", "hours"]
+    ["pool", "rules", "safety"]
   );
 
   section("seasons", "winter", ["winter", "snow"]);
@@ -2537,7 +2537,7 @@ function seasons({ f, section }) {
     "Backpack",
     "cardSolid",
     "Ready for school",
-    "Scan for the checklist",
+    "Scan for first-day info",
     { m: "backpack", mfill: "accent", mfill2: "frame" },
     W.schoolBlue,
     ["backpack"]
@@ -2907,16 +2907,6 @@ function events({ f, section, MONO, SOFT, NEON, GREY }) {
     ["soccer", "lineup"]
   );
   f(
-    "event-game-scores",
-    "Game day scores",
-    "cardSolid",
-    "Scan for live scores",
-    "Game day",
-    { m: "basketball" },
-    MONO,
-    ["basketball", "scores"]
-  );
-  f(
     "event-season-ticket",
     "Season ticket",
     "ticketV",
@@ -2925,16 +2915,6 @@ function events({ f, section, MONO, SOFT, NEON, GREY }) {
     { m: "whistle" },
     MONO,
     ["tickets", "fixtures"]
-  );
-  f(
-    "event-scoreboard",
-    "Scoreboard",
-    "landscape",
-    "Live scores",
-    "Scan to follow the game",
-    { m: "scoreboard" },
-    MONO,
-    ["scores"]
   );
   f(
     "event-tournament",
@@ -2982,7 +2962,7 @@ function events({ f, section, MONO, SOFT, NEON, GREY }) {
   );
   f(
     "event-game-night",
-    "Game night",
+    "Game night ticket",
     "ticketH",
     "Save your seat",
     "Game night",
@@ -3166,16 +3146,6 @@ function places({ f, section, MONO, SOFT, NEON, GREY }) {
     ["e-books"]
   );
   f(
-    "library-card",
-    "Library card sign-up",
-    "landscape",
-    "Get a library card",
-    "Scan to sign up",
-    { m: "books", light: true, codeRight: true },
-    MONO,
-    ["sign up"]
-  );
-  f(
     "library-hours",
     "Library hours",
     "hangingSign",
@@ -3258,27 +3228,8 @@ function places({ f, section, MONO, SOFT, NEON, GREY }) {
     ["tickets", "fare"]
   );
 
-  section("places", undefined, ["parking"], ["url"]);
-  f(
-    "parking-pay",
-    "Pay to park",
-    "cardSolid",
-    "Pay for parking",
-    "Scan to start",
-    { m: "parking", mfill2: "text" },
-    MONO,
-    ["payment"]
-  );
-  f(
-    "parking-permit",
-    "Parking permit",
-    "hangTag",
-    "Scan to verify permit",
-    undefined,
-    { light: true },
-    MONO,
-    ["permit"]
-  );
+  // Cars & parking is catalogue-industries.mjs's collection
+  section("automotive", undefined, ["parking"], ["url"]);
   f(
     "parking-find-car",
     "Find my car",
@@ -3534,28 +3485,6 @@ function places({ f, section, MONO, SOFT, NEON, GREY }) {
     { m: "angelfish", bandTop: true },
     MONO,
     ["aquarium"]
-  );
-
-  section("places", undefined, ["facilities"], ["url"]);
-  f(
-    "lost-and-found",
-    "Lost and found",
-    "bubbleFrame",
-    "Lost something?",
-    "Scan to report it",
-    { m: "box", light: true, tail: "right" },
-    MONO,
-    ["lost and found"]
-  );
-  f(
-    "restroom-feedback",
-    "Restroom feedback",
-    "cardPill",
-    "How clean is it?",
-    "Scan to tell us",
-    { m: "thumb", tintBg: true },
-    MONO,
-    ["feedback", "restroom"]
   );
 
   section("places", undefined, ["wifi"], ["wifi"]);

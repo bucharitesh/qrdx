@@ -1,6 +1,6 @@
 {
   "id": "event-game-night",
-  "name": "Game night",
+  "name": "Game night ticket",
   "description": "A wide ticket: the code on the left, a perforated stub with a pair of dice on the right.",
   "category": "use-case",
   "collection": "events",

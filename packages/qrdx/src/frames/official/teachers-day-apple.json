@@ -1,7 +1,7 @@
 {
   "id": "teachers-day-apple",
   "name": "Teachers' Day card",
-  "description": "A solid card with an orchard fruit over the code and the label underneath, in navy and red.",
+  "description": "A solid card with a piece of fruit over the code and the label underneath, in navy and red.",
   "category": "seasonal",
   "collection": "holidays",
   "occasion": "teachers-day",
@@ -39,12 +39,12 @@
       },
       {
         "type": "path",
-        "d": "M620 80C605 65 566 68 566 110C566 146 593 173 608 170C614 168.5 626 168.5 632 170C647 173 674 146 674 110C674 68 635 65 620 80Z",
+        "d": "M620 84.5C635 69.5 677 72.5 677 114.5C677 150.5 650 177.5 632 174.5C626 173 614 173 608 174.5C590 177.5 563 150.5 563 114.5C563 72.5 605 69.5 620 84.5ZM623.69 79.15A3.75 3.75 0 0 0 616.31 77.85L620.81 52.35A3.75 3.75 0 0 0 628.19 53.65L623.69 79.15Z",
         "fill": "accent"
       },
       {
         "type": "path",
-        "d": "M617.03 82.59L621.53 49.59L627.47 50.41L622.97 83.41ZM626 65C638.06 71.11 654.26 63.01 662 47C641.86 38.22 625.66 46.32 626 65Z",
+        "d": "M627.5 66.5C633.5 47 654.5 44 668 50C659 66.5 639.5 72.5 627.5 66.5Z",
         "fill": "text"
       }
     ],
