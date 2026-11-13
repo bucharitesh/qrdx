@@ -39,6 +39,7 @@
         "@repo/config": "workspace:*",
         "@repo/database": "workspace:*",
         "@repo/design-system": "workspace:*",
+        "@repo/docs-assets": "workspace:*",
         "@repo/integration-kit": "workspace:*",
         "@repo/integrations": "workspace:*",
         "@repo/next-config": "workspace:*",
@@ -313,6 +314,23 @@
         "@types/react": "^19.3.0",
         "postcss": "^8.5.32",
         "tailwindcss": "^4.3.3",
+        "typescript": "^6.0.3",
+      },
+    },
+    "packages/docs-assets": {
+      "name": "@repo/docs-assets",
+      "version": "0.0.0",
+      "dependencies": {
+        "@repo/design-system": "workspace:*",
+        "lucide-react": "^1.66.0",
+        "next": "16.4.3",
+        "qrdx": "workspace:*",
+        "react": "19.3.1",
+      },
+      "devDependencies": {
+        "@repo/typescript-config": "workspace:*",
+        "@types/node": "^26.6.6",
+        "@types/react": "^19.3.0",
         "typescript": "^6.0.3",
       },
     },
@@ -1733,6 +1751,8 @@
     "@repo/database": ["@repo/database@workspace:packages/database"],
 
     "@repo/design-system": ["@repo/design-system@workspace:packages/design-system"],
+
+    "@repo/docs-assets": ["@repo/docs-assets@workspace:packages/docs-assets"],
 
     "@repo/integration-kit": ["@repo/integration-kit@workspace:packages/integration-kit"],
 

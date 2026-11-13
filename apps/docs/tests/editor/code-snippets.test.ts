@@ -417,7 +417,10 @@ describe("reactSnippet", () => {
 
 /** QrCodeProps of the registry item, read from its source. */
 function shadcnItemProps(): Set<string> {
-  const source = readFileSync(join(root, "registry/qrdx/qr-code.tsx"), "utf8");
+  const source = readFileSync(
+    join(root, "../../packages/docs-assets/registry/qrdx/qr-code.tsx"),
+    "utf8",
+  );
   const body = /export interface QrCodeProps[^{]*\{([\s\S]*?)\n\}/.exec(
     source,
   )?.[1];

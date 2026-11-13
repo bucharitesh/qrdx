@@ -1,14 +1,14 @@
 ---
 title: "テンプレート"
-description: "デザイン済みのフレームテンプレートをQRコードに適用したり、独自のテンプレートを登録したりできます。"
+description: "あらかじめデザインされたフレームテンプレートをQRコードに適用したり、独自のテンプレートを登録したりできます。"
 icon: LayoutTemplate
 ---
 
-QRコードを既成のアートワーク、または独自のアートワークで囲みます。
+QRコードを、既成のアートワークや独自のアートワークで包みます。
 
 ## テンプレートとは [#what-are-templates]
 
-テンプレートは、コードの周囲に描かれるSVGアートワークです。ボックス、枠線、バッジなどがあります。テンプレートは `children` としてコードを受け取り、自身の描画の内側に配置します。色、パターン、ロゴは引き続き `QRCode` のpropsで指定するため、どのスタイルでもテンプレートを使えます。
+テンプレートは、コードの周囲に描かれるSVGのアートワークです。ボックス、枠線、バッジなどがあります。テンプレートはコードを `children` として受け取り、自身の描画の内側に配置します。色、パターン、ロゴは `QRCode` のプロパティで指定するため、どのスタイルでもテンプレートを使えます。
 
 ## 利用可能なテンプレート [#available-templates]
 
@@ -36,29 +36,76 @@ import { QRCode } from 'qrdx';
 ```
 
 ### Square Border [#square-border]
-輪郭がはっきりした枠付きのデザインです。
+輪郭がはっきりした枠線付きのデザインです。
 
 ```tsx
 <QRCode value="https://example.com" templateId="SquareBorder" size={256} />
 ```
 
 ### Striked Box [#striked-box]
-斜めの要素を使ったダイナミックなデザインです。
+斜めの要素を使った躍動感のあるデザインです。
 
 ```tsx
 <QRCode value="https://example.com" templateId="StrikedBox" size={256} />
 ```
 
 ### Halloween [#halloween]
-ハロウィンをテーマにした季節限定のデザインです。
+ハロウィン向けの季節限定テーマです。
 
 ```tsx
 <QRCode value="https://example.com" templateId="Halloween" size={256} />
 ```
 
+### Dot Ring [#dot-ring]
+丸いコードです。コードは暗いリングの内側にあるドットの円盤に収まり、リングに沿って1行のテキストが配置されます。表示されるドットはコードの内容のハッシュから決まるため、リンクごとに固有のリングになり、同じリンクなら常に同じリングになります。
+
+```tsx
+<QRCode
+  value="https://example.com"
+  templateId="DotRing"
+  bodyPattern="circle-large"
+  size={512}
+/>
+```
+
+設定は `customProps` に指定します（型は `DotRingProps`）。
+
+```tsx
+<QRCode
+  value="https://example.com"
+  templateId="DotRing"
+  customProps={{
+    customText: "Scan for the menu",
+    textPosition: "bottom",
+    textColor: "#fde047",
+    outerCircleColor: "#1e3a8a",
+  }}
+  size={512}
+/>
+```
+
+| プロパティ | デフォルト | 備考 |
+| --- | --- | --- |
+| `customText` | 「Scan the QR code」を4回繰り返したもの | リングに沿うテキストです。収まらない文字は省かれます。`""` を指定するとリングは空になります |
+| `textPosition` | `"top"` | `"top"`：上部の中央に、時計回りに読めるよう配置します。`"bottom"`：下部の中央に、左から右へ読めるよう配置します |
+| `textRotation` | `0` | テキストを中心のまわりで回転させます（単位は度） |
+| `textColor` | `#ffffff` | テキストの色 |
+| `fontFamily` | システムフォントスタック | テキストのCSSフォントファミリー |
+| `fontWeight` | `900` | フォントの太さ |
+| `fontSize` | `32` | テンプレートの593単位の描画での値です。この描画ではコードの幅が300になります |
+| `fontLetterSpacing` | `3.5` | 文字間の追加スペースです。単位は同じです |
+| `outerCircleColor` | `fgColor` | リングの色 |
+| `strokeWidth`, `strokeColor` | `0`, `#000000` | リングの両側の縁に付ける線 |
+| `outerStrokeWidth`, `outerStrokeColor` | `strokeWidth`, `strokeColor` | リングの外側の縁のみ |
+| `innerStrokeWidth`, `innerStrokeColor` | `strokeWidth`, `strokeColor` | リングの内側の縁のみ |
+
+ロゴは、ほかのコードと同様に中央へ配置できます。長いリンク（幅が49モジュールを超えるコード）では、コードとドットの間に明るい帯が残されるため、小さく印刷してもスキャンできます。
+
+テキストは、選択したフォントのSVGテキストです。デフォルトはシステムフォントスタックなので、フォントのダウンロードは発生しません。ブラウザでのSVGおよびPNGのダウンロードでは、閲覧している環境のフォントが使われます。PDFとEPSではHelvetica Boldで出力されるため、Latin-1のテキストを使用してください。`qrdx/node` の `getQRAsPNG` では、フレームのラベルと同様に、サーバーにフォントがインストールされている必要があります。
+
 ## テンプレートのカスタマイズ [#customize-templates]
 
-組み込みテンプレートは、アートワークを `fgColor` で描画します。パターンやロゴなどそれ以外の設定は、通常どおりコードに対して行います。
+組み込みのテンプレートは、アートワークを `fgColor` で描画します。パターンやロゴなど、そのほかの設定は通常どおりコードに指定します。
 
 ```tsx
 <QRCode
@@ -96,9 +143,9 @@ const ids = getTemplateIds();
 
 ## カスタムテンプレート [#custom-templates]
 
-独自のテンプレートは `TemplateDefinition` として作成します。`wrapper` は `children` としてコードを受け取り、描画するSVGを返します。描画領域は300×300のキャンバスで、コードも同じサイズで渡されます。アートワーク用の余白を確保するには、コードを縮小してください。`props` には、コードの `fgColor` と `bgColor` が含まれます。
+独自のテンプレートは `TemplateDefinition` として作成します。`wrapper` はコードを `children` として受け取り、描画するSVGを返します。描画のキャンバスは300×300で、コードも同じサイズで渡されます。アートワークの余白を確保するため、コードを縮小してください。`props` にはコードの `fgColor` と `bgColor` が入っています。
 
-次の例では、コードの周りにリングを描きます。
+次の例では、コードのまわりにリングを描画します。
 
 ```tsx
 import { QRCode, type TemplateDefinition } from "qrdx";
@@ -130,28 +177,29 @@ const ringTemplate: TemplateDefinition = {
 />
 ```
 
-コードは、人がスマートフォンをかざす距離からスキャンできる大きさに保ち、アートワークとの間に明るい余白を残してください。結果は[スキャンスコア](/docs/features/frames#will-it-scan)で確認できます。
+人がスマートフォンを構える距離からでもスキャンできるよう、コードは十分な大きさを保ち、コードとアートワークの間に明るい余白を残してください。結果は[スキャンスコア](/docs/features/frames#will-it-scan)で確認できます。
 
 ## テンプレートを使う場面 [#when-to-use-templates]
 
-- **ブランドの一貫性** — すべてのQRコードを統一できます
-- **簡単セットアップ** — プロ品質の仕上がりをすばやく得られます
-- **季節キャンペーン** — テーマ別のテンプレートを使えます
+- **ブランドの一貫性** — すべてのQRコードの見た目をそろえられます
+- **簡単なセットアップ** — プロ品質の仕上がりをすばやく得られます
+- **季節のキャンペーン** — テーマ別のテンプレートを使えます
 - **一括生成** — 一貫したスタイルを適用できます
 
 ## テンプレート選択ガイド [#template-selection-guide]
 
 | テンプレート | 最適な用途 | 雰囲気 |
 |----------|----------|------|
-| Default | ビジネス | ニュートラル |
+| Default | ビジネス全般 | ニュートラル |
 | Arrow | テック、モダン | ダイナミック |
 | Standard Box | 企業 | プロフェッショナル |
-| Square Border | フォーマル | 構造的 |
+| Square Border | フォーマル | 整然 |
 | Striked Box | マーケティング | エネルギッシュ |
-| Halloween | 季節限定 | 楽しい |
+| Halloween | 季節イベント | 楽しい |
+| Dot Ring | 丸いコード、ポスター、ステッカー | 力強い |
 
 ## 次のステップ [#next-steps]
 
 - [パターン](/docs/features/patterns) — パターンの詳細なカスタマイズ
-- [色とグラデーション](/docs/features/colors-gradients) — 高度な色設定
+- [カラーとグラデーション](/docs/features/colors-gradients) — 高度な色設定
 - [ロゴ](/docs/features/logos) — テンプレートにロゴを追加

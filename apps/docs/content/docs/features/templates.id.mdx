@@ -8,7 +8,7 @@ Bungkus kode QR dengan desain siap pakai, atau dengan desain Anda sendiri.
 
 ## Apa Itu Template? [#what-are-templates]
 
-Template adalah karya seni SVG yang digambar di sekeliling kode: kotak, bingkai, atau lencana. Template menerima kode sebagai `children` dan menempatkannya di dalam gambarnya sendiri. Warna, pola, dan logo tetap diatur pada props `QRCode`, sehingga template dapat digunakan dengan gaya apa pun.
+Template adalah desain SVG yang digambar di sekeliling kode: kotak, bingkai, atau lencana. Template menerima kode sebagai `children` dan menempatkannya di dalam gambarnya sendiri. Warna, pola, dan logo tetap diatur lewat prop `QRCode`, sehingga template bisa dipakai dengan gaya apa pun.
 
 ## Template yang Tersedia [#available-templates]
 
@@ -56,9 +56,56 @@ Tema Halloween musiman.
 <QRCode value="https://example.com" templateId="Halloween" size={256} />
 ```
 
+### Dot Ring [#dot-ring]
+Kode berbentuk bulat. Kode berada di dalam cakram titik-titik di dalam cincin gelap, dengan satu baris teks yang mengikuti lengkung cincin. Titik mana yang tampil ditentukan dari hash isi kode, sehingga setiap tautan mendapat cincin yang unik dan tautan yang sama selalu mendapat cincin yang sama.
+
+```tsx
+<QRCode
+  value="https://example.com"
+  templateId="DotRing"
+  bodyPattern="circle-large"
+  size={512}
+/>
+```
+
+Pengaturannya ditulis di `customProps` (bertipe `DotRingProps`):
+
+```tsx
+<QRCode
+  value="https://example.com"
+  templateId="DotRing"
+  customProps={{
+    customText: "Scan for the menu",
+    textPosition: "bottom",
+    textColor: "#fde047",
+    outerCircleColor: "#1e3a8a",
+  }}
+  size={512}
+/>
+```
+
+| Prop | Default | Catatan |
+| --- | --- | --- |
+| `customText` | "Scan the QR code" diulang empat kali mengelilingi cincin | Teks di sepanjang cincin. Huruf yang tidak muat di sekeliling cincin dihilangkan; `""` membiarkan cincin kosong |
+| `textPosition` | `"top"` | `"top"`: di tengah bagian atas, dibaca searah jarum jam. `"bottom"`: di tengah bagian bawah, dibaca dari kiri ke kanan |
+| `textRotation` | `0` | Memutar teks mengelilingi pusat, dalam derajat |
+| `textColor` | `#ffffff` | Warna teks |
+| `fontFamily` | font sistem bawaan | Keluarga font CSS untuk teks |
+| `fontWeight` | `900` | Ketebalan font |
+| `fontSize` | `32` | Dalam gambar template berukuran 593 unit, tempat lebar kode adalah 300 |
+| `fontLetterSpacing` | `3.5` | Jarak tambahan antarhuruf, dalam satuan yang sama |
+| `outerCircleColor` | `fgColor` | Warna cincin |
+| `strokeWidth`, `strokeColor` | `0`, `#000000` | Garis tepi di kedua sisi cincin |
+| `outerStrokeWidth`, `outerStrokeColor` | `strokeWidth`, `strokeColor` | Hanya untuk tepi luar cincin |
+| `innerStrokeWidth`, `innerStrokeColor` | `strokeWidth`, `strokeColor` | Hanya untuk tepi dalam cincin |
+
+Logo dapat ditempatkan di tengah seperti pada kode lainnya. Tautan panjang (kode dengan lebar lebih dari 49 modul) mempertahankan pita terang antara kode dan titik-titik, sehingga tetap bisa dipindai saat dicetak kecil.
+
+Teksnya adalah teks SVG dengan font pilihan Anda; bawaannya adalah font sistem, jadi tidak ada yang diunduh. Unduhan SVG dan PNG di browser memakai font milik pemirsa. PDF dan EPS mencetaknya dengan Helvetica Bold, jadi gunakan teks Latin-1 di sana. `getQRAsPNG` dari `qrdx/node` memerlukan font yang terpasang di server, seperti halnya label bingkai.
+
 ## Menyesuaikan Template [#customize-templates]
 
-Template bawaan menggambar karya seninya dengan `fgColor`. Hal lainnya, seperti pola dan logo, diatur pada kode seperti biasa:
+Template bawaan menggambar desainnya dengan `fgColor`. Hal lain, seperti pola dan logo, diatur pada kode seperti biasa:
 
 ```tsx
 <QRCode
@@ -77,7 +124,7 @@ Template bawaan menggambar karya seninya dengan `fgColor`. Hal lainnya, seperti 
 
 ## Registri Template [#template-registry]
 
-### Mendapatkan Semua Template [#get-all-templates]
+### Mengambil Semua Template [#get-all-templates]
 
 ```tsx
 import { getAllTemplates } from 'qrdx';
@@ -85,7 +132,7 @@ import { getAllTemplates } from 'qrdx';
 const templates = getAllTemplates();
 ```
 
-### Mendapatkan ID Template [#get-template-ids]
+### Mengambil ID Template [#get-template-ids]
 
 ```tsx
 import { getTemplateIds } from 'qrdx';
@@ -96,9 +143,9 @@ const ids = getTemplateIds();
 
 ## Template Kustom [#custom-templates]
 
-Tulis template Anda sendiri sebagai `TemplateDefinition`. `wrapper`-nya menerima kode sebagai `children` dan mengembalikan SVG yang akan digambar. Template digambar pada kanvas 300 kali 300, dan kode juga tiba dengan ukuran tersebut, jadi perkecil kode agar ada ruang untuk desain Anda. `props` membawa `fgColor` dan `bgColor` dari kode.
+Tulis template Anda sendiri sebagai `TemplateDefinition`. `wrapper`-nya menerima kode sebagai `children` dan mengembalikan SVG yang akan digambar. Template digambar pada kanvas 300 kali 300, dan kode juga datang dengan ukuran itu, jadi perkecil kode agar ada ruang untuk desain Anda. `props` membawa `fgColor` dan `bgColor` milik kode.
 
-Contoh ini menggambar cincin di sekeliling kode:
+Contoh berikut menggambar cincin di sekeliling kode:
 
 ```tsx
 import { QRCode, type TemplateDefinition } from "qrdx";
@@ -148,7 +195,8 @@ Jaga agar kode cukup besar untuk dipindai dari jarak orang memegang ponselnya, d
 | Standard Box | Korporat | Profesional |
 | Square Border | Formal | Terstruktur |
 | Striked Box | Pemasaran | Energik |
-| Halloween | Musiman | Menyenangkan |
+| Halloween | Musiman | Seru |
+| Dot Ring | Kode bulat, poster, stiker | Mencolok |
 
 ## Langkah Berikutnya [#next-steps]
 

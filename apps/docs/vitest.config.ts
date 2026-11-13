@@ -30,6 +30,12 @@ const config: ViteUserConfig = {
   esbuild: { jsx: "automatic", jsxImportSource: "react" },
   resolve: {
     alias: [
+      // The registry sources import each other as @/registry/... (tsconfig
+      // paths); they live in packages/docs-assets.
+      {
+        find: /^@\/registry\//,
+        replacement: `${path.resolve(root, "../../packages/docs-assets/registry")}/`,
+      },
       { find: /^@\//, replacement: `${root}/` },
       // Test the qrdx source, not its last build.
       { find: /^qrdx$/, replacement: `${qrdx}/src/index.tsx` },

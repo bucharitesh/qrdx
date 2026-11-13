@@ -291,7 +291,7 @@ const CASES: [string, QRSVGOptions][] = [
       },
     },
   ],
-  ["built-in template", { value: VALUE, templateId: "FlamQR" }],
+  ["built-in template", { value: VALUE, templateId: "DotRing" }],
   [
     "custom template written with h",
     {
@@ -364,7 +364,7 @@ describe("attributes and properties", () => {
       "corner-eye-pattern": "gear",
       "corner-eye-dot-pattern": "circle",
       margin: "4",
-      "template-id": "FlamQR",
+      "template-id": "DotRing",
       "module-scale": "0.8",
       "auto-level": "",
       shape: "circle",
@@ -381,7 +381,7 @@ describe("attributes and properties", () => {
       cornerEyePattern: "gear",
       cornerEyeDotPattern: "circle",
       margin: 4,
-      templateId: "FlamQR",
+      templateId: "DotRing",
       moduleScale: 0.8,
       autoLevel: true,
       shape: "circle",
@@ -646,5 +646,42 @@ describe("toQRdxCodeHTML", () => {
     const element = holder.firstElementChild as source.QRdxCodeElement;
     expect(element.options).toEqual(options);
     expect(element.label).toBe("Ticket");
+  });
+});
+
+describe("custom element names", () => {
+  it("accepts valid names and refuses ones without a hyphen or a leading letter", () => {
+    for (const name of ["qrdx-code", "brand-qr", "x.y-z_1", "my--el", "a-"]) {
+      expect(() =>
+        source.toQRdxCodeHTML(
+          { value: "https://example.com" },
+          { tagName: name }
+        )
+      ).not.toThrow();
+    }
+    for (const name of [
+      "qrdxcode",
+      "1-code",
+      "Qrdx-code",
+      "-code",
+      "qrdx code",
+    ]) {
+      expect(() =>
+        source.toQRdxCodeHTML(
+          { value: "https://example.com" },
+          { tagName: name }
+        )
+      ).toThrow(/not a custom element name/);
+    }
+  });
+
+  it("refuses a long run of hyphens in linear time", () => {
+    // The old pattern backtracked quadratically on this (CodeQL js/polynomial-redos)
+    const name = `a${"-".repeat(50_000)}!`;
+    const started = performance.now();
+    expect(() =>
+      source.toQRdxCodeHTML({ value: "https://example.com" }, { tagName: name })
+    ).toThrow(/not a custom element name/);
+    expect(performance.now() - started).toBeLessThan(50);
   });
 });
