@@ -72,13 +72,18 @@ export const PRODUCT_FACTS = {
   /** Dots inside the corner eyes (`cornerEyeDotPattern`). */
   eyeCentres: CORNER_EYE_DOT_PATTERNS.length,
   /**
-   * Every frame QRdx has: the engine's built-in styles plus the official
-   * frame library (qrdx OFFICIAL_FRAMES).
+   * Every frame QRdx has: the built-in frames plus the official frame
+   * library. Both are frame specs; the built-in ones live in qrdx
+   * BUILT_IN_FRAMES, not in OFFICIAL_FRAMES, so none is counted twice.
    */
   frames:
     FRAME_STYLES.filter((style) => style !== "none").length +
     OFFICIAL_FRAME_COUNT,
-  /** Built-in frame styles (`frame.style`); `none` isn't a frame. */
+  /**
+   * Built-in frames (qrdx BUILT_IN_FRAMES): one frame spec per
+   * `frame.style` name, which designs keep naming them by. `none` isn't a
+   * frame.
+   */
   frameStyles: FRAME_STYLES.filter((style) => style !== "none").length,
   /** Official frames (frame specs in qrdx OFFICIAL_FRAMES). */
   officialFrames: OFFICIAL_FRAME_COUNT,

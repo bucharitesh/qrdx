@@ -1,0 +1,54 @@
+{
+  "kind": "qrdx.frame",
+  "version": 1,
+  "artboard": {
+    "width": 1240,
+    "height": 1530
+  },
+  "qr": {
+    "x": 120,
+    "y": 120,
+    "size": 1000,
+    "padding": 80,
+    "radius": 80
+  },
+  "colors": {
+    "frame": "#000000",
+    "text": "#FFFFFF"
+  },
+  "shapes": [
+    {
+      "type": "rect",
+      "x": 0,
+      "y": 0,
+      "width": 1240,
+      "height": 1400,
+      "radius": 120,
+      "fill": "frame"
+    },
+    {
+      "type": "path",
+      "d": "M161.2 1380L62 1530Q198.4 1458.5 396.8 1380Z",
+      "fill": "frame"
+    }
+  ],
+  "labels": [
+    {
+      "type": "text",
+      "id": "cta",
+      "slot": "primary",
+      "text": "Scan me",
+      "color": "text",
+      "box": {
+        "x": 120,
+        "y": 1200,
+        "width": 1000,
+        "height": 200
+      },
+      "collapse": {
+        "y": 1220,
+        "height": 160
+      }
+    }
+  ]
+}

@@ -36,7 +36,7 @@ import {
 } from "./side-panel";
 
 // The frame picker: a row of common frames, and "More" for the whole
-// library (the engine's built-in styles, QRdx's official frames and the
+// library (the classic frames, shaped codes, QRdx's official frames and the
 // frames you saved), with search, a chip per group and a "Coming up" group
 // of the frames for the holidays and seasons ahead. Official frames load
 // a collection at a time as their tiles scroll into view; until then a tile
@@ -46,12 +46,16 @@ import {
 
 export const OFFICIAL_PREFIX = "official:";
 
-/** A frame the picker always has: built-in, saved or the custom one. */
+/**
+ * A tile the picker always has: a built-in frame, a shaped code, a saved
+ * frame or the custom one.
+ */
 export interface FrameChoice {
   id: string;
   name: string;
+  /** What the tile applies (a shaped code's is no frame) */
   frame: AnyQRFrame;
-  group: "built-in" | "saved" | "custom";
+  group: "built-in" | "shape" | "saved" | "custom";
   /** Words search matches besides the name */
   keywords?: string;
 }
@@ -213,7 +217,8 @@ const matches = (text: string, terms: string[]) =>
 
 const ALL = "all";
 const COMING_UP = "coming-up";
-const BUILT_IN = "built-in";
+const CLASSIC = "classic";
+const SHAPES = "shapes";
 const SAVED = "saved";
 
 interface Section {
@@ -351,9 +356,12 @@ export function FramePicker({
       : [...featured.slice(0, -1), value];
 
   const officialCount = index?.length ?? 0;
-  // "None" is a choice, not a frame
+  // "None" is a choice, not a frame; shaped codes are tiles, not frames
+  const frameTotal =
+    choices.filter((choice) => choice.id !== "none" && choice.group !== "shape")
+      .length + officialCount;
   const total =
-    choices.filter((choice) => choice.id !== "none").length + officialCount;
+    frameTotal + choices.filter((choice) => choice.group === "shape").length;
 
   // ── Catalog contents ────────────────────────────────────────────────────
   // Typing stays responsive: the filtering and the tiles follow a beat later
@@ -364,7 +372,10 @@ export function FramePicker({
     [index],
   );
   const sections: Section[] = React.useMemo(() => {
-    const builtIn = choices.filter((choice) => choice.group !== "saved");
+    const classic = choices.filter(
+      (choice) => choice.group === "built-in" || choice.group === "custom",
+    );
+    const shapes = choices.filter((choice) => choice.group === "shape");
     const saved = choices.filter((choice) => choice.group === "saved");
     const entries = index ?? [];
     const byCollection = new Map<OfficialFrameCollection, Section["items"]>();
@@ -385,9 +396,14 @@ export function FramePicker({
     return [
       { id: COMING_UP, label: t("comingUp"), items: comingUp },
       {
-        id: BUILT_IN,
-        label: t("builtIn"),
-        items: builtIn.map((choice) => ({ id: choice.id })),
+        id: CLASSIC,
+        label: t("classic"),
+        items: classic.map((choice) => ({ id: choice.id })),
+      },
+      {
+        id: SHAPES,
+        label: t("shapedCodes"),
+        items: shapes.map((choice) => ({ id: choice.id })),
       },
       ...OFFICIAL_FRAME_COLLECTIONS.map((collection) => ({
         id: collection.id,
@@ -481,7 +497,9 @@ export function FramePicker({
       }
       ref={moreRef}
       title={
-        officialCount > 0 ? t("allTotalFrames", { total }) : t("allFrames")
+        officialCount > 0
+          ? t("allTotalFrames", { total: frameTotal })
+          : t("allFrames")
       }
       type="button"
     >
@@ -533,7 +551,7 @@ export function FramePicker({
               }}
               placeholder={
                 officialCount > 0
-                  ? t("searchTotalFrames", { total })
+                  ? t("searchTotalFrames", { total: frameTotal })
                   : t("searchFrames")
               }
               ref={searchRef}
