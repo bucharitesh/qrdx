@@ -13,8 +13,15 @@ import {
   TYPE_LABELS,
   TYPE_SEGMENTS,
 } from "@/lib/community/types";
+import {
+  CARD_ART,
+  CARD_FRAME,
+  CARD_TEXT,
+  ROW_CARD,
+  ROW_CARDS,
+} from "./card-layout";
 import { CreatorLine } from "./creator-line";
-import { DesignQr } from "./design-qr";
+import { LazyDesignQr } from "./design-qr";
 
 const COUNT = new Intl.NumberFormat("en", { notation: "compact" });
 
@@ -24,13 +31,20 @@ export const cardHref = (card: CommunityItemCard) =>
     ? itemPath(card.type, card.slug)
     : `/community/${TYPE_SEGMENTS[card.type]}`;
 
-/** One item in a grid or row: the design, its name, type and creator. */
+/**
+ * One item in a grid or row: the design, its name, type and creator. The
+ * design is drawn in the browser as the card nears the screen; `eager`
+ * draws it in the server's HTML too (first-screen cards only: a framed
+ * design is tens of kilobytes of SVG).
+ */
 export function ItemCard({
   card,
   className,
+  eager = false,
 }: {
   card: CommunityItemCard;
   className?: string;
+  eager?: boolean;
 }) {
   const t = useTranslations("community.itemCard");
   const stack = card.type === "collection" ? (card.stack ?? []) : [];
@@ -40,7 +54,8 @@ export function ItemCard({
   return (
     <article
       className={cn(
-        "group bg-card relative flex min-w-0 flex-col overflow-hidden rounded-xl border shadow-xs transition-[border-color,box-shadow]",
+        CARD_FRAME,
+        "transition-[border-color,box-shadow]",
         "hover:border-foreground/15 hover:shadow-sm has-[a:focus-visible]:ring-ring/50 has-[a:focus-visible]:ring-[3px]",
         className,
       )}
@@ -50,7 +65,7 @@ export function ItemCard({
         className="absolute inset-0 z-10 rounded-xl outline-none"
         href={cardHref(card)}
       />
-      <div className="bg-muted/40 relative aspect-[6/5] overflow-hidden border-b">
+      <div className={CARD_ART}>
         {card.type === "collection" ? (
           <div className="absolute inset-5 grid place-items-center">
             {stack.length === 0 ? (
@@ -67,7 +82,13 @@ export function ItemCard({
                     zIndex: index,
                   }}
                 >
-                  <DesignQr className="size-full" style={style} />
+                  {/* Only the front design of an eager card is in the
+                      HTML; the ones behind it draw in the browser. */}
+                  <LazyDesignQr
+                    className="size-full"
+                    eager={eager && index === stack.length - 1}
+                    style={style}
+                  />
                 </div>
               ))
             )}
@@ -76,7 +97,11 @@ export function ItemCard({
           // The look and the page, side by side.
           <div className="absolute inset-0 flex items-start justify-center gap-3 px-5 pt-4">
             <div className="mt-6 aspect-square w-[38%] rounded-lg bg-white p-2 shadow-sm ring-1 ring-black/5">
-              <DesignQr className="size-full" style={card.preview} />
+              <LazyDesignQr
+                className="size-full"
+                eager={eager}
+                style={card.preview}
+              />
             </div>
             <div className="aspect-[9/16] w-[36%] overflow-hidden rounded-t-xl bg-white shadow-sm ring-1 ring-black/5">
               {card.page ? (
@@ -99,7 +124,11 @@ export function ItemCard({
           </div>
         ) : (
           <div className="absolute inset-3 rounded-lg bg-white p-2.5 ring-1 ring-black/5 transition-transform duration-300 group-hover:scale-[1.02]">
-            <DesignQr className="size-full" style={card.preview} />
+            <LazyDesignQr
+              className="size-full"
+              eager={eager}
+              style={card.preview}
+            />
           </div>
         )}
         {card.isOfficial && (
@@ -111,7 +140,7 @@ export function ItemCard({
           </Badge>
         )}
       </div>
-      <div className="flex min-w-0 flex-1 flex-col gap-1.5 px-3.5 py-3">
+      <div className={CARD_TEXT}>
         <div className="flex min-w-0 items-baseline justify-between gap-2">
           <span className="truncate text-sm font-medium">{card.name}</span>
           <span className="text-muted-foreground shrink-0 text-xs">
@@ -143,20 +172,23 @@ export function ItemCard({
   );
 }
 
-/** A titled row of cards (scrolls sideways on phones). */
-export function ItemRow({
+/** A card's key in a list: unique across types. */
+export const cardKey = (card: CommunityItemCard) =>
+  `${card.type}-${card.slug || card.id}`;
+
+/** A row's title and "See all", above its cards (`children`). */
+export function ItemRowShell({
   title,
   badge,
   href,
-  cards,
+  children,
 }: {
   title: string;
   badge?: React.ReactNode;
   href?: string;
-  cards: CommunityItemCard[];
+  children: React.ReactNode;
 }) {
   const t = useTranslations("community.itemCard");
-  if (cards.length === 0) return null;
   return (
     <section className="space-y-3">
       <div className="flex items-center justify-between gap-3">
@@ -173,16 +205,39 @@ export function ItemRow({
           </Link>
         )}
       </div>
-      <div className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-1 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 md:grid-cols-3 lg:grid-cols-4">
-        {cards.map((card) => (
-          <ItemCard
-            card={card}
-            className="w-[70%] shrink-0 snap-start sm:w-auto"
-            key={`${card.type}-${card.slug || card.id}`}
-          />
-        ))}
-      </div>
+      {children}
     </section>
+  );
+}
+
+/** A row's cards. */
+export function ItemRowCards({ cards }: { cards: CommunityItemCard[] }) {
+  return (
+    <div className={ROW_CARDS}>
+      {cards.map((card) => (
+        <ItemCard card={card} className={ROW_CARD} key={cardKey(card)} />
+      ))}
+    </div>
+  );
+}
+
+/** A titled row of cards (scrolls sideways on phones). */
+export function ItemRow({
+  title,
+  badge,
+  href,
+  cards,
+}: {
+  title: string;
+  badge?: React.ReactNode;
+  href?: string;
+  cards: CommunityItemCard[];
+}) {
+  if (cards.length === 0) return null;
+  return (
+    <ItemRowShell badge={badge} href={href} title={title}>
+      <ItemRowCards cards={cards} />
+    </ItemRowShell>
   );
 }
 
@@ -190,15 +245,18 @@ export function ItemRow({
 export function ItemGrid({
   cards,
   className = "grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4",
+  eager = 0,
 }: {
   cards: CommunityItemCard[];
   /** The grid's columns (a gallery with a sidebar has less room) */
   className?: string;
+  /** How many cards, from the first, draw their design on the server */
+  eager?: number;
 }) {
   return (
     <div className={className}>
-      {cards.map((card) => (
-        <ItemCard card={card} key={`${card.type}-${card.slug || card.id}`} />
+      {cards.map((card, index) => (
+        <ItemCard card={card} eager={index < eager} key={cardKey(card)} />
       ))}
     </div>
   );

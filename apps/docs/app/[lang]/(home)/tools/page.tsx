@@ -1,3 +1,4 @@
+import { MAX_BULK_TOOL_ROWS } from "@repo/config";
 import { cn } from "@repo/design-system/lib/utils";
 import {
   ArrowRight,
@@ -23,7 +24,6 @@ import {
 } from "@/components/sections/tools/cards";
 import { SpotlightLink } from "@/components/sections/tools/spotlight-link";
 import { ToolHero } from "@/components/sections/tools/tool-hero";
-import { MAX_BULK_TOOL_ROWS } from "@/lib/bulk-limits";
 import { localizedMetadata } from "@/lib/i18n/metadata";
 import { requireLocale } from "@/lib/i18n/server";
 import { PRODUCT_FACTS } from "@/lib/product-facts";

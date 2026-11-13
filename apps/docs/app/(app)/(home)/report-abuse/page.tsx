@@ -1,3 +1,4 @@
+import { SUPPORT_EMAIL } from "@repo/config";
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import Link from "next/link";
@@ -98,9 +99,9 @@ export default async function ReportAbusePage({
             Email{" "}
             <a
               className="font-medium text-foreground underline decoration-foreground/30 underline-offset-4 transition-colors hover:decoration-foreground"
-              href="mailto:support@qrdx.dev"
+              href={`mailto:${SUPPORT_EMAIL}`}
             >
-              support@qrdx.dev
+              {SUPPORT_EMAIL}
             </a>{" "}
             for copyright (DMCA) notices or anything the form doesn't cover.
             Read the{" "}

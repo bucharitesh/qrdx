@@ -1,0 +1,109 @@
+---
+title: "CLI"
+description: "@qrdx/cli कमांड-लाइन टूल से अपने टर्मिनल या CI में स्टाइल किए गए QR कोड SVG, PNG, WebP या वेक्टर EPS में बनाएँ, एक-एक करके या qrdx batch से पूरी CSV एक साथ।"
+icon: Terminal
+---
+
+`@qrdx/cli` कमांड लाइन से वही QR कोड बनाता है जो Playground और [`qrdx` लाइब्रेरी](/docs/getting-started) बनाती हैं। स्क्रिप्ट और CI में यह कभी कोई सवाल नहीं पूछता। टर्मिनल में बिना आर्गुमेंट के `qrdx generate` चलाने पर यह कंटेंट और विकल्प कदम-दर-कदम पूछता है।
+
+<NpmStatus package="@qrdx/cli" />
+
+```bash
+npx @qrdx/cli generate "https://example.com" -o qr.svg
+```
+
+`qrdx` कमांड पाने के लिए इसे ग्लोबली इंस्टॉल करें:
+
+```bash
+npm install -g @qrdx/cli
+qrdx generate "https://example.com" -o qr.png --size 1024
+```
+
+इसके लिए Node.js 22 या उससे नया वर्शन चाहिए। PNG और WebP आउटपुट [sharp](https://sharp.pixelplumbing.com) इस्तेमाल करते हैं। यह एक ऑप्शनल डिपेंडेंसी है, जिसे npm आपके प्लेटफ़ॉर्म पर सपोर्ट होने पर इंस्टॉल करता है। SVG और EPS इसके बिना भी काम करते हैं। `qrdx` npm पैकेज React लाइब्रेरी है: CLI सिर्फ़ `@qrdx/cli` में है।
+
+## आउटपुट फ़ॉर्मैट [#output-formats]
+
+फ़ॉर्मैट फ़ाइल एक्सटेंशन से तय होता है। फ़ाइल के नाम में एक्सटेंशन न हो तो `--format` इस्तेमाल करें।
+
+| फ़ॉर्मैट | किसके लिए | `--size` का मतलब |
+| --- | --- | --- |
+| `.svg` | वेब पेज, डिज़ाइन टूल, बिना क्वालिटी खोए स्केल करना | पिक्सल में चौड़ाई (डिफ़ॉल्ट 512) |
+| `.png` | डॉक्यूमेंट, स्लाइड, जहाँ भी इमेज चाहिए | पिक्सल में चौड़ाई |
+| `.webp` | वेबसाइट: PNG के ही पिक्सल, लॉसलेस, छोटी फ़ाइल में | पिक्सल में चौड़ाई |
+| `.eps` | प्रिंट शॉप, Illustrator, InDesign | पॉइंट में चौड़ाई (प्रति इंच 72, यानी `144` का मतलब 2 इंच) |
+
+EPS फ़ाइलें वेक्टर PostScript होती हैं। PNG और JPEG लोगो जैसे हैं वैसे ही एम्बेड होते हैं। दूसरे लोगो फ़ॉर्मैट sharp इंस्टॉल होने पर उससे बदले जाते हैं, वरना चेतावनी के साथ छोड़ दिए जाते हैं।
+
+## विकल्प [#options]
+
+| फ़्लैग | डिफ़ॉल्ट | विवरण |
+| --- | --- | --- |
+| `-o`, `--output` | `qr.svg` | आउटपुट फ़ाइल |
+| `--format` | एक्सटेंशन से | `svg`, `png`, `webp` या `eps` |
+| `--size` | `512` | आउटपुट साइज़ (ऊपर देखें) |
+| `-l`, `--level` | `Q` | एरर करेक्शन: `L`, `M`, `Q` या `H` |
+| `--body` | `square` | डेटा मॉड्यूल [पैटर्न](/docs/features/patterns) |
+| `--eye` | `square` | कोने की आई का पैटर्न |
+| `--dot` | `square` | कोने की आई के डॉट का पैटर्न |
+| `--fg`, `--bg` | `#000000`, `#ffffff` | फ़ोरग्राउंड और बैकग्राउंड: हेक्स रंग या JSON ग्रेडिएंट |
+| `--eye-color`, `--dot-color` | `--fg` | कोने की आई और आई डॉट के रंग |
+| `--logo` | | बीच में लगने वाले लोगो इमेज का URL (`--level H` के साथ इस्तेमाल करें) |
+| `--margin` | `0` | क्वाइट ज़ोन, मॉड्यूल में |
+| `--template` | | `Arrow`, `StandardBox`, `SquareBorder`, `StrikedBox` या `Halloween` |
+| `--frame` | | कॉल-टू-एक्शन [फ़्रेम](/docs/features/frames): {facts.frameStyles} बिल्ट-इन फ़्रेम में से कोई भी, जैसे `banner-bottom`, `rounded-border`, `circle`, `sticker` या `phone` ([सभी देखें](/docs/styles#frames)) |
+| `--frame-text` | `Scan me` | फ़्रेम का लेबल, ज़्यादा से ज़्यादा 24 अक्षर |
+| `--frame-color`, `--frame-text-color` | | फ़्रेम और लेबल के रंग (हेक्स) |
+
+`qrdx --help` हर पैटर्न का नाम दिखाता है। गलत वैल्यू देने पर कोड `1` के साथ बाहर निकल जाता है और मान्य वैल्यू की सूची वाला संदेश दिखता है।
+
+## CSV से कई कोड [#many-codes-from-a-csv]
+
+`qrdx batch` CSV फ़ाइल की हर पंक्ति के लिए एक स्टैटिक QR कोड बनाकर एक फ़ोल्डर में लिखता है:
+
+```bash
+qrdx batch products.csv -o codes --format png --size 1024 --body circle
+```
+
+यह वही कॉलम पढ़ता है जो [बल्क जनरेटर](/tools/bulk) पढ़ता है: कंटेंट `value`, `url`, `link`, `data`, `content`, `text` या `qr` नाम के कॉलम से (नहीं मिला तो पहला कॉलम), और फ़ाइल के नाम `file name`, `name`, `label`, `id`, `title` या `sku` नाम के कॉलम से (नहीं मिला तो `qr-00001`, `qr-00002` और इसी तरह आगे)। दूसरे कॉलम हेडर के नाम या कॉलम नंबर से चुनें:
+
+| फ़्लैग | डिफ़ॉल्ट | विवरण |
+| --- | --- | --- |
+| `-o`, `--out` | `qr-codes` | कोड के लिए फ़ोल्डर |
+| `--format` | `svg` | `svg`, `png` या `eps` |
+| `--value-column` | अपने आप पहचाना जाता है | वह कॉलम जिसमें हर कोड का कंटेंट है |
+| `--name-column` | अपने आप पहचाना जाता है | वह कॉलम जिसमें फ़ाइल के नाम हैं |
+| `--no-header` | | पहली पंक्ति कॉलम के नाम नहीं, एक कोड है |
+| `--jobs` | SVG के लिए `4`, बाकी के लिए `8` | एक समय में बनने वाले कोड |
+
+ऊपर दिए सभी स्टाइल विकल्प सभी कोड पर लागू होते हैं। CSV को स्ट्रीम की तरह पढ़ा जाता है और हर कोड बनते ही सेव हो जाता है, इसलिए कमांड की पंक्तियों की कोई सीमा नहीं है: एक लैपटॉप पर 10,000 SVG कोड में लगभग 40 सेकंड लगे और 200 MB से कम मेमोरी इस्तेमाल हुई। कुछ भी अपलोड नहीं होता और अकाउंट की ज़रूरत नहीं है। जो पंक्तियाँ एनकोड नहीं हो सकतीं, उन्हें छोड़ दिया जाता है और कारण के साथ आउटपुट फ़ोल्डर की `errors.csv` में लिखा जाता है।
+
+[डायनेमिक कोड](/docs/dynamic-qr-codes) बड़ी संख्या में प्रिंट करने के लिए, पहले उन्हें बनाएँ (डैशबोर्ड का CSV इंपोर्ट या API), फिर इंपोर्ट से मिली नतीजों वाली CSV पर `--value-column short_link` के साथ `qrdx batch` चलाएँ।
+
+## उदाहरण [#examples]
+
+```bash
+# High-resolution PNG for print
+qrdx generate "https://example.com" -o qr.png --size 2048 --level H
+
+# Vector EPS, 2 inches wide, for a print shop
+qrdx generate "https://example.com" -o qr.eps --size 144
+
+# Branded colors and patterns
+qrdx generate "https://example.com" --body circle --eye rounded --fg "#1a1a2e" -o brand.svg
+
+# Gradient foreground
+qrdx generate "https://example.com" -o gradient.svg \
+  --fg '{"type":"linear","stops":[{"color":"#6366f1","offset":0},{"color":"#ec4899","offset":100}],"angle":135}'
+
+# "Scan for the menu" frame
+qrdx generate "https://example.com/menu" --frame banner-bottom --frame-text "Scan for the menu" -o menu.png
+
+# Wi-Fi network
+qrdx generate "WIFI:T:WPA;S:MyNetwork;P:MyPassword;;" -o wifi.svg
+```
+
+[डायनेमिक QR कोड](/docs/dynamic-qr-codes) प्रिंट करने के लिए, उसका शॉर्ट लिंक (`https://qrdx.dev/q/<slug>`) डेटा के रूप में दें।
+
+## AI कोडिंग एजेंट से इस्तेमाल करें [#use-it-from-an-ai-coding-agent]
+
+रिपॉज़िटरी की [`generate-qr` स्किल](https://github.com/bucharitesh/qrdx/tree/main/skills/generate-qr) Claude Code जैसे एजेंट को CLI चलाना सिखाती है। जो एजेंट MCP सपोर्ट करते हैं, उनके लिए [MCP सर्वर](/docs/developers/mcp) को कुछ भी इंस्टॉल करने की ज़रूरत नहीं है।

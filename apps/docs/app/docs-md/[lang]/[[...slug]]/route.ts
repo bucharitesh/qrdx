@@ -1,8 +1,12 @@
 import { notFound } from "next/navigation";
+import {
+  docsIndex,
+  isTranslatedPage,
+  localizedDocsIndex,
+} from "@/lib/docs-index";
 import { getLLMText } from "@/lib/get-llm-text";
 import { DEFAULT_LOCALE, LOCALE_INFO } from "@/lib/i18n/config";
 import { DOCS_LOCALES, docsLocaleFromSegment } from "@/lib/i18n/docs";
-import { isTranslatedPage, localizedSource, source } from "@/lib/source";
 import { buildTimeParams } from "@/lib/static-params";
 
 export const revalidate = false;
@@ -25,11 +29,11 @@ export async function GET(
   const last = slug?.at(-1)?.replace(/\.mdx?$/, "");
   const slugs =
     slug && last !== undefined ? [...slug.slice(0, -1), last] : (slug ?? []);
-  const page = localizedSource.getPage(slugs, locale);
+  const page = localizedDocsIndex().getPage(slugs, locale);
   if (!page) notFound();
   const text = isTranslatedPage(page)
     ? await getLLMText(page)
-    : await getLLMText(source.getPage(slugs) ?? page);
+    : await getLLMText(docsIndex().getPage(slugs) ?? page);
 
   return new Response(text, {
     headers: {
@@ -46,7 +50,7 @@ export function generateStaticParams() {
   return buildTimeParams(() =>
     DOCS_LOCALES.filter((locale) => locale !== DEFAULT_LOCALE).flatMap(
       (locale) =>
-        localizedSource
+        localizedDocsIndex()
           .getPages(locale)
           .filter(isTranslatedPage)
           .map((page) => ({

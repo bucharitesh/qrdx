@@ -9,8 +9,10 @@
 //
 // Pure functions of the origin, so they're testable; the route handlers wrap
 // them with jsonDocument() for headers, ETags and CORS.
+
 import { createHash } from "node:crypto";
 import { SUPPORTED_PROTOCOL_VERSIONS } from "@modelcontextprotocol/server";
+import { CANONICAL_HOST, CANONICAL_ORIGIN } from "@repo/config";
 import { MCP_SERVER_INFO } from "@/app/api/mcp/tools";
 import { owner, repo } from "@/lib/github";
 import { type McpDeployment, mcpServerUrl } from "@/lib/mcp-clients";
@@ -32,7 +34,7 @@ export function publisherHost(
   deployment?: McpDeployment,
 ): string {
   return isOfficialOrigin(origin, deployment)
-    ? "qrdx.dev"
+    ? CANONICAL_HOST
     : new URL(origin).hostname;
 }
 
@@ -42,9 +44,7 @@ function siteUrl(
   path: string,
   deployment?: McpDeployment,
 ): string {
-  const base = isOfficialOrigin(origin, deployment)
-    ? "https://qrdx.dev"
-    : origin;
+  const base = isOfficialOrigin(origin, deployment) ? CANONICAL_ORIGIN : origin;
   return new URL(path, base).toString();
 }
 

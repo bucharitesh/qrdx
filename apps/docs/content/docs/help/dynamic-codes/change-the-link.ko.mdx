@@ -1,0 +1,43 @@
+---
+title: "코드가 연결되는 주소 변경하기"
+description: "동적 QR 코드의 이동 주소를 수정합니다. 이미 인쇄한 코드도 다음 스캔부터 새 링크를 엽니다."
+---
+
+동적 코드의 이동 주소는 언제든지 바꿀 수 있습니다. 인쇄된 모든 코드가 다음 스캔부터 새 링크를 엽니다.
+
+## 대시보드에서 변경하기 [#from-your-dashboard]
+
+1. **Codes**로 이동합니다.
+2. 코드의 메뉴(**⋯**)를 열고 **Edit link**를 선택합니다. 코드를 열어 **Edit link**를 클릭해도 됩니다.
+3. **Destination URL**을 변경합니다.
+4. **Save changes**를 클릭합니다.
+
+변경이 끝나면 QRdx가 "Scans now open the updated destination."이라는 메시지로 알려 줍니다.
+
+## Playground에서 변경하기 [#from-the-playground]
+
+코드가 Playground에서 열려 있다면 주소를 변경하세요. **Point it to the new address**를 클릭하기 전까지는 카드에 "Printed codes still open"과 함께 이전 링크가 표시됩니다.
+
+## 변경 사항은 바로 적용됩니다 [#changes-take-effect-right-away]
+
+QRdx는 리디렉션을 캐시하지 않습니다. 다음 스캔부터 모든 휴대폰에서 새 주소가 열립니다.
+
+## 짧은 링크 자체는 바꾸지 마세요 [#dont-change-the-short-link-itself]
+
+이동 주소는 언제든 안전하게 바꿀 수 있습니다. 하지만 코드의 **back-half**나 **domain**을 바꾸면 안 됩니다. 이전 짧은 링크로 이미 인쇄된 코드는 작동하지 않게 됩니다.
+
+## 변경 되돌리기 [#undo-a-change]
+
+1. **Codes**에서 코드를 엽니다.
+2. **Settings**에서 **Version history**를 엽니다.
+3. 원하는 버전 옆의 **Restore**를 클릭한 다음 **Restore version**을 클릭합니다.
+
+QRdx는 코드마다 최대 100개의 버전을 보관합니다.
+
+## 링크 대신 페이지 열기 [#open-a-page-instead]
+
+코드가 링크 대신 호스팅 페이지를 열도록 하려면 코드 페이지에서 **Change type**을 사용하세요. [인쇄된 코드가 여는 대상 변경하기](/docs/help/dynamic-codes/change-the-type)를 참고하세요.
+
+## 정적 코드는 변경할 수 없습니다 [#static-codes-cant-change]
+
+정적 QR 코드는 링크를 코드 안에 저장합니다. 링크를 바꾸려면 새 코드를 인쇄해야 합니다. [정적 코드와 동적 코드](/docs/help/getting-started/static-vs-dynamic)를 참고하세요.

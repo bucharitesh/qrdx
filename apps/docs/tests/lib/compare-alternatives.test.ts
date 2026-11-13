@@ -7,13 +7,16 @@ import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it, vi } from "vitest";
 
-vi.mock("@/lib/source", () => ({ compareSource: { getPage: () => null } }));
+vi.mock("@/lib/content-source", () => ({
+  compareSource: { getPage: () => null },
+}));
 
 const { qrdxAlternative } = await import(
   "@/components/sections/compare/compare-alternatives"
 );
 const { PLAN_LIMITS } = await import("@/lib/plans");
 const { PRICING } = await import("@/lib/pricing");
+const { PRODUCT_FACTS } = await import("@/lib/product-facts");
 const { siteDescription, siteTitle } = await import("@/lib/metadata");
 const { MAX_DESCRIPTION, MAX_TITLE } = await import("@/lib/seo-overrides");
 
@@ -148,6 +151,11 @@ describe("copy around the lists", () => {
   );
 
   it("quotes QRdx's Free plan limits from lib/plans.ts", () => {
+    // "{facts.freeScanHistoryYears} year": Free's history, singular.
+    expect(PRODUCT_FACTS.freeScanHistoryYears).toBe(1);
+    expect(free.analyticsRetentionDays).toBe(
+      365 * PRODUCT_FACTS.freeScanHistoryYears,
+    );
     for (const [file, phrases] of Object.entries({
       "uniqode.mdx": [`with logos and ${free.dynamicCodes} dynamic codes.`],
       "qr-verse.mdx": [
@@ -155,7 +163,7 @@ describe("copy around the lists", () => {
       ],
       "canva-qr.mdx": [
         `SVG and ${free.dynamicCodes} tracked codes free.`,
-        `for up to ${free.dynamicCodes} dynamic codes with ${free.analyticsRetentionDays} days of history.`,
+        `for up to ${free.dynamicCodes} dynamic codes with {facts.freeScanHistoryYears} year of history.`,
         `up to ${mb} MB per file on the free plan`,
         `the free plan includes ${free.dynamicCodes}`,
       ],
@@ -166,7 +174,7 @@ describe("copy around the lists", () => {
       for (const phrase of phrases) expect(read(file), file).toContain(phrase);
     }
     expect(blog).toContain(
-      `a free account adds ${free.dynamicCodes} dynamic codes with unlimited scans and ${free.analyticsRetentionDays} days of history`,
+      `a free account adds ${free.dynamicCodes} dynamic codes with unlimited scans and {facts.freeScanHistoryYears} year of history`,
     );
   });
 

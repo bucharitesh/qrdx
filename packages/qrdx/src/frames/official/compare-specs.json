@@ -1,0 +1,112 @@
+{
+  "id": "compare-specs",
+  "name": "Compare specs",
+  "description": "A shelf strip with a card hanging under it and a laptop.",
+  "category": "use-case",
+  "collection": "shopping",
+  "contentTypes": ["url"],
+  "tags": ["retail", "shop", "electronics", "shelf"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1500,
+      "height": 1900
+    },
+    "qr": {
+      "x": 250,
+      "y": 540,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1500,
+        "height": 150,
+        "radius": 16,
+        "fill": "accent"
+      },
+      {
+        "type": "rect",
+        "x": 680,
+        "y": 140,
+        "width": 140,
+        "height": 100,
+        "radius": 8,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.55
+        }
+      },
+      {
+        "type": "rect",
+        "x": 130,
+        "y": 220,
+        "width": 1240,
+        "height": 1680,
+        "radius": 44,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 150,
+        "y": 240,
+        "width": 1200,
+        "height": 1640,
+        "radius": 28,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.9
+        }
+      },
+      {
+        "type": "path",
+        "d": "M703.5 309L796.5 309A7.5 7.5 0 0 1 804 316.5L804 376.5A7.5 7.5 0 0 1 796.5 384L703.5 384A7.5 7.5 0 0 1 696 376.5L696 316.5A7.5 7.5 0 0 1 703.5 309ZM708 318A3 3 0 0 0 705 321L705 372A3 3 0 0 0 708 375L792 375A3 3 0 0 0 795 372L795 321A3 3 0 0 0 792 318L708 318ZM681 390L819 390L810 408L690 408Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M740.25 393A2.25 2.25 0 0 0 738 395.25L738 395.25A2.25 2.25 0 0 0 740.25 397.5L759.75 397.5A2.25 2.25 0 0 0 762 395.25L762 395.25A2.25 2.25 0 0 0 759.75 393L740.25 393Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Compare the specs",
+        "color": "frame",
+        "box": {
+          "x": 200,
+          "y": 1660,
+          "width": 1100,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Laptops",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 20,
+          "width": 1260,
+          "height": 110
+        }
+      }
+    ]
+  }
+}

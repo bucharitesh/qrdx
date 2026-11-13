@@ -1,6 +1,6 @@
 # qrdx
 
-Customizable QR codes for React: SVG and canvas rendering, dot and eye patterns, gradients, logos, call-to-action frames, Logo QR and Image QR art, PNG/JPG/WebP/SVG/PDF/EPS export, print-ready files, a scan score and QR scanning.
+Customizable QR codes for React and plain JavaScript: SVG and canvas rendering, dot and eye patterns, gradients, logos, call-to-action frames, Logo QR and Image QR art, PNG/JPG/WebP/SVG/PDF/EPS export, print-ready files, a scan score and QR scanning.
 
 It powers the [QRdx](https://qrdx.dev) QR code generator. Docs: [qrdx.dev/docs](https://qrdx.dev/docs) · CLI: [`@qrdx/cli`](https://www.npmjs.com/package/@qrdx/cli) · No-code: [image API](https://qrdx.dev/docs/developers/image-api) and [MCP server](https://qrdx.dev/docs/developers/mcp)
 
@@ -11,10 +11,11 @@ npm install qrdx
 # or: pnpm add qrdx / yarn add qrdx
 ```
 
-`react` and `react-dom` (18 or newer) are peer dependencies. PDF export also needs the optional `jspdf` peer:
+`react` and `react-dom` (18 or newer) are optional peer dependencies: the React components need them, and [`qrdx/vanilla` and `qrdx/core`](#without-react-qrdxvanilla-and-qrdxcore) don't. PDF export also needs the optional `jspdf` peer, and PNG export in Node (`getQRAsPNG`, imported from `qrdx/node`) needs one of the optional rasterizer peers (`@resvg/resvg-js` draws the SVG — logos included — the way browsers do; `sharp` also works):
 
 ```bash
 npm install jspdf
+npm install @resvg/resvg-js # or: npm install sharp
 ```
 
 ## Quick start
@@ -124,6 +125,204 @@ import { QRCodeCanvas } from "qrdx";
 />;
 ```
 
+## Without React (`qrdx/vanilla` and `qrdx/core`)
+
+The engine under the React components is also published without React. `qrdx/core` draws the same SVG as `QRCodeSVG`, byte for byte, and has every export, download, print and scan-score function the main entry has. `qrdx/vanilla` adds `createQRCode`, which draws a code into an element and keeps it up to date. Neither imports `react` or `react-dom`.
+
+### In a page
+
+```js
+import { createQRCode } from "qrdx/vanilla";
+
+const qr = createQRCode("#qr", {
+  value: "https://example.com",
+  size: 256,
+  bodyPattern: "rounded",
+  frame: { style: "banner-bottom", text: "Scan me" },
+  "aria-label": "QR code for example.com",
+});
+
+qr.update({ fgColor: "#1d4ed8" }); // merges, redraws only when the markup changes
+qr.toSVGString(); // the SVG markup
+await qr.toDataURL("png", { size: 1024 }); // "png", "jpg", "webp", "svg", "pdf" or "eps"
+await qr.download({ format: "svg", filename: "menu.svg" });
+qr.destroy(); // removes the <svg>
+```
+
+`createQRCode(element, options)` takes an element or a CSS selector, and every option `QRCodeSVG` takes. Attributes such as `className`, `style` or `aria-label` go on the `<svg>`. It builds the `<svg>` with `createElementNS`, so no HTML is parsed. `qr.svg` is the element and `qr.options` the current options; `update` merges new options in (pass `undefined` to drop one).
+
+### Without a bundler
+
+`dist/vanilla.browser.mjs` is the same API as one ES module, for a `<script type="module">` served from a CDN:
+
+```html
+<div id="qr"></div>
+<script type="module">
+  import { createQRCode } from "https://cdn.jsdelivr.net/npm/qrdx/dist/vanilla.browser.mjs";
+
+  createQRCode("#qr", { value: "https://example.com", size: 256 });
+</script>
+```
+
+Add `@` and a version after `qrdx` in the URL to pin one. The file leaves out the official frame library's data (`OFFICIAL_FRAMES`, `getOfficialFrame`, `OFFICIAL_FRAME_INDEX`); import those from `dist/frames-official.mjs` and `dist/frames-index.mjs` next to it. PDF export and the scan score load `jspdf` and `jsqr` when they run, so a page that uses them maps both with an import map:
+
+```html
+<script type="importmap">
+  {
+    "imports": {
+      "jspdf": "https://cdn.jsdelivr.net/npm/jspdf@4/+esm",
+      "jsqr": "https://cdn.jsdelivr.net/npm/jsqr@1/+esm"
+    }
+  }
+</script>
+```
+
+### Markup, DOM nodes and other frameworks
+
+```ts
+import {
+  createQRCodeTree,
+  renderToDOM,
+  renderToString,
+  resolveQRCodeProps,
+  toHyperscript,
+  toSVGString,
+} from "qrdx/core";
+
+toSVGString({ value: "https://example.com" }); // what <QRCodeSVG> renders, in Node or a browser
+const tree = createQRCodeTree({ value: "https://example.com" }); // plain { type, props, key } nodes
+renderToString(tree); // the same markup
+renderToDOM(tree); // a DocumentFragment
+// Another framework's elements (Vue's or Preact's h), with DOM attribute names
+toHyperscript(tree, (type, attributes, children, key) => h(type, { ...attributes, key }, children));
+toSVGString(resolveQRCodeProps({ value: "https://example.com", logo: "/logo.png" })); // what <QRCode> renders
+```
+
+`getQRAsSVGNode(props)` is `getQRAsSVG` without React (it resolves to a tree). [docs/adapters.md](./docs/adapters.md) describes how a framework wrapper should use the core.
+
+## Vue (`qrdx/vue`)
+
+`qrdx/vue` has Vue 3 versions of `QRCode` and `QRCodeSVG`, with the React components' props and the same SVG, and a `useQRCode` composable. `vue` 3.3 or newer is an optional peer dependency; TypeScript checks the components' props with Vue 3.4.20 or newer.
+
+```vue
+<script setup lang="ts">
+import { QRCode, useQRCode } from "qrdx/vue";
+import { ref } from "vue";
+
+const url = ref("https://example.com");
+const { download } = useQRCode(() => ({ value: url.value, size: 256 }));
+</script>
+
+<template>
+  <QRCode
+    :value="url"
+    :size="256"
+    body-pattern="rounded"
+    :frame="{ style: 'banner-bottom', text: 'Scan me' }"
+    class="qr"
+  />
+  <button type="button" @click="download({ format: 'svg' })">Download</button>
+</template>
+```
+
+- Write props in kebab-case or camelCase. A flag such as `auto-level` needs no value. `class`, `style`, `aria-label`, other attributes and listeners go on the `<svg>` (the frame's outer `<svg>` when there is a frame).
+- When a prop changes, Vue updates the `<svg>` in place.
+- Both components render on the server with `vue/server-renderer` and hydrate without a mismatch. In Nuxt they work in server-rendered pages and inside `<ClientOnly>`.
+- `useQRCode(props)` takes `QRCode`'s props as an object, a ref, a reactive object or a getter. It returns `svg` (the markup as a computed ref, which works in SSR too), `options`, `toDataURL(format, { size, quality })` and `download({ format, filename, size, quality })`.
+- Everything in `qrdx/core` is re-exported. Its `h`, for custom templates, is the core's, not Vue's.
+
+## Web component (`qrdx/element`)
+
+`<qrdx-code>` is a custom element on `qrdx/core`: the same SVG as `QRCodeSVG`, in plain HTML or any framework that renders DOM elements (tested in React 19 and Vue 3). It needs no framework.
+
+```html
+<!-- From a CDN, no bundler: registers <qrdx-code> -->
+<script type="module" src="https://cdn.jsdelivr.net/npm/qrdx/dist/element-define.browser.mjs"></script>
+
+<qrdx-code value="https://example.com" size="256" body-pattern="rounded" label="Link to example.com"></qrdx-code>
+```
+
+```js
+import "qrdx/element/define"; // with a bundler: registers <qrdx-code>
+// or pick the tag name: import { defineQRdxCode } from "qrdx/element"; defineQRdxCode("brand-qr");
+
+const qr = document.querySelector("qrdx-code");
+qr.fgColor = { type: "linear", angle: 45, stops: [{ color: "#1d4ed8", offset: 0 }, { color: "#0f172a", offset: 100 }] };
+qr.frame = { style: "banner-bottom", text: "Scan me" };
+qr.props = { margin: 2 }; // every option at once; attributes and named properties win over it
+
+qr.toSVGString(); // the SVG markup
+await qr.toDataURL("png", { size: 1024 }); // "png", "jpg", "webp", "svg", "pdf" or "eps"
+await qr.download({ format: "svg", filename: "menu.svg" });
+```
+
+- **Attributes:** `value`, `size`, `level`, `fg-color`, `bg-color`, `eye-color`, `dot-color`, `body-pattern`, `corner-eye-pattern`, `corner-eye-dot-pattern`, `margin`, `template-id`, `module-scale`, `auto-level`, `shape`, `label`, and `props` (any other option as JSON). Each is also a property with the option's name (`qr.bodyPattern`). Object options (`frame`, gradients, `imageSettings`, `eyeColors`, `art`, `customTemplate`, `customProps`) are properties only.
+- **Updates** are batched: however many changes you make in a row, the code is redrawn once, in a microtask, and only if its markup changed. Properties set before the element is defined are picked up when it is.
+- **Shadow DOM:** the code is drawn in an open shadow root, so page CSS can't restyle its paths by accident. Style it from outside with `qrdx-code::part(svg)`.
+- **Accessibility:** the `<svg>` has `role="img"` and an `aria-label` from `label`, or "QR code". It never falls back to the value, which can hold a Wi-Fi password or contact details.
+- **Errors:** a code that can't be drawn (a value too long for a QR code) fires a `qrdx-error` event, and is logged unless a listener calls `preventDefault()`.
+- **Server rendering:** `toQRdxCodeHTML(options, { label })` returns the element with the code already drawn in a declarative shadow root, so it shows before any script runs. It runs in Node.
+- **Types:** `QRdxCodeElement`, `HTMLElementTagNameMap["qrdx-code"]`, and `QRdxCodeJSXProps` for declaring the element in React's or Preact's JSX (the docs have the snippet).
+
+The full guide, with React and Vue setup: [qrdx.dev/docs/web-component](https://qrdx.dev/docs/web-component).
+
+## Preact and SolidJS (`qrdx/preact` and `qrdx/solid`)
+
+Both entries have the two SVG components, `QRCodeSVG` and `QRCode` (with the `logo` shortcut), with the same props as in React. They draw the same SVG, render on a server and hydrate without drawing the code again. `preact` (10 or later) and `solid-js` (1.8 or later, 1.x) are optional peer dependencies; neither entry imports React.
+
+```tsx
+// Preact: drawn with Preact's own h, no preact/compat
+import { QRCode, QRCodeSVG } from "qrdx/preact";
+
+<QRCodeSVG value="https://example.com" size={256} bodyPattern="rounded" class="qr" />;
+<QRCode value="https://example.com" logo="/logo.png" level="H" />;
+```
+
+```tsx
+// Solid: props are reactive like any Solid component's
+import { createSignal } from "solid-js";
+import { QRCodeSVG } from "qrdx/solid";
+
+const [color] = createSignal("#0f172a"); // change it and the code redraws
+<QRCodeSVG value="https://example.com" size={256} fgColor={color()} />;
+```
+
+- **Preact:** the components redraw when a prop changes and skip the work when none did. `preact-render-to-string` writes `toSVGString`'s markup (Preact leaves `>` and `'` unescaped in text), and `hydrate` keeps the server's `<svg>`.
+- **Solid:** the package has no Solid JSX, so no Solid compiler runs on it. In the browser a component returns the `<svg>` element itself, built with `createElementNS`; Solid swaps in a new one when a change alters the markup and removes it on unmount. `renderToString` from `solid-js/web` writes `toSVGString`'s markup plus a `data-hk` hydration key on the root, which `hydrate` uses to keep the server's `<svg>`.
+
+Downloads, the scan score and the other functions come from `qrdx/core`, the engine both entries already use. More at [qrdx.dev/docs/preact](https://qrdx.dev/docs/preact) and [qrdx.dev/docs/solid](https://qrdx.dev/docs/solid).
+
+## Angular (`qrdx/angular`)
+
+A standalone component, `<qrdx-qr-code>`, for Angular 20 and newer. It takes `QRCode`'s props as signal inputs (`value` is required) and draws the same SVG, on the server too: with `@angular/ssr` the server's HTML holds the code and hydrates without errors. `@angular/core` is an optional peer dependency.
+
+```ts
+import { Component } from "@angular/core";
+import { QRCode } from "qrdx/angular";
+
+@Component({
+  selector: "app-menu-code",
+  imports: [QRCode],
+  template: `
+    <qrdx-qr-code
+      #qr
+      value="https://example.com"
+      [size]="240"
+      bodyPattern="rounded"
+      [frame]="{ style: 'banner-bottom', text: 'Scan me' }"
+      [svgStyle]="{ maxWidth: '100%', height: 'auto' }"
+    />
+    <button type="button" (click)="qr.download({ format: 'svg' })">Download</button>
+  `,
+})
+export class MenuCode {}
+```
+
+- The code redraws when an input changes, and only when its markup does. `style` is `svgStyle` (styles for the `<svg>`); attributes on `<qrdx-qr-code>` stay on it.
+- `download(options)` and `toDataURL(format, options)` export the code as in `qrdx/vanilla`; `markup()`, `options()` and `svg` are the markup, the resolved props and the `<svg>` element.
+- Everything in `qrdx/core` is exported from `qrdx/angular` too.
+- It ships compiled in Angular's partial mode, like other Angular libraries, and the Angular CLI links it when it builds the app.
+
 ## Patterns
 
 See every option drawn live at [qrdx.dev/docs/styles](https://qrdx.dev/docs/styles).
@@ -217,6 +416,8 @@ const Framed: TemplateDefinition<{ label?: string }> = {
 <QRCodeSVG value="https://example.com" customTemplate={Framed} customProps={{ label: "Scan me" }} />;
 ```
 
+A wrapper gets React elements and returns them when a React component draws the code. With `qrdx/core` or `qrdx/vanilla` it gets the core's plain nodes instead, and a wrapper written with JSX still works as long as it uses no hooks. `h(type, props, ...children)` writes a wrapper without JSX that works in both; import it from the entry that draws the code (`qrdx` for the React components).
+
 ## Frames (call to action)
 
 `frame` draws a "Scan me" style frame around any code (`QRCode`, `QRCodeSVG`, `QRCodeCanvas`, `getQRAsSVG`, `getQRData` and the download helpers). The frame is added around the code, so the output grows; the modules and quiet zone are not touched.
@@ -240,11 +441,13 @@ const Framed: TemplateDefinition<{ label?: string }> = {
 
 Frames are plain shapes and text with opaque colors, so SVG, PNG, PDF and EPS match: the gradient border is drawn as fine solid color steps, and `circle` sets its letters as rotated text in every format.
 
+Each style is a built-in frame: a frame spec in `BUILT_IN_FRAMES` (with its `name` and `spec`; `BUILT_IN_FRAME_SPECS` has the specs by style), drawn exactly like a [custom frame](#custom-frames). The style names stay valid for good. `frameSpecOf(frame)` returns the spec a frame draws, and `getFrameColors(frame)` the frame, text and accent colors it paints with.
+
 The label uses a system font stack (nothing is fetched). `getFrameDimensions(size, frame)` returns the output size for a `size`-pixel code, and `frameSchema` (zod) validates frame options. To draw a frame of your own, see [Custom frames](#custom-frames).
 
 ## Custom frames
 
-A custom frame is data: a JSON **frame spec** with shapes, labels, theme colors and the place the code goes. Pass it as `frame: { style: "custom", spec }`. The engine turns it into the same plain shapes the built-in frames use, so SVG, canvas (PNG/JPG), PDF and EPS draw the same artwork. A spec holds no markup, URLs, scripts or images, so specs from other people are safe to store and render.
+A custom frame is data: a JSON **frame spec** with shapes, labels, theme colors and the place the code goes. Pass it as `frame: { style: "custom", spec }`. The built-in frames are specs too, and the engine draws every spec as the same plain shapes, so SVG, canvas (PNG/JPG), PDF and EPS draw the same artwork. A spec holds no markup, URLs, scripts or images, so specs from other people are safe to store and render.
 
 ```tsx
 import { QRCodeSVG, type FrameSpec } from "qrdx";
@@ -270,17 +473,17 @@ const spec: FrameSpec = {
 <QRCodeSVG value="WIFI:T:WPA;S:Guest;P:secret;;" frame={{ style: "custom", spec, color: "#1e3a8a" }} />;
 ```
 
-**Units and layout.** Coordinates are in artboard units; the spec is scaled so `qr.size` becomes the code's size. The engine always paints an opaque plate of the code's background (white when the background is transparent) under the code and `qr.padding` around it, so nothing in the spec can show in the quiet zone. Labels may not overlap the code or its padding.
+**Units and layout.** Coordinates are in artboard units; the spec is scaled so `qr.size` becomes the code's size. The engine paints an opaque plate of the code's background (white when the background is transparent) under the code and `qr.padding` around it, so nothing in the spec can show in the quiet zone. With `qr.plate: "background"`, a see-through background stays see-through and the plate is left out; that's allowed only when nothing but `background` fills, or a ring whose hole holds the plate, lies under the plate. A label may not overlap the code. A text label's row may reach into the padding as long as its capitals stay out of it at the largest `fontScale`.
 
 **Shapes** are painted behind the code, in order: `rect` (with `radius` and an optional `hole`), `circle` (with an optional `hole` radius, for rings), `ellipse`, `polygon`, `path` (SVG path data: `M L H V C S Q T A Z` and plain numbers only), `line` (a filled bar with `width`, `cap: "butt" | "round"` and an optional `dash: [dash, gap]`) and `icon` (a built-in glyph by id: <!-- catalogue:FRAME_ICONS -->`wifi`, `star`, `heart`, `phone`, `headphones`, `calendar`, `user`, `chat`, `bag`, `bell`, `cup`, `card`, `check`, `info`, `home`, `pin`, `share`, `download`, `clock`, `snowflake`, `pumpkin`, `tree`, `sparkle`, `gift`<!-- /catalogue -->).
 
-**Colors.** A fill is a theme token or a fixed `#rgb`/`#rrggbb` color. `frame` is the frame's `color` (else `colors.frame`), `text` is `textColor` (else `colors.text`, else the frame color), `accent` is `secondaryColor` (else `colors.accent`, else the frame color) and `background` is the code's background. `{ mix: [a, b], amount }` is an opaque tint, and `{ gradient: { from, to, direction, steps } }` draws a gradient as solid color steps, which EPS can print too. `bleed` names the color print bleed continues with when the artwork fills its edges.
+**Colors.** A fill is a theme token or a fixed `#rgb`/`#rrggbb` color. `frame` is the frame's `color` (else `colors.frame`), `text` is `textColor` (else `colors.text`, else the frame color), `accent` is `secondaryColor` (else `colors.accent`, else the frame color) and `background` is the code's background. `colors.text` may also be a mix of `frame`, `accent`, `background` and hex colors (`{ mix: ["frame", "accent"], amount: 0.5 }`). `{ mix: [a, b], amount }` is an opaque tint, and `{ gradient: { from, to, direction, steps } }` draws a gradient as solid color steps, which EPS can print too. `bleed` names the color print bleed continues with when the artwork fills its edges.
 
-**Labels.** A `text` label is fitted in its `box` (`align` start, middle or end; `weight` bold or regular; `fontSize` defaults to 52% of the box height and never exceeds 95% of it). A `curved` label sets its letters along a circle (`curve: { cx, cy, radius, side: "top" | "bottom", spread }`). `slot: "primary"` shows the frame's `text`, `"secondary"` its `secondaryText` (each falls back to the label's own `text`, and `""` hides it), and `"fixed"` always shows `text`. `fontScale` scales every label. Text is cleaned with `sanitizeFrameText` (no control, invisible or direction-override characters, at most 24 characters). PDF and EPS print labels in Helvetica, so use Latin-1 text there (`isLatin1Text`).
+**Labels.** A `text` label is fitted in its `box` (`align` start, middle or end; `weight` bold or regular; `fontSize` defaults to 52% of the box height and never exceeds 95% of it). A `curved` label sets its letters along a circle (`curve: { cx, cy, radius, side: "top" | "bottom", spread }`). `slot: "primary"` shows the frame's `text`, `"secondary"` its `secondaryText` (each falls back to the label's own `text`, and `""` hides it), and `"fixed"` always shows `text`. `fontScale` scales every label. `collapse: { y, height }` cuts a band out of the artwork when the label shows no text: rows below it move up, and shapes wholly inside it are left out. A band can't cross the code, its padding or another band. Text is cleaned with `sanitizeFrameText` (no control, invisible or direction-override characters, at most 24 characters). PDF and EPS print labels in Helvetica, so use Latin-1 text there (`isLatin1Text`).
 
 **Validation.** `frameSpecSchema` (zod) checks every field and the hard limits in `FRAME_SPEC_LIMITS`: artboard sides of 50 to 2000 units, at most 3 decimals per number, 64 shapes, 8 labels, 256 points per polygon, 16,000 characters per path, 2,000 segments in all, 32 KB of JSON, a code at least half the artboard's shorter side and padding of at least 4% of the code. `getFrameSpecIssues(spec)` lists problems as text. Drawing an invalid spec throws a `FrameSpecError` instead of leaving the frame out.
 
-**Official frames.** `OFFICIAL_FRAMES` is QRdx's frame library: call-to-action styles (tabs, ribbons, speech bubbles, tickets, stamps, badges, phones, arrows and more), holidays and seasons from around the world, and frames for restaurants and cafes, shops and packaging, events and weddings, hotels, travel and homes, health, fitness and learning, and business and social. Each has an `id`, `name`, `description`, `collection`, an `occasion` when it is seasonal (such as `"diwali"` or `"summer"`), suggested `contentTypes` and `tags`, and is released under CC0 1.0. `getOfficialFrame(id)` returns one. `OFFICIAL_FRAME_COLLECTIONS` lists the groups in picker order, and `OFFICIAL_FRAME_COUNT` and `OFFICIAL_FRAME_COUNTS` count them. `OFFICIAL_FRAME_INDEX` lists every frame without its spec (id, name, collection, occasion, tags, the artboard's width-to-height `ratio` and `frameSpecHash(spec)`, which tells an unchanged copy of a frame apart from an edited one), so a picker can search and lay out the whole library before loading any spec. Ids never change. `BUILT_IN_FRAME_SPECS` has `banner-bottom`, `rounded-border`, `circle` and `ticket` written as specs, as starting points.
+**Official frames.** `OFFICIAL_FRAMES` is QRdx's frame library: call-to-action styles (tabs, ribbons, speech bubbles, tickets, stamps, badges, phones, arrows and more), holidays and seasons from around the world, and frames for restaurants and cafes, shops and packaging, beauty and wellness, events and weddings, hotels and travel, real estate, cars and parking, health and learning, sports and fitness, business and social, and nonprofits and community groups. Each has an `id`, `name`, `description`, `collection`, an `occasion` when it is seasonal (such as `"diwali"` or `"summer"`), suggested `contentTypes` and `tags`, and is released under CC0 1.0. `getOfficialFrame(id)` returns one. `OFFICIAL_FRAME_COLLECTIONS` lists the groups in picker order, and `OFFICIAL_FRAME_COUNT` and `OFFICIAL_FRAME_COUNTS` count them. `OFFICIAL_FRAME_INDEX` lists every frame without its spec (id, name, collection, occasion, tags, the artboard's width-to-height `ratio` and `frameSpecHash(spec)`, which tells an unchanged copy of a frame apart from an edited one), so a picker can search and lay out the whole library before loading any spec. Ids never change. Every built-in frame's spec (`BUILT_IN_FRAMES`, `BUILT_IN_FRAME_SPECS`) is a starting point too.
 
 ```ts
 import { getOfficialFrame } from "qrdx";
@@ -352,6 +555,7 @@ const props = { value: "https://example.com", bodyPattern: "rounded" as const };
 await downloadQRCode(props, { format: "png", size: PRESET_SIZES.large }); // png | jpg | webp | svg | pdf | eps
 await downloadQRCode(props, { format: "webp", size: PRESET_SIZES.large }); // lossless WebP
 const webp = await getQRAsWebP({ ...props, size: 1024 }); // a Blob; { quality: 0.9 } makes it lossy
+const png = await getQRAsPNG({ ...props, size: 1024 }); // PNG bytes, plain Node — import from "qrdx/node"
 await downloadQRCode(props, { format: "pdf", size: { width: 1200, height: 1200 }, filename: "qr.pdf" });
 const dataUrl = await getQRCodeDataUrl(props, "svg", { width: 512, height: 512 });
 await copyQRCodeToClipboard(props, { width: 512, height: 512 }); // PNG to the clipboard
@@ -359,6 +563,16 @@ const svgMarkup = await getSVGString(props);
 ```
 
 Sizes must be square and between 50 and 5000 pixels (`validateSize`); with a frame the file is larger by the frame. For `eps`, `size.width` is in PostScript points (72 per inch). When `props.size` is set, a logo laid out for that size is scaled with the export (`withQRSize`). PDF export loads `jspdf` on demand and throws a clear error if it is not installed; EPS needs no extra package.
+
+**PNG on a server.** `getQRAsPNG(props, { size })` returns PNG bytes and runs in plain Node without a DOM (handy where the browser helpers can't go). It lives behind its own subpath, so the browser bundle never sees the rasterizer:
+
+```js
+import { getQRAsPNG } from "qrdx/node";
+```
+
+It rasterizes the SVG the library renders with an optional peer dependency loaded only when the function is called: `@resvg/resvg-js` (recommended — it draws embedded logos the way browsers do, supporting PNG, JPEG, GIF, WebP and SVG images) or `sharp` (whose SVG renderer skips embedded images, so the logo is composited onto the pixels). Installing `qrdx` alone never pulls in a native module.
+
+Logos are conservative by default, since a library function that runs on servers shouldn't fetch or read on a caller's behalf: a `src` that is a **data URL** is always used, while **http(s) URLs and local paths are only loaded with `loadExternalLogos: true`** (fetches are capped at 1 MB and refuse redirects). A logo that isn't loaded or can't be is left out, like in the browser. Frame label text needs a font on the machine. The CLI passes `loadExternalLogos: true` for its PNG and WebP output, since the person running it picked the source.
 
 WebP is lossless by default, so module edges stay exact, and a transparent background stays transparent. `quality` (0 to 1, in `downloadQRCode` options or `getQRAsWebP`) asks for a smaller lossy file instead. The browser's canvas encodes it where it can; where it can't (Safari hands back a PNG for `image/webp`), QRdx encodes the pixels itself with a small built-in lossless encoder, so a `.webp` file is always WebP. `canvasToWebP(canvas)` does the same for any canvas, and `encodeWebPLossless(rgba, width, height)` encodes raw RGBA pixels without a DOM. Lower-level helpers: `getQRAsSVGDataUri(props)` and `getQRAsCanvas(props, mimeType, returnCanvas?)`.
 

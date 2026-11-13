@@ -1,6 +1,6 @@
 ---
 title: "ライブラリAPIリファレンス"
-description: "qrdx Reactライブラリがエクスポートするすべてのコンポーネント、関数、型を紹介します。HTTPエンドポイントについては、REST APIをご覧ください。"
+description: "qrdx React ライブラリがエクスポートするすべてのコンポーネント、関数、型を紹介します。HTTPエンドポイントについては、REST APIをご覧ください。"
 icon: Code
 ---
 
@@ -12,7 +12,7 @@ icon: Code
 
 ### QRCode [#qrcode]
 
-QRコードを描画するメインコンポーネントです。
+QRコードを描画するメインのコンポーネントです。
 
 ```tsx
 import { QRCode } from 'qrdx';
@@ -25,35 +25,35 @@ import { QRCode } from 'qrdx';
 />
 ```
 
-#### Props [#props]
+#### プロパティ [#props]
 
-| Prop | 型 | デフォルト | 説明 |
+| プロパティ | 型 | デフォルト | 説明 |
 |------|------|---------|-------------|
 | `value` | `string` | **必須** | エンコードするURLまたはテキスト |
-| `size` | `number` | `128` | ピクセル単位のサイズ |
+| `size` | `number` | `128` | サイズ（ピクセル） |
 | `scale` | `number` | `1` | 拡大率 |
 | `fgColor` | `ColorConfig` | `#000000` | QRコードの色 |
 | `bgColor` | `ColorConfig` | `#ffffff` | 背景色 |
-| `eyeColor` | `ColorConfig` | `fgColor` | 角のマーカーの色 |
-| `dotColor` | `ColorConfig` | `fgColor` | 各コーナーアイの内側にあるドットの色 |
+| `eyeColor` | `ColorConfig` | `fgColor` | コーナーマーカーの色 |
+| `dotColor` | `ColorConfig` | `fgColor` | 各コーナーアイの内側のドットの色 |
 | `bodyPattern` | `BodyPattern` | `'circle'` | データドットのパターン |
-| `cornerEyePattern` | `CornerEyePattern` | `'gear'` | 角のマーカーのパターン |
-| `cornerEyeDotPattern` | `CornerEyeDotPattern` | `'circle'` | 角のドットのパターン |
-| `hideLogo` | `boolean` | `false` | ロゴを非表示にします。`logo` を設定しない限りロゴは描画されません |
+| `cornerEyePattern` | `CornerEyePattern` | `'gear'` | コーナーマーカーのパターン |
+| `cornerEyeDotPattern` | `CornerEyeDotPattern` | `'circle'` | コーナードットのパターン |
+| `hideLogo` | `boolean` | `false` | ロゴを非表示にします。`logo` を設定しない限り、ロゴは描画されません |
 | `logo` | `string` | — | ロゴのURL |
 | `templateId` | `string` | `'default'` | テンプレートID |
 | `customTemplate` | `TemplateDefinition` | — | カスタムテンプレート |
-| `level` | `ErrorLevel` | `'Q'` | 誤り訂正レベル |
-| `autoLevel` | `boolean` | `false` | ロゴがコードの7%を超えて覆う場合に、`level` をHに引き上げます（`AUTO_LEVEL_LOGO_COVERAGE`） |
-| `margin` | `number` | `0` | モジュール単位の余白 |
+| `level` | `ErrorLevel` | `'Q'` | 誤り訂正 |
+| `autoLevel` | `boolean` | `false` | ロゴがコードの7%を超えて覆う場合、`level` をHに引き上げます（`AUTO_LEVEL_LOGO_COVERAGE`） |
+| `margin` | `number` | `0` | 余白（モジュール単位） |
 | `imageSettings` | `ImageSettings` | — | ロゴの設定 |
 | `eyeColors` | `EyeColors` | — | `topLeft`、`topRight`、`bottomLeft` ごとの `outer` / `inner` の色。それぞれ `eyeColor` / `dotColor` より優先されます |
 | `moduleScale` | `number` | `1` | データモジュールのサイズ（0.5〜1）。各パターンは、スキャンできる最小のサイズで止まります（`MODULE_SCALE_FLOOR`） |
-| `frame` | `QRFrame` | — | 行動を促すフレーム。[フレームと印刷](/docs/features/frames)を参照してください |
-| `art` | `QRArt` | — | ロゴや写真をモジュールに溶け込ませます（Logo QR、Image QR）。[アートQR](/docs/features/art-qr)を参照してください |
-| `frameLabelMarkers` | `boolean` | `false` | エディター向け：各フレームラベルの `<text>` に `data-qrdx-frame-label`（`"text"`、`"secondaryText"`、またはスペックラベルのID）を付けます。ダウンロードやエクスポートには含まれません |
+| `frame` | `QRFrame` | — | 行動喚起フレーム。[フレームと印刷](/docs/features/frames)をご覧ください |
+| `art` | `QRArt` | — | ロゴや写真をモジュールに溶け込ませます（Logo QR、Image QR）。[Art QR](/docs/features/art-qr)をご覧ください |
+| `frameLabelMarkers` | `boolean` | `false` | エディター向け：各フレームラベルの `<text>` に `data-qrdx-frame-label`（`"text"`、`"secondaryText"`、または仕様ラベルのID）を付けます。ダウンロードやエクスポートには含まれません |
 
-{facts.bodyPatterns} 種類のボディパターン、{facts.eyeShapes} 種類のアイ、{facts.eyeCentres} 種類のアイ中心、{facts.frameStyles} 種類のフレームスタイルは、すべて[図形・アイ・フレーム](/docs/styles)で実際の表示を確認できます。
+{facts.bodyPatterns} 種類のボディパターン、{facts.eyeShapes} 種類のアイ、{facts.eyeCentres} 種類のアイ中心、{facts.frameStyles} 種類の組み込みフレームは、[図形、アイ、フレーム](/docs/styles)でライブ表示されます。
 
 ### QRCodeCanvas [#qrcodecanvas]
 
@@ -115,7 +115,7 @@ getQRCodeDataUrl(
 
 ### getQRAsWebP [#getqraswebp]
 
-コードをWebPの `Blob` として返します。`quality` を指定しない限りロスレスです。ブラウザーがWebPをエンコードできない場合（Safari）は、qrdx内蔵のロスレスエンコーダーが生成します。`canvasToWebP(canvas, options)` は任意のcanvasに対して同じ処理を行い、`encodeWebPLossless(rgba, width, height)` はDOMなしでRGBAピクセルをエンコードします。
+QRコードをWebPの `Blob` として返します。`quality` を設定しない限りロスレスです。ブラウザーがWebPをエンコードできない場合（Safari）は、qrdx組み込みのロスレスエンコーダーが生成します。`canvasToWebP(canvas, options)` は任意のcanvasに対して同じ処理を行い、`encodeWebPLossless(rgba, width, height)` はDOMなしでRGBAピクセルをエンコードします。
 
 ```tsx
 getQRAsWebP(
@@ -145,18 +145,19 @@ getSVGString(qrProps: QRProps): Promise<string>
 
 ## 印刷とスキャンの関数 [#print-and-scan-functions]
 
-これらの関数は、各機能ページで例とともに説明しています。
+これらの関数は、各機能のページで例とともに説明しています。
 
 | 関数 | 機能 | ドキュメント |
 |----------|--------------|------|
-| `getQRAsSVG(props)` | フレームを含む、コードのSVGマークアップ | [フレーム](/docs/features/frames) |
-| `getQRAsPrintPDF`、`downloadPrintPDF` | 裁ち落とし、トンボ、CMYKに対応した、正確な物理サイズのベクターPDF（`jspdf` が必要） | [印刷用エクスポート](/docs/features/frames#print-ready-export) |
+| `getQRAsSVG(props)` | フレームを含むコードのSVGマークアップ | [フレーム](/docs/features/frames) |
+| `getQRAsPrintPDF`, `downloadPrintPDF` | 正確な物理サイズのベクターPDF。裁ち落とし、トンボ、CMYKに対応（`jspdf` が必要） | [印刷用エクスポート](/docs/features/frames#print-ready-export) |
 | `downloadPrintSVG` | 正確な物理サイズの印刷用SVG | [印刷用エクスポート](/docs/features/frames#print-ready-export) |
-| `getQRAsEPS`、`downloadPrintEPS` | 印刷所やデザインツール向けのベクターEPS | [ダウンロード](/docs/features/downloads) |
-| `getScanScore(props)` | デザインがどれだけ確実にスキャンできるかを推定します | [スキャンできる？](/docs/features/frames#will-it-scan) |
-| `getImageScanScore(image)` | 手元にあるQRコード画像をスコア化します（ブラウザーのみ） | [スキャンできる？](/docs/features/frames#will-it-scan) |
-| `scanQRPixels(pixels, expected)` | 生のRGBAピクセルが `expected` にデコードされるかを、ぼかして縮小した場合も含めて確認します。Nodeで動作します | — |
-| `getStylePairRisk(...)` | 一部のスキャナーが読み取れない、アイとパターンの組み合わせを警告します | [パターン](/docs/features/patterns) |
+| `getQRAsEPS`, `downloadPrintEPS` | 印刷会社やデザインツール向けのベクターEPS | [ダウンロード](/docs/features/downloads) |
+| `getScanScore(props)` | デザインがどの程度確実にスキャンできるかを推定します | [スキャンできる？](/docs/features/frames#will-it-scan) |
+| `getImageScanScore(image)` | 手元にあるQRコード画像を採点します（ブラウザーのみ） | [スキャンできる？](/docs/features/frames#will-it-scan) |
+| `getQRAsPNG(props, { size })` | DOMなしの通常のNodeでPNGのバイト列を取得します。`qrdx/node` からインポートします。`@resvg/resvg-js` または `sharp` のインストールが必要です | — |
+| `scanQRPixels(pixels, expected)` | 生のRGBAピクセルが `expected` にデコードされることを確認します。ぼかしや縮小をした場合も確認します。Nodeで動作します | — |
+| `getStylePairRisk(...)` | 一部のスキャナーが読み取れないアイとパターンの組み合わせを警告します | [パターン](/docs/features/patterns) |
 
 ## 検出関数 [#detection-functions]
 
@@ -222,7 +223,7 @@ getLuminance(r: number, g: number, b: number): number
 hexToRgb(hex: string): { r: number; g: number; b: number }
 ```
 
-### バリデーション [#validation]
+### 検証 [#validation]
 
 ```tsx
 validateSize(width: number, height: number): {
@@ -267,6 +268,8 @@ type ErrorLevel = 'L' | 'M' | 'Q' | 'H';
 ```tsx
 // The arrays BODY_PATTERN, CORNER_EYE_PATTERNS, CORNER_EYE_DOT_PATTERNS and
 // FRAME_STYLES (and their zod schemas) are exported from 'qrdx/types'.
+// FRAME_STYLES names the built-in frames; each is a frame spec in
+// BUILT_IN_FRAMES (from 'qrdx').
 
 type BodyPattern =
   | 'circle' | 'circle-large' | 'square' | 'diamond' | 'circle-mixed'
@@ -296,7 +299,7 @@ type EyeColors = {
 };
 
 type QRFrame = {
-  style: FrameStyle; // "none" or a frame, see FRAME_STYLES
+  style: FrameStyle; // "none" or a built-in frame, see FRAME_STYLES
   text?: string; // up to 24 characters, default "Scan me"
   color?: string;
   textColor?: string;
@@ -381,7 +384,7 @@ const ERROR_LEVELS = {
 
 ## エラー処理 [#error-handling]
 
-非同期関数はtry-catchで囲んでください。
+非同期関数は try-catch で囲んでください。
 
 ```tsx
 try {
@@ -395,16 +398,16 @@ try {
 - 無効な画像URL
 - ネットワーク障害
 - 無効なサイズパラメーター
-- Canvasコンテキストを利用できない
+- Canvasコンテキストが利用できない
 
-## ブラウザー対応 [#browser-support]
+## ブラウザーのサポート [#browser-support]
 
 - Chrome 90+
 - Firefox 88+
 - Safari 14+
 - Edge 90+
 
-## サーバー対応 [#server-support]
+## サーバーのサポート [#server-support]
 
 Node.js環境で動作します。
 - Next.js

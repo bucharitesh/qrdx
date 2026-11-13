@@ -1,0 +1,115 @@
+{
+  "id": "yard-sign-coming-soon",
+  "name": "Yard sign, coming soon",
+  "description": "A yard sign hanging from the arm of a post and a house.",
+  "category": "use-case",
+  "collection": "real-estate",
+  "contentTypes": ["url"],
+  "tags": ["real estate", "property", "coming soon", "yard sign"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1500,
+      "height": 1970
+    },
+    "qr": {
+      "x": 365,
+      "y": 570,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 40,
+        "y": 0,
+        "width": 70,
+        "height": 1970,
+        "radius": 8,
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.25
+        }
+      },
+      {
+        "type": "rect",
+        "x": 40,
+        "y": 30,
+        "width": 1460,
+        "height": 70,
+        "radius": 12,
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.25
+        }
+      },
+      {
+        "type": "rect",
+        "x": 402,
+        "y": 96,
+        "width": 16,
+        "height": 100,
+        "radius": 6,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.45
+        }
+      },
+      {
+        "type": "rect",
+        "x": 1312,
+        "y": 96,
+        "width": 16,
+        "height": 100,
+        "radius": 6,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.45
+        }
+      },
+      {
+        "type": "rect",
+        "x": 230,
+        "y": 190,
+        "width": 1270,
+        "height": 1740,
+        "radius": 28,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M865 308.6L943.2 376.6L926.2 376.6L926.2 451.4L803.8 451.4L803.8 376.6L786.8 376.6ZM854.8 400.4A3.4 3.4 0 0 0 851.4 403.8L851.4 448A3.4 3.4 0 0 0 854.8 451.4L875.2 451.4A3.4 3.4 0 0 0 878.6 448L878.6 403.8A3.4 3.4 0 0 0 875.2 400.4ZM888.8 318.8L905.8 318.8L905.8 352.8L888.8 352.8Z",
+        "fill": "text",
+        "fillRule": "evenodd"
+      },
+      {
+        "type": "path",
+        "d": "M820.8 390.2L837.8 390.2A3.4 3.4 0 0 1 841.2 393.6L841.2 410.6A3.4 3.4 0 0 1 837.8 414L820.8 414A3.4 3.4 0 0 1 817.4 410.6L817.4 393.6A3.4 3.4 0 0 1 820.8 390.2Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Get early access",
+        "color": "text",
+        "box": {
+          "x": 300,
+          "y": 1700,
+          "width": 1130,
+          "height": 180
+        }
+      }
+    ]
+  }
+}

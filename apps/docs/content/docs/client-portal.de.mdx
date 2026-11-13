@@ -1,0 +1,45 @@
+---
+title: "Kundenportal"
+description: "Gib Kunden Lesezugriff auf die Ordner, die du auswählst – mit dem Namen und Logo deiner Agentur statt dem von QRdx."
+icon: Briefcase
+---
+
+Das Kundenportal ist für Agenturen gedacht, die QR-Codes für ihre Kunden betreiben. Du lädst einen Kunden per E-Mail ein und wählst die Ordner aus, die er sehen darf. Er meldet sich im Portal deines Workspace an und findet dort die Codes aus diesen Ordnern, jeweils mit ihrer Scan-Analyse und, bei gehosteten Seiten, einem Link zur Seite. Alles dort ist schreibgeschützt.
+
+Das Portal gehört zu Business. Kunden sind keine Mitglieder deines Workspace und belegen keinen Platz.
+
+## Einrichten [#set-it-up]
+
+Öffne [Einstellungen → Kundenportal](/dashboard?to=settings/clients). Inhaber und Admins verwalten es.
+
+1. Gib unter **Branding** den Namen ein, den Kunden sehen, füge ein Logo hinzu und wähle eine Akzentfarbe. Leere Felder verwenden den Namen und das Logo des Workspace.
+2. Lege die Codes jedes Kunden in [Codes](/dashboard?to=codes) in einem eigenen Ordner ab.
+3. Gib unter **Kunden** die E-Mail-Adresse des Kunden ein, hake seine Ordner an und klicke auf **Kunde einladen**.
+
+QRdx schickt dem Kunden in deinem Portalnamen eine E-Mail mit einem Link zum Portal. Wenn auf dem Server, den du nutzt, kein E-Mail-Versand eingerichtet ist, kopiere die Adresse unter **Portal-Adresse** und schicke sie selbst.
+
+Nur die Ordner, die du anhakst, werden geteilt. Ein Unterordner wird nur geteilt, wenn du ihn ebenfalls anhakst.
+
+## Was Kunden sehen [#what-clients-see]
+
+Das Portal befindet sich unter `https://qrdx.dev/portal/<your workspace's URL name>`. Kunden melden sich dort mit einem Einmalcode an, der an die eingeladene Adresse gesendet wird. Die E-Mail mit dem Code kommt von QRdx. Beim ersten Mal erhalten sie mit der Anmeldung außerdem ein eigenes kostenloses QRdx-Konto, das sie nicht nutzen müssen.
+
+Nach der Anmeldung sehen sie:
+
+- jeden geteilten Ordner mit seinen Codes, den Scan-Summen und dem letzten Scan
+- für jeden Code die Scans im Zeitverlauf, eindeutige Besucher, QR-Scans und NFC-Taps, Top-Länder, Geräte und Referrer-Seiten für die letzten 7, 30 oder 90 Tage
+- bei Codes, die eine gehostete Seite öffnen, eine Schaltfläche zum Öffnen der Seite (das Öffnen dort zählt nicht als Scan)
+
+Sie sehen keine anderen Ordner, keine Codes im Papierkorb, keine vollständige Adresse eines Ziels, keine Städte, keine genauen Standorte, keine Mitglieder, keine Einstellungen und keine Abrechnung. Das Portal zeigt deinen Namen, dein Logo und deine Farbe und kein QRdx-Zeichen.
+
+Wer sich mit einer Adresse anmeldet, die du nicht eingeladen hast, sieht den Hinweis, dass er keinen Zugriff hat. Eine Einladung gehört zu dem Konto, das sich als Erstes damit anmeldet. Sie funktioniert also weiter, wenn der Kunde später seine E-Mail-Adresse ändert.
+
+## Zugriff ändern oder entfernen [#change-or-remove-access]
+
+Unter **Kunden** ändert **Ordner**, was ein Kunde sieht, und **Entfernen** nimmt ihm den Zugriff. Beides gilt ab dem nächsten Laden der Seite. Wenn du eine Adresse erneut einlädst, werden ihre Ordner aktualisiert und der Link wird noch einmal gesendet.
+
+Wenn der Workspace Business verlässt, lässt sich das Portal nicht mehr öffnen, bis er wieder auf Business ist. Kunden entfernen kannst du in der Zwischenzeit weiterhin.
+
+## Warum das Portal unter der Adresse von QRdx bleibt [#why-the-portal-stays-on-qrdxs-address]
+
+Kunden bleiben mit einem Cookie für die eigene Website von QRdx angemeldet. Würden angemeldete Seiten auf deiner Domain ausgeliefert, läge dieses Anmelde-Cookie auf einer Domain, deren DNS du kontrollierst, außerhalb von QRdx. Deshalb liegt das Portal unter der Adresse von QRdx und zeigt dort dein Branding. Geteilte [Kundenberichte](/docs/client-reports) brauchen keine Anmeldung, daher kann Business diese auf deiner eigenen Domain ausliefern.

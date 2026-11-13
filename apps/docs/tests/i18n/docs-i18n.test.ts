@@ -13,7 +13,10 @@ import {
   translationLocale,
 } from "@/lib/i18n/docs";
 import { localizedMeta, localizedPages } from "@/lib/i18n/docs-meta";
-import { segmenterTokenizer } from "@/lib/i18n/docs-search";
+import {
+  docsSearchLanguages,
+  segmenterTokenizer,
+} from "@/lib/i18n/docs-search";
 import {
   docsLanguageAlternates,
   docsPageSeo,
@@ -40,13 +43,27 @@ const ES_REVIEWED: ReviewTable = { ...MACHINE, es: "reviewed" };
 const ONE_PAGE: ReviewTable = { ...MACHINE, ja: ["/docs/help"] };
 
 describe("docs languages", () => {
-  it("are English and the four owner-picked languages", () => {
-    expect(DOCS_LOCALES).toEqual(["en", "es", "pt-BR", "ja", "zh-Hans"]);
+  it("are English and every site language", () => {
+    expect(DOCS_LOCALES).toEqual([
+      "en",
+      "es",
+      "pt-BR",
+      "fr",
+      "de",
+      "it",
+      "ja",
+      "ko",
+      "zh-Hans",
+      "id",
+      "hi",
+    ]);
     expect(docsLocaleFromSegment("pt-br")).toBe("pt-BR");
     expect(docsLocaleFromSegment("zh-hans")).toBe("zh-Hans");
-    // A site language without docs, and something that isn't a language.
-    expect(docsLocaleFromSegment("fr")).toBeUndefined();
+    expect(docsLocaleFromSegment("fr")).toBe("fr");
+    expect(docsLocaleFromSegment("hi")).toBe("hi");
+    // Something that isn't a language.
     expect(docsLocaleFromSegment("docs")).toBeUndefined();
+    expect(docsLocaleFromSegment("xx")).toBeUndefined();
   });
 
   it("have URLs under their segment; English keeps /docs", () => {
@@ -57,7 +74,8 @@ describe("docs languages", () => {
     expect(englishDocsPath("/zh-hans/docs/help")).toBe("/docs/help");
     expect(englishDocsPath("/es/docs")).toBe("/docs");
     expect(englishDocsPath("/docs/help")).toBe("/docs/help");
-    expect(englishDocsPath("/fr/docs/help")).toBe("/fr/docs/help");
+    expect(englishDocsPath("/ko/docs/help")).toBe("/docs/help");
+    expect(englishDocsPath("/xx/docs/help")).toBe("/xx/docs/help");
   });
 
   it("name translation files after the English one", () => {
@@ -67,8 +85,9 @@ describe("docs languages", () => {
     );
     expect(translationLocale("help/index.zh-Hans.mdx")).toBe("zh-Hans");
     expect(translationLocale("help/index.mdx")).toBeUndefined();
+    expect(translationLocale("help/meta.id.json")).toBe("id");
     // Not a docs language: not a translation file.
-    expect(translationLocale("help/index.fr.mdx")).toBeUndefined();
+    expect(translationLocale("help/index.xx.mdx")).toBeUndefined();
     expect(englishFile("a/b.es.mdx")).toBe("a/b.mdx");
   });
 
@@ -81,7 +100,7 @@ describe("docs languages", () => {
     expect(pattern.test("developers/mcp.md")).toBe(false);
     expect(pattern.test("developers/mcp.mdx")).toBe(false);
     expect(docsMarkdownRewrites()[2]).toEqual({
-      source: "/:lang(es|pt-br|ja|zh-hans)/docs/:path*.md",
+      source: "/:lang(es|pt-br|fr|de|it|ja|ko|zh-hans|id|hi)/docs/:path*.md",
       destination: "/docs-md/:lang/:path*",
     });
   });
@@ -174,6 +193,23 @@ describe("docs search-engine rules", () => {
 });
 
 describe("docs search tokenizers", () => {
+  it("cover every docs language", () => {
+    expect(Object.keys(docsSearchLanguages()).sort()).toEqual(
+      [...DOCS_LOCALES].sort(),
+    );
+  });
+
+  it("split Korean on spaces and keep Hangul words whole", () => {
+    const ko = segmenterTokenizer("ko");
+    expect(ko.tokenize("동적 QR 코드의 링크 변경")).toEqual([
+      "동적",
+      "qr",
+      "코드의",
+      "링크",
+      "변경",
+    ]);
+  });
+
   it("split Japanese into words, whatever the width of Latin letters", () => {
     const ja = segmenterTokenizer("ja");
     const words = ja.tokenize("動的ＱＲコードのリンクを変更する");

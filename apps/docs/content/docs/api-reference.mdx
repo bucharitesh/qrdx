@@ -53,7 +53,7 @@ import { QRCode } from 'qrdx';
 | `art` | `QRArt` | — | Blend a logo or photo into the modules (Logo QR, Image QR); see [Art QR](/docs/features/art-qr) |
 | `frameLabelMarkers` | `boolean` | `false` | For editors: marks each frame label `<text>` with `data-qrdx-frame-label` (`"text"`, `"secondaryText"` or a spec label's id). Downloads and exports never include it |
 
-All {facts.bodyPatterns} body patterns, {facts.eyeShapes} eyes, {facts.eyeCentres} eye centers and {facts.frameStyles} frame styles are shown live in [Shapes, eyes and frames](/docs/styles).
+All {facts.bodyPatterns} body patterns, {facts.eyeShapes} eyes, {facts.eyeCentres} eye centers and {facts.frameStyles} built-in frames are shown live in [Shapes, eyes and frames](/docs/styles).
 
 ### QRCodeCanvas
 
@@ -155,6 +155,7 @@ These are documented with examples on their feature pages.
 | `getQRAsEPS`, `downloadPrintEPS` | Vector EPS for print shops and design tools | [Downloads](/docs/features/downloads) |
 | `getScanScore(props)` | Estimates how reliably a design scans | [Will it scan?](/docs/features/frames#will-it-scan) |
 | `getImageScanScore(image)` | Scores a QR code image you already have (browser only) | [Will it scan?](/docs/features/frames#will-it-scan) |
+| `getQRAsPNG(props, { size })` | PNG bytes in plain Node, no DOM. Import it from `qrdx/node`; it needs `@resvg/resvg-js` or `sharp` installed | — |
 | `scanQRPixels(pixels, expected)` | Checks that raw RGBA pixels decode to `expected`, also when blurred and shrunk; runs in Node | — |
 | `getStylePairRisk(...)` | Warns about eye and pattern pairs some scanners miss | [Patterns](/docs/features/patterns) |
 
@@ -267,6 +268,8 @@ type ErrorLevel = 'L' | 'M' | 'Q' | 'H';
 ```tsx
 // The arrays BODY_PATTERN, CORNER_EYE_PATTERNS, CORNER_EYE_DOT_PATTERNS and
 // FRAME_STYLES (and their zod schemas) are exported from 'qrdx/types'.
+// FRAME_STYLES names the built-in frames; each is a frame spec in
+// BUILT_IN_FRAMES (from 'qrdx').
 
 type BodyPattern =
   | 'circle' | 'circle-large' | 'square' | 'diamond' | 'circle-mixed'
@@ -296,7 +299,7 @@ type EyeColors = {
 };
 
 type QRFrame = {
-  style: FrameStyle; // "none" or a frame, see FRAME_STYLES
+  style: FrameStyle; // "none" or a built-in frame, see FRAME_STYLES
   text?: string; // up to 24 characters, default "Scan me"
   color?: string;
   textColor?: string;

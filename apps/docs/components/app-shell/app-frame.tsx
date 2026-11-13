@@ -44,9 +44,22 @@ export function AppFrame({
   }, []);
 
   return (
-    <div className="flex min-h-svh flex-col">
+    // From md up the frame is exactly the screen: the top bar and sidebar stay
+    // put and only the page scrolls, inside <main>. Phones scroll the window
+    // (the sidebar is a sheet there).
+    // --app-sidebar-width: what the sidebar takes from md up, so fixed layers
+    // over the page (the lists' selection bar) centre on the page beside it.
+    <div
+      className={cn(
+        "flex min-h-svh flex-col md:h-svh md:overflow-hidden",
+        // The aside's w-14 and w-60, on the same spacing scale.
+        collapsed
+          ? "md:[--app-sidebar-width:--spacing(14)]"
+          : "md:[--app-sidebar-width:--spacing(60)]",
+      )}
+    >
       <AppTopBar limitWarnings={limitWarnings} shell={shell} />
-      <div className="flex flex-1">
+      <div className="flex flex-1 md:min-h-0">
         <aside
           className={cn(
             "bg-sidebar border-sidebar-border hidden shrink-0 border-r transition-[width] duration-200 ease-out motion-reduce:transition-none md:block",
@@ -54,8 +67,8 @@ export function AppFrame({
           )}
           data-state={collapsed ? "collapsed" : "expanded"}
         >
-          {/* Fills the screen under the top bar and stays while the page scrolls. */}
-          <div className="sticky top-0 h-[calc(100svh-3rem)]">
+          {/* Full height under the top bar; its links scroll inside it. */}
+          <div className="h-full">
             <AppSidebar
               collapsed={collapsed}
               limitWarnings={limitWarnings}
@@ -64,7 +77,21 @@ export function AppFrame({
             />
           </div>
         </aside>
-        <main className="min-w-0 flex-1 px-4 py-5 md:px-8 md:py-8">
+        {/* Room at the bottom, so the last row and the pager scroll clear of
+            what floats over the page: a list's selection bar while it's open
+            (dashboard/_components/selection-bar.tsx) and the "Get set up"
+            launcher while it's on screen (setup-guide.tsx sets
+            --setup-guide-clearance, which already counts a bar under it).
+            Focusable from script only (tabIndex -1, no ring): where focus
+            lands when the control holding it goes away (focus-page.ts). */}
+        <main
+          className={cn(
+            "min-w-0 flex-1 outline-none px-4 pt-5 pb-[max(1.25rem,var(--setup-guide-clearance,0px))] md:overflow-y-auto md:overscroll-contain md:px-8 md:pt-8 md:pb-[max(2rem,var(--setup-guide-clearance,0px))]",
+            "has-[[data-selection-bar=open]]:pb-[max(calc(env(safe-area-inset-bottom)+5.5rem),var(--setup-guide-clearance,0px))] md:has-[[data-selection-bar=open]]:pb-[max(calc(env(safe-area-inset-bottom)+6.5rem),var(--setup-guide-clearance,0px))]",
+          )}
+          data-app-scroll=""
+          tabIndex={-1}
+        >
           <div className="mx-auto w-full max-w-6xl">{children}</div>
         </main>
       </div>

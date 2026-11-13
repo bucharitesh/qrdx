@@ -1,0 +1,107 @@
+{
+  "id": "event-fun-run",
+  "name": "Fun run route",
+  "description": "A light card with a sneaker and a solid label band.",
+  "category": "use-case",
+  "collection": "events",
+  "contentTypes": ["url"],
+  "tags": ["charity run", "running", "events", "route", "map"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1770
+    },
+    "qr": {
+      "x": 120,
+      "y": 390,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "frame",
+        "hole": {
+          "x": 20,
+          "y": 20,
+          "width": 1200,
+          "height": 1730,
+          "radius": 38
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 250,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 190,
+        "width": 1240,
+        "height": 60,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M561.2 1597.2L561.2 1574.8C561.2 1563.6 569.6 1558 580.8 1560.8L606 1566.4C617.2 1558 622.8 1544 631.2 1538.4L642.4 1535.6C648 1549.6 656.4 1566.4 670.4 1574.8C681.6 1580.4 684.4 1587.4 684.4 1597.2ZM567.5 1602.8L678.1 1602.8A9.1 9.1 0 0 1 687.2 1611.9L687.2 1611.9A9.1 9.1 0 0 1 678.1 1621L567.5 1621A9.1 9.1 0 0 1 558.4 1611.9L558.4 1611.9A9.1 9.1 0 0 1 567.5 1602.8ZM618.78 1569.38L628.58 1559.58A2.24 2.24 0 0 1 625.42 1556.42L615.62 1566.22A2.24 2.24 0 0 1 618.78 1569.38ZM629.98 1576.38L639.78 1566.58A2.24 2.24 0 0 1 636.62 1563.42L626.82 1573.22A2.24 2.24 0 0 1 629.98 1576.38ZM641.06 1582.1L650.86 1573.7A2.24 2.24 0 0 1 647.94 1570.3L638.14 1578.7A2.24 2.24 0 0 1 641.06 1582.1Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for the route",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 30,
+          "width": 1040,
+          "height": 190
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Fun run",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 1650,
+          "width": 960,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

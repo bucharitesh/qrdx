@@ -20,11 +20,18 @@ import {
   desc,
   eq,
   gt,
+  ilike,
   inArray,
   isNull,
   or,
   type SQL,
 } from "drizzle-orm";
+import {
+  type CursorPage,
+  decodeKeyset,
+  encodeKeyset,
+} from "@/lib/keyset-cursor";
+import { keysetAfter, keysetOrder } from "@/lib/keyset-sql";
 import { parseLandingPageContent } from "@/lib/landing/blocks";
 import {
   type FormField,
@@ -172,41 +179,119 @@ export interface ScopedFormPage {
   }>;
 }
 
-const MAX_PAGES = 200;
+/** Form pages a page of the response-sync settings loads. */
+export const FORM_PAGES_PAGE_SIZE = 20;
+/** Pages read from the database per batch while looking for forms. */
+const SCAN_BATCH = 100;
+/** Most pages one request reads; past it, it answers with what it found. */
+const MAX_SCAN = 500;
+/** Most selected pages loaded by id (the settings allow 200). */
+const MAX_BY_ID = 200;
 
-/** The scope's pages that have at least one form block (newest first). */
+type PageRow = {
+  id: string;
+  title: string | null;
+  content: unknown;
+  updatedAt: Date;
+};
+
+/** The page with its form blocks, or null when it has none. */
+function toFormPage(row: PageRow): ScopedFormPage | null {
+  const parsed = parseLandingPageContent(row.content, { mode: "read" });
+  if (!parsed.success) return null;
+  const forms = parsed.data.blocks
+    .filter((block) => block.type === "form")
+    .map((block, index) => {
+      const props = block.props as { title?: string; fields: FormField[] };
+      return {
+        id: block.id,
+        title: props.title || `Form ${index + 1}`,
+        fields: props.fields.map((field) => ({
+          id: field.id,
+          label: field.label,
+          type: field.type,
+        })),
+      };
+    });
+  return forms.length > 0 ? { id: row.id, title: row.title, forms } : null;
+}
+
+const pageColumns = {
+  id: landingPage.id,
+  title: landingPage.title,
+  content: landingPage.content,
+  updatedAt: landingPage.updatedAt,
+};
+
+/** `%`, `_` and `\` match themselves. */
+const likePattern = (term: string) =>
+  `%${term.replace(/[\\%_]/g, (char) => `\\${char}`)}%`;
+
+/**
+ * The scope's pages that have at least one form block, most recently
+ * updated first, a page at a time after `cursor`; `q` narrows by title.
+ *
+ * Whether a page has a form is only known once its content is read, so this
+ * reads pages in batches until it has `limit` form pages, runs out, or has
+ * read MAX_SCAN pages (then it answers with fewer and a cursor to carry on).
+ */
 export async function listFormPages(
   scope: SyncScope,
+  {
+    cursor,
+    limit = FORM_PAGES_PAGE_SIZE,
+    q,
+  }: { cursor?: string | null; limit?: number; q?: string } = {},
+): Promise<CursorPage<ScopedFormPage>> {
+  const size = Math.min(Math.max(1, Math.floor(limit)), 100);
+  const term = q?.trim().slice(0, 200);
+  const items: ScopedFormPage[] = [];
+  let position = decodeKeyset(cursor);
+  let scanned = 0;
+  while (scanned < MAX_SCAN) {
+    const rows: PageRow[] = await db
+      .select(pageColumns)
+      .from(landingPage)
+      .where(
+        and(
+          pageScopeWhere(scope),
+          term ? ilike(landingPage.title, likePattern(term)) : undefined,
+          keysetAfter(landingPage.updatedAt, landingPage.id, position),
+        ),
+      )
+      .orderBy(...keysetOrder(landingPage.updatedAt, landingPage.id))
+      .limit(SCAN_BATCH);
+    for (const row of rows) {
+      scanned++;
+      position = { at: row.updatedAt, id: row.id };
+      const page = toFormPage(row);
+      if (page) items.push(page);
+      if (items.length === size) {
+        return { items, nextCursor: encodeKeyset(position) };
+      }
+    }
+    if (rows.length < SCAN_BATCH) return { items, nextCursor: null };
+  }
+  return { items, nextCursor: position ? encodeKeyset(position) : null };
+}
+
+/** The scope's form pages among `ids` (the pages a sync is limited to). */
+export async function formPagesByIds(
+  scope: SyncScope,
+  ids: string[],
 ): Promise<ScopedFormPage[]> {
-  const rows = await db
-    .select({
-      id: landingPage.id,
-      title: landingPage.title,
-      content: landingPage.content,
-    })
+  if (ids.length === 0) return [];
+  const rows: PageRow[] = await db
+    .select(pageColumns)
     .from(landingPage)
-    .where(pageScopeWhere(scope))
-    .orderBy(desc(landingPage.updatedAt))
-    .limit(MAX_PAGES);
-  return rows.flatMap((row) => {
-    const parsed = parseLandingPageContent(row.content, { mode: "read" });
-    if (!parsed.success) return [];
-    const forms = parsed.data.blocks
-      .filter((block) => block.type === "form")
-      .map((block, index) => {
-        const props = block.props as { title?: string; fields: FormField[] };
-        return {
-          id: block.id,
-          title: props.title || `Form ${index + 1}`,
-          fields: props.fields.map((field) => ({
-            id: field.id,
-            label: field.label,
-            type: field.type,
-          })),
-        };
-      });
-    return forms.length > 0 ? [{ id: row.id, title: row.title, forms }] : [];
-  });
+    .where(
+      and(
+        pageScopeWhere(scope),
+        inArray(landingPage.id, ids.slice(0, MAX_BY_ID)),
+      ),
+    )
+    .orderBy(desc(landingPage.updatedAt), desc(landingPage.id));
+  return rows.flatMap((row) => toFormPage(row) ?? []);
 }
 
 /** Page ids of `ids` that belong to the scope. */

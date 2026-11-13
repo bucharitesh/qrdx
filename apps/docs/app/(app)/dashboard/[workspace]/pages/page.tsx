@@ -20,6 +20,11 @@ import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import Link from "next/link";
 import { getUserSettings } from "@/actions/user-settings";
+import { ListPagination } from "@/app/(app)/dashboard/_components/list-pagination";
+import {
+  pageSizeMenu,
+  TABLE_PAGE_SIZES,
+} from "@/app/(app)/dashboard/_lib/list-paging";
 import {
   formatDate,
   formatNumber,
@@ -44,13 +49,20 @@ import {
 } from "@/app/(app)/dashboard/pages/_components/pages-selection";
 import { PagesToolbar } from "@/app/(app)/dashboard/pages/_components/pages-toolbar";
 import {
+  type PagesFilters,
+  pagesHref,
+  parsePagesFilters,
+} from "@/app/(app)/dashboard/pages/_lib/filters";
+import {
   getPageUsage,
   listPages,
+  listPageTypes,
 } from "@/app/(app)/dashboard/pages/_lib/landing-pages";
 import { CopyButton } from "@/components/copy-button";
 import { HairlineFigure } from "@/components/mockups/hairline";
 import { getAppTranslations } from "@/lib/i18n/app-locale";
 import { getTemplate } from "@/lib/landing/templates";
+import { loadPage } from "@/lib/paging";
 import { can } from "@/lib/permissions";
 import { requestWorkspaceSlug } from "@/lib/scope";
 import { workspaceLink } from "@/lib/workspace-paths";
@@ -70,25 +82,17 @@ export const metadata: Metadata = {
 export default async function PagesPage({
   searchParams,
 }: {
-  searchParams: Promise<{
-    new?: string | string[];
-    template?: string | string[];
-    q?: string | string[];
-    type?: string | string[];
-  }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const t = await getAppTranslations("app.dashboard.pages.page");
+  const tp = await getAppTranslations("app.dashboard.paging");
   const [scope, slug, cookieStore] = await Promise.all([
     requireDashboardScope(),
     requestWorkspaceSlug(),
     cookies(),
   ]);
-  const {
-    new: requested,
-    template: requestedTemplate,
-    q: rawQuery,
-    type: rawType,
-  } = await searchParams;
+  const query = await searchParams;
+  const { new: requested, template: requestedTemplate } = query;
   // `?new=<type>` comes from the editor's type picker; unknown types are ignored.
   const newType =
     typeof requested === "string" && getTemplate(requested)
@@ -101,9 +105,9 @@ export default async function PagesPage({
     getTemplate(newType)?.variants.some((item) => item.id === requestedTemplate)
       ? requestedTemplate
       : undefined;
-  const [usage, allPages, settings] = await Promise.all([
+  const [usage, typesInUse, settings] = await Promise.all([
     getPageUsage(scope),
-    listPages(scope),
+    listPageTypes(scope),
     // List keys follow the shortcuts switch; unread, they stay on (the default).
     getUserSettings().catch(() => null),
   ]);
@@ -112,27 +116,33 @@ export default async function PagesPage({
     canWrite && (!scope.organizationId || can(scope.role, "content.manageAll"));
   const display = parseDisplay(cookieStore.get(DISPLAY_COOKIES.pages)?.value);
 
-  // The types in use, for the Filter menu; then the filters from the URL.
-  const types = [...new Set(allPages.map((page) => page.type))].map((type) => ({
+  // The types in use, for the Filter menu; then the filters from the URL
+  // (a type no page uses any more is dropped, not an error).
+  const types = typesInUse.map((type) => ({
     type,
     label: getTemplate(type)?.label ?? type,
   }));
-  const filters = {
-    q: (typeof rawQuery === "string" ? rawQuery : "").trim().slice(0, 200),
-    type:
-      typeof rawType === "string" && types.some((item) => item.type === rawType)
-        ? rawType
-        : null,
+  const parsed = parsePagesFilters(query);
+  const filters: PagesFilters = {
+    ...parsed,
+    type: parsed.type && typesInUse.includes(parsed.type) ? parsed.type : null,
   };
-  const term = filters.q.toLowerCase();
-  const pages = allPages.filter(
+  // Past the last page (an old link, pages deleted since): the last page.
+  const { pages, total, page } = await loadPage(
+    filters.page,
     (page) =>
-      (!filters.type || page.type === filters.type) &&
-      (!term ||
-        (page.title ?? "").toLowerCase().includes(term) ||
-        (getTemplate(page.type)?.label ?? "").toLowerCase().includes(term) ||
-        page.codes.some((code) => code.pageUrl.toLowerCase().includes(term))),
+      listPages(scope, {
+        q: filters.q || undefined,
+        type: filters.type,
+        limit: filters.size,
+        offset: (page - 1) * filters.size,
+      }),
+    filters.size,
   );
+  const pageCount = Math.max(1, Math.ceil(total / filters.size));
+  const basePath = workspaceLink(slug, "/pages");
+  const href = (patch: Partial<PagesFilters>) =>
+    pagesHref(basePath, { ...filters, page }, patch);
 
   const rows = pages.map((page) => {
     const template = getTemplate(page.type);
@@ -163,8 +173,8 @@ export default async function PagesPage({
               {t("allPages")}
             </h1>
             <span className="text-muted-foreground hidden shrink-0 text-sm tabular-nums sm:inline">
-              {formatNumber(allPages.length)}{" "}
-              {allPages.length === 1 ? t("page2") : t("pages2")}
+              {formatNumber(usage.used)}{" "}
+              {usage.used === 1 ? t("page2") : t("pages2")}
             </span>
           </div>
           {canWrite && (
@@ -178,7 +188,7 @@ export default async function PagesPage({
 
         <PageUsageMeter usage={usage} />
 
-        {allPages.length === 0 ? (
+        {usage.used === 0 ? (
           <Empty className="border">
             <EmptyHeader>
               <HairlineFigure
@@ -389,6 +399,28 @@ export default async function PagesPage({
                 )}
               </PagesSelection>
             )}
+            <ListPagination
+              labels={{
+                navigation: tp("navigation"),
+                previous: tp("previous"),
+                next: tp("next"),
+                pageSize: tp("rowsPerPage"),
+              }}
+              nextHref={page < pageCount ? href({ page: page + 1 }) : null}
+              previousHref={page > 1 ? href({ page: page - 1 }) : null}
+              sizes={pageSizeMenu({
+                options: TABLE_PAGE_SIZES,
+                value: filters.size,
+                total,
+                label: (count) => tp("perPage", { count }),
+                href: (size) => href({ size }),
+              })}
+              summary={t("pagePageOfPagecountTotal", {
+                page,
+                pageCount,
+                total: formatNumber(total),
+              })}
+            />
           </div>
         )}
       </div>

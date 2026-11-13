@@ -116,11 +116,7 @@ export async function getShellData(): Promise<ShellData | null> {
         isTeam,
         usageHref: workspaceHref(workspace.slug, "/settings/usage"),
       },
-      changelogSeen: seen && {
-        viewerId: scope.userId,
-        stored: seen.stored,
-        signedUpAt: seen.signedUpAt,
-      },
+      changelogSeen: seen && { viewerId: scope.userId, ...seen },
     };
   } catch (error) {
     // Next's own signals (a request-time API during prerendering, a

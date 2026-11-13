@@ -1,4 +1,4 @@
-import type { CSSProperties } from "react";
+import type * as CSS from "csstype";
 import { z } from "zod";
 import { type QRArt, qrArtSchema } from "./art";
 import { type ColorConfig, colorConfigSchema } from "./color";
@@ -211,7 +211,7 @@ export interface QRProps {
   cornerEyePattern?: CornerEyePattern;
   cornerEyeDotPattern?: CornerEyeDotPattern;
   margin?: number;
-  style?: CSSProperties;
+  style?: QRStyle;
   imageSettings?: ImageSettings;
   isOGContext?: boolean;
   templateId?: string;
@@ -242,8 +242,27 @@ export interface QRProps {
   // export (getQRAsSVGDataUri and the PNG, JPG, PDF and EPS built on it)
   // drops it, so downloads never carry the marker.
   frameLabelMarkers?: boolean;
+  // For editors drawing a live preview: marks the drawn parts with
+  // data-qrdx-part ("eye-outer" and "eye-centre", each with data-qrdx-eye,
+  // "body", "logo", "background"; see QR_PART_ATTRIBUTE). Off by default,
+  // and every export drops it, like frameLabelMarkers.
+  partMarkers?: boolean;
 }
 
-export type QRPropsCanvas = QRProps &
-  React.CanvasHTMLAttributes<HTMLCanvasElement>;
-export type QRPropsSVG = QRProps & React.SVGProps<SVGSVGElement>;
+/**
+ * Inline styles for the root element, as a style object (`{ maxWidth: 200 }`):
+ * the same type as React's `CSSProperties`, without needing React.
+ */
+export type QRStyle = CSS.Properties<string | number>;
+
+/**
+ * Attributes for the root `<svg>`, with React's names (`className`, `style`,
+ * `aria-label`, `data-*`…). Event handlers and functions are left out of
+ * markup, as React leaves them out.
+ */
+export interface QRSVGAttributes {
+  [attribute: string]: any;
+}
+
+/** What the core draws (`createQRCodeTree`, `toSVGString`): `QRProps` plus root attributes. */
+export type QRSVGOptions = QRProps & QRSVGAttributes;

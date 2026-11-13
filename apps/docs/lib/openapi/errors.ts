@@ -4,7 +4,8 @@
 // content/docs/developers/errors.mdx documents it; tests/api/openapi.test.ts
 // keeps all three in step with the codes thrown in the route code.
 
-import { formatCount, MAX_CODES_PER_REQUEST } from "@/lib/bulk-limits";
+import { MAX_CODES_PER_REQUEST } from "@repo/config";
+import { formatCount } from "@/lib/format-count";
 
 export interface ApiErrorInfo {
   /** The `code` field of the error body */

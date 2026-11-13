@@ -11,7 +11,8 @@ import Link from "next/link";
 import { SettingsHeader } from "@/app/(app)/settings/components/settings-header";
 import { referralLinkLabel } from "@/lib/affiliates/links";
 import {
-  type AdminAffiliateRow,
+  type AdminAffiliateList,
+  type AdminAffiliateSummary,
   listAffiliatesForAdmin,
 } from "@/lib/affiliates/program";
 import {
@@ -19,7 +20,9 @@ import {
   AFFILIATE_MIN_PAYOUT_LABEL,
 } from "@/lib/affiliates/terms";
 import { isFeatureAvailable } from "@/lib/feature-availability";
+import { PAGE_SIZE, parsePage } from "@/lib/paging";
 import { AdminAction } from "../_components/admin-action";
+import { Pager } from "../_components/pager";
 import { Empty, Row, Rows } from "../_components/panel";
 import { EmptyRow, Section, StatCard } from "../_components/stat-card";
 import { formatDate, formatNumber } from "../_lib/format";
@@ -29,10 +32,11 @@ import { Money } from "./money";
 
 export const generateMetadata = adminMetadata("Admin · Affiliates");
 
-const detailHref = (id: string) =>
-  `/admin/affiliates/${encodeURIComponent(id)}`;
+const BASE_PATH = "/admin/affiliates";
 
-function Application({ row }: { row: AdminAffiliateRow }) {
+const detailHref = (id: string) => `${BASE_PATH}/${encodeURIComponent(id)}`;
+
+function Application({ row }: { row: AdminAffiliateSummary }) {
   const website = row.application?.website;
   const promotion = row.application?.promotion;
   return (
@@ -54,9 +58,20 @@ function Application({ row }: { row: AdminAffiliateRow }) {
   );
 }
 
-export default async function AdminAffiliatesPage() {
+export default async function AdminAffiliatesPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
   await requireAdmin();
-  const loaded = await listAffiliatesForAdmin();
+  const params = await searchParams;
+  // Each list pages on its own: ?page= for the affiliates table,
+  // ?applications= and ?rejected= for the other two.
+  const loaded = await listAffiliatesForAdmin(new Date(), {
+    affiliates: parsePage(params.page),
+    applications: parsePage(params.applications),
+    rejected: parsePage(params.rejected),
+  });
   const programOn = isFeatureAvailable("affiliates");
 
   return (
@@ -81,44 +96,39 @@ export default async function AdminAffiliatesPage() {
           the database first.
         </p>
       ) : (
-        <AffiliateLists rows={loaded.value} />
+        <AffiliateLists list={loaded.value} />
       )}
     </div>
   );
 }
 
-function AffiliateLists({ rows }: { rows: AdminAffiliateRow[] }) {
-  const applications = rows.filter((row) => row.status === "pending");
-  const active = rows.filter(
-    (row) => row.status === "approved" || row.status === "suspended",
-  );
-  const rejected = rows.filter((row) => row.status === "rejected");
-  const payable = active.filter(
-    (row) => Object.keys(row.totals.payable).length > 0,
-  );
+function AffiliateLists({ list }: { list: AdminAffiliateList }) {
+  const { stats, applications, affiliates, rejected } = list;
+  // Paging one list keeps the others where they are.
+  const pageParam = (page: number) => (page > 1 ? String(page) : undefined);
+  const pages = {
+    page: pageParam(affiliates.page),
+    applications: pageParam(applications.page),
+    rejected: pageParam(rejected.page),
+  };
 
   return (
     <>
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StatCard
-          alert={applications.length > 0}
+          alert={stats.applications > 0}
           label="Applications"
-          value={formatNumber(applications.length)}
+          value={formatNumber(stats.applications)}
         />
-        <StatCard
-          label="Approved"
-          value={formatNumber(
-            active.filter((row) => row.status === "approved").length,
-          )}
-        />
+        <StatCard label="Approved" value={formatNumber(stats.approved)} />
         <StatCard
           hint="Past the hold, not yet paid"
           label="With a payable balance"
-          value={formatNumber(payable.length)}
+          value={formatNumber(stats.withPayableBalance)}
         />
         <StatCard
           label="Sign-ups referred"
-          value={formatNumber(rows.reduce((sum, row) => sum + row.signUps, 0))}
+          value={formatNumber(stats.signUps)}
         />
       </div>
 
@@ -126,11 +136,11 @@ function AffiliateLists({ rows }: { rows: AdminAffiliateRow[] }) {
         description="Approving lets them share their link and earn. Both ask you to confirm it's you."
         title="Applications"
       >
-        {applications.length === 0 ? (
+        {applications.total === 0 ? (
           <Empty>No applications waiting.</Empty>
         ) : (
           <Rows>
-            {applications.map((row) => (
+            {applications.rows.map((row) => (
               <Row
                 actions={
                   <>
@@ -173,13 +183,18 @@ function AffiliateLists({ rows }: { rows: AdminAffiliateRow[] }) {
             ))}
           </Rows>
         )}
+        <SectionPager
+          list={applications}
+          pageParam="applications"
+          params={pages}
+        />
       </Section>
 
       <Section
         description="Pending: still in the hold. Payable: past it, not yet paid. Amounts stay in the currency the customer paid in."
         title="Affiliates"
       >
-        {active.length === 0 ? (
+        {affiliates.total === 0 ? (
           <EmptyRow>No approved affiliates yet.</EmptyRow>
         ) : (
           <Table>
@@ -195,7 +210,7 @@ function AffiliateLists({ rows }: { rows: AdminAffiliateRow[] }) {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {active.map((row) => (
+              {affiliates.rows.map((row) => (
                 <TableRow key={row.id}>
                   <TableCell className="max-w-56">
                     <Link
@@ -242,12 +257,13 @@ function AffiliateLists({ rows }: { rows: AdminAffiliateRow[] }) {
             </TableBody>
           </Table>
         )}
+        <SectionPager list={affiliates} pageParam="page" params={pages} />
       </Section>
 
-      {rejected.length > 0 && (
+      {rejected.total > 0 && (
         <Section title="Rejected">
           <Rows>
-            {rejected.map((row) => (
+            {rejected.rows.map((row) => (
               <Row
                 actions={
                   <AdminAction
@@ -267,8 +283,31 @@ function AffiliateLists({ rows }: { rows: AdminAffiliateRow[] }) {
               />
             ))}
           </Rows>
+          <SectionPager list={rejected} pageParam="rejected" params={pages} />
         </Section>
       )}
     </>
+  );
+}
+
+/** Previous / next under a list, once it has more than one page. */
+function SectionPager({
+  list,
+  pageParam,
+  params,
+}: {
+  list: { total: number; page: number };
+  pageParam: string;
+  params: Record<string, string | undefined>;
+}) {
+  if (list.total <= PAGE_SIZE) return null;
+  return (
+    <Pager
+      basePath={BASE_PATH}
+      page={list.page}
+      pageParam={pageParam}
+      params={params}
+      total={list.total}
+    />
   );
 }

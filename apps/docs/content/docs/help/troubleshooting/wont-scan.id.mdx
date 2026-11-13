@@ -1,0 +1,44 @@
+---
+title: "Kode tidak bisa dipindai"
+description: "Mengapa kode QR tidak terbaca, dan cara memperbaiki setiap penyebabnya."
+---
+
+Jika kamera ponsel tidak bereaksi terhadap kode Anda, atau hanya kadang-kadang membacanya, lakukan pemeriksaan berikut.
+
+Mulailah dengan **Skor pemindaian** di bawah pratinjau di [Playground](/playground). Klik skor tersebut untuk melihat pemeriksaan mana yang gagal. Lihat [Periksa desain dengan skor pemindaian](/docs/help/designing/scan-score).
+
+Untuk kode yang sudah dicetak, ambil foto lalu masukkan ke [pemeriksa pemindaian](/tools/scan-checker). Alat ini menampilkan isi kode dan menguji seberapa baik kode terbaca.
+
+## Penyebab umum [#common-causes]
+
+### Kontras rendah atau terang di atas gelap [#low-contrast-or-light-on-dark]
+
+Pemindai mencari kotak gelap di atas latar yang terang. Buat kode lebih gelap atau latar lebih terang, dan hindari kode terang di atas latar gelap. Lihat [Pilih warna yang bisa dipindai](/docs/help/designing/colors-and-contrast).
+
+### Logo menutupi terlalu banyak [#a-logo-covers-too-much]
+
+Atur **Koreksi kesalahan** ke **Tinggi** di tab **Desain**. Lihat [Tambahkan logo](/docs/help/designing/logos).
+
+### Bentuk mata yang tidak umum [#unusual-eye-shapes]
+
+Mata lingkaran dan sudut melengkung gagal terbaca di beberapa aplikasi pemindai. Mata persegi, membulat, dan gerigi terbaca di mana saja.
+
+### Tidak ada batas yang jelas [#no-clear-border]
+
+Pemindai membutuhkan ruang kosong di sekitar kode. Atur **Padding** ke **Standar** atau **Besar**, dan jangan biarkan gambar lain menyentuh kode.
+
+### Dicetak terlalu kecil [#printed-too-small]
+
+Buat kode sekitar sepersepuluh dari jarak pemindaian: 2 cm untuk kartu yang dipindai dari jarak 20 cm, 10 cm untuk poster yang dipindai dari jarak 1 m. [Kalkulator ukuran cetak](/tools/print-size) dapat menghitungnya untuk Anda.
+
+### Konten terlalu banyak [#too-much-content]
+
+Kode statis yang berisi banyak teks menjadi padat dan sulit dibaca saat berukuran kecil. Gunakan kode dinamis sebagai gantinya: kode ini hanya berisi tautan pendek. Lihat [Statis atau dinamis](/docs/help/getting-started/static-vs-dynamic).
+
+### Hasil cetaknya sendiri [#the-print-itself]
+
+Cetakan buram, permukaan mengilap yang memantulkan cahaya, serta permukaan melengkung atau terlipat membuat kode lebih sulit dibaca. Cetak sebagai file vektor (SVG, EPS, atau PDF dari **Siap cetak**) dan uji satu salinan sebelum mencetak dalam jumlah banyak.
+
+## Kode terbaca, tetapi muncul kesalahan [#it-scans-but-shows-an-error]
+
+Jika kamera membaca kode tetapi Anda melihat halaman seperti "QR code not found", lihat [Pemindaian menampilkan halaman kesalahan](/docs/help/troubleshooting/error-pages).

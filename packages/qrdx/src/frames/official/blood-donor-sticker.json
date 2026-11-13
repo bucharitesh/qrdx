@@ -1,0 +1,94 @@
+{
+  "id": "blood-donor-sticker",
+  "name": "Blood donor sticker",
+  "description": "A die-cut sticker with a thick outline and an offset shadow and a drop with a cross, in blood red.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "blood-donor-day",
+  "contentTypes": [],
+  "tags": [
+    "world blood donor day",
+    "blood donation",
+    "june 14",
+    "blood",
+    "sticker"
+  ],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1750
+    },
+    "qr": {
+      "x": 110,
+      "y": 370,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#991b1b",
+      "text": "#ffffff",
+      "accent": "#fca5a5"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 50,
+        "y": 50,
+        "width": 1270,
+        "height": 1700,
+        "radius": 110,
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1270,
+        "height": 1700,
+        "radius": 110,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 36,
+        "y": 36,
+        "width": 1198,
+        "height": 1628,
+        "radius": 80,
+        "fill": "background"
+      },
+      {
+        "type": "path",
+        "d": "M635 82.8C651.8 125.04 683 146.8 683 175.6A48 48 0 0 1 587 175.6C587 146.8 618.2 125.04 635 82.8Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M628.6 153.2L641.4 153.2A3.2 3.2 0 0 1 644.6 156.4L644.6 198A3.2 3.2 0 0 1 641.4 201.2L628.6 201.2A3.2 3.2 0 0 1 625.4 198L625.4 156.4A3.2 3.2 0 0 1 628.6 153.2ZM614.2 167.6L655.8 167.6A3.2 3.2 0 0 1 659 170.8L659 183.6A3.2 3.2 0 0 1 655.8 186.8L614.2 186.8A3.2 3.2 0 0 1 611 183.6L611 170.8A3.2 3.2 0 0 1 614.2 167.6Z",
+        "fill": "background"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "I gave blood",
+        "color": "frame",
+        "box": {
+          "x": 100,
+          "y": 1490,
+          "width": 1070,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

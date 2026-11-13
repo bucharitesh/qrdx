@@ -1,6 +1,12 @@
 // Client-safe helpers for organizing codes: folder trees, tag colors and the
 // codes list filters kept in the URL. No server imports.
 
+import {
+  parsePageSize,
+  TABLE_PAGE_SIZES,
+} from "@/app/(app)/dashboard/_lib/list-paging";
+import { parsePage } from "@/lib/paging";
+
 export const MAX_FOLDERS = 500;
 export const MAX_FOLDER_DEPTH = 5;
 export const MAX_FOLDER_NAME = 60;
@@ -220,6 +226,8 @@ export interface CodesFilters {
   domain: string | null;
   sort: CodeSort;
   page: number;
+  /** Rows per page, one of TABLE_PAGE_SIZES */
+  size: number;
 }
 
 type SearchParams = Record<string, string | string[] | undefined>;
@@ -235,7 +243,6 @@ export function parseCodesFilters(params: SearchParams): CodesFilters {
   const folder = first(params.folder)?.trim() ?? "";
   const type = first(params.type);
   const domain = first(params.domain)?.trim() ?? "";
-  const page = Number.parseInt(first(params.page) ?? "1", 10);
   return {
     status: status === "archived" || status === "trash" ? status : "active",
     q: (first(params.q) ?? "").trim().slice(0, 200),
@@ -254,11 +261,15 @@ export function parseCodesFilters(params: SearchParams): CodesFilters {
       : null,
     domain: ID_PATTERN.test(domain) ? domain : null,
     sort: CODE_SORTS.includes(sort as CodeSort) ? (sort as CodeSort) : "newest",
-    page: Number.isFinite(page) && page > 0 ? page : 1,
+    page: parsePage(params.page),
+    size: parsePageSize(params.size, TABLE_PAGE_SIZES),
   };
 }
 
-/** URL for the codes list with `patch` applied; any filter change resets the page. */
+/**
+ * URL for the codes list with `patch` applied; any filter change (or a new
+ * page size) resets the page. The page size is kept.
+ */
 export function codesHref(
   basePath: string,
   filters: CodesFilters,
@@ -275,9 +286,45 @@ export function codesHref(
   if (next.domain) search.set("domain", next.domain);
   if (next.q) search.set("q", next.q);
   if (next.sort !== "newest") search.set("sort", next.sort);
+  if (next.size !== TABLE_PAGE_SIZES[0]) search.set("size", String(next.size));
   if (next.page > 1) search.set("page", String(next.page));
   const query = search.toString();
   return query ? `${basePath}?${query}` : basePath;
+}
+
+/**
+ * What the codes list asks the database for, from its filters (the page
+ * window aside): the Type filter picks a code kind, the Domain filter a
+ * custom domain or, for DEFAULT_DOMAIN_FILTER, the default short link.
+ */
+export function codesQueryOf(filters: CodesFilters): {
+  status: CodesStatus;
+  q: string | undefined;
+  folderId: string | null | undefined;
+  tagIds: string[];
+  favorites: boolean;
+  kind: "redirect" | "page" | undefined;
+  domainId: string | null | undefined;
+  sort: CodeSort;
+} {
+  return {
+    status: filters.status,
+    q: filters.q || undefined,
+    folderId: filters.folder === "none" ? null : (filters.folder ?? undefined),
+    tagIds: filters.tags,
+    favorites: filters.favorites,
+    kind:
+      filters.type === "page"
+        ? "page"
+        : filters.type === "link"
+          ? "redirect"
+          : undefined,
+    domainId:
+      filters.domain === DEFAULT_DOMAIN_FILTER
+        ? null
+        : (filters.domain ?? undefined),
+    sort: filters.sort,
+  };
 }
 
 /** True when nothing narrows the list (the "no codes yet" state applies). */

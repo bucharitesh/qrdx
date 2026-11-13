@@ -69,7 +69,8 @@ export function FolderField({
         <SelectTrigger className="w-full" id="code-builder-folder">
           <SelectValue placeholder={t("noFolder")} />
         </SelectTrigger>
-        <SelectContent>
+        {/* Above the code builder's dialog (z-[99]) */}
+        <SelectContent className="z-[120]">
           <SelectItem value={NO_FOLDER}>{t("noFolder")}</SelectItem>
           {flat.map((folder) => (
             <SelectItem key={folder.id} value={folder.id}>
@@ -172,7 +173,8 @@ export function TagsField({
             )}
           </button>
         </PopoverTrigger>
-        <PopoverContent align="start" className="w-72 p-0">
+        {/* Above the code builder's dialog (z-[99]) */}
+        <PopoverContent align="start" className="z-[120] w-72 p-0">
           <Command>
             <CommandInput
               maxLength={MAX_TAG_NAME}

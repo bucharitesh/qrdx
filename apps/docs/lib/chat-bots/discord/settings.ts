@@ -1,6 +1,6 @@
 import "server-only";
 
-import { env } from "@/lib/env";
+import { env } from "@/env";
 import { isFeatureAvailable } from "@/lib/feature-availability";
 
 export interface DiscordBotSettings {

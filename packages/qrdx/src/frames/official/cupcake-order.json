@@ -1,0 +1,108 @@
+{
+  "id": "cupcake-order",
+  "name": "Cupcake order",
+  "description": "A light card with a cupcake and a pill-shaped button under the code.",
+  "category": "use-case",
+  "collection": "food-drink",
+  "contentTypes": ["url"],
+  "tags": ["restaurant", "food", "cupcakes", "bakery"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1760
+    },
+    "qr": {
+      "x": 120,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 64,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 64,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.82
+        },
+        "hole": {
+          "x": 12,
+          "y": 12,
+          "width": 1216,
+          "height": 1736,
+          "radius": 54
+        }
+      },
+      {
+        "type": "path",
+        "d": "M577.1 96A16.9 16.9 0 1 1 610.9 96A16.9 16.9 0 1 1 577.1 96ZM629.1 96A16.9 16.9 0 1 1 662.9 96A16.9 16.9 0 1 1 629.1 96ZM597.9 88.2A22.1 22.1 0 1 1 642.1 88.2A22.1 22.1 0 1 1 597.9 88.2ZM603.1 67.4A16.9 14.3 0 1 1 636.9 67.4A16.9 14.3 0 1 1 603.1 67.4ZM584.25 92.1L655.75 92.1A7.15 7.15 0 0 1 662.9 99.25L662.9 99.25A7.15 7.15 0 0 1 655.75 106.4L584.25 106.4A7.15 7.15 0 0 1 577.1 99.25L577.1 99.25A7.15 7.15 0 0 1 584.25 92.1ZM582.3 111.6L657.7 111.6L647.3 153.2L592.7 153.2ZM599.62 118.45L604.17 147.05A2.21 2.21 0 0 1 608.53 146.35L603.98 117.75A2.21 2.21 0 0 1 599.62 118.45ZM617.79 118.1L617.79 146.7A2.21 2.21 0 0 1 622.21 146.7L622.21 118.1A2.21 2.21 0 0 1 617.79 118.1ZM636.02 117.75L631.47 146.35A2.21 2.21 0 0 1 635.83 147.05L640.38 118.45A2.21 2.21 0 0 1 636.02 117.75Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M611.55 46.6A8.45 8.45 0 1 1 628.45 46.6A8.45 8.45 0 1 1 611.55 46.6ZM623.5 41.53A1.69 1.69 0 0 0 621.7 38.67L632.1 32.17A1.69 1.69 0 0 0 633.9 35.03L623.5 41.53Z",
+        "fill": "accent"
+      },
+      {
+        "type": "rect",
+        "x": 170,
+        "y": 1520,
+        "width": 900,
+        "height": 180,
+        "radius": 90,
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Order cupcakes",
+        "color": "text",
+        "box": {
+          "x": 230,
+          "y": 1520,
+          "width": 780,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "For any occasion",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 180,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

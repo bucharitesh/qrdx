@@ -7,7 +7,9 @@
 //
 // The owner's decisions (10 Nov 2026): 30% of what a referred customer pays,
 // for their first 12 months as a paying customer; each commission waits 30
-// days, and a refund or chargeback in that time cancels it; paid monthly by
+// days (45 since 13 Nov 2026, so a refund under the 30-day money-back
+// guarantee asked for on its last day still lands inside the hold), and a
+// refund or chargeback in that time cancels it; paid monthly by
 // PayPal, by hand, from US$25, with commissions in other currencies
 // converted to US dollars at the payout date; referrals count only for a
 // sign-up in the same visit (no cookie); random referral codes that can be
@@ -22,8 +24,13 @@ export const AFFILIATE_COMMISSION_PERCENT = AFFILIATE_COMMISSION_BPS / 100;
 /** Months from a customer's first payment during which their payments earn. */
 export const AFFILIATE_COMMISSION_MONTHS = 12;
 
-/** Days each commission waits before it can be paid. */
-export const AFFILIATE_HOLD_DAYS = 30;
+/**
+ * Days each commission waits before it can be paid. Longer than the
+ * money-back guarantee (MONEY_BACK_DAYS), because a refund asked for within
+ * the guarantee can be made after it ends, and a refund after the hold no
+ * longer cancels the commission.
+ */
+export const AFFILIATE_HOLD_DAYS = 45;
 
 /** Payouts are sent in this currency, lower case as Polar writes currencies. */
 export const AFFILIATE_PAYOUT_CURRENCY = "usd";
@@ -57,7 +64,7 @@ export const AFFILIATE_TERMS_NOTICE_DAYS = 30;
  * the same). Stored with each acceptance, so it's clear which text someone
  * agreed to. Change both when the terms change.
  */
-export const AFFILIATE_TERMS_VERSION = "2026-11-10";
+export const AFFILIATE_TERMS_VERSION = "2026-11-13";
 
 /** New referral codes are this many random letters and digits. */
 export const AFFILIATE_RANDOM_CODE_LENGTH = 8;

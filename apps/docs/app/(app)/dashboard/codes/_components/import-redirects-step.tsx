@@ -25,7 +25,7 @@ import type {
   RedirectResult,
 } from "@/lib/migrate/types";
 import { soundEvent } from "@/lib/sound";
-import { Note, plural, StepLayout } from "./import-shared";
+import { Note, StepLayout } from "./import-shared";
 
 type Run = {
   mode: Exclude<RedirectMode, "dry-run">;
@@ -145,7 +145,7 @@ export function RedirectsStep({
                 variant="outline"
               >
                 <RotateLeft />
-                {t("undoValue", { value: plural(live, "link") })}
+                {t("undoValue", { count: live })}
               </Button>
             )}
             {pending > 0 && !retired && (
@@ -156,7 +156,7 @@ export function RedirectsStep({
                 {busy && run?.mode === "apply" && (
                   <Spinner className="animate-spin" />
                 )}
-                {t("update")} {plural(pending, "link")} {t("in")} {name}
+                {t("updateLinksIn", { count: pending, name })}
               </Button>
             )}
           </div>
@@ -191,8 +191,8 @@ export function RedirectsStep({
               <span className="font-medium">
                 {run.finished
                   ? run.mode === "undo"
-                    ? t("valueRestored", { value: plural(run.done, "link") })
-                    : t("valueNowOpenQrdx", { value: plural(run.done, "link") })
+                    ? t("valueRestored", { count: run.done })
+                    : t("valueNowOpenQrdx", { count: run.done })
                   : run.mode === "undo"
                     ? t("restoringOriginalDestinations")
                     : t("updatingLinksInName", { name })}
@@ -236,7 +236,7 @@ export function RedirectsStep({
           <div className="space-y-2">
             <h3 className="text-sm font-semibold">
               {t.rich("dryRunValueWouldChange", {
-                value: plural(pending, "link"),
+                count: pending,
                 span: (chunks) => (
                   <span className="text-muted-foreground font-normal">
                     {chunks}
@@ -280,7 +280,7 @@ export function RedirectsStep({
           plan && (
             <p className="text-muted-foreground text-sm">
               {live > 0
-                ? `${plural(live, "old link")} already point${live === 1 ? "s" : ""} to QRdx.`
+                ? t("oldLinksAlreadyPoint", { count: live })
                 : retired
                   ? t("everyOldNameLinkHas", { name })
                   : t("noLinksToChange")}

@@ -1,5 +1,6 @@
 "use client";
 
+import { API_BASE_URL } from "@repo/config";
 import type { AuthProvider } from "fumadocs-openapi/playground";
 import {
   type CodeUsageGenerator,
@@ -16,7 +17,6 @@ import {
 
 // The client half of the API reference pages (components/docs/api-page.tsx).
 
-const PUBLIC_API = "https://api.qrdx.dev/v1";
 const TOKEN_HELP = "/docs/developers/rest-api#get-an-access-token";
 const KEY_HELP = "/docs/developers/api-keys#create-a-key";
 
@@ -31,7 +31,7 @@ export function publicApiUrl(url: string): string {
       parsed.pathname === "/api/v1" ||
       parsed.pathname.startsWith("/api/v1/")
     ) {
-      return `${PUBLIC_API}${parsed.pathname.slice("/api/v1".length)}${parsed.search}`;
+      return `${API_BASE_URL}${parsed.pathname.slice("/api/v1".length)}${parsed.search}`;
     }
   } catch {
     // Not absolute: leave it as it is.
@@ -83,8 +83,8 @@ const keyField: AuthProvider = {
 function ResultDisplay(props: ResultDisplayProps) {
   const blocked =
     props.data.type === "client_error" &&
-    props.data.url.startsWith(PUBLIC_API) &&
-    !props.data.url.startsWith(`${PUBLIC_API}/qr`);
+    props.data.url.startsWith(API_BASE_URL) &&
+    !props.data.url.startsWith(`${API_BASE_URL}/qr`);
   return (
     <>
       <DefaultResultDisplay {...props} />

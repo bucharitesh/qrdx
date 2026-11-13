@@ -45,6 +45,16 @@ export type CodeBuilderRequest =
       /** The page code's design; none = the workspace's default theme */
       style?: QRStyle | null;
       origin?: CodeBuilderOrigin;
+    }
+  | {
+      /** A new saved barcode (BarcodeBuilderModal) */
+      mode: "barcode";
+      /**
+       * Closed on `from` (not by opening the new barcode), the address bar
+       * changes to `to`: /barcodes/new opens it over the list and leaves
+       * the list at /barcodes (barcode-request.ts).
+       */
+      closeTo?: { from: string; to: string };
     };
 
 interface CodeBuilderState {
@@ -110,12 +120,12 @@ export function useCodeBuilderHostSlot(): boolean {
 
 /**
  * Opens the dynamic code builder from anywhere in the app (the app shell
- * and the playground mount a host). Create a new code, edit one by id, or
- * open the hosted page gallery.
+ * and the playground mount a host). Create a new code, edit one by id, open
+ * the hosted page gallery, or make a barcode.
  */
 export function openCodeBuilder(
   request:
-    | Extract<CodeBuilderRequest, { mode: "create" | "page" }>
+    | Extract<CodeBuilderRequest, { mode: "create" | "page" | "barcode" }>
     | {
         mode: "edit";
         codeId?: string;

@@ -14,9 +14,12 @@ import {
   strokeLine,
   transform,
 } from "./lib.mjs";
+import { INDUSTRY_MOTIFS } from "./motifs-industries.mjs";
+import { defineWorldMotifs } from "./motifs-world.mjs";
 
 const M = {};
 const def = (name, fn) => {
+  if (M[name]) throw new Error(`Motif ${name} defined twice`);
   M[name] = fn;
 };
 
@@ -2848,6 +2851,8 @@ def("bowtie", () => {
   return parts(A(p), B(path().rrect(41, 38, 18, 24, 6)));
 });
 
+defineWorldMotifs(def, { leaf, teardrop, ring, heart });
+
 export const ICONS = [
   "wifi",
   "star",
@@ -2874,6 +2879,8 @@ export const ICONS = [
   "sparkle",
   "gift",
 ];
+
+for (const [name, fn] of Object.entries(INDUSTRY_MOTIFS)) def(name, fn);
 
 export const MOTIFS = M;
 export const MOTIF_NAMES = Object.keys(M);

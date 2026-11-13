@@ -3,7 +3,7 @@
   "name": "House",
   "description": "A house with a roof and chimney around the code.",
   "category": "use-case",
-  "collection": "places",
+  "collection": "real-estate",
   "contentTypes": ["url"],
   "tags": ["real estate", "property", "listing"],
   "license": "CC0-1.0",

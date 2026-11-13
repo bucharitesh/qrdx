@@ -17,8 +17,7 @@ import {
   RefreshCircle as Retry,
 } from "iconsax-reactjs";
 import { useTranslations } from "next-intl";
-import { plural } from "@/app/(app)/dashboard/codes/_components/use-organize-action";
-import { formatCount } from "@/lib/bulk-limits";
+import { formatCount } from "@/lib/format-count";
 import { type ImportJob, jobProgress } from "../_lib/job";
 
 /** "3:42 PM", or with the day when it isn't today. */
@@ -56,11 +55,22 @@ export function ImportProgress({
   const progress = jobProgress(job);
   const running = job.status === "running";
   const percent = (progress.sent / Math.max(1, progress.total)) * 100;
-  const organize = [
-    job.folder && `into ${job.folder.name}`,
-    job.tags.length > 0 &&
-      `tagged ${job.tags.map((tag) => tag.name).join(", ")}`,
-  ].filter(Boolean);
+  const tags = job.tags.map((tag) => tag.name).join(", ");
+  const summary =
+    job.folder && tags
+      ? t("codesIntoFolderTagged", {
+          count: progress.total,
+          folder: job.folder.name,
+          tags,
+        })
+      : job.folder
+        ? t("codesIntoFolder", {
+            count: progress.total,
+            folder: job.folder.name,
+          })
+        : tags
+          ? t("codesTagged", { count: progress.total, tags })
+          : t("codesCount", { count: progress.total });
 
   return (
     <section aria-live="polite" className="space-y-4">
@@ -68,10 +78,7 @@ export function ImportProgress({
         <FileSpreadsheet className="text-muted-foreground size-5 shrink-0" />
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-medium">{job.fileName}</p>
-          <p className="text-muted-foreground text-xs">
-            {plural(progress.total, "code")}
-            {organize.length > 0 && `, ${organize.join(", ")}`}
-          </p>
+          <p className="text-muted-foreground text-xs">{summary}</p>
         </div>
       </div>
 
@@ -152,9 +159,7 @@ export function ImportProgress({
         <Alert>
           <CircleAlert />
           <AlertTitle>
-            {t("valueCouldntBeSent", {
-              value: plural(progress.failedRows, "row"),
-            })}
+            {t("valueCouldntBeSent", { count: progress.failedRows })}
           </AlertTitle>
           <AlertDescription>
             {job.chunkErrors.find(Boolean) ?? t("theRequestDidntGoThrough")}{" "}
@@ -176,9 +181,7 @@ export function ImportProgress({
                 <Retry />
                 {progress.pendingChunks > 0
                   ? t("retryAndContinue")
-                  : t("retryValue", {
-                      value: plural(progress.failedRows, "row"),
-                    })}
+                  : t("retryValue", { count: progress.failedRows })}
               </Button>
             ) : (
               progress.pendingChunks > 0 && (

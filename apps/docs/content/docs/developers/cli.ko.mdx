@@ -1,0 +1,109 @@
+---
+title: "CLI"
+description: "터미널이나 CI에서 @qrdx/cli 명령줄 도구로 스타일이 적용된 QR 코드를 SVG, PNG, WebP 또는 벡터 EPS로 생성하세요. 하나씩 만들 수도 있고, qrdx batch로 CSV 전체를 한 번에 만들 수도 있어요."
+icon: Terminal
+---
+
+`@qrdx/cli`는 명령줄에서 Playground 및 [`qrdx` 라이브러리](/docs/getting-started)와 동일한 QR 코드를 만들어 줍니다. 스크립트와 CI에서는 입력을 요구하지 않으며, 터미널에서 인자 없이 `qrdx generate`를 실행하면 내용과 옵션을 단계별로 물어봅니다.
+
+<NpmStatus package="@qrdx/cli" />
+
+```bash
+npx @qrdx/cli generate "https://example.com" -o qr.svg
+```
+
+전역으로 설치하면 `qrdx` 명령을 사용할 수 있습니다.
+
+```bash
+npm install -g @qrdx/cli
+qrdx generate "https://example.com" -o qr.png --size 1024
+```
+
+Node.js 22 이상이 필요합니다. PNG와 WebP 출력에는 [sharp](https://sharp.pixelplumbing.com)를 사용합니다. sharp는 선택적 의존성이며, 플랫폼이 지원하는 경우 npm이 설치합니다. SVG와 EPS는 sharp 없이도 동작합니다. npm 패키지 `qrdx`는 React 라이브러리이고, CLI는 `@qrdx/cli`에만 있습니다.
+
+## 출력 형식 [#output-formats]
+
+파일 확장자로 형식이 정해집니다. 파일 이름에 확장자가 없으면 `--format`을 사용하세요.
+
+| 형식 | 용도 | `--size`의 의미 |
+| --- | --- | --- |
+| `.svg` | 웹 페이지, 디자인 도구, 손실 없는 확대·축소 | 픽셀 단위 너비(기본값 512) |
+| `.png` | 문서, 슬라이드 등 이미지가 필요한 모든 곳 | 픽셀 단위 너비 |
+| `.webp` | 웹사이트: PNG와 같은 픽셀을 무손실로, 더 작은 파일에 담음 | 픽셀 단위 너비 |
+| `.eps` | 인쇄소, Illustrator, InDesign | 포인트 단위 너비(인치당 72포인트이므로 `144`는 2인치) |
+
+EPS 파일은 벡터 PostScript입니다. PNG와 JPEG 로고는 그대로 삽입되고, 다른 형식의 로고는 sharp가 설치되어 있으면 변환되며, 설치되어 있지 않으면 경고와 함께 제외됩니다.
+
+## 옵션 [#options]
+
+| 플래그 | 기본값 | 설명 |
+| --- | --- | --- |
+| `-o`, `--output` | `qr.svg` | 출력 파일 |
+| `--format` | 확장자에서 결정 | `svg`, `png`, `webp` 또는 `eps` |
+| `--size` | `512` | 출력 크기(위 표 참고) |
+| `-l`, `--level` | `Q` | 오류 정정: `L`, `M`, `Q` 또는 `H` |
+| `--body` | `square` | 데이터 모듈 [패턴](/docs/features/patterns) |
+| `--eye` | `square` | 모서리 눈 패턴 |
+| `--dot` | `square` | 모서리 눈 점 패턴 |
+| `--fg`, `--bg` | `#000000`, `#ffffff` | 전경색과 배경색: 16진수 색상 또는 JSON 그라디언트 |
+| `--eye-color`, `--dot-color` | `--fg` | 모서리 눈과 눈 점의 색상 |
+| `--logo` | | 중앙 로고 이미지 URL(`--level H`와 함께 사용) |
+| `--margin` | `0` | 여백 영역(모듈 단위) |
+| `--template` | | `Arrow`, `StandardBox`, `SquareBorder`, `StrikedBox` 또는 `Halloween` |
+| `--frame` | | 행동 유도 [프레임](/docs/features/frames): 기본 제공되는 {facts.frameStyles}개 프레임 중 하나(예: `banner-bottom`, `rounded-border`, `circle`, `sticker`, `phone`) ([전체 보기](/docs/styles#frames)) |
+| `--frame-text` | `Scan me` | 프레임 문구, 최대 24자 |
+| `--frame-color`, `--frame-text-color` | | 프레임과 문구 색상(16진수) |
+
+`qrdx --help`를 실행하면 모든 패턴 이름이 표시됩니다. 잘못된 값을 입력하면 허용되는 값을 알려 주는 메시지와 함께 종료 코드 `1`로 종료됩니다.
+
+## CSV로 여러 코드 만들기 [#many-codes-from-a-csv]
+
+`qrdx batch`는 CSV 파일의 모든 행에 대해 정적 QR 코드를 만들어 폴더에 저장합니다.
+
+```bash
+qrdx batch products.csv -o codes --format png --size 1024 --body circle
+```
+
+[대량 생성기](/tools/bulk)와 같은 열을 읽습니다. 내용은 `value`, `url`, `link`, `data`, `content`, `text`, `qr` 중 하나의 이름을 가진 열에서 가져오고(없으면 첫 번째 열), 파일 이름은 `file name`, `name`, `label`, `id`, `title`, `sku` 중 하나의 이름을 가진 열에서 가져옵니다(없으면 `qr-00001`, `qr-00002` 같은 식). 다른 열을 쓰려면 헤더 이름이나 열 번호로 지정하세요.
+
+| 플래그 | 기본값 | 설명 |
+| --- | --- | --- |
+| `-o`, `--out` | `qr-codes` | 코드를 저장할 폴더 |
+| `--format` | `svg` | `svg`, `png` 또는 `eps` |
+| `--value-column` | 자동 추정 | 각 코드의 내용이 있는 열 |
+| `--name-column` | 자동 추정 | 파일 이름이 있는 열 |
+| `--no-header` | | 첫 번째 행을 열 이름이 아닌 코드로 처리 |
+| `--jobs` | SVG는 `4`, 그 외는 `8` | 동시에 렌더링하는 코드 수 |
+
+위의 모든 스타일 옵션이 모든 코드에 적용됩니다. CSV는 스트림으로 읽고 각 코드는 만들어지는 즉시 저장되므로 행 수 제한이 없습니다. 노트북에서 SVG 코드 10,000개를 만드는 데 약 40초가 걸렸고 메모리는 200MB 미만이었습니다. 아무것도 업로드되지 않으며 계정도 필요하지 않습니다. 인코딩할 수 없는 행은 건너뛰고, 그 이유를 출력 폴더의 `errors.csv`에 기록합니다.
+
+[동적 코드](/docs/dynamic-qr-codes)를 대량으로 인쇄하려면 먼저 대시보드의 CSV 가져오기나 API로 코드를 만든 다음, 가져오기에서 받은 결과 CSV에 `--value-column short_link`를 지정해 `qrdx batch`를 실행하세요.
+
+## 예시 [#examples]
+
+```bash
+# High-resolution PNG for print
+qrdx generate "https://example.com" -o qr.png --size 2048 --level H
+
+# Vector EPS, 2 inches wide, for a print shop
+qrdx generate "https://example.com" -o qr.eps --size 144
+
+# Branded colors and patterns
+qrdx generate "https://example.com" --body circle --eye rounded --fg "#1a1a2e" -o brand.svg
+
+# Gradient foreground
+qrdx generate "https://example.com" -o gradient.svg \
+  --fg '{"type":"linear","stops":[{"color":"#6366f1","offset":0},{"color":"#ec4899","offset":100}],"angle":135}'
+
+# "Scan for the menu" frame
+qrdx generate "https://example.com/menu" --frame banner-bottom --frame-text "Scan for the menu" -o menu.png
+
+# Wi-Fi network
+qrdx generate "WIFI:T:WPA;S:MyNetwork;P:MyPassword;;" -o wifi.svg
+```
+
+[동적 QR 코드](/docs/dynamic-qr-codes)를 인쇄하려면 짧은 링크(`https://qrdx.dev/q/<slug>`)를 데이터로 전달하세요.
+
+## AI 코딩 에이전트에서 사용하기 [#use-it-from-an-ai-coding-agent]
+
+저장소의 [`generate-qr` 스킬](https://github.com/bucharitesh/qrdx/tree/main/skills/generate-qr)은 Claude Code 같은 에이전트가 CLI를 호출하는 방법을 알려 줍니다. MCP를 지원하는 에이전트라면 [MCP 서버](/docs/developers/mcp)를 설치 없이 바로 사용할 수 있습니다.

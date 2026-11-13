@@ -76,8 +76,18 @@ export function qrMarkup(
   value: string,
   style: ShowcaseStyleName,
   level: ErrorLevel = "L",
+  ring?: ArtRing,
 ) {
   const look = SHOWCASE_STYLES[style];
+  const frame = ring
+    ? {
+        style: "circle" as const,
+        text: ring.text,
+        ...(ring.secondaryText && { secondaryText: ring.secondaryText }),
+        color: INK,
+        textColor: PAPER,
+      }
+    : look.frame && { ...look.frame, color: INK };
   const svg = renderToStaticMarkup(
     createElement(
       QRCodeSVG,
@@ -90,7 +100,8 @@ export function qrMarkup(
           eyeColor: EYE,
           dotColor: look.accent ? DOT : EYE,
           bgColor: PAPER,
-          ...(look.frame && { frame: { ...look.frame, color: INK } }),
+          ...(frame && { frame }),
+          ...(ring && { shape: "circle" as const }),
         },
       ),
     ),
@@ -120,12 +131,23 @@ export function qrMarkup(
   return { viewBox, inner };
 }
 
+/**
+ * A round code: the style's modules in qrdx's circle shape (decorative dots
+ * seeded by the value fill the disc), inside the circle frame with `text` on
+ * its top arc and `secondaryText` on the bottom one.
+ */
+export interface ArtRing {
+  text: string;
+  secondaryText?: string;
+}
+
 export interface ArtCode {
   /** Symbol id, drawn with `code(x, y, w, h, id)`. */
   id: string;
   value: string;
   style: ShowcaseStyleName;
   level?: ErrorLevel;
+  ring?: ArtRing;
 }
 
 /**
@@ -134,10 +156,10 @@ export interface ArtCode {
  * Only the ones the scene uses are written.
  */
 export function qrSymbols(
-  { id, value, style, level }: ArtCode,
+  { id, value, style, level, ring }: ArtCode,
   used: { whole: boolean; body: boolean; eyes: boolean },
 ) {
-  const { viewBox, inner } = qrMarkup(value, style, level);
+  const { viewBox, inner } = qrMarkup(value, style, level, ring);
   const only = (keep: RegExp) =>
     inner.replace(/class="(q[123])"/g, (match, cls: string) =>
       keep.test(cls) ? match : 'class="qh"',

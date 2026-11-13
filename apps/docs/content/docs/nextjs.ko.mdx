@@ -1,0 +1,158 @@
+---
+title: "Next.js에서 QR 코드 만들기"
+description: "qrdx로 Next.js App Router에서 QR 코드를 렌더링하는 방법입니다. 클라이언트 JavaScript 없이 Server Component에서, 실시간 입력은 Client Component에서, 로고를 넣어서, SVG 다운로드까지 다룹니다."
+icon: Code
+---
+
+`qrdx`는 App Router의 서버와 클라이언트 양쪽에서 동작합니다. `QRCodeSVG`와 `QRCode`는 클라이언트 전용 훅을 쓰지 않으므로, Server Component가 JavaScript를 전혀 보내지 않고 QR 코드를 페이지 HTML에 바로 렌더링할 수 있습니다. 값이 브라우저에서 바뀌거나 파일을 다운로드해야 할 때만 Client Component가 필요합니다.
+
+<NpmStatus package="qrdx" />
+
+## 설치 [#install]
+
+```package-install
+qrdx@latest
+```
+
+`react`와 `react-dom` 18 이상은 peer dependency이므로 앱에서 사용 중인 버전이 그대로 쓰입니다.
+
+## Server Component에서 [#in-a-server-component]
+
+```tsx title="app/page.tsx"
+import { QRCodeSVG } from "qrdx";
+
+export default function Page() {
+  return (
+    <QRCodeSVG
+      value="https://example.com"
+      size={256}
+      margin={4}
+      role="img"
+      aria-label="QR code for example.com"
+    />
+  );
+}
+```
+
+SVG는 서버가 보내는 HTML의 일부입니다. JavaScript가 로드되기 전에도 표시되고, 정적 페이지는 빌드할 때 한 번만 렌더링하며, 스크린 리더는 `aria-label`을 읽을 수 있습니다.
+
+`margin`은 QR 코드 주변의 여백(quiet zone)이며 모듈 단위입니다. `QRCodeSVG`의 기본값은 `0`이라서, 자체 패딩이 있는 카드 안에 넣을 때 알맞습니다. QR 표준은 4모듈을 요구하며, 배경이 복잡하거나 어두울 때는 이 값이 안전합니다.
+
+### 라우트 params나 데이터에서 [#from-route-params-or-data]
+
+```tsx title="app/tickets/[id]/page.tsx"
+import { QRCodeSVG } from "qrdx";
+
+export default async function TicketPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const url = `https://example.com/check-in/${encodeURIComponent(id)}`;
+  return <QRCodeSVG value={url} size={200} margin={4} level="H" />;
+}
+```
+
+Next.js는 `params`를 promise로 전달하므로 페이지가 `async`입니다. 사용자나 데이터베이스에서 온 값은 URL에 넣기 전에 반드시 인코딩하세요. 레벨 `H`는 코드의 최대 30%가 손상되어도 읽을 수 있어서, 접히거나 긁히기 쉬운 배지에 도움이 됩니다.
+
+## Client Component에서 [#in-a-client-component]
+
+값이 입력창에서 올 때는 Client Component에서 QR 코드를 렌더링하세요.
+
+```tsx title="components/live-qr-code.tsx"
+"use client";
+
+import { QRCodeSVG } from "qrdx";
+import { useState } from "react";
+
+export function LiveQrCode() {
+  const [value, setValue] = useState("https://example.com");
+  return (
+    <div>
+      <input
+        aria-label="Text or link to encode"
+        value={value}
+        onChange={(event) => setValue(event.target.value)}
+      />
+      {value ? <QRCodeSVG value={value} size={200} margin={4} /> : null}
+    </div>
+  );
+}
+```
+
+`QRCodeCanvas`도 클라이언트 컴포넌트이지만(`"use client"`가 포함되어 있습니다) 일반 정사각형 모듈만 그립니다. 스타일을 적용한 QR 코드에는 `QRCodeSVG`를 사용하세요.
+
+## 로고 넣기 [#with-a-logo]
+
+```tsx title="components/logo-qr-code.tsx"
+import { QRCode } from "qrdx";
+
+export function LogoQrCode() {
+  return (
+    <QRCode
+      value="https://example.com"
+      size={256}
+      margin={4}
+      level="H"
+      logo="/logo.png"
+    />
+  );
+}
+```
+
+- **오류 정정 H.** 로고는 코드 너비의 약 4분의 1 크기로 그려지고 뒤에 있는 모듈을 지우기 때문에, 코드가 스캔되려면 오류 정정에 의존합니다. 복구할 수 있는 범위보다 로고가 크면 `QRCode`가 로고를 자동으로 줄이기도 합니다.
+- **로고 출처.** `logo`에는 앱 내 경로, URL, data URL을 쓸 수 있으며 페이지에는 세 가지 모두 표시됩니다. 다운로드할 때는 data URL이 가장 안전합니다. 원격 이미지는 파일로 복사하려면 CORS 헤더가 필요하기 때문입니다.
+- **확인하세요.** 여러 대의 휴대폰으로 코드를 시험해 보거나 스크린샷을 [스캔 검사기](/tools/scan-checker)에 업로드해 보세요.
+
+`logoOptions`로 로고의 크기, 여백, 위치, 잘라내기를 설정합니다. 자세한 내용은 [로고](/docs/features/logos)를 참고하세요.
+
+## SVG로 다운로드 [#download-as-svg]
+
+```tsx title="components/download-svg-button.tsx"
+"use client";
+
+import { downloadQRCode } from "qrdx";
+
+export function DownloadSvgButton({ value }: { value: string }) {
+  return (
+    <button
+      type="button"
+      onClick={() =>
+        downloadQRCode(
+          { value, level: "Q", margin: 4 },
+          {
+            format: "svg",
+            size: { width: 1024, height: 1024 },
+            filename: "qr-code.svg",
+          },
+        )
+      }
+    >
+      Download SVG
+    </button>
+  );
+}
+```
+
+`downloadQRCode`는 브라우저의 DOM이 필요하므로 버튼은 Client Component여야 합니다. Server Component 페이지에서 이 버튼을 렌더링하고 값을 prop으로 전달할 수도 있습니다. 다른 파일 형식은 `format`을 `png`, `jpg`, `webp`, `eps`, `pdf` 중 하나로 설정하세요(PDF는 선택 패키지인 `jspdf`가 필요합니다). 모든 옵션은 [다운로드](/docs/features/downloads)를 참고하세요.
+
+## 이미지 URL이 필요할 때 [#when-you-need-an-image-url]
+
+이메일, Open Graph 이미지, Markdown 파일처럼 React를 실행할 수 없는 곳에서는 컴포넌트 대신 이미지 URL이 필요합니다. [무료 QR 코드 API](/qr-code-api)는 키 없이 이미지 URL을 반환합니다.
+
+```html
+<img src="https://api.qrdx.dev/v1/qr?data=https://example.com&format=png" width="256" height="256" alt="QR code for example.com" />
+```
+
+## 바로 쓸 수 있는 컴포넌트 [#ready-made-components]
+
+[shadcn/ui 레지스트리](/docs/developers/shadcn)를 사용하면 프로젝트에 컴포넌트를 설치할 수 있습니다. [다운로드 버튼이 있는 QR 코드](/docs/components/qr-code), 카드, 공유 대화상자, 생성기, 스캐너, Wi-Fi 및 연락처 QR 코드가 있습니다.
+
+```bash
+npx shadcn@latest add https://qrdx.dev/r/qr-code.json
+```
+
+## 다른 React QR 코드 라이브러리 [#other-react-qr-code-libraries]
+
+단순한 흑백 QR 코드만 필요하다면 `qrcode.react`가 더 가볍고 더 오래되었습니다. `qrdx`는 모양, 그라데이션, 프레임, 로고, PNG/SVG/PDF/EPS 내보내기, 스캔 점수를 추가로 제공합니다. [qrcode.react](/compare/qrcode-react) 및 [qr-code-styling](/compare/qr-code-styling)과의 비교에서 차이점을 자세히 확인할 수 있습니다.

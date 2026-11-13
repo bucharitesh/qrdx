@@ -1,0 +1,94 @@
+{
+  "id": "fitness-test",
+  "name": "Fitness test",
+  "description": "A solid card with a round badge holding a gauge on its top edge.",
+  "category": "use-case",
+  "collection": "sports-fitness",
+  "contentTypes": ["calcom", "url"],
+  "tags": ["sports", "fitness", "assessment"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1830
+    },
+    "qr": {
+      "x": 120,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 150,
+        "width": 1240,
+        "height": 1680,
+        "radius": 64,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 620,
+        "cy": 150,
+        "r": 150,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 620,
+        "cy": 150,
+        "r": 120,
+        "fill": "background"
+      },
+      {
+        "type": "path",
+        "d": "M569.08 193.4A58.8 58.8 0 1 1 670.92 193.4L658.8 186.4A44.8 44.8 0 1 0 581.2 186.4ZM576.98 186.09L570.92 189.59L573.3 193.71L579.36 190.21ZM572.85 153.27L565.95 152.05L565.13 156.74L572.02 157.96ZM590.78 125.47L586.28 120.11L582.63 123.17L587.13 128.53ZM622.38 115.7L622.38 108.7L617.62 108.7L617.62 115.7ZM652.87 128.53L657.37 123.17L653.72 120.11L649.22 125.47ZM667.98 157.96L674.87 156.74L674.05 152.05L667.15 153.27ZM660.64 190.21L666.7 193.71L669.08 189.59L663.02 186.09ZM608.8 164A11.2 11.2 0 1 1 631.2 164A11.2 11.2 0 1 1 608.8 164Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M622.58 166.37A3.5 3.5 0 0 0 617.42 161.63L648.22 128.03A3.5 3.5 0 0 0 653.38 132.77L622.58 166.37Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Book a fitness test",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1540,
+          "width": 1040,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Know your numbers",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1710,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

@@ -1,0 +1,82 @@
+{
+  "id": "dumpling-house",
+  "name": "Dumpling house",
+  "description": "A wide card: the code on one side, a dumpling and the label on the other.",
+  "category": "use-case",
+  "collection": "food-drink",
+  "contentTypes": ["url"],
+  "tags": ["restaurant", "food", "dumplings", "asian"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 2000,
+      "height": 1040
+    },
+    "qr": {
+      "x": 120,
+      "y": 120,
+      "size": 800,
+      "padding": 64,
+      "radius": 19.2
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 2000,
+        "height": 1040,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M1044.4 282.4C1048 217.6 1192 217.6 1195.6 282.4Q1120 307.6 1044.4 282.4ZM1084.48 247.34L1078 270.74A3.24 3.24 0 0 1 1084.24 272.46L1090.72 249.06A3.24 3.24 0 0 1 1084.48 247.34ZM1116.76 248.2L1116.76 271.6A3.24 3.24 0 0 1 1123.24 271.6L1123.24 248.2A3.24 3.24 0 0 1 1116.76 248.2ZM1149.28 249.06L1155.76 272.46A3.24 3.24 0 0 1 1162 270.74L1155.52 247.34A3.24 3.24 0 0 1 1149.28 249.06Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M1096.14 169.26A3.06 3.06 0 0 0 1100.66 165.14L1106 171.09L1107.53 178.62L1103.45 185.35L1097.98 190.74L1095.25 194.78L1096.18 198.06L1100.76 202.94L1105.67 208.35A3.06 3.06 0 0 0 1101.13 212.45L1096.25 207.06L1090.88 201.14L1089.24 193.62L1093.25 186.86L1098.73 181.45L1101.54 177.38L1100.67 174.11L1096.14 169.26ZM1139.34 169.26A3.06 3.06 0 0 0 1143.86 165.14L1149.2 171.09L1150.73 178.62L1146.65 185.35L1141.18 190.74L1138.45 194.78L1139.38 198.06L1143.96 202.94L1148.87 208.35A3.06 3.06 0 0 0 1144.33 212.45L1139.45 207.06L1134.08 201.14L1132.44 193.62L1136.45 186.86L1141.93 181.45L1144.74 177.38L1143.87 174.11L1139.34 169.26Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Order dumplings",
+        "color": "text",
+        "box": {
+          "x": 1030,
+          "y": 400,
+          "width": 860,
+          "height": 190
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan to order online",
+        "color": "text",
+        "box": {
+          "x": 1030,
+          "y": 610,
+          "width": 860,
+          "height": 100
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

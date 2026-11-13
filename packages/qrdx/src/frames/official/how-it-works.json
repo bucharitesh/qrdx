@@ -1,0 +1,98 @@
+{
+  "id": "how-it-works",
+  "name": "How it works",
+  "description": "A round badge with a play button inside the ring, the label set along its top and the note along its bottom.",
+  "category": "use-case",
+  "collection": "call-to-action",
+  "contentTypes": [],
+  "tags": ["call to action", "video", "how-to"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 2000,
+      "height": 2000
+    },
+    "qr": {
+      "x": 500,
+      "y": 500,
+      "size": 1000,
+      "padding": 64,
+      "radius": 40
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "circle",
+        "cx": 1000,
+        "cy": 1000,
+        "r": 1000,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 1000,
+        "cy": 1000,
+        "r": 820,
+        "hole": 808,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.25
+        }
+      },
+      {
+        "type": "path",
+        "d": "M921.8 315A78.2 78.2 0 1 1 1078.2 315A78.2 78.2 0 1 1 921.8 315ZM983 349L1034 315L983 281Z",
+        "fill": "text",
+        "fillRule": "evenodd"
+      },
+      {
+        "type": "polygon",
+        "points": [[95, 974], [121, 1000], [95, 1026], [69, 1000]],
+        "fill": "text"
+      },
+      {
+        "type": "polygon",
+        "points": [[1905, 974], [1931, 1000], [1905, 1026], [1879, 1000]],
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "curved",
+        "id": "cta",
+        "slot": "primary",
+        "text": "See how it works",
+        "color": "text",
+        "curve": {
+          "cx": 1000,
+          "cy": 1000,
+          "radius": 905,
+          "side": "top",
+          "spread": 120
+        },
+        "fontSize": 92
+      },
+      {
+        "type": "curved",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan for the video",
+        "color": "text",
+        "curve": {
+          "cx": 1000,
+          "cy": 1000,
+          "radius": 905,
+          "side": "bottom",
+          "spread": 110
+        },
+        "fontSize": 76,
+        "weight": "regular"
+      }
+    ]
+  }
+}

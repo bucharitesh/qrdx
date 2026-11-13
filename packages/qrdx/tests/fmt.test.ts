@@ -2,7 +2,7 @@
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
-import { QRCodeSVG } from "../src/utils";
+import { QRCodeSVG } from "../src/qr-code-svg";
 import { compact, fmt, roundTo } from "../src/utils/fmt";
 
 describe("fmt", () => {

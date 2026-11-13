@@ -12,7 +12,7 @@
     "status": "machine"
   },
   "api-reference.mdx": {
-    "source": "1a86b891af9b",
+    "source": "e4b61bbf6cbd",
     "status": "machine"
   },
   "client-portal.mdx": {
@@ -88,7 +88,7 @@
     "status": "machine"
   },
   "developers/cli.mdx": {
-    "source": "ce4d18504c6a",
+    "source": "01a37178580c",
     "status": "machine"
   },
   "developers/errors.mdx": {
@@ -100,7 +100,7 @@
     "status": "machine"
   },
   "developers/image-api.mdx": {
-    "source": "adb6c5eaf03d",
+    "source": "e98d4597f9d5",
     "status": "machine"
   },
   "developers/index.mdx": {
@@ -136,7 +136,7 @@
     "status": "machine"
   },
   "dynamic-qr-codes.mdx": {
-    "source": "587194efb22c",
+    "source": "339330d48a19",
     "status": "machine"
   },
   "features/art-qr.mdx": {
@@ -152,7 +152,7 @@
     "status": "machine"
   },
   "features/frames.mdx": {
-    "source": "984c29607483",
+    "source": "fac4c55bbed6",
     "status": "machine"
   },
   "features/logos.mdx": {
@@ -168,7 +168,7 @@
     "status": "machine"
   },
   "features/templates.mdx": {
-    "source": "1921356e5c36",
+    "source": "29894891201f",
     "status": "machine"
   },
   "files.mdx": {
@@ -188,11 +188,11 @@
     "status": "machine"
   },
   "help/account-and-billing/cancel.mdx": {
-    "source": "42ca138b8ad5",
+    "source": "b70874971f92",
     "status": "machine"
   },
   "help/account-and-billing/change-plan.mdx": {
-    "source": "0a6d993ff76c",
+    "source": "fa70d24f521b",
     "status": "machine"
   },
   "help/account-and-billing/delete-your-account.mdx": {
@@ -204,15 +204,19 @@
     "status": "machine"
   },
   "help/account-and-billing/invoices.mdx": {
-    "source": "32ced6762159",
+    "source": "148c07f2ab68",
     "status": "machine"
   },
   "help/account-and-billing/meta.json": {
-    "source": "e8069c442747",
+    "source": "bf9b1f4e1b9e",
     "status": "machine"
   },
   "help/account-and-billing/never-hostage.mdx": {
     "source": "71b7da0290bd",
+    "status": "machine"
+  },
+  "help/account-and-billing/nonprofit-discount.mdx": {
+    "source": "b35320fba669",
     "status": "machine"
   },
   "help/account-and-billing/pay-by-invoice.mdx": {
@@ -220,7 +224,7 @@
     "status": "machine"
   },
   "help/account-and-billing/plans.mdx": {
-    "source": "11e1c15a872d",
+    "source": "0e352e475150",
     "status": "machine"
   },
   "help/account-and-billing/sign-in.mdx": {
@@ -228,7 +232,7 @@
     "status": "machine"
   },
   "help/contact.mdx": {
-    "source": "045c7d5b1881",
+    "source": "3ea00d8b91ca",
     "status": "machine"
   },
   "help/designing/art.mdx": {
@@ -240,7 +244,7 @@
     "status": "machine"
   },
   "help/designing/frames.mdx": {
-    "source": "b4f7a677f30e",
+    "source": "1c467722d531",
     "status": "machine"
   },
   "help/designing/logos.mdx": {
@@ -304,7 +308,7 @@
     "status": "machine"
   },
   "help/dynamic-codes/scans.mdx": {
-    "source": "a6459065128b",
+    "source": "7110d4575cf9",
     "status": "machine"
   },
   "help/getting-started/download-and-print.mdx": {
@@ -360,7 +364,7 @@
     "status": "machine"
   },
   "help/privacy-and-security/scan-data.mdx": {
-    "source": "b12d6389171e",
+    "source": "cecba3edab7f",
     "status": "machine"
   },
   "help/privacy-and-security/two-step-verification.mdx": {
@@ -448,7 +452,7 @@
     "status": "machine"
   },
   "plans-and-limits.mdx": {
-    "source": "8c805d953dc7",
+    "source": "b80e821f6433",
     "status": "machine"
   },
   "precise-location.mdx": {
@@ -464,7 +468,7 @@
     "status": "machine"
   },
   "self-hosting.mdx": {
-    "source": "d53496d2103e",
+    "source": "a8b465412f70",
     "status": "machine"
   },
   "short-links-and-file-pickers.mdx": {
@@ -480,7 +484,7 @@
     "status": "machine"
   },
   "styles.mdx": {
-    "source": "d0ea089a62aa",
+    "source": "26fadbacd0e4",
     "status": "machine"
   },
   "teams.mdx": {

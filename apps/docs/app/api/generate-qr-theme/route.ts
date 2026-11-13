@@ -1,3 +1,4 @@
+import { MAX_AI_REQUEST_BODY_BYTES } from "@repo/config";
 import {
   createUIMessageStream,
   createUIMessageStreamResponse,
@@ -30,7 +31,6 @@ import {
 import { textProviderOptions } from "@/lib/ai/models";
 import { assertAIConfigured, languageModel } from "@/lib/ai/providers";
 import { streamErrorMessage } from "@/lib/ai/stream-error-message";
-import { MAX_AI_REQUEST_BODY_BYTES } from "@/lib/constants";
 import { handleError } from "@/lib/error-response";
 import { scoreDesign } from "@/lib/qr-design/score";
 import {

@@ -1,0 +1,224 @@
+---
+title: "सेल्फ-होस्टिंग गाइड"
+description: "Docker Compose या Node.js से अपना QRdx वेब ऐप चलाएँ, जिसमें डायनेमिक QR कोड और होस्टेड पेज भी शामिल हैं।"
+icon: Server
+---
+
+QRdx AGPL-3.0 लाइसेंस के तहत है, और आप वेब ऐप (QR एडिटर, अकाउंट, टू-स्टेप वेरिफ़िकेशन और पासकी, डायनेमिक कोड और होस्टेड पेज, टीम, सेव की गई थीम, कम्युनिटी गैलरी और ये docs) अपने सर्वर पर चला सकते हैं। वर्कस्पेस सिंगल साइन-ऑन और वर्कस्पेस ऑडिट लॉग इसका अपवाद हैं: ये कमर्शियल लाइसेंस वाले `ee/` फ़ोल्डरों में हैं और लाइसेंस की (`QRDX_EE_LICENSE`) सेट किए बिना बंद रहते हैं। प्रोडक्शन में इनका इस्तेमाल करने के लिए QRdx के साथ लिखित अनुबंध ज़रूरी है; देखें [LICENSING.md](https://github.com/bucharitesh/qrdx/blob/main/LICENSING.md)। [`qrdx` React library](/docs/getting-started) या CLI इस्तेमाल करने के लिए इनमें से किसी की ज़रूरत नहीं है। ये MIT लाइसेंस के तहत बिना बैकएंड के कहीं भी चलते हैं। [QRdx पर ओपन सोर्स](/open-source-qr-code-generator) पेज में रिपॉज़िटरी का हर हिस्सा और उसका लाइसेंस दिया गया है।
+
+<Callout type="warn">
+  Docker सेटअप नया है। अगर कुछ काम न करे, तो कृपया [issue खोलें](https://github.com/bucharitesh/qrdx/issues)।
+</Callout>
+
+## ज़रूरतें [#requirements]
+
+- Compose v2 और BuildKit वाला Docker (Docker Desktop और मौजूदा Docker Engine दोनों में ये शामिल हैं), या मैन्युअल सेटअप के लिए Node.js 22 (22.22.3 या बाद का) और [Bun](https://bun.com/docs/installation) 1.4
+- इमेज बनते समय Docker के लिए कम से कम 8 GB मेमोरी
+- साइन इन करने का कोई तरीका, ताकि अकाउंट बन सकें: GitHub या Google OAuth ऐप, या ईमेल साइन-इन कोड के लिए [Resend](https://resend.com)। कोड ईमेल तभी भेजे जाते हैं जब `NEXT_PUBLIC_APP_URL` `localhost` न हो। `bun run dev` इन्हें टर्मिनल में प्रिंट करता है, लेकिन Docker इमेज ऐसा नहीं करती, इसलिए लोकल Docker टेस्ट के लिए GitHub या Google साइन-इन चाहिए।
+- Postgres: `docker-compose.yml` में दिया गया कंटेनर, या [Neon](https://neon.tech) डेटाबेस
+
+### डेटाबेस कनेक्शन कैसे काम करता है [#how-the-database-connection-works]
+
+ऐप Neon के serverless HTTP ड्राइवर के ज़रिए Postgres से बात करता है।
+
+- **Neon:** सीधे काम करता है। `DATABASE_URL` को अपनी Neon कनेक्शन स्ट्रिंग पर सेट करें।
+- **सादा Postgres:** इसके आगे Neon-कम्पैटिबल HTTP प्रॉक्सी चाहिए। `docker-compose.yml` एक प्रॉक्सी ([local-neon-http-proxy](https://github.com/TimoWilhelm/local-neon-http-proxy)) चलाता है और `DATABASE_HTTP_ENDPOINT` सेट करता है, ताकि ऐप अपनी क्वेरी वहीं भेजे।
+
+स्कीमा `packages/database/schema.ts` से आता है और `drizzle-kit push` से लागू होता है।
+
+## Docker Compose से क्विक स्टार्ट [#quick-start-with-docker-compose]
+
+### 1. रिपॉज़िटरी क्लोन करें [#1-clone-the-repository]
+
+```bash
+git clone https://github.com/bucharitesh/qrdx.git
+cd qrdx
+```
+
+### 2. एनवायरनमेंट कॉन्फ़िगर करें [#2-configure-the-environment]
+
+```bash
+cp apps/docs/.env.example .env
+```
+
+`.env` एडिट करें:
+
+- `BETTER_AUTH_SECRET`: `openssl rand -base64 32` से बनाएँ
+- `NEXT_PUBLIC_APP_URL`: आपके इंस्टेंस का पब्लिक URL, जैसे `https://qr.example.com`। लोकल टेस्ट के लिए `http://localhost:3000` ही रखें।
+- `BETTER_AUTH_URL`: इसे अनकमेंट करें और वही वैल्यू डालें
+- `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET`: [GitHub OAuth app](https://github.com/settings/developers) से, जिसका callback URL `<your url>/api/auth/callback/github` हो
+- या `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET`: [Google OAuth client](https://console.cloud.google.com/apis/credentials) से, जिसका redirect URI `<your url>/api/auth/callback/google` हो
+
+`DATABASE_URL` सेट करने की ज़रूरत नहीं है। Compose ऐप को उसके अपने Postgres कंटेनर पर पॉइंट करता है। डेटाबेस का पासवर्ड बदलने के लिए पहली बार शुरू करने से पहले `POSTGRES_PASSWORD` सेट करें।
+
+### 3. स्टैक शुरू करें [#3-start-the-stack]
+
+```bash
+docker compose up -d --build
+```
+
+यह इमेज बनाता है, Postgres और प्रॉक्सी शुरू करता है, एक बार चलने वाली `migrate` सर्विस (`drizzle-kit push`) चलाता है और फिर ऐप को पोर्ट 3000 पर शुरू करता है। पहली बिल्ड में कई मिनट लगते हैं।
+
+```bash
+docker compose ps                    # migrate should show "exited (0)"
+docker compose logs -f migrate app   # follow the schema sync and the app
+```
+
+### 4. अपना पहला यूज़र बनाएँ [#4-create-your-first-user]
+
+ब्राउज़र में `NEXT_PUBLIC_APP_URL` खोलें और GitHub, Google या ईमेल कोड से साइन इन करें। आपका अकाउंट पहली बार साइन इन करने पर बन जाता है।
+
+### 5. अपना पहला एडमिन बनाएँ [#5-create-your-first-admin]
+
+अभी बनाए गए अकाउंट का ईमेल पता `.env` में जोड़ें:
+
+```bash
+ADMIN_EMAILS=you@example.com
+```
+
+ऐप कंटेनर को दोबारा बनाएँ ताकि बदलाव लागू हो जाए, फिर साइन इन करके `/admin` खोलें:
+
+```bash
+docker compose up -d app
+```
+
+`ADMIN_USER_IDS` भी इसी तरह काम करता है, बस ईमेल की जगह यूज़र id देनी होती है।
+
+## Neon या किसी और मैनेज्ड डेटाबेस का इस्तेमाल [#using-neon-or-another-managed-database]
+
+आप बंडल किया हुआ Postgres छोड़कर सिर्फ़ ऐप इमेज चला सकते हैं:
+
+```bash
+docker build -t qrdx --build-arg NEXT_PUBLIC_APP_URL=https://qr.example.com .
+docker run -d --env-file .env -p 3000:3000 qrdx
+```
+
+`.env` में `DATABASE_URL` को अपनी Neon कनेक्शन स्ट्रिंग पर सेट करें और `DATABASE_HTTP_ENDPOINT` को unset रहने दें। स्कीमा एक बार लागू करें (और हर अपडेट के बाद फिर से) migrator इमेज से:
+
+```bash
+docker build --target migrator -t qrdx-migrate .
+docker run --rm -e DATABASE_URL="<your connection string>" qrdx-migrate
+```
+
+## मैन्युअल सेटअप (Node.js) [#manual-setup-nodejs]
+
+```bash
+git clone https://github.com/bucharitesh/qrdx.git
+cd qrdx
+bun install
+
+cp apps/docs/.env.example apps/docs/.env.local          # then edit it
+
+bun run db:push                                          # apply the schema
+bun run --filter docs dev                                # http://localhost:3000
+```
+
+प्रोडक्शन के लिए ऐप को बिल्ड करें और शुरू करें:
+
+```bash
+bun x turbo build --filter=docs
+bun run --filter docs start
+```
+
+`bun run db:push` Neon के ड्राइवर से कनेक्ट होता है, इसलिए इसके लिए Neon डेटाबेस चाहिए। इसके बजाय लोकल डेवलपमेंट के लिए Docker वाला Postgres इस्तेमाल करना हो, तो उसे `docker compose up -d db db-proxy` से शुरू करें, स्कीमा `docker compose run --rm migrate` से लागू करें, और `apps/docs/.env.local` में ये सेट करें:
+
+```bash
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/qrdx
+DATABASE_HTTP_ENDPOINT=http://localhost:4444/sql
+```
+
+## एनवायरनमेंट वेरिएबल [#environment-variables]
+
+[`apps/docs/.env.example`](https://github.com/bucharitesh/qrdx/blob/main/apps/docs/.env.example) में हर वेरिएबल की सूची है, साथ में एक छोटा नोट कि वह कहाँ से मिलेगा।
+
+### न्यूनतम [#minimum]
+
+| वेरिएबल | उद्देश्य |
+| --- | --- |
+| `NEXT_PUBLIC_APP_URL` | आपके इंस्टेंस का सार्वजनिक URL |
+| `DATABASE_URL` | Postgres कनेक्शन स्ट्रिंग (Compose सेट करता है) |
+| `BETTER_AUTH_SECRET` | सेशन और कुकी पर हस्ताक्षर करता है |
+
+एक OAuth प्रोवाइडर (GitHub या Google) जोड़ें, या ईमेल साइन-इन कोड के लिए Resend जोड़ें, ताकि लोग साइन इन कर सकें।
+
+### वैकल्पिक सेवाएँ [#optional-services]
+
+| सेवा | वेरिएबल | इसके बिना |
+| --- | --- | --- |
+| GitHub साइन-इन | `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET` | GitHub साइन-इन उपलब्ध नहीं होगा |
+| Google साइन-इन | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | Google साइन-इन उपलब्ध नहीं होगा |
+| Auth बेस URL | `BETTER_AUTH_URL` | हर रिक्वेस्ट से अनुमान लगाया जाता है, और लॉग में चेतावनी आती है |
+| एडमिन पैनल | `ADMIN_EMAILS`, `ADMIN_USER_IDS` | कोई भी `/admin` नहीं खोल सकेगा |
+| वर्कस्पेस सिंगल साइन-ऑन | `QRDX_EE_LICENSE` | सिंगल साइन-ऑन बंद रहता है: **Sign in with SSO** नहीं दिखेगा, SSO सेटिंग नहीं होंगी, और इसके साइन-इन रूट मौजूद नहीं होंगे। SSO `ee/` फ़ोल्डरों में है, जो QRdx के कमर्शियल लाइसेंस के अंतर्गत हैं, इसलिए प्रोडक्शन में इस्तेमाल के लिए QRdx के साथ लिखित अनुबंध ज़रूरी है। देखें [सिंगल साइन-ऑन](/docs/help/teams/single-sign-on) |
+| वर्कस्पेस ऑडिट लॉग | `QRDX_EE_LICENSE` | ऑडिट लॉग बंद रहता है: कुछ भी रिकॉर्ड नहीं होता और **Settings** → **Audit log** नहीं दिखता। सिंगल साइन-ऑन की तरह यह भी `ee/` फ़ोल्डरों में QRdx के कमर्शियल लाइसेंस के अंतर्गत है। इसकी पंक्तियाँ {facts.auditLogRetentionDays} दिन रखी जाती हैं; `/api/cron/webhooks` का रोज़ का रन पुरानी पंक्तियाँ हटा देता है। देखें [ऑडिट लॉग](/docs/help/teams/audit-log) |
+| AI थीम, प्रॉम्प्ट एन्हांसमेंट और AI QR आर्ट (Vercel AI Gateway) | `AI_GATEWAY_API_KEY` | AI रिक्वेस्ट फ़ेल हो जाती हैं और AI पेज नेविगेशन और साइटमैप से हट जाते हैं। एडिटर सामान्य रूप से काम करता है। की (key) अपने Vercel अकाउंट में बनाएँ (AI Gateway, API keys); इस्तेमाल का बिल उसी अकाउंट के AI Gateway क्रेडिट से कटता है, और आपके ऐप का Vercel पर चलना ज़रूरी नहीं है। हर काम का मॉडल `apps/docs/lib/ai/models.ts` में सेट है |
+| शॉर्ट-लिंक ऑरिजिन | `NEXT_PUBLIC_SHORT_LINK_BASE_URL` | [डायनेमिक कोड](/docs/dynamic-qr-codes#self-hosting) `NEXT_PUBLIC_APP_URL` इस्तेमाल करते हैं |
+| स्कैन प्राइवेसी सॉल्ट | `SCAN_HASH_SALT` | `BETTER_AUTH_SECRET` से बनाया जाता है |
+| फ़ाइल स्टोरेज (Cloudflare R2) | `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`, `R2_PUBLIC_BASE_URL` | अपलोड बंद रहते हैं; पेज फिर भी कहीं और होस्ट की गई फ़ाइलों से लिंक कर सकते हैं। देखें [फ़ाइलें](/docs/files#set-up-storage-self-hosting) |
+| ईमेल (Resend) | `RESEND_API_KEY`, `EMAIL_FROM` | ईमेल छोड़ दिए जाते हैं और लॉग किए जाते हैं, इसलिए ईमेल साइन-इन कोड नहीं भेजे जा सकते; टीम इन्वाइट कॉपी करने लायक लिंक से होते हैं। देखें [नोटिफ़िकेशन](/docs/notifications#self-hosting) |
+| Vercel पर कस्टम डोमेन | `VERCEL_API_TOKEN`, `VERCEL_PROJECT_ID`, `VERCEL_TEAM_ID` | Vercel के बाहर इन्हें सेट न करें: तब डोमेन DNS `TXT` रिकॉर्ड से वेरिफ़ाई होते हैं। देखें [कस्टम डोमेन](/docs/custom-domains#self-hosting) |
+| वन-क्लिक DNS सेटअप (Domain Connect) | `DOMAIN_CONNECT_PROVIDER_ID`, `DOMAIN_CONNECT_SERVICE_ID`, `DOMAIN_CONNECT_PRIVATE_KEY` | **Set up with …** बटन नहीं दिखेगा: लोग DNS रिकॉर्ड खुद जोड़ते हैं। इसके लिए आपका अपना Domain Connect टेम्पलेट चाहिए जिसे हर DNS प्रोवाइडर स्वीकार करे, और उसकी पब्लिक की DNS में होनी चाहिए। देखें [कस्टम डोमेन](/docs/custom-domains#self-hosting) |
+| शेड्यूल्ड जॉब | `CRON_SECRET` | प्रोडक्शन में साप्ताहिक डाइजेस्ट और वेबहुक रीट्राई जॉब चलने से मना कर देते हैं, और {facts.auditLogRetentionDays} दिन से पुरानी ऑडिट लॉग पंक्तियाँ नहीं हटतीं |
+| लिंक सुरक्षा (Google Web Risk) | `WEB_RISK_API_KEY` | डेस्टिनेशन सिर्फ़ ऑफ़लाइन नियमों से जाँचे जाते हैं। देखें [कोड कंट्रोल](/docs/code-controls) |
+| फ़ॉर्म स्पैम जाँच (Cloudflare Turnstile) | `NEXT_PUBLIC_TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY` | फ़ॉर्म बिल्ट-इन हनीपॉट और रेट लिमिट पर निर्भर रहते हैं |
+| पेमेंट (Polar) | `POLAR_ACCESS_TOKEN`, `POLAR_WEBHOOK_SECRET`, `NEXT_PUBLIC_QRDX_PRO_MONTHLY_PRODUCT_ID`, `NEXT_PUBLIC_QRDX_PRO_YEARLY_PRODUCT_ID`, `NEXT_PUBLIC_QRDX_BUSINESS_MONTHLY_PRODUCT_ID`, `NEXT_PUBLIC_QRDX_BUSINESS_YEARLY_PRODUCT_ID` | अपग्रेड काम नहीं करता (जिन प्लान का प्रोडक्ट id नहीं है उन पर "Coming soon" दिखता है), और हर अकाउंट फ़्री की सीमाओं पर चलता है |
+| यूरो कीमतें | `NEXT_PUBLIC_QRDX_EUR_PRICES=1`, इसे तभी सेट करें जब ऊपर के हर प्रोडक्ट की Polar में EUR कीमत हो | EU और EEA के विज़िटर US$ कीमतें देखते हैं, और उन्हीं में चार्ज होते हैं |
+| अफ़िलिएट प्रोग्राम | कोई नहीं: यह सिर्फ़ qrdx.dev पर चलता है | बंद: QRdx का अफ़िलिएट प्रोग्राम और उसकी [शर्तें](/legal/affiliate-terms) qrdx.dev के लिए लिखी गई हैं, इसलिए सेल्फ़-होस्टेड कॉपी में **/affiliates** पेज, आवेदन और **Settings** → **Affiliate program** नहीं होते, और रेफ़रल लिंक होम पेज पर जाते हैं। |
+| Dub शॉर्ट लिंक | `DUB_CLIENT_ID`, `DUB_CLIENT_SECRET`, `DUB_REDIRECT_URI`, `INTEGRATION_ENCRYPTION_KEY` | Dub इंटीग्रेशन कनेक्ट नहीं हो सकता |
+| Google Drive | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_DRIVE_REDIRECT_URI`, `INTEGRATION_ENCRYPTION_KEY` | Google Drive इंटीग्रेशन कनेक्ट नहीं हो सकता |
+| Bitly, Dropbox, OneDrive, Box, Notion | `BITLY_CLIENT_ID`/`_SECRET`, `DROPBOX_CLIENT_ID`/`_SECRET`, `MICROSOFT_CLIENT_ID`/`_SECRET`, `BOX_CLIENT_ID`/`_SECRET`, `NOTION_CLIENT_ID`/`_SECRET`, `INTEGRATION_ENCRYPTION_KEY` | वह इंटीग्रेशन "Not configured" दिखाता है (Bitly फिर भी पेस्ट किए गए एक्सेस टोकन से कनेक्ट होता है)। Rebrandly और Short.io को किसी वेरिएबल की ज़रूरत नहीं। देखें [शॉर्ट लिंक और फ़ाइल पिकर](/docs/short-links-and-file-pickers#self-hosting) |
+| Slack बॉट | `SLACK_CLIENT_ID`, `SLACK_CLIENT_SECRET`, `SLACK_SIGNING_SECRET`, और प्रोडक्शन में `INTEGRATION_ENCRYPTION_KEY` | Slack बॉट नहीं होगा: इसके रूट और लिंक पेज 404 देते हैं और Settings इसे ऑफ़र नहीं करती। अपना Slack ऐप [`plugins/slack/manifest.json`](https://github.com/bucharitesh/qrdx/tree/main/plugins/slack) से बनाएँ, जैसा उसके README में बताया है। देखें [Slack बॉट](/docs/slack-bot#self-hosting) |
+| Discord बॉट | `DISCORD_APPLICATION_ID`, `DISCORD_PUBLIC_KEY` | Discord बॉट नहीं होगा: इसका interactions एंडपॉइंट `404` देता है और यह इंटीग्रेशन डायरेक्टरी में नहीं दिखता। अपना Discord ऐप रजिस्टर करें, जैसा [`plugins/discord/README.md`](https://github.com/bucharitesh/qrdx/tree/main/plugins/discord) में बताया है |
+| Telegram बॉट | `TELEGRAM_BOT_TOKEN`, `TELEGRAM_WEBHOOK_SECRET`, `TELEGRAM_BOT_USERNAME` | Telegram बॉट नहीं होगा: इसके रूट 404 देते हैं और साइट इसे लिस्ट नहीं करती। @BotFather से अपना बॉट बनाएँ और `plugins/telegram/scripts/setup.mjs` चलाएँ। देखें [Telegram बॉट](/docs/telegram-bot#self-hosting) |
+| रेट लिमिटिंग (Upstash) | `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN` (या Vercel KV के नाम `KV_REST_API_URL`, `KV_REST_API_TOKEN`) | कोई रेट लिमिटिंग नहीं। प्रोडक्शन में इसकी सलाह दी जाती है। |
+| एनालिटिक्स (PostHog, कुकी सहमति के बाद) | `NEXT_PUBLIC_POSTHOG_KEY`, `NEXT_PUBLIC_POSTHOG_HOST` | कोई प्रोडक्ट एनालिटिक्स नहीं |
+| एनालिटिक्स (Umami, बिना कुकी) | `NEXT_PUBLIC_UMAMI_WEBSITE_ID`, `NEXT_PUBLIC_UMAMI_SCRIPT_URL` | विज़िट की गिनती नहीं |
+| फ़ीडबैक विजेट | `NEXT_PUBLIC_FEATUREBASE_APP_ID` | विजेट लोड नहीं होता |
+| डॉक्स एक्स्ट्रा | `GITHUB_TOKEN` | स्टार की गिनती पर GitHub की रेट लिमिट लग सकती है |
+
+जैसे ही आप कोई इंटीग्रेशन चालू करें, प्रोडक्शन में `INTEGRATION_ENCRYPTION_KEY` सेट करना ज़रूरी है, क्योंकि यह स्टोर किए गए टोकन को एन्क्रिप्ट करता है।
+
+<Callout>
+  `NEXT_PUBLIC_*` वैल्यू बिल्ड के समय ब्राउज़र बंडल में इनलाइन हो जाती हैं। इनमें से कोई बदलने के बाद `docker compose up -d --build` से दोबारा बिल्ड करें।
+</Callout>
+
+## रिवर्स प्रॉक्सी और HTTPS [#reverse-proxy-and-https]
+
+ऐप को Caddy, nginx या Traefik जैसे रिवर्स प्रॉक्सी के पीछे रखें जो TLS संभाले, और पोर्ट 3000 को सीधे इंटरनेट पर एक्सपोज़ न करें। रेट लिमिटिंग, सिक्योरिटी ईमेल और [ऑडिट लॉग](/docs/help/teams/audit-log) क्लाइंट IP `X-Real-IP` से पढ़ते हैं, और फिर `X-Forwarded-For` का पहला पता लेते हैं, इसलिए प्रॉक्सी को ये हेडर सेट करने होंगे और ऐप सिर्फ़ उसी के ज़रिए पहुँच में होना चाहिए। प्रॉक्सी से `X-Real-IP` उस पते पर सेट करवाएँ जिससे उसे कनेक्शन मिला (nginx में `proxy_set_header X-Real-IP $remote_addr;`)। जो प्रॉक्सी `X-Forwarded-For` में सिर्फ़ जोड़ता है, उसमें क्लाइंट कोई भी पता सबसे पहले डाल सकता है।
+
+HTTPS सेट हो जाने के बाद `NEXT_PUBLIC_APP_URL` और `BETTER_AUTH_URL` को `https://` URL में बदलें, OAuth कॉलबैक URL अपडेट करें, और दोबारा बिल्ड करें।
+
+### Content-Security-Policy [#content-security-policy]
+
+प्रोडक्शन बिल्ड QRdx के अपने पेजों पर Content-Security-Policy भेजते हैं: साइन-इन किए हुए पेजों को हर रिक्वेस्ट पर नया स्क्रिप्ट nonce मिलता है, और प्रीरेंडर किए गए पेजों को स्क्रिप्ट होस्ट की allowlist। होस्टेड पेज (`/p`) पर ढीली पॉलिसी लगती है, क्योंकि वे मालिक के पिक्सेल चलाते हैं और कहीं से भी मीडिया एम्बेड करते हैं। अगर आपका रिवर्स प्रॉक्सी भी `Content-Security-Policy` सेट करता है, तो ब्राउज़र दोनों लागू करते हैं, इसलिए उसे वहाँ न रखें। नया सेटअप जाँचते समय पॉलिसी को रिपोर्ट-ओनली के रूप में भेजने के लिए `CSP_REPORT_ONLY=1` सेट करें (बिल्ड के समय और रन के समय दोनों में); उल्लंघन `/api/csp-report` में लॉग होते हैं। जब आप Vercel के बाहर HTTPS पर सर्व करें, तो `CSP_HTTPS=1` जोड़ें, ताकि ब्राउज़र किसी भी `http://` रिसोर्स को अपग्रेड कर लें।
+
+## अपडेट करना [#updating]
+
+पहले डेटाबेस का बैकअप लें:
+
+```bash
+docker compose exec db pg_dump -U postgres qrdx > qrdx-backup.sql
+```
+
+फिर pull करें और दोबारा बिल्ड करें। ऐप शुरू होने से पहले `migrate` सर्विस स्कीमा को फिर से सिंक करती है।
+
+```bash
+git pull
+docker compose up -d --build
+```
+
+मैनुअल सेटअप के लिए `git pull`, `bun install` और `bun run db:push` चलाएँ, फिर दोबारा बिल्ड करें।
+
+अगर किसी स्कीमा बदलाव से डेटा हट सकता है, तो `drizzle-kit push` पुष्टि माँगता है। ऐसे में बदलाव देखने और पुष्टि करने के लिए टर्मिनल में `docker compose run --rm migrate` चलाएँ।
+## समस्या निवारण [#troubleshooting]
+
+- **स्टार्टअप पर "Invalid environment variables":** लॉग में हर missing या invalid variable का नाम दिया होता है। Optional variables को comment out करें, उन्हें खाली वैल्यू पर सेट न करें।
+- **"BETTER_AUTH_SECRET is missing" या "You are using the default secret":** `BETTER_AUTH_SECRET` सेट करें और container दोबारा बनाएँ।
+- **OAuth `redirect_uri` mismatch:** आपके OAuth app में callback URL ठीक `<NEXT_PUBLIC_APP_URL>/api/auth/callback/<github|google>` होना चाहिए। `BETTER_AUTH_URL` को इसी base URL पर सेट करें।
+- **App डेटाबेस तक नहीं पहुँच पा रहा (`fetch failed`):** सादे Postgres के साथ `DATABASE_HTTP_ENDPOINT` चल रहे proxy की ओर पॉइंट करना चाहिए। `docker compose ps db-proxy` चेक करें।
+- **`migrate` कभी खत्म नहीं होता:** `drizzle-kit push` किसी confirmation का इंतज़ार कर रहा है। [अपडेट करना](#updating) देखें।
+- **बदली हुई `NEXT_PUBLIC_*` वैल्यू का कोई असर नहीं होता:** image दोबारा build करें।
+- **Port 4444 पहले से इस्तेमाल में है:** `docker-compose.yml` में `db-proxy` का port mapping बदलें। इसे सिर्फ़ host पर लोकल डेवलपमेंट में इस्तेमाल किया जाता है।
+- **"the --mount option requires BuildKit":** आपके Docker में BuildKit नहीं है। `buildx` plugin इंस्टॉल करें, या Docker अपडेट करें।
+- **Build `Killed` या exit code 137 के साथ रुक जाता है:** Docker की मेमोरी खत्म हो गई। उसे कम से कम 8 GB दें (Docker Desktop: Settings → Resources) और `docker compose up -d --build` फिर से चलाएँ।
+- **"sign-in code email is off for this deployment":** जब `NEXT_PUBLIC_APP_URL` `localhost` हो, तब ईमेल कोड नहीं भेजे जाते। लोकल टेस्ट के लिए GitHub या Google से साइन इन करें।

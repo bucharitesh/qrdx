@@ -7,7 +7,6 @@ import { useTranslations } from "next-intl";
 // the codes and pages lists (_components/list-selection.tsx).
 
 import { toast } from "@repo/design-system";
-import { Close as X } from "@repo/design-system/components/icons";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -65,26 +64,24 @@ import {
 import {
   LIST_ROW_FOCUS,
   type ListSelectionApi,
-  ListShortcuts,
-  SelectionStatus,
   useListSelection,
 } from "@/app/(app)/dashboard/_components/list-selection";
+import {
+  SelectionBar,
+  type SelectionBarAction,
+} from "@/app/(app)/dashboard/_components/selection-bar";
 import {
   BULK_KEYS,
   type BulkAction,
   keyLabel,
 } from "@/app/(app)/dashboard/_lib/list-keys";
 import { formatDate } from "@/app/(app)/dashboard/codes/_components/format";
-import { TooltipWrapper } from "@/components/tooltip-wrapper";
 import { useCan } from "@/components/workspace-provider";
 import { track } from "@/lib/analytics";
 import { BARCODE_FILE_TYPES, BARCODE_FILES } from "@/lib/barcode/files";
 import type { BarcodeStatus } from "@/lib/barcodes/schema";
 import { soundEvent } from "@/lib/sound/emit";
 import type { BarcodeCard, FolderOption } from "../_lib/filters";
-
-const plural = (count: number) =>
-  `${count} ${count === 1 ? "barcode" : "barcodes"}`;
 
 interface ListContextValue {
   selection: ListSelectionApi;
@@ -207,8 +204,8 @@ export function BarcodesList({
       ({ updated, skipped }) => {
         clear();
         return skipped > 0
-          ? `Moved ${plural(updated)} to the trash. ${skipped} made by others stayed: only owners and admins can delete them.`
-          : `Moved ${plural(updated)} to the trash`;
+          ? t("movedToTrashSkipped", { count: updated, skipped })
+          : t("movedToTrash", { count: updated });
       },
     );
   const restore = (ids: string[]) =>
@@ -216,7 +213,7 @@ export function BarcodesList({
       () => restoreSavedBarcodes({ ids }),
       ({ updated }) => {
         clear();
-        return `Restored ${plural(updated)}`;
+        return t("restored", { count: updated });
       },
     );
   const move = (ids: string[], folderId: string | null) =>
@@ -226,8 +223,8 @@ export function BarcodesList({
         clear();
         const name = folders.find((row) => row.id === folderId)?.name;
         return name
-          ? `Moved ${plural(updated)} to ${name}`
-          : `Took ${plural(updated)} out of folders`;
+          ? t("movedToFolder", { count: updated, name })
+          : t("tookOutOfFolders", { count: updated });
       },
     );
   const purge = (ids: string[]) =>
@@ -236,7 +233,7 @@ export function BarcodesList({
       ({ updated }) => {
         clear();
         setConfirm(null);
-        return `Deleted ${plural(updated)} for good`;
+        return t("deletedForGood", { count: updated });
       },
     );
   const emptyTrash = () =>
@@ -245,7 +242,7 @@ export function BarcodesList({
       ({ updated }) => {
         clear();
         setConfirm(null);
-        return `Deleted ${plural(updated)} for good`;
+        return t("deletedForGood", { count: updated });
       },
     );
 
@@ -261,10 +258,61 @@ export function BarcodesList({
             trash: () => trash(selectedIds),
           };
 
+  const actions: SelectionBarAction[] = inTrash
+    ? [
+        {
+          id: "restore",
+          label: t("restore"),
+          icon: <RotateLeft aria-hidden />,
+          kbd: keyLabel(BULK_KEYS.restore),
+          priority: 60,
+          onSelect: () => restore(selectedIds),
+        },
+        {
+          id: "purge",
+          label: t("deleteForGood"),
+          icon: <Trash aria-hidden />,
+          kbd: keyLabel(BULK_KEYS.trash),
+          priority: 50,
+          destructive: true,
+          onSelect: () => setConfirm("purge"),
+        },
+      ]
+    : [
+        {
+          id: "move",
+          label: t("move"),
+          title: t("moveToFolder"),
+          icon: <FolderOpen aria-hidden />,
+          priority: 60,
+          menu: (
+            <FolderItems
+              folders={folders}
+              onPick={(folderId) => move(selectedIds, folderId)}
+            />
+          ),
+          menuClassName: "max-h-80 w-60 overflow-y-auto",
+        },
+        {
+          id: "trash",
+          label: t("delete"),
+          icon: <Trash aria-hidden />,
+          kbd: keyLabel(BULK_KEYS.trash),
+          priority: 50,
+          destructive: true,
+          onSelect: () => trash(selectedIds),
+        },
+      ];
+  const shortcutRows = inTrash
+    ? [
+        { label: t("restore"), keys: [keyLabel(BULK_KEYS.restore)] },
+        { label: t("deleteForGood"), keys: [keyLabel(BULK_KEYS.trash)] },
+      ]
+    : [{ label: t("delete"), keys: [keyLabel(BULK_KEYS.trash)] }];
+
   return (
     <ListContext.Provider value={{ selection, selectable }}>
       <div className="space-y-3" ref={listRef}>
-        <SelectionStatus count={count} noun={["barcode", "barcodes"]} />
         {inTrash && canWrite && count === 0 && (
           <div className="flex justify-end">
             <Button
@@ -278,117 +326,6 @@ export function BarcodesList({
             </Button>
           </div>
         )}
-        {count > 0 && (
-          <div
-            aria-label={t("bulkActions")}
-            className="bg-background/95 supports-[backdrop-filter]:bg-background/80 sticky top-2 z-10 flex flex-wrap items-center gap-1 rounded-lg border p-1.5 shadow-sm backdrop-blur"
-            role="toolbar"
-          >
-            <span className="px-2 text-sm font-medium tabular-nums">
-              {t("countSelected", { count })}
-            </span>
-            <TooltipWrapper kbd="Esc" label={t("clearSelection")}>
-              <Button
-                aria-label={t("clearSelection")}
-                onClick={clear}
-                size="icon-sm"
-                variant="ghost"
-              >
-                <X />
-              </Button>
-            </TooltipWrapper>
-            <div className="bg-border mx-1 h-5 w-px" />
-            {inTrash ? (
-              <>
-                <TooltipWrapper
-                  kbd={keyLabel(BULK_KEYS.restore)}
-                  label={t("restore")}
-                >
-                  <Button
-                    disabled={pending}
-                    onClick={() => restore(selectedIds)}
-                    size="sm"
-                    variant="ghost"
-                  >
-                    <RotateLeft aria-hidden />
-                    {t("restore")}
-                  </Button>
-                </TooltipWrapper>
-                <TooltipWrapper
-                  kbd={keyLabel(BULK_KEYS.trash)}
-                  label={t("deleteForGood")}
-                >
-                  <Button
-                    disabled={pending}
-                    onClick={() => setConfirm("purge")}
-                    size="sm"
-                    variant="ghost"
-                  >
-                    <Trash aria-hidden />
-                    {t("deleteForGood")}
-                  </Button>
-                </TooltipWrapper>
-              </>
-            ) : (
-              <>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button disabled={pending} size="sm" variant="ghost">
-                      <FolderOpen aria-hidden />
-                      {t("moveToFolder")}
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="start" className="w-60">
-                    <FolderItems
-                      folders={folders}
-                      onPick={(folderId) => move(selectedIds, folderId)}
-                    />
-                  </DropdownMenuContent>
-                </DropdownMenu>
-                <TooltipWrapper
-                  kbd={keyLabel(BULK_KEYS.trash)}
-                  label={t("delete")}
-                >
-                  <Button
-                    disabled={pending}
-                    onClick={() => trash(selectedIds)}
-                    size="sm"
-                    variant="ghost"
-                  >
-                    <Trash aria-hidden />
-                    {t("delete")}
-                  </Button>
-                </TooltipWrapper>
-              </>
-            )}
-            {keyboardShortcuts && (
-              <div className="ml-auto">
-                <ListShortcuts
-                  actions={
-                    inTrash
-                      ? [
-                          {
-                            label: t("restore"),
-                            keys: [keyLabel(BULK_KEYS.restore)],
-                          },
-                          {
-                            label: t("deleteForGood"),
-                            keys: [keyLabel(BULK_KEYS.trash)],
-                          },
-                        ]
-                      : [
-                          {
-                            label: t("delete"),
-                            keys: [keyLabel(BULK_KEYS.trash)],
-                          },
-                        ]
-                  }
-                />
-              </div>
-            )}
-          </div>
-        )}
-
         <ul
           aria-label={t("barcodes")}
           className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4"
@@ -411,6 +348,18 @@ export function BarcodesList({
             />
           ))}
         </ul>
+
+        <SelectionBar
+          actions={actions}
+          clearLabel={t("clearSelection")}
+          count={count}
+          countLabel={t("countSelected", { count })}
+          disabled={pending}
+          label={t("bulkActions")}
+          noun={["barcode", "barcodes"]}
+          onClear={clear}
+          shortcuts={keyboardShortcuts ? shortcutRows : undefined}
+        />
       </div>
 
       <AlertDialog
@@ -422,7 +371,7 @@ export function BarcodesList({
             <AlertDialogTitle>
               {confirm === "empty"
                 ? t("emptyTheTrash")
-                : t("deleteValueForGood", { value: plural(count) })}
+                : t("deleteValueForGood", { count })}
             </AlertDialogTitle>
             <AlertDialogDescription>
               {t("printedCopiesKeepWorkingBarcodes")}

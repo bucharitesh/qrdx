@@ -1,7 +1,12 @@
 // The frame library in the browser (lib/frames/library.ts): nothing loads
 // until asked, the index names official frames without their specs, and a
 // frame's collection loads on its own.
-import { frameSpecHash, getOfficialFrame, OFFICIAL_FRAMES } from "qrdx";
+import {
+  frameSpecHash,
+  getOfficialFrame,
+  OFFICIAL_FRAME_COLLECTIONS,
+  OFFICIAL_FRAMES,
+} from "qrdx";
 import { beforeEach, describe, expect, it } from "vitest";
 import {
   isCollectionLoaded,
@@ -60,17 +65,7 @@ describe("the frame library", () => {
 
   it("loads every collection", async () => {
     const ids = new Set<string>();
-    for (const collection of [
-      "call-to-action",
-      "holidays",
-      "seasons",
-      "food-drink",
-      "shopping",
-      "events",
-      "places",
-      "health-learning",
-      "business",
-    ] as const) {
+    for (const { id: collection } of OFFICIAL_FRAME_COLLECTIONS) {
       for (const frame of await loadFrameCollection(collection)) {
         expect(frame.collection).toBe(collection);
         ids.add(frame.id);

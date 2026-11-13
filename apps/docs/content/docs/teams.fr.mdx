@@ -1,0 +1,89 @@
+---
+title: "Espaces de travail et équipes"
+description: "Chacun dispose de son propre espace de travail. Créez-en d'autres avec Pro ou Business, invitez des personnes par e-mail ou par lien d'invitation, et choisissez les rôles propriétaire, administrateur, membre, facturation ou lecteur."
+icon: Users
+---
+
+Tout ce que vous créez dans QRdx appartient à un espace de travail : QR codes dynamiques et [pages hébergées](/docs/landing-pages), [fichiers](/docs/files), [domaines personnalisés](/docs/custom-domains), dossiers et tags, réponses aux formulaires, [webhooks](/docs/webhooks) et clés API. Les thèmes enregistrés sont à vous, et les propriétaires et administrateurs peuvent en partager des copies avec un espace de travail afin que tous les membres conçoivent avec les mêmes couleurs. Chaque page du tableau de bord contient l'espace de travail dans son URL (`/dashboard/<workspace>/…`). Changez d'espace de travail avec le sélecteur d'espace de travail, en bas de la barre latérale (sur un téléphone, dans le menu) ; vous restez dans la même section, comme Codes ou Paramètres → Domaines, de l'espace de travail que vous choisissez.
+
+## Votre propre espace de travail [#your-own-workspace]
+
+Chaque compte dispose d'un espace de travail à lui, créé automatiquement, dont vous êtes le propriétaire. Il utilise votre offre. Vous pouvez le renommer et modifier son URL, mais vous ne pouvez ni le quitter ni le supprimer : il disparaît lorsque vous [supprimez votre compte](/docs/help/account-and-billing/delete-your-account). Avec Pro ou Business, vous pouvez y inviter des personnes, ou le garder pour vous et créer un espace de travail distinct pour chaque équipe ou client.
+
+## Créer un autre espace de travail [#create-another-workspace]
+
+Pour créer d'autres espaces de travail, il faut Pro ou Business. Tout le monde peut rejoindre un espace de travail auquel il est invité, y compris les personnes avec l'offre Gratuit.
+
+1. Ouvrez le sélecteur d'espace de travail et cliquez sur **Créer un espace de travail**.
+2. Saisissez un **Nom de l'espace de travail** et une **URL de l'espace de travail** (3 à 48 lettres minuscules, chiffres et tirets). QRdx vérifie pendant la saisie si l'URL est disponible ; quelques mots, comme `codes` et `settings`, sont réservés.
+3. Cliquez sur **Créer un espace de travail**. Il s'ouvre avec vous comme propriétaire.
+
+## Inviter des personnes [#invite-people]
+
+Les propriétaires et administrateurs invitent des personnes depuis [Paramètres → Équipe](/dashboard?to=settings/team) :
+
+1. Saisissez l'adresse e-mail de la personne et choisissez un rôle : **Administrateur**, **Membre** ou **Lecteur**. Les propriétaires peuvent aussi inviter quelqu'un avec le rôle **Facturation**.
+2. QRdx lui envoie une invitation par e-mail. Chaque invitation comporte aussi un lien que vous pouvez copier et envoyer vous-même.
+3. La personne ouvre le lien, se connecte avec l'adresse e-mail invitée et clique sur **Accepter l'invitation**. L'espace de travail s'ouvre alors pour elle.
+
+Inviter quelqu'un comme administrateur vous demande d'abord de [confirmer votre identité](/docs/help/privacy-and-security/two-step-verification#confirm-its-you), sauf si vous l'avez fait dans ce navigateur au cours des 10 dernières minutes.
+
+Les invitations expirent après 48 heures et ne fonctionnent que pour l'adresse e-mail à laquelle elles ont été envoyées : un lien transféré ne peut donc pas être utilisé par quelqu'un d'autre. Les invitations en attente occupent une place jusqu'à leur acceptation ; révoquez donc celles dont vous n'avez plus besoin.
+
+## Lien d'invitation [#join-link]
+
+Un lien d'invitation est un lien unique pour toute l'équipe : toute personne connectée qui l'ouvre rejoint l'espace de travail, tant qu'il reste des places libres. Les propriétaires et administrateurs le gèrent dans [Paramètres → Équipe](/dashboard?to=settings/team), avec Pro et Business :
+
+1. Choisissez le rôle attribué aux personnes qui rejoignent (**Membre** par défaut ; jamais propriétaire, et seuls les propriétaires peuvent créer un lien **Facturation**) et cliquez sur **Créer un lien d'invitation**. Un lien qui ajoute des personnes comme administrateurs vous demande d'abord de [confirmer votre identité](/docs/help/privacy-and-security/two-step-verification#confirm-its-you).
+2. Copiez le lien et partagez-le. Par sécurité, il n'est affiché qu'une seule fois ; QRdx en conserve une empreinte, pas le lien lui-même.
+3. Vous l'avez perdu, ou il a été transmis à quelqu'un qui ne devrait pas l'avoir ? Cliquez sur **Réinitialiser le lien** : l'ancien cesse de fonctionner et vous en obtenez un nouveau. **Désactiver** l'arrête définitivement.
+
+Les personnes qui ne sont pas connectées se connectent d'abord, puis reviennent au lien. Une personne déjà membre en est informée. Lorsque toutes les places sont occupées, il n'est plus possible de rejoindre l'espace de travail tant qu'une place ne se libère pas.
+
+## Rôles [#roles]
+
+| | Lecteur | Facturation | Membre | Administrateur | Propriétaire |
+| --- | --- | --- | --- | --- | --- |
+| Voir les codes, les pages et les statistiques | Oui | Oui | Oui | Oui | Oui |
+| Créer et modifier des codes et des pages, importer des fichiers | Non | Non | Oui | Oui | Oui |
+| Supprimer des codes, des fichiers et des réponses aux formulaires | Non | Non | Les siens | Tous | Tous |
+| Créer des clés API | Non | Non | Oui | Oui | Oui |
+| Partager des thèmes enregistrés avec l'espace de travail | Non | Non | Non | Oui | Oui |
+| Inviter et retirer des personnes, modifier les rôles | Non | Non | Non | Oui | Oui |
+| Renommer l'espace de travail, modifier son URL et son logo | Non | Non | Non | Oui | Oui |
+| Ajouter, vérifier et supprimer des domaines personnalisés | Non | Non | Non | Oui | Oui |
+| Gérer les points de terminaison de webhook et voir les secrets de signature | Non | Non | Non | Oui | Oui |
+| Passer l'espace de travail à une offre supérieure | Non | Oui | Non | Non | Oui |
+| Créer et modifier des applications OAuth | Non | Non | Non | Non | Oui |
+| Nommer quelqu'un propriétaire ou membre Facturation | Non | Non | Non | Non | Oui |
+| Supprimer l'espace de travail | Non | Non | Non | Non | Oui |
+
+Les lecteurs et les membres Facturation ont un accès en lecture seule : ils ne peuvent rien créer, modifier ni supprimer dans l'espace de travail, et une clé API ne peut pas faire plus que le rôle de son créateur. Les membres peuvent voir les points de terminaison de webhook et leurs journaux de livraison, et utiliser les domaines vérifiés de l'espace de travail pour leurs codes. Les [paramètres de notification](/docs/notifications) sont personnels : chaque membre choisit ses propres alertes pour chaque espace de travail.
+
+## Offres et places [#plans-and-seats]
+
+Un espace de travail utilise la meilleure offre parmi ses propriétaires et ses membres Facturation : si l'un d'eux a Business, tout l'espace de travail bénéficie des limites de Business et les membres n'ont pas besoin de leur propre abonnement. C'est le but du rôle **Facturation** : quelqu'un qui paie pour l'espace de travail sans le gérer. Les limites telles que les QR codes dynamiques, les pages, le stockage et les réponses aux formulaires sont comptées par espace de travail. Consultez [Offres et limites](/docs/plans-and-limits).
+
+Les places correspondent aux membres, propriétaire compris, plus les invitations en attente : 1 (vous seul) lorsque les propriétaires et les membres Facturation sont sur Gratuit, jusqu'à 3 avec Pro et aucune limite avec Business. Si leur offre change, les membres actuels restent et chaque code continue de fonctionner ; seules les nouvelles invitations et les nouveaux éléments au-delà de la limite sont bloqués.
+
+## Renommer, quitter ou supprimer un espace de travail [#rename-leave-or-delete-a-workspace]
+
+Ces options se trouvent dans [Paramètres → Général](/dashboard?to=settings) de l'espace de travail.
+
+- **Renommer :** les propriétaires et administrateurs modifient le nom et l'URL. Les liens vers l'ancienne URL cessent de fonctionner ; les codes imprimés ne changent pas.
+- **Logo :** les propriétaires et administrateurs importent un logo (lorsque le stockage de fichiers est configuré sur le serveur) ou utilisent l'URL d'une image en https. Il s'affiche dans le sélecteur d'espace de travail ; sans logo, le sélecteur affiche la première lettre du nom.
+- **Quitter :** cliquez sur **Quitter l'espace de travail** dans la zone de danger. Le dernier propriétaire ne peut pas quitter : nommez d'abord un autre membre propriétaire, ou supprimez l'espace de travail. Personne ne peut quitter son propre espace de travail.
+- **Retirer un membre :** dans [Paramètres → Équipe](/dashboard?to=settings/team). Les codes et les pages qu'il a créés restent dans l'espace de travail. Personne ne peut être retiré de son propre espace de travail. Retirer quelqu'un, comme modifier son rôle, vous demande d'abord de [confirmer votre identité](/docs/help/privacy-and-security/two-step-verification#confirm-its-you).
+- **Supprimer un espace de travail :** réservé aux propriétaires, et jamais l'espace de travail personnel de quelqu'un. Vous confirmez en saisissant l'URL de l'espace de travail, et QRdx vous demande de confirmer votre identité. Rien ne cesse de fonctionner : les codes, pages, fichiers, domaines et autres éléments passent dans l'espace de travail personnel de la personne qui les a créés. Les clés API de l'espace de travail sont supprimées avec lui.
+
+## Déplacer un code vers un autre espace de travail [#move-a-code-to-another-workspace]
+
+Dans le menu **⋯** du code, sur la page Codes, choisissez **Déplacer vers un espace de travail...** et sélectionnez un espace de travail dans lequel vous pouvez créer des codes. Le lien court reste le même, donc les codes imprimés continuent de fonctionner, et ses scans et son historique de versions le suivent. Son dossier et ses tags restent en place, car ils appartiennent à l'ancien espace de travail.
+
+- Les membres peuvent déplacer les codes qu'ils ont créés ; les propriétaires et administrateurs, n'importe quel code.
+- L'offre de l'autre espace de travail doit permettre un code actif de plus. Les codes archivés ne comptent pas.
+- Un code dont le lien utilise un domaine personnalisé ne peut pas être déplacé, car le domaine appartient à l'ancien espace de travail et le lien imprimé cesserait de fonctionner. Les codes qui ouvrent une page hébergée restent avec leur page.
+
+## Accès à l'API [#api-access]
+
+Les requêtes [REST API](/docs/developers/rest-api) effectuées avec un jeton d'accès OAuth agissent sur l'espace de travail personnel du propriétaire du jeton. Une [clé API](/docs/developers/api-keys) agit sur l'espace de travail dans lequel elle a été créée, avec votre rôle dans cet espace. Les requêtes effectuées depuis une session de navigateur connectée agissent sur le dernier espace de travail ouvert dans cette session.

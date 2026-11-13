@@ -1,0 +1,81 @@
+{
+  "id": "monsoon-umbrella",
+  "name": "Monsoon umbrella",
+  "description": "A solid card with an umbrella in the rain over the code and the label underneath, in rain blue.",
+  "category": "seasonal",
+  "collection": "seasons",
+  "occasion": "monsoon",
+  "contentTypes": [],
+  "tags": ["monsoon", "rainy season", "rain", "umbrella"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#1e3a5f",
+      "text": "#ffffff",
+      "accent": "#7dd3fc"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M557 110C557 71 587 50 620 50C653 50 683 71 683 110C674 101 662 101 651.5 110C642.5 101 630.5 101 620 110C609.5 101 597.5 101 588.5 110C578 101 566 101 557 110ZM622.63 41L622.63 53L617.38 53L617.38 41ZM623.75 107L623.75 161.03L623.13 165.99L621.31 170.19L618.47 173.37L614.91 175.34L611 176L607.09 175.34L603.53 173.37L600.69 170.19L598.87 165.99L598.28 161.46L605.72 160.54L606.13 164.11L607.05 166.21L608.24 167.53L609.58 168.26L611 168.5L612.42 168.26L613.76 167.53L614.95 166.21L615.87 164.11L616.25 160.97L616.25 107Z",
+        "fill": "accent"
+      },
+      {
+        "type": "path",
+        "d": "M566 131C567.84 136.4 571.25 140.6 571.25 143.75A5.25 5.25 0 0 1 560.75 143.75C560.75 140.6 564.16 136.4 566 131ZM671 125C672.84 130.4 676.25 134.6 676.25 137.75A5.25 5.25 0 0 1 665.75 137.75C665.75 134.6 669.16 130.4 671 125ZM653 156.5C654.58 161 657.5 164.3 657.5 167A4.5 4.5 0 0 1 648.5 167C648.5 164.3 651.42 161 653 156.5Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Hello monsoon",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan me",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

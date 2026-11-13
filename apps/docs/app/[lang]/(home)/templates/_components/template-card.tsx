@@ -1,7 +1,7 @@
 import { buttonVariants } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
 import { ArrowRight } from "iconsax-reactjs";
-import { useLocale, useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import { DemoQrButton } from "@/components/landing/demo/demo-qr-button";
 import { UseTemplateLink } from "@/components/landing/demo/use-template-link";
@@ -9,6 +9,7 @@ import {
   PhoneFrame,
   TemplatePreview,
 } from "@/components/landing/template-preview";
+import type { Locale } from "@/lib/i18n/config";
 import { localizeHref } from "@/lib/i18n/paths";
 import { buildDemoContent, type TemplateDemo } from "@/lib/landing/demo";
 import { baseUrl } from "@/lib/metadata";
@@ -16,17 +17,20 @@ import { baseUrl } from "@/lib/metadata";
 /**
  * One template in the gallery: a live preview in a phone frame (the same
  * thumbnail the dashboard's template picker shows), its name, a QR code that
- * opens the demo on a phone, "View demo" and "Use template".
+ * opens the demo on a phone, "View demo" and "Use template". The language
+ * is a prop, not the request's, because the gallery's later sections render
+ * in a server action (../actions.tsx), which has no [lang] segment.
  */
-export function TemplateCard({
+export async function TemplateCard({
   demo,
+  locale,
   className,
 }: {
   demo: TemplateDemo;
+  locale: Locale;
   className?: string;
 }) {
-  const t = useTranslations("templates.card");
-  const locale = useLocale();
+  const t = await getTranslations({ locale, namespace: "templates.card" });
   const { template, variant, path } = demo;
   const content = buildDemoContent(template.type, variant.id, {
     thumbnail: true,

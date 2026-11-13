@@ -1,0 +1,103 @@
+{
+  "id": "plant-based-menu",
+  "name": "Plant-based menu",
+  "description": "A round badge with a leaf inside the ring, the label set along its top and the note along its bottom.",
+  "category": "use-case",
+  "collection": "food-drink",
+  "contentTypes": ["url"],
+  "tags": ["restaurant", "food", "vegan", "vegetarian"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 2000,
+      "height": 2000
+    },
+    "qr": {
+      "x": 500,
+      "y": 500,
+      "size": 1000,
+      "padding": 64,
+      "radius": 40
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "circle",
+        "cx": 1000,
+        "cy": 1000,
+        "r": 1000,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 1000,
+        "cy": 1000,
+        "r": 820,
+        "hole": 808,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.25
+        }
+      },
+      {
+        "type": "path",
+        "d": "M938.8 379.6C1011.46 400.01 1068.07 341.87 1064.6 250.4C987.68 263.6 931.07 321.74 938.8 379.6Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M941.43 381.76L945.86 376.36L950.34 371.02L954.86 365.73L959.44 360.5L964.06 355.31L968.74 350.18L973.47 345.1L978.25 340.07L983.07 335.08L987.95 330.15L992.88 325.27L997.87 320.45L1002.9 315.67L1007.98 310.94L1013.11 306.26L1018.3 301.64L1023.53 297.06L1028.82 292.54L1034.16 288.06L1039.56 283.63A3.4 3.4 0 0 1 1035.24 278.37L1029.81 282.83L1024.42 287.35L1019.09 291.92L1013.8 296.54L1008.56 301.21L1003.38 305.94L998.24 310.71L993.16 315.54L988.13 320.42L983.15 325.35L978.22 330.33L973.34 335.36L968.51 340.44L963.74 345.58L959.01 350.76L954.34 356L949.72 361.29L945.15 366.62L940.63 372.01L936.17 377.44A3.4 3.4 0 0 1 941.43 381.76Z",
+        "fill": "accent"
+      },
+      {
+        "type": "polygon",
+        "points": [[95, 974], [121, 1000], [95, 1026], [69, 1000]],
+        "fill": "text"
+      },
+      {
+        "type": "polygon",
+        "points": [[1905, 974], [1931, 1000], [1905, 1026], [1879, 1000]],
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "curved",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Plant-based menu",
+        "color": "text",
+        "curve": {
+          "cx": 1000,
+          "cy": 1000,
+          "radius": 905,
+          "side": "top",
+          "spread": 120
+        },
+        "fontSize": 92
+      },
+      {
+        "type": "curved",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan to see it",
+        "color": "text",
+        "curve": {
+          "cx": 1000,
+          "cy": 1000,
+          "radius": 905,
+          "side": "bottom",
+          "spread": 110
+        },
+        "fontSize": 76,
+        "weight": "regular"
+      }
+    ]
+  }
+}

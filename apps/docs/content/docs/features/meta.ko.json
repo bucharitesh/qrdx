@@ -1,0 +1,13 @@
+{
+  "$schema": "../../../.source/json-schema/docs.meta.json",
+  "title": "기능",
+  "pages": [
+    "patterns",
+    "colors-gradients",
+    "logos",
+    "templates",
+    "frames",
+    "art-qr",
+    "downloads"
+  ]
+}

@@ -19,6 +19,7 @@
 // Never in a snippet: an uploaded logo (a data URL) or art pixels. Each
 // serializer lists what its tab can't express in `omitted`, in plain English.
 
+import { API_BASE_URL, MCP_ENDPOINT, SHADCN_REGISTRY_URL } from "@repo/config";
 import { getTemplateIds } from "qrdx";
 import {
   BODY_PATTERN,
@@ -98,11 +99,11 @@ export interface RestSnippet extends Snippet {
 
 export const SAMPLE_VALUE = "https://example.com";
 export const REACT_INSTALL = "npm install qrdx";
-export const SHADCN_ITEM_URL = "https://qrdx.dev/r/qr-code.json";
+export const SHADCN_ITEM_URL = `${SHADCN_REGISTRY_URL}/qr-code.json`;
 export const SHADCN_INSTALL = `npx shadcn@latest add ${SHADCN_ITEM_URL}`;
-export const IMAGE_API_URL = "https://api.qrdx.dev/v1/qr";
-export const CODES_API_URL = "https://api.qrdx.dev/v1/codes";
-export const MCP_SERVER_URL = "https://mcp.qrdx.dev/mcp";
+export const IMAGE_API_URL = `${API_BASE_URL}/qr`;
+export const CODES_API_URL = `${API_BASE_URL}/codes`;
+export const MCP_SERVER_URL = MCP_ENDPOINT;
 
 /**
  * What npm `qrdx` 0.0.46 accepts (dist/types/*.d.ts and

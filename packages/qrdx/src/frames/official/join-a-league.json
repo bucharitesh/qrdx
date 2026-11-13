@@ -1,0 +1,94 @@
+{
+  "id": "join-a-league",
+  "name": "Join a league",
+  "description": "A solid card with a round badge holding three people on its top edge.",
+  "category": "use-case",
+  "collection": "sports-fitness",
+  "contentTypes": ["url"],
+  "tags": ["sports", "fitness", "league", "teams"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1830
+    },
+    "qr": {
+      "x": 120,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 150,
+        "width": 1240,
+        "height": 1680,
+        "radius": 64,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 620,
+        "cy": 150,
+        "r": 150,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 620,
+        "cy": 150,
+        "r": 120,
+        "fill": "background"
+      },
+      {
+        "type": "path",
+        "d": "M564 138.8A12.6 12.6 0 1 1 589.2 138.8A12.6 12.6 0 1 1 564 138.8ZM558.4 208.8C558.4 161.2 594.8 161.2 594.8 208.8ZM650.8 138.8A12.6 12.6 0 1 1 676 138.8A12.6 12.6 0 1 1 650.8 138.8ZM645.2 208.8C645.2 161.2 681.6 161.2 681.6 208.8Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M603.2 122A16.8 16.8 0 1 1 636.8 122A16.8 16.8 0 1 1 603.2 122ZM596.2 208.8C596.2 150 643.8 150 643.8 208.8Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Join a league",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1540,
+          "width": 1040,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Teams wanted",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1710,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

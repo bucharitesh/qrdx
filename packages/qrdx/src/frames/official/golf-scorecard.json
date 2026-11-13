@@ -1,0 +1,120 @@
+{
+  "id": "golf-scorecard",
+  "name": "Golf scorecard",
+  "description": "A clipboard with the code on its sheet of paper and a golf flag.",
+  "category": "use-case",
+  "collection": "sports-fitness",
+  "contentTypes": ["url"],
+  "tags": ["sports", "fitness", "golf", "scorecard"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1890
+    },
+    "qr": {
+      "x": 160,
+      "y": 480,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 90,
+        "width": 1320,
+        "height": 1800,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 60,
+        "y": 200,
+        "width": 1200,
+        "height": 1630,
+        "radius": 12,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 60,
+        "y": 200,
+        "width": 1200,
+        "height": 14,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.75
+        }
+      },
+      {
+        "type": "path",
+        "d": "M470 20L850 20A40 40 0 0 1 890 60L890 150A40 40 0 0 1 850 190L470 190A40 40 0 0 1 430 150L430 60A40 40 0 0 1 470 20ZM626 85A34 34 0 1 0 694 85A34 34 0 1 0 626 85Z",
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.3
+        }
+      },
+      {
+        "type": "path",
+        "d": "M210.8 262.2L210.8 262.2A3.6 3.6 0 0 1 214.4 265.8L214.4 357A3.6 3.6 0 0 1 210.8 360.6L210.8 360.6A3.6 3.6 0 0 1 207.2 357L207.2 265.8A3.6 3.6 0 0 1 210.8 262.2ZM214.4 264.6L263.6 281.4L214.4 298.2ZM244.4 351A7.2 7.2 0 1 1 258.8 351A7.2 7.2 0 1 1 244.4 351Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M179.6 365.4A50.4 7.2 0 1 1 280.4 365.4A50.4 7.2 0 1 1 179.6 365.4ZM202.4 365.4A8.4 3 0 1 0 219.2 365.4A8.4 3 0 1 0 202.4 365.4Z",
+        "fill": "accent"
+      },
+      {
+        "type": "rect",
+        "x": 160,
+        "y": 392,
+        "width": 1000,
+        "height": 8,
+        "radius": 4,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.7
+        }
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Get the scorecard",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 1600,
+          "width": 1040,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Course guide",
+        "color": "frame",
+        "box": {
+          "x": 330,
+          "y": 260,
+          "width": 830,
+          "height": 110
+        },
+        "align": "start"
+      }
+    ]
+  }
+}

@@ -1,5 +1,6 @@
 // The paint picker's math: color models, CSS parsing, gradient stop
 // editing, the QR contrast readout and its fix, and swatch storage.
+import { MAX_GRADIENT_STOPS } from "@repo/config";
 import { getScanContrast } from "qrdx";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
@@ -24,7 +25,6 @@ import {
 import {
   addStop,
   colorAtOffset,
-  MAX_STOPS,
   moveStop,
   normalizeStops,
   removeStop,
@@ -176,10 +176,10 @@ describe("gradient stops", () => {
 
   it("caps the number of stops", () => {
     let current = stops;
-    for (let i = 0; i < MAX_STOPS + 4; i++) {
+    for (let i = 0; i < MAX_GRADIENT_STOPS + 4; i++) {
       current = addStop(current, i * 5)?.stops ?? current;
     }
-    expect(current).toHaveLength(MAX_STOPS);
+    expect(current).toHaveLength(MAX_GRADIENT_STOPS);
     expect(addStop(current, 10)).toBeNull();
   });
 

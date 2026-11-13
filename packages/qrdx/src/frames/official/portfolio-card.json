@@ -1,0 +1,110 @@
+{
+  "id": "portfolio-card",
+  "name": "Portfolio card",
+  "description": "A business card: a greeting and a call to save the contact beside the code.",
+  "category": "use-case",
+  "collection": "business",
+  "contentTypes": ["url"],
+  "tags": ["business", "portfolio", "freelance"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 2000,
+      "height": 1060
+    },
+    "qr": {
+      "x": 1070,
+      "y": 130,
+      "size": 800,
+      "padding": 64,
+      "radius": 19.2
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 2000,
+        "height": 1060,
+        "radius": 48,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 2000,
+        "height": 1060,
+        "radius": 48,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.78
+        },
+        "hole": {
+          "x": 10,
+          "y": 10,
+          "width": 1980,
+          "height": 1040,
+          "radius": 40
+        }
+      },
+      {
+        "type": "path",
+        "d": "M149.6 192L250.4 192A11.2 11.2 0 0 1 261.6 203.2L261.6 264.8A11.2 11.2 0 0 1 250.4 276L149.6 276A11.2 11.2 0 0 1 138.4 264.8L138.4 203.2A11.2 11.2 0 0 1 149.6 192ZM186 169.6L214 169.6A8.4 8.4 0 0 1 222.4 178L222.4 189.2A8.4 8.4 0 0 1 214 197.6L186 197.6A8.4 8.4 0 0 1 177.6 189.2L177.6 178A8.4 8.4 0 0 1 186 169.6ZM188.8 178A2.8 2.8 0 0 0 186 180.8L186 189.2A2.8 2.8 0 0 0 188.8 192L211.2 192A2.8 2.8 0 0 0 214 189.2L214 180.8A2.8 2.8 0 0 0 211.2 178L188.8 178ZM142.6 231.2L190.2 231.2L190.2 225.6L142.6 225.6ZM209.8 231.2L257.4 231.2L257.4 225.6L209.8 225.6Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M193 218.6L207 218.6A2.8 2.8 0 0 1 209.8 221.4L209.8 234A2.8 2.8 0 0 1 207 236.8L193 236.8A2.8 2.8 0 0 1 190.2 234L190.2 221.4A2.8 2.8 0 0 1 193 218.6Z",
+        "fill": "accent"
+      },
+      {
+        "type": "rect",
+        "x": 130,
+        "y": 610,
+        "width": 160,
+        "height": 16,
+        "radius": 8,
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Selected work",
+        "color": "frame",
+        "box": {
+          "x": 130,
+          "y": 390,
+          "width": 816,
+          "height": 170
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "See my portfolio",
+        "color": "frame",
+        "box": {
+          "x": 130,
+          "y": 680,
+          "width": 816,
+          "height": 130
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

@@ -19,6 +19,7 @@ import {
   TYPE_SEGMENTS,
   typeFromSegment,
 } from "@/lib/community/types";
+import { loadPage, offsetOf } from "@/lib/paging";
 import { Pager } from "../_components/pager";
 import { EmptyRow } from "../_components/stat-card";
 import { formatDate, formatNumber } from "../_lib/format";
@@ -44,12 +45,9 @@ export default async function AdminCommunityPage({
     typeof params.type === "string"
       ? (typeFromSegment(params.type) ?? undefined)
       : undefined;
-  const page = parsePage(params.page);
-  const { rows, total } = await itemsForReview({
-    type,
-    limit: PAGE_SIZE,
-    offset: (page - 1) * PAGE_SIZE,
-  });
+  const { rows, total, page } = await loadPage(parsePage(params.page), (page) =>
+    itemsForReview({ type, limit: PAGE_SIZE, offset: offsetOf(page) }),
+  );
   const views: { type: CommunityItemType | null; label: string }[] = [
     { type: null, label: "All" },
     ...COMMUNITY_TYPES.map((value) => ({

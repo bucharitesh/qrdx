@@ -2,6 +2,7 @@ import { passkey } from "@better-auth/passkey";
 import { sso } from "@better-auth/sso";
 import * as schema from "@repo/database";
 import { database as db } from "@repo/database";
+import { keys as core } from "@repo/next-config/keys";
 import { type BetterAuthOptions, betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import {
@@ -112,11 +113,18 @@ async function teamInvitationLimit(organizationId: string): Promise<number> {
 }
 
 const {
+  BETTER_AUTH_URL,
   GITHUB_CLIENT_ID,
   GITHUB_CLIENT_SECRET,
   GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET,
 } = keys();
+
+// Passkeys' relying party: BETTER_AUTH_URL, else the app URL (./passkey-rp.ts).
+const appUrls = {
+  BETTER_AUTH_URL,
+  NEXT_PUBLIC_APP_URL: core().NEXT_PUBLIC_APP_URL,
+};
 
 // Only providers with both a client id and secret are offered.
 const socialProviders: BetterAuthOptions["socialProviders"] = {
@@ -394,22 +402,12 @@ export const auth = betterAuth({
     // a code or a passkey (same relying party as the passkey plugin below).
     twoFactorPlugin,
     signInChallenge(twoFactorPlugin, {
-      relyingParty: passkeyRelyingParty({
-        BETTER_AUTH_URL: process.env.BETTER_AUTH_URL,
-        NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
-      }),
+      relyingParty: passkeyRelyingParty(appUrls),
     }),
     // Passkeys: rpID and origin from the app's URL (./passkey-rp.ts), user
     // verification required, sign-in options and registration rules in
     // ./passkey.ts.
-    passkey(
-      passkeyOptions(
-        passkeyRelyingParty({
-          BETTER_AUTH_URL: process.env.BETTER_AUTH_URL,
-          NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
-        })
-      )
-    ),
+    passkey(passkeyOptions(passkeyRelyingParty(appUrls))),
     passkeyPolicy(),
     // Linking, unlinking and workspace changes over HTTP need "Confirm it's you" (./confirm-gate.ts).
     confirmGate(),

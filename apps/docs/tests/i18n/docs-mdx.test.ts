@@ -132,6 +132,37 @@ describe("shapeProblems", () => {
     expect(mdxShape("Use n8n and GA4 with 2FA.").numbers).toEqual([]);
   });
 
+  it("reads thousands grouped the way each language writes them", () => {
+    const numbers = (text: string) => mdxShape(text).numbers;
+    const english = numbers(
+      "Up to 1,000 codes, 10,000 scans and 100,000 rows.",
+    );
+    expect(english).toEqual(["1000", "10000", "100000"]);
+    // French: a space, a no-break space or a narrow no-break space.
+    expect(
+      numbers("Jusqu'à 1 000 codes, 10\u00A0000 scans et 100\u202F000 lignes."),
+    ).toEqual(english);
+    // Hindi: lakh grouping.
+    expect(numbers("1,000 कोड, 10,000 स्कैन और 1,00,000 पंक्तियाँ।")).toEqual(
+      english,
+    );
+    expect(numbers("12,34,567.5")).toEqual(["1234567.5"]);
+    // Decimals keep their comma or point.
+    expect(numbers("1,5 Mo")).toEqual(["1.5"]);
+    // A number written against its unit, as Korean does, still counts.
+    expect(
+      shapeProblems(
+        mdxShape("Under 200 MB, one point is 0.353 mm, at most 32 KB."),
+        mdxShape("200MB 미만, 한 점은 0.353mm, 최대 32KB입니다."),
+      ),
+    ).toEqual([]);
+    expect(
+      shapeProblems(mdxShape("Under 200 MB."), mdxShape("100MB 미만."))[0],
+    ).toMatch(/numbers missing: "200"/);
+    // Two numbers on separate lines stay two numbers.
+    expect(numbers("5\n100")).toEqual(["100", "5"]);
+  });
+
   it("counts braces a translation adds to prose", () => {
     expect(proseBraces(english)).toBe(0);
     expect(proseBraces(`${english}\n{oops}`)).toBe(2);

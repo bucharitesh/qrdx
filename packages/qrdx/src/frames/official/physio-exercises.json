@@ -1,0 +1,86 @@
+{
+  "id": "physio-exercises",
+  "name": "Physio exercises",
+  "description": "A light card with a dumbbell and a pill-shaped button under the code.",
+  "category": "use-case",
+  "collection": "health-learning",
+  "contentTypes": ["url"],
+  "tags": ["healthcare", "clinic", "physiotherapy", "exercises"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1760
+    },
+    "qr": {
+      "x": 120,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 64,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.9
+        }
+      },
+      {
+        "type": "path",
+        "d": "M564.1 75.2L569.3 75.2A3.9 3.9 0 0 1 573.2 79.1L573.2 112.9A3.9 3.9 0 0 1 569.3 116.8L564.1 116.8A3.9 3.9 0 0 1 560.2 112.9L560.2 79.1A3.9 3.9 0 0 1 564.1 75.2ZM581 62.2L588.8 62.2A5.2 5.2 0 0 1 594 67.4L594 124.6A5.2 5.2 0 0 1 588.8 129.8L581 129.8A5.2 5.2 0 0 1 575.8 124.6L575.8 67.4A5.2 5.2 0 0 1 581 62.2ZM596.6 89.5L643.4 89.5A2.6 2.6 0 0 1 646 92.1L646 99.9A2.6 2.6 0 0 1 643.4 102.5L596.6 102.5A2.6 2.6 0 0 1 594 99.9L594 92.1A2.6 2.6 0 0 1 596.6 89.5ZM651.2 62.2L659 62.2A5.2 5.2 0 0 1 664.2 67.4L664.2 124.6A5.2 5.2 0 0 1 659 129.8L651.2 129.8A5.2 5.2 0 0 1 646 124.6L646 67.4A5.2 5.2 0 0 1 651.2 62.2ZM670.7 75.2L675.9 75.2A3.9 3.9 0 0 1 679.8 79.1L679.8 112.9A3.9 3.9 0 0 1 675.9 116.8L670.7 116.8A3.9 3.9 0 0 1 666.8 112.9L666.8 79.1A3.9 3.9 0 0 1 670.7 75.2Z",
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 170,
+        "y": 1520,
+        "width": 900,
+        "height": 180,
+        "radius": 90,
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Physio exercises",
+        "color": "text",
+        "box": {
+          "x": 230,
+          "y": 1520,
+          "width": 780,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Do them every day",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 180,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

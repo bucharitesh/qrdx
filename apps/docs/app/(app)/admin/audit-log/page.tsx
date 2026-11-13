@@ -10,6 +10,7 @@ import {
 } from "@repo/design-system/components/ui/table";
 import Link from "next/link";
 import { SettingsHeader } from "@/app/(app)/settings/components/settings-header";
+import { loadPage } from "@/lib/paging";
 import { Pager } from "../_components/pager";
 import { EmptyRow } from "../_components/stat-card";
 import { formatDateTime } from "../_lib/format";
@@ -30,8 +31,10 @@ export default async function AdminAuditLogPage({
   const params = await searchParams;
   const q =
     typeof params.q === "string" ? params.q.trim().slice(0, 200) : undefined;
-  const page = parsePage(params.page);
-  const { entries, total } = await listAuditLog({ page, q: q || undefined });
+  const { entries, total, page } = await loadPage(
+    parsePage(params.page),
+    (page) => listAuditLog({ page, q: q || undefined }),
+  );
 
   return (
     <div className="space-y-4">

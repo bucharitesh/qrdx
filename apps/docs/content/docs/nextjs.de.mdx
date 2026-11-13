@@ -1,0 +1,158 @@
+---
+title: "QR-Codes in Next.js"
+description: "Rendere QR-Codes im Next.js App Router mit qrdx: in Server Components ohne Client-JavaScript, in Client Components für Live-Eingaben, mit Logo und als SVG-Download."
+icon: Code
+---
+
+`qrdx` funktioniert auf beiden Seiten des App Routers. `QRCodeSVG` und `QRCode` verwenden keine Hooks, die nur im Client laufen. Eine Server Component kann den Code daher direkt ins HTML der Seite rendern, ohne dafür JavaScript auszuliefern. Eine Client Component brauchst du nur, wenn sich der Wert im Browser ändert oder wenn du eine Datei herunterladen willst.
+
+<NpmStatus package="qrdx" />
+
+## Installation [#install]
+
+```package-install
+qrdx@latest
+```
+
+`react` und `react-dom` ab Version 18 sind Peer-Dependencies, es werden also die Versionen deiner App verwendet.
+
+## In einer Server Component [#in-a-server-component]
+
+```tsx title="app/page.tsx"
+import { QRCodeSVG } from "qrdx";
+
+export default function Page() {
+  return (
+    <QRCodeSVG
+      value="https://example.com"
+      size={256}
+      margin={4}
+      role="img"
+      aria-label="QR code for example.com"
+    />
+  );
+}
+```
+
+Das SVG ist Teil des HTML, das der Server sendet. Es erscheint, bevor JavaScript geladen ist, eine statische Seite rendert es einmal beim Build, und Screenreader bekommen das `aria-label`.
+
+`margin` ist die Ruhezone um den Code, gemessen in Modulen. Bei `QRCodeSVG` ist der Standardwert `0`, was zu einem Code in einer Karte mit eigenem Innenabstand passt. Der QR-Standard verlangt 4 Module, und das ist die sichere Wahl bei unruhigem oder dunklem Hintergrund.
+
+### Aus Route-Parametern oder Daten [#from-route-params-or-data]
+
+```tsx title="app/tickets/[id]/page.tsx"
+import { QRCodeSVG } from "qrdx";
+
+export default async function TicketPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const url = `https://example.com/check-in/${encodeURIComponent(id)}`;
+  return <QRCodeSVG value={url} size={200} margin={4} level="H" />;
+}
+```
+
+Next.js übergibt `params` als Promise, deshalb ist die Seite `async`. Kodiere alles, was von einem Nutzer oder aus einer Datenbank kommt, bevor es in eine URL gelangt. Mit Stufe `H` dürfen bis zu 30 % des Codes beschädigt sein, was bei einem Ausweis hilft, der geknickt oder zerkratzt wird.
+
+## In einer Client Component [#in-a-client-component]
+
+Wenn der Wert aus einem Eingabefeld kommt, rendere den Code in einer Client Component:
+
+```tsx title="components/live-qr-code.tsx"
+"use client";
+
+import { QRCodeSVG } from "qrdx";
+import { useState } from "react";
+
+export function LiveQrCode() {
+  const [value, setValue] = useState("https://example.com");
+  return (
+    <div>
+      <input
+        aria-label="Text or link to encode"
+        value={value}
+        onChange={(event) => setValue(event.target.value)}
+      />
+      {value ? <QRCodeSVG value={value} size={200} margin={4} /> : null}
+    </div>
+  );
+}
+```
+
+`QRCodeCanvas` ist ebenfalls eine Client Component (sie wird mit `"use client"` ausgeliefert), zeichnet aber nur einfache quadratische Module. Für gestaltete Codes nimmst du `QRCodeSVG`.
+
+## Mit Logo [#with-a-logo]
+
+```tsx title="components/logo-qr-code.tsx"
+import { QRCode } from "qrdx";
+
+export function LogoQrCode() {
+  return (
+    <QRCode
+      value="https://example.com"
+      size={256}
+      margin={4}
+      level="H"
+      logo="/logo.png"
+    />
+  );
+}
+```
+
+- **Fehlerkorrektur H.** Das Logo wird etwa in einem Viertel der Code-Breite gezeichnet und räumt die Module dahinter frei. Der Code ist also auf die Fehlerkorrektur angewiesen, damit er sich scannen lässt. `QRCode` verkleinert außerdem ein Logo, das zu groß ist, als dass der Code es ausgleichen könnte.
+- **Woher das Logo kommt.** `logo` akzeptiert einen Pfad in deiner App, eine URL oder eine Data-URL. Die Seite zeigt alle drei. Für Downloads ist eine Data-URL am sichersten, weil ein Remote-Bild CORS-Header braucht, bevor es in die Datei kopiert werden kann.
+- **Prüfen.** Teste den Code auf mehreren Smartphones oder lade einen Screenshot im [Scan-Checker](/tools/scan-checker) hoch.
+
+Mit `logoOptions` legst du Größe, Freiraum, Position und Zuschnitt des Logos fest; siehe [Logos](/docs/features/logos).
+
+## Als SVG herunterladen [#download-as-svg]
+
+```tsx title="components/download-svg-button.tsx"
+"use client";
+
+import { downloadQRCode } from "qrdx";
+
+export function DownloadSvgButton({ value }: { value: string }) {
+  return (
+    <button
+      type="button"
+      onClick={() =>
+        downloadQRCode(
+          { value, level: "Q", margin: 4 },
+          {
+            format: "svg",
+            size: { width: 1024, height: 1024 },
+            filename: "qr-code.svg",
+          },
+        )
+      }
+    >
+      Download SVG
+    </button>
+  );
+}
+```
+
+`downloadQRCode` braucht das DOM des Browsers, deshalb ist der Button eine Client Component. Eine Seite als Server Component kann ihn trotzdem rendern und den Wert als Prop übergeben. Für andere Dateien setzt du `format` auf `png`, `jpg`, `webp`, `eps` oder `pdf` (PDF braucht das optionale Paket `jspdf`). Alle Optionen findest du unter [Downloads](/docs/features/downloads).
+
+## Wenn du eine Bild-URL brauchst [#when-you-need-an-image-url]
+
+E-Mails, Open-Graph-Bilder, Markdown-Dateien und andere Orte, an denen React nicht laufen kann, brauchen eine Bild-URL statt einer Komponente. Die [kostenlose QR-Code-API](/qr-code-api) liefert eine ohne Schlüssel:
+
+```html
+<img src="https://api.qrdx.dev/v1/qr?data=https://example.com&format=png" width="256" height="256" alt="QR code for example.com" />
+```
+
+## Fertige Komponenten [#ready-made-components]
+
+Die [shadcn/ui-Registry](/docs/developers/shadcn) installiert Komponenten in dein Projekt: einen [QR-Code mit Download-Buttons](/docs/components/qr-code), eine Karte, einen Teilen-Dialog, einen Generator, einen Scanner sowie Wi-Fi- und Kontakt-Codes.
+
+```bash
+npx shadcn@latest add https://qrdx.dev/r/qr-code.json
+```
+
+## Andere React-Bibliotheken für QR-Codes [#other-react-qr-code-libraries]
+
+Wenn du nur einen einfachen schwarz-weißen Code brauchst, ist `qrcode.react` kleiner und schon länger auf dem Markt. `qrdx` bietet zusätzlich Formen, Verläufe, Rahmen, Logos, Export als PNG/SVG/PDF/EPS und einen Scan-Score. Die Vergleiche mit [qrcode.react](/compare/qrcode-react) und [qr-code-styling](/compare/qr-code-styling) gehen die Unterschiede durch.

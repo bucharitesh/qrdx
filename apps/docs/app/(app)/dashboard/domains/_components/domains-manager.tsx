@@ -95,9 +95,6 @@ const checkedFormat = new Intl.DateTimeFormat("en-US", {
   timeZoneName: "short",
 });
 
-const plural = (count: number, word: string) =>
-  `${count} ${word}${count === 1 ? "" : "s"}`;
-
 function DomainStatusBadge({ verified }: { verified: boolean }) {
   const t = useTranslations("app.dashboard.domains.domainsManager");
   return verified ? (
@@ -150,10 +147,12 @@ function DomainCard({
               {domain.verified
                 ? t("shortLinksLookLikeHttps", {
                     hostname: domain.hostname,
-                    value: plural(domain.codeCount, "code"),
+                    count: domain.codeCount,
                   })
                 : oneClick
-                  ? `${provider ? `Your DNS is at ${provider}, which` : "Your DNS provider"} can add these records for you.`
+                  ? provider
+                    ? t("providerCanAddRecords", { provider })
+                    : t("yourProviderCanAddRecords")
                   : t("addTheseRecordsAtYour")}
             </CardDescription>
           </div>
@@ -193,7 +192,9 @@ function DomainCard({
               </a>
             </Button>
             <p className="text-muted-foreground text-xs">
-              {`You approve the change at ${provider ?? "your DNS provider"}, then return here.`}
+              {provider
+                ? t("approveAtProvider", { provider })
+                : t("approveAtYourProvider")}
             </p>
           </div>
         )}
@@ -465,7 +466,7 @@ export function DomainsManager({
                   fallback={
                     <p className="text-muted-foreground text-xs">
                       {t("youveAddedValueTheMost", {
-                        value: plural(limit, "domain"),
+                        count: limit,
                       })}
                     </p>
                   }
@@ -522,8 +523,14 @@ export function DomainsManager({
             </AlertDialogTitle>
             <AlertDialogDescription>
               {removing && removing.codeCount > 0
-                ? `${removing.codeCount === 1 ? "1 code uses" : `${removing.codeCount} codes use`} this domain. QR codes printed with ${removing.hostname} links will stop working, and the codes switch to their ${defaultHost}/q/… link. Back-halves chosen on the domain stay when they're free on ${defaultHost}; the others get a new one.`
-                : `Short links on ${removing?.hostname ?? "this domain"} stop working.`}
+                ? t("removeDomainInUse", {
+                    count: removing.codeCount,
+                    hostname: removing.hostname,
+                    defaultHost,
+                  })
+                : t("removeDomainUnused", {
+                    hostname: removing?.hostname ?? "",
+                  })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

@@ -1,6 +1,7 @@
 // CSV import of dynamic codes: column mapping and per-row checks shared by
 // the browser preview and the server (which re-checks everything).
 
+import { IMPORT_CHUNK_ROWS } from "@repo/config";
 import {
   MAX_FOLDER_DEPTH,
   MAX_FOLDER_NAME,
@@ -9,10 +10,14 @@ import {
   splitFolderPath,
   splitTagNames,
 } from "@/app/(app)/dashboard/codes/_lib/organize-shared";
-import { IMPORT_CHUNK_ROWS } from "@/lib/bulk-limits";
-import { SLUG_PROBLEM_MESSAGES, slugProblem } from "@/lib/short-links";
+import {
+  CUSTOM_SLUG_MAX,
+  CUSTOM_SLUG_MIN,
+  SLUG_PROBLEM_MESSAGES,
+  slugProblem,
+} from "@/lib/short-links";
 
-export { MAX_IMPORT_ROWS } from "@/lib/bulk-limits";
+export { MAX_IMPORT_ROWS } from "@repo/config";
 /** Rows per create request (under the API's MAX_CODES_PER_REQUEST). */
 export const IMPORT_CHUNK_SIZE = IMPORT_CHUNK_ROWS;
 /** Rows per preview request: each stays well under the 2 MB action body limit. */
@@ -110,27 +115,121 @@ export interface NormalizedImportRow {
   slug: string | null;
 }
 
-function destinationError(value: string): string | null {
-  if (!value) return "Destination URL is missing";
-  if (value.length > MAX_DESTINATION_LENGTH)
-    return "Destination URL is too long";
+/**
+ * A row's problem as a stable code and its values. The server and the API
+ * keep the English text (importIssueText); the wizard shows the person's
+ * language by code (app.dashboard.codes.import.issues).
+ */
+export const IMPORT_ISSUE_CODES = [
+  "destinationMissing",
+  "destinationTooLong",
+  "destinationNotUrl",
+  "destinationProtocol",
+  "destinationCredentials",
+  "destinationShortLink",
+  "destinationRejected",
+  "titleTooLong",
+  "folderDepth",
+  "folderNameTooLong",
+  "tooManyTags",
+  "tooManyTagsWithBatch",
+  "tagNameTooLong",
+  "slugReserved",
+  "slugLength",
+  "slugCharacters",
+  "slugDash",
+  "slugDuplicate",
+  "slugTaken",
+  "slugNotOnPlan",
+] as const;
+
+export type ImportIssueCode = (typeof IMPORT_ISSUE_CODES)[number];
+
+export interface ImportIssue {
+  code: ImportIssueCode;
+  values?: Record<string, string | number>;
+}
+
+/** The English text of an issue (what the server and the API return). */
+export function importIssueText(issue: ImportIssue): string {
+  const v = issue.values ?? {};
+  switch (issue.code) {
+    case "destinationMissing":
+      return "Destination URL is missing";
+    case "destinationTooLong":
+      return "Destination URL is too long";
+    case "destinationNotUrl":
+      return "Destination must be a full URL starting with https://";
+    case "destinationProtocol":
+      return "Only http:// and https:// destinations can be used";
+    case "destinationCredentials":
+      return "Destinations with a username or password are not allowed";
+    case "destinationShortLink":
+      return "A dynamic code cannot point to another QRdx short link";
+    case "destinationRejected":
+      return String(v.reason ?? "Invalid URL");
+    case "titleTooLong":
+      return `Title is longer than ${v.max} characters`;
+    case "folderDepth":
+      return `Folders can be nested up to ${v.max} levels`;
+    case "folderNameTooLong":
+      return `Folder names can be up to ${v.max} characters`;
+    case "tooManyTags":
+      return `Up to ${v.max} tags per code`;
+    case "tooManyTagsWithBatch":
+      return `Up to ${v.max} tags per code, counting the ones for every code`;
+    case "tagNameTooLong":
+      return `Tag names can be up to ${v.max} characters`;
+    case "slugReserved":
+      return "This back-half is reserved";
+    case "slugLength":
+      return `Back-half: ${SLUG_PROBLEM_MESSAGES.length}`;
+    case "slugCharacters":
+      return `Back-half: ${SLUG_PROBLEM_MESSAGES.characters}`;
+    case "slugDash":
+      return `Back-half: ${SLUG_PROBLEM_MESSAGES.dash}`;
+    case "slugDuplicate":
+      return "This back-half appears earlier in the file";
+    case "slugTaken":
+      return "This back-half is already in use";
+    case "slugNotOnPlan":
+      return `Custom back-halves are part of ${v.plans}`;
+  }
+}
+
+function destinationIssue(value: string): ImportIssue | null {
+  if (!value) return { code: "destinationMissing" };
+  if (value.length > MAX_DESTINATION_LENGTH) {
+    return { code: "destinationTooLong" };
+  }
   let url: URL;
   try {
     url = new URL(value);
   } catch {
-    return "Destination must be a full URL starting with https://";
+    return { code: "destinationNotUrl" };
   }
   if (url.protocol !== "https:" && url.protocol !== "http:") {
-    return "Only http:// and https:// destinations can be used";
+    return { code: "destinationProtocol" };
   }
   if (url.username || url.password) {
-    return "Destinations with a username or password are not allowed";
+    return { code: "destinationCredentials" };
   }
   return null;
 }
 
+const SLUG_ISSUES = {
+  length: "slugLength",
+  characters: "slugCharacters",
+  dash: "slugDash",
+  reserved: "slugReserved",
+} as const satisfies Record<
+  keyof typeof SLUG_PROBLEM_MESSAGES,
+  ImportIssueCode
+>;
+
 /**
- * Problems with a row (empty = importable as far as the file goes).
+ * Problems with a row (empty = importable as far as the file goes), as
+ * codes (`issues`) and their English text (`errors`).
  * `onCustomDomain`: the codes go on a custom domain, where fewer back-halves
  * are reserved.
  */
@@ -139,47 +238,55 @@ export function checkImportRow(
   { onCustomDomain = false }: { onCustomDomain?: boolean } = {},
 ): {
   errors: string[];
+  issues: ImportIssue[];
   normalized: NormalizedImportRow;
 } {
-  const errors: string[] = [];
-  const destinationProblem = destinationError(row.destination);
-  if (destinationProblem) errors.push(destinationProblem);
+  const issues: ImportIssue[] = [];
+  const destinationProblem = destinationIssue(row.destination);
+  if (destinationProblem) issues.push(destinationProblem);
 
   const title = row.title.trim().replace(/\s+/g, " ");
   if (title.length > MAX_TITLE_LENGTH) {
-    errors.push(`Title is longer than ${MAX_TITLE_LENGTH} characters`);
+    issues.push({ code: "titleTooLong", values: { max: MAX_TITLE_LENGTH } });
   }
 
   const folderPath = splitFolderPath(row.folder);
   if (folderPath.length > MAX_FOLDER_DEPTH) {
-    errors.push(`Folders can be nested up to ${MAX_FOLDER_DEPTH} levels`);
+    issues.push({ code: "folderDepth", values: { max: MAX_FOLDER_DEPTH } });
   }
   if (folderPath.some((name) => name.length > MAX_FOLDER_NAME)) {
-    errors.push(`Folder names can be up to ${MAX_FOLDER_NAME} characters`);
+    issues.push({
+      code: "folderNameTooLong",
+      values: { max: MAX_FOLDER_NAME },
+    });
   }
 
   const tagNames = splitTagNames(row.tags);
   if (tagNames.length > MAX_TAGS_PER_CODE) {
-    errors.push(`Up to ${MAX_TAGS_PER_CODE} tags per code`);
+    issues.push({ code: "tooManyTags", values: { max: MAX_TAGS_PER_CODE } });
   }
   if (tagNames.some((name) => name.length > MAX_TAG_NAME)) {
-    errors.push(`Tag names can be up to ${MAX_TAG_NAME} characters`);
+    issues.push({ code: "tagNameTooLong", values: { max: MAX_TAG_NAME } });
   }
 
   const slug = row.slug.trim();
   if (slug) {
     const problem = slugProblem(slug, { onCustomDomain });
     if (problem) {
-      errors.push(
-        problem === "reserved"
-          ? "This back-half is reserved"
-          : `Back-half: ${SLUG_PROBLEM_MESSAGES[problem]}`,
+      issues.push(
+        problem === "length"
+          ? {
+              code: "slugLength",
+              values: { min: CUSTOM_SLUG_MIN, max: CUSTOM_SLUG_MAX },
+            }
+          : { code: SLUG_ISSUES[problem] },
       );
     }
   }
 
   return {
-    errors,
+    errors: issues.map(importIssueText),
+    issues,
     normalized: {
       line: row.line,
       destinationUrl: row.destination.trim(),

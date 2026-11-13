@@ -1,4 +1,4 @@
-import { Ruler, TableDocument } from "iconsax-reactjs";
+import { Routing2, Ruler, TableDocument } from "iconsax-reactjs";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { MockupImage } from "@/components/mockups/mockup-image";
@@ -150,7 +150,13 @@ export default async function QrTypesHubPage() {
       </section>
 
       <section aria-label={t("hub.moreTools")} className="w-full px-10 py-10">
-        <CardGrid count={2} max={2}>
+        <CardGrid count={3}>
+          <LinkCard
+            href="/dynamic-qr-code"
+            icon={Routing2}
+            title={t("hub.dynamicTitle")}
+            description={t("hub.dynamicDescription")}
+          />
           <LinkCard
             href="/tools/bulk"
             icon={TableDocument}

@@ -1,3 +1,4 @@
+import { MCP_ENDPOINT } from "@repo/config";
 import type {
   CatalogCapability,
   CatalogSnippet,
@@ -5,7 +6,7 @@ import type {
 } from "../types";
 
 /** Public MCP server; swapped for the deployment's origin when rendered. */
-export const MCP_SERVER_URL = "https://mcp.qrdx.dev/mcp";
+export const MCP_SERVER_URL = MCP_ENDPOINT;
 
 export const CLAUDE_CONNECTORS_URL =
   "https://claude.ai/customize/connectors?modal=add-custom-connector";

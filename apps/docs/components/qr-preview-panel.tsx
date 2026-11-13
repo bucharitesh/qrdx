@@ -1,5 +1,6 @@
 "use client";
 
+import { CANONICAL_ORIGIN } from "@repo/config";
 import { cn } from "@repo/design-system/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslations } from "next-intl";
@@ -12,7 +13,9 @@ import { useQREditorStore } from "@/store/editor-store";
 import type { QRStyle } from "@/types/theme";
 import { ArtCanvas, useShownArt } from "./editor/art/art-canvas";
 import { FrameTextOverlay } from "./editor/frame-inline/frame-text-overlay";
+import { PartOverlay } from "./editor/part-inline/part-overlay";
 import { usePhotoScanDialogStore } from "./editor/photo-scan-dialog-store";
+import { previewEditors } from "./editor/preview-editors";
 import { ScanScoreBadge } from "./editor/scan-score";
 import ExamplesPreviewContainer from "./editor/theme-preview/examples-preview-container";
 
@@ -43,7 +46,7 @@ const QRCode = lazy(() =>
  * (Download, Copy SVG and the dialog read the store's value, which stays
  * empty).
  */
-export const SAMPLE_PREVIEW_VALUE = "https://qrdx.dev";
+export const SAMPLE_PREVIEW_VALUE = CANONICAL_ORIGIN;
 
 /** The scan score popover's "Check a photo of the print" (PhotoScanDialog). */
 const openPhotoCheck = () => usePhotoScanDialogStore.getState().setOpen(true);
@@ -80,6 +83,10 @@ const QRPreviewPanel: React.FC<QRPreviewPanelProps> = ({
   const value = hasContent ? storedValue : SAMPLE_PREVIEW_VALUE;
   const rootRef = useRef<HTMLDivElement>(null);
   const shownArt = useShownArt();
+  const editors = previewEditors({
+    hasContent,
+    frameActive: isFrameActive(style.frame),
+  });
 
   // Keep a framed code inside the same 512px box as a plain one
   const framed = getFrameDimensions(512, style.frame);
@@ -145,6 +152,7 @@ const QRPreviewPanel: React.FC<QRPreviewPanelProps> = ({
                       fgColor={style.fgColor}
                       frame={style.frame}
                       frameLabelMarkers
+                      partMarkers
                       hideLogo={!style.showLogo}
                       logo={style.customLogo ?? DEFAULT_QR_LOGO}
                       scale={previewScale}
@@ -169,8 +177,18 @@ const QRPreviewPanel: React.FC<QRPreviewPanelProps> = ({
         ) : (
           <SampleLabel className="absolute bottom-4 left-1/2 z-10 -translate-x-1/2" />
         )}
-        {/* Frame text is edited where it's drawn (frame-inline/). */}
-        {isFrameActive(style.frame) && (
+        {/* The eyes, dots, logo, background and frame are edited where
+            they're drawn (part-inline/), under the frame text's buttons,
+            and frame text too (frame-inline/). Neither on the blurred
+            sample: unmounting keeps an open edit and closes it. */}
+        {editors.parts && (
+          <PartOverlay
+            disabled={shownArt.visible}
+            frame={isFrameActive(style.frame)}
+            rootRef={rootRef}
+          />
+        )}
+        {editors.frameText && (
           <FrameTextOverlay
             disabled={shownArt.visible}
             frame={style.frame}

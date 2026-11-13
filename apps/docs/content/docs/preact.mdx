@@ -1,0 +1,87 @@
+---
+title: Preact
+description: Styled QR codes as Preact components with qrdx/preact, drawn with Preact's own h (no preact/compat), rendered on a server with preact-render-to-string and hydrated without a redraw.
+icon: FileCode
+---
+
+`qrdx/preact` has the React library's two SVG components, `QRCodeSVG` and `QRCode`, for Preact. They draw with Preact's own `h`, so you don't need `preact/compat`, and they draw the same SVG as the React components.
+
+## Install
+
+```package-install
+qrdx@latest
+```
+
+`preact` 10 or later is an optional peer dependency of `qrdx`. Your app already has it, and you don't need `react`.
+
+## Draw a code
+
+```tsx
+import { QRCodeSVG } from "qrdx/preact";
+
+export function MenuCode() {
+  return (
+    <QRCodeSVG
+      value="https://example.com/menu"
+      size={256}
+      bodyPattern="rounded"
+      frame={{ style: "banner-bottom", text: "Scan me" }}
+      aria-label="QR code for the menu"
+    />
+  );
+}
+```
+
+`QRCodeSVG` takes every option the React `QRCodeSVG` takes: patterns, colors and gradients, logos (`imageSettings`), frames, shapes, templates and Art QR. Attributes such as `class`, `style` or `aria-label` go on the `<svg>`, or on the frame's outer `<svg>` when there's a frame.
+
+`QRCode` adds the React `QRCode`'s logo shortcut: `logo`, `logoOptions`, `hideLogo` and `scale`.
+
+```tsx
+import { QRCode } from "qrdx/preact";
+
+<QRCode value="https://example.com" logo="/logo.png" level="H" />;
+```
+
+Both components redraw when a prop changes and skip the work when none did. Event handlers in the props aren't put on the `<svg>`, as in React. Put them on an element around the code.
+
+## Server rendering
+
+`renderToString` from `preact-render-to-string` writes the same SVG as `toSVGString` from `qrdx/core`. The only difference is escaping: Preact leaves `>` and `'` as they are in text, where the core writes `&gt;` and `&#x27;`. Browsers read both the same way.
+
+`hydrate` keeps the server's `<svg>` and doesn't draw it again. The markup has no random ids, so the server and the browser always agree.
+
+## Downloads, markup and the scan score
+
+The components only draw the code. Downloads, `toSVGString`, the scan score and the other functions come from `qrdx/core`. That's the engine the components already use, so it isn't bundled twice.
+
+```tsx
+import { downloadQRCode } from "qrdx/core";
+import { QRCodeSVG } from "qrdx/preact";
+
+const options = { value: "https://example.com", size: 256 };
+
+export function DownloadableCode() {
+  return (
+    <>
+      <QRCodeSVG {...options} />
+      <button
+        type="button"
+        onClick={() =>
+          downloadQRCode(options, {
+            format: "png",
+            size: { width: 1024, height: 1024 },
+          })
+        }
+      >
+        Download PNG
+      </button>
+    </>
+  );
+}
+```
+
+[Vanilla JavaScript](/docs/vanilla-js) covers `qrdx/core` in full.
+
+## With preact/compat
+
+If your app already aliases `react` to `preact/compat`, the React components from `qrdx` work too: `import { QRCodeSVG } from "qrdx"`. `qrdx/preact` draws the same code without the alias, so prefer it when you add `qrdx` to a Preact app.

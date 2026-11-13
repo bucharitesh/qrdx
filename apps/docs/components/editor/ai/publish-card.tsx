@@ -1,5 +1,6 @@
 "use client";
 
+import { CANONICAL_ORIGIN } from "@repo/config";
 import { Spinner } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { TickCircle } from "iconsax-reactjs";
@@ -87,7 +88,7 @@ export function PublishToCommunityCard({
           logo={design?.logo ?? "keep"}
           size={72}
           styles={style}
-          value={design ? value : value || "https://qrdx.dev"}
+          value={design ? value : value || CANONICAL_ORIGIN}
         />
         <div className="min-w-0 flex-1 space-y-1">
           <p className="text-sm font-medium leading-snug break-words">

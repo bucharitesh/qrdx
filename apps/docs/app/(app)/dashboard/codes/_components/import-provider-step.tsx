@@ -17,7 +17,7 @@ import {
   providerName,
 } from "@/lib/migrate/providers";
 import type { JobSummary, ProviderStatus } from "@/lib/migrate/types";
-import { formatDay, ProviderLogo, plural, StepLayout } from "./import-shared";
+import { formatDay, ProviderLogo, StepLayout } from "./import-shared";
 
 /** Short enough to fit a tile in the three-column row. */
 function metaFor(
@@ -178,15 +178,13 @@ export function ProviderStep({
                       <span className="block truncate font-medium">
                         {t("valueValue2Created", {
                           value: providerName(job.provider),
-                          value2: plural(job.created, "code"),
+                          count: job.created,
                         })}
                       </span>
                       <span className="text-muted-foreground block truncate text-xs">
                         {formatDay(job.createdAt)}
                         {job.redirected > 0 &&
-                          t("valuePointingToQrdx", {
-                            value: plural(job.redirected, "old link"),
-                          })}
+                          ` · ${t("valuePointingToQrdx", { count: job.redirected })}`}
                       </span>
                     </span>
                     <span

@@ -1,0 +1,18 @@
+{
+  "$schema": "../../../../.source/json-schema/docs.meta.json",
+  "title": "계정 및 결제",
+  "icon": "CreditCard",
+  "pages": [
+    "plans",
+    "change-plan",
+    "invoices",
+    "pay-by-invoice",
+    "nonprofit-discount",
+    "cancel",
+    "never-hostage",
+    "affiliate-program",
+    "sign-in",
+    "export-your-data",
+    "delete-your-account"
+  ]
+}

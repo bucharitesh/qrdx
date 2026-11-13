@@ -1,0 +1,109 @@
+{
+  "id": "skate-park-rules",
+  "name": "Skate park",
+  "description": "A sign on two posts with a skateboard in a round badge on top.",
+  "category": "use-case",
+  "collection": "sports-fitness",
+  "contentTypes": ["url"],
+  "tags": ["sports", "fitness", "skate park", "rules"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1940
+    },
+    "qr": {
+      "x": 120,
+      "y": 400,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 250,
+        "y": 1720,
+        "width": 56,
+        "height": 220,
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.25
+        }
+      },
+      {
+        "type": "rect",
+        "x": 934,
+        "y": 1720,
+        "width": 56,
+        "height": 220,
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.25
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 48,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 26,
+        "y": 26,
+        "width": 1188,
+        "height": 1688,
+        "radius": 28,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.9
+        }
+      },
+      {
+        "type": "circle",
+        "cx": 620,
+        "cy": 170,
+        "r": 125,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M557 158Q560 167 569 167L671 167Q680 167 683 158L689 161Q686 176 671 176L569 176Q554 176 551 161ZM578 176L593 176A3 3 0 0 1 596 179L596 182A3 3 0 0 1 593 185L578 185A3 3 0 0 1 575 182L575 179A3 3 0 0 1 578 176ZM647 176L662 176A3 3 0 0 1 665 179L665 182A3 3 0 0 1 662 185L647 185A3 3 0 0 1 644 182L644 179A3 3 0 0 1 647 176Z",
+        "fill": "background"
+      },
+      {
+        "type": "path",
+        "d": "M569 194A10.5 10.5 0 1 1 590 194A10.5 10.5 0 1 1 569 194ZM650 194A10.5 10.5 0 1 1 671 194A10.5 10.5 0 1 1 650 194Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.5
+        }
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Skate park rules",
+        "color": "frame",
+        "box": {
+          "x": 90,
+          "y": 1520,
+          "width": 1060,
+          "height": 180
+        }
+      }
+    ]
+  }
+}

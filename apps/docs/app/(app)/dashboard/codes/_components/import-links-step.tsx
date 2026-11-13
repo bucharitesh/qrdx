@@ -44,7 +44,6 @@ import {
   formatDay,
   Note,
   ProviderLogo,
-  plural,
   StepLayout,
 } from "./import-shared";
 
@@ -152,7 +151,7 @@ function ConnectPanel({
         <div className="space-y-1.5">
           <Button className="w-full" disabled={busy !== null} onClick={signIn}>
             {busy === "oauth" ? <Spinner className="animate-spin" /> : null}
-            {t("signInWith")} {name}
+            {t("signInWith", { name })}
           </Button>
           <p className="text-muted-foreground text-xs">
             {t("afterSigningInYouCome")}
@@ -423,7 +422,7 @@ export function LinksStep({
           </Button>
           <div className="flex items-center gap-3">
             <span className="text-muted-foreground text-sm tabular-nums">
-              {t("valueSelected", { value: plural(selected.size, "link") })}
+              {t("valueSelected", { count: selected.size })}
             </span>
             <Button
               disabled={selected.size === 0 || loadingAll !== null}

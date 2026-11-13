@@ -14,8 +14,8 @@ import {
 } from "./constants";
 import { handleImageLoad } from "./detection";
 import { withQRSize } from "./download";
+import { getQRAsSVGDataUri } from "./export";
 import { getFrameDimensions, getFrameGapRatio, isFrameActive } from "./frame";
-import { getQRAsSVGDataUri } from "./index";
 import { getLogoBlockDamage } from "./logo-budget";
 import { circleQuietZone, getLayoutMargin, isShapedCode } from "./qr-shape";
 import { getStylePairRisk } from "./scan-risk";

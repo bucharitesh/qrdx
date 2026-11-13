@@ -1,6 +1,6 @@
-import { MAX_BULK_TOOL_ROWS } from "@/lib/bulk-limits";
+import { CANONICAL_ORIGIN, MAX_BULK_TOOL_ROWS } from "@repo/config";
 
-/** Rows in one file (lib/bulk-limits.ts, where the reasoning is). */
+/** Rows in one file (@repo/config limits.ts, where the reasoning is). */
 export const MAX_BULK_ROWS = MAX_BULK_TOOL_ROWS;
 export const MAX_CSV_BYTES = 10 * 1024 * 1024;
 
@@ -108,8 +108,8 @@ export async function imageToDataUrl(src: string): Promise<string> {
 }
 
 export const SAMPLE_CSV_ROWS = [
-  { value: "https://qrdx.dev", filename: "qrdx-home" },
-  { value: "https://qrdx.dev/pricing", filename: "pricing" },
+  { value: CANONICAL_ORIGIN, filename: "qrdx-home" },
+  { value: `${CANONICAL_ORIGIN}/pricing`, filename: "pricing" },
   {
     value: "WIFI:T:WPA;S:Office Guest;P:welcome123;H:false;;",
     filename: "office-wifi",

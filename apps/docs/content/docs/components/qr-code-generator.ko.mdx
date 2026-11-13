@@ -1,0 +1,64 @@
+---
+title: "QR 코드 생성기"
+description: "실시간 QR 코드 미리보기, 스타일 프리셋, 다운로드 버튼을 갖춘 텍스트 입력 컴포넌트입니다."
+icon: Sparkles
+---
+
+<ComponentLinks name="qr-code-generator" />
+
+<ComponentPreview name="qr-code-generator-demo" />
+
+## 설치 [#installation]
+
+<InstallationTabs name="qr-code-generator" />
+
+## 사용법 [#usage]
+
+```tsx
+import { QrCodeGenerator } from "@/components/qr-code-generator";
+```
+
+```tsx
+<QrCodeGenerator defaultValue="https://example.com" />
+```
+
+입력하는 동안 미리보기가 업데이트됩니다. 각 프리셋 버튼에는 해당 스타일의 작은 샘플이 표시되며, 다운로드는 선택한 프리셋을 1024픽셀 크기로 적용합니다.
+
+## 예제 [#examples]
+
+### 사용자 지정 프리셋 [#custom-presets]
+
+기본 제공 프리셋을 직접 만든 프리셋으로 바꿀 수 있습니다. 프리셋은 `id`, `name`, 그리고 qrdx 옵션을 담은 `style`로 구성됩니다. 그라디언트, 로고, 오류 정정 `level`도 사용할 수 있습니다.
+
+<ComponentPreview name="qr-code-generator-presets" />
+
+기본 제공 프리셋은 `QR_CODE_PRESETS`로 내보내므로 이를 확장할 수 있습니다.
+
+```tsx
+import { QR_CODE_PRESETS, QrCodeGenerator } from "@/components/qr-code-generator";
+
+<QrCodeGenerator
+  presets={[
+    ...QR_CODE_PRESETS,
+    { id: "brand", name: "Brand", style: { fgColor: "#155DFC" } },
+  ]}
+/>
+```
+
+### 결과 저장하기 [#saving-the-result]
+
+`onChange`는 변경이 있을 때마다 텍스트와 선택된 프리셋을 전달합니다. 예를 들어 사용자의 선택을 저장할 때 쓸 수 있습니다.
+
+```tsx
+<QrCodeGenerator
+  onChange={({ value, preset }) => saveDraft({ value, style: preset.style })}
+/>
+```
+
+## API 레퍼런스 [#api-reference]
+
+<auto-type-table path="../../../registry/qrdx/qr-code-generator.tsx" type="{ [K in keyof QrCodeGeneratorProps as K extends keyof ComponentProps<'div'> ? never : K]: QrCodeGeneratorProps[K] }" />
+
+### QrCodePreset [#qrcodepreset]
+
+<auto-type-table path="../../../registry/qrdx/qr-code-generator.tsx" name="QrCodePreset" />

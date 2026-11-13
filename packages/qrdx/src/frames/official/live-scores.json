@@ -1,0 +1,101 @@
+{
+  "id": "live-scores",
+  "name": "Live scores",
+  "description": "A phone with the code on its screen and a soccer ball.",
+  "category": "use-case",
+  "collection": "sports-fitness",
+  "contentTypes": ["url"],
+  "tags": ["sports", "fitness", "scores", "soccer"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1360,
+      "height": 2000
+    },
+    "qr": {
+      "x": 180,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1360,
+        "height": 2000,
+        "radius": 190,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 60,
+        "y": 60,
+        "width": 1240,
+        "height": 1880,
+        "radius": 150,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 550,
+        "y": 76,
+        "width": 260,
+        "height": 64,
+        "radius": 32,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M624.8 250A55.2 55.2 0 1 1 735.2 250A55.2 55.2 0 1 1 624.8 250ZM630.8 250A49.2 49.2 0 1 0 729.2 250A49.2 49.2 0 1 0 630.8 250ZM680 229.6L699.4 243.7L691.99 266.5L668.01 266.5L660.6 243.7ZM677.84 230.8L677.84 212.8L682.16 212.8L682.16 230.8ZM694.74 201.8L687.79 209.95L680 214.6L672.21 209.95L665.26 201.8ZM697.59 242.01L714.71 236.45L716.05 240.56L698.93 246.12ZM730.39 249.12L720.5 245.03L713.67 239.06L715.68 230.22L721.29 221.09ZM693.03 264.26L703.61 278.83L700.12 281.37L689.54 266.8ZM696.41 297.65L697.24 286.98L700.81 278.64L709.84 277.83L720.25 280.33ZM670.46 266.8L659.88 281.37L656.39 278.83L666.97 264.26ZM639.75 280.33L650.16 277.83L659.19 278.64L662.76 286.98L663.59 297.65ZM661.07 246.12L643.95 240.56L645.29 236.45L662.41 242.01ZM638.71 221.09L644.32 230.22L646.33 239.06L639.5 245.03L629.61 249.12Z",
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 510,
+        "y": 1880,
+        "width": 340,
+        "height": 18,
+        "radius": 9,
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Live scores",
+        "color": "frame",
+        "box": {
+          "x": 160,
+          "y": 1550,
+          "width": 1040,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Follow the game",
+        "color": "frame",
+        "box": {
+          "x": 180,
+          "y": 1735,
+          "width": 1000,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

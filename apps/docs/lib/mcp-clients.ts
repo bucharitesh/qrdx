@@ -4,43 +4,25 @@
  * integrations pages; keep the exports stable.
  */
 
+import {
+  type DeploymentUrls,
+  isLocalHost,
+  isQrdxDeployment as isQrdxDeploymentAt,
+} from "@repo/availability/deployment";
+import { isQrdxHost, MCP_ENDPOINT } from "@repo/config";
+
+// The deployment checks live in @repo/availability with the feature rules
+// that read them; they're re-exported here, where the MCP links use them.
+export { isLocalHost } from "@repo/availability/deployment";
+
 export const MCP_SERVER_NAME = "qrdx";
 export const MCP_PATH = "/api/mcp";
 
 /** The hosted service's public endpoint (mcp.qrdx.dev/mcp → /api/mcp, see next.config.ts). */
-export const MCP_PUBLIC_URL = "https://mcp.qrdx.dev/mcp";
-
-/** qrdx.dev and its subdomains (www, mcp, api). */
-const isQrdxHost = (host: string) =>
-  host === "qrdx.dev" || host.endsWith(".qrdx.dev");
-
-/** This machine: `next dev` or a production build started locally. */
-export function isLocalHost(host: string): boolean {
-  return (
-    host === "localhost" ||
-    host.endsWith(".localhost") ||
-    host === "127.0.0.1" ||
-    host === "0.0.0.0" ||
-    host === "[::1]"
-  );
-}
-
-function hostOf(value: string | undefined): string | null {
-  if (!value) return null;
-  try {
-    return new URL(value.includes("://") ? value : `https://${value}`).hostname;
-  } catch {
-    return null;
-  }
-}
+export const MCP_PUBLIC_URL = MCP_ENDPOINT;
 
 /** Where a deployment says it lives. */
-export interface McpDeployment {
-  /** NEXT_PUBLIC_APP_URL. */
-  appUrl?: string;
-  /** VERCEL_PROJECT_PRODUCTION_URL: set on every Vercel deployment, previews included. */
-  productionUrl?: string;
-}
+export type McpDeployment = DeploymentUrls;
 
 const currentDeployment = (): McpDeployment => ({
   appUrl: process.env.NEXT_PUBLIC_APP_URL,
@@ -67,22 +49,15 @@ export function mcpServerUrl(
 }
 
 /**
- * Whether this deployment is QRdx itself: its app URL is on qrdx.dev (or a
- * subdomain) or local, or it's a Vercel preview of the qrdx.dev project. A
- * self-hosted copy on its own domain is not. Features that only make sense
- * for qrdx.dev (its affiliate program) are on here and off elsewhere, with
- * no setting of their own.
+ * Whether this deployment is QRdx itself (qrdx.dev, its Vercel previews,
+ * local dev) rather than a self-hosted copy on its own domain; by default
+ * read from this process's environment. The rule is in
+ * @repo/availability/deployment.
  */
 export function isQrdxDeployment(
   deployment: McpDeployment = currentDeployment(),
 ): boolean {
-  const appHost = hostOf(deployment.appUrl);
-  const productionHost = hostOf(deployment.productionUrl);
-  return (
-    (appHost !== null && (isQrdxHost(appHost) || isLocalHost(appHost))) ||
-    // A preview has its own *.vercel.app host; its project is still qrdx.dev.
-    (productionHost !== null && isQrdxHost(productionHost))
-  );
+  return isQrdxDeploymentAt(deployment);
 }
 
 /**

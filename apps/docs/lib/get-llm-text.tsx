@@ -1,4 +1,5 @@
 import { cleanLlmMarkdown } from "@/lib/agents/llm-markdown";
+import type { DocsIndexPage as Page } from "@/lib/docs-index";
 import {
   isFeatureAvailable,
   isPathAvailable,
@@ -6,7 +7,6 @@ import {
 import type { FeatureId } from "@/lib/feature-availability-rules";
 import { isIntegrationVisible } from "@/lib/integration-availability";
 import { baseUrl } from "@/lib/metadata";
-import type { Page } from "@/lib/source";
 import { owner, repo } from "./github";
 
 /** "developers" → "Developers"; nested docs keep their section as context. */
@@ -17,12 +17,18 @@ function sectionOf(page: Page): string | null {
 }
 
 /** The same test <IfAvailable> applies when it renders (components/mdx/if-available.tsx). */
-function isShown({ feature, path, integration }: Record<string, string>) {
-  return (
+function isShown({
+  feature,
+  path,
+  integration,
+  unavailable,
+}: Record<string, string>) {
+  const available =
     (!feature || isFeatureAvailable(feature as FeatureId)) &&
     (!path || isPathAvailable(path)) &&
-    (!integration || isIntegrationVisible(integration))
-  );
+    (!integration || isIntegrationVisible(integration));
+  // A bare `unavailable` attribute reads as "true" (lib/agents/llm-markdown.ts).
+  return unavailable === "true" ? !available : available;
 }
 
 /** The page's absolute URL. */

@@ -1,0 +1,78 @@
+{
+  "id": "visitor-info",
+  "name": "Visitor information",
+  "description": "A framed code with a tab hanging below it for the label.",
+  "category": "use-case",
+  "collection": "places",
+  "contentTypes": ["url"],
+  "tags": ["visitor center", "tourism", "information"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1540
+    },
+    "qr": {
+      "x": 120,
+      "y": 120,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1240,
+        "radius": 64,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 100,
+        "y": 1176,
+        "width": 1040,
+        "height": 364,
+        "radius": 64,
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Visitor information",
+        "color": "text",
+        "box": {
+          "x": 150,
+          "y": 1250,
+          "width": 940,
+          "height": 160
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "What's nearby",
+        "color": "text",
+        "box": {
+          "x": 170,
+          "y": 1405,
+          "width": 900,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

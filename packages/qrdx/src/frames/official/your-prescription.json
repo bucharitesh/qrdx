@@ -1,0 +1,107 @@
+{
+  "id": "your-prescription",
+  "name": "Your prescription",
+  "description": "A light card with glasses and a solid label band.",
+  "category": "use-case",
+  "collection": "health-learning",
+  "contentTypes": ["url"],
+  "tags": ["healthcare", "clinic", "optician", "glasses"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1770
+    },
+    "qr": {
+      "x": 120,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "frame",
+        "hole": {
+          "x": 20,
+          "y": 20,
+          "width": 1200,
+          "height": 1730,
+          "radius": 38
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 250,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 60,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M562.6 110.4A26.6 26.6 0 1 1 615.8 110.4A26.6 26.6 0 1 1 562.6 110.4ZM570.3 110.4A18.9 18.9 0 1 0 608.1 110.4A18.9 18.9 0 1 0 570.3 110.4ZM624.2 110.4A26.6 26.6 0 1 1 677.4 110.4A26.6 26.6 0 1 1 624.2 110.4ZM631.9 110.4A18.9 18.9 0 1 0 669.7 110.4A18.9 18.9 0 1 0 631.9 110.4ZM611.28 104.88A3.5 3.5 0 0 0 605.04 101.7L606.65 98.6L609.23 95.64L612.44 93.38L616.11 91.98L620 91.5L623.89 91.98L627.56 93.38L630.77 95.64L633.35 98.6L634.96 101.7A3.5 3.5 0 0 0 628.72 104.88L627.54 102.51L626.09 100.84L624.27 99.57L622.2 98.77L620 98.5L617.8 98.77L615.73 99.57L613.91 100.84L612.46 102.51L611.28 104.88ZM565.94 103.76A3.5 3.5 0 0 0 559.26 105.84L552.26 83.44A3.5 3.5 0 0 0 558.94 81.36L565.94 103.76ZM680.74 105.84A3.5 3.5 0 0 0 674.06 103.76L681.06 81.36A3.5 3.5 0 0 0 687.74 83.44L680.74 105.84Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "See your prescription",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1550,
+          "width": 1040,
+          "height": 190
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Opticians",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 180,
+          "width": 960,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

@@ -1,6 +1,7 @@
 import "server-only";
 
 import { createHash, createHmac, timingSafeEqual } from "node:crypto";
+import { env } from "@/env";
 import type { UsdRates } from "./exchange-rates";
 import { currencyEntries, payableUsdTotal, toUsdCents } from "./rules";
 import { AFFILIATE_PAYOUT_CURRENCY } from "./terms";
@@ -106,9 +107,7 @@ let cachedKey: Buffer | null = null;
 
 function signingKey(): Buffer {
   cachedKey ??= createHash("sha256")
-    .update(
-      `qrdx:affiliate-payout-quote:${process.env.BETTER_AUTH_SECRET ?? "development"}`,
-    )
+    .update(`qrdx:affiliate-payout-quote:${env.BETTER_AUTH_SECRET}`)
     .digest();
   return cachedKey;
 }

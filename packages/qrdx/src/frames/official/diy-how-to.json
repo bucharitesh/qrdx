@@ -1,0 +1,87 @@
+{
+  "id": "diy-how-to",
+  "name": "DIY how-to",
+  "description": "A phone with the code on its screen and a hammer.",
+  "category": "use-case",
+  "collection": "shopping",
+  "contentTypes": ["url"],
+  "tags": ["retail", "shop", "hardware", "diy"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1360,
+      "height": 2000
+    },
+    "qr": {
+      "x": 180,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1360,
+        "height": 2000,
+        "radius": 190,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 26,
+        "y": 26,
+        "width": 1308,
+        "height": 1948,
+        "radius": 150,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 550,
+        "y": 56,
+        "width": 260,
+        "height": 64,
+        "radius": 32,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M662.14 191.58L715.11 219.74L723.46 229.62L716.7 242.33L703.85 240.93L650.87 212.77C644.51 209.39 646.9 199.78 653.39 197.8ZM685.9 228.67L685.9 228.67A7.2 7.2 28 0 1 688.88 238.41L660.71 291.39A7.2 7.2 28 0 1 650.97 294.37L650.97 294.37A7.2 7.2 28 0 1 648 284.63L676.17 231.65A7.2 7.2 28 0 1 685.9 228.67Z",
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 510,
+        "y": 1910,
+        "width": 340,
+        "height": 18,
+        "radius": 9,
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Watch the how-to",
+        "color": "frame",
+        "box": {
+          "x": 160,
+          "y": 1550,
+          "width": 1040,
+          "height": 180
+        }
+      }
+    ]
+  }
+}

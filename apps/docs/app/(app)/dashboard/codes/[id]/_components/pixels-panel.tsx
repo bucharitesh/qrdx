@@ -318,7 +318,8 @@ function PixelsEditor({
               <SelectTrigger className="w-full sm:w-96" id={`${id}-consent`}>
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
+              {/* Above the code builder's dialog (z-[99]), which shows this panel too */}
+              <SelectContent className="z-[120]">
                 <SelectItem value="auto">
                   {t("whereRequiredEuEeaUk")}
                 </SelectItem>

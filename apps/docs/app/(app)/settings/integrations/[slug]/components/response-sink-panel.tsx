@@ -28,22 +28,31 @@ import {
   suggestMapping,
 } from "@repo/integrations/src/sinks/mapping";
 import { useTranslations } from "next-intl";
-import { useEffect, useId, useMemo, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { SyncStatus } from "@/components/data-connections/sync-status";
 import { emitSound } from "@/components/editor/sound";
+import { LoadMore } from "@/components/load-more";
 import {
   DataConnectionError,
   loadMailchimpAudiences,
   loadMailchimpMergeFields,
+  loadSinkPages,
   loadSinkView,
   retrySinkNow,
   type SinkViewData,
   saveSink,
 } from "@/lib/data-connections/client";
+import type { ScopedFormPage } from "@/lib/data-connections/data";
+import { mappingsToSave } from "@/lib/data-connections/sink-mappings";
+import { useCursorList } from "@/lib/hooks/use-cursor-list";
+import type { CursorPage } from "@/lib/keyset-cursor";
 
 const SKIP = "__skip";
 const NO_CONSENT = "__none";
+const NO_PAGES: CursorPage<ScopedFormPage> = { items: [], nextCursor: null };
+/** Wait this long after the last keystroke before searching pages. */
+const SEARCH_DELAY_MS = 300;
 
 interface ResponseSinkPanelProps {
   provider: "hubspot" | "mailchimp";
@@ -74,6 +83,22 @@ export function ResponseSinkPanel({ provider, name }: ResponseSinkPanelProps) {
   const [saving, setSaving] = useState(false);
   const [retrying, setRetrying] = useState(false);
   const isMailchimp = provider === "mailchimp";
+  // The workspace's form pages, a page at a time (most recently updated
+  // first), narrowed by a title search once typing pauses.
+  const [search, setSearch] = useState("");
+  const [query, setQuery] = useState("");
+  const [searching, setSearching] = useState(false);
+  /** The pages the sync was limited to when the panel loaded */
+  const [selectedPages, setSelectedPages] = useState<ScopedFormPage[]>([]);
+  const list = useCursorList({
+    first: NO_PAGES,
+    keyOf: (page) => page.id,
+    errorMessage: t("couldntLoadMorePages"),
+    load: (cursor) => loadSinkPages(provider, { cursor, q: query }),
+  });
+  /** The search the list shows; the latest search request */
+  const shownQuery = useRef("");
+  const latestSearch = useRef(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -81,6 +106,8 @@ export function ResponseSinkPanel({ provider, name }: ResponseSinkPanelProps) {
       .then((data) => {
         if (cancelled) return;
         setView(data);
+        list.replace({ items: data.pages, nextCursor: data.pagesCursor });
+        setSelectedPages(data.selectedPages);
         const settings = data.settings as {
           pageIds?: string[] | null;
           forms?: Record<string, FormMapping>;
@@ -117,7 +144,31 @@ export function ResponseSinkPanel({ provider, name }: ResponseSinkPanelProps) {
     return () => {
       cancelled = true;
     };
-  }, [provider, isMailchimp]);
+  }, [provider, isMailchimp, list.replace]);
+
+  // Search once typing pauses.
+  useEffect(() => {
+    const timer = setTimeout(() => setQuery(search.trim()), SEARCH_DELAY_MS);
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  // A new search: its first page (the first view's page already shows "").
+  useEffect(() => {
+    if (!view || query === shownQuery.current) return;
+    shownQuery.current = query;
+    const request = ++latestSearch.current;
+    setSearching(true);
+    loadSinkPages(provider, { q: query })
+      .then((page) => request === latestSearch.current && list.replace(page))
+      .catch(
+        (err) =>
+          request === latestSearch.current &&
+          toast.error(
+            err instanceof Error ? err.message : t("couldntLoadMorePages"),
+          ),
+      )
+      .finally(() => request === latestSearch.current && setSearching(false));
+  }, [view, query, provider, list.replace, t]);
 
   useEffect(() => {
     if (!(isMailchimp && audienceId)) return;
@@ -135,10 +186,18 @@ export function ResponseSinkPanel({ provider, name }: ResponseSinkPanelProps) {
     [isMailchimp, mergeFields],
   );
 
-  const pages = view?.pages ?? [];
-  const included = pages.filter(
-    (page) => allPages || pageIds.includes(page.id),
+  const pages = list.items;
+  /** Every page loaded so far, and the selected ones wherever they sit */
+  const known = useMemo(
+    () =>
+      new Map([...selectedPages, ...list.items].map((page) => [page.id, page])),
+    [selectedPages, list.items],
   );
+  // Every page with a form: those loaded so far (more load as you scroll).
+  // Chosen pages: each one picked, loaded or not.
+  const included = allPages
+    ? pages
+    : pageIds.flatMap((pageId) => known.get(pageId) ?? []);
 
   const mappingOf = (
     pageId: string,
@@ -166,12 +225,14 @@ export function ResponseSinkPanel({ provider, name }: ResponseSinkPanelProps) {
   const save = async () => {
     setSaving(true);
     try {
-      const mappings: Record<string, FormMapping> = {};
+      const shown: Record<string, FormMapping> = {};
       for (const page of included) {
         for (const form of page.forms) {
-          mappings[formKey(page.id, form.id)] = mappingOf(page.id, form);
+          shown[formKey(page.id, form.id)] = mappingOf(page.id, form);
         }
       }
+      // Pages the panel never loaded keep what was saved for them.
+      const mappings = mappingsToSave(forms, new Set(known.keys()), shown);
       const next = await saveSink(provider, {
         enabled,
         pageIds: allPages ? null : pageIds,
@@ -319,6 +380,19 @@ export function ResponseSinkPanel({ provider, name }: ResponseSinkPanelProps) {
             {t("everyPageWithAForm")}
           </Label>
         </div>
+        {(pages.length > 0 || query || list.hasMore) && (
+          <div className="flex items-center gap-2">
+            <Input
+              aria-label={t("searchPages")}
+              className="sm:max-w-xs"
+              maxLength={200}
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder={t("searchPages")}
+              value={search}
+            />
+            {searching && <Spinner aria-hidden className="size-4" />}
+          </div>
+        )}
         {!allPages && (
           <div className="grid gap-2 sm:grid-cols-2">
             {pages.map((page) => (
@@ -341,10 +415,24 @@ export function ResponseSinkPanel({ provider, name }: ResponseSinkPanelProps) {
             ))}
           </div>
         )}
-        {pages.length === 0 && (
+        {pages.length === 0 && !searching && (
           <p className="text-muted-foreground text-sm">
-            {t("noHostedPagesWithA")}
+            {query ? t("noPagesMatch") : t("noHostedPagesWithA")}
           </p>
+        )}
+        {!allPages && pages.length > 0 && (
+          <LoadMore
+            count={pages.length}
+            error={list.error}
+            hasMore={list.hasMore}
+            labels={{
+              loadMore: t("loadMorePages"),
+              loading: t("loadingPages"),
+              retry: t("tryAgain"),
+            }}
+            loading={list.loading}
+            onLoadMore={list.loadMore}
+          />
         )}
       </fieldset>
 
@@ -447,6 +535,20 @@ export function ResponseSinkPanel({ provider, name }: ResponseSinkPanelProps) {
             </div>
           );
         }),
+      )}
+      {allPages && pages.length > 0 && (
+        <LoadMore
+          count={pages.length}
+          error={list.error}
+          hasMore={list.hasMore}
+          labels={{
+            loadMore: t("loadMorePages"),
+            loading: t("loadingPages"),
+            retry: t("tryAgain"),
+          }}
+          loading={list.loading}
+          onLoadMore={list.loadMore}
+        />
       )}
 
       <div className="flex justify-end">

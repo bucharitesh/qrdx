@@ -48,7 +48,7 @@ tableRows:
     qrdx: "Square, circle, heart or a custom silhouette"
     competitor: "Square or circle"
   - feature: Server rendering
-    qrdx: "SVG (React Server Components), PDF and EPS"
+    qrdx: "SVG (React Server Components), PNG (qrdx/node), PDF and EPS"
     competitor: "Raster and SVG, via node-canvas or jsdom"
   - feature: Frame templates
     qrdx: "{facts.frames} built in"
@@ -78,7 +78,6 @@ QRdx suits React apps that want styled codes as declarative components, a wider 
 ## Where qr-code-styling is the better choice
 
 - **Framework freedom.** It works with Vue, Angular, vanilla JS and React alike. QRdx is React-first.
-- **Raster images on a server.** It renders PNG in Node.js through node-canvas. QRdx renders SVG, PDF and EPS on a server; for PNG there, use the [image API](/docs/developers/image-api), the `@qrdx/cli` command line tool or your own rasterizer.
 - **Maturity and community.** Its user base is orders of magnitude larger, and QRdx is still pre-1.0.
 
 ## Key differences
@@ -86,6 +85,7 @@ QRdx suits React apps that want styled codes as declarative components, a wider 
 - **API:** class plus `append()` and `update()` versus React components with props.
 - **Shapes:** QRdx offers more body and eye-dot styles, and the code itself can be a circle, a heart or a custom silhouette; qr-code-styling has a circle. Both rotate linear gradients, and QRdx adds angular gradients and image fills.
 - **Export:** QRdx adds PDF and EPS; both do WebP.
+- **On a server:** qr-code-styling renders in Node.js through node-canvas or jsdom. QRdx renders SVG in React Server Components and PDF and EPS in plain Node. For PNG, `getQRAsPNG` from `qrdx/node` returns the bytes once you install `@resvg/resvg-js` or `sharp`.
 
 ## Switching from qr-code-styling
 

@@ -1,0 +1,80 @@
+{
+  "id": "size-guide",
+  "name": "Size guide",
+  "description": "A solid card with a ruler over the code and the label underneath.",
+  "category": "use-case",
+  "collection": "shopping",
+  "contentTypes": ["url"],
+  "tags": ["retail", "shop", "sizes", "fashion"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M553.64 124.06L665.36 59.56A4.5 4.5 -30 0 1 671.51 61.21L688.01 89.79A4.5 4.5 -30 0 1 686.36 95.94L574.64 160.44A4.5 4.5 -30 0 1 568.49 158.79L551.99 130.21A4.5 4.5 -30 0 1 553.64 124.06Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M560.14 120.31L563.25 118.51L572.25 134.1L569.14 135.9ZM572.61 113.11L575.73 111.31L580.98 120.41L577.86 122.21ZM585.08 105.91L588.2 104.11L597.2 119.7L594.08 121.5ZM597.55 98.71L600.67 96.91L605.92 106.01L602.8 107.81ZM610.02 91.51L613.14 89.71L622.14 105.3L619.02 107.1ZM622.49 84.31L625.61 82.51L630.86 91.61L627.74 93.41ZM634.96 77.11L638.08 75.31L647.08 90.9L643.96 92.7ZM647.43 69.91L650.55 68.11L655.8 77.21L652.68 79.01ZM659.9 62.71L663.02 60.91L672.02 76.5L668.9 78.3Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "See the size guide",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Measure at home",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

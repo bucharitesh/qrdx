@@ -1,5 +1,6 @@
 "use client";
 
+import { CANONICAL_ORIGIN } from "@repo/config";
 import { cn } from "@repo/design-system/lib/utils";
 import { useTranslations } from "next-intl";
 import { type ColorConfig, getColorString } from "qrdx";
@@ -146,7 +147,7 @@ function ThemeStrip({
             <CodeQr
               className="w-full rounded-md bg-white"
               style={themeLook(choice.style)}
-              value="https://qrdx.dev"
+              value={CANONICAL_ORIGIN}
             />
             <span className="text-muted-foreground w-full truncate text-center text-[10px] leading-tight">
               {choice.isDefault ? t("default") : choice.name}

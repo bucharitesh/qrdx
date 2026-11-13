@@ -293,10 +293,11 @@ export function ScanScoreBadge({
         </button>
       </PopoverTrigger>
       {/* Scrolls when the screen is short (a phone's preview), so the photo
-          check button stays reachable. */}
+          check button stays reachable. Above the code builder's dialog
+          (z-[99]), which shows this badge too. */}
       <PopoverContent
         align="center"
-        className="max-h-(--radix-popover-content-available-height) w-80 overflow-y-auto"
+        className="z-[120] max-h-(--radix-popover-content-available-height) w-80 overflow-y-auto"
         collisionPadding={8}
         side="top"
       >

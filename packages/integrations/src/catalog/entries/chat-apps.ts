@@ -1,8 +1,9 @@
+import { CANONICAL_ORIGIN } from "@repo/config";
 import type { IntegrationCatalogEntry } from "../types";
 
 // QRdx bots in chat apps: QR codes made in a chat, no QRdx account needed.
 // Each one is offered only where its bot is set up (the `discordBot` and
-// `telegramBot` features in apps/docs/lib/feature-availability-rules.ts).
+// `telegramBot` features in packages/availability/rules.ts).
 // The Slack bot lives on the Slack entry (notifications.ts), which joins
 // this category through its `configured` overlay where the bot is set up.
 
@@ -11,7 +12,7 @@ export const chatApps: IntegrationCatalogEntry[] = [
     // A sibling of the webhook entry rather than part of it: the bot needs
     // no account (the alerts need Business), is added in Discord rather than
     // in Settings, and is listed only where the deployment has set it up
-    // (feature-availability-rules.ts `discordBot`). The button goes through
+    // (packages/availability/rules.ts `discordBot`). The button goes through
     // /api/integrations/discord/install, which builds Discord's link from
     // the app id.
     slug: "discord-bot",
@@ -36,7 +37,7 @@ export const chatApps: IntegrationCatalogEntry[] = [
     primaryAction: {
       type: "link",
       label: "Add to Discord",
-      href: "https://qrdx.dev/api/integrations/discord/install",
+      href: `${CANONICAL_ORIGIN}/api/integrations/discord/install`,
     },
     secondaryAction: {
       type: "link",
@@ -113,7 +114,7 @@ export const chatApps: IntegrationCatalogEntry[] = [
     primaryAction: {
       type: "link",
       label: "Open in Telegram",
-      href: "https://qrdx.dev/api/integrations/telegram/open",
+      href: `${CANONICAL_ORIGIN}/api/integrations/telegram/open`,
     },
     secondaryAction: {
       type: "link",

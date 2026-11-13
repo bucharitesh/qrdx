@@ -1,0 +1,91 @@
+---
+title: "Dein Konto sicher halten"
+description: "Wie die Anmeldung funktioniert, Bestätigung in zwei Schritten, Passkeys, die Prüfung, wenn eine Anmeldung an einem neuen Ort verwendet wird, die E-Mails von QRdx zur Sicherheit deines Kontos, wie lange eine Anmeldung gilt, andere Geräte abmelden und wie du ein Sicherheitsproblem meldest."
+---
+
+## Kein Passwort, das gestohlen werden kann [#no-password-to-leak]
+
+QRdx hat keine Passwörter. Du meldest dich mit Google, GitHub oder einem Einmalcode an, der an deine E-Mail-Adresse geschickt wird<IfAvailable feature="passkeys">, oder mit einem Passkey</IfAvailable>.<IfAvailable feature="sso"> Wenn dein Workspace den Business-Tarif nutzt, kann er außerdem die [Single Sign-on](/docs/help/teams/single-sign-on)-Anmeldung deines Unternehmens erlauben oder verlangen.</IfAvailable>
+
+Damit sind dein E-Mail-Konto und dein Google- oder GitHub-Konto die Schlüssel zu QRdx. Aktiviere dort ebenfalls die Bestätigung in zwei Schritten.
+
+<IfAvailable feature="sso" id="if-your-company-requires-single-sign-on" title="Wenn dein Unternehmen Single Sign-on verlangt">
+Ein Business-Workspace kann [Single Sign-on verlangen](/docs/help/teams/single-sign-on#require-single-sign-on), und zwar für die E-Mail-Domain seines Unternehmens. Wenn deine Adresse zu dieser Domain gehört:
+
+- meldest du dich nur noch per Single Sign-on an: Ein E-Mail-Code, Google oder GitHub<IfAvailable feature="passkeys"> oder **Mit Passkey fortfahren**</IfAvailable> meldet dich nicht an;
+- die Bestätigung in zwei Schritten gilt weiterhin nach der Anmeldeseite deines Unternehmens<IfAvailable feature="passkeys">, und ein Passkey funktioniert weiterhin als zweiter Schritt</IfAvailable>;
+- jede Anmeldung gilt höchstens 24 Stunden, danach meldest du dich erneut per Single Sign-on an;
+- deine QRdx-E-Mail-Adresse kann nicht auf eine Adresse außerhalb der Domain geändert werden.
+
+Wenn der Workspace die Pflicht aktiviert, wirst du aus Sitzungen abgemeldet, die nicht per Single Sign-on begonnen haben. Die Inhaber des Workspaces behalten ihre anderen Anmeldewege, damit ein Problem mit der Anmeldeseite des Unternehmens nicht alle aussperren kann.
+</IfAvailable>
+
+## Bestätigung in zwei Schritten aktivieren [#turn-on-two-step-verification]
+
+Die [Bestätigung in zwei Schritten](/docs/help/privacy-and-security/two-step-verification) sorgt dafür, dass QRdx nach der Anmeldung einen zweiten Schritt verlangt, egal wie du dich anmeldest: <IfAvailable feature="passkeys">mit deinem Passkey oder </IfAvailable>mit einem Code aus einer Authenticator-App. Wer Zugriff auf deine E-Mail oder dein Google-Konto bekommt, kommt ohne diesen Schritt trotzdem nicht in QRdx. Du erhältst 10 Backup-Codes für den Fall, dass du den zweiten Schritt nicht ausführen kannst. Wenn du die Funktion aktivierst, werden alle anderen Browser und Geräte abgemeldet, die bei deinem Konto angemeldet sind, und jedes muss sich mit dem zweiten Schritt neu anmelden.
+
+<IfAvailable feature="passkeys" id="add-a-passkey" title="Passkey hinzufügen">
+Ein [Passkey](/docs/help/privacy-and-security/passkeys) prüft mit deinem Fingerabdruck, deinem Gesicht oder deiner Bildschirmsperre, dass du es bist. Er funktioniert nur auf der eigenen Website von QRdx, deshalb kann ihn eine täuschend ähnliche Seite nicht abgreifen. Er kann dich mit **Mit Passkey fortfahren** allein anmelden oder dein zweiter Schritt sein. Wenn du einen Passkey hinzufügst, während die Bestätigung in zwei Schritten ausgeschaltet ist, wird sie aktiviert, und deine anderen Geräte werden abgemeldet.
+</IfAvailable>
+
+## Änderungen musst du bestätigen [#changes-ask-you-to-confirm-its-you]
+
+Vor einer Änderung an der Sicherheit deines Kontos bittet dich QRdx, [zu bestätigen, dass du es bist](/docs/help/privacy-and-security/two-step-verification#confirm-its-you), obwohl du angemeldet bist: bei der Änderung deiner E-Mail-Adresse, dem Löschen deines Kontos, dem Ein- oder Ausschalten der Bestätigung in zwei Schritten, neuen Backup-Codes, der Änderung deiner Methoden für den zweiten Schritt sowie dem Verknüpfen oder Trennen von Google oder GitHub. Dasselbe gilt für das Erstellen eines API-Schlüssels oder des Client Secrets einer OAuth-App, das Genehmigen einer App, die dein Konto nutzen möchte, das Hinzufügen eines Webhooks oder die Änderung seiner URL, das Anzeigen oder Erneuern des Signing Secrets eines Webhooks, das Hinzufügen eines Slack- oder Discord-Benachrichtigungs-Webhooks oder das Verbinden einer Integration, die deine Scans oder Formularantworten an ein anderes Tool sendet, und in einem Workspace für das Löschen, das Ändern der Rolle einer Person, das Entfernen einer Person oder das Einladen eines Admins.<IfAvailable feature="sso"> Das gilt auch für Änderungen an der Single-Sign-on-Verbindung eines Workspaces und für die Pflicht zu Single Sign-on.</IfAvailable>
+
+Wenn die Bestätigung in zwei Schritten aktiv ist, bestätigst du mit <IfAvailable feature="passkeys">deinem Passkey, </IfAvailable>einem Authenticator-Code oder einem Backup-Code, nie mit einem per E-Mail gesendeten Code. Ohne sie kannst du einen 6-stelligen Code verwenden, den QRdx dir per E-Mail schickt<IfAvailable feature="passkeys">, deinen Passkey, falls du einen hast,</IfAvailable> oder dich erneut mit einem verknüpften Google- oder GitHub-Konto anmelden<IfAvailable feature="sso"> (oder mit dem Single Sign-on deines Workspaces, wenn er OIDC verwendet)</IfAvailable>. Eine Bestätigung gilt 10 Minuten in diesem Browser.
+
+Für die Änderung deiner E-Mail-Adresse brauchst du außerdem einen Code, der an die neue Adresse gesendet wird. Danach wirst du überall sonst abgemeldet, und die alte Adresse erhält eine E-Mail, dass sie geändert wurde. Hast du den Zugriff auf deine E-Mail verloren? Hier steht, [was du tun kannst](/docs/help/account-and-billing/sign-in#lost-access-to-your-email).
+
+## Eine Anmeldung an einem neuen Ort [#a-sign-in-used-somewhere-new]
+
+Wenn du dich anmeldest, merkt sich QRdx das Land, aus dem du dich angemeldet hast, und deinen Browser, zum Beispiel „Chrome on macOS“. Wird diese Anmeldung später aus einem anderen Land und mit einem anderen Browser verwendet, bittet dich QRdx, [zu bestätigen, dass du es bist](/docs/help/privacy-and-security/two-step-verification#confirm-its-you), bevor du in deinem Konto irgendetwas anderes tun kannst. Bis du das tust, gilt dieser Browser überall sonst bei QRdx als abgemeldet. Wer deine Anmeldung aus deinem Browser kopiert, kann sie also nicht aus der Ferne nutzen, ohne auch bestätigen zu können, dass du es bist.
+
+Die Abfrage erfolgt nur, wenn sich beides geändert hat. Reisen mit demselben Browser oder das Aktualisieren deines Browsers oder Systems zählt nicht. Sobald du bestätigst, merkt sich QRdx das neue Land und den neuen Browser für diese Anmeldung. Du kannst dich stattdessen auch abmelden und neu anmelden.
+
+Es ist eine zusätzliche Prüfung, keine Garantie: Eine kopierte Anmeldung, die aus deinem eigenen Land oder mit derselben Art von Browser verwendet wird, löst keine Abfrage aus. QRdx kennt das Land nur, wenn sein Hosting-Anbieter es liefert, und wo das nicht der Fall ist, läuft diese Prüfung nicht. Um eine Anmeldung zu beenden, die du nicht kennst, [melde andere Geräte ab](#sign-out-other-devices).
+
+## E-Mails zur Sicherheit deines Kontos [#emails-about-your-accounts-security]
+
+Wir schicken eine E-Mail an die Adresse deines Kontos, wenn:
+
+- sich ein Browser oder Gerät zum ersten Mal bei deinem Konto anmeldet;
+- die Bestätigung in zwei Schritten ein- oder ausgeschaltet wird, eine Authenticator-App<IfAvailable feature="passkeys"> oder ein Passkey</IfAvailable> hinzugefügt oder entfernt wird oder neue Backup-Codes erstellt werden;
+- ein Backup-Code verwendet wird, um sich anzumelden oder zu bestätigen, dass du es bist, mit der Angabe, wie viele Codes du noch hast;
+- der Support gebeten wird, deine Bestätigung in zwei Schritten auszuschalten, mit dem Tag, an dem das passiert, und wie du es stoppen kannst, sowie wenn das abgebrochen wird;
+- deine E-Mail-Adresse geändert wird (an die alte Adresse).
+
+Jede E-Mail sagt, was passiert ist, auf welchem Gerät und in welchem Browser (zum Beispiel „Chrome on macOS“), ungefähr wo, von welcher IP-Adresse und wann. **Sicherheit prüfen** öffnet deine Sicherheitseinstellungen. Wenn du es nicht warst, folge den Schritten in der E-Mail und wende dich an den Support.
+
+E-Mails mit einem Code, etwa Anmeldecodes und der Code, der bestätigt, dass du es bist, nennen ungefähr, wo der Code angefordert wurde. QRdx fragt nie per Telefon, Chat oder E-Mail nach einem Code: Gib keinen an andere weiter.
+
+### Neue Anmeldungen [#new-sign-ins]
+
+QRdx erkennt einen Browser an einem Cookie, das gesetzt wird, wenn du die Anmeldung abschließt. Wenn sich ein Browser oder Gerät ohne dieses Cookie bei deinem Konto anmeldet, bekommst du eine E-Mail. Bei aktiver Bestätigung in zwei Schritten wird sie gesendet, sobald der zweite Schritt abgeschlossen ist.
+
+Eine erneute Anmeldung in einem Browser, den QRdx bereits erkennt, löst keine E-Mail aus, ebenso wenig das Erstellen deines Kontos. Wenn du deine Cookies löschst oder ein privates Fenster verwendest, gilt die nächste Anmeldung dort als neu.
+
+Jeder neue Browser bekommt eine eigene E-Mail, bis zu 10 pro Tag, damit viele Anmeldungen hintereinander dein Postfach nicht überfluten. Jede Anmeldung erscheint trotzdem unter **Sitzungen**. QRdx merkt sich die 50 Browser, die du zuletzt verwendet hast, und vergisst einen, mit dem du dich 400 Tage lang nicht angemeldet hast.
+
+<IfAvailable feature="sso">
+Eine Ausnahme: Wenn du dich über den SAML-Identity-Provider deines Workspaces anmeldest und die Bestätigung in zwei Schritten ausgeschaltet ist, kann QRdx den Browser bei der Rückkehr nicht erkennen und sendet diese E-Mail deshalb nicht.
+</IfAvailable>
+
+## Wie lange du angemeldet bleibst [#how-long-you-stay-signed-in]
+
+Eine Anmeldung gilt bis zu 30 Tage. Danach bittet dich QRdx, dich in diesem Browser erneut anzumelden, egal wie oft du ihn genutzt hast. Wenn du QRdx etwa eine Woche lang in einem Browser nicht verwendest, wirst du dort früher abgemeldet.
+
+## Andere Geräte abmelden [#sign-out-other-devices]
+
+Gehe zu **Einstellungen** → **Profil & Sicherheit**. Melde dich unter **Sitzungen** von einem Gerät ab oder klicke auf **Überall sonst abmelden**. Dabei musst du nie bestätigen, dass du es bist, du kannst es also sofort tun.
+
+Wenn du die Bestätigung in zwei Schritten aktivierst, werden ebenfalls alle anderen Geräte abgemeldet. Wenn der Support sie für dich ausschaltet, was [7 Tage wartet](/docs/help/privacy-and-security/two-step-verification#lost-your-phone-and-your-backup-codes), werden an diesem Tag alle Geräte abgemeldet, auch das, das du gerade benutzt.<IfAvailable feature="sso"> Wenn dein Unternehmen beginnt, Single Sign-on zu verlangen, wirst du aus Sitzungen abgemeldet, die nicht damit begonnen haben, und eine Single-Sign-on-Sitzung gilt höchstens 24 Stunden.</IfAvailable>
+
+## Verbundene Apps entfernen [#remove-apps-you-connected]
+
+Wenn du einer anderen App erlaubt hast, dein QRdx-Konto zu nutzen, steht sie unter **Einstellungen** → **Autorisierte Apps**. Entferne alle, die du nicht nutzt. Eine App funktioniert auch nach deiner Abmeldung weiter, deshalb musst du beim Genehmigen einer App bestätigen, dass du es bist.
+
+## Ein Sicherheitsproblem melden [#report-a-security-problem]
+
+Schreibe eine E-Mail an [support@qrdx.dev](mailto:support@qrdx.dev) mit einem Betreff, der mit `[security]` beginnt. Poste es bitte nicht in öffentlichen GitHub-Issues. Lies die [Sicherheitsrichtlinie](/legal/security).
+
+Ein schädlicher QR-Code ist kein Sicherheitsfehler: [Melde ihn](/docs/help/privacy-and-security/report-abuse) stattdessen.

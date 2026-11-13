@@ -25,7 +25,9 @@ import {
   AFFILIATE_PAYOUT_CURRENCY,
   formatMinorAmount,
 } from "@/lib/affiliates/terms";
+import { parsePage } from "@/lib/paging";
 import { AdminAction } from "../../_components/admin-action";
+import { Pager } from "../../_components/pager";
 import { Empty, Facts, Row, Rows } from "../../_components/panel";
 import { Section } from "../../_components/stat-card";
 import { formatDate, formatNumber } from "../../_lib/format";
@@ -60,14 +62,19 @@ function daysAgo(date: Date, now: Date): string {
 
 export default async function AdminAffiliatePage({
   params,
+  searchParams,
 }: {
   params: Promise<{ affiliateId: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   await requireAdmin();
   const { affiliateId } = await params;
+  const { page } = await searchParams;
   // One moment for the whole page: "Mark paid" covers what was payable then.
   const shownAt = new Date();
-  const loaded = await loadAffiliateForAdmin(affiliateId, shownAt);
+  const loaded = await loadAffiliateForAdmin(affiliateId, shownAt, {
+    page: parsePage(page),
+  });
   if (!loaded.ready) {
     return (
       <p className="bg-muted/40 rounded-lg border p-4 text-sm">
@@ -239,7 +246,7 @@ export default async function AdminAffiliatePage({
       </Section>
 
       <Section title="Commissions">
-        {commissions.length === 0 ? (
+        {commissions.total === 0 ? (
           <Empty>No commissions yet.</Empty>
         ) : (
           <Table>
@@ -254,7 +261,7 @@ export default async function AdminAffiliatePage({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {commissions.map((commission) => (
+              {commissions.rows.map((commission) => (
                 <TableRow key={commission.id}>
                   <TableCell>{formatDate(commission.orderPaidAt)}</TableCell>
                   <TableCell className="tabular-nums">
@@ -304,6 +311,11 @@ export default async function AdminAffiliatePage({
             </TableBody>
           </Table>
         )}
+        <Pager
+          basePath={`/admin/affiliates/${encodeURIComponent(row.id)}`}
+          page={commissions.page}
+          total={commissions.total}
+        />
       </Section>
     </div>
   );

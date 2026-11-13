@@ -1,3 +1,4 @@
+import { CANONICAL_ORIGIN } from "@repo/config";
 import { baseUrl } from "@/lib/metadata";
 
 /**
@@ -99,6 +100,6 @@ export function getEasterEgg(slug: string): EasterEgg | null {
  */
 export function easterEggUrl(slug: EasterEggSlug): string {
   const origin =
-    process.env.NODE_ENV === "development" ? baseUrl : "https://qrdx.dev";
+    process.env.NODE_ENV === "development" ? baseUrl : CANONICAL_ORIGIN;
   return new URL(`/m/${slug}`, origin).toString();
 }

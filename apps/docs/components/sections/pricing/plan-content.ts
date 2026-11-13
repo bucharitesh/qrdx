@@ -6,10 +6,10 @@
 // English catalog. Client components import ./savings or
 // ./upgrade-highlights instead.
 
+import { AI_REQUEST_FREE_TIER_LIMIT } from "@repo/config";
 import { createTranslator } from "next-intl";
 import { AUDIT_RETENTION_DAYS } from "@/ee/audit-log/limits";
 import { listNames } from "@/lib/availability-copy";
-import { AI_REQUEST_FREE_TIER_LIMIT } from "@/lib/constants";
 import type { Locale } from "@/lib/i18n/config";
 import type { Messages } from "@/lib/i18n/messages";
 import type { PlanLimits } from "@/lib/plans";
@@ -145,6 +145,14 @@ function analyticsHistory(
   copy: PricingCopy,
 ): string {
   return formatDays(limits.analyticsRetentionDays, copy);
+}
+
+/** "1 year of analytics history", or "Unlimited analytics history". */
+function historyHighlight(days: number, copy: PricingCopy): string {
+  const duration = formatDays(days, copy);
+  return Number.isFinite(days)
+    ? copy.t("highlights.historyOf", { duration })
+    : copy.t("highlights.history", { duration });
 }
 
 function teamMembers(limits: PlanLimits, _: Plan, copy: PricingCopy): string {
@@ -481,9 +489,7 @@ export function buildHighlights(
       t("highlights.dynamicWithAnalytics", { count: count(free.dynamicCodes) }),
       t("highlights.unlimitedScans"),
       t("highlights.landingPages", { count: count(free.landingPages) }),
-      t("highlights.historyOf", {
-        duration: formatDays(free.analyticsRetentionDays, copy),
-      }),
+      historyHighlight(free.analyticsRetentionDays, copy),
       ...(storage
         ? [
             t("highlights.fileStorage", {
@@ -494,9 +500,7 @@ export function buildHighlights(
     ],
     pro: [
       t("highlights.unlimitedDynamic"),
-      t("highlights.historyOf", {
-        duration: formatDays(pro.analyticsRetentionDays, copy),
-      }),
+      historyHighlight(pro.analyticsRetentionDays, copy),
       ...(domains
         ? [t("highlights.customDomains", { count: count(pro.customDomains) })]
         : []),
@@ -509,9 +513,10 @@ export function buildHighlights(
     ],
     business: [
       t("highlights.whiteLabel"),
-      t("highlights.history", {
-        duration: formatDays(business.analyticsRetentionDays, copy),
-      }),
+      // The card starts "Everything in Pro": only a longer history is news.
+      ...(business.analyticsRetentionDays > pro.analyticsRetentionDays
+        ? [historyHighlight(business.analyticsRetentionDays, copy)]
+        : []),
       ...(domains
         ? [
             t("highlights.customDomains", {

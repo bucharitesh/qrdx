@@ -1,5 +1,6 @@
 import "server-only";
 
+import { AI_REQUEST_FREE_TIER_LIMIT } from "@repo/config";
 import { aiUsage, database as db } from "@repo/database";
 import { subscription } from "@repo/database/schema";
 import cuid from "cuid";
@@ -7,7 +8,6 @@ import { and, count, desc, eq, inArray, notInArray } from "drizzle-orm";
 import { SubscriptionRequiredError } from "@/types/errors";
 import type { SubscriptionCheck } from "@/types/subscription";
 import { ART_USAGE_MODEL_IDS } from "./ai/art-models";
-import { AI_REQUEST_FREE_TIER_LIMIT } from "./constants";
 
 // Polar keeps a subscription "active" until a cancellation takes effect at period end;
 // "canceled", "past_due", "unpaid" and "incomplete*" do not grant access.

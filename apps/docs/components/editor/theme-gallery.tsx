@@ -1,5 +1,6 @@
 "use client";
 
+import { CANONICAL_ORIGIN } from "@repo/config";
 import { Tick } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
@@ -32,7 +33,7 @@ import { useQREditorStore } from "@/store/editor-store";
 import type { ThemeCategory, ThemeStyles } from "@/types/theme";
 import { defaultPresets } from "@/utils/qr-presets";
 
-const THUMB_VALUE = "https://qrdx.dev";
+const THUMB_VALUE = CANONICAL_ORIGIN;
 
 interface GalleryItem {
   id: string;

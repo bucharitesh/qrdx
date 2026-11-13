@@ -3,7 +3,7 @@
   "name": "For sale sign",
   "description": "A hanging sign on two chains.",
   "category": "use-case",
-  "collection": "places",
+  "collection": "real-estate",
   "contentTypes": ["url"],
   "tags": ["real estate", "property", "for sale", "signage"],
   "license": "CC0-1.0",

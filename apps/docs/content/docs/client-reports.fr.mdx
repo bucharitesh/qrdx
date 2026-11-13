@@ -1,0 +1,63 @@
+---
+title: "Rapports client"
+description: "Partagez les statistiques de scan d'un code avec un client sur une page qui affiche son nom, son logo et sa couleur."
+icon: ChartLine
+---
+
+Tout QR code dynamique peut avoir une page de statistiques partagée : une page en lecture seule à l'adresse `/stats/<token>`, avec les scans dans le temps, les principaux pays, les appareils et les sites référents. Toute personne disposant du lien peut l'ouvrir. Les moteurs de recherche ne l'indexent pas, et elle n'affiche rien sur les personnes qui ont scanné.
+
+Avec Pro et Business, vous pouvez afficher l'identité visuelle d'un client sur cette page. Elle présente alors en haut le nom, le logo et la couleur d'accent du client, ainsi que le nom du client dans l'onglet du navigateur et dans les aperçus de lien, ce qui vous permet de la lui envoyer comme son rapport.
+
+| | Gratuit | Pro | Business |
+| --- | --- | --- | --- |
+| Page de statistiques partagée | Oui | Oui | Oui |
+| Nom, logo et couleur du client | Non | Oui | Oui |
+| QRdx sur la page | En-tête et pied de page | Un petit « Made with QRdx » en bas | Aucun |
+| Lien sur votre propre domaine | Non | Non | Oui |
+
+## Partager les statistiques d'un code [#share-a-codes-stats]
+
+1. Dans [Codes](/dashboard?to=codes), ouvrez le menu **⋯** du code et choisissez **Share analytics**.
+2. Activez **Public analytics page** et copiez le lien.
+
+**Reset link** crée un nouveau lien et désactive immédiatement l'ancien, tout en conservant l'identité visuelle de la page. Si vous désactivez la page, son lien renvoie une erreur 404 et son identité visuelle est effacée ; la marque elle-même reste enregistrée.
+
+## Ajouter la marque du client [#add-the-clients-brand]
+
+Une fois la page activée, la même boîte de dialogue comporte une section **Client branding**.
+
+1. Ouvrez le menu et choisissez **New client brand**.
+2. Saisissez le nom du client, ajoutez un logo (importez une image ou collez une URL d'image `https`) et, si vous le souhaitez, une couleur d'accent.
+3. Cliquez sur **Add and use**. La page affiche aussitôt la marque.
+
+Les marques sont enregistrées dans l'espace de travail : pour le prochain code du même client, il suffit de choisir la marque dans le menu. Le bouton en forme de crayon modifie la marque sélectionnée partout où elle est utilisée. Supprimer une marque ramène toutes les pages qui l'utilisaient à une page neutre.
+
+La couleur d'accent est utilisée avec parcimonie : sur le graphique des scans et sur la vignette du logo. Si la couleur est difficile à voir sur un fond blanc ou noir, ce thème conserve pour le graphique la couleur de texte propre à la page. Laissez l'accent vide pour obtenir une page entièrement monochrome.
+
+Les propriétaires, les administrateurs et les membres peuvent personnaliser une page. Les lecteurs et les membres chargés de la facturation voient ce réglage mais ne peuvent pas le modifier.
+
+## Business : sans marque QRdx, sur votre domaine [#business-no-qrdx-mark-on-your-domain]
+
+Avec Business, une page personnalisée n'affiche aucune marque QRdx : pas de logo QRdx dans l'en-tête, pas de mention en pied de page et pas de « QRdx » dans le titre de l'onglet. L'onglet du navigateur affiche le logo du client, ou son initiale. Si le lien court du code se trouve sur le domaine de QRdx, la page ne l'affiche pas.
+
+<IfAvailable feature="customDomains" id="serve-the-page-on-your-domain" title="Servir la page sur votre domaine">
+
+Un espace de travail Business disposant d'un [domaine personnalisé](/docs/custom-domains) vérifié peut y servir la page. Dans la boîte de dialogue, choisissez le domaine sous **Link address**. Le lien devient `https://<your domain>/stats/<token>`.
+
+Le domaine ne sert que les pages que vous lui avez attribuées, et uniquement tant que l'espace de travail est sur Business. L'adresse QRdx de la même page continue aussi de fonctionner.
+
+</IfAvailable>
+
+## Ce que la page affiche [#what-the-page-shows]
+
+- Les scans et les visiteurs uniques sur les 7, 30 ou 90 derniers jours, dans la limite de l'historique conservé par le forfait de l'espace de travail
+- Les scans de QR code et les touches NFC
+- Les scans par jour, les principaux pays, les types d'appareils et les sites référents
+
+Elle n'affiche jamais le chemin ni la chaîne de requête de la destination, les villes, les localisations précises, ni aucune information sur un scan en particulier. Les chiffres peuvent avoir jusqu'à 5 minutes de retard.
+
+## En cas de changement de forfait [#if-the-plan-changes]
+
+L'identité visuelle est conservée, mais elle ne s'affiche que tant que le forfait l'inclut. Lorsqu'un espace de travail Business passe à Pro, ses pages retrouvent le petit « Made with QRdx » et leurs liens sur domaine personnalisé cessent de fonctionner ; l'adresse QRdx continue de fonctionner. Avec Gratuit, la page n'affiche aucune marque client. Repasser à un forfait supérieur rétablit les deux.
+
+Pour offrir à un client une vue de plusieurs codes à la fois, avec leurs statistiques et leurs pages hébergées, utilisez le [portail client](/docs/client-portal) avec Business.

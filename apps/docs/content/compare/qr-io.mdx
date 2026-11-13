@@ -41,7 +41,7 @@ tableRows:
     qrdx: "10 free; unlimited on Pro"
     competitor: "Unlimited"
   - feature: Scan analytics
-    qrdx: "90 days free; 3 years on Pro; unlimited on Business"
+    qrdx: "{facts.freeScanHistoryYears} year free; unlimited on Pro and Business"
     competitor: "How many, when and where"
   - feature: Hosted pages
     qrdx: "3 free; unlimited on Pro"
@@ -59,7 +59,7 @@ tableRows:
     qrdx: "1,000 requests a day free; 10,000 on Pro"
     competitor: "2,000 requests a month (paid plan)"
   - feature: Site languages
-    qrdx: "English"
+    qrdx: "English and {facts.translatedLanguages} more, machine-translated"
     competitor: "6"
   - feature: Open source
     qrdx: "AGPL-3.0"
@@ -85,15 +85,15 @@ QRdx suits people who want to start free and pay monthly, if at all. Static code
 
 ## Where QR.io is the better choice
 
-- You want the whole site in your language, reviewed by native speakers. QR.io is available in English, Spanish, Portuguese, Italian, French and German. QRdx's home page and pricing are in {facts.translatedLanguages} more languages, machine-translated and waiting for native review; its docs and app are English only for now.
-- You want a refund guarantee. QR.io's refund policy promises a full refund if you ask within 7 days of your first purchase. QRdx looks at refund requests case by case.
-- You run a non-profit. QR.io's help center says it has special plans for non-profits, arranged through its support team.
+- You want the whole site in your language, reviewed by native speakers. QR.io is available in English, Spanish, Portuguese, Italian, French and German. QRdx's main pages, editor, signed-in app, docs and emails are in {facts.translatedLanguages} more languages, machine-translated and still waiting for native review.
 - You'd rather not choose between tiers. QR.io's one plan comes with unlimited codes, bulk creation, the API and 5 team members.
 
 ## Key differences
 
 - What happens when you stop paying. QR.io's help center says that when the 7-day trial expires, "Dynamic QR codes will be paused" until you upgrade, and static codes "will work forever." Its refund policy says that after you cancel a paid plan, "your QR Codes will go into paused mode" until you subscribe again. We checked both pages on 10 November 2026. On QRdx, dynamic codes keep redirecting on every plan, including after a cancellation.
 - Price. One person with a few codes pays nothing on QRdx. On QR.io the cheapest option after the trial is $39.99 for one month.
+- Refunds. QR.io's refund policy promises a full refund if you ask within 7 days of your first purchase. QRdx refunds the first payment for a paid plan in full if you ask within {facts.moneyBackDays} days.
+- Non-profits. QR.io's help center says it has special plans for non-profits, arranged through its support team. QRdx gives registered non-profits and charities {facts.nonprofitDiscountPercent}% off Pro or Business, with a code you ask for on the pricing page.
 - Getting a code. QR.io asks you to create a free account before you can download any code. The QRdx static generator works without an account.
 - Developer access. QR.io's API comes with its paid plan and allows 2,000 requests a month. The QRdx REST API allows 1,000 requests a day on Free and 10,000 on Pro, and QRdx also has an MCP server, a React library on npm and a CLI.
 - Openness. QRdx is open source under AGPL-3.0, so you can check how scans are counted or run your own copy. QR.io doesn't advertise its source code.

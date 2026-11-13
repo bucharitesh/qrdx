@@ -4,7 +4,7 @@
 // looked up, the dev mock passes in fixtures.
 
 import {
-  backHalfMessage,
+  backHalfReason,
   backHalfShapeProblem,
   fallbackCandidates,
   pickSuggestion,
@@ -16,6 +16,7 @@ import {
   displayLink,
 } from "./normalize";
 import { getProvider, type ProviderId } from "./providers";
+import { type MigrateReason, migrateReasonText } from "./reasons";
 import type {
   BackHalfPlan,
   BackHalfTarget,
@@ -138,14 +139,6 @@ export function slugLookups(
   return { shared: [...shared], domain: [...onDomain], candidates };
 }
 
-const REASONS = {
-  imported: "Already imported",
-  duplicate: "A QRdx code with this destination already exists",
-  selectedTwice: "Selected twice",
-  qrdx: "Already points to a QRdx short link",
-  limit: "Over your plan's active-code limit",
-};
-
 function pointsToQrdx(url: string, hosts: ReadonlySet<string>): boolean {
   try {
     return hosts.has(new URL(url).host.toLowerCase());
@@ -201,36 +194,42 @@ export function planImport(links: SourceLink[], ctx: PlanContext): ImportPlan {
     };
     const skip = (
       status: PlannedItem["status"],
-      reason: string,
+      reason: string | MigrateReason,
       existing: CodeRef | null = null,
     ) => {
       item.status = status;
-      item.reason = reason;
+      if (typeof reason === "string") {
+        item.reason = reason;
+      } else {
+        item.reason = migrateReasonText(reason);
+        item.reasonCode = reason;
+      }
       item.existing = existing;
       return { link, item, prepared: null };
     };
 
-    if (seenIds.has(link.id)) return skip("invalid", REASONS.selectedTwice);
+    if (seenIds.has(link.id)) return skip("invalid", { code: "selectedTwice" });
     seenIds.add(link.id);
 
     const destination = ctx.checkDestination(link.destinationUrl);
     if (!destination.ok) return skip("invalid", destination.message);
     if (pointsToQrdx(destination.url, ctx.qrdxHosts)) {
-      return skip("invalid", REASONS.qrdx);
+      return skip("invalid", { code: "qrdx" });
     }
 
     const imported = ctx.imported.get(link.id);
-    if (imported) return skip("already-imported", REASONS.imported, imported);
+    if (imported)
+      return skip("already-imported", { code: "imported" }, imported);
 
     const sameDestination = ctx.byDestination.get(
       destinationKey(destination.url) ?? destination.url,
     );
     if (sameDestination && !options.includeDuplicates) {
-      return skip("duplicate", REASONS.duplicate, sameDestination);
+      return skip("duplicate", { code: "duplicate" }, sameDestination);
     }
 
     wanted += 1;
-    if (creates >= cap) return skip("over-limit", REASONS.limit);
+    if (creates >= cap) return skip("over-limit", { code: "limit" });
     creates += 1;
 
     const tags = options.carryTags ? cleanTags(link.tags) : [];
@@ -260,7 +259,7 @@ export function planImport(links: SourceLink[], ctx: PlanContext): ImportPlan {
         used[target].add(backHalf.slug as string);
       } else {
         conflicts += 1;
-        item.reason = backHalfMessage(
+        const reason = backHalfReason(
           backHalf.status as Exclude<
             BackHalfPlan["status"],
             "kept" | "not-on-domain"
@@ -271,6 +270,8 @@ export function planImport(links: SourceLink[], ctx: PlanContext): ImportPlan {
             ? options.backHalfDomain
             : null,
         );
+        item.reason = migrateReasonText(reason);
+        item.reasonCode = reason;
       }
     }
     item.backHalf = backHalf;
@@ -398,6 +399,7 @@ export function jobItemsFromPlan(plan: ImportPlan): JobItem[] {
     };
     if (item.status !== "create") {
       base.reason = item.reason ?? undefined;
+      if (item.reasonCode) base.reasonCode = item.reasonCode;
       if (item.existing) {
         // Old links of skipped items can still point at the existing code.
         base.codeId = item.existing.id;

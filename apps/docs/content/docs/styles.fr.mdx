@@ -1,0 +1,59 @@
+---
+title: "Formes, yeux et cadres"
+description: "Chaque motif de corps, cadre d'œil, centre d'œil et cadre d'appel à l'action, dessiné en direct par le moteur de rendu qrdx et décodé dans votre navigateur."
+icon: Grid3x3
+---
+
+import { QrCatalog } from "@/components/docs/qr-catalog";
+
+Chaque style ci-dessous est dessiné par le même moteur de rendu que vos téléchargements, avec le nom de son option et la valeur d'API à copier. Chaque tuile est décodée avec [jsQR](https://github.com/cozmo/jsQR) directement dans votre navigateur, une à la fois : le badge **Scans** est donc un résultat en direct, et non une promesse.
+
+Tous sont également testés dans le package (`packages/qrdx/tests/catalog-*.test.ts`) : chaque valeur est décodée à travers un modèle d'appareil photo de téléphone (perte de contraste et flou d'un quart de module) à 4, 6 et 9 pixels par module, à côté de chaque autre corps, œil et centre, avec une correction d'erreur L, M, Q et H, à 148 px et 1024 px, en clair sur fond sombre, avec des couleurs de marque et avec un logo au centre. Ils ont aussi été vérifiés avec ZXing et dans des rendus nets. Quelques associations fonctionnent mal ensemble ; voir [Associations à éviter](#pairs-to-avoid).
+
+## Motifs de corps [#body-patterns]
+
+La forme des modules de données (`bodyPattern`). Les styles connectés (`liquid`, `classy`) fusionnent les modules voisins en un seul contour. `random-dots` et `mosaic` varient selon le module mais sont déterministes : la même valeur dessine toujours le même code.
+
+<QrCatalog kind="body" />
+
+## Cadres d'œil [#eye-frames]
+
+L'anneau extérieur des trois repères d'angle (`cornerEyePattern`). `leaf`, `leaf-reverse`, `drop` et `petal` orientent chaque œil de façon qu'il soit tourné vers le coin du code. Chaque tuile associe l'œil à son centre recommandé.
+
+<QrCatalog kind="eye" />
+
+## Centres d'œil [#eye-centers]
+
+Le centre plein de chaque repère d'angle (`cornerEyeDotPattern`), affiché à l'intérieur d'yeux carrés.
+
+<QrCatalog kind="dot" />
+
+## Cadres [#frames]
+
+Les cadres d'appel à l'action sont dessinés autour du code : le code et sa zone de silence ne sont donc jamais recouverts, et l'image téléchargée s'agrandit pour les accueillir. Chaque cadre intégré ci-dessous est une spécification de cadre, dessinée par le même moteur que les [cadres officiels et communautaires](/docs/features/frames). Chaque cadre accepte `text` (jusqu'à 24 caractères), `color`, `textColor` et `fontScale` (de 0.5 à 1.5). `banner-top-bottom`, `circle` et `menu-card` affichent aussi `secondaryText` ; `gradient-border` va de `color` à `secondaryColor`.
+
+<QrCatalog kind="frame" />
+
+```tsx
+import { QRCode } from "qrdx";
+
+<QRCode
+  value="https://example.com"
+  bodyPattern="liquid"
+  cornerEyePattern="leaf"
+  cornerEyeDotPattern="leaf"
+  frame={{ style: "circle", text: "Scan me", secondaryText: "example.com" }}
+/>;
+```
+
+## Associations à éviter [#pairs-to-avoid]
+
+Quelques associations de formes qui se scannent bien séparément échouent ensemble dans nos tests de décodage. Le playground ne vous laisse pas les choisir ensemble, et le score de scan les signale (`style-pair`) :
+
+- les corps `diamond` à côté d'yeux `square`, `pacman` à côté de `rounded`, et `small-square` à côté d'yeux `square` ou `rounded` (non détectés de près).
+
+Les yeux `circle` sont lus par les deux décodeurs que nous testons (jsQR et ZXing) mais sont marqués **prudence** : certaines applications de scan les manquent. Ces associations sont fournies dans le package sous le nom `WEAK_BODY_EYES`, et `getStylePairRisk(props)` renvoie l'avertissement pour un style.
+
+## Formes retirées [#retired-shapes]
+
+Les yeux `curly` ainsi que les centres `diamond`, `star` et `banner` ont été retirés parce qu'ils ne se scannent pas de façon fiable : ZXing (le décodeur de la plupart des scanners Android) manque les yeux curly et les centres diamond et star à des distances de téléphone, et jsQR manque les centres banner dans chaque rendu net. Les codes enregistrés avec ces formes se chargent et s'affichent toujours exactement comme avant, et l'image API les dessine encore pour les liens existants, mais aucun sélecteur, préréglage ni thème IA ne les propose, et leurs noms sont conservés uniquement comme valeurs obsolètes (`RETIRED_CORNER_EYE_PATTERNS`, `RETIRED_CORNER_EYE_DOT_PATTERNS`).

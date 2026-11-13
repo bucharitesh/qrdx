@@ -1,5 +1,6 @@
 "use client";
 
+import { CANONICAL_ORIGIN } from "@repo/config";
 import { toast } from "@repo/design-system";
 import { Spinner as Loader2, Star } from "@repo/design-system/components/icons";
 import {
@@ -193,7 +194,7 @@ export function ThemeCard({ theme, workspace, canCopyToTeam }: ThemeCardProps) {
         <CodeQr
           className="w-32 transition-transform duration-300 group-hover:scale-105"
           style={{ ...defaultThemeState.styles, ...theme.style }}
-          value="https://qrdx.dev"
+          value={CANONICAL_ORIGIN}
         />
       </Link>
 
@@ -383,9 +384,8 @@ export function ThemeCard({ theme, workspace, canCopyToTeam }: ThemeCardProps) {
               {t("deleteName", { name: theme.name })}
             </AlertDialogTitle>
             <AlertDialogDescription>
-              {t("qrCodesYouAlreadyMade")}
-              {isTeamTheme ? t("forEveryoneInThisWorkspace") : ""}.
-              {theme.isPublished && t("itIsAlsoRemovedFrom")}
+              {isTeamTheme ? t("deleteThemeTeam") : t("deleteTheme")}
+              {theme.isPublished && ` ${t("itIsAlsoRemovedFrom")}`}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

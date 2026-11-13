@@ -1,0 +1,106 @@
+{
+  "id": "vehicle-history",
+  "name": "Vehicle history",
+  "description": "A light card with a bold side bar and left-aligned text and a document.",
+  "category": "use-case",
+  "collection": "automotive",
+  "contentTypes": ["url"],
+  "tags": ["cars", "parking", "used cars", "history"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1300,
+      "height": 1620
+    },
+    "qr": {
+      "x": 180,
+      "y": 140,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1300,
+        "height": 1620,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 40,
+        "height": 1620,
+        "fill": "accent"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1300,
+        "height": 1620,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.82
+        },
+        "hole": {
+          "x": 0,
+          "y": 8,
+          "width": 1292,
+          "height": 1604
+        }
+      },
+      {
+        "type": "path",
+        "d": "M1082 1324L1142 1324L1181 1363L1181 1456L1082 1456ZM1100.75 1345A3.75 3.75 0 0 0 1097 1348.75L1097 1348.75A3.75 3.75 0 0 0 1100.75 1352.5L1126.25 1352.5A3.75 3.75 0 0 0 1130 1348.75L1130 1348.75A3.75 3.75 0 0 0 1126.25 1345L1100.75 1345ZM1100.75 1381A3.75 3.75 0 0 0 1097 1384.75L1097 1384.75A3.75 3.75 0 0 0 1100.75 1388.5L1162.25 1388.5A3.75 3.75 0 0 0 1166 1384.75L1166 1384.75A3.75 3.75 0 0 0 1162.25 1381L1100.75 1381ZM1100.75 1399A3.75 3.75 0 0 0 1097 1402.75L1097 1402.75A3.75 3.75 0 0 0 1100.75 1406.5L1162.25 1406.5A3.75 3.75 0 0 0 1166 1402.75L1166 1402.75A3.75 3.75 0 0 0 1162.25 1399L1100.75 1399ZM1100.75 1417A3.75 3.75 0 0 0 1097 1420.75L1097 1420.75A3.75 3.75 0 0 0 1100.75 1424.5L1162.25 1424.5A3.75 3.75 0 0 0 1166 1420.75L1166 1420.75A3.75 3.75 0 0 0 1162.25 1417L1100.75 1417ZM1100.75 1435A3.75 3.75 0 0 0 1097 1438.75L1097 1438.75A3.75 3.75 0 0 0 1100.75 1442.5L1132.25 1442.5A3.75 3.75 0 0 0 1136 1438.75L1136 1438.75A3.75 3.75 0 0 0 1132.25 1435L1100.75 1435Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M1181 1363L1142 1363L1142 1324Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "See its history",
+        "color": "frame",
+        "box": {
+          "x": 180,
+          "y": 1270,
+          "width": 1000,
+          "height": 170
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Service records",
+        "color": "frame",
+        "box": {
+          "x": 180,
+          "y": 1450,
+          "width": 1000,
+          "height": 90
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

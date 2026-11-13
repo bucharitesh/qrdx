@@ -1,0 +1,49 @@
+---
+title: "Wi-Fi-QR-Code"
+description: "Ein QR-Code, der beim Scannen einem Wi-Fi-Netzwerk beitritt, mit einem typisierten Payload-Builder, der Sonderzeichen automatisch escaped."
+icon: Globe
+---
+
+<ComponentLinks name="wifi-qr-code" />
+
+<ComponentPreview name="wifi-qr-code-demo" />
+
+## Installation [#installation]
+
+<InstallationTabs name="wifi-qr-code" />
+
+## Verwendung [#usage]
+
+```tsx
+import { WifiQrCode } from "@/components/wifi-qr-code";
+```
+
+```tsx
+<WifiQrCode ssid="Cafe Guest" password="espresso-2024" />
+```
+
+Die Kameras von iOS und Android bieten an, dem Netzwerk beizutreten, sobald sie den Code scannen. Du brauchst dafür keine App.
+
+## Beispiele [#examples]
+
+### Varianten [#variants]
+
+`showPassword` gibt das Passwort im Klartext aus, damit Gäste es eintippen können. Verwende `encryption="nopass"` für offene Netzwerke und `hidden` für Netzwerke, die ihren Namen nicht senden.
+
+<ComponentPreview name="wifi-qr-code-variants" />
+
+### Payload-Builder [#payload-builder]
+
+`buildWifiPayload` gibt den `WIFI:`-Text zurück, den der Code kodiert. Die Funktion escaped `\`, `;`, `,`, `:` und `"` in Namen und Passwörtern. Genau daran scheitern handgeschriebene Payloads meistens. Du kannst sie mit jedem QR-Renderer verwenden oder den Payload zum Debuggen ausgeben.
+
+<ComponentPreview name="wifi-qr-code-payload" />
+
+## API-Referenz [#api-reference]
+
+<auto-type-table path="../../../registry/qrdx/wifi-qr-code.tsx" type="{ [K in keyof WifiQrCodeProps as K extends Exclude<keyof ComponentProps<'figure'>, 'hidden'> ? never : K]: WifiQrCodeProps[K] }" />
+
+Jede weitere Prop, etwa `className`, wird an das umschließende `<figure>` weitergegeben.
+
+### buildWifiPayload [#buildwifipayload]
+
+`buildWifiPayload(network: WifiNetwork): string` nimmt dieselben Netzwerkfelder entgegen wie die Komponente: `ssid`, `password`, `encryption` und `hidden`.

@@ -8,34 +8,44 @@ import {
   type SlugProblem,
   slugProblem,
 } from "@/lib/short-links";
+import { type MigrateReason, migrateReasonText } from "./reasons";
 import type { BackHalfStatus, BackHalfTarget } from "./types";
 
 type ConflictStatus = Exclude<BackHalfStatus, "kept" | "not-on-domain">;
 
-/** Why a back-half wasn't kept, for the preview ("spring-menu → Ab3xK9q"). */
+/** Why a back-half wasn't kept, for the preview ("spring-menu → Ab3xK9q"), as a code (./reasons.ts). */
+export function backHalfReason(
+  status: ConflictStatus,
+  target: BackHalfTarget,
+  domain: string | null,
+): MigrateReason {
+  switch (status) {
+    case "shape":
+      return { code: "backHalfShape" };
+    case "reserved":
+      return target === "domain"
+        ? domain
+          ? { code: "backHalfReservedDomain", values: { domain } }
+          : { code: "backHalfReservedShared" }
+        : domain
+          ? { code: "backHalfReservedSharedAddDomain", values: { domain } }
+          : { code: "backHalfReservedShared" };
+    case "taken":
+      return target === "domain" && domain
+        ? { code: "backHalfTakenDomain", values: { domain } }
+        : { code: "backHalfTakenShared" };
+    case "repeated":
+      return { code: "backHalfRepeated" };
+  }
+}
+
+/** The same, in English. */
 export function backHalfMessage(
   status: ConflictStatus,
   target: BackHalfTarget,
   domain: string | null,
 ): string {
-  const where =
-    target === "domain" && domain ? domain : "the shared qrdx.dev links";
-  switch (status) {
-    case "shape":
-      return "QRdx back-halves are 3 to 64 letters, digits, - or _, so this one can't be kept.";
-    case "reserved":
-      return target === "domain"
-        ? `This back-half is reserved on ${where}.`
-        : domain
-          ? `This back-half is reserved on qrdx.dev. Add ${domain} on the Domains page to keep it there.`
-          : "This back-half is reserved on qrdx.dev.";
-    case "taken":
-      return target === "domain"
-        ? `Another code on ${where} already uses this back-half.`
-        : "Another QRdx code already uses this back-half on qrdx.dev.";
-    case "repeated":
-      return "Another selected link has the same back-half.";
-  }
+  return migrateReasonText(backHalfReason(status, target, domain));
 }
 
 /** Why a back-half can't be a slug in `target`, before checking availability. */

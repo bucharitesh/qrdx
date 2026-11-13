@@ -1,0 +1,78 @@
+{
+  "id": "reyes-crown",
+  "name": "Three kings crown",
+  "description": "An arched card, like a window, with a crown, in royal blue and gold.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "three-kings-day",
+  "contentTypes": [],
+  "tags": [
+    "three kings day",
+    "dia de reyes",
+    "epiphany",
+    "january 6",
+    "crown",
+    "bakery"
+  ],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1880
+    },
+    "qr": {
+      "x": 160,
+      "y": 470,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#1e3a8a",
+      "text": "#ffffff",
+      "accent": "#e0a526"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M0 660A660 660 0 0 1 1320 660L1320 1840Q1320 1880 1280 1880L40 1880Q0 1880 0 1840Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M50 660A610 610 0 0 1 1270 660L1270 1830L50 1830ZM62 660L62 1818L1258 1818L1258 660A598 598 0 0 0 62 660Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.35
+        }
+      },
+      {
+        "type": "path",
+        "d": "M603 276L597 210L630 240L660 195L690 240L723 210L717 276ZM607.5 282L712.5 282A4.5 4.5 0 0 1 717 286.5L717 292.5A4.5 4.5 0 0 1 712.5 297L607.5 297A4.5 4.5 0 0 1 603 292.5L603 286.5A4.5 4.5 0 0 1 607.5 282Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M652.5 255A7.5 7.5 0 1 1 667.5 255A7.5 7.5 0 1 1 652.5 255ZM624.6 261A5.4 5.4 0 1 1 635.4 261A5.4 5.4 0 1 1 624.6 261ZM684.6 261A5.4 5.4 0 1 1 695.4 261A5.4 5.4 0 1 1 684.6 261Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan to order your rosca",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1610,
+          "width": 1040,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

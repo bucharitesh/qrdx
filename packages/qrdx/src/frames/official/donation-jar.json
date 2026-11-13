@@ -1,0 +1,101 @@
+{
+  "id": "donation-jar",
+  "name": "Donation jar",
+  "description": "A collection jar with a coin over the slot in its lid.",
+  "category": "use-case",
+  "collection": "nonprofit",
+  "contentTypes": ["upi", "paypal", "url"],
+  "tags": ["nonprofit", "community", "donate", "fundraising"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1440,
+      "height": 1920
+    },
+    "qr": {
+      "x": 220,
+      "y": 500,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "circle",
+        "cx": 720,
+        "cy": 46,
+        "r": 44,
+        "fill": "accent"
+      },
+      {
+        "type": "circle",
+        "cx": 720,
+        "cy": 46,
+        "r": 28,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.6
+        }
+      },
+      {
+        "type": "path",
+        "d": "M220 300L1220 300C1340 300 1400 360 1400 470L1400 1830Q1400 1920 1310 1920L130 1920Q40 1920 40 1830L40 470C40 360 100 300 220 300Z",
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 250,
+        "y": 240,
+        "width": 940,
+        "height": 70,
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.3
+        }
+      },
+      {
+        "type": "path",
+        "d": "M230 100L1210 100A30 30 0 0 1 1240 130L1240 230A30 30 0 0 1 1210 260L230 260A30 30 0 0 1 200 230L200 130A30 30 0 0 1 230 100ZM590 160A20 20 0 0 0 570 180L570 180A20 20 0 0 0 590 200L850 200A20 20 0 0 0 870 180L870 180A20 20 0 0 0 850 160Z",
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.3
+        },
+        "fillRule": "evenodd"
+      },
+      {
+        "type": "rect",
+        "x": 100,
+        "y": 380,
+        "width": 1240,
+        "height": 1440,
+        "radius": 30,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.9
+        }
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Donate here",
+        "color": "frame",
+        "box": {
+          "x": 160,
+          "y": 1620,
+          "width": 1120,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,37 @@
+---
+title: "Ajouter un cadre et un appel à l'action"
+description: "Placez une bordure et un court message comme « Scannez-moi » autour de votre QR code."
+---
+
+Un cadre indique aux gens ce qu'ils obtiennent en scannant.
+
+## Ajouter un cadre [#add-a-frame]
+
+1. Dans le [Playground](/playground?tab=design&section=frame), ouvrez l'onglet **Design**, puis **Frame**.
+2. Choisissez un cadre. Le groupe **Classic** contient les cadres intégrés ; **More** ouvre tous les groupes, avec une recherche.
+3. Saisissez votre texte dans **Label**, ou choisissez un texte prêt à l'emploi : Scan me, Scan for menu, Join Wi-Fi, Leave a review, Follow us, Pay here, Save contact ou Download the app.
+4. Réglez **Frame color**, **Text color** et **Text size**. Certains cadres proposent aussi une **Second line**.
+
+{/* Shaped codes (feat/heart-silhouette-shapes) */}
+
+## Placer le code dans une forme [#put-the-code-in-a-shape]
+
+Le même sélecteur contient un groupe **Shaped codes**. **Dot circle** et **Heart** placent le code dans un cercle ou un cœur de points décoratifs. **Silhouette** remplit une forme de votre choix : importez un fichier PNG, JPEG ou SVG avec une forme sombre ou pleine sur un fond clair ou transparent. Seul son contour est conservé, jamais l'image.
+
+Les lecteurs ne lisent que le code au centre : imprimez donc un code en forme plus grand qu'un code carré pour la même distance de scan. Une forme remplace le cadre : en choisir une désactive l'autre. Une forme trop fine pour contenir le code est refusée, avec un message.
+
+{/* end shaped codes */}
+
+## Les cadres ne gênent jamais le scan [#frames-never-hurt-scanning]
+
+Les cadres se placent à l'extérieur du code. Ils ne recouvrent jamais aucun de ses carrés.
+
+Gardez un texte de cadre court. Trois ou quatre mots se lisent mieux de loin.
+
+## Télécharger avec le cadre [#download-with-the-frame]
+
+Le cadre fait partie de chaque téléchargement, quel que soit le format. Pour l'impression, consultez [Télécharger et imprimer un QR code](/docs/help/getting-started/download-and-print).
+
+## Voir aussi [#related]
+
+- [Cadres et impression pour les développeurs](/docs/features/frames)

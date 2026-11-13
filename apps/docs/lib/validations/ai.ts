@@ -2,13 +2,13 @@
  * Zod validation schemas for AI route request bodies
  */
 
-import { z } from "zod";
 import {
   AI_PROMPT_SERVER_CHARACTER_LIMIT,
   MAX_AI_CHAT_MESSAGES,
   MAX_IMAGE_FILE_SIZE,
   MAX_IMAGE_FILES,
-} from "@/lib/constants";
+} from "@repo/config";
+import { z } from "zod";
 
 const MAX_MENTIONS = 10;
 const MAX_MESSAGE_PART_TEXT_LENGTH = 20_000;

@@ -1,0 +1,174 @@
+---
+title: "Warna & gradien"
+description: "Gunakan warna solid atau gradien linear dan radial, lalu periksa kontras agar kode tetap dapat dipindai."
+icon: Palette
+---
+
+Terapkan warna dan gradien untuk membuat kode QR sesuai merek Anda.
+
+## Warna Solid [#solid-colors]
+
+```tsx
+import { QRCode } from 'qrdx';
+
+<QRCode
+  value="https://example.com"
+  size={256}
+  fgColor="#1a56db"
+  bgColor="#f9fafb"
+  eyeColor="#0d47a1"
+  dotColor="#3b82f6"
+/>
+```
+
+Format yang didukung: `#hex`, `rgb()`, `rgba()`, `hsl()`, `hsla()`, nama warna
+
+`eyeColors` mengatur setiap mata secara terpisah (`topLeft`, `topRight`, `bottomLeft`, masing-masing dengan warna atau gradien `outer` dan `inner`); lihat [Pola](/docs/features/patterns#per-eye-colors).
+
+### Latar belakang transparan [#transparent-background]
+
+`bgColor="transparent"` tidak menggambar latar belakang, sehingga unduhan PNG dan SVG menjadi tembus pandang, sedangkan file PDF dan EPS tidak memiliki isian latar belakang. Letakkan kode pada permukaan yang terang dan polos: pemindai membutuhkan celah terang di antara modul.
+
+## Gradien Linear [#linear-gradients]
+
+```tsx
+import { QRCodeCanvas } from 'qrdx';
+
+<QRCodeCanvas
+  value="https://example.com"
+  size={256}
+  fgColor={{
+    type: 'linear',
+    stops: [
+      { offset: 0, color: '#667eea' },
+      { offset: 1, color: '#764ba2' }
+    ],
+    x1: 0, y1: 0,
+    x2: 1, y2: 1
+  }}
+/>
+```
+
+### Arah Gradien [#gradient-directions]
+
+- **Horizontal**: `x1: 0, y1: 0, x2: 1, y2: 0`
+- **Vertikal**: `x1: 0, y1: 0, x2: 0, y2: 1`
+- **Diagonal**: `x1: 0, y1: 0, x2: 1, y2: 1`
+
+### Gradien Multi-Stop [#multi-stop-gradients]
+
+```tsx
+<QRCodeCanvas
+  value="https://example.com"
+  size={256}
+  fgColor={{
+    type: 'linear',
+    stops: [
+      { offset: 0, color: '#667eea' },
+      { offset: 0.3, color: '#764ba2' },
+      { offset: 0.7, color: '#f093fb' },
+      { offset: 1, color: '#f5576c' }
+    ],
+    x1: 0, y1: 0, x2: 1, y2: 1
+  }}
+/>
+```
+
+## Gradien Radial [#radial-gradients]
+
+```tsx
+<QRCodeCanvas
+  value="https://example.com"
+  size={256}
+  fgColor={{
+    type: 'radial',
+    stops: [
+      { offset: 0, color: '#ff6b6b' },
+      { offset: 1, color: '#4ecdc4' }
+    ],
+    cx: 0.5, cy: 0.5,
+    r: 0.5
+  }}
+/>
+```
+
+## Utilitas Warna [#color-utilities]
+
+### Memeriksa Kontras [#check-contrast]
+
+```tsx
+import { getContrastRatio, getContrastLevel } from 'qrdx';
+
+const ratio = getContrastRatio('#000000', '#ffffff');
+// Returns: 21
+
+const level = getContrastLevel(ratio);
+// Returns: { level: 'AAA', warning: false, message: 'Excellent contrast' }
+```
+
+### Panduan Kontras [#contrast-guidelines]
+
+- **Minimum**: rasio 3.0:1
+- **Disarankan**: 4.5:1 atau lebih tinggi
+- **Sangat baik**: 7.0:1 atau lebih tinggi
+
+{/* Angular gradients, see-through colors and image fills (paint picker) */}
+
+## Gradien angular [#angular-gradients]
+
+Gradien angular menyapu searah jarum jam mengelilingi pusat area yang diisinya, seperti `conic-gradient` pada CSS. `angle` adalah titik awal sapuan, dalam derajat searah jarum jam dari atas. Offset berjalan dari 0 sampai 100 mengelilingi satu putaran.
+
+```tsx
+<QRCode
+  value="https://example.com"
+  fgColor={{
+    type: "angular",
+    angle: 30,
+    stops: [
+      { color: "#1d4ed8", offset: 0 },
+      { color: "#7c3aed", offset: 50 },
+      { color: "#1d4ed8", offset: 100 },
+    ],
+  }}
+/>
+```
+
+SVG tidak memiliki gradien konik, sehingga kode menggambar kipas dari irisan tipis, dengan selisih sekitar dua tingkat warna. PDF dan EPS menggambar irisan yang sama.
+
+## Warna tembus pandang [#see-through-colors]
+
+Warna dan stop gradien dapat memuat alfa, misalnya `#1d4ed8cc` atau `rgba(29, 78, 216, 0.8)`. SVG menuliskannya sebagai `fill-opacity` dan `stop-opacity`, dan PDF mempertahankannya. EPS tidak mendukung transparansi, sehingga warna tembus pandang dicampur dengan latar belakang. Pemeriksaan pemindaian menilai warna tembus pandang sesuai tampilannya di atas latar belakang.
+
+## Isian gambar [#image-fills]
+
+Isian gambar melukiskan sebuah gambar pada latar belakang, titik, atau mata. Gambar dibentangkan di seluruh kode, sehingga titik dan mata yang memakai isian yang sama menampilkan satu gambar.
+
+```tsx
+<QRCode
+  value="https://example.com"
+  fgColor={{
+    type: "image",
+    src: "data:image/jpeg;base64,…",
+    fit: "cover", // or "contain", "tile"
+    position: "center",
+    scale: 1,
+    opacity: 0.45,
+    underlay: "#000000",
+  }}
+/>
+```
+
+- `src` adalah gambarnya sendiri, seperti pada logo. QRdx menyimpan isian gambar (di kode, tema, dan REST API) hanya sebagai URL `data:image` base64 (PNG, JPEG, WebP, atau GIF) berukuran maksimal 1,5 MB; gambar dari tautan ditolak. PNG dan JPEG disematkan di setiap ekspor, dan server tidak pernah mengambil tautan.
+- `underlay` adalah warna solid di bawah gambar. `opacity` membiarkannya tembus: di atas hitam, warna ini menggelapkan foto untuk titik, dan di atas putih, warna ini mencerahkan foto untuk latar belakang.
+- Detail pada gambar terbaca sebagai derau oleh kamera, sehingga pemeriksaan pemindaian meminta kontras yang lebih tinggi: 7:1 pada titik atau mata, 12:1 pada latar belakangnya (`SCAN_IMAGE_CONTRAST_MIN`). Gambar diukur dari sepersepuluh bagian terterang dan tergelapnya (`getImageTones`). Di editor, "Make it scannable" mencari opasitas di atas underlay yang lolos pemeriksaan.
+- SVG, PNG, dan PDF mendukung isian gambar. EPS tidak bisa ([Unduhan](/docs/features/downloads#eps)).
+
+Isian gambar diperlakukan seperti logo. Isian ini tetap menyertai desain di editor, di kode tersimpan, dan di tema tersimpan. Isian ini tidak masuk ke tautan `?style=`, gaya komunitas yang dipublikasikan, cuplikan Get code, atau konteks obrolan: di sana, setiap isian gambar digantikan oleh warna underlay-nya. Image API (`GET /v1/qr`) dan server MCP belum mendukungnya. `POST /v1/codes` dan `PATCH /v1/codes/{id}` hanya menerimanya sebagai URL `data:image`, dan menjawab 400 untuk yang lain; belum ada id file unggahan untuk gambar.
+
+Gradien angular dan isian gambar sudah ada di sumber qrdx dan akan dirilis bersama rilis npm berikutnya. qrdx 0.0.46 di npm belum memilikinya.
+
+## Langkah Berikutnya [#next-steps]
+
+- [Logo](/docs/features/logos) — Tambahkan logo ke kode QR berwarna
+- [Pola](/docs/features/patterns) — Padukan warna dengan pola
+- [Unduhan](/docs/features/downloads) — Ekspor kode QR berwarna

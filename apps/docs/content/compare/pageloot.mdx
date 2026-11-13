@@ -33,7 +33,7 @@ tableRows:
     qrdx: "10 free; unlimited on Pro"
     competitor: "15, 300, 1,500 or 5,000 by plan"
   - feature: Scan history
-    qrdx: "90 days free; 3 years on Pro; unlimited on Business"
+    qrdx: "{facts.freeScanHistoryYears} year free; unlimited on Pro and Business"
     competitor: "Unlimited on subscriptions; 60 days to 1 year on lifetime plans"
   - feature: Team members
     qrdx: "1 free; 3 on Pro; unlimited on Business"
@@ -48,7 +48,7 @@ tableRows:
     qrdx: "PNG, JPG, WebP, SVG, PDF, EPS"
     competitor: "PNG and PDF; SVG from Pro"
   - feature: Site languages
-    qrdx: "English"
+    qrdx: "English and {facts.translatedLanguages} more, machine-translated"
     competitor: "37"
   - feature: Client reports
     qrdx: "Pro: client-branded stats pages; Business: white-label, client portal, yearly invoice on request"
@@ -81,14 +81,13 @@ QRdx suits people who want to start free and pay little as they grow. Static cod
 ## Where Pageloot is the better choice
 
 - You'd rather pay once. Pageloot's lifetime deal costs $197, $297 or $897 one time for 15, 60 or 300 dynamic codes, and its page says "Buy once, use forever." Its terms define lifetime as the product's commercial lifetime and say "We aim to provide access for at least 5 years from purchase." QRdx bills monthly or yearly.
-- You want unlimited scan history on the cheapest plan. Every Pageloot subscription keeps unlimited scan history. QRdx keeps 90 days on Free, 3 years on Pro and everything on Business.
-- You want a money-back promise up front. Pageloot's pricing page offers a 30-day money-back guarantee. QRdx looks at refund requests case by case.
-- You want the whole site in your own language. Pageloot's site comes in 37 languages. QRdx's home page and pricing are in {facts.translatedLanguages} more languages, machine-translated and waiting for native review; its docs and app are English only for now.
+- You want the whole site in your own language. Pageloot's site comes in 37 languages. QRdx's main pages, editor, signed-in app, docs and emails are in {facts.translatedLanguages} more languages, machine-translated and still waiting for native review.
 
 ## Key differences
 
 - Code limits. Pageloot sets a number of dynamic codes for each plan, from 15 on Starter to 5,000 on Max. QRdx Pro and Business have no limit on dynamic codes or hosted pages.
 - When you stop paying. Pageloot's pricing page (checked 10 November 2026) answers "What happens to my QR codes if I cancel?" with "Your QR codes will become inactive after your plan has expired. If you need to access the statistics or edit your QR codes, you just have to renew your subscription." That answer is about subscriptions; the lifetime deal page doesn't repeat it. On QRdx, dynamic codes keep redirecting after a downgrade or a cancellation, and the account moves to Free.
+- Refunds. Pageloot's pricing page offers a 30-day money-back guarantee. QRdx refunds the first payment for a paid plan in full if you ask within {facts.moneyBackDays} days.
 - Trial and free use. Pageloot's trial gives you 14 days of dynamic codes without a card, and its generator page says dynamic codes "are part of a paid plan". QRdx Free includes 10 dynamic codes with no time limit.
 - Client work. Pageloot's Agency plan ($99/mo billed yearly) adds client reports with each client's logo, a white-label dashboard and payment by invoice. On QRdx Pro, a code's shared stats page can carry a client's name, logo and color. Business ($15/mo) drops the QRdx mark from those pages and can serve them on your own domain, adds a read-only client portal for the folders you share, and lets you ask to pay a year by invoice, which QRdx arranges by hand.
 - Developer access. Pageloot lists "Custom integrations, API & MCP" on its Enterprise plan, which is priced on request. QRdx has a REST API and an MCP server on every plan, plus an npm library and a CLI, and it's open source under AGPL-3.0.

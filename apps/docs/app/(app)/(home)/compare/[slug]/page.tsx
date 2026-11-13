@@ -9,10 +9,10 @@ import { CompareMigrate } from "@/components/sections/compare/compare-migrate";
 import { CompareOthers } from "@/components/sections/compare/compare-others";
 import { CompareTable } from "@/components/sections/compare/compare-table";
 import { FaqList } from "@/components/sections/tools/faq-list";
+import { compareSource } from "@/lib/content-source";
 import { createMetadata } from "@/lib/metadata";
 import { getLatestVersion, getNpmLag } from "@/lib/npm-version";
 import { brandedTitle } from "@/lib/seo-overrides";
-import { compareSource } from "@/lib/source";
 import { buildTimeParams } from "@/lib/static-params";
 import { getMDXComponents } from "@/mdx-components";
 

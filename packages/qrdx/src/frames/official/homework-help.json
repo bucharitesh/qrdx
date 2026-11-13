@@ -1,0 +1,79 @@
+{
+  "id": "homework-help",
+  "name": "Homework help",
+  "description": "A speech bubble around the code with a question mark and the label inside.",
+  "category": "use-case",
+  "collection": "health-learning",
+  "contentTypes": ["url"],
+  "tags": ["education", "school", "homework", "tutoring"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1820
+    },
+    "qr": {
+      "x": 120,
+      "y": 360,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1670,
+        "radius": 90,
+        "fill": "frame"
+      },
+      {
+        "type": "polygon",
+        "points": [[130, 1660], [310, 1660], [80, 1820]],
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M605.13 78.53A6.05 6.05 0 0 0 593.07 77.47L593.46 73.32L594.68 68.78L596.66 64.53L599.36 60.68L602.68 57.36L606.53 54.66L610.78 52.68L615.32 51.46L620 51.05L624.68 51.46L629.22 52.68L633.48 54.66L637.32 57.36L640.64 60.68L643.34 64.52L645.32 68.78L646.54 73.32L646.95 77.76L646.77 83.87L642 95.35L626.48 106.48L625.99 109.66L626.05 117.6A6.05 6.05 0 0 0 613.95 117.6L614.01 107.94L617.92 97.92L633.2 87.05L635.03 80.93L634.85 78.24L634.62 75.42L633.95 72.92L632.86 70.57L631.38 68.45L629.55 66.62L627.42 65.14L625.08 64.05L622.58 63.38L620 63.15L617.42 63.38L614.92 64.05L612.58 65.14L610.45 66.62L608.62 68.45L607.14 70.58L606.05 72.92L605.38 75.42L605.13 78.53ZM611.75 137.4A8.25 8.25 0 1 1 628.25 137.4A8.25 8.25 0 1 1 611.75 137.4Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Homework help",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1465,
+          "width": 1040,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Ask a tutor",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 170,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

@@ -3,7 +3,7 @@
   "name": "Challenge",
   "description": "A shield with a medal and a banner across the bottom.",
   "category": "use-case",
-  "collection": "health-learning",
+  "collection": "sports-fitness",
   "contentTypes": ["url"],
   "tags": ["fitness", "gym", "challenge"],
   "license": "CC0-1.0",

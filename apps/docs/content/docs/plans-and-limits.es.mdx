@@ -1,17 +1,23 @@
 ---
 title: "Planes y límites"
-description: "Qué incluyen Gratis, Pro y Business, cómo se aplican los límites a cada espacio de trabajo y qué pasa cuando bajas de plan o cancelas."
+description: "Qué incluyen Gratis, Pro y Business, cómo se aplican los límites a cada espacio de trabajo y qué pasa cuando cambias a un plan inferior o cancelas."
 icon: Gauge
 ---
 
-QRdx tiene tres planes. Los códigos QR estáticos del Playground y de la biblioteca `qrdx` son gratis e ilimitados en todos ellos, sin necesidad de cuenta. Compara los precios en la [página de precios](/pricing).
+QRdx tiene tres planes. Los códigos QR estáticos del Playground y de la biblioteca `qrdx` son gratuitos e ilimitados en todos ellos, sin necesidad de cuenta. Compara los precios en la [página de precios](/pricing).
 
 | | Gratis | Pro | Business |
 | --- | --- | --- | --- |
 | Precio (US$) | $0 | $5/mes o $48/año | $15/mes o $144/año |
-| Precio (India) | ₹0 | ₹199/mes o ₹1.499/año | ₹599/mes o ₹4.999/año |
+| Precio (India) | ₹0 | ₹199/mes o ₹1,499/año | ₹599/mes o ₹4,999/año |
 
-Los visitantes de India ven los precios en rupias. El pago lo gestiona [Polar](https://polar.sh), que cobra en ₹ a los clientes de India y en US$ a todos los demás, y añade los impuestos locales cuando corresponden.
+<IfAvailable feature="eurPrices">
+
+En la UE y el EEE, Pro cuesta €5/mes o €48/año y Business €15/mes o €144/año.
+
+</IfAvailable>
+
+Los visitantes de India ven los precios en rupias. El pago lo gestiona [Polar](https://polar.sh), que cobra en la moneda del país en el que estás y añade los impuestos locales cuando corresponden. Tu primer pago de un plan de pago incluye una garantía de devolución de {facts.moneyBackDays} días: consulta [Reembolsos y cancelaciones](/legal/refunds).
 
 <IfAvailable feature="invoiceRequests">
 
@@ -25,8 +31,8 @@ Un año de Business también se puede pagar por transferencia bancaria: consulta
 | --- | --- | --- | --- |
 | Códigos QR dinámicos | 10 | Ilimitados | Ilimitados |
 | Escaneos | Ilimitados | Ilimitados | Ilimitados |
-| Páginas de destino alojadas | 3, con pie de página "Made with QRdx" | Ilimitadas, sin pie de página | Ilimitadas, marca blanca, CSS personalizado |
-| Historial de analíticas | 90 días | 3 años | Ilimitado |
+| Páginas de destino alojadas | 3, con el pie "Made with QRdx" | Ilimitadas, sin pie | Ilimitadas, marca blanca, CSS personalizado |
+| Historial de analíticas | {facts.freeScanHistoryYears} año | Ilimitado | Ilimitado |
 | Dominios personalizados | Ninguno | 5 | 25 |
 | Back-halves personalizados (`qrdx.dev/q/spring-menu`) | No | Sí | Sí |
 | Miembros por espacio de trabajo | 1 (solo tú) | 3 | Ilimitados |
@@ -45,37 +51,39 @@ Un año de Business también se puede pagar por transferencia bancaria: consulta
 | Generaciones de temas con IA | 5 en total | Ilimitadas | Ilimitadas |
 | Temas guardados | 10 | Ilimitados, se pueden compartir con un espacio de trabajo | Ilimitados, se pueden compartir con un espacio de trabajo |
 | [Códigos de barras](/docs/developers/barcode-api#saved-barcodes) guardados | 1.000 | 10.000 | 100.000 |
-| [Páginas de estadísticas con marca del cliente](/docs/client-reports) | No | Sí, con un pequeño "Made with QRdx" | Sí, marca blanca, pueden usar tu dominio personalizado |
-| [Portal de clientes](/docs/client-portal) | No | No | Sí |
+| [Páginas de estadísticas con la marca del cliente](/docs/client-reports) | No | Sí, con un pequeño "Made with QRdx" | Sí, marca blanca, pueden usar tu dominio personalizado |
+| [Portal del cliente](/docs/client-portal) | No | No | Sí |
 
-Solo los códigos dinámicos activos cuentan para el límite de códigos: los archivados no. Los escaneos nunca cuentan para nada y ningún plan pausa un código por el tráfico. Los únicos límites de escaneo son los que tú mismo defines en un código.
+El historial de analíticas solo limita hasta dónde puedes mirar atrás. Los escaneos se conservan mientras exista su código, así que después de mejorar de plan vuelven a verse los más antiguos.
 
-El cupo de la API es por espacio de trabajo y se restablece a las 00:00 UTC. Cada solicitud que cuenta devuelve `X-RateLimit-Limit`, `X-RateLimit-Remaining` y `X-RateLimit-Reset` para que puedas seguirlo. Consulta la [REST API](/docs/developers/rest-api) para ver los límites por minuto.
+Solo los códigos dinámicos activos cuentan para el límite de códigos: los archivados no. Los escaneos nunca cuentan para nada, y ningún plan pausa un código por el tráfico. Los únicos límites de escaneo son los que tú mismo defines en un código.
+
+La cuota de la API es por espacio de trabajo y se restablece a las 00:00 UTC. Cada solicitud que cuenta devuelve `X-RateLimit-Limit`, `X-RateLimit-Remaining` y `X-RateLimit-Reset` para que puedas seguirla. Consulta la [REST API](/docs/developers/rest-api) para ver los límites por minuto.
 
 ## Espacios de trabajo [#workspaces]
 
-Los límites se aplican a cada [espacio de trabajo](/docs/teams) por separado, y un espacio de trabajo usa el mejor plan entre sus propietarios y sus [miembros de facturación](/docs/teams#roles). Todos tienen un espacio de trabajo propio, creado automáticamente con esa persona como propietaria, por lo que usa su plan. En cualquier otro espacio de trabajo, un propietario con Business da límites de Business a todos los miembros; los miembros no necesitan su propia suscripción.
+Los límites se aplican a cada [espacio de trabajo](/docs/teams) por separado, y un espacio de trabajo usa el mejor plan entre sus propietarios y sus [miembros de facturación](/docs/teams#roles). Todos tienen un espacio de trabajo propio, creado automáticamente con ellos como propietarios, por lo que usa su plan. En cualquier otro espacio de trabajo, un propietario con Business da límites de Business a todos los que están en él; los miembros no necesitan su propia suscripción.
 
-Crear más espacios de trabajo requiere Pro o Business. Un espacio de trabajo cuyos propietarios y miembros de facturación están en Gratis tiene 1 plaza (solo tú), en Pro hasta 3 y en Business no tiene límite. Las plazas son los miembros, propietario incluido, más las invitaciones pendientes, así que revoca las invitaciones que ya no necesites para liberar su plaza. Si cambia el plan de los propietarios, los miembros actuales se quedan; solo se bloquean las invitaciones nuevas.
+Crear más espacios de trabajo requiere Pro o Business. Un espacio de trabajo cuyos propietarios y miembros de facturación tienen Gratis cuenta con 1 plaza (solo tú), con Pro hasta 3 y con Business sin límite. Las plazas son los miembros, propietario incluido, más las invitaciones pendientes, así que revoca una invitación que ya no necesites para liberar su plaza. Si cambia el plan de los propietarios, los miembros actuales se quedan; solo se bloquean las invitaciones nuevas.
 
-## Superar un límite, bajar de plan y cancelar [#going-over-a-limit-downgrading-and-cancelling]
+## Superar un límite, cambiar a un plan inferior y cancelar [#going-over-a-limit-downgrading-and-cancelling]
 
 <Callout type="info">
-  Los límites solo impiden crear cosas nuevas. Los códigos existentes siguen redirigiendo en todos los planes, incluso después de bajar de plan, de un pago fallido o de una cancelación. Esa es la [Garantía Never-Hostage](/guarantee).
+  Los límites solo impiden crear cosas nuevas. Los códigos existentes siguen redirigiendo en todos los planes, también después de bajar de plan, de un pago fallido o de una cancelación. Esa es la [Garantía Never-Hostage](/guarantee).
 </Callout>
 
 - **Si superas un límite:** no puedes crear más hasta que estés por debajo. Aún puedes editar, archivar y exportar lo que tienes.
-- **Si superas el cupo diario de la API:** las llamadas a la API reciben `429` hasta las 00:00 UTC. Tus códigos siguen redirigiendo y el sitio web sigue funcionando.
-- **Al bajar de plan:** los códigos, las páginas de destino y los dominios personalizados verificados siguen funcionando. Las analíticas muestran el historial que incluye tu nuevo plan.
+- **Si superas la cuota diaria de la API:** las llamadas a la API reciben `429` hasta las 00:00 UTC. Tus códigos siguen redirigiendo y el sitio web sigue funcionando.
+- **Al cambiar a un plan inferior:** los códigos, las páginas de destino y los dominios personalizados verificados siguen funcionando. Las analíticas muestran el historial que incluye tu nuevo plan.
 - **Al cancelar:** tu plan sigue activo hasta el final del periodo que pagaste y después tu cuenta pasa a Gratis.
 - **Si falla un pago:** cuando la suscripción caduca, es lo mismo que cancelar. No se pausa nada.
 
-Los códigos que terminan por un motivo que tú elegiste, como una fecha de caducidad, una pausa o un límite de escaneo, envían a quienes escanean a tu URL de respaldo o a una página neutra con el mensaje "This campaign has ended", nunca a una página de QRdx.
+Los códigos que terminan por un motivo que elegiste, como una fecha de caducidad, una pausa o un límite de escaneo, envían a quienes escanean a tu URL alternativa o a una página neutra de "Esta campaña ha terminado", nunca a una página de QRdx.
 
 ## Facturación [#billing]
 
-Mejora tu plan desde la [página de precios](/pricing). Para cambiar de plan, alternar entre mensual y anual, actualizar tu tarjeta o cancelar, abre **Manage subscription** en tus ajustes, que te lleva al portal de facturación de Polar. Una sola suscripción cubre tu cuenta, así que mientras tengas una, los cambios de plan se hacen en el portal en lugar de en un nuevo pago.
+Mejora tu plan desde la [página de precios](/pricing). Para cambiar de plan, alternar entre mensual y anual, actualizar tu tarjeta o cancelar, abre **Gestionar suscripción** en tus ajustes, que te lleva al portal de facturación de Polar. Una suscripción cubre tu cuenta, así que mientras tengas una, los cambios de plan se hacen en el portal en lugar de en un nuevo pago.
 
 ## Autoalojamiento [#self-hosting]
 
-Una instancia [autoalojada](/docs/self-hosting) usa los mismos planes. Los límites se definen en un solo archivo, `apps/docs/lib/plans.ts`, que puedes modificar para tu instancia. Sin Polar configurado, las mejoras de plan no están disponibles y todas las cuentas usan los límites de Gratis.
+Una instancia [autoalojada](/docs/self-hosting) usa los mismos planes. Los límites se definen en un único archivo, `apps/docs/lib/plans.ts`, que puedes modificar para tu instancia. Sin Polar configurado, no se pueden mejorar los planes y todas las cuentas usan los límites de Gratis.

@@ -2,18 +2,28 @@ name: Notify search engines
 
 # After each production deploy, tells IndexNow (Bing, Yandex, Seznam and the
 # other IndexNow engines) and, when the BING_WEBMASTER_API_KEY secret is set,
-# the Bing Webmaster API which sitemap URLs changed
-# (scripts/notify-search-engines.mjs). A search engine error never fails
-# the run, and nothing here gates a merge or a deploy.
+# the Bing Webmaster API which sitemap URLs changed, and resubmits the
+# sitemap to Google Search Console when the GSC_SERVICE_ACCOUNT_JSON secret
+# is set (scripts/notify-search-engines.mjs). Google has no API to request
+# indexing of ordinary pages; that stays a manual step in Search Console.
 #
-# Pull requests that change the script or this workflow run its read-only
-# --check: the IndexNow key file, the Bing key, the site's verification in
-# Bing Webmaster Tools and today's quota. It fails when Bing rejects the key
-# or the site, so a broken setup shows before merging.
+# Every day at 23:15 UTC, before Bing's quota resets at midnight, the rest of
+# the day's Bing quota goes to the next slice of the sitemap (--backlog), so
+# every page reaches the Bing API every few days, including pages whose
+# lastmod never changes, like the home page.
+#
+# A search engine error never fails the run, and nothing here gates a merge
+# or a deploy. Pull requests that change the script or this workflow run its
+# read-only --check: the IndexNow key file, the Bing key, the site's
+# verification and today's quota, the Google service account's access to the
+# property and when Google last read the sitemap. It fails when Bing or
+# Google rejects the key or the site, so a broken setup shows before merging.
 on:
   push:
     branches:
       - main
+  schedule:
+    - cron: "15 23 * * *"
   pull_request:
     paths:
       - scripts/notify-search-engines.mjs
@@ -21,12 +31,13 @@ on:
   workflow_dispatch:
     inputs:
       scope:
-        description: "Which URLs to send (check: read-only setup check)"
+        description: "Which URLs to send (backlog: today's Bing slice; check: read-only setup check)"
         type: choice
         options:
           - important
           - all
           - urls
+          - backlog
           - check
         default: important
       urls:
@@ -55,11 +66,12 @@ jobs:
         with:
           node-version: 22
 
-      # Pull requests from forks get no secrets: the Bing part then says
-      # "not set" and passes.
-      - name: Check IndexNow and Bing
+      # Pull requests from forks get no secrets: the Bing and Google parts
+      # then say "not set" and pass.
+      - name: Check IndexNow, Bing and Google
         env:
           BING_WEBMASTER_API_KEY: ${{ secrets.BING_WEBMASTER_API_KEY }}
+          GSC_SERVICE_ACCOUNT_JSON: ${{ secrets.GSC_SERVICE_ACCOUNT_JSON }}
         run: node scripts/notify-search-engines.mjs --check
 
   notify:
@@ -126,12 +138,15 @@ jobs:
         if: steps.deploy.outputs.skip != 'true'
         env:
           BING_WEBMASTER_API_KEY: ${{ secrets.BING_WEBMASTER_API_KEY }}
+          GSC_SERVICE_ACCOUNT_JSON: ${{ secrets.GSC_SERVICE_ACCOUNT_JSON }}
           SCOPE: ${{ inputs.scope }}
           URLS: ${{ inputs.urls }}
         run: |
           set -f
           if [ "$GITHUB_EVENT_NAME" = "push" ]; then
             node scripts/notify-search-engines.mjs --changed-since "$RUNNER_TEMP/sitemap-before.xml"
+          elif [ "$GITHUB_EVENT_NAME" = "schedule" ]; then
+            node scripts/notify-search-engines.mjs --backlog
           elif [ "$SCOPE" = "urls" ]; then
             printf '%s\n' $URLS > "$RUNNER_TEMP/urls.txt"
             node scripts/notify-search-engines.mjs --urls "$RUNNER_TEMP/urls.txt"

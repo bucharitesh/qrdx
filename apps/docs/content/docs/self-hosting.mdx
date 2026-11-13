@@ -4,7 +4,7 @@ description: Run your own QRdx web app, dynamic QR codes and hosted pages includ
 icon: Server
 ---
 
-QRdx is AGPL-3.0 licensed, and you can run the web app (QR editor, accounts, two-step verification and passkeys, dynamic codes and hosted pages, teams, saved themes, community gallery and these docs) on your own server. Workspace single sign-on and the workspace audit log are the exception: they live in the commercially licensed `ee/` folders and stay off unless you set a license key (`QRDX_EE_LICENSE`). Using them in production needs a written agreement with QRdx; see [LICENSING.md](https://github.com/bucharitesh/qrdx/blob/main/LICENSING.md). You don't need any of this to use the [`qrdx` React library](/docs/getting-started) or the CLI. Those run anywhere without a backend.
+QRdx is AGPL-3.0 licensed, and you can run the web app (QR editor, accounts, two-step verification and passkeys, dynamic codes and hosted pages, teams, saved themes, community gallery and these docs) on your own server. Workspace single sign-on and the workspace audit log are the exception: they live in the commercially licensed `ee/` folders and stay off unless you set a license key (`QRDX_EE_LICENSE`). Using them in production needs a written agreement with QRdx; see [LICENSING.md](https://github.com/bucharitesh/qrdx/blob/main/LICENSING.md). You don't need any of this to use the [`qrdx` React library](/docs/getting-started) or the CLI. Those run anywhere without a backend, under the MIT license. [Open source at QRdx](/open-source-qr-code-generator) lists each part of the repository and its license.
 
 <Callout type="warn">
   The Docker setup is new. If something doesn't work, please [open an issue](https://github.com/bucharitesh/qrdx/issues).
@@ -38,7 +38,7 @@ cd qrdx
 ### 2. Configure the environment
 
 ```bash
-cp .env.example .env
+cp apps/docs/.env.example .env
 ```
 
 Edit `.env`:
@@ -107,8 +107,7 @@ git clone https://github.com/bucharitesh/qrdx.git
 cd qrdx
 bun install
 
-cp .env.example apps/docs/.env.local                    # then edit it
-echo 'DATABASE_URL=<your connection string>' > packages/database/.env
+cp apps/docs/.env.example apps/docs/.env.local          # then edit it
 
 bun run db:push                                          # apply the schema
 bun run --filter docs dev                                # http://localhost:3000
@@ -130,7 +129,7 @@ DATABASE_HTTP_ENDPOINT=http://localhost:4444/sql
 
 ## Environment variables
 
-[`.env.example`](https://github.com/bucharitesh/qrdx/blob/main/.env.example) lists every variable with a short note on where to get it.
+[`apps/docs/.env.example`](https://github.com/bucharitesh/qrdx/blob/main/apps/docs/.env.example) lists every variable with a short note on where to get it.
 
 ### Minimum
 
@@ -163,6 +162,7 @@ Add one OAuth provider (GitHub or Google), or Resend for email sign-in codes, so
 | Link safety (Google Web Risk) | `WEB_RISK_API_KEY` | Destinations are checked by the offline rules only. See [Code controls](/docs/code-controls) |
 | Form spam check (Cloudflare Turnstile) | `NEXT_PUBLIC_TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY` | Forms rely on the built-in honeypot and rate limits |
 | Payments (Polar) | `POLAR_ACCESS_TOKEN`, `POLAR_WEBHOOK_SECRET`, `NEXT_PUBLIC_QRDX_PRO_MONTHLY_PRODUCT_ID`, `NEXT_PUBLIC_QRDX_PRO_YEARLY_PRODUCT_ID`, `NEXT_PUBLIC_QRDX_BUSINESS_MONTHLY_PRODUCT_ID`, `NEXT_PUBLIC_QRDX_BUSINESS_YEARLY_PRODUCT_ID` | Upgrading doesn't work (plans without a product id show "Coming soon"), and every account uses the Free limits |
+| Euro prices | `NEXT_PUBLIC_QRDX_EUR_PRICES=1`, set only once every product above has a EUR price in Polar | Visitors from the EU and EEA see, and are charged, US$ prices |
 | Affiliate program | None: it runs only on qrdx.dev | Off: QRdx's affiliate program and its [terms](/legal/affiliate-terms) are written for qrdx.dev, so a self-hosted copy has no **/affiliates** page, no applications, no **Settings** → **Affiliate program**, and referral links go to the home page. |
 | Dub short links | `DUB_CLIENT_ID`, `DUB_CLIENT_SECRET`, `DUB_REDIRECT_URI`, `INTEGRATION_ENCRYPTION_KEY` | The Dub integration can't be connected |
 | Google Drive | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_DRIVE_REDIRECT_URI`, `INTEGRATION_ENCRYPTION_KEY` | The Google Drive integration can't be connected |

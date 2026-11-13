@@ -22,13 +22,18 @@ import { CompareChart } from "@/app/(app)/dashboard/analytics/_components/charts
 import { ComparePicker } from "@/app/(app)/dashboard/analytics/_components/compare-picker";
 import { TimeZoneSwitch } from "@/app/(app)/dashboard/analytics/_components/time-zone-switch";
 import {
+  codeLabel,
+  toCompareOption,
+} from "@/app/(app)/dashboard/analytics/_lib/code-label";
+import {
   type ConversionSummary,
+  codeOptionsByIds,
   filterScopeCodeIds,
   getCodeTotals,
   getConversionSummary,
   getWorkspaceAnalytics,
-  listCodeOptions,
   scopeScansWhere,
+  searchCodeOptions,
 } from "@/app/(app)/dashboard/analytics/_lib/queries";
 import {
   BreakdownCard,
@@ -107,9 +112,6 @@ function parseCompare(value: string | undefined): string[] {
     .filter((id) => /^[A-Za-z0-9_-]{1,64}$/.test(id));
   return [...new Set(ids)].slice(0, MAX_COMPARE);
 }
-
-const codeLabel = (code: { title: string | null; slug: string }) =>
-  code.title || `/${code.slug}`;
 
 function Metric({
   label,
@@ -214,15 +216,18 @@ export default async function AnalyticsPage({
       getWorkspaceAnalytics(scope, from, days),
       settle(getScanTimeBreakdown(scopeScansWhere(scope), from, timeZone)),
       settle(getLanguageBreakdown(scopeScansWhere(scope), from)),
-      listCodeOptions(scope),
+      // The picker's list before anything is typed: the most scanned codes.
+      searchCodeOptions(scope),
       filterScopeCodeIds(scope, requested),
       limits.conversions
         ? settle(getConversionSummary({ scope }, from))
         : Promise.resolve(null),
     ]);
-  const [sparklines, compareTotals] = await Promise.all([
+  const [sparklines, compareTotals, compared] = await Promise.all([
     getScanSparklines(compareIds, days),
     getCodeTotals(compareIds, from),
+    // Names for the compared codes, which may be outside the picker's list.
+    codeOptionsByIds(scope, compareIds),
   ]);
 
   const params: Record<string, string> = {};
@@ -236,7 +241,7 @@ export default async function AnalyticsPage({
   const { compare: _compare, ...withoutCompare } = params;
 
   const optionLabels = new Map(
-    options.map((option) => [option.id, codeLabel(option)]),
+    compared.map((option) => [option.id, codeLabel(option)]),
   );
   const dates = Array.from({ length: days }, (_, i) =>
     new Date(from.getTime() + i * DAY_MS).toISOString().slice(0, 10),
@@ -434,13 +439,16 @@ export default async function AnalyticsPage({
         </CardHeader>
         <CardContent className="space-y-4 px-2 sm:px-4">
           <ComparePicker
-            options={options.map((option) => ({
-              id: option.id,
-              label: codeLabel(option),
-            }))}
+            defaults={{
+              options: options.options.map(toCompareOption),
+              more: options.more,
+            }}
             params={withoutCompare}
             path={PATH}
-            selected={compareIds}
+            selected={compareIds.map((id) => ({
+              id,
+              label: optionLabels.get(id) ?? id,
+            }))}
           />
           {compareIds.length > 0 ? (
             <>

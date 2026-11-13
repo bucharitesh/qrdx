@@ -2,9 +2,8 @@
 import { useTranslations } from "next-intl";
 
 // The Barcodes page's header: the folder switcher as its title (the codes'
-// folders), the count, and New barcode.
+// folders), the count, and New barcode (the modal).
 
-import { Button } from "@repo/design-system/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,21 +12,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@repo/design-system/components/ui/dropdown-menu";
-import {
-  Add,
-  ArrowDown2,
-  Category,
-  Folder2,
-  FolderMinus,
-} from "iconsax-reactjs";
+import { ArrowDown2, Category, Folder2, FolderMinus } from "iconsax-reactjs";
 import Link from "next/link";
 import { formatNumber } from "@/app/(app)/dashboard/codes/_components/format";
-import { useCan } from "@/components/workspace-provider";
 import {
   type BarcodesFilters,
   barcodesHref,
   type FolderOption,
 } from "../_lib/filters";
+import { NewBarcodeButton } from "./new-barcode-button";
 
 export function BarcodesHeader({
   basePath,
@@ -42,7 +35,6 @@ export function BarcodesHeader({
   total: number;
 }) {
   const t = useTranslations("app.dashboard.barcodes.barcodesHeader");
-  const canWrite = useCan("content.write");
   const current = folders.find((row) => row.id === filters.folder) ?? null;
   const title = current
     ? current.name
@@ -122,15 +114,7 @@ export function BarcodesHeader({
           {formatNumber(total)} {total === 1 ? t("barcode") : t("barcodes2")}
         </span>
       </div>
-      {canWrite && (
-        <Button asChild>
-          <Link href={`${basePath}/new`}>
-            <Add aria-hidden />
-            <span className="max-sm:hidden">{t("newBarcode")}</span>
-            <span className="sm:hidden">{t("new")}</span>
-          </Link>
-        </Button>
-      )}
+      <NewBarcodeButton short />
     </div>
   );
 }

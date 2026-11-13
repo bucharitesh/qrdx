@@ -1,5 +1,6 @@
 "use client";
 
+import { GITHUB_REPO_URL } from "@repo/config";
 import { GithubLogo } from "@repo/design-system/components/icons";
 import { Separator } from "@repo/design-system/components/ui/separator";
 import { GetProCTA } from "@/components/get-pro-cta";
@@ -12,7 +13,7 @@ export function HomeNav() {
       <GetProCTA className="h-8" />
 
       <SocialLink
-        href="https://github.com/bucharitesh/qrdx"
+        href={GITHUB_REPO_URL}
         className="flex items-center gap-2 text-sm font-bold"
       >
         <GithubLogo className="size-4" />

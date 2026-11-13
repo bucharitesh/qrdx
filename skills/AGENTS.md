@@ -1,110 +1,45 @@
 # AGENTS.md
 
-This file provides guidance to AI coding agents (Claude Code, Cursor, Copilot, etc.) when working with code in this repository.
+Guidance for coding agents working in `skills/`. The repository-wide rules are in [`../AGENTS.md`](../AGENTS.md).
 
-## Repository Overview
+## What lives here
 
-A collection of skills for Claude.ai and Claude Code for working with Vercel deployments. Skills are packaged instructions and scripts that extend Claude's capabilities.
-
-## Creating a New Skill
-
-### Directory Structure
+Agent Skills for QRdx, in the open [Agent Skills](https://agentskills.io/specification) format. A skill is a folder with a `SKILL.md`: YAML frontmatter that tells an agent when to load it, then the instructions it follows. Skill indexes such as skills.sh and SkillsMP read these folders straight from GitHub, so whatever is merged here is what they list.
 
 ```
 skills/
-  {skill-name}/           # kebab-case directory name
-    SKILL.md              # Required: skill definition
-    scripts/              # Required: executable scripts
-      {script-name}.sh    # Bash scripts (preferred)
-  {skill-name}.zip        # Required: packaged for distribution
+  {skill-name}/       # kebab-case, same as the name in the frontmatter
+    SKILL.md          # required
+    LICENSE           # the skill's license
+  {skill-name}.zip    # the folder, packaged for claude.ai uploads
 ```
 
-### Naming Conventions
+## Frontmatter
 
-- **Skill directory**: `kebab-case` (e.g., `vercel-deploy`, `log-monitor`)
-- **SKILL.md**: Always uppercase, always this exact filename
-- **Scripts**: `kebab-case.sh` (e.g., `deploy.sh`, `fetch-logs.sh`)
-- **Zip file**: Must match directory name exactly: `{skill-name}.zip`
+Use only the keys the spec allows: `name`, `description`, `license`, `compatibility`, `metadata`, `allowed-tools`. Validators reject anything else.
 
-### SKILL.md Format
+- `name`: the folder name, lowercase letters, numbers and hyphens.
+- `description`: what the skill does and when to use it, with trigger phrases. Say "QRdx" in it so keyword searches find it. At most 1024 characters.
+- `license`: `MIT`, with the full text in the folder's `LICENSE`.
+- `compatibility`: what the skill needs to run, such as the Node.js version and network access.
+- `metadata`: string values only. The skill's own version goes here as `version: "x.y.z"`; bump it when the skill changes.
 
-```markdown
----
-name: {skill-name}
-description: {One sentence describing when to use this skill. Include trigger phrases like "Deploy my app", "Check logs", etc.}
----
-
-# {Skill Title}
-
-{Brief description of what the skill does.}
-
-## How It Works
-
-{Numbered list explaining the skill's workflow}
-
-## Usage
+Check a skill with the reference validator:
 
 ```bash
-bash /mnt/skills/user/{skill-name}/scripts/{script}.sh [args]
+uvx --from "git+https://github.com/agentskills/agentskills#subdirectory=skills-ref" skills-ref validate skills/generate-qr
 ```
 
-**Arguments:**
-- `arg1` - Description (defaults to X)
+## Rules
 
-**Examples:**
-{Show 2-3 common usage patterns}
+- **Pin the CLI version.** Every command runs `npx @qrdx/cli@<version>`, never a bare `npx @qrdx/cli` or `@latest`. Security scanners and directories fail unpinned launchers. To move the pin, run `npm view @qrdx/cli version`, check every flag and value list in `SKILL.md` against that version's `--help` (and by generating a code), then change the version in every command here and in `README.md`.
+- **Only document what the pinned version does.** Flags and values that exist in `packages/cli/src` but aren't published yet don't belong in the skill.
+- **No secrets in examples.** Use placeholders such as `<password>` for Wi-Fi passwords, tokens and keys, and tell the agent not to repeat secrets back to the user.
+- **No helper scripts that write outside the output file.** The skill runs the CLI directly.
+- **Rebuild the zip whenever a skill changes**, from inside `skills/`, without macOS metadata:
 
-## Output
+  ```bash
+  cd skills && rm -f generate-qr.zip && zip -r -X generate-qr.zip generate-qr -x '*.DS_Store'
+  ```
 
-{Show example output users will see}
-
-## Present Results to User
-
-{Template for how Claude should format results when presenting to users}
-
-## Troubleshooting
-
-{Common issues and solutions, especially network/permissions errors}
-```
-
-### Best Practices for Context Efficiency
-
-Skills are loaded on-demand — only the skill name and description are loaded at startup. The full `SKILL.md` loads into context only when the agent decides the skill is relevant. To minimize context usage:
-
-- **Keep SKILL.md under 500 lines** — put detailed reference material in separate files
-- **Write specific descriptions** — helps the agent know exactly when to activate the skill
-- **Use progressive disclosure** — reference supporting files that get read only when needed
-- **Prefer scripts over inline code** — script execution doesn't consume context (only output does)
-- **File references work one level deep** — link directly from SKILL.md to supporting files
-
-### Script Requirements
-
-- Use `#!/bin/bash` shebang
-- Use `set -e` for fail-fast behavior
-- Write status messages to stderr: `echo "Message" >&2`
-- Write machine-readable output (JSON) to stdout
-- Include a cleanup trap for temp files
-- Reference the script path as `/mnt/skills/user/{skill-name}/scripts/{script}.sh`
-
-### Creating the Zip Package
-
-After creating or updating a skill:
-
-```bash
-cd skills
-zip -r {skill-name}.zip {skill-name}/
-```
-
-### End-User Installation
-
-Document these two installation methods for users:
-
-**Claude Code:**
-```bash
-cp -r skills/{skill-name} ~/.claude/skills/
-```
-
-**claude.ai:**
-Add the skill to project knowledge or paste SKILL.md contents into the conversation.
-
-If the skill requires network access, instruct users to add required domains at `claude.ai/settings/capabilities`.
+- **Resync the agent plugin's copy whenever `generate-qr` changes.** `plugins/agent/skills/generate-qr` is a real copy, because plugin directories refuse symlinks. This folder stays the source, since the skill indexes link to it. From the repository root, run `bun run sync:agent-plugin` (`scripts/sync-agent-plugin.mjs`); `apps/docs/tests/repo/agent-plugin.test.ts` fails while the copy differs. Then raise `version` in `plugins/agent/plugin.json`, `plugins/agent/.claude-plugin/plugin.json` and `gemini-extension.json`, so installed plugins pick up the change.

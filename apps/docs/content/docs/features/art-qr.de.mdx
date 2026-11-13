@@ -1,0 +1,106 @@
+---
+title: "Art-QR-Codes"
+description: "Integriere ein Logo oder Foto in die Module eines scanbaren QR-Codes (Vektor, ohne KI) oder erzeuge KI-Artwork um einen Code herum."
+icon: Sparkles
+---
+
+QRdx bietet drei Wege, einen QR-Code in ein Kunstwerk zu verwandeln:
+
+| | So funktioniert es | Ausgabe | Kosten |
+|---|---|---|---|
+| **Logo QR** | Module innerhalb der Form deines Logos übernehmen dessen Farben; der Rest verblasst zu einem helleren Ton | Vektor (SVG, PDF, EPS, PNG) | Kostenlos |
+| **Image QR** | Jedes Modul zeigt dein Foto rund um ein mittleres Quadrat, das den echten Wert behält (Halbton) | Vektor (SVG, PDF, EPS, PNG) | Kostenlos |
+| **KI-Art** | Ein KI-Bildmodell malt den Code als Szene neu, und jedes Bild wird auf Scanbarkeit geprüft | Bild mit 1024 px, Druckkopie mit 2048 px | KI-Art-Credits |
+
+Logo QR und Image QR werden von der `qrdx`-Bibliothek selbst gezeichnet. Sie funktionieren daher offline, im Editor, auf dem Server und in Node, und das Ergebnis ist immer ein echter QR-Code: Die Suchmuster, Timing-Muster und Ausrichtungsmuster werden nie angetastet.
+
+## Im Editor [#in-the-editor]
+
+Öffne den [Playground](/playground?tab=art), wechsle zum Tab **Art** und wähle **Logo QR** oder **Image QR**:
+
+1. Lade ein Logo oder Foto hoch (PNG, JPG, WebP oder SVG, bis 1 MB). Ein transparentes PNG oder SVG ergibt den saubersten Logo QR.
+2. Stelle die **Intensität** ein: Niedrig behält einen schlicht wirkenden Code, hoch zeigt mehr vom Bild.
+3. Beobachte den **Scan-Check** neben dem Regler. Er decodiert den Art-Code in deinem Browser in drei Größen, wie der [Scan-Score](/docs/qr-detection) in der Vorschau.
+
+Beim Hochladen eines Art-Bilds wird die Fehlerkorrektur auf `H` gesetzt, damit das Artwork den meisten Spielraum hat. Das Bild verlässt nie deinen Browser: Nur ein kleines Farbraster (64 oder 96 Pixel breit) wird mit dem Design gespeichert.
+
+## Im Code [#in-code]
+
+Übergib die Prop `art` mit einem Modus, einem gesampelten Bild und einer optionalen Intensität (0 bis 1, Standard 0.6):
+
+```tsx
+import { QRCodeSVG, loadQRArtImage } from 'qrdx';
+
+// Browser: sample an uploaded file, a data URL or an <img>
+const image = await loadQRArtImage(file, { mode: 'logo' });
+
+<QRCodeSVG
+  value="https://example.com"
+  size={512}
+  level="H"
+  art={{ mode: 'logo', image, intensity: 0.7 }}
+/>;
+```
+
+Auf dem Server oder in Node decodierst du das Bild selbst und übergibst die RGBA-Pixel an `createQRArtImage`:
+
+```ts
+import sharp from 'sharp';
+import { createQRArtImage } from 'qrdx';
+
+const { data, info } = await sharp('photo.jpg')
+  .ensureAlpha()
+  .raw()
+  .toBuffer({ resolveWithObject: true });
+
+const image = createQRArtImage(
+  { data, width: info.width, height: info.height },
+  { maxSize: 96 }
+);
+// art={{ mode: 'halftone', image, intensity: 0.8 }}
+```
+
+`art.image` ist reines JSON (`{ width, height, data }` mit Base64-RGBA). So kannst du es mit einem gespeicherten Design ablegen und denselben Code überall synchron rendern, ohne das Bild erneut abzurufen.
+
+| Option | Werte | Hinweise |
+|---|---|---|
+| `mode` | `logo`, `halftone` | `halftone` heißt im Editor „Image QR“ |
+| `image` | von `loadQRArtImage` oder `createQRArtImage` | höchstens 192 × 192 Samples |
+| `intensity` | `0` bis `1` | Standard `0.6`; `0` sieht aus wie ein schlichter Code |
+
+Art ersetzt das Körpermuster; die Eckaugen behalten ihr `cornerEyePattern`, `cornerEyeDotPattern` und ihre Farben. Art verwendet die erste Farbe eines Verlaufs bei `fgColor`/`bgColor` und braucht einen dunklen Vordergrund auf hellem Hintergrund (bei invertierten Farben fällt sie auf ein schlichtes Aussehen zurück).
+
+### So bleibt die Scanbarkeit erhalten [#how-scannability-is-kept]
+
+- **Logo QR**: Dunkle Module innerhalb des Logos werden umgefärbt, aber nur bis zu einer Helligkeit abgedunkelt, die ein Scanner noch als dunkel liest; helle Module im Logo erhalten einen blassen Farbton, der über der Hellschwelle bleibt. Dunkle Module außerhalb des Logos verblassen zu Grau, nie heller als die Dunkelschwelle.
+- **Logo-QR-Plakette**: Jedes Modul unter der Plakette kann ein Codewort zerstören. Die Plakette ist so groß gewählt, dass kein Fehlerkorrekturblock mehr als 60 % der Codewörter verliert, die er reparieren kann. Der Rest bleibt für die Kamera. Die Intensität lässt die Plakette bis zu dieser Größe wachsen. Kleine Codes bekommen ein kleineres Logo, und die kleinsten (Version 1, Version 2 bei L oder M, Version 3 bei L) zeichnen keine Plakette.
+- **Image QR**: Jedes Modul wird in ein 3 × 3-Raster geteilt. Die äußeren Zellen zeigen das Foto, dunkler oder heller verschoben, passend zum Wert des Moduls, und die Mitte behält die exakte Vorder- oder Hintergrundfarbe, an der Scanner abtasten.
+- Such-, Timing-, Ausrichtungs-, Format- und Versionsmodule werden immer vollflächig gezeichnet.
+
+Prüfe jedes Design vor dem Druck mit `getScanScore(props)` und teste es mit einer echten Handykamera.
+
+## Art-Codes exportieren [#exporting-art-codes]
+
+Art-Codes sind Vektorformen, daher bleibt jeder Export scharf:
+
+```ts
+import { downloadQRCode, getQRAsEPS, getQRAsPrintPDF } from 'qrdx';
+
+await downloadQRCode(props, { format: 'svg', size: { width: 1024, height: 1024 } });
+const pdf = await getQRAsPrintPDF(props, { size: 40, unit: 'mm', colorMode: 'cmyk' });
+const eps = await getQRAsEPS(props, { sizeMm: 40, bleedMm: 3, colorMode: 'cmyk' });
+```
+
+`getQRAsEPS` schreibt eine EPSF-3.0-Datei mit einer `%%BoundingBox` in Punkten, und jedes Modul, Auge und jeder Rahmen wird als PostScript-Pfad ausgegeben. Wie das Druck-PDF behält sie lineare und radiale Verläufe (als PostScript-Level-3-Shadings) und enthält keine Transparenz. PNG- und JPEG-Logos werden als Bilder eingebettet; andere Logoformate werden im Browser konvertiert und auf dem Server weggelassen. Der Rahmentext verwendet Helvetica, daher werden Zeichen außerhalb von Latin-1 als `?` gedruckt. `svgToEPS(svg, { width })` konvertiert jedes SVG, das diese Bibliothek rendert.
+
+Die CLI schreibt ebenfalls EPS: `qrdx generate "https://example.com" -o qr.eps`.
+
+<IfAvailable feature="aiArt" id="ai-art" title="KI-Art">
+
+[KI-QR-Art](/ai/art) macht aus deinem Code eine Szene mit {facts.artModel}, über Vercel AI Gateway. Du bekommst {facts.aiArtStyles} Stil-Presets, die du nach Kategorie durchstöbern oder durchsuchen kannst, jeweils mit einer Vorschau, die den Scan-Check bestanden hat. Dazu gibt es Dinge, die vermieden werden sollen, einen Regler **QR-Sichtbarkeit** (wie stark das Modell den Code bevorzugt) und einen Regler **Kreativität** (wie frei es deinen Prompt auslegt), 1 bis 4 Variationen pro Durchlauf und ein optionales Referenzbild, etwa ein Logo oder eine Palette, deren Farben und Formen übernommen werden.
+
+Jedes Bild wird auf dem Server geprüft, bevor du es siehst. QRdx sendet dem Modell einen schlichten Schwarz-Weiß-Code (Fehlerkorrektur H, quadratische Module, eine breite Ruhezone) und bittet es, das Modulraster, die Suchaugen und die Ruhezone beizubehalten. Danach decodiert es das Bild des Modells mit jsQR, unverändert und durch ein Handykamera-Modell. Schlägt das fehl, findet es das Modulraster dort, wo das Modell es gezeichnet hat, und verstärkt den Code auf dem eigenen Bild des Modells so wenig wie möglich: zuerst die Suchaugen und die Ruhezone, dann die Module, wobei es die Stärke Schritt für Schritt erhöht, bis das Bild scannt, auch wenn der Code in der Kameraansicht kleiner ist. Die QR-Sichtbarkeit legt fest, wie weit es gehen darf. Nur wenn das nicht reicht, zeichnet es das Bild als Image-QR-Code neu. Ein Bild, das trotzdem nicht zu genau deinem Inhalt decodiert, wird nicht geliefert. Dein Browser bewertet dann die Variationen und wählt die beste aus; lade sie mit 1024 px oder als Druckkopie mit 2048 px herunter (neu abgetastet und erneut geprüft).
+
+Jedes gelieferte Bild verbraucht einen KI-Art-Credit: Kostenlos-Konten erhalten 3 pro Monat, Pro 30 und Business 150, geteilt von allen im Workspace. Bilder, die fehlschlagen oder den Scan-Check nicht bestehen, verbrauchen keinen Credit, und die Druckkopie ist kostenlos. KI-Art ist ein Rasterbild und sein Inhalt ist fest. Für einen bearbeitbaren Link setze daher den Kurzlink eines [dynamischen QR-Codes](/docs/dynamic-qr-codes) ein.
+
+</IfAvailable>

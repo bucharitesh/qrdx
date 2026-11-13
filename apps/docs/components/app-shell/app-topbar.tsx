@@ -91,7 +91,8 @@ export function AppTopBar({
       className={cn(
         bar.bar,
         bar.surface,
-        "relative z-40 border-b backdrop-blur-md",
+        // Sticky: phones scroll the window, and the bar stays on top.
+        "sticky top-0 z-40 border-b backdrop-blur-md",
       )}
     >
       <div className="flex h-12 items-center gap-2 px-3 md:gap-3 md:px-4">

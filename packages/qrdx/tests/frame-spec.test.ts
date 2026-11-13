@@ -701,3 +701,205 @@ describe("fuzzing malformed specs", () => {
     expect(valid).toBeGreaterThan(20);
   });
 });
+
+// Added with the built-in frames as specs (src/frames/builtin)
+describe("spec fields the built-in frames use", () => {
+  it("cuts a label's collapse band out when the label is empty", () => {
+    const spec = baseSpec();
+    spec.labels = [
+      {
+        ...(spec.labels[0] as Extract<
+          FrameSpec["labels"][number],
+          { type: "text" }
+        >),
+        collapse: { y: 1200, height: 160 },
+      },
+    ];
+    // A shape wholly inside the band goes with it; one crossing it shrinks
+    spec.shapes.push({
+      type: "rect",
+      x: 500,
+      y: 1250,
+      width: 200,
+      height: 50,
+      fill: "accent",
+    });
+    expect(getFrameSpecIssues(spec)).toEqual([]);
+    const full = getFrameLayout(1000, custom(spec));
+    const empty = getFrameLayout(1000, custom(spec, { text: "" }));
+    expect(full.height).toBeCloseTo(1500);
+    expect(empty.height).toBeCloseTo(1340);
+    expect(empty.qrY).toBeCloseTo(full.qrY);
+    expect(frameLabels(empty)).toEqual([]);
+    // card, accent rect, plate → card, plate
+    expect(full.shapes).toHaveLength(3);
+    expect(empty.shapes).toHaveLength(2);
+    const card = empty.shapes[0];
+    expect(card?.type === "rect" && card.height).toBeCloseTo(1340);
+  });
+
+  it("moves path points below a band up, relative commands included", () => {
+    const spec = baseSpec();
+    spec.labels = [
+      {
+        ...(spec.labels[0] as Extract<
+          FrameSpec["labels"][number],
+          { type: "text" }
+        >),
+        collapse: { y: 1200, height: 100 },
+      },
+    ];
+    spec.shapes = [{ type: "path", d: "M0 1400l100 0V1500H0z", fill: "frame" }];
+    const layout = getFrameLayout(1000, custom(spec, { text: "" }));
+    const path = layout.shapes[0];
+    expect(path?.type === "path" && path.d).toBe("M0 1300L100 1300V1400H0Z");
+  });
+
+  it("keeps collapse bands off the code and off each other", () => {
+    const band = (y: number, height: number) => (spec: FrameSpec) => {
+      const label = spec.labels[0] as Extract<
+        FrameSpec["labels"][number],
+        { type: "text" }
+      >;
+      label.collapse = { y, height };
+    };
+    expect(issuesOf(band(1000, 200))).toMatch(/crosses the code/);
+    expect(issuesOf(band(1400, 200))).toMatch(/inside the artboard/);
+    expect(
+      issuesOf((spec) => {
+        band(1200, 160)(spec);
+        const note = spec.labels[1] as Extract<
+          FrameSpec["labels"][number],
+          { type: "text" }
+        >;
+        note.collapse = { y: 1300, height: 100 };
+      })
+    ).toMatch(/may not overlap/);
+  });
+
+  it("lets a label's row reach into the padding while its letters stay off it", () => {
+    // The row starts at the code's edge: its capitals, at the largest
+    // font, still clear the 40-unit padding
+    const near = (spec: FrameSpec) => {
+      spec.qr.padding = 40;
+      const label = spec.labels[0] as Extract<
+        FrameSpec["labels"][number],
+        { type: "text" }
+      >;
+      label.box = { x: 100, y: 1100, width: 1000, height: 180 };
+    };
+    expect(issuesOf(near)).toBe("");
+    // Over the code itself, never
+    expect(
+      issuesOf((spec) => {
+        near(spec);
+        (spec.labels[0] as { box: { y: number } }).box.y = 1090;
+      })
+    ).toMatch(/overlaps the code/);
+    // Letters that would reach the padding
+    expect(
+      issuesOf((spec) => {
+        near(spec);
+        (spec.labels[0] as { box: { height: number } }).box.height = 120;
+      })
+    ).toMatch(/overlaps the code/);
+  });
+
+  it("works out a default text color from the frame and accent colors", () => {
+    const spec = baseSpec();
+    spec.colors = {
+      frame: "#000000",
+      accent: "#ffffff",
+      text: { mix: ["frame", "accent"], amount: 0.5 },
+    };
+    expect(getFrameSpecIssues(spec)).toEqual([]);
+    const label = (frame: Partial<AnyQRFrame>) =>
+      frameLabels(getFrameLayout(1000, custom(spec, frame)))[0]?.color;
+    expect(label({})).toBe("#808080");
+    expect(label({ color: "#ff0000" })).toBe("#ff8080");
+    expect(label({ textColor: "#123456" })).toBe("#123456");
+    // It can't refer to itself
+    expect(
+      getFrameSpecIssues({
+        ...spec,
+        colors: {
+          frame: "#000000",
+          text: { mix: ["text", "frame"], amount: 0.5 },
+        },
+      })
+    ).not.toEqual([]);
+  });
+
+  it('keeps a see-through background with plate "background" only when nothing lies under the plate', () => {
+    const ring = (): FrameSpec => ({
+      ...baseSpec(),
+      qr: { x: 100, y: 100, size: 1000, padding: 80, plate: "background" },
+      shapes: [
+        {
+          type: "rect",
+          x: 20,
+          y: 20,
+          width: 1160,
+          height: 1160,
+          fill: "background",
+        },
+        {
+          type: "rect",
+          x: 0,
+          y: 0,
+          width: 1200,
+          height: 1500,
+          fill: "frame",
+          hole: { x: 20, y: 20, width: 1160, height: 1160 },
+        },
+      ],
+    });
+    expect(getFrameSpecIssues(ring())).toEqual([]);
+    const layout = getFrameLayout(1000, custom(ring()), "transparent");
+    expect(layout.shapes.map((shape) => shape.fill)).toEqual([
+      "transparent",
+      "#111111",
+    ]);
+    // An opaque background still gets the plate
+    expect(getFrameLayout(1000, custom(ring()), "#fef3c7").shapes).toHaveLength(
+      3
+    );
+    // Artwork under the plate isn't allowed
+    const covered = ring();
+    covered.shapes.push({
+      type: "circle",
+      cx: 600,
+      cy: 600,
+      r: 100,
+      fill: "frame",
+    });
+    expect(getFrameSpecIssues(covered).join()).toMatch(/plate "background"/);
+    // Without it, the plate stays opaque: white on a see-through background
+    const opaque = baseSpec();
+    expect(
+      getFrameLayout(1000, custom(opaque), "transparent").shapes.at(-1)?.fill
+    ).toBe("#FFFFFF");
+  });
+
+  it("draws every built-in style from its spec", () => {
+    for (const style of FRAME_STYLES.filter((name) => name !== "none")) {
+      const spec = BUILT_IN_FRAME_SPECS[style];
+      expect(getFrameSpecIssues(spec), style).toEqual([]);
+      // A style and its spec as a custom frame draw the same artwork; only
+      // the labels' fields differ (the frame options they edit)
+      const named = getFrameLayout(256, { style, secondaryText: "qrdx.dev" });
+      const asSpec = getFrameLayout(
+        256,
+        custom(spec, { secondaryText: "qrdx.dev" })
+      );
+      expect(asSpec.shapes).toEqual(named.shapes);
+      expect(frameLabels(named).map((label) => label.field)).toEqual(
+        frameLabels(asSpec).map((label) =>
+          label.field === spec?.labels.find((l) => l.slot === "secondary")?.id
+            ? "secondaryText"
+            : "text"
+        )
+      );
+    }
+  });
+});

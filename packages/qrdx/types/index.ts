@@ -118,10 +118,11 @@ export type {
   LogoShape,
   QRCodeShape,
   QRProps,
-  QRPropsCanvas,
-  QRPropsSVG,
   QRShape,
   QRSilhouette,
+  QRStyle,
+  QRSVGAttributes,
+  QRSVGOptions,
 } from "./qr";
 export {
   AUTO_LEVEL_LOGO_COVERAGE,
@@ -153,6 +154,7 @@ export type {
   BaseTemplateProps,
   TemplateConfig,
   TemplateDefinition,
+  TemplateNode,
 } from "./template";
 export {
   baseTemplatePropsSchema,

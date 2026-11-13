@@ -1,0 +1,108 @@
+{
+  "id": "pay-at-the-pump",
+  "name": "Pay at the pump",
+  "description": "A light card with a fuel pump and a pill-shaped button under the code.",
+  "category": "use-case",
+  "collection": "automotive",
+  "contentTypes": ["upi", "paypal", "url"],
+  "tags": ["cars", "parking", "fuel", "gas station"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1760
+    },
+    "qr": {
+      "x": 120,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 64,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 64,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.82
+        },
+        "hole": {
+          "x": 12,
+          "y": 12,
+          "width": 1216,
+          "height": 1736,
+          "radius": 54
+        }
+      },
+      {
+        "type": "path",
+        "d": "M581 46.6L625.2 46.6A7.8 7.8 0 0 1 633 54.4L633 142.8A7.8 7.8 0 0 1 625.2 150.6L581 150.6A7.8 7.8 0 0 1 573.2 142.8L573.2 54.4A7.8 7.8 0 0 1 581 46.6ZM569.3 145.4L636.9 145.4A3.9 3.9 0 0 1 640.8 149.3L640.8 151.9A3.9 3.9 0 0 1 636.9 155.8L569.3 155.8A3.9 3.9 0 0 1 565.4 151.9L565.4 149.3A3.9 3.9 0 0 1 569.3 145.4ZM587.5 57A3.9 3.9 0 0 0 583.6 60.9L583.6 79.1A3.9 3.9 0 0 0 587.5 83L618.7 83A3.9 3.9 0 0 0 622.6 79.1L622.6 60.9A3.9 3.9 0 0 0 618.7 57L587.5 57ZM633 78.45A3.25 3.25 0 0 0 633 71.95L652.45 72.2L667.34 87.37L667.41 125.13L659 136.95A3.25 3.25 0 0 0 653.8 133.05L660.99 124.07L661.06 89.03L649.95 78.2L633 78.45Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M592.7 98.6L613.5 98.6A3.9 3.9 0 0 1 617.4 102.5L617.4 102.5A3.9 3.9 0 0 1 613.5 106.4L592.7 106.4A3.9 3.9 0 0 1 588.8 102.5L588.8 102.5A3.9 3.9 0 0 1 592.7 98.6Z",
+        "fill": "accent"
+      },
+      {
+        "type": "rect",
+        "x": 170,
+        "y": 1520,
+        "width": 900,
+        "height": 180,
+        "radius": 90,
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Pay at the pump",
+        "color": "text",
+        "box": {
+          "x": 230,
+          "y": 1520,
+          "width": 780,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Skip the line",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 180,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

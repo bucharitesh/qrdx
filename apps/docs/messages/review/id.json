@@ -427,6 +427,10 @@
     "source": "cc813935fc0f",
     "status": "machine"
   },
+  "footer.links.enterprise": {
+    "source": "3fbe5ed156f1",
+    "status": "machine"
+  },
   "footer.links.slackBot": {
     "source": "12355a7a269d",
     "status": "machine"
@@ -515,6 +519,10 @@
     "source": "b817cbd4d6df",
     "status": "machine"
   },
+  "footer.links.openSource": {
+    "source": "67a0d2e0dab4",
+    "status": "machine"
+  },
   "footer.links.github": {
     "source": "f911e414cf6b",
     "status": "machine"
@@ -597,6 +605,10 @@
   },
   "footer.links.security": {
     "source": "8f6fb4eb7f42",
+    "status": "machine"
+  },
+  "footer.links.securityPolicy": {
+    "source": "5929ef9641ba",
     "status": "machine"
   },
   "footer.links.allComparisons": {
@@ -725,6 +737,18 @@
   },
   "home.hero.sceneLabel": {
     "source": "011285a5fac5",
+    "status": "machine"
+  },
+  "home.customers.eyebrow": {
+    "source": "681bf81aba87",
+    "status": "machine"
+  },
+  "home.customers.readStory": {
+    "source": "f6dd46fb0044",
+    "status": "machine"
+  },
+  "home.customers.lines.flam": {
+    "source": "3cab5d2533e7",
     "status": "machine"
   },
   "home.editor.eyebrow": {
@@ -1028,7 +1052,7 @@
     "status": "machine"
   },
   "home.features.analytics.description": {
-    "source": "70e771f9a62b",
+    "source": "1682ec931c9d",
     "status": "machine"
   },
   "home.features.analytics.link": {
@@ -1128,7 +1152,7 @@
     "status": "machine"
   },
   "home.faq.items.free.answer": {
-    "source": "a98f1c61d55c",
+    "source": "9f19df673fb5",
     "status": "machine"
   },
   "home.faq.items.signup.question": {
@@ -1144,7 +1168,7 @@
     "status": "machine"
   },
   "home.faq.items.dynamic.answer": {
-    "source": "3d15c90b62ae",
+    "source": "1753b61d11a8",
     "status": "machine"
   },
   "home.faq.items.guarantee.question": {
@@ -1192,7 +1216,7 @@
     "status": "machine"
   },
   "home.faq.items.paidPlans.answer": {
-    "source": "79ab9fcc2788",
+    "source": "163192236bb8",
     "status": "machine"
   },
   "pricing.meta.title": {
@@ -1224,11 +1248,11 @@
     "status": "machine"
   },
   "pricing.extras.longerAnalytics": {
-    "source": "c3e335c053cd",
+    "source": "ae257e3ae35d",
     "status": "machine"
   },
   "pricing.extras.analyticsHistory": {
-    "source": "11944a1af311",
+    "source": "505e90a770cf",
     "status": "machine"
   },
   "pricing.extras.customDomains": {
@@ -1273,6 +1297,14 @@
   },
   "pricing.currency.showUsd": {
     "source": "10b749bd2aed",
+    "status": "machine"
+  },
+  "pricing.currency.eur": {
+    "source": "d82a1e0b8cd0",
+    "status": "machine"
+  },
+  "pricing.currency.showEur": {
+    "source": "78712d1708c1",
     "status": "machine"
   },
   "pricing.price.forever": {
@@ -1383,8 +1415,32 @@
     "source": "65858866917e",
     "status": "machine"
   },
+  "pricing.selfHost.openSource": {
+    "source": "4e28c4b751fd",
+    "status": "machine"
+  },
   "pricing.footnote": {
     "source": "11d50baa54d6",
+    "status": "machine"
+  },
+  "pricing.footnoteEur": {
+    "source": "d8f9ab4a96a2",
+    "status": "machine"
+  },
+  "pricing.offers.moneyBack": {
+    "source": "ed4f6b1fc384",
+    "status": "machine"
+  },
+  "pricing.offers.moneyBackLink": {
+    "source": "6da9e675b1a7",
+    "status": "machine"
+  },
+  "pricing.offers.nonprofit": {
+    "source": "01db7e5d7bed",
+    "status": "machine"
+  },
+  "pricing.offers.nonprofitLink": {
+    "source": "b3592d56a8a1",
     "status": "machine"
   },
   "pricing.values.unlimited": {
@@ -1844,7 +1900,15 @@
     "status": "machine"
   },
   "pricing.faq.items.cancel.answer": {
-    "source": "8bf967e25bf1",
+    "source": "808cb0425bdb",
+    "status": "machine"
+  },
+  "pricing.faq.items.refund.question": {
+    "source": "895d605d64ef",
+    "status": "machine"
+  },
+  "pricing.faq.items.refund.answer": {
+    "source": "17aedeffc3df",
     "status": "machine"
   },
   "pricing.faq.items.paymentFails.question": {
@@ -1871,6 +1935,14 @@
     "source": "4fd441009e6e",
     "status": "machine"
   },
+  "pricing.faq.items.currencies.question": {
+    "source": "8729b9a52324",
+    "status": "machine"
+  },
+  "pricing.faq.items.currencies.answer": {
+    "source": "023e1d65fb1e",
+    "status": "machine"
+  },
   "pricing.faq.items.switchPlans.question": {
     "source": "261e87b59bcc",
     "status": "machine"
@@ -1893,6 +1965,14 @@
   },
   "pricing.faq.items.selfHost.answer": {
     "source": "8c5477b33a21",
+    "status": "machine"
+  },
+  "pricing.faq.items.nonprofit.question": {
+    "source": "0310d979de93",
+    "status": "machine"
+  },
+  "pricing.faq.items.nonprofit.answer": {
+    "source": "e0e0f2a339c7",
     "status": "machine"
   },
   "pricing.faq.items.billing.question": {
@@ -1969,6 +2049,346 @@
   },
   "pricing.invoice.signInNote": {
     "source": "c6d5bfba58c3",
+    "status": "machine"
+  },
+  "pricing.enterprise.name": {
+    "source": "3fbe5ed156f1",
+    "status": "machine"
+  },
+  "pricing.enterprise.tagline": {
+    "source": "fb21e317df5c",
+    "status": "machine"
+  },
+  "pricing.enterprise.price": {
+    "source": "494ca78f7374",
+    "status": "machine"
+  },
+  "pricing.enterprise.priceNote": {
+    "source": "52a4bdbf7c72",
+    "status": "machine"
+  },
+  "pricing.enterprise.cta": {
+    "source": "47aaf31b83d6",
+    "status": "machine"
+  },
+  "pricing.enterprise.lead": {
+    "source": "244263497096",
+    "status": "machine"
+  },
+  "pricing.enterprise.adds.contract": {
+    "source": "74140e63fec3",
+    "status": "machine"
+  },
+  "pricing.enterprise.adds.replies": {
+    "source": "1e55867de73b",
+    "status": "machine"
+  },
+  "pricing.enterprise.adds.review": {
+    "source": "cbd0d74fe76f",
+    "status": "machine"
+  },
+  "pricing.enterprise.adds.selfHost": {
+    "source": "c13894e74f3b",
+    "status": "machine"
+  },
+  "pricing.enterprise.security": {
+    "source": "b1a805be3ecd",
+    "status": "machine"
+  },
+  "pricing.nonprofit.title": {
+    "source": "3b5b3393411a",
+    "status": "machine"
+  },
+  "pricing.nonprofit.description": {
+    "source": "f8a9c7301484",
+    "status": "machine"
+  },
+  "pricing.nonprofit.organization": {
+    "source": "9a807d52ba21",
+    "status": "machine"
+  },
+  "pricing.nonprofit.country": {
+    "source": "701d021d08c5",
+    "status": "machine"
+  },
+  "pricing.nonprofit.registration": {
+    "source": "b275b25afa7b",
+    "status": "machine"
+  },
+  "pricing.nonprofit.registrationHint": {
+    "source": "c2d17b86aae5",
+    "status": "machine"
+  },
+  "pricing.nonprofit.contactEmail": {
+    "source": "6d7fce11ae00",
+    "status": "machine"
+  },
+  "pricing.nonprofit.plan": {
+    "source": "fa8ed0bdabdd",
+    "status": "machine"
+  },
+  "pricing.nonprofit.reply": {
+    "source": "acd8b0c281ca",
+    "status": "machine"
+  },
+  "pricing.nonprofit.submit": {
+    "source": "3a69f897298e",
+    "status": "machine"
+  },
+  "pricing.nonprofit.sending": {
+    "source": "b8ed5279e897",
+    "status": "machine"
+  },
+  "pricing.nonprofit.sentTitle": {
+    "source": "a73f99f6bfc8",
+    "status": "machine"
+  },
+  "pricing.nonprofit.sent": {
+    "source": "45a1e02a6386",
+    "status": "machine"
+  },
+  "pricing.nonprofit.close": {
+    "source": "7d9eb7acb13e",
+    "status": "machine"
+  },
+  "pricing.nonprofit.failed": {
+    "source": "1342d6313653",
+    "status": "machine"
+  },
+  "docs.meta.titleSuffix": {
+    "source": "fe4691e307c7",
+    "status": "machine"
+  },
+  "docs.breadcrumb.home": {
+    "source": "3a78695388b3",
+    "status": "machine"
+  },
+  "docs.breadcrumb.docs": {
+    "source": "7af023c43013",
+    "status": "machine"
+  },
+  "docs.untranslated.title": {
+    "source": "c8dbd7a8cabe",
+    "status": "machine"
+  },
+  "docs.untranslated.body": {
+    "source": "adc86b84c4ea",
+    "status": "machine"
+  },
+  "docs.client.actions.copyMarkdown": {
+    "source": "47ffe39e7556",
+    "status": "machine"
+  },
+  "docs.client.actions.open": {
+    "source": "ed077f3d8125",
+    "status": "machine"
+  },
+  "docs.client.actions.openIn": {
+    "source": "f30fd61ae722",
+    "status": "machine"
+  },
+  "docs.client.actions.askPrompt": {
+    "source": "619e3673b5ff",
+    "status": "machine"
+  },
+  "docs.client.search.jumpTo": {
+    "source": "af52001d68d3",
+    "status": "machine"
+  },
+  "docs.client.language.label": {
+    "source": "f6b558b05684",
+    "status": "machine"
+  },
+  "docs.client.language.note": {
+    "source": "03ef886d4fb4",
+    "status": "machine"
+  },
+  "docs.help.search": {
+    "source": "b706ef91638d",
+    "status": "machine"
+  },
+  "docs.help.stillStuck.title": {
+    "source": "834c08cbe8b2",
+    "status": "machine"
+  },
+  "docs.help.stillStuck.body": {
+    "source": "fafd93b01e8e",
+    "status": "machine"
+  },
+  "docs.help.stillStuck.widget": {
+    "source": "8732a1194302",
+    "status": "machine"
+  },
+  "docs.help.stillStuck.github": {
+    "source": "d20c2ea01cb2",
+    "status": "machine"
+  },
+  "docs.help.stillStuck.contact": {
+    "source": "53a6bccefa78",
+    "status": "machine"
+  },
+  "docs.notFound.title": {
+    "source": "fc2df991dde0",
+    "status": "machine"
+  },
+  "docs.notFound.body": {
+    "source": "fb5d44895901",
+    "status": "machine"
+  },
+  "docs.notFound.places.gettingStarted.title": {
+    "source": "831d0f72d242",
+    "status": "machine"
+  },
+  "docs.notFound.places.gettingStarted.description": {
+    "source": "49a20b634f66",
+    "status": "machine"
+  },
+  "docs.notFound.places.dynamic.title": {
+    "source": "6089067b0798",
+    "status": "machine"
+  },
+  "docs.notFound.places.dynamic.description": {
+    "source": "1fe60eeb86d0",
+    "status": "machine"
+  },
+  "docs.notFound.places.restApi.title": {
+    "source": "41a52587276c",
+    "status": "machine"
+  },
+  "docs.notFound.places.restApi.description": {
+    "source": "1cc1f70ae2bc",
+    "status": "machine"
+  },
+  "docs.notFound.places.components.title": {
+    "source": "a150ce221602",
+    "status": "machine"
+  },
+  "docs.notFound.places.components.description": {
+    "source": "c02a102cb413",
+    "status": "machine"
+  },
+  "docs.ui.search": {
+    "source": "49c266baaaa7",
+    "status": "machine"
+  },
+  "docs.ui.searchPlaceholder": {
+    "source": "49c266baaaa7",
+    "status": "machine"
+  },
+  "docs.ui.openSearch": {
+    "source": "9c3451e933c5",
+    "status": "machine"
+  },
+  "docs.ui.closeSearch": {
+    "source": "713e7816521d",
+    "status": "machine"
+  },
+  "docs.ui.noResults": {
+    "source": "7d7e36058609",
+    "status": "machine"
+  },
+  "docs.ui.searchFailed": {
+    "source": "01ee45e5e189",
+    "status": "machine"
+  },
+  "docs.ui.onThisPage": {
+    "source": "b5658fc8edda",
+    "status": "machine"
+  },
+  "docs.ui.noHeadings": {
+    "source": "877e7e5d5975",
+    "status": "machine"
+  },
+  "docs.ui.tableOfContents": {
+    "source": "a9360e0212a4",
+    "status": "machine"
+  },
+  "docs.ui.lastUpdated": {
+    "source": "103e2a9f3f94",
+    "status": "machine"
+  },
+  "docs.ui.previousPage": {
+    "source": "a163aaa22cf7",
+    "status": "machine"
+  },
+  "docs.ui.nextPage": {
+    "source": "6ead5dfdc11e",
+    "status": "machine"
+  },
+  "docs.ui.copyCode": {
+    "source": "8195c1caa503",
+    "status": "machine"
+  },
+  "docs.ui.copiedCode": {
+    "source": "75a5d50a9fe9",
+    "status": "machine"
+  },
+  "docs.ui.copyAnchor": {
+    "source": "6999a51263ff",
+    "status": "machine"
+  },
+  "docs.ui.copiedAnchor": {
+    "source": "2576ae8fb339",
+    "status": "machine"
+  },
+  "docs.ui.copyLink": {
+    "source": "724e78a3254c",
+    "status": "machine"
+  },
+  "docs.ui.copiedLink": {
+    "source": "b9173920bbf8",
+    "status": "machine"
+  },
+  "docs.ui.toggleMenu": {
+    "source": "f2fca5f98405",
+    "status": "machine"
+  },
+  "docs.ui.toggleTheme": {
+    "source": "de148bf17210",
+    "status": "machine"
+  },
+  "docs.ui.themeLight": {
+    "source": "dbcd5e7bb7a0",
+    "status": "machine"
+  },
+  "docs.ui.themeDark": {
+    "source": "60acc53f13a5",
+    "status": "machine"
+  },
+  "docs.ui.themeSystem": {
+    "source": "6725e7bbcd28",
+    "status": "machine"
+  },
+  "docs.ui.openSidebar": {
+    "source": "ef84dd64b90f",
+    "status": "machine"
+  },
+  "docs.ui.closeSidebar": {
+    "source": "8896c14d09e7",
+    "status": "machine"
+  },
+  "docs.ui.collapseSidebar": {
+    "source": "9da0bf42ad07",
+    "status": "machine"
+  },
+  "docs.ui.typeTableProp": {
+    "source": "57d968860fab",
+    "status": "machine"
+  },
+  "docs.ui.typeTableType": {
+    "source": "baaddf70fb5d",
+    "status": "machine"
+  },
+  "docs.ui.typeTableDefault": {
+    "source": "21b111cbfe6e",
+    "status": "machine"
+  },
+  "docs.ui.typeTableParameters": {
+    "source": "e68b36b17cbd",
+    "status": "machine"
+  },
+  "docs.ui.typeTableReturns": {
+    "source": "16dcaa923f16",
     "status": "machine"
   },
   "common.breadcrumb": {
@@ -2097,6 +2517,14 @@
   },
   "qrGenerator.hub.printDescription": {
     "source": "28ef13e82f50",
+    "status": "machine"
+  },
+  "qrGenerator.hub.dynamicTitle": {
+    "source": "dd0575c219cf",
+    "status": "machine"
+  },
+  "qrGenerator.hub.dynamicDescription": {
+    "source": "41afc4815db4",
     "status": "machine"
   },
   "qrGenerator.hub.hostedTitle": {
@@ -5247,6 +5675,10 @@
     "source": "d3c7d623b5b1",
     "status": "machine"
   },
+  "scanPages.hosted.form.checkAnswer": {
+    "source": "9c0e8508c35d",
+    "status": "machine"
+  },
   "barcodeGenerator.metaTitle": {
     "source": "2fa06448fb2a",
     "status": "machine"
@@ -5607,6 +6039,118 @@
     "source": "b01adf6a8917",
     "status": "machine"
   },
+  "barcodeTool.issues.enterDigits": {
+    "source": "b78dd409e68b",
+    "status": "machine"
+  },
+  "barcodeTool.issues.digitsOnly": {
+    "source": "325ff8f299bb",
+    "status": "machine"
+  },
+  "barcodeTool.issues.checkDigitAdded": {
+    "source": "ccfa50d356e7",
+    "status": "machine"
+  },
+  "barcodeTool.issues.wrongCheckDigit": {
+    "source": "9075f84b67b8",
+    "status": "machine"
+  },
+  "barcodeTool.issues.wrongLength": {
+    "source": "a4f780c32d38",
+    "status": "machine"
+  },
+  "barcodeTool.issues.upceEnter": {
+    "source": "f14e6e8cfe6e",
+    "status": "machine"
+  },
+  "barcodeTool.issues.upceSystem": {
+    "source": "99e1439025df",
+    "status": "machine"
+  },
+  "barcodeTool.issues.upceNoForm": {
+    "source": "f43319da0a3e",
+    "status": "machine"
+  },
+  "barcodeTool.issues.shortenedFromUpca": {
+    "source": "dfc7efdbeb69",
+    "status": "machine"
+  },
+  "barcodeTool.issues.numberSystemAssumed": {
+    "source": "ca5d5a60741b",
+    "status": "machine"
+  },
+  "barcodeTool.issues.upceLength": {
+    "source": "b7b7aee5f5bf",
+    "status": "machine"
+  },
+  "barcodeTool.issues.upceStart": {
+    "source": "ca04130ba9ec",
+    "status": "machine"
+  },
+  "barcodeTool.issues.enterText": {
+    "source": "3108f54898db",
+    "status": "machine"
+  },
+  "barcodeTool.issues.tooLong": {
+    "source": "4fd5de26b64f",
+    "status": "machine"
+  },
+  "barcodeTool.issues.code128Chars": {
+    "source": "bb5d1c6fd7e4",
+    "status": "machine"
+  },
+  "barcodeTool.issues.code39Chars": {
+    "source": "737c3742b459",
+    "status": "machine"
+  },
+  "barcodeTool.issues.code39Lowercase": {
+    "source": "96f655f4da3d",
+    "status": "machine"
+  },
+  "barcodeTool.issues.gs1Enter": {
+    "source": "389cb8feffc5",
+    "status": "machine"
+  },
+  "barcodeTool.issues.gs1Start": {
+    "source": "a34425448eba",
+    "status": "machine"
+  },
+  "barcodeTool.issues.gs1Brackets": {
+    "source": "59e0cd9a7acf",
+    "status": "machine"
+  },
+  "barcodeTool.issues.gs1BadAi": {
+    "source": "2162274691d7",
+    "status": "machine"
+  },
+  "barcodeTool.issues.gs1NoValue": {
+    "source": "7b205247617c",
+    "status": "machine"
+  },
+  "barcodeTool.issues.gs1BadChars": {
+    "source": "fbd675c12d24",
+    "status": "machine"
+  },
+  "barcodeTool.issues.gs1Ai": {
+    "source": "43dae09c4787",
+    "status": "machine"
+  },
+  "barcodeTool.issues.gs1TooLong": {
+    "source": "94da50fa92a1",
+    "status": "machine"
+  },
+  "barcodeTool.issues.unknownFormat": {
+    "source": "b9fdff27e6d6",
+    "status": "machine"
+  },
+  "barcodeTool.issues.space": {
+    "source": "3f49dbbfe051",
+    "status": "machine"
+  },
+  "barcodeTool.issues.lineBreak": {
+    "source": "6f8b6cb4c0b9",
+    "status": "machine"
+  },
   "guarantee.metaTitle": {
     "source": "c2a9f926960a",
     "status": "machine"
@@ -5703,6 +6247,18 @@
     "source": "8b7b5245ac0c",
     "status": "machine"
   },
+  "guarantee.moneyBackTitle": {
+    "source": "2197d8b81a9b",
+    "status": "machine"
+  },
+  "guarantee.moneyBack": {
+    "source": "88055c875609",
+    "status": "machine"
+  },
+  "guarantee.moneyBackLink": {
+    "source": "54bd838dbc15",
+    "status": "machine"
+  },
   "guarantee.exceptionTitle": {
     "source": "1c9ec99f6cf8",
     "status": "machine"
@@ -5713,6 +6269,678 @@
   },
   "guarantee.questions": {
     "source": "bed70e84c27c",
+    "status": "machine"
+  },
+  "enterprise.metaTitle": {
+    "source": "ba8d80b3e11b",
+    "status": "machine"
+  },
+  "enterprise.metaDescription": {
+    "source": "47c0dbccc8c7",
+    "status": "machine"
+  },
+  "enterprise.crumb": {
+    "source": "3fbe5ed156f1",
+    "status": "machine"
+  },
+  "enterprise.title": {
+    "source": "e0b734809ddf",
+    "status": "machine"
+  },
+  "enterprise.intro1": {
+    "source": "42098b124f64",
+    "status": "machine"
+  },
+  "enterprise.intro2": {
+    "source": "4ea31911d946",
+    "status": "machine"
+  },
+  "enterprise.contactCta": {
+    "source": "47aaf31b83d6",
+    "status": "machine"
+  },
+  "enterprise.securityCta": {
+    "source": "d75dbab0c686",
+    "status": "machine"
+  },
+  "enterprise.whoTitle": {
+    "source": "60c3907ec269",
+    "status": "machine"
+  },
+  "enterprise.who.brands.title": {
+    "source": "65e543d4e0dc",
+    "status": "machine"
+  },
+  "enterprise.who.brands.body": {
+    "source": "c1f03ef6817a",
+    "status": "machine"
+  },
+  "enterprise.who.agencies.title": {
+    "source": "3b8797f648d8",
+    "status": "machine"
+  },
+  "enterprise.who.agencies.body": {
+    "source": "2f83ff647e70",
+    "status": "machine"
+  },
+  "enterprise.who.security.title": {
+    "source": "33d2e347bf8d",
+    "status": "machine"
+  },
+  "enterprise.who.security.body": {
+    "source": "f300729315fb",
+    "status": "machine"
+  },
+  "enterprise.featuresTitle": {
+    "source": "41a1acbef296",
+    "status": "machine"
+  },
+  "enterprise.featuresIntro": {
+    "source": "bef1c9c40f61",
+    "status": "machine"
+  },
+  "enterprise.features.sso.title": {
+    "source": "3bc44ac28dcd",
+    "status": "machine"
+  },
+  "enterprise.features.sso.body": {
+    "source": "56f4b420464a",
+    "status": "machine"
+  },
+  "enterprise.features.auditLog.title": {
+    "source": "e4d36f9a4e22",
+    "status": "machine"
+  },
+  "enterprise.features.auditLog.body": {
+    "source": "0610b7909354",
+    "status": "machine"
+  },
+  "enterprise.features.roles.title": {
+    "source": "adb94651dea4",
+    "status": "machine"
+  },
+  "enterprise.features.roles.body": {
+    "source": "d9e93d43e62a",
+    "status": "machine"
+  },
+  "enterprise.features.seats.title": {
+    "source": "56465b948842",
+    "status": "machine"
+  },
+  "enterprise.features.seats.body": {
+    "source": "c728595a6343",
+    "status": "machine"
+  },
+  "enterprise.features.domains.title": {
+    "source": "e4351f23dd28",
+    "status": "machine"
+  },
+  "enterprise.features.domains.body": {
+    "source": "01600d4cbf22",
+    "status": "machine"
+  },
+  "enterprise.features.clients.title": {
+    "source": "824c4811da5c",
+    "status": "machine"
+  },
+  "enterprise.features.clients.body": {
+    "source": "155fcde336b9",
+    "status": "machine"
+  },
+  "enterprise.features.api.title": {
+    "source": "cbb045bcf6d5",
+    "status": "machine"
+  },
+  "enterprise.features.api.body": {
+    "source": "41e178e0d753",
+    "status": "machine"
+  },
+  "enterprise.features.export.title": {
+    "source": "5e3aa8abf5e1",
+    "status": "machine"
+  },
+  "enterprise.features.export.body": {
+    "source": "45a43e7702f2",
+    "status": "machine"
+  },
+  "enterprise.contractTitle": {
+    "source": "190eec512a10",
+    "status": "machine"
+  },
+  "enterprise.contractIntro": {
+    "source": "bcb0e24321db",
+    "status": "machine"
+  },
+  "enterprise.contract.replies.title": {
+    "source": "581f1e088a18",
+    "status": "machine"
+  },
+  "enterprise.contract.replies.body": {
+    "source": "3c60b034c115",
+    "status": "machine"
+  },
+  "enterprise.contract.invoice.title": {
+    "source": "74140e63fec3",
+    "status": "machine"
+  },
+  "enterprise.contract.invoice.body": {
+    "source": "020597e61743",
+    "status": "machine"
+  },
+  "enterprise.contract.review.title": {
+    "source": "cbd0d74fe76f",
+    "status": "machine"
+  },
+  "enterprise.contract.review.body": {
+    "source": "2d15cb242f46",
+    "status": "machine"
+  },
+  "enterprise.contract.selfHost.title": {
+    "source": "5b4655e8e804",
+    "status": "machine"
+  },
+  "enterprise.contract.selfHost.body": {
+    "source": "42e6f874036d",
+    "status": "machine"
+  },
+  "enterprise.limitsNote": {
+    "source": "190e10a846b5",
+    "status": "machine"
+  },
+  "enterprise.repliesTitle": {
+    "source": "e399e8ca0cf3",
+    "status": "machine"
+  },
+  "enterprise.replies.when": {
+    "source": "cf9c7aa24a26",
+    "status": "machine"
+  },
+  "enterprise.replies.enterprise": {
+    "source": "3fbe5ed156f1",
+    "status": "machine"
+  },
+  "enterprise.replies.business": {
+    "source": "76f68a75f01e",
+    "status": "machine"
+  },
+  "enterprise.replies.outage": {
+    "source": "921fbb5e07e6",
+    "status": "machine"
+  },
+  "enterprise.replies.other": {
+    "source": "cd6c5f59d15c",
+    "status": "machine"
+  },
+  "enterprise.replies.hours": {
+    "source": "a10cc41369f9",
+    "status": "machine"
+  },
+  "enterprise.replies.days": {
+    "source": "c5f85a16d66c",
+    "status": "machine"
+  },
+  "enterprise.repliesNote": {
+    "source": "ea86713858aa",
+    "status": "machine"
+  },
+  "enterprise.buyTitle": {
+    "source": "7f2469b30362",
+    "status": "machine"
+  },
+  "enterprise.buy.ask.title": {
+    "source": "f5cc85390482",
+    "status": "machine"
+  },
+  "enterprise.buy.ask.body": {
+    "source": "01a578b888da",
+    "status": "machine"
+  },
+  "enterprise.buy.quote.title": {
+    "source": "b58fbf45341d",
+    "status": "machine"
+  },
+  "enterprise.buy.quote.body": {
+    "source": "a1c1a9364eb3",
+    "status": "machine"
+  },
+  "enterprise.buy.sign.title": {
+    "source": "05df38c676cb",
+    "status": "machine"
+  },
+  "enterprise.buy.sign.body": {
+    "source": "071331f7eb5b",
+    "status": "machine"
+  },
+  "enterprise.formTitle": {
+    "source": "1d1d94fb5397",
+    "status": "machine"
+  },
+  "enterprise.formIntro": {
+    "source": "31278da32614",
+    "status": "machine"
+  },
+  "enterprise.form.name": {
+    "source": "dcd1d5223f73",
+    "status": "machine"
+  },
+  "enterprise.form.email": {
+    "source": "932f815786ae",
+    "status": "machine"
+  },
+  "enterprise.form.company": {
+    "source": "de4743c87973",
+    "status": "machine"
+  },
+  "enterprise.form.teamSize": {
+    "source": "62bc7da1d31a",
+    "status": "machine"
+  },
+  "enterprise.form.teamSizePlaceholder": {
+    "source": "1546cecb3fb2",
+    "status": "machine"
+  },
+  "enterprise.form.sizes.1-10": {
+    "source": "31b8ffcc7a36",
+    "status": "machine"
+  },
+  "enterprise.form.sizes.11-50": {
+    "source": "96ca1d5540d4",
+    "status": "machine"
+  },
+  "enterprise.form.sizes.51-200": {
+    "source": "e9231acc548e",
+    "status": "machine"
+  },
+  "enterprise.form.sizes.201-1000": {
+    "source": "34dd110d6c74",
+    "status": "machine"
+  },
+  "enterprise.form.sizes.1000+": {
+    "source": "aa9084662986",
+    "status": "machine"
+  },
+  "enterprise.form.need": {
+    "source": "52c6a4f68307",
+    "status": "machine"
+  },
+  "enterprise.form.needPlaceholder": {
+    "source": "03373b2dfdbb",
+    "status": "machine"
+  },
+  "enterprise.form.submit": {
+    "source": "f6f4688ff23d",
+    "status": "machine"
+  },
+  "enterprise.form.sending": {
+    "source": "b8ed5279e897",
+    "status": "machine"
+  },
+  "enterprise.form.sentTitle": {
+    "source": "0a1f2fbcba7a",
+    "status": "machine"
+  },
+  "enterprise.form.sent": {
+    "source": "c10f2016b6a9",
+    "status": "machine"
+  },
+  "enterprise.form.privacy": {
+    "source": "6dc467d2a40c",
+    "status": "machine"
+  },
+  "enterprise.form.errors.name": {
+    "source": "a480220a0f59",
+    "status": "machine"
+  },
+  "enterprise.form.errors.email": {
+    "source": "e57dd3309d28",
+    "status": "machine"
+  },
+  "enterprise.form.errors.company": {
+    "source": "4a5f71fb2f8c",
+    "status": "machine"
+  },
+  "enterprise.form.errors.teamSize": {
+    "source": "413cf8c080bf",
+    "status": "machine"
+  },
+  "enterprise.form.errors.need": {
+    "source": "6a09f1a9f79d",
+    "status": "machine"
+  },
+  "enterprise.form.errors.rateLimited": {
+    "source": "4f4556467963",
+    "status": "machine"
+  },
+  "enterprise.form.errors.check": {
+    "source": "dac96971ca0b",
+    "status": "machine"
+  },
+  "enterprise.form.errors.notSent": {
+    "source": "a6a6398ffb0b",
+    "status": "machine"
+  },
+  "enterprise.form.errors.unavailable": {
+    "source": "c446ef20266c",
+    "status": "machine"
+  },
+  "enterprise.form.errors.unknown": {
+    "source": "1342d6313653",
+    "status": "machine"
+  },
+  "enterprise.orEmail": {
+    "source": "ca9eb342c102",
+    "status": "machine"
+  },
+  "enterprise.relatedTitle": {
+    "source": "83b794145c0c",
+    "status": "machine"
+  },
+  "enterprise.related.security": {
+    "source": "b1a805be3ecd",
+    "status": "machine"
+  },
+  "enterprise.related.dpa": {
+    "source": "ba0d6a897ca4",
+    "status": "machine"
+  },
+  "enterprise.related.subprocessors": {
+    "source": "4fd685570eae",
+    "status": "machine"
+  },
+  "enterprise.related.pricing": {
+    "source": "dfe95783edfe",
+    "status": "machine"
+  },
+  "security.metaTitle": {
+    "source": "894d7ea469e0",
+    "status": "machine"
+  },
+  "security.metaDescription": {
+    "source": "4d198d5b5711",
+    "status": "machine"
+  },
+  "security.crumb": {
+    "source": "8f6fb4eb7f42",
+    "status": "machine"
+  },
+  "security.title": {
+    "source": "b1a805be3ecd",
+    "status": "machine"
+  },
+  "security.intro1": {
+    "source": "23dc63fcec28",
+    "status": "machine"
+  },
+  "security.intro2": {
+    "source": "5962fe3a976c",
+    "status": "machine"
+  },
+  "security.reportCta": {
+    "source": "3805db21012a",
+    "status": "machine"
+  },
+  "security.enterpriseCta": {
+    "source": "ce2a4460459e",
+    "status": "machine"
+  },
+  "security.sections.transport.title": {
+    "source": "7d837a55a61c",
+    "status": "machine"
+  },
+  "security.sections.transport.items.https.title": {
+    "source": "5ba50a1456b9",
+    "status": "machine"
+  },
+  "security.sections.transport.items.https.body": {
+    "source": "2f23353f64d2",
+    "status": "machine"
+  },
+  "security.sections.transport.items.csp.title": {
+    "source": "3c661467d580",
+    "status": "machine"
+  },
+  "security.sections.transport.items.csp.body": {
+    "source": "32f8535de7c6",
+    "status": "machine"
+  },
+  "security.sections.transport.items.framing.title": {
+    "source": "9282f71bb61e",
+    "status": "machine"
+  },
+  "security.sections.transport.items.framing.body": {
+    "source": "d3675f0e0c95",
+    "status": "machine"
+  },
+  "security.sections.signIn.title": {
+    "source": "824a1d703ce6",
+    "status": "machine"
+  },
+  "security.sections.signIn.items.passwords.title": {
+    "source": "12efecf8b86f",
+    "status": "machine"
+  },
+  "security.sections.signIn.items.passwords.body": {
+    "source": "0b8e1710aaf0",
+    "status": "machine"
+  },
+  "security.sections.signIn.items.twoFactor.title": {
+    "source": "7c0ff7eab32d",
+    "status": "machine"
+  },
+  "security.sections.signIn.items.twoFactor.body": {
+    "source": "34d72598a225",
+    "status": "machine"
+  },
+  "security.sections.signIn.items.confirm.title": {
+    "source": "6176eec272e8",
+    "status": "machine"
+  },
+  "security.sections.signIn.items.confirm.body": {
+    "source": "786d4b16fe1e",
+    "status": "machine"
+  },
+  "security.sections.signIn.items.alerts.title": {
+    "source": "98caea2b703d",
+    "status": "machine"
+  },
+  "security.sections.signIn.items.alerts.body": {
+    "source": "eeb68397239a",
+    "status": "machine"
+  },
+  "security.sections.signIn.items.sessions.title": {
+    "source": "0bfe5e5292fc",
+    "status": "machine"
+  },
+  "security.sections.signIn.items.sessions.body": {
+    "source": "ba1f8139d0f8",
+    "status": "machine"
+  },
+  "security.sections.workspaces.title": {
+    "source": "bda7f646246a",
+    "status": "machine"
+  },
+  "security.sections.workspaces.items.sso.title": {
+    "source": "3bc44ac28dcd",
+    "status": "machine"
+  },
+  "security.sections.workspaces.items.sso.body": {
+    "source": "a8161189f882",
+    "status": "machine"
+  },
+  "security.sections.workspaces.items.roles.title": {
+    "source": "c25337055464",
+    "status": "machine"
+  },
+  "security.sections.workspaces.items.roles.body": {
+    "source": "e6b64984ade8",
+    "status": "machine"
+  },
+  "security.sections.workspaces.items.auditLog.title": {
+    "source": "e4d36f9a4e22",
+    "status": "machine"
+  },
+  "security.sections.workspaces.items.auditLog.body": {
+    "source": "ba81cdf1796e",
+    "status": "machine"
+  },
+  "security.sections.workspaces.items.staff.title": {
+    "source": "75860b315d60",
+    "status": "machine"
+  },
+  "security.sections.workspaces.items.staff.body": {
+    "source": "cc01e4b189e7",
+    "status": "machine"
+  },
+  "security.sections.secrets.title": {
+    "source": "a535d2b73199",
+    "status": "machine"
+  },
+  "security.sections.secrets.items.hashed.title": {
+    "source": "781dca79e4ee",
+    "status": "machine"
+  },
+  "security.sections.secrets.items.hashed.body": {
+    "source": "04a53752bfcc",
+    "status": "machine"
+  },
+  "security.sections.secrets.items.encrypted.title": {
+    "source": "300324cbd920",
+    "status": "machine"
+  },
+  "security.sections.secrets.items.encrypted.body": {
+    "source": "8fe1724a0310",
+    "status": "machine"
+  },
+  "security.sections.secrets.items.webhooks.title": {
+    "source": "45ca11ddb2a4",
+    "status": "machine"
+  },
+  "security.sections.secrets.items.webhooks.body": {
+    "source": "8509a1451943",
+    "status": "machine"
+  },
+  "security.sections.abuse.title": {
+    "source": "f9adabdd950f",
+    "status": "machine"
+  },
+  "security.sections.abuse.items.linkChecks.title": {
+    "source": "46aadf7e9cd9",
+    "status": "machine"
+  },
+  "security.sections.abuse.items.linkChecks.body": {
+    "source": "2dc96fea3c6b",
+    "status": "machine"
+  },
+  "security.sections.abuse.items.rateLimits.title": {
+    "source": "6ed021f7e822",
+    "status": "machine"
+  },
+  "security.sections.abuse.items.rateLimits.body": {
+    "source": "36c11233c272",
+    "status": "machine"
+  },
+  "security.sections.abuse.items.bots.title": {
+    "source": "f350e8588b0c",
+    "status": "machine"
+  },
+  "security.sections.abuse.items.bots.body": {
+    "source": "37fffb86ed6d",
+    "status": "machine"
+  },
+  "security.sections.abuse.items.reports.title": {
+    "source": "7b2bf935fc22",
+    "status": "machine"
+  },
+  "security.sections.abuse.items.reports.body": {
+    "source": "5437fc33d0a5",
+    "status": "machine"
+  },
+  "security.sections.storage.title": {
+    "source": "488a4d15a92c",
+    "status": "machine"
+  },
+  "security.sections.storage.items.hosting.title": {
+    "source": "b4ec9bba800b",
+    "status": "machine"
+  },
+  "security.sections.storage.items.hosting.body": {
+    "source": "f2e4bccde657",
+    "status": "machine"
+  },
+  "security.sections.storage.items.database.title": {
+    "source": "fa7fe67124e9",
+    "status": "machine"
+  },
+  "security.sections.storage.items.database.body": {
+    "source": "7f95d032e29f",
+    "status": "machine"
+  },
+  "security.sections.storage.items.files.title": {
+    "source": "3c4d5d917f9b",
+    "status": "machine"
+  },
+  "security.sections.storage.items.files.body": {
+    "source": "4510b7135cbb",
+    "status": "machine"
+  },
+  "security.sections.storage.items.scans.title": {
+    "source": "7e4e852d0f81",
+    "status": "machine"
+  },
+  "security.sections.storage.items.scans.body": {
+    "source": "978edb24eee4",
+    "status": "machine"
+  },
+  "security.sections.yourData.title": {
+    "source": "2fc3ec06cd72",
+    "status": "machine"
+  },
+  "security.sections.yourData.items.export.title": {
+    "source": "3664895579f0",
+    "status": "machine"
+  },
+  "security.sections.yourData.items.export.body": {
+    "source": "5ef74c5eaf9e",
+    "status": "machine"
+  },
+  "security.sections.yourData.items.delete.title": {
+    "source": "3f1e41fa5f7f",
+    "status": "machine"
+  },
+  "security.sections.yourData.items.delete.body": {
+    "source": "9fe1fad3a544",
+    "status": "machine"
+  },
+  "security.sections.yourData.items.dpa.title": {
+    "source": "ba0d6a897ca4",
+    "status": "machine"
+  },
+  "security.sections.yourData.items.dpa.body": {
+    "source": "781c4e81a8c8",
+    "status": "machine"
+  },
+  "security.sections.yourData.items.subprocessors.title": {
+    "source": "4fd685570eae",
+    "status": "machine"
+  },
+  "security.sections.yourData.items.subprocessors.body": {
+    "source": "81258a30ec34",
+    "status": "machine"
+  },
+  "security.reportTitle": {
+    "source": "3805db21012a",
+    "status": "machine"
+  },
+  "security.report": {
+    "source": "0c3e807903f7",
+    "status": "machine"
+  },
+  "security.reviewTitle": {
+    "source": "d69bedb763c4",
+    "status": "machine"
+  },
+  "security.review": {
+    "source": "f5f999c23247",
     "status": "machine"
   },
   "templates.metaTitle": {
@@ -5809,6 +7037,18 @@
   },
   "templates.card.use": {
     "source": "351dd54e5327",
+    "status": "machine"
+  },
+  "templates.more.load": {
+    "source": "ac8991ef0101",
+    "status": "machine"
+  },
+  "templates.more.loading": {
+    "source": "dc380888c4e2",
+    "status": "machine"
+  },
+  "templates.more.failed": {
+    "source": "6fe10efa7628",
     "status": "machine"
   },
   "templateDemo.showQr": {
@@ -7153,6 +8393,766 @@
   },
   "qrCodeApi.faq.aiAnswer": {
     "source": "154fdcb1f0b3",
+    "status": "machine"
+  },
+  "dynamicQrCode.metaTitle": {
+    "source": "0de5e645d436",
+    "status": "machine"
+  },
+  "dynamicQrCode.metaDescription": {
+    "source": "6cf92984806f",
+    "status": "machine"
+  },
+  "dynamicQrCode.crumb": {
+    "source": "dd0575c219cf",
+    "status": "machine"
+  },
+  "dynamicQrCode.title": {
+    "source": "d21bdc1d645e",
+    "status": "machine"
+  },
+  "dynamicQrCode.intro1": {
+    "source": "4b4125427e2a",
+    "status": "machine"
+  },
+  "dynamicQrCode.intro2": {
+    "source": "c9578b66e690",
+    "status": "machine"
+  },
+  "dynamicQrCode.facts.free": {
+    "source": "607a9b3e4b5d",
+    "status": "machine"
+  },
+  "dynamicQrCode.facts.scans": {
+    "source": "482daead73be",
+    "status": "machine"
+  },
+  "dynamicQrCode.facts.ads": {
+    "source": "6b9f5af1209e",
+    "status": "machine"
+  },
+  "dynamicQrCode.facts.openSource": {
+    "source": "67a0d2e0dab4",
+    "status": "machine"
+  },
+  "dynamicQrCode.cta": {
+    "source": "e74d87cf6a11",
+    "status": "machine"
+  },
+  "dynamicQrCode.pricingCta": {
+    "source": "30d9abfd7c7a",
+    "status": "machine"
+  },
+  "dynamicQrCode.docsLink": {
+    "source": "1c66cb38256b",
+    "status": "machine"
+  },
+  "dynamicQrCode.howEyebrow": {
+    "source": "9c870aa6e5e9",
+    "status": "machine"
+  },
+  "dynamicQrCode.howTitle": {
+    "source": "78a49d16d4e1",
+    "status": "machine"
+  },
+  "dynamicQrCode.steps.create.title": {
+    "source": "4aabe7bcd163",
+    "status": "machine"
+  },
+  "dynamicQrCode.steps.create.body": {
+    "source": "2dd51a7f672a",
+    "status": "machine"
+  },
+  "dynamicQrCode.steps.print.title": {
+    "source": "f43ecc8ca87d",
+    "status": "machine"
+  },
+  "dynamicQrCode.steps.print.body": {
+    "source": "a0a15f173c36",
+    "status": "machine"
+  },
+  "dynamicQrCode.steps.change.title": {
+    "source": "eb54a1918d82",
+    "status": "machine"
+  },
+  "dynamicQrCode.steps.change.body": {
+    "source": "e6a147e27c6b",
+    "status": "machine"
+  },
+  "dynamicQrCode.featuresEyebrow": {
+    "source": "5697d03daef4",
+    "status": "machine"
+  },
+  "dynamicQrCode.featuresTitle": {
+    "source": "0b007c79f5cf",
+    "status": "machine"
+  },
+  "dynamicQrCode.featuresDescription": {
+    "source": "9dc121425900",
+    "status": "machine"
+  },
+  "dynamicQrCode.planAll": {
+    "source": "ca143554d6a2",
+    "status": "machine"
+  },
+  "dynamicQrCode.planSome": {
+    "source": "05b61721bf0f",
+    "status": "machine"
+  },
+  "dynamicQrCode.features.edit.title": {
+    "source": "2a2fe4991d42",
+    "status": "machine"
+  },
+  "dynamicQrCode.features.edit.body": {
+    "source": "61d208eca93f",
+    "status": "machine"
+  },
+  "dynamicQrCode.features.analytics.title": {
+    "source": "7c39db22de2a",
+    "status": "machine"
+  },
+  "dynamicQrCode.features.analytics.body": {
+    "source": "7794c97ac23d",
+    "status": "machine"
+  },
+  "dynamicQrCode.features.pages.title": {
+    "source": "e60b60fa6839",
+    "status": "machine"
+  },
+  "dynamicQrCode.features.pages.body": {
+    "source": "74a19dfc4e21",
+    "status": "machine"
+  },
+  "dynamicQrCode.features.routing.title": {
+    "source": "01f29b35c8d8",
+    "status": "machine"
+  },
+  "dynamicQrCode.features.routing.body": {
+    "source": "7d19192a80d7",
+    "status": "machine"
+  },
+  "dynamicQrCode.features.controls.title": {
+    "source": "ba08e7a571f7",
+    "status": "machine"
+  },
+  "dynamicQrCode.features.controls.body": {
+    "source": "d65c68a13ff9",
+    "status": "machine"
+  },
+  "dynamicQrCode.features.slugs.title": {
+    "source": "c3ddfb32e225",
+    "status": "machine"
+  },
+  "dynamicQrCode.features.slugs.body": {
+    "source": "81847efca7c5",
+    "status": "machine"
+  },
+  "dynamicQrCode.features.tracking.title": {
+    "source": "b2f5a04ab02e",
+    "status": "machine"
+  },
+  "dynamicQrCode.features.tracking.body": {
+    "source": "3e20337b7f1a",
+    "status": "machine"
+  },
+  "dynamicQrCode.features.api.title": {
+    "source": "9ec4ec82592b",
+    "status": "machine"
+  },
+  "dynamicQrCode.features.api.body": {
+    "source": "30f5b62507f1",
+    "status": "machine"
+  },
+  "dynamicQrCode.freeEyebrow": {
+    "source": "899e2f1f2abf",
+    "status": "machine"
+  },
+  "dynamicQrCode.freeTitle": {
+    "source": "7f295f693258",
+    "status": "machine"
+  },
+  "dynamicQrCode.freeDescription": {
+    "source": "ad07f3aa495a",
+    "status": "machine"
+  },
+  "dynamicQrCode.freeItems.codes": {
+    "source": "387d597aa12f",
+    "status": "machine"
+  },
+  "dynamicQrCode.freeItems.scans": {
+    "source": "24c53a57132e",
+    "status": "machine"
+  },
+  "dynamicQrCode.freeItems.history": {
+    "source": "cbb2f758b180",
+    "status": "machine"
+  },
+  "dynamicQrCode.freeItems.pages": {
+    "source": "46d258ea4e4f",
+    "status": "machine"
+  },
+  "dynamicQrCode.freeItems.organize": {
+    "source": "e6d4a645f5a5",
+    "status": "machine"
+  },
+  "dynamicQrCode.freeItems.api": {
+    "source": "be319c69541e",
+    "status": "machine"
+  },
+  "dynamicQrCode.freeLink": {
+    "source": "a9dc07ed7e62",
+    "status": "machine"
+  },
+  "dynamicQrCode.guaranteeEyebrow": {
+    "source": "8f4b785153d1",
+    "status": "machine"
+  },
+  "dynamicQrCode.guaranteeTitle": {
+    "source": "76a42c7626c8",
+    "status": "machine"
+  },
+  "dynamicQrCode.guaranteeBody": {
+    "source": "fef058bf9b44",
+    "status": "machine"
+  },
+  "dynamicQrCode.guaranteeLink": {
+    "source": "66c654a32b1e",
+    "status": "machine"
+  },
+  "dynamicQrCode.openSourceBody": {
+    "source": "52ea01bfa591",
+    "status": "machine"
+  },
+  "dynamicQrCode.openSourceLink": {
+    "source": "4ff3e4ae5c34",
+    "status": "machine"
+  },
+  "dynamicQrCode.staticTitle": {
+    "source": "5040c3857b87",
+    "status": "machine"
+  },
+  "dynamicQrCode.staticBody": {
+    "source": "2bcecbeed270",
+    "status": "machine"
+  },
+  "dynamicQrCode.staticLink": {
+    "source": "83a034578d32",
+    "status": "machine"
+  },
+  "dynamicQrCode.blogLink": {
+    "source": "a2ab69053b95",
+    "status": "machine"
+  },
+  "dynamicQrCode.moreTitle": {
+    "source": "83b794145c0c",
+    "status": "machine"
+  },
+  "dynamicQrCode.more.docsTitle": {
+    "source": "6089067b0798",
+    "status": "machine"
+  },
+  "dynamicQrCode.more.docsBody": {
+    "source": "3fa6611edb76",
+    "status": "machine"
+  },
+  "dynamicQrCode.more.routingTitle": {
+    "source": "01f29b35c8d8",
+    "status": "machine"
+  },
+  "dynamicQrCode.more.routingBody": {
+    "source": "63da4252a2df",
+    "status": "machine"
+  },
+  "dynamicQrCode.more.controlsTitle": {
+    "source": "ff0ae4b25977",
+    "status": "machine"
+  },
+  "dynamicQrCode.more.controlsBody": {
+    "source": "3123eff1436f",
+    "status": "machine"
+  },
+  "dynamicQrCode.more.trackingTitle": {
+    "source": "276ed81072f4",
+    "status": "machine"
+  },
+  "dynamicQrCode.more.trackingBody": {
+    "source": "99b6cc84d5dd",
+    "status": "machine"
+  },
+  "dynamicQrCode.more.domainsTitle": {
+    "source": "e4351f23dd28",
+    "status": "machine"
+  },
+  "dynamicQrCode.more.domainsBody": {
+    "source": "daa7fa6968fe",
+    "status": "machine"
+  },
+  "dynamicQrCode.more.apiTitle": {
+    "source": "41a52587276c",
+    "status": "machine"
+  },
+  "dynamicQrCode.more.apiBody": {
+    "source": "460102fc1a1b",
+    "status": "machine"
+  },
+  "dynamicQrCode.faqTitle": {
+    "source": "ecc29b4cb857",
+    "status": "machine"
+  },
+  "dynamicQrCode.faq.freeQuestion": {
+    "source": "3bdfe6ab0adf",
+    "status": "machine"
+  },
+  "dynamicQrCode.faq.freeAnswer": {
+    "source": "083b09729ab1",
+    "status": "machine"
+  },
+  "dynamicQrCode.faq.expireQuestion": {
+    "source": "46917b2464b6",
+    "status": "machine"
+  },
+  "dynamicQrCode.faq.expireAnswer": {
+    "source": "73ed63d3a0d8",
+    "status": "machine"
+  },
+  "dynamicQrCode.faq.editQuestion": {
+    "source": "14cd637637e2",
+    "status": "machine"
+  },
+  "dynamicQrCode.faq.editAnswer": {
+    "source": "31b588f61aa5",
+    "status": "machine"
+  },
+  "dynamicQrCode.faq.trackQuestion": {
+    "source": "8f901c83bbb0",
+    "status": "machine"
+  },
+  "dynamicQrCode.faq.trackAnswer": {
+    "source": "6c6e860f6507",
+    "status": "machine"
+  },
+  "dynamicQrCode.faq.typesQuestion": {
+    "source": "39512ce13c53",
+    "status": "machine"
+  },
+  "dynamicQrCode.faq.typesAnswer": {
+    "source": "2d7c812812d5",
+    "status": "machine"
+  },
+  "dynamicQrCode.faq.domainQuestion": {
+    "source": "59194917cd69",
+    "status": "machine"
+  },
+  "dynamicQrCode.faq.domainAnswer": {
+    "source": "73e70b623244",
+    "status": "machine"
+  },
+  "dynamicQrCode.faq.apiQuestion": {
+    "source": "770bc7e3844f",
+    "status": "machine"
+  },
+  "dynamicQrCode.faq.apiAnswer": {
+    "source": "3a5471ee9807",
+    "status": "machine"
+  },
+  "dynamicQrCode.faq.selfHostQuestion": {
+    "source": "299ec1d80a56",
+    "status": "machine"
+  },
+  "dynamicQrCode.faq.selfHostAnswer": {
+    "source": "f8ef3a53b0da",
+    "status": "machine"
+  },
+  "openSource.metaTitle": {
+    "source": "a838912c369b",
+    "status": "machine"
+  },
+  "openSource.metaDescription": {
+    "source": "207c829706ab",
+    "status": "machine"
+  },
+  "openSource.crumb": {
+    "source": "67a0d2e0dab4",
+    "status": "machine"
+  },
+  "openSource.title": {
+    "source": "1bcd142c42e5",
+    "status": "machine"
+  },
+  "openSource.intro1": {
+    "source": "987b6782a46a",
+    "status": "machine"
+  },
+  "openSource.intro2": {
+    "source": "246de1afcab9",
+    "status": "machine"
+  },
+  "openSource.facts.agpl": {
+    "source": "8173f418671c",
+    "status": "machine"
+  },
+  "openSource.facts.mit": {
+    "source": "d2ad7ba5fa81",
+    "status": "machine"
+  },
+  "openSource.facts.selfHost": {
+    "source": "06bc184fcf44",
+    "status": "machine"
+  },
+  "openSource.facts.noAccount": {
+    "source": "490f3824824b",
+    "status": "machine"
+  },
+  "openSource.githubCta": {
+    "source": "20672423d716",
+    "status": "machine"
+  },
+  "openSource.selfHostCta": {
+    "source": "65858866917e",
+    "status": "machine"
+  },
+  "openSource.partsEyebrow": {
+    "source": "65b555fc7436",
+    "status": "machine"
+  },
+  "openSource.partsTitle": {
+    "source": "7513fc9b98bf",
+    "status": "machine"
+  },
+  "openSource.partsDescription": {
+    "source": "7692d5c252a2",
+    "status": "machine"
+  },
+  "openSource.partsHeader.part": {
+    "source": "8570a2e1669f",
+    "status": "machine"
+  },
+  "openSource.partsHeader.folder": {
+    "source": "74ccd4330384",
+    "status": "machine"
+  },
+  "openSource.partsHeader.license": {
+    "source": "c011d6097bfb",
+    "status": "machine"
+  },
+  "openSource.parts.appName": {
+    "source": "f2dc406dd2f3",
+    "status": "machine"
+  },
+  "openSource.parts.appBody": {
+    "source": "2d62fe0e242c",
+    "status": "machine"
+  },
+  "openSource.parts.libraryName": {
+    "source": "d08b1e49c527",
+    "status": "machine"
+  },
+  "openSource.parts.libraryBody": {
+    "source": "fda8f243bd5c",
+    "status": "machine"
+  },
+  "openSource.parts.cliName": {
+    "source": "6efec9ed7999",
+    "status": "machine"
+  },
+  "openSource.parts.cliBody": {
+    "source": "4dcc7514fb4f",
+    "status": "machine"
+  },
+  "openSource.parts.pluginsName": {
+    "source": "9514b7ff4860",
+    "status": "machine"
+  },
+  "openSource.parts.pluginsBody": {
+    "source": "83fa6a36f67c",
+    "status": "machine"
+  },
+  "openSource.parts.eeName": {
+    "source": "a2bb3445855d",
+    "status": "machine"
+  },
+  "openSource.parts.eeBody": {
+    "source": "1eeff098c7c5",
+    "status": "machine"
+  },
+  "openSource.eeLicense": {
+    "source": "74be5bbb6261",
+    "status": "machine"
+  },
+  "openSource.eeNote": {
+    "source": "4a6fedd7f2d1",
+    "status": "machine"
+  },
+  "openSource.waysEyebrow": {
+    "source": "b62354b3a6a8",
+    "status": "machine"
+  },
+  "openSource.waysTitle": {
+    "source": "c85917d62e09",
+    "status": "machine"
+  },
+  "openSource.ways.hostedTitle": {
+    "source": "1c828b52012b",
+    "status": "machine"
+  },
+  "openSource.ways.hostedBody": {
+    "source": "5a96b019b4ee",
+    "status": "machine"
+  },
+  "openSource.ways.hostedLink": {
+    "source": "e29e52c48e42",
+    "status": "machine"
+  },
+  "openSource.ways.hostedLink2": {
+    "source": "e64f4839ef20",
+    "status": "machine"
+  },
+  "openSource.ways.selfHostTitle": {
+    "source": "c42ee80914b2",
+    "status": "machine"
+  },
+  "openSource.ways.selfHostBody": {
+    "source": "8478121a7197",
+    "status": "machine"
+  },
+  "openSource.ways.selfHostLink": {
+    "source": "65858866917e",
+    "status": "machine"
+  },
+  "openSource.ways.libraryTitle": {
+    "source": "de6194a02423",
+    "status": "machine"
+  },
+  "openSource.ways.libraryBody": {
+    "source": "2231f716f1b2",
+    "status": "machine"
+  },
+  "openSource.ways.libraryLink": {
+    "source": "9428411081b1",
+    "status": "machine"
+  },
+  "openSource.ways.libraryLink2": {
+    "source": "a501ec76ca7e",
+    "status": "machine"
+  },
+  "openSource.runEyebrow": {
+    "source": "61e8d44ad423",
+    "status": "machine"
+  },
+  "openSource.runTitle": {
+    "source": "49a45319dcd3",
+    "status": "machine"
+  },
+  "openSource.runDescription": {
+    "source": "0f22178acb85",
+    "status": "machine"
+  },
+  "openSource.runLabels.docker": {
+    "source": "006a07fe9111",
+    "status": "machine"
+  },
+  "openSource.runLabels.library": {
+    "source": "2acaf9b6ceaf",
+    "status": "machine"
+  },
+  "openSource.runNotes.signIn": {
+    "source": "59f9948f08e3",
+    "status": "machine"
+  },
+  "openSource.runNotes.postgres": {
+    "source": "ad4e0f01bf32",
+    "status": "machine"
+  },
+  "openSource.runNotes.limits": {
+    "source": "eb0e1007cc78",
+    "status": "machine"
+  },
+  "openSource.runLink": {
+    "source": "a19ca783db8a",
+    "status": "machine"
+  },
+  "openSource.licenseEyebrow": {
+    "source": "6d5d90047973",
+    "status": "machine"
+  },
+  "openSource.licenseTitle": {
+    "source": "afed568bfa3e",
+    "status": "machine"
+  },
+  "openSource.licenses.agplTitle": {
+    "source": "1ad524220f9c",
+    "status": "machine"
+  },
+  "openSource.licenses.agplBody": {
+    "source": "66401ef5e480",
+    "status": "machine"
+  },
+  "openSource.licenses.mitTitle": {
+    "source": "dc2d09c52ac3",
+    "status": "machine"
+  },
+  "openSource.licenses.mitBody": {
+    "source": "10218abbcede",
+    "status": "machine"
+  },
+  "openSource.licenses.trademarkTitle": {
+    "source": "96b73a01f4e9",
+    "status": "machine"
+  },
+  "openSource.licenses.trademarkBody": {
+    "source": "bc5c2c57041e",
+    "status": "machine"
+  },
+  "openSource.licenseNote": {
+    "source": "e018c3036863",
+    "status": "machine"
+  },
+  "openSource.contributeEyebrow": {
+    "source": "97b0c61b99f6",
+    "status": "machine"
+  },
+  "openSource.contributeTitle": {
+    "source": "947a702caee8",
+    "status": "machine"
+  },
+  "openSource.contributeBody": {
+    "source": "edb422e88c21",
+    "status": "machine"
+  },
+  "openSource.contributeLinks.contributing": {
+    "source": "856161dc5b9a",
+    "status": "machine"
+  },
+  "openSource.contributeLinks.goodFirst": {
+    "source": "a4c2774739ee",
+    "status": "machine"
+  },
+  "openSource.contributeLinks.discussions": {
+    "source": "60157cfcfe3f",
+    "status": "machine"
+  },
+  "openSource.contributeLinks.security": {
+    "source": "5929ef9641ba",
+    "status": "machine"
+  },
+  "openSource.stackTitle": {
+    "source": "757d4af22a81",
+    "status": "machine"
+  },
+  "openSource.stackBody": {
+    "source": "1bb23bf30949",
+    "status": "machine"
+  },
+  "openSource.moreTitle": {
+    "source": "ddc0be666191",
+    "status": "machine"
+  },
+  "openSource.more.dynamicTitle": {
+    "source": "6089067b0798",
+    "status": "machine"
+  },
+  "openSource.more.dynamicBody": {
+    "source": "f3e53080ab4a",
+    "status": "machine"
+  },
+  "openSource.more.apiTitle": {
+    "source": "f04a8a45ca80",
+    "status": "machine"
+  },
+  "openSource.more.apiBody": {
+    "source": "35a969b520cc",
+    "status": "machine"
+  },
+  "openSource.more.mcpTitle": {
+    "source": "d938c8168e3a",
+    "status": "machine"
+  },
+  "openSource.more.mcpBody": {
+    "source": "977b2c1d5ca1",
+    "status": "machine"
+  },
+  "openSource.more.compareTitle": {
+    "source": "5bd08d2b18fb",
+    "status": "machine"
+  },
+  "openSource.more.compareBody": {
+    "source": "8b1b41fb8e65",
+    "status": "machine"
+  },
+  "openSource.more.guaranteeTitle": {
+    "source": "cc813935fc0f",
+    "status": "machine"
+  },
+  "openSource.more.guaranteeBody": {
+    "source": "4749961326ea",
+    "status": "machine"
+  },
+  "openSource.faqTitle": {
+    "source": "41f3dd38dbae",
+    "status": "machine"
+  },
+  "openSource.faq.openQuestion": {
+    "source": "0872b4208c88",
+    "status": "machine"
+  },
+  "openSource.faq.openAnswer": {
+    "source": "703ac6c32b02",
+    "status": "machine"
+  },
+  "openSource.faq.githubQuestion": {
+    "source": "c4377af897ab",
+    "status": "machine"
+  },
+  "openSource.faq.githubAnswer": {
+    "source": "1ea4d4eb335a",
+    "status": "machine"
+  },
+  "openSource.faq.freeQuestion": {
+    "source": "f0e63e74e968",
+    "status": "machine"
+  },
+  "openSource.faq.freeAnswer": {
+    "source": "4d30724fc751",
+    "status": "machine"
+  },
+  "openSource.faq.needQuestion": {
+    "source": "5d92a52d2c37",
+    "status": "machine"
+  },
+  "openSource.faq.needAnswer": {
+    "source": "11ba7055ff00",
+    "status": "machine"
+  },
+  "openSource.faq.closedQuestion": {
+    "source": "754f4a17ac34",
+    "status": "machine"
+  },
+  "openSource.faq.closedAnswer": {
+    "source": "ceaf084a9857",
+    "status": "machine"
+  },
+  "openSource.faq.changesQuestion": {
+    "source": "87e958b83c28",
+    "status": "machine"
+  },
+  "openSource.faq.changesAnswer": {
+    "source": "440007f924be",
+    "status": "machine"
+  },
+  "openSource.faq.nameQuestion": {
+    "source": "73930af9a847",
+    "status": "machine"
+  },
+  "openSource.faq.nameAnswer": {
+    "source": "8c07d0debdf7",
+    "status": "machine"
+  },
+  "openSource.faq.shutdownQuestion": {
+    "source": "80a6c2564679",
+    "status": "machine"
+  },
+  "openSource.faq.shutdownAnswer": {
+    "source": "b16f2965c09d",
     "status": "machine"
   },
   "ai.metaTitle": {
@@ -11095,10 +13095,6 @@
     "source": "f5a57b969150",
     "status": "machine"
   },
-  "editor.controlSections.frameControls.customise": {
-    "source": "1bed90804c20",
-    "status": "machine"
-  },
   "editor.controlSections.frameControls.importSvg": {
     "source": "88575ae0c628",
     "status": "machine"
@@ -11115,32 +13111,8 @@
     "source": "0e66373f45dc",
     "status": "machine"
   },
-  "editor.controlSections.frameControls.secondLine": {
-    "source": "c8b588f708d6",
-    "status": "machine"
-  },
-  "editor.controlSections.frameControls.leaveEmptyForNoLabel": {
-    "source": "664c33884a79",
-    "status": "machine"
-  },
   "editor.controlSections.frameControls.pickAFrameFirst": {
     "source": "4aede128d746",
-    "status": "machine"
-  },
-  "editor.controlSections.frameControls.frameColor": {
-    "source": "2d7228cc6b77",
-    "status": "machine"
-  },
-  "editor.controlSections.frameControls.textColor": {
-    "source": "4a69d0166046",
-    "status": "machine"
-  },
-  "editor.controlSections.frameControls.endColor": {
-    "source": "da2d25d0b723",
-    "status": "machine"
-  },
-  "editor.controlSections.frameControls.optionalEGYourWebsite": {
-    "source": "f7f267b95bd4",
     "status": "machine"
   },
   "editor.controlSections.frameControls.none": {
@@ -11200,7 +13172,7 @@
     "status": "machine"
   },
   "editor.controlSections.framePicker.everyFrameBuiltInStyles": {
-    "source": "40954525a2f2",
+    "source": "7753c9ce4374",
     "status": "machine"
   },
   "editor.controlSections.framePicker.less": {
@@ -11223,8 +13195,12 @@
     "source": "b743c760826c",
     "status": "machine"
   },
-  "editor.controlSections.framePicker.builtIn": {
-    "source": "1f43948106d1",
+  "editor.controlSections.framePicker.classic": {
+    "source": "ae25d6481fc1",
+    "status": "machine"
+  },
+  "editor.controlSections.framePicker.shapedCodes": {
+    "source": "85014cc1a454",
     "status": "machine"
   },
   "editor.controlSections.framePicker.saved": {
@@ -11857,6 +13833,302 @@
   },
   "editor.frameInline.inlineFrameEditor.moreFrameOptions": {
     "source": "84853fb7f0ef",
+    "status": "machine"
+  },
+  "editor.partInline.parts.eyes.edit": {
+    "source": "691e8fbf5f47",
+    "status": "machine"
+  },
+  "editor.partInline.parts.eyes.options": {
+    "source": "27bbc0a2ebf6",
+    "status": "machine"
+  },
+  "editor.partInline.parts.eyes.random": {
+    "source": "28d8de9fd9e9",
+    "status": "machine"
+  },
+  "editor.partInline.parts.eyes.more": {
+    "source": "2cfe63824ded",
+    "status": "machine"
+  },
+  "editor.partInline.parts.dots.edit": {
+    "source": "0c5f54d7380b",
+    "status": "machine"
+  },
+  "editor.partInline.parts.dots.options": {
+    "source": "109fc933304c",
+    "status": "machine"
+  },
+  "editor.partInline.parts.dots.random": {
+    "source": "e07c46fdfdc3",
+    "status": "machine"
+  },
+  "editor.partInline.parts.dots.more": {
+    "source": "fdb192df70c2",
+    "status": "machine"
+  },
+  "editor.partInline.parts.logo.edit": {
+    "source": "134a1450f00b",
+    "status": "machine"
+  },
+  "editor.partInline.parts.logo.options": {
+    "source": "7d59ee50382b",
+    "status": "machine"
+  },
+  "editor.partInline.parts.logo.random": {
+    "source": "b430f59a36c2",
+    "status": "machine"
+  },
+  "editor.partInline.parts.logo.more": {
+    "source": "530b7838757e",
+    "status": "machine"
+  },
+  "editor.partInline.parts.background.edit": {
+    "source": "75dbca49b6f4",
+    "status": "machine"
+  },
+  "editor.partInline.parts.background.options": {
+    "source": "21e8489c64d9",
+    "status": "machine"
+  },
+  "editor.partInline.parts.background.random": {
+    "source": "c1eed655ecfe",
+    "status": "machine"
+  },
+  "editor.partInline.parts.background.more": {
+    "source": "d738160c6b99",
+    "status": "machine"
+  },
+  "editor.partInline.parts.background.editShape": {
+    "source": "0f6d760059b8",
+    "status": "machine"
+  },
+  "editor.partInline.parts.frame.edit": {
+    "source": "83af8e9e4bf6",
+    "status": "machine"
+  },
+  "editor.partInline.parts.frame.options": {
+    "source": "83f066591c5a",
+    "status": "machine"
+  },
+  "editor.partInline.parts.frame.random": {
+    "source": "0e26e0660dd9",
+    "status": "machine"
+  },
+  "editor.partInline.parts.frame.more": {
+    "source": "84853fb7f0ef",
+    "status": "machine"
+  },
+  "editor.partInline.items.outerShape": {
+    "source": "f215b634a3aa",
+    "status": "machine"
+  },
+  "editor.partInline.items.centerShape": {
+    "source": "5aefcf3ebc59",
+    "status": "machine"
+  },
+  "editor.partInline.items.eyeColor": {
+    "source": "2816702f68ad",
+    "status": "machine"
+  },
+  "editor.partInline.items.centerColor": {
+    "source": "99df89fac615",
+    "status": "machine"
+  },
+  "editor.partInline.items.pattern": {
+    "source": "4288ade73ff9",
+    "status": "machine"
+  },
+  "editor.partInline.items.dotColor": {
+    "source": "f762f73563fb",
+    "status": "machine"
+  },
+  "editor.partInline.items.dotSize": {
+    "source": "97c5bc43ff30",
+    "status": "machine"
+  },
+  "editor.partInline.items.logo": {
+    "source": "d707dc2f1936",
+    "status": "machine"
+  },
+  "editor.partInline.items.quickIcons": {
+    "source": "4f438e913206",
+    "status": "machine"
+  },
+  "editor.partInline.items.logoSize": {
+    "source": "1483ec4e73dc",
+    "status": "machine"
+  },
+  "editor.partInline.items.hideLogo": {
+    "source": "4b2d07b23ba4",
+    "status": "machine"
+  },
+  "editor.partInline.items.backgroundColor": {
+    "source": "3e314dafdf7c",
+    "status": "machine"
+  },
+  "editor.partInline.items.padding": {
+    "source": "ee0d7af0bffd",
+    "status": "machine"
+  },
+  "editor.partInline.items.frameStyle": {
+    "source": "84b161a43043",
+    "status": "machine"
+  },
+  "editor.partInline.items.frameColor": {
+    "source": "2d7228cc6b77",
+    "status": "machine"
+  },
+  "editor.partInline.items.whichEyes": {
+    "source": "f01982f48c03",
+    "status": "machine"
+  },
+  "editor.partInline.items.allEyes": {
+    "source": "6dd43284a407",
+    "status": "machine"
+  },
+  "editor.partInline.items.thisEye": {
+    "source": "be88e7e92763",
+    "status": "machine"
+  },
+  "editor.partInline.items.thisEyesColor": {
+    "source": "3df8cea82992",
+    "status": "machine"
+  },
+  "editor.partInline.items.thisEyesCenterColor": {
+    "source": "b18eff2ab4f2",
+    "status": "machine"
+  },
+  "editor.partInline.items.shapesChangeAllThreeEyes": {
+    "source": "2ec9e6c3e0e7",
+    "status": "machine"
+  },
+  "editor.partInline.items.sameAsTheOthers": {
+    "source": "c20b8a1de631",
+    "status": "machine"
+  },
+  "editor.partInline.items.eyesWithTheirOwnColor": {
+    "source": "a4e225b42367",
+    "status": "machine"
+  },
+  "editor.partInline.items.logoShapeAndPlate": {
+    "source": "848f74c90181",
+    "status": "machine"
+  },
+  "editor.partInline.items.clearSpace": {
+    "source": "5921f132532e",
+    "status": "machine"
+  },
+  "editor.partInline.items.content": {
+    "source": "47bd29075f8b",
+    "status": "machine"
+  },
+  "editor.partInline.items.codeShape": {
+    "source": "6f591585fbae",
+    "status": "machine"
+  },
+  "editor.partInline.items.errorCorrection": {
+    "source": "c7bdad567af2",
+    "status": "machine"
+  },
+  "editor.partInline.random": {
+    "source": "67bc484430fe",
+    "status": "machine"
+  },
+  "editor.partInline.moreOptions": {
+    "source": "bc79cdffbaa8",
+    "status": "machine"
+  },
+  "editor.partInline.sheet.changesShowOnTheCode": {
+    "source": "83ba360b3742",
+    "status": "machine"
+  },
+  "editor.partInline.sheet.done": {
+    "source": "11a6767d5674",
+    "status": "machine"
+  },
+  "editor.partInline.content.link": {
+    "source": "a6a32dbc5618",
+    "status": "machine"
+  },
+  "editor.partInline.content.text": {
+    "source": "71988c4d8e08",
+    "status": "machine"
+  },
+  "editor.partInline.content.theCodeKeepsItsContent": {
+    "source": "e3eea635dbc5",
+    "status": "machine"
+  },
+  "editor.partInline.content.scansOpenHost": {
+    "source": "89d886d47495",
+    "status": "machine"
+  },
+  "editor.partInline.content.textHint": {
+    "source": "c910e35a6a23",
+    "status": "machine"
+  },
+  "editor.partInline.content.editedInTheContentTab": {
+    "source": "61df96171e51",
+    "status": "machine"
+  },
+  "editor.partInline.content.openTheContentTab": {
+    "source": "d63bfc89400f",
+    "status": "machine"
+  },
+  "editor.partInline.codeShape.codeShape": {
+    "source": "6f591585fbae",
+    "status": "machine"
+  },
+  "editor.partInline.codeShape.names.square": {
+    "source": "c11092bc0861",
+    "status": "machine"
+  },
+  "editor.partInline.codeShape.names.circle": {
+    "source": "b93d3bcecff5",
+    "status": "machine"
+  },
+  "editor.partInline.codeShape.names.heart": {
+    "source": "770af9d18037",
+    "status": "machine"
+  },
+  "editor.partInline.codeShape.aCircleOrHeartTakes": {
+    "source": "ac2030d88592",
+    "status": "machine"
+  },
+  "editor.partInline.errorCorrection.theLogoRaisesItToLevel": {
+    "source": "b84208d7c5bf",
+    "status": "machine"
+  },
+  "editor.partInline.handles.moveLogo": {
+    "source": "d27a74e88bfc",
+    "status": "machine"
+  },
+  "editor.partInline.handles.dragOrUseTheArrowKeys": {
+    "source": "56e4952aafe1",
+    "status": "machine"
+  },
+  "editor.partInline.handles.logoSize": {
+    "source": "1483ec4e73dc",
+    "status": "machine"
+  },
+  "editor.partInline.handles.percentOfTheCode": {
+    "source": "227aab7c91cd",
+    "status": "machine"
+  },
+  "editor.partInline.handles.padding": {
+    "source": "ee0d7af0bffd",
+    "status": "machine"
+  },
+  "editor.partInline.handles.modules": {
+    "source": "a11fcc63bcde",
+    "status": "machine"
+  },
+  "editor.partInline.handles.dragToChangeThePadding": {
+    "source": "36445054fae4",
+    "status": "machine"
+  },
+  "editor.partInline.drop.dropToUseAsLogo": {
+    "source": "18b3a562cd9e",
     "status": "machine"
   },
   "editor.gradientPicker.pickASolidColorA": {
@@ -12631,6 +14903,10 @@
     "source": "4353ae15ce2a",
     "status": "machine"
   },
+  "editor.keyboardShortcutsModal.categories.preview": {
+    "source": "324b134f57c7",
+    "status": "machine"
+  },
   "editor.keyboardShortcutsModal.categories.help": {
     "source": "b79cac926e0b",
     "status": "machine"
@@ -12709,6 +14985,22 @@
   },
   "editor.keyboardShortcutsModal.shortcuts.showThisShortcutsDialog": {
     "source": "ddefcf6aec3e",
+    "status": "machine"
+  },
+  "editor.keyboardShortcutsModal.shortcuts.editAPartOfTheCode": {
+    "source": "cfddc2b2d6c6",
+    "status": "machine"
+  },
+  "editor.keyboardShortcutsModal.shortcuts.randomLookForThatPart": {
+    "source": "70db48fdf358",
+    "status": "machine"
+  },
+  "editor.keyboardShortcutsModal.shortcuts.hideTheFocusedLogo": {
+    "source": "1f1218678b8a",
+    "status": "machine"
+  },
+  "editor.keyboardShortcutsModal.shortcuts.moveTheLogoWhileEditing": {
+    "source": "4e8217755d57",
     "status": "machine"
   },
   "editor.soundSwitch.sounds": {
@@ -13191,6 +15483,22 @@
     "source": "d7cbbb688b2e",
     "status": "machine"
   },
+  "editor.connections.libraryDialog.loadMore": {
+    "source": "ac8991ef0101",
+    "status": "machine"
+  },
+  "editor.connections.libraryDialog.loading": {
+    "source": "ba3bbbe10d8b",
+    "status": "machine"
+  },
+  "editor.connections.libraryDialog.tryAgain": {
+    "source": "d8b8392e2c54",
+    "status": "machine"
+  },
+  "editor.connections.libraryDialog.couldntLoadYourFiles": {
+    "source": "811a2f91fd40",
+    "status": "machine"
+  },
   "editor.connections.sourceListEditor.thisBlockHoldsUpTo": {
     "source": "7a1519ab5ca1",
     "status": "machine"
@@ -13597,6 +15905,30 @@
   },
   "community.itemPages.pages": {
     "source": "9046da16aea9",
+    "status": "machine"
+  },
+  "community.itemPages.loadMore": {
+    "source": "ac8991ef0101",
+    "status": "machine"
+  },
+  "community.itemPages.loading": {
+    "source": "dc380888c4e2",
+    "status": "machine"
+  },
+  "community.itemPages.failed": {
+    "source": "2ee27b98630c",
+    "status": "machine"
+  },
+  "community.more.load": {
+    "source": "ac8991ef0101",
+    "status": "machine"
+  },
+  "community.more.loading": {
+    "source": "dc380888c4e2",
+    "status": "machine"
+  },
+  "community.more.failed": {
+    "source": "4d46d47424c3",
     "status": "machine"
   },
   "community.licenceConfirm.licence": {
@@ -14611,6 +16943,10 @@
     "source": "7cc4c76e3a85",
     "status": "machine"
   },
+  "app.settings.account.twoFactorSettings.passkeySpotlight": {
+    "source": "7ba7ffc49846",
+    "status": "machine"
+  },
   "app.settings.account.twoFactorSetupDialog.stepStepnumberOfLength": {
     "source": "c103e940197b",
     "status": "machine"
@@ -14773,6 +17109,58 @@
   },
   "app.settings.account.page.profileSecurity": {
     "source": "07877769c55c",
+    "status": "machine"
+  },
+  "app.settings.account.deletion.counts.codes": {
+    "source": "c31e993dfe0e",
+    "status": "machine"
+  },
+  "app.settings.account.deletion.counts.pages": {
+    "source": "b307a9a56be0",
+    "status": "machine"
+  },
+  "app.settings.account.deletion.counts.files": {
+    "source": "e60f4a210767",
+    "status": "machine"
+  },
+  "app.settings.account.deletion.counts.domains": {
+    "source": "d79b94f4fb49",
+    "status": "machine"
+  },
+  "app.settings.account.deletion.workspaceEmpty": {
+    "source": "6d15283591d6",
+    "status": "machine"
+  },
+  "app.settings.account.deletion.workspaceWith": {
+    "source": "8ec611c811e6",
+    "status": "machine"
+  },
+  "app.settings.account.deletion.workspaceWithCodes": {
+    "source": "63b8526586f8",
+    "status": "machine"
+  },
+  "app.settings.account.deletion.teamPromote": {
+    "source": "271c9a55887f",
+    "status": "machine"
+  },
+  "app.settings.account.deletion.teamStays": {
+    "source": "2d9e30d4be27",
+    "status": "machine"
+  },
+  "app.settings.account.deletion.teamDeleted": {
+    "source": "716af2e4a826",
+    "status": "machine"
+  },
+  "app.settings.account.deletion.subscriptionCancelled": {
+    "source": "264cadb9d717",
+    "status": "machine"
+  },
+  "app.settings.account.deletion.signedOut": {
+    "source": "f211ac66ae60",
+    "status": "machine"
+  },
+  "app.settings.account.deletion.subscriptionBlocker": {
+    "source": "9cc87508accc",
     "status": "machine"
   },
   "app.settings.affiliate.affiliateClient.paypalEmail": {
@@ -15019,6 +17407,18 @@
     "source": "4895f73177ab",
     "status": "machine"
   },
+  "app.settings.affiliate.page.pagePageOfPagecount": {
+    "source": "c2aef42e9d5f",
+    "status": "machine"
+  },
+  "app.settings.affiliate.page.previous": {
+    "source": "a57b08a480b8",
+    "status": "machine"
+  },
+  "app.settings.affiliate.page.next": {
+    "source": "1ff57a29d7c9",
+    "status": "machine"
+  },
   "app.settings.authorizedApps.authorizedAppsView.noAppsHaveAccess": {
     "source": "1474712e7d67",
     "status": "machine"
@@ -15083,8 +17483,12 @@
     "source": "7071afd2cdad",
     "status": "machine"
   },
-  "app.settings.authorizedApps.authorizedAppsView.lastActiveLastactiveat": {
-    "source": "1581596cc5eb",
+  "app.settings.authorizedApps.authorizedAppsView.authorizedOn": {
+    "source": "aa2b90247e0b",
+    "status": "machine"
+  },
+  "app.settings.authorizedApps.authorizedAppsView.authorizedLastActive": {
+    "source": "6bac3532c5c9",
     "status": "machine"
   },
   "app.settings.authorizedApps.authorizedAppsView.revoking": {
@@ -15959,6 +18363,30 @@
     "source": "b764cdc0eab7",
     "status": "machine"
   },
+  "app.settings.integrations.dubManagement.couldntLoadLinks": {
+    "source": "2450d54facb8",
+    "status": "machine"
+  },
+  "app.settings.integrations.dubManagement.couldntLoadMoreLinks": {
+    "source": "e3dde93ed24d",
+    "status": "machine"
+  },
+  "app.settings.integrations.dubManagement.loadMoreLinks": {
+    "source": "00ca18a004d4",
+    "status": "machine"
+  },
+  "app.settings.integrations.dubManagement.loadingLinks": {
+    "source": "8662575b9c7b",
+    "status": "machine"
+  },
+  "app.settings.integrations.dubManagement.tryAgain": {
+    "source": "d8b8392e2c54",
+    "status": "machine"
+  },
+  "app.settings.integrations.dubManagement.thatsEveryLink": {
+    "source": "464714814ef3",
+    "status": "machine"
+  },
   "app.settings.integrations.integrationDetail.connected": {
     "source": "22965568d22a",
     "status": "machine"
@@ -16189,6 +18617,30 @@
   },
   "app.settings.integrations.responseSinkPanel.retryFailed": {
     "source": "2630f6505062",
+    "status": "machine"
+  },
+  "app.settings.integrations.responseSinkPanel.searchPages": {
+    "source": "ec5ae92b811c",
+    "status": "machine"
+  },
+  "app.settings.integrations.responseSinkPanel.noPagesMatch": {
+    "source": "9903cc602926",
+    "status": "machine"
+  },
+  "app.settings.integrations.responseSinkPanel.loadMorePages": {
+    "source": "7080f5621e95",
+    "status": "machine"
+  },
+  "app.settings.integrations.responseSinkPanel.loadingPages": {
+    "source": "b703d4e30767",
+    "status": "machine"
+  },
+  "app.settings.integrations.responseSinkPanel.tryAgain": {
+    "source": "d8b8392e2c54",
+    "status": "machine"
+  },
+  "app.settings.integrations.responseSinkPanel.couldntLoadMorePages": {
+    "source": "56be4d318a76",
     "status": "machine"
   },
   "app.settings.integrations.slackBotPanel.qrdxBot": {
@@ -16663,6 +19115,30 @@
     "source": "cefccbc9e817",
     "status": "machine"
   },
+  "app.dashboard.analytics.comparePicker.searchCodes": {
+    "source": "67130f2cf40c",
+    "status": "machine"
+  },
+  "app.dashboard.analytics.comparePicker.mostScanned": {
+    "source": "b2c373d580d9",
+    "status": "machine"
+  },
+  "app.dashboard.analytics.comparePicker.searching": {
+    "source": "c31723ab3302",
+    "status": "machine"
+  },
+  "app.dashboard.analytics.comparePicker.noCodesMatch": {
+    "source": "16943b5b8eb2",
+    "status": "machine"
+  },
+  "app.dashboard.analytics.comparePicker.couldntSearch": {
+    "source": "0896353d2c9c",
+    "status": "machine"
+  },
+  "app.dashboard.analytics.comparePicker.typeToNarrow": {
+    "source": "619281111c3d",
+    "status": "machine"
+  },
   "app.dashboard.analytics.timeZoneSwitch.currentShowUtc": {
     "source": "6698dd1c40c6",
     "status": "machine"
@@ -16689,10 +19165,6 @@
   },
   "app.dashboard.barcodes.page.noBarcodesYet": {
     "source": "398eb5fb95a6",
-    "status": "machine"
-  },
-  "app.dashboard.barcodes.page.newBarcode": {
-    "source": "4820c2686d7d",
     "status": "machine"
   },
   "app.dashboard.barcodes.page.openTheFreeGenerator": {
@@ -16751,18 +19223,6 @@
     "source": "206660802867",
     "status": "machine"
   },
-  "app.dashboard.barcodes.new.page.allBarcodes": {
-    "source": "8f26addb57cb",
-    "status": "machine"
-  },
-  "app.dashboard.barcodes.new.page.newBarcode": {
-    "source": "4820c2686d7d",
-    "status": "machine"
-  },
-  "app.dashboard.barcodes.new.page.pickTheTypeEnterThe": {
-    "source": "f9db5e565e45",
-    "status": "machine"
-  },
   "app.dashboard.barcodes.barcodeActions.duplicate": {
     "source": "02cdaabfca80",
     "status": "machine"
@@ -16819,16 +19279,8 @@
     "source": "fc2f5a475297",
     "status": "machine"
   },
-  "app.dashboard.barcodes.barcodeEditor.notSavedYet": {
-    "source": "35c5fe43950d",
-    "status": "machine"
-  },
   "app.dashboard.barcodes.barcodeEditor.saveChanges": {
     "source": "dd0ae7a5cbcf",
-    "status": "machine"
-  },
-  "app.dashboard.barcodes.barcodeEditor.saveBarcode": {
-    "source": "2c052df33b87",
     "status": "machine"
   },
   "app.dashboard.barcodes.barcodeEditor.couldntSaveTheBarcode": {
@@ -16837,6 +19289,98 @@
   },
   "app.dashboard.barcodes.barcodeEditor.barcodeSaved": {
     "source": "1af329782c8c",
+    "status": "machine"
+  },
+  "app.dashboard.barcodes.barcodeBuilder.newBarcode": {
+    "source": "4820c2686d7d",
+    "status": "machine"
+  },
+  "app.dashboard.barcodes.barcodeBuilder.pickTheTypeEnterThe": {
+    "source": "f9db5e565e45",
+    "status": "machine"
+  },
+  "app.dashboard.barcodes.barcodeBuilder.yourBarcodeIsSaved": {
+    "source": "d2f203ad953c",
+    "status": "machine"
+  },
+  "app.dashboard.barcodes.barcodeBuilder.downloadItNowOrOpen": {
+    "source": "0986bba9e9d6",
+    "status": "machine"
+  },
+  "app.dashboard.barcodes.barcodeBuilder.design": {
+    "source": "0072e6b93494",
+    "status": "machine"
+  },
+  "app.dashboard.barcodes.barcodeBuilder.back": {
+    "source": "76900f1bfd16",
+    "status": "machine"
+  },
+  "app.dashboard.barcodes.barcodeBuilder.close": {
+    "source": "7d9eb7acb13e",
+    "status": "machine"
+  },
+  "app.dashboard.barcodes.barcodeBuilder.value": {
+    "source": "8e37953d23da",
+    "status": "machine"
+  },
+  "app.dashboard.barcodes.barcodeBuilder.valueCopied": {
+    "source": "7a764ef31463",
+    "status": "machine"
+  },
+  "app.dashboard.barcodes.barcodeBuilder.type": {
+    "source": "baaddf70fb5d",
+    "status": "machine"
+  },
+  "app.dashboard.barcodes.barcodeBuilder.title": {
+    "source": "7e8cd2056da7",
+    "status": "machine"
+  },
+  "app.dashboard.barcodes.barcodeBuilder.openTheBarcode": {
+    "source": "a9bedcf177ef",
+    "status": "machine"
+  },
+  "app.dashboard.barcodes.barcodeBuilder.foldersDidntLoad": {
+    "source": "b0b8ac3d1bf4",
+    "status": "machine"
+  },
+  "app.dashboard.barcodes.barcodeBuilder.couldntReachQrdx": {
+    "source": "5d5e4c745266",
+    "status": "machine"
+  },
+  "app.dashboard.barcodes.barcodeBuilder.fixTheHighlightedInputTo": {
+    "source": "c0eb30ae5db5",
+    "status": "machine"
+  },
+  "app.dashboard.barcodes.barcodeBuilder.saveBarcode": {
+    "source": "2c052df33b87",
+    "status": "machine"
+  },
+  "app.dashboard.barcodes.barcodeBuilder.saving": {
+    "source": "dc85af8f2b1d",
+    "status": "machine"
+  },
+  "app.dashboard.barcodes.barcodeBuilder.createAnother": {
+    "source": "a2795bb4d347",
+    "status": "machine"
+  },
+  "app.dashboard.barcodes.barcodeBuilder.done": {
+    "source": "11a6767d5674",
+    "status": "machine"
+  },
+  "app.dashboard.barcodes.barcodeBuilder.closeWithoutSaving": {
+    "source": "e30d18d097ef",
+    "status": "machine"
+  },
+  "app.dashboard.barcodes.barcodeBuilder.thisBarcodeIsntSavedYet": {
+    "source": "f84e54fea007",
+    "status": "machine"
+  },
+  "app.dashboard.barcodes.barcodeBuilder.keepEditing": {
+    "source": "e76fd2add010",
+    "status": "machine"
+  },
+  "app.dashboard.barcodes.barcodeBuilder.discard": {
+    "source": "eb1a70e39274",
     "status": "machine"
   },
   "app.dashboard.barcodes.barcodesHeader.barcodes": {
@@ -16873,6 +19417,10 @@
   },
   "app.dashboard.barcodes.barcodesHeader.barcodes2": {
     "source": "33ab2ebaeb7c",
+    "status": "machine"
+  },
+  "app.dashboard.barcodes.barcodesList.move": {
+    "source": "6ecc3df6bffd",
     "status": "machine"
   },
   "app.dashboard.barcodes.barcodesList.noFolder": {
@@ -16968,7 +19516,31 @@
     "status": "machine"
   },
   "app.dashboard.barcodes.barcodesList.deleteValueForGood": {
-    "source": "7f5b4c6b225f",
+    "source": "7cedf5015823",
+    "status": "machine"
+  },
+  "app.dashboard.barcodes.barcodesList.movedToTrash": {
+    "source": "7339b5942faf",
+    "status": "machine"
+  },
+  "app.dashboard.barcodes.barcodesList.movedToTrashSkipped": {
+    "source": "8e20574c7df8",
+    "status": "machine"
+  },
+  "app.dashboard.barcodes.barcodesList.restored": {
+    "source": "967462a921c6",
+    "status": "machine"
+  },
+  "app.dashboard.barcodes.barcodesList.movedToFolder": {
+    "source": "7aa6209a0a30",
+    "status": "machine"
+  },
+  "app.dashboard.barcodes.barcodesList.tookOutOfFolders": {
+    "source": "57f59296e7be",
+    "status": "machine"
+  },
+  "app.dashboard.barcodes.barcodesList.deletedForGood": {
+    "source": "8a60d24dc34b",
     "status": "machine"
   },
   "app.dashboard.barcodes.barcodesList.deleting": {
@@ -17140,7 +19712,27 @@
     "status": "machine"
   },
   "app.dashboard.codes.import.importProgress.valueCouldntBeSent": {
-    "source": "10aed6718835",
+    "source": "5dabef0784d0",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.importProgress.retryValue": {
+    "source": "fafd32bac91b",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.importProgress.codesCount": {
+    "source": "c31e993dfe0e",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.importProgress.codesIntoFolder": {
+    "source": "7c2148d27287",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.importProgress.codesTagged": {
+    "source": "c0c9b2dc3bd8",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.importProgress.codesIntoFolderTagged": {
+    "source": "9633c3457bcb",
     "status": "machine"
   },
   "app.dashboard.codes.import.importProgress.retryThemNothingIsMade": {
@@ -17185,10 +19777,6 @@
   },
   "app.dashboard.codes.import.importProgress.retryAndContinue": {
     "source": "4b7489b3f95f",
-    "status": "machine"
-  },
-  "app.dashboard.codes.import.importProgress.retryValue": {
-    "source": "8daa3ac9b297",
     "status": "machine"
   },
   "app.dashboard.codes.import.importProgress.finishWithWhatsMade": {
@@ -17252,7 +19840,31 @@
     "status": "machine"
   },
   "app.dashboard.codes.import.importResults.createdValue": {
-    "source": "e5452822a939",
+    "source": "9bb42a8ae4b7",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.importResults.zipParts": {
+    "source": "8e4fb1e6a3f5",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.importResults.imagesMissing": {
+    "source": "98fc02fb4247",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.importResults.zipFailed": {
+    "source": "4929736dbcf7",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.importResults.rowsNotImported": {
+    "source": "3fe0aeb1ebb1",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.importResults.rowsNotSent": {
+    "source": "782e06bf32ca",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.importResults.rowsSkipped": {
+    "source": "b879979a5a2e",
     "status": "machine"
   },
   "app.dashboard.codes.import.importResults.noCodesWereCreated": {
@@ -17320,7 +19932,31 @@
     "status": "machine"
   },
   "app.dashboard.codes.import.importWizard.valueWithProblems": {
-    "source": "ff8eebf0af42",
+    "source": "9ec7ab8e90d7",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.importWizard.importValue": {
+    "source": "057a80ec94c6",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.importWizard.rowsAndColumns": {
+    "source": "6ca6ee345738",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.importWizard.validRows": {
+    "source": "9f89e91e1438",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.importWizard.needsHeaderAndRows": {
+    "source": "d030594523eb",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.importWizard.columnNumber": {
+    "source": "e9a03bca31e4",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.importWizard.fileTooLarge": {
+    "source": "acdcb46e3120",
     "status": "machine"
   },
   "app.dashboard.codes.import.importWizard.problemsCsv": {
@@ -17367,10 +20003,6 @@
     "source": "d989893356ee",
     "status": "machine"
   },
-  "app.dashboard.codes.import.importWizard.importValue": {
-    "source": "4f1cd9b8cd14",
-    "status": "machine"
-  },
   "app.dashboard.codes.import.importWizard.removeFile": {
     "source": "fffa2e32da71",
     "status": "machine"
@@ -17405,6 +20037,138 @@
   },
   "app.dashboard.codes.import.importWizard.sentImportChunkSizeAt": {
     "source": "b60dae388e20",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.issues.destinationMissing": {
+    "source": "64f0a746a104",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.issues.destinationTooLong": {
+    "source": "ce855a7160c8",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.issues.destinationNotUrl": {
+    "source": "4530d06f07af",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.issues.destinationProtocol": {
+    "source": "1394b1f3f212",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.issues.destinationCredentials": {
+    "source": "79aabc6e9e9d",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.issues.destinationShortLink": {
+    "source": "62e50bc97e78",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.issues.destinationRejected": {
+    "source": "37a5e503ef7b",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.issues.titleTooLong": {
+    "source": "3c70db19b4aa",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.issues.folderDepth": {
+    "source": "f5c2357551f7",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.issues.folderNameTooLong": {
+    "source": "590790f5e08c",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.issues.tooManyTags": {
+    "source": "bf00efeb8b5c",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.issues.tooManyTagsWithBatch": {
+    "source": "725d366fca17",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.issues.tagNameTooLong": {
+    "source": "2c7c06c76d81",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.issues.slugReserved": {
+    "source": "8f0d3ffb1a93",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.issues.slugLength": {
+    "source": "f29949aefc0c",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.issues.slugCharacters": {
+    "source": "9fb1ceb55c69",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.issues.slugDash": {
+    "source": "ab0b7cc67220",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.issues.slugDuplicate": {
+    "source": "9c025e4cba8d",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.issues.slugTaken": {
+    "source": "083c20591c73",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.issues.slugNotOnPlan": {
+    "source": "9d85ff1a215b",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.reasons.imported": {
+    "source": "e47fafe0a1c6",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.reasons.duplicate": {
+    "source": "a49d96278233",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.reasons.selectedTwice": {
+    "source": "5c81723218b1",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.reasons.qrdx": {
+    "source": "4fc8041cb0e8",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.reasons.limit": {
+    "source": "36e65c9a671a",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.reasons.providerEnded": {
+    "source": "e5436c9e7070",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.reasons.backHalfShape": {
+    "source": "d3320d4e1b42",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.reasons.backHalfReservedDomain": {
+    "source": "8afec599747a",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.reasons.backHalfReservedShared": {
+    "source": "5f806b1dc721",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.reasons.backHalfReservedSharedAddDomain": {
+    "source": "49fef8fa9273",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.reasons.backHalfTakenDomain": {
+    "source": "8590bfcb6296",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.reasons.backHalfTakenShared": {
+    "source": "e2879838811c",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.reasons.backHalfRepeated": {
+    "source": "4e57f7ef6c78",
     "status": "machine"
   },
   "app.dashboard.codes.analyticsExtra.whenPeopleScan": {
@@ -17529,10 +20293,6 @@
   },
   "app.dashboard.codes.analyticsTab.dateRange": {
     "source": "8061bfb29ce8",
-    "status": "machine"
-  },
-  "app.dashboard.codes.analyticsTab.valueKeepsValue2OfScan": {
-    "source": "5128689e0974",
     "status": "machine"
   },
   "app.dashboard.codes.analyticsTab.totalScans": {
@@ -18895,6 +21655,34 @@
     "source": "82484d20f5c1",
     "status": "machine"
   },
+  "app.dashboard.codes.codeActionsMenu.removedFromFavorites": {
+    "source": "e8a659fd472c",
+    "status": "machine"
+  },
+  "app.dashboard.codes.codeActionsMenu.addedToFavorites": {
+    "source": "e7a9801e0944",
+    "status": "machine"
+  },
+  "app.dashboard.codes.codeActionsMenu.copyCreated": {
+    "source": "00080b7c608c",
+    "status": "machine"
+  },
+  "app.dashboard.codes.codeActionsMenu.copyOpensSamePage": {
+    "source": "6ec13e1c344a",
+    "status": "machine"
+  },
+  "app.dashboard.codes.codeActionsMenu.copyScansFromZero": {
+    "source": "6619e759c4b3",
+    "status": "machine"
+  },
+  "app.dashboard.codes.codeActionsMenu.movedToTrash": {
+    "source": "a086066395cd",
+    "status": "machine"
+  },
+  "app.dashboard.codes.codeActionsMenu.codeRestored": {
+    "source": "0724e33fc0c8",
+    "status": "machine"
+  },
   "app.dashboard.codes.codeOptions.on": {
     "source": "ad6fe5958276",
     "status": "machine"
@@ -19099,8 +21887,56 @@
     "source": "b250a454877d",
     "status": "machine"
   },
+  "app.dashboard.codes.codesList.preparingValue": {
+    "source": "031d27231122",
+    "status": "machine"
+  },
+  "app.dashboard.codes.codesList.downloadedValueAsValue2": {
+    "source": "776010b03482",
+    "status": "machine"
+  },
   "app.dashboard.codes.codesList.deleteValueForever": {
-    "source": "1aa38b8ab240",
+    "source": "d477ca1e4903",
+    "status": "machine"
+  },
+  "app.dashboard.codes.codesList.allSelectedOthersSkipped": {
+    "source": "7435a2fb7655",
+    "status": "machine"
+  },
+  "app.dashboard.codes.codesList.movedToTrash": {
+    "source": "be3aad105b26",
+    "status": "machine"
+  },
+  "app.dashboard.codes.codesList.deletedForever": {
+    "source": "84d92b8493fe",
+    "status": "machine"
+  },
+  "app.dashboard.codes.codesList.othersSkipped": {
+    "source": "0d59505a2ec3",
+    "status": "machine"
+  },
+  "app.dashboard.codes.codesList.trashScansNote": {
+    "source": "85317e302d09",
+    "status": "machine"
+  },
+  "app.dashboard.codes.codesList.restoredCodes": {
+    "source": "11cf95e790be",
+    "status": "machine"
+  },
+  "app.dashboard.codes.codesList.archivedCodes": {
+    "source": "8457c3999aa4",
+    "status": "machine"
+  },
+  "app.dashboard.codes.codesList.unarchivedCodes": {
+    "source": "9a1f5ebdda3c",
+    "status": "machine"
+  },
+  "app.dashboard.codes.codesList.pausedCodes": {
+    "source": "efe0c790dc8d",
+    "status": "machine"
+  },
+  "app.dashboard.codes.codesList.resumedCodes": {
+    "source": "d7f781857d36",
     "status": "machine"
   },
   "app.dashboard.codes.codesList.theirScanAndVersionHistory": {
@@ -19163,24 +21999,12 @@
     "source": "0d8dba58eafb",
     "status": "machine"
   },
-  "app.dashboard.codes.codesList.allSelectedOthersSkipped": {
-    "source": "8ec3298516d7",
-    "status": "machine"
-  },
-  "app.dashboard.codes.codesList.preparingValue": {
-    "source": "2ccdf070c3b2",
-    "status": "machine"
-  },
   "app.dashboard.codes.codesList.renderingFinishedOfTotal": {
     "source": "acf871668d9b",
     "status": "machine"
   },
   "app.dashboard.codes.codesList.theQrCodesCouldntBe": {
     "source": "0b44d6ba1509",
-    "status": "machine"
-  },
-  "app.dashboard.codes.codesList.downloadedValueAsValue2": {
-    "source": "2a14e4144514",
     "status": "machine"
   },
   "app.dashboard.codes.codesList.downloadFailedPleaseTryAgain": {
@@ -19312,7 +22136,15 @@
     "status": "machine"
   },
   "app.dashboard.codes.codesToolbar.valueAndTheirScanHistory": {
-    "source": "012be164bfac",
+    "source": "3498793a05ec",
+    "status": "machine"
+  },
+  "app.dashboard.codes.codesToolbar.codeCount": {
+    "source": "c31e993dfe0e",
+    "status": "machine"
+  },
+  "app.dashboard.codes.codesToolbar.deletedForever": {
+    "source": "84d92b8493fe",
     "status": "machine"
   },
   "app.dashboard.codes.codesToolbar.cancel": {
@@ -19523,6 +22355,26 @@
     "source": "8b0bbad988f6",
     "status": "machine"
   },
+  "app.dashboard.codes.folderDialogs.movedToFolder": {
+    "source": "9da9c34245d2",
+    "status": "machine"
+  },
+  "app.dashboard.codes.folderDialogs.movedOutOfFolders": {
+    "source": "b06933076f29",
+    "status": "machine"
+  },
+  "app.dashboard.codes.folderDialogs.theTopLevel": {
+    "source": "fadfd18d60fa",
+    "status": "machine"
+  },
+  "app.dashboard.codes.folderDialogs.deletedFolder": {
+    "source": "0c82d7f9acbb",
+    "status": "machine"
+  },
+  "app.dashboard.codes.folderDialogs.folderRenamed": {
+    "source": "e2fc268e8030",
+    "status": "machine"
+  },
   "app.dashboard.codes.importDialog.import": {
     "source": "2cff9baabf56",
     "status": "machine"
@@ -19639,12 +22491,20 @@
     "source": "d9d979c63132",
     "status": "machine"
   },
-  "app.dashboard.codes.importFileStep.import": {
-    "source": "d942f6488657",
+  "app.dashboard.codes.importFileStep.previewRows": {
+    "source": "a838c49fd4f0",
     "status": "machine"
   },
-  "app.dashboard.codes.importFileStep.firstMaxJobLinks": {
-    "source": "dbc14328e6f2",
+  "app.dashboard.codes.importFileStep.previewImport": {
+    "source": "ab5c8e55ce2c",
+    "status": "machine"
+  },
+  "app.dashboard.codes.importFileStep.rows": {
+    "source": "c1a8854d520b",
+    "status": "machine"
+  },
+  "app.dashboard.codes.importFileStep.rowsFirst": {
+    "source": "71536403a24a",
     "status": "machine"
   },
   "app.dashboard.codes.importFileStep.chooseAnotherFile": {
@@ -19664,7 +22524,11 @@
     "status": "machine"
   },
   "app.dashboard.codes.importLinksStep.signInWith": {
-    "source": "11aaa14268df",
+    "source": "3a5ccde0e7d0",
+    "status": "machine"
+  },
+  "app.dashboard.codes.importLinksStep.valueSelected": {
+    "source": "335260945450",
     "status": "machine"
   },
   "app.dashboard.codes.importLinksStep.afterSigningInYouCome": {
@@ -19689,10 +22553,6 @@
   },
   "app.dashboard.codes.importLinksStep.allProviders": {
     "source": "20e56db7dfc7",
-    "status": "machine"
-  },
-  "app.dashboard.codes.importLinksStep.valueSelected": {
-    "source": "b0dc3e608e15",
     "status": "machine"
   },
   "app.dashboard.codes.importLinksStep.previewImport": {
@@ -19920,11 +22780,11 @@
     "status": "machine"
   },
   "app.dashboard.codes.importPreviewStep.importTheFirstValue": {
-    "source": "0ac7c1e5e095",
+    "source": "f0d470b9299d",
     "status": "machine"
   },
   "app.dashboard.codes.importPreviewStep.importValue": {
-    "source": "4f1cd9b8cd14",
+    "source": "057a80ec94c6",
     "status": "machine"
   },
   "app.dashboard.codes.importPreviewStep.keepTheirsOnThatDomain": {
@@ -19976,15 +22836,15 @@
     "status": "machine"
   },
   "app.dashboard.codes.importProviderStep.valueValue2Created": {
-    "source": "02b13c8d191c",
+    "source": "7519b1ccaab8",
+    "status": "machine"
+  },
+  "app.dashboard.codes.importProviderStep.valuePointingToQrdx": {
+    "source": "d6d4fe1aecec",
     "status": "machine"
   },
   "app.dashboard.codes.importProviderStep.resumeProcessedTotal": {
     "source": "657ea13572aa",
-    "status": "machine"
-  },
-  "app.dashboard.codes.importProviderStep.valuePointingToQrdx": {
-    "source": "a2665f63cd73",
     "status": "machine"
   },
   "app.dashboard.codes.importProviderStep.open": {
@@ -20020,15 +22880,27 @@
     "status": "machine"
   },
   "app.dashboard.codes.importRedirectsStep.undoValue": {
-    "source": "14e84bab06df",
+    "source": "a465798952e0",
     "status": "machine"
   },
-  "app.dashboard.codes.importRedirectsStep.update": {
-    "source": "c1c1009d3f37",
+  "app.dashboard.codes.importRedirectsStep.valueRestored": {
+    "source": "c0f88631c839",
     "status": "machine"
   },
-  "app.dashboard.codes.importRedirectsStep.in": {
-    "source": "582967534d0f",
+  "app.dashboard.codes.importRedirectsStep.valueNowOpenQrdx": {
+    "source": "6e34edd392c0",
+    "status": "machine"
+  },
+  "app.dashboard.codes.importRedirectsStep.dryRunValueWouldChange": {
+    "source": "650779540f22",
+    "status": "machine"
+  },
+  "app.dashboard.codes.importRedirectsStep.updateLinksIn": {
+    "source": "5e0f5123c042",
+    "status": "machine"
+  },
+  "app.dashboard.codes.importRedirectsStep.oldLinksAlreadyPoint": {
+    "source": "d1a25cb7bf81",
     "status": "machine"
   },
   "app.dashboard.codes.importRedirectsStep.importsFromNameHaveEnded": {
@@ -20051,24 +22923,12 @@
     "source": "d1b3b01b0e83",
     "status": "machine"
   },
-  "app.dashboard.codes.importRedirectsStep.dryRunValueWouldChange": {
-    "source": "074a9572fe38",
-    "status": "machine"
-  },
   "app.dashboard.codes.importRedirectsStep.iUnderstandTheseNameLinks": {
     "source": "db873883fef2",
     "status": "machine"
   },
   "app.dashboard.codes.importRedirectsStep.updateProgress": {
     "source": "e08dc19e0c25",
-    "status": "machine"
-  },
-  "app.dashboard.codes.importRedirectsStep.valueRestored": {
-    "source": "5743364789a6",
-    "status": "machine"
-  },
-  "app.dashboard.codes.importRedirectsStep.valueNowOpenQrdx": {
-    "source": "0be255f052a5",
     "status": "machine"
   },
   "app.dashboard.codes.importRedirectsStep.restoringOriginalDestinations": {
@@ -20151,8 +23011,16 @@
     "source": "e7df89e1e148",
     "status": "machine"
   },
-  "app.dashboard.codes.importRunStep.codesLiveOnItsOwn": {
-    "source": "1b7bb760c3b8",
+  "app.dashboard.codes.importRunStep.oldProviderCodesLiveOnItsDomain": {
+    "source": "7ddce2ff50f4",
+    "status": "machine"
+  },
+  "app.dashboard.codes.importRunStep.providerCodesLiveOnItsDomain": {
+    "source": "8a87ca7d3613",
+    "status": "machine"
+  },
+  "app.dashboard.codes.importRunStep.oldLinksPointToQrdx": {
+    "source": "ba50c63ac530",
     "status": "machine"
   },
   "app.dashboard.codes.importRunStep.backHalvesOnBackhalfdomain": {
@@ -20196,7 +23064,7 @@
     "status": "machine"
   },
   "app.dashboard.codes.importRunStep.valueCreatedSoFarIn": {
-    "source": "957b44ff4a0a",
+    "source": "b2faff104197",
     "status": "machine"
   },
   "app.dashboard.codes.importRunStep.manage": {
@@ -20205,10 +23073,6 @@
   },
   "app.dashboard.codes.importRunStep.reviewChanges": {
     "source": "6a47708f4e14",
-    "status": "machine"
-  },
-  "app.dashboard.codes.importRunStep.yourOldProviders": {
-    "source": "5d7f5c14b6fe",
     "status": "machine"
   },
   "app.dashboard.codes.importRunStep.theCodesAreOnBackhalfdomain": {
@@ -20228,7 +23092,7 @@
     "status": "machine"
   },
   "app.dashboard.codes.moveWorkspaceDialog.keepsItsShortLinkSo": {
-    "source": "3f840fb493ac",
+    "source": "d4e42f7e0d00",
     "status": "machine"
   },
   "app.dashboard.codes.moveWorkspaceDialog.loadingWorkspaces": {
@@ -20257,6 +23121,22 @@
   },
   "app.dashboard.codes.moveWorkspaceDialog.movedToName": {
     "source": "77f2ff74fb35",
+    "status": "machine"
+  },
+  "app.dashboard.codes.moveWorkspaceDialog.movedSameLink": {
+    "source": "2ec50fbad882",
+    "status": "machine"
+  },
+  "app.dashboard.codes.moveWorkspaceDialog.movedFolderStayed": {
+    "source": "4cab49d30455",
+    "status": "machine"
+  },
+  "app.dashboard.codes.moveWorkspaceDialog.movedTagsStayed": {
+    "source": "7a130f1a988e",
+    "status": "machine"
+  },
+  "app.dashboard.codes.moveWorkspaceDialog.movedFolderAndTagsStayed": {
+    "source": "4c5b7131cc37",
     "status": "machine"
   },
   "app.dashboard.codes.newCodeDialog.template": {
@@ -20399,12 +23279,12 @@
     "source": "d05020a2579e",
     "status": "machine"
   },
-  "app.dashboard.codes.nfcGuide.openThisPageInChrome": {
-    "source": "e778ed6b1235",
+  "app.dashboard.codes.nfcGuide.writeItTag": {
+    "source": "bf9bc052ca83",
     "status": "machine"
   },
-  "app.dashboard.codes.nfcGuide.againstTheBackOfThe": {
-    "source": "edc45f6d81e9",
+  "app.dashboard.codes.nfcGuide.writeItCard": {
+    "source": "b66e001f3d92",
     "status": "machine"
   },
   "app.dashboard.codes.nfcGuide.analyticsCountsTapsAndScans": {
@@ -20812,7 +23692,23 @@
     "status": "machine"
   },
   "app.dashboard.codes.tagDialogs.tagsForValue": {
-    "source": "3e3f5e2814dc",
+    "source": "c181f0273e61",
+    "status": "machine"
+  },
+  "app.dashboard.codes.tagDialogs.tagsSaved": {
+    "source": "c0eb2c23aa70",
+    "status": "machine"
+  },
+  "app.dashboard.codes.tagDialogs.updatedTagsOn": {
+    "source": "d158816191c2",
+    "status": "machine"
+  },
+  "app.dashboard.codes.tagDialogs.tagSaved": {
+    "source": "0c34758d4c31",
+    "status": "machine"
+  },
+  "app.dashboard.codes.tagDialogs.deletedTag": {
+    "source": "eb49e21dd402",
     "status": "machine"
   },
   "app.dashboard.codes.usage.unlimitedUsage": {
@@ -20905,10 +23801,6 @@
   },
   "app.dashboard.files.filesManager.delete": {
     "source": "e2d0a54968ea",
-    "status": "machine"
-  },
-  "app.dashboard.files.filesManager.showingThe500NewestFiles": {
-    "source": "3d64c3486be6",
     "status": "machine"
   },
   "app.dashboard.files.filesManager.deleteFilename": {
@@ -21011,8 +23903,36 @@
     "source": "9de87487a30e",
     "status": "machine"
   },
-  "app.dashboard.files.filesManager.usedByValue": {
-    "source": "6a773b011208",
+  "app.dashboard.files.filesManager.usedByPagesAndCodes": {
+    "source": "6363f17d29ec",
+    "status": "machine"
+  },
+  "app.dashboard.files.filesManager.usedByPages": {
+    "source": "f61dacc87f69",
+    "status": "machine"
+  },
+  "app.dashboard.files.filesManager.usedByCodes": {
+    "source": "003d3e4c0441",
+    "status": "machine"
+  },
+  "app.dashboard.files.filesManager.loadMoreFiles": {
+    "source": "5c455f6d7ca7",
+    "status": "machine"
+  },
+  "app.dashboard.files.filesManager.loadingMoreFiles": {
+    "source": "4aed40d2ff15",
+    "status": "machine"
+  },
+  "app.dashboard.files.filesManager.tryAgain": {
+    "source": "d8b8392e2c54",
+    "status": "machine"
+  },
+  "app.dashboard.files.filesManager.couldntLoadMoreFiles": {
+    "source": "d91122d5a4a8",
+    "status": "machine"
+  },
+  "app.dashboard.files.filesManager.allFilesShown": {
+    "source": "c0f25eb6f6a0",
     "status": "machine"
   },
   "app.dashboard.loading.loading": {
@@ -21133,6 +24053,10 @@
   },
   "app.dashboard.pages.page.pageLinkCopied": {
     "source": "0538f52d94e1",
+    "status": "machine"
+  },
+  "app.dashboard.pages.page.pagePageOfPagecountTotal": {
+    "source": "87b71f53b4a6",
     "status": "machine"
   },
   "app.dashboard.pages.responses.page.backToPage": {
@@ -21289,6 +24213,18 @@
   },
   "app.dashboard.pages.responses.responsesList.deletedResponsesDeleted": {
     "source": "40e30ca72abf",
+    "status": "machine"
+  },
+  "app.dashboard.pages.responses.responsesList.countSelected": {
+    "source": "1225443244be",
+    "status": "machine"
+  },
+  "app.dashboard.pages.responses.responsesList.clearSelection": {
+    "source": "cea4d2e010b8",
+    "status": "machine"
+  },
+  "app.dashboard.pages.responses.responsesList.bulkActions": {
+    "source": "19f0dd9ac406",
     "status": "machine"
   },
   "app.dashboard.pages.pageListControls.unlimitedPagesUsage": {
@@ -21695,10 +24631,6 @@
     "source": "9d067ec89760",
     "status": "machine"
   },
-  "app.dashboard.settings.webhooks.page.theLast50KeptFor": {
-    "source": "8a52339447f8",
-    "status": "machine"
-  },
   "app.dashboard.settings.webhooks.page.endpointDeliveries": {
     "source": "12e6c38b996f",
     "status": "machine"
@@ -21761,6 +24693,10 @@
   },
   "app.dashboard.settings.webhooks.page.yourPlanNoLongerIncludes": {
     "source": "a8b0a32a0953",
+    "status": "machine"
+  },
+  "app.dashboard.settings.webhooks.page.keptFor30Days": {
+    "source": "2a9dcb2310cc",
     "status": "machine"
   },
   "app.dashboard.themes.page.newTheme": {
@@ -21855,12 +24791,12 @@
     "source": "a4b982a9e0bc",
     "status": "machine"
   },
-  "app.dashboard.themes.themeCard.qrCodesYouAlreadyMade": {
-    "source": "989bea1f155d",
-    "status": "machine"
-  },
   "app.dashboard.themes.themeCard.deleteTheme": {
     "source": "e29a2b87f4ff",
+    "status": "machine"
+  },
+  "app.dashboard.themes.themeCard.deleteThemeTeam": {
+    "source": "aef542896365",
     "status": "machine"
   },
   "app.dashboard.themes.themeCard.updateTheTagsForName": {
@@ -21899,12 +24835,8 @@
     "source": "d09b4dd6265a",
     "status": "machine"
   },
-  "app.dashboard.themes.themeCard.forEveryoneInThisWorkspace": {
-    "source": "3f9182983f27",
-    "status": "machine"
-  },
   "app.dashboard.themes.themeCard.itIsAlsoRemovedFrom": {
-    "source": "bfa261dd462b",
+    "source": "eb848f75a147",
     "status": "machine"
   },
   "app.dashboard.themes.themeCard.upgrade": {
@@ -22027,6 +24959,10 @@
     "source": "f3ee17b88805",
     "status": "machine"
   },
+  "app.dashboard.themes.themesManager.showMoreThemes": {
+    "source": "c34f9f979d32",
+    "status": "machine"
+  },
   "app.dashboard.home.homeView.recentCodes": {
     "source": "950459488b67",
     "status": "machine"
@@ -22075,66 +25011,6 @@
     "source": "fbd99af4f3c0",
     "status": "machine"
   },
-  "app.dashboard.home.setupChecklist.done": {
-    "source": "891db1376d80",
-    "status": "machine"
-  },
-  "app.dashboard.home.setupChecklist.create": {
-    "source": "4759498ac2a7",
-    "status": "machine"
-  },
-  "app.dashboard.home.setupChecklist.start": {
-    "source": "e4bb9f1ece9a",
-    "status": "machine"
-  },
-  "app.dashboard.home.setupChecklist.design": {
-    "source": "0072e6b93494",
-    "status": "machine"
-  },
-  "app.dashboard.home.setupChecklist.invite": {
-    "source": "1fd9ae1607aa",
-    "status": "machine"
-  },
-  "app.dashboard.home.setupChecklist.connect": {
-    "source": "1a2303ede074",
-    "status": "machine"
-  },
-  "app.dashboard.home.setupChecklist.getSetUp": {
-    "source": "359c897644fa",
-    "status": "machine"
-  },
-  "app.dashboard.home.setupChecklist.doneOfLengthDone": {
-    "source": "179059a52a15",
-    "status": "machine"
-  },
-  "app.dashboard.home.setupChecklist.hide": {
-    "source": "ac20a57bfde0",
-    "status": "machine"
-  },
-  "app.dashboard.home.setupChecklist.setupTasksDone": {
-    "source": "71d73e3562de",
-    "status": "machine"
-  },
-  "app.dashboard.home.setupChecklist.createADynamicQrCode": {
-    "source": "e74d87cf6a11",
-    "status": "machine"
-  },
-  "app.dashboard.home.setupChecklist.makeALandingPageOr": {
-    "source": "3f70b7a19037",
-    "status": "machine"
-  },
-  "app.dashboard.home.setupChecklist.saveAThemeWithYour": {
-    "source": "baf037f07ec7",
-    "status": "machine"
-  },
-  "app.dashboard.home.setupChecklist.inviteATeammate": {
-    "source": "3e14c44747ea",
-    "status": "machine"
-  },
-  "app.dashboard.home.setupChecklist.connectACustomDomain": {
-    "source": "4a828dd8faac",
-    "status": "machine"
-  },
   "app.dashboard.listSelection.keyboardShortcuts": {
     "source": "e9bef0b0f3c2",
     "status": "machine"
@@ -22181,6 +25057,14 @@
   },
   "app.dashboard.listSelection.withASelection": {
     "source": "b255840f2e48",
+    "status": "machine"
+  },
+  "app.dashboard.listSelection.more": {
+    "source": "d47d7cb0e4f8",
+    "status": "machine"
+  },
+  "app.dashboard.listSelection.moreActions": {
+    "source": "f8d46c2570e7",
     "status": "machine"
   },
   "app.dashboard.domains.dnsRecords.type": {
@@ -22244,7 +25128,35 @@
     "status": "machine"
   },
   "app.dashboard.domains.domainsManager.shortLinksLookLikeHttps": {
-    "source": "4365f6963b2f",
+    "source": "8da12fa1c5bc",
+    "status": "machine"
+  },
+  "app.dashboard.domains.domainsManager.youveAddedValueTheMost": {
+    "source": "43b09b50a563",
+    "status": "machine"
+  },
+  "app.dashboard.domains.domainsManager.providerCanAddRecords": {
+    "source": "64d0e7db9aad",
+    "status": "machine"
+  },
+  "app.dashboard.domains.domainsManager.yourProviderCanAddRecords": {
+    "source": "5fda276cfce5",
+    "status": "machine"
+  },
+  "app.dashboard.domains.domainsManager.approveAtProvider": {
+    "source": "c8eecaa5587f",
+    "status": "machine"
+  },
+  "app.dashboard.domains.domainsManager.approveAtYourProvider": {
+    "source": "6f5513e10bb4",
+    "status": "machine"
+  },
+  "app.dashboard.domains.domainsManager.removeDomainInUse": {
+    "source": "c95c4d0e116b",
+    "status": "machine"
+  },
+  "app.dashboard.domains.domainsManager.removeDomainUnused": {
+    "source": "70d9b6598d6c",
     "status": "machine"
   },
   "app.dashboard.domains.domainsManager.addTheseRecordsAtYour": {
@@ -22301,10 +25213,6 @@
   },
   "app.dashboard.domains.domainsManager.addingDomainsNeedsProOr": {
     "source": "0261639a1687",
-    "status": "machine"
-  },
-  "app.dashboard.domains.domainsManager.youveAddedValueTheMost": {
-    "source": "e03b7f49b20a",
     "status": "machine"
   },
   "app.dashboard.domains.domainsManager.removing": {
@@ -22987,6 +25895,42 @@
     "source": "a952db8672b8",
     "status": "machine"
   },
+  "app.dashboard.paging.navigation": {
+    "source": "7b3f674b625e",
+    "status": "machine"
+  },
+  "app.dashboard.paging.previous": {
+    "source": "a57b08a480b8",
+    "status": "machine"
+  },
+  "app.dashboard.paging.next": {
+    "source": "1ff57a29d7c9",
+    "status": "machine"
+  },
+  "app.dashboard.paging.rowsPerPage": {
+    "source": "141b69f95916",
+    "status": "machine"
+  },
+  "app.dashboard.paging.perPage": {
+    "source": "35135bb009ee",
+    "status": "machine"
+  },
+  "app.dashboard.paging.page": {
+    "source": "7db207a1b062",
+    "status": "machine"
+  },
+  "app.dashboard.paging.pageOf": {
+    "source": "c2aef42e9d5f",
+    "status": "machine"
+  },
+  "app.dashboard.paging.newer": {
+    "source": "718c45696575",
+    "status": "machine"
+  },
+  "app.dashboard.paging.older": {
+    "source": "03281c889c28",
+    "status": "machine"
+  },
   "app.shell.appSidebar.whatsNew": {
     "source": "135e912e8905",
     "status": "machine"
@@ -23083,6 +26027,10 @@
     "source": "a3f530fd1cb1",
     "status": "machine"
   },
+  "app.shell.commandMenu.newBarcode": {
+    "source": "4820c2686d7d",
+    "status": "machine"
+  },
   "app.shell.commandMenu.importCodesFromACsv": {
     "source": "1817bc02f61e",
     "status": "machine"
@@ -23113,6 +26061,10 @@
   },
   "app.shell.createMenu.form": {
     "source": "2e0e960ab320",
+    "status": "machine"
+  },
+  "app.shell.createMenu.barcode": {
+    "source": "a401f372102d",
     "status": "machine"
   },
   "app.shell.createMenu.importCodes": {
@@ -23173,6 +26125,118 @@
   },
   "app.shell.whatsNew.seeAllUpdates": {
     "source": "c7c3273cc231",
+    "status": "machine"
+  },
+  "app.shell.whatsNew.newFeatures": {
+    "source": "77c26dac9096",
+    "status": "machine"
+  },
+  "app.shell.whatsNew.dismissTitle": {
+    "source": "d4d093af8c7f",
+    "status": "machine"
+  },
+  "app.shell.whatsNew.previousUpdate": {
+    "source": "fa59c435bde3",
+    "status": "machine"
+  },
+  "app.shell.whatsNew.nextUpdate": {
+    "source": "2ae2d4056e8d",
+    "status": "machine"
+  },
+  "app.shell.whatsNew.positionOfTotal": {
+    "source": "dc277926a025",
+    "status": "machine"
+  },
+  "app.shell.whatsNew.readOnTheChangelog": {
+    "source": "2f8f4b221a0b",
+    "status": "machine"
+  },
+  "app.shell.whatsNew.tryIt": {
+    "source": "fe6951113784",
+    "status": "machine"
+  },
+  "app.shell.whatsNew.close": {
+    "source": "7d9eb7acb13e",
+    "status": "machine"
+  },
+  "app.shell.spotlight.new": {
+    "source": "18fdd549b2ed",
+    "status": "machine"
+  },
+  "app.shell.spotlight.gotIt": {
+    "source": "5ad3dbd1242a",
+    "status": "machine"
+  },
+  "app.shell.setupGuide.getSetUp": {
+    "source": "359c897644fa",
+    "status": "machine"
+  },
+  "app.shell.setupGuide.launcherLabel": {
+    "source": "b7c0c7c31b4f",
+    "status": "machine"
+  },
+  "app.shell.setupGuide.doneOfLengthDone": {
+    "source": "179059a52a15",
+    "status": "machine"
+  },
+  "app.shell.setupGuide.doneOfLengthShort": {
+    "source": "0594fae3e732",
+    "status": "machine"
+  },
+  "app.shell.setupGuide.setupTasksDone": {
+    "source": "71d73e3562de",
+    "status": "machine"
+  },
+  "app.shell.setupGuide.collapse": {
+    "source": "be6eb1fc3b05",
+    "status": "machine"
+  },
+  "app.shell.setupGuide.dismissGuide": {
+    "source": "3986028d181d",
+    "status": "machine"
+  },
+  "app.shell.setupGuide.done": {
+    "source": "891db1376d80",
+    "status": "machine"
+  },
+  "app.shell.setupGuide.create": {
+    "source": "4759498ac2a7",
+    "status": "machine"
+  },
+  "app.shell.setupGuide.start": {
+    "source": "e4bb9f1ece9a",
+    "status": "machine"
+  },
+  "app.shell.setupGuide.design": {
+    "source": "0072e6b93494",
+    "status": "machine"
+  },
+  "app.shell.setupGuide.invite": {
+    "source": "1fd9ae1607aa",
+    "status": "machine"
+  },
+  "app.shell.setupGuide.connect": {
+    "source": "1a2303ede074",
+    "status": "machine"
+  },
+  "app.shell.setupGuide.createADynamicQrCode": {
+    "source": "e74d87cf6a11",
+    "status": "machine"
+  },
+  "app.shell.setupGuide.makeALandingPageOr": {
+    "source": "3f70b7a19037",
+    "status": "machine"
+  },
+  "app.shell.setupGuide.saveAThemeWithYour": {
+    "source": "baf037f07ec7",
+    "status": "machine"
+  },
+  "app.shell.setupGuide.inviteATeammate": {
+    "source": "3e14c44747ea",
+    "status": "machine"
+  },
+  "app.shell.setupGuide.connectACustomDomain": {
+    "source": "4a828dd8faac",
     "status": "machine"
   },
   "app.workspaces.createWorkspaceDialog.createAWorkspace": {

@@ -1,0 +1,152 @@
+{
+  "id": "fan-club",
+  "name": "Fan club",
+  "description": "A wide vinyl banner with eyelets in its corners and a soccer ball.",
+  "category": "use-case",
+  "collection": "sports-fitness",
+  "contentTypes": ["url"],
+  "tags": ["sports", "fitness", "supporters", "soccer"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 2000,
+      "height": 1140
+    },
+    "qr": {
+      "x": 190,
+      "y": 170,
+      "size": 800,
+      "padding": 64,
+      "radius": 19.2
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M114.95 105.05L4.95 -4.95A7 7 0 0 1 -4.95 4.95L105.05 114.95A7 7 0 0 1 114.95 105.05Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.4
+        }
+      },
+      {
+        "type": "path",
+        "d": "M1894.95 114.95L2004.95 4.95A7 7 0 0 1 1995.05 -4.95L1885.05 105.05A7 7 0 0 1 1894.95 114.95Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.4
+        }
+      },
+      {
+        "type": "path",
+        "d": "M105.05 1025.05L-4.95 1135.05A7 7 0 0 1 4.95 1144.95L114.95 1034.95A7 7 0 0 1 105.05 1025.05Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.4
+        }
+      },
+      {
+        "type": "path",
+        "d": "M1885.05 1034.95L1995.05 1144.95A7 7 0 0 1 2004.95 1135.05L1894.95 1025.05A7 7 0 0 1 1885.05 1034.95Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.4
+        }
+      },
+      {
+        "type": "rect",
+        "x": 40,
+        "y": 40,
+        "width": 1920,
+        "height": 1060,
+        "radius": 14,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 66,
+        "y": 66,
+        "width": 1868,
+        "height": 1008,
+        "radius": 6,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.9
+        }
+      },
+      {
+        "type": "circle",
+        "cx": 110,
+        "cy": 110,
+        "r": 30,
+        "hole": 15,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 1890,
+        "cy": 110,
+        "r": 30,
+        "hole": 15,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 110,
+        "cy": 1030,
+        "r": 30,
+        "hole": 15,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 1890,
+        "cy": 1030,
+        "r": 30,
+        "hole": 15,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M1121.8 300A78.2 78.2 0 1 1 1278.2 300A78.2 78.2 0 1 1 1121.8 300ZM1130.3 300A69.7 69.7 0 1 0 1269.7 300A69.7 69.7 0 1 0 1130.3 300ZM1200 271.1L1227.49 291.07L1216.99 323.38L1183.01 323.38L1172.51 291.07ZM1196.94 272.8L1196.94 247.3L1203.06 247.3L1203.06 272.8ZM1220.88 231.72L1211.03 243.26L1200 249.85L1188.97 243.26L1179.12 231.72ZM1224.92 288.68L1249.18 280.8L1251.07 286.63L1226.81 294.5ZM1271.39 298.75L1257.37 292.96L1247.7 284.5L1250.55 271.98L1258.49 259.05ZM1218.46 320.21L1233.45 340.84L1228.5 344.43L1213.51 323.8ZM1223.25 367.51L1224.43 352.38L1229.48 340.57L1242.27 339.42L1257.02 342.97ZM1186.49 323.8L1171.5 344.43L1166.55 340.84L1181.54 320.21ZM1142.98 342.97L1157.73 339.42L1170.52 340.57L1175.57 352.38L1176.75 367.51ZM1173.19 294.5L1148.93 286.63L1150.82 280.8L1175.08 288.68ZM1141.51 259.05L1149.45 271.98L1152.3 284.5L1142.63 292.96L1128.61 298.75Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Join the fan club",
+        "color": "frame",
+        "box": {
+          "x": 1110,
+          "y": 470,
+          "width": 720,
+          "height": 190
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Members get more",
+        "color": "frame",
+        "box": {
+          "x": 1110,
+          "y": 680,
+          "width": 720,
+          "height": 100
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

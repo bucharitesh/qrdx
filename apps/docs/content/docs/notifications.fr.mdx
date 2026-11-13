@@ -1,0 +1,59 @@
+---
+title: "Notifications"
+description: "Alertes par e-mail, résumé hebdomadaire et messages Slack ou Discord lorsque vos QR codes sont scannés ou que vos formulaires reçoivent des réponses."
+icon: Bell
+---
+
+Choisissez ce dont QRdx vous informe dans [Paramètres → Notifications](/settings/notifications). Les réglages sont propres à chaque personne et à chaque espace de travail : votre propre espace de travail et tous les autres auxquels vous appartenez ont chacun leurs interrupteurs, et dans un espace de travail partagé, chaque membre choisit les siens.
+
+| Canal | Ce que vous pouvez recevoir | Offre |
+| --- | --- | --- |
+| E-mail | Résumé hebdomadaire, paliers de scans, réponses aux formulaires, nouveaux codes, modifications de codes | Pro et Business |
+| Slack, Discord | Paliers de scans, réponses aux formulaires, nouveaux codes, modifications de codes | Business |
+| [Webhooks](/docs/webhooks), Zapier, Make | Tous les événements, y compris chaque scan | Business |
+
+Chaque espace de travail suit l'offre de ses propriétaires. Tout est désactivé tant que vous ne l'activez pas.
+
+## Alertes [#alerts]
+
+- **Paliers de scans :** le premier scan d'un code (avec la date, le lieu et l'appareil), puis 10, 100, 500, 1000, 5000, 10000 scans et au-delà.
+- **Réponses aux formulaires :** les réponses envoyées depuis un formulaire d'une de vos [pages hébergées](/docs/landing-pages), avec un lien vers toutes les réponses.
+- **Nouveaux codes** et **modifications de codes :** qui a créé un code, ou modifié sa destination, son titre, son design ou son domaine. Très utile dans les espaces de travail que vous partagez avec d'autres personnes.
+
+Pour éviter qu'un formulaire très actif ou un import en masse n'inonde votre boîte de réception ou votre canal, chaque cible reçoit au maximum 30 alertes d'un même type par heure ; les autres sont ignorées (le résumé hebdomadaire les compte quand même, et les webhooks reçoivent toujours chaque événement).
+
+## Résumé hebdomadaire [#weekly-digest]
+
+Chaque lundi (UTC), vous recevez les chiffres de la semaine passée pour l'espace de travail : les scans comparés à la semaine précédente, les visiteurs uniques, vos 5 meilleurs codes, les principaux pays, les nouveaux codes et les réponses aux formulaires. Il n'est pas envoyé s'il n'y a eu aucun scan pendant deux semaines et aucune réponse à un formulaire.
+
+## E-mail [#email]
+
+Les e-mails d'alerte sont envoyés à l'adresse e-mail de votre compte. Chacun contient un lien **Se désabonner** qui désactive ce type d'e-mail sans connexion (les applications de messagerie qui prennent en charge le désabonnement en un clic l'affichent aussi). Vous pouvez réactiver ou désactiver les e-mails à tout moment dans les paramètres de notification.
+
+Les invitations d'équipe et les autres e-mails liés au compte ne sont pas concernés par ces réglages.
+
+## Slack et Discord [#slack-and-discord]
+
+1. Créez un webhook entrant :
+   - **Slack :** ajoutez l'application [Incoming WebHooks](https://slack.com/apps/A0F7XDUAZ-incoming-webhooks), ou votre propre application Slack avec des webhooks entrants, à un canal, puis copiez l'URL (`https://hooks.slack.com/services/...`).
+   - **Discord :** paramètres du canal → **Intégrations** → **Webhooks** → **Nouveau webhook** → **Copier l'URL du webhook** (`https://discord.com/api/webhooks/...`).
+2. Dans [Paramètres → Notifications](/settings/notifications), cliquez sur **+ Slack** ou **+ Discord** dans l'espace de travail, collez l'URL et choisissez les événements. Pour en ajouter un, vous devez d'abord [confirmer votre identité](/docs/help/privacy-and-security/two-step-verification#confirm-its-you).
+3. Utilisez le bouton d'envoi pour publier un message de test.
+
+Seules les URL de webhook Slack et Discord sont acceptées. Après l'enregistrement, QRdx n'affiche que le début de l'URL, car toute personne qui la possède peut publier dans le canal. Les messages ne mentionnent jamais `@everyone`, `@here` ni de rôles, quoi que les visiteurs saisissent dans un formulaire.
+
+## Offres et rétrogradation [#plans-and-downgrades]
+
+Si l'offre d'un espace de travail n'inclut plus un canal, ses alertes s'arrêtent, mais vos réglages sont conservés et vous pouvez toujours les désactiver ou supprimer des cibles. Vos QR codes continuent de fonctionner quelle que soit l'offre.
+
+## Auto-hébergement [#self-hosting]
+
+Les e-mails sont envoyés via [Resend](https://resend.com) : définissez `RESEND_API_KEY` et `EMAIL_FROM` (une adresse sur un domaine vérifié dans Resend). Sans ces variables, les e-mails sont ignorés et consignés dans les journaux, et les invitations d'équipe sont remplacées par des liens à copier.
+
+Le résumé hebdomadaire est lancé par une tâche planifiée le lundi matin (`apps/docs/vercel.json` sur Vercel appelle `/api/cron/digest?shard=all`, qui envoie en une seule exécution le résumé de chaque abonné). Si vous avez beaucoup d'abonnés, vous pouvez à la place l'appeler toutes les heures le lundi sans `shard=all` : chaque exécution traite alors un vingt-quatrième d'entre eux. Ailleurs, appelez-le avec le `CRON_SECRET` de votre environnement :
+
+```bash
+curl -H "Authorization: Bearer $CRON_SECRET" https://your-host/api/cron/digest
+```
+
+Les liens de désabonnement sont signés avec `BETTER_AUTH_SECRET` ; le modifier invalide les liens des e-mails déjà envoyés.

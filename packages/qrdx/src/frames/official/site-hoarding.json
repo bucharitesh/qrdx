@@ -1,0 +1,158 @@
+{
+  "id": "site-hoarding",
+  "name": "Site hoarding",
+  "description": "A wide vinyl banner with eyelets in its corners and a hard hat.",
+  "category": "use-case",
+  "collection": "real-estate",
+  "contentTypes": ["url"],
+  "tags": ["real estate", "property", "construction", "development"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 2000,
+      "height": 1140
+    },
+    "qr": {
+      "x": 190,
+      "y": 170,
+      "size": 800,
+      "padding": 64,
+      "radius": 19.2
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M114.95 105.05L4.95 -4.95A7 7 0 0 1 -4.95 4.95L105.05 114.95A7 7 0 0 1 114.95 105.05Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.4
+        }
+      },
+      {
+        "type": "path",
+        "d": "M1894.95 114.95L2004.95 4.95A7 7 0 0 1 1995.05 -4.95L1885.05 105.05A7 7 0 0 1 1894.95 114.95Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.4
+        }
+      },
+      {
+        "type": "path",
+        "d": "M105.05 1025.05L-4.95 1135.05A7 7 0 0 1 4.95 1144.95L114.95 1034.95A7 7 0 0 1 105.05 1025.05Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.4
+        }
+      },
+      {
+        "type": "path",
+        "d": "M1885.05 1034.95L1995.05 1144.95A7 7 0 0 1 2004.95 1135.05L1894.95 1025.05A7 7 0 0 1 1885.05 1034.95Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.4
+        }
+      },
+      {
+        "type": "rect",
+        "x": 40,
+        "y": 40,
+        "width": 1920,
+        "height": 1060,
+        "radius": 14,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 110,
+        "cy": 110,
+        "r": 30,
+        "hole": 15,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.55
+        }
+      },
+      {
+        "type": "circle",
+        "cx": 1890,
+        "cy": 110,
+        "r": 30,
+        "hole": 15,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.55
+        }
+      },
+      {
+        "type": "circle",
+        "cx": 110,
+        "cy": 1030,
+        "r": 30,
+        "hole": 15,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.55
+        }
+      },
+      {
+        "type": "circle",
+        "cx": 1890,
+        "cy": 1030,
+        "r": 30,
+        "hole": 15,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.55
+        }
+      },
+      {
+        "type": "path",
+        "d": "M1138.8 320.4C1138.8 266 1172.8 242.2 1200 242.2C1227.2 242.2 1261.2 266 1261.2 320.4ZM1132 325.5L1268 325.5A10.2 10.2 0 0 1 1278.2 335.7L1278.2 335.7A10.2 10.2 0 0 1 1268 345.9L1132 345.9A10.2 10.2 0 0 1 1121.8 335.7L1121.8 335.7A10.2 10.2 0 0 1 1132 325.5Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M1198.3 235.4L1201.7 235.4A10.2 10.2 0 0 1 1211.9 245.6L1211.9 300A10.2 10.2 0 0 1 1201.7 310.2L1198.3 310.2A10.2 10.2 0 0 1 1188.1 300L1188.1 245.6A10.2 10.2 0 0 1 1198.3 235.4Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "See what we're building",
+        "color": "text",
+        "box": {
+          "x": 1110,
+          "y": 470,
+          "width": 720,
+          "height": 190
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Coming soon",
+        "color": "text",
+        "box": {
+          "x": 1110,
+          "y": 680,
+          "width": 720,
+          "height": 100
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

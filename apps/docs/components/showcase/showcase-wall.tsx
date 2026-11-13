@@ -11,6 +11,7 @@ import {
   type WallTile,
 } from "@/lib/landing/showcase-gallery";
 import type { WallPlacement, WallRow } from "@/lib/landing/showcase-wall";
+import { WALL_GAP } from "./wall-placeholder";
 
 // The "Made with QRdx" wall: justified rows of real codes, each a lazy
 // <img> of an SVG the engine drew at build time (app/gallery/[file]/route.ts)
@@ -20,7 +21,7 @@ import type { WallPlacement, WallRow } from "@/lib/landing/showcase-wall";
 // and nothing shifts when the images load. The page frame stays monochrome;
 // the codes carry the color.
 
-const GAP = "gap-2 lg:gap-2.5";
+const GAP = WALL_GAP;
 
 /** Printer's crop marks just outside the code. */
 function CropMarks() {

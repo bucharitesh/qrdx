@@ -33,17 +33,19 @@ import {
 } from "@/lib/migrate/providers";
 import type { JobItem, JobSummary } from "@/lib/migrate/types";
 import { soundEvent } from "@/lib/sound";
-import { Note, plural, Stat, StepLayout, saveText } from "./import-shared";
+import { Note, Stat, StepLayout, saveText } from "./import-shared";
+import { useMigrateReasonText } from "./migrate-reason-text";
 
 function reasonsOf(
   items: JobItem[],
   status: JobItem["status"],
   t: Translator<"app.dashboard.codes.importRunStep">,
+  reasonText: ReturnType<typeof useMigrateReasonText>,
 ) {
   const counts = new Map<string, number>();
   for (const item of items) {
     if (item.status !== status) continue;
-    const reason = item.reason ?? t("other");
+    const reason = reasonText(item) ?? t("other");
     counts.set(reason, (counts.get(reason) ?? 0) + 1);
   }
   return [...counts].sort((a, b) => b[1] - a[1]);
@@ -63,6 +65,7 @@ export function RunStep({
   onBack: () => void;
 }) {
   const t = useTranslations("app.dashboard.codes.importRunStep");
+  const reasonText = useMigrateReasonText();
   const inWorkspace = useWorkspaceHref();
   const [job, setJob] = useState<JobSummary | null>(null);
   const [items, setItems] = useState<JobItem[]>([]);
@@ -250,9 +253,7 @@ export function RunStep({
           <p className="text-muted-foreground text-xs">
             {waiting !== null
               ? t("waitingWaitingSForThe", { waiting })
-              : t("valueCreatedSoFarIn", {
-                  value: plural(job.created, "code"),
-                })}
+              : t("valueCreatedSoFarIn", { count: job.created })}
           </p>
           {error && (
             <Note icon={<Warning2 />} tone="warning">
@@ -264,8 +265,8 @@ export function RunStep({
     );
   }
 
-  const skipped = reasonsOf(items, "skipped", t);
-  const failed = reasonsOf(items, "failed", t);
+  const skipped = reasonsOf(items, "skipped", t, reasonText);
+  const failed = reasonsOf(items, "failed", t, reasonText);
   const searchHref = inWorkspace(
     `/codes?q=${encodeURIComponent(`Imported from ${name}`)}`,
   );
@@ -342,7 +343,7 @@ export function RunStep({
             </span>
             <div className="min-w-0 flex-1">
               <h3 className="text-sm font-semibold">
-                {`${plural(job.redirected, `old ${name} link`)} ${job.redirected === 1 ? "points" : "point"} to QRdx`}
+                {t("oldLinksPointToQrdx", { count: job.redirected, name })}
               </h3>
               <p className="text-muted-foreground text-xs">
                 {t("importsFromNameHaveEnded", { name, name2: name })}
@@ -383,8 +384,9 @@ export function RunStep({
               {t("pointYourOldCodesAt")}
             </h3>
             <p className="text-muted-foreground text-xs">
-              {name === "CSV" ? t("yourOldProviders") : `${name}'s`}{" "}
-              {t("codesLiveOnItsOwn")}
+              {name === "CSV"
+                ? t("oldProviderCodesLiveOnItsDomain")
+                : t("providerCodesLiveOnItsDomain", { name })}
             </p>
             <ol className="list-decimal space-y-1 pl-5 text-sm">
               {file.repointSteps.map((step) => (

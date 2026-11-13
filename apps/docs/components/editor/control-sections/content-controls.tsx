@@ -1,5 +1,6 @@
 "use client";
 
+import { CANONICAL_ORIGIN } from "@repo/config";
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
 import { ArrowRight, Element3 } from "iconsax-reactjs";
@@ -211,7 +212,7 @@ function QuickStyles() {
                   margin={1}
                   size={56}
                   style={{ maxWidth: "100%", height: "auto" }}
-                  value="https://qrdx.dev"
+                  value={CANONICAL_ORIGIN}
                 />
               </span>
               <span

@@ -1,0 +1,71 @@
+{
+  "id": "vesak-lotus",
+  "name": "Vesak lotus arch",
+  "description": "An arched card, like a window, with a lotus, in saffron and pale gold.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "vesak",
+  "contentTypes": [],
+  "tags": ["vesak", "wesak", "buddha day", "may", "lotus"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1880
+    },
+    "qr": {
+      "x": 160,
+      "y": 470,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#92400e",
+      "text": "#ffffff",
+      "accent": "#fde68a"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M0 660A660 660 0 0 1 1320 660L1320 1840Q1320 1880 1280 1880L40 1880Q0 1880 0 1840Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M50 660A610 610 0 0 1 1270 660L1270 1830L50 1830ZM62 660L62 1818L1258 1818L1258 660A598 598 0 0 0 62 660Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.35
+        }
+      },
+      {
+        "type": "path",
+        "d": "M660 285C685.74 265.2 685.74 220.65 660 186C634.26 220.65 634.26 265.2 660 285ZM657 288C663.31 265.34 645.76 230.24 618 210C606.8 249.72 624.35 284.82 657 288ZM663 288C695.65 284.82 713.2 249.72 702 210C674.24 230.24 656.69 265.34 663 288ZM654 291C649.26 272.03 622.26 254.48 594 252C602.84 284.36 629.84 301.91 654 291ZM666 291C690.16 301.91 717.16 284.36 726 252C697.74 254.48 670.74 272.03 666 291Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M612 294C639 303 681 303 708 294L705 303C678 312 642 312 615 303Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Vesak greetings",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1610,
+          "width": 1040,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

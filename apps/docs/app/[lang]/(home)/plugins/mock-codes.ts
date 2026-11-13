@@ -1,3 +1,4 @@
+import { CANONICAL_ORIGIN } from "@repo/config";
 import type { QRProps } from "qrdx/types";
 import {
   SHOWCASE_PLACEMENTS as AT,
@@ -10,7 +11,7 @@ import {
 // tests/lib/showcase-styles.test.ts checks every one scans.
 
 /** The value typed into each mock. */
-export const VALUE = "https://qrdx.dev";
+export const VALUE = CANONICAL_ORIGIN;
 
 /** 25 modules (version 2 at Q) × 4 px: whole-number coordinates keep the markup small. */
 const SIZE = 100;

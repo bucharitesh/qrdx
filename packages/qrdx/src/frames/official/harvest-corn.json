@@ -1,0 +1,115 @@
+{
+  "id": "harvest-corn",
+  "name": "Harvest corn",
+  "description": "A light card with an ear of corn and a solid label band, in harvest brown and gold.",
+  "category": "seasonal",
+  "collection": "seasons",
+  "occasion": "harvest",
+  "contentTypes": [],
+  "tags": ["harvest", "farm", "autumn", "corn", "festival"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1770
+    },
+    "qr": {
+      "x": 120,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#7c4a12",
+      "text": "#ffffff",
+      "accent": "#e9b949"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "frame",
+        "hole": {
+          "x": 20,
+          "y": 20,
+          "width": 1200,
+          "height": 1730,
+          "radius": 38
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 250,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 60,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M620 158C651.42 134.48 651.42 81.56 620 40.4C588.58 81.56 588.58 134.48 620 158ZM615.66 60A3.64 4.48 0 1 0 622.94 60A3.64 4.48 0 1 0 615.66 60ZM610.96 72.6A3.64 4.48 0 1 0 618.24 72.6A3.64 4.48 0 1 0 610.96 72.6ZM621.46 72.6A3.64 4.48 0 1 0 628.74 72.6A3.64 4.48 0 1 0 621.46 72.6ZM607.82 85.2A3.64 4.48 0 1 0 615.1 85.2A3.64 4.48 0 1 0 607.82 85.2ZM618.32 85.2A3.64 4.48 0 1 0 625.6 85.2A3.64 4.48 0 1 0 618.32 85.2ZM606.57 97.8A3.64 4.48 0 1 0 613.85 97.8A3.64 4.48 0 1 0 606.57 97.8ZM617.07 97.8A3.64 4.48 0 1 0 624.35 97.8A3.64 4.48 0 1 0 617.07 97.8ZM607.37 110.4A3.64 4.48 0 1 0 614.65 110.4A3.64 4.48 0 1 0 607.37 110.4ZM617.87 110.4A3.64 4.48 0 1 0 625.15 110.4A3.64 4.48 0 1 0 617.87 110.4ZM610.12 123A3.64 4.48 0 1 0 617.4 123A3.64 4.48 0 1 0 610.12 123ZM620.62 123A3.64 4.48 0 1 0 627.9 123A3.64 4.48 0 1 0 620.62 123ZM614.51 135.6A3.64 4.48 0 1 0 621.79 135.6A3.64 4.48 0 1 0 614.51 135.6Z",
+        "fill": "frame",
+        "fillRule": "evenodd"
+      },
+      {
+        "type": "path",
+        "d": "M620 166.4C619.25 143.94 599.09 102.36 575.2 74C562.51 120.09 582.67 161.67 620 166.4ZM620 166.4C657.33 161.67 677.49 120.09 664.8 74C640.91 102.36 620.75 143.94 620 166.4Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Harvest festival",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1550,
+          "width": 1040,
+          "height": 190
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan me",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 180,
+          "width": 960,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

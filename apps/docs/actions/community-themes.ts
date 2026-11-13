@@ -3,6 +3,7 @@
 "use server";
 
 import { auth } from "@repo/auth/server";
+import { MAX_TAGS_PER_THEME } from "@repo/config";
 import {
   communityItem,
   communityItemTag,
@@ -35,7 +36,6 @@ import { authorNotBanned } from "@/lib/community/visibility";
 import {
   COMMUNITY_THEME_TAGS,
   COMMUNITY_THEMES_PAGE_SIZE,
-  MAX_TAGS_PER_THEME,
 } from "@/lib/constants";
 import { getCurrentUserId } from "@/lib/shared";
 import type {

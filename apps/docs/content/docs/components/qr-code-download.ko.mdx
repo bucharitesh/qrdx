@@ -1,0 +1,50 @@
+---
+title: "QR 코드 다운로드"
+description: "QR 코드를 원하는 크기의 PNG, SVG, JPG, PDF로 내보내거나 이미지로 복사하는 다운로드 메뉴입니다."
+icon: Download
+---
+
+<ComponentLinks name="qr-code-download" />
+
+<ComponentPreview name="qr-code-download-demo" />
+
+## 설치 [#installation]
+
+<InstallationTabs name="qr-code-download" />
+
+## 사용법 [#usage]
+
+```tsx
+import { QrCodeDownload } from "@/components/qr-code-download";
+```
+
+```tsx
+<QrCodeDownload value="https://qrdx.dev" />
+```
+
+메뉴에는 형식별로 짧은 설명, 크기 선택기, 그리고 PNG를 클립보드에 넣어 주는 "이미지 복사"가 표시됩니다. 파일은 브라우저에서 생성되며 어디에도 업로드되지 않습니다.
+
+## 예제 [#examples]
+
+### 스타일이 적용된 내보내기 [#styled-export]
+
+화면에 렌더링하는 스타일 객체를 `qr`에 그대로 전달하면 내보낸 모든 파일이 미리보기와 일치합니다. `formats`, `sizes`, `label`, `variant`로 메뉴와 버튼의 모양을 정할 수 있습니다.
+
+<ComponentPreview name="qr-code-download-styled" />
+
+### 형식 [#formats]
+
+| 형식 | 출력 |
+|--------|--------|
+| `png` | 코드의 배경이 포함된 이미지 |
+| `jpg` | 단색 배경의 이미지 |
+| `svg` | 어떤 크기로도 확대할 수 있는 벡터 |
+| `pdf` | 한 페이지짜리 문서. 선택 패키지인 `jspdf`가 필요합니다(`npm install jspdf`) |
+
+래스터 크기는 50~5000픽셀입니다. `sizes`에 항목을 하나만 전달하면 크기 선택기가 숨겨집니다.
+
+## API 레퍼런스 [#api-reference]
+
+<auto-type-table path="../../../registry/qrdx/qr-code-download.tsx" type="{ [K in keyof QrCodeDownloadProps as K extends Exclude<keyof ComponentProps<'div'>, 'onError'> ? never : K]: QrCodeDownloadProps[K] }" />
+
+`className`과 같은 그 밖의 prop은 바깥을 감싸는 `<div>`에 전달됩니다.

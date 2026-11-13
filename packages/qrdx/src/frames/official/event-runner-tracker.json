@@ -1,0 +1,101 @@
+{
+  "id": "event-runner-tracker",
+  "name": "Runner tracker",
+  "description": "A phone with the code on its screen and a stopwatch.",
+  "category": "use-case",
+  "collection": "events",
+  "contentTypes": ["url"],
+  "tags": ["charity run", "running", "events", "tracking"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1360,
+      "height": 2000
+    },
+    "qr": {
+      "x": 180,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1360,
+        "height": 2000,
+        "radius": 190,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 26,
+        "y": 26,
+        "width": 1308,
+        "height": 1948,
+        "radius": 150,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 550,
+        "y": 56,
+        "width": 260,
+        "height": 64,
+        "radius": 32,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M634.4 257.2A45.6 45.6 0 1 1 725.6 257.2A45.6 45.6 0 1 1 634.4 257.2ZM644 257.2A36 36 0 1 0 716 257.2A36 36 0 1 0 644 257.2ZM672.8 197.2L687.2 197.2A2.4 2.4 0 0 1 689.6 199.6L689.6 204.4A2.4 2.4 0 0 1 687.2 206.8L672.8 206.8A2.4 2.4 0 0 1 670.4 204.4L670.4 199.6A2.4 2.4 0 0 1 672.8 197.2ZM676.4 204.4L683.6 204.4L683.6 214L676.4 214ZM683.6 257.2L683.6 233.2A3.6 3.6 0 0 1 676.4 233.2L676.4 257.2A3.6 3.6 0 0 1 683.6 257.2ZM677.91 260.13L694.71 272.13A3.6 3.6 0 0 1 698.89 266.27L682.09 254.27A3.6 3.6 0 0 1 677.91 260.13Z",
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 510,
+        "y": 1910,
+        "width": 340,
+        "height": 18,
+        "radius": 9,
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Cheer me on",
+        "color": "frame",
+        "box": {
+          "x": 160,
+          "y": 1550,
+          "width": 1040,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan to follow my run",
+        "color": "frame",
+        "box": {
+          "x": 180,
+          "y": 1735,
+          "width": 1000,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}
