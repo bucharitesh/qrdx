@@ -257,7 +257,7 @@ Docs pages follow the same `review`: a list can name docs paths (`"/docs/help"`)
 - Use a [Conventional Commits](https://www.conventionalcommits.org/) style title, for example `feat(editor): add frame presets` or `fix(cli): handle missing sharp`.
 - Fill in the pull request template. For UI changes, include before and after screenshots at 1440 px and 390 px wide, in light and dark mode.
 - Keep secrets out of code, tests, screenshots and logs: no `.env` values, tokens or session cookies. Tests use the fakes in `apps/docs/tests/support/`.
-- Copy on the site goes live as written, so no placeholders or "TBD". Product counts come from code (`apps/docs/lib/product-facts.ts` and the catalogues), not typed by hand. When you change one, or anything one counts, run `bun run --filter docs facts:snapshot` and commit `packages/config/facts.generated.json`, the copy that apps outside the main app read through `@repo/config/facts`; a test fails until you do.
+- Copy on the site goes live as written, so no placeholders or "TBD". Product counts come from code (`apps/docs/lib/product-facts.ts` and the catalogues), not typed by hand.
 - Update the docs (`apps/docs/content/docs`) or package READMEs when you change behavior or public APIs.
 - Make sure the checks above pass. A maintainer reviews every pull request before it's merged.
 
