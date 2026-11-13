@@ -21,6 +21,12 @@ Release notes for earlier versions are at [qrdx.dev/changelog](https://qrdx.dev/
 - `dist/element-define.browser.mjs` registers the element from a CDN with no bundler; it loads `dist/element.browser.mjs`, one module with the engine inside (the official frame library's data stays in `dist/frames-official.mjs`).
 - Types: `QRdxCodeElement`, `QRdxCodeOptions`, `QRdxCodeProperties`, `QRdxCodeAttributes`, `QRdxCodeJSXProps` (for a React or Preact JSX declaration) and an `HTMLElementTagNameMap` entry for `qrdx-code`.
 
+### Preact and SolidJS
+
+- **`qrdx/preact`** has `QRCodeSVG` and `QRCode` (with the `logo` shortcut) as Preact components, with the React components' props. They draw with Preact's own `h` through `toHyperscript`, so `preact/compat` isn't needed, and skip a render when no prop changed. `preact-render-to-string` writes `toSVGString`'s markup (Preact leaves `>` and `'` unescaped in text), and `hydrate` keeps the server's `<svg>`. `preact` 10 or later is an optional peer dependency (#330).
+- **`qrdx/solid`** has the same two components for SolidJS, written without JSX, so the package needs no Solid compiler. In the browser a component returns the `<svg>` element itself (built with `renderToDOM`) from a memo: Solid inserts it, swaps in a new one when a prop change alters the markup, and removes it on unmount. On a server it returns `toSVGString`'s markup with Solid's `data-hk` hydration key on the root, and `hydrate` adopts that element instead of drawing it again. `solid-js` 1.8 or later (1.x) is an optional peer dependency (#329).
+- Both entries import the engine from `qrdx/core`, so an app that also uses `qrdx/core` loads it once, and neither imports React.
+
 ## 0.0.51
 
 ### React-free core and plain JavaScript

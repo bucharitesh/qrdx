@@ -266,6 +266,32 @@ await qr.download({ format: "svg", filename: "menu.svg" });
 
 The full guide, with React and Vue setup: [qrdx.dev/docs/web-component](https://qrdx.dev/docs/web-component).
 
+## Preact and SolidJS (`qrdx/preact` and `qrdx/solid`)
+
+Both entries have the two SVG components, `QRCodeSVG` and `QRCode` (with the `logo` shortcut), with the same props as in React. They draw the same SVG, render on a server and hydrate without drawing the code again. `preact` (10 or later) and `solid-js` (1.8 or later, 1.x) are optional peer dependencies; neither entry imports React.
+
+```tsx
+// Preact: drawn with Preact's own h, no preact/compat
+import { QRCode, QRCodeSVG } from "qrdx/preact";
+
+<QRCodeSVG value="https://example.com" size={256} bodyPattern="rounded" class="qr" />;
+<QRCode value="https://example.com" logo="/logo.png" level="H" />;
+```
+
+```tsx
+// Solid: props are reactive like any Solid component's
+import { createSignal } from "solid-js";
+import { QRCodeSVG } from "qrdx/solid";
+
+const [color] = createSignal("#0f172a"); // change it and the code redraws
+<QRCodeSVG value="https://example.com" size={256} fgColor={color()} />;
+```
+
+- **Preact:** the components redraw when a prop changes and skip the work when none did. `preact-render-to-string` writes `toSVGString`'s markup (Preact leaves `>` and `'` unescaped in text), and `hydrate` keeps the server's `<svg>`.
+- **Solid:** the package has no Solid JSX, so no Solid compiler runs on it. In the browser a component returns the `<svg>` element itself, built with `createElementNS`; Solid swaps in a new one when a change alters the markup and removes it on unmount. `renderToString` from `solid-js/web` writes `toSVGString`'s markup plus a `data-hk` hydration key on the root, which `hydrate` uses to keep the server's `<svg>`.
+
+Downloads, the scan score and the other functions come from `qrdx/core`, the engine both entries already use. More at [qrdx.dev/docs/preact](https://qrdx.dev/docs/preact) and [qrdx.dev/docs/solid](https://qrdx.dev/docs/solid).
+
 ## Patterns
 
 See every option drawn live at [qrdx.dev/docs/styles](https://qrdx.dev/docs/styles).
