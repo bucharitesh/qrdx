@@ -1,6 +1,7 @@
 import "server-only";
 
 import { createHash } from "node:crypto";
+import { MAX_TAGS_PER_THEME } from "@repo/config";
 import {
   communityCollectionEntry,
   communityItem,
@@ -12,7 +13,7 @@ import cuid from "cuid";
 import { and, eq, ne, sql } from "drizzle-orm";
 import { revalidateTag } from "next/cache";
 import type { QRCustomFrame } from "qrdx/types";
-import { COMMUNITY_THEME_TAGS, MAX_TAGS_PER_THEME } from "@/lib/constants";
+import { COMMUNITY_THEME_TAGS } from "@/lib/constants";
 import { parseLandingPageContent } from "@/lib/landing/blocks";
 import type { LandingPageContent } from "@/types/landing";
 import type { ThemeStyles } from "@/types/theme";

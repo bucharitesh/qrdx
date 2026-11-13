@@ -1,11 +1,8 @@
+import { shortLinkOrigin } from "@repo/config/origins";
 import { baseUrl } from "./metadata";
 
 /** Default short links are `${SHORT_LINK_BASE}/q/<slug>`. */
-export const SHORT_LINK_BASE = (() => {
-  // Validated as a URL by env.ts; only its origin is used.
-  const override = process.env.NEXT_PUBLIC_SHORT_LINK_BASE_URL;
-  return override ? new URL(override).origin : baseUrl.origin;
-})();
+export const SHORT_LINK_BASE = shortLinkOrigin(baseUrl);
 
 const BASE62 = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 export const SLUG_LENGTH = 7;

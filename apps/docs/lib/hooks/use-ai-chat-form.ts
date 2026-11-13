@@ -1,8 +1,8 @@
 "use client";
 
+import { MAX_IMAGE_FILE_SIZE, MAX_IMAGE_FILES } from "@repo/config";
 import type { JSONContent } from "@tiptap/react";
 import { useEffect, useReducer, useRef, useTransition } from "react";
-import { MAX_IMAGE_FILE_SIZE, MAX_IMAGE_FILES } from "@/lib/constants";
 import { useDocumentDragAndDropIntent } from "@/lib/hooks/use-document-drag-and-drop-intent";
 import { useImageUpload } from "@/lib/hooks/use-image-upload";
 import { createSyncedImageUploadReducer } from "@/lib/hooks/use-image-upload-reducer";

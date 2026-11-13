@@ -21,6 +21,7 @@ const nodeList = deploymentEnv("scripts/run-node-tests.mjs");
 const SCHEMAS = [
   "env.ts",
   "../../packages/auth/keys.ts",
+  "../../packages/config/keys.ts",
   "../../packages/database/keys.ts",
   "../../packages/next-config/keys.ts",
   "../../packages/rate-limit/keys.ts",

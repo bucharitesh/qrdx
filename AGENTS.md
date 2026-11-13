@@ -15,6 +15,7 @@ QRdx is an open-source QR code platform (https://qrdx.dev): a free static QR gen
 | `packages/auth` | Better Auth setup |
 | `packages/design-system` | Shared UI (shadcn/ui), icons, styles |
 | `packages/integrations`, `packages/integration-kit` | The integrations catalogue and shared types |
+| `packages/config` | `@repo/config`: platform constants (brand, URLs, contact emails, social links, shared limits); import these instead of typing `qrdx.dev` or an email address |
 | `packages/rate-limit`, `packages/next-config`, `packages/typescript-config` | Shared helpers and config |
 | `plugins/*` | Chrome, Figma, Raycast and Canva plugins |
 | `skills/` | Agent Skills, such as `generate-qr` |

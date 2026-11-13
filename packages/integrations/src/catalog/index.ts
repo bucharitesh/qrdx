@@ -1,3 +1,4 @@
+import { CANONICAL_ORIGIN } from "@repo/config";
 import { ai } from "./entries/ai";
 import { analytics } from "./entries/analytics";
 import { automation } from "./entries/automation";
@@ -219,7 +220,7 @@ export function matchesCatalogQuery(
   ].some((text) => text.toLowerCase().includes(q));
 }
 
-const DEFAULT_ORIGIN = "https://qrdx.dev";
+const DEFAULT_ORIGIN = CANONICAL_ORIGIN;
 
 /** Points catalog URLs and snippets at the deployment that renders them. */
 export function withOrigin(text: string, origin: string): string {

@@ -1,3 +1,4 @@
+import { CANONICAL_HOST, CANONICAL_ORIGIN } from "@repo/config";
 import type { QRProps } from "qrdx";
 import {
   BODY_CATALOG,
@@ -12,7 +13,7 @@ import {
 // playground, and the client part, which draws and decodes them.
 
 /** What every tile encodes; the browser check decodes it back. */
-export const CATALOG_VALUE = "https://qrdx.dev/docs/styles";
+export const CATALOG_VALUE = `${CANONICAL_ORIGIN}/docs/styles`;
 
 const PLAIN = {
   bodyPattern: "square",
@@ -82,7 +83,7 @@ export function tilesFor(kind: QrCatalogKind): CatalogTile[] {
           frame: {
             style: item.value,
             text: "Scan me",
-            ...(item.secondLine && { secondaryText: "qrdx.dev" }),
+            ...(item.secondLine && { secondaryText: CANONICAL_HOST }),
           },
         },
       }));

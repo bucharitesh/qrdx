@@ -1,6 +1,7 @@
 "use client";
 
 import { authClient } from "@repo/auth/client";
+import { CANONICAL_HOST } from "@repo/config";
 import {
   Tabs,
   TabsContent,
@@ -193,7 +194,7 @@ export function NoMessagesPlaceholder({
                   level="L"
                   margin={1}
                   size={48}
-                  value="qrdx.dev"
+                  value={CANONICAL_HOST}
                 />
               </button>
             ))}

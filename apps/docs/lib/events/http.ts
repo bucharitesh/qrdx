@@ -1,14 +1,14 @@
 import "server-only";
 
 import { request } from "node:https";
+import { CANONICAL_ORIGIN } from "@repo/config";
 import { isOutboundDeliveryAllowed } from "@/lib/delivery-guard";
 import { checkWebhookUrl, safeLookup } from "./url-safety";
 
 export const WEBHOOK_TIMEOUT_MS = 10_000;
 const MAX_RESPONSE_BYTES = 2048;
 
-export const WEBHOOK_USER_AGENT =
-  "QRdx-Webhooks/1.0 (+https://qrdx.dev/docs/webhooks)";
+export const WEBHOOK_USER_AGENT = `QRdx-Webhooks/1.0 (+${CANONICAL_ORIGIN}/docs/webhooks)`;
 
 export type PostResult =
   | { ok: true; status: number; durationMs: number }

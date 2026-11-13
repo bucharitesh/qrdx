@@ -1,5 +1,6 @@
 import "server-only";
 
+import { MAX_CODES_PER_REQUEST } from "@repo/config";
 import {
   type CodeCreatedVia,
   database as db,
@@ -34,13 +35,13 @@ import {
 import { getDefaultThemeStyle } from "@/app/(app)/dashboard/themes/_lib/queries";
 import { codeEvents, codeUpdateEvents } from "@/ee/audit-log/code-events";
 import { recordAuditEvent } from "@/ee/audit-log/record";
-import { formatCount, MAX_CODES_PER_REQUEST } from "@/lib/bulk-limits";
 import { snapshotCodeVersion } from "@/lib/code-versions";
 import {
   contentTypeForDestination,
   isDestinationContentType,
 } from "@/lib/dynamic-content";
 import { HttpError } from "@/lib/error-response";
+import { formatCount } from "@/lib/format-count";
 import { noteLimitUsage } from "@/lib/limit-notices";
 import { baseUrl } from "@/lib/metadata";
 import { can } from "@/lib/permissions";
@@ -100,7 +101,7 @@ export const MAX_TITLE_LENGTH = 100;
  */
 const RECHECK_BUDGET_MS = 25_000;
 
-/** Codes in one create request (lib/bulk-limits.ts). */
+/** Codes in one create request (@repo/config limits.ts). */
 export const MAX_BULK_CREATE = MAX_CODES_PER_REQUEST;
 // A custom logo is stored inline as a data URL (≤ 1MB file ≈ 1.4MB of text).
 const MAX_STYLE_LENGTH = 1_500_000;

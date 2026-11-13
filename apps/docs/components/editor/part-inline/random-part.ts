@@ -4,6 +4,7 @@
 // another quick icon, the background another color the contrast check
 // passes, the frame another built-in style that keeps its text. Pure, and
 // `random` is passed in (Math.random in the app, a seeded one in tests).
+import { CANONICAL_ORIGIN } from "@repo/config";
 import {
   type AnyQRFrame,
   type ColorConfig,
@@ -189,7 +190,7 @@ function codeColors(style: QRStyle): string[] {
 /** The scan score's contrast check with `bgColor` behind the code. */
 function scanContrast(style: QRStyle, bgColor: ColorConfig) {
   return getScanContrast({
-    value: "https://qrdx.dev",
+    value: CANONICAL_ORIGIN,
     bgColor,
     fgColor: style.fgColor,
     eyeColor: style.eyeColor,

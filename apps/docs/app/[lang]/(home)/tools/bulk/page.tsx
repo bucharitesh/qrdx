@@ -1,3 +1,4 @@
+import { MAX_BULK_TOOL_ROWS } from "@repo/config";
 import { ArrowRight2, TickCircle } from "iconsax-reactjs";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
@@ -9,7 +10,6 @@ import { loopVideos } from "@/components/mockups/visuals";
 import { BulkGenerator } from "@/components/sections/tools/bulk-generator";
 import { FaqList } from "@/components/sections/tools/faq-list";
 import { ToolHero } from "@/components/sections/tools/tool-hero";
-import { MAX_BULK_TOOL_ROWS } from "@/lib/bulk-limits";
 import { localizedMetadata } from "@/lib/i18n/metadata";
 import { requireLocale } from "@/lib/i18n/server";
 

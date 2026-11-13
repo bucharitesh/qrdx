@@ -1,12 +1,12 @@
 "use client";
 
+import { MAX_IMAGE_FILES } from "@repo/config";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Kbd } from "@repo/design-system/components/ui/kbd";
 import { cn } from "@repo/design-system/lib/utils";
 import { Add as Plus } from "iconsax-reactjs";
 import { useTranslations } from "next-intl";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
-import { MAX_IMAGE_FILES } from "@/lib/constants";
 import { useAIChatForm } from "@/lib/hooks/use-ai-chat-form";
 import { useAIEnhancePrompt } from "@/lib/hooks/use-ai-enhance-prompt";
 import { useChatContext } from "@/lib/hooks/use-chat-context";

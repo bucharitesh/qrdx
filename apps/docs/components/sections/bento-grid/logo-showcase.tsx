@@ -1,5 +1,6 @@
 "use client";
 
+import { CANONICAL_ORIGIN } from "@repo/config";
 import { Star } from "@repo/design-system/components/icons";
 import { Crown, Flash, Heart, MagicStar } from "iconsax-reactjs";
 import { QRCodeSVG } from "qrdx";
@@ -29,7 +30,7 @@ export function LogoShowcase() {
     <div className="flex items-center justify-center h-full relative">
       <div className="relative">
         <QRCodeSVG
-          value="https://qrdx.dev"
+          value={CANONICAL_ORIGIN}
           size={140}
           fgColor="#000000"
           bgColor="transparent"

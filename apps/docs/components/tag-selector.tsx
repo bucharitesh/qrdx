@@ -1,5 +1,6 @@
 "use client";
 
+import { MAX_TAGS_PER_THEME } from "@repo/config";
 import {
   Tick as Check,
   Close as X,
@@ -21,7 +22,7 @@ import {
 import { cn } from "@repo/design-system/lib/utils";
 import { ArrowDown2 as ChevronsUpDown } from "iconsax-reactjs";
 import { useState } from "react";
-import { COMMUNITY_THEME_TAGS, MAX_TAGS_PER_THEME } from "@/lib/constants";
+import { COMMUNITY_THEME_TAGS } from "@/lib/constants";
 
 interface TagSelectorProps {
   selectedTags: string[];

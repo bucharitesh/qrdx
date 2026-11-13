@@ -1,6 +1,7 @@
 /** biome-ignore-all lint/a11y/useKeyWithClickEvents: false positive */
 /** biome-ignore-all lint/a11y/noStaticElementInteractions: false positive */
 
+import { CANONICAL_HOST } from "@repo/config";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Card } from "@repo/design-system/components/ui/card";
 import { cn } from "@repo/design-system/lib/utils";
@@ -127,7 +128,7 @@ export function ChatThemePreview({
               level="L"
               margin={1}
               size={28}
-              value="qrdx.dev"
+              value={CANONICAL_HOST}
             />
           </div>
           <CheckCheck

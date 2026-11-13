@@ -1,6 +1,7 @@
 "use client";
 
 import { authClient } from "@repo/auth/client";
+import { CANONICAL_HOST } from "@repo/config";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
@@ -228,7 +229,7 @@ export function FrameStylePicker({ active = true }: { active?: boolean }) {
           }
           size={40}
           style={{ maxHeight: "100%", maxWidth: "100%" }}
-          value="qrdx.dev"
+          value={CANONICAL_HOST}
         />
       )}
       value={value}

@@ -1,5 +1,6 @@
 "use client";
 
+import { CANONICAL_ORIGIN } from "@repo/config";
 import { cn } from "@repo/design-system/lib/utils";
 import { ArrowRight, Scan, TickCircle } from "iconsax-reactjs";
 import { useTheme } from "next-themes";
@@ -612,7 +613,7 @@ function ErrorLevels() {
                   logo={LOGO}
                   margin={0}
                   size={108}
-                  value="https://qrdx.dev/playground"
+                  value={`${CANONICAL_ORIGIN}/playground`}
                 />
               ),
             }))}

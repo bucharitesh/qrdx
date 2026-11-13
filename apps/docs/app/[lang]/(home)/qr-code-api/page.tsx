@@ -1,3 +1,4 @@
+import { CANONICAL_ORIGIN } from "@repo/config";
 import { Card } from "@repo/design-system/components/ui/card";
 import {
   ArrowRight2,
@@ -70,7 +71,7 @@ const EXAMPLES = {
   markdown: `![QR code](${API}/qr?data=https://github.com/you/repo)`,
   html: [
     "<img",
-    `  src="${API}/qr?data=https://qrdx.dev&size=256&fg=155dfc"`,
+    `  src="${API}/qr?data=${CANONICAL_ORIGIN}&size=256&fg=155dfc"`,
     '  width="256"',
     '  height="256"',
     '  alt="QR code for qrdx.dev"',
@@ -78,10 +79,10 @@ const EXAMPLES = {
   ].join("\n"),
   curl: [
     "# A PNG for slides and documents",
-    `curl -o qr.png "${API}/qr?data=https://qrdx.dev&format=png&size=1024"`,
+    `curl -o qr.png "${API}/qr?data=${CANONICAL_ORIGIN}&format=png&size=1024"`,
     "",
     "# A vector EPS for print (size is the width in points)",
-    `curl -o qr.eps "${API}/qr?data=https://qrdx.dev&format=eps&size=144"`,
+    `curl -o qr.eps "${API}/qr?data=${CANONICAL_ORIGIN}&format=eps&size=144"`,
   ].join("\n"),
   js: [
     'const link = "https://example.com/menu?table=12&lang=en";',
@@ -332,7 +333,7 @@ export default async function QrCodeApiPage() {
             perMinute={perMinute}
             initial={{
               ...API_DEFAULTS,
-              data: "https://qrdx.dev",
+              data: CANONICAL_ORIGIN,
               logoIcon: "none",
             }}
           />

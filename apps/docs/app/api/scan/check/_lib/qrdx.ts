@@ -1,5 +1,6 @@
 import "server-only";
 
+import { CANONICAL_HOST } from "@repo/config";
 import {
   abuseReport,
   customDomain,
@@ -21,8 +22,8 @@ import type { InternalHop } from "./resolve";
 /** Hosts that serve `/q/<slug>` and `/p/<slug>` for every shared-namespace slug. */
 const OWN_HOSTS: ReadonlySet<string> = new Set(
   [
-    "qrdx.dev",
-    "www.qrdx.dev",
+    CANONICAL_HOST,
+    `www.${CANONICAL_HOST}`,
     baseUrl.hostname,
     new URL(SHORT_LINK_BASE).hostname,
   ].map((host) => host.toLowerCase()),

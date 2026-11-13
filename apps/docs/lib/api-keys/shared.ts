@@ -2,6 +2,7 @@
 // request to try. Client-safe: Settings → Developers imports it, and the
 // server modules (crypto.ts, service.ts) build on it.
 
+import { API_BASE_URL, CANONICAL_HOST } from "@repo/config";
 import { z } from "zod";
 import {
   OAUTH_SCOPE_INFO,
@@ -115,8 +116,8 @@ export function expiryDate(
  */
 export function apiBaseFor(origin: string): string {
   const { protocol, host } = new URL(origin);
-  return host === "qrdx.dev" && protocol === "https:"
-    ? "https://api.qrdx.dev/v1"
+  return host === CANONICAL_HOST && protocol === "https:"
+    ? API_BASE_URL
     : `${protocol}//${host}/api/v1`;
 }
 

@@ -1,5 +1,6 @@
 "use client";
 
+import { MAX_LOGO_FILE_SIZE } from "@repo/config";
 import { toast } from "@repo/design-system";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Label } from "@repo/design-system/components/ui/label";
@@ -11,7 +12,7 @@ import * as React from "react";
 import type { BrandLogoPick } from "@/components/editor/brand-logos/brand-logo-gallery";
 import ControlSection from "@/components/editor/control-section";
 import { BRAND_LOGO_COUNT } from "@/lib/brand-logos/catalog.generated";
-import { DEFAULT_QR_LOGO, MAX_LOGO_FILE_SIZE } from "@/lib/constants";
+import { DEFAULT_QR_LOGO } from "@/lib/constants";
 import { soundEvent } from "@/lib/sound/emit";
 import type { ThemeStyles } from "@/types/theme";
 import { brandLogoName, LogoPresets, logoIconName } from "./logo-presets";

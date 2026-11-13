@@ -2,6 +2,7 @@
 // rest of the design, judged by the scan score's own check
 // (getScanContrast and its thresholds), and a one-click fix that moves the
 // color just far enough to pass.
+import { CANONICAL_ORIGIN } from "@repo/config";
 import {
   type ColorConfig,
   getScanContrast,
@@ -51,7 +52,7 @@ export interface PaintSafety {
   inverted: boolean;
 }
 
-const SAMPLE_VALUE = "https://qrdx.dev";
+const SAMPLE_VALUE = CANONICAL_ORIGIN;
 
 /** Props holding only the colors the contrast check compares. */
 function contrastProps(

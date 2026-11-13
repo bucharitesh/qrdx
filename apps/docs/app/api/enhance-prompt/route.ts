@@ -1,3 +1,4 @@
+import { MAX_AI_REQUEST_BODY_BYTES } from "@repo/config";
 import {
   createUIMessageStreamResponse,
   smoothStream,
@@ -9,7 +10,6 @@ import { textProviderOptions } from "@/lib/ai/models";
 import { ENHANCE_PROMPT_SYSTEM } from "@/lib/ai/prompts";
 import { assertAIConfigured, languageModel } from "@/lib/ai/providers";
 import { streamErrorMessage } from "@/lib/ai/stream-error-message";
-import { MAX_AI_REQUEST_BODY_BYTES } from "@/lib/constants";
 import { handleError } from "@/lib/error-response";
 import {
   enforceAIRateLimit,

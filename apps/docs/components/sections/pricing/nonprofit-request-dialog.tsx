@@ -5,6 +5,7 @@
 // nonprofit-requests.ts), who replies with a Polar discount code. Shown only
 // where the discount is offered (qrdx.dev, feature nonprofitDiscounts).
 
+import { SUPPORT_EMAIL } from "@repo/config";
 import { Spinner } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
@@ -35,9 +36,6 @@ import {
   PLAN_NAMES,
 } from "@/lib/pricing";
 import { soundEvent } from "@/lib/sound/emit";
-
-/** Where the form says to write when it can't send (lib/nonprofit-requests.tsx). */
-const SUPPORT_EMAIL = "support@qrdx.dev";
 
 export function NonprofitRequestDialog({
   open,
