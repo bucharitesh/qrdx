@@ -11,6 +11,20 @@ Release notes for earlier versions are at [qrdx.dev/changelog](https://qrdx.dev/
 - Everything in `qrdx/core` is re-exported. The entry imports the engine from `qrdx/core`, so it adds under 1 KB gzipped of its own.
 - `vue` 3.3 or newer is an optional peer dependency, so installing `qrdx` never installs Vue. TypeScript checks the components' props with Vue 3.4.20 or newer.
 
+### Frame library: holidays, seasons, events and places
+
+- **292 more official frames** in the holidays, seasons, events and places collections, and one in Cars & parking. `OFFICIAL_FRAMES` grows from 721 to 1,013. No existing frame or id changes.
+- **Holidays** (115 to 283) adds festivals and national days from regions the library covered thinly:
+  - South Asia: Pongal, Lohri, Makar Sankranti, Vaisakhi, Onam, Navratri, Durga Puja and Dussehra, Ganesh Chaturthi, Raksha Bandhan, Janmashtami, Ugadi and Gudi Padwa, Pohela Boishakh, the Sinhala and Tamil New Year, and Republic Day in India.
+  - Southeast and East Asia: Songkran, Loy Krathong, Vesak, Hari Raya, Tết, Seollal, the Mid-Autumn Festival, Chuseok, the Dragon Boat and Lantern festivals, Tanabata, Obon and Children's Day.
+  - The Middle East, Africa and the Americas: Nowruz, Yalda, the Islamic New Year, Rosh Hashanah, Purim, Enkutatash, Kwanzaa, Juneteenth, Africa Day, Sham el-Nessim, Tabaski, the Day of the Dead, Carnival and Mardi Gras, Three Kings Day, Las Posadas, Festa Junina and Inti Raymi.
+  - Europe: Orthodox Easter and Christmas, Maslenitsa, Pancake Day and King's Day.
+  - National days for 18 more countries, and awareness days and months such as International Women's Day, Earth Day, Pride Month, World Mental Health Day and World Blood Donor Day.
+- **Seasons** (28 to 60) adds monsoon, harvest and cherry blossom season, with more frames for summer, winter, spring, autumn and back to school.
+- **Events** (32 to 77) adds graduations, conferences, workshops, concerts, festivals and fairs, birthdays, baby showers, a quinceañera, sports matches, charity runs, quiz and game nights, galas, reunions and memorials.
+- **Places** (25 to 71) adds museums, libraries, transit, parks, beaches, campsites, coworking spaces, hostels, visitor centers, marinas, zoos and aquariums, plus guest Wi-Fi frames for cafés, offices, rentals, waiting rooms, libraries, venues and hostels.
+- 96 new motifs, from kites and krathongs to buses and lifebuoys. Every new frame passes the same checks as the rest: it decodes at phone distances, scores Great and reads with zbar.
+
 ## 0.0.51
 
 ### React-free core and plain JavaScript
@@ -29,20 +43,6 @@ Release notes for earlier versions are at [qrdx.dev/changelog](https://qrdx.dev/
 - **Five new collections:** `beauty-wellness`, `real-estate`, `automotive` ("Cars & parking"), `sports-fitness` and `nonprofit` ("Nonprofits & community"). `OfficialFrameCollection` and `OFFICIAL_FRAME_COLLECTIONS` include them, so code with a case or a `Record` for every collection needs the new ids.
 - The property frames and `sign-rider` move from `places` to `real-estate`, and the gym frames from `health-learning` to `sports-fitness`. Their ids, names and specs are unchanged.
 - New shapes: yard signs with a rider, signs on posts, sidewalk A-frame boards, shelf talkers, clipboards, team shirts, vinyl banners with eyelets, bone-shaped pet tags, collection jars, EV chargers, folded-corner and stacked cards, a cloud bubble and a big side arrow, plus about a hundred new drawings (food, shop goods, sports gear, cars, salon tools, community symbols).
-
-### Frame library: holidays, seasons, events and places
-
-- **292 more official frames** in the holidays, seasons, events and places collections, and one in Cars & parking. With the industry frames above, `OFFICIAL_FRAMES` grows from 418 to 1,013. No existing frame or id changes.
-- **Holidays** (115 to 283) adds festivals and national days from regions the library covered thinly:
-  - South Asia: Pongal, Lohri, Makar Sankranti, Vaisakhi, Onam, Navratri, Durga Puja and Dussehra, Ganesh Chaturthi, Raksha Bandhan, Janmashtami, Ugadi and Gudi Padwa, Pohela Boishakh, the Sinhala and Tamil New Year, and Republic Day in India.
-  - Southeast and East Asia: Songkran, Loy Krathong, Vesak, Hari Raya, Tết, Seollal, the Mid-Autumn Festival, Chuseok, the Dragon Boat and Lantern festivals, Tanabata, Obon and Children's Day.
-  - The Middle East, Africa and the Americas: Nowruz, Yalda, the Islamic New Year, Rosh Hashanah, Purim, Enkutatash, Kwanzaa, Juneteenth, Africa Day, Sham el-Nessim, Tabaski, the Day of the Dead, Carnival and Mardi Gras, Three Kings Day, Las Posadas, Festa Junina and Inti Raymi.
-  - Europe: Orthodox Easter and Christmas, Maslenitsa, Pancake Day and King's Day.
-  - National days for 18 more countries, and awareness days and months such as International Women's Day, Earth Day, Pride Month, World Mental Health Day and World Blood Donor Day.
-- **Seasons** (28 to 60) adds monsoon, harvest and cherry blossom season, with more frames for summer, winter, spring, autumn and back to school.
-- **Events** (32 to 77) adds graduations, conferences, workshops, concerts, festivals and fairs, birthdays, baby showers, a quinceañera, sports matches, charity runs, quiz and game nights, galas, reunions and memorials.
-- **Places** (25 to 71, after the property frames moved to Real estate) adds museums, libraries, transit, parks, beaches, campsites, coworking spaces, hostels, visitor centers, marinas, zoos and aquariums, plus guest Wi-Fi frames for cafés, offices, rentals, waiting rooms, libraries, venues and hostels.
-- 96 new motifs, from kites and krathongs to buses and lifebuoys. Every new frame passes the same checks as the rest: it decodes at phone distances, scores Great and reads with zbar.
 
 ## 0.0.50
 
