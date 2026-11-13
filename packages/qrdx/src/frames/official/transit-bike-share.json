@@ -1,0 +1,94 @@
+{
+  "id": "transit-bike-share",
+  "name": "Bike share",
+  "description": "A solid card with a round badge holding a bicycle on its top edge.",
+  "category": "use-case",
+  "collection": "places",
+  "contentTypes": ["url"],
+  "tags": ["transit", "travel", "bike", "rental"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1830
+    },
+    "qr": {
+      "x": 120,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 150,
+        "width": 1240,
+        "height": 1680,
+        "radius": 64,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 620,
+        "cy": 150,
+        "r": 150,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 620,
+        "cy": 150,
+        "r": 120,
+        "fill": "background"
+      },
+      {
+        "type": "path",
+        "d": "M554.2 169.6A29.4 29.4 0 1 1 613 169.6A29.4 29.4 0 1 1 554.2 169.6ZM562.6 169.6A21 21 0 1 0 604.6 169.6A21 21 0 1 0 562.6 169.6ZM627 169.6A29.4 29.4 0 1 1 685.8 169.6A29.4 29.4 0 1 1 627 169.6ZM635.4 169.6A21 21 0 1 0 677.4 169.6A21 21 0 1 0 635.4 169.6Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M583.6 166.1L617.2 166.1L617.2 173.1L583.6 173.1ZM580.66 167.71L605.86 128.51L611.74 132.29L586.54 171.49ZM613.78 170.36L602.58 119.96L609.42 118.44L620.62 168.84ZM607.4 126.9L645.2 126.9L645.2 133.9L607.4 133.9ZM614.35 167.57L642.35 128.37L648.05 132.43L620.05 171.63ZM648.58 126.7L659.78 168.7L653.02 170.5L641.82 128.5ZM641.75 130.98L638.95 114.18L645.85 113.02L648.65 129.82ZM634 108.7L653.6 108.7L653.6 115.7L634 115.7ZM596.2 113.6L613 113.6A4.2 4.2 0 0 1 617.2 117.8L617.2 117.8A4.2 4.2 0 0 1 613 122L596.2 122A4.2 4.2 0 0 1 592 117.8L592 117.8A4.2 4.2 0 0 1 596.2 113.6ZM610.2 169.6A7 7 0 1 1 624.2 169.6A7 7 0 1 1 610.2 169.6Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Unlock a bike",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1540,
+          "width": 1040,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan to ride",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1710,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

@@ -1,0 +1,95 @@
+{
+  "id": "independence-pakistan",
+  "name": "Pakistan Independence Day",
+  "description": "A solid card with a round badge holding a crescent and star on its top edge, in deep green and white.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "independence-day",
+  "contentTypes": [],
+  "tags": ["independence day", "national day", "pakistan", "august 14"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1830
+    },
+    "qr": {
+      "x": 120,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#01411c",
+      "text": "#ffffff",
+      "accent": "#e8f5ec"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 150,
+        "width": 1240,
+        "height": 1680,
+        "radius": 64,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 620,
+        "cy": 150,
+        "r": 150,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 620,
+        "cy": 150,
+        "r": 120,
+        "fill": "background"
+      },
+      {
+        "type": "path",
+        "d": "M634.7 105.21A53.2 53.2 0 1 0 634.7 194.79A44.8 44.8 0 0 1 634.7 105.21Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M656.4 116.4L661.01 129.66L675.04 129.94L663.86 138.42L667.92 151.86L656.4 143.84L644.88 151.86L648.94 138.42L637.76 129.94L651.79 129.66Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Happy Independence Day",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1540,
+          "width": 1040,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Pakistan",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1710,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

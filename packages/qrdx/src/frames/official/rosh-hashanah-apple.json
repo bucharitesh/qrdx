@@ -1,0 +1,81 @@
+{
+  "id": "rosh-hashanah-apple",
+  "name": "Apple and honey",
+  "description": "A solid card with an apple over the code and the label underneath, in apple red and honey.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "rosh-hashanah",
+  "contentTypes": [],
+  "tags": ["rosh hashanah", "jewish new year", "shanah tovah", "apple"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#991b1b",
+      "text": "#ffffff",
+      "accent": "#e9a93a"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M620 80C605 65 566 68 566 110C566 146 593 173 608 170C614 168.5 626 168.5 632 170C647 173 674 146 674 110C674 68 635 65 620 80Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M617.03 82.59L621.53 49.59L627.47 50.41L622.97 83.41ZM626 65C638.06 71.11 654.26 63.01 662 47C641.86 38.22 625.66 46.32 626 65Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Shanah Tovah",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan me",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

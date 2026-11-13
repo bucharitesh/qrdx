@@ -1,0 +1,94 @@
+{
+  "id": "event-grad-stream",
+  "name": "Graduation stream",
+  "description": "A wide card: the code on one side, a rolled diploma and the label on the other.",
+  "category": "use-case",
+  "collection": "events",
+  "contentTypes": ["url"],
+  "tags": ["graduation", "events", "livestream"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 2000,
+      "height": 1040
+    },
+    "qr": {
+      "x": 120,
+      "y": 120,
+      "size": 800,
+      "padding": 64,
+      "radius": 19.2
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 2000,
+        "height": 1040,
+        "radius": 72,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.9
+        }
+      },
+      {
+        "type": "path",
+        "d": "M1057.14 243.41L1172.41 214.67A19.8 19.8 -14 0 1 1196.41 229.09L1196.41 229.09A19.8 19.8 -14 0 1 1181.99 253.1L1066.72 281.84A19.8 19.8 -14 0 1 1042.72 267.41L1042.72 267.41A19.8 19.8 -14 0 1 1057.14 243.41ZM1168.47 236.06A9 9 -14 1 0 1185.93 231.71A9 9 -14 1 0 1168.47 236.06ZM1102.11 230.34A1.8 1.8 -14 0 0 1100.8 232.53L1110.38 270.95A1.8 1.8 -14 0 0 1112.56 272.26L1114.31 271.82A1.8 1.8 -14 0 0 1115.62 269.64L1106.04 231.22A1.8 1.8 -14 0 0 1103.86 229.91ZM1124.82 224.68A1.8 1.8 -14 0 0 1123.51 226.86L1133.09 265.29A1.8 1.8 -14 0 0 1135.27 266.6L1137.02 266.16A1.8 1.8 -14 0 0 1138.33 263.98L1128.75 225.56A1.8 1.8 -14 0 0 1126.56 224.25Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M1108.66 226.85L1119.14 224.24A3.6 3.6 -14 0 1 1123.51 226.86L1133.09 265.29A3.6 3.6 -14 0 1 1130.47 269.65L1119.99 272.26A3.6 3.6 -14 0 1 1115.62 269.64L1106.04 231.22A3.6 3.6 -14 0 1 1108.66 226.85ZM1117.37 269.21L1124.35 267.47L1124.33 311.99L1114.73 303.26ZM1124.35 267.47L1131.34 265.72L1149.66 294.55L1145.28 306.77Z",
+        "fill": "accent"
+      },
+      {
+        "type": "rect",
+        "x": 1030,
+        "y": 870,
+        "width": 240,
+        "height": 26,
+        "radius": 13,
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Watch the ceremony",
+        "color": "frame",
+        "box": {
+          "x": 1030,
+          "y": 400,
+          "width": 860,
+          "height": 190
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan to stream it live",
+        "color": "frame",
+        "box": {
+          "x": 1030,
+          "y": 610,
+          "width": 860,
+          "height": 100
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

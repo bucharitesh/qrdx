@@ -1,0 +1,89 @@
+{
+  "id": "parking-find-car",
+  "name": "Find my car",
+  "description": "An arrow-shaped tag pointing up at the code.",
+  "category": "use-case",
+  "collection": "places",
+  "contentTypes": ["url"],
+  "tags": ["parking", "car park"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1760
+    },
+    "qr": {
+      "x": 120,
+      "y": 280,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 20,
+        "y": 180,
+        "width": 1200,
+        "height": 1200,
+        "radius": 60,
+        "fill": "frame",
+        "hole": {
+          "x": 40,
+          "y": 200,
+          "width": 1160,
+          "height": 1160,
+          "radius": 40
+        }
+      },
+      {
+        "type": "polygon",
+        "points": [
+          [620, 1400],
+          [800, 1510],
+          [1080, 1510],
+          [1080, 1760],
+          [160, 1760],
+          [160, 1510],
+          [440, 1510]
+        ],
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Find your car",
+        "color": "text",
+        "box": {
+          "x": 210,
+          "y": 1530,
+          "width": 820,
+          "height": 190
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan to save your spot",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 50,
+          "width": 960,
+          "height": 110
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

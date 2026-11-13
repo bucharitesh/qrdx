@@ -1,0 +1,128 @@
+{
+  "id": "rosh-hashanah-shofar",
+  "name": "Shofar",
+  "description": "A thin double border with a shofar, a small divider and the label, in blue and honey.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "rosh-hashanah",
+  "contentTypes": [],
+  "tags": [
+    "rosh hashanah",
+    "jewish new year",
+    "shanah tovah",
+    "shofar",
+    "services"
+  ],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1830
+    },
+    "qr": {
+      "x": 160,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#1e3a8a",
+      "text": "#ffffff",
+      "accent": "#e9a93a"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1320,
+        "height": 1830,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 30,
+        "y": 30,
+        "width": 1260,
+        "height": 1770,
+        "fill": "frame",
+        "hole": {
+          "x": 40,
+          "y": 40,
+          "width": 1240,
+          "height": 1750
+        }
+      },
+      {
+        "type": "rect",
+        "x": 60,
+        "y": 60,
+        "width": 1200,
+        "height": 1710,
+        "fill": "frame",
+        "hole": {
+          "x": 64,
+          "y": 64,
+          "width": 1192,
+          "height": 1702
+        }
+      },
+      {
+        "type": "path",
+        "d": "M605.72 190.21L610.44 191.51L614.86 192.39L619.1 192.91L623.18 193.08L627.08 192.94L630.81 192.49L634.37 191.75L637.76 190.74L641.01 189.47L644.11 187.95L647.08 186.19L649.94 184.19L652.69 181.95L655.34 179.47L657.89 176.75L660.36 173.78L662.73 170.57L665.02 167.11L667.21 163.4L669.31 159.45L671.3 155.26L673.2 150.82L674.99 146.14L676.66 141.23L678.23 136.09L679.67 130.72L680.99 125.13L682.19 119.33L683.25 113.31L684.24 106.84L719.76 114.76L717.8 121.52L715.62 128.32L713.29 134.89L710.79 141.23L708.14 147.34L705.34 153.21L702.38 158.84L699.27 164.2L696 169.31L692.59 174.15L689.02 178.71L685.31 182.98L681.45 186.95L677.45 190.61L673.31 193.95L669.03 196.96L664.63 199.62L660.12 201.92L655.5 203.84L650.8 205.38L646.02 206.53L641.19 207.28L636.33 207.64L631.44 207.6L626.55 207.16L621.65 206.34L616.76 205.14L611.88 203.57L607 201.63L602.28 199.39Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M682.4 108A19.6 7 0 1 1 721.6 108A19.6 7 0 1 1 682.4 108ZM606.68 189.1L610.81 190.84L614.77 192.28L618.72 193.49L622.81 194.54L618.79 207.94L614.48 206.46L610.03 204.71L605.59 202.7L601.32 200.5ZM672 161.69L673.8 156.06L675.15 151.42L676.27 147.22L677.31 143.09L709.89 151.31L708.79 155.67L707.5 160.48L705.92 165.9L704 171.91Z",
+        "fill": "accent"
+      },
+      {
+        "type": "line",
+        "x1": 470,
+        "y1": 1570,
+        "x2": 850,
+        "y2": 1570,
+        "width": 6,
+        "fill": "frame"
+      },
+      {
+        "type": "polygon",
+        "points": [[660, 1550], [680, 1570], [660, 1590], [640, 1570]],
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for service times",
+        "color": "frame",
+        "box": {
+          "x": 180,
+          "y": 1610,
+          "width": 960,
+          "height": 160
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Rosh Hashanah",
+        "color": "frame",
+        "box": {
+          "x": 180,
+          "y": 225,
+          "width": 960,
+          "height": 100
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

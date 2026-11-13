@@ -4,24 +4,71 @@ import type { OfficialFrame } from "../official";
 import attendance from "../official/attendance.json";
 import checkIn from "../official/check-in.json";
 import eventAgenda from "../official/event-agenda.json";
+import eventAnniversary from "../official/event-anniversary.json";
 import eventAnnouncement from "../official/event-announcement.json";
+import eventAwards from "../official/event-awards.json";
+import eventBabyGifts from "../official/event-baby-gifts.json";
+import eventBabyShower from "../official/event-baby-shower.json";
 import eventBadge from "../official/event-badge.json";
+import eventBirthAnnouncement from "../official/event-birth-announcement.json";
 import eventBirthday from "../official/event-birthday.json";
+import eventBookFair from "../official/event-book-fair.json";
+import eventBooth from "../official/event-booth.json";
 import eventCheckIn from "../official/event-check-in.json";
 import eventCinema from "../official/event-cinema.json";
 import eventComedy from "../official/event-comedy.json";
 import eventConcert from "../official/event-concert.json";
+import eventCraftFair from "../official/event-craft-fair.json";
+import eventCupcake from "../official/event-cupcake.json";
+import eventEngagement from "../official/event-engagement.json";
 import eventExhibit from "../official/event-exhibit.json";
 import eventFestival from "../official/event-festival.json";
+import eventFilmFestival from "../official/event-film-festival.json";
+import eventFoodFestival from "../official/event-food-festival.json";
+import eventFunRun from "../official/event-fun-run.json";
+import eventGala from "../official/event-gala.json";
+import eventGameNight from "../official/event-game-night.json";
+import eventGameScores from "../official/event-game-scores.json";
+import eventGradDiploma from "../official/event-grad-diploma.json";
+import eventGradParty from "../official/event-grad-party.json";
+import eventGradSeal from "../official/event-grad-seal.json";
+import eventGradStream from "../official/event-grad-stream.json";
+import eventGuestBook from "../official/event-guest-book.json";
+import eventHackathon from "../official/event-hackathon.json";
+import eventKeynote from "../official/event-keynote.json";
 import eventLivestream from "../official/event-livestream.json";
+import eventMatchLineup from "../official/event-match-lineup.json";
+import eventMeetup from "../official/event-meetup.json";
+import eventMemorial from "../official/event-memorial.json";
+import eventMilestone from "../official/event-milestone.json";
+import eventNightMarket from "../official/event-night-market.json";
+import eventOpenMic from "../official/event-open-mic.json";
 import eventParty from "../official/event-party.json";
+import eventPartyHat from "../official/event-party-hat.json";
 import eventPhotos from "../official/event-photos.json";
+import eventProm from "../official/event-prom.json";
+import eventQuince from "../official/event-quince.json";
 import eventRace from "../official/event-race.json";
 import eventRaffle from "../official/event-raffle.json";
+import eventRetirement from "../official/event-retirement.json";
+import eventReunion from "../official/event-reunion.json";
+import eventRunnerTracker from "../official/event-runner-tracker.json";
 import eventSaveTheDate from "../official/event-save-the-date.json";
+import eventScoreboard from "../official/event-scoreboard.json";
+import eventSeasonTicket from "../official/event-season-ticket.json";
+import eventSessionFeedback from "../official/event-session-feedback.json";
+import eventSetlist from "../official/event-setlist.json";
+import eventShortFilms from "../official/event-short-films.json";
+import eventSlides from "../official/event-slides.json";
+import eventSpeakerQa from "../official/event-speaker-qa.json";
 import eventSports from "../official/event-sports.json";
+import eventTalentShow from "../official/event-talent-show.json";
 import eventTheatre from "../official/event-theatre.json";
 import eventTicket from "../official/event-ticket.json";
+import eventTourMerch from "../official/event-tour-merch.json";
+import eventTournament from "../official/event-tournament.json";
+import eventTrivia from "../official/event-trivia.json";
+import eventWorkshop from "../official/event-workshop.json";
 import eventWristband from "../official/event-wristband.json";
 import rsvpCard from "../official/rsvp-card.json";
 import weddingInvitation from "../official/wedding-invitation.json";
@@ -68,6 +115,53 @@ const frames = [
   weddingSeating,
   weddingLetter,
   weddingSeal,
+  eventGradSeal,
+  eventGradDiploma,
+  eventGradParty,
+  eventGradStream,
+  eventKeynote,
+  eventSpeakerQa,
+  eventSessionFeedback,
+  eventSlides,
+  eventBooth,
+  eventWorkshop,
+  eventHackathon,
+  eventMeetup,
+  eventSetlist,
+  eventTourMerch,
+  eventOpenMic,
+  eventFilmFestival,
+  eventShortFilms,
+  eventBookFair,
+  eventCraftFair,
+  eventNightMarket,
+  eventFoodFestival,
+  eventCupcake,
+  eventPartyHat,
+  eventGuestBook,
+  eventMilestone,
+  eventBabyShower,
+  eventBabyGifts,
+  eventBirthAnnouncement,
+  eventQuince,
+  eventMatchLineup,
+  eventGameScores,
+  eventSeasonTicket,
+  eventScoreboard,
+  eventTournament,
+  eventFunRun,
+  eventRunnerTracker,
+  eventTrivia,
+  eventGameNight,
+  eventGala,
+  eventAwards,
+  eventProm,
+  eventTalentShow,
+  eventRetirement,
+  eventAnniversary,
+  eventEngagement,
+  eventReunion,
+  eventMemorial,
 ] as unknown as readonly OfficialFrame[];
 
 export default frames;

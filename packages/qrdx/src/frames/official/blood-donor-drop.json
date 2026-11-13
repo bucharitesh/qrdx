@@ -1,0 +1,87 @@
+{
+  "id": "blood-donor-drop",
+  "name": "Give blood",
+  "description": "A solid card with a drop with a cross over the code and the label underneath, in blood red.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "blood-donor-day",
+  "contentTypes": [],
+  "tags": [
+    "world blood donor day",
+    "blood donation",
+    "june 14",
+    "blood",
+    "donation"
+  ],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#991b1b",
+      "text": "#ffffff",
+      "accent": "#fca5a5"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M620 47C635.75 86.6 665 107 665 134A45 45 0 0 1 575 134C575 107 604.25 86.6 620 47Z",
+        "fill": "accent"
+      },
+      {
+        "type": "path",
+        "d": "M614 113L626 113A3 3 0 0 1 629 116L629 155A3 3 0 0 1 626 158L614 158A3 3 0 0 1 611 155L611 116A3 3 0 0 1 614 113ZM600.5 126.5L639.5 126.5A3 3 0 0 1 642.5 129.5L642.5 141.5A3 3 0 0 1 639.5 144.5L600.5 144.5A3 3 0 0 1 597.5 141.5L597.5 129.5A3 3 0 0 1 600.5 126.5Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Give blood",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan to book a donation",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

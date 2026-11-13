@@ -1,0 +1,74 @@
+{
+  "id": "parking-pay",
+  "name": "Pay to park",
+  "description": "A solid card with a parking sign over the code and the label underneath.",
+  "category": "use-case",
+  "collection": "places",
+  "contentTypes": ["url"],
+  "tags": ["parking", "payment"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M584 47L656 47A24 24 0 0 1 680 71L680 143A24 24 0 0 1 656 167L584 167A24 24 0 0 1 560 143L560 71A24 24 0 0 1 584 47ZM599 71L599 146L617 146L617 123.5L629 123.5C647 123.5 657.5 111.5 657.5 97.25C657.5 83 647 71 629 71ZM617 87.5L627.5 87.5C635.75 87.5 640.25 92 640.25 97.25C640.25 102.5 635.75 107 627.5 107L617 107ZM615.5 167L624.5 167A3 3 0 0 1 627.5 170L627.5 182A3 3 0 0 1 624.5 185L615.5 185A3 3 0 0 1 612.5 182L612.5 170A3 3 0 0 1 615.5 167Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Pay for parking",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan to start",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

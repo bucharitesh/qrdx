@@ -1,0 +1,64 @@
+{
+  "id": "park-playground",
+  "name": "Playground",
+  "description": "An arched card, like a window, with a swing set.",
+  "category": "use-case",
+  "collection": "places",
+  "contentTypes": ["url"],
+  "tags": ["park", "outdoors", "playground", "kids"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1880
+    },
+    "qr": {
+      "x": 160,
+      "y": 470,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M0 660A660 660 0 0 1 1320 660L1320 1840Q1320 1880 1280 1880L40 1880Q0 1880 0 1840Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.9
+        }
+      },
+      {
+        "type": "path",
+        "d": "M50 660A610 610 0 0 1 1270 660L1270 1830L50 1830ZM62 660L62 1818L1258 1818L1258 660A598 598 0 0 0 62 660Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M598.6 308.08L625.6 179.08L634.4 180.92L607.4 309.92ZM712.6 309.92L685.6 180.92L694.4 179.08L721.4 308.08ZM621 174L699 174A6 6 0 0 1 705 180L705 180A6 6 0 0 1 699 186L621 186A6 6 0 0 1 615 180L615 180A6 6 0 0 1 621 174ZM648.38 186L648.38 264L644.63 264L644.63 186ZM675.38 186L675.38 264L671.63 264L671.63 186ZM640.5 262.5L679.5 262.5A4.5 4.5 0 0 1 684 267L684 268.5A4.5 4.5 0 0 1 679.5 273L640.5 273A4.5 4.5 0 0 1 636 268.5L636 267A4.5 4.5 0 0 1 640.5 262.5Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Playground rules",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 1610,
+          "width": 1040,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

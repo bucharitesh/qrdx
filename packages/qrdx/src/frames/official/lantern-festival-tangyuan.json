@@ -1,0 +1,122 @@
+{
+  "id": "lantern-festival-tangyuan",
+  "name": "Tangyuan bowl",
+  "description": "A thin double border with a bowl and chopsticks, a small divider and the label, in lantern red and gold.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "lantern-festival",
+  "contentTypes": [],
+  "tags": ["lantern festival", "yuanxiao", "lanterns", "tangyuan", "menu"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1830
+    },
+    "qr": {
+      "x": 160,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#a61b29",
+      "text": "#ffffff",
+      "accent": "#f6c344"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1320,
+        "height": 1830,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 30,
+        "y": 30,
+        "width": 1260,
+        "height": 1770,
+        "fill": "frame",
+        "hole": {
+          "x": 40,
+          "y": 40,
+          "width": 1240,
+          "height": 1750
+        }
+      },
+      {
+        "type": "rect",
+        "x": 60,
+        "y": 60,
+        "width": 1200,
+        "height": 1710,
+        "fill": "frame",
+        "hole": {
+          "x": 64,
+          "y": 64,
+          "width": 1192,
+          "height": 1702
+        }
+      },
+      {
+        "type": "path",
+        "d": "M598.4 144.4L721.6 144.4C718.8 183.6 693.6 206 660 206C626.4 206 601.2 183.6 598.4 144.4Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M670.45 138.3L720.85 93.5A3.08 3.08 0 0 1 716.75 88.9L666.35 133.7A3.08 3.08 0 0 1 670.45 138.3ZM681.45 141.26L726.25 107.66A3.08 3.08 0 0 1 722.55 102.74L677.75 136.34A3.08 3.08 0 0 1 681.45 141.26Z",
+        "fill": "accent"
+      },
+      {
+        "type": "line",
+        "x1": 470,
+        "y1": 1570,
+        "x2": 850,
+        "y2": 1570,
+        "width": 6,
+        "fill": "frame"
+      },
+      {
+        "type": "polygon",
+        "points": [[660, 1550], [680, 1570], [660, 1590], [640, 1570]],
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for the menu",
+        "color": "frame",
+        "box": {
+          "x": 180,
+          "y": 1610,
+          "width": 960,
+          "height": 160
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Lantern Festival",
+        "color": "frame",
+        "box": {
+          "x": 180,
+          "y": 225,
+          "width": 960,
+          "height": 100
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

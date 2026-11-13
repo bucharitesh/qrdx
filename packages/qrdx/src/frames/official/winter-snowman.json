@@ -1,0 +1,81 @@
+{
+  "id": "winter-snowman",
+  "name": "Snowman",
+  "description": "A solid card with a snowman over the code and the label underneath, in night slate and ice blue.",
+  "category": "seasonal",
+  "collection": "seasons",
+  "occasion": "winter",
+  "contentTypes": [],
+  "tags": ["winter", "snow", "snowman", "closures"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#1e293b",
+      "text": "#ffffff",
+      "accent": "#bae6fd"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M587 146A33 33 0 1 1 653 146A33 33 0 1 1 587 146ZM597.5 101A22.5 22.5 0 1 1 642.5 101A22.5 22.5 0 1 1 597.5 101ZM603.5 68A16.5 16.5 0 1 1 636.5 68A16.5 16.5 0 1 1 603.5 68Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M606.5 38L633.5 38A1.5 1.5 0 0 1 635 39.5L635 54.5A1.5 1.5 0 0 1 633.5 56L606.5 56A1.5 1.5 0 0 1 605 54.5L605 39.5A1.5 1.5 0 0 1 606.5 38ZM599.75 53L640.25 53A2.25 2.25 0 0 1 642.5 55.25L642.5 56.75A2.25 2.25 0 0 1 640.25 59L599.75 59A2.25 2.25 0 0 1 597.5 56.75L597.5 55.25A2.25 2.25 0 0 1 599.75 53ZM605 80L635 80A4.5 4.5 0 0 1 639.5 84.5L639.5 84.5A4.5 4.5 0 0 1 635 89L605 89A4.5 4.5 0 0 1 600.5 84.5L600.5 84.5A4.5 4.5 0 0 1 605 80ZM629 84.5L632 84.5A3 3 0 0 1 635 87.5L635 105.5A3 3 0 0 1 632 108.5L629 108.5A3 3 0 0 1 626 105.5L626 87.5A3 3 0 0 1 629 84.5Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Snow day",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan for closures",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}
