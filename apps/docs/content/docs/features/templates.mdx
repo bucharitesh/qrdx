@@ -56,6 +56,53 @@ Seasonal Halloween theme.
 <QRCode value="https://example.com" templateId="Halloween" size={256} />
 ```
 
+### Dot Ring
+A round code. The code sits in a disc of dots inside a dark ring, with a line of text set along the ring. Which dots show comes from a hash of the code's content, so every link gets a ring of its own and the same link always gets the same one.
+
+```tsx
+<QRCode
+  value="https://example.com"
+  templateId="DotRing"
+  bodyPattern="circle-large"
+  size={512}
+/>
+```
+
+Its settings go in `customProps` (typed as `DotRingProps`):
+
+```tsx
+<QRCode
+  value="https://example.com"
+  templateId="DotRing"
+  customProps={{
+    customText: "Scan for the menu",
+    textPosition: "bottom",
+    textColor: "#fde047",
+    outerCircleColor: "#1e3a8a",
+  }}
+  size={512}
+/>
+```
+
+| Prop | Default | Notes |
+| --- | --- | --- |
+| `customText` | "Scan the QR code" four times round | Text along the ring. Letters that don't fit around it are left out; `""` leaves the ring empty |
+| `textPosition` | `"top"` | `"top"`: centered over the top, reading clockwise. `"bottom"`: centered along the bottom, reading left to right |
+| `textRotation` | `0` | Turns the text around the center, in degrees |
+| `textColor` | `#ffffff` | Text color |
+| `fontFamily` | system font stack | CSS font family of the text |
+| `fontWeight` | `900` | Font weight |
+| `fontSize` | `32` | In the template's 593-unit drawing, where the code is 300 across |
+| `fontLetterSpacing` | `3.5` | Extra space between letters, in the same units |
+| `outerCircleColor` | `fgColor` | Ring color |
+| `strokeWidth`, `strokeColor` | `0`, `#000000` | A stroke along both edges of the ring |
+| `outerStrokeWidth`, `outerStrokeColor` | `strokeWidth`, `strokeColor` | The ring's outer edge only |
+| `innerStrokeWidth`, `innerStrokeColor` | `strokeWidth`, `strokeColor` | The ring's inner edge only |
+
+A logo goes in the middle as on any code. Long links (codes over 49 modules across) keep a light band between the code and the dots, so they still scan when printed small.
+
+The text is SVG text in the font you choose; the default is the system font stack, so nothing is downloaded. SVG and PNG downloads in the browser use the viewer's fonts. PDF and EPS print it in Helvetica Bold, so use Latin-1 text there. `getQRAsPNG` from `qrdx/node` needs a font installed on the server, as frame labels do.
+
 ## Customize Templates
 
 The built-in templates draw their artwork in `fgColor`. Everything else, such as patterns and a logo, is set on the code as usual:
@@ -149,6 +196,7 @@ Keep the code large enough to scan from where people will hold their phones, and
 | Square Border | Formal | Structured |
 | Striked Box | Marketing | Energetic |
 | Halloween | Seasonal | Fun |
+| Dot Ring | Round codes, posters, stickers | Bold |
 
 ## Next Steps
 
