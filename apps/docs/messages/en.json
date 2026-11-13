@@ -5167,7 +5167,11 @@
         "filesUploadedToThisWorkspace": "Files uploaded to this workspace. Manage them in Dashboard → Files.",
         "noLabelFilesYetUpload": "No {label}files yet. Upload one first.",
         "add": "Add",
-        "selected": "selected"
+        "selected": "selected",
+        "loadMore": "Load more",
+        "loading": "Loading…",
+        "tryAgain": "Try again",
+        "couldntLoadYourFiles": "Couldn't load your files."
       },
       "sourceListEditor": {
         "thisBlockHoldsUpTo": "This block holds up to {max, number} items.",
@@ -7577,7 +7581,6 @@
           "open": "Open",
           "replaceFile": "Replace file…",
           "delete": "Delete",
-          "showingThe500NewestFiles": "Showing the 500 newest files.",
           "deleteFilename": "Delete {filename}?",
           "thisFileIsValueThey": "This file is {value}. They will show \"File unavailable\" instead.",
           "andValueMore": "and {value, number} more",
@@ -7605,7 +7608,12 @@
           "notUsedYet": "Not used yet",
           "usedByPagesAndCodes": "Used by {pages, plural, one {# page} other {# pages}} · {codes, plural, one {# code} other {# codes}}",
           "usedByPages": "Used by {pages, plural, one {# page} other {# pages}}",
-          "usedByCodes": "Used by {codes, plural, one {# code} other {# codes}}"
+          "usedByCodes": "Used by {codes, plural, one {# code} other {# codes}}",
+          "loadMoreFiles": "Load more files",
+          "loadingMoreFiles": "Loading files…",
+          "tryAgain": "Try again",
+          "couldntLoadMoreFiles": "Couldn't load more files. Try again.",
+          "allFilesShown": "That's every file."
         }
       },
       "loading": {
@@ -7918,7 +7926,8 @@
           "yourThemes": "Your themes",
           "noSharedThemesYetUse": "No shared themes yet. Use \"Copy to this workspace\" on one of your themes below.",
           "noSharedThemesYetOwners": "No shared themes yet. Owners and admins can share themes here.",
-          "askAWorkspaceOwnerTo": "Ask a workspace owner to upgrade."
+          "askAWorkspaceOwnerTo": "Ask a workspace owner to upgrade.",
+          "showMoreThemes": "Show more themes"
         }
       },
       "home": {

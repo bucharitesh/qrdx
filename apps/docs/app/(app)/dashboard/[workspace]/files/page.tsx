@@ -13,15 +13,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHeader } from "@/app/(app)/dashboard/_components/page-header";
 import { requireDashboardScope } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
-import {
-  type FileRow,
-  FilesManager,
-} from "@/app/(app)/dashboard/files/_components/files-manager";
-import {
-  getFileUsage,
-  getStorageOverview,
-  listFiles,
-} from "@/lib/files/service";
+import { FilesManager } from "@/app/(app)/dashboard/files/_components/files-manager";
+import { loadFileRows } from "@/app/(app)/dashboard/files/_lib/rows";
+import { countFilesByKind, getStorageOverview } from "@/lib/files/service";
+import { FILE_KINDS, type FileKind } from "@/lib/files/types";
 import { getAppTranslations } from "@/lib/i18n/app-locale";
 import { isOwnWorkspaceScope } from "@/lib/own-workspace";
 import { can } from "@/lib/permissions";
@@ -33,7 +28,11 @@ export const metadata: Metadata = {
 
 const DOCS_HREF = "/docs/files";
 
-export default async function FilesPage() {
+export default async function FilesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ kind?: string | string[] }>;
+}) {
   const t = await getAppTranslations("app.dashboard.files.page");
   const scope = await requireDashboardScope();
   const overview = await getStorageOverview(scope);
@@ -68,16 +67,13 @@ export default async function FilesPage() {
     );
   }
 
-  const files = await listFiles(scope);
-  const usage = await getFileUsage(
-    scope,
-    files.map((file) => file.id),
-  );
-  const rows: FileRow[] = files.map((file) => ({
-    ...file,
-    pages: usage.get(file.id)?.pages ?? [],
-    codeCount: usage.get(file.id)?.codeCount ?? 0,
-  }));
+  // ?kind= narrows the list to one kind; a kind with no files shows them all.
+  const { kind: rawKind } = await searchParams;
+  const counts = await countFilesByKind(scope);
+  const requested = FILE_KINDS.find((item) => item === rawKind);
+  const kind: FileKind | null =
+    requested && counts[requested] > 0 ? requested : null;
+  const first = await loadFileRows(scope, { kind: kind ?? undefined });
 
   return (
     <div className="space-y-6">
@@ -85,8 +81,10 @@ export default async function FilesPage() {
       <FilesManager
         canManageAll={can(scope.role, "content.manageAll")}
         canUpgrade={isOwnWorkspaceScope(scope) && overview.plan !== "business"}
-        files={rows}
+        counts={counts}
+        first={first}
         isTeam={!isOwnWorkspaceScope(scope)}
+        kind={kind}
         overview={overview}
       />
     </div>
