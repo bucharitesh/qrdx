@@ -1,0 +1,80 @@
+{
+  "id": "register-to-vote",
+  "name": "Register to vote",
+  "description": "A solid card with a ballot box over the code and the label underneath.",
+  "category": "use-case",
+  "collection": "nonprofit",
+  "contentTypes": ["url"],
+  "tags": ["nonprofit", "community", "voting", "election"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M566 110L674 110A6 6 0 0 1 680 116L680 170A6 6 0 0 1 674 176L566 176A6 6 0 0 1 560 170L560 116A6 6 0 0 1 566 110ZM590.75 120.5A3.75 3.75 0 0 0 587 124.25L587 124.25A3.75 3.75 0 0 0 590.75 128L649.25 128A3.75 3.75 0 0 0 653 124.25L653 124.25A3.75 3.75 0 0 0 649.25 120.5L590.75 120.5Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M599 50L641 50A3 3 0 0 1 644 53L644 110A3 3 0 0 1 641 113L599 113A3 3 0 0 1 596 110L596 53A3 3 0 0 1 599 50ZM604.38 83.62L618.09 94.8L635.86 72.85A3 3 0 0 1 631.14 69.15L615.91 89.2L608.62 79.38A3 3 0 0 1 604.38 83.62Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Register to vote",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "It takes a few minutes",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

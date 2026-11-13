@@ -1,0 +1,86 @@
+{
+  "id": "rebook-visit",
+  "name": "Rebook",
+  "description": "A solid card with a calendar over the code and the label underneath.",
+  "category": "use-case",
+  "collection": "beauty-wellness",
+  "contentTypes": ["calcom", "url"],
+  "tags": ["beauty", "wellness", "salon", "booking"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M569 59L671 59A12 12 0 0 1 683 71L683 164A12 12 0 0 1 671 176L569 176A12 12 0 0 1 557 164L557 71A12 12 0 0 1 569 59ZM573.5 92A4.5 4.5 0 0 0 569 96.5L569 159.5A4.5 4.5 0 0 0 573.5 164L666.5 164A4.5 4.5 0 0 0 671 159.5L671 96.5A4.5 4.5 0 0 0 666.5 92Z",
+        "fill": "text",
+        "fillRule": "evenodd"
+      },
+      {
+        "type": "path",
+        "d": "M590 44L590 44A6 6 0 0 1 596 50L596 68A6 6 0 0 1 590 74L590 74A6 6 0 0 1 584 68L584 50A6 6 0 0 1 590 44ZM650 44L650 44A6 6 0 0 1 656 50L656 68A6 6 0 0 1 650 74L650 74A6 6 0 0 1 644 68L644 50A6 6 0 0 1 650 44Z",
+        "fill": "accent"
+      },
+      {
+        "type": "path",
+        "d": "M632 125L653 125A3 3 0 0 1 656 128L656 149A3 3 0 0 1 653 152L632 152A3 3 0 0 1 629 149L629 128A3 3 0 0 1 632 125Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Rebook in one tap",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "See you soon",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

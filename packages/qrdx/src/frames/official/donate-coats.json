@@ -1,0 +1,74 @@
+{
+  "id": "donate-coats",
+  "name": "Coat drive",
+  "description": "A solid card with a clothes hanger over the code and the label underneath.",
+  "category": "use-case",
+  "collection": "nonprofit",
+  "contentTypes": ["url"],
+  "tags": ["nonprofit", "community", "clothing drive", "donations"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M623.28 86.33L623.65 82.49L624.6 79.56L626.03 76.94L627.85 74.48L629.97 72.07L632.22 69.58L634.43 66.87L636.39 63.78L637.78 60.15L638.27 56.41L638.26 55.48L637.55 51.27L635.38 47.01L631.99 43.62L627.73 41.45L623 40.7L618.27 41.45L614.01 43.62L610.62 47.01L608.45 51.27L607.74 55.48A3.3 3.3 0 0 1 614.26 56.52L614.73 53.31L615.96 50.89L617.89 48.96L620.31 47.73L623 47.3L625.69 47.73L628.11 48.96L630.04 50.89L631.27 53.31L631.74 56.52L631.73 55.59L631.38 58.56L630.49 60.8L629.09 63L627.22 65.27L625.03 67.68L622.71 70.35L620.45 73.4L618.52 76.99L617.19 81.19L616.72 85.67A3.3 3.3 0 0 1 623.28 86.33ZM559.65 154.65L620 92.75L680.35 149.35L557 148.25L557 155.75L685.65 154.65L620 85.25L554.35 149.35Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Donate your coats",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Coat drive",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

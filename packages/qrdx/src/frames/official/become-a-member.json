@@ -1,0 +1,79 @@
+{
+  "id": "become-a-member",
+  "name": "Become a member",
+  "description": "A wide card: the code on one side, a hand holding a heart and the label on the other.",
+  "category": "use-case",
+  "collection": "nonprofit",
+  "contentTypes": ["upi", "paypal", "url"],
+  "tags": ["nonprofit", "community", "membership", "support"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 2000,
+      "height": 1040
+    },
+    "qr": {
+      "x": 120,
+      "y": 120,
+      "size": 800,
+      "padding": 64,
+      "radius": 19.2
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 2000,
+        "height": 1040,
+        "radius": 72,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.9
+        }
+      },
+      {
+        "type": "path",
+        "d": "M1040.8 271.6C1055.2 268 1073.2 268 1087.6 271.6L1127.2 282.4C1139.8 286 1138 302.2 1125.4 300.4L1103.8 298.6L1141.6 307.6L1184.8 286C1195.6 280.6 1204.6 293.2 1195.6 300.4L1148.8 329.2C1138 334.6 1127.2 334.6 1116.4 332.8L1040.8 322ZM1127.2 251.44C1120 242.8 1090.48 222.64 1091.2 205.36C1091.92 186.64 1120 183.76 1127.2 202.48C1134.4 183.76 1162.48 186.64 1163.2 205.36C1163.92 222.64 1134.4 242.8 1127.2 251.44Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Become a member",
+        "color": "frame",
+        "box": {
+          "x": 1030,
+          "y": 400,
+          "width": 860,
+          "height": 190
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Support our work",
+        "color": "frame",
+        "box": {
+          "x": 1030,
+          "y": 610,
+          "width": 860,
+          "height": 100
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

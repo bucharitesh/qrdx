@@ -1,0 +1,108 @@
+{
+  "id": "moving-checklist",
+  "name": "Moving checklist",
+  "description": "A light card with a delivery truck and a pill-shaped button under the code.",
+  "category": "use-case",
+  "collection": "real-estate",
+  "contentTypes": ["url"],
+  "tags": ["real estate", "property", "moving", "checklist"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1760
+    },
+    "qr": {
+      "x": 120,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 64,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 64,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.82
+        },
+        "hole": {
+          "x": 12,
+          "y": 12,
+          "width": 1216,
+          "height": 1736,
+          "radius": 54
+        }
+      },
+      {
+        "type": "path",
+        "d": "M565.4 59.6L629.1 59.6A5.2 5.2 0 0 1 634.3 64.8L634.3 124.6A5.2 5.2 0 0 1 629.1 129.8L565.4 129.8A5.2 5.2 0 0 1 560.2 124.6L560.2 64.8A5.2 5.2 0 0 1 565.4 59.6ZM636.9 80.4L659 80.4L677.2 102.5L677.2 129.8L636.9 129.8ZM643.4 102.5L668.1 102.5L656.4 86.9L643.4 86.9Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M571.9 132.4A14.3 14.3 0 1 1 600.5 132.4A14.3 14.3 0 1 1 571.9 132.4ZM642.1 132.4A14.3 14.3 0 1 1 670.7 132.4A14.3 14.3 0 1 1 642.1 132.4ZM580.35 132.4A5.85 5.85 0 1 0 592.05 132.4A5.85 5.85 0 1 0 580.35 132.4ZM650.55 132.4A5.85 5.85 0 1 0 662.25 132.4A5.85 5.85 0 1 0 650.55 132.4Z",
+        "fill": "accent"
+      },
+      {
+        "type": "rect",
+        "x": 170,
+        "y": 1520,
+        "width": 900,
+        "height": 180,
+        "radius": 90,
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Moving checklist",
+        "color": "text",
+        "box": {
+          "x": 230,
+          "y": 1520,
+          "width": 780,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Make the move easy",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 180,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

@@ -3,7 +3,7 @@
   "name": "Equipment guide",
   "description": "A folder tab on top carrying the label and a play button.",
   "category": "use-case",
-  "collection": "health-learning",
+  "collection": "sports-fitness",
   "contentTypes": ["url"],
   "tags": ["fitness", "gym", "equipment", "video"],
   "license": "CC0-1.0",

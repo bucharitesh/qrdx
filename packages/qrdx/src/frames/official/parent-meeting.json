@@ -1,0 +1,108 @@
+{
+  "id": "parent-meeting",
+  "name": "Parent meeting",
+  "description": "A light card with three people and a pill-shaped button under the code.",
+  "category": "use-case",
+  "collection": "health-learning",
+  "contentTypes": ["calcom", "url"],
+  "tags": ["education", "school", "parents"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1760
+    },
+    "qr": {
+      "x": 120,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 64,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 64,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.82
+        },
+        "hole": {
+          "x": 12,
+          "y": 12,
+          "width": 1216,
+          "height": 1736,
+          "radius": 54
+        }
+      },
+      {
+        "type": "path",
+        "d": "M568 85.6A11.7 11.7 0 1 1 591.4 85.6A11.7 11.7 0 1 1 568 85.6ZM562.8 150.6C562.8 106.4 596.6 106.4 596.6 150.6ZM648.6 85.6A11.7 11.7 0 1 1 672 85.6A11.7 11.7 0 1 1 648.6 85.6ZM643.4 150.6C643.4 106.4 677.2 106.4 677.2 150.6Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M604.4 70A15.6 15.6 0 1 1 635.6 70A15.6 15.6 0 1 1 604.4 70ZM597.9 150.6C597.9 96 642.1 96 642.1 150.6Z",
+        "fill": "accent"
+      },
+      {
+        "type": "rect",
+        "x": 170,
+        "y": 1520,
+        "width": 900,
+        "height": 180,
+        "radius": 90,
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Book a meeting",
+        "color": "text",
+        "box": {
+          "x": 230,
+          "y": 1520,
+          "width": 780,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Parents' evening",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 180,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

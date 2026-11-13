@@ -1,0 +1,103 @@
+{
+  "id": "vote-for-us",
+  "name": "Vote for us",
+  "description": "A round badge with a trophy inside the ring, the label set along its top and the note along its bottom.",
+  "category": "use-case",
+  "collection": "business",
+  "contentTypes": ["url"],
+  "tags": ["business", "awards"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 2000,
+      "height": 2000
+    },
+    "qr": {
+      "x": 500,
+      "y": 500,
+      "size": 1000,
+      "padding": 64,
+      "radius": 40
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "circle",
+        "cx": 1000,
+        "cy": 1000,
+        "r": 1000,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 1000,
+        "cy": 1000,
+        "r": 820,
+        "hole": 808,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.25
+        }
+      },
+      {
+        "type": "path",
+        "d": "M955.8 243.6L1044.2 243.6L1044.2 281C1044.2 315 1023.8 332 1000 332C976.2 332 955.8 315 955.8 281ZM955.8 299.7A25.5 25.5 0 0 1 955.8 248.7L955.8 258.9A15.3 15.3 0 0 0 955.8 289.5ZM1044.2 248.7A25.5 25.5 0 0 1 1044.2 299.7L1044.2 289.5A15.3 15.3 0 0 0 1044.2 258.9Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M991.5 328.6L1008.5 328.6L1008.5 359.2L991.5 359.2ZM969.4 359.2L1030.6 359.2A3.4 3.4 0 0 1 1034 362.6L1034 369.4A3.4 3.4 0 0 1 1030.6 372.8L969.4 372.8A3.4 3.4 0 0 1 966 369.4L966 362.6A3.4 3.4 0 0 1 969.4 359.2ZM960.9 372.8L1039.1 372.8A5.1 5.1 0 0 1 1044.2 377.9L1044.2 384.7A5.1 5.1 0 0 1 1039.1 389.8L960.9 389.8A5.1 5.1 0 0 1 955.8 384.7L955.8 377.9A5.1 5.1 0 0 1 960.9 372.8Z",
+        "fill": "accent"
+      },
+      {
+        "type": "polygon",
+        "points": [[95, 974], [121, 1000], [95, 1026], [69, 1000]],
+        "fill": "text"
+      },
+      {
+        "type": "polygon",
+        "points": [[1905, 974], [1931, 1000], [1905, 1026], [1879, 1000]],
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "curved",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Vote for us",
+        "color": "text",
+        "curve": {
+          "cx": 1000,
+          "cy": 1000,
+          "radius": 905,
+          "side": "top",
+          "spread": 120
+        },
+        "fontSize": 92
+      },
+      {
+        "type": "curved",
+        "id": "note",
+        "slot": "secondary",
+        "text": "We're nominated",
+        "color": "text",
+        "curve": {
+          "cx": 1000,
+          "cy": 1000,
+          "radius": 905,
+          "side": "bottom",
+          "spread": 110
+        },
+        "fontSize": 76,
+        "weight": "regular"
+      }
+    ]
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "id": "dress-fitting",
+  "name": "Dress fitting",
+  "description": "An arched card, like a window, with a dress.",
+  "category": "use-case",
+  "collection": "shopping",
+  "contentTypes": ["calcom", "url"],
+  "tags": ["retail", "shop", "boutique", "bridal"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1880
+    },
+    "qr": {
+      "x": 160,
+      "y": 470,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M0 660A660 660 0 0 1 1320 660L1320 1840Q1320 1880 1280 1880L40 1880Q0 1880 0 1840Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.9
+        }
+      },
+      {
+        "type": "path",
+        "d": "M50 660A610 610 0 0 1 1270 660L1270 1830L50 1830ZM62 660L62 1818L1258 1818L1258 660A598 598 0 0 0 62 660Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M640.5 174L651 174L660 187.5L669 174L679.5 174L682.5 210C682.5 219 676.5 225 676.5 231L714 306L606 306L643.5 231C643.5 225 637.5 219 637.5 210ZM648 229.5A3 3 0 0 0 645 232.5L645 232.5A3 3 0 0 0 648 235.5L672 235.5A3 3 0 0 0 675 232.5L675 232.5A3 3 0 0 0 672 229.5L648 229.5Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Book a fitting",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 1610,
+          "width": 1040,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

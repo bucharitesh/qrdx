@@ -1,0 +1,98 @@
+{
+  "id": "nutrition-facts",
+  "name": "Nutrition facts",
+  "description": "The label between two short rules under the code and a document.",
+  "category": "use-case",
+  "collection": "food-drink",
+  "contentTypes": ["url"],
+  "tags": ["restaurant", "food", "nutrition", "calories"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 40,
+        "fill": "background"
+      },
+      {
+        "type": "line",
+        "x1": 60,
+        "y1": 1610,
+        "x2": 220,
+        "y2": 1610,
+        "width": 10,
+        "fill": "frame"
+      },
+      {
+        "type": "line",
+        "x1": 1020,
+        "y1": 1610,
+        "x2": 1180,
+        "y2": 1610,
+        "width": 10,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M581.6 47.2L629.6 47.2L660.8 78.4L660.8 152.8L581.6 152.8ZM596.6 64A3 3 0 0 0 593.6 67L593.6 67A3 3 0 0 0 596.6 70L617 70A3 3 0 0 0 620 67L620 67A3 3 0 0 0 617 64L596.6 64ZM596.6 92.8A3 3 0 0 0 593.6 95.8L593.6 95.8A3 3 0 0 0 596.6 98.8L645.8 98.8A3 3 0 0 0 648.8 95.8L648.8 95.8A3 3 0 0 0 645.8 92.8L596.6 92.8ZM596.6 107.2A3 3 0 0 0 593.6 110.2L593.6 110.2A3 3 0 0 0 596.6 113.2L645.8 113.2A3 3 0 0 0 648.8 110.2L648.8 110.2A3 3 0 0 0 645.8 107.2L596.6 107.2ZM596.6 121.6A3 3 0 0 0 593.6 124.6L593.6 124.6A3 3 0 0 0 596.6 127.6L645.8 127.6A3 3 0 0 0 648.8 124.6L648.8 124.6A3 3 0 0 0 645.8 121.6L596.6 121.6ZM596.6 136A3 3 0 0 0 593.6 139L593.6 139A3 3 0 0 0 596.6 142L621.8 142A3 3 0 0 0 624.8 139L624.8 139A3 3 0 0 0 621.8 136L596.6 136Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M660.8 78.4L629.6 78.4L629.6 47.2Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Nutrition facts",
+        "color": "frame",
+        "box": {
+          "x": 260,
+          "y": 1530,
+          "width": 720,
+          "height": 160
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan for calories",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 180,
+          "width": 960,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

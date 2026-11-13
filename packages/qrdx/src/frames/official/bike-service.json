@@ -1,0 +1,113 @@
+{
+  "id": "bike-service",
+  "name": "Bike service",
+  "description": "A light card with a bicycle and a solid label band.",
+  "category": "use-case",
+  "collection": "sports-fitness",
+  "contentTypes": ["calcom", "url"],
+  "tags": ["sports", "fitness", "cycling", "bike shop"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1770
+    },
+    "qr": {
+      "x": 120,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "frame",
+        "hole": {
+          "x": 20,
+          "y": 20,
+          "width": 1200,
+          "height": 1730,
+          "radius": 38
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 250,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 60,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M555.6 124.4A25.2 25.2 0 1 1 606 124.4A25.2 25.2 0 1 1 555.6 124.4ZM561.9 124.4A18.9 18.9 0 1 0 599.7 124.4A18.9 18.9 0 1 0 561.9 124.4ZM634 124.4A25.2 25.2 0 1 1 684.4 124.4A25.2 25.2 0 1 1 634 124.4ZM640.3 124.4A18.9 18.9 0 1 0 678.1 124.4A18.9 18.9 0 1 0 640.3 124.4ZM580.8 127.55A3.15 3.15 0 0 0 580.8 121.25L617.2 121.25A3.15 3.15 0 0 0 617.2 127.55L580.8 127.55ZM620.23 123.53A3.15 3.15 0 0 0 614.17 125.27L602.97 86.07A3.15 3.15 0 0 0 609.03 84.33L620.23 123.53ZM603.35 83.5A3.15 3.15 0 0 0 608.65 86.9L583.45 126.1A3.15 3.15 0 0 0 578.15 122.7L603.35 83.5ZM605.8 88.34A3.15 3.15 0 0 0 606.2 82.06L651 84.86A3.15 3.15 0 0 0 650.6 91.14L605.8 88.34ZM648.49 85.86A3.15 3.15 0 0 0 653.11 90.14L619.51 126.54A3.15 3.15 0 0 0 614.89 122.26L648.49 85.86ZM647.73 88.71A3.15 3.15 0 0 0 653.87 87.29L662.27 123.69A3.15 3.15 0 0 0 656.13 125.11L647.73 88.71ZM653.79 87A3.15 3.15 0 0 0 647.81 89L642.3 69.96L658.58 65.31A3.15 3.15 0 0 0 659.82 71.49L648.1 72.44L653.79 87ZM596.9 76.8L615.1 76.8A3.5 3.5 0 0 1 618.6 80.3L618.6 80.3A3.5 3.5 0 0 1 615.1 83.8L596.9 83.8A3.5 3.5 0 0 1 593.4 80.3L593.4 80.3A3.5 3.5 0 0 1 596.9 76.8Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M610.2 124.4A7 7 0 1 1 624.2 124.4A7 7 0 1 1 610.2 124.4Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Book a bike service",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1550,
+          "width": 1040,
+          "height": 190
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Bike shop",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 180,
+          "width": 960,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

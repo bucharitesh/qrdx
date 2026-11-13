@@ -1,0 +1,98 @@
+{
+  "id": "delivery-instructions",
+  "name": "Delivery instructions",
+  "description": "A folder tab on top carrying the label and a delivery truck.",
+  "category": "use-case",
+  "collection": "business",
+  "contentTypes": ["url"],
+  "tags": ["business", "delivery", "drivers"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1560
+    },
+    "qr": {
+      "x": 120,
+      "y": 290,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1000,
+        "height": 220,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 170,
+        "width": 1240,
+        "height": 1390,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 170,
+        "width": 200,
+        "height": 100,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M839.6 66.4L898.4 66.4A4.8 4.8 0 0 1 903.2 71.2L903.2 126.4A4.8 4.8 0 0 1 898.4 131.2L839.6 131.2A4.8 4.8 0 0 1 834.8 126.4L834.8 71.2A4.8 4.8 0 0 1 839.6 66.4ZM905.6 85.6L926 85.6L942.8 106L942.8 131.2L905.6 131.2ZM911.6 106L934.4 106L923.6 91.6L911.6 91.6Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M845.6 133.6A13.2 13.2 0 1 1 872 133.6A13.2 13.2 0 1 1 845.6 133.6ZM910.4 133.6A13.2 13.2 0 1 1 936.8 133.6A13.2 13.2 0 1 1 910.4 133.6ZM853.4 133.6A5.4 5.4 0 1 0 864.2 133.6A5.4 5.4 0 1 0 853.4 133.6ZM918.2 133.6A5.4 5.4 0 1 0 929 133.6A5.4 5.4 0 1 0 918.2 133.6Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Drivers, scan here",
+        "color": "text",
+        "box": {
+          "x": 60,
+          "y": 25,
+          "width": 740,
+          "height": 150
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Delivery instructions",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 1400,
+          "width": 1000,
+          "height": 100
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

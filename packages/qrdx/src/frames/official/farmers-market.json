@@ -1,0 +1,74 @@
+{
+  "id": "farmers-market",
+  "name": "Farmers market",
+  "description": "A solid card with a shopping basket over the code and the label underneath.",
+  "category": "use-case",
+  "collection": "food-drink",
+  "contentTypes": ["url"],
+  "tags": ["restaurant", "food", "market", "farm"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M560 107L680 107L665 176L575 176ZM558.5 95L681.5 95A6 6 0 0 1 687.5 101L687.5 101A6 6 0 0 1 681.5 107L558.5 107A6 6 0 0 1 552.5 101L552.5 101A6 6 0 0 1 558.5 95ZM569 101A51 51 0 0 1 671 101L662 101A42 42 0 0 0 578 101ZM587 119A3 3 0 0 0 584 122L584 134A3 3 0 0 0 587 137L596 137A3 3 0 0 0 599 134L599 122A3 3 0 0 0 596 119L587 119ZM588.5 146A3 3 0 0 0 585.5 149L585.5 161A3 3 0 0 0 588.5 164L597.5 164A3 3 0 0 0 600.5 161L600.5 149A3 3 0 0 0 597.5 146L588.5 146ZM617 119A3 3 0 0 0 614 122L614 134A3 3 0 0 0 617 137L626 137A3 3 0 0 0 629 134L629 122A3 3 0 0 0 626 119L617 119ZM618.5 146A3 3 0 0 0 615.5 149L615.5 161A3 3 0 0 0 618.5 164L627.5 164A3 3 0 0 0 630.5 161L630.5 149A3 3 0 0 0 627.5 146L618.5 146ZM647 119A3 3 0 0 0 644 122L644 134A3 3 0 0 0 647 137L656 137A3 3 0 0 0 659 134L659 122A3 3 0 0 0 656 119L647 119ZM648.5 146A3 3 0 0 0 645.5 149L645.5 161A3 3 0 0 0 648.5 164L657.5 164A3 3 0 0 0 660.5 161L660.5 149A3 3 0 0 0 657.5 146L648.5 146Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "See this week's stalls",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Farmers market",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

@@ -1,0 +1,85 @@
+{
+  "id": "click-and-collect",
+  "name": "Click and collect",
+  "description": "A wide card: the code on one side, a shop front and the label on the other.",
+  "category": "use-case",
+  "collection": "shopping",
+  "contentTypes": ["url"],
+  "tags": ["retail", "shop", "click and collect", "pickup"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 2000,
+      "height": 1040
+    },
+    "qr": {
+      "x": 120,
+      "y": 120,
+      "size": 800,
+      "padding": 64,
+      "radius": 19.2
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 2000,
+        "height": 1040,
+        "radius": 72,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.9
+        }
+      },
+      {
+        "type": "path",
+        "d": "M1040.8 192.4L1199.2 192.4L1199.2 217.6A15.84 13.2 0 0 1 1167.52 217.6A15.84 13.2 0 0 1 1135.84 217.6A15.84 13.2 0 0 1 1104.16 217.6A15.84 13.2 0 0 1 1072.48 217.6A15.84 13.2 0 0 1 1040.8 217.6ZM1042.6 178L1197.4 178A5.4 5.4 0 0 1 1202.8 183.4L1202.8 187A5.4 5.4 0 0 1 1197.4 192.4L1042.6 192.4A5.4 5.4 0 0 1 1037.2 187L1037.2 183.4A5.4 5.4 0 0 1 1042.6 178ZM1051.6 241L1188.4 241A3.6 3.6 0 0 1 1192 244.6L1192 325.6A3.6 3.6 0 0 1 1188.4 329.2L1051.6 329.2A3.6 3.6 0 0 1 1048 325.6L1048 244.6A3.6 3.6 0 0 1 1051.6 241ZM1107.4 271.6A1.8 1.8 0 0 0 1105.6 273.4L1105.6 327.4A1.8 1.8 0 0 0 1107.4 329.2L1132.6 329.2A1.8 1.8 0 0 0 1134.4 327.4L1134.4 273.4A1.8 1.8 0 0 0 1132.6 271.6L1107.4 271.6ZM1066 259A3.6 3.6 0 0 0 1062.4 262.6L1062.4 287.8A3.6 3.6 0 0 0 1066 291.4L1091.2 291.4A3.6 3.6 0 0 0 1094.8 287.8L1094.8 262.6A3.6 3.6 0 0 0 1091.2 259L1066 259ZM1148.8 259A3.6 3.6 0 0 0 1145.2 262.6L1145.2 287.8A3.6 3.6 0 0 0 1148.8 291.4L1174 291.4A3.6 3.6 0 0 0 1177.6 287.8L1177.6 262.6A3.6 3.6 0 0 0 1174 259L1148.8 259Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M1072.48 192.4L1104.16 192.4L1104.16 217.6L1072.48 217.6ZM1135.84 192.4L1167.52 192.4L1167.52 217.6L1135.84 217.6Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Collect in store",
+        "color": "frame",
+        "box": {
+          "x": 1030,
+          "y": 400,
+          "width": 860,
+          "height": 190
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Order online first",
+        "color": "frame",
+        "box": {
+          "x": 1030,
+          "y": 610,
+          "width": 860,
+          "height": 100
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

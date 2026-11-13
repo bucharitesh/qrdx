@@ -1,0 +1,162 @@
+{
+  "id": "yard-sign-sold",
+  "name": "Yard sign, sold",
+  "description": "A yard sign hanging from the arm of a post.",
+  "category": "use-case",
+  "collection": "real-estate",
+  "contentTypes": ["url"],
+  "tags": ["real estate", "property", "sold", "yard sign"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1500,
+      "height": 1970
+    },
+    "qr": {
+      "x": 365,
+      "y": 340,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 40,
+        "y": 0,
+        "width": 70,
+        "height": 1970,
+        "radius": 8,
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.25
+        }
+      },
+      {
+        "type": "rect",
+        "x": 40,
+        "y": 30,
+        "width": 1460,
+        "height": 70,
+        "radius": 12,
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.25
+        }
+      },
+      {
+        "type": "rect",
+        "x": 402,
+        "y": 96,
+        "width": 16,
+        "height": 100,
+        "radius": 6,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.45
+        }
+      },
+      {
+        "type": "rect",
+        "x": 402,
+        "y": 1690,
+        "width": 16,
+        "height": 90,
+        "radius": 6,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.45
+        }
+      },
+      {
+        "type": "rect",
+        "x": 1312,
+        "y": 96,
+        "width": 16,
+        "height": 100,
+        "radius": 6,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.45
+        }
+      },
+      {
+        "type": "rect",
+        "x": 1312,
+        "y": 1690,
+        "width": 16,
+        "height": 90,
+        "radius": 6,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.45
+        }
+      },
+      {
+        "type": "rect",
+        "x": 230,
+        "y": 190,
+        "width": 1270,
+        "height": 1510,
+        "radius": 28,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 254,
+        "y": 214,
+        "width": 1222,
+        "height": 1462,
+        "radius": 14,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.9
+        }
+      },
+      {
+        "type": "rect",
+        "x": 350,
+        "y": 1770,
+        "width": 1030,
+        "height": 170,
+        "radius": 20,
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "See similar homes",
+        "color": "frame",
+        "box": {
+          "x": 300,
+          "y": 1470,
+          "width": 1130,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Sold",
+        "color": "text",
+        "box": {
+          "x": 400,
+          "y": 1790,
+          "width": 930,
+          "height": 130
+        }
+      }
+    ]
+  }
+}
