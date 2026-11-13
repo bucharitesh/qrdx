@@ -399,7 +399,7 @@
       "analytics": {
         "eyebrow": "Statistiken",
         "title": "Jeden Scan sehen",
-        "description": "Scans im Zeitverlauf, Länder, Geräte, Browser und Referrer für jeden dynamischen QR-Code. Kostenlose Konten behalten {days, number} Tage.",
+        "description": "Scans im Zeitverlauf, nach Ländern, Geräten, Browsern und Referrern für jeden dynamischen QR-Code. Kostenlose Konten behalten {years, plural, one {# Jahr} other {# Jahre}} Verlauf, bezahlte Tarife behalten alles.",
         "link": "So funktionieren Scan-Statistiken"
       },
       "bulk": {
@@ -443,7 +443,7 @@
       "items": {
         "free": {
           "question": "Ist QRdx wirklich kostenlos? Gibt es versteckte Limits?",
-          "answer": "Ja. Statische QR-Codes zu erstellen, anzupassen und herunterzuladen ist kostenlos und braucht kein Konto: unbegrenzt viele Codes, alle Design-Optionen ({bodyPatterns, number} Körpermuster, {eyeShapes, number} Eckaugen-Formen und {eyeCentres, number} Augenzentren, Verläufe, Logos, Rahmen und Logo QR oder Image QR) sowie Downloads als PNG, JPG, SVG, PDF und EPS. Es gibt keine Wasserzeichen und keine Werbung. Statische Codes speichern deinen Inhalt im Code selbst, deshalb laufen sie nie ab und haben kein Scan-Limit. Ein kostenloses Konto bringt 10 dynamische QR-Codes, 3 gehostete Seiten, 90 Tage Scan-Statistiken, 10 gespeicherte Themes und 5 KI-Theme-Generierungen dazu; Pro ({proMonthly}/Monat oder {proYearly}/Jahr) und Business ({businessMonthly}/Monat oder {businessYearly}/Jahr) erhöhen diese Limits."
+          "answer": "Ja. Statische QR-Codes zu erstellen, anzupassen und herunterzuladen ist kostenlos und erfordert kein Konto: unbegrenzt viele Codes, alle Designoptionen ({bodyPatterns, number} Körpermuster, {eyeShapes, number} Eckaugen-Formen und {eyeCentres, number} Augenzentren, Farbverläufe, Logos, Rahmen und Logo QR oder Image QR) sowie Downloads als PNG, JPG, SVG, PDF und EPS. Es gibt keine Wasserzeichen und keine Werbung. Statische Codes speichern deinen Inhalt im Code selbst, deshalb laufen sie nie ab und haben keine Scan-Limits. Ein kostenloses Konto bringt 10 dynamische QR-Codes, 3 gehostete Seiten, {historyYears, plural, one {# Jahr} other {# Jahre}} Scan-Analysen, 10 gespeicherte Themes und 5 KI-Theme-Generierungen dazu; Pro ({proMonthly}/Monat oder {proYearly}/Jahr) und Business ({businessMonthly}/Monat oder {businessYearly}/Jahr) erhöhen diese Limits."
         },
         "signup": {
           "question": "Muss ich mich registrieren oder ein Konto erstellen?",
@@ -451,7 +451,7 @@
         },
         "dynamic": {
           "question": "Unterstützt QRdx dynamische QR-Codes und Scan-Statistiken?",
-          "answer": "Ja. Ein dynamischer QR-Code enthält einen Kurzlink, sodass du auch nach dem Druck ändern kannst, wohin er führt, und jeder Scan wird mit Statistiken zu Land, Gerät und Browser gezählt. Ein Code kann eine Website oder eine gehostete mobile Seite öffnen (Linkliste, Menü, vCard, Gutschein, Event, Formular, PDF, Galerie, Audio oder Video). Pro und Business bieten zusätzlich Smart Routing nach Gerät, Land, Sprache oder Uhrzeit, A/B-Tests, UTM-Tags, Passwörter, Ablaufdaten und Scan-Limits. Kostenlose Konten erhalten 10 aktive dynamische QR-Codes mit 90 Tagen Verlauf; bei Pro und Business gibt es unbegrenzt viele Codes mit längerem Verlauf."
+          "answer": "Ja. Ein dynamischer Code enthält einen Kurzlink, sodass du nach dem Druck noch ändern kannst, wohin er führt, und jeder Scan wird mit Analysen nach Land, Gerät und Browser gezählt. Ein Code kann eine Website oder eine gehostete mobile Seite öffnen (Linkliste, Speisekarte, vCard, Gutschein, Event, Formular, PDF, Galerie, Audio oder Video). Pro und Business bieten zusätzlich Smart Routing nach Gerät, Land, Sprache oder Uhrzeit, A/B-Tests, UTM-Tags, Passwörter, Ablaufdaten und Scan-Limits. Kostenlose Konten erhalten 10 aktive dynamische Codes mit {historyYears, plural, one {# Jahr} other {# Jahre}} Verlauf; bei Pro und Business gibt es unbegrenzt viele und du behältst deinen gesamten Scan-Verlauf."
         },
         "guarantee": {
           "question": "Funktionieren meine QR-Codes nicht mehr, wenn ich nicht mehr zahle?",
@@ -475,7 +475,7 @@
         },
         "paidPlans": {
           "question": "Was bekomme ich mit Pro oder Business?",
-          "answer": "Pro ({proMonthly}/Monat oder {proYearly}/Jahr) bietet zusätzlich unbegrenzt viele dynamische QR-Codes und gehostete Seiten, 3 Jahre Analysen, {customDomains, select, yes {5 eigene Domains, } other {}}Teams mit bis zu 3 Personen, Smart Routing, A/B-Tests, UTM-Tags, Pixel, E-Mail-Benachrichtigungen und eine wöchentliche Zusammenfassung sowie Link-Kontrollen wie Passwörter und Ablaufdaten. Business ({businessMonthly}/Monat oder {businessYearly}/Jahr) bietet zusätzlich White-Label-Seiten mit eigenem CSS, einen unbegrenzten Analyseverlauf, {customDomains, select, yes {25 eigene Domains, } other {}}unbegrenzt viele Teammitglieder, Conversion-Tracking, Webhooks und Benachrichtigungen per Slack oder Discord. Statische QR-Codes zu erstellen, anzupassen und herunterzuladen bleibt kostenlos."
+          "answer": "Pro ({proMonthly}/Monat oder {proYearly}/Jahr) bietet zusätzlich unbegrenzt viele dynamische Codes und gehostete Seiten, deinen gesamten Scan-Verlauf, {customDomains, select, yes {5 eigene Domains, } other {}}Teams mit bis zu 3 Personen, Smart Routing, A/B-Tests, UTM-Tags, Pixel, E-Mail-Benachrichtigungen und eine wöchentliche Zusammenfassung sowie Link-Kontrollen wie Passwörter und Ablaufdaten. Business ({businessMonthly}/Monat oder {businessYearly}/Jahr) bietet zusätzlich White-Label-Seiten mit eigenem CSS, {customDomains, select, yes {25 eigene Domains, } other {}}unbegrenzt viele Teammitglieder, Conversion-Tracking, Webhooks und Benachrichtigungen per Slack oder Discord. Statische QR-Codes zu erstellen, anzupassen und herunterzuladen bleibt kostenlos."
         }
       }
     }
@@ -495,8 +495,8 @@
     },
     "extras": {
       "unlimitedDynamic": "unbegrenzte dynamische Codes",
-      "longerAnalytics": "längere Analysen",
-      "analyticsHistory": "Analyse-Verlauf",
+      "longerAnalytics": "dein gesamter Scan-Verlauf",
+      "analyticsHistory": "vollständiger Analyse-Verlauf",
       "customDomains": "eigene Domains",
       "teams": "Teams"
     },
@@ -709,7 +709,7 @@
       "items": {
         "cancel": {
           "question": "Was passiert, wenn ich kündige?",
-          "answer": "Nichts geht kaputt. Dein Tarif bleibt bis zum Ende des bezahlten Zeitraums aktiv, danach wechselt dein Konto zu Kostenlos. Jeder dynamische QR-Code leitet weiter und jeder Scan wird weiterhin gezählt: Das ist unsere Never-Hostage-Garantie. In Kostenlos kannst du nicht mehr erstellen, als die Limits des Tarifs Kostenlos erlauben, und die Analysen zeigen die letzten 90 Tage."
+          "answer": "Nichts geht kaputt. Dein Tarif bleibt bis zum Ende des bezahlten Zeitraums aktiv, danach wechselt dein Konto zu Kostenlos. Jeder dynamische QR-Code leitet weiter und jeder Scan wird weiterhin gezählt: Das ist unsere Never-Hostage-Garantie. Mit Kostenlos kannst du nicht mehr erstellen, als die Limits von Kostenlos erlauben, und die Analysen zeigen {historyYears, plural, one {das letzte Jahr} other {die letzten # Jahre}}. Ältere Scans bleiben gespeichert, sie sind also wieder da, wenn du erneut upgradest."
         },
         "refund": {
           "question": "Bekomme ich mein Geld zurück?",
@@ -772,6 +772,21 @@
       "signIn": "Melde dich an, um eine Rechnung anzufordern",
       "signInNote": "Wir stellen die Rechnung für den Workspace deines Kontos aus, also melde dich zuerst an."
     },
+    "enterprise": {
+      "name": "Enterprise",
+      "tagline": "Für Unternehmen, die einen Vertrag und eine Sicherheitsprüfung brauchen",
+      "price": "Individuell",
+      "priceNote": "Jahresvertrag, Zahlung per Rechnung",
+      "cta": "Kontakt aufnehmen",
+      "lead": "Alles aus Business, plus:",
+      "adds": {
+        "contract": "Ein Jahresvertrag, Zahlung per Rechnung",
+        "replies": "Antwort innerhalb von {hours, plural, one {# Geschäftsstunde} other {# Geschäftsstunden}}, wenn Codes nicht mehr funktionieren",
+        "review": "Antworten für deine Sicherheitsprüfung",
+        "selfHost": "SSO und Audit-Log auf deinem eigenen Server"
+      },
+      "security": "Sicherheit bei QRdx"
+    },
     "nonprofit": {
       "title": "Non-Profit-Rabatt",
       "description": "Eingetragene Non-Profit-Organisationen und gemeinnützige Einrichtungen bekommen {percent, number} % Rabatt auf Pro oder Business, monatlich oder jährlich. Erzähl uns von deiner Organisation, dann schicken wir dir per E-Mail einen Rabattcode für den Checkout.",
@@ -788,21 +803,6 @@
       "sent": "Wir antworten an {email}, meist innerhalb weniger Tage. Wenn deine Organisation infrage kommt, enthält die Antwort einen Rabattcode für den Checkout.",
       "close": "Schließen",
       "failed": "Etwas ist schiefgelaufen. Schreib stattdessen an {email}."
-    },
-    "enterprise": {
-      "name": "Enterprise",
-      "tagline": "Für Unternehmen, die einen Vertrag und eine Sicherheitsprüfung brauchen",
-      "price": "Individuell",
-      "priceNote": "Jahresvertrag, Zahlung per Rechnung",
-      "cta": "Kontakt aufnehmen",
-      "lead": "Alles aus Business, plus:",
-      "adds": {
-        "contract": "Ein Jahresvertrag, Zahlung per Rechnung",
-        "replies": "Antwort innerhalb von {hours, plural, one {# Geschäftsstunde} other {# Geschäftsstunden}}, wenn Codes nicht mehr funktionieren",
-        "review": "Antworten für deine Sicherheitsprüfung",
-        "selfHost": "SSO und Audit-Log auf deinem eigenen Server"
-      },
-      "security": "Sicherheit bei QRdx"
     }
   },
   "docs": {
@@ -6338,7 +6338,6 @@
           "scansPerDayLastDays": "Scans pro Tag, letzte {days, number} Tage (UTC)",
           "botsAndLinkPreviewsAre": "Bots und Link-Vorschauen werden nicht gezählt. Länder und Städte stammen aus der IP-Adresse der Besucher, die nie gespeichert wird; genaue Standorte nur von Scannenden, die sich fürs Teilen entschieden haben.",
           "dateRange": "Zeitraum",
-          "valueKeepsValue2OfScan": "{value} behält {value2} Scan-Verlauf",
           "totalScans": "Scans gesamt",
           "scansInRange": "Scans im Zeitraum",
           "uniqueVisitors": "Eindeutige Besucher",

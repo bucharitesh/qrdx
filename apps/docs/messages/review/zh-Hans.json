@@ -1036,7 +1036,7 @@
     "status": "machine"
   },
   "home.features.analytics.description": {
-    "source": "70e771f9a62b",
+    "source": "1682ec931c9d",
     "status": "machine"
   },
   "home.features.analytics.link": {
@@ -1136,7 +1136,7 @@
     "status": "machine"
   },
   "home.faq.items.free.answer": {
-    "source": "a98f1c61d55c",
+    "source": "9f19df673fb5",
     "status": "machine"
   },
   "home.faq.items.signup.question": {
@@ -1152,7 +1152,7 @@
     "status": "machine"
   },
   "home.faq.items.dynamic.answer": {
-    "source": "3d15c90b62ae",
+    "source": "1753b61d11a8",
     "status": "machine"
   },
   "home.faq.items.guarantee.question": {
@@ -1200,7 +1200,7 @@
     "status": "machine"
   },
   "home.faq.items.paidPlans.answer": {
-    "source": "79ab9fcc2788",
+    "source": "163192236bb8",
     "status": "machine"
   },
   "pricing.meta.title": {
@@ -1232,11 +1232,11 @@
     "status": "machine"
   },
   "pricing.extras.longerAnalytics": {
-    "source": "c3e335c053cd",
+    "source": "ae257e3ae35d",
     "status": "machine"
   },
   "pricing.extras.analyticsHistory": {
-    "source": "11944a1af311",
+    "source": "505e90a770cf",
     "status": "machine"
   },
   "pricing.extras.customDomains": {
@@ -1880,7 +1880,7 @@
     "status": "machine"
   },
   "pricing.faq.items.cancel.answer": {
-    "source": "8bf967e25bf1",
+    "source": "808cb0425bdb",
     "status": "machine"
   },
   "pricing.faq.items.refund.question": {
@@ -2031,6 +2031,50 @@
     "source": "c6d5bfba58c3",
     "status": "machine"
   },
+  "pricing.enterprise.name": {
+    "source": "3fbe5ed156f1",
+    "status": "machine"
+  },
+  "pricing.enterprise.tagline": {
+    "source": "fb21e317df5c",
+    "status": "machine"
+  },
+  "pricing.enterprise.price": {
+    "source": "494ca78f7374",
+    "status": "machine"
+  },
+  "pricing.enterprise.priceNote": {
+    "source": "52a4bdbf7c72",
+    "status": "machine"
+  },
+  "pricing.enterprise.cta": {
+    "source": "47aaf31b83d6",
+    "status": "machine"
+  },
+  "pricing.enterprise.lead": {
+    "source": "244263497096",
+    "status": "machine"
+  },
+  "pricing.enterprise.adds.contract": {
+    "source": "74140e63fec3",
+    "status": "machine"
+  },
+  "pricing.enterprise.adds.replies": {
+    "source": "1e55867de73b",
+    "status": "machine"
+  },
+  "pricing.enterprise.adds.review": {
+    "source": "cbd0d74fe76f",
+    "status": "machine"
+  },
+  "pricing.enterprise.adds.selfHost": {
+    "source": "c13894e74f3b",
+    "status": "machine"
+  },
+  "pricing.enterprise.security": {
+    "source": "b1a805be3ecd",
+    "status": "machine"
+  },
   "pricing.nonprofit.title": {
     "source": "3b5b3393411a",
     "status": "machine"
@@ -2089,50 +2133,6 @@
   },
   "pricing.nonprofit.failed": {
     "source": "1342d6313653",
-    "status": "machine"
-  },
-  "pricing.enterprise.name": {
-    "source": "3fbe5ed156f1",
-    "status": "machine"
-  },
-  "pricing.enterprise.tagline": {
-    "source": "fb21e317df5c",
-    "status": "machine"
-  },
-  "pricing.enterprise.price": {
-    "source": "494ca78f7374",
-    "status": "machine"
-  },
-  "pricing.enterprise.priceNote": {
-    "source": "52a4bdbf7c72",
-    "status": "machine"
-  },
-  "pricing.enterprise.cta": {
-    "source": "47aaf31b83d6",
-    "status": "machine"
-  },
-  "pricing.enterprise.lead": {
-    "source": "244263497096",
-    "status": "machine"
-  },
-  "pricing.enterprise.adds.contract": {
-    "source": "74140e63fec3",
-    "status": "machine"
-  },
-  "pricing.enterprise.adds.replies": {
-    "source": "1e55867de73b",
-    "status": "machine"
-  },
-  "pricing.enterprise.adds.review": {
-    "source": "cbd0d74fe76f",
-    "status": "machine"
-  },
-  "pricing.enterprise.adds.selfHost": {
-    "source": "c13894e74f3b",
-    "status": "machine"
-  },
-  "pricing.enterprise.security": {
-    "source": "b1a805be3ecd",
     "status": "machine"
   },
   "docs.meta.titleSuffix": {
@@ -16115,6 +16115,10 @@
     "source": "7cc4c76e3a85",
     "status": "machine"
   },
+  "app.settings.account.twoFactorSettings.passkeySpotlight": {
+    "source": "7ba7ffc49846",
+    "status": "machine"
+  },
   "app.settings.account.twoFactorSetupDialog.stepStepnumberOfLength": {
     "source": "c103e940197b",
     "status": "machine"
@@ -19373,10 +19377,6 @@
   },
   "app.dashboard.codes.analyticsTab.dateRange": {
     "source": "8061bfb29ce8",
-    "status": "machine"
-  },
-  "app.dashboard.codes.analyticsTab.valueKeepsValue2OfScan": {
-    "source": "5128689e0974",
     "status": "machine"
   },
   "app.dashboard.codes.analyticsTab.totalScans": {
@@ -25183,6 +25183,46 @@
     "source": "c7c3273cc231",
     "status": "machine"
   },
+  "app.shell.whatsNew.newFeatures": {
+    "source": "77c26dac9096",
+    "status": "machine"
+  },
+  "app.shell.whatsNew.dismissTitle": {
+    "source": "d4d093af8c7f",
+    "status": "machine"
+  },
+  "app.shell.whatsNew.previousUpdate": {
+    "source": "fa59c435bde3",
+    "status": "machine"
+  },
+  "app.shell.whatsNew.nextUpdate": {
+    "source": "2ae2d4056e8d",
+    "status": "machine"
+  },
+  "app.shell.whatsNew.positionOfTotal": {
+    "source": "dc277926a025",
+    "status": "machine"
+  },
+  "app.shell.whatsNew.readOnTheChangelog": {
+    "source": "2f8f4b221a0b",
+    "status": "machine"
+  },
+  "app.shell.whatsNew.tryIt": {
+    "source": "fe6951113784",
+    "status": "machine"
+  },
+  "app.shell.whatsNew.close": {
+    "source": "7d9eb7acb13e",
+    "status": "machine"
+  },
+  "app.shell.spotlight.new": {
+    "source": "18fdd549b2ed",
+    "status": "machine"
+  },
+  "app.shell.spotlight.gotIt": {
+    "source": "5ad3dbd1242a",
+    "status": "machine"
+  },
   "app.workspaces.createWorkspaceDialog.createAWorkspace": {
     "source": "954bd1fe66b4",
     "status": "machine"
@@ -26737,50 +26777,6 @@
   },
   "codeBuilder.formBanner.upgrade": {
     "source": "7ec0261b8e8a",
-    "status": "machine"
-  },
-  "app.shell.whatsNew.newFeatures": {
-    "source": "77c26dac9096",
-    "status": "machine"
-  },
-  "app.shell.whatsNew.dismissTitle": {
-    "source": "d4d093af8c7f",
-    "status": "machine"
-  },
-  "app.shell.whatsNew.previousUpdate": {
-    "source": "fa59c435bde3",
-    "status": "machine"
-  },
-  "app.shell.whatsNew.nextUpdate": {
-    "source": "2ae2d4056e8d",
-    "status": "machine"
-  },
-  "app.shell.whatsNew.positionOfTotal": {
-    "source": "dc277926a025",
-    "status": "machine"
-  },
-  "app.shell.whatsNew.readOnTheChangelog": {
-    "source": "2f8f4b221a0b",
-    "status": "machine"
-  },
-  "app.shell.whatsNew.tryIt": {
-    "source": "fe6951113784",
-    "status": "machine"
-  },
-  "app.shell.whatsNew.close": {
-    "source": "7d9eb7acb13e",
-    "status": "machine"
-  },
-  "app.shell.spotlight.new": {
-    "source": "18fdd549b2ed",
-    "status": "machine"
-  },
-  "app.shell.spotlight.gotIt": {
-    "source": "5ad3dbd1242a",
-    "status": "machine"
-  },
-  "app.settings.account.twoFactorSettings.passkeySpotlight": {
-    "source": "7ba7ffc49846",
     "status": "machine"
   }
 }

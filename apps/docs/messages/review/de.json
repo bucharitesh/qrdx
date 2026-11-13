@@ -1036,7 +1036,7 @@
     "status": "machine"
   },
   "home.features.analytics.description": {
-    "source": "70e771f9a62b",
+    "source": "1682ec931c9d",
     "status": "machine"
   },
   "home.features.analytics.link": {
@@ -1136,7 +1136,7 @@
     "status": "machine"
   },
   "home.faq.items.free.answer": {
-    "source": "a98f1c61d55c",
+    "source": "9f19df673fb5",
     "status": "machine"
   },
   "home.faq.items.signup.question": {
@@ -1152,7 +1152,7 @@
     "status": "machine"
   },
   "home.faq.items.dynamic.answer": {
-    "source": "3d15c90b62ae",
+    "source": "1753b61d11a8",
     "status": "machine"
   },
   "home.faq.items.guarantee.question": {
@@ -1200,7 +1200,7 @@
     "status": "machine"
   },
   "home.faq.items.paidPlans.answer": {
-    "source": "79ab9fcc2788",
+    "source": "163192236bb8",
     "status": "machine"
   },
   "pricing.meta.title": {
@@ -1232,11 +1232,11 @@
     "status": "machine"
   },
   "pricing.extras.longerAnalytics": {
-    "source": "c3e335c053cd",
+    "source": "ae257e3ae35d",
     "status": "machine"
   },
   "pricing.extras.analyticsHistory": {
-    "source": "11944a1af311",
+    "source": "505e90a770cf",
     "status": "machine"
   },
   "pricing.extras.customDomains": {
@@ -1880,7 +1880,7 @@
     "status": "machine"
   },
   "pricing.faq.items.cancel.answer": {
-    "source": "8bf967e25bf1",
+    "source": "808cb0425bdb",
     "status": "machine"
   },
   "pricing.faq.items.refund.question": {
@@ -19377,10 +19377,6 @@
   },
   "app.dashboard.codes.analyticsTab.dateRange": {
     "source": "8061bfb29ce8",
-    "status": "machine"
-  },
-  "app.dashboard.codes.analyticsTab.valueKeepsValue2OfScan": {
-    "source": "5128689e0974",
     "status": "machine"
   },
   "app.dashboard.codes.analyticsTab.totalScans": {
