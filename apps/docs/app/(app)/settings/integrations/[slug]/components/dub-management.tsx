@@ -21,21 +21,15 @@ import {
 import { useTranslations } from "next-intl";
 import * as React from "react";
 import { toast } from "sonner";
+import { LoadMore } from "@/components/load-more";
 import { apiFetch } from "@/lib/api-fetch";
+import { useCursorList } from "@/lib/hooks/use-cursor-list";
 import type { Translator } from "@/lib/i18n/translator";
+import type { CursorPage } from "@/lib/keyset-cursor";
 import { soundEvent } from "@/lib/sound/emit";
+import { fetchLinksPage, LINKS_PAGE_SIZE, type ShortLink } from "./link-pages";
 
-interface DubLink {
-  id: string;
-  domain: string;
-  key: string;
-  url: string;
-  title?: string;
-  description?: string;
-  archived: boolean;
-  clicks?: number;
-  createdAt: string;
-}
+type DubLink = ShortLink;
 
 type AnalyticsGroupBy =
   | "timeseries"
@@ -52,6 +46,10 @@ const ANALYTICS_GROUPS: AnalyticsGroupBy[] = [
   "browsers",
   "os",
 ];
+
+/** Wait this long after the last keystroke before searching. */
+const SEARCH_DELAY_MS = 300;
+const NO_LINKS: CursorPage<DubLink> = { items: [], nextCursor: null };
 
 function getShortUrl(link: DubLink) {
   return `https://${link.domain}/${link.key}`;
@@ -92,8 +90,9 @@ interface DubManagementProps {
 export function DubManagement({ metadata }: DubManagementProps) {
   const t = useTranslations("app.settings.integrations.dubManagement");
   const workspaceName = getWorkspaceName(metadata);
-  const [links, setLinks] = React.useState<DubLink[]>([]);
   const [search, setSearch] = React.useState("");
+  /** The search the list shows: `search` once typing pauses */
+  const [query, setQuery] = React.useState("");
   const [selectedLink, setSelectedLink] = React.useState<DubLink | null>(null);
   const [analytics, setAnalytics] = React.useState<AnalyticsResult | null>(
     null,
@@ -105,28 +104,44 @@ export function DubManagement({ metadata }: DubManagementProps) {
   const [editingLinkId, setEditingLinkId] = React.useState<string | null>(null);
   const [editUrl, setEditUrl] = React.useState("");
 
+  // The first page comes from fetchLinks; later ones load as the list
+  // nears the bottom.
+  const list = useCursorList({
+    first: NO_LINKS,
+    keyOf: (link) => link.id,
+    errorMessage: t("couldntLoadMoreLinks"),
+    load: (cursor) =>
+      fetchLinksPage(query, Number(cursor), t("couldntLoadMoreLinks")),
+  });
+  const links = list.items;
+  /** The latest first-page request: answers to older ones are dropped. */
+  const latestFetch = React.useRef(0);
+  // A string, so fetchLinks (and the effect that runs it) stays the same
+  // between renders.
+  const loadError = t("couldntLoadLinks");
+
   const fetchLinks = React.useCallback(async () => {
+    const request = ++latestFetch.current;
     setIsLoading(true);
     setError(null);
+    list.replace(NO_LINKS);
 
     try {
-      const params = new URLSearchParams({ pageSize: "25" });
-      if (search.trim()) {
-        params.set("search", search.trim());
-      }
-
-      const response = await apiFetch(`/api/integrations/dub/links?${params}`);
-      if (!response.ok) {
-        throw new Error("Failed to load Dub links");
-      }
-
-      const data = await response.json();
-      setLinks(data.links || []);
+      const page = await fetchLinksPage(query, 1, loadError);
+      if (request === latestFetch.current) list.replace(page);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load Dub links");
+      if (request === latestFetch.current) {
+        setError(err instanceof Error ? err.message : loadError);
+      }
     } finally {
-      setIsLoading(false);
+      if (request === latestFetch.current) setIsLoading(false);
     }
+  }, [query, list.replace, loadError]);
+
+  // Search once typing pauses, not on every keystroke.
+  React.useEffect(() => {
+    const timer = setTimeout(() => setQuery(search.trim()), SEARCH_DELAY_MS);
+    return () => clearTimeout(timer);
   }, [search]);
 
   const fetchAnalytics = React.useCallback(
@@ -191,7 +206,8 @@ export function DubManagement({ metadata }: DubManagementProps) {
     }
 
     toast.success(t("dubLinkArchived"));
-    await fetchLinks();
+    // Archived links leave the list; the rest stay where they are.
+    list.update((items) => items.filter((item) => item.id !== link.id));
   };
 
   const handleUpdate = async (link: DubLink) => {
@@ -208,10 +224,20 @@ export function DubManagement({ metadata }: DubManagementProps) {
       return;
     }
 
+    const data = (await response.json().catch(() => null)) as {
+      link?: Partial<DubLink>;
+    } | null;
     toast.success(t("dubLinkUpdated"));
     setEditingLinkId(null);
     setEditUrl("");
-    await fetchLinks();
+    // The edited link in place, so the list keeps its length and position.
+    list.update((items) =>
+      items.map((item) =>
+        item.id === link.id
+          ? { ...item, url: editUrl, ...(data?.link ?? {}) }
+          : item,
+      ),
+    );
   };
 
   const handleGroupChange = async (nextGroupBy: AnalyticsGroupBy) => {
@@ -238,16 +264,26 @@ export function DubManagement({ metadata }: DubManagementProps) {
         </Button>
       </div>
 
-      <div className="flex gap-2">
+      <form
+        className="flex gap-2"
+        onSubmit={(event) => {
+          event.preventDefault();
+          const next = search.trim();
+          // Same search again (the button after a pause): load it afresh.
+          if (next === query) void fetchLinks();
+          else setQuery(next);
+        }}
+      >
         <Input
+          maxLength={200}
           placeholder={t("searchDubLinks")}
           value={search}
           onChange={(event) => setSearch(event.target.value)}
         />
-        <Button type="button" variant="outline" onClick={fetchLinks}>
+        <Button type="submit" variant="outline">
           {t("search")}
         </Button>
-      </div>
+      </form>
 
       {error && (
         <Alert variant="destructive">
@@ -374,6 +410,24 @@ export function DubManagement({ metadata }: DubManagementProps) {
               </div>
             </div>
           ))
+        )}
+        {!(isLoading || error) && links.length > 0 && (
+          <LoadMore
+            count={links.length}
+            error={list.error}
+            hasMore={list.hasMore}
+            labels={{
+              loadMore: t("loadMoreLinks"),
+              loading: t("loadingLinks"),
+              retry: t("tryAgain"),
+              end:
+                links.length > LINKS_PAGE_SIZE
+                  ? t("thatsEveryLink")
+                  : undefined,
+            }}
+            loading={list.loading}
+            onLoadMore={list.loadMore}
+          />
         )}
       </div>
 
