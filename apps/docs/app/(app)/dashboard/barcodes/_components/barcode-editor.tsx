@@ -120,7 +120,8 @@ export function BarcodeDetailsFields({
           <SelectTrigger className="w-full" id={`${id}-folder`}>
             <SelectValue />
           </SelectTrigger>
-          <SelectContent>
+          {/* Above the new-barcode modal (z-[99]) too */}
+          <SelectContent className="z-[120]">
             <SelectItem value={NO_FOLDER}>{t("noFolder")}</SelectItem>
             {(folders ?? []).map((folder) => (
               <SelectItem key={folder.id} value={folder.id}>

@@ -168,7 +168,8 @@ export function InfoHint({
       <PopoverContent
         align={align}
         aria-label={hint.title}
-        className="w-[18.5rem] max-w-[calc(100vw-2rem)] overflow-hidden p-0"
+        // Above the code builder's dialog (z-[99]) too
+        className="z-[120] w-[18.5rem] max-w-[calc(100vw-2rem)] overflow-hidden p-0"
         collisionPadding={12}
         data-info-hint-card={id}
         onCloseAutoFocus={(event) => {

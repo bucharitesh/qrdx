@@ -11,7 +11,6 @@ import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
-  AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
@@ -60,6 +59,7 @@ import {
   type BarcodeBuilderRequest,
 } from "./barcode-request";
 import {
+  BuilderAlertContent,
   BuilderShell,
   BuilderSubmitKey,
   useBuilderShortcuts,
@@ -419,7 +419,7 @@ export default function BarcodeBuilderModal({
         }}
         open={confirmClose}
       >
-        <AlertDialogContent>
+        <BuilderAlertContent>
           <AlertDialogHeader>
             <AlertDialogTitle>{t("closeWithoutSaving")}</AlertDialogTitle>
             <AlertDialogDescription>
@@ -432,7 +432,7 @@ export default function BarcodeBuilderModal({
               {t("discard")}
             </AlertDialogAction>
           </AlertDialogFooter>
-        </AlertDialogContent>
+        </BuilderAlertContent>
       </AlertDialog>
     </>
   );
