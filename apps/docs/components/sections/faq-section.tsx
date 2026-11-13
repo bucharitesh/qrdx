@@ -1,3 +1,4 @@
+import { SUPPORT_EMAIL } from "@repo/config";
 import { ArrowDown2 } from "iconsax-reactjs";
 import { useLocale, useTranslations } from "next-intl";
 import { HairlineFigure } from "@/components/mockups/hairline";
@@ -98,10 +99,10 @@ export function FAQSection() {
           <p className="text-sm text-muted-foreground text-pretty leading-relaxed">
             {t("somethingElse")}{" "}
             <a
-              href="mailto:support@qrdx.dev"
+              href={`mailto:${SUPPORT_EMAIL}`}
               className="font-medium text-foreground underline decoration-foreground/30 underline-offset-4 hover:decoration-foreground"
             >
-              support@qrdx.dev
+              {SUPPORT_EMAIL}
             </a>
           </p>
         </div>

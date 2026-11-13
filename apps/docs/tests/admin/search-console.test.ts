@@ -15,7 +15,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 const state = vi.hoisted(() => ({
   env: {} as { GSC_SERVICE_ACCOUNT_JSON?: string },
 }));
-vi.mock("@/lib/env", () => ({ env: state.env }));
+vi.mock("@/env", () => ({ env: state.env }));
 
 const gsc = await import("@/app/(app)/admin/_lib/search-console");
 const { growthWeeks } = await import("@/app/(app)/admin/_lib/weeks");

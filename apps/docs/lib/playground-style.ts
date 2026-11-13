@@ -8,6 +8,7 @@
 // remote resource. Decoding validates every field and rejects the whole
 // value when anything is off.
 
+import { MAX_GRADIENT_STOPS } from "@repo/config";
 import { type FrameSpec, getTemplateIds } from "qrdx";
 import {
   anyFrameSchema,
@@ -74,7 +75,7 @@ function isSafeColorConfig(value: unknown): value is ColorConfig {
   // An image fill travels like a logo: never in a link
   if (color.type === "image") return false;
   return (
-    color.stops.length <= 16 &&
+    color.stops.length <= MAX_GRADIENT_STOPS &&
     color.stops.every((stop) => isSafeColor(stop.color))
   );
 }

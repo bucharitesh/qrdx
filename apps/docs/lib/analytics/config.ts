@@ -6,6 +6,8 @@
  * `localStorage.setItem("qrdx:analytics-debug", "1")`, which also logs each
  * event to the console.
  */
+
+import { CANONICAL_HOST, CANONICAL_ORIGIN } from "@repo/config";
 export const ANALYTICS_DEBUG_KEY = "qrdx:analytics-debug";
 
 /**
@@ -17,10 +19,10 @@ export const ANALYTICS_CONSENT_COOKIE = "qrdx_analytics";
 
 export function analyticsHostname(): string {
   try {
-    return new URL(process.env.NEXT_PUBLIC_APP_URL ?? "https://qrdx.dev")
+    return new URL(process.env.NEXT_PUBLIC_APP_URL ?? CANONICAL_ORIGIN)
       .hostname;
   } catch {
-    return "qrdx.dev";
+    return CANONICAL_HOST;
   }
 }
 

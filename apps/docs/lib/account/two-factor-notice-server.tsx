@@ -1,10 +1,10 @@
 import "server-only";
 
 import type { BackupCodeNotifier } from "@repo/auth/sign-in-challenge";
+import { SUPPORT_EMAIL } from "@repo/config";
 import { after } from "next/server";
 import { isOutboundDeliveryAllowed } from "@/lib/delivery-guard";
 import { sendEmail } from "@/lib/email/send";
-import { SUPPORT_EMAIL } from "@/lib/email/templates/security-parts";
 import {
   type BackupCodeUsedFor,
   SUPPORT_KINDS,

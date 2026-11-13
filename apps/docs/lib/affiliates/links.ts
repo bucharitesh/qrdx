@@ -1,18 +1,5 @@
-import { baseUrl } from "@/lib/metadata";
+import { appOrigin } from "@repo/config/origins";
 import { AFFILIATE_LINK_PREFIX } from "./terms";
-
-/** The app's own origin: NEXT_PUBLIC_APP_URL, else the deployment's URL. */
-function appOrigin(): string {
-  const configured = process.env.NEXT_PUBLIC_APP_URL;
-  if (configured) {
-    try {
-      return new URL(configured).origin;
-    } catch {
-      // Validated by lib/env.ts; fall through just in case.
-    }
-  }
-  return baseUrl.origin;
-}
 
 /** "https://qrdx.dev/r/ana-diaz-4k2p" */
 export function referralLink(code: string): string {

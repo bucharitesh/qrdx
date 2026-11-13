@@ -28,12 +28,12 @@ import {
 } from "@repo/integrations";
 import { and, eq, inArray } from "drizzle-orm";
 import { cookies } from "next/headers";
+import { env } from "@/env";
 import {
   getConnection,
   getIntegrationConfig,
 } from "@/lib/connected-accounts/server";
 import { isOutboundDeliveryAllowed } from "@/lib/delivery-guard";
-import { env } from "@/lib/env";
 import { HttpError } from "@/lib/error-response";
 import { addChatTarget } from "@/lib/events/notification-settings";
 import { invalidateSubscribers } from "@/lib/events/subscribers";

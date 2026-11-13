@@ -214,8 +214,11 @@ async function main() {
   }
   // Never the shared database: nothing here queries one, and this makes sure.
   process.env.DATABASE_URL = "postgres://art-eval@127.0.0.1:1/none";
+  // The app's other required variables; nothing here signs or links anything.
+  process.env.NEXT_PUBLIC_APP_URL ??= "https://qrdx.dev";
+  process.env.BETTER_AUTH_SECRET ??= "art-eval-placeholder-not-a-secret";
 
-  // After the env is set: lib/env validates on import. (The pipeline decodes
+  // After the env is set: env.ts validates on import. (The pipeline decodes
   // with qrdx itself; importing "qrdx" here directly would take its ESM build,
   // which fails under the react-server condition.)
   const [pipeline, models, config, presets, providers] = await Promise.all([

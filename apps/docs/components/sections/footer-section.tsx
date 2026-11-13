@@ -1,5 +1,6 @@
 "use client";
 
+import { CANONICAL_HOST, CANONICAL_ORIGIN } from "@repo/config";
 import { GithubLogo } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
@@ -181,10 +182,10 @@ export function FooterSection() {
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
           <LocaleSwitcher />
           <a
-            href={`https://qrdx.dev${localizeHref("/") === "/" ? "" : localizeHref("/")}`}
+            href={`${CANONICAL_ORIGIN}${localizeHref("/") === "/" ? "" : localizeHref("/")}`}
             className="w-fit font-mono text-xs text-muted-foreground transition-colors hover:text-foreground"
           >
-            qrdx.dev
+            {CANONICAL_HOST}
           </a>
         </div>
       </div>

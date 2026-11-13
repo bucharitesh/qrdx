@@ -121,7 +121,7 @@ vi.mock("@repo/database", () => ({
 }));
 vi.mock("@repo/auth/admin", () => ({ getAdminUserIds: () => ["u_admin"] }));
 vi.mock("@repo/auth/keys", () => ({ keys: () => ({}) }));
-vi.mock("@/lib/env", () => ({ env: state.env }));
+vi.mock("@/env", () => ({ env: state.env }));
 
 const sections = await import("@/app/(app)/admin/growth/sections");
 const { growthWeeks } = await import("@/app/(app)/admin/_lib/weeks");

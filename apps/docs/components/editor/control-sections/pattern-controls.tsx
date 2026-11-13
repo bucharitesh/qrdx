@@ -1,5 +1,6 @@
 "use client";
 
+import { CANONICAL_ORIGIN } from "@repo/config";
 import { cn } from "@repo/design-system/lib/utils";
 import { ArrowDown2 } from "iconsax-reactjs";
 import { useTranslations } from "next-intl";
@@ -65,7 +66,7 @@ function EyePairSwatch({
         level="L"
         margin={0}
         size={210}
-        value="https://qrdx.dev"
+        value={CANONICAL_ORIGIN}
       />
     </svg>
   );
@@ -318,7 +319,7 @@ export function BorderControl() {
               fgColor="#000000"
               size={56}
               templateId={template.id}
-              value="https://qrdx.dev"
+              value={CANONICAL_ORIGIN}
             />
           </OptionTile>
         ))}
@@ -347,7 +348,7 @@ export function ErrorLevelControl() {
               fgColor="#000000"
               level={level.id}
               size={48}
-              value="https://qrdx.dev"
+              value={CANONICAL_ORIGIN}
             />
           </OptionTile>
         ))}

@@ -5,6 +5,7 @@
 // an in-memory workspace and fake provider accounts: no session, no database,
 // no provider calls. All names, domains and URLs are made up.
 
+import { CANONICAL_HOST } from "@repo/config";
 import { IntegrationApiError } from "@repo/integrations/src/core/http-client";
 import { filterPage } from "./adapters";
 import type { MigrateClient } from "./client";
@@ -282,7 +283,7 @@ function mockWorld(plan: "pro" | "free") {
         : { id: null, qrdx: "missing" as const, canUse: plan !== "free" };
     },
     async qrdxHosts() {
-      return new Set(["localhost:3000", "qrdx.dev"]);
+      return new Set(["localhost:3000", CANONICAL_HOST]);
     },
     checkDestination(url) {
       try {

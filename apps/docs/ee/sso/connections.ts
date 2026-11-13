@@ -33,6 +33,7 @@ import {
   auditSsoRequirement,
 } from "@/ee/audit-log/security-events";
 import { endSessionsWithoutSso, sessionCameFromSso } from "@/ee/sso/required";
+import { env } from "@/env";
 import { HttpError } from "@/lib/error-response";
 import { checkWebhookUrl, isBlockedAddress } from "@/lib/events/url-safety";
 import { can } from "@/lib/permissions";
@@ -111,9 +112,7 @@ type ProviderRow = {
 };
 
 function appUrl(): string {
-  const url = process.env.BETTER_AUTH_URL || process.env.NEXT_PUBLIC_APP_URL;
-  if (!url) throw new Error("BETTER_AUTH_URL is not set");
-  return url;
+  return env.BETTER_AUTH_URL || env.NEXT_PUBLIC_APP_URL;
 }
 
 function json(value: string | null): Record<string, unknown> | null {

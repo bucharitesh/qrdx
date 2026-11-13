@@ -16,7 +16,7 @@ import {
 } from "../support/fake-gateway";
 
 const state = vi.hoisted(() => {
-  // lib/env reads the key when it's first imported. A Google key does
+  // env.ts reads the key when it's first imported. A Google key does
   // nothing any more: AI runs only through the gateway.
   process.env.AI_GATEWAY_API_KEY = "test-gateway-key";
   process.env.GOOGLE_API_KEY = "test-google-key";

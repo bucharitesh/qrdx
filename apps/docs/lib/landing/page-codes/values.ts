@@ -1,3 +1,4 @@
+import { CANONICAL_ORIGIN } from "@repo/config";
 import { demoPath } from "@/lib/landing/demo-paths";
 import type { ContentType, QRContentConfig } from "@/types/qr-content";
 import { encodeQRContent } from "@/utils/qr-content-encoder";
@@ -17,7 +18,7 @@ export interface SampleValue {
   type: ContentType;
 }
 
-const SITE = "https://qrdx.dev";
+const SITE = CANONICAL_ORIGIN;
 
 const encode = (content: QRContentConfig): string => encodeQRContent(content);
 

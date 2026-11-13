@@ -1,4 +1,5 @@
 import { auth } from "@repo/auth/server";
+import { SUPPORT_EMAIL } from "@repo/config";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
@@ -370,7 +371,7 @@ function Dashboard({ dashboard }: { dashboard: AffiliateDashboard }) {
           link2: (chunks) => (
             <a
               className="underline underline-offset-4"
-              href="mailto:support@qrdx.dev"
+              href={`mailto:${SUPPORT_EMAIL}`}
             >
               {chunks}
             </a>

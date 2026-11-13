@@ -17,6 +17,7 @@ import {
   //   ImageZoom,
   InlineTOC,
 } from "@/components/preview/lazy";
+import { env } from "@/env";
 import { owner, repo } from "@/lib/github";
 import { Wrapper } from "./wrapper";
 
@@ -276,7 +277,7 @@ export function githubInfo() {
       <GithubInfo
         owner={owner}
         repo={repo}
-        token={process.env.GITHUB_TOKEN}
+        token={env.GITHUB_TOKEN}
         className="not-prose bg-fd-card"
       />
     </Wrapper>

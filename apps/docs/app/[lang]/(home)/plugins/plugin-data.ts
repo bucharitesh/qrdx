@@ -3,9 +3,10 @@
 // install it. A plugin with a `storeUrl` installs from its store; the others
 // install from source until they're listed.
 
+import { GITHUB_REPO_URL } from "@repo/config";
 import { CHROME_WEB_STORE_URL } from "@repo/integrations/src/catalog/entries/plugins";
 
-const REPO = "https://github.com/bucharitesh/qrdx";
+const REPO = GITHUB_REPO_URL;
 
 export type PluginSlug = "chrome" | "figma" | "raycast" | "canva";
 

@@ -1,3 +1,4 @@
+import { CANONICAL_ORIGIN } from "@repo/config";
 import { QRCodeSVG } from "qrdx";
 import type {
   BodyPattern,
@@ -11,7 +12,7 @@ import type {
 // eyes and eye dots (the part not being picked is shown in light grey, like
 // the hand-drawn icons).
 
-const SAMPLE = "https://qrdx.dev";
+const SAMPLE = CANONICAL_ORIGIN;
 const MODULE = 10;
 const SIZE = 21 * MODULE;
 const GREY = "#DDDDDD";

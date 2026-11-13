@@ -1,5 +1,6 @@
 "use client";
 
+import { CANONICAL_HOST } from "@repo/config";
 import { Button } from "@repo/design-system/components/ui/button";
 import { GalleryAdd, Trash } from "iconsax-reactjs";
 import { useTranslations } from "next-intl";
@@ -113,7 +114,7 @@ function ShapePreview({
       shape={id === "silhouette" ? (silhouette ?? undefined) : id}
       size={TILE}
       style={{ maxHeight: "100%", maxWidth: "100%" }}
-      value="qrdx.dev"
+      value={CANONICAL_HOST}
     />
   );
 }

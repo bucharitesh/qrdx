@@ -7,7 +7,7 @@
 // no copy anywhere promises uptime or an uptime percentage.
 
 /** Where contracts, custom invoicing and security reviews go. */
-export const ENTERPRISE_EMAIL = "enterprise@qrdx.dev";
+export { ENTERPRISE_EMAIL } from "@repo/config";
 
 /** Written reply times in an Enterprise contract (business hours/days). */
 export const ENTERPRISE_REPLY = {

@@ -38,7 +38,7 @@ cd qrdx
 ### 2. 환경 설정하기 [#2-configure-the-environment]
 
 ```bash
-cp .env.example .env
+cp apps/docs/.env.example .env
 ```
 
 `.env`를 수정하세요.
@@ -107,8 +107,7 @@ git clone https://github.com/bucharitesh/qrdx.git
 cd qrdx
 bun install
 
-cp .env.example apps/docs/.env.local                    # then edit it
-echo 'DATABASE_URL=<your connection string>' > packages/database/.env
+cp apps/docs/.env.example apps/docs/.env.local          # then edit it
 
 bun run db:push                                          # apply the schema
 bun run --filter docs dev                                # http://localhost:3000
@@ -130,7 +129,7 @@ DATABASE_HTTP_ENDPOINT=http://localhost:4444/sql
 
 ## 환경 변수 [#environment-variables]
 
-[`.env.example`](https://github.com/bucharitesh/qrdx/blob/main/.env.example)에 모든 변수와 각 값을 어디서 얻는지에 대한 간단한 설명이 있어요.
+[`apps/docs/.env.example`](https://github.com/bucharitesh/qrdx/blob/main/apps/docs/.env.example)에 모든 변수와 각 값을 어디서 얻는지에 대한 간단한 설명이 있어요.
 
 ### 최소 설정 [#minimum]
 

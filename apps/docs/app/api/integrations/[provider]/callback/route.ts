@@ -12,9 +12,9 @@ import {
 import { and, eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
+import { env } from "@/env";
 import { hasAnalyticsConsent, trackServer } from "@/lib/analytics/server";
 import { prepareDataConnect } from "@/lib/data-connections/server";
-import { env } from "@/lib/env";
 import {
   consumeIntegrationOAuthState,
   takeIntegrationReturnPath,

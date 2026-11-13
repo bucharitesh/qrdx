@@ -5,7 +5,7 @@ import {
   type RateLimiter,
   slidingWindow,
 } from "@repo/rate-limit";
-import { env } from "@/lib/env";
+import { env } from "@/env";
 import { isFeatureAvailable } from "@/lib/feature-availability";
 import { baseUrl } from "@/lib/metadata";
 import { enforceRateLimits } from "@/lib/request-guards";
@@ -53,7 +53,7 @@ export function botRedirectUri(): string {
 
 /** BETTER_AUTH_SECRET, which link tokens' key is derived from. */
 export function linkTokenSecret(): string | null {
-  return process.env.BETTER_AUTH_SECRET || null;
+  return env.BETTER_AUTH_SECRET || null;
 }
 
 /** Slack's requests are small; anything bigger isn't one. */

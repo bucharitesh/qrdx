@@ -4,7 +4,7 @@ import { createHash, createHmac, timingSafeEqual } from "node:crypto";
 import { qrScan, SCAN_DEVICE_TYPES, type ScanDeviceType } from "@repo/database";
 import { and, gte, inArray, lt, type SQL, sql } from "drizzle-orm";
 import { z } from "zod";
-import { env } from "@/lib/env";
+import { env } from "@/env";
 import { networkCoordinates } from "@/lib/request-geo";
 import { getClientIp } from "@/lib/request-guards";
 import {
@@ -731,9 +731,7 @@ let tokenKey: Buffer | null = null;
 function scanTokenKey(): Buffer {
   if (!tokenKey) {
     tokenKey = createHash("sha256")
-      .update(
-        `qrdx:scan-token:${env.SCAN_HASH_SALT ?? process.env.BETTER_AUTH_SECRET ?? "development"}`,
-      )
+      .update(`qrdx:scan-token:${env.SCAN_HASH_SALT ?? env.BETTER_AUTH_SECRET}`)
       .digest();
   }
   return tokenKey;

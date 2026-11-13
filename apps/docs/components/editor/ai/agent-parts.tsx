@@ -1,5 +1,6 @@
 "use client";
 
+import { CANONICAL_ORIGIN } from "@repo/config";
 import { Spinner } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
@@ -614,7 +615,7 @@ export function SaveTemplateCard({
           logo={logo}
           size={72}
           styles={styles}
-          value={design?.value ?? (editorValue || "https://qrdx.dev")}
+          value={design?.value ?? (editorValue || CANONICAL_ORIGIN)}
         />
         <div className="min-w-0 flex-1 space-y-1">
           <p className="text-sm font-medium leading-snug">

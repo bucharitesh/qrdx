@@ -2,7 +2,8 @@
 // Write for a first-time user: plain words, one or two short sentences,
 // and only what the product really does.
 
-import { formatCount, MAX_BULK_TOOL_ROWS } from "@/lib/bulk-limits";
+import { MAX_BULK_TOOL_ROWS } from "@repo/config";
+import { formatCount } from "@/lib/format-count";
 
 /** Live examples drawn with the real qrdx engine (components/help/hint-visual.tsx). */
 export type LiveExample =

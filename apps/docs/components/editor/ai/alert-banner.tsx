@@ -1,13 +1,13 @@
 "use client";
 
 import { authClient } from "@repo/auth/client";
+import { AI_REQUEST_FREE_TIER_LIMIT } from "@repo/config";
 import { Close as X } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { LocaleLink as Link } from "@/components/i18n/locale-link";
-import { AI_REQUEST_FREE_TIER_LIMIT } from "@/lib/constants";
 import { useSubscription } from "@/lib/hooks/use-subscription";
 
 export function AlertBanner() {

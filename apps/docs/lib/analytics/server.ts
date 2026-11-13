@@ -3,7 +3,7 @@ import "server-only";
 import { createHash, randomUUID } from "node:crypto";
 import { cookies } from "next/headers";
 import { after } from "next/server";
-import { env } from "@/lib/env";
+import { env } from "@/env";
 import { ANALYTICS_CONSENT_COOKIE } from "./config";
 import type {
   AnalyticsEvents,
@@ -74,8 +74,7 @@ export function buildServerEvent(
 function isServerAnalyticsEnabled(): boolean {
   if (process.env.NODE_ENV !== "production") return false;
   // Vercel previews share production's env; keep them out of the numbers.
-  const vercelEnv = process.env.VERCEL_ENV;
-  return !vercelEnv || vercelEnv === "production";
+  return !env.VERCEL_ENV || env.VERCEL_ENV === "production";
 }
 
 async function send(body: ReturnType<typeof buildServerEvent>) {

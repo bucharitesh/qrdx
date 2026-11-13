@@ -1,5 +1,6 @@
 "use client";
 
+import { CANONICAL_ORIGIN } from "@repo/config";
 import { cn } from "@repo/design-system/lib/utils";
 import { QRCodeSVG } from "qrdx";
 import { type CSSProperties, type RefObject, useEffect, useRef } from "react";
@@ -285,7 +286,7 @@ export function Gift({ right }: { right: number }) {
       </span>
       <span className={styles.giftCard}>
         <span className="grid size-full place-items-center rounded-[3px] bg-white p-[2px] shadow-sm ring-1 ring-black/10">
-          <QRCodeSVG value="https://qrdx.dev" size={64} className="size-full" />
+          <QRCodeSVG value={CANONICAL_ORIGIN} size={64} className="size-full" />
         </span>
       </span>
       {/* The lid: the render above the seam, hinged on its left */}

@@ -1,5 +1,6 @@
 "use client";
 
+import { CANONICAL_ORIGIN } from "@repo/config";
 import { cn } from "@repo/design-system/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslations } from "next-intl";
@@ -45,7 +46,7 @@ const QRCode = lazy(() =>
  * (Download, Copy SVG and the dialog read the store's value, which stays
  * empty).
  */
-export const SAMPLE_PREVIEW_VALUE = "https://qrdx.dev";
+export const SAMPLE_PREVIEW_VALUE = CANONICAL_ORIGIN;
 
 /** The scan score popover's "Check a photo of the print" (PhotoScanDialog). */
 const openPhotoCheck = () => usePhotoScanDialogStore.getState().setOpen(true);

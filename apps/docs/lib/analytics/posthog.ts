@@ -1,5 +1,5 @@
 import type { CaptureResult, PostHog, Properties } from "posthog-js";
-import { env } from "@/lib/env";
+import { env } from "@/env";
 import { ANALYTICS_CONSENT_COOKIE, debugLog } from "./config";
 import {
   isUntrackedAnalyticsPath,
