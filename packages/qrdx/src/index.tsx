@@ -103,6 +103,14 @@ export {
   removeLogoBackdrop,
   removeLogoBackground,
 } from "./logo-cleanup";
+export {
+  partMarker,
+  QR_EYE_ATTRIBUTE,
+  QR_PART_ATTRIBUTE,
+  QR_PARTS,
+  type QRPart,
+  type QRPartEye,
+} from "./part-markers";
 export * from "./print";
 export * from "./qr-code";
 // QRCodeCanvas is the only export that needs client-only hooks. It lives in
@@ -169,13 +177,14 @@ export async function getQRAsSVGDataUri(props: QRProps) {
 
   // Create the SVG element with all props including templateId
   // Filter out props that aren't valid for QRCodeSVG (like hideLogo, url, etc.)
-  // Exports never carry the preview's frame label markers.
+  // Exports never carry the preview's frame label or part markers.
   const {
     hideLogo: _hideLogo,
     url: _url,
     logo: _logo,
     scale: _scale,
     frameLabelMarkers: _frameLabelMarkers,
+    partMarkers: _partMarkers,
     ...validSVGProps
   } = updatedProps as any;
 

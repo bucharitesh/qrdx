@@ -124,21 +124,17 @@ function useSavedFrames() {
   });
 }
 
-export function FrameControls() {
+/**
+ * The frame picker on its own: the built-in frames, the official library
+ * and the frames you saved. A built-in style keeps the text and colors
+ * chosen so far; a ready-made frame comes as its tile shows it.
+ */
+export function FrameStylePicker({ active = true }: { active?: boolean }) {
   const t = useTranslations("editor.controlSections.frameControls");
   const { style, setStyle } = useEditableStyle();
-  const { checkValidSession } = useSessionGuard();
   const frame: AnyQRFrame = style.frame ?? { style: "none" };
   const custom = frame.style === "custom" ? frame : null;
-  const builtIn = frame.style === "custom" ? null : frame;
   const { data: saved = [] } = useSavedFrames();
-  // Inside a collapsed section the picker waits (nothing is on screen)
-  const section = useContext(SectionContext);
-  const active = section ? section.isExpanded : true;
-  const [importOpen, setImportOpen] = useState(false);
-  const [publishOpen, setPublishOpen] = useState(false);
-  // The dialogs load on first open, then stay mounted (for their exit)
-  const [dialogs, setDialogs] = useState({ import: false, publish: false });
 
   // A frame takes the place of a shaped code (frame-shapes.tsx)
   const setFrame = (next: AnyQRFrame) =>
@@ -210,6 +206,56 @@ export function FrameControls() {
     setFrame({ ...carryFrameSettings(frame), style: picked.style });
   };
 
+  return (
+    <FramePicker
+      active={active}
+      choices={pickerChoices}
+      currentName={frameName(frame, t("none"))}
+      featured={FEATURED}
+      onPick={pick}
+      preview={(option) => (
+        <QRCodeSVG
+          bgColor="#ffffff"
+          bodyPattern="square"
+          cornerEyeDotPattern="square"
+          cornerEyePattern="square"
+          fgColor="#000000"
+          frame={
+            option.style === "custom" || !frame.color
+              ? option
+              : // Built-in tiles take the chosen frame color
+                { ...option, color: frame.color }
+          }
+          size={40}
+          style={{ maxHeight: "100%", maxWidth: "100%" }}
+          value="qrdx.dev"
+        />
+      )}
+      value={value}
+    />
+  );
+}
+
+export function FrameControls() {
+  const t = useTranslations("editor.controlSections.frameControls");
+  const { style, setStyle } = useEditableStyle();
+  const { checkValidSession } = useSessionGuard();
+  const frame: AnyQRFrame = style.frame ?? { style: "none" };
+  const custom = frame.style === "custom" ? frame : null;
+  const builtIn = frame.style === "custom" ? null : frame;
+  // Inside a collapsed section the picker waits (nothing is on screen)
+  const section = useContext(SectionContext);
+  const active = section ? section.isExpanded : true;
+  const [importOpen, setImportOpen] = useState(false);
+  const [publishOpen, setPublishOpen] = useState(false);
+  // The dialogs load on first open, then stay mounted (for their exit)
+  const [dialogs, setDialogs] = useState({ import: false, publish: false });
+
+  // A frame takes the place of a shaped code (frame-shapes.tsx)
+  const setFrame = (next: AnyQRFrame) =>
+    setStyle({ ...withoutShape(style), frame: next });
+  const shaped = frameShapeOf(style) !== null;
+
   const editableSpec =
     builtIn && BUILT_IN_SPEC_STYLES.includes(builtIn.style)
       ? builtInSpec(builtIn.style)
@@ -217,32 +263,7 @@ export function FrameControls() {
 
   return (
     <div className="space-y-4">
-      <FramePicker
-        active={active}
-        choices={pickerChoices}
-        currentName={frameName(frame, t("none"))}
-        featured={FEATURED}
-        onPick={pick}
-        preview={(option) => (
-          <QRCodeSVG
-            bgColor="#ffffff"
-            bodyPattern="square"
-            cornerEyeDotPattern="square"
-            cornerEyePattern="square"
-            fgColor="#000000"
-            frame={
-              option.style === "custom" || !frame.color
-                ? option
-                : // Built-in tiles take the chosen frame color
-                  { ...option, color: frame.color }
-            }
-            size={40}
-            style={{ maxHeight: "100%", maxWidth: "100%" }}
-            value="qrdx.dev"
-          />
-        )}
-        value={value}
-      />
+      <FrameStylePicker active={active} />
 
       <FrameShapes setStyle={setStyle} style={style} />
 

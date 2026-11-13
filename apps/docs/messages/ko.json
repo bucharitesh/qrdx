@@ -4370,6 +4370,110 @@
         "moreFrameOptions": "프레임 옵션 더 보기"
       }
     },
+    "partInline": {
+      "parts": {
+        "eyes": {
+          "edit": "눈 편집",
+          "options": "눈 옵션",
+          "random": "눈 무작위",
+          "more": "눈 옵션 더 보기"
+        },
+        "dots": {
+          "edit": "점 편집",
+          "options": "점 옵션",
+          "random": "점 무작위",
+          "more": "점 옵션 더 보기"
+        },
+        "logo": {
+          "edit": "로고 편집",
+          "options": "로고 옵션",
+          "random": "로고 무작위",
+          "more": "로고 옵션 더 보기"
+        },
+        "background": {
+          "edit": "배경 편집",
+          "options": "배경 옵션",
+          "random": "배경 무작위",
+          "more": "배경 옵션 더 보기",
+          "editShape": "코드 모양 편집"
+        },
+        "frame": {
+          "edit": "프레임 편집",
+          "options": "프레임 옵션",
+          "random": "프레임 무작위",
+          "more": "프레임 옵션 더 보기"
+        }
+      },
+      "items": {
+        "outerShape": "바깥 모양",
+        "centerShape": "중앙 모양",
+        "eyeColor": "눈 색상",
+        "centerColor": "중앙 색상",
+        "pattern": "패턴",
+        "dotColor": "점 색상",
+        "dotSize": "점 크기",
+        "logo": "로고",
+        "quickIcons": "빠른 아이콘",
+        "logoSize": "로고 크기",
+        "hideLogo": "로고 숨기기",
+        "backgroundColor": "배경 색상",
+        "padding": "여백",
+        "frameStyle": "프레임 스타일",
+        "frameColor": "프레임 색상",
+        "whichEyes": "적용할 눈 선택",
+        "allEyes": "모든 눈",
+        "thisEye": "이 눈만",
+        "thisEyesColor": "이 눈의 색상",
+        "thisEyesCenterColor": "이 눈의 중앙 색상",
+        "shapesChangeAllThreeEyes": "모양은 세 눈 모두에 적용돼요.",
+        "sameAsTheOthers": "다른 눈과 동일",
+        "eyesWithTheirOwnColor": "고유한 색상이 있는 눈은 그 색상을 유지해요. 하나만 바꾸려면 '이 눈만'을 선택하세요.",
+        "logoShapeAndPlate": "로고 모양 및 배경판",
+        "clearSpace": "여백",
+        "content": "콘텐츠",
+        "codeShape": "코드 모양",
+        "errorCorrection": "오류 정정"
+      },
+      "random": "무작위",
+      "moreOptions": "옵션 더 보기",
+      "sheet": {
+        "changesShowOnTheCode": "변경 사항은 적용하는 즉시 코드에 표시돼요. 완료를 누르면 그대로 유지돼요.",
+        "done": "완료"
+      },
+      "content": {
+        "link": "링크",
+        "text": "텍스트",
+        "theCodeKeepsItsContent": "올바른 값이 입력될 때까지 코드는 기존 콘텐츠를 유지해요.",
+        "scansOpenHost": "스캔하면 {host}(으)로 이동해요",
+        "textHint": "스캔하면 코드에 이 텍스트가 표시돼요.",
+        "editedInTheContentTab": "이 유형의 콘텐츠는 콘텐츠 탭에 전용 양식이 있어요.",
+        "openTheContentTab": "콘텐츠 탭 열기"
+      },
+      "codeShape": {
+        "codeShape": "코드 모양",
+        "names": {
+          "square": "사각형",
+          "circle": "원형",
+          "heart": "하트"
+        },
+        "aCircleOrHeartTakes": "원형이나 하트 모양은 프레임을 대체해요."
+      },
+      "errorCorrection": {
+        "theLogoRaisesItToLevel": "로고 때문에 지금은 레벨 {level}(으)로 높아져요."
+      },
+      "handles": {
+        "moveLogo": "로고 이동",
+        "dragOrUseTheArrowKeys": "드래그하거나 방향키를 사용하세요. Shift 키를 누르면 더 멀리 이동해요. Delete 키를 누르면 숨겨져요.",
+        "logoSize": "로고 크기",
+        "percentOfTheCode": "코드의 {value, number}%",
+        "padding": "여백",
+        "modules": "{count, plural, other {모듈 #개}}",
+        "dragToChangeThePadding": "안쪽이나 바깥쪽으로 드래그해 여백을 조절해요"
+      },
+      "drop": {
+        "dropToUseAsLogo": "여기에 놓아 로고로 사용"
+      }
+    },
     "gradientPicker": {
       "pickASolidColorA": "{label}에 사용할 단색, 그라데이션 또는 견본을 선택하세요."
     },
@@ -4619,6 +4723,7 @@
         "actions": "작업",
         "themeAppearance": "테마 및 외관",
         "patternCustomization": "패턴 사용자 지정",
+        "preview": "미리보기",
         "help": "도움말"
       },
       "shortcuts": {
@@ -4640,7 +4745,11 @@
         "cycleCornerEyePatterns": "모서리 눈 패턴 순환",
         "cycleInternalEyePatterns": "내부 눈 패턴 순환",
         "cycleFrames": "프레임 순환",
-        "showThisShortcutsDialog": "단축키 대화상자 표시"
+        "showThisShortcutsDialog": "단축키 대화상자 표시",
+        "editAPartOfTheCode": "포인터가 가리키거나 포커스된 QR 코드 부분 편집",
+        "randomLookForThatPart": "해당 부분을 무작위 스타일로 변경",
+        "hideTheFocusedLogo": "포커스된 로고 숨기기",
+        "moveTheLogoWhileEditing": "편집 중에 로고 이동하기"
       }
     },
     "soundSwitch": {

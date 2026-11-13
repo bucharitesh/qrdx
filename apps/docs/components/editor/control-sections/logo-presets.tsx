@@ -14,6 +14,8 @@ import {
   Wifi,
 } from "iconsax-reactjs";
 import { useTranslations } from "next-intl";
+import { flushSync } from "react-dom";
+import { createRoot } from "react-dom/client";
 import {
   BrandLogo,
   type BrandMarkSlug,
@@ -61,13 +63,47 @@ function toLogoDataUrl(glyph: SVGSVGElement, id: string): string {
   return `data:image/svg+xml,${encodeURIComponent(markup)}`;
 }
 
+/** The quick icon a logo was made from, if any. */
+function logoIcon(logo: string | undefined): LogoIcon | null {
+  if (!logo?.startsWith("data:image/svg+xml,")) return null;
+  return (
+    LOGO_ICONS.find((item) =>
+      logo.includes(encodeURIComponent(`${MARKER}="${item.id}"`)),
+    ) ?? null
+  );
+}
+
 /** Name of the quick icon a logo was made from, if any. */
 export function logoIconName(logo: string | undefined): string | null {
-  if (!logo?.startsWith("data:image/svg+xml,")) return null;
-  const icon = LOGO_ICONS.find((item) =>
-    logo.includes(encodeURIComponent(`${MARKER}="${item.id}"`)),
-  );
-  return icon ? icon.name : null;
+  return logoIcon(logo)?.name ?? null;
+}
+
+/** Id of the quick icon a logo was made from ("wifi"), if any. */
+export function logoIconId(logo: string | undefined): string | null {
+  return logoIcon(logo)?.id ?? null;
+}
+
+/** The quick icons' ids, in the picker's order. */
+export const QUICK_ICON_IDS = LOGO_ICONS.map((icon) => icon.id);
+
+/**
+ * A quick icon as the data URL picking its tile stores, without the tile
+ * on screen (the preview's Random logo). Browser only: the glyph is drawn
+ * into a detached node to read its markup.
+ */
+export function quickIconDataUrl(id: string): string | null {
+  const icon = LOGO_ICONS.find((item) => item.id === id);
+  if (!icon) return null;
+  if (icon.brand) return brandQuickIconDataUrl(brandMark(icon.brand), id);
+  const { Glyph } = icon;
+  if (!Glyph) return null;
+  const host = document.createElement("div");
+  const root = createRoot(host);
+  flushSync(() => root.render(<Glyph color={GLYPH_COLOR} variant="Bold" />));
+  const glyph = host.querySelector("svg");
+  const url = glyph ? toLogoDataUrl(glyph, id) : null;
+  root.unmount();
+  return url;
 }
 
 /** Name of the brand a gallery logo shows ("Spotify"), if it is one. */
