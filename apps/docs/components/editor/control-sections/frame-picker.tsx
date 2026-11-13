@@ -282,7 +282,10 @@ export function FramePicker({
   active: boolean;
   /** Name shown over the library for the current choice */
   currentName: string;
-  /** Shown beside the search field (the Frame panel's Upload SVG) */
+  /**
+   * Shown beside the search field (the Frame panel's Upload SVG); inside
+   * the `frame-search` container, so it can show less when that's narrow
+   */
   action?: React.ReactNode;
 }) {
   const t = useTranslations("editor.controlSections.framePicker");
@@ -494,6 +497,19 @@ export function FramePicker({
 
   const gridId = `${browserId}-grid`;
 
+  // A narrow picker (the preview's frame menu) has no room for the count
+  // in the search placeholder beside Upload SVG
+  const [narrowSearch, setNarrowSearch] = React.useState(false);
+  React.useEffect(() => {
+    const input = searchRef.current;
+    if (!input || typeof ResizeObserver === "undefined") return;
+    const watcher = new ResizeObserver(([entry]) => {
+      if (entry) setNarrowSearch(entry.contentRect.width < 170);
+    });
+    watcher.observe(input);
+    return () => watcher.disconnect();
+  }, []);
+
   // Open on the current choice, once the groups above it have settled (the
   // library's index and what's coming up): mount the tiles down to it, or
   // open its own group when it's far down, then scroll it into view. Only
@@ -501,6 +517,9 @@ export function FramePicker({
   const settled =
     active && upcoming !== null && (Boolean(index) || indexFailed);
   const [placed, setPlaced] = React.useState(false);
+  // A group the picker opened in (not one the viewer chose): searching
+  // looks through every frame again
+  const [openedInGroup, setOpenedInGroup] = React.useState(false);
   const scrolled = React.useRef(false);
   React.useEffect(() => {
     if (placed || !settled) return;
@@ -510,6 +529,7 @@ export function FramePicker({
     const place = openingPlace(sections, value);
     if (!place) return;
     setFilter(place.filter);
+    setOpenedInGroup(place.filter !== ALL);
     setMounted({ view: viewOf(place.filter, []), count: place.count });
   });
   React.useEffect(() => {
@@ -566,7 +586,8 @@ export function FramePicker({
       </div>
 
       <div className="space-y-2.5">
-        <div className="flex items-center gap-1.5">
+        {/* A container: the action can drop its label where it's narrow */}
+        <div className="@container/frame-search flex items-center gap-1.5">
           <div className="relative min-w-0 flex-1">
             <SearchNormal1
               aria-hidden
@@ -575,7 +596,14 @@ export function FramePicker({
             <Input
               aria-label={t("searchFrames")}
               className="h-8 pl-8 text-sm"
-              onChange={(event) => setQuery(event.target.value)}
+              onChange={(event) => {
+                setQuery(event.target.value);
+                if (openedInGroup) {
+                  setOpenedInGroup(false);
+                  setFilter(ALL);
+                  chipsRef.current?.scrollTo({ left: 0 });
+                }
+              }}
               onKeyDown={(event) => {
                 if (event.key === "ArrowDown") {
                   event.preventDefault();
@@ -583,7 +611,7 @@ export function FramePicker({
                 }
               }}
               placeholder={
-                officialCount > 0
+                officialCount > 0 && !narrowSearch
                   ? t("searchTotalFrames", { total: frameTotal })
                   : t("searchFrames")
               }
@@ -608,6 +636,7 @@ export function FramePicker({
               key={chip.id}
               onClick={(event) => {
                 setFilter(chip.id);
+                setOpenedInGroup(false);
                 event.currentTarget.scrollIntoView({
                   block: "nearest",
                   inline: "nearest",

@@ -8,6 +8,8 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
+  DialogOverlay,
+  DialogPortal,
   DialogTitle,
 } from "@repo/design-system/components/ui/dialog";
 import { Input } from "@repo/design-system/components/ui/input";
@@ -100,7 +102,12 @@ export function PublishFrameDialog({
 
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
-      <DialogContent className="sm:max-w-lg">
+      {/* Opened from the editor's Frame panel (z-[120]): a dimmed layer
+          and the dialog of its own above it */}
+      <DialogPortal>
+        <DialogOverlay className="z-[130]" />
+      </DialogPortal>
+      <DialogContent className="z-[131] sm:max-w-lg">
         {published ? (
           <>
             <DialogHeader>
