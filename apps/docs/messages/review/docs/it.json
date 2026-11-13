@@ -32,35 +32,35 @@
     "status": "machine"
   },
   "components/qr-code-card.mdx": {
-    "source": "d69a08f01029",
+    "source": "3226d01ca68f",
     "status": "machine"
   },
   "components/qr-code-download.mdx": {
-    "source": "d50f6275f526",
+    "source": "16bde8bed1b3",
     "status": "machine"
   },
   "components/qr-code-generator.mdx": {
-    "source": "378a4b369f75",
+    "source": "e3697dc4e163",
     "status": "machine"
   },
   "components/qr-code-scanner.mdx": {
-    "source": "639d25a0d8e1",
+    "source": "bf40cd66616f",
     "status": "machine"
   },
   "components/qr-code-share-dialog.mdx": {
-    "source": "6e986ab1cd95",
+    "source": "b3ff1b968bff",
     "status": "machine"
   },
   "components/qr-code.mdx": {
-    "source": "f9407df848c9",
+    "source": "2fd9f1a19c64",
     "status": "machine"
   },
   "components/vcard-qr-code.mdx": {
-    "source": "abaa0b546bbe",
+    "source": "8c649eff82e7",
     "status": "machine"
   },
   "components/wifi-qr-code.mdx": {
-    "source": "ba6ebf7d9510",
+    "source": "f9a1b956e488",
     "status": "machine"
   },
   "custom-domains.mdx": {

@@ -1,0 +1,15 @@
+{
+  "extends": "@repo/typescript-config/nextjs.json",
+  "compilerOptions": {
+    "types": ["node"],
+    // The registry sources import each other as "@/registry/..." (the paths
+    // the registry build rewrites for shadcn/ui projects), so every app that
+    // compiles them maps the same prefix to this folder.
+    "paths": {
+      "@/registry/*": ["./registry/*"],
+      "@repo/*": ["../*"]
+    }
+  },
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules"]
+}
