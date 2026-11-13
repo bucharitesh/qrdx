@@ -195,14 +195,22 @@ describe("the menu", () => {
     });
   });
 
-  it("a built-in frame's text color is what's drawn until one is picked", () => {
-    expect(frameTweaks({ style: "border" }, "#000000").textColor).toBe(
-      "#000000",
+  it("a built-in frame's colors come from its spec until one is picked", () => {
+    // Border sets its label on the light area, in the frame color
+    expect(frameTweaks({ style: "border" }).textColor).toBe("#000000");
+    expect(frameTweaks({ style: "border", color: "#123456" }).textColor).toBe(
+      "#123456",
     );
     expect(
-      frameTweaks({ style: "border", textColor: "#ff0000" }, "#000000")
-        .textColor,
+      frameTweaks({ style: "border", textColor: "#ff0000" }).textColor,
     ).toBe("#ff0000");
+    // A banner's label sits on the frame, in white
+    expect(frameTweaks({ style: "banner-bottom" }).textColor).toBe("#FFFFFF");
+    // The gradient's label is the middle of its two colors
+    expect(frameTweaks({ style: "gradient-border" })).toMatchObject({
+      frameColor: "#7c3aed",
+      textColor: "#ac31b2",
+    });
     expect(frameTweaks({ style: "border" }).frameColor).toBe("#000000");
     expect(frameTweaks({ style: "border" }).icons).toEqual([]);
   });
