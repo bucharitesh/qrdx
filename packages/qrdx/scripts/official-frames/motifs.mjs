@@ -14,9 +14,11 @@ import {
   strokeLine,
   transform,
 } from "./lib.mjs";
+import { INDUSTRY_MOTIFS } from "./motifs-industries.mjs";
 
 const M = {};
 const def = (name, fn) => {
+  if (M[name]) throw new Error(`Motif ${name} defined twice`);
   M[name] = fn;
 };
 
@@ -2874,6 +2876,8 @@ export const ICONS = [
   "sparkle",
   "gift",
 ];
+
+for (const [name, fn] of Object.entries(INDUSTRY_MOTIFS)) def(name, fn);
 
 export const MOTIFS = M;
 export const MOTIF_NAMES = Object.keys(M);
