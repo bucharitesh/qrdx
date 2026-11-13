@@ -1,14 +1,32 @@
+import { cn } from "@repo/design-system/lib/utils";
+import { DeferredWallRows } from "@/components/community/deferred-community";
+import type { DeferredLabels } from "@/components/infinite/deferred";
 import { ShowcaseWall } from "@/components/showcase/showcase-wall";
 import { WallHeading } from "@/components/showcase/wall-heading";
 import { WALL_TILES } from "@/lib/landing/showcase-gallery";
-import { COMMUNITY_WALL } from "@/lib/landing/showcase-wall";
+import {
+  COMMUNITY_WALL,
+  chunkRows,
+  wallChunkKey,
+  wallShape,
+} from "@/lib/landing/showcase-wall";
+import { WALL_GAP } from "./wall-placeholder";
 
 // The full "Made with QRdx" wall on /community: every tile, in titled bands
 // (themes, frames, art and logos, content types) with an anchor each, so the
 // page reads as a catalogue rather than one 200-tile scroll. Every image is
 // lazy, so only the tiles near the viewport load.
+//
+// Only the first rows are in the page's HTML: the rest load a few rows at a
+// time as they near the screen (components/community/deferred-community.tsx),
+// each in a placeholder of its exact size until then, so the anchors and
+// the page's length don't change.
 
-export function CommunityWall() {
+/** Chunks drawn on the server: the first band's first rows. */
+const SERVER_CHUNKS = 1;
+
+export function CommunityWall({ labels }: { labels: DeferredLabels }) {
+  let drawn = 0;
   return (
     <section
       id="made-with-qrdx"
@@ -57,7 +75,22 @@ export function CommunityWall() {
               {section.description}
             </p>
           </div>
-          <ShowcaseWall rows={section.rows} />
+          <div className={cn("flex flex-col", WALL_GAP)}>
+            {chunkRows(section.rows).map((rows, index) => {
+              const key = wallChunkKey(section.band, index);
+              drawn += 1;
+              return drawn <= SERVER_CHUNKS ? (
+                <ShowcaseWall key={key} rows={rows} />
+              ) : (
+                <DeferredWallRows
+                  chunkKey={key}
+                  key={key}
+                  labels={labels}
+                  shape={wallShape(rows)}
+                />
+              );
+            })}
+          </div>
         </section>
       ))}
     </section>

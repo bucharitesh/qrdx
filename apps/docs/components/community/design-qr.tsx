@@ -4,6 +4,7 @@ import { CANONICAL_ORIGIN } from "@repo/config";
 import { cn } from "@repo/design-system/lib/utils";
 import { QRCode } from "qrdx";
 import { DEFAULT_QR_LOGO } from "@/lib/constants";
+import { useNearViewport } from "@/lib/hooks/use-infinite-scroll";
 import { styleEngineOptions } from "@/lib/qr-design/engine-options";
 import type { ThemeStyles } from "@/types/theme";
 
@@ -44,4 +45,25 @@ export function DesignQr({
       />
     </div>
   );
+}
+
+/**
+ * DesignQr for cards in long lists: drawn only once the card nears the
+ * screen, so the server's HTML carries no SVG for it (a framed design is
+ * tens of kilobytes, and a gallery shows dozens). `eager` draws it on the
+ * server too, for cards on the first screen.
+ */
+export function LazyDesignQr({
+  eager = false,
+  className,
+  ...props
+}: {
+  style: ThemeStyles;
+  value?: string;
+  className?: string;
+  eager?: boolean;
+}) {
+  const [ref, near] = useNearViewport<HTMLDivElement>({ initial: eager });
+  if (near) return <DesignQr className={className} {...props} />;
+  return <div aria-hidden className={className} ref={ref} />;
 }

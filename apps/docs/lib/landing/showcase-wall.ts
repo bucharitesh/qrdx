@@ -265,3 +265,56 @@ export const COMMUNITY_WALL: WallSection[] = BANDS.map(
 /** Every placement of a wall, row by row. */
 export const wallPlacements = (rows: WallRow[]): WallPlacement[] =>
   rows.flatMap((row) => row.halves.flat());
+
+/**
+ * Rows of a wall drawn together. The community wall draws its first chunk
+ * on the server and loads the others as they near the screen
+ * (components/showcase/community-wall.tsx), so its HTML doesn't carry two
+ * hundred tiles.
+ */
+export const WALL_ROWS_PER_CHUNK = 3;
+
+/** A wall's rows, `size` at a time. */
+export function chunkRows(
+  rows: WallRow[],
+  size = WALL_ROWS_PER_CHUNK,
+): WallRow[][] {
+  const chunks: WallRow[][] = [];
+  for (let start = 0; start < rows.length; start += size) {
+    chunks.push(rows.slice(start, start + size));
+  }
+  return chunks;
+}
+
+/** A chunk's id in requests: "<band>:<index>". */
+export const wallChunkKey = (band: WallBand, index: number) =>
+  `${band}:${index}`;
+
+/** The rows a chunk id names, or undefined for any other id. */
+export function findWallChunk(key: string): WallRow[] | undefined {
+  const match = /^([a-z]{1,24}):(\d{1,3})$/.exec(key);
+  if (!(match?.[1] && match[2])) return undefined;
+  const section = COMMUNITY_WALL.find((item) => item.band === match[1]);
+  return section ? chunkRows(section.rows)[Number(match[2])] : undefined;
+}
+
+/**
+ * A chunk's layout without its tiles, for the placeholder it shows until
+ * it loads: per row, whether it shows below `lg`, and per half, each
+ * tile's aspect ratio and whether it shows below `lg`.
+ */
+export interface WallShapeRow {
+  compact: boolean;
+  halves: [ratio: number, compact: boolean][][];
+}
+
+export const wallShape = (rows: WallRow[]): WallShapeRow[] =>
+  rows.map((row) => ({
+    compact: row.compact,
+    halves: row.halves.map((half) =>
+      half.map((placement): [number, boolean] => [
+        TILE_ASPECT[placement.shape],
+        placement.compact,
+      ]),
+    ),
+  }));

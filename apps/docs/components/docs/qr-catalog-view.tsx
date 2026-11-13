@@ -2,17 +2,14 @@
 
 import { Close, Spinner, Tick } from "@repo/design-system/components/icons";
 import { cn } from "@repo/design-system/lib/utils";
-import {
-  getQRAsSVGDataUri,
-  handleImageLoad,
-  QRCodeSVG,
-  type QRProps,
-} from "qrdx";
+import { getQRAsSVGDataUri, handleImageLoad, type QRProps } from "qrdx";
 import { useEffect, useMemo, useState } from "react";
 import {
   CATALOG_VALUE,
   type CatalogTile,
+  catalogTileSrc,
   type QrCatalogKind,
+  tileSize,
   tilesFor,
 } from "./qr-catalog-tiles";
 
@@ -22,8 +19,15 @@ import {
 // badge is a real result on the reader's machine, not a claim. Each code
 // links into the playground; the links come from the server
 // (./qr-catalog.tsx), so the link code never ships to the browser.
+//
+// The codes the page shows are the engine's own SVGs as files
+// (app/catalog/[file]/route.ts), loaded as lazy images: inline, eighty of
+// them made the page's HTML 3 MB.
 
 const CHECK_SIZE = 360;
+
+/** Tiles of the first catalogue (body patterns) on the first screen. */
+const FIRST_SCREEN = 4;
 
 type Status = "checking" | "scans" | "no-read";
 
@@ -124,7 +128,7 @@ export function QrCatalogView({
           : `${scanned} of ${tiles.length} decoded with jsQR in your browser.`}
       </p>
       <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4">
-        {tiles.map((tile) => (
+        {tiles.map((tile, index) => (
           <li
             className="bg-fd-card border-fd-border flex min-w-0 flex-col gap-2 rounded-xl border p-2"
             data-catalog-tile={tile.id}
@@ -134,10 +138,20 @@ export function QrCatalogView({
             {/* The code opens the playground with this one option set. */}
             <a
               aria-label={`Open ${tile.label} in the playground`}
-              className="grid aspect-square place-items-center overflow-hidden rounded-lg bg-white p-3 transition-shadow hover:ring-1 hover:ring-fd-foreground/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-fd-ring [&_svg]:h-auto [&_svg]:max-h-full [&_svg]:max-w-full"
+              className="grid aspect-square place-items-center overflow-hidden rounded-lg bg-white p-3 transition-shadow hover:ring-1 hover:ring-fd-foreground/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-fd-ring"
               href={hrefs[tile.id]}
             >
-              <QRCodeSVG {...tile.props} size={kind === "frame" ? 120 : 132} />
+              {/* Decorative: the link's label names the option. */}
+              <img
+                alt=""
+                className="h-auto max-h-full max-w-full"
+                decoding="async"
+                loading={
+                  kind === "body" && index < FIRST_SCREEN ? "eager" : "lazy"
+                }
+                src={catalogTileSrc(tile)}
+                width={tileSize(kind)}
+              />
             </a>
             <div className="flex min-w-0 flex-col gap-1 px-1 pb-1">
               <div className="flex items-center justify-between gap-2">
