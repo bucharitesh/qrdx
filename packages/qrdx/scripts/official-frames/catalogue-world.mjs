@@ -65,7 +65,7 @@ const W = {
   yalda: pal("#5b0e1e", "#f2a541", "pomegranate red and amber"),
   hijri: pal("#134e4a", "#d4af37", "deep teal and gold"),
   iftar: pal("#3b2a20", "#e0b84f", "date brown and gold"),
-  roshHashanah: pal("#991b1b", "#e9a93a", "apple red and honey"),
+  roshHashanah: pal("#991b1b", "#e9a93a", "crimson and honey"),
   roshHashanahBlue: pal("#1e3a8a", "#e9a93a", "blue and honey"),
   purim: pal("#5b21b6", "#facc15", "purple and yellow"),
   enkutatash: pal("#1f5130", "#f4c20d", "highland green and daisy yellow"),
@@ -115,7 +115,7 @@ const W = {
   redRibbon: pal("#b91c1c", "#fecaca", "red"),
   greenRibbon: pal("#166534", "#86efac", "green"),
   donor: pal("#991b1b", "#fca5a5", "blood red"),
-  teachers: pal("#1f3a5f", "#e11d48", "navy and apple red"),
+  teachers: pal("#1f3a5f", "#e11d48", "navy and red"),
   kindness: pal("#0f766e", "#fda4af", "teal and pink"),
   foodDay: pal("#365314", "#f59e0b", "olive and amber"),
   // Seasons
@@ -1277,7 +1277,7 @@ function holidays({ f, section, P }) {
   ]);
   f(
     "rosh-hashanah-apple",
-    "Apple and honey",
+    "Sweet new year",
     "cardSolid",
     "Shanah Tovah",
     "Scan me",
@@ -2185,7 +2185,7 @@ function holidays({ f, section, P }) {
   ]);
   f(
     "teachers-day-apple",
-    "Teacher's apple",
+    "Teachers' Day card",
     "cardSolid",
     "Happy Teachers' Day",
     "Scan me",
@@ -2502,9 +2502,9 @@ function seasons({ f, section }) {
   section("seasons", "autumn", ["autumn", "fall"]);
   f(
     "autumn-apple-picking",
-    "Apple picking",
+    "Orchard picking",
     "cardSolid",
-    "Apple picking",
+    "Fruit picking",
     "Scan for orchard hours",
     { m: "apple", mfill: "accent", mfill2: "text" },
     W.autumnForest,
@@ -2554,7 +2554,7 @@ function seasons({ f, section }) {
   );
   f(
     "school-welcome-apple",
-    "Welcome back apple",
+    "Welcome back arch",
     "arch",
     "Welcome back",
     undefined,

@@ -894,7 +894,7 @@ add("pomegranate", "a pomegranate", ({ A, B, parts, leaf }) => {
 });
 
 // Jewish holidays
-add("apple", "an apple", ({ A, B, parts, leaf, band }) => {
+add("apple", "an orchard fruit", ({ A, B, parts, leaf, band }) => {
   const body = path()
     .M(50, 30)
     .C(40, 20, 14, 22, 14, 50)

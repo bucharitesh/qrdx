@@ -1,7 +1,7 @@
 {
   "id": "autumn-apple-picking",
-  "name": "Apple picking",
-  "description": "A solid card with an apple over the code and the label underneath, in forest brown and ochre.",
+  "name": "Orchard picking",
+  "description": "A solid card with an orchard fruit over the code and the label underneath, in forest brown and ochre.",
   "category": "seasonal",
   "collection": "seasons",
   "occasion": "autumn",
@@ -53,7 +53,7 @@
         "type": "text",
         "id": "cta",
         "slot": "primary",
-        "text": "Apple picking",
+        "text": "Fruit picking",
         "color": "text",
         "box": {
           "x": 80,
