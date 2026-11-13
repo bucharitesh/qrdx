@@ -536,6 +536,7 @@ describe("the community wall", () => {
     const cautions = tiles.filter((t) => t.caution).map((t) => t.id);
     expect(cautions.sort()).toEqual([
       "border-arrow",
+      "border-dot-ring",
       "border-halloween",
       "border-standard-box",
       "eyes-circle",

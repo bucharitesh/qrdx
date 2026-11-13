@@ -457,7 +457,9 @@ const CIRCLE_EYES: Partial<ThemeStyles> = {
 };
 
 const SMALL_IN_BORDER =
-  "The border draws the code at under half the artwork's width, so the scan score marks it down; print it at 5 cm or more.";
+  "The border draws the code at under half the artwork's width; print it at 5 cm or more.";
+const HALF_IN_RING =
+  "The ring draws the code at about half the artwork's width; print it at 5 cm or more.";
 
 const artTiles: WallTile[] = [
   art("bloom", "logo", "blend", "classic"),
@@ -529,6 +531,7 @@ const artTiles: WallTile[] = [
   border("StrikedBox", "Striked box"),
   border("Arrow", "Arrow", SMALL_IN_BORDER),
   border("Halloween", "Halloween", SMALL_IN_BORDER),
+  border("DotRing", "Dot ring", HALF_IN_RING),
   {
     id: "eyes-circle",
     band: "art",
