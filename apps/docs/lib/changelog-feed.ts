@@ -18,6 +18,18 @@ export interface ChangelogItem {
   tags: string[];
   /** /changelogs#<slug> */
   href: string;
+  /** 16:9 picture's URL (light theme); entries with one become feature cards */
+  image?: string;
+  /** The picture in the dark theme */
+  imageDark?: string;
+  /** What the picture shows */
+  imageAlt?: string;
+  /** A muted, looping clip's URL (lib/media.ts), shown in the entry's modal */
+  video?: string;
+  /** "Try it" in the entry's modal: an in-app link */
+  cta?: { label?: string; href: string };
+  /** Opens the entry's modal once by itself (pickAnnouncement) */
+  announce?: boolean;
 }
 
 /** An entry's id on /changelogs, so "Read more" lands on it. */
@@ -126,4 +138,120 @@ export function unreadLabel(count: number): string {
 /** This browser's copy of the day, per person. */
 export function seenStorageKey(userId: string): string {
   return `qrdx:changelog-seen:${userId}`;
+}
+
+// Feature cards and announcements. Entries the person is done with (a
+// dismissed card, a closed announcement) are a list of slugs in
+// user.settings.whatsNewDismissed, mirrored in localStorage.
+
+/** Cards show entries released in this many days. */
+export const FEATURE_CARD_DAYS = 60;
+/** Cards stacked in the sidebar at most. */
+export const FEATURE_CARD_LIMIT = 3;
+/** Dismissed entries an account remembers (the newest ones). */
+export const DISMISSED_LIMIT = 50;
+
+/** A UTC day moved by `days` (negative goes back). */
+export function addDays(day: string, days: number): string {
+  const date = new Date(`${day}T00:00:00Z`);
+  date.setUTCDate(date.getUTCDate() + days);
+  return date.toISOString().slice(0, 10);
+}
+
+/**
+ * The sidebar's cards: the newest entries from the last FEATURE_CARD_DAYS
+ * that have a picture and weren't dismissed, at most FEATURE_CARD_LIMIT.
+ */
+export function featureCards<
+  T extends Pick<ChangelogItem, "slug" | "date" | "version" | "image">,
+>(
+  items: readonly T[],
+  { dismissed, today }: { dismissed: readonly string[]; today: string },
+): T[] {
+  const from = addDays(today, -FEATURE_CARD_DAYS);
+  const hidden = new Set(dismissed);
+  return sortChangelog(items)
+    .filter((item) => {
+      const day = toDay(item.date);
+      return Boolean(item.image) && day !== null && day >= from;
+    })
+    .filter((item) => !hidden.has(item.slug))
+    .slice(0, FEATURE_CARD_LIMIT);
+}
+
+/**
+ * The entry whose modal opens by itself, or null. Only the newest entry
+ * marked `announce` counts (an older one never shows later), and only for
+ * someone who joined before it came out, isn't on their sign-up day, hasn't
+ * seen it (opened What's new or the entry since) and hasn't closed it.
+ */
+export function pickAnnouncement<
+  T extends Pick<ChangelogItem, "slug" | "date" | "version" | "announce">,
+>(
+  items: readonly T[],
+  {
+    today,
+    signedUpAt,
+    seenAt,
+    dismissed,
+  }: {
+    today: string;
+    signedUpAt: string | Date | null | undefined;
+    seenAt: string | null;
+    dismissed: readonly string[];
+  },
+): T | null {
+  const entry = sortChangelog(items).find((item) => item.announce);
+  const joined = toDay(signedUpAt);
+  const day = entry && toDay(entry.date);
+  if (!(entry && joined && day)) return null;
+  if (joined >= today || day <= joined) return null;
+  if (!isUnread(entry, seenAt) || dismissed.includes(entry.slug)) return null;
+  return entry;
+}
+
+/**
+ * `added` moved to the end of `list` (newest last), keeping the last
+ * `limit`. The same merge the server actions run in SQL.
+ */
+export function appendRecent(
+  list: readonly string[],
+  added: readonly string[],
+  limit = DISMISSED_LIMIT,
+): string[] {
+  const fresh = new Set(added);
+  return [...list.filter((value) => !fresh.has(value)), ...fresh].slice(-limit);
+}
+
+/**
+ * The ids a caller sent that are in `known`: strings only, each once, at
+ * most `max`. Anything else is dropped, so a request can't store values
+ * the app doesn't have.
+ */
+export function knownIds(
+  input: unknown,
+  known: ReadonlySet<string>,
+  max = 10,
+): string[] {
+  const values: unknown[] = Array.isArray(input) ? input : [input];
+  const ids: string[] = [];
+  for (const value of values) {
+    if (ids.length >= max) break;
+    if (typeof value === "string" && known.has(value) && !ids.includes(value)) {
+      ids.push(value);
+    }
+  }
+  return ids;
+}
+
+/** A stored list read back: its strings, or empty for anything else. */
+export function storedList(value: unknown): string[] {
+  return Array.isArray(value)
+    ? value.filter((item): item is string => typeof item === "string")
+    : [];
+}
+
+/** This browser's dismissed entries, per person ("anyone" when signed out). */
+export function dismissedStorageKey(userId: string | null): string {
+  return `qrdx:whats-new-dismissed:${userId ?? "anyone"}`;
 }

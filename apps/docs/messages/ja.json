@@ -5381,7 +5381,8 @@
           "afterYouSignInPasskeyOrApp": "サインイン後、QRdxからパスキーまたは認証アプリのコードの入力を求められます。バックアップコードも使用できます。",
           "afterYouSignInPasskey": "サインイン後、QRdxからパスキーの入力を求められます。バックアップコードも使用できます。",
           "afterYouSignInApp": "サインイン後、QRdxから認証アプリのコードの入力を求められます。バックアップコードも使用できます。",
-          "afterYouSignInQrdx2": "サインイン後、QRdxからバックアップコードの入力を求められます。"
+          "afterYouSignInQrdx2": "サインイン後、QRdxからバックアップコードの入力を求められます。",
+          "passkeySpotlight": "認証アプリのコードの代わりに、パスキーを2段階目の認証として使えるようになりました。"
         },
         "twoFactorSetupDialog": {
           "stepStepnumberOfLength": "ステップ {stepNumber, number}/{length, number}",
@@ -8006,7 +8007,19 @@
         "new": "新着",
         "whatsNew": "新着情報",
         "newFeaturesAndFixesIn": "QRdxの新機能と修正です。",
-        "seeAllUpdates": "すべてのアップデートを見る"
+        "seeAllUpdates": "すべてのアップデートを見る",
+        "newFeatures": "新機能",
+        "dismissTitle": "{title}を閉じる",
+        "previousUpdate": "前のお知らせ",
+        "nextUpdate": "次のお知らせ",
+        "positionOfTotal": "{position, number}/{total, number}",
+        "readOnTheChangelog": "変更履歴で読む",
+        "tryIt": "試してみる",
+        "close": "閉じる"
+      },
+      "spotlight": {
+        "new": "新着",
+        "gotIt": "了解"
       }
     },
     "workspaces": {
