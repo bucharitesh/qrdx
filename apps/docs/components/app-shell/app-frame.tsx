@@ -77,13 +77,15 @@ export function AppFrame({
             />
           </div>
         </aside>
-        {/* With a list's selection bar open (dashboard/_components/
-            selection-bar.tsx), room underneath it, so the last row and the
-            pager scroll clear of the bar. */}
+        {/* Room at the bottom, so the last row and the pager scroll clear of
+            what floats over the page: a list's selection bar while it's open
+            (dashboard/_components/selection-bar.tsx) and the "Get set up"
+            launcher while it's on screen (setup-guide.tsx sets
+            --setup-guide-clearance, which already counts a bar under it). */}
         <main
           className={cn(
-            "min-w-0 flex-1 px-4 py-5 md:overflow-y-auto md:overscroll-contain md:px-8 md:py-8",
-            "has-[[data-selection-bar=open]]:pb-[calc(env(safe-area-inset-bottom)+5.5rem)] md:has-[[data-selection-bar=open]]:pb-[calc(env(safe-area-inset-bottom)+6.5rem)]",
+            "min-w-0 flex-1 px-4 pt-5 pb-[max(1.25rem,var(--setup-guide-clearance,0px))] md:overflow-y-auto md:overscroll-contain md:px-8 md:pt-8 md:pb-[max(2rem,var(--setup-guide-clearance,0px))]",
+            "has-[[data-selection-bar=open]]:pb-[max(calc(env(safe-area-inset-bottom)+5.5rem),var(--setup-guide-clearance,0px))] md:has-[[data-selection-bar=open]]:pb-[max(calc(env(safe-area-inset-bottom)+6.5rem),var(--setup-guide-clearance,0px))]",
           )}
           data-app-scroll=""
         >

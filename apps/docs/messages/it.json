@@ -7685,23 +7685,6 @@
         },
         "newCodeButton": {
           "newDynamicCode": "Nuovo codice dinamico"
-        },
-        "setupChecklist": {
-          "done": "(fatto)",
-          "create": "Crea",
-          "start": "Inizia",
-          "design": "Progetta",
-          "invite": "Invita",
-          "connect": "Collega",
-          "getSetUp": "Configura",
-          "doneOfLengthDone": "{done, number} di {length, number} completati",
-          "hide": "Nascondi",
-          "setupTasksDone": "Attività completate",
-          "createADynamicQrCode": "Crea un QR code dinamico",
-          "makeALandingPageOr": "Crea una landing page o un modulo",
-          "saveAThemeWithYour": "Salva un tema con il tuo logo e i tuoi colori",
-          "inviteATeammate": "Invita un collega",
-          "connectACustomDomain": "Collega un dominio personalizzato"
         }
       },
       "listSelection": {
@@ -8041,6 +8024,22 @@
       "spotlight": {
         "new": "Novità",
         "gotIt": "Ho capito"
+      },
+      "setupGuide": {
+        "getSetUp": "Configura",
+        "doneOfLengthDone": "{done, number} di {length, number} completati",
+        "setupTasksDone": "Attività completate",
+        "done": "(fatto)",
+        "create": "Crea",
+        "start": "Inizia",
+        "design": "Progetta",
+        "invite": "Invita",
+        "connect": "Collega",
+        "createADynamicQrCode": "Crea un QR code dinamico",
+        "makeALandingPageOr": "Crea una landing page o un modulo",
+        "saveAThemeWithYour": "Salva un tema con il tuo logo e i tuoi colori",
+        "inviteATeammate": "Invita un collega",
+        "connectACustomDomain": "Collega un dominio personalizzato"
       }
     },
     "workspaces": {
