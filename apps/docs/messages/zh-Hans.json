@@ -7572,7 +7572,6 @@
           "page": {
             "webhooks": "Webhooks",
             "recentDeliveries": "最近的投递记录",
-            "theLast50KeptFor": "保留最近 50 条，保存 30 天。投递失败时最多重试 {MAX_DELIVERY_ATTEMPTS, number} 次，每次等待时间逐渐变长。",
             "endpointDeliveries": "端点投递记录",
             "filterDeliveries": "筛选投递记录",
             "active": "已启用",

@@ -10,14 +10,19 @@ import {
 import cuid from "cuid";
 import {
   and,
+  asc,
   count,
   desc,
   eq,
+  exists,
+  ilike,
   inArray,
   isNotNull,
   isNull,
   ne,
+  or,
   type SQL,
+  sql,
 } from "drizzle-orm";
 import { z } from "zod";
 import {
@@ -28,6 +33,7 @@ import {
   scopeWhere,
 } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import { getDomainRefs } from "@/app/(app)/dashboard/domains/_lib/domains";
+import { linkSearchTerm } from "@/app/(app)/dashboard/pages/_lib/filters";
 import {
   getPageSettings,
   PAGE_SETTINGS_TYPE,
@@ -37,7 +43,11 @@ import { recordAuditEvent } from "@/ee/audit-log/record";
 import { HttpError } from "@/lib/error-response";
 import { PRODUCT_BLOCK_TYPE, pageGtin } from "@/lib/gs1/digital-link";
 import { parseLandingPageContent } from "@/lib/landing/blocks";
-import { buildTemplateContent, getTemplate } from "@/lib/landing/templates";
+import {
+  buildTemplateContent,
+  getTemplate,
+  listTemplates,
+} from "@/lib/landing/templates";
 import { noteLimitUsage } from "@/lib/limit-notices";
 import { can } from "@/lib/permissions";
 import { assertCan } from "@/lib/permissions-server";
@@ -252,17 +262,84 @@ const toListItem = (
 
 // ─── Queries ─────────────────────────────────────────────────────────────────
 
-export async function listPages(
-  scope: ActiveScope,
-): Promise<LandingPageListItem[]> {
+/** `%`, `_` and `\` match themselves in a search. */
+const likePattern = (term: string) =>
+  `%${term.replace(/[\\%_]/g, (char) => `\\${char}`)}%`;
+
+/**
+ * A search over the list: the title, the page type's name, or a link to the
+ * page (its back-half, or the custom domain it's on).
+ */
+function pageSearchWhere(term: string): SQL {
+  const lower = term.toLowerCase();
+  const types = listTemplates()
+    .filter((template) => template.label.toLowerCase().includes(lower))
+    .map((template) => template.type);
+  const slug = likePattern(linkSearchTerm(term));
+  const host = likePattern(term);
+  return or(
+    ilike(landingPage.title, likePattern(term)),
+    types.length > 0 ? inArray(landingPage.type, types) : undefined,
+    exists(
+      db
+        .select({ one: sql`1` })
+        .from(qrCode)
+        .leftJoin(customDomain, eq(customDomain.id, qrCode.domainId))
+        .where(
+          and(
+            eq(qrCode.pageId, landingPage.id),
+            eq(qrCode.kind, "page"),
+            or(ilike(qrCode.slug, slug), ilike(customDomain.hostname, host)),
+          ),
+        ),
+    ),
+  ) as SQL;
+}
+
+/** The page types the workspace's pages use, for the list's Type filter. */
+export async function listPageTypes(scope: ActiveScope): Promise<string[]> {
   const rows = await db
-    .select()
+    .selectDistinct({ type: landingPage.type })
     .from(landingPage)
     .where(pageScopeWhere(scope))
-    .orderBy(desc(landingPage.updatedAt), desc(landingPage.id))
-    .limit(500);
+    .orderBy(asc(landingPage.type));
+  return rows.map((row) => row.type);
+}
+
+/**
+ * One page of the workspace's pages, most recently updated first (the id
+ * breaks ties, so paging never skips or repeats a page), with how many match.
+ */
+export async function listPages(
+  scope: ActiveScope,
+  {
+    q,
+    type,
+    limit,
+    offset = 0,
+  }: { q?: string; type?: string | null; limit: number; offset?: number },
+): Promise<{ pages: LandingPageListItem[]; total: number }> {
+  const term = q?.trim().slice(0, 200);
+  const where = and(
+    pageScopeWhere(scope),
+    type ? eq(landingPage.type, type) : undefined,
+    term ? pageSearchWhere(term) : undefined,
+  );
+  const [rows, [totals]] = await Promise.all([
+    db
+      .select()
+      .from(landingPage)
+      .where(where)
+      .orderBy(desc(landingPage.updatedAt), desc(landingPage.id))
+      .limit(limit)
+      .offset(offset),
+    db.select({ total: count() }).from(landingPage).where(where),
+  ]);
   const codes = await codesByPage(rows.map((row) => row.id));
-  return rows.map((row) => toListItem(row, codes.get(row.id) ?? []));
+  return {
+    pages: rows.map((row) => toListItem(row, codes.get(row.id) ?? [])),
+    total: totals?.total ?? 0,
+  };
 }
 
 async function findPageRow(scope: ActiveScope, id: string): Promise<PageRow> {

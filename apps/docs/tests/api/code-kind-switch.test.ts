@@ -488,7 +488,9 @@ describe("hosted page → website link", () => {
     expect(await loadPublicPage({ slug: "Menu123" }, null)).toBeNull();
 
     // The page stays in Pages, with no code, and is offered to switch back.
-    const [listed] = await listPages(SCOPE);
+    const {
+      pages: [listed],
+    } = await listPages(SCOPE, { limit: 25 });
     expect(listed).toMatchObject({ id: pageId, codes: [] });
     const remembered = await rememberedPages(SCOPE, {
       id: "code_1",
