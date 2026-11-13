@@ -155,6 +155,7 @@ These are documented with examples on their feature pages.
 | `getQRAsEPS`, `downloadPrintEPS` | Vector EPS for print shops and design tools | [Downloads](/docs/features/downloads) |
 | `getScanScore(props)` | Estimates how reliably a design scans | [Will it scan?](/docs/features/frames#will-it-scan) |
 | `getImageScanScore(image)` | Scores a QR code image you already have (browser only) | [Will it scan?](/docs/features/frames#will-it-scan) |
+| `getQRAsPNG(props, { size })` | PNG bytes in plain Node, no DOM. Import it from `qrdx/node`; it needs `@resvg/resvg-js` or `sharp` installed | — |
 | `scanQRPixels(pixels, expected)` | Checks that raw RGBA pixels decode to `expected`, also when blurred and shrunk; runs in Node | — |
 | `getStylePairRisk(...)` | Warns about eye and pattern pairs some scanners miss | [Patterns](/docs/features/patterns) |
 
