@@ -9,12 +9,11 @@ import { useTranslations } from "next-intl";
 
 import { authClient } from "@repo/auth/client";
 import { toast } from "@repo/design-system";
-import { Close, Spinner } from "@repo/design-system/components/icons";
+import { Spinner } from "@repo/design-system/components/icons";
 import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
-  AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
@@ -22,21 +21,13 @@ import {
 } from "@repo/design-system/components/ui/alert-dialog";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
-import { Kbd } from "@repo/design-system/components/ui/kbd";
 import { Label } from "@repo/design-system/components/ui/label";
-import {
-  ResponsiveDialog,
-  ResponsiveDialogContent,
-  ResponsiveDialogDescription,
-  ResponsiveDialogTitle,
-} from "@repo/design-system/components/ui/revola";
 import { Skeleton } from "@repo/design-system/components/ui/skeleton";
 import {
   ToggleGroup,
   ToggleGroupItem,
 } from "@repo/design-system/components/ui/toggle-group";
 import useMediaQuery from "@repo/design-system/hooks/use-media-query";
-import { cn } from "@repo/design-system/lib/utils";
 import {
   ArrowLeft,
   Brush2,
@@ -112,6 +103,12 @@ import {
 import { BuilderOptionBar, BuilderOptionsOn } from "./builder-options";
 import { FolderField, TagsField } from "./builder-organize";
 import { BuilderPreview } from "./builder-preview";
+import {
+  BuilderAlertContent,
+  BuilderShell,
+  BuilderSubmitKey,
+  useBuilderShortcuts,
+} from "./builder-shell";
 import { BuilderStyle } from "./builder-style";
 import {
   SlugSuggestions,
@@ -137,11 +134,7 @@ import {
   loadCodeForEdit,
   playgroundBuilderServices,
 } from "./services";
-import {
-  escapeAction,
-  resolveBuilderShortcut,
-  submitKeyLabel,
-} from "./shortcuts";
+import { escapeAction } from "./shortcuts";
 import { type CodeBuilderRequest, useCodeBuilderStore } from "./store";
 import { type SubmitResult, submitCreate, submitUpdate } from "./submit";
 import { type BuilderFields, EMPTY_FIELDS } from "./types";
@@ -429,9 +422,6 @@ export default function CodeBuilderModal({
     usage.limit > 0 &&
     usage.used / usage.limit >= 0.9;
   const formShown = phase === "form" && panel === null && ready;
-  const submitLabel = submitKeyLabel(
-    typeof navigator === "undefined" ? "" : navigator.userAgent,
-  );
 
   const update = useCallback(
     <K extends keyof BuilderFields>(key: K, value: BuilderFields[K]) => {
@@ -825,8 +815,6 @@ export default function CodeBuilderModal({
 
   // ─── Keyboard ─────────────────────────────────────────────────────────────
 
-  const keyActions = useRef({ submit, selectOption });
-  keyActions.current = { submit, selectOption };
   const shortcutContext = {
     singleKeys,
     options: isPage ? codeOptionsFor("page") : codeOptionsFor("redirect"),
@@ -837,48 +825,16 @@ export default function CodeBuilderModal({
         contentType === "link" ||
         (contentType === "other" && otherType !== null)),
   };
-  const contextRef = useRef(shortcutContext);
-  contextRef.current = shortcutContext;
   const confirmOpen = confirm !== null;
-
-  useEffect(() => {
-    if (!open || confirmOpen) return;
-    const onKeyDown = (event: KeyboardEvent) => {
-      const content = contentRef.current;
-      const element = event.target instanceof HTMLElement ? event.target : null;
-      // Only keys meant for the builder: not a menu or popover above it.
-      if (
-        !content ||
-        !(element === document.body || (element && content.contains(element)))
-      ) {
-        return;
-      }
-      const action = resolveBuilderShortcut(
-        {
-          key: event.key,
-          metaKey: event.metaKey,
-          ctrlKey: event.ctrlKey,
-          altKey: event.altKey,
-          shiftKey: event.shiftKey,
-          isComposing: event.isComposing,
-          target: element
-            ? {
-                tagName: element.tagName,
-                isContentEditable: element.isContentEditable,
-                role: element.getAttribute("role"),
-              }
-            : null,
-        },
-        contextRef.current,
-      );
-      if (!action) return;
-      event.preventDefault();
-      if (action.type === "submit") keyActions.current.submit();
-      else keyActions.current.selectOption(action.option);
-    };
-    document.addEventListener("keydown", onKeyDown);
-    return () => document.removeEventListener("keydown", onKeyDown);
-  }, [open, confirmOpen]);
+  useBuilderShortcuts({
+    enabled: open && !confirmOpen,
+    contentRef,
+    context: shortcutContext,
+    onAction: (action) => {
+      if (action.type === "submit") submit();
+      else selectOption(action.option);
+    },
+  });
 
   // ─── Pieces ───────────────────────────────────────────────────────────────
 
@@ -1448,178 +1404,126 @@ export default function CodeBuilderModal({
 
   return (
     <>
-      <ResponsiveDialog
-        onOpenChange={(next) => {
-          if (!next) requestClose();
-        }}
-        open={open}
-      >
-        <ResponsiveDialogContent
-          className="flex flex-col gap-0 overflow-hidden p-0 max-sm:max-h-[92svh] sm:max-w-5xl"
-          onEscapeKeyDown={(event) => {
-            event.preventDefault();
-            onEscape();
-          }}
-          ref={contentRef}
-        >
-          {/* Header */}
-          <div className="flex items-center gap-3 border-b px-4 py-3 sm:px-5">
-            <div className="min-w-0 flex-1">
-              <ResponsiveDialogTitle className="truncate text-base">
-                {optionPanel
-                  ? `${title} · ${CODE_OPTION_COPY[optionPanel].label}`
-                  : title}
-              </ResponsiveDialogTitle>
-              <ResponsiveDialogDescription className="truncate text-xs max-sm:sr-only">
-                {phase === "success"
-                  ? t("downloadItAndPrintIt")
-                  : code
-                    ? displayUrl(code.shortLink)
-                    : t("itEncodesAShortLink")}
-              </ResponsiveDialogDescription>
-            </div>
-            {phase === "form" && (
-              <DraftControls
-                drafts={otherDrafts}
-                onDelete={(draft) => drafts.remove(draft.id)}
-                onRestore={restoreDraft}
-                state={draftState}
-              />
-            )}
-            <Button
-              aria-label={t("close")}
-              className="size-8 shrink-0"
-              onClick={requestClose}
-              size="icon"
-              type="button"
-              variant="ghost"
-            >
-              <Close className="size-4" />
-            </Button>
-          </div>
-
-          {/* Body */}
-          <div
-            className={cn(
-              "grid min-h-0 flex-1",
-              showPreviewColumn &&
-                "md:h-[min(38rem,calc(100dvh-12rem))] md:grid-cols-[minmax(0,1fr)_21rem]",
-            )}
-          >
-            <div className="min-h-0 overflow-y-auto px-4 py-4 sm:px-5">
-              {!wide && ready && !(contentType === "page" && !editing) && (
-                <div className="mb-4">{preview}</div>
-              )}
-              {main}
-            </div>
-            {showPreviewColumn && (
-              <div className="bg-muted/20 flex min-h-0 flex-col border-l">
-                <div className="shrink-0 p-4">{ready && preview}</div>
-                {phase === "success" && created ? (
-                  <div className="space-y-2 px-4 pb-4">
-                    <CodeDownloadButtons code={created.code} />
+      <BuilderShell
+        aside={
+          showPreviewColumn && (
+            <>
+              <div className="shrink-0 p-4">{ready && preview}</div>
+              {phase === "success" && created ? (
+                <div className="space-y-2 px-4 pb-4">
+                  <CodeDownloadButtons code={created.code} />
+                  {fullEditorButton}
+                  {aiArtButton}
+                </div>
+              ) : (
+                <>
+                  <div className="min-h-0 flex-1 overflow-y-auto border-t">
+                    {ready && styleBody}
+                  </div>
+                  <div className="shrink-0 space-y-1 border-t p-3">
                     {fullEditorButton}
                     {aiArtButton}
                   </div>
-                ) : (
-                  <>
-                    <div className="min-h-0 flex-1 overflow-y-auto border-t">
-                      {ready && styleBody}
-                    </div>
-                    <div className="shrink-0 space-y-1 border-t p-3">
-                      {fullEditorButton}
-                      {aiArtButton}
-                    </div>
-                  </>
-                )}
-              </div>
-            )}
-          </div>
-
-          {/* Footer (none while picking a page type: that continues in the gallery) */}
-          <div
-            className={cn(
-              "bg-muted/30 flex flex-col gap-3 border-t px-4 py-3 sm:px-5 md:flex-row md:items-center",
-              contentType === "page" &&
-                !editing &&
-                phase === "form" &&
-                "hidden",
-            )}
-          >
-            <div className="min-w-0 flex-1">
-              {showOptions && (
-                <BuilderOptionBar
-                  active={optionPanel}
-                  disabled={isPending}
-                  kind={kind}
-                  onSelect={selectOption}
-                  options={options}
-                  showKeys={singleKeys}
-                />
-              )}
-            </div>
-            <div className="flex shrink-0 items-center justify-end gap-2">
-              {nearCap && phase === "form" && usage && plans && (
-                <span className="text-muted-foreground mr-1 text-xs">
-                  {t("usedOfLimitActiveCodes", {
-                    used: usage.used,
-                    limit: usage.limit,
-                    value: PLAN_NAMES[plans.plan],
-                  })}
-                </span>
-              )}
-              {phase === "success" ? (
-                <>
-                  <Button
-                    onClick={startAnother}
-                    type="button"
-                    variant="outline"
-                  >
-                    {t("createAnother")}
-                  </Button>
-                  <Button
-                    onClick={() => finishClose({ keepDraft: false })}
-                    type="button"
-                  >
-                    {t("done")}
-                  </Button>
                 </>
-              ) : contentType === "page" && !editing ? null : (
-                <Button
-                  aria-keyshortcuts="Meta+Enter Control+Enter"
-                  aria-label={editing ? t("saveChanges") : t("createCode")}
-                  className="max-md:w-full"
-                  disabled={
-                    isPending ||
-                    !ready ||
-                    panel !== null ||
-                    (editing && !dirty) ||
-                    (!editing && contentType === "other" && !otherType)
-                  }
-                  form="code-builder-form"
-                  type="submit"
-                >
-                  {isPending
-                    ? editing
-                      ? t("saving")
-                      : t("creating")
-                    : editing
-                      ? t("saveChanges")
-                      : t("createCode")}
-                  {!isPending && (
-                    <Kbd
-                      aria-hidden
-                      className="bg-primary-foreground/15 text-primary-foreground ml-1 hidden md:inline-flex"
-                    >
-                      {submitLabel}
-                    </Kbd>
-                  )}
-                </Button>
               )}
-            </div>
-          </div>
-        </ResponsiveDialogContent>
-      </ResponsiveDialog>
+            </>
+          )
+        }
+        closeLabel={t("close")}
+        contentRef={contentRef}
+        description={
+          phase === "success"
+            ? t("downloadItAndPrintIt")
+            : code
+              ? displayUrl(code.shortLink)
+              : t("itEncodesAShortLink")
+        }
+        footerEnd={
+          <>
+            {nearCap && phase === "form" && usage && plans && (
+              <span className="text-muted-foreground mr-1 text-xs">
+                {t("usedOfLimitActiveCodes", {
+                  used: usage.used,
+                  limit: usage.limit,
+                  value: PLAN_NAMES[plans.plan],
+                })}
+              </span>
+            )}
+            {phase === "success" ? (
+              <>
+                <Button onClick={startAnother} type="button" variant="outline">
+                  {t("createAnother")}
+                </Button>
+                <Button
+                  onClick={() => finishClose({ keepDraft: false })}
+                  type="button"
+                >
+                  {t("done")}
+                </Button>
+              </>
+            ) : contentType === "page" && !editing ? null : (
+              <Button
+                aria-keyshortcuts="Meta+Enter Control+Enter"
+                aria-label={editing ? t("saveChanges") : t("createCode")}
+                className="max-md:w-full"
+                disabled={
+                  isPending ||
+                  !ready ||
+                  panel !== null ||
+                  (editing && !dirty) ||
+                  (!editing && contentType === "other" && !otherType)
+                }
+                form="code-builder-form"
+                type="submit"
+              >
+                {isPending
+                  ? editing
+                    ? t("saving")
+                    : t("creating")
+                  : editing
+                    ? t("saveChanges")
+                    : t("createCode")}
+                {!isPending && <BuilderSubmitKey />}
+              </Button>
+            )}
+          </>
+        }
+        // None while picking a page type: that continues in the gallery.
+        footerHidden={contentType === "page" && !editing && phase === "form"}
+        footerStart={
+          showOptions && (
+            <BuilderOptionBar
+              active={optionPanel}
+              disabled={isPending}
+              kind={kind}
+              onSelect={selectOption}
+              options={options}
+              showKeys={singleKeys}
+            />
+          )
+        }
+        headerActions={
+          phase === "form" && (
+            <DraftControls
+              drafts={otherDrafts}
+              onDelete={(draft) => drafts.remove(draft.id)}
+              onRestore={restoreDraft}
+              state={draftState}
+            />
+          )
+        }
+        onEscape={onEscape}
+        onRequestClose={requestClose}
+        open={open}
+        title={
+          optionPanel
+            ? `${title} · ${CODE_OPTION_COPY[optionPanel].label}`
+            : title
+        }
+        top={!wide && ready && !(contentType === "page" && !editing) && preview}
+      >
+        {main}
+      </BuilderShell>
 
       <AlertDialog
         onOpenChange={(next) => {
@@ -1627,7 +1531,7 @@ export default function CodeBuilderModal({
         }}
         open={confirm === "close"}
       >
-        <AlertDialogContent>
+        <BuilderAlertContent>
           <AlertDialogHeader>
             <AlertDialogTitle>{t("closeWithoutSaving")}</AlertDialogTitle>
             <AlertDialogDescription>
@@ -1653,7 +1557,7 @@ export default function CodeBuilderModal({
               </AlertDialogAction>
             )}
           </AlertDialogFooter>
-        </AlertDialogContent>
+        </BuilderAlertContent>
       </AlertDialog>
 
       <AlertDialog
@@ -1662,7 +1566,7 @@ export default function CodeBuilderModal({
         }}
         open={typeof confirm === "object" && confirm !== null}
       >
-        <AlertDialogContent>
+        <BuilderAlertContent>
           <AlertDialogHeader>
             <AlertDialogTitle>{t("thisDesignMayNotScan")}</AlertDialogTitle>
             <AlertDialogDescription>
@@ -1685,7 +1589,7 @@ export default function CodeBuilderModal({
               {editing ? t("saveAnyway") : t("createAnyway")}
             </AlertDialogAction>
           </AlertDialogFooter>
-        </AlertDialogContent>
+        </BuilderAlertContent>
       </AlertDialog>
     </>
   );

@@ -6017,7 +6017,6 @@
           "youHaveViewOnlyAccess": "你只有查看权限：可以下载此条形码，但无法修改。",
           "planBarcodesAreStaticThey": "{plan} 套餐。条形码都是静态的：永不过期，所有套餐均可使用。",
           "noBarcodesYet": "还没有条形码",
-          "newBarcode": "新建条形码",
           "openTheFreeGenerator": "打开免费生成器",
           "barcodesInTheTrashDont": "回收站中的条形码不计入你的套餐。你可以恢复它们，或将其永久删除。",
           "showAllBarcodes": "显示所有条形码",
@@ -6032,13 +6031,6 @@
           "noBarcodesMatchQ": "没有与“{q}”匹配的条形码。",
           "noBarcodesHereYet": "这里还没有条形码。",
           "noBarcodesMatchTheseFilters": "没有符合这些筛选条件的条形码。"
-        },
-        "new": {
-          "page": {
-            "allBarcodes": "全部条形码",
-            "newBarcode": "新建条形码",
-            "pickTheTypeEnterThe": "选择类型，输入数字或文本，保存后即可随时重新编辑和下载。"
-          }
         },
         "barcodeActions": {
           "duplicate": "复制",
@@ -6057,11 +6049,34 @@
           "fixTheHighlightedInputTo": "请修正高亮的输入项后再保存。",
           "unsavedChanges": "有未保存的更改",
           "allChangesSaved": "所有更改已保存",
-          "notSavedYet": "尚未保存",
           "saveChanges": "保存更改",
-          "saveBarcode": "保存条形码",
           "couldntSaveTheBarcode": "无法保存条形码",
           "barcodeSaved": "条形码已保存"
+        },
+        "barcodeBuilder": {
+          "newBarcode": "新建条形码",
+          "pickTheTypeEnterThe": "选择类型，输入数字或文本，保存后即可随时重新编辑和下载。",
+          "yourBarcodeIsSaved": "条形码已保存",
+          "downloadItNowOrOpen": "可以立即下载，也可以稍后从“条形码”中打开，编辑后再次下载。",
+          "design": "设计",
+          "back": "返回",
+          "close": "关闭",
+          "value": "内容",
+          "valueCopied": "内容已复制",
+          "type": "类型",
+          "title": "标题",
+          "openTheBarcode": "打开条形码",
+          "foldersDidntLoad": "文件夹未能加载，因此该条形码将不放入文件夹保存。",
+          "couldntReachQrdx": "无法连接到 QRdx。请检查网络连接后重试。",
+          "fixTheHighlightedInputTo": "请修正高亮的输入项后再保存。",
+          "saveBarcode": "保存条形码",
+          "saving": "正在保存...",
+          "createAnother": "再创建一个",
+          "done": "完成",
+          "closeWithoutSaving": "不保存就关闭？",
+          "thisBarcodeIsntSavedYet": "该条形码尚未保存，您输入的内容将会丢失。",
+          "keepEditing": "继续编辑",
+          "discard": "放弃"
         },
         "barcodesHeader": {
           "barcodes": "条形码：",
@@ -7975,6 +7990,7 @@
         "newDynamicQrCode": "新建动态二维码",
         "newLandingPage": "新建落地页",
         "newForm": "新建表单",
+        "newBarcode": "新建条形码",
         "importCodesFromACsv": "从 CSV 文件导入二维码",
         "inviteATeammate": "邀请团队成员",
         "connectADomain": "连接域名",
@@ -7985,6 +8001,7 @@
         "dynamicQrCode": "动态二维码",
         "landingPage": "落地页",
         "form": "表单",
+        "barcode": "条形码",
         "importCodes": "导入二维码",
         "openTheEditor": "打开编辑器",
         "newDynamicQrCode": "新建动态二维码",

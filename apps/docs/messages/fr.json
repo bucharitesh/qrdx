@@ -6017,7 +6017,6 @@
           "youHaveViewOnlyAccess": "Vous avez un accès en lecture seule : vous pouvez télécharger ce code-barres, mais pas le modifier.",
           "planBarcodesAreStaticThey": "Forfait {plan}. Les codes-barres sont statiques : ils n’expirent jamais et fonctionnent avec tous les forfaits.",
           "noBarcodesYet": "Aucun code-barres",
-          "newBarcode": "Nouveau code-barres",
           "openTheFreeGenerator": "Ouvrir le générateur gratuit",
           "barcodesInTheTrashDont": "Les codes-barres de la corbeille ne comptent pas dans votre offre. Restaurez-les ou supprimez-les définitivement.",
           "showAllBarcodes": "Afficher tous les codes-barres",
@@ -6032,13 +6031,6 @@
           "noBarcodesMatchQ": "Aucun code-barres ne correspond à « {q} ».",
           "noBarcodesHereYet": "Aucun code-barres pour le moment.",
           "noBarcodesMatchTheseFilters": "Aucun code-barres ne correspond à ces filtres."
-        },
-        "new": {
-          "page": {
-            "allBarcodes": "Tous les codes-barres",
-            "newBarcode": "Nouveau code-barres",
-            "pickTheTypeEnterThe": "Choisissez le type, saisissez le numéro ou le texte, puis enregistrez-le pour le modifier et le télécharger à nouveau plus tard."
-          }
         },
         "barcodeActions": {
           "duplicate": "Dupliquer",
@@ -6057,11 +6049,34 @@
           "fixTheHighlightedInputTo": "Corrigez le champ en surbrillance pour enregistrer.",
           "unsavedChanges": "Modifications non enregistrées",
           "allChangesSaved": "Toutes les modifications sont enregistrées",
-          "notSavedYet": "Pas encore enregistré",
           "saveChanges": "Enregistrer les modifications",
-          "saveBarcode": "Enregistrer le code-barres",
           "couldntSaveTheBarcode": "Impossible d’enregistrer le code-barres",
           "barcodeSaved": "Code-barres enregistré"
+        },
+        "barcodeBuilder": {
+          "newBarcode": "Nouveau code-barres",
+          "pickTheTypeEnterThe": "Choisissez le type, saisissez le numéro ou le texte, puis enregistrez-le pour le modifier et le télécharger à nouveau plus tard.",
+          "yourBarcodeIsSaved": "Votre code-barres est enregistré",
+          "downloadItNowOrOpen": "Téléchargez-le maintenant, ou rouvrez-le plus tard depuis Codes-barres pour le modifier et le télécharger à nouveau.",
+          "design": "Design",
+          "back": "Retour",
+          "close": "Fermer",
+          "value": "Valeur",
+          "valueCopied": "Valeur copiée",
+          "type": "Type",
+          "title": "Titre",
+          "openTheBarcode": "Ouvrir le code-barres",
+          "foldersDidntLoad": "Les dossiers n’ont pas chargé : ce code-barres est donc enregistré sans dossier.",
+          "couldntReachQrdx": "Impossible de joindre QRdx. Vérifiez votre connexion et réessayez.",
+          "fixTheHighlightedInputTo": "Corrigez le champ en surbrillance pour enregistrer.",
+          "saveBarcode": "Enregistrer le code-barres",
+          "saving": "Enregistrement...",
+          "createAnother": "En créer un autre",
+          "done": "Terminé",
+          "closeWithoutSaving": "Fermer sans enregistrer ?",
+          "thisBarcodeIsntSavedYet": "Ce code-barres n’est pas encore enregistré : ce que vous avez saisi sera perdu.",
+          "keepEditing": "Continuer à modifier",
+          "discard": "Abandonner"
         },
         "barcodesHeader": {
           "barcodes": "Codes-barres :",
@@ -7975,6 +7990,7 @@
         "newDynamicQrCode": "Nouveau QR code dynamique",
         "newLandingPage": "Nouvelle landing page",
         "newForm": "Nouveau formulaire",
+        "newBarcode": "Nouveau code-barres",
         "importCodesFromACsv": "Importer des codes depuis un CSV",
         "inviteATeammate": "Inviter un collègue",
         "connectADomain": "Connecter un domaine",
@@ -7985,6 +8001,7 @@
         "dynamicQrCode": "QR code dynamique",
         "landingPage": "Landing page",
         "form": "Formulaire",
+        "barcode": "Code-barres",
         "importCodes": "Importer des codes",
         "openTheEditor": "Ouvrir l’éditeur",
         "newDynamicQrCode": "Nouveau QR code dynamique",

@@ -1,9 +1,12 @@
 "use client";
 import { useTranslations } from "next-intl";
 
-// Editing a saved barcode, or making one: the generator's form (the same
-// component /barcode-generator uses) with a title and a folder above it and
-// Save under the downloads.
+// A saved barcode's editor (its page), and the parts the new-barcode modal
+// (components/code-builder/barcode-builder-modal.tsx) is built from: the
+// generator's form (the same one /barcode-generator uses), a title and a
+// folder above it, and what Save stores. The dashboard reaches the
+// generator through this file only, so bwip-js keeps loading in one place
+// (tests/barcode/render.test.ts).
 
 import { toast } from "@repo/design-system";
 import { Spinner } from "@repo/design-system/components/icons";
@@ -18,19 +21,28 @@ import {
   SelectValue,
 } from "@repo/design-system/components/ui/select";
 import { Save2 } from "iconsax-reactjs";
-import { useRouter } from "next/navigation";
 import { useId, useState } from "react";
-import { saveBarcode, updateSavedBarcode } from "@/actions/barcodes";
+import { updateSavedBarcode } from "@/actions/barcodes";
+import { useLocaleRouter as useRouter } from "@/components/i18n/locale-link";
 import {
   BarcodeGenerator,
   type CurrentBarcode,
 } from "@/components/sections/tools/barcode-generator";
-import { track } from "@/lib/analytics";
 import type { BarcodeFormatId } from "@/lib/barcode/formats";
 import { type BarcodeStyle, styleChanges } from "@/lib/barcode/style";
 import { MAX_BARCODE_TITLE } from "@/lib/barcodes/schema";
 import { soundEvent } from "@/lib/sound/emit";
 import type { FolderOption } from "../_lib/filters";
+
+export {
+  BarcodeContentFields,
+  BarcodeDownloads,
+  type BarcodeGeneratorState,
+  BarcodePreview,
+  BarcodeStyleFields,
+  type CurrentBarcode,
+  useBarcodeGenerator,
+} from "@/components/sections/tools/barcode-generator";
 
 export interface EditableBarcode {
   id: string;
@@ -43,101 +55,55 @@ export interface EditableBarcode {
 
 const NO_FOLDER = "none";
 
+/** What Save stores: the barcode drawn, its title and its folder. */
+export const barcodeSaveFields = (
+  current: CurrentBarcode,
+  title: string,
+  folderId: string | null,
+) => ({
+  title: title.trim() || null,
+  format: current.format,
+  value: current.value,
+  options: styleChanges(current.format, current.style),
+  folderId,
+});
+
 /** What Save would store, to tell whether anything changed. */
 const snapshot = (
   current: CurrentBarcode | null,
   title: string,
   folderId: string | null,
 ) =>
-  current
-    ? JSON.stringify([
-        current.format,
-        current.value,
-        styleChanges(current.format, current.style),
-        title.trim(),
-        folderId,
-      ])
-    : null;
+  current ? JSON.stringify(barcodeSaveFields(current, title, folderId)) : null;
 
-export function BarcodeEditor({
-  saved,
+/** The title and the folder, above the barcode's type. */
+export function BarcodeDetailsFields({
+  title,
+  onTitleChange,
+  folderId,
+  onFolderChange,
   folders,
-  basePath,
-  readOnly,
+  disabled,
 }: {
-  /** null for a new barcode */
-  saved: EditableBarcode | null;
-  folders: FolderOption[];
-  /** /dashboard/<workspace>/barcodes */
-  basePath: string;
-  /** Viewers and billing members see it without Save */
-  readOnly: boolean;
+  title: string;
+  onTitleChange: (title: string) => void;
+  folderId: string | null;
+  onFolderChange: (folderId: string | null) => void;
+  /** null while they load */
+  folders: FolderOption[] | null;
+  disabled?: boolean;
 }) {
   const t = useTranslations("app.dashboard.barcodes.barcodeEditor");
-  const router = useRouter();
   const id = useId();
-  const [title, setTitle] = useState(saved?.title ?? "");
-  const [folderId, setFolderId] = useState<string | null>(
-    saved?.folderId ?? null,
-  );
-  const [saving, setSaving] = useState(false);
-  const [savedSnapshot, setSavedSnapshot] = useState(() =>
-    saved
-      ? snapshot(
-          { format: saved.format, value: saved.value, style: saved.options },
-          saved.title ?? "",
-          saved.folderId,
-        )
-      : null,
-  );
-
-  const save = async (current: CurrentBarcode) => {
-    setSaving(true);
-    const fields = {
-      title: title.trim() || null,
-      format: current.format,
-      value: current.value,
-      options: styleChanges(current.format, current.style),
-      folderId,
-    };
-    try {
-      const result = saved
-        ? await updateSavedBarcode({ id: saved.id, patch: fields })
-        : await saveBarcode(fields);
-      if (!result.success) {
-        soundEvent("error");
-        toast.error(t("couldntSaveTheBarcode"), {
-          description: result.error.message,
-        });
-        return;
-      }
-      soundEvent("success");
-      setSavedSnapshot(snapshot(current, title, folderId));
-      if (saved) {
-        toast.success(t("barcodeSaved"));
-        router.refresh();
-      } else {
-        track("barcode_saved", {
-          symbology: current.format,
-          source: "dashboard",
-        });
-        toast.success(t("barcodeSaved"));
-        router.replace(`${basePath}/${encodeURIComponent(result.data.id)}`);
-      }
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const formTop = (
+  return (
     <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_minmax(0,12rem)]">
       <div className="flex min-w-0 flex-col gap-1.5">
         <Label htmlFor={`${id}-title`}>{t("title")}</Label>
         <Input
-          disabled={readOnly}
+          disabled={disabled}
           id={`${id}-title`}
           maxLength={MAX_BARCODE_TITLE}
-          onChange={(event) => setTitle(event.target.value)}
+          onChange={(event) => onTitleChange(event.target.value)}
           placeholder={t("optionalToFindItLater")}
           value={title}
         />
@@ -145,18 +111,19 @@ export function BarcodeEditor({
       <div className="flex min-w-0 flex-col gap-1.5">
         <Label htmlFor={`${id}-folder`}>{t("folder")}</Label>
         <Select
-          disabled={readOnly}
+          disabled={disabled || folders === null}
           onValueChange={(value) =>
-            setFolderId(value === NO_FOLDER ? null : value)
+            onFolderChange(value === NO_FOLDER ? null : value)
           }
           value={folderId ?? NO_FOLDER}
         >
           <SelectTrigger className="w-full" id={`${id}-folder`}>
             <SelectValue />
           </SelectTrigger>
-          <SelectContent>
+          {/* Above the new-barcode modal (z-[99]) too */}
+          <SelectContent className="z-[120]">
             <SelectItem value={NO_FOLDER}>{t("noFolder")}</SelectItem>
-            {folders.map((folder) => (
+            {(folders ?? []).map((folder) => (
               <SelectItem key={folder.id} value={folder.id}>
                 <span style={{ paddingLeft: `${folder.depth * 0.75}rem` }}>
                   {folder.name}
@@ -168,30 +135,85 @@ export function BarcodeEditor({
       </div>
     </div>
   );
+}
+
+/**
+ * A saved barcode's page: edit, download, save. New barcodes are made in
+ * the modal.
+ */
+export function BarcodeEditor({
+  saved,
+  folders,
+  readOnly,
+}: {
+  saved: EditableBarcode;
+  folders: FolderOption[];
+  /** Viewers and billing members see it without Save */
+  readOnly: boolean;
+}) {
+  const t = useTranslations("app.dashboard.barcodes.barcodeEditor");
+  const router = useRouter();
+  const [title, setTitle] = useState(saved.title ?? "");
+  const [folderId, setFolderId] = useState<string | null>(saved.folderId);
+  const [saving, setSaving] = useState(false);
+  const [savedSnapshot, setSavedSnapshot] = useState(() =>
+    snapshot(
+      { format: saved.format, value: saved.value, style: saved.options },
+      saved.title ?? "",
+      saved.folderId,
+    ),
+  );
+
+  const save = async (current: CurrentBarcode) => {
+    setSaving(true);
+    const fields = barcodeSaveFields(current, title, folderId);
+    try {
+      const result = await updateSavedBarcode({ id: saved.id, patch: fields });
+      if (!result.success) {
+        soundEvent("error");
+        toast.error(t("couldntSaveTheBarcode"), {
+          description: result.error.message,
+        });
+        return;
+      }
+      soundEvent("success");
+      setSavedSnapshot(snapshot(current, title, folderId));
+      toast.success(t("barcodeSaved"));
+      router.refresh();
+    } finally {
+      setSaving(false);
+    }
+  };
 
   return (
     <BarcodeGenerator
       footnote={null}
-      formTop={formTop}
-      initial={
-        saved
-          ? { format: saved.format, value: saved.value, style: saved.options }
-          : undefined
+      formTop={
+        <BarcodeDetailsFields
+          disabled={readOnly}
+          folderId={folderId}
+          folders={folders}
+          onFolderChange={setFolderId}
+          onTitleChange={setTitle}
+          title={title}
+        />
       }
+      initial={{
+        format: saved.format,
+        value: saved.value,
+        style: saved.options,
+      }}
       renderActions={(current) => {
         if (readOnly) return null;
-        const changed =
-          !saved || snapshot(current, title, folderId) !== savedSnapshot;
+        const changed = snapshot(current, title, folderId) !== savedSnapshot;
         return (
           <div className="flex items-center justify-between gap-3 border-t pt-3">
             <p className="text-muted-foreground text-xs">
               {!current
                 ? t("fixTheHighlightedInputTo")
-                : saved
-                  ? changed
-                    ? t("unsavedChanges")
-                    : t("allChangesSaved")
-                  : t("notSavedYet")}
+                : changed
+                  ? t("unsavedChanges")
+                  : t("allChangesSaved")}
             </p>
             <Button
               disabled={!current || saving || !changed}
@@ -202,7 +224,7 @@ export function BarcodeEditor({
               ) : (
                 <Save2 aria-hidden className="size-4" />
               )}
-              {saved ? t("saveChanges") : t("saveBarcode")}
+              {t("saveChanges")}
             </Button>
           </div>
         );

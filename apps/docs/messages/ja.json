@@ -6017,7 +6017,6 @@
           "youHaveViewOnlyAccess": "閲覧のみの権限です。このバーコードはダウンロードできますが、変更はできません。",
           "planBarcodesAreStaticThey": "{plan}プラン。バーコードは静的なので、期限切れになることはなく、どのプランでも使えます。",
           "noBarcodesYet": "バーコードはまだありません",
-          "newBarcode": "新規バーコード",
           "openTheFreeGenerator": "無料ジェネレーターを開く",
           "barcodesInTheTrashDont": "ゴミ箱内のバーコードはプランの対象数にカウントされません。復元するか、完全に削除してください。",
           "showAllBarcodes": "すべてのバーコードを表示",
@@ -6032,13 +6031,6 @@
           "noBarcodesMatchQ": "「{q}」に一致するバーコードはありません。",
           "noBarcodesHereYet": "バーコードはまだありません。",
           "noBarcodesMatchTheseFilters": "これらのフィルターに一致するバーコードはありません。"
-        },
-        "new": {
-          "page": {
-            "allBarcodes": "すべてのバーコード",
-            "newBarcode": "新規バーコード",
-            "pickTheTypeEnterThe": "種類を選び、番号またはテキストを入力して保存すると、あとから編集やダウンロードができます。"
-          }
         },
         "barcodeActions": {
           "duplicate": "複製",
@@ -6057,11 +6049,34 @@
           "fixTheHighlightedInputTo": "保存するには、強調表示された入力を修正してください。",
           "unsavedChanges": "未保存の変更があります",
           "allChangesSaved": "すべての変更を保存しました",
-          "notSavedYet": "まだ保存されていません",
           "saveChanges": "変更を保存",
-          "saveBarcode": "バーコードを保存",
           "couldntSaveTheBarcode": "バーコードを保存できませんでした",
           "barcodeSaved": "バーコードを保存しました"
+        },
+        "barcodeBuilder": {
+          "newBarcode": "新規バーコード",
+          "pickTheTypeEnterThe": "種類を選び、番号またはテキストを入力して保存すると、あとから編集やダウンロードができます。",
+          "yourBarcodeIsSaved": "バーコードを保存しました",
+          "downloadItNowOrOpen": "今すぐダウンロードするか、後で「バーコード」から開いて編集し、あらためてダウンロードできます。",
+          "design": "デザイン",
+          "back": "戻る",
+          "close": "閉じる",
+          "value": "値",
+          "valueCopied": "値をコピーしました",
+          "type": "タイプ",
+          "title": "タイトル",
+          "openTheBarcode": "バーコードを開く",
+          "foldersDidntLoad": "フォルダを読み込めなかったため、このバーコードはフォルダなしで保存されました。",
+          "couldntReachQrdx": "QRdxに接続できませんでした。接続を確認して、もう一度お試しください。",
+          "fixTheHighlightedInputTo": "保存するには、強調表示された入力を修正してください。",
+          "saveBarcode": "バーコードを保存",
+          "saving": "保存中...",
+          "createAnother": "続けて作成",
+          "done": "完了",
+          "closeWithoutSaving": "保存せずに閉じますか？",
+          "thisBarcodeIsntSavedYet": "このバーコードはまだ保存されていないため、入力した内容は失われます。",
+          "keepEditing": "編集を続ける",
+          "discard": "破棄"
         },
         "barcodesHeader": {
           "barcodes": "バーコード:",
@@ -7975,6 +7990,7 @@
         "newDynamicQrCode": "新規動的QRコード",
         "newLandingPage": "新規ランディングページ",
         "newForm": "新規フォーム",
+        "newBarcode": "新規バーコード",
         "importCodesFromACsv": "CSVファイルからコードをインポート",
         "inviteATeammate": "チームメンバーを招待",
         "connectADomain": "ドメインを接続",
@@ -7985,6 +8001,7 @@
         "dynamicQrCode": "動的QRコード",
         "landingPage": "ランディングページ",
         "form": "フォーム",
+        "barcode": "バーコード",
         "importCodes": "コードをインポート",
         "openTheEditor": "エディタを開く",
         "newDynamicQrCode": "新規動的QRコード",
