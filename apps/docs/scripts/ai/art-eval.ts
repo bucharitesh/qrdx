@@ -57,15 +57,16 @@ const PRESET_IDS = ["zen-garden", "neon-city", "botanical-watercolor"];
 /** Photo mode's test photos (public/images/art-samples/photos) and what they show. */
 const PHOTOS: Record<string, string> = {
   mountain:
-    "a snowy mountain peak at sunset, reflected in a still lake, deep blue sky and orange horizon",
+    "a snowy mountain peak at sunset, reflected in a still lake, deep blue sky and an orange horizon",
   latte:
-    "a latte with leaf art in a ceramic cup on a wooden cafe table, warm morning light",
+    "a latte with heart latte art in a white cup, seen from above on a dark wooden table by a window",
   flowers:
-    "a bright bouquet of spring flowers on a table by a window, soft daylight",
-  dog: "a happy golden dog sitting in a sunny park, green grass and trees behind",
+    "a bouquet of pink peonies and white roses in a glass vase against a dark green wall",
+  dog: "a golden retriever smiling at the camera, a studio portrait on a plain warm beige background",
   portrait:
-    "a portrait of a smiling person outdoors, soft natural light, blurred city background",
-  sneaker: "a white sneaker on a plain studio background, clean product photo",
+    "a black and white portrait of a smiling woman with short hair, on a plain grey background",
+  sneaker:
+    "a white sneaker with a coral sole on a plain cream studio background, a clean product photo",
 };
 const PHOTO_DIR = "public/images/art-samples/photos";
 

@@ -72,7 +72,7 @@ const seedFor = (choice: ArtModelChoice, seed: number) =>
   choice.supportsSeed ? { seed: seed % SEED_RANGE } : {};
 
 /** Plain props of the control code; the blend reuses them with `art`. */
-function controlProps(text: string): QRPropsSVG {
+export function controlProps(text: string): QRPropsSVG {
   return {
     value: text,
     level: "H",
@@ -94,7 +94,7 @@ const dataUrl = (bytes: Uint8Array, mediaType: string) =>
 const dataUrlBytes = (url: string) =>
   new Uint8Array(Buffer.from(url.slice(url.indexOf(",") + 1), "base64"));
 
-async function renderPng(
+export async function renderPng(
   src: string,
   size = ART_IMAGE_SIZE,
 ): Promise<{ png: Uint8Array; pixels: DecodedImage }> {
@@ -518,7 +518,7 @@ function errorStatus(error: unknown): number | undefined {
   return typeof status === "number" ? status : undefined;
 }
 
-async function callModel(
+export async function callModel(
   model: ArtImageModel,
   request: Omit<ArtModelRequest, "abortSignal">,
   signal: AbortSignal,
@@ -567,7 +567,7 @@ async function callModel(
 // ── Scan check and blend ───────────────────────────────────────────────────
 
 /** The model's image as ART_IMAGE_SIZE square RGBA pixels, plus PNG bytes. */
-async function readModelImage(
+export async function readModelImage(
   image: ArtModelImage,
 ): Promise<{ png: Uint8Array; pixels: DecodedImage }> {
   if (image.mediaType === "image/png") {
@@ -797,7 +797,7 @@ async function passesGate(png: Uint8Array, text: string): Promise<boolean> {
   return Boolean(pixels && (await scanQRPixels(pixels, text)).passed);
 }
 
-interface Delivery {
+export interface Delivery {
   png: Uint8Array;
   blend: AIArtVariant["blend"];
   blendStrength: number;
@@ -808,7 +808,7 @@ interface Delivery {
  * allows: as drawn, else the least blend, else (from visibility 50) the
  * Image QR blend. Null when none of them passes the gate.
  */
-async function deliverable({
+export async function deliverable({
   text,
   art,
   control,
