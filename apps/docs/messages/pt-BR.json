@@ -1669,6 +1669,11 @@
       "after": "Ele abre direto no leitor, em uma janela própria, e funciona offline depois que você ler um código com ele."
     }
   },
+  "scannerApp": {
+    "share": "Enviar",
+    "scanInstructions": "Aponte a câmera para um QR code ou código de barras",
+    "cameraBlocked": "O acesso à câmera está desativado para o QRdx Scanner. Ative nos Ajustes ou faça a leitura de uma imagem."
+  },
   "scanPages": {
     "reportAbuse": "Denunciar abuso",
     "privacy": "Privacidade",

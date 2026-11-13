@@ -1669,6 +1669,11 @@
       "after": "Se abre directamente en el escáner, en su propia ventana, y funciona sin conexión una vez que has hecho un escaneo con él."
     }
   },
+  "scannerApp": {
+    "share": "Compartir",
+    "scanInstructions": "Apunta la cámara a un código QR o a un código de barras",
+    "cameraBlocked": "El acceso a la cámara está desactivado para QRdx Scanner. Actívalo en Ajustes o escanea una imagen."
+  },
   "scanPages": {
     "reportAbuse": "Reportar abuso",
     "privacy": "Privacidad",
