@@ -648,3 +648,40 @@ describe("toQRdxCodeHTML", () => {
     expect(element.label).toBe("Ticket");
   });
 });
+
+describe("custom element names", () => {
+  it("accepts valid names and refuses ones without a hyphen or a leading letter", () => {
+    for (const name of ["qrdx-code", "brand-qr", "x.y-z_1", "my--el", "a-"]) {
+      expect(() =>
+        source.toQRdxCodeHTML(
+          { value: "https://example.com" },
+          { tagName: name }
+        )
+      ).not.toThrow();
+    }
+    for (const name of [
+      "qrdxcode",
+      "1-code",
+      "Qrdx-code",
+      "-code",
+      "qrdx code",
+    ]) {
+      expect(() =>
+        source.toQRdxCodeHTML(
+          { value: "https://example.com" },
+          { tagName: name }
+        )
+      ).toThrow(/not a custom element name/);
+    }
+  });
+
+  it("refuses a long run of hyphens in linear time", () => {
+    // The old pattern backtracked quadratically on this (CodeQL js/polynomial-redos)
+    const name = `a${"-".repeat(50_000)}!`;
+    const started = performance.now();
+    expect(() =>
+      source.toQRdxCodeHTML({ value: "https://example.com" }, { tagName: name })
+    ).toThrow(/not a custom element name/);
+    expect(performance.now() - started).toBeLessThan(50);
+  });
+});
