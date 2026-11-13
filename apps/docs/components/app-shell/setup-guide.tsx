@@ -40,6 +40,7 @@ import {
 import type { SpotlightId } from "@/lib/spotlights";
 import { useCreate } from "./create-actions";
 import { useSpotlightsSeen } from "./feature-spotlight";
+import { focusPage } from "./focus-page";
 import styles from "./setup-guide.module.css";
 
 /** The account's copy of "dismissed" (user.settings.spotlightsSeen). */
@@ -241,22 +242,36 @@ export function SetupGuide() {
   const visible = showSetupGuide({ canWrite, dismissed, tasks });
 
   const [open, setOpen] = useState(false);
-  const followed = useRef(false);
+  // Set when focus is already taken care of as the panel closes.
+  const keepFocus = useRef(false);
   const titleId = useId();
+  const cornerRef = useRef<HTMLDivElement | null>(null);
+  const panelRef = useRef<HTMLDivElement | null>(null);
   const onOpenChange = (next: boolean) => {
     setOpen(next);
     if (next) {
-      followed.current = false;
+      keepFocus.current = false;
       void query.refetch();
     }
   };
   /** A task was followed: close, and let the page it opens keep focus. */
   const follow = (run?: () => void) => () => {
-    followed.current = true;
+    keepFocus.current = true;
     setOpen(false);
     run?.();
   };
   const dismiss = () => {
+    // The launcher goes for good, and the control holding focus with it:
+    // hand focus to the page first, rather than losing it to <body>.
+    const active = document.activeElement;
+    if (
+      active &&
+      (panelRef.current?.contains(active) ||
+        cornerRef.current?.contains(active))
+    ) {
+      keepFocus.current = true;
+      focusPage();
+    }
     writeHidden();
     setHiddenHere(true);
     spotlights?.markSeen(SEEN_ID);
@@ -264,8 +279,6 @@ export function SetupGuide() {
   };
 
   // Room for the launcher (and its open panel) at the bottom of the window.
-  const cornerRef = useRef<HTMLDivElement | null>(null);
-  const panelRef = useRef<HTMLDivElement | null>(null);
   const measure = useCallback(() => {
     const corner = cornerRef.current;
     if (!corner) return;
@@ -436,8 +449,9 @@ export function SetupGuide() {
         collisionPadding={12}
         onAnimationEnd={measure}
         onCloseAutoFocus={(event) => {
-          // Following a task opens a page or a dialog: focus stays there.
-          if (followed.current) event.preventDefault();
+          // Following a task opens a page or a dialog, and Dismiss guide
+          // hands focus to the page: it stays there.
+          if (keepFocus.current) event.preventDefault();
         }}
         ref={setPanel}
         side="top"
