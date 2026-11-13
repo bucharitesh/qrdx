@@ -19,6 +19,7 @@ import { getFrameDimensions, getFrameGapRatio, isFrameActive } from "./frame";
 import { getLogoBlockDamage } from "./logo-budget";
 import { circleQuietZone, getLayoutMargin, isShapedCode } from "./qr-shape";
 import { getStylePairRisk } from "./scan-risk";
+import { getTemplateCodeShare } from "./template-placement";
 import { getImageSettings, getLuminance, resolveErrorLevel } from "./utils";
 import { parseColor, type RGBAColor } from "./utils/parse-color";
 
@@ -1011,9 +1012,12 @@ export async function getScanScore(
   const { signal } = options;
   const sizes = testSizes(options);
 
+  // A template draws the code smaller than its artwork: render the artwork
+  // large enough for the code itself to be SOURCE_SIZE wide
+  const artworkSize = SOURCE_SIZE / getTemplateCodeShare(props);
   const sourceProps = await inlineImagePaints(
     await inlineLogo(
-      withQRSize({ ...props, size: props.size ?? DEFAULT_SIZE }, SOURCE_SIZE)
+      withQRSize({ ...props, size: props.size ?? DEFAULT_SIZE }, artworkSize)
     )
   );
   throwIfAborted(signal);
@@ -1033,7 +1037,7 @@ export async function getScanScore(
   const img = await loadImage(svgUri);
   throwIfAborted(signal);
 
-  const artwork = getFrameDimensions(SOURCE_SIZE, props.frame);
+  const artwork = getFrameDimensions(artworkSize, props.frame);
   const drawArtwork = (codeWidth: number) => {
     const scale = codeWidth / SOURCE_SIZE;
     const width = artwork.width * scale;
@@ -1062,9 +1066,10 @@ export const PIXEL_SCORE_MIN_CODE_WIDTH = SOURCE_SIZE;
  * `getScanScore` for servers and other places without a DOM: the same
  * checks, weights and camera model, decoding `pixels` instead of drawing the
  * SVG on a canvas. `pixels` is the whole artwork as `props` renders it (the
- * code plus its frame, if any), at any size with the code at least
- * `PIXEL_SCORE_MIN_CODE_WIDTH` px wide (rasterized with resvg, sharp or a
- * canvas). Transparent pixels count as white, like paper. Logos must already
+ * code plus its frame or template, if any), at any size with the code itself
+ * at least `PIXEL_SCORE_MIN_CODE_WIDTH` px wide (rasterized with resvg, sharp
+ * or a canvas; a template draws the code smaller than its artwork).
+ * Transparent pixels count as white, like paper. Logos must already
  * be painted into the pixels; an opaque placeholder of the same size scores
  * the same.
  */
@@ -1080,8 +1085,10 @@ export async function getScanScoreFromPixels(
   const sizes = testSizes(options);
   const size = props.size ?? DEFAULT_SIZE;
   const artwork = getFrameDimensions(size, props.frame);
-  // Code width in the source pixels
-  const sourceCodeWidth = (width * size) / artwork.width;
+  // Code width in the source pixels (a template draws it smaller than its
+  // artwork)
+  const sourceCodeWidth =
+    (width * size * getTemplateCodeShare(props)) / artwork.width;
   const source = { data: onWhite(pixels), width, height };
 
   const drawArtwork = (codeWidth: number) => {
