@@ -84,7 +84,7 @@ Kelola kode secara terprogram di `https://api.qrdx.dev/v1/codes`. Permintaan dia
 | Metode | Path | Deskripsi |
 | --- | --- | --- |
 | `GET` | `/v1/codes` | Menampilkan daftar kode. Query: `status` (`active`, `archived`, `all`), `q`, `limit` (≤ 100), `offset` |
-| `POST` | `/v1/codes` | Membuat satu kode, atau array hingga 100 kode (array memerlukan Pro). Body: `destinationUrl`, opsional `title`, `style`, `domainId`, dan `slug` |
+| `POST` | `/v1/codes` | Membuat satu kode, atau array hingga {facts.apiBatchCodes} kode (array memerlukan Pro). Body: `destinationUrl`, opsional `title`, `style`, `domainId`, dan `slug` |
 | `GET` | `/v1/codes/{id}` | Mengambil satu kode |
 | `PATCH` | `/v1/codes/{id}` | Memperbarui `destinationUrl`, `title`, `style`, `domainId` ([domain kustom](/docs/custom-domains)), `slug`, atau `archived`, atau mengubah `kind` antara `redirect` dan `page` |
 | `DELETE` | `/v1/codes/{id}` | Menghapus kode beserta pemindaiannya |

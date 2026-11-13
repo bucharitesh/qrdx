@@ -84,7 +84,7 @@ Playgroundや `qrdx` ライブラリで作成する静的QRコードは、これ
 | メソッド | パス | 説明 |
 | --- | --- | --- |
 | `GET` | `/v1/codes` | コードを一覧表示します。クエリ: `status`（`active`、`archived`、`all`）、`q`、`limit`（100以下）、`offset` |
-| `POST` | `/v1/codes` | コードを1件、または最大100件の配列で作成します（配列は Pro が必要です）。本文: `destinationUrl`、任意で `title`、`style`、`domainId`、`slug` |
+| `POST` | `/v1/codes` | コードを1件、または最大{facts.apiBatchCodes}件の配列で作成します（配列は Pro が必要です）。本文: `destinationUrl`、任意で `title`、`style`、`domainId`、`slug` |
 | `GET` | `/v1/codes/{id}` | コードを1件取得します |
 | `PATCH` | `/v1/codes/{id}` | `destinationUrl`、`title`、`style`、`domainId`（[カスタムドメイン](/docs/custom-domains)）、`slug`、`archived` を更新します。また、`kind` を `redirect` と `page` の間で切り替えられます |
 | `DELETE` | `/v1/codes/{id}` | コードとそのスキャンを削除します |
