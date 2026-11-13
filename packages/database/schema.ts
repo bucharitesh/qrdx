@@ -1786,6 +1786,12 @@ export const webhookDelivery = pgTable(
       table.nextAttemptAt
     ),
     index("webhook_delivery_endpoint_id_idx").on(table.endpointId),
+    // An endpoint's deliveries page, newest first (manual-sql/2026-11-13-webhook-delivery-paging.sql)
+    index("webhook_delivery_endpoint_created_at_id_idx").on(
+      table.endpointId,
+      table.createdAt.desc(),
+      table.id.desc()
+    ),
   ]
 );
 

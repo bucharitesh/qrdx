@@ -13,16 +13,11 @@ import {
   EmptyHeader,
   EmptyTitle,
 } from "@repo/design-system/components/ui/empty";
-import { cn } from "@repo/design-system/lib/utils";
-import {
-  ArrowLeft,
-  ArrowLeft2 as ChevronLeft,
-  ArrowRight2 as ChevronRight,
-  Import as Download,
-} from "iconsax-reactjs";
+import { ArrowLeft, Import as Download } from "iconsax-reactjs";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ListPagination } from "@/app/(app)/dashboard/_components/list-pagination";
 import { PageHeader } from "@/app/(app)/dashboard/_components/page-header";
 import { requireDashboardScope } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import { ResponseUsage } from "@/app/(app)/dashboard/pages/[id]/responses/_components/response-usage";
@@ -42,6 +37,7 @@ import { SheetsExport } from "@/components/data-connections/sheets-export";
 import { HairlineFigure } from "@/components/mockups/hairline";
 import { HttpError } from "@/lib/error-response";
 import { getAppTranslations } from "@/lib/i18n/app-locale";
+import { loadPage, parsePage } from "@/lib/paging";
 import { can } from "@/lib/permissions";
 import { workspaceHref } from "@/lib/workspace-paths";
 
@@ -81,23 +77,30 @@ export default async function FormResponsesPage({
   );
   const requested = first(query.form) ?? null;
   const formFilter = requested && formIds.has(requested) ? requested : null;
-  const pageNumber = Math.max(
-    1,
-    Number.parseInt(first(query.page) ?? "1", 10) || 1,
-  );
 
-  const [responses, total, usage, redemptions] = await Promise.all([
-    listPageResponses(page.id, {
-      block: formFilter,
-      limit: PAGE_SIZE,
-      offset: (pageNumber - 1) * PAGE_SIZE,
-    }),
-    countPageResponses(page.id, formFilter),
-    getFormResponseUsage(scope),
-    page.coupons.length > 0
-      ? countCouponRedemptions(page.id)
-      : Promise.resolve(new Map<string, number>()),
-  ]);
+  const [{ responses, total, page: pageNumber }, usage, redemptions] =
+    await Promise.all([
+      // Past the last page (an old link, responses deleted since): the last page.
+      loadPage(
+        parsePage(query.page),
+        async (pageNumber) => {
+          const [responses, total] = await Promise.all([
+            listPageResponses(page.id, {
+              block: formFilter,
+              limit: PAGE_SIZE,
+              offset: (pageNumber - 1) * PAGE_SIZE,
+            }),
+            countPageResponses(page.id, formFilter),
+          ]);
+          return { responses, total };
+        },
+        PAGE_SIZE,
+      ),
+      getFormResponseUsage(scope),
+      page.coupons.length > 0
+        ? countCouponRedemptions(page.id)
+        : Promise.resolve(new Map<string, number>()),
+    ]);
 
   const titles = new Map(page.forms.map((form) => [form.id, form.title]));
   const multipleForms = formIds.size > 1;
@@ -250,50 +253,20 @@ export default async function FormResponsesPage({
         <ResponsesList canDelete={canDelete} items={items} pageId={page.id} />
       )}
 
-      {pages > 1 && (
-        <nav
-          aria-label={t("pagination")}
-          className="flex items-center justify-between gap-3 text-sm"
-        >
-          <Button
-            asChild={pageNumber > 1}
-            className={cn(pageNumber <= 1 && "invisible")}
-            size="sm"
-            variant="outline"
-          >
-            {pageNumber > 1 ? (
-              <Link href={href({ page: pageNumber - 1 })}>
-                <ChevronLeft />
-                {t("newer")}
-              </Link>
-            ) : (
-              <span>{t("newer")}</span>
-            )}
-          </Button>
-          <span className="text-muted-foreground tabular-nums">
-            {t("pageValueOfPagesValue2", {
-              value: Math.min(pageNumber, pages),
-              pages,
-              value2: total.toLocaleString("en-US"),
-            })}
-          </span>
-          <Button
-            asChild={pageNumber < pages}
-            className={cn(pageNumber >= pages && "invisible")}
-            size="sm"
-            variant="outline"
-          >
-            {pageNumber < pages ? (
-              <Link href={href({ page: pageNumber + 1 })}>
-                {t("older")}
-                <ChevronRight />
-              </Link>
-            ) : (
-              <span>{t("older")}</span>
-            )}
-          </Button>
-        </nav>
-      )}
+      <ListPagination
+        labels={{
+          navigation: t("pagination"),
+          previous: t("newer"),
+          next: t("older"),
+        }}
+        nextHref={pageNumber < pages ? href({ page: pageNumber + 1 }) : null}
+        previousHref={pageNumber > 1 ? href({ page: pageNumber - 1 }) : null}
+        summary={t("pageValueOfPagesValue2", {
+          value: pageNumber,
+          pages,
+          value2: total.toLocaleString("en-US"),
+        })}
+      />
     </div>
   );
 }

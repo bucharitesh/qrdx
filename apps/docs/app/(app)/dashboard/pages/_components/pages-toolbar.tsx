@@ -20,25 +20,10 @@ import {
   DisplayMenu,
   ListSearch,
 } from "@/app/(app)/dashboard/codes/_components/display-menu";
-
-export interface PagesFilters {
-  q: string;
-  /** A page type (lib/landing/templates); null for every type */
-  type: string | null;
-}
-
-export function pagesHref(
-  basePath: string,
-  filters: PagesFilters,
-  patch: Partial<PagesFilters>,
-): string {
-  const next = { ...filters, ...patch };
-  const search = new URLSearchParams();
-  if (next.type) search.set("type", next.type);
-  if (next.q) search.set("q", next.q);
-  const query = search.toString();
-  return query ? `${basePath}?${query}` : basePath;
-}
+import {
+  type PagesFilters,
+  pagesHref,
+} from "@/app/(app)/dashboard/pages/_lib/filters";
 
 export function PagesToolbar({
   filters,

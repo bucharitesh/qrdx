@@ -102,6 +102,7 @@ describe("list filters", () => {
       domain: "dom_1",
       sort: "scans",
       page: "3",
+      size: "50",
     });
     assert.deepEqual(filters, {
       status: "trash",
@@ -113,15 +114,18 @@ describe("list filters", () => {
       domain: "dom_1",
       sort: "scans",
       page: 3,
+      size: 50,
     });
     const fallback = parseCodesFilters({
       status: "nope",
       sort: "drop table",
       page: "-1",
+      size: "7",
       folder: "../x",
       type: "wifi",
       domain: "../x",
     });
+    assert.equal(fallback.size, 25);
     assert.equal(fallback.status, "active");
     assert.equal(fallback.type, null);
     assert.equal(fallback.domain, null);
