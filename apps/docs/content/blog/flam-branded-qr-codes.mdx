@@ -13,31 +13,29 @@ related: ["introducing-qrdx", "qr-code-api-guide"]
 published: true
 ---
 
-Flam makes its branded QR codes with qrdx, the open-source library behind QRdx. Each code is round, sits inside a ring of text, and gets a pattern of dots that belongs to its link alone.
+Flam makes its branded QR codes with qrdx, the open-source library behind QRdx. The codes are round, they sit inside a ring of text, and every link gets its own pattern of dots.
 
 ## Who Flam is
 
-[Flam](https://www.flamapp.ai) builds "AI models and products for interactive content", with formats called Flicks, Airboards and Visual Agents.
+[Flam](https://www.flamapp.ai) builds "AI models and products for interactive content". Its formats are called Flicks, Airboards and Visual Agents.
 
 ## What Flam needed
 
-A QR code in its own style, not a stock square. Codes for many different links that still look like one family. And files ready for print and design: PNG, JPG and SVG, including PNGs with a transparent background.
+Flam wanted round QR codes in its own style. It needed codes for lots of different links that still look like they belong together, and files it could hand straight to print and design: PNG, JPG and SVG, with transparent PNGs too.
 
 ## What Flam built
 
-A small generator inside its own Next.js app, using qrdx and a custom template. qrdx draws the code, and the template draws everything around it: a dark ring with text along it, and a halo of dots seeded by the link. The template picks 240 of 297 dot positions for each link, which allows about 10<sup>61</sup> different rings, so two links practically never share one, and the same link always gets the same ring.
+Flam built a small generator inside its own Next.js app, on qrdx and a custom template. qrdx draws the code and the template draws the rest: a dark ring with text running along it, and a halo of dots worked out from the link. For each link it picks 240 of 297 possible dot positions. That allows about 10<sup>61</sup> different rings, so two links almost never share one, while the same link always gets the same ring.
 
 The repository's first commit, on November 11, 2025, already held a working generator.
 
 ## Why QRdx
 
-- **Full control.** A template is code, so the design is exactly Flam's, not a preset with a logo dropped in.
-- **One design everywhere.** The preview, the PNG, JPG and SVG downloads and the copied SVG all come from the same template.
-- **Nothing to pay per code.** The library is MIT-licensed and runs inside Flam's app, with no QRdx account, no calls to QRdx's servers and no limit on how many codes it makes.
+A template is plain code, so the ring looks exactly the way Flam wrote it. The preview and every download, whether PNG, JPG, SVG or the copied SVG, come from that one template, which keeps them identical. The library is MIT-licensed and runs inside Flam's own app. Flam doesn't need a QRdx account, its generator never calls QRdx's servers, and nothing caps how many codes it makes.
 
 ## Make your own
 
-QRdx now has this design built in as the **Dot Ring** template: the ring, the text along it, and a dot halo that's different for every link.
+QRdx now ships the same design as the Dot Ring template: a ring of text, with a halo of dots that changes from link to link.
 
 <Figure
   src="/blog/flam/examples.webp"
