@@ -11,11 +11,13 @@ import {
 import { cn } from "@repo/design-system/lib/utils";
 import { Setting4, ShieldTick } from "iconsax-reactjs";
 import { useTranslations } from "next-intl";
-import { useLayoutEffect, useRef } from "react";
-import { LocaleLink as Link } from "@/components/i18n/locale-link";
-import { useMounted } from "@/lib/hooks/use-mounted";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { setConsentBannerInset } from "./banner-inset";
-import { PRIVACY_POLICY_URL, TEXT_LINK } from "./consent-copy";
+import {
+  type ConsentLink,
+  PRIVACY_POLICY_URL,
+  TEXT_LINK,
+} from "./consent-copy";
 import {
   CONSENT_EARLY_TAP_ATTRIBUTE,
   EARLY_BANNER_ACTIONS,
@@ -30,7 +32,7 @@ import {
  * after hydration (when it was the LCP element on pages with little text,
  * like /playground). Once c15t has resolved the policy, its state decides.
  */
-export function CookieBanner() {
+export function CookieBanner({ link: Link }: { link: ConsentLink }) {
   const t = useTranslations("consent");
   const mounted = useMounted();
   const ready = useHasConsentPolicy();
@@ -49,7 +51,7 @@ export function CookieBanner() {
   useLayoutEffect(() => {
     if (early || !visible) return;
     const tap = takeEarlyConsentTap();
-    if (tap) void performBannerAction(tap);
+    if (tap) performBannerAction(tap);
   }, [early, visible, performBannerAction]);
 
   // While it shows, the editor's popovers keep clear of it (banner-inset.ts).
@@ -83,11 +85,11 @@ export function CookieBanner() {
       aria-labelledby="cookie-banner-title"
       aria-describedby="cookie-banner-description"
       className={cn(
-        "fixed inset-x-4 bottom-[max(1rem,env(safe-area-inset-bottom))] z-50 animate-in fade-in-0 slide-in-from-bottom-4 duration-300 ease-[cubic-bezier(.32,.72,0,1)] motion-reduce:animate-none sm:inset-x-auto sm:bottom-6 sm:left-6 sm:w-[26rem]",
+        "fixed inset-x-4 bottom-[max(1rem,env(safe-area-inset-bottom))] z-50 animate-in duration-300 ease-[cubic-bezier(.32,.72,0,1)] fade-in-0 slide-in-from-bottom-4 motion-reduce:animate-none sm:inset-x-auto sm:bottom-6 sm:left-6 sm:w-[26rem]",
         // Painted with the page: no entrance animation (and no restart of
         // one when c15t takes over the same element).
         "[:root[data-consent-prompt]_&]:animate-none",
-        early && "hidden [:root[data-consent-prompt]_&]:block",
+        early && "hidden [:root[data-consent-prompt]_&]:block"
       )}
     >
       <Card className="gap-4 py-5 shadow-lg">
@@ -101,13 +103,13 @@ export function CookieBanner() {
           <div className="flex min-w-0 flex-col gap-1">
             <h2
               id="cookie-banner-title"
-              className="text-sm font-semibold leading-snug"
+              className="text-sm leading-snug font-semibold"
             >
               {t("banner.title")}
             </h2>
             <p
               id="cookie-banner-description"
-              className="text-pretty text-sm text-muted-foreground"
+              className="text-sm text-pretty text-muted-foreground"
             >
               {t("banner.description")}{" "}
               <Link
@@ -127,12 +129,16 @@ export function CookieBanner() {
               type="button"
               variant="outline"
               className={cn(
-                action === "customize" && "col-span-2 sm:col-span-1",
+                action === "customize" && "col-span-2 sm:col-span-1"
               )}
               {...{ [CONSENT_EARLY_TAP_ATTRIBUTE]: early ? action : undefined }}
               // Early taps are held by ConsentEarlyScript and replayed above.
               onClick={
-                early ? undefined : () => void performBannerAction(action)
+                early
+                  ? undefined
+                  : () => {
+                      performBannerAction(action);
+                    }
               }
             >
               {action === "customize" && <Setting4 aria-hidden="true" />}
@@ -143,4 +149,13 @@ export function CookieBanner() {
       </Card>
     </section>
   );
+}
+
+/** False on the server and during hydration, true after. */
+function useMounted() {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+  return mounted;
 }
