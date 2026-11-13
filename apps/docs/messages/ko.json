@@ -4401,7 +4401,7 @@
         "label": "라벨",
         "pickAFrameFirst": "먼저 프레임을 선택하세요",
         "none": "없음",
-        "takesDotColor": "이 프레임은 코드 점의 색상을 따라가요.",
+        "takesDotColor": "코드 점의 색상을 따라가요.",
         "alsoHasTemplate": "이 디자인에는 이 프레임 안에 {name} 프레임도 들어 있어요. 다른 프레임을 고르면 두 프레임이 모두 바뀌어요.",
         "templateKeepsSize": "이 프레임은 안에 들어가는 코드에 맞춰지므로 다운로드한 이미지는 선택한 크기를 유지해요."
       },

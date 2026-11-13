@@ -4401,7 +4401,7 @@
         "label": "Etiqueta",
         "pickAFrameFirst": "Elige un marco primero",
         "none": "Ninguno",
-        "takesDotColor": "Este marco toma el color de los puntos del código.",
+        "takesDotColor": "Toma el color de los puntos del código.",
         "alsoHasTemplate": "Este diseño también incluye el marco {name} dentro de este. Si eliges otro marco, se reemplazan ambos.",
         "templateKeepsSize": "Este marco ajusta el código en su interior, así que la imagen descargada mantiene el tamaño que elijas."
       },

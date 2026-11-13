@@ -4401,7 +4401,7 @@
         "label": "Libellé",
         "pickAFrameFirst": "Choisissez d’abord un cadre",
         "none": "Aucun",
-        "takesDotColor": "Ce cadre prend la couleur des points du code.",
+        "takesDotColor": "Il prend la couleur des points du code.",
         "alsoHasTemplate": "Ce design inclut aussi le cadre {name} à l’intérieur de celui-ci. Choisir un autre cadre remplace les deux.",
         "templateKeepsSize": "Ce cadre s’ajuste au code qu’il contient : l’image téléchargée conserve donc la taille que vous choisissez."
       },

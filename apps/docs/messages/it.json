@@ -4401,7 +4401,7 @@
         "label": "Etichetta",
         "pickAFrameFirst": "Scegli prima una cornice",
         "none": "Nessuna",
-        "takesDotColor": "Questa cornice prende il colore dei punti del codice.",
+        "takesDotColor": "Prende il colore dei punti del codice.",
         "alsoHasTemplate": "Questo design include anche la cornice {name} all’interno di questa. Scegliendo un’altra cornice, vengono sostituite entrambe.",
         "templateKeepsSize": "Questa cornice si adatta al codice che contiene, quindi l’immagine scaricata mantiene la dimensione che scegli."
       },
