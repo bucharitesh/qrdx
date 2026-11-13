@@ -11,6 +11,12 @@
 // search index all show it. tests/lib/product-facts.test.ts fails when a
 // hard-coded count comes back.
 //
+// Apps that can't import this one (the docs site) read a snapshot of these
+// values through @repo/config/facts (packages/config/facts.generated.json).
+// After changing a fact, or anything one counts, run
+// `bun run --filter docs facts:snapshot`; tests/lib/product-facts-snapshot.test.ts
+// fails while the snapshot is stale.
+//
 // Keep this module light (no React, no "server-only"): source.config.ts and
 // client-side config import it.
 //

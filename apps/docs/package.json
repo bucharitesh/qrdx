@@ -17,6 +17,7 @@
     "test:e2e:passkeys": "tsx e2e/passkeys.e2e.ts",
     "registry:build": "tsx registry/build.ts",
     "openapi:generate": "tsx --tsconfig scripts/openapi/tsconfig.json scripts/openapi/generate.ts",
+    "facts:snapshot": "tsx scripts/facts-snapshot.ts",
     "postinstall": "fumadocs-mdx",
     "format": "ultracite fix",
     "i18n:check": "tsx scripts/i18n-check.ts",

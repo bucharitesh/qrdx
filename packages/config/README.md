@@ -14,6 +14,7 @@ import { CANONICAL_ORIGIN, SUPPORT_EMAIL, MAX_CODES_PER_REQUEST } from "@repo/co
 | `contact.ts` | The email addresses people are told to write to |
 | `social.ts` | Profiles and listings the site links to |
 | `limits.ts` | Platform limits that more than one part of QRdx enforces or quotes: editor uploads, AI caps, theme caps, batch sizes, the keyless endpoints' rate limits |
+| `facts.ts` | Product counts and names quoted in copy, imported as `@repo/config/facts`, for apps that can't import the main app (the docs site). It reads `facts.generated.json`, a snapshot of `apps/docs/lib/product-facts.ts`, and offers the same API: `PRODUCT_FACTS`, `STYLE_SUMMARY`, `productFact()`, `isProductFact()`, `fillFacts()` and `fillFactsDeep()`. The main app keeps reading `lib/product-facts.ts` itself. After changing a fact, or anything one counts, run `bun run --filter docs facts:snapshot` and commit the JSON; `apps/docs/tests/lib/product-facts-snapshot.test.ts` fails while it's stale |
 | `keys.ts` | The environment variable this package reads, validated like every other `keys.ts`; `apps/docs/env.ts` extends it |
 
 ## What belongs here
@@ -22,7 +23,7 @@ A value goes here when it's a plain constant (or a pure function of one) that mo
 
 ## What doesn't
 
-- Copy and JSX: marketing text, navigation and footers stay in `apps/docs/config/site.tsx`, product counts in `apps/docs/lib/product-facts.ts`, the default QR theme in `apps/docs/config/qr.ts`.
+- Copy and JSX: marketing text, navigation and footers stay in `apps/docs/config/site.tsx`, product counts in `apps/docs/lib/product-facts.ts` (this package only holds its generated snapshot), the default QR theme in `apps/docs/config/qr.ts`.
 - Plan limits and anything that needs the database, the session or a plan lookup (`apps/docs/lib/plans.ts`).
 - Values only one screen uses, such as debounce delays, page sizes and tag lists.
 - Next.js configuration and the core environment keys, which live in `@repo/next-config`.
