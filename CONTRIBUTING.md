@@ -172,7 +172,7 @@ The copy is in `apps/docs/messages/`:
 
 Long copy kept in TypeScript (for example `lib/qr-types-content.ts`, `lib/seo-content`, a page's `content.ts`) stays English in its file. `apps/docs/lib/i18n/content-sources.ts` lists that data, the translate script fills `content/<locale>.json` from it, and pages render it with `localizeContent()` (client components with `useContentText()`). A string is looked up by its English, so when the English changes it shows in English until it's translated again.
 
-The namespaces the docs read (`docs`, `footer`, `localeSwitcher`, `meta` and `consent`) are also copied to `packages/i18n/messages/<locale>.json`, so an app other than `apps/docs` can load them through `@repo/i18n`. The translate and extract scripts refresh the copy when they save. After editing a catalog by hand, run `bun run --filter docs i18n:docs-messages`; `i18n:check` fails until the copy matches.
+An app other than `apps/docs` loads the namespaces the docs read (`docs`, `footer`, `localeSwitcher`, `meta` and `consent`) through `@repo/i18n`, from a copy that `bun run --filter docs i18n:docs-messages` writes to `packages/i18n/messages` right before that app builds. The copy isn't committed, so there's nothing to refresh by hand.
 
 ### Add a language
 
@@ -180,7 +180,7 @@ Open an issue first, so two people don't start the same language. A new language
 
 1. `packages/i18n/config.ts`: one entry in `LOCALE_CONFIG`. The key is the BCP 47 code (`nl`, `zh-Hant`). Give it the lowercase URL `segment`, its `name` written in the language itself, its `englishName`, the `hreflang` values, `ogLocale`, `dir` (`"rtl"` for Arabic, Hebrew or Persian) and `review: "machine"`.
 2. `apps/docs/messages/<code>.json`: the translations. It can start as `{}`, and a partial file is fine to merge, because untranslated strings show in English.
-3. `apps/docs/messages/review/<code>.json` and `packages/i18n/messages/<code>.json`: written by the translate script (below). Don't edit the hashes by hand.
+3. `apps/docs/messages/review/<code>.json`: written by the translate script (below). Don't edit the hashes by hand.
 4. `apps/docs/messages/glossary.json` (optional): the language's fixed terms under `fixed`, such as the Free plan's name, and its tone under `register`.
 
 Routes, the language menu, `<html lang>` and `<html dir>`, page metadata and the sitemap read the config, so nothing else needs editing. A right-to-left language renders with `dir="rtl"`, but the layout hasn't been converted yet (logical CSS properties, mirrored icons, a font for the script). That work has its own issue.

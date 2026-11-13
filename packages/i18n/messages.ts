@@ -1,10 +1,10 @@
 // Message catalogs. apps/docs/messages holds every string, in English and
 // each language, and the main app loads those (apps/docs/lib/i18n/messages.ts).
-// This package keeps a copy of the namespaces the docs read (DOCS_NAMESPACES)
-// in messages/<locale>.json, for an app that can't import the main app's
-// files; docs-messages.ts loads it. `bun run --filter docs i18n:docs-messages`
-// writes the copy, the translate and extract scripts write it after they
-// save, and `i18n:check` fails while it's out of date.
+// An app that can't import the main app's files (the docs site) reads a copy
+// of the namespaces the docs use (DOCS_NAMESPACES) from messages/<locale>.json
+// through docs-messages.ts. The copy isn't committed: that app writes it
+// right before it builds or starts (DOCS_MESSAGES_COMMAND), so it can't go
+// stale between merges.
 //
 // English is the source; a key a translation lacks falls back to English,
 // so a slip never shows a raw key.
@@ -77,8 +77,11 @@ export const DOCS_NAMESPACES = [
   "meta",
 ] as const;
 
-/** Where the docs catalogs are written, from the repository root. */
+/** Where the docs catalogs are written, from the repository root (not committed). */
 export const DOCS_MESSAGES_DIR = "packages/i18n/messages";
+
+/** Writes the copy (apps/docs/scripts/i18n-docs-messages.ts). */
+export const DOCS_MESSAGES_COMMAND = "bun run --filter docs i18n:docs-messages";
 
 /**
  * The namespaces of `catalog` the docs read, in the catalog's own order.

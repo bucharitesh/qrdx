@@ -1,26 +1,29 @@
 // @repo/i18n (packages/i18n) holds the languages, URLs and docs rules the
-// docs site shares with this app, plus a copy of the docs' message
-// namespaces (lib/i18n/docs-messages.ts writes it from messages/). The
-// copy must match the catalogs, cover every namespace the docs read, and
-// load like this app's catalogs; the old lib/i18n paths must give the
-// package's own values.
+// docs site shares with this app, and loads the docs' messages from a copy
+// of their namespaces (lib/i18n/docs-messages.ts writes it from messages/
+// before the docs site builds; it isn't committed). Built in memory here,
+// the copy must load like this app's catalogs and cover every namespace the
+// docs read; the old lib/i18n paths must give the package's own values.
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
 import * as packageConfig from "@repo/i18n/config";
 import * as packageDocs from "@repo/i18n/docs";
-import { loadDocsMessages } from "@repo/i18n/docs-messages";
+import {
+  type DocsMessagesReader,
+  loadDocsMessages,
+} from "@repo/i18n/docs-messages";
 import { createDocsSeo } from "@repo/i18n/docs-seo";
-import { DOCS_NAMESPACES, pickMessages } from "@repo/i18n/messages";
+import {
+  DOCS_MESSAGES_COMMAND,
+  DOCS_NAMESPACES,
+  pickMessages,
+} from "@repo/i18n/messages";
 import * as packagePaths from "@repo/i18n/paths";
 import * as packageRouting from "@repo/i18n/routing";
 import { describe, expect, it } from "vitest";
 import * as config from "@/lib/i18n/config";
 import * as docs from "@/lib/i18n/docs";
-import {
-  DOCS_MESSAGES_COMMAND,
-  docsMessagesFiles,
-  staleDocsMessages,
-} from "@/lib/i18n/docs-messages";
+import { docsMessagesFiles } from "@/lib/i18n/docs-messages";
 import { docsPageSeo } from "@/lib/i18n/docs-seo";
 import { loadMessages } from "@/lib/i18n/messages";
 import * as paths from "@/lib/i18n/paths";
@@ -29,33 +32,55 @@ import { baseUrl } from "@/lib/metadata";
 
 const ROOT = path.resolve(import.meta.dirname, "../..");
 
-describe("the docs' copy of their messages", () => {
-  it("matches messages/", () => {
-    expect(
-      staleDocsMessages(),
-      `out of date: run \`${DOCS_MESSAGES_COMMAND}\``,
-    ).toEqual([]);
-  });
+/** The copy as `i18n:docs-messages` would write it, without the disk. */
+const files = docsMessagesFiles();
+const inMemory: DocsMessagesReader = (locale) => {
+  const text = files.get(`${locale}.json`);
+  return text === undefined
+    ? Promise.reject(new Error(`no ${locale}.json`))
+    : Promise.resolve(JSON.parse(text));
+};
 
-  it("holds the docs' namespaces and nothing else", () => {
-    const english = JSON.parse(
-      docsMessagesFiles(["en"]).get("en.json") as string,
-    ) as Record<string, unknown>;
+describe("the docs' copy of their messages", () => {
+  it("has a file for every language, with the docs' namespaces only", () => {
+    expect([...files.keys()].sort()).toEqual(
+      config.LOCALES.map((locale) => `${locale}.json`).sort(),
+    );
+    const english = JSON.parse(files.get("en.json") as string) as object;
     expect(Object.keys(english).sort()).toEqual([...DOCS_NAMESPACES].sort());
+    for (const text of files.values()) {
+      expect(text.endsWith("}\n")).toBe(true);
+      for (const name of Object.keys(JSON.parse(text) as object)) {
+        expect(DOCS_NAMESPACES).toContain(name);
+      }
+    }
   });
 
   it.each(config.LOCALES)("loads %s like this app does", async (locale) => {
     const app = pickMessages(await loadMessages(locale), DOCS_NAMESPACES);
-    expect(await loadDocsMessages(locale)).toEqual(app);
+    expect(await loadDocsMessages(locale, inMemory)).toEqual(app);
+  });
+
+  it("names the command when the copy wasn't written", async () => {
+    const nothing: DocsMessagesReader = () =>
+      Promise.reject(new Error("ENOENT"));
+    await expect(loadDocsMessages("es", nothing)).rejects.toThrow(
+      `packages/i18n/messages/en.json is missing: run \`${DOCS_MESSAGES_COMMAND}\` first`,
+    );
+    const englishOnly: DocsMessagesReader = (locale) =>
+      locale === "en" ? inMemory(locale) : nothing(locale);
+    await expect(loadDocsMessages("es", englishOnly)).rejects.toThrow(
+      "packages/i18n/messages/es.json is missing",
+    );
   });
 
   it("covers every namespace the docs read", () => {
     const read = docsNamespaces();
     expect(read.size).toBeGreaterThan(0);
-    for (const [namespace, files] of read) {
+    for (const [namespace, readers] of read) {
       expect(
         DOCS_NAMESPACES,
-        `${files.join(", ")} read "${namespace}": add it to DOCS_NAMESPACES (packages/i18n/messages.ts) and run \`${DOCS_MESSAGES_COMMAND}\``,
+        `${readers.join(", ")} read "${namespace}": add it to DOCS_NAMESPACES (packages/i18n/messages.ts)`,
       ).toContain(namespace);
     }
   });
