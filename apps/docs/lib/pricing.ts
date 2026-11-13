@@ -6,6 +6,11 @@
 // in Polar). Checkout asks Polar for the currency of the visitor's country
 // (lib/region.ts checkoutCurrency), so the amounts here match what's charged.
 
+import { isFlagOn } from "@repo/availability/flags";
+
+// The availability rules read NEXT_PUBLIC_QRDX_EUR_PRICES the same way.
+export { isFlagOn } from "@repo/availability/flags";
+
 export type Plan = "free" | "pro" | "business";
 export type PaidPlan = Exclude<Plan, "free">;
 export type BillingInterval = "month" | "year";
@@ -13,12 +18,6 @@ export type PricingCurrency = "USD" | "INR" | "EUR";
 
 export const PAID_PLANS: readonly PaidPlan[] = ["pro", "business"];
 export const BILLING_INTERVALS: readonly BillingInterval[] = ["month", "year"];
-
-/** "1" or "true" turns a flag on; anything else, or unset, leaves it off. */
-export function isFlagOn(value: string | null | undefined): boolean {
-  const flag = value?.trim().toLowerCase();
-  return flag === "1" || flag === "true";
-}
 
 /**
  * Euro prices, for visitors in the EU and EEA: on only once every Polar
