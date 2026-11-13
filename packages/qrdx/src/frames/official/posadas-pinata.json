@@ -1,0 +1,114 @@
+{
+  "id": "posadas-pinata",
+  "name": "Posada piñata",
+  "description": "A light card with a star piñata and a solid label band, in terracotta and yellow.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "las-posadas",
+  "contentTypes": [],
+  "tags": ["las posadas", "mexico", "december", "pinata"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1770
+    },
+    "qr": {
+      "x": 120,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#9a3412",
+      "text": "#ffffff",
+      "accent": "#facc15"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "frame",
+        "hole": {
+          "x": 20,
+          "y": 20,
+          "width": 1200,
+          "height": 1730,
+          "radius": 38
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 250,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 60,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M593.4 104.8A26.6 26.6 0 1 1 646.6 104.8A26.6 26.6 0 1 1 593.4 104.8ZM620 48.8L631.2 85.2L608.8 85.2ZM663.78 69.88L642.31 101.34L628.34 83.82ZM674.6 117.26L636.62 120.08L641.6 98.24ZM644.3 155.25L618.41 127.32L638.59 117.6ZM595.7 155.25L601.41 117.6L621.59 127.32ZM565.4 117.26L598.4 98.24L603.38 120.08ZM576.22 69.88L611.66 83.82L597.69 101.34Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M620 40.4L623.64 57.2L616.36 57.2ZM670.35 64.65L659.48 77.97L654.95 72.28ZM682.79 119.13L665.6 118.94L667.22 111.84ZM647.94 162.82L637.37 149.27L643.93 146.11ZM592.06 162.82L596.07 146.11L602.63 149.27ZM557.21 119.13L572.78 111.84L574.4 118.94ZM569.65 64.65L585.05 72.28L580.52 77.97Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Las Posadas",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1550,
+          "width": 1040,
+          "height": 190
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan for the schedule",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 180,
+          "width": 960,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

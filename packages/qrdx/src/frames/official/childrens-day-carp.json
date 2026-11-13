@@ -1,0 +1,114 @@
+{
+  "id": "childrens-day-carp",
+  "name": "Carp streamers",
+  "description": "A light card with carp streamers and a solid label band, in blue and carp red.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "childrens-day",
+  "contentTypes": [],
+  "tags": ["children's day", "kodomo no hi", "may 5", "koinobori", "kids"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1770
+    },
+    "qr": {
+      "x": 120,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#1d4ed8",
+      "text": "#ffffff",
+      "accent": "#ef4444"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "frame",
+        "hole": {
+          "x": 20,
+          "y": 20,
+          "width": 1200,
+          "height": 1730,
+          "radius": 38
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 250,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 60,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M569.6 46C611.6 32 648 37.6 659.2 48.8L678.8 34.8L670.4 60L678.8 85.2L659.2 71.2C648 82.4 611.6 88 569.6 74ZM569.6 107.6C604.04 96.12 633.89 100.71 643.07 109.9L659.14 98.42L652.26 119.08L659.14 139.74L643.07 128.26C633.89 137.45 604.04 142.04 569.6 130.56Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M567.15 37.6L567.15 169.2L560.85 169.2L560.85 37.6ZM557.7 37.6A6.3 6.3 0 1 1 570.3 37.6A6.3 6.3 0 1 1 557.7 37.6ZM565.4 60A4.2 14 0 1 1 573.8 60A4.2 14 0 1 1 565.4 60ZM578.7 53A4.9 4.9 0 1 1 588.5 53A4.9 4.9 0 1 1 578.7 53ZM566.1 119.08A3.5 11.2 0 1 1 573.1 119.08A3.5 11.2 0 1 1 566.1 119.08ZM576.6 113.9A4.2 4.2 0 1 1 585 113.9A4.2 4.2 0 1 1 576.6 113.9Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Happy Children's Day",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1550,
+          "width": 1040,
+          "height": 190
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan me",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 180,
+          "width": 960,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

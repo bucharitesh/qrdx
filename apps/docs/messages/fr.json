@@ -8342,8 +8342,12 @@
       },
       "setupGuide": {
         "getSetUp": "Prise en main",
+        "launcherLabel": "Prise en main : {done, number} sur {length, number} terminées",
         "doneOfLengthDone": "{done, number} sur {length, number} terminées",
+        "doneOfLengthShort": "{done, number}/{length, number}",
         "setupTasksDone": "Tâches terminées",
+        "collapse": "Réduire",
+        "dismissGuide": "Masquer le guide",
         "done": "(terminé)",
         "create": "Créer",
         "start": "Démarrer",

@@ -8342,8 +8342,12 @@
       },
       "setupGuide": {
         "getSetUp": "Configura",
+        "launcherLabel": "Per iniziare: {done, number} di {length, number} completati",
         "doneOfLengthDone": "{done, number} di {length, number} completati",
+        "doneOfLengthShort": "{done, number}/{length, number}",
         "setupTasksDone": "Attività completate",
+        "collapse": "Comprimi",
+        "dismissGuide": "Chiudi la guida",
         "done": "(fatto)",
         "create": "Crea",
         "start": "Inizia",

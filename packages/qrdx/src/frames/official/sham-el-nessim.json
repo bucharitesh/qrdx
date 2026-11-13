@@ -1,0 +1,81 @@
+{
+  "id": "sham-el-nessim",
+  "name": "Sham el-Nessim egg",
+  "description": "A solid card with a painted egg over the code and the label underneath, in Nile blue and spring green.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "sham-el-nessim",
+  "contentTypes": [],
+  "tags": ["sham el-nessim", "egypt", "spring", "egg", "picnic"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#0e7490",
+      "text": "#ffffff",
+      "accent": "#a3e635"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M620 44C656 44 677 110 677 131C677 161 653 179 620 179C587 179 563 161 563 131C563 110 584 44 620 44Z",
+        "fill": "accent"
+      },
+      {
+        "type": "path",
+        "d": "M565.25 113L581 101L600.5 113L620 101L639.5 113L659 101L674.75 113L676.4 125L659 113L639.5 125L620 113L600.5 125L581 113L563.6 125Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Happy Sham el-Nessim",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan me",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

@@ -109,7 +109,7 @@ export type CatalogAction =
 
 /**
  * How an entry reads where its optional extra is configured on the server
- * (apps/docs lib/feature-availability-rules `extrasOf`, like the QRdx bot
+ * (@repo/availability rules `extrasOf`, like the QRdx bot
  * for Slack). The tagline, plan and steps replace the entry's own,
  * capabilities come before its own, and categories and keywords are added. Elsewhere none
  * of it is shown, so it may describe what only works with the extra.
@@ -163,7 +163,7 @@ export interface IntegrationCatalogEntry {
   /**
    * QRdx's own page about it, like "/slack" for the QRdx bot. The detail
    * page links there only where that page is shown: a page that needs a
-   * feature (apps/docs lib/feature-availability-rules `paths`) hides with it.
+   * feature (@repo/availability rules `paths`) hides with it.
    */
   page?: { href: string; label: string };
   primaryAction: CatalogAction;

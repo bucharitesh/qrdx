@@ -1,0 +1,83 @@
+{
+  "id": "onam-boat-race",
+  "name": "Snake boat race",
+  "description": "A wide card: the code on one side, a snake boat and the label on the other, in banana-leaf green and gold.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "onam",
+  "contentTypes": [],
+  "tags": ["onam", "kerala", "harvest festival", "boat race"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 2000,
+      "height": 1040
+    },
+    "qr": {
+      "x": 120,
+      "y": 120,
+      "size": 800,
+      "padding": 64,
+      "radius": 19.2
+    },
+    "colors": {
+      "frame": "#2f5d34",
+      "text": "#ffffff",
+      "accent": "#f2c94c"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 2000,
+        "height": 1040,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M1037.2 268L1156 268C1174 268 1186.6 250 1192 196L1202.8 196C1201 253.6 1184.8 289.6 1148.8 289.6L1055.2 289.6C1044.4 289.6 1037.2 280.6 1037.2 268Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M1048.72 244.6A6.48 6.48 0 1 1 1061.68 244.6A6.48 6.48 0 1 1 1048.72 244.6ZM1060.91 254.06L1048.31 311.66L1044.09 310.74L1056.69 253.14ZM1067.62 244.6A6.48 6.48 0 1 1 1080.58 244.6A6.48 6.48 0 1 1 1067.62 244.6ZM1079.81 254.06L1067.21 311.66L1062.99 310.74L1075.59 253.14ZM1086.52 244.6A6.48 6.48 0 1 1 1099.48 244.6A6.48 6.48 0 1 1 1086.52 244.6ZM1098.71 254.06L1086.11 311.66L1081.89 310.74L1094.49 253.14ZM1105.42 244.6A6.48 6.48 0 1 1 1118.38 244.6A6.48 6.48 0 1 1 1105.42 244.6ZM1117.61 254.06L1105.01 311.66L1100.79 310.74L1113.39 253.14ZM1124.32 244.6A6.48 6.48 0 1 1 1137.28 244.6A6.48 6.48 0 1 1 1124.32 244.6ZM1136.51 254.06L1123.91 311.66L1119.69 310.74L1132.29 253.14ZM1143.22 244.6A6.48 6.48 0 1 1 1156.18 244.6A6.48 6.48 0 1 1 1143.22 244.6ZM1155.41 254.06L1142.81 311.66L1138.59 310.74L1151.19 253.14Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for race times",
+        "color": "text",
+        "box": {
+          "x": 1030,
+          "y": 400,
+          "width": 860,
+          "height": 190
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Vallam kali",
+        "color": "text",
+        "box": {
+          "x": 1030,
+          "y": 610,
+          "width": 860,
+          "height": 100
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

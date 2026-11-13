@@ -1,0 +1,77 @@
+{
+  "id": "mid-autumn-rabbit",
+  "name": "Moon rabbit",
+  "description": "An arched card, like a window, with a rabbit, in night slate and moon gold.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "mid-autumn",
+  "contentTypes": [],
+  "tags": [
+    "mid-autumn festival",
+    "moon festival",
+    "mooncakes",
+    "rabbit",
+    "moon"
+  ],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1880
+    },
+    "qr": {
+      "x": 160,
+      "y": 470,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#1e293b",
+      "text": "#ffffff",
+      "accent": "#f2c14e"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M0 660A660 660 0 0 1 1320 660L1320 1840Q1320 1880 1280 1880L40 1880Q0 1880 0 1840Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M50 660A610 610 0 0 1 1270 660L1270 1830L50 1830ZM62 660L62 1818L1258 1818L1258 660A598 598 0 0 0 62 660Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.35
+        }
+      },
+      {
+        "type": "path",
+        "d": "M633 267A39 33 0 1 1 711 267A39 33 0 1 1 633 267ZM613.5 234A22.5 22.5 0 1 1 658.5 234A22.5 22.5 0 1 1 613.5 234ZM700.5 273A10.5 10.5 0 1 1 721.5 273A10.5 10.5 0 1 1 700.5 273ZM622.5 297A16.5 7.5 0 1 1 655.5 297A16.5 7.5 0 1 1 622.5 297ZM630 222C636.24 209.77 630.84 186.82 618 171C607.72 192.26 613.12 215.21 630 222ZM642 219C658.43 212.14 662.48 190.54 651 171C639.12 186.16 635.07 207.76 642 219Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M630 210C631.5 203.01 627.45 189.51 621 180C617.97 192.35 622.02 205.85 630 210ZM643.5 207C651 203 653.7 190.85 649.5 180C644.03 188.7 641.33 200.85 643.5 207ZM623.1 231A3.9 3.9 0 1 1 630.9 231A3.9 3.9 0 1 1 623.1 231Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Happy Mid-Autumn",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1610,
+          "width": 1040,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

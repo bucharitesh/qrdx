@@ -8342,8 +8342,12 @@
       },
       "setupGuide": {
         "getSetUp": "Penyiapan",
+        "launcherLabel": "Mulai atur: {done, number} dari {length, number} selesai",
         "doneOfLengthDone": "{done, number} dari {length, number} selesai",
+        "doneOfLengthShort": "{done, number}/{length, number}",
         "setupTasksDone": "Tugas penyiapan selesai",
+        "collapse": "Ciutkan",
+        "dismissGuide": "Tutup panduan",
         "done": "(selesai)",
         "create": "Buat",
         "start": "Mulai",

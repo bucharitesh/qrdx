@@ -1,0 +1,118 @@
+{
+  "id": "park-report",
+  "name": "Park issue report",
+  "description": "Two chat bubbles: a light one with the note and a solid one with the label.",
+  "category": "use-case",
+  "collection": "places",
+  "contentTypes": ["url"],
+  "tags": ["park", "outdoors", "report", "feedback"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1750
+    },
+    "qr": {
+      "x": 120,
+      "y": 360,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 900,
+        "height": 200,
+        "radius": 70,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.86
+        }
+      },
+      {
+        "type": "polygon",
+        "points": [[120, 198], [260, 198], [90, 270]],
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.86
+        }
+      },
+      {
+        "type": "rect",
+        "x": 300,
+        "y": 1510,
+        "width": 940,
+        "height": 220,
+        "radius": 80,
+        "fill": "frame"
+      },
+      {
+        "type": "polygon",
+        "points": [[980, 1512], [1120, 1512], [1180, 1430]],
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 40,
+        "y": 260,
+        "width": 1160,
+        "height": 1200,
+        "radius": 56,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.95
+        }
+      },
+      {
+        "type": "path",
+        "d": "M124 1590A36 36 0 1 1 196 1590A36 36 0 1 1 124 1590ZM103 1614A27 27 0 1 1 157 1614A27 27 0 1 1 103 1614ZM163 1614A27 27 0 1 1 217 1614A27 27 0 1 1 163 1614ZM130 1623A30 30 0 1 1 190 1623A30 30 0 1 1 130 1623Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M152.5 1632L167.5 1632L172 1686L148 1686ZM157.35 1653.35L178.35 1632.35L183.65 1637.65L162.65 1658.65ZM127.75 1684.5L192.25 1684.5A3.75 3.75 0 0 1 196 1688.25L196 1688.25A3.75 3.75 0 0 1 192.25 1692L127.75 1692A3.75 3.75 0 0 1 124 1688.25L124 1688.25A3.75 3.75 0 0 1 127.75 1684.5Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Report a problem",
+        "color": "text",
+        "box": {
+          "x": 360,
+          "y": 1530,
+          "width": 820,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Broken bench? Tell us",
+        "color": "frame",
+        "box": {
+          "x": 60,
+          "y": 40,
+          "width": 780,
+          "height": 120
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

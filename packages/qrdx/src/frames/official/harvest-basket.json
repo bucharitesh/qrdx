@@ -1,0 +1,87 @@
+{
+  "id": "harvest-basket",
+  "name": "Harvest basket",
+  "description": "A solid card with a basket of produce over the code and the label underneath, in harvest brown and gold.",
+  "category": "seasonal",
+  "collection": "seasons",
+  "occasion": "harvest",
+  "contentTypes": [],
+  "tags": ["harvest", "farm", "autumn", "farm shop"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#7c4a12",
+      "text": "#ffffff",
+      "accent": "#e9b949"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M573.5 107A19.5 19.5 0 1 1 612.5 107A19.5 19.5 0 1 1 573.5 107ZM600.5 95A22.5 22.5 0 1 1 645.5 95A22.5 22.5 0 1 1 600.5 95ZM632 110A18 18 0 1 1 668 110A18 18 0 1 1 632 110ZM623 74C635.02 78.82 643.12 70.72 641 56C630.52 58.12 622.42 66.22 623 74Z",
+        "fill": "accent"
+      },
+      {
+        "type": "path",
+        "d": "M560 113L680 113L665 173L575 173ZM570.5 134A1.5 1.5 0 0 0 569 135.5L569 138.5A1.5 1.5 0 0 0 570.5 140L669.5 140A1.5 1.5 0 0 0 671 138.5L671 135.5A1.5 1.5 0 0 0 669.5 134ZM575 152A1.5 1.5 0 0 0 573.5 153.5L573.5 156.5A1.5 1.5 0 0 0 575 158L665 158A1.5 1.5 0 0 0 666.5 156.5L666.5 153.5A1.5 1.5 0 0 0 665 152Z",
+        "fill": "text",
+        "fillRule": "evenodd"
+      },
+      {
+        "type": "path",
+        "d": "M560 116A60 60 0 0 1 680 116L671 116A51 51 0 0 0 569 116Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Harvest season",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan for the farm shop",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

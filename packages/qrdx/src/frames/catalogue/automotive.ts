@@ -13,6 +13,7 @@ import damageReport from "../official/damage-report.json";
 import dashboardLights from "../official/dashboard-lights.json";
 import drivingLessons from "../official/driving-lessons.json";
 import findACharger from "../official/find-a-charger.json";
+import parkingFindCar from "../official/parking-find-car.json";
 import parkingPermit from "../official/parking-permit.json";
 import payAtThePump from "../official/pay-at-the-pump.json";
 import payForParking from "../official/pay-for-parking.json";
@@ -56,6 +57,7 @@ const frames = [
   unlockThisCar,
   damageReport,
   carForSale,
+  parkingFindCar,
 ] as unknown as readonly OfficialFrame[];
 
 export default frames;
