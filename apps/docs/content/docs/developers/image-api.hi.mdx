@@ -4,13 +4,13 @@ description: "किसी भी URL को QR कोड इमेज में
 icon: ImageDown
 ---
 
-`GET https://api.qrdx.dev/v1/qr` QR कोड को SVG, PNG या WebP इमेज के रूप में लौटाता है, या प्रिंट और डिज़ाइन टूल्स के लिए वेक्टर EPS फ़ाइल के रूप में। सब कुछ query string में होता है, इसलिए URL ही इमेज है: इसे README, `<img>` टैग या ईमेल टेम्पलेट में पेस्ट करें। यह एडिटर की स्टाइल भी लेता है: ग्रेडिएंट, फ़्रेम (कस्टम फ़्रेम सहित), बॉर्डर, आई और डॉट के रंग और लोगो आइकन।
+`GET https://api.qrdx.dev/v1/qr` QR कोड को SVG, PNG या WebP इमेज के रूप में लौटाता है, या प्रिंट और डिज़ाइन टूल के लिए वेक्टर EPS फ़ाइल के रूप में। सब कुछ query string में होता है, इसलिए URL ही इमेज है: इसे README, `<img>` टैग या ईमेल टेम्पलेट में पेस्ट करें। यह एडिटर की स्टाइल भी लेता है: ग्रेडिएंट, फ़्रेम (कस्टम फ़्रेम सहित), बॉर्डर, आई और डॉट के रंग और लोगो आइकन।
 
 ```md
 ![QR code](https://api.qrdx.dev/v1/qr?data=https://github.com/you/repo)
 ```
 
-अकाउंट या API key की ज़रूरत नहीं है। एक अपवाद है: वह लोगो जो आपने QRdx पर अपलोड किया हो (देखें [लोगो](#logos))।
+अकाउंट या API key की ज़रूरत नहीं है। एक अपवाद है: वह लोगो जो आपने QRdx पर अपलोड किया हो ([Logos](#logos) देखें)।
 
 [Playground में आज़माएँ](/playground?open=code&lang=image): वहाँ कोड को स्टाइल करें, फिर उसका इमेज URL कॉपी करें।
 
@@ -25,31 +25,31 @@ icon: ImageDown
 />
 ```
 
-curl से PNG डाउनलोड करें (URL को quotes में रखें ताकि आपका shell `&` को न बदले):
+curl से PNG डाउनलोड करें (URL को quotes में रखें ताकि आपका शेल `&` को न छेड़े):
 
 ```bash
 curl -o qr.png "https://api.qrdx.dev/v1/qr?data=https://qrdx.dev&format=png&size=1024"
 ```
 
-या WebP: PNG जैसे ही पिक्सल, लॉसलेस और ट्रांसपेरेंसी सहित, पर छोटी फ़ाइल में:
+या WebP: PNG जैसे ही पिक्सल, लॉसलेस और ट्रांसपेरेंसी समेत, लेकिन छोटी फ़ाइल में:
 
 ```bash
 curl -o qr.webp "https://api.qrdx.dev/v1/qr?data=https://qrdx.dev&format=webp&size=1024"
 ```
 
-Illustrator, InDesign या प्रिंट शॉप के लिए वेक्टर EPS पाएँ (`size` पॉइंट में चौड़ाई है, प्रति इंच 72, इसलिए `144` का मतलब 2 इंच है):
+Illustrator, InDesign या प्रिंट शॉप के लिए वेक्टर EPS पाएँ (`size` पॉइंट में चौड़ाई है, 72 प्रति इंच, इसलिए `144` यानी 2 इंच):
 
 ```bash
 curl -o qr.eps "https://api.qrdx.dev/v1/qr?data=https://qrdx.dev&format=eps&size=144"
 ```
 
-फ़्रेम के साथ स्टाइल किए हुए डॉट्स:
+फ़्रेम के साथ स्टाइल वाले डॉट:
 
 ```txt
 https://api.qrdx.dev/v1/qr?data=https://qrdx.dev&body=rounded&eye=rounded&dot=rounded&template=Arrow
 ```
 
-लेबल के साथ बिल्ट-इन फ़्रेम, और id से कम्युनिटी फ़्रेम:
+लेबल के साथ एक बिल्ट-इन फ़्रेम, और id से एक कम्युनिटी फ़्रेम:
 
 ```txt
 https://api.qrdx.dev/v1/qr?data=https://qrdx.dev&frame=banner-bottom&frameText=Scan%20the%20menu
@@ -85,76 +85,76 @@ const src = `https://api.qrdx.dev/v1/qr?data=${encodeURIComponent(link)}&style=$
 | `data` | ज़रूरी | एन्कोड करने के लिए टेक्स्ट या URL, अधिकतम 2048 अक्षर |
 | `format` | `svg` | `svg`, `png`, `webp` (लॉसलेस) या `eps` (वेक्टर PostScript; तब `size` पॉइंट में चौड़ाई होती है) |
 | `size` | `512` | पिक्सल में चौड़ाई और ऊँचाई, `64` से `2048` |
-| `fg` | `000000` | मॉड्यूल का रंग hex में (`155dfc`, `fff`, या alpha के साथ 8 अंक) |
-| `bg` | `ffffff` | बैकग्राउंड का रंग hex में। `00000000` से बैकग्राउंड ट्रांसपेरेंट हो जाता है |
-| `eyeColor` | `fg` | तीनों कोने की आई का रंग |
-| `dotColor` | `fg` | हर कोने की आई के अंदर के डॉट का रंग |
+| `fg` | `000000` | मॉड्यूल का रंग, hex में (`155dfc`, `fff`, या alpha के साथ 8 अंक) |
+| `bg` | `ffffff` | बैकग्राउंड का रंग, hex में। `00000000` से बैकग्राउंड ट्रांसपेरेंट होता है |
+| `eyeColor` | `fg` | तीनों कॉर्नर आई का रंग |
+| `dotColor` | `fg` | हर कॉर्नर आई के अंदर के डॉट का रंग |
 | `body` | `square` | डेटा मॉड्यूल का आकार |
-| `eye` | `square` | कोने की आई के फ़्रेम का आकार |
-| `dot` | `square` | हर कोने की आई के अंदर के डॉट का आकार |
+| `eye` | `square` | कॉर्नर आई फ़्रेम का आकार |
+| `dot` | `square` | हर कॉर्नर आई के अंदर के डॉट का आकार |
 | `level` | `Q` | एरर करेक्शन: `L` (~7%), `M` (~15%), `Q` (~25%) या `H` (~30%) |
 | `margin` | `4` | कोड के चारों ओर खाली जगह (quiet zone), मॉड्यूल में, `0` से `16` |
 | `template` | none | सजावटी बॉर्डर टेम्पलेट |
-| `frame` | none | बिल्ट-इन कॉल-टू-एक्शन [फ़्रेम](/docs/features/frames), जैसे `banner-bottom`, `speech-bubble` या `circle` ({facts.frameStyles} स्टाइल में से कोई भी) |
+| `frame` | none | एक बिल्ट-इन कॉल-टू-एक्शन [फ़्रेम](/docs/features/frames), जैसे `banner-bottom`, `speech-bubble` या `circle` ({facts.frameStyles} बिल्ट-इन फ़्रेम में से कोई भी, हर एक अपने frame spec से बना) |
 | `frameText` | `Scan me` | फ़्रेम का लेबल, अधिकतम 24 अक्षर। यह `style` या `item` के फ़्रेम का लेबल भी बदल देता है |
-| `style` | none | एडिटर का पूरा डिज़ाइन JSON में; देखें [स्टाइल](#style) |
-| `item` | none | id से कम्युनिटी फ़्रेम या थीम, जैसे `frame:wifi-card`; देखें [कम्युनिटी आइटम](#community-items) |
-| `logoIcon` | none | बीच में एक क्विक आइकन या ब्रांड लोगो; देखें [लोगो](#logos) |
-| `logoFileId` | none | आपका अपलोड किया हुआ लोगो, file id से; API key चाहिए; देखें [लोगो](#logos) |
+| `style` | none | एडिटर का पूरा डिज़ाइन JSON के रूप में; देखें [Styles](#style) |
+| `item` | none | id से एक कम्युनिटी फ़्रेम या थीम, जैसे `frame:wifi-card`; देखें [कम्युनिटी आइटम](#community-items) |
+| `logoIcon` | none | बीच में एक क्विक आइकन या ब्रांड लोगो; देखें [Logos](#logos) |
+| `logoFileId` | none | आपका अपलोड किया हुआ लोगो, file id से; इसके लिए API key चाहिए; देखें [Logos](#logos) |
 
-रंग `#` के बिना लिखें, या उसे `%23` के रूप में एन्कोड करें: सीधा `#` URL का fragment शुरू कर देता है और कभी भेजा नहीं जाता। Enum वैल्यू (`level`, `format`, `template`, `frame`) में अक्षरों का case मायने नहीं रखता।
+रंग `#` के बिना लिखें, या उसे `%23` के रूप में एन्कोड करें: सीधा `#` URL फ़्रैगमेंट शुरू कर देता है और कभी भेजा नहीं जाता। Enum वैल्यू (`level`, `format`, `template`, `frame`) में अक्षरों का केस मायने नहीं रखता।
 
-फ़्रेम के साथ, `size` कोड की अपनी चौड़ाई है और फ़्रेम इमेज में जुड़ जाता है, हर format में।
+फ़्रेम के साथ, `size` कोड की अपनी चौड़ाई है और फ़्रेम इमेज में जुड़ता है, हर format में।
 
-## स्टाइल [#style]
+## Styles [#style]
 
-`style` डिज़ाइन को JSON के रूप में लेता है, जिसके फ़ील्ड सेव की हुई थीम जैसे ही हैं। इसलिए [`GET /v1/themes`](/docs/developers/api/list-themes) की कोई थीम, या [MCP सर्वर](/docs/developers/mcp) के `design_qr` से मिला `qrdxStyle`, जैसा है वैसा ही पास किया जा सकता है (अपलोड किए गए लोगो को छोड़कर, नीचे देखें):
+`style` डिज़ाइन को JSON के रूप में लेता है, जिसके फ़ील्ड सेव की गई थीम जैसे ही हैं। इसलिए [`GET /v1/themes`](/docs/developers/api/list-themes) की कोई थीम, या [MCP server](/docs/developers/mcp) के `design_qr` से लौटा `qrdxStyle`, जैसा है वैसा पास किया जा सकता है (अपलोड किए गए लोगो को छोड़कर, नीचे देखें):
 
 | फ़ील्ड | क्या लेता है |
 | --- | --- |
-| `bgColor`, `fgColor`, `eyeColor`, `dotColor` | एक रंग (hex जैसे `#155dfc`, `rgb()`, `hsl()` या रंग का नाम), या ग्रेडिएंट: `{ "type": "linear", "angle": 45, "stops": [...] }` या `{ "type": "radial", "stops": [...] }`, जिसमें `{ "color", "offset" }` के 2 से 8 stops हों (offset 0 से 100) |
+| `bgColor`, `fgColor`, `eyeColor`, `dotColor` | एक रंग (hex जैसे `#155dfc`, `rgb()`, `hsl()` या रंग का नाम), या एक ग्रेडिएंट: `{ "type": "linear", "angle": 45, "stops": [...] }` या `{ "type": "radial", "stops": [...] }`, जिसमें `{ "color", "offset" }` के 2 से 8 stop हों (offset 0 से 100) |
 | `bodyPattern`, `cornerEyePattern`, `cornerEyeDotPattern` | [पैटर्न वैल्यू](#pattern-values) |
-| `level`, `margin` | ऊपर के पैरामीटर जैसे (`margin` 0 से 16) |
-| `templateId` | बॉर्डर टेम्पलेट, कोई नहीं के लिए `default` |
-| `frame` | बिल्ट-इन फ़्रेम, `{ "style": "banner-bottom", "text": "Scan me", "color": "#155dfc", "textColor": "#ffffff" }`, या कस्टम फ़्रेम, `{ "style": "custom", "spec": { … } }`, जिसमें [कम्युनिटी](#community-items) का या playground के Frame सेक्शन में बनाया गया फ़्रेम spec हो। Specs की जाँच इंजन के frame-spec नियमों से होती है (कोई markup, लिंक या इमेज नहीं; अधिकतम 32 KB) |
-| `eyeColors` | हर आई का अलग रंग, जो `eyeColor` और `dotColor` पर लागू होता है: `{ "topLeft": { "outer": "#b91c1c", "inner": "#1d4ed8" }, "topRight": …, "bottomLeft": … }`, हर एक रंग या ग्रेडिएंट |
-| `moduleScale` | हर डॉट का साइज़, `0.5` से `1` (डिफ़ॉल्ट `1`) |
-| `shape` | `square` (डिफ़ॉल्ट) या `circle`: सजावटी डॉट्स की डिस्क में कोड |
-| `autoLevel` | जब लोगो कोड के 7% से ज़्यादा हिस्से को ढके, तब एरर करेक्शन `H` कर देता है (लोगो होने पर यहाँ हमेशा चालू रहता है) |
-| `logoOptions` | लोगो का लेआउट: `size` (कोड की चौड़ाई का `0.1` से `0.3`; जब कोड इतने मॉड्यूल नहीं दे सकता तो QRdx इसे छोटा कर देता है), `padding` (`0` से `2` मॉड्यूल), `x` और `y` (`0` से `1`), `shape` (`square`, `rounded` या `circle` क्रॉप) और `plate` (उसके पीछे का रंग) |
-| `showLogo`, `logoIcon`, `logoFileId` | देखें [लोगो](#logos) |
+| `level`, `margin` | ऊपर दिए पैरामीटर जैसे (`margin` 0 से 16) |
+| `templateId` | एक बॉर्डर टेम्पलेट, कोई नहीं के लिए `default` |
+| `frame` | एक बिल्ट-इन फ़्रेम, `{ "style": "banner-bottom", "text": "Scan me", "color": "#155dfc", "textColor": "#ffffff" }`, या एक कस्टम फ़्रेम, `{ "style": "custom", "spec": { … } }`, जिसमें [कम्युनिटी](#community-items) से लिया गया या Playground के Frame सेक्शन में बनाया गया frame spec हो। Spec की जाँच इंजन के frame-spec नियमों से होती है (कोई मार्कअप, लिंक या इमेज नहीं; अधिकतम 32 KB) |
+| `eyeColors` | हर आई के अलग रंग, जो `eyeColor` और `dotColor` पर लागू होते हैं: `{ "topLeft": { "outer": "#b91c1c", "inner": "#1d4ed8" }, "topRight": …, "bottomLeft": … }`, हर एक रंग या ग्रेडिएंट |
+| `moduleScale` | हर डॉट का आकार, `0.5` से `1` (डिफ़ॉल्ट `1`) |
+| `shape` | `square` (डिफ़ॉल्ट) या `circle`: सजावटी डॉट की डिस्क में कोड |
+| `autoLevel` | जब लोगो कोड के 7% से ज़्यादा हिस्से को ढके, तो एरर करेक्शन `H` कर दें (लोगो होने पर यहाँ हमेशा चालू रहता है) |
+| `logoOptions` | लोगो का लेआउट: `size` (कोड की चौड़ाई का `0.1` से `0.3`; जब कोड के पास उतने मॉड्यूल नहीं बचते तो QRdx इसे छोटा कर देता है), `padding` (`0` से `2` मॉड्यूल), `x` और `y` (`0` से `1`), `shape` (`square`, `rounded` या `circle` क्रॉप) और `plate` (उसके पीछे का रंग) |
+| `showLogo`, `logoIcon`, `logoFileId` | देखें [Logos](#logos) |
 
-`style` playground लिंक की `style` वैल्यू भी लेता है (वह `1.` से शुरू होती है), इसलिए [playground](/playground) से शेयर किया गया डिज़ाइन वैसा ही रेंडर होता है जैसा वहाँ दिखता है, बिना उसके लोगो के।
+`style` Playground लिंक की `style` वैल्यू भी लेता है (यह `1.` से शुरू होती है), इसलिए [Playground](/playground) से शेयर किया गया डिज़ाइन वैसा ही रेंडर होता है जैसा वहाँ दिखता है, लेकिन उसके लोगो के बिना।
 
-फ़्लैट पैरामीटर (`fg`, `body`, `frame` और बाकी) से सेट किए गए फ़ील्ड `style` पर भारी पड़ते हैं, और `style` `item` पर। अज्ञात फ़ील्ड, लोगो के पते (`customLogo`) और Logo QR या Image QR आर्ट (`art`) को `400` के साथ अस्वीकार कर दिया जाता है, जिसमें कारण बताया जाता है।
+फ़्लैट पैरामीटर (`fg`, `body`, `frame` और बाकी) से सेट किए गए फ़ील्ड `style` पर भारी पड़ते हैं, और `style` `item` पर भारी पड़ता है। अज्ञात फ़ील्ड, लोगो के पते (`customLogo`) और Logo QR या Image QR आर्ट (`art`) को `400` के साथ मना कर दिया जाता है, जो वजह भी बताता है।
 
 ## कम्युनिटी आइटम [#community-items]
 
-`item` किसी प्रकाशित [कम्युनिटी](/community) फ़्रेम या थीम को रेंडर करता है, जो CC0 के तहत फ़्री है। id पाने के लिए [`GET /v1/community/items`](/docs/developers/api/list-community-items) इस्तेमाल करें, या किसी आइटम का पेज खोलकर उसका type और slug लें: `/community/frames/wifi-card` का मतलब `frame:wifi-card` है। फ़्रेम आइटम सादे काले-पर-सफ़ेद कोड पर लगता है; उसके नीचे का कोड बदलने के लिए `style` या फ़्लैट पैरामीटर जोड़ें।
+`item` एक प्रकाशित [कम्युनिटी](/community) फ़्रेम या थीम रेंडर करता है, जो CC0 के तहत फ़्री है। id [`GET /v1/community/items`](/docs/developers/api/list-community-items) से खोजें, या किसी आइटम का पेज खोलकर उसका type और slug इस्तेमाल करें: `/community/frames/wifi-card` यानी `frame:wifi-card`। फ़्रेम आइटम सादे काले-पर-सफ़ेद कोड पर लगता है; उसके नीचे का कोड बदलने के लिए `style` या फ़्लैट पैरामीटर जोड़ें।
 
 ## लोगो [#logos]
 
-- **क्विक आइकन।** `logoIcon` एडिटर के आइकन में से एक को बीच में सफ़ेद टाइल पर लगाता है: `wifi`, `location`, `phone`, `email`, `link`, `file`, `calendar`, `whatsapp` या `instagram`। इन्हें QRdx खुद बनाता है, और इनके लिए key की ज़रूरत नहीं होती।
-- **ब्रांड लोगो।** `logoIcon` [Simple Icons](https://simpleicons.org) के {facts.brandLogos} ब्रांड में से किसी को भी slug से ले सकता है: `spotify`, `paypal`, `googlemaps`, `appstore`। मार्क अपने ब्रांड कलर में बिना प्लेट के बनता है; ये रंग चाहिए तो `:black` या `:white` जोड़ें (`whatsapp:white`), और उसके पीछे प्लेट के लिए `style` में `logoOptions.plate` इस्तेमाल करें। [`GET /api/brand-logos`](https://qrdx.dev/api/brand-logos) सभी slug की सूची देता है। जो slug QRdx में नहीं है, उस पर `400` मिलता है।
+- **क्विक आइकन।** `logoIcon` एडिटर के आइकन में से एक को बीच में सफ़ेद टाइल पर लगाता है: `wifi`, `location`, `phone`, `email`, `link`, `file`, `calendar`, `whatsapp` या `instagram`। इन्हें QRdx खुद बनाता है और इनके लिए किसी key की ज़रूरत नहीं होती।
+- **ब्रैंड लोगो।** `logoIcon` [Simple Icons](https://simpleicons.org) के {facts.brandLogos} ब्रैंड में से किसी को भी उसके slug से ले सकता है: `spotify`, `paypal`, `googlemaps`, `appstore`। मार्क बिना प्लेट के, ब्रैंड के अपने रंग में बनता है। काले या सफ़ेद रंग के लिए `:black` या `:white` जोड़ें (`whatsapp:white`), और उसके पीछे प्लेट के लिए `style` में `logoOptions.plate` इस्तेमाल करें। [`GET /api/brand-logos`](https://qrdx.dev/api/brand-logos) सभी slug की सूची देता है। जो slug QRdx में नहीं है, उस पर `400` मिलता है।
 - **QRdx मार्क**, जो एडिटर में डिफ़ॉल्ट रूप से दिखता है, यहाँ नहीं बनता: सिर्फ़ `showLogo: true` से कोई लोगो नहीं जुड़ता।
-- **लोगो के लिए error correction बढ़ जाता है।** जब लोगो कोड के 7% से ज़्यादा हिस्से को ढकता है, तो `level` में कुछ भी हो, कोड level `H` पर बनता है, ताकि वह फिर भी स्कैन हो सके।
+- **लोगो के लिए error correction बढ़ जाता है।** जब कोई लोगो कोड के 7% से ज़्यादा हिस्से को ढकता है, तो `level` में कुछ भी हो, कोड `H` लेवल पर बनता है, ताकि वह फिर भी स्कैन हो सके।
 
 <IfAvailable feature="fileStorage">
 
-**आपका अपना लोगो।** `logoFileId` आपके [डैशबोर्ड → Files](/docs/files) में अपलोड की गई 1 MB तक की PNG या JPEG फ़ाइल को लोगो के रूप में बनाता है। id फ़ाइल के लिंक का आख़िरी हिस्सा है, `https://qrdx.dev/api/files/<id>`। उस वर्कस्पेस की [API key](/docs/developers/api-keys) भेजें जिसकी वह फ़ाइल है:
+**आपका अपना लोगो।** `logoFileId` आपके [डैशबोर्ड → Files](/docs/files) में अपलोड की गई 1 MB तक की PNG या JPEG फ़ाइल को लोगो के रूप में बनाता है। id फ़ाइल के लिंक का आख़िरी हिस्सा होती है, `https://qrdx.dev/api/files/<id>`। उस वर्कस्पेस की [API key](/docs/developers/api-keys) भेजें जिसकी वह फ़ाइल है:
 
 ```bash
 curl -o qr.png -H "Authorization: Bearer $QRDX_API_KEY" \
   "https://api.qrdx.dev/v1/qr?data=https://qrdx.dev&format=png&logoFileId=<id>"
 ```
 
-रिस्पॉन्स प्राइवेट होता है (`Cache-Control: private, no-store`) और वर्कस्पेस के रोज़ के API कोटा में गिना जाता है। दूसरे वर्कस्पेस की फ़ाइल पर `404` मिलता है, और key के बिना रिक्वेस्ट पर `401`। QRdx इमेज को अपनी ही स्टोरेज से पढ़ता है और जाँचता है कि वह सच में PNG या JPEG है; आपके भेजे वेब पते से वह कभी लोगो नहीं लाता।
+रिस्पॉन्स प्राइवेट होता है (`Cache-Control: private, no-store`) और वर्कस्पेस के रोज़ाना API कोटा में गिना जाता है। दूसरे वर्कस्पेस की फ़ाइल पर `404` मिलता है, और key के बिना रिक्वेस्ट पर `401`। QRdx इमेज को अपनी ही स्टोरेज से पढ़ता है और जाँचता है कि वह सच में PNG या JPEG है; वह आपके भेजे वेब पते से कभी कोई लोगो नहीं लाता।
 
 </IfAvailable>
 
-`logoOptions` इनमें से किसी भी लोगो का साइज़ और जगह तय करता है, उसे क्रॉप करता है और उसके पीछे बैकग्राउंड लगाता है। अपलोड किए लोगो का अपना बैकग्राउंड हटाने का काम Playground में होता है; Image API अपलोड की गई फ़ाइल को जैसी है वैसी ही बनाता है।
+`logoOptions` इनमें से किसी भी लोगो का साइज़, जगह, क्रॉप और बैकग्राउंड तय करता है। अपलोड किए गए लोगो का अपना बैकग्राउंड हटाना Playground में होता है; image API अपलोड की गई फ़ाइल को जैसी है वैसी ही बनाता है।
 
-Logo QR और Image QR आर्ट यहाँ उपलब्ध नहीं हैं: Playground उन्हें आपकी तस्वीर से ब्राउज़र में बनाता है, और Image API अपलोड से आर्ट नहीं बनाता। आर्ट कोड [Playground](/playground?tab=art) में डिज़ाइन करें।
+Logo QR और Image QR आर्ट यहाँ उपलब्ध नहीं हैं: Playground उन्हें आपकी तस्वीर से ब्राउज़र में बनाता है, और image API अपलोड से आर्ट नहीं बनाता। आर्ट कोड [Playground](/playground?tab=art) में डिज़ाइन करें।
 
 ### पैटर्न की वैल्यू [#pattern-values]
 
@@ -163,19 +163,19 @@ Logo QR और Image QR आर्ट यहाँ उपलब्ध नही�
 - `dot`: `square`, `rounded`, `circle`, `message`, `message-reverse`, `diya`, `diya-reverse`, `rounded-triangle`, `leaf`, `drop`, `plus`, `cross-rounded`, `hexagon`, `octagon`, `flower`, `heart`, `squircle`, `dots`, `extra-rounded`, `leaf-reverse`, `drop-reverse`
 - `template`: `default`, `Arrow`, `StandardBox`, `SquareBorder`, `StrikedBox`, `Halloween`
 
-ये वही स्टाइल हैं जो [`qrdx` React लाइब्रेरी](/docs/features/patterns) में हैं। [MCP सर्वर](/docs/developers/mcp) भी इन्हें छोटे विवरणों के साथ सूचीबद्ध कर सकता है।
+ये वही स्टाइल हैं जो [`qrdx` React लाइब्रेरी](/docs/features/patterns) में हैं। [MCP सर्वर](/docs/developers/mcp) भी इन्हें छोटे विवरण के साथ सूची में दिखा सकता है।
 
 ## रिस्पॉन्स [#responses]
 
-सफल रिक्वेस्ट इमेज लौटाती है, इन हेडर के साथ:
+सफल रिक्वेस्ट इमेज लौटाती है, इन के साथ:
 
-- `Content-Type: image/svg+xml`, `image/png` या `application/postscript` (EPS `qr-code.eps` डाउनलोड के रूप में भेजी जाती है)
+- `Content-Type: image/svg+xml`, `image/png` या `application/postscript` (EPS `qr-code.eps` डाउनलोड के रूप में भेजा जाता है)
 - `Cache-Control: public, max-age=31536000, immutable`, सिवाय `item` वाले रेंडर के (5 मिनट, CDN पर 10, क्योंकि किसी item का नया वर्शन आ सकता है या उसे हटाया जा सकता है) और `logoFileId` वाले रेंडर के (`private, no-store`)
 - `Access-Control-Allow-Origin: *`, ताकि आप इसे किसी भी वेबसाइट से `fetch` कर सकें
 
-रेंडरिंग डिटरमिनिस्टिक है: एक ही query string हमेशा वही बाइट्स लौटाती है, इसीलिए रिस्पॉन्स एक साल तक कैश किए जा सकते हैं। जो URL सिर्फ़ मूल पैरामीटर इस्तेमाल करते हैं, वे बिल्कुल वैसे ही बनते हैं जैसे हमेशा बनते आए हैं।
+रेंडरिंग डिटरमिनिस्टिक है: एक ही query string हमेशा वही बाइट्स लौटाती है, इसीलिए रिस्पॉन्स एक साल तक cache किए जा सकते हैं। सिर्फ़ मूल पैरामीटर वाले URL बिल्कुल वैसे ही रेंडर होते हैं जैसे हमेशा होते आए हैं।
 
-अमान्य पैरामीटर पर `400` मिलता है, जिसकी JSON बॉडी हर समस्या का नाम बताती है:
+गलत पैरामीटर पर `400` मिलता है, जिसकी JSON बॉडी हर समस्या का नाम बताती है:
 
 ```json
 {
@@ -190,22 +190,22 @@ Logo QR और Image QR आर्ट यहाँ उपलब्ध नही�
 }
 ```
 
-जो डेटा चुने गए error correction level पर QR कोड में नहीं समाता, उस पर भी `param: "data"` के साथ `400` मिलता है। कम `level` या छोटा डेटा इस्तेमाल करें।
+जो डेटा चुने गए error correction लेवल पर QR कोड में नहीं समाता, उस पर भी `param: "data"` के साथ `400` मिलता है। कम `level` या छोटा डेटा इस्तेमाल करें।
 
 ## सीमाएँ [#limits]
 
-- **रेट लिमिट:** प्रति IP पता प्रति मिनट 300 रिक्वेस्ट। सीमा पार होने पर `Retry-After` हेडर के साथ `429` मिलता है।
-- **स्कैन की जाँच नहीं होती।** Image API वही बनाता है जो आप माँगते हैं। किसी डिज़ाइन का स्कैन स्कोर पहले जाँचने और ठीक करने के लिए [MCP सर्वर](/docs/developers/mcp) पर `design_qr` इस्तेमाल करें, या [Playground](/playground?tab=design) में स्कैन स्कोर देखें।
+- **रेट लिमिट:** हर IP एड्रेस के लिए प्रति मिनट 300 रिक्वेस्ट। सीमा पार होने पर `Retry-After` हेडर के साथ `429` मिलता है।
+- **कोई स्कैन जाँच नहीं।** image API वही बनाता है जो आप माँगते हैं। किसी डिज़ाइन का स्कैन स्कोर पहले जाँचने और ठीक करने के लिए [MCP सर्वर](/docs/developers/mcp) पर `design_qr` इस्तेमाल करें, या [Playground](/playground?tab=design) में स्कैन स्कोर देखें।
 - **`style` URL में 8,192 अक्षरों तक** हो सकता है, और उसका JSON 40 KB तक।
-- **डेटा URL का हिस्सा है।** किसी भी URL की तरह, यह सर्वर लॉग, ब्राउज़र हिस्ट्री और कैश में पहुँच सकता है। इसमें पासवर्ड या दूसरी गोपनीय चीज़ें न डालें।
+- **डेटा URL का हिस्सा है।** किसी भी URL की तरह यह सर्वर लॉग, ब्राउज़र हिस्ट्री और cache में पहुँच सकता है। इसमें पासवर्ड या दूसरी गोपनीय जानकारी न डालें।
 
-## स्कैन के लिए सुझाव [#scanning-tips]
+## स्कैन करने के सुझाव [#scanning-tips]
 
-- जब इमेज गहरे या भरे-भरे बैकग्राउंड पर हो, जैसे GitHub के डार्क मोड में README, तब `margin` को `2` या उससे ज़्यादा रखें।
-- `fg` और `bg` के बीच अच्छा कंट्रास्ट रखें। हल्के बैकग्राउंड पर गहरे मॉड्यूल सबसे भरोसेमंद ढंग से स्कैन होते हैं।
-- डिफ़ॉल्ट (चौकोर मॉड्यूल, 4 मॉड्यूल का मार्जिन) हर रीडर पर स्कैन होते हैं। `circle` जैसी सजावटी आकृतियाँ नरम दिखती हैं, पर कुछ पुराने स्कैनर उन्हें कम भरोसेमंद ढंग से पढ़ते हैं — [स्कैन चेकर](/tools/scan-checker) से जाँचें।
-- प्रिंट करने से पहले कोड को कुछ फ़ोनों से टेस्ट करें।
+- जब इमेज गहरे या भरे-भरे बैकग्राउंड पर हो, जैसे GitHub के डार्क मोड में README, तो `margin` को `2` या उससे ज़्यादा रखें।
+- `fg` और `bg` के बीच अच्छा कंट्रास्ट रखें। हल्के बैकग्राउंड पर गहरे मॉड्यूल सबसे भरोसेमंद तरीके से स्कैन होते हैं।
+- डिफ़ॉल्ट (चौकोर मॉड्यूल, 4 मॉड्यूल का margin) हर रीडर पर स्कैन होते हैं। `circle` डॉट जैसे स्टाइल वाले आकार ज़्यादा मुलायम दिखते हैं, लेकिन कुछ पुराने स्कैनर उन्हें कम भरोसेमंद ढंग से पढ़ते हैं — [स्कैन चेकर](/tools/scan-checker) से जाँच लें।
+- प्रिंट करने से पहले कोड को कुछ फ़ोन से टेस्ट करें।
 
 ## सेल्फ-होस्टिंग [#self-hosting]
 
-यह endpoint QRdx वेब ऐप का हिस्सा है, इसलिए [सेल्फ-होस्ट](/docs/self-hosting) किया हुआ इंस्टेंस इसे आपके अपने डोमेन पर `/api/v1/qr` पर चलाता है (जैसे `https://qr.example.com/api/v1/qr?data=…`)। छोटा `/v1/qr` पाथ सिर्फ़ `api.qrdx.dev` पर काम करता है। रेट लिमिटिंग तब Upstash Redis इस्तेमाल करती है जब वह कॉन्फ़िगर हो, वरना बंद रहती है।
+यह endpoint QRdx वेब ऐप का हिस्सा है, इसलिए [सेल्फ-होस्टेड](/docs/self-hosting) इंस्टेंस इसे आपके अपने डोमेन पर `/api/v1/qr` पर चलाता है (उदाहरण के लिए `https://qr.example.com/api/v1/qr?data=…`)। छोटा `/v1/qr` पाथ सिर्फ़ `api.qrdx.dev` पर काम करता है। रेट लिमिटिंग तब Upstash Redis इस्तेमाल करती है जब वह कॉन्फ़िगर हो, वरना बंद रहती है।
