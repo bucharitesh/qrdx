@@ -102,7 +102,7 @@ You don't need a database or any environment variables to work on the React libr
 
 ## Checks before you open a pull request
 
-CI (`.github/workflows/ci.yml`) runs these on every pull request and on every push to `main`. Pushes to `staging` don't run it again: every change reaches `staging` through a pull request that already did. Both branches require the job to pass before anything merges.
+CI (`.github/workflows/ci.yml`) runs these on every pull request and on every push to `staging` and `main`. Both branches require the job to pass before anything merges. A push to `staging` runs the full suite in the background after each merge. A release pull request into `main`, and the push to `main` it creates, hold the same code, so they reuse that result instead of testing it again (`scripts/ci-reuse-check.sh` compares git trees; it waits up to 20 minutes for a staging run that's still going, and falls back to the full suite when nothing matches). Manual runs always test everything.
 
 ```bash
 bun x turbo build --filter=qrdx --filter=@qrdx/cli   # the docs app and CLI use qrdx's build output; the CLI tests run its dist/index.js
@@ -113,7 +113,7 @@ bun run test                        # every package's tests, through turbo
 bun run lint:ci                     # ultracite check: Biome's lint and format rules over the whole repository
 ```
 
-A pull request into `staging` tests only the packages it changes and the packages that depend on them (`turbo test --affected`). A content-only change runs the docs app's tests and skips the engine's; a change to `packages/qrdx` runs the engine, the CLI and the docs app. Release pull requests into `main`, pushes to `main` and manual runs test everything. Turbo's cache (`.turbo/cache`, kept between runs with `actions/cache`) replays any task whose inputs haven't changed, and the job's summary lists what was replayed and what ran.
+A pull request into `staging` tests only the packages it changes and the packages that depend on them (`turbo test --affected`). A content-only change runs the docs app's tests and skips the engine's; a change to `packages/qrdx` runs the engine, the CLI and the docs app. Pushes to `staging` and `main`, release pull requests into `main` and manual runs test everything, unless an earlier full run already passed on the identical code (see above). Turbo's cache (`.turbo/cache`, kept between runs with `actions/cache`) replays any task whose inputs haven't changed, and the job's summary lists what was replayed and what ran.
 
 The official frames (`packages/qrdx/src/frames/official`, hundreds of them) all get their spec, color, layout and generator checks and one crisp decode on every run, but the slow scan checks (the phone-camera model at three distances, 160 and 320 px, the scan score, zbar, PDF and EPS) only go to a sample: the hand-made frames, one frame per layout, and a set that rotates daily so every frame comes round (`packages/qrdx/scripts/official-frames/sample.mjs`). To scan every frame, as the weekly and release `Frame scan` workflow does, set `QRDX_FULL_FRAME_SCAN=1`:
 

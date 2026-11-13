@@ -1,24 +1,17 @@
 // Vercel's "Ignored Build Step" (apps/docs/vercel.json ignoreCommand).
 // Exit 0 skips the build, exit 1 builds.
 //
-// Production (main) and staging always build. Every other branch is a
-// pull request preview, and those are skipped: the project runs on Vercel
-// Hobby, where a day of agent branches used up the deployment budget and a
-// production build was missed (2026-11-05). Previews were rarely opened
-// anyway, since review happens locally.
-//
-// Skipped builds still count as deployments, and on 2026-11-11 agent pushes
-// hit the daily cap again. So apps/docs/vercel.json (git.deploymentEnabled)
-// now stops Vercel from creating a deployment at all for any branch other
-// than main, staging and preview/**. This script is the second line: it
-// only sees those branches.
-//
-// To build a preview on purpose, push the work to a branch named
-// preview/<something>. [skip ci] still skips any build, production included.
+// Only production (main) builds. The project runs on Vercel Hobby, whose
+// build and CPU allowances are tight, so previews and staging don't deploy
+// at all (owner, 2026-11-14): apps/docs/vercel.json (git.deploymentEnabled)
+// stops Vercel from creating a deployment for any branch but main, and this
+// script is the second line in case a non-production build reaches it.
+// Review happens locally (bun run --filter docs dev); CI runs the typechecks,
+// tests and lint. [skip ci] still skips any build, production included.
 //
 // A change to the docs site alone (apps/docs-site, its deploy workflow) is
-// skipped too, production included: that app deploys from its own GitHub
-// Action (.github/workflows/docs-deploy.yml), and nothing here uses it. The
+// skipped too: that app deploys from its own GitHub Action
+// (.github/workflows/docs-deploy.yml), and nothing here uses it. The
 // changes are the ones since the last deployment (VERCEL_GIT_PREVIOUS_SHA);
 // when git can't list them, the build goes ahead.
 const { execFileSync, execSync } = require("node:child_process");
@@ -74,18 +67,9 @@ function shouldSkip({ message, env, branch, changedFiles: files = null }) {
   if (env === "production") {
     return { skip: false, reason: "Building production." };
   }
-  if (branch === "staging") {
-    return { skip: false, reason: "Building staging." };
-  }
-  if (branch?.startsWith("preview/")) {
-    return {
-      skip: false,
-      reason: `Building this preview: ${branch} is a preview/ branch.`,
-    };
-  }
   return {
     skip: true,
-    reason: `Skipping the preview for ${branch || "this branch"}: only main, staging and preview/ branches build. Push to a preview/<name> branch to build one.`,
+    reason: `Skipping ${branch || "this branch"}: only production (main) builds on Vercel.`,
   };
 }
 
