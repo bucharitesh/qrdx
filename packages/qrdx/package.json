@@ -29,7 +29,11 @@
   },
   "license": "MIT",
   "author": "Ritesh Bucha",
-  "sideEffects": false,
+  "sideEffects": [
+    "./dist/element-define.mjs",
+    "./dist/element-define.js",
+    "./dist/element-define.browser.mjs"
+  ],
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/src/index.d.ts",
@@ -64,6 +68,26 @@
       "require": {
         "types": "./dist/src/vanilla.d.ts",
         "default": "./dist/vanilla.js"
+      }
+    },
+    "./element": {
+      "import": {
+        "types": "./dist/src/element.d.ts",
+        "default": "./dist/element.mjs"
+      },
+      "require": {
+        "types": "./dist/src/element.d.ts",
+        "default": "./dist/element.js"
+      }
+    },
+    "./element/define": {
+      "import": {
+        "types": "./dist/src/element-define.d.ts",
+        "default": "./dist/element-define.mjs"
+      },
+      "require": {
+        "types": "./dist/src/element-define.d.ts",
+        "default": "./dist/element-define.js"
       }
     },
     "./node": {
