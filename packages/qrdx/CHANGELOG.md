@@ -2,7 +2,7 @@
 
 Release notes for earlier versions are at [qrdx.dev/changelog](https://qrdx.dev/changelog).
 
-## Unreleased
+## 0.0.51
 
 ### React-free core and plain JavaScript
 
