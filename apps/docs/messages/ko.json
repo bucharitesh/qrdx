@@ -1669,6 +1669,11 @@
       "after": "스캐너가 별도의 창에서 바로 열리고, 이 스캐너로 코드를 한 번 스캔하고 나면 오프라인에서도 작동해요."
     }
   },
+  "scannerApp": {
+    "share": "공유",
+    "scanInstructions": "QR 코드나 바코드에 카메라를 맞춰 주세요",
+    "cameraBlocked": "QRdx Scanner의 카메라 접근이 꺼져 있어요. 설정에서 켜거나 사진을 대신 스캔해 보세요."
+  },
   "scanPages": {
     "reportAbuse": "악용 신고",
     "privacy": "개인정보",

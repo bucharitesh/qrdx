@@ -1,0 +1,17 @@
+/* The website's design system, and the class names the reused scanner
+   components use (apps/docs/components/scanner). */
+@import "../../../packages/design-system/styles/globals.css";
+
+@source "../../docs/components/scanner";
+@source "../../docs/components/brand-marks.tsx";
+@source "./";
+
+html,
+body {
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: ui-sans-serif, system-ui, sans-serif;
+}

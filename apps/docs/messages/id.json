@@ -1669,6 +1669,11 @@
       "after": "Aplikasi langsung terbuka di pemindai dalam jendelanya sendiri, dan dapat digunakan secara offline setelah Anda memindai satu kode dengannya."
     }
   },
+  "scannerApp": {
+    "share": "Bagikan",
+    "scanInstructions": "Arahkan kamera ke kode QR atau barcode",
+    "cameraBlocked": "Akses kamera untuk QRdx Scanner sedang nonaktif. Aktifkan di Pengaturan, atau pindai gambar sebagai gantinya."
+  },
   "scanPages": {
     "reportAbuse": "Laporkan penyalahgunaan",
     "privacy": "Privasi",

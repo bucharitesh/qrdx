@@ -4863,6 +4863,18 @@
     "source": "3ee48cb78ef2",
     "status": "machine"
   },
+  "scannerApp.share": {
+    "source": "29887a5ff984",
+    "status": "machine"
+  },
+  "scannerApp.scanInstructions": {
+    "source": "716118d231d5",
+    "status": "machine"
+  },
+  "scannerApp.cameraBlocked": {
+    "source": "7d85f36d7bea",
+    "status": "machine"
+  },
   "scanPages.reportAbuse": {
     "source": "179e5a21cc1e",
     "status": "machine"

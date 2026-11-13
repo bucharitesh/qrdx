@@ -100,6 +100,14 @@
   },
   "overrides": [
     {
+      // The native scanner reuses the website's packages through Vite aliases
+      // (apps/scanner-mobile/vite.config.ts), outside the workspace.
+      "includes": ["apps/scanner-mobile/src/**"],
+      "linter": {
+        "rules": { "correctness": { "noUndeclaredDependencies": "off" } }
+      }
+    },
+    {
       // Installed by the submit_sitemap workflow; eslint comes with @raycast/eslint-config.
       "includes": [".github/scripts/**", "plugins/raycast/eslint.config.js"],
       "linter": {
@@ -127,6 +135,9 @@
       "!packages/design-system/lib",
       "!packages/design-system/hooks",
       "!plugins/raycast/raycast-env.d.ts",
+      // The native scanner's generated Xcode and Gradle projects
+      "!apps/scanner-mobile/ios",
+      "!apps/scanner-mobile/android",
       // Generated screenshots, E2E results and agent worktrees
       "!.claude/build/shots",
       "!.claude/worktrees"
