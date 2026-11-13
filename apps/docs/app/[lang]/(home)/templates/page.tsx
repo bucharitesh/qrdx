@@ -5,24 +5,26 @@ import { IconTile } from "@/components/sections/tools/cards";
 import { FaqList } from "@/components/sections/tools/faq-list";
 import { ToolHero } from "@/components/sections/tools/tool-hero";
 import { isFeatureAvailable } from "@/lib/feature-availability";
-import { TEMPLATE_RULES } from "@/lib/i18n/content-rules";
-import { localizeContent } from "@/lib/i18n/content-server";
 import { localizedMetadata } from "@/lib/i18n/metadata";
 import { requireLocale } from "@/lib/i18n/server";
-import { listTemplateDemos } from "@/lib/landing/demo";
 import { TEMPLATES_PATH } from "@/lib/landing/demo-paths";
-import { listTemplates } from "@/lib/landing/templates";
-import { TemplateCard } from "./_components/template-card";
+import { DeferredCards } from "./_components/deferred-cards";
+import { SectionCards } from "./_components/section-cards";
 import { TemplateFilter } from "./_components/template-filter";
+import { EAGER_CARDS, SECTION_CARDS } from "./_lib/gallery";
+import { localizedGallery, TEMPLATE_COUNT } from "./_lib/sections";
 
 // Public gallery of every hosted-page template, grouped by page type, each
 // with a live demo (/templates/<type>/<id>). Built from the template
 // registry; no database.
+//
+// Every section, template name and demo link is in the HTML, but only the
+// first screen's cards draw their live preview (a page in a phone each, the
+// heavy part): the others load theirs as they near the screen
+// (_components/deferred-cards.tsx), so the page stays light and static.
 
 // Event previews start "a week from today"; rebuild daily.
 export const revalidate = 86400;
-
-const demos = listTemplateDemos();
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await requireLocale();
@@ -31,7 +33,7 @@ export async function generateMetadata(): Promise<Metadata> {
     locale,
     path: TEMPLATES_PATH,
     title: t("metaTitle"),
-    description: t("metaDescription", { count: demos.length }),
+    description: t("metaDescription", { count: TEMPLATE_COUNT }),
     ownOgImage: true,
   });
 }
@@ -45,12 +47,24 @@ export default async function TemplatesPage() {
   const [t, common, { types, localDemos }] = await Promise.all([
     getTranslations({ locale, namespace: "templates" }),
     getTranslations({ locale, namespace: "common" }),
-    localizeContent(
-      { types: listTemplates(), localDemos: demos },
-      locale,
-      TEMPLATE_RULES,
-    ),
+    localizedGallery(locale),
   ]);
+  const moreLabels = {
+    load: t("more.load"),
+    loading: t("more.loading"),
+    failed: t("more.failed"),
+  };
+  const sections = types.map((template) => ({
+    template,
+    items: localDemos.filter((demo) => demo.template.type === template.type),
+  }));
+  // The first EAGER_CARDS cards, in order, are drawn on the server.
+  let left = EAGER_CARDS;
+  const eager = sections.map(({ items }) => {
+    const count = Math.min(left, items.length);
+    left -= count;
+    return count;
+  });
   const domains = isFeatureAvailable("customDomains") ? "yes" : "no";
   const faqs = FAQS.map((key) => ({
     question: t(`faq.${key}Question`),
@@ -67,23 +81,21 @@ export default async function TemplatesPage() {
           { name: common("home"), path: "/" },
           { name: t("crumb"), path: TEMPLATES_PATH },
         ]}
-        intro={[t("intro", { templates: demos.length, types: types.length })]}
+        intro={[t("intro", { templates: TEMPLATE_COUNT, types: types.length })]}
         title={t("title")}
       />
 
       <ClientMessages namespaces={["templates.filter", "templateDemo"]}>
         <TemplateFilter
-          total={demos.length}
+          total={TEMPLATE_COUNT}
           types={types.map((template) => ({
             type: template.type,
             label: template.label,
             count: template.variants.length,
           }))}
         >
-          {types.map((template) => {
-            const items = localDemos.filter(
-              (demo) => demo.template.type === template.type,
-            );
+          {sections.map(({ template, items }, index) => {
+            const drawn = eager[index] ?? 0;
             const headingId = `${template.type}-heading`;
             return (
               <section
@@ -110,15 +122,21 @@ export default async function TemplatesPage() {
                     {t("count", { count: items.length })}
                   </span>
                 </div>
-                {/* A swipeable row on phones, a grid from sm. */}
-                <div className="flex scroll-px-10 snap-x snap-mandatory gap-4 overflow-x-auto px-10 pt-1 pb-10 [scrollbar-width:none] sm:grid sm:snap-none sm:grid-cols-2 sm:gap-x-6 sm:gap-y-10 sm:overflow-visible lg:grid-cols-3 lg:gap-x-8">
-                  {items.map((demo) => (
-                    <TemplateCard
-                      className="w-[15.5rem] shrink-0 snap-start sm:w-auto"
-                      demo={demo}
-                      key={demo.path}
+                <div className={SECTION_CARDS}>
+                  <SectionCards demos={items.slice(0, drawn)} locale={locale} />
+                  {items.length > drawn && (
+                    <DeferredCards
+                      cards={items.slice(drawn).map((demo) => ({
+                        name: demo.variant.name,
+                        description: demo.variant.description,
+                        href: demo.path,
+                      }))}
+                      labels={moreLabels}
+                      locale={locale}
+                      offset={drawn}
+                      type={template.type}
                     />
-                  ))}
+                  )}
                 </div>
               </section>
             );
