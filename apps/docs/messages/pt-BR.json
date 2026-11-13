@@ -406,7 +406,7 @@
       "analytics": {
         "eyebrow": "Análises",
         "title": "Veja cada leitura",
-        "description": "Leituras ao longo do tempo, países, dispositivos, navegadores e origens de cada QR code dinâmico. Contas Grátis mantêm {days, number} dias.",
+        "description": "Leituras ao longo do tempo, países, dispositivos, navegadores e origens de acesso de cada código dinâmico. Contas grátis guardam {years, plural, one {# ano} other {# anos}} de histórico, e os planos pagos guardam tudo.",
         "link": "Como funcionam as análises de leitura"
       },
       "bulk": {
@@ -450,7 +450,7 @@
       "items": {
         "free": {
           "question": "O QRdx é grátis mesmo? Existem limites escondidos?",
-          "answer": "Sim. Criar, personalizar e baixar QR codes estáticos é grátis e não exige conta: códigos ilimitados, todas as opções de design ({bodyPatterns, number} padrões de corpo, {eyeShapes, number} formatos de olho de canto e {eyeCentres, number} centros de olho, gradientes, logos, molduras e arte com Logo QR ou Image QR) e downloads em PNG, JPG, SVG, PDF e EPS. Não há marcas d'água nem anúncios. Os QR codes estáticos guardam seu conteúdo no próprio código, então nunca expiram e não têm limite de leituras. Uma conta grátis adiciona 10 QR codes dinâmicos, 3 páginas hospedadas, 90 dias de análise de leituras, 10 temas salvos e 5 gerações de tema com IA; Pro ({proMonthly}/mês ou {proYearly}/ano) e Business ({businessMonthly}/mês ou {businessYearly}/ano) ampliam esses limites."
+          "answer": "Sim. Criar, personalizar e baixar QR codes estáticos é grátis e não exige conta: códigos ilimitados, todas as opções de design ({bodyPatterns, number} padrões de corpo, {eyeShapes, number} formatos de olho de canto e {eyeCentres, number} centros de olho, gradientes, logos, molduras e arte com Logo QR ou Image QR) e downloads em PNG, JPG, SVG, PDF e EPS. Não há marcas d’água nem anúncios. Os códigos estáticos guardam seu conteúdo no próprio código, então nunca expiram e não têm limite de leituras. Uma conta grátis inclui 10 QR codes dinâmicos, 3 páginas hospedadas, {historyYears, plural, one {# ano} other {# anos}} de análise de leituras, 10 temas salvos e 5 gerações de tema com IA; Pro ({proMonthly}/mês ou {proYearly}/ano) e Business ({businessMonthly}/mês ou {businessYearly}/ano) ampliam esses limites."
         },
         "signup": {
           "question": "Preciso me cadastrar ou criar uma conta?",
@@ -458,7 +458,7 @@
         },
         "dynamic": {
           "question": "O QRdx tem QR codes dinâmicos e análise de leituras?",
-          "answer": "Sim. Um QR code dinâmico codifica um link curto, então você pode mudar o destino depois de imprimir, e cada leitura é contada com análises de país, dispositivo e navegador. Um código pode abrir um site ou uma página hospedada para celular (lista de links, cardápio, vCard, cupom, evento, formulário, PDF, galeria, áudio ou vídeo). Pro e Business adicionam roteamento inteligente por dispositivo, país, idioma ou horário, testes A/B, tags UTM, senhas, datas de expiração e limites de leitura. Contas grátis têm 10 QR codes dinâmicos ativos com 90 dias de histórico; Pro e Business são ilimitados, com histórico maior."
+          "answer": "Sim. Um código dinâmico codifica um link curto, então você pode mudar o destino depois de imprimir, e cada leitura é contabilizada com análises de país, dispositivo e navegador. Um código pode abrir um site ou uma página hospedada para celular (lista de links, cardápio, vCard, cupom, evento, formulário, PDF, galeria, áudio ou vídeo). Pro e Business adicionam roteamento inteligente por dispositivo, país, idioma ou horário, testes A/B, tags UTM, senhas, datas de expiração e limites de leituras. Contas grátis têm 10 códigos dinâmicos ativos com {historyYears, plural, one {# ano} other {# anos}} de histórico; Pro e Business são ilimitados e guardam todo o seu histórico de leituras."
         },
         "guarantee": {
           "question": "Meus QR codes vão parar de funcionar se eu parar de pagar?",
@@ -482,7 +482,7 @@
         },
         "paidPlans": {
           "question": "O que eu ganho com o Pro ou o Business?",
-          "answer": "O Pro ({proMonthly}/mês ou {proYearly}/ano) inclui QR codes dinâmicos e páginas hospedadas ilimitados, 3 anos de análises, {customDomains, select, yes {5 domínios personalizados, } other {}}equipes de até 3 pessoas, roteamento inteligente, testes A/B, tags UTM, pixels, alertas por e-mail e um resumo semanal, além de controles de link, como senhas e datas de expiração. O Business ({businessMonthly}/mês ou {businessYearly}/ano) inclui páginas white-label com CSS personalizado, histórico de análises ilimitado, {customDomains, select, yes {25 domínios personalizados, } other {}}membros de equipe ilimitados, rastreamento de conversões, webhooks e alertas no Slack ou no Discord. Criar, personalizar e baixar QR codes estáticos continua grátis."
+          "answer": "Pro ({proMonthly}/mês ou {proYearly}/ano) adiciona códigos dinâmicos e páginas hospedadas ilimitados, todo o seu histórico de leituras, {customDomains, select, yes {5 domínios personalizados, } other {}}equipes de até 3 pessoas, roteamento inteligente, testes A/B, tags UTM, pixels, alertas por e-mail e um resumo semanal, além de controles de link como senhas e datas de expiração. Business ({businessMonthly}/mês ou {businessYearly}/ano) adiciona páginas white-label com CSS personalizado, {customDomains, select, yes {25 domínios personalizados, } other {}}membros de equipe ilimitados, rastreamento de conversões, webhooks e alertas no Slack ou Discord. Criar, personalizar e baixar QR codes estáticos continua grátis."
         }
       }
     }
@@ -502,8 +502,8 @@
     },
     "extras": {
       "unlimitedDynamic": "códigos dinâmicos ilimitados",
-      "longerAnalytics": "análises por mais tempo",
-      "analyticsHistory": "histórico de análises",
+      "longerAnalytics": "todo o seu histórico de leituras",
+      "analyticsHistory": "histórico completo de análises",
       "customDomains": "domínios próprios",
       "teams": "equipes"
     },
@@ -716,7 +716,7 @@
       "items": {
         "cancel": {
           "question": "O que acontece se eu cancelar?",
-          "answer": "Nada quebra. Seu plano continua ativo até o fim do período que você pagou, e depois sua conta passa para o Grátis. Todo QR code dinâmico continua redirecionando e toda leitura continua sendo contada: essa é a nossa Garantia Never-Hostage. No Grátis, você não pode criar além do que os limites do plano Grátis permitem, e as análises mostram os últimos 90 dias."
+          "answer": "Nada quebra. Seu plano continua ativo até o fim do período que você pagou e, depois, sua conta passa para o Grátis. Todo QR code dinâmico continua redirecionando e toda leitura continua sendo contada: essa é a nossa Garantia Never-Hostage. No Grátis, você não pode criar além do que os limites do plano Grátis permitem, e as análises mostram {historyYears, plural, one {o último ano} other {os últimos # anos}}. As leituras mais antigas são mantidas, então elas voltam se você fizer upgrade de novo."
         },
         "refund": {
           "question": "Posso pedir meu dinheiro de volta?",
@@ -6345,7 +6345,6 @@
           "scansPerDayLastDays": "Leituras por dia, últimos {days, number} dias (UTC)",
           "botsAndLinkPreviewsAre": "Bots e pré-visualizações de links não são contados. Países e cidades vêm do endereço IP do visitante, que nunca é armazenado; locais precisos apenas de quem optou por compartilhá-los.",
           "dateRange": "Período",
-          "valueKeepsValue2OfScan": "{value} mantém {value2} de histórico de leituras",
           "totalScans": "Total de leituras",
           "scansInRange": "Leituras no período",
           "uniqueVisitors": "Visitantes únicos",

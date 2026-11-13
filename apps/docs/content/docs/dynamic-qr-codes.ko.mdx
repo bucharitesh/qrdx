@@ -1,96 +1,96 @@
 ---
 title: "동적 QR 코드"
-description: "QR 코드를 한 번 인쇄한 뒤에도 연결 대상을 바꿀 수 있고, 얼마나 자주 스캔되는지 확인할 수 있어요."
+description: "QR 코드를 한 번 인쇄한 뒤 연결 대상을 나중에 바꾸고, 얼마나 자주 스캔되는지 확인하세요."
 icon: QrCode
 ---
 
-동적 QR 코드는 최종 URL 대신 `https://qrdx.dev/q/aB3dE5f` 같은 짧은 링크를 담고 있습니다. 코드를 스캔하면 짧은 링크가 열리고, 설정해 둔 대상으로 리디렉션됩니다. 대상은 언제든지 바꿀 수 있으므로 인쇄한 코드가 오래되어 쓸모없어지는 일이 없고, 모든 스캔이 집계됩니다.
+동적 QR 코드는 최종 URL 대신 `https://qrdx.dev/q/aB3dE5f` 같은 짧은 링크를 인코딩합니다. 코드를 스캔하면 짧은 링크가 열리고, 설정해 둔 대상으로 리디렉션됩니다. 대상은 언제든지 바꿀 수 있으므로 인쇄한 코드가 오래되어 못 쓰게 되는 일이 없고, 모든 스캔이 집계됩니다.
 
-Playground와 `qrdx` 라이브러리에서 만드는 정적 QR 코드는 계속 무료이며 제한이 없습니다. 동적 QR 코드를 만들려면 QRdx 계정이 필요합니다.
+Playground와 `qrdx` 라이브러리에서 만드는 정적 QR 코드는 계속 무료이며 무제한입니다. 동적 코드를 쓰려면 QRdx 계정이 필요합니다.
 
 ## 동적 코드 만들기 [#create-a-dynamic-code]
 
 - **대시보드:** [대시보드](/dashboard)를 열고 **New code**를 클릭한 다음 대상 URL과 선택 사항인 제목을 입력합니다. 코드는 PNG, WebP, SVG로 다운로드할 수 있습니다.
-- **Playground:** **URL** 콘텐츠 유형을 선택하고 링크를 입력한 뒤 **Make it dynamic**을 켭니다. QR 코드가 짧은 링크로 바뀌고 디자인은 그대로 유지됩니다. 이후에 URL을 수정했다면 **Point it to the new URL**을 클릭해 대상을 업데이트하세요. **Save design to code**를 누르면 현재 디자인이 코드와 함께 저장됩니다.
+- **Playground:** **URL** 콘텐츠 유형을 선택하고 링크를 입력한 뒤 **Make it dynamic**을 켭니다. QR 코드가 짧은 링크로 바뀌며 디자인은 그대로 유지됩니다. 이후 URL을 수정했다면 **Point it to the new URL**을 클릭해 대상을 업데이트하세요. **Save design to code**를 누르면 현재 디자인이 코드와 함께 저장됩니다.
 
 대상은 `http://` 또는 `https://` 링크여야 합니다. 사용자 이름이나 비밀번호가 포함된 링크와 다른 QRdx 짧은 링크로 연결되는 링크는 거부됩니다.
 
 ## 사용자 지정 back-half [#custom-back-halves]
 
-모든 코드에는 무작위 7자 back-half(`/q/` 뒤에 오는 부분)가 부여됩니다. Pro와 Business에서는 `https://qrdx.dev/q/spring-menu`처럼 원하는 back-half를 직접 정할 수 있습니다. 코드를 만들거나 수정할 때 **Custom back-half**를 입력하면 되고, 입력하는 동안 대화상자에서 사용 가능한지 알려 줍니다.
+모든 코드에는 무작위 7자리 back-half가 부여됩니다. back-half는 `/q/` 뒤에 오는 부분입니다. Pro와 Business에서는 `https://qrdx.dev/q/spring-menu`처럼 원하는 값을 직접 정할 수 있습니다. 코드를 만들거나 편집할 때 **Custom back-half**를 입력하면, 입력하는 동안 대화상자가 사용 가능한지 알려 줍니다.
 
-- 3자에서 64자까지: 영문자, 숫자, `-`, `_`를 쓸 수 있으며 `-`로 시작하거나 끝날 수 없습니다.
-- 자동 생성된 back-half와 마찬가지로 대소문자를 구분합니다. `Spring-Menu`와 `spring-menu`는 서로 다른 링크입니다.
+- 3~64자: 영문자, 숫자, `-`, `_`를 사용할 수 있으며 `-`로 시작하거나 끝날 수 없습니다.
+- back-half는 자동 생성된 값과 마찬가지로 대소문자를 구분합니다. `Spring-Menu`와 `spring-menu`는 서로 다른 링크입니다.
 - `qrdx.dev`에서는 back-half가 QRdx 전체에서 고유해야 하며, QRdx 페이지로 읽히는 단어(`admin`, `api`, `docs`, `login`, `pricing`, `settings` 등)는 예약되어 있습니다.
-- 직접 연결한 [사용자 지정 도메인](/docs/custom-domains)에서는 해당 도메인 안에서만 고유하면 되고, `api`, `p`, `q`만 예약되어 있으므로 `go.yourbrand.com/pricing` 같은 주소도 쓸 수 있습니다. 이런 back-half는 도메인에 속하므로 `qrdx.dev/q/` 링크는 없습니다.
-- 코드의 back-half를 바꾸면 링크도 바뀝니다. 이전 back-half로 인쇄한 QR 코드는 작동하지 않으므로 코드를 다시 다운로드하세요.
+- 자신의 [사용자 지정 도메인](/docs/custom-domains)에서는 해당 도메인 안에서만 고유하면 되고, `api`, `p`, `q`만 예약되어 있으므로 `go.yourbrand.com/pricing` 같은 주소를 쓸 수 있습니다. 이런 back-half는 도메인에 속하므로 `qrdx.dev/q/` 링크는 없습니다.
+- 코드의 back-half를 바꾸면 링크가 바뀝니다. 이전 back-half로 인쇄한 QR 코드는 작동하지 않으므로 코드를 다시 다운로드하세요.
 
 ## 코드 관리 [#manage-codes]
 
-대시보드에서 다음 작업을 할 수 있어요.
+대시보드에서 다음 작업을 할 수 있습니다.
 
 - **Edit link:** 대상이나 제목을 변경합니다. 인쇄한 코드는 계속 작동하며, 다음 스캔부터 새 대상이 열립니다.
-- **Change type:** 웹사이트 링크를 [호스팅 페이지](/docs/landing-pages)로, 페이지를 다시 링크로, 또는 페이지를 다른 페이지 유형으로 바꿉니다. 짧은 링크와 스캔 기록은 그대로 유지됩니다. [인쇄된 코드가 여는 내용 바꾸기](/docs/help/dynamic-codes/change-the-type)를 참고하세요.
-- **Edit design in playground:** 코드를 에디터에서 엽니다. 짧은 링크와는 계속 연결된 상태입니다.
-- **Archive:** 코드를 복원할 때까지 짧은 링크에 "더 이상 활성화되지 않음" 페이지가 표시됩니다. 보관한 코드는 요금제 한도에 포함되지 않습니다.
-- **Move to trash:** 짧은 링크에 "더 이상 활성화되지 않음" 페이지(HTTP 410)가 표시되고, 코드는 요금제 한도에서 제외됩니다. **Trash**에서 복원하거나 영구 삭제할 수 있으며, 영구 삭제하면 스캔 기록도 함께 삭제됩니다. 이후 짧은 링크에는 "QR 코드를 찾을 수 없음" 페이지가 표시됩니다. API(`DELETE /v1/codes/{id}`)로 삭제하면 즉시 영구 삭제됩니다.
-- **Duplicate:** 대상, 디자인, 폴더, 태그, 메모를 복사해 새 짧은 링크와 스캔 기록이 없는 새 코드를 만듭니다.
-- **Version history:** 모든 변경 내용이 코드 페이지에 기록됩니다. 버전을 복원하면 현재 설정이 먼저 저장되므로 복원을 되돌릴 수 있습니다.
+- **Change type:** 웹사이트 링크를 [호스팅 페이지](/docs/landing-pages)로, 페이지를 다시 링크로, 또는 페이지를 다른 페이지 유형으로 바꿉니다. 짧은 링크와 스캔 기록은 그대로 유지됩니다. [인쇄한 코드가 여는 대상 바꾸기](/docs/help/dynamic-codes/change-the-type)를 참고하세요.
+- **Edit design in playground:** 코드를 편집기에서 열며, 짧은 링크에 계속 연결된 상태로 유지됩니다.
+- **Archive:** 코드를 복원할 때까지 짧은 링크에 "더 이상 활성화되어 있지 않음" 페이지가 표시됩니다. 보관된 코드는 플랜 한도에 포함되지 않습니다.
+- **Move to trash:** 짧은 링크에 "더 이상 활성화되어 있지 않음" 페이지(HTTP 410)가 표시되고, 코드는 플랜 한도에서 제외됩니다. **Trash**에서 복원하거나 그곳에서 영구 삭제할 수 있으며, 영구 삭제하면 스캔 기록도 함께 삭제됩니다. 이후 짧은 링크에는 "QR 코드를 찾을 수 없음" 페이지가 표시됩니다. API(`DELETE /v1/codes/{id}`)로 삭제하면 즉시 영구 삭제됩니다.
+- **Duplicate:** 대상, 디자인, 폴더, 태그, 메모를 복사해 새 짧은 링크가 있는 새 코드를 만듭니다. 스캔 기록은 복사되지 않습니다.
+- **Version history:** 모든 변경 사항이 코드 페이지에 기록됩니다. 버전을 복원하면 현재 설정이 먼저 저장되므로 복원을 되돌릴 수 있습니다.
 
 ## 코드 정리 [#organize-codes]
 
-- **폴더:** 최대 5단계까지 중첩할 수 있습니다. 코드를 폴더로 끌어다 놓거나 **Move to folder**를 사용하세요. 폴더를 삭제하면 그 안의 코드와 하위 폴더는 한 단계 위로 이동합니다.
-- **태그:** 여러 태그로 필터링하면 해당 태그를 모두 가진 코드만 볼 수 있습니다.
-- **즐겨찾기와 메모:** 코드에 별표를 표시하고 비공개 메모를 남길 수 있으며, 메모는 검색됩니다.
-- **검색**은 제목, 대상, 메모, 태그, back-half를 대상으로 합니다(짧은 링크를 붙여넣으면 해당 코드를 찾을 수 있어요).
-- **일괄 작업:** 코드를 선택해 이동, 태그 지정, 일시 중지, 보관, 즐겨찾기, 휴지통 이동을 하거나 PNG, WebP, SVG 파일을 담은 ZIP으로 다운로드할 수 있습니다.
-- **CSV 가져오기:** **Codes → Import**는 CSV 하나로 최대 {facts.importRows}개의 동적 코드를 만듭니다(대상, 제목, 폴더, 태그, 그리고 `slug` 열의 선택 사항인 사용자 지정 back-half). 모든 코드를 한 폴더에 넣고 전체에 태그를 추가할 수도 있습니다. 긴 가져오기는 일시 중지할 수 있으며, 새로고침하거나 연결이 끊겨도 코드가 중복 생성되지 않고 이어서 진행됩니다. 마지막에는 결과 CSV(각 행의 짧은 링크)와 PNG 또는 SVG 코드가 담긴 ZIP이 제공됩니다. 2개 이상의 행을 가져오는 기능과 사용자 지정 back-half는 Pro가 필요합니다.
+- **Folders:** 최대 5단계까지 중첩할 수 있습니다. 코드를 폴더로 끌어다 놓거나 **Move to folder**를 사용하세요. 폴더를 삭제하면 그 안의 코드와 하위 폴더가 한 단계 위로 이동합니다.
+- **Tags:** 여러 태그로 필터링하면 해당 태그를 모두 가진 코드만 표시됩니다.
+- **즐겨찾기와 메모:** 코드에 별표를 표시하고 비공개 메모를 남길 수 있으며, 메모는 검색할 수 있습니다.
+- **검색**은 제목, 대상, 메모, 태그, back-half를 대상으로 합니다. 짧은 링크를 붙여 넣으면 해당 코드를 찾을 수 있습니다.
+- **일괄 작업:** 코드를 선택해 이동, 태그 지정, 일시 중지, 보관, 즐겨찾기, 휴지통 이동을 하거나 PNG, WebP, SVG 파일의 ZIP으로 다운로드할 수 있습니다.
+- **CSV 가져오기:** **Codes → Import**는 CSV 하나로 동적 코드를 최대 {facts.importRows}개까지 만듭니다(대상, 제목, 폴더, 태그, 그리고 `slug` 열의 선택 사항인 사용자 지정 back-half). 모든 코드를 한 폴더에 넣고 전체에 태그를 추가할 수도 있습니다. 긴 가져오기는 일시 중지할 수 있고, 새로고침하거나 연결이 끊긴 뒤에도 코드가 중복 생성되지 않고 이어서 진행됩니다. 가져오기가 끝나면 결과 CSV(각 행의 짧은 링크)와 PNG 또는 SVG 코드 ZIP이 제공됩니다. 두 행 이상 가져오기와 사용자 지정 back-half는 Pro가 필요합니다.
 
-코드는 만든 워크스페이스에 속합니다. 워크스페이스의 모든 멤버가 코드를 만들고 수정할 수 있으며, 멤버는 자신이 만든 코드를 삭제할 수 있고, 소유자와 관리자는 워크스페이스의 모든 코드를 삭제할 수 있습니다.
+코드는 만든 워크스페이스에 속합니다. 워크스페이스의 모든 멤버가 코드를 만들고 편집할 수 있습니다. 멤버는 자신이 만든 코드를 삭제할 수 있고, 소유자와 관리자는 워크스페이스의 모든 코드를 삭제할 수 있습니다.
 
 <Callout type="info">
-  코드는 사라지지 않습니다. 요금제를 다운그레이드해도 기존 코드가 꺼지지 않습니다. 한도를 초과해도 코드를 수정하고 보관할 수는 있지만, 한도 아래로 내려갈 때까지는 새 코드를 만들거나 복원할 수 없습니다.
+  코드는 사라지지 않습니다. 플랜을 다운그레이드해도 기존 코드가 꺼지지 않습니다. 한도를 초과한 상태에서도 코드를 편집하고 보관할 수 있지만, 한도 이하로 내려갈 때까지는 새로 만들거나 복원할 수 없습니다.
 </Callout>
 
-## 요금제 [#plans]
+## 플랜 [#plans]
 
 | | 무료 | Pro | Business |
 | --- | --- | --- | --- |
 | 활성 동적 코드 | 10 | 무제한 | 무제한 |
 | 스캔 | 무제한 | 무제한 | 무제한 |
-| 스캔 기록 | 90일 | 3년 | 무제한 |
+| 스캔 기록 | {facts.freeScanHistoryYears}년 | 무제한 | 무제한 |
 | API를 통한 일괄 생성 | 불가 | 요청당 최대 {facts.apiBatchCodes}개 | 요청당 최대 {facts.apiBatchCodes}개 |
 
-워크스페이스의 코드에는 소유자들의 요금제 중 가장 높은 요금제가 적용됩니다. 각 요금제에 포함된 나머지 기능은 [요금제 및 한도](/docs/plans-and-limits)를 참고하세요.
+워크스페이스의 코드에는 소유자들이 가진 플랜 중 가장 높은 플랜이 적용됩니다. 각 플랜에 포함된 나머지 항목은 [플랜과 한도](/docs/plans-and-limits)를 참고하세요.
 
 ## 스캔 분석 [#scan-analytics]
 
-각 코드에는 분석 페이지가 있으며, 최근 7일, 30일, 90일, 1년 또는 3년(요금제의 기록 보관 기간에 따라 제한됨) 동안의 시간별 스캔 수, 고유 방문자, 상위 국가와 도시, 기기, 운영체제, 브라우저, 리퍼러를 볼 수 있습니다. 선택한 기간의 스캔은 CSV로 내보낼 수 있습니다.
+각 코드에는 시간별 스캔 수, 고유 방문자, 상위 국가와 도시, 기기, 운영 체제, 브라우저, 리퍼러를 보여 주는 분석 페이지가 있습니다. 기간은 최근 7일, 30일, 90일, 1년, 3년 중에서 선택할 수 있으며 플랜의 기록 보관 기간에 따라 제한됩니다. 선택한 기간의 스캔을 CSV로 내보낼 수 있습니다.
 
-각 스캔에 대해 기록되는 정보는 다음과 같습니다.
+각 스캔에 기록되는 정보는 다음과 같습니다.
 
-- 시간(UTC), 그리고 호스팅 플랫폼이 제공하는 경우 국가, 지역, 도시(qrdx.dev에서는 Vercel 지리 헤더)
-- 사용자 에이전트에서 감지한 기기 유형, 운영체제, 브라우저
+- 시간(UTC), 그리고 호스팅 플랫폼이 제공하는 경우 국가, 지역, 도시(qrdx.dev에서는 Vercel 지역 헤더)
+- 사용자 에이전트로 감지한 기기 유형, 운영 체제, 브라우저
 - 리퍼러의 호스트 이름만 기록하며 전체 URL은 기록하지 않습니다. 대부분의 QR 스캔에는 리퍼러가 없습니다.
-- 방문자 해시: IP 주소, 사용자 에이전트, 날짜를 솔트와 함께 SHA-256으로 해시한 값입니다. 하루 단위로 고유 방문자 수를 계산하는 데 쓰이며, IP 주소 자체는 저장되지 않습니다.
-- Pro와 Business에서 코드가 [정확한 위치를 요청](/docs/precise-location)하고 스캔한 사람이 허용한 경우: 소수점 3자리(약 100m)로 반올림한 위치와 브라우저가 보고한 정확도
+- 방문자 해시: IP 주소, 사용자 에이전트, 날짜에 솔트를 적용한 SHA-256 값입니다. 하루 단위로 고유 방문자를 집계하는 데 쓰이며, IP 주소 자체는 저장되지 않습니다.
+- Pro와 Business에서 코드가 [정밀 위치를 요청](/docs/precise-location)하고 스캔한 사람이 허용한 경우: 소수점 3자리(약 100 m)로 반올림한 위치와 브라우저가 보고한 정확도
 
 알려진 봇, 링크 미리보기, 브라우저 프리페치는 집계되지 않습니다.
 
 ## REST API [#rest-api]
 
-`https://api.qrdx.dev/v1/codes` 아래에서 코드를 프로그래밍 방식으로 관리할 수 있습니다. 요청은 [API 키](/docs/developers/api-keys) 또는 `codes:read`나 `codes:write` 스코프가 있는 OAuth 액세스 토큰(`Authorization: Bearer <key or token>`)으로 인증합니다. 키나 토큰을 받는 방법은 [REST API](/docs/developers/rest-api)를 참고하세요. 키는 생성된 워크스페이스에서 동작하고, 토큰 요청은 본인의 워크스페이스에서 동작합니다. 로그인한 브라우저 세션의 요청도 사용할 수 있으며, 이 경우 대시보드에서 마지막으로 연 워크스페이스에서 동작합니다.
+`https://api.qrdx.dev/v1/codes` 아래에서 코드를 프로그래밍 방식으로 관리할 수 있어요. 요청은 [API 키](/docs/developers/api-keys) 또는 `codes:read`나 `codes:write` 범위를 가진 OAuth 액세스 토큰(`Authorization: Bearer <key or token>`)으로 인증합니다. 발급 방법은 [REST API](/docs/developers/rest-api)를 참고하세요. 키는 생성된 워크스페이스에서 동작하고, 토큰 요청은 내 워크스페이스에서 동작합니다. 로그인한 브라우저 세션의 요청도 사용할 수 있으며, 이 경우 대시보드에서 마지막으로 연 워크스페이스에서 동작합니다.
 
-| Method | Path | Description |
+| 메서드 | 경로 | 설명 |
 | --- | --- | --- |
-| `GET` | `/v1/codes` | 코드 목록을 가져옵니다. 쿼리: `status`(`active`, `archived`, `all`), `q`, `limit`(≤ 100), `offset` |
-| `POST` | `/v1/codes` | 코드를 하나 만들거나 최대 {facts.apiBatchCodes}개의 배열로 만듭니다(배열은 Pro 필요). 본문: `destinationUrl`, 선택 항목 `title`, `style`, `domainId`, `slug` |
-| `GET` | `/v1/codes/{id}` | 코드 하나를 가져옵니다 |
+| `GET` | `/v1/codes` | 코드 목록을 조회합니다. 쿼리: `status`(`active`, `archived`, `all`), `q`, `limit`(≤ 100), `offset` |
+| `POST` | `/v1/codes` | 코드 하나 또는 최대 {facts.apiBatchCodes}개의 배열을 생성합니다(배열은 Pro 필요). 본문: `destinationUrl`, 선택 항목 `title`, `style`, `domainId`, `slug` |
+| `GET` | `/v1/codes/{id}` | 코드 하나를 조회합니다 |
 | `PATCH` | `/v1/codes/{id}` | `destinationUrl`, `title`, `style`, `domainId`([사용자 지정 도메인](/docs/custom-domains)), `slug`, `archived`를 수정하거나 `kind`를 `redirect`와 `page` 사이에서 전환합니다 |
 | `DELETE` | `/v1/codes/{id}` | 코드와 해당 스캔 기록을 삭제합니다 |
-| `GET` | `/v1/codes/{id}/scans` | `range`(`7d`, `30d`, `90d`, `365d`, `1095d`, 플랜의 기록 보관 기간에 따라 제한됨)에 대한 분석입니다. 개별 스캔은 `limit`(≤ 500)을 추가하고, 다음 페이지는 `before`(마지막 `scannedAt`)를 사용하세요 |
+| `GET` | `/v1/codes/{id}/scans` | `range`(`7d`, `30d`, `90d`, `365d`, `1095d`, 요금제의 기록 보관 기간까지)에 대한 분석입니다. 개별 스캔은 `limit`(≤ 500)을 추가하고, 다음 페이지는 `before`(마지막 `scannedAt`)를 사용하세요 |
 
-코드 만들기:
+코드 생성:
 
 ```bash
 curl https://api.qrdx.dev/v1/codes \
@@ -124,7 +124,7 @@ curl https://api.qrdx.dev/v1/codes \
 }
 ```
 
-back-half를 직접 정하려면 `slug`를 전달하세요(Pro와 Business, 규칙은 [사용자 지정 back-half](#custom-back-halves) 참고). `domainId`를 함께 보내면 해당 도메인에서, 보내지 않으면 `qrdx.dev`에서 중복을 확인합니다.
+`slug`를 전달하면 back-half를 직접 정할 수 있어요(Pro와 Business, 규칙은 [사용자 지정 back-half](#custom-back-halves) 참고). `domainId`가 있으면 해당 도메인에서, 없으면 `qrdx.dev`에서 중복을 확인합니다.
 
 ```bash
 curl https://api.qrdx.dev/v1/codes \
@@ -133,13 +133,13 @@ curl https://api.qrdx.dev/v1/codes \
   -d '{"destinationUrl": "https://example.com/menu", "slug": "spring-menu"}'
 ```
 
-그러면 응답에 `"slug": "spring-menu"`와 `"shortLink": "https://qrdx.dev/q/spring-menu"`가 담깁니다. 사용자 지정 도메인에서 정한 back-half는 그 도메인에만 존재하므로 `"defaultShortLink": null`이 됩니다. 배열로 보낼 때는 모든 `slug`가 서로 달라야 합니다.
+그러면 응답에 `"slug": "spring-menu"`와 `"shortLink": "https://qrdx.dev/q/spring-menu"`가 포함돼요. 사용자 지정 도메인에서 정한 back-half는 그 도메인에만 존재하므로 `"defaultShortLink": null`이 됩니다. 배열에서는 모든 `slug`가 서로 달라야 해요.
 
-### 한 번의 요청으로 여러 코드 만들기 [#many-codes-in-one-request]
+### 한 번의 요청으로 여러 코드 생성 [#many-codes-in-one-request]
 
-Pro와 Business에서는 최대 {facts.apiBatchCodes}개의 코드를 배열로 보낼 수 있습니다. 자동 생성되는 back-half는 일괄 요청 안에서 중복되지 않고 기존 코드와도 겹치지 않습니다. Google Web Risk가 제때 확인하지 못한 링크는 일괄 생성 직후 다시 조회하며, 해당 링크가 목록에 있으면 그 코드는 비활성화됩니다([링크 안전 검사](/docs/code-controls#safety-checks-on-links)). 일괄 생성은 전부 성공하거나 전부 실패합니다. 한 행이라도 문제가 있으면(잘못된 대상, 이미 사용 중이거나 예약된 `slug`, 안전하지 않은 링크) 아무것도 만들어지지 않으며, 오류의 `data.details`에 모든 문제가 `index`(배열에서 해당 행의 위치, 0부터 시작)와 함께 나열됩니다.
+Pro와 Business에서는 최대 {facts.apiBatchCodes}개의 코드 배열을 보낼 수 있어요. 생성되는 back-half는 일괄 요청 안에서 반복되지 않고 기존 코드와도 겹치지 않습니다. Google Web Risk가 제때 확인하지 못한 링크는 일괄 생성 직후 다시 조회하며, 해당 링크가 목록에 있는 코드는 비활성화됩니다([링크 안전 검사](/docs/code-controls#safety-checks-on-links)). 일괄 생성은 전부 성공하거나 전부 실패해요. 한 행이라도 문제가 있으면(잘못된 대상, 이미 사용 중이거나 예약된 `slug`, 안전하지 않은 링크) 아무것도 생성되지 않고, 오류의 `data.details`에 모든 문제가 `index`(배열에서 해당 행의 위치, 0부터 시작)별로 나열됩니다.
 
-일괄 요청마다 고유한 값(예: UUID)을 담은 `Idempotency-Key` 헤더를 보내세요. 요청이 시간 초과되거나 연결이 끊기면 같은 키로 같은 요청을 다시 보내면 됩니다. 그러면 첫 시도에서 만들어진 코드가 `Idempotent-Replayed: true` 헤더와 함께 반환되고, 중간에 끊긴 시도는 코드가 중복 생성되지 않도록 마무리됩니다.
+일괄 요청마다 고유한 값(예: UUID)으로 `Idempotency-Key` 헤더를 보내세요. 요청이 시간 초과되거나 연결이 끊기면 같은 키로 같은 요청을 다시 보내면 됩니다. 첫 번째 시도에서 만들어진 코드가 `Idempotent-Replayed: true` 헤더와 함께 반환되고, 도중에 중단된 시도는 코드가 중복 생성되지 않은 채 마무리돼요.
 
 ```bash
 curl https://api.qrdx.dev/v1/codes \
@@ -151,9 +151,9 @@ curl https://api.qrdx.dev/v1/codes \
        {"destinationUrl": "https://example.com/table/2", "title": "Table 2"}]'
 ```
 
-각 코드는 디자인과 함께 반환됩니다. 워크스페이스의 기본 테마에 로고가 포함되어 있으면 대량 일괄 요청에서 응답 크기가 커집니다. `Prefer: return=minimal`을 보내면 `style` 없이(ID, slug, 링크, 대상, 제목, 상태, 생성 시각) 각 코드를 받을 수 있습니다. 응답이 4MB를 넘는 일괄 요청은 아무것도 만들어지기 전에 `PAYLOAD_TOO_LARGE`로 거부됩니다.
+각 코드는 디자인과 함께 반환돼요. 워크스페이스의 기본 테마에 로고가 포함되어 있으면 대량 일괄 요청에서 응답 크기가 커집니다. 이때 `Prefer: return=minimal`을 보내면 `style` 없이 각 코드(id, slug, 링크, 대상, 제목, 상태, 생성 시간)를 받을 수 있어요. 응답이 4 MB를 넘는 일괄 요청은 코드가 생성되기 전에 `PAYLOAD_TOO_LARGE`로 거부됩니다.
 
-대상 변경하기:
+대상 변경:
 
 ```bash
 curl -X PATCH https://api.qrdx.dev/v1/codes/cm3x... \
@@ -162,26 +162,26 @@ curl -X PATCH https://api.qrdx.dev/v1/codes/cm3x... \
   -d '{"destinationUrl": "https://example.com/summer-menu"}'
 ```
 
-`style`에는 Playground와 같은 디자인 필드(`fgColor`, `bgColor`, `bodyPattern`, `cornerEyePattern`, `level`, ...)를 사용할 수 있습니다. 로고는 `logoIcon`<IfAvailable feature="fileStorage">이나 업로드한 파일의 `logoFileId`</IfAvailable>를 보내세요([코드 스타일의 로고](/docs/developers/rest-api#code-logos)). `shortLink`를 QR 코드에 인코딩하려면 예를 들어 [`qrdx` 라이브러리](/docs/getting-started)나 [Image API](/docs/developers/image-api)를 사용하세요.
+`style`에는 Playground와 같은 디자인 필드(`fgColor`, `bgColor`, `bodyPattern`, `cornerEyePattern`, `level` 등)를 사용할 수 있어요. 로고는 `logoIcon`<IfAvailable feature="fileStorage">이나 업로드한 파일의 `logoFileId`</IfAvailable>를 보내세요([코드 스타일의 로고](/docs/developers/rest-api#code-logos)). `shortLink`는 [`qrdx` 라이브러리](/docs/getting-started)나 [Image API](/docs/developers/image-api) 등으로 QR 코드에 인코딩하세요.
 
 오류는 하나의 JSON 형식 `{ "code": "...", "message": "...", "status": 400 }`을 사용하며, 해결 방법을 설명하는 페이지가 있으면 `docs` 링크가 추가됩니다.
 
-| Status | Code | When |
+| 상태 | 코드 | 발생 조건 |
 | --- | --- | --- |
-| 400 | `VALIDATION_ERROR`, `INVALID_SLUG` | 잘못된 본문 또는 쿼리(자세한 내용은 `data`에 있으며, 일괄 요청에서는 `index`별로 표시), 또는 규칙에 맞지 않거나 예약된 `slug` |
-| 401 | `UNAUTHORIZED`, `INVALID_TOKEN` | `Authorization: Bearer` 토큰이 없거나, 유효하지 않거나 만료되었거나 취소된 토큰([토큰 받기](/docs/developers/rest-api#get-an-access-token)) |
-| 402 | `LIMIT_REACHED`, `PLAN_REQUIRED` | 플랜의 활성 코드 한도 초과, 또는 Pro 없이 일괄 생성이나 사용자 지정 `slug`를 사용한 경우 |
-| 403 | `INSUFFICIENT_SCOPE`, `FORBIDDEN` | 필요한 스코프가 없는 토큰, 또는 이 작업을 할 수 없는 워크스페이스 역할 |
+| 400 | `VALIDATION_ERROR`, `INVALID_SLUG` | 본문이나 쿼리가 올바르지 않거나(자세한 내용은 `data`에, 일괄 요청에서는 `index`별로 표시), `slug`가 규칙에 맞지 않거나 예약되어 있음 |
+| 401 | `UNAUTHORIZED`, `INVALID_TOKEN` | `Authorization: Bearer` 토큰이 없거나, 올바르지 않거나 만료되었거나 취소된 토큰([토큰 받기](/docs/developers/rest-api#get-an-access-token)) |
+| 402 | `LIMIT_REACHED`, `PLAN_REQUIRED` | 요금제의 활성 코드 한도를 초과했거나, Pro 없이 대량 생성 또는 사용자 지정 `slug`를 사용함 |
+| 403 | `INSUFFICIENT_SCOPE`, `FORBIDDEN` | 필요한 범위가 없는 토큰, 또는 이 작업을 할 수 없는 워크스페이스 역할 |
 | 404 | `NOT_FOUND` | 코드가 없거나 내 코드가 아니거나, 해당 엔드포인트가 없음 |
 | 409 | `SLUG_TAKEN` | 다른 코드가 이미 해당 `slug`를 사용 중임(`qrdx.dev` 또는 사용자 지정 도메인에서) |
-| 429 | `RATE_LIMITED` | 요청이 너무 많음. `Retry-After` 헤더에 표시된 시간 뒤에 다시 시도하세요 |
+| 429 | `RATE_LIMITED` | 요청이 너무 많음. `Retry-After` 헤더 이후에 다시 시도하세요 |
 
 ## 셀프 호스팅 [#self-hosting]
 
-동적 QR 코드는 셀프 호스팅 인스턴스에서도 작동합니다.
+동적 QR 코드는 셀프 호스팅 인스턴스에서도 작동해요.
 
-- `NEXT_PUBLIC_SHORT_LINK_BASE_URL`은 단축 링크의 오리진을 설정합니다. 기본값은 앱 URL입니다.
-- `SCAN_HASH_SALT`는 방문자 해시에 사용하는 비밀 salt를 설정합니다. 설정하지 않으면 `BETTER_AUTH_SECRET`에서 파생된 값을 사용합니다.
-- 국가, 지역, 도시는 Vercel의 지리 정보 헤더에서 가져옵니다. Cloudflare 뒤에서는 국가만 사용할 수 있으며(`CF-IPCountry`), 그 외 환경에서는 위치가 알 수 없음으로 표시됩니다.
-- 스캔한 사람이 위치를 공유하지 않은 경우, 영역 규칙은 Vercel의 IP 좌표(`x-vercel-ip-latitude`, `x-vercel-ip-longitude`)를 사용합니다. 그 외 환경에서는 위치를 공유한 스캔에만 일치합니다.
-- Upstash Redis를 구성하면 요청 제한이 적용됩니다.
+- `NEXT_PUBLIC_SHORT_LINK_BASE_URL`은 짧은 링크의 오리진을 설정합니다. 기본값은 앱 URL이에요.
+- `SCAN_HASH_SALT`는 방문자 해시에 쓰는 비밀 솔트를 설정합니다. 설정하지 않으면 `BETTER_AUTH_SECRET`에서 파생된 값을 사용해요.
+- 국가, 지역, 도시는 Vercel의 지역 헤더에서 가져옵니다. Cloudflare 뒤에서는 국가만 사용할 수 있고(`CF-IPCountry`), 그 외 환경에서는 위치가 알 수 없음으로 표시돼요.
+- 스캔한 사람이 위치를 공유하지 않은 경우 영역 규칙은 Vercel의 IP 좌표(`x-vercel-ip-latitude`, `x-vercel-ip-longitude`)를 사용합니다. 그 외 환경에서는 위치를 공유한 스캔에만 적용돼요.
+- Upstash Redis를 설정하면 요청 제한이 적용돼요.

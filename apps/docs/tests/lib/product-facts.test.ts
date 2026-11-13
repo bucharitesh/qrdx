@@ -92,6 +92,8 @@ describe("PRODUCT_FACTS", () => {
       // lib/pricing.ts
       moneyBackDays: 30,
       nonprofitDiscountPercent: 50,
+      // lib/scan-history.ts: 365 days, written "1 year"
+      freeScanHistoryYears: 1,
     });
     expect(FRAME_STYLES).toContain("none");
     expect(STYLE_SUMMARY).toBe(
