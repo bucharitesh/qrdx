@@ -63,7 +63,10 @@ const handleGET = withApiQuotaHeaders(
           data: {
             codeId: code.id,
             range,
-            retentionDays,
+            // null: the plan keeps the whole history (JSON has no Infinity).
+            retentionDays: Number.isFinite(retentionDays)
+              ? retentionDays
+              : null,
             ...analytics,
             from: analytics.from.toISOString(),
             preciseLocations: precise && {

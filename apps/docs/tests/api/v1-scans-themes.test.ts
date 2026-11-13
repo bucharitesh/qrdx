@@ -1,7 +1,7 @@
 // GET /v1/codes/{id}/scans and GET /v1/themes as rest-api.mdx and
 // plans-and-limits.mdx describe them: scan analytics for a code in the
-// caller's workspace, clamped to the plan's analytics history (Free 90 days,
-// Pro 3 years, Business unlimited), individual scans paged with `before`;
+// caller's workspace, clamped to the plan's analytics history (Free 1 year,
+// Pro and Business unlimited), individual scans paged with `before`;
 // saved themes for tokens with themes:read. Codes and tokens live in memory;
 // the SQL aggregation itself (lib/scans getScanAnalytics/listScans) is
 // replaced by a recorder, since it is Postgres-specific.
@@ -208,7 +208,7 @@ describe("GET /v1/codes/{id}/scans", () => {
     expect(data).toMatchObject({
       codeId: "code_alice",
       range: "30d",
-      retentionDays: 90,
+      retentionDays: 365,
       total: 3,
     });
     expect(data.events).toBeUndefined();
@@ -218,9 +218,9 @@ describe("GET /v1/codes/{id}/scans", () => {
   });
 
   it.each([
-    ["free", "365d", "30d", 90],
-    ["free", "90d", "90d", 90],
-    ["pro", "1095d", "1095d", 1095],
+    ["free", "1095d", "30d", 365],
+    ["free", "365d", "365d", 365],
+    ["pro", "1095d", "1095d", Number.POSITIVE_INFINITY],
     ["business", "1095d", "1095d", Number.POSITIVE_INFINITY],
   ] as const)(
     "on %s, asking for %s gives %s (history: %s days)",
