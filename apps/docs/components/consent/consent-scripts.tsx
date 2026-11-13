@@ -2,8 +2,8 @@
 
 import { useConsent, useHasConsentPolicy } from "@c15t/nextjs";
 import FeaturebaseScript from "@/components/featurebase-script";
+import { env } from "@/env";
 import { Analytics } from "@/lib/analytics/analytics";
-import { env } from "@/lib/env";
 
 /**
  * QRdx's own third-party tools. Analytics: Umami (cookieless) always runs,

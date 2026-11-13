@@ -1,0 +1,72 @@
+---
+title: "Registry shadcn/ui"
+description: "Delapan komponen kode QR untuk proyek shadcn/ui, dibangun di atas pustaka qrdx. Pasang satu komponen dengan satu perintah dan miliki kodenya."
+icon: Blocks
+---
+
+QRdx menerbitkan registry [shadcn/ui](https://ui.shadcn.com) berisi komponen kode QR yang dibangun di atas pustaka [`qrdx`](https://www.npmjs.com/package/qrdx). CLI shadcn menyalin kode sumbernya ke proyek Anda, sehingga Anda memiliki kodenya dan bisa mengubahnya.
+
+<NpmStatus package="qrdx" />
+
+<PackageManagerTabs command="npx shadcn@latest add https://qrdx.dev/r/qr-code.json" />
+
+Setiap komponen memiliki halamannya sendiri dengan pratinjau langsung, kode sumber, langkah pemasangan, contoh, dan referensi API.
+
+[Coba di playground](/playground?open=code&lang=shadcn): atur gaya kode di sana, lalu salin untuk komponen QR Code dari registry.
+
+## Komponen [#components]
+
+<Cards>
+  <Card title="QR Code" href="/docs/components/qr-code" icon={<QrCode />}>
+    Kode QR bergaya dan mudah diakses dengan tombol unduh, warna, gradasi, pola, logo, dan templat bingkai.
+  </Card>
+  <Card title="QR Code Card" href="/docs/components/qr-code-card" icon={<Frame />}>
+    Kartu dengan kode di dalam bingkai "Scan me", judul, deskripsi, dan ruang untuk aksi.
+  </Card>
+  <Card title="QR Code Download" href="/docs/components/qr-code-download" icon={<Download />}>
+    Menu yang mengekspor PNG, SVG, JPG, atau PDF dengan ukuran pilihan Anda, atau menyalin gambar.
+  </Card>
+  <Card title="QR Code Share Dialog" href="/docs/components/qr-code-share-dialog" icon={<Webhook />}>
+    Dialog berisi kode untuk sebuah tautan, tombol salin, unduhan PNG, dan lembar berbagi bawaan perangkat.
+  </Card>
+  <Card title="QR Code Generator" href="/docs/components/qr-code-generator" icon={<Sparkles />}>
+    Kolom input teks dengan pratinjau langsung, preset gaya, dan tombol unduh.
+  </Card>
+  <Card title="QR Code Scanner" href="/docs/components/qr-code-scanner" icon={<Scan />}>
+    Area seret-dan-lepas yang membaca kode QR dari gambar di browser.
+  </Card>
+  <Card title="Wi-Fi QR Code" href="/docs/components/wifi-qr-code" icon={<Globe />}>
+    Kode yang menghubungkan ke jaringan Wi-Fi, dengan pembuat payload yang di-escape.
+  </Card>
+  <Card title="vCard QR Code" href="/docs/components/vcard-qr-code" icon={<Users />}>
+    Kode yang menyimpan kartu kontak, dengan pembuat vCard 3.0.
+  </Card>
+</Cards>
+
+## Yang ikut terpasang [#what-gets-installed]
+
+Setiap komponen adalah satu berkas di `components/`. CLI juga memasang `qrdx` (serta `lucide-react` untuk ikon yang dipakai beberapa komponen) dan menambahkan komponen shadcn/ui yang menjadi dasarnya, seperti `button`, `card`, `dialog`, `dropdown-menu`, atau `input`.
+
+Indeks lengkapnya ada di [`https://qrdx.dev/r/registry.json`](https://qrdx.dev/r/registry.json).
+
+## Menggunakan namespace registry [#using-the-registry-namespace]
+
+Untuk memasang dengan nama singkat, tambahkan registry ke `components.json` Anda:
+
+```json
+{
+  "registries": {
+    "@qrdx": "https://qrdx.dev/r/{name}.json"
+  }
+}
+```
+
+Lalu tambahkan satu atau beberapa komponen berdasarkan nama:
+
+<PackageManagerTabs command="npx shadcn@latest add @qrdx/qr-code @qrdx/qr-code-download @qrdx/qr-code-share-dialog" />
+
+## Gaya tampilan [#styling]
+
+Komponen menggunakan kelas Tailwind dengan token tema standar shadcn/ui (`bg-card`, `border`, `text-muted-foreground`, `ring-ring`) dan Button, Card, Dialog, serta Input milik Anda sendiri, sehingga mengikuti tema dan mode gelap Anda. Kode QR secara default memakai latar terang, karena modul gelap pada ubin terang bisa dipindai oleh semua pembaca.
+
+Unduhan PDF memerlukan paket opsional `jspdf` (`npm install jspdf`).

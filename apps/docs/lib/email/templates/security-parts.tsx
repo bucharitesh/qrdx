@@ -1,3 +1,4 @@
+import { SUPPORT_EMAIL } from "@repo/config";
 import { Link, Section } from "react-email";
 import { type EmailIntl, ENGLISH_EMAIL } from "@/lib/i18n/email";
 import { baseUrl } from "@/lib/metadata";
@@ -7,8 +8,6 @@ import { DetailsTable } from "./parts";
 // Shared by every security email (two-step verification, passkeys, email
 // changes, new sign-ins, confirmation codes): where and when it happened,
 // the way to the security settings, and the support address.
-
-export const SUPPORT_EMAIL = "support@qrdx.dev";
 
 /** Settings → Profile & security, at Two-step verification. */
 export const reviewSecurityUrl = () =>

@@ -1,0 +1,93 @@
+{
+  "id": "watch-the-experiment",
+  "name": "Experiment video",
+  "description": "A phone with the code on its screen and an atom.",
+  "category": "use-case",
+  "collection": "health-learning",
+  "contentTypes": ["url"],
+  "tags": ["education", "school", "science", "video"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1360,
+      "height": 2000
+    },
+    "qr": {
+      "x": 180,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1360,
+        "height": 2000,
+        "radius": 190,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 60,
+        "y": 60,
+        "width": 1240,
+        "height": 1880,
+        "radius": 150,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 550,
+        "y": 76,
+        "width": 260,
+        "height": 64,
+        "radius": 32,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M626 250A54 19.2 0 1 1 734 250A54 19.2 0 1 1 626 250ZM632 250A48 13.8 0 1 0 728 250A48 13.8 0 1 0 632 250ZM653 203.23A54 19.2 60 1 1 707 296.77A54 19.2 60 1 1 653 203.23ZM656 208.43A48 13.8 60 1 0 704 291.57A48 13.8 60 1 0 656 208.43ZM707 203.23A54 19.2 120 1 1 653 296.77A54 19.2 120 1 1 707 203.23ZM704 208.43A48 13.8 120 1 0 656 291.57A48 13.8 120 1 0 704 208.43Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M670.4 250A9.6 9.6 0 1 1 689.6 250A9.6 9.6 0 1 1 670.4 250Z",
+        "fill": "accent"
+      },
+      {
+        "type": "rect",
+        "x": 510,
+        "y": 1880,
+        "width": 340,
+        "height": 18,
+        "radius": 9,
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Watch the experiment",
+        "color": "frame",
+        "box": {
+          "x": 160,
+          "y": 1550,
+          "width": 1040,
+          "height": 180
+        }
+      }
+    ]
+  }
+}

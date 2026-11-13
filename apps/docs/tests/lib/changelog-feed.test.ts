@@ -31,7 +31,7 @@ const pages = vi.hoisted(() => ({
     };
   }>,
 }));
-vi.mock("@/lib/source", () => ({
+vi.mock("@/lib/content-source", () => ({
   changelogSource: { getPages: () => pages.list },
 }));
 vi.mock("@repo/database", () => ({ database: {} }));

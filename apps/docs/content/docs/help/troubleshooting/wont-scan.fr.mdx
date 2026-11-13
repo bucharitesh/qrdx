@@ -1,0 +1,44 @@
+---
+title: "Un code ne se scanne pas"
+description: "Pourquoi un QR code ne se scanne pas, et comment corriger chaque cause."
+---
+
+Si l'appareil photo d'un téléphone ne réagit pas à votre code, ou ne le lit que de temps en temps, passez en revue les vérifications suivantes.
+
+Commencez par le **Score de scan** sous l'aperçu dans le [Playground](/playground). Cliquez dessus pour voir quelles vérifications échouent. Consultez [Vérifier un design avec le score de scan](/docs/help/designing/scan-score).
+
+Pour un code déjà imprimé, prenez-le en photo et déposez la photo dans le [vérificateur de scan](/tools/scan-checker). Il affiche le contenu du code et teste la qualité de sa lecture.
+
+## Causes courantes [#common-causes]
+
+### Contraste faible ou code clair sur fond sombre [#low-contrast-or-light-on-dark]
+
+Les scanners recherchent des carrés sombres sur un fond clair. Assombrissez le code ou éclaircissez le fond, et évitez les codes clairs sur fond sombre. Consultez [Choisir des couleurs qui se scannent](/docs/help/designing/colors-and-contrast).
+
+### Un logo en couvre trop [#a-logo-covers-too-much]
+
+Réglez **Correction d'erreur** sur **Élevée** dans l'onglet **Design**. Consultez [Ajouter un logo](/docs/help/designing/logos).
+
+### Formes d'yeux inhabituelles [#unusual-eye-shapes]
+
+Les yeux en cercle et en coins courbes échouent dans certaines applications de scan. Les yeux carrés, arrondis et en engrenage se lisent partout.
+
+### Pas de bordure dégagée [#no-clear-border]
+
+Les scanners ont besoin d'un espace vide autour du code. Réglez **Marge** sur **Standard** ou **Grande**, et ne laissez aucun autre visuel toucher le code.
+
+### Imprimé trop petit [#printed-too-small]
+
+Donnez au code environ un dixième de la distance de scan : 2 cm pour une carte lue à 20 cm, 10 cm pour une affiche lue à 1 m. Le [calculateur de taille d'impression](/tools/print-size) fait le calcul pour vous.
+
+### Trop de contenu [#too-much-content]
+
+Un QR code statique qui contient beaucoup de texte devient dense et difficile à lire lorsqu'il est petit. Utilisez plutôt un QR code dynamique : il ne contient qu'un lien court. Consultez [Statique ou dynamique](/docs/help/getting-started/static-vs-dynamic).
+
+### L'impression elle-même [#the-print-itself]
+
+Une impression floue, des surfaces brillantes qui réfléchissent la lumière, ainsi que des surfaces courbes ou pliées rendent les codes plus difficiles à lire. Imprimez en fichier vectoriel (SVG, EPS ou un PDF issu de **Prêt à imprimer**) et testez un exemplaire avant d'en imprimer beaucoup.
+
+## Il se scanne, mais affiche une erreur [#it-scans-but-shows-an-error]
+
+Si l'appareil photo lit le code mais que vous voyez une page du type « QR code introuvable », consultez [Un scan affiche une page d'erreur](/docs/help/troubleshooting/error-pages).

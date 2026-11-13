@@ -1,0 +1,133 @@
+---
+title: "Verifica in due passaggi"
+description: "Aggiungi un secondo passaggio a ogni accesso con una passkey o un'app di autenticazione, conserva i codici di backup e rientra nel tuo account se perdi il telefono."
+---
+
+La verifica in due passaggi (detta anche 2FA) aggiunge un secondo passaggio all'accesso. Dopo che hai effettuato l'accesso con un codice via email, con Google o con GitHub<IfAvailable feature="sso"> (o con il single sign-on del tuo workspace)</IfAvailable>, QRdx ti chiede <IfAvailable feature="passkeys">la tua passkey o </IfAvailable>un codice di 6 cifre generato da un'app di autenticazione. Chi riesce a entrare nella tua email o nel tuo account Google non può comunque accedere a QRdx senza questo passaggio.
+
+<IfAvailable feature="passkeys">
+Una [passkey](/docs/help/privacy-and-security/passkeys) verifica che sei tu con la tua impronta digitale, il tuo volto, il blocco schermo o una chiave di sicurezza. Funziona solo sul sito di QRdx, quindi un sito contraffatto non può raccoglierla.
+</IfAvailable>
+
+Va bene anche un'app di autenticazione: qualsiasi app che mostra codici di 6 cifre che cambiano ogni 30 secondi, inclusa la funzione di codice monouso della maggior parte dei gestori di password. QRdx non invia i codici del secondo passaggio via email o SMS.
+
+Puoi configurarli entrambi e usare quello che hai a portata di mano quando accedi.
+
+## Attivala [#turn-it-on]
+
+1. Vai su **Impostazioni** → **Profilo e sicurezza**.
+2. In **Verifica in due passaggi**, clicca su **Attiva** e [conferma la tua identità](#confirm-its-you).
+3. Configura il secondo passaggio<IfAvailable feature="passkeys">: scegli **Passkey** o **App di autenticazione**</IfAvailable>, come descritto di seguito.
+4. Salva i tuoi 10 codici di backup. Copiali o scaricali come file di testo e conservali in un posto sicuro, per esempio in un gestore di password. QRdx li mostra una sola volta. Seleziona **Ho salvato i miei codici di backup** e clicca su **Fine**.
+
+<IfAvailable feature="passkeys">
+Per una passkey, mantieni il nome suggerito (il tuo browser e sistema, come "Chrome su macOS") oppure scrivine uno tuo, clicca su **Continua** e lascia che il browser salvi la passkey.
+</IfAvailable>
+
+Per un'app di autenticazione, inquadra il QR code con l'app oppure digita la chiave mostrata sotto. Inserisci il codice di 6 cifre che l'app mostra e clicca su **Verifica**.
+
+Ora la verifica in due passaggi è attiva e tutti gli altri browser o dispositivi collegati al tuo account vengono disconnessi. Ognuno dovrà accedere di nuovo, questa volta con il secondo passaggio. Il browser in cui l'hai attivata resta connesso.<IfAvailable feature="passkeys"> Per aggiungere l'altro metodo in seguito, usa la stessa sezione. Mantieni i codici di backup che hai già e nessuno viene disconnesso.</IfAvailable>
+
+<IfAvailable feature="passkeys">
+Se hai aggiunto una passkey prima che la verifica in due passaggi potesse usarla, nelle Impostazioni compare **La tua passkey è pronta per essere il tuo secondo passaggio**. Clicca su **Attiva**, conferma la tua identità, verifica che sei tu con quella passkey e salva i tuoi codici di backup. Anche questa operazione disconnette gli altri tuoi dispositivi.
+</IfAvailable>
+
+Inviamo un'email all'indirizzo del tuo account ogni volta che la verifica in due passaggi viene attivata o disattivata, un metodo viene aggiunto o rimosso, vengono creati nuovi codici di backup o ne viene usato uno. Inviamo un'email anche quando viene chiesto al supporto di disattivare per te la verifica in due passaggi.
+
+## Accedi con la verifica [#sign-in-with-it]
+
+Accedi come fai sempre. Poi QRdx ti chiede il secondo passaggio.
+
+<IfAvailable feature="passkeys">
+Se hai una passkey, la richiesta della passkey del tuo browser si apre da sola. Alcuni browser la aprono solo dopo un clic: in quel caso clicca su **Continua con la passkey**. Se hai chiuso la richiesta o è scaduta, riprova oppure scegli un altro metodo.
+</IfAvailable>
+
+Sotto il passaggio, **Usa un codice di autenticazione** e **Usa un codice di backup** passano agli altri metodi che hai. QRdx ricorda quale hai usato per ultimo in questo browser e la volta successiva parte da quello.
+
+I codici di autenticazione cambiano ogni 30 secondi, quindi se uno viene rifiutato, aspetta il successivo.
+
+Ogni passaggio di accesso consente 5 codici errati<IfAvailable feature="passkeys">, e una passkey che non supera la verifica ne conta come uno</IfAvailable>. Dopo, ricomincia l'accesso. Dopo 10 codici errati di fila, QRdx smette di accettare codici per il tuo account per 15 minuti.
+
+Il passaggio scade dopo 10 minuti. In tal caso, accedi di nuovo.
+
+## Codici di backup [#backup-codes]
+
+Un codice di backup sostituisce il secondo passaggio, per quando non hai il telefono<IfAvailable feature="passkeys"> o la passkey</IfAvailable>. Nel secondo passaggio, clicca su **Usa un codice di backup** e inseriscine uno. I codici hanno questo aspetto: `ABCDE-FGH23`: lettere maiuscole e cifre da 2 a 9, senza 0, O, 1 o I che possano creare confusione. Puoi scriverli in minuscolo, con o senza il trattino. Ogni codice funziona una sola volta.
+
+Ogni volta che viene usato un codice di backup, per accedere o per confermare la tua identità, inviamo un'email all'indirizzo del tuo account con il numero di codici che ti restano. Se non sei stato tu, qualcuno ha i tuoi codici di backup: contatta subito il supporto.
+
+Nelle Impostazioni vedi quanti codici ti restano. Quando ne hai 2 o meno, creane di nuovi: clicca su **Nuovi codici** e conferma la tua identità. I vecchi codici smettono di funzionare.
+
+## Dispositivi attendibili [#trusted-devices]
+
+Nel secondo passaggio, seleziona **Non chiedermelo più su questo dispositivo per 30 giorni** per saltarlo su quel browser per 30 giorni. Usalo solo su un dispositivo tuo. Disattivare la verifica in due passaggi fa dimenticare tutti i dispositivi attendibili.
+
+## Quali accessi la richiedono [#which-sign-ins-ask-for-it]
+
+Tutti: codici via email, Google e GitHub<IfAvailable feature="sso"> e single sign-on del workspace</IfAvailable>. Questo include anche un nuovo accesso in un browser in cui sei già connesso.
+
+<IfAvailable feature="passkeys">
+L'accesso con **Continua con la passkey** è l'eccezione. Un accesso con passkey usa già due fattori, il dispositivo e la tua impronta digitale, il tuo volto o il blocco schermo, quindi QRdx non chiede un secondo passaggio. QRdx accetta solo passkey che ti verificano in questo modo.
+</IfAvailable>
+
+## Cambia i tuoi metodi [#change-your-methods]
+
+In **Impostazioni** → **Profilo e sicurezza**, sotto **Verifica in due passaggi**, configura o rimuovi l'app di autenticazione<IfAvailable feature="passkeys"> e aggiungi, rinomina o rimuovi le passkey</IfAvailable>. Ogni modifica ti chiede di confermare la tua identità.
+
+Se rimuovi il tuo ultimo metodo, la verifica in due passaggi si disattiva e i tuoi codici di backup smettono di funzionare. QRdx te lo comunica prima che tu confermi.
+
+## Conferma la tua identità [#confirm-its-you]
+
+Prima di una modifica alla sicurezza del tuo account, QRdx ti chiede di confermare la tua identità, anche se hai già effettuato l'accesso. Questo vale per:
+
+- cambiare il tuo indirizzo email;
+- eliminare il tuo account;
+- attivare o disattivare la verifica in due passaggi e creare nuovi codici di backup;
+- aggiungere o rimuovere l'app di autenticazione<IfAvailable feature="passkeys"> e aggiungere, rinominare o rimuovere una passkey</IfAvailable>;
+- collegare o scollegare un account Google o GitHub;
+- creare una chiave API, creare un'app OAuth o generare un nuovo client secret per una di esse;
+- approvare un'app che chiede di usare il tuo account QRdx, nella schermata **Autorizza**;
+- aggiungere un endpoint webhook, cambiare l'URL di un endpoint e mostrare o ruotare il suo segreto di firma;
+- aggiungere un webhook di notifica per Slack o Discord, oppure collegare un'integrazione che invia le tue scansioni o le risposte dei moduli a un altro strumento;
+- in un workspace: eliminarlo, cambiare il ruolo di qualcuno, rimuovere qualcuno, invitare un amministratore via email o con un link di invito e [richiedere la verifica in due passaggi](/docs/help/teams/require-two-step-verification) o smettere di richiederla.
+
+<IfAvailable feature="sso">
+Lo stesso vale per creare, modificare, verificare o eliminare la connessione di single sign-on di un workspace, o per richiedere il single sign-on.
+</IfAvailable>
+
+Con la verifica in due passaggi attiva, conferma con <IfAvailable feature="passkeys">la tua passkey, </IfAvailable>un codice della tua app di autenticazione o un codice di backup (che viene poi consumato). QRdx qui non offre un codice via email, quindi accedere alla tua email non basta per modificare la tua sicurezza.
+
+Con la verifica disattivata, conferma con uno di questi metodi:
+
+- un codice di 6 cifre che QRdx ti invia via email;
+- un nuovo accesso con un account Google o GitHub che hai collegato<IfAvailable feature="sso">, o con il single sign-on del tuo workspace quando usa OIDC</IfAvailable>.
+
+<IfAvailable feature="passkeys">
+Funziona anche la tua passkey, se ne hai una.
+</IfAvailable>
+
+Un nuovo accesso ti porta a quel metodo di accesso, dove ti chiede di scegliere il tuo account o di accedervi, e poi ti riporta alla stessa pagina. La modifica non viene salvata mentre sei via, quindi rifalla quando torni. Usa l'account che hai collegato: QRdx non ti farà passare a un altro account né ne creerà uno.
+
+Quindi, se non riesci ad accedere alla tua email, puoi comunque confermare in un altro modo. Se non hai nessuna di queste possibilità, consulta [Hai perso l'accesso alla tua email](/docs/help/account-and-billing/sign-in#lost-access-to-your-email).
+
+Una conferma dura 10 minuti in quel browser, quindi più modifiche di fila la richiedono una sola volta.
+
+Anche l'accesso conta come conferma, per 10 minuti in quel browser. Con la verifica in due passaggi attiva, vale solo un accesso in cui hai risposto al secondo passaggio<IfAvailable feature="passkeys"> o hai usato **Continua con la passkey**</IfAvailable>, non uno in cui un dispositivo attendibile l'ha saltato.<IfAvailable feature="sso"> Non conta nemmeno aprire QRdx dalla dashboard delle app del tuo provider di identità, a meno che tu non abbia risposto al secondo passaggio.</IfAvailable>
+
+Disconnettere gli altri tuoi dispositivi non chiede mai conferma, quindi se qualcun altro è entrato nel tuo account puoi disconnetterlo subito.
+
+## Disattivala [#turn-it-off]
+
+Vai in **Impostazioni** → **Profilo e sicurezza**, clicca **Disattiva** sotto **Verifica in due passaggi** e conferma la tua identità. I tuoi codici di backup, e la configurazione della tua app di autenticazione se ne hai una, vengono eliminati.
+
+Se un workspace di cui fai parte [richiede la verifica in due passaggi](/docs/help/teams/require-two-step-verification), non potrai riaprirlo finché non la riattivi.
+
+## Hai perso il telefono e i codici di backup [#lost-your-phone-and-your-backup-codes]
+
+Se hai ancora <IfAvailable feature="passkeys">una passkey, </IfAvailable>la tua app di autenticazione o un codice di backup, accedi con uno di questi e cambia i tuoi metodi nelle Impostazioni.
+
+Se hai perso ogni modo per completare il secondo passaggio, scrivi a [support@qrdx.dev](mailto:support@qrdx.dev) dall'indirizzo email del tuo account e raccontaci cos'è successo. Chi ci scrive potrebbe non essere tu, quindi, dopo aver confermato che la richiesta arriva da quell'indirizzo, la disattivazione da parte del supporto attende 7 giorni:
+
+- **Inviamo un'email a quell'indirizzo il giorno stesso.** Fino ad allora non cambia nulla e resti connesso dove sei già.
+- **Se non l'hai richiesto tu, fermala.** Accedi con la tua app di autenticazione o con un codice di backup: questo la annulla.<IfAvailable feature="passkeys"> Accedere con una passkey non la annulla, perché il ripristino serve per un dispositivo perso e una passkey potrebbe trovarsi proprio lì.</IfAvailable> Puoi anche cliccare **Annulla** sotto **Verifica in due passaggi** in **Impostazioni** → **Profilo e sicurezza** e [confermare la tua identità](#confirm-its-you), oppure rispondere all'email. Ti scriviamo quando viene annullata.
+- **Alla scadenza, la verifica in due passaggi si disattiva.** La configurazione della tua app di autenticazione, i codici di backup e i dispositivi attendibili vengono eliminati,<IfAvailable feature="passkeys"> le tue passkey restano,</IfAvailable> il tuo account viene disconnesso da tutti i dispositivi e ti inviamo un'email per avvisarti. Poi accedi come al solito e riattivala.

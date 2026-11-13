@@ -3,6 +3,7 @@
 // renderer: lib/product-facts.ts counts BARCODE_FORMATS, and the page imports
 // this module without loading bwip-js (lib/barcode/render.ts does that).
 
+import { CANONICAL_ORIGIN } from "@repo/config";
 export type BarcodeFormatId =
   | "ean13"
   | "ean8"
@@ -151,7 +152,7 @@ export const BARCODE_FORMATS: readonly BarcodeFormat[] = [
     label: "Data Matrix",
     kind: "2d",
     summary: "Small square 2D code for parts and labels",
-    example: "https://qrdx.dev",
+    example: CANONICAL_ORIGIN,
     inputHint: "Any text up to 1,000 characters.",
     quietZone: { min: 1, default: 2 },
     maxLength: 1000,
@@ -193,6 +194,51 @@ export function isBarcodeFormatId(value: string): value is BarcodeFormatId {
   return BARCODE_FORMATS.some((format) => format.id === value);
 }
 
+/**
+ * Why a value can't be drawn, or what was changed, as a stable code and its
+ * values. The API sends the English text (`error`, `note`); the generator
+ * shows the visitor's language by code (messages: barcodeTool.issues).
+ */
+export const BARCODE_ISSUE_CODES = [
+  "enterDigits",
+  "digitsOnly",
+  "checkDigitAdded",
+  "wrongCheckDigit",
+  "wrongLength",
+  "upceEnter",
+  "upceSystem",
+  "upceNoForm",
+  "shortenedFromUpca",
+  "numberSystemAssumed",
+  "upceLength",
+  "upceStart",
+  "enterText",
+  "tooLong",
+  "code128Chars",
+  "code39Chars",
+  "code39Lowercase",
+  "gs1Enter",
+  "gs1Start",
+  "gs1Brackets",
+  "gs1BadAi",
+  "gs1NoValue",
+  "gs1BadChars",
+  "gs1Ai",
+  "gs1TooLong",
+  "unknownFormat",
+] as const;
+
+export type BarcodeIssueCode = (typeof BARCODE_ISSUE_CODES)[number];
+
+export interface BarcodeIssue {
+  code: BarcodeIssueCode;
+  values?: Record<string, string | number>;
+  /** Characters that aren't allowed, up to six (" " a space, "\n" a line break) */
+  chars?: string[];
+  /** gs1Ai: the problem (or note) about that AI's value */
+  inner?: BarcodeIssue;
+}
+
 export type BarcodeInput =
   | {
       ok: true;
@@ -200,10 +246,91 @@ export type BarcodeInput =
       value: string;
       /** A note about what was added or changed ("Check digit 7 added.") */
       note?: string;
+      /** The same, as codes */
+      notes?: BarcodeIssue[];
     }
-  | { ok: false; error: string };
+  | { ok: false; error: string; issue: BarcodeIssue };
 
-const fail = (error: string): BarcodeInput => ({ ok: false, error });
+const digitCount = (n: number | string) =>
+  `${n} digit${Number(n) === 1 ? "" : "s"}`;
+const count = (n: number | string) => Number(n).toLocaleString("en-US");
+const englishChars = (chars: readonly string[] = []) =>
+  chars
+    .map((char) =>
+      char === " " ? "space" : char.trim() ? char : "a line break",
+    )
+    .join(" ");
+
+/** The English text of an issue (the API's `error` and `note`). */
+export function barcodeIssueText(issue: BarcodeIssue): string {
+  const v = issue.values ?? {};
+  switch (issue.code) {
+    case "enterDigits":
+      return `Enter ${v.short} digits, or all ${v.length} with the check digit.`;
+    case "digitsOnly":
+      return `${v.label} takes digits only.`;
+    case "checkDigitAdded":
+      return `Check digit ${v.check} added.`;
+    case "wrongCheckDigit":
+      return `The check digit should be ${v.expected}, not ${v.given}. Check the number, or leave the last digit off and it's worked out for you.`;
+    case "wrongLength":
+      return `${v.label} needs ${v.short} or ${v.length} digits; this has ${digitCount(v.count ?? 0)}.`;
+    case "upceEnter":
+      return "Enter 6 to 8 digits, or a 12-digit UPC-A to shorten.";
+    case "upceSystem":
+      return "Only UPC-A numbers starting with 0 or 1 have a UPC-E form. Use UPC-A instead.";
+    case "upceNoForm":
+      return "This UPC-A number has no UPC-E form: only numbers with zeros in the right places can be shortened. Use UPC-A instead.";
+    case "shortenedFromUpca":
+      return `Shortened from UPC-A ${v.upca}.`;
+    case "numberSystemAssumed":
+      return "Number system 0 assumed.";
+    case "upceLength":
+      return `UPC-E needs 6, 7 or 8 digits (or a 12-digit UPC-A); this has ${digitCount(v.count ?? 0)}.`;
+    case "upceStart":
+      return "A UPC-E number starts with number system 0 or 1.";
+    case "enterText":
+      return "Enter the text to encode.";
+    case "tooLong":
+      return `${v.label} here takes up to ${count(v.max ?? 0)} characters; this has ${count(v.count ?? 0)}.`;
+    case "code128Chars":
+      return `Code 128 here takes plain ASCII letters, digits, spaces and symbols. Not allowed: ${englishChars(issue.chars)}`;
+    case "code39Chars":
+      return `Code 39 takes capital letters, digits, spaces and - . $ / + % only. Not allowed: ${englishChars(issue.chars)}`;
+    case "code39Lowercase":
+      return "Code 39 has no lowercase letters. Use capitals, or Code 128 for mixed case.";
+    case "gs1Enter":
+      return "Enter Application Identifiers in brackets with their values, e.g. (01)09501101530003.";
+    case "gs1Start":
+      return "Start with an Application Identifier in brackets, e.g. (01) for a GTIN, then its value.";
+    case "gs1Brackets":
+      return "Brackets don't line up: write each AI as (digits), followed by its value.";
+    case "gs1BadAi":
+      return `"(${v.ai})" isn't an Application Identifier: AIs are 2 to 4 digits.`;
+    case "gs1NoValue":
+      return `AI (${v.ai}) has no value after it.`;
+    case "gs1BadChars":
+      return `AI (${v.ai}) has characters GS1 doesn't allow: ${englishChars(issue.chars)}`;
+    case "gs1Ai":
+      return `AI (${v.ai}): ${issue.inner ? barcodeIssueText(issue.inner) : ""}`;
+    case "gs1TooLong":
+      return `GS1-128 holds up to ${v.max} characters of AIs and data; this has ${v.count}. Split it over two barcodes.`;
+    case "unknownFormat":
+      return "Unknown barcode format.";
+  }
+}
+
+const fail = (issue: BarcodeIssue): BarcodeInput => ({
+  ok: false,
+  error: barcodeIssueText(issue),
+  issue,
+});
+
+/** A success with notes: `note` is their English text, joined. */
+const done = (value: string, notes: BarcodeIssue[] = []): BarcodeInput =>
+  notes.length > 0
+    ? { ok: true, value, note: notes.map(barcodeIssueText).join(" "), notes }
+    : { ok: true, value };
 
 /**
  * The GS1 check digit (EAN, UPC, ITF-14, GTIN, SSCC): weights 3 and 1
@@ -222,8 +349,6 @@ export function gs1CheckDigit(body: string): number {
   return (10 - (sum % 10)) % 10;
 }
 
-const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? "" : "s"}`;
-
 /**
  * A GS1 number of `length` digits: one digit short gets its check digit,
  * the full length has its check digit verified.
@@ -231,34 +356,32 @@ const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? "" : "s"}`;
 function gs1Number(label: string, raw: string, length: number): BarcodeInput {
   const digits = raw.replace(/[\s-]/g, "");
   if (!digits) {
-    return fail(
-      `Enter ${length - 1} digits, or all ${length} with the check digit.`,
-    );
+    return fail({
+      code: "enterDigits",
+      values: { short: length - 1, length },
+    });
   }
   if (!/^\d+$/.test(digits)) {
-    return fail(`${label} takes digits only.`);
+    return fail({ code: "digitsOnly", values: { label } });
   }
   if (digits.length === length - 1) {
     const check = gs1CheckDigit(digits);
-    return {
-      ok: true,
-      value: digits + check,
-      note: `Check digit ${check} added.`,
-    };
+    return done(digits + check, [
+      { code: "checkDigitAdded", values: { check } },
+    ]);
   }
   if (digits.length === length) {
     const expected = gs1CheckDigit(digits.slice(0, -1));
     const given = Number(digits.at(-1));
     if (expected !== given) {
-      return fail(
-        `The check digit should be ${expected}, not ${given}. Check the number, or leave the last digit off and it's worked out for you.`,
-      );
+      return fail({ code: "wrongCheckDigit", values: { expected, given } });
     }
-    return { ok: true, value: digits };
+    return done(digits);
   }
-  return fail(
-    `${label} needs ${length - 1} or ${length} digits; this has ${plural(digits.length, "digit")}.`,
-  );
+  return fail({
+    code: "wrongLength",
+    values: { label, short: length - 1, length, count: digits.length },
+  });
 }
 
 /** A UPC-E number (number system, six digits, check digit) as its UPC-A. */
@@ -308,71 +431,59 @@ export function compressUpca(upca: string): string | null {
 function upceInput(raw: string): BarcodeInput {
   const digits = raw.replace(/[\s-]/g, "");
   if (!digits) {
-    return fail("Enter 6 to 8 digits, or a 12-digit UPC-A to shorten.");
+    return fail({ code: "upceEnter" });
   }
-  if (!/^\d+$/.test(digits)) return fail("UPC-E takes digits only.");
+  if (!/^\d+$/.test(digits)) {
+    return fail({ code: "digitsOnly", values: { label: "UPC-E" } });
+  }
 
   if (digits.length === 11 || digits.length === 12) {
     const upca = gs1Number("UPC-A", digits, 12);
     if (!upca.ok) return upca;
     if (!/^[01]/.test(upca.value)) {
-      return fail(
-        "Only UPC-A numbers starting with 0 or 1 have a UPC-E form. Use UPC-A instead.",
-      );
+      return fail({ code: "upceSystem" });
     }
     const upce = compressUpca(upca.value);
     if (!upce) {
-      return fail(
-        "This UPC-A number has no UPC-E form: only numbers with zeros in the right places can be shortened. Use UPC-A instead.",
-      );
+      return fail({ code: "upceNoForm" });
     }
-    return {
-      ok: true,
-      value: upce,
-      note: `Shortened from UPC-A ${upca.value}.`,
-    };
+    return done(upce, [
+      { code: "shortenedFromUpca", values: { upca: upca.value } },
+    ]);
   }
 
   let withSystem = digits;
-  let note: string | undefined;
+  const notes: BarcodeIssue[] = [];
   if (digits.length === 6) {
     withSystem = `0${digits}`;
-    note = "Number system 0 assumed.";
+    notes.push({ code: "numberSystemAssumed" });
   }
   if (withSystem.length !== 7 && withSystem.length !== 8) {
-    return fail(
-      `UPC-E needs 6, 7 or 8 digits (or a 12-digit UPC-A); this has ${plural(digits.length, "digit")}.`,
-    );
+    return fail({ code: "upceLength", values: { count: digits.length } });
   }
   if (!/^[01]/.test(withSystem)) {
-    return fail("A UPC-E number starts with number system 0 or 1.");
+    return fail({ code: "upceStart" });
   }
   const expected = gs1CheckDigit(expandUpce(withSystem).slice(0, 11));
   if (withSystem.length === 7) {
-    return {
-      ok: true,
-      value: withSystem + expected,
-      note: [note, `Check digit ${expected} added.`].filter(Boolean).join(" "),
-    };
+    return done(withSystem + expected, [
+      ...notes,
+      { code: "checkDigitAdded", values: { check: expected } },
+    ]);
   }
   const given = Number(withSystem[7]);
   if (given !== expected) {
-    return fail(
-      `The check digit should be ${expected}, not ${given}. Check the number, or leave the last digit off and it's worked out for you.`,
-    );
+    return fail({ code: "wrongCheckDigit", values: { expected, given } });
   }
-  return { ok: true, value: withSystem, note };
+  return done(withSystem, notes);
 }
 
-/** Characters outside `allowed`, each listed once, for an error message. */
-function offending(text: string, allowed: RegExp): string {
+/** Characters outside `allowed`, each listed once (up to six), for an issue. */
+function offending(text: string, allowed: RegExp): string[] {
   const bad = [...new Set([...text].filter((char) => !allowed.test(char)))];
   return bad
     .slice(0, 6)
-    .map((char) =>
-      char === " " ? "space" : char.trim() ? char : "a line break",
-    )
-    .join(" ");
+    .map((char) => (char.trim() || char === " " ? char : "\n"));
 }
 
 const CODE128_CHAR = /^[\x20-\x7e]$/;
@@ -381,20 +492,20 @@ const CODE39_CHAR = /^[0-9A-Z \-.$/+%]$/;
 function textInput(
   format: BarcodeFormat,
   raw: string,
-  allowed: RegExp | null,
-  why: string,
+  allowed: { chars: RegExp; code: "code128Chars" | "code39Chars" } | null,
 ): BarcodeInput {
-  if (!raw) return fail("Enter the text to encode.");
+  if (!raw) return fail({ code: "enterText" });
   const length = [...raw].length;
   if (length > format.maxLength) {
-    return fail(
-      `${format.label} here takes up to ${format.maxLength.toLocaleString("en-US")} characters; this has ${length.toLocaleString("en-US")}.`,
-    );
+    return fail({
+      code: "tooLong",
+      values: { label: format.label, max: format.maxLength, count: length },
+    });
   }
-  if (allowed && [...raw].some((char) => !allowed.test(char))) {
-    return fail(`${why} Not allowed: ${offending(raw, allowed)}`);
+  if (allowed && [...raw].some((char) => !allowed.chars.test(char))) {
+    return fail({ code: allowed.code, chars: offending(raw, allowed.chars) });
   }
-  return { ok: true, value: raw };
+  return done(raw);
 }
 
 /** GS1 Application Identifiers whose value is a fixed-length number with a check digit. */
@@ -416,17 +527,13 @@ export const GS1_128_MAX_DATA = 48;
 function gs1Input(raw: string): BarcodeInput {
   const text = raw.replace(/\s+/g, "");
   if (!text) {
-    return fail(
-      "Enter Application Identifiers in brackets with their values, e.g. (01)09501101530003.",
-    );
+    return fail({ code: "gs1Enter" });
   }
   if (!text.startsWith("(")) {
-    return fail(
-      "Start with an Application Identifier in brackets, e.g. (01) for a GTIN, then its value.",
-    );
+    return fail({ code: "gs1Start" });
   }
   const parts: string[] = [];
-  const notes: string[] = [];
+  const notes: BarcodeIssue[] = [];
   let dataLength = 0;
   const pattern = /\((\d*)\)([^()]*)/y;
   let index = 0;
@@ -434,24 +541,22 @@ function gs1Input(raw: string): BarcodeInput {
     pattern.lastIndex = index;
     const match = pattern.exec(text);
     if (!match) {
-      return fail(
-        "Brackets don't line up: write each AI as (digits), followed by its value.",
-      );
+      return fail({ code: "gs1Brackets" });
     }
     index = pattern.lastIndex;
     const ai = match[1] as string;
     let value = match[2] as string;
     if (!/^\d{2,4}$/.test(ai)) {
-      return fail(
-        `"(${ai})" isn't an Application Identifier: AIs are 2 to 4 digits.`,
-      );
+      return fail({ code: "gs1BadAi", values: { ai } });
     }
-    if (!value) return fail(`AI (${ai}) has no value after it.`);
+    if (!value) return fail({ code: "gs1NoValue", values: { ai } });
     const bad = [...value].filter((char) => !GS1_VALUE.test(char));
     if (bad.length > 0) {
-      return fail(
-        `AI (${ai}) has characters GS1 doesn't allow: ${offending(value, GS1_VALUE)}`,
-      );
+      return fail({
+        code: "gs1BadChars",
+        values: { ai },
+        chars: offending(value, GS1_VALUE),
+      });
     }
     const checked = GS1_CHECKED_AIS[ai];
     if (checked) {
@@ -460,23 +565,24 @@ function gs1Input(raw: string): BarcodeInput {
         value,
         checked.length,
       );
-      if (!number.ok) return fail(`AI (${ai}): ${number.error}`);
-      if (number.note) notes.push(`AI (${ai}): ${number.note}`);
+      if (!number.ok) {
+        return fail({ code: "gs1Ai", values: { ai }, inner: number.issue });
+      }
+      for (const note of number.notes ?? []) {
+        notes.push({ code: "gs1Ai", values: { ai }, inner: note });
+      }
       value = number.value;
     }
     parts.push(`(${ai})${value}`);
     dataLength += ai.length + value.length;
   }
   if (dataLength > GS1_128_MAX_DATA) {
-    return fail(
-      `GS1-128 holds up to ${GS1_128_MAX_DATA} characters of AIs and data; this has ${dataLength}. Split it over two barcodes.`,
-    );
+    return fail({
+      code: "gs1TooLong",
+      values: { max: GS1_128_MAX_DATA, count: dataLength },
+    });
   }
-  return {
-    ok: true,
-    value: parts.join(""),
-    note: notes.length > 0 ? notes.join(" ") : undefined,
-  };
+  return done(parts.join(""), notes);
 }
 
 /** Checks `raw` for `format`; on success, the value the encoder draws. */
@@ -497,36 +603,30 @@ export function validateBarcodeInput(
     case "itf14":
       return gs1Number("ITF-14", raw, 14);
     case "code128":
-      return textInput(
-        format,
-        raw,
-        CODE128_CHAR,
-        "Code 128 here takes plain ASCII letters, digits, spaces and symbols.",
-      );
+      return textInput(format, raw, {
+        chars: CODE128_CHAR,
+        code: "code128Chars",
+      });
     case "code39": {
       const onlyCaseIsWrong =
         /[a-z]/.test(raw) &&
         [...raw.toUpperCase()].every((char) => CODE39_CHAR.test(char));
       if (onlyCaseIsWrong) {
-        return fail(
-          "Code 39 has no lowercase letters. Use capitals, or Code 128 for mixed case.",
-        );
+        return fail({ code: "code39Lowercase" });
       }
-      return textInput(
-        format,
-        raw,
-        CODE39_CHAR,
-        "Code 39 takes capital letters, digits, spaces and - . $ / + % only.",
-      );
+      return textInput(format, raw, {
+        chars: CODE39_CHAR,
+        code: "code39Chars",
+      });
     }
     case "gs1-128":
       return gs1Input(raw);
     case "datamatrix":
     case "pdf417":
     case "aztec":
-      return textInput(format, raw, null, "");
+      return textInput(format, raw, null);
     default:
-      return fail("Unknown barcode format.");
+      return fail({ code: "unknownFormat" });
   }
 }
 

@@ -63,6 +63,28 @@ const daysAgo = (days: number) => new Date(Date.now() - days * DAY_MS);
 const countIf = (condition: SQL) =>
   sql<number>`count(*) filter (where ${condition})`.mapWith(Number);
 
+// How many rows the capped sections show. Their queries read one more, so
+// the section can say it's showing only the latest ones.
+export const SECTION_LIMITS = {
+  webhookEndpoints: 20,
+  integrations: 30,
+  oauthApps: 20,
+  sessions: 10,
+  abuseReports: 20,
+  auditTrail: 30,
+} as const;
+
+export interface Latest<T> {
+  rows: T[];
+  /** More exist than `rows` holds. */
+  more: boolean;
+}
+
+/** The first `limit` of rows read with `.limit(limit + 1)`. */
+export function latest<T>(rows: T[], limit: number): Latest<T> {
+  return { rows: rows.slice(0, limit), more: rows.length > limit };
+}
+
 // ─── Profile ─────────────────────────────────────────────────────────────────
 
 export async function loadProfile(userId: string) {
@@ -275,7 +297,7 @@ export async function loadCodes(userId: string) {
       })
       .from(qrCode)
       .where(eq(qrCode.userId, userId))
-      .orderBy(desc(qrCode.createdAt))
+      .orderBy(desc(qrCode.createdAt), desc(qrCode.id))
       .limit(10),
   ]);
   return { counts, recent };
@@ -425,22 +447,26 @@ export async function loadLibrary(userId: string) {
 // ─── Webhooks ────────────────────────────────────────────────────────────────
 
 export async function loadWebhooks(userId: string) {
-  const endpoints = await db
-    .select({
-      id: webhookEndpoint.id,
-      url: webhookEndpoint.url,
-      events: webhookEndpoint.events,
-      active: webhookEndpoint.active,
-      organizationId: webhookEndpoint.organizationId,
-      createdAt: webhookEndpoint.createdAt,
-    })
-    .from(webhookEndpoint)
-    .where(eq(webhookEndpoint.userId, userId))
-    .orderBy(desc(webhookEndpoint.createdAt))
-    .limit(20);
+  const limit = SECTION_LIMITS.webhookEndpoints;
+  const { rows: endpoints, more } = latest(
+    await db
+      .select({
+        id: webhookEndpoint.id,
+        url: webhookEndpoint.url,
+        events: webhookEndpoint.events,
+        active: webhookEndpoint.active,
+        organizationId: webhookEndpoint.organizationId,
+        createdAt: webhookEndpoint.createdAt,
+      })
+      .from(webhookEndpoint)
+      .where(eq(webhookEndpoint.userId, userId))
+      .orderBy(desc(webhookEndpoint.createdAt), desc(webhookEndpoint.id))
+      .limit(limit + 1),
+    limit,
+  );
   const ids = endpoints.map((endpoint) => endpoint.id);
   if (ids.length === 0) {
-    return { endpoints: [], deliveries: [], stats: [] };
+    return { endpoints: [], more, deliveries: [], stats: [] };
   }
 
   const [stats, deliveries] = await Promise.all([
@@ -477,14 +503,15 @@ export async function loadWebhooks(userId: string) {
       )
       .limit(12),
   ]);
-  return { endpoints, deliveries, stats };
+  return { endpoints, more, deliveries, stats };
 }
 
 // ─── Integrations ────────────────────────────────────────────────────────────
 
 export async function loadIntegrations(userId: string) {
+  const limit = SECTION_LIMITS.integrations;
   // Tokens are never selected; from metadata only the sync status is read.
-  const rows = await db
+  const read = await db
     .select({
       id: integration.id,
       provider: integration.provider,
@@ -503,30 +530,35 @@ export async function loadIntegrations(userId: string) {
         ne(integration.provider, JOB_STORE_PROVIDER),
       ),
     )
-    .orderBy(desc(integration.createdAt))
-    .limit(30);
-  return rows.map(({ sync, ...row }) => {
-    const state = readSyncState(sync);
-    return {
-      ...row,
-      sync: state
-        ? {
-            enabled: state.enabled,
-            status: state.status,
-            lastError: state.lastError,
-            lastAttemptAt: state.lastAttemptAt,
-            lastSuccessAt: state.lastSuccessAt,
-            delivered: state.delivered,
-          }
-        : null,
-    };
-  });
+    .orderBy(desc(integration.createdAt), desc(integration.id))
+    .limit(limit + 1);
+  const { rows, more } = latest(read, limit);
+  return {
+    more,
+    rows: rows.map(({ sync, ...row }) => {
+      const state = readSyncState(sync);
+      return {
+        ...row,
+        sync: state
+          ? {
+              enabled: state.enabled,
+              status: state.status,
+              lastError: state.lastError,
+              lastAttemptAt: state.lastAttemptAt,
+              lastSuccessAt: state.lastSuccessAt,
+              delivered: state.delivered,
+            }
+          : null,
+      };
+    }),
+  };
 }
 
 // ─── OAuth apps ──────────────────────────────────────────────────────────────
 
 export async function loadOAuthApps(userId: string) {
-  const [owned, authorized] = await Promise.all([
+  const limit = SECTION_LIMITS.oauthApps;
+  const [ownedRead, authorized] = await Promise.all([
     db
       .select({
         id: oauthApp.id,
@@ -540,10 +572,11 @@ export async function loadOAuthApps(userId: string) {
       })
       .from(oauthApp)
       .where(eq(oauthApp.ownerUserId, userId))
-      .orderBy(desc(oauthApp.createdAt))
-      .limit(20),
+      .orderBy(desc(oauthApp.createdAt), desc(oauthApp.id))
+      .limit(limit + 1),
     listAuthorizedApps(userId),
   ]);
+  const { rows: owned, more: moreOwned } = latest(ownedRead, limit);
 
   const ids = owned.map((app) => app.id);
   const [users, moderation] = ids.length
@@ -590,6 +623,7 @@ export async function loadOAuthApps(userId: string) {
       users: usersByApp.get(app.id) ?? 0,
       suspended: suspended.has(app.id),
     })),
+    moreOwned,
     authorized,
   };
 }
@@ -680,8 +714,9 @@ const describeDevice = (userAgent: string | null) => {
 };
 
 export async function loadSessions(userId: string) {
+  const limit = SECTION_LIMITS.sessions;
   // Never select the session token.
-  const rows = await db
+  const read = await db
     .select({
       id: session.id,
       createdAt: session.createdAt,
@@ -692,12 +727,16 @@ export async function loadSessions(userId: string) {
     })
     .from(session)
     .where(and(eq(session.userId, userId), gt(session.expiresAt, new Date())))
-    .orderBy(desc(session.updatedAt))
-    .limit(10);
-  return rows.map(({ userAgent, ...row }) => ({
-    ...row,
-    device: describeDevice(userAgent),
-  }));
+    .orderBy(desc(session.updatedAt), desc(session.id))
+    .limit(limit + 1);
+  const { rows, more } = latest(read, limit);
+  return {
+    more,
+    rows: rows.map(({ userAgent, ...row }) => ({
+      ...row,
+      device: describeDevice(userAgent),
+    })),
+  };
 }
 
 // ─── AI usage ────────────────────────────────────────────────────────────────
@@ -744,7 +783,8 @@ export async function loadAbuseReports(userId: string, email: string) {
     .select({ id: landingPage.id })
     .from(landingPage)
     .where(eq(landingPage.userId, userId));
-  return db
+  const limit = SECTION_LIMITS.abuseReports;
+  const read = await db
     .select({
       id: abuseReport.id,
       reason: abuseReport.reason,
@@ -764,8 +804,9 @@ export async function loadAbuseReports(userId: string, email: string) {
         eq(abuseReport.reporterEmail, email),
       ),
     )
-    .orderBy(desc(abuseReport.createdAt))
-    .limit(20);
+    .orderBy(desc(abuseReport.createdAt), desc(abuseReport.id))
+    .limit(limit + 1);
+  return latest(read, limit);
 }
 
 // ─── Audit trail ─────────────────────────────────────────────────────────────
@@ -774,9 +815,10 @@ export async function loadAbuseReports(userId: string, email: string) {
  * Admin actions about this user: on the account itself, or on something they
  * own (entries name the owner as subjectUserId, ownerId or ownerUserId).
  */
-export function loadAuditTrail(userId: string) {
+export async function loadAuditTrail(userId: string) {
   const meta = sql`${adminAuditLog.metadata}::jsonb`;
-  return db
+  const limit = SECTION_LIMITS.auditTrail;
+  const read = await db
     .select({
       id: adminAuditLog.id,
       action: adminAuditLog.action,
@@ -798,6 +840,7 @@ export function loadAuditTrail(userId: string) {
         sql`${meta} ->> 'ownerUserId' = ${userId}`,
       ),
     )
-    .orderBy(desc(adminAuditLog.createdAt))
-    .limit(30);
+    .orderBy(desc(adminAuditLog.createdAt), desc(adminAuditLog.id))
+    .limit(limit + 1);
+  return latest(read, limit);
 }

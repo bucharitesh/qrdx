@@ -1,0 +1,89 @@
+{
+  "id": "pay-for-parking",
+  "name": "Pay for parking",
+  "description": "A sign on two posts with a parking sign in a round badge on top.",
+  "category": "use-case",
+  "collection": "automotive",
+  "contentTypes": ["upi", "paypal", "url"],
+  "tags": ["cars", "parking", "payment"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1940
+    },
+    "qr": {
+      "x": 120,
+      "y": 400,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 250,
+        "y": 1720,
+        "width": 56,
+        "height": 220,
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.25
+        }
+      },
+      {
+        "type": "rect",
+        "x": 934,
+        "y": 1720,
+        "width": 56,
+        "height": 220,
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.25
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 48,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 620,
+        "cy": 170,
+        "r": 125,
+        "fill": "background"
+      },
+      {
+        "type": "path",
+        "d": "M581 107L659 107A24 24 0 0 1 683 131L683 209A24 24 0 0 1 659 233L581 233A24 24 0 0 1 557 209L557 131A24 24 0 0 1 581 107ZM596 212L615.5 212L615.5 185L629 185C650 185 660.5 171.5 660.5 156.5C660.5 143 650 128 629 128L596 128ZM615.5 144.5L627.5 144.5C636.5 144.5 641 150.5 641 156.5C641 164 636.5 168.5 627.5 168.5L615.5 168.5Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Pay for parking",
+        "color": "text",
+        "box": {
+          "x": 90,
+          "y": 1520,
+          "width": 1060,
+          "height": 180
+        }
+      }
+    ]
+  }
+}

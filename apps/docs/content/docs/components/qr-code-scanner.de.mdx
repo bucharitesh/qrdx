@@ -1,0 +1,41 @@
+---
+title: "QR-Code-Scanner"
+description: "Eine Drop-Zone, die einen QR-Code aus einem Bild direkt im Browser ausliest, mit Aktionen zum Kopieren und zum Öffnen des Links."
+icon: Scan
+---
+
+<ComponentLinks name="qr-code-scanner" />
+
+<ComponentPreview name="qr-code-scanner-demo" />
+
+## Installation [#installation]
+
+<InstallationTabs name="qr-code-scanner" />
+
+## Verwendung [#usage]
+
+```tsx
+import { QrCodeScanner } from "@/components/qr-code-scanner";
+```
+
+```tsx
+<QrCodeScanner onResult={(value) => console.log(value)} />
+```
+
+Nutzer:innen legen ein Bild per Drag-and-drop ab oder klicken, um eines auszuwählen. Die Dekodierung läuft im Browser mit den [Erkennungs-Helfern](/docs/qr-detection) von qrdx, sodass das Bild das Gerät nie verlässt. Die Komponente liest Bilddateien, keinen Live-Kamerastream.
+
+Das Ergebnis erscheint mit einem Kopieren-Button und, wenn es eine `http`- oder `https`-URL ist, zusätzlich mit einem Button „Link öffnen".
+
+## Beispiele [#examples]
+
+### Ein Ergebnis prüfen [#checking-a-result]
+
+`onResult` erhält den dekodierten Text, sodass du darauf reagieren kannst, zum Beispiel um ein Ticket einzuchecken. `label` ändert die Überschrift in der Drop-Zone. Lade den obigen Beispiel-Code herunter und lege ihn dort ab, um ein gültiges Ticket zu sehen.
+
+<ComponentPreview name="qr-code-scanner-tickets" />
+
+## API-Referenz [#api-reference]
+
+<auto-type-table path="../../../registry/qrdx/qr-code-scanner.tsx" type="{ [K in keyof QrCodeScannerProps as K extends keyof ComponentProps<'div'> ? never : K]: QrCodeScannerProps[K] }" />
+
+Jede weitere Prop, wie `className`, wird an das umgebende `<div>` weitergegeben.

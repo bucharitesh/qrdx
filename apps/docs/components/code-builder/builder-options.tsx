@@ -93,7 +93,8 @@ export function BuilderOptionBar({
                   )}
                 </button>
               </TooltipTrigger>
-              <TooltipContent side="top">
+              {/* Above the code builder's dialog (z-[99]) */}
+              <TooltipContent className="z-[120]" side="top">
                 {copy.blurb}
                 {access?.requiredPlan &&
                   !locked &&

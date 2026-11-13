@@ -1,0 +1,41 @@
+---
+title: "Controlla un design con lo scan score"
+description: "Lo scan score mette alla prova il tuo design come lo vede la fotocamera di un telefono e ti dice cosa correggere."
+---
+
+Ogni design nel Playground ottiene uno **Scan score** da 0 a 100. Viene mostrato sotto l'anteprima, per esempio "Scan score 92 · Ottimo".
+
+## Cosa significa il punteggio [#what-the-score-means]
+
+- **Ottimo** (85 o più): pronto per la stampa.
+- **Discreto** (da 65 a 84): dovrebbe essere letto, ma controlla gli avvisi.
+- **A rischio** (sotto 65): correggi i controlli contrassegnati da una croce.
+- **Fallito**: il codice non è stato decodificato nei test, oppure il contrasto è troppo basso. Non stamparlo.
+
+## Scopri cosa correggere [#see-what-to-fix]
+
+Clicca sul punteggio. Il pannello **Verrà letto?** elenca tutti i controlli, con quelli non superati in cima.
+
+Lo scan score controlla:
+
+- **Decodifica**: il codice viene letto a dimensioni ridotte con una sfocatura simile a quella di una fotocamera.
+- **Contrasto**: il codice e lo sfondo devono differire di almeno 4.5:1.
+- **Scuro su chiaro**: i codici scuri su sfondi chiari vengono letti in più app.
+- **Dimensione del logo**: un logo non deve coprire più di quanto la correzione degli errori sia in grado di ricostruire.
+- **Forma degli occhi**: gli occhi circolari e quelli ondulati non funzionano in alcune app di scansione.
+- **Spazio libero**: il bordo vuoto attorno al codice. Quattro moduli sono l'ideale.
+
+## Correzioni rapide [#quick-fixes]
+
+- Contrasto basso: rendi il codice più scuro o lo sfondo più chiaro. Vedi [Scegli colori che si leggono](/docs/help/designing/colors-and-contrast).
+- Il logo copre troppo: imposta **Correzione errori** su **Alta**. Vedi [Aggiungi un logo](/docs/help/designing/logos).
+- Occhi: passa a occhi quadrati, arrotondati o a ingranaggio.
+- Spazio libero: imposta **Margine** su **Standard** o **Ampio**.
+
+## Controlla un codice stampato [#check-a-printed-code]
+
+Lo scan score testa il design su schermo. Per testare un codice che hai già stampato, scatta una foto e trascinala nello [strumento di verifica della scansione](/tools/scan-checker). L'immagine non lascia mai il tuo dispositivo.
+
+## Correlati [#related]
+
+- [Un codice non viene letto](/docs/help/troubleshooting/wont-scan)

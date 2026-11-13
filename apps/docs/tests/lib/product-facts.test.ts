@@ -2,8 +2,13 @@
 // through `{facts.<name>}` tokens, so they can't drift from the playground.
 import { readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
+import {
+  MAX_BULK_TOOL_ROWS,
+  MAX_CODES_PER_REQUEST,
+  MAX_IMPORT_ROWS,
+} from "@repo/config";
 import { remarkLLMs } from "fumadocs-core/mdx-plugins/remark-llms";
-import { OFFICIAL_FRAMES } from "qrdx";
+import { BUILT_IN_FRAMES, OFFICIAL_FRAMES } from "qrdx";
 import {
   BODY_PATTERN,
   CORNER_EYE_DOT_PATTERNS,
@@ -16,11 +21,6 @@ import { describe, expect, it } from "vitest";
 import { AI_ART_PRESETS } from "@/components/sections/ai-art/presets";
 import { BARCODE_FORMATS } from "@/lib/barcode/formats";
 import { BRAND_LOGO_COUNT } from "@/lib/brand-logos/catalog.generated";
-import {
-  MAX_BULK_TOOL_ROWS,
-  MAX_CODES_PER_REQUEST,
-  MAX_IMPORT_ROWS,
-} from "@/lib/bulk-limits";
 import { TRANSLATED_LOCALES } from "@/lib/i18n/config";
 import { PAGE_TYPE_IDS } from "@/lib/landing/page-type-ids";
 import {
@@ -78,10 +78,10 @@ describe("PRODUCT_FACTS", () => {
       // lib/affiliates/terms.ts
       affiliateCommissionPercent: 30,
       affiliateCommissionMonths: 12,
-      affiliateHoldDays: 30,
+      affiliateHoldDays: 45,
       affiliateMinPayoutUsd: "US$25",
       affiliateTermsNoticeDays: 30,
-      // lib/bulk-limits.ts
+      // @repo/config limits.ts
       apiBatchCodes: MAX_CODES_PER_REQUEST.toLocaleString("en-US"),
       importRows: MAX_IMPORT_ROWS.toLocaleString("en-US"),
       bulkToolRows: MAX_BULK_TOOL_ROWS.toLocaleString("en-US"),
@@ -89,8 +89,21 @@ describe("PRODUCT_FACTS", () => {
       imageApiPerMinute: 300,
       mcpPerMinute: 120,
       designQrPerMinute: 20,
+      // lib/pricing.ts
+      moneyBackDays: 30,
+      nonprofitDiscountPercent: 50,
+      // lib/scan-history.ts: 365 days, written "1 year"
+      freeScanHistoryYears: 1,
     });
     expect(FRAME_STYLES).toContain("none");
+    // Every built-in frame is a spec named by one style; none is official
+    expect(BUILT_IN_FRAMES.map((frame) => frame.style).sort()).toEqual(
+      FRAME_STYLES.filter((style) => style !== "none").sort(),
+    );
+    const official = new Set(OFFICIAL_FRAMES.map((frame) => frame.id));
+    expect(
+      BUILT_IN_FRAMES.filter((frame) => official.has(frame.style)),
+    ).toEqual([]);
     expect(STYLE_SUMMARY).toBe(
       `${BODY_PATTERN.length} body patterns, ${CORNER_EYE_PATTERNS.length} corner-eye shapes and ${CORNER_EYE_DOT_PATTERNS.length} eye centers`,
     );
@@ -210,10 +223,11 @@ describe("product counts in copy", () => {
       "call-to-action frames": PRODUCT_FACTS.frameStyles,
       frames: PRODUCT_FACTS.frames,
     };
+    // Counts may use a thousands separator ("1,032 frames")
     for (const match of readme.matchAll(
-      /\b(\d+) (body patterns|corner-eye shapes|eye centers|call-to-action frames|frames)\b/g,
+      /\b(\d{1,3}(?:,\d{3})+|\d+) (body patterns|corner-eye shapes|eye centers|call-to-action frames|frames)\b/g,
     )) {
-      expect(`${match[1]} ${match[2]}`).toBe(
+      expect(`${match[1].replaceAll(",", "")} ${match[2]}`).toBe(
         `${expected[match[2]]} ${match[2]}`,
       );
     }

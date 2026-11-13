@@ -36,7 +36,9 @@ import {
   checkImportRow,
   duplicateSlugLines,
   IMPORT_CHUNK_SIZE,
+  type ImportIssue,
   importBlocked,
+  importIssueText,
   type NormalizedImportRow,
   PREVIEW_CHUNK_SIZE,
 } from "./csv";
@@ -92,8 +94,22 @@ type ImportRow = z.infer<typeof rowSchema>;
 
 interface CheckedRow {
   row: NormalizedImportRow;
+  /** The problems as codes; `errors` is their English text */
+  issues: ImportIssue[];
   errors: string[];
 }
+
+/** Adds a problem to a checked row, as a code and as English text. */
+function addIssue(item: CheckedRow, issue: ImportIssue) {
+  item.issues.push(issue);
+  item.errors.push(importIssueText(issue));
+}
+
+/** The destination schema's English, as a code where it has one. */
+const DESTINATION_SCHEMA_ISSUES: Record<string, ImportIssue["code"]> = {
+  "A dynamic code cannot point to another QRdx short link":
+    "destinationShortLink",
+};
 
 /**
  * File checks plus the server-only ones: destination rules, the plan and
@@ -105,8 +121,11 @@ async function checkRows(
   domainId: string | null,
 ): Promise<CheckedRow[]> {
   const onCustomDomain = Boolean(domainId);
-  const checked = rows.map((input) => {
-    const { errors, normalized } = checkImportRow(input, { onCustomDomain });
+  const checked = rows.map((input): CheckedRow => {
+    const { errors, issues, normalized } = checkImportRow(input, {
+      onCustomDomain,
+    });
+    const item = { row: normalized, errors, issues };
     if (errors.length === 0) {
       const destination = destinationUrlSchema.safeParse(
         normalized.destinationUrl,
@@ -114,10 +133,15 @@ async function checkRows(
       if (destination.success) {
         normalized.destinationUrl = destination.data;
       } else {
-        errors.push(destination.error.issues[0]?.message ?? "Invalid URL");
+        const reason = destination.error.issues[0]?.message ?? "Invalid URL";
+        const code = DESTINATION_SCHEMA_ISSUES[reason];
+        addIssue(
+          item,
+          code ? { code } : { code: "destinationRejected", values: { reason } },
+        );
       }
     }
-    return { row: normalized, errors };
+    return item;
   });
 
   const duplicates = duplicateSlugLines(checked.map(({ row }) => row));
@@ -134,13 +158,16 @@ async function checkRows(
   for (const item of checked) {
     if (!item.row.slug) continue;
     if (!customSlugs) {
-      item.errors.push(
-        `Custom back-halves are part of ${formatPlanList(plansWith((limits) => limits.customSlugs))}`,
-      );
+      addIssue(item, {
+        code: "slugNotOnPlan",
+        values: {
+          plans: formatPlanList(plansWith((limits) => limits.customSlugs)),
+        },
+      });
     } else if (duplicates.has(item.row.line)) {
-      item.errors.push("This back-half appears earlier in the file");
+      addIssue(item, { code: "slugDuplicate" });
     } else if (taken.has(item.row.slug)) {
-      item.errors.push("This back-half is already in use");
+      addIssue(item, { code: "slugTaken" });
     }
   }
   return checked;
@@ -177,8 +204,8 @@ function newNames(
 }
 
 export interface ImportPreview {
-  /** Problems by CSV line (lines without problems are left out) */
-  errors: { line: number; messages: string[] }[];
+  /** Problems by CSV line (lines without problems are left out), in English and as codes */
+  errors: { line: number; messages: string[]; issues: ImportIssue[] }[];
   valid: number;
   invalid: number;
   newFolders: string[];
@@ -223,7 +250,7 @@ export async function previewImport(
   return {
     errors: checked.flatMap((item) =>
       item.errors.length > 0
-        ? [{ line: item.row.line, messages: item.errors }]
+        ? [{ line: item.row.line, messages: item.errors, issues: item.issues }]
         : [],
     ),
     valid: validRows.length,
@@ -239,6 +266,8 @@ export interface ImportRowResult {
   line: number;
   ok: boolean;
   message?: string;
+  /** Why the row wasn't imported, as codes the wizard translates */
+  issues?: ImportIssue[];
   code?: { id: string; slug: string; shortLink: string };
 }
 
@@ -324,15 +353,17 @@ export async function importChunk(
   const batchTags = [...new Set(tagIds)];
   for (const item of checked) {
     if (item.row.tagNames.length + batchTags.length > MAX_TAGS_PER_CODE) {
-      item.errors.push(
-        `Up to ${MAX_TAGS_PER_CODE} tags per code, counting the ones for every code`,
-      );
+      addIssue(item, {
+        code: "tooManyTagsWithBatch",
+        values: { max: MAX_TAGS_PER_CODE },
+      });
     }
     if (item.errors.length > 0) {
       results.set(item.row.line, {
         line: item.row.line,
         ok: false,
         message: item.errors.join(". "),
+        issues: item.issues,
       });
     } else {
       valid.push(item.row);

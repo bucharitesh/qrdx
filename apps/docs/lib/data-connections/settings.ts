@@ -30,6 +30,7 @@ import { HttpError } from "@/lib/error-response";
 import type { ActiveScope } from "@/lib/scope";
 import {
   findScopedCode,
+  formPagesByIds,
   listFormPages,
   loadResponses,
   loadScans,
@@ -360,7 +361,12 @@ export async function listMailchimpMergeFields(
 export interface SinkView {
   sync: SyncState | null;
   settings: Record<string, unknown>;
+  /** The first page of form pages, most recently updated first */
   pages: ScopedFormPage[];
+  /** Where the next page of `pages` starts; null when that's all */
+  pagesCursor: string | null;
+  /** The pages the sync is limited to (settings.pageIds), wherever they sit in the list */
+  selectedPages: ScopedFormPage[];
   workspaceId: string | null;
 }
 
@@ -382,10 +388,23 @@ export async function getSinkView(
   if (!row) return null;
   const metadata = (row.metadata ?? {}) as Record<string, unknown>;
   const settings = (metadata.settings as Record<string, unknown>) ?? {};
+  const pageIds = Array.isArray(settings.pageIds)
+    ? settings.pageIds.filter((id): id is string => typeof id === "string")
+    : [];
+  // Sheets exports scans and has no page list.
+  const [first, selectedPages] =
+    provider === "google-sheets"
+      ? [{ items: [], nextCursor: null }, []]
+      : await Promise.all([
+          listFormPages(scope),
+          formPagesByIds(scope, pageIds),
+        ]);
   return {
     sync: readSyncState(metadata.sync),
     settings,
-    pages: provider === "google-sheets" ? [] : await listFormPages(scope),
+    pages: first.items,
+    pagesCursor: first.nextCursor,
+    selectedPages,
     workspaceId: scope.organizationId,
   };
 }

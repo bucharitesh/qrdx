@@ -1,6 +1,9 @@
-// Reading and editing a custom frame (a frame spec) in the editor: which
-// theme colors it uses, its labels, and swapping its icons. The engine
-// validates and draws the result; nothing here renders.
+// Reading and editing a frame through its spec in the editor: which theme
+// colors it uses, its labels, and swapping its icons. Every frame has a
+// spec: a custom frame carries its own, a built-in style draws the engine's
+// (qrdx frameSpecOf). The engine validates and draws the result; nothing
+// here renders.
+import { getFrameColors } from "qrdx";
 import type {
   AnyQRFrame,
   FrameSpec,
@@ -44,16 +47,19 @@ export function specTokens(spec: FrameSpec): Set<FrameToken> {
   return tokens;
 }
 
-/** The colors a custom frame shows now, per token. */
-export function customFrameColors(frame: QRCustomFrame) {
-  const { colors } = frame.spec;
-  const base = frame.color ?? colors.frame;
-  return {
-    frame: base,
-    text: frame.textColor ?? colors.text ?? base,
-    accent: frame.secondaryColor ?? colors.accent ?? base,
-  };
+/** The colors a frame shows now, per token (its options, else its spec's). */
+export function frameColors(frame: AnyQRFrame) {
+  return (
+    getFrameColors(frame) ?? {
+      frame: "#000000",
+      text: "#000000",
+      accent: "#000000",
+    }
+  );
 }
+
+/** The colors a custom frame shows now, per token. */
+export const customFrameColors = (frame: QRCustomFrame) => frameColors(frame);
 
 export const labelOfSlot = (
   spec: FrameSpec,

@@ -1,0 +1,106 @@
+---
+title: "아트 QR 코드"
+description: "스캔 가능한 QR 코드의 모듈에 로고나 사진을 녹여 넣거나(벡터, AI 없음), QR 코드 주변에 AI 아트워크를 생성해 보세요."
+icon: Sparkles
+---
+
+QRdx에는 QR 코드를 아트워크로 만드는 방법이 세 가지 있습니다.
+
+| | 작동 방식 | 출력 | 비용 |
+|---|---|---|---|
+| **Logo QR** | 로고 모양 안의 모듈은 로고의 색을 따르고, 나머지는 더 밝은 톤으로 옅어집니다 | 벡터 (SVG, PDF, EPS, PNG) | 무료 |
+| **Image QR** | 모든 모듈에 사진이 비치며, 가운데 정사각형이 실제 값을 유지합니다 (하프톤) | 벡터 (SVG, PDF, EPS, PNG) | 무료 |
+| **AI 아트** | AI 이미지 모델이 코드를 하나의 장면으로 다시 그리고, 모든 이미지는 스캔되는지 검증됩니다 | 1024 px 이미지, 2048 px 인쇄용 사본 | AI 아트 크레딧 |
+
+Logo QR과 Image QR은 `qrdx` 라이브러리가 직접 그립니다. 그래서 오프라인, 에디터, 서버, Node에서 모두 작동하며, 결과물은 항상 실제 QR 코드입니다. 파인더, 타이밍, 얼라인먼트 패턴은 전혀 건드리지 않습니다.
+
+## 에디터에서 [#in-the-editor]
+
+[Playground](/playground?tab=art)를 열고 **아트** 탭에서 **Logo QR** 또는 **Image QR**을 선택하세요.
+
+1. 로고나 사진을 업로드해요 (PNG, JPG, WebP 또는 SVG, 최대 1 MB). 투명 PNG나 SVG를 사용하면 가장 깔끔한 Logo QR을 얻을 수 있어요.
+2. **강도**를 설정해요. 낮으면 평범해 보이는 코드가 유지되고, 높으면 그림이 더 많이 드러나요.
+3. 슬라이더 옆의 **스캔 검사**를 확인해요. 브라우저에서 아트 코드를 세 가지 크기로 디코딩하며, 미리보기의 [스캔 점수](/docs/qr-detection)와 같은 방식이에요.
+
+아트 이미지를 업로드하면 오류 정정 수준이 `H`로 설정되어 아트에 가장 많은 여유를 줍니다. 이미지는 브라우저 밖으로 나가지 않으며, 작은 색상 격자(가로 64 또는 96픽셀)만 디자인과 함께 저장됩니다.
+
+## 코드에서 [#in-code]
+
+모드, 샘플링된 이미지, 선택 사항인 강도(0에서 1, 기본값 0.6)를 `art` prop으로 전달합니다.
+
+```tsx
+import { QRCodeSVG, loadQRArtImage } from 'qrdx';
+
+// Browser: sample an uploaded file, a data URL or an <img>
+const image = await loadQRArtImage(file, { mode: 'logo' });
+
+<QRCodeSVG
+  value="https://example.com"
+  size={512}
+  level="H"
+  art={{ mode: 'logo', image, intensity: 0.7 }}
+/>;
+```
+
+서버나 Node에서는 이미지를 직접 디코딩한 다음 RGBA 픽셀을 `createQRArtImage`에 전달하세요.
+
+```ts
+import sharp from 'sharp';
+import { createQRArtImage } from 'qrdx';
+
+const { data, info } = await sharp('photo.jpg')
+  .ensureAlpha()
+  .raw()
+  .toBuffer({ resolveWithObject: true });
+
+const image = createQRArtImage(
+  { data, width: info.width, height: info.height },
+  { maxSize: 96 }
+);
+// art={{ mode: 'halftone', image, intensity: 0.8 }}
+```
+
+`art.image`는 일반 JSON(base64 RGBA를 쓰는 `{ width, height, data }`)이라서, 저장된 디자인과 함께 보관하고 사진을 다시 가져오지 않아도 어디서든 동기적으로 같은 코드를 렌더링할 수 있습니다.
+
+| 옵션 | 값 | 참고 |
+|---|---|---|
+| `mode` | `logo`, `halftone` | `halftone`은 에디터의 "Image QR"에 해당합니다 |
+| `image` | `loadQRArtImage` 또는 `createQRArtImage`의 결과 | 최대 192 × 192 샘플 |
+| `intensity` | `0`에서 `1` | 기본값 `0.6`, `0`이면 평범한 코드처럼 보입니다 |
+
+아트는 본문 패턴을 대체합니다. 모서리 눈은 `cornerEyePattern`, `cornerEyeDotPattern`과 색상을 그대로 유지합니다. 아트는 그라데이션 `fgColor`/`bgColor`의 첫 번째 색을 사용하며, 밝은 배경 위의 어두운 전경이 필요합니다(색을 반전하면 평범한 모양으로 돌아갑니다).
+
+### 스캔 가능성을 유지하는 방법 [#how-scannability-is-kept]
+
+- **Logo QR**: 로고 안의 어두운 모듈은 색이 바뀌지만, 스캐너가 여전히 어둡다고 읽는 밝기까지만 어두워집니다. 로고 안의 밝은 모듈은 밝음 기준치 위에 머무는 옅은 색조를 받습니다. 로고 밖의 어두운 모듈은 회색으로 옅어지되, 어두움 기준치보다 밝아지지는 않습니다.
+- **Logo QR 배지**: 플레이트 아래의 모듈은 각각 코드워드 하나를 손상시킬 수 있습니다. 플레이트는 어떤 오류 정정 블록도 복구 가능한 코드워드의 60%를 넘게 잃지 않도록 크기가 정해지며, 나머지는 카메라를 위해 남겨 둡니다. 강도가 높을수록 플레이트가 그 크기까지 커집니다. 작은 코드는 로고도 더 작아지며, 가장 작은 코드(버전 1, L 또는 M의 버전 2, L의 버전 3)에는 플레이트를 그리지 않습니다.
+- **Image QR**: 각 모듈을 3 × 3 격자로 나눕니다. 바깥쪽 칸에는 모듈의 값에 맞게 더 어둡거나 밝게 조정한 사진이 보이고, 가운데 칸은 스캐너가 샘플링하는 위치이므로 정확한 전경색 또는 배경색을 유지합니다.
+- 파인더, 타이밍, 얼라인먼트, 형식, 버전 모듈은 항상 단색으로 그립니다.
+
+인쇄하기 전에 `getScanScore(props)`로 디자인을 확인하고, 실제 휴대폰 카메라로도 테스트하세요.
+
+## 아트 코드 내보내기 [#exporting-art-codes]
+
+아트 코드는 벡터 도형이라 어떤 형식으로 내보내도 선명하게 유지됩니다.
+
+```ts
+import { downloadQRCode, getQRAsEPS, getQRAsPrintPDF } from 'qrdx';
+
+await downloadQRCode(props, { format: 'svg', size: { width: 1024, height: 1024 } });
+const pdf = await getQRAsPrintPDF(props, { size: 40, unit: 'mm', colorMode: 'cmyk' });
+const eps = await getQRAsEPS(props, { sizeMm: 40, bleedMm: 3, colorMode: 'cmyk' });
+```
+
+`getQRAsEPS`는 포인트 단위의 `%%BoundingBox`를 가진 EPSF-3.0 파일을 만들며, 모든 모듈, 눈, 프레임을 PostScript 경로로 기록합니다. 인쇄용 PDF와 마찬가지로 선형 및 방사형 그라데이션을 (PostScript Level 3 셰이딩으로) 유지하며 투명도는 없습니다. PNG와 JPEG 로고는 이미지로 삽입되고, 다른 형식의 로고는 브라우저에서는 변환되지만 서버에서는 제외됩니다. 프레임 텍스트는 Helvetica를 사용하므로 Latin-1 범위 밖의 문자는 `?`로 인쇄됩니다. `svgToEPS(svg, { width })`는 이 라이브러리가 렌더링한 모든 SVG를 변환합니다.
+
+CLI도 EPS를 작성합니다: `qrdx generate "https://example.com" -o qr.eps`.
+
+<IfAvailable feature="aiArt" id="ai-art" title="AI 아트">
+
+[AI QR 아트](/ai/art)는 Vercel AI Gateway를 통해 {facts.artModel}로 코드를 하나의 장면으로 만들어 줍니다. 카테고리별로 둘러보거나 검색할 수 있는 스타일 프리셋이 {facts.aiArtStyles}개 있으며, 각 프리셋에는 스캔 검사를 통과한 미리보기가 있습니다. 피해야 할 요소, **QR 가시성** 슬라이더(모델이 코드를 얼마나 강하게 우선하는지), **창의성** 슬라이더(모델이 프롬프트를 얼마나 자유롭게 해석하는지), 한 번에 1~4개의 변형, 그리고 색과 형태를 그대로 가져오는 로고나 팔레트 같은 선택 사항인 참조 이미지도 있습니다.
+
+모든 이미지는 표시되기 전에 서버에서 검사됩니다. QRdx는 모델에 단순한 흑백 코드(오류 정정 H, 정사각형 모듈, 넓은 여백)를 보내 모듈 격자, 파인더 눈, 여백을 유지하도록 요청합니다. 그런 다음 모델의 이미지를 jsQR로 있는 그대로, 그리고 휴대폰 카메라 모델을 거쳐 디코딩합니다. 실패하면 모델이 그린 모듈 격자를 찾아, 모델 자체의 이미지에서 코드를 가능한 한 적게 강화합니다. 먼저 파인더 눈과 여백, 그다음 모듈 순서로, 이미지가 스캔될 때까지(코드가 카메라 화면에서 더 작을 때도 포함) 강도를 단계적으로 높입니다. QR 가시성이 어디까지 허용할지를 정합니다. 그래도 충분하지 않을 때만 이미지를 Image QR 코드로 다시 그립니다. 그래도 정확한 콘텐츠로 디코딩되지 않는 이미지는 전달되지 않습니다. 이후 브라우저가 변형들의 점수를 매겨 가장 좋은 것을 고르며, 1024 px 또는 2048 px 인쇄용 사본(리샘플링 후 다시 검사)으로 다운로드할 수 있습니다.
+
+전달된 이미지 하나당 AI 아트 크레딧이 1개 사용됩니다. 무료 계정은 월 3개, Pro는 30개, Business는 워크스페이스의 모든 사용자가 함께 쓰는 150개를 받습니다. 실패했거나 스캔 검사를 통과하지 못한 이미지에는 크레딧이 사용되지 않으며, 인쇄용 사본은 무료입니다. AI 아트는 래스터 이미지이고 내용이 고정되어 있으므로, 편집 가능한 링크가 필요하다면 [동적 코드](/docs/dynamic-qr-codes)의 짧은 링크를 넣으세요.
+
+</IfAvailable>

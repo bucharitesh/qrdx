@@ -1,0 +1,94 @@
+---
+title: "추적 및 전환"
+description: "호스팅 페이지에 분석 및 리타게팅 픽셀을 추가하고, 사람들이 언제 어떻게 스캔하는지 확인하며, 매출과 가입을 QR 코드 스캔으로 귀속시키세요."
+icon: Target
+---
+
+모든 [동적 QR 코드](/docs/dynamic-qr-codes)는 쿠키 없이 스캔을 기록합니다. 여기에 더해 호스팅 페이지에 직접 만든 픽셀을 불러올 수 있고(Pro), 구매 같은 전환을 방문자를 데려온 스캔에 귀속시킬 수도 있어요(Business). 두 기능 모두 [대시보드](/dashboard?to=codes)의 해당 코드 페이지에서 **설정** 탭에서 설정합니다.
+
+## 모든 코드의 분석 [#analytics-on-every-code]
+
+시간별 스캔, 국가, 도시, 기기, 운영 체제, 브라우저, 유입 경로 외에도 각 코드 페이지에는 다음 정보가 표시됩니다.
+
+- **스캔 시간대:** 시간대별, 요일별 스캔 수를 UTC 또는 사용자의 시간대로 보여 줍니다.
+- **언어:** 각 방문자가 선호하는 브라우저 언어입니다(브라우저가 언어를 보내지 않은 경우와 언어를 기록하기 전의 스캔은 "알 수 없음"으로 표시됩니다).
+- **A/B 분할:** 각 [A/B 분할 규칙](/docs/smart-routing#ab-tests)의 변형별 스캔 수입니다.
+- **페이지 활동**(호스팅 페이지): 페이지 조회수, 고유 조회자 수, 탭 수, 가장 많이 탭한 링크와 버튼입니다.
+- **전환**: 코드에 전환이 있는 경우에 표시됩니다.
+
+[대시보드 → 분석](/dashboard?to=analytics)에서는 워크스페이스의 모든 코드를 합산해 보여 줍니다. 총계, 시간별 스캔, 상위 코드, 국가, 기기, 언어, 스캔 시간, 그리고 최대 4개 코드를 나란히 비교한 결과를 확인할 수 있어요.
+
+봇과 링크 미리보기는 집계하지 않으며, "고유" 집계에서는 방문자를 하루에 한 번만 셉니다. IP 주소는 저장하지 않습니다.
+
+## 호스팅 페이지의 추적 픽셀 (Pro) [#tracking-pixels-on-hosted-pages-pro]
+
+호스팅 페이지를 여는 코드에서는 **추적 픽셀** 패널을 통해 직접 만든 태그를 해당 페이지에 불러옵니다.
+
+| 제공업체 | ID 형식 |
+| --- | --- |
+| Google Analytics 4 | `G-XXXXXXXXXX` |
+| Google Tag Manager | `GTM-XXXXXXX` |
+| Meta (Facebook) 픽셀 | 6–20자리 숫자 |
+| TikTok 픽셀 | 10–30자의 영문자와 숫자 |
+| LinkedIn Insight Tag | 파트너 ID, 3–12자리 숫자 |
+
+픽셀은 사용자가 설정할 때만 불러옵니다. QRdx는 호스팅 페이지에 자체적으로 서드파티 스크립트를 추가하지 않습니다.
+
+Google Tag Manager는 페이지가 [사용자 지정 도메인](/docs/custom-domains) 중 하나에서 열릴 때만 불러옵니다. 컨테이너는 어떤 스크립트든 실행할 수 있으므로, 방문자가 QRdx에 로그인해 있을 수 있는 qrdx.dev에서는 실행되지 않습니다.
+
+**동의.** 픽셀은 방문자가 동의하기 전에는 절대 불러오지 않습니다.
+
+- **필요한 경우**(기본값): EU/EEA, 영국, 스위스의 방문자와 위치를 알 수 없는 방문자에게는 사용 중인 제공업체를 알려 주는 짧은 배너가 표시되며, **수락** 또는 **거부**를 선택합니다. 선택은 해당 페이지에 기억되고, **쿠키 설정**에서 변경할 수 있어요. 그 외 지역에서는 픽셀이 바로 로드되지만, Global Privacy Control 신호를 보내는 브라우저는 예외입니다.
+- **모든 방문자:** 모든 방문자에게 먼저 배너가 표시됩니다.
+
+개인정보 처리방침과 픽셀이 수집한 데이터의 사용 방식에 대한 책임은 사용자에게 있습니다.
+
+사용자의 웹사이트를 여는 코드는 해당 사이트로 바로 이동하므로, 픽셀은 사이트에 직접 추가하세요.
+
+## 전환 추적 (Business) [#conversion-tracking-business]
+
+전환 추적을 사용하면 어떤 스캔이 판매, 가입 또는 기타 목표로 이어졌는지 매출과 함께 확인할 수 있습니다.
+
+1. 웹사이트를 여는 코드에서 **전환 추적**을 켭니다. 이후 모든 스캔은 서명된 `qrdx_sid` 매개변수가 추가된 URL로 열립니다. 예: `https://shop.example/?qrdx_sid=…`
+2. 방문자가 처음 도착하는 페이지와 전환이 일어나는 페이지에 스니펫을 추가합니다.
+
+```html
+<script async src="https://qrdx.dev/conversions.js"></script>
+<script>
+  window.qrdx = window.qrdx || function () {
+    (window.qrdx.q = window.qrdx.q || []).push(arguments);
+  };
+  // Where the conversion happens, e.g. your order confirmation page:
+  qrdx("conversion", { name: "purchase", value: 49.99, currency: "USD", id: "ORDER-1234" });
+</script>
+```
+
+스크립트는 `qrdx_sid`를 사용자 도메인의 퍼스트 파티 쿠키에 30일 동안 저장하고(브라우저 세션 동안만 유지하려면 script 태그에 `data-storage="session"`을 추가하세요) 주소 표시줄에서는 제거합니다. 전환은 스캔을 통해 도착한 방문자의 것만 전송되므로, 다른 방문자는 추적되지 않습니다.
+
+| 필드 | 의미 |
+| --- | --- |
+| `name` | 발생한 일. 예: `purchase`, `signup` (기본값 `conversion`) |
+| `value` | 금액, 소수점 2자리까지 (선택) |
+| `currency` | `USD` 같은 ISO 4217 코드. 값이 주어지면 기본값은 `USD` |
+| `id` | 주문 또는 이벤트 ID. 같은 ID를 두 번 보내도 한 번만 기록됩니다 |
+| `metadata` | 추가 키/값 쌍 최대 20개 (선택) |
+
+### 서버에서 보내기 [#from-your-server]
+
+백엔드에서 전환을 보고하려면(브라우저보다 더 안정적입니다) 주문과 함께 `qrdx_sid`를 보관하고, `codes:write` 범위가 있는 [API 키](/docs/developers/api-keys) 또는 [OAuth 액세스 토큰](/docs/developers/rest-api#get-an-access-token)으로 API를 호출하세요.
+
+```bash
+curl -X POST https://api.qrdx.dev/v1/conversions \
+  -H "Authorization: Bearer $QRDX_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"sid": "<qrdx_sid>", "name": "purchase", "value": 49.99, "currency": "USD", "id": "ORDER-1234"}'
+```
+
+토큰을 사용하면 스캔을 알 수 없을 때 `sid` 대신 `"code": "<code id>"`를 보낼 수도 있습니다. API는 새 전환에는 `201`로, `id`가 이미 기록된 경우에는 `"duplicate": true`와 함께 `200`으로 응답합니다.
+
+### 제한 [#limits]
+
+- 스캔은 발생 후 30일 동안 귀속될 수 있습니다.
+- `qrdx_sid`는 서명되어 있어 추측하거나 다른 코드를 가리키도록 변경할 수 없습니다.
+- 브라우저 보고를 사용하려면 해당 코드에서 전환 추적이 켜져 있어야 하며, 각 스캔이 시간당 보고할 수 있는 전환 수에는 제한이 있습니다.
+- 워크스페이스가 Business를 떠나면 전환 기록이 중단됩니다. 기존 전환은 분석에 그대로 남으며, 추적은 언제든지 끌 수 있습니다.

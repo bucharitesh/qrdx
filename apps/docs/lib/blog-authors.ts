@@ -1,4 +1,4 @@
-import { blogAuthorsSource } from "@/lib/source";
+import { blogAuthorsSource } from "@/lib/content-source";
 
 export interface ResolvedAuthor {
   id: string;

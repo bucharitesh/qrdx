@@ -1,0 +1,107 @@
+---
+title: "Bot Slack"
+description: "Buat dan atur gaya kode QR di Slack dengan /qr, sebuah mention, pesan langsung, atau pintasan pesan, serta kode terlacak setelah Anda menautkan akun QRdx."
+icon: Bot
+---
+
+QRdx memiliki aplikasi Slack yang membuat kode QR langsung di dalam Slack. Siapa pun di workspace Slack yang memiliki bot ini dapat membuat kode dari tautan atau teks apa pun. Orang yang menautkan akun QRdx mereka juga dapat membuat kode terlacak (dinamis), yang menghitung pemindaian dan dapat diarahkan ke tujuan lain di kemudian hari.
+
+<IfAvailable feature="slackBot" id="add-the-bot-to-slack" title="Tambahkan bot ke Slack">
+
+1. Di QRdx, buka [Pengaturan → Integrasi → Slack](/settings/integrations/slack) lalu klik **Add the bot to Slack**. Akun QRdx mana pun dapat melakukannya, di paket apa pun.
+2. Pilih workspace Slack dan setujui. Bot meminta izin untuk melihat perintah garis miringnya, mention terhadapnya, dan pesan langsungnya, serta untuk memposting pesan.
+3. Anda kembali ke halaman pengaturan, yang mencantumkan workspace Slack tempat Anda menambahkan bot.
+
+Aplikasi Slack yang sama juga memposting [peringatan](/docs/notifications#slack-and-discord) ke sebuah kanal. Menambahkan bot tidak mengaktifkan peringatan, dan menambahkan peringatan tidak menambahkan bot.
+
+</IfAvailable>
+
+<IfAvailable feature="slackBot" id="make-a-qr-code" title="Buat kode QR">
+
+| Lokasi | Yang dilakukan | Tempat kode muncul |
+| --- | --- | --- |
+| Kanal mana pun | `/qr` diikuti tautan atau teks | Di kanal |
+| Kanal tempat bot berada | Mention bot dengan tautan atau teks | Di thread |
+| Pesan langsung bot | Kirim tautan atau teks | Di DM |
+| Pesan mana pun | **More actions** → **Make a QR code** | Di thread pesan tersebut |
+
+Setiap balasan berupa gambar kode QR dengan isinya di bawahnya, tiga tombol, dan menu gaya yang dijelaskan di bawah. Tombolnya adalah **Download PNG** (1024 piksel), **Download SVG**, dan **Open in editor**, tempat Anda dapat mengubah desain lebih lanjut. Tautan membuka editor dengan tautan itu sudah terisi; teks membuka editor kosong, karena teks tidak pernah dimasukkan ke dalam tautan.
+
+Pintasan ini membuat kode dari alamat web pertama dalam pesan, atau dari seluruh teksnya jika tidak ada alamat web. Jika bot tidak berada di kanal tersebut, hanya Anda yang melihat kodenya, dan sebuah catatan meminta Anda menambahkan aplikasi ke kanal.
+
+`/qr` saja, atau `/qr help`, menampilkan daftar perintah. Konten yang terlalu panjang untuk kode QR mendapat penjelasan singkat sebagai ganti gambar, dan hanya Anda yang melihatnya.
+
+</IfAvailable>
+
+<IfAvailable feature="slackBot" id="style-your-code" title="Atur gaya kode Anda">
+
+Di bawah setiap kode ada empat menu: **Look**, **Color**, **Frame**, dan **Logo**. Pilih sesuatu dan kode berubah di tempat, dengan tautan unduhan baru. Setiap pilihan dibangun di atas kode seperti kondisinya saat ini. Hanya orang yang membuat kode yang dapat mengubah gayanya. Saat orang lain memilih, Slack menampilkan catatan yang hanya terlihat oleh mereka, dan kode tetap seperti semula.
+
+Tampilan (look) adalah sebagian desain bawaan editor yang mudah dibaca pada ukuran kecil, dan **Plain** mengembalikan ke hitam di atas putih. Sebuah warna membuat seluruh kode berwarna itu di atas putih. Bingkainya menambahkan label "Scan me", dan logonya adalah ikon cepat dari editor.
+
+Anda juga dapat mengatur gaya kode saat membuatnya dengan menambahkan opsi setelah tautan atau teks, dengan nama yang sama seperti di [CLI QRdx](/docs/developers/cli):
+
+```text
+/qr qrdx.dev --look modern --fg 0051ff --frame banner-bottom --frame-text "Scan me"
+```
+
+Semua yang ada sebelum opsi pertama adalah kontennya. Tampilan diterapkan lebih dulu dan opsi lainnya di atasnya, sehingga `--look royal --fg 0051ff` mempertahankan bentuk Royal dalam warna biru. Opsi juga berfungsi di mention dan pesan langsung. Jika sebuah opsi atau nilai salah, bot memberi tahu Anda secara privat dan mencantumkan nilai yang diterimanya.
+
+| Opsi | Yang diubah | Nilai |
+| --- | --- | --- |
+| `--look` | Seluruh desain, dari salah satu preset editor | `plain`, `classic`, `modern`, `royal`, `folio`, `caffeine`, `retro`, `bordeaux`, `blossom` |
+| `--fg` (atau `--color`) | Titik-titik, dan mata sudut kecuali Anda juga mengaturnya | Warna hex seperti `0051ff`, atau `black`, `blue`, `green`, `red`, `purple`, `orange` |
+| `--bg` | Latar belakang | Sama seperti `--fg` |
+| `--eye-color` | Ketiga mata sudut | Sama seperti `--fg` |
+| `--dot-color` | Bagian tengah mata sudut | Sama seperti `--fg` |
+| `--body` | Bentuk titik-titik | Salah satu dari {facts.bodyPatterns} bentuk titik editor, seperti `rounded`, `circle` atau `classy` |
+| `--eye` | Bentuk mata sudut | Salah satu dari {facts.eyeShapes} bentuk mata, seperti `square`, `rounded` atau `gear` |
+| `--dot` | Bentuk bagian tengah mata | Salah satu dari {facts.eyeCentres} bentuk bagian tengah, seperti `square`, `rounded` atau `circle` |
+| `--frame` | Bingkai di sekeliling kode | `none` atau salah satu dari {facts.frameStyles} bingkai bawaan, seperti `banner-bottom`, `banner-top`, `speech-bubble` atau `polaroid` |
+| `--frame-text` | Label bingkai, hingga 24 karakter | Teks apa pun, dalam tanda kutip jika mengandung spasi. Tanpa `--frame`, teks ditempatkan pada banner di bawah kode |
+| `--template` | Bingkai dekoratif | `Arrow`, `StandardBox`, `SquareBorder`, `StrikedBox` atau `Halloween` |
+| `--logo` | Ikon di tengah | `link`, `wifi`, `location`, `phone`, `email`, `whatsapp`, `instagram`, `file`, `calendar` atau `none` |
+
+Sebelum kode bergaya diposting, QRdx memeriksanya dengan skor pemindaian yang sama seperti di editor. Jika sebuah desain akan sulit dibaca ponsel, QRdx menyesuaikannya (warna lebih gelap, bentuk lebih sederhana, atau koreksi kesalahan lebih tinggi) dan menyebutkannya di bawah kode. Jika itu masih belum cukup, biasanya karena kontennya panjang, Anda mendapat kode hitam di atas putih beserta catatan. Kode bergaya dari `/qr` tiba beberapa saat setelah Anda mengirim perintah, setelah selesai diperiksa.
+
+**Open in editor** membuka editor dengan desain yang sama: warna, bentuk, bingkai, dan border. Ikon logo tidak ikut terbawa dalam tautan, jadi pilih lagi di editor.
+
+Kode dari pintasan yang hanya Anda yang dapat melihatnya tidak memiliki menu, dan kode terlacak tetap memakai desain polos.
+
+</IfAvailable>
+
+<IfAvailable feature="slackBot" id="tracked-codes" title="Kode terlacak">
+
+Kode biasa berisi tautan itu sendiri. Kode terlacak berisi tautan pendek (`https://qrdx.dev/q/<slug>`) yang mengarahkan ke tautan Anda, sehingga QRdx menghitung pemindaiannya dan Anda dapat mengubah tujuannya. Untuk membuatnya dari Slack, tautkan akun QRdx Anda sekali saja:
+
+1. Jalankan `/qr link`. Sebuah tombol yang hanya terlihat oleh Anda membuka QRdx. Tombol ini berlaku selama 10 menit.
+2. Masuk ke QRdx jika diminta. Lalu klik **Sign in with Slack** dan masuk sebagai akun Slack yang sama yang menjalankan `/qr link`. Slack hanya memberi tahu QRdx pengguna dan workspace Slack Anda, dan QRdx memeriksa bahwa keduanya cocok. Jika Anda masuk ke Slack sebagai orang lain, tidak ada yang ditautkan.
+3. Pilih workspace QRdx tujuan kode terlacak Anda lalu klik **Confirm**. QRdx lebih dulu meminta Anda [memastikan bahwa ini Anda](/docs/help/privacy-and-security/two-step-verification#confirm-its-you), karena tautan ini memungkinkan akun Slack tersebut membuat kode di workspace Anda.
+4. Kembali di Slack, bot mengirimi Anda pesan langsung yang menyebutkan akun dan workspace QRdx yang Anda tautkan. Jika bukan Anda yang menautkannya, jalankan `/qr unlink`.
+5. Jalankan `/qr track` diikuti tautan yang diawali `https://` atau `http://`. Anda juga dapat me-mention bot dengan `track` dan sebuah tautan.
+
+Kode muncul di kanal beserta tautan pendeknya dan nama workspace QRdx tempatnya berada. Tombol **Open in QRdx**, yang mengarah ke kode di dasbor Anda, hadir dalam pesan terpisah yang hanya terlihat oleh Anda. Kode diberi nama sesuai situs tautan tersebut ditambah "from Slack", dan Anda akan menemukannya di kode-kode workspace seperti kode lainnya.
+
+Kode terlacak mengikuti aturan yang sama dengan kode yang dibuat di dasbor: peran Anda harus mengizinkan pembuatan kode, workspace yang mewajibkan verifikasi dua langkah mengharuskannya aktif untuk akun Anda, dan batas paket Anda untuk kode dinamis aktif berlaku. Saat Anda mencapai batas, bot memberi tahu dan menautkan ke halaman paket. Hal ini diperiksa setiap kali, jadi keluar dari workspace atau kehilangan akses menghentikan tautan berfungsi di sana.
+
+Setiap akun Slack memiliki satu tautan per workspace Slack. Saat Anda menjalankan `/qr link` untuk akun Slack yang sudah tertaut, halaman menyebutkan ke workspace QRdx mana akun itu tertaut, dan apakah itu di akun QRdx lain. Tombolnya kemudian bertuliskan **Replace the link**, dan tidak ada yang berubah sampai Anda mengkliknya. `/qr unlink` menghapus tautan, begitu juga **Unlink** di bawah **Linked Slack accounts** di [Pengaturan → Integrasi → Slack](/settings/integrations/slack).
+
+Pemilik dan admin workspace QRdx melihat setiap akun Slack yang tertaut ke workspace itu di [Pengaturan → API keys & apps](/dashboard?to=settings/developers): workspace Slack, id pengguna Slack, anggota yang diwakilinya, dan kapan ditautkan. **Revoke** menghapus tautan di sana. Jika workspace memiliki [log audit](/docs/help/teams/audit-log), kode yang dibuat dengan `/qr track` menampilkan nama anggota "via Slack", beserta id pengguna dan workspace Slack, dan pencabutan tautan juga dicatat.
+
+</IfAvailable>
+
+## Apa yang disimpan bot [#what-the-bot-keeps]
+
+Bot membaca pesan hanya saat seseorang menjalankan `/qr`, menyebut bot, mengirim pesan langsung kepadanya, atau memakai pintasan pada pesan tersebut. Bot tidak pernah menyimpan isi pesan. Gambar kode QR berasal dari [Image API](/docs/developers/image-api) QRdx, yang dimuat Slack dari tautan di dalam pesan, jadi tidak ada yang diunggah.
+
+Untuk setiap workspace Slack, QRdx menyimpan id dan namanya, id pengguna Slack milik bot, token bot (terenkripsi), serta akun QRdx mana yang menambahkannya. Untuk setiap akun Slack yang ditautkan, QRdx menyimpan id pengguna Slack, akun QRdx Anda, dan workspace yang Anda pilih. Masuk dengan Slack untuk menautkan tidak menambahkan data apa pun: QRdx membandingkan pengguna dan workspace Slack, lalu melupakan proses masuk tersebut.<IfAvailable feature="slackBot"> Akun Slack Anda yang tertaut ada di [ekspor data](/docs/help/account-and-billing/export-your-data) Anda.</IfAvailable>
+
+<IfAvailable feature="slackBot" id="remove-the-bot" title="Hapus bot">
+
+Di Slack, buka halaman aplikasi lalu pilih **Remove App** (atau minta admin Slack melakukannya). QRdx kemudian menghapus token bot workspace Slack tersebut dan semua tautan akun Slack yang dibuat di sana. Kode yang sudah dibuat tetap ada di QRdx, dan kode yang dilacak tetap berfungsi.
+
+</IfAvailable>
+
+## Hosting mandiri [#self-hosting]
+
+Bot memakai aplikasi Slack yang sama dengan peringatan "Add to Slack", dengan tambahan signing secret. Atur `SLACK_CLIENT_ID`, `SLACK_CLIENT_SECRET`, dan `SLACK_SIGNING_SECRET`, ditambah `INTEGRATION_ENCRYPTION_KEY` di produksi, yang mengenkripsi token bot. Tanpa variabel tersebut, halaman dan endpoint bot tidak tersedia. `plugins/slack/manifest.json` di repositori adalah manifes aplikasi, dan `plugins/slack/README.md` memandu pembuatan aplikasi dari manifes itu. Manifes tersebut menyertakan user scope `openid` dan URL pengalihan `/api/integrations/slack/link/callback`, yang dibutuhkan Sign in with Slack saat seseorang menautkan akunnya.

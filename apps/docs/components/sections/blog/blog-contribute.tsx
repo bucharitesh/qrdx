@@ -1,4 +1,5 @@
 /** biome-ignore-all lint/suspicious/noArrayIndexKey: false positive */
+import { GITHUB_OWNER, GITHUB_REPO } from "@repo/config";
 import type { Page } from "fumadocs-core/source";
 import {
   Danger as BugIcon,
@@ -15,8 +16,8 @@ export function Contribute({ page }: { page: Page }) {
       text: "Report an issue",
       icon: BugIcon,
       href: getGitHubIssueUrl({
-        owner: "bucharitesh",
-        repo: "qrdx",
+        owner: GITHUB_OWNER,
+        repo: GITHUB_REPO,
         title: `[bug]: ${page.url}`,
         labels: ["bug", "documentation"],
         template: "bug_report.yml",
@@ -26,8 +27,8 @@ export function Contribute({ page }: { page: Page }) {
       text: "Request a feature",
       icon: LightbulbIcon,
       href: getGitHubIssueUrl({
-        owner: "bucharitesh",
-        repo: "qrdx",
+        owner: GITHUB_OWNER,
+        repo: GITHUB_REPO,
         title: `[feat]: ${page.url}`,
         labels: ["enhancement"],
         template: "feature_request.yml",
@@ -37,8 +38,8 @@ export function Contribute({ page }: { page: Page }) {
       text: "Edit this page",
       icon: PencilIcon,
       href: getGithubFileUrl({
-        owner: "bucharitesh",
-        repo: "qrdx",
+        owner: GITHUB_OWNER,
+        repo: GITHUB_REPO,
         slug: page.url,
       }),
     },

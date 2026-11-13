@@ -5,11 +5,14 @@
 # one-shot schema sync job; see apps/docs/content/docs/self-hosting.mdx.
 # Untested reference setup.
 #
+#   cp apps/docs/.env.example .env   # then fill it in
 #   docker build -t qrdx --build-arg NEXT_PUBLIC_APP_URL=https://qr.example.com .
 #   docker run --env-file .env -p 3000:3000 qrdx
 #
 # NEXT_PUBLIC_* values are inlined into the client bundle, so pass them as
-# build args. Server secrets are only read at runtime (--env-file / compose).
+# build args. Server secrets are only read at runtime (--env-file / compose),
+# and the server refuses to start when a required one is missing
+# (apps/docs/env.ts, checked from instrumentation.ts).
 
 ARG NODE_VERSION=22
 

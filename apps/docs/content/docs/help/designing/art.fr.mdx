@@ -1,0 +1,41 @@
+---
+title: "Intégrer un logo ou une photo dans le code"
+description: "Logo QR et Image QR intègrent une image directement dans les points du code, sans IA."
+---
+
+## Logo QR et Image QR [#logo-qr-and-image-qr]
+
+Dans le [Playground](/playground?tab=art), ouvrez l'onglet **Art**. Choisissez un mode :
+
+- **Logo QR** colorie les points à l'intérieur de la forme de votre logo.
+- **Image QR** transforme tout le code en votre photo.
+- **Off** désactive l'art.
+
+Importez votre propre image ou essayez un exemple. Les logos fonctionnent mieux en PNG transparent ou en SVG. Les photos fonctionnent mieux avec un seul sujet bien net.
+
+L'art fonctionne dans tous les formats de téléchargement, et aucune IA n'intervient.
+
+## Équilibrer art et scan [#balance-art-and-scanning]
+
+Choisissez l'intensité de l'art : **Subtle**, **Balanced** ou **Bold**. Plus l'art est marqué, plus le rendu est beau, mais plus le code est difficile à scanner.
+
+Le **Scan check** sous l'art décode votre vrai code dans votre navigateur, à trois tailles. Si le résultat n'est pas bon, il liste ce qu'il faut corriger.
+
+Pour de meilleurs résultats, réglez **Error correction** sur **High** et gardez une bordure dégagée autour du code.
+
+Avec le badge Logo QR, le logo ne grandit que dans la limite de ce que le code peut réparer. Un lien court produit un petit code, donc le logo reste petit, et les plus petits codes n'affichent aucun logo. Avec **Error correction** sur **High**, le logo dispose de la marge la plus large.
+
+<IfAvailable feature="aiArt" id="ai-art" title="Art IA">
+
+[L'art QR par IA](/ai/art) génère une illustration autour d'un code qui reste scannable. Il nécessite un compte gratuit.
+
+Dans le Playground, choisissez **AI art** dans l'onglet **Art**. L'IA peint le code que vous modifiez. Si ce code est lié à un QR code dynamique, l'art encode le lien court : vous pouvez donc changer sa destination après l'impression. L'art IA est une image : téléchargez-la en PNG, ou utilisez **Use as Image QR** pour la convertir en code vectoriel pour SVG, PDF ou EPS.
+
+Chaque offre inclut un certain nombre d'images d'art IA par mois : 3 avec Gratuit, 30 avec Pro et 150 avec Business, partagées par tous les membres de l'espace de travail.
+
+</IfAvailable>
+
+## Voir aussi [#related]
+
+- [Vérifier un design avec le score de scan](/docs/help/designing/scan-score)
+- [Les QR codes artistiques pour les développeurs](/docs/features/art-qr)

@@ -4,7 +4,10 @@
 // IndexNow always: Bing, Yandex, Seznam, Naver and the other IndexNow engines
 // share what one of them receives. The Bing Webmaster API too, when
 // BING_WEBMASTER_API_KEY is set: it resubmits the sitemap, then submits the
-// URLs, up to the site's daily quota.
+// URLs, up to the site's daily quota. And Google, when
+// GSC_SERVICE_ACCOUNT_JSON is set (a service account with access to the
+// Search Console property): it resubmits the sitemap. Google has no API to
+// request indexing of ordinary pages, so the sitemap is all it gets.
 //
 //   node scripts/notify-search-engines.mjs --all           every sitemap URL
 //   node scripts/notify-search-engines.mjs --important     the main pages
@@ -13,17 +16,23 @@
 //       saves the live sitemap, before a deploy
 //   node scripts/notify-search-engines.mjs --changed-since <file>
 //       the URLs that are new or have a new lastmod since that saved sitemap
+//   node scripts/notify-search-engines.mjs --backlog
+//       Bing only: today's slice of the whole sitemap, so every page reaches
+//       the Bing API every few days, including pages whose lastmod never
+//       changes. Run late in the UTC day, it uses the quota deploys left.
 //   node scripts/notify-search-engines.mjs --check
 //       reads only: is the IndexNow key file live, does the Bing key work,
-//       is qrdx.dev verified for it and what's today's quota
+//       is qrdx.dev verified for it and what's today's quota; can the Google
+//       service account see the property and when Google last read the sitemap
 //
 // Add --dry-run to print what would be sent without sending anything. Only
 // URLs in the live sitemap are sent. A search engine error is a warning and
 // never fails a run that sends; bad arguments exit with 2, and --check with
-// 1 when Bing rejects the key or the site.
+// 1 when Bing or Google rejects the key or the site.
 // .github/workflows/notify-search-engines.yml runs it after every
-// production deploy, from the Actions tab, and with --check on pull requests
-// that change it.
+// production deploy, daily for the Bing backlog, from the Actions tab, and
+// with --check on pull requests that change it.
+import { createSign } from "node:crypto";
 import { readFileSync, writeFileSync } from "node:fs";
 import { pathToFileURL } from "node:url";
 import { parseArgs } from "node:util";
@@ -43,6 +52,18 @@ export const INDEXNOW_MAX = 10_000;
 const BING_API = "https://ssl.bing.com/webmaster/api.svc/json";
 /** SubmitUrlBatch takes up to 500 URLs, and no more than the daily quota. */
 export const BING_BATCH_MAX = 500;
+
+/**
+ * How far the --backlog slice moves each day: Bing's usual daily quota, so
+ * consecutive days send consecutive slices.
+ */
+export const BING_BACKLOG_STEP = 100;
+
+/** The Search Console property, as the service account was given it. */
+export const GOOGLE_PROPERTY = "sc-domain:qrdx.dev";
+const GOOGLE_SCOPE = "https://www.googleapis.com/auth/webmasters";
+const GOOGLE_TOKEN_URI = "https://oauth2.googleapis.com/token";
+const GSC_API = "https://searchconsole.googleapis.com/webmasters/v3";
 
 /** Sent to Bing when the changed pages can't be worked out. */
 export const IMPORTANT_PATHS = [
@@ -130,6 +151,58 @@ export function inSitemap(items, sitemapUrls, site = SITE) {
   return { kept: [...kept], dropped };
 }
 
+/**
+ * `urls` starting at day `day`'s slice and wrapping around, so slices of
+ * `step` on consecutive days cover every URL.
+ */
+export function rotate(urls, day, step = BING_BACKLOG_STEP) {
+  if (urls.length === 0) return [];
+  const start = (((day * step) % urls.length) + urls.length) % urls.length;
+  return [...urls.slice(start), ...urls.slice(0, start)];
+}
+
+/** Days since 1970-01-01, UTC: Bing's quota resets at UTC midnight. */
+export const utcDay = (now = Date.now()) => Math.floor(now / 86_400_000);
+
+/** The parts of a service account key file the token exchange needs. */
+export function parseServiceAccount(json) {
+  let account;
+  try {
+    account = JSON.parse(json);
+  } catch {
+    return;
+  }
+  if (
+    typeof account?.client_email !== "string" ||
+    typeof account?.private_key !== "string"
+  ) {
+    return;
+  }
+  return {
+    clientEmail: account.client_email,
+    privateKey: account.private_key,
+    tokenUri: account.token_uri ?? GOOGLE_TOKEN_URI,
+  };
+}
+
+/** A signed JWT that trades for an access token (OAuth 2.0 JWT bearer). */
+export function googleAssertion(account, now = Date.now()) {
+  const iat = Math.floor(now / 1000);
+  const encode = (value) =>
+    Buffer.from(JSON.stringify(value)).toString("base64url");
+  const unsigned = `${encode({ alg: "RS256", typ: "JWT" })}.${encode({
+    iss: account.clientEmail,
+    scope: GOOGLE_SCOPE,
+    aud: account.tokenUri,
+    iat,
+    exp: iat + 3600,
+  })}`;
+  const signature = createSign("RSA-SHA256")
+    .update(unsigned)
+    .sign(account.privateKey, "base64url");
+  return `${unsigned}.${signature}`;
+}
+
 /** The site's URL as Bing Webmaster Tools registered it, if it's verified. */
 export function pickBingSite(sites, site = SITE) {
   const host = new URL(site).hostname;
@@ -168,7 +241,13 @@ function errorText(text, secret) {
   let message = text;
   try {
     const json = JSON.parse(text);
-    message = json.Message ?? json.message ?? text;
+    // Bing, then Google APIs, then Google's token endpoint.
+    message =
+      json.Message ??
+      json.message ??
+      json.error?.message ??
+      json.error_description ??
+      text;
   } catch {
     // Not JSON: keep the text.
   }
@@ -315,11 +394,144 @@ async function sendBing(urls, results) {
 }
 
 /**
- * --check. Reads only, never submits: the IndexNow key file, then the Bing
- * key, the site's verification and today's quota. False when Bing rejects
- * the key or the site; a missing key or an undeployed key file is fine.
+ * The service account from GSC_SERVICE_ACCOUNT_JSON and an access token for
+ * it, or why there isn't one. `missing` means the secret isn't set.
+ */
+async function googleAccess() {
+  const json = process.env.GSC_SERVICE_ACCOUNT_JSON?.trim();
+  if (!json) return { missing: true };
+  const account = parseServiceAccount(json);
+  if (!account) {
+    return { error: "GSC_SERVICE_ACCOUNT_JSON isn't a service account key" };
+  }
+  const response = await request(account.tokenUri, {
+    method: "POST",
+    headers: { "content-type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({
+      grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer",
+      assertion: googleAssertion(account),
+    }),
+  });
+  let token;
+  try {
+    token = JSON.parse(response.text)?.access_token;
+  } catch {
+    token = undefined;
+  }
+  if (!(response.ok && token)) {
+    return {
+      error: `token HTTP ${response.status}: ${errorText(response.text)}`,
+    };
+  }
+  return { account, token };
+}
+
+async function callGoogle(token, path, method = "GET") {
+  const response = await request(`${GSC_API}${path}`, {
+    method,
+    headers: { authorization: `Bearer ${token}` },
+  });
+  let data;
+  try {
+    data = response.text ? JSON.parse(response.text) : undefined;
+  } catch {
+    data = undefined;
+  }
+  return { ...response, data, error: errorText(response.text, token) };
+}
+
+const googleSitemapPath = () =>
+  `/sites/${encodeURIComponent(GOOGLE_PROPERTY)}/sitemaps/${encodeURIComponent(SITEMAP_URL)}`;
+
+async function sendGoogle(results) {
+  const access = await googleAccess();
+  if (access.missing) {
+    notice(
+      "Google: GSC_SERVICE_ACCOUNT_JSON isn't set; skipped Search Console."
+    );
+    results.push(["Google", "-", "skipped: no service account"]);
+    return;
+  }
+  if (access.error) {
+    warn(`Google: ${access.error}`);
+    results.push(["Google", "sitemap", `skipped: ${access.error}`]);
+    return;
+  }
+  const submit = await callGoogle(access.token, googleSitemapPath(), "PUT");
+  if (!submit.ok) {
+    warn(
+      `Google Search Console sitemaps.submit answered HTTP ${submit.status}: ${submit.error}`
+    );
+  }
+  results.push(["Google", "sitemap", `HTTP ${submit.status}`]);
+}
+
+/**
+ * --check for Google: can the service account see the property, and when
+ * did Google last read the sitemap. False when Google refuses the key or the
+ * property; a missing secret is fine.
+ */
+async function checkGoogle(results) {
+  const access = await googleAccess();
+  if (access.missing) {
+    notice("Google: GSC_SERVICE_ACCOUNT_JSON isn't set; nothing to check.");
+    results.push(["Google", "service account", "not set"]);
+    return true;
+  }
+  if (access.error) {
+    warn(`Google: ${access.error}`);
+    results.push(["Google", "service account", access.error]);
+    return false;
+  }
+  results.push(["Google", "service account", "accepted"]);
+  const site = await callGoogle(
+    access.token,
+    `/sites/${encodeURIComponent(GOOGLE_PROPERTY)}`
+  );
+  if (!site.ok) {
+    warn(
+      `Google Search Console sites.get answered HTTP ${site.status}: ${site.error}`
+    );
+    results.push(["Google", "property", `HTTP ${site.status}: ${site.error}`]);
+    return false;
+  }
+  results.push([
+    "Google",
+    "property",
+    `${GOOGLE_PROPERTY}: ${site.data?.permissionLevel ?? "unknown permission"}`,
+  ]);
+  const sitemap = await callGoogle(access.token, googleSitemapPath());
+  results.push([
+    "Google",
+    "sitemap",
+    sitemap.ok
+      ? `last read ${sitemap.data?.lastDownloaded ?? "never"}${sitemap.data?.isPending ? ", pending" : ""}, ${sitemap.data?.errors ?? 0} errors, ${sitemap.data?.warnings ?? 0} warnings`
+      : `not submitted yet (HTTP ${sitemap.status})`,
+  ]);
+  return true;
+}
+
+/**
+ * --check. Reads only, never submits: IndexNow and Bing, then Google. False
+ * when either rejects its key or the site.
  */
 async function checkSetup(results) {
+  const bing = await checkIndexNowAndBing(results);
+  let google = false;
+  try {
+    google = await checkGoogle(results);
+  } catch (error) {
+    warn(`Google check failed: ${error.message}`);
+  }
+  return bing && google;
+}
+
+/**
+ * The IndexNow key file, then the Bing key, the site's verification and
+ * today's quota. False when Bing rejects the key or the site; a missing key
+ * or an undeployed key file is fine.
+ */
+async function checkIndexNowAndBing(results) {
   const keyFile = await keyFileServed();
   results.push([
     "IndexNow",
@@ -396,7 +608,7 @@ function report(results, { title = "Search engines", column = "Sent" } = {}) {
 }
 
 const USAGE =
-  "Usage: notify-search-engines.mjs (--all | --important | --urls <file> | --changed-since <file> | --snapshot <file> | --check) [--dry-run]";
+  "Usage: notify-search-engines.mjs (--all | --important | --urls <file> | --changed-since <file> | --backlog | --snapshot <file> | --check) [--dry-run]";
 
 export async function main(argv = process.argv.slice(2)) {
   let values;
@@ -408,6 +620,7 @@ export async function main(argv = process.argv.slice(2)) {
         important: { type: "boolean" },
         urls: { type: "string" },
         "changed-since": { type: "string" },
+        backlog: { type: "boolean" },
         snapshot: { type: "string" },
         check: { type: "boolean" },
         "dry-run": { type: "boolean" },
@@ -422,6 +635,7 @@ export async function main(argv = process.argv.slice(2)) {
     "important",
     "urls",
     "changed-since",
+    "backlog",
     "snapshot",
     "check",
   ].filter((mode) => values[mode] !== undefined);
@@ -461,12 +675,21 @@ export async function main(argv = process.argv.slice(2)) {
   const sitemap = parseSitemap(xml);
   const all = sitemap.map((entry) => entry.url);
   const important = inSitemap(IMPORTANT_PATHS, all).kept;
-  // What each engine gets. IndexNow has no quota; Bing's is small.
+  // What each engine gets. IndexNow has no quota; Bing's is small. Google
+  // gets the sitemap whenever pages are sent, but not for the Bing backlog.
   let plan;
   if (values.all) {
     plan = { indexNow: all, bing: all, source: "every sitemap URL" };
   } else if (values.important) {
     plan = { indexNow: important, bing: important, source: "the main pages" };
+  } else if (values.backlog) {
+    plan = {
+      indexNow: [],
+      bing: rotate(all, utcDay()).slice(0, BING_BATCH_MAX),
+      google: false,
+      source:
+        "today's slice of the sitemap, for Bing, as far as the quota left goes",
+    };
   } else if (values.urls) {
     let lines;
     try {
@@ -502,12 +725,17 @@ export async function main(argv = process.argv.slice(2)) {
     }
   }
 
+  // The backlog sends from the front of the rotation until the quota runs
+  // out, usually no more than one step.
+  const listed = values.backlog
+    ? plan.bing.slice(0, BING_BACKLOG_STEP)
+    : plan.indexNow;
   console.log(
-    `${plan.indexNow.length} URLs (${plan.source}) of ${all.length} in the sitemap.`
+    `${listed.length} URLs (${plan.source}) of ${all.length} in the sitemap.`
   );
-  for (const url of plan.indexNow.slice(0, 50)) console.log(`  ${url}`);
-  if (plan.indexNow.length > 50) {
-    console.log(`  … and ${plan.indexNow.length - 50} more`);
+  for (const url of listed.slice(0, 50)) console.log(`  ${url}`);
+  if (listed.length > 50) {
+    console.log(`  … and ${listed.length - 50} more`);
   }
   if (values["dry-run"]) {
     console.log("Dry run: nothing sent.");
@@ -515,17 +743,27 @@ export async function main(argv = process.argv.slice(2)) {
   }
 
   const results = [];
-  try {
-    await sendIndexNow(plan.indexNow, results);
-  } catch (error) {
-    warn(`IndexNow failed: ${error.message}`);
-    results.push(["IndexNow", `${plan.indexNow.length} URLs`, "failed"]);
+  if (!values.backlog) {
+    try {
+      await sendIndexNow(plan.indexNow, results);
+    } catch (error) {
+      warn(`IndexNow failed: ${error.message}`);
+      results.push(["IndexNow", `${plan.indexNow.length} URLs`, "failed"]);
+    }
   }
   try {
     await sendBing(plan.bing, results);
   } catch (error) {
     warn(`Bing failed: ${error.message}`);
     results.push(["Bing", `${plan.bing.length} URLs`, "failed"]);
+  }
+  if (plan.google !== false) {
+    try {
+      await sendGoogle(results);
+    } catch (error) {
+      warn(`Google failed: ${error.message}`);
+      results.push(["Google", "sitemap", "failed"]);
+    }
   }
   report(results);
   return 0;

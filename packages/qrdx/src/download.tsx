@@ -1,8 +1,8 @@
 import type { QRProps } from "../types";
 import { DEFAULT_SIZE } from "./constants";
 import { epsToDataUrl, getQRAsEPS } from "./eps";
+import { getQRAsCanvas, getQRAsSVGDataUri } from "./export";
 import { getFrameDimensions } from "./frame";
-import { getQRAsCanvas, getQRAsSVGDataUri } from "./index";
 import { blobToDataUrl, canvasToWebP, type WebPOptions } from "./webp";
 
 /**

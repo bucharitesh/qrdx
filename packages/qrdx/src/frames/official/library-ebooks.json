@@ -1,0 +1,107 @@
+{
+  "id": "library-ebooks",
+  "name": "Library e-books",
+  "description": "A phone with the code on its screen and an open book.",
+  "category": "use-case",
+  "collection": "places",
+  "contentTypes": ["url"],
+  "tags": ["library", "books", "e-books"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1360,
+      "height": 2000
+    },
+    "qr": {
+      "x": 180,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1360,
+        "height": 2000,
+        "radius": 190,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 26,
+        "y": 26,
+        "width": 1308,
+        "height": 1948,
+        "radius": 150,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 550,
+        "y": 56,
+        "width": 260,
+        "height": 64,
+        "radius": 32,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M680 216.4C665.6 204.4 641.6 204.4 627.2 209.2L627.2 290.8C641.6 286 665.6 286 680 298C694.4 286 718.4 286 732.8 290.8L732.8 209.2C718.4 204.4 694.4 204.4 680 216.4Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M678.2 216.4L681.8 216.4L681.8 295.6L678.2 295.6Z",
+        "fill": "accent"
+      },
+      {
+        "type": "rect",
+        "x": 510,
+        "y": 1910,
+        "width": 340,
+        "height": 18,
+        "radius": 9,
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Borrow e-books",
+        "color": "frame",
+        "box": {
+          "x": 160,
+          "y": 1550,
+          "width": 1040,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Use your library card",
+        "color": "frame",
+        "box": {
+          "x": 180,
+          "y": 1735,
+          "width": 1000,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

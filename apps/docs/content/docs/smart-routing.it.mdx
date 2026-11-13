@@ -1,0 +1,66 @@
+---
+title: "Smart routing"
+description: "Invia ogni scansione di un QR code dinamico a un URL diverso in base a dispositivo, paese, area, lingua, orario o numero di scansioni, esegui test A/B e aggiungi parametri UTM."
+icon: Split
+---
+
+Un [QR code dinamico](/docs/dynamic-qr-codes) di norma invia ogni scansione a un'unica destinazione. Con lo smart routing, un solo codice stampato può aprire l'App Store su iPhone e Google Play su Android, una pagina in spagnolo per i visitatori di lingua spagnola, oppure un'offerta diversa fuori dall'orario di lavoro. Lo configuri nel pannello **Smart routing** nella pagina del codice nella [dashboard](/dashboard?to=codes) (apri un codice, poi apri la scheda **Impostazioni**).
+
+Lo smart routing e i parametri UTM sono inclusi in Pro e Business. Si applicano ai codici che aprono un link a un sito web; le [pagine ospitate](/docs/landing-pages) non fanno redirect, quindi non hanno routing.
+
+## Come funzionano le regole [#how-rules-work]
+
+- Un codice può avere fino a 20 **regole**. Ogni regola ha condizioni ("quando") e un'azione ("allora").
+- Le regole vengono controllate **dall'alto verso il basso** a ogni scansione. La **prima regola le cui condizioni corrispondono tutte** decide dove va la scansione. Usa le frecce per riordinare le regole.
+- Se nessuna regola corrisponde, la scansione va alla destinazione principale del codice.
+- Una regola senza condizioni corrisponde a ogni scansione, quindi le regole sotto di essa non vengono mai eseguite.
+- **Disattiva** una regola per conservarla senza usarla.
+- Le modifiche si applicano dalla scansione successiva; non devi mai ristampare il codice.
+
+Se per qualche motivo una regola non può essere valutata, la scansione va comunque alla destinazione principale: il routing non impedisce mai a un codice di funzionare.
+
+## Condizioni [#conditions]
+
+Ogni condizione può essere invertita con **non è** (per esempio "il paese non è US").
+
+| Condizione | Corrisponde quando | Note |
+| --- | --- | --- |
+| Dispositivo | Chi scansiona usa uno smartphone, un tablet, un desktop o un altro dispositivo | Dallo user agent del browser |
+| Sistema operativo | iOS, Android, Windows, macOS, Linux, ChromeOS, HarmonyOS, … | iPhone e iPad contano entrambi come iOS |
+| Paese | La scansione proviene da uno dei paesi elencati | Codici di 2 lettere come `US, CA, GB` |
+| Regione | La scansione proviene da una delle regioni elencate | Codici come `US-CA, US-NY` (paese + suddivisione) |
+| Lingua | La lingua preferita del browser del visitatore è una di quelle elencate | `es` corrisponde a tutte le varianti dello spagnolo (`es-MX`, `es-ES`); `pt-BR` solo al portoghese del Brasile |
+| Ora del giorno | La scansione avviene nei giorni della settimana scelti tra due orari, in un fuso orario a tua scelta | Una fascia come 22:00–02:00 supera la mezzanotte e appartiene al giorno in cui inizia |
+| Intervallo di date | La scansione avviene tra due date | Lascia vuoto un lato per "fino a" o "da"; le date seguono il fuso orario del tuo browser |
+| Numero di scansioni | È una delle prime N scansioni, oppure una qualsiasi scansione dopo la N-esima | Conta le scansioni registrate (i bot non vengono contati), quindi è approssimativo quando molte persone scansionano insieme |
+| Area | Chi scansiona si trova entro un raggio (da 100 m a 500 km) da un punto | Usa la posizione condivisa da chi scansiona quando la [posizione precisa](/docs/precise-location) è attiva, altrimenti la posizione approssimativa del suo indirizzo IP |
+
+Paese, regione e la posizione basata sull'IP per le aree derivano dall'indirizzo IP di chi scansiona, che QRdx non memorizza mai. Quando una posizione è sconosciuta, le condizioni di posizione non corrispondono (mentre quelle "non è" sì). [Posizione precisa e geofencing](/docs/precise-location) spiega le aree, incluso come far funzionare un codice solo al loro interno.
+
+## Link intelligenti alle app [#smart-app-links]
+
+Scegli **Aggiungi regola → Link intelligente all'app** per creare due regole in un colpo solo: iOS va al tuo link dell'App Store, Android al tuo link di Google Play. Tutti gli altri (desktop, altri telefoni) vanno alla destinazione principale, per esempio il tuo sito web.
+
+## Test A/B [#ab-tests]
+
+Imposta l'azione di una regola su **Dividi tra URL (A/B)** e aggiungi da 2 a 5 varianti, ciascuna con un URL e un peso. Una ripartizione di 70 e 30 invia circa il 70% dei visitatori al primo URL.
+
+- L'assegnazione è **persistente**: un visitatore che scansiona di nuovo lo stesso giorno riceve la stessa variante. Si basa su un hash anonimo giornaliero del visitatore, mai su un cookie.
+- Le statistiche del codice mostrano le **scansioni per variante** dall'ultima modifica delle varianti o dei pesi della ripartizione. Ogni scansione memorizza la variante servita. Le scansioni registrate prima che QRdx memorizzasse le varianti vengono rielaborate con le tue regole attuali e la scheda è contrassegnata come stima.
+- Anche una ripartizione può avere condizioni, per esempio "test A/B solo per i visitatori in Germania".
+
+## Prova le tue regole [#test-your-rules]
+
+**Prova le tue regole**, in fondo al pannello, mostra dove andrebbe una scansione, per qualsiasi dispositivo, sistema operativo, paese, regione, lingua, data e ora, numero di scansione e visitatore, usando le modifiche non salvate. Elenca quale regola ha corrisposto e perché le altre no, e mostra l'URL finale inclusi i parametri UTM.
+
+## Parametri UTM [#utm-parameters]
+
+Il pannello **Parametri UTM** aggiunge `utm_source`, `utm_medium`, `utm_campaign`, `utm_term`, `utm_content` e fino a 10 parametri personalizzati all'URL che ogni scansione apre, così gli strumenti di analisi possono distinguere il traffico dei QR.
+
+- I parametri vengono aggiunti dopo il routing, a qualunque URL porti la scansione.
+- Un parametro già presente nell'URL non viene mai sostituito, e il resto dell'URL resta esattamente come l'hai inserito.
+- I nomi che iniziano con `qrdx_` sono riservati al [tracciamento delle conversioni](/docs/tracking-and-conversions).
+
+## Piani e downgrade [#plans-and-downgrades]
+
+Le regole e i parametri UTM salvati con Pro continuano a funzionare se passi a un piano inferiore: i limiti impediscono solo di creare nuovi elementi. Senza Pro puoi comunque disattivare ed eliminare le regole o rimuovere i parametri UTM; per modificarli serve di nuovo Pro.

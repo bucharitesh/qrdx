@@ -1,0 +1,89 @@
+---
+title: "Piani e limiti"
+description: "Cosa includono Gratuito, Pro e Business, come si applicano i limiti a ciascun workspace e cosa succede quando passi a un piano inferiore o annulli."
+icon: Gauge
+---
+
+QRdx ha tre piani. I QR code statici creati dal Playground e dalla libreria `qrdx` sono gratuiti e illimitati in tutti i piani, senza bisogno di un account. Confronta i prezzi nella [pagina dei prezzi](/pricing).
+
+| | Gratuito | Pro | Business |
+| --- | --- | --- | --- |
+| Prezzo (US$) | $0 | $5/mese o $48/anno | $15/mese o $144/anno |
+| Prezzo (India) | ₹0 | ₹199/mese o ₹1,499/anno | ₹599/mese o ₹4,999/anno |
+
+<IfAvailable feature="eurPrices">
+
+Nell'UE e nel SEE, Pro costa €5/mese o €48/anno e Business €15/mese o €144/anno.
+
+</IfAvailable>
+
+I visitatori dall'India vedono i prezzi in rupie. Il checkout è gestito da [Polar](https://polar.sh), che addebita nella valuta del paese in cui ti trovi e aggiunge le imposte locali dove previste. Il tuo primo pagamento per un piano a pagamento include una garanzia di rimborso di {facts.moneyBackDays} giorni: consulta [Rimborsi e annullamenti](/legal/refunds).
+
+<IfAvailable feature="invoiceRequests">
+
+Un anno di Business può essere pagato anche con bonifico bancario: consulta [pagamento con fattura](/docs/help/account-and-billing/pay-by-invoice).
+
+</IfAvailable>
+
+## Limiti [#limits]
+
+| | Gratuito | Pro | Business |
+| --- | --- | --- | --- |
+| QR code dinamici | 10 | Illimitati | Illimitati |
+| Scansioni | Illimitate | Illimitate | Illimitate |
+| Landing page ospitate | 3, con footer "Made with QRdx" | Illimitate, senza footer | Illimitate, white-label, CSS personalizzato |
+| Cronologia delle analisi | {facts.freeScanHistoryYears} anno | Illimitata | Illimitata |
+| Domini personalizzati | Nessuno | 5 | 25 |
+| Back-half personalizzati (`qrdx.dev/q/spring-menu`) | No | Sì | Sì |
+| Membri per workspace | 1 (solo tu) | 3 | Illimitati |
+| Altri workspace | No | Sì | Sì |
+| Smart routing, test A/B, tag UTM | No | Sì | Sì |
+| Password, pianificazioni, scadenza, limiti di scansione | No | Sì | Sì |
+| Pixel di retargeting | No | Sì | Sì |
+| Tracciamento delle conversioni | No | No | Sì |
+| Riepiloghi e avvisi via email | No | Sì | Sì |
+| Webhook, Zapier e Slack | No | No | Sì |
+| App OAuth ([crea un'integrazione](/docs/developers/build-an-integration)) | 1 | 5 | 25 |
+| Archiviazione file (file più grande) | 50 MB (10 MB) | 5 GB (100 MB) | 50 GB (250 MB) |
+| Risposte ai moduli al mese | 50 | 1,000 | 10,000 |
+| Richieste API al giorno | 1,000 | 10,000, più creazione in blocco | 100,000, più creazione in blocco |
+| Immagini AI art al mese | 3 | 30 | 150, condivise nel workspace |
+| Generazioni di temi con AI | 5 in totale | Illimitate | Illimitate |
+| Temi salvati | 10 | Illimitati, condivisibili con un workspace | Illimitati, condivisibili con un workspace |
+| [Codici a barre](/docs/developers/barcode-api#saved-barcodes) salvati | 1,000 | 10,000 | 100,000 |
+| [Pagine di statistiche con il marchio del cliente](/docs/client-reports) | No | Sì, con un piccolo "Made with QRdx" | Sì, white-label, con possibilità di usare il tuo dominio personalizzato |
+| [Portale clienti](/docs/client-portal) | No | No | Sì |
+
+La cronologia delle analisi limita solo quanto indietro puoi guardare. Le scansioni vengono conservate finché esiste il loro codice, quindi dopo un upgrade quelle più vecchie tornano visibili.
+
+Nel limite dei codici contano solo i QR code dinamici attivi: quelli archiviati no. Le scansioni non contano mai per nessun limite e nessun piano mette in pausa un codice a causa del traffico. Gli unici limiti di scansione sono quelli che imposti tu su un codice.
+
+Il limite dell'API è per workspace e si azzera alle 00:00 UTC. Ogni richiesta conteggiata restituisce `X-RateLimit-Limit`, `X-RateLimit-Remaining` e `X-RateLimit-Reset`, così puoi tenerlo sotto controllo. Consulta la [REST API](/docs/developers/rest-api) per i limiti al minuto.
+
+## Workspace [#workspaces]
+
+I limiti si applicano a ogni [workspace](/docs/teams) separatamente, e un workspace usa il miglior piano tra i suoi proprietari e i [membri di fatturazione](/docs/teams#roles). Ognuno ha un workspace personale, creato automaticamente con lui come proprietario, quindi usa il suo piano. In qualsiasi altro workspace, un proprietario con Business dà a tutti i suoi membri i limiti di Business: i membri non hanno bisogno di un abbonamento personale.
+
+Creare altri workspace richiede Pro o Business. Un workspace i cui proprietari e membri di fatturazione hanno il piano Gratuito ha 1 posto (solo tu), con Pro fino a 3, con Business nessun limite. I posti sono i membri, proprietario incluso, più gli inviti in sospeso, quindi revoca un invito che non ti serve più per liberare il suo posto. Se il piano dei proprietari cambia, i membri attuali restano; vengono bloccati solo i nuovi inviti.
+
+## Superare un limite, passare a un piano inferiore e annullare [#going-over-a-limit-downgrading-and-cancelling]
+
+<Callout type="info">
+  I limiti bloccano solo le cose nuove. I codici esistenti continuano a reindirizzare in ogni piano, anche dopo un downgrade, un pagamento non riuscito o un annullamento. Questa è la [Garanzia Never-Hostage](/guarantee).
+</Callout>
+
+- **Oltre un limite:** non puoi crearne altri finché non rientri nel limite. Puoi comunque modificare, archiviare ed esportare ciò che hai.
+- **Oltre il limite giornaliero dell'API:** le chiamate API ricevono `429` fino alle 00:00 UTC. I tuoi codici continuano a reindirizzare e il sito continua a funzionare.
+- **Passaggio a un piano inferiore:** i codici, le landing page e i domini personalizzati verificati continuano a funzionare. Le analisi mostrano la cronologia inclusa nel nuovo piano.
+- **Annullamento:** il tuo piano resta attivo fino alla fine del periodo che hai pagato, poi il tuo account passa a Gratuito.
+- **Pagamento non riuscito:** quando l'abbonamento scade, è come annullare. Non viene messo in pausa nulla.
+
+I codici che terminano per un motivo che hai scelto tu, come una data di scadenza, una pausa o un limite di scansioni, mandano chi li scansiona al tuo URL di riserva o a una pagina neutra "Questa campagna è terminata", mai a una pagina di QRdx.
+
+## Fatturazione [#billing]
+
+Fai l'upgrade dalla [pagina dei prezzi](/pricing). Per cambiare piano, passare dal mensile all'annuale, aggiornare la carta o annullare, apri **Gestisci abbonamento** nelle impostazioni, che ti porta al portale di fatturazione di Polar. Un solo abbonamento copre il tuo account, quindi finché ne hai uno, i cambi di piano passano dal portale invece che da un nuovo checkout.
+
+## Self-hosting [#self-hosting]
+
+Un'istanza [self-hosted](/docs/self-hosting) usa gli stessi piani. I limiti sono definiti in un solo file, `apps/docs/lib/plans.ts`, che puoi modificare per la tua istanza. Senza Polar configurato, gli upgrade non sono disponibili e ogni account usa i limiti del piano Gratuito.

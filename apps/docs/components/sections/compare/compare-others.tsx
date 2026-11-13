@@ -2,7 +2,7 @@ import { ArrowRight } from "iconsax-reactjs";
 import Link from "next/link";
 import { CompareCard } from "@/components/sections/compare/compare-card";
 import { pickCompareSiblings } from "@/lib/compare-siblings";
-import { compareSource } from "@/lib/source";
+import { compareSource } from "@/lib/content-source";
 
 /** Six cards fill two rows of three (or three of two) with no orphans. */
 const SHOWN = 6;

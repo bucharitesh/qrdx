@@ -1,0 +1,93 @@
+{
+  "id": "how-to-apply",
+  "name": "How to apply",
+  "description": "A phone with the code on its screen and a lipstick.",
+  "category": "use-case",
+  "collection": "beauty-wellness",
+  "contentTypes": ["url"],
+  "tags": ["beauty", "wellness", "makeup", "tutorial"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1360,
+      "height": 2000
+    },
+    "qr": {
+      "x": 180,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1360,
+        "height": 2000,
+        "radius": 190,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 60,
+        "y": 60,
+        "width": 1240,
+        "height": 1880,
+        "radius": 150,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 550,
+        "y": 76,
+        "width": 260,
+        "height": 64,
+        "radius": 32,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M665.6 238L665.6 211.6L693.2 197.2L694.4 238ZM662 260.8L698 260.8A4.8 4.8 0 0 1 702.8 265.6L702.8 299.2A4.8 4.8 0 0 1 698 304L662 304A4.8 4.8 0 0 1 657.2 299.2L657.2 265.6A4.8 4.8 0 0 1 662 260.8Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M664.4 241.6L695.6 241.6A2.4 2.4 0 0 1 698 244L698 254.8A2.4 2.4 0 0 1 695.6 257.2L664.4 257.2A2.4 2.4 0 0 1 662 254.8L662 244A2.4 2.4 0 0 1 664.4 241.6Z",
+        "fill": "accent"
+      },
+      {
+        "type": "rect",
+        "x": 510,
+        "y": 1880,
+        "width": 340,
+        "height": 18,
+        "radius": 9,
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "How to apply it",
+        "color": "frame",
+        "box": {
+          "x": 160,
+          "y": 1550,
+          "width": 1040,
+          "height": 180
+        }
+      }
+    ]
+  }
+}

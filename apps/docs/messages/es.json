@@ -184,6 +184,7 @@
       "pageTemplates": "Plantillas de página",
       "pricing": "Precios",
       "guarantee": "Garantía Never-Hostage",
+      "enterprise": "Empresas",
       "slackBot": "Bot de Slack",
       "telegramBot": "Bot de Telegram",
       "discordBot": "Bot de Discord",
@@ -206,6 +207,7 @@
       "shadcn": "Registro de shadcn/ui",
       "plugins": "Plugins",
       "selfHosting": "Autoalojamiento",
+      "openSource": "Código abierto",
       "github": "GitHub",
       "help": "Centro de ayuda",
       "blog": "Blog",
@@ -227,6 +229,7 @@
       "refunds": "Reembolsos",
       "affiliateTerms": "Términos de afiliados",
       "security": "Seguridad",
+      "securityPolicy": "Política de seguridad",
       "allComparisons": "Todas las comparativas"
     }
   },
@@ -283,6 +286,13 @@
       "primary": "Prueba el Playground",
       "secondary": "Lee la documentación",
       "sceneLabel": "Dibujo animado del flujo de QRdx: una pantalla de estudio diseña y da estilo a un código QR, una impresora lo imprime en una tarjeta, un brazo robótico coloca la tarjeta en una cinta transportadora, un teléfono en un portón escanea cada tarjeta a medida que pasa, el escaneo viaja a un panel de analíticas que añade una barra nueva, y una gran tarjeta con un código QR dinámico cambia su enlace de destino sin volver a imprimirse"
+    },
+    "customers": {
+      "eyebrow": "Usado por",
+      "readStory": "Lee la historia",
+      "lines": {
+        "flam": "Flam crea sus códigos QR de marca con QRdx."
+      }
     },
     "editor": {
       "eyebrow": "Pruébalo con tu enlace",
@@ -397,7 +407,7 @@
       "analytics": {
         "eyebrow": "Analíticas",
         "title": "Mira cada escaneo",
-        "description": "Escaneos a lo largo del tiempo, países, dispositivos, navegadores y referencias de cada código dinámico. Las cuentas gratis conservan {days, number} días.",
+        "description": "Escaneos a lo largo del tiempo, países, dispositivos, navegadores y orígenes de referencia de cada código dinámico. Las cuentas gratis conservan {years, plural, one {# año} other {# años}} de historial, y los planes de pago lo conservan todo.",
         "link": "Cómo funcionan las analíticas"
       },
       "bulk": {
@@ -441,7 +451,7 @@
       "items": {
         "free": {
           "question": "¿QRdx es realmente gratis? ¿Hay límites ocultos?",
-          "answer": "Sí. Crear, personalizar y descargar códigos QR estáticos es gratis y no requiere cuenta: códigos ilimitados, todas las opciones de diseño ({bodyPatterns, number} patrones de cuerpo, {eyeShapes, number} formas de ojo de esquina y {eyeCentres, number} centros de ojo, degradados, logos, marcos y arte Logo QR o Image QR) y descargas en PNG, JPG, SVG, PDF y EPS. No hay marcas de agua ni anuncios. Los códigos estáticos guardan tu contenido en el propio código, así que nunca caducan y no tienen límite de escaneos. Una cuenta gratuita añade 10 códigos QR dinámicos, 3 páginas alojadas, 90 días de analíticas de escaneo, 10 temas guardados y 5 generaciones de temas con IA; Pro ({proMonthly}/mes o {proYearly}/año) y Business ({businessMonthly}/mes o {businessYearly}/año) amplían esos límites."
+          "answer": "Sí. Crear, personalizar y descargar códigos QR estáticos es gratis y no requiere cuenta: códigos ilimitados, todas las opciones de diseño ({bodyPatterns, number} patrones de cuerpo, {eyeShapes, number} formas de ojo de esquina y {eyeCentres, number} centros de ojo, degradados, logos, marcos y arte con Logo QR o Image QR) y descargas en PNG, JPG, SVG, PDF y EPS. No hay marcas de agua ni anuncios. Los códigos estáticos guardan tu contenido en el propio código, así que nunca caducan y no tienen límites de escaneo. Una cuenta gratis añade 10 códigos QR dinámicos, 3 páginas alojadas, {historyYears, plural, one {# año} other {# años}} de analíticas de escaneo, 10 temas guardados y 5 generaciones de temas con IA; Pro ({proMonthly}/mes o {proYearly}/año) y Business ({businessMonthly}/mes o {businessYearly}/año) amplían esos límites."
         },
         "signup": {
           "question": "¿Necesito registrarme o crear una cuenta?",
@@ -449,7 +459,7 @@
         },
         "dynamic": {
           "question": "¿QRdx admite códigos QR dinámicos y analíticas de escaneo?",
-          "answer": "Sí. Un código dinámico codifica un enlace corto, así que puedes cambiar su destino después de imprimirlo, y cada escaneo se cuenta con analíticas de país, dispositivo y navegador. Un código puede abrir un sitio web o una página móvil alojada (lista de enlaces, menú, vCard, cupón, evento, formulario, PDF, galería, audio o vídeo). Pro y Business añaden enrutamiento inteligente por dispositivo, país, idioma u hora, pruebas A/B, etiquetas UTM, contraseñas, fechas de caducidad y límites de escaneo. Las cuentas gratuitas tienen 10 códigos dinámicos activos con 90 días de historial; Pro y Business son ilimitados y con un historial más largo."
+          "answer": "Sí. Un código dinámico codifica un enlace corto, así que puedes cambiar adónde apunta después de imprimirlo, y cada escaneo se cuenta con analíticas de país, dispositivo y navegador. Un código puede abrir un sitio web o una página móvil alojada (lista de enlaces, menú, vCard, cupón, evento, formulario, PDF, galería, audio o vídeo). Pro y Business añaden enrutamiento inteligente por dispositivo, país, idioma u hora, pruebas A/B, etiquetas UTM, contraseñas, fechas de caducidad y límites de escaneo. Las cuentas gratis tienen 10 códigos dinámicos activos con {historyYears, plural, one {# año} other {# años}} de historial; Pro y Business son ilimitados y conservan todo tu historial de escaneos."
         },
         "guarantee": {
           "question": "¿Dejarán de funcionar mis códigos QR si dejo de pagar?",
@@ -473,7 +483,7 @@
         },
         "paidPlans": {
           "question": "¿Qué incluyen Pro y Business?",
-          "answer": "Pro ({proMonthly}/mes o {proYearly}/año) añade códigos dinámicos y páginas alojadas sin límite, 3 años de analíticas, {customDomains, select, yes {5 dominios personalizados, } other {}}equipos de hasta 3 personas, enrutamiento inteligente, pruebas A/B, etiquetas UTM, píxeles, alertas por correo y un resumen semanal, además de controles de enlace como contraseñas y fechas de caducidad. Business ({businessMonthly}/mes o {businessYearly}/año) añade páginas de marca blanca con CSS personalizado, historial de analíticas sin límite, {customDomains, select, yes {25 dominios personalizados, } other {}}miembros de equipo sin límite, seguimiento de conversiones, webhooks y alertas en Slack o Discord. Crear, personalizar y descargar códigos QR estáticos sigue siendo gratis."
+          "answer": "Pro ({proMonthly}/mes o {proYearly}/año) añade códigos dinámicos y páginas alojadas ilimitados, todo tu historial de escaneos, {customDomains, select, yes {5 dominios personalizados, } other {}}equipos de hasta 3 personas, enrutamiento inteligente, pruebas A/B, etiquetas UTM, píxeles, alertas por correo electrónico y un resumen semanal, y controles de enlace como contraseñas y fechas de caducidad. Business ({businessMonthly}/mes o {businessYearly}/año) añade páginas de marca blanca con CSS personalizado, {customDomains, select, yes {25 dominios personalizados, } other {}}miembros de equipo ilimitados, seguimiento de conversiones, webhooks y alertas de Slack o Discord. Crear, personalizar y descargar códigos QR estáticos sigue siendo gratis."
         }
       }
     }
@@ -493,8 +503,8 @@
     },
     "extras": {
       "unlimitedDynamic": "códigos dinámicos ilimitados",
-      "longerAnalytics": "analítica más extensa",
-      "analyticsHistory": "historial de analítica",
+      "longerAnalytics": "tu historial completo de escaneos",
+      "analyticsHistory": "historial completo de analíticas",
       "customDomains": "dominios propios",
       "teams": "equipos"
     },
@@ -509,7 +519,9 @@
       "inr": "Precios en ₹ para India.",
       "usd": "Precios en US$.",
       "showInr": "¿En India? Ver precios en ₹",
-      "showUsd": "Ver precios en US$"
+      "showUsd": "Ver precios en US$",
+      "eur": "Precios en € para la UE y el EEE.",
+      "showEur": "¿Estás en la UE o el EEE? Ver precios en €"
     },
     "price": {
       "forever": "para siempre",
@@ -550,9 +562,17 @@
     "selfHost": {
       "title": "Autoalojado",
       "description": "Ejecuta la app de código abierto en tu propio servidor con tu propia base de datos Postgres. Los límites del plan están en un solo archivo que puedes modificar para tu instancia.",
-      "guide": "Guía de autoalojamiento"
+      "guide": "Guía de autoalojamiento",
+      "openSource": "Qué es de código abierto"
     },
     "footnote": "Polar gestiona el pago como comerciante de registro; es posible que se añadan impuestos locales al pagar. A los clientes de India se les cobra en ₹ y al resto en US$.",
+    "footnoteEur": "Polar gestiona el pago como comerciante de registro; es posible que se añadan impuestos locales al pagar. A los clientes de India se les cobra en ₹, a los de la UE y el EEE en € y al resto en US$.",
+    "offers": {
+      "moneyBack": "Garantía de devolución del dinero de {days, number} días en tu primer pago.",
+      "moneyBackLink": "Cómo funcionan los reembolsos",
+      "nonprofit": "¿Organización sin ánimo de lucro o benéfica? {percent, number}% de descuento en Pro y Business.",
+      "nonprofitLink": "Solicita un código"
+    },
     "values": {
       "unlimited": "Ilimitado",
       "days": "{count, plural, one {# día} other {# días}}",
@@ -698,7 +718,11 @@
       "items": {
         "cancel": {
           "question": "¿Qué pasa si cancelo?",
-          "answer": "No se rompe nada. Tu plan sigue activo hasta el final del periodo que pagaste y después tu cuenta pasa a Gratis. Todo código QR dinámico sigue redirigiendo y cada escaneo se sigue contando: esa es nuestra Garantía Never-Hostage. En Gratis no puedes crear más de lo que permiten los límites de Gratis, y las analíticas muestran los últimos 90 días."
+          "answer": "No se rompe nada. Tu plan sigue activo hasta el final del período que has pagado y después tu cuenta pasa a Gratis. Todos los códigos QR dinámicos siguen redirigiendo y cada escaneo se sigue contando: esa es nuestra Garantía Never-Hostage. En Gratis no puedes crear más de lo que permiten los límites de Gratis, y las analíticas muestran {historyYears, plural, one {el último año} other {los últimos # años}}. Los escaneos anteriores se conservan, así que reaparecen si vuelves a mejorar tu plan."
+        },
+        "refund": {
+          "question": "¿Puedo recuperar mi dinero?",
+          "answer": "Sí. Tu primer pago de Pro o Business, mensual o anual, incluye una garantía de devolución del dinero de {days, number} días: escribe a support@qrdx.dev desde el correo de tu cuenta dentro de los {days, number} días siguientes al pago y te lo reembolsamos por completo, sin preguntas. Solo se aplica una vez por cliente. Después, tus códigos seguirán funcionando con el plan Gratis."
         },
         "paymentFails": {
           "question": "¿Qué pasa si falla un pago?",
@@ -712,6 +736,10 @@
           "question": "¿Por qué veo los precios en ₹?",
           "answer": "Los visitantes de India ven los precios en rupias indias: Pro cuesta {proMonthly} al mes o {proYearly} al año, y Business {businessMonthly} al mes o {businessYearly} al año. El pago cobra en ₹ a los clientes de India y en US$ a todos los demás, sin importar en qué moneda hayas navegado. Usa el selector sobre los planes para cambiar la moneda que se muestra."
         },
+        "currencies": {
+          "question": "¿Por qué veo los precios en ₹ o €?",
+          "answer": "Los precios se muestran en la moneda del país en el que estás. En India, Pro cuesta {proMonthly} al mes o {proYearly} al año, y Business {businessMonthly} al mes o {businessYearly} al año. En la UE y el EEE, Pro cuesta {proMonthlyEur} al mes o {proYearlyEur} al año, y Business {businessMonthlyEur} al mes o {businessYearlyEur} al año. En el resto del mundo es en US$. El pago se cobra en la moneda de tu país, sin importar en qué moneda hayas visto los precios. Usa el selector que hay sobre los planes para cambiar la moneda mostrada."
+        },
         "switchPlans": {
           "question": "¿Puedo cambiar de plan o de periodo de facturación más adelante?",
           "answer": "Sí. Abre Gestionar suscripción en tus ajustes para cambiar o cancelar tu plan en el portal de facturación de Polar. Pasar a un plan inferior nunca desactiva los códigos, páginas ni dominios existentes."
@@ -723,6 +751,10 @@
         "selfHost": {
           "question": "¿Puedo alojarlo yo mismo?",
           "answer": "Sí. QRdx es de código abierto bajo la licencia AGPL-3.0. Ejecútalo con tu propia base de datos Postgres siguiendo la guía de autoalojamiento; los límites de los planes se definen en un solo archivo que puedes modificar para tu instancia."
+        },
+        "nonprofit": {
+          "question": "¿Tenéis descuento para organizaciones sin ánimo de lucro?",
+          "answer": "Sí. Las organizaciones sin ánimo de lucro y benéficas registradas obtienen un {percent, number}% de descuento en Pro o Business, mensual o anual. Cuéntanos sobre tu organización con el enlace para organizaciones sin ánimo de lucro que hay bajo los planes. Normalmente respondemos en unos días, con un código de descuento para introducir al pagar."
         },
         "billing": {
           "question": "¿Quién gestiona la facturación y los impuestos?",
@@ -748,6 +780,38 @@
       "close": "Cerrar",
       "signIn": "Inicia sesión para pedir una factura",
       "signInNote": "Enviamos la factura para el espacio de trabajo de tu cuenta, así que primero inicia sesión."
+    },
+    "enterprise": {
+      "name": "Enterprise",
+      "tagline": "Para empresas que necesitan un contrato y una revisión de seguridad",
+      "price": "A medida",
+      "priceNote": "Contrato anual, pago con factura",
+      "cta": "Contáctanos",
+      "lead": "Todo lo de Business, y además:",
+      "adds": {
+        "contract": "Un contrato anual, pagado con factura",
+        "replies": "Respuesta en {hours, plural, one {# hora laborable} other {# horas laborables}} cuando los códigos dejan de funcionar",
+        "review": "Respuestas para tu revisión de seguridad",
+        "selfHost": "SSO y registro de auditoría en tu propio servidor"
+      },
+      "security": "Seguridad en QRdx"
+    },
+    "nonprofit": {
+      "title": "Descuento para ONG",
+      "description": "Las organizaciones sin ánimo de lucro y benéficas registradas obtienen un {percent, number}% de descuento en Pro o Business, mensual o anual. Cuéntanos sobre tu organización y te enviaremos por correo un código de descuento para introducir al pagar.",
+      "organization": "Nombre de la organización",
+      "country": "País",
+      "registration": "Número de registro o enlace",
+      "registrationHint": "Tu número en un registro de organizaciones benéficas o sin ánimo de lucro, o un enlace a tu ficha en un registro público.",
+      "contactEmail": "Correo de contacto",
+      "plan": "Plan",
+      "reply": "Normalmente respondemos en unos días. No se cobra nada hasta que pagues.",
+      "submit": "Enviar solicitud",
+      "sending": "Enviando…",
+      "sentTitle": "Solicitud enviada",
+      "sent": "Responderemos a {email}, normalmente en unos días. Si tu organización cumple los requisitos, la respuesta incluirá un código de descuento para introducir al pagar.",
+      "close": "Cerrar",
+      "failed": "Algo salió mal. Escribe a {email}."
     }
   },
   "docs": {
@@ -881,6 +945,8 @@
       "bulkDescription": "Sube un CSV y descarga todos los códigos en PNG, WebP o SVG en un solo archivo ZIP, generado por completo en tu navegador.",
       "printTitle": "¿Vas a imprimir tu código? Revisa el tamaño",
       "printDescription": "Calcula el tamaño mínimo de impresión según la distancia de escaneo y la cantidad de datos que contiene el código.",
+      "dynamicTitle": "Generador de código QR dinámico",
+      "dynamicDescription": "Edita el enlace después de imprimir y cuenta cada escaneo",
       "hostedTitle": "Códigos que abren una página que puedes editar",
       "hostedDescription": "Estos códigos abren una página móvil que QRdx aloja por ti, así que puedes cambiarla después de imprimir y ver los escaneos. Necesitan una cuenta gratuita.",
       "menuTitle": "Generador de código QR de menú",
@@ -1878,7 +1944,8 @@
           "choices": "Elige entre las opciones",
           "choice": "Elige una de las opciones",
           "invalid": "Valor no válido"
-        }
+        },
+        "checkAnswer": "Esta respuesta necesita otra revisión."
       }
     }
   },
@@ -1980,6 +2047,36 @@
       "savedDescription": "Lo encontrarás en Códigos de barras, en tu panel.",
       "open": "Abrir",
       "save": "Guardar en el panel"
+    },
+    "issues": {
+      "enterDigits": "Introduce {short} dígitos, o los {length} con el dígito de control.",
+      "digitsOnly": "{label} solo admite dígitos.",
+      "checkDigitAdded": "Dígito de control {check} añadido.",
+      "wrongCheckDigit": "El dígito de control debería ser {expected}, no {given}. Revisa el número, o deja fuera el último dígito y se calcula por ti.",
+      "wrongLength": "{label} necesita {short} o {length} dígitos; este tiene {count, plural, one {# dígito} other {# dígitos}}.",
+      "upceEnter": "Introduce de 6 a 8 dígitos, o un UPC-A de 12 dígitos para acortarlo.",
+      "upceSystem": "Solo los números UPC-A que empiezan por 0 o 1 tienen forma UPC-E. Usa UPC-A en su lugar.",
+      "upceNoForm": "Este número UPC-A no tiene forma UPC-E: solo se pueden acortar los números con ceros en las posiciones adecuadas. Usa UPC-A en su lugar.",
+      "shortenedFromUpca": "Acortado a partir del UPC-A {upca}.",
+      "numberSystemAssumed": "Se asume el sistema numérico 0.",
+      "upceLength": "UPC-E necesita 6, 7 u 8 dígitos (o un UPC-A de 12 dígitos); este tiene {count, plural, one {# dígito} other {# dígitos}}.",
+      "upceStart": "Un número UPC-E empieza por el sistema numérico 0 o 1.",
+      "enterText": "Introduce el texto a codificar.",
+      "tooLong": "{label} admite aquí hasta {max, number} caracteres; este tiene {count, number}.",
+      "code128Chars": "Code 128 admite aquí letras ASCII básicas, dígitos, espacios y símbolos. No permitidos: {chars}",
+      "code39Chars": "Code 39 solo admite letras mayúsculas, dígitos, espacios y - . $ / + %. No permitidos: {chars}",
+      "code39Lowercase": "Code 39 no admite letras minúsculas. Usa mayúsculas, o Code 128 para combinar mayúsculas y minúsculas.",
+      "gs1Enter": "Introduce los identificadores de aplicación entre paréntesis con sus valores, p. ej. (01)09501101530003.",
+      "gs1Start": "Empieza con un identificador de aplicación entre paréntesis, p. ej. (01) para un GTIN, y después su valor.",
+      "gs1Brackets": "Los paréntesis no coinciden: escribe cada AI como (dígitos), seguido de su valor.",
+      "gs1BadAi": "“({ai})” no es un identificador de aplicación: los AI tienen de 2 a 4 dígitos.",
+      "gs1NoValue": "El AI ({ai}) no tiene ningún valor a continuación.",
+      "gs1BadChars": "El AI ({ai}) contiene caracteres que GS1 no permite: {chars}",
+      "gs1Ai": "AI ({ai}): {inner}",
+      "gs1TooLong": "GS1-128 admite hasta {max} caracteres entre AI y datos; este tiene {count}. Divídelo en dos códigos de barras.",
+      "unknownFormat": "Formato de código de barras desconocido.",
+      "space": "espacio",
+      "lineBreak": "un salto de línea"
     }
   },
   "guarantee": {
@@ -2023,9 +2120,322 @@
         "outcome": "Recibes un aviso con al menos 12 meses de antelación, tiempo para exportarlo todo y una vía documentada para ejecutar la app de código abierto en tu propio servidor."
       }
     },
+    "moneyBackTitle": "Garantía de reembolso",
+    "moneyBack": "Tu primer pago de Pro o Business, mensual o anual, incluye una garantía de reembolso de {days, number} días. Si el plan no es para ti, escribe a <mail>{email}</mail> en los {days, number} días siguientes al pago y te lo reembolsamos por completo, sin preguntas. Se aplica una vez por cliente, y después tus códigos siguen funcionando en el plan Gratis.",
+    "moneyBackLink": "Lee la política de reembolsos",
     "exceptionTitle": "La única excepción: el abuso",
     "exception": "Solo desactivamos un código cuando incumple nuestros <terms>términos del servicio</terms>, por ejemplo si apunta a phishing o malware. Es una decisión de seguridad tomada tras una denuncia o una revisión, nunca por motivos de facturación. Cualquiera puede <report>denunciar un código</report>.",
     "questions": "¿Tienes preguntas sobre la garantía? Escribe a <mail>{email}</mail>. Última actualización: <time>{date, date, long}</time>."
+  },
+  "enterprise": {
+    "metaTitle": "QRdx Enterprise: SSO, registro de auditoría, contratos y tiempos de respuesta",
+    "metaDescription": "QRdx para equipos grandes: inicio de sesión único, registro de auditoría con exportación a CSV, roles, dominios propios y un portal para clientes, con contrato anual, tiempos de respuesta por escrito y pago con factura.",
+    "crumb": "Enterprise",
+    "title": "QRdx para equipos enterprise",
+    "intro1": "Para empresas que ponen códigos QR en envases, carteles y campañas en muchos equipos, marcas o clientes, y necesitan inicio de sesión único, un registro de auditoría y un contrato antes de desplegarlos.",
+    "intro2": "Enterprise es el plan Business con un contrato alrededor: tiempos de respuesta por escrito, pago con factura y respuestas para tu revisión de seguridad.",
+    "contactCta": "Contáctanos",
+    "securityCta": "Cómo gestionamos la seguridad",
+    "whoTitle": "Para quién es",
+    "who": {
+      "brands": {
+        "title": "Marcas y minoristas",
+        "body": "Códigos en envases, menús y carteles en muchos lugares, gestionados por varios equipos que necesitan su propio acceso."
+      },
+      "agencies": {
+        "title": "Agencias",
+        "body": "Un espacio de trabajo por cliente, un portal de solo lectura para cada cliente y páginas de estadísticas con su marca."
+      },
+      "security": {
+        "title": "Equipos de TI y seguridad",
+        "body": "Un proveedor que inicia la sesión de las personas a través de tu proveedor de identidad, registra quién cambió qué y responde a tu cuestionario de seguridad."
+      }
+    },
+    "featuresTitle": "Qué obtienes",
+    "featuresIntro": "Todo lo del plan Business. Cada elemento funciona hoy en qrdx.dev.",
+    "features": {
+      "sso": {
+        "title": "Inicio de sesión único",
+        "body": "OIDC o SAML 2.0 para el dominio de tu correo, verificado con un registro DNS. Si lo exiges, tu proveedor de identidad será la única forma de entrar para ese dominio."
+      },
+      "auditLog": {
+        "title": "Registro de auditoría",
+        "body": "Quién cambió qué código, página, miembro, dominio, clave de API o ajuste, y cuándo. Fíltralo, exporta hasta {rows, number} filas en CSV y conserva {days, number} días de historial."
+      },
+      "roles": {
+        "title": "Roles y verificación en dos pasos",
+        "body": "Propietarios, administradores, miembros, miembros de facturación y lectores de solo lectura. Los espacios de trabajo pueden exigir la verificación en dos pasos a todos sus integrantes."
+      },
+      "seats": {
+        "title": "Espacios de trabajo y puestos",
+        "body": "Miembros ilimitados, con un espacio de trabajo distinto para cada equipo, marca o cliente, y roles propios en cada uno."
+      },
+      "domains": {
+        "title": "Dominios propios",
+        "body": "Enlaces cortos y páginas alojadas en hasta {count, number} dominios tuyos."
+      },
+      "clients": {
+        "title": "Portal de clientes y estadísticas con su marca",
+        "body": "Un portal de solo lectura donde los clientes ven las carpetas que compartes con ellos, y páginas de estadísticas con su marca y sin la marca de QRdx."
+      },
+      "api": {
+        "title": "API y creación en bloque",
+        "body": "{requests, number} solicitudes a la API al día, hasta {batch, number} códigos en una sola llamada a la API e importaciones CSV de hasta {importRows, number} filas."
+      },
+      "export": {
+        "title": "Tus datos, exportables",
+        "body": "Descarga todo el contenido de tu cuenta en un ZIP y exporta escaneos, respuestas de formularios y el registro de auditoría en CSV."
+      }
+    },
+    "contractTitle": "Lo que añade el contrato",
+    "contractIntro": "Además del plan Business:",
+    "contract": {
+      "replies": {
+        "title": "Tiempos de respuesta por escrito",
+        "body": "En un plazo de {outage, plural, one {# hora laborable} other {# horas laborables}} cuando tus códigos o páginas alojadas dejan de funcionar, y de {other, plural, one {# día laborable} other {# días laborables}} para todo lo demás."
+      },
+      "invoice": {
+        "title": "Contrato anual, pago con factura",
+        "body": "Paga por transferencia bancaria en lugar de con tarjeta, con los datos de tu empresa, el número de identificación fiscal y el número de orden de compra en la factura."
+      },
+      "review": {
+        "title": "Respuestas para tu revisión de seguridad",
+        "body": "Completamos tu cuestionario de seguridad y te enviamos una copia firmada del Anexo de Tratamiento de Datos."
+      },
+      "selfHost": {
+        "title": "Inicio de sesión único y registro de auditoría si alojas tú mismo",
+        "body": "QRdx es de código abierto, pero el inicio de sesión único y el registro de auditoría están bajo la licencia comercial de QRdx. Un acuerdo Enterprise te permite ejecutarlos en tu propio servidor con una clave de licencia."
+      }
+    },
+    "limitsNote": "En qrdx.dev, los espacios de trabajo Enterprise tienen los límites del plan Business. Si necesitas más de algo, indícalo en el formulario.",
+    "repliesTitle": "Tiempos de respuesta",
+    "replies": {
+      "when": "Cuándo",
+      "enterprise": "Enterprise",
+      "business": "Business",
+      "outage": "Tus códigos o páginas alojadas dejan de funcionar",
+      "other": "Todo lo demás",
+      "hours": "En un plazo de {count, plural, one {# hora laborable} other {# horas laborables}}",
+      "days": "En un plazo de {count, plural, one {# día laborable} other {# días laborables}}"
+    },
+    "repliesNote": "El horario laborable es de lunes a viernes, hora de la India. Son tiempos de respuesta: QRdx no ofrece garantía de disponibilidad.",
+    "buyTitle": "Cómo comprar",
+    "buy": {
+      "ask": {
+        "title": "Cuéntanos qué necesitas",
+        "body": "Usa el formulario de abajo o escribe a {email}. Indica el tamaño de tu equipo y todo lo que pida tu revisión de seguridad."
+      },
+      "quote": {
+        "title": "Recibe respuestas y un precio",
+        "body": "Te respondemos por correo con las respuestas a tus preguntas y un precio anual."
+      },
+      "sign": {
+        "title": "Firma y paga con factura",
+        "body": "Cuando se firma el contrato, pasamos tu espacio de trabajo al plan Business y te enviamos la factura."
+      }
+    },
+    "formTitle": "Habla con nosotros",
+    "formIntro": "Cuéntanos sobre tu equipo y lo que necesitas. Te respondemos por correo electrónico.",
+    "form": {
+      "name": "Nombre",
+      "email": "Correo de trabajo",
+      "company": "Empresa",
+      "teamSize": "Tamaño del equipo",
+      "teamSizePlaceholder": "Elige un tamaño",
+      "sizes": {
+        "1-10": "De 1 a 10 personas",
+        "11-50": "De 11 a 50 personas",
+        "51-200": "De 51 a 200 personas",
+        "201-1000": "De 201 a 1.000 personas",
+        "1000+": "Más de 1.000 personas"
+      },
+      "need": "¿Qué necesitas?",
+      "needPlaceholder": "Por ejemplo: inicio de sesión único para 300 personas, una factura anual, nuestro cuestionario de seguridad",
+      "submit": "Enviar",
+      "sending": "Enviando…",
+      "sentTitle": "Mensaje enviado",
+      "sent": "Gracias. Te responderemos a {email}.",
+      "privacy": "Usamos estos datos solo para responderte. Consulta nuestra <privacy>política de privacidad</privacy>.",
+      "errors": {
+        "name": "Escribe tu nombre.",
+        "email": "Escribe un correo de trabajo válido.",
+        "company": "Escribe el nombre de tu empresa.",
+        "teamSize": "Elige el tamaño de tu equipo.",
+        "need": "Cuéntanos qué necesitas.",
+        "rateLimited": "Ya has enviado varios mensajes. Responderemos a esos o escribe a {email}.",
+        "check": "Completa la verificación que está sobre el botón y vuelve a enviar.",
+        "notSent": "No pudimos enviar tu mensaje. Escribe a {email}.",
+        "unavailable": "Este formulario no está disponible aquí. Escribe a {email}.",
+        "unknown": "Algo salió mal. Escribe a {email}."
+      }
+    },
+    "orEmail": "¿Prefieres el correo? Escribe a <mail>{email}</mail>.",
+    "relatedTitle": "Más información",
+    "related": {
+      "security": "Seguridad en QRdx",
+      "dpa": "Adenda de tratamiento de datos",
+      "subprocessors": "Subencargados",
+      "pricing": "Precios"
+    }
+  },
+  "security": {
+    "metaTitle": "Seguridad en QRdx: inicio de sesión, almacenamiento de datos y cómo informar de problemas",
+    "metaDescription": "Cómo protege QRdx las cuentas y los datos: HTTPS con HSTS, una política de seguridad de contenido, llaves de acceso y verificación en dos pasos, inicio de sesión único, un registro de auditoría, comprobación de enlaces, dónde se almacenan los datos y cómo informar de una vulnerabilidad.",
+    "crumb": "Seguridad",
+    "title": "Seguridad en QRdx",
+    "intro1": "Lo que hace QRdx para proteger tu cuenta, tus códigos y los datos de tus visitantes. Cada punto describe algo que funciona hoy en qrdx.dev, y el código es abierto, así que puedes comprobarlo.",
+    "intro2": "QRdx no tiene la certificación SOC 2 ni HIPAA, ni ninguna otra certificación de seguridad, y no promete tenerla.",
+    "reportCta": "Informar de una vulnerabilidad",
+    "enterpriseCta": "¿Revisión de seguridad? Escríbenos",
+    "sections": {
+      "transport": {
+        "title": "Conexiones y navegadores",
+        "items": {
+          "https": {
+            "title": "HTTPS en todas partes",
+            "body": "Todas las páginas y llamadas a la API se sirven por HTTPS, y se indica a los navegadores que sigan usando HTTPS para qrdx.dev durante dos años (HSTS)."
+          },
+          "csp": {
+            "title": "Política de seguridad de contenido",
+            "body": "Las páginas propias de QRdx limitan qué scripts, marcos y conexiones pueden cargar. Las páginas que muestran los datos de tu cuenta reciben un nonce nuevo en cada solicitud, así que un script inyectado en ellas no se ejecuta."
+          },
+          "framing": {
+            "title": "Sin marcos de otros sitios",
+            "body": "Las páginas propias de QRdx no se pueden mostrar dentro del marco de otro sitio, y la pantalla en la que apruebas una aplicación no se puede enmarcar en ningún caso. También se indica a los navegadores que no adivinen los tipos de archivo."
+          }
+        }
+      },
+      "signIn": {
+        "title": "Inicio de sesión",
+        "items": {
+          "passwords": {
+            "title": "Sin contraseñas",
+            "body": "Inicias sesión con Google, GitHub o un código de un solo uso por correo{passkeys, select, yes {, o con una llave de acceso} other {}}. QRdx no guarda contraseñas que puedan filtrarse."
+          },
+          "twoFactor": {
+            "title": "Verificación en dos pasos",
+            "body": "Un segundo paso con una aplicación de autenticación{passkeys, select, yes { o una llave de acceso} other {}}, con códigos de respaldo para cuando no puedas usarla. Los espacios de trabajo en Business pueden exigirla a todos los miembros."
+          },
+          "confirm": {
+            "title": "Confirma que eres tú",
+            "body": "Los cambios de seguridad, las claves de API y webhooks nuevos, los cambios de rol y la eliminación de un espacio de trabajo te piden confirmar que eres tú, aunque ya hayas iniciado sesión. Una confirmación dura 10 minutos."
+          },
+          "alerts": {
+            "title": "Alertas de nuevo inicio de sesión",
+            "body": "Te enviamos un correo cuando un navegador o dispositivo inicia sesión en tu cuenta por primera vez, y cuando cambia la configuración de tu verificación en dos pasos."
+          },
+          "sessions": {
+            "title": "Sesiones que caducan",
+            "body": "Una sesión dura 30 días como máximo, y menos si dejas de usarla. Si se usa desde un país nuevo y un navegador nuevo, debe confirmar que eres tú, y puedes cerrar la sesión en todos los demás dispositivos a la vez."
+          }
+        }
+      },
+      "workspaces": {
+        "title": "Espacios de trabajo y equipos",
+        "items": {
+          "sso": {
+            "title": "Inicio de sesión único",
+            "body": "OIDC o SAML 2.0 en Business, para un dominio de correo que demuestras con un registro DNS. Las respuestas SAML deben estar firmadas con SHA-256 o superior. Cuando un espacio de trabajo lo exige, se cierran todas las demás vías de acceso para ese dominio y las sesiones duran 24 horas como máximo."
+          },
+          "roles": {
+            "title": "Roles",
+            "body": "Propietario, administrador, miembro, facturación y lector. Solo los propietarios y administradores gestionan personas, dominios y ajustes, y los miembros de facturación y los lectores no pueden cambiar los códigos."
+          },
+          "auditLog": {
+            "title": "Registro de auditoría",
+            "body": "En Business, los propietarios y administradores ven quién cambió qué código, página, miembro, dominio, clave de API o ajuste, y pueden exportarlo como CSV. Las filas se conservan durante {days, number} días."
+          },
+          "staff": {
+            "title": "Acceso del personal",
+            "body": "Solo las cuentas del personal de QRdx pueden abrir las herramientas de administración, y cada acción del personal en ellas queda registrada en un registro de auditoría."
+          }
+        }
+      },
+      "secrets": {
+        "title": "Claves y secretos",
+        "items": {
+          "hashed": {
+            "title": "Claves y tokens con hash",
+            "body": "Las claves de API y los tokens de acceso de OAuth se guardan solo como hashes SHA-256, así que una copia de la base de datos no los revela. Las contraseñas de los códigos protegidos también se guardan como hashes."
+          },
+          "encrypted": {
+            "title": "Tokens de integración cifrados",
+            "body": "Los tokens de las herramientas que conectas, como Google Drive o Slack, se cifran con AES-256-GCM."
+          },
+          "webhooks": {
+            "title": "Webhooks firmados",
+            "body": "Cada endpoint de webhook tiene su propio secreto y cada payload se firma con él, para que tu servidor pueda comprobar que viene de QRdx."
+          }
+        }
+      },
+      "abuse": {
+        "title": "Abuso y seguridad de enlaces",
+        "items": {
+          "linkChecks": {
+            "title": "Revisión de enlaces",
+            "body": "Cuando se define el destino de un código dinámico, QRdx lo comprueba en las listas de sitios de malware y phishing de Google Web Risk y rechaza los marcados. Un destino que no se pudo comprobar a tiempo se vuelve a comprobar y, si resulta marcado, su código se desactiva."
+          },
+          "rateLimits": {
+            "title": "Límites de uso",
+            "body": "La API, el servidor MCP, los formularios y otros endpoints públicos tienen límites de uso por clave, cuenta o dirección IP."
+          },
+          "bots": {
+            "title": "Control de bots en formularios",
+            "body": "Los formularios públicos usan Cloudflare Turnstile y campos ocultos que solo rellenan los bots."
+          },
+          "reports": {
+            "title": "Denunciar códigos dañinos",
+            "body": "Cualquiera puede <report>denunciar un código QR</report> que lleve a phishing, malware o una estafa. Los códigos que incumplen las normas se desactivan."
+          }
+        }
+      },
+      "storage": {
+        "title": "Dónde se almacenan los datos",
+        "items": {
+          "hosting": {
+            "title": "Alojamiento",
+            "body": "La aplicación se ejecuta en Vercel. Sus funciones de servidor se ejecutan en Washington, D. C., en Estados Unidos, detrás de la red global de borde de Vercel."
+          },
+          "database": {
+            "title": "Base de datos",
+            "body": "Las cuentas, los códigos, los escaneos y las respuestas de formularios se guardan en una base de datos Neon Postgres en AWS US East (N. Virginia). Neon <neon>cifra los datos en reposo</neon> con AES-256 y conserva copias de seguridad cifradas."
+          },
+          "files": {
+            "title": "Archivos subidos",
+            "body": "Los archivos que subes se almacenan en Cloudflare R2, en su región de Asia-Pacífico."
+          },
+          "scans": {
+            "title": "Datos de escaneo",
+            "body": "Las direcciones IP de quienes escanean nunca se almacenan. Los visitantes únicos se cuentan con un hash que cambia cada día."
+          }
+        }
+      },
+      "yourData": {
+        "title": "Tus datos y los documentos legales",
+        "items": {
+          "export": {
+            "title": "Exportación",
+            "body": "Descarga desde Ajustes todo lo que QRdx guarda sobre tu cuenta en un ZIP, y exporta los escaneos, las respuestas de formularios y el registro de auditoría en CSV."
+          },
+          "delete": {
+            "title": "Eliminación",
+            "body": "Elimina códigos, páginas, archivos y respuestas de formularios en cualquier momento, o toda tu cuenta. Los datos eliminados pueden permanecer durante un breve periodo en el historial de recuperación del proveedor de la base de datos."
+          },
+          "dpa": {
+            "title": "Adenda de tratamiento de datos",
+            "body": "El <dpa>DPA</dpa> forma parte de los Términos para todos los clientes e incluye las Cláusulas Contractuales Tipo. Pide una copia firmada si la necesitas."
+          },
+          "subprocessors": {
+            "title": "Subencargados",
+            "body": "La <list>lista de subencargados</list> indica todos los servicios que tratan datos personales para QRdx, qué hacen y dónde. La actualizamos al menos 30 días antes de que empiece a operar uno nuevo."
+          }
+        }
+      }
+    },
+    "reportTitle": "Informa de una vulnerabilidad",
+    "report": "Escribe a <mail>{email}</mail> con un asunto que empiece por [security] y, por favor, no lo publiques en una incidencia pública de GitHub. Nuestra <policy>política de seguridad</policy> cubre el alcance y el puerto seguro, y <txt>security.txt</txt> incluye los mismos datos de contacto.",
+    "reviewTitle": "¿Haces una revisión de seguridad?",
+    "review": "Envíanos tu cuestionario. Los contratos <enterprise>Enterprise</enterprise> incluyen respuestas para tu revisión y un DPA firmado."
   },
   "templates": {
     "metaTitle": "Plantillas de páginas para códigos QR con demos en vivo",
@@ -2057,6 +2467,11 @@
       "viewLabel": "Ver la demo de {name}",
       "view": "Ver demo",
       "use": "Usar plantilla"
+    },
+    "more": {
+      "load": "Cargar más",
+      "loading": "Cargando",
+      "failed": "No se cargaron estas plantillas."
     }
   },
   "templateDemo": {
@@ -2473,6 +2888,254 @@
       "limitAnswer": "Recibes una respuesta 429 con un encabezado Retry-After que indica cuándo volver a intentarlo. Las URL idénticas se guardan en caché durante un año, así que una imagen mostrada en una página con mucho tráfico suele servirse desde la caché.",
       "aiQuestion": "¿Puede usarla un asistente de IA?",
       "aiAnswer": "Sí. La herramienta generate_qr_code del servidor MCP de QRdx devuelve estas URL de imagen, y un asistente sin MCP puede escribir la propia URL como una imagen en Markdown."
+    }
+  },
+  "dynamicQrCode": {
+    "metaTitle": "Generador de códigos QR dinámicos gratis: edita y rastrea escaneos",
+    "metaDescription": "Crea un código QR dinámico que puedes editar después de imprimirlo y rastrea cada escaneo. Las cuentas gratis incluyen {count, number} códigos con escaneos ilimitados y sin límite de tiempo.",
+    "crumb": "Generador de código QR dinámico",
+    "title": "Generador de código QR dinámico gratis",
+    "intro1": "Un código QR dinámico contiene un enlace corto en lugar de tu URL. Puedes cambiar a dónde apunta después de imprimirlo, y QRdx cuenta cada escaneo.",
+    "intro2": "Las cuentas gratis incluyen {count, number} códigos dinámicos con escaneos ilimitados y {years, plural, one {# año} other {# años}} de historial de escaneos. No hay período de prueba, y los códigos siguen funcionando aunque nunca pagues.",
+    "facts": {
+      "free": "{count, number} códigos dinámicos gratis",
+      "scans": "Escaneos ilimitados en todos los planes",
+      "ads": "Sin anuncios antes de tu enlace",
+      "openSource": "Código abierto"
+    },
+    "cta": "Crear un código QR dinámico",
+    "pricingCta": "Comparar planes",
+    "docsLink": "Docs de código QR dinámico",
+    "howEyebrow": "Cómo funciona",
+    "howTitle": "Un enlace corto que puedes redirigir a otro destino",
+    "steps": {
+      "create": {
+        "title": "Crea el código",
+        "body": "En el panel, haz clic en Nuevo código e introduce la página que debe abrir. En el Playground, elige el tipo URL y activa Hacerlo dinámico. De cualquier forma, el código recibe un enlace corto como {example}."
+      },
+      "print": {
+        "title": "Descárgalo e imprímelo",
+        "body": "Descárgalo como PNG, WebP o SVG, o dale estilo primero en el Playground. Un enlace corto necesita menos módulos que una URL larga, así que el código se puede imprimir más pequeño y seguir escaneándose."
+      },
+      "change": {
+        "title": "Cámbialo cuando lo necesites",
+        "body": "Edita el destino y el siguiente escaneo abrirá la nueva página. Cada escaneo recibe una redirección 302 que los navegadores no guardan en caché, así que un teléfono que escaneó la semana pasada no recuerda la dirección anterior."
+      }
+    },
+    "featuresEyebrow": "Funciones",
+    "featuresTitle": "Lo que puede hacer un código dinámico",
+    "featuresDescription": "La edición, las analíticas y las páginas alojadas vienen con todos los planes. Cada tarjeta indica qué planes la incluyen.",
+    "planAll": "Todos los planes",
+    "planSome": "En {plans}",
+    "features": {
+      "edit": {
+        "title": "Edita tras imprimir",
+        "body": "Cambia el destino, renombra el código o conviértelo en una página alojada sin volver a imprimir. Cada cambio queda en el historial de versiones del código y puedes restaurar una versión anterior."
+      },
+      "analytics": {
+        "title": "Analíticas de escaneos",
+        "body": "Consulta los escaneos a lo largo del tiempo, visitantes únicos, países y ciudades, dispositivos, navegadores y las horas en que la gente escanea, y expórtalos como CSV. Las direcciones IP nunca se almacenan. Las cuentas gratis conservan {years, plural, one {# año} other {# años}} de historial, y los planes de pago lo conservan todo."
+      },
+      "pages": {
+        "title": "Páginas móviles alojadas",
+        "body": "Dirige un código a una página que aloja QRdx en lugar de a un sitio web: una lista de enlaces, un menú, una tarjeta de contacto, un cupón, un evento o un formulario, entre {types, number} tipos de página. Las cuentas gratuitas tienen {pages, number} páginas."
+      },
+      "routing": {
+        "title": "Enrutamiento inteligente",
+        "body": "Envía los iPhone a la App Store y los teléfonos Android a Google Play, o dirige según el país, la zona, el idioma, la hora o el número de escaneos, con hasta {rules, number} reglas por código. Las divisiones A/B y los parámetros UTM forman parte de ello."
+      },
+      "controls": {
+        "title": "Contraseñas, horarios y límites de escaneo",
+        "body": "Protege un código con una contraseña, asígnale fechas de inicio y fin o un límite de escaneos, y elige a dónde envían los códigos finalizados a las personas. Pausar un código funciona en todos los planes."
+      },
+      "slugs": {
+        "title": "{domains, select, yes {Tu propio final de enlace y tu dominio} other {Tu propio final de enlace}}",
+        "body": "Elige el final del enlace corto, como {example}, en lugar de uno aleatorio.{domains, select, yes { También puedes servir códigos desde tu propio dominio, como go.yourbrand.com.} other {}}"
+      },
+      "tracking": {
+        "title": "Píxeles y conversiones",
+        "body": "Carga tus píxeles de analítica y de retargeting en la página alojada de un código. {conversionPlans} añade seguimiento de conversiones, que vincula las compras y los registros con el escaneo que llevó al visitante."
+      },
+      "api": {
+        "title": "REST API y creación masiva",
+        "body": "Crea y edita códigos y consulta sus escaneos desde tu propio código, con {perDay, number} solicitudes de API al día en Gratis. Los planes de pago crean hasta {batch} códigos en una sola solicitud, o importan hasta {rows} desde un CSV."
+      }
+    },
+    "freeEyebrow": "Plan Gratis",
+    "freeTitle": "Lo que obtienes sin pagar",
+    "freeDescription": "No necesitas tarjeta y no hay periodo de prueba. Mejora de plan solo si necesitas más códigos o las funciones de pago anteriores.",
+    "freeItems": {
+      "codes": "{count, number} códigos dinámicos activos (los códigos archivados no cuentan)",
+      "scans": "Escaneos ilimitados que nunca se pausan",
+      "history": "{years, plural, one {# año} other {# años}} de historial de escaneos",
+      "pages": "{pages, number} páginas alojadas",
+      "organize": "Edición, pausa, carpetas, etiquetas e historial de versiones",
+      "api": "La REST API, con {perDay, number} solicitudes al día"
+    },
+    "freeLink": "Compara todos los planes",
+    "guaranteeEyebrow": "Si dejas de pagar",
+    "guaranteeTitle": "Los códigos impresos siguen funcionando",
+    "guaranteeBody": "Con la Garantía Never-Hostage, todos los códigos dinámicos siguen redirigiendo en todos los planes, incluso tras una rebaja de plan, un pago fallido o una cancelación. Los escaneos nunca se pausan y quienes escanean nunca ven un anuncio ni una página de registro de QRdx. Superar un límite solo te impide crear códigos nuevos.",
+    "guaranteeLink": "Lee la garantía",
+    "openSourceBody": "La redirección, la analítica y el resto de la aplicación son de código abierto, así que puedes leer qué ocurre en cada escaneo o ejecutarla en tu propio servidor.",
+    "openSourceLink": "Código abierto y autoalojamiento",
+    "staticTitle": "Cuándo es mejor un código estático",
+    "staticBody": "Solo los enlaces pueden ser dinámicos: un código dinámico abre un sitio web o una página alojada. Los datos de acceso Wi-Fi, las tarjetas de contacto que se guardan directamente en el teléfono y los códigos de pago bancario tienen que ser estáticos, porque el teléfono los lee del propio patrón. Los códigos estáticos son gratuitos e ilimitados, y no requieren una cuenta.",
+    "staticLink": "Generadores de códigos QR estáticos",
+    "blogLink": "Códigos QR estáticos vs dinámicos",
+    "moreTitle": "Leer más",
+    "more": {
+      "docsTitle": "Códigos QR dinámicos",
+      "docsBody": "Back-halves, carpetas, importación CSV y la API en detalle",
+      "routingTitle": "Enrutamiento inteligente",
+      "routingBody": "Reglas, pruebas A/B y parámetros UTM",
+      "controlsTitle": "Controles del código",
+      "controlsBody": "Contraseñas, horarios, límites de escaneo y URL de respaldo",
+      "trackingTitle": "Seguimiento y conversiones",
+      "trackingBody": "Analíticas, píxeles y seguimiento de conversiones",
+      "domainsTitle": "Dominios personalizados",
+      "domainsBody": "Sirve enlaces cortos desde un dominio tuyo",
+      "apiTitle": "REST API",
+      "apiBody": "Crea y gestiona códigos desde tu propio código"
+    },
+    "faqTitle": "Preguntas sobre códigos QR dinámicos",
+    "faq": {
+      "freeQuestion": "¿Puedo crear un código QR dinámico gratis?",
+      "freeAnswer": "Sí. Una cuenta gratuita de QRdx incluye {count, number} códigos dinámicos activos con escaneos ilimitados y {years, plural, one {# año} other {# años}} de historial de escaneos, sin período de prueba. Los códigos archivados no cuentan para el límite, y los planes de pago lo eliminan.",
+      "expireQuestion": "¿Caducan los códigos QR dinámicos?",
+      "expireAnswer": "En QRdx no. Un código sigue redirigiendo hasta que lo pausas, lo archivas o lo eliminas, o hasta una fecha de fin o un límite de escaneos que hayas definido tú. Esto se cumple en todos los planes, incluido Gratis, y también tras bajar de plan, un pago fallido o una cancelación. La única excepción es el abuso: un código que apunta a phishing o malware se desactiva.",
+      "editQuestion": "¿Puedo editar un código QR después de imprimirlo?",
+      "editAnswer": "Solo si es dinámico. Contiene un enlace corto, así que cambias el destino en el panel y el código impreso abre la nueva página en el siguiente escaneo. Un código estático contiene la dirección en sí, así que cambiarla implica imprimir un código nuevo.",
+      "trackQuestion": "¿Cómo hago el seguimiento de los escaneos de un código QR?",
+      "trackAnswer": "Haz que el código sea dinámico. Cada código dinámico tiene una página de analíticas con los escaneos a lo largo del tiempo, visitantes únicos, países y ciudades, dispositivos, sistemas operativos, navegadores, referentes e idiomas, y puedes exportar los escaneos como CSV. QRdx no almacena direcciones IP ni cuenta bots conocidos ni vistas previas de enlaces.",
+      "typesQuestion": "¿Puede ser dinámico un código QR de Wi-Fi o vCard?",
+      "typesAnswer": "No directamente, porque el teléfono lee los datos de Wi-Fi y vCard del propio patrón, y un código dinámico solo puede abrir un enlace. Para datos de contacto que quieras cambiar más adelante, apunta un código dinámico a una página de contacto alojada. Para Wi-Fi, usa un código estático.",
+      "domainQuestion": "¿Puedo usar mi propio dominio para los enlaces cortos?",
+      "domainAnswer": "Sí, en {plans}. Entonces el código contiene un enlace como go.yourbrand.com/menu, y las redirecciones y las analíticas de escaneo funcionan igual. Conectas el dominio añadiendo un registro DNS en tu proveedor de DNS.",
+      "apiQuestion": "¿Puedo crear códigos QR dinámicos con una API?",
+      "apiAnswer": "Sí. La REST API crea y edita códigos y lee sus escaneos, con una clave de API o un token de acceso OAuth. Las cuentas gratuitas tienen {perDay, number} solicitudes al día, y los planes de pago pueden crear hasta {batch} códigos en una sola solicitud.",
+      "selfHostQuestion": "¿Puedo ejecutar códigos QR dinámicos en mi propio servidor?",
+      "selfHostAnswer": "Sí. QRdx es de código abierto y una copia autoalojada ejecuta códigos dinámicos, páginas alojadas y analíticas de escaneo en tu propio dominio. Las ubicaciones de los escaneos dependen de lo que proporcionen los encabezados de tu host, algo que explica la guía de autoalojamiento."
+    }
+  },
+  "openSource": {
+    "metaTitle": "Generador de códigos QR de código abierto que puedes alojar tú mismo",
+    "metaDescription": "QRdx es un generador de códigos QR de código abierto en GitHub. La app tiene licencia AGPL-3.0 y la biblioteca de React y la CLI son MIT. Usa qrdx.dev gratis o ejecuta tu propia copia.",
+    "crumb": "Código abierto",
+    "title": "Generador de códigos QR de código abierto",
+    "intro1": "QRdx se desarrolla de forma pública en GitHub. La aplicación web que funciona en qrdx.dev, con su editor, códigos dinámicos, páginas alojadas y analíticas de escaneo, tiene licencia AGPL-3.0. La biblioteca de React, la CLI y los plugins son MIT.",
+    "intro2": "Puedes usarlo gratis en qrdx.dev, ejecutar tu propia copia o integrar códigos QR en tu app con la biblioteca.",
+    "facts": {
+      "agpl": "App AGPL-3.0",
+      "mit": "Biblioteca y CLI MIT",
+      "selfHost": "Autoalójalo con Docker o Node.js",
+      "noAccount": "Los códigos estáticos no requieren cuenta"
+    },
+    "githubCta": "Ver en GitHub",
+    "selfHostCta": "Guía de autoalojamiento",
+    "partsEyebrow": "Qué hay en el repositorio",
+    "partsTitle": "Tres licencias en un repositorio",
+    "partsDescription": "<link>LICENSING.md</link> define la licencia de cada carpeta. Todo lo que no figure bajo MIT o la licencia comercial es AGPL-3.0-or-later.",
+    "partsHeader": {
+      "part": "Parte",
+      "folder": "Carpeta",
+      "license": "Licencia"
+    },
+    "parts": {
+      "appName": "App web",
+      "appBody": "El editor, las cuentas, los códigos dinámicos, las páginas alojadas, las analíticas de escaneo, las API, el servidor MCP y la documentación",
+      "libraryName": "Biblioteca qrdx",
+      "libraryBody": "Componentes de React que generan, exportan y puntúan códigos QR, disponibles en npm como qrdx",
+      "cliName": "@qrdx/cli",
+      "cliBody": "Códigos QR con estilo desde una terminal o un trabajo de CI",
+      "pluginsName": "Plugins",
+      "pluginsBody": "La extensión de Chrome, los plugins de Figma, Raycast y Canva y el resto de la carpeta de plugins",
+      "eeName": "Funciones Business",
+      "eeBody": "Inicio de sesión único del espacio de trabajo y registro de auditoría del espacio de trabajo"
+    },
+    "eeLicense": "Licencia comercial de QRdx",
+    "eeNote": "Puedes leer, probar y contribuir al código de las carpetas ee, pero usarlo en producción requiere un acuerdo por escrito con QRdx. En una instancia autoalojada esas dos funciones permanecen desactivadas a menos que se defina QRDX_EE_LICENSE, y todo lo demás funciona sin ellas.",
+    "waysEyebrow": "Formas de usarlo",
+    "waysTitle": "Elige cómo ejecutarlo",
+    "ways": {
+      "hostedTitle": "Usa qrdx.dev",
+      "hostedBody": "Los códigos QR estáticos son gratis y no requieren cuenta: diséñalos en el Playground y descárgalos. Una cuenta gratuita añade {count, number} códigos dinámicos y {pages, number} páginas alojadas, y los planes de pago añaden funciones para equipos y marketing.",
+      "hostedLink": "Abrir el Playground",
+      "hostedLink2": "Ver precios",
+      "selfHostTitle": "Ejecuta tu propia copia",
+      "selfHostBody": "Docker Compose inicia la aplicación con su propia base de datos Postgres, o puedes ejecutarla con Node.js sobre una base de datos Neon. Necesita tres variables de entorno y una forma de iniciar sesión. La IA, los pagos, el almacenamiento de archivos, los dominios personalizados y las integraciones son opcionales.",
+      "selfHostLink": "Guía de autoalojamiento",
+      "libraryTitle": "Intégralo en tu aplicación",
+      "libraryBody": "La biblioteca qrdx genera códigos QR en React con el mismo motor que el Playground, y @qrdx/cli los crea desde una terminal o un trabajo de CI. Ambas son MIT, así que los proyectos de código cerrado también pueden usarlas.",
+      "libraryLink": "Docs de la biblioteca",
+      "libraryLink2": "Docs de la CLI"
+    },
+    "runEyebrow": "Primeros pasos",
+    "runTitle": "Ejecuta el código",
+    "runDescription": "Define un secreto y un método de inicio de sesión en .env y luego inicia el stack. La primera compilación de Docker tarda varios minutos y necesita al menos 8 GB de memoria.",
+    "runLabels": {
+      "docker": "Autoaloja con Docker Compose",
+      "library": "Biblioteca y CLI"
+    },
+    "runNotes": {
+      "signIn": "Las personas inician sesión con una aplicación OAuth de GitHub o Google, o con códigos enviados por correo a través de Resend.",
+      "postgres": "Neon funciona directamente. Postgres estándar necesita el proxy HTTP compatible con Neon que docker-compose.yml ya ejecuta.",
+      "limits": "Sin pagos configurados, todas las cuentas usan los límites del plan Gratis. Están definidos en un solo archivo, apps/docs/lib/plans.ts, que puedes modificar para tu instancia."
+    },
+    "runLink": "Lee la guía completa de autoalojamiento",
+    "licenseEyebrow": "Licencias",
+    "licenseTitle": "Lo que te piden las licencias",
+    "licenses": {
+      "agplTitle": "La aplicación (AGPL-3.0)",
+      "agplBody": "Puedes ejecutarla, modificarla y alojarla. Si ejecutas una versión modificada como servicio en red, debes ofrecer su código fuente a sus usuarios bajo la misma licencia.",
+      "mitTitle": "La biblioteca, la CLI y los plugins (MIT)",
+      "mitBody": "Úsalos en cualquier proyecto, incluido el de código cerrado, siempre que el aviso de copyright y de licencia permanezca junto al código. Las versiones anteriores a qrdx 0.0.47 y @qrdx/cli 0.0.5 eran AGPL-3.0-or-later.",
+      "trademarkTitle": "El nombre y el logo",
+      "trademarkBody": "El nombre y el logo de QRdx son marcas registradas. Un fork o un servicio público creado a partir del código necesita su propio nombre y logo; la <link>política de marca</link> tiene los detalles."
+    },
+    "licenseNote": "Esto es un resumen. Lo que se aplica son los archivos de licencia del repositorio.",
+    "contributeEyebrow": "Contribuir",
+    "contributeTitle": "Ayuda a construirlo",
+    "contributeBody": "Los reportes de errores, las ideas y los pull requests son bienvenidos. La guía de contribución explica la configuración local y las comprobaciones que debes ejecutar, y las issues con la etiqueta good first issue son pequeñas y autocontenidas. Haz tus preguntas en GitHub Discussions e informa de los problemas de seguridad de forma privada, como describe la política de seguridad.",
+    "contributeLinks": {
+      "contributing": "Guía de contribución",
+      "goodFirst": "Good first issues",
+      "discussions": "Discussions",
+      "security": "Política de seguridad"
+    },
+    "stackTitle": "El stack",
+    "stackBody": "Un monorepo con Bun y Turborepo: una app de Next.js con React, TypeScript, Tailwind CSS, Drizzle sobre Postgres, Better Auth y el Vercel AI SDK. La app, sus pruebas y sus compilaciones se ejecutan en Node.js 22.",
+    "moreTitle": "Más de QRdx",
+    "more": {
+      "dynamicTitle": "Códigos QR dinámicos",
+      "dynamicBody": "Edita los códigos después de imprimirlos y consulta cada escaneo",
+      "apiTitle": "API de códigos QR gratis",
+      "apiBody": "Una imagen de código QR desde una sola URL, sin clave ni registro",
+      "mcpTitle": "Servidor MCP",
+      "mcpBody": "Crea códigos QR desde Claude, ChatGPT o Cursor",
+      "compareTitle": "Cómo se compara QRdx",
+      "compareBody": "Páginas comparativas con otras herramientas de códigos QR",
+      "guaranteeTitle": "Garantía Never-Hostage",
+      "guaranteeBody": "Qué pasa con tus códigos si dejas de pagar o si QRdx cierra"
+    },
+    "faqTitle": "Preguntas sobre código abierto",
+    "faq": {
+      "openQuestion": "¿QRdx es realmente de código abierto?",
+      "openAnswer": "Sí. El código fuente está en GitHub, la aplicación web tiene licencia AGPL-3.0-or-later, y la biblioteca qrdx, @qrdx/cli y los plugins son MIT. Dos funciones para empresas, el inicio de sesión único del espacio de trabajo y el registro de auditoría, están en carpetas ee bajo la QRdx Commercial License: puedes leer ese código, pero para usarlo en producción necesitas un acuerdo con QRdx.",
+      "githubQuestion": "¿Dónde está el código fuente de QRdx en GitHub?",
+      "githubAnswer": "En github.com/bucharitesh/qrdx. Es un único monorepo con la aplicación web, la biblioteca qrdx, la CLI, los plugins y la documentación.",
+      "freeQuestion": "¿Se puede alojar QRdx por cuenta propia gratis?",
+      "freeAnswer": "Sí. No hay cuota de licencia; solo pagas tu propio servidor y tu base de datos. Una instancia autoalojada ejecuta códigos dinámicos, páginas alojadas y analítica de escaneos. El inicio de sesión único y el registro de auditoría permanecen desactivados salvo que tengas una clave de licencia de QRdx.",
+      "needQuestion": "¿Qué necesito para alojar QRdx por mi cuenta?",
+      "needAnswer": "Necesitas Docker con Compose v2, o Node.js 22 y Bun 1.4 para la instalación manual, y una base de datos Postgres: la que inicia docker-compose.yml, o Neon. Define NEXT_PUBLIC_APP_URL, DATABASE_URL y BETTER_AUTH_SECRET, y ofrece a los usuarios una forma de iniciar sesión con una app OAuth de GitHub o Google, o con códigos por correo mediante Resend.",
+      "closedQuestion": "¿Puedo usar la biblioteca de códigos QR en una app de código cerrado?",
+      "closedAnswer": "Sí. La biblioteca qrdx y @qrdx/cli son MIT, así que los proyectos comerciales y de código cerrado pueden usarlas siempre que el aviso de licencia se mantenga junto al código. Las versiones anteriores a qrdx 0.0.47 y @qrdx/cli 0.0.5 eran AGPL-3.0-or-later.",
+      "changesQuestion": "¿Tengo que publicar mis cambios en la app?",
+      "changesAnswer": "Solo cuando ejecutas una versión modificada como servicio de red: en ese caso tienes que ofrecer su código fuente a sus usuarios bajo la misma licencia. Si piensas desarrollar sobre la app, comprueba antes que la AGPL encaje con tu proyecto.",
+      "nameQuestion": "¿Puedo llamar QRdx a mi fork?",
+      "nameAnswer": "No. Un fork o un servicio público creado a partir del código necesita su propio nombre y logotipo, y los avisos de licencia se mantienen. Ejecutar QRdx para ti o para tu organización con su propio nombre está permitido. La política de marca tiene los detalles.",
+      "shutdownQuestion": "¿Qué pasa con mis códigos de qrdx.dev si QRdx cierra?",
+      "shutdownAnswer": "La Garantía Never-Hostage promete un aviso con al menos 12 meses de antelación, tiempo para exportarlo todo y una vía documentada para ejecutar la app de código abierto en tu propio servidor."
     }
   },
   "ai": {
@@ -3733,18 +4396,11 @@
         }
       },
       "frameControls": {
-        "customise": "Personalizar",
         "importSvg": "Importar SVG",
         "publishFrame": "Publicar marco",
         "theFrameIsAddedAround": "El marco se añade alrededor del código, por lo que la imagen descargada es más grande y el código sigue siendo escaneable.",
         "label": "Etiqueta",
-        "secondLine": "Segunda línea",
-        "leaveEmptyForNoLabel": "Déjalo vacío para no usar etiqueta",
         "pickAFrameFirst": "Elige un marco primero",
-        "frameColor": "Color del marco",
-        "textColor": "Color del texto",
-        "endColor": "Color final",
-        "optionalEGYourWebsite": "Opcional, p. ej. tu sitio web",
         "none": "Ninguno"
       },
       "frameFields": {
@@ -3763,13 +4419,14 @@
         "filterFrames": "Filtrar marcos",
         "labelFrames": "Marcos: {label}",
         "commonFrames": "Marcos comunes",
-        "everyFrameBuiltInStyles": "Todos los marcos: estilos integrados, los marcos oficiales de QRdx y los marcos que guardaste. Al elegir uno, se aplica de inmediato.",
+        "everyFrameBuiltInStyles": "Todos los marcos: los marcos clásicos, los códigos con forma, los marcos oficiales de QRdx y los marcos que guardaste. Al elegir uno, se aplica de inmediato.",
         "less": "Menos",
         "all": "Todos",
         "noFramesMatchQuery": "Ningún marco coincide con \"{query}\".",
         "loadingFrames": "Cargando marcos…",
         "comingUp": "Próximamente",
-        "builtIn": "Integrados",
+        "classic": "Clásicos",
+        "shapedCodes": "Códigos con forma",
         "saved": "Guardados",
         "results": "Resultados"
       },
@@ -3974,6 +4631,110 @@
         "frameColor": "Color del marco",
         "icon": "Icono",
         "moreFrameOptions": "Más opciones del marco"
+      }
+    },
+    "partInline": {
+      "parts": {
+        "eyes": {
+          "edit": "Editar ojos",
+          "options": "Opciones de ojos",
+          "random": "Ojos aleatorios",
+          "more": "Más opciones de ojos"
+        },
+        "dots": {
+          "edit": "Editar puntos",
+          "options": "Opciones de puntos",
+          "random": "Puntos aleatorios",
+          "more": "Más opciones de puntos"
+        },
+        "logo": {
+          "edit": "Editar logo",
+          "options": "Opciones de logo",
+          "random": "Logo aleatorio",
+          "more": "Más opciones de logo"
+        },
+        "background": {
+          "edit": "Editar fondo",
+          "options": "Opciones de fondo",
+          "random": "Fondo aleatorio",
+          "more": "Más opciones de fondo",
+          "editShape": "Editar forma del código"
+        },
+        "frame": {
+          "edit": "Editar marco",
+          "options": "Opciones de marco",
+          "random": "Marco aleatorio",
+          "more": "Más opciones de marco"
+        }
+      },
+      "items": {
+        "outerShape": "Forma exterior",
+        "centerShape": "Forma del centro",
+        "eyeColor": "Color del ojo",
+        "centerColor": "Color del centro",
+        "pattern": "Patrón",
+        "dotColor": "Color de puntos",
+        "dotSize": "Tamaño de punto",
+        "logo": "Logo",
+        "quickIcons": "Iconos rápidos",
+        "logoSize": "Tamaño del logo",
+        "hideLogo": "Ocultar logo",
+        "backgroundColor": "Color de fondo",
+        "padding": "Margen",
+        "frameStyle": "Estilo de marco",
+        "frameColor": "Color del marco",
+        "whichEyes": "Qué ojos",
+        "allEyes": "Todos los ojos",
+        "thisEye": "Este ojo",
+        "thisEyesColor": "Color de este ojo",
+        "thisEyesCenterColor": "Color del centro de este ojo",
+        "shapesChangeAllThreeEyes": "Las formas cambian los tres ojos.",
+        "sameAsTheOthers": "Igual que los demás",
+        "eyesWithTheirOwnColor": "Los ojos con un color propio lo conservan. Elige Este ojo para cambiar uno.",
+        "logoShapeAndPlate": "Forma y base del logo",
+        "clearSpace": "Espacio libre",
+        "content": "Contenido",
+        "codeShape": "Forma del código",
+        "errorCorrection": "Corrección de errores"
+      },
+      "random": "Aleatorio",
+      "moreOptions": "Más opciones",
+      "sheet": {
+        "changesShowOnTheCode": "Los cambios se ven en el código a medida que los haces. Listo los conserva.",
+        "done": "Listo"
+      },
+      "content": {
+        "link": "Enlace",
+        "text": "Texto",
+        "theCodeKeepsItsContent": "El código conserva su contenido hasta que esto sea válido.",
+        "scansOpenHost": "Los escaneos abren {host}",
+        "textHint": "El código muestra este texto al escanearlo.",
+        "editedInTheContentTab": "Este tipo de contenido tiene su propio formulario en la pestaña Contenido.",
+        "openTheContentTab": "Abrir la pestaña Contenido"
+      },
+      "codeShape": {
+        "codeShape": "Forma del código",
+        "names": {
+          "square": "Cuadrado",
+          "circle": "Círculo",
+          "heart": "Corazón"
+        },
+        "aCircleOrHeartTakes": "Un círculo o un corazón ocupa el lugar del marco."
+      },
+      "errorCorrection": {
+        "theLogoRaisesItToLevel": "Por ahora, el logo lo sube al nivel {level}."
+      },
+      "handles": {
+        "moveLogo": "Mover logo",
+        "dragOrUseTheArrowKeys": "Arrástralo o usa las teclas de flecha. Con Shift se mueve más. Suprimir lo oculta.",
+        "logoSize": "Tamaño del logo",
+        "percentOfTheCode": "{value, number}% del código",
+        "padding": "Relleno",
+        "modules": "{count, plural, one {# módulo} other {# módulos}}",
+        "dragToChangeThePadding": "Arrastra hacia dentro o hacia fuera para cambiar el relleno"
+      },
+      "drop": {
+        "dropToUseAsLogo": "Suelta para usar como logo"
       }
     },
     "gradientPicker": {
@@ -4225,6 +4986,7 @@
         "actions": "Acciones",
         "themeAppearance": "Tema y apariencia",
         "patternCustomization": "Personalización del patrón",
+        "preview": "Vista previa",
         "help": "Ayuda"
       },
       "shortcuts": {
@@ -4246,7 +5008,11 @@
         "cycleCornerEyePatterns": "Alternar patrones de ojos de esquina",
         "cycleInternalEyePatterns": "Alternar patrones de ojos internos",
         "cycleFrames": "Alternar marcos",
-        "showThisShortcutsDialog": "Mostrar este diálogo de atajos"
+        "showThisShortcutsDialog": "Mostrar este diálogo de atajos",
+        "editAPartOfTheCode": "Editar la parte del código bajo el puntero o con el foco",
+        "randomLookForThatPart": "Aspecto aleatorio para esa parte",
+        "hideTheFocusedLogo": "Ocultar el logo con el foco",
+        "moveTheLogoWhileEditing": "Mover el logo mientras se edita"
       }
     },
     "soundSwitch": {
@@ -4412,7 +5178,11 @@
         "filesUploadedToThisWorkspace": "Archivos subidos a este espacio de trabajo. Gestiónalos en panel → Archivos.",
         "noLabelFilesYetUpload": "Aún no hay archivos {label}. Sube uno primero.",
         "add": "Añadir",
-        "selected": "seleccionado"
+        "selected": "seleccionado",
+        "loadMore": "Cargar más",
+        "loading": "Cargando…",
+        "tryAgain": "Reintentar",
+        "couldntLoadYourFiles": "No se pudieron cargar tus archivos."
       },
       "sourceListEditor": {
         "thisBlockHoldsUpTo": "Este bloque admite hasta {max, number} elementos.",
@@ -4557,7 +5327,15 @@
       "previous": "Anterior",
       "pagePageOfPages": "Página {page, number} de {pages, number}",
       "next": "Siguiente",
-      "pages": "Páginas"
+      "pages": "Páginas",
+      "loadMore": "Cargar más",
+      "loading": "Cargando",
+      "failed": "No se cargó la página siguiente."
+    },
+    "more": {
+      "load": "Cargar más",
+      "loading": "Cargando",
+      "failed": "Esta parte de la página no se cargó."
     },
     "licenceConfirm": {
       "licence": "Licencia:"
@@ -4878,7 +5656,8 @@
           "afterYouSignInPasskeyOrApp": "Después de iniciar sesión, QRdx te pedirá tu llave de acceso o un código de tu app de autenticación. Un código de respaldo también funciona.",
           "afterYouSignInPasskey": "Después de iniciar sesión, QRdx te pedirá tu llave de acceso. Un código de respaldo también funciona.",
           "afterYouSignInApp": "Después de iniciar sesión, QRdx te pedirá un código de tu app de autenticación. Un código de respaldo también funciona.",
-          "afterYouSignInQrdx2": "Después de iniciar sesión, QRdx te pedirá un código de respaldo."
+          "afterYouSignInQrdx2": "Después de iniciar sesión, QRdx te pedirá un código de respaldo.",
+          "passkeySpotlight": "Ahora una llave de acceso puede ser tu segundo paso, en lugar de un código de autenticación."
         },
         "twoFactorSetupDialog": {
           "stepStepnumberOfLength": "Paso {stepNumber, number} de {length, number}",
@@ -4926,6 +5705,23 @@
         "page": {
           "yourProfileHowYouSign": "Tu perfil, cómo inicias sesión, dónde tienes la sesión iniciada y tus datos.",
           "profileSecurity": "Perfil y seguridad"
+        },
+        "deletion": {
+          "counts": {
+            "codes": "{count, plural, one {# código} other {# códigos}}",
+            "pages": "{count, plural, one {# página alojada} other {# páginas alojadas}}",
+            "files": "{count, plural, one {# archivo} other {# archivos}}",
+            "domains": "{count, plural, one {# dominio personalizado} other {# dominios personalizados}}"
+          },
+          "workspaceEmpty": "Tu propio espacio de trabajo se elimina, junto con tus temas, ajustes e integraciones.",
+          "workspaceWith": "Tu propio espacio de trabajo se elimina, con sus {list}, además de tus escaneos, temas, webhooks e integraciones.",
+          "workspaceWithCodes": "Tu propio espacio de trabajo se elimina, con sus {list}, además de tus escaneos, temas, webhooks e integraciones. Sus códigos QR impresos mostrarán una página de «Código QR no encontrado».",
+          "teamPromote": "{team}: {who} ({role, select, owner {propietario} admin {administrador} billing {facturación} viewer {lector} other {miembro}}) pasa a ser propietario y se hace cargo de lo que creaste en el espacio de trabajo, así que sus códigos siguen funcionando.",
+          "teamStays": "{team}: lo que creaste en el espacio de trabajo se queda en él, a cargo de {who}.",
+          "teamDeleted": "{team}: eres el único miembro, así que el espacio de trabajo y su contenido se eliminan.",
+          "subscriptionCancelled": "Tu suscripción {plan} se cancela de inmediato.",
+          "signedOut": "Se cierra tu sesión en todos los dispositivos.",
+          "subscriptionBlocker": "Ahora mismo no se puede cancelar tu suscripción {plan} desde aquí. Cancélala antes en Ajustes → Plan y uso, o escribe a support@qrdx.dev."
         }
       },
       "affiliate": {
@@ -4992,7 +5788,10 @@
           "commissions": "Comisiones",
           "suspended": "Suspendido",
           "approved": "Aprobado",
-          "notSet": "Sin definir"
+          "notSet": "Sin definir",
+          "pagePageOfPagecount": "Página {page, number} de {pageCount, number}",
+          "previous": "Anterior",
+          "next": "Siguiente"
         }
       },
       "authorizedApps": {
@@ -5013,7 +5812,8 @@
           "appsYouveAllowedToUse": "Apps a las que has permitido usar tu cuenta de QRdx a través de la API. Revoca el acceso para cerrar la sesión de una app de inmediato.",
           "authorizedApps": "Apps autorizadas",
           "noApiPermissions": "Sin permisos de API",
-          "lastActiveLastactiveat": " · última actividad {lastActiveAt}",
+          "authorizedOn": "Autorizada el {authorizedAt}",
+          "authorizedLastActive": "Autorizada el {authorizedAt} · última actividad {lastActiveAt}",
           "revoking": "Revocando…",
           "nameCanNoLongerUse": "{name} ya no puede usar tu cuenta"
         }
@@ -5269,7 +6069,13 @@
           "dubLinkArchived": "Enlace de Dub archivado",
           "failedToUpdateDubLink": "No se pudo actualizar el enlace de Dub",
           "dubLinkUpdated": "Enlace de Dub actualizado",
-          "unknown": "Desconocido"
+          "unknown": "Desconocido",
+          "couldntLoadLinks": "No se pudieron cargar tus enlaces. Inténtalo de nuevo.",
+          "couldntLoadMoreLinks": "No se pudieron cargar más enlaces. Inténtalo de nuevo.",
+          "loadMoreLinks": "Cargar más enlaces",
+          "loadingLinks": "Cargando enlaces…",
+          "tryAgain": "Reintentar",
+          "thatsEveryLink": "Esos son todos los enlaces."
         },
         "integrationDetail": {
           "connected": "Conectado",
@@ -5331,7 +6137,13 @@
           "nameSyncIsOn": "Sincronización de {name} activada",
           "saved": "Guardado",
           "couldntSave": "No se pudo guardar",
-          "retryFailed": "Error al reintentar"
+          "retryFailed": "Error al reintentar",
+          "searchPages": "Buscar páginas por título",
+          "noPagesMatch": "Ninguna página con formulario coincide.",
+          "loadMorePages": "Cargar más páginas",
+          "loadingPages": "Cargando páginas…",
+          "tryAgain": "Reintentar",
+          "couldntLoadMorePages": "No se pudieron cargar más páginas. Inténtalo de nuevo."
         },
         "slackBotPanel": {
           "qrdxBot": "Bot de QRdx",
@@ -5481,7 +6293,13 @@
         "comparePicker": {
           "stopComparingValue": "Dejar de comparar {value}",
           "addACodeToCompare": "Añade un código para comparar",
-          "upToMaxCompareCodes": "Hasta {MAX_COMPARE, number} códigos"
+          "upToMaxCompareCodes": "Hasta {MAX_COMPARE, number} códigos",
+          "searchCodes": "Buscar por título, enlace o destino",
+          "mostScanned": "Más escaneados",
+          "searching": "Buscando…",
+          "noCodesMatch": "Ningún código coincide.",
+          "couldntSearch": "No se pudo buscar en tus códigos. Inténtalo de nuevo.",
+          "typeToNarrow": "Se muestran los primeros {count, number}. Escribe para filtrar."
         },
         "timeZoneSwitch": {
           "currentShowUtc": "{current} · mostrar UTC",
@@ -5495,7 +6313,6 @@
           "youHaveViewOnlyAccess": "Tienes acceso de solo lectura: puedes descargar este código de barras, pero no modificarlo.",
           "planBarcodesAreStaticThey": "Plan {plan}. Los códigos de barras son estáticos: nunca caducan y funcionan en todos los planes.",
           "noBarcodesYet": "Aún no hay códigos de barras",
-          "newBarcode": "Nuevo código de barras",
           "openTheFreeGenerator": "Abrir el generador gratuito",
           "barcodesInTheTrashDont": "Los códigos de barras de la papelera no cuentan para tu plan. Restáuralos o elimínalos definitivamente.",
           "showAllBarcodes": "Mostrar todos los códigos de barras",
@@ -5510,13 +6327,6 @@
           "noBarcodesMatchQ": "Ningún código de barras coincide con \"{q}\".",
           "noBarcodesHereYet": "Aún no hay códigos de barras.",
           "noBarcodesMatchTheseFilters": "Ningún código de barras coincide con estos filtros."
-        },
-        "new": {
-          "page": {
-            "allBarcodes": "Todos los códigos de barras",
-            "newBarcode": "Nuevo código de barras",
-            "pickTheTypeEnterThe": "Elige el tipo, introduce el número o el texto y guárdalo para editarlo y descargarlo de nuevo más tarde."
-          }
         },
         "barcodeActions": {
           "duplicate": "Duplicar",
@@ -5535,11 +6345,34 @@
           "fixTheHighlightedInputTo": "Corrige el campo resaltado para guardar.",
           "unsavedChanges": "Cambios sin guardar",
           "allChangesSaved": "Todos los cambios guardados",
-          "notSavedYet": "Aún sin guardar",
           "saveChanges": "Guardar cambios",
-          "saveBarcode": "Guardar código de barras",
           "couldntSaveTheBarcode": "No se pudo guardar el código de barras",
           "barcodeSaved": "Código de barras guardado"
+        },
+        "barcodeBuilder": {
+          "newBarcode": "Nuevo código de barras",
+          "pickTheTypeEnterThe": "Elige el tipo, introduce el número o el texto y guárdalo para editarlo y descargarlo de nuevo más tarde.",
+          "yourBarcodeIsSaved": "Tu código de barras está guardado",
+          "downloadItNowOrOpen": "Descárgalo ahora o ábrelo más tarde desde Códigos de barras para editarlo y descargarlo de nuevo.",
+          "design": "Diseño",
+          "back": "Atrás",
+          "close": "Cerrar",
+          "value": "Valor",
+          "valueCopied": "Valor copiado",
+          "type": "Tipo",
+          "title": "Título",
+          "openTheBarcode": "Abrir el código de barras",
+          "foldersDidntLoad": "No se cargaron las carpetas, así que este código de barras se guardó sin carpeta.",
+          "couldntReachQrdx": "No se pudo conectar con QRdx. Revisa tu conexión e inténtalo de nuevo.",
+          "fixTheHighlightedInputTo": "Corrige el campo resaltado para guardar.",
+          "saveBarcode": "Guardar código de barras",
+          "saving": "Guardando...",
+          "createAnother": "Crear otro",
+          "done": "Listo",
+          "closeWithoutSaving": "¿Cerrar sin guardar?",
+          "thisBarcodeIsntSavedYet": "Este código de barras aún no está guardado, así que se perderá lo que has introducido.",
+          "keepEditing": "Seguir editando",
+          "discard": "Descartar"
         },
         "barcodesHeader": {
           "barcodes": "Códigos de barras:",
@@ -5553,6 +6386,7 @@
           "barcodes2": "códigos de barras"
         },
         "barcodesList": {
+          "move": "Mover",
           "noFolder": "Sin carpeta",
           "makeFoldersUnderCodesBarcodes": "Crea carpetas en Códigos; los códigos de barras las comparten.",
           "emptyTrash": "Vaciar papelera",
@@ -5576,7 +6410,13 @@
           "selectLabel": "Seleccionar {label}",
           "actionsForLabel": "Acciones para {label}",
           "emptyTheTrash": "¿Vaciar la papelera?",
-          "deleteValueForGood": "¿Eliminar {value} definitivamente?",
+          "deleteValueForGood": "¿Eliminar definitivamente {count, plural, one {# código de barras} other {# códigos de barras}}?",
+          "movedToTrash": "{count, plural, one {Se movió # código de barras} other {Se movieron # códigos de barras}} a la papelera",
+          "movedToTrashSkipped": "{count, plural, one {Se movió # código de barras} other {Se movieron # códigos de barras}} a la papelera. {skipped, number} creados por otras personas no se movieron: solo los propietarios y administradores pueden eliminarlos.",
+          "restored": "{count, plural, one {Se restauró # código de barras} other {Se restauraron # códigos de barras}}",
+          "movedToFolder": "{count, plural, one {Se movió # código de barras} other {Se movieron # códigos de barras}} a {name}",
+          "tookOutOfFolders": "{count, plural, one {Se sacó # código de barras} other {Se sacaron # códigos de barras}} de las carpetas",
+          "deletedForGood": "{count, plural, one {Se eliminó # código de barras} other {Se eliminaron # códigos de barras}} definitivamente",
           "deleting": "Eliminando...",
           "edit": "Editar",
           "open": "Abrir",
@@ -5636,7 +6476,12 @@
             "rowsSentOf": "{sent} de {total} filas enviadas",
             "createdCount": "{created} creados",
             "createdWithProblems": "{created} creados · {rowErrors} con problemas",
-            "valueCouldntBeSent": "No se pudo enviar {value}",
+            "valueCouldntBeSent": "{count, plural, one {No se pudo enviar # fila} other {No se pudieron enviar # filas}}",
+            "retryValue": "Reintentar {count, plural, one {# fila} other {# filas}}",
+            "codesCount": "{count, plural, one {# código} other {# códigos}}",
+            "codesIntoFolder": "{count, plural, one {# código} other {# códigos}}, en {folder}",
+            "codesTagged": "{count, plural, one {# código} other {# códigos}}, con las etiquetas {tags}",
+            "codesIntoFolderTagged": "{count, plural, one {# código} other {# códigos}}, en {folder}, con las etiquetas {tags}",
             "retryThemNothingIsMade": "Reinténtalo; no se crea nada dos veces.",
             "pause": "Pausar",
             "resume": "Reanudar",
@@ -5648,7 +6493,6 @@
             "paused": "En pausa",
             "theRequestDidntGoThrough": "La solicitud no se completó.",
             "retryAndContinue": "Reintentar y continuar",
-            "retryValue": "Reintentar {value}",
             "finishWithWhatsMade": "Terminar con lo creado",
             "stop": "Detener"
           },
@@ -5666,7 +6510,13 @@
             "downloadImages": "Descargar imágenes",
             "imagesProgress": "Progreso de imágenes",
             "imageFormat": "Formato de imagen",
-            "createdValue": "Creados {value}",
+            "createdValue": "{count, plural, one {Se creó # código} other {Se crearon # códigos}}",
+            "zipParts": "Guardado como {parts, number} archivos ZIP (los lotes grandes se dividen en partes de unos 500 MB; codes.csv está en la última).",
+            "imagesMissing": "{count, plural, one {No se pudo dibujar # imagen y falta.} other {No se pudieron dibujar # imágenes y faltan.}}",
+            "zipFailed": "No se pudo crear el ZIP.",
+            "rowsNotImported": "{count, plural, one {No se pudo importar # fila.} other {No se pudieron importar # filas.}}",
+            "rowsNotSent": "{count, plural, one {No se envió # fila (la importación terminó antes).} other {No se enviaron # filas (la importación terminó antes).}}",
+            "rowsSkipped": "{count, plural, one {Se omitió # fila con problemas en el archivo.} other {Se omitieron # filas con problemas en el archivo.}}",
             "noCodesWereCreated": "No se creó ningún código",
             "everyRowWasImported": "Se importaron todas las filas."
           },
@@ -5685,7 +6535,13 @@
             "chooseTheColumnWithThe": "Elige la columna con las URL de destino.",
             "n3Organize": "3. Organizar",
             "n4Review": "4. Revisar",
-            "valueWithProblems": "{value} con problemas",
+            "valueWithProblems": "{count, plural, one {# fila} other {# filas}} con problemas",
+            "importValue": "Importar {count, plural, one {# código} other {# códigos}}",
+            "rowsAndColumns": "{rows, plural, one {# fila} other {# filas}} · {columns, plural, one {# columna} other {# columnas}}",
+            "validRows": "{count, plural, one {# fila válida} other {# filas válidas}}",
+            "needsHeaderAndRows": "El archivo necesita una fila de encabezado y al menos una fila de códigos.",
+            "columnNumber": "Columna {number}",
+            "fileTooLarge": "El archivo supera los {size} MB.",
             "problemsCsv": "CSV de problemas",
             "line": "Línea",
             "destination": "Destino",
@@ -5697,7 +6553,6 @@
             "showingTheFirstPreviewRows": "Se muestran las primeras {PREVIEW_ROWS, number} de {length} filas. Todas las filas se comprueban.",
             "upgradeToImportTheseCodes": "Mejora tu plan para importar estos códigos",
             "seePlans": "Ver planes",
-            "importValue": "Importar {value}",
             "removeFile": "Quitar archivo",
             "bulkImportIsAValue": "La importación masiva es una función de {value}",
             "bulkImportIsntOnYour": "Tu plan no incluye importación masiva",
@@ -5707,6 +6562,43 @@
             "auto": "auto",
             "rowsWithProblemsAreSkipped": "Las filas con problemas se omiten.",
             "sentImportChunkSizeAt": "Se envían {IMPORT_CHUNK_SIZE} a la vez; puedes pausar y reanudar."
+          },
+          "issues": {
+            "destinationMissing": "Falta la URL de destino",
+            "destinationTooLong": "La URL de destino es demasiado larga",
+            "destinationNotUrl": "El destino debe ser una URL completa que empiece por https://",
+            "destinationProtocol": "Solo se pueden usar destinos http:// y https://",
+            "destinationCredentials": "No se permiten destinos con nombre de usuario o contraseña",
+            "destinationShortLink": "Un código dinámico no puede apuntar a otro enlace corto de QRdx",
+            "destinationRejected": "Esta URL de destino no se puede usar",
+            "titleTooLong": "El título supera los {max, number} caracteres",
+            "folderDepth": "Las carpetas se pueden anidar hasta {max, number} niveles",
+            "folderNameTooLong": "Los nombres de carpeta pueden tener hasta {max, number} caracteres",
+            "tooManyTags": "Hasta {max, number} etiquetas por código",
+            "tooManyTagsWithBatch": "Hasta {max, number} etiquetas por código, contando las que se aplican a todos los códigos",
+            "tagNameTooLong": "Los nombres de etiqueta pueden tener hasta {max, number} caracteres",
+            "slugReserved": "Esta parte final está reservada",
+            "slugLength": "Parte final: usa de {min} a {max} caracteres.",
+            "slugCharacters": "Parte final: usa solo letras, dígitos, - y _.",
+            "slugDash": "Parte final: no puede empezar ni terminar con guion.",
+            "slugDuplicate": "Esta parte final aparece antes en el archivo",
+            "slugTaken": "Esta parte final ya está en uso",
+            "slugNotOnPlan": "Las partes finales personalizadas forman parte de {plans}"
+          },
+          "reasons": {
+            "imported": "Ya importado",
+            "duplicate": "Ya existe un código de QRdx con este destino",
+            "selectedTwice": "Seleccionado dos veces",
+            "qrdx": "Ya apunta a un enlace corto de QRdx",
+            "limit": "Supera el límite de códigos activos de tu plan",
+            "providerEnded": "Las importaciones desde {provider} han terminado",
+            "backHalfShape": "Las partes finales de QRdx tienen de 3 a 64 letras, dígitos, - o _, así que esta no se puede conservar.",
+            "backHalfReservedDomain": "Esta parte final está reservada en {domain}.",
+            "backHalfReservedShared": "Esta parte final está reservada en qrdx.dev.",
+            "backHalfReservedSharedAddDomain": "Esta parte final está reservada en qrdx.dev. Añade {domain} en la página Dominios para conservarla allí.",
+            "backHalfTakenDomain": "Otro código en {domain} ya usa este back-half.",
+            "backHalfTakenShared": "Otro código de QRdx ya usa este back-half en qrdx.dev.",
+            "backHalfRepeated": "Otro enlace seleccionado tiene el mismo back-half."
           }
         },
         "analyticsExtra": {
@@ -5743,7 +6635,6 @@
           "scansPerDayLastDays": "Escaneos por día, últimos {days, number} días (UTC)",
           "botsAndLinkPreviewsAre": "Los bots y las vistas previas de enlaces no se cuentan. Los países y las ciudades se obtienen de la dirección IP del visitante, que nunca se almacena; las ubicaciones precisas solo provienen de quienes escanean y decidieron compartirlas.",
           "dateRange": "Rango de fechas",
-          "valueKeepsValue2OfScan": "{value} conserva {value2} de historial de escaneos",
           "totalScans": "Escaneos totales",
           "scansInRange": "Escaneos en el rango",
           "uniqueVisitors": "Visitantes únicos",
@@ -6117,7 +7008,14 @@
           "onlyTeamOwnersAndAdmins": "Solo los propietarios y administradores del equipo pueden eliminar códigos creados por otros.",
           "downloadFailedPleaseTryAgain": "La descarga falló. Inténtalo de nuevo.",
           "shortLinkCopied": "Enlace corto copiado",
-          "couldntCopyTheShortLink": "No se pudo copiar el enlace corto"
+          "couldntCopyTheShortLink": "No se pudo copiar el enlace corto",
+          "removedFromFavorites": "Quitado de favoritos",
+          "addedToFavorites": "Añadido a favoritos",
+          "copyCreated": "Copia creada",
+          "copyOpensSamePage": "Nuevo enlace corto {link}. Abre la misma página de destino.",
+          "copyScansFromZero": "Nuevo enlace corto {link}. Los escaneos empiezan desde cero.",
+          "movedToTrash": "Movido a la papelera",
+          "codeRestored": "Código restaurado"
         },
         "codeOptions": {
           "on": "(activado)",
@@ -6181,7 +7079,19 @@
           "svgImagesZip": "Imágenes SVG (ZIP)",
           "more": "Más",
           "moveToTrash": "Mover a la papelera",
-          "deleteValueForever": "¿Eliminar {value} definitivamente?",
+          "preparingValue": "Preparando {count, plural, one {# código QR} other {# códigos QR}}...",
+          "downloadedValueAsValue2": "{count, plural, one {Se descargó # código QR} other {Se descargaron # códigos QR}} como {value2}",
+          "deleteValueForever": "¿Eliminar {count, plural, one {# código} other {# códigos}} para siempre?",
+          "allSelectedOthersSkipped": "Todos los códigos seleccionados los crearon otros miembros del equipo y se omitieron: solo los propietarios y administradores pueden eliminarlos.",
+          "movedToTrash": "{count, plural, one {Se movió # código a la papelera} other {Se movieron # códigos a la papelera}}",
+          "deletedForever": "{count, plural, one {Se eliminó # código para siempre} other {Se eliminaron # códigos para siempre}}",
+          "othersSkipped": "{count, plural, one {Se omitió # código creado por otro miembro del equipo} other {Se omitieron # códigos creados por otros miembros del equipo}}: solo los propietarios y administradores pueden eliminarlos.",
+          "trashScansNote": "Los escaneos muestran una página de «ya no está activo» hasta que los restaures.",
+          "restoredCodes": "{count, plural, one {Se restauró # código} other {Se restauraron # códigos}}",
+          "archivedCodes": "{count, plural, one {# código archivado} other {# códigos archivados}}",
+          "unarchivedCodes": "{count, plural, one {# código desarchivado} other {# códigos desarchivados}}",
+          "pausedCodes": "{count, plural, one {# código pausado} other {# códigos pausados}}",
+          "resumedCodes": "{count, plural, one {# código reanudado} other {# códigos reanudados}}",
           "theirScanAndVersionHistory": "Se eliminan su historial de escaneos y de versiones, y las copias impresas muestran una página de «código QR no encontrado». Esta acción no se puede deshacer.",
           "cancel": "Cancelar",
           "bulkActions": "Acciones en lote",
@@ -6197,11 +7107,8 @@
           "failedCouldntBeRendered": "No se pudieron generar {failed, number}.",
           "scansRedirectAgain": "Los escaneos vuelven a redirigir.",
           "scansGoToEachCodes": "Los escaneos van a la URL alternativa de cada código o a una página neutra de «en pausa».",
-          "allSelectedOthersSkipped": "Todos los seleccionados {OTHERS_SKIPPED}",
-          "preparingValue": "Preparando {value}...",
           "renderingFinishedOfTotal": "Generando {finished, number} de {total, number}...",
           "theQrCodesCouldntBe": "No se pudieron generar los códigos QR.",
-          "downloadedValueAsValue2": "{value} descargado como {value2}",
           "downloadFailedPleaseTryAgain": "Error en la descarga. Inténtalo de nuevo."
         },
         "codesTable": {
@@ -6238,7 +7145,9 @@
           "clearAll": "Borrar todo",
           "codesWithAllOfThese": "Códigos con todas estas etiquetas",
           "emptyTheTrash": "¿Vaciar la papelera?",
-          "valueAndTheirScanHistory": "{value} y su historial de escaneos se eliminarán para siempre. Las copias impresas mostrarán una página de \"Código QR no encontrado\". Esta acción no se puede deshacer.",
+          "valueAndTheirScanHistory": "Se eliminarán para siempre {count, plural, one {# código} other {# códigos}} y su historial de escaneos. Las copias impresas mostrarán una página “Código QR no encontrado”. Esto no se puede deshacer.",
+          "codeCount": "{count, plural, one {# código} other {# códigos}}",
+          "deletedForever": "{count, plural, one {# código eliminado} other {# códigos eliminados}} para siempre",
           "cancel": "Cancelar",
           "editName": "Editar {name}",
           "deleteName": "Eliminar {name}",
@@ -6298,7 +7207,12 @@
           "springCampaign": "Campaña de primavera",
           "save": "Guardar",
           "createFolder": "Crear carpeta",
-          "itsCodesAndSubfoldersMoved": "Sus códigos y subcarpetas se movieron a {target}."
+          "itsCodesAndSubfoldersMoved": "Sus códigos y subcarpetas se movieron a {target}.",
+          "movedToFolder": "{count, plural, one {# código movido} other {# códigos movidos}} a “{name}”",
+          "movedOutOfFolders": "{count, plural, one {# código movido} other {# códigos movidos}} a ninguna carpeta",
+          "theTopLevel": "el nivel superior",
+          "deletedFolder": "“{name}” eliminada",
+          "folderRenamed": "Carpeta renombrada"
         },
         "importDialog": {
           "import": "Importar",
@@ -6332,22 +7246,24 @@
           "theOldShortLinkOr": "El enlace corto antiguo (o el ID del código) hace que, al volver a subir el mismo archivo, se omitan los códigos ya importados, y se usa en la correspondencia entre enlaces antiguos y nuevos.",
           "provider": "Proveedor",
           "exportFile": "Archivo de exportación",
-          "import": "importar",
-          "firstMaxJobLinks": " (los primeros {MAX_JOB_LINKS, number})",
+          "previewRows": "Vista previa de {count, plural, one {# fila} other {# filas}}",
+          "previewImport": "Vista previa",
+          "rows": "{count, plural, one {# fila} other {# filas}}",
+          "rowsFirst": "{count, plural, one {# fila} other {# filas}} (primeras {MAX_JOB_LINKS, number})",
           "chooseAnotherFile": "Elegir otro archivo",
           "chooseFile": "Elegir archivo"
         },
         "importLinksStep": {
           "importingFromNameIsntAvailable": "Aún no se puede importar desde {name}.",
           "qrdxReadsYourLinksTo": "QRdx lee tus enlaces para importarlos. El token se guarda cifrado; puedes desconectarte cuando quieras en Ajustes.",
-          "signInWith": "Inicia sesión con",
+          "signInWith": "Inicia sesión con {name}",
+          "valueSelected": "{count, plural, one {# enlace seleccionado} other {# enlaces seleccionados}}",
           "afterSigningInYouCome": "Después de iniciar sesión volverás directamente aquí para elegir tus enlaces.",
           "orPasteAKey": "o pega una clave",
           "connect": "Conectar",
           "openName": "Abrir {name}",
           "connectingNameIsntAvailableRight": "Ahora mismo no se puede conectar {name}. Exporta tus enlaces como CSV desde {name2} y usa \"Otro proveedor (CSV)\".",
           "allProviders": "Todos los proveedores",
-          "valueSelected": "{value} seleccionados",
           "previewImport": "Vista previa de la importación",
           "allDomains": "Todos los dominios",
           "allTags": "Todas las etiquetas",
@@ -6408,8 +7324,8 @@
           "folderName": "Nombre de carpeta",
           "yourDomain": "Tu dominio",
           "nothingToImport": "Nada que importar",
-          "importTheFirstValue": "Importar los primeros {value}",
-          "importValue": "Importar {value}",
+          "importTheFirstValue": "Importar los primeros {count, plural, one {# código} other {# códigos}}",
+          "importValue": "Importar {count, plural, one {# código} other {# códigos}}",
           "keepTheirsOnThatDomain": "Las partes finales se quedan en el dominio que elijas, así que los códigos impresos vuelven a funcionar cuando su DNS pasa a QRdx.",
           "everyBackHalfIsKept": "Todas las partes finales se conservan en qrdx.dev.",
           "keepingBackHalvesIsPart": "Conservar los back-halves forma parte de {slugPlans}.",
@@ -6424,9 +7340,9 @@
           "forProvidersWithoutApiAccess": "Para proveedores sin acceso a la API. Sube un CSV, revisa las columnas, y luego previsualiza e importa.",
           "alreadyUsingTheQrdxCsv": "¿Ya usas la plantilla CSV de QRdx? <link>Importar CSV</link>",
           "recentImports": "Importaciones recientes",
-          "valueValue2Created": "{value} · {value2} creados",
+          "valueValue2Created": "{value} · {count, plural, one {# código creado} other {# códigos creados}}",
+          "valuePointingToQrdx": "{count, plural, one {# enlace antiguo que apunta} other {# enlaces antiguos que apuntan}} a QRdx",
           "resumeProcessedTotal": "Reanudar {processed, number}/{total, number}",
-          "valuePointingToQrdx": " · {value} apuntando a QRdx",
           "open": "Abrir",
           "checking": "Comprobando…",
           "connected": "Conectado",
@@ -6437,19 +7353,19 @@
         },
         "importRedirectsStep": {
           "summary": "Resumen",
-          "undoValue": "Deshacer {value}",
-          "update": "Actualizar",
-          "in": "en",
+          "undoValue": "Deshacer {count, plural, one {# enlace} other {# enlaces}}",
+          "valueRestored": "{count, plural, one {# enlace restaurado} other {# enlaces restaurados}}",
+          "valueNowOpenQrdx": "{count, plural, one {# enlace ahora abre} other {# enlaces ahora abren}} QRdx",
+          "dryRunValueWouldChange": "Simulación <span>· {count, plural, one {# enlace cambiaría} other {# enlaces cambiarían}}</span>",
+          "updateLinksIn": "Actualizar {count, plural, one {# enlace} other {# enlaces}} en {name}",
+          "oldLinksAlreadyPoint": "{count, plural, one {# enlace antiguo ya apunta} other {# enlaces antiguos ya apuntan}} a QRdx.",
           "importsFromNameHaveEnded": "Las importaciones de {name} han finalizado.",
           "qrdxNoLongerChangesName": "QRdx ya no modifica los enlaces de {name}. Al deshacer, los destinos originales vuelven a tu cuenta de {name2} (se guardan con esta importación). Los códigos QRdx se mantienen.",
           "thisChangesLinksInYour": "Esto modifica enlaces de tu cuenta de {name}.",
           "eachOldLinkWillOpen": "Cada enlace antiguo abrirá su nuevo código QRdx, que envía a los visitantes al mismo destino, así que los códigos impresos siguen funcionando y sus escaneos aparecen en QRdx. {name} sigue registrando primero un clic. Al deshacer, los destinos originales se restauran (se guardan con esta importación).",
           "listingTheChanges": "Listando los cambios…",
-          "dryRunValueWouldChange": "Simulación <span>· cambiarían {value}</span>",
           "iUnderstandTheseNameLinks": "Entiendo que estos enlaces de {name} apuntarán a QRdx hasta que lo deshaga.",
           "updateProgress": "Progreso de la actualización",
-          "valueRestored": "{value} restaurados",
-          "valueNowOpenQrdx": "{value} ahora abren QRdx",
           "restoringOriginalDestinations": "Restaurando los destinos originales…",
           "updatingLinksInName": "Actualizando enlaces en {name}…",
           "everyOldNameLinkHas": "Todos los enlaces antiguos de {name} vuelven a tener su destino original.",
@@ -6472,7 +7388,9 @@
           "keepMyPrintedCodesWorking": "Mantener mis códigos impresos activos",
           "optionalPointEachOldName": "Opcional. Dirige cada enlace antiguo de {name} a su nuevo código de QRdx, para que los códigos ya impresos sigan funcionando y sus escaneos aparezcan en QRdx. Verás cada cambio antes y podrás deshacerlo.",
           "pointYourOldCodesAt": "Dirige tus códigos antiguos a QRdx",
-          "codesLiveOnItsOwn": "los códigos están en su propio dominio, así que QRdx no puede cambiarlos. Para cada código antiguo:",
+          "oldProviderCodesLiveOnItsDomain": "Los códigos de tu proveedor anterior viven en su propio dominio, así que QRdx no puede cambiarlos. Para cada código antiguo:",
+          "providerCodesLiveOnItsDomain": "Los códigos de {name} viven en su propio dominio, así que QRdx no puede cambiarlos. Para cada código antiguo:",
+          "oldLinksPointToQrdx": "{count, plural, one {# enlace antiguo de {name} apunta} other {# enlaces antiguos de {name} apuntan}} a QRdx",
           "backHalvesOnBackhalfdomain": "Sufijos en {backHalfDomain}",
           "attachCodes": "Adjuntar códigos",
           "notesOnEachCodeSay": "Las notas de cada código indican de dónde viene, su enlace antiguo y su fecha de creación original. Si vuelves a ejecutar esta importación, se omite todo lo ya importado.",
@@ -6483,24 +7401,27 @@
           "importingFromName": "Importando desde {name}…",
           "importPaused": "Importación en pausa",
           "waitingWaitingSForThe": "Esperando {waiting, number} s por el límite de solicitudes, después continuará…",
-          "valueCreatedSoFarIn": "{value} creados hasta ahora, en lotes de 50. Cada enlace se importa una sola vez, aunque vuelvas a intentarlo.",
+          "valueCreatedSoFarIn": "{count, plural, one {# código creado} other {# códigos creados}} hasta ahora, en lotes de 50. Cada enlace se importa una sola vez, aunque lo reintentes.",
           "manage": "Gestionar",
           "reviewChanges": "Revisar cambios",
-          "yourOldProviders": "Tu proveedor anterior",
           "theCodesAreOnBackhalfdomain": "Los códigos están en {backHalfDomain}. Los enlaces antiguos de ese dominio vuelven a funcionar en cuanto su DNS apunte a QRdx y se verifique en la página Dominios.",
           "afterBackhalfdomainPointsToQrdx": "Cuando {backHalfDomain} apunte a QRdx y esté verificado en la página Dominios, asocia los códigos para que {backHalfDomain2}/'<'parte-final'>' los abra.",
           "other": "Otro"
         },
         "moveWorkspaceDialog": {
           "moveToAnotherWorkspace": "Mover a otro espacio de trabajo",
-          "keepsItsShortLinkSo": "conserva su enlace corto, así que las copias impresas siguen funcionando. Sus escaneos y su historial se mueven con él; su carpeta y sus etiquetas se quedan aquí.",
+          "keepsItsShortLinkSo": "<strong>{name}</strong> conserva su enlace corto, así que las copias impresas siguen funcionando. Sus escaneos y su historial se mueven con él; su carpeta y sus etiquetas se quedan aquí.",
           "loadingWorkspaces": "Cargando espacios de trabajo",
           "youreNotInAnotherWorkspace": "No estás en ningún otro espacio de trabajo donde puedas añadir códigos. Los espacios en los que eres lector o miembro de facturación no aparecen en la lista.",
           "cancel": "Cancelar",
           "moveCode": "Mover código",
           "workspaces": "Espacios de trabajo",
           "open": "Abrir",
-          "movedToName": "Movido a {name}"
+          "movedToName": "Movido a {name}",
+          "movedSameLink": "Mismo enlace corto, escaneos e historial.",
+          "movedFolderStayed": "Mismo enlace corto, escaneos e historial. Su carpeta se quedó aquí.",
+          "movedTagsStayed": "Mismo enlace corto, escaneos e historial. {count, plural, one {# etiqueta se quedó} other {# etiquetas se quedaron}} aquí.",
+          "movedFolderAndTagsStayed": "Mismo enlace corto, escaneos e historial. Su carpeta y {count, plural, one {# etiqueta} other {# etiquetas}} se quedaron aquí."
         },
         "newCodeDialog": {
           "template": "Plantilla",
@@ -6542,8 +7463,8 @@
           "bytesBytes": "{bytes, number} bytes",
           "fits": "Cabe",
           "theLinkNeedsBytesBytes": "El enlace necesita {bytes, number} bytes. NTAG215 y NTAG216 dejan margen si más adelante escribes un enlace más largo.",
-          "openThisPageInChrome": "Abre esta página en Chrome en un teléfono Android con NFC activado, toca Escribir en etiqueta NFC y mantén la",
-          "againstTheBackOfThe": "contra la parte trasera del teléfono. En iPhone, usa una app de escritura NFC.",
+          "writeItTag": "Abre esta página en Chrome en un teléfono Android con NFC activado, toca Escribir en etiqueta NFC y acerca la etiqueta a la parte trasera del teléfono. En iPhone, usa una app para escribir NFC.",
+          "writeItCard": "Abre esta página en Chrome en un teléfono Android con NFC activado, toca Escribir en etiqueta NFC y acerca la tarjeta a la parte trasera del teléfono. En iPhone, usa una app para escribir NFC.",
           "analyticsCountsTapsAndScans": "Analítica cuenta toques y escaneos por separado.",
           "downloadTheQrCode": "Descargar el código QR",
           "androidPhonesWithNfcOn": "Los teléfonos Android con NFC activado y los iPhone XS o posteriores abren el enlace cuando la etiqueta toca el teléfono, sin ninguna app. La etiqueta sigue al código: cambia a dónde lleva en QRdx y todas las etiquetas que hayas escrito lo siguen.",
@@ -6661,7 +7582,11 @@
           "editTag": "Editar etiqueta",
           "createTag": "Crear etiqueta",
           "tags": "Etiquetas",
-          "tagsForValue": "Etiquetas de {value}"
+          "tagsForValue": "Etiquetas de {count, plural, one {# código} other {# códigos}}",
+          "tagsSaved": "Etiquetas guardadas",
+          "updatedTagsOn": "Etiquetas actualizadas en {count, plural, one {# código} other {# códigos}}",
+          "tagSaved": "Etiqueta guardada",
+          "deletedTag": "Etiqueta “{name}” eliminada"
         },
         "usage": {
           "unlimitedUsage": "{count, plural, one {# código dinámico activo} other {# códigos dinámicos activos}} · plan {plan}, códigos ilimitados",
@@ -6693,7 +7618,6 @@
           "open": "Abrir",
           "replaceFile": "Reemplazar archivo…",
           "delete": "Eliminar",
-          "showingThe500NewestFiles": "Se muestran los 500 archivos más recientes.",
           "deleteFilename": "¿Eliminar {filename}?",
           "thisFileIsValueThey": "Este archivo está {value}. En su lugar mostrarán «Archivo no disponible».",
           "andValueMore": "y {value, number} más",
@@ -6719,7 +7643,14 @@
           "linkCopied": "Enlace copiado",
           "couldntCopyTheLink": "No se pudo copiar el enlace.",
           "notUsedYet": "Aún sin usar",
-          "usedByValue": "Usado por {value}"
+          "usedByPagesAndCodes": "Usado en {pages, plural, one {# página} other {# páginas}} · {codes, plural, one {# código} other {# códigos}}",
+          "usedByPages": "Usado en {pages, plural, one {# página} other {# páginas}}",
+          "usedByCodes": "Usado en {codes, plural, one {# código} other {# códigos}}",
+          "loadMoreFiles": "Cargar más archivos",
+          "loadingMoreFiles": "Cargando archivos…",
+          "tryAgain": "Reintentar",
+          "couldntLoadMoreFiles": "No se pudieron cargar más archivos. Inténtalo de nuevo.",
+          "allFilesShown": "Esos son todos los archivos."
         }
       },
       "loading": {
@@ -6757,7 +7688,8 @@
           "archived": "Archivada",
           "disabled": "Desactivada",
           "noQrCodeYet": "Aún sin código QR",
-          "pageLinkCopied": "Enlace de la página copiado"
+          "pageLinkCopied": "Enlace de la página copiado",
+          "pagePageOfPagecountTotal": "Página {page, number} de {pageCount, number} · {total} páginas"
         },
         "responses": {
           "page": {
@@ -6803,7 +7735,10 @@
             "deleting": "Eliminando…",
             "delete": "Eliminar",
             "responseDeleted": "Respuesta eliminada",
-            "deletedResponsesDeleted": "{deleted, number} respuestas eliminadas"
+            "deletedResponsesDeleted": "{deleted, number} respuestas eliminadas",
+            "countSelected": "{count, number} seleccionados",
+            "clearSelection": "Borrar selección",
+            "bulkActions": "Acciones en lote"
           }
         },
         "pageListControls": {
@@ -6941,7 +7876,6 @@
           "page": {
             "webhooks": "Webhooks",
             "recentDeliveries": "Entregas recientes",
-            "theLast50KeptFor": "Las últimas 50, conservadas durante 30 días. Las entregas fallidas se reintentan hasta {MAX_DELIVERY_ATTEMPTS, number} veces con esperas crecientes.",
             "endpointDeliveries": "Entregas del endpoint",
             "filterDeliveries": "Filtrar entregas",
             "active": "Activo",
@@ -6957,7 +7891,8 @@
             "onlyTeamOwnersAndAdmins": "Solo los propietarios y administradores del equipo pueden añadir, cambiar o probar endpoints.",
             "sendScansNewAndChanged": "Envía escaneos, códigos nuevos y modificados, y respuestas de formularios a tu propio servidor, Zapier o Make.",
             "thisTeamsPlanNoLonger": "El plan de este equipo ya no incluye webhooks.",
-            "yourPlanNoLongerIncludes": "Tu plan ya no incluye webhooks."
+            "yourPlanNoLongerIncludes": "Tu plan ya no incluye webhooks.",
+            "keptFor30Days": "Los más recientes primero, se conservan durante 30 días. Las entregas fallidas se reintentan hasta {MAX_DELIVERY_ATTEMPTS, number} veces con esperas cada vez mayores."
           }
         }
       },
@@ -6988,8 +7923,8 @@
           "cancel": "Cancelar",
           "save": "Guardar",
           "deleteName": "¿Eliminar {name}?",
-          "qrCodesYouAlreadyMade": "Los códigos QR que ya creaste con este tema conservan su aspecto. Esto solo elimina el tema guardado",
           "deleteTheme": "Eliminar tema",
+          "deleteThemeTeam": "Los códigos QR que ya creaste con este tema conservan su aspecto. Esto solo elimina el tema guardado para todos los miembros de este espacio de trabajo.",
           "updateTheTagsForName": "Actualiza las etiquetas de “{name}”.",
           "saveTags": "Guardar etiquetas",
           "openNameInThePlayground": "Abrir {name} en el Playground",
@@ -6999,8 +7934,7 @@
           "removeAsDefault": "Quitar como predeterminado",
           "setAsWorkspaceDefault": "Predeterminado del espacio de trabajo",
           "setAsDefault": "Hacer predeterminado",
-          "forEveryoneInThisWorkspace": " para todos en este espacio de trabajo",
-          "itIsAlsoRemovedFrom": " También se elimina de la comunidad.",
+          "itIsAlsoRemovedFrom": "También se elimina de la comunidad.",
           "upgrade": "Mejorar",
           "themeRenamed": "Tema renombrado",
           "couldNotRenameTheTheme": "No se pudo renombrar el tema. Inténtalo de nuevo.",
@@ -7032,7 +7966,8 @@
           "yourThemes": "Tus temas",
           "noSharedThemesYetUse": "Aún no hay temas compartidos. Usa \"Copiar a este espacio de trabajo\" en uno de tus temas de abajo.",
           "noSharedThemesYetOwners": "Aún no hay temas compartidos. Los propietarios y administradores pueden compartir temas aquí.",
-          "askAWorkspaceOwnerTo": "Pide a un propietario que mejore el plan."
+          "askAWorkspaceOwnerTo": "Pide a un propietario que mejore el plan.",
+          "showMoreThemes": "Mostrar más temas"
         }
       },
       "home": {
@@ -7051,23 +7986,6 @@
         },
         "newCodeButton": {
           "newDynamicCode": "Nuevo código dinámico"
-        },
-        "setupChecklist": {
-          "done": "(hecho)",
-          "create": "Crear",
-          "start": "Empezar",
-          "design": "Diseñar",
-          "invite": "Invitar",
-          "connect": "Conectar",
-          "getSetUp": "Configuración",
-          "doneOfLengthDone": "{done, number} de {length, number} completadas",
-          "hide": "Ocultar",
-          "setupTasksDone": "Tareas completadas",
-          "createADynamicQrCode": "Crea un código QR dinámico",
-          "makeALandingPageOr": "Crea una página de destino o un formulario",
-          "saveAThemeWithYour": "Guarda un tema con tu logo y tus colores",
-          "inviteATeammate": "Invita a un compañero de equipo",
-          "connectACustomDomain": "Conecta un dominio personalizado"
         }
       },
       "listSelection": {
@@ -7082,7 +8000,9 @@
         "move": "Mover",
         "nextOrPreviousRow": "Fila siguiente o anterior",
         "extendTheSelection": "Ampliar la selección",
-        "withASelection": "Con una selección"
+        "withASelection": "Con una selección",
+        "more": "Más",
+        "moreActions": "Más acciones"
       },
       "domains": {
         "dnsRecords": {
@@ -7103,7 +8023,14 @@
           "removeHostname": "¿Quitar {hostname}?",
           "cancel": "Cancelar",
           "removeHostname2": "Quitar {hostname}",
-          "shortLinksLookLikeHttps": "Los enlaces cortos tienen este aspecto: https://{hostname}/aB3dE5f · usado por {value}",
+          "shortLinksLookLikeHttps": "Los enlaces cortos tienen este aspecto: https://{hostname}/aB3dE5f · usado en {count, plural, one {# código} other {# códigos}}",
+          "youveAddedValueTheMost": "Has añadido {count, plural, one {# dominio} other {# dominios}}, el máximo que incluye tu plan. Elimina uno para añadir otro.",
+          "providerCanAddRecords": "Tu DNS está en {provider}, que puede añadir estos registros por ti.",
+          "yourProviderCanAddRecords": "Tu proveedor de DNS puede añadir estos registros por ti.",
+          "approveAtProvider": "Apruebas el cambio en {provider} y luego vuelves aquí.",
+          "approveAtYourProvider": "Apruebas el cambio en tu proveedor de DNS y luego vuelves aquí.",
+          "removeDomainInUse": "{count, plural, one {# código usa} other {# códigos usan}} este dominio. Los códigos QR impresos con enlaces de {hostname} dejarán de funcionar y los códigos pasarán a su enlace {defaultHost}/q/…. Las terminaciones personalizadas elegidas en el dominio se mantienen si están libres en {defaultHost}; las demás reciben una nueva.",
+          "removeDomainUnused": "Los enlaces cortos de {hostname} dejan de funcionar.",
           "addTheseRecordsAtYour": "Añade estos registros en tu proveedor de DNS y haz clic en Verificar.",
           "checkDns": "Comprobar DNS",
           "verify": "Verificar",
@@ -7118,7 +8045,6 @@
           "addDomain": "Añadir dominio",
           "aSubdomainSuchAsGo": "Lo mejor es un subdominio como go. o qr.: tu sitio web principal sigue donde está.",
           "addingDomainsNeedsProOr": "Añadir dominios requiere Pro o Business.",
-          "youveAddedValueTheMost": "Has añadido {value}, el máximo que incluye tu plan. Quita uno para añadir otro.",
           "removing": "Quitando...",
           "removeDomain": "Quitar dominio",
           "addTheDnsRecordsShown": "Añade los registros DNS indicados y haz clic en Verificar.",
@@ -7322,6 +8248,17 @@
           "notDeliveredError": "No entregado: {error}",
           "endpointDeleted": "Endpoint eliminado"
         }
+      },
+      "paging": {
+        "navigation": "Paginación",
+        "previous": "Anterior",
+        "next": "Siguiente",
+        "rowsPerPage": "Filas por página",
+        "perPage": "{count, number} por página",
+        "page": "Página {page, number}",
+        "pageOf": "Página {page, number} de {pageCount, number}",
+        "newer": "Más recientes",
+        "older": "Más antiguos"
       }
     },
     "shell": {
@@ -7354,6 +8291,7 @@
         "newDynamicQrCode": "Nuevo código QR dinámico",
         "newLandingPage": "Nueva landing page",
         "newForm": "Nuevo formulario",
+        "newBarcode": "Nuevo código de barras",
         "importCodesFromACsv": "Importar códigos desde un CSV",
         "inviteATeammate": "Invitar a un compañero",
         "connectADomain": "Conectar un dominio",
@@ -7364,6 +8302,7 @@
         "dynamicQrCode": "Código QR dinámico",
         "landingPage": "Landing page",
         "form": "Formulario",
+        "barcode": "Código de barras",
         "importCodes": "Importar códigos",
         "openTheEditor": "Abrir el editor",
         "newDynamicQrCode": "Nuevo código QR dinámico",
@@ -7386,7 +8325,39 @@
         "new": "Nuevo",
         "whatsNew": "Novedades",
         "newFeaturesAndFixesIn": "Nuevas funciones y correcciones en QRdx.",
-        "seeAllUpdates": "Ver todas las novedades"
+        "seeAllUpdates": "Ver todas las novedades",
+        "newFeatures": "Novedades",
+        "dismissTitle": "Descartar {title}",
+        "previousUpdate": "Novedad anterior",
+        "nextUpdate": "Siguiente novedad",
+        "positionOfTotal": "{position, number} de {total, number}",
+        "readOnTheChangelog": "Leer en el changelog",
+        "tryIt": "Pruébalo",
+        "close": "Cerrar"
+      },
+      "spotlight": {
+        "new": "Nuevo",
+        "gotIt": "Entendido"
+      },
+      "setupGuide": {
+        "getSetUp": "Configuración",
+        "launcherLabel": "Primeros pasos: {done, number} de {length, number} completados",
+        "doneOfLengthDone": "{done, number} de {length, number} completadas",
+        "doneOfLengthShort": "{done, number}/{length, number}",
+        "setupTasksDone": "Tareas completadas",
+        "collapse": "Contraer",
+        "dismissGuide": "Descartar guía",
+        "done": "(hecho)",
+        "create": "Crear",
+        "start": "Empezar",
+        "design": "Diseñar",
+        "invite": "Invitar",
+        "connect": "Conectar",
+        "createADynamicQrCode": "Crea un código QR dinámico",
+        "makeALandingPageOr": "Crea una página de destino o un formulario",
+        "saveAThemeWithYour": "Guarda un tema con tu logo y tus colores",
+        "inviteATeammate": "Invita a un compañero de equipo",
+        "connectACustomDomain": "Conecta un dominio personalizado"
       }
     },
     "workspaces": {

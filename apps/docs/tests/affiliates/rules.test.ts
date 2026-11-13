@@ -1,5 +1,5 @@
 // The affiliate program's maths and rules (lib/affiliates/rules.ts): 30%,
-// the 12-month window, the 30-day hold, the payout minimums, and the email
+// the 12-month window, the 45-day hold, the payout minimums, and the email
 // normalisation behind the self-referral check. Pure: no database.
 import { describe, expect, it } from "vitest";
 import {
@@ -36,15 +36,16 @@ import {
   EXAMPLE_REFERRAL_CODE,
   formatMinorAmount,
 } from "@/lib/affiliates/terms";
+import { MONEY_BACK_DAYS } from "@/lib/pricing";
 
 const DAY = 24 * 60 * 60 * 1000;
 
 describe("the owner's numbers", () => {
-  it("are 30%, 12 months, 30 days and US$25", () => {
+  it("are 30%, 12 months, 45 days and US$25", () => {
     expect(AFFILIATE_COMMISSION_BPS).toBe(3000);
     expect(AFFILIATE_COMMISSION_PERCENT).toBe(30);
     expect(AFFILIATE_COMMISSION_MONTHS).toBe(12);
-    expect(AFFILIATE_HOLD_DAYS).toBe(30);
+    expect(AFFILIATE_HOLD_DAYS).toBe(45);
     expect(AFFILIATE_MIN_PAYOUT_USD).toBe(2500);
     expect(AFFILIATE_MIN_PAYOUT_LABEL).toBe("US$25");
   });
@@ -157,12 +158,18 @@ describe("the 12-month window", () => {
   });
 });
 
-describe("the 30-day hold", () => {
+describe("the 45-day hold", () => {
   const paidAt = new Date("2026-11-10T12:00:00Z");
   const availableAt = availableAtFor(paidAt);
 
-  it("ends 30 days after the payment", () => {
-    expect(availableAt.getTime() - paidAt.getTime()).toBe(30 * DAY);
+  it("ends 45 days after the payment", () => {
+    expect(availableAt.getTime() - paidAt.getTime()).toBe(45 * DAY);
+  });
+
+  it("outlasts the money-back guarantee, so its refunds still cancel", () => {
+    // A refund asked for on the guarantee's last day can be made days
+    // later; a refund after the hold no longer voids the commission.
+    expect(AFFILIATE_HOLD_DAYS).toBeGreaterThanOrEqual(MONEY_BACK_DAYS + 14);
   });
 
   it("is pending until then, payable after, whether or not the cron ran", () => {

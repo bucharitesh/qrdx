@@ -1,0 +1,88 @@
+{
+  "id": "read-the-faq",
+  "name": "FAQ",
+  "description": "A solid card with a round badge holding a question mark on its top edge.",
+  "category": "use-case",
+  "collection": "call-to-action",
+  "contentTypes": [],
+  "tags": ["call to action", "faq", "help"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1830
+    },
+    "qr": {
+      "x": 120,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 150,
+        "width": 1240,
+        "height": 1680,
+        "radius": 64,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 620,
+        "cy": 150,
+        "r": 150,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 620,
+        "cy": 150,
+        "r": 120,
+        "fill": "background"
+      },
+      {
+        "type": "path",
+        "d": "M601.07 122.67A7.7 7.7 0 0 0 585.73 121.33L586.22 116.04L587.77 110.27L590.3 104.85L593.72 99.95L597.95 95.72L602.85 92.3L608.27 89.77L614.04 88.22L620 87.7L625.96 88.22L631.73 89.77L637.15 92.3L642.05 95.72L646.28 99.95L649.7 104.85L652.23 110.27L653.78 116.04L654.29 121.7L654.07 129.47L648 144.09L628.24 158.24L627.62 162.29L627.7 172.4A7.7 7.7 0 0 0 612.3 172.4L612.38 160.11L617.36 147.36L636.8 133.51L639.13 125.73L638.91 122.3L638.61 118.72L637.76 115.54L636.37 112.55L634.48 109.85L632.15 107.52L629.45 105.63L626.46 104.24L623.28 103.39L620 103.1L616.72 103.39L613.54 104.24L610.55 105.63L607.85 107.52L605.52 109.85L603.63 112.55L602.24 115.54L601.39 118.72L601.07 122.67ZM609.5 197.6A10.5 10.5 0 1 1 630.5 197.6A10.5 10.5 0 1 1 609.5 197.6Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Read the FAQ",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1540,
+          "width": 1040,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Quick answers",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1710,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

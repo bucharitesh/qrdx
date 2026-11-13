@@ -36,11 +36,11 @@ import { AFFILIATE_COMMISSION_BPS } from "./terms";
 //   months, that's a pending commission of 30% of what the customer was
 //   charged before tax (rules.ts chargedNetAmount: Polar's `net_amount`,
 //   capped at `due_amount − tax_amount` for account credit) less
-//   `refunded_amount`, payable 30 days after the payment. One per order:
+//   `refunded_amount`, payable AFFILIATE_HOLD_DAYS (45) days after the payment. One per order:
 //   polar_order_id is unique, so a repeated webhook finds the existing row
 //   and changes nothing.
 // - refund.created / refund.updated (status "succeeded", net amount above
-//   0) and order.refunded: a refund before the 30 days are over voids the
+//   0) and order.refunded: a refund before the hold is over voids the
 //   commission. A refund Polar made to prevent a chargeback (the refund has
 //   a `dispute`, or the reason "dispute_prevention") is recorded as a
 //   chargeback. Repeats are harmless: only a pending or approved commission

@@ -1,0 +1,93 @@
+{
+  "id": "virtual-try-on",
+  "name": "Virtual try-on",
+  "description": "A phone with the code on its screen and a hand mirror.",
+  "category": "use-case",
+  "collection": "beauty-wellness",
+  "contentTypes": ["url"],
+  "tags": ["beauty", "wellness", "makeup", "try-on"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1360,
+      "height": 2000
+    },
+    "qr": {
+      "x": 180,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1360,
+        "height": 2000,
+        "radius": 190,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 26,
+        "y": 26,
+        "width": 1308,
+        "height": 1948,
+        "radius": 150,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 550,
+        "y": 56,
+        "width": 260,
+        "height": 64,
+        "radius": 32,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M642.8 234.4A37.2 39.6 0 1 1 717.2 234.4A37.2 39.6 0 1 1 642.8 234.4ZM651.2 234.4A28.8 31.2 0 1 0 708.8 234.4A28.8 31.2 0 1 0 651.2 234.4ZM678.8 269.2L681.2 269.2A7.2 7.2 0 0 1 688.4 276.4L688.4 298A7.2 7.2 0 0 1 681.2 305.2L678.8 305.2A7.2 7.2 0 0 1 671.6 298L671.6 276.4A7.2 7.2 0 0 1 678.8 269.2Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M654.8 234.4A25.2 27.6 0 1 1 705.2 234.4A25.2 27.6 0 1 1 654.8 234.4ZM667.04 227.44L681.44 213.04A2.04 2.04 0 0 1 678.56 210.16L664.16 224.56A2.04 2.04 0 0 1 667.04 227.44ZM669.44 239.44L691.04 217.84A2.04 2.04 0 0 1 688.16 214.96L666.56 236.56A2.04 2.04 0 0 1 669.44 239.44Z",
+        "fill": "accent"
+      },
+      {
+        "type": "rect",
+        "x": 510,
+        "y": 1910,
+        "width": 340,
+        "height": 18,
+        "radius": 9,
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Try it on virtually",
+        "color": "frame",
+        "box": {
+          "x": 160,
+          "y": 1550,
+          "width": 1040,
+          "height": 180
+        }
+      }
+    ]
+  }
+}

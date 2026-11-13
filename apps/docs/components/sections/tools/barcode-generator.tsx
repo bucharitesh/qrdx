@@ -47,6 +47,7 @@ import {
   useState,
 } from "react";
 import { useContentText } from "@/components/i18n/content-text";
+import { useBarcodeIssueText } from "@/components/sections/tools/barcode-issue-text";
 import { track } from "@/lib/analytics";
 import {
   useTrackBarcodeGenerated,
@@ -296,20 +297,29 @@ function ScanStatus({
   );
 }
 
+/** Same colors, sizes, text and rotation. */
+const sameStyle = (a: BarcodeStyle, b: BarcodeStyle) =>
+  a.foreground === b.foreground &&
+  a.background === b.background &&
+  a.showText === b.showText &&
+  a.barHeightMm === b.barHeightMm &&
+  a.quietZone === b.quietZone &&
+  a.scale === b.scale &&
+  (a.rotation ?? 0) === (b.rotation ?? 0);
+
 /**
- * The /barcode-generator tool. Everything happens in the browser: bwip-js
- * (lib/barcode/render.ts) loads on this page only, through the dynamic
- * import below, and the scan check's decoder loads on first use.
+ * The generator's state: the form's values, the drawing, the scan check and
+ * the downloads. Its parts below render it; the /barcode-generator tool, the
+ * dashboard's barcode page and the new-barcode modal lay them out their own
+ * way. bwip-js (lib/barcode/render.ts) loads through the dynamic import
+ * below, and the scan check's decoder loads on first use.
  */
-export function BarcodeGenerator({
+export function useBarcodeGenerator({
   initial,
-  formTop,
-  renderActions,
-  footnote,
   source = "generator",
-}: BarcodeGeneratorProps = {}) {
+}: Pick<BarcodeGeneratorProps, "initial" | "source"> = {}) {
   const t = useTranslations("barcodeTool");
-  const tc = useContentText();
+  const issueText = useBarcodeIssueText();
   const start = useRef({
     format: initial?.format ?? DEFAULT_BARCODE_FORMAT,
     value:
@@ -455,6 +465,19 @@ export function BarcodeGenerator({
     if (nextFormat.barHeightMm) setBarHeightMm(nextFormat.barHeightMm);
   };
 
+  /** Back to where it started (the modal's "Create another"). */
+  const reset = () => {
+    setFormatId(start.format);
+    setInput(start.value);
+    setForeground(start.style.foreground);
+    setBackground(start.style.background);
+    setShowText(start.style.showText);
+    setBarHeightMm(start.style.barHeightMm);
+    setQuietZone(start.style.quietZone);
+    setScale(start.style.scale);
+    setRotation(start.style.rotation ?? 0);
+  };
+
   /** WebP and AVIF: browsers can't encode them, so the image API does. */
   const serverFile = async (type: BarcodeFileType): Promise<Blob> => {
     if (!value) throw new Error(t("fixFirst"));
@@ -541,299 +564,507 @@ export function BarcodeGenerator({
     ? drawn && "error" in drawn
       ? drawn.error
       : null
-    : checked.error;
+    : issueText(checked.issue);
+
+  return {
+    inputId,
+    format,
+    formatId,
+    linear,
+    input,
+    setInput,
+    changeFormat,
+    foreground,
+    setForeground,
+    background,
+    setBackground,
+    showText,
+    setShowText,
+    barHeightMm,
+    setBarHeightMm,
+    quietZone,
+    setQuietZone,
+    scale,
+    setScale,
+    rotation,
+    setRotation,
+    renderer,
+    loadError,
+    checked,
+    colorWarnings,
+    rendered,
+    value,
+    /** The valid barcode drawn, null while the input has a problem */
+    current,
+    /** What's wrong with the input or the drawing */
+    error,
+    scan,
+    checking,
+    downloading,
+    download,
+    canDownload: Boolean(rendered) && downloading === null,
+    /** Anything differs from where it started */
+    changed:
+      formatId !== start.format ||
+      input !== start.value ||
+      !sameStyle(style, start.style),
+    reset,
+  };
+}
+
+export type BarcodeGeneratorState = ReturnType<typeof useBarcodeGenerator>;
+
+/** The barcode type and what it encodes, with the value's problem or note. */
+export function BarcodeContentFields({
+  state,
+  autoFocus,
+}: {
+  state: BarcodeGeneratorState;
+  /** Focus the value on open (the modal, on wide screens) */
+  autoFocus?: boolean;
+}) {
+  const t = useTranslations("barcodeTool");
+  const tc = useContentText();
+  const issueText = useBarcodeIssueText();
+  const { inputId, format, formatId, linear, input, checked, error } = state;
+  return (
+    <>
+      <div className="flex flex-col gap-1.5">
+        <Label htmlFor={`${inputId}-format`}>{t("type")}</Label>
+        <Select value={formatId} onValueChange={state.changeFormat}>
+          <SelectTrigger id={`${inputId}-format`} className="w-full">
+            {/* Just the name; the list shows what each one is for. */}
+            <SelectValue>{format.label}</SelectValue>
+          </SelectTrigger>
+          {/* Above the new-barcode modal (z-[99]) too */}
+          <SelectContent className="z-[120]">
+            <SelectGroup>
+              <SelectLabel>{t("linear")}</SelectLabel>
+              {LINEAR.map((item) => (
+                <SelectItem key={item.id} value={item.id}>
+                  {item.label}
+                  <span className="text-muted-foreground">
+                    {" "}
+                    · {tc(item.summary)}
+                  </span>
+                </SelectItem>
+              ))}
+            </SelectGroup>
+            <SelectGroup>
+              <SelectLabel>2D</SelectLabel>
+              {MATRIX.map((item) => (
+                <SelectItem key={item.id} value={item.id}>
+                  {item.label}
+                  <span className="text-muted-foreground">
+                    {" "}
+                    · {tc(item.summary)}
+                  </span>
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="flex flex-col gap-1.5">
+        <Label htmlFor={inputId}>
+          {t(linear ? "linearInput" : "textInput")}
+        </Label>
+        {linear ? (
+          <Input
+            id={inputId}
+            aria-describedby={`${inputId}-help`}
+            aria-invalid={!checked.ok}
+            autoComplete="off"
+            autoFocus={autoFocus}
+            className="font-mono"
+            maxLength={format.maxLength}
+            spellCheck={false}
+            value={input}
+            onChange={(event) => state.setInput(event.target.value)}
+          />
+        ) : (
+          <Textarea
+            id={inputId}
+            aria-describedby={`${inputId}-help`}
+            aria-invalid={!checked.ok}
+            autoFocus={autoFocus}
+            className="font-mono text-sm"
+            maxLength={format.maxLength}
+            rows={3}
+            spellCheck={false}
+            value={input}
+            onChange={(event) => state.setInput(event.target.value)}
+          />
+        )}
+        <div id={`${inputId}-help`} className="flex flex-col gap-1">
+          {error ? (
+            <p className="text-xs text-destructive" role="alert">
+              {error}
+            </p>
+          ) : checked.ok && checked.notes ? (
+            <p className="text-xs text-foreground">
+              {checked.notes.map(issueText).join(" ")}
+            </p>
+          ) : null}
+          <p className="text-xs text-muted-foreground">
+            {tc(format.inputHint)}
+          </p>
+        </div>
+      </div>
+    </>
+  );
+}
+
+/** Colors, bar height, quiet zone, image size, the text line and rotation. */
+export function BarcodeStyleFields({
+  state,
+}: {
+  state: BarcodeGeneratorState;
+}) {
+  const t = useTranslations("barcodeTool");
+  const {
+    inputId,
+    format,
+    formatId,
+    linear,
+    quietZone,
+    barHeightMm,
+    scale,
+    rendered,
+  } = state;
   const quietZoneLow = quietZone < format.quietZone.min;
+  return (
+    <>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <ColorField
+          label={t("barColor")}
+          value={state.foreground}
+          onChange={state.setForeground}
+        />
+        <ColorField
+          label={t("background")}
+          value={state.background}
+          onChange={state.setBackground}
+        />
+      </div>
+
+      {linear && (
+        <RangeField
+          label={t("barHeight")}
+          max={60}
+          min={5}
+          readout={`${barHeightMm} mm`}
+          value={barHeightMm}
+          onChange={state.setBarHeightMm}
+        />
+      )}
+
+      <RangeField
+        label={t("quietZone")}
+        max={maxQuietZone(formatId)}
+        min={0}
+        readout={t("modules", { count: quietZone })}
+        value={quietZone}
+        onChange={state.setQuietZone}
+      >
+        <p
+          className={cn(
+            "text-xs",
+            quietZoneLow ? "text-destructive" : "text-muted-foreground",
+          )}
+        >
+          {quietZoneLow
+            ? t("quietZoneLow", {
+                format: format.label,
+                min: format.quietZone.min,
+                kind: linear ? "linear" : "matrix",
+              })
+            : t("quietZoneHelp", {
+                format: format.label,
+                min: format.quietZone.min,
+                kind: linear ? "linear" : "matrix",
+              })}
+        </p>
+      </RangeField>
+
+      <RangeField
+        label={t("imageSize")}
+        max={BARCODE_LIMITS.scale.max}
+        min={BARCODE_LIMITS.scale.min}
+        readout={
+          rendered
+            ? `${Math.round(rendered.width)} × ${Math.round(rendered.height)} px`
+            : `${scale}×`
+        }
+        value={scale}
+        onChange={state.setScale}
+      />
+
+      {linear && (
+        <div className="flex items-center justify-between gap-3">
+          <Label htmlFor={`${inputId}-text`}>
+            {t(TEXT_FORMATS.has(format.id) ? "showText" : "showDigits")}
+          </Label>
+          <Switch
+            id={`${inputId}-text`}
+            checked={state.showText}
+            onCheckedChange={state.setShowText}
+          />
+        </div>
+      )}
+
+      <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
+        <Label id={`${inputId}-rotation`}>{t("rotation")}</Label>
+        <ToggleGroup
+          aria-labelledby={`${inputId}-rotation`}
+          onValueChange={(next) => {
+            if (next) state.setRotation(Number(next) as BarcodeRotation);
+          }}
+          size="sm"
+          type="single"
+          value={String(state.rotation)}
+          variant="outline"
+        >
+          {BARCODE_ROTATIONS.map((angle) => (
+            <ToggleGroupItem
+              aria-label={t("degrees", { angle })}
+              className="px-2.5 font-mono text-xs tabular-nums"
+              key={angle}
+              value={String(angle)}
+            >
+              {angle}°
+            </ToggleGroupItem>
+          ))}
+        </ToggleGroup>
+      </div>
+    </>
+  );
+}
+
+/** The drawing, as an image: a data URL, so the SVG never becomes page markup. */
+function BarcodeImage({
+  state,
+  className,
+}: {
+  state: BarcodeGeneratorState;
+  className: string;
+}) {
+  const t = useTranslations("barcodeTool");
+  const { rendered } = state;
+  if (!rendered) return null;
+  return (
+    <img
+      alt={t("alt", { format: state.format.label, value: state.value ?? "" })}
+      className={className}
+      height={rendered.height}
+      src={`data:image/svg+xml;charset=utf-8,${encodeURIComponent(rendered.svg)}`}
+      width={rendered.width}
+    />
+  );
+}
+
+/**
+ * The live barcode with its print size, scan check and color warnings.
+ * "column" fits the modal's preview column; "compact" is the phone layout,
+ * a thumbnail beside the scan check with `action` (e.g. "Design") under it.
+ */
+export function BarcodePreview({
+  state,
+  variant = "page",
+  action,
+}: {
+  state: BarcodeGeneratorState;
+  variant?: "page" | "column" | "compact";
+  action?: ReactNode;
+}) {
+  const t = useTranslations("barcodeTool");
+  const { rendered, renderer, loadError, checked, format, formatId } = state;
   const mm = (units: number, digits = 1) =>
     ((units * 25.4) / 72).toLocaleString("en-US", {
       maximumFractionDigits: digits,
     });
-  const canDownload = Boolean(rendered) && downloading === null;
+  const scanStatus = rendered && (
+    <ScanStatus
+      checking={state.checking}
+      label={format.label}
+      result={state.scan}
+      value={state.value ?? ""}
+    />
+  );
+
+  if (variant === "compact") {
+    return (
+      <div className="flex items-center gap-3">
+        <div
+          aria-live="polite"
+          className="flex h-24 w-32 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-border bg-muted/40 p-1.5"
+        >
+          {rendered ? (
+            <BarcodeImage
+              className="h-auto max-h-full w-auto max-w-full"
+              state={state}
+            />
+          ) : !(renderer || loadError) && checked.ok ? (
+            <Spinner className="size-5 animate-spin text-muted-foreground" />
+          ) : (
+            <>
+              <Warning2 aria-hidden className="size-5 text-muted-foreground" />
+              <span className="sr-only">
+                {loadError ? t("loadFailed") : t("fixInput")}
+              </span>
+            </>
+          )}
+        </div>
+        <div className="min-w-0 flex-1 space-y-1.5">
+          {scanStatus}
+          {state.colorWarnings.map((warning) => (
+            <Notice key={warning.message} warning={warning} />
+          ))}
+          {action}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <div
+        aria-live="polite"
+        className={cn(
+          "flex items-center justify-center overflow-hidden rounded-lg border border-border bg-muted/40 p-4",
+          variant === "column" ? "min-h-40" : "min-h-56",
+        )}
+      >
+        {rendered ? (
+          <BarcodeImage
+            className={cn(
+              "h-auto w-auto max-w-full",
+              variant === "column" ? "max-h-48" : "max-h-80",
+            )}
+            state={state}
+          />
+        ) : loadError ? (
+          <p className="max-w-xs text-center text-sm text-destructive">
+            {t("loadFailed")}
+          </p>
+        ) : !renderer && checked.ok ? (
+          <Spinner className="size-6 animate-spin text-muted-foreground" />
+        ) : (
+          <p className="max-w-xs text-center text-sm text-muted-foreground">
+            {t("fixInput")}
+          </p>
+        )}
+      </div>
+
+      {rendered && renderer && (
+        <p className="text-xs text-muted-foreground">
+          {t("sizes", {
+            width: Math.round(rendered.width),
+            height: Math.round(rendered.height),
+            widthMm: mm(rendered.widthUnits),
+            heightMm: mm(rendered.heightUnits),
+            moduleMm: mm(renderer.MODULE_UNITS[formatId], 2),
+          })}
+        </p>
+      )}
+
+      {(rendered || state.colorWarnings.length > 0) && (
+        <div className="flex flex-col gap-2 border-t border-border pt-3">
+          {scanStatus}
+          {state.colorWarnings.map((warning) => (
+            <Notice key={warning.message} warning={warning} />
+          ))}
+        </div>
+      )}
+    </>
+  );
+}
+
+/** PNG, SVG and PDF, and the rest in More. */
+export function BarcodeDownloads({
+  state,
+  className,
+}: {
+  state: BarcodeGeneratorState;
+  className?: string;
+}) {
+  const t = useTranslations("barcodeTool");
+  const tc = useContentText();
+  const { canDownload, downloading, download } = state;
+  return (
+    <div className={cn("grid grid-cols-4 gap-2", className)}>
+      {MAIN_FILES.map((type) => (
+        <Button
+          key={type}
+          disabled={!canDownload}
+          onClick={() => download(type)}
+          variant={type === "png" ? "default" : "outline"}
+        >
+          {downloading === type ? (
+            <Spinner className="size-4 animate-spin" />
+          ) : (
+            <Download aria-hidden className="size-4" />
+          )}
+          {BARCODE_FILES[type].label}
+        </Button>
+      ))}
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button disabled={!canDownload} variant="outline">
+            {downloading && MORE_FILES.includes(downloading) ? (
+              <Spinner className="size-4 animate-spin" />
+            ) : null}
+            {t("more")}
+            <ArrowDown2 aria-hidden className="size-3.5 opacity-70" />
+          </Button>
+        </DropdownMenuTrigger>
+        {/* Above the new-barcode modal (z-[99]) too */}
+        <DropdownMenuContent align="end" className="z-[120] w-64">
+          <DropdownMenuLabel>{t("moreFormats")}</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          {MORE_FILES.map((type) => (
+            <DropdownMenuItem key={type} onSelect={() => download(type)}>
+              <span className="w-10 font-medium">
+                {BARCODE_FILES[type].label}
+              </span>
+              <span className="text-muted-foreground text-xs">
+                {tc(BARCODE_FILES[type].hint)}
+              </span>
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
+  );
+}
+
+/**
+ * The /barcode-generator tool: the form beside the barcode, its downloads
+ * and `renderActions` (Save) under them. Everything happens in the browser.
+ */
+export function BarcodeGenerator({
+  initial,
+  formTop,
+  renderActions,
+  footnote,
+  source = "generator",
+}: BarcodeGeneratorProps = {}) {
+  const t = useTranslations("barcodeTool");
+  const state = useBarcodeGenerator({ initial, source });
 
   return (
     <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
       <div className="flex flex-col gap-5 rounded-xl border border-border bg-card p-5">
         {formTop}
-        <div className="flex flex-col gap-1.5">
-          <Label htmlFor={`${inputId}-format`}>{t("type")}</Label>
-          <Select value={formatId} onValueChange={changeFormat}>
-            <SelectTrigger id={`${inputId}-format`} className="w-full">
-              {/* Just the name; the list shows what each one is for. */}
-              <SelectValue>{format.label}</SelectValue>
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>{t("linear")}</SelectLabel>
-                {LINEAR.map((item) => (
-                  <SelectItem key={item.id} value={item.id}>
-                    {item.label}
-                    <span className="text-muted-foreground">
-                      {" "}
-                      · {tc(item.summary)}
-                    </span>
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-              <SelectGroup>
-                <SelectLabel>2D</SelectLabel>
-                {MATRIX.map((item) => (
-                  <SelectItem key={item.id} value={item.id}>
-                    {item.label}
-                    <span className="text-muted-foreground">
-                      {" "}
-                      · {tc(item.summary)}
-                    </span>
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="flex flex-col gap-1.5">
-          <Label htmlFor={inputId}>
-            {t(linear ? "linearInput" : "textInput")}
-          </Label>
-          {linear ? (
-            <Input
-              id={inputId}
-              aria-describedby={`${inputId}-help`}
-              aria-invalid={!checked.ok}
-              autoComplete="off"
-              className="font-mono"
-              maxLength={format.maxLength}
-              spellCheck={false}
-              value={input}
-              onChange={(event) => setInput(event.target.value)}
-            />
-          ) : (
-            <Textarea
-              id={inputId}
-              aria-describedby={`${inputId}-help`}
-              aria-invalid={!checked.ok}
-              className="font-mono text-sm"
-              maxLength={format.maxLength}
-              rows={3}
-              spellCheck={false}
-              value={input}
-              onChange={(event) => setInput(event.target.value)}
-            />
-          )}
-          <div id={`${inputId}-help`} className="flex flex-col gap-1">
-            {error ? (
-              <p className="text-xs text-destructive" role="alert">
-                {error}
-              </p>
-            ) : checked.ok && checked.note ? (
-              <p className="text-xs text-foreground">{checked.note}</p>
-            ) : null}
-            <p className="text-xs text-muted-foreground">
-              {tc(format.inputHint)}
-            </p>
-          </div>
-        </div>
-
-        <div className="grid gap-4 sm:grid-cols-2">
-          <ColorField
-            label={t("barColor")}
-            value={foreground}
-            onChange={setForeground}
-          />
-          <ColorField
-            label={t("background")}
-            value={background}
-            onChange={setBackground}
-          />
-        </div>
-
-        {linear && (
-          <RangeField
-            label={t("barHeight")}
-            max={60}
-            min={5}
-            readout={`${barHeightMm} mm`}
-            value={barHeightMm}
-            onChange={setBarHeightMm}
-          />
-        )}
-
-        <RangeField
-          label={t("quietZone")}
-          max={maxQuietZone(formatId)}
-          min={0}
-          readout={t("modules", { count: quietZone })}
-          value={quietZone}
-          onChange={setQuietZone}
-        >
-          <p
-            className={cn(
-              "text-xs",
-              quietZoneLow ? "text-destructive" : "text-muted-foreground",
-            )}
-          >
-            {quietZoneLow
-              ? t("quietZoneLow", {
-                  format: format.label,
-                  min: format.quietZone.min,
-                  kind: linear ? "linear" : "matrix",
-                })
-              : t("quietZoneHelp", {
-                  format: format.label,
-                  min: format.quietZone.min,
-                  kind: linear ? "linear" : "matrix",
-                })}
-          </p>
-        </RangeField>
-
-        <RangeField
-          label={t("imageSize")}
-          max={BARCODE_LIMITS.scale.max}
-          min={BARCODE_LIMITS.scale.min}
-          readout={
-            rendered
-              ? `${Math.round(rendered.width)} × ${Math.round(rendered.height)} px`
-              : `${scale}×`
-          }
-          value={scale}
-          onChange={setScale}
-        />
-
-        {linear && (
-          <div className="flex items-center justify-between gap-3">
-            <Label htmlFor={`${inputId}-text`}>
-              {t(TEXT_FORMATS.has(format.id) ? "showText" : "showDigits")}
-            </Label>
-            <Switch
-              id={`${inputId}-text`}
-              checked={showText}
-              onCheckedChange={setShowText}
-            />
-          </div>
-        )}
-
-        <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
-          <Label id={`${inputId}-rotation`}>{t("rotation")}</Label>
-          <ToggleGroup
-            aria-labelledby={`${inputId}-rotation`}
-            onValueChange={(next) => {
-              if (next) setRotation(Number(next) as BarcodeRotation);
-            }}
-            size="sm"
-            type="single"
-            value={String(rotation)}
-            variant="outline"
-          >
-            {BARCODE_ROTATIONS.map((angle) => (
-              <ToggleGroupItem
-                aria-label={t("degrees", { angle })}
-                className="px-2.5 font-mono text-xs tabular-nums"
-                key={angle}
-                value={String(angle)}
-              >
-                {angle}°
-              </ToggleGroupItem>
-            ))}
-          </ToggleGroup>
-        </div>
+        <BarcodeContentFields state={state} />
+        <BarcodeStyleFields state={state} />
       </div>
 
       <div className="flex min-w-0 flex-col gap-4 rounded-xl border border-border bg-card p-5">
-        <div
-          aria-live="polite"
-          className="flex min-h-56 items-center justify-center overflow-hidden rounded-lg border border-border bg-muted/40 p-4"
-        >
-          {rendered ? (
-            // A data URL in an <img>: the SVG never becomes page markup.
-            <img
-              alt={t("alt", { format: format.label, value: value ?? "" })}
-              className="h-auto max-h-80 w-auto max-w-full"
-              height={rendered.height}
-              src={`data:image/svg+xml;charset=utf-8,${encodeURIComponent(rendered.svg)}`}
-              width={rendered.width}
-            />
-          ) : loadError ? (
-            <p className="max-w-xs text-center text-sm text-destructive">
-              {t("loadFailed")}
-            </p>
-          ) : !renderer && checked.ok ? (
-            <Spinner className="size-6 animate-spin text-muted-foreground" />
-          ) : (
-            <p className="max-w-xs text-center text-sm text-muted-foreground">
-              {t("fixInput")}
-            </p>
-          )}
-        </div>
-
-        {rendered && renderer && (
-          <p className="text-xs text-muted-foreground">
-            {t("sizes", {
-              width: Math.round(rendered.width),
-              height: Math.round(rendered.height),
-              widthMm: mm(rendered.widthUnits),
-              heightMm: mm(rendered.heightUnits),
-              moduleMm: mm(renderer.MODULE_UNITS[formatId], 2),
-            })}
-          </p>
-        )}
-
-        {(rendered || colorWarnings.length > 0) && (
-          <div className="flex flex-col gap-2 border-t border-border pt-3">
-            {rendered && (
-              <ScanStatus
-                checking={checking}
-                label={format.label}
-                result={scan}
-                value={value ?? ""}
-              />
-            )}
-            {colorWarnings.map((warning) => (
-              <Notice key={warning.message} warning={warning} />
-            ))}
-          </div>
-        )}
-
-        <div className="mt-auto grid grid-cols-4 gap-2">
-          {MAIN_FILES.map((type) => (
-            <Button
-              key={type}
-              disabled={!canDownload}
-              onClick={() => download(type)}
-              variant={type === "png" ? "default" : "outline"}
-            >
-              {downloading === type ? (
-                <Spinner className="size-4 animate-spin" />
-              ) : (
-                <Download aria-hidden className="size-4" />
-              )}
-              {BARCODE_FILES[type].label}
-            </Button>
-          ))}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button disabled={!canDownload} variant="outline">
-                {downloading && MORE_FILES.includes(downloading) ? (
-                  <Spinner className="size-4 animate-spin" />
-                ) : null}
-                {t("more")}
-                <ArrowDown2 aria-hidden className="size-3.5 opacity-70" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-64">
-              <DropdownMenuLabel>{t("moreFormats")}</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              {MORE_FILES.map((type) => (
-                <DropdownMenuItem key={type} onSelect={() => download(type)}>
-                  <span className="w-10 font-medium">
-                    {BARCODE_FILES[type].label}
-                  </span>
-                  <span className="text-muted-foreground text-xs">
-                    {tc(BARCODE_FILES[type].hint)}
-                  </span>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-        {renderActions?.(current)}
+        <BarcodePreview state={state} />
+        <BarcodeDownloads className="mt-auto" state={state} />
+        {renderActions?.(state.current)}
         {footnote === null ? null : (
           <p className="text-center text-[11px] text-muted-foreground text-pretty">
             {footnote ?? t("footnote")}

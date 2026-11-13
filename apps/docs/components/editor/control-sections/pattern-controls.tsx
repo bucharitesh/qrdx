@@ -1,9 +1,10 @@
 "use client";
 
+import { CANONICAL_ORIGIN } from "@repo/config";
 import { cn } from "@repo/design-system/lib/utils";
 import { ArrowDown2 } from "iconsax-reactjs";
 import { useTranslations } from "next-intl";
-import { getAllTemplates, getStylePairRisk, QRCodeSVG } from "qrdx";
+import { getAllTemplates, QRCodeSVG } from "qrdx";
 import type {
   BodyPattern,
   CornerEyeDotPattern,
@@ -27,6 +28,7 @@ import {
   OptionTile,
   ShapePicker,
 } from "./option-tiles";
+import { pairBlocked, pairRisk } from "./pair-rules";
 import {
   BODY_CATEGORY,
   BODY_FEATURED,
@@ -37,31 +39,6 @@ import {
   EYE_PRESET_FEATURED,
   EYE_PRESETS,
 } from "./shape-catalog";
-
-/** ENGINE's known-weak style pairs (qrdx scan-risk), as a short reason. */
-function pairRisk(style: QRStyle, change: Partial<QRStyle>) {
-  const next = { ...style, ...change };
-  const risk = getStylePairRisk({
-    bodyPattern: next.bodyPattern,
-    cornerEyePattern: next.cornerEyePattern,
-    cornerEyeDotPattern: next.cornerEyeDotPattern,
-  });
-  return risk ? `${risk.message}. ${risk.fix}.` : null;
-}
-
-/**
- * Pairs that fail our decode tests (body × eye, centre × eye) can't be
- * picked together: the tile is disabled instead of hiding either shape.
- */
-function pairBlocked(style: QRStyle, change: Partial<QRStyle>) {
-  const next = { ...style, ...change };
-  const kind = getStylePairRisk({
-    bodyPattern: next.bodyPattern,
-    cornerEyePattern: next.cornerEyePattern,
-    cornerEyeDotPattern: next.cornerEyeDotPattern,
-  })?.kind;
-  return kind === "body-eye" || kind === "dot-eye";
-}
 
 /** The top-left finder drawn by the real renderer: outer and centre together. */
 function EyePairSwatch({
@@ -89,7 +66,7 @@ function EyePairSwatch({
         level="L"
         margin={0}
         size={210}
-        value="https://qrdx.dev"
+        value={CANONICAL_ORIGIN}
       />
     </svg>
   );
@@ -172,7 +149,7 @@ export function DotPatternControl() {
  */
 export function EyeControls() {
   const t = useTranslations("editor.controlSections.patternControls");
-  const { style, setStyle, set } = useStyleSetter();
+  const { style, setStyle } = useStyleSetter();
   const outer = (style.cornerEyePattern || "square") as CornerEyePattern;
   const centre = (style.cornerEyeDotPattern || "circle") as CornerEyeDotPattern;
   const preset = EYE_PRESETS.find(
@@ -256,44 +233,62 @@ export function EyeControls() {
         </button>
         {custom && (
           <div className="space-y-4 border-t px-3 pt-3 pb-3" id={customId}>
-            <ShapePicker
-              category={(id) => EYE_CATEGORY[id] ?? "decorative"}
-              featured={EYE_FEATURED}
-              label={t("outerEyeShape")}
-              noun={t("outerShapes")}
-              onChange={(id) => set("cornerEyePattern", id)}
-              options={eyePatterns}
-              preview={(id) => (
-                <span className={fill}>
-                  <EyePatterns pattern={id} />
-                </span>
-              )}
-              blockedOf={(id) => pairBlocked(style, { cornerEyePattern: id })}
-              riskOf={(id) => pairRisk(style, { cornerEyePattern: id })}
-              value={outer}
-            />
-            <ShapePicker
-              category={(id) => EYE_DOT_CATEGORY[id] ?? "decorative"}
-              featured={EYE_DOT_FEATURED}
-              label={t("innerEyeShape")}
-              noun={t("centerShapes")}
-              onChange={(id) => set("cornerEyeDotPattern", id)}
-              options={eyeDotPatterns}
-              preview={(id) => (
-                <span className={fill}>
-                  <EyeDotPatterns pattern={id} />
-                </span>
-              )}
-              blockedOf={(id) =>
-                pairBlocked(style, { cornerEyeDotPattern: id })
-              }
-              riskOf={(id) => pairRisk(style, { cornerEyeDotPattern: id })}
-              value={centre}
-            />
+            <EyeOuterShapeControl />
+            <EyeCentreShapeControl />
           </div>
         )}
       </div>
     </div>
+  );
+}
+
+/** The eyes' outer ring on its own (any centre). */
+export function EyeOuterShapeControl() {
+  const t = useTranslations("editor.controlSections.patternControls");
+  const { style, set } = useStyleSetter();
+  const outer = (style.cornerEyePattern || "square") as CornerEyePattern;
+  return (
+    <ShapePicker
+      category={(id) => EYE_CATEGORY[id] ?? "decorative"}
+      featured={EYE_FEATURED}
+      label={t("outerEyeShape")}
+      noun={t("outerShapes")}
+      onChange={(id) => set("cornerEyePattern", id)}
+      options={eyePatterns}
+      preview={(id) => (
+        <span className={fill}>
+          <EyePatterns pattern={id} />
+        </span>
+      )}
+      blockedOf={(id) => pairBlocked(style, { cornerEyePattern: id })}
+      riskOf={(id) => pairRisk(style, { cornerEyePattern: id })}
+      value={outer}
+    />
+  );
+}
+
+/** The eyes' centre on its own (any outer ring). */
+export function EyeCentreShapeControl() {
+  const t = useTranslations("editor.controlSections.patternControls");
+  const { style, set } = useStyleSetter();
+  const centre = (style.cornerEyeDotPattern || "circle") as CornerEyeDotPattern;
+  return (
+    <ShapePicker
+      category={(id) => EYE_DOT_CATEGORY[id] ?? "decorative"}
+      featured={EYE_DOT_FEATURED}
+      label={t("innerEyeShape")}
+      noun={t("centerShapes")}
+      onChange={(id) => set("cornerEyeDotPattern", id)}
+      options={eyeDotPatterns}
+      preview={(id) => (
+        <span className={fill}>
+          <EyeDotPatterns pattern={id} />
+        </span>
+      )}
+      blockedOf={(id) => pairBlocked(style, { cornerEyeDotPattern: id })}
+      riskOf={(id) => pairRisk(style, { cornerEyeDotPattern: id })}
+      value={centre}
+    />
   );
 }
 
@@ -324,7 +319,7 @@ export function BorderControl() {
               fgColor="#000000"
               size={56}
               templateId={template.id}
-              value="https://qrdx.dev"
+              value={CANONICAL_ORIGIN}
             />
           </OptionTile>
         ))}
@@ -353,7 +348,7 @@ export function ErrorLevelControl() {
               fgColor="#000000"
               level={level.id}
               size={48}
-              value="https://qrdx.dev"
+              value={CANONICAL_ORIGIN}
             />
           </OptionTile>
         ))}

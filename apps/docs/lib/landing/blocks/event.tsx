@@ -1,3 +1,4 @@
+import { CANONICAL_HOST } from "@repo/config";
 import { cn } from "@repo/design-system/lib/utils";
 import {
   Calendar1 as CalendarDays,
@@ -193,7 +194,7 @@ export function EventBlock({
                   demoFile={
                     context.demo
                       ? {
-                          href: `data:text/calendar;charset=utf-8,${encodeURIComponent(buildIcs(calendar, { uid: `${id}@demo.qrdx.dev` }))}`,
+                          href: `data:text/calendar;charset=utf-8,${encodeURIComponent(buildIcs(calendar, { uid: `${id}@demo.${CANONICAL_HOST}` }))}`,
                           filename: icsFilename(props.title),
                         }
                       : undefined

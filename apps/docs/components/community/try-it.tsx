@@ -1,5 +1,6 @@
 "use client";
 
+import { CANONICAL_ORIGIN } from "@repo/config";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import { useTranslations } from "next-intl";
@@ -7,7 +8,7 @@ import { useId, useState } from "react";
 import type { ThemeStyles } from "@/types/theme";
 import { DesignQr } from "./design-qr";
 
-const SAMPLE = "https://qrdx.dev/community";
+const SAMPLE = `${CANONICAL_ORIGIN}/community`;
 
 /** The item's design with the visitor's own link, drawn in the browser. */
 export function TryIt({ style }: { style: ThemeStyles }) {

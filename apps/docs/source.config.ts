@@ -19,6 +19,7 @@ import type { ElementContent } from "hast";
 import rehypeKatex from "rehype-katex";
 import remarkMath from "remark-math";
 import { z } from "zod";
+import { docsIndex } from "./lib/docs-index-plugin";
 import { fillFactsDeep } from "./lib/product-facts";
 import { remarkNpmStatus } from "./lib/remark-npm-status";
 import { remarkProductFacts } from "./lib/remark-product-facts";
@@ -41,9 +42,9 @@ export const docs = defineDocs({
         _openapi: z.looseObject({}).optional(),
       })
       .transform(fillFactsDeep),
-    postprocess: {
-      includeProcessedMarkdown: true,
-    },
+    // No `postprocess.includeProcessedMarkdown`: each page's Markdown (the
+    // .md and llms routes) comes from the docs index (lib/docs-index.ts), so
+    // the compiled pages don't carry a copy.
   },
   meta: {
     schema: metaSchema.extend({
@@ -75,6 +76,30 @@ export const changelog = defineDocs({
           }),
         )
         .optional(),
+      /**
+       * A 16:9 picture (1600×900): a site path such as
+       * /changelog/<slug>/cover.webp, or a media key (lib/media.ts). Entries
+       * with one show as cards in the app's sidebar and on /changelogs.
+       */
+      image: z.string().optional(),
+      /** The picture in the dark theme */
+      imageDark: z.string().optional(),
+      /** What the picture shows */
+      imageAlt: z.string().optional(),
+      /** A clip's media key (/videos/…, served through lib/media.ts) */
+      video: z.string().optional(),
+      /** "Try it" in the app's modal; an in-app path */
+      cta: z
+        .object({
+          label: z.string().optional(),
+          href: z.string().regex(/^\/(?!\/)/, "an in-app path, like /settings"),
+        })
+        .optional(),
+      /**
+       * Opens the entry in the app once by itself, for people who joined
+       * before it (components/app-shell/whats-new.tsx). One per release.
+       */
+      announce: z.boolean().optional(),
     }),
   },
 });
@@ -216,6 +241,9 @@ export default defineConfig({
     lastModified({
       versionControl: hasGit ? "git" : async () => undefined,
     }),
+    // .source/docs.ts, .source/content.ts and the docs index the route
+    // handlers read (lib/docs-index.ts), so the build compiles the docs once.
+    docsIndex({ collection: "docs" }),
   ],
   mdxOptions: {
     rehypeCodeOptions: {

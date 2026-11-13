@@ -1,0 +1,66 @@
+---
+title: "Smart routing"
+description: "Arahkan setiap pemindaian kode QR dinamis ke URL yang berbeda berdasarkan perangkat, negara, area, bahasa, waktu, atau jumlah pemindaian, jalankan A/B test, dan tambahkan parameter UTM."
+icon: Split
+---
+
+[Kode QR dinamis](/docs/dynamic-qr-codes) biasanya mengarahkan setiap pemindaian ke satu tujuan. Dengan smart routing, satu kode yang dicetak dapat membuka App Store di iPhone dan Google Play di Android, halaman berbahasa Spanyol untuk pengunjung berbahasa Spanyol, atau penawaran berbeda di luar jam kerja. Anda mengaturnya di panel **Smart routing** pada halaman kode di [dasbor](/dashboard?to=codes) (buka sebuah kode, lalu buka tab **Settings**).
+
+Smart routing dan parameter UTM tersedia di Pro dan Business. Fitur ini berlaku untuk kode yang membuka tautan situs web; [halaman yang di-hosting](/docs/landing-pages) tidak melakukan pengalihan, sehingga tidak memiliki routing.
+
+## Cara kerja aturan [#how-rules-work]
+
+- Satu kode dapat memiliki hingga 20 **aturan**. Setiap aturan memiliki kondisi ("ketika") dan tindakan ("maka").
+- Aturan diperiksa **dari atas ke bawah** untuk setiap pemindaian. **Aturan pertama yang semua kondisinya cocok** menentukan ke mana pemindaian diarahkan. Gunakan tanda panah untuk mengubah urutan aturan.
+- Jika tidak ada aturan yang cocok, pemindaian diarahkan ke tujuan utama kode.
+- Aturan tanpa kondisi cocok dengan setiap pemindaian, sehingga aturan di bawahnya tidak pernah dijalankan.
+- **Nonaktifkan** aturan untuk menyimpannya tanpa menggunakannya.
+- Perubahan berlaku pada pemindaian berikutnya; Anda tidak perlu mencetak ulang kode.
+
+Jika suatu aturan karena alasan tertentu tidak dapat dievaluasi, pemindaian tetap diarahkan ke tujuan utama: routing tidak pernah membuat kode berhenti berfungsi.
+
+## Kondisi [#conditions]
+
+Setiap kondisi dapat dibalik dengan **is not** (misalnya "country is not US").
+
+| Kondisi | Cocok ketika | Catatan |
+| --- | --- | --- |
+| Perangkat | Pemindai menggunakan ponsel, tablet, desktop, atau perangkat lain | Berdasarkan user agent browser |
+| Sistem operasi | iOS, Android, Windows, macOS, Linux, ChromeOS, HarmonyOS, … | iPhone dan iPad sama-sama dihitung sebagai iOS |
+| Negara | Pemindaian berasal dari salah satu negara yang tercantum | Kode 2 huruf seperti `US, CA, GB` |
+| Wilayah | Pemindaian berasal dari salah satu wilayah yang tercantum | Kode seperti `US-CA, US-NY` (negara + subdivisi) |
+| Bahasa | Bahasa browser pilihan pengunjung adalah salah satu yang tercantum | `es` cocok dengan semua varian bahasa Spanyol (`es-MX`, `es-ES`); `pt-BR` hanya bahasa Portugis Brasil |
+| Waktu dalam sehari | Pemindaian terjadi pada hari-hari yang dipilih di antara dua waktu dalam zona waktu yang Anda pilih | Rentang seperti 22:00–02:00 berlanjut melewati tengah malam dan termasuk dalam hari saat rentang itu dimulai |
+| Rentang tanggal | Pemindaian terjadi di antara dua tanggal | Kosongkan salah satu sisi untuk "sampai" atau "mulai dari"; tanggal mengikuti zona waktu browser Anda |
+| Jumlah pemindaian | Termasuk N pemindaian pertama, atau pemindaian apa pun setelah N | Menghitung pemindaian yang tercatat (bot tidak dihitung), sehingga hasilnya perkiraan ketika banyak orang memindai bersamaan |
+| Area | Pemindai berada dalam radius (100 m hingga 500 km) dari suatu titik | Menggunakan lokasi yang dibagikan pemindai saat [lokasi presisi](/docs/precise-location) aktif, jika tidak, menggunakan perkiraan lokasi dari alamat IP mereka |
+
+Negara, wilayah, dan lokasi berbasis IP untuk area berasal dari alamat IP pemindai, yang tidak pernah disimpan oleh QRdx. Ketika lokasi tidak diketahui, kondisi lokasi tidak cocok (dan kondisi "is not" cocok). [Lokasi presisi dan geofencing](/docs/precise-location) menjelaskan area, termasuk cara membuat kode hanya berfungsi di dalam satu area.
+
+## Tautan aplikasi pintar [#smart-app-links]
+
+Pilih **Add rule → Smart app link** untuk membuat dua aturan sekaligus: iOS diarahkan ke tautan App Store Anda, Android ke tautan Google Play Anda. Semua pengguna lain (desktop, ponsel lain) diarahkan ke tujuan utama, misalnya situs web Anda.
+
+## A/B test [#ab-tests]
+
+Atur tindakan aturan ke **Split between URLs (A/B)** dan tambahkan 2 hingga 5 varian, masing-masing dengan URL dan bobot. Pembagian 70 dan 30 mengarahkan sekitar 70% pengunjung ke URL pertama.
+
+- Penetapan bersifat **tetap**: pengunjung yang memindai lagi pada hari yang sama mendapatkan varian yang sama. Penetapan ini didasarkan pada hash pengunjung harian yang anonim, bukan cookie.
+- Analitik kode menampilkan **pemindaian per varian** sejak varian atau bobot pembagian terakhir diubah. Setiap pemindaian menyimpan varian yang ditampilkan. Pemindaian yang tercatat sebelum QRdx menyimpan varian diputar ulang dengan aturan Anda saat ini dan kartunya ditandai sebagai perkiraan.
+- Pembagian juga dapat memiliki kondisi, misalnya "A/B test hanya untuk pengunjung di Jerman".
+
+## Uji aturan Anda [#test-your-rules]
+
+**Test your rules** di bagian bawah panel menunjukkan ke mana sebuah pemindaian akan diarahkan, untuk perangkat, sistem operasi, negara, wilayah, bahasa, tanggal dan waktu, nomor pemindaian, dan pengunjung apa pun, menggunakan perubahan Anda yang belum disimpan. Panel ini menampilkan aturan mana yang cocok dan alasan aturan lain tidak cocok, serta menampilkan URL akhir termasuk parameter UTM.
+
+## Parameter UTM [#utm-parameters]
+
+Panel **UTM parameters** menambahkan `utm_source`, `utm_medium`, `utm_campaign`, `utm_term`, `utm_content`, dan hingga 10 parameter buatan Anda sendiri ke URL yang dibuka setiap pemindaian, sehingga alat analitik dapat membedakan lalu lintas QR.
+
+- Parameter ditambahkan setelah routing, ke URL mana pun yang menjadi tujuan pemindaian.
+- Parameter yang sudah ada di URL tidak pernah diganti, dan bagian URL lainnya dipertahankan persis seperti yang Anda masukkan.
+- Nama yang diawali `qrdx_` dicadangkan untuk [pelacakan konversi](/docs/tracking-and-conversions).
+
+## Paket dan penurunan paket [#plans-and-downgrades]
+
+Aturan dan parameter UTM yang disimpan di Pro tetap berfungsi jika Anda menurunkan paket: batas hanya mencegah pembuatan hal baru. Tanpa Pro, Anda masih dapat menonaktifkan dan menghapus aturan atau menghapus parameter UTM; untuk mengubahnya, Anda memerlukan Pro lagi.

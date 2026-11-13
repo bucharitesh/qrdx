@@ -1,0 +1,98 @@
+{
+  "id": "event-booth",
+  "name": "Exhibitor booth",
+  "description": "A folder tab on top carrying the label and a laptop.",
+  "category": "use-case",
+  "collection": "events",
+  "contentTypes": ["url"],
+  "tags": ["conference", "events", "trade show", "booth"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1560
+    },
+    "qr": {
+      "x": 120,
+      "y": 290,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#8a8a8a"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1000,
+        "height": 220,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 170,
+        "width": 1240,
+        "height": 1390,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 170,
+        "width": 200,
+        "height": 100,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M852.8 59.2L927.2 59.2A6 6 0 0 1 933.2 65.2L933.2 113.2A6 6 0 0 1 927.2 119.2L852.8 119.2A6 6 0 0 1 846.8 113.2L846.8 65.2A6 6 0 0 1 852.8 59.2ZM856.4 66.4A2.4 2.4 0 0 0 854 68.8L854 109.6A2.4 2.4 0 0 0 856.4 112L923.6 112A2.4 2.4 0 0 0 926 109.6L926 68.8A2.4 2.4 0 0 0 923.6 66.4L856.4 66.4ZM834.8 124L945.2 124L938 138.4L842 138.4Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M882.2 126.4A1.8 1.8 0 0 0 880.4 128.2L880.4 128.2A1.8 1.8 0 0 0 882.2 130L897.8 130A1.8 1.8 0 0 0 899.6 128.2L899.6 128.2A1.8 1.8 0 0 0 897.8 126.4L882.2 126.4Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Visit our booth",
+        "color": "text",
+        "box": {
+          "x": 60,
+          "y": 25,
+          "width": 740,
+          "height": 150
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan for a demo",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 1400,
+          "width": 1000,
+          "height": 100
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

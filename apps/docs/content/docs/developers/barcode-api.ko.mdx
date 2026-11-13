@@ -1,0 +1,163 @@
+---
+title: "Barcode API"
+description: "API 키 없이 URL만으로 EAN, UPC, Code 128, Data Matrix 등 다양한 바코드 이미지를 만들고, REST API로 워크스페이스에 바코드를 보관하세요."
+icon: Barcode
+---
+
+`GET https://api.qrdx.dev/v1/barcode`는 바코드 이미지를 반환합니다. 모든 값을 쿼리 문자열에 담기 때문에 URL 자체가 이미지입니다. `<img>` 태그, 상품 피드, 라벨 템플릿에 그대로 넣을 수 있습니다. [바코드 생성기](/barcode-generator)와 같은 {facts.barcodeFormats}개 형식을 같은 규칙으로 그리며, 결과도 같은 SVG입니다.
+
+```html
+<img
+  src="https://api.qrdx.dev/v1/barcode?format=ean13&data=590123412345"
+  alt="EAN-13 barcode 5901234123457"
+/>
+```
+
+위 숫자는 한 자리가 모자라서 체크 디지트(7)가 추가됩니다. 13자리를 모두 보내면 체크 디지트를 검증하며, 틀린 경우 `400`을 반환하고 올바른 값을 알려 줍니다.
+
+계정이나 API 키는 필요 없습니다. 워크스페이스에 바코드를 보관하고 나중에 수정하려면 [저장된 바코드](#saved-barcodes)를 사용하세요.
+
+## 예시 [#examples]
+
+모듈당 3픽셀의 PNG입니다(셸이 `&`를 그대로 유지하도록 URL을 따옴표로 감싸세요).
+
+```bash
+curl -o box.png "https://api.qrdx.dev/v1/barcode?format=ean13&data=5901234123457&type=png&scale=3"
+```
+
+각 Application Identifier를 괄호로 묶은 GS1-128 물류 라벨의 벡터 PDF입니다.
+
+```bash
+curl -o pallet.pdf "https://api.qrdx.dev/v1/barcode?format=gs1-128&type=pdf&data=(01)09501101530003(17)261231(10)AB-123"
+```
+
+`&`, `#`, `+` 또는 공백이 들어 있는 값은 인코딩하세요. 예를 들어 JavaScript에서는 `encodeURIComponent`를 사용할 수 있습니다.
+
+막대 아래 텍스트가 없고 90° 회전한 진한 파란색 Code 128 선반 라벨입니다.
+
+```txt
+https://api.qrdx.dev/v1/barcode?format=code128&data=SHELF-A12&fg=1e3a8a&text=false&rotate=90
+```
+
+여백을 넓힌 Data Matrix입니다.
+
+```txt
+https://api.qrdx.dev/v1/barcode?format=datamatrix&data=SN-0042-7781&quietZone=4
+```
+
+## 매개변수 [#parameters]
+
+| 매개변수 | 기본값 | 설명 |
+| --- | --- | --- |
+| `format` | 필수 | 바코드 종류입니다. [형식](#formats)을 참고하세요. 대소문자와 대시는 구분하지 않아서 `EAN-13`도 사용할 수 있습니다 |
+| `data` | 필수 | 인코딩할 숫자 또는 텍스트로, 최대 1,000자입니다(대부분의 선형 형식은 더 적습니다) |
+| `type` | `svg` | `svg`, `png`, `jpg`, `webp`, `avif`, `pdf` 또는 `eps` |
+| `scale` | `4` | PNG, JPG, WebP, AVIF에서 모듈당 픽셀 수로, `1`~`10`입니다 |
+| `height` | 형식에 따라 다름 | 벡터 크기 기준 선형 바코드의 막대 높이(밀리미터)로, `5`~`60`입니다(EAN-13은 23) |
+| `quietZone` | 형식의 최소값 | 모듈 단위의 빈 여백입니다. 선형 바코드는 양쪽 옆(`0`~`20`), 2D 코드는 사방(`0`~`10`)에 적용됩니다 |
+| `text` | `true` | 선형 바코드 아래에 숫자 또는 텍스트를 출력합니다 |
+| `fg` | `000000` | 막대와 텍스트 색상(16진수)입니다 |
+| `bg` | `ffffff` | 배경 색상(16진수)입니다 |
+| `rotate` | `0` | 시계 방향 회전: `0`, `90`, `180` 또는 `270` |
+
+색상은 `#` 없이 쓰거나 `%23`으로 인코딩하세요.
+
+## 형식 [#formats]
+
+| `format` | 바코드 | 입력값 |
+| --- | --- | --- |
+| `ean13` | EAN-13 | 12자리(체크 디지트 추가) 또는 13자리(검증) |
+| `ean8` | EAN-8 | 7자리 또는 8자리 |
+| `upca` | UPC-A | 11자리 또는 12자리 |
+| `upce` | UPC-E | 6~8자리, 또는 줄일 수 있는 12자리 UPC-A |
+| `itf14` | ITF-14 | 13자리 또는 14자리 |
+| `gs1-128` | GS1-128 | 괄호로 묶은 Application Identifier와 값. GTIN과 SSCC의 체크 디지트는 추가 또는 검증되며, 데이터는 최대 48자입니다 |
+| `code128` | Code 128 | 출력 가능한 ASCII 문자 최대 80자 |
+| `code39` | Code 39 | 대문자, 숫자, 공백, `- . $ / + %` 최대 40자 |
+| `datamatrix` | Data Matrix | 최대 1,000자의 모든 텍스트 |
+| `pdf417` | PDF417 | 최대 1,000자의 모든 텍스트 |
+| `aztec` | Aztec | 최대 1,000자의 모든 텍스트 |
+
+소매용 번호(EAN, UPC, ITF-14, GS1-128의 GTIN)는 GS1이 기업에 라이선스로 부여합니다. API는 유효한 번호라면 무엇이든 그려 주지만, 번호를 발급하거나 등록하지는 않습니다.
+
+## 크기 [#sizes]
+
+PNG, JPG, WebP, AVIF는 모듈(가장 좁은 막대의 너비)당 `scale` 픽셀입니다. 2D 셀의 너비는 2모듈입니다.
+
+SVG, PDF, EPS는 모듈당 1포인트(0.353mm)의 벡터입니다. 따라서 기본값의 EAN-13은 정격 크기의 약 107%로 인쇄됩니다. 벡터 파일은 레이아웃에서 크기를 조정하세요. 소매용 바코드는 80%~200% 범위를 유지하고 막대 높이를 자르지 마세요.
+
+## 응답 [#responses]
+
+요청이 성공하면 다음 헤더와 함께 파일을 반환합니다.
+
+- 파일 형식에 맞는 `Content-Type`. EPS는 다운로드로 제공되고(`Content-Disposition: attachment`), 나머지는 `ean13-5901234123457.png` 같은 파일 이름으로 인라인으로 열립니다
+- `Cache-Control: public, max-age=31536000, immutable`: 같은 쿼리는 항상 같은 바이트를 반환합니다
+- `Access-Control-Allow-Origin: *`: 어떤 웹사이트에서든 `fetch`할 수 있습니다
+
+매개변수가 없거나 잘못되었거나 형식이 담을 수 없는 값이면 `400`을 반환하고 문제를 알려 줍니다.
+
+```json
+{
+  "code": "VALIDATION_ERROR",
+  "message": "Invalid query parameters",
+  "data": {
+    "details": [
+      {
+        "param": "data",
+        "message": "EAN-13: The check digit should be 7, not 8. Check the number, or leave the last digit off and it's worked out for you."
+      }
+    ]
+  },
+  "status": 400
+}
+```
+
+## URL에 값을 노출하지 않기 [#keep-the-value-out-of-the-url]
+
+`POST https://api.qrdx.dev/v1/barcode`는 같은 필드를 JSON으로 받아 같은 파일을 캐시 없이 반환합니다. URL처럼 값이 로그, 기록, 캐시에 남으면 안 될 때 사용하세요.
+
+```bash
+curl -o label.png https://api.qrdx.dev/v1/barcode \
+  -H "Content-Type: application/json" \
+  -d '{"format":"datamatrix","data":"Internal note 42","type":"png"}'
+```
+
+JSON에서 `text`는 불리언이고 `scale`, `height`, `quietZone`, `rotate`는 숫자입니다.
+
+## 저장된 바코드 [#saved-barcodes]
+
+[API 키](/docs/developers/api-keys)를 사용하면 REST API가 키의 워크스페이스에 바코드를 보관하며, 대시보드의 **Barcodes**에 표시됩니다. 스코프는 코드와 같습니다. 목록 조회와 다운로드는 `codes:read`, 변경은 `codes:write`입니다.
+
+```bash
+curl https://api.qrdx.dev/v1/barcodes \
+  -H "Authorization: Bearer $QRDX_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"format":"ean13","value":"590123412345","title":"Spring box"}'
+```
+
+| 엔드포인트 | 기능 |
+| --- | --- |
+| [`GET /v1/barcodes`](/docs/developers/api/list-barcodes) | 최근 변경순으로 목록을 조회합니다. `q`, `format`, `folderId`, `status=trash`로 필터링할 수 있습니다 |
+| [`POST /v1/barcodes`](/docs/developers/api/create-barcode) | 바코드를 하나 저장합니다. `options`에는 `foreground`, `background`, `showText`, `barHeightMm`, `quietZone`, `scale`, `rotation`을 사용할 수 있습니다 |
+| [`GET /v1/barcodes/{id}`](/docs/developers/api/get-barcode) | 바코드 하나를 조회합니다 |
+| [`PATCH /v1/barcodes/{id}`](/docs/developers/api/update-barcode) | 제목, 형식, 값, 옵션, 폴더를 변경합니다 |
+| [`DELETE /v1/barcodes/{id}`](/docs/developers/api/delete-barcode) | 휴지통으로 옮깁니다. `?permanent=true`를 붙이면 완전히 삭제합니다 |
+| [`GET /v1/barcodes/{id}/image`](/docs/developers/api/get-saved-barcode-image) | 저장된 대로 그린 파일입니다. `type`과 `scale`은 위와 같습니다 |
+
+저장된 각 바코드에는 `imageUrl`이 있습니다. 이는 `GET /v1/barcode`와 같은 이미지이며, 링크를 가진 누구나 불러올 수 있습니다. `/image` 엔드포인트는 비공개이며 키가 필요합니다.
+
+모든 요금제에서 바코드를 저장할 수 있습니다. 휴지통을 제외하고 무료는 최대 1,000개, Pro는 10,000개, Business는 100,000개입니다. 이 요청은 워크스페이스의 일일 API 할당량에 포함되며, [REST API](/docs/developers/rest-api)처럼 `X-RateLimit-*` 헤더를 보냅니다.
+
+## MCP [#mcp]
+
+[MCP 서버](/docs/developers/mcp)에는 값을 검증하고 이미지 URL과 함께 PNG를 반환하는 `generate_barcode`와, 연결된 API 키의 워크스페이스에 저장하는 `save_barcode`가 있습니다.
+
+## 제한 [#limits]
+
+- **요청 제한:** `GET` 및 `POST /v1/barcode`는 [QR Image API](/docs/developers/image-api)와 마찬가지로 IP 주소당 분당 300회입니다. 제한을 넘으면 `Retry-After` 헤더와 함께 `429`를 받습니다. 저장된 바코드는 REST API의 분당 제한과 일일 할당량을 따릅니다.
+- **이미지 크기:** 래스터 이미지는 한 변이 최대 6,000픽셀입니다. 긴 값에는 `scale`을 낮추세요.
+- **여기서는 스캔 확인을 하지 않습니다.** [바코드 생성기](/barcode-generator)는 다운로드 전에 그린 결과를 디코딩해 확인하지만, API는 요청한 대로 그리기만 합니다. 테스트 인쇄를 한 뒤 실제로 읽을 스캐너로 스캔해 보세요.
+
+## 셀프 호스팅 [#self-hosting]
+
+이 엔드포인트는 QRdx 웹 앱에 포함되어 있으므로, [셀프 호스팅](/docs/self-hosting)한 인스턴스에서는 자체 도메인의 `/api/v1/barcode`와 `/api/v1/barcodes`로 제공됩니다.

@@ -8,8 +8,8 @@ import {
 import { getDefaultThemeStyle } from "@/app/(app)/dashboard/themes/_lib/queries";
 import { withApiUsage } from "@/lib/analytics/usage";
 import { withApiQuotaHeaders } from "@/lib/api-quota";
-import { formatCount } from "@/lib/bulk-limits";
 import { HttpError, handleError } from "@/lib/error-response";
+import { formatCount } from "@/lib/format-count";
 import { parseWithSchema, readJsonBody } from "@/lib/request-guards";
 import { ValidationError } from "@/types/errors";
 import {

@@ -1,4 +1,4 @@
-import { env } from "@/lib/env";
+import { env } from "@/env";
 import { debugLog, isAnalyticsRuntime } from "./config";
 import type { CleanProps } from "./events";
 import { hasPrivacySignal, safeTitle, sanitizeUrl } from "./privacy";

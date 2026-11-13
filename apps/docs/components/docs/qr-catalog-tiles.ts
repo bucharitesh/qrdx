@@ -1,3 +1,4 @@
+import { CANONICAL_HOST, CANONICAL_ORIGIN } from "@repo/config";
 import type { QRProps } from "qrdx";
 import {
   BODY_CATALOG,
@@ -12,7 +13,7 @@ import {
 // playground, and the client part, which draws and decodes them.
 
 /** What every tile encodes; the browser check decodes it back. */
-export const CATALOG_VALUE = "https://qrdx.dev/docs/styles";
+export const CATALOG_VALUE = `${CANONICAL_ORIGIN}/docs/styles`;
 
 const PLAIN = {
   bodyPattern: "square",
@@ -31,6 +32,36 @@ export interface CatalogTile {
 }
 
 export type QrCatalogKind = "body" | "eye" | "dot" | "frame";
+
+export const CATALOG_KINDS: readonly QrCatalogKind[] = [
+  "body",
+  "eye",
+  "dot",
+  "frame",
+];
+
+/** How big a tile's code is drawn (frames grow around the code). */
+export const tileSize = (kind: QrCatalogKind): number =>
+  kind === "frame" ? 120 : 132;
+
+/**
+ * A tile's code as an SVG file (app/catalog/[file]/route.ts), drawn by the
+ * engine and prerendered at build time, so the page loads them as lazy
+ * images instead of carrying every SVG in its HTML.
+ */
+export const catalogTileSrc = (tile: Pick<CatalogTile, "id">): string =>
+  `/catalog/${encodeURIComponent(tile.id)}.svg`;
+
+/** The tile with this id, and its kind; undefined for any other id. */
+export function findCatalogTile(
+  id: string,
+): { kind: QrCatalogKind; tile: CatalogTile } | undefined {
+  for (const kind of CATALOG_KINDS) {
+    const tile = tilesFor(kind).find((item) => item.id === id);
+    if (tile) return { kind, tile };
+  }
+  return undefined;
+}
 
 export function tilesFor(kind: QrCatalogKind): CatalogTile[] {
   switch (kind) {
@@ -82,7 +113,7 @@ export function tilesFor(kind: QrCatalogKind): CatalogTile[] {
           frame: {
             style: item.value,
             text: "Scan me",
-            ...(item.secondLine && { secondaryText: "qrdx.dev" }),
+            ...(item.secondLine && { secondaryText: CANONICAL_HOST }),
           },
         },
       }));

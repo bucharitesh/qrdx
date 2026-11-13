@@ -1,7 +1,7 @@
 // Workspace single sign-on lives in `ee/` folders under the QRdx commercial
 // licence. It runs only where QRDX_EE_LICENSE is set: ./server.ts registers
 // the plugin and its routes, and the app shows SSO
-// (apps/docs/lib/feature-availability-rules.ts "sso"). Any non-empty value
+// (packages/availability/rules.ts "sso"). Any non-empty value
 // turns it on; nothing is checked over the network. Pure and client-safe.
 
 export const EE_LICENSE_ENV = "QRDX_EE_LICENSE";

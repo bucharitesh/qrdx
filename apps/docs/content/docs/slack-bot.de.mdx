@@ -1,0 +1,107 @@
+---
+title: "Slack-Bot"
+description: "Erstelle und style QR-Codes in Slack mit /qr, einer Erwähnung, einer Direktnachricht oder einer Nachrichtenaktion – und verfolgte Codes, sobald du deinen QRdx-Account verknüpfst."
+icon: Bot
+---
+
+QRdx hat eine Slack-App, die QR-Codes direkt in Slack erstellt. Alle in einem Slack-Workspace mit dem Bot können aus einem Link oder beliebigem Text einen Code erstellen. Wer seinen QRdx-Account verknüpft, kann außerdem verfolgte (dynamische) Codes erstellen, die Scans zählen und später auf ein anderes Ziel zeigen können.
+
+<IfAvailable feature="slackBot" id="add-the-bot-to-slack" title="Bot zu Slack hinzufügen">
+
+1. Öffne in QRdx [Einstellungen → Integrationen → Slack](/settings/integrations/slack) und klicke auf **Bot zu Slack hinzufügen**. Das geht mit jedem QRdx-Account, in jedem Tarif.
+2. Wähle den Slack-Workspace und bestätige. Der Bot bittet um Zugriff auf seinen Slash-Befehl, auf Erwähnungen und Direktnachrichten an ihn sowie um die Erlaubnis, Nachrichten zu senden.
+3. Du kommst zurück zur Einstellungsseite, die die Slack-Workspaces auflistet, zu denen du den Bot hinzugefügt hast.
+
+Dieselbe Slack-App sendet auch [Benachrichtigungen](/docs/notifications#slack-and-discord) in einen Kanal. Wenn du den Bot hinzufügst, werden Benachrichtigungen nicht aktiviert, und wenn du Benachrichtigungen einrichtest, wird der Bot nicht hinzugefügt.
+
+</IfAvailable>
+
+<IfAvailable feature="slackBot" id="make-a-qr-code" title="QR-Code erstellen">
+
+| Wo | Was zu tun ist | Wo der Code erscheint |
+| --- | --- | --- |
+| Beliebiger Kanal | `/qr` gefolgt von einem Link oder Text | Im Kanal |
+| Ein Kanal, in dem der Bot ist | Den Bot mit einem Link oder Text erwähnen | Im Thread |
+| Direktnachrichten an den Bot | Einen Link oder Text senden | In der DM |
+| Beliebige Nachricht | **Weitere Aktionen** → **QR-Code erstellen** | Im Thread der Nachricht |
+
+Jede Antwort ist ein QR-Code-Bild mit dem Inhalt darunter, drei Buttons und den unten beschriebenen Stilmenüs. Die Buttons sind **PNG herunterladen** (1024 Pixel), **SVG herunterladen** und **Im Editor öffnen**, wo du das Design weiter anpassen kannst. Ein Link öffnet den Editor mit dem eingetragenen Link; bei Text öffnet sich ein leerer Editor, weil Text nie in einen Link übernommen wird.
+
+Die Nachrichtenaktion erstellt einen Code aus der ersten Webadresse der Nachricht oder, falls es keine gibt, aus dem gesamten Text. Wenn der Bot nicht in diesem Kanal ist, siehst nur du den Code, und ein Hinweis sagt, dass du die App zum Kanal hinzufügen sollst.
+
+`/qr` allein oder `/qr help` zeigt die Befehle. Bei Inhalten, die für einen QR-Code zu lang sind, bekommst du statt eines Bilds eine kurze Erklärung, die nur du siehst.
+
+</IfAvailable>
+
+<IfAvailable feature="slackBot" id="style-your-code" title="Code stylen">
+
+Unter jedem Code findest du vier Menüs: **Look**, **Farbe**, **Rahmen** und **Logo**. Wähle etwas aus, und der Code ändert sich an Ort und Stelle, mit neuen Download-Links. Jede Auswahl baut auf dem aktuellen Stand des Codes auf. Nur die Person, die den Code erstellt hat, kann ihn neu stylen. Wenn jemand anderes etwas auswählt, zeigt Slack nur dieser Person einen Hinweis, und der Code bleibt unverändert.
+
+Die Looks sind einige der integrierten Designs des Editors, die auch bei kleiner Größe gut lesbar sind; **Plain** setzt auf Schwarz auf Weiß zurück. Eine Farbe färbt den ganzen Code in dieser Farbe auf Weiß. Die Rahmen fügen ein „Scan me“-Label hinzu, und die Logos sind die Schnell-Icons des Editors.
+
+Du kannst einen Code auch gleich beim Erstellen stylen, indem du Optionen hinter den Link oder Text setzt, mit denselben Namen wie in der [QRdx CLI](/docs/developers/cli):
+
+```text
+/qr qrdx.dev --look modern --fg 0051ff --frame banner-bottom --frame-text "Scan me"
+```
+
+Alles vor der ersten Option ist der Inhalt. Zuerst wird der Look angewendet, darüber die übrigen Optionen, sodass `--look royal --fg 0051ff` die Formen von Royal in Blau beibehält. Optionen funktionieren auch in Erwähnungen und Direktnachrichten. Wenn eine Option oder ein Wert falsch ist, sagt dir der Bot das privat und listet die Werte auf, die er akzeptiert.
+
+| Option | Was sie ändert | Werte |
+| --- | --- | --- |
+| `--look` | Das gesamte Design, aus einer der Vorlagen des Editors | `plain`, `classic`, `modern`, `royal`, `folio`, `caffeine`, `retro`, `bordeaux`, `blossom` |
+| `--fg` (oder `--color`) | Die Punkte und die Augen in den Ecken, sofern du diese nicht separat festlegst | Eine Hex-Farbe wie `0051ff` oder `black`, `blue`, `green`, `red`, `purple`, `orange` |
+| `--bg` | Der Hintergrund | Wie bei `--fg` |
+| `--eye-color` | Die drei Augen in den Ecken | Wie bei `--fg` |
+| `--dot-color` | Die Mitten der Augen in den Ecken | Wie bei `--fg` |
+| `--body` | Die Form der Punkte | Eine der {facts.bodyPatterns} Punktformen des Editors, etwa `rounded`, `circle` oder `classy` |
+| `--eye` | Die Form der Augen in den Ecken | Eine der {facts.eyeShapes} Augenformen, etwa `square`, `rounded` oder `gear` |
+| `--dot` | Die Form der Augenmitten | Eine der {facts.eyeCentres} Mittenformen, etwa `square`, `rounded` oder `circle` |
+| `--frame` | Ein Rahmen um den Code | `none` oder einer der {facts.frameStyles} integrierten Rahmen, etwa `banner-bottom`, `banner-top`, `speech-bubble` oder `polaroid` |
+| `--frame-text` | Das Label des Rahmens, bis zu 24 Zeichen | Beliebiger Text, in Anführungszeichen, wenn er Leerzeichen enthält. Ohne `--frame` steht er auf einem Banner unter dem Code |
+| `--template` | Ein dekorativer Rand | `Arrow`, `StandardBox`, `SquareBorder`, `StrikedBox` oder `Halloween` |
+| `--logo` | Ein Icon in der Mitte | `link`, `wifi`, `location`, `phone`, `email`, `whatsapp`, `instagram`, `file`, `calendar` oder `none` |
+
+Bevor ein gestylter Code gepostet wird, prüft QRdx ihn mit demselben Scan-Score wie der Editor. Wenn ein Design für Smartphones schwer lesbar wäre, passt QRdx es an (dunklere Farben, schlichtere Formen oder mehr Fehlerkorrektur) und weist unter dem Code darauf hin. Reicht auch das nicht aus, meist weil der Inhalt lang ist, bekommst du den Code in Schwarz auf Weiß mit einem Hinweis. Ein gestylter Code von `/qr` erscheint einen Moment nach dem Absenden des Befehls, sobald er geprüft wurde.
+
+**Im Editor öffnen** öffnet den Editor mit demselben Design: Farben, Formen, Rahmen und Rand. Das Logo-Icon wird nicht im Link übertragen, wähle es also im Editor erneut aus.
+
+Codes aus der Nachrichtenaktion, die nur du sehen kannst, haben keine Menüs, und verfolgte Codes behalten das schlichte Design.
+
+</IfAvailable>
+
+<IfAvailable feature="slackBot" id="tracked-codes" title="Verfolgte Codes">
+
+Ein einfacher Code enthält den Link selbst. Ein verfolgter Code enthält einen Kurzlink (`https://qrdx.dev/q/<slug>`), der auf deinen Link weiterleitet, sodass QRdx seine Scans zählt und du das Ziel ändern kannst. Um sie aus Slack zu erstellen, verknüpfe einmalig deinen QRdx-Account:
+
+1. Führe `/qr link` aus. Ein Button, den nur du siehst, öffnet QRdx. Er funktioniert 10 Minuten lang.
+2. Melde dich bei QRdx an, falls du dazu aufgefordert wirst. Klicke dann auf **Mit Slack anmelden** und melde dich mit demselben Slack-Account an, der `/qr link` ausgeführt hat. Slack teilt QRdx nur deinen Slack-Nutzer und deinen Workspace mit, und QRdx prüft, ob sie übereinstimmen. Wenn du dich bei Slack als jemand anderes anmeldest, wird nichts verknüpft.
+3. Wähle den QRdx-Workspace, in den deine verfolgten Codes gehen sollen, und klicke auf **Bestätigen**. QRdx bittet dich zuerst, [zu bestätigen, dass du es bist](/docs/help/privacy-and-security/two-step-verification#confirm-its-you), weil die Verknüpfung diesem Slack-Account erlaubt, Codes in deinem Workspace zu erstellen.
+4. Zurück in Slack schickt dir der Bot eine Direktnachricht mit dem Namen des QRdx-Accounts und des Workspace, mit denen du verknüpft hast. Wenn du das nicht verknüpft hast, führe `/qr unlink` aus.
+5. Führe `/qr track` gefolgt von einem Link aus, der mit `https://` oder `http://` beginnt. Du kannst den Bot auch mit `track` und einem Link erwähnen.
+
+Der Code erscheint im Kanal mit seinem Kurzlink und dem Namen des QRdx-Workspace, in dem er liegt. Der Button **In QRdx öffnen**, der zum Code in deinem Dashboard führt, kommt in einer separaten Nachricht, die nur du siehst. Der Code ist nach der Website des Links benannt, plus „from Slack“, und du findest ihn wie jeden anderen in den Codes des Workspace.
+
+Verfolgte Codes folgen denselben Regeln wie im Dashboard erstellte Codes: Deine Rolle muss das Erstellen von Codes erlauben, ein Workspace, der Zwei-Faktor-Verifizierung verlangt, braucht sie für deinen Account, und das Limit deines Tarifs für aktive dynamische Codes gilt. Wenn du am Limit bist, sagt der Bot das und verlinkt auf die Tarife. Das wird jedes Mal geprüft, sodass die Verknüpfung dort nicht mehr funktioniert, wenn du einen Workspace verlässt oder den Zugriff verlierst.
+
+Jeder Slack-Account hat pro Slack-Workspace eine Verknüpfung. Wenn du `/qr link` für einen bereits verknüpften Slack-Account ausführst, steht auf der Seite, mit welchem QRdx-Workspace er verknüpft ist und ob das in einem anderen QRdx-Account ist. Der Button heißt dann **Verknüpfung ersetzen**, und nichts ändert sich, bis du darauf klickst. `/qr unlink` entfernt eine Verknüpfung, ebenso **Verknüpfung aufheben** unter **Verknüpfte Slack-Accounts** in [Einstellungen → Integrationen → Slack](/settings/integrations/slack).
+
+Inhaber und Admins eines QRdx-Workspace sehen alle damit verknüpften Slack-Accounts unter [Einstellungen → API-Schlüssel & Apps](/dashboard?to=settings/developers): den Slack-Workspace, die Slack-Nutzer-ID, das Mitglied, als das der Account handelt, und wann er verknüpft wurde. Mit **Widerrufen** entfernst du dort eine Verknüpfung. Wenn der Workspace das [Audit-Log](/docs/help/teams/audit-log) hat, zeigen mit `/qr track` erstellte Codes den Namen des Mitglieds „via Slack“ mit den IDs des Slack-Nutzers und -Workspace, und auch das Widerrufen einer Verknüpfung wird protokolliert.
+
+</IfAvailable>
+
+## Was der Bot speichert [#what-the-bot-keeps]
+
+Der Bot liest eine Nachricht nur, wenn jemand `/qr` ausführt, den Bot erwähnt, ihm direkt schreibt oder die Verknüpfung (Shortcut) auf dieser Nachricht nutzt. Nachrichtentext speichert er nie. Die QR-Code-Bilder kommen von der QRdx [Image API](/docs/developers/image-api), die Slack über den Link in der Nachricht lädt. Es wird also nichts hochgeladen.
+
+Für jeden Slack-Workspace speichert QRdx dessen ID und Namen, die Slack-Nutzer-ID des Bots, das Token des Bots (verschlüsselt) und welcher QRdx-Account ihn hinzugefügt hat. Für jeden verknüpften Slack-Account speichert QRdx die Slack-Nutzer-ID, deinen QRdx-Account und den Workspace, den du gewählt hast. Die Anmeldung mit Slack zum Verknüpfen fügt dem nichts hinzu: QRdx gleicht den Slack-Nutzer und den Workspace ab und vergisst die Anmeldung danach.<IfAvailable feature="slackBot"> Deine verknüpften Slack-Accounts findest du in deinem [Datenexport](/docs/help/account-and-billing/export-your-data).</IfAvailable>
+
+<IfAvailable feature="slackBot" id="remove-the-bot" title="Bot entfernen">
+
+Öffne in Slack die Seite der App und wähle **Remove App** (oder bitte einen Slack-Admin darum). QRdx löscht dann das Bot-Token dieses Slack-Workspace und alle dort erstellten Verknüpfungen mit Slack-Accounts. Bereits erstellte Codes bleiben in QRdx erhalten, und getrackte Codes funktionieren weiter.
+
+</IfAvailable>
+
+## Self-Hosting [#self-hosting]
+
+Der Bot nutzt dieselbe Slack-App wie die Benachrichtigungen über „Add to Slack“, ergänzt um das Signing Secret. Setze `SLACK_CLIENT_ID`, `SLACK_CLIENT_SECRET` und `SLACK_SIGNING_SECRET`, in der Produktion zusätzlich `INTEGRATION_ENCRYPTION_KEY`, der die Bot-Tokens verschlüsselt. Ohne diese Variablen gibt es die Seiten und Endpunkte des Bots nicht. `plugins/slack/manifest.json` im Repository ist das Manifest der App, und `plugins/slack/README.md` führt dich Schritt für Schritt durch das Erstellen der App daraus. Das Manifest enthält den User-Scope `openid` und die Redirect-URL `/api/integrations/slack/link/callback`, die Sign in with Slack braucht, wenn jemand seinen Account verknüpft.

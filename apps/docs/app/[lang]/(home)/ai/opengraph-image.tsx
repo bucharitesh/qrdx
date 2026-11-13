@@ -1,5 +1,5 @@
+import { AI_REQUEST_FREE_TIER_LIMIT } from "@repo/config";
 import { ogSize, renderPageOgImage } from "@/app/og/brand";
-import { AI_REQUEST_FREE_TIER_LIMIT } from "@/lib/constants";
 import { localeParams, requireLocaleParam } from "@/lib/i18n/static-params";
 
 export const alt = "The QRdx AI QR code designer";

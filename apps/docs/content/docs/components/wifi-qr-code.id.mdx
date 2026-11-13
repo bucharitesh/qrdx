@@ -1,0 +1,49 @@
+---
+title: "Kode QR Wi-Fi"
+description: "Kode QR yang menghubungkan ke jaringan Wi-Fi saat dipindai, dengan pembuat payload bertipe yang sudah di-escape."
+icon: Globe
+---
+
+<ComponentLinks name="wifi-qr-code" />
+
+<ComponentPreview name="wifi-qr-code-demo" />
+
+## Instalasi [#installation]
+
+<InstallationTabs name="wifi-qr-code" />
+
+## Penggunaan [#usage]
+
+```tsx
+import { WifiQrCode } from "@/components/wifi-qr-code";
+```
+
+```tsx
+<WifiQrCode ssid="Cafe Guest" password="espresso-2024" />
+```
+
+Kamera iOS dan Android menawarkan untuk terhubung ke jaringan saat memindai kode ini. Tidak perlu aplikasi.
+
+## Contoh [#examples]
+
+### Varian [#variants]
+
+`showPassword` menampilkan kata sandi untuk tamu yang mengetiknya secara manual. Gunakan `encryption="nopass"` untuk jaringan terbuka dan `hidden` untuk jaringan yang tidak menyiarkan namanya.
+
+<ComponentPreview name="wifi-qr-code-variants" />
+
+### Pembuat payload [#payload-builder]
+
+`buildWifiPayload` mengembalikan teks `WIFI:` yang dienkode oleh kode tersebut. Fungsi ini meng-escape `\`, `;`, `,`, `:` dan `"` pada nama dan kata sandi, yang biasanya menjadi sumber kesalahan pada payload yang ditulis manual. Gunakan dengan renderer QR apa pun, atau untuk mencetak payload saat debugging.
+
+<ComponentPreview name="wifi-qr-code-payload" />
+
+## Referensi API [#api-reference]
+
+<auto-type-table path="../../../registry/qrdx/wifi-qr-code.tsx" type="{ [K in keyof WifiQrCodeProps as K extends Exclude<keyof ComponentProps<'figure'>, 'hidden'> ? never : K]: WifiQrCodeProps[K] }" />
+
+Prop lain apa pun, seperti `className`, diteruskan ke `<figure>` pembungkus.
+
+### buildWifiPayload [#buildwifipayload]
+
+`buildWifiPayload(network: WifiNetwork): string` menerima kolom jaringan yang sama dengan komponen: `ssid`, `password`, `encryption` dan `hidden`.

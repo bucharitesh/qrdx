@@ -1,0 +1,47 @@
+---
+title: "Una scansione mostra una pagina di errore"
+description: "Cosa significa ogni pagina di errore del QR code, da \"QR code non trovato\" a \"Questa campagna è terminata\", e come risolvere."
+---
+
+Quando un QR code dinamico non riesce ad aprire la sua destinazione, chi lo scansiona vede una breve pagina. Ecco cosa significa ciascuna.
+
+## "QR code non trovato" [#qr-code-not-found]
+
+È una pagina 404: il link breve non appartiene a nessun codice.
+
+- Il codice è stato **eliminato definitivamente**.
+- Il **back-half** o il **dominio** del codice è stato modificato dopo la stampa.
+- L'account a cui apparteneva è stato eliminato.
+- Il link è stato digitato a mano con un errore. I link brevi distinguono tra maiuscole e minuscole.
+
+Un codice eliminato non può essere recuperato. Se hai cambiato il back-half, ripristinalo con **Modifica link**.
+
+## "Questo QR code non è più attivo" [#this-qr-code-is-no-longer-active]
+
+Il codice è **archiviato** o nel **cestino**. Scegli **Rimuovi dall'archivio** o **Ripristina** in **Codici**. Vedi [Archiviare, eliminare e ripristinare i codici](/docs/help/dynamic-codes/archive-and-delete).
+
+QRdx disattiva inoltre i codici che rimandano a siti dannosi.
+
+## "Questa campagna è in pausa", "non è ancora iniziata" o "è terminata" [#this-campaign-is-paused-hasnt-started-yet-or-has-ended]
+
+Dipendono dalle impostazioni del codice stesso: una pausa, una data di inizio o di fine, oppure un limite di scansioni. Modificale in **Accesso e programmazione**. Vedi [Mettere in pausa, programmare o limitare un codice](/docs/help/dynamic-codes/pause-schedule-limit).
+
+## "Questo QR code è protetto da password" [#this-qr-code-is-password-protected]
+
+Il codice ha una password. Inseriscila e fai clic su **Continua**. Vedi [Proteggere un codice con una password](/docs/help/dynamic-codes/password).
+
+## "Troppe richieste" [#too-many-requests]
+
+Una stessa rete ha aperto molti QR code in pochi secondi. Attendi un momento e riprova la scansione.
+
+## "Questo dominio non è ancora collegato" [#this-domain-isnt-connected-yet]
+
+Il codice usa un dominio personalizzato la cui configurazione DNS non è completata. Controlla il dominio nella pagina **Domini** della tua dashboard.
+
+## "Impossibile trovare questa pagina" su una pagina [#this-page-could-not-be-found-on-a-page]
+
+Una pagina mobile a `/p/…` mostra questo messaggio quando la pagina è stata eliminata o l'indirizzo è stato scritto in modo errato.
+
+## "Questo modulo al momento non accetta risposte" [#this-form-isnt-accepting-responses-right-now]
+
+Lo spazio di lavoro ha raggiunto il limite mensile di risposte ai moduli. Vedi [Raccogliere risposte con un modulo](/docs/help/pages-and-forms/forms#monthly-limits).

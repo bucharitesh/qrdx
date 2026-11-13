@@ -1,0 +1,157 @@
+---
+title: "टेम्पलेट"
+description: "QR कोड पर पहले से डिज़ाइन किए गए फ़्रेम टेम्पलेट लगाएँ, या अपना टेम्पलेट रजिस्टर करें।"
+icon: LayoutTemplate
+---
+
+QR कोड को तैयार आर्टवर्क में लपेटें, या अपने खुद के आर्टवर्क में।
+
+## टेम्पलेट क्या होते हैं? [#what-are-templates]
+
+टेम्पलेट कोड के चारों ओर बना SVG आर्टवर्क होता है: जैसे बॉक्स, बॉर्डर या बैज। यह कोड को `children` के रूप में लेता है और उसे अपनी ड्रॉइंग के अंदर रखता है। रंग, पैटर्न और लोगो `QRCode` props पर ही रहते हैं, इसलिए टेम्पलेट किसी भी स्टाइल के साथ काम करता है।
+
+## उपलब्ध टेम्पलेट [#available-templates]
+
+### Default [#default]
+क्लासिक ब्लैक एंड व्हाइट।
+
+```tsx
+import { QRCode } from 'qrdx';
+
+<QRCode value="https://example.com" templateId="default" size={256} />
+```
+
+### Arrow [#arrow]
+मॉडर्न ज्यामितीय डिज़ाइन।
+
+```tsx
+<QRCode value="https://example.com" templateId="Arrow" size={256} />
+```
+
+### Standard Box [#standard-box]
+साफ़-सुथरा, व्यवस्थित डिज़ाइन।
+
+```tsx
+<QRCode value="https://example.com" templateId="StandardBox" size={256} />
+```
+
+### Square Border [#square-border]
+साफ़ किनारों वाला बॉर्डर डिज़ाइन।
+
+```tsx
+<QRCode value="https://example.com" templateId="SquareBorder" size={256} />
+```
+
+### Striked Box [#striked-box]
+तिरछे एलिमेंट वाला डायनेमिक डिज़ाइन।
+
+```tsx
+<QRCode value="https://example.com" templateId="StrikedBox" size={256} />
+```
+
+### Halloween [#halloween]
+हैलोवीन के मौसम की थीम।
+
+```tsx
+<QRCode value="https://example.com" templateId="Halloween" size={256} />
+```
+
+## टेम्पलेट कस्टमाइज़ करें [#customize-templates]
+
+बिल्ट-इन टेम्पलेट अपना आर्टवर्क `fgColor` में बनाते हैं। बाकी सब कुछ, जैसे पैटर्न और लोगो, हमेशा की तरह कोड पर सेट किया जाता है:
+
+```tsx
+<QRCode
+  value="https://example.com"
+  templateId="Arrow"
+  fgColor="#1a56db"
+  imageSettings={{
+    src: "/your-logo.png",
+    width: 48,
+    height: 48,
+    excavate: true,
+  }}
+  size={512}
+/>
+```
+
+## टेम्पलेट रजिस्ट्री [#template-registry]
+
+### सभी टेम्पलेट पाएँ [#get-all-templates]
+
+```tsx
+import { getAllTemplates } from 'qrdx';
+
+const templates = getAllTemplates();
+```
+
+### टेम्पलेट ID पाएँ [#get-template-ids]
+
+```tsx
+import { getTemplateIds } from 'qrdx';
+
+const ids = getTemplateIds();
+// Returns: ['default', 'Arrow', 'StandardBox', ...]
+```
+
+## कस्टम टेम्पलेट [#custom-templates]
+
+अपना टेम्पलेट `TemplateDefinition` के रूप में लिखें। इसका `wrapper` कोड को `children` के रूप में लेता है और ड्रॉ करने के लिए SVG लौटाता है। यह 300 गुणा 300 के कैनवास पर बनता है, और कोड भी उसी साइज़ में आता है, इसलिए अपने आर्टवर्क के लिए जगह छोड़ने हेतु उसे छोटा करें। `props` में कोड के `fgColor` और `bgColor` होते हैं।
+
+यह टेम्पलेट कोड के चारों ओर एक रिंग बनाता है:
+
+```tsx
+import { QRCode, type TemplateDefinition } from "qrdx";
+
+const ringTemplate: TemplateDefinition = {
+  id: "ring",
+  name: "Ring",
+  wrapper: (children, props) => (
+    <svg viewBox="0 0 300 300" width="300" height="300" xmlns="http://www.w3.org/2000/svg">
+      <circle
+        cx="150"
+        cy="150"
+        r="140"
+        fill="none"
+        stroke={props?.fgColor ?? "#000000"}
+        strokeWidth="8"
+      />
+      {/* The code at half size, centered */}
+      <g transform="translate(75, 75) scale(0.5)">{children}</g>
+    </svg>
+  ),
+};
+
+<QRCode
+  value="https://example.com"
+  customTemplate={ringTemplate}
+  fgColor="#1a56db"
+  size={256}
+/>
+```
+
+कोड को इतना बड़ा रखें कि लोग जहाँ से फ़ोन पकड़ेंगे वहाँ से वह स्कैन हो सके, और उसके व मौजूद आर्टवर्क के बीच हल्की खाली जगह छोड़ें। नतीजे को [स्कैन स्कोर](/docs/features/frames#will-it-scan) से जाँचें।
+
+## टेम्पलेट कब इस्तेमाल करें [#when-to-use-templates]
+
+- **ब्रांड में एकरूपता** — सुनिश्चित करें कि सभी QR कोड एक जैसे दिखें
+- **तेज़ सेटअप** — प्रोफ़ेशनल नतीजे जल्दी पाएँ
+- **सीज़नल कैंपेन** — थीम वाले टेम्पलेट इस्तेमाल करें
+- **बैच जनरेशन** — एक जैसी स्टाइल लगाएँ
+
+## टेम्पलेट चुनने की गाइड [#template-selection-guide]
+
+| टेम्पलेट | किसके लिए बेहतर | मूड |
+|----------|----------|------|
+| Default | प्रोफ़ेशनल | न्यूट्रल |
+| Arrow | टेक, मॉडर्न | डायनेमिक |
+| Standard Box | कॉर्पोरेट | प्रोफ़ेशनल |
+| Square Border | औपचारिक | व्यवस्थित |
+| Striked Box | मार्केटिंग | ऊर्जावान |
+| Halloween | सीज़नल | मज़ेदार |
+
+## अगले कदम [#next-steps]
+
+- [पैटर्न](/docs/features/patterns) — पैटर्न कस्टमाइज़ेशन की विस्तृत जानकारी
+- [रंग और ग्रेडिएंट](/docs/features/colors-gradients) — एडवांस्ड रंग
+- [लोगो](/docs/features/logos) — टेम्पलेट में लोगो जोड़ें

@@ -1,15 +1,15 @@
-// The rate limits copy quotes (lib/public-api-limits.ts) are the ones the
+// The rate limits copy quotes (@repo/config limits.ts) are the ones the
 // routes enforce. The routes build their limiters inline, so this reads
 // their source rather than importing them (which would need Redis).
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { describe, expect, it } from "vitest";
-import { PRODUCT_FACTS } from "@/lib/product-facts";
 import {
   DESIGN_QR_REQUESTS_PER_MINUTE,
   MCP_REQUESTS_PER_MINUTE,
   QR_IMAGE_REQUESTS_PER_MINUTE,
-} from "@/lib/public-api-limits";
+} from "@repo/config";
+import { describe, expect, it } from "vitest";
+import { PRODUCT_FACTS } from "@/lib/product-facts";
 
 const APP = join(import.meta.dirname, "../..");
 const source = (file: string) => readFileSync(join(APP, file), "utf8");

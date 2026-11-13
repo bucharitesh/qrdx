@@ -1,3 +1,4 @@
+import { GITHUB_REPO_URL } from "@repo/config";
 import { cn } from "@repo/design-system/lib/utils";
 import {
   getCatalogBySurface,
@@ -43,7 +44,7 @@ const BUILD_LABELS = {
 } as const;
 
 const BUILD_YOUR_OWN = "/docs/developers/build-an-integration";
-const REQUEST_URL = "https://github.com/bucharitesh/qrdx/issues/new";
+const REQUEST_URL = `${GITHUB_REPO_URL}/issues/new`;
 
 function LogoStack({ entries }: { entries: IntegrationCatalogEntry[] }) {
   return (

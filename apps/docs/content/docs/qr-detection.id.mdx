@@ -1,0 +1,152 @@
+---
+title: "Deteksi QR"
+description: "Baca dan dekode kode QR dari gambar di browser."
+icon: Scan
+---
+
+Baca dan dekode kode QR dari gambar yang diunggah.
+
+## Deteksi Dasar [#basic-detection]
+
+```tsx
+import { handleImageLoad } from 'qrdx';
+
+async function detectQR(file: File) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      const img = new Image();
+      img.onload = async () => {
+        try {
+          const result = await handleImageLoad(img, 400, false);
+          if (result === "NO_QR") {
+            resolve("No QR code found");
+          } else {
+            resolve(result);
+          }
+        } catch (error) {
+          reject(error);
+        }
+      };
+      img.src = e.target?.result as string;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+```
+
+## Komponen React [#react-component]
+
+```tsx
+import { useState } from 'react';
+import { handleImageLoad } from 'qrdx';
+
+export default function QRDetector() {
+  const [result, setResult] = useState('');
+
+  const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const qrData = await detectQR(file);
+      setResult(qrData);
+    } catch (error) {
+      setResult(`Error: ${error.message}`);
+    }
+  };
+
+  return (
+    <div>
+      <input type="file" accept="image/*" onChange={handleFile} />
+      {result && <p>{result}</p>}
+    </div>
+  );
+}
+```
+
+## Parameter Deteksi [#detection-parameters]
+
+```tsx
+handleImageLoad(
+  imgElement: HTMLImageElement,
+  size: number,              // Processing size (recommended: 400)
+  returnFullData?: boolean   // Return full data or just text
+)
+```
+
+### Parameter Ukuran [#size-parameter]
+
+- **200-400** — Lebih cepat, cocok untuk gambar yang jelas
+- **600+** — Lebih baik untuk kode QR yang kecil atau rusak
+- **Direkomendasikan** — 400 untuk sebagian besar kasus
+
+## Respons Data Lengkap [#full-data-response]
+
+Dapatkan informasi deteksi yang lengkap:
+
+```tsx
+const fullData = await handleImageLoad(img, 400, true);
+// Returns:
+// {
+//   data: "https://example.com",
+//   binaryData: Uint8ClampedArray,
+//   location: { topLeftCorner, topRightCorner, ... },
+//   chunks: [...]
+// }
+```
+
+## Visualisasi Debug [#debug-visualization]
+
+Unduh gambar dengan kotak pembatas:
+
+```tsx
+import { downloadImageWithBoundingBox } from 'qrdx';
+
+const fullData = await handleImageLoad(img, 400, true);
+if (fullData?.location) {
+  const boundingBox = [
+    fullData.location.topLeftCorner,
+    fullData.location.topRightCorner,
+    fullData.location.bottomRightCorner,
+    fullData.location.bottomLeftCorner,
+  ];
+  downloadImageWithBoundingBox(img, boundingBox, "debug.png");
+}
+```
+
+## Penanganan Error [#error-handling]
+
+```tsx
+try {
+  const result = await handleImageLoad(img, 400, false);
+  if (result === "NO_QR") {
+    console.log("No QR code found");
+  } else {
+    console.log("QR data:", result);
+  }
+} catch (error) {
+  console.error("Detection failed:", error);
+}
+```
+
+## Kapan Digunakan [#when-to-use]
+
+- Memproses gambar kode QR yang diunggah
+- Mengekstrak data dari tangkapan layar
+- Membangun pemindai kode QR
+- Memverifikasi isi kode QR
+- Men-debug masalah kode QR
+
+## Persyaratan Browser [#browser-requirements]
+
+- FileReader API
+- HTMLCanvasElement
+- ImageData dan getImageData
+- Fitur ES6+
+
+## Langkah Berikutnya [#next-steps]
+
+- [Utilitas](/docs/utilities) — Utilitas deteksi
+- [Unduhan](/docs/features/downloads) — Ekspor data yang terdeteksi
+- [Referensi API](/docs/api-reference) — API deteksi yang lengkap

@@ -4,6 +4,11 @@ import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import {
+  type FolderOption,
+  folderOptions,
+} from "@/app/(app)/dashboard/barcodes/_lib/filters";
+import { listFolders } from "@/app/(app)/dashboard/codes/_lib/organize";
+import {
   barcodeIdSchema,
   createBarcodeSchema,
   MAX_BARCODE_BULK,
@@ -139,6 +144,18 @@ export async function saveBarcode(
       active,
     ),
   );
+}
+
+/** The workspace's folders, for the new-barcode modal's picker. Read-only. */
+export async function listBarcodeFolders(): Promise<
+  BarcodeActionResult<FolderOption[]>
+> {
+  try {
+    const { scope } = await getActiveWorkspace();
+    return { success: true, data: folderOptions(await listFolders(scope)) };
+  } catch (error) {
+    return failure(error, "listBarcodeFolders");
+  }
 }
 
 const updateInput = z.object({

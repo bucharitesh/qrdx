@@ -30,7 +30,7 @@ import {
 } from "drizzle-orm";
 import type { PgColumn } from "drizzle-orm/pg-core";
 import { isbot } from "isbot";
-import { env } from "@/lib/env";
+import { env } from "@/env";
 import { getClientIp } from "@/lib/request-guards";
 import { scanGeo } from "./request-geo";
 import { parseUserAgent } from "./user-agent";
@@ -66,9 +66,7 @@ function scanHashSalt(): string {
     cachedSalt =
       env.SCAN_HASH_SALT ??
       createHash("sha256")
-        .update(
-          `qrdx:scan-salt:${process.env.BETTER_AUTH_SECRET ?? "development"}`,
-        )
+        .update(`qrdx:scan-salt:${env.BETTER_AUTH_SECRET}`)
         .digest("hex");
   }
   return cachedSalt;
@@ -226,7 +224,9 @@ export const SCAN_RANGES = {
   "30d": 30,
   "90d": 90,
   "365d": 365,
-  // Pro keeps 3 years; Business keeps everything (lib/plans).
+  // Each plan's reach is in lib/scan-history (Pro and Business: everything).
+  // Scans started in October 2026, so 3 years covers every workspace's
+  // whole history until late 2029; a longer range is needed before then.
   "1095d": 1095,
 } as const;
 

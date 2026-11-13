@@ -3,9 +3,9 @@ import "server-only";
 import { render } from "@react-email/render";
 import type { ReactElement } from "react";
 import { Resend } from "resend";
+import { env } from "@/env";
 import { isOutboundDeliveryAllowed } from "@/lib/delivery-guard";
 import { isReservedEmailAddress } from "@/lib/email/reserved-address";
-import { env } from "@/lib/env";
 
 /**
  * Transactional email through Resend. Without RESEND_API_KEY + EMAIL_FROM

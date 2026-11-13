@@ -1,140 +1,17 @@
-import type { QRPropsSVG } from "../types";
-import qrcodegen from "./codegen";
-import {
-  DEFAULT_BGCOLOR,
-  DEFAULT_FGCOLOR,
-  DEFAULT_LEVEL,
-  DEFAULT_MARGIN,
-  DEFAULT_SIZE,
-  ERROR_LEVEL_MAP,
-} from "./constants";
-import { isFrameActive, wrapWithFrame } from "./frame";
-import { renderLogo } from "./logo";
-import { capImageSettings } from "./logo-budget";
-import {
-  excavateModules,
-  generatePath,
-  getImageSettings,
-  resolveErrorLevel,
-} from "./utils";
-import { getSolidColor } from "./utils/color";
+import type { JSX } from "react";
+import type { QRPropsSVG } from "../types/react";
+import { withElementFactory } from "./jsx/runtime";
+import { drawPlainQRCode, preparePlainQRCode } from "./plain";
+import { REACT_ELEMENTS } from "./react-elements";
 
-export async function getQRAsSVG(props: QRPropsSVG) {
-  const {
-    value,
-    size = DEFAULT_SIZE,
-    level = DEFAULT_LEVEL,
-    bgColor = DEFAULT_BGCOLOR,
-    fgColor = DEFAULT_FGCOLOR,
-    margin = DEFAULT_MARGIN,
-    imageSettings: requestedImageSettings,
-    // Styling props this plain renderer does not support; keep them off <svg>.
-    eyeColor: _eyeColor,
-    dotColor: _dotColor,
-    bodyPattern: _bodyPattern,
-    cornerEyePattern: _cornerEyePattern,
-    cornerEyeDotPattern: _cornerEyeDotPattern,
-    isOGContext: _isOGContext,
-    templateId: _templateId,
-    customTemplate: _customTemplate,
-    customProps: _customProps,
-    frame,
-    art: _art,
-    eyeColors: _eyeColors,
-    moduleScale: _moduleScale,
-    frameLabelMarkers: _frameLabelMarkers,
-    autoLevel,
-    ...otherProps
-  } = props;
-  // A logo no bigger than the code can repair (logo-budget.ts)
-  const imageSettings = capImageSettings(
-    { value, size, margin, level, autoLevel },
-    requestedImageSettings
-  );
-  const effectiveLevel = resolveErrorLevel({
-    value,
-    size,
-    level,
-    margin,
-    imageSettings,
-    autoLevel,
-  });
-
-  let cells = qrcodegen.QrCode.encodeText(
-    value,
-    ERROR_LEVEL_MAP[effectiveLevel]
-  ).getModules();
-
-  const numCells = cells.length + margin * 2;
-  const calculatedImageSettings = getImageSettings(
-    cells,
-    size,
-    margin,
-    imageSettings
-  );
-
-  let image = <></>;
-  if (imageSettings != null && calculatedImageSettings != null) {
-    if (calculatedImageSettings.excavation != null) {
-      cells = excavateModules(cells, calculatedImageSettings.excavation);
-    }
-
-    const base64Image = imageSettings.src.startsWith("data:")
-      ? imageSettings.src
-      : await fetch(
-          `https://wsrv.nl/?url=${encodeURIComponent(imageSettings.src)}&w=100&h=100&encoding=base64`
-        ).then((res) => {
-          if (!res.ok) {
-            throw new Error(
-              `Failed to load QR logo (${res.status}): ${imageSettings.src}`
-            );
-          }
-          return res.text();
-        });
-
-    image = renderLogo(
-      { ...imageSettings, src: base64Image },
-      {
-        x: calculatedImageSettings.x + margin,
-        y: calculatedImageSettings.y + margin,
-        w: calculatedImageSettings.w,
-        h: calculatedImageSettings.h,
-      }
-    );
-  }
-
-  // Drawing strategy: instead of a rect per module, we're going to create a
-  // single path for the dark modules and layer that on top of a light rect,
-  // for a total of 2 DOM nodes. We pay a bit more in string concat but that's
-  // way faster than DOM ops.
-  // For level 1, 441 nodes -> 2
-  // For level 40, 31329 -> 2
-  const fgPath = generatePath(cells, margin);
-  const framed = isFrameActive(frame);
-
-  const code = (
-    <svg
-      height={size}
-      viewBox={`0 0 ${numCells} ${numCells}`}
-      width={size}
-      xmlns="http://www.w3.org/2000/svg"
-      {...(framed ? {} : otherProps)}
-    >
-      <path
-        d={`M0,0 h${numCells}v${numCells}H0z`}
-        fill={getSolidColor(bgColor, DEFAULT_BGCOLOR)}
-        shapeRendering="crispEdges"
-      />
-      <path
-        d={fgPath}
-        fill={getSolidColor(fgColor, DEFAULT_FGCOLOR)}
-        shapeRendering="crispEdges"
-      />
-      {image}
-    </svg>
-  );
-
-  return framed
-    ? wrapWithFrame(code, { size, frame, bgColor, svgProps: otherProps })
-    : code;
+/**
+ * The plain code as a React element: one path for the dark modules on a
+ * background rect, plus the logo and frame (`getQRAsSVGNode` is the same
+ * without React). A logo that isn't a data URL is fetched as base64 first.
+ */
+export async function getQRAsSVG(props: QRPropsSVG): Promise<JSX.Element> {
+  const plain = await preparePlainQRCode(props);
+  return withElementFactory(REACT_ELEMENTS, () =>
+    drawPlainQRCode(plain)
+  ) as unknown as JSX.Element;
 }

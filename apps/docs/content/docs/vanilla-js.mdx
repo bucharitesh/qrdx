@@ -1,0 +1,144 @@
+---
+title: Vanilla JavaScript
+description: Draw, update and export styled QR codes without React, with qrdx/vanilla in a page or app, qrdx/core for markup and DOM nodes, and one ES module for pages without a bundler.
+icon: FileCode
+---
+
+`qrdx` isn't only for React. The engine the React components draw with is published on its own as `qrdx/core`, and `qrdx/vanilla` adds a small API for plain JavaScript on top. They draw the same SVG as `QRCodeSVG`, byte for byte, with every style, frame, logo and export. Neither imports `react` or `react-dom`.
+
+## Install
+
+```package-install
+qrdx@latest
+```
+
+`react` and `react-dom` are optional peer dependencies. You don't need them for `qrdx/vanilla` or `qrdx/core`.
+
+## Draw a code in a page
+
+```js
+import { createQRCode } from "qrdx/vanilla";
+
+const qr = createQRCode("#qr", {
+  value: "https://example.com",
+  size: 256,
+  bodyPattern: "rounded",
+  frame: { style: "banner-bottom", text: "Scan me" },
+  "aria-label": "QR code for example.com",
+});
+```
+
+`createQRCode(element, options)` takes an element or a CSS selector, and every option `QRCodeSVG` takes: patterns, colors and gradients, logos (`imageSettings`), frames, shapes and Art QR. Attributes such as `className`, `style` or `aria-label` go on the `<svg>`. The `<svg>` is built with `createElementNS`, so no HTML is parsed.
+
+## Update, export and remove it
+
+```js
+qr.update({ fgColor: "#1d4ed8" });
+
+qr.toSVGString(); // the SVG markup
+await qr.toDataURL("png", { size: 1024 }); // "png", "jpg", "webp", "svg", "pdf" or "eps"
+await qr.download({ format: "svg", filename: "menu.svg" });
+
+qr.destroy();
+```
+
+- `update` merges new options into the current ones and redraws. Pass `undefined` to drop an option. When the markup doesn't change, the page isn't touched.
+- `toDataURL` and `download` default to PNG at the code's own `size`. A frame makes the image bigger than the code. PDF needs the optional `jspdf` package.
+- `qr.svg` is the `<svg>` element and `qr.options` the current options.
+- `destroy` removes the `<svg>`. `update` throws after it.
+
+## Without a bundler
+
+`dist/vanilla.browser.mjs` is the same API as one ES module, for a page that loads it straight from a CDN:
+
+```html
+<div id="qr"></div>
+<script type="module">
+  import { createQRCode } from "https://cdn.jsdelivr.net/npm/qrdx/dist/vanilla.browser.mjs";
+
+  createQRCode("#qr", { value: "https://example.com", size: 256 });
+</script>
+```
+
+Add `@` and a version after `qrdx` in the URL to pin one. The same path works on unpkg.
+
+The file leaves out the official frame library's data, so pages that don't use it don't download it. To use an official frame, import it from the file next to it:
+
+```js
+import { getOfficialFrame } from "https://cdn.jsdelivr.net/npm/qrdx/dist/frames-official.mjs";
+
+const wifi = getOfficialFrame("wifi-card");
+qr.update({ frame: { style: "custom", spec: wifi.spec } });
+```
+
+PDF export and the scan score load `jspdf` and `jsqr` when they run. A page that uses them maps both with an import map, placed before the module script:
+
+```html
+<script type="importmap">
+  {
+    "imports": {
+      "jspdf": "https://cdn.jsdelivr.net/npm/jspdf@4/+esm",
+      "jsqr": "https://cdn.jsdelivr.net/npm/jsqr@1/+esm"
+    }
+  }
+</script>
+```
+
+## Markup and DOM nodes (qrdx/core)
+
+`qrdx/core` has everything the main `qrdx` entry has except the React components. It works in Node and in the browser.
+
+```ts
+import {
+  createQRCodeTree,
+  renderToDOM,
+  renderToString,
+  resolveQRCodeProps,
+  toSVGElement,
+  toSVGString,
+} from "qrdx/core";
+
+// What <QRCodeSVG> renders, as a string (no DOM needed)
+const svg = toSVGString({ value: "https://example.com", size: 256 });
+
+// The same code as an <svg> element
+document.body.append(toSVGElement({ value: "https://example.com" }));
+
+// The code as plain { type, props, key } nodes, then markup or DOM nodes
+const tree = createQRCodeTree({ value: "https://example.com" });
+renderToString(tree);
+renderToDOM(tree);
+
+// <QRCode>'s logo API (logo, logoOptions, hideLogo, scale)
+toSVGString(resolveQRCodeProps({ value: "https://example.com", logo: "/logo.png" }));
+```
+
+The output has no random ids, so markup rendered on a server matches the browser's. Downloads, the scan score and print-ready PDF and EPS come from the same functions as in the React library: `downloadQRCode`, `getQRCodeDataUrl`, `getScanScore`, `downloadPrintPDF` and the rest. For PNG on a server, use `getQRAsPNG` from `qrdx/node`.
+
+## Custom templates without JSX
+
+A template's `wrapper` receives the drawn code and returns it wrapped. `h(type, props, ...children)` writes one without JSX:
+
+```js
+import { h, toSVGString } from "qrdx/core";
+
+const Labelled = {
+  id: "Labelled",
+  name: "Labelled",
+  wrapper: (children, props) =>
+    h(
+      "svg",
+      { viewBox: "0 0 300 340", xmlns: "http://www.w3.org/2000/svg" },
+      h("g", { transform: "translate(20, 20) scale(0.87)" }, children),
+      h("text", { x: "150", y: "325", textAnchor: "middle" }, props?.label)
+    ),
+};
+
+toSVGString({
+  value: "https://example.com",
+  customTemplate: Labelled,
+  customProps: { label: "Scan me" },
+});
+```
+
+The same wrapper works in the React components when `h` is imported from `qrdx` instead.

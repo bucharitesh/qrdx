@@ -1,0 +1,127 @@
+---
+title: "Menus, coupons, événements et formulaires"
+description: "Types de pages hébergées pour les restaurants, les offres, les événements et les téléchargements d'application, ainsi que des formulaires qui recueillent les avis dans une boîte de réponses."
+icon: ClipboardList
+---
+
+Un QR code dynamique peut ouvrir une page hébergée au lieu d'un site web. Outre les listes de liens, les pages d'entreprise et les vCards, QRdx propose cinq types de pages pour les usages d'impression courants. Chacun part d'un modèle que vous pouvez modifier bloc par bloc dans l'éditeur de page, avec un aperçu en direct sur téléphone.
+
+| Type de page | Conçu pour | Blocs de départ |
+| --- | --- | --- |
+| **Menu** | Cafés, restaurants, bars | Menu, Wi-Fi, horaires d'ouverture, carte |
+| **Coupon** | Réductions et cadeaux | Coupon avec code-barres et bouton Utiliser |
+| **Événement** | Fêtes, conférences, webinaires | Événement avec ajout au calendrier |
+| **Téléchargement d'application** | Un seul code pour tous les stores | Téléchargement d'application |
+| **Avis et formulaires** | Avis, enquêtes NPS, inscriptions | Formulaire, liens d'avis |
+
+Chacun des blocs ci-dessous peut aussi être ajouté à n'importe quelle autre page.
+
+## Menu [#menu]
+
+Le bloc **Menu** liste des sections (Entrées, Plats, ...) avec leurs articles. Chaque article peut avoir une description, un prix, une mention après le prix (« au verre », « Prix du marché »), une photo, un court badge (« Le choix du chef ») ainsi que :
+
+- **Étiquettes alimentaires :** végétarien, végan, sans gluten, sans produits laitiers, halal, casher, épicé, bio.
+- **Allergènes :** les 14 allergènes que les professionnels de l'alimentation doivent déclarer dans l'UE et au Royaume-Uni (gluten, crustacés, œufs, poisson, arachides, soja, lait, fruits à coque, céleri, moutarde, sésame, sulfites, lupin, mollusques), affichés sous la forme « Contient : … ».
+- **Épuisé :** l'article reste au menu, grisé et marqué comme épuisé.
+
+Tous les prix d'un même menu utilisent la devise que vous choisissez. À partir de deux sections, des raccourcis en haut de page permettent d'accéder directement à chaque section. Un menu peut contenir jusqu'à 30 sections et 300 articles.
+
+Le bloc **Wi-Fi** affiche le nom de votre réseau et son mot de passe avec des boutons de copie. Un téléphone ne peut pas rejoindre un réseau depuis une page web : les invités copient donc le mot de passe et le collent dans leurs réglages Wi-Fi. Toute personne qui ouvre la page peut voir le mot de passe.
+
+## Coupon [#coupon]
+
+Le bloc **Coupon** affiche un titre, le code avec un bouton de copie et, en option, un code-barres que votre caisse peut scanner :
+
+- **Code 128** encode jusqu'à 48 lettres, chiffres et symboles (sans accents ni emoji).
+- **EAN-13** accepte 12 chiffres (QRdx ajoute le chiffre de contrôle) ou les 13. Les numéros commençant par 20–29 sont réservés à l'usage en magasin, ce qui convient aux codes de coupon.
+
+Par défaut, le code-barres encode le code du coupon ; renseignez **Valeur du code-barres** pour encoder autre chose, par exemple votre numéro de point de vente.
+
+**Valable à partir du** et **Valable jusqu'au** sont des jours calendaires. Un coupon est considéré comme commencé dès que son premier jour a débuté quelque part dans le monde, et comme expiré seulement après la fin de son dernier jour partout dans le monde : personne ne voit donc « expiré » trop tôt à cause de son fuseau horaire. Les coupons expirés restent visibles, marqués comme expirés.
+
+Activez **Bouton Utiliser** pour compter les utilisations : le visiteur montre l'écran à votre personnel et touche **Utiliser maintenant**. La page affiche alors « Utilisé » avec l'heure sur ce téléphone, et le nombre apparaît sur l'écran [Réponses](#responses) de la page. Cela n'empêche pas d'afficher le même code sur un autre téléphone : considérez-le comme un compteur, pas comme un verrou.
+
+## Événement [#event]
+
+Le bloc **Événement** affiche la date et l'heure, le lieu et l'adresse (avec un lien **Ouvrir dans Maps**), un lien en ligne, l'organisateur et un bouton tel que **Obtenir des billets**. Les heures sont saisies dans le fuseau horaire de l'événement et affichées aux visiteurs dans ce même fuseau, par exemple « 7:00 – 10:00 PM GMT+1 ». Les événements d'une journée entière ou sur plusieurs jours sont pris en charge ; sans heure de fin, un événement dure une heure.
+
+**Ajouter au calendrier** propose Google Calendar, Apple Calendar (un fichier `.ics`), Outlook.com et Yahoo Calendar. Le téléchargement `.ics` est servi depuis l'adresse de votre page, il fonctionne donc aussi sur un [domaine personnalisé](/docs/custom-domains) ; dans l'aperçu de l'éditeur, il est désactivé tant que la page n'est pas publiée. Une fois l'événement terminé, le bloc l'indique et masque le bouton du calendrier.
+
+## Téléchargement d'application [#app-download]
+
+Le bloc **Téléchargement d'application** accepte votre lien App Store (`apps.apple.com`), votre lien Google Play (`play.google.com`) et un site web. Le store du visiteur passe en premier : les utilisateurs d'iPhone et d'iPad voient le bouton App Store en haut, ceux d'Android Google Play, et tous les autres votre site web. Les autres liens restent en dessous, personne n'est donc bloqué.
+
+## Formulaires [#forms]
+
+Le bloc **Formulaire** recueille des réponses. Les questions peuvent être de ces types :
+
+| Type | Les visiteurs répondent avec |
+| --- | --- |
+| Texte | Une réponse courte ou longue (vous définissez la longueur maximale) |
+| E-mail | Une adresse e-mail |
+| Téléphone | Un numéro de téléphone |
+| Note en étoiles | Des étoiles, sur 3 à 10 (à vous de choisir ; 5 par défaut) |
+| NPS | Une note de 0 à 10 à la question « quelle est la probabilité que vous nous recommandiez » |
+| Choix | Une option, ou plusieurs lorsque **Autoriser plusieurs réponses** est activé |
+| Case à cocher | Une case à cocher, par exemple pour accepter d'être contacté |
+
+Marquez des questions comme **Obligatoire** pour les rendre impératives. Les visiteurs voient les erreurs à côté de la question, puis un message de remerciement que vous rédigez après l'envoi. Ne demandez que ce dont vous avez besoin, et indiquez comment vous utiliserez les coordonnées.
+
+Une protection anti-spam est intégrée : un champ caché que seuls les robots remplissent, et des limites sur la fréquence d'envoi d'un formulaire depuis un même appareil. Lorsque le serveur dispose de clés [Cloudflare Turnstile](#cloudflare-turnstile), les formulaires exécutent aussi la vérification invisible de Turnstile.
+
+### Liens d'avis [#review-links]
+
+Le bloc **Liens d'avis** affiche des boutons « Donnez votre avis sur Google » (et Tripadvisor, Yelp, Facebook, Trustpilot ou tout autre site). Il est montré à tous les visiteurs, quelles que soient leurs réponses dans un formulaire. Les sites d'avis, Google compris, n'autorisent pas à n'afficher les liens d'avis qu'aux personnes qui vous ont bien noté : QRdx ne les masque donc jamais en fonction d'une note.
+
+Dans Google Business Profile, choisissez **Demander des avis** pour copier votre lien d'avis.
+
+## Réponses [#responses]
+
+Ouvrez une page dans **Tableau de bord → Pages et formulaires** et choisissez **Réponses** (ou allez à `/dashboard/<workspace>/pages/<page id>/responses`). Les réponses sont listées de la plus récente à la plus ancienne, 25 par écran, avec l'heure (UTC), le code que le visiteur a scanné et chaque réponse. Les adresses e-mail et les numéros de téléphone sont des liens.
+
+- **Plusieurs formulaires sur une page :** des onglets filtrent par formulaire.
+- **Exporter en CSV :** une ligne par réponse et une colonne par question. Les colonnes suivent les questions actuelles, puis les questions supprimées qui ont encore des réponses. Renommer une question conserve sa colonne.
+- **Supprimer :** sélectionnez des réponses, ou utilisez le bouton corbeille sur l'une d'elles. La suppression est irréversible. Les membres peuvent supprimer les réponses des pages qu'ils ont créées ; les propriétaires et les administrateurs, celles de n'importe quelle page de l'espace de travail.
+
+Les réponses appartiennent à la page. Supprimer la page supprime ses réponses.
+
+### Limites mensuelles [#monthly-limits]
+
+| Offre | Réponses par mois |
+| --- | --- |
+| Gratuit | 50 |
+| Pro | 1.000 |
+| Business | 10.000 |
+
+La limite compte les réponses reçues par toutes les pages de l'espace de travail, par mois calendaire (UTC), et repart de zéro le 1er. L'écran Réponses indique combien vous en avez utilisé.
+
+Lorsque la limite est atteinte, les formulaires affichent « Ce formulaire n'accepte pas de réponses pour le moment » et conservent ce que le visiteur a saisi. Les réponses que vous avez déjà ne sont jamais supprimées ni masquées, quelle que soit l'offre, y compris après un passage à une offre inférieure.
+
+## Règles d'accès [#access-rules]
+
+Les formulaires et les fichiers de calendrier suivent les [contrôles du code](/docs/code-controls) de la page : tant qu'un code est en pause, programmé pour plus tard, expiré ou au-delà de sa limite de scans, son formulaire n'accepte plus de réponses et le fichier `.ics` n'est pas servi. Sur une page protégée par mot de passe, ils fonctionnent une fois que le visiteur a saisi le mot de passe.
+
+## Notifications et webhooks [#notifications-and-webhooks]
+
+Chaque réponse envoie un événement `form.submitted` avec les réponses. Utilisez-le pour les [notifications par e-mail ou Slack/Discord](/docs/notifications) et les [webhooks](/docs/webhooks) (Zapier, Make, votre propre serveur).
+
+## Confidentialité [#privacy]
+
+Les réponses sont stockées avec la page dans votre espace de travail. QRdx ne stocke pas les adresses IP des visiteurs avec les réponses : chaque réponse conserve uniquement un hachage salé de l'adresse IP et du navigateur pour la journée, qui ne peut être reconverti ni en l'une ni en l'autre.
+
+## Auto-hébergement [#self-hosting]
+
+### Cloudflare Turnstile [#cloudflare-turnstile]
+
+Définissez les deux variables pour protéger les formulaires avec [Cloudflare Turnstile](https://developers.cloudflare.com/turnstile/) :
+
+```bash
+NEXT_PUBLIC_TURNSTILE_SITE_KEY=0x4AAAAAAA...
+TURNSTILE_SECRET_KEY=0x4AAAAAAA...
+```
+
+Si une seule des deux est définie, Turnstile reste désactivé. Le script Turnstile se charge lorsqu'un visiteur touche un formulaire pour la première fois, et non avec la page, et s'exécute de façon invisible sauf si Cloudflare a besoin que le visiteur clique. Si Cloudflare est injoignable, les réponses sont tout de même acceptées pour que vous ne perdiez jamais d'avis ; les autres protections anti-spam restent actives.
+
+### Domaines personnalisés [#custom-domains]
+
+Sur un [domaine personnalisé](/docs/custom-domains) vérifié, le point d'accès des formulaires (`/api/forms/...`) et les fichiers de calendrier (`/api/calendar/...`) sont servis à côté de vos pages : les formulaires et l'ajout au calendrier y fonctionnent donc sans configuration supplémentaire.

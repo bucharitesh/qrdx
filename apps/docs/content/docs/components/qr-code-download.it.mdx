@@ -1,0 +1,50 @@
+---
+title: "QR Code Download"
+description: "Un menu di download che esporta un QR code in PNG, SVG, JPG o PDF alla dimensione che scegli, oppure lo copia come immagine."
+icon: Download
+---
+
+<ComponentLinks name="qr-code-download" />
+
+<ComponentPreview name="qr-code-download-demo" />
+
+## Installazione [#installation]
+
+<InstallationTabs name="qr-code-download" />
+
+## Utilizzo [#usage]
+
+```tsx
+import { QrCodeDownload } from "@/components/qr-code-download";
+```
+
+```tsx
+<QrCodeDownload value="https://qrdx.dev" />
+```
+
+Il menu elenca ogni formato con un breve suggerimento, un selettore di dimensione e "Copia immagine", che mette un PNG negli appunti. I file vengono generati nel browser; non viene caricato nulla.
+
+## Esempi [#examples]
+
+### Esportazione con stile [#styled-export]
+
+Passa a `qr` lo stesso oggetto di stile che usi per il rendering a schermo, così ogni file esportato corrisponde all'anteprima. `formats`, `sizes`, `label` e `variant` definiscono il menu e il suo pulsante.
+
+<ComponentPreview name="qr-code-download-styled" />
+
+### Formati [#formats]
+
+| Formato | Output |
+|--------|--------|
+| `png` | Immagine con lo sfondo del codice |
+| `jpg` | Immagine con sfondo a tinta unita |
+| `svg` | Vettoriale che si adatta a qualsiasi dimensione |
+| `pdf` | Documento di una sola pagina. Richiede il pacchetto opzionale `jspdf` (`npm install jspdf`) |
+
+Le dimensioni raster vanno da 50 a 5000 pixel. Passa un solo elemento in `sizes` per nascondere il selettore di dimensione.
+
+## Riferimento API [#api-reference]
+
+<auto-type-table path="../../../registry/qrdx/qr-code-download.tsx" type="{ [K in keyof QrCodeDownloadProps as K extends Exclude<keyof ComponentProps<'div'>, 'onError'> ? never : K]: QrCodeDownloadProps[K] }" />
+
+Qualsiasi altra prop, come `className`, viene passata al `<div>` che fa da contenitore.

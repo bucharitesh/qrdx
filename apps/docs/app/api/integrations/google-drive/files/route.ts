@@ -6,7 +6,7 @@ import {
 } from "@repo/integrations";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
-import { env } from "@/lib/env";
+import { env } from "@/env";
 
 const MAX_PAGE_SIZE = 100;
 

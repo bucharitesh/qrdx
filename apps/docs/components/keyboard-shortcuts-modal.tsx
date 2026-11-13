@@ -83,6 +83,16 @@ const shortcutCategories: ShortcutCategory[] = [
     ],
   },
   {
+    // The playground preview's parts (components/editor/part-inline)
+    id: "preview",
+    shortcuts: [
+      { keys: ["Enter"], id: "editAPartOfTheCode" },
+      { keys: ["R"], id: "randomLookForThatPart" },
+      { keys: ["Delete"], id: "hideTheFocusedLogo" },
+      { keys: ["←", "↑", "→", "↓"], id: "moveTheLogoWhileEditing" },
+    ],
+  },
+  {
     id: "help",
     shortcuts: [{ keys: ["?"], id: "showThisShortcutsDialog" }],
   },

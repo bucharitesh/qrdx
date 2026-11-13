@@ -44,7 +44,7 @@ import {
 } from "@/app/(app)/dashboard/codes/_lib/organize-shared";
 import type { TagRef } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import { TagDot } from "./tag-chip";
-import { plural, useOrganizeAction } from "./use-organize-action";
+import { useOrganizeAction } from "./use-organize-action";
 
 /** Tags from props, or loaded when a dialog opens outside the list. */
 export function useTags(open: boolean, initial?: TagRow[]) {
@@ -127,7 +127,7 @@ export function TagEditDialog({
     event.preventDefault();
     if (tag) {
       const done = await run(() => updateCodeTag({ id: tag.id, name, color }), {
-        success: "Tag saved",
+        success: t("tagSaved"),
       });
       if (done !== null) {
         onSaved?.({ ...tag, name: name.trim(), color });
@@ -200,7 +200,7 @@ export function DeleteTagDialog({
   const remove = async () => {
     if (!tag) return;
     const done = await run(() => deleteCodeTag({ id: tag.id }), {
-      success: `Deleted tag "${tag.name}"`,
+      success: t("deletedTag", { name: tag.name }),
     });
     if (done !== null) {
       onOpenChange(false);
@@ -296,8 +296,8 @@ export function TagsDialog({
       () => tagQrCodes({ ids: codes.map((code) => code.id), add, remove }),
       {
         success: single
-          ? "Tags saved"
-          : ({ updated }) => `Updated tags on ${plural(updated, "code")}`,
+          ? t("tagsSaved")
+          : ({ updated }) => t("updatedTagsOn", { count: updated }),
       },
     );
     if (done) onOpenChange(false);
@@ -309,9 +309,7 @@ export function TagsDialog({
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>
-              {single
-                ? t("tags")
-                : t("tagsForValue", { value: plural(codes.length, "code") })}
+              {single ? t("tags") : t("tagsForValue", { count: codes.length })}
             </DialogTitle>
             <DialogDescription>
               {t("upToMaxTagsPer", { MAX_TAGS_PER_CODE })}

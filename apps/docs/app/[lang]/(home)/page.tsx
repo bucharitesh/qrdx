@@ -8,6 +8,7 @@ import { FeatureRowsSection } from "@/components/sections/home/feature-rows-sect
 import { GallerySection } from "@/components/sections/home/gallery-section";
 import { HomeNumbers } from "@/components/sections/home/numbers/home-numbers";
 import { UseCasesSection } from "@/components/sections/home/use-cases-section";
+import { UsedBySection } from "@/components/sections/home/used-by-section";
 import { isArtAvailable } from "@/lib/ai/art-availability";
 import { isFeatureAvailable } from "@/lib/feature-availability";
 import { localizedMetadata } from "@/lib/i18n/metadata";
@@ -16,12 +17,14 @@ import { baseUrl, defaultOgImage, siteName } from "@/lib/metadata";
 import { PLAN_LIMITS } from "@/lib/plans";
 import {
   BILLING_INTERVALS,
+  EUR_COUNTRIES,
   PAID_PLANS,
   type PaidPlan,
   PLAN_NAMES,
   PRICING,
   PRICING_CURRENCIES,
 } from "@/lib/pricing";
+import { scanHistoryLabel } from "@/lib/scan-history";
 import {
   founderSchema,
   organizationId,
@@ -49,10 +52,22 @@ const customDomains = isFeatureAvailable("customDomains");
 const domains = (count: number) =>
   customDomains ? `${count} custom domains, ` : "";
 
+/** "1 year of scan analytics", or "unlimited scan history" (lib/scan-history). */
+const scanHistory = (days: number) =>
+  Number.isFinite(days)
+    ? `${scanHistoryLabel(days)} of scan analytics`
+    : "unlimited scan history";
+
+// "Everything in Pro": Business names its history only when it keeps more.
+const businessHistory =
+  business.analyticsRetentionDays > pro.analyticsRetentionDays
+    ? `${scanHistory(business.analyticsRetentionDays)}, `
+    : "";
+
 /** Offer descriptions; limits come from lib/plans.ts so they can't drift. */
 const PLAN_SUMMARY: Record<PaidPlan, string> = {
-  pro: `Unlimited dynamic QR codes and hosted pages, ${pro.analyticsRetentionDays / 365} years of scan analytics, ${domains(pro.customDomains)}teams of up to ${pro.teamMembers}, smart routing, A/B tests, UTM tags, passwords, schedules and scan limits.`,
-  business: `Everything in Pro, plus white-label hosted pages with custom CSS, unlimited analytics history, ${domains(business.customDomains)}unlimited team members, conversion tracking, webhooks and Slack or Discord alerts.`,
+  pro: `Unlimited dynamic QR codes and hosted pages, ${scanHistory(pro.analyticsRetentionDays)}, ${domains(pro.customDomains)}teams of up to ${pro.teamMembers}, smart routing, A/B tests, UTM tags, passwords, schedules and scan limits.`,
+  business: `Everything in Pro, plus white-label hosted pages with custom CSS, ${businessHistory}${domains(business.customDomains)}unlimited team members, conversion tracking, webhooks and Slack or Discord alerts.`,
 };
 
 const offers = [
@@ -62,7 +77,7 @@ const offers = [
     price: "0",
     priceCurrency: "USD",
     url: url("/pricing"),
-    description: `Unlimited static QR codes with no account. A free account adds ${free.dynamicCodes} dynamic QR codes, ${free.landingPages} hosted pages and ${free.analyticsRetentionDays} days of scan analytics.`,
+    description: `Unlimited static QR codes with no account. A free account adds ${free.dynamicCodes} dynamic QR codes, ${free.landingPages} hosted pages and ${scanHistory(free.analyticsRetentionDays)}.`,
   },
   ...PAID_PLANS.flatMap((plan) =>
     BILLING_INTERVALS.flatMap((interval) =>
@@ -84,6 +99,13 @@ const offers = [
           // Rupee prices are shown and charged to customers in India only.
           ...(currency === "INR" && {
             eligibleRegion: { "@type": "Country", name: "IN" },
+          }),
+          // Euro prices (when on): the EU and EEA only.
+          ...(currency === "EUR" && {
+            eligibleRegion: [...EUR_COUNTRIES].map((name) => ({
+              "@type": "Country",
+              name,
+            })),
           }),
         };
       }),
@@ -167,6 +189,8 @@ export default async function Home() {
       />
       <main className="flex flex-col items-center justify-center divide-y divide-border min-h-screen w-full">
         <HeroSection />
+        {/* Off until a customer is published in lib/customers.ts. */}
+        <UsedBySection />
         <GallerySection />
         <UseCasesSection />
         <AsciiDivider />

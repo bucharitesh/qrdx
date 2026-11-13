@@ -1,0 +1,80 @@
+{
+  "id": "food-truck-location",
+  "name": "Food truck spot",
+  "description": "A solid card with a delivery truck over the code and the label underneath.",
+  "category": "use-case",
+  "collection": "food-drink",
+  "contentTypes": ["location", "url"],
+  "tags": ["restaurant", "food", "food truck", "location"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M557 68L630.5 68A6 6 0 0 1 636.5 74L636.5 143A6 6 0 0 1 630.5 149L557 149A6 6 0 0 1 551 143L551 74A6 6 0 0 1 557 68ZM639.5 92L665 92L686 117.5L686 149L639.5 149ZM647 117.5L675.5 117.5L662 99.5L647 99.5Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M564.5 152A16.5 16.5 0 1 1 597.5 152A16.5 16.5 0 1 1 564.5 152ZM645.5 152A16.5 16.5 0 1 1 678.5 152A16.5 16.5 0 1 1 645.5 152ZM574.25 152A6.75 6.75 0 1 0 587.75 152A6.75 6.75 0 1 0 574.25 152ZM655.25 152A6.75 6.75 0 1 0 668.75 152A6.75 6.75 0 1 0 655.25 152Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Where's the truck?",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan for today's spot",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

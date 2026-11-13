@@ -1,0 +1,88 @@
+---
+title: "도움말 센터"
+description: "QR 코드 만들기, 동적 코드, 페이지, 결제, 계정에 대한 답을 모았어요. 코드는 필요 없어요."
+icon: LifeBuoy
+---
+
+import { HelpSearch, StillStuck } from "@/components/docs/help-home";
+
+<HelpSearch />
+
+## 자주 묻는 질문 [#common-questions]
+
+- [첫 QR 코드 만들기](/docs/help/getting-started/first-qr-code)
+- [정적 QR 코드와 동적 QR 코드, 어떤 것이 필요할까요?](/docs/help/getting-started/static-vs-dynamic)
+- [코드가 가리키는 위치 바꾸기](/docs/help/dynamic-codes/change-the-link)
+- [코드가 스캔되지 않아요](/docs/help/troubleshooting/wont-scan)
+- [QR 코드 다운로드 및 인쇄하기](/docs/help/getting-started/download-and-print)
+- [결제를 중단하면 코드는 어떻게 되나요?](/docs/help/account-and-billing/never-hostage)
+- [구독 취소하기](/docs/help/account-and-billing/cancel)
+- [스캔하면 오류 페이지가 나와요](/docs/help/troubleshooting/error-pages)
+
+## 주제별로 보기 [#browse-by-topic]
+
+<Cards>
+  <Card
+    icon={<Rocket />}
+    href="/docs/help/getting-started/first-qr-code"
+    title="시작하기"
+    description="첫 코드를 만들고, 다운로드하고, 인쇄해 보세요. 정적 코드와 동적 코드 모두 다뤄요."
+  />
+  <Card
+    icon={<Palette />}
+    href="/docs/help/designing/colors-and-contrast"
+    title="디자인"
+    description="색상, 로고, 프레임, 아트, 그리고 항상 스캔되는 코드를 만드는 방법이에요."
+  />
+  <Card
+    icon={<QrCode />}
+    href="/docs/help/dynamic-codes/create"
+    title="동적 코드"
+    description="링크를 바꾸고, 스캔 수를 확인하고, 코드를 일시 중지하거나 보호하고 경로를 지정해요."
+  />
+  <Card
+    icon={<PanelsTopLeft />}
+    href="/docs/help/pages-and-forms/create-a-page"
+    title="페이지와 양식"
+    description="QRdx가 호스팅하는 모바일 페이지와 양식이에요."
+  />
+  <Card
+    icon={<CreditCard />}
+    href="/docs/help/account-and-billing/plans"
+    title="계정 및 결제"
+    description="요금제, 청구서, 취소, 내 데이터와 계정을 다뤄요."
+  />
+  <Card
+    icon={<Users />}
+    href="/docs/help/teams/create-and-invite"
+    title="워크스페이스와 팀"
+    description="워크스페이스 만들기, 사람 초대, 역할과 좌석을 안내해요."
+  />
+  <IfAvailable path="/docs/help/domains/custom-domains">
+    <Card
+      icon={<Globe />}
+      href="/docs/help/domains/custom-domains"
+      title="도메인"
+      description="직접 소유한 도메인으로 짧은 링크를 만들어요."
+    />
+  </IfAvailable>
+  <Card
+    icon={<TriangleAlert />}
+    href="/docs/help/troubleshooting/wont-scan"
+    title="문제 해결"
+    description="스캔되지 않는 코드, 잘못된 페이지, 오류 페이지, 받지 못한 이메일을 다뤄요."
+  />
+  <Card
+    icon={<ShieldCheck />}
+    href="/docs/help/privacy-and-security/scan-data"
+    title="개인정보 보호 및 보안"
+    description="스캔 시 기록되는 정보, 계정 보안, 악용 신고를 안내해요."
+  />
+</Cards>
+
+## 더 보기 [#more]
+
+- [새 소식과 앞으로의 계획](/docs/help/whats-new), 그리고 전체 [변경 로그](/changelogs)를 확인해 보세요.
+- 무언가를 개발하고 계신가요? [개발자](/docs/developers) 탭에서 REST API, 웹훅, MCP, CLI를 확인할 수 있어요.
+
+<StillStuck />

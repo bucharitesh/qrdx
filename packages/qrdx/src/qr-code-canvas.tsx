@@ -11,7 +11,7 @@
  * SPDX-License-Identifier: ISC
  */
 import { type JSX, useEffect, useRef, useState } from "react";
-import type { QRPropsCanvas } from "../types";
+import type { QRPropsCanvas } from "../types/react";
 import qrcodegen from "./codegen";
 import {
   DEFAULT_BGCOLOR,
@@ -60,6 +60,7 @@ export function QRCodeCanvas(props: QRPropsCanvas) {
     eyeColors: _eyeColors,
     moduleScale: _moduleScale,
     frameLabelMarkers: _frameLabelMarkers,
+    partMarkers: _partMarkers,
     autoLevel,
     shape,
     ...otherProps

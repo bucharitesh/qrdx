@@ -1,0 +1,66 @@
+---
+title: "Routage intelligent"
+description: "Envoyez chaque scan d'un QR code dynamique vers une URL différente selon l'appareil, le pays, la zone, la langue, l'heure ou le nombre de scans, lancez des tests A/B et ajoutez des paramètres UTM."
+icon: Split
+---
+
+Un [QR code dynamique](/docs/dynamic-qr-codes) envoie normalement tous les scans vers une seule destination. Avec le routage intelligent, un seul code imprimé peut ouvrir l'App Store sur iPhone et Google Play sur Android, une page en espagnol pour les visiteurs hispanophones, ou une autre offre en dehors des heures d'ouverture. Vous le configurez dans le panneau **Routage intelligent** de la page du code dans le [tableau de bord](/dashboard?to=codes) (ouvrez un code, puis son onglet **Paramètres**).
+
+Le routage intelligent et les paramètres UTM font partie de Pro et Business. Ils s'appliquent aux codes qui ouvrent un lien de site web ; les [pages hébergées](/docs/landing-pages) ne redirigent pas, elles n'ont donc pas de routage.
+
+## Fonctionnement des règles [#how-rules-work]
+
+- Un code peut avoir jusqu'à 20 **règles**. Chaque règle comporte des conditions (« quand ») et une action (« alors »).
+- Les règles sont vérifiées **de haut en bas** pour chaque scan. La **première règle dont toutes les conditions correspondent** décide de la destination du scan. Utilisez les flèches pour réorganiser les règles.
+- Si aucune règle ne correspond, le scan va vers la destination principale du code.
+- Une règle sans condition correspond à tous les scans : les règles situées en dessous ne s'exécutent donc jamais.
+- **Désactivez** une règle pour la conserver sans l'utiliser.
+- Les modifications s'appliquent dès le scan suivant ; vous n'avez jamais besoin de réimprimer le code.
+
+Si une règle ne peut pas être évaluée pour une raison quelconque, le scan est tout de même envoyé vers la destination principale : le routage n'empêche jamais un code de fonctionner.
+
+## Conditions [#conditions]
+
+Chaque condition peut être inversée avec **n'est pas** (par exemple « le pays n'est pas US »).
+
+| Condition | Correspond quand | Remarques |
+| --- | --- | --- |
+| Appareil | Le scan provient d'un téléphone, d'une tablette, d'un ordinateur ou d'un autre appareil | D'après le user agent du navigateur |
+| Système d'exploitation | iOS, Android, Windows, macOS, Linux, ChromeOS, HarmonyOS, … | iPhone et iPad comptent tous deux comme iOS |
+| Pays | Le scan provient de l'un des pays listés | Codes à 2 lettres comme `US, CA, GB` |
+| Région | Le scan provient de l'une des régions listées | Codes comme `US-CA, US-NY` (pays + subdivision) |
+| Langue | La langue préférée du navigateur du visiteur fait partie de celles listées | `es` correspond à toutes les variantes de l'espagnol (`es-MX`, `es-ES`) ; `pt-BR` uniquement au portugais brésilien |
+| Heure de la journée | Le scan a lieu les jours de la semaine choisis, entre deux heures, dans un fuseau horaire que vous sélectionnez | Une plage comme 22:00–02:00 passe minuit et appartient au jour où elle commence |
+| Plage de dates | Le scan a lieu entre deux dates | Laissez un côté vide pour « jusqu'au » ou « à partir du » ; les dates suivent le fuseau horaire de votre navigateur |
+| Nombre de scans | Il s'agit de l'un des N premiers scans, ou de n'importe quel scan après le N-ième | Compte les scans enregistrés (les bots ne sont pas comptés), le chiffre est donc approximatif quand beaucoup de personnes scannent en même temps |
+| Zone | Le scanneur se trouve dans un rayon (de 100 m à 500 km) autour d'un point | Utilise la position partagée par le scanneur lorsque la [localisation précise](/docs/precise-location) est activée, sinon la position approximative de son adresse IP |
+
+Le pays, la région et la position basée sur l'IP pour les zones proviennent de l'adresse IP du scanneur, que QRdx ne stocke jamais. Lorsqu'une position est inconnue, les conditions de localisation ne correspondent pas (et les conditions « n'est pas » correspondent). [Localisation précise et géorepérage](/docs/precise-location) explique les zones, y compris comment faire fonctionner un code uniquement à l'intérieur de l'une d'elles.
+
+## Liens d'application intelligents [#smart-app-links]
+
+Choisissez **Ajouter une règle → Lien d'application intelligent** pour créer deux règles en une fois : iOS va vers votre lien App Store, Android vers votre lien Google Play. Tous les autres (ordinateur, autres téléphones) vont vers la destination principale, par exemple votre site web.
+
+## Tests A/B [#ab-tests]
+
+Définissez l'action d'une règle sur **Répartir entre plusieurs URL (A/B)** et ajoutez de 2 à 5 variantes, chacune avec une URL et un poids. Une répartition de 70 et 30 envoie environ 70 % des visiteurs vers la première URL.
+
+- L'attribution est **persistante** : un visiteur qui scanne à nouveau le même jour obtient la même variante. Elle repose sur un hash quotidien anonyme du visiteur, jamais sur un cookie.
+- Les statistiques du code affichent les **scans par variante** depuis la dernière modification des variantes ou des poids de la répartition. Chaque scan enregistre la variante qui lui a été servie. Les scans enregistrés avant que QRdx ne stocke les variantes sont rejoués avec vos règles actuelles, et la carte est marquée comme une estimation.
+- Une répartition peut aussi avoir des conditions, par exemple « test A/B pour les visiteurs en Allemagne uniquement ».
+
+## Tester vos règles [#test-your-rules]
+
+**Tester vos règles**, en bas du panneau, montre où irait un scan pour n'importe quel appareil, système d'exploitation, pays, région, langue, date et heure, numéro de scan et visiteur, en utilisant vos modifications non enregistrées. Il indique quelle règle a correspondu et pourquoi les autres ne correspondaient pas, et affiche l'URL finale, paramètres UTM compris.
+
+## Paramètres UTM [#utm-parameters]
+
+Le panneau **Paramètres UTM** ajoute `utm_source`, `utm_medium`, `utm_campaign`, `utm_term`, `utm_content` et jusqu'à 10 paramètres personnalisés à l'URL ouverte par chaque scan, afin que les outils d'analyse puissent distinguer le trafic des QR codes.
+
+- Les paramètres sont ajoutés après le routage, à l'URL vers laquelle le scan est envoyé.
+- Un paramètre déjà présent dans l'URL n'est jamais remplacé, et le reste de l'URL est conservé exactement tel que vous l'avez saisi.
+- Les noms commençant par `qrdx_` sont réservés au [suivi des conversions](/docs/tracking-and-conversions).
+
+## Offres et rétrogradation [#plans-and-downgrades]
+
+Les règles et paramètres UTM enregistrés avec Pro continuent de fonctionner si vous rétrogradez : les limites empêchent seulement d'en créer de nouveaux. Sans Pro, vous pouvez toujours désactiver et supprimer des règles ou retirer des paramètres UTM ; pour les modifier, Pro est de nouveau nécessaire.

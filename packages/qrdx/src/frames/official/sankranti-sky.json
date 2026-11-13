@@ -1,0 +1,98 @@
+{
+  "id": "sankranti-sky",
+  "name": "Kites in the sky",
+  "description": "Rolling hills under the code and a kite in the sky, in sky blue and marigold.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "makar-sankranti",
+  "contentTypes": [],
+  "tags": ["makar sankranti", "uttarayan", "kites", "january", "kite", "sky"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1820
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#0f4c81",
+      "text": "#ffffff",
+      "accent": "#f4a62a"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1820,
+        "radius": 56,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.82
+        }
+      },
+      {
+        "type": "path",
+        "d": "M300 82.6L357 147.2L300 219.4L243 147.2ZM302.07 216.95L299.94 220.16L299 222.77L298.83 225.1L299.27 227.33L300.27 229.61L301.76 231.95L303.61 234.35L305.69 236.81L307.83 239.35L309.89 242.01L311.69 244.87L313.05 247.99L313.71 251.43L313.42 255.1L312.05 258.9L309.67 262.55L305.53 259.85L307.66 256.64L308.6 254.03L308.77 251.7L308.33 249.47L307.33 247.19L305.84 244.85L303.99 242.45L301.91 239.99L299.77 237.45L297.71 234.79L295.91 231.93L294.55 228.81L293.89 225.37L294.18 221.7L295.55 217.9L297.93 214.25Z",
+        "fill": "accent"
+      },
+      {
+        "type": "path",
+        "d": "M300 82.6L357 147.2L300 147.2ZM300 147.2L300 219.4L243 147.2ZM288.6 234.6L303.8 238.4L288.6 246ZM319 246L303.8 249.8L319 257.4Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M0 1330C300 1190 600 1430 1240 1270L1240 1764Q1240 1820 1184 1820L56 1820Q0 1820 0 1764Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.45
+        }
+      },
+      {
+        "type": "path",
+        "d": "M0 1530C380 1420 820 1610 1240 1480L1240 1764Q1240 1820 1184 1820L56 1820Q0 1820 0 1764Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Happy Uttarayan",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1600,
+          "width": 1040,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Kite festival",
+        "color": "frame",
+        "box": {
+          "x": 420,
+          "y": 120,
+          "width": 720,
+          "height": 110
+        },
+        "weight": "regular",
+        "align": "end"
+      }
+    ]
+  }
+}

@@ -1,0 +1,64 @@
+---
+title: "Generator Kode QR"
+description: "Input teks dengan pratinjau kode QR langsung, preset gaya, dan tombol unduh."
+icon: Sparkles
+---
+
+<ComponentLinks name="qr-code-generator" />
+
+<ComponentPreview name="qr-code-generator-demo" />
+
+## Instalasi [#installation]
+
+<InstallationTabs name="qr-code-generator" />
+
+## Penggunaan [#usage]
+
+```tsx
+import { QrCodeGenerator } from "@/components/qr-code-generator";
+```
+
+```tsx
+<QrCodeGenerator defaultValue="https://example.com" />
+```
+
+Pratinjau diperbarui saat Anda mengetik. Setiap tombol preset menampilkan contoh kecil gayanya, dan unduhan menggunakan preset yang dipilih pada ukuran 1024 piksel.
+
+## Contoh [#examples]
+
+### Preset kustom [#custom-presets]
+
+Ganti preset bawaan dengan preset Anda sendiri. Sebuah preset terdiri dari `id`, `name`, dan `style` dengan opsi qrdx apa pun, termasuk gradien, logo, dan `level` koreksi kesalahan.
+
+<ComponentPreview name="qr-code-generator-presets" />
+
+Preset bawaan diekspor sebagai `QR_CODE_PRESETS`, sehingga Anda dapat memperluasnya:
+
+```tsx
+import { QR_CODE_PRESETS, QrCodeGenerator } from "@/components/qr-code-generator";
+
+<QrCodeGenerator
+  presets={[
+    ...QR_CODE_PRESETS,
+    { id: "brand", name: "Brand", style: { fgColor: "#155DFC" } },
+  ]}
+/>
+```
+
+### Menyimpan hasil [#saving-the-result]
+
+`onChange` melaporkan teks dan preset yang dipilih pada setiap perubahan, misalnya untuk menyimpan pilihan pengguna:
+
+```tsx
+<QrCodeGenerator
+  onChange={({ value, preset }) => saveDraft({ value, style: preset.style })}
+/>
+```
+
+## Referensi API [#api-reference]
+
+<auto-type-table path="../../../registry/qrdx/qr-code-generator.tsx" type="{ [K in keyof QrCodeGeneratorProps as K extends keyof ComponentProps<'div'> ? never : K]: QrCodeGeneratorProps[K] }" />
+
+### QrCodePreset [#qrcodepreset]
+
+<auto-type-table path="../../../registry/qrdx/qr-code-generator.tsx" name="QrCodePreset" />

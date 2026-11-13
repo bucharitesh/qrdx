@@ -1,7 +1,7 @@
+import { MAX_SVG_FILE_SIZE } from "@repo/config";
 import { toast } from "@repo/design-system";
 import { useTranslations } from "next-intl";
 import { useRef } from "react";
-import { MAX_SVG_FILE_SIZE } from "@/lib/constants";
 import type { PromptImage } from "@/types/ai";
 import {
   ALLOWED_IMAGE_TYPES,

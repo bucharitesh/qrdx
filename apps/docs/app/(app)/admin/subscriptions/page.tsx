@@ -10,6 +10,7 @@ import {
 } from "@repo/design-system/components/ui/table";
 import Link from "next/link";
 import { SettingsHeader } from "@/app/(app)/settings/components/settings-header";
+import { loadPage } from "@/lib/paging";
 import { Pager } from "../_components/pager";
 import { EmptyRow, StatCard } from "../_components/stat-card";
 import { formatDate, formatMoney, formatNumber } from "../_lib/format";
@@ -31,8 +32,6 @@ export default async function AdminSubscriptionsPage({
 }) {
   await requireAdmin();
   const params = await searchParams;
-  const page = parsePage(params.page);
-
   const [statusCounts, mrr] = await Promise.all([
     getSubscriptionStatusCounts(),
     getEstimatedMrr(),
@@ -43,7 +42,10 @@ export default async function AdminSubscriptionsPage({
     statusCounts.some((row) => row.status === params.status)
       ? params.status
       : undefined;
-  const { subscriptions, total } = await listSubscriptions({ status, page });
+  const { subscriptions, total, page } = await loadPage(
+    parsePage(params.page),
+    (page) => listSubscriptions({ status, page }),
+  );
 
   return (
     <div className="space-y-4">

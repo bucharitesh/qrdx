@@ -1,0 +1,157 @@
+---
+title: "Template"
+description: "Applica template di cornice predefiniti a un QR code, oppure registra i tuoi."
+icon: LayoutTemplate
+---
+
+Racchiudi un QR code in una grafica già pronta, oppure nella tua.
+
+## Che cosa sono i template? [#what-are-templates]
+
+Un template è una grafica SVG disegnata attorno al codice: un riquadro, un bordo, un badge. Riceve il codice come `children` e lo posiziona all'interno del proprio disegno. Colori, pattern e loghi restano nelle prop di `QRCode`, quindi un template funziona con qualsiasi stile.
+
+## Template disponibili [#available-templates]
+
+### Default [#default]
+Classico in bianco e nero.
+
+```tsx
+import { QRCode } from 'qrdx';
+
+<QRCode value="https://example.com" templateId="default" size={256} />
+```
+
+### Arrow [#arrow]
+Design geometrico moderno.
+
+```tsx
+<QRCode value="https://example.com" templateId="Arrow" size={256} />
+```
+
+### Standard Box [#standard-box]
+Design pulito e strutturato.
+
+```tsx
+<QRCode value="https://example.com" templateId="StandardBox" size={256} />
+```
+
+### Square Border [#square-border]
+Design con bordo e contorni ben definiti.
+
+```tsx
+<QRCode value="https://example.com" templateId="SquareBorder" size={256} />
+```
+
+### Striked Box [#striked-box]
+Design dinamico con elementi diagonali.
+
+```tsx
+<QRCode value="https://example.com" templateId="StrikedBox" size={256} />
+```
+
+### Halloween [#halloween]
+Tema stagionale di Halloween.
+
+```tsx
+<QRCode value="https://example.com" templateId="Halloween" size={256} />
+```
+
+## Personalizzare i template [#customize-templates]
+
+I template integrati disegnano la loro grafica con `fgColor`. Tutto il resto, come i pattern e un logo, si imposta sul codice come al solito:
+
+```tsx
+<QRCode
+  value="https://example.com"
+  templateId="Arrow"
+  fgColor="#1a56db"
+  imageSettings={{
+    src: "/your-logo.png",
+    width: 48,
+    height: 48,
+    excavate: true,
+  }}
+  size={512}
+/>
+```
+
+## Registro dei template [#template-registry]
+
+### Ottenere tutti i template [#get-all-templates]
+
+```tsx
+import { getAllTemplates } from 'qrdx';
+
+const templates = getAllTemplates();
+```
+
+### Ottenere gli ID dei template [#get-template-ids]
+
+```tsx
+import { getTemplateIds } from 'qrdx';
+
+const ids = getTemplateIds();
+// Returns: ['default', 'Arrow', 'StandardBox', ...]
+```
+
+## Template personalizzati [#custom-templates]
+
+Scrivi il tuo template come `TemplateDefinition`. Il suo `wrapper` riceve il codice come `children` e restituisce l'SVG da disegnare. Disegna su una tela di 300 per 300 e anche il codice arriva con queste dimensioni, quindi riducilo per lasciare spazio alla tua grafica. `props` contiene `fgColor` e `bgColor` del codice.
+
+Questo esempio disegna un anello attorno al codice:
+
+```tsx
+import { QRCode, type TemplateDefinition } from "qrdx";
+
+const ringTemplate: TemplateDefinition = {
+  id: "ring",
+  name: "Ring",
+  wrapper: (children, props) => (
+    <svg viewBox="0 0 300 300" width="300" height="300" xmlns="http://www.w3.org/2000/svg">
+      <circle
+        cx="150"
+        cy="150"
+        r="140"
+        fill="none"
+        stroke={props?.fgColor ?? "#000000"}
+        strokeWidth="8"
+      />
+      {/* The code at half size, centered */}
+      <g transform="translate(75, 75) scale(0.5)">{children}</g>
+    </svg>
+  ),
+};
+
+<QRCode
+  value="https://example.com"
+  customTemplate={ringTemplate}
+  fgColor="#1a56db"
+  size={256}
+/>
+```
+
+Mantieni il codice abbastanza grande da poter essere scansionato dalla distanza a cui le persone terranno il telefono e lascia uno spazio chiaro tra il codice e la tua grafica. Controlla il risultato con il [punteggio di scansione](/docs/features/frames#will-it-scan).
+
+## Quando usare i template [#when-to-use-templates]
+
+- **Coerenza del brand** — Fai in modo che tutti i QR code siano uniformi
+- **Configurazione rapida** — Ottieni risultati professionali in poco tempo
+- **Campagne stagionali** — Usa template a tema
+- **Generazione in blocco** — Applica stili coerenti
+
+## Guida alla scelta del template [#template-selection-guide]
+
+| Template | Ideale per | Atmosfera |
+|----------|----------|------|
+| Default | Professionale | Neutra |
+| Arrow | Tecnologia, moderno | Dinamica |
+| Standard Box | Aziendale | Professionale |
+| Square Border | Formale | Strutturata |
+| Striked Box | Marketing | Energica |
+| Halloween | Stagionale | Divertente |
+
+## Passi successivi [#next-steps]
+
+- [Pattern](/docs/features/patterns) — Personalizzazione dettagliata dei pattern
+- [Colori e gradienti](/docs/features/colors-gradients) — Colori avanzati
+- [Loghi](/docs/features/logos) — Aggiungi loghi ai template

@@ -1,3 +1,4 @@
+import { CANONICAL_ORIGIN } from "@repo/config";
 import { bitlyIntegration } from "../integrations/bitly/config";
 import { boxIntegration } from "../integrations/box/config";
 import { calcomIntegration } from "../integrations/calcom/config";
@@ -93,7 +94,7 @@ export function getIntegrationRedirectOrigin(): string {
   if (process.env.NODE_ENV === "development") return "http://localhost:3000";
   const origin = process.env.VERCEL_PROJECT_PRODUCTION_URL
     ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-    : (process.env.NEXT_PUBLIC_APP_URL ?? "https://qrdx.dev");
+    : (process.env.NEXT_PUBLIC_APP_URL ?? CANONICAL_ORIGIN);
   return origin.replace(/\/+$/, "");
 }
 

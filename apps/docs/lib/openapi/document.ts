@@ -1,3 +1,4 @@
+import { API_BASE_URL, CANONICAL_ORIGIN, GITHUB_REPO_URL } from "@repo/config";
 import type { OpenAPIV3_1 } from "fumadocs-openapi";
 import { z } from "zod";
 import {
@@ -43,6 +44,7 @@ import { WEBHOOK_EVENTS, type WebhookEvent } from "@/lib/events/types";
 import { baseUrl } from "@/lib/metadata";
 import { OAUTH_SCOPE_INFO, OAUTH_SCOPES } from "@/lib/oauth-scopes";
 import { qrOptionsSchema } from "@/lib/qr-render";
+import { SCAN_HISTORY_DAYS, scanHistoryLabel } from "@/lib/scan-history";
 import { SHORT_LINK_BASE } from "@/lib/short-links";
 import { API_ERRORS, type ApiErrorCode, type ApiErrorInfo } from "./errors";
 import {
@@ -83,9 +85,7 @@ type Response = JsonSchema;
 type Ref = { $ref: string };
 type OAuthScope = (typeof OAUTH_SCOPES)[number];
 
-/** The public API host; the same routes also answer at qrdx.dev/api/v1. */
-export const API_SERVER_URL = "https://api.qrdx.dev/v1";
-const SITE = "https://qrdx.dev";
+const SITE = CANONICAL_ORIGIN;
 const docs = (path: string) => `${SITE}/docs/${path}`;
 
 const COMPONENT_REF = "#/components/schemas/";
@@ -578,7 +578,7 @@ function operations(c: SchemaCollector): Record<string, JsonSchema> {
             eye: "Shape of the corner eye frames",
             dot: "Shape of the dot inside each corner eye",
           },
-          { data: "https://qrdx.dev", format: "svg" },
+          { data: CANONICAL_ORIGIN, format: "svg" },
         ),
         responses: {
           "200": {
@@ -1027,7 +1027,7 @@ Its short link stops working, and this can't be undone. To pause a code and keep
         security: security("codes:read"),
         description: `Scan analytics of a code for a range of days.
 
-Totals, a daily series and the top countries, cities, devices, systems, browsers and referrers. \`sources\` splits the scans into QR scans and NFC taps (visits through the code's \`nfcLink\`), and each listed scan has its \`source\`. The range is clamped to how long the plan keeps analytics. With \`limit\` above 0 the response also lists individual scans, newest first: pass the response's \`nextBefore\` as \`before\` for the next page.
+Totals, a daily series and the top countries, cities, devices, systems, browsers and referrers. \`sources\` splits the scans into QR scans and NFC taps (visits through the code's \`nfcLink\`), and each listed scan has its \`source\`. The range is clamped to how far back the plan's analytics reach: ${scanHistoryLabel(SCAN_HISTORY_DAYS.free)} on Free, the whole history on Pro and Business (\`retentionDays\` is then null). With \`limit\` above 0 the response also lists individual scans, newest first: pass the response's \`nextBefore\` as \`before\` for the next page.
 
 On Pro and Business, \`preciseLocations\` lists the locations scanners chose to share (rounded to about 100 m) for codes that ask for them, and each scan has \`latitude\`, \`longitude\`, \`locationAccuracyM\` and \`locationSource\`. On Free, \`preciseLocations\` is null and those fields are null. More in [Precise location and geofencing](${docs("precise-location")}).`,
         parameters: c.parameters(scansQuerySchema, "query", {
@@ -1045,7 +1045,7 @@ On Pro and Business, \`preciseLocations\` lists the locations scanners chose to 
                 data: {
                   codeId: exampleCode.id,
                   range: "7d",
-                  retentionDays: 30,
+                  retentionDays: SCAN_HISTORY_DAYS.free,
                   from: "2026-01-06T00:00:00.000Z",
                   days: 7,
                   total: 42,
@@ -1732,7 +1732,7 @@ Printed barcodes keep working either way: they're static.`,
 
 const DESCRIPTION = `Create and manage dynamic QR codes, read scan analytics, report conversions and subscribe to events over HTTP.
 
-- **Base URL:** \`${API_SERVER_URL}\`. The same routes answer at \`${SITE}/api/v1\`.
+- **Base URL:** \`${API_BASE_URL}\`. The same routes answer at \`${SITE}/api/v1\`.
 - **Auth:** an API key, \`Authorization: Bearer qrdx_…\` ([create one](${docs("developers/api-keys")})), or an OAuth 2.0 access token in the same header for apps that act for other people ([OAuth](${docs("developers/rest-api#get-an-access-token")})). A key acts on the workspace it was created in, with its creator's role there; a token acts on its user's own workspace. The image APIs (\`GET /qr\`, \`GET /barcode\`) need neither.
 - **Errors:** \`{ "code", "message", "status" }\`, plus \`docs\` when a page explains the fix ([every code](${docs("developers/errors")})).
 - **Limits:** a daily quota per workspace (1,000 requests on Free, 10,000 on Pro, 100,000 on Business), reported in \`X-RateLimit-*\` headers, plus per-minute limits. Over a limit you get \`429\` with \`Retry-After\`.`;
@@ -1794,10 +1794,10 @@ export function buildOpenApiDocument(): Document {
       contact: { name: "QRdx", url: `${SITE}/docs/developers/quickstart` },
       license: {
         name: "AGPL-3.0",
-        url: "https://github.com/bucharitesh/qrdx/blob/main/LICENSE",
+        url: `${GITHUB_REPO_URL}/blob/main/LICENSE`,
       },
     },
-    servers: [{ url: API_SERVER_URL, description: "QRdx API" }],
+    servers: [{ url: API_BASE_URL, description: "QRdx API" }],
     externalDocs: {
       description: "Quickstart: your first request in 2 minutes",
       url: docs("developers/quickstart"),

@@ -1,25 +1,12 @@
-export const AI_PROMPT_CHARACTER_LIMIT = 1000;
+import { CANONICAL_ORIGIN } from "@repo/config";
+
+// App-only constants. Limits that more than one part of QRdx enforces or
+// quotes (uploads, AI caps, themes, batches) live in @repo/config.
 
 export const DEBOUNCE_DELAY = 50;
 
-export const AI_REQUEST_FREE_TIER_LIMIT = 5;
-
-export const MAX_IMAGE_FILES = 2;
-export const MAX_IMAGE_FILE_SIZE = 4 * 1024 * 1024; // 4MB
-export const MAX_SVG_FILE_SIZE = 1 * 1024 * 1024; // 1MB
-export const MAX_LOGO_FILE_SIZE = 1 * 1024 * 1024; // 1MB
-
 // Logo shown when "Show logo" is on but no custom logo was uploaded.
-export const DEFAULT_QR_LOGO = "https://qrdx.dev/logo.png";
-
-// Server-side caps for AI routes (base64 images inflate size by ~4/3)
-export const AI_PROMPT_SERVER_CHARACTER_LIMIT = AI_PROMPT_CHARACTER_LIMIT * 4;
-export const MAX_AI_CHAT_MESSAGES = 50;
-export const MAX_AI_REQUEST_BODY_BYTES = 16 * 1024 * 1024; // 16MB
-
-export const MAX_FREE_THEMES = 10;
-
-export const MAX_GRADIENT_STOPS = 5;
+export const DEFAULT_QR_LOGO = `${CANONICAL_ORIGIN}/logo.png`;
 
 export const COMMUNITY_THEMES_PAGE_SIZE = 20;
 
@@ -74,8 +61,6 @@ export const COMMUNITY_THEME_TAGS = [
   "romantic",
   "geometric",
 ] as const;
-
-export const MAX_TAGS_PER_THEME = 5;
 
 export const OAUTH_ACCESS_TOKEN_EXPIRY_SECONDS = 60 * 60; // 1 hour
 export const OAUTH_REFRESH_TOKEN_EXPIRY_SECONDS = 60 * 60 * 24 * 30; // 30 days

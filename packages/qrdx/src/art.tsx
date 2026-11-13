@@ -1,3 +1,4 @@
+/** @jsxImportSource ./jsx */
 /** biome-ignore-all lint/style/noMagicNumbers: color math and module geometry */
 // Art modes: Logo QR and Image QR, as plain vector shapes (no AI, no images),
 // so SVG, PNG, PDF and EPS exports all look the same.
@@ -22,7 +23,7 @@
 //   sub-cells per module, with each module's center sub-cell forced to its
 //   value (after Chu et al., "Halftone QR Codes", SIGGRAPH Asia 2013).
 // Finder, alignment and format patterns always stay crisp.
-import type { JSX } from "react";
+
 import {
   QR_ART_MAX_SAMPLE_SIZE,
   QR_ART_MODES,
@@ -46,6 +47,7 @@ import {
   damagedCodewords,
   getCodewordMap,
 } from "./codeword-map";
+import type { QRNode } from "./jsx/runtime";
 import { roundTo } from "./utils/fmt";
 import { parseColor } from "./utils/parse-color";
 
@@ -684,7 +686,7 @@ class PathGroups {
     this.add(color, circlePath(cx, cy, r));
   }
 
-  toElements(keyPrefix: string): JSX.Element[] {
+  toElements(keyPrefix: string): QRNode[] {
     return [...this.groups].map(([color, segments], index) => (
       <path d={segments.join("")} fill={color} key={`${keyPrefix}-${index}`} />
     ));
@@ -767,7 +769,7 @@ export interface QRArtRenderOptions {
    * skipped by the caller). Logo "badge" uses it so the code keeps the
    * chosen dot shape; without it, art draws round dots.
    */
-  body?: (modules: Modules) => JSX.Element | JSX.Element[] | null;
+  body?: (modules: Modules) => QRNode | QRNode[] | null;
 }
 
 interface RenderContext {
@@ -876,12 +878,12 @@ function context(options: QRArtRenderOptions): RenderContext | null {
  * when `art` is not usable (or its strength is 0), so callers fall back to
  * the normal body pattern.
  */
-export function renderQRArt(options: QRArtRenderOptions): JSX.Element | null {
+export function renderQRArt(options: QRArtRenderOptions): QRNode | null {
   const ctx = context(options);
   if (!ctx) {
     return null;
   }
-  let content: JSX.Element[];
+  let content: QRNode[];
   if (ctx.art.mode === "halftone") {
     content =
       ctx.variant === "mono"
@@ -1166,7 +1168,7 @@ function cellLayer(
   cells: Cells,
   colorOf: (cell: number) => string | null,
   key: string
-): JSX.Element {
+): QRNode {
   const { count } = cells;
   const runs = new PathGroups();
   for (let row = 0; row < count; row++) {
@@ -1195,7 +1197,7 @@ function cellLayer(
   );
 }
 
-function alignmentLayer(ctx: RenderContext, color: string): JSX.Element[] {
+function alignmentLayer(ctx: RenderContext, color: string): QRNode[] {
   const centers = alignmentCenters(ctx.version, ctx.size);
   if (centers.length === 0) {
     return [];
@@ -1338,7 +1340,7 @@ function planDots(
   return { diameter, surround: target };
 }
 
-function renderColorHalftone(ctx: RenderContext): JSX.Element[] {
+function renderColorHalftone(ctx: RenderContext): QRNode[] {
   const { size, kinds, modules, fg, bg, t, margin, pixelSize } = ctx;
   const n = subCells(ctx);
   const cells = sampleCells(ctx, n, true);
@@ -1406,7 +1408,7 @@ function renderColorHalftone(ctx: RenderContext): JSX.Element[] {
     }
   }
 
-  const layers: JSX.Element[] = [
+  const layers: QRNode[] = [
     cellLayer(
       ctx,
       cells,
@@ -1455,7 +1457,7 @@ function renderColorHalftone(ctx: RenderContext): JSX.Element[] {
   return layers;
 }
 
-function renderMonoHalftone(ctx: RenderContext): JSX.Element[] {
+function renderMonoHalftone(ctx: RenderContext): QRNode[] {
   const { size, kinds, modules, fg, bg } = ctx;
   const n = subCells(ctx);
   const cells = sampleCells(ctx, n);
@@ -1596,8 +1598,8 @@ function logoGroup(
   box: { x: number; y: number; scale: number },
   colorOf: (color: RGB) => RGB,
   key: string
-): JSX.Element {
-  let content: JSX.Element[];
+): QRNode {
+  let content: QRNode[];
   if (traced.photographic) {
     // Photos uploaded as logos: a fine mosaic of the sample itself.
     const runs = new PathGroups();
@@ -1641,7 +1643,7 @@ function logoGroup(
   );
 }
 
-function renderLogoBlend(ctx: RenderContext): JSX.Element[] {
+function renderLogoBlend(ctx: RenderContext): QRNode[] {
   const { art, image, size, kinds, modules, fg, bg, t, margin, pixelSize } =
     ctx;
   const traced = tracedLogo(art, image);
@@ -1652,7 +1654,7 @@ function renderLogoBlend(ctx: RenderContext): JSX.Element[] {
   const colorOf = (color: RGB) => mix(bg, color, fade);
   const bgHex = toHex(bg);
   const fgHex = toHex(fg);
-  const layers: JSX.Element[] = [
+  const layers: QRNode[] = [
     logoGroup(
       traced,
       logo,
@@ -2040,7 +2042,7 @@ function badgeColors(
   return { body, inner };
 }
 
-function renderLogoBadge(ctx: RenderContext): JSX.Element[] {
+function renderLogoBadge(ctx: RenderContext): QRNode[] {
   const { art, image, size, kinds, modules, bg, margin, pixelSize, version } =
     ctx;
   const traced = tracedLogo(art, image);
@@ -2062,7 +2064,7 @@ function renderLogoBadge(ctx: RenderContext): JSX.Element[] {
       }
     }
   }
-  const layers: JSX.Element[] = [];
+  const layers: QRNode[] = [];
   const drawn = ctx.body?.(cleared);
   if (drawn) {
     layers.push(

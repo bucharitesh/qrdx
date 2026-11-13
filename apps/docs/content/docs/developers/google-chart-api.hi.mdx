@@ -1,0 +1,72 @@
+---
+title: "Google Chart QR कोड API की जगह QRdx इस्तेमाल करें"
+description: "chart.googleapis.com के QR कोड अब 404 देते हैं। chl, chs और chld को फ़्री QRdx image API के पैरामीटर से बदलें, और पुराने URL एक कमांड से अपडेट करें।"
+icon: Wrench
+---
+
+Google ने अप्रैल 2012 में अपने Image Charts को deprecate कर दिया था, और इसमें `chart.googleapis.com/chart?cht=qr` वाले QR कोड भी शामिल थे। यह endpoint अब `404` देता है (हमने 13 नवंबर 2026 को जाँचा), इसलिए इसे इस्तेमाल करने वाले पुराने `<img>` टैग, ईमेल और स्प्रेडशीट में टूटी हुई इमेज दिखती है।
+
+QRdx की [image API](/docs/developers/image-api) उसी तरह काम करती है: एक `GET` URL जो इमेज लौटाता है, बिना अकाउंट और बिना key के। बस host बदलें और तीन पैरामीटर के नाम बदलें।
+
+## पहले और बाद में [#before-and-after]
+
+```txt
+https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=https%3A%2F%2Fexample.com&chld=M|2
+https://api.qrdx.dev/v1/qr?format=png&size=300&data=https%3A%2F%2Fexample.com&level=M&margin=2
+```
+
+दोनों `https://example.com` का 300 × 300 PNG बनाते हैं, जिसमें error correction M है और margin 2 module का है।
+
+## पैरामीटर मैपिंग [#parameter-mapping]
+
+| Google Chart | QRdx | नोट्स |
+| --- | --- | --- |
+| `cht=qr` | ज़रूरी नहीं | यह endpoint सिर्फ़ QR कोड बनाता है। छोड़ देने पर इसे अनदेखा किया जाता है। |
+| `chl=<data>` | `data=<data>` | URL-encode उसी तरह होता है, 2048 अक्षरों तक। |
+| `chs=<width>x<height>` | `size=<width>` | एक ही संख्या, क्योंकि QR कोड चौकोर होते हैं: `64` से `2048` पिक्सल। |
+| `chld=<level>\|<margin>` | `level=<level>&margin=<margin>` | वही अक्षर, `L`, `M`, `Q` और `H`। margin modules में होता है, `0` से `16`। |
+| `choe=UTF-8` | ज़रूरी नहीं | QRdx टेक्स्ट को हमेशा UTF-8 में encode करता है, जो Google का भी default था। Shift_JIS या ISO-8859-1 का विकल्प नहीं है। छोड़ देने पर इसे अनदेखा किया जाता है। |
+| हमेशा PNG | `format=png` | जब तक आप `png`, `webp` या `eps` न माँगें, QRdx SVG लौटाता है। ईमेल के लिए PNG रखें, क्योंकि कई ईमेल क्लाइंट SVG नहीं दिखाते। |
+
+दो default अलग हैं। `chld` न होने पर Google error correction `L` इस्तेमाल करता था; QRdx `Q` इस्तेमाल करता है, जो ज़्यादा नुकसान झेल लेता है लेकिन कोड को घना बनाता है। पुराना जैसा लुक चाहिए तो `level=L` जोड़ें। दोनों में margin का default 4 module है।
+
+## एक कमांड से माइग्रेट करें [#migrate-with-one-command]
+
+यह आपके बताए हुए फ़ाइलों में हर Google Chart QR URL को बदल देता है, पुराने `chart.apis.google.com` host समेत। यह host और path बदलता है, `chl`, `chs` और `chld` के नाम बदलता है, और `format=png` जोड़ता है ताकि इमेज PNG ही रहें। Perl macOS और ज़्यादातर Linux distribution के साथ आता है।
+
+```bash
+perl -pi -e 's{https?://chart\.(?:googleapis|apis\.google)\.com/chart\?([^\s"\x27<>)]*)}{my $q = $1; $q =~ s/(^|[&;])chl=/${1}data=/; $q =~ s/(^|[&;])chs=(\d+)x\d+/${1}size=$2/; $q =~ s/(^|[&;])chld=([LMQH])(?:\||%7C)(\d+)/${1}level=$2&margin=$3/i; $q =~ s/(^|[&;])chld=([LMQH])/${1}level=$2/i; "https://api.qrdx.dev/v1/qr?format=png&$q"}ge' index.html
+```
+
+इसे ऐसी जगह चलाएँ जहाँ आप बदलाव देख सकें, जैसे git checkout, और diff जाँच लें। जो फ़ाइलें अब भी पुरानी API इस्तेमाल करती हैं, उन्हें खोजने के लिए:
+
+```bash
+grep -rlE "chart\.(googleapis|apis\.google)\.com/chart" .
+```
+
+64 पिक्सल से कम (`50x50`) या 2048 से ज़्यादा `chs` पर QRdx `400` देता है, इसलिए ऐसे साइज़ हाथ से बदलें।
+
+## कोड में [#in-code]
+
+```js
+// Before
+const src = `https://chart.googleapis.com/chart?cht=qr&chs=200x200&chl=${encodeURIComponent(link)}`;
+
+// After
+const src = `https://api.qrdx.dev/v1/qr?format=png&size=200&data=${encodeURIComponent(link)}`;
+```
+
+Google Sheets में:
+
+```txt
+=IMAGE("https://api.qrdx.dev/v1/qr?format=png&size=150&data="&ENCODEURL(A2))
+```
+
+Sheets इमेज Google के अपने सर्वर के ज़रिए लोड करता है, इसलिए सैकड़ों कोड वाली शीट नीचे बताई गई प्रति-IP सीमा तक पहुँच सकती है। बड़ी सूची के लिए फ़ाइलें एक बार [bulk generator](/tools/bulk) से या [CLI](/docs/developers/cli) के `qrdx batch` से बना लें।
+
+## और क्या जानना चाहिए [#what-else-to-know]
+
+- **Rate limit:** प्रति IP address {facts.imageApiPerMinute} रिक्वेस्ट प्रति मिनट। इससे ज़्यादा होने पर `Retry-After` हेडर के साथ `429` मिलता है।
+- **Caching:** एक ही URL हमेशा वही bytes लौटाता है, इसलिए रिस्पॉन्स एक साल के लिए cache होते हैं (`Cache-Control: public, max-age=31536000, immutable`)।
+- **और विकल्प:** रंग (`fg`, `bg`), module और eye के आकार, लोगो आइकन (`logoIcon`) और फ़्रेम। इन्हें [URL builder](/qr-code-api) में आज़माएँ, या [पैरामीटर](/docs/developers/image-api#parameters) पढ़ें।
+- **Self-hosting:** [self-hosted](/docs/self-hosting) QRdx आपके अपने डोमेन पर `/api/v1/qr` पर यही API देता है।

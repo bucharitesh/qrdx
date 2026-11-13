@@ -2,17 +2,22 @@
 // Do not edit: change the frame files or the generator, then run it again.
 
 /** How many official frames there are. */
-export const OFFICIAL_FRAME_COUNT = 418;
+export const OFFICIAL_FRAME_COUNT = 1013;
 
 /** Official frames per collection. */
 export const OFFICIAL_FRAME_COUNTS = {
-  "call-to-action": 75,
-  holidays: 115,
-  seasons: 28,
-  "food-drink": 32,
-  shopping: 30,
-  events: 32,
-  places: 34,
-  "health-learning": 24,
-  business: 48,
+  "call-to-action": 105,
+  holidays: 283,
+  seasons: 60,
+  "food-drink": 71,
+  shopping: 64,
+  "beauty-wellness": 26,
+  events: 77,
+  places: 71,
+  "real-estate": 35,
+  automotive: 27,
+  "health-learning": 48,
+  "sports-fitness": 36,
+  business: 82,
+  nonprofit: 28,
 } as const;

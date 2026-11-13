@@ -1,0 +1,88 @@
+{
+  "id": "test-drive",
+  "name": "Test drive",
+  "description": "A solid card with a round badge holding a steering wheel on its top edge.",
+  "category": "use-case",
+  "collection": "automotive",
+  "contentTypes": ["calcom", "url"],
+  "tags": ["cars", "parking", "dealership", "test drive"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1830
+    },
+    "qr": {
+      "x": 120,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 150,
+        "width": 1240,
+        "height": 1680,
+        "radius": 64,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 620,
+        "cy": 150,
+        "r": 150,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 620,
+        "cy": 150,
+        "r": 120,
+        "fill": "background"
+      },
+      {
+        "type": "path",
+        "d": "M557 150A63 63 0 1 1 683 150A63 63 0 1 1 557 150ZM569.6 150A50.4 50.4 0 1 0 670.4 150A50.4 50.4 0 1 0 569.6 150ZM564 146.5L606 146.5L606 159.1L564 159.1ZM634 146.5L676 146.5L676 159.1L634 159.1ZM626.3 164L626.3 206L613.7 206L613.7 164ZM603.2 152.8A16.8 16.8 0 1 1 636.8 152.8A16.8 16.8 0 1 1 603.2 152.8Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Book a test drive",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1540,
+          "width": 1040,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Try it today",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1710,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

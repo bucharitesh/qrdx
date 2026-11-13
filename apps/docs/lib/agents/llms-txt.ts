@@ -4,16 +4,19 @@
 // link is absolute, and pages for features this deployment can't offer are
 // left out. Pure: app/llms.txt/route.ts passes in the content-collection
 // pages and what this deployment offers; tests/lib/agents.test.ts checks it.
+import { CANONICAL_ORIGIN, GITHUB_REPO_URL } from "@repo/config";
 import {
   buildHighlights,
   type PricingOptions,
 } from "@/components/sections/pricing/plan-content";
 import { MAX_BULK_ROWS } from "@/components/sections/tools/bulk-utils";
 import { BARCODE_FORMATS } from "@/lib/barcode/formats";
+import { ENTERPRISE_ADDS } from "@/lib/enterprise";
 import { claudeCodeCommand, mcpServerUrl } from "@/lib/mcp-clients";
 import type { PlanLimits } from "@/lib/plans";
 import {
   formatPrice,
+  localPricesNote,
   type PaidPlan,
   PLAN_NAMES,
   type Plan,
@@ -92,7 +95,7 @@ export function buildLlmsTxt(input: LlmsTxtInput): string {
   const mcpUrl = mcpServerUrl(origin);
   const api = apiBaseUrl(origin);
   const exampleImage = imageApiUrl(origin, {
-    data: "https://qrdx.dev",
+    data: CANONICAL_ORIGIN,
     format: "svg",
   });
   const npmNote = ({ name, repo, published }: NpmRelease) =>
@@ -111,11 +114,16 @@ export function buildLlmsTxt(input: LlmsTxtInput): string {
     `- Free QR code API, no key: \`GET ${api}/qr?data=…\` returns an SVG, PNG, WebP or EPS QR code with no account or signup, at up to ${PRODUCT_FACTS.imageApiPerMinute} requests a minute per IP address; identical URLs are cached for a year. URL builder: ${abs("/qr-code-api")}.`,
     `- Can Claude or ChatGPT make a QR code that scans? Yes, with the QRdx MCP server at \`${mcpUrl}\`: free, no key, and the codes it renders are standard QR codes (a chat model drawing one itself rarely scans).`,
     `- What's free: unlimited static QR codes with no account. A free account adds ${input.limits.free.dynamicCodes} dynamic codes and ${input.limits.free.landingPages} hosted pages, with unlimited scans.`,
-    "- When to choose something else: QRdx has no SOC 2 or HIPAA certification, so teams that need that paperwork may prefer Uniqode. It isn't a general link shortener for links shared online (it integrates with Dub for that), and Bitly suits teams whose links already live there. Placing a code inside a larger design is simplest in Canva. Native CRM or CDP integrations point to Flowcode, a sales-led Enterprise contract to Scanova, and a native scanner app to QR TIGER. For a dependency-free React component with a long track record, qrcode.react is more mature: the qrdx library is pre-1.0 and React-first.",
+    "- When to choose something else: QRdx has no SOC 2 or HIPAA certification, so teams that need that paperwork may prefer Uniqode. It isn't a general link shortener for links shared online (it integrates with Dub for that), and Bitly suits teams whose links already live there. Placing a code inside a larger design is simplest in Canva. Native CRM or CDP integrations point to Flowcode, a custom-quoted Enterprise tier with its own limits to Scanova, and a native scanner app to QR TIGER. For a dependency-free React component with a long track record, qrcode.react is more mature: the qrdx library is pre-1.0 and React-first.",
     `- Markdown versions: add \`.md\` to any docs URL (for example ${abs("/docs/developers/mcp.md")}); ${abs("/pricing.md")} and ${abs("/mcp.md")} are Markdown too, and ${abs("/llms-full.txt")} has every docs page in one file.`,
   ].join("\n");
 
   const product = links([
+    {
+      title: "Dynamic QR code generator",
+      url: "/dynamic-qr-code",
+      description: `What dynamic codes do on each plan: ${input.limits.free.dynamicCodes} free with unlimited scans, editing after printing, scan analytics, hosted pages, smart routing and the REST API`,
+    },
     {
       title: "Dynamic QR codes",
       url: "/docs/dynamic-qr-codes",
@@ -240,8 +248,14 @@ export function buildLlmsTxt(input: LlmsTxtInput): string {
     { title: "Changelog", url: "/changelogs" },
     {
       title: "Source code",
-      url: "https://github.com/bucharitesh/qrdx",
+      url: GITHUB_REPO_URL,
       description: "The whole platform, open source and self-hostable",
+    },
+    {
+      title: "Open source",
+      url: "/open-source-qr-code-generator",
+      description:
+        "What's in the repository and under which license (AGPL-3.0 app; MIT library, CLI and plugins; commercial ee/ folders), and the ways to run it",
     },
   ]);
 
@@ -415,7 +429,7 @@ export function buildLlmsTxt(input: LlmsTxtInput): string {
   );
 
   const price = (plan: PaidPlan) =>
-    `${formatPrice(PRICING[plan].month.amounts.USD, "USD")} a month or ${formatPrice(PRICING[plan].year.amounts.USD, "USD")} a year (in India ${formatPrice(PRICING[plan].month.amounts.INR, "INR")} or ${formatPrice(PRICING[plan].year.amounts.INR, "INR")})`;
+    `${formatPrice(PRICING[plan].month.amounts.USD, "USD")} a month or ${formatPrice(PRICING[plan].year.amounts.USD, "USD")} a year (${localPricesNote(plan)})`;
   const highlights = buildHighlights(input.limits, offered);
   const planLine = (plan: Plan, cost: string, lead = "") => ({
     title: `${PLAN_NAMES[plan]} plan`,
@@ -426,6 +440,11 @@ export function buildLlmsTxt(input: LlmsTxtInput): string {
     planLine("free", formatPrice(0, "USD")),
     planLine("pro", price("pro")),
     planLine("business", price("business"), "Everything in Pro, plus: "),
+    {
+      title: "Enterprise",
+      url: "/enterprise",
+      description: `Custom price: the Business plan under a contract. Everything in Business, plus: ${ENTERPRISE_ADDS.join(". ")}. No uptime guarantee`,
+    },
     {
       title: "Pricing as Markdown",
       url: "/pricing.md",
@@ -445,10 +464,16 @@ export function buildLlmsTxt(input: LlmsTxtInput): string {
   ]);
 
   const legal = links([
+    {
+      title: "Security at QRdx",
+      url: "/security",
+      description:
+        "Sign-in protections, single sign-on, the audit log, link checks, where data is stored and how to report a vulnerability. No SOC 2 or HIPAA certification",
+    },
     ...input.legal,
     {
       title: "Licence (the app is AGPL-3.0)",
-      url: "https://github.com/bucharitesh/qrdx/blob/main/LICENSE",
+      url: `${GITHUB_REPO_URL}/blob/main/LICENSE`,
     },
     {
       title: "Licence of the qrdx library and @qrdx/cli (MIT)",

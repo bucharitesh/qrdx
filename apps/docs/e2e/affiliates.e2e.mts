@@ -689,7 +689,7 @@ async function program() {
   check("the page states the terms", await waitText("Earn 30% for 12 months"));
   const page = await bodyText();
   for (const phrase of [
-    "30 days",
+    "45 days",
     "US$25",
     "same visit",
     "PayPal",
@@ -975,9 +975,9 @@ async function program() {
   check("and the counts", (await bodyText()).includes("Sign-ups"));
   await shot("settings-affiliate-on-hold");
 
-  console.log("after the 30 days");
+  console.log("after the 45-day hold");
   sql(
-    `update affiliate_commission set order_paid_at = order_paid_at - interval '31 days', available_at = now() - interval '1 day' where affiliate_id=${q(affiliateId)} and status='pending'`,
+    `update affiliate_commission set order_paid_at = order_paid_at - interval '46 days', available_at = now() - interval '1 day' where affiliate_id=${q(affiliateId)} and status='pending'`,
   );
   await goto(`${BASE}/settings/affiliate`);
   await waitText("Payable");

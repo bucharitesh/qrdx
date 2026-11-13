@@ -1,0 +1,18 @@
+{
+  "name": "qrdx",
+  "displayName": "QRdx",
+  "version": "0.1.0",
+  "description": "Styled, scannable QR codes from your agent: a skill that runs the QRdx CLI on your machine, and the QRdx MCP server for scan-checked designs, barcodes, and Wi-Fi, contact and payment codes.",
+  "author": {
+    "name": "QRdx",
+    "url": "https://qrdx.dev"
+  },
+  "homepage": "https://qrdx.dev",
+  "repository": "https://github.com/bucharitesh/qrdx",
+  "license": "MIT",
+  "keywords": ["qr-code", "qrcode", "barcode", "svg", "png", "mcp", "cli"],
+  "documentationUrl": "https://qrdx.dev/docs/developers/mcp",
+  "supportUrl": "https://qrdx.dev/docs/help/contact",
+  "privacyPolicyUrl": "https://qrdx.dev/legal/privacy-policy",
+  "termsOfServiceUrl": "https://qrdx.dev/legal/terms-of-service"
+}

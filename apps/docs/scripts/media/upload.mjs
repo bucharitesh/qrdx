@@ -9,8 +9,8 @@
 //   cd apps/docs && R2_BUCKET=<bucket> bun run media:upload
 //
 // Env: R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET and
-// R2_PUBLIC_BASE_URL (the bucket's public origin), from the shell or the
-// .env.local files the npm script loads.
+// R2_PUBLIC_BASE_URL (the bucket's public origin), from the shell or
+// apps/docs/.env.local, which the npm script loads.
 import { createHash } from "node:crypto";
 import { readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { extname, join, relative, sep } from "node:path";

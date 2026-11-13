@@ -1,0 +1,91 @@
+---
+title: "Sécurisez votre compte"
+description: "Comment fonctionne la connexion, la validation en deux étapes, les passkeys, la vérification lorsqu'une connexion est utilisée depuis un nouvel endroit, les e-mails que QRdx envoie à propos de la sécurité de votre compte, la durée d'une connexion, la déconnexion des autres appareils et comment signaler un problème de sécurité."
+---
+
+## Aucun mot de passe à divulguer [#no-password-to-leak]
+
+QRdx n'a pas de mots de passe. Vous vous connectez avec Google, GitHub ou un code à usage unique envoyé à votre adresse e-mail<IfAvailable feature="passkeys">, ou avec une passkey</IfAvailable>.<IfAvailable feature="sso"> Si votre espace de travail est sur le plan Business, il peut aussi vous permettre de vous connecter avec l'[authentification unique](/docs/help/teams/single-sign-on) de votre entreprise, ou l'exiger.</IfAvailable>
+
+Votre compte e-mail et votre compte Google ou GitHub deviennent ainsi des clés d'accès à QRdx. Activez aussi la validation en deux étapes pour ces comptes.
+
+<IfAvailable feature="sso" id="if-your-company-requires-single-sign-on" title="Si votre entreprise exige l'authentification unique">
+Un espace de travail Business peut [exiger l'authentification unique](/docs/help/teams/single-sign-on#require-single-sign-on) pour le domaine e-mail de son entreprise. Si votre adresse appartient à ce domaine :
+
+- vous vous connectez uniquement avec l'authentification unique : un code par e-mail, Google ou GitHub<IfAvailable feature="passkeys">, ou **Continue with passkey**,</IfAvailable> ne vous connectera pas ;
+- la validation en deux étapes s'applique toujours après la page de connexion de votre entreprise<IfAvailable feature="passkeys">, et une passkey fonctionne toujours comme seconde étape</IfAvailable> ;
+- chaque connexion dure 24 heures au maximum, puis vous vous reconnectez avec l'authentification unique ;
+- l'adresse e-mail de votre compte QRdx ne peut pas être remplacée par une adresse extérieure au domaine.
+
+Lorsque l'espace de travail l'active, vous êtes déconnecté des sessions qui n'ont pas démarré avec l'authentification unique. Les propriétaires de l'espace de travail conservent leurs autres moyens de connexion, afin qu'un problème avec la page de connexion de l'entreprise ne puisse pas verrouiller tout le monde.
+</IfAvailable>
+
+## Activer la validation en deux étapes [#turn-on-two-step-verification]
+
+La [validation en deux étapes](/docs/help/privacy-and-security/two-step-verification) fait que QRdx demande une seconde étape après votre connexion, quelle que soit la façon dont vous vous connectez : <IfAvailable feature="passkeys">votre passkey ou </IfAvailable>un code issu d'une application d'authentification. Une personne qui accède à votre messagerie ou à votre compte Google ne peut donc pas accéder à QRdx sans cette étape. Vous recevez 10 codes de secours pour les cas où vous ne pouvez pas effectuer la seconde étape. L'activer déconnecte tous les autres navigateurs ou appareils connectés à votre compte : chacun doit se reconnecter avec la seconde étape.
+
+<IfAvailable feature="passkeys" id="add-a-passkey" title="Ajouter une passkey">
+Une [passkey](/docs/help/privacy-and-security/passkeys) vérifie que c'est bien vous grâce à votre empreinte digitale, votre visage ou le verrouillage de votre écran. Elle ne fonctionne que sur le site de QRdx, donc un site factice ne peut pas la récupérer. Elle peut vous connecter à elle seule avec **Continue with passkey**, ou servir de seconde étape. Ajouter une passkey alors que la validation en deux étapes est désactivée l'active, ce qui déconnecte vos autres appareils.
+</IfAvailable>
+
+## Les modifications demandent de confirmer votre identité [#changes-ask-you-to-confirm-its-you]
+
+Avant une modification liée à la sécurité de votre compte, QRdx vous demande de [confirmer votre identité](/docs/help/privacy-and-security/two-step-verification#confirm-its-you), même si vous êtes connecté : changer votre adresse e-mail, supprimer votre compte, activer ou désactiver la validation en deux étapes, générer de nouveaux codes de secours, modifier vos méthodes de seconde étape, ou associer ou dissocier Google ou GitHub. Il en va de même pour créer une clé d'API ou le secret client d'une application OAuth, approuver une application qui demande à utiliser votre compte, ajouter un webhook ou modifier son URL, afficher ou renouveler le secret de signature d'un webhook, ajouter un webhook de notification Slack ou Discord ou connecter une intégration qui envoie vos scans ou les réponses de formulaire à un autre outil, et, dans un espace de travail, le supprimer, changer le rôle d'un membre, retirer un membre ou inviter un administrateur.<IfAvailable feature="sso"> Il en va de même pour les modifications de la connexion d'authentification unique d'un espace de travail, et pour l'exigence de l'authentification unique.</IfAvailable>
+
+Lorsque la validation en deux étapes est activée, vous confirmez avec <IfAvailable feature="passkeys">votre passkey, </IfAvailable>un code d'application d'authentification ou un code de secours, jamais avec un code envoyé par e-mail. Sans elle, vous pouvez utiliser un code à 6 chiffres que QRdx vous envoie par e-mail<IfAvailable feature="passkeys">, votre passkey si vous en avez une,</IfAvailable> ou vous reconnecter avec un compte Google ou GitHub que vous avez associé<IfAvailable feature="sso"> (ou avec l'authentification unique de votre espace de travail, lorsqu'elle utilise OIDC)</IfAvailable>. Une confirmation est valable 10 minutes dans ce navigateur.
+
+Changer votre adresse e-mail nécessite aussi un code envoyé à la nouvelle adresse. Ensuite, vous êtes déconnecté partout ailleurs, et l'ancienne adresse reçoit un e-mail indiquant qu'elle a été modifiée. Vous n'avez plus accès à votre messagerie ? Consultez [la marche à suivre](/docs/help/account-and-billing/sign-in#lost-access-to-your-email).
+
+## Une connexion utilisée depuis un nouvel endroit [#a-sign-in-used-somewhere-new]
+
+Lorsque vous vous connectez, QRdx note le pays depuis lequel vous vous connectez et votre navigateur, par exemple « Chrome on macOS ». Si cette connexion est ensuite utilisée depuis un autre pays et avec un autre navigateur, QRdx vous demande de [confirmer votre identité](/docs/help/privacy-and-security/two-step-verification#confirm-its-you) avant de pouvoir faire quoi que ce soit d'autre dans votre compte. Tant que vous ne l'avez pas fait, ce navigateur est considéré comme déconnecté partout ailleurs sur QRdx. Ainsi, une personne qui copie votre connexion depuis votre navigateur ne peut pas l'utiliser à distance sans pouvoir aussi confirmer votre identité.
+
+QRdx ne le demande que lorsque les deux ont changé. Voyager avec le même navigateur, ou mettre à jour votre navigateur ou votre système, ne compte pas. Une fois que vous avez confirmé, QRdx note le nouveau pays et le nouveau navigateur pour cette connexion. Vous pouvez aussi vous déconnecter puis vous reconnecter.
+
+C'est une vérification supplémentaire, pas une garantie : une connexion copiée et utilisée depuis votre propre pays, ou avec le même type de navigateur, n'est pas soumise à cette demande. QRdx ne connaît le pays que si son hébergeur le fournit, et lorsque ce n'est pas le cas, cette vérification ne s'exécute pas. Pour mettre fin à une connexion que vous ne reconnaissez pas, [déconnectez les autres appareils](#sign-out-other-devices).
+
+## E-mails sur la sécurité de votre compte [#emails-about-your-accounts-security]
+
+Nous écrivons à l'adresse de votre compte lorsque :
+
+- un navigateur ou un appareil se connecte à votre compte pour la première fois ;
+- la validation en deux étapes est activée ou désactivée, une application d'authentification<IfAvailable feature="passkeys"> ou une passkey</IfAvailable> est ajoutée ou retirée, ou de nouveaux codes de secours sont générés ;
+- un code de secours est utilisé, pour se connecter ou pour confirmer votre identité, avec le nombre de codes qu'il vous reste ;
+- le support est sollicité pour désactiver votre validation en deux étapes, avec le jour où cela aura lieu et comment l'empêcher, et lorsque la demande est annulée ;
+- votre adresse e-mail est modifiée (à l'ancienne adresse).
+
+Chacun indique ce qui s'est passé, sur quel appareil et quel navigateur (par exemple « Chrome on macOS »), approximativement où, depuis quelle adresse IP et quand. **Review security** ouvre vos paramètres de sécurité. Si ce n'était pas vous, suivez les étapes de l'e-mail et contactez le support.
+
+Les e-mails contenant un code, comme les codes de connexion et le code qui confirme votre identité, indiquent approximativement d'où le code a été demandé. QRdx ne vous demandera jamais de code par téléphone, par chat ou par e-mail : ne le communiquez à personne.
+
+### Nouvelles connexions [#new-sign-ins]
+
+QRdx reconnaît un navigateur grâce à un cookie qu'il dépose lorsque vous terminez votre connexion. Lorsqu'un navigateur ou un appareil sans ce cookie se connecte à votre compte, vous recevez un e-mail. Si la validation en deux étapes est activée, il est envoyé une fois la seconde étape effectuée.
+
+Se reconnecter dans un navigateur que QRdx reconnaît déjà n'envoie pas d'e-mail, pas plus que la création de votre compte. Si vous supprimez vos cookies ou utilisez une fenêtre de navigation privée, la prochaine connexion à cet endroit compte comme nouvelle.
+
+Chaque nouveau navigateur reçoit son propre e-mail, dans la limite de 10 par jour, afin qu'une rafale de connexions ne submerge pas votre boîte de réception. Chaque connexion apparaît quand même sous **Sessions**. QRdx garde en mémoire les 50 navigateurs que vous avez utilisés le plus récemment, et oublie celui qui ne s'est pas connecté depuis 400 jours.
+
+<IfAvailable feature="sso">
+Une exception : lorsque vous vous connectez via le fournisseur d'identité SAML de votre espace de travail et que la validation en deux étapes est désactivée, QRdx ne peut pas reconnaître le navigateur au retour, donc il n'envoie pas cet e-mail.
+</IfAvailable>
+
+## Combien de temps vous restez connecté [#how-long-you-stay-signed-in]
+
+Une connexion dure jusqu'à 30 jours. Ensuite, QRdx vous demande de vous reconnecter dans ce navigateur, quelle que soit la fréquence à laquelle vous l'avez utilisé. Si vous n'utilisez pas QRdx dans un navigateur pendant environ une semaine, vous y êtes déconnecté plus tôt.
+
+## Déconnecter les autres appareils [#sign-out-other-devices]
+
+Allez dans **Settings** → **Profile & security**. Sous **Sessions**, déconnectez un appareil, ou cliquez sur **Sign out everywhere else**. Cette action ne vous demande jamais de confirmer votre identité, vous pouvez donc la faire immédiatement.
+
+Activer la validation en deux étapes déconnecte aussi tous les autres appareils. Si le support la désactive pour vous, ce qui [prend 7 jours](/docs/help/privacy-and-security/two-step-verification#lost-your-phone-and-your-backup-codes), tous les appareils sont déconnectés ce jour-là, y compris celui que vous utilisez.<IfAvailable feature="sso"> Si votre entreprise commence à exiger l'authentification unique, vous êtes déconnecté des sessions qui n'ont pas démarré avec elle, et une session d'authentification unique dure 24 heures au maximum.</IfAvailable>
+
+## Retirer les applications que vous avez connectées [#remove-apps-you-connected]
+
+Si vous avez autorisé une autre application à utiliser votre compte QRdx, elle figure sous **Settings** → **Authorized apps**. Retirez celles que vous n'utilisez pas. Une application continue de fonctionner après votre déconnexion, c'est pourquoi en approuver une vous demande de confirmer votre identité.
+
+## Signaler un problème de sécurité [#report-a-security-problem]
+
+Écrivez à [support@qrdx.dev](mailto:support@qrdx.dev) avec un objet commençant par `[security]`. Merci de ne pas le publier dans les issues publiques de GitHub. Consultez la [politique de sécurité](/legal/security).
+
+Un QR code nuisible n'est pas une faille de sécurité : [signalez-le](/docs/help/privacy-and-security/report-abuse) plutôt.

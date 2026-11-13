@@ -1,41 +1,41 @@
 ---
 title: "O que o QRdx registra quando alguém faz a leitura"
-description: "Os dados que a leitura de um código dinâmico registra, o que nunca é armazenado e por quanto tempo tudo fica guardado."
+description: "Os dados que a leitura de um QR code dinâmico registra, o que nunca é armazenado e por quanto tempo ficam guardados."
 ---
 
-Só os códigos dinâmicos registram leituras. Um código estático guarda o seu conteúdo diretamente e nunca passa pelo QRdx.
+Só os QR codes dinâmicos registram leituras. Um QR code estático guarda seu conteúdo diretamente e nunca passa pelo QRdx.
 
 ## O que uma leitura registra [#what-a-scan-records]
 
-- País, região e cidade, definidos a partir da rede.
+- País, região e cidade, calculados a partir da rede.
 - Tipo de dispositivo, sistema operacional e navegador.
 - O site de origem, se houver.
 - O idioma do navegador.
 - Qual versão o visitante viu, se um teste A/B estiver em andamento.
 - Um hash diário, com salt, do endereço de rede e do navegador, para que cada visitante seja contado uma vez por dia.
-- A localização da pessoa, arredondada para cerca de 100 m, somente se o dono do código ativou a [localização precisa](/docs/precise-location) e quem fez a leitura permitiu no navegador. Nada é armazenado quando a pessoa recusa.
+- A localização da pessoa, arredondada para cerca de 100 m, somente se o dono do código ativou a [localização precisa](/docs/precise-location) e quem fez a leitura permitiu no navegador. Nada é armazenado se a pessoa recusar.
 
 ## O que nunca é armazenado [#what-it-never-stores]
 
-O QRdx nunca armazena o endereço IP de quem faz a leitura. O hash acima não pode ser revertido para chegar a ele, e muda todos os dias.
+O QRdx nunca armazena o endereço IP de quem faz a leitura. Não é possível reverter o hash acima para obtê-lo, e ele muda todos os dias.
 
 Bots e pré-visualizações de links não são registrados.
 
-## Por quanto tempo as leituras são guardadas [#how-long-scans-are-kept]
+## Por quanto tempo as leituras ficam guardadas [#how-long-scans-are-kept]
 
-As leituras ficam guardadas enquanto o código existir. Seu plano define até quanto tempo atrás você consegue ver: 90 dias no Grátis, 3 anos no Pro e ilimitado no Business.
+As leituras ficam guardadas enquanto o código existir. Seu plano define até quanto tempo atrás você pode vê-las: {facts.freeScanHistoryYears} ano no Grátis, e todas no Pro e no Business.
 
-Excluir um código exclui suas leituras para sempre.
+Excluir um código exclui para sempre as leituras dele.
 
 ## Cookies para quem faz a leitura [#cookies-for-people-who-scan]
 
-As páginas que quem faz a leitura vê, como links curtos e páginas para celular, não mostram aviso de cookies e não carregam o analytics nem o widget de suporte do QRdx.
+As páginas que quem faz a leitura vê, como links curtos e páginas para celular, não mostram banner de cookies e não carregam a análise do QRdx nem o widget de suporte.
 
-O QRdx define dois cookies nelas. Um lembra por 6 horas que a senha do código foi digitada corretamente. O outro vincula uma página hospedada à leitura que a abriu por 15 minutos, somente quando o código pede localização precisa, para que a localização compartilhada seja adicionada a essa leitura. Os donos das páginas podem adicionar seus próprios pixels de analytics às páginas nos planos pagos.
+O QRdx define dois cookies nelas. Um lembra por 6 horas a senha correta de um código. O outro vincula por 15 minutos uma página hospedada à leitura que a abriu, somente quando o código pede localização precisa, para que a localização compartilhada seja adicionada a essa leitura. Nos planos pagos, os donos das páginas podem adicionar seus próprios pixels de análise a elas.
 
 ## O leitor de QR code [#the-qr-code-scanner]
 
-O [leitor do QRdx](/scan) mantém o histórico de leituras somente no seu dispositivo. Os quadros da câmera e as imagens são processados no seu dispositivo e nunca são enviados, inclusive capturas de tela que você compartilha com o leitor instalado no Android. Para verificar um link antes de abri-lo, apenas o endereço é enviado para verificação, e o QRdx não o guarda.
+O [leitor do QRdx](/scan) mantém seu histórico de leituras somente no seu dispositivo. Os quadros da câmera e as imagens são lidos no seu dispositivo e nunca são enviados, inclusive capturas de tela que você compartilha com o leitor instalado no Android. Para verificar um link antes de abri-lo, só o endereço é enviado para verificação, e o QRdx não o guarda.
 
 ## Mais detalhes [#more-detail]
 

@@ -27,6 +27,8 @@ export const PAGE_SOURCES: Readonly<Record<string, readonly string[]>> = {
     "lib/pricing.ts",
   ],
   "/guarantee": ["app/[lang]/(home)/guarantee/page.tsx"],
+  "/enterprise": ["app/[lang]/(home)/enterprise/page.tsx", "lib/enterprise.ts"],
+  "/security": ["app/[lang]/(home)/security/page.tsx"],
   "/affiliates": [
     "app/(app)/(home)/affiliates/page.tsx",
     "lib/affiliates/terms.ts",
@@ -36,6 +38,13 @@ export const PAGE_SOURCES: Readonly<Record<string, readonly string[]>> = {
     "app/[lang]/(home)/mcp/content.ts",
   ],
   "/qr-code-api": ["app/[lang]/(home)/qr-code-api/page.tsx"],
+  "/dynamic-qr-code": [
+    "app/[lang]/(home)/dynamic-qr-code/page.tsx",
+    "lib/plans.ts",
+  ],
+  "/open-source-qr-code-generator": [
+    "app/[lang]/(home)/open-source-qr-code-generator/page.tsx",
+  ],
   "/plugins": [
     "app/[lang]/(home)/plugins/page.tsx",
     "app/[lang]/(home)/plugins/plugin-data.ts",

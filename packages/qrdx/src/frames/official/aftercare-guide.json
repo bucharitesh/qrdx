@@ -1,0 +1,98 @@
+{
+  "id": "aftercare-guide",
+  "name": "Aftercare guide",
+  "description": "A folder tab on top carrying the label and a dropper bottle.",
+  "category": "use-case",
+  "collection": "beauty-wellness",
+  "contentTypes": ["url"],
+  "tags": ["beauty", "wellness", "aftercare"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1560
+    },
+    "qr": {
+      "x": 120,
+      "y": 290,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1000,
+        "height": 220,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 170,
+        "width": 1240,
+        "height": 1390,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 170,
+        "width": 200,
+        "height": 100,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M872 92.8L908 92.8A12 12 0 0 1 920 104.8L920 140.8A12 12 0 0 1 908 152.8L872 152.8A12 12 0 0 1 860 140.8L860 104.8A12 12 0 0 1 872 92.8ZM876.8 80.8L903.2 80.8A2.4 2.4 0 0 1 905.6 83.2L905.6 88A2.4 2.4 0 0 1 903.2 90.4L876.8 90.4A2.4 2.4 0 0 1 874.4 88L874.4 83.2A2.4 2.4 0 0 1 876.8 80.8ZM874.4 109.6A3.6 3.6 0 0 0 870.8 113.2L870.8 132.4A3.6 3.6 0 0 0 874.4 136L905.6 136A3.6 3.6 0 0 0 909.2 132.4L909.2 113.2A3.6 3.6 0 0 0 905.6 109.6L874.4 109.6Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M890 47.2L890 47.2A9.6 9.6 0 0 1 899.6 56.8L899.6 68.8A9.6 9.6 0 0 1 890 78.4L890 78.4A9.6 9.6 0 0 1 880.4 68.8L880.4 56.8A9.6 9.6 0 0 1 890 47.2Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Aftercare guide",
+        "color": "text",
+        "box": {
+          "x": 60,
+          "y": 25,
+          "width": 740,
+          "height": 150
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "For your new look",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 1400,
+          "width": 1000,
+          "height": 100
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

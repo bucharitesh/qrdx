@@ -1,42 +1,48 @@
-// Long community lists (the official frame library alone is hundreds of
-// frames) are shown a page at a time, so a page never draws every design.
+// Long community lists (the official frame library alone is a long one) are
+// shown a page at a time, so a page never draws every design.
 // A server component: the links keep the page's other parameters.
 
 import { cn } from "@repo/design-system/lib/utils";
 import { ArrowLeft2, ArrowRight2 } from "iconsax-reactjs";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { pageSlice, parsePage } from "@/lib/paging";
 
 /** Items per page of a community list. */
 export const ITEMS_PER_PAGE = 48;
 
 /** The page number in a `page` search parameter (1 when absent or invalid). */
-export function pageParam(value: string | string[] | undefined): number {
-  const page = typeof value === "string" ? Number.parseInt(value, 10) : 1;
-  return Number.isFinite(page) && page > 0 ? page : 1;
-}
+export const pageParam = (value: string | string[] | undefined): number =>
+  parsePage(value);
 
 /** One page of `items`, with the page clamped to the ones that exist. */
 export function pageOf<T>(items: readonly T[], requested: number) {
-  const pages = Math.max(1, Math.ceil(items.length / ITEMS_PER_PAGE));
-  const page = Math.min(requested, pages);
-  return {
+  const {
     page,
     pages,
-    items: items.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE),
-  };
+    items: shown,
+  } = pageSlice(items, requested, ITEMS_PER_PAGE);
+  return { page, pages, items: shown };
 }
 
-/** Previous and next links, with "Page 2 of 9" between them. */
+/**
+ * Previous and next links, with "Page 2 of 9" between them. A list that
+ * loads its next pages as someone scrolls (components/infinite) has its own
+ * link to the next page: it shows this above the list without `next`, on
+ * the numbered pages after the first.
+ */
 export function ItemPages({
   page,
   pages,
   href,
+  next = true,
 }: {
   page: number;
   pages: number;
   /** The link to a page */
   href: (page: number) => string;
+  /** Show the link to the next page */
+  next?: boolean;
 }) {
   const t = useTranslations("community.itemPages");
   if (pages <= 1) return null;
@@ -64,7 +70,7 @@ export function ItemPages({
       <span className="text-muted-foreground text-sm tabular-nums">
         {t("pagePageOfPages", { page, pages })}
       </span>
-      {page < pages ? (
+      {!next ? null : page < pages ? (
         <Link
           className={cn(link, "text-muted-foreground hover:text-foreground")}
           href={href(page + 1)}

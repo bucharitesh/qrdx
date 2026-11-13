@@ -1,0 +1,59 @@
+---
+title: "Bentuk, mata, dan bingkai"
+description: "Setiap pola isi, bingkai mata, pusat mata, dan bingkai ajakan bertindak, digambar langsung oleh perender qrdx dan didekode di browser Anda."
+icon: Grid3x3
+---
+
+import { QrCatalog } from "@/components/docs/qr-catalog";
+
+Setiap gaya di bawah ini digambar oleh perender yang sama dengan unduhan Anda, lengkap dengan nama opsi dan nilai API yang bisa disalin. Setiap ubin didekode dengan [jsQR](https://github.com/cozmo/jsQR) langsung di browser Anda, satu per satu, sehingga lencana **Scans** adalah hasil langsung, bukan sekadar janji.
+
+Semuanya juga diuji di dalam paket (`packages/qrdx/tests/catalog-*.test.ts`): setiap nilai didekode melalui model kamera ponsel (kehilangan kontras dan keburaman seperempat modul) pada 4, 6, dan 9 piksel per modul, berdampingan dengan setiap isi, mata, dan pusat lainnya, pada koreksi kesalahan L, M, Q, dan H, pada 148 px dan 1024 px, terang di atas gelap, dengan warna merek, dan dengan logo di tengah; semuanya juga diperiksa dengan ZXing dan pada hasil render sharp. Beberapa pasangan kurang andal jika digabungkan; lihat [Pasangan yang perlu dihindari](#pairs-to-avoid).
+
+## Pola isi [#body-patterns]
+
+Bentuk modul data (`bodyPattern`). Gaya terhubung (`liquid`, `classy`) menggabungkan modul yang bersebelahan menjadi satu garis luar. `random-dots` dan `mosaic` bervariasi pada tiap modul tetapi bersifat deterministik: nilai yang sama selalu menggambar kode yang sama.
+
+<QrCatalog kind="body" />
+
+## Bingkai mata [#eye-frames]
+
+Cincin luar dari tiga penanda sudut (`cornerEyePattern`). `leaf`, `leaf-reverse`, `drop`, dan `petal` memutar setiap mata agar menghadap sudut kode. Setiap ubin memasangkan mata dengan pusat yang direkomendasikan.
+
+<QrCatalog kind="eye" />
+
+## Pusat mata [#eye-centers]
+
+Bagian tengah yang solid dari setiap penanda sudut (`cornerEyeDotPattern`), ditampilkan di dalam mata persegi.
+
+<QrCatalog kind="dot" />
+
+## Bingkai [#frames]
+
+Bingkai ajakan bertindak digambar mengelilingi kode, sehingga kode dan zona tenangnya tidak pernah tertutup dan gambar yang diunduh membesar menyesuaikan. Setiap bingkai bawaan di bawah ini adalah spesifikasi bingkai, digambar oleh mesin yang sama dengan [bingkai resmi dan komunitas](/docs/features/frames). Setiap bingkai menerima `text` (hingga 24 karakter), `color`, `textColor`, dan `fontScale` (0,5 hingga 1,5). `banner-top-bottom`, `circle`, dan `menu-card` juga menampilkan `secondaryText`; `gradient-border` berjalan dari `color` ke `secondaryColor`.
+
+<QrCatalog kind="frame" />
+
+```tsx
+import { QRCode } from "qrdx";
+
+<QRCode
+  value="https://example.com"
+  bodyPattern="liquid"
+  cornerEyePattern="leaf"
+  cornerEyeDotPattern="leaf"
+  frame={{ style: "circle", text: "Scan me", secondaryText: "example.com" }}
+/>;
+```
+
+## Pasangan yang perlu dihindari [#pairs-to-avoid]
+
+Beberapa pasangan bentuk yang dapat dipindai sendiri-sendiri gagal jika digabungkan dalam pengujian dekode kami. Playground tidak mengizinkan Anda memilihnya bersamaan, dan skor pemindaian memperingatkannya (`style-pair`):
+
+- isi `diamond` di samping mata `square`, `pacman` di samping `rounded`, dan `small-square` di samping mata `square` atau `rounded` (gagal terbaca dari jarak dekat).
+
+Mata `circle` terbaca di kedua dekoder yang kami uji (jsQR dan ZXing) tetapi ditandai **caution**: beberapa aplikasi pemindai gagal membacanya. Pasangan tersebut disertakan dalam paket sebagai `WEAK_BODY_EYES`, dan `getStylePairRisk(props)` mengembalikan peringatan untuk suatu gaya.
+
+## Bentuk yang dihentikan [#retired-shapes]
+
+Mata `curly` serta pusat `diamond`, `star`, dan `banner` dihapus karena tidak terbaca dengan andal: ZXing (dekoder di sebagian besar pemindai Android) gagal membaca mata curly serta pusat diamond dan star pada jarak ponsel, dan jsQR gagal membaca pusat banner di setiap hasil render sharp. Kode yang disimpan dengan bentuk tersebut tetap dimuat dan dirender persis seperti sebelumnya, dan image API tetap menggambarnya untuk tautan yang sudah ada, tetapi tidak ada pemilih, preset, atau tema AI yang menawarkannya, dan namanya hanya dipertahankan sebagai nilai usang (`RETIRED_CORNER_EYE_PATTERNS`, `RETIRED_CORNER_EYE_DOT_PATTERNS`).

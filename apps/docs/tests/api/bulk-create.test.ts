@@ -1,16 +1,16 @@
-// Large batches on POST /v1/codes (lib/bulk-limits.ts): up to
+// Large batches on POST /v1/codes (@repo/config limits.ts): up to
 // MAX_CODES_PER_REQUEST codes per request, inserted in chunks, with slugs that
 // can't collide, every row's problem listed by index, an Idempotency-Key
 // that makes retries safe, and `Prefer: return=minimal`. Same in-memory
 // harness as v1-codes.test.ts: the real codes service, stubbed side systems.
 import { createHash } from "node:crypto";
+import { MAX_CODES_PER_REQUEST } from "@repo/config";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   chunkRows,
   idempotentCodeId,
   uniqueSlugs,
 } from "@/app/(app)/dashboard/codes/_lib/bulk";
-import { MAX_CODES_PER_REQUEST } from "@/lib/bulk-limits";
 import { fakeDb } from "../support/fake-db";
 
 const state = vi.hoisted(() => ({

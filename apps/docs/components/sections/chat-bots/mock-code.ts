@@ -1,5 +1,6 @@
 import "server-only";
 
+import { CANONICAL_ORIGIN } from "@repo/config";
 import type { QRProps } from "qrdx/types";
 import { QR_DEFAULTS } from "@/lib/qr-render";
 
@@ -10,7 +11,7 @@ import { QR_DEFAULTS } from "@/lib/qr-render";
 // scans.
 
 /** What the person in each mock sends the bot. */
-export const CHAT_MOCK_VALUE = "https://qrdx.dev";
+export const CHAT_MOCK_VALUE = CANONICAL_ORIGIN;
 
 export const CHAT_MOCK_CODE: QRProps = {
   value: CHAT_MOCK_VALUE,

@@ -1,0 +1,181 @@
+---
+title: "QR Code"
+description: "एक स्टाइल किया हुआ, एक्सेसिबल QR code, जिसमें डाउनलोड बटन हैं। रंग, ग्रेडिएंट, पैटर्न, लोगो और फ़्रेम टेम्पलेट qrdx लाइब्रेरी से आते हैं।"
+icon: QrCode
+---
+
+<ComponentLinks name="qr-code" />
+
+<ComponentPreview name="qr-code-demo" />
+
+## इंस्टॉलेशन [#installation]
+
+<InstallationTabs name="qr-code" />
+
+## उपयोग [#usage]
+
+```tsx
+import { QrCode } from "@/components/qr-code";
+```
+
+```tsx
+<QrCode value="https://qrdx.dev" />
+```
+
+यह कोड एक्सेसिबल नाम के साथ SVG के रूप में रेंडर होता है, इसलिए यह किसी भी साइज़ पर साफ़ रहता है और स्क्रीन रीडर बताते हैं कि यह किस चीज़ से लिंक है।
+
+## उदाहरण [#examples]
+
+### साइज़ [#sizes]
+
+`size` स्क्रीन पर चौड़ाई और ऊँचाई पिक्सल में तय करता है। डाउनलोड में `downloadSize` इस्तेमाल होता है, इसलिए पेज पर छोटा दिखने वाला कोड भी प्रिंट के लिए तैयार फ़ाइल के रूप में एक्सपोर्ट होता है।
+
+<ComponentPreview name="qr-code-sizes" />
+
+### रंग [#colors]
+
+`fgColor` और `bgColor` कोई भी CSS रंग ले सकते हैं। `eyeColor` और `dotColor` तीनों कोने की आँखों को अलग से रंगते हैं। मॉड्यूल का रंग बैकग्राउंड से गहरा रखें, ताकि हर स्कैनर कोड पढ़ सके।
+
+<ComponentPreview name="qr-code-colors" />
+
+### ग्रेडिएंट [#gradients]
+
+रंग की जगह qrdx ग्रेडिएंट दें: `angle` के साथ `linear`, या `radial`। ग्रेडिएंट PNG, SVG और PDF डाउनलोड में भी शामिल रहते हैं।
+
+<ComponentPreview name="qr-code-gradient" />
+
+### पैटर्न [#patterns]
+
+`bodyPattern` डेटा मॉड्यूल का आकार तय करता है, `cornerEyePattern` कोने के फ़्रेम का और `cornerEyeDotPattern` उनके अंदर के डॉट का। सभी आकार देखने के लिए [पैटर्न](/docs/features/patterns) देखें।
+
+<ComponentPreview name="qr-code-patterns" />
+
+### लोगो [#logo]
+
+`logo` बीच में एक इमेज लगाता है और उसके पीछे के मॉड्यूल हटा देता है। एरर करेक्शन लेवल `H` इस्तेमाल करें, ताकि कोड का कुछ हिस्सा ढका होने पर भी वह स्कैन हो। डेटा URL लोगो को डाउनलोड में बनाए रखता है; रिमोट इमेज के लिए CORS हेडर ज़रूरी हैं।
+
+<ComponentPreview name="qr-code-logo" />
+
+### फ़्रेम टेम्पलेट [#frame-templates]
+
+`templateId` कोड के चारों ओर qrdx [टेम्पलेट](/docs/features/templates) बनाता है। फ़्रेम के नीचे कॉल टू एक्शन के लिए इसे `caption` के साथ इस्तेमाल करें।
+
+<ComponentPreview name="qr-code-template" />
+
+### डाउनलोड फ़ॉर्मेट [#download-formats]
+
+`downloadFormats` बटन चुनता है: `png`, `jpg`, `svg` और `pdf`। PDF एक्सपोर्ट के लिए वैकल्पिक `jspdf` पैकेज चाहिए (`npm install jspdf`)। बटन छिपाने के लिए `[]` दें।
+
+<ComponentPreview name="qr-code-downloads" />
+
+फ़ॉर्मेट और साइज़ वाले एक ही मेन्यू के लिए [QR Code Download](/docs/components/qr-code-download) इस्तेमाल करें।
+
+### डार्क मोड [#dark-mode]
+
+डार्क थीम में डिफ़ॉल्ट सफ़ेद बैकग्राउंड सबसे सुरक्षित विकल्प है: हल्की टाइल पर गहरे मॉड्यूल हर रीडर से स्कैन होते हैं। थीम के हिसाब से चलाने के लिए `fgColor="currentColor"` और पारदर्शी बैकग्राउंड सेट करें। तब कोड डार्क मोड में उलट जाता है, जिसे फ़ोन कैमरे पढ़ लेते हैं, लेकिन कुछ पुराने स्कैनर नहीं पढ़ पाते।
+
+<ComponentPreview name="qr-code-dark-mode" />
+
+## Next.js पेज में [#in-a-nextjs-page]
+
+`QrCode` एक Client Component है (डाउनलोड बटन की वजह से इसकी फ़ाइल `"use client"` से शुरू होती है), इसलिए Server Component पेज इसे इम्पोर्ट करके सर्वर डेटा को props के रूप में दे सकता है:
+
+```tsx title="app/menu/page.tsx"
+import { QrCode } from "@/components/qr-code";
+
+export default function MenuPage() {
+  return (
+    <QrCode
+      value="https://example.com/menu"
+      caption="Scan to see the menu"
+      filename="menu-qr"
+    />
+  );
+}
+```
+
+कोड खुद अब भी सर्वर पर रेंडर होता है, इसलिए बटन इंटरैक्टिव होने से पहले ही वह पेज के HTML में मौजूद होता है। App Router में कोड रेंडर करने के बारे में और जानने के लिए [Next.js में QR कोड](/docs/nextjs) देखें।
+
+## सिर्फ़ लिंक नहीं, कोई भी कंटेंट [#any-content-not-only-links]
+
+`value` को ठीक वैसे ही एन्कोड किया जाता है जैसे आप देते हैं, इसलिए कोई भी QR पेलोड काम करता है: Wi-Fi नेटवर्क, कॉन्टैक्ट कार्ड, `mailto:`, `tel:` या सादा टेक्स्ट। `label` सेट करें, ताकि स्क्रीन रीडर कच्चे पेलोड की जगह यह बताएँ कि कोड क्या करता है; Wi-Fi के पेलोड में पासवर्ड भी होता है।
+
+```tsx title="components/guest-wifi.tsx"
+import { QrCode } from "@/components/qr-code";
+
+export function GuestWifi() {
+  return (
+    <QrCode
+      value="WIFI:T:WPA;S:Cafe Guest;P:sunshine123;;"
+      label="QR code to join the Cafe Guest Wi-Fi"
+      caption="Cafe Guest Wi-Fi"
+    />
+  );
+}
+```
+
+फ़ॉर्म से पेलोड बनाने के लिए [Wi-Fi QR Code](/docs/components/wifi-qr-code) या [vCard QR Code](/docs/components/vcard-qr-code) इस्तेमाल करें, जो स्पेशल कैरेक्टर अपने आप एस्केप करते हैं।
+
+## इनपुट से मिली वैल्यू [#a-value-from-an-input]
+
+```tsx title="components/link-qr-code.tsx"
+"use client";
+
+import { useState } from "react";
+import { QrCode } from "@/components/qr-code";
+
+export function LinkQrCode() {
+  const [value, setValue] = useState("https://example.com");
+  return (
+    <div className="grid justify-items-center gap-4">
+      <input
+        aria-label="Link"
+        className="w-full rounded-md border px-3 py-2"
+        value={value}
+        onChange={(event) => setValue(event.target.value)}
+      />
+      {value ? <QrCode value={value} downloadFormats={[]} /> : null}
+    </div>
+  );
+}
+```
+
+`downloadFormats={[]}` बटन तब तक छिपाता है जब तक कोई टाइप कर रहा हो; वैल्यू अंतिम हो जाने पर उन्हें दिखाएँ।
+
+## प्रिंट के लिए तैयार डाउनलोड [#print-ready-downloads]
+
+```tsx title="components/table-code.tsx"
+import { QrCode } from "@/components/qr-code";
+
+export function TableCode() {
+  return (
+    <QrCode
+      value="https://example.com/order?table=12"
+      level="H"
+      margin={4}
+      downloadFormats={["svg", "png", "pdf"]}
+      downloadSize={2048}
+      filename="table-12"
+    />
+  );
+}
+```
+
+- **SVG** बिना धुंधला हुए किसी भी साइज़ तक बड़ा हो जाता है, इसलिए प्रिंट शॉप या डिज़ाइन टूल के लिए यह सबसे अच्छी फ़ाइल है।
+- `downloadSize={2048}` पर **PNG** 300 पिक्सल प्रति इंच पर लगभग 17 सेमी (6.8 इंच) चौड़ाई तक साफ़ प्रिंट होता है। `downloadSize` 50 से 5000 पिक्सल तक लेता है।
+- **PDF** के लिए वैकल्पिक `jspdf` पैकेज चाहिए (`npm install jspdf`)।
+- `filename` फ़ाइल का नाम बिना एक्सटेंशन के तय करता है: `table-12.svg`, `table-12.png`।
+
+## पक्का करें कि कोड स्कैन हो [#make-sure-it-scans]
+
+- **कॉन्ट्रास्ट।** हल्के बैकग्राउंड पर गहरे मॉड्यूल हर रीडर से स्कैन होते हैं। गहरे बैकग्राउंड पर हल्का कोड ज़्यादातर फ़ोन कैमरों पर चलता है, लेकिन कुछ पुराने स्कैनर पर नहीं।
+- **क्वाइट ज़ोन।** `margin` का डिफ़ॉल्ट 2 मॉड्यूल है। जब कोड फ़ोटो, पैटर्न या गहरे पेज पर हो, तो 4 इस्तेमाल करें।
+- **लोगो।** `logo` के साथ `level="H"` इस्तेमाल करें, ताकि लोगो से ढके मॉड्यूल के बावजूद कोड पढ़ा जा सके।
+- **प्रिंट साइज़।** लगभग 25 सेमी से स्कैन होने वाले छोटे लिंक के लिए करीब 2.5 सेमी चौड़ा कोड चाहिए; दूसरी दूरियों के लिए [प्रिंट साइज़ कैलकुलेटर](/tools/print-size) हिसाब लगा देता है।
+- **टेस्ट करें।** तैयार कोड को कुछ फ़ोन से स्कैन करें, या [स्कैन चेकर](/tools/scan-checker) पर इमेज अपलोड करें।
+
+## API रेफ़रेंस [#api-reference]
+
+<auto-type-table path="../../../registry/qrdx/qr-code.tsx" type="{ [K in keyof QrCodeProps as K extends keyof ComponentProps<'figure'> ? never : K]: QrCodeProps[K] }" />
+
+`className` जैसा कोई भी दूसरा prop रैपिंग `<figure>` को दे दिया जाता है।

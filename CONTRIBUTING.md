@@ -39,14 +39,15 @@ You don't need a database or any environment variables to work on the React libr
 
 3. **Configure the environment**
 
-   Next.js loads env files from the app directory, so copy the example there:
+   Next.js loads env files from the app directory, and the template lives there too:
 
    ```bash
-   cp .env.example apps/docs/.env.local
-   echo 'DATABASE_URL=<your connection string>' > packages/database/.env
+   cp apps/docs/.env.example apps/docs/.env.local
    ```
 
-   In `apps/docs/.env.local`, set the three required values (`NEXT_PUBLIC_APP_URL`, `DATABASE_URL`, `BETTER_AUTH_SECRET`). To sign in locally, also add a [GitHub OAuth app](https://github.com/settings/developers) with the callback URL `http://localhost:3000/api/auth/callback/github`. Every other variable is optional, and `.env.example` explains each one.
+   In `apps/docs/.env.local`, set the three required values (`NEXT_PUBLIC_APP_URL`, `DATABASE_URL`, `BETTER_AUTH_SECRET`). To sign in locally, also add a [GitHub OAuth app](https://github.com/settings/developers) with the callback URL `http://localhost:3000/api/auth/callback/github`. Every other variable is optional, and `apps/docs/.env.example` explains each one. It's the only env file you need: the database scripts (`bun run db:push` and the other `db:*` scripts) read `DATABASE_URL` from it too.
+
+   The app checks its environment when it starts (`next dev`, `next build` and a production server): if a required value is missing, or a value is set but invalid, it stops and names the variable. The schema is `apps/docs/env.ts`, which extends the `keys.ts` of `packages/auth`, `packages/config`, `packages/database`, `packages/next-config` and `packages/rate-limit`. A new variable goes in the `keys.ts` of the package that reads it, or in `apps/docs/env.ts` if only the app does, and in `apps/docs/.env.example`; server code reads it from `env` (`import { env } from "@/env"`) or the package's `keys()` rather than from `process.env`.
 
 4. **Set up the database**
 
@@ -91,6 +92,8 @@ You don't need a database or any environment variables to work on the React libr
 | `packages/database` | Drizzle schema (`schema.ts`), the database client, and hand-applied SQL (`manual-sql/`) |
 | `packages/design-system` | Shared UI components (shadcn/ui), icons, styles and fonts |
 | `packages/integrations`, `packages/integration-kit` | The integrations catalogue (`src/catalog`), the connected-account integrations (`src/integrations`) and the shared integration types |
+| `packages/config` | Platform constants: the brand, the hosted service's URLs, contact emails, social links and limits shared across the app (its README says what belongs there) |
+| `packages/availability` | Which built-in features a deployment can offer (custom domains, AI, storage, email, the bots), decided from which variables are set; the app passes its environment in (its README says how the app and `/zone/availability.json` use it) |
 | `packages/rate-limit` | Upstash-based rate limiting |
 | `packages/next-config`, `packages/typescript-config` | Shared Next.js config and env keys, shared tsconfig presets |
 | `plugins/chrome`, `plugins/figma`, `plugins/raycast`, `plugins/canva` | The Chrome extension, Figma plugin, Raycast extension and Canva app |
@@ -154,7 +157,7 @@ A maintainer applies schema changes to the production database before the code t
 
 ## Translating QRdx
 
-English is the source and keeps the unprefixed URLs (`/pricing`). Every other language lives under its own lowercase segment: `/es/pricing`, `/pt-br/pricing`, `/zh-hans`. Translated so far: the header, the footer, the cookie banner and its dialog, the home page, `/pricing` and the other marketing pages listed in `apps/docs/lib/i18n/localized-paths.json` (tools, scanner, generators, industry and placement guides, templates, integrations, plugins, MCP, AI and the comparison index). A dynamic route is listed the way its folder is named (`/qr-code-generator/[type]`). The docs are also in Spanish, Brazilian Portuguese, Japanese and Simplified Chinese (see [Docs](#docs) below). The blog, the legal pages, the comparison pages themselves and the signed-in app are English only.
+English is the source and keeps the unprefixed URLs (`/pricing`). Every other language lives under its own lowercase segment: `/es/pricing`, `/pt-br/pricing`, `/zh-hans`. Translated so far: the header, the footer, the cookie banner and its dialog, the home page, `/pricing` and the other marketing pages listed in `apps/docs/lib/i18n/localized-paths.json` (tools, scanner, generators, industry and placement guides, templates, integrations, plugins, MCP, AI and the comparison index). A dynamic route is listed the way its folder is named (`/qr-code-generator/[type]`). The docs are in every one of these languages too (see [Docs](#docs) below). The blog, the legal pages, the comparison pages themselves and the signed-in app are English only.
 
 The copy is in `apps/docs/messages/`:
 
@@ -217,7 +220,7 @@ It fails on keys that English doesn't have, on placeholders or tags that changed
 
 ### Docs
 
-The docs (`apps/docs/content/docs`) are translated into the languages whose entry in `lib/i18n/config.ts` has `docs: true`: today `es`, `pt-BR`, `ja` and `zh-Hans`. Their pages live at `/es/docs/...`, `/pt-br/docs/...`, `/ja/docs/...` and `/zh-hans/docs/...`; English keeps `/docs/...`. Other languages link to the English docs.
+The docs (`apps/docs/content/docs`) are translated into the languages whose entry in `lib/i18n/config.ts` has `docs: true`: today all of them, `es`, `pt-BR`, `fr`, `de`, `it`, `ja`, `ko`, `zh-Hans`, `id` and `hi`. Their pages live under the language's segment, such as `/es/docs/...`, `/pt-br/docs/...` and `/zh-hans/docs/...`; English keeps `/docs/...`. A language added without `docs: true` links to the English docs.
 
 | File | What it holds |
 | --- | --- |
@@ -254,7 +257,7 @@ Docs pages follow the same `review`: a list can name docs paths (`"/docs/help"`)
 - Use a [Conventional Commits](https://www.conventionalcommits.org/) style title, for example `feat(editor): add frame presets` or `fix(cli): handle missing sharp`.
 - Fill in the pull request template. For UI changes, include before and after screenshots at 1440 px and 390 px wide, in light and dark mode.
 - Keep secrets out of code, tests, screenshots and logs: no `.env` values, tokens or session cookies. Tests use the fakes in `apps/docs/tests/support/`.
-- Copy on the site goes live as written, so no placeholders or "TBD". Product counts come from code (`apps/docs/lib/product-facts.ts` and the catalogues), not typed by hand.
+- Copy on the site goes live as written, so no placeholders or "TBD". Product counts come from code (`apps/docs/lib/product-facts.ts` and the catalogues), not typed by hand. When you change one, or anything one counts, run `bun run --filter docs facts:snapshot` and commit `packages/config/facts.generated.json`, the copy that apps outside the main app read through `@repo/config/facts`; a test fails until you do.
 - Update the docs (`apps/docs/content/docs`) or package READMEs when you change behavior or public APIs.
 - Make sure the checks above pass. A maintainer reviews every pull request before it's merged.
 

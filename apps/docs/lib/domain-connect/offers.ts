@@ -2,8 +2,8 @@ import "server-only";
 
 import { Resolver } from "node:dns/promises";
 import { isDnsHostname } from "@/app/(app)/dashboard/domains/_lib/hostname";
+import { env } from "@/env";
 import type { DnsRecord } from "@/lib/custom-domains";
-import { env } from "@/lib/env";
 import { isFeatureAvailable } from "@/lib/feature-availability";
 import { baseUrl } from "@/lib/metadata";
 import { logError } from "@/lib/shared";

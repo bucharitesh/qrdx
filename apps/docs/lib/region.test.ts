@@ -2,6 +2,8 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
+  checkoutCurrency,
+  countryFromHeaders,
   currencyForRegion,
   overrideForCurrency,
   regionForCountry,
@@ -80,7 +82,71 @@ describe("currency helpers", () => {
   it("round-trips between region, currency and override", () => {
     assert.equal(currencyForRegion("IN"), "INR");
     assert.equal(currencyForRegion("default"), "USD");
+    assert.equal(currencyForRegion("EU"), "EUR");
     assert.equal(overrideForCurrency("INR"), "inr");
     assert.equal(overrideForCurrency("USD"), "usd");
+    assert.equal(overrideForCurrency("EUR"), "eur");
+  });
+});
+
+// Euro prices: off until NEXT_PUBLIC_QRDX_EUR_PRICES is on (lib/pricing.ts).
+describe("euro prices", () => {
+  const on = { eur: true };
+  const off = { eur: false };
+
+  it("show for the EU and EEA only once they're on", () => {
+    for (const country of ["DE", "fr", " PL ", "NO", "IS", "LI", "RE"]) {
+      assert.equal(regionForCountry(country, on), "EU", country);
+      assert.equal(regionForCountry(country, off), "default", country);
+    }
+    for (const country of ["GB", "CH", "US", "TR"]) {
+      assert.equal(regionForCountry(country, on), "default", country);
+    }
+    assert.equal(regionForCountry("IN", on), "IN");
+  });
+
+  it("are off when the flag isn't set", () => {
+    assert.equal(regionForCountry("DE"), "default");
+    assert.equal(regionForOverride("eur"), null);
+  });
+
+  it("accept ?currency=eur and the cookie only while on", () => {
+    assert.equal(regionForOverride("eur", on), "EU");
+    assert.equal(regionForOverride("EUR", off), null);
+    const germany = headers({ "x-vercel-ip-country": "DE" });
+    assert.equal(resolveRegion({ headers: germany }, on), "EU");
+    assert.equal(resolveRegion({ headers: germany }, off), "default");
+    assert.equal(
+      resolveRegion({ headers: germany, cookie: "usd" }, on),
+      "default",
+    );
+    const us = headers({ "x-vercel-ip-country": "US" });
+    assert.equal(resolveRegion({ headers: us, param: "eur" }, on), "EU");
+    assert.equal(resolveRegion({ headers: us, param: "eur" }, off), "default");
+  });
+});
+
+describe("checkoutCurrency", () => {
+  it("charges the visitor's country's currency", () => {
+    const from = (country: string) =>
+      headers({ "x-vercel-ip-country": country });
+    assert.equal(checkoutCurrency(from("IN")), "inr");
+    assert.equal(checkoutCurrency(from("US")), "usd");
+    assert.equal(checkoutCurrency(from("DE"), { eur: true }), "eur");
+    assert.equal(checkoutCurrency(from("DE"), { eur: false }), "usd");
+    assert.equal(checkoutCurrency(from("GB"), { eur: true }), "usd");
+    assert.equal(checkoutCurrency(headers({}), { eur: true }), "usd");
+    assert.equal(checkoutCurrency(null), "usd");
+  });
+
+  it("reads the Vercel header before the Cloudflare one", () => {
+    assert.equal(
+      countryFromHeaders(
+        headers({ "x-vercel-ip-country": "us", "cf-ipcountry": "IN" }),
+      ),
+      "US",
+    );
+    assert.equal(countryFromHeaders(headers({ "cf-ipcountry": "in" })), "IN");
+    assert.equal(countryFromHeaders(headers({})), null);
   });
 });

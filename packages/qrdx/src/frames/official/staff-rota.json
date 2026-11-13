@@ -1,0 +1,112 @@
+{
+  "id": "staff-rota",
+  "name": "Staff rota",
+  "description": "A light card with a bold side bar and left-aligned text and a calendar.",
+  "category": "use-case",
+  "collection": "business",
+  "contentTypes": ["url"],
+  "tags": ["business", "staff", "schedule"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1300,
+      "height": 1620
+    },
+    "qr": {
+      "x": 180,
+      "y": 140,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1300,
+        "height": 1620,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 40,
+        "height": 1620,
+        "fill": "accent"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1300,
+        "height": 1620,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.82
+        },
+        "hole": {
+          "x": 0,
+          "y": 8,
+          "width": 1292,
+          "height": 1604
+        }
+      },
+      {
+        "type": "path",
+        "d": "M1079 1339L1181 1339A12 12 0 0 1 1193 1351L1193 1444A12 12 0 0 1 1181 1456L1079 1456A12 12 0 0 1 1067 1444L1067 1351A12 12 0 0 1 1079 1339ZM1083.5 1372A4.5 4.5 0 0 0 1079 1376.5L1079 1439.5A4.5 4.5 0 0 0 1083.5 1444L1176.5 1444A4.5 4.5 0 0 0 1181 1439.5L1181 1376.5A4.5 4.5 0 0 0 1176.5 1372Z",
+        "fill": "frame",
+        "fillRule": "evenodd"
+      },
+      {
+        "type": "path",
+        "d": "M1100 1324L1100 1324A6 6 0 0 1 1106 1330L1106 1348A6 6 0 0 1 1100 1354L1100 1354A6 6 0 0 1 1094 1348L1094 1330A6 6 0 0 1 1100 1324ZM1160 1324L1160 1324A6 6 0 0 1 1166 1330L1166 1348A6 6 0 0 1 1160 1354L1160 1354A6 6 0 0 1 1154 1348L1154 1330A6 6 0 0 1 1160 1324Z",
+        "fill": "accent"
+      },
+      {
+        "type": "path",
+        "d": "M1142 1405L1163 1405A3 3 0 0 1 1166 1408L1166 1429A3 3 0 0 1 1163 1432L1142 1432A3 3 0 0 1 1139 1429L1139 1408A3 3 0 0 1 1142 1405Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "See your shifts",
+        "color": "frame",
+        "box": {
+          "x": 180,
+          "y": 1270,
+          "width": 1000,
+          "height": 170
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Staff rota",
+        "color": "frame",
+        "box": {
+          "x": 180,
+          "y": 1450,
+          "width": 1000,
+          "height": 90
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

@@ -1,5 +1,6 @@
 "use client";
 
+import { CANONICAL_HOST } from "@repo/config";
 import { Button } from "@repo/design-system/components/ui/button";
 import { GalleryAdd, Trash } from "iconsax-reactjs";
 import { useTranslations } from "next-intl";
@@ -11,24 +12,33 @@ import {
 } from "qrdx";
 import type { QRSilhouette } from "qrdx/types";
 import * as React from "react";
+import { useEditableStyle } from "@/components/editor/style-scope";
 import {
   SILHOUETTE_ACCEPT,
   silhouetteFileProblem,
 } from "@/lib/qr-design/silhouette";
 import { soundEvent } from "@/lib/sound/emit";
 import type { QRStyle } from "@/types/theme";
-import { CompactTile, OptionGrid } from "./option-tiles";
 
-// Shaped codes in Design → Frame: the code sits in a circle or a heart of
-// decorative dots, or in a shape of your own traced from an upload (only
-// the traced grid is kept, lib/qr-design/silhouette.ts). They set the
-// style's `shape` or `silhouette`, as saved designs, links and the API
-// already hold them. A shaped code takes the place of a frame: every frame
-// paints a light plate under the code, which would hide the outline, so
-// picking a shape clears the frame (and a border template), and picking a
-// frame clears the shape (frame-controls.tsx).
+// Shaped codes, tiles in the frame picker (Design → Frame): the code sits
+// in a circle or a heart of decorative dots, or in a shape of your own
+// traced from an upload (only the traced grid is kept,
+// lib/qr-design/silhouette.ts). They set the style's `shape` or
+// `silhouette`, as saved designs, links and the API already hold them. A
+// shaped code takes the place of a frame: every frame paints a light plate
+// under the code, which would hide the outline, so picking a shape clears
+// the frame (and a border template), and picking a frame clears the shape
+// (frame-controls.tsx). useShapedCodes gives the picker its tiles' state
+// and the panel for your own shape (upload, replace, remove).
 
 export type FrameShapeId = "circle" | "heart" | "silhouette";
+
+/** Shaped codes, in picker order. */
+export const FRAME_SHAPE_IDS: FrameShapeId[] = [
+  "circle",
+  "heart",
+  "silhouette",
+];
 
 /** Names in the picker. "Circle" is taken by the ring frame with curved text. */
 export function useFrameShapeNames(): Record<FrameShapeId, string> {
@@ -93,7 +103,8 @@ export function withShape(
 
 const TILE = 40;
 
-function ShapePreview({
+/** A shaped code's tile: the code in that shape (an upload icon until one). */
+export function ShapePreview({
   id,
   silhouette,
 }: {
@@ -113,7 +124,7 @@ function ShapePreview({
       shape={id === "silhouette" ? (silhouette ?? undefined) : id}
       size={TILE}
       style={{ maxHeight: "100%", maxWidth: "100%" }}
-      value="qrdx.dev"
+      value={CANONICAL_HOST}
     />
   );
 }
@@ -130,14 +141,26 @@ function SilhouetteOutline({ silhouette }: { silhouette: QRSilhouette }) {
   );
 }
 
-export function FrameShapes({
-  style,
-  setStyle,
-}: {
-  style: QRStyle;
-  setStyle: (next: QRStyle) => void;
-}) {
-  const frameShapeNames = useFrameShapeNames();
+export interface ShapedCodes {
+  /** The shaped code on now (or being uploaded) */
+  current: FrameShapeId | null;
+  names: Record<FrameShapeId, string>;
+  /** Your own shape: the current one, else the last one used */
+  silhouette: QRSilhouette | null;
+  /** Picks a shaped code (your own shape asks for an upload the first time) */
+  pick: (id: FrameShapeId) => void;
+  /** The upload, replace and remove controls, any problem and the help line */
+  panel: React.ReactNode;
+}
+
+/**
+ * The shaped codes for the frame picker: the current one, picking one, and
+ * the panel under the picker. Render `panel` (it holds the file input) once
+ * wherever the hook is used.
+ */
+export function useShapedCodes(): ShapedCodes {
+  const { style, setStyle } = useEditableStyle();
+  const names = useFrameShapeNames();
   const t = useTranslations("editor.controlSections.frameShapes");
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const [picking, setPicking] = React.useState(false);
@@ -223,8 +246,8 @@ export function FrameShapes({
     setStyle(withoutShape(style));
   };
 
-  return (
-    <div className="space-y-3">
+  const panel = (
+    <>
       <input
         accept={SILHOUETTE_ACCEPT}
         aria-label={t("uploadASilhouette")}
@@ -234,31 +257,6 @@ export function FrameShapes({
         tabIndex={-1}
         type="file"
       />
-      <div>
-        <div className="mb-2 flex items-baseline justify-between gap-3 text-xs">
-          <span className="text-muted-foreground font-medium">
-            {t("shapedCode")}
-          </span>
-          {current && (
-            <span className="text-foreground font-medium">
-              {frameShapeNames[current]}
-            </span>
-          )}
-        </div>
-        <OptionGrid columns={6} label={t("shapedCode")}>
-          {(Object.keys(frameShapeNames) as FrameShapeId[]).map((id) => (
-            <CompactTile
-              key={id}
-              name={frameShapeNames[id]}
-              onSelect={() => pick(id)}
-              selected={current === id}
-            >
-              <ShapePreview id={id} silhouette={silhouette ?? lastSilhouette} />
-            </CompactTile>
-          ))}
-        </OptionGrid>
-      </div>
-
       {current === "silhouette" && (
         <div className="flex items-center gap-3 rounded-lg border p-3">
           {silhouette ? (
@@ -302,7 +300,6 @@ export function FrameShapes({
           </div>
         </div>
       )}
-
       {problem && (
         <p className="text-destructive text-xs text-pretty" role="alert">
           {problem}
@@ -313,6 +310,14 @@ export function FrameShapes({
           {t(`shapeHelp.${current}`)}
         </p>
       )}
-    </div>
+    </>
   );
+
+  return {
+    current,
+    names,
+    silhouette: silhouette ?? lastSilhouette,
+    pick,
+    panel,
+  };
 }

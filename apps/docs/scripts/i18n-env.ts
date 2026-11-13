@@ -2,8 +2,9 @@
 // The content sources (lib/i18n/content-sources.ts) import app modules to
 // read their English copy:
 // - some validate the environment when loaded (lib/landing/blocks reaches
-//   the database keys): the scripts never connect to anything, so in CI or a
-//   fresh clone they get placeholders; values already set are kept;
+//   the database keys, others the app's env.ts): the scripts never connect to
+//   anything, so in CI or a fresh clone the three required variables get
+//   placeholders; values already set are kept;
 // - some are marked server-only (lib/plans.ts holds the plan limits the
 //   copy quotes): these scripts aren't a client bundle, so that guard
 //   resolves to an empty module here.
@@ -12,6 +13,7 @@ import path from "node:path";
 
 process.env.DATABASE_URL ??= "postgresql://i18n-scripts.invalid/unused";
 process.env.NEXT_PUBLIC_APP_URL ??= "https://qrdx.dev";
+process.env.BETTER_AUTH_SECRET ??= "i18n-scripts-placeholder-not-a-secret";
 
 type Resolve = (request: string, ...rest: unknown[]) => string;
 const loader = Module as unknown as { _resolveFilename: Resolve };

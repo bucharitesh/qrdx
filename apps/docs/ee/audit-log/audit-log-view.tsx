@@ -1,6 +1,5 @@
 "use client";
 
-import { toast } from "@repo/design-system";
 import { Spinner } from "@repo/design-system/components/icons";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
@@ -18,6 +17,7 @@ import { ArrowDown2, DocumentDownload } from "iconsax-reactjs";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useId, useState, useTransition } from "react";
+import { LoadMore } from "@/components/load-more";
 import { loadMoreAuditEvents } from "@/ee/audit-log/actions";
 import {
   AUDIT_CATEGORIES,
@@ -34,6 +34,7 @@ import type {
   AuditEventView,
   AuditPage,
 } from "@/ee/audit-log/queries";
+import { useCursorList } from "@/lib/hooks/use-cursor-list";
 import { useMounted } from "@/lib/hooks/use-mounted";
 
 const ALL = "all";
@@ -289,39 +290,29 @@ export function AuditLogView({
 }) {
   const router = useRouter();
   const format = useTimeFormat();
-  const [events, setEvents] = useState(initial.events);
-  const [cursor, setCursor] = useState(initial.nextCursor);
-  const [loading, startLoading] = useTransition();
   const [navigating, startNavigating] = useTransition();
-  const [shown, setShown] = useState(initial);
   const ids = { who: useId(), category: useId(), from: useId(), to: useId() };
-
-  // A new first page (the filter changed): start over from it.
-  if (shown !== initial) {
-    setShown(initial);
-    setEvents(initial.events);
-    setCursor(initial.nextCursor);
-  }
-
-  const apply = (patch: Partial<AuditFilter>) => {
-    const next = { ...filter, ...patch };
-    startNavigating(() => router.push(`${basePath}${filterQuery(next)}`));
-  };
-
-  const loadMore = () => {
-    if (!cursor) return;
-    startLoading(async () => {
+  // Newest first; more load as the list nears the bottom. Another filter
+  // starts over from its first page.
+  const list = useCursorList({
+    first: { items: initial.events, nextCursor: initial.nextCursor },
+    resetKey: filterQuery(filter),
+    keyOf: (event) => event.id,
+    errorMessage: "Couldn't load more events. Try again.",
+    load: async (cursor) => {
       const result = await loadMoreAuditEvents({
         filter: filterRecord(filter),
         cursor,
       });
-      if (!result.ok) {
-        toast.error(result.error);
-        return;
-      }
-      setEvents((current) => [...current, ...result.data.events]);
-      setCursor(result.data.nextCursor);
-    });
+      if (!result.ok) throw new Error(result.error);
+      return { items: result.data.events, nextCursor: result.data.nextCursor };
+    },
+  });
+  const events = list.items;
+
+  const apply = (patch: Partial<AuditFilter>) => {
+    const next = { ...filter, ...patch };
+    startNavigating(() => router.push(`${basePath}${filterQuery(next)}`));
   };
 
   const filtered = isFiltered(filter);
@@ -439,14 +430,18 @@ export function AuditLogView({
         </ul>
       )}
 
-      {cursor && (
-        <div className="flex justify-center">
-          <Button disabled={loading} onClick={loadMore} variant="outline">
-            {loading && <Spinner className="size-4" />}
-            Load more
-          </Button>
-        </div>
-      )}
+      <LoadMore
+        count={events.length}
+        error={list.error}
+        hasMore={list.hasMore}
+        labels={{
+          loadMore: "Load more",
+          loading: "Loading…",
+          retry: "Try again",
+        }}
+        loading={list.loading}
+        onLoadMore={list.loadMore}
+      />
     </div>
   );
 }

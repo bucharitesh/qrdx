@@ -1,0 +1,83 @@
+{
+  "id": "chess-lessons",
+  "name": "Chess lessons",
+  "description": "A ticket with side notches, a perforated line and a stub for the label and a chess pawn.",
+  "category": "use-case",
+  "collection": "health-learning",
+  "contentTypes": ["url"],
+  "tags": ["education", "school", "chess", "club"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1820
+    },
+    "qr": {
+      "x": 120,
+      "y": 300,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M64 0L1176 0A64 64 0 0 1 1240 64L1240 1380A60 60 0 0 0 1240 1500L1240 1756A64 64 0 0 1 1176 1820L64 1820A64 64 0 0 1 0 1756L0 1500A60 60 0 0 0 0 1380L0 64A64 64 0 0 1 64 0Z",
+        "fill": "frame"
+      },
+      {
+        "type": "line",
+        "x1": 100,
+        "y1": 1440,
+        "x2": 1140,
+        "y2": 1440,
+        "width": 10,
+        "dash": [36, 24],
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.55
+        }
+      },
+      {
+        "type": "path",
+        "d": "M600.5 78A19.5 19.5 0 1 1 639.5 78A19.5 19.5 0 1 1 600.5 78ZM602 100.5L638 100.5A4.5 4.5 0 0 1 642.5 105L642.5 105A4.5 4.5 0 0 1 638 109.5L602 109.5A4.5 4.5 0 0 1 597.5 105L597.5 105A4.5 4.5 0 0 1 602 100.5ZM605 112.5L635 112.5C635 135 647 153 650 162L590 162C593 153 605 135 605 112.5ZM584 166.5L656 166.5A6 6 0 0 1 662 172.5L662 178.5A6 6 0 0 1 656 184.5L584 184.5A6 6 0 0 1 578 178.5L578 172.5A6 6 0 0 1 584 166.5Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Learn to play chess",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1490,
+          "width": 1040,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "After-school club",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1675,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

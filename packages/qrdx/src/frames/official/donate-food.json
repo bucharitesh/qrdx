@@ -1,0 +1,80 @@
+{
+  "id": "donate-food",
+  "name": "Donate food",
+  "description": "A solid card with a can of food over the code and the label underneath.",
+  "category": "use-case",
+  "collection": "nonprofit",
+  "contentTypes": ["url"],
+  "tags": ["nonprofit", "community", "food bank", "donations"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M587 56L653 56A9 9 0 0 1 662 65L662 167A9 9 0 0 1 653 176L587 176A9 9 0 0 1 578 167L578 65A9 9 0 0 1 587 56ZM586.25 68A2.25 2.25 0 0 0 584 70.25L584 70.25A2.25 2.25 0 0 0 586.25 72.5L653.75 72.5A2.25 2.25 0 0 0 656 70.25L656 70.25A2.25 2.25 0 0 0 653.75 68L586.25 68ZM586.25 159.5A2.25 2.25 0 0 0 584 161.75L584 161.75A2.25 2.25 0 0 0 586.25 164L653.75 164A2.25 2.25 0 0 0 656 161.75L656 161.75A2.25 2.25 0 0 0 653.75 159.5L586.25 159.5Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M579.5 89L660.5 89A1.5 1.5 0 0 1 662 90.5L662 144.5A1.5 1.5 0 0 1 660.5 146L579.5 146A1.5 1.5 0 0 1 578 144.5L578 90.5A1.5 1.5 0 0 1 579.5 89ZM620 130.1C623 126.5 635.3 118.1 635 110.9C634.7 103.1 623 101.9 620 109.7C617 101.9 605.3 103.1 605 110.9C604.7 118.1 617 126.5 620 130.1Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Donate food",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Food bank",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

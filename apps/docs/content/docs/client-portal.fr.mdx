@@ -1,0 +1,45 @@
+---
+title: "Portail client"
+description: "Donnez à vos clients un accès en lecture seule aux dossiers de votre choix, avec le nom et le logo de votre agence à la place de ceux de QRdx."
+icon: Briefcase
+---
+
+Le portail client s'adresse aux agences qui gèrent des QR codes pour leurs clients. Vous invitez un client par e-mail et choisissez les dossiers qu'il peut consulter. Il se connecte au portail de votre espace de travail et y retrouve les codes de ces dossiers, chacun avec ses statistiques de scan et, pour les pages hébergées, un lien vers la page. Tout y est en lecture seule.
+
+Le portail fait partie de Business. Les clients ne sont pas membres de votre espace de travail et n'occupent pas de siège.
+
+## Configuration [#set-it-up]
+
+Ouvrez [Paramètres → Portail client](/dashboard?to=settings/clients). Les propriétaires et les administrateurs le gèrent.
+
+1. Sous **Personnalisation**, saisissez le nom que verront les clients, ajoutez un logo et choisissez une couleur d'accent. Les champs laissés vides utilisent le nom et le logo de l'espace de travail.
+2. Placez les codes de chaque client dans un dossier qui lui est propre, dans [Codes](/dashboard?to=codes).
+3. Sous **Clients**, saisissez l'adresse e-mail du client, cochez ses dossiers et cliquez sur **Inviter le client**.
+
+QRdx envoie au client un e-mail contenant un lien vers le portail, au nom de votre portail. Si l'envoi d'e-mails n'est pas configuré sur le serveur que vous utilisez, copiez l'adresse depuis **Adresse du portail** et envoyez-la vous-même.
+
+Seuls les dossiers que vous cochez sont partagés. Un sous-dossier n'est pas partagé, sauf si vous le cochez aussi.
+
+## Ce que voient les clients [#what-clients-see]
+
+Le portail se trouve à l'adresse `https://qrdx.dev/portal/<your workspace's URL name>`. Les clients s'y connectent avec un code à usage unique envoyé à l'adresse que vous avez invitée. L'e-mail contenant le code provient de QRdx. À la première connexion, ils obtiennent aussi un compte QRdx gratuit à leur nom, qu'ils ne sont pas obligés d'utiliser.
+
+Une fois connectés, ils voient :
+
+- chaque dossier partagé avec ses codes, le total des scans et le dernier scan
+- pour chaque code, les scans dans le temps, les visiteurs uniques, les scans de QR code et les touches NFC, les principaux pays, appareils et sites référents sur les 7, 30 ou 90 derniers jours
+- pour les codes qui ouvrent une page hébergée, un bouton pour ouvrir la page (l'ouvrir depuis le portail ne compte pas comme un scan)
+
+Ils ne peuvent pas voir les autres dossiers, les codes placés dans la corbeille, l'adresse complète d'une destination, les villes, les localisations précises, vos membres, les paramètres ni la facturation. Le portail affiche votre nom, votre logo et votre couleur, sans aucune marque QRdx.
+
+Une personne qui se connecte avec une adresse que vous n'avez pas invitée voit qu'elle n'a aucun accès. Une invitation appartient au compte qui s'y connecte en premier : elle continue donc de fonctionner si le client change ensuite d'adresse e-mail.
+
+## Modifier ou retirer l'accès [#change-or-remove-access]
+
+Dans **Clients**, **Dossiers** modifie ce que voit un client, et **Retirer** lui supprime son accès. Les deux changements s'appliquent au prochain chargement de page. Inviter à nouveau une adresse met à jour ses dossiers et renvoie le lien.
+
+Si l'espace de travail quitte Business, le portail ne s'ouvre plus tant qu'il n'est pas revenu sur Business. Vous pouvez néanmoins retirer des clients entre-temps.
+
+## Pourquoi le portail reste à l'adresse de QRdx [#why-the-portal-stays-on-qrdxs-address]
+
+Les clients restent connectés grâce à un cookie propre au site de QRdx. Servir des pages connectées sur votre domaine placerait ce cookie de connexion sur un domaine dont vous contrôlez le DNS, en dehors de QRdx. Le portail est donc à l'adresse de QRdx et y affiche votre personnalisation. Les [rapports clients](/docs/client-reports) partagés n'exigent pas de connexion : Business peut donc les servir sur votre propre domaine.

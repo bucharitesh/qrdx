@@ -137,7 +137,7 @@ export default async function CreatorProfilePage({
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
         {items.length > 0 ? (
           <div className="space-y-5">
-            <ItemGrid cards={items} />
+            <ItemGrid cards={items} eager={4} />
             <ItemPages
               href={(next) => {
                 const params = new URLSearchParams();

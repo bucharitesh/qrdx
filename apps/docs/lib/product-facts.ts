@@ -11,6 +11,12 @@
 // search index all show it. tests/lib/product-facts.test.ts fails when a
 // hard-coded count comes back.
 //
+// Apps that can't import this one (the docs site) read a snapshot of these
+// values through @repo/config/facts (packages/config/facts.generated.json).
+// After changing a fact, or anything one counts, run
+// `bun run --filter docs facts:snapshot`; tests/lib/product-facts-snapshot.test.ts
+// fails while the snapshot is stale.
+//
 // Keep this module light (no React, no "server-only"): source.config.ts and
 // client-side config import it.
 //
@@ -19,6 +25,16 @@
 // postinstall (fumadocs-mdx loads source.config.ts, which imports this file),
 // so CI and Vercel failed at install. These files only depend on zod.
 
+import {
+  DESIGN_QR_REQUESTS_PER_MINUTE,
+  MAX_BULK_TOOL_ROWS,
+  MAX_CODES_PER_REQUEST,
+  MAX_IMPORT_ROWS,
+  MCP_REQUESTS_PER_MINUTE,
+  NEW_PAID_ACCOUNT_CODES_PER_HOUR,
+  QR_IMAGE_REQUESTS_PER_MINUTE,
+} from "@repo/config";
+import { formatCount } from "@/lib/format-count";
 import {
   OFFICIAL_FRAME_COUNT,
   OFFICIAL_FRAME_COUNTS,
@@ -43,20 +59,10 @@ import {
 import { ART_MODEL_LABEL } from "./ai/art-models";
 import { BARCODE_FORMATS } from "./barcode/formats";
 import { BRAND_LOGO_COUNT } from "./brand-logos/catalog.generated";
-import {
-  formatCount,
-  MAX_BULK_TOOL_ROWS,
-  MAX_CODES_PER_REQUEST,
-  MAX_IMPORT_ROWS,
-  NEW_PAID_ACCOUNT_CODES_PER_HOUR,
-} from "./bulk-limits";
 import { TRANSLATED_LOCALES } from "./i18n/config";
 import { PAGE_TYPE_IDS } from "./landing/page-type-ids";
-import {
-  DESIGN_QR_REQUESTS_PER_MINUTE,
-  MCP_REQUESTS_PER_MINUTE,
-  QR_IMAGE_REQUESTS_PER_MINUTE,
-} from "./public-api-limits";
+import { MONEY_BACK_DAYS, NONPROFIT_DISCOUNT_PERCENT } from "./pricing";
+import { FREE_SCAN_HISTORY_YEARS } from "./scan-history";
 
 export const PRODUCT_FACTS = {
   /** Shapes for the data modules (`bodyPattern`). */
@@ -66,13 +72,18 @@ export const PRODUCT_FACTS = {
   /** Dots inside the corner eyes (`cornerEyeDotPattern`). */
   eyeCentres: CORNER_EYE_DOT_PATTERNS.length,
   /**
-   * Every frame QRdx has: the engine's built-in styles plus the official
-   * frame library (qrdx OFFICIAL_FRAMES).
+   * Every frame QRdx has: the built-in frames plus the official frame
+   * library. Both are frame specs; the built-in ones live in qrdx
+   * BUILT_IN_FRAMES, not in OFFICIAL_FRAMES, so none is counted twice.
    */
   frames:
     FRAME_STYLES.filter((style) => style !== "none").length +
     OFFICIAL_FRAME_COUNT,
-  /** Built-in frame styles (`frame.style`); `none` isn't a frame. */
+  /**
+   * Built-in frames (qrdx BUILT_IN_FRAMES): one frame spec per
+   * `frame.style` name, which designs keep naming them by. `none` isn't a
+   * frame.
+   */
   frameStyles: FRAME_STYLES.filter((style) => style !== "none").length,
   /** Official frames (frame specs in qrdx OFFICIAL_FRAMES). */
   officialFrames: OFFICIAL_FRAME_COUNT,
@@ -111,7 +122,7 @@ export const PRODUCT_FACTS = {
   affiliateMinPayoutUsd: AFFILIATE_MIN_PAYOUT_LABEL,
   /** Days of notice before the affiliate terms change: "30". */
   affiliateTermsNoticeDays: AFFILIATE_TERMS_NOTICE_DAYS,
-  // Large batches (lib/bulk-limits.ts), as copy writes them ("1,000").
+  // Large batches (@repo/config limits.ts), as copy writes them ("1,000").
   /** Dynamic codes in one POST /v1/codes request. */
   apiBatchCodes: formatCount(MAX_CODES_PER_REQUEST),
   /** Rows in one dashboard CSV import. */
@@ -120,13 +131,23 @@ export const PRODUCT_FACTS = {
   bulkToolRows: formatCount(MAX_BULK_TOOL_ROWS),
   /** Codes an hour a new account may create in a paid workspace. */
   newPaidAccountHourlyCodes: formatCount(NEW_PAID_ACCOUNT_CODES_PER_HOUR),
-  // Keyless endpoints' per-IP limits (lib/public-api-limits.ts).
+  // Keyless endpoints' per-IP limits (@repo/config limits.ts).
   /** Image API (GET /v1/qr) requests a minute per IP address. */
   imageApiPerMinute: QR_IMAGE_REQUESTS_PER_MINUTE,
   /** MCP server requests a minute per IP address. */
   mcpPerMinute: MCP_REQUESTS_PER_MINUTE,
   /** design_qr calls a minute per IP address. */
   designQrPerMinute: DESIGN_QR_REQUESTS_PER_MINUTE,
+  // Pricing offers (lib/pricing.ts), for the refund policy, help and compare pages.
+  /** Days to ask for a full refund of the first payment for a paid plan: "30". */
+  moneyBackDays: MONEY_BACK_DAYS,
+  /** The non-profit discount, as copy writes it: "50" (followed by "%"). */
+  nonprofitDiscountPercent: NONPROFIT_DISCOUNT_PERCENT,
+  /**
+   * Years of scan history Free shows (lib/scan-history.ts): "1", followed by
+   * "year". Pro and Business keep all of it, which copy writes as words.
+   */
+  freeScanHistoryYears: FREE_SCAN_HISTORY_YEARS,
 } as const;
 
 export type ProductFact = keyof typeof PRODUCT_FACTS;

@@ -1,0 +1,43 @@
+---
+title: "Modifier la destination d'un code"
+description: "Modifiez la destination d'un QR code dynamique. Les exemplaires imprimés ouvrent le nouveau lien dès le prochain scan."
+---
+
+Vous pouvez modifier à tout moment la destination d'un code dynamique. Chaque exemplaire imprimé ouvre le nouveau lien dès son prochain scan.
+
+## Depuis votre tableau de bord [#from-your-dashboard]
+
+1. Allez dans **Codes**.
+2. Ouvrez le menu du code (**⋯**) et choisissez **Modifier le lien**. Vous pouvez aussi ouvrir le code et cliquer sur **Modifier le lien**.
+3. Modifiez l'**URL de destination**.
+4. Cliquez sur **Enregistrer les modifications**.
+
+QRdx confirme par le message « Les scans ouvrent désormais la destination mise à jour. »
+
+## Depuis le Playground [#from-the-playground]
+
+Si le code est ouvert dans le Playground, modifiez l'adresse. La carte indique que les codes imprimés ouvrent toujours votre ancien lien tant que vous n'avez pas cliqué sur **Rediriger vers la nouvelle adresse**.
+
+## Les modifications sont immédiates [#changes-take-effect-right-away]
+
+QRdx ne met pas les redirections en cache. Le prochain scan ouvre la nouvelle destination, sur tous les téléphones.
+
+## Ne modifiez pas le lien court lui-même [#dont-change-the-short-link-itself]
+
+Modifier la destination est toujours sans risque. Ce n'est pas le cas du **suffixe** ou du **domaine** du code : les codes déjà imprimés avec l'ancien lien court cessent de fonctionner.
+
+## Annuler une modification [#undo-a-change]
+
+1. Ouvrez le code depuis **Codes**.
+2. Sous **Paramètres**, ouvrez **Historique des versions**.
+3. Cliquez sur **Restaurer** à côté de la version souhaitée, puis sur **Restaurer la version**.
+
+QRdx conserve jusqu'à 100 versions de chaque code.
+
+## Ouvrir une page à la place [#open-a-page-instead]
+
+Pour que le code ouvre une page hébergée plutôt qu'un lien, utilisez **Changer le type** sur la page du code. Consultez [Changer ce qu'ouvre un code imprimé](/docs/help/dynamic-codes/change-the-type).
+
+## Les codes statiques ne peuvent pas être modifiés [#static-codes-cant-change]
+
+Un QR code statique stocke le lien à l'intérieur du code. Pour le changer, vous devez imprimer un nouveau code. Consultez [Statique ou dynamique](/docs/help/getting-started/static-vs-dynamic).

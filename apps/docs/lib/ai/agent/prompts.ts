@@ -1,3 +1,4 @@
+import { BUILT_IN_FRAMES } from "qrdx";
 import { contentFieldGuide } from "@/lib/qr-design/content";
 import { MAX_REPAIRS } from "@/lib/qr-design/repair";
 
@@ -66,7 +67,7 @@ You produce the complete style of a QR code as JSON, from the conversation, the 
 # Options
 - bodyPattern, cornerEyePattern, cornerEyeDotPattern: only the schema's values.
 - gradients: optional two-color gradients for the dots (body), background, eyes or eye centers. Use them only when the user asks for a gradient.
-- frame: a call-to-action frame (banner-bottom, banner-top, border, rounded-border, speech-bubble, banner-top-bottom, speech-bubble-top, chat-bubble, circle, polaroid, phone, ticket, badge, envelope, tag, menu-card, sticker, gradient-border, focus) with a label of at most 24 characters, or style "none". Without colors a frame is black with a white label; to match the design, set the frame color (usually the eye or dot color) and a label color that contrasts with it.
+- frame: a call-to-action frame (${BUILT_IN_FRAMES.map((frame) => frame.style).join(", ")}) with a label of at most 24 characters, or style "none". Without colors a frame is black with a white label; to match the design, set the frame color (usually the eye or dot color) and a label color that contrasts with it.
 - templateId: a decorative border ("default" for none). Don't combine a border with a frame.
 - logo: none, keep (the code's current logo), qrdx, or an icon (wifi, location, phone, email, link, file, calendar, whatsapp, instagram). Use none unless the brief or the user asks for a logo; keep when changing a code that has one.
 - level: L, M, Q or H. margin: 0 to 16 modules.

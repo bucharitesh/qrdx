@@ -5,55 +5,64 @@ import { Label } from "@repo/design-system/components/ui/label";
 import { cn } from "@repo/design-system/lib/utils";
 import { useTranslations } from "next-intl";
 import {
+  type AnyQRFrame,
   FRAME_ICONS,
   FRAME_TEXT_MAX_LENGTH,
+  type FrameSpec,
   type FrameSpecIcon,
   getFrameIconPath,
-  type QRCustomFrame,
 } from "qrdx";
 import { soundEvent } from "@/lib/sound/emit";
 import { FrameColorField, FrameTextSize } from "./frame-fields";
 import {
-  customFrameColors,
+  frameColors,
   labelOfSlot,
   specIcons,
   specTokens,
   swapSpecIcon,
 } from "./frame-specs";
+import { FrameTextPresets } from "./frame-text-presets";
 
 /**
- * A custom frame's labels, colors and icons, edited through its spec: the
- * labels fill the spec's primary and secondary slots, the colors set the
- * theme tokens it paints with, and an icon swap rewrites its icon shapes.
+ * A frame's labels, colors and icons, edited through its spec: the labels
+ * fill the spec's primary and secondary slots, the colors set the theme
+ * tokens it paints with, and an icon swap rewrites its icon shapes. Every
+ * frame is edited this way: a custom frame through its own spec, a built-in
+ * style through the engine's spec for it (it has no icons, so it keeps its
+ * style name and only its text, colors and size change).
  */
-export function CustomFrameFields({
+export function FrameSpecFields({
   frame,
+  spec,
   onChange,
 }: {
-  frame: QRCustomFrame;
-  onChange: (frame: QRCustomFrame) => void;
+  frame: AnyQRFrame;
+  spec: FrameSpec;
+  onChange: (frame: AnyQRFrame) => void;
 }) {
   const t = useTranslations("editor.controlSections.customFrameFields");
-  const { spec } = frame;
   const primary = labelOfSlot(spec, "primary");
   const secondary = labelOfSlot(spec, "secondary");
   const tokens = specTokens(spec);
-  const colors = customFrameColors(frame);
+  const colors = frameColors(frame);
   const icons = specIcons(spec);
-  const update = (changes: Partial<QRCustomFrame>) =>
-    onChange({ ...frame, ...changes });
+  const update = (changes: Partial<AnyQRFrame>) =>
+    onChange({ ...frame, ...changes } as AnyQRFrame);
 
   return (
     <>
       {primary && (
-        <FrameLabelField
-          id="frame-text"
-          label={t("label")}
-          max={primary.maxLength ?? FRAME_TEXT_MAX_LENGTH}
-          onChange={(text) => update({ text })}
-          placeholder={t("leaveEmptyForNoLabel")}
-          value={frame.text ?? primary.text}
-        />
+        <div className="space-y-1.5">
+          <FrameLabelField
+            id="frame-text"
+            label={t("label")}
+            max={primary.maxLength ?? FRAME_TEXT_MAX_LENGTH}
+            onChange={(text) => update({ text })}
+            placeholder={t("leaveEmptyForNoLabel")}
+            value={frame.text ?? primary.text}
+          />
+          <FrameTextPresets />
+        </div>
       )}
       {secondary && (
         <FrameLabelField
@@ -100,17 +109,18 @@ export function CustomFrameFields({
         </div>
       )}
 
-      {icons.map((icon) => (
-        <IconPicker
-          current={icon}
-          key={icon}
-          onPick={(next) => {
-            update({ spec: swapSpecIcon(spec, icon, next) });
-            soundEvent("tick");
-          }}
-          taken={icons.filter((other) => other !== icon)}
-        />
-      ))}
+      {frame.style === "custom" &&
+        icons.map((icon) => (
+          <IconPicker
+            current={icon}
+            key={icon}
+            onPick={(next) => {
+              update({ spec: swapSpecIcon(spec, icon, next) });
+              soundEvent("tick");
+            }}
+            taken={icons.filter((other) => other !== icon)}
+          />
+        ))}
 
       {spec.labels.length > 0 && (
         <FrameTextSize

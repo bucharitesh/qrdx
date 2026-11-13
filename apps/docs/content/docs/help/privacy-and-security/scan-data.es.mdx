@@ -1,6 +1,6 @@
 ---
 title: "Qué registra QRdx cuando alguien escanea"
-description: "Los datos que registra el escaneo de un código dinámico, lo que nunca almacena y cuánto tiempo se conservan."
+description: "Los datos que registra un escaneo de un código dinámico, lo que nunca almacena y cuánto tiempo se conservan."
 ---
 
 Solo los códigos dinámicos registran escaneos. Un código estático contiene tu contenido directamente y nunca pasa por QRdx.
@@ -12,30 +12,30 @@ Solo los códigos dinámicos registran escaneos. Un código estático contiene t
 - El sitio de referencia, si lo hay.
 - El idioma del navegador.
 - Qué versión vio el visitante, si hay una prueba A/B en curso.
-- Un hash diario con sal de la dirección de red y del navegador, de modo que un visitante cuenta una sola vez al día.
-- Su ubicación, redondeada a unos 100 m, solo si el propietario del código activó la [ubicación precisa](/docs/precise-location) y la persona que escaneó la permitió en su navegador. No se almacena nada si la rechaza.
+- Un hash diario con sal de la dirección de red y del navegador, de modo que un visitante cuenta una vez al día.
+- Su ubicación, redondeada a unos 100 m, solo si el propietario del código activó la [ubicación precisa](/docs/precise-location) y la persona que escaneó lo permitió en su navegador. Si lo rechaza, no se almacena nada.
 
-## Qué nunca almacena [#what-it-never-stores]
+## Qué nunca se almacena [#what-it-never-stores]
 
-QRdx nunca almacena la dirección IP de quien escanea. El hash anterior no se puede revertir para obtenerla y cambia cada día.
+QRdx nunca almacena la dirección IP de quien escanea. El hash anterior no se puede revertir para obtenerla, y cambia cada día.
 
 Los bots y las vistas previas de enlaces no se registran.
 
 ## Cuánto tiempo se conservan los escaneos [#how-long-scans-are-kept]
 
-Los escaneos se conservan mientras exista el código. Tu plan determina hasta cuánto tiempo atrás puedes verlos: 90 días en Gratis, 3 años en Pro e ilimitado en Business.
+Los escaneos se conservan mientras exista el código. Tu plan determina hasta qué fecha atrás puedes verlos: {facts.freeScanHistoryYears} año en Gratis, y todos en Pro y Business.
 
-Al eliminar un código para siempre, también se eliminan sus escaneos.
+Al eliminar un código para siempre, se eliminan también sus escaneos.
 
 ## Cookies para quienes escanean [#cookies-for-people-who-scan]
 
 Las páginas que ven quienes escanean, como los enlaces cortos y las páginas para móvil, no muestran un banner de cookies y no cargan las analíticas de QRdx ni el widget de soporte.
 
-QRdx establece allí dos cookies. Una recuerda durante 6 horas la contraseña correcta de un código. La otra vincula una página alojada con el escaneo que la abrió durante 15 minutos, solo cuando el código pide ubicación precisa, de modo que la ubicación que comparte quien escanea se añada a ese escaneo. Los propietarios de las páginas pueden añadir sus propios píxeles de analíticas a sus páginas en los planes de pago.
+QRdx establece allí dos cookies. Una recuerda durante 6 horas una contraseña de código correcta. La otra vincula durante 15 minutos una página alojada con el escaneo que la abrió, solo cuando el código pide ubicación precisa, de modo que la ubicación que comparte quien escanea se añade a ese escaneo. Los propietarios de las páginas pueden añadir sus propios píxeles de analítica en sus páginas en los planes de pago.
 
 ## El escáner de códigos QR [#the-qr-code-scanner]
 
-El [escáner de QRdx](/scan) guarda tu historial de escaneos solo en tu dispositivo. Los fotogramas de la cámara y las imágenes se leen en tu dispositivo y nunca se suben, incluidas las capturas de pantalla que compartes con el escáner instalado en Android. Para comprobar un enlace antes de abrirlo, solo se envía su dirección para verificarla, y QRdx no la conserva.
+El [escáner de QRdx](/scan) guarda tu historial de escaneos solo en tu dispositivo. Los fotogramas de la cámara y las imágenes se leen en tu dispositivo y nunca se suben, incluidas las capturas de pantalla que compartes con el escáner instalado en Android. Para comprobar un enlace antes de abrirlo, solo se envía su dirección para revisarla, y QRdx no la conserva.
 
 ## Más detalles [#more-detail]
 

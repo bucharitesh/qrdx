@@ -30,7 +30,7 @@ export const templateConfigSchema = z.object({
   url: z.string(),
 });
 
-// Note: TemplateDefinition cannot be fully represented in Zod due to React.ReactNode and function types
+// Note: TemplateDefinition cannot be fully represented in Zod due to its element and function types
 // We'll keep the type definition but add validation for the serializable parts
 export const templateDefinitionBaseSchema = z.object({
   id: z.string(),
@@ -42,14 +42,21 @@ export const templateDefinitionBaseSchema = z.object({
 export type BaseTemplateProps = z.infer<typeof baseTemplatePropsSchema>;
 export type TemplateConfig = z.infer<typeof templateConfigSchema>;
 
+/**
+ * What a template wrapper receives and returns: React elements when a React
+ * component draws the code, the core's plain nodes (`QRNode`) otherwise. A
+ * wrapper written with JSX or `h` from "qrdx/core" works in both.
+ */
+export type TemplateNode = any;
+
 // Generic template definition that allows custom props
 export interface TemplateDefinition<TCustomProps = Record<string, never>> {
   id: string;
   name: string;
   description?: string;
   wrapper: (
-    children: React.ReactNode,
+    children: TemplateNode,
     props?: BaseTemplateProps & TCustomProps,
     templateConfig?: TemplateConfig
-  ) => React.ReactNode;
+  ) => TemplateNode;
 }

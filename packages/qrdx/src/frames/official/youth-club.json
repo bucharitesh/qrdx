@@ -1,0 +1,104 @@
+{
+  "id": "youth-club",
+  "name": "Youth club",
+  "description": "A card with two more stacked behind it and three people.",
+  "category": "use-case",
+  "collection": "nonprofit",
+  "contentTypes": ["url"],
+  "tags": ["nonprofit", "community", "youth", "club"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1340,
+      "height": 1860
+    },
+    "qr": {
+      "x": 120,
+      "y": 400,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 100,
+        "y": 100,
+        "width": 1240,
+        "height": 1760,
+        "radius": 48,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.75
+        }
+      },
+      {
+        "type": "rect",
+        "x": 50,
+        "y": 50,
+        "width": 1240,
+        "height": 1760,
+        "radius": 48,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.45
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 48,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M564 108.8A12.6 12.6 0 1 1 589.2 108.8A12.6 12.6 0 1 1 564 108.8ZM558.4 178.8C558.4 131.2 594.8 131.2 594.8 178.8ZM650.8 108.8A12.6 12.6 0 1 1 676 108.8A12.6 12.6 0 1 1 650.8 108.8ZM645.2 178.8C645.2 131.2 681.6 131.2 681.6 178.8Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M603.2 92A16.8 16.8 0 1 1 636.8 92A16.8 16.8 0 1 1 603.2 92ZM596.2 178.8C596.2 120 643.8 120 643.8 178.8Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Join the youth club",
+        "color": "text",
+        "box": {
+          "x": 90,
+          "y": 1520,
+          "width": 1060,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Sports, music and more",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 210,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

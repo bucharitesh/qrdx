@@ -1,0 +1,215 @@
+---
+title: "पैटर्न"
+description: "डेटा मॉड्यूल, कॉर्नर आई और आई डॉट का आकार बदलें।"
+icon: Grid3x3
+---
+
+अनोखे डिज़ाइन के लिए QR कोड के एलिमेंट का आकार बदलें। हर विकल्प को लाइव देखें (और अपने ब्राउज़र में डीकोड होते हुए) [आकार, आई और फ़्रेम](/docs/styles) में।
+
+## बॉडी पैटर्न [#body-patterns]
+
+डेटा डॉट का आकार तय करें। कुल {facts.bodyPatterns} बॉडी पैटर्न हैं:
+
+- क्लासिक: `square`, `small-square`, `horizontal-line`, `vertical-line`, `octagon`
+- राउंडेड: `circle` (डिफ़ॉल्ट), `circle-large`, `rounded`, `liquid`, `liquid-horizontal`, `liquid-vertical`, `random-dots`
+- डेकोरेटिव: `classy`, `classy-rounded`, `leaf`, `diamond`, `hexagon`
+- प्लेफ़ुल: `mosaic`, `plus`, `star`, `heart`, `pacman`, `circle-mixed`
+
+`liquid`, `classy` और `classy-rounded` पास के मॉड्यूल को जोड़कर एक चिकनी आउटलाइन बनाते हैं (`liquid-horizontal` और `liquid-vertical` उन्हें सिर्फ़ पंक्तियों या कॉलम में जोड़ते हैं)। `random-dots` और `mosaic` हर मॉड्यूल पर अलग दिखते हैं, लेकिन एक ही वैल्यू के लिए हमेशा वही कोड बनाते हैं। अलाइनमेंट पैटर्न पैटर्न कोई भी हो, हमेशा ठोस स्क्वायर के रूप में बनते हैं, ताकि डीकोडर उन्हें भरोसे से ढूँढ सकें।
+
+```tsx
+import { QRCode } from 'qrdx';
+
+<QRCode value="https://example.com" bodyPattern="circle" size={256} />
+<QRCode value="https://example.com" bodyPattern="liquid" size={256} />
+<QRCode value="https://example.com" bodyPattern="classy-rounded" size={256} />
+```
+
+### मॉड्यूल स्केल [#module-scale]
+
+`moduleScale` (0.5 से 1, डिफ़ॉल्ट 1) हर डेटा मॉड्यूल को उसके केंद्र के आसपास छोटा करता है, जिससे लुक हल्का और ज़्यादा खुला-खुला दिखता है; जुड़े हुए पैटर्न में इसकी जगह लाइनें पतली हो जाती हैं। हर पैटर्न उस सबसे छोटे साइज़ पर रुक जाता है जो हमारे टेस्ट में अब भी डीकोड होता है (जैसे `circle` के लिए 0.95, `classy` के लिए 0.7; देखें `MODULE_SCALE_FLOOR`), और अलाइनमेंट पैटर्न पूरे साइज़ में रहते हैं।
+
+```tsx
+<QRCode value="https://example.com" bodyPattern="liquid" moduleScale={0.8} />
+```
+
+## कॉर्नर आई पैटर्न [#corner-eye-patterns]
+
+कॉर्नर मार्कर का आकार तय करें। कुल {facts.eyeShapes} कॉर्नर आई पैटर्न हैं (React कंपोनेंट में डिफ़ॉल्ट `gear` है; CLI में डिफ़ॉल्ट `square`): `square`, `rounded`, `extra-rounded`, `squircle`, `cushion`, `bevel`, `octagon`, `leaf`, `leaf-reverse`, `drop`, `petal`, `shield`, `gear`, `circle`, `diya`, `message` और `pointy`।
+
+`leaf`, `leaf-reverse`, `drop` और `petal` तीनों आई को कोड के अपने-अपने कोने की ओर मोड़ देते हैं। `circle` आई कुछ स्कैनर ऐप से छूट सकती हैं; [स्कैन स्कोर](/docs/utilities) इनके बारे में चेतावनी देता है।
+
+```tsx
+<QRCode value="https://example.com" cornerEyePattern="square" />
+<QRCode value="https://example.com" cornerEyePattern="leaf" />
+<QRCode value="https://example.com" cornerEyePattern="squircle" />
+```
+
+## कॉर्नर आई डॉट पैटर्न [#corner-eye-dot-patterns]
+
+हर कॉर्नर मार्कर के अंदर के डॉट का आकार तय करें। कुल {facts.eyeCentres} कॉर्नर आई डॉट पैटर्न हैं (React कंपोनेंट में डिफ़ॉल्ट `circle` है; CLI में डिफ़ॉल्ट `square`): `square`, `rounded`, `extra-rounded`, `circle`, `squircle`, `octagon`, `hexagon`, `dots`, `leaf`, `leaf-reverse`, `drop`, `drop-reverse`, `plus`, `cross-rounded`, `flower`, `heart`, `message`, `message-reverse`, `diya`, `diya-reverse` और `rounded-triangle`।
+
+```tsx
+<QRCode value="https://example.com" cornerEyeDotPattern="square" />
+<QRCode value="https://example.com" cornerEyeDotPattern="flower" />
+<QRCode value="https://example.com" cornerEyeDotPattern="heart" />
+```
+
+### बचने वाले जोड़े और हटाए गए आकार [#pairs-to-avoid-and-retired-shapes]
+
+`square` आई के साथ `diamond` बॉडी, `rounded` के साथ `pacman`, और `square` या `rounded` आई के साथ `small-square` पास से स्कैन करने पर छूट जाते हैं; playground इन्हें एक साथ नहीं चुनने देता, ये `WEAK_BODY_EYES` के रूप में शिप होते हैं, और `getStylePairRisk(props)` वही चेतावनी लौटाता है जो स्कैन स्कोर दिखाता है।
+
+चौकोर कोनों वाली आई (`square`, `rounded`, `extra-rounded` और ज़्यादातर अन्य) के अंदर `circle` सेंटर शार्प रेंडर में सख़्त डीकोडर से छूट सकता है: स्क्रीन पर, PNG एक्सपोर्ट में और बड़े प्रिंट में। jsQR इसे कुछ साइज़ पर नहीं पढ़ पाता और zbar पढ़ लेता है। ठोस बॉडी (`square`, `liquid`, `classy`, `classy-rounded`) आमतौर पर फिर भी पढ़ी जाती हैं, और `gear`, `circle` व `octagon` आई पर इसका असर नहीं पड़ता। स्कैन स्कोर इसकी चेतावनी देता है (`style-pair`) और आप फिर भी इसे चुन सकते हैं। ये जोड़े `WEAK_SHARP_DOT_EYES` (साथ में `SHARP_DOT_EYE_SAFE_BODIES`) के रूप में शिप होते हैं, और `rounded` सेंटर इस समस्या से बचाता है।
+
+`curly` आई और `diamond`, `star` व `banner` सेंटर हटा दिए गए क्योंकि वे भरोसे से स्कैन नहीं होते। इनके साथ सेव किए गए डिज़ाइन अब भी रेंडर होते हैं, लेकिन अब वे ऑफ़र या लिस्ट नहीं किए जाते (देखें [हटाए गए आकार](/docs/styles#retired-shapes))।
+
+## सर्कल कोड [#circle-codes]
+
+`shape="circle"` कोड को एक डिस्क में रखता है और बाकी हिस्से को उसी डॉट आकार के सजावटी मॉड्यूल से भर देता है। असली कोड के चारों ओर `margin` मॉड्यूल (कम से कम 3) की हल्की रिंग रहती है, और स्कैनर सिर्फ़ बीच का कोड पढ़ते हैं। डिस्क कोड से बड़ी होती है, इसलिए उतनी ही स्कैन दूरी के लिए इसे थोड़ा बड़ा प्रिंट करें; प्रिंट-साइज़ कैलकुलेटर पूरी डिस्क को गिनता है।
+
+```tsx
+<QRCode value="https://example.com" shape="circle" bodyPattern="rounded" />
+```
+
+हमारे डीकोड टेस्ट में ठोस डॉट आकारों (`square`, `rounded`, `classy`, `liquid`) के साथ सर्कल कोड चौकोर कोड की तरह ही पढ़े जाते हैं। playground में यह **Design → Frame → Shaped code → Dot circle** है।
+
+{/* Heart and custom shapes (feat/heart-silhouette-shapes) */}
+
+## हार्ट कोड [#heart-codes]
+
+`shape="heart"` सर्कल कोड की तरह काम करता है, बस दिल के आकार में। असली कोड दिल के बीच में कम से कम 3 मॉड्यूल की हल्की रिंग के साथ रहता है, और दिल का बाकी हिस्सा सजावटी मॉड्यूल से भर जाता है। दिल में कोड को सर्कल से छोटा हिस्सा मिलता है, इसलिए उतनी ही स्कैन दूरी के लिए हार्ट कोड को चौकोर कोड से बड़ा प्रिंट करें। स्कैन स्कोर इसे गिनता है: एक ही साइज़ पर हार्ट कोड का स्कोर सर्कल कोड से कम आता है।
+
+```tsx
+<QRCode value="https://example.com" shape="heart" bodyPattern="rounded" />
+```
+
+playground में शेप्ड कोड फ़्रेम की जगह लेता है: शेप चुनने पर फ़्रेम हट जाता है, और फ़्रेम चुनने पर शेप हट जाती है। हर फ़्रेम कोड के नीचे एक हल्की प्लेट बनाता है, जो आउटलाइन को छिपा देती। अगर आप दोनों दें, तो इंजन फिर भी `frame` के साथ `shape` बनाता है।
+
+हमारे डीकोड टेस्ट में हार्ट कोड हर ठोस डॉट आकार के साथ, `square`, `rounded` और `gear` आई के साथ, और डिफ़ॉल्ट लुक में पढ़े गए, और zbar उन्हें शार्प रेंडर में पढ़ता है।
+
+## कस्टम आकार [#custom-shapes]
+
+`shape` एक सिल्हूट भी लेता है: आपकी अपनी तस्वीर से बनाई गई एक छोटी ग्रिड (हर तरफ़ अधिकतम 64 सेल)। कोड आकार के सबसे खुले बीच वाले हिस्से में रहता है, और बाकी आकार सजावटी मॉड्यूल से भर जाता है। सिर्फ़ ग्रिड रखी जाती है, तस्वीर कभी नहीं।
+
+```tsx
+import { getQRSilhouetteFit, loadQRSilhouette, QRCode } from "qrdx";
+
+const shape = await loadQRSilhouette(file); // a PNG, JPEG or SVG, in the browser
+const fit = getQRSilhouetteFit(shape);
+if (!fit.ok) throw new Error(fit.message);
+
+<QRCode value="https://example.com" shape={shape} />;
+```
+
+`loadQRSilhouette` तस्वीर को कैनवास पर बनाता है और उसकी पारदर्शिता का इस्तेमाल करता है, या तस्वीर ठोस हो तो उसके गहरेपन का (गहरे बैकग्राउंड पर हल्का आकार भी चलता है)। सर्वर पर डीकोड किए हुए पिक्सल `createQRSilhouette` को दें। `getQRSilhouetteFit` ऐसे आकार को मना कर देता है जो क्वाइट ज़ोन के साथ कोड रखने के लिए बहुत पतला हो, जैसे पतला तारा, बार या रिंग। मना किया गया आकार चौकोर कोड के रूप में बनता है।
+
+playground में **Design → Frame → Shaped code → Silhouette** चुनें और PNG, JPEG या SVG अपलोड करें (वहाँ हार्ट **Heart** है)। आपका आकार आपके डिज़ाइन के साथ रहता है, अपलोड किए गए लोगो की तरह: शेयर किए गए लिंक, कम्युनिटी आइटम, कोड स्निपेट और AI चैट में इसकी जगह चौकोर कोड इस्तेमाल होता है।
+
+{/* end heart and custom shapes */}
+
+## हर आई का अलग रंग [#per-eye-colors]
+
+`eyeColor` और `dotColor` तीनों आई को रंगते हैं। `eyeColors` इन्हें हर आई (`topLeft`, `topRight`, `bottomLeft`) के लिए बदल देता है, हर एक में `outer` (फ़्रेम) और `inner` (डॉट) रंग या ग्रेडिएंट के साथ:
+
+```tsx
+<QRCode
+  value="https://example.com"
+  eyeColor="#111827"
+  eyeColors={{
+    topLeft: { outer: "#dc2626", inner: "#1d4ed8" },
+    topRight: { outer: "#16a34a" },
+  }}
+/>
+```
+
+हर आई को बैकग्राउंड के मुकाबले गहरा रखें: डीकोडर कोड को उसकी तीन आई से ढूँढते हैं। स्कैन स्कोर हर आई के अपने रंगों का कंट्रास्ट जाँचता है।
+
+playground में **Design → Eye colors** हर आई के लिए फ़्रेम और सेंटर का रंग तय करता है, और **Design → Dot size** मौजूदा डॉट आकार की अनुमति वाली रेंज में `moduleScale` सेट करता है।
+
+## पैटर्न मिलाएँ [#combine-patterns]
+
+अनोखे डिज़ाइन के लिए अलग-अलग पैटर्न मिलाएँ:
+
+```tsx
+<QRCode
+  value="https://example.com"
+  bodyPattern="rounded"
+  cornerEyePattern="circle"
+  cornerEyeDotPattern="circle"
+  size={256}
+/>
+```
+
+## परफ़ॉर्मेंस [#performance]
+
+### तेज़ पैटर्न [#fast-patterns]
+- `circle` — बेहतरीन परफ़ॉर्मेंस
+- `square` — बहुत तेज़
+
+### मध्यम पैटर्न [#medium-patterns]
+- `rounded` — अच्छा संतुलन
+- `diamond` — सामान्य
+
+### जटिल पैटर्न [#complex-patterns]
+- `pacman` — ज़्यादा प्रोसेसिंग
+- `circle-mixed` — बदलती जटिलता
+
+## पैटर्न का चुनाव [#pattern-selection]
+
+### ब्रांड पहचान के लिए [#for-brand-identity]
+```tsx
+// Minimal, professional
+<QRCode
+  value="https://example.com"
+  bodyPattern="rounded"
+  cornerEyePattern="square"
+/>
+
+// Modern, tech-focused
+<QRCode
+  value="https://example.com"
+  bodyPattern="circle"
+  cornerEyePattern="rounded"
+/>
+```
+
+### मार्केटिंग के लिए [#for-marketing]
+```tsx
+// Eye-catching
+<QRCode
+  value="https://example.com"
+  bodyPattern="liquid"
+  cornerEyePattern="leaf"
+  cornerEyeDotPattern="leaf"
+/>
+
+// Elegant
+<QRCode
+  value="https://example.com"
+  bodyPattern="diamond"
+  cornerEyePattern="rounded"
+/>
+```
+
+### प्रिंट के लिए [#for-print]
+```tsx
+// High contrast
+<QRCode
+  value="https://example.com"
+  bodyPattern="square"
+  cornerEyePattern="square"
+/>
+
+// Smooth, professional
+<QRCode
+  value="https://example.com"
+  bodyPattern="rounded"
+  cornerEyePattern="rounded"
+/>
+```
+
+## अगले कदम [#next-steps]
+
+- [रंग और ग्रेडिएंट](/docs/features/colors-gradients) — पैटर्न में रंग जोड़ें
+- [टेम्पलेट](/docs/features/templates) — पहले से कॉन्फ़िगर किए पैटर्न
+- [लोगो](/docs/features/logos) — पैटर्न को लोगो के साथ मिलाएँ

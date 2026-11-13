@@ -1562,7 +1562,7 @@
             "oauth2": ["codes:read"]
           }
         ],
-        "description": "Scan analytics of a code for a range of days.\n\nTotals, a daily series and the top countries, cities, devices, systems, browsers and referrers. `sources` splits the scans into QR scans and NFC taps (visits through the code's `nfcLink`), and each listed scan has its `source`. The range is clamped to how long the plan keeps analytics. With `limit` above 0 the response also lists individual scans, newest first: pass the response's `nextBefore` as `before` for the next page.\n\nOn Pro and Business, `preciseLocations` lists the locations scanners chose to share (rounded to about 100 m) for codes that ask for them, and each scan has `latitude`, `longitude`, `locationAccuracyM` and `locationSource`. On Free, `preciseLocations` is null and those fields are null. More in [Precise location and geofencing](https://qrdx.dev/docs/precise-location).\n\n**Scope:** `codes:read` or `codes:write`, for API keys and OAuth tokens alike.",
+        "description": "Scan analytics of a code for a range of days.\n\nTotals, a daily series and the top countries, cities, devices, systems, browsers and referrers. `sources` splits the scans into QR scans and NFC taps (visits through the code's `nfcLink`), and each listed scan has its `source`. The range is clamped to how far back the plan's analytics reach: 1 year on Free, the whole history on Pro and Business (`retentionDays` is then null). With `limit` above 0 the response also lists individual scans, newest first: pass the response's `nextBefore` as `before` for the next page.\n\nOn Pro and Business, `preciseLocations` lists the locations scanners chose to share (rounded to about 100 m) for codes that ask for them, and each scan has `latitude`, `longitude`, `locationAccuracyM` and `locationSource`. On Free, `preciseLocations` is null and those fields are null. More in [Precise location and geofencing](https://qrdx.dev/docs/precise-location).\n\n**Scope:** `codes:read` or `codes:write`, for API keys and OAuth tokens alike.",
         "parameters": [
           {
             "name": "range",
@@ -1628,7 +1628,7 @@
                       "data": {
                         "codeId": "cm5code0spring0menu00001",
                         "range": "7d",
-                        "retentionDays": 30,
+                        "retentionDays": 365,
                         "from": "2026-01-06T00:00:00.000Z",
                         "days": 7,
                         "total": 42,
@@ -7934,6 +7934,10 @@
                 "type": "number",
                 "minimum": -4000,
                 "maximum": 4000
+              },
+              "plate": {
+                "type": "string",
+                "enum": ["opaque", "background"]
               }
             },
             "required": ["x", "y", "size"],
@@ -7947,8 +7951,56 @@
                 "pattern": "^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$"
               },
               "text": {
-                "type": "string",
-                "pattern": "^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$"
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "mix": {
+                        "type": "array",
+                        "prefixItems": [
+                          {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "enum": ["frame", "accent", "background"]
+                              },
+                              {
+                                "type": "string",
+                                "pattern": "^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$"
+                              }
+                            ]
+                          },
+                          {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "enum": ["frame", "accent", "background"]
+                              },
+                              {
+                                "type": "string",
+                                "pattern": "^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$"
+                              }
+                            ]
+                          }
+                        ],
+                        "items": false,
+                        "minItems": 2,
+                        "maxItems": 2
+                      },
+                      "amount": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                      }
+                    },
+                    "required": ["mix", "amount"],
+                    "additionalProperties": false
+                  }
+                ]
               },
               "accent": {
                 "type": "string",
@@ -8320,6 +8372,23 @@
                       "type": "string",
                       "enum": ["bold", "regular"]
                     },
+                    "collapse": {
+                      "type": "object",
+                      "properties": {
+                        "y": {
+                          "type": "number",
+                          "minimum": -4000,
+                          "maximum": 4000
+                        },
+                        "height": {
+                          "type": "number",
+                          "minimum": -4000,
+                          "maximum": 4000
+                        }
+                      },
+                      "required": ["y", "height"],
+                      "additionalProperties": false
+                    },
                     "box": {
                       "type": "object",
                       "properties": {
@@ -8390,6 +8459,23 @@
                     "weight": {
                       "type": "string",
                       "enum": ["bold", "regular"]
+                    },
+                    "collapse": {
+                      "type": "object",
+                      "properties": {
+                        "y": {
+                          "type": "number",
+                          "minimum": -4000,
+                          "maximum": 4000
+                        },
+                        "height": {
+                          "type": "number",
+                          "minimum": -4000,
+                          "maximum": 4000
+                        }
+                      },
+                      "required": ["y", "height"],
+                      "additionalProperties": false
                     },
                     "curve": {
                       "type": "object",
@@ -8692,10 +8778,17 @@
             "description": "The range used: the requested one, or the longest the plan's retention allows"
           },
           "retentionDays": {
-            "type": "integer",
-            "minimum": -9007199254740991,
-            "maximum": 9007199254740991,
-            "description": "How far back the plan keeps analytics"
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "How far back the plan's analytics reach, in days; null when the plan keeps the whole history"
           },
           "from": {
             "type": "string",

@@ -110,7 +110,7 @@ export default async function CommunityItemPage({
         <div className="grid gap-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:gap-12">
           <div className="min-w-0">
             {item.type === "collection" ? (
-              <ItemGrid cards={item.entries ?? []} />
+              <ItemGrid cards={item.entries ?? []} eager={4} />
             ) : item.unavailable ? (
               <div className="text-muted-foreground flex aspect-[4/3] items-center justify-center rounded-xl border border-dashed p-8 text-center text-sm text-pretty">
                 This kit is no longer available: its page template was removed

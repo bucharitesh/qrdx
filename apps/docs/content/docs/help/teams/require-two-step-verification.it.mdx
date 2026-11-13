@@ -1,0 +1,48 @@
+---
+title: "Richiedere la verifica in due passaggi"
+description: "Fai in modo che tutti i membri di uno spazio di lavoro attivino la verifica in due passaggi prima di poterci accedere. Fa parte del piano Business."
+---
+
+Proprietari e amministratori possono richiedere a tutti i membri di uno spazio di lavoro di usare la [verifica in due passaggi](/docs/help/privacy-and-security/two-step-verification). Un membro che non l'ha attivata non può aprire lo spazio di lavoro finché non lo fa, quindi accedere all'email di qualcuno non basta per entrare nel tuo spazio di lavoro.
+
+La richiesta della verifica in due passaggi fa parte del piano **Business**. Uno spazio di lavoro la ha quando almeno uno dei suoi proprietari o membri con accesso alla fatturazione è su Business. Vedi [Postazioni e limiti dello spazio di lavoro](/docs/help/teams/seats).
+
+## Attivala [#turn-it-on]
+
+1. Attiva prima la verifica in due passaggi per il tuo account, in **Impostazioni** → **Profilo e sicurezza**. Non puoi richiederla se non ce l'hai anche tu.
+2. Nello spazio di lavoro, vai su **Impostazioni** → **Team**.
+3. In **Verifica in due passaggi**, attiva **Richiedi la verifica in due passaggi**.
+4. Se alcuni membri non l'hanno ancora attivata, QRdx ti dice quanti sono e chiede conferma prima di procedere.
+5. [Conferma la tua identità](/docs/help/privacy-and-security/two-step-verification#confirm-its-you).
+
+Solo proprietari e amministratori possono modificarla, e per attivarla o disattivarla ti viene chiesto di confermare la tua identità.
+
+Non viene inviata nessuna email. I membri senza verifica in due passaggi lo scoprono la prossima volta che aprono lo spazio di lavoro.
+
+## Vedi chi l'ha attivata [#see-who-has-it-on]
+
+Nella pagina **Impostazioni** → **Team**, proprietari e amministratori vedono se per ogni membro la verifica in due passaggi è **Attiva** o **Disattiva**. Su smartphone si trova sotto l'indirizzo email di ciascuna persona.
+
+## Cosa vedono i membri che non l'hanno attivata [#what-members-without-it-see]
+
+Quando aprono lo spazio di lavoro, vedono che richiede la verifica in due passaggi, con un pulsante **Attiva la verifica in due passaggi**. Il pulsante li porta in **Impostazioni** → **Profilo e sicurezza** e, una volta attivata, **Torna a** lo spazio di lavoro li riporta alla pagina in cui si trovavano.
+
+Fino ad allora non possono vedere né modificare nulla in quello spazio di lavoro. Gli altri loro spazi di lavoro funzionano come al solito.
+
+Questo vale anche per ciò che lo spazio di lavoro invia loro. Gli avvisi via email, il riepilogo settimanale e gli avvisi su Slack o Discord per quello spazio di lavoro si interrompono, e non possono aggiungerne di nuovi. Le sincronizzazioni che hanno configurato per inviare i dati dello spazio di lavoro ad altri strumenti vengono messe in pausa. Gli avvisi ripartono quando la verifica in due passaggi è attiva; una sincronizzazione in pausa va riattivata.
+
+Se in seguito qualcuno disattiva la verifica in due passaggi, lo spazio di lavoro si chiude di nuovo per lui finché non la riattiva. Questo vale anche per proprietari e amministratori.
+
+## Chiavi API [#api-keys]
+
+Le chiavi API create nello spazio di lavoro continuano a funzionare per la persona che le ha create, con o senza verifica in due passaggi. La verifica in due passaggi protegge l'accesso, e una chiave è una credenziale a sé. Nessuno può creare una nuova chiave nello spazio di lavoro senza poterlo aprire, e proprietari e amministratori possono vedere e revocare le chiavi di tutti in **Impostazioni** → **Sviluppatori** dello spazio di lavoro.
+
+Le app collegate all'account di qualcuno tramite OAuth funzionano sempre e solo nello spazio di lavoro personale di quella persona, quindi non raggiungono mai uno spazio di lavoro di team.
+
+## Se lo spazio di lavoro esce da Business [#if-the-workspace-leaves-business]
+
+La richiesta smette di applicarsi e l'impostazione risulta disattivata. Se lo spazio di lavoro torna su Business, si applica di nuovo.
+
+## Disattivala [#turn-it-off]
+
+Nella pagina **Impostazioni** → **Team**, disattiva **Richiedi la verifica in due passaggi** e conferma la tua identità. I membri senza verifica in due passaggi possono riaprire subito lo spazio di lavoro.

@@ -1,0 +1,68 @@
+---
+title: "Metode masuk dan alamat email"
+description: "Masuk dengan Google, GitHub, atau kode email, tautkan metode masuk, ubah alamat email Anda, dan apa yang harus dilakukan jika Anda kehilangan akses ke email."
+---
+
+## Cara masuk [#ways-to-sign-in]
+
+- **Google** atau **GitHub**.
+- **Kode email**: masukkan email Anda, lalu ketik kode 6 digit yang kami kirim. Kode berlaku selama 5 menit.
+
+<IfAvailable feature="passkeys">
+Setelah Anda [menambahkan passkey](/docs/help/privacy-and-security/passkeys), Anda juga dapat masuk dengan sidik jari, wajah, atau kunci layar.
+</IfAvailable>
+
+Saat pertama kali masuk, QRdx membuat akun Anda. Tidak ada kata sandi yang perlu diingat.
+
+Dengan Google atau GitHub, QRdx hanya membuat akun jika alamat email Anda sudah diverifikasi di sana. Jika email Anda belum diverifikasi di sana, verifikasi terlebih dahulu (GitHub menampilkan daftar alamat Anda di **Settings** → **Emails**), atau masuk dengan kode email.
+
+## Akun untuk alamat Anda yang tidak Anda buat [#an-account-for-your-address-you-didnt-make]
+
+Jika QRdx sudah memiliki akun untuk alamat Anda dan bukan Anda yang membuatnya, masuklah dengan kode email. Setelah itu membuktikan bahwa alamat tersebut milik Anda, QRdx menghapus apa saja yang dapat digunakan pendaftaran sebelumnya untuk masuk kembali atau terus mendapatkan data akun:
+
+- tautan Google dan GitHub-nya, serta semua sesi;
+- verifikasi dua langkah dan perangkat tepercayanya<IfAvailable feature="passkeys">, serta passkey-nya</IfAvailable>;
+- kunci API-nya, dan aplikasi yang diizinkan menggunakan akun;
+- webhook serta peringatan Slack dan Discord yang disiapkannya, dan sinkronisasi apa pun yang disiapkannya untuk mengirim pemindaian atau jawaban formulir ke alat lain.
+
+Semua hal lainnya di akun tetap ada, jadi periksa ruang kerja dan anggotanya setelahnya.
+
+## Tautkan Google atau GitHub [#link-google-or-github]
+
+Buka **Settings** → **Profile & security** → **Sign-in methods**.
+
+- **Kode email** selalu aktif.
+- Tautkan Google atau GitHub untuk masuk dengan satu klik. Akun tersebut harus memakai alamat email yang sama dengan akun QRdx Anda.
+- Klik **Unlink** untuk menghapus salah satunya.
+
+## Ubah alamat email Anda [#change-your-email-address]
+
+1. Buka **Settings** → **Profile & security**.
+2. Di samping **Email**, klik **Change**, lalu [konfirmasi bahwa ini Anda](/docs/help/privacy-and-security/two-step-verification#confirm-its-you).
+3. Masukkan alamat baru dan ketik kode yang kami kirim ke alamat tersebut.
+
+QRdx kemudian mengeluarkan Anda dari semua perangkat dan browser lain, dan alamat lama Anda menerima email yang menyatakan bahwa akun telah dipindahkan, beserta cara menghubungi dukungan jika itu bukan Anda.
+
+## Kehilangan akses ke email [#lost-access-to-your-email]
+
+Jika Anda masih bisa masuk ke QRdx, ubah email Anda sendiri seperti di atas. Untuk mengonfirmasi bahwa ini Anda tanpa kotak surat, gunakan <IfAvailable feature="passkeys">passkey Anda, </IfAvailable>akun Google atau GitHub yang telah Anda tautkan, atau metode verifikasi dua langkah Anda jika aktif. Sudah keluar? Masuklah terlebih dahulu dengan <IfAvailable feature="passkeys">passkey Anda atau </IfAvailable>akun Google atau GitHub yang tertaut.
+
+Jika semuanya tidak berhasil, kirim email ke [support@qrdx.dev](mailto:support@qrdx.dev) dari alamat yang ingin Anda gunakan. Memindahkan akun ke alamat baru adalah hal paling sensitif yang dilakukan dukungan, jadi:
+
+- **Kami memerlukan bukti bahwa akun tersebut milik Anda.** Kami akan menanyakan alamat email pada akun, dan salah satu dari berikut:
+  - jika Anda pernah membayar QRdx, nomor pada salah satu [faktur](/docs/help/account-and-billing/invoices) Anda dan kira-kira kapan Anda membayar;
+  - jika ruang kerja di akun Anda memakai [domain](/docs/help/domains/custom-domains) sendiri, sebuah catatan DNS yang kami kirim kepada Anda, untuk ditambahkan ke domain tersebut.
+- **Kami memberi tahu alamat lama dan menunggu 7 hari.** Jika ada yang membalas dari alamat itu dalam waktu tersebut dan menolak, kami berhenti.
+- **Setelah itu kami memindahkan akun.** Kami mengubah email akun ke alamat baru, mengeluarkannya dari semua tempat, dan mengirim email ke alamat lama. Masuklah dengan kode yang dikirim ke alamat baru. Verifikasi dua langkah Anda, jika aktif, tetap seperti semula.
+
+Jika kami tidak dapat memastikan bahwa akun tersebut milik Anda, kami tidak akan memindahkannya, meskipun akibatnya akun tidak dapat dijangkau. Menyerahkannya kepada orang yang salah akan lebih buruk.
+
+Sebelum alamat lama Anda berhenti berfungsi, tambahkan passkey atau tautkan Google atau GitHub, agar Anda selalu dapat mengonfirmasi bahwa ini Anda.
+
+## Keluar dari perangkat lain [#sign-out-of-other-devices]
+
+Di bawah **Sessions** pada **Settings** → **Profile & security**, keluar dari satu perangkat, atau klik **Sign out everywhere else**.
+
+## Masalah saat masuk [#trouble-signing-in]
+
+Lihat [Kode atau email masuk tidak sampai](/docs/help/troubleshooting/emails).

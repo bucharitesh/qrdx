@@ -4,10 +4,10 @@ import { database as db, webhookDelivery } from "@repo/database";
 import { getCatalogBySurface } from "@repo/integrations/src/catalog";
 import { redis } from "@repo/rate-limit";
 import { and, count, eq, gte, lte, min, sql } from "drizzle-orm";
+import { env } from "@/env";
 import { type CronJob, type CronStatus, getCronRuns } from "@/lib/cron-runs";
 import { isOutboundDeliveryAllowed } from "@/lib/delivery-guard";
 import { isEmailConfigured } from "@/lib/email/send";
-import { env } from "@/lib/env";
 import { featureContext, getFeatures } from "@/lib/feature-availability";
 import { FEATURE_IDS, FEATURE_RULES } from "@/lib/feature-availability-rules";
 import { getIntegrationAvailability } from "@/lib/integration-availability";
@@ -224,19 +224,17 @@ export function getWebhookBacklog() {
 // ─── Build ───────────────────────────────────────────────────────────────────
 
 export function getBuildInfo() {
-  const sha = process.env.VERCEL_GIT_COMMIT_SHA ?? null;
+  const sha = env.VERCEL_GIT_COMMIT_SHA ?? null;
   return {
-    environment: process.env.VERCEL_ENV ?? env.NODE_ENV,
+    environment: env.VERCEL_ENV ?? env.NODE_ENV,
     commit: sha ? sha.slice(0, 7) : null,
     commitUrl:
-      sha &&
-      process.env.VERCEL_GIT_REPO_OWNER &&
-      process.env.VERCEL_GIT_REPO_SLUG
-        ? `https://github.com/${process.env.VERCEL_GIT_REPO_OWNER}/${process.env.VERCEL_GIT_REPO_SLUG}/commit/${sha}`
+      sha && env.VERCEL_GIT_REPO_OWNER && env.VERCEL_GIT_REPO_SLUG
+        ? `https://github.com/${env.VERCEL_GIT_REPO_OWNER}/${env.VERCEL_GIT_REPO_SLUG}/commit/${sha}`
         : null,
-    branch: process.env.VERCEL_GIT_COMMIT_REF ?? null,
-    message: process.env.VERCEL_GIT_COMMIT_MESSAGE?.split("\n")[0] ?? null,
-    region: process.env.VERCEL_REGION ?? null,
+    branch: env.VERCEL_GIT_COMMIT_REF ?? null,
+    message: env.VERCEL_GIT_COMMIT_MESSAGE?.split("\n")[0] ?? null,
+    region: env.VERCEL_REGION ?? null,
     node: process.version,
   };
 }

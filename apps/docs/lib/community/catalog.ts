@@ -26,6 +26,10 @@ export const officialFrameValue = (frame: OfficialFrame): QRCustomFrame => ({
   spec: frame.spec,
 });
 
+/** How an official frame's card draws it. */
+export const officialFramePreview = (frame: OfficialFrame) =>
+  framePreviewStyle(officialFrameValue(frame));
+
 export function officialFrameCard(frame: OfficialFrame): CommunityItemCard {
   return {
     id: null,
@@ -41,7 +45,7 @@ export function officialFrameCard(frame: OfficialFrame): CommunityItemCard {
     useCount: 0,
     tags: frame.tags,
     publishedAt: null,
-    preview: framePreviewStyle(officialFrameValue(frame)),
+    preview: officialFramePreview(frame),
   };
 }
 
@@ -61,8 +65,10 @@ export function officialFrameDetail(frame: OfficialFrame): CommunityItemDetail {
 export const officialFrameCards = (): CommunityItemCard[] =>
   OFFICIAL_FRAMES.map(officialFrameCard);
 
+const BY_ID = new Map(OFFICIAL_FRAMES.map((frame) => [frame.id, frame]));
+
 export const findOfficialFrame = (slug: string): OfficialFrame | undefined =>
-  OFFICIAL_FRAMES.find((frame) => frame.id === slug);
+  BY_ID.get(slug);
 
 const BY_HASH = new Map(
   OFFICIAL_FRAMES.map((frame) => [frameSpecHash(frame.spec), frame]),

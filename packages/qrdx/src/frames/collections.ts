@@ -11,8 +11,13 @@ export const OFFICIAL_FRAME_COLLECTIONS: readonly {
   { id: "seasons", label: "Seasons" },
   { id: "food-drink", label: "Food & drink" },
   { id: "shopping", label: "Shops & packaging" },
+  { id: "beauty-wellness", label: "Beauty & wellness" },
   { id: "events", label: "Events & weddings" },
   { id: "places", label: "Places & Wi-Fi" },
+  { id: "real-estate", label: "Real estate" },
+  { id: "automotive", label: "Cars & parking" },
   { id: "health-learning", label: "Health & learning" },
+  { id: "sports-fitness", label: "Sports & fitness" },
   { id: "business", label: "Business & social" },
+  { id: "nonprofit", label: "Nonprofits & community" },
 ];

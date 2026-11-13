@@ -1,5 +1,6 @@
 "use client";
 
+import { CANONICAL_HOST } from "@repo/config";
 import { Info, Spinner } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
@@ -122,7 +123,7 @@ export function ImportFrameDialog({
                   frame={{ style: "custom", spec: result.spec }}
                   size={96}
                   style={{ maxHeight: "100%", maxWidth: "100%" }}
-                  value="qrdx.dev"
+                  value={CANONICAL_HOST}
                 />
               </div>
               <div className="min-w-0 space-y-3 text-xs">

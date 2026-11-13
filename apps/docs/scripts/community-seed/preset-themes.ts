@@ -10,12 +10,13 @@
 // publishing keeps it), the name is the preset's label, and the tags are the
 // preset's tags and gallery shelf that are in the community vocabulary.
 
+import { MAX_TAGS_PER_THEME } from "@repo/config";
 import {
   type ThemePayload,
   themePayloadFromStyle,
 } from "@/lib/community/payloads";
 import { slugify } from "@/lib/community/text";
-import { COMMUNITY_THEME_TAGS, MAX_TAGS_PER_THEME } from "@/lib/constants";
+import { COMMUNITY_THEME_TAGS } from "@/lib/constants";
 import type { ThemePreset } from "@/types/theme";
 import { defaultPresets } from "@/utils/qr-presets";
 

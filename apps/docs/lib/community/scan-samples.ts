@@ -8,13 +8,14 @@
 // 2026-11-03 with lib/qr-design/score.ts), while 63 of them are Great with
 // both of these.
 
+import { CANONICAL_ORIGIN } from "@repo/config";
 export const MIN_GATE_SCORE = 85;
 
 export const GATE_SAMPLES = [
   {
     id: "link",
     label: "a link",
-    value: "https://qrdx.dev/community",
+    value: `${CANONICAL_ORIGIN}/community`,
   },
   {
     id: "wifi",
