@@ -1,10 +1,5 @@
 "use client";
 
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@repo/design-system/components/ui/popover";
 import { cn } from "@repo/design-system/lib/utils";
 import {
   Paintbucket,
@@ -18,7 +13,6 @@ import { FRAME_FONT_FAMILY } from "qrdx";
 import {
   type CSSProperties,
   type KeyboardEvent,
-  type ReactNode,
   useId,
   useLayoutEffect,
   useRef,
@@ -39,6 +33,16 @@ import {
   IconsEditor,
   labelContrast,
 } from "./frame-text-menu";
+import {
+  Divider,
+  inlineMenuSelector,
+  insideInlineEditor,
+  MenuPopover,
+  menuButton,
+  moveAlongToolbar,
+  Swatch,
+  toolbarClass,
+} from "./inline-toolbar";
 import { placeMenu } from "./menu-placement";
 import type { Box, PreviewLabel } from "./preview-labels";
 
@@ -160,7 +164,7 @@ export function InlineFrameEditor({
   const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.key !== "Escape") return;
     // An open menu closes first (Radix handles its own Escape)
-    if ((event.target as Element).closest("[data-frame-inline-menu]")) return;
+    if ((event.target as Element).closest(inlineMenuSelector("frame"))) return;
     event.preventDefault();
     event.stopPropagation();
     onCancel();
@@ -189,7 +193,7 @@ export function InlineFrameEditor({
         const next = event.relatedTarget as Element | null;
         if (!next) return;
         if (event.currentTarget.contains(next)) return;
-        if (next.closest("[data-frame-inline]")) return;
+        if (insideInlineEditor(next, "frame")) return;
         onLeave();
       }}
       onKeyDown={onKeyDown}
@@ -243,7 +247,7 @@ export function InlineFrameEditor({
       <div
         aria-label={t("frameTextOptions")}
         aria-orientation="horizontal"
-        className="bg-popover text-popover-foreground pointer-events-auto absolute flex items-center gap-0.5 rounded-full border p-1 shadow-md"
+        className={toolbarClass}
         onKeyDown={moveAlongToolbar}
         ref={menuRef}
         role="toolbar"
@@ -254,6 +258,7 @@ export function InlineFrameEditor({
         }}
       >
         <MenuPopover
+          kind="frame"
           label={t("textSize")}
           menu="size"
           onOpenChange={setMenu}
@@ -276,6 +281,7 @@ export function InlineFrameEditor({
 
         {tweaks.textColor && (
           <MenuPopover
+            kind="frame"
             label={t("textColor")}
             menu="text-color"
             onOpenChange={setMenu}
@@ -299,6 +305,7 @@ export function InlineFrameEditor({
 
         {tweaks.frameColor && (
           <MenuPopover
+            kind="frame"
             label={t("frameColor")}
             menu="frame-color"
             onOpenChange={setMenu}
@@ -322,6 +329,7 @@ export function InlineFrameEditor({
 
         {tweaks.icons.length > 0 && (
           <MenuPopover
+            kind="frame"
             className="w-80"
             label={t("icon")}
             menu="icon"
@@ -357,81 +365,5 @@ export function InlineFrameEditor({
         )}
       </div>
     </div>
-  );
-}
-
-/** Left and right arrows move between the menu's buttons (a toolbar). */
-function moveAlongToolbar(event: KeyboardEvent<HTMLDivElement>) {
-  if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
-  const buttons = Array.from(
-    event.currentTarget.querySelectorAll<HTMLButtonElement>("button"),
-  );
-  const index = buttons.indexOf(document.activeElement as HTMLButtonElement);
-  if (index < 0) return;
-  event.preventDefault();
-  const step = event.key === "ArrowRight" ? 1 : -1;
-  buttons[(index + step + buttons.length) % buttons.length]?.focus();
-}
-
-const menuButton =
-  "hover:bg-accent focus-visible:ring-ring/50 aria-expanded:bg-accent inline-flex h-7 items-center gap-1.5 rounded-full px-2 text-xs font-medium outline-none focus-visible:ring-[3px]";
-
-function Divider() {
-  return <span aria-hidden className="bg-border mx-0.5 h-4 w-px" />;
-}
-
-function Swatch({ color }: { color: string }) {
-  return (
-    <span
-      aria-hidden
-      className="size-3 rounded-full border shadow-xs"
-      style={{ backgroundColor: color }}
-    />
-  );
-}
-
-function MenuPopover({
-  label,
-  menu,
-  open,
-  onOpenChange,
-  trigger,
-  side,
-  className,
-  children,
-}: {
-  label: string;
-  menu: Menu;
-  open: boolean;
-  onOpenChange: (menu: Menu | null) => void;
-  trigger: ReactNode;
-  side: "top" | "bottom";
-  className?: string;
-  children: ReactNode;
-}) {
-  return (
-    <Popover
-      onOpenChange={(next) => onOpenChange(next ? menu : null)}
-      open={open}
-    >
-      <TooltipWrapper label={label} side="top">
-        <PopoverTrigger asChild>
-          <button aria-label={label} className={menuButton} type="button">
-            {trigger}
-          </button>
-        </PopoverTrigger>
-      </TooltipWrapper>
-      <PopoverContent
-        aria-label={label}
-        className={cn("z-[120] w-64 space-y-3 p-3", className)}
-        collisionPadding={12}
-        data-frame-inline=""
-        data-frame-inline-menu=""
-        side={side}
-        sideOffset={8}
-      >
-        {children}
-      </PopoverContent>
-    </Popover>
   );
 }

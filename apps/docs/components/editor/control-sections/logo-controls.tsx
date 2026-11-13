@@ -33,6 +33,78 @@ const ALLOWED_LOGO_TYPES = [
   "image/svg+xml",
 ];
 
+/**
+ * A logo file picker: `input` is the hidden file input to render, `choose`
+ * opens it, `readFile` takes a file from elsewhere (a drop). A PNG, JPG,
+ * WebP or SVG within the size limit is read as a data URL (the format logos
+ * are saved in) and handed to `onLogo`; anything else gets the same error
+ * toasts.
+ */
+export function useLogoUpload(onLogo: (dataUrl: string) => void) {
+  const t = useTranslations("editor.controlSections.logoControls");
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+  // Logos are inlined as data URLs into the saved theme and local storage
+  const readFile = (file: File): boolean => {
+    if (!ALLOWED_LOGO_TYPES.includes(file.type)) {
+      toast.error(t("unsupportedLogoFormat"), {
+        description: t("useAPngJpgWebp"),
+      });
+      return false;
+    }
+
+    if (file.size > MAX_LOGO_FILE_SIZE) {
+      toast.error(t("logoIsTooLarge"), {
+        description: t("logosMustBeValueMb", {
+          value: MAX_LOGO_FILE_SIZE / 1024 / 1024,
+        }),
+      });
+      return false;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === "string") {
+        onLogo(reader.result);
+        soundEvent("apply");
+      }
+    };
+    reader.onerror = () => {
+      toast.error(t("failedToReadLogoFile"));
+    };
+    reader.readAsDataURL(file);
+    return true;
+  };
+
+  const onFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!readFile(file)) e.target.value = "";
+  };
+
+  const input = (
+    <input
+      accept={ALLOWED_LOGO_TYPES.join(",")}
+      aria-label={t("uploadLogo")}
+      className="sr-only"
+      onChange={onFile}
+      ref={fileInputRef}
+      tabIndex={-1}
+      type="file"
+    />
+  );
+
+  return {
+    input,
+    /** Checks and reads a file (a dropped one, say) like a picked one */
+    readFile,
+    choose: () => fileInputRef.current?.click(),
+    clear: () => {
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    },
+  };
+}
+
 interface LogoControlsProps {
   style: Partial<ThemeStyles>;
   onStyleChange: (styles: Partial<ThemeStyles>) => void;
@@ -46,7 +118,9 @@ export function LogoControls({
   expanded,
 }: LogoControlsProps) {
   const t = useTranslations("editor.controlSections.logoControls");
-  const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const upload = useLogoUpload((logo) =>
+    onStyleChange({ ...style, customLogo: logo, showLogo: true }),
+  );
   const showLogo = style.showLogo ?? false;
   const iconName = logoIconName(style.customLogo);
   const brandName = brandLogoName(style.customLogo);
@@ -83,47 +157,9 @@ export function LogoControls({
     });
   };
 
-  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    // Logos are inlined as data URLs into the saved theme and local storage
-    if (!ALLOWED_LOGO_TYPES.includes(file.type)) {
-      toast.error(t("unsupportedLogoFormat"), {
-        description: t("useAPngJpgWebp"),
-      });
-      e.target.value = "";
-      return;
-    }
-
-    if (file.size > MAX_LOGO_FILE_SIZE) {
-      toast.error(t("logoIsTooLarge"), {
-        description: t("logosMustBeValueMb", {
-          value: MAX_LOGO_FILE_SIZE / 1024 / 1024,
-        }),
-      });
-      e.target.value = "";
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = () => {
-      if (typeof reader.result === "string") {
-        onStyleChange({ ...style, customLogo: reader.result, showLogo: true });
-        soundEvent("apply");
-      }
-    };
-    reader.onerror = () => {
-      toast.error(t("failedToReadLogoFile"));
-    };
-    reader.readAsDataURL(file);
-  };
-
   const handleClearLogo = () => {
     onStyleChange({ ...style, customLogo: undefined });
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
+    upload.clear();
   };
 
   return (
@@ -134,15 +170,7 @@ export function LogoControls({
       summary={showLogo ? logoName : t("off")}
       title={t("logo")}
     >
-      <input
-        accept={ALLOWED_LOGO_TYPES.join(",")}
-        aria-label={t("uploadLogo")}
-        className="sr-only"
-        id="logo-upload"
-        onChange={handleLogoUpload}
-        ref={fileInputRef}
-        type="file"
-      />
+      {upload.input}
       <div className="flex items-center justify-between gap-3">
         <div className="space-y-0.5">
           <Label className="cursor-pointer text-sm" htmlFor="show-logo">
@@ -169,7 +197,7 @@ export function LogoControls({
           onPick={(logo) =>
             onStyleChange({ ...style, customLogo: logo, showLogo: true })
           }
-          onUpload={() => fileInputRef.current?.click()}
+          onUpload={upload.choose}
         />
       </div>
 
@@ -225,7 +253,7 @@ export function LogoControls({
             </p>
             <div className="flex flex-wrap gap-2">
               <Button
-                onClick={() => fileInputRef.current?.click()}
+                onClick={upload.choose}
                 size="sm"
                 type="button"
                 variant="outline"
