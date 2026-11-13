@@ -5,6 +5,7 @@
 import { describe, expect, it } from "vitest";
 import { svgToEPS } from "../src/eps";
 import {
+  drawFrameOnCanvas,
   frameLabels,
   getFrameGapRatio,
   getFrameLayout,
@@ -901,5 +902,82 @@ describe("spec fields the built-in frames use", () => {
         )
       );
     }
+  });
+});
+
+// Added with the built-in templates as specs (src/template/specs)
+describe("spec fields the built-in templates use", () => {
+  const stroked = (): FrameSpec => ({
+    ...baseSpec(),
+    shapes: [
+      {
+        type: "circle",
+        cx: 600,
+        cy: 600,
+        r: 560,
+        hole: 540,
+        fill: "#ffffff",
+        stroke: { color: "frame", width: 20 },
+      },
+    ],
+  });
+
+  it("outlines a shape with a stroke in every output", async () => {
+    expect(getFrameSpecIssues(stroked())).toEqual([]);
+    const layout = getFrameLayout(1000, custom(stroked(), { color: "#be123c" }));
+    const ring = layout.shapes[0];
+    expect(ring?.stroke).toBe("#be123c");
+    expect(ring?.strokeWidth).toBeCloseTo(20);
+    const svg = renderSvg({ value: "stroke", size: 200, frame: custom(stroked()) });
+    expect(svg).toMatch(/stroke="#111111" stroke-width="4"/);
+    // A canvas strokes it after its fill
+    const calls: string[] = [];
+    const ctx = new Proxy(
+      {},
+      {
+        get: (_t, key: string) => () => calls.push(key),
+        set: (_t, key: string, value) => {
+          calls.push(`${key}=${value}`);
+          return true;
+        },
+      }
+    ) as unknown as CanvasRenderingContext2D;
+    const previous = (globalThis as Record<string, unknown>).Path2D;
+    (globalThis as Record<string, unknown>).Path2D = class {};
+    try {
+      drawFrameOnCanvas(ctx, layout);
+    } finally {
+      (globalThis as Record<string, unknown>).Path2D = previous;
+    }
+    expect(calls.indexOf("stroke")).toBeGreaterThan(calls.indexOf("fill"));
+    expect(calls).toContain("lineWidth=20");
+    // EPS strokes it too
+    const eps = await svgToEPS(svg);
+    expect(eps).toMatch(/ w .* s\n/);
+  });
+
+  it("keeps strokes thin and inside the artboard", () => {
+    const thick = stroked();
+    (thick.shapes[0] as { stroke: { width: number } }).stroke.width = 200;
+    expect(getFrameSpecIssues(thick).join()).toMatch(/at most 10%/);
+    const wide = stroked();
+    // The circle fits; its stroke, half outside the edge, doesn't
+    (wide.shapes[0] as { r: number }).r = 598;
+    expect(getFrameSpecIssues(wide).join()).toMatch(/outside the artboard/);
+  });
+
+  it("draws no plate with qr.plate none, and allows a tighter padding", () => {
+    const spec: FrameSpec = {
+      ...baseSpec(),
+      qr: { x: 100, y: 100, size: 1000, padding: 10, plate: "none" },
+    };
+    expect(getFrameSpecIssues(spec)).toEqual([]);
+    // The card only: no plate behind the code
+    expect(getFrameLayout(1000, custom(spec)).shapes).toHaveLength(1);
+    expect(getFrameGapRatio(custom(spec))).toBeCloseTo(0.01);
+    // Other plates still need 4%
+    expect(
+      getFrameSpecIssues({ ...spec, qr: { ...spec.qr, plate: "opaque" } }).join()
+    ).toMatch(/at least 4%/);
   });
 });
