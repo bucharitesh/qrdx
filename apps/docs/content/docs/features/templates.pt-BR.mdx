@@ -1,6 +1,6 @@
 ---
 title: "Templates"
-description: "Aplique templates de moldura pré-desenhados a um QR code ou registre os seus próprios."
+description: "Aplique templates de moldura pré-desenhados a um QR code ou registre os seus."
 icon: LayoutTemplate
 ---
 
@@ -56,7 +56,54 @@ Tema sazonal de Halloween.
 <QRCode value="https://example.com" templateId="Halloween" size={256} />
 ```
 
-## Personalize os templates [#customize-templates]
+### Dot Ring [#dot-ring]
+Um código redondo. O código fica em um disco de pontos dentro de um anel escuro, com uma linha de texto ao longo do anel. Quais pontos aparecem vem de um hash do conteúdo do código, então cada link ganha um anel só dele e o mesmo link sempre recebe o mesmo anel.
+
+```tsx
+<QRCode
+  value="https://example.com"
+  templateId="DotRing"
+  bodyPattern="circle-large"
+  size={512}
+/>
+```
+
+As configurações ficam em `customProps` (com tipo `DotRingProps`):
+
+```tsx
+<QRCode
+  value="https://example.com"
+  templateId="DotRing"
+  customProps={{
+    customText: "Scan for the menu",
+    textPosition: "bottom",
+    textColor: "#fde047",
+    outerCircleColor: "#1e3a8a",
+  }}
+  size={512}
+/>
+```
+
+| Prop | Padrão | Observações |
+| --- | --- | --- |
+| `customText` | "Scan the QR code" quatro vezes ao redor | Texto ao longo do anel. As letras que não cabem no anel são omitidas; `""` deixa o anel vazio |
+| `textPosition` | `"top"` | `"top"`: centralizado na parte de cima, lido no sentido horário. `"bottom"`: centralizado na parte de baixo, lido da esquerda para a direita |
+| `textRotation` | `0` | Gira o texto em torno do centro, em graus |
+| `textColor` | `#ffffff` | Cor do texto |
+| `fontFamily` | fontes padrão do sistema | Família de fonte CSS do texto |
+| `fontWeight` | `900` | Peso da fonte |
+| `fontSize` | `32` | No desenho de 593 unidades do template, em que o código tem 300 de largura |
+| `fontLetterSpacing` | `3.5` | Espaço extra entre as letras, nas mesmas unidades |
+| `outerCircleColor` | `fgColor` | Cor do anel |
+| `strokeWidth`, `strokeColor` | `0`, `#000000` | Um contorno nas duas bordas do anel |
+| `outerStrokeWidth`, `outerStrokeColor` | `strokeWidth`, `strokeColor` | Só a borda externa do anel |
+| `innerStrokeWidth`, `innerStrokeColor` | `strokeWidth`, `strokeColor` | Só a borda interna do anel |
+
+Um logo vai no centro, como em qualquer código. Links longos (códigos com mais de 49 módulos de largura) mantêm uma faixa clara entre o código e os pontos, para que ainda sejam lidos quando impressos em tamanho pequeno.
+
+O texto é texto SVG na fonte que você escolher; o padrão são as fontes do sistema, então nada é baixado. Os downloads em SVG e PNG no navegador usam as fontes de quem está vendo. PDF e EPS imprimem o texto em Helvetica Bold, então use texto Latin-1 nesses formatos. `getQRAsPNG` de `qrdx/node` precisa de uma fonte instalada no servidor, assim como os rótulos de moldura.
+
+## Personalizar templates [#customize-templates]
 
 Os templates integrados desenham a arte em `fgColor`. Todo o resto, como padrões e logo, é definido no código normalmente:
 
@@ -96,7 +143,7 @@ const ids = getTemplateIds();
 
 ## Templates personalizados [#custom-templates]
 
-Escreva seu próprio template como um `TemplateDefinition`. O `wrapper` dele recebe o código como `children` e retorna o SVG a ser desenhado. Ele desenha em um canvas de 300 por 300, e o código chega nesse mesmo tamanho, então reduza-o para deixar espaço para a sua arte. `props` traz o `fgColor` e o `bgColor` do código.
+Escreva seu próprio template como um `TemplateDefinition`. O `wrapper` dele recebe o código como `children` e retorna o SVG a ser desenhado. Ele desenha em uma tela de 300 por 300, e o código também chega nesse tamanho, então reduza-o para deixar espaço para a sua arte. `props` traz o `fgColor` e o `bgColor` do código.
 
 Este desenha um anel ao redor do código:
 
@@ -130,7 +177,7 @@ const ringTemplate: TemplateDefinition = {
 />
 ```
 
-Mantenha o código grande o bastante para ser lido de onde as pessoas vão segurar o celular e deixe um espaço claro entre ele e a sua arte. Confira o resultado com a [pontuação de leitura](/docs/features/frames#will-it-scan).
+Mantenha o código grande o bastante para ser lido da distância em que as pessoas vão segurar o celular, e deixe um espaço claro entre ele e a sua arte. Confira o resultado com a [pontuação de leitura](/docs/features/frames#will-it-scan).
 
 ## Quando usar templates [#when-to-use-templates]
 
@@ -139,9 +186,9 @@ Mantenha o código grande o bastante para ser lido de onde as pessoas vão segur
 - **Campanhas sazonais** — Use templates temáticos
 - **Geração em lote** — Aplique estilos consistentes
 
-## Guia de seleção de templates [#template-selection-guide]
+## Guia de escolha de template [#template-selection-guide]
 
-| Template | Ideal para | Clima |
+| Template | Ideal para | Estilo |
 |----------|----------|------|
 | Default | Profissional | Neutro |
 | Arrow | Tecnologia, moderno | Dinâmico |
@@ -149,6 +196,7 @@ Mantenha o código grande o bastante para ser lido de onde as pessoas vão segur
 | Square Border | Formal | Estruturado |
 | Striked Box | Marketing | Enérgico |
 | Halloween | Sazonal | Divertido |
+| Dot Ring | Códigos redondos, pôsteres, adesivos | Marcante |
 
 ## Próximos passos [#next-steps]
 
