@@ -1,18 +1,25 @@
-// scripts/notify-search-engines.mjs, which tells IndexNow and Bing about
-// changed pages after a deploy (.github/workflows/notify-search-engines.yml).
-// Only the pure parts run here; nothing is sent anywhere.
+// scripts/notify-search-engines.mjs, which tells IndexNow, Bing and Google
+// about changed pages after a deploy, and works through the Bing backlog
+// daily (.github/workflows/notify-search-engines.yml). Only the pure parts
+// run here; nothing is sent anywhere.
+import { createVerify, generateKeyPairSync } from "node:crypto";
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
+  BING_BACKLOG_STEP,
   changedUrls,
+  googleAssertion,
   IMPORTANT_PATHS,
   INDEXNOW_KEY,
   inSitemap,
   main,
   normalizeUrl,
+  parseServiceAccount,
   parseSitemap,
   pickBingSite,
+  rotate,
+  utcDay,
 } from "../../../../scripts/notify-search-engines.mjs";
 
 const APP = join(import.meta.dirname, "../..");
@@ -131,10 +138,88 @@ describe("pickBingSite", () => {
   });
 });
 
+describe("rotate (the daily Bing backlog)", () => {
+  const urls = Array.from({ length: 368 }, (_, i) => `https://qrdx.dev/p${i}`);
+
+  it("covers every URL in consecutive daily slices", () => {
+    const sent = new Set<string>();
+    const days = Math.ceil(urls.length / BING_BACKLOG_STEP);
+    for (let day = 20_405; day < 20_405 + days; day += 1) {
+      for (const url of rotate(urls, day).slice(0, BING_BACKLOG_STEP)) {
+        sent.add(url);
+      }
+    }
+    expect(sent.size).toBe(urls.length);
+  });
+
+  it("keeps every URL once, wrapping around", () => {
+    const rotated = rotate(["a", "b", "c"], 1, 2);
+    expect(rotated).toEqual(["c", "a", "b"]);
+    expect(rotate([], 5)).toEqual([]);
+  });
+
+  it("counts days in UTC", () => {
+    expect(utcDay(Date.UTC(2026, 10, 13, 23, 59))).toBe(
+      utcDay(Date.UTC(2026, 10, 13, 0, 0)),
+    );
+    expect(utcDay(Date.UTC(2026, 10, 14))).toBe(
+      utcDay(Date.UTC(2026, 10, 13)) + 1,
+    );
+  });
+});
+
+describe("Google service account", () => {
+  const { privateKey, publicKey } = generateKeyPairSync("rsa", {
+    modulusLength: 2048,
+    privateKeyEncoding: { type: "pkcs8", format: "pem" },
+    publicKeyEncoding: { type: "spki", format: "pem" },
+  });
+  const keyFile = JSON.stringify({
+    type: "service_account",
+    client_email: "notify@example.iam.gserviceaccount.com",
+    private_key: privateKey,
+    token_uri: "https://oauth2.googleapis.com/token",
+  });
+
+  it("reads a key file and rejects anything else", () => {
+    expect(parseServiceAccount(keyFile)).toEqual({
+      clientEmail: "notify@example.iam.gserviceaccount.com",
+      privateKey,
+      tokenUri: "https://oauth2.googleapis.com/token",
+    });
+    expect(parseServiceAccount("not json")).toBeUndefined();
+    expect(parseServiceAccount('{"client_email":"x"}')).toBeUndefined();
+  });
+
+  it("signs a JWT bearer assertion for the Search Console scope", () => {
+    const account = parseServiceAccount(keyFile);
+    if (!account) throw new Error("key file didn't parse");
+    const now = Date.UTC(2026, 10, 13, 12);
+    const [header, payload, signature] = googleAssertion(account, now).split(
+      ".",
+    );
+    const decode = (part = "") =>
+      JSON.parse(Buffer.from(part, "base64url").toString("utf8"));
+    expect(decode(header)).toEqual({ alg: "RS256", typ: "JWT" });
+    expect(decode(payload)).toEqual({
+      iss: "notify@example.iam.gserviceaccount.com",
+      scope: "https://www.googleapis.com/auth/webmasters",
+      aud: "https://oauth2.googleapis.com/token",
+      iat: now / 1000,
+      exp: now / 1000 + 3600,
+    });
+    const verified = createVerify("RSA-SHA256")
+      .update(`${header}.${payload}`)
+      .verify(publicKey, signature ?? "", "base64url");
+    expect(verified).toBe(true);
+  });
+});
+
 describe("arguments", () => {
   it("wants exactly one mode", async () => {
     expect(await main([])).toBe(2);
     expect(await main(["--all", "--check"])).toBe(2);
+    expect(await main(["--backlog", "--important"])).toBe(2);
     expect(await main(["--nope"])).toBe(2);
   });
 });
@@ -151,10 +236,18 @@ describe("workflow", () => {
     expect(workflow).toContain("scripts/notify-search-engines.mjs");
   });
 
-  it("passes the Bing key only through the environment", () => {
+  it("passes the Bing key and Google account only through the environment", () => {
     expect(workflow).toMatch(
       /BING_WEBMASTER_API_KEY: \$\{\{ secrets\.BING_WEBMASTER_API_KEY \}\}/,
     );
+    expect(workflow).toMatch(
+      /GSC_SERVICE_ACCOUNT_JSON: \$\{\{ secrets\.GSC_SERVICE_ACCOUNT_JSON \}\}/,
+    );
     expect(workflow).not.toMatch(/run:.*secrets\./);
+  });
+
+  it("works through the Bing backlog daily, before the quota resets", () => {
+    expect(workflow).toMatch(/schedule:\n\s+- cron: "15 23 \* \* \*"/);
+    expect(workflow).toContain("--backlog");
   });
 });
