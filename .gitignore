@@ -282,3 +282,6 @@ packages/database/generated
 packages/database/*.sql
 packages/database/meta
 .gstack/
+
+# Product facts snapshot, written before the docs site builds (bun run --filter docs facts:snapshot)
+packages/config/facts.generated.json

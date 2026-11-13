@@ -14,7 +14,7 @@ import { CANONICAL_ORIGIN, SUPPORT_EMAIL, MAX_CODES_PER_REQUEST } from "@repo/co
 | `contact.ts` | The email addresses people are told to write to |
 | `social.ts` | Profiles and listings the site links to |
 | `limits.ts` | Platform limits that more than one part of QRdx enforces or quotes: editor uploads, AI caps, theme caps, batch sizes, the keyless endpoints' rate limits |
-| `facts.ts` | Product counts and names quoted in copy, imported as `@repo/config/facts`, for apps that can't import the main app (the docs site). It reads `facts.generated.json`, a snapshot of `apps/docs/lib/product-facts.ts`, and offers the same API: `PRODUCT_FACTS`, `STYLE_SUMMARY`, `productFact()`, `isProductFact()`, `fillFacts()` and `fillFactsDeep()`. The main app keeps reading `lib/product-facts.ts` itself. After changing a fact, or anything one counts, run `bun run --filter docs facts:snapshot` and commit the JSON; `apps/docs/tests/lib/product-facts-snapshot.test.ts` fails while it's stale |
+| `facts.ts` | Product counts and names quoted in copy, imported as `@repo/config/facts`, for apps that can't import the main app (the docs site). `createFacts(snapshot)` gives them the main app's API (`PRODUCT_FACTS`, `STYLE_SUMMARY`, `productFact()`, `isProductFact()`, `fillFacts()`, `fillFactsDeep()`) over a snapshot of `apps/docs/lib/product-facts.ts` that `bun run --filter docs facts:snapshot` writes to `facts.generated.json` just before such an app builds. The file isn't committed, so it can't go stale |
 | `keys.ts` | The environment variable this package reads, validated like every other `keys.ts`; `apps/docs/env.ts` extends it |
 
 ## What belongs here
