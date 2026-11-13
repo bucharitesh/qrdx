@@ -7934,6 +7934,10 @@
                 "type": "number",
                 "minimum": -4000,
                 "maximum": 4000
+              },
+              "plate": {
+                "type": "string",
+                "enum": ["opaque", "background"]
               }
             },
             "required": ["x", "y", "size"],
@@ -7947,8 +7951,56 @@
                 "pattern": "^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$"
               },
               "text": {
-                "type": "string",
-                "pattern": "^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$"
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "mix": {
+                        "type": "array",
+                        "prefixItems": [
+                          {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "enum": ["frame", "accent", "background"]
+                              },
+                              {
+                                "type": "string",
+                                "pattern": "^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$"
+                              }
+                            ]
+                          },
+                          {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "enum": ["frame", "accent", "background"]
+                              },
+                              {
+                                "type": "string",
+                                "pattern": "^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$"
+                              }
+                            ]
+                          }
+                        ],
+                        "items": false,
+                        "minItems": 2,
+                        "maxItems": 2
+                      },
+                      "amount": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                      }
+                    },
+                    "required": ["mix", "amount"],
+                    "additionalProperties": false
+                  }
+                ]
               },
               "accent": {
                 "type": "string",
@@ -8320,6 +8372,23 @@
                       "type": "string",
                       "enum": ["bold", "regular"]
                     },
+                    "collapse": {
+                      "type": "object",
+                      "properties": {
+                        "y": {
+                          "type": "number",
+                          "minimum": -4000,
+                          "maximum": 4000
+                        },
+                        "height": {
+                          "type": "number",
+                          "minimum": -4000,
+                          "maximum": 4000
+                        }
+                      },
+                      "required": ["y", "height"],
+                      "additionalProperties": false
+                    },
                     "box": {
                       "type": "object",
                       "properties": {
@@ -8390,6 +8459,23 @@
                     "weight": {
                       "type": "string",
                       "enum": ["bold", "regular"]
+                    },
+                    "collapse": {
+                      "type": "object",
+                      "properties": {
+                        "y": {
+                          "type": "number",
+                          "minimum": -4000,
+                          "maximum": 4000
+                        },
+                        "height": {
+                          "type": "number",
+                          "minimum": -4000,
+                          "maximum": 4000
+                        }
+                      },
+                      "required": ["y", "height"],
+                      "additionalProperties": false
                     },
                     "curve": {
                       "type": "object",
