@@ -17,6 +17,7 @@ QRdx is an open-source QR code platform (https://qrdx.dev): a free static QR gen
 | `packages/integrations`, `packages/integration-kit` | The integrations catalogue and shared types |
 | `packages/config` | `@repo/config`: platform constants (brand, URLs, contact emails, social links, shared limits); import these instead of typing `qrdx.dev` or an email address |
 | `packages/availability` | `@repo/availability`: which built-in features a deployment can offer, from the names of the variables it has set (pure; the app passes its environment in) |
+| `packages/analytics` | `@repo/analytics`: the cookie banner and consent, `track()`, and the browser tools consent gates (PostHog, Umami, Featurebase); the app registers its untracked pages and keeps the server parts (`apps/docs/lib/analytics`) |
 | `packages/i18n` | `@repo/i18n`: the languages (`config.ts`), translated paths and their URLs, the docs' language rules, and the loader for the docs' messages (a copy of `apps/docs/messages`, written before use, not committed) |
 | `packages/rate-limit`, `packages/next-config`, `packages/typescript-config` | Shared helpers and config |
 | `plugins/*` | Chrome, Figma, Raycast and Canva plugins |
@@ -36,7 +37,7 @@ bun x vitest run                        # unit and integration tests (tests/**);
 bun run test:node                       # node:test suites next to the code
 ```
 
-The pre-push hook runs the engine build, both typechecks, the lint check (`bun run lint:ci`, which is `ultracite check`) and the tests of the packages your branch changes compared with `origin/staging`, plus the packages that depend on them (`turbo --affected`; unchanged results come from the turbo cache). `bun run prepush`, or `QRDX_PREPUSH=full git push`, runs every test. CI runs on every pull request (affected packages for pull requests into `staging`, everything for release pull requests into `main`) and on every push to `main`. The e2e suites (`bun run --filter docs test:e2e`, `test:e2e:app`, `test:e2e:site`) need a running dev server and Chrome.
+The pre-push hook runs the engine build, both typechecks, the lint check (`bun run lint:ci`, which is `ultracite check`) and the tests of the packages your branch changes compared with `origin/staging`, plus the packages that depend on them (`turbo --affected`; unchanged results come from the turbo cache). `bun run prepush`, or `QRDX_PREPUSH=full git push`, runs every test. CI runs on every pull request (affected packages for pull requests into `staging`, everything for release pull requests into `main`) and on every push to `staging` and `main` (everything). A release pull request and the push to `main` reuse the staging run when the code is identical, so a release doesn't wait for the suite again (`scripts/ci-reuse-check.sh`). The e2e suites (`bun run --filter docs test:e2e`, `test:e2e:app`, `test:e2e:site`) need a running dev server and Chrome.
 
 ## Rules
 

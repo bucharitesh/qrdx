@@ -104,9 +104,9 @@ describe("the program's code", () => {
 
   it("isn't tied to cookie consent any more", () => {
     for (const path of [
-      "components/consent/config.ts",
-      "components/consent/consent-scripts.tsx",
-      "components/consent/cookie-preferences.tsx",
+      "../../packages/analytics/consent/config.ts",
+      "../../packages/analytics/consent/consent-scripts.tsx",
+      "../../packages/analytics/consent/cookie-preferences.tsx",
       "content/legal/cookie-policy.mdx",
     ]) {
       const source = readFileSync(join(root, path), "utf8");
