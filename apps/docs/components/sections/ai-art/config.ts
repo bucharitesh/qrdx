@@ -227,7 +227,7 @@ export const artDescribeRequestSchema = z
   .object({
     mode: z.enum(ART_MODES).default(DEFAULT_ART_MODE),
     style: artLookIdSchema.optional(),
-    photo: artReferenceSchema.optional(),
+    photo: artPhotoSchema.optional(),
     hint: z
       .string()
       .trim()

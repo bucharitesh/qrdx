@@ -9,6 +9,7 @@ import {
   ART_PHOTO_MAX_SIDE,
   ART_REFERENCE_MAX_BYTES,
   aiArtRequestSchema,
+  artDescribeRequestSchema,
   seedsForRun,
 } from "./config";
 import { AI_ART_PRESET_COUNT, aiArtPresetPreview } from "./preset-meta";
@@ -93,6 +94,19 @@ describe("aiArtRequestSchema", () => {
       !aiArtRequestSchema.safeParse({ ...base, mode: "scene", photo }).success,
     );
     assert.ok(aiArtRequestSchema.safeParse({ ...base, mode: "scene" }).success);
+  });
+
+  it("lets Write one for me read the same photo the art gets", () => {
+    const photo = png(ART_REFERENCE_MAX_BYTES + 1);
+    assert.ok(
+      artDescribeRequestSchema.safeParse({ mode: "photo", photo }).success,
+    );
+    assert.ok(
+      !artDescribeRequestSchema.safeParse({
+        mode: "photo",
+        photo: png(ART_PHOTO_MAX_BYTES + 1),
+      }).success,
+    );
   });
 
   it("caps the photo's size and only accepts uploaded PNG/JPEG data URLs", () => {
