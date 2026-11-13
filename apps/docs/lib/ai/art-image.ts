@@ -25,19 +25,24 @@ import { HttpError } from "@/lib/error-response";
 import { rasterizeImage, serializeQrSvg } from "@/lib/qr-render";
 import { logError } from "@/lib/shared";
 import {
+  type BlendStyle,
+  CODE_BLEND_STYLE,
   encodePng,
   findLeastBlend,
   leastBlendBounds,
   type ModuleGrid,
   type QRModuleMap,
   readModuleMap,
+  SCENE_BLEND_STYLE,
 } from "./art-blend";
 import { AI_MODELS, type ArtModelChoice, artProviderOptions } from "./models";
 import { aiGateway } from "./providers";
 
 // AI QR art in four steps, all on the server:
 // 1. Draw the code as a plain black-on-white QR (level H, square modules, a
-//    wide quiet zone): the control image.
+//    wide quiet zone): the control image. In scene and photo modes the code
+//    is smaller than the image, with a thin light margin, on a flat canvas
+//    the model replaces with the scene, or on the user's photo.
 // 2. The art model (lib/ai/models.ts, through Vercel AI Gateway) restyles it,
 //    told to keep the module grid, flat finder eyes and a plain quiet zone
 //    (plus an optional reference image for colors or a logo).
@@ -48,8 +53,8 @@ import { aiGateway } from "./providers";
 //    which strengthening the finders, the quiet zone and then the modules,
 //    on the grid where the model drew them, makes it scan. Only when no
 //    strength QR visibility allows works, or the model didn't draw this code
-//    at all, does the Image QR (halftone) blend redraw the whole image as a
-//    code. Nothing that fails is delivered.
+//    at all, does the Image QR (halftone) blend redraw the code's square as
+//    a code (the whole image in code mode). Nothing that fails is delivered.
 
 /** Light border around the control code, in modules (the spec minimum is 4). */
 const CONTROL_QUIET_ZONE_MODULES = 6;
@@ -85,11 +90,15 @@ const svgDataUrl = (svg: string) =>
   `data:image/svg+xml;base64,${Buffer.from(svg).toString("base64")}`;
 const dataUrl = (bytes: Uint8Array, mediaType: string) =>
   `data:${mediaType};base64,${Buffer.from(bytes).toString("base64")}`;
+/** The bytes of an uploaded (base64) data: URL. */
+const dataUrlBytes = (url: string) =>
+  new Uint8Array(Buffer.from(url.slice(url.indexOf(",") + 1), "base64"));
 
 async function renderPng(
   src: string,
+  size = ART_IMAGE_SIZE,
 ): Promise<{ png: Uint8Array; pixels: DecodedImage }> {
-  const png = new Uint8Array(await rasterizeImage(src, ART_IMAGE_SIZE));
+  const png = new Uint8Array(await rasterizeImage(src, size));
   const pixels = await decodePNGPixels(png);
   if (!pixels) throw new Error("Could not read the rendered PNG");
   return { png, pixels };
@@ -104,6 +113,10 @@ export interface ControlImage {
   modules: number;
   /** Every module's value and kind, read from the rendered control */
   map: QRModuleMap;
+  /** Where the code's modules are in `png`, in pixels */
+  grid: Omit<ModuleGrid, "fit">;
+  /** "code": the code fills the image; "scene" and "photo": it sits in it */
+  mode: ArtMode;
 }
 
 /**
@@ -119,19 +132,147 @@ export async function renderControlImage(text: string): Promise<ControlImage> {
     throw new Error("The control QR code doesn't decode");
   }
   const modules = 17 + 4 * scan.version;
+  const pitch = ART_IMAGE_SIZE / (modules + 2 * CONTROL_QUIET_ZONE_MODULES);
+  const edge = CONTROL_QUIET_ZONE_MODULES * pitch;
   return {
     png,
     modules,
     map: readModuleMap(pixels, modules, CONTROL_QUIET_ZONE_MODULES),
+    grid: { left: edge, top: edge, pitch },
+    mode: "code",
   };
 }
 
 /** Where the control image has its modules, in pixels. */
 export function controlGrid(control: ControlImage): Omit<ModuleGrid, "fit"> {
-  const pitch =
-    ART_IMAGE_SIZE / (control.modules + 2 * CONTROL_QUIET_ZONE_MODULES);
-  const edge = CONTROL_QUIET_ZONE_MODULES * pitch;
-  return { left: edge, top: edge, pitch };
+  return control.grid;
+}
+
+/** Where the code sits in a scene or photo control image. */
+export interface SceneLayout {
+  /** The code's width (without its margin) as a share of the image's */
+  size: number;
+  /** The code's center, as shares of the image's width and height */
+  x: number;
+  y: number;
+  /** The light margin around the code, in modules */
+  margin: number;
+  /** Luma (0–255) of the dark modules, and of the light ones and the margin */
+  dark: number;
+  /** null: light modules and margin show the canvas (or photo) */
+  light: number | null;
+  /** How much the code covers what's under it, 0–1 (1: solid) */
+  opacity: number;
+}
+
+/**
+ * The scene and photo layout, from scripts/ai/art-eval.ts: the code at
+ * about two thirds of the image, centered, with a thin light margin.
+ */
+export const SCENE_LAYOUT: SceneLayout = {
+  size: 0.64,
+  x: 0.5,
+  y: 0.5,
+  margin: 1.5,
+  dark: 0,
+  light: 255,
+  opacity: 1,
+};
+
+/**
+ * Photo mode's layout: the code over the photo at 85%, so the model sees
+ * the subject under it and keeps it (at 100% it painted a new one).
+ */
+export const PHOTO_LAYOUT: SceneLayout = { ...SCENE_LAYOUT, opacity: 0.85 };
+
+/** The flat canvas around the code in scene mode, which the model paints over. */
+const SCENE_CANVAS: readonly [number, number, number] = [150, 150, 150];
+
+/**
+ * Where a code of `modules` sits in a scene control (exported for tests):
+ * a whole number of pixels per module, so module edges stay crisp, with the
+ * code and its margin kept inside the image.
+ */
+export function sceneGrid(
+  modules: number,
+  layout: SceneLayout = SCENE_LAYOUT,
+): Omit<ModuleGrid, "fit"> {
+  const pitch = Math.max(
+    1,
+    Math.floor((layout.size * ART_IMAGE_SIZE) / modules),
+  );
+  const side = pitch * modules;
+  const edge = Math.ceil(layout.margin * pitch);
+  const place = (center: number) =>
+    Math.min(
+      Math.max(Math.round(center * ART_IMAGE_SIZE - side / 2), edge),
+      ART_IMAGE_SIZE - side - edge,
+    );
+  return { left: place(layout.x), top: place(layout.y), pitch };
+}
+
+/**
+ * The control for scene and photo modes, from the code's control: the same
+ * modules on `sceneGrid`, black on a thin white margin, over a flat grey
+ * canvas or, in photo mode, the photo itself (ART_IMAGE_SIZE square).
+ */
+export function sceneControl(
+  control: ControlImage,
+  {
+    mode = "scene",
+    photo,
+    layout = SCENE_LAYOUT,
+  }: {
+    mode?: Exclude<ArtMode, "code">;
+    photo?: DecodedImage;
+    layout?: SceneLayout;
+  } = {},
+): ControlImage {
+  const size = ART_IMAGE_SIZE;
+  const { map } = control;
+  const grid = sceneGrid(control.modules, layout);
+  const { left, top, pitch } = grid;
+  const data = new Uint8Array(size * size * 4);
+  if (photo && photo.width === size && photo.height === size) {
+    data.set(photo.data);
+  } else {
+    for (let i = 0; i < data.length; i += 4) {
+      data.set(SCENE_CANVAS, i);
+      data[i + 3] = 255;
+    }
+  }
+  const fill = (x0: number, y0: number, w: number, h: number, v: number) => {
+    for (let y = Math.max(0, y0); y < Math.min(size, y0 + h); y++) {
+      for (let x = Math.max(0, x0); x < Math.min(size, x0 + w); x++) {
+        const i = (y * size + x) * 4;
+        for (let c = 0; c < 3; c++) {
+          const under = data[i + c] as number;
+          data[i + c] = Math.round(under + (v - under) * layout.opacity);
+        }
+        data[i + 3] = 255;
+      }
+    }
+  };
+  const edge = Math.ceil(layout.margin * pitch);
+  const side = pitch * map.size;
+  if (layout.light !== null) {
+    fill(
+      left - edge,
+      top - edge,
+      side + 2 * edge,
+      side + 2 * edge,
+      layout.light,
+    );
+  }
+  for (let y = 0; y < map.size; y++) {
+    for (let x = 0; x < map.size; x++) {
+      if (map.dark[y * map.size + x]) {
+        fill(left + x * pitch, top + y * pitch, pitch, pitch, layout.dark);
+      }
+    }
+  }
+  const pixels = { width: size, height: size, data };
+  return { png: encodePng(pixels), modules: control.modules, map, grid, mode };
 }
 
 // ── Prompt ─────────────────────────────────────────────────────────────────
@@ -153,6 +294,18 @@ const MODEL_PROMPT_RULES: Record<string, string> = {
     "- Keep it flat and front-on, like a print: no perspective, depth or 3D blocks, and nothing that rises above or overlaps the code.",
 };
 
+/** How the photo reaches the model in photo mode. */
+export type PhotoInput =
+  /** The control is the photo with the code on it (the default) */
+  | "composite"
+  /** The control is the code on a flat canvas; the photo is the next image */
+  | "second";
+
+/** The default photo input, from scripts/ai/art-eval.ts. */
+export const PHOTO_INPUT: PhotoInput = "composite";
+
+const sentence = (text: string) => text.replace(/[.\s]+$/, "");
+
 /** The instruction sent with the control image (exported for tests). */
 export function buildArtPrompt({
   prompt,
@@ -160,6 +313,8 @@ export function buildArtPrompt({
   visibility,
   creativity,
   withReference,
+  mode = "code",
+  photoInput = PHOTO_INPUT,
   model = AI_MODELS.art.model,
 }: {
   prompt: string;
@@ -167,40 +322,80 @@ export function buildArtPrompt({
   visibility: number;
   creativity: number;
   withReference: boolean;
+  /** How the code sits in the artwork */
+  mode?: ArtMode;
+  /** Photo mode: how the photo is sent */
+  photoInput?: PhotoInput;
   /** Gateway id of the art model, for its own rules */
   model?: string;
 }): string {
   const modelRule = MODEL_PROMPT_RULES[model];
-  const lines = [
-    `Repaint the QR code in the first image as artwork: ${prompt.replace(/[.\s]+$/, "")}.`,
-    "",
-    "The artwork must still scan as exactly this QR code:",
-    "- Keep the image square and the code exactly where it is, at the same size, on the same grid. Don't move, resize, add, remove, rotate or merge modules.",
-    "- Draw the three large finder patterns in the corners and the small alignment square flat and crisp, at exactly their current size: a solid dark ring, a clean light ring and a solid dark center, with straight edges and no scene painted inside them.",
-    "- Every dark module must stay clearly darker than the light modules next to it. Paint the scene into the modules themselves, through color, shading and light, so the dark and light pattern stays intact. Keep detail inside a module soft, without fine speckles or thin lines of the opposite tone.",
-    "- Keep the border around the code (the quiet zone) plain, light and free of detail: the scene stays inside the code's square.",
-    ...(modelRule ? [modelRule] : []),
-    withReference
-      ? "- No text, letters, signatures or watermarks."
-      : "- No text, letters, logos, signatures or watermarks.",
-    "",
-    visibility >= 70
-      ? "Favor the code: dark modules close to black and light modules close to white, with the scene as color and texture inside them."
-      : visibility >= 35
-        ? "Balance the two: the scene should be rich and easy to see, and the module pattern obvious at a glance."
-        : "Favor the scene: let its light and shadow form the modules, but keep every module clearly dark or light.",
-  ];
+  const noText = withReference
+    ? "- No text, letters, signatures or watermarks."
+    : "- No text, letters, logos, signatures or watermarks.";
+  const lines =
+    mode === "code"
+      ? [
+          `Repaint the QR code in the first image as artwork: ${sentence(prompt)}.`,
+          "",
+          "The artwork must still scan as exactly this QR code:",
+          "- Keep the image square and the code exactly where it is, at the same size, on the same grid. Don't move, resize, add, remove, rotate or merge modules.",
+          "- Draw the three large finder patterns in the corners and the small alignment square flat and crisp, at exactly their current size: a solid dark ring, a clean light ring and a solid dark center, with straight edges and no scene painted inside them.",
+          "- Every dark module must stay clearly darker than the light modules next to it. Paint the scene into the modules themselves, through color, shading and light, so the dark and light pattern stays intact. Keep detail inside a module soft, without fine speckles or thin lines of the opposite tone.",
+          "- Keep the border around the code (the quiet zone) plain, light and free of detail: the scene stays inside the code's square.",
+          ...(modelRule ? [modelRule] : []),
+          noText,
+          "",
+          visibility >= 70
+            ? "Favor the code: dark modules close to black and light modules close to white, with the scene as color and texture inside them."
+            : visibility >= 35
+              ? "Balance the two: the scene should be rich and easy to see, and the module pattern obvious at a glance."
+              : "Favor the scene: let its light and shadow form the modules, but keep every module clearly dark or light.",
+        ]
+      : [
+          ...(mode === "scene"
+            ? [
+                `Paint one full-bleed picture that fills the whole square, edge to edge: ${sentence(prompt)}.`,
+                "Replace the flat grey background completely. The QR code in the first image becomes part of something in the picture that suits it, such as a building's facade with lit and dark windows, a tiled floor or wall, a mosaic, a garden of clipped hedges and pale gravel, or a city's windows at night.",
+                "Don't draw it as a printed QR code, a sign, a panel or a screen, and don't put a frame or border around it: the scene runs through the code's square, and every module is made of that thing's own materials, light and colors, so someone sees the picture first and the code second.",
+              ]
+            : photoInput === "composite"
+              ? [
+                  `The first image is a photo with a QR code placed on it. Paint the code into the photo so it belongs there: ${sentence(prompt)}.`,
+                  "Keep the photo's subject, composition, colors and light. Change only what the code needs to become part of the photo where it sits, such as a pattern painted on a wall or surface, in the sky or water, or on clothing.",
+                ]
+              : [
+                  `The second image is a photo. Repaint it with the QR code from the first image painted into it: ${sentence(prompt)}.`,
+                  "Keep the photo's subject, composition, colors and light. The code goes exactly where it is in the first image, at the same size, as part of the photo there, such as a pattern painted on a wall or surface, in the sky or water, or on clothing.",
+                ]),
+          "",
+          "The picture must still scan as exactly this QR code:",
+          "- Keep the image square and the code at exactly the same pixels and size as in the first image, on the same grid, flat and facing the viewer. Don't move, resize, tilt, add, remove, rotate or merge modules.",
+          "- Draw the three large finder patterns in the code's corners as part of the picture (dark window frames, framed panels, stones), in its darkest tone, at exactly their current size: a solid dark square ring, a clean light ring and a solid dark center, with straight edges.",
+          "- Every dark module must stay clearly darker than the light modules next to it, in the picture's own colors, never flat black and white: dark modules in its deepest shadows and darkest materials, light modules in its brightest light and palest materials. Keep detail inside a module soft, without fine speckles or thin lines of the opposite tone.",
+          "- Right around the code, keep the scene a little lighter and calmer for about one module's width, without drawing a frame.",
+          ...(modelRule ? [modelRule] : []),
+          noText,
+          "",
+          visibility >= 70
+            ? "Favor the code: dark modules close to black and light modules close to white, in the picture's colors."
+            : visibility >= 35
+              ? "Balance the two: someone should see a picture first, and a clear code as soon as they look for it."
+              : "Favor the picture: weave the code into it, but keep every module clearly dark or light.",
+        ];
   if (creativity <= 30) lines.push("Follow the description literally.");
   if (creativity >= 70) {
     lines.push("Interpret the description freely and imaginatively.");
   }
   if (withReference) {
+    const which =
+      mode === "photo" && photoInput === "second" ? "third" : "second";
     lines.push(
-      "The second image is a reference: carry over its colors, shapes or logo where they fit, without covering the finder patterns.",
+      `The ${which} image is a reference: carry over its colors, shapes or logo where they fit, without covering the finder patterns.`,
     );
   }
   if (negativePrompt) {
-    lines.push(`Avoid: ${negativePrompt.replace(/[.\s]+$/, "")}.`);
+    lines.push(`Avoid: ${sentence(negativePrompt)}.`);
   }
   return lines.join("\n");
 }
@@ -461,11 +656,40 @@ function blendPalette(pixels: DecodedImage): { fg: string; bg: string } {
   return { fg: hex(dark), bg: hex(light) };
 }
 
+/** Light border of the Image QR blend in scene and photo modes, in modules. */
+const REGION_BLEND_QUIET_ZONE_MODULES = 2;
+
+/** `patch` drawn over a copy of `pixels` at (`left`, `top`), clipped. */
+function paste(
+  pixels: DecodedImage,
+  patch: DecodedImage,
+  left: number,
+  top: number,
+): DecodedImage {
+  const data = new Uint8Array(pixels.data);
+  const x0 = Math.max(0, left);
+  const x1 = Math.min(pixels.width, left + patch.width);
+  for (
+    let y = Math.max(0, top);
+    y < Math.min(pixels.height, top + patch.height);
+    y++
+  ) {
+    const from = ((y - top) * patch.width + (x0 - left)) * 4;
+    data.set(
+      patch.data.subarray(from, from + (x1 - x0) * 4),
+      (y * pixels.width + x0) * 4,
+    );
+  }
+  return { width: pixels.width, height: pixels.height, data };
+}
+
 /**
  * The Image QR blend, the last resort: redraws the code with qrdx's Image QR
  * art on the control's module grid, the model's image showing through it,
- * then checks the result. Null when no strength scans. (The eval runs it on
- * every image to compare with the least blend.)
+ * then checks the result. In code mode that's the whole image; in scene and
+ * photo modes only the code's square and a thin border, over the picture.
+ * Null when no strength scans. (The eval runs it on every image to compare
+ * with the least blend.)
  */
 export async function blendImageQR({
   text,
@@ -478,26 +702,44 @@ export async function blendImageQR({
   control: ControlImage;
   visibility: number;
 }): Promise<Uint8Array | null> {
-  const cells = control.modules + 2 * CONTROL_QUIET_ZONE_MODULES;
-  const modulePx = ART_IMAGE_SIZE / cells;
+  const { left, top, pitch } = control.grid;
   // The art covers the code area only, so it lines up module for module.
-  const left = Math.round(CONTROL_QUIET_ZONE_MODULES * modulePx);
-  const side = Math.round(control.modules * modulePx);
-  const area = crop(pixels, left, left, side);
+  const side = Math.round(control.modules * pitch);
+  const area = crop(pixels, Math.round(left), Math.round(top), side);
   const image = createQRArtImage(area);
   const { fg, bg } = blendPalette(area);
+  const region = control.mode !== "code";
+  const quiet = region
+    ? REGION_BLEND_QUIET_ZONE_MODULES
+    : CONTROL_QUIET_ZONE_MODULES;
+  const size = region
+    ? Math.round((control.modules + 2 * quiet) * pitch)
+    : ART_IMAGE_SIZE;
   // A second, gentler try shows the code more strongly.
   for (const intensity of [visibilityToBlendIntensity(visibility), 0.4]) {
     const svg = serializeQrSvg(
       createElement(QRCodeSVG, {
         ...controlProps(text),
+        size,
+        margin: quiet,
         fgColor: fg,
         bgColor: bg,
         art: { mode: "halftone", variant: "color", image, intensity },
       }),
     );
-    const blend = await renderPng(svgDataUrl(svg));
-    if ((await scanQRPixels(blend.pixels, text)).passed) return blend.png;
+    const blend = await renderPng(svgDataUrl(svg), size);
+    if (!region) {
+      if ((await scanQRPixels(blend.pixels, text)).passed) return blend.png;
+      continue;
+    }
+    const offset = Math.round(quiet * pitch);
+    const whole = paste(
+      pixels,
+      blend.pixels,
+      Math.round(left) - offset,
+      Math.round(top) - offset,
+    );
+    if ((await scanQRPixels(whole, text)).passed) return encodePng(whole);
   }
   return null;
 }
@@ -572,12 +814,14 @@ async function deliverable({
   control,
   visibility,
   signal,
+  blendStyle,
 }: {
   text: string;
   art: { png: Uint8Array; pixels: DecodedImage };
   control: ControlImage;
   visibility: number;
   signal: AbortSignal;
+  blendStyle?: BlendStyle;
 }): Promise<Delivery | null> {
   const flat = flattenOnWhite(art.pixels);
   const pixels = flat ?? art.pixels;
@@ -597,6 +841,9 @@ async function deliverable({
     bounds,
     deadline: Date.now() + LEAST_BLEND_BUDGET_MS,
     signal,
+    style:
+      blendStyle ??
+      (control.mode === "code" ? CODE_BLEND_STYLE : SCENE_BLEND_STYLE),
   });
   if (least) {
     const png = encodePng(least.pixels);
@@ -624,11 +871,16 @@ export async function generateArtVariant({
   creativity,
   seed,
   reference,
-  control,
+  mode = "code",
+  photo,
+  control: codeControl,
   signal,
   model = gatewayArtModel,
   modelId = AI_MODELS.art.model,
   timeoutMs = ART_MODEL_TIMEOUT_MS,
+  layout = mode === "photo" ? PHOTO_LAYOUT : SCENE_LAYOUT,
+  photoInput = PHOTO_INPUT,
+  blendStyle,
 }: {
   text: string;
   prompt: string;
@@ -642,6 +894,7 @@ export async function generateArtVariant({
   mode?: ArtMode;
   /** Photo mode: the uploaded PNG/JPEG data URL the code is painted into */
   photo?: string;
+  /** The code's control (renderControlImage); scene and photo modes redraw it */
   control: ControlImage;
   signal: AbortSignal;
   model?: ArtImageModel;
@@ -649,15 +902,34 @@ export async function generateArtVariant({
   modelId?: string;
   /** How long the model may take before the request fails */
   timeoutMs?: number;
+  /** Scene and photo modes: where the code sits (the eval tries others) */
+  layout?: SceneLayout;
+  /** Photo mode: how the photo is sent (the eval tries both) */
+  photoInput?: PhotoInput;
+  /** The least blend's treatment of the picture (the eval tries others) */
+  blendStyle?: BlendStyle;
 }): Promise<AIArtVariant> {
-  const images = [control.png];
-  if (reference) {
-    images.push(
-      new Uint8Array(
-        Buffer.from(reference.slice(reference.indexOf(",") + 1), "base64"),
-      ),
+  if (mode === "photo" && !photo) {
+    throw new HttpError(
+      400,
+      "VALIDATION_ERROR",
+      "Add a photo to paint the code into",
     );
   }
+  // The photo, square at the delivered size; it's never stored or logged.
+  const photoPixels =
+    mode === "photo" && photo && photoInput === "composite"
+      ? (await renderPng(photo)).pixels
+      : undefined;
+  const control =
+    mode === "code"
+      ? codeControl
+      : sceneControl(codeControl, { mode, photo: photoPixels, layout });
+  const images = [control.png];
+  if (mode === "photo" && photo && photoInput === "second") {
+    images.push(dataUrlBytes(photo));
+  }
+  if (reference) images.push(dataUrlBytes(reference));
   const output = await callModel(
     model,
     {
@@ -667,6 +939,8 @@ export async function generateArtVariant({
         visibility,
         creativity,
         withReference: Boolean(reference),
+        mode,
+        photoInput,
         model: modelId,
       }),
       images,
@@ -683,6 +957,7 @@ export async function generateArtVariant({
     control,
     visibility,
     signal,
+    blendStyle,
   });
   if (!delivery) {
     throw new HttpError(
