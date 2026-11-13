@@ -1,38 +1,32 @@
-// @repo/config/facts serves a JSON snapshot of lib/product-facts.ts to apps
-// that can't import this one (the docs site). The committed snapshot must
-// match the live values, and the package's helpers must fill tokens exactly
-// like this app's.
-import { readFileSync } from "node:fs";
-import path from "node:path";
-import * as snapshot from "@repo/config/facts";
+// Another app (the docs site) reads product facts through @repo/config/facts,
+// from a snapshot of lib/product-facts.ts written just before it builds. The
+// snapshot must carry every live value through JSON, and the package's
+// helpers must fill tokens exactly like this app's.
+import { createFacts, type FactsSnapshot } from "@repo/config/facts";
 import { describe, expect, it } from "vitest";
 import * as live from "@/lib/product-facts";
-import {
-  FACTS_SNAPSHOT_FILE,
-  productFactsSnapshot,
-} from "@/lib/product-facts-snapshot";
+import { productFactsSnapshot } from "@/lib/product-facts-snapshot";
 
-const repo = path.resolve(import.meta.dirname, "../../../..");
-const STALE = `${FACTS_SNAPSHOT_FILE} is out of date with apps/docs/lib/product-facts.ts. Run \`bun run --filter docs facts:snapshot\` and commit the result.`;
+const snapshot = createFacts(
+  JSON.parse(productFactsSnapshot()) as FactsSnapshot,
+);
+const names = Object.keys(live.PRODUCT_FACTS);
 
-describe("facts.generated.json", () => {
-  it("matches lib/product-facts.ts", () => {
-    const committed = readFileSync(
-      path.join(repo, FACTS_SNAPSHOT_FILE),
-      "utf8",
-    );
-    expect(committed, STALE).toBe(productFactsSnapshot());
+describe("product facts snapshot", () => {
+  it("is JSON with a trailing newline and sorted keys", () => {
+    const text = productFactsSnapshot();
+    expect(text.endsWith("}\n")).toBe(true);
+    const keys = Object.keys(JSON.parse(text).facts);
+    expect(keys).toEqual([...keys].sort((a, b) => (a < b ? -1 : 1)));
+  });
+
+  it("carries the live values", () => {
+    expect(snapshot.PRODUCT_FACTS).toEqual(live.PRODUCT_FACTS);
+    expect(snapshot.STYLE_SUMMARY).toBe(live.STYLE_SUMMARY);
   });
 });
 
 describe("@repo/config/facts", () => {
-  const names = Object.keys(live.PRODUCT_FACTS);
-
-  it("serves the live values", () => {
-    expect(snapshot.PRODUCT_FACTS, STALE).toEqual(live.PRODUCT_FACTS);
-    expect(snapshot.STYLE_SUMMARY, STALE).toBe(live.STYLE_SUMMARY);
-  });
-
   it("fills tokens like the app", () => {
     const every = names.map((name) => `{facts.${name}}`).join(" · ");
     expect(snapshot.fillFacts(every)).toBe(live.fillFacts(every));
