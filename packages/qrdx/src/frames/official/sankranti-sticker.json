@@ -1,0 +1,90 @@
+{
+  "id": "sankranti-sticker",
+  "name": "Kite sticker",
+  "description": "A die-cut sticker with a thick outline and an offset shadow and a kite, in sky blue and marigold.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "makar-sankranti",
+  "contentTypes": [],
+  "tags": [
+    "makar sankranti",
+    "uttarayan",
+    "kites",
+    "january",
+    "kite",
+    "sticker"
+  ],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1750
+    },
+    "qr": {
+      "x": 110,
+      "y": 370,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#0f4c81",
+      "text": "#ffffff",
+      "accent": "#f4a62a"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 50,
+        "y": 50,
+        "width": 1270,
+        "height": 1700,
+        "radius": 110,
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1270,
+        "height": 1700,
+        "radius": 110,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 36,
+        "y": 36,
+        "width": 1198,
+        "height": 1628,
+        "radius": 80,
+        "fill": "background"
+      },
+      {
+        "type": "path",
+        "d": "M635 76.4L683 130.8L635 191.6L587 130.8ZM635 76.4L683 130.8L635 130.8ZM635 130.8L635 191.6L587 130.8ZM636.74 189.54L634.95 192.24L634.15 194.44L634.01 196.4L634.39 198.28L635.23 200.2L636.48 202.17L638.04 204.19L639.79 206.26L641.6 208.4L643.33 210.64L644.85 213.05L645.99 215.68L646.54 218.57L646.3 221.67L645.15 224.86L643.14 227.94L639.66 225.66L641.45 222.96L642.25 220.76L642.39 218.8L642.01 216.92L641.17 215L639.92 213.03L638.36 211.01L636.61 208.94L634.8 206.8L633.07 204.56L631.55 202.15L630.41 199.52L629.86 196.63L630.1 193.53L631.25 190.34L633.26 187.26ZM625.4 204.4L638.2 207.6L625.4 214ZM651 214L638.2 217.2L651 223.6Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Happy Sankranti",
+        "color": "frame",
+        "box": {
+          "x": 100,
+          "y": 1490,
+          "width": 1070,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

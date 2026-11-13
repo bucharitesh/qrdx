@@ -1,0 +1,76 @@
+{
+  "id": "orthodox-christmas-star",
+  "name": "First star",
+  "description": "A solid card with a north star over the code and the label underneath, in burgundy and gold.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "orthodox-christmas",
+  "contentTypes": [],
+  "tags": ["orthodox christmas", "january 7", "christmas", "star"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#5a1a1a",
+      "text": "#ffffff",
+      "accent": "#d9b45b"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M620 38L629.55 100.45L692 110L629.55 119.55L620 182L610.45 119.55L548 110L610.45 100.45ZM647.58 82.42L633.5 110L647.58 137.58L620 123.5L592.42 137.58L606.5 110L592.42 82.42L620 96.5Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Merry Christmas",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "January 7",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

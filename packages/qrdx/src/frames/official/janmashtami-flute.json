@@ -1,0 +1,81 @@
+{
+  "id": "janmashtami-flute",
+  "name": "Krishna's flute",
+  "description": "A solid card with a flute over the code and the label underneath, in indigo and peacock teal.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "janmashtami",
+  "contentTypes": [],
+  "tags": ["janmashtami", "krishna", "festival", "flute"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#1e3a8a",
+      "text": "#ffffff",
+      "accent": "#2dd4bf"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M552.91 155.63L678.91 59.63L687.09 70.37L561.09 166.37Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M606.62 120.68A3.3 3.3 0 1 1 613.22 120.68A3.3 3.3 0 1 1 606.62 120.68ZM619.22 111.08A3.3 3.3 0 1 1 625.82 111.08A3.3 3.3 0 1 1 619.22 111.08ZM631.82 101.48A3.3 3.3 0 1 1 638.42 101.48A3.3 3.3 0 1 1 631.82 101.48ZM644.42 91.88A3.3 3.3 0 1 1 651.02 91.88A3.3 3.3 0 1 1 644.42 91.88ZM576.03 143.74L578.74 147.33A1.5 1.5 53 0 1 578.45 149.43L565.27 159.36A1.5 1.5 53 0 1 563.17 159.06L560.46 155.47A1.5 1.5 53 0 1 560.75 153.37L573.93 143.44A1.5 1.5 53 0 1 576.03 143.74ZM583.59 137.98L586.3 141.57A1.5 1.5 53 0 1 586.01 143.67L572.83 153.6A1.5 1.5 53 0 1 570.73 153.3L568.02 149.71A1.5 1.5 53 0 1 568.31 147.61L581.49 137.68A1.5 1.5 53 0 1 583.59 137.98ZM676.83 66.94L679.54 70.53A1.5 1.5 53 0 1 679.25 72.63L666.07 82.56A1.5 1.5 53 0 1 663.97 82.26L661.26 78.67A1.5 1.5 53 0 1 661.55 76.57L674.73 66.64A1.5 1.5 53 0 1 676.83 66.94ZM573.79 148.82L576.79 178.82L573.21 179.18L570.21 149.18ZM573.71 149.57L564.71 176.57L561.29 175.43L570.29 148.43Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Happy Janmashtami",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan me",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

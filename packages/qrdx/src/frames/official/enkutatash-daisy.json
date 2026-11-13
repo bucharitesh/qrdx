@@ -1,0 +1,87 @@
+{
+  "id": "enkutatash-daisy",
+  "name": "Adey Abeba",
+  "description": "A solid card with a daisy over the code and the label underneath, in highland green and daisy yellow.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "enkutatash",
+  "contentTypes": [],
+  "tags": [
+    "enkutatash",
+    "ethiopian new year",
+    "september",
+    "adey abeba",
+    "flowers"
+  ],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#1f5130",
+      "text": "#ffffff",
+      "accent": "#f4c20d"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M632 110C643.7 124.85 670.03 124.85 690.5 110C670.03 95.15 643.7 95.15 632 110ZM630.39 116C633.1 134.71 655.9 147.87 681.05 145.25C670.75 122.15 647.95 108.99 630.39 116ZM626 120.39C618.99 137.95 632.15 160.75 655.25 171.05C657.87 145.9 644.71 123.1 626 120.39ZM620 122C605.15 133.7 605.15 160.02 620 180.5C634.85 160.02 634.85 133.7 620 122ZM614 120.39C595.29 123.1 582.13 145.9 584.75 171.05C607.85 160.75 621.01 137.95 614 120.39ZM609.61 116C592.05 108.99 569.25 122.15 558.95 145.25C584.1 147.87 606.9 134.71 609.61 116ZM608 110C596.3 95.15 569.98 95.15 549.5 110C569.98 124.85 596.3 124.85 608 110ZM609.61 104C606.9 85.29 584.1 72.13 558.95 74.75C569.25 97.85 592.05 111.01 609.61 104ZM614 99.61C621.01 82.05 607.85 59.25 584.75 48.95C582.13 74.1 595.29 96.9 614 99.61ZM620 98C634.85 86.3 634.85 59.97 620 39.5C605.15 59.98 605.15 86.3 620 98ZM626 99.61C644.71 96.9 657.87 74.1 655.25 48.95C632.15 59.25 618.99 82.05 626 99.61ZM630.39 104C647.95 111.01 670.75 97.85 681.05 74.75C655.9 72.13 633.1 85.29 630.39 104Z",
+        "fill": "accent"
+      },
+      {
+        "type": "path",
+        "d": "M600.5 110A19.5 19.5 0 1 1 639.5 110A19.5 19.5 0 1 1 600.5 110Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Melkam Addis Amet",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan me",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

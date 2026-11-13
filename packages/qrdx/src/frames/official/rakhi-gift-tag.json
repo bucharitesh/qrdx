@@ -1,0 +1,59 @@
+{
+  "id": "rakhi-gift-tag",
+  "name": "Rakhi gift tag",
+  "description": "A hang tag with clipped corners, an eyelet and a loop of string, in rose and gold.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "raksha-bandhan",
+  "contentTypes": [],
+  "tags": ["raksha bandhan", "rakhi", "siblings", "gift"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1880
+    },
+    "qr": {
+      "x": 120,
+      "y": 500,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#9d174d",
+      "text": "#ffffff",
+      "accent": "#fbbf24"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M300 120L940 120L1240 420L1240 1840L1200 1880L40 1880L0 1840L0 420ZM570 260A50 50 0 1 0 670 260A50 50 0 1 0 570 260Z",
+        "fill": "frame",
+        "fillRule": "evenodd"
+      },
+      {
+        "type": "path",
+        "d": "M625.27 227.13L616.41 210.86L607.81 195.04L599.41 179.67L591.16 164.76L583.02 150.31L574.95 136.33L566.9 122.84L558.82 109.82L550.67 97.3L542.39 85.28L533.94 73.76L525.28 62.76L516.36 52.28L507.12 42.34L497.52 32.95L487.53 24.12L477.09 15.86L466.16 8.18L454.71 1.1L442.84 -5.28A6 6 0 0 1 437.16 5.28L448.71 11.5L459.56 18.2L469.92 25.48L479.83 33.32L489.35 41.74L498.52 50.72L507.39 60.26L516 70.36L524.39 81.02L532.61 92.22L540.7 103.97L548.7 116.26L556.65 129.07L564.61 142.41L572.6 156.25L580.68 170.6L588.89 185.45L597.27 200.78L605.87 216.59L614.73 232.87A6 6 0 0 1 625.27 227.13Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for your rakhi gift",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1630,
+          "width": 1040,
+          "height": 180
+        }
+      }
+    ]
+  }
+}

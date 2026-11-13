@@ -1,0 +1,98 @@
+{
+  "id": "transit-train-timetable",
+  "name": "Train timetable",
+  "description": "A folder tab on top carrying the label and a train.",
+  "category": "use-case",
+  "collection": "places",
+  "contentTypes": ["url"],
+  "tags": ["transit", "travel", "train", "timetable"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1560
+    },
+    "qr": {
+      "x": 120,
+      "y": 290,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#8a8a8a"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1000,
+        "height": 220,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 170,
+        "width": 1240,
+        "height": 1390,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 170,
+        "width": 200,
+        "height": 100,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M854 140.8L854 76C854 52 926 52 926 76L926 140.8ZM870.8 68.8A7.2 7.2 0 0 0 863.6 76L863.6 90.4A7.2 7.2 0 0 0 870.8 97.6L909.2 97.6A7.2 7.2 0 0 0 916.4 90.4L916.4 76A7.2 7.2 0 0 0 909.2 68.8ZM861.2 120.4A6 6 0 1 0 873.2 120.4A6 6 0 1 0 861.2 120.4ZM906.8 120.4A6 6 0 1 0 918.8 120.4A6 6 0 1 0 906.8 120.4Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M875.85 145.64L861.45 161.24L856.15 156.36L870.55 140.76ZM909.45 140.76L923.85 156.36L918.55 161.24L904.15 145.64ZM862.4 136L917.6 136A3.6 3.6 0 0 1 921.2 139.6L921.2 140.8A3.6 3.6 0 0 1 917.6 144.4L862.4 144.4A3.6 3.6 0 0 1 858.8 140.8L858.8 139.6A3.6 3.6 0 0 1 862.4 136Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Train timetable",
+        "color": "text",
+        "box": {
+          "x": 60,
+          "y": 25,
+          "width": 740,
+          "height": 150
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan for departures",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 1400,
+          "width": 1000,
+          "height": 100
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

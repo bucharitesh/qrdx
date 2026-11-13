@@ -1,0 +1,83 @@
+{
+  "id": "dragon-boat-race",
+  "name": "Dragon boat race",
+  "description": "A wide card: the code on one side, a dragon boat and the label on the other, in jade and gold.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "dragon-boat-festival",
+  "contentTypes": [],
+  "tags": ["dragon boat festival", "duanwu", "boat race"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 2000,
+      "height": 1040
+    },
+    "qr": {
+      "x": 120,
+      "y": 120,
+      "size": 800,
+      "padding": 64,
+      "radius": 19.2
+    },
+    "colors": {
+      "frame": "#0f5e4f",
+      "text": "#ffffff",
+      "accent": "#e0b13a"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 2000,
+        "height": 1040,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M1048 264.4L1188.4 264.4C1195.6 253.6 1199.2 239.2 1195.6 224.8C1206.4 235.6 1210 260.8 1195.6 278.8C1174 293.2 1084 293.2 1062.4 282.4ZM1048 268C1037.2 242.8 1040.8 221.2 1051.6 206.8L1073.2 199.6L1064.2 214L1080.4 217.6L1060.6 226.6C1057 242.8 1060.6 253.6 1066 268Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M1077.52 239.2A6.48 6.48 0 1 1 1090.48 239.2A6.48 6.48 0 1 1 1077.52 239.2ZM1080.86 245.8L1097.06 307L1092.54 308.2L1076.34 247ZM1095.52 239.2A6.48 6.48 0 1 1 1108.48 239.2A6.48 6.48 0 1 1 1095.52 239.2ZM1098.86 245.8L1115.06 307L1110.54 308.2L1094.34 247ZM1113.52 239.2A6.48 6.48 0 1 1 1126.48 239.2A6.48 6.48 0 1 1 1113.52 239.2ZM1116.86 245.8L1133.06 307L1128.54 308.2L1112.34 247ZM1131.52 239.2A6.48 6.48 0 1 1 1144.48 239.2A6.48 6.48 0 1 1 1131.52 239.2ZM1134.86 245.8L1151.06 307L1146.54 308.2L1130.34 247ZM1149.52 239.2A6.48 6.48 0 1 1 1162.48 239.2A6.48 6.48 0 1 1 1149.52 239.2ZM1152.86 245.8L1169.06 307L1164.54 308.2L1148.34 247ZM1167.52 239.2A6.48 6.48 0 1 1 1180.48 239.2A6.48 6.48 0 1 1 1167.52 239.2ZM1170.86 245.8L1187.06 307L1182.54 308.2L1166.34 247Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for race times",
+        "color": "text",
+        "box": {
+          "x": 1030,
+          "y": 400,
+          "width": 860,
+          "height": 190
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Dragon Boat Festival",
+        "color": "text",
+        "box": {
+          "x": 1030,
+          "y": 610,
+          "width": 860,
+          "height": 100
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

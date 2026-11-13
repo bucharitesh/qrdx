@@ -1,0 +1,71 @@
+{
+  "id": "rosh-hashanah-honey",
+  "name": "Honey jar arch",
+  "description": "An arched card, like a window, with a jar of honey, in crimson and honey.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "rosh-hashanah",
+  "contentTypes": [],
+  "tags": ["rosh hashanah", "jewish new year", "shanah tovah", "honey"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1880
+    },
+    "qr": {
+      "x": 160,
+      "y": 470,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#991b1b",
+      "text": "#ffffff",
+      "accent": "#e9a93a"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M0 660A660 660 0 0 1 1320 660L1320 1840Q1320 1880 1280 1880L40 1880Q0 1880 0 1840Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M50 660A610 610 0 0 1 1270 660L1270 1830L50 1830ZM62 660L62 1818L1258 1818L1258 660A598 598 0 0 0 62 660Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.35
+        }
+      },
+      {
+        "type": "path",
+        "d": "M639 216L681 216A21 21 0 0 1 702 237L702 279A21 21 0 0 1 681 300L639 300A21 21 0 0 1 618 279L618 237A21 21 0 0 1 639 216ZM631.5 198L688.5 198A4.5 4.5 0 0 1 693 202.5L693 211.5A4.5 4.5 0 0 1 688.5 216L631.5 216A4.5 4.5 0 0 1 627 211.5L627 202.5A4.5 4.5 0 0 1 631.5 198Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M618 243L702 243L702 273L618 273ZM630 213L690 213A3 3 0 0 1 693 216L693 219A3 3 0 0 1 690 222L630 222A3 3 0 0 1 627 219L627 216A3 3 0 0 1 630 213ZM642 219C643.84 224.4 647.25 228.6 647.25 231.75A5.25 5.25 0 0 1 636.75 231.75C636.75 228.6 640.16 224.4 642 219ZM678 220.5C679.84 226.8 683.25 233.1 683.25 236.25A5.25 5.25 0 0 1 672.75 236.25C672.75 233.1 676.16 226.8 678 220.5Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Shanah Tovah Umetukah",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1610,
+          "width": 1040,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,85 @@
+{
+  "id": "carnival-pass",
+  "name": "Carnival pass",
+  "description": "A ticket with side notches, a perforated line and a stub for the label and a masquerade mask, in carnival orange and turquoise.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "carnival",
+  "contentTypes": [],
+  "tags": ["carnival", "mardi gras", "parade", "ticket"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1820
+    },
+    "qr": {
+      "x": 120,
+      "y": 300,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#c2410c",
+      "text": "#ffffff",
+      "accent": "#22d3ee"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M64 0L1176 0A64 64 0 0 1 1240 64L1240 1380A60 60 0 0 0 1240 1500L1240 1756A64 64 0 0 1 1176 1820L64 1820A64 64 0 0 1 0 1756L0 1500A60 60 0 0 0 0 1380L0 64A64 64 0 0 1 64 0Z",
+        "fill": "frame"
+      },
+      {
+        "type": "line",
+        "x1": 100,
+        "y1": 1440,
+        "x2": 1140,
+        "y2": 1440,
+        "width": 10,
+        "dash": [36, 24],
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.55
+        }
+      },
+      {
+        "type": "path",
+        "d": "M557 96C590 87 650 87 683 96C683 129 665 150 641 144C629 141 626 129 620 129C614 129 611 141 599 144C575 150 557 129 557 96ZM578 114A13.5 9 0 1 0 605 114A13.5 9 0 1 0 578 114ZM635 114A13.5 9 0 1 0 662 114A13.5 9 0 1 0 635 114Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Carnival pass",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1490,
+          "width": 1040,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan at the gate",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1675,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

@@ -34,6 +34,20 @@ Release notes for earlier versions are at [qrdx.dev/changelog](https://qrdx.dev/
 - `download(options)` and `toDataURL(format, options)` export the code; `markup()`, `options()` and `svg` give its markup, its resolved props and the `<svg>` element. Everything in `qrdx/core` is exported from `qrdx/angular` too.
 - It ships compiled in Angular's partial mode, which the Angular CLI links when it builds an app. `@angular/core` is an optional peer dependency.
 
+### Frame library: holidays, seasons, events and places
+
+- **292 more official frames** in the holidays, seasons, events and places collections, and one in Cars & parking. `OFFICIAL_FRAMES` grows from 721 to 1,013. No existing frame or id changes.
+- **Holidays** (115 to 283) adds festivals and national days from regions the library covered thinly:
+  - South Asia: Pongal, Lohri, Makar Sankranti, Vaisakhi, Onam, Navratri, Durga Puja and Dussehra, Ganesh Chaturthi, Raksha Bandhan, Janmashtami, Ugadi and Gudi Padwa, Pohela Boishakh, the Sinhala and Tamil New Year, and Republic Day in India.
+  - Southeast and East Asia: Songkran, Loy Krathong, Vesak, Hari Raya, Tết, Seollal, the Mid-Autumn Festival, Chuseok, the Dragon Boat and Lantern festivals, Tanabata, Obon and Children's Day.
+  - The Middle East, Africa and the Americas: Nowruz, Yalda, the Islamic New Year, Rosh Hashanah, Purim, Enkutatash, Kwanzaa, Juneteenth, Africa Day, Sham el-Nessim, Tabaski, the Day of the Dead, Carnival and Mardi Gras, Three Kings Day, Las Posadas, Festa Junina and Inti Raymi.
+  - Europe: Orthodox Easter and Christmas, Maslenitsa, Pancake Day and King's Day.
+  - National days for 18 more countries, and awareness days and months such as International Women's Day, Earth Day, Pride Month, World Mental Health Day and World Blood Donor Day.
+- **Seasons** (28 to 60) adds monsoon, harvest and cherry blossom season, with more frames for summer, winter, spring, autumn and back to school.
+- **Events** (32 to 77) adds graduations, conferences, workshops, concerts, festivals and fairs, birthdays, baby showers, a quinceañera, sports matches, charity runs, quiz and game nights, galas, reunions and memorials.
+- **Places** (25 to 71) adds museums, libraries, transit, parks, beaches, campsites, coworking spaces, hostels, visitor centers, marinas, zoos and aquariums, plus guest Wi-Fi frames for cafés, offices, rentals, waiting rooms, libraries, venues and hostels.
+- 96 new motifs, from kites and krathongs to buses and lifebuoys. Every new frame passes the same checks as the rest: it decodes at phone distances, scores Great and reads with zbar.
+
 ## 0.0.51
 
 ### React-free core and plain JavaScript
