@@ -11,6 +11,7 @@ import {
   DocumentDownload,
   type Icon,
   Location,
+  MagicStar,
   MessageText,
   People,
   Personalcard,
@@ -92,7 +93,7 @@ export const MCP_TOOLS: {
     name: "save_template",
     title: "Save as a theme",
     description:
-      "Saves a design as a theme in your workspace, under the plan's saved-theme limit. Needs a QRdx API key on the connection; every other tool works without one.",
+      "Saves a design as a theme in your workspace, under the plan's saved-theme limit. Needs a QRdx API key on the connection.",
     icon: Save2,
     needsKey: true,
   },
@@ -109,6 +110,14 @@ export const MCP_TOOLS: {
     description:
       "Keeps a barcode in your workspace's Barcodes to edit and download later. Needs a QRdx API key on the connection.",
     icon: ArchiveAdd,
+    needsKey: true,
+  },
+  {
+    name: "generate_ai_art",
+    title: "Generate AI art",
+    description:
+      "Paints a QR code into AI artwork from your description, a scene or your photo, and checks that it scans. Each image uses one of your workspace's monthly AI art images and takes up to a minute. Needs a QRdx API key on the connection.",
+    icon: MagicStar,
     needsKey: true,
   },
   {
@@ -174,7 +183,7 @@ export const MCP_FAQS: { question: string; answer: string }[] = [
   {
     question: "Does it need an API key?",
     answer:
-      "No, for designing and rendering codes and browsing the community: the QRdx MCP server is public and free, and it keeps no session state. Saving a design to your themes (save_template), saving a barcode (save_barcode) and using a logo you uploaded need a QRdx API key, sent as Authorization: Bearer qrdx_… in your app's settings for the server.",
+      "No, for designing and rendering codes and browsing the community: the QRdx MCP server is public and free, and it keeps no session state. Saving a design to your themes (save_template), saving a barcode (save_barcode), making AI art (generate_ai_art) and using a logo you uploaded need a QRdx API key, sent as Authorization: Bearer qrdx_… in your app's settings for the server.",
   },
   {
     question: "Which AI tools does it work with?",
@@ -199,7 +208,7 @@ export const MCP_FAQS: { question: string; answer: string }[] = [
   {
     question: "Does QRdx store the codes I generate?",
     answer:
-      "No. The tools render images, format text and read the public community. Only save_template and save_barcode write anything: the theme or barcode you ask them to save, in the API key's workspace. The server doesn't save the codes. The image URLs it returns contain the encoded data, so don't share them if the data is private, such as a Wi-Fi password.",
+      "No. The tools render images, format text and read the public community. Only save_template and save_barcode write anything: the theme or barcode you ask them to save, in the API key's workspace. generate_ai_art uses one of the workspace's monthly AI art images but keeps neither the image nor a photo you send. The server doesn't save the codes. The image URLs it returns contain the encoded data, so don't share them if the data is private, such as a Wi-Fi password.",
   },
   {
     question: "Are there limits?",

@@ -72,6 +72,14 @@ Static barcodes (EAN, UPC, Code 128, Data Matrix and more): keyless images, and 
 | [Delete a saved barcode](/docs/developers/api/delete-barcode) | `DELETE /barcodes/{id}` | `codes:write` |
 | [Download a saved barcode](/docs/developers/api/get-saved-barcode-image) | `GET /barcodes/{id}/image` | `codes:read` |
 
+### AI art
+
+QR codes painted into AI artwork, checked to scan, on the workspace's monthly AI art allowance.
+
+| Endpoint | Request | Scope |
+| --- | --- | --- |
+| [Generate AI QR art](/docs/developers/api/create-art) | `POST /art` | `codes:write` |
+
 ### Scans
 
 Scan analytics of a code.

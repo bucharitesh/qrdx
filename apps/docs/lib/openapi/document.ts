@@ -25,6 +25,13 @@ import {
 } from "@/app/api/v1/hooks/_lib/hooks";
 import { qrImageQuerySchema } from "@/app/api/v1/qr/_lib/query";
 import {
+  ART_CREATIVITY,
+  ART_QR_VISIBILITY,
+  ART_TEXT_MAX_LENGTH,
+  aiArtRequestSchema,
+} from "@/components/sections/ai-art/config";
+import { AI_ART_DAILY_LIMIT } from "@/lib/ai/art";
+import {
   insufficientKeyScopeError,
   invalidApiKeyError,
   missingTokenError,
@@ -43,11 +50,13 @@ import {
 import { WEBHOOK_EVENTS, type WebhookEvent } from "@/lib/events/types";
 import { baseUrl } from "@/lib/metadata";
 import { OAUTH_SCOPE_INFO, OAUTH_SCOPES } from "@/lib/oauth-scopes";
+import { getPlanLimits } from "@/lib/plans";
 import { qrOptionsSchema } from "@/lib/qr-render";
 import { SCAN_HISTORY_DAYS, scanHistoryLabel } from "@/lib/scan-history";
 import { SHORT_LINK_BASE } from "@/lib/short-links";
 import { API_ERRORS, type ApiErrorCode, type ApiErrorInfo } from "./errors";
 import {
+  artResponseSchema,
   barcodeDeletedResponseSchema,
   barcodeListResponseSchema,
   barcodeResponseSchema,
@@ -1737,6 +1746,180 @@ const DESCRIPTION = `Create and manage dynamic QR codes, read scan analytics, re
 - **Errors:** \`{ "code", "message", "status" }\`, plus \`docs\` when a page explains the fix ([every code](${docs("developers/errors")})).
 - **Limits:** a daily quota per workspace (1,000 requests on Free, 10,000 on Pro, 100,000 on Business), reported in \`X-RateLimit-*\` headers, plus per-minute limits. Over a limit you get \`429\` with \`Retry-After\`.`;
 
+// ─── AI art ──────────────────────────────────────────────────────────────────
+
+/** What each field of POST /art's body does (a field that's gone throws). */
+const ART_FIELD_DESCRIPTIONS: Record<string, string> = {
+  text: `What the code encodes: a link or text, up to ${ART_TEXT_MAX_LENGTH} characters. Send this or \`code\`.`,
+  prompt: "The artwork to paint, in plain words.",
+  negativePrompt: "What to keep out of the picture.",
+  visibility: `QR visibility, ${ART_QR_VISIBILITY.min} to ${ART_QR_VISIBILITY.max} in steps of ${ART_QR_VISIBILITY.step}: higher shows the code more clearly, lower favors the picture.`,
+  creativity: `${ART_CREATIVITY.min} follows the prompt literally, ${ART_CREATIVITY.max} interprets it freely.`,
+  seed: "Send a seed again for a similar image. Random when left out.",
+  reference:
+    "A reference image for colors and shapes, such as a logo or a palette: a PNG or JPEG `data:` URL, downsized to about 512 px. It goes to the model and is discarded.",
+  mode: "How the code sits in the art: `code` paints the art into the code's modules; `scene` paints a full-bleed picture with the code in something in it; `photo` paints the code into your `photo`.",
+  style:
+    "A quick look by its id, combined with your `prompt`. The [AI art API docs](https://qrdx.dev/docs/developers/ai-art-api#quick-looks) list them.",
+  photo:
+    "Photo mode only: your picture as a PNG or JPEG `data:` URL, downsized to about 512 px. It goes to the model and is discarded.",
+};
+
+function artRequestBody(c: SchemaCollector): JsonSchema {
+  const base = c.schema(aiArtRequestSchema) as JsonSchema & {
+    properties: Record<string, JsonSchema>;
+    required?: string[];
+  };
+  const properties: Record<string, JsonSchema> = {};
+  for (const [name, property] of Object.entries(base.properties)) {
+    properties[name] = {
+      ...property,
+      ...(ART_FIELD_DESCRIPTIONS[name] && {
+        description: ART_FIELD_DESCRIPTIONS[name],
+      }),
+    };
+    if (name === "text") {
+      properties.code = {
+        ...c.schema(codeIdSchema),
+        description:
+          "The `id` of one of the workspace's dynamic codes, in place of `text`: the art encodes its short link, so you can change where it goes after printing and its scans are counted.",
+      };
+    }
+  }
+  for (const name of Object.keys(ART_FIELD_DESCRIPTIONS)) {
+    if (!(name in properties)) throw new Error(`No art field "${name}".`);
+  }
+  return {
+    ...base,
+    properties,
+    required: (base.required ?? []).filter((name) => name !== "text"),
+    description: "Send exactly one of `text` and `code`.",
+  };
+}
+
+const exampleArt = {
+  imageUrl:
+    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABAAAAAQACAIAAADwf7zU…",
+  width: 1024,
+  height: 1024,
+  seed: 2_841_337_190,
+  mode: "code",
+  blend: "least",
+  blendStrength: 0.35,
+  text: `${SITE}/q/aB3dE5f`,
+  code: { id: "cm5code0spring0menu00001", shortLink: `${SITE}/q/aB3dE5f` },
+  visibility: 50,
+  creativity: 45,
+};
+
+const artAllowance = (plan: "free" | "pro" | "business") =>
+  getPlanLimits(plan).aiArtPerMonth;
+
+function artOperations(c: SchemaCollector): Record<string, JsonSchema> {
+  // JSON by default; the PNG itself with ?format=png or Accept: image/png.
+  const image = json(
+    "The image. `Cache-Control: no-store`.",
+    c.schema(artResponseSchema),
+    {
+      art: {
+        data: exampleArt,
+        credits: {
+          plan: "pro",
+          limit: artAllowance("pro"),
+          used: 7,
+          remaining: artAllowance("pro") - 7,
+          pooled: false,
+          resetsAt: "2026-02-01T00:00:00.000Z",
+        },
+      },
+    },
+  ) as Response & { content: JsonSchema };
+  return {
+    "/art": {
+      post: {
+        operationId: "createArt",
+        summary: "Generate AI QR art",
+        tags: ["AI art"],
+        security: security("codes:write"),
+        description: `Paints a QR code into AI artwork from your description and checks that the image scans. Where the model's image doesn't scan as drawn, QRdx strengthens the code just enough, on the model's own pixels (\`blend\` says how). It's the same AI art as the playground's Art tab and the [AI art studio](${SITE}/ai/art).
+
+**Credits.** Each image uses one from the monthly AI art allowance of the workspace the key acts on, the same allowance as the app: ${artAllowance("free")} on Free, ${artAllowance("pro")} on Pro and ${artAllowance("business")} on Business, shared by the team. A failed call is refunded. Each person can also make at most ${AI_ART_DAILY_LIMIT} a day. \`credits\` in the response shows what's left.
+
+**Timing.** A call takes about 15 to 45 seconds and gives up before a minute, without using a credit. Set your HTTP client's timeout to at least 60 seconds.
+
+**What it encodes.** Send \`text\`, or a dynamic code's \`code\` (its \`id\`) to encode its short link, so you can change where it goes later and its scans are counted. A code in another workspace is a \`404\`.
+
+**Response.** JSON with the image as a \`data:\` URL, or the PNG itself with \`?format=png\` or \`Accept: image/png\` (seed, mode and blend then come as \`X-QRdx-Seed\`, \`X-QRdx-Mode\`, \`X-QRdx-Blend\`, \`X-QRdx-Blend-Strength\` and \`X-QRdx-Credits-Remaining\` headers). Nothing is stored, and photos and reference images are discarded after the call. [AI art API](${docs("developers/ai-art-api")}).`,
+        parameters: [
+          {
+            name: "format",
+            in: "query",
+            required: false,
+            description:
+              "`json` (default) or `png` for the image's bytes. `Accept: image/png` does the same.",
+            schema: { type: "string", enum: ["json", "png"] },
+          },
+        ],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: artRequestBody(c),
+              examples: {
+                text: {
+                  summary: "Art for a link",
+                  value: {
+                    text: "https://qrdx.dev",
+                    prompt: "a koi pond at dusk, ink and watercolor",
+                  },
+                },
+                code: {
+                  summary: "Art for a dynamic code, as a scene",
+                  value: {
+                    code: "cm5code0spring0menu00001",
+                    prompt: "a bistro chalkboard menu on a brick wall",
+                    mode: "scene",
+                    visibility: 60,
+                  },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          "200": {
+            ...image,
+            content: {
+              ...image.content,
+              "image/png": {
+                schema: { type: "string", contentMediaType: "image/png" },
+              },
+            },
+          },
+          ...errorResponses(
+            c,
+            [
+              ...AUTH_ERRORS,
+              ...WRITE_ERRORS,
+              "NOT_FOUND",
+              "AI_ART_TEXT_TOO_LONG",
+              "AI_ART_CREDITS_EXHAUSTED",
+              "AI_ART_IMAGE_TOO_LARGE",
+              "AI_ART_DAILY_LIMIT",
+              "AI_ART_FAILED",
+              "AI_ART_UNSCANNABLE",
+              "AI_ART_BUSY",
+              "AI_NOT_CONFIGURED",
+              "AI_ART_TIMEOUT",
+            ],
+            { scope: "codes:write" },
+          ),
+        },
+      },
+    },
+  };
+}
+
 /**
  * Ends each authenticated operation's description with the scope it needs,
  * read from its OAuth requirement: API keys use the same scopes, but bearer
@@ -1773,6 +1956,7 @@ export function buildOpenApiDocument(): Document {
   const paths = withScopeNotes({
     ...operations(c),
     ...barcodeOperations(c),
+    ...artOperations(c),
   });
   const missing = [
     ...JSON.stringify(paths).matchAll(/"#\/components\/schemas\/([^"]+)"/g),
@@ -1817,6 +2001,11 @@ export function buildOpenApiDocument(): Document {
         name: "Barcodes",
         description:
           "Static barcodes (EAN, UPC, Code 128, Data Matrix and more): keyless images, and barcodes saved to a workspace.",
+      },
+      {
+        name: "AI art",
+        description:
+          "QR codes painted into AI artwork, checked to scan, on the workspace's monthly AI art allowance.",
       },
       { name: "Scans", description: "Scan analytics of a code." },
       {

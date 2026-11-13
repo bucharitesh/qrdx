@@ -66,6 +66,11 @@ export function faqItems(allowances: AIArtAllowances) {
       answer: `${ART_MODEL_LABEL}, through Vercel AI Gateway, with ${AI_ART_PRESET_COUNT} style presets. QRdx draws a plain black-and-white QR code on the server, the model repaints it as your scene, and QRdx's own scan check makes sure the result decodes, strengthening the code only as much as it needs.`,
     },
     {
+      question: "Can I make AI art with the API or an AI assistant?",
+      answer:
+        "Yes. With a QRdx API key, the REST API (POST /v1/art) and the MCP server's generate_ai_art tool make the same scan-checked images, on your workspace's monthly credits. They can also encode a dynamic code by its id, so the link stays editable. The AI art API page in the developer docs has the details.",
+    },
+    {
       question: "Does QRdx store my prompt or image?",
       answer: `QRdx doesn't save your prompt, reference image or the generated images; it only counts your credits. The prompt, the QR code image and any reference image are sent through Vercel AI Gateway to ${ART_MODEL_LABEL} to create the artwork, and the result comes straight back to your browser, so download the ones you want to keep.`,
     },
