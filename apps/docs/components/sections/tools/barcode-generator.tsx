@@ -861,16 +861,16 @@ function BarcodeImage({
 
 /**
  * The live barcode with its print size, scan check and color warnings.
- * `compact` is the phone layout: a thumbnail beside the scan check, with
- * `action` (e.g. "Design") under it.
+ * "column" fits the modal's preview column; "compact" is the phone layout,
+ * a thumbnail beside the scan check with `action` (e.g. "Design") under it.
  */
 export function BarcodePreview({
   state,
-  compact,
+  variant = "page",
   action,
 }: {
   state: BarcodeGeneratorState;
-  compact?: boolean;
+  variant?: "page" | "column" | "compact";
   action?: ReactNode;
 }) {
   const t = useTranslations("barcodeTool");
@@ -888,7 +888,7 @@ export function BarcodePreview({
     />
   );
 
-  if (compact) {
+  if (variant === "compact") {
     return (
       <div className="flex items-center gap-3">
         <div
@@ -926,11 +926,17 @@ export function BarcodePreview({
     <>
       <div
         aria-live="polite"
-        className="flex min-h-56 items-center justify-center overflow-hidden rounded-lg border border-border bg-muted/40 p-4"
+        className={cn(
+          "flex items-center justify-center overflow-hidden rounded-lg border border-border bg-muted/40 p-4",
+          variant === "column" ? "min-h-40" : "min-h-56",
+        )}
       >
         {rendered ? (
           <BarcodeImage
-            className="h-auto max-h-80 w-auto max-w-full"
+            className={cn(
+              "h-auto w-auto max-w-full",
+              variant === "column" ? "max-h-48" : "max-h-80",
+            )}
             state={state}
           />
         ) : loadError ? (
