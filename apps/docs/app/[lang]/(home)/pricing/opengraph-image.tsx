@@ -1,20 +1,18 @@
 import { notFound } from "next/navigation";
 import { ogSize, renderPageOgImage } from "@/app/og/brand";
 import { GUARANTEE_NAME } from "@/components/sections/pricing/guarantee-block";
-import { LOCALE_SEGMENTS, localeFromSegment } from "@/lib/i18n/config";
+import { localeFromSegment } from "@/lib/i18n/config";
 import { formatPrice, PRICING } from "@/lib/pricing";
-import { buildTimeParams } from "@/lib/static-params";
+import { onDemandParams } from "@/lib/static-params";
 
 export const alt = "QRdx pricing: Free, Pro and Business plans";
 export const size = ogSize;
 export const contentType = "image/png";
 
-// One image per language, prerendered (the page itself reads the request).
-// The image is in English for now.
+// One image per language, rendered on its first request and cached (the
+// page itself reads the request). The image is in English for now.
 export function generateStaticParams() {
-  return buildTimeParams(() =>
-    LOCALE_SEGMENTS.map((segment) => ({ lang: segment })),
-  );
+  return onDemandParams();
 }
 
 export default async function Image({

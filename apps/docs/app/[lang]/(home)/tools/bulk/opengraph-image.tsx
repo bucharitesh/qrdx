@@ -1,13 +1,14 @@
 import { ogSize, renderPageOgImage } from "@/app/og/brand";
 import { MAX_BULK_ROWS } from "@/components/sections/tools/bulk-utils";
-import { localeParams, requireLocaleParam } from "@/lib/i18n/static-params";
+import { requireLocaleParam } from "@/lib/i18n/static-params";
+import { onDemandParams } from "@/lib/static-params";
 
 export const alt = "QRdx bulk QR code generator";
 export const size = ogSize;
 export const contentType = "image/png";
 
 export function generateStaticParams() {
-  return localeParams();
+  return onDemandParams();
 }
 
 export default async function Image({

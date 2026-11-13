@@ -1,27 +1,20 @@
 import { notFound } from "next/navigation";
-import { buildTimeParams } from "@/lib/static-params";
-import { LOCALE_SEGMENTS, localeFromSegment } from "./config";
+import { prerenderScope } from "@/lib/static-params";
+import { DEFAULT_LOCALE, LOCALE_INFO, localeFromSegment } from "./config";
 
-// Metadata routes under app/[lang] (opengraph-image, twitter-image) don't get
-// the root layout's `lang` params, so each lists them itself and is
-// prerendered once per language like its page.
-
-/** { lang } for every locale (lib/static-params.ts: none under `next dev`). */
+/**
+ * The [lang] params a build prerenders: English only. The other languages
+ * render on their first request and are cached from then on
+ * (lib/static-params.ts); they're noindex until a native speaker reviews
+ * them, so few people open them. None under `next dev`.
+ *
+ * Listed by the root layout (app/[lang]/layout.tsx): Next calls each page's
+ * generateStaticParams once per language listed here, so a page that lists
+ * only its own segment ({ type }) is prerendered in English.
+ */
 export function localeParams(): { lang: string }[] {
-  return buildTimeParams(() =>
-    LOCALE_SEGMENTS.map((segment) => ({ lang: segment })),
-  );
-}
-
-/** A route's own params in every locale: { lang, ...params }. */
-export function withLocaleParams<T extends Record<string, string>>(
-  params: () => T[],
-): (T & { lang: string })[] {
-  return buildTimeParams(() =>
-    LOCALE_SEGMENTS.flatMap((segment) =>
-      params().map((entry) => ({ ...entry, lang: segment })),
-    ),
-  );
+  if (prerenderScope() === "none") return [];
+  return [{ lang: LOCALE_INFO[DEFAULT_LOCALE].segment }];
 }
 
 /** A 404 for a first segment that isn't a locale (/pricng/opengraph-image). */
