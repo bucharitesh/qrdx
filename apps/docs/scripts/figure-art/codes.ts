@@ -4,7 +4,7 @@
 // tests/figure-art.test.ts checks that every baked code decodes to `value`.
 // AuthorizedApp shows the QRdx mark instead of a code.
 
-import type { HairlineFigureName } from "@/components/mockups/hairline-figures";
+import type { HairlineFigureName } from "@repo/design-system/components/hairline/hairline-figures";
 import type { ShowcaseStyleName } from "@/lib/landing/showcase-styles";
 
 export interface FigureCode {
