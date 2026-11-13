@@ -1,14 +1,16 @@
 ---
 title: "Marcos e impresión"
-description: "Marcos de llamada a la acción, la biblioteca oficial de marcos, una puntuación de \"¿Se escaneará?\" y exportación a PDF listo para imprimir."
+description: "Marcos con llamada a la acción, la biblioteca de marcos oficiales, una puntuación de «¿Se escaneará?» y exportación a PDF listo para imprimir."
 icon: Frame
 ---
 
-Añade un marco de "Escanéame", comprueba que un diseño se escanea antes de publicarlo y exporta un archivo vectorial con un tamaño físico exacto.
+Añade un marco de «Escanéame», comprueba que un diseño se escanea antes de publicarlo y exporta un archivo vectorial con un tamaño físico exacto.
 
-## Marcos de llamada a la acción [#call-to-action-frames]
+## Marcos con llamada a la acción [#call-to-action-frames]
 
-La propiedad `frame` dibuja alrededor del código un marco con una etiqueta breve. Funciona en `QRCode`, `QRCodeSVG`, `QRCodeCanvas`, `getQRAsSVG`, `getQRData` y todos los asistentes de descarga.
+Cada marco que dibuja QRdx es una especificación de marco: una pequeña descripción JSON de formas, etiquetas y colores. Un solo motor dibuja todas las especificaciones, así que un marco se ve igual en SVG, PNG, PDF y EPS. QRdx tiene {facts.frames} marcos: {facts.frameStyles} marcos integrados y {facts.officialFrames} [marcos oficiales](#official-frames). También puedes crear el tuyo o elegir uno de la [comunidad](/community/frames).
+
+La propiedad `frame` dibuja uno alrededor del código. Funciona en `QRCode`, `QRCodeSVG`, `QRCodeCanvas`, `getQRAsSVG`, `getQRData` y en todos los auxiliares de descarga.
 
 ```tsx
 import { QRCode } from "qrdx";
@@ -19,26 +21,49 @@ import { QRCode } from "qrdx";
 />
 ```
 
-El marco se añade **alrededor** del código: el resultado es más grande, y los módulos del QR y la zona de silencio nunca quedan tapados, así que la legibilidad no cambia. Un pequeño espacio claro del color de fondo del código separa el código del marco.
+El marco se añade **alrededor** del código: el resultado es más grande, y los módulos del QR y la zona de silencio nunca se tapan, así que la legibilidad del escaneo no cambia. Un espacio claro del color de fondo del código separa el código del marco.
+
+### Marcos integrados [#built-in-frames]
+
+Un marco integrado se identifica por su `style`. Las opciones rellenan las etiquetas y los colores de su especificación:
 
 | Opción | Valor por defecto | Notas |
 | --- | --- | --- |
-| `style` | — | Uno de los {facts.frameStyles} estilos de abajo, o `none` (`FRAME_STYLES`) |
+| `style` | — | Uno de los {facts.frameStyles} marcos integrados que aparecen abajo, o `none` (`FRAME_STYLES`) |
 | `text` | `"Scan me"` | Hasta 24 caracteres. Pasa `""` para ocultar la etiqueta |
 | `color` | `#000000` | Color del marco (`gradient-border`: color inicial, violeta por defecto) |
 | `textColor` | blanco sobre el marco, `color` sobre zonas claras | Color de la etiqueta |
 | `secondaryText` | ninguno | Segunda etiqueta, hasta 24 caracteres: la banda inferior de `banner-top-bottom`, el arco inferior de `circle`, el pie de `menu-card` |
 | `secondaryColor` | `#db2777` | Color final de `gradient-border` |
-| `fontScale` | `1` | Tamaño de la etiqueta de 0,5 a 1,5; las etiquetas aún se reducen para caber |
+| `fontScale` | `1` | Tamaño de la etiqueta de 0.5 a 1.5; las etiquetas aún se reducen para ajustarse |
 
-Estilos:
+Los marcos integrados, por `style`:
 
-- Banners y bordes: `banner-bottom`, `banner-top`, `banner-top-bottom`, `border`, `rounded-border`, `gradient-border`, `focus` (esquinas en corchete)
+- Banners y bordes: `banner-bottom`, `banner-top`, `banner-top-bottom`, `border`, `rounded-border`, `gradient-border`, `focus` (esquinas en corchetes)
 - Globos: `speech-bubble`, `speech-bubble-top`, `chat-bubble`
-- Insignias: `circle` (texto dispuesto alrededor de un anillo), `badge` (cinta), `sticker` (troquelado con sombra)
+- Insignias: `circle` (texto dispuesto en un anillo), `badge` (cinta), `sticker` (troquelado con sombra)
 - Objetos: `polaroid`, `phone`, `ticket`, `tag` (etiqueta colgante con agujero), `envelope`, `menu-card`
 
-Míralos todos, decodificados en tu navegador, en [Formas, ojos y marcos](/docs/styles#frames). Cada marco son formas simples y texto con colores opacos, así que las exportaciones a SVG, PNG, PDF y EPS coinciden (el borde con degradado se dibuja como pasos finos de color sólido, y las letras curvas del marco circle son texto rotado en todos los formatos).
+Cada uno de estos nombres representa una especificación del motor, y los nombres siguen siendo válidos para siempre. Los diseños guardados, los enlaces de la Image API, las opciones de la CLI y el código que los usan seguirán dibujando el mismo marco. Los marcos que eliminan la fila de su etiqueta cuando no hay etiqueta, como los bordes, siguen haciéndolo.
+
+`BUILT_IN_FRAMES` los lista con sus nombres y especificaciones (`BUILT_IN_FRAME_SPECS` tiene las especificaciones por estilo). `frameSpecOf` devuelve la especificación que dibuja cualquier marco, y `getFrameColors` los colores con los que pinta:
+
+```tsx
+import { BUILT_IN_FRAMES, frameSpecOf, getFrameColors } from "qrdx";
+
+BUILT_IN_FRAMES.map((frame) => frame.name); // ["Banner", "Top banner", …]
+
+// A built-in style's spec, or a custom frame's own
+const ticket = frameSpecOf({ style: "ticket" });
+
+// The frame's options, else its spec's defaults
+getFrameColors({ style: "border", color: "#1e3a8a" });
+// { frame: "#1e3a8a", text: "#1e3a8a", accent: "#1e3a8a" }
+```
+
+Para cambiar algo más que las etiquetas y los colores, empieza un marco personalizado a partir de una especificación integrada: `{ style: "custom", spec: frameSpecOf({ style: "ticket" }) }` dibuja el mismo ticket, y puedes editar sus formas.
+
+Míralos todos, decodificados en tu navegador, en [Formas, ojos y marcos](/docs/styles#frames). Cada marco son formas y texto simples con colores opacos, así que las exportaciones a SVG, PNG, PDF y EPS coinciden (el borde con degradado se dibuja como finos pasos de color sólido, y las letras curvas del marco circular son texto girado en todos los formatos).
 
 ```tsx
 <QRCode
@@ -55,7 +80,13 @@ import { getFrameDimensions } from "qrdx";
 getFrameDimensions(400, { style: "banner-bottom" }); // { width: 496, height: 568 }
 ```
 
-`FRAME_STYLES`, `frameSchema` (zod) y los tipos `QRFrame` / `FrameStyle` también se exportan desde `qrdx/types` para validar en el servidor.
+`FRAME_STYLES`, `frameSchema` (zod) y los tipos `QRFrame` / `FrameStyle` también se exportan desde `qrdx/types` para validar en el servidor. `GRADIENT_FRAME_DEFAULTS` (los colores por defecto del borde con degradado) y `FRAME_GAP_RATIO` se siguen exportando para el código que los usaba; el espacio de cada marco es el relleno de su especificación (`getFrameGapRatio`).
+
+### En el playground [#in-the-playground]
+
+**Design → Frame** tiene un único selector para todos los marcos. El grupo **Classic** contiene los marcos integrados, junto a los códigos con forma, los marcos oficiales y los marcos que guardaste. Todos los marcos se editan de la misma manera: su etiqueta, segunda línea, colores y tamaño de texto, además de iconos en los marcos que los tienen. Un diseño con un marco integrado conserva su nombre en `style`, así que los enlaces, las URL de imagen y los fragmentos de código siguen siendo cortos.
+
+El grupo **Shaped codes** da forma al propio código: un círculo o un corazón de puntos decorativos, o una forma que subes tú ([`shape`](/docs/features/patterns#circle-codes)). Un código con forma ocupa el lugar de un marco: elegir uno quita el marco, y elegir un marco quita la forma.
 
 ### En la CLI [#in-the-cli]
 
@@ -65,11 +96,27 @@ qrdx generate "https://example.com/menu" --frame banner-bottom --frame-text "Sca
 
 `--frame-color` y `--frame-text-color` aceptan colores hexadecimales. Si pasas texto o colores sin `--frame`, se usa `banner-bottom`.
 
+### Especificaciones de marco [#frame-specs]
+
+Una especificación de marco es un JSON con `kind: "qrdx.frame"`, `version: 1`, un tamaño de `artboard`, un cuadro `qr` donde va el código, `colors` por defecto, las `shapes` pintadas detrás del código y las `labels`. Las formas son rectángulos (con un agujero opcional), círculos y anillos, elipses, polígonos, trazados, líneas e iconos integrados. Se rellenan con un token de tema (`frame`, `text`, `accent`, `background`), un color hexadecimal, una mezcla de dos o un degradado. Una especificación no contiene marcado, enlaces ni imágenes. Comprueba con `frameSpecSchema` o `getFrameSpecIssues` de `qrdx/types` las que no hayas escrito tú antes de almacenarlas. El motor la vuelve a comprobar antes de dibujar.
+
+Los marcos integrados trajeron estos campos opcionales. Las especificaciones sin ellos se dibujan como antes:
+
+| Campo | Qué hace |
+| --- | --- |
+| `labels[].collapse` | `{ y, height }`. Cuando la etiqueta no muestra texto, se recorta la banda desde `y` hasta `y + height`: las filas inferiores suben y la ilustración se acorta. Las formas totalmente dentro de la banda se omiten, y las que la cruzan se acortan. Una banda no puede cruzar el código, su relleno ni otra banda. |
+| `qr.plate` | `"opaque"` (el valor por defecto) o `"background"`. El motor pinta una placa del color de fondo del código bajo el código. Cuando ese fondo es transparente, `"opaque"` pinta la placa y `background` rellena de blanco, así que la ilustración nunca se ve a través de la zona de silencio. `"background"` las mantiene transparentes y omite la placa. Solo se permite cuando bajo la placa no hay nada más que rellenos `background`, o un anillo cuyo agujero contiene la placa. |
+| `colors.text` | Un color hexadecimal, o una mezcla de `frame`, `accent`, `background` y colores hexadecimales, como `{ "mix": ["frame", "accent"], "amount": 0.5 }` para la etiqueta del borde con degradado. Es el valor por defecto; `textColor` sigue prevaleciendo. |
+
+La fila de una etiqueta de texto también puede entrar en el relleno de la placa, siempre que no toque el código y que sus mayúsculas queden fuera del relleno con el mayor tamaño de texto (`fontScale` 1.5). Los marcos de borde colocan así su etiqueta justo debajo del código.
+
+qrdx 0.0.51 y anteriores rechazan las especificaciones que usan estos campos o que ponen una fila de etiqueta en el relleno, así que actualiza el motor antes de dibujar una de esas especificaciones en otro lugar.
+
 ## Marcos oficiales [#official-frames]
 
-Además de los estilos integrados, QRdx tiene {facts.officialFrames} marcos oficiales: diseños listos para usar en llamadas a la acción, restaurantes y cafeterías, tiendas y envases, eventos y bodas, hoteles, viajes e inmobiliaria, salud, fitness y educación, y negocios y redes sociales. {facts.seasonalFrames} de ellos son para fiestas y temporadas, desde el Año Nuevo Lunar, Holi, el Eid y Diwali hasta Janucá, Pascua, Acción de Gracias y Navidad. Cada uno es una especificación de marco con etiquetas y colores que puedes cambiar, publicada bajo CC0, y cada uno se prueba para que se escanee a distancias de teléfono.
+Además de los marcos integrados, QRdx tiene {facts.officialFrames} marcos oficiales: diseños ya preparados para llamadas a la acción, restaurantes y cafeterías, tiendas y embalajes, belleza y bienestar, eventos y bodas, hoteles y viajes, inmobiliaria, coches y aparcamiento, salud y educación, deporte y fitness, negocios y redes sociales, y organizaciones sin ánimo de lucro y grupos comunitarios. {facts.seasonalFrames} de ellos son para festividades y estaciones, desde el Año Nuevo Lunar, Holi, Eid y Diwali hasta Janucá, Pascua, Acción de Gracias y Navidad. Cada uno es una especificación de marco con etiquetas y colores que puedes cambiar, publicada bajo CC0, y cada uno se ha probado para escanearse a distancias de teléfono.
 
-En el [Playground](/playground), abre **Marco** y luego **Más**. Busca por nombre, uso o fiesta, o elige un grupo. Los marcos de las fiestas y temporadas próximas aparecen primero. También los encontrarás en la [comunidad](/community/frames), publicados por @qrdx.
+En el [playground](/playground), abre **Frame** y luego **More**. Busca por nombre, uso o festividad, o elige un grupo. Los marcos de las festividades y estaciones próximas aparecen primero. También los encontrarás en la [comunidad](/community/frames), publicados por @qrdx.
 
 El motor los exporta como `OFFICIAL_FRAMES`:
 
@@ -86,11 +133,11 @@ const diwali = getOfficialFrame("diwali-diya"); // undefined for an unknown id
 )}
 ```
 
-`OFFICIAL_FRAME_INDEX` enumera todos los marcos sin su especificación, de modo que un selector puede mostrar toda la biblioteca y cargar las especificaciones solo cuando hagan falta. En la [Image API](/docs/developers/image-api#community-items) y el [servidor MCP](/docs/developers/mcp), usa un marco oficial como elemento de la comunidad, por ejemplo `item=frame:diwali-diya`.
+`OFFICIAL_FRAME_INDEX` lista todos los marcos sin su especificación, de modo que un selector pueda mostrar toda la biblioteca y cargar las especificaciones solo cuando se necesiten. En la [Image API](/docs/developers/image-api#community-items) y en el [servidor MCP](/docs/developers/mcp), usa un marco oficial como elemento de la comunidad, por ejemplo `item=frame:diwali-diya`.
 
 ## ¿Se escaneará? [#will-it-scan]
 
-`getScanScore` estima con qué fiabilidad se escanea un diseño. Se ejecuta en el navegador y carga [jsQR](https://github.com/cozmo/jsQR) bajo demanda.
+`getScanScore` estima la fiabilidad con la que se escanea un diseño. Se ejecuta en el navegador y carga [jsQR](https://github.com/cozmo/jsQR) bajo demanda.
 
 ```ts
 import { getScanScore } from "qrdx";
@@ -106,14 +153,14 @@ const { score, grade, checks } = await getScanScore({
 
 Qué comprueba:
 
-- **Decodificación a 96, 160 y 320 px.** El diseño se renderiza en cada ancho, se le aplica desenfoque y pérdida de contraste como los de una cámara, y se decodifica varias veces a escalas ligeramente distintas.
-- **Contraste** entre cada color del código (incluidas las paradas del degradado y los colores de ojos y puntos) y el fondo, y si el código es oscuro sobre claro.
+- **Decodificación a 96, 160 y 320 px.** El diseño se renderiza en cada ancho, se le aplica un desenfoque y una pérdida de contraste similares a los de una cámara, y se decodifica varias veces a escalas ligeramente distintas.
+- **Contraste** entre cada color del código (incluidos los puntos de degradado y los colores de ojos y puntos) y el fondo, y si el código es oscuro sobre fondo claro.
 - **Cobertura del logo** en comparación con lo que el nivel de corrección de errores puede recuperar.
 - **Zona de silencio**: el margen, más el espacio que añade un marco.
-- **Riesgo de la forma de los ojos**: los ojos `circle` pueden pasar desapercibidos para algunas apps de escáner (y los ojos `curly`, ya retirados, fallan en decodificadores estrictos si un diseño guardado aún los usa).
-- **Pares de estilos** (`style-pair`): formas que fallan juntas en nuestras pruebas de decodificación, como puntos `small-square` junto a ojos cuadrados, y centros retirados en diseños guardados (consulta `getStylePairRisk`).
+- **Riesgo de la forma de los ojos**: algunas apps de escaneo pueden no detectar los ojos `circle` (y los ojos `curly`, ya retirados, si un diseño guardado aún los usa, fallan en decodificadores estrictos).
+- **Pares de estilos** (`style-pair`): formas que fallan juntas en nuestras pruebas de decodificación, como los puntos `small-square` junto a ojos cuadrados, y los centros retirados en diseños guardados (consulta `getStylePairRisk`).
 
-`getImageScanScore(fileOrImage)` hace lo mismo con una imagen existente: devuelve el contenido decodificado junto con comprobaciones de decodificación, contraste, polaridad, zona de silencio y resolución medidas a partir de los píxeles. El [verificador de escaneo](/tools/scan-checker) está construido sobre esta función.
+`getImageScanScore(fileOrImage)` hace lo mismo con una imagen existente: devuelve el contenido decodificado, además de comprobaciones de decodificación, contraste, polaridad, zona de silencio y resolución medidas a partir de los píxeles. El [verificador de escaneo](/tools/scan-checker) se basa en ella.
 
 <Callout type="info">
   La puntuación es una heurística basada en un único decodificador de código abierto. Las apps de cámara de los teléfonos suelen ser más tolerantes, así que tómala como una guía y prueba el escaneo de las impresiones importantes.
@@ -144,10 +191,10 @@ layout.maxScanDistance; // 400 (mm)
 ```
 
 - `size` es el ancho del código; un marco se suma al tamaño final.
-- Con sangrado, el fondo (o el color de un marco cuadrado) se extiende más allá del borde de corte, de modo que al recortar no queda ninguna franja blanca. Las marcas de corte quedan fuera del sangrado.
-- `colorMode: "cmyk"` usa una conversión simple (`rgbToCmyk`: K = 1 − max(R, G, B), sin perfil ICC; el negro puro se imprime solo con K). Pide a tu imprenta una conversión con gestión de color cuando los colores exactos de la marca importen.
-- Los degradados lineales y radiales se imprimen como sombreados suaves en el PDF, en CMYK cuando el PDF es CMYK; el SVG de impresión los conserva pero se mantiene en RGB.
-- El texto del marco en el PDF usa Helvetica Bold, así que los caracteres fuera de Latin-1 pueden no mostrarse. Usa el SVG para otros alfabetos.
+- Con sangrado, el fondo (o el color de un marco cuadrado) se extiende más allá del borde de corte, de modo que al recortar no quede ninguna franja blanca. Las marcas de corte quedan fuera del sangrado.
+- `colorMode: "cmyk"` usa una conversión sencilla (`rgbToCmyk`: K = 1 − max(R, G, B), sin perfil ICC; el negro puro se imprime solo con K). Pide a tu imprenta una conversión con gestión de color cuando los colores exactos de la marca sean importantes.
+- Los degradados lineales y radiales se imprimen como sombreados suaves en el PDF, en CMYK cuando el PDF es CMYK; el SVG de impresión los conserva, pero sigue en RGB.
+- El texto del marco en el PDF usa Helvetica Bold, por lo que los caracteres fuera de Latin-1 pueden no mostrarse. Usa el SVG para otras escrituras.
 - `getQRAsPrintPDF` y `getQRAsPrintPDFBuffer` devuelven el archivo en lugar de descargarlo, y también funcionan en Node.
 
-**Qué tamaño imprimir:** un código se escanea desde aproximadamente diez veces su ancho, así que tamaño ≈ distancia de escaneo ÷ 10 (2 cm de ancho para 20 cm). Los códigos más densos necesitan más; la [calculadora de tamaño de impresión](/tools/print-size) lo tiene en cuenta.
+**Qué tamaño imprimir:** un código se escanea desde una distancia de unas diez veces su ancho, así que tamaño ≈ distancia de escaneo ÷ 10 (2 cm de ancho para 20 cm). Los códigos más densos necesitan más; la [calculadora de tamaño de impresión](/tools/print-size) lo tiene en cuenta.

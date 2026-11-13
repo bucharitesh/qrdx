@@ -8,9 +8,8 @@ import {
   CORNER_EYE_DOT_PATTERNS,
   CORNER_EYE_PATTERNS,
   FRAME_STYLES,
-  GRADIENT_FRAME_DEFAULTS,
   getContrastRatio,
-  mixFrameColors,
+  getFrameColors,
 } from "qrdx";
 import type { ColorConfig } from "qrdx/types";
 import { describe, expect, it, vi } from "vitest";
@@ -139,8 +138,8 @@ describe("the built-in library", () => {
   it("draws every frame label in a color that reads on what it sits on", () => {
     // Some frame styles set the label on the code's own background (the
     // pattern catalog's textOnLight: border, rounded-border, focus, phone,
-    // gradient-border, menu-card), in textColor or else the frame color; the
-    // rest set it on the frame, in textColor or else white. The contrast bar
+    // gradient-border, menu-card); the rest set it on the frame. Its color
+    // is textColor, else the spec's default. The contrast bar
     // is the theme generator's (lib/themes/compose.ts). A textColor equal to
     // the background hid three border labels and the Bistro Menu card's.
     const unreadable: string[] = [];
@@ -149,18 +148,8 @@ describe("the built-in library", () => {
       if (!frame || frame.style === "custom") continue;
       if (!(frame.text || frame.secondaryText)) continue;
       const onBackground = LABEL_ON_BACKGROUND.has(frame.style);
-      // Each style's default label color (packages/qrdx/src/frame-styles.ts).
-      const label =
-        frame.textColor ||
-        (frame.style === "gradient-border"
-          ? mixFrameColors(
-              frame.color || GRADIENT_FRAME_DEFAULTS.from,
-              frame.secondaryColor || GRADIENT_FRAME_DEFAULTS.to,
-              0.5,
-            )
-          : onBackground
-            ? frame.color
-            : "#FFFFFF");
+      // The label color the engine draws: textColor, else its spec's
+      const label = getFrameColors(frame)?.text;
       const backdrop = onBackground ? firstStop(bgColor) : frame.color;
       if (!(label && backdrop)) continue;
       const ratio = getContrastRatio(label, backdrop);

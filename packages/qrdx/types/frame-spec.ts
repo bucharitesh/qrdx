@@ -8,7 +8,7 @@
 
 import { z } from "zod";
 import { countPathSegments, tokenizePathData } from "../src/utils/path-data";
-import { segmentsBounds } from "../src/utils/polygon-clip";
+import { clipPolygon, segmentsBounds } from "../src/utils/polygon-clip";
 import { parsePathData } from "../src/utils/svg-geometry";
 import {
   FRAME_FONT_SCALE_MAX,
@@ -165,15 +165,30 @@ const hexColorSchema = z
 
 const baseColorSchema = z.union([z.enum(FRAME_COLOR_TOKENS), hexColorSchema]);
 
+const mixSchema = <T extends z.ZodType>(base: T) =>
+  z
+    .object({
+      mix: z.tuple([base, base]),
+      amount: z.number().min(0).max(1).refine(hasPrecision),
+    })
+    .strict();
+
 /** A theme token, a fixed hex color, or an opaque mix of two of them. */
 export const frameSpecColorSchema = z.union([
   baseColorSchema,
-  z
-    .object({
-      mix: z.tuple([baseColorSchema, baseColorSchema]),
-      amount: z.number().min(0).max(1).refine(hasPrecision),
-    })
-    .strict(),
+  mixSchema(baseColorSchema),
+]);
+
+/**
+ * The text color's default: a hex color, or a mix of the frame and accent
+ * colors (and fixed colors), worked out from the frame's own colors. It
+ * can't refer to `text` itself.
+ */
+const defaultTextColorSchema = z.union([
+  hexColorSchema,
+  mixSchema(
+    z.union([z.enum(["frame", "accent", "background"]), hexColorSchema])
+  ),
 ]);
 
 /**
@@ -318,6 +333,14 @@ const labelFields = {
   maxLength: z.int().min(1).max(FRAME_TEXT_MAX_LENGTH).optional(),
   color: frameSpecColorSchema,
   weight: z.enum(["bold", "regular"]).optional(),
+  /**
+   * A band of the artboard that goes away when the label shows no text:
+   * the rows from `y` to `y + height` are cut out, everything below moves
+   * up and the artwork gets shorter. Shapes that lie wholly inside the band
+   * are left out; shapes that cross it are shortened. The band never
+   * touches the code or its padding.
+   */
+  collapse: z.object({ y: number, height: positive }).strict().optional(),
 };
 
 const textLabelSchema = z
@@ -386,13 +409,26 @@ const frameSpecObjectSchema = z
         padding: nonNegative.optional(),
         /** Corner radius of the plate */
         radius: nonNegative.optional(),
+        /**
+         * What the plate and `background` fills are painted with when the
+         * code's background is see-through. "opaque" (the default) paints
+         * them white, so artwork never shows through the quiet zone.
+         * "background" keeps them see-through too (and leaves the plate
+         * out); it's allowed only when nothing but `background` fills, or a
+         * ring whose hole clears the plate, lies under the plate.
+         */
+        plate: z.enum(["opaque", "background"]).optional(),
       })
       .strict(),
     /** Default colors, used when the theme sets none */
     colors: z
       .object({
         frame: hexColorSchema,
-        text: hexColorSchema.optional(),
+        /**
+         * Default text color (else the frame color): a hex color, or a mix
+         * of `frame`, `accent` and fixed colors
+         */
+        text: defaultTextColorSchema.optional(),
         accent: hexColorSchema.optional(),
       })
       .strict(),
@@ -408,6 +444,8 @@ const frameSpecObjectSchema = z
   .strict();
 
 export type FrameSpecColor = z.infer<typeof frameSpecColorSchema>;
+/** A spec's default text color (`colors.text`). */
+export type FrameSpecDefaultTextColor = z.infer<typeof defaultTextColorSchema>;
 export type FrameSpecPaint = z.infer<typeof frameSpecPaintSchema>;
 export type FrameSpecShape = z.infer<typeof frameSpecShapeSchema>;
 export type FrameSpecLabel = z.infer<typeof frameSpecLabelSchema>;
@@ -434,16 +472,143 @@ export function frameSpecQrZone(spec: FrameSpec): Box {
   };
 }
 
+/** The code itself, without its padding. */
+function frameSpecQrBox(spec: FrameSpec): Box {
+  return {
+    x0: spec.qr.x,
+    y0: spec.qr.y,
+    x1: spec.qr.x + spec.qr.size,
+    y1: spec.qr.y + spec.qr.size,
+  };
+}
+
 /** The plate's padding around the code, in spec units. */
 export function frameSpecPadding(spec: FrameSpec): number {
   return spec.qr.padding ?? spec.qr.size * FRAME_SPEC_LIMITS.defaultPadding;
+}
+
+/** Font size of a text label with no `fontSize`, as a share of its row. */
+export const FRAME_SPEC_DEFAULT_FONT = 0.52;
+
+/**
+ * Half the height a label's capitals fill, as a share of its font size: a
+ * text label's letters are centered on its row, so they fill the row's
+ * middle, this far above and below it.
+ */
+export const FRAME_SPEC_CAP_HALF = 0.35;
+
+/** The largest font a text label draws (at the largest fontScale). */
+function textLabelMaxFont(
+  label: Extract<FrameSpecLabel, { type: "text" }>
+): number {
+  const base = label.fontSize ?? label.box.height * FRAME_SPEC_DEFAULT_FONT;
+  return Math.min(
+    base * FRAME_FONT_SCALE_MAX,
+    label.box.height * FRAME_SPEC_LABEL_MAX_FONT
+  );
 }
 
 const overlaps = (a: Box, b: Box) =>
   Math.min(a.x1, b.x1) - Math.max(a.x0, b.x0) > 1e-6 &&
   Math.min(a.y1, b.y1) - Math.max(a.y0, b.y0) > 1e-6;
 
-function shapeBounds(shape: FrameSpecShape): {
+// ── The plate ─────────────────────────────────────────────────────────────
+
+type Point = [number, number];
+
+/** Points along the plate's outline (its corners rounded by `qr.radius`). */
+function plateOutline(spec: FrameSpec): Point[] {
+  const zone = frameSpecQrZone(spec);
+  const r = Math.min(
+    spec.qr.radius ?? 0,
+    (zone.x1 - zone.x0) / 2,
+    (zone.y1 - zone.y0) / 2
+  );
+  const corners: [number, number, number][] = [
+    [zone.x0 + r, zone.y0 + r, Math.PI],
+    [zone.x1 - r, zone.y0 + r, -Math.PI / 2],
+    [zone.x1 - r, zone.y1 - r, 0],
+    [zone.x0 + r, zone.y1 - r, Math.PI / 2],
+  ];
+  const points: Point[] = [];
+  for (const [cx, cy, start] of corners) {
+    for (let i = 0; i <= 8; i++) {
+      const angle = start + (Math.PI / 2) * (i / 8);
+      points.push([cx + r * Math.cos(angle), cy + r * Math.sin(angle)]);
+    }
+  }
+  return points;
+}
+
+function insideRoundedBox(
+  [x, y]: Point,
+  box: { x: number; y: number; width: number; height: number },
+  radius: number
+): boolean {
+  const tolerance = 0.01;
+  if (
+    x < box.x - tolerance ||
+    y < box.y - tolerance ||
+    x > box.x + box.width + tolerance ||
+    y > box.y + box.height + tolerance
+  ) {
+    return false;
+  }
+  const r = Math.min(radius, box.width / 2, box.height / 2);
+  const cx = Math.min(Math.max(x, box.x + r), box.x + box.width - r);
+  const cy = Math.min(Math.max(y, box.y + r), box.y + box.height - r);
+  return Math.hypot(x - cx, y - cy) <= r + tolerance;
+}
+
+/** Area of a simple polygon (shoelace). */
+function polygonArea(points: Point[]): number {
+  let twice = 0;
+  points.forEach(([x0, y0], i) => {
+    const [x1, y1] = points[(i + 1) % points.length] as Point;
+    twice += x0 * y1 - x1 * y0;
+  });
+  return Math.abs(twice) / 2;
+}
+
+/**
+ * True when `shape` may paint under the plate: anything but a `background`
+ * fill, a ring whose hole holds the whole plate, or a polygon that stays
+ * off it. Paths, lines, ellipses and icons count when their bounds reach
+ * the plate.
+ */
+function paintsUnderPlate(
+  shape: FrameSpecShape,
+  spec: FrameSpec,
+  bounds: Box
+): boolean {
+  const zone = frameSpecQrZone(spec);
+  if (shape.fill === "background" || !overlaps(bounds, zone)) {
+    return false;
+  }
+  if (shape.type === "rect" && shape.hole) {
+    const { hole } = shape;
+    return !plateOutline(spec).every((point) =>
+      insideRoundedBox(point, hole, hole.radius ?? 0)
+    );
+  }
+  if (shape.type === "circle" && shape.hole) {
+    const hole = shape.hole;
+    return !plateOutline(spec).every(
+      ([x, y]) => Math.hypot(x - shape.cx, y - shape.cy) <= hole + 0.01
+    );
+  }
+  if (shape.type === "polygon") {
+    const clipped = clipPolygon(shape.points as Point[], zone);
+    return clipped.length > 2 && polygonArea(clipped) > 1e-6;
+  }
+  return true;
+}
+
+/**
+ * Bounds of a spec shape (null for path data outside the grammar) and the
+ * segments it counts against FRAME_SPEC_LIMITS.maxSegments.
+ */
+export function frameSpecShapeBounds(shape: FrameSpecShape): {
   bounds: Box | null;
   segments: number;
 } {
@@ -587,7 +752,7 @@ function checkFrameSpec(spec: FrameSpec, ctx: z.RefinementCtx) {
   let gradientWork = 0;
   spec.shapes.forEach((shape, index) => {
     const path = ["shapes", index];
-    const { bounds, segments: count } = shapeBounds(shape);
+    const { bounds, segments: count } = frameSpecShapeBounds(shape);
     if (!bounds) {
       issue(
         "Path data must use only M L H V C S Q T A Z, plain numbers (up to 3 decimals) and start with M",
@@ -612,6 +777,12 @@ function checkFrameSpec(spec: FrameSpec, ctx: z.RefinementCtx) {
     if (shape.type === "circle" && shape.hole && shape.hole >= shape.r) {
       issue("The hole must be smaller than the circle", [...path, "hole"]);
     }
+    if (qr.plate === "background" && paintsUnderPlate(shape, spec, bounds)) {
+      issue(
+        'With qr.plate "background", only background fills (or a ring whose hole holds the plate) may lie under the plate',
+        path
+      );
+    }
     segments += count;
     if (typeof shape.fill === "object" && "gradient" in shape.fill) {
       gradientWork += (shape.fill.gradient.steps ?? 32) * count;
@@ -630,6 +801,7 @@ function checkFrameSpec(spec: FrameSpec, ctx: z.RefinementCtx) {
   }
 
   // Labels: clean text, inside the artboard, never over the code
+  const bands: { y: number; height: number }[] = [];
   const ids = new Set<string>();
   const slots = new Set<string>();
   spec.labels.forEach((label, index) => {
@@ -671,7 +843,17 @@ function checkFrameSpec(spec: FrameSpec, ctx: z.RefinementCtx) {
           "fontSize",
         ]);
       }
-      if (overlaps(box, zone)) {
+      // The row may reach into the padding, but never over the code, and
+      // the band its capitals fill (at the largest font) stays off both
+      const middle = label.box.y + label.box.height / 2;
+      const reach = textLabelMaxFont(label) * FRAME_SPEC_CAP_HALF;
+      const letters: Box = {
+        x0: box.x0,
+        x1: box.x1,
+        y0: middle - reach,
+        y1: middle + reach,
+      };
+      if (overlaps(box, frameSpecQrBox(spec)) || overlaps(letters, zone)) {
         issue("The label overlaps the code or its padding", [...path, "box"]);
       }
     } else {
@@ -700,6 +882,28 @@ function checkFrameSpec(spec: FrameSpec, ctx: z.RefinementCtx) {
     }
     if (!inside(box)) {
       issue("The label extends outside the artboard", path);
+    }
+    if (label.collapse) {
+      const band = label.collapse;
+      const end = band.y + band.height;
+      if (band.y < -1e-9 || end > height + 1e-9) {
+        issue("The collapse band must sit inside the artboard", [
+          ...path,
+          "collapse",
+        ]);
+      }
+      if (end > zone.y0 + 1e-6 && band.y < zone.y1 - 1e-6) {
+        issue("The collapse band crosses the code or its padding", [
+          ...path,
+          "collapse",
+        ]);
+      }
+      for (const other of bands) {
+        if (end > other.y + 1e-6 && band.y < other.y + other.height - 1e-6) {
+          issue("Collapse bands may not overlap", [...path, "collapse"]);
+        }
+      }
+      bands.push(band);
     }
   });
 }
