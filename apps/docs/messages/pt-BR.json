@@ -6017,7 +6017,6 @@
           "youHaveViewOnlyAccess": "Você tem acesso somente para visualização: pode baixar este código de barras, mas não alterá-lo.",
           "planBarcodesAreStaticThey": "Plano {plan}. Os códigos de barras são estáticos: nunca expiram e funcionam em todos os planos.",
           "noBarcodesYet": "Nenhum código de barras ainda",
-          "newBarcode": "Novo código de barras",
           "openTheFreeGenerator": "Abrir o gerador grátis",
           "barcodesInTheTrashDont": "Códigos de barras na lixeira não contam no seu plano. Restaure-os ou exclua de vez.",
           "showAllBarcodes": "Mostrar todos os códigos de barras",
@@ -6032,13 +6031,6 @@
           "noBarcodesMatchQ": "Nenhum código de barras corresponde a \"{q}\".",
           "noBarcodesHereYet": "Nenhum código de barras por aqui ainda.",
           "noBarcodesMatchTheseFilters": "Nenhum código de barras corresponde a esses filtros."
-        },
-        "new": {
-          "page": {
-            "allBarcodes": "Todos os códigos de barras",
-            "newBarcode": "Novo código de barras",
-            "pickTheTypeEnterThe": "Escolha o tipo, digite o número ou o texto e salve para editar e baixar de novo depois."
-          }
         },
         "barcodeActions": {
           "duplicate": "Duplicar",
@@ -6057,11 +6049,34 @@
           "fixTheHighlightedInputTo": "Corrija o campo destacado para salvar.",
           "unsavedChanges": "Alterações não salvas",
           "allChangesSaved": "Todas as alterações salvas",
-          "notSavedYet": "Ainda não salvo",
           "saveChanges": "Salvar alterações",
-          "saveBarcode": "Salvar código de barras",
           "couldntSaveTheBarcode": "Não foi possível salvar o código de barras",
           "barcodeSaved": "Código de barras salvo"
+        },
+        "barcodeBuilder": {
+          "newBarcode": "Novo código de barras",
+          "pickTheTypeEnterThe": "Escolha o tipo, digite o número ou o texto e salve para editar e baixar de novo depois.",
+          "yourBarcodeIsSaved": "Seu código de barras foi salvo",
+          "downloadItNowOrOpen": "Baixe agora ou abra depois em Códigos de barras para editar e baixar de novo.",
+          "design": "Design",
+          "back": "Voltar",
+          "close": "Fechar",
+          "value": "Valor",
+          "valueCopied": "Valor copiado",
+          "type": "Tipo",
+          "title": "Título",
+          "openTheBarcode": "Abrir o código de barras",
+          "foldersDidntLoad": "As pastas não carregaram, então este código de barras foi salvo sem pasta.",
+          "couldntReachQrdx": "Não foi possível acessar o QRdx. Verifique sua conexão e tente de novo.",
+          "fixTheHighlightedInputTo": "Corrija o campo destacado para salvar.",
+          "saveBarcode": "Salvar código de barras",
+          "saving": "Salvando...",
+          "createAnother": "Criar outro",
+          "done": "Concluir",
+          "closeWithoutSaving": "Fechar sem salvar?",
+          "thisBarcodeIsntSavedYet": "Este código de barras ainda não foi salvo, então o que você digitou será perdido.",
+          "keepEditing": "Continuar editando",
+          "discard": "Descartar"
         },
         "barcodesHeader": {
           "barcodes": "Códigos de barras:",
@@ -7975,6 +7990,7 @@
         "newDynamicQrCode": "Novo QR code dinâmico",
         "newLandingPage": "Nova landing page",
         "newForm": "Novo formulário",
+        "newBarcode": "Novo código de barras",
         "importCodesFromACsv": "Importar códigos de um CSV",
         "inviteATeammate": "Convidar um colega",
         "connectADomain": "Conectar um domínio",
@@ -7985,6 +8001,7 @@
         "dynamicQrCode": "QR code dinâmico",
         "landingPage": "Landing page",
         "form": "Formulário",
+        "barcode": "Código de barras",
         "importCodes": "Importar códigos",
         "openTheEditor": "Abrir o editor",
         "newDynamicQrCode": "Novo QR code dinâmico",

@@ -1,10 +1,5 @@
 import "server-only";
 
-import {
-  buildFolderTree,
-  type FolderRow,
-  flattenFolderTree,
-} from "@/app/(app)/dashboard/codes/_lib/organize-shared";
 import { getBarcodeFormat } from "@/lib/barcode/formats";
 import { renderBarcodeServer } from "@/lib/barcode/server";
 import { barcodeImageUrl } from "@/lib/barcode/url";
@@ -12,7 +7,7 @@ import { type BarcodeView, barcodeLabel } from "@/lib/barcodes/service";
 import { baseUrl } from "@/lib/metadata";
 import { can } from "@/lib/permissions";
 import type { ActiveScope } from "@/lib/scope";
-import type { BarcodeCard, FolderOption } from "./filters";
+import type { BarcodeCard } from "./filters";
 
 /** The preview's scale: sharp at card size, a few KB of SVG. */
 const PREVIEW_SCALE = 2;
@@ -51,13 +46,4 @@ export function toBarcodeCard(
     preview,
     imageUrl: barcodeImageUrl(baseUrl, view.format, view.value, view.options),
   };
-}
-
-/** The workspace's folders in tree order, for pickers. */
-export function folderOptions(rows: FolderRow[]): FolderOption[] {
-  return flattenFolderTree(buildFolderTree(rows)).map((node) => ({
-    id: node.id,
-    name: node.name,
-    depth: node.depth,
-  }));
 }

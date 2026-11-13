@@ -68,9 +68,12 @@ export const APP_NAMESPACES = [
   "templateDemo",
   ...EDITOR_NAMESPACES,
   // The app's frame: sidebar, workspace switcher, command menu, and the
-  // New code dialog its create menu opens on every page.
+  // New code dialog and new-barcode modal its create menu opens on every
+  // page.
   "app.shell",
   "app.workspaces",
+  "app.dashboard.barcodes.barcodeBuilder",
+  "app.dashboard.barcodes.barcodeEditor",
   "app.dashboard.codes.newCodeDialog",
   "app.dashboard.codes.codeQr",
   "app.dashboard.codes.domainPicker",

@@ -6017,7 +6017,6 @@
           "youHaveViewOnlyAccess": "Anda hanya memiliki akses lihat: Anda dapat mengunduh barcode ini, tetapi tidak dapat mengubahnya.",
           "planBarcodesAreStaticThey": "Paket {plan}. Barcode bersifat statis: tidak pernah kedaluwarsa dan berfungsi di semua paket.",
           "noBarcodesYet": "Belum ada barcode",
-          "newBarcode": "Barcode baru",
           "openTheFreeGenerator": "Buka generator gratis",
           "barcodesInTheTrashDont": "Barcode di tempat sampah tidak dihitung dalam paket Anda. Pulihkan, atau hapus secara permanen.",
           "showAllBarcodes": "Tampilkan semua barcode",
@@ -6032,13 +6031,6 @@
           "noBarcodesMatchQ": "Tidak ada barcode yang cocok dengan \"{q}\".",
           "noBarcodesHereYet": "Belum ada barcode di sini.",
           "noBarcodesMatchTheseFilters": "Tidak ada barcode yang cocok dengan filter ini."
-        },
-        "new": {
-          "page": {
-            "allBarcodes": "Semua barcode",
-            "newBarcode": "Barcode baru",
-            "pickTheTypeEnterThe": "Pilih jenisnya, masukkan angka atau teks, lalu simpan agar bisa diedit dan diunduh lagi nanti."
-          }
         },
         "barcodeActions": {
           "duplicate": "Duplikat",
@@ -6057,11 +6049,34 @@
           "fixTheHighlightedInputTo": "Perbaiki input yang disorot untuk menyimpan.",
           "unsavedChanges": "Perubahan belum disimpan",
           "allChangesSaved": "Semua perubahan tersimpan",
-          "notSavedYet": "Belum disimpan",
           "saveChanges": "Simpan perubahan",
-          "saveBarcode": "Simpan barcode",
           "couldntSaveTheBarcode": "Barcode tidak dapat disimpan",
           "barcodeSaved": "Barcode tersimpan"
+        },
+        "barcodeBuilder": {
+          "newBarcode": "Barcode baru",
+          "pickTheTypeEnterThe": "Pilih jenisnya, masukkan angka atau teks, lalu simpan agar bisa diedit dan diunduh lagi nanti.",
+          "yourBarcodeIsSaved": "Barcode Anda tersimpan",
+          "downloadItNowOrOpen": "Unduh sekarang, atau buka nanti dari Barcode untuk mengedit dan mengunduh lagi.",
+          "design": "Desain",
+          "back": "Kembali",
+          "close": "Tutup",
+          "value": "Nilai",
+          "valueCopied": "Nilai disalin",
+          "type": "Jenis",
+          "title": "Judul",
+          "openTheBarcode": "Buka barcode",
+          "foldersDidntLoad": "Folder gagal dimuat, jadi barcode ini disimpan tanpa folder.",
+          "couldntReachQrdx": "Tidak dapat terhubung ke QRdx. Periksa koneksi Anda dan coba lagi.",
+          "fixTheHighlightedInputTo": "Perbaiki input yang disorot untuk menyimpan.",
+          "saveBarcode": "Simpan barcode",
+          "saving": "Menyimpan...",
+          "createAnother": "Buat lagi",
+          "done": "Selesai",
+          "closeWithoutSaving": "Tutup tanpa menyimpan?",
+          "thisBarcodeIsntSavedYet": "Barcode ini belum disimpan, jadi data yang Anda masukkan akan hilang.",
+          "keepEditing": "Lanjut mengedit",
+          "discard": "Buang"
         },
         "barcodesHeader": {
           "barcodes": "Barcode:",
@@ -7975,6 +7990,7 @@
         "newDynamicQrCode": "Kode QR dinamis baru",
         "newLandingPage": "Landing page baru",
         "newForm": "Formulir baru",
+        "newBarcode": "Barcode baru",
         "importCodesFromACsv": "Impor kode dari file CSV",
         "inviteATeammate": "Undang anggota tim",
         "connectADomain": "Hubungkan domain",
@@ -7985,6 +8001,7 @@
         "dynamicQrCode": "Kode QR dinamis",
         "landingPage": "Landing page",
         "form": "Formulir",
+        "barcode": "Barcode",
         "importCodes": "Impor kode",
         "openTheEditor": "Buka editor",
         "newDynamicQrCode": "Kode QR dinamis baru",
