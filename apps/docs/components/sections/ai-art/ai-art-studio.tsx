@@ -37,6 +37,7 @@ import {
   useArtPromptWriter,
 } from "./art-look-write";
 import { ArtModePicker } from "./art-mode-picker";
+import { useArtModeProgress } from "./art-mode-progress";
 import {
   type AIArtCredits,
   type AIArtRequest,
@@ -79,6 +80,7 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
   useTrackEditorOpened("ai_art");
   const [store] = useState(() => createAIArtRunStore(configured));
   const art = useAIArtRun({ store });
+  const progress = useArtModeProgress(store);
   const writer = useArtPromptWriter({ mock: art.mock });
   const [text, setText] = useState("");
   const [prompt, setPrompt] = useState("");
@@ -471,6 +473,7 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
 
       <AIArtResultPanel
         isGenerating={isGenerating}
+        progress={progress}
         onLockSeed={
           ART_SUPPORTS_SEED
             ? (value) => {

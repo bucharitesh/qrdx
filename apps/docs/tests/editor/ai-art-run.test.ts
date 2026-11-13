@@ -110,6 +110,9 @@ function mockApi(
       if (outcome instanceof Error) throw outcome;
       return outcome;
     },
+    requestPicture: async () => {
+      throw new Error("no picture step outside scene mode");
+    },
   };
 }
 
@@ -436,4 +439,111 @@ describe("the Art tab's session", () => {
       results: [{ status: "unreadable", score: null }],
     });
   });
+});
+
+describe("a scene run (two steps per variation)", () => {
+  const SCENE: AIArtRequest = { ...REQUEST, mode: "scene", prompt: undefined };
+
+  /** A picture step and a paint step, each waiting for `gate` when given. */
+  function sceneApi({
+    pictureGate,
+    paintGate,
+    refuseFirstPaint = false,
+  }: {
+    pictureGate?: Promise<void>;
+    paintGate?: Promise<void>;
+    refuseFirstPaint?: boolean;
+  } = {}) {
+    const steps: string[] = [];
+    let paints = 0;
+    return {
+      steps,
+      requestPicture: async (request: AIArtRequest, signal: AbortSignal) => {
+        steps.push(`picture:${request.seed}`);
+        await pictureGate;
+        signal.throwIfAborted();
+        return {
+          picture: `sealed-${request.seed}-${steps.length}`,
+          writtenPrompt: "a lighthouse at dusk",
+        };
+      },
+      requestImage: async (request: AIArtRequest, signal: AbortSignal) => {
+        steps.push(`paint:${request.picture}:${request.prompt}`);
+        await paintGate;
+        signal.throwIfAborted();
+        if (refuseFirstPaint && paints++ === 0) {
+          throw new ArtRequestError({
+            code: "AI_ART_PICTURE_EXPIRED",
+            message: "Expired",
+          });
+        }
+        return { ...response(request.seed ?? 0, 1), mode: "scene" as const };
+      },
+    };
+  }
+
+  it("makes each variation's picture, then paints into it with the written description", async () => {
+    const store = createAIArtRunStore();
+    const api = sceneApi();
+    const outcome = await runAIArt(store, api, SCENE, [1, 2]);
+    expect(outcome.status).toBe("done");
+    expect(api.steps.filter((s) => s.startsWith("picture"))).toHaveLength(2);
+    expect(
+      api.steps.filter((s) =>
+        /^paint:sealed-\d-\d:a lighthouse at dusk$/.test(s),
+      ),
+    ).toHaveLength(2);
+    expect(store.getState().picturing).toBe(0);
+  });
+
+  it("shows the picture step while it runs", async () => {
+    const store = createAIArtRunStore();
+    let open: () => void = () => {};
+    const gate = new Promise<void>((resolve) => {
+      open = resolve;
+    });
+    const running = runAIArt(
+      store,
+      sceneApi({ pictureGate: gate }),
+      SCENE,
+      [1],
+    );
+    await Promise.resolve();
+    expect(store.getState().picturing).toBe(1);
+    expect(store.getState().pendingMode).toBe("scene");
+    open();
+    await running;
+    expect(store.getState().pendingMode).toBeNull();
+  });
+
+  it("makes the picture again, once, when the server refuses it", async () => {
+    const api = sceneApi({ refuseFirstPaint: true });
+    const outcome = await runAIArt(createAIArtRunStore(), api, SCENE, [1]);
+    expect(outcome.status).toBe("done");
+    expect(api.steps.filter((s) => s.startsWith("picture"))).toHaveLength(2);
+  });
+
+  for (const step of ["picture", "paint"] as const) {
+    it(`cancels during the ${step} step`, async () => {
+      const store = createAIArtRunStore();
+      let open: () => void = () => {};
+      const gate = new Promise<void>((resolve) => {
+        open = resolve;
+      });
+      const api = sceneApi(
+        step === "picture" ? { pictureGate: gate } : { paintGate: gate },
+      );
+      const running = runAIArt(store, api, SCENE, [1]);
+      await new Promise((resolve) => setTimeout(resolve, 0));
+      cancelAIArt(store);
+      open();
+      const outcome = await running;
+      expect(outcome).toEqual({ status: "aborted", reason: "cancelled" });
+      expect(store.getState().run).toBeNull();
+      expect(store.getState().picturing).toBe(0);
+      if (step === "picture") {
+        expect(api.steps.some((s) => s.startsWith("paint"))).toBe(false);
+      }
+    });
+  }
 });

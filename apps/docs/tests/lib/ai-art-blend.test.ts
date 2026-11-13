@@ -26,8 +26,6 @@ import {
   type ControlImage,
   controlGrid,
   renderControlImage,
-  SCENE_LAYOUT,
-  sceneControl,
 } from "@/lib/ai/art-image";
 import { paintedArt, sceneArt, texturedArt } from "../support/ai-art-images";
 
@@ -113,15 +111,64 @@ describe("locateGrid", () => {
   });
 });
 
+/**
+ * The code drawn on a grey canvas (150) with a light margin, at `pitch` px
+ * from (`left`, `top`): a picture square as the paint step lays it out.
+ */
+function drawCode(
+  map: ControlImage["map"],
+  { left, top, pitch }: { left: number; top: number; pitch: number },
+): { png: Uint8Array; grid: { left: number; top: number; pitch: number } } {
+  const size = 1024;
+  const data = new Uint8Array(size * size * 4).fill(150);
+  const fill = (x0: number, y0: number, w: number, h: number, v: number) => {
+    for (
+      let y = Math.max(0, Math.round(y0));
+      y < Math.min(size, Math.round(y0 + h));
+      y++
+    ) {
+      for (
+        let x = Math.max(0, Math.round(x0));
+        x < Math.min(size, Math.round(x0 + w));
+        x++
+      ) {
+        data.fill(v, (y * size + x) * 4, (y * size + x) * 4 + 3);
+      }
+    }
+  };
+  for (let i = 3; i < data.length; i += 4) data[i] = 255;
+  const side = map.size * pitch;
+  fill(
+    left - 1.5 * pitch,
+    top - 1.5 * pitch,
+    side + 3 * pitch,
+    side + 3 * pitch,
+    255,
+  );
+  for (let y = 0; y < map.size; y++) {
+    for (let x = 0; x < map.size; x++) {
+      if (map.dark[y * map.size + x]) {
+        fill(left + x * pitch, top + y * pitch, pitch, pitch, 0);
+      }
+    }
+  }
+  return {
+    png: encodePng({ width: size, height: size, data }),
+    grid: { left, top, pitch },
+  };
+}
+
 describe("scenes", () => {
   it("finds a scene's code the model moved and shrank, with the wide search", async () => {
     // Drawn at half the image's width and low, though the control asked for
     // 64% centered: the model's choice, as GPT Image 2 makes it.
-    const drawn = sceneControl(control, {
-      layout: { ...SCENE_LAYOUT, size: 0.42, x: 0.38, y: 0.7 },
-    });
+    const drawn = drawCode(control.map, { left: 220, top: 560, pitch: 13 });
     const art = await pixelsOf(await sceneArt(drawn.png, { speckle: 40 }));
-    const expected = sceneControl(control).grid;
+    const expected = drawCode(control.map, {
+      left: 195,
+      top: 195,
+      pitch: 19,
+    }).grid;
     expect(locateGrid(art, control.map, expected).fit).toBeLessThan(0.6);
     const grid = locateGrid(art, control.map, expected, { wide: true });
     expect(grid.fit).toBeGreaterThan(0.9);
@@ -131,7 +178,7 @@ describe("scenes", () => {
   });
 
   it("lightens light modules in the scene's own color, not toward white", async () => {
-    const scene = sceneControl(control);
+    const scene = drawCode(control.map, { left: 195, top: 195, pitch: 19 });
     const art = await pixelsOf(
       await sceneArt(scene.png, { light: [90, 140, 200] }),
     );
@@ -162,7 +209,7 @@ describe("scenes", () => {
   });
 
   it("touches less of the picture around the code than code mode's quiet zone", async () => {
-    const scene = sceneControl(control);
+    const scene = drawCode(control.map, { left: 195, top: 195, pitch: 19 });
     const art = await pixelsOf(await sceneArt(scene.png));
     const grid = { ...scene.grid, fit: 1 };
     const changeAround = (style: typeof CODE_BLEND_STYLE) => {

@@ -1,21 +1,19 @@
 /**
- * Measures the "picture first" prototypes in lib/ai/art-picture.ts on the
- * art model through Vercel AI Gateway, then the same scan check and least
- * blend the app delivers by:
- * - --approach paint: the picture first (scene: one text-to-image call from
- *   the description; photo: the photo), then the code-mode treatment on the
- *   square where the code goes, pasted back into the picture
- * - --approach extend (scene only): code mode from the description, then the
- *   picture extended out from the code's square
- * Per image it records each call's latency and cost, the blend, zbarimg's
- * reading and the end-to-end time, and writes a contact sheet (picture |
- * delivered, labeled) per run.
+ * Measures scene and photo modes (lib/ai/art-picture.ts: the picture first,
+ * then the code painted into it) on the art model through Vercel AI
+ * Gateway, through the same functions the app runs (makeScenePicture and
+ * generatePictureVariant, as lib/ai/art-run.ts calls them): scene mode makes
+ * a picture from each description, photo mode uses each sample photo
+ * (public/images/art-samples/photos). Per image it records each call's
+ * latency and cost, the blend, zbarimg's reading and the end-to-end time,
+ * and writes a contact sheet (picture | delivered, labeled). Code mode is
+ * scripts/ai/art-eval.ts.
  *
  * Usage (from apps/docs, with the engine built):
  *   AI_GATEWAY_API_KEY=... bun x tsx --conditions=react-server scripts/ai/art-eval-picture.ts \
- *     --approach paint --mode scene [--n 2] [--size 0.64] [--presets a,b] \
- *     [--photos dog,latte] [--quality medium] [--blend '{"ringFull":0}'] \
- *     [--keep 0.75] [--feather 0.75] (painted margin kept, seam feather, in modules) \
+ *     --mode scene|photo [--n 2] [--presets a,b] [--photos dog,latte] \
+ *     [--size 0.64] [--keep 0.75] [--feather 0.75] [--quality low] \
+ *     [--blend '{"ringFull":0.3}'] [--text https://qrdx.dev/ai/art] \
  *     [--max-cost 1] [--concurrency 3] [--out dir]
  *   ... --replay <dir>   (no cost: the saved model images stand in)
  *   ... --dry-run        (no cost, no network: fake models)
@@ -28,7 +26,6 @@ import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { parseArgs } from "node:util";
 import type { ArtImageModel, ArtModelImage } from "../../lib/ai/art-image";
-import type { PictureModel } from "../../lib/ai/art-picture";
 
 const DEFAULT_TEXT = "https://qrdx.dev/q/Ab3dE9x";
 const PRESET_IDS = [
@@ -68,7 +65,6 @@ interface Attempt {
   delivered: boolean;
   blend: string | null;
   blendStrength: number | null;
-  zbarArt: boolean | null;
   zbarDelivered: boolean | null;
   /** Each model call, ms (picture first in scene mode) */
   calls: number[];
@@ -110,7 +106,6 @@ async function pool<T>(
 async function main() {
   const { values } = parseArgs({
     options: {
-      approach: { type: "string", default: "paint" },
       mode: { type: "string", default: "scene" },
       n: { type: "string", default: "2" },
       size: { type: "string" },
@@ -135,7 +130,6 @@ async function main() {
       ? JSON.parse(readFileSync(join(replay, "results.json"), "utf8"))
       : {}
   ) as {
-    approach?: string;
     mode?: string;
     size?: number;
     ids?: string[];
@@ -143,13 +137,8 @@ async function main() {
     text?: string;
     attempts?: Attempt[];
   };
-  const approach = (earlier.approach ?? values.approach) as "paint" | "extend";
   const mode = (earlier.mode ?? values.mode) as "scene" | "photo";
-  if (!["paint", "extend"].includes(approach)) fail("--approach paint|extend");
   if (!["scene", "photo"].includes(mode)) fail("--mode scene|photo");
-  if (approach === "extend" && mode === "photo") {
-    fail("extend starts from code mode, so it's scene only");
-  }
   const n = Number(earlier.n ?? values.n);
   const size = Number(values.size ?? earlier.size ?? 0.64);
   const text = values.text ?? earlier.text ?? DEFAULT_TEXT;
@@ -225,8 +214,8 @@ async function main() {
     }
   };
 
-  /** A photo as the client sends it: 1024 px square JPEG, as pixels. */
-  const photoPixels = async (id: string) => {
+  /** A photo as the client sends it: 1024 px square JPEG. */
+  const photoBytes = (id: string) => {
     const file = join(out, `photo-${id}.jpg`);
     const run = spawnSync(
       "ffmpeg",
@@ -245,12 +234,7 @@ async function main() {
       { encoding: "utf8" },
     );
     if (run.status !== 0) fail(`ffmpeg: ${run.stderr}`);
-    return (
-      await pipeline.readModelImage({
-        data: new Uint8Array(readFileSync(file)),
-        mediaType: "image/jpeg",
-      })
-    ).pixels;
+    return new Uint8Array(readFileSync(file));
   };
 
   const saved = (stem: string, name: string) => {
@@ -263,7 +247,7 @@ async function main() {
     Array.from({ length: n }, (_, i) => ({ id, seed: 1000 + i })),
   );
   console.log(
-    `${dryRun ? "Dry run: " : replay ? `Replay of ${replay}: ` : ""}${approach} × ${mode}, ${jobs.length} images, code square ${size} → ${out}`,
+    `${dryRun ? "Dry run: " : replay ? `Replay of ${replay}: ` : ""}${mode} mode, ${jobs.length} images, code square ${size} → ${out}`,
   );
   let spent = 0;
   let stopped = 0;
@@ -282,7 +266,6 @@ async function main() {
       delivered: false,
       blend: null,
       blendStrength: null,
-      zbarArt: null,
       zbarDelivered: null,
       calls: [],
       callCosts: [],
@@ -295,113 +278,92 @@ async function main() {
     const started = performance.now();
     const signal = new AbortController().signal;
     // Each model answer is saved as it comes; a replay reads them back.
-    let call = 0;
-    const names = approach === "extend" ? ["code", "extend"] : ["paint"];
-    const art: ArtImageModel = async (request) => {
-      const name = names[call++] ?? "extra";
-      if (from) return saved(from, name);
-      if (dryRun)
-        return {
-          data: request.images[0] as Uint8Array,
-          mediaType: "image/png",
-        };
-      const image = await pipeline.artModelFor(models.AI_MODELS.art)(request);
-      writeFileSync(
-        `${stem}-${name}.png`,
-        (await pipeline.readModelImage(image)).png,
-      );
-      attempt.callCosts.push(await costOf(image));
+    const timedCall = async <T extends ArtModelImage>(
+      name: string,
+      call: () => Promise<T>,
+    ): Promise<ArtModelImage> => {
+      const t = performance.now();
+      const image: ArtModelImage = from ? saved(from, name) : await call();
+      attempt.calls.push(Math.round(performance.now() - t));
+      if (!(from || dryRun)) {
+        writeFileSync(
+          `${stem}-${name}.png`,
+          (await pipeline.readModelImage(image)).png,
+        );
+        attempt.callCosts.push(await costOf(image));
+      }
       return image;
     };
+    const paintModel: ArtImageModel = (request) =>
+      timedCall("paint", () =>
+        dryRun
+          ? Promise.resolve({
+              data: request.images[0] as Uint8Array,
+              mediaType: "image/png",
+            })
+          : pipeline.artModelFor(models.AI_MODELS.art)(request),
+      );
     try {
-      let base: { pixels: import("qrdx").DecodedImage } | null = null;
-      let result: import("../../lib/ai/art-picture").PictureArt;
-      if (approach === "paint") {
-        let pixels: import("qrdx").DecodedImage;
-        if (mode === "photo") {
-          pixels = await photoPixels(id);
-        } else {
-          const model: PictureModel = from
-            ? async () => saved(from, "picture")
-            : dryRun
-              ? async () => ({ data: codeControl.png, mediaType: "image/png" })
-              : picture.pictureModelFor(models.AI_MODELS.art, {
-                  ...(values.quality
-                    ? { quality: values.quality as "low" | "medium" | "high" }
-                    : {}),
-                });
-          const t = performance.now();
-          const image = await model({
-            prompt: picture.buildPicturePrompt({ prompt }),
-            seed,
-            abortSignal: signal,
-          });
-          attempt.calls.push(Math.round(performance.now() - t));
-          if (!(from || dryRun)) attempt.callCosts.push(await costOf(image));
-          pixels = (await pipeline.readModelImage(image)).pixels;
-        }
-        base = { pixels };
-        writeFileSync(
-          `${stem}-picture.png`,
-          (await import("../../lib/ai/art-blend")).encodePng(pixels),
-        );
-        result = await picture.paintIntoPicture({
-          text,
-          prompt,
-          visibility,
-          creativity: 45,
-          seed,
-          picture: pixels,
-          codeControl,
-          region: { ...picture.PICTURE_REGION, size },
-          ...(values.keep ? { keepModules: Number(values.keep) } : {}),
-          ...(values.feather ? { featherModules: Number(values.feather) } : {}),
-          model: art,
-          signal,
-        });
+      let bytes: Uint8Array;
+      if (mode === "photo") {
+        bytes = photoBytes(id);
       } else {
-        result = await picture.extendFromCode({
-          text,
+        const real = picture.pictureModelFor(models.AI_MODELS.art, {
+          ...(values.quality
+            ? { quality: values.quality as "low" | "medium" | "high" }
+            : {}),
+        });
+        bytes = await picture.makeScenePicture({
           prompt,
-          visibility,
-          creativity: 45,
           seed,
-          codeControl,
-          region: { ...picture.PICTURE_REGION, size },
-          model: art,
           signal,
+          timeoutMs: 45_000,
+          model: (request) =>
+            timedCall("picture", () =>
+              dryRun
+                ? Promise.resolve({
+                    data: codeControl.png,
+                    mediaType: "image/png",
+                  })
+                : real(request),
+            ),
         });
       }
-      attempt.calls.push(...result.latencies);
-      if (replayed) {
-        attempt.calls = replayed.calls;
-        attempt.callCosts = replayed.callCosts;
-      }
-      writeFileSync(`${stem}-art.png`, result.art.png);
-      if (zbarOk) attempt.zbarArt = zbar(`${stem}-art.png`);
-      void base;
+      writeFileSync(`${stem}-input.jpg`, bytes);
       const t = performance.now();
-      const delivery = await pipeline.deliverable({
+      const variant = await picture.generatePictureVariant({
         text,
-        art: result.art,
-        control: result.control,
+        prompt,
         visibility,
+        creativity: 45,
+        seed,
+        picture: bytes,
+        control: codeControl,
         signal,
+        model: paintModel,
+        region: { ...picture.PICTURE_REGION, size },
+        ...(values.keep ? { keepModules: Number(values.keep) } : {}),
+        ...(values.feather ? { featherModules: Number(values.feather) } : {}),
         blendStyle,
       });
-      attempt.blendMs = Math.round(performance.now() - t);
-      if (delivery) {
-        attempt.delivered = true;
-        attempt.blend = delivery.blend;
-        attempt.blendStrength = delivery.blendStrength;
-        writeFileSync(`${stem}-delivered.png`, delivery.png);
-        if (zbarOk) attempt.zbarDelivered = zbar(`${stem}-delivered.png`);
-      } else {
-        attempt.error = "AI_ART_UNSCANNABLE";
-      }
+      attempt.blendMs = Math.round(
+        performance.now() - t - (attempt.calls.at(-1) ?? 0),
+      );
+      attempt.delivered = true;
+      attempt.blend = variant.blend;
+      attempt.blendStrength = variant.blendStrength;
+      writeFileSync(
+        `${stem}-delivered.png`,
+        Buffer.from(variant.imageUrl.split(",")[1] ?? "", "base64"),
+      );
+      if (zbarOk) attempt.zbarDelivered = zbar(`${stem}-delivered.png`);
     } catch (error) {
       const coded = error as { code?: string; message?: string };
       attempt.error = coded.code ?? coded.message ?? String(error);
+    }
+    if (replayed) {
+      attempt.calls = replayed.calls;
+      attempt.callCosts = replayed.callCosts;
     }
     attempt.totalMs = replayed
       ? replayed.calls.reduce((s, v) => s + v, 0) + (attempt.blendMs ?? 0)
@@ -427,7 +389,6 @@ async function main() {
       )
     : costs.reduce((s, c) => s + c, 0);
   const row = {
-    approach,
     mode,
     "code square": size,
     images: attempts.length,
@@ -444,7 +405,7 @@ async function main() {
       : "n/a",
     "least ≤ 0.3": least.filter((a) => (a.blendStrength ?? 0) <= 0.3).length,
     "Image QR": delivered.filter((a) => a.blend === "image-qr").length,
-    "zbar art / delivered": `${attempts.filter((a) => a.zbarArt).length} / ${attempts.filter((a) => a.zbarDelivered).length}`,
+    "zbar delivered": attempts.filter((a) => a.zbarDelivered).length,
     "calls p50": attempts[0]
       ? attempts[0].calls
           .map((_, i) =>
@@ -483,33 +444,22 @@ async function main() {
     )
     .flatMap((a) => {
       const stem = join(out, `${a.id}-${a.seed}`);
-      const first =
-        approach === "extend" ? `${stem}-code.png` : `${stem}-picture.png`;
-      const firstFile = existsSync(first)
-        ? first
-        : replay
-          ? join(
-              replay,
-              `${a.id}-${a.seed}-${approach === "extend" ? "code" : "picture"}.png`,
-            )
-          : first;
-      const second = existsSync(`${stem}-delivered.png`)
-        ? `${stem}-delivered.png`
-        : `${stem}-art.png`;
+      const firstFile = `${stem}-input.jpg`;
+      const second = `${stem}-delivered.png`;
       if (!(existsSync(firstFile) && existsSync(second))) return [];
       const how = a.delivered
         ? `${a.blend}${a.blend === "least" ? ` ${a.blendStrength}` : ""}${a.zbarDelivered ? " zbar" : ""}`
         : "NOT DELIVERED";
       return [
         "-label",
-        `${a.id} #${a.seed}: ${approach === "extend" ? "code mode" : "picture"}`,
+        `${a.id} #${a.seed}: ${mode === "photo" ? "photo" : "picture"}`,
         firstFile,
         "-label",
         `delivered: ${how}`,
         second,
       ];
     });
-  const sheet = join(out, `contact-${approach}-${mode}.png`);
+  const sheet = join(out, `contact-${mode}.png`);
   if (tiles.length) {
     spawnSync("magick", [
       "montage",
@@ -528,7 +478,6 @@ async function main() {
     join(out, "results.json"),
     JSON.stringify(
       {
-        approach,
         mode,
         size,
         ids,

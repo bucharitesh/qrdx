@@ -35,6 +35,8 @@ export type { AIArtRun } from "./ai-art-run";
 interface AIArtResultPanelProps {
   result: AIArtRun | null;
   isGenerating: boolean;
+  /** Scene and photo modes' step, in place of the generic text */
+  progress?: string | null;
   /** Variants the current run will return, for placeholders */
   pendingVariations: number;
   onRetryClearer: (variant: AIArtVariant) => void;
@@ -45,6 +47,7 @@ interface AIArtResultPanelProps {
 export function AIArtResultPanel({
   result,
   isGenerating,
+  progress,
   pendingVariations,
   onRetryClearer,
   onLockSeed,
@@ -138,11 +141,15 @@ export function AIArtResultPanel({
           <div className="bg-background/80 absolute inset-0 flex flex-col items-center justify-center gap-3 p-6 text-center backdrop-blur-sm">
             <Spinner className="size-6" />
             <p className="text-sm font-medium">
-              {t("generating")}{" "}
-              {pendingVariations > 1
-                ? t("pendingvariationsVariations", { pendingVariations })
-                : t("yourArtwork")}
-              …
+              {progress ?? (
+                <>
+                  {t("generating")}{" "}
+                  {pendingVariations > 1
+                    ? t("pendingvariationsVariations", { pendingVariations })
+                    : t("yourArtwork")}
+                  …
+                </>
+              )}
             </p>
             <p className="text-muted-foreground text-xs">
               {t("eachImageIsCheckedTo")}

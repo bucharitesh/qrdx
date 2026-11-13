@@ -18,6 +18,7 @@ import {
   ART_IMAGE_SIZE,
   type ArtDescribeRequest,
   type ArtDescribeResult,
+  type ArtPictureResult,
   DEFAULT_ART_MODE,
 } from "./config";
 
@@ -145,4 +146,22 @@ export async function mockArtDescription(
   const stand = MOCK_DESCRIPTIONS[mockDescriptionTurn++ % 3] ?? "";
   const hint = request.hint?.trim();
   return { prompt: hint ? `${hint}, ${stand}` : stand };
+}
+
+/**
+ * A fake scene picture (POST /api/ai/art/picture): a stand-in seal; the
+ * mock's paint step draws its own picture. Writes a description when none
+ * was given, as the real step does.
+ */
+export async function mockArtPicture(
+  request: AIArtRequest,
+  signal: AbortSignal,
+): Promise<ArtPictureResult> {
+  await wait(MOCK_DELAY_MS, signal);
+  return {
+    picture: `mock-picture-${request.seed ?? 0}`,
+    ...(!request.prompt && {
+      writtenPrompt: MOCK_DESCRIPTIONS[mockDescriptionTurn++ % 3] ?? "",
+    }),
+  };
 }

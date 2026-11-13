@@ -114,6 +114,17 @@ export async function parseApiArtRequest(
     fields.text = found.shortLink;
   }
 
+  // The app's sealed scene picture (POST /api/ai/art/picture) isn't part of
+  // the API: scene mode makes its picture in the same request here.
+  if ("picture" in fields) {
+    throw new ValidationError("Invalid request body", [
+      {
+        path: "picture",
+        message:
+          "picture isn't an API field: scene mode makes its picture in the same request",
+      },
+    ]);
+  }
   const parsed = aiArtRequestSchema.safeParse(fields);
   if (!parsed.success) throw invalid(parsed.error.issues);
   return { request: parsed.data, code };

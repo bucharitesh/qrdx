@@ -93,7 +93,7 @@ const artInput = z.object({
     .enum(ART_MODES)
     .optional()
     .describe(
-      'How the code sits in the art: "code" (default; the art painted into the code\'s modules), "scene" (a full-bleed picture with the code painted into something in it) or "photo" (your photo with the code painted into it; needs photo).',
+      'How the code sits in the art: "code" (default; the art painted into the code\'s modules), "scene" (a picture is painted from the description first, then the code is painted into its middle, so the picture runs through the code; about 40-55 seconds) or "photo" (the same with your photo as the picture; needs photo; about 25-45 seconds).',
     ),
   style: z
     .enum(ART_LOOK_IDS)
@@ -161,14 +161,14 @@ const allowance = (plan: "free" | "pro" | "business") =>
   getPlanLimits(plan).aiArtPerMonth;
 
 export const ART_MCP_INSTRUCTIONS =
-  " With an API key, generate_ai_art paints a QR code into AI artwork (a prompt, optionally a quick look, a scene or your photo) and checks that it scans; each image uses one of the workspace's paid monthly AI art images and takes up to a minute.";
+  " With an API key, generate_ai_art paints a QR code into AI artwork (a prompt, optionally a quick look, a picture or your photo) and checks that it scans; each image uses one of the workspace's paid monthly AI art images and takes up to a minute.";
 
 export function registerArtTools(server: McpServer) {
   server.registerTool(
     "generate_ai_art",
     {
       title: "Generate AI QR art",
-      description: `Paint a QR code into AI artwork from a description: the art painted into the code's modules (mode "code"), a full-bleed scene with the code painted into something in it ("scene"), or your own photo with the code painted into it ("photo"). QRdx checks that the image scans to the content and strengthens the code just enough when it doesn't. Encodes text, or a dynamic code's short link by its id (code) so the destination stays editable and scans are counted. Needs a QRdx API key with full access on this MCP connection (Authorization: Bearer qrdx_…). Each call uses one image from the workspace's paid monthly AI art allowance (${allowance("free")} on Free, ${allowance("pro")} on Pro, ${allowance("business")} on Business, shared by the team), refunded when no scannable image comes back, and takes 15-45 seconds, up to a minute. Returns a 1024 px PNG, the seed, how the code was made to scan and the images left this month.`,
+      description: `Paint a QR code into AI artwork from a description: the art painted into the code's modules (mode "code"), a picture painted from the description with the code painted into its middle, so the picture runs through the code ("scene"), or the same with your own photo ("photo"). QRdx checks that the image scans to the content and strengthens the code just enough when it doesn't. Encodes text, or a dynamic code's short link by its id (code) so the destination stays editable and scans are counted. Needs a QRdx API key with full access on this MCP connection (Authorization: Bearer qrdx_…). Each call uses one image from the workspace's paid monthly AI art allowance (${allowance("free")} on Free, ${allowance("pro")} on Pro, ${allowance("business")} on Business, shared by the team), refunded when no scannable image comes back. Code mode takes 15-45 seconds, photo mode about 25-45 and scene mode about 40-55 (it makes the picture first); a scene that runs out of time is refunded with AI_ART_TIMEOUT, so retry it or use code mode. Returns a 1024 px PNG, the seed, how the code was made to scan and the images left this month.`,
       inputSchema: artInput,
       annotations: {
         readOnlyHint: false,

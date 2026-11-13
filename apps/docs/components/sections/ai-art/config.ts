@@ -127,8 +127,9 @@ export const artPhotoSchema = uploadedImageSchema(ART_PHOTO_MAX_BYTES, "Photo");
  * How the code sits in the artwork:
  * - "code": the code is the whole picture, with the art painted into its
  *   modules and a plain quiet zone (the original mode)
- * - "scene": a full-bleed picture with the code painted into something in it
- * - "photo": the user's own photo, with the code painted into it
+ * - "scene": a picture is painted from the description first, then the
+ *   code is painted into its middle, so the picture runs through the code
+ * - "photo": the same, with the user's own photo as the picture
  */
 export const ART_MODES = ["code", "scene", "photo"] as const;
 export type ArtMode = (typeof ART_MODES)[number];
@@ -178,6 +179,33 @@ function checkPhoto(
   }
 }
 
+/**
+ * Scene mode's picture between its two steps (POST /api/ai/art/picture,
+ * then /api/ai/art): sealed on the server (lib/ai/art-seal.ts), so the
+ * client carries it without being able to see it. At most a 1 MB JPEG,
+ * base64url, plus the seal's own few hundred bytes.
+ */
+export const ART_PICTURE_SEAL_MAX_LENGTH =
+  Math.ceil((ART_PHOTO_MAX_BYTES * 4) / 3) + 1024;
+const artPictureSealSchema = z
+  .string()
+  .max(ART_PICTURE_SEAL_MAX_LENGTH)
+  .regex(/^[A-Za-z0-9_-]+$/, "Not a picture from QRdx");
+
+/** Only scene mode takes a sealed picture. */
+function checkPicture(
+  request: { mode: ArtMode; picture?: string },
+  ctx: z.RefinementCtx,
+) {
+  if (request.mode !== "scene" && request.picture) {
+    ctx.addIssue({
+      code: "custom",
+      path: ["picture"],
+      message: "A picture is only used in scene mode",
+    });
+  }
+}
+
 // ── Requests and responses ────────────────────────────────────────────────
 
 const aiArtRequestFields = z.object({
@@ -212,9 +240,19 @@ const aiArtRequestFields = z.object({
   style: artLookIdSchema.optional(),
   /** Photo mode: the uploaded picture the code is painted into */
   photo: artPhotoSchema.optional(),
+  /**
+   * Scene mode in the app: the sealed picture from POST /api/ai/art/picture.
+   * Without it, the picture is made in the same request (the REST API).
+   */
+  picture: artPictureSealSchema.optional(),
 });
 
-export const aiArtRequestSchema = aiArtRequestFields.superRefine(checkPhoto);
+export const aiArtRequestSchema = aiArtRequestFields.superRefine(
+  (request, ctx) => {
+    checkPhoto(request, ctx);
+    checkPicture(request, ctx);
+  },
+);
 export type AIArtRequest = z.input<typeof aiArtRequestSchema>;
 /** A request after validation, defaults filled in. */
 export type ParsedAIArtRequest = z.output<typeof aiArtRequestSchema>;
@@ -240,6 +278,22 @@ export type ArtDescribeRequest = z.input<typeof artDescribeRequestSchema>;
 export type ParsedArtDescribeRequest = z.output<
   typeof artDescribeRequestSchema
 >;
+
+/**
+ * Scene mode's first step (POST /api/ai/art/picture): the picture for the
+ * art's description and look, made before the code is painted into it.
+ */
+export const artPictureRequestSchema = aiArtRequestFields
+  .pick({ text: true, prompt: true, negativePrompt: true, style: true })
+  .extend({ mode: z.literal("scene").default("scene") });
+export type ArtPictureRequest = z.input<typeof artPictureRequestSchema>;
+
+/** POST /api/ai/art/picture's answer: the picture, sealed. */
+export interface ArtPictureResult {
+  picture: string;
+  /** The description QRdx wrote, when the request had none */
+  writtenPrompt?: string;
+}
 
 /** POST /api/ai/art/describe's answer. */
 export interface ArtDescribeResult {
