@@ -99,7 +99,7 @@ export const FEATURE_RULES: Record<FeatureId, FeatureRule> = {
   aiArt: {
     name: "AI QR art (Vercel AI Gateway)",
     requires: () => ["AI_GATEWAY_API_KEY"],
-    paths: ["/ai/art"],
+    paths: ["/ai/art", "/docs/developers/ai-art-api"],
   },
   customDomains: {
     // Serving domains already verified never depends on this: proxy.ts reads
