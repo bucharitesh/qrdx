@@ -254,11 +254,15 @@ export function FrameStylePicker({
               setImportOpen(true);
             }}
             size="sm"
+            title={t("uploadSvg")}
             type="button"
             variant="outline"
           >
             <DocumentUpload aria-hidden className="size-4" />
-            {t("uploadSvg")}
+            {/* Icon only in the preview's narrow frame menu */}
+            <span className="sr-only @[20rem]/frame-search:not-sr-only">
+              {t("uploadSvg")}
+            </span>
           </Button>
         }
         active={active}
