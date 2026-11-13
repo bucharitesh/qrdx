@@ -2,6 +2,18 @@
 
 Release notes for earlier versions are at [qrdx.dev/changelog](https://qrdx.dev/changelog).
 
+## Unreleased
+
+### React-free core and plain JavaScript
+
+- **`qrdx/core`** is the whole engine without React: everything the main entry exports except the React components (`QRCode`, `QRCodeSVG`, `QRCodeCanvas`, and `getQRAsSVG`, which returns a React element). `toSVGString(props)` returns exactly the markup `<QRCodeSVG>` renders, in Node or a browser. `createQRCodeTree(props)` builds the code as plain `{ type, props, key }` nodes, which `renderToString`, `renderToDOM` (built with `createElementNS`) and `toHyperscript` (another framework's elements, with DOM attribute names) turn into markup, DOM nodes or virtual DOM. `toSVGElement(props)` returns an `<svg>` element, `resolveQRCodeProps(props)` resolves `QRCode`'s logo API, and `getQRAsSVGNode(props)` is `getQRAsSVG` without React.
+- **`qrdx/vanilla`** adds `createQRCode(element, options)` to the core: it draws a code into an element or CSS selector and returns `update`, `toSVGString`, `toDataURL`, `download` and `destroy`. `dist/vanilla.browser.mjs` is the same API as one ES module for `<script type="module">` without a bundler (the official frame library's data ships next to it in `dist/frames-official.mjs`).
+- `react` and `react-dom` are now optional peer dependencies. The React components still need them; `qrdx/core`, `qrdx/vanilla` and `qrdx/node` don't import either.
+- The React components draw through the same renderer, building React elements directly, so their markup is unchanged byte for byte (a parity test compares over 500 prop combinations, every official frame among them). `getQRAsSVGDataUri`, and the downloads, print PDF and EPS, the scan score and `qrdx/node`'s PNG built on it, no longer load `react-dom/server`.
+- `qrdx/node` now imports the engine from `qrdx/core`, so it's a few kilobytes on its own and needs neither `react` nor `react-dom`.
+- `h(type, props, ...children)` writes a custom template without JSX. A template `wrapper` gets React elements in the React components and the core's nodes elsewhere (`TemplateNode`).
+- Types: `QRSVGOptions` (props plus root `<svg>` attributes) and `QRStyle` (the same type as React's `CSSProperties`, from `csstype`) are new. `QRPropsSVG` and `QRPropsCanvas` are unchanged and still exported from `qrdx` and `qrdx/types`.
+
 ## 0.0.50
 
 ### PNG in Node
