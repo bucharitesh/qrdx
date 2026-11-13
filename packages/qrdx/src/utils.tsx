@@ -1,5 +1,4 @@
-import type { JSX } from "react";
-import React from "react";
+/** @jsxImportSource ./jsx */
 import type {
   AngularGradient,
   BodyPattern,
@@ -11,7 +10,7 @@ import type {
   ImageSettings,
   LinearGradient,
   Modules,
-  QRPropsSVG,
+  QRSVGOptions,
   RadialGradient,
   TemplateConfig,
 } from "../types";
@@ -41,6 +40,7 @@ import {
 import { generateCornerDotPath } from "./corner-dot";
 import { generateCornerSquarePath } from "./corner-eye";
 import { isFrameActive, wrapWithFrame } from "./frame";
+import { cloneElement, type QRNode } from "./jsx/runtime";
 import { LOGO_PLATE_INSET, LOGO_ROUNDED_RADIUS, renderLogo } from "./logo";
 import { capImageSettings } from "./logo-budget";
 import { partMarker, type QRPart, type QRPartEye } from "./part-markers";
@@ -148,7 +148,7 @@ function generateDataCircles(
     /** Decorative modules (a circle code's ring): no finders or alignment */
     plain?: boolean;
   }
-): JSX.Element[] {
+): QRNode[] {
   const { margin, pixelSize, pattern = "circle", plain = false } = options;
   if (isShapedBodyPattern(pattern)) {
     return renderShapedBody(modules, {
@@ -160,7 +160,7 @@ function generateDataCircles(
     });
   }
   const scale = clampModuleScale(options.scale, pattern);
-  const shapes: JSX.Element[] = [];
+  const shapes: QRNode[] = [];
   const qrSize = modules.length;
   const radius = pixelSize * 0.45; // radius for circles (≥0.45 needed for reliable scanning)
   const isAlignmentModule = plain ? () => false : alignmentMask(qrSize);
@@ -350,7 +350,7 @@ function generateDataCircles(
 
         // A smaller moduleScale shrinks the shape around its center
         if (scale !== 1 && shapes.length > start) {
-          const shape = shapes.pop() as JSX.Element;
+          const shape = shapes.pop() as QRNode;
           shapes.push(
             <g
               key={key}
@@ -473,7 +473,7 @@ function renderConicPattern(
   cy: number,
   radius: number,
   size: number
-): JSX.Element {
+): QRNode {
   const fan = conicWedges(gradient.stops, gradient.angle ?? 0, cx, cy, radius);
   const wedges = fan.wedges.map((wedge, index) => (
     <path
@@ -532,7 +532,7 @@ function renderImagePattern(
   id: string,
   paint: ImagePaint,
   size: number
-): JSX.Element {
+): QRNode {
   const scale = paint.scale ?? 1;
   const tile = paint.fit === "tile";
   const side = tile ? (size / 4) * scale : size;
@@ -590,7 +590,7 @@ function generateCornerGradientDef(
   cornerType: "top-left" | "top-right" | "bottom-left",
   idPrefix: string,
   size: number
-): { id: string; element: JSX.Element } | null {
+): { id: string; element: QRNode } | null {
   const normalized = normalizeColorConfig(colorConfig);
 
   if (normalized.type === "solid") {
@@ -690,7 +690,7 @@ function generateGradientDef(
   colorConfig: ColorConfig,
   size: number,
   idPrefix: string
-): { id: string; element: JSX.Element } | null {
+): { id: string; element: QRNode } | null {
   const normalized = normalizeColorConfig(colorConfig);
 
   if (normalized.type === "solid") {
@@ -776,10 +776,10 @@ const hasPaintDef = (color: ColorConfig) =>
 
 /** Definitions once each: image fills that share a picture share an id. */
 function uniqueDefs(
-  defs: ({ id: string; element: JSX.Element } | null | undefined)[]
-): JSX.Element[] {
+  defs: ({ id: string; element: QRNode } | null | undefined)[]
+): QRNode[] {
   const seen = new Set<string>();
-  const out: JSX.Element[] = [];
+  const out: QRNode[] = [];
   for (const def of defs) {
     if (def && !seen.has(def.id)) {
       seen.add(def.id);
@@ -938,7 +938,12 @@ export function convertImageSettingsToPixels(
   return { imgWidth, imgHeight, imgLeft, imgTop };
 }
 
-export function QRCodeSVG(props: QRPropsSVG) {
+/**
+ * The code as a tree of plain nodes (`QRNode`): what `QRCodeSVG` draws, with
+ * no framework. `renderToString` turns it into the same markup React writes,
+ * `renderToDOM` into DOM nodes. Every styling option is supported.
+ */
+export function createQRCodeTree(props: QRSVGOptions): QRNode {
   const {
     value,
     size = DEFAULT_SIZE,
@@ -975,7 +980,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
   // With a frame, the caller's SVG attributes belong on the outer frame <svg>.
   const framed = isFrameActive(frame);
   const rootProps: typeof otherProps = framed ? {} : otherProps;
-  const withFrame = (element: JSX.Element) =>
+  const withFrame = (element: QRNode) =>
     framed
       ? wrapWithFrame(element, {
           size,
@@ -1046,7 +1051,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
     imageSettings
   );
 
-  let image: null | JSX.Element = null;
+  let image: null | QRNode = null;
   if (imageSettings != null && calculatedImageSettings != null) {
     if (calculatedImageSettings.excavation != null) {
       cells = excavateModules(cells, calculatedImageSettings.excavation);
@@ -1096,7 +1101,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
         h: imgHeight,
       });
       if (partMarkers) {
-        image = React.cloneElement(image, part("logo"));
+        image = cloneElement(image, part("logo"));
       }
     }
   }
@@ -1131,9 +1136,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
       })
     : null;
   const markedArtLayer =
-    artLayer && partMarkers
-      ? React.cloneElement(artLayer, part("body"))
-      : artLayer;
+    artLayer && partMarkers ? cloneElement(artLayer, part("body")) : artLayer;
   const artEyes =
     artLayer && art
       ? getQRArtEyeColors({ art, version: qrCode.version, ...artColors })
@@ -1558,7 +1561,6 @@ export function QRCodeSVG(props: QRPropsSVG) {
     // Clone the wrapped SVG element and override width/height to match requested size
     // This ensures downloads get the proper size while keeping viewBox for scaling
     // Remove percentage-based styles that would interfere with absolute sizing
-    // @ts-expect-error
     const originalStyle = wrappedSvg?.props?.style || {};
     const newStyle = {
       ...originalStyle,
@@ -1570,8 +1572,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
     // Forward the caller's SVG attributes (className, aria-*, etc.) to the
     // root element, same as the non-template path below.
     return withFrame(
-      // @ts-expect-error
-      React.cloneElement(wrappedSvg, {
+      cloneElement(wrappedSvg, {
         ...rootProps,
         width: size,
         height: size,
