@@ -1,22 +1,17 @@
 "use client";
 
-import { ConsentRoot } from "@c15t/nextjs";
-import { consentConfig } from "./config";
-import { ConsentScripts } from "./consent-scripts";
-import { CookieBanner } from "./cookie-banner";
-import { CookiePreferences } from "./cookie-preferences";
+import "@/lib/analytics/privacy";
+import { ConsentManager as Consent } from "@repo/analytics/consent/consent-manager";
+import { getAnalyticsPlan } from "@/actions/analytics";
+import { LocaleLink } from "@/components/i18n/locale-link";
 
 /**
- * c15t consent for QRdx's own pages. Rendered beside the page tree (not
- * around it) and only off customer pages, so hosted pages never get the
- * provider, banner or QRdx's tools.
+ * The cookie banner, preferences and consent-gated tools
+ * (packages/analytics/consent), with this app's pieces: links that keep the
+ * visitor's language, and the server action that reads the signed-in user's
+ * plan for PostHog. @/lib/analytics/privacy registers the app's untracked
+ * pages before anything is tracked.
  */
 export function ConsentManager() {
-  return (
-    <ConsentRoot config={consentConfig}>
-      <CookieBanner />
-      <CookiePreferences />
-      <ConsentScripts />
-    </ConsentRoot>
-  );
+  return <Consent link={LocaleLink} getPlan={getAnalyticsPlan} />;
 }
