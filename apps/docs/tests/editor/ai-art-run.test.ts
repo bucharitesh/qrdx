@@ -87,6 +87,7 @@ const response = (seed: number, used: number): AIArtResult => ({
     blend: "none",
     blendStrength: 0,
   },
+  mode: "code",
   text: TEXT,
   visibility: 50,
   creativity: 45,
