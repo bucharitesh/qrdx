@@ -207,6 +207,7 @@
       "shadcn": "shadcn/ui 레지스트리",
       "plugins": "플러그인",
       "selfHosting": "셀프 호스팅",
+      "openSource": "오픈 소스",
       "github": "GitHub",
       "help": "도움말 센터",
       "blog": "블로그",
@@ -561,7 +562,8 @@
     "selfHost": {
       "title": "셀프 호스팅",
       "description": "오픈소스 앱을 직접 운영하는 서버에서 자체 Postgres 데이터베이스와 함께 실행하세요. 플랜 한도는 파일 하나에 있어서 인스턴스에 맞게 변경할 수 있어요.",
-      "guide": "셀프 호스팅 가이드"
+      "guide": "셀프 호스팅 가이드",
+      "openSource": "오픈 소스 범위"
     },
     "footnote": "결제는 Polar가 판매 대행자(merchant of record)로서 처리하며, 결제 시 현지 세금이 추가될 수 있어요. 인도 고객은 ₹, 그 외 고객은 US$로 청구돼요.",
     "footnoteEur": "결제는 Polar가 머천트 오브 레코드로 처리하며, 결제 시 현지 세금이 추가될 수 있어요. 인도 고객은 ₹, EU 및 EEA 고객은 €, 그 밖의 고객은 US$로 청구돼요.",
@@ -943,6 +945,8 @@
       "bulkDescription": "CSV를 업로드하면 모든 코드를 PNG, WebP 또는 SVG로 만들어 ZIP 파일 하나로 내려받을 수 있습니다. 모든 작업은 브라우저에서만 처리돼요.",
       "printTitle": "코드를 인쇄하나요? 크기를 확인하세요",
       "printDescription": "스캔 거리와 코드에 담긴 데이터 양을 바탕으로 최소 인쇄 크기를 계산해 보세요.",
+      "dynamicTitle": "동적 QR 코드 생성기",
+      "dynamicDescription": "인쇄한 뒤에도 링크를 수정하고 모든 스캔을 집계해요",
       "hostedTitle": "수정할 수 있는 페이지를 여는 코드",
       "hostedDescription": "이 코드는 QRdx가 호스팅하는 모바일 페이지를 열어요. 그래서 인쇄한 뒤에도 내용을 바꿀 수 있고 스캔 수도 확인할 수 있어요. 무료 계정이 필요해요.",
       "menuTitle": "메뉴 QR 코드 생성기",
@@ -2458,6 +2462,11 @@
       "viewLabel": "{name} 데모 보기",
       "view": "데모 보기",
       "use": "템플릿 사용"
+    },
+    "more": {
+      "load": "더 보기",
+      "loading": "불러오는 중",
+      "failed": "템플릿을 불러오지 못했어요."
     }
   },
   "templateDemo": {
@@ -2874,6 +2883,254 @@
       "limitAnswer": "429 응답과 함께 다시 시도할 시점을 알려주는 Retry-After 헤더를 받게 돼요. 동일한 URL은 1년간 캐시되기 때문에, 방문자가 많은 페이지에 표시되는 이미지는 대개 캐시에서 제공돼요.",
       "aiQuestion": "AI 어시스턴트도 사용할 수 있나요?",
       "aiAnswer": "네. QRdx MCP 서버의 generate_qr_code 도구가 이 이미지 URL을 반환하며, MCP를 사용하지 않는 어시스턴트도 URL을 직접 Markdown 이미지로 작성할 수 있어요."
+    }
+  },
+  "dynamicQrCode": {
+    "metaTitle": "무료 동적 QR 코드 생성기: 수정하고 스캔을 추적하세요",
+    "metaDescription": "인쇄한 뒤에도 수정할 수 있고 모든 스캔을 추적할 수 있는 동적 QR 코드를 만드세요. 무료 계정은 스캔 횟수 제한과 기간 제한 없이 코드 {count, number}개를 사용할 수 있어요.",
+    "crumb": "동적 QR 코드 생성기",
+    "title": "무료 동적 QR 코드 생성기",
+    "intro1": "동적 QR 코드에는 URL 대신 짧은 링크가 들어 있어요. 인쇄한 뒤에도 연결되는 곳을 바꿀 수 있고, QRdx가 모든 스캔을 집계해요.",
+    "intro2": "무료 계정은 동적 코드 {count, number}개, 무제한 스캔, {years, plural, one {#년} other {#년}}의 스캔 기록을 제공해요. 체험 기간이 없고, 결제 여부와 관계없이 코드는 계속 작동해요.",
+    "facts": {
+      "free": "무료 동적 코드 {count, number}개",
+      "scans": "모든 플랜에서 스캔 무제한",
+      "ads": "링크 앞에 광고 없음",
+      "openSource": "오픈 소스"
+    },
+    "cta": "동적 QR 코드 만들기",
+    "pricingCta": "플랜 비교",
+    "docsLink": "동적 QR 코드 문서",
+    "howEyebrow": "작동 방식",
+    "howTitle": "다른 곳으로 연결을 바꿀 수 있는 짧은 링크",
+    "steps": {
+      "create": {
+        "title": "코드 만들기",
+        "body": "대시보드에서 새 코드를 클릭하고 열어야 할 페이지를 입력하세요. Playground에서는 URL 유형을 고르고 동적으로 만들기를 켜세요. 어느 쪽이든 코드에 {example} 같은 짧은 링크가 생겨요."
+      },
+      "print": {
+        "title": "다운로드하고 인쇄하기",
+        "body": "PNG, WebP, SVG로 다운로드하거나 Playground에서 먼저 스타일을 꾸밀 수 있어요. 짧은 링크는 긴 URL보다 모듈이 적게 필요해서 코드를 더 작게 인쇄해도 스캔돼요."
+      },
+      "change": {
+        "title": "필요할 때 바꾸기",
+        "body": "목적지를 수정하면 다음 스캔부터 새 페이지가 열려요. 스캔할 때마다 브라우저가 캐시하지 않는 302 리디렉션이 적용되므로, 지난주에 스캔한 휴대폰도 예전 주소를 기억하지 않아요."
+      }
+    },
+    "featuresEyebrow": "기능",
+    "featuresTitle": "동적 코드로 할 수 있는 일",
+    "featuresDescription": "수정, 분석, 호스팅 페이지는 모든 플랜에서 사용할 수 있어요. 각 카드에 포함된 플랜이 표시돼요.",
+    "planAll": "모든 플랜",
+    "planSome": "{plans} 플랜",
+    "features": {
+      "edit": {
+        "title": "인쇄 후에도 수정",
+        "body": "다시 인쇄하지 않고도 목적지를 바꾸고, 코드 이름을 바꾸고, 호스팅 페이지로 전환할 수 있어요. 모든 변경 사항은 코드의 버전 기록에 남고, 이전 버전으로 복원할 수 있어요."
+      },
+      "analytics": {
+        "title": "스캔 분석",
+        "body": "시간에 따른 스캔 수, 고유 방문자, 국가와 도시, 기기, 브라우저, 스캔이 이뤄지는 시간대를 확인하고 CSV로 내보낼 수 있어요. IP 주소는 저장하지 않아요. 무료 계정은 {years, plural, one {#년} other {#년}}의 기록을 보관하고, 유료 플랜은 전체 기록을 보관해요."
+      },
+      "pages": {
+        "title": "호스팅 모바일 페이지",
+        "body": "웹사이트 대신 QRdx가 호스팅하는 페이지로 코드를 연결하세요. 링크 목록, 메뉴, 연락처 카드, 쿠폰, 이벤트, 양식 등 {types, number}가지 페이지 유형을 쓸 수 있어요. 무료 계정은 페이지를 {pages, number}개까지 만들 수 있어요."
+      },
+      "routing": {
+        "title": "스마트 라우팅",
+        "body": "iPhone은 App Store로, Android 폰은 Google Play로 보내거나, 국가, 지역, 언어, 시간 또는 스캔 횟수에 따라 연결 위치를 나눌 수 있어요. 코드당 규칙은 최대 {rules, number}개까지 가능해요. A/B 분할과 UTM 파라미터도 포함돼요."
+      },
+      "controls": {
+        "title": "비밀번호, 일정, 스캔 제한",
+        "body": "코드에 비밀번호를 걸고, 시작일과 종료일 또는 스캔 제한을 정하고, 종료된 코드가 사람들을 어디로 보낼지 선택할 수 있어요. 코드 일시 중지는 모든 요금제에서 쓸 수 있어요."
+      },
+      "slugs": {
+        "title": "{domains, select, yes {나만의 짧은 주소 끝부분과 도메인} other {나만의 짧은 주소 끝부분}}",
+        "body": "무작위 주소 대신 {example}처럼 짧은 링크의 끝부분을 직접 정하세요.{domains, select, yes { go.yourbrand.com 같은 내 도메인으로 코드를 제공할 수도 있어요.} other {}}"
+      },
+      "tracking": {
+        "title": "픽셀과 전환",
+        "body": "코드의 호스팅 페이지에 분석 및 리타게팅 픽셀을 불러올 수 있어요. {conversionPlans}에서는 전환 추적이 추가되어, 구매와 가입을 방문자를 데려온 스캔과 연결해 줘요."
+      },
+      "api": {
+        "title": "REST API와 대량 생성",
+        "body": "직접 작성한 코드에서 QR 코드를 만들고 수정하고 스캔 데이터를 읽을 수 있어요. 무료에서는 하루 API 요청 {perDay, number}회까지 가능해요. 유료 요금제에서는 한 번의 요청으로 코드를 최대 {batch}개 만들거나 CSV에서 최대 {rows}개를 가져올 수 있어요."
+      }
+    },
+    "freeEyebrow": "무료 요금제",
+    "freeTitle": "결제 없이 이용할 수 있는 기능",
+    "freeDescription": "카드가 필요 없고 체험 기간도 없어요. 코드가 더 필요하거나 위의 유료 기능이 필요할 때만 업그레이드하세요.",
+    "freeItems": {
+      "codes": "활성 동적 코드 {count, number}개 (보관한 코드는 포함되지 않아요)",
+      "scans": "중단되지 않는 무제한 스캔",
+      "history": "{years, plural, one {#년} other {#년}} 동안의 스캔 기록",
+      "pages": "호스팅 페이지 {pages, number}개",
+      "organize": "편집, 일시 중지, 폴더, 태그, 버전 기록",
+      "api": "하루 {perDay, number}회 요청 가능한 REST API"
+    },
+    "freeLink": "모든 요금제 비교하기",
+    "guaranteeEyebrow": "결제를 중단하더라도",
+    "guaranteeTitle": "인쇄한 코드는 계속 작동해요",
+    "guaranteeBody": "Never-Hostage 보장에 따라 모든 동적 QR 코드는 다운그레이드, 결제 실패, 해지 이후에도 모든 요금제에서 계속 리디렉션돼요. 스캔은 중단되지 않고, 스캔하는 사람에게 광고나 QRdx 가입 페이지가 보이지 않아요. 한도를 넘으면 새 코드를 만들 수 없을 뿐이에요.",
+    "guaranteeLink": "보장 내용 읽기",
+    "openSourceBody": "리디렉션, 분석, 나머지 앱은 모두 오픈 소스예요. 스캔할 때마다 어떤 일이 일어나는지 직접 확인하거나 자신의 서버에서 실행할 수 있어요.",
+    "openSourceLink": "오픈 소스와 셀프 호스팅",
+    "staticTitle": "정적 QR 코드가 더 나은 경우",
+    "staticBody": "동적으로 만들 수 있는 것은 링크뿐이에요. 동적 QR 코드는 웹사이트나 호스팅 페이지를 열어요. Wi-Fi 로그인 정보, 휴대폰에 바로 저장되는 연락처 카드, 은행 결제 코드는 휴대폰이 패턴 자체에서 읽기 때문에 정적 QR 코드여야 해요. 정적 QR 코드는 무료에 무제한이고 계정도 필요 없어요.",
+    "staticLink": "정적 QR 코드 생성기",
+    "blogLink": "정적 QR 코드와 동적 QR 코드 비교",
+    "moreTitle": "더 알아보기",
+    "more": {
+      "docsTitle": "동적 QR 코드",
+      "docsBody": "백하프, 폴더, CSV 가져오기, API를 자세히 살펴봐요",
+      "routingTitle": "스마트 라우팅",
+      "routingBody": "규칙, A/B 테스트, UTM 매개변수",
+      "controlsTitle": "코드 제어",
+      "controlsBody": "비밀번호, 일정, 스캔 제한, 대체 URL",
+      "trackingTitle": "추적 및 전환",
+      "trackingBody": "분석, 픽셀, 전환 추적",
+      "domainsTitle": "커스텀 도메인",
+      "domainsBody": "내가 소유한 도메인으로 단축 링크를 제공해요",
+      "apiTitle": "REST API",
+      "apiBody": "내 코드에서 직접 QR 코드를 만들고 관리해요"
+    },
+    "faqTitle": "동적 QR 코드 관련 질문",
+    "faq": {
+      "freeQuestion": "동적 QR 코드를 무료로 만들 수 있나요?",
+      "freeAnswer": "네. 무료 QRdx 계정에는 활성 동적 코드 {count, number}개, 무제한 스캔, {years, plural, one {#년} other {#년}}간의 스캔 기록이 포함되며 체험 기간은 없습니다. 보관된 코드는 한도에 포함되지 않고, 유료 플랜에서는 한도가 없어집니다.",
+      "expireQuestion": "동적 QR 코드는 만료되나요?",
+      "expireAnswer": "QRdx에서는 만료되지 않습니다. 코드는 일시 중지, 보관 또는 삭제하기 전까지, 또는 직접 설정한 종료일이나 스캔 한도에 도달하기 전까지 계속 리디렉션됩니다. 이는 무료를 포함한 모든 플랜에서 같고, 다운그레이드나 결제 실패, 해지 이후에도 마찬가지입니다. 유일한 예외는 악용으로, 피싱이나 악성코드로 연결되는 코드는 비활성화됩니다.",
+      "editQuestion": "인쇄한 뒤에도 QR 코드를 수정할 수 있나요?",
+      "editAnswer": "동적 QR 코드만 가능합니다. 동적 코드에는 단축 링크가 들어 있어서 대시보드에서 이동 주소를 바꾸면, 인쇄된 코드를 다음에 스캔할 때 새 페이지가 열립니다. 정적 코드에는 주소 자체가 들어 있으므로 주소를 바꾸려면 새 코드를 인쇄해야 합니다.",
+      "trackQuestion": "QR 코드 스캔은 어떻게 추적하나요?",
+      "trackAnswer": "코드를 동적으로 만드세요. 동적 코드마다 시간별 스캔 수, 고유 방문자, 국가와 도시, 기기, 운영 체제, 브라우저, 유입 경로, 언어를 보여 주는 분석 페이지가 있고, 스캔 기록은 CSV로 내보낼 수 있습니다. QRdx는 IP 주소를 저장하지 않으며 알려진 봇과 링크 미리 보기는 집계하지 않습니다.",
+      "typesQuestion": "Wi-Fi나 vCard QR 코드도 동적으로 만들 수 있나요?",
+      "typesAnswer": "직접은 어렵습니다. 휴대폰은 Wi-Fi와 vCard 정보를 패턴 자체에서 읽는데, 동적 코드는 링크만 열 수 있기 때문입니다. 나중에 바꾸고 싶은 연락처 정보는 동적 코드를 호스팅 연락처 페이지에 연결하세요. Wi-Fi는 정적 코드를 사용하세요.",
+      "domainQuestion": "단축 링크에 내 도메인을 사용할 수 있나요?",
+      "domainAnswer": "네, {plans}에서 가능합니다. 이 경우 코드에 go.yourbrand.com/menu 같은 링크가 들어가며, 리디렉션과 스캔 분석은 똑같이 작동합니다. DNS 제공업체에서 DNS 레코드를 추가해 도메인을 연결합니다.",
+      "apiQuestion": "API로 동적 QR 코드를 만들 수 있나요?",
+      "apiAnswer": "네. REST API로 코드를 만들고 수정하며 스캔 기록을 조회할 수 있고, API 키 또는 OAuth 액세스 토큰을 사용합니다. 무료 계정은 하루 {perDay, number}회 요청할 수 있고, 유료 플랜은 한 번의 요청으로 최대 {batch}개의 코드를 만들 수 있습니다.",
+      "selfHostQuestion": "동적 QR 코드를 제 서버에서 직접 운영할 수 있나요?",
+      "selfHostAnswer": "네. QRdx는 오픈 소스이며, 직접 호스팅한 사본으로 동적 QR 코드, 호스팅 페이지, 스캔 분석을 자체 도메인에서 운영할 수 있습니다. 스캔 위치는 호스트가 제공하는 헤더에 따라 달라지며, 이는 셀프 호스팅 가이드에서 설명합니다."
+    }
+  },
+  "openSource": {
+    "metaTitle": "직접 호스팅할 수 있는 오픈소스 QR 코드 생성기",
+    "metaDescription": "QRdx는 GitHub에 공개된 오픈소스 QR 코드 생성기예요. 앱은 AGPL-3.0, React 라이브러리와 CLI는 MIT 라이선스입니다. qrdx.dev를 무료로 사용하거나 직접 설치해서 운영할 수 있어요.",
+    "crumb": "오픈소스",
+    "title": "오픈소스 QR 코드 생성기",
+    "intro1": "QRdx는 GitHub에서 공개적으로 개발하고 있습니다. 에디터, 동적 QR 코드, 호스팅 페이지, 스캔 분석을 갖춘 qrdx.dev의 웹 앱은 AGPL-3.0 라이선스입니다. React 라이브러리, CLI, 플러그인은 MIT 라이선스입니다.",
+    "intro2": "qrdx.dev에서 무료로 사용하거나, 직접 설치해 운영하거나, 라이브러리로 앱에 QR 코드를 넣을 수 있습니다.",
+    "facts": {
+      "agpl": "AGPL-3.0 앱",
+      "mit": "MIT 라이브러리와 CLI",
+      "selfHost": "Docker 또는 Node.js로 직접 호스팅",
+      "noAccount": "정적 QR 코드는 계정이 필요 없어요"
+    },
+    "githubCta": "GitHub에서 보기",
+    "selfHostCta": "자체 호스팅 가이드",
+    "partsEyebrow": "저장소 구성",
+    "partsTitle": "한 저장소, 세 가지 라이선스",
+    "partsDescription": "<link>LICENSING.md</link>에서 폴더별 라이선스를 정해요. MIT나 상용 라이선스에 명시되지 않은 모든 항목은 AGPL-3.0-or-later입니다.",
+    "partsHeader": {
+      "part": "구성 요소",
+      "folder": "폴더",
+      "license": "라이선스"
+    },
+    "parts": {
+      "appName": "웹 앱",
+      "appBody": "에디터, 계정, 동적 QR 코드, 호스팅 페이지, 스캔 분석, API, MCP 서버, 문서",
+      "libraryName": "qrdx 라이브러리",
+      "libraryBody": "QR 코드를 렌더링하고 내보내고 평가하는 React 컴포넌트로, npm에 qrdx로 있어요",
+      "cliName": "@qrdx/cli",
+      "cliBody": "터미널이나 CI 작업에서 스타일이 적용된 QR 코드 생성",
+      "pluginsName": "플러그인",
+      "pluginsBody": "Chrome 확장 프로그램, Figma, Raycast, Canva 플러그인, 그리고 plugins 폴더의 나머지 플러그인",
+      "eeName": "Business 기능",
+      "eeBody": "워크스페이스 SSO와 워크스페이스 감사 로그"
+    },
+    "eeLicense": "QRdx 상용 라이선스",
+    "eeNote": "ee 폴더의 코드는 읽고, 테스트하고, 기여할 수 있지만 프로덕션에서 사용하려면 QRdx와 서면 계약이 필요합니다. 자체 호스팅 인스턴스에서는 QRDX_EE_LICENSE를 설정하지 않으면 이 두 기능이 꺼져 있으며, 나머지 기능은 모두 그것 없이도 작동해요.",
+    "waysEyebrow": "사용 방법",
+    "waysTitle": "원하는 방식으로 실행하세요",
+    "ways": {
+      "hostedTitle": "qrdx.dev 사용하기",
+      "hostedBody": "정적 QR 코드는 무료이고 계정이 필요 없어요. Playground에서 디자인하고 바로 다운로드하면 됩니다. 무료 계정을 만들면 동적 QR 코드 {count, number}개와 호스팅 페이지 {pages, number}개가 추가되고, 유료 플랜에서는 팀 기능과 마케팅 기능이 추가됩니다.",
+      "hostedLink": "Playground 열기",
+      "hostedLink2": "요금 보기",
+      "selfHostTitle": "직접 설치해서 실행하기",
+      "selfHostBody": "Docker Compose로 자체 Postgres 데이터베이스와 함께 앱을 시작할 수 있고, Node.js로 Neon 데이터베이스에 연결해 실행할 수도 있습니다. 환경 변수 3개와 로그인 방법 1가지가 필요합니다. AI, 결제, 파일 저장소, 사용자 지정 도메인, 연동 기능은 선택 사항입니다.",
+      "selfHostLink": "셀프 호스팅 가이드",
+      "libraryTitle": "내 앱에 직접 넣기",
+      "libraryBody": "qrdx 라이브러리는 Playground와 같은 엔진으로 React에서 QR 코드를 렌더링하고, @qrdx/cli는 터미널이나 CI 작업에서 QR 코드를 만듭니다. 둘 다 MIT 라이선스라서 비공개 소스 프로젝트에서도 사용할 수 있습니다.",
+      "libraryLink": "라이브러리 문서",
+      "libraryLink2": "CLI 문서"
+    },
+    "runEyebrow": "시작하기",
+    "runTitle": "코드 실행하기",
+    "runDescription": ".env에 시크릿과 로그인 방법을 설정한 다음 스택을 시작하세요. 처음 Docker 빌드는 몇 분 걸리고 메모리가 최소 8GB 필요합니다.",
+    "runLabels": {
+      "docker": "Docker Compose로 셀프 호스팅",
+      "library": "라이브러리와 CLI"
+    },
+    "runNotes": {
+      "signIn": "사용자는 GitHub 또는 Google OAuth 앱으로 로그인하거나, Resend를 통해 보내는 이메일 코드로 로그인합니다.",
+      "postgres": "Neon은 바로 연결할 수 있습니다. 일반 Postgres는 docker-compose.yml이 이미 실행하는 Neon 호환 HTTP 프록시가 필요합니다.",
+      "limits": "결제를 설정하지 않으면 모든 계정이 무료 플랜 한도를 사용합니다. 한도는 apps/docs/lib/plans.ts 파일 하나에 정의되어 있어서 인스턴스에 맞게 바꿀 수 있습니다."
+    },
+    "runLink": "셀프 호스팅 가이드 전체 보기",
+    "licenseEyebrow": "라이선스",
+    "licenseTitle": "라이선스에서 요구하는 사항",
+    "licenses": {
+      "agplTitle": "앱 (AGPL-3.0)",
+      "agplBody": "앱을 실행하고, 수정하고, 호스팅할 수 있습니다. 수정한 버전을 네트워크 서비스로 운영한다면 사용자에게 같은 라이선스로 소스 코드를 제공해야 합니다.",
+      "mitTitle": "라이브러리, CLI, 플러그인 (MIT)",
+      "mitBody": "저작권 및 라이선스 고지를 코드와 함께 유지하면 비공개 소스를 포함한 모든 프로젝트에서 사용할 수 있습니다. qrdx 0.0.47 이전 릴리스와 @qrdx/cli 0.0.5 이전 릴리스는 AGPL-3.0-or-later였습니다.",
+      "trademarkTitle": "이름과 로고",
+      "trademarkBody": "QRdx 이름과 로고는 상표입니다. 코드를 포크하거나 이 코드로 공개 서비스를 만들 때는 별도의 이름과 로고를 사용해야 합니다. 자세한 내용은 <link>상표 정책</link>을 확인하세요."
+    },
+    "licenseNote": "이 내용은 요약이에요. 실제로 적용되는 것은 저장소에 있는 라이선스 파일이에요.",
+    "contributeEyebrow": "기여하기",
+    "contributeTitle": "함께 만들어 가요",
+    "contributeBody": "버그 제보, 아이디어, 풀 리퀘스트를 환영합니다. 기여 가이드에는 로컬 환경 설정 방법과 실행할 검사 항목이 담겨 있고, good first issue 라벨이 붙은 이슈는 작고 독립적으로 처리할 수 있어요. 질문은 GitHub Discussions에 남겨 주시고, 보안 문제는 보안 정책에 안내된 대로 비공개로 제보해 주세요.",
+    "contributeLinks": {
+      "contributing": "기여 가이드",
+      "goodFirst": "Good first issues",
+      "discussions": "Discussions",
+      "security": "보안 정책"
+    },
+    "stackTitle": "기술 스택",
+    "stackBody": "Bun과 Turborepo 기반 모노레포로, React, TypeScript, Tailwind CSS, Postgres 기반 Drizzle, Better Auth, Vercel AI SDK를 사용하는 Next.js 앱이에요. 앱과 테스트, 빌드는 Node.js 22에서 실행돼요.",
+    "moreTitle": "QRdx 더 알아보기",
+    "more": {
+      "dynamicTitle": "동적 QR 코드",
+      "dynamicBody": "인쇄한 뒤에도 코드를 수정하고 모든 스캔을 확인하세요",
+      "apiTitle": "무료 QR 코드 API",
+      "apiBody": "URL 하나로 QR 코드 이미지를 만들어요. 키도, 가입도 필요 없어요",
+      "mcpTitle": "MCP 서버",
+      "mcpBody": "Claude, ChatGPT, Cursor에서 QR 코드를 만들어요",
+      "compareTitle": "QRdx 비교",
+      "compareBody": "다른 QR 코드 도구와 나란히 비교한 페이지예요",
+      "guaranteeTitle": "Never-Hostage 보장",
+      "guaranteeBody": "결제를 중단하거나 QRdx가 서비스를 종료하면 내 코드가 어떻게 되는지 알려드려요"
+    },
+    "faqTitle": "오픈 소스 FAQ",
+    "faq": {
+      "openQuestion": "QRdx는 정말 오픈 소스인가요?",
+      "openAnswer": "네. 소스는 GitHub에 있고, 웹 앱은 AGPL-3.0-or-later 라이선스를 따르며, qrdx 라이브러리, @qrdx/cli, 플러그인은 MIT예요. 워크스페이스 싱글 사인온과 감사 로그, 이 두 가지 비즈니스 기능은 QRdx Commercial License가 적용되는 ee 폴더에 있어요. 코드를 읽어볼 수는 있지만 프로덕션에서 사용하려면 QRdx와 계약이 필요해요.",
+      "githubQuestion": "GitHub에서 QRdx 소스 코드는 어디에 있나요?",
+      "githubAnswer": "github.com/bucharitesh/qrdx에 있어요. 웹 앱, qrdx 라이브러리, CLI, 플러그인, 문서가 하나의 모노레포에 들어 있어요.",
+      "freeQuestion": "QRdx를 무료로 셀프 호스팅할 수 있나요?",
+      "freeAnswer": "네. 라이선스 비용은 없고, 직접 운영하는 서버와 데이터베이스 비용만 내시면 돼요. 셀프 호스팅 인스턴스에서도 동적 QR 코드, 호스팅 페이지, 스캔 분석을 사용할 수 있어요. 싱글 사인온과 감사 로그는 QRdx 라이선스 키가 없으면 꺼져 있어요.",
+      "needQuestion": "QRdx를 셀프 호스팅하려면 무엇이 필요한가요?",
+      "needAnswer": "Compose v2가 포함된 Docker, 또는 수동 설치를 위한 Node.js 22와 Bun 1.4가 필요하고, docker-compose.yml이 실행하는 Postgres나 Neon 같은 Postgres 데이터베이스도 필요해요. NEXT_PUBLIC_APP_URL, DATABASE_URL, BETTER_AUTH_SECRET을 설정하고, GitHub 또는 Google OAuth 앱이나 Resend를 통한 이메일 코드로 로그인할 수 있게 해 주세요.",
+      "closedQuestion": "QR 코드 라이브러리를 클로즈드 소스 앱에서 사용할 수 있나요?",
+      "closedAnswer": "네. qrdx 라이브러리와 @qrdx/cli는 MIT 라이선스라서 라이선스 고지가 코드와 함께 유지되는 한 상업용 프로젝트와 클로즈드 소스 프로젝트에서도 사용할 수 있습니다. qrdx 0.0.47 이전 버전과 @qrdx/cli 0.0.5 이전 버전은 AGPL-3.0-or-later였습니다.",
+      "changesQuestion": "앱을 수정하면 변경 사항을 공개해야 하나요?",
+      "changesAnswer": "수정한 버전을 네트워크 서비스로 운영하는 경우에만 해당합니다. 이때는 사용자에게 같은 라이선스로 소스 코드를 제공해야 합니다. 앱을 기반으로 개발할 계획이라면 먼저 AGPL이 프로젝트에 맞는지 확인해 보세요.",
+      "nameQuestion": "포크 이름을 QRdx로 해도 되나요?",
+      "nameAnswer": "아니요. 이 코드로 만든 포크나 공개 서비스에는 고유한 이름과 로고가 필요하며, 라이선스 고지는 그대로 유지해야 합니다. 본인이나 소속 조직이 QRdx를 자체 이름으로 직접 운영하는 것은 괜찮습니다. 자세한 내용은 상표 정책에서 확인할 수 있습니다.",
+      "shutdownQuestion": "QRdx가 서비스를 종료하면 qrdx.dev의 내 코드는 어떻게 되나요?",
+      "shutdownAnswer": "Never-Hostage 보장에 따라 최소 12개월 전에 공지하고, 모든 데이터를 내보낼 시간을 드리며, 오픈 소스 앱을 직접 서버에서 운영하는 방법을 문서로 안내합니다."
     }
   },
   "ai": {
@@ -4922,7 +5179,11 @@
         "filesUploadedToThisWorkspace": "이 워크스페이스에 업로드된 파일이에요. 대시보드 → 파일에서 관리할 수 있어요.",
         "noLabelFilesYetUpload": "{label}파일이 아직 없어요. 먼저 업로드해 주세요.",
         "add": "추가",
-        "selected": "선택됨"
+        "selected": "선택됨",
+        "loadMore": "더 보기",
+        "loading": "불러오는 중…",
+        "tryAgain": "다시 시도",
+        "couldntLoadYourFiles": "파일을 불러오지 못했어요."
       },
       "sourceListEditor": {
         "thisBlockHoldsUpTo": "이 블록에는 최대 {max, number}개 항목을 넣을 수 있어요.",
@@ -5067,7 +5328,15 @@
       "previous": "이전",
       "pagePageOfPages": "{pages, number}페이지 중 {page, number}페이지",
       "next": "다음",
-      "pages": "페이지"
+      "pages": "페이지",
+      "loadMore": "더 보기",
+      "loading": "불러오는 중",
+      "failed": "다음 페이지를 불러오지 못했어요."
+    },
+    "more": {
+      "load": "더 보기",
+      "loading": "불러오는 중",
+      "failed": "페이지의 이 부분을 불러오지 못했어요."
     },
     "licenceConfirm": {
       "licence": "라이선스:"
@@ -5520,7 +5789,10 @@
           "commissions": "수수료",
           "suspended": "정지됨",
           "approved": "승인됨",
-          "notSet": "설정 안 됨"
+          "notSet": "설정 안 됨",
+          "pagePageOfPagecount": "{page, number} / {pageCount, number} 페이지",
+          "previous": "이전",
+          "next": "다음"
         }
       },
       "authorizedApps": {
@@ -5798,7 +6070,13 @@
           "dubLinkArchived": "Dub 링크를 보관했어요",
           "failedToUpdateDubLink": "Dub 링크를 업데이트하지 못했어요",
           "dubLinkUpdated": "Dub 링크를 업데이트했어요",
-          "unknown": "알 수 없음"
+          "unknown": "알 수 없음",
+          "couldntLoadLinks": "링크를 불러오지 못했어요. 다시 시도해 주세요.",
+          "couldntLoadMoreLinks": "링크를 더 불러오지 못했어요. 다시 시도해 주세요.",
+          "loadMoreLinks": "링크 더 불러오기",
+          "loadingLinks": "링크 불러오는 중…",
+          "tryAgain": "다시 시도",
+          "thatsEveryLink": "모든 링크를 불러왔어요."
         },
         "integrationDetail": {
           "connected": "연결됨",
@@ -5860,7 +6138,13 @@
           "nameSyncIsOn": "{name} 동기화 켜짐",
           "saved": "저장됨",
           "couldntSave": "저장하지 못했어요",
-          "retryFailed": "재시도 실패"
+          "retryFailed": "재시도 실패",
+          "searchPages": "제목으로 페이지 검색",
+          "noPagesMatch": "폼이 있는 일치하는 페이지가 없어요.",
+          "loadMorePages": "페이지 더 불러오기",
+          "loadingPages": "페이지 불러오는 중…",
+          "tryAgain": "다시 시도",
+          "couldntLoadMorePages": "페이지를 더 불러오지 못했어요. 다시 시도해 주세요."
         },
         "slackBotPanel": {
           "qrdxBot": "QRdx 봇",
@@ -6010,7 +6294,13 @@
         "comparePicker": {
           "stopComparingValue": "{value} 비교 중지",
           "addACodeToCompare": "비교할 코드 추가",
-          "upToMaxCompareCodes": "최대 {MAX_COMPARE, number}개 코드"
+          "upToMaxCompareCodes": "최대 {MAX_COMPARE, number}개 코드",
+          "searchCodes": "제목, 링크 또는 대상으로 검색",
+          "mostScanned": "스캔 많은 순",
+          "searching": "검색 중…",
+          "noCodesMatch": "일치하는 코드가 없어요.",
+          "couldntSearch": "코드를 검색하지 못했어요. 다시 시도해 주세요.",
+          "typeToNarrow": "처음 {count, number}개를 표시하고 있어요. 입력해서 범위를 좁혀 보세요."
         },
         "timeZoneSwitch": {
           "currentShowUtc": "{current} · UTC로 보기",
@@ -6097,6 +6387,7 @@
           "barcodes2": "바코드"
         },
         "barcodesList": {
+          "move": "이동",
           "noFolder": "폴더 없음",
           "makeFoldersUnderCodesBarcodes": "코드 아래에 폴더를 만들면 바코드도 함께 사용해요.",
           "emptyTrash": "휴지통 비우기",
@@ -7355,7 +7646,12 @@
           "notUsedYet": "아직 사용 안 함",
           "usedByPagesAndCodes": "{pages, plural, one {페이지 #개} other {페이지 #개}} · {codes, plural, one {코드 #개} other {코드 #개}}에서 사용 중",
           "usedByPages": "{pages, plural, one {페이지 #개} other {페이지 #개}}에서 사용 중",
-          "usedByCodes": "{codes, plural, one {코드 #개} other {코드 #개}}에서 사용 중"
+          "usedByCodes": "{codes, plural, one {코드 #개} other {코드 #개}}에서 사용 중",
+          "loadMoreFiles": "파일 더 불러오기",
+          "loadingMoreFiles": "파일 불러오는 중…",
+          "tryAgain": "다시 시도",
+          "couldntLoadMoreFiles": "파일을 더 불러오지 못했어요. 다시 시도해 주세요.",
+          "allFilesShown": "모든 파일을 불러왔어요."
         }
       },
       "loading": {
@@ -7393,7 +7689,8 @@
           "archived": "보관됨",
           "disabled": "비활성화됨",
           "noQrCodeYet": "QR 코드 없음",
-          "pageLinkCopied": "페이지 링크를 복사했어요"
+          "pageLinkCopied": "페이지 링크를 복사했어요",
+          "pagePageOfPagecountTotal": "{page, number} / {pageCount, number} 페이지 · 총 {total}개 페이지"
         },
         "responses": {
           "page": {
@@ -7439,7 +7736,10 @@
             "deleting": "삭제하는 중…",
             "delete": "삭제",
             "responseDeleted": "응답을 삭제했어요",
-            "deletedResponsesDeleted": "응답 {deleted, number}개를 삭제했어요"
+            "deletedResponsesDeleted": "응답 {deleted, number}개를 삭제했어요",
+            "countSelected": "{count, number}개 선택됨",
+            "clearSelection": "선택 해제",
+            "bulkActions": "일괄 작업"
           }
         },
         "pageListControls": {
@@ -7592,7 +7892,8 @@
             "onlyTeamOwnersAndAdmins": "팀 소유자와 관리자만 엔드포인트를 추가, 변경, 테스트할 수 있어요.",
             "sendScansNewAndChanged": "스캔, 새 코드와 변경된 코드, 폼 응답을 내 서버, Zapier 또는 Make로 보내세요.",
             "thisTeamsPlanNoLonger": "이 팀의 플랜에는 더 이상 웹훅이 포함되어 있지 않아요.",
-            "yourPlanNoLongerIncludes": "현재 플랜에는 더 이상 웹훅이 포함되어 있지 않아요."
+            "yourPlanNoLongerIncludes": "현재 플랜에는 더 이상 웹훅이 포함되어 있지 않아요.",
+            "keptFor30Days": "최신순으로 표시되며 30일 동안 보관돼요. 전송에 실패하면 대기 시간을 점점 늘려 가며 최대 {MAX_DELIVERY_ATTEMPTS, number}번까지 다시 시도해요."
           }
         }
       },
@@ -7666,7 +7967,8 @@
           "yourThemes": "내 테마",
           "noSharedThemesYetUse": "공유 테마가 아직 없어요. 아래 내 테마 중 하나에서 \"이 워크스페이스로 복사\"를 사용하세요.",
           "noSharedThemesYetOwners": "공유 테마가 아직 없어요. 소유자와 관리자가 여기서 테마를 공유할 수 있어요.",
-          "askAWorkspaceOwnerTo": "워크스페이스 소유자에게 업그레이드를 요청하세요."
+          "askAWorkspaceOwnerTo": "워크스페이스 소유자에게 업그레이드를 요청하세요.",
+          "showMoreThemes": "테마 더 보기"
         }
       },
       "home": {
@@ -7716,7 +8018,9 @@
         "move": "이동",
         "nextOrPreviousRow": "다음 또는 이전 행",
         "extendTheSelection": "선택 범위 확장",
-        "withASelection": "선택한 항목이 있을 때"
+        "withASelection": "선택한 항목이 있을 때",
+        "more": "더 보기",
+        "moreActions": "더 많은 작업"
       },
       "domains": {
         "dnsRecords": {
@@ -7962,6 +8266,17 @@
           "notDeliveredError": "전송 실패: {error}",
           "endpointDeleted": "엔드포인트 삭제됨"
         }
+      },
+      "paging": {
+        "navigation": "페이지 이동",
+        "previous": "이전",
+        "next": "다음",
+        "rowsPerPage": "페이지당 행 수",
+        "perPage": "페이지당 {count, number}개",
+        "page": "{page, number}페이지",
+        "pageOf": "{page, number} / {pageCount, number} 페이지",
+        "newer": "최신",
+        "older": "이전 항목"
       }
     },
     "shell": {
