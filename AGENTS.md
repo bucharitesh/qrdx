@@ -35,7 +35,7 @@ bun x vitest run                        # unit and integration tests (tests/**);
 bun run test:node                       # node:test suites next to the code
 ```
 
-The pre-push hook runs the engine build, both typechecks, the lint check (`bun run lint:ci`, which is `ultracite check`) and the tests of the packages your branch changes compared with `origin/staging`, plus the packages that depend on them (`turbo --affected`; unchanged results come from the turbo cache). `bun run prepush`, or `QRDX_PREPUSH=full git push`, runs every test. CI runs on every pull request (affected packages for pull requests into `staging`, everything for release pull requests into `main`) and on every push to `main`. The e2e suites (`bun run --filter docs test:e2e`, `test:e2e:app`, `test:e2e:site`) need a running dev server and Chrome.
+The pre-push hook runs the engine build, both typechecks, the lint check (`bun run lint:ci`, which is `ultracite check`) and the tests of the packages your branch changes compared with `origin/staging`, plus the packages that depend on them (`turbo --affected`; unchanged results come from the turbo cache). `bun run prepush`, or `QRDX_PREPUSH=full git push`, runs every test. CI runs on every pull request (affected packages for pull requests into `staging`, everything for release pull requests into `main`) and on every push to `staging` and `main` (everything). A release pull request and the push to `main` reuse the staging run when the code is identical, so a release doesn't wait for the suite again (`scripts/ci-reuse-check.sh`). The e2e suites (`bun run --filter docs test:e2e`, `test:e2e:app`, `test:e2e:site`) need a running dev server and Chrome.
 
 ## Rules
 
