@@ -1,0 +1,108 @@
+{
+  "id": "event-grad-party",
+  "name": "Grad party",
+  "description": "A light card with a graduation cap and a pill-shaped button under the code.",
+  "category": "use-case",
+  "collection": "events",
+  "contentTypes": ["url"],
+  "tags": ["graduation", "events", "party", "rsvp"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1760
+    },
+    "qr": {
+      "x": 120,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 64,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 64,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.82
+        },
+        "hole": {
+          "x": 12,
+          "y": 12,
+          "width": 1216,
+          "height": 1736,
+          "radius": 54
+        }
+      },
+      {
+        "type": "path",
+        "d": "M620 46.6L679.8 72.6L620 98.6L560.2 72.6ZM586.2 88.2L620 103.8L653.8 88.2L653.8 122C640.8 132.4 599.2 132.4 586.2 122Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M619.48 74.48L665.46 87.02L664.85 116.8L668.75 116.8L668.14 84.18L620.52 70.72ZM664.2 114.2L669.4 114.2A2.6 2.6 0 0 1 672 116.8L672 129.8A2.6 2.6 0 0 1 669.4 132.4L664.2 132.4A2.6 2.6 0 0 1 661.6 129.8L661.6 116.8A2.6 2.6 0 0 1 664.2 114.2Z",
+        "fill": "accent"
+      },
+      {
+        "type": "rect",
+        "x": 170,
+        "y": 1520,
+        "width": 900,
+        "height": 180,
+        "radius": 90,
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan to RSVP",
+        "color": "text",
+        "box": {
+          "x": 230,
+          "y": 1520,
+          "width": 780,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Grad party",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 180,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

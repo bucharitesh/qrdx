@@ -1,0 +1,81 @@
+{
+  "id": "shogatsu-kadomatsu",
+  "name": "Kadomatsu",
+  "description": "A solid card with a kadomatsu over the code and the label underneath, in pine green and gold.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "new-year",
+  "contentTypes": [],
+  "tags": ["new year", "celebration", "japan", "shogatsu"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#14532d",
+      "text": "#ffffff",
+      "accent": "#c9a227"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M590 83L608 71L608 149L590 149ZM611 59L629 44L629 149L611 149ZM632 77L650 65L650 149L632 149ZM581 143C581.08 133.32 570.28 122.52 557 119C556.28 136.52 567.08 147.32 581 143ZM659 143C672.92 147.32 683.72 136.52 683 119C669.72 122.52 658.92 133.32 659 143Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M585.5 140L654.5 140A7.5 7.5 0 0 1 662 147.5L662 171.5A7.5 7.5 0 0 1 654.5 179L585.5 179A7.5 7.5 0 0 1 578 171.5L578 147.5A7.5 7.5 0 0 1 585.5 140Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Happy New Year",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Akemashite omedetou",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

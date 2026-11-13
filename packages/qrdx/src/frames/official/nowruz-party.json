@@ -1,0 +1,90 @@
+{
+  "id": "nowruz-party",
+  "name": "Nowruz party ticket",
+  "description": "A ticket with side notches, a perforated line and a stub for the label and a dish of sprouted wheat, in lapis blue and sprout green.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "nowruz",
+  "contentTypes": [],
+  "tags": ["nowruz", "persian new year", "spring", "party", "ticket"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1820
+    },
+    "qr": {
+      "x": 120,
+      "y": 300,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#1e40af",
+      "text": "#ffffff",
+      "accent": "#86efac"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M64 0L1176 0A64 64 0 0 1 1240 64L1240 1380A60 60 0 0 0 1240 1500L1240 1756A64 64 0 0 1 1176 1820L64 1820A64 64 0 0 1 0 1756L0 1500A60 60 0 0 0 0 1380L0 64A64 64 0 0 1 64 0Z",
+        "fill": "frame"
+      },
+      {
+        "type": "line",
+        "x1": 100,
+        "y1": 1440,
+        "x2": 1140,
+        "y2": 1440,
+        "width": 10,
+        "dash": [36, 24],
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.55
+        }
+      },
+      {
+        "type": "path",
+        "d": "M575 156C578.94 140.96 573.54 109.57 563 86.25C560.86 111.75 566.26 143.14 575 156ZM584 156C588.46 140.18 584.14 106.43 574.4 81C571.38 108.07 575.7 141.82 584 156ZM593 156C597.97 139.37 594.73 103.26 585.8 75.75C581.91 104.41 585.15 140.53 593 156ZM602 156C607.46 138.54 605.3 100.06 597.2 70.5C592.46 100.79 594.62 139.26 602 156ZM611 156C616.95 137.68 615.87 96.84 608.6 65.25C603.01 97.18 604.09 138.02 611 156ZM620 156C626.43 136.8 626.43 93.6 620 60C613.57 93.6 613.57 136.8 620 156ZM629 156C635.91 138.02 636.99 97.18 631.4 65.25C624.13 96.84 623.05 137.68 629 156ZM638 156C645.38 139.26 647.54 100.79 642.8 70.5C634.7 100.06 632.54 138.54 638 156ZM647 156C654.85 140.53 658.09 104.41 654.2 75.75C645.27 103.26 642.03 139.37 647 156ZM656 156C664.3 141.82 668.62 108.07 665.6 81C655.86 106.43 651.54 140.18 656 156ZM665 156C673.74 143.14 679.14 111.75 677 86.25C666.46 109.57 661.06 140.96 665 156Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M563 150L677 150C674 171 653 183 620 183C587 183 566 171 563 150ZM587 120L653 120A3 3 0 0 1 656 123L656 127.5A3 3 0 0 1 653 130.5L587 130.5A3 3 0 0 1 584 127.5L584 123A3 3 0 0 1 587 120ZM656 124.5L677 111L674 135Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Nowruz party",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1490,
+          "width": 1040,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan for tickets",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1675,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

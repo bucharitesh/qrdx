@@ -1,0 +1,71 @@
+{
+  "id": "winter-skating",
+  "name": "Skating rink",
+  "description": "An arched card, like a window, with an ice skate, in night slate and ice blue.",
+  "category": "seasonal",
+  "collection": "seasons",
+  "occasion": "winter",
+  "contentTypes": [],
+  "tags": ["winter", "snow", "skating", "rink"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1880
+    },
+    "qr": {
+      "x": 160,
+      "y": 470,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#1e293b",
+      "text": "#ffffff",
+      "accent": "#bae6fd"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M0 660A660 660 0 0 1 1320 660L1320 1840Q1320 1880 1280 1880L40 1880Q0 1880 0 1840Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M50 660A610 610 0 0 1 1270 660L1270 1830L50 1830ZM62 660L62 1818L1258 1818L1258 660A598 598 0 0 0 62 660Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.35
+        }
+      },
+      {
+        "type": "path",
+        "d": "M618 180L660 180L663 228C687 231 708 243 711 261L711 273L615 273Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M610.5 288L715.5 288A4.5 4.5 0 0 1 720 292.5L720 292.5A4.5 4.5 0 0 1 715.5 297L610.5 297A4.5 4.5 0 0 1 606 292.5L606 292.5A4.5 4.5 0 0 1 610.5 288ZM627 270L636 270L636 291L627 291ZM690 270L699 270L699 291L690 291ZM629.25 198L651.75 198A2.25 2.25 0 0 1 654 200.25L654 201A2.25 2.25 0 0 1 651.75 203.25L629.25 203.25A2.25 2.25 0 0 1 627 201L627 200.25A2.25 2.25 0 0 1 629.25 198ZM629.25 210L654.75 210A2.25 2.25 0 0 1 657 212.25L657 213A2.25 2.25 0 0 1 654.75 215.25L629.25 215.25A2.25 2.25 0 0 1 627 213L627 212.25A2.25 2.25 0 0 1 629.25 210ZM629.25 222L657.75 222A2.25 2.25 0 0 1 660 224.25L660 225A2.25 2.25 0 0 1 657.75 227.25L629.25 227.25A2.25 2.25 0 0 1 627 225L627 224.25A2.25 2.25 0 0 1 629.25 222Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for session times",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1610,
+          "width": 1040,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

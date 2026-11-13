@@ -1,0 +1,88 @@
+{
+  "id": "kings-day-crown",
+  "name": "Koningsdag crown",
+  "description": "A solid card with a crown over the code and the label underneath, in orange.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "kings-day",
+  "contentTypes": [],
+  "tags": [
+    "king's day",
+    "koningsdag",
+    "netherlands",
+    "april 27",
+    "crown",
+    "orange"
+  ],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#c2410c",
+      "text": "#ffffff",
+      "accent": "#fed7aa"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M563 146L557 80L590 110L620 65L650 110L683 80L677 146ZM567.5 152L672.5 152A4.5 4.5 0 0 1 677 156.5L677 162.5A4.5 4.5 0 0 1 672.5 167L567.5 167A4.5 4.5 0 0 1 563 162.5L563 156.5A4.5 4.5 0 0 1 567.5 152Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M612.5 125A7.5 7.5 0 1 1 627.5 125A7.5 7.5 0 1 1 612.5 125ZM584.6 131A5.4 5.4 0 1 1 595.4 131A5.4 5.4 0 1 1 584.6 131ZM644.6 131A5.4 5.4 0 1 1 655.4 131A5.4 5.4 0 1 1 644.6 131Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Fijne Koningsdag",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan me",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

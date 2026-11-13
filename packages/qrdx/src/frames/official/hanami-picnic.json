@@ -1,0 +1,90 @@
+{
+  "id": "hanami-picnic",
+  "name": "Hanami picnic",
+  "description": "A ticket with side notches, a perforated line and a stub for the label and a cherry blossom, in plum and blossom pink.",
+  "category": "seasonal",
+  "collection": "seasons",
+  "occasion": "cherry-blossom",
+  "contentTypes": [],
+  "tags": ["cherry blossom", "hanami", "sakura", "spring", "picnic", "rsvp"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1820
+    },
+    "qr": {
+      "x": 120,
+      "y": 300,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#831843",
+      "text": "#ffffff",
+      "accent": "#f9a8d4"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M64 0L1176 0A64 64 0 0 1 1240 64L1240 1380A60 60 0 0 0 1240 1500L1240 1756A64 64 0 0 1 1176 1820L64 1820A64 64 0 0 1 0 1756L0 1500A60 60 0 0 0 0 1380L0 64A64 64 0 0 1 64 0Z",
+        "fill": "frame"
+      },
+      {
+        "type": "line",
+        "x1": 100,
+        "y1": 1440,
+        "x2": 1140,
+        "y2": 1440,
+        "width": 10,
+        "dash": [36, 24],
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.55
+        }
+      },
+      {
+        "type": "path",
+        "d": "M620 123C602 108 597.5 81 609.5 66L620 75L630.5 66C642.5 81 638 108 620 123ZM620 123C628.7 101.25 652.99 88.62 670.97 95.4L665.65 108.17L677.45 115.37C666.9 131.42 639.83 135.48 620 123ZM620 123C643.38 124.56 662.89 143.75 662 162.94L648.21 161.83L645.01 175.29C626.48 170.2 614.25 145.72 620 123ZM620 123C625.75 145.72 613.52 170.2 594.99 175.29L591.79 161.83L578 162.94C577.11 143.75 596.62 124.56 620 123ZM620 123C600.17 135.48 573.1 131.42 562.55 115.37L574.35 108.17L569.03 95.4C587.01 88.62 611.3 101.25 620 123Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M609.5 123A10.5 10.5 0 1 1 630.5 123A10.5 10.5 0 1 1 609.5 123ZM627.86 107.22A3.6 3.6 0 1 1 635.06 107.22A3.6 3.6 0 1 1 627.86 107.22ZM634.95 129.03A3.6 3.6 0 1 1 642.15 129.03A3.6 3.6 0 1 1 634.95 129.03ZM616.4 142.5A3.6 3.6 0 1 1 623.6 142.5A3.6 3.6 0 1 1 616.4 142.5ZM597.85 129.03A3.6 3.6 0 1 1 605.05 129.03A3.6 3.6 0 1 1 597.85 129.03ZM604.94 107.22A3.6 3.6 0 1 1 612.14 107.22A3.6 3.6 0 1 1 604.94 107.22Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Hanami picnic",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1490,
+          "width": 1040,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan to RSVP",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1675,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

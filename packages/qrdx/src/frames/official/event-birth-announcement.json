@@ -1,0 +1,71 @@
+{
+  "id": "event-birth-announcement",
+  "name": "Birth announcement",
+  "description": "An envelope with a pointed flap over the code and a baby bottle.",
+  "category": "use-case",
+  "collection": "events",
+  "contentTypes": ["url"],
+  "tags": ["baby shower", "baby", "events", "announcement", "newborn"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1880
+    },
+    "qr": {
+      "x": 160,
+      "y": 500,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1320,
+        "height": 1880,
+        "radius": 40,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.88
+        }
+      },
+      {
+        "type": "path",
+        "d": "M40 0L1280 0Q1320 0 1300 40L700 490Q660 520 620 490L20 40Q0 0 40 0Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.7
+        }
+      },
+      {
+        "type": "path",
+        "d": "M648.8 170.4L671.2 170.4A14 14 0 0 1 685.2 184.4L685.2 237.6A14 14 0 0 1 671.2 251.6L648.8 251.6A14 14 0 0 1 634.8 237.6L634.8 184.4A14 14 0 0 1 648.8 170.4ZM642.5 190A2.1 2.1 0 0 0 640.4 192.1L640.4 192.1A2.1 2.1 0 0 0 642.5 194.2L655.1 194.2A2.1 2.1 0 0 0 657.2 192.1L657.2 192.1A2.1 2.1 0 0 0 655.1 190ZM642.5 204A2.1 2.1 0 0 0 640.4 206.1L640.4 206.1A2.1 2.1 0 0 0 642.5 208.2L662.1 208.2A2.1 2.1 0 0 0 664.2 206.1L664.2 206.1A2.1 2.1 0 0 0 662.1 204ZM642.5 218A2.1 2.1 0 0 0 640.4 220.1L640.4 220.1A2.1 2.1 0 0 0 642.5 222.2L655.1 222.2A2.1 2.1 0 0 0 657.2 220.1L657.2 220.1A2.1 2.1 0 0 0 655.1 218ZM634.8 157.8L685.2 157.8A4.2 4.2 0 0 1 689.4 162L689.4 169A4.2 4.2 0 0 1 685.2 173.2L634.8 173.2A4.2 4.2 0 0 1 630.6 169L630.6 162A4.2 4.2 0 0 1 634.8 157.8ZM650.2 157.8C650.2 141 654.4 131.2 660 128.4C665.6 131.2 669.8 141 669.8 157.8Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Meet our baby",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 1630,
+          "width": 1040,
+          "height": 180
+        }
+      }
+    ]
+  }
+}

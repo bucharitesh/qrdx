@@ -1,0 +1,113 @@
+{
+  "id": "event-baby-gifts",
+  "name": "Baby gift list",
+  "description": "A light card with a baby bodysuit and a solid label band.",
+  "category": "use-case",
+  "collection": "events",
+  "contentTypes": ["url"],
+  "tags": ["baby shower", "baby", "events", "registry", "gifts"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1770
+    },
+    "qr": {
+      "x": 120,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "frame",
+        "hole": {
+          "x": 20,
+          "y": 20,
+          "width": 1200,
+          "height": 1730,
+          "radius": 38
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 250,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 60,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M592 46L608.8 46C611.6 55.8 628.4 55.8 631.2 46L648 46L676 68.4L663.4 88L650.8 79.6L650.8 121.6C650.8 138.4 639.6 149.6 631.2 152.4L628.4 163.6L611.6 163.6L608.8 152.4C600.4 149.6 589.2 138.4 589.2 121.6L589.2 79.6L576.6 88L564 68.4ZM610.48 156.6A2.52 2.52 0 1 0 615.52 156.6A2.52 2.52 0 1 0 610.48 156.6ZM624.48 156.6A2.52 2.52 0 1 0 629.52 156.6A2.52 2.52 0 1 0 624.48 156.6Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M620 113.76C617.2 110.4 605.72 102.56 606 95.84C606.28 88.56 617.2 87.44 620 94.72C622.8 87.44 633.72 88.56 634 95.84C634.28 102.56 622.8 110.4 620 113.76Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for the gift list",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1550,
+          "width": 1040,
+          "height": 190
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Baby on the way",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 180,
+          "width": 960,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

@@ -1,0 +1,98 @@
+{
+  "id": "event-tournament",
+  "name": "Tournament draw",
+  "description": "A folder tab on top carrying the label and a trophy.",
+  "category": "use-case",
+  "collection": "events",
+  "contentTypes": ["url"],
+  "tags": ["sports", "match day", "events", "tournament", "brackets"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1560
+    },
+    "qr": {
+      "x": 120,
+      "y": 290,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#8a8a8a"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1000,
+        "height": 220,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 170,
+        "width": 1240,
+        "height": 1390,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 170,
+        "width": 200,
+        "height": 100,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M858.8 49.6L921.2 49.6L921.2 76C921.2 100 906.8 112 890 112C873.2 112 858.8 100 858.8 76ZM858.8 89.2A18 18 0 0 1 858.8 53.2L858.8 60.4A10.8 10.8 0 0 0 858.8 82ZM921.2 53.2A18 18 0 0 1 921.2 89.2L921.2 82A10.8 10.8 0 0 0 921.2 60.4Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M884 109.6L896 109.6L896 131.2L884 131.2ZM868.4 131.2L911.6 131.2A2.4 2.4 0 0 1 914 133.6L914 138.4A2.4 2.4 0 0 1 911.6 140.8L868.4 140.8A2.4 2.4 0 0 1 866 138.4L866 133.6A2.4 2.4 0 0 1 868.4 131.2ZM862.4 140.8L917.6 140.8A3.6 3.6 0 0 1 921.2 144.4L921.2 149.2A3.6 3.6 0 0 1 917.6 152.8L862.4 152.8A3.6 3.6 0 0 1 858.8 149.2L858.8 144.4A3.6 3.6 0 0 1 862.4 140.8Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Tournament draw",
+        "color": "text",
+        "box": {
+          "x": 60,
+          "y": 25,
+          "width": 740,
+          "height": 150
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan for the brackets",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 1400,
+          "width": 1000,
+          "height": 100
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

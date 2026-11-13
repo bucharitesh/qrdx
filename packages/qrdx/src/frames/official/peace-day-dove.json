@@ -1,0 +1,66 @@
+{
+  "id": "peace-day-dove",
+  "name": "Peace dove",
+  "description": "An arched card, like a window, with a dove, in peace blue and white.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "peace-day",
+  "contentTypes": [],
+  "tags": ["international day of peace", "peace", "september 21", "dove"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1880
+    },
+    "qr": {
+      "x": 160,
+      "y": 470,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#1d4ed8",
+      "text": "#ffffff",
+      "accent": "#dbeafe"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M0 660A660 660 0 0 1 1320 660L1320 1840Q1320 1880 1280 1880L40 1880Q0 1880 0 1840Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M50 660A610 610 0 0 1 1270 660L1270 1830L50 1830ZM62 660L62 1818L1258 1818L1258 660A598 598 0 0 0 62 660Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.35
+        }
+      },
+      {
+        "type": "path",
+        "d": "M600 234C624 225 645 231 660 243C666 210 690 186 723 180C711 210 699 234 681 252C696 255 711 264 720 276C690 282 666 276 651 264C633 267 618 258 609 246L594 246Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "International Peace Day",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1610,
+          "width": 1040,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

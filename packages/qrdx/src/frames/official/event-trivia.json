@@ -1,0 +1,79 @@
+{
+  "id": "event-trivia",
+  "name": "Trivia night",
+  "description": "A speech bubble around the code with a question in a speech bubble and the label inside.",
+  "category": "use-case",
+  "collection": "events",
+  "contentTypes": ["url"],
+  "tags": ["games", "events", "trivia", "quiz"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1820
+    },
+    "qr": {
+      "x": 120,
+      "y": 360,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1670,
+        "radius": 90,
+        "fill": "frame"
+      },
+      {
+        "type": "polygon",
+        "points": [[930, 1660], [1110, 1660], [1160, 1820]],
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M593.6 53.8L646.4 53.8A19.8 19.8 0 0 1 666.2 73.6L666.2 106.6A19.8 19.8 0 0 1 646.4 126.4L593.6 126.4A19.8 19.8 0 0 1 573.8 106.6L573.8 73.6A19.8 19.8 0 0 1 593.6 53.8ZM612.29 78.77L612.53 77.24L612.91 76.1L613.46 75.03L614.17 74.07L615.03 73.22L616.01 72.52L617.08 71.98L618.22 71.61L619.41 71.42L620.62 71.42L621.8 71.61L622.95 71.99L624.02 72.53L624.99 73.24L625.84 74.09L626.55 75.06L627.1 76.13L627.48 77.27L627.67 78.46L627.68 79.66L627.5 80.85L627.14 81.99L626.6 83.07L625.89 84.06L616.17 95.64L615.6 103.3L624.4 103.3L623.83 99.96L632.65 89.69L634.14 87.61L635.29 85.3L636.07 82.85L636.46 80.3L636.44 77.72L636.03 75.18L635.22 72.73L634.04 70.44L632.52 68.36L630.7 66.54L628.61 65.03L626.31 63.86L623.86 63.06L621.32 62.65L618.74 62.65L616.19 63.04L613.74 63.83L611.44 64.99L609.35 66.5L607.52 68.31L605.99 70.39L604.8 72.68L603.99 75.12L603.61 77.32ZM614.5 114.3A5.5 5.5 0 1 0 625.5 114.3A5.5 5.5 0 1 0 614.5 114.3ZM589.2 117.6L611.2 117.6L584.8 146.2Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Join the quiz",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1465,
+          "width": 1040,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Trivia night",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 170,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

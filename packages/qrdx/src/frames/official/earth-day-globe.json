@@ -1,0 +1,77 @@
+{
+  "id": "earth-day-globe",
+  "name": "Earth Day globe",
+  "description": "A solid card with a globe over the code and the label underneath, in forest green and sky blue.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "earth-day",
+  "contentTypes": [],
+  "tags": ["earth day", "environment", "april 22", "globe"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#14532d",
+      "text": "#ffffff",
+      "accent": "#38bdf8"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M551 110A69 69 0 1 1 689 110A69 69 0 1 1 551 110ZM560 110A60 60 0 1 0 680 110A60 60 0 1 0 560 110ZM593 110A27 64.5 0 1 1 647 110A27 64.5 0 1 1 593 110ZM600.5 110A19.5 60 0 1 0 639.5 110A19.5 60 0 1 0 600.5 110ZM557 105.5L683 105.5L683 114.5L557 114.5ZM558.39 92.74L565.85 89.93L573.35 87.51L580.96 85.46L588.66 83.77L596.43 82.45L604.26 81.51L612.12 80.94L620 80.75L627.88 80.94L635.74 81.51L643.57 82.45L651.34 83.77L659.04 85.46L666.65 87.51L674.15 89.93L681.61 92.74L684.25 85.72L676.62 82.85L668.78 80.32L660.82 78.17L652.77 76.41L644.64 75.03L636.46 74.04L628.24 73.45L620 73.25L611.76 73.45L603.54 74.04L595.36 75.03L587.23 76.41L579.18 78.17L571.22 80.32L563.38 82.85L555.75 85.72ZM681.61 127.26L674.15 130.07L666.65 132.49L659.04 134.54L651.34 136.23L643.57 137.55L635.74 138.49L627.88 139.06L620 139.25L612.12 139.06L604.26 138.49L596.43 137.55L588.66 136.23L580.96 134.54L573.35 132.49L565.85 130.07L558.39 127.26L555.75 134.28L563.38 137.15L571.22 139.68L579.18 141.83L587.23 143.59L595.36 144.97L603.54 145.96L611.76 146.55L620 146.75L628.24 146.55L636.46 145.96L644.64 144.97L652.77 143.59L660.82 141.83L668.78 139.68L676.62 137.15L684.25 134.28Z",
+        "fill": "text",
+        "fillRule": "evenodd"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Happy Earth Day",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan me",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

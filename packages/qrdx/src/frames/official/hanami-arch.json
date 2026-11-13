@@ -1,0 +1,71 @@
+{
+  "id": "hanami-arch",
+  "name": "Blossom season arch",
+  "description": "An arched card, like a window, with a cherry blossom, in spring blue and blossom pink.",
+  "category": "seasonal",
+  "collection": "seasons",
+  "occasion": "cherry-blossom",
+  "contentTypes": [],
+  "tags": ["cherry blossom", "hanami", "sakura", "spring"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1880
+    },
+    "qr": {
+      "x": 160,
+      "y": 470,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#1e3a8a",
+      "text": "#ffffff",
+      "accent": "#fbcfe8"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M0 660A660 660 0 0 1 1320 660L1320 1840Q1320 1880 1280 1880L40 1880Q0 1880 0 1840Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M50 660A610 610 0 0 1 1270 660L1270 1830L50 1830ZM62 660L62 1818L1258 1818L1258 660A598 598 0 0 0 62 660Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.35
+        }
+      },
+      {
+        "type": "path",
+        "d": "M660 243C642 228 637.5 201 649.5 186L660 195L670.5 186C682.5 201 678 228 660 243ZM660 243C668.7 221.25 692.99 208.62 710.97 215.4L705.65 228.17L717.45 235.37C706.9 251.42 679.83 255.48 660 243ZM660 243C683.38 244.56 702.89 263.75 702 282.94L688.21 281.83L685.01 295.29C666.48 290.2 654.25 265.72 660 243ZM660 243C665.75 265.72 653.52 290.2 634.99 295.29L631.79 281.83L618 282.94C617.11 263.75 636.62 244.56 660 243ZM660 243C640.17 255.48 613.1 251.42 602.55 235.37L614.35 228.17L609.03 215.4C627.01 208.62 651.3 221.25 660 243Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M649.5 243A10.5 10.5 0 1 1 670.5 243A10.5 10.5 0 1 1 649.5 243ZM667.86 227.22A3.6 3.6 0 1 1 675.06 227.22A3.6 3.6 0 1 1 667.86 227.22ZM674.95 249.03A3.6 3.6 0 1 1 682.15 249.03A3.6 3.6 0 1 1 674.95 249.03ZM656.4 262.5A3.6 3.6 0 1 1 663.6 262.5A3.6 3.6 0 1 1 656.4 262.5ZM637.85 249.03A3.6 3.6 0 1 1 645.05 249.03A3.6 3.6 0 1 1 637.85 249.03ZM644.94 227.22A3.6 3.6 0 1 1 652.14 227.22A3.6 3.6 0 1 1 644.94 227.22Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Cherry blossom season",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1610,
+          "width": 1040,
+          "height": 170
+        }
+      }
+    ]
+  }
+}
