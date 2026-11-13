@@ -188,6 +188,27 @@ export const BLOG_ART = {
     // clear of the finder and alignment patterns a camera locks onto.
     damage: { id: "code", x: 320, y: 600, w: 300, h: 300 },
   },
+  flamCover: {
+    file: "flam/cover",
+    size: COVER,
+    // Round codes like the ones the post is about, drawn with QRdx's own
+    // circle shape and circle frame: three links, three different dot rings.
+    codes: [
+      { id: "c1", value: url("/"), style: "dots", ring: { text: "SCAN ME" } },
+      {
+        id: "c2",
+        value: url("/playground"),
+        style: "dots",
+        ring: { text: "SCAN ME" },
+      },
+      {
+        id: "c3",
+        value: url("/docs"),
+        style: "dots",
+        ring: { text: "SCAN ME" },
+      },
+    ],
+  },
   understandingPipeline: {
     file: "understanding-qr-codes/scan-pipeline",
     size: [560, 240],
