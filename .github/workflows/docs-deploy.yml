@@ -22,6 +22,12 @@ on:
       - apps/docs/content/docs/**
       - apps/docs/messages/**
       - apps/docs/lib/seo-file-dates.json
+      # The generated inputs' sources: the docs' message subset and the OpenAPI
+      # document's copy (apps/docs-site/scripts/zone-inputs.mjs)
+      - apps/docs/scripts/i18n-docs-messages.ts
+      - apps/docs/lib/i18n/docs-messages.ts
+      - apps/docs/public/openapi.json
+      - apps/docs/scripts/openapi/export.ts
       # The product facts snapshot (apps/docs/lib/product-facts.ts and what
       # it reads)
       - apps/docs/lib/product-facts.ts

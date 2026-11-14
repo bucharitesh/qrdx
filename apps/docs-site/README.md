@@ -17,12 +17,14 @@ To see it through the main app as readers will, run the main app with `DOCS_ZONE
 
 ## What it reads from the main app
 
-`scripts/zone-inputs.mjs` runs before `dev`, `build`, `typecheck` and `test`:
+`scripts/zone-inputs.mjs` runs before `dev`, `build`, `typecheck` and `test`, and writes every generated input (none of them is committed):
 
 - the product facts snapshot (`bun run --filter docs facts:snapshot` writes `packages/config/facts.generated.json` from `apps/docs/lib/product-facts.ts`), for `{facts.…}` in the docs;
+- the docs' message catalogs (`bun run --filter docs i18n:docs-messages` writes the `DOCS_NAMESPACES` of `apps/docs/messages` to `packages/i18n/messages`), which `lib/i18n/messages.ts` loads;
+- the OpenAPI document's copy (`bun run --filter docs openapi:export` writes `packages/docs-assets/openapi.json`), for the API reference pages;
 - `${MAIN_ZONE_URL}/zone/availability.json` into `generated/zone-availability.json`, for `<IfAvailable>` and the sidebar (`lib/zone-availability.ts`). When it can't be fetched, every feature that needs setup counts as unavailable; with `DOCS_REQUIRE_AVAILABILITY=1` (the deploy workflow) the build stops instead.
 
-It also reads the message catalogs from `apps/docs/messages`, the recorded file dates from `apps/docs/lib/seo-file-dates.json`, and the OpenAPI document, registry sources, pattern catalog and catalogue tiles from `@repo/docs-assets`.
+The content stays in `apps/docs/content/docs` and the recorded file dates in `apps/docs/lib/seo-file-dates.json`. The shared code comes from packages: `@repo/i18n` (languages, URLs, docs SEO), `@repo/analytics` (consent and analytics), `@repo/docs-assets` (registry, pattern catalog, catalogue tiles), `@repo/design-system`, `@repo/config` and `@repo/availability`.
 
 ## What it gives the main app
 
@@ -30,7 +32,7 @@ It also reads the message catalogs from `apps/docs/messages`, the recorded file 
 
 ## How it differs from the main app's copy
 
-- No database, no auth and no server actions. Analytics and the cookie banner work as on the main app's pages, without the session sync: PostHog keeps the identity the main app's pages set.
+- No database, no auth and no server actions. Analytics and the cookie banner (`@repo/analytics`) work as on the main app's pages, without the plan lookup; the session sync asks the main app (same origin). The docs site records its own pages only (`lib/analytics/privacy.ts`), and its privacy policy links are plain `<a>` elements.
 - `lib/metadata.ts` writes every absolute URL against `NEXT_PUBLIC_APP_URL` (qrdx.dev), never against this project's own domain.
 - `ZoneLink` (`components/zone-link.tsx`): next/link for docs pages, a plain `<a>` for every other page, which belongs to the main app. `LocaleLink` and `useLocaleRouter` go through it.
 - `assetPrefix: "/docs-static"`, so the main app can proxy this app's `/_next` files without clashing with its own.
