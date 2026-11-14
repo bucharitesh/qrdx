@@ -14,6 +14,7 @@ export function StatCard({
   value,
   hint,
   href,
+  crossZone = false,
   alert = false,
 }: {
   label: string;
@@ -21,6 +22,11 @@ export function StatCard({
   hint?: ReactNode;
   /** The list behind the number */
   href?: string;
+  /**
+   * `href` is served by the other zone (this app or the back-office
+   * console): a plain <a>, since next/link can't navigate between zones.
+   */
+  crossZone?: boolean;
   /** Draws attention (something needs a look) */
   alert?: boolean;
 }) {
@@ -45,12 +51,16 @@ export function StatCard({
       )}
     </Card>
   );
-  return href ? (
-    <Link className="block rounded-xl focus-visible:outline-2" href={href}>
+  if (!href) return card;
+  const className = "block rounded-xl focus-visible:outline-2";
+  return crossZone ? (
+    <a className={className} href={href}>
+      {card}
+    </a>
+  ) : (
+    <Link className={className} href={href}>
       {card}
     </Link>
-  ) : (
-    card
   );
 }
 

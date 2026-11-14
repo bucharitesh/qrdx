@@ -1,4 +1,11 @@
+import { withoutAuthCookies } from "@repo/auth/auth-cookies";
 import { workspaceSlugFromPath } from "@repo/availability/workspace-pattern";
+import {
+  CONSOLE_KEY_HEADER,
+  hasDotSegment,
+  isConsolePath,
+  lowerCasedZonePrefix,
+} from "@repo/next-config/console-zone";
 import {
   appCsp,
   createNonce,
@@ -6,9 +13,14 @@ import {
   NONCE_ROUTE,
   reportingEndpoints,
 } from "@repo/next-config/csp";
+import {
+  hostMatcher,
+  platformHostsPattern,
+} from "@repo/next-config/platform-hosts";
 import { headers } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
 import { routeCustomDomain } from "@/app/(app)/dashboard/domains/_lib/host-routing";
+import { env } from "@/env";
 import { sessionCheckPath } from "@/lib/account/session-origin";
 import {
   getSessionAllowingHold,
@@ -33,6 +45,47 @@ const cspOptions = cspOptionsFromEnv();
 const CSP_HEADER = cspHeaderName();
 const REPORTING_ENDPOINTS = reportingEndpoints(cspOptions);
 
+// The back-office console serves some /admin sections once CONSOLE_ORIGIN is
+// set: next.config.ts proxies them there, on QRdx's own hosts only
+// (@repo/next-config/console-zone). Unset, every /admin page is this app's
+// own and nothing below changes.
+const CONSOLE_ON = Boolean(env.CONSOLE_ORIGIN);
+const onPlatformHost = hostMatcher(
+  platformHostsPattern(env.NEXT_PUBLIC_APP_URL),
+);
+
+/** Whether next.config.ts sends this request on to the console. */
+const forConsole = (request: NextRequest) =>
+  CONSOLE_ON &&
+  isConsolePath(request.nextUrl.pathname) &&
+  onPlatformHost(request.headers.get("host"));
+
+/**
+ * A console page: it sets its own policy with its own nonce, so this app
+ * adds none (one policy per page), and it gets the zone key, so it can tell
+ * requests that came through this app. Any copy the browser sent is dropped.
+ * `signedOut`: passed on without the session (Better Auth's cookies), so the
+ * console sees no one signed in.
+ */
+function toConsole(
+  request: NextRequest,
+  { signedOut = false }: { signedOut?: boolean } = {},
+): NextResponse {
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.delete(CONSOLE_KEY_HEADER);
+  requestHeaders.delete(WORKSPACE_HEADER);
+  if (env.CONSOLE_ZONE_KEY) {
+    requestHeaders.set(CONSOLE_KEY_HEADER, env.CONSOLE_ZONE_KEY);
+  }
+  if (signedOut) {
+    const cookie = withoutAuthCookies(requestHeaders.get("cookie") ?? "");
+    if (cookie) requestHeaders.set("cookie", cookie);
+    else requestHeaders.delete("cookie");
+    requestHeaders.delete("authorization");
+  }
+  return NextResponse.next({ request: { headers: requestHeaders } });
+}
+
 /**
  * Continues the request. Pages under /dashboard/<slug> get the slug as a
  * request header (lib/scope.ts reads it, and so do the server actions they
@@ -41,6 +94,9 @@ const REPORTING_ENDPOINTS = reportingEndpoints(cspOptions);
  * from the request's policy and puts on every script it renders.
  */
 function next(request: NextRequest): NextResponse {
+  if (forConsole(request)) {
+    return toConsole(request);
+  }
   const { pathname } = request.nextUrl;
   const slug = workspaceSlugFromPath(pathname);
   const nonce = CSP_ENABLED && NONCE_ROUTE.test(pathname);
@@ -74,6 +130,24 @@ export default async function proxy(request: NextRequest) {
   if (customDomainResponse) {
     return customDomainResponse;
   }
+  // Next's rewrites match /ADMIN/growth as /admin/growth, but this proxy's
+  // matchers and the pages are case-sensitive: any other casing of /admin or
+  // /console-static goes to the lower-case path first (it was a 404 before),
+  // so nothing reaches the console without passing through here.
+  const lowerCased = lowerCasedZonePrefix(request.nextUrl.pathname);
+  if (lowerCased) {
+    const url = request.nextUrl.clone();
+    url.pathname = lowerCased;
+    return NextResponse.redirect(url, 308);
+  }
+  // No dot segments into or out of the console's paths (its assets come
+  // here for this check alone: no session lookup).
+  if (
+    isConsolePath(request.nextUrl.pathname) &&
+    hasDotSegment(request.nextUrl.pathname)
+  ) {
+    return new NextResponse("Not found", { status: 404 });
+  }
   // The catch-all matcher also reaches here on hosts that aren't custom domains.
   const appPath = APP_PATHS.test(request.nextUrl.pathname);
   if (!(appPath || ADMIN_PATHS.test(request.nextUrl.pathname))) {
@@ -104,11 +178,17 @@ export default async function proxy(request: NextRequest) {
   // Used from a different country and browser than where it signed in: the
   // check page asks "Confirm it's you" before any page here renders. Server
   // actions posted here go on: their own session reads see no session (and
-  // the gated ones answer CONFIRMATION_REQUIRED).
+  // the gated ones answer CONFIRMATION_REQUIRED). The console can't tell a
+  // held session (its own session lookup comes from its servers, not the
+  // visitor's country), so a server action headed there is checked here and
+  // sent on without the session: it sees no one signed in, as this app's
+  // own actions do.
+  const action = request.headers.has("next-action");
   if (
-    !request.headers.has("next-action") &&
+    (!action || forConsole(request)) &&
     (await isSessionHeld(session.session, requestHeaders))
   ) {
+    if (action) return toConsole(request, { signedOut: true });
     return NextResponse.redirect(
       new URL(sessionCheckPath(pathname + request.nextUrl.search), request.url),
     );
@@ -134,6 +214,10 @@ export const config = {
     // Nonce routes without a sign-in redirect (@repo/next-config/csp NONCE_ROUTE).
     "/admin",
     "/admin/:path*",
+    // The console's prefixes in any casing (its assets too): next.config's
+    // rewrites match them all, so each passes through here first.
+    "/:prefix([aA][dD][mM][iI][nN])/:path*",
+    "/:prefix([cC][oO][nN][sS][oO][lL][eE]-[sS][tT][aA][tT][iI][cC])/:path*",
     "/oauth/:path*",
     "/invite/:path*",
     "/join/:path*",
