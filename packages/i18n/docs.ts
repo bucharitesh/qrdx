@@ -186,6 +186,16 @@ export interface DocsZoneOptions {
   markdown: { has: RouteCondition[]; missing?: RouteCondition[] };
 }
 
+/**
+ * `url` without its trailing slashes. A loop rather than /\/+$/, which
+ * backtracks on every position of a long run of slashes.
+ */
+function withoutTrailingSlashes(url: string): string {
+  let end = url.length;
+  while (end > 0 && url[end - 1] === "/") end--;
+  return url.slice(0, end);
+}
+
 const langParam = (segments: readonly string[]) =>
   segments.length > 0 ? `:lang(${segments.join("|")})` : null;
 
@@ -204,7 +214,7 @@ export function docsZoneRewrites(
   options: DocsZoneOptions
 ): ZoneRewrite[] {
   if (!zoneUrl) return [];
-  const zone = zoneUrl.replace(/\/+$/, "");
+  const zone = withoutTrailingSlashes(zoneUrl);
   const lang = langParam(
     options.translatedSegments ?? translatedDocsSegments()
   );
@@ -275,10 +285,14 @@ export function isDocsPagePath(
 ): boolean {
   if (!href.startsWith("/") || href.startsWith("//")) return false;
   const path = href.split(/[?#]/, 1)[0] ?? href;
-  if (/\.mdx?$/.test(path)) return false;
-  const match = /^\/([^/]+)(\/.*)?$/.exec(path);
-  const first = match?.[1];
-  const rest =
-    first && translatedSegments.includes(first) ? (match?.[2] ?? "") : path;
+  if (path.endsWith(".md") || path.endsWith(".mdx")) return false;
+  // The first segment, and the rest of the path after it.
+  const slash = path.indexOf("/", 1);
+  const first = slash === -1 ? path.slice(1) : path.slice(1, slash);
+  const rest = translatedSegments.includes(first)
+    ? slash === -1
+      ? ""
+      : path.slice(slash)
+    : path;
   return rest === "/docs" || rest.startsWith("/docs/");
 }

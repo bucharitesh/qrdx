@@ -160,6 +160,39 @@ describe("isDocsPagePath", () => {
   });
 });
 
+describe("long runs of slashes", () => {
+  // Both helpers read URLs and hrefs they don't control, so they must stay
+  // linear: a regex like /\/+$/ backtracks over every slash of a long run.
+  const run = "/".repeat(200_000);
+  const within = (ms: number, work: () => void) => {
+    const start = performance.now();
+    work();
+    expect(performance.now() - start).toBeLessThan(ms);
+  };
+
+  it("docsZoneRewrites trims any number of trailing slashes, fast", () => {
+    within(200, () => {
+      const [first] = docsZoneRewrites(`https://docs.qrdx.dev${run}`, options);
+      expect(first?.destination).toBe("https://docs.qrdx.dev/llms.mdx");
+    });
+    within(200, () => {
+      expect(docsZoneRewrites(`${run}x${run}`, options)[0]?.destination).toBe(
+        `${run}x/llms.mdx`,
+      );
+    });
+  });
+
+  it("isDocsPagePath answers fast for any run of slashes", () => {
+    within(200, () => {
+      expect(isDocsPagePath(run, SEGMENTS)).toBe(false);
+      expect(isDocsPagePath(`/docs${run}x`, SEGMENTS)).toBe(true);
+      expect(isDocsPagePath(`/es${run}`, SEGMENTS)).toBe(false);
+      expect(isDocsPagePath(`/x${run}docs`, SEGMENTS)).toBe(false);
+      expect(isDocsPagePath(`/docs/x${run}.md`, SEGMENTS)).toBe(false);
+    });
+  });
+});
+
 describe("parseDocsManifest", () => {
   const manifest = {
     version: 1,
