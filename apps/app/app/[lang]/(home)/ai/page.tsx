@@ -1,11 +1,11 @@
 import { AI_REQUEST_FREE_TIER_LIMIT } from "@repo/config";
+import { HairlineFigure } from "@repo/design-system/components/hairline/hairline";
 import { ArrowRight } from "iconsax-reactjs";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { AsciiField, Backdrop, RadialHalo } from "@/components/fx";
 import { ClientMessages } from "@/components/i18n/client-messages";
 import { LocaleLink as Link } from "@/components/i18n/locale-link";
-import { HairlineFigure } from "@/components/mockups/hairline";
 import { isArtAvailable } from "@/lib/ai/art-availability";
 import { localizedMetadata } from "@/lib/i18n/metadata";
 import { AI_CHAT_NAMESPACES } from "@/lib/i18n/playground";

@@ -1,5 +1,5 @@
+import { ogSize, renderArticleOgImage } from "@repo/design-system/og/brand";
 import { notFound } from "next/navigation";
-import { ogSize, renderArticleOgImage } from "@/app/og/brand";
 import { onDemandParams } from "@/lib/static-params";
 import { getCustomerStory } from "../_lib/stories";
 

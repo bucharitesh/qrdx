@@ -1,8 +1,8 @@
 import "server-only";
 
+import { type Locale, localeFromSegment } from "@repo/i18n/config";
 import { notFound } from "next/navigation";
 import { lang } from "next/root-params";
-import { type Locale, localeFromSegment } from "./config";
 
 /**
  * The locale of a page under app/[lang], or a 404 for a first segment that

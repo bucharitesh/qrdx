@@ -1,5 +1,10 @@
 import { CANONICAL_HOST, CANONICAL_ORIGIN } from "@repo/config";
 import {
+  BODY_CATALOG,
+  EYE_CATALOG,
+  FRAME_CATALOG,
+} from "@repo/docs-assets/pattern-catalog";
+import {
   getFrameLayout,
   getTemplate,
   isFrameActive,
@@ -16,11 +21,6 @@ import { OFFICIAL_FRAME_RESOLVER } from "@/lib/community/catalog";
 import { itemPath } from "@/lib/community/types";
 import { demoPath } from "@/lib/landing/demo-paths";
 import { generatorPath } from "@/lib/landing/generator-paths";
-import {
-  BODY_CATALOG,
-  EYE_CATALOG,
-  FRAME_CATALOG,
-} from "@/lib/pattern-catalog";
 import {
   type ArtLinkMode,
   type PlaygroundLinkOptions,

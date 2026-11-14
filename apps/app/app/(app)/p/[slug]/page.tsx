@@ -1,3 +1,5 @@
+import type { Locale } from "@repo/i18n/config";
+import { localizePath } from "@repo/i18n/paths";
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
@@ -11,8 +13,6 @@ import { Pixels } from "@/components/landing/pixels";
 import { PreciseLocationPrompt } from "@/components/landing/precise-location";
 import { LandingRender } from "@/components/landing/render";
 import { negotiateLocale } from "@/lib/i18n/accept-language";
-import type { Locale } from "@/lib/i18n/config";
-import { localizePath } from "@/lib/i18n/paths";
 import { requestAppLocale } from "@/lib/i18n/request-locale";
 import { scanPagesIntl } from "@/lib/i18n/scan-pages";
 import type { BlockRenderContext } from "@/lib/landing/blocks";

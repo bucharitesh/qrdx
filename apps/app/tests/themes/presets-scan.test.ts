@@ -3,6 +3,8 @@
 // longer URL at 320 px, and a scan score of at least 75. The same judge picks
 // the library in scripts/themes/generate.ts. Shuffle's runtime themes come
 // from the same building blocks, so a fixed sample of seeds is judged too.
+
+import { FRAME_CATALOG } from "@repo/docs-assets/pattern-catalog";
 import {
   BODY_PATTERN,
   CORNER_EYE_DOT_PATTERNS,
@@ -13,7 +15,6 @@ import {
 } from "qrdx";
 import type { ColorConfig } from "qrdx/types";
 import { describe, expect, it, vi } from "vitest";
-import { FRAME_CATALOG } from "@/lib/pattern-catalog";
 import { CATEGORY_ORDER } from "@/lib/themes/categories";
 import { isInverted } from "@/lib/themes/color";
 import { FRAME_TEXT_CONTRAST } from "@/lib/themes/compose";

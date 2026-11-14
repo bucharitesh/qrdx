@@ -336,7 +336,7 @@ let nextConfig: NextConfig = {
         ...redirect,
         has: [{ type: "host" as const, value: `(?:${PLATFORM_HOSTS})` }],
       })),
-      // English has one address: /en/pricing → /pricing (lib/i18n/routing.ts).
+      // English has one address: /en/pricing → /pricing (packages/i18n/routing.ts).
       ...englishRedirects(`(?:${PLATFORM_HOSTS})`),
     ];
   },
@@ -386,7 +386,7 @@ let nextConfig: NextConfig = {
           { source: "/mcp", destination: "/mcp.md" },
         ].map((rule) => ({ ...rule, ...MARKDOWN_REQUEST })),
         // Translated pages live in app/[lang]; English is [lang]=en behind
-        // its unprefixed URL (lib/i18n/routing.ts). After the Markdown
+        // its unprefixed URL (packages/i18n/routing.ts). After the Markdown
         // rewrites, which answer agents for / and /pricing first.
         ...englishRewrites(),
       ],

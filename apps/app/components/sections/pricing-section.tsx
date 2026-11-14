@@ -1,5 +1,6 @@
 "use client";
 
+import { track } from "@repo/analytics";
 import { authClient } from "@repo/auth/client";
 import { toast } from "@repo/design-system";
 import {
@@ -26,7 +27,6 @@ import { InvoiceRequestDialog } from "@/components/sections/pricing/invoice-requ
 import { PricingOffers } from "@/components/sections/pricing/pricing-offers";
 import { maxYearlySavingsPercent } from "@/components/sections/pricing/savings";
 import { siteConfig } from "@/config/site";
-import { track } from "@/lib/analytics";
 import { usePostLoginAction } from "@/lib/hooks/use-post-login-action";
 import { playgroundHref } from "@/lib/playground-links";
 import {

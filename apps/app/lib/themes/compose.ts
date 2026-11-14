@@ -1,5 +1,7 @@
 // Samples a theme from the building blocks in ./blocks. Pure and seeded: the
 // same random sequence always composes the same theme.
+
+import { FRAME_CATALOG } from "@repo/docs-assets/pattern-catalog";
 import { getFrameColors } from "qrdx";
 import type {
   BodyPattern,
@@ -9,7 +11,6 @@ import type {
   FrameStyle,
 } from "qrdx/types";
 import type { ThemeCategory, ThemeStyles } from "@/types/theme";
-import { FRAME_CATALOG } from "../pattern-catalog";
 import {
   CONTRAST_MIXES,
   EYE_DOTS,

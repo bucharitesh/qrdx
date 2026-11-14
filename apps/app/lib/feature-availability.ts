@@ -1,6 +1,5 @@
 import "server-only";
 
-import { env } from "@/env";
 import {
   type CustomDomainMode,
   computeFeatures,
@@ -11,7 +10,8 @@ import {
   isPathShown,
   missingFeatureSetup,
   toPublicAvailability,
-} from "@/lib/feature-availability-rules";
+} from "@repo/availability";
+import { env } from "@/env";
 
 /**
  * The server environment as the feature rules read it (names only; values

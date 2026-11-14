@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@repo/design-system/components/ui/dropdown-menu";
 import { cn } from "@repo/design-system/lib/utils";
+import { splitLocale } from "@repo/i18n/paths";
 import { Avatar, AvatarFallback, AvatarImage } from "facehash";
 import {
   Card,
@@ -33,7 +34,6 @@ import {
   useLocaleRouter as useRouter,
 } from "@/components/i18n/locale-link";
 import { useSubscription } from "@/lib/hooks/use-subscription";
-import { splitLocale } from "@/lib/i18n/paths";
 import { playgroundHref } from "@/lib/playground-links";
 import { PLAN_NAMES, type Plan } from "@/lib/pricing";
 import { useAuthStore } from "@/store/auth-store";

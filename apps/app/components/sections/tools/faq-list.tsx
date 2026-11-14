@@ -1,6 +1,6 @@
+import { faqSchema, JsonLd } from "@repo/design-system/components/seo/json-ld";
 import { ArrowDown2 } from "iconsax-reactjs";
 import { SectionHeader } from "@/components/sections/section-header";
-import { faqSchema, JsonLd } from "./json-ld";
 
 interface FaqListProps {
   title: string;

@@ -1,8 +1,9 @@
 import { cn } from "@repo/design-system/lib/utils";
 import { ScanBarcode } from "iconsax-reactjs";
 
-// The empty-history illustration (components/mockups/hairline.tsx) loads its
-// figures with next/dynamic; the app shows a still icon in its place.
+// The empty-history illustration (@repo/design-system/components/hairline/
+// hairline.tsx) loads its figures with next/dynamic; the app shows a still
+// icon in its place.
 export function HairlineFigure({ className }: { className?: string }) {
   return (
     <div

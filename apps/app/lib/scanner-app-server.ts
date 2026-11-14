@@ -1,8 +1,8 @@
 import "server-only";
 
+import type { Locale } from "@repo/i18n/config";
 import type { MetadataRoute } from "next";
 import { createTranslator } from "next-intl";
-import type { Locale } from "./i18n/config";
 import { loadMessages } from "./i18n/messages";
 import { scannerManifest } from "./scanner-app";
 

@@ -3,7 +3,7 @@ import * as schema from "@repo/database";
 import { database as db, eq } from "@repo/database";
 
 // A new account starts in the language the site was in when it signed up:
-// the language menu's cookie (apps/app/lib/i18n/config.ts, LOCALE_COOKIE),
+// the language menu's cookie (packages/i18n/config.ts, LOCALE_COOKIE),
 // sent with the email-code request and with the Google or GitHub callback.
 // The app validates the code against its languages when it reads it
 // (apps/app/lib/i18n/app-locale.ts), so this only keeps well-formed codes.

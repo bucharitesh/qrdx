@@ -53,7 +53,7 @@ export interface TelegramBotConfig {
   username: string;
 }
 
-/** The bot's settings, or null where the feature is off (lib/feature-availability-rules.ts). */
+/** The bot's settings, or null where the feature is off (packages/availability/rules.ts). */
 export function telegramBotConfig(): TelegramBotConfig | null {
   if (!isFeatureAvailable("telegramBot")) return null;
   const token = env.TELEGRAM_BOT_TOKEN?.trim();

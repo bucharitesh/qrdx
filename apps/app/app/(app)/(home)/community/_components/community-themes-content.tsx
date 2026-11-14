@@ -1,6 +1,7 @@
 /** biome-ignore-all lint/suspicious/noArrayIndexKey: false positive */
 "use client";
 
+import { HairlineFigure } from "@repo/design-system/components/hairline/hairline";
 import { Spinner } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Card } from "@repo/design-system/components/ui/card";
@@ -20,7 +21,6 @@ import {
   HowToPublish,
   SortMenu,
 } from "@/components/community/browse-sidebar";
-import { HairlineFigure } from "@/components/mockups/hairline";
 import { useWorkspaceHref } from "@/components/workspace-provider";
 import { useCommunityThemes } from "@/lib/hooks/themes/use-community-themes";
 import { playgroundHref } from "@/lib/playground-links";

@@ -7,9 +7,10 @@
 // with the same scope, keeps that page for offline use and receives shared
 // images at <scope>/share. It hands them to the page through the Cache
 // Storage below: images never leave the device and never go in a URL.
+
+import { LOCALE_INFO, type Locale } from "@repo/i18n/config";
+import { localizeHref } from "@repo/i18n/paths";
 import type { MetadataRoute } from "next";
-import { LOCALE_INFO, type Locale } from "./i18n/config";
-import { localizeHref } from "./i18n/paths";
 
 /** The brand blue the icons are drawn on (scripts/scanner-app-icons.ts). */
 export const SCANNER_APP_BLUE = "#0051ff";

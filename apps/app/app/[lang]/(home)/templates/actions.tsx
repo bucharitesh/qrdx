@@ -1,8 +1,8 @@
 "use server";
 
+import { isLocale } from "@repo/i18n/config";
 import type { ReactNode } from "react";
 import { InLocale } from "@/components/i18n/in-locale";
-import { isLocale } from "@/lib/i18n/config";
 import { SectionCards } from "./_components/section-cards";
 import { MAX_CHUNKS_PER_REQUEST, parseChunkKey } from "./_lib/gallery";
 import { localizedGallery } from "./_lib/sections";

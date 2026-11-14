@@ -1,10 +1,10 @@
 import { SUPPORT_EMAIL } from "@repo/config";
+import { HairlineFigure } from "@repo/design-system/components/hairline/hairline";
+import type { Locale } from "@repo/i18n/config";
 import { ArrowDown2 } from "iconsax-reactjs";
 import { useLocale, useTranslations } from "next-intl";
-import { HairlineFigure } from "@/components/mockups/hairline";
 import { SectionHeader } from "@/components/sections/section-header";
 import { isFeatureAvailable } from "@/lib/feature-availability";
-import type { Locale } from "@/lib/i18n/config";
 import type { Messages } from "@/lib/i18n/messages";
 import { formatPrice, PRICING } from "@/lib/pricing";
 import { PRODUCT_FACTS } from "@/lib/product-facts";
@@ -35,7 +35,7 @@ function faqValues(locale: Locale) {
     proYearly: usd("pro", "year"),
     businessMonthly: usd("business", "month"),
     businessYearly: usd("business", "year"),
-    // Where custom domains can't be added (lib/feature-availability-rules.ts).
+    // Where custom domains can't be added (packages/availability/rules.ts).
     customDomains: isFeatureAvailable("customDomains")
       ? ("yes" as const)
       : ("no" as const),

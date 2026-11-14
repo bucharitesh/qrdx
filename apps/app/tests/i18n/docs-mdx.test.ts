@@ -3,8 +3,8 @@
 // must not change.
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
+import { translationLocale } from "@repo/i18n/docs";
 import { describe, expect, it } from "vitest";
-import { translationLocale } from "@/lib/i18n/docs";
 import {
   fileHash,
   frontmatterValue,

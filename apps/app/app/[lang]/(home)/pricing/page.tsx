@@ -1,4 +1,6 @@
 import { auth } from "@repo/auth/server";
+import { JsonLd } from "@repo/design-system/components/seo/json-ld";
+import { CHROME_NAMESPACES, pickMessages } from "@repo/i18n/messages";
 import type { Metadata } from "next";
 import { cookies, headers } from "next/headers";
 import { NextIntlClientProvider } from "next-intl";
@@ -17,9 +19,7 @@ import { PricingFaq } from "@/components/sections/pricing/pricing-faq";
 import { pricingFaqs } from "@/components/sections/pricing/pricing-faqs";
 import { pricingSchema } from "@/components/sections/pricing/pricing-schema";
 import { PricingSection } from "@/components/sections/pricing-section";
-import { JsonLd } from "@/components/sections/tools/json-ld";
 import { isFeatureAvailable } from "@/lib/feature-availability";
-import { CHROME_NAMESPACES, pickMessages } from "@/lib/i18n/messages";
 import { localizedMetadata } from "@/lib/i18n/metadata";
 import { requireLocale } from "@/lib/i18n/server";
 import { baseUrl } from "@/lib/metadata";
@@ -33,7 +33,7 @@ import {
 import { logError } from "@/lib/shared";
 
 // Rows, plan-card lines and copy for features that can't work on this
-// deployment are left out (lib/feature-availability-rules.ts). The page is
+// deployment are left out (packages/availability/rules.ts). The page is
 // prerendered, so a change shows up on the next deploy.
 const OPTIONS: PricingOptions = {
   aiArt: isFeatureAvailable("aiArt"),

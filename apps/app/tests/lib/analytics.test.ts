@@ -77,9 +77,9 @@ async function load(env: Record<string, string | undefined> = {}) {
   })) {
     vi.stubEnv(key, value as string);
   }
-  const track = await import("@/lib/analytics/track");
-  const ph = await import("@/lib/analytics/posthog");
-  const umami = await import("@/lib/analytics/umami");
+  const track = await import("@repo/analytics/track");
+  const ph = await import("@repo/analytics/posthog");
+  const umami = await import("@repo/analytics/umami");
   const privacy = await import("@/lib/analytics/privacy");
   return { ...track, ...ph, ...umami, ...privacy };
 }
@@ -455,7 +455,7 @@ describe("sign-in detection", () => {
   it("tells a sign-up from a sign-in, and ignores old sessions", async () => {
     vi.resetModules();
     const { authEventFor, toSignInMethod } = await import(
-      "@/lib/analytics/identity"
+      "@repo/analytics/identity"
     );
     const now = Date.parse("2026-11-01T10:00:00Z");
     const session = (userAgoMs: number, sessionAgoMs: number) => ({

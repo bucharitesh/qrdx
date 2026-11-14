@@ -10,9 +10,9 @@
 //   URL: `noindex, follow`, canonical to the English page.
 //
 // Pure functions: callers pass which languages a page is translated into
-// (apps/app/lib/source.ts docsPageLocales), so tests need no content. The
+// (apps/docs/lib/source.ts docsPageLocales), so tests need no content. The
 // helpers that write absolute URLs come from createDocsSeo(baseUrl): the app
-// passes its own origin (apps/app/lib/i18n/docs-seo.ts), as this package
+// passes its own origin (apps/docs/lib/i18n/docs-seo.ts), as this package
 // reads no environment.
 import type { MetadataRoute } from "next";
 import { DEFAULT_LOCALE, LOCALE_INFO, type Locale } from "./config";

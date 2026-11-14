@@ -6,10 +6,8 @@
 // in Polar). Checkout asks Polar for the currency of the visitor's country
 // (lib/region.ts checkoutCurrency), so the amounts here match what's charged.
 
-import { isFlagOn } from "@repo/availability/flags";
-
 // The availability rules read NEXT_PUBLIC_QRDX_EUR_PRICES the same way.
-export { isFlagOn } from "@repo/availability/flags";
+import { isFlagOn } from "@repo/availability/flags";
 
 export type Plan = "free" | "pro" | "business";
 export type PaidPlan = Exclude<Plan, "free">;

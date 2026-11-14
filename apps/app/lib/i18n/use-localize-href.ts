@@ -3,12 +3,13 @@
 // (next-intl's useLocale reads the page's locale in both), so plain <a>
 // links on translated pages can keep the language too. Async server
 // components use localizeHref(href, await getLocale()) instead.
+
+import { isLocale } from "@repo/i18n/config";
+import { localizeHref } from "@repo/i18n/paths";
 import { useLocale } from "next-intl";
 import { useCallback } from "react";
-import { isLocale } from "./config";
-import { localizeHref } from "./paths";
 
-/** `(href) => href in this page's language` (lib/i18n/paths.ts). */
+/** `(href) => href in this page's language` (packages/i18n/paths.ts). */
 export function useLocalizeHref(): (href: string) => string {
   const locale = useLocale();
   return useCallback(

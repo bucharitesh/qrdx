@@ -221,7 +221,7 @@ export function settingsNav(slug: string): AppNavGroup[] {
           keywords: ["oauth", "access", "revoke"],
         },
         {
-          // Only where the program runs (lib/feature-availability-rules.ts
+          // Only where the program runs (packages/availability/rules.ts
           // hides the path elsewhere).
           href: "/settings/affiliate",
           label: "Affiliate program",

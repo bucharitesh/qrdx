@@ -1,5 +1,6 @@
 "use client";
 
+import { track } from "@repo/analytics";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
@@ -9,7 +10,6 @@ import {
 } from "@/components/confirm-identity/provider";
 import { useShowLimit } from "@/components/limits/limit-dialog";
 import { useWorkspaceHref } from "@/components/workspace-provider";
-import { track } from "@/lib/analytics";
 import { createOAuthAppAction } from "../_lib/actions";
 import { EMPTY_APP_VALUES, OAuthAppForm } from "./oauth-app-form";
 import { ClientSecretDialog } from "./secret-dialog";

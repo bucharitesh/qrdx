@@ -5,7 +5,7 @@ import { isFeatureAvailable } from "@/lib/feature-availability";
  * for AI themes (it runs through Vercel AI Gateway).
  *
  * The pricing page, sitemap and llms.txt are prerendered, so a change takes
- * effect on the next deploy. The rule lives in lib/feature-availability-rules.ts
+ * effect on the next deploy. The rule lives in packages/availability/rules.ts
  * with the other features'.
  */
 export const isArtAvailable = isFeatureAvailable("aiArt");

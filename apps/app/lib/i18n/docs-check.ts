@@ -11,9 +11,9 @@ import {
   LOCALES,
   type Locale,
   type ReviewState,
-} from "./config";
-import { hasDocs } from "./docs";
-import { isPublished, type ReviewTable } from "./review";
+} from "@repo/i18n/config";
+import { hasDocs } from "@repo/i18n/docs";
+import { isPublished, type ReviewTable } from "@repo/i18n/review";
 
 export type DocsReviewFile = Record<
   string,

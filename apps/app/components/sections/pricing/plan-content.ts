@@ -7,10 +7,10 @@
 // ./upgrade-highlights instead.
 
 import { AI_REQUEST_FREE_TIER_LIMIT } from "@repo/config";
+import type { Locale } from "@repo/i18n/config";
 import { createTranslator } from "next-intl";
 import { AUDIT_RETENTION_DAYS } from "@/ee/audit-log/limits";
 import { listNames } from "@/lib/availability-copy";
-import type { Locale } from "@/lib/i18n/config";
 import type { Messages } from "@/lib/i18n/messages";
 import type { PlanLimits } from "@/lib/plans";
 import {
@@ -342,7 +342,7 @@ export function priceRow(
 }
 
 /**
- * What this deployment can offer (lib/feature-availability-rules.ts): rows
+ * What this deployment can offer (packages/availability/rules.ts): rows
  * and plan-card lines for a feature that can't work here are left out. Each
  * defaults to true.
  */

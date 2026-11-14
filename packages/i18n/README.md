@@ -27,9 +27,9 @@ localizeHref("/pricing", "es"); // "/es/pricing"
 
 `apps/app/messages` stays the only place anyone edits copy. An app that can't import `apps/app` reads the namespaces the docs use (`DOCS_NAMESPACES`: `docs`, `footer`, `localeSwitcher`, `meta`, `consent`) from `messages/<locale>.json` here, which `bun run --filter app i18n:docs-messages` (`apps/app/lib/i18n/docs-messages.ts`) writes. The folder is gitignored: that app runs the command right before it builds or starts, like `facts:snapshot` for `@repo/config/facts`, so the copy is always made from the current catalogs and can't go stale between merges. `loadDocsMessages` throws, naming the command, when a file is missing.
 
-`apps/app/tests/i18n/i18n-package.test.ts` builds the copy in memory and checks that it loads like the app's catalogs and that every namespace the docs' code reads is in `DOCS_NAMESPACES`.
+`apps/app/tests/i18n/i18n-package.test.ts` builds the copy in memory and checks that it loads like the app's catalogs; `apps/docs/tests/i18n/docs-namespaces.test.ts` checks that every namespace the docs' code reads is in `DOCS_NAMESPACES`.
 
 ## How the app uses it
 
-- `apps/app/lib/i18n/{config,paths,routing,review,docs,docs-meta,docs-search,docs-seo,messages}.ts` keep the app's import paths. Three add something of the app's: `docs.ts` builds `docsI18n` with fumadocs, `docs-seo.ts` gives the URL helpers the app's origin (`lib/metadata.ts`), and `messages.ts` loads the full catalogs.
-- `next.config.ts` imports `@repo/i18n/docs` and `@repo/i18n/routing` directly. Next compiles the config with the app's tsconfig paths, and a file in a subfolder of the app (such as `lib/i18n/routing.ts`) that imports `@repo/*` can't be resolved there, so modules this config loads use relative imports only.
+- The main app imports the package directly (`@repo/i18n/config`, `@repo/i18n/paths`, …). Its own `lib/i18n/messages.ts` loads the full catalogs; the docs site's `lib/i18n/docs.ts` builds `docsI18n` with fumadocs and its `lib/i18n/docs-seo.ts` gives the URL helpers qrdx.dev's origin.
+- `next.config.ts` imports `@repo/i18n/docs` and `@repo/i18n/routing` directly. Next compiles the config with the app's tsconfig paths, and a file in a subfolder of the app that imports `@repo/*` can't be resolved there, so modules this config loads use relative imports only.

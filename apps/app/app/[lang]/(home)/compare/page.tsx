@@ -1,12 +1,13 @@
+import { JsonLd } from "@repo/design-system/components/seo/json-ld";
 import { cn } from "@repo/design-system/lib/utils";
+import { localizeHref } from "@repo/i18n/paths";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { AsciiField } from "@/components/fx";
 import { CompareCard } from "@/components/sections/compare/compare-card";
-import { breadcrumbSchema, JsonLd } from "@/components/sections/tools/json-ld";
+import { breadcrumbSchema } from "@/components/sections/tools/json-ld";
 import { compareSource } from "@/lib/content-source";
 import { localizedMetadata } from "@/lib/i18n/metadata";
-import { localizeHref } from "@/lib/i18n/paths";
 import { requireLocale } from "@/lib/i18n/server";
 import { baseUrl } from "@/lib/metadata";
 

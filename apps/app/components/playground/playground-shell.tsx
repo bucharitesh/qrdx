@@ -1,7 +1,7 @@
+import { JsonLd } from "@repo/design-system/components/seo/json-ld";
 import type { ReactNode } from "react";
 import { Header } from "@/components/header";
 import { SeasonalPlayground } from "@/components/seasonal/playground-layer";
-import { JsonLd } from "@/components/sections/tools/json-ld";
 import { organizationSchema } from "@/lib/seo-schema";
 import { Providers } from "./playground-providers";
 

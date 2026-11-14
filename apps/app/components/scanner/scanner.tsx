@@ -1,5 +1,6 @@
 "use client";
 
+import { HairlineFigure } from "@repo/design-system/components/hairline/hairline";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -37,7 +38,6 @@ import {
 } from "iconsax-reactjs";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { HairlineFigure } from "@/components/mockups/hairline";
 import { CameraView } from "./camera-view";
 import type { DetectedCode } from "./detector";
 import { EntryList, exportEntries } from "./entry-list";

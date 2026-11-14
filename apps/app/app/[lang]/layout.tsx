@@ -1,13 +1,13 @@
+import {
+  DEFAULT_LOCALE,
+  LOCALE_INFO,
+  localeFromSegment,
+} from "@repo/i18n/config";
 import type { Metadata, Viewport } from "next";
 import { lang } from "next/root-params";
 import { getTranslations } from "next-intl/server";
 import { RememberLocale } from "@/components/i18n/remember-locale";
 import { RootDocument } from "@/components/root-document";
-import {
-  DEFAULT_LOCALE,
-  LOCALE_INFO,
-  localeFromSegment,
-} from "@/lib/i18n/config";
 import { localeParams } from "@/lib/i18n/static-params";
 import { rootMetadata, rootViewport } from "@/lib/root-metadata";
 

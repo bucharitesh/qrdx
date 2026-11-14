@@ -9,6 +9,7 @@ import {
   NavigationMenuTrigger,
 } from "@repo/design-system/components/ui/navigation-menu";
 import { cn } from "@repo/design-system/lib/utils";
+import { splitLocale } from "@repo/i18n/paths";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import {
@@ -29,7 +30,6 @@ import {
   type NavItemConfig,
   siteConfig,
 } from "@/config/site";
-import { splitLocale } from "@/lib/i18n/paths";
 import bar from "./header-bar.module.css";
 import styles from "./header-nav.module.css";
 import { NavPanel, navPanelRootClass } from "./header-nav-panel";
@@ -51,7 +51,7 @@ export const headerNavEntries: NavEntryConfig[] = siteConfig.nav.links;
 
 /**
  * The header entries in the visitor's language, without links to pages for
- * features this deployment can't offer (lib/feature-availability-rules.ts),
+ * features this deployment can't offer (packages/availability/rules.ts),
  * like AI QR art. Hrefs point at the page in that language where it exists.
  */
 export function useHeaderNavEntries(): HeaderNavEntry[] {

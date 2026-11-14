@@ -1,15 +1,14 @@
 import "@/styles/styles.css";
 import { cn } from "@repo/design-system/lib/utils";
+import { LOCALE_INFO, type Locale } from "@repo/i18n/config";
+import { CHROME_NAMESPACES, pickMessages } from "@repo/i18n/messages";
 import { getLocale, getMessages } from "next-intl/server";
 import type { ReactNode } from "react";
 import { Provider } from "@/app/providers";
 import { ConsentEarlyScript } from "@/components/consent/consent-early-script";
 import { RootIntlProvider } from "@/components/i18n/root-intl-provider";
-import { SearchHighlightStyle } from "@/components/search-highlight-style";
 import { ThemeScript } from "@/components/theme-script";
 import { fonts } from "@/lib/fonts";
-import { LOCALE_INFO, type Locale } from "@/lib/i18n/config";
-import { CHROME_NAMESPACES, pickMessages } from "@/lib/i18n/messages";
 import { getPublicAvailability } from "@/lib/integration-availability";
 
 /**
@@ -46,7 +45,6 @@ export async function RootDocument({
       <head>
         <ThemeScript />
         <ConsentEarlyScript />
-        <SearchHighlightStyle />
         <meta name="darkreader-lock" />
       </head>
       <body className="antialiased font-sans bg-background relative flex min-h-screen flex-col">

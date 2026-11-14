@@ -1,4 +1,6 @@
+import { JsonLd } from "@repo/design-system/components/seo/json-ld";
 import { cn } from "@repo/design-system/lib/utils";
+import { localizeHref } from "@repo/i18n/paths";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { ClientContent } from "@/components/i18n/client-content";
@@ -12,7 +14,6 @@ import {
   textLinkClass,
 } from "@/components/sections/tools/cards";
 import { FaqList } from "@/components/sections/tools/faq-list";
-import { JsonLd } from "@/components/sections/tools/json-ld";
 import { PublicBarcodeGenerator } from "@/components/sections/tools/save-barcode";
 import { SpotlightLink } from "@/components/sections/tools/spotlight-link";
 import { ToolHero } from "@/components/sections/tools/tool-hero";
@@ -21,7 +22,6 @@ import { BARCODE_FORMATS } from "@/lib/barcode/formats";
 import { BARCODE_CONTENT_RULES } from "@/lib/i18n/content-rules";
 import { localizeContent } from "@/lib/i18n/content-server";
 import { localizedMetadata } from "@/lib/i18n/metadata";
-import { localizeHref } from "@/lib/i18n/paths";
 import { requireLocale } from "@/lib/i18n/server";
 import { baseUrl } from "@/lib/metadata";
 import { PRODUCT_FACTS } from "@/lib/product-facts";

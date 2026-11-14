@@ -2,7 +2,7 @@
 // the dialogs around it), wherever they render. A nested provider replaces
 // the root one's messages (components/i18n/client-messages.tsx), so each
 // list names everything its children read.
-import { CHROME_NAMESPACES } from "./messages";
+import { CHROME_NAMESPACES } from "@repo/i18n/messages";
 
 /**
  * The code builder (components/code-builder/code-builder-host.tsx): the New

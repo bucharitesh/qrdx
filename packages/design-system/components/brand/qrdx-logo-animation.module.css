@@ -1,5 +1,5 @@
 /*
- * The QRdx mark's loop (components/qrdx-logo-animation.tsx), on an 8 s cycle
+ * The QRdx mark's loop (qrdx-logo-animation.tsx), on an 8 s cycle
  * of four 2 s steps. At each step the corners turn a quarter while the inner
  * squares' current shape shrinks away (0.5 s), then the next shape grows in
  * (0.5 s). Each shape runs the same keyframes, offset by its step

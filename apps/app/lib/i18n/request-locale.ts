@@ -4,7 +4,8 @@
 // i18n/request.ts uses it, so server components that call useTranslations
 // or getTranslations speak it too. Unset (static pages, route handlers):
 // English. Per request, through React's cache.
+
+import type { Locale } from "@repo/i18n/config";
 import { cache } from "react";
-import type { Locale } from "./config";
 
 export const requestAppLocale = cache((): { current?: Locale } => ({}));

@@ -5,6 +5,11 @@
 import { generateKeyPairSync } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import {
+  computeFeatures,
+  type FeatureContext,
+  missingFeatureSetup,
+} from "@repo/availability";
 import { describe, expect, it, vi } from "vitest";
 import {
   createVerificationToken,
@@ -30,11 +35,6 @@ import {
   TEMPLATE_GROUPS,
   templateApplyFor,
 } from "@/lib/domain-connect/template";
-import {
-  computeFeatures,
-  type FeatureContext,
-  missingFeatureSetup,
-} from "@/lib/feature-availability-rules";
 import { applyTemplate, type Template } from "../support/domain-connect-apply";
 
 const TEMPLATE_PATH = join(

@@ -1,5 +1,6 @@
 "use client";
 
+import { track } from "@repo/analytics";
 import { toast } from "@repo/design-system";
 import {
   AlertDialog,
@@ -44,7 +45,6 @@ import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { useConfirmation } from "@/components/confirm-identity/provider";
 import { useWorkspaceHref } from "@/components/workspace-provider";
-import { track } from "@/lib/analytics";
 import type { WebhookEndpointView } from "@/lib/events/endpoints";
 import { EVENT_INFO } from "@/lib/events/types";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";

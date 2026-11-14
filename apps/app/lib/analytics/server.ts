@@ -1,15 +1,15 @@
 import "server-only";
 
 import { createHash, randomUUID } from "node:crypto";
-import { cookies } from "next/headers";
-import { after } from "next/server";
-import { env } from "@/env";
-import { ANALYTICS_CONSENT_COOKIE } from "./config";
+import { ANALYTICS_CONSENT_COOKIE } from "@repo/analytics/config";
 import type {
   AnalyticsEvents,
   CleanProps,
   ServerAnalyticsEventName,
-} from "./events";
+} from "@repo/analytics/events";
+import { cookies } from "next/headers";
+import { after } from "next/server";
+import { env } from "@/env";
 import { sanitizeProps } from "./privacy";
 
 /**

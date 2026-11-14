@@ -1,7 +1,7 @@
+import { ogSize, renderPageOgImage } from "@repo/design-system/og/brand";
+import { localeFromSegment } from "@repo/i18n/config";
 import { notFound } from "next/navigation";
-import { ogSize, renderPageOgImage } from "@/app/og/brand";
 import { GUARANTEE_NAME } from "@/components/sections/pricing/guarantee-block";
-import { localeFromSegment } from "@/lib/i18n/config";
 import { formatPrice, PRICING } from "@/lib/pricing";
 import { onDemandParams } from "@/lib/static-params";
 

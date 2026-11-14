@@ -1,5 +1,9 @@
 "use client";
 
+import {
+  clearOfBanner,
+  useConsentBannerInset,
+} from "@repo/analytics/consent/banner-inset";
 import { Close } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
@@ -24,10 +28,6 @@ import {
   useId,
   useMemo,
 } from "react";
-import {
-  clearOfBanner,
-  useConsentBannerInset,
-} from "@/components/consent/banner-inset";
 
 // Shape catalogs and the shape sections (eyes, frame) open beside the design
 // panel instead of growing it, so the code preview stays in view: a popover

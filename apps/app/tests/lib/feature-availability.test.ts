@@ -2,13 +2,7 @@
 // only where they can work. The environment is injected: every value below is
 // a fake placeholder, and only "is it set" is ever read (except the app URL,
 // which passkeys need to be HTTPS).
-import {
-  getIntegrationRegistry,
-  INTEGRATION_ENV_VARS,
-  initializeIntegrations,
-} from "@repo/integrations";
-import { getCatalogBySurface } from "@repo/integrations/src/catalog";
-import { describe, expect, it } from "vitest";
+
 import {
   catalogParagraphs,
   computeFeatures,
@@ -21,7 +15,14 @@ import {
   isPathShown,
   missingFeatureSetup,
   toPublicAvailability,
-} from "@/lib/feature-availability-rules";
+} from "@repo/availability";
+import {
+  getIntegrationRegistry,
+  INTEGRATION_ENV_VARS,
+  initializeIntegrations,
+} from "@repo/integrations";
+import { getCatalogBySurface } from "@repo/integrations/src/catalog";
+import { describe, expect, it } from "vitest";
 import {
   type AvailabilityContext,
   computeAvailability,

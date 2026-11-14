@@ -10,7 +10,7 @@
 import { execFileSync } from "node:child_process";
 import { writeFileSync } from "node:fs";
 import path from "node:path";
-import { translationLocale } from "@/lib/i18n/docs";
+import { translationLocale } from "@repo/i18n/docs";
 import { industries, placements } from "@/lib/seo-content";
 import { gitLastModified, withoutGitEnv } from "@/lib/seo-dates";
 import {

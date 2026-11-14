@@ -1,12 +1,12 @@
 "use client";
 
+import { QrdxLogo } from "@repo/design-system/components/brand/qrdx-logo";
 import { Play, Tick } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
 import { Pause } from "iconsax-reactjs";
 import { type CSSProperties, useEffect, useRef, useState } from "react";
 import { QRDX_QR_H } from "@/components/fx";
-import { QrdxLogo } from "@/components/qrdx-logo";
 
 // A real QR code for https://qrdx.dev (version 3, error correction H, encoded
 // by the qrdx encoder) drawn module by module, so it can restyle itself with

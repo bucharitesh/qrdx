@@ -1,17 +1,18 @@
 // Metadata for translated pages: a self-referencing canonical per language,
 // hreflang alternates for every indexable language plus x-default, og:locale
 // with its alternates, and `noindex, follow` until a native reviewer signs
-// the language off (lib/i18n/review.ts).
-import type { Metadata } from "next";
-import { baseUrl, createMetadata } from "@/lib/metadata";
-import { LOCALE_INFO, type Locale } from "./config";
-import { localizePath } from "./paths";
+// the language off (packages/i18n/review.ts).
+
+import { LOCALE_INFO, type Locale } from "@repo/i18n/config";
+import { localizePath } from "@repo/i18n/paths";
 import {
   isPublished,
   publishedLocales,
   REVIEW,
   type ReviewTable,
-} from "./review";
+} from "@repo/i18n/review";
+import type { Metadata } from "next";
+import { baseUrl, createMetadata } from "@/lib/metadata";
 
 const absolute = (path: string) => new URL(path, baseUrl).toString();
 

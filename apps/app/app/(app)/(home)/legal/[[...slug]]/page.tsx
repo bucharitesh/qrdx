@@ -16,7 +16,7 @@ export default async function LegalPage(
   const page = legalSource.getPage(params.slug);
 
   // A page about a feature this server doesn't run (the affiliate terms
-  // where the program is off: lib/feature-availability-rules.ts).
+  // where the program is off: packages/availability/rules.ts).
   if (!(page && isPathAvailable(page.url))) {
     notFound();
   }
@@ -94,7 +94,7 @@ export async function generateMetadata(
   const page = legalSource.getPage(params.slug);
 
   // A page about a feature this server doesn't run (the affiliate terms
-  // where the program is off: lib/feature-availability-rules.ts).
+  // where the program is off: packages/availability/rules.ts).
   if (!(page && isPathAvailable(page.url))) {
     notFound();
   }

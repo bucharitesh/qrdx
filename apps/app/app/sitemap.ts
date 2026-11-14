@@ -1,3 +1,4 @@
+import { isLocalizedPath } from "@repo/i18n/paths";
 import { getCatalogBySurface } from "@repo/integrations/src/catalog";
 import type { MetadataRoute } from "next";
 import { BARCODE_FORMAT_PAGES } from "@/app/[lang]/(home)/barcode-generator/[format]/content";
@@ -15,7 +16,6 @@ import {
 import { CUSTOMERS_PATH } from "@/lib/customers";
 import { docsZoneManifest } from "@/lib/docs-zone-manifest";
 import { isPathAvailable } from "@/lib/feature-availability";
-import { isLocalizedPath } from "@/lib/i18n/paths";
 import { localizedEntries } from "@/lib/i18n/sitemap";
 import { getIntegrationAvailability } from "@/lib/integration-availability";
 import { filterVisible } from "@/lib/integration-availability-rules";
@@ -205,7 +205,7 @@ function entries(docs: Entry[]): Entry[] {
         ]
       : []),
     // AI themes and AI QR art are only listed where they can run
-    // (lib/feature-availability-rules.ts).
+    // (packages/availability/rules.ts).
     ...(isPathAvailable("/ai")
       ? [
           {
@@ -281,7 +281,7 @@ function entries(docs: Entry[]): Entry[] {
       priority: 0.7,
     },
     // The chat bots' pages, where each bot is set up
-    // (lib/feature-availability-rules.ts).
+    // (packages/availability/rules.ts).
     ...CHAT_BOTS.filter((bot) => isPathAvailable(bot.path)).map(
       (bot) =>
         ({

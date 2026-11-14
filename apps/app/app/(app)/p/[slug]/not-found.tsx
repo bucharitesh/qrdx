@@ -1,6 +1,6 @@
+import { localizePath } from "@repo/i18n/paths";
 import { headers } from "next/headers";
 import { negotiateLocale } from "@/lib/i18n/accept-language";
-import { localizePath } from "@/lib/i18n/paths";
 import { scanPagesIntl } from "@/lib/i18n/scan-pages";
 import { baseUrl } from "@/lib/metadata";
 

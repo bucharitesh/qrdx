@@ -1,5 +1,5 @@
+import { ogSize, renderPageOgImage } from "@repo/design-system/og/brand";
 import { getCatalogBySurface } from "@repo/integrations/src/catalog";
-import { ogSize, renderPageOgImage } from "@/app/og/brand";
 import { requireLocaleParam } from "@/lib/i18n/static-params";
 import { getIntegrationAvailability } from "@/lib/integration-availability";
 import { filterVisible } from "@/lib/integration-availability-rules";

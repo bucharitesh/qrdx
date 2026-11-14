@@ -7,6 +7,7 @@ import { useTranslations } from "next-intl";
 // the live QR with its scan score and quick design choices. Footer: the
 // round 4 option buttons and Create. Opened through openCodeBuilder().
 
+import { track } from "@repo/analytics";
 import { authClient } from "@repo/auth/client";
 import { toast } from "@repo/design-system";
 import { Spinner } from "@repo/design-system/components/icons";
@@ -82,7 +83,6 @@ import {
   useWorkspaceSlug,
 } from "@/components/workspace-provider";
 import { defaultThemeState } from "@/config/qr";
-import { track } from "@/lib/analytics";
 import {
   dynamicDestination,
   type OtherDynamicType,

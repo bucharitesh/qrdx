@@ -1,5 +1,7 @@
 import { CANONICAL_ORIGIN } from "@repo/config";
+import { JsonLd } from "@repo/design-system/components/seo/json-ld";
 import { Card } from "@repo/design-system/components/ui/card";
+import { localizeHref } from "@repo/i18n/paths";
 import {
   ArrowRight2,
   Barcode,
@@ -29,11 +31,9 @@ import {
   textLinkClass,
 } from "@/components/sections/tools/cards";
 import { FaqList } from "@/components/sections/tools/faq-list";
-import { JsonLd } from "@/components/sections/tools/json-ld";
 import { ToolHero } from "@/components/sections/tools/tool-hero";
 import { apiBaseUrl } from "@/lib/agents/hosts";
 import { localizedMetadata } from "@/lib/i18n/metadata";
-import { localizeHref } from "@/lib/i18n/paths";
 import { requireLocale } from "@/lib/i18n/server";
 import { baseUrl } from "@/lib/metadata";
 import { getPlanLimits } from "@/lib/plans";

@@ -10,7 +10,7 @@ import { useLocalizeHref } from "@/lib/i18n/use-localize-href";
 // app/[lang] links through these, never next/link or useRouter directly
 // (tests/i18n/locale-links.test.ts): on /hi pages a link to /playground goes
 // to /hi/playground, and pages that aren't translated keep their English
-// URL (lib/i18n/paths.ts). In the signed-in app the language is the
+// URL (packages/i18n/paths.ts). In the signed-in app the language is the
 // person's (lib/i18n/app-locale.ts), so its links to public pages follow it.
 
 export { useLocalizeHref } from "@/lib/i18n/use-localize-href";
@@ -37,7 +37,7 @@ function anchorProps({
 /**
  * next/link that keeps the visitor's language: on /es pages, a link to
  * /pricing goes to /es/pricing. Pages that aren't translated keep their
- * English URL (lib/i18n/paths.ts).
+ * English URL (packages/i18n/paths.ts).
  *
  * Docs pages get a plain <a>: another app serves them behind the same URLs
  * (the docs site, @repo/i18n/docs), or qrdx.dev does when this deployment

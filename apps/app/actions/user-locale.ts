@@ -3,13 +3,13 @@
 import { auth } from "@repo/auth/server";
 import { database as db } from "@repo/database";
 import { user } from "@repo/database/schema";
-import { eq } from "drizzle-orm";
-import { cookies, headers } from "next/headers";
 import {
   isLocale,
   LOCALE_COOKIE,
   LOCALE_COOKIE_MAX_AGE,
-} from "@/lib/i18n/config";
+} from "@repo/i18n/config";
+import { eq } from "drizzle-orm";
+import { cookies, headers } from "next/headers";
 
 /** Why a change didn't save: a message key in app.settings.general.language. */
 export type UpdateUserLocaleError = "signIn" | "invalid" | "failed";

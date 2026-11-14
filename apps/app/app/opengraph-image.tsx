@@ -1,4 +1,4 @@
-import { renderSiteOgImage } from "@/app/og/brand";
+import { renderSiteOgImage } from "@repo/design-system/og/brand";
 import { defaultOgImage } from "@/lib/metadata";
 
 export const alt = defaultOgImage.alt;

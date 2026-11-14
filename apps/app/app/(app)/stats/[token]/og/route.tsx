@@ -1,3 +1,4 @@
+import { loadOgFonts, ogSize } from "@repo/design-system/og/brand";
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import { ImageResponse } from "next/og";
 import type { NextRequest } from "next/server";
@@ -6,7 +7,6 @@ import {
   CUSTOM_DOMAIN_HEADER,
   isCustomDomainRequest,
 } from "@/app/(app)/dashboard/domains/_lib/hostname";
-import { loadOgFonts, ogSize } from "@/app/og/brand";
 import { accentUse } from "@/lib/client-brands-shared";
 import { loadPublicStats } from "@/lib/public-stats";
 import { DEFAULT_PUBLIC_STATS_RANGE } from "@/lib/public-stats-shared";

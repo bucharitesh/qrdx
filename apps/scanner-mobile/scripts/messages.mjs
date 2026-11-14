@@ -16,7 +16,7 @@ const root = path.resolve(import.meta.dirname, "..");
 const web = path.resolve(root, "../app");
 const out = path.join(root, "src/generated/messages");
 
-/** The site's languages (apps/app/lib/i18n/config.ts). */
+/** The site's languages (packages/i18n/config.ts). */
 export const LOCALES = [
   "en",
   "es",

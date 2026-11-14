@@ -1,5 +1,6 @@
 "use client";
 
+import { QrdxLogo } from "@repo/design-system/components/brand/qrdx-logo";
 import { cn } from "@repo/design-system/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -8,7 +9,6 @@ import type { Meter } from "@/app/(app)/settings/usage/_lib/meters";
 import { useAvailability } from "@/components/availability-provider";
 import bar from "@/components/header-bar.module.css";
 import { useContentText } from "@/components/i18n/content-text";
-import { QrdxLogo } from "@/components/qrdx-logo";
 import { UserProfileDropdown } from "@/components/user-profile-dropdown";
 import { workspaceHref } from "@/lib/workspace-paths";
 import { CommandMenu } from "./command-menu";

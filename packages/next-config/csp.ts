@@ -1,8 +1,8 @@
 /**
  * Content-Security-Policy for QRdx's own pages (the app, marketing site and
  * docs). Built here, used by the app's next.config.ts (prerendered pages) and
- * proxy.ts (signed-in pages, with a per-request nonce), through
- * apps/app/lib/security/csp.ts. Pure: no Next, env or app imports, so a
+ * proxy.ts (signed-in pages, with a per-request nonce; its options come from
+ * apps/app/lib/security/csp.ts). Pure: no Next, env or app imports, so a
  * next.config can load it directly and the tests can call it.
  *
  * Two script policies, one set of everything else:
