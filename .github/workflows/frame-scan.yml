@@ -8,6 +8,11 @@ name: Frame scan
 # - on each release (a push to main that changes the frames),
 # - weekly, and
 # - by hand (Actions > Frame scan > Run workflow).
+# The frames are split across the parallel jobs below: part i of n checks
+# every n-th frame (QRDX_FRAME_SCAN_PART, sample.mjs), so together they
+# check every one. With 1,013 frames a single job took over 25 minutes, and
+# the gate, then one test for all its frames, ran past its 5-minute limit
+# (13 Nov 2026). Add a part when the library grows.
 # It runs on GitHub's runners only; nothing here runs on Vercel.
 on:
   push:
@@ -41,9 +46,19 @@ env:
 
 jobs:
   scan:
-    name: Scan every official frame
+    name: Scan the official frames (part ${{ matrix.part }})
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    # A part took 4.5 to 7.6 minutes with 1,013 frames (14 Nov 2026; some
+    # runners are twice as fast as others). This stops a hung job, not a
+    # slow one; add a part before the slowest gets near it.
+    timeout-minutes: 20
+    strategy:
+      # Every part runs to the end, so a run lists every frame that fails
+      fail-fast: false
+      matrix:
+        part: [1, 2, 3, 4]
+    env:
+      QRDX_FRAME_SCAN_PART: ${{ matrix.part }}/${{ strategy.job-total }}
     defaults:
       run:
         shell: bash
@@ -71,12 +86,12 @@ jobs:
       - name: Build qrdx
         run: bun run --filter qrdx build:inplace
 
-      - name: Engine scan checks, every frame
+      - name: Engine scan checks, this part's frames
         working-directory: packages/qrdx
         run: bun x vitest run tests/official-frames tests/frame-label-markers.test.ts
 
-      - name: Publish gate, every seeded frame
+      - name: Publish gate, this part's seeded frames
         working-directory: apps/app
         run: |
           bun x next typegen
-          bun x vitest run tests/database/seed-frames-gate-1.test.ts tests/database/seed-frames-gate-2.test.ts
+          bun x vitest run tests/database/seed-frames-gate-1.test.ts tests/database/seed-frames-gate-2.test.ts tests/database/seed-frames-gate-3.test.ts

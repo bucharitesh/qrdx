@@ -14,7 +14,9 @@
 // QRDX_FULL_FRAME_SCAN=1 runs everything on every frame (the Frame scan
 // workflow, .github/workflows/frame-scan.yml, does on each release and
 // weekly). QRDX_FRAME_SCAN_DAY=<n> replays the sample of day n (UTC days
-// since 1970), as a failing run printed it.
+// since 1970), as a failing run printed it. QRDX_FRAME_SCAN_PART=<i>/<n>
+// checks part i of n of the frames, so the workflow's parallel jobs split
+// them and together check every one.
 import { ENTRIES } from "./catalogue.mjs";
 import { HAND_MADE } from "./modules.mjs";
 
@@ -81,3 +83,25 @@ export function frameScanPlan(allIds, day = frameScanDay()) {
 /** Shard `index` (1-based) of `count` of `ids`. */
 export const shardOf = (ids, index, count) =>
   ids.filter((_, i) => i % count === index - 1);
+
+/**
+ * The part of `items` this run checks: shard i of n with
+ * QRDX_FRAME_SCAN_PART=<i>/<n>, all of them when it's unset.
+ */
+export function framePart(items) {
+  const part = process.env.QRDX_FRAME_SCAN_PART ?? "";
+  if (part === "") return items;
+  const match = /^(\d+)\/(\d+)$/.exec(part);
+  const index = Number(match?.[1]);
+  const count = Number(match?.[2]);
+  if (!(match && index >= 1 && index <= count)) {
+    throw new Error(`QRDX_FRAME_SCAN_PART must be <i>/<n>, not "${part}"`);
+  }
+  return shardOf(items, index, count);
+}
+
+/** " (part i of n)" when the run checks a part, else "". */
+export function framePartLabel() {
+  const part = process.env.QRDX_FRAME_SCAN_PART ?? "";
+  return part === "" ? "" : ` (part ${part.replace("/", " of ")})`;
+}
