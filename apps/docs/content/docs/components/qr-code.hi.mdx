@@ -58,7 +58,7 @@ import { QrCode } from "@/components/qr-code";
 
 ### फ़्रेम टेम्पलेट [#frame-templates]
 
-`templateId` कोड के चारों ओर qrdx [टेम्पलेट](/docs/features/templates) बनाता है। फ़्रेम के नीचे कॉल टू एक्शन के लिए इसे `caption` के साथ इस्तेमाल करें।
+`templateId` कोड के चारों ओर qrdx का एक [टेम्पलेट के रूप में बना फ़्रेम](/docs/features/templates) बनाता है। फ़्रेम के नीचे कॉल टू एक्शन के लिए इसे `caption` के साथ इस्तेमाल करें।
 
 <ComponentPreview name="qr-code-template" />
 
@@ -176,6 +176,6 @@ export function TableCode() {
 
 ## API रेफ़रेंस [#api-reference]
 
-<auto-type-table path="../../../registry/qrdx/qr-code.tsx" type="{ [K in keyof QrCodeProps as K extends keyof ComponentProps<'figure'> ? never : K]: QrCodeProps[K] }" />
+<auto-type-table path="../../../../../packages/docs-assets/registry/qrdx/qr-code.tsx" type="{ [K in keyof QrCodeProps as K extends keyof ComponentProps<'figure'> ? never : K]: QrCodeProps[K] }" />
 
 `className` जैसा कोई भी दूसरा prop रैपिंग `<figure>` को दे दिया जाता है।

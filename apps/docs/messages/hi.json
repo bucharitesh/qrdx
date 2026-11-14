@@ -1669,6 +1669,11 @@
       "after": "यह सीधे स्कैनर पर अपनी अलग विंडो में खुलता है, और इससे एक कोड स्कैन करने के बाद ऑफ़लाइन भी काम करता है।"
     }
   },
+  "scannerApp": {
+    "share": "शेयर करें",
+    "scanInstructions": "कैमरा किसी QR code या बारकोड की ओर करें",
+    "cameraBlocked": "QRdx Scanner के लिए कैमरा एक्सेस बंद है। Settings में जाकर इसे चालू करें, या इसके बजाय कोई फ़ोटो स्कैन करें।"
+  },
   "scanPages": {
     "reportAbuse": "दुरुपयोग की रिपोर्ट करें",
     "privacy": "प्राइवेसी",
@@ -4368,7 +4373,6 @@
         "frame": "फ़्रेम",
         "padding": "पैडिंग",
         "errorCorrection": "एरर करेक्शन",
-        "border": "बॉर्डर",
         "none": "कोई नहीं"
       },
       "dotSizeSection": {
@@ -4391,43 +4395,32 @@
         }
       },
       "frameControls": {
-        "customise": "कस्टमाइज़ करें",
-        "importSvg": "SVG इंपोर्ट करें",
+        "uploadSvg": "SVG अपलोड करें",
         "publishFrame": "फ़्रेम पब्लिश करें",
         "theFrameIsAddedAround": "फ़्रेम कोड के चारों ओर जुड़ता है, इसलिए डाउनलोड की गई इमेज बड़ी हो जाती है और कोड खुद स्कैन होने लायक रहता है।",
         "label": "लेबल",
-        "secondLine": "दूसरी लाइन",
-        "leaveEmptyForNoLabel": "लेबल न चाहिए तो खाली छोड़ें",
         "pickAFrameFirst": "पहले फ़्रेम चुनें",
-        "frameColor": "फ़्रेम का रंग",
-        "textColor": "टेक्स्ट का रंग",
-        "endColor": "आखिरी रंग",
-        "optionalEGYourWebsite": "वैकल्पिक, जैसे आपकी वेबसाइट",
-        "none": "कोई नहीं"
+        "none": "कोई नहीं",
+        "takesDotColor": "यह कोड के डॉट्स का रंग लेता है।",
+        "alsoHasTemplate": "इस डिज़ाइन में इस फ़्रेम के अंदर {name} फ़्रेम भी है। दूसरा फ़्रेम चुनने पर दोनों बदल जाएँगे।",
+        "templateKeepsSize": "यह फ़्रेम कोड को अपने अंदर फ़िट कर लेता है, इसलिए डाउनलोड की गई इमेज का साइज़ वही रहता है जो आप चुनते हैं।"
       },
       "frameFields": {
         "textSize": "टेक्स्ट साइज़"
       },
       "framePicker": {
-        "more": "और",
         "showAll": "सभी देखें",
         "frame": "फ़्रेम",
-        "moreFrames": "और फ़्रेम",
-        "allTotalFrames": "सभी {total, number} फ़्रेम",
-        "allFrames": "सभी फ़्रेम",
         "searchFrames": "फ़्रेम खोजें",
         "searchTotalFrames": "{total, number} फ़्रेम में खोजें",
-        "closeFrames": "फ़्रेम बंद करें",
         "filterFrames": "फ़्रेम फ़िल्टर करें",
         "labelFrames": "{label} फ़्रेम",
-        "commonFrames": "आम फ़्रेम",
-        "everyFrameBuiltInStyles": "सभी फ़्रेम: बिल्ट-इन स्टाइल, QRdx के आधिकारिक फ़्रेम और आपके सेव किए हुए फ़्रेम। कोई एक चुनते ही वह तुरंत लागू हो जाता है।",
-        "less": "कम",
         "all": "सभी",
         "noFramesMatchQuery": "\"{query}\" से कोई फ़्रेम नहीं मिला।",
         "loadingFrames": "फ़्रेम लोड हो रहे हैं…",
         "comingUp": "जल्द आ रहे हैं",
-        "builtIn": "बिल्ट-इन",
+        "classic": "क्लासिक",
+        "shapedCodes": "शेप वाले कोड",
         "saved": "सेव किए गए",
         "results": "नतीजे"
       },
@@ -4555,7 +4548,6 @@
       },
       "patternControls": {
         "customizeOuterAndCenter": "बाहरी और बीच का हिस्सा बदलें",
-        "border": "बॉर्डर",
         "higherLevelsSurviveScratchesAnd": "ऊँचे लेवल खरोंच और लोगो होने पर भी स्कैन होते हैं, लेकिन उनमें डॉट ज़्यादा होते हैं। लोगो जोड़ें तो H चुनें।",
         "dotShape": "डॉट का आकार",
         "dotShapes": "डॉट आकार",
@@ -8342,8 +8334,12 @@
       },
       "setupGuide": {
         "getSetUp": "सेटअप करें",
+        "launcherLabel": "सेटअप करें: {length, number} में से {done, number} पूरे",
         "doneOfLengthDone": "{length, number} में से {done, number} पूरे",
+        "doneOfLengthShort": "{done, number}/{length, number}",
         "setupTasksDone": "पूरे हुए सेटअप कार्य",
+        "collapse": "छोटा करें",
+        "dismissGuide": "गाइड बंद करें",
         "done": "(हो गया)",
         "create": "बनाएँ",
         "start": "शुरू करें",

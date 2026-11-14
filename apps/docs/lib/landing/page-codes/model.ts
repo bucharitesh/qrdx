@@ -1,4 +1,10 @@
-import { getFrameLayout, getOfficialFrame, isFrameActive } from "qrdx";
+import {
+  BUILT_IN_FRAMES,
+  getFrameLayout,
+  getFrameSpecColors,
+  getOfficialFrame,
+  isFrameActive,
+} from "qrdx";
 import type { AnyQRFrame, ColorConfig, FrameStyle, QRProps } from "qrdx/types";
 import type { ContentType } from "@/types/qr-content";
 import type { ThemeStyles } from "@/types/theme";
@@ -48,31 +54,10 @@ export type OfficialFrameId = (typeof OFFICIAL_FRAME_IDS)[number];
 
 export type BuiltInFrameStyle = Exclude<FrameStyle, "none">;
 
-/**
- * Names for the built-in frame styles, as the editor's frame picker shows
- * them (components/editor/control-sections/frame-controls.tsx).
- */
-export const FRAME_STYLE_NAMES: Record<BuiltInFrameStyle, string> = {
-  "banner-bottom": "Banner",
-  "banner-top": "Top banner",
-  "banner-top-bottom": "Two banners",
-  border: "Border",
-  "rounded-border": "Rounded",
-  "gradient-border": "Gradient",
-  focus: "Focus",
-  "speech-bubble": "Bubble",
-  "speech-bubble-top": "Bubble top",
-  "chat-bubble": "Chat",
-  circle: "Circle",
-  badge: "Ribbon",
-  sticker: "Sticker",
-  polaroid: "Polaroid",
-  phone: "Phone",
-  ticket: "Ticket",
-  tag: "Tag",
-  envelope: "Envelope",
-  "menu-card": "Menu card",
-};
+/** Names for the built-in frame styles: the engine catalogue's, as pickers show them. */
+export const FRAME_STYLE_NAMES = Object.fromEntries(
+  BUILT_IN_FRAMES.map((frame) => [frame.style, frame.name]),
+) as Record<BuiltInFrameStyle, string>;
 
 interface FrameLabels {
   text?: string;
@@ -108,14 +93,11 @@ export const PAGE_CODE_SIZE = 240;
 const WHITE = "#ffffff";
 
 /** Built-in frame styles that set their label on the paper, not on a band. */
-const LABEL_ON_PAPER = new Set<BuiltInFrameStyle>([
-  "border",
-  "rounded-border",
-  "phone",
-  "menu-card",
-  "focus",
-  "gradient-border",
-]);
+const LABEL_ON_PAPER = new Set<string>(
+  BUILT_IN_FRAMES.filter((frame) => frame.labelOn === "background").map(
+    (frame) => frame.style,
+  ),
+);
 
 /** A solid color from a theme color, or the first stop of a gradient. */
 function solid(color: ColorConfig | undefined): string | undefined {
@@ -175,7 +157,7 @@ export function frameOf(code: PageCode): AnyQRFrame | undefined {
     if (!official) throw new Error(`Unknown frame "${code.frame.official}"`);
     const spec = official.spec;
     // Labels keep the spec's contrast: light on the ink, or ink on paper.
-    const lightText = luminance(spec.colors.text ?? WHITE) > 0.5;
+    const lightText = luminance(getFrameSpecColors(spec, {}).text) > 0.5;
     return {
       style: "custom",
       spec,

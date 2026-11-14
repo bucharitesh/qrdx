@@ -47,7 +47,7 @@ qrdx.dev --look modern --fg 0051ff --frame banner-bottom --frame-text "Scan me"
 | `--dot` | 定位眼中心的形状 | {facts.eyeCentres} 种中心形状的任意一种,如 `square`、`rounded` 或 `circle` |
 | `--frame` | 二维码周围的边框 | `none` 或 {facts.frameStyles} 种内置边框的任意一种,如 `banner-bottom`、`banner-top`、`speech-bubble` 或 `polaroid` |
 | `--frame-text` | 边框上的标签,最多 24 个字符 | 任意文本;含空格时请加引号。未设置 `--frame` 时,文本会显示在二维码下方的横幅上 |
-| `--template` | 装饰性边框 | `Arrow`, `StandardBox`, `SquareBorder`, `StrikedBox` 或 `Halloween` |
+| `--template` | 以模板绘制的边框 | `Arrow`, `StandardBox`, `SquareBorder`, `StrikedBox` 或 `Halloween` |
 | `--logo` | 中间的图标 | `link`, `wifi`, `location`, `phone`, `email`, `whatsapp`, `instagram`, `file`, `calendar` 或 `none` |
 
 机器人发送带样式的二维码之前,QRdx 会使用与编辑器相同的扫描评分对其进行检查。如果某个设计让手机难以识别,QRdx 会进行调整(更深的颜色、更简单的形状或更高的纠错级别),并在说明文字中告知。如果这样仍然不够,通常是因为内容太长,你会收到白底黑码的二维码,并附有一条说明。

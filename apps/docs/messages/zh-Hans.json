@@ -1669,6 +1669,11 @@
       "after": "它会在独立窗口中直接打开扫描器，并且在你用它扫描过一次二维码后即可离线使用。"
     }
   },
+  "scannerApp": {
+    "share": "分享",
+    "scanInstructions": "将摄像头对准二维码或条形码",
+    "cameraBlocked": "QRdx Scanner 的相机权限已关闭。请在设置中开启，或改为扫描图片。"
+  },
   "scanPages": {
     "reportAbuse": "举报滥用",
     "privacy": "隐私",
@@ -4368,7 +4373,6 @@
         "frame": "外框",
         "padding": "边距",
         "errorCorrection": "纠错级别",
-        "border": "边框",
         "none": "无"
       },
       "dotSizeSection": {
@@ -4391,43 +4395,32 @@
         }
       },
       "frameControls": {
-        "customise": "自定义",
-        "importSvg": "导入 SVG",
+        "uploadSvg": "上传 SVG",
         "publishFrame": "发布边框",
         "theFrameIsAddedAround": "边框会添加在二维码外围，因此下载的图片尺寸会变大，二维码本身仍可正常扫描。",
         "label": "标签",
-        "secondLine": "第二行",
-        "leaveEmptyForNoLabel": "留空则不显示标签",
         "pickAFrameFirst": "请先选择边框",
-        "frameColor": "边框颜色",
-        "textColor": "文字颜色",
-        "endColor": "结束颜色",
-        "optionalEGYourWebsite": "选填，例如你的网站",
-        "none": "无"
+        "none": "无",
+        "takesDotColor": "它使用二维码圆点的颜色。",
+        "alsoHasTemplate": "此设计内还包含 {name} 边框。选择其他边框会同时替换这两个边框。",
+        "templateKeepsSize": "此边框会将二维码容纳在内部，因此下载的图片会保持你所选的尺寸。"
       },
       "frameFields": {
         "textSize": "文字大小"
       },
       "framePicker": {
-        "more": "更多",
         "showAll": "显示全部",
         "frame": "边框",
-        "moreFrames": "更多边框",
-        "allTotalFrames": "全部 {total, number} 个边框",
-        "allFrames": "全部边框",
         "searchFrames": "搜索边框",
         "searchTotalFrames": "在 {total, number} 个边框中搜索",
-        "closeFrames": "关闭边框",
         "filterFrames": "筛选边框",
         "labelFrames": "{label}边框",
-        "commonFrames": "常用边框",
-        "everyFrameBuiltInStyles": "所有边框：内置样式、QRdx 官方边框和你保存的边框。选择后立即应用。",
-        "less": "收起",
         "all": "全部",
         "noFramesMatchQuery": "没有与“{query}”匹配的边框。",
         "loadingFrames": "正在加载边框…",
         "comingUp": "即将推出",
-        "builtIn": "内置",
+        "classic": "经典",
+        "shapedCodes": "异形二维码",
         "saved": "已保存",
         "results": "结果"
       },
@@ -4555,7 +4548,6 @@
       },
       "patternControls": {
         "customizeOuterAndCenter": "自定义外圈与中心",
-        "border": "边框",
         "higherLevelsSurviveScratchesAnd": "更高级别可承受划痕和徽标遮挡，但会增加点的数量。添加徽标时请使用 H。",
         "dotShape": "点形状",
         "dotShapes": "点形状",
@@ -8342,8 +8334,12 @@
       },
       "setupGuide": {
         "getSetUp": "完成设置",
+        "launcherLabel": "开始设置：已完成 {done, number}/{length, number}",
         "doneOfLengthDone": "已完成 {done, number}/{length, number} 项",
+        "doneOfLengthShort": "{done, number}/{length, number}",
         "setupTasksDone": "已完成的设置任务",
+        "collapse": "收起",
+        "dismissGuide": "关闭指南",
         "done": "（已完成）",
         "create": "创建",
         "start": "开始",

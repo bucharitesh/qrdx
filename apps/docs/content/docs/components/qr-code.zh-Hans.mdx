@@ -58,7 +58,7 @@ import { QrCode } from "@/components/qr-code";
 
 ### 边框模板 [#frame-templates]
 
-`templateId` 会在二维码周围绘制 qrdx [模板](/docs/features/templates)。可搭配 `caption`,在边框下方添加行动号召文案。
+`templateId` 会在二维码周围绘制 qrdx 的一种[以模板绘制的边框](/docs/features/templates)。可搭配 `caption`,在边框下方添加行动号召文案。
 
 <ComponentPreview name="qr-code-template" />
 
@@ -176,6 +176,6 @@ export function TableCode() {
 
 ## API 参考 [#api-reference]
 
-<auto-type-table path="../../../registry/qrdx/qr-code.tsx" type="{ [K in keyof QrCodeProps as K extends keyof ComponentProps<'figure'> ? never : K]: QrCodeProps[K] }" />
+<auto-type-table path="../../../../../packages/docs-assets/registry/qrdx/qr-code.tsx" type="{ [K in keyof QrCodeProps as K extends keyof ComponentProps<'figure'> ? never : K]: QrCodeProps[K] }" />
 
 其他任何属性(例如 `className`)都会传给外层的 `<figure>`。

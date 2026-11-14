@@ -6,40 +6,57 @@ import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import { useQuery } from "@tanstack/react-query";
-import { Brush2, DocumentUpload, Global } from "iconsax-reactjs";
+import { DocumentUpload, Global } from "iconsax-reactjs";
 import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
 import {
   type AnyQRFrame,
-  DEFAULT_FRAME_TEXT,
-  FRAME_TEXT_MAX_LENGTH,
-  type FrameStyle,
-  GRADIENT_FRAME_DEFAULTS,
-  mixFrameColors,
+  BUILT_IN_FRAMES,
+  frameSpecOf,
+  getBuiltInFrame,
   QRCodeSVG,
-  type QRCustomFrame,
 } from "qrdx";
 import { useContext, useMemo, useState } from "react";
 import { getSavedCommunityFrames } from "@/actions/community";
 import { useEditableStyle } from "@/components/editor/style-scope";
-import { BUILT_IN_SPEC_STYLES, builtInSpec } from "@/lib/frames/built-in";
 import { peekOfficialEntryOfSpec } from "@/lib/frames/library";
 import { useFrameLibrary } from "@/lib/frames/use-frame-library";
 import { useSessionGuard } from "@/lib/hooks/use-gaurds";
 import { soundEvent } from "@/lib/sound/emit";
 import { SectionContext } from "../section-context";
-import { CustomFrameFields } from "./custom-frame-fields";
-import { FrameColorField, FrameTextSize } from "./frame-fields";
+import { FrameSpecFields } from "./custom-frame-fields";
 import { type FrameChoice, FramePicker, OFFICIAL_PREFIX } from "./frame-picker";
-import { FrameShapes, frameShapeOf, withoutShape } from "./frame-shapes";
+import {
+  FRAME_SHAPE_IDS,
+  type FrameShapeId,
+  frameShapeOf,
+  type ShapedCodes,
+  ShapePreview,
+  useShapedCodes,
+  withoutShape,
+} from "./frame-shapes";
 import { carryFrameSettings, customFrameName } from "./frame-specs";
+import {
+  FRAME_TEMPLATES,
+  TEMPLATE_PREFIX,
+  templateOf,
+  templateTakesCodeColor,
+  withoutTemplate,
+} from "./frame-templates";
 import { FrameTextPresets } from "./frame-text-presets";
 
-// One picker for every frame: the engine's built-in call-to-action frames,
-// QRdx's official frame library (frame specs, loaded on demand from the
-// engine's catalogue, lib/frames/library.ts) and the frames you saved from
-// the community. Official and saved frames are custom frames: their
-// labels, colors and icons are edited through the spec.
+// One picker for every frame: the engine's built-in frames (the classic
+// call-to-action frames), the shaped codes, QRdx's official frame library
+// (frame specs, loaded on demand from the engine's catalogue,
+// lib/frames/library.ts) and the frames you saved from the community.
+// Every frame is a frame spec, so all of them are edited the same way:
+// labels, colors, text size and icons through the spec (FrameSpecFields).
+//
+// A built-in frame keeps its style name in the design ({ style: "border",
+// text, color, … }), as saved designs, links, the image API, the CLI and
+// code snippets hold it: it draws the engine's spec for that style, and
+// every field the editor changes (text, second line, colors, text size)
+// lives on the frame itself, so there is nothing to convert.
 
 // Opened rarely: kept out of the editor's first load
 const ImportFrameDialog = dynamic(() =>
@@ -53,66 +70,17 @@ const PublishFrameDialog = dynamic(() =>
   ),
 );
 
-const BUILT_IN_OPTIONS: { id: FrameStyle; name: string }[] = [
-  { id: "none", name: "None" },
-  { id: "banner-bottom", name: "Banner" },
-  { id: "banner-top", name: "Top banner" },
-  { id: "banner-top-bottom", name: "Two banners" },
-  { id: "border", name: "Border" },
-  { id: "rounded-border", name: "Rounded" },
-  { id: "gradient-border", name: "Gradient" },
-  { id: "focus", name: "Focus" },
-  { id: "speech-bubble", name: "Bubble" },
-  { id: "speech-bubble-top", name: "Bubble top" },
-  { id: "chat-bubble", name: "Chat" },
-  { id: "circle", name: "Circle" },
-  { id: "badge", name: "Ribbon" },
-  { id: "sticker", name: "Sticker" },
-  { id: "polaroid", name: "Polaroid" },
-  { id: "phone", name: "Phone" },
-  { id: "ticket", name: "Ticket" },
-  { id: "tag", name: "Tag" },
-  { id: "envelope", name: "Envelope" },
-  { id: "menu-card", name: "Menu card" },
-];
-
+const NONE = "none";
 const SAVED_PREFIX = "saved:";
+const SHAPE_PREFIX = "shape:";
 const CUSTOM_ID = "custom";
-/** The frame picker's value while a shaped code is on: no frame tile */
-const SHAPED_ID = "shaped";
 
 /** Name for the collapsed Frame header. */
 export function frameName(frame: AnyQRFrame | undefined, none: string) {
   if (!frame || frame.style === "none") return none;
   if (frame.style === "custom") return customFrameName(frame);
-  return (
-    BUILT_IN_OPTIONS.find((option) => option.id === frame.style)?.name ?? none
-  );
+  return getBuiltInFrame(frame.style)?.name ?? none;
 }
-
-const FEATURED = [
-  "none",
-  "banner-bottom",
-  "rounded-border",
-  `${OFFICIAL_PREFIX}wifi-card`,
-  `${OFFICIAL_PREFIX}review-us`,
-];
-
-// Frames whose label sits on the light area, so it defaults to the frame color
-const TEXT_ON_LIGHT = new Set<FrameStyle>([
-  "border",
-  "rounded-border",
-  "phone",
-  "menu-card",
-  "focus",
-]);
-
-// Frames with a second label
-const SECOND_LINE = new Set<FrameStyle>([
-  "banner-top-bottom",
-  "circle",
-  "menu-card",
-]);
 
 /** Frames saved from the community, for the signed-in picker. */
 function useSavedFrames() {
@@ -126,33 +94,78 @@ function useSavedFrames() {
 }
 
 /**
- * The frame picker on its own: the built-in frames, the official library
- * and the frames you saved. A built-in style keeps the text and colors
- * chosen so far; a ready-made frame comes as its tile shows it.
+ * The frame picker on its own: the built-in frames (the classic ones and
+ * the templates), the shaped codes, the official library and the frames you
+ * saved, with Upload SVG beside the search (an SVG of your own becomes a
+ * custom frame). One choice at a time: picking a frame, template or shaped
+ * code replaces the one before. A built-in frame keeps the text and colors
+ * chosen so far; a ready-made frame comes as its tile shows it. Pass
+ * `shapes` when the shaped code panel is shown elsewhere (FrameControls);
+ * on its own the picker shows the panel under it.
  */
-export function FrameStylePicker({ active = true }: { active?: boolean }) {
+export function FrameStylePicker({
+  active = true,
+  shapes: given,
+}: {
+  active?: boolean;
+  shapes?: ShapedCodes;
+}) {
   const t = useTranslations("editor.controlSections.frameControls");
   const { style, setStyle } = useEditableStyle();
+  const own = useShapedCodes();
+  const shapes = given ?? own;
   const frame: AnyQRFrame = style.frame ?? { style: "none" };
   const custom = frame.style === "custom" ? frame : null;
   const { data: saved = [] } = useSavedFrames();
+  const { checkValidSession } = useSessionGuard();
+  const [importOpen, setImportOpen] = useState(false);
+  // The dialog loads on first open, then stays mounted (for its exit)
+  const [importUsed, setImportUsed] = useState(false);
 
-  // A frame takes the place of a shaped code (frame-shapes.tsx)
+  // A frame (a picked or an uploaded one) takes the place of a shaped code
+  // (frame-shapes.tsx) or a template (frame-templates.ts)
   const setFrame = (next: AnyQRFrame) =>
-    setStyle({ ...withoutShape(style), frame: next });
-  const shaped = frameShapeOf(style) !== null;
+    setStyle({ ...withoutTemplate(withoutShape(style)), frame: next });
+  const shape = frameShapeOf(style) ?? shapes.current;
+  const template = templateOf(style);
 
-  // The picker's own choices: built-ins, saved frames, the custom one.
-  // Official frames come from the library (frame-picker.tsx).
+  // The picker's own tiles: no frame, the built-in frames and templates,
+  // the shaped codes, saved frames. Official frames come from the library
+  // (frame-picker.tsx).
   const choices = useMemo(() => {
     const list: FrameChoice[] = [
-      ...BUILT_IN_OPTIONS.map(
-        (option): FrameChoice => ({
-          id: option.id as string,
-          name: option.name,
-          frame: { style: option.id, text: "" } as AnyQRFrame,
+      {
+        id: NONE,
+        name: t("none"),
+        frame: { style: "none" },
+        group: "built-in",
+        keywords: "no frame plain square",
+      },
+      ...BUILT_IN_FRAMES.map(
+        (item): FrameChoice => ({
+          id: item.style,
+          name: item.name,
+          frame: { style: item.style, text: "" },
           group: "built-in",
-          keywords: "built-in classic",
+          keywords: `classic built-in ${item.tags.join(" ")}`,
+        }),
+      ),
+      ...FRAME_TEMPLATES.map(
+        (item): FrameChoice => ({
+          id: `${TEMPLATE_PREFIX}${item.id}`,
+          name: item.name,
+          frame: { style: "none" },
+          group: "built-in",
+          keywords: `classic built-in border ${item.id} ${item.description ?? ""}`,
+        }),
+      ),
+      ...FRAME_SHAPE_IDS.map(
+        (id): FrameChoice => ({
+          id: `${SHAPE_PREFIX}${id}`,
+          name: shapes.names[id],
+          frame: { style: "none" },
+          group: "shape",
+          keywords: `shape shaped code ${id} round heart outline upload`,
         }),
       ),
       ...saved.map(
@@ -166,14 +179,18 @@ export function FrameStylePicker({ active = true }: { active?: boolean }) {
       ),
     ];
     return list;
-  }, [saved]);
+  }, [saved, shapes.names, t]);
 
   // Name official frames (and keep the picker current) as the library loads
   useFrameLibrary({ withIndex: Boolean(custom) });
   const official = custom ? peekOfficialEntryOfSpec(custom.spec) : undefined;
 
   const value = (() => {
-    if (shaped && frame.style === "none") return SHAPED_ID;
+    if (shape && frame.style === "none") return `${SHAPE_PREFIX}${shape}`;
+    // A legacy design with a template inside a frame shows its frame
+    if (template && frame.style === "none") {
+      return `${TEMPLATE_PREFIX}${template.id}`;
+    }
     if (!custom) return frame.style as string;
     if (official) return `${OFFICIAL_PREFIX}${official.id}`;
     const json = JSON.stringify(custom.spec);
@@ -197,43 +214,111 @@ export function FrameStylePicker({ active = true }: { active?: boolean }) {
       : choices;
 
   const pick = (id: string, picked: AnyQRFrame) => {
+    if (id.startsWith(SHAPE_PREFIX)) {
+      // Plays its own sound, and clears the frame
+      shapes.pick(id.slice(SHAPE_PREFIX.length) as FrameShapeId);
+      return;
+    }
     soundEvent("tick");
+    if (id.startsWith(TEMPLATE_PREFIX)) {
+      // A template takes the place of the frame and of a shaped code
+      const { frame: _frame, ...rest } = withoutShape(style);
+      setStyle({ ...rest, templateId: id.slice(TEMPLATE_PREFIX.length) });
+      return;
+    }
     if (picked.style === "custom") {
       // A ready-made frame looks like its tile: its own labels and colors.
       setFrame(id === CUSTOM_ID && custom ? custom : picked);
       return;
     }
-    // A built-in style keeps the text and colors chosen so far.
+    // A built-in frame keeps the text and colors chosen so far.
     setFrame({ ...carryFrameSettings(frame), style: picked.style });
   };
 
+  const currentName =
+    frame.style !== "none"
+      ? frameName(frame, t("none"))
+      : shape
+        ? shapes.names[shape]
+        : (template?.name ?? t("none"));
+
   return (
-    <FramePicker
-      active={active}
-      choices={pickerChoices}
-      currentName={frameName(frame, t("none"))}
-      featured={FEATURED}
-      onPick={pick}
-      preview={(option) => (
-        <QRCodeSVG
-          bgColor="#ffffff"
-          bodyPattern="square"
-          cornerEyeDotPattern="square"
-          cornerEyePattern="square"
-          fgColor="#000000"
-          frame={
-            option.style === "custom" || !frame.color
-              ? option
-              : // Built-in tiles take the chosen frame color
-                { ...option, color: frame.color }
-          }
-          size={40}
-          style={{ maxHeight: "100%", maxWidth: "100%" }}
-          value={CANONICAL_HOST}
+    <>
+      <FramePicker
+        action={
+          <Button
+            className="shrink-0"
+            onClick={() => {
+              if (!checkValidSession("signin")) return;
+              setImportUsed(true);
+              setImportOpen(true);
+            }}
+            size="sm"
+            title={t("uploadSvg")}
+            type="button"
+            variant="outline"
+          >
+            <DocumentUpload aria-hidden className="size-4" />
+            {/* Icon only in the preview's narrow frame menu */}
+            <span className="sr-only @[20rem]/frame-search:not-sr-only">
+              {t("uploadSvg")}
+            </span>
+          </Button>
+        }
+        active={active}
+        choices={pickerChoices}
+        currentName={currentName}
+        onPick={pick}
+        preview={(option, id) =>
+          id.startsWith(TEMPLATE_PREFIX) ? (
+            <QRCodeSVG
+              bgColor="transparent"
+              fgColor={frame.color || "#000000"}
+              size={40}
+              style={{ maxHeight: "100%", maxWidth: "100%" }}
+              templateId={id.slice(TEMPLATE_PREFIX.length)}
+              value={CANONICAL_HOST}
+            />
+          ) : id.startsWith(SHAPE_PREFIX) ? (
+            <ShapePreview
+              id={id.slice(SHAPE_PREFIX.length) as FrameShapeId}
+              silhouette={shapes.silhouette}
+            />
+          ) : (
+            <QRCodeSVG
+              bgColor="#ffffff"
+              bodyPattern="square"
+              cornerEyeDotPattern="square"
+              cornerEyePattern="square"
+              fgColor="#000000"
+              frame={
+                option.style === "custom" || !frame.color
+                  ? option
+                  : // Built-in tiles take the chosen frame color
+                    { ...option, color: frame.color }
+              }
+              size={40}
+              style={{ maxHeight: "100%", maxWidth: "100%" }}
+              value={CANONICAL_HOST}
+            />
+          )
+        }
+        value={value}
+      />
+      {given ? null : (
+        <div className="mt-3 space-y-3 empty:hidden">{own.panel}</div>
+      )}
+      {importUsed && (
+        <ImportFrameDialog
+          onImported={(imported) => {
+            setFrame({ style: "custom", spec: imported });
+            soundEvent("tick");
+          }}
+          onOpenChange={setImportOpen}
+          open={importOpen}
         />
       )}
-      value={value}
-    />
+    </>
   );
 }
 
@@ -241,108 +326,73 @@ export function FrameControls() {
   const t = useTranslations("editor.controlSections.frameControls");
   const { style, setStyle } = useEditableStyle();
   const { checkValidSession } = useSessionGuard();
+  const shapes = useShapedCodes();
   const frame: AnyQRFrame = style.frame ?? { style: "none" };
   const custom = frame.style === "custom" ? frame : null;
-  const builtIn = frame.style === "custom" ? null : frame;
+  // Every frame is edited through its spec: its own, or its style's
+  const spec = frameSpecOf(frame);
   // Inside a collapsed section the picker waits (nothing is on screen)
   const section = useContext(SectionContext);
   const active = section ? section.isExpanded : true;
-  const [importOpen, setImportOpen] = useState(false);
   const [publishOpen, setPublishOpen] = useState(false);
-  // The dialogs load on first open, then stay mounted (for their exit)
-  const [dialogs, setDialogs] = useState({ import: false, publish: false });
+  // The dialog loads on first open, then stays mounted (for its exit)
+  const [publishUsed, setPublishUsed] = useState(false);
 
-  // A frame takes the place of a shaped code (frame-shapes.tsx)
+  // Editing a frame's fields keeps it as it is (a new frame, picked or
+  // uploaded, comes from FrameStylePicker)
   const setFrame = (next: AnyQRFrame) =>
     setStyle({ ...withoutShape(style), frame: next });
-  const shaped = frameShapeOf(style) !== null;
-
-  const editableSpec =
-    builtIn && BUILT_IN_SPEC_STYLES.includes(builtIn.style)
-      ? builtInSpec(builtIn.style)
-      : undefined;
+  const shaped = frameShapeOf(style) !== null || shapes.current !== null;
+  const template = templateOf(style);
 
   return (
     <div className="space-y-4">
-      <FrameStylePicker active={active} />
+      <FrameStylePicker active={active} shapes={shapes} />
 
-      <FrameShapes setStyle={setStyle} style={style} />
+      {shapes.panel}
 
-      {shaped && frame.style === "none" ? null : custom ? (
-        <CustomFrameFields frame={custom} onChange={setFrame} />
+      {spec ? (
+        <>
+          <FrameSpecFields frame={frame} onChange={setFrame} spec={spec} />
+          {template && (
+            // A design from before templates were frames, with both
+            <p className="text-muted-foreground text-xs text-pretty">
+              {t("alsoHasTemplate", { name: template.name })}
+            </p>
+          )}
+        </>
+      ) : template ? (
+        <p className="text-muted-foreground text-xs text-pretty">
+          {t("templateKeepsSize")}
+          {templateTakesCodeColor(template) && ` ${t("takesDotColor")}`}
+        </p>
       ) : (
-        builtIn && (
-          <BuiltInFrameFields
-            frame={builtIn}
-            onChange={(changes) => setFrame({ ...builtIn, ...changes })}
-          />
-        )
+        !shaped && <NoFrameFields />
       )}
 
-      <div className="flex flex-wrap gap-2">
-        {editableSpec && builtIn && (
-          <Button
-            onClick={() => {
-              setFrame({
-                ...carryFrameSettings(builtIn),
-                style: "custom",
-                spec: editableSpec,
-              });
-              soundEvent("tick");
-            }}
-            size="sm"
-            type="button"
-            variant="outline"
-          >
-            <Brush2 aria-hidden className="size-4" />
-            {t("customise")}
-          </Button>
-        )}
+      {custom && (
         <Button
           onClick={() => {
             if (!checkValidSession("signin")) return;
-            setDialogs((used) => ({ ...used, import: true }));
-            setImportOpen(true);
+            setPublishUsed(true);
+            setPublishOpen(true);
           }}
           size="sm"
           type="button"
           variant="outline"
         >
-          <DocumentUpload aria-hidden className="size-4" />
-          {t("importSvg")}
+          <Global aria-hidden className="size-4" />
+          {t("publishFrame")}
         </Button>
-        {custom && (
-          <Button
-            onClick={() => {
-              if (!checkValidSession("signin")) return;
-              setDialogs((used) => ({ ...used, publish: true }));
-              setPublishOpen(true);
-            }}
-            size="sm"
-            type="button"
-            variant="outline"
-          >
-            <Global aria-hidden className="size-4" />
-            {t("publishFrame")}
-          </Button>
-        )}
-      </div>
-
-      <p className="text-muted-foreground text-xs">
-        {t("theFrameIsAddedAround")}
-      </p>
-
-      {dialogs.import && (
-        <ImportFrameDialog
-          onImported={(spec) => {
-            setFrame({ style: "custom", spec });
-            soundEvent("tick");
-          }}
-          onOpenChange={setImportOpen}
-          open={importOpen}
-        />
       )}
-      {custom && dialogs.publish && (
+
+      {!(template && !spec) && (
+        <p className="text-muted-foreground text-xs">
+          {t("theFrameIsAddedAround")}
+        </p>
+      )}
+
+      {custom && publishUsed && (
         <PublishFrameDialog
           frame={custom}
           onOpenChange={setPublishOpen}
@@ -353,116 +403,19 @@ export function FrameControls() {
   );
 }
 
-type BuiltInFrame = Exclude<AnyQRFrame, QRCustomFrame>;
-
-/** Label, colors and text size of a built-in frame. */
-function BuiltInFrameFields({
-  frame,
-  onChange,
-}: {
-  frame: BuiltInFrame;
-  onChange: (changes: Partial<BuiltInFrame>) => void;
-}) {
+/**
+ * With no frame: the label field, waiting for a frame, and label ideas
+ * (picking one adds the default frame with that label).
+ */
+function NoFrameFields() {
   const t = useTranslations("editor.controlSections.frameControls");
-  const active = frame.style !== "none";
-  const isGradient = frame.style === "gradient-border";
-  const frameColor =
-    frame.color ?? (isGradient ? GRADIENT_FRAME_DEFAULTS.from : "#000000");
-  const endColor = frame.secondaryColor ?? GRADIENT_FRAME_DEFAULTS.to;
-  const textColor =
-    frame.textColor ??
-    (isGradient
-      ? mixFrameColors(frameColor, endColor, 0.5)
-      : TEXT_ON_LIGHT.has(frame.style)
-        ? frameColor
-        : "#ffffff");
-  const fontScale = frame.fontScale ?? 1;
-
   return (
-    <>
-      <div className="space-y-1.5">
-        <div className="flex items-center justify-between">
-          <Label className="text-xs" htmlFor="frame-text">
-            {t("label")}
-          </Label>
-          <span className="text-muted-foreground text-xs tabular-nums">
-            {(frame.text ?? DEFAULT_FRAME_TEXT).length}/{FRAME_TEXT_MAX_LENGTH}
-          </span>
-        </div>
-        <Input
-          disabled={!active}
-          id="frame-text"
-          maxLength={FRAME_TEXT_MAX_LENGTH}
-          onChange={(event) =>
-            onChange({
-              text: event.target.value.slice(0, FRAME_TEXT_MAX_LENGTH),
-            })
-          }
-          placeholder={
-            active ? t("leaveEmptyForNoLabel") : t("pickAFrameFirst")
-          }
-          value={frame.text ?? DEFAULT_FRAME_TEXT}
-        />
-        <FrameTextPresets />
-      </div>
-
-      <div className="grid grid-cols-2 gap-3">
-        <FrameColorField
-          disabled={!active}
-          id="frame-color"
-          label={t("frameColor")}
-          onChange={(color) => onChange({ color })}
-          value={frameColor}
-        />
-        <FrameColorField
-          disabled={!active}
-          id="frame-text-color"
-          label={t("textColor")}
-          onChange={(color) => onChange({ textColor: color })}
-          value={textColor}
-        />
-        {isGradient && (
-          <FrameColorField
-            id="frame-end-color"
-            label={t("endColor")}
-            onChange={(color) => onChange({ secondaryColor: color })}
-            value={endColor}
-          />
-        )}
-      </div>
-
-      {SECOND_LINE.has(frame.style) && (
-        <div className="space-y-1.5">
-          <div className="flex items-center justify-between">
-            <Label className="text-xs" htmlFor="frame-secondary-text">
-              {t("secondLine")}
-            </Label>
-            <span className="text-muted-foreground text-xs tabular-nums">
-              {(frame.secondaryText ?? "").length}/{FRAME_TEXT_MAX_LENGTH}
-            </span>
-          </div>
-          <Input
-            id="frame-secondary-text"
-            maxLength={FRAME_TEXT_MAX_LENGTH}
-            onChange={(event) =>
-              onChange({
-                secondaryText: event.target.value.slice(
-                  0,
-                  FRAME_TEXT_MAX_LENGTH,
-                ),
-              })
-            }
-            placeholder={t("optionalEGYourWebsite")}
-            value={frame.secondaryText ?? ""}
-          />
-        </div>
-      )}
-
-      <FrameTextSize
-        disabled={!active}
-        onChange={(value) => onChange({ fontScale: value })}
-        value={fontScale}
-      />
-    </>
+    <div className="space-y-1.5">
+      <Label className="text-xs" htmlFor="frame-text">
+        {t("label")}
+      </Label>
+      <Input disabled id="frame-text" placeholder={t("pickAFrameFirst")} />
+      <FrameTextPresets />
+    </div>
   );
 }

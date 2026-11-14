@@ -1669,6 +1669,11 @@
       "after": "Aplikasi langsung terbuka di pemindai dalam jendelanya sendiri, dan dapat digunakan secara offline setelah Anda memindai satu kode dengannya."
     }
   },
+  "scannerApp": {
+    "share": "Bagikan",
+    "scanInstructions": "Arahkan kamera ke kode QR atau barcode",
+    "cameraBlocked": "Akses kamera untuk QRdx Scanner sedang nonaktif. Aktifkan di Pengaturan, atau pindai gambar sebagai gantinya."
+  },
   "scanPages": {
     "reportAbuse": "Laporkan penyalahgunaan",
     "privacy": "Privasi",
@@ -4368,7 +4373,6 @@
         "frame": "Bingkai",
         "padding": "Padding",
         "errorCorrection": "Koreksi kesalahan",
-        "border": "Garis tepi",
         "none": "Tidak ada"
       },
       "dotSizeSection": {
@@ -4391,43 +4395,32 @@
         }
       },
       "frameControls": {
-        "customise": "Kustomisasi",
-        "importSvg": "Impor SVG",
+        "uploadSvg": "Unggah SVG",
         "publishFrame": "Publikasikan bingkai",
         "theFrameIsAddedAround": "Bingkai ditambahkan di sekeliling kode, sehingga gambar yang diunduh menjadi lebih besar dan kodenya sendiri tetap dapat dipindai.",
         "label": "Label",
-        "secondLine": "Baris kedua",
-        "leaveEmptyForNoLabel": "Kosongkan jika tanpa label",
         "pickAFrameFirst": "Pilih bingkai terlebih dahulu",
-        "frameColor": "Warna bingkai",
-        "textColor": "Warna teks",
-        "endColor": "Warna akhir",
-        "optionalEGYourWebsite": "Opsional, mis. situs web Anda",
-        "none": "Tidak ada"
+        "none": "Tidak ada",
+        "takesDotColor": "Warnanya mengikuti warna titik-titik kode.",
+        "alsoHasTemplate": "Desain ini juga memiliki bingkai {name} di dalam bingkai ini. Memilih bingkai lain akan mengganti keduanya.",
+        "templateKeepsSize": "Bingkai ini menyesuaikan kode di dalamnya, sehingga gambar yang diunduh tetap berukuran sesuai pilihan Anda."
       },
       "frameFields": {
         "textSize": "Ukuran teks"
       },
       "framePicker": {
-        "more": "Lainnya",
         "showAll": "Lihat semua",
         "frame": "Bingkai",
-        "moreFrames": "Bingkai lainnya",
-        "allTotalFrames": "Semua {total, number} bingkai",
-        "allFrames": "Semua bingkai",
         "searchFrames": "Cari bingkai",
         "searchTotalFrames": "Cari {total, number} bingkai",
-        "closeFrames": "Tutup bingkai",
         "filterFrames": "Filter bingkai",
         "labelFrames": "Bingkai {label}",
-        "commonFrames": "Bingkai umum",
-        "everyFrameBuiltInStyles": "Semua bingkai: gaya bawaan, bingkai resmi QRdx, dan bingkai yang Anda simpan. Begitu dipilih, bingkai langsung diterapkan.",
-        "less": "Lebih sedikit",
         "all": "Semua",
         "noFramesMatchQuery": "Tidak ada bingkai yang cocok dengan \"{query}\".",
         "loadingFrames": "Memuat bingkai…",
         "comingUp": "Segera hadir",
-        "builtIn": "Bawaan",
+        "classic": "Klasik",
+        "shapedCodes": "Kode berbentuk",
         "saved": "Tersimpan",
         "results": "Hasil"
       },
@@ -4555,7 +4548,6 @@
       },
       "patternControls": {
         "customizeOuterAndCenter": "Sesuaikan bagian luar dan tengah",
-        "border": "Bingkai",
         "higherLevelsSurviveScratchesAnd": "Level yang lebih tinggi tahan terhadap goresan dan logo, tetapi menambah jumlah titik. Gunakan H saat Anda menambahkan logo.",
         "dotShape": "Bentuk titik",
         "dotShapes": "bentuk titik",
@@ -8342,8 +8334,12 @@
       },
       "setupGuide": {
         "getSetUp": "Penyiapan",
+        "launcherLabel": "Mulai atur: {done, number} dari {length, number} selesai",
         "doneOfLengthDone": "{done, number} dari {length, number} selesai",
+        "doneOfLengthShort": "{done, number}/{length, number}",
         "setupTasksDone": "Tugas penyiapan selesai",
+        "collapse": "Ciutkan",
+        "dismissGuide": "Tutup panduan",
         "done": "(selesai)",
         "create": "Buat",
         "start": "Mulai",

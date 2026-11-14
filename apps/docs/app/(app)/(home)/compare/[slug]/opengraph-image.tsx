@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { ogSize, renderPageOgImage } from "@/app/og/brand";
 import { compareSource } from "@/lib/content-source";
-import { buildTimeParams } from "@/lib/static-params";
+import { onDemandParams } from "@/lib/static-params";
 
 export const alt = "QRdx compared with another QR code tool";
 export const size = ogSize;
@@ -13,9 +13,7 @@ function firstSentence(text: string): string {
 }
 
 export function generateStaticParams() {
-  return buildTimeParams(() =>
-    compareSource.getPages().map((page) => ({ slug: page.slugs[0] })),
-  );
+  return onDemandParams();
 }
 
 export default async function Image({

@@ -1,0 +1,80 @@
+{
+  "id": "wifi-hostel-board",
+  "name": "Hostel Wi-Fi board",
+  "description": "A chalkboard in a wooden frame.",
+  "category": "use-case",
+  "collection": "places",
+  "contentTypes": ["wifi"],
+  "tags": ["wifi", "hostel"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1720
+    },
+    "qr": {
+      "x": 160,
+      "y": 340,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#2b2b2b",
+      "text": "#ffffff",
+      "accent": "#b5b5b5"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1320,
+        "height": 1720,
+        "radius": 30,
+        "fill": "accent"
+      },
+      {
+        "type": "rect",
+        "x": 50,
+        "y": 50,
+        "width": 1220,
+        "height": 1620,
+        "radius": 10,
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for Wi-Fi",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1460,
+          "width": 1040,
+          "height": 170
+        },
+        "weight": "regular"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Hostel guests",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 90,
+          "width": 1040,
+          "height": 120
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

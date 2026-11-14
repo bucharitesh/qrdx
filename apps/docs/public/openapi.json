@@ -80,7 +80,7 @@
         "summary": "Render a QR code image",
         "tags": ["QR images"],
         "security": [],
-        "description": "A QR code image as SVG (default), PNG, WebP or EPS, with no key.\n\n**No key or token needed**, and it doesn't use your daily quota: put the URL straight into an `<img>` tag. The same query always returns the same bytes, so responses are cached for a year. Colors are hex without `#` (or with `#` encoded as `%23`). Limit: 300 requests a minute per IP address. More in the [Image API guide](https://qrdx.dev/docs/developers/image-api).\n\n**The editor's styles.** `style` takes the whole design as URL-encoded JSON, with the same fields as a saved theme: gradients (linear, radial), frames including custom frame specs, border templates, eye and dot colors, and a logo icon. It also takes the `style` value of a playground link. `item` renders a community frame or theme (`/community/items`); `frame` and `frameText` add a built-in frame. Flat parameters you set win over `style`, and `style` wins over `item`. With a frame, `size` is the code's width and the frame adds to it.\n\n**Logos.** `logoIcon` draws one of the editor's quick icons, or a brand logo by its Simple Icons slug (`spotify`, `paypal:white`). `logoFileId` draws an image you uploaded, and needs `Authorization: Bearer qrdx_…` from the workspace that owns it; that response is private and counts toward the daily quota. QRdx never fetches a logo from an address you send. Logo QR and Image QR art aren't available here.\n\n**Caching.** Renders with `item` are cached for 5 minutes (10 at the CDN), since an item can change; renders with `logoFileId` aren't cached.\n\n**WebP** is lossless: the same pixels as the PNG in a smaller file, transparency included.",
+        "description": "A QR code image as SVG (default), PNG, WebP or EPS, with no key.\n\n**No key or token needed**, and it doesn't use your daily quota: put the URL straight into an `<img>` tag. The same query always returns the same bytes, so responses are cached for a year. Colors are hex without `#` (or with `#` encoded as `%23`). Limit: 300 requests a minute per IP address. More in the [Image API guide](https://qrdx.dev/docs/developers/image-api).\n\n**The editor's styles.** `style` takes the whole design as URL-encoded JSON, with the same fields as a saved theme: gradients (linear, radial), frames (built-in, custom frame specs, or a frame drawn as a template), eye and dot colors, and a logo icon. It also takes the `style` value of a playground link. `item` renders a community frame or theme (`/community/items`); `frame` and `frameText` add a built-in frame. Flat parameters you set win over `style`, and `style` wins over `item`. With a frame, `size` is the code's width and the frame adds to it.\n\n**Logos.** `logoIcon` draws one of the editor's quick icons, or a brand logo by its Simple Icons slug (`spotify`, `paypal:white`). `logoFileId` draws an image you uploaded, and needs `Authorization: Bearer qrdx_…` from the workspace that owns it; that response is private and counts toward the daily quota. QRdx never fetches a logo from an address you send. Logo QR and Image QR art aren't available here.\n\n**Caching.** Renders with `item` are cached for 5 minutes (10 at the CDN), since an item can change; renders with `logoFileId` aren't cached.\n\n**WebP** is lossless: the same pixels as the PNG in a smaller file, transparency included.",
         "parameters": [
           {
             "name": "data",
@@ -272,7 +272,7 @@
             "name": "template",
             "in": "query",
             "required": false,
-            "description": "Decorative frame template",
+            "description": "A built-in frame drawn as a template (Arrow, StandardBox, SquareBorder, StrikedBox, Halloween, DotRing; default is none). Unlike `frame`, the whole artwork is `size` wide with the code smaller inside it",
             "schema": {
               "type": "string",
               "enum": [
@@ -281,7 +281,8 @@
                 "StandardBox",
                 "SquareBorder",
                 "StrikedBox",
-                "Halloween"
+                "Halloween",
+                "DotRing"
               ]
             }
           },
@@ -301,7 +302,7 @@
             "name": "style",
             "in": "query",
             "required": false,
-            "description": "The editor's whole style: URL-encoded JSON with the same fields as a saved theme (gradients, frames including custom frame specs, border templates, eye and dot colors, logoIcon, logoFileId), or the `style` value of a playground link (1.…). Flat parameters you also set win over it.",
+            "description": "The editor's whole style: URL-encoded JSON with the same fields as a saved theme (gradients, frames (built-in, custom frame specs, or a template), eye and dot colors, logoIcon, logoFileId), or the `style` value of a playground link (1.…). Flat parameters you also set win over it.",
             "schema": {
               "type": "string",
               "maxLength": 8192
@@ -8551,6 +8552,10 @@
                 "type": "number",
                 "minimum": -4000,
                 "maximum": 4000
+              },
+              "plate": {
+                "type": "string",
+                "enum": ["opaque", "background", "none"]
               }
             },
             "required": ["x", "y", "size"],
@@ -8564,8 +8569,56 @@
                 "pattern": "^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$"
               },
               "text": {
-                "type": "string",
-                "pattern": "^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$"
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "mix": {
+                        "type": "array",
+                        "prefixItems": [
+                          {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "enum": ["frame", "accent", "background"]
+                              },
+                              {
+                                "type": "string",
+                                "pattern": "^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$"
+                              }
+                            ]
+                          },
+                          {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "enum": ["frame", "accent", "background"]
+                              },
+                              {
+                                "type": "string",
+                                "pattern": "^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$"
+                              }
+                            ]
+                          }
+                        ],
+                        "items": false,
+                        "minItems": 2,
+                        "maxItems": 2
+                      },
+                      "amount": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                      }
+                    },
+                    "required": ["mix", "amount"],
+                    "additionalProperties": false
+                  }
+                ]
               },
               "accent": {
                 "type": "string",
@@ -8646,6 +8699,21 @@
                       },
                       "required": ["x", "y", "width", "height"],
                       "additionalProperties": false
+                    },
+                    "stroke": {
+                      "type": "object",
+                      "properties": {
+                        "color": {
+                          "$ref": "#/components/schemas/FrameSpecColor"
+                        },
+                        "width": {
+                          "type": "number",
+                          "minimum": -4000,
+                          "maximum": 4000
+                        }
+                      },
+                      "required": ["color", "width"],
+                      "additionalProperties": false
                     }
                   },
                   "required": ["type", "x", "y", "width", "height", "fill"],
@@ -8680,6 +8748,21 @@
                     },
                     "fill": {
                       "$ref": "#/components/schemas/FrameSpecPaint"
+                    },
+                    "stroke": {
+                      "type": "object",
+                      "properties": {
+                        "color": {
+                          "$ref": "#/components/schemas/FrameSpecColor"
+                        },
+                        "width": {
+                          "type": "number",
+                          "minimum": -4000,
+                          "maximum": 4000
+                        }
+                      },
+                      "required": ["color", "width"],
+                      "additionalProperties": false
                     }
                   },
                   "required": ["type", "cx", "cy", "r", "fill"],
@@ -8714,6 +8797,21 @@
                     },
                     "fill": {
                       "$ref": "#/components/schemas/FrameSpecPaint"
+                    },
+                    "stroke": {
+                      "type": "object",
+                      "properties": {
+                        "color": {
+                          "$ref": "#/components/schemas/FrameSpecColor"
+                        },
+                        "width": {
+                          "type": "number",
+                          "minimum": -4000,
+                          "maximum": 4000
+                        }
+                      },
+                      "required": ["color", "width"],
+                      "additionalProperties": false
                     }
                   },
                   "required": ["type", "cx", "cy", "rx", "ry", "fill"],
@@ -8751,6 +8849,21 @@
                     },
                     "fill": {
                       "$ref": "#/components/schemas/FrameSpecPaint"
+                    },
+                    "stroke": {
+                      "type": "object",
+                      "properties": {
+                        "color": {
+                          "$ref": "#/components/schemas/FrameSpecColor"
+                        },
+                        "width": {
+                          "type": "number",
+                          "minimum": -4000,
+                          "maximum": 4000
+                        }
+                      },
+                      "required": ["color", "width"],
+                      "additionalProperties": false
                     }
                   },
                   "required": ["type", "points", "fill"],
@@ -8774,6 +8887,21 @@
                     "fillRule": {
                       "type": "string",
                       "enum": ["nonzero", "evenodd"]
+                    },
+                    "stroke": {
+                      "type": "object",
+                      "properties": {
+                        "color": {
+                          "$ref": "#/components/schemas/FrameSpecColor"
+                        },
+                        "width": {
+                          "type": "number",
+                          "minimum": -4000,
+                          "maximum": 4000
+                        }
+                      },
+                      "required": ["color", "width"],
+                      "additionalProperties": false
                     }
                   },
                   "required": ["type", "d", "fill"],
@@ -8937,6 +9065,23 @@
                       "type": "string",
                       "enum": ["bold", "regular"]
                     },
+                    "collapse": {
+                      "type": "object",
+                      "properties": {
+                        "y": {
+                          "type": "number",
+                          "minimum": -4000,
+                          "maximum": 4000
+                        },
+                        "height": {
+                          "type": "number",
+                          "minimum": -4000,
+                          "maximum": 4000
+                        }
+                      },
+                      "required": ["y", "height"],
+                      "additionalProperties": false
+                    },
                     "box": {
                       "type": "object",
                       "properties": {
@@ -9007,6 +9152,23 @@
                     "weight": {
                       "type": "string",
                       "enum": ["bold", "regular"]
+                    },
+                    "collapse": {
+                      "type": "object",
+                      "properties": {
+                        "y": {
+                          "type": "number",
+                          "minimum": -4000,
+                          "maximum": 4000
+                        },
+                        "height": {
+                          "type": "number",
+                          "minimum": -4000,
+                          "maximum": 4000
+                        }
+                      },
+                      "required": ["y", "height"],
+                      "additionalProperties": false
                     },
                     "curve": {
                       "type": "object",

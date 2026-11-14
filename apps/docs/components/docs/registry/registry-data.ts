@@ -1,8 +1,8 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { SHADCN_REGISTRY_URL } from "@repo/config";
-import { toConsumerSource } from "@/registry/transform";
-import registry from "@/registry.json";
+import { toConsumerSource } from "@repo/docs-assets/registry/transform";
+import registry from "@repo/docs-assets/registry.json";
 
 export interface RegistryItem {
   name: string;
@@ -30,11 +30,11 @@ export function getRegistryItems(): RegistryItem[] {
 const REGISTRY_PREFIX = "registry/";
 
 /**
- * Reads a file under apps/docs/registry (at build time) the way a shadcn/ui
- * project sees it, with `@/registry/...` imports rewritten.
+ * Reads a file under packages/docs-assets/registry (at build time) the way a
+ * shadcn/ui project sees it, with `@/registry/...` imports rewritten.
  *
- * The "registry" path segment is a literal so Turbopack traces only that
- * folder; a fully dynamic path made it trace (and deploy) the whole project.
+ * The path segments are literals so Turbopack traces only that folder; a
+ * fully dynamic path made it trace (and deploy) the whole project.
  */
 export async function readRegistrySource(relativePath: string) {
   const inRegistry = relativePath.startsWith(REGISTRY_PREFIX)
@@ -46,7 +46,15 @@ export async function readRegistrySource(relativePath: string) {
     );
   }
   const source = await readFile(
-    path.join(process.cwd(), "registry", inRegistry),
+    path.join(
+      process.cwd(),
+      "..",
+      "..",
+      "packages",
+      "docs-assets",
+      "registry",
+      inRegistry,
+    ),
     "utf8",
   );
   return toConsumerSource(source);

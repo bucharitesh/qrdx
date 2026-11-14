@@ -1,0 +1,87 @@
+{
+  "id": "avurudu-pot",
+  "name": "Avurudu milk pot",
+  "description": "A solid card with a pot boiling over over the code and the label underneath, in clay and gold.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "sinhala-tamil-new-year",
+  "contentTypes": [],
+  "tags": [
+    "sinhala and tamil new year",
+    "avurudu",
+    "puthandu",
+    "april",
+    "milk rice"
+  ],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#8c3b0c",
+      "text": "#ffffff",
+      "accent": "#e9b949"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M581 134A39 39 0 1 1 659 134A39 39 0 1 1 581 134ZM600.5 92L639.5 92A4.5 4.5 0 0 1 644 96.5L644 102.5A4.5 4.5 0 0 1 639.5 107L600.5 107A4.5 4.5 0 0 1 596 102.5L596 96.5A4.5 4.5 0 0 1 600.5 92Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M585.5 92A13.5 13.5 0 1 1 612.5 92A13.5 13.5 0 1 1 585.5 92ZM602 81.5A18 18 0 1 1 638 81.5A18 18 0 1 1 602 81.5ZM627.5 92A13.5 13.5 0 1 1 654.5 92A13.5 13.5 0 1 1 627.5 92ZM599 75.5A10.5 10.5 0 1 1 620 75.5A10.5 10.5 0 1 1 599 75.5ZM620 74A10.5 10.5 0 1 1 641 74A10.5 10.5 0 1 1 620 74ZM582.5 125C605 134 635 134 657.5 125L658.7 135.5C635 144.5 605 144.5 581.3 135.5Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Happy Avurudu",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan me",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

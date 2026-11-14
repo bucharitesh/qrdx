@@ -1,0 +1,81 @@
+{
+  "id": "womens-day-mimosa",
+  "name": "Mimosa sprig",
+  "description": "A solid card with a mimosa sprig over the code and the label underneath, in purple and mimosa yellow.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "womens-day",
+  "contentTypes": [],
+  "tags": ["international women's day", "march 8", "mimosa", "flowers"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#5b21b6",
+      "text": "#ffffff",
+      "accent": "#facc15"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M572.56 178.02L574.94 172.1L577.56 166.06L580.4 159.95L583.46 153.78L586.76 147.56L590.28 141.29L594.02 134.99L597.99 128.67L602.19 122.32L606.61 115.97L611.26 109.63L616.14 103.29L621.24 96.97L626.57 90.68L632.12 84.42L637.9 78.21L643.91 72.06L650.14 65.97L656.6 59.95L663.26 54.04L666.74 57.96L660.13 63.84L653.76 69.77L647.62 75.77L641.7 81.84L636 87.95L630.53 94.12L625.29 100.31L620.26 106.54L615.46 112.78L610.89 119.03L606.53 125.27L602.41 131.51L598.5 137.73L594.82 143.92L591.37 150.07L588.14 156.17L585.13 162.22L582.34 168.21L579.79 174.12L577.44 179.98ZM596 134C593.1 123.98 578.25 114.53 563 113C567.62 131.23 582.47 140.68 596 134ZM617 107C617.59 96.69 606.79 83.19 593 77C591.33 95.56 602.13 109.06 617 107ZM611 119C614.21 133.25 629.06 137.3 644 128C634.27 118.19 619.42 114.14 611 119Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M654.5 56A10.5 10.5 0 1 1 675.5 56A10.5 10.5 0 1 1 654.5 56ZM641 65A9 9 0 1 1 659 65A9 9 0 1 1 641 65ZM649.25 77A9.75 9.75 0 1 1 668.75 77A9.75 9.75 0 1 1 649.25 77ZM629 80A9 9 0 1 1 647 80A9 9 0 1 1 629 80ZM620.75 68A8.25 8.25 0 1 1 637.25 68A8.25 8.25 0 1 1 620.75 68ZM665.75 71A8.25 8.25 0 1 1 682.25 71A8.25 8.25 0 1 1 665.75 71ZM635.75 95A8.25 8.25 0 1 1 652.25 95A8.25 8.25 0 1 1 635.75 95ZM615.5 92A7.5 7.5 0 1 1 630.5 92A7.5 7.5 0 1 1 615.5 92Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Happy Women's Day",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan me",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

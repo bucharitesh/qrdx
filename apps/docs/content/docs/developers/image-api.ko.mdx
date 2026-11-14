@@ -1,18 +1,18 @@
 ---
 title: "QR 코드 이미지 API"
-description: "어떤 URL이든 Markdown, HTML, 이메일에 삽입할 수 있는 QR 코드 이미지로 바꿔 보세요. API 키는 필요하지 않습니다."
+description: "어떤 URL이든 Markdown, HTML, 이메일에 삽입할 수 있는 QR 코드 이미지로 바꿔 보세요. API 키는 필요 없습니다."
 icon: ImageDown
 ---
 
-`GET https://api.qrdx.dev/v1/qr`는 QR 코드를 SVG, PNG, WebP 이미지로 반환하거나, 인쇄와 디자인 도구에 쓸 수 있는 벡터 EPS 파일로 반환합니다. 모든 설정이 쿼리 문자열에 들어 있어서 URL 자체가 곧 이미지입니다. README, `<img>` 태그, 이메일 템플릿에 그대로 붙여 넣으면 됩니다. 에디터의 스타일도 그대로 쓸 수 있습니다. 그라데이션, 프레임(사용자 지정 프레임 포함), 테두리, 눈 색상과 점 색상, 로고 아이콘을 지원합니다.
+`GET https://api.qrdx.dev/v1/qr`은 QR 코드를 SVG, PNG, WebP 이미지로 반환하며, 인쇄와 디자인 도구용 벡터 EPS 파일로도 반환합니다. 모든 설정이 쿼리 문자열에 들어 있으므로 URL 자체가 이미지입니다. README, `<img>` 태그, 이메일 템플릿에 그대로 붙여 넣으면 됩니다. 에디터의 스타일도 사용할 수 있습니다. 그라디언트, 프레임(커스텀 프레임 포함), 테두리, 눈과 점 색상, 로고 아이콘을 지원합니다.
 
 ```md
 ![QR code](https://api.qrdx.dev/v1/qr?data=https://github.com/you/repo)
 ```
 
-계정이나 API 키는 필요하지 않습니다. 단, QRdx에 업로드한 로고는 예외입니다([로고](#logos) 참고).
+계정이나 API 키는 필요 없습니다. 단, QRdx에 업로드한 로고를 사용할 때는 예외입니다([로고](#logos) 참고).
 
-[Playground에서 사용해 보기](/playground?open=code&lang=image): 그곳에서 코드를 꾸민 다음 이미지 URL을 복사하세요.
+[Playground에서 사용해 보기](/playground?open=code&lang=image): 그곳에서 코드를 꾸민 뒤 이미지 URL을 복사하세요.
 
 ## 예시 [#examples]
 
@@ -25,38 +25,38 @@ icon: ImageDown
 />
 ```
 
-curl로 PNG를 다운로드합니다(셸이 `&`를 그대로 두도록 URL을 따옴표로 감싸세요).
+curl로 PNG 내려받기(셸이 `&`를 그대로 유지하도록 URL을 따옴표로 감싸세요):
 
 ```bash
 curl -o qr.png "https://api.qrdx.dev/v1/qr?data=https://qrdx.dev&format=png&size=1024"
 ```
 
-WebP도 받을 수 있습니다. PNG와 픽셀은 같고 무손실이며 투명도도 유지되면서 파일은 더 작습니다.
+WebP도 가능합니다. PNG와 픽셀이 같고 무손실이며 투명도도 유지되지만 파일은 더 작습니다.
 
 ```bash
 curl -o qr.webp "https://api.qrdx.dev/v1/qr?data=https://qrdx.dev&format=webp&size=1024"
 ```
 
-Illustrator, InDesign 또는 인쇄소에 쓸 벡터 EPS를 받습니다(`size`는 포인트 단위 너비이며 1인치가 72포인트이므로 `144`는 2인치입니다).
+Illustrator, InDesign 또는 인쇄소용 벡터 EPS 받기(`size`는 포인트 단위의 너비이고 1인치가 72포인트이므로 `144`는 2인치입니다):
 
 ```bash
 curl -o qr.eps "https://api.qrdx.dev/v1/qr?data=https://qrdx.dev&format=eps&size=144"
 ```
 
-프레임이 있는 스타일 점 모양:
+프레임이 있는 스타일 점:
 
 ```txt
 https://api.qrdx.dev/v1/qr?data=https://qrdx.dev&body=rounded&eye=rounded&dot=rounded&template=Arrow
 ```
 
-레이블이 있는 기본 제공 프레임, 그리고 id로 지정한 커뮤니티 프레임:
+레이블이 있는 기본 제공 프레임과 id로 지정한 커뮤니티 프레임:
 
 ```txt
 https://api.qrdx.dev/v1/qr?data=https://qrdx.dev&frame=banner-bottom&frameText=Scan%20the%20menu
 https://api.qrdx.dev/v1/qr?data=https://qrdx.dev&item=frame:wifi-card
 ```
 
-`style`에 JSON으로 전달한 전체 디자인입니다. 여기서는 그라데이션, 빨간 눈, 프레임을 사용합니다.
+`style`에 JSON으로 담은 전체 디자인. 여기서는 그라디언트, 빨간 눈, 프레임을 사용했습니다.
 
 ```js
 const style = {
@@ -75,7 +75,7 @@ const src = `https://api.qrdx.dev/v1/qr?data=${encodeURIComponent(link)}&style=$
 ```
 
 <Callout>
-  `data` 값에 `&`, `#`, `+` 또는 공백이 들어 있으면 인코딩하세요. 예를 들어 JavaScript에서는 `encodeURIComponent`를 사용합니다. 그렇지 않으면 URL이 해당 문자에서 잘립니다. `style`도 같은 방식으로 인코딩하세요.
+  `data` 값에 `&`, `#`, `+` 또는 공백이 있으면 인코딩하세요. 예를 들어 JavaScript에서는 `encodeURIComponent`를 사용합니다. 인코딩하지 않으면 URL이 해당 문자에서 나뉩니다. `style`도 같은 방식으로 인코딩하세요.
 </Callout>
 
 ## 매개변수 [#parameters]
@@ -84,27 +84,27 @@ const src = `https://api.qrdx.dev/v1/qr?data=${encodeURIComponent(link)}&style=$
 |-----------|---------|-------------|
 | `data` | 필수 | 인코딩할 텍스트 또는 URL, 최대 2048자 |
 | `format` | `svg` | `svg`, `png`, `webp`(무손실) 또는 `eps`(벡터 PostScript, 이 경우 `size`는 포인트 단위 너비) |
-| `size` | `512` | 픽셀 단위 너비와 높이, `64`~`2048` |
-| `fg` | `000000` | 모듈 색상(hex: `155dfc`, `fff` 또는 알파가 포함된 8자리) |
-| `bg` | `ffffff` | hex 배경색. `00000000`을 쓰면 배경이 투명해집니다 |
-| `eyeColor` | `fg` | 세 모서리 눈의 색상 |
+| `size` | `512` | 픽셀 단위의 너비와 높이, `64`~`2048` |
+| `fg` | `000000` | 모듈 색상(16진수: `155dfc`, `fff` 또는 알파가 포함된 8자리) |
+| `bg` | `ffffff` | 16진수 배경색. `00000000`이면 배경이 투명해집니다 |
+| `eyeColor` | `fg` | 모서리 눈 세 개의 색상 |
 | `dotColor` | `fg` | 각 모서리 눈 안쪽 점의 색상 |
 | `body` | `square` | 데이터 모듈의 모양 |
 | `eye` | `square` | 모서리 눈 프레임의 모양 |
 | `dot` | `square` | 각 모서리 눈 안쪽 점의 모양 |
 | `level` | `Q` | 오류 정정: `L`(~7%), `M`(~15%), `Q`(~25%) 또는 `H`(~30%) |
 | `margin` | `4` | 코드 주변 여백(콰이어트 존), 모듈 단위, `0`~`16` |
-| `template` | 없음 | 장식 테두리 템플릿 |
-| `frame` | 없음 | 기본 제공 행동 유도 [프레임](/docs/features/frames). `banner-bottom`, `speech-bubble`, `circle` 등({facts.frameStyles}가지 스타일 중 아무거나) |
+| `template` | 없음 | [템플릿으로 그리는 프레임](/docs/features/templates): 전체 이미지의 너비가 `size`이고 코드는 그 안에 더 작게 들어가요 |
+| `frame` | 없음 | `banner-bottom`, `speech-bubble`, `circle` 같은 기본 제공 행동 유도 [프레임](/docs/features/frames)({facts.frameStyles}개의 기본 프레임 모두 사용 가능하며 각각 프레임 사양에 따라 그려집니다) |
 | `frameText` | `Scan me` | 프레임의 레이블, 최대 24자. `style`이나 `item`의 프레임 레이블도 바꿉니다 |
-| `style` | 없음 | 에디터의 전체 디자인을 JSON으로 전달합니다. [스타일](#style) 참고 |
-| `item` | 없음 | id로 지정하는 커뮤니티 프레임 또는 테마. 예: `frame:wifi-card`. [커뮤니티 항목](#community-items) 참고 |
-| `logoIcon` | 없음 | 중앙에 넣을 간단한 아이콘 또는 브랜드 로고. [로고](#logos) 참고 |
+| `style` | 없음 | JSON으로 된 에디터의 전체 디자인. [스타일](#style) 참고 |
+| `item` | 없음 | `frame:wifi-card`처럼 id로 지정하는 커뮤니티 프레임 또는 테마. [커뮤니티 항목](#community-items) 참고 |
+| `logoIcon` | 없음 | 중앙에 넣는 빠른 아이콘 또는 브랜드 로고. [로고](#logos) 참고 |
 | `logoFileId` | 없음 | 파일 id로 지정하는 업로드한 로고. API 키가 필요합니다. [로고](#logos) 참고 |
 
-색상은 `#` 없이 쓰거나 `%23`으로 인코딩하세요. `#`를 그대로 쓰면 URL 프래그먼트가 시작되어 서버로 전송되지 않습니다. 열거형 값(`level`, `format`, `template`, `frame`)은 대소문자를 구분하지 않습니다.
+색상은 `#` 없이 쓰거나 `%23`으로 인코딩하세요. `#`을 그대로 쓰면 URL 프래그먼트가 시작되어 서버로 전송되지 않습니다. 열거형 값(`level`, `format`, `template`, `frame`)은 대소문자를 구분하지 않습니다.
 
-프레임을 사용하면 `size`는 코드 자체의 너비이고, 프레임은 모든 형식에서 이미지 크기에 추가됩니다.
+프레임을 사용하면 `size`는 코드 자체의 너비이며, 모든 형식에서 프레임이 그만큼 이미지에 더해집니다.
 
 ## 스타일 [#style]
 
@@ -112,47 +112,47 @@ const src = `https://api.qrdx.dev/v1/qr?data=${encodeURIComponent(link)}&style=$
 
 | 필드 | 값 |
 | --- | --- |
-| `bgColor`, `fgColor`, `eyeColor`, `dotColor` | 색상(`#155dfc` 같은 hex, `rgb()`, `hsl()` 또는 색상 이름) 또는 그라데이션: `{ "type": "linear", "angle": 45, "stops": [...] }` 또는 `{ "type": "radial", "stops": [...] }`. 스톱은 `{ "color", "offset" }` 형태로 2~8개(offset은 0~100) |
+| `bgColor`, `fgColor`, `eyeColor`, `dotColor` | 색상(`#155dfc` 같은 16진수, `rgb()`, `hsl()` 또는 색상 이름) 또는 그라디언트: `{ "type": "linear", "angle": 45, "stops": [...] }` 또는 `{ "type": "radial", "stops": [...] }`. `{ "color", "offset" }` 형태의 정지점 2~8개(offset 0~100) |
 | `bodyPattern`, `cornerEyePattern`, `cornerEyeDotPattern` | [패턴 값](#pattern-values) |
-| `level`, `margin` | 위 매개변수와 같습니다(`margin`은 0~16) |
-| `templateId` | 테두리 템플릿, 없으면 `default` |
-| `frame` | 기본 제공 프레임 `{ "style": "banner-bottom", "text": "Scan me", "color": "#155dfc", "textColor": "#ffffff" }` 또는 사용자 지정 프레임 `{ "style": "custom", "spec": { … } }`. 프레임 스펙은 [커뮤니티](#community-items)의 것이거나 Playground의 프레임 섹션에서 만든 사용자 지정 프레임을 사용합니다. 스펙은 엔진의 프레임 스펙 규칙(마크업, 링크, 이미지 불가, 최대 32 KB)에 따라 검사됩니다 |
-| `eyeColors` | `eyeColor`와 `dotColor`보다 우선하는 눈별 색상: `{ "topLeft": { "outer": "#b91c1c", "inner": "#1d4ed8" }, "topRight": …, "bottomLeft": … }`. 각각 색상 또는 그라데이션 |
+| `level`, `margin` | 위 매개변수와 같음(`margin`은 0~16) |
+| `templateId` | 템플릿으로 그리는 프레임, 없음은 `default` |
+| `frame` | 기본 제공 프레임 `{ "style": "banner-bottom", "text": "Scan me", "color": "#155dfc", "textColor": "#ffffff" }` 또는 커스텀 프레임 `{ "style": "custom", "spec": { … } }`. 프레임 사양은 [커뮤니티](#community-items)의 것이나 Playground의 프레임 섹션에서 만든 커스텀 프레임의 것을 사용합니다. 사양은 엔진의 프레임 사양 규칙에 따라 검사됩니다(마크업, 링크, 이미지 불가, 최대 32 KB) |
+| `eyeColors` | `eyeColor`와 `dotColor`보다 우선하는 눈별 색상: `{ "topLeft": { "outer": "#b91c1c", "inner": "#1d4ed8" }, "topRight": …, "bottomLeft": … }`, 각각 색상 또는 그라디언트 |
 | `moduleScale` | 각 점의 크기, `0.5`~`1`(기본값 `1`) |
-| `shape` | `square`(기본값) 또는 `circle`: 장식 점으로 이루어진 원형 안에 코드를 배치 |
-| `autoLevel` | 로고가 코드의 7% 넘게 가리면 오류 정정을 `H`로 올립니다(로고가 있으면 여기서는 항상 켜짐) |
-| `logoOptions` | 로고 레이아웃: `size`(코드 너비의 `0.1`~`0.3`, 코드가 모듈을 내줄 수 없으면 QRdx가 크기를 줄임), `padding`(`0`~`2`모듈), `x`와 `y`(`0`~`1`), `shape`(`square`, `rounded`, `circle` 자르기), `plate`(로고 뒤의 색상) |
+| `shape` | `square`(기본값) 또는 `circle`: 장식용 점으로 이루어진 원판 안의 코드 |
+| `autoLevel` | 로고가 코드의 7% 넘게 가리면 오류 정정을 `H`로 올립니다(로고가 있으면 여기서는 항상 켜져 있음) |
+| `logoOptions` | 로고의 레이아웃: `size`(코드 너비의 `0.1`~`0.3`, 코드에 여유 모듈이 없으면 QRdx가 줄임), `padding`(`0`~`2` 모듈), `x`와 `y`(`0`~`1`), `shape`(`square`, `rounded`, `circle` 자르기), `plate`(뒤에 까는 색상) |
 | `showLogo`, `logoIcon`, `logoFileId` | [로고](#logos) 참고 |
 
-`style`은 Playground 링크의 `style` 값(`1.`로 시작)도 받을 수 있습니다. 그래서 [Playground](/playground)에서 공유한 디자인이 로고를 제외하고 그곳에서 보이는 모습 그대로 렌더링됩니다.
+`style`에는 Playground 링크의 `style` 값(`1.`로 시작)도 넣을 수 있으므로, [Playground](/playground)에서 공유한 디자인이 로고를 제외하고 그곳에서 보이는 모습 그대로 렌더링됩니다.
 
-플랫 매개변수(`fg`, `body`, `frame` 등)로 설정한 필드가 `style`보다 우선하고, `style`이 `item`보다 우선합니다. 알 수 없는 필드, 로고 주소(`customLogo`), Logo QR 또는 Image QR 아트(`art`)는 이유를 알려 주는 `400` 오류로 거부됩니다.
+단순 매개변수(`fg`, `body`, `frame` 등)로 설정한 필드는 `style`보다 우선하고, `style`은 `item`보다 우선합니다. 알 수 없는 필드, 로고 주소(`customLogo`), Logo QR 또는 Image QR 아트(`art`)는 이유를 알려 주는 `400` 오류와 함께 거부됩니다.
 
 ## 커뮤니티 항목 [#community-items]
 
-`item`은 게시된 [커뮤니티](/community) 프레임 또는 테마를 렌더링하며, CC0로 무료입니다. id는 [`GET /v1/community/items`](/docs/developers/api/list-community-items)로 찾거나, 항목 페이지를 열어 유형과 슬러그를 사용하세요. `/community/frames/wifi-card`는 `frame:wifi-card`입니다. 프레임 항목은 흰 바탕에 검은색인 기본 코드에 적용됩니다. 그 안의 코드를 바꾸려면 `style`이나 플랫 매개변수를 추가하세요.
+`item`은 게시된 [커뮤니티](/community) 프레임 또는 테마를 렌더링하며, CC0로 무료입니다. id는 [`GET /v1/community/items`](/docs/developers/api/list-community-items)로 찾거나 항목 페이지를 열어 유형과 슬러그를 쓰면 됩니다. `/community/frames/wifi-card`는 `frame:wifi-card`입니다. 프레임 항목은 흰 바탕에 검은색인 기본 코드 위에 놓입니다. 그 아래 코드를 바꾸려면 `style`이나 단순 매개변수를 추가하세요.
 
 ## 로고 [#logos]
 
-- **빠른 아이콘.** `logoIcon`은 편집기의 아이콘 중 하나를 흰색 타일에 담아 가운데에 넣습니다. 사용할 수 있는 값은 `wifi`, `location`, `phone`, `email`, `link`, `file`, `calendar`, `whatsapp`, `instagram`입니다. QRdx가 직접 그리므로 키가 필요 없습니다.
-- **브랜드 로고.** `logoIcon`에는 [Simple Icons](https://simpleicons.org)의 {facts.brandLogos}개 브랜드도 슬러그로 지정할 수 있습니다. 예: `spotify`, `paypal`, `googlemaps`, `appstore`. 마크는 배경 없이 브랜드 색상으로 그려집니다. 검은색이나 흰색을 쓰려면 `:black` 또는 `:white`를 붙이고(`whatsapp:white`), 마크 뒤에 판을 깔려면 `style`에 `logoOptions.plate`를 지정하세요. [`GET /api/brand-logos`](https://qrdx.dev/api/brand-logos)에서 모든 슬러그를 볼 수 있습니다. QRdx에 없는 슬러그를 보내면 `400`이 반환됩니다.
+- **빠른 아이콘.** `logoIcon`은 편집기의 아이콘 중 하나를 가운데의 흰색 타일 위에 배치합니다. 사용할 수 있는 값은 `wifi`, `location`, `phone`, `email`, `link`, `file`, `calendar`, `whatsapp`, `instagram`입니다. QRdx가 직접 그리므로 키가 필요하지 않습니다.
+- **브랜드 로고.** `logoIcon`은 [Simple Icons](https://simpleicons.org)의 {facts.brandLogos}개 브랜드도 슬러그로 지정할 수 있습니다. 예: `spotify`, `paypal`, `googlemaps`, `appstore`. 마크는 배경 없이 브랜드 색상으로 그려집니다. 검은색이나 흰색으로 그리려면 `:black` 또는 `:white`를 붙이고(`whatsapp:white`), 마크 뒤에 플레이트를 넣으려면 `style`의 `logoOptions.plate`를 사용하세요. [`GET /api/brand-logos`](https://qrdx.dev/api/brand-logos)에서 모든 슬러그를 확인할 수 있습니다. QRdx에 없는 슬러그를 보내면 `400`이 반환됩니다.
 - **QRdx 마크**는 편집기에서 기본으로 표시되지만 여기서는 그려지지 않습니다. `showLogo: true`만으로는 로고가 추가되지 않습니다.
-- **로고를 넣으면 오류 정정 수준이 올라갑니다.** 로고가 코드의 7%보다 넓은 영역을 덮으면 `level` 값과 관계없이 코드가 `H` 수준으로 그려져서 스캔이 가능하도록 유지됩니다.
+- **로고를 넣으면 오류 정정 수준이 올라갑니다.** 로고가 코드의 7%를 넘게 덮으면 `level` 값과 관계없이 코드를 `H` 수준으로 그려서 스캔이 되도록 합니다.
 
 <IfAvailable feature="fileStorage">
 
-**내 로고.** `logoFileId`는 [대시보드 → 파일](/docs/files)에 업로드한 최대 1 MB의 PNG 또는 JPEG를 그립니다. id는 파일 링크 `https://qrdx.dev/api/files/<id>`의 마지막 부분입니다. 파일을 소유한 워크스페이스의 [API 키](/docs/developers/api-keys)를 함께 보내세요.
+**나만의 로고.** `logoFileId`는 [대시보드 → 파일](/docs/files)에 업로드한 최대 1 MB의 PNG 또는 JPEG를 그립니다. ID는 파일 링크 `https://qrdx.dev/api/files/<id>`의 마지막 부분입니다. 파일을 소유한 워크스페이스의 [API 키](/docs/developers/api-keys)를 함께 보내세요.
 
 ```bash
 curl -o qr.png -H "Authorization: Bearer $QRDX_API_KEY" \
   "https://api.qrdx.dev/v1/qr?data=https://qrdx.dev&format=png&logoFileId=<id>"
 ```
 
-응답은 비공개(`Cache-Control: private, no-store`)이며 워크스페이스의 일일 API 할당량에 포함됩니다. 다른 워크스페이스의 파일은 `404`, 키가 없는 요청은 `401`이 반환됩니다. QRdx는 자체 저장소에서 이미지를 읽고 실제로 PNG 또는 JPEG인지 확인하며, 사용자가 보낸 웹 주소에서 로고를 가져오지 않습니다.
+응답은 비공개(`Cache-Control: private, no-store`)이며 워크스페이스의 일일 API 할당량에 포함됩니다. 다른 워크스페이스의 파일은 `404`, 키가 없는 요청은 `401`이 반환됩니다. QRdx는 자체 스토리지에서 이미지를 읽고 실제로 PNG 또는 JPEG인지 확인하며, 사용자가 보낸 웹 주소에서 로고를 가져오지 않습니다.
 
 </IfAvailable>
 
-`logoOptions`로 이 모든 로고의 크기, 위치, 잘라내기, 배경을 지정할 수 있습니다. 업로드한 로고 자체의 배경 제거는 Playground에서 할 수 있으며, Image API는 업로드한 파일을 그대로 그립니다.
+`logoOptions`로 이 모든 로고의 크기, 위치, 자르기, 배경을 지정할 수 있습니다. 업로드한 로고 자체의 배경 제거는 Playground에서 하며, Image API는 업로드한 파일을 그대로 그립니다.
 
 Logo QR과 Image QR 아트는 여기서 사용할 수 없습니다. Playground는 브라우저에서 사용자의 사진으로 아트를 만들지만, Image API는 업로드한 파일로 아트를 만들지 않습니다. 아트 코드는 [Playground](/playground?tab=art)에서 디자인하세요.
 
@@ -161,19 +161,19 @@ Logo QR과 Image QR 아트는 여기서 사용할 수 없습니다. Playground�
 - `body`: `circle`, `circle-large`, `square`, `diamond`, `circle-mixed`, `pacman`, `rounded`, `small-square`, `vertical-line`, `horizontal-line`, `liquid`, `liquid-horizontal`, `liquid-vertical`, `classy`, `classy-rounded`, `leaf`, `plus`, `hexagon`, `star`, `heart`, `random-dots`, `mosaic`, `octagon`
 - `eye`: `square`, `rounded`, `gear`, `circle`, `diya`, `extra-rounded`, `message`, `pointy`, `leaf`, `drop`, `octagon`, `bevel`, `squircle`, `cushion`, `shield`, `petal`, `leaf-reverse`
 - `dot`: `square`, `rounded`, `circle`, `message`, `message-reverse`, `diya`, `diya-reverse`, `rounded-triangle`, `leaf`, `drop`, `plus`, `cross-rounded`, `hexagon`, `octagon`, `flower`, `heart`, `squircle`, `dots`, `extra-rounded`, `leaf-reverse`, `drop-reverse`
-- `template`: `default`, `Arrow`, `StandardBox`, `SquareBorder`, `StrikedBox`, `Halloween`
+- `template`: `default`, `Arrow`, `StandardBox`, `SquareBorder`, `StrikedBox`, `Halloween`, `DotRing`
 
-이 스타일은 [`qrdx` React 라이브러리](/docs/features/patterns)와 같습니다. [MCP 서버](/docs/developers/mcp)에서도 짧은 설명과 함께 목록을 확인할 수 있습니다.
+이 스타일은 [`qrdx` React 라이브러리](/docs/features/patterns)와 같습니다. [MCP 서버](/docs/developers/mcp)에서도 짧은 설명과 함께 목록을 볼 수 있습니다.
 
 ## 응답 [#responses]
 
 요청이 성공하면 다음 헤더와 함께 이미지가 반환됩니다.
 
 - `Content-Type: image/svg+xml`, `image/png` 또는 `application/postscript` (EPS는 `qr-code.eps` 다운로드로 전송됩니다)
-- `Cache-Control: public, max-age=31536000, immutable`. 단, `item`을 사용한 렌더링(5분, CDN에서는 10분. 아이템에 새 버전이 생기거나 내려질 수 있기 때문입니다)과 `logoFileId`를 사용한 렌더링(`private, no-store`)은 예외입니다.
+- `Cache-Control: public, max-age=31536000, immutable`. 단, `item`을 사용한 렌더링(5분, CDN에서는 10분. 항목에 새 버전이 생기거나 내려질 수 있기 때문입니다)과 `logoFileId`를 사용한 렌더링(`private, no-store`)은 예외입니다.
 - `Access-Control-Allow-Origin: *`. 어떤 웹사이트에서든 `fetch`로 가져올 수 있습니다.
 
-렌더링은 결정적입니다. 같은 쿼리 문자열은 항상 같은 바이트를 반환하므로 응답을 1년 동안 캐시할 수 있습니다. 기존 파라미터만 사용하는 URL은 예전과 똑같이 렌더링됩니다.
+렌더링은 결정적입니다. 같은 쿼리 문자열은 항상 같은 바이트를 반환하므로 응답을 1년간 캐시할 수 있습니다. 기존 파라미터만 사용하는 URL은 예전과 똑같이 렌더링됩니다.
 
 잘못된 파라미터가 있으면 각 문제를 알려 주는 JSON 본문과 함께 `400`이 반환됩니다.
 
@@ -194,18 +194,18 @@ Logo QR과 Image QR 아트는 여기서 사용할 수 없습니다. Playground�
 
 ## 제한 [#limits]
 
-- **요청 제한:** IP 주소당 분당 300회입니다. 제한을 넘으면 `Retry-After` 헤더와 함께 `429`가 반환됩니다.
-- **스캔 검사 없음.** Image API는 요청한 대로 그리기만 합니다. 디자인의 스캔 점수를 먼저 확인하고 보정하려면 [MCP 서버](/docs/developers/mcp)의 `design_qr`를 사용하거나 [Playground](/playground?tab=design)의 스캔 점수를 확인하세요.
+- **요청 제한:** IP 주소당 분당 300회 요청입니다. 제한을 넘으면 `Retry-After` 헤더와 함께 `429`가 반환됩니다.
+- **스캔 검사 없음.** Image API는 요청한 대로 그리기만 합니다. 디자인의 스캔 점수를 먼저 확인하고 보정하려면 [MCP 서버](/docs/developers/mcp)의 `design_qr`을 사용하거나 [Playground](/playground?tab=design)의 스캔 점수를 확인하세요.
 - **`style`은 URL에서 최대 8,192자**이며, JSON은 최대 40 KB입니다.
-- **데이터는 URL의 일부입니다.** 다른 URL과 마찬가지로 서버 로그, 브라우저 기록, 캐시에 남을 수 있습니다. 비밀번호나 다른 비밀 정보는 넣지 마세요.
+- **데이터는 URL의 일부입니다.** 다른 URL과 마찬가지로 서버 로그, 브라우저 기록, 캐시에 남을 수 있습니다. 비밀번호나 그 밖의 비밀 정보는 넣지 마세요.
 
 ## 스캔 팁 [#scanning-tips]
 
-- 이미지를 README의 GitHub 다크 모드처럼 어둡거나 복잡한 배경에 놓을 때는 `margin`을 `2` 이상으로 유지하세요.
+- 이미지를 어두운 배경이나 복잡한 배경(예: GitHub 다크 모드의 README) 위에 놓을 때는 `margin`을 `2` 이상으로 유지하세요.
 - `fg`와 `bg`의 대비를 충분히 유지하세요. 밝은 배경에 어두운 모듈이 가장 안정적으로 스캔됩니다.
 - 기본값(사각형 모듈, 4모듈 여백)은 모든 리더에서 스캔됩니다. `circle` 점 같은 장식적인 모양은 더 부드러워 보이지만 일부 오래된 스캐너에서는 인식률이 떨어질 수 있으니 [스캔 검사기](/tools/scan-checker)로 확인하세요.
 - 인쇄하기 전에 여러 대의 휴대폰으로 코드를 테스트하세요.
 
 ## 셀프 호스팅 [#self-hosting]
 
-이 엔드포인트는 QRdx 웹 앱의 일부이므로 [셀프 호스팅](/docs/self-hosting) 인스턴스에서는 사용자의 도메인에서 `/api/v1/qr`로 제공됩니다(예: `https://qr.example.com/api/v1/qr?data=…`). 짧은 `/v1/qr` 경로는 `api.qrdx.dev`에서만 동작합니다. 요청 제한은 Upstash Redis가 구성되어 있으면 이를 사용하고, 구성되어 있지 않으면 꺼집니다.
+이 엔드포인트는 QRdx 웹 앱의 일부이므로 [셀프 호스팅](/docs/self-hosting) 인스턴스는 사용자의 도메인에서 `/api/v1/qr`로 제공합니다(예: `https://qr.example.com/api/v1/qr?data=…`). 짧은 `/v1/qr` 경로는 `api.qrdx.dev`에서만 작동합니다. 요청 제한은 Upstash Redis가 설정되어 있으면 이를 사용하고, 설정되어 있지 않으면 꺼집니다.

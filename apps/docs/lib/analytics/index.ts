@@ -1,13 +1,6 @@
-/**
- * QRdx's one analytics layer: a typed event catalogue (events.ts) and
- * `track()`, which fans out to Umami (cookieless) and PostHog (with
- * consent). Server events: lib/analytics/server.ts. Mounting:
- * lib/analytics/analytics.tsx, rendered by the consent manager.
- */
-export type {
-  AnalyticsEventName,
-  AnalyticsEvents,
-  QrSource,
-  SignInMethod,
-} from "./events";
-export { resetAnalytics, track, trackPageview } from "./track";
+// The client analytics layer lives in @repo/analytics (packages/analytics);
+// this path stays for the app's imports. ./privacy registers the app's
+// untracked pages first.
+import "./privacy";
+
+export * from "@repo/analytics";

@@ -1669,6 +1669,11 @@
       "after": "It opens straight to the scanner in its own window, and works offline once you've scanned a code with it."
     }
   },
+  "scannerApp": {
+    "share": "Share",
+    "scanInstructions": "Point the camera at a QR code or barcode",
+    "cameraBlocked": "Camera access is off for QRdx Scanner. Turn it on in Settings, or scan a picture instead."
+  },
   "scanPages": {
     "reportAbuse": "Report abuse",
     "privacy": "Privacy",
@@ -4449,7 +4454,6 @@
         "frame": "Frame",
         "padding": "Padding",
         "errorCorrection": "Error correction",
-        "border": "Border",
         "none": "None"
       },
       "dotSizeSection": {
@@ -4472,43 +4476,32 @@
         }
       },
       "frameControls": {
-        "customise": "Customise",
-        "importSvg": "Import SVG",
+        "uploadSvg": "Upload SVG",
         "publishFrame": "Publish frame",
         "theFrameIsAddedAround": "The frame is added around the code, so the downloaded image gets bigger and the code itself stays scannable.",
         "label": "Label",
-        "secondLine": "Second line",
-        "leaveEmptyForNoLabel": "Leave empty for no label",
         "pickAFrameFirst": "Pick a frame first",
-        "frameColor": "Frame color",
-        "textColor": "Text color",
-        "endColor": "End color",
-        "optionalEGYourWebsite": "Optional, e.g. your website",
-        "none": "None"
+        "none": "None",
+        "takesDotColor": "It takes the color of the code's dots.",
+        "alsoHasTemplate": "This design also has the {name} frame inside this one. Picking another frame replaces both.",
+        "templateKeepsSize": "This frame fits the code inside it, so the downloaded image keeps the size you choose."
       },
       "frameFields": {
         "textSize": "Text size"
       },
       "framePicker": {
-        "more": "More",
         "showAll": "Show all",
         "frame": "Frame",
-        "moreFrames": "More frames",
-        "allTotalFrames": "All {total, number} frames",
-        "allFrames": "All frames",
         "searchFrames": "Search frames",
         "searchTotalFrames": "Search {total, number} frames",
-        "closeFrames": "Close frames",
         "filterFrames": "Filter frames",
         "labelFrames": "{label} frames",
-        "commonFrames": "Common frames",
-        "everyFrameBuiltInStyles": "Every frame: built-in styles, QRdx's official frames and the frames you saved. Picking one applies it right away.",
-        "less": "Less",
         "all": "All",
         "noFramesMatchQuery": "No frames match \"{query}\".",
         "loadingFrames": "Loading frames…",
         "comingUp": "Coming up",
-        "builtIn": "Built-in",
+        "classic": "Classic",
+        "shapedCodes": "Shaped codes",
         "saved": "Saved",
         "results": "Results"
       },
@@ -4636,7 +4629,6 @@
       },
       "patternControls": {
         "customizeOuterAndCenter": "Customize outer and center",
-        "border": "Border",
         "higherLevelsSurviveScratchesAnd": "Higher levels survive scratches and logos but add more dots. Use H when you add a logo.",
         "dotShape": "Dot shape",
         "dotShapes": "dot shapes",

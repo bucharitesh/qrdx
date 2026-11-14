@@ -1,0 +1,114 @@
+{
+  "id": "durga-puja-lotus",
+  "name": "Durga Puja lotus",
+  "description": "A light card with a lotus and a solid label band, in sindoor red and gold.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "navratri",
+  "contentTypes": [],
+  "tags": ["navratri", "dussehra", "durga puja", "festival", "lotus"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1770
+    },
+    "qr": {
+      "x": 120,
+      "y": 390,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#a31621",
+      "text": "#ffffff",
+      "accent": "#f5d06f"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "frame",
+        "hole": {
+          "x": 20,
+          "y": 20,
+          "width": 1200,
+          "height": 1730,
+          "radius": 38
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 250,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 190,
+        "width": 1240,
+        "height": 60,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M620 1614C644.02 1595.52 644.02 1553.94 620 1521.6C595.98 1553.94 595.98 1595.52 620 1614ZM617.2 1616.8C623.09 1595.65 606.71 1562.89 580.8 1544C570.35 1581.08 586.73 1613.84 617.2 1616.8ZM622.8 1616.8C653.27 1613.84 669.65 1581.08 659.2 1544C633.29 1562.89 616.91 1595.65 622.8 1616.8ZM614.4 1619.6C609.98 1601.9 584.78 1585.52 558.4 1583.2C566.65 1613.41 591.85 1629.79 614.4 1619.6ZM625.6 1619.6C648.15 1629.79 673.35 1613.41 681.6 1583.2C655.22 1585.52 630.02 1601.9 625.6 1619.6Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M575.2 1622.4C600.4 1630.8 639.6 1630.8 664.8 1622.4L662 1630.8C636.8 1639.2 603.2 1639.2 578 1630.8Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Shubho Pujo",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 30,
+          "width": 1040,
+          "height": 190
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Happy Durga Puja",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 1650,
+          "width": 960,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

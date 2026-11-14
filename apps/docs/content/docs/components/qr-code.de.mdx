@@ -58,7 +58,7 @@ Der Code wird als SVG mit einem zugänglichen Namen gerendert. So bleibt er bei 
 
 ### Rahmenvorlagen [#frame-templates]
 
-`templateId` zeichnet eine qrdx-[Vorlage](/docs/features/templates) um den Code. Kombiniere sie mit `caption` für einen Call-to-Action unter dem Rahmen.
+`templateId` zeichnet einen der [als Template gezeichneten Rahmen](/docs/features/templates) von qrdx um den Code. Kombiniere sie mit `caption` für einen Call-to-Action unter dem Rahmen.
 
 <ComponentPreview name="qr-code-template" />
 
@@ -176,6 +176,6 @@ export function TableCode() {
 
 ## API-Referenz [#api-reference]
 
-<auto-type-table path="../../../registry/qrdx/qr-code.tsx" type="{ [K in keyof QrCodeProps as K extends keyof ComponentProps<'figure'> ? never : K]: QrCodeProps[K] }" />
+<auto-type-table path="../../../../../packages/docs-assets/registry/qrdx/qr-code.tsx" type="{ [K in keyof QrCodeProps as K extends keyof ComponentProps<'figure'> ? never : K]: QrCodeProps[K] }" />
 
 Jede weitere Prop, etwa `className`, wird an das umschließende `<figure>` weitergegeben.

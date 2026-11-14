@@ -1,10 +1,10 @@
 ---
 title: "API gambar kode QR"
-description: "Ubah URL apa pun menjadi gambar kode QR yang dapat Anda sematkan di Markdown, HTML, atau email. Tanpa kunci API."
+description: "Ubah URL apa pun menjadi gambar kode QR yang bisa Anda sematkan di Markdown, HTML, atau email. Tanpa kunci API."
 icon: ImageDown
 ---
 
-`GET https://api.qrdx.dev/v1/qr` mengembalikan kode QR sebagai gambar SVG, PNG, atau WebP, atau sebagai file EPS vektor untuk cetak dan alat desain. Semuanya ada di query string, sehingga URL itu sendiri adalah gambarnya: tempelkan ke README, tag `<img>`, atau templat email. API ini juga mendukung gaya dari editor: gradien, bingkai (termasuk bingkai kustom), border, warna mata dan titik, serta ikon logo.
+`GET https://api.qrdx.dev/v1/qr` mengembalikan kode QR sebagai gambar SVG, PNG, atau WebP, atau sebagai file EPS vektor untuk alat cetak dan desain. Semuanya ada di query string, jadi URL itu sendiri adalah gambarnya: tempelkan ke README, tag `<img>`, atau templat email. API ini juga mendukung gaya dari editor: gradien, bingkai (termasuk bingkai kustom), border, warna mata dan titik, serta ikon logo.
 
 ```md
 ![QR code](https://api.qrdx.dev/v1/qr?data=https://github.com/you/repo)
@@ -25,13 +25,13 @@ Tidak perlu akun atau kunci API. Satu-satunya pengecualian adalah logo yang Anda
 />
 ```
 
-Unduh PNG dengan curl (beri tanda kutip pada URL agar shell Anda tetap mempertahankan `&`):
+Unduh PNG dengan curl (beri tanda kutip pada URL agar shell Anda mempertahankan `&`):
 
 ```bash
 curl -o qr.png "https://api.qrdx.dev/v1/qr?data=https://qrdx.dev&format=png&size=1024"
 ```
 
-Atau WebP: piksel yang sama dengan PNG, tanpa kehilangan kualitas dan tetap mendukung transparansi, dalam file yang lebih kecil:
+Atau WebP: piksel yang sama dengan PNG, tanpa kehilangan kualitas dan tetap mendukung transparansi, dengan ukuran file lebih kecil:
 
 ```bash
 curl -o qr.webp "https://api.qrdx.dev/v1/qr?data=https://qrdx.dev&format=webp&size=1024"
@@ -75,7 +75,7 @@ const src = `https://api.qrdx.dev/v1/qr?data=${encodeURIComponent(link)}&style=$
 ```
 
 <Callout>
-  Enkode nilai `data` jika berisi `&`, `#`, `+`, atau spasi, misalnya dengan `encodeURIComponent` di JavaScript. Jika tidak, URL akan terpotong pada karakter tersebut. Enkode `style` dengan cara yang sama.
+  Enkode nilai `data` jika berisi `&`, `#`, `+`, atau spasi, misalnya dengan `encodeURIComponent` di JavaScript. Jika tidak, URL akan terpotong di karakter tersebut. Enkode `style` dengan cara yang sama.
 </Callout>
 
 ## Parameter [#parameters]
@@ -83,7 +83,7 @@ const src = `https://api.qrdx.dev/v1/qr?data=${encodeURIComponent(link)}&style=$
 | Parameter | Default | Deskripsi |
 |-----------|---------|-------------|
 | `data` | wajib | Teks atau URL yang akan dienkode, hingga 2048 karakter |
-| `format` | `svg` | `svg`, `png`, `webp` (lossless), atau `eps` (PostScript vektor; `size` kemudian menjadi lebar dalam poin) |
+| `format` | `svg` | `svg`, `png`, `webp` (lossless), atau `eps` (PostScript vektor; `size` kemudian adalah lebar dalam poin) |
 | `size` | `512` | Lebar dan tinggi dalam piksel, `64` hingga `2048` |
 | `fg` | `000000` | Warna modul dalam hex (`155dfc`, `fff`, atau 8 digit dengan alfa) |
 | `bg` | `ffffff` | Warna latar dalam hex. `00000000` menghasilkan latar transparan |
@@ -93,87 +93,87 @@ const src = `https://api.qrdx.dev/v1/qr?data=${encodeURIComponent(link)}&style=$
 | `eye` | `square` | Bentuk bingkai mata sudut |
 | `dot` | `square` | Bentuk titik di dalam setiap mata sudut |
 | `level` | `Q` | Koreksi kesalahan: `L` (~7%), `M` (~15%), `Q` (~25%), atau `H` (~30%) |
-| `margin` | `4` | Zona tenang di sekeliling kode dalam satuan modul, `0` hingga `16` |
-| `template` | tidak ada | Templat border dekoratif |
-| `frame` | tidak ada | [Bingkai](/docs/features/frames) ajakan bertindak bawaan, seperti `banner-bottom`, `speech-bubble`, atau `circle` (salah satu dari {facts.frameStyles} gaya) |
+| `margin` | `4` | Zona tenang di sekitar kode dalam modul, `0` hingga `16` |
+| `template` | tidak ada | [Bingkai yang digambar sebagai template](/docs/features/templates): seluruh gambar selebar `size`, dengan kode lebih kecil di dalamnya |
+| `frame` | tidak ada | [Bingkai](/docs/features/frames) ajakan bertindak bawaan, seperti `banner-bottom`, `speech-bubble`, atau `circle` (salah satu dari {facts.frameStyles} bingkai bawaan, masing-masing digambar dari spesifikasi bingkainya) |
 | `frameText` | `Scan me` | Label bingkai, hingga 24 karakter. Juga mengganti label bingkai pada `style` atau `item` |
 | `style` | tidak ada | Seluruh desain editor sebagai JSON; lihat [Gaya](#style) |
 | `item` | tidak ada | Bingkai atau tema komunitas berdasarkan id, seperti `frame:wifi-card`; lihat [Item komunitas](#community-items) |
 | `logoIcon` | tidak ada | Ikon cepat atau logo merek di bagian tengah; lihat [Logo](#logos) |
 | `logoFileId` | tidak ada | Logo yang Anda unggah, berdasarkan id file; memerlukan kunci API; lihat [Logo](#logos) |
 
-Tulis warna tanpa `#`, atau enkode menjadi `%23`: `#` polos memulai fragmen URL dan tidak pernah dikirim. Nilai enum (`level`, `format`, `template`, `frame`) tidak peka huruf besar/kecil.
+Tulis warna tanpa `#`, atau enkode sebagai `%23`: `#` polos memulai fragmen URL dan tidak pernah dikirim. Nilai enum (`level`, `format`, `template`, `frame`) tidak peka huruf besar/kecil.
 
 Dengan bingkai, `size` adalah lebar kode itu sendiri dan bingkai menambah ukuran gambar, di semua format.
 
 ## Gaya [#style]
 
-`style` menerima desain sebagai JSON dengan field yang sama seperti tema tersimpan, sehingga tema dari [`GET /v1/themes`](/docs/developers/api/list-themes) atau `qrdxStyle` yang dikembalikan `design_qr` milik [server MCP](/docs/developers/mcp) dapat diteruskan apa adanya (kecuali logo yang diunggah, lihat di bawah):
+`style` menerima desain sebagai JSON dengan field yang sama seperti tema tersimpan, sehingga tema dari [`GET /v1/themes`](/docs/developers/api/list-themes) atau `qrdxStyle` yang dikembalikan `design_qr` milik [server MCP](/docs/developers/mcp) bisa diteruskan apa adanya (kecuali logo yang diunggah, lihat di bawah):
 
 | Field | Menerima |
 | --- | --- |
 | `bgColor`, `fgColor`, `eyeColor`, `dotColor` | Warna (hex seperti `#155dfc`, `rgb()`, `hsl()`, atau nama warna), atau gradien: `{ "type": "linear", "angle": 45, "stops": [...] }` atau `{ "type": "radial", "stops": [...] }`, dengan 2 hingga 8 stop berupa `{ "color", "offset" }` (offset 0 hingga 100) |
 | `bodyPattern`, `cornerEyePattern`, `cornerEyeDotPattern` | [Nilai pola](#pattern-values) |
 | `level`, `margin` | Sama seperti parameter di atas (`margin` 0 hingga 16) |
-| `templateId` | Templat border, `default` berarti tanpa border |
-| `frame` | Bingkai bawaan, `{ "style": "banner-bottom", "text": "Scan me", "color": "#155dfc", "textColor": "#ffffff" }`, atau bingkai kustom, `{ "style": "custom", "spec": { … } }`, dengan spesifikasi bingkai dari [komunitas](#community-items) atau bingkai kustom yang dibuat di bagian Bingkai pada Playground. Spesifikasi diperiksa terhadap aturan frame-spec engine (tanpa markup, tautan, atau gambar; maksimal 32 KB) |
+| `templateId` | Bingkai yang digambar sebagai template, `default` untuk tanpa bingkai |
+| `frame` | Bingkai bawaan, `{ "style": "banner-bottom", "text": "Scan me", "color": "#155dfc", "textColor": "#ffffff" }`, atau bingkai kustom, `{ "style": "custom", "spec": { … } }`, dengan spesifikasi bingkai dari [komunitas](#community-items) atau bingkai kustom yang dibuat di bagian Bingkai pada Playground. Spesifikasi diperiksa terhadap aturan spesifikasi bingkai milik mesin (tanpa markup, tautan, atau gambar; maksimal 32 KB) |
 | `eyeColors` | Warna per mata, menimpa `eyeColor` dan `dotColor`: `{ "topLeft": { "outer": "#b91c1c", "inner": "#1d4ed8" }, "topRight": …, "bottomLeft": … }`, masing-masing berupa warna atau gradien |
 | `moduleScale` | Ukuran setiap titik, `0.5` hingga `1` (default `1`) |
-| `shape` | `square` (default) atau `circle`: kode di dalam cakram titik-titik dekoratif |
-| `autoLevel` | Naikkan koreksi kesalahan ke `H` ketika logo menutupi lebih dari 7% kode (selalu aktif di sini bila ada logo) |
-| `logoOptions` | Tata letak logo: `size` (`0.1` hingga `0.3` dari lebar kode; QRdx memperkecilnya ketika kode tidak punya cukup modul), `padding` (`0` hingga `2` modul), `x` dan `y` (`0` hingga `1`), `shape` (potongan `square`, `rounded`, atau `circle`), dan `plate` (warna di belakangnya) |
+| `shape` | `square` (default) atau `circle`: kode dalam cakram titik-titik dekoratif |
+| `autoLevel` | Naikkan koreksi kesalahan ke `H` saat logo menutupi lebih dari 7% kode (selalu aktif di sini jika ada logo) |
+| `logoOptions` | Tata letak logo: `size` (`0.1` hingga `0.3` dari lebar kode; QRdx memperkecilnya jika kode tidak dapat menyisihkan modul), `padding` (`0` hingga `2` modul), `x` dan `y` (`0` hingga `1`), `shape` (potongan `square`, `rounded`, atau `circle`), dan `plate` (warna di belakangnya) |
 | `showLogo`, `logoIcon`, `logoFileId` | Lihat [Logo](#logos) |
 
-`style` juga menerima nilai `style` dari tautan Playground (diawali `1.`), sehingga desain yang dibagikan dari [Playground](/playground) dirender sama seperti tampilannya di sana, tanpa logonya.
+`style` juga menerima nilai `style` dari tautan Playground (diawali `1.`), sehingga desain yang dibagikan dari [Playground](/playground) dirender seperti tampilannya di sana, tanpa logonya.
 
-Field yang Anda atur dengan parameter datar (`fg`, `body`, `frame`, dan lainnya) menimpa `style`, dan `style` menimpa `item`. Field yang tidak dikenal, alamat logo (`customLogo`), serta karya Logo QR atau Image QR (`art`) ditolak dengan `400` yang menjelaskan alasannya.
+Field yang Anda atur dengan parameter datar (`fg`, `body`, `frame`, dan lainnya) menimpa `style`, dan `style` menimpa `item`. Field yang tidak dikenal, alamat logo (`customLogo`), serta seni Logo QR atau Image QR (`art`) ditolak dengan `400` yang menjelaskan alasannya.
 
 ## Item komunitas [#community-items]
 
-`item` merender bingkai atau tema [komunitas](/community) yang telah dipublikasikan, gratis di bawah CC0. Temukan id dengan [`GET /v1/community/items`](/docs/developers/api/list-community-items), atau buka halaman item dan gunakan tipe serta slug-nya: `/community/frames/wifi-card` adalah `frame:wifi-card`. Item bingkai ditempatkan pada kode hitam di atas putih polos; tambahkan `style` atau parameter datar untuk mengubah kode di bawahnya.
+`item` merender bingkai atau tema [komunitas](/community) yang dipublikasikan, gratis di bawah CC0. Temukan id dengan [`GET /v1/community/items`](/docs/developers/api/list-community-items), atau buka halaman item dan gunakan tipe serta slug-nya: `/community/frames/wifi-card` menjadi `frame:wifi-card`. Item bingkai ditempatkan pada kode polos hitam di atas putih; tambahkan `style` atau parameter datar untuk mengubah kode di bawahnya.
 
 ## Logo [#logos]
 
-- **Ikon cepat.** `logoIcon` menempatkan salah satu ikon editor pada kotak putih di tengah: `wifi`, `location`, `phone`, `email`, `link`, `file`, `calendar`, `whatsapp` atau `instagram`. QRdx menggambarnya sendiri, dan ikon ini tidak memerlukan kunci.
-- **Logo merek.** `logoIcon` juga menerima salah satu dari {facts.brandLogos} merek dari [Simple Icons](https://simpleicons.org) berdasarkan slug: `spotify`, `paypal`, `googlemaps`, `appstore`. Logo digambar polos dengan warna mereknya; tambahkan `:black` atau `:white` untuk warna tersebut (`whatsapp:white`), dan `logoOptions.plate` di `style` untuk pelat di belakangnya. [`GET /api/brand-logos`](https://qrdx.dev/api/brand-logos) menampilkan semua slug. Slug yang tidak dimiliki QRdx akan mendapat `400`.
+- **Ikon cepat.** `logoIcon` menempatkan salah satu ikon editor di atas ubin putih di bagian tengah: `wifi`, `location`, `phone`, `email`, `link`, `file`, `calendar`, `whatsapp`, atau `instagram`. QRdx menggambarnya sendiri, dan ikon-ikon ini tidak memerlukan kunci.
+- **Logo merek.** `logoIcon` juga menerima salah satu dari {facts.brandLogos} merek dari [Simple Icons](https://simpleicons.org) berdasarkan slug: `spotify`, `paypal`, `googlemaps`, `appstore`. Logo digambar polos dengan warna mereknya; tambahkan `:black` atau `:white` untuk warna tersebut (`whatsapp:white`), dan `logoOptions.plate` di dalam `style` untuk pelat di belakangnya. [`GET /api/brand-logos`](https://qrdx.dev/api/brand-logos) menampilkan semua slug. Slug yang tidak dimiliki QRdx akan menghasilkan `400`.
 - **Logo QRdx** yang ditampilkan editor secara default tidak digambar di sini: `showLogo: true` saja tidak menambahkan logo.
-- **Koreksi kesalahan naik untuk logo.** Saat logo menutupi lebih dari 7% kode, kode digambar pada level `H`, apa pun nilai `level`, sehingga tetap dapat dipindai.
+- **Koreksi kesalahan naik saat ada logo.** Jika logo menutupi lebih dari 7% kode, kode digambar pada level `H`, apa pun nilai `level`, agar tetap dapat dipindai.
 
 <IfAvailable feature="fileStorage">
 
-**Logo Anda sendiri.** `logoFileId` menggambar PNG atau JPEG hingga 1 MB yang Anda unggah di [Dasbor → File](/docs/files). Id-nya adalah bagian terakhir dari tautan file, `https://qrdx.dev/api/files/<id>`. Kirim [kunci API](/docs/developers/api-keys) dari workspace pemilik file:
+**Logo Anda sendiri.** `logoFileId` menggambar PNG atau JPEG hingga 1 MB yang Anda unggah di [Dasbor → File](/docs/files). Id-nya adalah bagian terakhir dari tautan file, `https://qrdx.dev/api/files/<id>`. Kirim [kunci API](/docs/developers/api-keys) dari workspace yang memiliki file tersebut:
 
 ```bash
 curl -o qr.png -H "Authorization: Bearer $QRDX_API_KEY" \
   "https://api.qrdx.dev/v1/qr?data=https://qrdx.dev&format=png&logoFileId=<id>"
 ```
 
-Respons bersifat privat (`Cache-Control: private, no-store`) dan dihitung dalam kuota API harian workspace. File dari workspace lain mendapat `404`, dan permintaan tanpa kunci mendapat `401`. QRdx membaca gambar dari penyimpanannya sendiri dan memeriksa bahwa file tersebut benar-benar PNG atau JPEG; QRdx tidak pernah mengambil logo dari alamat web yang Anda kirim.
+Responsnya bersifat privat (`Cache-Control: private, no-store`) dan dihitung dalam kuota API harian workspace. File dari workspace lain mendapat `404`, dan permintaan tanpa kunci mendapat `401`. QRdx membaca gambar dari penyimpanannya sendiri dan memeriksa bahwa file itu benar-benar PNG atau JPEG; QRdx tidak pernah mengambil logo dari alamat web yang Anda kirim.
 
 </IfAvailable>
 
-`logoOptions` mengatur ukuran, posisi, pemotongan, dan latar logo-logo ini. Menghapus latar belakang bawaan logo yang diunggah dilakukan di Playground; Image API menggambar file yang diunggah apa adanya.
+`logoOptions` mengatur ukuran, penempatan, pemangkasan, dan latar semua logo ini. Penghapusan latar belakang bawaan logo yang diunggah dilakukan di Playground; Image API menggambar file yang diunggah apa adanya.
 
-Logo QR dan Image QR tidak tersedia di sini: Playground membuatnya dari gambar Anda di browser, dan Image API tidak membuat karya seni dari unggahan. Rancang kode seni di [Playground](/playground?tab=art).
+Logo QR dan Image QR tidak tersedia di sini: Playground membuatnya dari gambar Anda di browser, dan Image API tidak membuat karya seni dari unggahan. Rancang kode QR seni di [Playground](/playground?tab=art).
 
 ### Nilai pola [#pattern-values]
 
 - `body`: `circle`, `circle-large`, `square`, `diamond`, `circle-mixed`, `pacman`, `rounded`, `small-square`, `vertical-line`, `horizontal-line`, `liquid`, `liquid-horizontal`, `liquid-vertical`, `classy`, `classy-rounded`, `leaf`, `plus`, `hexagon`, `star`, `heart`, `random-dots`, `mosaic`, `octagon`
 - `eye`: `square`, `rounded`, `gear`, `circle`, `diya`, `extra-rounded`, `message`, `pointy`, `leaf`, `drop`, `octagon`, `bevel`, `squircle`, `cushion`, `shield`, `petal`, `leaf-reverse`
 - `dot`: `square`, `rounded`, `circle`, `message`, `message-reverse`, `diya`, `diya-reverse`, `rounded-triangle`, `leaf`, `drop`, `plus`, `cross-rounded`, `hexagon`, `octagon`, `flower`, `heart`, `squircle`, `dots`, `extra-rounded`, `leaf-reverse`, `drop-reverse`
-- `template`: `default`, `Arrow`, `StandardBox`, `SquareBorder`, `StrikedBox`, `Halloween`
+- `template`: `default`, `Arrow`, `StandardBox`, `SquareBorder`, `StrikedBox`, `Halloween`, `DotRing`
 
-Gaya-gaya ini sama dengan [pustaka React `qrdx`](/docs/features/patterns). [Server MCP](/docs/developers/mcp) juga dapat mencantumkannya beserta deskripsi singkat.
+Gaya-gaya ini sama dengan yang ada di [pustaka React `qrdx`](/docs/features/patterns). [Server MCP](/docs/developers/mcp) juga dapat menampilkannya beserta deskripsi singkat.
 
 ## Respons [#responses]
 
 Permintaan yang berhasil mengembalikan gambar dengan:
 
-- `Content-Type: image/svg+xml`, `image/png` atau `application/postscript` (EPS dikirim sebagai unduhan `qr-code.eps`)
-- `Cache-Control: public, max-age=31536000, immutable`, kecuali untuk render dengan `item` (5 menit, 10 menit di CDN, karena item dapat memiliki versi baru atau diturunkan) dan dengan `logoFileId` (`private, no-store`)
+- `Content-Type: image/svg+xml`, `image/png`, atau `application/postscript` (EPS dikirim sebagai unduhan `qr-code.eps`)
+- `Cache-Control: public, max-age=31536000, immutable`, kecuali untuk render dengan `item` (5 menit, 10 menit di CDN, karena sebuah item dapat memiliki versi baru atau diturunkan) dan dengan `logoFileId` (`private, no-store`)
 - `Access-Control-Allow-Origin: *`, sehingga Anda dapat memanggilnya dengan `fetch` dari situs web mana pun
 
-Render bersifat deterministik: string kueri yang sama selalu menghasilkan byte yang sama, itulah sebabnya respons dapat di-cache selama satu tahun. URL yang hanya memakai parameter asli dirender persis seperti biasa.
+Proses render bersifat deterministik: string kueri yang sama selalu menghasilkan byte yang sama, itulah sebabnya respons dapat di-cache selama setahun. URL yang hanya memakai parameter asli dirender persis seperti sebelumnya.
 
 Parameter yang tidak valid mengembalikan `400` dengan isi JSON yang menyebutkan setiap masalah:
 
@@ -196,14 +196,14 @@ Data yang tidak muat dalam kode QR pada level koreksi kesalahan yang dipilih jug
 
 - **Batas laju:** 300 permintaan per menit per alamat IP. Jika melewati batas, Anda mendapat `429` dengan header `Retry-After`.
 - **Tanpa pemeriksaan pemindaian.** Image API menggambar apa yang Anda minta. Untuk memeriksa dan memperbaiki skor pemindaian desain terlebih dahulu, gunakan `design_qr` di [server MCP](/docs/developers/mcp), atau skor pemindaian di [Playground](/playground?tab=design).
-- **`style` maksimal 8.192 karakter** di URL, dan JSON-nya maksimal 40 KB.
-- **Data adalah bagian dari URL.** Seperti URL lainnya, data dapat berakhir di log server, riwayat browser, dan cache. Jangan memasukkan kata sandi atau rahasia lain ke dalamnya.
+- **`style` maksimal 8.192 karakter** di dalam URL, dan JSON-nya maksimal 40 KB.
+- **Data menjadi bagian dari URL.** Seperti URL lainnya, data dapat tersimpan di log server, riwayat browser, dan cache. Jangan menaruh kata sandi atau rahasia lain di dalamnya.
 
 ## Tips pemindaian [#scanning-tips]
 
 - Pertahankan `margin` pada `2` atau lebih saat gambar berada di latar belakang gelap atau ramai, seperti README di mode gelap GitHub.
 - Jaga kontras yang baik antara `fg` dan `bg`. Modul gelap pada latar terang paling andal dipindai.
-- Pengaturan default (modul persegi, margin 4 modul) dapat dipindai di semua pembaca. Bentuk bergaya seperti titik `circle` terlihat lebih lembut, tetapi beberapa pemindai lama membacanya kurang andal — periksa dengan [pemeriksa pemindaian](/tools/scan-checker).
+- Nilai default (modul persegi, margin 4 modul) dapat dipindai di semua pembaca. Bentuk bergaya seperti titik `circle` terlihat lebih lembut, tetapi sebagian pemindai lama membacanya kurang andal — periksa dengan [pemeriksa pemindaian](/tools/scan-checker).
 - Uji kode dengan beberapa ponsel sebelum mencetaknya.
 
 ## Hosting mandiri [#self-hosting]

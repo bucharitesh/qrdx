@@ -1,69 +1,40 @@
 ---
 title: "Template"
-description: "Applica template di cornice predefiniti a un QR code, oppure registra i tuoi."
+description: "Cornici che inseriscono il codice in una grafica di dimensione fissa, e l'API TemplateDefinition per le cornici che disegni nel codice."
 icon: LayoutTemplate
 ---
 
-Racchiudi un QR code in una grafica già pronta, oppure nella tua.
+Un template è una cornice che inserisce il codice dentro la propria grafica. Nel playground i template non sono un elenco separato. Arrow, Standard Box, Square Border, Striked Box, Halloween e Dot Ring sono riquadri nel gruppo **Classic** del selettore delle cornici, accanto alle altre [cornici](/docs/features/frames), e scegliere una cornice sostituisce la precedente.
 
-## Che cosa sono i template? [#what-are-templates]
+I template si distinguono dalle altre cornici per un aspetto: la dimensione. Una cornice aggiunge spazio attorno al codice, quindi `size` è la larghezza del codice e l'immagine si ingrandisce. Un template disegna tutta la sua grafica a `size`, con il codice più piccolo al suo interno.
 
-Un template è una grafica SVG disegnata attorno al codice: un riquadro, un bordo, un badge. Riceve il codice come `children` e lo posiziona all'interno del proprio disegno. Colori, pattern e loghi restano nelle prop di `QRCode`, quindi un template funziona con qualsiasi stile.
+## Template integrati [#built-in-templates]
 
-## Template disponibili [#available-templates]
+Passa l'id come `templateId`. L'image API lo accetta come `template` e la CLI come `--template`.
 
-### Default [#default]
-Classico in bianco e nero.
+| `templateId` | Nome | Colore |
+|--------------|------|-------|
+| `Arrow` | Arrow | Il colore scuro del codice (`fgColor`) |
+| `StandardBox` | Standard Box | `fgColor` |
+| `SquareBorder` | Square Border | `fgColor` |
+| `StrikedBox` | Striked Box | Un proprio colore scuro |
+| `Halloween` | Halloween | Arancione, verde e nero propri |
+| `DotRing` | Dot Ring | Anello in `fgColor`, testo in bianco; entrambi si possono cambiare (sotto) |
+
+`default` non disegna alcuna grafica. Riduce solo un poco il codice, al 95% di `size`.
 
 ```tsx
 import { QRCode } from 'qrdx';
 
-<QRCode value="https://example.com" templateId="default" size={256} />
+<QRCode value="https://example.com" templateId="Arrow" fgColor="#1a56db" size={256} />
 ```
 
-### Arrow [#arrow]
-Design geometrico moderno.
-
-```tsx
-<QRCode value="https://example.com" templateId="Arrow" size={256} />
-```
-
-### Standard Box [#standard-box]
-Design pulito e strutturato.
-
-```tsx
-<QRCode value="https://example.com" templateId="StandardBox" size={256} />
-```
-
-### Square Border [#square-border]
-Design con bordo e contorni ben definiti.
-
-```tsx
-<QRCode value="https://example.com" templateId="SquareBorder" size={256} />
-```
-
-### Striked Box [#striked-box]
-Design dinamico con elementi diagonali.
-
-```tsx
-<QRCode value="https://example.com" templateId="StrikedBox" size={256} />
-```
-
-### Halloween [#halloween]
-Tema stagionale di Halloween.
-
-```tsx
-<QRCode value="https://example.com" templateId="Halloween" size={256} />
-```
-
-## Personalizzare i template [#customize-templates]
-
-I template integrati disegnano la loro grafica con `fgColor`. Tutto il resto, come i pattern e un logo, si imposta sul codice come al solito:
+Colori, pattern e logo restano nelle props del codice, quindi un template funziona con qualsiasi stile:
 
 ```tsx
 <QRCode
   value="https://example.com"
-  templateId="Arrow"
+  templateId="StandardBox"
   fgColor="#1a56db"
   imageSettings={{
     src: "/your-logo.png",
@@ -75,30 +46,89 @@ I template integrati disegnano la loro grafica con `fgColor`. Tutto il resto, co
 />
 ```
 
+## Dot Ring [#dot-ring]
+
+Un codice rotondo. Il codice sta in un disco di punti dentro un anello scuro, con una riga di testo lungo l'anello. I punti visibili derivano da un hash del contenuto del codice, quindi ogni link ha un anello tutto suo e lo stesso link ottiene sempre lo stesso anello.
+
+```tsx
+<QRCode
+  value="https://example.com"
+  templateId="DotRing"
+  bodyPattern="circle-large"
+  size={512}
+/>
+```
+
+Le sue impostazioni vanno in `customProps` (tipizzato come `DotRingProps`):
+
+```tsx
+<QRCode
+  value="https://example.com"
+  templateId="DotRing"
+  customProps={{
+    customText: "Scan for the menu",
+    textPosition: "bottom",
+    textColor: "#fde047",
+    outerCircleColor: "#1e3a8a",
+  }}
+  size={512}
+/>
+```
+
+| Prop | Predefinito | Note |
+| --- | --- | --- |
+| `customText` | "Scan the QR code" ripetuto quattro volte attorno | Testo lungo l'anello. Le lettere che non ci stanno attorno vengono omesse; `""` lascia l'anello vuoto |
+| `textPosition` | `"top"` | `"top"`: centrato in alto, con lettura in senso orario. `"bottom"`: centrato in basso, con lettura da sinistra a destra |
+| `textRotation` | `0` | Ruota il testo attorno al centro, in gradi |
+| `textColor` | `#ffffff` | Colore del testo |
+| `fontFamily` | stack di font di sistema | Famiglia di font CSS del testo |
+| `fontWeight` | `900` | Spessore del font |
+| `fontSize` | `32` | Nel disegno del template di 593 unità, in cui il codice è largo 300 |
+| `fontLetterSpacing` | `3.5` | Spazio extra tra le lettere, nelle stesse unità |
+| `outerCircleColor` | `fgColor` | Colore dell'anello |
+| `strokeWidth`, `strokeColor` | `0`, `#000000` | Un contorno lungo entrambi i bordi dell'anello |
+| `outerStrokeWidth`, `outerStrokeColor` | `strokeWidth`, `strokeColor` | Solo il bordo esterno dell'anello |
+| `innerStrokeWidth`, `innerStrokeColor` | `strokeWidth`, `strokeColor` | Solo il bordo interno dell'anello |
+
+Un logo va al centro come su qualsiasi codice. I link lunghi (codici larghi più di 49 moduli) mantengono una fascia chiara tra il codice e i punti, così si leggono ancora quando vengono stampati in piccolo.
+
+Il testo è testo SVG nel font che scegli; quello predefinito è lo stack di font di sistema, quindi non viene scaricato nulla. I download SVG e PNG nel browser usano i font di chi li visualizza. PDF ed EPS lo stampano in Helvetica Bold, quindi usa testo Latin-1. `getQRAsPNG` da `qrdx/node` richiede un font installato sul server, come le etichette delle cornici.
+
+## I template sono specifiche di cornice [#templates-are-frame-specs]
+
+La grafica di Arrow, Standard Box, Square Border, Striked Box e Halloween è una [specifica di cornice](/docs/features/frames#frame-specs), lo stesso formato JSON di ogni altra cornice, disegnata dallo stesso motore. `getTemplate(id).spec` la restituisce. Usala come cornice quando vuoi il dimensionamento delle cornici (il codice mantiene la sua dimensione e la grafica cresce attorno) e l'opzione colore della cornice:
+
+```tsx
+import { getTemplate, QRCode } from 'qrdx';
+
+const spec = getTemplate('Arrow')?.spec;
+
+<QRCode
+  value="https://example.com"
+  frame={spec && { style: 'custom', spec, color: '#1a56db' }}
+  size={256}
+/>
+```
+
+Dot Ring non ha una specifica: i suoi punti derivano dal contenuto del codice, quindi li disegna nel codice (vedi [Cornici che disegni nel codice](#frames-you-draw-in-code)).
+
+`templateId` disegna la stessa grafica di prima. I design salvati, gli URL delle immagini, i comandi della CLI e il codice che usano un id di template hanno lo stesso aspetto di sempre.
+
 ## Registro dei template [#template-registry]
 
-### Ottenere tutti i template [#get-all-templates]
-
 ```tsx
-import { getAllTemplates } from 'qrdx';
+import { getAllTemplates, getTemplate, getTemplateIds } from 'qrdx';
 
-const templates = getAllTemplates();
+getTemplateIds(); // ['default', 'Arrow', 'StandardBox', ...]
+getAllTemplates(); // every TemplateDefinition, with its id and name
+getTemplate('Halloween'); // one by id
 ```
 
-### Ottenere gli ID dei template [#get-template-ids]
+## Cornici che disegni nel codice [#frames-you-draw-in-code]
 
-```tsx
-import { getTemplateIds } from 'qrdx';
+Una specifica di cornice descrive una grafica fissa. Quando la grafica va calcolata, scrivi una `TemplateDefinition` e passala come `customTemplate`. Il suo `wrapper` riceve il codice come `children` e restituisce l'SVG da disegnare. Disegna su un canvas di 300 per 300, e anche il codice arriva a quella dimensione, quindi riducilo per lasciare spazio alla tua grafica. `props` contiene `fgColor` e `bgColor` del codice, e il terzo argomento contiene `url` e `pixelSize` del codice.
 
-const ids = getTemplateIds();
-// Returns: ['default', 'Arrow', 'StandardBox', ...]
-```
-
-## Template personalizzati [#custom-templates]
-
-Scrivi il tuo template come `TemplateDefinition`. Il suo `wrapper` riceve il codice come `children` e restituisce l'SVG da disegnare. Disegna su una tela di 300 per 300 e anche il codice arriva con queste dimensioni, quindi riducilo per lasciare spazio alla tua grafica. `props` contiene `fgColor` e `bgColor` del codice.
-
-Questo esempio disegna un anello attorno al codice:
+Questo disegna un anello attorno al codice:
 
 ```tsx
 import { QRCode, type TemplateDefinition } from "qrdx";
@@ -130,28 +160,10 @@ const ringTemplate: TemplateDefinition = {
 />
 ```
 
-Mantieni il codice abbastanza grande da poter essere scansionato dalla distanza a cui le persone terranno il telefono e lascia uno spazio chiaro tra il codice e la tua grafica. Controlla il risultato con il [punteggio di scansione](/docs/features/frames#will-it-scan).
+Mantieni il codice abbastanza grande da poter essere scansionato dalla distanza a cui le persone terranno il telefono, e lascia uno spazio chiaro tra il codice e la tua grafica. Controlla il risultato con il [punteggio di scansione](/docs/features/frames#will-it-scan).
 
-## Quando usare i template [#when-to-use-templates]
+## Prossimi passi [#next-steps]
 
-- **Coerenza del brand** — Fai in modo che tutti i QR code siano uniformi
-- **Configurazione rapida** — Ottieni risultati professionali in poco tempo
-- **Campagne stagionali** — Usa template a tema
-- **Generazione in blocco** — Applica stili coerenti
-
-## Guida alla scelta del template [#template-selection-guide]
-
-| Template | Ideale per | Atmosfera |
-|----------|----------|------|
-| Default | Professionale | Neutra |
-| Arrow | Tecnologia, moderno | Dinamica |
-| Standard Box | Aziendale | Professionale |
-| Square Border | Formale | Strutturata |
-| Striked Box | Marketing | Energica |
-| Halloween | Stagionale | Divertente |
-
-## Passi successivi [#next-steps]
-
-- [Pattern](/docs/features/patterns) — Personalizzazione dettagliata dei pattern
-- [Colori e gradienti](/docs/features/colors-gradients) — Colori avanzati
-- [Loghi](/docs/features/logos) — Aggiungi loghi ai template
+- [Cornici](/docs/features/frames): tutte le cornici e il formato della specifica di cornice
+- [Pattern](/docs/features/patterns): personalizzazione dettagliata dei pattern
+- [Logo](/docs/features/logos): aggiungi un logo al codice

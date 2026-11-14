@@ -1,6 +1,6 @@
 ---
 title: "Riferimento API della libreria"
-description: "Tutti i componenti, le funzioni e i tipi esportati dalla libreria React qrdx. Per gli endpoint HTTP, consulta la REST API."
+description: "Ogni componente, funzione e tipo esportato dalla libreria React qrdx. Per gli endpoint HTTP, consulta la REST API."
 icon: Code
 ---
 
@@ -33,27 +33,27 @@ import { QRCode } from 'qrdx';
 | `size` | `number` | `128` | Dimensione in pixel |
 | `scale` | `number` | `1` | Moltiplicatore di scala |
 | `fgColor` | `ColorConfig` | `#000000` | Colore del QR code |
-| `bgColor` | `ColorConfig` | `#ffffff` | Colore dello sfondo |
+| `bgColor` | `ColorConfig` | `#ffffff` | Colore di sfondo |
 | `eyeColor` | `ColorConfig` | `fgColor` | Colore dei marcatori d'angolo |
 | `dotColor` | `ColorConfig` | `fgColor` | Colore del punto all'interno di ogni occhio d'angolo |
-| `bodyPattern` | `BodyPattern` | `'circle'` | Pattern dei punti dei dati |
-| `cornerEyePattern` | `CornerEyePattern` | `'gear'` | Pattern dei marcatori d'angolo |
-| `cornerEyeDotPattern` | `CornerEyeDotPattern` | `'circle'` | Pattern del punto d'angolo |
-| `hideLogo` | `boolean` | `false` | Nasconde il logo. Nessun logo viene disegnato se non imposti `logo` |
+| `bodyPattern` | `BodyPattern` | `'circle'` | Motivo dei punti dei dati |
+| `cornerEyePattern` | `CornerEyePattern` | `'gear'` | Motivo dei marcatori d'angolo |
+| `cornerEyeDotPattern` | `CornerEyeDotPattern` | `'circle'` | Motivo del punto d'angolo |
+| `hideLogo` | `boolean` | `false` | Nasconde il logo. Non viene disegnato alcun logo a meno che `logo` non sia impostato |
 | `logo` | `string` | — | URL del logo |
-| `templateId` | `string` | `'default'` | ID del template |
-| `customTemplate` | `TemplateDefinition` | — | Template personalizzato |
+| `templateId` | `string` | `'default'` | Una [cornice disegnata come template](/docs/features/templates) (`'Arrow'`, `'StandardBox'`, …): l'intera grafica è larga `size` |
+| `customTemplate` | `TemplateDefinition` | — | Una cornice che disegni nel codice (ha la precedenza su `templateId`) |
 | `level` | `ErrorLevel` | `'Q'` | Correzione degli errori |
 | `autoLevel` | `boolean` | `false` | Porta `level` a H quando il logo copre più del 7% del codice (`AUTO_LEVEL_LOGO_COVERAGE`) |
 | `margin` | `number` | `0` | Margine in moduli |
 | `imageSettings` | `ImageSettings` | — | Impostazioni del logo |
 | `eyeColors` | `EyeColors` | — | Colori `outer` / `inner` per ogni occhio (`topLeft`, `topRight` e `bottomLeft`); ciascuno sostituisce `eyeColor` / `dotColor` |
-| `moduleScale` | `number` | `1` | Dimensione dei moduli dei dati, da 0.5 a 1. Ogni pattern si ferma alla dimensione minima che si riesce ancora a leggere (`MODULE_SCALE_FLOOR`) |
+| `moduleScale` | `number` | `1` | Dimensione dei moduli dei dati, da 0.5 a 1. Ogni motivo si ferma alla dimensione minima che si riesce ancora a scansionare (`MODULE_SCALE_FLOOR`) |
 | `frame` | `QRFrame` | — | Cornice con invito all'azione; vedi [Cornici e stampa](/docs/features/frames) |
 | `art` | `QRArt` | — | Fonde un logo o una foto nei moduli (Logo QR, Image QR); vedi [Art QR](/docs/features/art-qr) |
-| `frameLabelMarkers` | `boolean` | `false` | Per gli editor: contrassegna ogni etichetta `<text>` della cornice con `data-qrdx-frame-label` (`"text"`, `"secondaryText"` o l'id di un'etichetta della specifica). Download ed esportazioni non lo includono mai |
+| `frameLabelMarkers` | `boolean` | `false` | Per gli editor: contrassegna ogni etichetta della cornice `<text>` con `data-qrdx-frame-label` (`"text"`, `"secondaryText"` o l'id di un'etichetta della specifica). Download ed esportazioni non lo includono mai |
 
-Tutti i {facts.bodyPatterns} pattern del corpo, i {facts.eyeShapes} occhi, i {facts.eyeCentres} centri degli occhi e i {facts.frameStyles} stili di cornice sono mostrati dal vivo in [Forme, occhi e cornici](/docs/styles).
+Tutti i {facts.bodyPatterns} motivi del corpo, i {facts.eyeShapes} occhi, i {facts.eyeCentres} centri degli occhi e le {facts.frameStyles} cornici integrate sono mostrati dal vivo in [Forme, occhi e cornici](/docs/styles).
 
 ### QRCodeCanvas [#qrcodecanvas]
 
@@ -102,7 +102,7 @@ downloadQRCode(
 
 ### getQRCodeDataUrl [#getqrcodedataurl]
 
-Ottieni il codice come data URL.
+Ottieni come data URL.
 
 ```tsx
 getQRCodeDataUrl(
@@ -115,7 +115,7 @@ getQRCodeDataUrl(
 
 ### getQRAsWebP [#getqraswebp]
 
-Il codice come `Blob` WebP, senza perdita a meno che tu non imposti `quality`. Dove il browser non sa codificare WebP (Safari), lo genera l'encoder lossless integrato di qrdx. `canvasToWebP(canvas, options)` fa lo stesso per qualsiasi canvas, ed `encodeWebPLossless(rgba, width, height)` codifica pixel RGBA senza DOM.
+Il codice come `Blob` WebP, senza perdita a meno che non sia impostato `quality`. Dove il browser non sa codificare WebP (Safari), lo crea l'encoder lossless integrato di qrdx. `canvasToWebP(canvas, options)` fa lo stesso per qualsiasi canvas, mentre `encodeWebPLossless(rgba, width, height)` codifica pixel RGBA senza DOM.
 
 ```tsx
 getQRAsWebP(
@@ -145,7 +145,7 @@ getSVGString(qrProps: QRProps): Promise<string>
 
 ## Funzioni di stampa e scansione [#print-and-scan-functions]
 
-Queste funzioni sono documentate con esempi nelle rispettive pagine delle funzionalità.
+Sono documentate con esempi nelle rispettive pagine delle funzionalità.
 
 | Funzione | Cosa fa | Documentazione |
 |----------|---------|----------------|
@@ -153,11 +153,11 @@ Queste funzioni sono documentate con esempi nelle rispettive pagine delle funzio
 | `getQRAsPrintPDF`, `downloadPrintPDF` | PDF vettoriale a una dimensione fisica esatta, con abbondanza, crocini di taglio e CMYK (richiede `jspdf`) | [Esportazione pronta per la stampa](/docs/features/frames#print-ready-export) |
 | `downloadPrintSVG` | SVG pronto per la stampa a una dimensione fisica esatta | [Esportazione pronta per la stampa](/docs/features/frames#print-ready-export) |
 | `getQRAsEPS`, `downloadPrintEPS` | EPS vettoriale per tipografie e strumenti di design | [Download](/docs/features/downloads) |
-| `getScanScore(props)` | Stima quanto affidabilmente si scansiona un design | [Si scansiona?](/docs/features/frames#will-it-scan) |
+| `getScanScore(props)` | Stima quanto un design venga scansionato in modo affidabile | [Si scansiona?](/docs/features/frames#will-it-scan) |
 | `getImageScanScore(image)` | Valuta l'immagine di un QR code che hai già (solo browser) | [Si scansiona?](/docs/features/frames#will-it-scan) |
-| `getQRAsPNG(props, { size })` | Byte PNG in Node puro, senza DOM. Importala da `qrdx/node`; richiede l'installazione di `@resvg/resvg-js` o `sharp` | — |
-| `scanQRPixels(pixels, expected)` | Verifica che i pixel RGBA grezzi si decodifichino in `expected`, anche sfocati e rimpiccioliti; funziona in Node | — |
-| `getStylePairRisk(...)` | Avvisa sulle coppie di occhio e pattern che alcuni scanner non leggono | [Pattern](/docs/features/patterns) |
+| `getQRAsPNG(props, { size })` | Byte PNG in puro Node, senza DOM. Importala da `qrdx/node`; richiede l'installazione di `@resvg/resvg-js` o `sharp` | — |
+| `scanQRPixels(pixels, expected)` | Verifica che i pixel RGBA grezzi vengano decodificati in `expected`, anche se sfocati e rimpiccioliti; funziona in Node | — |
+| `getStylePairRisk(...)` | Avvisa sulle combinazioni di occhi e motivi che alcuni scanner non leggono | [Motivi](/docs/features/patterns) |
 
 ## Funzioni di rilevamento [#detection-functions]
 
@@ -175,7 +175,7 @@ handleImageLoad(
 
 ### downloadImageWithBoundingBox [#downloadimagewithboundingbox]
 
-Debug con i riquadri di delimitazione.
+Debug con riquadri di delimitazione.
 
 ```tsx
 downloadImageWithBoundingBox(
@@ -263,11 +263,13 @@ type ColorConfig =
 type ErrorLevel = 'L' | 'M' | 'Q' | 'H';
 ```
 
-### Tipi dei pattern [#pattern-types]
+### Tipi dei motivi [#pattern-types]
 
 ```tsx
 // The arrays BODY_PATTERN, CORNER_EYE_PATTERNS, CORNER_EYE_DOT_PATTERNS and
 // FRAME_STYLES (and their zod schemas) are exported from 'qrdx/types'.
+// FRAME_STYLES names the built-in frames; each is a frame spec in
+// BUILT_IN_FRAMES (from 'qrdx').
 
 type BodyPattern =
   | 'circle' | 'circle-large' | 'square' | 'diamond' | 'circle-mixed'
@@ -297,7 +299,7 @@ type EyeColors = {
 };
 
 type QRFrame = {
-  style: FrameStyle; // "none" or a frame, see FRAME_STYLES
+  style: FrameStyle; // "none" or a built-in frame, see FRAME_STYLES
   text?: string; // up to 24 characters, default "Scan me"
   color?: string;
   textColor?: string;
@@ -327,7 +329,7 @@ const PRESET_SIZES: Record<string, DownloadSize> = {
 };
 ```
 
-### Tipi dei gradienti [#gradient-types]
+### Tipi di gradiente [#gradient-types]
 
 ```tsx
 type LinearGradient = {
@@ -393,7 +395,7 @@ try {
 ```
 
 Errori comuni:
-- URL di immagini non validi
+- URL delle immagini non validi
 - Errori di rete
 - Parametri di dimensione non validi
 - Contesto canvas non disponibile
@@ -407,13 +409,13 @@ Errori comuni:
 
 ## Supporto lato server [#server-support]
 
-Funziona in ambienti Node.js:
+Funziona negli ambienti Node.js:
 - Next.js
 - Remix
 - Express.js
 - Altri framework Node.js
 
 Alcune funzionalità richiedono le API del browser:
-- Operazioni su canvas
+- Operazioni con canvas
 - Clipboard API
 - File API

@@ -1669,6 +1669,11 @@
       "after": "Er öffnet sich direkt als Scanner in einem eigenen Fenster und funktioniert offline, sobald du damit einen Code gescannt hast."
     }
   },
+  "scannerApp": {
+    "share": "Teilen",
+    "scanInstructions": "Richte die Kamera auf einen QR-Code oder Barcode",
+    "cameraBlocked": "Der Kamerazugriff für QRdx Scanner ist ausgeschaltet. Aktiviere ihn in den Einstellungen oder scanne stattdessen ein Bild."
+  },
   "scanPages": {
     "reportAbuse": "Missbrauch melden",
     "privacy": "Datenschutz",
@@ -4368,7 +4373,6 @@
         "frame": "Rahmen",
         "padding": "Abstand",
         "errorCorrection": "Fehlerkorrektur",
-        "border": "Rand",
         "none": "Keine"
       },
       "dotSizeSection": {
@@ -4391,43 +4395,32 @@
         }
       },
       "frameControls": {
-        "customise": "Anpassen",
-        "importSvg": "SVG importieren",
+        "uploadSvg": "SVG hochladen",
         "publishFrame": "Rahmen veröffentlichen",
         "theFrameIsAddedAround": "Der Rahmen wird um den Code herum hinzugefügt. Dadurch wird das heruntergeladene Bild größer und der Code selbst bleibt scanbar.",
         "label": "Text",
-        "secondLine": "Zweite Zeile",
-        "leaveEmptyForNoLabel": "Leer lassen für keinen Text",
         "pickAFrameFirst": "Wähle zuerst einen Rahmen",
-        "frameColor": "Rahmenfarbe",
-        "textColor": "Textfarbe",
-        "endColor": "Endfarbe",
-        "optionalEGYourWebsite": "Optional, z. B. deine Website",
-        "none": "Keiner"
+        "none": "Keiner",
+        "takesDotColor": "Er übernimmt die Farbe der Punkte des Codes.",
+        "alsoHasTemplate": "Dieses Design enthält auch den Rahmen {name}. Wenn du einen anderen Rahmen wählst, werden beide ersetzt.",
+        "templateKeepsSize": "Dieser Rahmen passt sich dem Code darin an, sodass das heruntergeladene Bild die von dir gewählte Größe behält."
       },
       "frameFields": {
         "textSize": "Textgröße"
       },
       "framePicker": {
-        "more": "Mehr",
         "showAll": "Alle zeigen",
         "frame": "Rahmen",
-        "moreFrames": "Mehr Rahmen",
-        "allTotalFrames": "Alle {total, number} Rahmen",
-        "allFrames": "Alle Rahmen",
         "searchFrames": "Rahmen suchen",
         "searchTotalFrames": "{total, number} Rahmen durchsuchen",
-        "closeFrames": "Rahmen schließen",
         "filterFrames": "Rahmen filtern",
         "labelFrames": "{label}-Rahmen",
-        "commonFrames": "Gängige Rahmen",
-        "everyFrameBuiltInStyles": "Alle Rahmen: integrierte Stile, die offiziellen Rahmen von QRdx und deine gespeicherten Rahmen. Ein Klick wendet den Rahmen sofort an.",
-        "less": "Weniger",
         "all": "Alle",
         "noFramesMatchQuery": "Keine Rahmen für „{query}“ gefunden.",
         "loadingFrames": "Rahmen werden geladen …",
         "comingUp": "Demnächst",
-        "builtIn": "Integriert",
+        "classic": "Klassisch",
+        "shapedCodes": "Formcodes",
         "saved": "Gespeichert",
         "results": "Ergebnisse"
       },
@@ -4555,7 +4548,6 @@
       },
       "patternControls": {
         "customizeOuterAndCenter": "Außen und Mitte anpassen",
-        "border": "Rahmen",
         "higherLevelsSurviveScratchesAnd": "Höhere Stufen überstehen Kratzer und Logos, benötigen aber mehr Punkte. Nimm H, wenn du ein Logo hinzufügst.",
         "dotShape": "Punktform",
         "dotShapes": "Punktformen",
@@ -8342,8 +8334,12 @@
       },
       "setupGuide": {
         "getSetUp": "Einrichten",
+        "launcherLabel": "Einrichtung: {done, number} von {length, number} erledigt",
         "doneOfLengthDone": "{done, number} von {length, number} erledigt",
+        "doneOfLengthShort": "{done, number}/{length, number}",
         "setupTasksDone": "Erledigte Aufgaben",
+        "collapse": "Einklappen",
+        "dismissGuide": "Guide schließen",
         "done": "(erledigt)",
         "create": "Erstellen",
         "start": "Starten",

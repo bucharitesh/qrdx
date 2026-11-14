@@ -15,6 +15,7 @@ import {
   transform,
 } from "./lib.mjs";
 import { INDUSTRY_MOTIFS } from "./motifs-industries.mjs";
+import { defineWorldMotifs } from "./motifs-world.mjs";
 
 const M = {};
 const def = (name, fn) => {
@@ -2849,6 +2850,8 @@ def("bowtie", () => {
     .Z();
   return parts(A(p), B(path().rrect(41, 38, 18, 24, 6)));
 });
+
+defineWorldMotifs(def, { leaf, teardrop, ring, heart });
 
 export const ICONS = [
   "wifi",

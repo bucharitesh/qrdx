@@ -9,7 +9,8 @@
     "x": 120,
     "y": 120,
     "size": 1000,
-    "padding": 40
+    "padding": 40,
+    "plate": "background"
   },
   "colors": {
     "frame": "#000000"
@@ -50,11 +51,14 @@
       "color": "text",
       "box": {
         "x": 120,
-        "y": 1160,
+        "y": 1120,
         "width": 1000,
-        "height": 100
+        "height": 180
       },
-      "fontSize": 93.6
+      "collapse": {
+        "y": 1200,
+        "height": 100
+      }
     }
   ]
 }

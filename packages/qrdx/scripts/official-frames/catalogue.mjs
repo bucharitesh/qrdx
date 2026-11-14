@@ -6,6 +6,8 @@ import {
   INDUSTRY_LAYOUT_WORDS,
   INDUSTRY_MOTIF_WORDS,
 } from "./catalogue-industries.mjs";
+import { addWorldFrames } from "./catalogue-world.mjs";
+import { WORLD_MOTIF_WORDS } from "./motifs-world.mjs";
 
 const MONO = { frame: "#111111", text: "#ffffff", accent: "#111111", word: "" };
 const SOFT = { frame: "#111111", text: "#ffffff", accent: "#8a8a8a", word: "" };
@@ -387,6 +389,7 @@ const LAYOUT = {
 };
 
 const MOTIF_WORDS = {
+  ...WORLD_MOTIF_WORDS,
   holly: "a holly sprig",
   bauble: "a bauble",
   northStar: "a north star",
@@ -4660,3 +4663,6 @@ f(
 
 // Industries and everyday uses (catalogue-industries.mjs)
 addIndustryFrames({ section, f });
+
+// Holidays, seasons, events and places from around the world (catalogue-world.mjs)
+addWorldFrames({ f, section, P, MONO, SOFT, NEON, GREY });

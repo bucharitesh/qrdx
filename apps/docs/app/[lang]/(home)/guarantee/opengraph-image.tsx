@@ -1,13 +1,14 @@
 import { ogSize, renderPageOgImage } from "@/app/og/brand";
 import { GUARANTEE_NAME } from "@/components/sections/pricing/guarantee-block";
-import { localeParams, requireLocaleParam } from "@/lib/i18n/static-params";
+import { requireLocaleParam } from "@/lib/i18n/static-params";
+import { onDemandParams } from "@/lib/static-params";
 
 export const alt = "The QRdx Never-Hostage Guarantee";
 export const size = ogSize;
 export const contentType = "image/png";
 
 export function generateStaticParams() {
-  return localeParams();
+  return onDemandParams();
 }
 
 export default async function Image({

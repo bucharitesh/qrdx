@@ -1,0 +1,121 @@
+{
+  "id": "park-bench-walks",
+  "name": "Park bench walks",
+  "description": "A card with a stitched dashed edge and a park bench.",
+  "category": "use-case",
+  "collection": "places",
+  "contentTypes": ["url"],
+  "tags": ["park", "outdoors", "walks"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1750
+    },
+    "qr": {
+      "x": 120,
+      "y": 390,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1750,
+        "radius": 80,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.92
+        }
+      },
+      {
+        "type": "line",
+        "x1": 86,
+        "y1": 36,
+        "x2": 1154,
+        "y2": 36,
+        "width": 8,
+        "cap": "round",
+        "dash": [26, 18],
+        "fill": "frame"
+      },
+      {
+        "type": "line",
+        "x1": 1204,
+        "y1": 86,
+        "x2": 1204,
+        "y2": 1664,
+        "width": 8,
+        "cap": "round",
+        "dash": [26, 18],
+        "fill": "frame"
+      },
+      {
+        "type": "line",
+        "x1": 1154,
+        "y1": 1714,
+        "x2": 86,
+        "y2": 1714,
+        "width": 8,
+        "cap": "round",
+        "dash": [26, 18],
+        "fill": "frame"
+      },
+      {
+        "type": "line",
+        "x1": 36,
+        "y1": 1664,
+        "x2": 36,
+        "y2": 86,
+        "width": 8,
+        "cap": "round",
+        "dash": [26, 18],
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M575.6 86.4L664.4 86.4A3.6 3.6 0 0 1 668 90L668 94.8A3.6 3.6 0 0 1 664.4 98.4L575.6 98.4A3.6 3.6 0 0 1 572 94.8L572 90A3.6 3.6 0 0 1 575.6 86.4ZM575.6 103.2L664.4 103.2A3.6 3.6 0 0 1 668 106.8L668 111.6A3.6 3.6 0 0 1 664.4 115.2L575.6 115.2A3.6 3.6 0 0 1 572 111.6L572 106.8A3.6 3.6 0 0 1 575.6 103.2ZM570.8 124.8L669.2 124.8A3.6 3.6 0 0 1 672.8 128.4L672.8 133.2A3.6 3.6 0 0 1 669.2 136.8L570.8 136.8A3.6 3.6 0 0 1 567.2 133.2L567.2 128.4A3.6 3.6 0 0 1 570.8 124.8ZM584 84L587.6 84A2.4 2.4 0 0 1 590 86.4L590 127.2A2.4 2.4 0 0 1 587.6 129.6L584 129.6A2.4 2.4 0 0 1 581.6 127.2L581.6 86.4A2.4 2.4 0 0 1 584 84ZM652.4 84L656 84A2.4 2.4 0 0 1 658.4 86.4L658.4 127.2A2.4 2.4 0 0 1 656 129.6L652.4 129.6A2.4 2.4 0 0 1 650 127.2L650 86.4A2.4 2.4 0 0 1 652.4 84ZM588.16 134.99L583.36 168.59L575.04 167.41L579.84 133.81ZM660.16 133.81L664.96 167.41L656.64 168.59L651.84 134.99Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for local walks",
+        "color": "frame",
+        "box": {
+          "x": 100,
+          "y": 1510,
+          "width": 1040,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Take a seat",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 190,
+          "width": 960,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

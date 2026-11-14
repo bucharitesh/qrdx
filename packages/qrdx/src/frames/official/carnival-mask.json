@@ -1,0 +1,76 @@
+{
+  "id": "carnival-mask",
+  "name": "Carnival mask",
+  "description": "A solid card with a masquerade mask over the code and the label underneath, in purple and gold.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "carnival",
+  "contentTypes": [],
+  "tags": ["carnival", "mardi gras", "parade", "mask"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#4c1d95",
+      "text": "#ffffff",
+      "accent": "#facc15"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M557 86C590 77 650 77 683 86C683 119 665 140 641 134C629 131 626 119 620 119C614 119 611 131 599 134C575 140 557 119 557 86ZM578 104A13.5 9 0 1 0 605 104A13.5 9 0 1 0 578 104ZM635 104A13.5 9 0 1 0 662 104A13.5 9 0 1 0 635 104Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for the parade map",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Happy Carnival",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

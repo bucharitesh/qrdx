@@ -1,0 +1,108 @@
+{
+  "id": "visitor-town-map",
+  "name": "Town map",
+  "description": "A light card with a folded map and a pill-shaped button under the code.",
+  "category": "use-case",
+  "collection": "places",
+  "contentTypes": ["url"],
+  "tags": ["visitor center", "tourism", "map"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1760
+    },
+    "qr": {
+      "x": 120,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 64,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 64,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.82
+        },
+        "hole": {
+          "x": 12,
+          "y": 12,
+          "width": 1216,
+          "height": 1736,
+          "radius": 54
+        }
+      },
+      {
+        "type": "path",
+        "d": "M565.4 59.6L599.85 46.6L599.85 137.6L565.4 150.6ZM603.75 46.6L636.25 59.6L636.25 150.6L603.75 137.6ZM640.15 59.6L674.6 46.6L674.6 137.6L640.15 150.6Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M656.4 64.8C646 64.8 642.1 77.8 656.4 96C670.7 77.8 666.8 64.8 656.4 64.8ZM652.5 75.2A3.9 3.9 0 1 0 660.3 75.2A3.9 3.9 0 1 0 652.5 75.2ZM576.7 126.25L590.58 102.03L611.38 109.83L623.5 87.25L626.9 89.15L613.02 113.37L592.22 105.57L580.1 128.15Z",
+        "fill": "accent"
+      },
+      {
+        "type": "rect",
+        "x": 170,
+        "y": 1520,
+        "width": 900,
+        "height": 180,
+        "radius": 90,
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Get the town map",
+        "color": "text",
+        "box": {
+          "x": 230,
+          "y": 1520,
+          "width": 780,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan to explore",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 180,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

@@ -1,0 +1,114 @@
+{
+  "id": "onam-sadya",
+  "name": "Onam sadya",
+  "description": "A light card with a leaf and a solid label band, in banana-leaf green and gold.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "onam",
+  "contentTypes": [],
+  "tags": ["onam", "kerala", "harvest festival", "sadya", "menu"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1770
+    },
+    "qr": {
+      "x": 120,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#2f5d34",
+      "text": "#ffffff",
+      "accent": "#f2c94c"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "frame",
+        "hole": {
+          "x": 20,
+          "y": 20,
+          "width": 1200,
+          "height": 1730,
+          "radius": 38
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 250,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 60,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M569.6 155.2C629.44 172.01 676.06 124.13 673.2 48.8C609.86 59.67 563.24 107.55 569.6 155.2Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M571.76 156.98L575.42 152.53L579.1 148.13L582.83 143.78L586.59 139.47L590.4 135.2L594.26 130.97L598.15 126.79L602.08 122.64L606.06 118.54L610.08 114.48L614.14 110.46L618.24 106.48L622.39 102.55L626.57 98.66L630.8 94.8L635.07 90.99L639.38 87.23L643.73 83.5L648.13 79.82L652.58 76.16A2.8 2.8 0 0 1 649.02 71.84L644.55 75.51L640.11 79.23L635.72 82.99L631.36 86.8L627.05 90.65L622.78 94.54L618.55 98.47L614.37 102.44L610.22 106.46L606.12 110.52L602.06 114.62L598.04 118.77L594.07 122.95L590.14 127.18L586.25 131.45L582.4 135.76L578.59 140.12L574.83 144.51L571.11 148.95L567.44 153.42A2.8 2.8 0 0 1 571.76 156.98Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan to book your sadya",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1550,
+          "width": 1040,
+          "height": 190
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Happy Onam",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 180,
+          "width": 960,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

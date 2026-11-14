@@ -1669,6 +1669,11 @@
       "after": "Il s’ouvre directement sur le scanner dans sa propre fenêtre et fonctionne hors ligne une fois que vous avez scanné un code avec."
     }
   },
+  "scannerApp": {
+    "share": "Partager",
+    "scanInstructions": "Pointez l’appareil photo vers un QR code ou un code-barres",
+    "cameraBlocked": "L’accès à l’appareil photo est désactivé pour QRdx Scanner. Activez-le dans les Réglages, ou scannez plutôt une image."
+  },
   "scanPages": {
     "reportAbuse": "Signaler un abus",
     "privacy": "Confidentialité",
@@ -4368,7 +4373,6 @@
         "frame": "Cadre",
         "padding": "Marge",
         "errorCorrection": "Correction d’erreur",
-        "border": "Bordure",
         "none": "Aucun"
       },
       "dotSizeSection": {
@@ -4391,43 +4395,32 @@
         }
       },
       "frameControls": {
-        "customise": "Personnaliser",
-        "importSvg": "Importer un SVG",
+        "uploadSvg": "Importer un SVG",
         "publishFrame": "Publier le cadre",
         "theFrameIsAddedAround": "Le cadre est ajouté autour du code : l’image téléchargée est donc plus grande et le code reste scannable.",
         "label": "Libellé",
-        "secondLine": "Deuxième ligne",
-        "leaveEmptyForNoLabel": "Laissez vide pour aucun libellé",
         "pickAFrameFirst": "Choisissez d’abord un cadre",
-        "frameColor": "Couleur du cadre",
-        "textColor": "Couleur du texte",
-        "endColor": "Couleur de fin",
-        "optionalEGYourWebsite": "Facultatif, p. ex. votre site web",
-        "none": "Aucun"
+        "none": "Aucun",
+        "takesDotColor": "Il prend la couleur des points du code.",
+        "alsoHasTemplate": "Ce design inclut aussi le cadre {name} à l’intérieur de celui-ci. Choisir un autre cadre remplace les deux.",
+        "templateKeepsSize": "Ce cadre s’ajuste au code qu’il contient : l’image téléchargée conserve donc la taille que vous choisissez."
       },
       "frameFields": {
         "textSize": "Taille du texte"
       },
       "framePicker": {
-        "more": "Plus",
         "showAll": "Tout afficher",
         "frame": "Cadre",
-        "moreFrames": "Plus de cadres",
-        "allTotalFrames": "Les {total, number} cadres",
-        "allFrames": "Tous les cadres",
         "searchFrames": "Rechercher un cadre",
         "searchTotalFrames": "Rechercher parmi {total, number} cadres",
-        "closeFrames": "Fermer les cadres",
         "filterFrames": "Filtrer les cadres",
         "labelFrames": "Cadres {label}",
-        "commonFrames": "Cadres courants",
-        "everyFrameBuiltInStyles": "Tous les cadres : styles intégrés, cadres officiels de QRdx et cadres que vous avez enregistrés. Un clic sur un cadre l’applique immédiatement.",
-        "less": "Moins",
         "all": "Tous",
         "noFramesMatchQuery": "Aucun cadre ne correspond à « {query} ».",
         "loadingFrames": "Chargement des cadres…",
         "comingUp": "Bientôt",
-        "builtIn": "Intégrés",
+        "classic": "Classiques",
+        "shapedCodes": "Codes à forme",
         "saved": "Enregistrés",
         "results": "Résultats"
       },
@@ -4555,7 +4548,6 @@
       },
       "patternControls": {
         "customizeOuterAndCenter": "Personnaliser l’extérieur et le centre",
-        "border": "Bordure",
         "higherLevelsSurviveScratchesAnd": "Les niveaux élevés résistent aux rayures et aux logos, mais ajoutent plus de points. Utilisez H si vous ajoutez un logo.",
         "dotShape": "Forme des points",
         "dotShapes": "formes de points",
@@ -8342,8 +8334,12 @@
       },
       "setupGuide": {
         "getSetUp": "Prise en main",
+        "launcherLabel": "Prise en main : {done, number} sur {length, number} terminées",
         "doneOfLengthDone": "{done, number} sur {length, number} terminées",
+        "doneOfLengthShort": "{done, number}/{length, number}",
         "setupTasksDone": "Tâches terminées",
+        "collapse": "Réduire",
+        "dismissGuide": "Masquer le guide",
         "done": "(terminé)",
         "create": "Créer",
         "start": "Démarrer",

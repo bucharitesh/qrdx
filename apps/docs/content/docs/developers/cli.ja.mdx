@@ -1,10 +1,10 @@
 ---
 title: "CLI"
-description: "@qrdx/cli コマンドラインツールを使って、ターミナルや CI から装飾付きQRコードを SVG、PNG、WebP、ベクター EPS で生成できます。1 つずつの生成も、qrdx batch による CSV 一括生成も可能です。"
+description: "@qrdx/cli コマンドラインツールを使えば、ターミナルや CI から、スタイル付きの QR コードを SVG、PNG、WebP、ベクター EPS で生成できます。1 件ずつの生成も、qrdx batch による CSV 一括生成も可能です。"
 icon: Terminal
 ---
 
-`@qrdx/cli` は、Playground や [`qrdx` ライブラリ](/docs/getting-started)と同じQRコードをコマンドラインから生成します。スクリプトや CI ではプロンプトを表示しません。ターミナルで引数なしの `qrdx generate` を実行した場合は、内容とオプションを順番に尋ねます。
+`@qrdx/cli` は、Playground や [`qrdx` ライブラリ](/docs/getting-started)と同じ QR コードをコマンドラインから生成します。スクリプトや CI では入力を求めることはありません。ターミナルで引数なしの `qrdx generate` を実行すると、内容とオプションを順に尋ねます。
 
 <NpmStatus package="@qrdx/cli" />
 
@@ -12,27 +12,27 @@ icon: Terminal
 npx @qrdx/cli generate "https://example.com" -o qr.svg
 ```
 
-グローバルにインストールすると、`qrdx` コマンドを使えます。
+グローバルにインストールすると、`qrdx` コマンドが使えるようになります。
 
 ```bash
 npm install -g @qrdx/cli
 qrdx generate "https://example.com" -o qr.png --size 1024
 ```
 
-Node.js 22 以降が必要です。PNG と WebP の出力には [sharp](https://sharp.pixelplumbing.com) を使います。sharp はオプションの依存パッケージで、お使いのプラットフォームが対応していれば npm が自動でインストールします。SVG と EPS は sharp がなくても動作します。`qrdx` という npm パッケージは React ライブラリです。CLI は `@qrdx/cli` にのみ含まれています。
+Node.js 22 以降が必要です。PNG と WebP の出力には [sharp](https://sharp.pixelplumbing.com) を使います。sharp はオプションの依存関係で、お使いのプラットフォームが対応していれば npm がインストールします。SVG と EPS は sharp がなくても動作します。`qrdx` npm パッケージは React ライブラリです。CLI は `@qrdx/cli` にのみ含まれています。
 
 ## 出力形式 [#output-formats]
 
-形式はファイル拡張子で決まります。ファイル名に拡張子がない場合は `--format` を使います。
+形式はファイルの拡張子で決まります。ファイル名に拡張子がない場合は `--format` を使います。
 
 | 形式 | 用途 | `--size` の意味 |
 | --- | --- | --- |
-| `.svg` | Web ページ、デザインツール、劣化のない拡大縮小 | ピクセル単位の幅（デフォルトは 512） |
-| `.png` | ドキュメント、スライドなど、画像が必要なあらゆる場面 | ピクセル単位の幅 |
-| `.webp` | Web サイト向け。PNG と同じピクセルを可逆圧縮し、ファイルサイズを小さくします | ピクセル単位の幅 |
-| `.eps` | 印刷会社、Illustrator、InDesign | ポイント単位の幅（1 インチ 72 ポイントなので、`144` は 2 インチ） |
+| `.svg` | Web ページ、デザインツール、劣化のない拡大縮小 | 幅（ピクセル、デフォルトは 512） |
+| `.png` | ドキュメント、スライドなど、画像が必要な場所 | 幅（ピクセル） |
+| `.webp` | Web サイト：PNG と同じピクセルをロスレスで、より小さいファイルに | 幅（ピクセル） |
+| `.eps` | 印刷会社、Illustrator、InDesign | 幅（ポイント、1 インチ = 72 ポイントなので `144` は 2 インチ） |
 
-EPS ファイルはベクターの PostScript です。PNG と JPEG のロゴはそのまま埋め込まれます。それ以外の形式のロゴは、sharp がインストールされていれば変換され、ない場合は警告を表示して除外されます。
+EPS ファイルはベクターの PostScript です。PNG と JPEG のロゴはそのまま埋め込まれます。それ以外の形式のロゴは、sharp がインストールされていれば sharp で変換され、なければ警告を出して除外されます。
 
 ## オプション [#options]
 
@@ -43,43 +43,43 @@ EPS ファイルはベクターの PostScript です。PNG と JPEG のロゴは
 | `--size` | `512` | 出力サイズ（上記参照） |
 | `-l`, `--level` | `Q` | 誤り訂正レベル：`L`、`M`、`Q`、`H` |
 | `--body` | `square` | データモジュールの[パターン](/docs/features/patterns) |
-| `--eye` | `square` | コーナーアイのパターン |
-| `--dot` | `square` | コーナーアイのドットのパターン |
+| `--eye` | `square` | 角のアイのパターン |
+| `--dot` | `square` | 角のアイドットのパターン |
 | `--fg`, `--bg` | `#000000`, `#ffffff` | 前景色と背景色：16 進カラーまたは JSON のグラデーション |
-| `--eye-color`, `--dot-color` | `--fg` | コーナーアイとアイドットの色 |
+| `--eye-color`, `--dot-color` | `--fg` | 角のアイとアイドットの色 |
 | `--logo` | | 中央に配置するロゴ画像の URL（`--level H` と併用） |
 | `--margin` | `0` | クワイエットゾーン（モジュール単位） |
 | `--template` | | `Arrow`、`StandardBox`、`SquareBorder`、`StrikedBox`、`Halloween` |
-| `--frame` | | 行動喚起の[フレーム](/docs/features/frames)：{facts.frameStyles} 種類のフレームスタイルのいずれか。`banner-bottom`、`rounded-border`、`circle`、`sticker`、`phone` など（[すべてを見る](/docs/styles#frames)） |
+| `--frame` | | 行動を促す[フレーム](/docs/features/frames)：{facts.frameStyles} 種類の組み込みフレームから選べます。例：`banner-bottom`、`rounded-border`、`circle`、`sticker`、`phone`（[すべてのフレーム](/docs/styles#frames)を参照） |
 | `--frame-text` | `Scan me` | フレームのラベル（最大 24 文字） |
 | `--frame-color`, `--frame-text-color` | | フレームとラベルの色（16 進） |
 
-`qrdx --help` で、使用できるすべてのパターン名を確認できます。無効な値を指定すると、終了コード `1` で終了し、指定できる値を示すメッセージが表示されます。
+`qrdx --help` で、すべてのパターン名を確認できます。無効な値を指定すると、終了コード `1` で終了し、指定できる値を示すメッセージが表示されます。
 
-## CSV から大量のコードを生成 [#many-codes-from-a-csv]
+## CSV から大量のコードを生成する [#many-codes-from-a-csv]
 
-`qrdx batch` は、CSV ファイルの各行に対応する静的QRコードをフォルダに書き出します。
+`qrdx batch` は、CSV ファイルの各行について静的QRコードを作成し、フォルダーに書き出します。
 
 ```bash
 qrdx batch products.csv -o codes --format png --size 1024 --body circle
 ```
 
-[一括ジェネレーター](/tools/bulk)と同じ列を読み取ります。内容は `value`、`url`、`link`、`data`、`content`、`text`、`qr` のいずれかの名前の列から取得します（該当がなければ最初の列）。ファイル名は `file name`、`name`、`label`、`id`、`title`、`sku` のいずれかの名前の列から取得します（該当がなければ `qr-00001`、`qr-00002` のように連番）。別の列を使う場合は、ヘッダー名または列番号で指定します。
+読み込む列は[一括ジェネレーター](/tools/bulk)と同じです。内容は `value`、`url`、`link`、`data`、`content`、`text`、`qr` のいずれかの名前の列から取得します（該当する列がなければ最初の列）。ファイル名は `file name`、`name`、`label`、`id`、`title`、`sku` のいずれかの名前の列から取得します（該当する列がなければ `qr-00001`、`qr-00002` のように連番になります）。別の列を使う場合は、ヘッダー名または列番号で指定します。
 
 | フラグ | デフォルト | 説明 |
 | --- | --- | --- |
-| `-o`, `--out` | `qr-codes` | コードを保存するフォルダ |
+| `-o`, `--out` | `qr-codes` | コードの出力先フォルダー |
 | `--format` | `svg` | `svg`、`png`、`eps` |
-| `--value-column` | 自動判定 | 各コードの内容が入っている列 |
-| `--name-column` | 自動判定 | ファイル名が入っている列 |
-| `--no-header` | | 先頭行を列名ではなくコードとして扱います |
-| `--jobs` | SVG は `4`、それ以外は `8` | 同時にレンダリングするコードの数 |
+| `--value-column` | 自動判定 | 各コードの内容が入った列 |
+| `--name-column` | 自動判定 | ファイル名が入った列 |
+| `--no-header` | | 最初の行を列名ではなくコードとして扱う |
+| `--jobs` | SVG は `4`、それ以外は `8` | 同時に生成するコード数 |
 
-上記のスタイルオプションはすべて、全コードに適用されます。CSV はストリームとして読み込まれ、各コードは生成されるとすぐに保存されるため、行数の上限はありません。ノート PC では、10,000 個の SVG コードの生成に約 40 秒、使用メモリは 200 MB 未満でした。何もアップロードされず、アカウントも不要です。エンコードできなかった行はスキップされ、理由とともに出力フォルダの `errors.csv` に記録されます。
+上記のスタイルオプションは、すべてのコードに適用されます。CSV はストリームとして読み込まれ、各コードは生成されるたびに保存されるため、行数の上限はありません。ノート PC で SVG のコード 10,000 件を生成したところ、約 40 秒で、メモリ使用量は 200 MB 未満でした。何もアップロードされず、アカウントも不要です。エンコードできなかった行はスキップされ、その理由とともに出力フォルダー内の `errors.csv` に一覧されます。
 
-[動的コード](/docs/dynamic-qr-codes)を大量に印刷するには、先にそれらを作成し（ダッシュボードの CSV インポートまたは API）、インポート結果の CSV に対して `--value-column short_link` を付けて `qrdx batch` を実行します。
+[動的QRコード](/docs/dynamic-qr-codes)を一括で印刷するには、先にそれらを作成し（ダッシュボードの CSV インポートまたは API）、インポートで得られる結果の CSV に対して `--value-column short_link` を付けて `qrdx batch` を実行します。
 
-## 使用例 [#examples]
+## 例 [#examples]
 
 ```bash
 # High-resolution PNG for print
@@ -102,8 +102,8 @@ qrdx generate "https://example.com/menu" --frame banner-bottom --frame-text "Sca
 qrdx generate "WIFI:T:WPA;S:MyNetwork;P:MyPassword;;" -o wifi.svg
 ```
 
-[動的QRコード](/docs/dynamic-qr-codes)を印刷するには、そのショートリンク（`https://qrdx.dev/q/<slug>`）をデータとして渡します。
+[動的QRコード](/docs/dynamic-qr-codes)を印刷するには、データとして短縮リンク（`https://qrdx.dev/q/<slug>`）を渡します。
 
 ## AI コーディングエージェントから使う [#use-it-from-an-ai-coding-agent]
 
-リポジトリの [`generate-qr` スキル](https://github.com/bucharitesh/qrdx/tree/main/skills/generate-qr)は、Claude Code などのエージェントに CLI の呼び出し方を教えます。MCP に対応したエージェントでは、[MCP サーバー](/docs/developers/mcp)を使えばインストールは一切不要です。
+リポジトリの [`generate-qr` スキル](https://github.com/bucharitesh/qrdx/tree/main/skills/generate-qr)は、Claude Code などのエージェントに CLI の呼び出し方を教えます。MCP に対応したエージェントなら、[MCP サーバー](/docs/developers/mcp)を使うことでインストールはまったく不要です。

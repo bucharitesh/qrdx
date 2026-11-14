@@ -82,7 +82,7 @@ Depois, peça o que você precisa, por exemplo:
 | `design_qr` | Cria o design de um código para qualquer tipo de conteúdo, com o estilo que o seu assistente escolher, ou partindo de um tema integrado ou de um item da comunidade. Verifica a nota de leitura e corrige o estilo até chegar a Ótima. Retorna a nota, o que mudou, o JSON do estilo, um link do Playground, um PNG e o SVG. |
 | `list_options` | Lista todos os valores que `design_qr` aceita: tipos de conteúdo e seus campos, cores e gradientes, formas, molduras (com os ids das molduras oficiais do QRdx), bordas, ícones de logo e logos de marcas, temas integrados, níveis de correção de erro e limites. |
 | `generate_qr_code` | Gera um QR code com os estilos do editor. Retorna uma imagem PNG e URLs públicas da [Image API](/docs/developers/image-api) (SVG, PNG, WebP sem perdas e EPS vetorial) prontas para Markdown, HTML ou impressão, além do código SVG, se você pedir. |
-| `list_qr_styles` | Lista padrões do corpo, formas dos olhos dos cantos e dos pontos dos olhos, modelos de borda, molduras, ícones de logo, níveis de correção de erro, padrões e limites. |
+| `list_qr_styles` | Lista padrões do corpo, formas dos olhos dos cantos e dos pontos dos olhos, molduras (os estilos integrados e as desenhadas como template), ícones de logo, níveis de correção de erro, padrões e limites. |
 | `search_community` | Busca molduras, temas e coleções publicados na [comunidade](/community) por palavras, tipo ou tag. |
 | `get_community_item` | Retorna um item da comunidade com o estilo que ele aplica, pronto para `design_qr` ou `generate_qr_code`. |
 | `save_template` | Salva um design como tema no seu workspace. Precisa de uma [chave de API](#use-an-api-key). |

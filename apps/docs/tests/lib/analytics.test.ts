@@ -187,7 +187,15 @@ describe("PostHog consent gating", () => {
   });
 
   it("records nothing on admin and customer pages", async () => {
-    for (const path of ["/admin/users", "/p/menu", "/scan"]) {
+    for (const path of [
+      "/admin/users",
+      "/p/menu",
+      "/scan",
+      // The app's untracked pages in another language, and a template demo
+      // (components/landing/customer-page-paths.ts, registered by the app).
+      "/es/scan",
+      "/templates/menu/cafe",
+    ]) {
       const { umami } = installBrowser({ path });
       const a = await load({ NEXT_PUBLIC_UMAMI_WEBSITE_ID: "site-1" });
       a.setPostHogConsent(true);
@@ -208,6 +216,48 @@ describe("PostHog consent gating", () => {
     a.track("sign_out");
     expect(posthog.capture).not.toHaveBeenCalled();
     expect(umami.track).not.toHaveBeenCalled();
+  });
+});
+
+describe("untracked pages", () => {
+  const SLOT = Symbol.for("@repo/analytics/untracked-paths");
+
+  it("are the app's: translated marketing pages still count", async () => {
+    const { umami } = installBrowser({ path: "/es/pricing" });
+    const a = await load({ NEXT_PUBLIC_UMAMI_WEBSITE_ID: "site-1" });
+    a.setPostHogConsent(true);
+    await settle();
+    a.track("sign_out");
+    expect(posthog.capture).toHaveBeenCalledWith("sign_out", {});
+    expect(umami.track).toHaveBeenCalledTimes(1);
+  });
+
+  it("are every page until an app registers them: nothing is sent", async () => {
+    const { umami } = installBrowser({ path: "/pricing" });
+    vi.resetModules();
+    vi.stubEnv("NEXT_PUBLIC_POSTHOG_KEY", "phc_test_key");
+    vi.stubEnv("NEXT_PUBLIC_UMAMI_WEBSITE_ID", "site-1");
+    const slot = globalThis as unknown as Record<symbol, unknown>;
+    const registered = slot[SLOT];
+    delete slot[SLOT];
+    try {
+      // The package alone, without the app's lib/analytics paths.
+      const track = await import("@repo/analytics/track");
+      const ph = await import("@repo/analytics/posthog");
+      const privacy = await import("@repo/analytics/privacy");
+      expect(privacy.isUntrackedAnalyticsPath("/pricing")).toBe(true);
+      ph.setPostHogConsent(true);
+      await settle();
+      track.track("sign_out");
+      track.trackPageview();
+      expect(posthog.capture).not.toHaveBeenCalled();
+      expect(umami.track).not.toHaveBeenCalled();
+      expect(
+        ph.beforeSend({ uuid: "u", event: "x", properties: {} }),
+      ).toBeNull();
+    } finally {
+      slot[SLOT] = registered;
+    }
   });
 });
 

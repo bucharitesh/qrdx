@@ -1,0 +1,105 @@
+{
+  "id": "independence-argentina",
+  "name": "Argentine Independence Day",
+  "description": "Flag colors in a band over the code and a sun, in sky blue and white.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "independence-day",
+  "contentTypes": [],
+  "tags": ["independence day", "national day", "argentina", "july 9"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1760
+    },
+    "qr": {
+      "x": 120,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#1f4e79",
+      "text": "#ffffff",
+      "accent": "#74acdf"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 24,
+        "y": 24,
+        "width": 1192,
+        "height": 276,
+        "radius": 36,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 24,
+        "y": 24,
+        "width": 1192,
+        "height": 93,
+        "fill": "accent"
+      },
+      {
+        "type": "rect",
+        "x": 24,
+        "y": 116,
+        "width": 1192,
+        "height": 93,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 24,
+        "y": 208,
+        "width": 1192,
+        "height": 92,
+        "fill": "accent"
+      },
+      {
+        "type": "path",
+        "d": "M24 24L60 24A36 36 0 0 0 24 60Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M1216 24L1180 24A36 36 0 0 1 1216 60Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M593.6 162A26.4 26.4 0 1 1 646.4 162A26.4 26.4 0 1 1 593.6 162ZM616.4 128.4L623.6 128.4L620 106.8ZM633.68 131.1L639.92 134.7L647.6 114.2ZM647.3 142.08L650.9 148.32L667.8 134.4ZM653.6 158.4L653.6 165.6L675.2 162ZM650.9 175.68L647.3 181.92L667.8 189.6ZM639.92 189.3L633.68 192.9L647.6 209.8ZM623.6 195.6L616.4 195.6L620 217.2ZM606.32 192.9L600.08 189.3L592.4 209.8ZM592.7 181.92L589.1 175.68L572.2 189.6ZM586.4 165.6L586.4 158.4L564.8 162ZM589.1 148.32L592.7 142.08L572.2 134.4ZM600.08 134.7L606.32 131.1L592.4 114.2Z",
+        "fill": "#f6b40e"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Feliz 9 de Julio",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1530,
+          "width": 1040,
+          "height": 180
+        }
+      }
+    ]
+  }
+}

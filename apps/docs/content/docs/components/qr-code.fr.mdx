@@ -58,7 +58,7 @@ Passez un dégradé qrdx à la place d'une couleur : `linear` avec un `angle`, o
 
 ### Modèles de cadre [#frame-templates]
 
-`templateId` dessine un [modèle](/docs/features/templates) qrdx autour du code. Associez-le à `caption` pour ajouter un appel à l'action sous le cadre.
+`templateId` dessine autour du code l'un des [cadres dessinés comme modèles](/docs/features/templates) de qrdx. Associez-le à `caption` pour ajouter un appel à l'action sous le cadre.
 
 <ComponentPreview name="qr-code-template" />
 
@@ -176,6 +176,6 @@ export function TableCode() {
 
 ## Référence de l'API [#api-reference]
 
-<auto-type-table path="../../../registry/qrdx/qr-code.tsx" type="{ [K in keyof QrCodeProps as K extends keyof ComponentProps<'figure'> ? never : K]: QrCodeProps[K] }" />
+<auto-type-table path="../../../../../packages/docs-assets/registry/qrdx/qr-code.tsx" type="{ [K in keyof QrCodeProps as K extends keyof ComponentProps<'figure'> ? never : K]: QrCodeProps[K] }" />
 
 Toute autre prop, comme `className`, est transmise à l'élément `<figure>` englobant.

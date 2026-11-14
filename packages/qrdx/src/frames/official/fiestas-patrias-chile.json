@@ -1,0 +1,76 @@
+{
+  "id": "fiestas-patrias-chile",
+  "name": "Fiestas Patrias star",
+  "description": "A solid card with a star over the code and the label underneath, in blue, white and red.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "fiestas-patrias-chile",
+  "contentTypes": [],
+  "tags": ["fiestas patrias", "chile", "september 18", "national day"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#0039a6",
+      "text": "#ffffff",
+      "accent": "#d52b1e"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M620 45.5L636.75 91.44L685.62 93.18L647.11 123.31L660.56 170.32L620 143L579.44 170.32L592.89 123.31L554.38 93.18L603.25 91.44Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "¡Viva Chile!",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Felices Fiestas Patrias",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

@@ -27,13 +27,13 @@ import { QRCode } from 'qrdx';
 
 #### Props [#props]
 
-| Prop | Type | Par défaut | Description |
+| Prop | Type | Valeur par défaut | Description |
 |------|------|---------|-------------|
 | `value` | `string` | **obligatoire** | URL ou texte à encoder |
 | `size` | `number` | `128` | Taille en pixels |
 | `scale` | `number` | `1` | Multiplicateur d'échelle |
 | `fgColor` | `ColorConfig` | `#000000` | Couleur du QR code |
-| `bgColor` | `ColorConfig` | `#ffffff` | Couleur d'arrière-plan |
+| `bgColor` | `ColorConfig` | `#ffffff` | Couleur de fond |
 | `eyeColor` | `ColorConfig` | `fgColor` | Couleur des repères d'angle |
 | `dotColor` | `ColorConfig` | `fgColor` | Couleur du point à l'intérieur de chaque œil d'angle |
 | `bodyPattern` | `BodyPattern` | `'circle'` | Motif des points de données |
@@ -41,19 +41,19 @@ import { QRCode } from 'qrdx';
 | `cornerEyeDotPattern` | `CornerEyeDotPattern` | `'circle'` | Motif du point d'angle |
 | `hideLogo` | `boolean` | `false` | Masque le logo. Aucun logo n'est dessiné tant que `logo` n'est pas défini |
 | `logo` | `string` | — | URL du logo |
-| `templateId` | `string` | `'default'` | ID du modèle |
-| `customTemplate` | `TemplateDefinition` | — | Modèle personnalisé |
+| `templateId` | `string` | `'default'` | Un [cadre dessiné comme modèle](/docs/features/templates) (`'Arrow'`, `'StandardBox'`, …) : l'ensemble du visuel fait `size` de large |
+| `customTemplate` | `TemplateDefinition` | — | Un cadre que vous dessinez en code (prioritaire sur `templateId`) |
 | `level` | `ErrorLevel` | `'Q'` | Correction d'erreur |
 | `autoLevel` | `boolean` | `false` | Passe `level` à H lorsque le logo couvre plus de 7 % du code (`AUTO_LEVEL_LOGO_COVERAGE`) |
 | `margin` | `number` | `0` | Marge en modules |
-| `imageSettings` | `ImageSettings` | — | Réglages du logo |
-| `eyeColors` | `EyeColors` | — | Couleurs `outer` / `inner` propres à chaque œil pour `topLeft`, `topRight` et `bottomLeft` ; chacune remplace `eyeColor` / `dotColor` |
-| `moduleScale` | `number` | `1` | Taille des modules de données, de 0.5 à 1. Chaque motif s'arrête à la plus petite taille encore scannable (`MODULE_SCALE_FLOOR`) |
+| `imageSettings` | `ImageSettings` | — | Paramètres du logo |
+| `eyeColors` | `EyeColors` | — | Couleurs `outer` / `inner` par œil pour `topLeft`, `topRight` et `bottomLeft` ; chacune remplace `eyeColor` / `dotColor` |
+| `moduleScale` | `number` | `1` | Taille des modules de données, de 0.5 à 1. Chaque motif s'arrête à la plus petite taille qui reste scannable (`MODULE_SCALE_FLOOR`) |
 | `frame` | `QRFrame` | — | Cadre d'appel à l'action ; voir [Cadres et impression](/docs/features/frames) |
 | `art` | `QRArt` | — | Fond un logo ou une photo dans les modules (Logo QR, Image QR) ; voir [QR artistique](/docs/features/art-qr) |
-| `frameLabelMarkers` | `boolean` | `false` | Pour les éditeurs : marque chaque libellé de cadre `<text>` avec `data-qrdx-frame-label` (`"text"`, `"secondaryText"` ou l'id d'un libellé de spécification). Les téléchargements et exports ne l'incluent jamais |
+| `frameLabelMarkers` | `boolean` | `false` | Pour les éditeurs : marque chaque libellé de cadre `<text>` avec `data-qrdx-frame-label` (`"text"`, `"secondaryText"` ou l'identifiant du libellé d'une spécification). Les téléchargements et exports ne l'incluent jamais |
 
-Les {facts.bodyPatterns} motifs de corps, {facts.eyeShapes} yeux, {facts.eyeCentres} centres d'œil et {facts.frameStyles} styles de cadre sont tous présentés en direct dans [Formes, yeux et cadres](/docs/styles).
+Les {facts.bodyPatterns} motifs de corps, {facts.eyeShapes} yeux, {facts.eyeCentres} centres d'œil et {facts.frameStyles} cadres intégrés sont tous présentés en direct dans [Formes, yeux et cadres](/docs/styles).
 
 ### QRCodeCanvas [#qrcodecanvas]
 
@@ -86,7 +86,7 @@ import { QRCodeSVG } from 'qrdx';
 
 ### downloadQRCode [#downloadqrcode]
 
-Télécharge des QR codes dans plusieurs formats.
+Téléchargez des QR codes dans plusieurs formats.
 
 ```tsx
 downloadQRCode(
@@ -102,7 +102,7 @@ downloadQRCode(
 
 ### getQRCodeDataUrl [#getqrcodedataurl]
 
-Obtient une URL de données.
+Obtenir une URL de données.
 
 ```tsx
 getQRCodeDataUrl(
@@ -115,7 +115,7 @@ getQRCodeDataUrl(
 
 ### getQRAsWebP [#getqraswebp]
 
-Le code sous forme de `Blob` WebP, sans perte sauf si `quality` est défini. Lorsque le navigateur ne peut pas encoder en WebP (Safari), l'encodeur sans perte intégré de qrdx s'en charge. `canvasToWebP(canvas, options)` fait de même pour n'importe quel canvas, et `encodeWebPLossless(rgba, width, height)` encode des pixels RGBA sans DOM.
+Le code sous forme de `Blob` WebP, sans perte sauf si `quality` est défini. Lorsque le navigateur ne peut pas encoder en WebP (Safari), l'encodeur sans perte intégré à qrdx s'en charge. `canvasToWebP(canvas, options)` fait de même pour n'importe quel canvas, et `encodeWebPLossless(rgba, width, height)` encode des pixels RGBA sans DOM.
 
 ```tsx
 getQRAsWebP(
@@ -126,7 +126,7 @@ getQRAsWebP(
 
 ### copyQRCodeToClipboard [#copyqrcodetoclipboard]
 
-Copie dans le presse-papiers.
+Copier dans le presse-papiers.
 
 ```tsx
 copyQRCodeToClipboard(
@@ -137,7 +137,7 @@ copyQRCodeToClipboard(
 
 ### getSVGString [#getsvgstring]
 
-Obtient le balisage SVG.
+Obtenir le balisage SVG.
 
 ```tsx
 getSVGString(qrProps: QRProps): Promise<string>
@@ -145,25 +145,25 @@ getSVGString(qrProps: QRProps): Promise<string>
 
 ## Fonctions d'impression et de scan [#print-and-scan-functions]
 
-Elles sont documentées avec des exemples sur leurs pages de fonctionnalités.
+Ces fonctions sont documentées avec des exemples sur les pages de leurs fonctionnalités.
 
-| Fonction | Ce qu'elle fait | Documentation |
+| Fonction | Rôle | Documentation |
 |----------|--------------|------|
 | `getQRAsSVG(props)` | Balisage SVG d'un code, cadre compris | [Cadres](/docs/features/frames) |
-| `getQRAsPrintPDF`, `downloadPrintPDF` | PDF vectoriel à une taille physique exacte, avec fond perdu, traits de coupe et CMJN (nécessite `jspdf`) | [Export prêt à imprimer](/docs/features/frames#print-ready-export) |
-| `downloadPrintSVG` | SVG prêt à imprimer à une taille physique exacte | [Export prêt à imprimer](/docs/features/frames#print-ready-export) |
+| `getQRAsPrintPDF`, `downloadPrintPDF` | PDF vectoriel à une taille physique exacte, avec fond perdu, traits de coupe et CMJN (nécessite `jspdf`) | [Export prêt pour l'impression](/docs/features/frames#print-ready-export) |
+| `downloadPrintSVG` | SVG prêt pour l'impression à une taille physique exacte | [Export prêt pour l'impression](/docs/features/frames#print-ready-export) |
 | `getQRAsEPS`, `downloadPrintEPS` | EPS vectoriel pour les imprimeurs et les outils de design | [Téléchargements](/docs/features/downloads) |
 | `getScanScore(props)` | Estime la fiabilité de scan d'un design | [Sera-t-il scannable ?](/docs/features/frames#will-it-scan) |
-| `getImageScanScore(image)` | Note une image de QR code que vous possédez déjà (navigateur uniquement) | [Sera-t-il scannable ?](/docs/features/frames#will-it-scan) |
+| `getImageScanScore(image)` | Évalue une image de QR code que vous avez déjà (navigateur uniquement) | [Sera-t-il scannable ?](/docs/features/frames#will-it-scan) |
 | `getQRAsPNG(props, { size })` | Octets PNG en Node pur, sans DOM. Importez-la depuis `qrdx/node` ; `@resvg/resvg-js` ou `sharp` doit être installé | — |
 | `scanQRPixels(pixels, expected)` | Vérifie que des pixels RGBA bruts se décodent en `expected`, y compris après flou et réduction ; s'exécute dans Node | — |
-| `getStylePairRisk(...)` | Avertit des associations d'yeux et de motifs que certains lecteurs ratent | [Motifs](/docs/features/patterns) |
+| `getStylePairRisk(...)` | Avertit des associations d'yeux et de motifs que certains lecteurs ne reconnaissent pas | [Motifs](/docs/features/patterns) |
 
 ## Fonctions de détection [#detection-functions]
 
 ### handleImageLoad [#handleimageload]
 
-Détecte les QR codes à partir d'images.
+Détectez des QR codes à partir d'images.
 
 ```tsx
 handleImageLoad(
@@ -175,7 +175,7 @@ handleImageLoad(
 
 ### downloadImageWithBoundingBox [#downloadimagewithboundingbox]
 
-Débogage avec des cadres englobants.
+Déboguez avec des cadres englobants.
 
 ```tsx
 downloadImageWithBoundingBox(
@@ -189,7 +189,7 @@ downloadImageWithBoundingBox(
 
 ### getTemplate [#gettemplate]
 
-Obtient un modèle précis.
+Obtenir un modèle précis.
 
 ```tsx
 getTemplate(templateId: string): TemplateDefinition | undefined
@@ -197,7 +197,7 @@ getTemplate(templateId: string): TemplateDefinition | undefined
 
 ### getAllTemplates [#getalltemplates]
 
-Obtient tous les modèles.
+Obtenir tous les modèles.
 
 ```tsx
 getAllTemplates(): TemplateDefinition[]
@@ -205,7 +205,7 @@ getAllTemplates(): TemplateDefinition[]
 
 ### getTemplateIds [#gettemplateids]
 
-Obtient les ID des modèles.
+Obtenir les ID des modèles.
 
 ```tsx
 getTemplateIds(): string[]
@@ -232,7 +232,7 @@ validateSize(width: number, height: number): {
 }
 ```
 
-### Détection de fonctionnalités [#feature-detection]
+### Détection des fonctionnalités [#feature-detection]
 
 ```tsx
 SUPPORTS_PATH2D: boolean
@@ -268,6 +268,8 @@ type ErrorLevel = 'L' | 'M' | 'Q' | 'H';
 ```tsx
 // The arrays BODY_PATTERN, CORNER_EYE_PATTERNS, CORNER_EYE_DOT_PATTERNS and
 // FRAME_STYLES (and their zod schemas) are exported from 'qrdx/types'.
+// FRAME_STYLES names the built-in frames; each is a frame spec in
+// BUILT_IN_FRAMES (from 'qrdx').
 
 type BodyPattern =
   | 'circle' | 'circle-large' | 'square' | 'diamond' | 'circle-mixed'
@@ -297,7 +299,7 @@ type EyeColors = {
 };
 
 type QRFrame = {
-  style: FrameStyle; // "none" or a frame, see FRAME_STYLES
+  style: FrameStyle; // "none" or a built-in frame, see FRAME_STYLES
   text?: string; // up to 24 characters, default "Scan me"
   color?: string;
   textColor?: string;
@@ -353,7 +355,7 @@ type GradientStop = {
 };
 ```
 
-### Réglages de l'image [#image-settings]
+### Paramètres de l'image [#image-settings]
 
 ```tsx
 type ImageSettings = {
@@ -394,7 +396,7 @@ try {
 
 Erreurs courantes :
 - URL d'image non valides
-- Échecs réseau
+- Défaillances réseau
 - Paramètres de taille non valides
 - Contexte canvas indisponible
 
@@ -415,5 +417,5 @@ Fonctionne dans les environnements Node.js :
 
 Certaines fonctionnalités nécessitent des API de navigateur :
 - Opérations canvas
-- API Clipboard
-- API File
+- Clipboard API
+- File API

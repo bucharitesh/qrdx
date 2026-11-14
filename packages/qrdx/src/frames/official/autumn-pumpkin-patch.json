@@ -1,0 +1,83 @@
+{
+  "id": "autumn-pumpkin-patch",
+  "name": "Pumpkin patch",
+  "description": "A wide card: the code on one side, a pumpkin and the label on the other, in plum and amber.",
+  "category": "seasonal",
+  "collection": "seasons",
+  "occasion": "autumn",
+  "contentTypes": [],
+  "tags": ["autumn", "fall", "pumpkins", "farm"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 2000,
+      "height": 1040
+    },
+    "qr": {
+      "x": 120,
+      "y": 120,
+      "size": 800,
+      "padding": 64,
+      "radius": 19.2
+    },
+    "colors": {
+      "frame": "#4a1d3a",
+      "text": "#ffffff",
+      "accent": "#f59e0b"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 2000,
+        "height": 1040,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M1048 268A72 57.6 0 1 1 1192 268A72 57.6 0 1 1 1048 268ZM1084 268A36 59.4 0 1 1 1156 268A36 59.4 0 1 1 1084 268Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M1112.8 214C1112.8 196 1120 181.6 1134.4 174.4L1138 185.2C1127.2 192.4 1127.2 203.2 1127.2 214Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Pumpkin patch",
+        "color": "text",
+        "box": {
+          "x": 1030,
+          "y": 400,
+          "width": 860,
+          "height": 190
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan for tickets",
+        "color": "text",
+        "box": {
+          "x": 1030,
+          "y": 610,
+          "width": 860,
+          "height": 100
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}
