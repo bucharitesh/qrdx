@@ -70,8 +70,13 @@ async function main() {
     throw new Error("ultracite fix failed on public/openapi.json");
   }
 
-  // The pages render the file just written (lib/api-reference imports it).
-  const { apiReference } = await import("@/lib/api-reference");
+  // The pages name the document "qrdx", the id the docs site's API reference
+  // renders it under (apps/docs/lib/api-reference.ts).
+  const { createOpenAPI } = await import("fumadocs-openapi/server");
+  const apiReference = createOpenAPI({
+    // fumadocs reads the document type loosely; it is our generated JSON.
+    input: { qrdx: () => document as never },
+  });
   const { errorsPage, writeReferencePages } = await import("./pages");
   const output = join(root, "content", "docs", "developers", "api");
   const operations = await writeReferencePages(document, apiReference, output);

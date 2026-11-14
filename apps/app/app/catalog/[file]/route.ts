@@ -1,6 +1,6 @@
+import { findCatalogTile, tileSize } from "@repo/docs-assets/qr-catalog-tiles";
 import { QRCodeSVG } from "qrdx";
 import { createElement } from "react";
-import { findCatalogTile, tileSize } from "@/components/docs/qr-catalog-tiles";
 import { serializeQrSvg } from "@/lib/qr-render";
 import { onDemandParams } from "@/lib/static-params";
 

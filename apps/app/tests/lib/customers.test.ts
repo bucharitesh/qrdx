@@ -31,7 +31,7 @@ const mdxIn = (dir: string) =>
 /** Files under app, lib, components and scripts that import `name` from the compiled content. */
 function readersOf(name: string): string[] {
   const pattern = new RegExp(
-    `import\\s*\\{[^}]*\\b${name}\\b[^}]*\\}\\s*from\\s*"@/\\.source/content"`,
+    `import\\s*\\{[^}]*\\b${name}\\b[^}]*\\}\\s*from\\s*"@/\\.source/server"`,
   );
   return ["app", "lib", "components", "scripts"]
     .flatMap((dir) => walk(join(APP, dir)))

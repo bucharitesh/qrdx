@@ -5,12 +5,7 @@ import {
   MCP_HOST,
 } from "@repo/config";
 import { OG_FONT_GLOB } from "@repo/design-system/og/font-files";
-import {
-  docsEnglishRewrites,
-  docsMarkdownAcceptRewrites,
-  docsMarkdownRewrites,
-  docsZoneRewrites,
-} from "@repo/i18n/docs";
+import { docsOriginRedirects, docsZoneRewrites } from "@repo/i18n/docs";
 import { englishRedirects, englishRewrites } from "@repo/i18n/routing";
 import { config, withAnalyzer } from "@repo/next-config";
 // Imported from the package, not from lib/security/csp.ts: the config is
@@ -80,10 +75,17 @@ const MARKDOWN_REQUEST = {
 
 // The docs site (apps/docs) at DOCS_ZONE_URL serves the docs: their
 // URLs are proxied there, ahead of every rule below (@repo/i18n/docs).
-// Unset, this app serves its own copy.
+// Unset (self-hosting, local development without the docs site), they
+// redirect to the same paths on qrdx.dev.
 const docsZone = docsZoneRewrites(env.DOCS_ZONE_URL, {
   markdown: MARKDOWN_REQUEST,
 });
+const docsElsewhere = env.DOCS_ZONE_URL
+  ? []
+  : docsOriginRedirects(CANONICAL_ORIGIN, {
+      // QRdx's own hosts: on a custom domain those paths are short links.
+      has: [{ type: "host", value: `(?:${PLATFORM_HOSTS})` }],
+    });
 
 /** Headers that put the app policy on prerendered pages (nonce routes: proxy.ts). */
 const cspHeaders = cspEnabled
@@ -185,14 +187,7 @@ let nextConfig: NextConfig = {
   outputFileTracingIncludes: {
     "/**": [OG_FONT_GLOB],
   },
-  serverExternalPackages: [
-    "ts-morph",
-    "typescript",
-    "oxc-transform",
-    "twoslash",
-    "shiki",
-    "@takumi-rs/core",
-  ],
+  serverExternalPackages: ["shiki", "@takumi-rs/core"],
   // When rules set the same header, the later one wins.
   async headers() {
     const base = (await config.headers?.()) ?? [];
@@ -260,8 +255,8 @@ let nextConfig: NextConfig = {
         ],
       },
       // Agent discovery (lib/agents): the home page points to the RFC 9727
-      // API catalog, and pages with a Markdown version link to it (docs
-      // pages do so in their <head>).
+      // API catalog, and pages with a Markdown version link to it (the docs
+      // site sends its own).
       ...[
         {
           path: "/",
@@ -270,7 +265,7 @@ let nextConfig: NextConfig = {
             '</index.md>; rel="alternate"; type="text/markdown"',
           ],
         },
-        ...["/pricing", "/mcp", "/docs"].map((path) => ({
+        ...["/pricing", "/mcp"].map((path) => ({
           path,
           links: [`<${path}.md>; rel="alternate"; type="text/markdown"`],
         })),
@@ -334,6 +329,8 @@ let nextConfig: NextConfig = {
         ...redirect,
         has: [{ type: "host" as const, value: `(?:${PLATFORM_HOSTS})` }],
       })),
+      // No docs site here: the docs are read on qrdx.dev (docsElsewhere).
+      ...docsElsewhere,
       // Site pages that moved (lib/moved-pages.ts), also on QRdx's own hosts.
       ...MOVED_PAGES.map((redirect) => ({
         ...redirect,
@@ -343,7 +340,7 @@ let nextConfig: NextConfig = {
       ...englishRedirects(`(?:${PLATFORM_HOSTS})`),
     ];
   },
-  // Keep the shared rewrites (PostHog /ingest proxy) alongside the docs ones.
+  // Keep the shared rewrites (PostHog /ingest proxy) alongside these.
   async rewrites() {
     const base = toRewritePhases(await config.rewrites?.());
     return {
@@ -381,46 +378,17 @@ let nextConfig: NextConfig = {
           destination: "/api/v1/:path*",
         },
         // Markdown for agents that ask for it (Accept: text/markdown): the
-        // home page, pricing, the MCP page and every docs page. Browsers
-        // never send text/markdown, so they keep getting HTML.
+        // home page, pricing and the MCP page (the docs site answers for the
+        // docs). Browsers never send text/markdown, so they keep getting HTML.
         ...[
           { source: "/", destination: "/index.md" },
           { source: "/pricing", destination: "/pricing.md" },
           { source: "/mcp", destination: "/mcp.md" },
-          { source: "/docs", destination: "/llms.mdx" },
-          { source: "/docs/:path+", destination: "/llms.mdx/:path+" },
-          // Translated docs pages (/es/docs/...): app/docs-md.
-          ...docsMarkdownAcceptRewrites(),
         ].map((rule) => ({ ...rule, ...MARKDOWN_REQUEST })),
         // Translated pages live in app/[lang]; English is [lang]=en behind
         // its unprefixed URL (lib/i18n/routing.ts). After the Markdown
         // rewrites, which answer agents for / and /pricing first.
         ...englishRewrites(),
-        // The docs too (app/[lang]/docs), apart from their .md and .mdx
-        // versions, which the afterFiles rules below answer.
-        ...docsEnglishRewrites(),
-      ],
-      afterFiles: [
-        ...base.afterFiles,
-        {
-          source: "/docs.mdx",
-          destination: "/llms.mdx",
-        },
-        {
-          source: "/docs/:path*.mdx",
-          destination: "/llms.mdx/:path*",
-        },
-        // llmstxt.org's convention: the page URL plus .md.
-        {
-          source: "/docs.md",
-          destination: "/llms.mdx",
-        },
-        {
-          source: "/docs/:path*.md",
-          destination: "/llms.mdx/:path*",
-        },
-        // A translated docs page as Markdown: /es/docs/x.md (app/docs-md).
-        ...docsMarkdownRewrites(),
       ],
     };
   },
@@ -439,8 +407,8 @@ const withNextIntl = createNextIntlPlugin({
   experimental: { createMessagesDeclaration: "./messages/en.json" },
 });
 
-// fumadocs-mdx writes .source (the compiled-content modules and the docs
-// index the route handlers read, lib/docs-index-plugin.ts) while the config
-// loads. withMDX's result is a promise of the config: outermost, so Next
-// waits for those files before it compiles anything.
+// fumadocs-mdx writes .source (the compiled-content modules,
+// lib/content-source.ts) while the config loads. withMDX's result is a
+// promise of the config: outermost, so Next waits for those files before it
+// compiles anything.
 export default withMDX(withNextIntl(nextConfig));

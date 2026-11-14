@@ -156,8 +156,9 @@ export function docsMarkdownAcceptRewrites(): {
 // ─── The docs zone ───────────────────────────────────────────────────────────
 // The docs are a separate Next.js app (apps/docs), served at the same
 // URLs on qrdx.dev. The main app proxies the docs' URLs to it with
-// docsZoneRewrites() once DOCS_ZONE_URL is set; until then it serves its own
-// copy of the docs. The manifest the zones exchange is in
+// docsZoneRewrites() when DOCS_ZONE_URL is set. Without it (self-hosting,
+// local development without the docs site), docsOriginRedirects() sends
+// them to the same paths on qrdx.dev. The manifest the zones exchange is in
 // @repo/next-config/docs-zone.
 
 /** A next.config rewrite: `has` and `missing` as Next takes them. */
@@ -204,7 +205,7 @@ const langParam = (segments: readonly string[]) =>
  * `zoneUrl` (no trailing slash): the pages in every language and their
  * Markdown versions, the docs' Open Graph images, search, llms-full.txt and
  * the zone's own build assets (its assetPrefix, /docs-static). None when
- * `zoneUrl` is unset: the main app keeps serving its own docs.
+ * `zoneUrl` is unset: docsOriginRedirects() covers the same URLs then.
  *
  * The .md and .mdx URLs go to the zone as they are; the zone's own
  * next.config maps them to its Markdown routes.
@@ -268,6 +269,62 @@ export function docsZoneRewrites(
   ].map((source) => ({ source, destination: `${zone}${source}` }));
 
   return [...markdown, ...pages, ...routes];
+}
+
+/** A next.config redirect: `has` and `missing` as Next takes them. */
+export interface DocsRedirect {
+  source: string;
+  destination: string;
+  permanent: false;
+  has?: RouteCondition[];
+}
+
+/**
+ * The main app's redirects when it has no docs site (DOCS_ZONE_URL unset):
+ * every docs URL docsZoneRewrites() would proxy, in every language and as
+ * Markdown, plus llms-full.txt and the docs' Open Graph images, goes to the
+ * same path at `origin` (qrdx.dev), keeping its query. Temporary (307), so a
+ * deployment that later gets a docs site serves them itself. Not
+ * /api/search, which answers 404 instead (the command menu leaves docs out
+ * then), nor /docs-static, which only the docs site's pages load.
+ */
+export function docsOriginRedirects(
+  origin: string,
+  options: {
+    translatedSegments?: readonly string[];
+    /** Conditions every rule carries (the main app's own hosts). */
+    has?: RouteCondition[];
+  } = {}
+): DocsRedirect[] {
+  const target = withoutTrailingSlashes(origin);
+  const lang = langParam(
+    options.translatedSegments ?? translatedDocsSegments()
+  );
+  const sources = [
+    "/docs",
+    "/docs.md",
+    "/docs.mdx",
+    "/docs/:path*",
+    ...(lang
+      ? [
+          `/${lang}/docs`,
+          `/${lang}/docs.md`,
+          `/${lang}/docs.mdx`,
+          `/${lang}/docs/:path*`,
+        ]
+      : []),
+    "/llms.mdx/:path*",
+    "/docs-md/:path*",
+    "/og/docs/:path*",
+    "/llms-full.txt",
+  ];
+  return sources.map((source) => ({
+    source,
+    // The path as it came: `/:lang(es|…)/docs` names its parameter `lang`.
+    destination: `${target}${source.replace(/^\/:lang\([^)]*\)/, "/:lang")}`,
+    permanent: false,
+    ...(options.has && { has: options.has }),
+  }));
 }
 
 /**

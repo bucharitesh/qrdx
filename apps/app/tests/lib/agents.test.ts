@@ -1,6 +1,7 @@
 // Agent-facing surfaces (lib/agents): robots.txt rules, the llms.txt
 // structure, the discovery documents (MCP Server Card, AI Catalog, RFC 9727
-// API catalog) and the Markdown that docs and marketing pages turn into.
+// API catalog) and the Markdown that marketing pages turn into. The docs'
+// Markdown is the docs site's (apps/docs/tests/lib/llm-markdown.test.ts).
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
@@ -8,7 +9,6 @@ import { MCP_TOOLS } from "@/app/[lang]/(home)/mcp/content";
 import { MCP_SERVER_INFO } from "@/app/api/mcp/tools";
 import robots from "@/app/robots";
 import { apiBaseUrl, imageApiUrl, isOfficialOrigin } from "@/lib/agents/hosts";
-import { cleanLlmMarkdown } from "@/lib/agents/llm-markdown";
 import {
   buildLlmsTxt,
   LLMS_SECTIONS,
@@ -234,6 +234,31 @@ describe("llms.txt", () => {
     );
     expect(behind).not.toContain("@qrdx/cli@");
   });
+
+  it("links the docs on qrdx.dev when this deployment has no docs site", () => {
+    const docsElsewhere = buildLlmsTxt(
+      fixture({
+        origin: SELF_HOSTED,
+        docsOrigin: new URL("https://qrdx.dev"),
+      }),
+    );
+    const targets = linkTargets(docsElsewhere);
+    for (const path of [
+      "/docs",
+      "/docs/help",
+      "/docs/developers/mcp",
+      "/docs/self-hosting",
+      "/llms-full.txt",
+    ]) {
+      expect(targets).toContain(`https://qrdx.dev${path}`);
+      expect(targets).not.toContain(`${SELF_HOSTED.origin}${path}`);
+    }
+    expect(docsElsewhere).toContain("https://qrdx.dev/docs/developers/mcp.md");
+    // Everything else stays on the deployment.
+    for (const path of ["/pricing", "/pricing.md", "/legal/privacy-policy"]) {
+      expect(targets).toContain(`${SELF_HOSTED.origin}${path}`);
+    }
+  });
 });
 
 describe("discovery documents", () => {
@@ -296,73 +321,6 @@ describe("discovery documents", () => {
       "application/json",
     );
     expect(again.status).toBe(304);
-  });
-});
-
-describe("Markdown for LLMs", () => {
-  const source = [
-    'Intro with [a link](/docs/teams) and `<QRCode value="x" />` inline.',
-    "",
-    '<ComponentPreview name="qr-code-demo" />',
-    "",
-    "<Cards>",
-    "  <Card",
-    "    icon={<Globe />}",
-    '    href="/docs/files"',
-    '    title="Files"',
-    '    description="Upload PDFs."',
-    "  />",
-    '  <IfAvailable feature="customDomains">',
-    '    <Card href="/docs/custom-domains" title="Domains" description="Own domain." />',
-    "  </IfAvailable>",
-    "</Cards>",
-    "",
-    '<Tabs items={["One", "Two"]}>',
-    '  <Tab value="One">',
-    "    ```bash",
-    "    echo one",
-    "    ```",
-    "  </Tab>",
-    "</Tabs>",
-    "",
-    '<InstallationTabs name="qr-code" />',
-    "",
-    'Text<IfAvailable feature="customDomains"> with domains</IfAvailable>.',
-    "",
-    "```tsx",
-    '<Card title="kept" />',
-    "```",
-  ].join("\n");
-  const shown = cleanLlmMarkdown(source, { origin: "https://qrdx.dev" });
-  const hidden = cleanLlmMarkdown(source, {
-    origin: "https://qrdx.dev",
-    isShown: ({ feature }) => feature !== "customDomains",
-  });
-
-  it("turns components into plain Markdown", () => {
-    expect(shown).not.toContain("ComponentPreview");
-    expect(shown).not.toContain("<Cards>");
-    expect(shown).toContain(
-      "- [Files](https://qrdx.dev/docs/files): Upload PDFs.",
-    );
-    expect(shown).toContain("**One**\n\n```bash\necho one\n```");
-    expect(shown).toContain(
-      "```bash\nnpx shadcn@latest add https://qrdx.dev/r/qr-code.json\n```",
-    );
-    expect(shown).toContain("[a link](https://qrdx.dev/docs/teams)");
-  });
-
-  it("never touches code", () => {
-    expect(shown).toContain('`<QRCode value="x" />`');
-    expect(shown).toContain('```tsx\n<Card title="kept" />\n```');
-  });
-
-  it("keeps <IfAvailable> content only where the feature is offered", () => {
-    expect(shown).toContain("Text with domains.");
-    expect(shown).toContain("[Domains](https://qrdx.dev/docs/custom-domains)");
-    expect(hidden).toContain("Text.");
-    expect(hidden).not.toContain("domains");
-    expect(hidden).not.toContain("Domains");
   });
 });
 

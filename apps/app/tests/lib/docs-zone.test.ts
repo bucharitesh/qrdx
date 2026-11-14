@@ -1,7 +1,10 @@
-// The docs zone (@repo/i18n/docs, @repo/next-config/docs-zone): with DOCS_ZONE_URL set, the
-// main app proxies the docs' URLs to the docs site (apps/docs); unset,
-// nothing changes. Also the manifest the sitemap and llms.txt read from it.
+// The docs zone (@repo/i18n/docs, @repo/next-config/docs-zone): with
+// DOCS_ZONE_URL set, the main app proxies the docs' URLs to the docs site
+// (apps/docs); unset, it redirects them to the same paths on qrdx.dev. Also
+// the manifest the sitemap and llms.txt read from it.
+import { createRequire } from "node:module";
 import {
+  docsOriginRedirects,
   docsZoneRewrites,
   isDocsPagePath,
   translatedDocsSegments,
@@ -10,7 +13,15 @@ import {
   DOCS_MANIFEST_PATH,
   parseDocsManifest,
 } from "@repo/next-config/docs-zone";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  vi,
+} from "vitest";
 
 const SEGMENTS = translatedDocsSegments();
 const LANG = `:lang(${SEGMENTS.join("|")})`;
@@ -22,6 +33,40 @@ const MARKDOWN = {
   missing: [{ type: "host" as const, value: "api\\.qrdx\\.dev" }],
 };
 const options = { translatedSegments: SEGMENTS, markdown: MARKDOWN };
+
+// Next's own copy of the matcher it applies to next.config.ts (no types).
+const pathToRegexp = createRequire(import.meta.url)(
+  "next/dist/compiled/path-to-regexp",
+) as {
+  match: (
+    source: string,
+  ) => (path: string) => false | { params: Record<string, unknown> };
+  compile: (path: string) => (params: Record<string, unknown>) => string;
+};
+
+interface Rule {
+  source: string;
+  destination: string;
+  permanent?: boolean;
+  has?: { type: string; key?: string; value?: string }[];
+}
+
+/** Where the first rule matching `path` on `host` sends it, with its rule. */
+function follow(rules: readonly Rule[], host: string, path: string) {
+  for (const rule of rules) {
+    const found = pathToRegexp.match(rule.source)(path);
+    const onHost = (rule.has ?? []).every(
+      (condition) =>
+        condition.type === "host" &&
+        new RegExp(`^${condition.value}$`).test(host),
+    );
+    if (!(found && onHost)) continue;
+    const url = new URL(rule.destination, "http://same-origin");
+    const target = `${url.origin}${pathToRegexp.compile(url.pathname)(found.params)}`;
+    return { rule, target: target.replace("http://same-origin", "") };
+  }
+  return undefined;
+}
 
 describe("docsZoneRewrites", () => {
   it("adds nothing while DOCS_ZONE_URL is unset", () => {
@@ -190,6 +235,155 @@ describe("long runs of slashes", () => {
       expect(isDocsPagePath(`/x${run}docs`, SEGMENTS)).toBe(false);
       expect(isDocsPagePath(`/docs/x${run}.md`, SEGMENTS)).toBe(false);
     });
+  });
+});
+
+describe("docsOriginRedirects", () => {
+  const HOST = { type: "host" as const, value: "(?:qrdx\\.dev|localhost)" };
+  const rules = docsOriginRedirects("https://qrdx.dev//", {
+    translatedSegments: SEGMENTS,
+    has: [HOST],
+  });
+
+  it.each([
+    ["/docs", "https://qrdx.dev/docs"],
+    ["/docs.md", "https://qrdx.dev/docs.md"],
+    ["/docs/dynamic-qr-codes", "https://qrdx.dev/docs/dynamic-qr-codes"],
+    ["/docs/developers/mcp.md", "https://qrdx.dev/docs/developers/mcp.md"],
+    ["/docs/developers/mcp.mdx", "https://qrdx.dev/docs/developers/mcp.mdx"],
+    ["/es/docs", "https://qrdx.dev/es/docs"],
+    ["/es/docs.md", "https://qrdx.dev/es/docs.md"],
+    ["/pt-br/docs/help/contact", "https://qrdx.dev/pt-br/docs/help/contact"],
+    ["/zh-hans/docs/teams.md", "https://qrdx.dev/zh-hans/docs/teams.md"],
+    ["/llms.mdx/teams", "https://qrdx.dev/llms.mdx/teams"],
+    ["/docs-md/es/teams", "https://qrdx.dev/docs-md/es/teams"],
+    ["/og/docs/teams/image.png", "https://qrdx.dev/og/docs/teams/image.png"],
+    ["/llms-full.txt", "https://qrdx.dev/llms-full.txt"],
+  ])("sends %s to the same path on qrdx.dev, for now (307)", (path, to) => {
+    const found = follow(rules, "localhost", path);
+    expect(found?.target).toBe(to);
+    expect(found?.rule.permanent).toBe(false);
+  });
+
+  it("leaves search, the docs site's assets and other pages alone", () => {
+    for (const path of [
+      "/api/search",
+      "/docs-static/chunks/a.js",
+      "/pricing",
+      "/es/pricing",
+      "/documentation",
+      "/fr/x/docs",
+    ]) {
+      expect(follow(rules, "localhost", path), path).toBeUndefined();
+    }
+  });
+
+  it("only on the hosts it's given (a custom domain's paths are short links)", () => {
+    expect(rules.every((rule) => rule.has?.[0] === HOST)).toBe(true);
+    expect(follow(rules, "go.example.com", "/docs/x")).toBeUndefined();
+  });
+
+  it("covers every URL docsZoneRewrites would proxy, but search and assets", () => {
+    const proxied = docsZoneRewrites("https://docs.qrdx.dev", options)
+      // The Markdown rules answer the page URLs, covered below.
+      .filter((rule) => !rule.has)
+      .map((rule) => rule.source)
+      .filter(
+        (source) => !["/api/search", "/docs-static/:path*"].includes(source),
+      );
+    expect(new Set(rules.map((rule) => rule.source))).toEqual(new Set(proxied));
+  });
+});
+
+describe("next.config.ts with and without a docs site", () => {
+  const saved = { ...process.env };
+
+  async function load(zone: string | undefined) {
+    process.env = { ...saved };
+    if (zone) process.env.DOCS_ZONE_URL = zone;
+    else delete process.env.DOCS_ZONE_URL;
+    vi.resetModules();
+    // As in tests/lib/csp.test.ts: no MDX for the routing rules.
+    vi.doMock("fumadocs-mdx/next", () => ({
+      createMDX: () => (config: unknown) => config,
+    }));
+    const config = (await import("@/next.config")).default;
+    const rewrites = (await config.rewrites?.()) as {
+      beforeFiles: Rule[];
+      afterFiles: Rule[];
+    };
+    return {
+      redirects: ((await config.redirects?.()) ?? []) as Rule[],
+      rewrites: [...rewrites.beforeFiles, ...rewrites.afterFiles],
+    };
+  }
+
+  let without: Awaited<ReturnType<typeof load>>;
+  let withZone: Awaited<ReturnType<typeof load>>;
+  beforeAll(async () => {
+    without = await load(undefined);
+    withZone = await load("http://localhost:3290");
+  }, 60_000);
+  afterAll(() => {
+    process.env = saved;
+    // The suites below read @/env as the test run sets it.
+    vi.resetModules();
+  });
+
+  it("without one, redirects the docs to qrdx.dev and proxies nothing", () => {
+    for (const path of [
+      "/docs",
+      "/docs/dynamic-qr-codes",
+      "/docs/developers/mcp.md",
+      "/es/docs/dynamic-qr-codes",
+      "/llms-full.txt",
+      "/og/docs/teams/image.png",
+    ]) {
+      const found = follow(without.redirects, "localhost", path);
+      expect(found?.target, path).toBe(`https://qrdx.dev${path}`);
+      expect(found?.rule.permanent, path).toBe(false);
+      expect(follow(without.rewrites, "localhost", path), path).toBeUndefined();
+    }
+    // A custom domain's short links keep their paths.
+    expect(
+      follow(without.redirects, "go.example.com", "/docs/x"),
+    ).toBeUndefined();
+    expect(
+      follow(without.rewrites, "localhost", "/api/search"),
+    ).toBeUndefined();
+    // /help still goes to the help center first (lib/docs-redirects.ts).
+    expect(follow(without.redirects, "qrdx.dev", "/help")?.target).toBe(
+      "/docs/help",
+    );
+  });
+
+  it("with one, proxies the docs there and redirects none of them", () => {
+    for (const path of [
+      "/docs/dynamic-qr-codes",
+      "/es/docs/x",
+      "/llms-full.txt",
+    ]) {
+      expect(
+        follow(withZone.redirects, "localhost", path),
+        path,
+      ).toBeUndefined();
+      expect(follow(withZone.rewrites, "localhost", path)?.target, path).toBe(
+        `http://localhost:3290${path}`,
+      );
+    }
+    expect(follow(withZone.rewrites, "localhost", "/api/search")?.target).toBe(
+      "http://localhost:3290/api/search",
+    );
+  });
+
+  it("keeps no docs rules of its own either way", () => {
+    for (const { rewrites } of [without, withZone]) {
+      for (const rule of rewrites) {
+        expect(rule.destination, rule.source).not.toMatch(
+          /^\/(?:llms\.mdx|docs-md|en\/docs)/,
+        );
+      }
+    }
   });
 });
 

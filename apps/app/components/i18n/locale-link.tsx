@@ -39,10 +39,10 @@ function anchorProps({
  * /pricing goes to /es/pricing. Pages that aren't translated keep their
  * English URL (lib/i18n/paths.ts).
  *
- * Docs pages get a plain <a>: the docs are moving to an app of their own
- * behind the same URLs (the docs zone, @repo/i18n/docs), and a
- * link from one app into the other must load the page in full. Until the
- * move that only skips a client-side navigation.
+ * Docs pages get a plain <a>: another app serves them behind the same URLs
+ * (the docs site, @repo/i18n/docs), or qrdx.dev does when this deployment
+ * has none (a redirect), and a link from one app into the other must load
+ * the page in full.
  */
 export function LocaleLink({ href, ...props }: LinkProps) {
   const localize = useLocalizeHref();
