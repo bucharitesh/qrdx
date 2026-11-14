@@ -1,4 +1,4 @@
-import { ogSize, renderPageOgImage } from "@/app/og/brand";
+import { ogSize, renderPageOgImage } from "@repo/design-system/og/brand";
 import { MAX_BULK_ROWS } from "@/components/sections/tools/bulk-utils";
 import { requireLocaleParam } from "@/lib/i18n/static-params";
 import { onDemandParams } from "@/lib/static-params";

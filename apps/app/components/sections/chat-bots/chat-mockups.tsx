@@ -1,3 +1,4 @@
+import { QrdxLogo } from "@repo/design-system/components/brand/qrdx-logo";
 import { cn } from "@repo/design-system/lib/utils";
 import {
   type CatalogLogo,
@@ -13,7 +14,6 @@ import {
 } from "iconsax-reactjs";
 import { QRCodeSVG } from "qrdx";
 import type { ReactNode } from "react";
-import { QrdxLogo } from "@/components/qrdx-logo";
 import { IntegrationLogo } from "@/components/sections/integrations/integration-logo";
 import { CHAT_MOCK_CODE, CHAT_MOCK_VALUE } from "./mock-code";
 

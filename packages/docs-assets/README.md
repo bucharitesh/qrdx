@@ -10,8 +10,8 @@ Files the docs render and the main app serves, kept outside `apps/app` so anothe
 | `registry/examples/*` | The live examples on the component docs pages, and `examples/index.tsx`, which loads each one on its own | By hand |
 | `registry/ui/*`, `registry/lib/utils.ts` | Aliases to `@repo/design-system`, standing in for a project's shadcn/ui components and `cn` | By hand |
 | `registry/outputs.ts`, `registry/build.ts` | What `/r/<name>.json` contains, and the script that writes it to a folder | |
-| `pattern-catalog.ts` | Every body pattern, eye, eye centre and frame the engine has, with its picker category, popularity and scan risk (the style pickers, the docs catalogue and presets). `apps/app/lib/pattern-catalog.ts` re-exports it | By hand, when the engine adds a value (tsc fails until it's listed) |
-| `qr-catalog-tiles.ts` | The tiles of the docs style catalogue (`/docs/styles`): each option on plain square shapes. `apps/app/components/docs/qr-catalog-tiles.ts` re-exports it | From `pattern-catalog.ts` |
+| `pattern-catalog.ts` | Every body pattern, eye, eye centre and frame the engine has, with its picker category, popularity and scan risk (the style pickers, the docs catalogue and presets) | By hand, when the engine adds a value (tsc fails until it's listed) |
+| `qr-catalog-tiles.ts` | The tiles of the docs style catalogue (`/docs/styles`): each option on plain square shapes. The main app draws them at `/catalog/<tile id>.svg` | From `pattern-catalog.ts` |
 
 ```ts
 import openapi from "@repo/docs-assets/openapi.json"; // after `bun run --filter app openapi:export`
@@ -35,7 +35,7 @@ The main app serves these from `apps/app/public`, so the URLs answer with static
 
 The registry sources import each other as `@/registry/ui/button`, `@/registry/lib/utils` and `@/registry/qrdx/qr-code`, the paths `registry/transform.ts` rewrites to a shadcn/ui project's `@/components/...` and `@/lib/utils`. Keep those imports: the published sources depend on them. Any app that compiles the sources maps the prefix to this folder, in its `tsconfig.json` paths (`"@/registry/*": ["../../packages/docs-assets/registry/*"]`) and its test runner's aliases (`apps/app/vitest.config.ts`).
 
-Reading a source as text (for a code tab) goes through the file system: `apps/app/components/docs/registry/registry-data.ts` reads `../../packages/docs-assets/registry/<file>` from the app's folder.
+Reading a source as text (for a code tab) goes through the file system: `apps/docs/components/docs/registry/registry-data.ts` reads `../../packages/docs-assets/registry/<file>` from the app's folder.
 
 ## Linting
 

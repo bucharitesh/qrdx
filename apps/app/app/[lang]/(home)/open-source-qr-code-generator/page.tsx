@@ -1,6 +1,8 @@
 import { GithubLogo } from "@repo/design-system/components/icons";
+import { JsonLd } from "@repo/design-system/components/seo/json-ld";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Card } from "@repo/design-system/components/ui/card";
+import { localizeHref } from "@repo/i18n/paths";
 import {
   ArrangeHorizontal,
   ArrowRight2,
@@ -28,11 +30,9 @@ import {
   textLinkClass,
 } from "@/components/sections/tools/cards";
 import { FaqList } from "@/components/sections/tools/faq-list";
-import { JsonLd } from "@/components/sections/tools/json-ld";
 import { ToolHero } from "@/components/sections/tools/tool-hero";
 import { siteConfig } from "@/config/site";
 import { localizedMetadata } from "@/lib/i18n/metadata";
-import { localizeHref } from "@/lib/i18n/paths";
 import { requireLocale } from "@/lib/i18n/server";
 import { baseUrl } from "@/lib/metadata";
 import { getPlanLimits } from "@/lib/plans";

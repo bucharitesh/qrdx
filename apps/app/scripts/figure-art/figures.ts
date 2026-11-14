@@ -13,8 +13,8 @@
 // acc = brand fill, vf = accent stroke, glow = bloom, shade = ground shadow,
 // beam = a scan line.
 
+import { LOGO_MARK_PATH } from "@repo/design-system/components/brand/brand-marks";
 import type { HairlineFigureName } from "@repo/design-system/components/hairline/hairline-figures";
-import { LOGO_MARK_PATH } from "@/components/brand-marks";
 import {
   block,
   bloom,

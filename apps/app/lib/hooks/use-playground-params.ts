@@ -1,5 +1,6 @@
 "use client";
 
+import { track } from "@repo/analytics";
 import { authClient } from "@repo/auth/client";
 import { toast } from "@repo/design-system";
 import { useSearchParams } from "next/navigation";
@@ -8,7 +9,6 @@ import { useEffect, useRef, useState } from "react";
 import { useAvailability } from "@/components/availability-provider";
 import { openPlaygroundBuilder } from "@/components/code-builder/in-place";
 import { useDynamicLinkStore } from "@/components/editor/dynamic-link-toggle";
-import { track } from "@/lib/analytics";
 import { isUntrackedAnalyticsPath } from "@/lib/analytics/privacy";
 import { loadOfficialFrame, peekOfficialFrame } from "@/lib/frames/library";
 import { previousPathname } from "@/lib/navigation-history";

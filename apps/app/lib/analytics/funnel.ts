@@ -1,8 +1,9 @@
 // The funnel's client-side steps as pure decisions (no React, no browser
 // globals), used by the hooks in ./react.tsx: when an editor opening, a QR
 // code or a barcode counts. Client-safe.
+
+import type { EditorSurface } from "@repo/analytics/events";
 import { handoffSource } from "@/lib/playground-links";
-import type { EditorSurface } from "./events";
 import { isUntrackedAnalyticsPath } from "./privacy";
 
 /**

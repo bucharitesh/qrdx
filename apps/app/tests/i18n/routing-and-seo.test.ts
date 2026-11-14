@@ -4,14 +4,12 @@
 import { readdirSync } from "node:fs";
 import { createRequire } from "node:module";
 import { join } from "node:path";
-import { describe, expect, it } from "vitest";
 import {
   LOCALE_INFO,
   LOCALES,
   localeFromSegment,
   TRANSLATED_LOCALES,
-} from "@/lib/i18n/config";
-import { alternateLanguages, localizedMetadata } from "@/lib/i18n/metadata";
+} from "@repo/i18n/config";
 import {
   isLocalizedPath,
   LOCALIZED_PATHS,
@@ -19,18 +17,20 @@ import {
   localizePath,
   routeMatcher,
   splitLocale,
-} from "@/lib/i18n/paths";
+} from "@repo/i18n/paths";
 import {
   isPublished,
   publishedLocales,
   REVIEW,
   type ReviewTable,
-} from "@/lib/i18n/review";
+} from "@repo/i18n/review";
 import {
   englishRedirects,
   englishRewrites,
   rewriteSource,
-} from "@/lib/i18n/routing";
+} from "@repo/i18n/routing";
+import { describe, expect, it } from "vitest";
+import { alternateLanguages, localizedMetadata } from "@/lib/i18n/metadata";
 import { localizedEntries } from "@/lib/i18n/sitemap";
 import { baseUrl } from "@/lib/metadata";
 

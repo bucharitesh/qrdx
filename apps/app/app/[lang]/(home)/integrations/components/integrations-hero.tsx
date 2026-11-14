@@ -1,3 +1,4 @@
+import { QrdxLogo } from "@repo/design-system/components/brand/qrdx-logo";
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
 import {
@@ -9,7 +10,6 @@ import { useTranslations } from "next-intl";
 import type { CSSProperties } from "react";
 import { AsciiField, Backdrop, MeshGradient } from "@/components/fx";
 import { LocaleLink as Link } from "@/components/i18n/locale-link";
-import { QrdxLogo } from "@/components/qrdx-logo";
 import { IntegrationLogo } from "@/components/sections/integrations/integration-logo";
 
 /** Logos for the orbit, best known first; the rest fill in when hidden. */

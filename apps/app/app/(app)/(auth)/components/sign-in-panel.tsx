@@ -6,6 +6,7 @@ import {
   OAUTH_REFERRAL_KEY,
 } from "@repo/auth/referral-keys";
 import { toast } from "@repo/design-system";
+import { QrdxLogoAnimation } from "@repo/design-system/components/brand/qrdx-logo-animation";
 import {
   GithubLogo,
   GoogleLogo,
@@ -18,7 +19,6 @@ import { useTranslations } from "next-intl";
 import { type ComponentType, type ReactNode, useEffect, useState } from "react";
 import { useAvailability } from "@/components/availability-provider";
 import { LocaleLink as Link } from "@/components/i18n/locale-link";
-import { QrdxLogoAnimation } from "@/components/qrdx-logo-animation";
 import { siteConfig } from "@/config/site";
 import { SsoSignIn } from "@/ee/sso/sso-sign-in";
 import { pendingReferralCode } from "@/lib/affiliates/referral-client";

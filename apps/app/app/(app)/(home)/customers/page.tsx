@@ -1,8 +1,9 @@
+import { JsonLd } from "@repo/design-system/components/seo/json-ld";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { SectionHeader } from "@/components/sections/section-header";
-import { breadcrumbSchema, JsonLd } from "@/components/sections/tools/json-ld";
+import { breadcrumbSchema } from "@/components/sections/tools/json-ld";
 import { CUSTOMERS_PATH, customerStoryHref } from "@/lib/customers";
 import { baseUrl, createMetadata } from "@/lib/metadata";
 import { getCustomerStories } from "./_lib/stories";

@@ -15,8 +15,8 @@ import {
   writeFileSync,
 } from "node:fs";
 import path from "node:path";
+import { LOCALES } from "@repo/i18n/config";
 import { DOCS_MESSAGES_DIR, docsMessages } from "@repo/i18n/messages";
-import { LOCALES } from "./config";
 
 const REPO = path.resolve(import.meta.dirname, "../../../..");
 const SOURCE = path.join(REPO, "apps/app/messages");

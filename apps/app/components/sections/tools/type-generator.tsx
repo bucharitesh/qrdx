@@ -1,6 +1,8 @@
 "use client";
 
+import { track } from "@repo/analytics";
 import { toast } from "@repo/design-system";
+import { HairlineFigure } from "@repo/design-system/components/hairline/hairline";
 import { Spinner as Loader2 } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
@@ -74,9 +76,7 @@ import { WifiForm } from "@/components/editor/content-forms/wifi-form";
 import { YouTubeForm } from "@/components/editor/content-forms/youtube-form";
 import { InfoHint } from "@/components/help/info-hint";
 import { LocaleLink } from "@/components/i18n/locale-link";
-import { HairlineFigure } from "@/components/mockups/hairline";
 import { ServerSnapshot } from "@/components/server-snapshot";
-import { track } from "@/lib/analytics";
 import {
   useTrackEditorOpened,
   useTrackQrGenerated,

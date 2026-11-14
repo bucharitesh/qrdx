@@ -1,5 +1,7 @@
+import type { FeatureId } from "@repo/availability";
 import { MAX_CODES_PER_REQUEST, MAX_IMPORT_ROWS } from "@repo/config";
 import { Button } from "@repo/design-system/components/ui/button";
+import { CHROME_NAMESPACES, pickMessages } from "@repo/i18n/messages";
 import {
   ArrowRight,
   Briefcase,
@@ -34,8 +36,6 @@ import {
   ENTERPRISE_REPLY,
 } from "@/lib/enterprise";
 import { isFeatureAvailable } from "@/lib/feature-availability";
-import type { FeatureId } from "@/lib/feature-availability-rules";
-import { CHROME_NAMESPACES, pickMessages } from "@/lib/i18n/messages";
 import { localizedMetadata } from "@/lib/i18n/metadata";
 import { requireLocale } from "@/lib/i18n/server";
 import { PLAN_LIMITS } from "@/lib/plans";
@@ -44,7 +44,7 @@ import { EnterpriseContactForm } from "./contact-form";
 
 // /enterprise: who it's for, what it includes and how to buy it. Every
 // feature line is something qrdx.dev runs today; lines for features this
-// deployment can't offer are left out (lib/feature-availability-rules.ts).
+// deployment can't offer are left out (packages/availability/rules.ts).
 // Enterprise is the Business plan under a contract (lib/enterprise.ts): the
 // limits below are Business's, read from lib/plans.ts.
 

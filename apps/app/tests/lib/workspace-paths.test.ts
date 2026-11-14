@@ -15,17 +15,19 @@ import {
   slugifyWorkspaceName,
   workspaceSlugProblem,
 } from "@repo/auth/workspace-rules";
+import { isPathShown } from "@repo/availability";
+import {
+  pathInWorkspace,
+  workspacePattern,
+  workspaceSlugFromPath,
+} from "@repo/availability/workspace-pattern";
 import { describe, expect, it } from "vitest";
-import { isPathShown } from "@/lib/feature-availability-rules";
 import {
   dashboardEntry,
   entryPath,
-  pathInWorkspace,
   switchWorkspaceHref,
   workspaceHref,
   workspaceLink,
-  workspacePattern,
-  workspaceSlugFromPath,
 } from "@/lib/workspace-paths";
 
 describe("workspace paths", () => {

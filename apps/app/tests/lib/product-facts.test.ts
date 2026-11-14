@@ -7,6 +7,7 @@ import {
   MAX_CODES_PER_REQUEST,
   MAX_IMPORT_ROWS,
 } from "@repo/config";
+import { TRANSLATED_LOCALES } from "@repo/i18n/config";
 import { remarkLLMs } from "fumadocs-core/mdx-plugins/remark-llms";
 import { BUILT_IN_FRAMES, OFFICIAL_FRAMES } from "qrdx";
 import {
@@ -21,7 +22,6 @@ import { describe, expect, it } from "vitest";
 import { AI_ART_PRESETS } from "@/components/sections/ai-art/presets";
 import { BARCODE_FORMATS } from "@/lib/barcode/formats";
 import { BRAND_LOGO_COUNT } from "@/lib/brand-logos/catalog.generated";
-import { TRANSLATED_LOCALES } from "@/lib/i18n/config";
 import { PAGE_TYPE_IDS } from "@/lib/landing/page-type-ids";
 import {
   fillFacts,

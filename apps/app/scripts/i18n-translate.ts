@@ -43,6 +43,12 @@ import {
   writeFileSync,
 } from "node:fs";
 import path from "node:path";
+import {
+  LOCALE_INFO,
+  TRANSLATED_LOCALES,
+  type TranslatedLocale,
+} from "@repo/i18n/config";
+import { hasDocs } from "@repo/i18n/docs";
 import { createGateway, generateText, Output } from "ai";
 import { z } from "zod";
 import {
@@ -52,18 +58,12 @@ import {
   sourceHash,
   unflatten,
 } from "@/lib/i18n/catalog";
-import {
-  LOCALE_INFO,
-  TRANSLATED_LOCALES,
-  type TranslatedLocale,
-} from "@/lib/i18n/config";
 import type { TranslationMemory } from "@/lib/i18n/content";
 import {
   CONTENT_SOURCES,
   type ContentString,
   contentEnglish,
 } from "@/lib/i18n/content-sources";
-import { hasDocs } from "@/lib/i18n/docs";
 import { numberMismatch, shapeMismatch } from "@/lib/i18n/icu";
 
 const MESSAGES = path.join(__dirname, "../messages");
@@ -545,7 +545,7 @@ function planUi(locale: TranslatedLocale): Run | null {
     if (keyPrefixes.length && !keyPrefixes.some((p) => key.startsWith(p))) {
       return false;
     }
-    // The docs chrome only shows in languages with docs (lib/i18n/docs.ts).
+    // The docs chrome only shows in languages with docs (packages/i18n/docs.ts).
     if (key.startsWith("docs.") && !hasDocs(locale)) return false;
     const entry = review[key];
     const fresh = entry?.source === sourceHash(source.get(key) ?? "");

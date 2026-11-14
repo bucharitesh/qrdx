@@ -2,8 +2,8 @@
 // the pipeline (art-mode-examples-data.ts). A server component.
 
 import { Badge } from "@repo/design-system/components/ui/badge";
+import type { Locale } from "@repo/i18n/config";
 import { getTranslations } from "next-intl/server";
-import type { Locale } from "@/lib/i18n/config";
 import { ART_MODE_EXAMPLES, artModeExampleSrc } from "./art-mode-examples-data";
 
 export async function ArtModeExamples({ locale }: { locale: Locale }) {

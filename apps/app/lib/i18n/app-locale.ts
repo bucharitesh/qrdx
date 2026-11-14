@@ -6,6 +6,7 @@ import "server-only";
 // else English. Reading it makes a page dynamic; every page that calls it
 // already is (it reads the session).
 import { auth } from "@repo/auth/server";
+import { DEFAULT_LOCALE, type Locale } from "@repo/i18n/config";
 import { headers } from "next/headers";
 import type {
   createTranslator,
@@ -15,7 +16,6 @@ import type {
 } from "next-intl";
 import { getTranslations } from "next-intl/server";
 import { cache } from "react";
-import { DEFAULT_LOCALE, type Locale } from "./config";
 import { requestAppLocale } from "./request-locale";
 import { cookieLocale, savedUserLocale } from "./user-locale";
 

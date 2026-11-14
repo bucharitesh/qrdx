@@ -4,11 +4,13 @@
 // have no menu, so the language comes from the request's Accept-Language
 // (./accept-language.ts), per request: nothing on these paths is cached
 // for everyone. The catalog part is messages/<locale>.json → "scanPages".
+
+import { DEFAULT_LOCALE, type Locale } from "@repo/i18n/config";
+import { mergeMessages } from "@repo/i18n/messages";
 import { createTranslator } from "use-intl/core";
 import en from "@/messages/en.json";
 import { negotiateLocale } from "./accept-language";
-import { DEFAULT_LOCALE, type Locale } from "./config";
-import { type Messages, mergeMessages } from "./messages";
+import type { Messages } from "./messages";
 
 export type ScanPagesTranslator = ReturnType<
   typeof createTranslator<Messages, "scanPages">

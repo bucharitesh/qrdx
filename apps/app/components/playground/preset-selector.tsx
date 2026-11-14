@@ -1,9 +1,8 @@
 "use client";
+import { track } from "@repo/analytics";
 import { useTranslations } from "next-intl";
-
 import { QRCodeSVG } from "qrdx";
 import type React from "react";
-import { track } from "@/lib/analytics";
 import { useQREditorStore } from "@/store/editor-store";
 import { defaultPresets } from "@/utils/qr-presets";
 

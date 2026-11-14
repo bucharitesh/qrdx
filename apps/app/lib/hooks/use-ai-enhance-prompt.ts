@@ -1,12 +1,12 @@
 "use client";
 
 import { useCompletion } from "@ai-sdk/react";
+import { track } from "@repo/analytics";
 import { toast } from "@repo/design-system";
 import type { JSONContent } from "@tiptap/react";
 import { useTranslations } from "next-intl";
 import { useCallback, useMemo, useRef } from "react";
 import { parseAiSdkTransportError } from "@/lib/ai/parse-ai-sdk-transport-error";
-import { track } from "@/lib/analytics";
 import { useAILocalDraftStore } from "@/store/ai-local-draft-store";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
 import type { AIPromptData } from "@/types/ai";

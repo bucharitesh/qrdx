@@ -1,3 +1,4 @@
+import { HairlineFigure } from "@repo/design-system/components/hairline/hairline";
 import { Button } from "@repo/design-system/components/ui/button";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -17,7 +18,6 @@ import { CommunityTabs } from "@/components/community/community-tabs";
 import { cardKey, ItemCard } from "@/components/community/item-card";
 import { ItemPages } from "@/components/community/item-pages";
 import { InfiniteList } from "@/components/infinite/infinite-list";
-import { HairlineFigure } from "@/components/mockups/hairline";
 import { COLLECTION_MIN_ITEMS } from "@/lib/community/bundles";
 import { hasCollections, hasKits, hasTemplates } from "@/lib/community/home";
 import { LICENSE_SHORT } from "@/lib/community/licence";

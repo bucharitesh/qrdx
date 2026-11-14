@@ -1,5 +1,5 @@
+import { QrdxLogo } from "@repo/design-system/components/brand/qrdx-logo";
 import { MagicStar } from "iconsax-reactjs";
-import { QrdxLogo } from "@/components/qrdx-logo";
 
 export function LoadingLogo() {
   return (

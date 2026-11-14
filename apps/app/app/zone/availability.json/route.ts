@@ -1,4 +1,4 @@
-import { toPublishedAvailability } from "@/lib/feature-availability-rules";
+import { toPublishedAvailability } from "@repo/availability";
 import { getPublicAvailability } from "@/lib/integration-availability";
 
 // What this deployment offers, for QRdx's other deployments: the docs app

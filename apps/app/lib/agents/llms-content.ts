@@ -1,5 +1,6 @@
 import "server-only";
 
+import { configuredEntry } from "@repo/availability";
 import { CANONICAL_ORIGIN } from "@repo/config";
 import { getCatalogBySurface } from "@repo/integrations/src/catalog";
 import type { PricingOptions } from "@/components/sections/pricing/plan-content";
@@ -14,7 +15,6 @@ import {
   isFeatureAvailable,
   isPathAvailable,
 } from "@/lib/feature-availability";
-import { configuredEntry } from "@/lib/feature-availability-rules";
 import { getIntegrationAvailability } from "@/lib/integration-availability";
 import { filterVisible } from "@/lib/integration-availability-rules";
 import { baseUrl } from "@/lib/metadata";

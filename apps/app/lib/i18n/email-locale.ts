@@ -5,8 +5,8 @@ import "server-only";
 // language the site was in (the language menu's cookie on that request),
 // else English.
 import { database as db, user } from "@repo/database";
+import { DEFAULT_LOCALE, isLocale, type Locale } from "@repo/i18n/config";
 import { eq } from "drizzle-orm";
-import { DEFAULT_LOCALE, isLocale, type Locale } from "./config";
 import { type EmailIntl, emailIntl } from "./email";
 import { cookieLocale, savedUserLocale } from "./user-locale";
 

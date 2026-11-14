@@ -1,3 +1,4 @@
+import { HairlineFigure } from "@repo/design-system/components/hairline/hairline";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   Card,
@@ -34,7 +35,6 @@ import {
   listPageResponses,
 } from "@/app/api/forms/_lib/responses";
 import { SheetsExport } from "@/components/data-connections/sheets-export";
-import { HairlineFigure } from "@/components/mockups/hairline";
 import { HttpError } from "@/lib/error-response";
 import { getAppTranslations } from "@/lib/i18n/app-locale";
 import { loadPage, parsePage } from "@/lib/paging";

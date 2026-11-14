@@ -1,6 +1,8 @@
 "use client";
 
+import { track } from "@repo/analytics";
 import { authClient } from "@repo/auth/client";
+import { HairlineFigure } from "@repo/design-system/components/hairline/hairline";
 import {
   Spinner as Loader2,
   Close as X,
@@ -34,9 +36,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { InfoHint } from "@/components/help/info-hint";
 import { LocaleLink as Link } from "@/components/i18n/locale-link";
-import { HairlineFigure } from "@/components/mockups/hairline";
 import { defaultThemeState } from "@/config/qr";
-import { track } from "@/lib/analytics";
 import { useTrackEditorOpened } from "@/lib/analytics/react";
 import { DEFAULT_QR_LOGO } from "@/lib/constants";
 import { useMounted } from "@/lib/hooks/use-mounted";

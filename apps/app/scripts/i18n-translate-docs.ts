@@ -35,18 +35,18 @@ import {
   writeFileSync,
 } from "node:fs";
 import path from "node:path";
+import { DEFAULT_LOCALE, LOCALE_INFO, type Locale } from "@repo/i18n/config";
+import {
+  DOCS_LOCALES,
+  translatedFile,
+  translationLocale,
+} from "@repo/i18n/docs";
 import { createGateway, generateText } from "ai";
 import { remarkHeading } from "fumadocs-core/mdx-plugins";
 import { remark } from "remark";
 import remarkGfm from "remark-gfm";
 import remarkMdx from "remark-mdx";
 import { visit } from "unist-util-visit";
-import { DEFAULT_LOCALE, LOCALE_INFO, type Locale } from "@/lib/i18n/config";
-import {
-  DOCS_LOCALES,
-  translatedFile,
-  translationLocale,
-} from "@/lib/i18n/docs";
 import { UNTRANSLATED_DOCS } from "@/lib/i18n/docs-check";
 import {
   fileHash,

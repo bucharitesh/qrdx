@@ -1,5 +1,6 @@
 "use client";
 
+import { track } from "@repo/analytics";
 import { CANONICAL_ORIGIN } from "@repo/config";
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
@@ -70,7 +71,6 @@ import { ExampleForm } from "@/components/editor/content-forms/example-form";
 import { ContentTypeSelector } from "@/components/editor/content-type-selector";
 import { ThemeGallery } from "@/components/editor/theme-gallery";
 import { seasonalPresetsFirst } from "@/components/seasonal/preset-order";
-import { track } from "@/lib/analytics";
 import { soundEvent } from "@/lib/sound/emit";
 import { useQREditorStore } from "@/store/editor-store";
 import { useThemePresetStore } from "@/store/theme-preset-store";

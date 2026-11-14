@@ -142,7 +142,7 @@ export const env = validateTogether(() =>
       CRON_SECRET: z.string().min(16).optional(),
 
       // Content-Security-Policy switches, at build time and at run time
-      // (lib/security/csp.ts reads them from the environment it's handed):
+      // (@repo/next-config/csp reads them from the environment it's handed):
       // "1" sends the policy report-only, "1" upgrades http:// off Vercel
       CSP_REPORT_ONLY: z.enum(["0", "1"]).optional(),
       CSP_HTTPS: z.enum(["0", "1"]).optional(),

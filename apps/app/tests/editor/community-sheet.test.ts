@@ -42,7 +42,7 @@ vi.mock("@/actions/qr-themes", () => ({
 vi.mock("@repo/auth/client", () => ({
   authClient: { useSession: () => ({ data: null, isPending: false }) },
 }));
-vi.mock("@/lib/analytics", () => ({ track: vi.fn() }));
+vi.mock("@repo/analytics", () => ({ track: vi.fn() }));
 
 const { toggleCommunityLike } = await import("@/actions/community");
 const {

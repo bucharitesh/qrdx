@@ -1,15 +1,13 @@
-// The Content-Security-Policy builder lives in @repo/next-config/csp
-// (packages/next-config/csp.ts), so QRdx's other apps send the same policy.
-// This path stays for the app's imports (proxy.ts, the tests) and adds the
-// app's media host to the storage origins. next.config.ts imports the
-// package directly: Next.js compiles the config with `@repo/*` paths
-// rewritten for the app's root, which breaks a package import made from a
-// file below it.
+// The app's Content-Security-Policy options. The builder lives in
+// @repo/next-config/csp (packages/next-config/csp.ts), so QRdx's other apps
+// send the same policy; proxy.ts and the tests import it from there and take
+// the options from here, which add the site's media host to the storage
+// origins. next.config.ts passes the same host itself: Next.js compiles the
+// config with `@repo/*` paths rewritten for the app's root, which breaks a
+// package import made from a file below it.
 
 import { cspOptionsFromEnv as cspOptionsFor } from "@repo/next-config/csp";
 import mediaManifest from "../media-manifest.json";
-
-export * from "@repo/next-config/csp";
 
 /** Options from the environment, with the site's media origin. */
 export function cspOptionsFromEnv(

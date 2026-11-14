@@ -1,9 +1,9 @@
+import { QrdxLogo } from "@repo/design-system/components/brand/qrdx-logo";
 import { Close, Tick } from "@repo/design-system/components/icons";
 import { Card } from "@repo/design-system/components/ui/card";
 import { cn } from "@repo/design-system/lib/utils";
 import { Minus } from "iconsax-reactjs";
 import type { ReactNode } from "react";
-import { QrdxLogo } from "@/components/qrdx-logo";
 import { CompetitorLogo } from "@/components/sections/compare/competitor-logo";
 
 export interface TableRow {

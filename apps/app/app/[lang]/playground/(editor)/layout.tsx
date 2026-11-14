@@ -1,6 +1,7 @@
+import { JsonLd } from "@repo/design-system/components/seo/json-ld";
+import { localizeHref } from "@repo/i18n/paths";
 import { getLocale, getTranslations } from "next-intl/server";
-import { breadcrumbSchema, JsonLd } from "@/components/sections/tools/json-ld";
-import { localizeHref } from "@/lib/i18n/paths";
+import { breadcrumbSchema } from "@/components/sections/tools/json-ld";
 import { baseUrl } from "@/lib/metadata";
 import { PRODUCT_FACTS } from "@/lib/product-facts";
 import { organizationId } from "@/lib/seo-schema";

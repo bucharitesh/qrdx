@@ -13,7 +13,7 @@ import type { ActiveScope } from "@/lib/scope";
 // Who gets the workspace audit log. A workspace has it under the same rule
 // as single sign-on: an owner or billing member is on a plan with `auditLog`
 // (Business; lib/plans.ts getOwnerPlanForOrganization). On a self-hosted
-// server it also needs the QRdx licence key (lib/feature-availability-rules
+// server it also needs the QRdx licence key (packages/availability/rules.ts
 // `auditLog`). Reading and exporting it is for owners and admins
 // (lib/permissions.ts `auditLog.view`).
 

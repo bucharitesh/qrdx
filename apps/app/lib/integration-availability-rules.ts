@@ -14,7 +14,7 @@
 //   Rebrandly, Short.io, Stripe, Cal.com and Shopify) also needs
 //   INTEGRATION_ENCRYPTION_KEY in production, where tokens must be encrypted.
 // - Catalog entries for built-in features (custom domains, email alerts)
-//   follow lib/feature-availability-rules.ts, through `featureSetup`.
+//   follow packages/availability/rules.ts, through `featureSetup`.
 
 /** Encrypts stored tokens and API keys; required in production. */
 export const ENCRYPTION_KEY_VAR = "INTEGRATION_ENCRYPTION_KEY";
@@ -46,7 +46,7 @@ export interface AvailabilityContext {
   credentials: (slug: string) => AvailabilityCredentialNames | undefined;
   /**
    * Catalog entries that are really built-in features (custom-domains,
-   * email-alerts): what they still need, from lib/feature-availability-rules.
+   * email-alerts): what they still need, from packages/availability/rules.ts.
    * Undefined for every other slug.
    */
   featureSetup?: (slug: string) => string[] | undefined;

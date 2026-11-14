@@ -1,5 +1,9 @@
+import {
+  BrandOgImage,
+  loadOgFonts,
+  ogSize,
+} from "@repo/design-system/og/brand";
 import { ImageResponse } from "next/og";
-import { BrandOgImage, loadOgFonts, ogSize } from "@/app/og/brand";
 import { requireLocaleParam } from "@/lib/i18n/static-params";
 import { onDemandParams } from "@/lib/static-params";
 

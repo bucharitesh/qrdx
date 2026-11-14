@@ -1,3 +1,4 @@
+import { HairlineFigure } from "@repo/design-system/components/hairline/hairline";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   Card,
@@ -53,7 +54,6 @@ import {
   TimeCard,
 } from "@/app/(app)/dashboard/codes/[id]/_components/analytics-extra";
 import { InfoHint } from "@/components/help/info-hint";
-import { HairlineFigure } from "@/components/mockups/hairline";
 import { getAppTranslations } from "@/lib/i18n/app-locale";
 import { getPlanForScope, getPlanLimits } from "@/lib/plans";
 import { seriesDates } from "@/lib/scan-ranges";

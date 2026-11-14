@@ -1,6 +1,7 @@
 /** biome-ignore-all lint/suspicious/noArrayIndexKey: skeleton tiles have no ids */
 "use client";
 
+import { track } from "@repo/analytics";
 import { authClient } from "@repo/auth/client";
 import { toast } from "@repo/design-system";
 import { Spinner, Tick } from "@repo/design-system/components/icons";
@@ -50,7 +51,6 @@ import { DesignQr } from "@/components/community/design-qr";
 import { PublishThemeDialog } from "@/components/community/publish-theme-dialog";
 import { QRSaveDialog } from "@/components/editor/qr-save-dialog";
 import { defaultThemeState } from "@/config/qr";
-import { track } from "@/lib/analytics";
 import {
   communityKeys,
   useCommunityTagCounts,

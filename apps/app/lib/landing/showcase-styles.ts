@@ -1,3 +1,4 @@
+import { LOGO_MARK_PATH } from "@repo/design-system/components/brand/brand-marks";
 import type {
   BodyPattern,
   ErrorLevel,
@@ -9,7 +10,6 @@ import type {
   QRFrame,
   QRProps,
 } from "qrdx/types";
-import { LOGO_MARK_PATH } from "@/components/brand-marks";
 import type { ThemeStyles } from "@/types/theme";
 
 /**

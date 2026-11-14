@@ -11,10 +11,6 @@ import {
 } from "@repo/availability/deployment";
 import { isQrdxHost, MCP_ENDPOINT } from "@repo/config";
 
-// The deployment checks live in @repo/availability with the feature rules
-// that read them; they're re-exported here, where the MCP links use them.
-export { isLocalHost } from "@repo/availability/deployment";
-
 export const MCP_SERVER_NAME = "qrdx";
 export const MCP_PATH = "/api/mcp";
 

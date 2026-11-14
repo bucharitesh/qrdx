@@ -16,11 +16,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@repo/design-system/components/ui/select";
+import { LOCALE_INFO, LOCALES, type Locale } from "@repo/i18n/config";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { updateUserLocale } from "@/actions/user-locale";
-import { LOCALE_INFO, LOCALES, type Locale } from "@/lib/i18n/config";
 
 /**
  * Settings > General: the language of the app and of the emails QRdx sends.

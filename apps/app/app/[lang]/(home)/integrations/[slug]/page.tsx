@@ -1,7 +1,10 @@
+import { catalogParagraphs, configuredEntry } from "@repo/availability";
 import { Info } from "@repo/design-system/components/icons";
+import { JsonLd } from "@repo/design-system/components/seo/json-ld";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Card } from "@repo/design-system/components/ui/card";
 import { cn } from "@repo/design-system/lib/utils";
+import { localizeHref } from "@repo/i18n/paths";
 import {
   CATALOG_CATEGORIES,
   CATALOG_KIND_DESCRIPTIONS,
@@ -31,16 +34,11 @@ import { IntegrationAction } from "@/components/sections/integrations/integratio
 import { IntegrationCard } from "@/components/sections/integrations/integration-card";
 import { IntegrationLogo } from "@/components/sections/integrations/integration-logo";
 import { resolveAction } from "@/components/sections/integrations/resolve-action";
-import { breadcrumbSchema, JsonLd } from "@/components/sections/tools/json-ld";
+import { breadcrumbSchema } from "@/components/sections/tools/json-ld";
 import { getFeatures, isPathAvailable } from "@/lib/feature-availability";
-import {
-  catalogParagraphs,
-  configuredEntry,
-} from "@/lib/feature-availability-rules";
 import { INTEGRATION_RULES } from "@/lib/i18n/content-rules";
 import { localizeContent } from "@/lib/i18n/content-server";
 import { localizedMetadata } from "@/lib/i18n/metadata";
-import { localizeHref } from "@/lib/i18n/paths";
 import { requireLocale } from "@/lib/i18n/server";
 import { getIntegrationAvailability } from "@/lib/integration-availability";
 import { isVisible, setupNeeded } from "@/lib/integration-availability-rules";

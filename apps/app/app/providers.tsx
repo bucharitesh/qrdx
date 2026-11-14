@@ -2,6 +2,7 @@
 
 // First: before any schema parses in the browser (see the file).
 import "@/lib/zod-csp";
+import type { PublicAvailability } from "@repo/availability";
 import { DesignSystemProvider } from "@repo/design-system";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { type ReactNode, Suspense } from "react";
@@ -15,7 +16,6 @@ import { LandingCapture } from "@/components/landing-capture";
 import { NavigationHistory } from "@/components/navigation-history";
 import { ReferralCapture } from "@/components/referral-capture";
 import { SoundProvider } from "@/components/sound/sound-provider";
-import type { PublicAvailability } from "@/lib/feature-availability-rules";
 import { ChatProvider } from "@/lib/hooks/use-chat-context";
 import { QueryProvider } from "@/lib/query-client";
 

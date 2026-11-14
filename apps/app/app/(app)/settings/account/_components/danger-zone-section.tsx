@@ -1,5 +1,6 @@
 "use client";
 
+import { resetAnalytics } from "@repo/analytics";
 import { authClient } from "@repo/auth/client";
 import { Spinner } from "@repo/design-system/components/icons";
 import {
@@ -24,7 +25,6 @@ import {
   type DeletionSummary,
   isDeleteConfirmed,
 } from "@/lib/account/deletion";
-import { resetAnalytics } from "@/lib/analytics";
 import { SettingsRow, SettingsSection } from "./settings-section";
 
 function Consequences({ items }: { items: string[] }) {

@@ -1,5 +1,5 @@
+import { ogSize, renderPageOgImage } from "@repo/design-system/og/brand";
 import { notFound } from "next/navigation";
-import { ogSize, renderPageOgImage } from "@/app/og/brand";
 import { COMMUNITY_LICENSE_NAME } from "@/lib/community/licence";
 import { typeFromSegment } from "@/lib/community/types";
 import { onDemandParams } from "@/lib/static-params";

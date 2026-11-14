@@ -8,7 +8,7 @@
 // back to English rather than to Simplified; every Portuguese reads the
 // Brazilian catalog) would have to wrap a generic matcher anyway, and this
 // runs on every scan's response.
-import { DEFAULT_LOCALE, LOCALES, type Locale } from "./config";
+import { DEFAULT_LOCALE, LOCALES, type Locale } from "@repo/i18n/config";
 
 /** Longest header we read; anything past it is ignored. */
 const MAX_HEADER = 512;

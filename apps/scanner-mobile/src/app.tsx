@@ -1,9 +1,9 @@
 import { Share } from "@capacitor/share";
 import { Toaster } from "@repo/design-system";
+import { LogoMark } from "@repo/design-system/components/brand/brand-marks";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Share as ShareIcon } from "iconsax-reactjs";
 import { useTranslations } from "use-intl";
-import { LogoMark } from "@/components/brand-marks";
 import { ResultActions } from "@/components/scanner/result-actions";
 import { Scanner } from "@/components/scanner/scanner";
 

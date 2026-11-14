@@ -3,13 +3,13 @@
 
 import { readdirSync } from "node:fs";
 import { join } from "node:path";
+import { loadOgFonts } from "@repo/design-system/og/brand";
 import {
   OG_FONT_GLOB,
   OG_FONTS_DIR,
   ogFontPath,
 } from "@repo/design-system/og/font-files";
 import { beforeAll, describe, expect, it, vi } from "vitest";
-import { loadOgFonts } from "@/app/og/brand";
 
 describe("OG image fonts", () => {
   it("load from the app's folder", async () => {

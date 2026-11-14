@@ -1,5 +1,6 @@
 "use client";
 
+import { track } from "@repo/analytics";
 import { toast } from "@repo/design-system";
 import {
   AlertDialog,
@@ -48,7 +49,6 @@ import { PublishPageDialog } from "@/components/community/publish-page-dialog";
 import { CapMeter } from "@/components/limits/cap-meter";
 import { useShowLimit } from "@/components/limits/limit-dialog";
 import { useCan, useWorkspaceHref } from "@/components/workspace-provider";
-import { track } from "@/lib/analytics";
 import { PLAN_NAMES } from "@/lib/pricing";
 
 const isAtLimit = (usage: PageUsage) =>

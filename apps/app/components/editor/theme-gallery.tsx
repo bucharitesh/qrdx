@@ -1,5 +1,6 @@
 "use client";
 
+import { track } from "@repo/analytics";
 import { CANONICAL_ORIGIN } from "@repo/config";
 import { Tick } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
@@ -19,7 +20,6 @@ import * as React from "react";
 import { DialogCloseButton } from "@/components/editor/dialog-close-button";
 import { emitSound } from "@/components/editor/sound";
 import { seasonalPresetsFirst } from "@/components/seasonal/preset-order";
-import { track } from "@/lib/analytics";
 import { DEFAULT_QR_LOGO } from "@/lib/constants";
 import { useThemeShuffle } from "@/lib/hooks/use-theme-shuffle";
 import { designQRProps } from "@/lib/qr-design/props";

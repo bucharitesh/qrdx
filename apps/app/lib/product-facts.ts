@@ -33,6 +33,7 @@ import {
   NEW_PAID_ACCOUNT_CODES_PER_HOUR,
   QR_IMAGE_REQUESTS_PER_MINUTE,
 } from "@repo/config";
+import { TRANSLATED_LOCALES } from "@repo/i18n/config";
 import { formatCount } from "@/lib/format-count";
 import {
   OFFICIAL_FRAME_COUNT,
@@ -58,7 +59,6 @@ import {
 import { ART_MODEL_LABEL } from "./ai/art-models";
 import { BARCODE_FORMATS } from "./barcode/formats";
 import { BRAND_LOGO_COUNT } from "./brand-logos/catalog.generated";
-import { TRANSLATED_LOCALES } from "./i18n/config";
 import { PAGE_TYPE_IDS } from "./landing/page-type-ids";
 import { MONEY_BACK_DAYS, NONPROFIT_DISCOUNT_PERCENT } from "./pricing";
 import { FREE_SCAN_HISTORY_YEARS } from "./scan-history";

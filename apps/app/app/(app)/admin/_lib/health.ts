@@ -1,5 +1,6 @@
 import "server-only";
 
+import { FEATURE_IDS, FEATURE_RULES } from "@repo/availability";
 import { database as db, webhookDelivery } from "@repo/database";
 import { getCatalogBySurface } from "@repo/integrations/src/catalog";
 import { redis } from "@repo/rate-limit";
@@ -9,7 +10,6 @@ import { type CronJob, type CronStatus, getCronRuns } from "@/lib/cron-runs";
 import { isOutboundDeliveryAllowed } from "@/lib/delivery-guard";
 import { isEmailConfigured } from "@/lib/email/send";
 import { featureContext, getFeatures } from "@/lib/feature-availability";
-import { FEATURE_IDS, FEATURE_RULES } from "@/lib/feature-availability-rules";
 import { getIntegrationAvailability } from "@/lib/integration-availability";
 import { headObject, isStorageConfigured } from "@/lib/storage/r2";
 import { cached, withTimeout } from "./cache";
@@ -241,7 +241,7 @@ export function getBuildInfo() {
 
 /**
  * Optional features: whether each is configured (names only). The feature
- * rows come from lib/feature-availability-rules.ts, the same rules that
+ * rows come from packages/availability/rules.ts, the same rules that
  * decide what the site offers.
  */
 export function getConfiguration(): {

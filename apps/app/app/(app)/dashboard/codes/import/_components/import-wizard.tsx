@@ -1,5 +1,6 @@
 "use client";
 
+import { track } from "@repo/analytics";
 import {
   Spinner as Loader2,
   Close as X,
@@ -48,7 +49,6 @@ import { formatPlanList } from "@/app/(app)/dashboard/codes/_lib/code-options";
 import { MAX_TAGS_PER_CODE } from "@/app/(app)/dashboard/codes/_lib/organize-shared";
 import type { ImportPreview } from "@/app/(app)/dashboard/codes/import/_lib/import";
 import { useShowLimit } from "@/components/limits/limit-dialog";
-import { track } from "@/lib/analytics";
 import { formatCount } from "@/lib/format-count";
 import { PLAN_NAMES, type Plan } from "@/lib/pricing";
 import { soundEvent } from "@/lib/sound/emit";
