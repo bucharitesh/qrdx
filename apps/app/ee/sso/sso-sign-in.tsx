@@ -1,6 +1,6 @@
 "use client";
 
-import { Spinner } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
@@ -91,7 +91,7 @@ export function SsoSignIn({
           value={email}
         />
         <Button disabled={busy || disabled || !email.trim()} type="submit">
-          {busy && <Spinner className="size-4 animate-spin" />}
+          {busy && <ModuleOrbit aria-hidden className="size-4" />}
           Continue
         </Button>
       </div>

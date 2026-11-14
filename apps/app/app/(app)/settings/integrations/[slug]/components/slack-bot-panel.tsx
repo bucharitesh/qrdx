@@ -1,6 +1,6 @@
 "use client";
 
-import { Spinner } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
@@ -153,7 +153,9 @@ export function SlackBotPanel({
                       size="sm"
                       variant="outline"
                     >
-                      {busy === link.id && <Spinner className="size-3.5" />}
+                      {busy === link.id && (
+                        <ModuleOrbit aria-hidden className="size-3.5" />
+                      )}
                       {t("unlink")}
                     </Button>
                   </li>

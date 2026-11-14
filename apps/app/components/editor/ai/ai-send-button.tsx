@@ -1,6 +1,6 @@
 "use client";
 
-import { Spinner } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
 import { ArrowUp } from "iconsax-reactjs";
@@ -36,7 +36,7 @@ export function AISendButton({
         type="button"
         variant="outline"
       >
-        <Spinner className="size-3.5" />
+        <ModuleOrbit aria-hidden className="size-3.5" />
         {t("stop")}
       </Button>
     );

@@ -1,7 +1,7 @@
 "use client";
 
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
-import { Spinner } from "@repo/design-system/components/ui/spinner";
 import { cn } from "@repo/design-system/lib/utils";
 import { type ReactNode, useCallback, useEffect, useState } from "react";
 import { useNearViewport } from "@/lib/hooks/use-infinite-scroll";
@@ -164,7 +164,7 @@ export function DeferredButton({
       >
         {status === "loading" ? (
           <>
-            <Spinner aria-hidden />
+            <ModuleOrbit aria-hidden />
             {labels.loading}
           </>
         ) : (

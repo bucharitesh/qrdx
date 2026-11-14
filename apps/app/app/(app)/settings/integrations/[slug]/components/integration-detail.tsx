@@ -2,7 +2,8 @@
 "use client";
 
 import { TWO_FACTOR_REQUIRED_MESSAGE } from "@repo/auth/workspace-two-factor-rules";
-import { Spinner, Tick } from "@repo/design-system/components/icons";
+import { Tick } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Separator } from "@repo/design-system/components/ui/separator";
@@ -289,7 +290,7 @@ export function IntegrationDetail({
               size="sm"
               variant="outline"
             >
-              {isLoading && <Spinner className="size-3.5" />}
+              {isLoading && <ModuleOrbit aria-hidden className="size-3.5" />}
               {t("disconnect")}
             </Button>
           </div>
@@ -355,7 +356,9 @@ export function IntegrationDetail({
                     variant="outline"
                     size="sm"
                   >
-                    {isLoading && <Spinner className="size-3.5" />}
+                    {isLoading && (
+                      <ModuleOrbit aria-hidden className="size-3.5" />
+                    )}
                     {t("reconnect")}
                   </Button>
                 )}
@@ -365,7 +368,9 @@ export function IntegrationDetail({
                   variant={status === "error" ? "destructive" : "outline"}
                   size="sm"
                 >
-                  {isLoading && <Spinner className="size-3.5" />}
+                  {isLoading && (
+                    <ModuleOrbit aria-hidden className="size-3.5" />
+                  )}
                   {t("disconnect")}
                 </Button>
               </>
@@ -376,7 +381,7 @@ export function IntegrationDetail({
                 disabled={isLoading || !canOAuth}
                 size="sm"
               >
-                {isLoading && <Spinner className="size-3.5" />}
+                {isLoading && <ModuleOrbit aria-hidden className="size-3.5" />}
                 {canOAuth ? t("enable") : t("needsSetup")}
               </Button>
             ) : null}

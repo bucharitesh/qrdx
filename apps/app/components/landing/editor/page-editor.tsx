@@ -2,7 +2,7 @@
 
 import { track } from "@repo/analytics";
 import { toast } from "@repo/design-system";
-import { Spinner as Loader2 } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
@@ -644,7 +644,7 @@ export function PageEditor({
             size="sm"
             title="Publish (⌘S)"
           >
-            {isPublishing && <Loader2 className="animate-spin" />}
+            {isPublishing && <ModuleOrbit aria-hidden />}
             {isPublishing ? "Publishing..." : "Publish"}
           </Button>
         </div>

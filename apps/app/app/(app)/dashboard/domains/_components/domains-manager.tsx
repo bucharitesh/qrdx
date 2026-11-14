@@ -1,7 +1,7 @@
 "use client";
 
 import { toast } from "@repo/design-system";
-import { Spinner } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -164,7 +164,7 @@ function DomainCard({
                 size="sm"
                 variant={domain.verified || oneClick ? "outline" : "default"}
               >
-                {busy ? <Spinner /> : <RefreshCw />}
+                {busy ? <ModuleOrbit aria-hidden /> : <RefreshCw />}
                 {domain.verified ? t("checkDns") : t("verify")}
               </Button>
               <Button

@@ -1,6 +1,7 @@
 "use client";
 
-import { Info, Spinner, Tick } from "@repo/design-system/components/icons";
+import { Info, Tick } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Checkbox } from "@repo/design-system/components/ui/checkbox";
 import {
@@ -208,7 +209,7 @@ export function PublishPageDialog({
                   <p className="font-medium">{t("whatWeChanged")}</p>
                   {preview === null ? (
                     <p className="text-muted-foreground flex items-center gap-2">
-                      <Spinner className="size-4" />
+                      <ModuleOrbit aria-hidden className="size-4" />
                       {t("checkingThePage")}
                     </p>
                   ) : (
@@ -386,7 +387,7 @@ export function PublishPageDialog({
                 disabled={!(accepted && name.trim()) || pending}
                 onClick={submit}
               >
-                {pending && <Spinner className="size-4" />}
+                {pending && <ModuleOrbit aria-hidden className="size-4" />}
                 {pending ? t("publishing") : t("publish")}
               </Button>
             </DialogFooter>

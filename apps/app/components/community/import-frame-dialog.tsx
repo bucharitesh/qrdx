@@ -1,7 +1,8 @@
 "use client";
 
 import { CANONICAL_HOST } from "@repo/config";
-import { Info, Spinner } from "@repo/design-system/components/icons";
+import { Info } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   Dialog,
@@ -97,7 +98,7 @@ export function ImportFrameDialog({
             <span className="min-w-0 flex-1 truncate">
               {fileName ?? t("chooseAnSvgFileUp")}
             </span>
-            {pending && <Spinner className="size-4" />}
+            {pending && <ModuleOrbit aria-hidden className="size-4" />}
           </label>
           <input
             accept=".svg,image/svg+xml"

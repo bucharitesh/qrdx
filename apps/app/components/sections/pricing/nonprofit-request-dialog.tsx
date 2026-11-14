@@ -6,7 +6,7 @@
 // where the discount is offered (qrdx.dev, feature nonprofitDiscounts).
 
 import { SUPPORT_EMAIL } from "@repo/config";
-import { Spinner } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   Dialog,
@@ -220,7 +220,7 @@ export function NonprofitRequestDialog({
                 disabled={busy}
                 type="submit"
               >
-                {busy && <Spinner aria-hidden className="animate-spin" />}
+                {busy && <ModuleOrbit aria-hidden />}
                 {busy ? t("sending") : t("submit")}
               </Button>
             </DialogFooter>

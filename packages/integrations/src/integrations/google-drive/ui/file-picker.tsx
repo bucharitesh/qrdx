@@ -1,10 +1,8 @@
 /** biome-ignore-all lint/correctness/useExhaustiveDependencies: false positive */
 "use client";
 
-import {
-  Spinner as Loader2,
-  Close as X,
-} from "@repo/design-system/components/icons";
+import { Close as X } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   Dialog,
@@ -168,7 +166,7 @@ export function GoogleDriveFilePicker({
               )}
             </div>
             <Button disabled={loading} onClick={handleSearch}>
-              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {loading && <ModuleOrbit aria-hidden className="mr-2 h-4 w-4" />}
               Search
             </Button>
           </div>
@@ -184,7 +182,10 @@ export function GoogleDriveFilePicker({
           <ScrollArea className="h-[400px] rounded-md border">
             {loading && files.length === 0 ? (
               <div className="flex items-center justify-center p-8">
-                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                <ModuleOrbit
+                  aria-hidden
+                  className="h-8 w-8 text-muted-foreground"
+                />
               </div>
             ) : files.length === 0 ? (
               <div className="flex flex-col items-center justify-center p-8 text-center">
@@ -232,7 +233,9 @@ export function GoogleDriveFilePicker({
                   onClick={handleLoadMore}
                   variant="outline"
                 >
-                  {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  {loading && (
+                    <ModuleOrbit aria-hidden className="mr-2 h-4 w-4" />
+                  )}
                   Load More
                 </Button>
               </div>

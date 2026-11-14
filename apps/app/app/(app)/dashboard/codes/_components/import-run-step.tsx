@@ -1,7 +1,8 @@
 "use client";
 
 import { track } from "@repo/analytics";
-import { Info, Spinner } from "@repo/design-system/components/icons";
+import { Info } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Progress } from "@repo/design-system/components/ui/progress";
 import {
@@ -174,7 +175,7 @@ export function RunStep({
         <div className="text-muted-foreground flex items-center justify-center gap-2 py-16 text-sm">
           {error ?? (
             <>
-              <Spinner className="size-4 animate-spin" />{" "}
+              <ModuleOrbit aria-hidden className="size-4" />{" "}
               {t("loadingTheImport")}
             </>
           )}
@@ -433,9 +434,7 @@ export function RunStep({
                 size="sm"
                 variant="outline"
               >
-                {attach.state === "busy" && (
-                  <Spinner className="animate-spin" />
-                )}
+                {attach.state === "busy" && <ModuleOrbit aria-hidden />}
                 {t("attachCodes")}
               </Button>
             )}

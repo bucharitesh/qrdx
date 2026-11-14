@@ -1,9 +1,7 @@
 "use client";
 
-import {
-  Info,
-  Spinner as LoaderCircle,
-} from "@repo/design-system/components/icons";
+import { Info } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { cn } from "@repo/design-system/lib/utils";
 import {
   MessageQuestion as CircleHelp,
@@ -196,10 +194,7 @@ export function LinkPreview({
         {verdict ? (
           <verdict.icon aria-hidden className="mt-0.5 size-5 shrink-0" />
         ) : (
-          <LoaderCircle
-            aria-hidden
-            className="mt-0.5 size-5 shrink-0 animate-spin"
-          />
+          <ModuleOrbit aria-hidden className="mt-0.5 size-5 shrink-0" />
         )}
         <div className="min-w-0 space-y-1">
           <p className="font-medium">

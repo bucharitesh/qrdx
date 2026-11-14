@@ -1,6 +1,6 @@
 "use client";
 
-import { Spinner } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   Gallery,
@@ -505,7 +505,7 @@ export function UseImageCard({
           <span className={muted}>{run.message}</span>
         ) : (
           <span className={`${muted} inline-flex items-center gap-1.5`}>
-            <Spinner className="size-3.5" />
+            <ModuleOrbit aria-hidden className="size-3.5" />
             {t("placingYourPicture")}
           </span>
         )
@@ -671,7 +671,7 @@ function AIArtHandOff({
               onClick={() => void open()}
               size="sm"
             >
-              {opening && <Spinner className="size-3.5" />}
+              {opening && <ModuleOrbit aria-hidden className="size-3.5" />}
               {t("openAiArt")}
             </Button>
           </>

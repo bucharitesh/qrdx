@@ -4,7 +4,8 @@
 import { track } from "@repo/analytics";
 import { authClient } from "@repo/auth/client";
 import { toast } from "@repo/design-system";
-import { Spinner, Tick } from "@repo/design-system/components/icons";
+import { Tick } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   DropdownMenu,
@@ -748,7 +749,10 @@ function CommunitySheetBody({
         ) : shown.length === 0 ? (
           isFetchingNextPage ? (
             <div className="flex justify-center py-10">
-              <Spinner className="text-muted-foreground size-5" />
+              <ModuleOrbit
+                aria-hidden
+                className="text-muted-foreground size-5"
+              />
             </div>
           ) : (
             <EmptyState
@@ -799,7 +803,10 @@ function CommunitySheetBody({
             </ul>
             <div className="flex min-h-8 justify-center pt-2" ref={sentinelRef}>
               {isFetchingNextPage && (
-                <Spinner className="text-muted-foreground size-5" />
+                <ModuleOrbit
+                  aria-hidden
+                  className="text-muted-foreground size-5"
+                />
               )}
             </div>
             {searchCapped && (

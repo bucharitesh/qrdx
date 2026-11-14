@@ -1,7 +1,7 @@
 "use client";
 
 import { toast } from "@repo/design-system";
-import { Spinner } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -37,7 +37,7 @@ export function JoinButton({ token, name }: { token: string; name: string }) {
   return (
     <div className="space-y-3">
       <Button className="w-full" disabled={isPending} onClick={join}>
-        {isPending && <Spinner aria-hidden className="animate-spin" />}
+        {isPending && <ModuleOrbit aria-hidden />}
         {t("joinWorkspace")}
       </Button>
       {error && (

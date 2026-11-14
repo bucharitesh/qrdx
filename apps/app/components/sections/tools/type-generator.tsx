@@ -3,7 +3,7 @@
 import { track } from "@repo/analytics";
 import { toast } from "@repo/design-system";
 import { HairlineFigure } from "@repo/design-system/components/hairline/hairline";
-import { Spinner as Loader2 } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
@@ -360,7 +360,7 @@ function GeneratorPanel({
               variant={format === "png" ? "default" : "outline"}
             >
               {downloading === format ? (
-                <Loader2 className="size-4 animate-spin" />
+                <ModuleOrbit aria-hidden className="size-4" />
               ) : (
                 <Download className="size-4" />
               )}

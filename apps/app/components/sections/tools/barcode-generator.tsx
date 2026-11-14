@@ -2,7 +2,7 @@
 
 import { track } from "@repo/analytics";
 import { toast } from "@repo/design-system";
-import { Spinner } from "@repo/design-system/components/icons";
+import { ModuleOrbit, Scanframe } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   DropdownMenu,
@@ -252,7 +252,7 @@ function ScanStatus({
   if (checking || !result) {
     return (
       <p className="flex items-center gap-2 text-xs text-muted-foreground">
-        <Spinner className="size-4 animate-spin" />
+        <ModuleOrbit aria-hidden className="size-4" />
         {t("checking")}
       </p>
     );
@@ -906,7 +906,7 @@ export function BarcodePreview({
               state={state}
             />
           ) : !(renderer || loadError) && checked.ok ? (
-            <Spinner className="size-5 animate-spin text-muted-foreground" />
+            <ModuleOrbit aria-hidden className="size-5 text-muted-foreground" />
           ) : (
             <>
               <Warning2 aria-hidden className="size-5 text-muted-foreground" />
@@ -949,7 +949,7 @@ export function BarcodePreview({
             {t("loadFailed")}
           </p>
         ) : !renderer && checked.ok ? (
-          <Spinner className="size-6 animate-spin text-muted-foreground" />
+          <Scanframe aria-hidden className="text-muted-foreground" size={24} />
         ) : (
           <p className="max-w-xs text-center text-sm text-muted-foreground">
             {t("fixInput")}
@@ -1002,7 +1002,7 @@ export function BarcodeDownloads({
           variant={type === "png" ? "default" : "outline"}
         >
           {downloading === type ? (
-            <Spinner className="size-4 animate-spin" />
+            <ModuleOrbit aria-hidden className="size-4" />
           ) : (
             <Download aria-hidden className="size-4" />
           )}
@@ -1013,7 +1013,7 @@ export function BarcodeDownloads({
         <DropdownMenuTrigger asChild>
           <Button disabled={!canDownload} variant="outline">
             {downloading && MORE_FILES.includes(downloading) ? (
-              <Spinner className="size-4 animate-spin" />
+              <ModuleOrbit aria-hidden className="size-4" />
             ) : null}
             {t("more")}
             <ArrowDown2 aria-hidden className="size-3.5 opacity-70" />
