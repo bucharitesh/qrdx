@@ -65,7 +65,7 @@ I codici di un workspace usano il miglior piano tra i suoi proprietari. Vedi [Pi
 
 ## Analisi delle scansioni [#scan-analytics]
 
-Ogni codice ha una pagina di analisi con scansioni nel tempo, visitatori unici, paesi e città principali, dispositivi, sistemi operativi, browser e referrer per gli ultimi 7, 30 o 90 giorni, 1 anno o 3 anni (entro il limite della cronologia del tuo piano). Puoi esportare in CSV le scansioni dell'intervallo selezionato.
+Ogni codice ha una pagina di analisi con scansioni nel tempo, visitatori unici, paesi e città principali, dispositivi, sistemi operativi, browser e referrer per gli ultimi 7, 30 o 90 giorni, 1 anno o 3 anni, oppure per tutto il periodo dalla prima scansione del codice (limitato dalla cronologia del tuo piano: l'intero periodo è disponibile con Pro e Business). Puoi esportare in CSV le scansioni dell'intervallo selezionato.
 
 Cosa viene registrato per ogni scansione:
 
@@ -88,7 +88,7 @@ Gestisci i codici in modo programmatico da `https://api.qrdx.dev/v1/codes`. Le r
 | `GET` | `/v1/codes/{id}` | Ottieni un codice |
 | `PATCH` | `/v1/codes/{id}` | Aggiorna `destinationUrl`, `title`, `style`, `domainId` ([domini personalizzati](/docs/custom-domains)), `slug` o `archived`, oppure passa `kind` da `redirect` a `page` e viceversa |
 | `DELETE` | `/v1/codes/{id}` | Elimina un codice e le sue scansioni |
-| `GET` | `/v1/codes/{id}/scans` | Statistiche per `range` (`7d`, `30d`, `90d`, `365d`, `1095d`; limitato dallo storico del tuo piano). Aggiungi `limit` (≤ 500) per le singole scansioni e `before` (l'ultimo `scannedAt`) per la pagina successiva |
+| `GET` | `/v1/codes/{id}/scans` | Analisi per `range` (`7d`, `30d`, `90d`, `365d`, `1095d`, oppure `all` su Pro e Business; limitato dallo storico del tuo piano). Aggiungi `limit` (≤ 500) per le singole scansioni e `before` (l'ultimo `scannedAt`) per la pagina successiva |
 
 Crea un codice:
 

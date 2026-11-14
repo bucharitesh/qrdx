@@ -19,6 +19,11 @@ import { BARCODE_FORMAT_IDS } from "@/lib/barcode/request";
 import { BARCODE_ROTATIONS } from "@/lib/barcode/style";
 import type { CommunityApiItem } from "@/lib/community/api";
 import { WEBHOOK_EVENTS } from "@/lib/events/types";
+import { scanHistoryLabel } from "@/lib/scan-history";
+import {
+  DAILY_SERIES_MAX_DAYS,
+  WEEKLY_SERIES_MAX_DAYS,
+} from "@/lib/scan-ranges";
 import {
   type PreciseLocationSummary,
   SCAN_RANGE_KEYS,
@@ -253,7 +258,7 @@ export const scanAnalyticsSchema = named(
     range: z
       .enum(SCAN_RANGE_KEYS as [string, ...string[]])
       .describe(
-        "The range used: the requested one, or the longest the plan's retention allows",
+        "The range used: the requested one when the plan's history reaches that far, else `30d`. `all` (Pro and Business) starts on the day of the code's first scan, or its creation day when it has none",
       ),
     retentionDays: z
       .number()
@@ -263,12 +268,26 @@ export const scanAnalyticsSchema = named(
         "How far back the plan's analytics reach, in days; null when the plan keeps the whole history",
       ),
     from: dateTime("Start of the range (00:00 UTC)"),
-    days: z.number().int(),
+    days: z.number().int().describe("Days the range covers, today included"),
     total: z.number().int().describe("Scans in the range"),
     unique: z.number().int().describe("Unique visitors in the range"),
+    interval: z
+      .enum(["day", "week", "month"])
+      .describe(
+        `What one \`series\` entry counts: a UTC day for ranges up to ${scanHistoryLabel(DAILY_SERIES_MAX_DAYS)} (every fixed range), a week (starting Monday) up to ${scanHistoryLabel(WEEKLY_SERIES_MAX_DAYS)}, then a month. Only \`all\` can be longer than ${scanHistoryLabel(DAILY_SERIES_MAX_DAYS)}`,
+      ),
     series: z
-      .array(z.object({ date: z.string(), count: z.number().int() }))
-      .describe("Scans per UTC day, oldest first, one entry per day"),
+      .array(
+        z.object({
+          date: z
+            .string()
+            .describe("First day of the bucket (YYYY-MM-DD, UTC)"),
+          count: z.number().int(),
+        }),
+      )
+      .describe(
+        "Scans per `interval`, oldest first, one entry per bucket including empty ones. The first week or month can start before `from`",
+      ),
     countries: z.array(breakdownRow).describe("Top 10 countries"),
     cities: z
       .array(

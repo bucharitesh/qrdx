@@ -65,7 +65,7 @@ Kode dalam sebuah workspace menggunakan paket terbaik di antara para pemiliknya.
 
 ## Analitik pemindaian [#scan-analytics]
 
-Setiap kode memiliki halaman analitik dengan pemindaian dari waktu ke waktu, pengunjung unik, negara dan kota teratas, perangkat, sistem operasi, browser, dan perujuk untuk 7, 30, atau 90 hari terakhir, 1 tahun, atau 3 tahun (dibatasi oleh riwayat paket Anda). Anda dapat mengekspor pemindaian dalam rentang yang dipilih sebagai CSV.
+Setiap kode memiliki halaman analitik dengan pemindaian dari waktu ke waktu, pengunjung unik, negara dan kota teratas, perangkat, sistem operasi, browser, dan perujuk untuk 7, 30, atau 90 hari terakhir, 1 tahun atau 3 tahun, atau untuk seluruh waktu sejak pemindaian pertama kode (dibatasi oleh riwayat paket Anda: seluruh waktu tersedia di Pro dan Business). Anda dapat mengekspor pemindaian pada rentang yang dipilih sebagai CSV.
 
 Hal yang dicatat untuk setiap pemindaian:
 
@@ -88,7 +88,7 @@ Kelola kode secara terprogram melalui `https://api.qrdx.dev/v1/codes`. Permintaa
 | `GET` | `/v1/codes/{id}` | Mengambil satu kode |
 | `PATCH` | `/v1/codes/{id}` | Memperbarui `destinationUrl`, `title`, `style`, `domainId` ([domain kustom](/docs/custom-domains)), `slug`, atau `archived`, atau mengubah `kind` antara `redirect` dan `page` |
 | `DELETE` | `/v1/codes/{id}` | Menghapus kode beserta pemindaiannya |
-| `GET` | `/v1/codes/{id}/scans` | Analitik untuk `range` (`7d`, `30d`, `90d`, `365d`, `1095d`; dibatasi oleh riwayat paket Anda). Tambahkan `limit` (≤ 500) untuk pemindaian individual, dan `before` (`scannedAt` terakhir) untuk halaman berikutnya |
+| `GET` | `/v1/codes/{id}/scans` | Analitik untuk `range` (`7d`, `30d`, `90d`, `365d`, `1095d`, atau `all` di Pro dan Business; dibatasi oleh riwayat paket Anda). Tambahkan `limit` (≤ 500) untuk pemindaian individual, dan `before` (`scannedAt` terakhir) untuk halaman berikutnya |
 
 Buat kode:
 

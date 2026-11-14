@@ -6367,7 +6367,12 @@
           "allCodesLastValue": "모든 코드, 최근 {value}",
           "topCountries": "상위 국가",
           "devices": "기기",
-          "unknown": "알 수 없음"
+          "unknown": "알 수 없음",
+          "allTime": "전체 기간",
+          "sinceDateUtc": "{date}부터 (UTC)",
+          "allCodesSince": "모든 코드, {date}부터",
+          "allCodesPerIntervalSince": "모든 코드, {interval, select, week {주별} month {월별} other {일별}}, {date}부터 (UTC)",
+          "scansPerIntervalOfUpTo": "최대 {MAX_COMPARE, number}개 코드의 {interval, select, week {주별} month {월별} other {일별}} 스캔을 나란히 비교해요 (UTC)."
         },
         "comparePicker": {
           "stopComparingValue": "{value} 비교 중지",
@@ -6704,7 +6709,9 @@
           "conversionTypes": "전환 유형",
           "sinceValue": " {value} 이후",
           "languageAndScanCountRules": " (언어 및 스캔 횟수 규칙은 다시 재현할 수 없어서, 해당 규칙으로 다른 곳에 연결된 스캔이 포함될 수 있어요)",
-          "unknown": "알 수 없음"
+          "unknown": "알 수 없음",
+          "sinceDate": "{date}부터, {timeZone}",
+          "sinceDateBusiest": "{date}부터, {timeZone} · 가장 붐비는 시간 {hour}:00"
         },
         "analyticsTab": {
           "exportCsv": "CSV 내보내기",
@@ -6731,7 +6738,11 @@
           "daysDaysOfScanHistory": "{days, number}일간의 스캔 기록",
           "valueKeepsValue2": "{value}은(는) {value2}을(를) 유지해요",
           "valueAndValue2": "{value} 및 {value2}.",
-          "yearsOfScanHistory": "{years, plural, one {스캔 기록 #년} other {스캔 기록 #년}}"
+          "yearsOfScanHistory": "{years, plural, one {스캔 기록 #년} other {스캔 기록 #년}}",
+          "allTime": "전체 기간",
+          "sinceDateUtc": "{date}부터 (UTC)",
+          "sinceDateTapsCome": "{date}부터예요. 탭은 코드의 NFC 링크를 통해 집계돼요.",
+          "scansPerIntervalSince": "{interval, select, week {주별} month {월별} other {일별}} 스캔 수, {date}부터 (UTC)"
         },
         "changeTypeDialog": {
           "theyStaySavedAndWork": "저장된 상태로 유지되며, 다시 전환하면 다시 작동해요.",
@@ -6909,7 +6920,9 @@
           "shared": "공유",
           "allowed": "허용",
           "noScansAskedForA": "최근 {days, number}일 동안 위치를 요청한 스캔이 아직 없어요.",
-          "thisCodeDoesntAskScanners": "이 코드는 스캔하는 사람에게 위치를 요청하지 않아요."
+          "thisCodeDoesntAskScanners": "이 코드는 스캔하는 사람에게 위치를 요청하지 않아요.",
+          "sharedByScannersWhoAllowedSince": "위치 공유를 허용한 스캔 사용자가 공유한 정보이며 약 100m 단위로 반올림돼요. 위 IP 기반 국가 및 도시와는 별개예요. {date}부터예요.",
+          "noScansAskedForASince": "{date}부터 위치를 요청한 스캔이 아직 없어요."
         },
         "preciseLocationsTable": {
           "preciseScanLocationsRoundedTo": "약 100m 단위로 처리된 정확한 스캔 위치",

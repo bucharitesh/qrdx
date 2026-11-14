@@ -40,11 +40,14 @@ export async function PreciseLocationsCard({
   code,
   from,
   days,
+  since,
   slug,
 }: {
   code: QrCodeView;
   from: Date;
   days: number;
+  /** "All time": the range's first day, shown instead of the days */
+  since?: string;
   slug: string | null;
 }) {
   const t = await getAppTranslations(
@@ -86,7 +89,9 @@ export async function PreciseLocationsCard({
     body = (
       <p className="text-muted-foreground text-sm">
         {code.preciseLocation
-          ? t("noScansAskedForA", { days })
+          ? since
+            ? t("noScansAskedForASince", { date: since })
+            : t("noScansAskedForA", { days })
           : t("thisCodeDoesntAskScanners")}{" "}
         {!code.preciseLocation && (
           <Link className="text-foreground underline" href={settingsHref}>
@@ -128,7 +133,9 @@ export async function PreciseLocationsCard({
       <CardHeader className="px-4">
         <CardTitle>{t("preciseLocations")}</CardTitle>
         <CardDescription>
-          {t("sharedByScannersWhoAllowed", { days })}
+          {since
+            ? t("sharedByScannersWhoAllowedSince", { date: since })
+            : t("sharedByScannersWhoAllowed", { days })}
         </CardDescription>
       </CardHeader>
       <CardContent className="px-4">{body}</CardContent>

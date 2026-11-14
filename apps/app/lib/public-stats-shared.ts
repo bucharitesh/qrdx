@@ -1,9 +1,16 @@
 // Client-safe parts of public analytics pages (lib/public-stats.ts).
 
 import type { ClientBrand } from "@/lib/client-brands-shared";
+import type { ScanRange, SeriesInterval } from "@/lib/scan-ranges";
 import type { BreakdownRow, DailyCount, ScanSourceCounts } from "@/lib/scans";
 
-export const PUBLIC_STATS_RANGES = ["7d", "30d", "90d"] as const;
+/** "all" only for plans that keep the whole history (Pro and Business). */
+export const PUBLIC_STATS_RANGES = [
+  "7d",
+  "30d",
+  "90d",
+  "all",
+] as const satisfies readonly ScanRange[];
 export type PublicStatsRange = (typeof PUBLIC_STATS_RANGES)[number];
 export const DEFAULT_PUBLIC_STATS_RANGE: PublicStatsRange = "30d";
 
@@ -48,9 +55,13 @@ export interface PublicStats {
   /** The short link is on QRdx's host, so a page without QRdx marks hides it */
   hideShortLink: boolean;
   analytics: {
+    /** First day of the range (00:00 UTC), ISO string */
+    from: string;
     days: number;
     total: number;
     unique: number;
+    /** What one `series` point counts: a UTC day, week or month */
+    interval: SeriesInterval;
     series: DailyCount[];
     countries: BreakdownRow[];
     devices: BreakdownRow[];

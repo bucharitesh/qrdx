@@ -441,8 +441,16 @@ describe("what a client sees", () => {
     ]) {
       expect(await access.findPortalCode(found, viewer, id), id).toBeNull();
     }
-    const report = await access.portalCodeAnalytics(found, "c_menu", "30d");
+    const code = await access.findPortalCode(found, viewer, "c_menu");
+    if (!code) throw new Error("no code");
+    const report = await access.portalCodeAnalytics(found, code, "30d");
     expect(JSON.stringify(report)).not.toContain("Lyon");
+    // Business keeps the whole history: All time, from the code's creation
+    // while it has no scans.
+    const all = await access.portalCodeAnalytics(found, code, "all");
+    expect(all.ranges).toEqual(["7d", "30d", "90d", "all"]);
+    expect(all.range).toBe("all");
+    expect(all.analytics.days).toBeGreaterThanOrEqual(1);
   });
 
   it("loses access when unshared, removed or the plan drops Business", async () => {

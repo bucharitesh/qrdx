@@ -9,10 +9,10 @@ import { handleError } from "@/lib/error-response";
 import { getPlanForScope, getPlanLimits } from "@/lib/plans";
 import { parseWithSchema } from "@/lib/request-guards";
 import {
+  codeScanRange,
   getPreciseLocations,
   getScanAnalytics,
   listScans,
-  resolveScanRange,
   withoutPreciseLocation,
 } from "@/lib/scans";
 import { NO_STORE, resolveApiScope } from "../../_lib/api";
@@ -21,6 +21,8 @@ import { scansQuerySchema } from "../../_lib/schemas";
 /**
  * Aggregated analytics for a range (clamped to the plan's retention), plus
  * optional individual scans paginated with `before` = the last `scannedAt`.
+ * `range=all` (whole-history plans) starts at the code's first scan, and its
+ * series is per week or month once it spans more than 3 years.
  */
 const handleGET = withApiQuotaHeaders(
   async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
@@ -38,7 +40,11 @@ const handleGET = withApiQuotaHeaders(
       ]);
       const limits = getPlanLimits(plan);
       const retentionDays = limits.analyticsRetentionDays;
-      const { range, days } = resolveScanRange(query.range, retentionDays);
+      const { range, days } = await codeScanRange(
+        code,
+        query.range,
+        retentionDays,
+      );
       const analytics = await getScanAnalytics(code.id, days);
       // Precise scan locations (lib/scan-location): Pro and Business only.
       const precise = limits.preciseLocation
