@@ -4,7 +4,7 @@
 
 import { getQRModuleCount } from "qrdx";
 import { describe, expect, it } from "vitest";
-import { CODE_TABS } from "@/components/editor/action-bar/code-snippets";
+import { CODE_TARGETS } from "@/components/editor/action-bar/code-snippets";
 import { AI_ART_PRESETS } from "@/components/sections/ai-art/presets";
 import {
   CODE_LANGS,
@@ -157,16 +157,30 @@ describe("other parameters", () => {
     });
   });
 
-  it("takes the Get code tabs that ship, with the code dialog", () => {
-    for (const lang of ["react", "shadcn", "image", "api", "mcp", "cli"]) {
+  it("takes the Get code frameworks and tabs that ship, with the code dialog", () => {
+    for (const lang of [
+      "react",
+      "vue",
+      "angular",
+      "preact",
+      "solid",
+      "web-component",
+      "vanilla",
+      "shadcn",
+      "image",
+      "api",
+      "mcp",
+      "cli",
+    ]) {
       expect(parseHref(`/playground?open=code&lang=${lang}`).lang).toBe(lang);
     }
-    expect(parseHref("/playground?open=code&lang=vue").lang).toBeUndefined();
+    expect(parseHref("/playground?open=code&lang=Vue").lang).toBe("vue");
+    expect(parseHref("/playground?open=code&lang=svelte").lang).toBeUndefined();
     expect(parseHref("/playground?lang=react").lang).toBeUndefined();
   });
 
-  it("offers a link for exactly the Get code tabs that ship", () => {
-    expect([...CODE_LANGS]).toEqual([...CODE_TABS]);
+  it("offers a link for exactly what the Get code dialog opens", () => {
+    expect([...CODE_LANGS]).toEqual([...CODE_TARGETS]);
   });
 
   it("only takes sections the Design tab can open", () => {
