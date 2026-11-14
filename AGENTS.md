@@ -13,7 +13,7 @@ QRdx is an open-source QR code platform (https://qrdx.dev): a free static QR gen
 | `packages/cli` | `@qrdx/cli`, the command-line generator |
 | `packages/database` | Drizzle schema (`schema.ts`), migrations and `manual-sql/` |
 | `packages/auth` | Better Auth setup |
-| `packages/design-system` | Shared UI (shadcn/ui), icons, styles |
+| `packages/design-system` | Shared UI (shadcn/ui), icons, styles, the logo, figures, JSON-LD helpers and the Open Graph image frame with its fonts |
 | `packages/integrations`, `packages/integration-kit` | The integrations catalogue and shared types |
 | `packages/config` | `@repo/config`: platform constants (brand, URLs, contact emails, social links, shared limits); import these instead of typing `qrdx.dev` or an email address |
 | `packages/availability` | `@repo/availability`: which built-in features a deployment can offer, from the names of the variables it has set (pure; the app passes its environment in) |

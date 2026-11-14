@@ -90,14 +90,14 @@ You don't need a database or any environment variables to work on the React libr
 | `packages/cli` | The command-line tool, published to npm as `@qrdx/cli` |
 | `packages/auth` | Better Auth server and client configuration |
 | `packages/database` | Drizzle schema (`schema.ts`), the database client, and hand-applied SQL (`manual-sql/`) |
-| `packages/design-system` | Shared UI components (shadcn/ui), icons, styles and fonts |
+| `packages/design-system` | Shared UI components (shadcn/ui), icons, styles and fonts; the logo, the figure set, JSON-LD helpers and the Open Graph image frame (`og/`, with the Geist files server images use) |
 | `packages/integrations`, `packages/integration-kit` | The integrations catalogue (`src/catalog`), the connected-account integrations (`src/integrations`) and the shared integration types |
 | `packages/config` | Platform constants: the brand, the hosted service's URLs, contact emails, social links and limits shared across the app (its README says what belongs there) |
 | `packages/availability` | Which built-in features a deployment can offer (custom domains, AI, storage, email, the bots), decided from which variables are set; the app passes its environment in (its README says how the app and `/zone/availability.json` use it) |
 | `packages/analytics` | The cookie banner and preferences, `track()`, and the browser-side tools consent gates (PostHog, Umami, Featurebase); its README says what an app passes in |
 | `packages/i18n` | The languages (`config.ts`), which pages exist in each (`localized-paths.json`) and their URLs, the docs' languages, sidebar labels, search and SEO rules, and a copy of the docs' messages (its README says what's where) |
 | `packages/rate-limit` | Upstash-based rate limiting |
-| `packages/next-config`, `packages/typescript-config` | Shared Next.js config and env keys, shared tsconfig presets |
+| `packages/next-config`, `packages/typescript-config` | Shared Next.js config, env keys and Content-Security-Policy builder (`@repo/next-config/csp`), shared tsconfig presets |
 | `plugins/chrome`, `plugins/figma`, `plugins/raycast`, `plugins/canva` | The Chrome extension, Figma plugin, Raycast extension and Canva app |
 | `skills/` | Agent skills, such as `generate-qr` |
 

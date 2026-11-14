@@ -1,50 +1,15 @@
+// The JSON-LD helpers live in @repo/design-system/components/seo/json-ld, so
+// QRdx's other apps share them. This path stays for the app's imports and
+// resolves breadcrumbs against the app's own URL.
+
+import {
+  breadcrumbSchema as breadcrumbSchemaFor,
+  type Crumb,
+} from "@repo/design-system/components/seo/json-ld";
 import { baseUrl } from "@/lib/metadata";
 
-type JsonLdData = Record<string, unknown>;
+export * from "@repo/design-system/components/seo/json-ld";
 
-/** Escapes "<" so string values can never close the script tag. */
-function serialize(data: JsonLdData): string {
-  return JSON.stringify(data).replace(/</g, "\\u003c");
-}
-
-export function JsonLd({ data }: { data: JsonLdData }) {
-  return (
-    <script
-      type="application/ld+json"
-      // biome-ignore lint/security/noDangerouslySetInnerHtml: schema markup requires raw JSON
-      dangerouslySetInnerHTML={{ __html: serialize(data) }}
-    />
-  );
-}
-
-export interface Crumb {
-  name: string;
-  path: string;
-}
-
-export function breadcrumbSchema(crumbs: Crumb[]): JsonLdData {
-  return {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: crumbs.map((crumb, index) => ({
-      "@type": "ListItem",
-      position: index + 1,
-      name: crumb.name,
-      item: new URL(crumb.path, baseUrl).toString(),
-    })),
-  };
-}
-
-export function faqSchema(
-  faqs: { question: string; answer: string }[],
-): JsonLdData {
-  return {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: faqs.map((faq) => ({
-      "@type": "Question",
-      name: faq.question,
-      acceptedAnswer: { "@type": "Answer", text: faq.answer },
-    })),
-  };
+export function breadcrumbSchema(crumbs: Crumb[]) {
+  return breadcrumbSchemaFor(crumbs, baseUrl);
 }
