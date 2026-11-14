@@ -1,187 +1,117 @@
 ---
 title: Dynamic QR codes
-description: Print a QR code once, change where it points later, and see how often it is scanned.
-icon: QrCode
+description: Print a QR code once, change where it points later, and see how often and where it is scanned.
 ---
 
-A dynamic QR code encodes a short link such as `https://qrdx.dev/q/aB3dE5f` instead of your final URL. Scanning it opens the short link, which redirects to the destination you set. You can change the destination at any time, so printed codes never go out of date, and every scan is counted.
+A dynamic QR code encodes a short link such as `https://qrdx.dev/q/aB3dE5f` instead of your final URL. Scanning it opens the short link, which redirects to the destination you set. You can change the destination at any time, so printed codes never go out of date, and every scan is counted. Use one whenever a code goes on something you can't reprint cheaply: menus, packaging, posters, business cards.
 
-Static QR codes from the playground and the `qrdx` library stay free and unlimited. Dynamic codes need a QRdx account.
+<Callout type="info" title="Needs a QRdx account">
+  Static QR codes from the playground and the `qrdx` library stay free and unlimited. Dynamic codes need an account: Free includes 10 active dynamic codes, Pro and Business have no limit. See [Plans and limits](/docs/plans-and-limits).
+</Callout>
 
-## Create a dynamic code
+In a hurry? The short task pages: [Create a dynamic QR code](/docs/help/dynamic-codes/create), [Change where a code points](/docs/help/dynamic-codes/change-the-link), [See your scans](/docs/help/dynamic-codes/scans) and [Archive, delete and restore codes](/docs/help/dynamic-codes/archive-and-delete).
 
-- **Dashboard:** open [Dashboard](/dashboard), click **New code**, enter the destination URL and an optional title. Download the code as PNG, WebP or SVG.
-- **Playground:** choose the **URL** content type, enter your link and turn on **Make it dynamic**. The QR code switches to a short link and keeps your design. If you edit the URL afterwards, click **Point it to the new URL** to update the destination. **Save design to code** stores the current design with the code.
+## How it works
 
-Destinations must be `http://` or `https://` links. Links with a username or password, and links to other QRdx short links, are rejected.
+{/* diagram: dynamic-code-redirect | A phone scans the printed code, which holds the short link; QRdx records the scan and redirects to the current destination, which the owner can change in the dashboard | concept drawing */}
 
-## Custom back-halves
+The printed code never changes: it holds the short link. When someone scans it, QRdx checks the code's settings (is it paused, scheduled, password-protected, routed by device or location), records the scan without cookies, and redirects to the destination. Changing the destination, the design or the settings takes effect on the next scan.
 
-Every code gets a random 7-character back-half, the part after `/q/`. On Pro and Business you can choose your own instead, such as `https://qrdx.dev/q/spring-menu`: fill in **Custom back-half** when you create or edit a code, and the dialog tells you as you type whether it's free.
+## Create a code
+
+**Dashboard:** open [Codes](/dashboard?to=codes) and click **New code**. The **New dynamic QR code** dialog asks what the code opens: **Website link**, or one of the [hosted page](/docs/landing-pages) templates. For a link, enter the **Destination URL** and an optional **Title**, then create the code. Download it as PNG, WebP or SVG from the code's **Overview** tab.
+
+{/* shot: new-code-dialog | The New dynamic QR code dialog with Website link selected and the Destination URL field filled | Dashboard → Codes → New code */}
+
+**Playground:** choose the **URL** content type, enter your link and switch the link from **Static** to **Dynamic**. The QR code now holds a short link and keeps your design. If you edit the URL afterwards, click **Point it to the new address** to update the destination. **Save design to code** stores the current design with the code. The action bar's **⋯** menu has **Make it dynamic…** for a code you designed as static.
+
+{/* shot: playground-dynamic-toggle | The URL form in the playground with Dynamic selected and the Point it to the new address button | Playground → URL type → Dynamic */}
+
+Destinations must be `http://` or `https://` links. Links with a username or password, and links to other QRdx short links, are rejected. Every destination also goes through [safety checks](/docs/code-controls#safety-checks-on-links).
+
+## Custom back-halves [#custom-back-halves]
+
+Every code gets a random 7-character back-half, the part after `/q/`. On Pro and Business you can choose your own, such as `https://qrdx.dev/q/spring-menu`: fill in **Custom back-half** when you create or edit a code, and the dialog tells you as you type whether it's free.
 
 - 3 to 64 characters: letters, digits, `-` and `_`, not starting or ending with `-`.
 - Back-halves are case-sensitive, like generated ones: `Spring-Menu` and `spring-menu` are two different links.
-- On `qrdx.dev` a back-half is unique across all of QRdx, and words that read as QRdx pages (`admin`, `api`, `docs`, `login`, `pricing`, `settings`, ...) are reserved.
-- On your own [custom domain](/docs/custom-domains) it only has to be unique on that domain, and only `api`, `p` and `q` are reserved, so `go.yourbrand.com/pricing` works. Such a back-half belongs to the domain: it has no `qrdx.dev/q/` link.
-- Changing the back-half of a code changes its link: QR codes printed with the old one stop working, so download the code again.
+- On `qrdx.dev` a back-half is unique across all of QRdx, and words that read as QRdx pages (`admin`, `api`, `docs`, `login`, `pricing`, `settings` and others) are reserved.
+- On your own [custom domain](/docs/custom-domains) it only has to be unique on that domain, and only a few technical words (`api`, `_next`, `null`, `undefined`) are reserved, so `go.yourbrand.com/pricing` works. Such a back-half belongs to the domain: it has no `qrdx.dev/q/` link.
 
-## Manage codes
+Changing the back-half of a code changes its link: QR codes printed with the old one stop working, so download the code again.
 
-From the dashboard you can:
+## Manage a code
 
-- **Edit link:** change the destination or title. The printed code keeps working and opens the new destination on the next scan.
-- **Change type:** turn a website link into a [hosted page](/docs/landing-pages), a page back into a link, or a page into another page type. The short link and scans stay. See [Change what a printed code opens](/docs/help/dynamic-codes/change-the-type).
-- **Edit design in playground:** opens the code in the editor, still bound to its short link.
-- **Archive:** the short link shows a "no longer active" page until you restore the code. Archived codes don't count toward your plan limit.
-- **Move to trash:** the short link shows a "no longer active" page (HTTP 410) and the code stops counting toward your plan. Restore it from **Trash**, or delete it forever there, which also removes its scan history; the short link then shows a "QR code not found" page. Deleting through the API (`DELETE /v1/codes/{id}`) is permanent immediately.
-- **Duplicate:** copies the destination, design, folder, tags and notes into a new code with a new short link and no scans.
-- **Version history:** every change is recorded on the code's page; restoring a version saves the current settings first, so a restore can be undone.
+Open a code from [Codes](/dashboard?to=codes). Its page has three tabs: **Overview** (the short link, the QR code and its downloads, scan totals, **Use with NFC** and shortcuts to its options), **Analytics** and **Settings**. Above the tabs:
+
+- **Edit link** changes the destination or title. The printed code keeps working and opens the new destination on the next scan.
+- **Change type** turns a website link into a [hosted page](/docs/landing-pages), a page back into a link, or a page into another page type. The short link and the scans stay. See [Change what a printed code opens](/docs/help/dynamic-codes/change-the-type).
+- The **⋯** menu holds **Edit design in playground** (the editor opens with the code still bound to its short link), **Duplicate**, **Share analytics...**, **Move to folder...**, **Move to workspace...**, **Pause** or **Resume**, **Archive** and **Move to trash**.
+
+{/* shot: code-page-overview | A code's page on the Overview tab: the short link, QR preview with download buttons, scan totals and the Options grid | Dashboard → Codes → open a code */}
+
+**Duplicate** makes a new code with a new short link and no scans. It copies the destination, design, folder, tags, notes and type, and, when your plan includes them, the code's controls, routing, UTM and pixel settings.
+
+**Archive** keeps the code but switches it off: the short link shows a "This QR code is no longer active" page until you restore it, and archived codes don't count toward your plan limit. **Move to trash** does the same and lets you delete the code forever from **Trash**, which also removes its scan history; the short link then shows a "QR code not found" page.
+
+**Version history**, at the bottom of the **Settings** tab, records every change to the code (up to 100 versions). Restoring a version saves the current settings first, so a restore can be undone.
 
 ## Organize codes
 
-- **Folders:** nest up to 5 levels deep. Drag codes onto a folder or use **Move to folder**. Deleting a folder moves its codes and subfolders up one level.
-- **Tags:** filter by several tags to see codes that have all of them.
-- **Favourites and notes:** star codes and keep private notes; notes are searchable.
-- **Search** covers titles, destinations, notes, tags and back-halves (paste a short link to find its code).
-- **Bulk actions:** select codes to move, tag, pause, archive, favourite, trash or download them as a ZIP of PNG, WebP or SVG files.
-- **CSV import:** **Codes → Import** creates up to {facts.importRows} dynamic codes from one CSV (destination, title, folder, tags, optional custom back-half in the `slug` column), and can file every code into one folder and add tags to all of them. A long import can be paused, and it picks up after a reload or a dropped connection without making any code twice. It ends with a results CSV (each row's short link) and a ZIP of the codes as PNG or SVG. Importing more than one row, and custom back-halves, need Pro.
+- **Folders** nest up to 5 levels deep. Drag codes onto a folder or use **Move to folder...**. Deleting a folder moves its codes and subfolders up one level.
+- **Tags** filter the list: pick several to see codes that have all of them.
+- **Favorites and notes:** star codes and keep private notes; notes are searchable.
+- **Search** covers titles, destinations, notes, tags and back-halves, so pasting a short link finds its code.
+- **Bulk actions:** select codes to move, tag, pause, archive, favorite, trash or download them as a ZIP of PNG, WebP or SVG files.
+- **CSV import:** **Codes** → **Import** in the sidebar (or **New code** → **Import codes** → **From a CSV file**) creates up to {facts.importRows} dynamic codes from one file: destination, title, folder, tags and an optional custom back-half in a `slug` column. You can file every code into one folder and tag them all. A long import can be paused, and it picks up after a reload or a dropped connection without making any code twice. It ends with a results CSV (each row's short link) and a ZIP of the codes as PNG or SVG. Importing more than one row, and custom back-halves, need Pro.
 
-Codes belong to the workspace they're created in. Every member of the workspace can create and edit them; members can delete their own codes, owners and admins can delete any code in the workspace.
+{/* shot: codes-list-folders | The Codes list with folders in the left column, a tag filter applied and two codes selected for a bulk action | Dashboard → Codes */}
 
-<Callout type="info">
-  Codes never die: downgrading your plan never turns off existing codes. Over the limit you can still edit and archive codes, you just can't create or restore more until you're under it.
-</Callout>
+## Who can do what
 
-## Plans
+Codes belong to the workspace they're created in. Owners, admins and members create and edit codes; members delete their own codes, owners and admins any code; viewers and billing members only look. A workspace's codes use the best plan among its owners and billing members. See [Workspaces and teams](/docs/teams).
+
+## Scan analytics
+
+A code's **Analytics** tab shows scans over time, unique visitors, QR scans and NFC taps, top countries and cities, devices, operating systems, browsers and referrers for the last 7, 30 or 90 days, 1 year or 3 years, or for all time since the first scan. Free shows the last {facts.freeScanHistoryYears} year; Pro and Business show everything. **Export CSV** downloads the scans in the selected range.
+
+{/* shot: code-analytics-tab | A code's Analytics tab with the range picker, the scans-over-time chart and the country and device cards | Dashboard → Codes → open a code → Analytics */}
+
+Each scan records the time (UTC), the country, region and city from the network, the device type, operating system and browser from the user agent, and the referrer's host name. Instead of an IP address it stores a salted hash of the address, user agent and day, which counts unique visitors per day and can't be turned back into the address. Known bots, link previews and browser prefetches aren't counted. On Pro and Business a code can also [ask scanners for their precise location](/docs/precise-location). Full list: [What QRdx records when someone scans](/docs/help/privacy-and-security/scan-data).
+
+## Limits and plans
 
 | | Free | Pro | Business |
 | --- | --- | --- | --- |
 | Active dynamic codes | 10 | Unlimited | Unlimited |
 | Scans | Unlimited | Unlimited | Unlimited |
-| Scan history | {facts.freeScanHistoryYears} year | Unlimited | Unlimited |
-| Bulk creation via the API | No | Up to {facts.apiBatchCodes} per request | Up to {facts.apiBatchCodes} per request |
+| Scan history | {facts.freeScanHistoryYears} year | All | All |
+| Custom back-halves | No | Yes | Yes |
+| CSV import | 1 row | Up to {facts.importRows} rows | Up to {facts.importRows} rows |
+| Bulk creation through the API | No | Up to {facts.apiBatchCodes} per request | Up to {facts.apiBatchCodes} per request |
 
-A workspace's codes use the best plan among its owners. See [Plans and limits](/docs/plans-and-limits) for everything else each plan includes.
+<Callout type="info" title="Codes never die">
+  Downgrading never turns off existing codes. Over the limit you can still edit and archive codes; you can't create or restore more until you're under it. See [What happens to your codes if you stop paying](/docs/help/account-and-billing/never-hostage).
+</Callout>
 
-## Scan analytics
+## For developers [#rest-api]
 
-Each code has an analytics page with scans over time, unique visitors, top countries and cities, devices, operating systems, browsers and referrers for the last 7, 30 or 90 days, 1 year or 3 years, or for all time since the code's first scan (limited by your plan's history: all time is on Pro and Business). You can export the scans in the selected range as CSV.
+Everything above is available through the REST API under `https://api.qrdx.dev/v1/codes`, with an [API key](/docs/developers/api-keys) or an OAuth token that has the `codes:read` or `codes:write` scope.
 
-What is recorded for each scan:
+- [List codes](/docs/developers/api/list-codes), [create codes](/docs/developers/api/create-codes), [get](/docs/developers/api/get-code), [update](/docs/developers/api/update-code) and [delete](/docs/developers/api/delete-code) a code, and [read its scans](/docs/developers/api/get-code-scans).
+- On Pro and Business, `POST /v1/codes` takes an array of up to {facts.apiBatchCodes} codes in one all-or-nothing request, with an `Idempotency-Key` header so a retry never creates duplicates and `Prefer: return=minimal` to leave out each code's design. The details are on [Create codes](/docs/developers/api/create-codes).
+- `slug` chooses the back-half, `domainId` a custom domain, `kind` switches between a redirect and a page, and `preciseLocation` turns on the location step. Every code comes back with `shortLink`, `defaultShortLink` and `nfcLink`.
+- Every error has the same shape: see [Errors](/docs/developers/errors).
 
-- Time (UTC), and country, region and city when the hosting platform provides them (Vercel geo headers on qrdx.dev)
-- Device type, operating system and browser, detected from the user agent
-- The referrer's host name only, never the full URL. Most QR scans have no referrer.
-- A visitor hash: a salted SHA-256 of the IP address, user agent and day. It counts unique visitors per day; the IP address itself is never stored.
-- On Pro and Business, when the code [asks for precise location](/docs/precise-location) and the scanner allows it: their location rounded to 3 decimal places (about 100 m) and the accuracy their browser reported
-
-Known bots, link previews and browser prefetches are not counted.
-
-## REST API
-
-Manage codes programmatically under `https://api.qrdx.dev/v1/codes`. Requests are authenticated with an [API key](/docs/developers/api-keys) or an OAuth access token (`Authorization: Bearer <key or token>`) that has the `codes:read` or `codes:write` scope; see [REST API](/docs/developers/rest-api) for how to get one. A key acts on the workspace it was created in; token requests act on your own workspace. Requests from a signed-in browser session also work and act on the workspace you last opened in the dashboard.
-
-| Method | Path | Description |
-| --- | --- | --- |
-| `GET` | `/v1/codes` | List codes. Query: `status` (`active`, `archived`, `all`), `q`, `limit` (≤ 100), `offset` |
-| `POST` | `/v1/codes` | Create one code, or an array of up to {facts.apiBatchCodes} (arrays need Pro). Body: `destinationUrl`, optional `title`, `style`, `domainId` and `slug` |
-| `GET` | `/v1/codes/{id}` | Get one code |
-| `PATCH` | `/v1/codes/{id}` | Update `destinationUrl`, `title`, `style`, `domainId` ([custom domains](/docs/custom-domains)), `slug` or `archived`, or switch `kind` between `redirect` and `page` |
-| `DELETE` | `/v1/codes/{id}` | Delete a code and its scans |
-| `GET` | `/v1/codes/{id}/scans` | Analytics for `range` (`7d`, `30d`, `90d`, `365d`, `1095d`, or `all` on Pro and Business; limited by your plan's history). Add `limit` (≤ 500) for individual scans, and `before` (the last `scannedAt`) for the next page |
-
-Create a code:
-
-```bash
-curl https://api.qrdx.dev/v1/codes \
-  -H "Authorization: Bearer $QRDX_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"destinationUrl": "https://example.com/menu", "title": "Spring menu"}'
-```
-
-```json
-{
-  "data": {
-    "id": "cm3x...",
-    "slug": "aB3dE5f",
-    "shortLink": "https://qrdx.dev/q/aB3dE5f",
-    "defaultShortLink": "https://qrdx.dev/q/aB3dE5f",
-    "domain": null,
-    "destinationUrl": "https://example.com/menu",
-    "title": "Spring menu",
-    "contentType": "url",
-    "kind": "redirect",
-    "pageId": null,
-    "status": "active",
-    "style": null,
-    "scanCount": 0,
-    "lastScannedAt": null,
-    "archivedAt": null,
-    "createdAt": "2026-10-31T12:00:00.000Z",
-    "updatedAt": "2026-10-31T12:00:00.000Z",
-    "organizationId": null
-  }
-}
-```
-
-Pass `slug` to choose the back-half (Pro and Business; see [custom back-halves](#custom-back-halves) for the rules). With a `domainId` it's checked on that domain, otherwise on `qrdx.dev`:
-
-```bash
-curl https://api.qrdx.dev/v1/codes \
-  -H "Authorization: Bearer $QRDX_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"destinationUrl": "https://example.com/menu", "slug": "spring-menu"}'
-```
-
-The response then has `"slug": "spring-menu"` and `"shortLink": "https://qrdx.dev/q/spring-menu"`. A back-half chosen on a custom domain has `"defaultShortLink": null`, because it only exists on that domain. In an array, every `slug` must be different.
-
-### Many codes in one request
-
-On Pro and Business, send an array of up to {facts.apiBatchCodes} codes. Generated back-halves never repeat within the batch or clash with existing codes. Links Google Web Risk can't check in time are looked up again shortly after the batch is created, and a code whose link it lists is switched off ([safety checks](/docs/code-controls#safety-checks-on-links)). A batch is all or nothing: if any row has a problem (an invalid destination, a taken or reserved `slug`, an unsafe link), nothing is created and the error's `data.details` lists every problem by `index`, the row's place in the array (from 0).
-
-Send an `Idempotency-Key` header with a value unique to the batch, such as a UUID. If the request times out or the connection drops, send the same request with the same key again: you get back the codes the first try made, with an `Idempotent-Replayed: true` header, and a try that was cut off part way is finished without making any code twice.
-
-```bash
-curl https://api.qrdx.dev/v1/codes \
-  -H "Authorization: Bearer $QRDX_TOKEN" \
-  -H "Content-Type: application/json" \
-  -H "Idempotency-Key: 6f1c2a9e-spring-tables" \
-  -H "Prefer: return=minimal" \
-  -d '[{"destinationUrl": "https://example.com/table/1", "title": "Table 1"},
-       {"destinationUrl": "https://example.com/table/2", "title": "Table 2"}]'
-```
-
-Each code comes back with its design. When your workspace's default theme embeds a logo, that adds up over a large batch: send `Prefer: return=minimal` to get each code without `style` (its id, slug, links, destination, title, status and creation time). A batch whose response wouldn't fit in 4 MB is refused with `PAYLOAD_TOO_LARGE` before anything is created.
-
-Change the destination:
-
-```bash
-curl -X PATCH https://api.qrdx.dev/v1/codes/cm3x... \
-  -H "Authorization: Bearer $QRDX_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"destinationUrl": "https://example.com/summer-menu"}'
-```
-
-`style` takes the same design fields as the playground (`fgColor`, `bgColor`, `bodyPattern`, `cornerEyePattern`, `level`, ...). For a logo, send `logoIcon`<IfAvailable feature="fileStorage"> or an uploaded file's `logoFileId`</IfAvailable> ([logos in a code's style](/docs/developers/rest-api#code-logos)). Encode `shortLink` in your QR code, for example with the [`qrdx` library](/docs/getting-started) or the [image API](/docs/developers/image-api).
-
-Errors use one JSON shape, `{ "code": "...", "message": "...", "status": 400 }`, plus a `docs` link when a page explains the fix:
-
-| Status | Code | When |
-| --- | --- | --- |
-| 400 | `VALIDATION_ERROR`, `INVALID_SLUG` | Invalid body or query (details in `data`, by `index` in a batch), or a `slug` that breaks the rules or is reserved |
-| 401 | `UNAUTHORIZED`, `INVALID_TOKEN` | No `Authorization: Bearer` token, or an invalid, expired or revoked one ([get a token](/docs/developers/rest-api#get-an-access-token)) |
-| 402 | `LIMIT_REACHED`, `PLAN_REQUIRED` | Over your plan's active code limit, or bulk creation or a custom `slug` without Pro |
-| 403 | `INSUFFICIENT_SCOPE`, `FORBIDDEN` | Token without the needed scope, or a workspace role that can't do this |
-| 404 | `NOT_FOUND` | The code doesn't exist or isn't yours, or there's no such endpoint |
-| 409 | `SLUG_TAKEN` | Another code already uses that `slug` (on `qrdx.dev`, or on the custom domain) |
-| 429 | `RATE_LIMITED` | Too many requests; retry after the `Retry-After` header |
+The [REST API](/docs/developers/rest-api) page explains authentication and rate limits; the [quickstart](/docs/developers/quickstart) creates your first code from the terminal.
 
 ## Self-hosting
 
-Dynamic codes work on self-hosted instances too:
+Dynamic codes work on a self-hosted instance with two optional variables: `NEXT_PUBLIC_SHORT_LINK_BASE_URL` sets the origin of short links (it defaults to your app URL) and `SCAN_HASH_SALT` sets the salt for visitor hashes (without it, one is derived from `BETTER_AUTH_SECRET`). Country, region and city come from Vercel's geo headers; behind Cloudflare only the country is read, and elsewhere locations show as unknown. [Area rules](/docs/precise-location#route-scans-by-area) use Vercel's IP coordinates when a scanner didn't share a location, so off Vercel they only match shared locations. Rate limits apply when Upstash Redis is configured. See [Self-hosting](/docs/self-hosting#optional-services).
 
-- `NEXT_PUBLIC_SHORT_LINK_BASE_URL` sets the origin of short links. It defaults to your app URL.
-- `SCAN_HASH_SALT` sets the secret salt for visitor hashes. Without it, one is derived from `BETTER_AUTH_SECRET`.
-- Country, region and city come from Vercel's geo headers. Behind Cloudflare only the country is available (`CF-IPCountry`); elsewhere locations show as unknown.
-- Area rules use Vercel's IP coordinates (`x-vercel-ip-latitude`, `x-vercel-ip-longitude`) when a scanner didn't share a location. Elsewhere they only match scans with a shared location.
-- Rate limits apply when Upstash Redis is configured.
+## Related
+
+- [Code controls](/docs/code-controls): pause, password, schedule and scan limits
+- [Smart routing](/docs/smart-routing): a different destination by device, country or time
+- [Custom domains](/docs/custom-domains): short links on your own domain
+- [A code opens the wrong page](/docs/help/troubleshooting/wrong-destination)

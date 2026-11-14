@@ -1,23 +1,32 @@
 ---
 title: Smart routing
 description: Send each scan of a dynamic QR code to a different URL by device, country, area, language, time or scan count, run A/B tests and add UTM parameters.
-icon: Split
 ---
 
-A [dynamic QR code](/docs/dynamic-qr-codes) normally sends every scan to one destination. With smart routing, one printed code can open the App Store on iPhones and Google Play on Android, a Spanish page for Spanish-speaking visitors, or a different offer outside business hours. You set it up in the **Smart routing** panel on the code's page in the [dashboard](/dashboard?to=codes) (open a code, then open its **Settings** tab).
+A [dynamic QR code](/docs/dynamic-qr-codes) normally sends every scan to one destination. With smart routing, one printed code can open the App Store on iPhones and Google Play on Android, a Spanish page for Spanish-speaking visitors, or a different offer outside business hours. Use it when the right page depends on who scans, where, or when.
 
-Smart routing and UTM parameters are part of Pro and Business. They apply to codes that open a website link; [hosted pages](/docs/landing-pages) don't redirect, so they have no routing.
+<Callout type="info" title="Pro and Business">
+  Smart routing and UTM parameters are part of Pro and Business. They apply to codes that open a website link; [hosted pages](/docs/landing-pages) don't redirect, so they have no routing. See [Plans and limits](/docs/plans-and-limits).
+</Callout>
 
-## How rules work
+In a hurry? The short task page: [Send scans to different links](/docs/help/dynamic-codes/routing).
 
-- A code has up to 20 **rules**. Each rule has conditions ("when") and an action ("then").
-- Rules are checked **top to bottom** for every scan. The **first rule whose conditions all match** decides where the scan goes. Use the arrows to reorder rules.
+## How it works
+
+{/* diagram: routing-rules-order | A scan arriving at a list of rules checked top to bottom, the first match deciding the URL, and the main destination catching everything else | concept drawing */}
+
+You set up routing in the **Smart routing** panel on the code's **Settings** tab (open the code from [Codes](/dashboard?to=codes)).
+
+- A code has up to 20 **rules**. Each rule has conditions ("when") and an action ("then": a URL, or an A/B split).
+- Rules are checked top to bottom for every scan. The first rule whose conditions all match decides where the scan goes. Use the arrows to reorder rules.
 - When no rule matches, the scan goes to the code's main destination.
 - A rule without conditions matches every scan, so rules below it never run.
-- Turn a rule **off** to keep it without using it.
+- Turn a rule off to keep it without using it.
 - Changes apply to the next scan; you never need to reprint the code.
 
 If a rule can't be evaluated for some reason, the scan still goes to the main destination: routing never stops a code from working.
+
+{/* shot: routing-panel-rules | The Smart routing panel with three rules: an iOS rule, an Android rule and a country rule, with their reorder arrows | Dashboard → Codes → open a code → Settings → Smart routing */}
 
 ## Conditions
 
@@ -26,11 +35,11 @@ Each condition can be inverted with **is not** (for example "country is not US")
 | Condition | Matches when | Notes |
 | --- | --- | --- |
 | Device | The scanner uses a phone, tablet, desktop or other device | From the browser's user agent |
-| Operating system | iOS, Android, Windows, macOS, Linux, ChromeOS, HarmonyOS, … | iPhone and iPad both count as iOS |
+| Operating system | iOS, Android, Windows, macOS, Linux, ChromeOS, HarmonyOS and others | iPhone and iPad both count as iOS |
 | Country | The scan comes from one of the listed countries | 2-letter codes like `US, CA, GB` |
-| Region | The scan comes from one of the listed regions | Codes like `US-CA, US-NY` (country + subdivision) |
+| Region | The scan comes from one of the listed regions | Codes like `US-CA, US-NY` (country and subdivision) |
 | Language | The visitor's preferred browser language is one of the listed ones | `es` matches every Spanish variant (`es-MX`, `es-ES`); `pt-BR` only Brazilian Portuguese |
-| Time of day | The scan happens on the chosen weekdays between two times in a time zone you pick | A window like 22:00–02:00 runs past midnight and belongs to the day it starts |
+| Time of day | The scan happens on the chosen weekdays between two times in a time zone you pick | A window like 22:00 to 02:00 runs past midnight and belongs to the day it starts |
 | Date range | The scan happens between two dates | Leave one side empty for "until" or "from"; dates are in your browser's time zone |
 | Scan count | It's one of the first N scans, or any scan after N | Counts recorded scans (bots aren't counted), so it is approximate when many people scan at once |
 | Area | The scanner is within a radius (100 m to 500 km) of a point | Uses the location the scanner shared when [precise location](/docs/precise-location) is on, otherwise the approximate location of their IP address |
@@ -39,28 +48,48 @@ Country, region and the IP-based location for areas come from the scanner's IP a
 
 ## Smart app links
 
-Choose **Add rule → Smart app link** to create two rules at once: iOS goes to your App Store link, Android to your Google Play link. Everyone else (desktop, other phones) goes to the main destination, for example your website.
+Choose **Add rule** → **Smart app link (App Store / Google Play)** to create two rules at once: iOS goes to your App Store link, Android to your Google Play link. Everyone else (desktop, other phones) goes to the main destination, for example your website.
 
-## A/B tests
+## A/B tests [#ab-tests]
 
 Set a rule's action to **Split between URLs (A/B)** and add 2 to 5 variants, each with a URL and a weight. A split of 70 and 30 sends about 70% of visitors to the first URL.
 
-- Assignment is **sticky**: a visitor who scans again the same day gets the same variant. It is based on an anonymous daily visitor hash, never a cookie.
-- The code's analytics show **scans per variant** since the split's variants or weights last changed. Each scan stores the variant it was served. Scans recorded before QRdx stored variants are replayed with your current rules and the card is marked as an estimate.
-- A split can have conditions too, for example "A/B test for visitors in Germany only".
+- Assignment is sticky: a visitor who scans again the same day gets the same variant. It is based on an anonymous daily visitor hash, never a cookie.
+- The code's **Analytics** tab shows an **A/B split** card with scans per variant since the split's variants or weights last changed. Each scan stores the variant it was served. Scans from before QRdx stored variants are replayed with your current rules, and the card is then marked as an estimate.
+- A split can have conditions too, for example an A/B test for visitors in Germany only.
+
+{/* shot: ab-split-card | The A/B split card on a code's Analytics tab showing scans per variant | Dashboard → Codes → open a code with a split → Analytics */}
 
 ## Test your rules
 
-**Test your rules** at the bottom of the panel shows where a scan would go, for any device, operating system, country, region, language, date and time, scan number and visitor, using your unsaved changes. It lists which rule matched and why the others didn't, and shows the final URL including UTM parameters.
+Once a code has at least one rule, **Test your rules (uses unsaved changes)** at the bottom of the panel shows where a scan would go for any device, operating system, country, region, language, date and time, scan number, visitor and location. It runs the rules as you have them in the panel, saved or not, against the code's saved main destination and UTM settings. It lists which rule matched and why the others didn't, and shows the final URL including UTM parameters.
+
+{/* shot: routing-tester | The Test your rules form filled in for an Android scan from Germany, with the matched rule and final URL below it | Dashboard → Codes → open a code → Settings → Smart routing → Test your rules */}
 
 ## UTM parameters
 
-The **UTM parameters** panel adds `utm_source`, `utm_medium`, `utm_campaign`, `utm_term`, `utm_content` and up to 10 parameters of your own to the URL each scan opens, so analytics tools can tell QR traffic apart.
+The **UTM parameters** panel, below the routing panel, adds `utm_source`, `utm_medium`, `utm_campaign`, `utm_term`, `utm_content` and up to 10 parameters of your own to the URL each scan opens, so analytics tools can tell QR traffic apart.
 
 - Parameters are added after routing, to whichever URL the scan goes to.
 - A parameter the URL already has is never replaced, and the rest of the URL is kept exactly as you entered it.
 - Names starting with `qrdx_` are reserved for [conversion tracking](/docs/tracking-and-conversions).
 
-## Plans and downgrades
+## Limits and plans
 
-Rules and UTM parameters saved on Pro keep working if you downgrade: limits only block creating new things. Without Pro you can still turn rules off and delete them or remove UTM parameters; changing them needs Pro again.
+| | Free | Pro | Business |
+| --- | --- | --- | --- |
+| Rules per code | None | 20 | 20 |
+| Variants per A/B split | None | 2 to 5 | 2 to 5 |
+| Custom UTM parameters | None | 10 | 10 |
+
+Rules and UTM parameters saved on Pro keep working if you downgrade: limits only block creating new things. Without Pro you can still turn rules off, delete them and remove UTM parameters; changing them needs Pro again.
+
+## For developers
+
+Rules, splits and UTM parameters are set in the dashboard. The [codes API](/docs/developers/api/update-code) creates and updates codes and their destinations but doesn't manage routing rules. Each recorded scan in [`GET /v1/codes/{id}/scans`](/docs/developers/api/get-code-scans) carries the device type, operating system, country, region and city the rules saw.
+
+## Related
+
+- [Precise location and geofencing](/docs/precise-location): route by area, down to about 100 m
+- [Tracking and conversions](/docs/tracking-and-conversions): UTM parameters and conversion tracking together
+- [A code opens the wrong page](/docs/help/troubleshooting/wrong-destination): when a rule matched that you didn't expect
