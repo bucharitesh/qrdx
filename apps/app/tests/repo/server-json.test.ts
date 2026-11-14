@@ -1,9 +1,10 @@
-// server.json at the repo root is what the owner publishes to the official
-// MCP Registry (mcp-publisher). It must describe the server that runs: the
-// version initialize reports, the public URL, the tools that need a key, and
-// every barcode format generate_barcode draws.
+// server.json at the repo root is what .github/workflows/mcp-registry.yml
+// publishes to the official MCP Registry (mcp-publisher). It must describe
+// the server that runs: the version initialize reports, the public URL, the
+// tools that need a key, and every barcode format generate_barcode draws.
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import { MCP_REGISTRY_NAME } from "@repo/config";
 import { describe, expect, it } from "vitest";
 import { MCP_TOOLS } from "@/app/[lang]/(home)/mcp/content";
 import { MCP_SERVER_INFO } from "@/app/api/mcp/tools";
@@ -18,7 +19,7 @@ const summary: string =
 
 describe("server.json", () => {
   it("names the registry entry and the running server's version", () => {
-    expect(server.name).toBe("io.github.bucharitesh/qrdx");
+    expect(server.name).toBe(MCP_REGISTRY_NAME);
     expect(server.version).toBe(MCP_SERVER_INFO.version);
     expect(server.$schema).toMatch(
       /^https:\/\/static\.modelcontextprotocol\.io\/schemas\/\d{4}-\d{2}-\d{2}\/server\.schema\.json$/,

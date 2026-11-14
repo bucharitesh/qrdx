@@ -5,5 +5,6 @@
 export * from "./brand";
 export * from "./contact";
 export * from "./limits";
+export * from "./mcp";
 export * from "./social";
 export * from "./urls";

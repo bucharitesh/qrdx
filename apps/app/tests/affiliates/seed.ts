@@ -4,7 +4,7 @@ import { fakeDb } from "../support/fake-db";
 
 export const AFFILIATE_USER = {
   id: "user_affiliate",
-  email: "ana.diaz@gmail.com",
+  email: "ana.diaz@example.test",
   name: "Ana Diaz",
 };
 export const CUSTOMER = {
