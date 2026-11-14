@@ -13,6 +13,7 @@ import {
   imageModelParts,
   imageModelResult,
   installFakeGateway,
+  textOnlyResult,
 } from "../support/fake-gateway";
 
 const state = vi.hoisted(() => {
@@ -369,5 +370,90 @@ describe("the art request through Vercel AI Gateway", () => {
     expect(response.status).toBe(502);
     expect((await response.json()).message).toMatch(/returned no image/);
     expect(usage()).toHaveLength(0);
+  });
+});
+
+describe("quick looks and a written description", () => {
+  const isTextCall = (url: string) => url.endsWith("/language-model");
+
+  it("adds the look's words and things to avoid to the art prompt", async () => {
+    respondWithArt(() => paintedArt(control.png, { keep: 0.75 }));
+    const response = await generate({
+      style: "watercolor",
+      negativePrompt: "people",
+    });
+    expect(response.status).toBe(200);
+    expect((await response.json()).writtenPrompt).toBeUndefined();
+    expect(gateway.calls).toHaveLength(1);
+    const { text } = imageModelParts(gateway.calls[0]!);
+    expect(text).toMatch(
+      /^Repaint the QR code in the first image as artwork: a zen garden, painted in watercolor/,
+    );
+    expect(text).toMatch(
+      /^Avoid: people, black outlines, photographic detail, pale washed-out areas\.$/m,
+    );
+  });
+
+  it("rejects an unknown look before anything runs", async () => {
+    const response = await generate({ style: "sepia" });
+    expect(response.status).toBe(400);
+    expect(gateway.calls).toHaveLength(0);
+    expect(usage()).toHaveLength(0);
+  });
+
+  it("writes a missing description first, then paints it with the look, for one credit", async () => {
+    const art = await paintedArt(control.png, { keep: 0.75 });
+    gateway.respondWith((call) =>
+      isTextCall(call.url)
+        ? textOnlyResult("A koi pond in the rain, ripples under lanterns.")
+        : imageModelResult([art]),
+    );
+    const response = await generate({ prompt: undefined, style: "ink" });
+    expect(response.status).toBe(200);
+    const body = await response.json();
+    expect(body.writtenPrompt).toBe(
+      "A koi pond in the rain, ripples under lanterns.",
+    );
+    expect(body.credits).toMatchObject({ used: 1 });
+
+    expect(gateway.calls.map((call) => call.url.split("/").pop())).toEqual([
+      "language-model",
+      "image-model",
+    ]);
+    expect(gateway.calls[0]?.headers["ai-language-model-id"]).toBe(
+      "anthropic/claude-haiku-5.5",
+    );
+    const { text } = imageModelParts(gateway.calls[1]!);
+    expect(text).toMatch(
+      /artwork: A koi pond in the rain, ripples under lanterns, as an ink wash drawing/,
+    );
+  });
+
+  it("refunds the credit when the description can't be written", async () => {
+    gateway.respondWith((call) =>
+      isTextCall(call.url)
+        ? gatewayError(500, "internal_server_error")
+        : imageModelResult([]),
+    );
+    const response = await generate({ prompt: "" });
+    expect(response.status).toBe(502);
+    expect((await response.json()).code).toBe("AI_ART_DESCRIBE_FAILED");
+    expect(gateway.calls.filter((call) => !isTextCall(call.url))).toHaveLength(
+      0,
+    );
+    expect(usage()).toHaveLength(0);
+  });
+
+  it("doesn't write anything for someone out of credits", async () => {
+    fakeDb.seed(
+      "aiUsage",
+      [1, 2, 3].map((n) =>
+        usageRow(`used_${n}`, "u_alice", "openai/gpt-image-2"),
+      ),
+    );
+    gateway.respondWith(() => textOnlyResult("A quiet harbor at dusk."));
+    const response = await generate({ prompt: undefined });
+    expect(response.status).toBe(402);
+    expect(gateway.calls).toHaveLength(0);
   });
 });

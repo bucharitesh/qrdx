@@ -20,6 +20,8 @@
     "update-barcode",
     "delete-barcode",
     "get-saved-barcode-image",
+    "---AI 아트---",
+    "create-art",
     "---스캔---",
     "get-code-scans",
     "---전환---",

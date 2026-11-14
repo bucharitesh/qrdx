@@ -21,6 +21,7 @@ import { LocaleLink } from "@/components/i18n/locale-link";
 import { ART_MODEL_LABEL, ART_SUPPORTS_SEED } from "@/lib/ai/art-models";
 import { useTrackEditorOpened } from "@/lib/analytics/react";
 import { playgroundHref } from "@/lib/playground-links";
+import { useAuthStore } from "@/store/auth-store";
 import { AIArtComingSoon } from "./ai-art-coming-soon";
 import { AIArtPresetGallery } from "./ai-art-preset-gallery";
 import { AIArtResultPanel } from "./ai-art-result";
@@ -29,6 +30,14 @@ import {
   lockedSeedFor,
   seedIsInvalid,
 } from "./ai-art-run";
+import { ArtLookChips } from "./art-look-chips";
+import {
+  ArtLookWriteButton,
+  describeRequestFor,
+  useArtPromptWriter,
+} from "./art-look-write";
+import { ArtModePicker } from "./art-mode-picker";
+import { useArtModeProgress } from "./art-mode-progress";
 import {
   type AIArtCredits,
   type AIArtRequest,
@@ -39,8 +48,11 @@ import {
   ART_PROMPT_MIN_LENGTH,
   ART_QR_VISIBILITY,
   ART_TEXT_MAX_LENGTH,
+  type ArtMode,
+  DEFAULT_ART_MODE,
   seedsForRun,
 } from "./config";
+import type { ArtLookId } from "./looks";
 import type { AIArtPreset } from "./presets";
 import {
   AI_ART_REFERENCE_TYPES,
@@ -63,14 +75,19 @@ interface AIArtStudioProps {
 
 export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
   const t = useTranslations("aiArt.aiArtStudio");
+  const tLooks = useTranslations("editor.art.artLooks");
+  const openAuthDialog = useAuthStore((state) => state.openAuthDialog);
   useTrackEditorOpened("ai_art");
   const [store] = useState(() => createAIArtRunStore(configured));
   const art = useAIArtRun({ store });
+  const progress = useArtModeProgress(store);
+  const writer = useArtPromptWriter({ mock: art.mock });
   const [text, setText] = useState("");
   const [prompt, setPrompt] = useState("");
   // The style preset the prompt came from, until the prompt is edited.
   const [preset, setPreset] = useState<AIArtPreset | null>(null);
   const presetId = preset?.id ?? null;
+  const [look, setLook] = useState<ArtLookId | null>(null);
   const [negativePrompt, setNegativePrompt] = useState("");
   const [visibility, setVisibility] = useState<number>(
     ART_QR_VISIBILITY.default,
@@ -80,9 +97,13 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
   const [seed, setSeed] = useState("");
   const [seedLocked, setSeedLocked] = useState(false);
   const [reference, setReference] = useState<string | null>(null);
+  const [mode, setMode] = useState<ArtMode>(DEFAULT_ART_MODE);
+  // Photo mode's photo: in memory only, never stored.
+  const [photo, setPhoto] = useState<string | null>(null);
   const referenceInputRef = useRef<HTMLInputElement>(null);
 
   const { credits, isGenerating, pendingVariations, run: result } = art;
+  const busy = isGenerating || writer.writing;
 
   if (!art.configured) {
     return <AIArtComingSoon />;
@@ -92,21 +113,49 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
   const lockedSeed = lockedSeedFor(seed, seedLocked, ART_SUPPORTS_SEED);
   const seedInvalid = seedIsInvalid(seed, seedLocked, ART_SUPPORTS_SEED);
   const notEnoughCredits = art.lacksCredits(variations);
+  // A blank description is written for you; a typed one needs a few words.
+  const promptLength = prompt.trim().length;
   const canSubmit =
     text.trim().length > 0 &&
-    prompt.trim().length >= ART_PROMPT_MIN_LENGTH &&
+    (promptLength === 0 || promptLength >= ART_PROMPT_MIN_LENGTH) &&
     !seedInvalid &&
-    !isGenerating;
+    (mode !== "photo" || Boolean(photo)) &&
+    !busy;
   const meta = { preset: presetId, lockedSeed: lockedSeed !== undefined };
 
   const currentRequest = (): AIArtRequest => ({
     text: text.trim(),
-    prompt: prompt.trim(),
+    ...(prompt.trim() && { prompt: prompt.trim() }),
+    ...(look && { style: look }),
     ...(negativePrompt.trim() && { negativePrompt: negativePrompt.trim() }),
     visibility,
     creativity,
     ...(reference && { reference }),
+    ...(mode !== DEFAULT_ART_MODE && { mode }),
+    ...(mode === "photo" && photo && { photo }),
   });
+
+  /** Fills the description from the writer; null when it failed. */
+  const writeDescription = async (request: AIArtRequest) => {
+    const written = await writer.write(describeRequestFor(request));
+    if (written) {
+      setPrompt(written);
+      setPreset(null);
+    }
+    return written;
+  };
+
+  const submit = async () => {
+    let request = currentRequest();
+    // Signed in, a blank description is written first, so it shows before
+    // it's used. Signed out, generating asks to sign in.
+    if (!request.prompt && art.signedIn) {
+      const written = await writeDescription(request);
+      if (!written) return;
+      request = { ...request, prompt: written };
+    }
+    await art.generate(request, seedsForRun(variations, lockedSeed), meta);
+  };
 
   const handleReference = async (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -124,13 +173,7 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
         className="flex flex-col gap-6"
         onSubmit={(event) => {
           event.preventDefault();
-          if (canSubmit) {
-            art.generate(
-              currentRequest(),
-              seedsForRun(variations, lockedSeed),
-              meta,
-            );
-          }
+          if (canSubmit) void submit();
         }}
       >
         <div className="flex flex-col gap-2">
@@ -150,6 +193,15 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
           </p>
         </div>
 
+        <ArtModePicker
+          disabled={isGenerating}
+          idPrefix="ai-art"
+          mode={mode}
+          onModeChange={setMode}
+          onPhotoChange={setPhoto}
+          photo={photo}
+        />
+
         <div className="flex flex-col gap-2">
           <div className="flex items-baseline justify-between gap-2">
             <Label htmlFor="ai-art-prompt">{t("style")}</Label>
@@ -159,15 +211,17 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
           </div>
           <AIArtPresetGallery
             activePresetId={presetId}
-            disabled={isGenerating}
+            disabled={busy}
             onSelect={(picked) => {
               setPreset(picked);
               setPrompt(picked.prompt);
               setNegativePrompt(picked.negativePrompt ?? "");
+              // A preset carries its own style.
+              setLook(null);
             }}
           />
           <Textarea
-            disabled={isGenerating}
+            disabled={busy}
             id="ai-art-prompt"
             maxLength={ART_PROMPT_MAX_LENGTH}
             onChange={(event) => {
@@ -180,6 +234,25 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
             rows={3}
             value={prompt}
           />
+          <div className="flex items-start justify-between gap-3">
+            <p className="text-muted-foreground pt-1.5 text-xs text-pretty">
+              {tLooks("blankIsWritten")}
+            </p>
+            <ArtLookWriteButton
+              disabled={isGenerating}
+              onClick={() => {
+                if (art.signedIn) void writeDescription(currentRequest());
+                else openAuthDialog("signin");
+              }}
+              writing={writer.writing}
+            />
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <Label>{tLooks("look")}</Label>
+          <ArtLookChips disabled={busy} onChange={setLook} value={look} wrap />
+          <p className="text-muted-foreground text-xs">{tLooks("lookHint")}</p>
         </div>
 
         <SliderField
@@ -340,10 +413,12 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
               disabled={!canSubmit || notEnoughCredits}
               type="submit"
             >
-              {isGenerating ? <Spinner /> : <Bot />}
-              {isGenerating
-                ? t("generating")
-                : t("generateVariations", { count: variations })}
+              {busy ? <Spinner /> : <Bot />}
+              {writer.writing
+                ? tLooks("writing")
+                : isGenerating
+                  ? t("generating")
+                  : t("generateVariations", { count: variations })}
             </Button>
             {isGenerating && (
               <Button onClick={art.cancel} type="button" variant="outline">
@@ -398,6 +473,7 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
 
       <AIArtResultPanel
         isGenerating={isGenerating}
+        progress={progress}
         onLockSeed={
           ART_SUPPORTS_SEED
             ? (value) => {

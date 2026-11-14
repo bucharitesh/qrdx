@@ -9,11 +9,15 @@
  * same raw image. With ffmpeg installed it also writes one sheet per model
  * and prompt: a row per seed, raw | old | new.
  *
+ * Code mode only. Scene and photo modes (the code painted into a picture)
+ * are measured by scripts/ai/art-eval-picture.ts, on the same pipeline.
+ *
  * Usage (from apps/docs, with the engine built: bun run --filter qrdx build:inplace):
  *   AI_GATEWAY_API_KEY=... bun x tsx --conditions=react-server scripts/ai/art-eval.ts \
  *     [--n 4] [--models google/gemini-nano-banana-2.1,openai/gpt-image-2] \
  *     [--out ./art-eval-out] [--concurrency 2] [--timeout 45000] \
- *     [--visibility 50] [--max-cost 2]
+ *     [--visibility 50] [--max-cost 2] [--presets zen-garden,neon-city] \
+ *     [--text https://qrdx.dev/ai/art] (what the codes encode)
  *   bun x tsx --conditions=react-server scripts/ai/art-eval.ts --replay ./art-eval-out
  *     (no key, no cost: the raw images saved by an earlier run stand in for
  *     the models, so a pipeline change can be compared on the same images)
@@ -38,7 +42,8 @@ import type {
 } from "../../lib/ai/art-image";
 import type { ArtModelChoice } from "../../lib/ai/models";
 
-const TEXT = "https://qrdx.dev/q/Ab3dE9x";
+/** What the codes encode, unless --text says otherwise. */
+let TEXT = "https://qrdx.dev/q/Ab3dE9x";
 /** A scene, a city at night and a painting style: three kinds of prompt. */
 const PRESET_IDS = ["zen-garden", "neon-city", "botanical-watercolor"];
 
@@ -199,10 +204,13 @@ async function main() {
       "max-cost": { type: "string" },
       replay: { type: "string" },
       "dry-run": { type: "boolean", default: false },
+      text: { type: "string" },
+      presets: { type: "string" },
     },
   });
   const n = Number(values.n);
   if (!(Number.isInteger(n) && n > 0)) fail("--n must be a positive integer");
+  if (values.text) TEXT = values.text;
   const dryRun = values["dry-run"];
   const replay = values.replay ? resolve(values.replay) : null;
   const maxCost = values["max-cost"] ? Number(values["max-cost"]) : null;
@@ -242,7 +250,9 @@ async function main() {
           ),
       )
     : [...models.ART_EVAL_CANDIDATES];
-  const prompts = PRESET_IDS.map(
+  const presetIds =
+    values.presets?.split(",").map((id) => id.trim()) ?? PRESET_IDS;
+  const prompts = presetIds.map(
     (id) =>
       presets.AI_ART_PRESETS.find((preset) => preset.id === id) ??
       fail(`Preset ${id} is gone; update PRESET_IDS`),
@@ -490,7 +500,7 @@ async function main() {
   writeFileSync(
     join(out, "results.json"),
     JSON.stringify(
-      { text: TEXT, prompts: PRESET_IDS, n, visibility, spent, attempts },
+      { text: TEXT, prompts: presetIds, n, visibility, spent, attempts },
       null,
       2,
     ),

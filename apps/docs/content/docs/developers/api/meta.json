@@ -20,6 +20,8 @@
     "update-barcode",
     "delete-barcode",
     "get-saved-barcode-image",
+    "---AI art---",
+    "create-art",
     "---Scans---",
     "get-code-scans",
     "---Conversions---",

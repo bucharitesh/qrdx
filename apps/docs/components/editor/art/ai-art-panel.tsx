@@ -36,6 +36,13 @@ import { useDynamicLinkStore } from "@/components/editor/dynamic-link-toggle";
 import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import { AIArtPresetGallery } from "@/components/sections/ai-art/ai-art-preset-gallery";
 import { lockedSeedFor } from "@/components/sections/ai-art/ai-art-run";
+import { ArtLookChips } from "@/components/sections/ai-art/art-look-chips";
+import {
+  ArtLookWriteButton,
+  describeRequestFor,
+  useArtPromptWriter,
+} from "@/components/sections/ai-art/art-look-write";
+import { ArtModePicker } from "@/components/sections/ai-art/art-mode-picker";
 import {
   type AIArtCredits,
   type AIArtRequest,
@@ -84,6 +91,7 @@ interface AIArtPanelProps {
  */
 export function AIArtPanel({ style }: AIArtPanelProps) {
   const t = useTranslations("editor.art.aiArtPanel");
+  const tLooks = useTranslations("editor.art.artLooks");
   const payload = useQREditorStore((state) => state.value);
   const contentType = useQREditorStore((state) => state.contentType);
   const { handleSetTab } = useControlsTabFromUrl();
@@ -111,6 +119,7 @@ export function AIArtPanel({ style }: AIArtPanelProps) {
       ),
   });
 
+  const writer = useArtPromptWriter({ mock: art.mock });
   const issue = artPayloadIssue(payload);
   const dynamic =
     linked &&
@@ -120,12 +129,26 @@ export function AIArtPanel({ style }: AIArtPanelProps) {
       : null;
   const ready = canGenerate(payload, draft);
   const generating = art.isGenerating;
+  const busy = generating || writer.writing;
   const result = art.run && art.run.text === payload.trim() ? art.run : null;
+
+  /** Fills the description from the writer; false when it failed. */
+  const writeDescription = async (request: AIArtRequest) => {
+    const prompt = await writer.write(describeRequestFor(request));
+    if (prompt) updateDraft({ prompt, presetId: null });
+    return prompt;
+  };
 
   const run = async (request: AIArtRequest, seeds: number[]) => {
     if (!art.signedIn) {
       await art.generate(request, seeds);
       return;
+    }
+    // A blank description is written first, so it shows before it's used.
+    if (!request.prompt) {
+      const prompt = await writeDescription(request);
+      if (!prompt) return;
+      request = { ...request, prompt };
     }
     setCanvasOpen(true);
     const outcome = await art.generate(request, seeds, {
@@ -140,7 +163,7 @@ export function AIArtPanel({ style }: AIArtPanelProps) {
   };
 
   const generate = () => {
-    if (!ready || generating) return;
+    if (!ready || busy) return;
     void run(artRequestFor(payload, draft), artSeedsFor(draft));
   };
 
@@ -173,8 +196,17 @@ export function AIArtPanel({ style }: AIArtPanelProps) {
         payload={payload}
       />
 
+      <ArtModePicker
+        disabled={generating}
+        idPrefix="art-ai"
+        mode={draft.mode}
+        onModeChange={(mode) => updateDraft({ mode })}
+        onPhotoChange={(photo) => updateDraft({ photo })}
+        photo={draft.photo}
+      />
+
       <div className="space-y-2">
-        <div className="flex items-baseline justify-between gap-2">
+        <div className="flex items-center justify-between gap-2">
           <Label htmlFor="art-ai-prompt">{t("style")}</Label>
           <span className="text-muted-foreground text-xs tabular-nums">
             {draft.prompt.length}/{ART_PROMPT_MAX_LENGTH}
@@ -182,11 +214,11 @@ export function AIArtPanel({ style }: AIArtPanelProps) {
         </div>
         <AIArtPresetGallery
           activePresetId={draft.presetId}
-          disabled={generating}
+          disabled={busy}
           onSelect={applyStylePreset}
         />
         <Textarea
-          disabled={generating}
+          disabled={busy}
           id="art-ai-prompt"
           maxLength={ART_PROMPT_MAX_LENGTH}
           onChange={(event) => {
@@ -197,6 +229,34 @@ export function AIArtPanel({ style }: AIArtPanelProps) {
           rows={3}
           value={draft.prompt}
         />
+        <div className="flex items-start justify-between gap-2">
+          <p className="text-muted-foreground pt-1.5 text-xs text-pretty">
+            {tLooks("blankIsWritten")}
+          </p>
+          <ArtLookWriteButton
+            disabled={generating}
+            onClick={() => {
+              if (!art.signedIn) {
+                openAuthDialog("signin");
+                return;
+              }
+              void writeDescription(artRequestFor(payload, draft));
+            }}
+            writing={writer.writing}
+          />
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        <Label>{tLooks("look")}</Label>
+        <ArtLookChips
+          disabled={busy}
+          onChange={(look) => updateDraft({ look })}
+          value={draft.look}
+        />
+        <p className="text-muted-foreground text-xs text-pretty">
+          {tLooks("lookHint")}
+        </p>
       </div>
 
       <ArtSlider
@@ -245,17 +305,19 @@ export function AIArtPanel({ style }: AIArtPanelProps) {
             className="flex-1"
             disabled={
               !ready ||
-              generating ||
+              busy ||
               (art.signedIn && art.lacksCredits(draft.variations))
             }
             onClick={generate}
           >
-            {generating ? <Spinner /> : <Bot />}
-            {generating
-              ? t("generating")
-              : !art.signedIn
-                ? t("signInToGenerate")
-                : t("generateVariations", { count: draft.variations })}
+            {busy ? <Spinner /> : <Bot />}
+            {writer.writing
+              ? tLooks("writing")
+              : generating
+                ? t("generating")
+                : !art.signedIn
+                  ? t("signInToGenerate")
+                  : t("generateVariations", { count: draft.variations })}
           </Button>
           {generating && (
             <Button onClick={art.cancel} variant="outline">

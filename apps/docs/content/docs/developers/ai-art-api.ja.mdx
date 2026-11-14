@@ -1,0 +1,176 @@
+---
+title: "AI アート API"
+description: "1回の REST 呼び出しまたは MCP ツールで、QRコードを AI アートに描き込みます。QRdx はすべての画像がスキャンできることを確認します。画像1枚ごとに、ワークスペースの月間 AI アート画像を1枚使用します。"
+icon: Sparkles
+---
+
+`POST https://api.qrdx.dev/v1/art` は、説明文をもとに QRコードを AI アートに描き込み、画像を返します。Playground の Art タブやスタジオと同じ [AI QRアート](/ai/art)です。{facts.artModel} が絵を描き、QRdx が、あなたのコンテンツにスキャンで読み取れることを確認してから画像を返します。モデルが描いたままの画像でスキャンできない場合、QRdx はモデル自身のピクセル上で、必要最小限だけコードを補強します。
+
+`codes:write` スコープを持つ [API キー](/docs/developers/api-keys)が必要です(**Full access** キーには含まれています)。画像1枚ごとに、キーのワークスペースの月間 AI アート画像を1枚使用します。これはアプリで使うものと同じ枠です。
+
+```bash
+curl https://api.qrdx.dev/v1/art \
+  -H "Authorization: Bearer $QRDX_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"text": "https://qrdx.dev", "prompt": "a koi pond at dusk, ink and watercolor"}' \
+  --max-time 90 -o art.json
+```
+
+1回の呼び出しには、コードモードで約15〜45秒、フォトモードで約25〜45秒、シーンモードで約40〜55秒かかります。シーンモードは先に絵を作ります。HTTP クライアントのタイムアウトは60秒以上に設定してください。時間内に終わらなかったシーンは `504 AI_ART_TIMEOUT` を返し、画像は使用されません。もう一度試すか、コードモードを使ってください。
+
+## リンクまたは動的QRコードをエンコードする [#encode]
+
+次のどちらか一方だけを送ってください。
+
+- `text`: コードに入れるリンクまたはテキストです(300文字まで)。アートは画像なので、印刷後に内容を変更することはできません。
+- `code`: ワークスペースの[動的QRコード](/docs/dynamic-qr-codes)の `id` です。アートにはそのコードの短縮リンクがエンコードされるため、印刷後でも転送先を変更でき、スキャンは分析に表示されます。別のワークスペースのコードやゴミ箱にあるコードは `404` になります。
+
+```bash
+curl https://api.qrdx.dev/v1/art \
+  -H "Authorization: Bearer $QRDX_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"code": "cm5code0spring0menu00001", "prompt": "a bistro chalkboard menu on a brick wall", "mode": "scene"}' \
+  --max-time 90
+```
+
+コードの `id` は [`GET /v1/codes`](/docs/developers/api/list-codes) で取得するか、[コードを作成](/docs/developers/api/create-codes)するときに確認できます。
+
+## リクエスト [#request]
+
+| フィールド | デフォルト | 説明 |
+| --- | --- | --- |
+| `text` | | コードにエンコードする内容。これか `code` のどちらかを送ります |
+| `code` | | `text` の代わりに使う動的QRコードの `id` |
+| `prompt` | 自動生成 | 描くアートを普通の言葉で記述します。[自動生成されるプロンプト](#written-prompt)を参照してください |
+| `mode` | `code` | アートの中でのコードの置き方。[モード](#modes)を参照してください |
+| `style` | | クイックルックの ID。プロンプトと組み合わされます。[クイックルック](#quick-looks)を参照してください |
+| `negativePrompt` | | 画像に含めたくないもの |
+| `visibility` | `50` | QR の視認性(`0`〜`100`)。高いほどコードがはっきり見え、低いほど絵を優先します |
+| `creativity` | `45` | `0` はプロンプトに忠実に従い、`100` は自由に解釈します |
+| `seed` | ランダム | 以前のレスポンスのシードを送ると、似た画像になります |
+| `reference` | | 色や形の参考にする画像(ロゴやパレットなど) |
+| `photo` | | フォトモードのみ: コードを描き込む写真 |
+
+`reference` と `photo` は PNG または JPEG の `data:` URL(`data:image/jpeg;base64,…`)です。`reference` は長辺を約512 pxに縮小し(最大600 KB)、`photo` はアートの作成サイズである約1024 pxの正方形に切り抜いてください(最大1 MB)。これらはモデルに送られた後に破棄され、QRdx が保存したりログに記録したりすることはありません。これより大きい画像は `413 AI_ART_IMAGE_TOO_LARGE` で拒否されます。
+
+完全なスキーマは [API リファレンス](/docs/developers/api/create-art)をご覧ください。
+
+## モード [#modes]
+
+| `mode` | 得られるもの |
+| --- | --- |
+| `code` | コード全体が絵になります。アートがモジュールの中に描かれ、ファインダーパターンは通常の四角形で、周囲には明るいクワイエットゾーンがあります。最も確実にスキャンできます |
+| `scene` | まず説明文から絵を描き、その中央にコードを描き込みます。絵はコードの際まで、そしてコードの中まで続き、モジュールは絵の色と光でできています |
+| `photo` | 絵の代わりにあなた自身の `photo` を使う点以外は同じです。被写体、色、光がコードの周囲と内部に保たれます。写真はこのモードでのみ送ってください |
+
+## クイックルック [#quick-looks]
+
+クイックルックは、画材や雰囲気などのあらかじめ用意されたスタイルで、QRdx があなたの `prompt` に追加します。たとえば `"a koi pond in the rain"` に `"style": "watercolor"` を指定すると、鯉のいる池が水彩画で描かれます。その ID を `style` として送ってください。それ以外の値は `400 VALIDATION_ERROR` になります。ルックは [AI アートスタジオ](/ai/art)と Playground の Art タブにチップとして表示されているもので、すべてのモードで使えます。
+
+| `style` | ルック |
+| --- | --- |
+| `watercolor` | 水彩画 |
+| `oil-painting` | 油絵 |
+| `anime` | アニメ |
+| `cartoon` | カートゥーン |
+| `pixel-art` | ピクセルアート |
+| `pop-art` | ポップアート |
+| `charcoal` | 木炭画 |
+| `ink` | インク画 |
+| `cyberpunk` | サイバーパンク |
+| `fantasy` | ファンタジー |
+| `photographic` | 写真風 |
+| `low-poly` | ローポリ |
+| `papercut` | 切り絵 |
+
+## 自動生成されるプロンプト [#written-prompt]
+
+`prompt` は省略できます。省略すると、QRdx がまず、送られた `mode`、`style`、`photo` に合わせてプロンプトを作成します。被写体、場所、光を備えた具体的な1つのシーン、フォトモードでは写真に写っているものの説明で、アートがそれを保てるようにします。作成に追加の AI アート画像は使いません。レスポンスには作成された内容が `writtenPrompt` として含まれるので、次回は編集して再送できます。作成に失敗した場合は `502 AI_ART_DESCRIBE_FAILED` が返り、画像は使用されません。
+
+## レスポンス [#response]
+
+```json
+{
+  "data": {
+    "imageUrl": "data:image/png;base64,iVBORw0KGgo…",
+    "width": 1024,
+    "height": 1024,
+    "seed": 2841337190,
+    "mode": "code",
+    "blend": "least",
+    "blendStrength": 0.35,
+    "text": "https://qrdx.dev/q/aB3dE5f",
+    "code": { "id": "cm5code0spring0menu00001", "shortLink": "https://qrdx.dev/q/aB3dE5f" },
+    "visibility": 50,
+    "creativity": 45
+  },
+  "credits": {
+    "plan": "pro",
+    "limit": 30,
+    "used": 7,
+    "remaining": 23,
+    "pooled": false,
+    "resetsAt": "2026-02-01T00:00:00.000Z"
+  }
+}
+```
+
+- `imageUrl` は、`data:` URL 形式の1024 px正方形の PNG です。QRdx はコピーを保持しないため、保存してください。
+- `text` は、画像をスキャンしたときに読み取られる内容そのものです。QRdx は応答する前にデコードして確認しています。
+- `blend` は、画像をスキャンできるようにした方法を示します。`none`(モデルが描いたままの画像)、`least`(モデルの画像上で、ファインダーパターン、クワイエットゾーン、モジュールを必要最小限だけ補強)、`image-qr`(最後の手段として Image QR コードとして描き直したもの)のいずれかです。`blendStrength` は `0`(描いたまま)から `1`(Image QR)までの値です。
+- `writtenPrompt` は、`prompt` を省略した場合にのみ含まれます。QRdx が作成した説明文です。
+- `credits` は、この画像の後のワークスペースの残り枠です。
+
+JSON ではなく PNG そのものを受け取るには、`?format=png` を付けるか、`Accept: image/png` を送ります。その場合、シード、モード、ブレンド、残りの画像数は、`X-QRdx-Seed`、`X-QRdx-Mode`、`X-QRdx-Blend`、`X-QRdx-Blend-Strength`、`X-QRdx-Credits-Remaining` ヘッダーで返されます。
+
+```bash
+curl "https://api.qrdx.dev/v1/art?format=png" \
+  -H "Authorization: Bearer $QRDX_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"text": "https://qrdx.dev", "prompt": "a lighthouse on a cliff, woodcut print"}' \
+  --max-time 90 -o art.png
+```
+
+## クレジット [#credits]
+
+API は、アプリと同じ月間 AI アート画像を使用し、キーが属するワークスペースに対してカウントされます。フリー、Pro、Business にはそれぞれ月ごとの画像数が含まれ、Business ではチーム全体で共有されます。具体的な数は[プランと制限](/docs/plans-and-limits)をご覧ください。毎月1日(UTC)にリセットされます。
+
+- 呼び出しが失敗した場合や、画像をスキャンできるようにできなかった場合は、画像は使用されません。
+- 月の画像を使い切ると、API は `AI_ART_CREDITS_EXHAUSTED` を返します。フリーと Pro では `402` で、アップグレードすると追加できます。Business では `429` です。
+- 月間の枠とは別に、1人あたり1日最大25枚まで画像を作成できます(`429 AI_ART_DAILY_LIMIT`)。
+- 1人あたり1分間に最大12枚まで開始できます。
+- 各呼び出しは、ワークスペースの1日の API クォータと、書き込みの毎分の制限にもカウントされます([レート制限](/docs/developers/rest-api#rate-limits))。
+
+## エラー [#errors]
+
+エラーは API 共通の形式（`code`、`message`、`status`）で返されます。すべてのエラーは [エラー](/docs/developers/errors) に一覧があります。AI アートに固有のエラーは次のとおりです。
+
+| ステータス | `code` | 対処方法 |
+| --- | --- | --- |
+| 400 | `AI_ART_TEXT_TOO_LONG` | `text` を短くするか、動的QRコードの `code` を送信してください |
+| 402 | `AI_ART_CREDITS_EXHAUSTED` | 毎月1日まで待つか、プランをアップグレードしてください |
+| 413 | `AI_ART_IMAGE_TOO_LARGE` | `photo` または `reference` のサイズを小さくしてください |
+| 429 | `AI_ART_CREDITS_EXHAUSTED` | Business：毎月1日まで待ってください |
+| 429 | `AI_ART_DAILY_LIMIT` | 明日（UTC）もう一度お試しください |
+| 502 | `AI_ART_FAILED` | モデルが失敗したか、プロンプトを受け付けませんでした。再試行するか、プロンプトの表現を変えてください |
+| 502 | `AI_ART_UNSCANNABLE` | `visibility` を上げるか、別のシードで再試行してください |
+| 502 | `AI_ART_DESCRIBE_FAILED` | `prompt` が送信されず、プロンプトの作成にも失敗しました。再試行するか、ご自身のプロンプトを送信してください |
+| 503 | `AI_ART_BUSY` | モデルが混み合っています。1分ほど待ってから再試行してください |
+| 503 | `AI_NOT_CONFIGURED` | このサーバーでは AI アートが設定されていません（セルフホスト） |
+| 504 | `AI_ART_TIMEOUT` | モデルの処理に時間がかかりすぎました（シーンモードでは、画像の生成に時間がかかり、コードを描く時間が足りませんでした）。画像は使用されません。再試行するか、コードモードをお使いください |
+
+`5xx` エラーでは、いずれも画像は使用されません。
+
+## MCP [#mcp]
+
+接続に QRdx の API キーを設定すると、[MCP サーバー](/docs/developers/mcp)で `generate_ai_art` ツールを使えます。このツールはリクエストボディと同じフィールドを受け取り、PNG、スキャン先、今月の残り画像数を返します。アシスタントには普通の言葉で依頼できます。
+
+```txt
+Make AI QR art for my code cm5code0spring0menu00001: a bistro chalkboard menu on a brick wall, as a scene.
+```
+
+キーがない場合、ツールはキーの追加方法を返します。REST API と同様に、呼び出しには最大1分かかります。
+
+## セルフホスト [#self-hosting]
+
+AI アートは Vercel AI Gateway を通じて動作します。ご自身のインスタンスでは `AI_GATEWAY_API_KEY` を設定してください。設定がない場合、`POST /v1/art` と `generate_ai_art` は `503 AI_NOT_CONFIGURED` を返します。

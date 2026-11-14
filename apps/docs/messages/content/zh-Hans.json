@@ -29723,9 +29723,9 @@
     "status": "machine",
     "context": "mcp.tools.5.title"
   },
-  "35f9a7f12b6f": {
-    "source": "Saves a design as a theme in your workspace, under the plan's saved-theme limit. Needs a QRdx API key on the connection; every other tool works without one.",
-    "text": "将设计作为主题保存到你的工作区，受当前套餐已保存主题数量的限制。连接中需要 QRdx API 密钥；其他所有工具无需密钥即可使用。",
+  "8fcad3c406cf": {
+    "source": "Saves a design as a theme in your workspace, under the plan's saved-theme limit. Needs a QRdx API key on the connection.",
+    "text": "将设计作为主题保存到你的工作区，受当前套餐已保存主题数量上限的限制。连接中需要提供 QRdx API 密钥。",
     "status": "machine",
     "context": "mcp.tools.5.description"
   },
@@ -29752,6 +29752,18 @@
     "text": "将条形码保存到工作区的“条形码”中，方便日后编辑和下载。连接中需要 QRdx API 密钥。",
     "status": "machine",
     "context": "mcp.tools.7.description"
+  },
+  "4c95ba85d6f1": {
+    "source": "Generate AI art",
+    "text": "生成 AI 艺术二维码",
+    "status": "machine",
+    "context": "mcp.tools.8.title"
+  },
+  "9254cd62817d": {
+    "source": "Paints a QR code into AI artwork from your description, a scene or your photo, and checks that it scans. Each image uses one of your workspace's monthly AI art images and takes up to a minute. Needs a QRdx API key on the connection.",
+    "text": "根据你的描述、场景或照片，将二维码绘制成 AI 艺术作品，并检查是否可以扫描。每张图片会使用工作区每月 AI 艺术图片额度中的 1 张，最长需要约 1 分钟。连接中需要提供 QRdx API 密钥。",
+    "status": "machine",
+    "context": "mcp.tools.8.description"
   },
   "abb9f9118ecf": {
     "source": "List styles",
@@ -29855,11 +29867,11 @@
     "status": "machine",
     "context": "mcp.faqs.2.question"
   },
-  "f538f592cdab": {
-    "source": "No, for designing and rendering codes and browsing the community: the QRdx MCP server is public and free, and it keeps no session state. Saving a design to your themes (save_template), saving a barcode (save_barcode) and using a logo you uploaded need a QRdx API key, sent as Authorization: Bearer qrdx_… in your app's settings for the server.",
-    "text": "设计、生成二维码和浏览社区内容不需要：QRdx MCP 服务器公开且免费，也不保存会话状态。将设计保存到你的主题（save_template）、保存条形码（save_barcode）以及使用你上传的 Logo，则需要 QRdx API 密钥，并在应用中该服务器的设置里以 Authorization: Bearer qrdx_… 的形式发送。",
+  "95b27c7bcd0a": {
+    "source": "No, for designing and rendering codes and browsing the community: the QRdx MCP server is public and free, and it keeps no session state. Saving a design to your themes (save_template), saving a barcode (save_barcode), making AI art (generate_ai_art) and using a logo you uploaded need a QRdx API key, sent as Authorization: Bearer qrdx_… in your app's settings for the server.",
+    "text": "不需要。设计和渲染二维码以及浏览社区内容无需密钥：QRdx MCP 服务器公开免费，并且不保存任何会话状态。将设计保存到你的主题（save_template）、保存条形码（save_barcode）、制作 AI 艺术（generate_ai_art）以及使用你上传的 logo，则需要 QRdx API 密钥，请在应用中该服务器的设置里以 Authorization: Bearer qrdx_… 的形式发送。",
     "status": "machine",
-    "context": "mcp.faqs.0.answer"
+    "context": "mcp.faqs.2.answer"
   },
   "d13545262ca7": {
     "source": "Which AI tools does it work with?",
@@ -29915,11 +29927,11 @@
     "status": "machine",
     "context": "mcp.faqs.5.question"
   },
-  "9ccc8cb2303b": {
-    "source": "No. The tools render images, format text and read the public community. Only save_template and save_barcode write anything: the theme or barcode you ask them to save, in the API key's workspace. The server doesn't save the codes. The image URLs it returns contain the encoded data, so don't share them if the data is private, such as a Wi-Fi password.",
-    "text": "不会。这些工具只负责生成图片、格式化文本和读取公开社区内容。只有 save_template 和 save_barcode 会写入数据：即你要求保存的主题或条形码，保存在该 API 密钥所属的工作区中。服务器不会保存二维码本身。它返回的图片 URL 包含编码的数据，因此如果数据属于隐私内容（例如 Wi-Fi 密码），请不要分享这些 URL。",
+  "06b24c9cbc55": {
+    "source": "No. The tools render images, format text and read the public community. Only save_template and save_barcode write anything: the theme or barcode you ask them to save, in the API key's workspace. generate_ai_art uses one of the workspace's monthly AI art images but keeps neither the image nor a photo you send. The server doesn't save the codes. The image URLs it returns contain the encoded data, so don't share them if the data is private, such as a Wi-Fi password.",
+    "text": "不会。这些工具只负责渲染图片、格式化文本和读取公开社区内容。只有 save_template 和 save_barcode 会写入数据：即你要求保存的主题或条形码，写入 API 密钥所属的工作区。generate_ai_art 会使用工作区每月 AI 艺术图片额度中的 1 张，但不会保留生成的图片，也不会保留你发送的照片。服务器不会保存这些二维码。它返回的图片 URL 包含已编码的数据，因此如果数据是私密的，例如 Wi-Fi 密码，请不要分享这些 URL。",
     "status": "machine",
-    "context": "mcp.faqs.5.answer"
+    "context": "mcp.faqs.7.answer"
   },
   "6b3231c3660f": {
     "source": "Are there limits?",
@@ -30575,11 +30587,23 @@
     "status": "machine",
     "context": "aiArt.faqs.9.question"
   },
-  "81399be3dc7a": {
-    "source": "OpenAI's GPT Image 2, through Vercel AI Gateway, with 171 style presets. QRdx draws a plain black-and-white QR code on the server, the model repaints it as your scene, and QRdx's own scan check makes sure the result decodes, strengthening the code only as much as it needs.",
-    "text": "OpenAI 的 GPT Image 2，通过 Vercel AI Gateway 提供，内置 171 种风格预设。QRdx 会在服务器上绘制一个普通的黑白二维码，由模型将其重绘为你所要的场景，再由 QRdx 自带的扫描检测确认结果可以被解码，并且只在必要时才增强二维码。",
+  "6ae28ea3daea": {
+    "source": "OpenAI's GPT Image 2, through Vercel AI Gateway, with 171 style presets. QRdx draws a plain black-and-white QR code on the server, the model repaints it as your scene, and QRdx's own scan check makes sure the result decodes, strengthening the code only as much as it needs. In scene and photo modes the picture comes first (one made from your description, or your photo) and the code is painted into its middle the same way.",
+    "text": "使用 OpenAI 的 GPT Image 2，通过 Vercel AI Gateway 调用，提供 171 种风格预设。QRdx 先在服务器上绘制一个普通的黑白二维码，再由模型按你的场景重新绘制，随后 QRdx 自带的扫描检测会确认结果可以被解码，只在必要时才增强二维码。在场景和照片模式下，先生成画面（根据你的描述生成，或使用你的照片），再以同样的方式把二维码绘制到画面中央。",
     "status": "machine",
     "context": "aiArt.faqs.9.answer"
+  },
+  "944a8f8415b3": {
+    "source": "Can I make AI art with the API or an AI assistant?",
+    "text": "可以通过 API 或 AI 助手制作 AI 艺术二维码吗？",
+    "status": "machine",
+    "context": "aiArt.faqs.10.question"
+  },
+  "6ceb6cca7bce": {
+    "source": "Yes. With a QRdx API key, the REST API (POST /v1/art) and the MCP server's generate_ai_art tool make the same scan-checked images, on your workspace's monthly credits. They can also encode a dynamic code by its id, so the link stays editable. The AI art API page in the developer docs has the details.",
+    "text": "可以。使用 QRdx API 密钥，通过 REST API（POST /v1/art）和 MCP 服务器的 generate_ai_art 工具，就能生成同样经过扫描检测的图片，并消耗你工作区的每月额度。它们还可以按 id 编码动态二维码，让链接始终可以编辑。更多详情请查看开发者文档中的 AI art API 页面。",
+    "status": "machine",
+    "context": "aiArt.faqs.10.answer"
   },
   "d054c5dbcf04": {
     "source": "Does QRdx store my prompt or image?",
@@ -30592,5 +30616,29 @@
     "text": "QRdx 不会保存你的提示词、参考图片或生成的图片，只会统计你的额度用量。提示词、二维码图片和所有参考图片会通过 Vercel AI Gateway 发送给 OpenAI 的 GPT Image 2 以生成作品，结果会直接返回到你的浏览器，因此请下载你想保留的图片。",
     "status": "machine",
     "context": "aiArt.faqs.10.answer"
+  },
+  "35f9a7f12b6f": {
+    "source": "Saves a design as a theme in your workspace, under the plan's saved-theme limit. Needs a QRdx API key on the connection; every other tool works without one.",
+    "text": "将设计作为主题保存到你的工作区，受当前套餐已保存主题数量的限制。连接中需要 QRdx API 密钥；其他所有工具无需密钥即可使用。",
+    "status": "machine",
+    "context": "mcp.tools.5.description"
+  },
+  "f538f592cdab": {
+    "source": "No, for designing and rendering codes and browsing the community: the QRdx MCP server is public and free, and it keeps no session state. Saving a design to your themes (save_template), saving a barcode (save_barcode) and using a logo you uploaded need a QRdx API key, sent as Authorization: Bearer qrdx_… in your app's settings for the server.",
+    "text": "设计、生成二维码和浏览社区内容不需要：QRdx MCP 服务器公开且免费，也不保存会话状态。将设计保存到你的主题（save_template）、保存条形码（save_barcode）以及使用你上传的 Logo，则需要 QRdx API 密钥，并在应用中该服务器的设置里以 Authorization: Bearer qrdx_… 的形式发送。",
+    "status": "machine",
+    "context": "mcp.faqs.0.answer"
+  },
+  "9ccc8cb2303b": {
+    "source": "No. The tools render images, format text and read the public community. Only save_template and save_barcode write anything: the theme or barcode you ask them to save, in the API key's workspace. The server doesn't save the codes. The image URLs it returns contain the encoded data, so don't share them if the data is private, such as a Wi-Fi password.",
+    "text": "不会。这些工具只负责生成图片、格式化文本和读取公开社区内容。只有 save_template 和 save_barcode 会写入数据：即你要求保存的主题或条形码，保存在该 API 密钥所属的工作区中。服务器不会保存二维码本身。它返回的图片 URL 包含编码的数据，因此如果数据属于隐私内容（例如 Wi-Fi 密码），请不要分享这些 URL。",
+    "status": "machine",
+    "context": "mcp.faqs.5.answer"
+  },
+  "81399be3dc7a": {
+    "source": "OpenAI's GPT Image 2, through Vercel AI Gateway, with 171 style presets. QRdx draws a plain black-and-white QR code on the server, the model repaints it as your scene, and QRdx's own scan check makes sure the result decodes, strengthening the code only as much as it needs.",
+    "text": "OpenAI 的 GPT Image 2，通过 Vercel AI Gateway 提供，内置 171 种风格预设。QRdx 会在服务器上绘制一个普通的黑白二维码，由模型将其重绘为你所要的场景，再由 QRdx 自带的扫描检测确认结果可以被解码，并且只在必要时才增强二维码。",
+    "status": "machine",
+    "context": "aiArt.faqs.9.answer"
   }
 }

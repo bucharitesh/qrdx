@@ -162,7 +162,7 @@ export function mcpMarkdown(origin: URL): string {
     `> ${MCP_INTRO}`,
     [
       `- Endpoint: \`${url}\` (Streamable HTTP)`,
-      "- No account or API key for designing, rendering and the community. Only save_template and save_barcode write (a theme or a barcode in an API key's workspace); the server keeps no other data.",
+      "- No account or API key for designing, rendering and the community. Only save_template and save_barcode write (a theme or a barcode in an API key's workspace), and generate_ai_art uses the key's workspace's monthly AI art images; the server keeps no other data.",
       `- Connect page: ${abs("/mcp")}`,
       `- Docs: ${abs("/docs/developers/mcp")}`,
       `- Server card: ${mcpServerCardUrl(origin)}`,

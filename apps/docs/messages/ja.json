@@ -2648,7 +2648,7 @@
     "setupUrl": "サーバーURL",
     "toolsEyebrow": "ツール",
     "toolsTitle": "アシスタントが呼び出せるツール",
-    "toolsDescription": "{count, number}個のツールがあります。save_templateとsave_barcode以外は読み取り専用でキーは不要です。画像の生成、テキストの整形、公開コミュニティの閲覧ができます。詳しいパラメータは<link>MCPサーバーのドキュメント</link>をご覧ください。",
+    "toolsDescription": "{count, number}個のツールがあります。save_template、save_barcode、generate_ai_art以外はすべて読み取り専用で、キーは不要です。画像のレンダリング、テキストの整形、公開コミュニティの閲覧ができます。パラメーターの詳細は<link>MCPサーバーのドキュメント</link>をご覧ください。",
     "toolNoKey": "キー不要",
     "toolNeedsKey": "APIキーが必要",
     "faqTitle": "MCPサーバーのFAQ",
@@ -3308,6 +3308,61 @@
       "followsYourPrompt": "プロンプトに忠実",
       "interpretsFreely": "自由に解釈",
       "generateVariations": "{count, plural, one {QRアートを生成} other {#件のバリエーションを生成}}"
+    },
+    "artModes": {
+      "mode": "モード",
+      "code": "コード",
+      "scene": "シーン",
+      "photo": "写真",
+      "codeDescription": "コードそのものが絵になります。アートがモジュールを埋め、周囲は無地の枠です。最も短時間で仕上がります。",
+      "sceneDescription": "説明文から1枚の絵を描き、その中央に、絵と同じ色合いでコードを描き込みます。少し時間がかかります。",
+      "photoDescription": "お持ちの写真の中央に、写真と同じ色合いでコードを描き込みます。少し時間がかかります。",
+      "dropAPhoto": "写真をドロップするか選択してください",
+      "photoHint": "PNG、JPG、WebPに対応しています。写真はブラウザー上で正方形に切り抜かれてリサイズされ、プロンプトと一緒にアートの生成のために送信されます。QRdxが写真を保存することはありません。",
+      "choosePhoto": "写真を選択",
+      "yourPhoto": "あなたの写真",
+      "crop": "切り抜き",
+      "left": "左",
+      "right": "右",
+      "top": "上",
+      "bottom": "下",
+      "croppedSquare": "アート用に正方形に切り抜きました。",
+      "replace": "置き換え",
+      "remove": "削除",
+      "couldntUseThisPhoto": "この写真は使用できません",
+      "unsupportedFormat": "未対応の画像形式です",
+      "usePngJpgWebp": "PNG、JPG、WebPの画像を使用してください。",
+      "photoTooLarge": "写真が大きすぎます",
+      "photosUpTo": "写真は{size} MBまでです。",
+      "examples": {
+        "eyebrow": "シーンモードと写真モード",
+        "title": "コードを絵の中に入れる",
+        "description": "シーンモードでは、まず説明文から絵を描き、その中央にコードを描き込むので、絵がコードの際までも、コードの中までも続きます。写真モードでは、アップロードした写真で同じことを行います。ここにある例は、皆さんがお使いになるのと同じ処理で作成したもので、どれもスキャンでき、このページが開きます。",
+        "scene": "シーン",
+        "photo": "写真",
+        "caption": {
+          "lighthouse": "岬に立つ灯台。崖と海にまたがってコードが描かれています",
+          "painted-townhouses": "色とりどりの街並みの色合いがコード全体に広がる、塗装された タウンハウス",
+          "photo-mountain": "夕暮れの山の湖の写真",
+          "botanical-watercolor": "野の花とシダの水彩画",
+          "venice-canals": "ヴェネツィアの運河。水面と壁にコードが重なります",
+          "photo-latte": "木のテーブルの上のラテの写真",
+          "zen-garden": "桜と錦鯉のある日本庭園",
+          "photo-dog": "ゴールデンレトリバーのスタジオ写真"
+        },
+        "alt": {
+          "lighthouse": "シーンモードのAI QRアート：海辺の草に覆われた岬に立つ灯台。青と緑の色合いで、絵の中央にQRコードが描き込まれています",
+          "painted-townhouses": "シーンモードのAI QRアート：色とりどりに塗られたタウンハウスの並び。ピンク、黄色、青の色合いで、絵の中央にQRコードが描き込まれています",
+          "photo-mountain": "フォトモードのAI QRアート：夕暮れの山の湖。写真の色合いで、山頂と水面に映る姿にQRコードが重ねて描き込まれています",
+          "botanical-watercolor": "シーンモードのAI QRアート：野の花とシダの水彩画。花の色合いで、絵の中央にQRコードが描き込まれています",
+          "venice-canals": "シーンモードのAI QRアート：ゴンドラが浮かぶヴェネツィアの運河。温かみのある石の色合いで、絵の中央にQRコードが描き込まれています",
+          "photo-latte": "フォトモードのAI QRアート：木のテーブルの上のラテ。カップとテーブルにQRコードが描き込まれています",
+          "zen-garden": "シーンモードのAI QRアート：桜、灯籠、錦鯉のある日本庭園。絵の中央にQRコードが描き込まれています",
+          "photo-dog": "フォトモードのAI QRアート：無地の背景のゴールデンレトリバー。その毛並みの色合いで、顔にQRコードが重ねて描き込まれています"
+        }
+      },
+      "paintingPicture": "絵を描いています…",
+      "paintingCode": "コードを描き込んでいます…"
     }
   },
   "compare": {
@@ -3828,6 +3883,32 @@
           "halftone": "AIは使いません。写真がコードの一部になり、すべての形式に対応します。",
           "ai": "AIがコードの中にシーンを描きます。すべての画像でスキャンできるかを確認しています。"
         }
+      },
+      "artLooks": {
+        "look": "スタイル",
+        "lookChoices": "スタイル",
+        "none": "なし",
+        "looks": {
+          "watercolor": "水彩画",
+          "oil-painting": "油絵",
+          "anime": "アニメ",
+          "cartoon": "カートゥーン",
+          "pixel-art": "ピクセルアート",
+          "pop-art": "ポップアート",
+          "charcoal": "木炭画",
+          "ink": "インク画",
+          "cyberpunk": "サイバーパンク",
+          "fantasy": "ファンタジー",
+          "photographic": "写真風",
+          "low-poly": "ローポリ",
+          "papercut": "切り絵"
+        },
+        "lookHint": "選んだスタイルは説明文に追加されます。上でスタイルを選ぶと、「なし」にリセットされます。",
+        "blankIsWritten": "空欄のままにすると、生成時に自動で作成されます。説明文の作成でクレジットは消費されません。",
+        "writeOneForMe": "説明文を作成",
+        "writing": "作成中…",
+        "couldntWrite": "説明文を作成できませんでした",
+        "checkConnection": "接続を確認して、もう一度お試しください。"
       }
     },
     "brandLogos": {

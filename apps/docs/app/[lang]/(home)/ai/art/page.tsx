@@ -8,6 +8,7 @@ import { LocaleLink } from "@/components/i18n/locale-link";
 import { AIArtComingSoon } from "@/components/sections/ai-art/ai-art-coming-soon";
 import { AIArtFAQ } from "@/components/sections/ai-art/ai-art-faq";
 import { AIArtStudio } from "@/components/sections/ai-art/ai-art-studio";
+import { ArtModeExamples } from "@/components/sections/ai-art/art-mode-examples";
 import { ART_PLAYGROUND_HREF } from "@/components/sections/ai-art/config";
 import { AI_ART_PRESET_COUNT } from "@/components/sections/ai-art/preset-meta";
 import { VectorArtExamples } from "@/components/sections/ai-art/vector-art-examples";
@@ -208,6 +209,7 @@ export default async function AIArtPage() {
               </ClientMessages>
             </div>
           </section>
+          <ArtModeExamples locale={locale} />
           <ClientMessages namespaces={["aiArt.vector"]}>
             <VectorArtSection lead={false} t={t} steps={content.vectorSteps} />
           </ClientMessages>

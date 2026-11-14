@@ -15,8 +15,11 @@ import {
 import {
   ART_CREATIVITY,
   ART_QR_VISIBILITY,
+  type ArtMode,
+  DEFAULT_ART_MODE,
 } from "@/components/sections/ai-art/config";
 import type { ScanCheckResult } from "@/components/sections/ai-art/image-utils";
+import type { ArtLookId } from "@/components/sections/ai-art/looks";
 import type { AIArtPreset } from "@/components/sections/ai-art/presets";
 import { useQREditorStore } from "@/store/editor-store";
 
@@ -27,6 +30,8 @@ export type ArtTabMode = "off" | QRArtMode | "ai";
 export interface AIArtDraft {
   presetId: string | null;
   prompt: string;
+  /** A quick look added to the prompt (looks.ts) */
+  look: ArtLookId | null;
   negativePrompt: string;
   visibility: number;
   creativity: number;
@@ -37,11 +42,16 @@ export interface AIArtDraft {
   reference: string | null;
   /** The reference is the editor's logo ("Use my logo as reference") */
   referenceIsLogo: boolean;
+  /** How the code sits in the artwork: the code itself, a scene or a photo */
+  mode: ArtMode;
+  /** Photo mode's photo (a JPEG data: URL); never kept across sign-in */
+  photo: string | null;
 }
 
 export const DEFAULT_AI_ART_DRAFT: AIArtDraft = {
   presetId: null,
   prompt: "",
+  look: null,
   negativePrompt: "",
   visibility: ART_QR_VISIBILITY.default,
   creativity: ART_CREATIVITY.default,
@@ -50,6 +60,8 @@ export const DEFAULT_AI_ART_DRAFT: AIArtDraft = {
   seedLocked: false,
   reference: null,
   referenceIsLogo: false,
+  mode: DEFAULT_ART_MODE,
+  photo: null,
 };
 
 export interface ArtSessionStore extends AIArtRunState {
@@ -66,7 +78,10 @@ export interface ArtSessionStore extends AIArtRunState {
 
   draft: AIArtDraft;
   updateDraft: (patch: Partial<AIArtDraft>) => void;
-  /** Fills the prompt from a style preset (presets.ts) */
+  /**
+   * Fills the prompt from a style preset (presets.ts) and resets the look:
+   * a preset carries its own style
+   */
   applyStylePreset: (preset: AIArtPreset) => void;
   /**
    * Generate, pressed signed out, waiting to run once signed in (the
@@ -113,6 +128,7 @@ export const useArtSessionStore = create<ArtSessionStore>()((set, get) => ({
         ...get().draft,
         presetId: preset.id,
         prompt: preset.prompt,
+        look: null,
         negativePrompt: preset.negativePrompt ?? "",
       },
     }),

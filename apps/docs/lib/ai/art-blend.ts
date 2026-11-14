@@ -209,6 +209,8 @@ function gridFit(
   left: number,
   top: number,
   pitch: number,
+  /** 2: every other row and column, for a coarse search */
+  stride = 1,
 ): number {
   const { size, dark } = map;
   const r = pitch * 0.4;
@@ -217,10 +219,10 @@ function gridFit(
   let sumBV = 0;
   let sumBB = 0;
   let sumVV = 0;
-  const n = size * size;
-  for (let y = 0; y < size; y++) {
+  const n = Math.ceil(size / stride) ** 2;
+  for (let y = 0; y < size; y += stride) {
     const cy = top + (y + 0.5) * pitch;
-    for (let x = 0; x < size; x++) {
+    for (let x = 0; x < size; x += stride) {
       const cx = left + (x + 0.5) * pitch;
       const v = boxMean(integral, cx - r, cy - r, cx + r, cy + r);
       const b = dark[y * size + x] as number;
@@ -237,17 +239,28 @@ function gridFit(
   return -cov / Math.sqrt(varB * varV + 1e-9);
 }
 
+/** The wide search runs when the search around the expected grid fits worse. */
+const WIDE_SEARCH_BELOW = 0.8;
+/** Coarse finds the wide search refines. */
+const WIDE_CANDIDATES = 6;
+
 /**
  * Finds where the model drew the code: the module size and position whose
  * module centers best follow `map`, searched around `expected` (0.8 to 1.4
  * times the size, about ±3 modules in position). In the eval, GPT Image 2
  * redrew codes about 4% larger and Gemini 3.1 Flash Image about 30% larger,
- * out to the image's edges.
+ * out to the image's edges. With `wide` (scenes and photos, where the code
+ * is smaller than the image) a coarser search follows when that finds no
+ * good fit: half to 1.7 times the size, anywhere in the image (a quarter of
+ * the modules at half-module steps, then the best few refined). GPT Image 2
+ * redrew a code placed at half the image's width and below its center about
+ * a quarter larger, re-centered, and shrank one photo's to two thirds.
  */
 export function locateGrid(
   pixels: DecodedImage,
   map: QRModuleMap,
   expected: Omit<ModuleGrid, "fit">,
+  { wide = false }: { wide?: boolean } = {},
 ): ModuleGrid {
   const integral = lumaIntegral(pixels);
   let best: ModuleGrid = {
@@ -272,6 +285,42 @@ export function locateGrid(
       for (let dx = -reach; dx <= reach; dx += step) {
         for (let dy = -reach; dy <= reach; dy += step) {
           consider(center.x - half + dx, center.y - half + dy, pitch);
+        }
+      }
+    }
+  }
+  if (wide && best.fit < WIDE_SEARCH_BELOW) {
+    // Coarse: every other module, half-module steps, the best few kept.
+    const pitch0 = expected.pitch;
+    const candidates: ModuleGrid[] = [];
+    for (let scale = 0.5; scale <= 1.7; scale += 0.04) {
+      const pitch = pitch0 * scale;
+      const side = map.size * pitch;
+      for (let left = 0; left + side <= pixels.width; left += pitch0 * 0.5) {
+        for (let top = 0; top + side <= pixels.height; top += pitch0 * 0.5) {
+          const fit = gridFit(integral, map, left, top, pitch, 2);
+          if (
+            candidates.length < WIDE_CANDIDATES ||
+            fit > (candidates.at(-1) as ModuleGrid).fit
+          ) {
+            candidates.push({ left, top, pitch, fit });
+            candidates.sort((a, b) => b.fit - a.fit);
+            candidates.length = Math.min(candidates.length, WIDE_CANDIDATES);
+          }
+        }
+      }
+    }
+    // Refine each around its find, at full detail.
+    for (const from of candidates) {
+      for (let k = -3; k <= 3; k++) {
+        for (let dx = -3; dx <= 3; dx++) {
+          for (let dy = -3; dy <= 3; dy++) {
+            consider(
+              from.left + dx * pitch0 * 0.17,
+              from.top + dy * pitch0 * 0.17,
+              from.pitch * (1 + k * 0.007),
+            );
+          }
         }
       }
     }
@@ -304,7 +353,9 @@ const lerp = (from: number, to: number, t: number) =>
 /**
  * Moves pixel `i` toward luma `limit` (0–255) by `weight`, only when it's on
  * the wrong side: darker by scaling (keeps the hue), lighter by mixing in
- * white.
+ * white. With `keepColor` (scenes and photos), lighter first by raising all
+ * three channels alike, which keeps the pixel's own color, and white only
+ * for what that can't reach below 255.
  */
 function push(
   data: Uint8Array,
@@ -312,6 +363,7 @@ function push(
   dark: boolean,
   limit: number,
   weight: number,
+  keepColor = false,
 ) {
   const r = data[i] as number;
   const g = data[i + 1] as number;
@@ -324,12 +376,20 @@ function push(
     data[i] = Math.round(r * f);
     data[i + 1] = Math.round(g * f);
     data[i + 2] = Math.round(b * f);
-  } else {
-    const k = (target - l) / Math.max(255 - l, 1e-6);
-    data[i] = Math.round(r + (255 - r) * k);
-    data[i + 1] = Math.round(g + (255 - g) * k);
-    data[i + 2] = Math.round(b + (255 - b) * k);
+    return;
   }
+  let [r1, g1, b1, l1] = [r, g, b, l];
+  if (keepColor) {
+    const shift = target - l;
+    r1 = Math.min(255, r + shift);
+    g1 = Math.min(255, g + shift);
+    b1 = Math.min(255, b + shift);
+    l1 = luma(r1, g1, b1);
+  }
+  const k = Math.max(0, (target - l1) / Math.max(255 - l1, 1e-6));
+  data[i] = Math.round(r1 + (255 - r1) * k);
+  data[i + 1] = Math.round(g1 + (255 - g1) * k);
+  data[i + 2] = Math.round(b1 + (255 - b1) * k);
 }
 
 interface ModuleLimits {
@@ -349,8 +409,60 @@ interface ModuleLimits {
  */
 const ANCHOR_START = 1;
 
+/**
+ * How the blend treats the picture around the code and its colors. Code
+ * mode's quiet zone is already a plain border; in scenes and photos it's
+ * part of the picture, so the light ring is thinner and keeps its colors.
+ */
+export interface BlendStyle {
+  /** Lighten in the image's own colors (see push) */
+  keepColor: boolean;
+  /** Light ring around the code, in modules: at full strength, then fading out */
+  ringFull: number;
+  ringFade: number;
+  /** The ring's lightest luma at full strength, 0–1 */
+  ringLight: number;
+  /** Ring the binarizer cleaning covers, in modules */
+  ringClean: number;
+  /** Look for a moved or resized code anywhere in the image (see locateGrid) */
+  wideSearch: boolean;
+  /** Lowest grid fit the least blend works from (see MIN_GRID_FIT) */
+  minFit: number;
+}
+
+export const CODE_BLEND_STYLE: BlendStyle = {
+  keepColor: false,
+  ringFull: 1.5,
+  ringFade: 2.5,
+  ringLight: 0.85,
+  ringClean: 2,
+  wideSearch: false,
+  minFit: 0.6,
+};
+
+/**
+ * Scenes and photos (the code painted into a picture), from
+ * scripts/ai/art-eval-picture.ts: without a ring, 7 of 12 scenes needed the
+ * Image QR blend; this thin one needed none.
+ */
+export const SCENE_BLEND_STYLE: BlendStyle = {
+  keepColor: true,
+  ringFull: 0.3,
+  ringFade: 0.8,
+  ringLight: 0.75,
+  ringClean: 1,
+  wideSearch: true,
+  // A photo's subject painted over part of the code (a cup on a table) fit
+  // 0.41 and 0.45 where the code was drawn: strengthening it there keeps the
+  // photo's colors, where Image QR would redraw the square as halftone dots.
+  minFit: 0.4,
+};
+
 /** The limits for each kind of module at strength `s`. */
-function limitsFor(s: number): {
+function limitsFor(
+  s: number,
+  ringLight: number,
+): {
   anchors: ModuleLimits;
   rest: ModuleLimits;
   quiet: number;
@@ -367,13 +479,9 @@ function limitsFor(s: number): {
       light: 255 * lerp(0.5, 0.85, s),
       cover: lerp(0.45, 1, s),
     },
-    quiet: 255 * lerp(0.5, 0.85, sf),
+    quiet: 255 * lerp(0.5, ringLight, sf),
   };
 }
-
-/** Light ring around the code, in modules, at full and fading strength. */
-const QUIET_RING_FULL = 1.5;
-const QUIET_RING_FADE = 2.5;
 
 function correctModules(
   data: Uint8Array,
@@ -382,10 +490,12 @@ function correctModules(
   map: QRModuleMap,
   grid: ModuleGrid,
   s: number,
+  style: BlendStyle,
 ) {
+  const { keepColor, ringFull, ringFade } = style;
   const { size, dark, kinds } = map;
   const { pitch } = grid;
-  const limits = limitsFor(s);
+  const limits = limitsFor(s, style.ringLight);
   const feather = Math.max(1, pitch * 0.08);
   for (let my = 0; my < size; my++) {
     for (let mx = 0; mx < size; mx++) {
@@ -417,6 +527,7 @@ function correctModules(
               isDark,
               isDark ? darkMax : lightMin,
               weight,
+              keepColor,
             );
           }
         }
@@ -424,7 +535,7 @@ function correctModules(
     }
   }
   // The quiet zone: light next to the code, fading into the scene.
-  const ring = QUIET_RING_FADE * pitch;
+  const ring = ringFade * pitch;
   const right = grid.left + size * pitch;
   const bottom = grid.top + size * pitch;
   const x0 = Math.max(0, Math.floor(grid.left - ring));
@@ -438,14 +549,12 @@ function correctModules(
       const d = Math.max(dx, dy) / pitch;
       if (d <= 0) continue;
       const weight =
-        d <= QUIET_RING_FULL
+        d <= ringFull
           ? 1
-          : Math.max(
-              0,
-              (QUIET_RING_FADE - d) / (QUIET_RING_FADE - QUIET_RING_FULL),
-            );
-      if (weight > 0)
-        push(data, (y * width + x) * 4, false, limits.quiet, weight);
+          : Math.max(0, (ringFade - d) / Math.max(ringFade - ringFull, 1e-6));
+      if (weight > 0) {
+        push(data, (y * width + x) * 4, false, limits.quiet, weight, keepColor);
+      }
     }
   }
 }
@@ -521,6 +630,7 @@ function cleanBinarization(
   want: Uint8Array,
   box: { x0: number; y0: number; x1: number; y1: number },
   margin: number,
+  keepColor: boolean,
 ) {
   const grey = new Float32Array(width * height);
   for (let pass = 0; pass < 3; pass++) {
@@ -544,7 +654,14 @@ function cleanBinarization(
           push(data, (y * width + x) * 4, true, Math.max(0, t - margin), 1);
           changed++;
         } else if (w === 2 && l <= t + margin) {
-          push(data, (y * width + x) * 4, false, Math.min(255, t + margin), 1);
+          push(
+            data,
+            (y * width + x) * 4,
+            false,
+            Math.min(255, t + margin),
+            1,
+            keepColor,
+          );
           changed++;
         }
       }
@@ -555,8 +672,6 @@ function cleanBinarization(
 
 /** Data modules join the binarizer cleaning from this strength on. */
 const CLEAN_DATA_FROM = 0.7;
-/** Quiet zone the binarizer cleaning covers, in modules. */
-const CLEAN_QUIET_MODULES = 2;
 
 /**
  * The model's image corrected at strength `s` (0–1) on `grid`. A new image;
@@ -567,15 +682,16 @@ export function correctArt(
   map: QRModuleMap,
   grid: ModuleGrid,
   s: number,
+  style: BlendStyle = CODE_BLEND_STYLE,
 ): DecodedImage {
   const { width, height } = pixels;
   const data = new Uint8Array(pixels.data);
   if (s <= 0) return { width, height, data };
-  correctModules(data, width, height, map, grid, s);
+  correctModules(data, width, height, map, grid, s, style);
 
   const { size, dark, kinds } = map;
   const { pitch } = grid;
-  const q = CLEAN_QUIET_MODULES;
+  const q = style.ringClean;
   const box = {
     x0: Math.max(0, Math.floor(grid.left - q * pitch)),
     y0: Math.max(0, Math.floor(grid.top - q * pitch)),
@@ -598,7 +714,15 @@ export function correctArt(
       }
     }
   }
-  cleanBinarization(data, width, height, want, box, lerp(8, 16, s));
+  cleanBinarization(
+    data,
+    width,
+    height,
+    want,
+    box,
+    lerp(8, 16, s),
+    style.keepColor,
+  );
   return { width, height, data };
 }
 
@@ -687,6 +811,7 @@ export async function findLeastBlend({
   scan = scanPixels,
   deadline = Number.POSITIVE_INFINITY,
   signal,
+  style = CODE_BLEND_STYLE,
 }: {
   pixels: DecodedImage;
   text: string;
@@ -697,15 +822,17 @@ export async function findLeastBlend({
   scan?: PixelScan;
   deadline?: number;
   signal?: AbortSignal;
+  /** How the picture around the code is treated (scenes and photos differ) */
+  style?: BlendStyle;
 }): Promise<LeastBlend | null> {
-  const grid = locateGrid(pixels, map, expected);
-  if (grid.fit < MIN_GRID_FIT) return null;
+  const grid = locateGrid(pixels, map, expected, { wide: style.wideSearch });
+  if (grid.fit < style.minFit) return null;
   const { floor, cap } = bounds;
   let tries = 0;
   const attempt = async (strength: number) => {
     signal?.throwIfAborted();
     tries++;
-    const corrected = correctArt(pixels, map, grid, strength);
+    const corrected = correctArt(pixels, map, grid, strength, style);
     return (await scan(corrected, text, LEAST_BLEND_SCAN_SIZES))
       ? corrected
       : null;

@@ -205,7 +205,8 @@ export function buildLlmsTxt(input: LlmsTxtInput): string {
     on("aiArt") && {
       title: "AI QR code art",
       url: "/ai/art",
-      description: "Artwork that still scans; needs an account",
+      description:
+        "Artwork that still scans; needs an account. Also through the REST API and MCP with an API key",
     },
     {
       title: "Page templates",
@@ -344,7 +345,7 @@ export function buildLlmsTxt(input: LlmsTxtInput): string {
     {
       title: "MCP server",
       url: "/docs/developers/mcp",
-      description: `Remote MCP endpoint \`${mcpUrl}\` (Streamable HTTP, no account or key, read-only tools that render QR codes and barcodes and build Wi-Fi, contact, email, SMS and map payloads). Claude Code: \`${claudeCodeCommand(mcpUrl)}\``,
+      description: `Remote MCP endpoint \`${mcpUrl}\` (Streamable HTTP, no account or key, read-only tools that render QR codes and barcodes and build Wi-Fi, contact, email, SMS and map payloads; with an API key, tools that save themes and barcodes and make AI QR art). Claude Code: \`${claudeCodeCommand(mcpUrl)}\``,
     },
     {
       title: "Connect an AI app to the MCP server",
@@ -373,6 +374,11 @@ export function buildLlmsTxt(input: LlmsTxtInput): string {
       title: "Barcode API",
       url: "/docs/developers/barcode-api",
       description: `\`GET ${api}/barcode?format=ean13&data=…\` returns an SVG, PNG, JPG, WebP, AVIF, PDF or EPS barcode in ${PRODUCT_FACTS.barcodeFormats} formats, with check digits worked out or verified; no key. Saved barcodes under \`${api}/barcodes\` with an API key`,
+    },
+    on("aiArt") && {
+      title: "AI art API",
+      url: "/docs/developers/ai-art-api",
+      description: `\`POST ${api}/art\` with an API key paints a QR code (text, or a dynamic code by id) into AI artwork, checked to scan, on the workspace's monthly AI art images; about 15-45 s a call. The MCP tool generate_ai_art does the same`,
     },
     {
       title: "Example image API URL",
