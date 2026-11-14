@@ -1,0 +1,117 @@
+---
+title: "Vue"
+description: "通过 qrdx/vue 在 Vue 3 和 Nuxt 中绘制带样式的二维码：QRCode 和 QRCodeSVG 组件支持服务端渲染，useQRCode 组合式函数可提供标记和下载功能。"
+icon: Code
+---
+
+`qrdx/vue` 提供了 React 组件 `QRCode` 和 `QRCodeSVG` 的 Vue 3 版本，以及一个 `useQRCode` 组合式函数。它们的 props 与 React 组件相同，绘制的 SVG 也相同，支持所有图案、颜色、logo、边框和模板。该入口基于 `qrdx/core` 构建，不会导入 `react`。
+
+## 安装 [#install]
+
+```package-install
+qrdx@latest
+```
+
+`vue` 3.3 或更高版本是可选的对等依赖，因此会使用你应用自己的 Vue。TypeScript 需要 Vue 3.4.20 或更高版本，才能检查组件的 props。
+
+## 绘制二维码 [#draw-a-code]
+
+```vue
+<script setup lang="ts">
+import { QRCode } from "qrdx/vue";
+import { ref } from "vue";
+
+const url = ref("https://example.com");
+</script>
+
+<template>
+  <QRCode
+    :value="url"
+    :size="256"
+    body-pattern="rounded"
+    :frame="{ style: 'banner-bottom', text: 'Scan me' }"
+    aria-label="QR code for example.com"
+  />
+</template>
+```
+
+`QRCode` 接受 React 版 `QRCode` 的 props：包括所有 `QRProps` 选项，以及用于 logo 的 `logo`、`logoOptions`、`hideLogo` 和 `scale`。在模板中，可以用短横线命名（`body-pattern`）或驼峰命名来书写。像 `auto-level` 或 `hide-logo` 这样的标志型 prop 不需要赋值。
+
+- 当某个 prop 变化时，二维码会重新绘制，Vue 会原地更新 `<svg>`。
+- `class`、`style`、`aria-label` 等属性会加在 `<svg>` 上；如果有边框，则加在边框的外层 `<svg>` 上。`@click` 这类监听器也加在同一位置。
+
+## QRCodeSVG [#qrcodesvg]
+
+`QRCodeSVG` 接受 `QRProps`，与 React 版 `QRCodeSVG` 相同。logo 通过 `imageSettings` 设置：
+
+```vue
+<script setup lang="ts">
+import { QRCodeSVG } from "qrdx/vue";
+</script>
+
+<template>
+  <QRCodeSVG
+    value="https://example.com"
+    level="H"
+    :image-settings="{ src: '/logo.png', width: 48, height: 48, excavate: true }"
+  />
+</template>
+```
+
+## 服务端渲染与 Nuxt [#server-rendering-and-nuxt]
+
+两个组件都可以用 Vue 的服务端渲染器（`vue/server-renderer`）渲染，因此二维码会成为服务端 HTML 的一部分。标记中没有随机 id，所以浏览器注水时不会出现不匹配。
+
+在 Nuxt 中，可以在任意页面或组件里使用它们。它们会在服务端渲染并在浏览器中注水；放在 `<ClientOnly>` 内则只在浏览器中渲染。
+
+## useQRCode [#useqrcode]
+
+```vue
+<script setup lang="ts">
+import { useQRCode } from "qrdx/vue";
+import { ref } from "vue";
+
+const url = ref("https://example.com");
+const { svg, download } = useQRCode(() => ({ value: url.value, size: 256 }));
+</script>
+
+<template>
+  <div v-html="svg" />
+  <button type="button" @click="download({ format: 'png', size: 1024 })">
+    Download PNG
+  </button>
+</template>
+```
+
+`useQRCode(props)` 接受 `QRCode` 的 props，可以是对象、ref、响应式对象或 getter。它返回：
+
+- `svg`：SVG 标记，是一个计算属性 ref。它会跟随 props 变化，并且在服务端渲染时也可用。
+- `toDataURL(format, { size, quality })`：以 data URL 形式返回二维码。
+- `download({ format, filename, size, quality })`：将二维码保存为文件。
+- `options`：绘制二维码所用的选项，是一个计算属性 ref。
+
+`toDataURL` 和 `download` 默认使用二维码自身的 `size`，输出 PNG。支持的格式有 `png`、`jpg`、`webp`、`svg`、`pdf` 和 `eps`。PNG、JPG 和 WebP 需要在浏览器中运行，PDF 需要可选的 `jspdf` 包。
+
+## qrdx/core 的更多功能 [#more-from-qrdxcore]
+
+`qrdx/vue` 会重新导出 `qrdx/core` 中的全部内容：`toSVGString`、`downloadQRCode`、`getQRCodeDataUrl`、`getScanScore`、官方边框库（`getOfficialFrame`）等。[Vanilla JavaScript](/docs/vanilla-js) 对它们有详细介绍。如需在服务端生成 PNG，请使用 `qrdx/node` 中的 `getQRAsPNG`。
+
+自定义模板的 `wrapper` 要用 `qrdx/vue` 导出的 `h` 来编写。它是 core 的 `h`，不是 Vue 的 `h`，所以当一个文件同时需要两者时，请将其中一个以别名导入：
+
+```js
+import { h } from "qrdx/vue";
+
+const Labelled = {
+  id: "Labelled",
+  name: "Labelled",
+  wrapper: (children, props) =>
+    h(
+      "svg",
+      { viewBox: "0 0 300 340", xmlns: "http://www.w3.org/2000/svg" },
+      h("g", { transform: "translate(20, 20) scale(0.87)" }, children),
+      h("text", { x: "150", y: "325", textAnchor: "middle" }, props?.label)
+    ),
+};
+```
+
+将它作为 `customTemplate` 传入，并通过 `customProps` 传入其 props：`<QRCode value="https://example.com" :custom-template="Labelled" :custom-props="{ label: 'Scan me' }" />`。
