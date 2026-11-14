@@ -2,6 +2,7 @@
 // original layout, picked per link exactly as the original design picks it;
 // it scans at every error-correction level for short, typical and long
 // links; and its text reaches every output.
+import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import qrcodegen from "../src/codegen";
@@ -13,11 +14,15 @@ import { DotRing } from "../src/template/dot-ring";
 import {
   CENTER,
   CODE_OFFSET,
+  DEFAULT_FONT_SIZE,
+  DEFAULT_LETTER_SPACING,
   DEFAULT_TEXT,
   dotRingDots,
   dotRingLetters,
   dotRingPositions,
+  dotRingText,
   dotsClearOfCode,
+  MIN_FONT_SIZE,
   VIEW,
 } from "../src/template/dot-ring-layout";
 import { getTemplateCodeShare } from "../src/template-placement";
@@ -26,6 +31,12 @@ import { decodePng } from "../src/utils/png";
 import { parseSvgMarkup, type SvgNode } from "../src/utils/svg-geometry";
 import type { ErrorLevel, QRProps } from "../types";
 import { lightOnTopOfRing, machineHasFonts } from "./support/dot-ring";
+import {
+  CIRCUMFERENCE,
+  cleanText,
+  legacyDotRingLetters,
+  letterWidth,
+} from "./support/legacy-dot-ring";
 import { renderSvg } from "./support/qr";
 import { decodeQR, rasterizeSvg, simulateCamera } from "./support/raster";
 
@@ -215,6 +226,24 @@ describe("dot ring template", () => {
       }
     });
 
+    it("with text fitted or repeated round the ring", () => {
+      const fills: Record<string, unknown>[] = [
+        {
+          customText: Array.from({ length: 6 }, () => "Make your own *").join(
+            " "
+          ),
+        },
+        { customText: "Point your camera here * ".repeat(12) },
+        { customText: "Read the docs *", textFill: "repeat" },
+      ];
+      for (const customProps of fills) {
+        for (const value of Object.values(URLS)) {
+          const props: QRProps = { value, templateId: "DotRing", customProps };
+          expect(capture(props, 6), JSON.stringify(customProps)).toBe(value);
+        }
+      }
+    });
+
     it("with a logo of the caller's in the middle", () => {
       const logo =
         "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Crect width='8' height='8' fill='%23e11d48'/%3E%3C/svg%3E";
@@ -320,16 +349,13 @@ describe("dot ring template", () => {
       );
     });
 
-    it("leaves out letters that don't fit and characters that can't show", () => {
+    it("leaves out characters that can't show, and draws nothing for no text", () => {
       const options = {
         fontSize: 32,
         letterSpacing: 3.5,
         position: "top" as const,
         rotation: 0,
       };
-      const long = dotRingLetters("W".repeat(200), options);
-      expect(long.length).toBeGreaterThan(40);
-      expect(long.length).toBeLessThan(80);
       const clean = dotRingLetters("A‮B\u0000C\nD", options);
       expect(clean.map((letter) => letter.char).join("")).toBe("ABCD");
       expect(
@@ -379,6 +405,284 @@ describe("dot ring template", () => {
         );
       }
     );
+  });
+
+  describe("text that fits the ring", () => {
+    // Captured from qrdx 0.0.54 before text fitting, as SHA-256 of the markup
+    const BEFORE: [string, QRProps, string][] = [
+      [
+        "default",
+        { value: URLS.typical, templateId: "DotRing" },
+        "7bd507641a9c448b613254f316f8ac37f9160a6bf236649b94f5d156c7615a97",
+      ],
+      [
+        "default at level H",
+        { value: URLS.short, templateId: "DotRing", level: "H" },
+        "d3ffbbf7e5d9c2ae3bed7f86a77a0fb87eed8f73d0d29967cc4c28945e5e13f4",
+      ],
+      [
+        "at the bottom, turned",
+        {
+          value: "https://qrdx.dev",
+          templateId: "DotRing",
+          customProps: { textPosition: "bottom", textRotation: 15 },
+        },
+        "911e402cdfa495687b0772a70f8e2cbfe7258e7cfe4698c12018ababa90abf9b",
+      ],
+      [
+        "short text, larger and wider",
+        {
+          value: "https://qrdx.dev",
+          templateId: "DotRing",
+          customProps: {
+            customText: "SCAN ME",
+            fontSize: 40,
+            fontLetterSpacing: 6,
+          },
+        },
+        "6542d3fa02cb1a2fa45968659d81094324bc6e11f18c8fb1ba97706d0051574b",
+      ],
+      [
+        "styled",
+        {
+          value: "https://qrdx.dev/docs",
+          templateId: "DotRing",
+          fgColor: "#1d4ed8",
+          customProps: {
+            customText: "Read the docs * Read the docs *",
+            textColor: "#fde047",
+            fontWeight: 700,
+            strokeWidth: 2,
+            outerCircleColor: "#111827",
+          },
+        },
+        "55f5352fbe134aee8d250697503388c8e7722940efb5065dc426eef1fe2be43a",
+      ],
+      [
+        "no text",
+        {
+          value: "https://qrdx.dev",
+          templateId: "DotRing",
+          customProps: { customText: "" },
+        },
+        "1b3129b32bada79c501f8c34dd05698e9d6d1118f3611029f464f88fa0cd4bbd",
+      ],
+    ];
+
+    it.each(BEFORE)("draws %s byte for byte as before", (_, props, sha256) => {
+      expect(
+        createHash("sha256").update(toSVGString(props)).digest("hex")
+      ).toBe(sha256);
+    });
+
+    it("sets any text with room to spare exactly as before", () => {
+      const words = ["Scan", "me", "QR", "*", "Wi-Fi", "menu", "Café", "@qrdx"];
+      let seed = 7;
+      const random = () => {
+        seed = (seed * 16_807) % 2_147_483_647;
+        return seed / 2_147_483_647;
+      };
+      let checked = 0;
+      for (let i = 0; i < 400; i++) {
+        const text = Array.from(
+          { length: 1 + Math.floor(random() * 24) },
+          () => words[Math.floor(random() * words.length)]
+        ).join(" ");
+        const options = {
+          fontSize: 16 + random() * 30,
+          letterSpacing: random() * 8 - 1,
+          position: random() < 0.5 ? ("top" as const) : ("bottom" as const),
+          rotation: random() * 360 - 180,
+        };
+        const chars = cleanText(text);
+        const line =
+          chars.reduce(
+            (sum, char) => sum + letterWidth(char, options.fontSize),
+            0
+          ) +
+          options.letterSpacing * (chars.length - 1);
+        const seam =
+          letterWidth(" ", options.fontSize) + 2 * options.letterSpacing;
+        if (line + seam > CIRCUMFERENCE) {
+          continue;
+        }
+        expect(dotRingLetters(text, options), text).toEqual(
+          legacyDotRingLetters(text, options)
+        );
+        expect(dotRingText(text, options).fontSize).toBe(options.fontSize);
+        checked++;
+      }
+      expect(checked).toBeGreaterThan(200);
+    });
+  });
+
+  describe("text longer than the ring", () => {
+    const options = {
+      fontSize: DEFAULT_FONT_SIZE,
+      letterSpacing: DEFAULT_LETTER_SPACING,
+      position: "top" as const,
+      rotation: 0,
+    };
+    const times = (phrase: string, count: number) =>
+      Array.from({ length: count }, () => phrase).join(" ");
+
+    /** The line as set, plus the word space where the ring closes. */
+    function closedLength(ring: ReturnType<typeof dotRingText>) {
+      const chars = Array.from(ring.text);
+      const letters = chars.reduce(
+        (sum, char) => sum + letterWidth(char, ring.fontSize),
+        0
+      );
+      return (
+        letters +
+        ring.letterSpacing * (chars.length - 1) +
+        letterWidth(" ", ring.fontSize) +
+        2 * ring.letterSpacing
+      );
+    }
+
+    it("tightens the letter spacing first, keeping the size", () => {
+      // Five times overruns the ring by about 8% at the default spacing
+      const text = times("Make your own *", 5);
+      const ring = dotRingText(text, options);
+      expect(ring.text).toBe(text);
+      expect(ring.fontSize).toBe(DEFAULT_FONT_SIZE);
+      expect(ring.letterSpacing).toBeGreaterThan(0);
+      expect(ring.letterSpacing).toBeLessThan(DEFAULT_LETTER_SPACING);
+      // It closes the ring with a word space: its end never meets its start
+      expect(closedLength(ring)).toBeCloseTo(CIRCUMFERENCE, 6);
+    });
+
+    it("then shrinks the font, keeping every letter", () => {
+      const text = times("Make your own *", 6);
+      const ring = dotRingText(text, options);
+      expect(ring.text).toBe(text);
+      expect(ring.letterSpacing).toBe(0);
+      expect(ring.fontSize).toBeLessThan(DEFAULT_FONT_SIZE);
+      expect(ring.fontSize).toBeGreaterThan(MIN_FONT_SIZE);
+      // (fontSize is rounded to 3 decimals for the markup)
+      expect(closedLength(ring)).toBeCloseTo(CIRCUMFERENCE, 1);
+      // The template draws the letters at that size
+      const markup = toSVGString({
+        value: URLS.typical,
+        templateId: "DotRing",
+        customProps: { customText: text },
+      });
+      const sizes = new Set(
+        textNodes(markup).map((node) => node.attrs["font-size"])
+      );
+      expect([...sizes]).toEqual([String(ring.fontSize)]);
+    });
+
+    it("then cuts after the last whole word that fits, at the smallest size", () => {
+      const text = times(
+        "Point your camera at the code to open the menu, order and pay at your table *",
+        3
+      );
+      const ring = dotRingText(text, options);
+      expect(ring.fontSize).toBeGreaterThanOrEqual(MIN_FONT_SIZE);
+      expect(ring.fontSize).toBeLessThan(MIN_FONT_SIZE * 1.1);
+      expect(text.startsWith(ring.text)).toBe(true);
+      expect(text[ring.text.length]).toBe(" ");
+      expect(closedLength(ring)).toBeLessThanOrEqual(CIRCUMFERENCE + 1e-6);
+      // The next word wouldn't have fitted at the smallest size
+      const next = text.slice(0, text.indexOf(" ", ring.text.length + 1));
+      expect(
+        dotRingText(next, {
+          ...options,
+          fontSize: MIN_FONT_SIZE,
+          letterSpacing: 0,
+        }).text
+      ).not.toBe(next);
+    });
+
+    it("cuts within a word longer than the ring", () => {
+      const ring = dotRingText("W".repeat(200), options);
+      expect(ring.text).toMatch(/^W{100,130}$/);
+      expect(ring.fontSize).toBeGreaterThanOrEqual(MIN_FONT_SIZE);
+      expect(closedLength(ring)).toBeLessThanOrEqual(CIRCUMFERENCE + 1e-6);
+    });
+
+    it("never shrinks a font asked for below the smallest size", () => {
+      const ring = dotRingText(times("Make your own *", 12), {
+        ...options,
+        fontSize: 12,
+      });
+      expect(ring.fontSize).toBe(12);
+      expect(closedLength(ring)).toBeLessThanOrEqual(CIRCUMFERENCE + 1e-6);
+    });
+  });
+
+  describe('textFill: "repeat"', () => {
+    const options = {
+      fontSize: DEFAULT_FONT_SIZE,
+      letterSpacing: DEFAULT_LETTER_SPACING,
+      position: "top" as const,
+      rotation: 0,
+      fill: "repeat" as const,
+    };
+    it.each([
+      ["Make your own *", 5],
+      ["Read the docs *", 5],
+      ["Scan the QR code *", 4],
+      ["SCAN ME", 9],
+    ])("repeats %j round the whole ring (%i times)", (phrase, copies) => {
+      const ring = dotRingText(phrase, options);
+      expect(ring.text).toBe(
+        Array.from({ length: copies }, () => phrase).join(" ")
+      );
+      expect(ring.fontSize).toBe(DEFAULT_FONT_SIZE);
+      // Even spacing, near the asked spacing
+      expect(
+        Math.abs(ring.letterSpacing - DEFAULT_LETTER_SPACING)
+      ).toBeLessThan(2.5);
+      // The copies close the ring: the seam is the same word space as
+      // between the copies
+      const chars = Array.from(ring.text);
+      const length =
+        chars.reduce((sum, char) => sum + letterWidth(char, ring.fontSize), 0) +
+        ring.letterSpacing * (chars.length + 1) +
+        letterWidth(" ", ring.fontSize);
+      expect(length).toBeCloseTo(CIRCUMFERENCE, 6);
+    });
+
+    it("reads text that already repeats a phrase as that phrase", () => {
+      const phrase = "Make your own *";
+      for (const count of [2, 3, 4, 5]) {
+        const repeated = Array.from({ length: count }, () => phrase).join(" ");
+        expect(dotRingText(repeated, options)).toEqual(
+          dotRingText(phrase, options)
+        );
+      }
+      // A line that doesn't repeat is the phrase
+      expect(dotRingText("Scan me to order", options).text).toMatch(
+        /^Scan me to order( Scan me to order)+$/
+      );
+    });
+
+    it("fits a phrase longer than the ring once, as without it", () => {
+      const long = "W".repeat(200);
+      expect(dotRingText(long, options)).toEqual(
+        dotRingText(long, { ...options, fill: "none" })
+      );
+    });
+
+    it("reaches the template's markup", () => {
+      const markup = (customProps: Record<string, unknown>) =>
+        textNodes(
+          toSVGString({
+            value: URLS.typical,
+            templateId: "DotRing",
+            customProps,
+          })
+        )
+          .map((node) => node.text)
+          .join("");
+      expect(
+        markup({ customText: "Read the docs *", textFill: "repeat" })
+      ).toBe("Readthedocs*".repeat(5));
+      expect(markup({ customText: "Read the docs *" })).toBe("Readthedocs*");
+    });
   });
 
   it("places the code in the middle of the artwork", () => {
