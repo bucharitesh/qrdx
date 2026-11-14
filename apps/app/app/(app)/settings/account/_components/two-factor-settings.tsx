@@ -1,7 +1,7 @@
 "use client";
 
 import { toast } from "@repo/design-system";
-import { Spinner } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -332,7 +332,7 @@ export function TwoFactorSettings({
               size="sm"
               variant={ready ? "default" : "outline"}
             >
-              {opening === "turn-on" && <Spinner className="animate-spin" />}
+              {opening === "turn-on" && <ModuleOrbit aria-hidden />}
               {t("turnOn")}
             </Button>
           )
@@ -376,9 +376,7 @@ export function TwoFactorSettings({
                   }
                   variant="outline"
                 >
-                  {opening === "passkey" && (
-                    <Spinner className="animate-spin" />
-                  )}
+                  {opening === "passkey" && <ModuleOrbit aria-hidden />}
                   {t("addPasskey")}
                 </Button>
               </FeatureSpotlight>
@@ -480,7 +478,7 @@ export function TwoFactorSettings({
               size="sm"
               variant="outline"
             >
-              {opening === "app" && <Spinner className="animate-spin" />}
+              {opening === "app" && <ModuleOrbit aria-hidden />}
               {t("setUp")}
             </Button>
           )
@@ -549,7 +547,7 @@ export function TwoFactorSettings({
               onClick={runConfirmed}
               variant={copy?.destructive ? "destructive" : "outline"}
             >
-              {busy && <Spinner className="animate-spin" />}
+              {busy && <ModuleOrbit aria-hidden />}
               {copy?.button}
             </Button>
           </AlertDialogFooter>

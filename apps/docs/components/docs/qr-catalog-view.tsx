@@ -1,6 +1,7 @@
 "use client";
 
-import { Close, Spinner, Tick } from "@repo/design-system/components/icons";
+import { Close, Tick } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { cn } from "@repo/design-system/lib/utils";
 import { getQRAsSVGDataUri, handleImageLoad, type QRProps } from "qrdx";
 import { useEffect, useMemo, useState } from "react";
@@ -78,7 +79,7 @@ function ScanBadge({ status }: { status: Status }) {
   if (status === "checking") {
     return (
       <span className="text-fd-muted-foreground inline-flex items-center gap-1 text-[11px]">
-        <Spinner className="size-3" />
+        <ModuleOrbit aria-hidden className="size-3" />
         Checking
       </span>
     );

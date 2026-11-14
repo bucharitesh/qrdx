@@ -3,7 +3,7 @@
 import { resetAnalytics, track } from "@repo/analytics";
 import { authClient } from "@repo/auth/client";
 import { QrdxLogo } from "@repo/design-system/components/brand/qrdx-logo";
-import { Spinner } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -67,7 +67,7 @@ export function SignOutScreen() {
           className="text-muted-foreground flex items-center gap-2.5 text-sm"
           role="status"
         >
-          <Spinner aria-hidden className="size-4 animate-spin" />
+          <ModuleOrbit aria-hidden className="size-4" />
           {step === "signing-out" ? "Signing you out…" : "One moment…"}
         </div>
       )}

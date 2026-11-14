@@ -1,7 +1,7 @@
 "use client";
 
 import { toast } from "@repo/design-system";
-import { Spinner } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Checkbox } from "@repo/design-system/components/ui/checkbox";
 import { Input } from "@repo/design-system/components/ui/input";
@@ -48,7 +48,7 @@ export function ApplyForm() {
   if (!state) {
     return (
       <div className="text-muted-foreground flex items-center gap-2 text-sm">
-        <Spinner className="animate-spin" aria-hidden /> Loading…
+        <ModuleOrbit aria-hidden /> Loading…
       </div>
     );
   }
@@ -171,7 +171,7 @@ export function ApplyForm() {
         </p>
       )}
       <Button disabled={isPending || !agree} type="submit">
-        {isPending && <Spinner className="animate-spin" aria-hidden />}
+        {isPending && <ModuleOrbit aria-hidden />}
         Apply
       </Button>
     </form>

@@ -1,6 +1,7 @@
 "use client";
 
-import { Tick as Check, Spinner } from "@repo/design-system/components/icons";
+import { Tick as Check } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import {
   Alert,
   AlertDescription,
@@ -243,7 +244,7 @@ export function DubshForm() {
                   disabled={isConnecting}
                 >
                   {isConnecting && (
-                    <Spinner className="mr-1.5 size-3.5 animate-spin" />
+                    <ModuleOrbit aria-hidden className="mr-1.5 size-3.5" />
                   )}
                   {t("connectDub")}
                 </Button>
@@ -379,7 +380,7 @@ export function DubshForm() {
               disabled={isMutating || !createData.url.trim()}
             >
               {isMutating && (
-                <Spinner className="mr-1.5 size-3.5 animate-spin" />
+                <ModuleOrbit aria-hidden className="mr-1.5 size-3.5" />
               )}
               {t("createDubLink")}
             </Button>

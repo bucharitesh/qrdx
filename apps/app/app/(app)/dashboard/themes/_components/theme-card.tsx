@@ -2,7 +2,8 @@
 
 import { CANONICAL_ORIGIN } from "@repo/config";
 import { toast } from "@repo/design-system";
-import { Spinner as Loader2, Star } from "@repo/design-system/components/icons";
+import { Star } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -237,7 +238,7 @@ export function ThemeCard({ theme, workspace, canCopyToTeam }: ThemeCardProps) {
               variant="ghost"
             >
               {busy ? (
-                <Loader2 className="size-4 animate-spin" />
+                <ModuleOrbit aria-hidden className="size-4" />
               ) : (
                 <MoreVertical className="text-muted-foreground size-4 rotate-90" />
               )}
@@ -370,7 +371,7 @@ export function ThemeCard({ theme, workspace, canCopyToTeam }: ThemeCardProps) {
               {t("cancel")}
             </Button>
             <Button disabled={isPending || !name.trim()} onClick={handleRename}>
-              {isPending && <Loader2 className="size-4 animate-spin" />}
+              {isPending && <ModuleOrbit aria-hidden className="size-4" />}
               {t("save")}
             </Button>
           </DialogFooter>
@@ -401,7 +402,7 @@ export function ThemeCard({ theme, workspace, canCopyToTeam }: ThemeCardProps) {
               }}
             >
               {deleteThemeMutation.isPending && (
-                <Loader2 className="size-4 animate-spin" />
+                <ModuleOrbit aria-hidden className="size-4" />
               )}
               {t("deleteTheme")}
             </AlertDialogAction>
@@ -453,7 +454,7 @@ export function ThemeCard({ theme, workspace, canCopyToTeam }: ThemeCardProps) {
               onClick={handleConfirmEditTags}
             >
               {updateTagsMutation.isPending && (
-                <Loader2 className="size-4 animate-spin" />
+                <ModuleOrbit aria-hidden className="size-4" />
               )}
               {t("saveTags")}
             </Button>

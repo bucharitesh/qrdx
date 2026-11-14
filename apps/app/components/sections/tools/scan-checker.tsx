@@ -1,7 +1,7 @@
 "use client";
 
 import { toast } from "@repo/design-system";
-import { Spinner as LoaderCircle } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
 import {
@@ -252,7 +252,7 @@ export function ScanChecker({
 
   const checking = status.phase === "checking" && (
     <p className="text-muted-foreground flex items-center gap-2 text-sm">
-      <LoaderCircle className="size-4 animate-spin" />
+      <ModuleOrbit aria-hidden className="size-4" />
       {t("checking")}
     </p>
   );

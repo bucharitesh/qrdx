@@ -1,6 +1,6 @@
 "use client";
 
-import { Spinner } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
@@ -397,7 +397,7 @@ export function AuditLogView({
           </Button>
         )}
         <div className="flex w-full items-center gap-2 sm:ml-auto sm:w-auto">
-          {navigating && <Spinner className="size-4" />}
+          {navigating && <ModuleOrbit aria-hidden className="size-4" />}
           <Button
             asChild
             className="max-sm:h-10 max-sm:flex-1"

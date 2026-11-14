@@ -1,8 +1,8 @@
 "use client";
 
 import { toast } from "@repo/design-system";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
-import { Spinner } from "@repo/design-system/components/ui/spinner";
 import { cn } from "@repo/design-system/lib/utils";
 import { MagicStar } from "iconsax-reactjs";
 import { useTranslations } from "next-intl";
@@ -118,7 +118,7 @@ export function ArtLookWriteButton({
       type="button"
       variant="ghost"
     >
-      {writing ? <Spinner /> : <MagicStar aria-hidden />}
+      {writing ? <ModuleOrbit /> : <MagicStar aria-hidden />}
       {writing ? t("writing") : t("writeOneForMe")}
     </Button>
   );

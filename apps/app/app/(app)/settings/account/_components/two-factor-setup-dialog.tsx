@@ -2,7 +2,7 @@
 
 import { addPasskeyWith } from "@repo/auth/passkey-client";
 import { toast } from "@repo/design-system";
-import { Spinner } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
@@ -546,7 +546,7 @@ export function TwoFactorSetupDialog({
             </div>
             {busy && (
               <p className="text-muted-foreground flex items-center gap-1.5 text-xs">
-                <Spinner className="size-3.5 animate-spin" />
+                <ModuleOrbit aria-hidden className="size-3.5" />
                 {t("followThePromptFromYour")}
               </p>
             )}
@@ -563,7 +563,7 @@ export function TwoFactorSetupDialog({
                 {start === "choose" ? t("back") : t("cancel")}
               </Button>
               <Button disabled={busy} type="submit">
-                {busy && <Spinner className="animate-spin" />}
+                {busy && <ModuleOrbit aria-hidden />}
                 {t("continue")}
               </Button>
             </DialogFooter>
@@ -636,7 +636,7 @@ export function TwoFactorSetupDialog({
                 <div className="flex min-h-5 items-center justify-center">
                   {busy ? (
                     <p className="text-muted-foreground flex items-center gap-1.5 text-xs">
-                      <Spinner className="size-3.5 animate-spin" />
+                      <ModuleOrbit aria-hidden className="size-3.5" />
                       {t("checkingCode")}
                     </p>
                   ) : (
@@ -647,7 +647,10 @@ export function TwoFactorSetupDialog({
             ) : (
               <div className="flex min-h-40 flex-col items-center justify-center gap-3">
                 {busy ? (
-                  <Spinner className="text-muted-foreground size-5 animate-spin" />
+                  <ModuleOrbit
+                    aria-hidden
+                    className="text-muted-foreground size-5"
+                  />
                 ) : (
                   <>
                     {errorLine}
@@ -701,7 +704,7 @@ export function TwoFactorSetupDialog({
                 onClick={() => void promptExistingPasskey(false)}
                 type="button"
               >
-                {busy && <Spinner className="animate-spin" />}
+                {busy && <ModuleOrbit aria-hidden />}
                 {t("continueWithPasskey")}
               </Button>
               {errorLine}

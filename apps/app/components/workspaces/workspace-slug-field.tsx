@@ -4,7 +4,8 @@ import {
   WORKSPACE_SLUG_MAX,
   workspaceSlugProblem,
 } from "@repo/auth/workspace-rules";
-import { Spinner, Tick } from "@repo/design-system/components/icons";
+import { Tick } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import { cn } from "@repo/design-system/lib/utils";
@@ -122,7 +123,7 @@ export function WorkspaceSlugField({
         />
         <span aria-hidden className="flex w-8 shrink-0 justify-center">
           {status.state === "checking" && (
-            <Spinner className="text-muted-foreground size-4 animate-spin" />
+            <ModuleOrbit aria-hidden className="text-muted-foreground size-4" />
           )}
           {status.state === "available" && (
             <Tick className="text-foreground size-4" strokeWidth={2} />

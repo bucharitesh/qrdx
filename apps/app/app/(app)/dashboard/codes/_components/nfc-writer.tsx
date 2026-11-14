@@ -1,7 +1,7 @@
 "use client";
 
 import { track } from "@repo/analytics";
-import { Spinner } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Checkbox } from "@repo/design-system/components/ui/checkbox";
 import { Label } from "@repo/design-system/components/ui/label";
@@ -83,7 +83,7 @@ function Status({
         )}
       >
         {spinning ? (
-          <Spinner className="size-5" />
+          <ModuleOrbit aria-hidden className="size-5" />
         ) : StatusIcon ? (
           <StatusIcon className="size-5" />
         ) : null}

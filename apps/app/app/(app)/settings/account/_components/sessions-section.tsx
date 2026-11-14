@@ -1,7 +1,7 @@
 "use client";
 
 import { toast } from "@repo/design-system";
-import { Spinner } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -121,9 +121,7 @@ export function SessionsSection({ sessions }: { sessions: SessionView[] }) {
                   size="sm"
                   variant="ghost"
                 >
-                  {ending === session.id && (
-                    <Spinner className="animate-spin" />
-                  )}
+                  {ending === session.id && <ModuleOrbit aria-hidden />}
                   {t("signOut")}
                 </Button>
               )}
@@ -153,7 +151,7 @@ export function SessionsSection({ sessions }: { sessions: SessionView[] }) {
               {t("cancel")}
             </AlertDialogCancel>
             <Button disabled={endingAll} onClick={endOthers} variant="outline">
-              {endingAll && <Spinner className="animate-spin" />}
+              {endingAll && <ModuleOrbit aria-hidden />}
               {t("signOutOthers")}
             </Button>
           </AlertDialogFooter>

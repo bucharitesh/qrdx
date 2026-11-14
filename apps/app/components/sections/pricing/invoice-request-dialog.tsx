@@ -6,7 +6,7 @@
 // by hand. Shown only where invoice requests are offered (qrdx.dev).
 
 import { ENTERPRISE_EMAIL } from "@repo/config";
-import { Spinner } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   Dialog,
@@ -189,7 +189,7 @@ export function InvoiceRequestDialog({
 
             <DialogFooter>
               <Button disabled={busy} type="submit">
-                {busy && <Spinner aria-hidden className="animate-spin" />}
+                {busy && <ModuleOrbit aria-hidden />}
                 {busy ? t("sending") : t("submit")}
               </Button>
             </DialogFooter>

@@ -2,11 +2,11 @@
 
 import { toast } from "@repo/design-system";
 import { Bot, Close } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import { Slider } from "@repo/design-system/components/ui/slider";
-import { Spinner } from "@repo/design-system/components/ui/spinner";
 import { Switch } from "@repo/design-system/components/ui/switch";
 import { Textarea } from "@repo/design-system/components/ui/textarea";
 import {
@@ -413,7 +413,7 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
               disabled={!canSubmit || notEnoughCredits}
               type="submit"
             >
-              {busy ? <Spinner /> : <Bot />}
+              {busy ? <ModuleOrbit /> : <Bot />}
               {writer.writing
                 ? tLooks("writing")
                 : isGenerating
