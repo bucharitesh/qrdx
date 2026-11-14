@@ -171,7 +171,16 @@ A maintainer applies schema changes to the production database before the code t
 
 ## Translating QRdx
 
-English is the source and keeps the unprefixed URLs (`/pricing`). Every other language lives under its own lowercase segment: `/es/pricing`, `/pt-br/pricing`, `/zh-hans`. Translated so far: the header, the footer, the cookie banner and its dialog, the home page, `/pricing` and the other marketing pages listed in `packages/i18n/localized-paths.json` (tools, scanner, generators, industry and placement guides, templates, integrations, plugins, MCP, AI and the comparison index). A dynamic route is listed the way its folder is named (`/qr-code-generator/[type]`). The docs are in every one of these languages too (see [Docs](#docs) below). The blog, the legal pages, the comparison pages themselves and the signed-in app are English only.
+English is the source, and `packages/i18n/config.ts` lists the languages it's translated into: today `es`, `pt-BR`, `fr`, `de`, `it`, `ja`, `ko`, `zh-Hans`, `id` and `hi`, all machine-translated and waiting for a native review (see [Review and search engines](#review-and-search-engines)).
+
+Translated so far:
+
+- **Public pages.** English keeps the unprefixed URLs (`/pricing`), and every other language lives under its own lowercase segment: `/es/pricing`, `/pt-br/pricing`, `/zh-hans`. These pages are under `apps/app/app/[lang]` and are listed in `packages/i18n/localized-paths.json`: the home page, `/pricing`, the guarantee, enterprise and security pages, the playground (`/es/playground`), tools, scanner, generators, industry and placement guides, templates, integrations, plugins, MCP, the API, dynamic QR code and open-source pages, AI and the comparison index. A dynamic route is listed the way its folder is named (`/qr-code-generator/[type]`). The header, the footer, the cookie banner and its dialog, and the sign-in dialog are translated on every one of them. Shared theme links (`/playground/<id>`) keep one URL and show the editor in the language menu's language (its cookie). To translate another marketing page, add its path to that list and run `bun run --filter app i18n:split`, which moves the page from `app/(app)/(home)` to `app/[lang]/(home)` and fixes the imports.
+- **The signed-in app.** The dashboard, settings, sign-in and two-step verification, OAuth consent, invitations and join links. Their URLs carry no language: `/dashboard` is `/dashboard` in every language. The language comes from the person: the one they pick in Settings > General > Language (saved on their account), else the language menu's cookie, else English. Server components there read it with `getAppTranslations()` from `apps/app/lib/i18n/app-locale.ts`, not `getTranslations()`, because the URL doesn't say.
+- **Emails.** The sign-in code, the new-address code and the first scan, scan milestone, form response and code activity alerts go out in the recipient's saved language, else the language the site was in when they asked for a code, else English. Templates take an `intl` (`apps/app/lib/i18n/email.ts`) and default to English.
+- **The docs**, in every one of these languages (see [Docs](#docs) below).
+
+The blog, the legal pages, the comparison pages themselves, admin and the other emails are English only.
 
 The copy is in `apps/app/messages/`:
 
@@ -184,6 +193,8 @@ The copy is in `apps/app/messages/`:
 | `content/<locale>.json` | Translations of copy that lives in TypeScript data (generator pages, industry and placement guides, FAQ lists), keyed by a hash of the English, with the English beside each one |
 
 Long copy kept in TypeScript (for example `lib/qr-types-content.ts`, `lib/seo-content`, a page's `content.ts`) stays English in its file. `apps/app/lib/i18n/content-sources.ts` lists that data, the translate script fills `content/<locale>.json` from it, and pages render it with `localizeContent()` (client components with `useContentText()`). A string is looked up by its English, so when the English changes it shows in English until it's translated again.
+
+New interface copy goes into `en.json` and is read with next-intl's `t()`. `bun run --filter app i18n:extract <files>` (paths from `apps/app`) does most of that for a component: it moves JSX text, copy props such as `aria-label` and `placeholder`, and toast messages into `en.json` and swaps them for `t()` calls. Add `--app` for the signed-in app's server components and `--dry-run` to see the changes first. Copy it can't convert, such as module-level data, is listed for you to move by hand.
 
 An app other than `apps/app` loads the namespaces the docs read (`docs`, `footer`, `localeSwitcher`, `meta` and `consent`) through `@repo/i18n`, from a copy that `bun run --filter app i18n:docs-messages` writes to `packages/i18n/messages` right before that app builds. The copy isn't committed, so there's nothing to refresh by hand.
 
