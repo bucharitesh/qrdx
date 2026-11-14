@@ -33,7 +33,7 @@ private codes (anyone can scan a QR code in a screenshot).
 
 ## Checklist
 - [ ] This PR targets `staging`
-- [ ] `bun run typecheck` and `bun run typecheck:docs` pass
+- [ ] `bun run typecheck` and `bun run typecheck:app` pass
 - [ ] `bun run prepush` passes (it also runs on `git push`)
 - [ ] `bun x ultracite check <files>` is clean for the files I changed
 - [ ] Docs or READMEs are updated if behavior or public APIs changed

@@ -1,6 +1,6 @@
 // Workspace single sign-on: pure and client-safe. The SSO plugin's gate
 // (./sso.ts), the app's server actions and settings page
-// (apps/docs/ee/sso/*, app/dashboard/[workspace]/settings/sso) and tests
+// (apps/app/ee/sso/*, app/dashboard/[workspace]/settings/sso) and tests
 // share these.
 //
 // A workspace has at most one connection (OIDC or SAML) for one email
@@ -13,7 +13,7 @@ import {
   CONFIRM_RETURN_PARAM,
 } from "../confirm-sign-in-rules";
 
-/** Where Better Auth is mounted (apps/docs/app/api/auth/[...all]). */
+/** Where Better Auth is mounted (apps/app/app/api/auth/[...all]). */
 export const AUTH_BASE_PATH = "/api/auth";
 
 /**
@@ -170,7 +170,7 @@ export function ssoServiceProviderUrls(
 
 const SIGN_IN_PATH = "/sign-in";
 
-/** Error codes QRdx sends back for SSO sign-ins (apps/docs/ee/sso/messages.ts). */
+/** Error codes QRdx sends back for SSO sign-ins (apps/app/ee/sso/messages.ts). */
 export const SSO_SIGN_IN_ERROR = {
   outsideDomain: "sso_email_outside_domain",
   emailUnverified: "sso_email_unverified",

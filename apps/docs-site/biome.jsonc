@@ -1,7 +1,7 @@
 {
   "root": false,
   "$schema": "https://biomejs.dev/schemas/2.6.4/schema.json",
-  // Not the root config: like apps/docs, where most of these files come
+  // Not the root config: like apps/app, where most of these files come
   // from, the app keeps Biome's recommended rules (below) and takes only
   // Ultracite's test preset.
   "extends": ["ultracite/biome/vitest"],

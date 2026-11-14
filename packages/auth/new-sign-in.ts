@@ -39,7 +39,7 @@ import { isUnsolicitedSignIn } from "./unsolicited-sign-in";
 // Bounds: an account keeps its MAX_KNOWN_DEVICES most recently seen browsers
 // (each cleared cookie or private window adds one), and the daily cron
 // deletes browsers not seen for KNOWN_DEVICE_DAYS, by when their cookie has
-// expired anyway (apps/docs/lib/auth/verification-prune.ts). Every new
+// expired anyway (apps/app/lib/auth/verification-prune.ts). Every new
 // browser is alerted, up to ALERTS_PER_DAY per account in 24 hours (a burst
 // of sign-ins can't flood the inbox or the email provider); past that, new
 // browsers are recorded without one. `alerted_at` marks the browsers that got

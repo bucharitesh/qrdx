@@ -170,7 +170,7 @@ export default async function Page(
           <LLMCopyButton markdownUrl={markdown} />
           <ViewOptions
             markdownUrl={markdown}
-            githubUrl={`https://github.com/${owner}/${repo}/blob/main/apps/docs/content/docs/${page.path}`}
+            githubUrl={`https://github.com/${owner}/${repo}/blob/main/apps/app/content/docs/${page.path}`}
           />
         </div>
         <div className="prose flex-1 text-fd-foreground/90">

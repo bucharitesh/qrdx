@@ -11,7 +11,7 @@ import {
 import { localeParams } from "@/lib/i18n/static-params";
 import { rootMetadata, rootViewport } from "@/lib/root-metadata";
 
-// The docs site's root layout. As in the main app (apps/docs/app/[lang]),
+// The docs site's root layout. As in the main app (apps/app/app/[lang]),
 // builds prerender English: next.config.ts rewrites /docs to /en/docs. The
 // other languages render on their first request and are cached from then
 // on (lib/i18n/static-params.ts). Anything else in the first segment is a

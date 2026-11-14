@@ -9,7 +9,7 @@ export const OAUTH_REFERRAL_KEY = "referralCode";
 
 /**
  * The request header an email-code sign-up sends how its visit started in
- * (apps/docs/lib/analytics/landing.ts): URI-encoded JSON.
+ * (apps/app/lib/analytics/landing.ts): URI-encoded JSON.
  */
 export const LANDING_HEADER = "x-qrdx-landing";
 

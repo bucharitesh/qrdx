@@ -1,0 +1,193 @@
+---
+title: "Webhooks"
+description: "जब आपके QR कोड स्कैन, बनाए या बदले जाएँ, या कोई फ़ॉर्म सबमिट करे, तो एक साइन किया हुआ HTTPS रिक्वेस्ट पाएँ। Zapier, Make और n8n के साथ काम करता है।"
+icon: Webhook
+---
+
+Webhooks किसी वर्कस्पेस के इवेंट होते ही आपके नियंत्रण वाले URL पर भेज देते हैं। इनका उपयोग तब करें जब किसी के फ़ॉर्म भरने पर CRM अपडेट करना हो, कोई कोड 1,000 स्कैन पार करे तो इंटरनल टूल में पोस्ट करना हो, या स्कैन डेटा की अपनी कॉपी रखनी हो।
+
+Webhooks, Zapier/Make हुक और Slack/Discord अलर्ट **Business** प्लान का हिस्सा हैं। ईमेल अलर्ट और साप्ताहिक डाइजेस्ट Pro में मिलते हैं; देखें [नोटिफ़िकेशन](/docs/notifications)।
+
+## एंडपॉइंट जोड़ें [#add-an-endpoint]
+
+1. जिस वर्कस्पेस के इवेंट चाहिए, उसमें [सेटिंग्स → Webhooks](/dashboard?to=settings/webhooks) खोलें। लिंक उस वर्कस्पेस को खोलता है जिसे आपने आख़िरी बार इस्तेमाल किया था; वर्कस्पेस स्विचर में दूसरा चुनने पर आप उसी पेज पर रहते हैं।
+2. **Add endpoint** पर क्लिक करें, एक `https://` URL डालें और इवेंट चुनें। QRdx पहले आपसे [पुष्टि करने](/docs/help/privacy-and-security/two-step-verification#confirm-its-you) को कहता है कि यह आप ही हैं, और एंडपॉइंट का URL बदलने पर फिर से कहता है; इवेंट बदलने या उसे पॉज़ करने पर नहीं पूछता।
+3. सेव करने के बाद दिखने वाला **signing secret** कॉपी करें। ओनर और एडमिन बाद में [पुष्टि करने](/docs/help/privacy-and-security/two-step-verification#confirm-its-you) के बाद इसे फिर से देख सकते हैं या रोटेट कर सकते हैं।
+4. **Send test** पर क्लिक करें। QRdx एक साइन किया हुआ `ping` इवेंट भेजता है और रिस्पॉन्स स्टेटस दिखाता है।
+
+ओनर और एडमिन एंडपॉइंट मैनेज करते हैं; मेंबर एंडपॉइंट और उनके डिलीवरी लॉग देख सकते हैं। एक वर्कस्पेस में अधिकतम 20 एंडपॉइंट हो सकते हैं।
+
+एंडपॉइंट URL सार्वजनिक `https://` होस्ट नाम होने चाहिए। IP पते, `localhost` और प्राइवेट नेटवर्क पर रिज़ॉल्व होने वाले नाम अस्वीकार कर दिए जाते हैं, और रीडायरेक्ट फ़ॉलो नहीं किए जाते।
+
+## इवेंट [#events]
+
+| इवेंट | कब | नोट्स |
+| --- | --- | --- |
+| `scan.created` | किसी डायनेमिक कोड को स्कैन किया जाता है | बैच में: हर एंडपॉइंट पर प्रति मिनट अधिकतम एक रिक्वेस्ट, कुछ मिनट के भीतर भेजी जाती है, जिसमें 100 तक स्कैन और सही `count` होता है |
+| `scan.milestone` | किसी कोड का पहला स्कैन, फिर 10, 100, 500, 1,000, 5,000, 10,000, 50,000, 100,000, 500,000 और 1,000,000 स्कैन, फिर हर दस लाख पर | हर माइलस्टोन पर एक बार |
+| `code.created` | एक डायनेमिक कोड बनाया जाता है (डैशबोर्ड या API से) | हर कोड पर एक इवेंट, बल्क में बनाने पर भी |
+| `code.updated` | किसी कोड की डेस्टिनेशन, टाइटल, डिज़ाइन या शॉर्ट-लिंक डोमेन बदलती है | `changes` में बदले हुए फ़ील्ड की सूची होती है |
+| `form.submitted` | कोई होस्टेड पेज पर फ़ॉर्म सबमिट करता है | जवाब शामिल होते हैं |
+| `ping` | आप **Send test** पर क्लिक करते हैं | |
+
+बॉट, लिंक प्रीव्यू और प्रीफ़ेचर के स्कैन, और एक ही विज़िटर के तेज़ दोहराव गिने नहीं जाते और इवेंट ट्रिगर नहीं करते, ठीक वैसे ही जैसे [स्कैन एनालिटिक्स](/docs/dynamic-qr-codes) में।
+
+## पेलोड [#payloads]
+
+हर रिक्वेस्ट JSON बॉडी और इन हेडर के साथ एक `POST` होती है:
+
+| हेडर | वैल्यू |
+| --- | --- |
+| `Content-Type` | `application/json` |
+| `User-Agent` | `QRdx-Webhooks/1.0 (+https://qrdx.dev/docs/webhooks)` |
+| `X-QRdx-Event` | इवेंट का प्रकार, जैसे `code.created` |
+| `X-QRdx-Delivery` | डिलीवरी id: हर रीट्राई पर वही रहती है, ताकि आप डुप्लिकेट को अनदेखा कर सकें |
+| `X-QRdx-Timestamp` | इस प्रयास को साइन करने का Unix सेकंड |
+| `X-QRdx-Signature` | `t=<timestamp>,v1=<hex HMAC-SHA256>` |
+
+बॉडी हमेशा एक envelope होती है:
+
+```json
+{
+  "id": "evt_cm3x8c1a20001",
+  "type": "code.created",
+  "created_at": "2026-10-31T09:30:00.000Z",
+  "data": {
+    "code": {
+      "id": "cm3x7q2l40000",
+      "slug": "aB3dE5f",
+      "title": "Spring menu",
+      "short_link": "https://qrdx.dev/q/aB3dE5f",
+      "destination_url": "https://example.com/menu",
+      "status": "active",
+      "scan_count": 0,
+      "created_at": "2026-10-31T09:30:00.000Z",
+      "updated_at": "2026-10-31T09:30:00.000Z"
+    },
+    "actor_id": "user_123"
+  }
+}
+```
+
+एक `scan.created` बैच:
+
+```json
+{
+  "id": "evt_cm3x9d0b10002",
+  "type": "scan.created",
+  "created_at": "2026-10-31T09:31:00.000Z",
+  "data": {
+    "window_started_at": "2026-10-31T09:31:00.000Z",
+    "window_seconds": 60,
+    "count": 2,
+    "scans": [
+      {
+        "scan_id": "cm3x9d0b00001",
+        "code": { "id": "cm3x7q2l40000", "slug": "aB3dE5f", "title": "Spring menu" },
+        "scanned_at": "2026-10-31T09:31:00.000Z",
+        "country": "DE",
+        "region": "BE",
+        "city": "Berlin",
+        "device_type": "mobile",
+        "os": "iOS",
+        "browser": "Safari",
+        "referer": null,
+        "source": "qr"
+      }
+    ]
+  }
+}
+```
+
+जब एक मिनट में 100 से ज़्यादा स्कैन आते हैं, तो `scans` में पहले 100 होते हैं और `count` में सही कुल संख्या। [NFC टैग](/docs/nfc) पर टैप के लिए `source` की वैल्यू `nfc` होती है और QR स्कैन के लिए `qr`। स्कैन पेलोड में IP पते या विज़िटर हैश कभी शामिल नहीं होते।
+
+अन्य इवेंट में ये होते हैं:
+
+- `scan.milestone`: `milestone`, `code` (`id`, `slug`, `title`, `scan_count`) और वह `scan` जिसने माइलस्टोन पूरा किया।
+- `code.updated`: `code.created` जैसा, साथ में `changes`, जैसे `["destination_url"]`।
+- `form.submitted`: `response_id`, `page` (`id`, `title`), `code` (`id`, `slug`, या `null`), `fields` (`name`, `label`, टेक्स्ट के रूप में `value`) और `submitted_at`।
+
+## सिग्नेचर सत्यापित करें [#verify-signatures]
+
+अपने signing secret से `<timestamp>.<raw body>` का HMAC-SHA256 निकालें और उसकी तुलना `X-QRdx-Signature` के `v1` से करें। रॉ रिक्वेस्ट बॉडी का उपयोग करें, JSON पार्स करने से पहले की, और पाँच मिनट से पुराने टाइमस्टैम्प अस्वीकार करें।
+
+```ts
+import { createHmac, timingSafeEqual } from "node:crypto";
+
+export function isFromQRdx(rawBody: string, header: string, secret: string) {
+  const parts = Object.fromEntries(
+    header.split(",").map((part) => part.trim().split("=", 2)),
+  );
+  const timestamp = Number(parts.t);
+  if (!timestamp || Math.abs(Date.now() / 1000 - timestamp) > 300) return false;
+
+  const expected = createHmac("sha256", secret)
+    .update(`${timestamp}.${rawBody}`)
+    .digest("hex");
+  const received = Buffer.from(parts.v1 ?? "");
+  return (
+    received.length === expected.length &&
+    timingSafeEqual(received, Buffer.from(expected))
+  );
+}
+```
+
+secret रोटेट करना तुरंत लागू होता है: पुराना secret सत्यापित होना बंद कर देता है, इसलिए रोटेट करने के तुरंत बाद अपना सर्वर अपडेट करें।
+
+## रीट्राई और डिलीवरी लॉग [#retries-and-the-delivery-log]
+
+10 सेकंड के भीतर किसी भी `2xx` स्टेटस से जवाब दें। इसके अलावा कुछ भी (एरर स्टेटस, रीडायरेक्ट, टाइमआउट, पहुँच से बाहर होस्ट) विफलता गिना जाता है, और QRdx बढ़ते अंतराल के साथ रीट्राई करता है: कम से कम 1 मिनट, 4 मिनट, 16 मिनट, 1 घंटा, 4 घंटे, 17 घंटे और 24 घंटे। हर रीट्राई अपना इंतज़ार ख़त्म होने के कुछ मिनट के भीतर भेजी जाती है। यानी लगभग दो दिनों में 8 प्रयास, जिसके बाद डिलीवरी को **Failed** चिह्नित कर दिया जाता है।
+
+हर एंडपॉइंट का **Deliveries** पेज पिछली 50 डिलीवरी उनके स्टेटस, प्रयासों, आख़िरी एरर और पेलोड के साथ दिखाता है। **Retry** किसी एक को तुरंत दोबारा भेजता है (डिलीवर हो चुकी को भी)। डिलीवरी 30 दिनों तक रखी जाती हैं।
+
+डिलीवरी एक से ज़्यादा बार और क्रम से बाहर भी आ सकती हैं (धीमे रिस्पॉन्स के बाद रीट्राई, मैन्युअल रीट्राई)। डुप्लिकेट को अनदेखा करने के लिए `X-QRdx-Delivery` या envelope के `id` का उपयोग करें।
+
+एंडपॉइंट को डिसेबल करने पर नई डिलीवरी बंद हो जाती हैं; उसे डिलीट करने पर उसका लॉग भी डिलीट हो जाता है। अगर किसी वर्कस्पेस के प्लान में अब webhooks शामिल नहीं हैं, तो एंडपॉइंट रखे जाते हैं लेकिन वर्कस्पेस के दोबारा Business पर आने तक कुछ नहीं भेजा जाता। आपके QR कोड दोनों स्थितियों में काम करते रहते हैं।
+
+## Zapier, Make और n8n (REST Hooks) [#zapier-make-and-n8n-rest-hooks]
+
+ऑटोमेशन टूल REST Hooks API से खुद सब्सक्राइब और अनसब्सक्राइब कर सकते हैं। [API key](/docs/developers/api-keys) या OAuth एक्सेस टोकन से ऑथेंटिकेट करें, जैसे [codes API](/docs/dynamic-qr-codes#rest-api) में: सब्सक्राइब या अनसब्सक्राइब के लिए `codes:write`, सूची के लिए `codes:read`। हुक URL अक्सर गोपनीय होते हैं, इसलिए सिर्फ़ `codes:read` होने पर `target_url` में केवल होस्ट दिखता है (`https://hooks.zapier.com/…`)। टोकन वाले रिक्वेस्ट आपके अपने वर्कस्पेस पर काम करते हैं; key उसी वर्कस्पेस पर काम करती है जिसमें वह बनाई गई थी। key या टोकन की जगह साइन इन किए हुए ब्राउज़र सेशन से सब्सक्राइब करने पर पहले आपसे [पुष्टि करने](/docs/help/privacy-and-security/two-step-verification#confirm-its-you) को कहा जाता है, और जब तक आप पिछले 10 मिनट में पुष्टि न कर लें, `CONFIRMATION_REQUIRED` के साथ `403` लौटता है। सब्सक्रिप्शन सामान्य एंडपॉइंट ही होते हैं: वे सेटिंग्स → Webhooks में दिखते हैं, जहाँ से आप उन्हें हटा भी सकते हैं।
+
+| मेथड | पाथ | विवरण |
+| --- | --- | --- |
+| `POST` | `/v1/hooks` | सब्सक्राइब करें। बॉडी: `target_url` (या Zapier का `hookUrl`) और `event` (या `events` ऐरे)। सब्सक्रिप्शन के `id` और उसके `secret` के साथ `201` लौटाता है |
+| `DELETE` | `/v1/hooks/{id}` | अनसब्सक्राइब करें (`204`) |
+| `GET` | `/v1/hooks` | सब्सक्रिप्शन और एंडपॉइंट की सूची |
+| `GET` | `/v1/hooks/{id}` | एक सब्सक्रिप्शन |
+| `GET` | `/v1/hooks/sample?event=<event>` | `event` के हाल के उदाहरण पेलोड, ऐरे के रूप में (Zapier की "perform list") |
+
+```bash
+curl https://api.qrdx.dev/v1/hooks \
+  -H "Authorization: Bearer $QRDX_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"target_url": "https://hooks.zapier.com/hooks/standard/123/abc/", "event": "form.submitted"}'
+```
+
+```json
+{
+  "id": "cm3xa1b2c0003",
+  "target_url": "https://hooks.zapier.com/hooks/standard/123/abc/",
+  "events": ["form.submitted"],
+  "event": "form.submitted",
+  "active": true,
+  "created_at": "2026-10-31T09:40:00.000Z",
+  "secret": "whsec_..."
+}
+```
+
+Business के बिना सब्सक्राइब कॉल `402 PLAN_REQUIRED` लौटाती है। `scan.created` डिलीवरी एक बैच होती है, इसलिए Zapier में हर स्कैन पर कार्रवाई करने के लिए `data.scans` लाइन आइटम का उपयोग करें।
+
+n8n में, [n8n के लिए QRdx नोड्स](/docs/developers/n8n) का QRdx Trigger नोड ये कॉल आपके लिए करता है और हर सिग्नेचर जाँचता है। सामान्य Webhook नोड भी काम करता है, जिसे किसी भी दूसरे एंडपॉइंट की तरह सेट करें।
+
+## सेल्फ़-होस्टिंग [#self-hosting]
+
+डिलीवरी तुरंत भेजी जाती हैं; रीट्राई और वे स्कैन बैच जिनका मिनट ख़त्म हो चुका है, एक शेड्यूल्ड जॉब भेजता है। QRdx इसे हर 5 मिनट में GitHub Actions वर्कफ़्लो से चलाता है, जो Vercel के फ़्री Hobby प्लान पर काम करता है, और `apps/app/vercel.json` इसे दिन में एक बार पूरा भी चलाता है। GitHub शेड्यूल्ड रन देर से शुरू कर सकता है, इसलिए रीट्राई ठीक मिनट पर नहीं, कुछ मिनट के भीतर होने की उम्मीद रखें।
+
+यही करने के लिए `.github/workflows/webhook-worker.yml` कॉपी करें, अपना `CRON_SECRET` Actions secret के रूप में और अपना जॉब URL `WEBHOOK_WORKER_URL` वैरिएबल के रूप में जोड़ें। या एनवायरमेंट में सेट किए `CRON_SECRET` के साथ किसी भी शेड्यूलर से जॉब को कॉल करें:
+
+```bash
+# every 1-5 minutes
+curl -H "Authorization: Bearer $CRON_SECRET" https://your-host/api/cron/webhooks
+```
+
+URL में `?source=github` जोड़ने पर, जॉब पहले Upstash Redis में एक छोटा मार्कर जाँचता है और कुछ भी बाकी न होने पर डेटाबेस को क्वेरी किए बिना `{"skipped": true}` लौटाता है, ताकि शून्य तक स्केल होने वाला डेटाबेस सोता रह सके (Upstash के बिना यह हमेशा पूरा जॉब चलाता है)। इसके बिना दिन में एक कॉल रखें: वह रन हमेशा पूरा जॉब करता है और मार्कर को ठीक करता है।

@@ -19,32 +19,32 @@ on:
       - .github/workflows/docs-deploy.yml
       # The content, its message catalogs and recorded dates, which stay in
       # the main app's folder for now
-      - apps/docs/content/docs/**
-      - apps/docs/messages/**
-      - apps/docs/lib/seo-file-dates.json
+      - apps/app/content/docs/**
+      - apps/app/messages/**
+      - apps/app/lib/seo-file-dates.json
       # The generated inputs' sources: the docs' message subset and the OpenAPI
       # document's copy (apps/docs-site/scripts/zone-inputs.mjs)
-      - apps/docs/scripts/i18n-docs-messages.ts
-      - apps/docs/lib/i18n/docs-messages.ts
-      - apps/docs/public/openapi.json
-      - apps/docs/scripts/openapi/export.ts
-      # The product facts snapshot (apps/docs/lib/product-facts.ts and what
+      - apps/app/scripts/i18n-docs-messages.ts
+      - apps/app/lib/i18n/docs-messages.ts
+      - apps/app/public/openapi.json
+      - apps/app/scripts/openapi/export.ts
+      # The product facts snapshot (apps/app/lib/product-facts.ts and what
       # it reads)
-      - apps/docs/lib/product-facts.ts
-      - apps/docs/lib/product-facts-snapshot.ts
-      - apps/docs/scripts/facts-snapshot.ts
-      - apps/docs/lib/format-count.ts
-      - apps/docs/lib/pricing.ts
-      - apps/docs/lib/scan-history.ts
-      - apps/docs/lib/affiliates/terms.ts
-      - apps/docs/lib/ai/art-models.ts
-      - apps/docs/lib/barcode/formats.ts
-      - apps/docs/lib/brand-logos/catalog.generated.ts
-      - apps/docs/lib/landing/page-type-ids.ts
-      - apps/docs/lib/i18n/config.ts
-      - apps/docs/ee/audit-log/limits.ts
-      - apps/docs/types/content-type-ids.ts
-      - apps/docs/components/sections/ai-art/preset-meta.ts
+      - apps/app/lib/product-facts.ts
+      - apps/app/lib/product-facts-snapshot.ts
+      - apps/app/scripts/facts-snapshot.ts
+      - apps/app/lib/format-count.ts
+      - apps/app/lib/pricing.ts
+      - apps/app/lib/scan-history.ts
+      - apps/app/lib/affiliates/terms.ts
+      - apps/app/lib/ai/art-models.ts
+      - apps/app/lib/barcode/formats.ts
+      - apps/app/lib/brand-logos/catalog.generated.ts
+      - apps/app/lib/landing/page-type-ids.ts
+      - apps/app/lib/i18n/config.ts
+      - apps/app/ee/audit-log/limits.ts
+      - apps/app/types/content-type-ids.ts
+      - apps/app/components/sections/ai-art/preset-meta.ts
       # The engine the docs' live examples render with, and the packages the
       # docs site imports
       - packages/qrdx/**

@@ -110,7 +110,7 @@ jobs:
         if: steps.reuse.outputs.hit != 'true'
         run: bun install --frozen-lockfile
 
-      # The docs app, CLI and CLI tests consume qrdx from its dist/ output,
+      # The main app, CLI and CLI tests consume qrdx from its dist/ output,
       # and the CLI tests run the CLI's own dist/index.js.
       - name: Build qrdx and the CLI
         if: steps.reuse.outputs.hit != 'true'
@@ -120,17 +120,17 @@ jobs:
         if: steps.reuse.outputs.hit != 'true'
         run: bun run typecheck 2>&1 | tee -a "$RUNNER_TEMP/turbo.log"
 
-      - name: Typecheck docs app
+      - name: Typecheck the main app
         if: steps.reuse.outputs.hit != 'true'
         run: |
-          (cd apps/docs && bun x next typegen)
-          bun run typecheck:docs
+          (cd apps/app && bun x next typegen)
+          bun run typecheck:app
 
       # Every translated catalog against English: keys, ICU arguments, numbers,
-      # review status (apps/docs/scripts/i18n-check.ts).
+      # review status (apps/app/scripts/i18n-check.ts).
       - name: Check translations
         if: steps.reuse.outputs.hit != 'true'
-        run: bun run --filter docs i18n:check
+        run: bun run --filter app i18n:check
 
       # Pull requests into staging test the packages they change and the
       # packages that depend on them. Release pull requests into main, pushes

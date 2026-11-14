@@ -3,10 +3,10 @@ import * as schema from "@repo/database";
 import { database as db, eq } from "@repo/database";
 
 // A new account starts in the language the site was in when it signed up:
-// the language menu's cookie (apps/docs/lib/i18n/config.ts, LOCALE_COOKIE),
+// the language menu's cookie (apps/app/lib/i18n/config.ts, LOCALE_COOKIE),
 // sent with the email-code request and with the Google or GitHub callback.
 // The app validates the code against its languages when it reads it
-// (apps/docs/lib/i18n/app-locale.ts), so this only keeps well-formed codes.
+// (apps/app/lib/i18n/app-locale.ts), so this only keeps well-formed codes.
 
 const LOCALE_COOKIE = "NEXT_LOCALE";
 /** "es", "pt-BR", "zh-Hans": a language and an optional region or script. */

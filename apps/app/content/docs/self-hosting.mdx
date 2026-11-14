@@ -1,0 +1,225 @@
+---
+title: Self-hosting guide
+description: Run your own QRdx web app, dynamic QR codes and hosted pages included, with Docker Compose or Node.js.
+icon: Server
+---
+
+QRdx is AGPL-3.0 licensed, and you can run the web app (QR editor, accounts, two-step verification and passkeys, dynamic codes and hosted pages, teams, saved themes, community gallery and these docs) on your own server. Workspace single sign-on and the workspace audit log are the exception: they live in the commercially licensed `ee/` folders and stay off unless you set a license key (`QRDX_EE_LICENSE`). Using them in production needs a written agreement with QRdx; see [LICENSING.md](https://github.com/bucharitesh/qrdx/blob/main/LICENSING.md). You don't need any of this to use the [`qrdx` React library](/docs/getting-started) or the CLI. Those run anywhere without a backend, under the MIT license. [Open source at QRdx](/open-source-qr-code-generator) lists each part of the repository and its license.
+
+<Callout type="warn">
+  The Docker setup is new. If something doesn't work, please [open an issue](https://github.com/bucharitesh/qrdx/issues).
+</Callout>
+
+## Requirements
+
+- Docker with Compose v2 and BuildKit (Docker Desktop and current Docker Engine include both), or Node.js 22 (22.22.3 or later) and [Bun](https://bun.com/docs/installation) 1.4 for the manual setup
+- At least 8 GB of memory for Docker while the image builds
+- A way to sign in, so accounts can be created: a GitHub or Google OAuth app, or [Resend](https://resend.com) for email sign-in codes. Codes are emailed only when `NEXT_PUBLIC_APP_URL` isn't `localhost`. `bun run dev` prints them in the terminal instead, but the Docker image doesn't, so a local Docker test needs GitHub or Google sign-in.
+- Postgres: the container bundled in `docker-compose.yml`, or a [Neon](https://neon.tech) database
+
+### How the database connection works
+
+The app talks to Postgres through Neon's serverless HTTP driver.
+
+- **Neon:** works directly. Set `DATABASE_URL` to your Neon connection string.
+- **Plain Postgres:** needs a Neon-compatible HTTP proxy in front of it. `docker-compose.yml` runs one ([local-neon-http-proxy](https://github.com/TimoWilhelm/local-neon-http-proxy)) and sets `DATABASE_HTTP_ENDPOINT` so the app sends its queries there.
+
+The schema comes from `packages/database/schema.ts` and is applied with `drizzle-kit push`.
+
+## Quick start with Docker Compose
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/bucharitesh/qrdx.git
+cd qrdx
+```
+
+### 2. Configure the environment
+
+```bash
+cp apps/app/.env.example .env
+```
+
+Edit `.env`:
+
+- `BETTER_AUTH_SECRET`: generate one with `openssl rand -base64 32`
+- `NEXT_PUBLIC_APP_URL`: the public URL of your instance, for example `https://qr.example.com`. Keep `http://localhost:3000` for a local test.
+- `BETTER_AUTH_URL`: uncomment it and use the same value
+- `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET`: from a [GitHub OAuth app](https://github.com/settings/developers) with the callback URL `<your url>/api/auth/callback/github`
+- or `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET`: from a [Google OAuth client](https://console.cloud.google.com/apis/credentials) with the redirect URI `<your url>/api/auth/callback/google`
+
+You don't need to set `DATABASE_URL`. Compose points the app at its own Postgres container. To change the database password, set `POSTGRES_PASSWORD` before the first start.
+
+### 3. Start the stack
+
+```bash
+docker compose up -d --build
+```
+
+This builds the image, starts Postgres and the proxy, runs the one-shot `migrate` service (`drizzle-kit push`) and then starts the app on port 3000. The first build takes several minutes.
+
+```bash
+docker compose ps                    # migrate should show "exited (0)"
+docker compose logs -f migrate app   # follow the schema sync and the app
+```
+
+### 4. Create your first user
+
+Open `NEXT_PUBLIC_APP_URL` in a browser and sign in with GitHub, Google or an email code. Your account is created on first sign-in.
+
+### 5. Create your first admin
+
+Add the email address of the account you just created to `.env`:
+
+```bash
+ADMIN_EMAILS=you@example.com
+```
+
+Recreate the app container so it picks up the change, then sign in and open `/admin`:
+
+```bash
+docker compose up -d app
+```
+
+`ADMIN_USER_IDS` works the same way with user ids.
+
+## Using Neon or another managed database
+
+You can skip the bundled Postgres and run only the app image:
+
+```bash
+docker build -t qrdx --build-arg NEXT_PUBLIC_APP_URL=https://qr.example.com .
+docker run -d --env-file .env -p 3000:3000 qrdx
+```
+
+Set `DATABASE_URL` in `.env` to your Neon connection string and leave `DATABASE_HTTP_ENDPOINT` unset. Apply the schema once (and again after each update) with the migrator image:
+
+```bash
+docker build --target migrator -t qrdx-migrate .
+docker run --rm -e DATABASE_URL="<your connection string>" qrdx-migrate
+```
+
+## Manual setup (Node.js)
+
+```bash
+git clone https://github.com/bucharitesh/qrdx.git
+cd qrdx
+bun install
+
+cp apps/app/.env.example apps/app/.env.local            # then edit it
+
+bun run db:push                                          # apply the schema
+bun run --filter app dev                                 # http://localhost:3000
+```
+
+For production, build and start the app:
+
+```bash
+bun x turbo build --filter=app
+bun run --filter app start
+```
+
+`bun run db:push` connects with Neon's driver, so it needs a Neon database. To use the Docker Postgres for local development instead, start it with `docker compose up -d db db-proxy`, apply the schema with `docker compose run --rm migrate`, and set these in `apps/app/.env.local`:
+
+```bash
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/qrdx
+DATABASE_HTTP_ENDPOINT=http://localhost:4444/sql
+```
+
+## Environment variables
+
+[`apps/app/.env.example`](https://github.com/bucharitesh/qrdx/blob/main/apps/app/.env.example) lists every variable with a short note on where to get it.
+
+### Minimum
+
+| Variable | Purpose |
+| --- | --- |
+| `NEXT_PUBLIC_APP_URL` | Public URL of your instance |
+| `DATABASE_URL` | Postgres connection string (set by Compose) |
+| `BETTER_AUTH_SECRET` | Signs sessions and cookies |
+
+Add one OAuth provider (GitHub or Google), or Resend for email sign-in codes, so people can sign in.
+
+### Optional services
+
+| Service | Variables | Without it |
+| --- | --- | --- |
+| GitHub sign-in | `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET` | GitHub sign-in is unavailable |
+| Google sign-in | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | Google sign-in is unavailable |
+| Auth base URL | `BETTER_AUTH_URL` | Inferred from each request, with a warning in the logs |
+| Admin panel | `ADMIN_EMAILS`, `ADMIN_USER_IDS` | Nobody can open `/admin` |
+| Workspace single sign-on | `QRDX_EE_LICENSE` | Single sign-on stays off: no **Sign in with SSO**, no SSO settings, and its sign-in routes don't exist. SSO is in the `ee/` folders under the QRdx commercial license, so production use needs a written agreement with QRdx. See [Single sign-on](/docs/help/teams/single-sign-on) |
+| Workspace audit log | `QRDX_EE_LICENSE` | The audit log stays off: nothing is recorded and there's no **Settings** → **Audit log**. Like single sign-on, it's in the `ee/` folders under the QRdx commercial license. Its rows are kept {facts.auditLogRetentionDays} days; the daily run of `/api/cron/webhooks` deletes older ones. See [Audit log](/docs/help/teams/audit-log) |
+| AI themes, prompt enhancement and AI QR art (Vercel AI Gateway) | `AI_GATEWAY_API_KEY` | AI requests fail and the AI pages leave the navigation and sitemap. The editor works normally. Create the key in your own Vercel account (AI Gateway, API keys); usage is billed to that account's AI Gateway credits, and your app doesn't have to run on Vercel. The model for each task is set in `apps/app/lib/ai/models.ts` |
+| Short-link origin | `NEXT_PUBLIC_SHORT_LINK_BASE_URL` | [Dynamic codes](/docs/dynamic-qr-codes#self-hosting) use `NEXT_PUBLIC_APP_URL` |
+| Scan privacy salt | `SCAN_HASH_SALT` | Derived from `BETTER_AUTH_SECRET` |
+| File storage (Cloudflare R2) | `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`, `R2_PUBLIC_BASE_URL` | Uploads are off; pages can still link to files hosted elsewhere. See [Files](/docs/files#set-up-storage-self-hosting) |
+| Email (Resend) | `RESEND_API_KEY`, `EMAIL_FROM` | Emails are skipped and logged, so email sign-in codes can't be sent; team invites use copyable links. See [Notifications](/docs/notifications#self-hosting) |
+| Custom domains on Vercel | `VERCEL_API_TOKEN`, `VERCEL_PROJECT_ID`, `VERCEL_TEAM_ID` | Leave unset off Vercel: domains are then verified with a DNS `TXT` record. See [Custom domains](/docs/custom-domains#self-hosting) |
+| One-click DNS setup (Domain Connect) | `DOMAIN_CONNECT_PROVIDER_ID`, `DOMAIN_CONNECT_SERVICE_ID`, `DOMAIN_CONNECT_PRIVATE_KEY` | No **Set up with …** button: people add DNS records themselves. Needs your own Domain Connect template accepted by each DNS provider, and its public key in DNS. See [Custom domains](/docs/custom-domains#self-hosting) |
+| Scheduled jobs | `CRON_SECRET` | In production the weekly digest and webhook retry jobs refuse to run, and audit log rows older than {facts.auditLogRetentionDays} days aren't deleted |
+| Link safety (Google Web Risk) | `WEB_RISK_API_KEY` | Destinations are checked by the offline rules only. See [Code controls](/docs/code-controls) |
+| Form spam check (Cloudflare Turnstile) | `NEXT_PUBLIC_TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY` | Forms rely on the built-in honeypot and rate limits |
+| Payments (Polar) | `POLAR_ACCESS_TOKEN`, `POLAR_WEBHOOK_SECRET`, `NEXT_PUBLIC_QRDX_PRO_MONTHLY_PRODUCT_ID`, `NEXT_PUBLIC_QRDX_PRO_YEARLY_PRODUCT_ID`, `NEXT_PUBLIC_QRDX_BUSINESS_MONTHLY_PRODUCT_ID`, `NEXT_PUBLIC_QRDX_BUSINESS_YEARLY_PRODUCT_ID` | Upgrading doesn't work (plans without a product id show "Coming soon"), and every account uses the Free limits |
+| Euro prices | `NEXT_PUBLIC_QRDX_EUR_PRICES=1`, set only once every product above has a EUR price in Polar | Visitors from the EU and EEA see, and are charged, US$ prices |
+| Affiliate program | None: it runs only on qrdx.dev | Off: QRdx's affiliate program and its [terms](/legal/affiliate-terms) are written for qrdx.dev, so a self-hosted copy has no **/affiliates** page, no applications, no **Settings** → **Affiliate program**, and referral links go to the home page. |
+| Dub short links | `DUB_CLIENT_ID`, `DUB_CLIENT_SECRET`, `DUB_REDIRECT_URI`, `INTEGRATION_ENCRYPTION_KEY` | The Dub integration can't be connected |
+| Google Drive | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_DRIVE_REDIRECT_URI`, `INTEGRATION_ENCRYPTION_KEY` | The Google Drive integration can't be connected |
+| Bitly, Dropbox, OneDrive, Box, Notion | `BITLY_CLIENT_ID`/`_SECRET`, `DROPBOX_CLIENT_ID`/`_SECRET`, `MICROSOFT_CLIENT_ID`/`_SECRET`, `BOX_CLIENT_ID`/`_SECRET`, `NOTION_CLIENT_ID`/`_SECRET`, `INTEGRATION_ENCRYPTION_KEY` | That integration shows "Not configured" (Bitly still connects with pasted access tokens). Rebrandly and Short.io need no variables. See [Short links and file pickers](/docs/short-links-and-file-pickers#self-hosting) |
+| Slack bot | `SLACK_CLIENT_ID`, `SLACK_CLIENT_SECRET`, `SLACK_SIGNING_SECRET`, plus `INTEGRATION_ENCRYPTION_KEY` in production | No Slack bot: its routes and link page answer 404 and Settings doesn't offer it. Create your own Slack app from [`plugins/slack/manifest.json`](https://github.com/bucharitesh/qrdx/tree/main/plugins/slack) as its README describes. See [Slack bot](/docs/slack-bot#self-hosting) |
+| Discord bot | `DISCORD_APPLICATION_ID`, `DISCORD_PUBLIC_KEY` | No Discord bot: its interactions endpoint answers `404` and it's left out of the integrations directory. Register your own Discord app as [`plugins/discord/README.md`](https://github.com/bucharitesh/qrdx/tree/main/plugins/discord) describes |
+| Telegram bot | `TELEGRAM_BOT_TOKEN`, `TELEGRAM_WEBHOOK_SECRET`, `TELEGRAM_BOT_USERNAME` | No Telegram bot: its routes answer 404 and the site doesn't list it. Create your own bot with @BotFather and run `plugins/telegram/scripts/setup.mjs`. See [Telegram bot](/docs/telegram-bot#self-hosting) |
+| Rate limiting (Upstash) | `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN` (or the Vercel KV names `KV_REST_API_URL`, `KV_REST_API_TOKEN`) | No rate limiting. Recommended in production. |
+| Analytics (PostHog, after cookie consent) | `NEXT_PUBLIC_POSTHOG_KEY`, `NEXT_PUBLIC_POSTHOG_HOST` | No product analytics |
+| Analytics (Umami, cookieless) | `NEXT_PUBLIC_UMAMI_WEBSITE_ID`, `NEXT_PUBLIC_UMAMI_SCRIPT_URL` | No visit counts |
+| Feedback widget | `NEXT_PUBLIC_FEATUREBASE_APP_ID` | The widget doesn't load |
+| Docs extras | `GITHUB_TOKEN` | Star counts may hit GitHub rate limits |
+
+`INTEGRATION_ENCRYPTION_KEY` must be set in production as soon as you enable an integration, because it encrypts the stored tokens.
+
+<Callout>
+  `NEXT_PUBLIC_*` values are inlined into the browser bundle at build time. After changing one, rebuild with `docker compose up -d --build`.
+</Callout>
+
+## Reverse proxy and HTTPS
+
+Put the app behind a reverse proxy such as Caddy, nginx or Traefik that terminates TLS, and don't expose port 3000 to the internet directly. Rate limiting, the security emails and the [audit log](/docs/help/teams/audit-log) read the client IP from `X-Real-IP` and then the first `X-Forwarded-For` address, so the proxy must set these headers and the app must only be reachable through it. Have the proxy set `X-Real-IP` to the address it received the connection from (in nginx, `proxy_set_header X-Real-IP $remote_addr;`). A proxy that only appends to `X-Forwarded-For` lets a client put any address first.
+
+Once HTTPS is set up, change `NEXT_PUBLIC_APP_URL` and `BETTER_AUTH_URL` to the `https://` URL, update the OAuth callback URLs, and rebuild.
+
+### Content-Security-Policy
+
+Production builds send a Content-Security-Policy on QRdx's own pages: signed-in pages get a fresh script nonce per request, prerendered pages an allowlist of script hosts. Hosted pages (`/p`) get a loose policy, because they run the owner's pixels and embed media from anywhere. If your reverse proxy also sets `Content-Security-Policy`, browsers enforce both, so leave it out there. Set `CSP_REPORT_ONLY=1` (at build time and at run time) to send the policy as report-only while you check a new setup; violations are logged by `/api/csp-report`. Add `CSP_HTTPS=1` when you serve over HTTPS outside Vercel, so browsers upgrade any `http://` resource.
+
+## Updating
+
+Back up the database first:
+
+```bash
+docker compose exec db pg_dump -U postgres qrdx > qrdx-backup.sql
+```
+
+Then pull and rebuild. The `migrate` service syncs the schema again before the app starts.
+
+```bash
+git pull
+docker compose up -d --build
+```
+
+For the manual setup, run `git pull`, `bun install` and `bun run db:push`, then rebuild.
+
+If a schema change would drop data, `drizzle-kit push` asks for confirmation. In that case, run `docker compose run --rm migrate` in a terminal to review and confirm the changes.
+
+## Troubleshooting
+
+- **"Invalid environment variables" on startup:** the log names each missing or invalid variable. Optional variables must be commented out, not set to an empty value.
+- **"BETTER_AUTH_SECRET is missing" or "You are using the default secret":** set `BETTER_AUTH_SECRET` and recreate the container.
+- **OAuth `redirect_uri` mismatch:** the callback URL in your OAuth app must be exactly `<NEXT_PUBLIC_APP_URL>/api/auth/callback/<github|google>`. Set `BETTER_AUTH_URL` to the same base URL.
+- **App can't reach the database (`fetch failed`):** with plain Postgres, `DATABASE_HTTP_ENDPOINT` must point at the running proxy. Check `docker compose ps db-proxy`.
+- **`migrate` never finishes:** `drizzle-kit push` is waiting for a confirmation. See [Updating](#updating).
+- **A changed `NEXT_PUBLIC_*` value has no effect:** rebuild the image.
+- **Port 4444 is already in use:** change the `db-proxy` port mapping in `docker-compose.yml`. Only local development on the host uses it.
+- **"the --mount option requires BuildKit":** your Docker has no BuildKit. Install the `buildx` plugin, or update Docker.
+- **The build stops with `Killed` or exit code 137:** Docker ran out of memory. Give it at least 8 GB (Docker Desktop: Settings → Resources) and run `docker compose up -d --build` again.
+- **"sign-in code email is off for this deployment":** email codes aren't sent while `NEXT_PUBLIC_APP_URL` is `localhost`. Use GitHub or Google sign-in for a local test.
