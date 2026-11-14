@@ -7,8 +7,8 @@
 //   entries all draw with the same core as the editor's preview, so each
 //   snippet draws the design exactly, bar what `omitted` lists. Check
 //   `npm view qrdx version` before raising QRDX_NPM_VERSION.
-// - shadcn: the registry item's own props (registry/qrdx/qr-code.tsx),
-//   checked against npm `qrdx` 0.0.46 (NPM_QRDX below).
+// - shadcn: the registry item's own props (registry/qrdx/qr-code.tsx). It
+//   installs the current npm `qrdx` and passes them to its QRCode as given.
 // - Image URL: GET https://api.qrdx.dev/v1/qr (app/api/v1/qr/_lib/query.ts):
 //   flat parameters where they say it, and `style` (lib/qr-api/style.ts) for
 //   gradients, other colors and frames with more than a label.
@@ -177,58 +177,6 @@ export const IMAGE_API_URL = `${API_BASE_URL}/qr`;
 export const CODES_API_URL = `${API_BASE_URL}/codes`;
 export const MCP_SERVER_URL = MCP_ENDPOINT;
 
-/**
- * What npm `qrdx` 0.0.46 accepts (dist/types/*.d.ts and
- * dist/src/templates.d.ts of the published package): the shapes and borders
- * the shadcn tab passes to the registry item, which was written against it.
- */
-export const NPM_QRDX = {
-  version: "0.0.46",
-  bodyPatterns: [
-    "circle",
-    "circle-large",
-    "square",
-    "diamond",
-    "circle-mixed",
-    "pacman",
-    "rounded",
-    "small-square",
-    "vertical-line",
-  ],
-  eyePatterns: [
-    "square",
-    "rounded",
-    "gear",
-    "circle",
-    "diya",
-    "extra-rounded",
-    "message",
-    "pointy",
-    "curly",
-  ],
-  eyeDotPatterns: [
-    "square",
-    "rounded",
-    "circle",
-    "diamond",
-    "message",
-    "message-reverse",
-    "diya",
-    "diya-reverse",
-    "rounded-triangle",
-    "star",
-    "banner",
-  ],
-  templates: [
-    "default",
-    "Arrow",
-    "StandardBox",
-    "SquareBorder",
-    "StrikedBox",
-    "Halloween",
-  ],
-} as const;
-
 /** Plain-English names for what a tab leaves out. */
 export const LEFT_OUT = {
   gradients: "Gradients",
@@ -245,8 +193,6 @@ export const LEFT_OUT = {
   frameSecondLabel: "The frame's second label",
   logo: "The logo",
   uploadedLogo: "Your logo",
-  shadcnNoLogo: "Hiding the logo (it shows the QRdx logo)",
-  shadcnUploadedLogo: "Your logo (it shows the QRdx logo)",
   restLogo:
     "Your logo (upload it in Dashboard → Files and send its id as logoFileId)",
   qrdxLogo: "The QRdx logo (the API doesn't draw it)",
@@ -467,62 +413,28 @@ function snippetStyle(style: ThemeStyles, notes: Notes): ThemeStyles {
   return withoutImageFills(style);
 }
 
-/** A color prop: `fgColor="#000"` or a gradient object literal. */
-function colorProp(name: string, paint: PublishedPaint): string {
-  if (paint.type === "solid") return jsxString(name, paint.color);
-  const inner = `${PROP_INDENT}  `;
-  const lines = [
-    `${name}={{`,
-    `${inner}type: "${paint.type}",`,
-    `${inner}stops: [`,
-    ...paint.stops.map(
-      (stop) =>
-        `${inner}  { color: ${JSON.stringify(stop.color)}, offset: ${stop.offset} },`,
-    ),
-    `${inner}],`,
-  ];
-  if (paint.type === "linear")
-    lines.push(`${inner}angle: ${paint.angle ?? 0},`);
-  lines.push(`${PROP_INDENT}}}`);
-  return lines.join("\n");
-}
-
 /**
- * Color, shape, level and border props npm qrdx 0.0.46 takes, shared by
- * the React and shadcn tabs. Shapes and borders it doesn't know are left
- * out (the component then draws its default).
+ * The color, shape, level and border props the shadcn item takes. It hands
+ * them to qrdx's QRCode as they are, so every color (gradients included)
+ * and shape the editor draws goes in; image fills, which are uploads, don't.
  */
-function npmStyleProps(style: ThemeStyles, notes: Notes): string[] {
+function shadcnStyleProps(style: ThemeStyles, notes: Notes): string[] {
+  const clean = snippetStyle(style, notes);
   const props: string[] = [];
-  for (const key of ["bgColor", "fgColor", "eyeColor", "dotColor"] as const) {
-    const color = style[key];
-    if (color !== undefined) {
-      props.push(colorProp(key, publishedNormalized(color, notes)));
-    }
-  }
-  const shapes = [
-    ["bodyPattern", style.bodyPattern, NPM_QRDX.bodyPatterns, "dot"],
-    ["cornerEyePattern", style.cornerEyePattern, NPM_QRDX.eyePatterns, "eye"],
-    [
-      "cornerEyeDotPattern",
-      style.cornerEyeDotPattern,
-      NPM_QRDX.eyeDotPatterns,
-      "eye center",
-    ],
-  ] as const;
-  for (const [name, value, known, part] of shapes) {
-    if (value === undefined) continue;
-    if (includes(known, value)) props.push(jsxString(name, value));
-    else notes.add(shapeLeftOut(part, value));
-  }
-  if (style.level) props.push(jsxString("level", style.level));
-  const template = style.templateId;
-  if (template && template !== "default") {
-    if (includes(NPM_QRDX.templates, template)) {
-      props.push(jsxString("templateId", template));
-    } else {
-      notes.add(borderLeftOut(template));
-    }
+  for (const key of [
+    "bgColor",
+    "fgColor",
+    "eyeColor",
+    "dotColor",
+    "bodyPattern",
+    "cornerEyePattern",
+    "cornerEyeDotPattern",
+    "level",
+    // "default" is a template too: it insets the code a little.
+    "templateId",
+  ] as const) {
+    const value = clean[key];
+    if (value !== undefined && value !== "") props.push(jsxProp(key, value));
   }
   return props;
 }
@@ -545,13 +457,13 @@ export interface ShadcnSnippet extends Snippet {
 
 /**
  * The shadcn registry's `qr-code` item (registry/qrdx/qr-code.tsx) with
- * this style. It runs on npm qrdx, and has no way to hide the logo.
+ * this style: its props, which don't include frames or the engine options.
  */
 export function shadcnSnippet(input: SnippetInput): ShadcnSnippet {
   const { style } = input;
   const notes = new Notes();
   const props = [jsxString("value", payloadOf(input.value))];
-  props.push(...npmStyleProps(style, notes));
+  props.push(...shadcnStyleProps(style, notes));
   // The item's own default is 2, so the editor's quiet zone always goes in.
   props.push(`margin={${style.margin ?? ENGINE_DEFAULTS.margin}}`);
   noteFrame(style, notes);
@@ -559,8 +471,8 @@ export function shadcnSnippet(input: SnippetInput): ShadcnSnippet {
   const logo = logoOf(style);
   if (logo.kind === "qrdx") props.push(jsxString("logo", DEFAULT_QR_LOGO));
   else if (logo.kind === "url") props.push(jsxString("logo", logo.url));
-  else if (logo.kind === "uploaded") notes.add(LEFT_OUT.shadcnUploadedLogo);
-  else notes.add(LEFT_OUT.shadcnNoLogo);
+  // Without `logo` the item draws none, as the editor does with the logo off.
+  else if (logo.kind === "uploaded") notes.add(LEFT_OUT.uploadedLogo);
   noteArt(style, notes);
   noteEngineOptions(style, notes);
 
