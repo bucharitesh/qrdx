@@ -1429,7 +1429,8 @@ describe("original back-halves", () => {
 // ─── Export files ────────────────────────────────────────────────────────────
 
 describe("export file auto-detection", () => {
-  const cases: [string, string[], string][] = [
+  // [provider, headers, destination column, which file (when several)]
+  const cases: [string, string[], string, string?][] = [
     [
       "uniqode",
       [
@@ -1451,7 +1452,36 @@ describe("export file auto-detection", () => {
       ["ID", "Campaign Name", "Category", "Scan Count", "URL"],
       "URL",
     ],
-    ["flowcode", ["Flowcode Name", "Flowcode Scan URL"], "Flowcode Scan URL"],
+    [
+      "uniqode",
+      [
+        "QR Code ID",
+        "QR Code Name",
+        "Organization",
+        "QR Code URL",
+        "Destination URL",
+        "QR Code Type",
+        "Owner email ID",
+        "Creation Date & Time",
+        "Labels",
+        "Frame Text",
+        "Scans",
+      ],
+      "Destination URL",
+      "bulk-operations columns",
+    ],
+    [
+      "flowcode",
+      ["Flowcode Name", "Flowcode Scan URL"],
+      "Flowcode Scan URL",
+      "bulk-create sheet",
+    ],
+    [
+      "flowcode",
+      ["Flowcode Name", "Short Links", "Scan Destination"],
+      "Scan Destination",
+      "folder download",
+    ],
     [
       "tinyurl",
       ["Alias", "TinyURL", "Long URL", "Created", "Clicks"],
@@ -1478,8 +1508,9 @@ describe("export file auto-detection", () => {
       "Destination",
     ],
   ];
-  for (const [provider, headers, destination] of cases) {
-    it(`detects ${provider} and maps its destination column`, () => {
+  for (const [provider, headers, destination, file] of cases) {
+    const name = file ? `${provider} (${file})` : provider;
+    it(`detects ${name} and maps its destination column`, () => {
       const detected = detectFileProvider(headers, []);
       assert.equal(detected.provider, provider);
       assert.equal(detected.confidence, "high");
@@ -1487,6 +1518,52 @@ describe("export file auto-detection", () => {
       assert.equal(headers[mapping.destination], destination);
     });
   }
+
+  it("maps every column of Flowcode's folder download", () => {
+    const headers = ["Flowcode Name", "Short Links", "Scan Destination"];
+    assert.deepEqual(guessFileMapping(headers, "flowcode"), {
+      destination: 2,
+      title: 0,
+      shortLink: 1,
+      id: -1,
+      tags: -1,
+      createdAt: -1,
+      clicks: -1,
+    });
+    const [link] = linksFromRows(
+      [["Spring menu", "flowcode.com/p/abc123", "https://example.com/menu"]],
+      guessFileMapping(headers, "flowcode"),
+    );
+    assert.equal(link?.destinationUrl, "https://example.com/menu");
+    assert.equal(link?.title, "Spring menu");
+    assert.equal(link?.domain, "flowcode.com");
+    assert.equal(link?.backHalf, "p/abc123");
+  });
+
+  it("maps Uniqode's creation date and scans in either spelling", () => {
+    for (const created of [
+      "Creation Date & Time",
+      "Creation Date & Timestamp",
+    ]) {
+      const headers = ["QR Code ID", "QR Code URL", created, "Scans"];
+      const mapping = guessFileMapping(headers, "uniqode");
+      assert.equal(headers[mapping.createdAt], created);
+      assert.equal(headers[mapping.clicks], "Scans");
+    }
+  });
+
+  it("maps Scanova's bulk-update sheet when Scanova is picked", () => {
+    const headers = ["qr code id", "name", "url"];
+    assert.deepEqual(guessFileMapping(headers, "scanova"), {
+      destination: 2,
+      title: 1,
+      shortLink: -1,
+      id: 0,
+      tags: -1,
+      createdAt: -1,
+      clicks: -1,
+    });
+  });
 
   it("falls back to link hosts for files without a known header set", () => {
     const detected = detectFileProvider(

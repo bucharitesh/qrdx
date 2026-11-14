@@ -11,7 +11,12 @@ export interface CompareMigration {
   href: string;
   label: string;
   steps: [string, string, string];
-  /** Whether printed codes keep working, in one or two sentences */
+  /**
+   * Printed codes, in one or two sentences: for "api" and "file", what to do
+   * with codes on the provider's own domain while its plan is still active
+   * (the compare page adds the own-domain and already-stopped cases); for
+   * "static" and "library", why they keep working.
+   */
   printed: string;
 }
 
@@ -47,7 +52,7 @@ function file(
       "Upload the CSV to Dashboard → Codes → Import and check the column mapping.",
       "Preview and import. Download the mapping CSV of old link → new QRdx link.",
     ],
-    printed: `${name} codes live on ${name}'s own domain, so QRdx can't change them: re-point each one to its new QRdx link (the mapping CSV lists them) and keep that account active until you reprint.`,
+    printed: `QRdx can't edit codes on ${name}'s own domain. In ${name}, point each one at its new QRdx link (the mapping CSV lists them), and keep that account active until you reprint.`,
   };
 }
 
@@ -103,7 +108,7 @@ export const COMPARE_MIGRATIONS: Record<string, CompareMigration> = {
   flowcode: file(
     "flowcode",
     "Flowcode",
-    "Flowcode doesn't document a code-list export: reuse your bulk-create sheet, or list Name, Scan URL and Destination for each code.",
+    "Put your Flowcodes in folders, then tick the folders in Flowcode's Folder section and click Download URLs to get a CSV.",
   ),
   "me-qr": file(
     "me-qr",
