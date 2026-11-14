@@ -7,8 +7,7 @@ import { useTranslations } from "next-intl";
 import { getFrameDimensions, isFrameActive } from "qrdx";
 import type React from "react";
 import { lazy, useRef } from "react";
-import { DEFAULT_QR_LOGO } from "@/lib/constants";
-import { styleEngineOptions } from "@/lib/qr-design/engine-options";
+import { editorCodeProps } from "@/lib/qr-design/props";
 import { useQREditorStore } from "@/store/editor-store";
 import type { QRStyle } from "@/types/theme";
 import { ArtCanvas, useShownArt } from "./editor/art/art-canvas";
@@ -141,25 +140,10 @@ const QRPreviewPanel: React.FC<QRPreviewPanelProps> = ({
                     />
                   ) : (
                     <QRCode
-                      art={style.art}
-                      bgColor={style.bgColor}
-                      cornerEyeDotPattern={style.cornerEyeDotPattern}
-                      cornerEyePattern={style.cornerEyePattern}
-                      dotColor={style.dotColor}
-                      bodyPattern={style.bodyPattern}
-                      level={style.level}
-                      eyeColor={style.eyeColor}
-                      fgColor={style.fgColor}
-                      frame={style.frame}
+                      {...editorCodeProps(style, value)}
                       frameLabelMarkers
                       partMarkers
-                      hideLogo={!style.showLogo}
-                      logo={style.customLogo ?? DEFAULT_QR_LOGO}
                       scale={previewScale}
-                      margin={style.margin}
-                      templateId={style.templateId}
-                      value={value}
-                      {...styleEngineOptions(style)}
                     />
                   )}
                 </div>

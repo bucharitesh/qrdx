@@ -3502,7 +3502,12 @@
       "qrCodeDialog": {
         "getCode": "コードを取得",
         "useThisDesignInYour": "このデザインを、アプリ、Webページ、API、またはAIアシスタントで使えます。",
+        "frameworks": "フレームワーク",
+        "framework": "フレームワーク",
         "installTheOpenSourceQrdx": "オープンソースの<code>qrdx</code>パッケージ(npm の {version})をインストールして、このコンポーネントを組み込みます。",
+        "installAndDrawIntoAnyElement": "オープンソースの<code>qrdx</code>パッケージ（npm の{version}）をインストールして、このデザインを任意の要素に描画します。",
+        "pasteThisIntoAnyPage": "これを任意のページに貼り付けてください。スクリプトが CDN から<code>qrdx-code</code>要素を読み込みます。バンドラーを使う場合は、代わりに<code>qrdx</code>をインストールして<code>qrdx/element/define</code>をインポートしてください。",
+        "withoutABundlerImportIt": "バンドラーを使わない場合は、次からインポートします",
         "addTheQrCodeComponent": "QRdxレジストリからQRコードコンポーネントを追加し、このデザインで使用します。",
         "aPublicImageOfThis": "このコードの公開画像です。どこにでも埋め込めます。APIキーは不要です。",
         "createsADynamicCodeWith": "このデザインで動的QRコードを作成します。<link>APIキー</link>が必要です。",

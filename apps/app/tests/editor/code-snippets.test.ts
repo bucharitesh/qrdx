@@ -15,13 +15,14 @@ import { qrImageQuerySchema } from "@/app/api/v1/qr/_lib/query";
 import {
   CLI_TAB_ENABLED,
   CODE_TABS,
+  CODE_TARGETS,
   cliSnippet,
   formatJson,
   IMAGE_API_URL,
   imageSnippet,
   LEFT_OUT,
   mcpSnippet,
-  NPM_QRDX,
+  QRDX_NPM_VERSION,
   REST_UNAVAILABLE,
   reactSnippet,
   restSnippet,
@@ -231,16 +232,9 @@ const ALL_SERIALIZERS = {
 // ─── Tabs ────────────────────────────────────────────────────────────────────
 
 describe("tabs", () => {
-  it("ship exactly the link ids, in tab order", () => {
-    expect(CODE_TABS).toEqual([
-      "react",
-      "shadcn",
-      "image",
-      "api",
-      "mcp",
-      "cli",
-    ]);
-    expect([...CODE_TABS]).toEqual([...CODE_LANGS]);
+  it("ship Frameworks and the services, and links open each one", () => {
+    expect(CODE_TABS).toEqual(["frameworks", "image", "api", "mcp", "cli"]);
+    expect([...CODE_TARGETS]).toEqual([...CODE_LANGS]);
   });
 
   it("show the CLI tab now that @qrdx/cli 0.0.5 is on npm", () => {
@@ -311,33 +305,11 @@ describe("formatJson", () => {
 });
 
 // ─── React ───────────────────────────────────────────────────────────────────
-
-/** QRCode's props in npm qrdx 0.0.46 (dist/src/qr-code.d.ts, types/qr.d.ts). */
-const NPM_QRCODE_PROPS = new Set([
-  "value",
-  "size",
-  "level",
-  "bgColor",
-  "fgColor",
-  "eyeColor",
-  "dotColor",
-  "bodyPattern",
-  "cornerEyePattern",
-  "cornerEyeDotPattern",
-  "margin",
-  "style",
-  "imageSettings",
-  "isOGContext",
-  "templateId",
-  "customTemplate",
-  "customProps",
-  "hideLogo",
-  "logo",
-  "scale",
-]);
+// tests/editor/framework-snippets.test.ts renders every framework's snippet
+// for many designs and compares it with the editor's preview.
 
 describe("reactSnippet", () => {
-  it("writes a plain style with props npm qrdx 0.0.46 has", () => {
+  it("writes a plain style as props of QRCode from npm qrdx", () => {
     const { code, omitted } = reactSnippet(urlInput(plain));
     expect(code).toContain('import { QRCode } from "qrdx";');
     expect(code).toContain('fgColor="#1e3a8a"');
@@ -346,14 +318,12 @@ describe("reactSnippet", () => {
     expect(code).toContain('cornerEyePattern="extra-rounded"');
     expect(code).toContain('level="M"');
     expect(code).toContain("margin={2}");
-    // 0.0.46 draws the QRdx logo by default.
-    expect(code).toContain("hideLogo");
+    // npm qrdx draws no logo unless it's given one
+    expect(code).not.toContain("hideLogo");
+    expect(code).not.toMatch(/\blogo=/);
     // An & in a JSX string would read as an entity.
     expect(code).toContain(`value={${JSON.stringify(URL_VALUE)}}`);
     expect(omitted).toEqual([]);
-    for (const name of propNames(code)) {
-      expect(NPM_QRCODE_PROPS.has(name as string), name).toBe(true);
-    }
   });
 
   it("keeps gradients as qrdx color objects", () => {
@@ -370,7 +340,6 @@ describe("reactSnippet", () => {
       'logo="https://qrdx.dev/logo.png"',
     );
     const uploaded = reactSnippet(urlInput(uploadedLogo));
-    expect(uploaded.code).toContain("hideLogo");
     expect(uploaded.code).not.toMatch(/\blogo=/);
     expect(uploaded.omitted).toEqual([LEFT_OUT.uploadedLogo]);
     const remote = reactSnippet(
@@ -384,32 +353,25 @@ describe("reactSnippet", () => {
     expect(remote.omitted).toEqual([]);
   });
 
-  it("leaves out frames, art and shapes newer than 0.0.46", () => {
-    expect(reactSnippet(urlInput(builtInFrame)).omitted).toEqual([
-      LEFT_OUT.frame,
-    ]);
-    expect(reactSnippet(urlInput(builtInFrame)).code).not.toContain("frame");
-    expect(reactSnippet(urlInput(customFrame)).omitted).toEqual([
-      LEFT_OUT.customFrame,
-    ]);
+  it("draws frames, borders and every shape, and leaves art out", () => {
+    const framed = reactSnippet(urlInput(builtInFrame));
+    expect(framed.omitted).toEqual([]);
+    expect(framed.code).toContain('style: "banner-bottom",');
+    const custom = reactSnippet(urlInput(customFrame));
+    expect(custom.omitted).toEqual([]);
+    expect(custom.code).toContain('style: "custom",');
+    expect(custom.code).toContain('kind: "qrdx.frame",');
     expect(reactSnippet(urlInput(art)).omitted).toEqual([LEFT_OUT.art]);
     const newer = reactSnippet(urlInput(newerShapes));
-    expect(newer.omitted).toEqual([
-      'The "liquid" dot shape',
-      'The "squircle" eye shape',
-      'The "flower" eye center shape',
-    ]);
-    expect(newer.code).not.toMatch(/liquid|squircle|flower/);
-    // Retired shapes are still in 0.0.46.
+    expect(newer.omitted).toEqual([]);
+    expect(newer.code).toContain('bodyPattern="liquid"');
     expect(reactSnippet(urlInput(retiredShapes)).code).toContain(
       'cornerEyePattern="curly"',
     );
   });
 
-  it("knows only the shapes and borders of the published package", () => {
-    expect(NPM_QRDX.version).toBe("0.0.46");
-    expect(NPM_QRDX.bodyPatterns).toHaveLength(9);
-    expect(NPM_QRDX.templates).toContain("Halloween");
+  it("is written for the qrdx on npm", () => {
+    expect(QRDX_NPM_VERSION).toBe("0.0.53");
   });
 });
 
@@ -440,8 +402,10 @@ describe("shadcnSnippet", () => {
     );
     const props = shadcnItemProps();
     expect(props.has("value")).toBe(true);
-    for (const name of propNames(snippet.code)) {
-      expect(props.has(name as string), name).toBe(true);
+    for (const [fixture, style] of Object.entries(FIXTURES)) {
+      for (const name of propNames(shadcnSnippet(urlInput(style)).code)) {
+        expect(props.has(name as string), `${fixture}: ${name}`).toBe(true);
+      }
     }
   });
 
@@ -450,25 +414,27 @@ describe("shadcnSnippet", () => {
     expect(shadcnSnippet(urlInput(plain)).code).toContain("margin={2}");
   });
 
-  it("says the logo can't be hidden or replaced by an upload", () => {
-    expect(shadcnSnippet(urlInput(plain)).omitted).toEqual([
-      LEFT_OUT.shadcnNoLogo,
-    ]);
-    expect(shadcnSnippet(urlInput(uploadedLogo)).omitted).toEqual([
-      LEFT_OUT.shadcnUploadedLogo,
-    ]);
+  it("draws no logo without one, and leaves an upload out", () => {
+    // The item installs the current qrdx, which draws no logo unless given one
+    const plainSnippet = shadcnSnippet(urlInput(plain));
+    expect(plainSnippet.omitted).toEqual([]);
+    expect(plainSnippet.code).not.toMatch(/\blogo=/);
+    const uploaded = shadcnSnippet(urlInput(uploadedLogo));
+    expect(uploaded.omitted).toEqual([LEFT_OUT.uploadedLogo]);
+    expect(uploaded.code).not.toMatch(/\blogo=/);
     const qrdx = shadcnSnippet(urlInput(qrdxLogo));
     expect(qrdx.code).toContain('logo="https://qrdx.dev/logo.png"');
     expect(qrdx.omitted).toEqual([]);
   });
 
-  it("leaves out frames and shapes newer than 0.0.46", () => {
+  it("passes every shape and gradient, and leaves out frames", () => {
     expect(shadcnSnippet(urlInput(builtInFrame)).omitted).toContain(
       LEFT_OUT.frame,
     );
-    expect(shadcnSnippet(urlInput(newerShapes)).omitted).toContain(
-      'The "liquid" dot shape',
-    );
+    const newer = shadcnSnippet(urlInput(newerShapes));
+    expect(newer.omitted).toEqual([]);
+    expect(newer.code).toContain('bodyPattern="liquid"');
+    expect(shadcnSnippet(urlInput(gradient)).code).toContain('type: "radial"');
   });
 });
 
@@ -1004,8 +970,9 @@ describe("engine options", () => {
 
   it("lists them as left out where the tab can't express them", () => {
     for (const [tab, serialize] of Object.entries(ALL_SERIALIZERS)) {
-      // REST, the image API and MCP take them (below).
-      if (tab === "api" || tab === "image" || tab === "mcp") continue;
+      // REST, the image API and MCP take them (below), and React's QRCode
+      // on npm (tests/editor/framework-snippets.test.ts).
+      if (["api", "image", "mcp", "react"].includes(tab)) continue;
       const { omitted } = serialize(urlInput(engine));
       for (const note of notes)
         expect(omitted, `${tab}: ${note}`).toContain(note);

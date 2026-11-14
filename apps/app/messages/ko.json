@@ -3502,7 +3502,12 @@
       "qrCodeDialog": {
         "getCode": "코드 받기",
         "useThisDesignInYour": "이 디자인을 앱, 웹 페이지, API 또는 AI 어시스턴트에서 사용해 보세요.",
+        "frameworks": "프레임워크",
+        "framework": "프레임워크",
         "installTheOpenSourceQrdx": "오픈 소스 <code>qrdx</code> 패키지(npm {version})를 설치하고 이 컴포넌트를 추가하세요.",
+        "installAndDrawIntoAnyElement": "오픈소스 <code>qrdx</code> 패키지(npm {version})를 설치하고 이 디자인을 원하는 요소에 그려 보세요.",
+        "pasteThisIntoAnyPage": "아래 코드를 원하는 페이지에 붙여 넣으세요. 스크립트가 CDN에서 <code>qrdx-code</code> 요소를 불러와요. 번들러를 사용한다면 <code>qrdx</code>를 설치하고 대신 <code>qrdx/element/define</code>을 가져오세요.",
+        "withoutABundlerImportIt": "번들러 없이 사용하려면 다음에서 가져오세요",
         "addTheQrCodeComponent": "QRdx 레지스트리에서 QR Code 컴포넌트를 추가한 뒤 이 디자인으로 사용하세요.",
         "aPublicImageOfThis": "어디에나 삽입할 수 있는 이 코드의 공개 이미지예요. API 키는 필요 없어요.",
         "createsADynamicCodeWith": "이 디자인으로 동적 QR 코드를 만들어요. <link>API 키</link>가 필요해요.",

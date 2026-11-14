@@ -10295,8 +10295,28 @@
     "source": "494576e1b1f5",
     "status": "machine"
   },
+  "editor.actionBar.qrCodeDialog.frameworks": {
+    "source": "cafd6b725820",
+    "status": "machine"
+  },
+  "editor.actionBar.qrCodeDialog.framework": {
+    "source": "192eb4525aab",
+    "status": "machine"
+  },
   "editor.actionBar.qrCodeDialog.installTheOpenSourceQrdx": {
     "source": "cbb3d770df82",
+    "status": "machine"
+  },
+  "editor.actionBar.qrCodeDialog.installAndDrawIntoAnyElement": {
+    "source": "d4e2ec78067b",
+    "status": "machine"
+  },
+  "editor.actionBar.qrCodeDialog.pasteThisIntoAnyPage": {
+    "source": "9465396840f2",
+    "status": "machine"
+  },
+  "editor.actionBar.qrCodeDialog.withoutABundlerImportIt": {
+    "source": "f3c04d3b1c81",
     "status": "machine"
   },
   "editor.actionBar.qrCodeDialog.addTheQrCodeComponent": {
