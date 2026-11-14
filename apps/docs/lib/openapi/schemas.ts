@@ -1,3 +1,4 @@
+import { GITHUB_REPO_URL } from "@repo/config";
 import {
   SCAN_DEVICE_TYPES,
   SCAN_LOCATION_SOURCES,
@@ -73,7 +74,7 @@ named(
 named(
   "FrameSpec",
   frameSpecSchema,
-  "A custom frame as data (qrdx frame spec v1): shapes, labels, colors and where the code goes. See https://github.com/bucharitesh/qrdx/tree/main/packages/qrdx#custom-frames.",
+  `A custom frame as data (qrdx frame spec v1): shapes, labels, colors and where the code goes. See ${GITHUB_REPO_URL}/tree/main/packages/qrdx#custom-frames.`,
 );
 
 // The original schema, so the codes routes' refined copy references it too.

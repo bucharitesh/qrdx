@@ -151,7 +151,7 @@ Node.js ≥ 22
 - [CLI docs](https://qrdx.dev/docs/developers/cli)
 - [qrdx.dev](https://qrdx.dev): the web app, with static and dynamic QR codes, hosted pages and scan analytics
 - [Image API](https://qrdx.dev/docs/developers/image-api) and [MCP server](https://qrdx.dev/docs/developers/mcp): QR codes over HTTP or from AI assistants, with nothing to install
-- [github.com/bucharitesh/qrdx](https://github.com/bucharitesh/qrdx): the source
+- [github.com/qrdxinc/qrdx](https://github.com/qrdxinc/qrdx): the source
 
 ## License
 

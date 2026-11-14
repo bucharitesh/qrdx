@@ -4,10 +4,10 @@ description: "Docker Compose या Node.js से अपना QRdx वेब �
 icon: Server
 ---
 
-QRdx AGPL-3.0 लाइसेंस के तहत है, और आप वेब ऐप (QR एडिटर, अकाउंट, टू-स्टेप वेरिफ़िकेशन और पासकी, डायनेमिक कोड और होस्टेड पेज, टीम, सेव की गई थीम, कम्युनिटी गैलरी और ये docs) अपने सर्वर पर चला सकते हैं। वर्कस्पेस सिंगल साइन-ऑन और वर्कस्पेस ऑडिट लॉग इसका अपवाद हैं: ये कमर्शियल लाइसेंस वाले `ee/` फ़ोल्डरों में हैं और लाइसेंस की (`QRDX_EE_LICENSE`) सेट किए बिना बंद रहते हैं। प्रोडक्शन में इनका इस्तेमाल करने के लिए QRdx के साथ लिखित अनुबंध ज़रूरी है; देखें [LICENSING.md](https://github.com/bucharitesh/qrdx/blob/main/LICENSING.md)। [`qrdx` React library](/docs/getting-started) या CLI इस्तेमाल करने के लिए इनमें से किसी की ज़रूरत नहीं है। ये MIT लाइसेंस के तहत बिना बैकएंड के कहीं भी चलते हैं। [QRdx पर ओपन सोर्स](/open-source-qr-code-generator) पेज में रिपॉज़िटरी का हर हिस्सा और उसका लाइसेंस दिया गया है।
+QRdx AGPL-3.0 लाइसेंस के तहत है, और आप वेब ऐप (QR एडिटर, अकाउंट, टू-स्टेप वेरिफ़िकेशन और पासकी, डायनेमिक कोड और होस्टेड पेज, टीम, सेव की गई थीम, कम्युनिटी गैलरी और ये docs) अपने सर्वर पर चला सकते हैं। वर्कस्पेस सिंगल साइन-ऑन और वर्कस्पेस ऑडिट लॉग इसका अपवाद हैं: ये कमर्शियल लाइसेंस वाले `ee/` फ़ोल्डरों में हैं और लाइसेंस की (`QRDX_EE_LICENSE`) सेट किए बिना बंद रहते हैं। प्रोडक्शन में इनका इस्तेमाल करने के लिए QRdx के साथ लिखित अनुबंध ज़रूरी है; देखें [LICENSING.md](https://github.com/qrdxinc/qrdx/blob/main/LICENSING.md)। [`qrdx` React library](/docs/getting-started) या CLI इस्तेमाल करने के लिए इनमें से किसी की ज़रूरत नहीं है। ये MIT लाइसेंस के तहत बिना बैकएंड के कहीं भी चलते हैं। [QRdx पर ओपन सोर्स](/open-source-qr-code-generator) पेज में रिपॉज़िटरी का हर हिस्सा और उसका लाइसेंस दिया गया है।
 
 <Callout type="warn">
-  Docker सेटअप नया है। अगर कुछ काम न करे, तो कृपया [issue खोलें](https://github.com/bucharitesh/qrdx/issues)।
+  Docker सेटअप नया है। अगर कुछ काम न करे, तो कृपया [issue खोलें](https://github.com/qrdxinc/qrdx/issues)।
 </Callout>
 
 ## ज़रूरतें [#requirements]
@@ -31,7 +31,7 @@ QRdx AGPL-3.0 लाइसेंस के तहत है, और आप व�
 ### 1. रिपॉज़िटरी क्लोन करें [#1-clone-the-repository]
 
 ```bash
-git clone https://github.com/bucharitesh/qrdx.git
+git clone https://github.com/qrdxinc/qrdx.git
 cd qrdx
 ```
 
@@ -103,7 +103,7 @@ docker run --rm -e DATABASE_URL="<your connection string>" qrdx-migrate
 ## मैन्युअल सेटअप (Node.js) [#manual-setup-nodejs]
 
 ```bash
-git clone https://github.com/bucharitesh/qrdx.git
+git clone https://github.com/qrdxinc/qrdx.git
 cd qrdx
 bun install
 
@@ -129,7 +129,7 @@ DATABASE_HTTP_ENDPOINT=http://localhost:4444/sql
 
 ## एनवायरनमेंट वेरिएबल [#environment-variables]
 
-[`apps/docs/.env.example`](https://github.com/bucharitesh/qrdx/blob/main/apps/docs/.env.example) में हर वेरिएबल की सूची है, साथ में एक छोटा नोट कि वह कहाँ से मिलेगा।
+[`apps/docs/.env.example`](https://github.com/qrdxinc/qrdx/blob/main/apps/docs/.env.example) में हर वेरिएबल की सूची है, साथ में एक छोटा नोट कि वह कहाँ से मिलेगा।
 
 ### न्यूनतम [#minimum]
 
@@ -167,8 +167,8 @@ DATABASE_HTTP_ENDPOINT=http://localhost:4444/sql
 | Dub शॉर्ट लिंक | `DUB_CLIENT_ID`, `DUB_CLIENT_SECRET`, `DUB_REDIRECT_URI`, `INTEGRATION_ENCRYPTION_KEY` | Dub इंटीग्रेशन कनेक्ट नहीं हो सकता |
 | Google Drive | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_DRIVE_REDIRECT_URI`, `INTEGRATION_ENCRYPTION_KEY` | Google Drive इंटीग्रेशन कनेक्ट नहीं हो सकता |
 | Bitly, Dropbox, OneDrive, Box, Notion | `BITLY_CLIENT_ID`/`_SECRET`, `DROPBOX_CLIENT_ID`/`_SECRET`, `MICROSOFT_CLIENT_ID`/`_SECRET`, `BOX_CLIENT_ID`/`_SECRET`, `NOTION_CLIENT_ID`/`_SECRET`, `INTEGRATION_ENCRYPTION_KEY` | वह इंटीग्रेशन "Not configured" दिखाता है (Bitly फिर भी पेस्ट किए गए एक्सेस टोकन से कनेक्ट होता है)। Rebrandly और Short.io को किसी वेरिएबल की ज़रूरत नहीं। देखें [शॉर्ट लिंक और फ़ाइल पिकर](/docs/short-links-and-file-pickers#self-hosting) |
-| Slack बॉट | `SLACK_CLIENT_ID`, `SLACK_CLIENT_SECRET`, `SLACK_SIGNING_SECRET`, और प्रोडक्शन में `INTEGRATION_ENCRYPTION_KEY` | Slack बॉट नहीं होगा: इसके रूट और लिंक पेज 404 देते हैं और Settings इसे ऑफ़र नहीं करती। अपना Slack ऐप [`plugins/slack/manifest.json`](https://github.com/bucharitesh/qrdx/tree/main/plugins/slack) से बनाएँ, जैसा उसके README में बताया है। देखें [Slack बॉट](/docs/slack-bot#self-hosting) |
-| Discord बॉट | `DISCORD_APPLICATION_ID`, `DISCORD_PUBLIC_KEY` | Discord बॉट नहीं होगा: इसका interactions एंडपॉइंट `404` देता है और यह इंटीग्रेशन डायरेक्टरी में नहीं दिखता। अपना Discord ऐप रजिस्टर करें, जैसा [`plugins/discord/README.md`](https://github.com/bucharitesh/qrdx/tree/main/plugins/discord) में बताया है |
+| Slack बॉट | `SLACK_CLIENT_ID`, `SLACK_CLIENT_SECRET`, `SLACK_SIGNING_SECRET`, और प्रोडक्शन में `INTEGRATION_ENCRYPTION_KEY` | Slack बॉट नहीं होगा: इसके रूट और लिंक पेज 404 देते हैं और Settings इसे ऑफ़र नहीं करती। अपना Slack ऐप [`plugins/slack/manifest.json`](https://github.com/qrdxinc/qrdx/tree/main/plugins/slack) से बनाएँ, जैसा उसके README में बताया है। देखें [Slack बॉट](/docs/slack-bot#self-hosting) |
+| Discord बॉट | `DISCORD_APPLICATION_ID`, `DISCORD_PUBLIC_KEY` | Discord बॉट नहीं होगा: इसका interactions एंडपॉइंट `404` देता है और यह इंटीग्रेशन डायरेक्टरी में नहीं दिखता। अपना Discord ऐप रजिस्टर करें, जैसा [`plugins/discord/README.md`](https://github.com/qrdxinc/qrdx/tree/main/plugins/discord) में बताया है |
 | Telegram बॉट | `TELEGRAM_BOT_TOKEN`, `TELEGRAM_WEBHOOK_SECRET`, `TELEGRAM_BOT_USERNAME` | Telegram बॉट नहीं होगा: इसके रूट 404 देते हैं और साइट इसे लिस्ट नहीं करती। @BotFather से अपना बॉट बनाएँ और `plugins/telegram/scripts/setup.mjs` चलाएँ। देखें [Telegram बॉट](/docs/telegram-bot#self-hosting) |
 | रेट लिमिटिंग (Upstash) | `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN` (या Vercel KV के नाम `KV_REST_API_URL`, `KV_REST_API_TOKEN`) | कोई रेट लिमिटिंग नहीं। प्रोडक्शन में इसकी सलाह दी जाती है। |
 | एनालिटिक्स (PostHog, कुकी सहमति के बाद) | `NEXT_PUBLIC_POSTHOG_KEY`, `NEXT_PUBLIC_POSTHOG_HOST` | कोई प्रोडक्ट एनालिटिक्स नहीं |
