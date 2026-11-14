@@ -1,15 +1,15 @@
 import { JWT } from "google-auth-library";
 import { google } from "googleapis";
 
-const { SITE_URL, SITEMAP_URL, GOOGLE_SEARCH_CONSOLE_JSON_KEY } = process.env;
+const { SITE_URL, SITEMAP_URL, GSC_SERVICE_ACCOUNT_JSON } = process.env;
 
-if (!(SITE_URL && SITEMAP_URL && GOOGLE_SEARCH_CONSOLE_JSON_KEY)) {
+if (!(SITE_URL && SITEMAP_URL && GSC_SERVICE_ACCOUNT_JSON)) {
   throw new Error("Missing required environment variables");
 }
 
-const keys = JSON.parse(
-  Buffer.from(GOOGLE_SEARCH_CONSOLE_JSON_KEY, "base64").toString("utf-8")
-);
+// The service account's key file as plain JSON, the same secret the
+// notify-search-engines workflow and the app's Growth page read.
+const keys = JSON.parse(GSC_SERVICE_ACCOUNT_JSON);
 
 const client = new JWT({
   email: keys.client_email,
@@ -26,10 +26,11 @@ const searchconsole = google.searchconsole("v1");
 
 (async () => {
   try {
-    await searchconsole.sitemaps.submit({
+    const { status } = await searchconsole.sitemaps.submit({
       feedpath: SITEMAP_URL,
       siteUrl: SITE_URL,
     });
+    console.log(`Submitted ${SITEMAP_URL} to ${SITE_URL}: HTTP ${status}`);
   } catch (e) {
     console.log(e);
     process.exit(1);
