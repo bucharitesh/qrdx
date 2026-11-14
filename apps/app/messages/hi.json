@@ -3502,7 +3502,12 @@
       "qrCodeDialog": {
         "getCode": "कोड पाएँ",
         "useThisDesignInYour": "इस डिज़ाइन को अपने app में, किसी वेब पेज पर, API के ज़रिए या AI असिस्टेंट के साथ इस्तेमाल करें।",
+        "frameworks": "फ़्रेमवर्क",
+        "framework": "फ़्रेमवर्क",
         "installTheOpenSourceQrdx": "ओपन-सोर्स <code>qrdx</code> पैकेज इंस्टॉल करें (npm पर {version}) और इस कॉम्पोनेंट को जोड़ें।",
+        "installAndDrawIntoAnyElement": "ओपन-सोर्स <code>qrdx</code> पैकेज ({version}, npm पर) इंस्टॉल करें और इस डिज़ाइन को किसी भी एलिमेंट में ड्रॉ करें।",
+        "pasteThisIntoAnyPage": "इसे किसी भी पेज में पेस्ट करें: स्क्रिप्ट CDN से <code>qrdx-code</code> एलिमेंट लोड करती है। बंडलर के साथ इसके बजाय <code>qrdx</code> इंस्टॉल करें और <code>qrdx/element/define</code> इम्पोर्ट करें।",
+        "withoutABundlerImportIt": "बंडलर के बिना, इसे यहाँ से इम्पोर्ट करें",
         "addTheQrCodeComponent": "QRdx रजिस्ट्री से QR Code कॉम्पोनेंट जोड़ें, फिर इसे इस डिज़ाइन के साथ इस्तेमाल करें।",
         "aPublicImageOfThis": "इस कोड की एक पब्लिक इमेज, जिसे कहीं भी एम्बेड किया जा सकता है। API key की ज़रूरत नहीं।",
         "createsADynamicCodeWith": "इस डिज़ाइन के साथ डायनेमिक कोड बनाता है। इसके लिए <link>API key</link> चाहिए।",

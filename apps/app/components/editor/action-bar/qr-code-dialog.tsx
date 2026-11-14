@@ -11,6 +11,13 @@ import {
   ResponsiveDialogTitle,
 } from "@repo/design-system/components/ui/revola";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@repo/design-system/components/ui/select";
+import {
   Tabs,
   TabsContent,
   TabsList,
@@ -24,22 +31,29 @@ import { useCodeDialogStore } from "@/components/editor/action-bar/code-dialog-s
 import {
   CODE_TAB_LABELS,
   CODE_TABS,
+  CODE_TARGETS,
   type CodeTab,
   cliSnippet,
+  codeTargetTab,
+  FRAMEWORK_LABELS,
+  FRAMEWORKS,
+  type Framework,
+  frameworkSnippet,
   imageSnippet,
   MCP_SERVER_URL,
   mcpSnippet,
-  NPM_QRDX,
-  REACT_INSTALL,
-  reactSnippet,
+  QRDX_INSTALL,
+  QRDX_NPM_VERSION,
   restSnippet,
   type SnippetInput,
   shadcnSnippet,
+  VANILLA_CDN_URL,
 } from "@/components/editor/action-bar/code-snippets";
 import { DialogCloseButton } from "@/components/editor/dialog-close-button";
 import { emitSound } from "@/components/editor/sound";
 import { InfoHint } from "@/components/help/info-hint";
 import { LocaleLink as Link } from "@/components/i18n/locale-link";
+import { BrandLogo, type BrandMarkSlug } from "@/lib/brand-logos/brand-logo";
 import type { CodeLang } from "@/lib/playground-links";
 import { useQREditorStore } from "@/store/editor-store";
 
@@ -51,9 +65,35 @@ interface QRCodeDialogProps {
 const linkClass =
   "text-foreground font-medium underline decoration-foreground/30 underline-offset-4 hover:decoration-foreground";
 
-/** The tab a link asked for, when it ships; React otherwise. */
-const tabFor = (lang: CodeLang | null): CodeTab =>
-  lang && CODE_TABS.includes(lang) ? lang : "react";
+/** The tab (and framework) a link asked for, when it ships; React otherwise. */
+const targetFor = (lang: CodeLang | null) =>
+  codeTargetTab(lang && CODE_TARGETS.includes(lang) ? lang : "react");
+
+/** Each framework's real mark (Simple Icons), drawn in the text color. */
+const FRAMEWORK_BRANDS: Record<Framework, BrandMarkSlug> = {
+  react: "react",
+  vue: "vuedotjs",
+  angular: "angular",
+  preact: "preact",
+  solid: "solid",
+  "web-component": "webcomponentsdotorg",
+  vanilla: "javascript",
+  shadcn: "shadcnui",
+};
+
+type CodeFramework = Exclude<Framework, "shadcn">;
+
+/** The file each framework's snippet goes in, and its highlighting. */
+const FRAMEWORK_FILES: Record<CodeFramework, { title: string; lang: string }> =
+  {
+    react: { title: "my-qr-code.tsx", lang: "tsx" },
+    vue: { title: "MyQRCode.vue", lang: "vue" },
+    angular: { title: "my-qr-code.ts", lang: "ts" },
+    preact: { title: "my-qr-code.tsx", lang: "tsx" },
+    solid: { title: "my-qr-code.tsx", lang: "tsx" },
+    "web-component": { title: "index.html", lang: "html" },
+    vanilla: { title: "main.js", lang: "js" },
+  };
 
 /** ["Gradients", "Your logo", "The frame"] → "gradients, your logo and the frame" */
 function listItems(items: string[]): string {
@@ -66,9 +106,11 @@ function listItems(items: string[]): string {
 }
 
 /**
- * Get code (V): the editor's design as React, shadcn, an image URL, a REST
- * API request and MCP arguments (code-snippets.ts writes them). A link's
- * open=code&lang=… picks the first tab.
+ * Get code (V): the editor's design as code for each framework (React, Vue,
+ * Angular, Preact, Solid, the web component, vanilla JS and shadcn), an
+ * image URL, a REST API request, MCP arguments and a CLI command
+ * (code-snippets.ts writes them). A link's open=code&lang=… picks the tab
+ * and framework.
  */
 export function QRCodeDialog({ open, onOpenChange }: QRCodeDialogProps) {
   const handleOpenChange = (next: boolean) => {
@@ -96,12 +138,19 @@ function GetCode({ onLeave }: { onLeave: () => void }) {
     (state) => state.contentConfigs[state.contentType],
   );
 
-  const [tab, setTab] = useState<CodeTab>(() => tabFor(lang));
+  const [tab, setTab] = useState<CodeTab>(() => targetFor(lang).tab);
+  const [framework, setFramework] = useState<Framework>(
+    () => targetFor(lang).framework ?? "react",
+  );
   // A link that opens the dialog on another tab while it's open.
   const [linkedLang, setLinkedLang] = useState(lang);
   if (lang !== linkedLang) {
     setLinkedLang(lang);
-    if (lang) setTab(tabFor(lang));
+    if (lang) {
+      const target = targetFor(lang);
+      setTab(target.tab);
+      if (target.framework) setFramework(target.framework);
+    }
   }
 
   // On a narrow screen the tab list scrolls: keep the open tab in view.
@@ -144,7 +193,10 @@ function GetCode({ onLeave }: { onLeave: () => void }) {
     () => ({ style, value, contentType, content }),
     [style, value, contentType, content],
   );
-  const react = useMemo(() => reactSnippet(input), [input]);
+  const code = useMemo(
+    () => (framework === "shadcn" ? null : frameworkSnippet(framework, input)),
+    [framework, input],
+  );
   const shadcn = useMemo(() => shadcnSnippet(input), [input]);
   const image = useMemo(() => imageSnippet(input), [input]);
   const rest = useMemo(() => restSnippet(input), [input]);
@@ -183,51 +235,80 @@ function GetCode({ onLeave }: { onLeave: () => void }) {
                 key={id}
                 value={id}
               >
-                {CODE_TAB_LABELS[id]}
+                {id === "frameworks" ? t("frameworks") : CODE_TAB_LABELS[id]}
               </TabsTrigger>
             ))}
           </TabsList>
         </div>
 
         <div className="min-h-0 flex-1 overflow-y-auto px-6 pt-4 pb-6">
-          <TabsContent className="mt-0 space-y-4" value="react">
-            <Lead>
-              {t.rich("installTheOpenSourceQrdx", {
-                version: NPM_QRDX.version,
-                code: (chunks) => (
-                  <code className="font-mono text-xs">{chunks}</code>
-                ),
-              })}
-            </Lead>
-            <CommandLine
-              prefix="$"
-              text={REACT_INSTALL}
-              {...copyProps("react-install", REACT_INSTALL)}
-            />
-            <CodeCard
-              code={react.code}
-              hint={<InfoHint align="start" id="react-component" />}
-              lang="tsx"
-              title="my-qr-code.tsx"
-              {...copyProps("react-code", react.code)}
-            />
-            <LeftOut items={react.omitted} />
-          </TabsContent>
-
-          <TabsContent className="mt-0 space-y-4" value="shadcn">
-            <Lead>{t("addTheQrCodeComponent")}</Lead>
-            <CommandLine
-              prefix="$"
-              text={shadcn.install}
-              {...copyProps("shadcn-install", shadcn.install)}
-            />
-            <CodeCard
-              code={shadcn.code}
-              lang="tsx"
-              title="my-qr-code.tsx"
-              {...copyProps("shadcn-code", shadcn.code)}
-            />
-            <LeftOut items={shadcn.omitted} />
+          <TabsContent className="mt-0 space-y-4" value="frameworks">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+              <FrameworkPicker onChange={setFramework} value={framework} />
+              <Lead>
+                {framework === "shadcn"
+                  ? t("addTheQrCodeComponent")
+                  : t.rich(
+                      framework === "web-component"
+                        ? "pasteThisIntoAnyPage"
+                        : framework === "vanilla"
+                          ? "installAndDrawIntoAnyElement"
+                          : "installTheOpenSourceQrdx",
+                      {
+                        version: QRDX_NPM_VERSION,
+                        code: (chunks) => (
+                          <code className="font-mono text-xs">{chunks}</code>
+                        ),
+                      },
+                    )}
+              </Lead>
+            </div>
+            {framework === "shadcn" ? (
+              <>
+                <CommandLine
+                  prefix="$"
+                  text={shadcn.install}
+                  {...copyProps("shadcn-install", shadcn.install)}
+                />
+                <CodeCard
+                  code={shadcn.code}
+                  lang="tsx"
+                  title="my-qr-code.tsx"
+                  {...copyProps("shadcn-code", shadcn.code)}
+                />
+                <LeftOut items={shadcn.omitted} />
+              </>
+            ) : code ? (
+              <>
+                {framework === "web-component" ? null : (
+                  <CommandLine
+                    prefix="$"
+                    text={QRDX_INSTALL}
+                    {...copyProps(`${framework}-install`, QRDX_INSTALL)}
+                  />
+                )}
+                <CodeCard
+                  code={code.code}
+                  hint={
+                    framework === "react" ? (
+                      <InfoHint align="start" id="react-component" />
+                    ) : undefined
+                  }
+                  lang={FRAMEWORK_FILES[framework].lang}
+                  title={FRAMEWORK_FILES[framework].title}
+                  {...copyProps(`${framework}-code`, code.code)}
+                />
+                {framework === "vanilla" ? (
+                  <UrlBox
+                    copyLabel={t("address")}
+                    label={t("withoutABundlerImportIt")}
+                    text={VANILLA_CDN_URL}
+                    {...copyProps("vanilla-cdn", VANILLA_CDN_URL)}
+                  />
+                ) : null}
+                <LeftOut items={code.omitted} />
+              </>
+            ) : null}
           </TabsContent>
 
           <TabsContent className="mt-0 space-y-4" value="image">
@@ -344,6 +425,41 @@ function GetCode({ onLeave }: { onLeave: () => void }) {
   );
 }
 
+/** The Frameworks tab's picker: each framework with its real mark. */
+function FrameworkPicker({
+  value,
+  onChange,
+}: {
+  value: Framework;
+  onChange: (framework: Framework) => void;
+}) {
+  const t = useTranslations("editor.actionBar.qrCodeDialog");
+  return (
+    <Select onValueChange={(next) => onChange(next as Framework)} value={value}>
+      <SelectTrigger
+        aria-label={t("framework")}
+        className="w-full shrink-0 sm:w-44"
+        data-code-framework-picker=""
+      >
+        <SelectValue />
+      </SelectTrigger>
+      {/* Above the dialog (z-[99]), as the app's other dialog selects */}
+      <SelectContent align="start" className="z-[120]" position="popper">
+        {FRAMEWORKS.map((id) => (
+          <SelectItem data-code-framework={id} key={id} value={id}>
+            <BrandLogo
+              className="size-4"
+              color="currentColor"
+              slug={FRAMEWORK_BRANDS[id]}
+            />
+            {FRAMEWORK_LABELS[id]}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  );
+}
+
 function Lead({ children }: { children: ReactNode }) {
   return <p className="text-muted-foreground text-sm">{children}</p>;
 }
@@ -400,8 +516,9 @@ function CommandLine({
 function UrlBox({
   text,
   label,
+  copyLabel = label.toLowerCase(),
   ...copy
-}: CopyProps & { text: string; label: string }) {
+}: CopyProps & { text: string; label: string; copyLabel?: string }) {
   return (
     <div className="space-y-1.5">
       <span className="text-muted-foreground block text-xs font-medium">
@@ -411,7 +528,7 @@ function UrlBox({
         <code className="min-w-0 flex-1 py-1.5 font-mono text-xs leading-5 break-all">
           {text}
         </code>
-        <CopyIconButton label={label.toLowerCase()} {...copy} />
+        <CopyIconButton label={copyLabel} {...copy} />
       </div>
     </div>
   );

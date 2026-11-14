@@ -3502,7 +3502,12 @@
       "qrCodeDialog": {
         "getCode": "Obter código",
         "useThisDesignInYour": "Use este design no seu app, em uma página web, pela API ou com um assistente de IA.",
+        "frameworks": "Frameworks",
+        "framework": "Framework",
         "installTheOpenSourceQrdx": "Instale o pacote open source <code>qrdx</code> ({version} no npm) e adicione este componente.",
+        "installAndDrawIntoAnyElement": "Instale o pacote open source <code>qrdx</code> ({version} no npm) e desenhe este design em qualquer elemento.",
+        "pasteThisIntoAnyPage": "Cole isto em qualquer página: o script carrega o elemento <code>qrdx-code</code> de uma CDN. Com um bundler, instale <code>qrdx</code> e importe <code>qrdx/element/define</code> no lugar.",
+        "withoutABundlerImportIt": "Sem um bundler, importe a partir de",
         "addTheQrCodeComponent": "Adicione o componente QR Code do registro do QRdx e use com este design.",
         "aPublicImageOfThis": "Uma imagem pública deste código para incorporar onde quiser. Sem precisar de chave de API.",
         "createsADynamicCodeWith": "Cria um QR code dinâmico com este design. Requer uma <link>chave de API</link>.",
