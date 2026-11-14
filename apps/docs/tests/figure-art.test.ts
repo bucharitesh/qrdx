@@ -1,14 +1,14 @@
-// The QRdx figure set (components/mockups/hairline.tsx): every figure name
+// The QRdx figure set (@repo/design-system/components/hairline): every figure name
 // has an up-to-date generated component, every real code in a figure scans
 // as its data, every call site names a figure that exists, and the colours
 // stay in step with the use-case illustrations.
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
-import { describe, expect, it } from "vitest";
 import {
   FIGURE_NAMES,
   figureSlug,
-} from "@/components/mockups/hairline-figures";
+} from "@repo/design-system/components/hairline/hairline-figures";
+import { describe, expect, it } from "vitest";
 import { FIGURE_CODES } from "@/scripts/figure-art/codes";
 import { relativePath, renderFigure } from "@/scripts/figure-art/generate";
 import { THEMES } from "@/scripts/use-case-art/kit";
@@ -19,7 +19,8 @@ import {
 } from "../../../packages/qrdx/tests/support/raster";
 
 const ROOT = join(import.meta.dirname, "..");
-const FIGURES_DIR = join(ROOT, "components/mockups/figures");
+const HAIRLINE = join(ROOT, "../../packages/design-system/components/hairline");
+const FIGURES_DIR = join(HAIRLINE, "figures");
 
 /** The figure's code as a flat black-on-white SVG the test rasterizer reads. */
 function bakedCode(markup: string, prefix: string) {
@@ -136,10 +137,7 @@ describe("QRdx figures", () => {
   });
 
   it("uses the use-case illustrations' colour tokens in both themes", () => {
-    const css = readFileSync(
-      join(ROOT, "components/mockups/hairline.module.css"),
-      "utf8",
-    );
+    const css = readFileSync(join(HAIRLINE, "hairline.module.css"), "utf8");
     const block = (selector: string) => {
       const start = css.indexOf(`${selector} {`);
       return css.slice(start, css.indexOf("}", start));

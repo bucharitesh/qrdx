@@ -26,11 +26,11 @@ function paint() {
     const reach = Math.max(box.width, 240) * 1.5;
     el.style.setProperty(
       "--px",
-      clamp((pointerX - box.left - box.width / 2) / reach),
+      clamp((pointerX - box.left - box.width / 2) / reach)
     );
     el.style.setProperty(
       "--py",
-      clamp((pointerY - box.top - box.height / 2) / reach),
+      clamp((pointerY - box.top - box.height / 2) / reach)
     );
   }
 }
