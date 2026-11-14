@@ -1,3 +1,4 @@
+import { HairlineFigure } from "@repo/design-system/components/hairline/hairline";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
@@ -15,7 +16,6 @@ import { UpgradePlanButton } from "@/app/(app)/dashboard/webhooks/_components/up
 import { WebhooksManager } from "@/app/(app)/dashboard/webhooks/_components/webhooks-manager";
 import { ConfirmIdentityProvider } from "@/components/confirm-identity/provider";
 import { InfoHint } from "@/components/help/info-hint";
-import { HairlineFigure } from "@/components/mockups/hairline";
 import {
   canManageWebhooks,
   listEndpoints,

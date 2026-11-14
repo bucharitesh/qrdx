@@ -1,5 +1,7 @@
 "use client";
 
+import { QrdxLogo } from "@repo/design-system/components/brand/qrdx-logo";
+import { QrdxLogoAnimation } from "@repo/design-system/components/brand/qrdx-logo-animation";
 import { Separator } from "@repo/design-system/components/ui/separator";
 import { cn } from "@repo/design-system/lib/utils";
 import { GetProCTA } from "@/components/get-pro-cta";
@@ -9,8 +11,6 @@ import { UserProfileDropdown } from "@/components/user-profile-dropdown";
 import bar from "./header-bar.module.css";
 import { HeaderMobileMenu } from "./header-mobile-nav";
 import { HeaderNav } from "./header-nav";
-import { QrdxLogo } from "./qrdx-logo";
-import { QrdxLogoAnimation } from "./qrdx-logo-animation";
 
 export function Header() {
   return (

@@ -4,9 +4,9 @@ import "server-only";
 // and the language menu's cookie. lib/i18n/app-locale.ts adds the session;
 // emails (lib/i18n/email-locale.ts) use these directly.
 import { database as db, user } from "@repo/database";
+import { isLocale, LOCALE_COOKIE, type Locale } from "@repo/i18n/config";
 import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
-import { isLocale, LOCALE_COOKIE, type Locale } from "./config";
 
 /**
  * A person's saved language, or null when they haven't chosen one. Also null

@@ -1,6 +1,6 @@
+import { DEFAULT_LOCALE, type Locale } from "@repo/i18n/config";
 import { useLocale } from "next-intl";
 import { type ReactNode, use } from "react";
-import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/config";
 import type { ContentRules } from "@/lib/i18n/content";
 import { loadMemory, pickTranslations } from "@/lib/i18n/content-server";
 import { ContentTextProvider } from "./content-text";

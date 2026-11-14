@@ -14,7 +14,7 @@
     "sync:agent-plugin": "node scripts/sync-agent-plugin.mjs",
     "lint:ci": "ultracite check",
     "prepush": "bun run --filter qrdx build:inplace && bun run typecheck && bun run typegen:app && bun run typecheck:app && bun run --filter app i18n:check && bun run lint:ci && bun run --filter @qrdx/cli build && bun run test",
-    "prepush:quick": "bun run --filter qrdx build:inplace && bun run typecheck && bun run typegen:app && bun run typecheck:app && bun run --filter app i18n:check && bun run lint:ci && bun run --filter @qrdx/cli build && TURBO_SCM_BASE=${TURBO_SCM_BASE:-origin/staging} turbo test --affected --only --concurrency=2",
+    "prepush:quick": "bun run --filter qrdx build:inplace && bun run typecheck && bun run typegen:app && bun run typecheck:app && bun run --filter app i18n:check && bun run lint:ci && bun run --filter @qrdx/cli build && TURBO_SCM_BASE=${TURBO_SCM_BASE:-origin/staging} turbo test --affected --only --concurrency=2 && { git diff --quiet ${TURBO_SCM_BASE:-origin/staging}...HEAD -- apps/docs/content || turbo test --filter=app --only --concurrency=2; }",
     "analyze": "turbo analyze",
     "translate": "turbo translate",
     "boundaries": "turbo boundaries",

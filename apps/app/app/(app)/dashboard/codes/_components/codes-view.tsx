@@ -1,3 +1,4 @@
+import { HairlineFigure } from "@repo/design-system/components/hairline/hairline";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   Empty,
@@ -39,7 +40,6 @@ import {
   requireDashboardScope,
 } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import { getDomainOptions } from "@/app/(app)/dashboard/domains/_lib/domains";
-import { HairlineFigure } from "@/components/mockups/hairline";
 import { getAppTranslations } from "@/lib/i18n/app-locale";
 import { loadPage } from "@/lib/paging";
 import { can } from "@/lib/permissions";

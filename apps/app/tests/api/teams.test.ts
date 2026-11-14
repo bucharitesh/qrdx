@@ -1,4 +1,4 @@
-// Teams as content/docs/teams.mdx and plans-and-limits.mdx describe them:
+// Teams as apps/docs/content/docs/teams.mdx and plans-and-limits.mdx describe them:
 // creating a team needs Pro or Business; a team's seats (members, owner
 // included, plus pending invitations) follow the best plan among its owners
 // (Pro 3, Business unlimited); revoking an invitation frees its seat; a

@@ -1,7 +1,7 @@
 // Every error code the REST API (/v1) can return, with its status, what it
 // means and how to fix it. The OpenAPI document (lib/openapi/document.ts)
 // describes each operation's error responses from this list, and
-// content/docs/developers/errors.mdx documents it; tests/api/openapi.test.ts
+// apps/docs/content/docs/developers/errors.mdx documents it; tests/api/openapi.test.ts
 // keeps all three in step with the codes thrown in the route code.
 
 import { MAX_CODES_PER_REQUEST } from "@repo/config";

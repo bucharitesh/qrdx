@@ -1,6 +1,8 @@
 /** biome-ignore-all lint/a11y/useButtonType: false positive */
 "use client";
 
+import { QrdxLogo } from "@repo/design-system/components/brand/qrdx-logo";
+import { QrdxLogoAnimation } from "@repo/design-system/components/brand/qrdx-logo-animation";
 import { Close } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
@@ -14,8 +16,6 @@ import { HeaderMobileNavList } from "@/components/header-mobile-nav";
 import { HeaderNav } from "@/components/header-nav";
 import { LocaleLink } from "@/components/i18n/locale-link";
 import { EASE_CLASS } from "@/components/mockups/motion";
-import { QrdxLogoAnimation } from "@/components/qrdx-logo-animation";
-import { QrdxLogo } from "../qrdx-logo";
 
 // Plain CSS transitions and tw-animate-css keyframes, no motion library:
 // this bar is on every marketing page, so it stays light.

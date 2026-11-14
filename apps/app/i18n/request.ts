@@ -2,14 +2,15 @@
 // comes from the `[lang]` root param (next/root-params), so translated pages
 // stay statically rendered: nothing here reads headers or cookies. Pages
 // under app/(app) have no `[lang]` and render in English.
-import { lang } from "next/root-params";
-import { getRequestConfig } from "next-intl/server";
+
 import {
   DEFAULT_LOCALE,
   isLocale,
   type Locale,
   localeFromSegment,
-} from "@/lib/i18n/config";
+} from "@repo/i18n/config";
+import { lang } from "next/root-params";
+import { getRequestConfig } from "next-intl/server";
 import { loadMessages } from "@/lib/i18n/messages";
 import { requestAppLocale } from "@/lib/i18n/request-locale";
 

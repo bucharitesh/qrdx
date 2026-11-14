@@ -1,3 +1,5 @@
+import { JsonLd } from "@repo/design-system/components/seo/json-ld";
+import { localizeHref } from "@repo/i18n/paths";
 import { getLocale, getTranslations } from "next-intl/server";
 import { TopicHubStrip } from "@/components/sections/page-codes/page-code-sections";
 import { SectionHeader } from "@/components/sections/section-header";
@@ -7,10 +9,8 @@ import {
   LinkCard,
 } from "@/components/sections/tools/cards";
 import { FaqList } from "@/components/sections/tools/faq-list";
-import { JsonLd } from "@/components/sections/tools/json-ld";
 import { ToolHero } from "@/components/sections/tools/tool-hero";
 import { topicIcon } from "@/components/sections/tools/topic-icons";
-import { localizeHref } from "@/lib/i18n/paths";
 import { baseUrl } from "@/lib/metadata";
 import type { SeoCollection } from "@/lib/seo-content";
 

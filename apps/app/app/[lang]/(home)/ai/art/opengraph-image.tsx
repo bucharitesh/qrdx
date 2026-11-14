@@ -1,4 +1,4 @@
-import { ogSize, renderPageOgImage } from "@/app/og/brand";
+import { ogSize, renderPageOgImage } from "@repo/design-system/og/brand";
 import { AI_ART_PRESET_COUNT } from "@/components/sections/ai-art/preset-meta";
 import { isArtConfigured } from "@/lib/ai/art";
 import { ART_MODEL_LABEL } from "@/lib/ai/art-models";

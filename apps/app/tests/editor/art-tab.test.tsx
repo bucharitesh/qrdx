@@ -105,8 +105,8 @@ const { DEFAULT_AI_ART_DRAFT, useArtSessionStore } = await import(
 );
 const { useQREditorStore } = await import("@/store/editor-store");
 
+import type { FeatureId } from "@repo/availability";
 import type { AIArtRun } from "@/components/sections/ai-art/ai-art-run";
-import type { FeatureId } from "@/lib/feature-availability-rules";
 
 afterAll(() => {
   vi.unstubAllGlobals();

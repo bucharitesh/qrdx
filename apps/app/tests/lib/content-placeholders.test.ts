@@ -2,8 +2,10 @@ import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 
-// Legal pages and docs ship to production as written: an unfilled
-// "[[PLACEHOLDER]]" (e.g. a legal entity name) must never go live.
+// Legal pages, the blog and the other content ship to production as
+// written: an unfilled "[[PLACEHOLDER]]" (e.g. a legal entity name) must
+// never go live. The docs site checks the docs the same way
+// (apps/docs/tests/lib/content-placeholders.test.ts).
 const CONTENT = join(__dirname, "..", "..", "content");
 const PLACEHOLDER = /\[\[[A-Z][^\]]*\]\]/;
 

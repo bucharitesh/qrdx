@@ -1,8 +1,8 @@
 "use client";
 
+import { isLocale } from "@repo/i18n/config";
 import { useLocale } from "next-intl";
 import { useEffect } from "react";
-import { isLocale } from "@/lib/i18n/config";
 import { rememberPageLocale } from "@/lib/i18n/locale-cookie";
 
 /**

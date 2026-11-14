@@ -2,14 +2,7 @@
 // only where they can work. The environment is injected: every value below is
 // a fake placeholder, and only "is it set" is ever read (except the app URL,
 // which passkeys need to be HTTPS).
-import {
-  getIntegrationRegistry,
-  INTEGRATION_ENV_VARS,
-  initializeIntegrations,
-} from "@repo/integrations";
-import { getCatalogBySurface } from "@repo/integrations/src/catalog";
-import { describe, expect, it } from "vitest";
-import { filterPageTree } from "@/lib/docs-tree";
+
 import {
   catalogParagraphs,
   computeFeatures,
@@ -22,7 +15,14 @@ import {
   isPathShown,
   missingFeatureSetup,
   toPublicAvailability,
-} from "@/lib/feature-availability-rules";
+} from "@repo/availability";
+import {
+  getIntegrationRegistry,
+  INTEGRATION_ENV_VARS,
+  initializeIntegrations,
+} from "@repo/integrations";
+import { getCatalogBySurface } from "@repo/integrations/src/catalog";
+import { describe, expect, it } from "vitest";
 import {
   type AvailabilityContext,
   computeAvailability,
@@ -494,30 +494,6 @@ describe("the Slack bot", () => {
     expect(
       catalogParagraphs(slack, computeFeatures(ctx({}, vercelProd))),
     ).toEqual(slack.description);
-  });
-});
-
-describe("docs sidebar", () => {
-  it("drops hidden pages and folders left empty", () => {
-    const tree = filterPageTree(
-      {
-        name: "Docs",
-        children: [
-          { type: "page", name: "Intro", url: "/docs" },
-          { type: "page", name: "Domains", url: "/docs/custom-domains" },
-          {
-            type: "folder",
-            name: "Only hidden",
-            children: [
-              { type: "page", name: "Domains", url: "/docs/custom-domains" },
-            ],
-          },
-          { type: "separator", name: "More" },
-        ],
-      },
-      (url) => isPathShown(["/docs/custom-domains"], url),
-    );
-    expect(tree.children.map((node) => node.name)).toEqual(["Intro", "More"]);
   });
 });
 

@@ -1,3 +1,4 @@
+import { QrdxLogo } from "@repo/design-system/components/brand/qrdx-logo";
 import { Close } from "@repo/design-system/components/icons";
 import { cn } from "@repo/design-system/lib/utils";
 import {
@@ -15,7 +16,6 @@ import {
 import { QRCodeSVG } from "qrdx";
 import type { QRProps } from "qrdx/types";
 import type { ReactNode } from "react";
-import { QrdxLogo } from "@/components/qrdx-logo";
 import { BrandLogo } from "@/lib/brand-logos/brand-logo";
 import { CANVA_PICKED, PLUGIN_CODES, VALUE } from "./mock-codes";
 

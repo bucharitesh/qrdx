@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 // folder, trash), and selection with a bulk toolbar, using the same keys as
 // the codes and pages lists (_components/list-selection.tsx).
 
+import { track } from "@repo/analytics";
 import { toast } from "@repo/design-system";
 import {
   AlertDialog,
@@ -77,7 +78,6 @@ import {
 } from "@/app/(app)/dashboard/_lib/list-keys";
 import { formatDate } from "@/app/(app)/dashboard/codes/_components/format";
 import { useCan } from "@/components/workspace-provider";
-import { track } from "@/lib/analytics";
 import { BARCODE_FILE_TYPES, BARCODE_FILES } from "@/lib/barcode/files";
 import type { BarcodeStatus } from "@/lib/barcodes/schema";
 import { soundEvent } from "@/lib/sound/emit";

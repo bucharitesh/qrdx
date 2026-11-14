@@ -10,12 +10,12 @@ import {
   DropdownMenuTrigger,
 } from "@repo/design-system/components/ui/dropdown-menu";
 import { cn } from "@repo/design-system/lib/utils";
+import { LOCALE_INFO, LOCALES, type Locale } from "@repo/i18n/config";
+import { isLocalizedPath, localizePath, splitLocale } from "@repo/i18n/paths";
 import { ArrowDown2, Global } from "iconsax-reactjs";
 import { usePathname } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
-import { LOCALE_INFO, LOCALES, type Locale } from "@/lib/i18n/config";
 import { rememberLocale } from "@/lib/i18n/locale-cookie";
-import { isLocalizedPath, localizePath, splitLocale } from "@/lib/i18n/paths";
 
 /** Remembers the choice for the signed-in app (lib/i18n/locale-cookie.ts). Never redirects. */
 export const remember = (locale: Locale) => rememberLocale(locale);

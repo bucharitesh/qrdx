@@ -1,9 +1,9 @@
+import { track } from "@repo/analytics";
 import { toast } from "@repo/design-system";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { createTheme, deleteTheme, updateTheme } from "@/actions/qr-themes";
 import { useLocaleRouter as useRouter } from "@/components/i18n/locale-link";
-import { track } from "@/lib/analytics";
 import { isUnauthorized } from "@/lib/handle-unauthorized";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
 import { useThemePresetStore } from "@/store/theme-preset-store";

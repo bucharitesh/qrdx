@@ -86,7 +86,7 @@ describe("copy", () => {
   });
 
   it("quotes the numbers in the help page from code", () => {
-    const help = read("content/docs/help/teams/audit-log.mdx");
+    const help = read("../docs/content/docs/help/teams/audit-log.mdx");
     expect(help).toContain("{facts.auditLogRetentionDays}");
     expect(help).toContain("{facts.auditLogExportRows}");
     expect(help).not.toMatch(/\b365\b|50,000/);

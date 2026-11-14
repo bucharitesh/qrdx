@@ -7,6 +7,7 @@
 // openCodeBuilder({ mode: "barcode" }); the form, the drawing and what Save
 // stores are the barcode page's (barcodes/_components/barcode-editor.tsx).
 
+import { track } from "@repo/analytics";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -50,7 +51,6 @@ import {
   LocaleLink as Link,
   useLocaleRouter as useRouter,
 } from "@/components/i18n/locale-link";
-import { track } from "@/lib/analytics";
 import { getBarcodeFormat } from "@/lib/barcode/formats";
 import { soundEvent } from "@/lib/sound/emit";
 import { workspaceHref } from "@/lib/workspace-paths";

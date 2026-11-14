@@ -1,5 +1,6 @@
 "use client";
 
+import { track } from "@repo/analytics";
 import { Spinner } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
@@ -15,7 +16,6 @@ import { useTranslations } from "next-intl";
 import { type FormEvent, useId, useState } from "react";
 import { toast } from "sonner";
 import { emitSound } from "@/components/editor/sound";
-import { track } from "@/lib/analytics";
 import { connectDataSourceAction } from "../../data-connection-actions";
 
 const linkClass =

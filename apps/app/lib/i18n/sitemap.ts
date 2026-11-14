@@ -1,13 +1,14 @@
 // Sitemap entries for a translated page (Google's sitemap form of hreflang):
 // one <url> per indexable language, each with every language and x-default
 // as xhtml:link alternates. Machine translations a native reviewer hasn't
-// signed off are left out (lib/i18n/review.ts), and so are their alternates.
+// signed off are left out (packages/i18n/review.ts), and so are their alternates.
+
+import { DEFAULT_LOCALE } from "@repo/i18n/config";
+import { localizePath } from "@repo/i18n/paths";
+import { publishedLocales, REVIEW, type ReviewTable } from "@repo/i18n/review";
 import type { MetadataRoute } from "next";
 import { baseUrl } from "@/lib/metadata";
-import { DEFAULT_LOCALE } from "./config";
 import { alternateLanguages } from "./metadata";
-import { localizePath } from "./paths";
-import { publishedLocales, REVIEW, type ReviewTable } from "./review";
 
 type Entry = MetadataRoute.Sitemap[number];
 

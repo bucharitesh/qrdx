@@ -1,10 +1,10 @@
 "use client";
 
+import { track } from "@repo/analytics";
 import { Button } from "@repo/design-system/components/ui/button";
 import type { ComponentProps } from "react";
 import type { UpgradeAction } from "@/app/(app)/settings/usage/_lib/meters";
 import { LocaleLink as Link } from "@/components/i18n/locale-link";
-import { track } from "@/lib/analytics";
 
 /** An upgrade link from a limit (limitCopy's `upgrade`), tracked on click. */
 export function UpgradeButton({

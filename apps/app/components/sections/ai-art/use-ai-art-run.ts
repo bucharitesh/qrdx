@@ -6,6 +6,7 @@
 // image. The /ai/art studio and the playground's Art tab share it; each
 // passes the store its run lives in (ai-art-run.ts).
 
+import { track } from "@repo/analytics";
 import { authClient } from "@repo/auth/client";
 import { toast } from "@repo/design-system";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -13,7 +14,6 @@ import { useEffect, useRef, useState } from "react";
 import { useStore } from "zustand";
 import type { StoreApi } from "zustand/vanilla";
 import { workspaceRequestHeaders } from "@/components/workspace-provider";
-import { track } from "@/lib/analytics";
 import { apiFetch } from "@/lib/api-fetch";
 import { useAuthStore } from "@/store/auth-store";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";

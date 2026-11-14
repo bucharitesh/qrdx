@@ -15,13 +15,12 @@ on:
     branches:
       - main
     paths:
+      # The docs site: its code, content (content/docs), translation review
+      # records and recorded dates
       - apps/docs/**
       - .github/workflows/docs-deploy.yml
-      # The content, its message catalogs and recorded dates, which stay in
-      # the main app's folder for now
-      - apps/app/content/docs/**
+      # The message catalogs, which stay with the main app's
       - apps/app/messages/**
-      - apps/app/lib/seo-file-dates.json
       # The generated inputs' sources: the docs' message subset and the OpenAPI
       # document's copy (apps/docs/scripts/zone-inputs.mjs)
       - apps/app/scripts/i18n-docs-messages.ts
@@ -29,7 +28,7 @@ on:
       - apps/app/public/openapi.json
       - apps/app/scripts/openapi/export.ts
       # The product facts snapshot (apps/app/lib/product-facts.ts and what
-      # it reads)
+      # it reads; turbo.json lists the same files for the docs' tasks)
       - apps/app/lib/product-facts.ts
       - apps/app/lib/product-facts-snapshot.ts
       - apps/app/scripts/facts-snapshot.ts
@@ -38,12 +37,13 @@ on:
       - apps/app/lib/scan-history.ts
       - apps/app/lib/affiliates/terms.ts
       - apps/app/lib/ai/art-models.ts
+      - apps/app/lib/ai/models.ts
       - apps/app/lib/barcode/formats.ts
       - apps/app/lib/brand-logos/catalog.generated.ts
       - apps/app/lib/landing/page-type-ids.ts
-      - apps/app/lib/i18n/config.ts
       - apps/app/ee/audit-log/limits.ts
       - apps/app/types/content-type-ids.ts
+      - apps/app/types/qr-content.ts
       - apps/app/components/sections/ai-art/preset-meta.ts
       # The engine the docs' live examples render with, and the packages the
       # docs site imports

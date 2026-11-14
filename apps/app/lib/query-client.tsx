@@ -1,5 +1,6 @@
 "use client";
 
+import { track } from "@repo/analytics";
 import {
   MutationCache,
   QueryCache,
@@ -8,7 +9,6 @@ import {
 } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { type ReactNode, useState } from "react";
-import { track } from "@/lib/analytics";
 import {
   handleUnauthorizedIfNeeded,
   isUnauthorized,

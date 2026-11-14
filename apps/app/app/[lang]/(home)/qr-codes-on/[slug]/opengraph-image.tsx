@@ -1,5 +1,5 @@
+import { ogSize, renderPageOgImage } from "@repo/design-system/og/brand";
 import { notFound } from "next/navigation";
-import { ogSize, renderPageOgImage } from "@/app/og/brand";
 import { requireLocaleParam } from "@/lib/i18n/static-params";
 import { placements } from "@/lib/seo-content";
 import { onDemandParams } from "@/lib/static-params";

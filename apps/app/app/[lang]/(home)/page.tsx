@@ -47,7 +47,7 @@ const url = (path: string): string => new URL(path, baseUrl).toString();
 const { free, pro, business } = PLAN_LIMITS;
 
 // Custom domains are only sold where they can be added
-// (lib/feature-availability-rules.ts); the page updates on the next deploy.
+// (packages/availability/rules.ts); the page updates on the next deploy.
 const customDomains = isFeatureAvailable("customDomains");
 const domains = (count: number) =>
   customDomains ? `${count} custom domains, ` : "";

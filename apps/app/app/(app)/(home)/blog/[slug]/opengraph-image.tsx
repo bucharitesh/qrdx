@@ -1,5 +1,5 @@
+import { ogSize, renderArticleOgImage } from "@repo/design-system/og/brand";
 import { notFound } from "next/navigation";
-import { ogSize, renderArticleOgImage } from "@/app/og/brand";
 import { resolveAuthors } from "@/lib/blog-authors";
 import { blogSource } from "@/lib/content-source";
 import { onDemandParams } from "@/lib/static-params";

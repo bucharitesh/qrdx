@@ -13,7 +13,7 @@ function historyLine(days: number): string {
 
 /**
  * The pricing page lists every limit; this is the short version. Custom
- * domains only where they can be added (lib/feature-availability-rules.ts).
+ * domains only where they can be added (packages/availability/rules.ts).
  */
 export function buildUpgradeHighlights(
   options: { customDomains?: boolean } = {},

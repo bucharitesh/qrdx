@@ -6,13 +6,13 @@
 
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
+import { TRANSLATED_LOCALES } from "@repo/i18n/config";
 import { NextIntlClientProvider } from "next-intl";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 import { statusPage } from "@/app/q/[slug]/status-page";
 import { LandingPageFooter } from "@/components/landing/page-footer";
 import { LandingRender } from "@/components/landing/render";
-import { TRANSLATED_LOCALES } from "@/lib/i18n/config";
 import { loadMessages } from "@/lib/i18n/messages";
 import {
   ENGLISH_SCAN_PAGES,

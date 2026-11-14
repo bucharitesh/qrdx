@@ -1,5 +1,5 @@
 // The daily REST API quota (lib/api-quota.ts), as
-// content/docs/developers/rest-api.mdx describes it: what counts (every
+// apps/docs/content/docs/developers/rest-api.mdx describes it: what counts (every
 // authenticated request, token or session), how the plan sizes it (1,000 / 10,000 / 100,000 a day), the 429 and the
 // X-RateLimit-* headers, and what happens when Upstash is down or missing.
 // Upstash is a stand-in that counts like its fixed-window script; the

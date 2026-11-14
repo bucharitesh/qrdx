@@ -1,5 +1,6 @@
 "use client";
 
+import { track } from "@repo/analytics";
 import { toast } from "@repo/design-system";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Spinner } from "@repo/design-system/components/ui/spinner";
@@ -17,7 +18,6 @@ import {
 } from "iconsax-reactjs";
 import { useTranslations } from "next-intl";
 import { type ReactNode, useEffect, useState } from "react";
-import { track } from "@/lib/analytics";
 import type { AIArtRun } from "./ai-art-run";
 import { type AIArtVariant, ART_PRINT_SIZE, ART_QR_VISIBILITY } from "./config";
 import {

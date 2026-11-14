@@ -51,6 +51,12 @@ export interface NpmRelease {
 
 export interface LlmsTxtInput {
   origin: URL;
+  /**
+   * Where the docs are read: `origin` when it serves them (through the docs
+   * site), qrdx.dev when it doesn't. Docs links, their Markdown versions and
+   * llms-full.txt point there. Defaults to `origin`.
+   */
+  docsOrigin?: URL;
   /** Pricing and product lines for features this deployment can't offer go. */
   offered: PricingOptions;
   /** False for links to pages this deployment hides (lib/feature-availability). */
@@ -84,7 +90,11 @@ const HELP_TAB = "Help";
 export function buildLlmsTxt(input: LlmsTxtInput): string {
   const { origin, offered, showsPath } = input;
   const on = (feature: keyof PricingOptions) => offered[feature] !== false;
-  const abs = (path: string) => new URL(path, origin).toString();
+  const docsOrigin = input.docsOrigin ?? origin;
+  const isDocsUrl = (path: string) =>
+    /^\/(?:docs(?:[/.?#]|$)|llms-full\.txt$)/.test(path);
+  const abs = (path: string) =>
+    new URL(path, isDocsUrl(path) ? docsOrigin : origin).toString();
   const isSite = (url: string) => url.startsWith("/");
   const link = ({ title, url, description }: LlmsLink) =>
     `- [${title}](${isSite(url) ? abs(url) : url})${description ? `: ${description}` : ""}`;

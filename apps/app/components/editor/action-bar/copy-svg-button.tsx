@@ -1,5 +1,6 @@
 "use client";
 
+import { track } from "@repo/analytics";
 import { toast } from "@repo/design-system";
 import { Tick as Check } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
@@ -9,7 +10,6 @@ import { getQRData, getSVGString } from "qrdx";
 import { useState } from "react";
 import { emitSound } from "@/components/editor/sound";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
-import { track } from "@/lib/analytics";
 import { DEFAULT_QR_LOGO } from "@/lib/constants";
 import { styleEngineOptions } from "@/lib/qr-design/engine-options";
 import { useQREditorStore } from "@/store/editor-store";

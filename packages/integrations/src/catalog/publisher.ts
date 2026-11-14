@@ -1,6 +1,6 @@
 // Who built a catalog entry. QRdx's own integrations omit `publisher`;
 // community integrations (OAuth apps other developers build and get listed,
-// see apps/app/content/docs/developers/build-an-integration.mdx) set
+// see apps/docs/content/docs/developers/build-an-integration.mdx) set
 // `publisher: "community"` and their maker in `builtBy`. Client-safe.
 import type { CatalogPublisher, IntegrationCatalogEntry } from "./types";
 

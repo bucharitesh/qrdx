@@ -2,10 +2,10 @@ import {
   twoFactorOnFor,
   workspaceRequiresTwoFactor,
 } from "@repo/auth/workspace-two-factor";
+import { workspaceSlugFromPath } from "@repo/availability/workspace-pattern";
 import { Button } from "@repo/design-system/components/ui/button";
 import Link from "next/link";
 import { getAppTranslations } from "@/lib/i18n/app-locale";
-import { workspaceSlugFromPath } from "@/lib/workspace-paths";
 import {
   TWO_FACTOR_SECTION_ID,
   WORKSPACE_NOTICE_ID,

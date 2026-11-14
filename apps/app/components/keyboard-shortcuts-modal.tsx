@@ -1,5 +1,6 @@
 "use client";
 
+import type { FeatureId } from "@repo/availability";
 import {
   Dialog,
   DialogContent,
@@ -13,7 +14,6 @@ import { Keyboard } from "iconsax-reactjs";
 import { useTranslations } from "next-intl";
 import { useAvailability } from "@/components/availability-provider";
 import { SoundSwitch } from "@/components/sound/sound-switch";
-import type { FeatureId } from "@/lib/feature-availability-rules";
 import { useKeyboardShortcut } from "@/lib/hooks/use-keyboard-shortcuts";
 import { useUserSettings } from "@/lib/hooks/use-user-settings";
 import type { Messages } from "@/lib/i18n/messages";

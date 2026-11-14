@@ -1,4 +1,4 @@
-// REST Hooks (/v1/hooks) as content/docs/webhooks.mdx and rest-api.mdx
+// REST Hooks (/v1/hooks) as apps/docs/content/docs/webhooks.mdx and rest-api.mdx
 // describe them: Business only, codes:write to subscribe and unsubscribe,
 // Zapier/Make body shapes, https URLs on public hosts only, the signing
 // secret shown once, secret-bearing target URLs masked for read-only callers,

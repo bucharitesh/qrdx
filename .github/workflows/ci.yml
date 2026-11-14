@@ -146,6 +146,13 @@ jobs:
           if [ "$AFFECTED" = "true" ]; then
             echo "Testing the packages this PR changes against $TURBO_SCM_BASE, and their dependents." | tee -a "$GITHUB_STEP_SUMMARY"
             bun x turbo test --affected 2>&1 | tee -a "$RUNNER_TEMP/turbo.log"
+            # The main app's tests check its behaviour against the docs'
+            # pages (apps/docs/content), which aren't its files, so
+            # --affected leaves it out when only the pages change.
+            if ! git diff --quiet "$TURBO_SCM_BASE"...HEAD -- apps/docs/content; then
+              echo "The docs' pages changed: testing the main app against them too." | tee -a "$GITHUB_STEP_SUMMARY"
+              bun x turbo test --filter=app 2>&1 | tee -a "$RUNNER_TEMP/turbo.log"
+            fi
           else
             echo "Testing every package." | tee -a "$GITHUB_STEP_SUMMARY"
             bun x turbo test 2>&1 | tee -a "$RUNNER_TEMP/turbo.log"

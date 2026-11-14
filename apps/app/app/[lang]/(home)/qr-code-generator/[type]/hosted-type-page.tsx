@@ -1,5 +1,8 @@
+import { JsonLd } from "@repo/design-system/components/seo/json-ld";
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
+import type { Locale } from "@repo/i18n/config";
+import { localizeHref } from "@repo/i18n/paths";
 import { ArrowRight, Eye, ShieldTick } from "iconsax-reactjs";
 import { getTranslations } from "next-intl/server";
 import { SignInLink } from "@/components/auth/sign-in-link";
@@ -12,7 +15,6 @@ import {
   textLinkClass,
 } from "@/components/sections/tools/cards";
 import { FaqList } from "@/components/sections/tools/faq-list";
-import { JsonLd } from "@/components/sections/tools/json-ld";
 import { ToolHero } from "@/components/sections/tools/tool-hero";
 import {
   PAGE_TYPE_ICONS,
@@ -20,10 +22,8 @@ import {
 } from "@/components/sections/tools/topic-icons";
 import { isPathAvailable } from "@/lib/feature-availability";
 import { formatBytes } from "@/lib/files/types";
-import type { Locale } from "@/lib/i18n/config";
 import { QR_TYPE_RULES } from "@/lib/i18n/content-rules";
 import { localizeContent } from "@/lib/i18n/content-server";
-import { localizeHref } from "@/lib/i18n/paths";
 import { demoPath } from "@/lib/landing/demo-paths";
 import { baseUrl } from "@/lib/metadata";
 import { PLAN_LIMITS, PLANS, type Plan } from "@/lib/plans";

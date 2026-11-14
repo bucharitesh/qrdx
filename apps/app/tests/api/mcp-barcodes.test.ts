@@ -1,5 +1,5 @@
 // The MCP server's barcode tools (app/api/mcp/barcodes.ts), as
-// content/docs/developers/mcp.mdx describes them: generate_barcode checks
+// apps/docs/content/docs/developers/mcp.mdx describes them: generate_barcode checks
 // the value like the image API and returns a PNG that decodes plus public
 // image URLs, with no key; save_barcode saves to the API key's workspace and
 // is a clear 401 without one. Saved rows live in in-memory tables.

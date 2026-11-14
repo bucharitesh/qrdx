@@ -22,6 +22,10 @@
 //   bun run --filter app test:e2e:site           (E2E_BASE_URL defaults to :3000)
 //   E2E_SUITES=image,mcp bun run --filter app test:e2e:site
 //
+// The docs come from the docs site (apps/docs) when the server has
+// DOCS_ZONE_URL set; without it, the docs checks check that the docs URLs
+// redirect to qrdx.dev instead.
+//
 // Skips (exit 0) when no server is running or Chrome isn't installed. It
 // never signs in and never writes data. The dev server compiles each route on
 // its first hit, so the first run is slow; later runs take a few minutes.
@@ -30,6 +34,9 @@ import { request as httpRequest } from "node:http";
 import { request as httpsRequest } from "node:https";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { LOCALE_INFO, type Locale } from "@repo/i18n/config";
+import { LOCALIZED_PATHS, localizePath } from "@repo/i18n/paths";
+import { REVIEW } from "@repo/i18n/review";
 import { decodePng } from "../../../packages/qrdx/src/utils/png";
 import {
   createImage,
@@ -38,9 +45,6 @@ import {
   rasterizeSvg,
 } from "../../../packages/qrdx/tests/support/raster";
 import { xmlProblems } from "../../../packages/qrdx/tests/support/xml";
-import { LOCALE_INFO, type Locale } from "../lib/i18n/config";
-import { LOCALIZED_PATHS, localizePath } from "../lib/i18n/paths";
-import { REVIEW } from "../lib/i18n/review";
 import { findChrome, launch, serverIsUp } from "./cdp.mjs";
 
 const BASE_URL = (process.env.E2E_BASE_URL ?? "http://localhost:3000").replace(
@@ -221,6 +225,34 @@ async function decodePngQr(bytes: Uint8Array): Promise<string | null> {
 const decodeSvgQr = (svg: string) =>
   decodeQR(rasterizeSvg(svg, { width: 360, pad: 24 }));
 
+// ── docs ───────────────────────────────────────────────────────────────────
+
+let docsServed: Promise<boolean> | undefined;
+
+/**
+ * Whether this server serves the docs (through the docs site at
+ * DOCS_ZONE_URL). Without one, every docs URL is a 307 to the same path on
+ * qrdx.dev (docsOriginRedirects in @repo/i18n/docs).
+ */
+function servesDocs(): Promise<boolean> {
+  docsServed ??= get("/docs").then(async (response) => {
+    await response.body?.cancel();
+    return response.status === 200;
+  });
+  return docsServed;
+}
+
+/** A docs URL on a server without the docs: a 307 to it on qrdx.dev. */
+async function redirectsToQrdx(path: string): Promise<[boolean, string]> {
+  const response = await get(path);
+  await response.body?.cancel();
+  const location = response.headers.get("location") ?? "";
+  return [
+    response.status === 307 && location === `https://qrdx.dev${path}`,
+    `no docs site: ${response.status} → ${location || "nowhere"}`,
+  ];
+}
+
 // ── routes ─────────────────────────────────────────────────────────────────
 
 /** Redirects a signed-out visitor is expected to get; anything else fails. */
@@ -253,6 +285,12 @@ const EXPECTED_REDIRECTS: {
     to: /^(?:https?:\/\/|\/)/,
     status: [307],
     why: "decorative easter-egg codes (lib/easter-eggs.ts)",
+  },
+  {
+    from: /^\/(?:[a-z]{2}(?:-[a-z]+)?\/)?docs(?:[/.]|$)/,
+    to: /^https:\/\/qrdx\.dev\/(?:[a-z]{2}(?:-[a-z]+)?\/)?docs(?:[/.#?]|$)/,
+    status: [307],
+    why: "without a docs site (DOCS_ZONE_URL unset) the docs are read on qrdx.dev",
   },
   {
     from: /^\/api\/integrations\/telegram\/open$/,
@@ -550,7 +588,7 @@ async function testSeo() {
       "/",
       "/playground",
       "/pricing",
-      "/docs",
+      ...((await servesDocs()) ? ["/docs"] : []),
       "/blog",
       "/customers",
     ]) {
@@ -584,6 +622,7 @@ async function testSeo() {
   });
 
   await check("seo", "llms-full.txt", async () => {
+    if (!(await servesDocs())) return redirectsToQrdx("/llms-full.txt");
     const response = await get("/llms-full.txt");
     const text = await response.text();
     return [
@@ -594,7 +633,8 @@ async function testSeo() {
     ];
   });
 
-  // Every page llms.txt points AI assistants to must exist.
+  // Every page llms.txt points AI assistants to must exist. Without a docs
+  // site, llms.txt links the docs on qrdx.dev instead.
   const broken = (
     await pool([...new Set(llmsLinks)], HTTP_CONCURRENCY, async (path) => {
       const response = await get(path.replace(/#.*/, ""));
@@ -611,6 +651,7 @@ async function testSeo() {
 
   for (const path of ["/docs/dynamic-qr-codes", "/docs/developers/rest-api"]) {
     await check("seo", `docs markdown ${path}.mdx`, async () => {
+      if (!(await servesDocs())) return redirectsToQrdx(`${path}.mdx`);
       const response = await get(`${path}.mdx`);
       const text = await response.text();
       return [
@@ -646,7 +687,8 @@ async function testSeo() {
   const customerStory = (await sitemapPaths()).find((p) =>
     /^\/customers\/[^/]+$/.test(p),
   );
-  const ogPages = ["/", "/pricing", "/plugins", "/docs/dynamic-qr-codes"];
+  const ogPages = ["/", "/pricing", "/plugins"];
+  if (await servesDocs()) ogPages.push("/docs/dynamic-qr-codes");
   if (blogPost) ogPages.push(blogPost);
   if (customerStory) ogPages.push(customerStory, "/customers");
   for (const pagePath of ogPages) {
@@ -1222,6 +1264,9 @@ async function testLegal() {
   ];
   for (const [name, path] of unknown) {
     await check("legal", `404: ${name}`, async () => {
+      if (path.startsWith("/docs/") && !(await servesDocs())) {
+        return redirectsToQrdx(path);
+      }
       const response = await get(path);
       const html = await response.text();
       return [

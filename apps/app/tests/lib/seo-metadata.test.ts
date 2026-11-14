@@ -20,6 +20,8 @@ import { organizationId, organizationSchema } from "@/lib/seo-schema";
 
 const APP = join(import.meta.dirname, "../..");
 const CONTENT = join(APP, "content");
+/** The docs' pages, in the docs site (apps/docs). */
+const DOCS_CONTENT = join(APP, "..", "docs", "content", "docs");
 
 function walk(dir: string, out: string[] = []): string[] {
   for (const entry of readdirSync(dir, { withFileTypes: true })) {
@@ -32,7 +34,7 @@ function walk(dir: string, out: string[] = []): string[] {
 
 /** Docs URLs from the real fumadocs loader (route groups dropped). */
 function docsUrls(): Set<string> {
-  const root = join(CONTENT, "docs");
+  const root = DOCS_CONTENT;
   const files = walk(root).flatMap((absolutePath): VirtualFile[] => {
     const path = relative(root, absolutePath);
     const text = readFileSync(absolutePath, "utf8");
@@ -180,7 +182,6 @@ describe("Organization schema", () => {
     for (const layout of [
       "app/(app)/(home)/layout.tsx",
       "app/[lang]/(home)/layout.tsx",
-      "app/[lang]/docs/layout.tsx",
       // Both playground layouts render it (/playground and shared themes).
       "components/playground/playground-shell.tsx",
     ]) {

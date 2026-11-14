@@ -5,7 +5,7 @@ import { visitorHash } from "@/lib/scans";
 import { parseCspReports } from "@/lib/security/csp-report";
 
 /**
- * Content-Security-Policy violation reports (lib/security/csp.ts `report-uri`
+ * Content-Security-Policy violation reports (@repo/next-config/csp `report-uri`
  * and `report-to`), logged as one compact line each so a blocked source shows
  * up in the logs. Only the directive, the blocked origin and the page path are
  * kept: no query strings, no IPs. Rate limited per (hashed) IP.

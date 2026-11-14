@@ -1,3 +1,5 @@
+import { JsonLd } from "@repo/design-system/components/seo/json-ld";
+import { localizeHref } from "@repo/i18n/paths";
 import {
   CATALOG_CATEGORIES,
   CATALOG_KIND_LABELS,
@@ -8,9 +10,8 @@ import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import { ClientContent } from "@/components/i18n/client-content";
 import { ClientMessages } from "@/components/i18n/client-messages";
-import { breadcrumbSchema, JsonLd } from "@/components/sections/tools/json-ld";
+import { breadcrumbSchema } from "@/components/sections/tools/json-ld";
 import { localizedMetadata } from "@/lib/i18n/metadata";
-import { localizeHref } from "@/lib/i18n/paths";
 import { requireLocale } from "@/lib/i18n/server";
 import { getIntegrationAvailability } from "@/lib/integration-availability";
 import { filterVisible } from "@/lib/integration-availability-rules";

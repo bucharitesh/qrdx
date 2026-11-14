@@ -1,5 +1,6 @@
 "use client";
 
+import { track } from "@repo/analytics";
 import { toast } from "@repo/design-system";
 import { Spinner as Loader2 } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
@@ -43,7 +44,6 @@ import { TemplatePreview } from "@/components/landing/template-preview";
 import { InlineLimit } from "@/components/limits/inline-limit";
 import { useShowLimit } from "@/components/limits/limit-dialog";
 import { useWorkspaceHref } from "@/components/workspace-provider";
-import { track } from "@/lib/analytics";
 import { demoPath } from "@/lib/landing/demo-paths";
 import {
   FILE_PAGE_TYPES,

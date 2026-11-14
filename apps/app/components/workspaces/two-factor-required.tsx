@@ -1,3 +1,4 @@
+import { QrdxLogo } from "@repo/design-system/components/brand/qrdx-logo";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   Card,
@@ -10,7 +11,6 @@ import { cn } from "@repo/design-system/lib/utils";
 import Link from "next/link";
 import { use } from "react";
 import bar from "@/components/header-bar.module.css";
-import { QrdxLogo } from "@/components/qrdx-logo";
 import { UserProfileDropdown } from "@/components/user-profile-dropdown";
 import { getAppTranslations } from "@/lib/i18n/app-locale";
 import { workspaceHref } from "@/lib/workspace-paths";

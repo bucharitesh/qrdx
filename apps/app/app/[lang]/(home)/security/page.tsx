@@ -1,3 +1,4 @@
+import type { FeatureId } from "@repo/availability";
 import { SUPPORT_EMAIL } from "@repo/config";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
@@ -17,14 +18,13 @@ import { LocaleLink } from "@/components/i18n/locale-link";
 import { ToolHero } from "@/components/sections/tools/tool-hero";
 import { AUDIT_RETENTION_DAYS } from "@/ee/audit-log/limits";
 import { isFeatureAvailable } from "@/lib/feature-availability";
-import type { FeatureId } from "@/lib/feature-availability-rules";
 import { localizedMetadata } from "@/lib/i18n/metadata";
 import { requireLocale } from "@/lib/i18n/server";
 
 // /security: what QRdx does to protect accounts and data. Each line was
 // checked against the code or configuration behind it:
 // - HSTS and the other headers: next.config.ts headers(); the CSP:
-//   lib/security/csp.ts (nonces for signed-in pages in proxy.ts)
+//   @repo/next-config/csp (nonces for signed-in pages in proxy.ts)
 // - sign-in: packages/auth (passkey.ts, confirm-gate.ts, new-sign-in.ts,
 //   session-lifetime.ts, session-origin.ts, workspace-two-factor.ts)
 // - single sign-on and the audit log: packages/auth/ee, ee/ (licence key)
@@ -36,7 +36,7 @@ import { requireLocale } from "@/lib/i18n/server";
 //   aws us-east-1, R2 and Upstash per /legal/subprocessors
 // - export and deletion: lib/account/export, the DPA (section 11)
 // Lines for features this deployment can't offer are left out
-// (lib/feature-availability-rules.ts). No certification is claimed.
+// (packages/availability/rules.ts). No certification is claimed.
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await requireLocale();

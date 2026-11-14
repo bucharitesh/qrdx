@@ -1,4 +1,4 @@
-// API keys on the REST API (/v1), as content/docs/developers/api-keys.mdx
+// API keys on the REST API (/v1), as apps/docs/content/docs/developers/api-keys.mdx
 // describes them: a `qrdx_` key in `Authorization: Bearer` acts on the
 // workspace it was created in, as its creator, with their role there right
 // now and never more, narrowed by its scopes. Revoked and expired keys, keys

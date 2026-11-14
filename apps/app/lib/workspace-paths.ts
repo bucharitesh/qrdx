@@ -7,13 +7,8 @@
 import { pathInWorkspace } from "@repo/availability/workspace-pattern";
 
 // Reading a workspace from a path, and the pattern availability rules match
-// (/dashboard/[workspace]/…), live with those rules in @repo/availability.
-export {
-  pathInWorkspace,
-  WORKSPACE_PATTERN_PREFIX,
-  workspacePattern,
-  workspaceSlugFromPath,
-} from "@repo/availability/workspace-pattern";
+// (/dashboard/[workspace]/…), live with those rules in
+// @repo/availability/workspace-pattern.
 
 /** Request header proxy.ts sets from the URL (lib/scope.ts reads it). */
 export const WORKSPACE_HEADER = "x-qrdx-workspace";

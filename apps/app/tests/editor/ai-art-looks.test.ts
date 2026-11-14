@@ -109,7 +109,10 @@ describe("the looks", () => {
 
   it("are listed, every one and in order, in the AI art API docs", () => {
     const mdx = readFileSync(
-      join(import.meta.dirname, "../../content/docs/developers/ai-art-api.mdx"),
+      join(
+        import.meta.dirname,
+        "../../../docs/content/docs/developers/ai-art-api.mdx",
+      ),
       "utf8",
     );
     const section = mdx.slice(

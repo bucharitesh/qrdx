@@ -1,5 +1,6 @@
 "use client";
 
+import { QrdxLogo } from "@repo/design-system/components/brand/qrdx-logo";
 import { cn } from "@repo/design-system/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -8,7 +9,6 @@ import type { Meter } from "@/app/(app)/settings/usage/_lib/meters";
 import { useAvailability } from "@/components/availability-provider";
 import bar from "@/components/header-bar.module.css";
 import { useContentText } from "@/components/i18n/content-text";
-import { QrdxLogo } from "@/components/qrdx-logo";
 import { UserProfileDropdown } from "@/components/user-profile-dropdown";
 import { workspaceHref } from "@/lib/workspace-paths";
 import { CommandMenu } from "./command-menu";
@@ -78,9 +78,12 @@ function Breadcrumb({ slug }: { slug: string | null }) {
 export function AppTopBar({
   shell,
   limitWarnings = null,
+  docsSearch,
 }: {
   shell: ShellData | null;
   limitWarnings?: Promise<Meter[]> | null;
+  /** The command menu searches the docs (a docs site serves them). */
+  docsSearch: boolean;
 }) {
   const t = useTranslations("app.shell.appTopbar");
   const slug = shell?.workspace.slug ?? null;
@@ -110,7 +113,7 @@ export function AppTopBar({
         <Breadcrumb slug={slug} />
 
         <div className="ml-auto flex shrink-0 items-center gap-1.5 md:gap-2">
-          <CommandMenu />
+          <CommandMenu docsSearch={docsSearch} />
           <CreateMenu />
           <HelpMenu />
           <UserProfileDropdown plan={shell?.personalPlan} signedIn />

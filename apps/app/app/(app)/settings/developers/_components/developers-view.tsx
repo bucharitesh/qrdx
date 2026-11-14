@@ -1,3 +1,4 @@
+import { HairlineFigure } from "@repo/design-system/components/hairline/hairline";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Add } from "iconsax-reactjs";
@@ -5,7 +6,6 @@ import Link from "next/link";
 import { use } from "react";
 import { UpgradePlanButton } from "@/app/(app)/dashboard/webhooks/_components/upgrade-plan-button";
 import { ConfirmIdentityProvider } from "@/components/confirm-identity/provider";
-import { HairlineFigure } from "@/components/mockups/hairline";
 import { getAppTranslations } from "@/lib/i18n/app-locale";
 import type { OAuthAppsOverview } from "@/lib/oauth-apps/service";
 import { PLAN_NAMES } from "@/lib/pricing";

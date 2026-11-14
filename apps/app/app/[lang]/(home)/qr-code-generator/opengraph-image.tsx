@@ -1,4 +1,4 @@
-import { ogSize, renderPageOgImage } from "@/app/og/brand";
+import { ogSize, renderPageOgImage } from "@repo/design-system/og/brand";
 import { requireLocaleParam } from "@/lib/i18n/static-params";
 import { QR_TYPES } from "@/lib/qr-types-content";
 import { onDemandParams } from "@/lib/static-params";

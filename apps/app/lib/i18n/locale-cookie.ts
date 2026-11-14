@@ -10,7 +10,7 @@ import {
   LOCALE_COOKIE,
   LOCALE_COOKIE_MAX_AGE,
   type Locale,
-} from "./config";
+} from "@repo/i18n/config";
 
 /** The `document` this module reads and writes (a fake one in tests). */
 interface CookieJar {

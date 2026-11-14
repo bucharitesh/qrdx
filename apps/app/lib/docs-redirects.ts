@@ -4,10 +4,12 @@
  * domain's /help short link is never taken over.
  *
  * The docs tabs (Help, Guides, Developers, React library, Self-hosting) kept
- * every page at its old URL (lib/docs-tree.ts), so nothing here is a move yet.
- * When a page moves, add `{ source: old, destination: new, permanent: true }`:
- * tests/lib/docs-structure.test.ts fails while an old docs URL resolves to
- * neither a page nor a redirect.
+ * every page at its old URL (apps/docs/lib/docs-tree.ts), so nothing here is
+ * a move yet. When a page moves, add `{ source: old, destination: new,
+ * permanent: true }`: apps/docs/tests/lib/docs-structure.test.ts fails while
+ * an old docs URL resolves to neither a page nor a redirect. The docs site
+ * runs on this app's hosts, so the main app answers these before it proxies
+ * the docs there.
  */
 export interface DocsRedirect {
   source: string;

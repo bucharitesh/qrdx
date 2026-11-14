@@ -1,5 +1,6 @@
 "use client";
 
+import { track } from "@repo/analytics";
 import { Info, Spinner } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Progress } from "@repo/design-system/components/ui/progress";
@@ -16,7 +17,6 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useWorkspaceHref } from "@/components/workspace-provider";
-import { track } from "@/lib/analytics";
 import type { Translator } from "@/lib/i18n/translator";
 import {
   MigrateApiError,
