@@ -1,96 +1,96 @@
 ---
 title: "动态二维码"
-description: "只需打印一次二维码，之后随时更改指向的地址，并查看它被扫描的次数。"
+description: "二维码只需打印一次，之后随时更改它指向的地址，并查看它被扫描的次数。"
 icon: QrCode
 ---
 
-动态二维码编码的是一个短链接，例如 `https://qrdx.dev/q/aB3dE5f`，而不是你的最终网址。扫描后会打开该短链接，并跳转到你设置的目标地址。你可以随时更改目标地址，因此已打印的二维码不会过时，每次扫描也都会被计数。
+动态二维码编码的是一个短链接，例如 `https://qrdx.dev/q/aB3dE5f`，而不是你的最终 URL。扫描后会打开该短链接，再重定向到你设置的目标地址。你可以随时更改目标地址，因此已打印的二维码永远不会过时，每次扫描也都会被统计。
 
-来自演示工具和 `qrdx` 库的静态二维码保持免费且不限量。动态二维码需要 QRdx 账户。
+来自 Playground 和 `qrdx` 库的静态二维码仍然免费且不限量。动态二维码需要 QRdx 账户。
 
 ## 创建动态二维码 [#create-a-dynamic-code]
 
-- **控制台：**打开[控制台](/dashboard)，点击**新建二维码**，输入目标网址和可选的标题。以 PNG、WebP 或 SVG 格式下载二维码。
-- **演示工具：**选择**网址**内容类型，输入你的链接，然后开启**转为动态二维码**。二维码会切换为短链接，并保留你的设计。如果之后编辑了网址，点击**指向新网址**即可更新目标地址。**将设计保存到二维码**会把当前设计与该二维码一起保存。
+- **控制台：**打开[控制台](/dashboard)，点击 **New code**，输入目标 URL 和可选的标题。可将二维码下载为 PNG、WebP 或 SVG。
+- **Playground：**选择 **URL** 内容类型，输入你的链接并打开 **Make it dynamic**。二维码会切换为短链接，并保留你的设计。如果之后修改了 URL，点击 **Point it to the new URL** 即可更新目标地址。**Save design to code** 会把当前设计与该二维码一起保存。
 
 目标地址必须是 `http://` 或 `https://` 链接。包含用户名或密码的链接，以及指向其他 QRdx 短链接的链接，都会被拒绝。
 
-## 自定义后半段 [#custom-back-halves]
+## 自定义短链后缀 [#custom-back-halves]
 
-每个二维码都会获得一个随机的 7 个字符后半段，即 `/q/` 之后的部分。在 Pro 和 Business 版中，你可以自行选择，例如 `https://qrdx.dev/q/spring-menu`：创建或编辑二维码时填写**自定义后半段**，对话框会在你输入时提示该后半段是否可用。
+每个二维码都会获得一个随机的 7 位字符后缀，即 `/q/` 之后的部分。在 Pro 和 Business 上，你可以自己选择，例如 `https://qrdx.dev/q/spring-menu`：在创建或编辑二维码时填写 **Custom back-half**，输入时对话框会实时告诉你该后缀是否可用。
 
-- 长度为 3 至 64 个字符：字母、数字、`-` 和 `_`，不能以 `-` 开头或结尾。
-- 后半段区分大小写，与系统生成的后半段一样：`Spring-Menu` 和 `spring-menu` 是两个不同的链接。
-- 在 `qrdx.dev` 上，后半段在整个 QRdx 中必须唯一，且看起来像 QRdx 页面的词（`admin`、`api`、`docs`、`login`、`pricing`、`settings` 等）为保留词。
-- 在你自己的[自定义域名](/docs/custom-domains)上，后半段只需在该域名内唯一，且只有 `api`、`p` 和 `q` 为保留词，因此 `go.yourbrand.com/pricing` 可以使用。此类后半段归属于该域名，没有 `qrdx.dev/q/` 链接。
-- 更改二维码的后半段会改变其链接：使用旧后半段打印的二维码将失效，因此需要重新下载该二维码。
+- 3 到 64 个字符：字母、数字、`-` 和 `_`，不能以 `-` 开头或结尾。
+- 后缀区分大小写，与自动生成的一样：`Spring-Menu` 和 `spring-menu` 是两个不同的链接。
+- 在 `qrdx.dev` 上，后缀在整个 QRdx 范围内唯一，看起来像 QRdx 页面的词（`admin`、`api`、`docs`、`login`、`pricing`、`settings` 等）为保留词。
+- 在你自己的[自定义域名](/docs/custom-domains)上，后缀只需在该域名下唯一，且仅 `api`、`p` 和 `q` 为保留词，因此 `go.yourbrand.com/pricing` 可以使用。这样的后缀属于该域名：它没有 `qrdx.dev/q/` 链接。
+- 更改二维码的后缀会改变它的链接：用旧链接打印的二维码将失效，因此请重新下载二维码。
 
 ## 管理二维码 [#manage-codes]
 
 在控制台中，你可以：
 
-- **编辑链接：**更改目标地址或标题。已打印的二维码仍然有效，并会在下次扫描时打开新的目标地址。
-- **更改类型：**将网站链接转为[托管页面](/docs/landing-pages)，将页面转回链接，或将页面转为另一种页面类型。短链接和扫描记录保持不变。参见[更改已打印二维码的打开内容](/docs/help/dynamic-codes/change-the-type)。
-- **在演示工具中编辑设计：**在编辑器中打开该二维码，它仍绑定到原短链接。
-- **归档：**在你恢复该二维码之前，短链接会显示“不再有效”页面。已归档的二维码不计入你的套餐上限。
-- **移至回收站：**短链接会显示“不再有效”页面（HTTP 410），该二维码也不再计入你的套餐。你可以从**回收站**中恢复它，或在那里永久删除它，这同时会删除其扫描历史；此后短链接会显示“未找到二维码”页面。通过 API（`DELETE /v1/codes/{id}`）删除则会立即永久删除。
-- **复制：**将目标地址、设计、文件夹、标签和备注复制到一个新二维码中，该新二维码拥有新的短链接，且没有扫描记录。
-- **版本历史：**每次更改都会记录在该二维码的页面上；恢复某个版本前会先保存当前设置，因此恢复操作可以撤销。
+- **Edit link：**更改目标地址或标题。已打印的二维码仍可使用，下次扫描时会打开新的目标地址。
+- **Change type：**将网站链接转为[托管页面](/docs/landing-pages)，将页面转回链接，或将页面转为另一种页面类型。短链接和扫描数据都会保留。参见[更改已打印二维码打开的内容](/docs/help/dynamic-codes/change-the-type)。
+- **Edit design in playground：**在编辑器中打开该二维码，仍与其短链接绑定。
+- **Archive：**在你恢复该二维码之前，短链接会显示“已失效”页面。已归档的二维码不计入套餐限额。
+- **Move to trash：**短链接会显示“已失效”页面（HTTP 410），该二维码不再计入你的套餐。你可以在 **Trash** 中恢复它，或在那里永久删除，同时会删除它的扫描历史；此后短链接会显示“未找到二维码”页面。通过 API 删除（`DELETE /v1/codes/{id}`）会立即永久删除。
+- **Duplicate：**将目标地址、设计、文件夹、标签和备注复制到一个新的二维码中，新码有新的短链接，且没有扫描记录。
+- **Version history：**每次更改都会记录在该二维码的页面上；恢复某个版本时会先保存当前设置，因此恢复操作可以撤销。
 
 ## 整理二维码 [#organize-codes]
 
-- **文件夹：**最多可嵌套 5 层。将二维码拖到文件夹上，或使用**移至文件夹**。删除文件夹时，其中的二维码和子文件夹会上移一级。
-- **标签：**可按多个标签筛选，查看同时具有所有这些标签的二维码。
-- **收藏和备注：**为二维码加星标并添加私人备注；备注可搜索。
-- **搜索**涵盖标题、目标地址、备注、标签和后半段（粘贴短链接即可找到对应二维码）。
-- **批量操作：**选择二维码后可以移动、添加标签、暂停、归档、收藏、移至回收站，或将其打包为 ZIP 下载，文件格式可为 PNG、WebP 或 SVG。
-- **CSV 导入：****二维码 → 导入**可从一个 CSV 文件最多创建 {facts.importRows} 个动态二维码（CSV 包含目标地址、标题、文件夹、标签，以及 `slug` 列中可选的自定义后半段），还可以将所有二维码归入同一文件夹，并为它们全部添加标签。较长的导入可以暂停，刷新页面或连接中断后会从中断处继续，且不会重复创建任何二维码。导入完成后会生成一份结果 CSV（包含每行的短链接），以及一个包含 PNG 或 SVG 格式二维码的 ZIP 文件。导入多于一行的数据，以及使用自定义后半段，都需要 Pro 版。
+- **文件夹：**最多可嵌套 5 层。将二维码拖到文件夹上，或使用 **Move to folder**。删除文件夹会把其中的二维码和子文件夹上移一层。
+- **标签：**按多个标签筛选，可查看同时具有所有这些标签的二维码。
+- **收藏与备注：**可为二维码加星标并记录私人备注；备注可搜索。
+- **搜索**涵盖标题、目标地址、备注、标签和后缀（粘贴短链接即可找到对应的二维码）。
+- **批量操作：**选择多个二维码，可移动、加标签、暂停、归档、收藏、移至回收站，或下载为包含 PNG、WebP 或 SVG 文件的 ZIP。
+- **CSV 导入：****Codes → Import** 可通过一个 CSV 创建最多 {facts.importRows} 个动态二维码（目标地址、标题、文件夹、标签，以及 `slug` 列中可选的自定义后缀），还可以把所有二维码归入同一个文件夹，并为它们统一添加标签。较长的导入可以暂停，并且在刷新页面或连接中断后会继续进行，不会重复创建任何二维码。导入结束时会生成一份结果 CSV（每行对应的短链接），以及一个包含这些二维码的 PNG 或 SVG 的 ZIP。导入多于一行以及使用自定义后缀都需要 Pro。
 
-二维码归属于创建它们时所在的工作区。工作区的每位成员都可以创建和编辑二维码；成员可以删除自己创建的二维码，所有者和管理员则可以删除工作区中的任何二维码。
+二维码属于创建它的工作区。工作区的每位成员都可以创建和编辑二维码；成员可以删除自己的二维码，所有者和管理员可以删除工作区中的任何二维码。
 
 <Callout type="info">
-  二维码不会失效：降级套餐不会关闭现有二维码。超出上限后，你仍可以编辑和归档二维码，只是在数量降到上限以下之前，无法创建或恢复更多二维码。
+  二维码永不失效：降级套餐绝不会停用现有的二维码。超出限额时，你仍可以编辑和归档二维码，只是在回到限额以内之前无法创建或恢复更多二维码。
 </Callout>
 
 ## 套餐 [#plans]
 
 | | 免费版 | Pro | Business |
 | --- | --- | --- | --- |
-| 有效动态二维码 | 10 | 不限 | 不限 |
+| 活跃的动态二维码 | 10 | 不限 | 不限 |
 | 扫描次数 | 不限 | 不限 | 不限 |
 | 扫描历史 | {facts.freeScanHistoryYears} 年 | 不限 | 不限 |
-| 通过 API 批量创建 | 否 | 每次请求最多 {facts.apiBatchCodes} 个 | 每次请求最多 {facts.apiBatchCodes} 个 |
+| 通过 API 批量创建 | 不支持 | 每次请求最多 {facts.apiBatchCodes} 个 | 每次请求最多 {facts.apiBatchCodes} 个 |
 
-工作区的二维码使用其所有者中最高级别的套餐。其他每个套餐包含的内容，请参见[套餐与限制](/docs/plans-and-limits)。
+工作区的二维码使用其所有者中最高的套餐。每个套餐包含的其他内容，参见[套餐与限额](/docs/plans-and-limits)。
 
 ## 扫描分析 [#scan-analytics]
 
-每个二维码都有一个分析页面，可查看以下内容：按时间统计的扫描次数、独立访客、排名靠前的国家和城市、设备、操作系统、浏览器和来源页面。时间范围可选最近 7、30 或 90 天、1 年或 3 年，或自该二维码首次扫描以来的全部时间（受套餐的历史记录限制：全部时间在 Pro 和 Business 版中可用）。你可以将所选时间范围内的扫描记录导出为 CSV。
+每个二维码都有一个分析页面，显示最近 7 天、30 天、90 天、1 年或 3 年，或自该二维码首次扫描以来全部时间内的扫描趋势、独立访客、热门国家和城市、设备、操作系统、浏览器和来源（受套餐历史范围限制：全部时间仅限 Pro 和 Business）。你可以将所选范围内的扫描记录导出为 CSV。
 
-每次扫描记录的内容包括：
+每次扫描会记录以下内容：
 
-- 时间（UTC），以及托管平台提供时的国家、地区和城市（qrdx.dev 上为 Vercel 地理位置请求头）
-- 根据用户代理识别的设备类型、操作系统和浏览器
-- 来源页面的主机名，绝不记录完整网址。大多数二维码扫描没有来源页面。
-- 访客哈希：对 IP 地址、用户代理和日期进行加盐的 SHA-256 运算。它用于按天统计独立访客；IP 地址本身从不存储。
-- 在 Pro 和 Business 版中，当二维码[请求精确位置](/docs/precise-location)且扫描者允许时，记录其位置（四舍五入到小数点后 3 位，约 100 米）以及其浏览器报告的精度
+- 时间（UTC），以及托管平台提供时的国家、地区和城市（qrdx.dev 上使用 Vercel 的地理位置标头）
+- 设备类型、操作系统和浏览器，根据 user agent 检测
+- 仅记录来源的主机名，绝不记录完整 URL。大多数二维码扫描没有来源。
+- 访客哈希：对 IP 地址、user agent 和日期加盐后计算的 SHA-256。它用于统计每天的独立访客；IP 地址本身绝不会被存储。
+- 在 Pro 和 Business 上，当二维码[请求精确位置](/docs/precise-location)且扫描者允许时：记录其位置（四舍五入到小数点后 3 位，约 100 米）以及其浏览器报告的精度
 
-已知的机器人、链接预览和浏览器预取请求不计入统计。
+已知的机器人、链接预览和浏览器预取不会被统计。
 
 ## REST API [#rest-api]
 
-在 `https://api.qrdx.dev/v1/codes` 下以编程方式管理二维码。请求需要使用具有 `codes:read` 或 `codes:write` 权限范围的 [API 密钥](/docs/developers/api-keys) 或 OAuth 访问令牌（`Authorization: Bearer <key or token>`）进行身份验证；获取方法请参阅 [REST API](/docs/developers/rest-api)。密钥作用于创建它时所在的工作区；令牌请求作用于您自己的工作区。已登录的浏览器会话也可以发出请求，并作用于您最后在控制台中打开的工作区。
+通过 `https://api.qrdx.dev/v1/codes` 以编程方式管理二维码。请求使用 [API 密钥](/docs/developers/api-keys)或 OAuth 访问令牌(`Authorization: Bearer <key or token>`)进行身份验证,且密钥或令牌需具有 `codes:read` 或 `codes:write` 权限范围;获取方式请参阅 [REST API](/docs/developers/rest-api)。密钥作用于其创建时所在的工作区;使用令牌的请求作用于你自己的工作区。已登录的浏览器会话发出的请求同样有效,并作用于你最近一次在控制台中打开的工作区。
 
 | 方法 | 路径 | 说明 |
 | --- | --- | --- |
-| `GET` | `/v1/codes` | 列出二维码。查询参数：`status`（`active`、`archived`、`all`）、`q`、`limit`（≤ 100）、`offset` |
-| `POST` | `/v1/codes` | 创建一个二维码，或创建最多 {facts.apiBatchCodes} 个二维码的数组（数组需要 Pro 版）。请求体：`destinationUrl`，可选 `title`、`style`、`domainId` 和 `slug` |
-| `GET` | `/v1/codes/{id}` | 获取一个二维码 |
-| `PATCH` | `/v1/codes/{id}` | 更新 `destinationUrl`、`title`、`style`、`domainId`（[自定义域名](/docs/custom-domains)）、`slug` 或 `archived`，或在 `redirect` 与 `page` 之间切换 `kind` |
-| `DELETE` | `/v1/codes/{id}` | 删除一个二维码及其扫描记录 |
-| `GET` | `/v1/codes/{id}/scans` | 获取 `range` 对应时间段的分析数据（`7d`、`30d`、`90d`、`365d`、`1095d`，或 Pro 版和 Business 版可用的 `all`；受您套餐的历史数据保留期限制）。添加 `limit`（≤ 500）可获取单次扫描记录，添加 `before`（上一条的 `scannedAt`）可获取下一页 |
+| `GET` | `/v1/codes` | 列出二维码。查询参数:`status`(`active`、`archived`、`all`)、`q`、`limit`(≤ 100)、`offset` |
+| `POST` | `/v1/codes` | 创建一个二维码,或一次创建最多 {facts.apiBatchCodes} 个(数组需要 Pro)。请求体:`destinationUrl`,可选 `title`、`style`、`domainId` 和 `slug` |
+| `GET` | `/v1/codes/{id}` | 获取单个二维码 |
+| `PATCH` | `/v1/codes/{id}` | 更新 `destinationUrl`、`title`、`style`、`domainId`([自定义域名](/docs/custom-domains))、`slug` 或 `archived`,也可在 `redirect` 与 `page` 之间切换 `kind` |
+| `DELETE` | `/v1/codes/{id}` | 删除二维码及其扫描记录 |
+| `GET` | `/v1/codes/{id}/scans` | `range` 范围内的分析数据(`7d`、`30d`、`90d`、`365d`、`1095d`,Pro 和 Business 还可用 `all`;受你套餐的历史记录期限限制)。添加 `limit`(≤ 500)可获取单次扫描记录,使用 `before`(上一条的 `scannedAt`)获取下一页 |
 
-创建二维码：
+创建二维码:
 
 ```bash
 curl https://api.qrdx.dev/v1/codes \
@@ -124,7 +124,7 @@ curl https://api.qrdx.dev/v1/codes \
 }
 ```
 
-传入 `slug` 可以选择后半段（Pro 版和 Business 版可用；规则请参阅[自定义后半段](#custom-back-halves)）。如果传入 `domainId`，则会在该域名上检查；否则在 `qrdx.dev` 上检查：
+传入 `slug` 可自选后半段(Pro 和 Business;规则请参阅[自定义后半段](#custom-back-halves))。如果带有 `domainId`,会在该域名下检查,否则在 `qrdx.dev` 下检查:
 
 ```bash
 curl https://api.qrdx.dev/v1/codes \
@@ -133,13 +133,13 @@ curl https://api.qrdx.dev/v1/codes \
   -d '{"destinationUrl": "https://example.com/menu", "slug": "spring-menu"}'
 ```
 
-响应中随后会包含 `"slug": "spring-menu"` 和 `"shortLink": "https://qrdx.dev/q/spring-menu"`。在自定义域名上选择的后半段，其 `"defaultShortLink": null`，因为它只存在于该域名上。在数组中，每个 `slug` 都必须不同。
+响应中随即会包含 `"slug": "spring-menu"` 和 `"shortLink": "https://qrdx.dev/q/spring-menu"`。在自定义域名上选择的后半段,其 `"defaultShortLink": null`,因为它只在该域名上存在。在数组中,每个 `slug` 都必须各不相同。
 
-### 在一次请求中创建多个二维码 [#many-codes-in-one-request]
+### 一次请求创建多个二维码 [#many-codes-in-one-request]
 
-在 Pro 版和 Business 版中，可以发送最多 {facts.apiBatchCodes} 个二维码组成的数组。生成的后半段在同一批次内不会重复，也不会与现有二维码冲突。Google Web Risk 无法及时检查的链接，会在批次创建后不久再次查询；若其列出了某个二维码的链接，该二维码将被关闭（[链接安全检查](/docs/code-controls#safety-checks-on-links)）。批次要么全部成功，要么全部失败：只要有任何一行出现问题（目标地址无效、`slug` 已被占用或保留、链接不安全），都不会创建任何二维码，错误的 `data.details` 会按 `index`（即该行在数组中的位置，从 0 开始）列出所有问题。
+在 Pro 和 Business 上,可发送最多 {facts.apiBatchCodes} 个二维码的数组。自动生成的后半段在批次内不会重复,也不会与已有二维码冲突。Google Web Risk 未能及时检查的链接,会在批次创建后不久再次查询;若某个二维码的链接被列入其名单,该二维码将被停用([链接安全检查](/docs/code-controls#safety-checks-on-links))。批量创建要么全部成功,要么全部失败:只要有任何一行存在问题(无效的目标地址、已被占用或保留的 `slug`、不安全的链接),就不会创建任何二维码,错误中的 `data.details` 会按 `index`(该行在数组中的位置,从 0 开始)列出所有问题。
 
-请为批次发送一个唯一的 `Idempotency-Key` 请求头，值可以是 UUID 之类的内容。如果请求超时或连接中断，请使用相同的密钥再次发送相同的请求：您会收到第一次尝试所创建的二维码，并带有 `Idempotent-Replayed: true` 响应头；被中断的尝试会在不重复创建任何二维码的前提下完成。
+请发送 `Idempotency-Key` 请求头,其值对该批次唯一,例如 UUID。如果请求超时或连接中断,请使用同一个密钥再次发送相同的请求:你会得到第一次尝试已创建的二维码,并带有 `Idempotent-Replayed: true` 响应头;中途被中断的尝试会被补全,不会重复创建任何二维码。
 
 ```bash
 curl https://api.qrdx.dev/v1/codes \
@@ -151,9 +151,9 @@ curl https://api.qrdx.dev/v1/codes \
        {"destinationUrl": "https://example.com/table/2", "title": "Table 2"}]'
 ```
 
-每个二维码都会返回其设计信息。当您工作区的默认主题嵌入了 Logo 时，大批量创建时这部分数据会累积得很大：发送 `Prefer: return=minimal` 可以让每个二维码不返回 `style`（只返回其 id、slug、链接、目标地址、标题、状态和创建时间）。如果批次的响应超过 4 MB，则会在创建任何二维码之前以 `PAYLOAD_TOO_LARGE` 拒绝该请求。
+每个二维码都会连同其设计一起返回。当你的工作区默认主题嵌入了徽标时,大批量请求的响应体积会随之增大:发送 `Prefer: return=minimal`,即可获取不含 `style` 的二维码(包括其 id、slug、链接、目标地址、标题、状态和创建时间)。如果批次的响应超过 4 MB,会在创建任何内容之前被拒绝,并返回 `PAYLOAD_TOO_LARGE`。
 
-更改目标地址：
+更改目标地址:
 
 ```bash
 curl -X PATCH https://api.qrdx.dev/v1/codes/cm3x... \
@@ -162,26 +162,26 @@ curl -X PATCH https://api.qrdx.dev/v1/codes/cm3x... \
   -d '{"destinationUrl": "https://example.com/summer-menu"}'
 ```
 
-`style` 接受与播放场相同的设计字段（`fgColor`、`bgColor`、`bodyPattern`、`cornerEyePattern`、`level` 等）。若要添加 Logo，请发送 `logoIcon`<IfAvailable feature="fileStorage">，或已上传文件的 `logoFileId`</IfAvailable>（[二维码样式中的 Logo](/docs/developers/rest-api#code-logos)）。请将 `shortLink` 编码到您的二维码中，例如使用 [`qrdx` 库](/docs/getting-started) 或[图片 API](/docs/developers/image-api)。
+`style` 接受与 Playground 相同的设计字段(`fgColor`、`bgColor`、`bodyPattern`、`cornerEyePattern`、`level` 等)。若要使用徽标,请发送 `logoIcon`<IfAvailable feature="fileStorage">,或已上传文件的 `logoFileId`</IfAvailable>([二维码样式中的徽标](/docs/developers/rest-api#code-logos))。请将 `shortLink` 编码到你的二维码中,例如使用 [`qrdx` 库](/docs/getting-started)或 [Image API](/docs/developers/image-api)。
 
-错误使用统一的 JSON 结构 `{ "code": "...", "message": "...", "status": 400 }`；当有页面说明如何修复时，还会附带 `docs` 链接：
+错误使用统一的 JSON 结构:`{ "code": "...", "message": "...", "status": 400 }`,当有页面说明修复方法时还会附带 `docs` 链接:
 
-| 状态码 | 错误代码 | 触发情况 |
+| 状态码 | 错误码 | 触发时机 |
 | --- | --- | --- |
-| 400 | `VALIDATION_ERROR`、`INVALID_SLUG` | 请求体或查询参数无效（详情在 `data` 中，批次中按 `index` 列出），或 `slug` 不符合规则或属于保留词 |
-| 401 | `UNAUTHORIZED`、`INVALID_TOKEN` | 缺少 `Authorization: Bearer` 令牌，或令牌无效、已过期或已被撤销（[获取令牌](/docs/developers/rest-api#get-an-access-token)） |
-| 402 | `LIMIT_REACHED`、`PLAN_REQUIRED` | 超出套餐的有效二维码数量上限，或在非 Pro 版中使用批量创建或自定义 `slug` |
-| 403 | `INSUFFICIENT_SCOPE`、`FORBIDDEN` | 令牌缺少所需权限范围，或工作区角色无权执行此操作 |
-| 404 | `NOT_FOUND` | 二维码不存在或不属于您，或该端点不存在 |
-| 409 | `SLUG_TAKEN` | 其他二维码已使用该 `slug`（在 `qrdx.dev` 上，或在自定义域名上） |
-| 429 | `RATE_LIMITED` | 请求过于频繁；请在 `Retry-After` 响应头指定的时间后重试 |
+| 400 | `VALIDATION_ERROR`、`INVALID_SLUG` | 请求体或查询参数无效(详情在 `data` 中,批量请求中按 `index` 列出),或 `slug` 违反规则或属于保留字 |
+| 401 | `UNAUTHORIZED`、`INVALID_TOKEN` | 没有 `Authorization: Bearer` 令牌,或令牌无效、已过期或已被撤销([获取令牌](/docs/developers/rest-api#get-an-access-token)) |
+| 402 | `LIMIT_REACHED`、`PLAN_REQUIRED` | 超出你所在套餐的活跃二维码数量上限,或在没有 Pro 的情况下使用批量创建或自定义 `slug` |
+| 403 | `INSUFFICIENT_SCOPE`、`FORBIDDEN` | 令牌缺少所需的权限范围,或工作区角色无权执行此操作 |
+| 404 | `NOT_FOUND` | 二维码不存在或不属于你,或没有这个端点 |
+| 409 | `SLUG_TAKEN` | 已有其他二维码使用该 `slug`(在 `qrdx.dev` 上,或在自定义域名上) |
+| 429 | `RATE_LIMITED` | 请求过多;请在 `Retry-After` 响应头指定的时间后重试 |
 
-## 自行托管 [#self-hosting]
+## 自托管 [#self-hosting]
 
-动态二维码同样适用于自行托管的实例：
+动态二维码在自托管实例上同样可用:
 
-- `NEXT_PUBLIC_SHORT_LINK_BASE_URL` 用于设置短链接的源地址。默认值为您的应用 URL。
-- `SCAN_HASH_SALT` 用于设置访客哈希的密钥盐值。若未设置，则会从 `BETTER_AUTH_SECRET` 派生一个。
-- 国家、地区和城市信息来自 Vercel 的地理位置请求头。在 Cloudflare 后面时，只能获取国家信息（`CF-IPCountry`）；在其他环境中，位置将显示为未知。
-- 当扫描者未共享位置时，区域规则会使用 Vercel 的 IP 坐标（`x-vercel-ip-latitude`、`x-vercel-ip-longitude`）。在其他环境中，区域规则只会匹配共享了位置的扫描。
-- 配置了 Upstash Redis 后，将应用速率限制。
+- `NEXT_PUBLIC_SHORT_LINK_BASE_URL` 用于设置短链接的源地址。默认为你的应用 URL。
+- `SCAN_HASH_SALT` 用于设置访客哈希的保密盐值。如果未设置,则由 `BETTER_AUTH_SECRET` 派生一个。
+- 国家、地区和城市来自 Vercel 的地理位置请求头。在 Cloudflare 之后只能获取国家(`CF-IPCountry`);在其他环境中,位置会显示为未知。
+- 当扫描者没有共享位置时,区域规则会使用 Vercel 提供的 IP 坐标(`x-vercel-ip-latitude`、`x-vercel-ip-longitude`)。在其他环境中,区域规则只会匹配共享了位置的扫描。
+- 配置了 Upstash Redis 后,速率限制才会生效。

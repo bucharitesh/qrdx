@@ -1,63 +1,63 @@
 ---
 title: "Laporan klien"
-description: "Bagikan analitik pemindaian sebuah kode kepada klien di halaman yang menampilkan nama, logo, dan warna mereka."
+description: "Bagikan analitik pemindaian sebuah kode kepada klien melalui halaman yang menampilkan nama, logo, dan warna klien."
 icon: ChartLine
 ---
 
-Setiap kode QR dinamis dapat memiliki halaman statistik yang dibagikan: halaman hanya-baca di `/stats/<token>` yang menampilkan pemindaian dari waktu ke waktu, negara teratas, perangkat, dan sumber rujukan. Siapa pun yang memiliki tautannya dapat membukanya. Mesin pencari tidak mengindeksnya, dan halaman ini tidak menampilkan apa pun tentang orang yang memindai.
+Setiap kode QR dinamis dapat memiliki halaman statistik bersama: halaman hanya-baca di `/stats/<token>` yang menampilkan pemindaian dari waktu ke waktu, negara teratas, perangkat, dan perujuk. Siapa pun yang memiliki tautannya dapat membukanya. Mesin pencari tidak mengindeksnya, dan halaman ini tidak menampilkan apa pun tentang orang yang melakukan pemindaian.
 
-Di Pro dan Business, Anda dapat menampilkan merek klien di halaman ini. Halaman kemudian menampilkan nama, logo, dan warna aksen klien di bagian atas, serta nama klien di tab browser dan di pratinjau tautan, sehingga Anda dapat mengirimkannya kepada klien sebagai laporan mereka.
+Di Pro dan Business, Anda dapat memasang merek klien pada halaman tersebut. Halaman lalu menampilkan nama, logo, dan warna aksen klien di bagian atas, serta nama klien di tab browser dan pratinjau tautan, sehingga Anda dapat mengirimkannya kepada klien sebagai laporan mereka.
 
 | | Gratis | Pro | Business |
 | --- | --- | --- | --- |
-| Halaman statistik yang dibagikan | Ya | Ya | Ya |
+| Halaman statistik bersama | Ya | Ya | Ya |
 | Nama, logo, dan warna klien | Tidak | Ya | Ya |
-| QRdx di halaman | Header dan footer | Tulisan kecil "Made with QRdx" di bagian bawah | Tidak ada |
+| QRdx di halaman | Header dan footer | "Made with QRdx" kecil di bagian bawah | Tidak ada |
 | Tautan di domain Anda sendiri | Tidak | Tidak | Ya |
 
 ## Bagikan statistik sebuah kode [#share-a-codes-stats]
 
-1. Di [Kode](/dashboard?to=codes), buka menu **⋯** pada kode tersebut lalu pilih **Bagikan analitik**.
-2. Aktifkan **Halaman analitik publik** dan salin tautannya.
+1. Di [Kode](/dashboard?to=codes), buka menu **⋯** pada kode, lalu pilih **Share analytics**.
+2. Aktifkan **Public analytics page** dan salin tautannya.
 
-**Reset tautan** membuat tautan baru dan langsung menghentikan tautan lama, sekaligus mempertahankan branding halaman. Menonaktifkan halaman membuat tautannya menampilkan 404 dan menghapus branding-nya; merek itu sendiri tetap tersimpan.
+**Reset link** membuat tautan baru dan langsung menghentikan tautan lama, serta mempertahankan branding halaman. Jika halaman dimatikan, tautannya menjadi 404 dan branding-nya dihapus; merek klien itu sendiri tetap tersimpan.
 
 ## Tambahkan merek klien [#add-the-clients-brand]
 
-Setelah halaman aktif, dialog yang sama memiliki bagian **Branding klien**.
+Setelah halaman aktif, dialog yang sama memiliki bagian **Client branding**.
 
-1. Buka menu lalu pilih **Merek klien baru**.
-2. Masukkan nama klien, tambahkan logo (unggah gambar atau tempel URL gambar `https`), dan jika diinginkan, warna aksen.
-3. Klik **Tambahkan dan gunakan**. Halaman langsung menampilkan merek tersebut.
+1. Buka menu dan pilih **New client brand**.
+2. Masukkan nama klien, tambahkan logo (unggah gambar atau tempel URL gambar `https`) dan, jika mau, warna aksen.
+3. Klik **Add and use**. Halaman langsung menampilkan merek tersebut.
 
-Merek disimpan di ruang kerja, jadi kode berikutnya untuk klien yang sama cukup memilih merek dari menu. Tombol pensil mengedit merek yang dipilih di semua tempat penggunaannya. Menghapus merek akan mengembalikan setiap halaman yang menggunakannya menjadi halaman biasa.
+Merek disimpan di workspace, sehingga untuk kode berikutnya bagi klien yang sama Anda cukup memilih merek dari menu. Tombol pensil mengedit merek yang dipilih di semua tempat merek itu digunakan. Jika sebuah merek dihapus, setiap halaman yang menggunakannya kembali menjadi halaman biasa.
 
-Warna aksen digunakan secara hemat: pada grafik pemindaian dan kotak logo. Jika warna tersebut sulit terlihat di latar putih atau hitam, tema itu akan membuat grafik menggunakan warna teks halaman. Kosongkan aksen untuk halaman yang sepenuhnya monokrom.
+Warna aksen digunakan secukupnya: pada grafik pemindaian dan kotak logo. Jika warnanya sulit terlihat pada latar putih atau hitam, tema tersebut mempertahankan grafik dengan warna teks halaman itu sendiri. Kosongkan aksen untuk halaman yang sepenuhnya monokrom.
 
-Pemilik, admin, dan anggota dapat memberi branding pada halaman. Viewer dan anggota penagihan dapat melihat pengaturannya tetapi tidak dapat mengubahnya.
+Pemilik, admin, dan anggota dapat memberi merek pada halaman. Viewer dan anggota penagihan dapat melihat pengaturan ini tetapi tidak dapat mengubahnya.
 
 ## Business: tanpa tanda QRdx, di domain Anda [#business-no-qrdx-mark-on-your-domain]
 
-Di Business, halaman yang diberi branding tidak memiliki tanda QRdx: tidak ada logo QRdx di header, tidak ada kredit di footer, dan tidak ada "QRdx" di judul tab. Tab browser menampilkan logo klien, atau inisialnya. Jika tautan pendek kode berada di domain QRdx, halaman tidak menyertakannya.
+Di Business, halaman bermerek tidak memiliki tanda QRdx: tidak ada logo QRdx di header, tidak ada kredit di footer, dan tidak ada "QRdx" pada judul tab. Tab browser menampilkan logo klien, atau inisialnya. Jika tautan pendek kode berada di domain QRdx, halaman tidak menampilkannya.
 
 <IfAvailable feature="customDomains" id="serve-the-page-on-your-domain" title="Sajikan halaman di domain Anda">
 
-Ruang kerja Business dengan [domain kustom](/docs/custom-domains) yang terverifikasi dapat menyajikan halaman di domain tersebut. Di dialog, pilih domain di bawah **Alamat tautan**. Tautannya menjadi `https://<your domain>/stats/<token>`.
+Workspace Business dengan [domain kustom](/docs/custom-domains) terverifikasi dapat menyajikan halaman di sana. Di dialog, pilih domain di bawah **Link address**. Tautannya menjadi `https://<your domain>/stats/<token>`.
 
-Domain hanya menyajikan halaman yang Anda tetapkan ke sana, dan hanya selama ruang kerja berada di Business. Alamat QRdx dari halaman yang sama tetap berfungsi.
+Domain hanya menyajikan halaman yang Anda tetapkan padanya, dan hanya selama workspace berada di Business. Alamat QRdx untuk halaman yang sama tetap berfungsi.
 
 </IfAvailable>
 
-## Isi halaman [#what-the-page-shows]
+## Apa yang ditampilkan halaman [#what-the-page-shows]
 
-- Pemindaian dan pengunjung unik untuk 7, 30, atau 90 hari terakhir, sejauh riwayat yang disimpan paket ruang kerja, atau sepanjang waktu di Pro dan Business
+- Pemindaian dan pengunjung unik selama 7, 30, atau 90 hari terakhir, sejauh riwayat yang disimpan oleh paket workspace, atau sepanjang waktu di Pro dan Business
 - Pemindaian QR dan ketukan NFC
-- Pemindaian per hari, negara teratas, jenis perangkat, dan situs sumber rujukan
+- Pemindaian per hari, negara teratas, jenis perangkat, dan situs perujuk
 
-Halaman ini tidak pernah menampilkan jalur atau query string tujuan, kota, lokasi yang presisi, ataupun informasi tentang satu pemindaian. Angka dapat berusia hingga 5 menit.
+Halaman tidak pernah menampilkan path atau query string tujuan, kota, lokasi yang presisi, atau apa pun tentang satu pemindaian. Angka dapat tertunda hingga 5 menit.
 
 ## Jika paket berubah [#if-the-plan-changes]
 
-Branding tetap disimpan, tetapi hanya ditampilkan selama paket menyertakannya. Saat ruang kerja Business beralih ke Pro, halamannya kembali menampilkan "Made with QRdx" yang kecil dan tautan domain kustomnya berhenti berfungsi; alamat QRdx tetap berfungsi. Di Gratis, halaman tidak menampilkan merek klien. Meningkatkan paket kembali akan memulihkan keduanya.
+Branding tetap tersimpan tetapi hanya tampil selama paket menyertakannya. Saat workspace Business pindah ke Pro, halamannya kembali menampilkan "Made with QRdx" kecil dan tautan domain kustomnya berhenti berfungsi; alamat QRdx tetap berfungsi. Di Gratis, halaman tidak menampilkan merek klien. Jika Anda upgrade lagi, keduanya pulih.
 
-Untuk memberi klien tampilan banyak kode sekaligus, dengan analitik dan halaman yang di-hosting, gunakan [portal klien](/docs/client-portal) di Business.
+Untuk memberi klien tampilan banyak kode sekaligus, beserta analitik dan halaman yang di-hosting, gunakan [portal klien](/docs/client-portal) di Business.

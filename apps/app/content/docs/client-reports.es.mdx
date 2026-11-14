@@ -1,12 +1,12 @@
 ---
 title: "Informes para clientes"
-description: "Comparte las analíticas de escaneos de un código con un cliente en una página que muestra su nombre, su logo y su color."
+description: "Comparte con un cliente las analíticas de escaneos de un código en una página que muestra su nombre, su logo y su color."
 icon: ChartLine
 ---
 
 Cualquier código QR dinámico puede tener una página de estadísticas compartida: una página de solo lectura en `/stats/<token>` con los escaneos a lo largo del tiempo, los países principales, los dispositivos y los referentes. Cualquiera que tenga el enlace puede abrirla. Los buscadores no la indexan y no muestra nada sobre las personas que escanearon.
 
-En Pro y Business puedes poner la marca de un cliente en esa página. Entonces muestra arriba el nombre, el logo y el color de acento del cliente, y el nombre del cliente en la pestaña del navegador y en las vistas previas del enlace, así que puedes enviársela al cliente como su informe.
+En Pro y Business puedes poner la marca de un cliente en esa página. Entonces muestra arriba el nombre, el logo y el color de acento del cliente, y el nombre del cliente en la pestaña del navegador y en las vistas previas del enlace, de modo que puedes enviársela como su informe.
 
 | | Gratis | Pro | Business |
 | --- | --- | --- | --- |
@@ -18,19 +18,19 @@ En Pro y Business puedes poner la marca de un cliente en esa página. Entonces m
 ## Comparte las estadísticas de un código [#share-a-codes-stats]
 
 1. En [Códigos](/dashboard?to=codes), abre el menú **⋯** del código y elige **Compartir analíticas**.
-2. Activa **Página de analíticas pública** y copia el enlace.
+2. Activa **Página pública de analíticas** y copia el enlace.
 
-**Restablecer enlace** crea un enlace nuevo y desactiva el anterior al instante, y conserva la marca de la página. Si desactivas la página, su enlace devuelve un 404 y se borra su marca; la marca del cliente sigue guardada.
+**Restablecer enlace** crea un enlace nuevo y detiene el anterior al instante, y conserva la marca de la página. Si desactivas la página, su enlace pasa a dar un error 404 y se borra su marca; la marca del cliente sigue guardada.
 
 ## Añade la marca del cliente [#add-the-clients-brand]
 
-Cuando la página está activada, el mismo cuadro de diálogo tiene una sección **Marca del cliente**.
+Una vez activada la página, el mismo cuadro de diálogo tiene una sección **Marca del cliente**.
 
 1. Abre el menú y elige **Nueva marca de cliente**.
 2. Escribe el nombre del cliente, añade un logo (sube una imagen o pega la URL `https` de una imagen) y, si quieres, un color de acento.
 3. Haz clic en **Añadir y usar**. La página muestra la marca de inmediato.
 
-Las marcas se guardan en el espacio de trabajo, así que para el siguiente código del mismo cliente solo tienes que elegir la marca en el menú. El botón del lápiz edita la marca seleccionada en todos los lugares donde se usa. Si eliminas una marca, todas las páginas que la usaban vuelven a ser páginas normales.
+Las marcas se guardan en el espacio de trabajo, así que para el siguiente código del mismo cliente solo tienes que elegir la marca en el menú. El botón del lápiz edita la marca seleccionada en todos los lugares donde se usa. Si eliminas una marca, todas las páginas que la usaban vuelven a ser páginas sin marca.
 
 El color de acento se usa con moderación: en el gráfico de escaneos y en el icono del logo. Si el color se vería mal sobre un fondo blanco o negro, ese tema mantiene el gráfico en el color de texto propio de la página. Deja el acento vacío para una página totalmente monocromática.
 
@@ -38,13 +38,13 @@ Los propietarios, los administradores y los miembros pueden poner marca a una p�
 
 ## Business: sin marca de QRdx y en tu dominio [#business-no-qrdx-mark-on-your-domain]
 
-En Business, una página con marca no lleva la marca de QRdx: ni el logo de QRdx en el encabezado, ni crédito en el pie de página, ni "QRdx" en el título de la pestaña. La pestaña del navegador muestra el logo del cliente o su inicial. Si el enlace corto del código está en el dominio de QRdx, la página lo omite.
+En Business, una página con marca no lleva la marca de QRdx: ni el logo de QRdx en el encabezado, ni el crédito en el pie de página, ni "QRdx" en el título de la pestaña. La pestaña del navegador muestra el logo del cliente o su inicial. Si el enlace corto del código está en el dominio de QRdx, la página lo omite.
 
 <IfAvailable feature="customDomains" id="serve-the-page-on-your-domain" title="Sirve la página en tu dominio">
 
 Un espacio de trabajo Business con un [dominio personalizado](/docs/custom-domains) verificado puede servir la página allí. En el cuadro de diálogo, elige el dominio en **Dirección del enlace**. El enlace pasa a ser `https://<your domain>/stats/<token>`.
 
-El dominio solo sirve las páginas que le asignaste, y solo mientras el espacio de trabajo esté en Business. La dirección de QRdx de la misma página también sigue funcionando.
+El dominio solo sirve las páginas que le asignaste, y solo mientras el espacio de trabajo esté en Business. La dirección de QRdx de la misma página sigue funcionando también.
 
 </IfAvailable>
 
@@ -54,10 +54,10 @@ El dominio solo sirve las páginas que le asignaste, y solo mientras el espacio 
 - Escaneos de QR y toques de NFC
 - Escaneos por día, países principales, tipos de dispositivo y sitios de referencia
 
-Nunca muestra la ruta ni la cadena de consulta del destino, ni ciudades, ni ubicaciones precisas, ni nada sobre un escaneo individual. Las cifras pueden tener hasta 5 minutos de antigüedad.
+Nunca muestra la ruta ni la cadena de consulta del destino, ciudades, ubicaciones precisas ni nada sobre un escaneo concreto. Las cifras pueden tener hasta 5 minutos de retraso.
 
-## Si cambia el plan [#if-the-plan-changes]
+## Si el plan cambia [#if-the-plan-changes]
 
-La marca se conserva, pero solo se muestra mientras el plan la incluya. Cuando un espacio de trabajo Business pasa a Pro, sus páginas recuperan el pequeño "Made with QRdx" y sus enlaces de dominio personalizado dejan de funcionar; la dirección de QRdx sigue funcionando. En Gratis la página no muestra ninguna marca de cliente. Si vuelves a mejorar el plan, se restablecen ambas cosas.
+La marca se conserva, pero solo se muestra mientras el plan la incluya. Cuando un espacio de trabajo Business pasa a Pro, sus páginas recuperan el pequeño "Made with QRdx" y sus enlaces en dominio personalizado dejan de funcionar; la dirección de QRdx sigue funcionando. En Gratis la página no muestra ninguna marca de cliente. Si vuelves a mejorar el plan, se restablecen ambas cosas.
 
-Para ofrecer a un cliente una vista de muchos códigos a la vez, con sus analíticas y sus páginas alojadas, usa el [portal del cliente](/docs/client-portal) en Business.
+Para dar a un cliente una vista de muchos códigos a la vez, con sus analíticas y sus páginas alojadas, usa el [portal del cliente](/docs/client-portal) en Business.

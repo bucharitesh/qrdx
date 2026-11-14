@@ -1,48 +1,48 @@
 ---
 title: "Kundenberichte"
-description: "Teile die Scan-Analysen eines Codes mit einem Kunden auf einer Seite, die Name, Logo und Farbe zeigt."
+description: "Teile die Scan-Analysen eines Codes mit einem Kunden auf einer Seite, die seinen Namen, sein Logo und seine Farbe zeigt."
 icon: ChartLine
 ---
 
-Jeder dynamische QR-Code kann eine geteilte Statistikseite haben: eine schreibgeschützte Seite unter `/stats/<token>` mit Scans über die Zeit, Top-Ländern, Geräten und Referrern. Jeder, der den Link hat, kann sie öffnen. Suchmaschinen indexieren sie nicht, und sie zeigt nichts über die Personen, die gescannt haben.
+Jeder dynamische QR-Code kann eine geteilte Statistikseite haben: eine schreibgeschützte Seite unter `/stats/<token>` mit Scans im Zeitverlauf, Top-Ländern, Geräten und Referrern. Jeder, der den Link hat, kann sie öffnen. Suchmaschinen indexieren sie nicht, und sie zeigt nichts über die Personen, die gescannt haben.
 
-Mit Pro und Business kannst du die Marke eines Kunden auf dieser Seite anzeigen. Oben zeigt sie dann den Namen, das Logo und die Akzentfarbe des Kunden sowie den Namen des Kunden im Browser-Tab und in Link-Vorschauen. So kannst du sie dem Kunden als seinen Bericht schicken.
+Mit Pro und Business kannst du die Marke eines Kunden auf diese Seite setzen. Oben zeigt sie dann Namen, Logo und Akzentfarbe des Kunden, und der Name des Kunden steht im Browser-Tab und in Link-Vorschauen. So kannst du sie dem Kunden als seinen Bericht schicken.
 
 | | Kostenlos | Pro | Business |
 | --- | --- | --- | --- |
 | Geteilte Statistikseite | Ja | Ja | Ja |
 | Name, Logo und Farbe des Kunden | Nein | Ja | Ja |
-| QRdx auf der Seite | Kopfzeile und Fußzeile | Ein kleines „Made with QRdx“ unten | Keine |
+| QRdx auf der Seite | Header und Footer | Ein kleines „Made with QRdx“ unten | Keins |
 | Link auf deiner eigenen Domain | Nein | Nein | Ja |
 
 ## Statistiken eines Codes teilen [#share-a-codes-stats]
 
-1. Öffne unter [Codes](/dashboard?to=codes) das **⋯**-Menü des Codes und wähle **Analysen teilen**.
-2. Aktiviere **Öffentliche Analyseseite** und kopiere den Link.
+1. Öffne in [Codes](/dashboard?to=codes) das Menü **⋯** des Codes und wähle **Share analytics**.
+2. Aktiviere **Public analytics page** und kopiere den Link.
 
-**Link zurücksetzen** erstellt einen neuen Link und deaktiviert den alten sofort. Die Branding-Einstellungen der Seite bleiben erhalten. Wenn du die Seite deaktivierst, gibt ihr Link einen 404-Fehler zurück und das Branding wird entfernt. Die Marke selbst bleibt gespeichert.
+**Reset link** erzeugt einen neuen Link und deaktiviert den alten sofort. Das Branding der Seite bleibt erhalten. Wenn du die Seite ausschaltest, führt ihr Link zu einem 404 und ihr Branding wird entfernt; die Marke selbst bleibt gespeichert.
 
-## Kundenmarke hinzufügen [#add-the-clients-brand]
+## Die Marke des Kunden hinzufügen [#add-the-clients-brand]
 
-Sobald die Seite aktiv ist, enthält derselbe Dialog den Abschnitt **Kunden-Branding**.
+Sobald die Seite aktiv ist, hat derselbe Dialog einen Bereich **Client branding**.
 
-1. Öffne das Menü und wähle **Neue Kundenmarke**.
-2. Gib den Namen des Kunden ein, füge ein Logo hinzu (lade ein Bild hoch oder füge eine `https`-Bild-URL ein) und wähle optional eine Akzentfarbe.
-3. Klicke auf **Hinzufügen und verwenden**. Die Seite zeigt die Marke sofort an.
+1. Öffne das Menü und wähle **New client brand**.
+2. Gib den Namen des Kunden ein, füge ein Logo hinzu (lade ein Bild hoch oder füge eine `https`-Bild-URL ein) und wähle, wenn du möchtest, eine Akzentfarbe.
+3. Klicke auf **Add and use**. Die Seite zeigt die Marke sofort.
 
-Marken werden im Workspace gespeichert. Für den nächsten Code desselben Kunden musst du die Marke also nur im Menü auswählen. Mit der Stift-Schaltfläche bearbeitest du die ausgewählte Marke überall, wo sie verwendet wird. Wenn du eine Marke löschst, wird jede Seite, die sie verwendet hat, wieder zu einer einfachen Seite.
+Marken werden im Workspace gespeichert. Beim nächsten Code für denselben Kunden musst du die Marke also nur im Menü auswählen. Mit dem Stift-Button bearbeitest du die ausgewählte Marke überall dort, wo sie verwendet wird. Wenn du eine Marke löschst, wird jede Seite, die sie verwendet hat, wieder zu einer schlichten Seite.
 
-Die Akzentfarbe wird sparsam eingesetzt: im Scan-Diagramm und in der Logo-Kachel. Wenn die Farbe auf einem weißen oder schwarzen Hintergrund schlecht zu sehen wäre, verwendet das jeweilige Design für das Diagramm die normale Textfarbe der Seite. Lass das Akzentfeld leer, wenn du eine komplett monochrome Seite möchtest.
+Die Akzentfarbe wird sparsam eingesetzt: im Scan-Diagramm und auf der Logo-Kachel. Wäre die Farbe auf weißem oder schwarzem Hintergrund schwer zu erkennen, bleibt das Diagramm in diesem Theme in der Textfarbe der Seite. Lass die Akzentfarbe leer, wenn die Seite komplett monochrom sein soll.
 
-Owner, Admins und Mitglieder können eine Seite branden. Viewer und Abrechnungsmitglieder können die Einstellung sehen, aber nicht ändern.
+Inhaber, Admins und Mitglieder können eine Seite mit einer Marke versehen. Betrachter und Abrechnungsmitglieder sehen die Einstellung, können sie aber nicht ändern.
 
-## Business: kein QRdx-Zeichen, auf deiner Domain [#business-no-qrdx-mark-on-your-domain]
+## Business: ohne QRdx-Kennzeichnung, auf deiner Domain [#business-no-qrdx-mark-on-your-domain]
 
-Bei Business hat eine gebrandete Seite kein QRdx-Zeichen: kein QRdx-Logo in der Kopfzeile, keine Quellenangabe in der Fußzeile und kein „QRdx“ im Tab-Titel. Der Browser-Tab zeigt das Logo des Kunden oder dessen Initial. Liegt der Kurzlink des Codes auf der Domain von QRdx, lässt die Seite ihn weg.
+Mit Business hat eine Seite mit Kundenmarke keine QRdx-Kennzeichnung: kein QRdx-Logo im Header, keinen Credit im Footer und kein „QRdx“ im Tab-Titel. Der Browser-Tab zeigt das Logo des Kunden oder dessen Initiale. Liegt der Kurzlink des Codes auf der Domain von QRdx, lässt die Seite ihn weg.
 
-<IfAvailable feature="customDomains" id="serve-the-page-on-your-domain" title="Seite auf deiner Domain bereitstellen">
+<IfAvailable feature="customDomains" id="serve-the-page-on-your-domain" title="Die Seite auf deiner Domain ausliefern">
 
-Ein Business-Workspace mit einer verifizierten [eigenen Domain](/docs/custom-domains) kann die Seite dort bereitstellen. Wähle im Dialog unter **Linkadresse** die Domain aus. Der Link wird zu `https://<your domain>/stats/<token>`.
+Ein Business-Workspace mit einer verifizierten [eigenen Domain](/docs/custom-domains) kann die Seite dort ausliefern. Wähle im Dialog unter **Link address** die Domain aus. Der Link lautet dann `https://<your domain>/stats/<token>`.
 
 Die Domain liefert nur Seiten aus, die du ihr zugewiesen hast, und nur solange der Workspace auf Business ist. Die QRdx-Adresse derselben Seite funktioniert weiterhin.
 
@@ -50,14 +50,14 @@ Die Domain liefert nur Seiten aus, die du ihr zugewiesen hast, und nur solange d
 
 ## Was die Seite zeigt [#what-the-page-shows]
 
-- Scans und eindeutige Besucher für die letzten 7, 30 oder 90 Tage, so weit zurück, wie der Tarif des Workspace den Verlauf speichert, bei Pro und Business auch für die gesamte Zeit
+- Scans und eindeutige Besucher für die letzten 7, 30 oder 90 Tage, so weit zurück, wie der Tarif des Workspaces den Verlauf speichert, oder für den gesamten Zeitraum mit Pro und Business
 - QR-Scans und NFC-Taps
 - Scans pro Tag, Top-Länder, Gerätetypen und Referrer-Seiten
 
-Sie zeigt nie den Pfad oder die Query-Zeichenfolge des Ziels, Städte, genaue Standorte oder etwas zu einzelnen Scans. Zahlen können bis zu 5 Minuten alt sein.
+Sie zeigt nie den Pfad oder den Query-String des Ziels, Städte, genaue Standorte oder irgendetwas zu einzelnen Scans. Die Zahlen können bis zu 5 Minuten alt sein.
 
 ## Wenn sich der Tarif ändert [#if-the-plan-changes]
 
-Das Branding bleibt erhalten, wird aber nur angezeigt, solange der Tarif es enthält. Wechselt ein Business-Workspace zu Pro, erhalten seine Seiten das kleine „Made with QRdx“ zurück, und ihre Links auf eigenen Domains funktionieren nicht mehr. Die QRdx-Adresse funktioniert weiterhin. Bei Kostenlos zeigt die Seite keine Kundenmarke. Ein erneutes Upgrade stellt beides wieder her.
+Das Branding bleibt erhalten, wird aber nur angezeigt, solange der Tarif es enthält. Wechselt ein Business-Workspace zu Pro, bekommen seine Seiten wieder das kleine „Made with QRdx“, und ihre Links auf der eigenen Domain funktionieren nicht mehr; die QRdx-Adresse funktioniert weiterhin. Mit Kostenlos zeigt die Seite keine Kundenmarke. Wenn du wieder upgradest, ist beides wieder da.
 
-Wenn du einem Kunden eine Übersicht über viele Codes gleichzeitig geben möchtest, mit seinen Analysen und gehosteten Seiten, nutze bei Business das [Kundenportal](/docs/client-portal).
+Wenn du einem Kunden eine Ansicht vieler Codes auf einmal geben willst, samt Analysen und gehosteten Seiten, nutze das [Kundenportal](/docs/client-portal) mit Business.
