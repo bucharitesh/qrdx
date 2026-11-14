@@ -30,6 +30,7 @@ import createNextIntlPlugin from "next-intl/plugin";
 import { env } from "@/env";
 import { DOCS_REDIRECTS } from "@/lib/docs-redirects";
 import mediaManifest from "@/lib/media-manifest.json";
+import { MOVED_PAGES } from "@/lib/moved-pages";
 
 type Rewrites = Awaited<ReturnType<NonNullable<NextConfig["rewrites"]>>>;
 type RewritePhases = Required<Exclude<Rewrites, unknown[]>>;
@@ -330,6 +331,11 @@ let nextConfig: NextConfig = {
       // /help, /support and moved docs pages (lib/docs-redirects.ts), on
       // QRdx's own hosts: on a custom domain those paths are short links.
       ...DOCS_REDIRECTS.map((redirect) => ({
+        ...redirect,
+        has: [{ type: "host" as const, value: `(?:${PLATFORM_HOSTS})` }],
+      })),
+      // Site pages that moved (lib/moved-pages.ts), also on QRdx's own hosts.
+      ...MOVED_PAGES.map((redirect) => ({
         ...redirect,
         has: [{ type: "host" as const, value: `(?:${PLATFORM_HOSTS})` }],
       })),

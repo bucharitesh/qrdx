@@ -109,6 +109,10 @@
         "name": "ब्लॉग",
         "description": "QR कोड की गाइड और ख़बरें"
       },
+      "customers": {
+        "name": "ग्राहक",
+        "description": "कंपनियाँ QRdx कैसे इस्तेमाल करती हैं"
+      },
       "compare": {
         "name": "तुलना",
         "description": "QRdx की दूसरे जनरेटर और लाइब्रेरी से तुलना"
@@ -211,6 +215,7 @@
       "github": "GitHub",
       "help": "हेल्प सेंटर",
       "blog": "ब्लॉग",
+      "customers": "ग्राहक",
       "changelog": "चेंजलॉग",
       "integrations": "इंटीग्रेशन",
       "industries": "इंडस्ट्री के हिसाब से QR कोड",

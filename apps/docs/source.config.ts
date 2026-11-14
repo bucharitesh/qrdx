@@ -224,6 +224,27 @@ export const blog = defineDocs({
   },
 });
 
+// Customer stories, served at /customers/<customer id>. One file per company
+// in lib/customers.ts, named after its id (content/customers/flam.mdx). The
+// customer's `published` switch there is the only thing that puts a story
+// on the site (lib/content-source.ts).
+export const customers = defineDocs({
+  dir: "content/customers",
+  docs: {
+    schema: frontmatterSchema
+      .extend({
+        date: z.string(),
+        /** Last substantive update (YYYY-MM-DD) */
+        updated: z.string().optional(),
+        tags: z.array(z.string()).optional(),
+        /** A site path (e.g. /customers/<id>/cover.svg) */
+        image: z.string(),
+        imageAlt: z.string().optional(),
+      })
+      .transform(fillFactsDeep),
+  },
+});
+
 // Each page's "last modified" date comes from git. A Docker build has
 // neither the git binary nor the .git folder (see .dockerignore), and
 // fumadocs fails the whole build when it can't run git, so there the dates

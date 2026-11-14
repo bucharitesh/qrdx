@@ -104,6 +104,7 @@ const fixture = (overrides: Partial<LlmsTxtInput> = {}): LlmsTxtInput => ({
     },
   ],
   blog: [{ title: "A post", url: "/blog/a-post" }],
+  customers: [{ title: "A customer story", url: "/customers/acme" }],
   compare: [{ title: "QRdx vs X", url: "/compare/x" }],
   legal: [{ title: "Privacy Policy", url: "/legal/privacy-policy" }],
   integrations: [{ title: "Slack", url: "/integrations/slack" }],
@@ -157,6 +158,9 @@ describe("llms.txt", () => {
       "/legal/privacy-policy",
       "/docs/help",
       "/llms-full.txt",
+      "/blog/a-post",
+      "/customers",
+      "/customers/acme",
     ]) {
       expect(targets).toContain(`${LOCAL.origin}${path}`);
     }
