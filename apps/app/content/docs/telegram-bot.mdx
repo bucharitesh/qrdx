@@ -1,0 +1,83 @@
+---
+title: Telegram bot
+description: Make and style QR codes in Telegram. Send the QRdx bot a link, call it inline in any chat, or use /qr in a group. No account needed.
+icon: Bot
+---
+
+The QRdx bot turns a link or any text into a QR code inside Telegram. It's free, and you don't need a QRdx account.
+
+<IfAvailable feature="telegramBot">
+To start, click **Open in Telegram** on the [Telegram integration page](/integrations/telegram), then tap **Start** in the bot's chat.
+</IfAvailable>
+
+## Private chat
+
+Send the bot a link or some text, and it replies with the QR code and four buttons:
+
+- **Download PNG** opens the image, ready to save or share.
+- **Download SVG** opens a vector version for print and design tools.
+- **Open in editor** opens the QRdx editor with the same design. A web address goes along with it. Other text doesn't, so paste it into the editor yourself.
+- **Style** changes the look of the code right in the chat (see below).
+
+The code holds exactly what you sent, line breaks included. Send `/help` (or `/start`) to see how to use the bot. If the text is too long for one QR code, the bot says so; a link to a page with the full text makes a smaller code that's easier to scan.
+
+## Style your code
+
+Tap **Style** under a code and four buttons take the place of the others: **Look**, **Color**, **Frame** and **Logo**. Each one opens its options, with a ✓ next to the one the code has now. Tap an option and the bot redraws the photo. **Back** returns to the four groups and **Done** brings the download buttons back. Each change builds on the code as it is now. In a group, only the person who asked for the code can restyle it; anyone else who taps gets a short note.
+
+The looks are some of the editor's built-in designs that read well at small sizes, and **Plain** goes back to black on white. A color puts the whole code in that color on white. The frames add a "Scan me" label, and the logos are the editor's quick icons.
+
+You can also style a code as you make it by adding options after the link or text, with the same names as the [QRdx CLI](/docs/developers/cli). This works in a private chat, after `/qr` in a group, and in inline mode, where it's the only way to style a code because there's no message to change yet:
+
+```text
+qrdx.dev --look modern --fg 0051ff --frame banner-bottom --frame-text "Scan me"
+```
+
+Everything before the first option is the content. The look is applied first and the other options on top of it, so `--look royal --fg 0051ff` keeps Royal's shapes in blue. If your phone turns `--` into a long dash, that works too. A wrong option or value gets a reply that lists the values it takes.
+
+| Option | What it changes | Values |
+| --- | --- | --- |
+| `--look` | The whole design, from one of the editor's presets | `plain`, `classic`, `modern`, `royal`, `folio`, `caffeine`, `retro`, `bordeaux`, `blossom` |
+| `--fg` (or `--color`) | The dots, and the corner eyes unless you set those too | A hex color such as `0051ff`, or `black`, `blue`, `green`, `red`, `purple`, `orange` |
+| `--bg` | The background | The same as `--fg` |
+| `--eye-color` | The three corner eyes | The same as `--fg` |
+| `--dot-color` | The centers of the corner eyes | The same as `--fg` |
+| `--body` | The shape of the dots | Any of the editor's {facts.bodyPatterns} dot shapes, such as `rounded`, `circle` or `classy` |
+| `--eye` | The shape of the corner eyes | Any of the {facts.eyeShapes} eye shapes, such as `square`, `rounded` or `gear` |
+| `--dot` | The shape of the eye centers | Any of the {facts.eyeCentres} center shapes, such as `square`, `rounded` or `circle` |
+| `--frame` | A frame around the code | `none` or any of the {facts.frameStyles} built-in frames, such as `banner-bottom`, `banner-top`, `speech-bubble` or `polaroid` |
+| `--frame-text` | The frame's label, up to 24 characters | Any text, in quotes when it has spaces. Without `--frame`, it goes on a banner under the code |
+| `--template` | A frame drawn as a template | `Arrow`, `StandardBox`, `SquareBorder`, `StrikedBox` or `Halloween` |
+| `--logo` | An icon in the middle | `link`, `wifi`, `location`, `phone`, `email`, `whatsapp`, `instagram`, `file`, `calendar` or `none` |
+
+Before the bot sends a styled code, QRdx checks it with the same scan score as the editor. When a design would be hard for phones to read, QRdx adjusts it (darker colors, plainer shapes or more error correction) and says so in the caption. If that still isn't enough, usually because the content is long, you get the code in black on white with a note.
+
+**Open in editor** opens the editor with the same design: colors, shapes, frame and border. The logo icon doesn't travel in the link, so pick it again in the editor.
+
+## Inline mode in any chat
+
+You can send a code to any chat without adding the bot to it. In the message field, type `@`, the bot's username, a space and a link or text. The code appears above the field after a moment. Tap it to send it, with the same three buttons. The people you're writing to don't need the bot.
+
+## Groups
+
+Add the bot to the group, then send `/qr` followed by a link or text, for example `/qr https://example.com/menu`. The bot replies to your message with the code.
+
+Bots in groups have privacy mode on by default, and this one keeps it on, so it doesn't see the group's conversation. Telegram passes it only commands meant for it and replies to its own messages. It answers `/qr`, `/start` and `/help` and ignores everything else. When a group has more than one bot, or the bot doesn't answer a plain `/qr`, add its username to the command: `/qr@` followed by the username, then the link or text.
+
+## Privacy
+
+QRdx doesn't save the codes you make, and the bot reads each message only to answer it.
+
+The content goes into the image link: Telegram loads each code's picture from a QRdx link that contains your text, and the design you picked. Restyling a code reads both back from that link, so QRdx doesn't save the code to restyle it. Like any link, it can end up in logs and caches, so don't make codes of passwords or other secrets. Telegram keeps the messages in the chat, as it does for any message.
+
+If you make a lot of codes in a short time, the bot asks you to wait a minute before the next one. Each restyle counts as a code. When a lot of people use it at once, it may say it's busy. Try again a minute later.
+
+## Remove the bot
+
+In a private chat, open the bot's profile and block it, or delete the chat. In a group, an admin removes the bot from the member list.
+
+Codes the bot already sent stay in the chat. Their buttons keep working, since they link straight to QRdx.
+
+## Self-hosting
+
+A self-hosted QRdx server can run its own bot. Create one with [@BotFather](https://t.me/BotFather), set `TELEGRAM_BOT_TOKEN`, `TELEGRAM_WEBHOOK_SECRET` and `TELEGRAM_BOT_USERNAME` on the server, and run the setup script. The steps are in [`plugins/telegram/README.md`](https://github.com/qrdxinc/qrdx/blob/main/plugins/telegram/README.md). Until all three variables are set, the bot's routes answer 404 and your site doesn't list the bot.

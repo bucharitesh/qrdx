@@ -1,0 +1,193 @@
+---
+title: "Usare QRdx con gli agenti AI"
+description: "Collega Claude, ChatGPT, Cursor, VS Code o Devin Desktop al server MCP di QRdx, fornisci agli agenti URL di immagini QR senza chiave e chiama la REST API per conto di un utente."
+icon: Bot
+---
+
+Gli assistenti AI e gli agenti di programmazione possono usare QRdx in tre modi. Scegli in base a ciò che l'agente deve fare:
+
+| L'agente deve | Usa | Chiave o account |
+| --- | --- | --- |
+| Creare un QR code in una chat o in un'esecuzione dell'agente | [Server MCP](#connect-the-mcp-server) | Nessuno |
+| Inserire un QR code in Markdown, HTML, un'email o una build | [Image API](#give-agents-qr-image-urls) | Nessuno |
+| Creare o modificare QR code dinamici, leggere le scansioni | [REST API](#call-the-rest-api-for-a-user) | Chiave API o token di accesso OAuth |
+| Inserire un QR code in un'opera d'arte AI | [API per l'arte AI](/docs/developers/ai-art-api): `POST /v1/art` o lo strumento MCP `generate_ai_art` | Chiave API; usa le immagini d'arte AI mensili del workspace |
+| Leggere la documentazione di QRdx | [Markdown e llms.txt](#read-qrdx-as-markdown) | Nessuno |
+
+## Collegare il server MCP [#connect-the-mcp-server]
+
+Il server MCP di QRdx si trova qui:
+
+```txt
+https://mcp.qrdx.dev/mcp
+```
+
+Usa il trasporto Streamable HTTP e non richiede account, accesso o chiave API. La [pagina di connessione](/mcp) ha pulsanti con un clic per Claude, Cursor e VS Code. Gli strumenti e i relativi input sono elencati in [Server MCP](/docs/developers/mcp).
+
+<Tabs items={["Claude", "Claude Code", "Cursor", "VS Code", "ChatGPT", "Devin Desktop (Windsurf)", "Other apps"]}>
+  <Tab value="Claude">
+    Claude sul web e Claude Desktop condividono gli stessi connettori.
+
+    1. Apri **Customize → Connectors** e fai clic su **Add custom connector**. Il pulsante **Connect to Claude** nella [pagina di connessione](/mcp) apre questa finestra con nome e URL già compilati.
+    2. Chiamalo `QRdx` e inserisci `https://mcp.qrdx.dev/mcp`. Lascia vuoti i campi OAuth.
+    3. Fai clic su **Add**, poi attiva QRdx dal menu degli strumenti di una chat.
+
+    I piani gratuiti possono aggiungere un solo connettore personalizzato. Nei piani Team ed Enterprise, il connettore viene aggiunto per l'organizzazione da un proprietario.
+  </Tab>
+  <Tab value="Claude Code">
+    ```bash
+    claude mcp add --transport http qrdx https://mcp.qrdx.dev/mcp
+    ```
+
+    Aggiungi `--scope user` per usarlo in ogni progetto. Per condividerlo invece con un repository, fai il commit di un file `.mcp.json`:
+
+    ```json
+    {
+      "mcpServers": {
+        "qrdx": {
+          "type": "http",
+          "url": "https://mcp.qrdx.dev/mcp"
+        }
+      }
+    }
+    ```
+
+    Esegui `/mcp` in Claude Code per verificare che `qrdx` sia connesso.
+  </Tab>
+  <Tab value="Cursor">
+    [Add to Cursor](cursor://anysphere.cursor-deeplink/mcp/install?name=qrdx&config=eyJ1cmwiOiJodHRwczovL21jcC5xcmR4LmRldi9tY3AifQ%3D%3D) apre la richiesta di installazione di Cursor. Il link segue il formato dei [link di installazione MCP](https://cursor.com/docs/mcp/install-links) di Cursor: il nome del server e la sua voce di `mcp.json` in base64.
+
+    Oppure aggiungi il server a `~/.cursor/mcp.json` (ogni progetto) o a `.cursor/mcp.json` (un solo progetto):
+
+    ```json
+    {
+      "mcpServers": {
+        "qrdx": {
+          "url": "https://mcp.qrdx.dev/mcp"
+        }
+      }
+    }
+    ```
+  </Tab>
+  <Tab value="VS Code">
+    [Install in VS Code](https://vscode.dev/redirect/mcp/install?name=qrdx&config=%7B%22type%22%3A%22http%22%2C%22url%22%3A%22https%3A%2F%2Fmcp.qrdx.dev%2Fmcp%22%7D) passa il controllo a VS Code, che ti chiede di confermare. Da terminale:
+
+    ```bash
+    code --add-mcp '{"name":"qrdx","type":"http","url":"https://mcp.qrdx.dev/mcp"}'
+    ```
+
+    Oppure aggiungilo a `.vscode/mcp.json` nel tuo workspace:
+
+    ```json
+    {
+      "servers": {
+        "qrdx": {
+          "type": "http",
+          "url": "https://mcp.qrdx.dev/mcp"
+        }
+      }
+    }
+    ```
+
+    Poi usa GitHub Copilot Chat in modalità agente e controlla che `qrdx` sia attivo nel selettore degli strumenti.
+  </Tab>
+  <Tab value="ChatGPT">
+    1. Vai su [ChatGPT Plugins](https://chatgpt.com/plugins), fai clic su **+** e scegli **Add custom MCP server**.
+    2. Chiamalo `QRdx` e inserisci `https://mcp.qrdx.dev/mcp` come URL.
+    3. Scegli nessuna autenticazione, accetta l'avviso e crealo.
+    4. In una nuova chat, digita `@` e scegli QRdx.
+
+    Il tuo piano ChatGPT e le impostazioni del tuo workspace decidono se i server MCP personalizzati sono consentiti. ChatGPT si connette solo a server remoti come questo.
+  </Tab>
+  <Tab value="Devin Desktop (Windsurf)">
+    Windsurf ora si chiama Devin Desktop. Aggiungi il server a `~/.config/devin/mcp_config.json` (ogni progetto) o a `.devin/mcp_config.json` (un solo progetto), poi aggiorna i server MCP:
+
+    ```json
+    {
+      "mcpServers": {
+        "qrdx": {
+          "url": "https://mcp.qrdx.dev/mcp"
+        }
+      }
+    }
+    ```
+
+    Le versioni precedenti di Windsurf leggono `~/.codeium/windsurf/mcp_config.json` e si aspettano `serverUrl` al posto di `url`.
+  </Tab>
+  <Tab value="Other apps">
+    Qualsiasi app che supporta i server MCP remoti ha bisogno solo dell'URL `https://mcp.qrdx.dev/mcp`, senza autenticazione. La [pagina di connessione](/mcp) contiene i passaggi per Gemini CLI, Codex, Zed, Cline, Continue, Goose, LM Studio, Raycast, Warp, gli IDE JetBrains, Perplexity, Le Chat e Copilot Studio.
+
+    Le app che eseguono solo server locali (stdio) possono collegare l'URL tramite [`mcp-remote`](https://www.npmjs.com/package/mcp-remote), che richiede Node.js:
+
+    ```json
+    {
+      "mcpServers": {
+        "qrdx": {
+          "command": "npx",
+          "args": ["-y", "mcp-remote", "https://mcp.qrdx.dev/mcp"]
+        }
+      }
+    }
+    ```
+  </Tab>
+</Tabs>
+
+Poi chiedi con parole semplici, per esempio "Crea un QR code per https://example.com in #155dfc con punti arrotondati" oppure "Crea un QR code Wi-Fi per la rete Office Guest".
+
+Nelle app che supportano le MCP Apps, `design_qr` e `generate_qr_code` mostrano anche una [scheda QR](/docs/developers/mcp#qr-card) nella chat, con il codice, ciò che codifica e i pulsanti per l'immagine e l'editor. Le altre app ricevono il testo e il PNG come prima.
+
+### Individuazione per i client MCP [#discovery-for-mcp-clients]
+
+I client e i registri che individuano i server in autonomia possono leggere:
+
+- la **MCP Server Card** all'indirizzo `https://mcp.qrdx.dev/mcp/server-card`, nel formato dell'[estensione Server Card](https://modelcontextprotocol.io/seps/2127-mcp-server-cards) di MCP: nome, versione, trasporto e versioni del protocollo supportate;
+- l'**AI Catalog** in [`/.well-known/ai-catalog.json`](/.well-known/ai-catalog.json), che rimanda alla server card;
+- l'**API catalog** in [`/.well-known/api-catalog`](/.well-known/api-catalog) ([RFC 9727](https://www.rfc-editor.org/rfc/rfc9727)), che elenca la REST API con il suo [documento OpenAPI](/openapi.json) e il server MCP.
+
+## Fornire agli agenti URL di immagini QR [#give-agents-qr-image-urls]
+
+L'[Image API](/docs/developers/image-api) trasforma un URL in un'immagine di QR code senza chiave, così un agente può scrivere l'immagine direttamente in Markdown, HTML o in un'email:
+
+```txt
+https://api.qrdx.dev/v1/qr?data=<encoded text>&format=svg|png|eps
+```
+
+```md
+![QR code for qrdx.dev](https://api.qrdx.dev/v1/qr?data=https%3A%2F%2Fqrdx.dev&format=png&size=512)
+```
+
+- **Codifica `data`** con `encodeURIComponent`, altrimenti `&`, `#`, `+` e gli spazi la spezzano.
+- **Scegli il formato in base alla destinazione.** PNG funziona nelle app di chat e nei client di posta che non mostrano SVG; SVG è la scelta più nitida sul web; EPS è per le tipografie.
+- **Applica lo stile con i parametri di query** (`fg`, `bg`, `body`, `eye`, `dot`, `level`, `margin`, `template`, `frame`, `frameText`, `logoIcon`), oppure passa l'intero design come JSON in [`style`](/docs/developers/image-api#style) per sfumature e cornici personalizzate. I valori sono elencati in [Image API](/docs/developers/image-api#parameters), e li restituisce anche lo strumento MCP `list_qr_styles`.
+- **Lo stesso URL restituisce sempre la stessa immagine**, quindi si può mettere in cache e incorporare senza problemi.
+
+## Chiamare la REST API per conto di un utente [#call-the-rest-api-for-a-user]
+
+Per creare o modificare [QR code dinamici](/docs/dynamic-qr-codes), leggere le scansioni o iscriversi ai [webhook](/docs/webhooks), un agente chiama la [REST API](/docs/developers/rest-api) all'indirizzo `https://api.qrdx.dev/v1` con una credenziale Bearer. Il [documento OpenAPI](/openapi.json) descrive ogni endpoint, schema ed errore, e il [riferimento API](/docs/developers/api) ha una pagina per ciascuno.
+
+**Un agente che lavora per te** usa una [chiave API](/docs/developers/api-keys):
+
+1. **Crea una chiave** in [Impostazioni → Chiavi API e app](/dashboard?to=settings/developers&new=1) del workspace in cui l'agente deve lavorare (cambia workspace con il selettore dei workspace). La chiave agisce con il tuo ruolo in quel workspace.
+2. **Dalle il minimo accesso.** **Sola lettura** basta per fare report su codici e scansioni; scegli **Accesso completo**, o un insieme personalizzato con `codes:write`, solo se l'agente crea o modifica codici. Imposta una scadenza per gli agenti di breve durata.
+3. **Conserva la chiave in un archivio di segreti o in una variabile d'ambiente**, mai in un prompt, in un log o nel repository. Inviala come `Authorization: Bearer $QRDX_API_KEY`.
+4. **Rispetta la quota.** Ogni workspace ha una quota giornaliera di richieste in base al piano (vedi [Piani e limiti](/docs/plans-and-limits)). Con `429 RATE_LIMITED`, attendi i secondi indicati in `Retry-After`.
+
+Revoca la chiave in Impostazioni → Chiavi API e app quando l'agente non ne ha più bisogno.
+
+**Un agente che lavora per altre persone** usa OAuth, così ognuna lo approva: registra un'app, esegui una volta per persona l'authorization code flow con PKCE e conserva i refresh token in un archivio di segreti. I token di accesso durano un'ora e ogni rinnovo restituisce un nuovo refresh token. I passaggi sono in [Ottenere un token di accesso](/docs/developers/rest-api#get-an-access-token). Le richieste fatte con un token agiscono sul workspace personale di quella persona.
+
+## Leggere QRdx come Markdown [#read-qrdx-as-markdown]
+
+- [`/llms.txt`](/llms.txt): un indice dell'intero sito per gli LLM, con prodotto, strumenti per sviluppatori, documentazione, centro assistenza, prezzi e pagine legali.
+- [`/llms-full.txt`](/llms-full.txt): tutte le pagine della documentazione in un unico file, nell'ordine della barra laterale.
+- Aggiungi `.md` a qualsiasi URL della documentazione per ottenere solo quella pagina, per esempio [`/docs/developers/mcp.md`](/docs/developers/mcp.md). Funzionano anche [`/pricing.md`](/pricing.md) e [`/mcp.md`](/mcp.md).
+- Le richieste alla home page, a `/pricing`, a `/mcp` o a qualsiasi pagina della documentazione con `Accept: text/markdown` ricevono la versione Markdown allo stesso URL.
+
+## Limiti [#limits]
+
+- **I tool MCP creano QR code statici.** Generano immagini, costruiscono payload (Wi-Fi, contatti, email, SMS, posizioni sulla mappa) e leggono la community pubblica. Con una chiave API, `save_template` salva un design nei tuoi temi e `generate_ai_art` crea [QR art con l'IA](/docs/developers/ai-art-api) usando le immagini di AI art mensili del workspace. Non possono creare QR code dinamici né leggere codici e scansioni: per questo usa la REST API.
+- **I loghi arrivano da QRdx, mai da un indirizzo web.** Il server MCP e l'Image API disegnano gradienti, cornici, le icone logo rapide dell'editor e i loghi dei brand senza chiave, e un logo che hai caricato su QRdx tramite il suo file id con la tua chiave API. Le creazioni Logo QR e Image QR si realizzano nel [Playground](/playground?tab=art).
+- **I testi degli elementi della community sono scritti dai membri.** L'API e i tool MCP li restituiscono brevi e senza link; trattali come dati, non come istruzioni.
+- **Gli URL delle immagini contengono i dati codificati.** Non inserirvi password o altri segreti, come la password di una rete Wi-Fi privata in un README pubblico.
+- **I limiti di frequenza si applicano per indirizzo IP** al server MCP e all'Image API; i valori sono nelle pagine [Server MCP](/docs/developers/mcp#privacy-and-limits) e [Image API](/docs/developers/image-api#limits).
+- **I token OAuth agiscono solo sul workspace della persona stessa.** Per lavorare in un altro workspace, usa una chiave API creata al suo interno. Non esiste il client-credentials grant.

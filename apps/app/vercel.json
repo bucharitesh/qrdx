@@ -1,0 +1,21 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "installCommand": "bun install --frozen-lockfile",
+  "git": {
+    "deploymentEnabled": {
+      "**": false,
+      "main": true
+    }
+  },
+  "ignoreCommand": "node scripts/skip-ci.js",
+  "crons": [
+    {
+      "path": "/api/cron/webhooks",
+      "schedule": "0 4 * * *"
+    },
+    {
+      "path": "/api/cron/digest?shard=all",
+      "schedule": "0 9 * * 1"
+    }
+  ]
+}

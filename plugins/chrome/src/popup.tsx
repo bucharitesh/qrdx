@@ -23,7 +23,7 @@ import {
 } from "./storage";
 
 const PLAYGROUND_URL = "https://qrdx.dev/playground?ref=chrome-extension";
-// The playground's limit for a link it opens with (apps/docs/lib/playground-links.ts).
+// The playground's limit for a link it opens with (apps/app/lib/playground-links.ts).
 const MAX_LINK_URL_LENGTH = 2048;
 const PREVIEW_SIZE = 192;
 const THUMB_SIZE = 56;

@@ -1,0 +1,110 @@
+---
+title: "开发者"
+description: "使用 QRdx 构建应用的所有方式：从无需密钥的图片 URL，到 REST API、webhook、MCP 和 CLI。"
+icon: Terminal
+---
+
+请选择适合你所构建内容的接入方式。前三种无需账号，也无需密钥。
+
+## 无需密钥 [#no-key-needed]
+
+<Cards>
+  <Card
+    icon={<ImageDown />}
+    href="/docs/developers/image-api"
+    title="二维码图片 API"
+    description="通过 URL 获取二维码图片。可直接粘贴到 Markdown、HTML 或电子邮件中。"
+  />
+  <Card
+    icon={<Bot />}
+    href="/docs/developers/mcp"
+    title="MCP 服务器"
+    description="让 Claude、Cursor、VS Code 等 AI 工具生成带样式的二维码。"
+  />
+  <Card
+    icon={<Terminal />}
+    href="/docs/developers/cli"
+    title="CLI"
+    description="在终端或 CI 中生成 SVG、PNG、WebP 或 EPS 二维码。"
+  />
+</Cards>
+
+## 使用账号 [#with-an-account]
+
+<Cards>
+  <Card
+    icon={<Rocket />}
+    href="/docs/developers/quickstart"
+    title="快速入门"
+    description="两分钟内发出第一个 API 请求，然后创建 API 密钥和动态二维码。"
+  />
+  <Card
+    icon={<LockKeyhole />}
+    href="/docs/developers/api-keys"
+    title="API 密钥"
+    description="为你的服务器和脚本创建 qrdx_ 密钥，权限范围限定在一个工作区。"
+  />
+  <Card
+    icon={<Code />}
+    href="/docs/developers/rest-api"
+    title="REST API 与 OAuth"
+    description="通过 HTTP 创建和编辑动态二维码、读取扫描数据并上报转化。"
+  />
+  <Card
+    icon={<FileCode />}
+    href="/docs/developers/api"
+    title="API 参考"
+    description="包含所有端点，附有 curl、JavaScript 和 Python 示例，以及“试一试”面板。"
+  />
+  <Card
+    icon={<Webhook />}
+    href="/docs/webhooks"
+    title="Webhook"
+    description="针对扫描、二维码变更和表单回复的签名事件。可与 Zapier、Make 和 n8n 配合使用。"
+  />
+  <Card
+    icon={<Blocks />}
+    href="/docs/developers/n8n"
+    title="n8n"
+    description="适用于 n8n 的 QRdx 节点：二维码图片、动态二维码、扫描数据，以及 QRdx 事件触发器。"
+  />
+  <Card
+    icon={<Blocks />}
+    href="/docs/developers/build-an-integration"
+    title="构建集成"
+    description="通过 OAuth 2.0 和 PKCE，让用户把自己的 QRdx 账号连接到你的应用。"
+  />
+  <Card
+    icon={<TriangleAlert />}
+    href="/docs/developers/errors"
+    title="错误"
+    description="API 返回的所有错误、其含义以及解决方法。"
+  />
+</Cards>
+
+## 在你自己的代码中 [#in-your-own-code]
+
+<Cards>
+  <Card
+    icon={<Rocket />}
+    href="/docs/getting-started"
+    title="React 库"
+    description="使用 qrdx 包渲染并导出带样式的二维码。"
+  />
+  <Card
+    icon={<Server />}
+    href="/docs/self-hosting"
+    title="自托管"
+    description="在你自己的服务器上运行整个应用，包括动态二维码。"
+  />
+</Cards>
+
+## 基础 URL 与身份验证 [#base-url-and-authentication]
+
+REST API 位于 `https://api.qrdx.dev/v1`。相同的路由也可通过 `https://qrdx.dev/api/v1` 访问。
+
+请求通过 `Authorization: Bearer` 请求头中的 [API 密钥](/docs/developers/api-keys)进行身份验证。代表其他 QRdx 用户操作的应用则改为在此处发送 [OAuth 2.0 访问令牌](/docs/developers/rest-api#get-an-access-token)。[快速入门](/docs/developers/quickstart#create-an-api-key)会创建一个密钥并发出第一个请求。
+
+## 获取最新动态 [#stay-up-to-date]
+
+库、CLI 和 API 的变更记录在[更新日志](/changelogs)中。源代码托管在 [GitHub](https://github.com/qrdxinc/qrdx) 上。

@@ -83,7 +83,7 @@ describe("route handlers and the compiled docs", () => {
     const names = routes.map((file) => relative(app, file));
     expect(names).toContain("app/llms.mdx/[[...slug]]/route.ts");
     expect(names).toContain("app/api/search/route.ts");
-    expect(names).toContain("app/sitemap.ts");
+    expect(names).toContain("app/zone/docs-manifest.json/route.ts");
   });
 
   it("never imports lib/source.ts", () => {

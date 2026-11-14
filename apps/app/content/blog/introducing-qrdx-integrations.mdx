@@ -1,0 +1,143 @@
+---
+title: Introducing QRdx Integrations
+description: QRdx connects to Bitly, Dub, Google Drive, Dropbox, Stripe, Shopify, Zapier, Make, n8n, Google Sheets and your analytics pixels. What each one does and what it needs.
+date: "2026-11-05"
+updated: "2026-11-05"
+author: ["ritesh-bucha"]
+category: Company News
+tags: ["integrations", "dub", "bitly", "google drive", "zapier", "webhooks", "oauth"]
+image: /blog/introducing-qrdx-integrations/cover.svg
+imageAlt: "Line drawing of a QR code on a round hub connected by pipes to four tool blocks: a link, a folder, a plug and a key"
+related: ["qr-code-api-guide", "dynamic-vs-static-qr-codes"]
+published: true
+---
+
+Integrations connect QRdx to the tools you already use. Some fill in the QR editor for you, like a link shortened with your own Bitly account or a file picked from Dropbox. Others send what happens in QRdx somewhere else, such as a Discord channel, a Zap or a Google Sheet. The [integrations page](/integrations) lists every one this site offers, each with its setup steps.
+
+Each integration has one of three labels. **Connect** means you sign in to the other service, or paste an API key from it, under Settings → Integrations. **Built in** means there's nothing to connect, because you paste a link or an ID into QRdx. **Guide** means it runs inside the other tool on QRdx webhooks, and the page walks you through the setup.
+
+## Short links in the editor
+
+<Figure
+  src="/blog/introducing-qrdx-integrations/dub.svg"
+  alt="Line drawing of a long link strip shortened into a small link tag, a QR code on a stand and a bar chart of rising clicks"
+  width={1600}
+  height={1067}
+  caption="The code holds the short link, so you repoint it and count its clicks in the service that made it."
+/>
+
+Connect Bitly, Rebrandly or Short.io, and the URL type in the QR editor can shorten its link. Open **Use a link from…** next to the address and pick the service. QRdx creates the link in your account, or lets you pick one you already have, and the QR code encodes that short link.
+
+- Bitly connects with a Bitly sign-in or a generic access token you paste. Links go on bit.ly or one of your branded domains, and Bitly picks the back-half.
+- Rebrandly takes an API key. You choose the domain and the slashtag.
+- Short.io takes a secret API key and asks which of your domains new links use. Type your own path, or let Short.io pick one.
+
+With all three, you change where the link points in that service, and that's where its clicks are counted. Bitly only lets paid Bitly plans change a destination. If you'd rather edit the destination in QRdx and get QRdx's scan analytics, make a [dynamic code](/docs/dynamic-qr-codes) instead.
+
+Dub has its own content type. Connect your Dub workspace and the editor can create a Dub link or pick an existing one. Settings → Integrations → Dub then shows each link's clicks by day, country, device, browser and OS. You can also paste any Dub link without connecting.
+
+## Files and folders
+
+<Figure
+  src="/blog/introducing-qrdx-integrations/drive.svg"
+  alt="Line drawing of an image lifted out of a folder and placed as the logo in the center of a QR code"
+  width={1600}
+  height={1067}
+  caption="A Drive image can go into a design, and a Drive file can be what the code opens."
+/>
+
+In the Google Drive content type, pick a document, sheet, slide deck, PDF or folder, and QRdx encodes its share link. People who scan need access to the file, so set its sharing to "Anyone with the link" in Drive if the code is public. You can also use your Drive images in a design.
+
+Dropbox shows up in the same **Use a link from…** menu. Browse or search your Dropbox and pick a file or folder, and QRdx creates its shared link or reuses the one it already has. If your team only allows team links, QRdx tells you right away, so a printed code doesn't send people to a sign-in page. Hosted pages can use Dropbox files too: PDF, audio, video and download blocks get **From Dropbox** and link straight to the file.
+
+<IfAvailable integration="onedrive">
+OneDrive works the same way. QRdx creates a view-only "Anyone with the link" sharing link, or an organization-only one where your admin turned "Anyone" links off, and tells you which one you got.
+</IfAvailable>
+
+<IfAvailable integration="box">
+Box turns on the item's shared link for people with the link. Where your Box admin only allows company links, QRdx creates one of those and says that only people signed in to your company's Box can open it.
+</IfAvailable>
+
+<IfAvailable integration="notion">
+Notion pages work too: QRdx encodes the page's "Publish to web" link. Notion's API can't publish a page for you, so if the one you pick isn't published yet, QRdx says so and shows you how.
+</IfAvailable>
+
+## Payment, product and booking links
+
+These integrations list things from your account in the URL type's **Use a link from…** menu, so you pick one instead of copying a link by hand.
+
+- Stripe lists your active Payment Links with their name, price and currency. It connects with a restricted key that can only read Payment Links. QRdx refuses full secret keys, and never sees payments, customers or balances.
+- Shopify lists your active products with their image and price, and encodes the product page on your store's primary domain. You connect an app you create for your own store with the `read_products` scope. It can also download a CSV of every product for the bulk importer.
+- Cal.com lists your event types and encodes the booking page. It connects with an API key from Cal.com.
+
+<IfAvailable integration="calendly">
+Calendly does the same for its event types. Sign in with Calendly, pick an active event type, and the code opens its scheduling page.
+</IfAvailable>
+
+YouTube and Spotify need no account at all. Paste a link into their content types and QRdx cleans it up: it drops the tracking parameters, keeps a video's start time and playlist, and previews the title and thumbnail or cover art before you print.
+
+## Scans and form responses, sent where you work
+
+On Business, QRdx sends signed webhooks for scans, scan milestones, new and changed codes, and form submissions. The Zapier, Make and n8n guides show how to catch them. You paste the address from a Webhooks by Zapier trigger, a Make custom webhook or an n8n Webhook node into Settings → Webhooks and pick the events (on Zapier's side, Webhooks by Zapier is a premium app). Each request carries an HMAC-SHA256 signature. QRdx tries a failed delivery up to 8 times over about two days, and scans arrive in batches of up to 100 a minute.
+
+Chat alerts are on Business too. Paste a Discord or Slack incoming webhook into Settings → Notifications and choose what to hear about: a code's first scan, scan milestones, form submissions and code changes. Each channel gets at most 30 alerts of one kind an hour, and the messages never mention @everyone, @here or a role, whatever visitors type into a form.
+
+<IfAvailable integration="slack">
+Slack also has an **Add to Slack** button, so you can pick a channel without creating a webhook first.
+</IfAvailable>
+
+Google Sheets is on the Free plan. Export the scans of one code, or of every code, to a new spreadsheet, and turn on **Keep in sync** to append new scans in batches, at most once every five minutes. Form responses from a hosted page export the same way, with one column per question. QRdx can only open spreadsheets it created, and it writes every cell as plain text, so nothing a visitor typed runs as a formula.
+
+<IfAvailable integration="hubspot">
+HubSpot turns form responses into contacts. You map each question to a contact property, and a response from an email address HubSpot already has updates that contact instead of creating a second one.
+</IfAvailable>
+
+<IfAvailable integration="mailchimp">
+Mailchimp adds the people who fill in a form to an audience, with tags. With a consent checkbox on the form, only people who tick it are subscribed, and nobody who unsubscribed is ever added back.
+</IfAvailable>
+
+## Your own analytics on hosted pages
+
+On Pro, a code that opens a hosted page can load your Google Analytics 4, Meta Pixel, TikTok Pixel or LinkedIn Insight Tag. Paste the ID in the Tracking pixels panel on the code's Settings tab. Pixels wait for consent: by default, visitors in the EU/EEA, the UK and Switzerland, and visitors whose location is unknown, choose Accept or Decline before anything loads. QRdx's own scan analytics don't use cookies, and it adds no third-party scripts of its own.
+
+<IfAvailable integration="google-tag-manager">
+Google Tag Manager works too, but only when the page opens on one of your [custom domains](/docs/custom-domains). A container can run any script, so it never runs on qrdx.dev, where visitors may be signed in to QRdx.
+</IfAvailable>
+
+## How connecting works
+
+<Figure
+  src="/blog/introducing-qrdx-integrations/oauth.svg"
+  alt="Line drawing of a padlock, a consent screen with two buttons, a key on the path between them, and a QR code on a stand"
+  width={1600}
+  height={900}
+  caption="You approve access on the other service's own page. QRdx gets a scoped token, never your password."
+/>
+
+Most Connect integrations use the other service's own sign-in, OAuth, so you approve access on their page and QRdx never sees your password. Dropbox, for example, asks only to see your files' names and to create shared links. The others take an API key you create in that service.
+
+Tokens and keys are stored encrypted, and QRdx refreshes sign-in tokens that are about to expire, so you don't have to reconnect. Integrations belong to your user account, and you can disconnect any of them in settings. Disconnecting deletes the stored token, and for Dropbox it also revokes the token with Dropbox. For services where you pasted a key, delete the key there too if you no longer use it. Codes you already made keep working, because they hold the link, not your token.
+
+## If you run your own QRdx
+
+On a self-hosted instance, the integrations that sign in with OAuth need an app at each service, with its client ID and secret in your environment. Bitly also works with pasted tokens, and Rebrandly, Short.io, Stripe, Shopify and Cal.com need nothing extra. In production every integration also needs `INTEGRATION_ENCRYPTION_KEY`, which encrypts the stored tokens. A production build hides any integration that isn't set up. The [self-hosting guide](/docs/self-hosting) and the [short links and file pickers](/docs/short-links-and-file-pickers#self-hosting) docs list the variables.
+
+## Build your own
+
+<Figure
+  src="/blog/introducing-qrdx-integrations/extensible.svg"
+  alt="Line drawing of a dock with three modules plugged in and a fourth hovering over its empty slot, a QR code standing behind"
+  width={1600}
+  height={1200}
+  caption="An integration you build is an OAuth app on QRdx. Once it's reviewed, it's listed next to these."
+/>
+
+If your product should make QR codes for its users, it can be a QRdx integration too. Create an OAuth app under Settings → API keys & apps, send people through QRdx's consent screen with OAuth 2.0 and PKCE, and call the [REST API](/docs/developers/rest-api) for them. A Free workspace can have one OAuth app, Pro five and Business 25. When it works end to end, email support@qrdx.dev to have it listed on the integrations page as a Community integration. The [Build an integration](/docs/developers/build-an-integration) guide covers every step.
+
+AI assistants and plugins have their own pages. The [MCP server](/mcp) lets Claude, ChatGPT, Cursor, VS Code and other MCP apps make QR codes in a chat, with no account. The Chrome extension is in the [Chrome Web Store](https://chromewebstore.google.com/detail/bpepiomjdoicpmbihlohodghdglkhicc), and the [plugins](/plugins) for Figma, Raycast and Canva install from source for now.
+
+Anything that accepts a webhook or calls an HTTP API works with QRdx. If there's a tool you'd like connected, [open an issue on GitHub](https://github.com/qrdxinc/qrdx/issues/new).
+
+[See all integrations →](/integrations)
+
+<GithubCard repo="qrdxinc/qrdx" />

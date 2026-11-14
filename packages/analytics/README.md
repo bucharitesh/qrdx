@@ -1,6 +1,6 @@
 # @repo/analytics
 
-QRdx's browser-side analytics and cookie consent: the cookie banner and preferences (c15t, local mode), the tools they gate, and `track()`. Client code only. The app's server parts stay in `apps/docs/lib/analytics` (`server.ts` for server events, `acquisition.ts`, `usage.ts`, the sign-up recorder), as does the server action that reads a user's plan (`apps/docs/actions/analytics.ts`).
+QRdx's browser-side analytics and cookie consent: the cookie banner and preferences (c15t, local mode), the tools they gate, and `track()`. Client code only. The app's server parts stay in `apps/app/lib/analytics` (`server.ts` for server events, `acquisition.ts`, `usage.ts`, the sign-up recorder), as does the server action that reads a user's plan (`apps/app/actions/analytics.ts`).
 
 | Module | What it holds |
 | --- | --- |
@@ -19,7 +19,7 @@ QRdx's browser-side analytics and cookie consent: the cookie banner and preferen
 
 ## What an app passes in
 
-- **Its untracked pages.** Which pages record nothing (the main app's customer pages, the scanner, template demos) depends on the app's routes, so the app registers them once, before anything can be tracked: `registerUntrackedPaths(isUntrackedPath)`. Until it does, every page counts as untracked and nothing is sent, so a missing registration loses numbers rather than recording a customer's page. The main app registers in `apps/docs/lib/analytics/privacy.ts`, which every analytics path in the app imports first.
+- **Its untracked pages.** Which pages record nothing (the main app's customer pages, the scanner, template demos) depends on the app's routes, so the app registers them once, before anything can be tracked: `registerUntrackedPaths(isUntrackedPath)`. Until it does, every page counts as untracked and nothing is sent, so a missing registration loses numbers rather than recording a customer's page. The main app registers in `apps/app/lib/analytics/privacy.ts`, which every analytics path in the app imports first.
 - **A link component** for the privacy policy links: `<ConsentManager link={…}>`. The main app passes `LocaleLink`, which keeps the visitor's language.
 - **Optionally, `getPlan`**: a function (the main app's server action) that returns the signed-in user's plan for PostHog's person properties. It's only called after the visitor allowed analytics. Without it, the plan is left out.
 - **Copy**: the components read the `consent` messages through next-intl, so the app's `NextIntlClientProvider` must include that namespace.
@@ -28,4 +28,4 @@ QRdx's browser-side analytics and cookie consent: the cookie banner and preferen
 <ConsentManager link={LocaleLink} getPlan={getAnalyticsPlan} />
 ```
 
-The main app wraps this in `apps/docs/components/consent/consent-manager.tsx`, and the files left at the old paths in `apps/docs/lib/analytics` and `apps/docs/components/consent` re-export this package so the app's imports keep working. The tests live in the app (`apps/docs/tests/lib/analytics.test.ts`, `apps/docs/tests/lib/consent-manager.test.tsx`).
+The main app wraps this in `apps/app/components/consent/consent-manager.tsx`, and the files left at the old paths in `apps/app/lib/analytics` and `apps/app/components/consent` re-export this package so the app's imports keep working. The tests live in the app (`apps/app/tests/lib/analytics.test.ts`, `apps/app/tests/lib/consent-manager.test.tsx`).

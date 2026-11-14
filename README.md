@@ -14,7 +14,7 @@
 <p align="center">
   <a href="LICENSING.md"><img src="https://img.shields.io/badge/license-AGPL--3.0%20%2B%20MIT-blue" alt="License: AGPL-3.0 app, MIT library, CLI and plugins" /></a>
   <a href="https://www.npmjs.com/package/qrdx"><img src="https://img.shields.io/npm/v/qrdx?label=qrdx%20on%20npm&color=f80" alt="qrdx version on npm" /></a>
-  <a href="https://github.com/bucharitesh/qrdx"><img src="https://img.shields.io/github/stars/bucharitesh/qrdx" alt="GitHub stars" /></a>
+  <a href="https://github.com/qrdxinc/qrdx"><img src="https://img.shields.io/github/stars/qrdxinc/qrdx" alt="GitHub stars" /></a>
 </p>
 
 <a href="https://qrdx.dev/playground?preset=restaurantMenu#url=https://qrdx.dev/menu">
@@ -152,8 +152,8 @@ npx @qrdx/cli generate "https://qrdx.dev" -o qr.png --body circle --eye rounded 
 You can run the whole web app yourself, dynamic codes and hosted pages included, with Docker Compose (Postgres included) or with Node.js. It needs three environment variables (`NEXT_PUBLIC_APP_URL`, `DATABASE_URL` and `BETTER_AUTH_SECRET`) and one way to sign in: a GitHub or Google OAuth app, or Resend for email sign-in codes. AI, payments, file storage, custom domains and the integrations are optional.
 
 ```bash
-git clone https://github.com/bucharitesh/qrdx.git && cd qrdx
-cp apps/docs/.env.example .env   # set BETTER_AUTH_SECRET and a sign-in method
+git clone https://github.com/qrdxinc/qrdx.git && cd qrdx
+cp apps/app/.env.example .env    # set BETTER_AUTH_SECRET and a sign-in method
 docker compose up -d --build
 ```
 
@@ -163,7 +163,7 @@ Read the [self-hosting guide](https://qrdx.dev/docs/self-hosting) before you run
 
 - The web app and everything else in this repository outside the folders below are licensed under the [GNU Affero General Public License v3.0 or later](LICENSE). If you run a modified version as a network service, you have to offer its source code to its users under the same license.
 - The React library ([`packages/qrdx`](packages/qrdx), from 0.0.47), the CLI ([`packages/cli`](packages/cli), from 0.0.5) and the plugins in [`plugins/`](plugins) are MIT-licensed, each with its own `LICENSE` file. Earlier npm releases of the library and the CLI were AGPL-3.0-or-later.
-- The `ee/` folders ([`apps/docs/ee`](apps/docs/ee), [`packages/auth/ee`](packages/auth/ee)) hold business features, today workspace single sign-on and the workspace audit log, under the QRdx Commercial License in each folder's `LICENSE.md`. You can read, test and contribute to that code; using it in production needs a written agreement with QRdx. On a self-hosted instance these features stay off unless `QRDX_EE_LICENSE` is set.
+- The `ee/` folders ([`apps/app/ee`](apps/app/ee), [`packages/auth/ee`](packages/auth/ee)) hold business features, today workspace single sign-on and the workspace audit log, under the QRdx Commercial License in each folder's `LICENSE.md`. You can read, test and contribute to that code; using it in production needs a written agreement with QRdx. On a self-hosted instance these features stay off unless `QRDX_EE_LICENSE` is set.
 
 [LICENSING.md](LICENSING.md) has the details.
 
@@ -171,7 +171,7 @@ The QRdx name and logo are trademarks. Read the [trademark policy](TRADEMARK.md)
 
 ## Contributing
 
-Bug reports, ideas and pull requests are welcome. [Open an issue](https://github.com/bucharitesh/qrdx/issues), or look for issues labeled `good first issue`. [CONTRIBUTING.md](CONTRIBUTING.md) covers local setup, the project layout and the checks to run. Report security issues privately, as [SECURITY.md](SECURITY.md) describes.
+Bug reports, ideas and pull requests are welcome. [Open an issue](https://github.com/qrdxinc/qrdx/issues), or look for issues labeled `good first issue`. [CONTRIBUTING.md](CONTRIBUTING.md) covers local setup, the project layout and the checks to run. Report security issues privately, as [SECURITY.md](SECURITY.md) describes.
 
 QRdx is a Bun and Turborepo monorepo: a Next.js app with React, TypeScript, Tailwind CSS, Drizzle on Postgres, Better Auth and the Vercel AI SDK. QR generation started from [qrcode.react](https://github.com/zpao/qrcode.react), and the playground layout was inspired by [tweakcn](https://github.com/jnsahaj/tweakcn).
 

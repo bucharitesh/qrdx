@@ -1,6 +1,6 @@
 // The QRdx figure set: small isometric drawings of the product (codes,
 // phones, pages, swatches, webhooks...) in the home hero's line style, each
-// with a real code drawn by qrdx. apps/docs/scripts/figure-art/generate.ts
+// with a real code drawn by qrdx. apps/app/scripts/figure-art/generate.ts
 // writes them as inline-SVG components in ./figures; the app's
 // tests/figure-art.test.ts checks every name has one, every code decodes and
 // every call site names a real figure.

@@ -5,7 +5,7 @@
  * search text: `track()` also strips anything that looks like them.
  *
  * Client events go through `track()` (track.ts), server events through the
- * app's `trackServer()` (apps/docs/lib/analytics/server.ts).
+ * app's `trackServer()` (apps/app/lib/analytics/server.ts).
  */
 
 /** How someone signed in (Better Auth's last-used login method). */
@@ -46,7 +46,7 @@ export interface AnalyticsEvents {
   // QR codes
   /**
    * An editor opened, once per mount: which one, and where the visit came
-   * from (editorOpenSource in apps/docs/lib/analytics/funnel.ts: a `ref`
+   * from (editorOpenSource in apps/app/lib/analytics/funnel.ts: a `ref`
    * tag, "direct", "external" or a site section). Never an address.
    */
   editor_opened: { surface: EditorSurface; source: string };
@@ -97,6 +97,10 @@ export interface AnalyticsEvents {
     locked_seed: boolean;
     reference: boolean;
     preset?: string;
+    /** The quick look (apps/app/components/sections/ai-art/looks.ts) */
+    look?: string;
+    /** How the code sits in the art: code, scene or photo */
+    mode?: string;
   };
   prompt_enhance_started: {
     length: number;
@@ -115,7 +119,7 @@ export interface AnalyticsEvents {
   template_used: { template_type: string };
 
   // NFC tags (feat/nfc): a code's NFC link written to a tag, or a tag locked.
-  // `error` is an apps/docs/lib/nfc/web-nfc.ts failure kind, never the link.
+  // `error` is an apps/app/lib/nfc/web-nfc.ts failure kind, never the link.
   nfc_tag_written: { result: "written" | "locked" | "failed"; error?: string };
 
   // Imports and integrations

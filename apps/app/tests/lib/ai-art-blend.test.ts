@@ -1,0 +1,466 @@
+// The least blend (lib/ai/art-blend.ts) on fake model images made from the
+// real control code: grid registration, the correction, the strength search
+// and its bounds, and the PNG it delivers. No network, no database.
+import {
+  type DecodedImage,
+  decodePNGPixels,
+  getQRFunctionModules,
+  scanQRPixels,
+} from "qrdx";
+import { beforeAll, describe, expect, it } from "vitest";
+import {
+  CODE_BLEND_STYLE,
+  correctArt,
+  encodePng,
+  findLeastBlend,
+  LEAST_BLEND_SCAN_SIZES,
+  leastBlendBounds,
+  locateGrid,
+  MIN_GRID_FIT,
+  ModuleKind,
+  moduleKinds,
+  type PixelScan,
+  SCENE_BLEND_STYLE,
+} from "@/lib/ai/art-blend";
+import {
+  type ControlImage,
+  controlGrid,
+  renderControlImage,
+} from "@/lib/ai/art-image";
+import { paintedArt, sceneArt, texturedArt } from "../support/ai-art-images";
+
+const TEXT = "https://qrdx.dev/q/Ab3dE9x";
+
+let control: ControlImage;
+let textured: DecodedImage;
+
+const pixelsOf = async (png: Uint8Array) => {
+  const pixels = await decodePNGPixels(png);
+  if (!pixels) throw new Error("unreadable PNG");
+  return pixels;
+};
+
+/** Mean absolute change per channel, 0–255. */
+function meanChange(a: DecodedImage, b: DecodedImage): number {
+  let sum = 0;
+  for (let i = 0; i < a.data.length; i += 4) {
+    for (let c = 0; c < 3; c++) {
+      sum += Math.abs((a.data[i + c] as number) - (b.data[i + c] as number));
+    }
+  }
+  return sum / ((a.data.length / 4) * 3);
+}
+
+beforeAll(async () => {
+  control = await renderControlImage(TEXT);
+  textured = await pixelsOf(await texturedArt(control.png));
+});
+
+describe("module map", () => {
+  it("marks the same function modules as the engine, for every version", () => {
+    for (let version = 1; version <= 40; version++) {
+      const kinds = moduleKinds(version);
+      const size = version * 4 + 17;
+      const functional = getQRFunctionModules(version);
+      for (let y = 0; y < size; y++) {
+        for (let x = 0; x < size; x++) {
+          const isData = kinds[y * size + x] === ModuleKind.data;
+          expect(isData, `v${version} (${x}, ${y})`).toBe(!functional[y]?.[x]);
+        }
+      }
+    }
+  });
+
+  it("reads the control's modules, with the finders where they belong", () => {
+    const { map } = control;
+    expect(map.size).toBe(control.modules);
+    // A finder: dark outer ring, light ring, dark center, light separator.
+    const at = (x: number, y: number) => map.dark[y * map.size + x];
+    expect([at(0, 0), at(1, 1), at(3, 3), at(7, 7)]).toEqual([1, 0, 1, 0]);
+    expect(map.kinds[0]).toBe(ModuleKind.finder);
+  });
+});
+
+describe("locateGrid", () => {
+  it("finds the control's grid in the control itself", async () => {
+    const grid = locateGrid(
+      await pixelsOf(control.png),
+      control.map,
+      controlGrid(control),
+    );
+    const expected = controlGrid(control);
+    expect(grid.fit).toBeGreaterThan(0.95);
+    expect(Math.abs(grid.left - expected.left)).toBeLessThan(2);
+    expect(Math.abs(grid.pitch / expected.pitch - 1)).toBeLessThan(0.01);
+  });
+
+  it("follows a code the model redrew 4% larger and off-center", async () => {
+    const moved = await pixelsOf(
+      await texturedArt(control.png, { scale: 1.04, shift: [-14, 10] }),
+    );
+    const expected = controlGrid(control);
+    const grid = locateGrid(moved, control.map, expected);
+    const size = control.modules * expected.pitch;
+    // Where the scaled, shifted code's corner really is
+    const left = 512 + (expected.left - 512) * 1.04 - 14;
+    const top = 512 + (expected.top - 512) * 1.04 + 10;
+    expect(grid.fit).toBeGreaterThan(0.8);
+    expect(Math.abs(grid.pitch / expected.pitch - 1.04)).toBeLessThan(0.01);
+    expect(Math.abs(grid.left - left)).toBeLessThan(size * 0.01);
+    expect(Math.abs(grid.top - top)).toBeLessThan(size * 0.01);
+  });
+});
+
+/**
+ * The code drawn on a grey canvas (150) with a light margin, at `pitch` px
+ * from (`left`, `top`): a picture square as the paint step lays it out.
+ */
+function drawCode(
+  map: ControlImage["map"],
+  { left, top, pitch }: { left: number; top: number; pitch: number },
+): { png: Uint8Array; grid: { left: number; top: number; pitch: number } } {
+  const size = 1024;
+  const data = new Uint8Array(size * size * 4).fill(150);
+  const fill = (x0: number, y0: number, w: number, h: number, v: number) => {
+    for (
+      let y = Math.max(0, Math.round(y0));
+      y < Math.min(size, Math.round(y0 + h));
+      y++
+    ) {
+      for (
+        let x = Math.max(0, Math.round(x0));
+        x < Math.min(size, Math.round(x0 + w));
+        x++
+      ) {
+        data.fill(v, (y * size + x) * 4, (y * size + x) * 4 + 3);
+      }
+    }
+  };
+  for (let i = 3; i < data.length; i += 4) data[i] = 255;
+  const side = map.size * pitch;
+  fill(
+    left - 1.5 * pitch,
+    top - 1.5 * pitch,
+    side + 3 * pitch,
+    side + 3 * pitch,
+    255,
+  );
+  for (let y = 0; y < map.size; y++) {
+    for (let x = 0; x < map.size; x++) {
+      if (map.dark[y * map.size + x]) {
+        fill(left + x * pitch, top + y * pitch, pitch, pitch, 0);
+      }
+    }
+  }
+  return {
+    png: encodePng({ width: size, height: size, data }),
+    grid: { left, top, pitch },
+  };
+}
+
+describe("scenes", () => {
+  it("finds a scene's code the model moved and shrank, with the wide search", async () => {
+    // Drawn at half the image's width and low, though the control asked for
+    // 64% centered: the model's choice, as GPT Image 2 makes it.
+    const drawn = drawCode(control.map, { left: 220, top: 560, pitch: 13 });
+    const art = await pixelsOf(await sceneArt(drawn.png, { speckle: 40 }));
+    const expected = drawCode(control.map, {
+      left: 195,
+      top: 195,
+      pitch: 19,
+    }).grid;
+    expect(locateGrid(art, control.map, expected).fit).toBeLessThan(0.6);
+    const grid = locateGrid(art, control.map, expected, { wide: true });
+    expect(grid.fit).toBeGreaterThan(0.9);
+    expect(Math.abs(grid.left - drawn.grid.left)).toBeLessThan(3);
+    expect(Math.abs(grid.top - drawn.grid.top)).toBeLessThan(3);
+    expect(Math.abs(grid.pitch / drawn.grid.pitch - 1)).toBeLessThan(0.02);
+  });
+
+  it("lightens light modules in the scene's own color, not toward white", async () => {
+    const scene = drawCode(control.map, { left: 195, top: 195, pitch: 19 });
+    const art = await pixelsOf(
+      await sceneArt(scene.png, { light: [90, 140, 200] }),
+    );
+    const grid = { ...scene.grid, fit: 1 };
+    const saturation = (style: typeof CODE_BLEND_STYLE) => {
+      const out = correctArt(art, control.map, grid, 1, style);
+      const { size, dark, kinds } = control.map;
+      let sum = 0;
+      let count = 0;
+      for (let i = 0; i < size * size; i++) {
+        if (dark[i] || kinds[i] !== ModuleKind.data) continue;
+        const x = Math.round(grid.left + ((i % size) + 0.5) * grid.pitch);
+        const y = Math.round(
+          grid.top + (Math.floor(i / size) + 0.5) * grid.pitch,
+        );
+        const p = (y * out.width + x) * 4;
+        const [r, g, b] = out.data.subarray(p, p + 3) as unknown as number[];
+        sum += Math.max(r!, g!, b!) - Math.min(r!, g!, b!);
+        count++;
+      }
+      return sum / count;
+    };
+    const kept = saturation(SCENE_BLEND_STYLE);
+    // The scene's blue (200 − 90 = 110 apart) mostly survives; toward white
+    // it fades.
+    expect(kept).toBeGreaterThan(70);
+    expect(kept).toBeGreaterThan(saturation(CODE_BLEND_STYLE) * 1.5);
+  });
+
+  it("touches less of the picture around the code than code mode's quiet zone", async () => {
+    const scene = drawCode(control.map, { left: 195, top: 195, pitch: 19 });
+    const art = await pixelsOf(await sceneArt(scene.png));
+    const grid = { ...scene.grid, fit: 1 };
+    const changeAround = (style: typeof CODE_BLEND_STYLE) => {
+      const out = correctArt(art, control.map, grid, 0.3, style);
+      // Two modules out from the code, left of it
+      const x = Math.round(grid.left - 2 * grid.pitch);
+      const y = Math.round(grid.top + 15 * grid.pitch);
+      const p = (y * out.width + x) * 4;
+      return Math.abs(
+        (out.data[p + 1] as number) - (art.data[p + 1] as number),
+      );
+    };
+    expect(changeAround(SCENE_BLEND_STYLE)).toBe(0);
+    expect(changeAround(CODE_BLEND_STYLE)).toBeGreaterThan(0);
+  });
+});
+
+// Byte equality without vitest's element-by-element deep compare, which took
+// over 30 s on CI for a full-size RGBA buffer.
+function sameBytes(a: Uint8Array | Uint8ClampedArray, b: Uint8Array): boolean {
+  return (
+    Buffer.compare(
+      Buffer.from(a.buffer, a.byteOffset, a.byteLength),
+      Buffer.from(b.buffer, b.byteOffset, b.byteLength),
+    ) === 0
+  );
+}
+
+describe("correctArt", () => {
+  it("leaves the image alone at strength 0 and never edits its input", () => {
+    const before = new Uint8Array(textured.data);
+    const grid = locateGrid(textured, control.map, controlGrid(control));
+    expect(
+      sameBytes(correctArt(textured, control.map, grid, 0).data, before),
+    ).toBe(true);
+    correctArt(textured, control.map, grid, 1);
+    expect(sameBytes(textured.data, before)).toBe(true);
+  });
+
+  it("changes the image more as the strength grows", () => {
+    const grid = locateGrid(textured, control.map, controlGrid(control));
+    const changes = [0.05, 0.3, 0.6, 1].map((s) =>
+      meanChange(textured, correctArt(textured, control.map, grid, s)),
+    );
+    for (let i = 1; i < changes.length; i++) {
+      expect(changes[i]).toBeGreaterThan(changes[i - 1] as number);
+    }
+  });
+
+  it("leaves the scene beyond the quiet zone untouched", () => {
+    const grid = locateGrid(textured, control.map, controlGrid(control));
+    const corrected = correctArt(textured, control.map, grid, 1);
+    // The image's corner pixel is far outside the code and its quiet zone.
+    expect([...corrected.data.subarray(0, 4)]).toEqual([
+      ...textured.data.subarray(0, 4),
+    ]);
+  });
+});
+
+describe("leastBlendBounds", () => {
+  it("maps QR visibility onto the search's floor and cap", () => {
+    expect(leastBlendBounds(0)).toEqual({
+      floor: 0,
+      cap: 0.6,
+      imageQRFallback: false,
+    });
+    expect(leastBlendBounds(50)).toEqual({
+      floor: 0,
+      cap: 1,
+      imageQRFallback: true,
+    });
+    expect(leastBlendBounds(100)).toEqual({
+      floor: 0.6,
+      cap: 1,
+      imageQRFallback: true,
+    });
+    expect(leastBlendBounds(500)).toEqual(leastBlendBounds(100));
+    let previous = leastBlendBounds(0);
+    for (let v = 5; v <= 100; v += 5) {
+      const bounds = leastBlendBounds(v);
+      expect(bounds.floor).toBeGreaterThanOrEqual(previous.floor);
+      expect(bounds.cap).toBeGreaterThanOrEqual(previous.cap);
+      previous = bounds;
+    }
+  });
+});
+
+describe("findLeastBlend", () => {
+  const expectedGrid = () => controlGrid(control);
+
+  /** Passes once the image has changed by at least `threshold` (a monotone stand-in for a scanner). */
+  const scanAfterChange =
+    (from: DecodedImage, threshold: number, calls: number[]): PixelScan =>
+    async (pixels, _text, sizes) => {
+      expect(sizes).toEqual(LEAST_BLEND_SCAN_SIZES);
+      const change = meanChange(from, pixels);
+      calls.push(change);
+      return change >= threshold;
+    };
+
+  it("returns the lowest strength that passes, to within a bisection step", async () => {
+    const grid = locateGrid(textured, control.map, expectedGrid());
+    const threshold = meanChange(
+      textured,
+      correctArt(textured, control.map, grid, 0.42),
+    );
+    const calls: number[] = [];
+    const least = await findLeastBlend({
+      pixels: textured,
+      text: TEXT,
+      map: control.map,
+      expected: expectedGrid(),
+      bounds: leastBlendBounds(50),
+      scan: scanAfterChange(textured, threshold, calls),
+    });
+    expect(least).not.toBeNull();
+    expect(least?.strength).toBeGreaterThanOrEqual(0.42 - 1e-9);
+    expect(least?.strength).toBeLessThan(0.42 + 0.03);
+    expect(least?.tries).toBe(calls.length);
+    expect(
+      meanChange(textured, least?.pixels as DecodedImage),
+    ).toBeGreaterThanOrEqual(threshold);
+  });
+
+  it("stays within the bounds QR visibility sets", async () => {
+    const calls: number[] = [];
+    // Always passes: a high QR visibility still starts at its floor.
+    const least = await findLeastBlend({
+      pixels: textured,
+      text: TEXT,
+      map: control.map,
+      expected: expectedGrid(),
+      bounds: leastBlendBounds(100),
+      scan: scanAfterChange(textured, 0, calls),
+    });
+    expect(least?.strength).toBe(0.6);
+
+    // Never passes: gives up at the cap, without bisecting.
+    const never: number[] = [];
+    const none = await findLeastBlend({
+      pixels: textured,
+      text: TEXT,
+      map: control.map,
+      expected: expectedGrid(),
+      bounds: leastBlendBounds(0),
+      scan: scanAfterChange(textured, Number.POSITIVE_INFINITY, never),
+    });
+    expect(none).toBeNull();
+    expect(never.length).toBe(9);
+  });
+
+  it("won't paint a code over an image that doesn't follow it", async () => {
+    // A scene with none of the code in it.
+    const blank = await pixelsOf(await paintedArt(control.png, { keep: 0 }));
+    expect(locateGrid(blank, control.map, expectedGrid()).fit).toBeLessThan(
+      MIN_GRID_FIT,
+    );
+    const calls: number[] = [];
+    const least = await findLeastBlend({
+      pixels: blank,
+      text: TEXT,
+      map: control.map,
+      expected: expectedGrid(),
+      bounds: leastBlendBounds(50),
+      scan: scanAfterChange(blank, 0, calls),
+    });
+    expect(least).toBeNull();
+    expect(calls).toHaveLength(0);
+  });
+
+  it("stops at the deadline", async () => {
+    const calls: number[] = [];
+    const least = await findLeastBlend({
+      pixels: textured,
+      text: TEXT,
+      map: control.map,
+      expected: expectedGrid(),
+      bounds: leastBlendBounds(50),
+      scan: scanAfterChange(textured, Number.POSITIVE_INFINITY, calls),
+      deadline: Date.now() - 1,
+    });
+    expect(least).toBeNull();
+    expect(calls).toHaveLength(0);
+  });
+
+  it("makes a textured image that jsQR can't read scan, with the real scanner", async () => {
+    expect((await scanQRPixels(textured, TEXT)).passed).toBe(false);
+    const least = await findLeastBlend({
+      pixels: textured,
+      text: TEXT,
+      map: control.map,
+      expected: expectedGrid(),
+      bounds: leastBlendBounds(50),
+    });
+    expect(least).not.toBeNull();
+    const delivered = await pixelsOf(encodePng(least?.pixels as DecodedImage));
+    expect((await scanQRPixels(delivered, TEXT)).passed).toBe(true);
+    expect(
+      (
+        await scanQRPixels(delivered, TEXT, {
+          sizes: [...LEAST_BLEND_SCAN_SIZES],
+        })
+      ).passed,
+    ).toBe(true);
+    // Less change than forcing every module.
+    const full = correctArt(textured, control.map, least?.grid as never, 1);
+    expect(meanChange(textured, delivered)).toBeLessThan(
+      meanChange(textured, full),
+    );
+  });
+
+  it("corrects a moved, rescaled code where the model drew it", async () => {
+    const moved = await pixelsOf(
+      await texturedArt(control.png, {
+        scale: 1.04,
+        shift: [-14, 10],
+        seed: 3,
+      }),
+    );
+    expect((await scanQRPixels(moved, TEXT)).passed).toBe(false);
+    const least = await findLeastBlend({
+      pixels: moved,
+      text: TEXT,
+      map: control.map,
+      expected: expectedGrid(),
+      bounds: leastBlendBounds(50),
+    });
+    expect(least?.grid.fit).toBeGreaterThan(0.8);
+    expect(
+      (await scanQRPixels(least?.pixels as DecodedImage, TEXT)).passed,
+    ).toBe(true);
+  });
+});
+
+describe("encodePng", () => {
+  it("round-trips the pixels as an opaque RGB PNG", async () => {
+    const painted = await pixelsOf(
+      await paintedArt(control.png, { keep: 0.75 }),
+    );
+    const back = await pixelsOf(encodePng(painted));
+    expect(back.width).toBe(painted.width);
+    expect(back.height).toBe(painted.height);
+    for (let i = 0; i < painted.data.length; i += 4) {
+      if (
+        back.data[i] !== painted.data[i] ||
+        back.data[i + 1] !== painted.data[i + 1] ||
+        back.data[i + 2] !== painted.data[i + 2] ||
+        back.data[i + 3] !== 255
+      ) {
+        throw new Error(`pixel ${i / 4} differs`);
+      }
+    }
+  });
+});

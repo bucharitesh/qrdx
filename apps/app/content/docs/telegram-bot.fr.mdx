@@ -1,0 +1,83 @@
+---
+title: "Bot Telegram"
+description: "Créez et personnalisez des QR codes dans Telegram. Envoyez un lien au bot QRdx, appelez-le en mode inline dans n'importe quelle conversation, ou utilisez /qr dans un groupe. Aucun compte requis."
+icon: Bot
+---
+
+Le bot QRdx transforme un lien ou n'importe quel texte en QR code directement dans Telegram. Il est gratuit et vous n'avez pas besoin de compte QRdx.
+
+<IfAvailable feature="telegramBot">
+Pour commencer, cliquez sur **Open in Telegram** sur la [page d'intégration Telegram](/integrations/telegram), puis appuyez sur **Start** dans la conversation avec le bot.
+</IfAvailable>
+
+## Conversation privée [#private-chat]
+
+Envoyez au bot un lien ou du texte : il répond avec le QR code et quatre boutons :
+
+- **Download PNG** ouvre l'image, prête à être enregistrée ou partagée.
+- **Download SVG** ouvre une version vectorielle pour l'impression et les outils de design.
+- **Open in editor** ouvre l'éditeur QRdx avec le même design. Une adresse web est transmise avec le code. Les autres textes ne le sont pas : collez-les vous-même dans l'éditeur.
+- **Style** modifie l'apparence du code directement dans la conversation (voir ci-dessous).
+
+Le code contient exactement ce que vous avez envoyé, sauts de ligne compris. Envoyez `/help` (ou `/start`) pour voir comment utiliser le bot. Si le texte est trop long pour un seul QR code, le bot vous le signale ; un lien vers une page contenant le texte complet donne un code plus petit, plus facile à scanner.
+
+## Personnaliser votre code [#style-your-code]
+
+Appuyez sur **Style** sous un code : quatre boutons remplacent les autres, **Look**, **Color**, **Frame** et **Logo**. Chacun ouvre ses options, avec un ✓ à côté de celle que le code utilise actuellement. Appuyez sur une option et le bot redessine la photo. **Back** revient aux quatre groupes et **Done** réaffiche les boutons de téléchargement. Chaque modification s'applique au code tel qu'il est à ce moment-là. Dans un groupe, seule la personne qui a demandé le code peut le modifier ; toute autre personne qui appuie reçoit une courte note.
+
+Les looks sont une sélection de designs intégrés à l'éditeur qui restent lisibles en petit, et **Plain** revient au noir sur blanc. Une couleur applique cette couleur à tout le code, sur fond blanc. Les cadres ajoutent une étiquette « Scan me », et les logos sont les icônes rapides de l'éditeur.
+
+Vous pouvez aussi personnaliser un code au moment de le créer en ajoutant des options après le lien ou le texte, avec les mêmes noms que la [CLI QRdx](/docs/developers/cli). Cela fonctionne en conversation privée, après `/qr` dans un groupe, et en mode inline, où c'est le seul moyen de personnaliser un code, car il n'y a pas encore de message à modifier :
+
+```text
+qrdx.dev --look modern --fg 0051ff --frame banner-bottom --frame-text "Scan me"
+```
+
+Tout ce qui précède la première option est le contenu. Le look est appliqué en premier, puis les autres options par-dessus, de sorte que `--look royal --fg 0051ff` conserve les formes de Royal en bleu. Si votre téléphone transforme `--` en tiret long, cela fonctionne aussi. Une option ou une valeur incorrecte déclenche une réponse qui liste les valeurs acceptées.
+
+| Option | Ce qu'elle modifie | Valeurs |
+| --- | --- | --- |
+| `--look` | Le design entier, à partir d'un des préréglages de l'éditeur | `plain`, `classic`, `modern`, `royal`, `folio`, `caffeine`, `retro`, `bordeaux`, `blossom` |
+| `--fg` (ou `--color`) | Les points, et les yeux des coins sauf si vous les définissez aussi | Une couleur hexadécimale comme `0051ff`, ou `black`, `blue`, `green`, `red`, `purple`, `orange` |
+| `--bg` | L'arrière-plan | Identiques à `--fg` |
+| `--eye-color` | Les trois yeux des coins | Identiques à `--fg` |
+| `--dot-color` | Les centres des yeux des coins | Identiques à `--fg` |
+| `--body` | La forme des points | N'importe laquelle des {facts.bodyPatterns} formes de points de l'éditeur, comme `rounded`, `circle` ou `classy` |
+| `--eye` | La forme des yeux des coins | N'importe laquelle des {facts.eyeShapes} formes d'yeux, comme `square`, `rounded` ou `gear` |
+| `--dot` | La forme des centres des yeux | N'importe laquelle des {facts.eyeCentres} formes de centres, comme `square`, `rounded` ou `circle` |
+| `--frame` | Un cadre autour du code | `none` ou n'importe lequel des {facts.frameStyles} cadres intégrés, comme `banner-bottom`, `banner-top`, `speech-bubble` ou `polaroid` |
+| `--frame-text` | L'étiquette du cadre, jusqu'à 24 caractères | N'importe quel texte, entre guillemets s'il contient des espaces. Sans `--frame`, il s'affiche sur une bannière sous le code |
+| `--template` | Un cadre dessiné comme modèle | `Arrow`, `StandardBox`, `SquareBorder`, `StrikedBox` ou `Halloween` |
+| `--logo` | Une icône au centre | `link`, `wifi`, `location`, `phone`, `email`, `whatsapp`, `instagram`, `file`, `calendar` ou `none` |
+
+Avant d'envoyer un code personnalisé, le bot le vérifie avec le même score de scan que l'éditeur. Lorsqu'un design serait difficile à lire pour les téléphones, QRdx l'ajuste (couleurs plus foncées, formes plus simples ou correction d'erreur renforcée) et l'indique dans la légende. Si cela ne suffit toujours pas, généralement parce que le contenu est long, vous recevez le code en noir sur blanc avec une note.
+
+**Open in editor** ouvre l'éditeur avec le même design : couleurs, formes, cadre et bordure. L'icône du logo n'est pas transmise dans le lien, il faut donc la sélectionner à nouveau dans l'éditeur.
+
+## Mode inline dans n'importe quelle conversation [#inline-mode-in-any-chat]
+
+Vous pouvez envoyer un code dans n'importe quelle conversation sans y ajouter le bot. Dans le champ de message, saisissez `@`, le nom d'utilisateur du bot, une espace, puis un lien ou du texte. Après un instant, le code apparaît au-dessus du champ. Appuyez dessus pour l'envoyer, avec les trois mêmes boutons. Les personnes à qui vous écrivez n'ont pas besoin du bot.
+
+## Groupes [#groups]
+
+Ajoutez le bot au groupe, puis envoyez `/qr` suivi d'un lien ou de texte, par exemple `/qr https://example.com/menu`. Le bot répond à votre message avec le code.
+
+Dans les groupes, les bots ont par défaut le mode confidentialité activé, et celui-ci le garde activé : il ne voit donc pas la conversation du groupe. Telegram ne lui transmet que les commandes qui lui sont destinées et les réponses à ses propres messages. Il répond à `/qr`, `/start` et `/help` et ignore tout le reste. Lorsqu'un groupe compte plusieurs bots, ou que le bot ne répond pas à un simple `/qr`, ajoutez son nom d'utilisateur à la commande : `/qr@` suivi du nom d'utilisateur, puis du lien ou du texte.
+
+## Confidentialité [#privacy]
+
+QRdx n'enregistre pas les codes que vous créez, et le bot ne lit chaque message que pour y répondre.
+
+Le contenu figure dans le lien de l'image : Telegram charge l'image de chaque code depuis un lien QRdx qui contient votre texte et le design choisi. Modifier le style d'un code relit les deux depuis ce lien, donc QRdx n'enregistre pas le code pour le modifier. Comme n'importe quel lien, il peut se retrouver dans des journaux et des caches : ne créez donc pas de codes contenant des mots de passe ou d'autres secrets. Telegram conserve les messages dans la conversation, comme pour n'importe quel message.
+
+Si vous créez beaucoup de codes en peu de temps, le bot vous demande d'attendre une minute avant le suivant. Chaque modification de style compte comme un code. Lorsque beaucoup de personnes l'utilisent en même temps, il peut indiquer qu'il est occupé. Réessayez une minute plus tard.
+
+## Supprimer le bot [#remove-the-bot]
+
+Dans une conversation privée, ouvrez le profil du bot et bloquez-le, ou supprimez la conversation. Dans un groupe, un administrateur retire le bot de la liste des membres.
+
+Les codes déjà envoyés par le bot restent dans la conversation. Leurs boutons continuent de fonctionner, car ils pointent directement vers QRdx.
+
+## Auto-hébergement [#self-hosting]
+
+Un serveur QRdx auto-hébergé peut faire fonctionner son propre bot. Créez-en un avec [@BotFather](https://t.me/BotFather), définissez `TELEGRAM_BOT_TOKEN`, `TELEGRAM_WEBHOOK_SECRET` et `TELEGRAM_BOT_USERNAME` sur le serveur, puis lancez le script d'installation. Les étapes sont décrites dans [`plugins/telegram/README.md`](https://github.com/qrdxinc/qrdx/blob/main/plugins/telegram/README.md). Tant que les trois variables ne sont pas toutes définies, les routes du bot répondent 404 et votre site ne mentionne pas le bot.

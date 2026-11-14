@@ -105,14 +105,14 @@ The tests use fake n8n contexts and never call the network. The lint config is t
 
 To try changes in a real n8n, run `npx @n8n/node-cli dev` in this folder. It compiles in watch mode, links the package into its own n8n user folder and starts n8n at `http://localhost:5678` (it needs Docker or Podman for that). To use an n8n you already run, pass `--external-n8n --custom-user-folder <the folder that holds .n8n>` and start that n8n with `N8N_DEV_RELOAD=true`.
 
-The dropdown values (shapes, frames, events, scan ranges) are copied from QRdx's OpenAPI document. `apps/docs/tests/plugins/n8n-node.test.ts` fails when they drift from the API.
+The dropdown values (shapes, frames, events, scan ranges) are copied from QRdx's OpenAPI document. `apps/app/tests/plugins/n8n-node.test.ts` fails when they drift from the API.
 
 ## Publishing
 
 For the maintainer:
 
 1. `.github/workflows/publish.yml` publishes this package from `main` with npm Trusted Publishing and a provenance statement, in its own job, whenever the `version` in `package.json` isn't on npm yet. A failed n8n publish never blocks `qrdx` or `@qrdx/cli`; re-run the workflow (it can be started by hand) once the cause is fixed.
-2. One-time setup on npmjs.com: on `@qrdx/n8n-nodes-qrdx` → Settings → Trusted publishing, add GitHub Actions with user `bucharitesh`, repository `qrdx` and workflow `publish.yml`. The package has to exist first, so its first version (0.1.0) was published by hand.
+2. One-time setup on npmjs.com: on `@qrdx/n8n-nodes-qrdx` → Settings → Trusted publishing, add GitHub Actions with organization `qrdxinc`, repository `qrdx` and workflow `publish.yml`. The package has to exist first, so its first version (0.1.0) was published by hand.
 3. Submit a version that CI published in the [n8n Creator Portal](https://creators.n8n.io/nodes). n8n only verifies versions published from GitHub Actions with provenance, and checks them with `npx @n8n/scan-community-package @qrdx/n8n-nodes-qrdx`, which you can run yourself first.
 
 The package was first published unscoped as `n8n-nodes-qrdx` 0.1.0. Use `@qrdx/n8n-nodes-qrdx` instead; the unscoped name gets no new versions.

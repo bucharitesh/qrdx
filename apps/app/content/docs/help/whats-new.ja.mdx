@@ -1,0 +1,35 @@
+---
+title: "新機能と今後の予定"
+description: "最近の変更点の確認方法、新しい機能の計画の進め方、そして現時点でQRdxにできないことをまとめています。"
+icon: Sparkles
+---
+
+## 新機能 [#whats-new]
+
+すべてのリリースは[変更履歴](/changelogs)に新しい順で掲載しています。
+
+最近の最大のリリースは、2026年10月31日の[0.1.0](/changelogs)です。このリリースで、QRdxは動的QRコード、モバイルページとフォーム、スマートルーティング、チーム、通知、Webhook、REST APIを備えたプラットフォームになりました。
+
+## 今後の予定 [#whats-next]
+
+日付入りのロードマップは公開していません。また、開発が完了する前に機能をお約束することもありません。何かをリリースしたときは、変更履歴に掲載します。
+
+開発する機能は、皆さまからのご要望をもとに決めています。ご要望は次の方法でお寄せください。
+
+- qrdx.dev のサポートウィジェットを使うか、[support@qrdx.dev](mailto:support@qrdx.dev)にメールを送る。
+- または、[GitHub Discussions](https://github.com/qrdxinc/qrdx/discussions)でアイデアを投稿する。
+
+## 現時点でQRdxにできないこと [#what-qrdx-doesnt-do-today]
+
+よくお問い合わせをいただく内容のうち、現時点でQRdxにないものは次のとおりです。
+
+- **Playgroundから直接作成する、リンク以外のコンテンツ向けの動的QRコード。** 連絡先カード、メニュー、PDFなど、あとから内容を変更したいコンテンツには、[モバイルページ](/docs/help/pages-and-forms/create-a-page)をご利用ください。
+- **すべてのプラグインのアプリストア掲載。** 各プラグインの現在のインストール方法は[プラグインのページ](/plugins)をご覧ください。
+
+<IfAvailable feature="sso">
+- **SCIM。** Businessのワークスペースでは[シングルサインオン](/docs/help/teams/single-sign-on)を有効にし、自社ドメインで必須にできます。ただし、IDプロバイダーからメンバーを削除しても、ワークスペースからは削除されません。シングルサインオンを必須にしている場合は、1日以内にそのメンバーがサインアウトされます。
+</IfAvailable>
+
+## 最新情報の確認 [#follow-along]
+
+ソースコードとすべての変更は[GitHub](https://github.com/qrdxinc/qrdx)で公開しています。

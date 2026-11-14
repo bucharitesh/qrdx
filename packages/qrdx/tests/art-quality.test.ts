@@ -1,6 +1,6 @@
 /** biome-ignore-all lint/style/noMagicNumbers: test matrix and PNG decoding */
 // Logo QR and Image QR quality gate. Every sample photo and logo the editor
-// offers (fixtures copied from apps/docs/public/images/art-samples, photos
+// offers (fixtures copied from apps/app/public/images/art-samples, photos
 // pre-sampled to the 160 px grid loadQRArtImage stores), in every variant, at
 // the editor's Subtle / Balanced / Bold strengths (and 1, where the renderer
 // clamps), must:

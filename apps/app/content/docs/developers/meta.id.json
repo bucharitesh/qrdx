@@ -1,0 +1,29 @@
+{
+  "$schema": "../../../.source/json-schema/docs.meta.json",
+  "title": "Developer",
+  "description": "REST API, webhook, MCP, dan CLI",
+  "icon": "Terminal",
+  "root": true,
+  "pages": [
+    "index",
+    "---REST API---",
+    "quickstart",
+    "api-keys",
+    "rest-api",
+    "api",
+    "errors",
+    "../webhooks",
+    "build-an-integration",
+    "---Alat---",
+    "image-api",
+    "google-chart-api",
+    "barcode-api",
+    "ai-art-api",
+    "mcp",
+    "ai-agents",
+    "cli",
+    "n8n",
+    "---Lainnya---",
+    "[Catatan perubahan](/changelogs)"
+  ]
+}

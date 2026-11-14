@@ -1,0 +1,110 @@
+---
+title: "Developer"
+description: "Semua cara membangun dengan QRdx, dari URL gambar tanpa kunci hingga REST API, webhook, MCP, dan CLI."
+icon: Terminal
+---
+
+Pilih permukaan yang sesuai dengan yang Anda bangun. Tiga yang pertama tidak memerlukan akun maupun kunci.
+
+## Tanpa kunci [#no-key-needed]
+
+<Cards>
+  <Card
+    icon={<ImageDown />}
+    href="/docs/developers/image-api"
+    title="API gambar kode QR"
+    description="Gambar kode QR dari sebuah URL. Tempelkan ke Markdown, HTML, atau email."
+  />
+  <Card
+    icon={<Bot />}
+    href="/docs/developers/mcp"
+    title="Server MCP"
+    description="Biarkan Claude, Cursor, VS Code, dan alat AI lainnya membuat kode QR bergaya."
+  />
+  <Card
+    icon={<Terminal />}
+    href="/docs/developers/cli"
+    title="CLI"
+    description="Kode QR SVG, PNG, WebP, atau EPS dari terminal atau CI Anda."
+  />
+</Cards>
+
+## Dengan akun [#with-an-account]
+
+<Cards>
+  <Card
+    icon={<Rocket />}
+    href="/docs/developers/quickstart"
+    title="Mulai cepat"
+    description="Permintaan API pertama Anda dalam waktu kurang dari dua menit, lalu kunci API dan kode dinamis."
+  />
+  <Card
+    icon={<LockKeyhole />}
+    href="/docs/developers/api-keys"
+    title="Kunci API"
+    description="Buat kunci qrdx_ untuk server dan skrip Anda, dengan cakupan satu ruang kerja."
+  />
+  <Card
+    icon={<Code />}
+    href="/docs/developers/rest-api"
+    title="REST API dan OAuth"
+    description="Buat dan ubah kode dinamis, baca pemindaian, dan laporkan konversi melalui HTTP."
+  />
+  <Card
+    icon={<FileCode />}
+    href="/docs/developers/api"
+    title="Referensi API"
+    description="Setiap endpoint, dengan contoh dalam curl, JavaScript, dan Python, serta panel Try it."
+  />
+  <Card
+    icon={<Webhook />}
+    href="/docs/webhooks"
+    title="Webhook"
+    description="Event bertanda tangan untuk pemindaian, perubahan kode, dan respons formulir. Berfungsi dengan Zapier, Make, dan n8n."
+  />
+  <Card
+    icon={<Blocks />}
+    href="/docs/developers/n8n"
+    title="n8n"
+    description="Node QRdx untuk n8n: gambar QR, kode dinamis, pemindaian, dan pemicu untuk event QRdx."
+  />
+  <Card
+    icon={<Blocks />}
+    href="/docs/developers/build-an-integration"
+    title="Bangun integrasi"
+    description="Biarkan pengguna menghubungkan akun QRdx mereka ke aplikasi Anda dengan OAuth 2.0 dan PKCE."
+  />
+  <Card
+    icon={<TriangleAlert />}
+    href="/docs/developers/errors"
+    title="Error"
+    description="Setiap error yang dikembalikan API, artinya, dan cara memperbaikinya."
+  />
+</Cards>
+
+## Dalam kode Anda sendiri [#in-your-own-code]
+
+<Cards>
+  <Card
+    icon={<Rocket />}
+    href="/docs/getting-started"
+    title="Pustaka React"
+    description="Render dan ekspor kode QR bergaya dengan paket qrdx."
+  />
+  <Card
+    icon={<Server />}
+    href="/docs/self-hosting"
+    title="Self-hosting"
+    description="Jalankan seluruh aplikasi, termasuk kode dinamis, di server Anda sendiri."
+  />
+</Cards>
+
+## URL dasar dan autentikasi [#base-url-and-authentication]
+
+REST API berada di `https://api.qrdx.dev/v1`. Rute yang sama juga dapat diakses di `https://qrdx.dev/api/v1`.
+
+Permintaan diautentikasi dengan [kunci API](/docs/developers/api-keys) pada header `Authorization: Bearer`. Aplikasi yang bertindak atas nama pengguna QRdx lain mengirim [token akses OAuth 2.0](/docs/developers/rest-api#get-an-access-token) di sana. [Panduan mulai cepat](/docs/developers/quickstart#create-an-api-key) membuat kunci dan melakukan permintaan pertama.
+
+## Tetap terbarui [#stay-up-to-date]
+
+Perubahan pada pustaka, CLI, dan API ada di [changelog](/changelogs). Kode sumbernya ada di [GitHub](https://github.com/qrdxinc/qrdx).

@@ -6,11 +6,11 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thanks for reporting a bug. Please search [open and closed issues](https://github.com/bucharitesh/qrdx/issues?q=is%3Aissue) first, in case it's already reported or fixed.
+        Thanks for reporting a bug. Please search [open and closed issues](https://github.com/qrdxinc/qrdx/issues?q=is%3Aissue) first, in case it's already reported or fixed.
 
-        - Questions and "how do I…" go to [Q&A in Discussions](https://github.com/bucharitesh/qrdx/discussions/new?category=q-a).
-        - Trouble running your own instance has its own [self-hosting form](https://github.com/bucharitesh/qrdx/issues/new?template=self_hosting.yml).
-        - Security problems go through [SECURITY.md](https://github.com/bucharitesh/qrdx/blob/main/SECURITY.md), never a public issue.
+        - Questions and "how do I…" go to [Q&A in Discussions](https://github.com/qrdxinc/qrdx/discussions/new?category=q-a).
+        - Trouble running your own instance has its own [self-hosting form](https://github.com/qrdxinc/qrdx/issues/new?template=self_hosting.yml).
+        - Security problems go through [SECURITY.md](https://github.com/qrdxinc/qrdx/blob/main/SECURITY.md), never a public issue.
         - Account, billing and refund questions about qrdx.dev go to [support@qrdx.dev](mailto:support@qrdx.dev).
 
   # Keep these options in sync with .github/scripts/issue-area-labels.mjs,
@@ -133,7 +133,7 @@ body:
     id: terms
     attributes:
       label: Before submitting
-      description: By submitting this issue, you agree to follow the [contributing guidelines](https://github.com/bucharitesh/qrdx/blob/main/CONTRIBUTING.md) and the [code of conduct](https://github.com/bucharitesh/qrdx/blob/main/.github/CODE_OF_CONDUCT.md).
+      description: By submitting this issue, you agree to follow the [contributing guidelines](https://github.com/qrdxinc/qrdx/blob/main/CONTRIBUTING.md) and the [code of conduct](https://github.com/qrdxinc/qrdx/blob/main/.github/CODE_OF_CONDUCT.md).
       options:
         - label: I searched the docs and existing issues
           required: true

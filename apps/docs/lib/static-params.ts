@@ -16,7 +16,7 @@ import { env } from "@/env";
  *   all of them (about 8,500 paths) ran Vercel's 8 GB Hobby build machine
  *   out of memory.
  * - "minimal": Vercel preview builds other than staging (the preview/*
- *   branches, apps/docs/vercel.json). Only the pages without a dynamic
+ *   branches, apps/app/vercel.json). Only the pages without a dynamic
  *   segment of their own, in English (the home page, /pricing, /blog...):
  *   previews build fast, and the few people who open one render what they
  *   visit. Staging deploys as a preview too, but builds the production set:

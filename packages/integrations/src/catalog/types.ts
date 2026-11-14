@@ -54,7 +54,7 @@ export type CatalogFeatureIcon =
 
 export type CatalogLogo =
   /**
-   * The brand's official logo file in apps/docs/public, shown on a white
+   * The brand's official logo file in apps/app/public, shown on a white
    * tile. Every third-party entry uses one; never an icon or an initial.
    */
   | { type: "image"; src: string }

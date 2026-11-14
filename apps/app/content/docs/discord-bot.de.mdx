@@ -1,0 +1,85 @@
+---
+title: "QR-Codes in Discord erstellen"
+description: "Füge den QRdx-Bot zu einem Discord-Server oder zu deinem eigenen Account hinzu und erstelle und style dann QR-Codes mit /qr oder aus jeder beliebigen Nachricht."
+---
+
+<IfAvailable feature="discordBot">
+
+Der QRdx-Bot erstellt QR-Codes direkt in Discord, und du brauchst dafür keinen QRdx-Account. Jede Antwort zeigt den Code mit Buttons, über die du ihn als PNG oder SVG herunterladen oder im [Editor](/playground) öffnen und sein Aussehen ändern kannst.
+
+</IfAvailable>
+
+<IfAvailable feature="discordBot" id="add-the-bot" title="Bot hinzufügen">
+
+1. Öffne die Seite [Discord-Bot](/integrations/discord-bot) und klicke auf **Zu Discord hinzufügen**.
+2. Discord fragt dich, wohin der Bot hinzugefügt werden soll:
+   - **Dein Account:** Du nutzt ihn in DMs, Gruppen-DMs und auf den Servern, auf denen du bist.
+   - **Ein Server:** Alle auf dem Server können ihn nutzen. Dafür brauchst du dort die Berechtigung **Server verwalten**.
+
+Auf manchen Servern dürfen die Apps von Mitgliedern nicht für alle posten. Dort sind Antworten des Bots auf deinem Account nur für dich sichtbar.
+
+</IfAvailable>
+
+<IfAvailable feature="discordBot" id="make-a-code-with-qr" title="Code mit /qr erstellen">
+
+1. Tippe in einem beliebigen Chat `/qr` und wähle den Befehl aus der Liste.
+2. Gib in **content** einen Link oder einen Text ein oder füge ihn ein und drücke dann Enter.
+
+Der Bot antwortet mit dem Code, seinem Inhalt als Titel, drei Buttons und den unten beschriebenen Stil-Menüs. Die Buttons heißen **PNG herunterladen** (1024 px), **SVG herunterladen** und **Im Editor öffnen**. Ein Link wird mit dem Design des Codes im Editor geöffnet. Text wird nicht im Editor-Link übertragen, also füge ihn dort selbst ein.
+
+Wenn du den Code für dich behalten willst, setze **private** auf **True**. Nur du siehst diese Antwort, und Discord entfernt sie, wenn du sie ausblendest oder neu lädst.
+
+Sehr langer Inhalt passt unter Umständen nicht in einen QR-Code oder ist zu lang, als dass Discord ihn als Bild anzeigen könnte. Der Bot sagt dir das in einer Nachricht, die nur du siehst.
+
+</IfAvailable>
+
+<IfAvailable feature="discordBot" id="style-your-code" title="Code stylen">
+
+`/qr` hat drei weitere Optionen, die du vor dem Drücken von Enter ausfüllen kannst:
+
+| Option | Was sie bewirkt | Auswahl |
+| --- | --- | --- |
+| **look** | Wendet eines der integrierten Designs des Editors an | Plain, Classic, Modern, Royal, Folio, Caffeine, Retro, Bordeaux, Blossom |
+| **color** | Färbt den ganzen Code einfarbig auf Weiß | Schwarz, Blau, Grün, Rot, Lila, Orange |
+| **frame** | Fügt einen Rahmen mit dem Text „Scan me“ hinzu | Kein Rahmen, Banner, Banner oben, Sprechblase, Polaroid |
+
+Zuerst wird der Look angewendet und darüber die Farbe. Mit **look** Royal und **color** Blau behält der Code also die Formen von Royal, aber in Blau.
+
+Unter jedem Code findest du vier Menüs, **Look**, **Farbe**, **Rahmen** und **Logo**, mit denselben Auswahlmöglichkeiten plus den schnellen Logo-Icons des Editors. Wähle etwas aus, und der Code ändert sich an Ort und Stelle. Jede Änderung baut auf dem aktuellen Stand des Codes auf. Nur die Person, die den Code erstellt hat, kann ihn neu stylen. Wer sonst etwas auswählt, bekommt einen Hinweis, den nur diese Person sieht, und der Code bleibt unverändert.
+
+Bevor ein gestylter Code erscheint, prüft QRdx ihn mit demselben Scan-Score wie der Editor. Deshalb zeigt Discord zuerst kurz an, dass QRdx nachdenkt. Wäre ein Design für Smartphones schwer lesbar, passt QRdx es an (dunklere Farben, schlichtere Formen oder mehr Fehlerkorrektur) und weist unter dem Code darauf hin. Reicht das immer noch nicht, meist weil der Inhalt lang ist, bekommst du den Code in Schwarz auf Weiß mit einem Hinweis.
+
+**Im Editor öffnen** öffnet den Editor mit demselben Design: Farben, Formen und Rahmen. Das Logo-Icon wird nicht im Link übertragen, wähle es also im Editor erneut aus.
+
+</IfAvailable>
+
+<IfAvailable feature="discordBot" id="make-a-code-from-a-message" title="Code aus einer Nachricht erstellen">
+
+Klicke am Desktop mit der rechten Maustaste auf eine Nachricht und wähle **Apps** → **QR-Code erstellen**. Halte auf dem Smartphone die Nachricht gedrückt und tippe auf **Apps** → **QR-Code erstellen**.
+
+Der Code enthält die erste Webadresse der Nachricht. Enthält die Nachricht keine, wird ein Code aus ihrem Text. Alle im Chat sehen die Antwort.
+
+Antworten erwähnen oder pingen nie jemanden, egal was in der Nachricht steht.
+
+</IfAvailable>
+
+<IfAvailable feature="discordBot" id="privacy" title="Datenschutz">
+
+QRdx speichert die Codes, die du erstellst, nicht, und der Bot kann deine Chats nicht lesen. Discord sendet an QRdx, was du nach `/qr` eingibst, oder die eine Nachricht, die du für **QR-Code erstellen** ausgewählt hast.
+
+Der Inhalt und das gewählte Design stecken im Bildlink, und Discord lädt das Bild über die [Image API](/docs/developers/image-api) von QRdx. Beim Neustylen eines Codes werden beide Angaben aus diesem Link wieder ausgelesen, QRdx muss den Code dafür also nicht speichern. Wie jeder Link kann er in Logs und Caches landen, erstelle daher keine Codes aus Passwörtern oder anderen Geheimnissen.
+
+Damit eine einzelne Person einen Kanal nicht überflutet, zählt QRdx die Codes, die jeder Discord-Account pro Minute erstellt oder neu stylt. Außerdem zählt es die Codes aller zusammen, und wenn in einer Minute zu viele eintreffen, meldet der Bot, dass er ausgelastet ist. Keiner der beiden Zähler enthält Inhalte, und beide laufen nach dieser Minute ab.
+
+</IfAvailable>
+
+<IfAvailable feature="discordBot" id="remove-the-bot" title="Bot entfernen">
+
+- **Von deinem Account:** Öffne **Benutzereinstellungen** → **Autorisierte Apps** und klicke neben QRdx auf **Autorisierung aufheben**.
+- **Von einem Server:** Jemand mit **Server verwalten** öffnet **Servereinstellungen** → **Integrationen**, wählt QRdx aus und entfernt es.
+
+</IfAvailable>
+
+## Self-Hosting [#self-hosting]
+
+Der Bot funktioniert auf deiner eigenen QRdx-Instanz, sobald du eine Discord-App registrierst und `DISCORD_APPLICATION_ID` und `DISCORD_PUBLIC_KEY` setzt. Die Schritte findest du in [`plugins/discord/README.md`](https://github.com/qrdxinc/qrdx/tree/main/plugins/discord).

@@ -3,17 +3,17 @@
 // environment comes in as an argument and only "is it set" is read (except
 // the app URL for passkeys, which must be HTTPS), so this is testable without
 // real values and safe to import from client code. The package never reads
-// the environment itself: apps/docs/lib/feature-availability.ts feeds it the
+// the environment itself: apps/app/lib/feature-availability.ts feeds it the
 // server's.
 //
 // A feature that can't work here is left out everywhere it would be offered:
 // nav, footer and dashboard links, pricing rows and plan-card lines, the
 // sitemap and llms.txt. It comes back on its own once its variables are set
 // (prerendered pages pick the change up on the next deploy). Integrations
-// are decided in apps/docs/lib/integration-availability-rules.ts, which
+// are decided in apps/app/lib/integration-availability-rules.ts, which
 // defers to these rules for the catalog entries that are really built-in
 // features. Paths in the comments below (lib/…, components/…, proxy.ts) are
-// the app's, under apps/docs.
+// the app's, under apps/app.
 
 import { EE_LICENSE_ENV } from "@repo/auth/ee-license";
 import { passkeyRelyingParty } from "@repo/auth/passkey-rp";
@@ -102,7 +102,7 @@ export const FEATURE_RULES: Record<FeatureId, FeatureRule> = {
   aiArt: {
     name: "AI QR art (Vercel AI Gateway)",
     requires: () => ["AI_GATEWAY_API_KEY"],
-    paths: ["/ai/art"],
+    paths: ["/ai/art", "/docs/developers/ai-art-api"],
   },
   customDomains: {
     // Serving domains already verified never depends on this: proxy.ts reads

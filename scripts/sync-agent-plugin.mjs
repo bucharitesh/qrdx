@@ -8,7 +8,7 @@
 //   bun run sync:agent-plugin                    write the copy
 //   node scripts/sync-agent-plugin.mjs --check   exit 1 if the copy differs
 //
-// apps/docs/tests/repo/agent-plugin.test.ts runs --check.
+// apps/app/tests/repo/agent-plugin.test.ts runs --check.
 import {
   existsSync,
   mkdirSync,

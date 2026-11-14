@@ -11,7 +11,7 @@ import {
 
 type Catalog = Record<string, unknown>;
 
-/** A docs catalog: DOCS_NAMESPACES of a language's apps/docs/messages file. */
+/** A docs catalog: DOCS_NAMESPACES of a language's apps/app/messages file. */
 export type DocsMessages = Record<string, Catalog>;
 
 /** Reads one language's file of the copy; rejects when it isn't there. */
