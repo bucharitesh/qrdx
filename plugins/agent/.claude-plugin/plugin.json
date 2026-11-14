@@ -8,7 +8,7 @@
     "url": "https://qrdx.dev"
   },
   "homepage": "https://qrdx.dev",
-  "repository": "https://github.com/bucharitesh/qrdx",
+  "repository": "https://github.com/qrdxinc/qrdx",
   "license": "MIT",
   "keywords": ["qr-code", "qrcode", "barcode", "svg", "png", "mcp", "cli"],
   "documentationUrl": "https://qrdx.dev/docs/developers/mcp",

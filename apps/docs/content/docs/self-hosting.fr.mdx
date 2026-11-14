@@ -4,10 +4,10 @@ description: "Hébergez votre propre application web QRdx, avec QR codes dynamiq
 icon: Server
 ---
 
-QRdx est distribué sous licence AGPL-3.0, et vous pouvez faire tourner l'application web (éditeur de QR code, comptes, vérification en deux étapes et clés d'accès, codes dynamiques et pages hébergées, équipes, thèmes enregistrés, galerie de la communauté et cette documentation) sur votre propre serveur. L'authentification unique de l'espace de travail et le journal d'audit de l'espace de travail font exception : ils se trouvent dans les dossiers `ee/`, sous licence commerciale, et restent désactivés tant que vous ne définissez pas de clé de licence (`QRDX_EE_LICENSE`). Leur utilisation en production nécessite un accord écrit avec QRdx ; consultez [LICENSING.md](https://github.com/bucharitesh/qrdx/blob/main/LICENSING.md). Vous n'avez besoin de rien de tout cela pour utiliser la [bibliothèque React `qrdx`](/docs/getting-started) ou la CLI. Elles fonctionnent partout, sans backend, sous licence MIT. [L'open source chez QRdx](/open-source-qr-code-generator) détaille chaque partie du dépôt et sa licence.
+QRdx est distribué sous licence AGPL-3.0, et vous pouvez faire tourner l'application web (éditeur de QR code, comptes, vérification en deux étapes et clés d'accès, codes dynamiques et pages hébergées, équipes, thèmes enregistrés, galerie de la communauté et cette documentation) sur votre propre serveur. L'authentification unique de l'espace de travail et le journal d'audit de l'espace de travail font exception : ils se trouvent dans les dossiers `ee/`, sous licence commerciale, et restent désactivés tant que vous ne définissez pas de clé de licence (`QRDX_EE_LICENSE`). Leur utilisation en production nécessite un accord écrit avec QRdx ; consultez [LICENSING.md](https://github.com/qrdxinc/qrdx/blob/main/LICENSING.md). Vous n'avez besoin de rien de tout cela pour utiliser la [bibliothèque React `qrdx`](/docs/getting-started) ou la CLI. Elles fonctionnent partout, sans backend, sous licence MIT. [L'open source chez QRdx](/open-source-qr-code-generator) détaille chaque partie du dépôt et sa licence.
 
 <Callout type="warn">
-  La configuration Docker est récente. Si quelque chose ne fonctionne pas, veuillez [ouvrir un ticket](https://github.com/bucharitesh/qrdx/issues).
+  La configuration Docker est récente. Si quelque chose ne fonctionne pas, veuillez [ouvrir un ticket](https://github.com/qrdxinc/qrdx/issues).
 </Callout>
 
 ## Prérequis [#requirements]
@@ -31,7 +31,7 @@ Le schéma provient de `packages/database/schema.ts` et s'applique avec `drizzle
 ### 1. Cloner le dépôt [#1-clone-the-repository]
 
 ```bash
-git clone https://github.com/bucharitesh/qrdx.git
+git clone https://github.com/qrdxinc/qrdx.git
 cd qrdx
 ```
 
@@ -103,7 +103,7 @@ docker run --rm -e DATABASE_URL="<your connection string>" qrdx-migrate
 ## Installation manuelle (Node.js) [#manual-setup-nodejs]
 
 ```bash
-git clone https://github.com/bucharitesh/qrdx.git
+git clone https://github.com/qrdxinc/qrdx.git
 cd qrdx
 bun install
 
@@ -129,7 +129,7 @@ DATABASE_HTTP_ENDPOINT=http://localhost:4444/sql
 
 ## Variables d'environnement [#environment-variables]
 
-[`apps/docs/.env.example`](https://github.com/bucharitesh/qrdx/blob/main/apps/docs/.env.example) liste chaque variable, avec une courte note indiquant où l'obtenir.
+[`apps/docs/.env.example`](https://github.com/qrdxinc/qrdx/blob/main/apps/docs/.env.example) liste chaque variable, avec une courte note indiquant où l'obtenir.
 
 ### Minimum [#minimum]
 
@@ -167,8 +167,8 @@ Ajoutez un fournisseur OAuth (GitHub ou Google), ou Resend pour les codes de con
 | Liens courts Dub | `DUB_CLIENT_ID`, `DUB_CLIENT_SECRET`, `DUB_REDIRECT_URI`, `INTEGRATION_ENCRYPTION_KEY` | L'intégration Dub ne peut pas être connectée |
 | Google Drive | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_DRIVE_REDIRECT_URI`, `INTEGRATION_ENCRYPTION_KEY` | L'intégration Google Drive ne peut pas être connectée |
 | Bitly, Dropbox, OneDrive, Box, Notion | `BITLY_CLIENT_ID`/`_SECRET`, `DROPBOX_CLIENT_ID`/`_SECRET`, `MICROSOFT_CLIENT_ID`/`_SECRET`, `BOX_CLIENT_ID`/`_SECRET`, `NOTION_CLIENT_ID`/`_SECRET`, `INTEGRATION_ENCRYPTION_KEY` | Cette intégration affiche « Not configured » (Bitly se connecte tout de même avec des jetons d'accès collés). Rebrandly et Short.io ne nécessitent aucune variable. Voir [Liens courts et sélecteurs de fichiers](/docs/short-links-and-file-pickers#self-hosting) |
-| Bot Slack | `SLACK_CLIENT_ID`, `SLACK_CLIENT_SECRET`, `SLACK_SIGNING_SECRET`, plus `INTEGRATION_ENCRYPTION_KEY` en production | Pas de bot Slack : ses routes et sa page de lien répondent 404 et Settings ne le propose pas. Créez votre propre application Slack à partir de [`plugins/slack/manifest.json`](https://github.com/bucharitesh/qrdx/tree/main/plugins/slack) comme le décrit son README. Voir [Bot Slack](/docs/slack-bot#self-hosting) |
-| Bot Discord | `DISCORD_APPLICATION_ID`, `DISCORD_PUBLIC_KEY` | Pas de bot Discord : son point de terminaison d'interactions répond `404` et il n'apparaît pas dans l'annuaire des intégrations. Enregistrez votre propre application Discord comme le décrit [`plugins/discord/README.md`](https://github.com/bucharitesh/qrdx/tree/main/plugins/discord) |
+| Bot Slack | `SLACK_CLIENT_ID`, `SLACK_CLIENT_SECRET`, `SLACK_SIGNING_SECRET`, plus `INTEGRATION_ENCRYPTION_KEY` en production | Pas de bot Slack : ses routes et sa page de lien répondent 404 et Settings ne le propose pas. Créez votre propre application Slack à partir de [`plugins/slack/manifest.json`](https://github.com/qrdxinc/qrdx/tree/main/plugins/slack) comme le décrit son README. Voir [Bot Slack](/docs/slack-bot#self-hosting) |
+| Bot Discord | `DISCORD_APPLICATION_ID`, `DISCORD_PUBLIC_KEY` | Pas de bot Discord : son point de terminaison d'interactions répond `404` et il n'apparaît pas dans l'annuaire des intégrations. Enregistrez votre propre application Discord comme le décrit [`plugins/discord/README.md`](https://github.com/qrdxinc/qrdx/tree/main/plugins/discord) |
 | Bot Telegram | `TELEGRAM_BOT_TOKEN`, `TELEGRAM_WEBHOOK_SECRET`, `TELEGRAM_BOT_USERNAME` | Pas de bot Telegram : ses routes répondent 404 et le site ne le liste pas. Créez votre propre bot avec @BotFather et exécutez `plugins/telegram/scripts/setup.mjs`. Voir [Bot Telegram](/docs/telegram-bot#self-hosting) |
 | Limitation de débit (Upstash) | `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN` (ou les noms Vercel KV `KV_REST_API_URL`, `KV_REST_API_TOKEN`) | Pas de limitation de débit. Recommandée en production. |
 | Analytique (PostHog, après consentement aux cookies) | `NEXT_PUBLIC_POSTHOG_KEY`, `NEXT_PUBLIC_POSTHOG_HOST` | Pas d'analytique produit |

@@ -3128,7 +3128,7 @@
       "openQuestion": "Apakah QRdx benar-benar open source?",
       "openAnswer": "Ya. Kode sumbernya ada di GitHub, aplikasi webnya dilisensikan di bawah AGPL-3.0-or-later, dan pustaka qrdx, @qrdx/cli, serta plugin-nya berlisensi MIT. Dua fitur bisnis, single sign-on workspace dan log audit, berada di folder ee di bawah QRdx Commercial License: Anda dapat membaca kodenya, tetapi penggunaan di produksi memerlukan perjanjian dengan QRdx.",
       "githubQuestion": "Di mana kode sumber QRdx di GitHub?",
-      "githubAnswer": "Di github.com/bucharitesh/qrdx. Semuanya ada dalam satu monorepo berisi aplikasi web, pustaka qrdx, CLI, plugin, dan dokumentasi.",
+      "githubAnswer": "Di github.com/qrdxinc/qrdx. Semuanya ada dalam satu monorepo berisi aplikasi web, pustaka qrdx, CLI, plugin, dan dokumentasi.",
       "freeQuestion": "Apakah QRdx gratis untuk di-host sendiri?",
       "freeAnswer": "Ya. Tidak ada biaya lisensi; Anda hanya membayar server dan basis data Anda sendiri. Instans yang di-host sendiri menjalankan kode dinamis, halaman yang di-hosting, dan analitik pemindaian. Single sign-on dan log audit tetap nonaktif kecuali Anda memiliki kunci lisensi QRdx.",
       "needQuestion": "Apa yang saya butuhkan untuk meng-host QRdx sendiri?",

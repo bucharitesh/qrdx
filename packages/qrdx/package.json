@@ -20,11 +20,11 @@
   ],
   "homepage": "https://qrdx.dev/docs",
   "bugs": {
-    "url": "https://github.com/bucharitesh/qrdx/issues"
+    "url": "https://github.com/qrdxinc/qrdx/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bucharitesh/qrdx.git",
+    "url": "git+https://github.com/qrdxinc/qrdx.git",
     "directory": "packages/qrdx"
   },
   "license": "MIT",

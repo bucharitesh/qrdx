@@ -5,10 +5,10 @@
 blank_issues_enabled: false
 contact_links:
   - name: Ask a question
-    url: https://github.com/bucharitesh/qrdx/discussions/new?category=q-a
+    url: https://github.com/qrdxinc/qrdx/discussions/new?category=q-a
     about: How-to questions and help with your setup go to Q&A in Discussions.
   - name: Share an idea
-    url: https://github.com/bucharitesh/qrdx/discussions/new?category=ideas
+    url: https://github.com/qrdxinc/qrdx/discussions/new?category=ideas
     about: Ideas you'd like to talk through before they become a feature request.
   - name: Read the docs
     url: https://qrdx.dev/docs
@@ -20,5 +20,5 @@ contact_links:
     url: https://qrdx.dev/report-abuse
     about: Phishing, malware or other abuse through a QRdx code or page.
   - name: Report a security vulnerability
-    url: https://github.com/bucharitesh/qrdx/blob/main/SECURITY.md
+    url: https://github.com/qrdxinc/qrdx/blob/main/SECURITY.md
     about: Report it privately by email. Don't open a public issue.
