@@ -133,8 +133,8 @@ describe("paths", () => {
     expect(localizeHref("/pricing?currency=inr#faq", "de")).toBe(
       "/de/pricing?currency=inr#faq",
     );
-    expect(localizeHref("https://github.com/bucharitesh/qrdx", "de")).toBe(
-      "https://github.com/bucharitesh/qrdx",
+    expect(localizeHref("https://github.com/qrdxinc/qrdx", "de")).toBe(
+      "https://github.com/qrdxinc/qrdx",
     );
     expect(localizeHref("mailto:support@qrdx.dev", "de")).toBe(
       "mailto:support@qrdx.dev",

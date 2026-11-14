@@ -2,7 +2,7 @@
 
 Thanks for your interest in contributing. This guide covers local setup, the project layout, the checks to run before opening a pull request, and how we review changes.
 
-Not sure where to start? See [Good first issues](#good-first-issues) below. For questions, use [Q&A in Discussions](https://github.com/bucharitesh/qrdx/discussions/categories/q-a), and [SUPPORT.md](SUPPORT.md) lists where everything else goes. To report a security problem, follow [SECURITY.md](SECURITY.md) instead of opening a public issue. If you work with a coding agent, [AGENTS.md](AGENTS.md) has the short version of this guide and the rules that are easy to break.
+Not sure where to start? See [Good first issues](#good-first-issues) below. For questions, use [Q&A in Discussions](https://github.com/qrdxinc/qrdx/discussions/categories/q-a), and [SUPPORT.md](SUPPORT.md) lists where everything else goes. To report a security problem, follow [SECURITY.md](SECURITY.md) instead of opening a public issue. If you work with a coding agent, [AGENTS.md](AGENTS.md) has the short version of this guide and the rules that are easy to break.
 
 ## Prerequisites
 
@@ -21,7 +21,7 @@ You don't need a database or any environment variables to work on the React libr
    ```bash
    git clone https://github.com/<your-username>/qrdx.git
    cd qrdx
-   git remote add upstream https://github.com/bucharitesh/qrdx.git
+   git remote add upstream https://github.com/qrdxinc/qrdx.git
    git fetch upstream staging
    git checkout -b my-change upstream/staging
    ```
@@ -268,8 +268,8 @@ Docs pages follow the same `review`: a list can name docs paths (`"/docs/help"`)
 
 ## Good first issues
 
-Issues labeled [`good first issue`](https://github.com/bucharitesh/qrdx/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) are small and self-contained, and [`help wanted`](https://github.com/bucharitesh/qrdx/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) marks bigger ones where help is welcome. Comment on the issue before you start, so two people don't build the same thing. The `area: …` labels tell you which part of the repository an issue is about.
+Issues labeled [`good first issue`](https://github.com/qrdxinc/qrdx/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) are small and self-contained, and [`help wanted`](https://github.com/qrdxinc/qrdx/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) marks bigger ones where help is welcome. Comment on the issue before you start, so two people don't build the same thing. The `area: …` labels tell you which part of the repository an issue is about.
 
-When nothing is open under those labels, docs fixes are a good first pull request: the **Open** menu under each docs page's title has **Open in GitHub**, which takes you to the page's source in `apps/app/content/docs`. Or ask in [Q&A](https://github.com/bucharitesh/qrdx/discussions/categories/q-a) what would help most.
+When nothing is open under those labels, docs fixes are a good first pull request: the **Open** menu under each docs page's title has **Open in GitHub**, which takes you to the page's source in `apps/app/content/docs`. Or ask in [Q&A](https://github.com/qrdxinc/qrdx/discussions/categories/q-a) what would help most.
 
 By contributing, you agree that your contributions are licensed under the project's [AGPL-3.0-or-later license](LICENSE), or under the MIT license for files in folders with their own MIT `LICENSE` (`packages/qrdx`, `packages/cli`, `plugins/*`), and that you'll follow the [Code of Conduct](.github/CODE_OF_CONDUCT.md).

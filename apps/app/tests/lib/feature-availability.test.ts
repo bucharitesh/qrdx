@@ -395,9 +395,7 @@ describe("what client components learn", () => {
     expect(isPathShown(hidden, "/ai/art?prompt=x#top")).toBe(false);
     expect(isPathShown(hidden, "/ai")).toBe(true);
     expect(isPathShown(hidden, "/dashboard")).toBe(true);
-    expect(isPathShown(hidden, "https://github.com/bucharitesh/qrdx")).toBe(
-      true,
-    );
+    expect(isPathShown(hidden, "https://github.com/qrdxinc/qrdx")).toBe(true);
   });
 });
 

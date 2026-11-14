@@ -92,7 +92,7 @@
     "status": "machine"
   },
   "developers/cli.mdx": {
-    "source": "01a37178580c",
+    "source": "9b2a40af9d12",
     "status": "machine"
   },
   "developers/errors.mdx": {
@@ -108,7 +108,7 @@
     "status": "machine"
   },
   "developers/index.mdx": {
-    "source": "f0f0d2433a2f",
+    "source": "688f6469d2d6",
     "status": "machine"
   },
   "developers/mcp.mdx": {
@@ -136,7 +136,7 @@
     "status": "machine"
   },
   "discord-bot.mdx": {
-    "source": "3fc32b399824",
+    "source": "0f889f8b7170",
     "status": "machine"
   },
   "dynamic-qr-codes.mdx": {
@@ -236,7 +236,7 @@
     "status": "machine"
   },
   "help/contact.mdx": {
-    "source": "3ea00d8b91ca",
+    "source": "2aef3e93f781",
     "status": "machine"
   },
   "help/designing/art.mdx": {
@@ -424,11 +424,11 @@
     "status": "machine"
   },
   "help/whats-new.mdx": {
-    "source": "43dad45698e8",
+    "source": "83b158476ec9",
     "status": "machine"
   },
   "index.mdx": {
-    "source": "c584b61bf311",
+    "source": "4cffaf6e6051",
     "status": "machine"
   },
   "landing-pages.mdx": {
@@ -472,7 +472,7 @@
     "status": "machine"
   },
   "self-hosting.mdx": {
-    "source": "2d632e06d6a2",
+    "source": "0b7d577976c8",
     "status": "machine"
   },
   "short-links-and-file-pickers.mdx": {
@@ -496,7 +496,7 @@
     "status": "machine"
   },
   "telegram-bot.mdx": {
-    "source": "d5013323bbc5",
+    "source": "89defb58e71f",
     "status": "machine"
   },
   "tracking-and-conversions.mdx": {

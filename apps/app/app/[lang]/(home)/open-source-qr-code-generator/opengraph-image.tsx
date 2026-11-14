@@ -1,3 +1,4 @@
+import { GITHUB_REPO_SLUG } from "@repo/config";
 import { ogSize, renderPageOgImage } from "@/app/og/brand";
 import { requireLocaleParam } from "@/lib/i18n/static-params";
 import { onDemandParams } from "@/lib/static-params";
@@ -21,6 +22,6 @@ export default async function Image({
     title: "Open source QR code generator",
     description:
       "The app is AGPL-3.0, the React library and CLI are MIT. Use qrdx.dev or run your own copy.",
-    footer: "github.com/bucharitesh/qrdx · Docker or Node.js",
+    footer: `github.com/${GITHUB_REPO_SLUG} · Docker or Node.js`,
   });
 }

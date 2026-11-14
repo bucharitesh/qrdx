@@ -3128,7 +3128,7 @@
       "openQuestion": "O QRdx é mesmo de código aberto?",
       "openAnswer": "Sim. O código-fonte está no GitHub, o app web é licenciado sob a AGPL-3.0-or-later, e a biblioteca qrdx, o @qrdx/cli e os plugins são MIT. Dois recursos empresariais, o login único do workspace e o log de auditoria, ficam em pastas ee sob a QRdx Commercial License: você pode ler esse código, mas o uso em produção exige um acordo com o QRdx.",
       "githubQuestion": "Onde fica o código-fonte do QRdx no GitHub?",
-      "githubAnswer": "Em github.com/bucharitesh/qrdx. É um monorepo só, com o app web, a biblioteca qrdx, a CLI, os plugins e a documentação.",
+      "githubAnswer": "Em github.com/qrdxinc/qrdx. É um monorepo só, com o app web, a biblioteca qrdx, a CLI, os plugins e a documentação.",
       "freeQuestion": "Auto-hospedar o QRdx é grátis?",
       "freeAnswer": "Sim. Não há taxa de licença; você paga apenas pelo seu servidor e banco de dados. Uma instância auto-hospedada executa QR codes dinâmicos, páginas hospedadas e análises de leitura. O login único e o log de auditoria ficam desativados, a menos que você tenha uma chave de licença do QRdx.",
       "needQuestion": "O que preciso para auto-hospedar o QRdx?",

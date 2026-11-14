@@ -29951,9 +29951,9 @@
     "status": "machine",
     "context": "mcp.faqs.9.question"
   },
-  "0a96e97f871b": {
-    "source": "Yes. The hosted server is listed in the official MCP Registry as io.github.bucharitesh/qrdx, so apps and directories that read the registry can find it there.",
-    "text": "Sim. O servidor hospedado está listado no MCP Registry oficial como io.github.bucharitesh/qrdx, então apps e diretórios que leem o registro conseguem encontrá-lo lá.",
+  "4b3b30987c1e": {
+    "source": "Yes. The hosted server is listed in the official MCP Registry as dev.qrdx/qrdx, so apps and directories that read the registry can find it there.",
+    "text": "Sim. O servidor hospedado está listado no MCP Registry oficial como dev.qrdx/qrdx, então apps e diretórios que leem o registro conseguem encontrá-lo lá.",
     "status": "machine",
     "context": "mcp.faqs.9.answer"
   },
@@ -30616,29 +30616,5 @@
     "text": "O QRdx não salva seu prompt, sua imagem de referência nem as imagens geradas; ele só conta seus créditos. O prompt, a imagem do QR code e qualquer imagem de referência são enviados pelo Vercel AI Gateway ao GPT Image 2 da OpenAI para criar a arte, e o resultado volta direto para o seu navegador, então baixe as que quiser guardar.",
     "status": "machine",
     "context": "aiArt.faqs.10.answer"
-  },
-  "35f9a7f12b6f": {
-    "source": "Saves a design as a theme in your workspace, under the plan's saved-theme limit. Needs a QRdx API key on the connection; every other tool works without one.",
-    "text": "Salva um design como tema no seu workspace, dentro do limite de temas salvos do plano. Precisa de uma chave de API do QRdx na conexão; todas as outras ferramentas funcionam sem ela.",
-    "status": "machine",
-    "context": "mcp.tools.5.description"
-  },
-  "f538f592cdab": {
-    "source": "No, for designing and rendering codes and browsing the community: the QRdx MCP server is public and free, and it keeps no session state. Saving a design to your themes (save_template), saving a barcode (save_barcode) and using a logo you uploaded need a QRdx API key, sent as Authorization: Bearer qrdx_… in your app's settings for the server.",
-    "text": "Não, para criar e gerar códigos e para navegar pela comunidade: o servidor MCP do QRdx é público e gratuito, e não guarda nenhum estado de sessão. Salvar um design nos seus temas (save_template), salvar um código de barras (save_barcode) e usar um logo que você enviou exigem uma chave de API do QRdx, enviada como Authorization: Bearer qrdx_… nas configurações do servidor no seu app.",
-    "status": "machine",
-    "context": "mcp.faqs.0.answer"
-  },
-  "9ccc8cb2303b": {
-    "source": "No. The tools render images, format text and read the public community. Only save_template and save_barcode write anything: the theme or barcode you ask them to save, in the API key's workspace. The server doesn't save the codes. The image URLs it returns contain the encoded data, so don't share them if the data is private, such as a Wi-Fi password.",
-    "text": "Não. As ferramentas geram imagens, formatam texto e leem a comunidade pública. Só save_template e save_barcode gravam algo: o tema ou código de barras que você pedir para salvar, no workspace da chave de API. O servidor não salva os códigos. As URLs de imagem que ele devolve contêm os dados codificados, então não as compartilhe se os dados forem privados, como a senha de um Wi-Fi.",
-    "status": "machine",
-    "context": "mcp.faqs.5.answer"
-  },
-  "81399be3dc7a": {
-    "source": "OpenAI's GPT Image 2, through Vercel AI Gateway, with 171 style presets. QRdx draws a plain black-and-white QR code on the server, the model repaints it as your scene, and QRdx's own scan check makes sure the result decodes, strengthening the code only as much as it needs.",
-    "text": "GPT Image 2, da OpenAI, pelo Vercel AI Gateway, com 171 estilos prontos. O QRdx desenha no servidor um QR code simples em preto e branco, o modelo o repinta como a sua cena, e a verificação de leitura do próprio QRdx garante que o resultado seja decodificado, reforçando o código só o necessário.",
-    "status": "machine",
-    "context": "aiArt.faqs.9.answer"
   }
 }

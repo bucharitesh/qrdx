@@ -288,7 +288,7 @@ describe("self-referral never earns", () => {
 
   it("when the Polar customer's email is the affiliate's under another spelling", async () => {
     const result = await paid(
-      polarOrder({ email: "AnaDiaz+billing@gmail.com" }),
+      polarOrder({ email: "ANA.Diaz+billing@Example.Test" }),
     );
     expect(result).toMatchObject({
       status: "created",

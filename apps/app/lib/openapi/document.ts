@@ -1221,7 +1221,7 @@ With a signed-in browser session instead of a key or token, it needs a recent "C
             {
               created: {
                 ...exampleHook,
-                secret: "whsec_9f2d7c1b8e4a6f3d0c5b2a7e1f8d4c6b",
+                secret: "whsec_example_replace_me",
               },
             },
           ),
