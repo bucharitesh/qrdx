@@ -6367,7 +6367,12 @@
           "allCodesLastValue": "所有二维码，最近 {value}",
           "topCountries": "热门国家和地区",
           "devices": "设备",
-          "unknown": "未知"
+          "unknown": "未知",
+          "allTime": "全部时间",
+          "sinceDateUtc": "自 {date} 起（UTC）",
+          "allCodesSince": "全部二维码，自 {date} 起",
+          "allCodesPerIntervalSince": "全部二维码，按{interval, select, week {周} month {月} other {天}}统计，自 {date} 起（UTC）",
+          "scansPerIntervalOfUpTo": "最多 {MAX_COMPARE, number} 个二维码并排对比的{interval, select, week {每周} month {每月} other {每日}}扫描量（UTC）。"
         },
         "comparePicker": {
           "stopComparingValue": "停止对比 {value}",
@@ -6704,7 +6709,9 @@
           "conversionTypes": "转化类型",
           "sinceValue": " 自 {value} 起",
           "languageAndScanCountRules": "（语言和扫描次数规则无法回放，因此这些数据可能包含被规则转到其他地方的扫描）",
-          "unknown": "未知"
+          "unknown": "未知",
+          "sinceDate": "自 {date} 起，{timeZone}",
+          "sinceDateBusiest": "自 {date} 起，{timeZone} · 最忙时段 {hour}:00"
         },
         "analyticsTab": {
           "exportCsv": "导出 CSV",
@@ -6731,7 +6738,11 @@
           "daysDaysOfScanHistory": "{days, number} 天的扫描历史",
           "valueKeepsValue2": "{value}保留{value2}",
           "valueAndValue2": "{value}和{value2}。",
-          "yearsOfScanHistory": "{years, plural, one {# 年扫描历史} other {# 年扫描历史}}"
+          "yearsOfScanHistory": "{years, plural, one {# 年扫描历史} other {# 年扫描历史}}",
+          "allTime": "全部时间",
+          "sinceDateUtc": "自 {date} 起（UTC）",
+          "sinceDateTapsCome": "自 {date} 起。轻触次数来自该二维码的 NFC 链接。",
+          "scansPerIntervalSince": "每{interval, select, week {周} month {月} other {天}}扫描量，自 {date} 起（UTC）"
         },
         "changeTypeDialog": {
           "theyStaySavedAndWork": "这些内容会保留，切换回来后即可再次使用。",
@@ -6909,7 +6920,9 @@
           "shared": "已共享",
           "allowed": "已允许",
           "noScansAskedForA": "最近 {days, number} 天内还没有请求位置的扫描。",
-          "thisCodeDoesntAskScanners": "此二维码不会向扫描者请求位置。"
+          "thisCodeDoesntAskScanners": "此二维码不会向扫描者请求位置。",
+          "sharedByScannersWhoAllowedSince": "由允许共享位置的扫描者提供，取整至约 100 米。与上方基于 IP 的国家和城市数据相互独立。自 {date} 起。",
+          "noScansAskedForASince": "自 {date} 起，暂无扫描请求位置信息。"
         },
         "preciseLocationsTable": {
           "preciseScanLocationsRoundedTo": "精确扫描位置，取整到约 100 米",
