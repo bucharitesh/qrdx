@@ -1,14 +1,47 @@
 import { BRAND_NAME, CANONICAL_ORIGIN } from "@repo/config";
 import type { Metadata } from "next";
+import { env } from "@/env";
 
-export const baseUrl =
-  process.env.NODE_ENV === "development"
-    ? new URL("http://localhost:3000")
-    : new URL(
-        process.env.VERCEL_PROJECT_PRODUCTION_URL
-          ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-          : (process.env.NEXT_PUBLIC_APP_URL ?? CANONICAL_ORIGIN),
-      );
+/** Where a dev server runs when NEXT_PUBLIC_APP_URL doesn't say. */
+export const DEV_BASE_URL = "http://localhost:3000";
+
+/**
+ * The origin absolute URLs are built on (canonical and Open Graph URLs,
+ * template and sample images). In development, the dev server's own
+ * NEXT_PUBLIC_APP_URL, so a server on another port links to itself;
+ * otherwise the production domain Vercel names, then NEXT_PUBLIC_APP_URL,
+ * then qrdx.dev.
+ */
+export function resolveBaseUrl({
+  nodeEnv,
+  devAppUrl,
+  appUrl,
+  productionUrl,
+}: {
+  nodeEnv: string | undefined;
+  /** NEXT_PUBLIC_APP_URL as `env` validates it */
+  devAppUrl: string | undefined;
+  /** NEXT_PUBLIC_APP_URL as the process has it */
+  appUrl: string | undefined;
+  /** VERCEL_PROJECT_PRODUCTION_URL: a host name, no scheme */
+  productionUrl: string | undefined;
+}): URL {
+  if (nodeEnv === "development") return new URL(devAppUrl || DEV_BASE_URL);
+  return new URL(
+    productionUrl ? `https://${productionUrl}` : (appUrl ?? CANONICAL_ORIGIN),
+  );
+}
+
+export const baseUrl = resolveBaseUrl({
+  nodeEnv: process.env.NODE_ENV,
+  // Read only in development: `env` checks it's a URL
+  devAppUrl:
+    process.env.NODE_ENV === "development"
+      ? env.NEXT_PUBLIC_APP_URL
+      : undefined,
+  appUrl: process.env.NEXT_PUBLIC_APP_URL,
+  productionUrl: process.env.VERCEL_PROJECT_PRODUCTION_URL,
+});
 
 export const siteName = BRAND_NAME;
 
