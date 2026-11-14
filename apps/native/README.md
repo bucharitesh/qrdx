@@ -20,7 +20,7 @@ The UI, parser and safety checks already exist as React components. With Capacit
 
 ## It stays out of the monorepo
 
-`apps/scanner-mobile` is excluded from the Bun workspace (`"!apps/scanner-mobile"` in the root `package.json`) and has its own `bun.lock`. Root `bun install`, turbo, CI and the Vercel build never see it. Biome lints its `src/`, and skips the generated `ios/` and `android/` projects.
+`apps/native` is excluded from the Bun workspace (`"!apps/native"` in the root `package.json`) and has its own `bun.lock`. Root `bun install`, turbo, CI and the Vercel build never see it. Biome lints its `src/`, and skips the generated `ios/` and `android/` projects.
 
 ## Build and run
 
@@ -28,7 +28,7 @@ Prerequisites: Bun, Node 22, Xcode (iOS), Android SDK with Java 21 (Android).
 
 ```bash
 bun install                          # at the repo root: the app reads apps/app in place
-cd apps/scanner-mobile
+cd apps/native
 bun install                          # the app's own dependencies
 bun run build                        # strings + decoder, then the web bundle (dist/)
 bunx cap sync                        # copies dist/ into ios/ and android/
