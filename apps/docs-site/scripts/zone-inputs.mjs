@@ -4,13 +4,13 @@
 // so none of it can go stale between merges:
 //
 // 1. packages/config/facts.generated.json, the product facts snapshot
-//    (`bun run --filter docs facts:snapshot`, from apps/docs/lib/
+//    (`bun run --filter app facts:snapshot`, from apps/app/lib/
 //    product-facts.ts), which lib/product-facts.ts reads.
 // 2. packages/i18n/messages/<locale>.json, the namespaces of the message
-//    catalogs the docs read (`bun run --filter docs i18n:docs-messages`,
+//    catalogs the docs read (`bun run --filter app i18n:docs-messages`,
 //    DOCS_NAMESPACES in @repo/i18n), which lib/i18n/messages.ts loads.
 // 3. packages/docs-assets/openapi.json, a copy of the main app's OpenAPI
-//    document (`bun run --filter docs openapi:export`), which the API
+//    document (`bun run --filter app openapi:export`), which the API
 //    reference pages render (lib/api-reference.ts).
 // 4. generated/zone-availability.json: the main app's
 //    ${MAIN_ZONE_URL}/zone/availability.json, which lib/feature-availability.ts
@@ -34,13 +34,13 @@ const OUT = join(app, "generated", "zone-availability.json");
 
 /** Runs one of the main app's scripts that write a generated input. */
 function mainAppScript(script, what) {
-  const result = spawnSync("bun", ["run", "--filter", "docs", script], {
+  const result = spawnSync("bun", ["run", "--filter", "app", script], {
     cwd: root,
     stdio: "inherit",
   });
   if (result.status !== 0) {
     console.error(
-      `zone-inputs: ${what} failed (bun run --filter docs ${script}).`,
+      `zone-inputs: ${what} failed (bun run --filter app ${script}).`,
     );
     process.exit(result.status ?? 1);
   }

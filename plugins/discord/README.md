@@ -13,11 +13,11 @@ Discord sends each command to the QRdx web app as an HTTP request (an "interacti
 
 | File | What it does |
 | --- | --- |
-| `apps/docs/app/api/integrations/discord/interactions/route.ts` | The Interactions Endpoint URL. Checks Discord's Ed25519 signature on the raw body (401 when it doesn't match), answers PING, rate limits each Discord user and replies within Discord's 3 seconds. A styled code needs its scan check first, so for those the endpoint answers "thinking" and edits the reply in through the interaction's own webhook (`PATCH /webhooks/<application id>/<interaction token>/messages/@original`), which needs no bot token |
-| `apps/docs/lib/chat-bots/discord/` | The commands (`commands.json`), the signature check, the replies and the follow-up edit (`followup.ts`) |
-| `apps/docs/lib/chat-bots/styles.ts` | Shared with the other chat bots: the looks, colors, frames and logos on offer, and the scan check |
-| `apps/docs/lib/chat-bots/qr-reply.ts` | Shared with the other chat bots: reads the content and builds the image and editor links |
-| `apps/docs/app/api/integrations/discord/install/route.ts` | **Add to Discord**: redirects to `https://discord.com/oauth2/authorize?client_id=<DISCORD_APPLICATION_ID>` |
+| `apps/app/app/api/integrations/discord/interactions/route.ts` | The Interactions Endpoint URL. Checks Discord's Ed25519 signature on the raw body (401 when it doesn't match), answers PING, rate limits each Discord user and replies within Discord's 3 seconds. A styled code needs its scan check first, so for those the endpoint answers "thinking" and edits the reply in through the interaction's own webhook (`PATCH /webhooks/<application id>/<interaction token>/messages/@original`), which needs no bot token |
+| `apps/app/lib/chat-bots/discord/` | The commands (`commands.json`), the signature check, the replies and the follow-up edit (`followup.ts`) |
+| `apps/app/lib/chat-bots/styles.ts` | Shared with the other chat bots: the looks, colors, frames and logos on offer, and the scan check |
+| `apps/app/lib/chat-bots/qr-reply.ts` | Shared with the other chat bots: reads the content and builds the image and editor links |
+| `apps/app/app/api/integrations/discord/install/route.ts` | **Add to Discord**: redirects to `https://discord.com/oauth2/authorize?client_id=<DISCORD_APPLICATION_ID>` |
 | `scripts/register-commands.mjs` | Registers `commands.json` as the app's global commands |
 
 The reply is an embed whose image is a link to the keyless image API (`/v1/qr?data=…&format=png&size=1024`, plus `style` and `logoIcon` for a styled code), which Discord loads itself. A pick in a menu reads the content and design back from that link and the maker's id from the menu, so QRdx doesn't save the code to restyle it. Replies set `allowed_mentions` to nothing, so content can't ping anyone.
@@ -45,7 +45,7 @@ You need a Discord account and a deployed QRdx (qrdx.dev, or your own) that Disc
    DISCORD_APPLICATION_ID=<Application ID> DISCORD_BOT_TOKEN=<token> node plugins/discord/scripts/register-commands.mjs
    ```
 
-   It prints each command it registered. Run it again whenever `apps/docs/lib/chat-bots/discord/commands.json` changes. Keep the token out of the web app's environment and out of git; reset it in the portal if it leaks.
+   It prints each command it registered. Run it again whenever `apps/app/lib/chat-bots/discord/commands.json` changes. Keep the token out of the web app's environment and out of git; reset it in the portal if it leaks.
 6. **Set the Interactions Endpoint URL.** On **General Information**, set it to `https://<your app host>/api/integrations/discord/interactions` (`https://qrdx.dev/api/integrations/discord/interactions` for qrdx.dev) and save. Discord sends a signed PING and some badly signed requests; the save goes through only when the endpoint answers the PING and refuses the rest.
 7. **Try it.** Open `https://<your app host>/api/integrations/discord/install` (or the install link on **Installation**). Add the app to a test server, then add it to your own account too. In each, try `/qr` with a link, `/qr` with text and `private:True`, `/qr` with a `look`, a pick in the menus under a code, and **Apps → Make QR code** on a message with a link and on one without.
 

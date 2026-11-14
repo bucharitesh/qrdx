@@ -16,7 +16,7 @@ interface PixelSpec {
   use: string;
   /**
    * What's specific to this provider on hosted pages: what QRdx loads and
-   * sends (apps/docs components/landing/pixels.tsx) and the setup gotcha.
+   * sends (apps/app components/landing/pixels.tsx) and the setup gotcha.
    */
   detail: string;
   keywords: string[];

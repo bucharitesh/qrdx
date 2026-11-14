@@ -1,5 +1,5 @@
 // Copies the scanner's strings from the website's catalogs
-// (apps/docs/messages) into src/generated/messages, English filling any gap,
+// (apps/app/messages) into src/generated/messages, English filling any gap,
 // and the decoder's WebAssembly into public/, so the app reads images
 // offline. Runs before every build.
 import {
@@ -13,10 +13,10 @@ import { createRequire } from "node:module";
 import path from "node:path";
 
 const root = path.resolve(import.meta.dirname, "..");
-const docs = path.resolve(root, "../docs");
+const web = path.resolve(root, "../app");
 const out = path.join(root, "src/generated/messages");
 
-/** The site's languages (apps/docs/lib/i18n/config.ts). */
+/** The site's languages (apps/app/lib/i18n/config.ts). */
 export const LOCALES = [
   "en",
   "es",
@@ -55,7 +55,7 @@ function pick(catalog) {
 
 const read = (locale) =>
   JSON.parse(
-    readFileSync(path.join(docs, "messages", `${locale}.json`), "utf8")
+    readFileSync(path.join(web, "messages", `${locale}.json`), "utf8")
   );
 
 mkdirSync(out, { recursive: true });
@@ -70,7 +70,7 @@ for (const locale of LOCALES) {
 }
 
 // barcode-detector's ZXing reader, the version the website loads from its CDN.
-const detector = realpathSync(path.join(docs, "node_modules/barcode-detector"));
+const detector = realpathSync(path.join(web, "node_modules/barcode-detector"));
 const zxing = createRequire(path.join(detector, "package.json"));
 const wasm = zxing.resolve("zxing-wasm/reader/zxing_reader.wasm");
 mkdirSync(path.join(root, "public"), { recursive: true });

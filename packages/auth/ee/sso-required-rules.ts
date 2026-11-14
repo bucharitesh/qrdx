@@ -1,6 +1,6 @@
 // "Require single sign-on for <domain>": the pure, client-safe rules, shared
 // by the plugin side (./sso-required.ts), the app's settings and sign-in
-// screens (apps/docs/ee/sso) and tests.
+// screens (apps/app/ee/sso) and tests.
 //
 // A workspace turns it on for its verified connection. From then on, for an
 // address in that domain (or a subdomain), only that connection signs in:

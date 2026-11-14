@@ -1,7 +1,7 @@
 -- The signed-in app's language (feat/i18n-playground-app, phase 2).
 --
 -- user.locale holds the language the app, its toasts and the emails QRdx
--- sends to this person use: a code from apps/docs/lib/i18n/config.ts ("es",
+-- sends to this person use: a code from apps/app/lib/i18n/config.ts ("es",
 -- "pt-BR", "zh-Hans"). NULL means "not chosen": the app then follows the
 -- language menu's cookie (NEXT_LOCALE) and emails go out in English. New
 -- accounts start with the cookie's language; Settings > General changes it.

@@ -76,7 +76,7 @@ jobs:
         run: bun x vitest run tests/official-frames tests/frame-label-markers.test.ts
 
       - name: Publish gate, every seeded frame
-        working-directory: apps/docs
+        working-directory: apps/app
         run: |
           bun x next typegen
           bun x vitest run tests/database/seed-frames-gate-1.test.ts tests/database/seed-frames-gate-2.test.ts

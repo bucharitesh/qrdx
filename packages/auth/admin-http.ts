@@ -2,7 +2,7 @@ import type { BetterAuthPlugin } from "better-auth";
 
 // Better Auth's admin plugin (./server.ts) is only used from the app's own
 // admin panel, server-side through auth.api, after its own admin check, rate
-// limit, reason and audit log (apps/docs/app/admin/_lib/action.ts). No
+// limit, reason and audit log (apps/app/app/admin/_lib/action.ts). No
 // browser code calls it. Over HTTP its endpoints would let a stolen admin
 // cookie change any account directly, skipping all of that: set an email
 // (marked verified), turn two-step verification off, ban, delete.

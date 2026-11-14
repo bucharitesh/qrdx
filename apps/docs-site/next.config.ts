@@ -18,7 +18,7 @@ import createNextIntlPlugin from "next-intl/plugin";
 import { env } from "@/env";
 import mediaManifest from "@/lib/media-manifest.json";
 
-// The docs site: one zone of qrdx.dev. The main app (apps/docs) proxies the
+// The docs site: one zone of qrdx.dev. The main app (apps/app) proxies the
 // docs' URLs here once its DOCS_ZONE_URL is set (@repo/next-config/
 // docs-zone), so every URL below is the same as on qrdx.dev, and the pages
 // carry the same headers the main app gives its own copy of the docs.
@@ -86,7 +86,7 @@ let nextConfig: NextConfig = {
     // The only root layout is app/[lang]: URLs that match no route get
     // app/global-not-found.tsx.
     globalNotFound: true,
-    // As in the main app (apps/docs/next.config.ts): on Vercel the build
+    // As in the main app (apps/app/next.config.ts): on Vercel the build
     // cache and source maps cost memory and nothing reads them.
     ...(env.VERCEL === "1" && {
       turbopackFileSystemCacheForBuild: false,
@@ -109,7 +109,7 @@ let nextConfig: NextConfig = {
     "shiki",
     "@takumi-rs/core",
   ],
-  // The main app's headers for its docs pages (apps/docs/next.config.ts).
+  // The main app's headers for its docs pages (apps/app/next.config.ts).
   // When rules set the same header, the later one wins.
   async headers() {
     const base = (await config.headers?.()) ?? [];
@@ -230,7 +230,7 @@ const withMDX = createMDX();
 
 // next-intl's catalogs and formatters (i18n/request.ts), without its
 // middleware or navigation. The main app writes the catalogs' type
-// declaration next to apps/docs/messages/en.json; types/next-intl.d.ts
+// declaration next to apps/app/messages/en.json; types/next-intl.d.ts
 // reads it from there.
 const withNextIntl = createNextIntlPlugin({
   requestConfig: "./i18n/request.ts",

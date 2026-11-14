@@ -3,7 +3,7 @@
 // community_theme_tag, theme_like) into the community tables made by
 // manual-sql/0012_community.sql. The old tables are only read.
 //
-//   node --env-file=apps/docs/.env.local packages/database/scripts/backfill-community.mjs
+//   node --env-file=apps/app/.env.local packages/database/scripts/backfill-community.mjs
 //       dry run (the default): reads, prints every planned insert and update,
 //       rolls back. Writes nothing.
 //   ... backfill-community.mjs --apply --backup ./community-backup.json
@@ -27,16 +27,16 @@
 //   published theme, keyed by legacy_community_theme_id, with version 1
 //   (community_item_version), its tags and its likes. The payload is a
 //   snapshot of the saved theme WITHOUT uploaded logos or image art; quick
-//   logo icons are kept by id (apps/docs/lib/community/public-style.ts).
+//   logo icons are kept by id (apps/app/lib/community/public-style.ts).
 // - An item whose community_theme row is gone (unpublished after the first
 //   run) is marked removed, as its creator asked.
 // Nothing is deleted. Banned creators' items are copied too; every community
-// query hides banned creators (apps/docs/lib/community/visibility.ts).
+// query hides banned creators (apps/app/lib/community/visibility.ts).
 //
 // Safe to run more than once: ids are derived from the old ids, inserts use
 // ON CONFLICT DO NOTHING, and a second run plans nothing new.
 //
-// Self-contained on purpose (no app imports): apps/docs/tests/database/
+// Self-contained on purpose (no app imports): apps/app/tests/database/
 // backfill-community.test.ts keeps the rules here equal to the app's and
 // runs the script against a fake database.
 
@@ -44,7 +44,7 @@ import { createHash } from "node:crypto";
 import { writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 
-// ─── Rules (mirror apps/docs/lib/community/*) ───────────────────────────────
+// ─── Rules (mirror apps/app/lib/community/*) ───────────────────────────────
 
 export const OFFICIAL_EMAIL = "team@qrdx.dev";
 export const OFFICIAL_WORKSPACE_SLUG = "qrdx";
@@ -52,7 +52,7 @@ export const OFFICIAL_PROFILE_ID = "cp_official_qrdx";
 export const OFFICIAL_HANDLE = "qrdx";
 export const LICENSE = "CC0-1.0";
 
-/** Quick logo icons (apps/docs/lib/qr-design/style.ts LOGO_ICON_IDS). */
+/** Quick logo icons (apps/app/lib/qr-design/style.ts LOGO_ICON_IDS). */
 export const LOGO_ICON_IDS = [
   "wifi",
   "location",
@@ -65,7 +65,7 @@ export const LOGO_ICON_IDS = [
   "instagram",
 ];
 
-/** The keys of themeStylePropsSchema (apps/docs/types/theme.ts). */
+/** The keys of themeStylePropsSchema (apps/app/types/theme.ts). */
 export const THEME_STYLE_KEYS = [
   "size",
   "bgColor",
@@ -141,7 +141,7 @@ export function themePayload(style) {
   };
 }
 
-/** JSON with sorted keys (apps/docs/lib/community/payloads.ts). */
+/** JSON with sorted keys (apps/app/lib/community/payloads.ts). */
 export function stableStringify(value) {
   if (Array.isArray(value)) {
     return `[${value.map((item) => stableStringify(item)).join(",")}]`;
@@ -159,7 +159,7 @@ export function stableStringify(value) {
 
 export const payloadHash = (payload) => sha(stableStringify(payload));
 
-/** apps/docs/lib/community/text.ts slugify. */
+/** apps/app/lib/community/text.ts slugify. */
 export function slugify(text, max = 48) {
   return String(text ?? "")
     .toLowerCase()
@@ -170,7 +170,7 @@ export function slugify(text, max = 48) {
     .replace(/-+$/g, "");
 }
 
-/** apps/docs/lib/community/publish.ts itemSlug. */
+/** apps/app/lib/community/publish.ts itemSlug. */
 export function itemSlug(name, id, fallback) {
   const base = slugify(name) || fallback;
   const suffix = createHash("sha256")
@@ -689,7 +689,7 @@ async function main() {
   const url = process.env.DATABASE_URL;
   if (!url) {
     console.error(
-      "Set DATABASE_URL (for example with node --env-file=apps/docs/.env.local)."
+      "Set DATABASE_URL (for example with node --env-file=apps/app/.env.local)."
     );
     return 2;
   }

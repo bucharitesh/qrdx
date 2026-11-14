@@ -4,9 +4,9 @@ import type { EmailOTPOptions } from "better-auth/plugins";
 /**
  * Email codes. This package has no email stack, so the app registers how a
  * code reaches the inbox:
- * - sign-in codes: apps/docs registers the sender in its /api/auth route;
+ * - sign-in codes: apps/app registers the sender in its /api/auth route;
  * - email-change codes (sent to the NEW address): registered by the server
- *   actions that request them (apps/docs/app/settings/account/_lib).
+ *   actions that request them (apps/app/app/settings/account/_lib).
  * Email verification and password reset codes are not used; their endpoints
  * are disabled in ./server.ts.
  */

@@ -1,9 +1,9 @@
 /**
  * Writes the shadcn/ui registry (outputs.ts) to a folder, where an app serves
- * it as /r/<name>.json. The main app keeps its copy in apps/docs/public/r:
+ * it as /r/<name>.json. The main app keeps its copy in apps/app/public/r:
  *
- *   bun run --filter docs registry:build             (writes public/r)
- *   bun run --filter docs registry:build -- --check  (exits non-zero when stale)
+ *   bun run --filter app registry:build             (writes public/r)
+ *   bun run --filter app registry:build -- --check  (exits non-zero when stale)
  *
  * which runs: tsx ../../packages/docs-assets/registry/build.ts --out public/r
  */
@@ -40,7 +40,7 @@ for (const [name, data] of outputs) {
 if (check) {
   if (stale.length > 0) {
     console.error(
-      `Registry is out of date: ${stale.join(", ")}\nRun: bun run --filter docs registry:build`,
+      `Registry is out of date: ${stale.join(", ")}\nRun: bun run --filter app registry:build`,
     );
     process.exit(1);
   }

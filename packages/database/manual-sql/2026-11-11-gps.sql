@@ -17,7 +17,7 @@
 --                         every code with the setting off).
 --
 -- The per-code setting needs no SQL: it is `preciseLocation` inside the
--- existing qr_code.pixels JSON (apps/docs/lib/redirect/routing.ts
+-- existing qr_code.pixels JSON (apps/app/lib/redirect/routing.ts
 -- pixelConfigSchema), so the short-link lookup reads nothing new.
 --
 -- Additive and idempotent: safe to run more than once, in one transaction.

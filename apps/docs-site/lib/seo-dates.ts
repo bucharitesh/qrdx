@@ -15,7 +15,7 @@
 //
 // Without it, a dropped date falls back to lib/seo-file-dates.json: each
 // source file's last change, read from the full history by
-// `bun run --filter docs seo:dates` (scripts/seo-dates.ts) and checked in.
+// `bun run --filter app seo:dates` (scripts/seo-dates.ts) and checked in.
 // The newer of the build's date and the recorded one wins, so a change the
 // shallow clone can see still counts. A file changed after the last refresh,
 // and outside the clone's history, keeps its older recorded date: a real
@@ -24,8 +24,8 @@ import { execFileSync } from "node:child_process";
 import { readFileSync, realpathSync } from "node:fs";
 import path from "node:path";
 // The recorded dates live with the main app (its `seo:dates` script writes
-// them), keyed by path from apps/docs: "content/docs/<page>.mdx".
-import recordedFileDates from "../../docs/lib/seo-file-dates.json";
+// them), keyed by path from apps/app: "content/docs/<page>.mdx".
+import recordedFileDates from "../../app/lib/seo-file-dates.json";
 
 /** Newest date per file from `git log --format=commit:%aI --name-only`. */
 export function parseGitLog(stdout: string): Map<string, Date> {
@@ -202,7 +202,7 @@ export function gitLastModified(
   return result;
 }
 
-/** File (relative to apps/docs) → ISO date of its last commit. */
+/** File (relative to apps/app) → ISO date of its last commit. */
 export type RecordedDates = Readonly<Record<string, string>>;
 
 const RECORDED: RecordedDates = recordedFileDates;
@@ -235,7 +235,7 @@ export function fileLastModified(
 
 /**
  * An MDX page's date: fumadocs' `lastModified` (a git date) when it can be
- * trusted, else the recorded date of `file` (relative to apps/docs).
+ * trusted, else the recorded date of `file` (relative to apps/app).
  */
 export function contentLastModified(
   file: string,

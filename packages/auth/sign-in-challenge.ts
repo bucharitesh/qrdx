@@ -81,7 +81,7 @@ import {
 // address (registerBackupCodeNotifier, sent by the app: this package has no
 // email stack). It never holds up or fails the sign-in.
 //
-// apps/docs/tests/auth/sign-in-challenge-guard.test.ts classifies every endpoint
+// apps/app/tests/auth/sign-in-challenge-guard.test.ts classifies every endpoint
 // path, so a new plugin can't add one without someone deciding.
 
 type Middleware = ReturnType<typeof createAuthMiddleware>;

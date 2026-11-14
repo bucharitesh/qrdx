@@ -3,13 +3,13 @@
 // structure (which pages, in which order, which tab) always comes from the
 // English meta.json. A page added to the English sidebar therefore shows up
 // in every language at once, in English with the "not translated yet" note,
-// before anyone runs `bun run --filter docs i18n:docs`.
+// before anyone runs `bun run --filter app i18n:docs`.
 //
 // Labels are matched to the English entries by the page next to them (a
 // separator by the page after it, or else the one before it; a link by its
 // URL), so pages inserted elsewhere don't shift them. A label that matches
 // nothing (a new separator) stays English until the folder is translated
-// again. Client-safe and pure; apps/docs/lib/source.ts and the tests use it.
+// again. Client-safe and pure; apps/app/lib/source.ts and the tests use it.
 import { englishFile, translationLocale } from "./docs";
 
 const SEPARATOR = /^---(?:\[[^\]]+])?(.+)---$/;

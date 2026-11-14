@@ -10,7 +10,7 @@ import {
 } from "./session-origin";
 
 // "Confirm it's you" for Better Auth's own endpoints, over HTTP. The app's
-// server actions ask first (apps/docs/lib/account/confirmation-server.tsx)
+// server actions ask first (apps/app/lib/account/confirmation-server.tsx)
 // before linking or unlinking Google or GitHub and before the workspace
 // changes that need it, and call these endpoints through auth.api. The same
 // endpoints are also open over HTTP, where a stolen session cookie alone
