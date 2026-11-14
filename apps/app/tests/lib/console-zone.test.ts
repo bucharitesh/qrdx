@@ -7,6 +7,7 @@
 // the console's.
 import { existsSync } from "node:fs";
 import path from "node:path";
+import { isAuthCookieName, withoutAuthCookies } from "@repo/auth/auth-cookies";
 import { docsZoneRewrites } from "@repo/i18n/docs";
 import {
   CONSOLE_ASSET_PREFIX,
@@ -63,17 +64,27 @@ const MOVING_SECTIONS: readonly string[] = [
   "affiliates",
 ];
 
+interface ProxySession {
+  /** Whether the signed-in session is held (lib/account/session-origin.ts) */
+  held: boolean;
+  lookups: number;
+  holdChecks: number;
+}
+
 /**
  * What proxy.ts reads besides the request: the session (signed in as an
  * admin; held or not) and custom domains (none). Nothing is looked up.
  */
-function mockProxyDependencies(session: { held: boolean; lookups: number }) {
+function mockProxyDependencies(session: ProxySession) {
   vi.doMock("@/lib/account/session-origin-server", () => ({
     getSessionAllowingHold: async () => {
       session.lookups++;
       return { user: { id: "admin_1" }, session: { id: "s1" } };
     },
-    isSessionHeld: async () => session.held,
+    isSessionHeld: async () => {
+      session.holdChecks++;
+      return session.held;
+    },
   }));
   vi.doMock("next/headers", () => ({ headers: async () => new Headers() }));
   vi.doMock("@/app/(app)/dashboard/domains/_lib/host-routing", () => ({
@@ -244,6 +255,39 @@ describe("lowerCasedZonePrefix and hasDotSegment (proxy.ts)", () => {
       expect(hasDotSegment(pathname), pathname).toBe(true);
     }
     expect(hasDotSegment("/console-static/_next/static/x.js")).toBe(false);
+  });
+});
+
+describe("Better Auth's cookies (@repo/auth/auth-cookies)", () => {
+  it.each([
+    "better-auth.session_token",
+    "__Secure-better-auth.session_token",
+    "__Secure-better-auth.session_data",
+    "better-auth.dont_remember",
+    "better-auth-session_token",
+  ])("knows %s", (name) => {
+    expect(isAuthCookieName(name)).toBe(true);
+  });
+
+  it.each([
+    "theme",
+    "NEXT_LOCALE",
+    "x-better-auth.session_token",
+    "betterauth",
+  ])("leaves %s", (name) => {
+    expect(isAuthCookieName(name)).toBe(false);
+  });
+
+  it("keeps every other cookie", () => {
+    expect(
+      withoutAuthCookies(
+        "theme=dark; __Secure-better-auth.session_token=abc.def; NEXT_LOCALE=es;better-auth.session_data=x",
+      ),
+    ).toBe("theme=dark; NEXT_LOCALE=es");
+    expect(
+      withoutAuthCookies("__Secure-better-auth.session_token=a"),
+    ).toBeNull();
+    expect(withoutAuthCookies("")).toBeNull();
   });
 });
 
@@ -586,7 +630,7 @@ describe("next.config.ts", () => {
     beforeAll(async () => {
       // Only its matcher is read: no session or domain lookups run.
       vi.resetModules();
-      mockProxyDependencies({ held: false, lookups: 0 });
+      mockProxyDependencies({ held: false, lookups: 0, holdChecks: 0 });
       const { config } = await import("@/proxy");
       const matcher = getMiddlewareRouteMatcher(
         getMiddlewareMatchers(config.matcher, { basePath: "" } as never),
@@ -644,8 +688,7 @@ describe("next.config.ts", () => {
 
 describe("proxy.ts", () => {
   const saved = { ...process.env };
-  /** Whether the signed-in session is held (lib/account/session-origin.ts). */
-  const session = { held: false, lookups: 0 };
+  const session: ProxySession = { held: false, lookups: 0, holdChecks: 0 };
 
   /** The proxy with CONSOLE_ORIGIN (and the key) set or unset. */
   async function loadProxy(
@@ -805,6 +848,77 @@ describe("proxy.ts", () => {
     );
     expect(unset.status).toBe(200);
     expect(session.lookups).toBe(0);
+  });
+
+  describe("server actions (POSTs with next-action)", () => {
+    const COOKIES =
+      "theme=dark; __Secure-better-auth.session_token=abc.sig; __Secure-better-auth.session_data=xyz";
+    const actionTo = (url: string) =>
+      request(url, {
+        "next-action": "abc123",
+        cookie: COOKIES,
+        authorization: "Bearer token",
+      });
+
+    it("sends a held session's action to the console without its session", async () => {
+      session.held = true;
+      try {
+        const response = await on(
+          actionTo("https://qrdx.dev/admin/affiliates/a1"),
+        );
+        expect(response.status).toBe(200);
+        const sent = forwarded(response);
+        expect(sent("cookie")).toBe("theme=dark");
+        expect(sent("authorization")).toBeUndefined();
+        expect(sent(CONSOLE_KEY_HEADER)).toBe(KEY);
+        // Without any other cookie, no Cookie header at all.
+        const bare = await on(
+          request("https://qrdx.dev/admin/growth", {
+            "next-action": "abc123",
+            cookie: "__Secure-better-auth.session_token=abc.sig",
+          }),
+        );
+        const names =
+          bare.headers.get("x-middleware-override-headers")?.split(",") ?? [];
+        expect(names).not.toContain("cookie");
+      } finally {
+        session.held = false;
+      }
+    });
+
+    it("sends an admin's action with its session when it isn't held", async () => {
+      const response = await on(
+        actionTo("https://qrdx.dev/admin/affiliates/a1"),
+      );
+      const sent = forwarded(response);
+      expect(sent("cookie")).toBe(COOKIES);
+      expect(sent(CONSOLE_KEY_HEADER)).toBe(KEY);
+    });
+
+    it("leaves this app's own admin actions to their own session reads", async () => {
+      session.held = true;
+      try {
+        const response = await on(actionTo("https://qrdx.dev/admin/users/u1"));
+        expect(response.status).toBe(200);
+        expect(forwarded(response)("cookie")).toBe(COOKIES);
+      } finally {
+        session.held = false;
+      }
+    });
+
+    it("changes nothing while CONSOLE_ORIGIN is unset", async () => {
+      session.held = true;
+      session.holdChecks = 0;
+      try {
+        const response = await off(actionTo("https://qrdx.dev/admin/growth"));
+        expect(response.status).toBe(200);
+        expect(forwarded(response)("cookie")).toBe(COOKIES);
+        // As before: a server action's hold isn't checked here at all.
+        expect(session.holdChecks).toBe(0);
+      } finally {
+        session.held = false;
+      }
+    });
   });
 
   it("still sends a held session to the check page first", async () => {
