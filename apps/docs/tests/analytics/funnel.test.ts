@@ -162,7 +162,7 @@ describe("barcode_generated", () => {
 describe("Umami", () => {
   it("loads right after hydration, so quick visits are counted", () => {
     const source = readFileSync(
-      join(root, "lib/analytics/analytics.tsx"),
+      join(root, "../../packages/analytics/analytics.tsx"),
       "utf8",
     );
     expect(source).toContain('strategy="afterInteractive"');
