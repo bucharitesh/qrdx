@@ -2648,7 +2648,7 @@
     "setupUrl": "服务器 URL",
     "toolsEyebrow": "工具",
     "toolsTitle": "你的助手可以调用什么",
-    "toolsDescription": "共 {count, number} 个工具。除 save_template 和 save_barcode 外，其余均为只读，无需密钥：它们可以渲染图片、格式化文本并读取公开社区内容。完整参数请见 <link>MCP 服务器文档</link>。",
+    "toolsDescription": "共 {count, number} 个工具。除 save_template、save_barcode 和 generate_ai_art 外，其余均为只读，无需密钥：它们可以渲染图像、格式化文本，并读取公开社区的内容。完整参数请参阅 <link>MCP server 文档</link>。",
     "toolNoKey": "无需密钥",
     "toolNeedsKey": "需要 API 密钥",
     "faqTitle": "MCP 服务器常见问题",
@@ -3308,6 +3308,61 @@
       "followsYourPrompt": "紧贴您的提示词",
       "interpretsFreely": "自由发挥",
       "generateVariations": "{count, plural, one {生成二维码艺术图} other {生成 # 个变体}}"
+    },
+    "artModes": {
+      "mode": "模式",
+      "code": "二维码",
+      "scene": "场景",
+      "photo": "照片",
+      "codeDescription": "二维码本身就是画面：艺术图案填充在码点之中，外围是纯色边框。速度最快。",
+      "sceneDescription": "先根据你的描述绘制一幅画面，再用画面本身的色彩将二维码绘入其中央。耗时稍长。",
+      "photoDescription": "使用你的照片，并用照片本身的色彩将二维码绘入其中央。耗时稍长。",
+      "dropAPhoto": "拖入照片或选择照片",
+      "photoHint": "支持 PNG、JPG 或 WebP。照片会在浏览器中裁剪为正方形并调整大小，随你的提示词一起发送以生成作品，QRdx 不会保存。",
+      "choosePhoto": "选择照片",
+      "yourPhoto": "你的照片",
+      "crop": "裁剪",
+      "left": "左",
+      "right": "右",
+      "top": "上",
+      "bottom": "下",
+      "croppedSquare": "已裁剪为用于生成作品的正方形。",
+      "replace": "替换",
+      "remove": "移除",
+      "couldntUseThisPhoto": "无法使用这张照片",
+      "unsupportedFormat": "不支持的图片格式",
+      "usePngJpgWebp": "请使用 PNG、JPG 或 WebP 图片。",
+      "photoTooLarge": "照片过大",
+      "photosUpTo": "照片大小最多为 {size} MB。",
+      "examples": {
+        "eyebrow": "场景与照片模式",
+        "title": "把二维码放进一幅画面里",
+        "description": "场景模式会先根据你的描述绘制一幅画面，再将二维码绘入其中央，让画面一直延伸并穿过二维码。照片模式则对你上传的照片做同样的处理。这些示例出自你所用的同一套流程，每一个都可以扫描，并会打开本页面。",
+        "scene": "场景",
+        "photo": "照片",
+        "caption": {
+          "lighthouse": "海岬上的灯塔，二维码横贯悬崖与大海",
+          "painted-townhouses": "彩绘排屋，它们的色彩贯穿整个二维码",
+          "photo-mountain": "日落时分的山间湖泊照片",
+          "botanical-watercolor": "野花与蕨类的水彩画",
+          "venice-canals": "威尼斯的一条运河，二维码融入水面与墙壁",
+          "photo-latte": "木桌上的一杯拿铁照片",
+          "zen-garden": "有樱花和锦鲤的日式庭园",
+          "photo-dog": "一只金毛寻回犬的棚拍照片"
+        },
+        "alt": {
+          "lighthouse": "场景模式下的 AI 二维码艺术图：海边长满青草的岬角上有一座灯塔，二维码以蓝色和绿色绘入画面中央",
+          "painted-townhouses": "场景模式下的 AI 二维码艺术图：一排彩绘排屋，二维码以粉色、黄色和蓝色绘入画面中央",
+          "photo-mountain": "照片模式下的 AI 二维码艺术图：日落时分的山间湖泊，二维码以照片的色彩绘制在山峰及其倒影之上",
+          "botanical-watercolor": "场景模式下的 AI 二维码艺术图：野花与蕨类的水彩画，二维码以花朵的颜色绘入画面中央",
+          "venice-canals": "场景模式下的 AI 二维码艺术图：威尼斯的一条运河和一艘贡多拉，二维码以温暖的石头色调绘入画面中央",
+          "photo-latte": "照片模式下的 AI 二维码艺术图：木桌上的一杯拿铁，二维码绘入杯子和桌面",
+          "zen-garden": "场景模式下的 AI 二维码艺术图：有樱花、石灯笼和锦鲤的日式庭园，二维码绘入画面中央",
+          "photo-dog": "照片模式下的 AI 二维码艺术图：纯色背景前的一只金毛寻回犬，二维码以它自身的毛色绘制在脸部之上"
+        }
+      },
+      "paintingPicture": "正在绘制图片…",
+      "paintingCode": "正在把二维码绘入图片…"
     }
   },
   "compare": {
@@ -3828,6 +3883,32 @@
           "halftone": "无需 AI：你的照片成为二维码的一部分，支持所有格式。",
           "ai": "AI 将场景绘入你的二维码。每张图片都会检查能否扫描。"
         }
+      },
+      "artLooks": {
+        "look": "风格",
+        "lookChoices": "风格",
+        "none": "无",
+        "looks": {
+          "watercolor": "水彩",
+          "oil-painting": "油画",
+          "anime": "动漫",
+          "cartoon": "卡通",
+          "pixel-art": "像素画",
+          "pop-art": "波普艺术",
+          "charcoal": "炭笔画",
+          "ink": "水墨",
+          "cyberpunk": "赛博朋克",
+          "fantasy": "奇幻",
+          "photographic": "写实摄影",
+          "low-poly": "低多边形",
+          "papercut": "剪纸"
+        },
+        "lookHint": "所选风格会添加到你的描述中。在上方选择样式会将其重置为“无”。",
+        "blankIsWritten": "留空的话，生成时会自动为你写一条描述。自己写描述不会消耗点数。",
+        "writeOneForMe": "帮我写一条",
+        "writing": "正在写…",
+        "couldntWrite": "无法生成描述",
+        "checkConnection": "请检查网络连接后重试。"
       }
     },
     "brandLogos": {

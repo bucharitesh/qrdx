@@ -6,6 +6,9 @@ import { enforceRateLimits, getClientIp } from "@/lib/request-guards";
 import { MCP_INSTRUCTIONS, MCP_SERVER_INFO, registerQrTools } from "./tools";
 import { countMcpSessions, countToolCalls } from "./usage";
 
+// generate_ai_art waits for the art model (./art.ts), which gives up first.
+export const maxDuration = 60;
+
 // Public, stateless MCP server (Streamable HTTP). Tools only render QR codes
 // and format payloads; nothing here reads or writes user data. Tool calls
 // and sessions are counted by name and client family only (./usage.ts).

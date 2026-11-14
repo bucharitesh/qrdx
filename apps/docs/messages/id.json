@@ -2648,7 +2648,7 @@
     "setupUrl": "URL server",
     "toolsEyebrow": "Alat",
     "toolsTitle": "Yang dapat dipanggil asisten Anda",
-    "toolsDescription": "{count, number} alat. Semuanya kecuali save_template dan save_barcode bersifat hanya-baca dan tidak memerlukan kunci: alat ini membuat gambar, memformat teks, dan membaca komunitas publik. Parameter lengkap ada di <link>dokumen server MCP</link>.",
+    "toolsDescription": "{count, number} alat. Semua alat kecuali save_template, save_barcode, dan generate_ai_art bersifat hanya-baca dan tidak memerlukan kunci: alat-alat ini merender gambar, memformat teks, dan membaca komunitas publik. Parameter lengkap ada di <link>dokumentasi server MCP</link>.",
     "toolNoKey": "Tanpa kunci",
     "toolNeedsKey": "Perlu kunci API",
     "faqTitle": "FAQ server MCP",
@@ -3308,6 +3308,61 @@
       "followsYourPrompt": "Mengikuti prompt Anda",
       "interpretsFreely": "Menafsirkan dengan bebas",
       "generateVariations": "{count, plural, one {Buat seni QR} other {Buat # variasi}}"
+    },
+    "artModes": {
+      "mode": "Mode",
+      "code": "Kode",
+      "scene": "Adegan",
+      "photo": "Foto",
+      "codeDescription": "Kodenya adalah gambarnya: karya seni mengisi modul-modulnya, dengan bingkai polos. Yang tercepat.",
+      "sceneDescription": "Sebuah gambar dilukis dari deskripsi Anda, lalu kode dilukis di bagian tengahnya, dengan warna asli gambar tersebut. Butuh waktu sedikit lebih lama.",
+      "photoDescription": "Foto Anda, dengan kode yang dilukis di bagian tengahnya dalam warna asli foto tersebut. Butuh waktu sedikit lebih lama.",
+      "dropAPhoto": "Letakkan foto atau pilih satu",
+      "photoHint": "PNG, JPG, atau WebP. Foto dipotong persegi dan diubah ukurannya di browser Anda, dikirim bersama prompt untuk membuat karya seni, dan QRdx tidak menyimpannya.",
+      "choosePhoto": "Pilih foto",
+      "yourPhoto": "Foto Anda",
+      "crop": "Potong",
+      "left": "Kiri",
+      "right": "Kanan",
+      "top": "Atas",
+      "bottom": "Bawah",
+      "croppedSquare": "Dipotong persegi untuk karya seni.",
+      "replace": "Ganti",
+      "remove": "Hapus",
+      "couldntUseThisPhoto": "Foto ini tidak dapat digunakan",
+      "unsupportedFormat": "Format gambar tidak didukung",
+      "usePngJpgWebp": "Gunakan gambar PNG, JPG, atau WebP.",
+      "photoTooLarge": "Ukuran foto terlalu besar",
+      "photosUpTo": "Ukuran foto maksimal {size} MB.",
+      "examples": {
+        "eyebrow": "Mode Adegan dan Foto",
+        "title": "Tempatkan kode di dalam gambar",
+        "description": "Mode Adegan melukis gambar dari deskripsi Anda terlebih dahulu, lalu melukis kode di bagian tengahnya, sehingga gambar menyatu hingga menembus kode. Mode Foto melakukan hal yang sama dengan foto yang Anda unggah. Semua ini dibuat dengan alur yang sama dengan yang Anda gunakan, dan masing-masing dapat dipindai serta membuka halaman ini.",
+        "scene": "Adegan",
+        "photo": "Foto",
+        "caption": {
+          "lighthouse": "Sebuah mercusuar di tanjung, dengan kode yang membentang di atas tebing dan lautnya",
+          "painted-townhouses": "Rumah-rumah kota yang dicat, warnanya mengalir di sepanjang kode",
+          "photo-mountain": "Foto danau pegunungan saat matahari terbenam",
+          "botanical-watercolor": "Lukisan cat air bunga liar dan pakis",
+          "venice-canals": "Kanal di Venesia, kode menyatu dengan air dan dinding",
+          "photo-latte": "Foto latte di atas meja kayu",
+          "zen-garden": "Taman Jepang dengan bunga sakura dan ikan koi",
+          "photo-dog": "Foto studio seekor golden retriever"
+        },
+        "alt": {
+          "lighthouse": "Seni QR AI dalam mode pemandangan: mercusuar di tanjung berumput dekat laut, dengan kode QR dilukis di tengah gambar dalam nuansa biru dan hijaunya",
+          "painted-townhouses": "Seni QR AI dalam mode pemandangan: deretan rumah kota yang dicat, dengan kode QR dilukis di tengah gambar dalam warna merah muda, kuning, dan biru rumah-rumah itu",
+          "photo-mountain": "Seni QR AI dalam mode foto: danau pegunungan saat matahari terbenam, dengan kode QR dilukis di atas puncak gunung dan pantulannya dalam warna foto",
+          "botanical-watercolor": "Seni QR AI dalam mode pemandangan: lukisan cat air bunga liar dan pakis, dengan kode QR dilukis di bagian tengahnya dalam warna bunga-bunga tersebut",
+          "venice-canals": "Seni QR AI dalam mode pemandangan: kanal di Venesia dengan sebuah gondola, dengan kode QR dilukis di tengah gambar dalam warna batu yang hangat",
+          "photo-latte": "Seni QR AI dalam mode foto: latte di atas meja kayu, dengan kode QR dilukis pada cangkir dan meja",
+          "zen-garden": "Seni QR AI dalam mode pemandangan: taman Jepang dengan bunga sakura, lentera, dan ikan koi, dengan kode QR dilukis di tengah gambar",
+          "photo-dog": "Seni QR AI dalam mode foto: golden retriever dengan latar polos, dengan kode QR dilukis di wajahnya dalam warna bulunya sendiri"
+        }
+      },
+      "paintingPicture": "Melukis gambar…",
+      "paintingCode": "Melukis kode ke dalamnya…"
     }
   },
   "compare": {
@@ -3828,6 +3883,32 @@
           "halftone": "Tanpa AI: foto Anda menjadi bagian dari kode, di semua format.",
           "ai": "AI melukis sebuah pemandangan ke dalam kode Anda. Setiap gambar diperiksa agar dapat dipindai."
         }
+      },
+      "artLooks": {
+        "look": "Gaya",
+        "lookChoices": "Gaya",
+        "none": "Tanpa",
+        "looks": {
+          "watercolor": "Cat air",
+          "oil-painting": "Lukisan cat minyak",
+          "anime": "Anime",
+          "cartoon": "Kartun",
+          "pixel-art": "Seni piksel",
+          "pop-art": "Pop art",
+          "charcoal": "Arang",
+          "ink": "Tinta",
+          "cyberpunk": "Cyberpunk",
+          "fantasy": "Fantasi",
+          "photographic": "Fotografis",
+          "low-poly": "Low poly",
+          "papercut": "Potongan kertas"
+        },
+        "lookHint": "Gaya ditambahkan ke deskripsi Anda. Memilih gaya di atas akan mengatur ulang pilihan ini ke Tanpa.",
+        "blankIsWritten": "Biarkan kosong dan deskripsi akan dibuatkan saat Anda membuat gambar. Menulis deskripsi tidak pernah memakai kredit.",
+        "writeOneForMe": "Tuliskan untuk saya",
+        "writing": "Menulis…",
+        "couldntWrite": "Tidak dapat menulis deskripsi",
+        "checkConnection": "Periksa koneksi Anda lalu coba lagi."
       }
     },
     "brandLogos": {

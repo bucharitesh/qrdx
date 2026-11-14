@@ -68,7 +68,11 @@
     "status": "machine"
   },
   "developers/ai-agents.mdx": {
-    "source": "5bfff9eebeb6",
+    "source": "42456f344baa",
+    "status": "machine"
+  },
+  "developers/ai-art-api.mdx": {
+    "source": "9177d9a4c21e",
     "status": "machine"
   },
   "developers/api-keys.mdx": {
@@ -76,7 +80,7 @@
     "status": "machine"
   },
   "developers/api/meta.json": {
-    "source": "8a4ae145eec7",
+    "source": "507714653e57",
     "status": "machine"
   },
   "developers/barcode-api.mdx": {
@@ -92,7 +96,7 @@
     "status": "machine"
   },
   "developers/errors.mdx": {
-    "source": "eaf24098059d",
+    "source": "26b6b2f8a457",
     "status": "machine"
   },
   "developers/google-chart-api.mdx": {
@@ -108,11 +112,11 @@
     "status": "machine"
   },
   "developers/mcp.mdx": {
-    "source": "2b48d42ae8ae",
+    "source": "ea7741904e6d",
     "status": "machine"
   },
   "developers/meta.json": {
-    "source": "98ff392ec155",
+    "source": "302a50150c8c",
     "status": "machine"
   },
   "developers/n8n.mdx": {
@@ -124,7 +128,7 @@
     "status": "machine"
   },
   "developers/rest-api.mdx": {
-    "source": "beced47930c4",
+    "source": "40c4bd0ebc82",
     "status": "machine"
   },
   "developers/shadcn.mdx": {

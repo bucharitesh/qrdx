@@ -12,10 +12,16 @@
  * public/images/ai-art-styles/<id>.webp (256 px), which the preset picker
  * loads lazily.
  *
+ * With --looks it makes the quick looks' previews instead
+ * (components/sections/ai-art/looks.ts): one fixed subject
+ * (ART_LOOK_PREVIEW_SUBJECT) with each look added the way lib/ai/art-run.ts
+ * adds it, kept the same way, to public/images/ai-art-looks/<id>.webp
+ * (128 px, for the chips).
+ *
  * Usage (from apps/docs, with the engine built: bun run --filter qrdx build:inplace;
  * needs zbarimg and cwebp: brew install zbar webp):
  *   AI_GATEWAY_API_KEY=... bun x tsx --conditions=react-server scripts/ai/art-previews.ts \
- *     [--missing | --ids zen-garden,coral-reef | --all] [--attempts 2] \
+ *     [--looks] [--missing | --ids zen-garden,coral-reef | --all] [--attempts 2] \
  *     [--max-cost 5] [--ledger ./art-previews-spend.json] [--out ./art-previews-out] \
  *     [--concurrency 4] [--dry-run]
  *   bun x tsx --conditions=react-server scripts/ai/art-previews.ts --rescore ./art-previews-out
@@ -55,7 +61,7 @@ const PAYLOAD = "https://qrdx.dev/playground";
  * flight reserves against --max-cost: above the $0.023 to $0.062 measured.
  */
 const ESTIMATED_COST_USD = 0.07;
-const PREVIEW_SIZE = 256;
+const PREVIEW_SIZE = { presets: 256, looks: 128 } as const;
 const PREVIEW_QUALITY = 72;
 /**
  * The preview trims a tenth off each side of the 1024 px image, most of the
@@ -63,7 +69,18 @@ const PREVIEW_QUALITY = 72;
  */
 const PREVIEW_CROP = { offset: 102, side: 820 };
 const DOCS = resolve(import.meta.dirname, "../..");
-const PREVIEW_DIR = join(DOCS, "public/images/ai-art-styles");
+const PREVIEW_DIR = {
+  presets: join(DOCS, "public/images/ai-art-styles"),
+  looks: join(DOCS, "public/images/ai-art-looks"),
+} as const;
+type PreviewKind = keyof typeof PREVIEW_DIR;
+
+/** What one preview is made from: a preset, or the subject in a look. */
+interface PreviewTarget {
+  id: string;
+  prompt: string;
+  negativePrompt?: string;
+}
 
 interface Attempt {
   attempt: number;
@@ -233,8 +250,8 @@ async function scoreInBrowser(
   return scores;
 }
 
-function writePreview(delivered: string, id: string) {
-  mkdirSync(PREVIEW_DIR, { recursive: true });
+function writePreview(delivered: string, id: string, kind: PreviewKind) {
+  mkdirSync(PREVIEW_DIR[kind], { recursive: true });
   const run = spawnSync(
     "cwebp",
     [
@@ -249,11 +266,11 @@ function writePreview(delivered: string, id: string) {
       String(PREVIEW_CROP.side),
       String(PREVIEW_CROP.side),
       "-resize",
-      String(PREVIEW_SIZE),
-      String(PREVIEW_SIZE),
+      String(PREVIEW_SIZE[kind]),
+      String(PREVIEW_SIZE[kind]),
       delivered,
       "-o",
-      join(PREVIEW_DIR, `${id}.webp`),
+      join(PREVIEW_DIR[kind], `${id}.webp`),
     ],
     { encoding: "utf8" },
   );
@@ -264,6 +281,7 @@ async function main() {
   const { values } = parseArgs({
     options: {
       ids: { type: "string" },
+      looks: { type: "boolean", default: false },
       missing: { type: "boolean", default: false },
       all: { type: "boolean", default: false },
       attempts: { type: "string", default: "2" },
@@ -298,15 +316,36 @@ async function main() {
   process.env.NEXT_PUBLIC_APP_URL ??= "https://qrdx.dev";
   process.env.BETTER_AUTH_SECRET ??= "art-previews-placeholder-not-a-secret";
 
-  const [pipeline, config, presets, providers] = await Promise.all([
-    import("../../lib/ai/art-image"),
-    import("../../components/sections/ai-art/config"),
-    import("../../components/sections/ai-art/presets"),
-    import("../../lib/ai/providers"),
-  ]);
+  const [pipeline, config, presets, looks, artPrompt, providers] =
+    await Promise.all([
+      import("../../lib/ai/art-image"),
+      import("../../components/sections/ai-art/config"),
+      import("../../components/sections/ai-art/presets"),
+      import("../../components/sections/ai-art/looks"),
+      import("../../lib/ai/art-prompt"),
+      import("../../lib/ai/providers"),
+    ]);
+  const kind: PreviewKind = values.looks ? "looks" : "presets";
+  const candidates: PreviewTarget[] =
+    kind === "looks"
+      ? looks.ART_LOOKS.map((look) => {
+          const composed = artPrompt.composeArtPrompt(
+            looks.ART_LOOK_PREVIEW_SUBJECT,
+            look.id,
+          );
+          return {
+            id: look.id,
+            prompt: composed.prompt,
+            negativePrompt: composed.avoid,
+          };
+        })
+      : presets.AI_ART_PRESETS;
 
   const out = resolve(
-    rescore ?? values.out ?? join(tmpdir(), "qrdx-art-previews"),
+    rescore ??
+      values.out ??
+      // Separate from the presets' run: some looks share a preset's id.
+      join(tmpdir(), kind === "looks" ? "qrdx-art-looks" : "qrdx-art-previews"),
   );
   mkdirSync(out, { recursive: true });
   const resultsFile = join(out, "results.json");
@@ -327,19 +366,19 @@ async function main() {
     join(out, id, `${attempt}-${kind}.png`);
 
   const wanted = values.ids?.split(",").map((id) => id.trim());
-  const targets = presets.AI_ART_PRESETS.filter((preset) =>
+  const targets = candidates.filter((preset) =>
     wanted
       ? wanted.includes(preset.id)
       : values.all || rescore
         ? true
         : values.missing
-          ? !existsSync(join(PREVIEW_DIR, `${preset.id}.webp`))
+          ? !existsSync(join(PREVIEW_DIR[kind], `${preset.id}.webp`))
           : false,
   );
   if (wanted) {
     for (const id of wanted) {
       if (!targets.some((preset) => preset.id === id))
-        fail(`Unknown preset ${id}`);
+        fail(`Unknown ${kind === "looks" ? "look" : "preset"} ${id}`);
     }
   }
   if (targets.length === 0)
@@ -491,7 +530,11 @@ async function main() {
         .sort((a, b) => (b.score ?? 0) - (a.score ?? 0))[0];
       record.kept = Boolean(best);
       if (best && !dryRun) {
-        writePreview(fileOf(record.id, best.attempt, "delivered"), record.id);
+        writePreview(
+          fileOf(record.id, best.attempt, "delivered"),
+          record.id,
+          kind,
+        );
       }
     }
     save();
@@ -499,7 +542,7 @@ async function main() {
 
   if (!rescore) {
     console.log(
-      `${dryRun ? "Dry run: " : ""}${targets.length} presets, up to ${maxAttempts} attempts each → ${out}. Spent so far: $${ledger.spentUsd.toFixed(2)}${maxCost ? ` of $${maxCost}` : ""}.`,
+      `${dryRun ? "Dry run: " : ""}${targets.length} ${kind}, up to ${maxAttempts} attempts each → ${out}. Spent so far: $${ledger.spentUsd.toFixed(2)}${maxCost ? ` of $${maxCost}` : ""}.`,
     );
     // A changed prompt starts over, with its earlier images gone.
     for (const preset of targets) {
@@ -520,7 +563,7 @@ async function main() {
         return !tries.some(passes) && tries.length < attempt;
       });
       if (round.length === 0) continue;
-      console.log(`Round ${attempt}: ${round.length} presets`);
+      console.log(`Round ${attempt}: ${round.length} ${kind}`);
       await pool(round, Number(values.concurrency), (preset) =>
         generate(preset, (results.get(preset.id)?.attempts.length ?? 0) + 1),
       );
@@ -538,7 +581,7 @@ async function main() {
   const firstTry = done.filter((r) => r.attempts[0] && passes(r.attempts[0]));
   const attempts = done.flatMap((r) => r.attempts);
   console.log(
-    `\nKept ${kept.length} of ${done.length} presets (${firstTry.length} on the first try). Attempts: ${attempts.length}, delivered ${attempts.filter((a) => a.delivered).length}, zbar ${attempts.filter((a) => a.zbar).length}, Great ${attempts.filter((a) => a.grade === "great" && a.decodes).length}, all three ${attempts.filter(passes).length}.`,
+    `\nKept ${kept.length} of ${done.length} ${kind} (${firstTry.length} on the first try). Attempts: ${attempts.length}, delivered ${attempts.filter((a) => a.delivered).length}, zbar ${attempts.filter((a) => a.zbar).length}, Great ${attempts.filter((a) => a.grade === "great" && a.decodes).length}, all three ${attempts.filter(passes).length}.`,
   );
   if (skippedForCost)
     console.log(`${skippedForCost} calls not made: --max-cost reached.`);

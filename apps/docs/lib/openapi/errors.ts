@@ -5,6 +5,8 @@
 // keeps all three in step with the codes thrown in the route code.
 
 import { MAX_CODES_PER_REQUEST } from "@repo/config";
+import { ART_TEXT_MAX_LENGTH } from "@/components/sections/ai-art/config";
+import { AI_ART_DAILY_LIMIT } from "@/lib/ai/art";
 import { formatCount } from "@/lib/format-count";
 
 export interface ApiErrorInfo {
@@ -52,6 +54,12 @@ export const API_ERRORS = [
     fix: "Send the `qrdx_sid` the short link added to your page URL, or, with an API key or token, the code id as `code`.",
   },
   {
+    code: "AI_ART_TEXT_TOO_LONG",
+    status: 400,
+    meaning: `\`text\` is too long for AI art (more than ${ART_TEXT_MAX_LENGTH} characters).`,
+    fix: "Send a dynamic code's id as `code` instead: the art encodes its short link, which is short and stays editable.",
+  },
+  {
     code: "UNAUTHORIZED",
     status: 401,
     meaning:
@@ -78,6 +86,13 @@ export const API_ERRORS = [
     meaning:
       "The workspace has as many active dynamic codes as its plan includes (10 on Free).",
     fix: "Archive a code (archived codes don't count) or upgrade to Pro for unlimited codes.",
+  },
+  {
+    code: "AI_ART_CREDITS_EXHAUSTED",
+    status: 402,
+    meaning:
+      "The workspace has used this month's AI art images (Free and Pro). Nothing was charged for the request.",
+    fix: "Wait for the allowance to reset on the 1st of the month (UTC), or upgrade for more images.",
   },
   {
     code: "INSUFFICIENT_SCOPE",
@@ -142,6 +157,13 @@ export const API_ERRORS = [
     fix: "Send a smaller body. For codes, a large inline logo is the usual cause; for a batch, send `Prefer: return=minimal` or fewer codes.",
   },
   {
+    code: "AI_ART_IMAGE_TOO_LARGE",
+    status: 413,
+    meaning:
+      "The `photo` or `reference` image is over the AI art size limit (the message says which).",
+    fix: "Downsize the image (a `reference` to about 512 px on its longest side, a `photo` to about 1024 px square) and send it again as a PNG or JPEG data URL.",
+  },
+  {
     code: "UNSUPPORTED_MEDIA_TYPE",
     status: 415,
     meaning: "A write without `Content-Type: application/json`.",
@@ -162,10 +184,44 @@ export const API_ERRORS = [
     fix: "Wait `Retry-After` seconds. For the daily quota, wait for 00:00 UTC or upgrade the plan.",
   },
   {
+    code: "AI_ART_CREDITS_EXHAUSTED",
+    status: 429,
+    meaning:
+      "A Business workspace has used this month's AI art images, which the whole team shares.",
+    fix: "Wait for the allowance to reset on the 1st of the month (UTC).",
+  },
+  {
+    code: "AI_ART_DAILY_LIMIT",
+    status: 429,
+    meaning: `The key's creator has made ${AI_ART_DAILY_LIMIT} AI art images today (UTC), a safety cap on top of the monthly allowance.`,
+    fix: "Try again tomorrow (UTC).",
+  },
+  {
     code: "INTERNAL_ERROR",
     status: 500,
     meaning: "Something failed on QRdx's side. It has been logged.",
     fix: "Try again in a moment. If it keeps happening, report it with the time of the request.",
+  },
+  {
+    code: "AI_ART_FAILED",
+    status: 502,
+    meaning:
+      "The image model failed, declined the prompt or returned an image QRdx couldn't read. No AI art credit was used.",
+    fix: "Try again, or reword the prompt. The message says what happened.",
+  },
+  {
+    code: "AI_ART_UNSCANNABLE",
+    status: 502,
+    meaning:
+      "The model's image couldn't be made to scan within the QR visibility you chose. No AI art credit was used.",
+    fix: "Try again with a higher `visibility`, or another seed.",
+  },
+  {
+    code: "AI_ART_DESCRIBE_FAILED",
+    status: 502,
+    meaning:
+      "You left out `prompt`, and the text model that writes one for you failed. No AI art credit was used.",
+    fix: "Try again, or send your own `prompt`.",
   },
   {
     code: "SLUG_UNAVAILABLE",
@@ -174,11 +230,32 @@ export const API_ERRORS = [
     fix: "Send the same request again.",
   },
   {
+    code: "AI_ART_BUSY",
+    status: 503,
+    meaning:
+      "The image model is over capacity right now. No AI art credit was used.",
+    fix: "Wait a minute and try again.",
+  },
+  {
+    code: "AI_NOT_CONFIGURED",
+    status: 503,
+    meaning:
+      "AI art isn't set up on this deployment (a self-hosted instance without `AI_GATEWAY_API_KEY`).",
+    fix: "Use the hosted QRdx API, or set up Vercel AI Gateway on your instance.",
+  },
+  {
     code: "UNAVAILABLE",
     status: 503,
     meaning:
       "Custom domains aren't set up on this deployment (a self-hosted instance without them).",
     fix: "Leave `domainId` out, or configure custom domains on your instance.",
+  },
+  {
+    code: "AI_ART_TIMEOUT",
+    status: 504,
+    meaning:
+      "The image model took too long, and QRdx stopped waiting before the request's one-minute limit. No AI art credit was used.",
+    fix: "Try again. Calls usually take 15 to 45 seconds.",
   },
 ] as const satisfies readonly ApiErrorInfo[];
 

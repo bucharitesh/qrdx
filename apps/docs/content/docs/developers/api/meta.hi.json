@@ -20,6 +20,8 @@
     "update-barcode",
     "delete-barcode",
     "get-saved-barcode-image",
+    "---AI आर्ट---",
+    "create-art",
     "---स्कैन---",
     "get-code-scans",
     "---कन्वर्ज़न---",

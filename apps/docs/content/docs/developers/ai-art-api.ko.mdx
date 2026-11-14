@@ -1,0 +1,176 @@
+---
+title: "AI 아트 API"
+description: "REST 호출 한 번 또는 MCP 도구 하나로 QR 코드를 AI 아트워크에 그려 넣으세요. QRdx가 모든 이미지의 스캔 가능 여부를 확인하며, 이미지마다 워크스페이스의 월간 AI 아트 이미지가 사용됩니다."
+icon: Sparkles
+---
+
+`POST https://api.qrdx.dev/v1/art`는 설명을 바탕으로 QR 코드를 AI 아트워크에 그려 넣고 이미지를 반환합니다. Playground의 Art 탭과 스튜디오에서 쓰는 [AI QR 아트](/ai/art)와 같은 기능입니다. {facts.artModel}이(가) 그림을 그리고, QRdx가 그 그림이 내 콘텐츠로 스캔되는지 확인한 뒤에 결과를 돌려줍니다. 모델이 그린 이미지가 그대로는 스캔되지 않으면, QRdx가 모델의 픽셀 위에서 필요한 만큼만 코드를 강화합니다.
+
+`codes:write` 범위가 있는 [API 키](/docs/developers/api-keys)가 필요합니다(**Full access** 키에는 이 범위가 있습니다). 이미지 한 장마다 키가 속한 워크스페이스의 월간 AI 아트 이미지가 하나씩 사용되며, 앱에서 쓰는 사용량과 같습니다.
+
+```bash
+curl https://api.qrdx.dev/v1/art \
+  -H "Authorization: Bearer $QRDX_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"text": "https://qrdx.dev", "prompt": "a koi pond at dusk, ink and watercolor"}' \
+  --max-time 90 -o art.json
+```
+
+호출 한 번에 코드 모드는 약 15~45초, 사진 모드는 약 25~45초, 장면 모드는 약 40~55초가 걸립니다. 장면 모드는 그림을 먼저 만들기 때문입니다. HTTP 클라이언트의 타임아웃은 60초 이상으로 설정하세요. 시간 안에 끝나지 못한 장면은 `504 AI_ART_TIMEOUT`으로 응답하며 이미지는 사용되지 않습니다. 다시 시도하거나 코드 모드를 사용하세요.
+
+## 링크 또는 동적 코드 인코딩 [#encode]
+
+다음 중 정확히 하나만 보내세요.
+
+- `text`: 코드에 담을 링크 또는 텍스트이며 최대 300자입니다. 아트는 그림이므로 인쇄한 뒤에는 내용을 바꿀 수 없습니다.
+- `code`: 워크스페이스에 있는 [동적 코드](/docs/dynamic-qr-codes) 중 하나의 `id`입니다. 아트에는 해당 코드의 짧은 링크가 인코딩되므로, 인쇄 후에도 이동 위치를 바꿀 수 있고 스캔 기록이 분석에 표시됩니다. 다른 워크스페이스의 코드나 휴지통에 있는 코드는 `404`입니다.
+
+```bash
+curl https://api.qrdx.dev/v1/art \
+  -H "Authorization: Bearer $QRDX_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"code": "cm5code0spring0menu00001", "prompt": "a bistro chalkboard menu on a brick wall", "mode": "scene"}' \
+  --max-time 90
+```
+
+코드의 `id`는 [`GET /v1/codes`](/docs/developers/api/list-codes)에서 가져오거나 [코드를 만들 때](/docs/developers/api/create-codes) 확인할 수 있습니다.
+
+## 요청 [#request]
+
+| 필드 | 기본값 | 설명 |
+| --- | --- | --- |
+| `text` | | 코드에 인코딩할 내용입니다. 이 필드 또는 `code` 중 하나를 보내세요 |
+| `code` | | `text` 대신 사용하는 동적 코드의 `id` |
+| `prompt` | 자동 작성 | 그릴 아트워크를 쉬운 말로 설명합니다. [자동으로 작성되는 프롬프트](#written-prompt)를 참고하세요 |
+| `mode` | `code` | 코드가 아트 안에 놓이는 방식입니다. [모드](#modes)를 참고하세요 |
+| `style` | | 퀵 룩의 id이며 프롬프트와 함께 적용됩니다. [퀵 룩](#quick-looks)을 참고하세요 |
+| `negativePrompt` | | 그림에서 제외할 내용 |
+| `visibility` | `50` | QR 가시성이며 `0`~`100`입니다. 높을수록 코드가 더 또렷하게 보이고, 낮을수록 그림을 우선합니다 |
+| `creativity` | `45` | `0`은 프롬프트를 그대로 따르고, `100`은 자유롭게 해석합니다 |
+| `seed` | 무작위 | 이전 응답의 시드를 보내면 비슷한 이미지를 얻을 수 있습니다 |
+| `reference` | | 색상과 형태를 참고할 이미지입니다(예: 로고나 팔레트) |
+| `photo` | | 사진 모드 전용: 코드를 그려 넣을 사진 |
+
+`reference`와 `photo`는 PNG 또는 JPEG `data:` URL(`data:image/jpeg;base64,…`)입니다. `reference`는 가장 긴 변을 약 512px(최대 600KB)로 줄이고, `photo`는 아트가 만들어지는 크기인 약 1024px 정사각형(최대 1MB)으로 잘라 보내세요. 이미지는 모델로 전달된 뒤 폐기되며, QRdx는 저장하거나 기록하지 않습니다. 더 큰 이미지는 `413 AI_ART_IMAGE_TOO_LARGE`로 거부됩니다.
+
+전체 스키마는 [API 레퍼런스](/docs/developers/api/create-art)에서 확인하세요.
+
+## 모드 [#modes]
+
+| `mode` | 결과 |
+| --- | --- |
+| `code` | 코드가 그림 전체가 됩니다. 아트워크가 모듈 안에 그려지고, 일반 파인더 사각형과 밝은 여백이 주변에 놓입니다. 스캔이 가장 안정적입니다 |
+| `scene` | 설명을 바탕으로 그림을 먼저 그린 뒤 그 가운데에 코드를 그려 넣습니다. 그림이 코드 바로 옆까지, 그리고 코드를 가로질러 이어지며, 모듈은 그림의 색과 빛으로 만들어집니다 |
+| `photo` | 같은 방식이지만 내 `photo`가 그림이 됩니다. 사진의 피사체, 색, 빛이 코드 주변과 코드 안에서 그대로 유지됩니다. 사진은 이 모드에서만 보내세요 |
+
+## 퀵 룩 [#quick-looks]
+
+퀵 룩은 매체나 분위기처럼 미리 만들어진 스타일로, QRdx가 내 `prompt`에 덧붙입니다. 예를 들어 `"a koi pond in the rain"`에 `"style": "watercolor"`를 더하면 비 오는 날의 비단잉어 연못이 수채화로 그려집니다. 퀵 룩의 id를 `style`로 보내세요. 다른 값은 `400 VALIDATION_ERROR`입니다. 퀵 룩은 [AI 아트 스튜디오](/ai/art)와 Playground의 Art 탭에서 칩으로 제공되는 것과 같으며, 모든 모드에서 사용할 수 있습니다.
+
+| `style` | 룩 |
+| --- | --- |
+| `watercolor` | 수채화 |
+| `oil-painting` | 유화 |
+| `anime` | 애니메이션 |
+| `cartoon` | 카툰 |
+| `pixel-art` | 픽셀 아트 |
+| `pop-art` | 팝 아트 |
+| `charcoal` | 목탄화 |
+| `ink` | 잉크 |
+| `cyberpunk` | 사이버펑크 |
+| `fantasy` | 판타지 |
+| `photographic` | 사진 |
+| `low-poly` | 로우 폴리 |
+| `papercut` | 종이 공예 |
+
+## 자동으로 작성되는 프롬프트 [#written-prompt]
+
+`prompt`는 선택 사항입니다. 생략하면 QRdx가 보낸 `mode`, `style`, `photo`에 맞춰 먼저 프롬프트를 작성합니다. 피사체, 배경, 빛이 있는 구체적인 장면 하나이며, 사진 모드에서는 아트가 사진 내용을 유지하도록 사진에 담긴 내용을 설명합니다. 프롬프트 작성에는 AI 아트 이미지가 추가로 사용되지 않습니다. 응답에는 작성된 내용이 `writtenPrompt`로 포함되므로, 다음에는 이를 수정해서 다시 보낼 수 있습니다. 작성에 실패하면 `502 AI_ART_DESCRIBE_FAILED`가 반환되며 이미지는 사용되지 않습니다.
+
+## 응답 [#response]
+
+```json
+{
+  "data": {
+    "imageUrl": "data:image/png;base64,iVBORw0KGgo…",
+    "width": 1024,
+    "height": 1024,
+    "seed": 2841337190,
+    "mode": "code",
+    "blend": "least",
+    "blendStrength": 0.35,
+    "text": "https://qrdx.dev/q/aB3dE5f",
+    "code": { "id": "cm5code0spring0menu00001", "shortLink": "https://qrdx.dev/q/aB3dE5f" },
+    "visibility": 50,
+    "creativity": 45
+  },
+  "credits": {
+    "plan": "pro",
+    "limit": 30,
+    "used": 7,
+    "remaining": 23,
+    "pooled": false,
+    "resetsAt": "2026-02-01T00:00:00.000Z"
+  }
+}
+```
+
+- `imageUrl`은 `data:` URL 형태의 1024px 정사각형 PNG입니다. QRdx는 사본을 보관하지 않으므로 직접 저장하세요.
+- `text`는 이미지를 스캔하면 나오는 내용과 정확히 같습니다. QRdx가 응답하기 전에 디코딩해 확인했습니다.
+- `blend`는 이미지가 스캔되도록 만든 방식을 나타냅니다. `none`(모델이 그린 이미지 그대로), `least`(모델의 이미지 위에서 파인더 사각형, 여백, 모듈을 필요한 만큼만 강화), `image-qr`(Image QR 코드로 다시 그림, 최후의 수단) 중 하나입니다. `blendStrength`는 `0`(그린 그대로)부터 `1`(Image QR)까지입니다.
+- `writtenPrompt`는 `prompt`를 생략했을 때만 포함되며, QRdx가 작성한 설명입니다.
+- `credits`는 이 이미지를 만든 뒤 워크스페이스에 남은 사용량입니다.
+
+JSON 대신 PNG 파일을 바로 받으려면 `?format=png`를 추가하거나 `Accept: image/png`를 보내세요. 이 경우 시드, 모드, 블렌드, 남은 이미지 수는 `X-QRdx-Seed`, `X-QRdx-Mode`, `X-QRdx-Blend`, `X-QRdx-Blend-Strength`, `X-QRdx-Credits-Remaining` 헤더로 전달됩니다.
+
+```bash
+curl "https://api.qrdx.dev/v1/art?format=png" \
+  -H "Authorization: Bearer $QRDX_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"text": "https://qrdx.dev", "prompt": "a lighthouse on a cliff, woodcut print"}' \
+  --max-time 90 -o art.png
+```
+
+## 크레딧 [#credits]
+
+API는 앱과 같은 월간 AI 아트 이미지를 사용하며, 키가 속한 워크스페이스 기준으로 집계됩니다. 무료, Pro, Business 플랜에는 각각 월별 이미지가 포함되어 있고, Business는 팀 전체가 이를 공유합니다. 구체적인 수치는 [플랜 및 한도](/docs/plans-and-limits)에서 확인하세요. 사용량은 매월 1일(UTC)에 초기화됩니다.
+
+- 호출이 실패하거나 이미지를 스캔되게 만들 수 없는 경우에는 이미지가 사용되지 않습니다.
+- 해당 월의 이미지를 모두 사용하면 API가 `AI_ART_CREDITS_EXHAUSTED`로 응답합니다. 업그레이드하면 더 받을 수 있는 무료와 Pro에서는 `402`, Business에서는 `429`입니다.
+- 한 사람이 하루에 만들 수 있는 이미지는 월간 사용량과 별개로 최대 25장입니다(`429 AI_ART_DAILY_LIMIT`).
+- 한 사람이 1분에 시작할 수 있는 이미지는 최대 12장입니다.
+- 각 호출은 워크스페이스의 일일 API 할당량과 분당 쓰기 제한에도 포함됩니다([요청 제한](/docs/developers/rest-api#rate-limits)).
+
+## 오류 [#errors]
+
+오류는 API의 일반적인 형식(`code`, `message`, `status`)을 따릅니다. 전체 목록은 [오류](/docs/developers/errors)에서 확인할 수 있습니다. AI 아트에만 해당하는 오류는 다음과 같습니다.
+
+| 상태 | `code` | 대처 방법 |
+| --- | --- | --- |
+| 400 | `AI_ART_TEXT_TOO_LONG` | `text`를 줄이거나 동적 QR 코드의 `code`를 보내세요 |
+| 402 | `AI_ART_CREDITS_EXHAUSTED` | 매월 1일까지 기다리거나 플랜을 업그레이드하세요 |
+| 413 | `AI_ART_IMAGE_TOO_LARGE` | `photo` 또는 `reference`의 크기를 줄이세요 |
+| 429 | `AI_ART_CREDITS_EXHAUSTED` | Business: 매월 1일까지 기다리세요 |
+| 429 | `AI_ART_DAILY_LIMIT` | 내일(UTC) 다시 시도하세요 |
+| 502 | `AI_ART_FAILED` | 모델이 실패했거나 프롬프트를 거부했습니다. 다시 시도하거나 프롬프트를 바꿔 쓰세요 |
+| 502 | `AI_ART_UNSCANNABLE` | `visibility`를 높이거나 다른 시드로 다시 시도하세요 |
+| 502 | `AI_ART_DESCRIBE_FAILED` | `prompt`를 보내지 않았고 프롬프트 작성에 실패했습니다. 다시 시도하거나 직접 프롬프트를 보내세요 |
+| 503 | `AI_ART_BUSY` | 모델이 바쁩니다. 1분 기다린 후 다시 시도하세요 |
+| 503 | `AI_NOT_CONFIGURED` | 이 서버에 AI 아트가 설정되어 있지 않습니다(셀프 호스팅) |
+| 504 | `AI_ART_TIMEOUT` | 모델이 너무 오래 걸렸습니다(장면 모드에서는 그림 때문에 코드를 그릴 시간이 부족했습니다). 이미지는 사용되지 않습니다. 다시 시도하거나 코드 모드를 사용하세요 |
+
+`5xx` 오류는 어느 것도 이미지를 사용하지 않습니다.
+
+## MCP [#mcp]
+
+연결에 QRdx API 키가 있으면 [MCP 서버](/docs/developers/mcp)에서 `generate_ai_art` 도구를 사용할 수 있습니다. 이 도구는 요청 본문과 같은 필드를 받고, PNG와 스캔 시 연결되는 대상, 이번 달에 남은 이미지 수를 반환합니다. 어시스턴트에게 일상적인 말로 요청해 보세요.
+
+```txt
+Make AI QR art for my code cm5code0spring0menu00001: a bistro chalkboard menu on a brick wall, as a scene.
+```
+
+키가 없으면 도구가 키를 추가하는 방법을 안내합니다. 호출은 REST API처럼 최대 1분이 걸립니다.
+
+## 셀프 호스팅 [#self-hosting]
+
+AI 아트는 Vercel AI Gateway를 통해 실행됩니다. 자체 인스턴스에서는 `AI_GATEWAY_API_KEY`를 설정하세요. 설정하지 않으면 `POST /v1/art`와 `generate_ai_art`가 `503 AI_NOT_CONFIGURED`로 응답합니다.

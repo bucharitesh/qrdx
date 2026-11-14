@@ -20,6 +20,8 @@
     "update-barcode",
     "delete-barcode",
     "get-saved-barcode-image",
+    "---Seni AI---",
+    "create-art",
     "---Pemindaian---",
     "get-code-scans",
     "---Konversi---",

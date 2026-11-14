@@ -2648,7 +2648,7 @@
     "setupUrl": "URL del server",
     "toolsEyebrow": "Strumenti",
     "toolsTitle": "Cosa può usare il tuo assistente",
-    "toolsDescription": "{count, number} strumenti. Tutti tranne save_template e save_barcode sono in sola lettura e non richiedono chiave: generano immagini, formattano testo e leggono la community pubblica. I parametri completi sono nella <link>documentazione del server MCP</link>.",
+    "toolsDescription": "{count, number} strumenti. Tutti tranne save_template, save_barcode e generate_ai_art sono di sola lettura e non richiedono nessuna chiave: generano immagini, formattano il testo e leggono la community pubblica. I parametri completi sono nella <link>documentazione del server MCP</link>.",
     "toolNoKey": "Senza chiave",
     "toolNeedsKey": "Richiede una chiave API",
     "faqTitle": "FAQ sul server MCP",
@@ -3308,6 +3308,61 @@
       "followsYourPrompt": "Segue il tuo prompt",
       "interpretsFreely": "Interpreta liberamente",
       "generateVariations": "{count, plural, one {Genera QR art} other {Genera # varianti}}"
+    },
+    "artModes": {
+      "mode": "Modalità",
+      "code": "Codice",
+      "scene": "Scena",
+      "photo": "Foto",
+      "codeDescription": "Il codice è l’immagine: l’arte riempie i suoi moduli, su un bordo semplice. La più veloce.",
+      "sceneDescription": "Un’immagine viene dipinta a partire dalla tua descrizione, poi il codice viene dipinto al suo centro, con i colori dell’immagine stessa. Richiede un po’ più di tempo.",
+      "photoDescription": "La tua foto, con il codice dipinto al centro con i colori della foto stessa. Richiede un po’ più di tempo.",
+      "dropAPhoto": "Trascina una foto o selezionane una",
+      "photoHint": "PNG, JPG o WebP. Viene ritagliata in formato quadrato e ridimensionata nel tuo browser, inviata insieme al tuo prompt per creare l’arte, e QRdx non la conserva.",
+      "choosePhoto": "Scegli una foto",
+      "yourPhoto": "La tua foto",
+      "crop": "Ritaglia",
+      "left": "Sinistra",
+      "right": "Destra",
+      "top": "Alto",
+      "bottom": "Basso",
+      "croppedSquare": "Quadrato ritagliato per l’arte.",
+      "replace": "Sostituisci",
+      "remove": "Rimuovi",
+      "couldntUseThisPhoto": "Impossibile usare questa foto",
+      "unsupportedFormat": "Formato immagine non supportato",
+      "usePngJpgWebp": "Usa un’immagine PNG, JPG o WebP.",
+      "photoTooLarge": "La foto è troppo grande",
+      "photosUpTo": "Le foto possono pesare fino a {size} MB.",
+      "examples": {
+        "eyebrow": "Modalità Scena e Foto",
+        "title": "Metti il codice dentro un’immagine",
+        "description": "La modalità Scena dipinge prima un’immagine dalla tua descrizione, poi dipinge il codice al suo centro, così l’immagine arriva fino al codice e lo attraversa. La modalità Foto fa lo stesso con una foto che carichi tu. Questi esempi vengono dalla stessa pipeline che usi tu, e ognuno ha una scansione che funziona e apre questa pagina.",
+        "scene": "Scena",
+        "photo": "Foto",
+        "caption": {
+          "lighthouse": "Un faro su un promontorio, con il codice sulla scogliera e sul mare",
+          "painted-townhouses": "Case colorate dipinte, con i loro colori che attraversano il codice",
+          "photo-mountain": "Foto di un lago di montagna al tramonto",
+          "botanical-watercolor": "Un acquerello di fiori di campo e felci",
+          "venice-canals": "Un canale di Venezia, con il codice sull’acqua e sui muri",
+          "photo-latte": "Foto di un latte su un tavolo di legno",
+          "zen-garden": "Un giardino giapponese con ciliegi in fiore e carpe koi",
+          "photo-dog": "Una foto in studio di un golden retriever"
+        },
+        "alt": {
+          "lighthouse": "Arte QR con AI in modalità scena: un faro su un promontorio erboso in riva al mare, con il QR code dipinto al centro dell’immagine nei suoi blu e verdi",
+          "painted-townhouses": "Arte QR con AI in modalità scena: una fila di case dipinte, con il QR code dipinto al centro dell’immagine nel loro rosa, giallo e blu",
+          "photo-mountain": "Arte QR con AI in modalità foto: un lago di montagna al tramonto, con il QR code dipinto sulla vetta e sul suo riflesso nei colori della foto",
+          "botanical-watercolor": "Arte QR con AI in modalità scena: un acquerello di fiori di campo e felci, con il QR code dipinto al centro nei colori dei fiori",
+          "venice-canals": "Arte QR con AI in modalità scena: un canale di Venezia con una gondola, con il QR code dipinto al centro dell’immagine nei caldi colori della pietra",
+          "photo-latte": "Arte QR con AI in modalità foto: un latte su un tavolo di legno, con il QR code dipinto nella tazza e sul tavolo",
+          "zen-garden": "Arte QR con AI in modalità scena: un giardino giapponese con ciliegi in fiore, una lanterna e carpe koi, con il QR code dipinto al centro dell’immagine",
+          "photo-dog": "Arte QR con AI in modalità foto: un golden retriever su sfondo neutro, con il QR code dipinto sul suo muso nei suoi stessi colori"
+        }
+      },
+      "paintingPicture": "Sto dipingendo l’immagine…",
+      "paintingCode": "Sto dipingendo il codice al suo interno…"
     }
   },
   "compare": {
@@ -3828,6 +3883,32 @@
           "halftone": "Senza IA: la tua foto diventa parte del codice, in ogni formato.",
           "ai": "L’IA dipinge una scena nel tuo codice. Ogni immagine viene controllata per garantire la scansione."
         }
+      },
+      "artLooks": {
+        "look": "Stile",
+        "lookChoices": "Stili",
+        "none": "Nessuno",
+        "looks": {
+          "watercolor": "Acquerello",
+          "oil-painting": "Pittura a olio",
+          "anime": "Anime",
+          "cartoon": "Cartoon",
+          "pixel-art": "Pixel art",
+          "pop-art": "Pop art",
+          "charcoal": "Carboncino",
+          "ink": "Inchiostro",
+          "cyberpunk": "Cyberpunk",
+          "fantasy": "Fantasy",
+          "photographic": "Fotografico",
+          "low-poly": "Low poly",
+          "papercut": "Carta ritagliata"
+        },
+        "lookHint": "Lo stile viene aggiunto alla tua descrizione. Se scegli uno stile qui sopra, tornerà su Nessuno.",
+        "blankIsWritten": "Lasciala vuota e ne verrà scritta una per te quando generi. Scriverne una non usa mai un credito.",
+        "writeOneForMe": "Scrivila per me",
+        "writing": "Scrittura…",
+        "couldntWrite": "Impossibile scrivere una descrizione",
+        "checkConnection": "Controlla la connessione e riprova."
       }
     },
     "brandLogos": {

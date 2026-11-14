@@ -12,6 +12,8 @@ import {
   type AIArtVariant,
   ART_MAX_SEED,
   ART_QR_VISIBILITY,
+  type ArtMode,
+  type ArtPictureResult,
 } from "./config";
 
 /** The images of one run (one request per variation). */
@@ -48,6 +50,10 @@ export interface AIArtRunState {
   runId: number;
   /** Variations the run in flight will return; 0 when idle */
   pending: number;
+  /** Of those, how many are still painting scene mode's picture (step 1) */
+  picturing: number;
+  /** The mode of the run in flight, for its progress text */
+  pendingMode: ArtMode | null;
   controller: AbortController | null;
 }
 
@@ -56,6 +62,8 @@ export const initialAIArtRunState = (configured = true): AIArtRunState => ({
   run: null,
   runId: 0,
   pending: 0,
+  picturing: 0,
+  pendingMode: null,
   controller: null,
 });
 
@@ -91,6 +99,64 @@ export interface AIArtRunDeps {
     request: AIArtRequest,
     signal: AbortSignal,
   ) => Promise<AIArtResult>;
+  /** Scene mode's first step: the sealed picture (POST /api/ai/art/picture) */
+  requestPicture: (
+    request: AIArtRequest,
+    signal: AbortSignal,
+  ) => Promise<ArtPictureResult>;
+}
+
+/** A sealed picture the server can't use (expired, or for other content). */
+const isPictureRefused = (error: unknown) =>
+  error instanceof ArtRequestError &&
+  (error.body.code === "AI_ART_PICTURE_EXPIRED" ||
+    error.body.code === "AI_ART_PICTURE_INVALID");
+
+/**
+ * One variation. Scene mode takes two steps: its own picture, then the code
+ * painted into it (a picture the server refuses is made again, once). The
+ * credit is used only when the art is delivered.
+ */
+async function requestVariation(
+  store: StoreApi<AIArtRunState>,
+  deps: AIArtRunDeps,
+  request: AIArtRequest,
+  signal: AbortSignal,
+  isCurrent: () => boolean,
+): Promise<AIArtResult> {
+  if (request.mode !== "scene" || request.picture) {
+    return deps.requestImage(request, signal);
+  }
+  const picture = async () => {
+    store.setState((state) => ({ picturing: state.picturing + 1 }));
+    try {
+      return await deps.requestPicture(request, signal);
+    } finally {
+      if (isCurrent()) {
+        store.setState((state) => ({
+          picturing: Math.max(0, state.picturing - 1),
+        }));
+      }
+    }
+  };
+  for (let attempt = 0; ; attempt++) {
+    const { picture: sealed, writtenPrompt } = await picture();
+    signal.throwIfAborted();
+    try {
+      const result = await deps.requestImage(
+        {
+          ...request,
+          picture: sealed,
+          ...(writtenPrompt && !request.prompt && { prompt: writtenPrompt }),
+        },
+        signal,
+      );
+      return writtenPrompt ? { ...result, writtenPrompt } : result;
+    } catch (error) {
+      if (attempt === 0 && isPictureRefused(error)) continue;
+      throw error;
+    }
+  }
 }
 
 /** Each response counted the credits when it was reserved; the latest count is the highest. */
@@ -120,12 +186,25 @@ export async function runAIArt(
   store.getState().controller?.abort("cancelled");
   const controller = new AbortController();
   const id = store.getState().runId + 1;
-  store.setState({ runId: id, pending: seeds.length, controller });
+  store.setState({
+    runId: id,
+    pending: seeds.length,
+    picturing: 0,
+    pendingMode: request.mode ?? "code",
+    controller,
+  });
+  const isCurrent = () => store.getState().runId === id;
 
   try {
     const outcomes = await Promise.allSettled(
       seeds.map((seed) =>
-        deps.requestImage({ ...request, seed }, controller.signal),
+        requestVariation(
+          store,
+          deps,
+          { ...request, seed },
+          controller.signal,
+          isCurrent,
+        ),
       ),
     );
     if (controller.signal.aborted || store.getState().runId !== id) {
@@ -171,7 +250,12 @@ export async function runAIArt(
     };
   } finally {
     if (store.getState().runId === id) {
-      store.setState({ pending: 0, controller: null });
+      store.setState({
+        pending: 0,
+        picturing: 0,
+        pendingMode: null,
+        controller: null,
+      });
     }
   }
 }
@@ -180,7 +264,13 @@ export async function runAIArt(
 export function cancelAIArt(store: StoreApi<AIArtRunState>): void {
   const { controller, runId } = store.getState();
   controller?.abort("cancelled");
-  store.setState({ runId: runId + 1, pending: 0, controller: null });
+  store.setState({
+    runId: runId + 1,
+    pending: 0,
+    picturing: 0,
+    pendingMode: null,
+    controller: null,
+  });
 }
 
 /** Forgets the results (and stops a run in flight): the content they encode changed. */
@@ -188,7 +278,14 @@ export function clearAIArt(store: StoreApi<AIArtRunState>): void {
   const { controller, runId, run, pending } = store.getState();
   if (!(run || pending || controller)) return;
   controller?.abort("cleared");
-  store.setState({ run: null, runId: runId + 1, pending: 0, controller: null });
+  store.setState({
+    run: null,
+    runId: runId + 1,
+    pending: 0,
+    picturing: 0,
+    pendingMode: null,
+    controller: null,
+  });
 }
 
 /** "Retry with a clearer code": the same seed and content, QR visibility one step up. */

@@ -18,11 +18,12 @@
     "image-api",
     "google-chart-api",
     "barcode-api",
+    "ai-art-api",
     "mcp",
     "ai-agents",
     "cli",
     "n8n",
     "---その他---",
-    "[更新履歴](/changelogs)"
+    "[変更履歴](/changelogs)"
   ]
 }

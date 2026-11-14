@@ -5,8 +5,11 @@ import { join } from "node:path";
 import { describe, it } from "node:test";
 import {
   ART_MAX_SEED,
+  ART_PHOTO_MAX_BYTES,
+  ART_PHOTO_MAX_SIDE,
   ART_REFERENCE_MAX_BYTES,
   aiArtRequestSchema,
+  artDescribeRequestSchema,
   seedsForRun,
 } from "./config";
 import { AI_ART_PRESET_COUNT, aiArtPresetPreview } from "./preset-meta";
@@ -76,6 +79,46 @@ describe("aiArtRequestSchema", () => {
         reference: png(ART_REFERENCE_MAX_BYTES + 1),
       }).success,
     );
+  });
+
+  it("takes a photo only in photo mode, larger than a reference", () => {
+    assert.equal(aiArtRequestSchema.parse(base).mode, "code");
+    const photo = png(ART_REFERENCE_MAX_BYTES + 1);
+    assert.ok(
+      aiArtRequestSchema.safeParse({ ...base, mode: "photo", photo }).success,
+    );
+    assert.ok(
+      !aiArtRequestSchema.safeParse({ ...base, mode: "photo" }).success,
+    );
+    assert.ok(
+      !aiArtRequestSchema.safeParse({ ...base, mode: "scene", photo }).success,
+    );
+    assert.ok(aiArtRequestSchema.safeParse({ ...base, mode: "scene" }).success);
+  });
+
+  it("lets Write one for me read the same photo the art gets", () => {
+    const photo = png(ART_REFERENCE_MAX_BYTES + 1);
+    assert.ok(
+      artDescribeRequestSchema.safeParse({ mode: "photo", photo }).success,
+    );
+    assert.ok(
+      !artDescribeRequestSchema.safeParse({
+        mode: "photo",
+        photo: png(ART_PHOTO_MAX_BYTES + 1),
+      }).success,
+    );
+  });
+
+  it("caps the photo's size and only accepts uploaded PNG/JPEG data URLs", () => {
+    assert.ok(ART_PHOTO_MAX_SIDE >= 1024);
+    assert.ok(ART_PHOTO_MAX_BYTES > ART_REFERENCE_MAX_BYTES);
+    const photo = (value: string) =>
+      aiArtRequestSchema.safeParse({ ...base, mode: "photo", photo: value })
+        .success;
+    assert.ok(photo(png(ART_PHOTO_MAX_BYTES)));
+    assert.ok(!photo(png(ART_PHOTO_MAX_BYTES + 1)));
+    assert.ok(!photo("https://example.com/photo.jpg"));
+    assert.ok(!photo("data:image/webp;base64,AAAA"));
   });
 
   it("bounds the seed and the negative prompt", () => {
