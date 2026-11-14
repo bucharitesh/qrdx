@@ -109,6 +109,10 @@
         "name": "Blog",
         "description": "Panduan dan kabar seputar kode QR"
       },
+      "customers": {
+        "name": "Pelanggan",
+        "description": "Cara perusahaan memakai QRdx"
+      },
       "compare": {
         "name": "Bandingkan",
         "description": "QRdx dibandingkan generator dan library lain"
@@ -211,6 +215,7 @@
       "github": "GitHub",
       "help": "Pusat bantuan",
       "blog": "Blog",
+      "customers": "Pelanggan",
       "changelog": "Changelog",
       "integrations": "Integrasi",
       "industries": "Kode QR per industri",
