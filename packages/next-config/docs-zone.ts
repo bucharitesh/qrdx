@@ -1,4 +1,4 @@
-// The docs zone: the docs are a separate Next.js app (apps/docs-site),
+// The docs zone: the docs are a separate Next.js app (apps/docs),
 // served at the same URLs on qrdx.dev. The routing between the zones
 // (docsZoneRewrites, isDocsPagePath) lives with the docs' other URL rules in
 // @repo/i18n/docs; this is the manifest the docs zone publishes for the main
