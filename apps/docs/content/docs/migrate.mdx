@@ -88,7 +88,7 @@ Back-halves that can't be kept get a generated one; those links need a reprint o
 2. Click **Import**, pick the provider and upload the file. QRdx recognizes the provider's columns where it can, and you can change the mapping. Only the destination is required; the old short link (or code ID) lets a re-upload skip codes already imported.
 3. Preview and import, then use **Copy all new links** or **Download mapping CSV** (old link → new QRdx link).
 
-Codes from these providers live on the provider's domain, so QRdx can't change them. To keep printed codes working, open each old dynamic code in the old provider and set its destination to the new QRdx link from the mapping. The old account has to stay active for those codes to redirect; reprint with the QRdx codes before you cancel.
+QRdx can't change codes that live on the provider's own domain. To keep printed codes working, open each old dynamic code in the old provider and set its destination to the new QRdx link from the mapping. The old account has to stay active for those codes to redirect; reprint with the QRdx codes before you cancel.<IfAvailable feature="customDomains"> Codes on a domain you own can move with the domain instead, with no reprint: see [Your own domain](#your-own-domain-go-yourbrand-com) above.</IfAvailable>
 
 ### QR Code Generator PRO
 
@@ -100,7 +100,7 @@ There's no documented export of the code list. Make a spreadsheet with **Name**,
 
 ### Flowcode
 
-There's no documented export of the code list. Reuse your bulk-create sheet (Flowcode Name, Flowcode Scan URL) or list Name, Scan URL and Destination. To re-point: **Assets** → the code → **Overview** → **Destination** → **Save**.
+Flowcode exports only codes that are in a folder, so move your codes into folders first. Then open the **Folder** section, tick the folders and click **Download URLs**. The CSV's columns (Flowcode Name, Short Links, Scan Destination) are recognized, and so are those of a bulk-create sheet (Flowcode Name, Flowcode Scan URL). To re-point: **Assets** → the code → **Overview** → **Destination** → **Save**.
 
 ### QR TIGER
 
