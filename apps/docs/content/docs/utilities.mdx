@@ -1,180 +1,138 @@
 ---
 title: Utilities
-description: Color, contrast, size validation and feature detection helpers exported by qrdx.
+description: The color, contrast, size validation and feature detection helpers qrdx exports, with their signatures, return values and an example of each.
 icon: Wrench
 ---
 
-Helper functions for colors, contrast, and QR code processing.
+These helpers are the small functions the renderer and the scan score use, exported for your own UI: picking a representative color, checking contrast, validating a download size and detecting canvas features. They run anywhere except where noted.
 
-## Color Utilities
+| Function | Returns | Notes |
+| --- | --- | --- |
+| `getSolidColor(color, fallback?)` | `string` | One color that stands for a `ColorConfig`: the string, a solid's `color`, a gradient's first stop, an image fill's `underlay`, else `fallback` (`"#000000"`) |
+| `getContrastRatio(a, b)` | `number` | The WCAG contrast ratio between two CSS colors, 1 to 21. See-through colors are composited over white first. Returns 1 when a color cannot be parsed |
+| `getContrastLevel(ratio)` | `{ level, warning, message }` | `AAA` from 7, `AA` from 4.5, `AA Large` from 3 (with `warning: true`), `Fail` below 3 |
+| `getLuminance(r, g, b)` | `number` | Relative luminance of an sRGB color, 0 to 1 |
+| `hexToRgb(hex)` | `{ r, g, b } \| null` | Reads 3, 4, 6 and 8 digit hex, dropping alpha. `null` for anything else |
+| `validateSize(width, height)` | `{ isValid, error? }` | The rule every download applies: 50 to 5000 px and square |
+| `SUPPORTS_PATH2D` | `boolean` | Whether this environment's canvas supports `Path2D` with `addPath` |
 
-### getSolidColor
+## Colors
 
-Extract solid color from any color config:
+```ts title="lib/colors.ts"
+import { getSolidColor, hexToRgb } from "qrdx";
 
-```tsx
-import { getSolidColor } from 'qrdx';
-
-const color = getSolidColor({
-  type: 'linear',
+getSolidColor({
+  type: "linear",
+  angle: 45,
   stops: [
-    { offset: 0, color: '#ff6b6b' },
-    { offset: 1, color: '#4ecdc4' }
+    { color: "#ff6b6b", offset: 0 },
+    { color: "#4ecdc4", offset: 100 },
   ],
-  x1: 0, y1: 0, x2: 1, y2: 1
 });
-// Returns: "#ff6b6b"
+// "#ff6b6b": the first stop
+
+getSolidColor({ type: "image", src: photo, underlay: "#111111" }); // "#111111"
+getSolidColor(undefined, "#ffffff"); // "#ffffff"
+
+hexToRgb("#ff6b6b"); // { r: 255, g: 107, b: 107 }
+hexToRgb("#f00"); // { r: 255, g: 0, b: 0 }
+hexToRgb("red"); // null
 ```
 
-### hexToRgb
+Use `getSolidColor` where you need one color for a swatch, a CSS background or a fallback. The renderer uses it where a format cannot draw a gradient, such as `QRCodeCanvas` and the Canvas frame drawing.
 
-Convert hex to RGB:
+## Contrast
 
-```tsx
-import { hexToRgb } from 'qrdx';
+```ts title="lib/contrast.ts"
+import { getContrastLevel, getContrastRatio, getLuminance } from "qrdx";
 
-const rgb = hexToRgb('#ff6b6b');
-// Returns: { r: 255, g: 107, b: 107 }
+getContrastRatio("#000000", "#ffffff"); // 21
+getContrastRatio("#1d4ed8", "#f8fafc"); // 6.4
+getContrastRatio("rgba(29, 78, 216, 0.5)", "#ffffff"); // the blue over white, so lower
+
+getContrastLevel(4.5);
+// { level: "AA", warning: false, message: "Good contrast" }
+
+getContrastLevel(2);
+// { level: "Fail", warning: true, message: "Poor contrast - QR code may not scan properly" }
+
+getLuminance(255, 255, 255); // 1
 ```
 
-## Contrast Checking
+The scan score passes a code at a ratio of 4.5 or more (`SCAN_CONTRAST_MIN`), takes points off below it and fails it below 1.5. Pictures need more: `SCAN_IMAGE_CONTRAST_MIN` is 7 for an image fill in the modules and 12 for one behind them. `getScanContrast(props)` runs the score's own check on a whole design, every gradient stop and eye color included; see [Frames, scan score and print files](/docs/features/frames#will-it-scan).
 
-### getContrastRatio
+A live contrast checker takes a dozen lines:
 
-Calculate WCAG contrast ratio:
+```tsx title="components/contrast-checker.tsx"
+"use client";
 
-```tsx
-import { getContrastRatio } from 'qrdx';
+import { getContrastLevel, getContrastRatio } from "qrdx";
+import { useState } from "react";
 
-const ratio = getContrastRatio('#000000', '#ffffff');
-// Returns: 21
-```
-
-### getContrastLevel
-
-Get contrast assessment:
-
-```tsx
-import { getContrastLevel } from 'qrdx';
-
-const level = getContrastLevel(4.5);
-// Returns: { level: 'AA', warning: false, message: 'Good contrast' }
-```
-
-**Contrast Guidelines:**
-- **`AAA` (7.0 and above)** — Excellent contrast
-- **`AA` (4.5 – 7.0)** — Good contrast
-- **`AA Large` (3.0 – 4.5)** — Low contrast, `warning: true`, may be hard to scan
-- **`Fail` (below 3.0)** — Not recommended, `warning: true`
-
-### getLuminance
-
-Calculate relative luminance:
-
-```tsx
-import { getLuminance } from 'qrdx';
-
-const luminance = getLuminance(255, 255, 255);
-// Returns: 1.0 (white)
-```
-
-## Validation
-
-### validateSize
-
-Validate download dimensions:
-
-```tsx
-import { validateSize } from 'qrdx';
-
-const validation = validateSize(512, 512);
-if (validation.isValid) {
-  console.log("Valid size");
-} else {
-  console.error(validation.error);
-}
-```
-
-## Feature Detection
-
-### SUPPORTS_PATH2D
-
-Check for Path2D support:
-
-```tsx
-import { SUPPORTS_PATH2D } from 'qrdx';
-
-if (SUPPORTS_PATH2D) {
-  // Use optimized rendering
-} else {
-  // Use fallback
-}
-```
-
-## Example: Contrast Checker
-
-```tsx
-import { getContrastRatio, getContrastLevel } from 'qrdx';
-import { useState } from 'react';
-
-export default function ContrastChecker() {
-  const [fgColor, setFgColor] = useState('#000000');
-  const [bgColor, setBgColor] = useState('#ffffff');
-
+export function ContrastChecker() {
+  const [fgColor, setFgColor] = useState("#000000");
+  const [bgColor, setBgColor] = useState("#ffffff");
   const ratio = getContrastRatio(fgColor, bgColor);
   const level = getContrastLevel(ratio);
 
   return (
     <div>
       <input
+        aria-label="Module color"
         type="color"
         value={fgColor}
-        onChange={(e) => setFgColor(e.target.value)}
+        onChange={(event) => setFgColor(event.target.value)}
       />
       <input
+        aria-label="Background color"
         type="color"
         value={bgColor}
-        onChange={(e) => setBgColor(e.target.value)}
+        onChange={(event) => setBgColor(event.target.value)}
       />
-      <p>Ratio: {ratio.toFixed(2)}:1</p>
-      <p>Level: {level.level}</p>
-      <p>{level.message}</p>
+      <p>
+        {ratio.toFixed(2)}:1, {level.level}. {level.message}
+      </p>
     </div>
   );
 }
 ```
 
-## Example: Size Calculator
+## Validation
 
-```tsx
-import { validateSize } from 'qrdx';
-import { useState } from 'react';
+```ts title="lib/sizes.ts"
+import { validateSize } from "qrdx";
 
-export default function SizeCalculator() {
-  const [width, setWidth] = useState(512);
-  const [height, setHeight] = useState(512);
+validateSize(1024, 1024); // { isValid: true }
+validateSize(40, 40); // { isValid: false, error: "Size must be at least 50x50 pixels" }
+validateSize(6000, 6000); // { isValid: false, error: "Size must not exceed 5000x5000 pixels" }
+validateSize(400, 300); // { isValid: false, error: "Width and height must be equal for QR codes" }
+```
 
-  const validation = validateSize(width, height);
+`downloadQRCode`, `getQRCodeDataUrl` and `copyQRCodeToClipboard` throw the same `error` text when a size fails, so a form can check it first.
 
-  return (
-    <div>
-      <input
-        type="number"
-        value={width}
-        onChange={(e) => setWidth(Number(e.target.value))}
-      />
-      <input
-        type="number"
-        value={height}
-        onChange={(e) => setHeight(Number(e.target.value))}
-      />
-      <p>{validation.isValid ? 'Valid' : validation.error}</p>
-    </div>
-  );
+## Feature detection
+
+```ts title="lib/features.ts"
+import { SUPPORTS_PATH2D } from "qrdx";
+
+if (SUPPORTS_PATH2D) {
+  // draw module paths with Path2D
 }
 ```
 
-## Next Steps
+`SUPPORTS_PATH2D` is computed once when the module loads, so it is `false` on a server.
 
-- [Usage](/docs/usage) — Apply utilities to QR codes
-- [API Reference](/docs/api-reference) — Complete utility reference
+## Other helpers
+
+- `getColorString(color)` and `normalizeColorConfig(color)` turn the forms of `ColorConfig` into one another; `isGradient(color)` and `isImagePaint(color)` tell them apart.
+- `sanitizeFrameText(text)` and `isLatin1Text(text)` apply the frame label rules (24 characters; Latin-1 for PDF and EPS).
+- `decodePNGPixels(bytes)` reads an 8-bit PNG into RGBA pixels with no DOM, for `createQRArtImage`, `createQRSilhouette` or `scanQRPixels` in Node.
+- `rgbToCmyk(color)` is the conversion the CMYK print files use.
+
+## Related
+
+<Cards>
+  <Card href="/docs/features/colors-gradients" title="Set colors and gradients" description="Where these colors go on a code." />
+  <Card href="/docs/features/frames" title="Frames, scan score and print files" description="The scan score, which runs the contrast check on a whole design." />
+  <Card href="/docs/api-reference" title="Library API reference" description="Every export, by entry point." />
+</Cards>

@@ -1,421 +1,263 @@
 ---
 title: Library API reference
-description: Every component, function and type exported by the qrdx React library. For HTTP endpoints, see the REST API.
+description: Every entry point, component, function, constant and type the qrdx package exports, with types and defaults. For HTTP endpoints, see the REST API.
 icon: Code
 ---
 
-Complete reference for all `qrdx` components, functions and types.
+This page lists what `qrdx` exports, by entry point and by task, with each prop's type and default. The feature pages explain how to use them; this one is for looking a name up.
 
 <NpmStatus package="qrdx" />
+
+## Entry points
+
+| Import from | What it has | Needs |
+| --- | --- | --- |
+| `qrdx` | The React components (`QRCode`, `QRCodeSVG`, `QRCodeCanvas`, `getQRAsSVG`) plus everything in `qrdx/core` | `react`, `react-dom` |
+| `qrdx/core` | The whole engine without React: markup, downloads, print files, the scan score, frames, templates, art and types | Nothing |
+| `qrdx/vanilla` | `createQRCode`, plus `qrdx/core` | A DOM |
+| `qrdx/element` | The `<qrdx-code>` custom element: `QRdxCodeElement`, `defineQRdxCode`, `toQRdxCodeHTML` | A DOM to draw; nothing to render markup |
+| `qrdx/element/define` | Registers `<qrdx-code>` on import | A DOM |
+| `qrdx/node` | `getQRAsPNG` | `@resvg/resvg-js` or `sharp` |
+| `qrdx/vue` | `QRCode`, `QRCodeSVG`, `useQRCode`, plus `qrdx/core` | `vue` 3.3 or newer |
+| `qrdx/preact` | `QRCode`, `QRCodeSVG` | `preact` 10 or newer |
+| `qrdx/solid` | `QRCode`, `QRCodeSVG` | `solid-js` 1.8 or newer |
+| `qrdx/angular` | The `QRCode` component (`<qrdx-qr-code>`), plus `qrdx/core` | `@angular/core` 20 or newer |
+| `qrdx/types` | Every type, option list and zod schema, without the renderer | Nothing |
+
+Every framework package is an optional peer dependency: installing `qrdx` never adds one you do not use. `jspdf` is optional too, for PDF.
 
 ## Components
 
 ### QRCode
 
-Main component for rendering QR codes.
+The component for most uses. `QRProps` plus a simple logo API, rendered as an `<svg>`. It uses no browser-only hooks, so it renders in React Server Components.
 
-```tsx
-import { QRCode } from 'qrdx';
+```tsx title="components/example.tsx"
+import { QRCode } from "qrdx";
 
-<QRCode
-  value="https://example.com"
-  size={256}
-  fgColor="#000000"
-  bgColor="#ffffff"
-/>
+<QRCode value="https://example.com" size={256} margin={4} level="H" logo="/logo.png" />;
 ```
 
-#### Props
+| Prop | Type | Default | What it does |
+| --- | --- | --- | --- |
+| `value` | `string` | required | The text or URL to encode, exactly as given |
+| `size` | `number` | `128` | Width and height in pixels. A frame adds to it; a template fits inside it |
+| `scale` | `number` | `1` | Multiplies `size` |
+| `level` | `"L" \| "M" \| "Q" \| "H"` | `"Q"` | Error correction: about 7%, 15%, 25% or 30% of the code may be damaged |
+| `margin` | `number` | `0` | Quiet zone around the code, in modules. The standard asks for 4 |
+| `fgColor` | `ColorConfig` | `"#000000"` | Color of the data modules: a CSS color, a gradient or an image fill |
+| `bgColor` | `ColorConfig` | `"#FFFFFF"` | Background. `"transparent"` paints none |
+| `eyeColor` | `ColorConfig` | `fgColor` | Color of the three corner eyes |
+| `dotColor` | `ColorConfig` | `fgColor` | Color of the dot inside each eye |
+| `eyeColors` | `EyeColors` | none | Per-eye `outer` and `inner` colors for `topLeft`, `topRight` and `bottomLeft`; each overrides `eyeColor` and `dotColor` |
+| `bodyPattern` | `BodyPattern` | `"circle"` | Shape of the data modules, one of {facts.bodyPatterns} |
+| `cornerEyePattern` | `CornerEyePattern` | `"gear"` | Shape of the corner eyes, one of {facts.eyeShapes} |
+| `cornerEyeDotPattern` | `CornerEyeDotPattern` | `"circle"` | Shape of the eye dots, one of {facts.eyeCentres} |
+| `moduleScale` | `number` | `1` | Size of each data module, 0.5 to 1. Each pattern stops at the smallest size that still scans (`MODULE_SCALE_FLOOR`) |
+| `logo` | `string` | none | A path, URL or data URL drawn in the middle, with the modules behind it cleared. No logo is drawn without it |
+| `logoOptions` | `LogoOptions` | none | The logo's `size` (0.1 to 0.3, default 0.25), `padding` (0 to 2 modules), `x` and `y` (0 to 1), `shape` and `plate` |
+| `hideLogo` | `boolean` | `false` | Hides the logo even when `logo` is set |
+| `autoLevel` | `boolean` | `false` | Raises `level` to `H` when the logo covers more than 7% of the code (`AUTO_LEVEL_LOGO_COVERAGE`) |
+| `frame` | `AnyQRFrame` | none | A call-to-action frame: `{ style, text, color, textColor, secondaryText, secondaryColor, fontScale }`, or `{ style: "custom", spec }`. The output grows to fit it |
+| `templateId` | `string` | none | A template drawn at `size` with the code inside: `"Arrow"`, `"StandardBox"`, `"SquareBorder"`, `"StrikedBox"`, `"Halloween"`, `"DotRing"` or `"default"` |
+| `customTemplate` | `TemplateDefinition` | none | A template you draw in code. Wins over `templateId` |
+| `customProps` | `Record<string, any>` | none | Props for the template's `wrapper`, such as `DotRingProps` |
+| `shape` | `"square" \| "circle" \| "heart" \| QRSilhouette` | `"square"` | Puts the code in a disc, a heart or your own outline filled with decorative modules |
+| `art` | `QRArt` | none | Blends a picture into the modules: `{ mode, image, intensity, variant, matchEyes }` |
+| `style` | `CSSProperties` | none | Inline styles for the `<svg>` |
+| `frameLabelMarkers` | `boolean` | `false` | For editors: marks each frame label `<text>` with `data-qrdx-frame-label`. Exports never include it |
+| `partMarkers` | `boolean` | `false` | For editors: marks the drawn parts with `data-qrdx-part`. Exports never include it |
+| `isOGContext` | `boolean` | `false` | Draws the logo as a positioned `<img>` for Open Graph image renderers |
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `value` | `string` | **required** | URL or text to encode |
-| `size` | `number` | `128` | Size in pixels |
-| `scale` | `number` | `1` | Scale multiplier |
-| `fgColor` | `ColorConfig` | `#000000` | QR code color |
-| `bgColor` | `ColorConfig` | `#ffffff` | Background color |
-| `eyeColor` | `ColorConfig` | `fgColor` | Corner marker color |
-| `dotColor` | `ColorConfig` | `fgColor` | Color of the dot inside each corner eye |
-| `bodyPattern` | `BodyPattern` | `'circle'` | Data dot pattern |
-| `cornerEyePattern` | `CornerEyePattern` | `'gear'` | Corner marker pattern |
-| `cornerEyeDotPattern` | `CornerEyeDotPattern` | `'circle'` | Corner dot pattern |
-| `hideLogo` | `boolean` | `false` | Hide the logo. No logo is drawn unless `logo` is set |
-| `logo` | `string` | — | Logo URL |
-| `templateId` | `string` | `'default'` | A [frame drawn as a template](/docs/features/templates) (`'Arrow'`, `'StandardBox'`, …): the whole artwork is `size` wide |
-| `customTemplate` | `TemplateDefinition` | — | A frame you draw in code (wins over `templateId`) |
-| `level` | `ErrorLevel` | `'Q'` | Error correction |
-| `autoLevel` | `boolean` | `false` | Raise `level` to H when the logo covers more than 7% of the code (`AUTO_LEVEL_LOGO_COVERAGE`) |
-| `margin` | `number` | `0` | Margin in modules |
-| `imageSettings` | `ImageSettings` | — | Logo settings |
-| `eyeColors` | `EyeColors` | — | Per-eye `outer` / `inner` colors for `topLeft`, `topRight` and `bottomLeft`; each overrides `eyeColor` / `dotColor` |
-| `moduleScale` | `number` | `1` | Data module size, 0.5 to 1. Each pattern stops at the smallest size that still scans (`MODULE_SCALE_FLOOR`) |
-| `frame` | `QRFrame` | — | Call-to-action frame; see [Frames & print](/docs/features/frames) |
-| `art` | `QRArt` | — | Blend a logo or photo into the modules (Logo QR, Image QR); see [Art QR](/docs/features/art-qr) |
-| `frameLabelMarkers` | `boolean` | `false` | For editors: marks each frame label `<text>` with `data-qrdx-frame-label` (`"text"`, `"secondaryText"` or a spec label's id). Downloads and exports never include it |
-
-All {facts.bodyPatterns} body patterns, {facts.eyeShapes} eyes, {facts.eyeCentres} eye centers and {facts.frameStyles} built-in frames are shown live in [Shapes, eyes and frames](/docs/styles).
-
-### QRCodeCanvas
-
-Canvas-based rendering.
-
-```tsx
-import { QRCodeCanvas } from 'qrdx';
-
-<QRCodeCanvas
-  value="https://example.com"
-  size={512}
-  fgColor="#000000"
-/>
-```
+`QRCode` takes these props only; any other prop is dropped. `QRCodeSVG` puts any other prop (`className`, `aria-label`, `role`, `data-*`, …) on the `<svg>`, or on the frame's outer `<svg>` when there is a frame. Event handlers are left out of the markup.
 
 ### QRCodeSVG
 
-SVG-based rendering.
-
-```tsx
-import { QRCodeSVG } from 'qrdx';
-
-<QRCodeSVG
-  value="https://example.com"
-  size={512}
-/>
-```
-
-## Download Functions
-
-### downloadQRCode
-
-Download QR codes in multiple formats.
-
-```tsx
-downloadQRCode(
-  qrProps: QRProps,
-  options: {
-    format: 'png' | 'jpg' | 'webp' | 'svg' | 'pdf' | 'eps';
-    size: { width: number; height: number };
-    filename?: string;
-    quality?: number; // WebP only: 0 to 1 for lossy; lossless when left out
-  }
-): Promise<void>
-```
-
-### getQRCodeDataUrl
-
-Get as data URL.
-
-```tsx
-getQRCodeDataUrl(
-  qrProps: QRProps,
-  format: DownloadFormat,
-  size: DownloadSize,
-  options?: { quality?: number } // WebP only
-): Promise<string>
-```
-
-### getQRAsWebP
-
-The code as a WebP `Blob`, lossless unless `quality` is set. Where the browser can't encode WebP (Safari), qrdx's built-in lossless encoder makes it. `canvasToWebP(canvas, options)` does the same for any canvas, and `encodeWebPLossless(rgba, width, height)` encodes RGBA pixels with no DOM.
-
-```tsx
-getQRAsWebP(
-  qrProps: QRProps,
-  options?: { quality?: number }
-): Promise<Blob>
-```
-
-### copyQRCodeToClipboard
-
-Copy to clipboard.
-
-```tsx
-copyQRCodeToClipboard(
-  qrProps: QRProps,
-  size?: DownloadSize
-): Promise<void>
-```
-
-### getSVGString
-
-Get SVG markup.
-
-```tsx
-getSVGString(qrProps: QRProps): Promise<string>
-```
-
-## Print and scan functions
-
-These are documented with examples on their feature pages.
-
-| Function | What it does | Docs |
-|----------|--------------|------|
-| `getQRAsSVG(props)` | SVG markup for a code, including its frame | [Frames](/docs/features/frames) |
-| `getQRAsPrintPDF`, `downloadPrintPDF` | Vector PDF at an exact physical size, with bleed, crop marks and CMYK (needs `jspdf`) | [Print-ready export](/docs/features/frames#print-ready-export) |
-| `downloadPrintSVG` | Print-ready SVG at an exact physical size | [Print-ready export](/docs/features/frames#print-ready-export) |
-| `getQRAsEPS`, `downloadPrintEPS` | Vector EPS for print shops and design tools | [Downloads](/docs/features/downloads) |
-| `getScanScore(props)` | Estimates how reliably a design scans | [Will it scan?](/docs/features/frames#will-it-scan) |
-| `getImageScanScore(image)` | Scores a QR code image you already have (browser only) | [Will it scan?](/docs/features/frames#will-it-scan) |
-| `getQRAsPNG(props, { size })` | PNG bytes in plain Node, no DOM. Import it from `qrdx/node`; it needs `@resvg/resvg-js` or `sharp` installed | — |
-| `scanQRPixels(pixels, expected)` | Checks that raw RGBA pixels decode to `expected`, also when blurred and shrunk; runs in Node | — |
-| `getStylePairRisk(...)` | Warns about eye and pattern pairs some scanners miss | [Patterns](/docs/features/patterns) |
-
-## Detection Functions
-
-### handleImageLoad
-
-Detect QR codes from images.
-
-```tsx
-handleImageLoad(
-  imgElement: HTMLImageElement,
-  size: number,
-  returnFullData?: boolean
-): Promise<string | any>
-```
-
-### downloadImageWithBoundingBox
-
-Debug with bounding boxes.
-
-```tsx
-downloadImageWithBoundingBox(
-  imgElement: HTMLImageElement,
-  boundingBox: { x: number; y: number }[],
-  filename: string
-): void
-```
-
-## Template Functions
-
-### getTemplate
-
-Get specific template.
-
-```tsx
-getTemplate(templateId: string): TemplateDefinition | undefined
-```
-
-### getAllTemplates
-
-Get all templates.
-
-```tsx
-getAllTemplates(): TemplateDefinition[]
-```
-
-### getTemplateIds
-
-Get template IDs.
-
-```tsx
-getTemplateIds(): string[]
-```
-
-## Utility Functions
-
-### Color & Contrast
-
-```tsx
-getSolidColor(colorConfig: ColorConfig, fallback?: string): string
-getContrastRatio(color1: string, color2: string): number
-getContrastLevel(ratio: number): ContrastLevel
-getLuminance(r: number, g: number, b: number): number
-hexToRgb(hex: string): { r: number; g: number; b: number }
-```
-
-### Validation
-
-```tsx
-validateSize(width: number, height: number): {
-  isValid: boolean;
-  error?: string;
-}
-```
-
-### Feature Detection
-
-```tsx
-SUPPORTS_PATH2D: boolean
-```
-
-## Types
-
-### Core Types
-
-```tsx
-type QRProps = {
-  value: string;
-  size?: number;
-  level?: ErrorLevel;
-  bgColor?: ColorConfig;
-  fgColor?: ColorConfig;
-  margin?: number;
-  imageSettings?: ImageSettings;
-  // ...
-};
-
-type ColorConfig =
-  | string
-  | { type: 'solid'; color: string }
-  | LinearGradient
-  | RadialGradient;
-
-type ErrorLevel = 'L' | 'M' | 'Q' | 'H';
-```
-
-### Pattern Types
-
-```tsx
-// The arrays BODY_PATTERN, CORNER_EYE_PATTERNS, CORNER_EYE_DOT_PATTERNS and
-// FRAME_STYLES (and their zod schemas) are exported from 'qrdx/types'.
-// FRAME_STYLES names the built-in frames; each is a frame spec in
-// BUILT_IN_FRAMES (from 'qrdx').
-
-type BodyPattern =
-  | 'circle' | 'circle-large' | 'square' | 'diamond' | 'circle-mixed'
-  | 'pacman' | 'rounded' | 'small-square' | 'vertical-line'
-  | 'horizontal-line' | 'liquid' | 'liquid-horizontal' | 'liquid-vertical'
-  | 'classy' | 'classy-rounded' | 'leaf' | 'plus' | 'hexagon' | 'star'
-  | 'heart' | 'random-dots' | 'mosaic' | 'octagon';
-
-type CornerEyePattern =
-  | 'square' | 'rounded' | 'gear' | 'circle' | 'diya' | 'extra-rounded'
-  | 'message' | 'pointy' | 'leaf' | 'drop' | 'octagon' | 'bevel'
-  | 'squircle' | 'cushion' | 'shield' | 'petal' | 'leaf-reverse';
-
-type CornerEyeDotPattern =
-  | 'square' | 'rounded' | 'circle' | 'message' | 'message-reverse'
-  | 'diya' | 'diya-reverse' | 'rounded-triangle' | 'leaf' | 'drop' | 'plus'
-  | 'cross-rounded' | 'hexagon' | 'octagon' | 'flower' | 'heart'
-  | 'squircle' | 'dots' | 'extra-rounded' | 'leaf-reverse' | 'drop-reverse';
-
-// Retired (deprecated) values still render for saved designs but are not
-// offered: RETIRED_CORNER_EYE_PATTERNS, RETIRED_CORNER_EYE_DOT_PATTERNS.
-
-type EyeColors = {
-  topLeft?: { outer?: ColorConfig; inner?: ColorConfig };
-  topRight?: { outer?: ColorConfig; inner?: ColorConfig };
-  bottomLeft?: { outer?: ColorConfig; inner?: ColorConfig };
-};
-
-type QRFrame = {
-  style: FrameStyle; // "none" or a built-in frame, see FRAME_STYLES
-  text?: string; // up to 24 characters, default "Scan me"
-  color?: string;
-  textColor?: string;
-  secondaryText?: string; // banner-top-bottom, circle, menu-card
-  secondaryColor?: string; // gradient-border end color
-  fontScale?: number; // 0.5 to 1.5
-};
-```
-
-### Download Types
-
-```tsx
-type DownloadFormat = 'png' | 'jpg' | 'webp' | 'svg' | 'pdf' | 'eps';
-
-type DownloadSize = {
-  width: number;
-  height: number;
-};
-
-const PRESET_SIZES: Record<string, DownloadSize> = {
-  small: { width: 200, height: 200 },
-  medium: { width: 400, height: 400 },
-  large: { width: 800, height: 800 },
-  xlarge: { width: 1200, height: 1200 },
-  '2xl': { width: 1600, height: 1600 },
-  '3xl': { width: 2000, height: 2000 },
-};
-```
-
-### Gradient Types
-
-```tsx
-type LinearGradient = {
-  type: 'linear';
-  stops: GradientStop[];
-  x1: number;
-  y1: number;
-  x2: number;
-  y2: number;
-};
-
-type RadialGradient = {
-  type: 'radial';
-  stops: GradientStop[];
-  cx: number;
-  cy: number;
-  r: number;
-};
-
-type GradientStop = {
-  offset: number;
-  color: string;
-};
-```
-
-### Image Settings
-
-```tsx
-type ImageSettings = {
-  src: string;
-  height: number;
-  width: number;
-  excavate?: boolean;
-  x?: number;
-  y?: number;
-  /** Extra clear space around the logo when excavating, in pixels */
-  padding?: number;
-  opacity?: number;
-};
-```
-
-## Error Correction Levels
-
-```tsx
-const ERROR_LEVELS = {
-  L: 'Low (~7%)',
-  M: 'Medium (~15%)',
-  Q: 'Quartile (~25%)',
-  H: 'High (~30%)',
-} as const;
-```
-
-## Error Handling
-
-Wrap async functions in try-catch:
-
-```tsx
-try {
-  await downloadQRCode(props, options);
-} catch (error) {
-  console.error('Failed:', error);
-}
-```
-
-Common errors:
-- Invalid image URLs
-- Network failures
-- Invalid size parameters
-- Canvas context unavailable
-
-## Browser Support
-
-- Chrome 90+
-- Firefox 88+
-- Safari 14+
-- Edge 90+
-
-## Server Support
-
-Works in Node.js environments:
-- Next.js
-- Remix
-- Express.js
-- Other Node.js frameworks
-
-Some features require browser APIs:
-- Canvas operations
-- Clipboard API
-- File API
+`QRProps` plus React's SVG attributes (`QRPropsSVG`): the same props as `QRCode` without `logo`, `logoOptions`, `hideLogo` and `scale`. The logo is `imageSettings`, in pixels:
+
+| Field | Type | Default | What it does |
+| --- | --- | --- | --- |
+| `src` | `string` | required | The image, as a URL or data URL |
+| `width`, `height` | `number` | required | Size in the same pixels as `size` |
+| `excavate` | `boolean` | required | Clears the modules behind the image |
+| `x`, `y` | `number` | centered | Top left corner of the image |
+| `padding` | `number` | `0` | Extra clear space around the image, in pixels, when excavating |
+| `shape` | `"square" \| "rounded" \| "circle"` | `"square"` | Crops the image |
+| `plate` | `string` | none | A solid plate behind the image, in its shape |
+
+A logo bigger than the code can repair is shrunk around its center (`capImageSettings`, the same budget as `QRCode`).
+
+### QRCodeCanvas
+
+`QRProps` plus React's canvas attributes (`QRPropsCanvas`), drawn on a `<canvas>` at the device's pixel ratio. It draws plain square modules with solid colors: a gradient falls back to its first stop, and the pattern, eye color, `eyeColors`, `moduleScale`, `art` and template props are ignored. It ships with `"use client"`.
+
+### getQRAsSVG
+
+`getQRAsSVG(props: QRPropsSVG): Promise<JSX.Element>` returns the code as a React element with its logo embedded as a data URL. For a string, use `toSVGString` or `getSVGString`.
+
+## Download and export
+
+| Function | Returns | Notes |
+| --- | --- | --- |
+| `downloadQRCode(props, { format, size, filename?, quality? })` | `Promise<void>` | Saves a file. `size` is 50 to 5000 px and square; the default file name states the pixel size for raster formats |
+| `getQRCodeDataUrl(props, format, size, { quality? })` | `Promise<string>` | The same file as a data URL |
+| `getQRAsWebP(props, { quality? })` | `Promise<Blob>` | Lossless unless `quality` is set; encodes itself where the browser cannot |
+| `copyQRCodeToClipboard(props, size?)` | `Promise<void>` | A PNG on the clipboard. Call it from a user gesture |
+| `getSVGString(props)` | `Promise<string>` | SVG markup with the logo embedded |
+| `toSVGString(props)` | `string` | SVG markup, synchronous, no logo embedding. Runs anywhere |
+| `toSVGElement(props, document?)` | `SVGSVGElement` | The code as a DOM element |
+| `getQRAsSVGDataUri(props)` | `Promise<string>` | `data:image/svg+xml,…`, the first step of every export |
+| `getQRAsCanvas(props, mimeType, getCanvas?)` | `Promise<string \| HTMLCanvasElement>` | A data URL, or the canvas itself with `getCanvas` |
+| `getQRAsPNG(props, { size?, loadExternalLogos? })` | `Promise<Uint8Array>` | PNG bytes in Node, from `qrdx/node`. Needs `@resvg/resvg-js` or `sharp` |
+| `validateSize(width, height)` | `{ isValid, error? }` | The size rule `downloadQRCode` applies |
+| `getDownloadFilename(format, size, frame?)` | `string` | The default file name |
+| `withQRSize(props, size)` | `QRProps` | The props drawn at `size`, with a pixel logo scaled along |
+| `canvasToWebP(canvas, { quality? })`, `blobToDataUrl(blob)`, `encodeWebPLossless(rgba, width, height)` | | WebP helpers |
+
+Constants: `DownloadFormat` is `"png" \| "jpg" \| "webp" \| "svg" \| "pdf" \| "eps"`; `DOWNLOAD_FORMATS` maps each to its MIME type and extension; `PRESET_SIZES` has `small` (200), `medium` (400), `large` (800), `xlarge` (1200), `2xl` (1600) and `3xl` (2000); `DEFAULT_SIZE` is 128.
+
+## Print and EPS
+
+| Function | Returns | Notes |
+| --- | --- | --- |
+| `getPrintLayout(props, { size, unit?, bleed?, cropMarks?, colorMode? })` | `PrintLayout` | Physical sizes in mm: `codeWidth`, `trimWidth`, `trimHeight`, `bleed`, `pageWidth`, `pageHeight`, `moduleSize`, `moduleCount`, `maxScanDistance`. `size` is 5 mm to 2 m |
+| `getQRAsPrintPDF(props, options)` | `Promise<string>` | A vector PDF as a data URL. Needs `jspdf` |
+| `getQRAsPrintPDFBuffer(props, options)` | `Promise<ArrayBuffer>` | The same PDF as bytes, for Node |
+| `getQRAsPrintSVG(props, { size, unit? })` | `Promise<string>` | SVG with `width` and `height` in mm or in |
+| `downloadPrintPDF(props, options & { filename? })`, `downloadPrintSVG(props, options & { filename? })` | `Promise<void>` | Browser downloads of the two |
+| `getQRAsEPS(props, { sizeMm?, bleedMm?, colorMode? })` | `Promise<string>` | EPSF-3.0 text. Throws `EPS_IMAGE_FILL_REASON` for an image fill |
+| `downloadPrintEPS(props, options & { filename? })` | `Promise<void>` | Browser download |
+| `svgToEPS(svg, { width?, colorMode?, bleed?, bleedColor?, title? })` | `Promise<string>` | Converts any SVG the library renders |
+| `epsToDataUrl(eps)`, `hasImageFill(props)`, `rgbToCmyk(color)`, `getQRModuleCount(props)` | | Helpers |
+
+`PrintOptions`: `size` (number), `unit` (`"mm"` or `"in"`, default `"mm"`), `bleed` (mm, 0 to 20), `cropMarks` (boolean), `colorMode` (`"rgb"` or `"cmyk"`).
+
+## Scan score and detection
+
+| Function | Returns | Notes |
+| --- | --- | --- |
+| `getScanScore(props, { sizes?, signal? })` | `Promise<ScanScoreResult>` | `{ score, grade, checks }`. Browser only; loads jsQR on demand. Default sizes 96, 160 and 320 px (`SCAN_TEST_SIZES`) |
+| `getImageScanScore(imageOrBlob, options?)` | `Promise<ImageScanScoreResult>` | The same for an existing image, plus `data` and `version`. Browser only |
+| `getScanScoreFromPixels(pixels, options?)` | `Promise<ImageScanScoreResult>` | The image score on RGBA pixels, in Node |
+| `scanQRPixels(pixels, expected, { sizes? })` | `Promise<PixelScanResult>` | Checks that pixels decode to `expected`, as they are and through the camera model. Node |
+| `getScanContrast(props)` | `{ ratio, required, inverted }` | The contrast check on its own |
+| `getStylePairRisk(props)` | `StylePairRisk \| null` | A shape pair some scanners miss, with a `fix` |
+| `handleImageLoad(img, size, returnFullData?)` | `Promise<string \| QRCode \| "NO_QR">` | Decodes a QR code from an `<img>`. See [QR detection](/docs/qr-detection) |
+| `downloadImageWithBoundingBox(img, corners, filename)` | `void` | Saves the image with the found code outlined |
+
+Grades are `"great"`, `"ok"`, `"risky"` and `"fails"`. Each check is `{ id, passed, message, fix?, skipped? }`. Contrast lines: `SCAN_CONTRAST_MIN` 4.5, `SCAN_CONTRAST_LOW` 3, `SCAN_CONTRAST_FAIL` 1.5, and `SCAN_IMAGE_CONTRAST_MIN` 7 for a picture in the code and 12 behind it. The weak pairs ship as `WEAK_BODY_EYES`, `WEAK_DOT_EYES`, `WEAK_SHARP_DOT_EYES`, `SHARP_DOT_EYE_SAFE_BODIES`, `WEAK_EYES` and `WEAK_DOTS`.
+
+## Logos
+
+| Function | Returns | Notes |
+| --- | --- | --- |
+| `getQRData(props)` | the props with `imageSettings` | Lays `logo` and `logoOptions` out for a 1024 px code, capped to the error-correction budget |
+| `resolveQRCodeProps(props)` | `QRSVGOptions` | `QRCode`'s props as what the renderer draws, `scale` applied |
+| `getLogoSizeLimit({ value, level, margin, shape, autoLevel, logoOptions })` | `number` | The largest `logoOptions.size` that fits, or 0 |
+| `getLogoBlockDamage(...)`, `logoFitsBudget(...)`, `getCodewordMap(...)`, `damagedCodewords(...)` | | The budget's parts. `LOGO_EC_SAFETY` is 0.6 |
+| `removeLogoBackground(src)` | `Promise<string \| null>` | The logo with its solid background removed, as a PNG data URL. Browser |
+| `removeLogoBackdrop(pixels)` | `LogoPixels \| null` | The same on RGBA pixels, anywhere |
+
+Limits: `LOGO_SIZE_MIN` 0.1, `LOGO_SIZE_MAX` 0.3, `LOGO_SIZE_DEFAULT` 0.25, `LOGO_PADDING_MAX` 2, `LOGO_SHAPES` (`square`, `rounded`, `circle`).
+
+## Frames
+
+| Export | What it is |
+| --- | --- |
+| `BUILT_IN_FRAMES` | Every built-in frame: `{ style, name, tags, labelOn, spec }`, in picker order |
+| `BUILT_IN_FRAME_SPECS`, `getBuiltInFrame(style)` | The specs by style |
+| `frameSpecOf(frame)` | The spec a frame draws, or `null` |
+| `getFrameColors(frame)` | `{ frame, text, accent }`, from the options or the spec's defaults |
+| `getFrameDimensions(size, frame)` | The output `{ width, height }` for a code of `size` px |
+| `getFrameLayout(size, frame)`, `getFrameText(frame)`, `getFrameSecondaryText(frame)`, `frameLabels(layout)`, `isFrameActive(frame)` | Layout helpers |
+| `OFFICIAL_FRAMES`, `OFFICIAL_FRAME_INDEX`, `getOfficialFrame(id)`, `OFFICIAL_FRAME_COLLECTIONS`, `OFFICIAL_FRAME_COUNT` | The official frame library. The frames are built as a module of their own, so unused they cost nothing |
+| `resolveFrameSpec(spec)`, `getFrameSpecIssues(spec)`, `frameSpecSchema` | Checks a spec; `resolveFrameSpec` throws `FrameSpecError` |
+| `importFrameSvg(svg, options)` | Turns an SVG drawing into a frame spec, with warnings (`FRAME_IMPORT_LIMITS`) |
+| `frameSpecHash(spec)` | A stable hash of a spec |
+
+Constants: `FRAME_STYLES` (the {facts.frameStyles} built-in styles plus `none`), `DEFAULT_FRAME_TEXT` (`"Scan me"`), `FRAME_TEXT_MAX_LENGTH` (24), `FRAME_FONT_SCALE_MIN` (0.5), `FRAME_FONT_SCALE_MAX` (1.5), `CUSTOM_FRAME_STYLE` (`"custom"`), `GRADIENT_FRAME_DEFAULTS`.
+
+## Templates
+
+| Export | What it is |
+| --- | --- |
+| `TEMPLATES` | The registry: `default`, `Arrow`, `StandardBox`, `SquareBorder`, `StrikedBox`, `Halloween`, `DotRing` |
+| `getTemplate(id)` | One `TemplateDefinition`, or `undefined` |
+| `getAllTemplates()`, `getTemplateIds()` | The list and the ids |
+| `Arrow`, `StandardBox`, `SquareBorder`, `StrikedBox`, `Halloween`, `DotRing`, `defaultTemplate` | The definitions themselves. `DotRingProps` types Dot Ring's `customProps` |
+
+`TemplateDefinition<TCustomProps>` is `{ id, name, description?, spec?, wrapper(children, props?, config?) }`. The wrapper draws on a 300 by 300 canvas and gets `{ fgColor, bgColor, ...customProps }` and `{ url, pixelSize }`.
+
+## Shapes and art
+
+| Export | What it is |
+| --- | --- |
+| `createQRArtImage(pixels, { maxSize?, square? })` | Samples RGBA pixels into a `QRArtImage`. Anywhere |
+| `loadQRArtImage(source, { mode?, maxSize? })` | The same from a file, data URL or `<img>`. Browser |
+| `isQRArtActive(art)`, `getQRArtVariant(art)`, `getQRArtColorIssue(props)` | Art helpers |
+| `createQRSilhouette(pixels, { mode?, cells? })`, `loadQRSilhouette(source, options?)` | A `QRSilhouette` for `shape`, from pixels or a picture |
+| `getQRSilhouetteFit(silhouette)` | `{ ok: true, share }` or `{ ok: false, reason, message }` |
+| `isShapedCode(shape)`, `getQRShapePath(...)`, `circleQuietZone(...)`, `getLayoutMargin(...)` | Shape helpers |
+| `clampModuleScale(scale, pattern?)`, `MODULE_SCALE_FLOOR` | The smallest `moduleScale` each pattern scans at |
+
+Constants: `QR_SHAPES` (`square`, `circle`, `heart`), `QR_CIRCLE_QUIET_MIN` (3), `QR_SILHOUETTE_MAX_CELLS` (64), `QR_ART_MODES` (`logo`, `halftone`), `QR_ART_VARIANTS`, `QR_ART_MAX_SAMPLE_SIZE` (192), `DEFAULT_ART_INTENSITY` (0.6).
+
+## Rendering primitives
+
+The React-free renderer, from `qrdx/core`:
+
+| Export | What it is |
+| --- | --- |
+| `createQRCodeTree(options)` | The code as plain `{ type, props, key }` nodes (`QRNode`) |
+| `renderToString(tree)`, `renderToDOM(tree, document?)` | Markup, or DOM nodes |
+| `toHyperscript(tree, createElement)` | The tree as another framework's elements. The Vue and Preact entries are built on it |
+| `h(type, props, ...children)`, `Fragment`, `isQRNode(value)` | Write a template wrapper without JSX |
+| `getQRAsSVGNode(options)` | `Promise<QRNode>` with the logo embedded |
+| `getQRCodeData(props)`, `getQRCodeSVGProps(props, data)` | The two halves of `resolveQRCodeProps` |
+
+## Utilities
+
+`getSolidColor`, `getContrastRatio`, `getContrastLevel`, `getLuminance`, `hexToRgb`, `SUPPORTS_PATH2D`, `getColorString`, `normalizeColorConfig`, `isGradient`, `isImagePaint`, `decodePNGPixels`, `sanitizeFrameText` and `isLatin1Text` are described on [Utilities](/docs/utilities).
+
+## Types and option lists
+
+The types below come from `qrdx`, `qrdx/core` and `qrdx/types`. The option lists are plain arrays; the zod schemas (`qrPropsSchema`, `frameSchema`, `frameSpecSchema`, `colorConfigSchema`, `qrArtSchema`, `logoOptionsSchema`, `imageSettingsSchema` and the rest) are built from them.
+
+| Type | Shape |
+| --- | --- |
+| `QRProps` | The props table above, without the logo API |
+| `QRCodeProps` | `QRProps` plus `logo`, `logoOptions`, `hideLogo`, `scale` |
+| `QRSVGOptions` | `QRProps` plus any root attribute: what the core draws |
+| `ColorConfig` | `string \| SolidColor \| LinearGradient \| RadialGradient \| AngularGradient \| ImagePaint` |
+| `LinearGradient` | `{ type: "linear", stops, angle? }`; `angle` in degrees, default 0 |
+| `RadialGradient` | `{ type: "radial", stops }` |
+| `AngularGradient` | `{ type: "angular", stops, angle? }` |
+| `GradientStop` | `{ color, offset }`; `offset` 0 to 100 |
+| `ImagePaint` | `{ type: "image", src, fit?, scale?, position?, opacity?, underlay? }` |
+| `ImageSettings`, `LogoOptions`, `EyeColors` | As in the tables above |
+| `QRFrame` | `{ style: FrameStyle, text?, color?, textColor?, secondaryText?, secondaryColor?, fontScale? }` |
+| `QRCustomFrame`, `AnyQRFrame`, `FrameSpec` | `{ style: "custom", spec, ...labels and colors }`, the union, and the spec format |
+| `QRArt`, `QRArtImage` | `{ mode, image, intensity?, variant?, matchEyes? }` and `{ width, height, data }` |
+| `QRCodeShape`, `QRSilhouette` | `"square" \| "circle" \| "heart"` or `{ type: "silhouette", width, height, cells }` |
+| `TemplateDefinition`, `BaseTemplateProps`, `TemplateConfig` | Templates |
+| `DownloadFormat`, `DownloadSize`, `DownloadOptions`, `PrintOptions`, `PrintLayout`, `EPSOptions` | Export |
+| `ScanScoreResult`, `ImageScanScoreResult`, `ScanCheck`, `ScanGrade`, `StylePairRisk` | The scan score |
+| `BodyPattern`, `CornerEyePattern`, `CornerEyeDotPattern`, `FrameStyle`, `ErrorLevel` | The option unions |
+
+Option lists: `BODY_PATTERN`, `CORNER_EYE_PATTERNS`, `CORNER_EYE_DOT_PATTERNS`, `FRAME_STYLES`, `QR_SHAPES`, `LOGO_SHAPES`, `EYE_POSITIONS`. Retired values that still render for saved designs: `RETIRED_CORNER_EYE_PATTERNS` (`curly`) and `RETIRED_CORNER_EYE_DOT_PATTERNS` (`diamond`, `star`, `banner`).
+
+## Where things run
+
+- **Anywhere, no DOM:** `toSVGString`, `createQRCodeTree`, `renderToString`, `getQRData`, the frame and template helpers, `createQRArtImage`, `createQRSilhouette`, `getPrintLayout`, `getQRAsEPS`, `getQRAsPrintPDFBuffer`, `scanQRPixels`, `toQRdxCodeHTML`.
+- **Browser:** `downloadQRCode` and the other downloads, `copyQRCodeToClipboard`, `getQRAsCanvas`, `getScanScore`, `getImageScanScore`, `handleImageLoad`, `loadQRArtImage`, `loadQRSilhouette`, `removeLogoBackground`, `createQRCode`, the custom element.
+- **Node only:** `getQRAsPNG` from `qrdx/node`.
+- **React Server Components:** `QRCode`, `QRCodeSVG` and everything that needs no DOM. `QRCodeCanvas` is a Client Component.
+
+## Related
+
+<Cards>
+  <Card href="/docs/usage" title="Basic usage" description="The props you set most often, with examples." />
+  <Card href="/docs/utilities" title="Utilities" description="The color, contrast and validation helpers." />
+  <Card href="/docs/qr-detection" title="QR detection" description="Reading codes from images." />
+  <Card href="/docs/developers/rest-api" title="REST API and OAuth" description="The HTTP API, for codes you host." />
+</Cards>
