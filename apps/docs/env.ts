@@ -137,6 +137,11 @@ export const env = validateTogether(() =>
       // GitHub token for the star counter in the docs (avoids API rate limits)
       GITHUB_TOKEN: z.string().min(1).optional(),
 
+      // OpenAI's plugin directory checks that we run the MCP host: the token
+      // from its submission portal, served as plain text at
+      // /.well-known/openai-apps-challenge (404 while unset)
+      OPENAI_APPS_CHALLENGE: z.string().trim().min(1).optional(),
+
       // Standard Node.js environment
       NODE_ENV: z
         .enum(["development", "test", "production"])
@@ -216,6 +221,7 @@ export const env = validateTogether(() =>
       CSP_HTTPS: process.env.CSP_HTTPS,
       QRDX_HOME_NUMBERS: process.env.QRDX_HOME_NUMBERS,
       GITHUB_TOKEN: process.env.GITHUB_TOKEN,
+      OPENAI_APPS_CHALLENGE: process.env.OPENAI_APPS_CHALLENGE,
       NODE_ENV: process.env.NODE_ENV,
       NEXT_PUBLIC_POSTHOG_HOST: process.env.NEXT_PUBLIC_POSTHOG_HOST,
       NEXT_PUBLIC_QRDX_PRO_MONTHLY_PRODUCT_ID:
