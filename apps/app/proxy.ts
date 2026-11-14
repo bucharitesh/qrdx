@@ -1,3 +1,4 @@
+import { withoutAuthCookies } from "@repo/auth/auth-cookies";
 import { workspaceSlugFromPath } from "@repo/availability/workspace-pattern";
 import {
   CONSOLE_KEY_HEADER,
@@ -63,13 +64,24 @@ const forConsole = (request: NextRequest) =>
  * A console page: it sets its own policy with its own nonce, so this app
  * adds none (one policy per page), and it gets the zone key, so it can tell
  * requests that came through this app. Any copy the browser sent is dropped.
+ * `signedOut`: passed on without the session (Better Auth's cookies), so the
+ * console sees no one signed in.
  */
-function toConsole(request: NextRequest): NextResponse {
+function toConsole(
+  request: NextRequest,
+  { signedOut = false }: { signedOut?: boolean } = {},
+): NextResponse {
   const requestHeaders = new Headers(request.headers);
   requestHeaders.delete(CONSOLE_KEY_HEADER);
   requestHeaders.delete(WORKSPACE_HEADER);
   if (env.CONSOLE_ZONE_KEY) {
     requestHeaders.set(CONSOLE_KEY_HEADER, env.CONSOLE_ZONE_KEY);
+  }
+  if (signedOut) {
+    const cookie = withoutAuthCookies(requestHeaders.get("cookie") ?? "");
+    if (cookie) requestHeaders.set("cookie", cookie);
+    else requestHeaders.delete("cookie");
+    requestHeaders.delete("authorization");
   }
   return NextResponse.next({ request: { headers: requestHeaders } });
 }
@@ -166,11 +178,17 @@ export default async function proxy(request: NextRequest) {
   // Used from a different country and browser than where it signed in: the
   // check page asks "Confirm it's you" before any page here renders. Server
   // actions posted here go on: their own session reads see no session (and
-  // the gated ones answer CONFIRMATION_REQUIRED).
+  // the gated ones answer CONFIRMATION_REQUIRED). The console can't tell a
+  // held session (its own session lookup comes from its servers, not the
+  // visitor's country), so a server action headed there is checked here and
+  // sent on without the session: it sees no one signed in, as this app's
+  // own actions do.
+  const action = request.headers.has("next-action");
   if (
-    !request.headers.has("next-action") &&
+    (!action || forConsole(request)) &&
     (await isSessionHeld(session.session, requestHeaders))
   ) {
+    if (action) return toConsole(request, { signedOut: true });
     return NextResponse.redirect(
       new URL(sessionCheckPath(pathname + request.nextUrl.search), request.url),
     );

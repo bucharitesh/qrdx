@@ -8,6 +8,7 @@
     "./admin": "./admin.ts",
     "./admin-rules": "./admin-rules.ts",
     "./admin-http": "./admin-http.ts",
+    "./auth-cookies": "./auth-cookies.ts",
     "./confirm-gate": "./confirm-gate.ts",
     "./confirm-sign-in": "./confirm-sign-in.ts",
     "./confirm-sign-in-rules": "./confirm-sign-in-rules.ts",
