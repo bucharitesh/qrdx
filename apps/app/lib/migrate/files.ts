@@ -1,10 +1,13 @@
 // Export files from providers without an API (or without API access): column
 // presets, provider auto-detection and rows → links. Pure and client-safe.
 //
-// Header names come from the providers' help docs where they publish them
-// (Uniqode lists its export columns; QR TIGER describes its "Download QR
-// List"; Flowcode's bulk template). The rest are best guesses, which is why
-// the dialog always shows the column mapping before anything is imported.
+// Header names come from the providers' help docs where they publish them:
+// Uniqode lists its export columns (two help articles, worded slightly
+// differently), QR TIGER describes its "Download QR List", Flowcode names the
+// columns of its folder download ("Flowcode Name", "Short Links", "Scan
+// Destination") and of its bulk template, and Scanova's bulk-update sheet has
+// `qr code id`, `name`, `url`. The rest are best guesses, which is why the
+// dialog always shows the column mapping before anything is imported.
 
 import { absoluteShortLink, splitShortLink, splitTagCell } from "./normalize";
 import type { FileProviderId } from "./providers";
@@ -52,15 +55,23 @@ export const FILE_PRESETS: Record<Exclude<FileProviderId, "csv">, Preset> = {
       title: ["qr code name"],
       shortLink: ["qr code url"],
       destination: ["destination url"],
-      createdAt: ["creation date & timestamp", "creation date"],
+      createdAt: [
+        "creation date & timestamp",
+        "creation date & time",
+        "creation date",
+      ],
       tags: ["labels"],
+      clicks: ["scans"],
     },
     signature: [
       "qr code id",
       "qr code url",
       "creation date & timestamp",
+      "creation date & time",
       "frame text details",
+      "frame text",
       "organization name",
+      "owner email id",
     ],
     hosts: /(^|\.)(uniqode\.com|beaconstac\.com|qr\.codes)$/,
   },
@@ -78,10 +89,20 @@ export const FILE_PRESETS: Record<Exclude<FileProviderId, "csv">, Preset> = {
   flowcode: {
     columns: {
       title: ["flowcode name", "name"],
-      destination: ["flowcode scan url", "destination", "destination url"],
-      shortLink: ["flowcode url", "short url"],
+      destination: [
+        "scan destination",
+        "flowcode scan url",
+        "destination",
+        "destination url",
+      ],
+      shortLink: ["short links", "flowcode url", "short url"],
     },
-    signature: ["flowcode name", "flowcode scan url"],
+    signature: [
+      "flowcode name",
+      "flowcode scan url",
+      "short links",
+      "scan destination",
+    ],
     hosts: /(^|\.)(flowcode\.com|flow\.page)$/,
   },
   "qr-code-generator-pro": {
