@@ -590,7 +590,23 @@ describe("next.config.ts", () => {
     expect(await consoleTarget(both, "https://qrdx.dev/admin/growth")).toBe(
       `${ORIGIN}/admin/growth`,
     );
-    expect(await consoleTarget(both, "https://qrdx.dev/docs")).toBeNull();
+    const docs = getRewrittenUrl(
+      await resolve(both, "https://qrdx.dev/docs/developers"),
+    );
+    expect(docs).toBe(`${DOCS}/docs/developers`);
+  });
+
+  it("leaves the docs on qrdx.dev while only the console is on", async () => {
+    // Without DOCS_ZONE_URL the docs' URLs redirect to qrdx.dev, ahead of
+    // every rewrite: none of those redirects touch the console's paths.
+    const response = await resolve(on, "https://qrdx.dev/docs/developers");
+    expect(response.status).toBe(307);
+    expect(getRedirectUrl(response)).toBe("https://qrdx.dev/docs/developers");
+    for (const pathname of ["/admin/growth", "/console-static/x.js"]) {
+      const answer = await resolve(on, `https://qrdx.dev${pathname}`);
+      expect(getRedirectUrl(answer), pathname).toBeNull();
+      expect(getRewrittenUrl(answer), pathname).toBe(`${ORIGIN}${pathname}`);
+    }
   });
 
   it("inlines CONSOLE_ORIGIN into server code, empty while unset", () => {
