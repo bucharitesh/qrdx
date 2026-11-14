@@ -18,6 +18,7 @@ import { getCatalogBySurface } from "@repo/integrations/src/catalog";
 import { afterAll, beforeAll, describe, expect, it, test } from "vitest";
 import { industries, placements } from "@/lib/seo-content";
 import {
+  gitFileDate,
   gitLastModified,
   latestDate,
   parseGitLog,
@@ -56,6 +57,50 @@ describe("parseGitLog", () => {
 
   it("skips files under a commit with an unreadable date", () => {
     expect(parseGitLog("commit:not-a-date\nc.ts\n").size).toBe(0);
+  });
+
+  it("keeps a moved file's dates from before the move", () => {
+    const log = [
+      "commit:2026-11-14T00:00:00Z",
+      "",
+      "R100\tapps/docs/a.mdx\tapps/app/a.mdx",
+      "D\tapps/docs/b.mdx",
+      "A\tapps/app/b.mdx",
+      "",
+      "commit:2026-11-01T00:00:00Z",
+      "",
+      "M\tapps/docs/a.mdx",
+      "M\tapps/docs/b.mdx",
+      "",
+      "commit:2026-10-01T00:00:00Z",
+      "",
+      "R100\tdocs/a.mdx\tapps/docs/a.mdx",
+      "",
+      "commit:2026-09-01T00:00:00Z",
+      "",
+      "A\tdocs/a.mdx",
+      "A\tdocs/c.mdx",
+      "",
+    ].join("\n");
+    const dates = parseGitLog(log);
+    // Moved unchanged twice: the edit before the moves.
+    expect(dates.get("apps/app/a.mdx")?.toISOString()).toBe(
+      "2026-11-01T00:00:00.000Z",
+    );
+    // Moved and edited in one commit (-M100% shows a delete and an add).
+    expect(dates.get("apps/app/b.mdx")?.toISOString()).toBe(
+      "2026-11-14T00:00:00.000Z",
+    );
+    // A deleted path keeps the date from before its delete; an exact
+    // rename's dates go to the new path.
+    expect(dates.get("apps/docs/b.mdx")?.toISOString()).toBe(
+      "2026-11-01T00:00:00.000Z",
+    );
+    expect(dates.has("apps/docs/a.mdx")).toBe(false);
+    expect(dates.has("docs/a.mdx")).toBe(false);
+    expect(dates.get("docs/c.mdx")?.toISOString()).toBe(
+      "2026-09-01T00:00:00.000Z",
+    );
   });
 });
 
@@ -275,6 +320,84 @@ describe.runIf(hasGit())("git dates from a full and a shallow checkout", () => {
     expect(() => decoyGit(["rev-parse", "--verify", "HEAD"])).toThrow();
     expect(decoyGit(["config", "--get", "core.bare"])).toBe("false");
     expect(gitLastModified(["recent.ts"], repo).size).toBe(1);
+  });
+});
+
+describe.runIf(hasGit())("git dates of moved files", () => {
+  let repo = "";
+  const config = [
+    "-c",
+    "user.name=Test",
+    "-c",
+    "user.email=test@example.com",
+    "-c",
+    "commit.gpgsign=false",
+    "-c",
+    "core.hooksPath=/dev/null",
+  ];
+  const run = (args: string[], date?: string) =>
+    execFileSync("git", [...config, ...args], {
+      cwd: repo,
+      stdio: "ignore",
+      env: {
+        ...withoutGitEnv(process.env),
+        ...(date && { GIT_AUTHOR_DATE: date, GIT_COMMITTER_DATE: date }),
+      },
+    });
+  const write = (file: string, text: string) => {
+    mkdirSync(join(repo, file, ".."), { recursive: true });
+    writeFileSync(join(repo, file), text);
+  };
+  const commit = (message: string, date: string) => {
+    run(["add", "-A"]);
+    run(["commit", "-q", "-m", message], date);
+  };
+
+  beforeAll(() => {
+    repo = realpathSync(mkdtempSync(join(tmpdir(), "seo-dates-moves-")));
+    run(["init", "-q"]);
+    write("apps/docs/kept.mdx", "kept\n");
+    write("apps/docs/edited.mdx", "edited\n");
+    commit("pages", "2026-01-01T00:00:00Z");
+    write("apps/docs/later.mdx", "later\n");
+    commit("later", "2026-02-01T00:00:00Z");
+    // The folder moves; one file is also edited in the same commit.
+    run(["mv", "apps/docs", "apps/app"]);
+    write("apps/app/edited.mdx", "edited while moving\n");
+    commit("move", "2026-03-01T00:00:00Z");
+    write("apps/app/later.mdx", "later, changed\n");
+    commit("change", "2026-04-01T00:00:00Z");
+  });
+
+  afterAll(() => {
+    if (repo) rmSync(repo, { recursive: true, force: true });
+  });
+
+  test("a move alone doesn't count as a change", () => {
+    const dates = gitLastModified(
+      ["apps/app/kept.mdx", "apps/app/edited.mdx", "apps/app/later.mdx"],
+      repo,
+    );
+    expect(dates.get("apps/app/kept.mdx")?.toISOString()).toBe(
+      "2026-01-01T00:00:00.000Z",
+    );
+    expect(dates.get("apps/app/edited.mdx")?.toISOString()).toBe(
+      "2026-03-01T00:00:00.000Z",
+    );
+    expect(dates.get("apps/app/later.mdx")?.toISOString()).toBe(
+      "2026-04-01T00:00:00.000Z",
+    );
+  });
+
+  test("dates a file for fumadocs, by a relative or an absolute path", () => {
+    const app = join(repo, "apps/app");
+    expect(gitFileDate("kept.mdx", app)?.toISOString()).toBe(
+      "2026-01-01T00:00:00.000Z",
+    );
+    expect(gitFileDate(join(app, "later.mdx"), repo)?.toISOString()).toBe(
+      "2026-04-01T00:00:00.000Z",
+    );
+    expect(gitFileDate("missing.mdx", app)).toBeUndefined();
   });
 });
 
