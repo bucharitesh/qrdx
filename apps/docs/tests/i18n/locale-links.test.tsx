@@ -278,7 +278,7 @@ describe("translated chrome and home sections, rendered in Hindi", () => {
 
 describe("links to the docs", () => {
   // The docs are moving to an app of their own behind the same URLs
-  // (@repo/next-config/docs-zone): a link into them loads the page in full.
+  // (@repo/i18n/docs): a link into them loads the page in full.
   const render = async (href: string, props: object = {}) => {
     const { LocaleLink } = await import("@/components/i18n/locale-link");
     return renderHindi(

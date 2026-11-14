@@ -1,10 +1,9 @@
 "use client";
 
-import { isDocsPagePath } from "@repo/next-config/docs-zone";
+import { isDocsPagePath } from "@repo/i18n/docs";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { type ComponentProps, useMemo } from "react";
-import { translatedDocsSegments } from "@/lib/i18n/docs";
 import { useLocalizeHref } from "@/lib/i18n/use-localize-href";
 
 // Internal links that keep the visitor's language. Everything reachable from
@@ -15,8 +14,6 @@ import { useLocalizeHref } from "@/lib/i18n/use-localize-href";
 // person's (lib/i18n/app-locale.ts), so its links to public pages follow it.
 
 export { useLocalizeHref } from "@/lib/i18n/use-localize-href";
-
-const DOCS_SEGMENTS = translatedDocsSegments();
 
 type LinkProps = ComponentProps<typeof Link>;
 
@@ -43,14 +40,14 @@ function anchorProps({
  * English URL (lib/i18n/paths.ts).
  *
  * Docs pages get a plain <a>: the docs are moving to an app of their own
- * behind the same URLs (the docs zone, @repo/next-config/docs-zone), and a
+ * behind the same URLs (the docs zone, @repo/i18n/docs), and a
  * link from one app into the other must load the page in full. Until the
  * move that only skips a client-side navigation.
  */
 export function LocaleLink({ href, ...props }: LinkProps) {
   const localize = useLocalizeHref();
   const target = typeof href === "string" ? localize(href) : href;
-  if (typeof target === "string" && isDocsPagePath(target, DOCS_SEGMENTS)) {
+  if (typeof target === "string" && isDocsPagePath(target)) {
     return <a href={target} {...anchorProps(props)} />;
   }
   return <Link href={target} {...props} />;

@@ -1,13 +1,13 @@
+import {
+  docsEnglishRewrites,
+  docsMarkdownAcceptRewrites,
+  docsMarkdownRewrites,
+} from "@repo/i18n/docs";
 import { config, withAnalyzer } from "@repo/next-config";
 import { createMDX } from "fumadocs-mdx/next";
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 import { env } from "@/env";
-import {
-  docsEnglishRewrites,
-  docsMarkdownAcceptRewrites,
-  docsMarkdownRewrites,
-} from "@/lib/i18n/docs";
 import {
   appCsp,
   cspHeaderName,

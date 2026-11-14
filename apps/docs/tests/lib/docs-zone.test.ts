@@ -1,14 +1,16 @@
-// The docs zone (@repo/next-config/docs-zone): with DOCS_ZONE_URL set, the
+// The docs zone (@repo/i18n/docs, @repo/next-config/docs-zone): with DOCS_ZONE_URL set, the
 // main app proxies the docs' URLs to the docs site (apps/docs-site); unset,
 // nothing changes. Also the manifest the sitemap and llms.txt read from it.
 import {
-  DOCS_MANIFEST_PATH,
   docsZoneRewrites,
   isDocsPagePath,
+  translatedDocsSegments,
+} from "@repo/i18n/docs";
+import {
+  DOCS_MANIFEST_PATH,
   parseDocsManifest,
 } from "@repo/next-config/docs-zone";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { translatedDocsSegments } from "@/lib/i18n/docs";
 
 const SEGMENTS = translatedDocsSegments();
 const LANG = `:lang(${SEGMENTS.join("|")})`;

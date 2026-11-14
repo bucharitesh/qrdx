@@ -58,7 +58,7 @@ describe("skip-ci", () => {
     for (const changedFiles of [
       ["apps/docs-site/app/robots.ts", "apps/docs/content/docs/index.mdx"],
       ["apps/docs-site/package.json", "bun.lock"],
-      ["packages/next-config/docs-zone.ts"],
+      ["packages/i18n/docs.ts"],
       // No previous deployment, or git couldn't tell.
       [],
       null,

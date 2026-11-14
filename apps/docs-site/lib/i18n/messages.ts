@@ -1,75 +1,31 @@
-// Message catalogs (apps/docs/messages: the docs site reads the main app's
-// catalogs, where the translation scripts write them). English is the
-// source; a key a translation lacks falls back to English, so a slip never
-// shows a raw key.
-import en from "../../../docs/messages/en.json";
-import { DEFAULT_LOCALE, type Locale } from "./config";
+// The docs' message catalogs: the copy of the namespaces the docs read
+// (DOCS_NAMESPACES) that @repo/i18n keeps in packages/i18n/messages, written
+// from apps/docs/messages before every dev server, build, typecheck and test
+// here (scripts/zone-inputs.mjs). English is the source; a key a
+// translation lacks falls back to English, so a slip never shows a raw key.
+import { type DocsMessages, loadDocsMessages } from "@repo/i18n/docs-messages";
+import type { DOCS_NAMESPACES } from "@repo/i18n/messages";
+// Types only: the keys and arguments of the namespaces the copy holds, from
+// the catalog they're copied from, so a wrong key fails tsc here too.
+import type en from "../../../docs/messages/en.json";
+import type { Locale } from "./config";
 
-export type Messages = typeof en;
+export { mergeMessages, pickMessages } from "@repo/i18n/messages";
 
-type Catalog = Record<string, unknown>;
+export type Messages = Pick<typeof en, (typeof DOCS_NAMESPACES)[number]>;
 
-const isObject = (value: unknown): value is Catalog =>
-  typeof value === "object" && value !== null && !Array.isArray(value);
-
-/** `base` with every string `override` has for the same key. */
-export function mergeMessages<T extends Catalog>(
-  base: T,
-  override: unknown,
-): T {
-  if (!isObject(override)) return base;
-  const out: Catalog = { ...base };
-  for (const [key, value] of Object.entries(base)) {
-    const next = override[key];
-    if (isObject(value)) out[key] = mergeMessages(value, next);
-    else if (typeof next === "string" && next.trim() !== "") out[key] = next;
-  }
-  return out as T;
-}
-
-/**
- * A locale's catalog over English. Found by path, so a new language needs
- * no code here; a missing file renders English (i18n:check reports it).
- */
+/** A locale's docs catalog over English (throws, naming the command, if the copy is missing). */
 export async function loadMessages(locale: Locale): Promise<Messages> {
-  if (locale === DEFAULT_LOCALE) return en;
-  try {
-    const catalog: unknown = (
-      await import(`../../../docs/messages/${locale}.json`)
-    ).default;
-    return mergeMessages(en, catalog);
-  } catch {
-    return en;
-  }
+  const messages: DocsMessages = await loadDocsMessages(locale);
+  return messages as unknown as Messages;
 }
 
 /**
- * The parts of a catalog client components read, by dotted path
- * ("home.editor"), so the browser gets only those, not every page's copy.
+ * What every page's client components translate: the parts of the site's
+ * shared chrome the docs show (the product links' copy, the language menu
+ * and the cookie banner).
  */
-export function pickMessages(
-  messages: Catalog,
-  paths: readonly string[],
-): Catalog {
-  const out: Catalog = {};
-  for (const path of paths) {
-    const keys = path.split(".");
-    let source: unknown = messages;
-    for (const key of keys) source = isObject(source) ? source[key] : undefined;
-    if (source === undefined) continue;
-    let target = out;
-    for (const key of keys.slice(0, -1)) {
-      if (!isObject(target[key])) target[key] = {};
-      target = target[key] as Catalog;
-    }
-    target[keys.at(-1) as string] = source;
-  }
-  return out;
-}
-
-/** What every page's client components translate: the shared chrome. */
 export const CHROME_NAMESPACES = [
-  "nav",
   "footer",
   "localeSwitcher",
   "consent",
