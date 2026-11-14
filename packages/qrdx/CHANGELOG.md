@@ -2,6 +2,21 @@
 
 Release notes for earlier versions are at [qrdx.dev/changelog](https://qrdx.dev/changelog).
 
+## Unreleased
+
+### Rendering without zod
+
+- **Drawing a code no longer loads zod.** `createQRCodeTree`, `toSVGString`, the React components and every adapter (`qrdx/vanilla`, `qrdx/element`, `qrdx/vue`, `qrdx/preact`, `qrdx/solid`, `qrdx/angular`) draw without it, custom frame specs included. A Vite app that draws one code with `createQRCode` from `qrdx/vanilla` ships 216 KB of JavaScript instead of 312 KB (78 KB gzipped instead of 105 KB), and one with `<QRCode>` 391 KB instead of 487 KB (129 KB instead of 156 KB). With esbuild, an app that draws a code shrinks from 619 KB to 165 KB.
+- **The zod schemas are unchanged.** `qrPropsSchema`, `frameStyleSchema`, `frameSpecSchema` and the rest are still exported from `qrdx`, `qrdx/core`, the adapters and `qrdx/types`. They now come from `dist/schemas.mjs`, which the core re-exports, so a bundler includes zod only when an app uses a schema or `getFrameSpecIssues`.
+- **Frame specs are checked as before.** The engine checks specs with its own parser, which accepts and rejects exactly what `frameSpecSchema` does, with the same messages and paths. A test compares the two on every built-in, template and official frame and on more than 20,000 broken specs. An invalid custom frame still throws a `FrameSpecError` with the same issues, and `importFrameSvg` still returns the same errors.
+- Every export of every entry is unchanged. The no-bundler `dist/vanilla.browser.mjs` still includes zod, because it exports the schemas. `dist/element.browser.mjs` exports none, so it drops zod and shrinks from 414 KB to 220 KB.
+
+### Dot Ring text that fits the ring
+
+- **Long text no longer runs into its own start.** Text that doesn't fit the ring with a word space to spare first gets tighter letter spacing, then a smaller font, down to half the default size (16 units, the smallest size frame labels get). It then closes the ring with a word space. Text that still doesn't fit is cut after the last whole word that does.
+- **`textFill: "repeat"`** (in `customProps`) repeats the text as many times as fit and evens out the spacing, so the ring closes with the same gap as between the copies. Give the phrase once (`"Read the docs *"`). Text that already repeats a phrase (`"Make your own * Make your own *"`) counts as that phrase.
+- Text that fits is drawn exactly as before. The default ring is byte for byte the same.
+
 ## 0.0.54
 
 - The repository moved to [qrdxinc/qrdx](https://github.com/qrdxinc/qrdx). The package's `repository`, `homepage` and `bugs` links point there, and this release is published with provenance from it. No code changes. `@qrdx/cli` 0.0.11 is the same move.
