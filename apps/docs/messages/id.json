@@ -3502,7 +3502,12 @@
       "qrCodeDialog": {
         "getCode": "Dapatkan kode",
         "useThisDesignInYour": "Gunakan desain ini di aplikasi Anda, di halaman web, melalui API, atau dengan asisten AI.",
+        "frameworks": "Framework",
+        "framework": "Framework",
         "installTheOpenSourceQrdx": "Instal paket open source <code>qrdx</code> ({version} di npm) dan pasang komponen ini.",
+        "installAndDrawIntoAnyElement": "Instal paket open source <code>qrdx</code> ({version} di npm) dan gambar desain ini ke elemen apa pun.",
+        "pasteThisIntoAnyPage": "Tempel kode ini ke halaman mana pun: skrip memuat elemen <code>qrdx-code</code> dari CDN. Jika menggunakan bundler, instal <code>qrdx</code> lalu impor <code>qrdx/element/define</code>.",
+        "withoutABundlerImportIt": "Tanpa bundler, impor dari",
         "addTheQrCodeComponent": "Tambahkan komponen QR Code dari registri QRdx, lalu gunakan dengan desain ini.",
         "aPublicImageOfThis": "Gambar publik dari kode ini untuk disematkan di mana saja. Tidak perlu kunci API.",
         "createsADynamicCodeWith": "Membuat kode dinamis dengan desain ini. Memerlukan <link>kunci API</link>.",
