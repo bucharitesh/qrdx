@@ -91,7 +91,7 @@ Ses réglages se placent dans `customProps` (typé `DotRingProps`) :
 | `outerStrokeWidth`, `outerStrokeColor` | `strokeWidth`, `strokeColor` | Le bord extérieur de l'anneau uniquement |
 | `innerStrokeWidth`, `innerStrokeColor` | `strokeWidth`, `strokeColor` | Le bord intérieur de l'anneau uniquement |
 
-Un texte qui tient dans l'anneau est placé tel quel, centré sur le haut ou le long du bas. Un texte trop long pour l'anneau ne empiète jamais sur son propre début. Les lettres se rapprochent d'abord, puis la police diminue, jusqu'à la moitié de la taille par défaut (la plus petite taille des libellés de cadre). Le texte referme ensuite l'anneau avec une espace entre mots à l'endroit où il rejoint son début. S'il ne tient toujours pas à cette taille, il est coupé après le dernier mot entier qui tient.
+Un texte qui tient dans l'anneau est placé tel quel, centré sur le haut ou le long du bas. Un texte trop long pour l'anneau ne empiète jamais sur son propre début. Les lettres se rapprochent d'abord, puis la police diminue, jusqu'à la moitié de la taille par défaut (la plus petite taille des libellés de cadre). Le texte referme ensuite l'anneau avec une espace entre mots à l'endroit où il rejoint son début. S'il ne tient toujours pas à cette taille, un texte qui répète une phrase garde autant de copies entières qu'il en tient, et tout autre texte est coupé après le dernier mot entier qui tient et se termine par « … ».
 
 Un logo se place au centre, comme sur n'importe quel code. Les liens longs (codes de plus de 49 modules de large) conservent une bande claire entre le code et les points, pour rester scannables même imprimés en petit.
 

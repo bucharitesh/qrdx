@@ -1,0 +1,97 @@
+---
+title: "SolidJS"
+description: "qrdx/solid के साथ Solid कॉम्पोनेंट के रूप में स्टाइल किए गए QR कोड: reactive props, पैकेज के लिए कंपाइल करने को कोई JSX नहीं, renderToString से सर्वर रेंडरिंग, और ऐसा hydration जो सर्वर का SVG बनाए रखता है।"
+icon: FileCode
+---
+
+`qrdx/solid` में SolidJS के लिए React लाइब्रेरी के दोनों SVG कॉम्पोनेंट, `QRCodeSVG` और `QRCode`, मौजूद हैं। ये React कॉम्पोनेंट जैसा ही SVG बनाते हैं, आपके signals को फ़ॉलो करते हैं, और सर्वर पर रेंडर हो सकते हैं।
+
+## इंस्टॉल करें [#install]
+
+```package-install
+qrdx@latest
+```
+
+`solid-js` 1.8 या उसके बाद का वर्शन (1.x लाइन में) `qrdx` की एक optional peer dependency है। आपके app में यह पहले से होगा, और `react` की ज़रूरत नहीं है।
+
+## कोड बनाएँ [#draw-a-code]
+
+```tsx
+import { createSignal } from "solid-js";
+import { QRCodeSVG } from "qrdx/solid";
+
+export function MenuCode() {
+  const [color, setColor] = createSignal("#0f172a");
+  return (
+    <>
+      <QRCodeSVG
+        value="https://example.com/menu"
+        size={256}
+        fgColor={color()}
+        frame={{ style: "banner-bottom", text: "Scan me" }}
+        aria-label="QR code for the menu"
+      />
+      <button type="button" onClick={() => setColor("#1d4ed8")}>
+        Blue
+      </button>
+    </>
+  );
+}
+```
+
+`QRCodeSVG` वे सभी ऑप्शन लेता है जो React का `QRCodeSVG` लेता है: पैटर्न, रंग और ग्रेडिएंट, लोगो (`imageSettings`), फ़्रेम, शेप, टेम्पलेट और Art QR। `class`, `style` या `aria-label` जैसे एट्रिब्यूट `<svg>` पर लगते हैं, या फ़्रेम होने पर फ़्रेम के बाहरी `<svg>` पर।
+
+`QRCode` में React के `QRCode` का लोगो शॉर्टकट जुड़ा है: `logo`, `logoOptions`, `hideLogo` और `scale`।
+
+```tsx
+import { QRCode } from "qrdx/solid";
+
+<QRCode value="https://example.com" logo="/logo.png" level="H" />;
+```
+
+किसी भी Solid कॉम्पोनेंट की तरह props reactive होते हैं। जब `color()` बदलता है, तो कोड दोबारा बनाया जाता है। props में दिए गए इवेंट हैंडलर `<svg>` पर नहीं लगाए जाते, इसलिए उन्हें कोड के आसपास के किसी एलिमेंट पर लगाएँ।
+
+## यह कैसे बनता है [#how-it-draws]
+
+पैकेज में Solid JSX नहीं है, इसलिए इसे Solid कंपाइलर की ज़रूरत नहीं पड़ती और यह किसी भी बिल्ड सेटअप के साथ काम करता है।
+
+- ब्राउज़र में, कॉम्पोनेंट खुद `<svg>` एलिमेंट लौटाता है, जो `createElementNS` से बनता है (कोई HTML पार्स नहीं होता)। Solid उसे पेज पर लगाता है, prop बदलने से मार्कअप बदलने पर नया एलिमेंट लगा देता है, और कॉम्पोनेंट unmount होने पर उसे हटा देता है।
+- जिस prop बदलाव से वही मार्कअप बनता है, उसमें पेज को छुआ नहीं जाता।
+
+## सर्वर रेंडरिंग और hydration [#server-rendering-and-hydration]
+
+`solid-js/web` के `renderToString` के साथ, कॉम्पोनेंट वही मार्कअप लिखता है जो `qrdx/core` का `toSVGString` लिखता है, और रूट एलिमेंट पर Solid की `data-hk` hydration key भी जुड़ती है। `hydrate` इसी key से सर्वर का `<svg>` दोबारा बनाने के बजाय बनाए रखता है। `<NoHydration>` के अंदर यह key नहीं लगाई जाती।
+
+मार्कअप में कोई random id नहीं होती, इसलिए सर्वर और ब्राउज़र हमेशा एकमत रहते हैं।
+
+## डाउनलोड, मार्कअप और स्कैन स्कोर [#downloads-markup-and-the-scan-score]
+
+कॉम्पोनेंट सिर्फ़ कोड बनाते हैं। डाउनलोड, `toSVGString`, स्कैन स्कोर और बाकी फ़ंक्शन `qrdx/core` से आते हैं। यही वह इंजन है जिसे कॉम्पोनेंट पहले से इस्तेमाल करते हैं, इसलिए यह दो बार बंडल नहीं होता।
+
+```tsx
+import { downloadQRCode } from "qrdx/core";
+import { QRCodeSVG } from "qrdx/solid";
+
+const options = { value: "https://example.com", size: 256 };
+
+export function DownloadableCode() {
+  return (
+    <>
+      <QRCodeSVG {...options} />
+      <button
+        type="button"
+        onClick={() =>
+          downloadQRCode(options, {
+            format: "png",
+            size: { width: 1024, height: 1024 },
+          })
+        }
+      >
+        Download PNG
+      </button>
+    </>
+  );
+}
+```
+
+`qrdx/core` की पूरी जानकारी [Vanilla JavaScript](/docs/vanilla-js) में है।

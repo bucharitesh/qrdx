@@ -1,0 +1,117 @@
+---
+title: "Vue"
+description: "qrdx/vue を使って、Vue 3 と Nuxt でスタイル付きQRコードを描画します。サーバーでレンダリングされる QRCode と QRCodeSVG コンポーネントと、マークアップやダウンロードのための useQRCode コンポーザブルを使います。"
+icon: Code
+---
+
+`qrdx/vue` には、React コンポーネントの `QRCode` と `QRCodeSVG` の Vue 3 版と、`useQRCode` コンポーザブルが含まれています。props は React コンポーネントと同じで、すべてのパターン、色、ロゴ、フレーム、テンプレートに対応した同じ SVG を描画します。このエントリは `qrdx/core` をベースに作られており、`react` はインポートしません。
+
+## インストール [#install]
+
+```package-install
+qrdx@latest
+```
+
+`vue` 3.3 以降はオプションの peer dependency なので、アプリ自身の Vue が使われます。TypeScript によるコンポーネントの props の型チェックには、Vue 3.4.20 以降が必要です。
+
+## コードを描画する [#draw-a-code]
+
+```vue
+<script setup lang="ts">
+import { QRCode } from "qrdx/vue";
+import { ref } from "vue";
+
+const url = ref("https://example.com");
+</script>
+
+<template>
+  <QRCode
+    :value="url"
+    :size="256"
+    body-pattern="rounded"
+    :frame="{ style: 'banner-bottom', text: 'Scan me' }"
+    aria-label="QR code for example.com"
+  />
+</template>
+```
+
+`QRCode` は React の `QRCode` と同じ props を受け取ります。すべての `QRProps` オプションに加えて、ロゴ用の `logo`、`logoOptions`、`hideLogo`、`scale` が使えます。テンプレートでは、ケバブケース（`body-pattern`）でもキャメルケースでも記述できます。`auto-level` や `hide-logo` のようなフラグには値は不要です。
+
+- prop が変わるとコードが再描画され、Vue が `<svg>` をその場で更新します。
+- `class`、`style`、`aria-label` などの属性は `<svg>` に付与されます。フレームがある場合は、フレームの外側の `<svg>` に付与されます。`@click` のようなリスナーも同じ要素に付きます。
+
+## QRCodeSVG [#qrcodesvg]
+
+`QRCodeSVG` は、React の `QRCodeSVG` と同様に `QRProps` を受け取ります。ロゴは `imageSettings` で指定します。
+
+```vue
+<script setup lang="ts">
+import { QRCodeSVG } from "qrdx/vue";
+</script>
+
+<template>
+  <QRCodeSVG
+    value="https://example.com"
+    level="H"
+    :image-settings="{ src: '/logo.png', width: 48, height: 48, excavate: true }"
+  />
+</template>
+```
+
+## サーバーレンダリングと Nuxt [#server-rendering-and-nuxt]
+
+どちらのコンポーネントも Vue のサーバーレンダラー（`vue/server-renderer`）でレンダリングされるため、コードはサーバーが返す HTML に含まれます。マークアップにランダムな id はないので、ブラウザーでのハイドレーション時に不一致は発生しません。
+
+Nuxt では、任意のページやコンポーネントで使えます。サーバーでレンダリングされてブラウザーでハイドレートされます。`<ClientOnly>` の中ではブラウザーのみでレンダリングされます。
+
+## useQRCode [#useqrcode]
+
+```vue
+<script setup lang="ts">
+import { useQRCode } from "qrdx/vue";
+import { ref } from "vue";
+
+const url = ref("https://example.com");
+const { svg, download } = useQRCode(() => ({ value: url.value, size: 256 }));
+</script>
+
+<template>
+  <div v-html="svg" />
+  <button type="button" @click="download({ format: 'png', size: 1024 })">
+    Download PNG
+  </button>
+</template>
+```
+
+`useQRCode(props)` は、`QRCode` の props をオブジェクト、ref、リアクティブオブジェクト、またはゲッターとして受け取ります。戻り値は次のとおりです。
+
+- `svg`: SVG マークアップ（computed ref）。props に追従し、サーバーレンダリング中も動作します。
+- `toDataURL(format, { size, quality })`: コードをデータ URL として返します。
+- `download({ format, filename, size, quality })`: コードをファイルとして保存します。
+- `options`: コードの描画に使われるオプション（computed ref）。
+
+`toDataURL` と `download` は、デフォルトでコード自身の `size` の PNG になります。使える形式は `png`、`jpg`、`webp`、`svg`、`pdf`、`eps` です。PNG、JPG、WebP にはブラウザーが必要で、PDF にはオプションの `jspdf` パッケージが必要です。
+
+## qrdx/core のその他の機能 [#more-from-qrdxcore]
+
+`qrdx/vue` は `qrdx/core` のすべてを再エクスポートします。`toSVGString`、`downloadQRCode`、`getQRCodeDataUrl`、`getScanScore`、公式フレームライブラリ（`getOfficialFrame`）などです。詳しくは [Vanilla JavaScript](/docs/vanilla-js) をご覧ください。サーバーで PNG を生成するには、`qrdx/node` の `getQRAsPNG` を使います。
+
+カスタムテンプレートの `wrapper` は、`qrdx/vue` がエクスポートする `h` を使って記述します。これは Vue の `h` ではなくコアの `h` です。1 つのファイルで両方が必要な場合は、どちらかを別名でインポートしてください。
+
+```js
+import { h } from "qrdx/vue";
+
+const Labelled = {
+  id: "Labelled",
+  name: "Labelled",
+  wrapper: (children, props) =>
+    h(
+      "svg",
+      { viewBox: "0 0 300 340", xmlns: "http://www.w3.org/2000/svg" },
+      h("g", { transform: "translate(20, 20) scale(0.87)" }, children),
+      h("text", { x: "150", y: "325", textAnchor: "middle" }, props?.label)
+    ),
+};
+```
+
+これを `customTemplate` として渡し、その props を `customProps` で指定します。`<QRCode value="https://example.com" :custom-template="Labelled" :custom-props="{ label: 'Scan me' }" />`

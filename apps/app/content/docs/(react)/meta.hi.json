@@ -1,7 +1,7 @@
 {
   "$schema": "../../../.source/json-schema/docs.meta.json",
   "title": "React लाइब्रेरी",
-  "description": "qrdx कंपोनेंट और shadcn रजिस्ट्री",
+  "description": "qrdx कंपोनेंट और shadcn registry",
   "icon": "Code",
   "root": true,
   "pages": [
@@ -9,6 +9,12 @@
     "../getting-started",
     "../usage",
     "../nextjs",
+    "../vanilla-js",
+    "../vue",
+    "../web-component",
+    "../preact",
+    "../solid",
+    "../angular",
     "---स्टाइलिंग और एक्सपोर्ट---",
     "../styles",
     "...../features",

@@ -91,7 +91,7 @@ Le sue impostazioni vanno in `customProps` (tipizzato come `DotRingProps`):
 | `outerStrokeWidth`, `outerStrokeColor` | `strokeWidth`, `strokeColor` | Solo il bordo esterno dell'anello |
 | `innerStrokeWidth`, `innerStrokeColor` | `strokeWidth`, `strokeColor` | Solo il bordo interno dell'anello |
 
-Il testo che entra nell'anello viene composto così com'è, centrato in alto o lungo il basso. Il testo troppo lungo non finisce mai per sovrapporsi al proprio inizio. Prima le lettere si avvicinano, poi il font si rimpicciolisce, fino a metà della dimensione predefinita (il minimo delle etichette delle cornici). Il testo poi chiude l'anello con uno spazio tra parole dove incontra il proprio inizio. Se anche a quella dimensione non entra, viene tagliato dopo l'ultima parola intera che ci sta.
+Il testo che entra nell'anello viene composto così com'è, centrato in alto o lungo il basso. Il testo troppo lungo non finisce mai per sovrapporsi al proprio inizio. Prima le lettere si avvicinano, poi il font si rimpicciolisce, fino a metà della dimensione predefinita (il minimo delle etichette delle cornici). Il testo poi chiude l'anello con uno spazio tra parole dove incontra il proprio inizio. Se anche a quella dimensione non entra, il testo che ripete una frase tiene tante copie intere quante ne entrano, mentre l'altro testo viene tagliato dopo l'ultima parola intera che ci sta e termina con «…».
 
 Un logo va al centro come su qualsiasi codice. I link lunghi (codici con più di 49 moduli di larghezza) mantengono una fascia chiara tra il codice e i punti, così si leggono ancora quando vengono stampati in piccolo.
 
