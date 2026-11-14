@@ -3502,7 +3502,12 @@
       "qrCodeDialog": {
         "getCode": "获取代码",
         "useThisDesignInYour": "在你的应用、网页中使用此设计，或通过 API、AI 助手来使用。",
+        "frameworks": "框架",
+        "framework": "框架",
         "installTheOpenSourceQrdx": "安装开源的 <code>qrdx</code> 包（npm 上的版本为 {version}），然后引入此组件。",
+        "installAndDrawIntoAnyElement": "安装开源的 <code>qrdx</code> 包（npm 上的版本为 {version}），即可将此设计绘制到任意元素中。",
+        "pasteThisIntoAnyPage": "将以下代码粘贴到任意页面：该脚本会从 CDN 加载 <code>qrdx-code</code> 元素。如果使用打包工具，请改为安装 <code>qrdx</code> 并导入 <code>qrdx/element/define</code>。",
+        "withoutABundlerImportIt": "如果不使用打包工具，请从以下地址导入",
         "addTheQrCodeComponent": "从 QRdx 注册表中添加二维码组件，然后配合此设计使用。",
         "aPublicImageOfThis": "此二维码的公开图片，可嵌入到任何地方，无需 API 密钥。",
         "createsADynamicCodeWith": "使用此设计创建动态二维码，需要 <link>API 密钥</link>。",
