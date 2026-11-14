@@ -4,7 +4,7 @@ description: Run your own QRdx web app, dynamic QR codes and hosted pages includ
 icon: Server
 ---
 
-QRdx is AGPL-3.0 licensed, and you can run the web app (QR editor, accounts, two-step verification and passkeys, dynamic codes and hosted pages, teams, saved themes, community gallery and these docs) on your own server. Workspace single sign-on and the workspace audit log are the exception: they live in the commercially licensed `ee/` folders and stay off unless you set a license key (`QRDX_EE_LICENSE`). Using them in production needs a written agreement with QRdx; see [LICENSING.md](https://github.com/qrdxinc/qrdx/blob/main/LICENSING.md). You don't need any of this to use the [`qrdx` React library](/docs/getting-started) or the CLI. Those run anywhere without a backend, under the MIT license. [Open source at QRdx](/open-source-qr-code-generator) lists each part of the repository and its license.
+QRdx is AGPL-3.0 licensed, and you can run the web app (QR editor, accounts, two-step verification and passkeys, dynamic codes and hosted pages, teams, saved themes and the community gallery) on your own server. The docs aren't part of it: your instance sends its docs links (`/docs` and every page under it, their Markdown versions and `/llms-full.txt`) to the same pages on qrdx.dev. Workspace single sign-on and the workspace audit log are the exception: they live in the commercially licensed `ee/` folders and stay off unless you set a license key (`QRDX_EE_LICENSE`). Using them in production needs a written agreement with QRdx; see [LICENSING.md](https://github.com/qrdxinc/qrdx/blob/main/LICENSING.md). You don't need any of this to use the [`qrdx` React library](/docs/getting-started) or the CLI. Those run anywhere without a backend, under the MIT license. [Open source at QRdx](/open-source-qr-code-generator) lists each part of the repository and its license.
 
 <Callout type="warn">
   The Docker setup is new. If something doesn't work, please [open an issue](https://github.com/qrdxinc/qrdx/issues).
@@ -174,7 +174,6 @@ Add one OAuth provider (GitHub or Google), or Resend for email sign-in codes, so
 | Analytics (PostHog, after cookie consent) | `NEXT_PUBLIC_POSTHOG_KEY`, `NEXT_PUBLIC_POSTHOG_HOST` | No product analytics |
 | Analytics (Umami, cookieless) | `NEXT_PUBLIC_UMAMI_WEBSITE_ID`, `NEXT_PUBLIC_UMAMI_SCRIPT_URL` | No visit counts |
 | Feedback widget | `NEXT_PUBLIC_FEATUREBASE_APP_ID` | The widget doesn't load |
-| Docs extras | `GITHUB_TOKEN` | Star counts may hit GitHub rate limits |
 
 `INTEGRATION_ENCRYPTION_KEY` must be set in production as soon as you enable an integration, because it encrypts the stored tokens.
 
