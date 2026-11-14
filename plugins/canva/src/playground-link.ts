@@ -1,6 +1,6 @@
 // "Open in QRdx": a link into the QRdx playground in the format the site
-// reads (apps/docs/lib/playground-links.ts, which this app can't import).
-// apps/docs/tests/plugins/playground-links.test.ts checks this file against
+// reads (apps/app/lib/playground-links.ts, which this app can't import).
+// apps/app/tests/plugins/playground-links.test.ts checks this file against
 // that reader.
 //
 // Only a web address goes in the link, after the `#`, which browsers never

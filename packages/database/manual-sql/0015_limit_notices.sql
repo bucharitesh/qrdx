@@ -1,10 +1,10 @@
 -- Plan-limit emails: one new table, limit_notice.
 -- When a workspace reaches 90% and again 100% of a capped limit in
--- apps/docs/lib/plans.ts (dynamic codes, hosted pages, saved themes, file
+-- apps/app/lib/plans.ts (dynamic codes, hosted pages, saved themes, file
 -- storage, AI art, form responses), its owners get one email per limit,
 -- threshold and calendar month. A row here means "already sent"; the app
 -- inserts it first (ON CONFLICT DO NOTHING) and only the request that
--- inserted it sends the email (apps/docs/lib/limit-notices/notify.tsx).
+-- inserted it sends the email (apps/app/lib/limit-notices/notify.tsx).
 --
 -- Written by the code-features agent (2026-11-04). NOT APPLIED. Until it is,
 -- the app's insert fails with "relation does not exist", which it treats as

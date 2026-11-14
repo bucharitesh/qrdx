@@ -3,15 +3,15 @@
 // Draws the app icons and launch screens for ios/ and android/ from the QRdx
 // mark (packages/design-system/components/brand/brand-marks.tsx): a white
 // mark on the brand blue, like the installable web scanner's icons
-// (apps/docs/scripts/scanner-app-icons.ts). Re-run after `cap add`, then
+// (apps/app/scripts/scanner-app-icons.ts). Re-run after `cap add`, then
 // commit the images. Uses the website's sharp.
 import { readFileSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import path from "node:path";
 
 const root = path.resolve(import.meta.dirname, "..");
-const docs = path.resolve(root, "../docs");
-const sharp = createRequire(path.join(docs, "package.json"))("sharp");
+const web = path.resolve(root, "../app");
+const sharp = createRequire(path.join(web, "package.json"))("sharp");
 
 const BLUE = "#0051ff";
 const DARK = "#0f0f12";

@@ -1,0 +1,193 @@
+---
+title: "Webhooks"
+description: "当你的二维码被扫描、创建或更改,或有人提交表单时,接收一条带签名的 HTTPS 请求。支持 Zapier、Make 和 n8n。"
+icon: Webhook
+---
+
+Webhooks 会在事件发生时,将工作区中的事件发送到你控制的 URL。你可以用它在有人填写表单时更新 CRM,在某个二维码的扫描次数超过 1,000 次时向内部工具发送消息,或者自行保存一份扫描数据。
+
+Webhooks、Zapier/Make 钩子以及 Slack/Discord 提醒属于 **Business** 套餐。邮件提醒和每周摘要属于 Pro 套餐,详见[通知](/docs/notifications)。
+
+## 添加端点 [#add-an-endpoint]
+
+1. 在你想接收事件的工作区中打开[设置 → Webhooks](/dashboard?to=settings/webhooks)。该链接会打开你上次使用的工作区;在工作区切换器中选择其他工作区,仍会停留在同一页面。
+2. 点击 **添加端点**,输入 `https://` 开头的 URL 并选择事件。QRdx 会先要求你[确认是你本人操作](/docs/help/privacy-and-security/two-step-verification#confirm-its-you),修改端点的 URL 时也会再次要求;修改事件或暂停端点则不需要。
+3. 保存后复制显示的**签名密钥**。所有者和管理员之后可以再次查看或轮换该密钥,但需要先[确认是本人操作](/docs/help/privacy-and-security/two-step-verification#confirm-its-you)。
+4. 点击 **发送测试**。QRdx 会发送一个带签名的 `ping` 事件,并显示响应状态。
+
+所有者和管理员可以管理端点;成员可以查看端点及其投递日志。每个工作区最多可以有 20 个端点。
+
+端点 URL 必须是公开的 `https://` 主机名。IP 地址、`localhost` 以及解析到私有网络的名称都会被拒绝,并且不会跟随重定向。
+
+## 事件 [#events]
+
+| 事件 | 触发时机 | 说明 |
+| --- | --- | --- |
+| `scan.created` | 动态二维码被扫描 | 批量发送:每个端点每分钟最多一次请求,在几分钟内发出,最多包含 100 次扫描以及精确的 `count` |
+| `scan.milestone` | 二维码的第 1 次扫描,然后是 10、100、500、1,000、5,000、10,000、50,000、100,000、500,000 和 1,000,000 次扫描,之后每增加一百万次 | 每个里程碑只触发一次 |
+| `code.created` | 创建动态二维码(通过控制台或 API) | 每个二维码一个事件,批量创建时也是如此 |
+| `code.updated` | 二维码的目标地址、标题、设计或短链接域名发生变化 | `changes` 列出变化的字段 |
+| `form.submitted` | 有人在托管页面上提交表单 | 包含填写的答案 |
+| `ping` | 你点击 **发送测试** | |
+
+机器人、链接预览和预取程序的扫描,以及同一访客的快速重复扫描,都不会被计入,也不会触发事件,这与[扫描分析](/docs/dynamic-qr-codes)中的规则完全一致。
+
+## 载荷 [#payloads]
+
+每个请求都是带 JSON 正文的 `POST`,并包含以下请求头:
+
+| 请求头 | 值 |
+| --- | --- |
+| `Content-Type` | `application/json` |
+| `User-Agent` | `QRdx-Webhooks/1.0 (+https://qrdx.dev/docs/webhooks)` |
+| `X-QRdx-Event` | 事件类型,例如 `code.created` |
+| `X-QRdx-Delivery` | 投递 ID:每次重试都相同,因此你可以忽略重复投递 |
+| `X-QRdx-Timestamp` | 本次尝试签名时的 Unix 秒数 |
+| `X-QRdx-Signature` | `t=<timestamp>,v1=<hex HMAC-SHA256>` |
+
+正文始终是一个信封结构:
+
+```json
+{
+  "id": "evt_cm3x8c1a20001",
+  "type": "code.created",
+  "created_at": "2026-10-31T09:30:00.000Z",
+  "data": {
+    "code": {
+      "id": "cm3x7q2l40000",
+      "slug": "aB3dE5f",
+      "title": "Spring menu",
+      "short_link": "https://qrdx.dev/q/aB3dE5f",
+      "destination_url": "https://example.com/menu",
+      "status": "active",
+      "scan_count": 0,
+      "created_at": "2026-10-31T09:30:00.000Z",
+      "updated_at": "2026-10-31T09:30:00.000Z"
+    },
+    "actor_id": "user_123"
+  }
+}
+```
+
+一个 `scan.created` 批次:
+
+```json
+{
+  "id": "evt_cm3x9d0b10002",
+  "type": "scan.created",
+  "created_at": "2026-10-31T09:31:00.000Z",
+  "data": {
+    "window_started_at": "2026-10-31T09:31:00.000Z",
+    "window_seconds": 60,
+    "count": 2,
+    "scans": [
+      {
+        "scan_id": "cm3x9d0b00001",
+        "code": { "id": "cm3x7q2l40000", "slug": "aB3dE5f", "title": "Spring menu" },
+        "scanned_at": "2026-10-31T09:31:00.000Z",
+        "country": "DE",
+        "region": "BE",
+        "city": "Berlin",
+        "device_type": "mobile",
+        "os": "iOS",
+        "browser": "Safari",
+        "referer": null,
+        "source": "qr"
+      }
+    ]
+  }
+}
+```
+
+当一分钟内收到超过 100 次扫描时,`scans` 包含前 100 次,`count` 为精确的总数。`source` 为 `nfc` 表示轻触 [NFC 标签](/docs/nfc),为 `qr` 表示扫描二维码。扫描载荷从不包含 IP 地址或访客哈希值。
+
+其他事件包含:
+
+- `scan.milestone`:`milestone`、`code`(`id`、`slug`、`title`、`scan_count`)以及达到该里程碑的 `scan`。
+- `code.updated`:与 `code.created` 相同,外加 `changes`,例如 `["destination_url"]`。
+- `form.submitted`:`response_id`、`page`(`id`、`title`)、`code`(`id`、`slug`,或 `null`)、`fields`(`name`、`label`、文本形式的 `value`)以及 `submitted_at`。
+
+## 验证签名 [#verify-signatures]
+
+使用你的签名密钥,对 `<timestamp>.<raw body>` 计算 HMAC-SHA256,并与 `X-QRdx-Signature` 中的 `v1` 比较。请使用未经任何 JSON 解析的原始请求正文,并拒绝时间戳早于五分钟的请求。
+
+```ts
+import { createHmac, timingSafeEqual } from "node:crypto";
+
+export function isFromQRdx(rawBody: string, header: string, secret: string) {
+  const parts = Object.fromEntries(
+    header.split(",").map((part) => part.trim().split("=", 2)),
+  );
+  const timestamp = Number(parts.t);
+  if (!timestamp || Math.abs(Date.now() / 1000 - timestamp) > 300) return false;
+
+  const expected = createHmac("sha256", secret)
+    .update(`${timestamp}.${rawBody}`)
+    .digest("hex");
+  const received = Buffer.from(parts.v1 ?? "");
+  return (
+    received.length === expected.length &&
+    timingSafeEqual(received, Buffer.from(expected))
+  );
+}
+```
+
+轮换密钥会立即生效:旧密钥将无法再通过验证,因此轮换后请马上更新你的服务器。
+
+## 重试与投递日志 [#retries-and-the-delivery-log]
+
+请在 10 秒内返回任意 `2xx` 状态码。其他情况(错误状态码、重定向、超时、主机不可达)都算作失败,QRdx 会按递增的等待时间重试,等待时间至少为 1 分钟、4 分钟、16 分钟、1 小时、4 小时、17 小时和 24 小时。每次重试会在等待结束后的几分钟内发出。也就是在大约两天内共尝试 8 次,之后该投递会被标记为 **失败**。
+
+每个端点的 **投递记录** 页面会列出最近 50 条投递,包括状态、尝试次数、最后一次错误和载荷。**重试** 会立即重新发送一条投递(已成功投递的也可以)。投递记录保留 30 天。
+
+投递可能会重复到达(例如响应缓慢后的重试、手动重试),也可能乱序到达。请使用 `X-QRdx-Delivery` 或信封中的 `id` 来忽略重复投递。
+
+停用端点会停止新的投递;删除端点还会同时删除它的日志。如果工作区的套餐不再包含 webhooks,端点会保留,但在重新升级到 Business 之前不会发送任何内容。无论哪种情况,你的二维码都会继续正常工作。
+
+## Zapier、Make 和 n8n(REST Hooks) [#zapier-make-and-n8n-rest-hooks]
+
+自动化工具可以通过 REST Hooks API 自行订阅和取消订阅。请使用 [API 密钥](/docs/developers/api-keys)或 OAuth 访问令牌进行身份验证,与[二维码 API](/docs/dynamic-qr-codes#rest-api)相同:订阅或取消订阅需要 `codes:write`,列出需要 `codes:read`。钩子 URL 通常是保密的,因此仅有 `codes:read` 时,`target_url` 只显示主机部分(`https://hooks.zapier.com/…`)。令牌请求作用于你自己的工作区;密钥则作用于创建它的工作区。如果使用已登录的浏览器会话而不是密钥或令牌来订阅,会先要求你[确认是本人操作](/docs/help/privacy-and-security/two-step-verification#confirm-its-you),在你完成确认之前(最近 10 分钟内),会返回 `403` 和 `CONFIRMATION_REQUIRED`。订阅就是普通的端点:它们会显示在设置 → Webhooks 中,你也可以在那里删除它们。
+
+| 方法 | 路径 | 说明 |
+| --- | --- | --- |
+| `POST` | `/v1/hooks` | 订阅。请求体:`target_url`(或 Zapier 的 `hookUrl`)和 `event`(或 `events` 数组)。返回 `201`,包含订阅的 `id` 及其 `secret` |
+| `DELETE` | `/v1/hooks/{id}` | 取消订阅(`204`) |
+| `GET` | `/v1/hooks` | 列出订阅和端点 |
+| `GET` | `/v1/hooks/{id}` | 查看单个订阅 |
+| `GET` | `/v1/hooks/sample?event=<event>` | 以数组形式返回 `event` 最近的示例载荷(Zapier 的“perform list”) |
+
+```bash
+curl https://api.qrdx.dev/v1/hooks \
+  -H "Authorization: Bearer $QRDX_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"target_url": "https://hooks.zapier.com/hooks/standard/123/abc/", "event": "form.submitted"}'
+```
+
+```json
+{
+  "id": "cm3xa1b2c0003",
+  "target_url": "https://hooks.zapier.com/hooks/standard/123/abc/",
+  "events": ["form.submitted"],
+  "event": "form.submitted",
+  "active": true,
+  "created_at": "2026-10-31T09:40:00.000Z",
+  "secret": "whsec_..."
+}
+```
+
+没有 Business 套餐时,订阅调用会返回 `402 PLAN_REQUIRED`。一次 `scan.created` 投递是一个批次,因此在 Zapier 中请使用 `data.scans` 行项目来处理每一次扫描。
+
+在 n8n 中,[QRdx 的 n8n 节点](/docs/developers/n8n)提供的 QRdx Trigger 节点会为你发起这些调用,并检查每个签名。普通的 Webhook 节点同样可用,设置方式与其他端点相同。
+
+## 自托管 [#self-hosting]
+
+投递会立即发送;重试以及已结束所在分钟的扫描批次,则由定时任务发送。QRdx 通过 GitHub Actions 工作流每 5 分钟运行一次该任务,这在 Vercel 的免费 Hobby 套餐上也可行,同时 `apps/app/vercel.json` 还会每天完整运行一次。GitHub 可能会延迟启动定时运行,因此重试大约会在几分钟内发生,而不是精确到分钟。
+
+若要采用同样的方式,请复制 `.github/workflows/webhook-worker.yml`,将你的 `CRON_SECRET` 添加为 Actions 密钥,并将你的任务 URL 设为变量 `WEBHOOK_WORKER_URL`。或者,使用你在环境中设置的 `CRON_SECRET`,从任意调度器调用该任务:
+
+```bash
+# every 1-5 minutes
+curl -H "Authorization: Bearer $CRON_SECRET" https://your-host/api/cron/webhooks
+```
+
+在 URL 后添加 `?source=github` 后,该任务会先检查 Upstash Redis 中的一个小标记;如果没有任何待处理事项,就会在不查询数据库的情况下返回 `{"skipped": true}`,这样可缩容到零的数据库就能保持休眠(没有 Upstash 时,它总会运行完整任务)。请保留每天一次不带该参数的调用:那次运行总会执行完整任务并修复该标记。

@@ -1,6 +1,6 @@
 -- Backfill: WhatsApp dynamic codes created before 2026-11-05 were stored with
 -- content_type 'url' (createCodes never set it). New codes and destination
--- edits now get 'whatsapp' from apps/docs/lib/dynamic-content.ts
+-- edits now get 'whatsapp' from apps/app/lib/dynamic-content.ts
 -- contentTypeForDestination(); this moves the old rows over to match.
 --
 -- Written by the small-fixes agent (2026-11-05). NOT APPLIED. Nothing reads

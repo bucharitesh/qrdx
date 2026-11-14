@@ -1,8 +1,8 @@
 /* The website's design system, and the class names the reused scanner
-   components use (apps/docs/components/scanner). */
+   components use (apps/app/components/scanner). */
 @import "../../../packages/design-system/styles/globals.css";
 
-@source "../../docs/components/scanner";
+@source "../../app/components/scanner";
 @source "../../../packages/design-system/components/brand/brand-marks.tsx";
 @source "./";
 

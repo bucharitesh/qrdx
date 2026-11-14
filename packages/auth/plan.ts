@@ -2,15 +2,15 @@ import "server-only";
 import { database } from "@repo/database";
 import { rolesInField } from "./workspace-role-rules";
 
-// Keep in sync with apps/docs/lib/subscription.ts: Polar keeps a subscription
+// Keep in sync with apps/app/lib/subscription.ts: Polar keeps a subscription
 // "active" until a cancellation takes effect at period end.
 export const ENTITLED_SUBSCRIPTION_STATUSES = ["active", "trialing"];
 
 /**
  * True when the user holds any entitled subscription. Gates team creation:
  * every paid product maps to Pro or Business (unknown products count as Pro,
- * see apps/docs/lib/plans.ts `planForSubscriptionProduct`) and both include
- * teams. apps/docs/lib/plans.ts is the source of truth for everything else.
+ * see apps/app/lib/plans.ts `planForSubscriptionProduct`) and both include
+ * teams. apps/app/lib/plans.ts is the source of truth for everything else.
  */
 export async function hasEntitledSubscription(userId: string) {
   const row = await database.query.subscription.findFirst({
@@ -27,7 +27,7 @@ export async function hasEntitledSubscription(userId: string) {
 export type WorkspacePlanTier = "free" | "pro" | "business";
 
 // Business products are the env ids; any other entitled product counts as Pro
-// (apps/docs/lib/plans.ts planForSubscriptionProduct).
+// (apps/app/lib/plans.ts planForSubscriptionProduct).
 const BUSINESS_PRODUCT_IDS = new Set(
   [
     process.env.NEXT_PUBLIC_QRDX_BUSINESS_MONTHLY_PRODUCT_ID,
@@ -35,12 +35,12 @@ const BUSINESS_PRODUCT_IDS = new Set(
   ].filter(Boolean)
 );
 
-// The roles that pay for a workspace (PLAN_ROLES in apps/docs/lib/permissions.ts).
+// The roles that pay for a workspace (PLAN_ROLES in apps/app/lib/permissions.ts).
 const PLAN_ROLES = new Set(["owner", "billing"]);
 
 /**
  * A workspace's plan: the best entitled subscription among its owners and
- * billing members, like getOwnerPlanForOrganization in apps/docs/lib/plans.ts.
+ * billing members, like getOwnerPlanForOrganization in apps/app/lib/plans.ts.
  * Seats (./server.ts) and workspace SSO (./ee/sso.ts) are decided by it.
  */
 export async function workspacePlanTier(

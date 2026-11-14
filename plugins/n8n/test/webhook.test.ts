@@ -10,7 +10,7 @@ import {
 } from "../nodes/Qrdx/webhook";
 import { fakeSigningSecret } from "./support/fakes";
 
-// How QRdx signs a delivery (apps/docs/lib/events/signature.ts):
+// How QRdx signs a delivery (apps/app/lib/events/signature.ts):
 //   X-QRdx-Signature: t=<unix seconds>,v1=<hex HMAC-SHA256(secret, "<t>.<raw body>")>
 function sign(secret: string, body: string, timestamp: number) {
   const v1 = createHmac("sha256", secret)
