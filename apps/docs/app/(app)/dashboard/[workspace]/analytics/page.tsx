@@ -34,12 +34,16 @@ import {
   getWorkspaceAnalytics,
   scopeScansWhere,
   searchCodeOptions,
+  workspaceHistoryStart,
 } from "@/app/(app)/dashboard/analytics/_lib/queries";
 import {
   BreakdownCard,
   type BreakdownItem,
 } from "@/app/(app)/dashboard/codes/_components/breakdown-card";
-import { formatNumber } from "@/app/(app)/dashboard/codes/_components/format";
+import {
+  formatDate,
+  formatNumber,
+} from "@/app/(app)/dashboard/codes/_components/format";
 // NFC (feat/nfc): QR scans and NFC taps.
 import { ScanSourceCard } from "@/app/(app)/dashboard/codes/_components/scan-source-card";
 import { ScansChart } from "@/app/(app)/dashboard/codes/_components/scans-chart";
@@ -52,7 +56,9 @@ import { InfoHint } from "@/components/help/info-hint";
 import { HairlineFigure } from "@/components/mockups/hairline";
 import { getAppTranslations } from "@/lib/i18n/app-locale";
 import { getPlanForScope, getPlanLimits } from "@/lib/plans";
+import { seriesDates } from "@/lib/scan-ranges";
 import {
+  ALL_TIME_RANGE,
   getLanguageBreakdown,
   getScanSparklines,
   getScanTimeBreakdown,
@@ -61,7 +67,10 @@ import {
   resolveScanRange,
   SCAN_RANGE_KEYS,
   SCAN_RANGES,
+  type ScanRange,
+  scanRangeDays,
   scanRangeLabel,
+  seriesInterval,
 } from "@/lib/scans";
 import { workspaceHref } from "@/lib/workspace-paths";
 
@@ -71,7 +80,6 @@ export const metadata: Metadata = {
 };
 
 const MAX_COMPARE = 4;
-const DAY_MS = 24 * 60 * 60 * 1000;
 
 type Query = Record<string, string | string[] | undefined>;
 
@@ -206,8 +214,16 @@ export default async function AnalyticsPage({
   const PATH = href("/analytics");
   const limits = getPlanLimits(await getPlanForScope(scope));
   const retentionDays = limits.analyticsRetentionDays;
-  const { range, days } = resolveScanRange(first(query.range), retentionDays);
+  const range = resolveScanRange(first(query.range), retentionDays);
+  const allTime = range === ALL_TIME_RANGE;
+  // "All time" starts at the workspace's first scan (else its first code).
+  const days = scanRangeDays(
+    range,
+    allTime ? await workspaceHistoryStart(scope) : null,
+  );
   const from = rangeStart(days);
+  const interval = seriesInterval(days);
+  const since = formatDate(from);
   const timeZone = normalizeTimeZone(first(query.tz));
   const requested = parseCompare(first(query.compare));
 
@@ -243,9 +259,11 @@ export default async function AnalyticsPage({
   const optionLabels = new Map(
     compared.map((option) => [option.id, codeLabel(option)]),
   );
-  const dates = Array.from({ length: days }, (_, i) =>
-    new Date(from.getTime() + i * DAY_MS).toISOString().slice(0, 10),
-  );
+  const dates = seriesDates(from, days, interval);
+  const rangeLabel = (key: ScanRange) =>
+    key === ALL_TIME_RANGE ? t("allTime") : scanRangeLabel(key);
+  // "30 days", "year", "3 years": the copy reads "last …".
+  const lastRange = scanRangeLabel(range).replace(/^1 /, "");
 
   const header = (
     <PageHeader
@@ -302,7 +320,7 @@ export default async function AnalyticsPage({
               title={t("yourPlanKeepsAShorter")}
               variant="ghost"
             >
-              {scanRangeLabel(key)}
+              {rangeLabel(key)}
               <Lock />
             </Button>
           ) : (
@@ -317,7 +335,7 @@ export default async function AnalyticsPage({
                 href={hrefWith(PATH, params, { range: key })}
                 scroll={false}
               >
-                {scanRangeLabel(key)}
+                {rangeLabel(key)}
               </Link>
             </Button>
           ),
@@ -335,7 +353,11 @@ export default async function AnalyticsPage({
           value={formatNumber(overview.allTimeScans)}
         />
         <Metric
-          hint={`Last ${scanRangeLabel(range).replace(/^1 /, "")} (UTC)`}
+          hint={
+            allTime
+              ? t("sinceDateUtc", { date: since })
+              : `Last ${lastRange} (UTC)`
+          }
           label={t("scansInRange")}
           value={formatNumber(overview.total)}
         />
@@ -348,9 +370,11 @@ export default async function AnalyticsPage({
 
       {/* NFC (feat/nfc) */}
       <ScanSourceCard
-        description={t("allCodesLastValue", {
-          value: scanRangeLabel(range).replace(/^1 /, ""),
-        })}
+        description={
+          allTime
+            ? t("allCodesSince", { date: since })
+            : t("allCodesLastValue", { value: lastRange })
+        }
         sources={overview.sources}
       />
 
@@ -358,13 +382,13 @@ export default async function AnalyticsPage({
         <CardHeader className="px-4">
           <CardTitle>{t("scansOverTime")}</CardTitle>
           <CardDescription>
-            {t("allCodesPerDayLast", {
-              value: scanRangeLabel(range).replace(/^1 /, ""),
-            })}
+            {allTime
+              ? t("allCodesPerIntervalSince", { interval, date: since })
+              : t("allCodesPerDayLast", { value: lastRange })}
           </CardDescription>
         </CardHeader>
         <CardContent className="px-2 sm:px-4">
-          <ScansChart data={overview.series} />
+          <ScansChart data={overview.series} interval={overview.interval} />
         </CardContent>
       </Card>
 
@@ -419,6 +443,7 @@ export default async function AnalyticsPage({
       {time && (
         <TimeCard
           days={days}
+          since={allTime ? since : undefined}
           switcher={
             <TimeZoneSwitch
               current={time.timeZone}
@@ -434,7 +459,9 @@ export default async function AnalyticsPage({
         <CardHeader className="px-4">
           <CardTitle>{t("compareCodes")}</CardTitle>
           <CardDescription>
-            {t("dailyScansOfUpTo", { MAX_COMPARE })}
+            {interval === "day"
+              ? t("dailyScansOfUpTo", { MAX_COMPARE })
+              : t("scansPerIntervalOfUpTo", { interval, MAX_COMPARE })}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4 px-2 sm:px-4">
@@ -454,6 +481,7 @@ export default async function AnalyticsPage({
             <>
               <CompareChart
                 dates={dates}
+                interval={interval}
                 series={compareIds.map((id) => ({
                   id,
                   label: optionLabels.get(id) ?? id,
