@@ -86,7 +86,7 @@ You don't need a database or any environment variables to work on the React libr
 | Path | What it is |
 | --- | --- |
 | `apps/app` | The Next.js app behind qrdx.dev: marketing pages, the editor (`app/(app)/playground`), docs (`content/docs`), the blog, the signed-in app (`app/(app)/dashboard`, `app/(app)/settings`), admin, and the API routes (`app/api`, served as `api.qrdx.dev/v1` and `mcp.qrdx.dev/mcp`) |
-| `apps/docs-site` | The docs as an app of their own, deployed to a separate Vercel project from `.github/workflows/docs-deploy.yml`. With `DOCS_ZONE_URL` set, the main app proxies `/docs` and the other docs URLs to it. Until then it's a copy of the main app's docs code, so a change to the docs routes or components goes in both apps (its README says what it reads from `apps/app`) |
+| `apps/docs` | The docs as an app of their own, deployed to a separate Vercel project from `.github/workflows/docs-deploy.yml`. With `DOCS_ZONE_URL` set, the main app proxies `/docs` and the other docs URLs to it. Until then it's a copy of the main app's docs code, so a change to the docs routes or components goes in both apps (its README says what it reads from `apps/app`) |
 | `packages/qrdx` | The QR engine and React library, published to npm as `qrdx` |
 | `packages/cli` | The command-line tool, published to npm as `@qrdx/cli` |
 | `packages/auth` | Better Auth server and client configuration |

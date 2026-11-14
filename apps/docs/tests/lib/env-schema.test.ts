@@ -71,7 +71,7 @@ describe("a missing variable", () => {
     vi.stubEnv("NODE_ENV", "production");
     vi.stubEnv("MAIN_ZONE_URL", "");
     await expect(import("@/env")).rejects.toThrow(
-      "Invalid environment variables: MAIN_ZONE_URL. See apps/docs-site/.env.example.",
+      "Invalid environment variables: MAIN_ZONE_URL. See apps/docs/.env.example.",
     );
   });
 });
