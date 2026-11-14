@@ -2,7 +2,7 @@
 
 import { track } from "@repo/analytics";
 import { toast } from "@repo/design-system";
-import { Spinner } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   ResponsiveDialog,
@@ -160,7 +160,7 @@ export function AIArtDownloadDialog({
             </ToggleGroup>
             <div className="flex flex-col gap-2">
               <Button disabled={busy !== null} onClick={download}>
-                {busy === "download" ? <Spinner /> : <Import />}
+                {busy === "download" ? <ModuleOrbit aria-hidden /> : <Import />}
                 {format === "png" ? t("downloadPng") : t("downloadPrintPng")}
               </Button>
               <Button
@@ -168,7 +168,11 @@ export function AIArtDownloadDialog({
                 onClick={turnIntoImageQR}
                 variant="outline"
               >
-                {busy === "image-qr" ? <Spinner /> : <Gallery />}
+                {busy === "image-qr" ? (
+                  <ModuleOrbit aria-hidden />
+                ) : (
+                  <Gallery />
+                )}
                 {t("useAsImageQr")}
               </Button>
             </div>

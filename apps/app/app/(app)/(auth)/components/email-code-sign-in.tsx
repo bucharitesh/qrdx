@@ -3,7 +3,7 @@
 import { authClient } from "@repo/auth/client";
 import { LANDING_HEADER, REFERRAL_HEADER } from "@repo/auth/referral-keys";
 import { SSO_REQUIRED_ERROR as SSO_REQUIRED } from "@repo/auth/sso-required-rules";
-import { Spinner } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
@@ -407,7 +407,7 @@ export function EmailCodeSignIn({
         >
           {verifying ? (
             <>
-              <Spinner className="size-3.5" />
+              <ModuleOrbit aria-hidden className="size-3.5" />
               {t("checkingCode")}
             </>
           ) : (
@@ -498,7 +498,7 @@ export function EmailCodeSignIn({
         >
           <Sms className="size-5" />
           <span className="font-medium">{t("emailMeACode")}</span>
-          {sending && <Spinner className="size-4" />}
+          {sending && <ModuleOrbit aria-hidden className="size-4" />}
         </Button>
         {lastUsed && (
           <Badge

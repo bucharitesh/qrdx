@@ -6,7 +6,7 @@ import {
   type SsoServiceProviderUrls,
 } from "@repo/auth/sso-rules";
 import { toast } from "@repo/design-system";
-import { Spinner } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -398,7 +398,7 @@ function SetupCard({
           <ErrorLine error={error} />
           <div className="flex justify-end">
             <Button disabled={busy} type="submit">
-              {busy && <Spinner />}
+              {busy && <ModuleOrbit aria-hidden />}
               Save connection
             </Button>
           </div>
@@ -529,7 +529,7 @@ function UpdateDialog({
               Cancel
             </Button>
             <Button disabled={busy || !value.trim()} type="submit">
-              {busy && <Spinner />}
+              {busy && <ModuleOrbit aria-hidden />}
               Save
             </Button>
           </DialogFooter>
@@ -685,7 +685,7 @@ function ConnectionCard({
           <AlertDialogFooter>
             <AlertDialogCancel disabled={busy}>Cancel</AlertDialogCancel>
             <Button disabled={busy} onClick={remove} variant="destructive">
-              {busy && <Spinner />}
+              {busy && <ModuleOrbit aria-hidden />}
               Remove
             </Button>
           </AlertDialogFooter>
@@ -745,7 +745,7 @@ function VerifyCard({
             onClick={verify}
             size="sm"
           >
-            {busy ? <Spinner /> : <RefreshCw />}
+            {busy ? <ModuleOrbit aria-hidden /> : <RefreshCw />}
             Verify
           </Button>
         </div>
@@ -872,7 +872,7 @@ function RequireSsoCard({
           <AlertDialogFooter>
             <AlertDialogCancel disabled={busy}>Cancel</AlertDialogCancel>
             <Button disabled={busy} onClick={() => void change(true)}>
-              {busy && <Spinner />}
+              {busy && <ModuleOrbit aria-hidden />}
               Require single sign-on
             </Button>
           </AlertDialogFooter>

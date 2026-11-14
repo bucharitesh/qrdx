@@ -1,6 +1,6 @@
 "use client";
 
-import { Spinner } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
 import type { SyncState } from "@repo/integrations";
@@ -76,7 +76,7 @@ export function SyncStatus({
             type="button"
             variant="outline"
           >
-            {retrying && <Spinner className="size-3.5" />}
+            {retrying && <ModuleOrbit aria-hidden className="size-3.5" />}
             {t("retryNow")}
           </Button>
         )}

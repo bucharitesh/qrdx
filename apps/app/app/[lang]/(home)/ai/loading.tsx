@@ -1,9 +1,12 @@
-import { Spinner } from "@repo/design-system/components/icons";
+import { Scanframe } from "@repo/design-system/components/loaders";
+import { useTranslations } from "next-intl";
 
 export default function Loading() {
+  // The shared "Loading…" string; the ai namespace has none of its own.
+  const t = useTranslations("app.dashboard.loading");
   return (
     <div className="flex min-h-screen items-center justify-center">
-      <Spinner className="size-8 animate-spin text-muted-foreground" />
+      <Scanframe label={t("loading")} />
     </div>
   );
 }

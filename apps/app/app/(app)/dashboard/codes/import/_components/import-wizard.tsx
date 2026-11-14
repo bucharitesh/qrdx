@@ -1,10 +1,8 @@
 "use client";
 
 import { track } from "@repo/analytics";
-import {
-  Spinner as Loader2,
-  Close as X,
-} from "@repo/design-system/components/icons";
+import { Close as X } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import {
   Alert,
   AlertDescription,
@@ -395,7 +393,7 @@ export function ImportWizard({
   if (!runner.loaded) {
     return (
       <p className="text-muted-foreground flex items-center gap-2 text-sm">
-        <Loader2 className="size-4 animate-spin" />
+        <ModuleOrbit aria-hidden className="size-4" />
         {t("loading")}
       </p>
     );
@@ -591,7 +589,10 @@ export function ImportWizard({
             <h2 className="flex items-center gap-2 text-base font-semibold">
               {t("n4Review")}
               {checking && (
-                <Loader2 className="text-muted-foreground size-4 animate-spin" />
+                <ModuleOrbit
+                  aria-hidden
+                  className="text-muted-foreground size-4"
+                />
               )}
             </h2>
             <div className="flex flex-wrap items-center gap-2 text-sm">

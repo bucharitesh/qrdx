@@ -4,7 +4,7 @@
 // each one sees, change that later, or remove them (agency tools).
 
 import { toast } from "@repo/design-system";
-import { Spinner } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Checkbox } from "@repo/design-system/components/ui/checkbox";
@@ -216,7 +216,7 @@ function ClientRow({
               size="sm"
               type="button"
             >
-              {isPending && <Spinner aria-hidden className="animate-spin" />}
+              {isPending && <ModuleOrbit aria-hidden />}
               Save folders
             </Button>
           </div>
@@ -363,7 +363,7 @@ export function PortalClientsManager({
               disabled={isPending || !email.trim() || selected.length === 0}
               type="submit"
             >
-              {isPending && <Spinner aria-hidden className="animate-spin" />}
+              {isPending && <ModuleOrbit aria-hidden />}
               Invite client
             </Button>
           </div>

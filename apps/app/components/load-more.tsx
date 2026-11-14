@@ -1,7 +1,7 @@
 "use client";
 
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
-import { Spinner } from "@repo/design-system/components/ui/spinner";
 import { cn } from "@repo/design-system/lib/utils";
 import type { MouseEvent, RefObject } from "react";
 import { useInfiniteScroll } from "@/lib/hooks/use-infinite-scroll";
@@ -66,7 +66,7 @@ export function LoadMore({
 
   const content = (
     <>
-      {loading && <Spinner aria-hidden />}
+      {loading && <ModuleOrbit aria-hidden />}
       {loading
         ? (labels.loading ?? labels.loadMore)
         : error

@@ -2,7 +2,7 @@
 
 import { resetAnalytics } from "@repo/analytics";
 import { authClient } from "@repo/auth/client";
-import { Spinner } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -182,7 +182,7 @@ function DeleteAccountDialog({
               type="submit"
               variant="destructive"
             >
-              {deleting && <Spinner className="animate-spin" />}
+              {deleting && <ModuleOrbit aria-hidden />}
               {t("deleteAccount")}
             </Button>
           </AlertDialogFooter>

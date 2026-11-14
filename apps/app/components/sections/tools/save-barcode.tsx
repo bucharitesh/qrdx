@@ -7,7 +7,7 @@
 import { track } from "@repo/analytics";
 import { authClient } from "@repo/auth/client";
 import { toast } from "@repo/design-system";
-import { Spinner } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import { ArchiveAdd } from "iconsax-reactjs";
 import { useTranslations } from "next-intl";
@@ -115,7 +115,7 @@ export function SaveBarcode({ current }: { current: CurrentBarcode | null }) {
       variant="secondary"
     >
       {saving ? (
-        <Spinner className="size-4 animate-spin" />
+        <ModuleOrbit aria-hidden className="size-4" />
       ) : (
         <ArchiveAdd aria-hidden className="size-4" />
       )}

@@ -8,7 +8,7 @@ import {
   TWO_FACTOR_METHODS_PATH,
   type TwoFactorMethods,
 } from "@repo/auth/sign-in-challenge-rules";
-import { Spinner } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Checkbox } from "@repo/design-system/components/ui/checkbox";
 import { Input } from "@repo/design-system/components/ui/input";
@@ -355,7 +355,7 @@ export function TwoFactorChallenge({
     >
       {working ? (
         <>
-          <Spinner className="size-3.5" />
+          <ModuleOrbit aria-hidden className="size-3.5" />
           {prompting
             ? PASSKEY_STEP_MESSAGES.waiting
             : mode === "passkey"
@@ -378,7 +378,7 @@ export function TwoFactorChallenge({
           aria-busy="true"
           className="flex h-11 w-full items-center justify-center"
         >
-          <Spinner className="size-5 text-muted-foreground" />
+          <ModuleOrbit aria-hidden className="size-5 text-muted-foreground" />
           <span className="sr-only">{t("loadingYourSignInMethods")}</span>
         </div>
       ) : mode === "passkey" ? (
@@ -390,7 +390,7 @@ export function TwoFactorChallenge({
         >
           <FingerScan className="size-5" />
           {t("continueWithPasskey")}
-          {working && <Spinner className="size-4" />}
+          {working && <ModuleOrbit aria-hidden className="size-4" />}
         </Button>
       ) : mode === "totp" ? (
         <InputOTP
@@ -457,7 +457,7 @@ export function TwoFactorChallenge({
             type="submit"
           >
             {t("verify")}
-            {checking && <Spinner className="size-4" />}
+            {checking && <ModuleOrbit aria-hidden className="size-4" />}
           </Button>
         </form>
       ) : null}
@@ -472,7 +472,7 @@ export function TwoFactorChallenge({
           variant="outline"
         >
           {t("signInAgain")}
-          {leaving && <Spinner className="size-4" />}
+          {leaving && <ModuleOrbit aria-hidden className="size-4" />}
         </Button>
       ) : (
         <>

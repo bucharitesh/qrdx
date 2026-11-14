@@ -1,7 +1,7 @@
 "use client";
 
 import { toast } from "@repo/design-system";
-import { Spinner } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   Dialog,
@@ -118,7 +118,7 @@ export function RenamePasskeyDialog({
               {t("cancel")}
             </Button>
             <Button disabled={saving || !name.trim()} type="submit">
-              {saving && <Spinner className="animate-spin" />}
+              {saving && <ModuleOrbit aria-hidden />}
               {t("save")}
             </Button>
           </DialogFooter>

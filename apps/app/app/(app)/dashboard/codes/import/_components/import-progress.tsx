@@ -1,6 +1,6 @@
 "use client";
 
-import { Spinner as Loader2 } from "@repo/design-system/components/icons";
+import { AssemblingCode } from "@repo/design-system/components/loaders";
 import {
   Alert,
   AlertDescription,
@@ -143,7 +143,7 @@ export function ImportProgress({
             </span>
           </p>
           <p className="text-muted-foreground flex items-center gap-1.5 text-xs">
-            {running && <Loader2 className="size-3.5 animate-spin" />}
+            {running && <AssemblingCode aria-hidden size={16} />}
             {running
               ? waiting
                 ? waiting.reason === "retry"

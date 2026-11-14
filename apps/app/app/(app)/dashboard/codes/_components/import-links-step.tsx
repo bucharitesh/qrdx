@@ -1,6 +1,7 @@
 "use client";
 
-import { Info, Spinner } from "@repo/design-system/components/icons";
+import { Info } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Checkbox } from "@repo/design-system/components/ui/checkbox";
 import { Input } from "@repo/design-system/components/ui/input";
@@ -150,7 +151,7 @@ function ConnectPanel({
       {status?.oauth && (
         <div className="space-y-1.5">
           <Button className="w-full" disabled={busy !== null} onClick={signIn}>
-            {busy === "oauth" ? <Spinner className="animate-spin" /> : null}
+            {busy === "oauth" ? <ModuleOrbit aria-hidden /> : null}
             {t("signInWith", { name })}
           </Button>
           <p className="text-muted-foreground text-xs">
@@ -184,7 +185,7 @@ function ConnectPanel({
               type="submit"
               variant={status.oauth ? "outline" : "default"}
             >
-              {busy === "key" ? <Spinner className="animate-spin" /> : <Key />}
+              {busy === "key" ? <ModuleOrbit aria-hidden /> : <Key />}
               {t("connect")}
             </Button>
           </div>
@@ -598,7 +599,7 @@ export function LinksStep({
           <div className="text-muted-foreground flex items-center gap-2">
             {loadingAll !== null ? (
               <>
-                <Spinner className="size-4 animate-spin" />
+                <ModuleOrbit aria-hidden className="size-4" />
                 {t("loadingLinksLoadingall", {
                   loadingAll: formatCount(loadingAll),
                 })}
@@ -627,7 +628,10 @@ export function LinksStep({
           </div>
           <div className="flex items-center gap-2">
             {loading && page && (
-              <Spinner className="text-muted-foreground size-4 animate-spin" />
+              <ModuleOrbit
+                aria-hidden
+                className="text-muted-foreground size-4"
+              />
             )}
             <Button
               disabled={loading || pageIndex === 0}

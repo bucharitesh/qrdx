@@ -1,7 +1,8 @@
 "use client";
 
 import { track } from "@repo/analytics";
-import { Info, Spinner } from "@repo/design-system/components/icons";
+import { Info } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Checkbox } from "@repo/design-system/components/ui/checkbox";
 import { Input } from "@repo/design-system/components/ui/input";
@@ -203,7 +204,7 @@ export function PreviewStep({
               disabled={loading || starting || creates === 0}
               onClick={start}
             >
-              {starting && <Spinner className="animate-spin" />}
+              {starting && <ModuleOrbit aria-hidden />}
               {creates === 0
                 ? t("nothingToImport")
                 : limited

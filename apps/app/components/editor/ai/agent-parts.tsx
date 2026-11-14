@@ -1,7 +1,7 @@
 "use client";
 
 import { CANONICAL_ORIGIN } from "@repo/config";
-import { Spinner } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
 import { cn } from "@repo/design-system/lib/utils";
@@ -96,7 +96,7 @@ export function StepLine({
     <li className="flex items-start gap-2 text-xs leading-5">
       <span className="grid size-5 shrink-0 place-items-center">
         {status === "running" ? (
-          <Spinner className="text-muted-foreground size-3.5" />
+          <ModuleOrbit aria-hidden className="text-muted-foreground size-3.5" />
         ) : status === "done" ? (
           <TickCircle className="text-muted-foreground size-3.5" />
         ) : (
@@ -557,7 +557,7 @@ export function ApplyDesignCard({
           </span>
         ) : state === "approval-responded" ? (
           <span className="text-muted-foreground inline-flex items-center gap-1.5 text-xs">
-            <Spinner className="size-3.5" />
+            <ModuleOrbit aria-hidden className="size-3.5" />
             {t("applying")}
           </span>
         ) : state === "output-error" ? (
@@ -674,7 +674,7 @@ export function SaveTemplateCard({
           </span>
         ) : part.state === "approval-responded" && part.approval.approved ? (
           <span className="text-muted-foreground inline-flex items-center gap-1.5 text-xs">
-            <Spinner className="size-3.5" />
+            <ModuleOrbit aria-hidden className="size-3.5" />
             {t("saving")}
           </span>
         ) : (

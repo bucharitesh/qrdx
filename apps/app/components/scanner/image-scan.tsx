@@ -1,7 +1,7 @@
 "use client";
 
 import { toast } from "@repo/design-system";
-import { Spinner as LoaderCircle } from "@repo/design-system/components/icons";
+import { Scanframe } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
 import {
@@ -143,10 +143,7 @@ export function ImageScan({
       >
         <input {...getInputProps()} aria-label={t("inputLabel")} />
         {busy ? (
-          <LoaderCircle
-            aria-hidden
-            className="text-muted-foreground size-8 animate-spin"
-          />
+          <Scanframe aria-hidden className="size-8 text-muted-foreground" />
         ) : (
           <ImageUp aria-hidden className="text-muted-foreground size-8" />
         )}

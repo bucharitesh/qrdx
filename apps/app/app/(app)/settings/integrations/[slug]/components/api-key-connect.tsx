@@ -1,7 +1,7 @@
 "use client";
 
 import { track } from "@repo/analytics";
-import { Spinner } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
@@ -102,7 +102,7 @@ export function ApiKeyConnect({
             value={value}
           />
           <Button disabled={pending || value.trim().length < 8} type="submit">
-            {pending && <Spinner className="size-4 animate-spin" />}
+            {pending && <ModuleOrbit aria-hidden className="size-4" />}
             {reconnect ? t("save") : t("connect")}
           </Button>
         </div>

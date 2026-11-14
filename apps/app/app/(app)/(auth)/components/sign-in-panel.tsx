@@ -7,11 +7,8 @@ import {
 } from "@repo/auth/referral-keys";
 import { toast } from "@repo/design-system";
 import { QrdxLogoAnimation } from "@repo/design-system/components/brand/qrdx-logo-animation";
-import {
-  GithubLogo,
-  GoogleLogo,
-  Spinner,
-} from "@repo/design-system/components/icons";
+import { GithubLogo, GoogleLogo } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Separator } from "@repo/design-system/components/ui/separator";
@@ -226,7 +223,7 @@ export function SignInPanel({
                 <provider.icon className="size-5" />
                 <span className="font-medium">{provider.label}</span>
                 {provider.loading && (
-                  <Spinner className="size-4 animate-spin" />
+                  <ModuleOrbit aria-hidden className="size-4" />
                 )}
               </Button>
               {lastLoginMethod === provider.id && (

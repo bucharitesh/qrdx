@@ -2,7 +2,8 @@
 
 import { track } from "@repo/analytics";
 import { toast } from "@repo/design-system";
-import { Spinner, Tick } from "@repo/design-system/components/icons";
+import { Tick } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   InputGroup,
@@ -748,7 +749,7 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
                     disabled={isDownloading || !!sizeError || !value}
                     onClick={handleDownload}
                   >
-                    {isDownloading ? <Spinner /> : <Import />}
+                    {isDownloading ? <ModuleOrbit aria-hidden /> : <Import />}
                     <span className="truncate">
                       {isDownloading
                         ? t("preparing")
@@ -782,7 +783,7 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
                     disabled={isDownloading || !printLayout.layout}
                     onClick={() => handlePrintDownload("pdf")}
                   >
-                    {isDownloading ? <Spinner /> : <Import />}
+                    {isDownloading ? <ModuleOrbit aria-hidden /> : <Import />}
                     <span className="truncate">
                       {isDownloading
                         ? t("preparing")

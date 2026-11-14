@@ -7,7 +7,7 @@ import { useTranslations } from "next-intl";
 // until the code is.
 
 import { toast } from "@repo/design-system";
-import { Spinner } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { cn } from "@repo/design-system/lib/utils";
 import { Add, Magicpen } from "iconsax-reactjs";
 import {
@@ -139,7 +139,7 @@ export function SuggestButton({
       type="button"
     >
       {loading ? (
-        <Spinner aria-hidden className="size-3.5 animate-spin" />
+        <ModuleOrbit aria-hidden className="size-3.5" />
       ) : (
         <Magicpen aria-hidden className="size-3.5" />
       )}

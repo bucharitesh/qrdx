@@ -10,7 +10,7 @@ import { useTranslations } from "next-intl";
 import { track } from "@repo/analytics";
 import { authClient } from "@repo/auth/client";
 import { toast } from "@repo/design-system";
-import { Spinner } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -1318,7 +1318,7 @@ export default function CodeBuilderModal({
         className="text-muted-foreground flex items-center gap-2 text-sm"
         role="status"
       >
-        <Spinner className="size-4 animate-spin" />
+        <ModuleOrbit aria-hidden className="size-4" />
         {t("loadingThisCode")}
       </p>
     );

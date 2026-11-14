@@ -1,4 +1,4 @@
-import { Spinner } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
 import { Heart } from "iconsax-reactjs";
@@ -26,7 +26,7 @@ export function SaveButton({
         {...props}
       >
         {isSaving ? (
-          <Spinner className="size-4" />
+          <ModuleOrbit aria-hidden className="size-4" />
         ) : (
           <Heart className="size-4" />
         )}
