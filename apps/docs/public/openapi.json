@@ -10,7 +10,7 @@
     },
     "license": {
       "name": "AGPL-3.0",
-      "url": "https://github.com/bucharitesh/qrdx/blob/main/LICENSE"
+      "url": "https://github.com/qrdxinc/qrdx/blob/main/LICENSE"
     }
   },
   "servers": [
@@ -9243,7 +9243,7 @@
           "labels"
         ],
         "additionalProperties": false,
-        "description": "A custom frame as data (qrdx frame spec v1): shapes, labels, colors and where the code goes. See https://github.com/bucharitesh/qrdx/tree/main/packages/qrdx#custom-frames."
+        "description": "A custom frame as data (qrdx frame spec v1): shapes, labels, colors and where the code goes. See https://github.com/qrdxinc/qrdx/tree/main/packages/qrdx#custom-frames."
       },
       "FrameSpecColor": {
         "anyOf": [

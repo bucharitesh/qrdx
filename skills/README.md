@@ -32,7 +32,7 @@ What it covers:
 
 ```bash
 # With the skills CLI (asks which of your agents to add it to)
-npx skills add bucharitesh/qrdx --skill generate-qr
+npx skills add qrdxinc/qrdx --skill generate-qr
 
 # Claude Code, by hand
 cp -r skills/generate-qr ~/.claude/skills/
@@ -45,19 +45,19 @@ The skill also ships in the QRdx plugin, together with the [MCP server](https://
 
 ```bash
 # Claude Code (inside a session)
-/plugin marketplace add bucharitesh/qrdx
+/plugin marketplace add qrdxinc/qrdx
 /plugin install qrdx@qrdx
 
 # GitHub Copilot CLI
-copilot plugin marketplace add bucharitesh/qrdx
+copilot plugin marketplace add qrdxinc/qrdx
 copilot plugin install qrdx@qrdx
 
 # Codex
-codex plugin marketplace add bucharitesh/qrdx
+codex plugin marketplace add qrdxinc/qrdx
 codex plugin add qrdx@qrdx
 
 # Gemini CLI
-gemini extensions install https://github.com/bucharitesh/qrdx
+gemini extensions install https://github.com/qrdxinc/qrdx
 ```
 
 The plugin is in [`plugins/agent`](../plugins/agent), and its [README](../plugins/agent/README.md) says what it runs and sends.

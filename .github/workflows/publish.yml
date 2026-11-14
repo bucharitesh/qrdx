@@ -10,7 +10,7 @@
 # One-time setup on npmjs.com, for each of qrdx, @qrdx/cli and
 # @qrdx/n8n-nodes-qrdx:
 #   Package → Settings → Trusted publishing → GitHub Actions
-#     Organization or user: bucharitesh
+#     Organization or user: qrdxinc
 #     Repository:           qrdx
 #     Workflow filename:    publish.yml
 #     Environment:          (leave empty)

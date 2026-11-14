@@ -2,9 +2,9 @@ body:
   - type: markdown
     attributes:
       value: |
-        Ideas is for talking a suggestion through before anyone builds it: what problem it solves, who else has it and what it could look like. Search [existing ideas](https://github.com/bucharitesh/qrdx/discussions/categories/ideas) first, and upvote one that matches instead of starting a new thread.
+        Ideas is for talking a suggestion through before anyone builds it: what problem it solves, who else has it and what it could look like. Search [existing ideas](https://github.com/qrdxinc/qrdx/discussions/categories/ideas) first, and upvote one that matches instead of starting a new thread.
 
-        If you already know exactly what you want, a [feature request](https://github.com/bucharitesh/qrdx/issues/new?template=feature_request.yml) works too.
+        If you already know exactly what you want, a [feature request](https://github.com/qrdxinc/qrdx/issues/new?template=feature_request.yml) works too.
 
   - type: dropdown
     id: area

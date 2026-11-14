@@ -1,9 +1,7 @@
 // Profiles and listings the site links to (structured data, page metadata).
 
-import { GITHUB_OWNER } from "./brand";
-
-/** The founder's GitHub profile (the repository's owner). */
-export const GITHUB_PROFILE_URL = `https://github.com/${GITHUB_OWNER}`;
+/** The founder's GitHub profile (the repository lives under the qrdxinc org). */
+export const GITHUB_PROFILE_URL = "https://github.com/bucharitesh";
 
 export const X_HANDLE = "@bucha_ritesh";
 export const X_PROFILE_URL = "https://x.com/bucha_ritesh";

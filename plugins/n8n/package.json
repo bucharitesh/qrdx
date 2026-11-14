@@ -10,13 +10,13 @@
     "qrcode",
     "dynamic-qr-code"
   ],
-  "homepage": "https://github.com/bucharitesh/qrdx/tree/main/plugins/n8n#readme",
+  "homepage": "https://github.com/qrdxinc/qrdx/tree/main/plugins/n8n#readme",
   "bugs": {
-    "url": "https://github.com/bucharitesh/qrdx/issues"
+    "url": "https://github.com/qrdxinc/qrdx/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bucharitesh/qrdx.git",
+    "url": "git+https://github.com/qrdxinc/qrdx.git",
     "directory": "plugins/n8n"
   },
   "license": "MIT",
