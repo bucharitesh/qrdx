@@ -48,7 +48,10 @@ jobs:
   scan:
     name: Scan the official frames (part ${{ matrix.part }})
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    # A part took 4.5 to 7.6 minutes with 1,013 frames (14 Nov 2026; some
+    # runners are twice as fast as others). This stops a hung job, not a
+    # slow one; add a part before the slowest gets near it.
+    timeout-minutes: 20
     strategy:
       # Every part runs to the end, so a run lists every frame that fails
       fail-fast: false
