@@ -55,7 +55,7 @@ import {
 //   accepting a pending invitation), with the role the workspace picked
 //   (member or viewer) or the invitation's.
 // Managing connections is server-only (SSO_SERVER_ONLY_PATHS): the app's
-// server actions check QRdx roles and the plan first (apps/docs/ee/sso).
+// server actions check QRdx roles and the plan first (apps/app/ee/sso).
 
 export const SSO_SIGN_IN_PATH = "/sign-in/sso";
 // Paths that sign someone in. Lane A challenges them for 2FA; here they're
@@ -79,7 +79,7 @@ export const SSO_SERVER_ONLY_PATHS = [
 // endpoints refuse every request while `saml.enableSingleLogout` is unset.)
 export const SSO_UNUSED_PATHS = ["/sso/callback"];
 
-/** Error codes the sign-in UI turns into messages (apps/docs/ee/sso/messages.ts). */
+/** Error codes the sign-in UI turns into messages (apps/app/ee/sso/messages.ts). */
 export const SSO_ERROR = {
   emailRequired: "SSO_EMAIL_REQUIRED",
   notFound: "SSO_NOT_FOUND",
@@ -129,7 +129,7 @@ async function signInProviderFor(domain: string): Promise<ProviderRow | null> {
 }
 
 /**
- * Read-only, for the sign-in panel's email step (apps/docs/ee/sso/
+ * Read-only, for the sign-in panel's email step (apps/app/ee/sso/
  * sign-in-offer.ts): true when "Sign in with SSO" with an address in `domain`
  * would go to an identity provider, by the same checks as the /sign-in/sso
  * hook below (one verified connection covers the domain, and its workspace

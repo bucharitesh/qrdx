@@ -1,5 +1,3 @@
-import type { qrPreset } from "@repo/database";
-import type { InferSelectModel } from "drizzle-orm";
 import {
   anyFrameSchema,
   bodyPatternSchema,
@@ -119,13 +117,6 @@ export interface ThemeEditorPreviewProps {
   styles: ThemeStyles;
 }
 
-export interface ThemeEditorControlsProps {
-  styles: ThemeStyles;
-  currentMode: "light" | "dark";
-  onChange: (styles: ThemeStyles) => void;
-  themePromise: Promise<Theme | null>;
-}
-
 /** Shelf a built-in theme sits on in the theme gallery. */
 export type ThemeCategory =
   | "essentials"
@@ -154,7 +145,8 @@ export type ThemePreset = {
 export type QRPreset = ThemePreset;
 export type QRStyle = ThemeStyles;
 
-export type Theme = InferSelectModel<typeof qrPreset>;
+// The saved-theme row type (`Theme`) and the editor's props stay in the main
+// app, which has the database: the docs site only needs the style shapes.
 
 /**
  * Download Format Options

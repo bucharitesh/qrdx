@@ -3,7 +3,7 @@
 // background. The SVG draws it as a <pattern> over the whole code; the PDF
 // embeds it once and paints it inside each shape; EPS refuses it. With the
 // six sample photos (fixtures copied from
-// apps/docs/public/images/art-samples/photos), each fill decodes at phone
+// apps/app/public/images/art-samples/photos), each fill decodes at phone
 // distances once its opacity over the underlay passes the scan score's
 // contrast check for pictures (7:1 in the code, 12:1 behind it, judged by
 // the picture's lightest and darkest tenth, getImageTonesFromPixels):

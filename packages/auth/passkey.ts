@@ -18,7 +18,7 @@ export const PASSKEY_SIGN_IN_OPTIONS_PATH =
   "/passkey/generate-authenticate-options";
 
 // Adding, renaming and removing passkeys only happen through the app's server
-// actions (apps/docs/app/settings/account/_lib/passkey-actions.ts), which add
+// actions (apps/app/app/settings/account/_lib/passkey-actions.ts), which add
 // a recent sign-in and the notice email, so these are off over HTTP.
 export const SERVER_ONLY_PASSKEY_PATHS = [
   "/passkey/generate-register-options",
@@ -63,7 +63,7 @@ export function passkeyOptions(
       // The plugin's own rule (a sign-in within a day) is off: adding a
       // passkey happens only through the app's server actions (these paths
       // are server-only, SERVER_ONLY_PASSKEY_PATHS), which ask the person to
-      // confirm it's you first (apps/docs/lib/account/confirmation-server.tsx).
+      // confirm it's you first (apps/app/lib/account/confirmation-server.tsx).
       // The person still comes from the session; without one the plugin
       // refuses (there's no resolveUser).
       requireSession: false,

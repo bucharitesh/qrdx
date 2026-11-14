@@ -1,14 +1,15 @@
 import { BRAND_NAME, CANONICAL_ORIGIN } from "@repo/config";
 import type { Metadata } from "next";
 
+// Readers reach the docs through the main app (qrdx.dev proxies them here),
+// so every absolute URL (canonical, hreflang, Open Graph, the sitemap) is
+// written against NEXT_PUBLIC_APP_URL. Unlike the main app's copy, never
+// VERCEL_PROJECT_PRODUCTION_URL: on this project that's the docs site's own
+// domain. Under `next dev` the main app's dev server is the front door.
 export const baseUrl =
   process.env.NODE_ENV === "development"
     ? new URL("http://localhost:3000")
-    : new URL(
-        process.env.VERCEL_PROJECT_PRODUCTION_URL
-          ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-          : (process.env.NEXT_PUBLIC_APP_URL ?? CANONICAL_ORIGIN),
-      );
+    : new URL(process.env.NEXT_PUBLIC_APP_URL ?? CANONICAL_ORIGIN);
 
 export const siteName = BRAND_NAME;
 

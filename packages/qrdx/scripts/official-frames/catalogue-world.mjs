@@ -5,7 +5,7 @@
 // catalogue.mjs's f() and section(), so they're described and checked like
 // every other generated frame; addWorldFrames() runs at the end of it.
 //
-// Seasonal frames name an occasion that apps/docs/lib/frames/occasions.ts
+// Seasonal frames name an occasion that apps/app/lib/frames/occasions.ts
 // knows the dates of. Labels are short, plain and Latin-1 (the label check
 // in tests/support/official-frames.ts), so greetings with letters outside it
 // are written the way they're commonly romanized.

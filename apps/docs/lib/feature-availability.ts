@@ -1,62 +1,40 @@
 import "server-only";
 
-import { env } from "@/env";
+import zoneFile from "@/generated/zone-availability.json";
+import type { FeatureId, FeatureMap } from "@/lib/feature-availability-rules";
 import {
-  type CustomDomainMode,
-  computeFeatures,
-  customDomainMode,
-  type FeatureContext,
-  type FeatureId,
-  type FeatureMap,
   isPathShown,
-  missingFeatureSetup,
-  toPublicAvailability,
-} from "@/lib/feature-availability-rules";
+  type ZoneAvailabilityFile,
+  zoneAvailability,
+} from "@/lib/zone-availability";
 
-/**
- * The server environment as the feature rules read it (names only; values
- * never leave the server). Fixed for the life of the process, so pages that
- * are prerendered pick up a change on the next deploy.
- */
-export function featureContext(): FeatureContext {
-  return {
-    // The app's variables and the packages' it extends: among them
-    // BETTER_AUTH_URL (passkeys) and QRDX_EE_LICENSE (ee/ features) from
-    // @repo/auth, and the app URL and VERCEL_PROJECT_PRODUCTION_URL (where
-    // the affiliate program runs) from @repo/next-config.
-    env: { ...(env as Readonly<Record<string, string | undefined>>) },
-    onVercel: Boolean(process.env.VERCEL),
-    production: process.env.NODE_ENV === "production",
-  };
-}
+// The main app's features, from its /zone/availability.json as fetched when
+// this build started (lib/zone-availability.ts). The main app's version of
+// this file reads its own environment; the docs site has none of those
+// variables, so it asks the app. Fixed for the life of the build, like the
+// main app's (a change shows with the next docs deploy).
 
-const features = computeFeatures(featureContext());
+const zone = zoneAvailability(zoneFile as ZoneAvailabilityFile);
 
-/** True when `id` can work on this deployment. */
+/** True when `id` works on the main app. */
 export function isFeatureAvailable(id: FeatureId): boolean {
-  return features[id];
+  return zone.features[id];
 }
 
-/** The variable names `id` still needs here (admin and dev use only). */
-export function featureSetupNeeded(id: FeatureId): string[] {
-  return missingFeatureSetup(id, featureContext());
-}
-
-export function getCustomDomainMode(): CustomDomainMode {
-  return customDomainMode(featureContext());
-}
-
-/** Every feature's availability here, by id. */
+/** Every feature's availability on the main app, by id. */
 export function getFeatures(): FeatureMap {
-  return features;
+  return zone.features;
 }
-
-const hiddenPaths = toPublicAvailability(features).hiddenPaths;
 
 /**
  * False for a link to a page that only offers an unavailable feature, like
  * a workspace's Domains page where custom domains can't be added.
  */
 export function isPathAvailable(href: string): boolean {
-  return isPathShown(hiddenPaths, href);
+  return isPathShown(zone.hiddenPaths, href);
+}
+
+/** True when the main app shows integration `slug`. */
+export function isIntegrationVisible(slug: string): boolean {
+  return zone.isIntegrationVisible(slug);
 }

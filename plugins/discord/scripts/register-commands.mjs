@@ -2,7 +2,7 @@
 // Registers the QRdx Discord app's commands (/qr with its content, look,
 // color, frame and private options, and "Make QR code") as its global
 // commands. The definitions are read from
-// apps/docs/lib/chat-bots/discord/commands.json, the same file the app
+// apps/app/lib/chat-bots/discord/commands.json, the same file the app
 // answers from, and replace every global command the app has.
 //
 //   DISCORD_APPLICATION_ID=… DISCORD_BOT_TOKEN=… node plugins/discord/scripts/register-commands.mjs
@@ -15,7 +15,7 @@ import { readFile } from "node:fs/promises";
 import { pathToFileURL } from "node:url";
 
 const COMMANDS_FILE = new URL(
-  "../../../apps/docs/lib/chat-bots/discord/commands.json",
+  "../../../apps/app/lib/chat-bots/discord/commands.json",
   import.meta.url
 );
 

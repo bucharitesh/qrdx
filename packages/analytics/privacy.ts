@@ -106,7 +106,7 @@ export function safeTitle(pathname: string, title: string): string {
 
 // Which of an app's pages record nothing is the app's to say: the main app
 // registers its customer-facing pages and the scanner
-// (apps/docs/lib/analytics/privacy.ts, before anything can be tracked). On
+// (apps/app/lib/analytics/privacy.ts, before anything can be tracked). On
 // globalThis, like @repo/auth's new-user recorder, so every copy of this
 // module sees it.
 const UNTRACKED_PATHS = Symbol.for("@repo/analytics/untracked-paths");

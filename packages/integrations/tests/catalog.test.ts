@@ -17,7 +17,7 @@ import {
   isListedIntegration,
 } from "../src/catalog";
 
-const PUBLIC = join(__dirname, "../../../apps/docs/public");
+const PUBLIC = join(__dirname, "../../../apps/app/public");
 
 const slugs = (surface: CatalogSurface) =>
   getCatalogBySurface(surface).map((entry) => entry.slug);

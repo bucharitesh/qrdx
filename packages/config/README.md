@@ -15,8 +15,8 @@ import { CANONICAL_ORIGIN, SUPPORT_EMAIL, MAX_CODES_PER_REQUEST } from "@repo/co
 | `social.ts` | Profiles and listings the site links to |
 | `mcp.ts` | The MCP server's name in the official MCP Registry (`dev.qrdx/qrdx`) and the URLs of its registry record and Glama page |
 | `limits.ts` | Platform limits that more than one part of QRdx enforces or quotes: editor uploads, AI caps, theme caps, batch sizes, the keyless endpoints' rate limits |
-| `facts.ts` | Product counts and names quoted in copy, imported as `@repo/config/facts`, for apps that can't import the main app (the docs site). `createFacts(snapshot)` gives them the main app's API (`PRODUCT_FACTS`, `STYLE_SUMMARY`, `productFact()`, `isProductFact()`, `fillFacts()`, `fillFactsDeep()`) over a snapshot of `apps/docs/lib/product-facts.ts` that `bun run --filter docs facts:snapshot` writes to `facts.generated.json` just before such an app builds. The file isn't committed, so it can't go stale |
-| `keys.ts` | The environment variable this package reads, validated like every other `keys.ts`; `apps/docs/env.ts` extends it |
+| `facts.ts` | Product counts and names quoted in copy, imported as `@repo/config/facts`, for apps that can't import the main app (the docs site). `createFacts(snapshot)` gives them the main app's API (`PRODUCT_FACTS`, `STYLE_SUMMARY`, `productFact()`, `isProductFact()`, `fillFacts()`, `fillFactsDeep()`) over a snapshot of `apps/app/lib/product-facts.ts` that `bun run --filter app facts:snapshot` writes to `facts.generated.json` just before such an app builds. The file isn't committed, so it can't go stale |
+| `keys.ts` | The environment variable this package reads, validated like every other `keys.ts`; `apps/app/env.ts` extends it |
 
 ## What belongs here
 
@@ -24,9 +24,9 @@ A value goes here when it's a plain constant (or a pure function of one) that mo
 
 ## What doesn't
 
-- Copy and JSX: marketing text, navigation and footers stay in `apps/docs/config/site.tsx`, product counts in `apps/docs/lib/product-facts.ts` (this package only holds its generated snapshot), the default QR theme in `apps/docs/config/qr.ts`.
-- Plan limits and anything that needs the database, the session or a plan lookup (`apps/docs/lib/plans.ts`).
+- Copy and JSX: marketing text, navigation and footers stay in `apps/app/config/site.tsx`, product counts in `apps/app/lib/product-facts.ts` (this package only holds its generated snapshot), the default QR theme in `apps/app/config/qr.ts`.
+- Plan limits and anything that needs the database, the session or a plan lookup (`apps/app/lib/plans.ts`).
 - Values only one screen uses, such as debounce delays, page sizes and tag lists.
 - Next.js configuration and the core environment keys, which live in `@repo/next-config`.
-- Modules that `apps/docs/next.config.ts` loads from below the app's root: Next.js compiles the config with the `@repo/*` path rewritten for the app's root, so a nested file can't import a workspace package there. They keep their literals. So does the Content-Security-Policy builder (`@repo/next-config/csp`): `@repo/next-config` sits below this package (this package depends on it).
+- Modules that `apps/app/next.config.ts` loads from below the app's root: Next.js compiles the config with the `@repo/*` path rewritten for the app's root, so a nested file can't import a workspace package there. They keep their literals. So does the Content-Security-Policy builder (`@repo/next-config/csp`): `@repo/next-config` sits below this package (this package depends on it).
 - The published packages (`packages/qrdx`, `packages/cli`, `plugins/*`) and the shadcn registry sources (`packages/docs-assets/registry`) never import this package: they ship outside the monorepo, so they keep their own literals.

@@ -3,7 +3,7 @@ import { AsyncLocalStorage } from "node:async_hooks";
 import { PASSKEY_SIGN_IN_PATH } from "./sign-in-challenge-rules";
 
 // "Confirm it's you" with a passkey, and turning on two-step verification with
-// one (apps/docs/lib/account/confirmation-server.tsx, verifyOwnPasskey), check
+// one (apps/app/lib/account/confirmation-server.tsx, verifyOwnPasskey), check
 // the assertion through the passkey plugin's sign-in endpoint, server-side.
 // The plugin then makes a session for the passkey's owner, which the app
 // deletes straight away; its token never leaves the server. That isn't a

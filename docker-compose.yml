@@ -1,10 +1,10 @@
 # Self-hosted QRdx: Postgres, a Neon-compatible HTTP proxy, a one-shot
 # schema sync job and the web app.
 #
-#   cp apps/docs/.env.example .env    # set BETTER_AUTH_SECRET and an OAuth provider
+#   cp apps/app/.env.example .env     # set BETTER_AUTH_SECRET and an OAuth provider
 #   docker compose up -d --build
 #
-# Guide: apps/docs/content/docs/self-hosting.mdx (https://qrdx.dev/docs/self-hosting)
+# Guide: apps/app/content/docs/self-hosting.mdx (https://qrdx.dev/docs/self-hosting)
 
 name: qrdx
 

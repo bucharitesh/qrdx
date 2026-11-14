@@ -16,8 +16,8 @@
         "ultracite": "8.1.1",
       },
     },
-    "apps/docs": {
-      "name": "docs",
+    "apps/app": {
+      "name": "app",
       "version": "0.0.0",
       "dependencies": {
         "@ai-sdk/react": "^4.0.163",
@@ -148,8 +148,8 @@
         "vitest": "^5.0.5",
       },
     },
-    "apps/docs-site": {
-      "name": "docs-site",
+    "apps/docs": {
+      "name": "docs",
       "version": "0.0.0",
       "dependencies": {
         "@mdx-js/mdx": "3.1.1",
@@ -2607,6 +2607,8 @@
 
     "anynum": ["anynum@1.0.1", "", {}, "sha512-N6//FLET/tXYNM/F6ABca1oH6fWB+KlTt909Le28WMDBk8oaT4vY17DCrwg2MvmuqUKt3Ni4N5dGJ/EoBgcO6A=="],
 
+    "app": ["app@workspace:apps/app"],
+
     "arg": ["arg@4.1.3", "", {}, "sha512-58S9QDqG0Xx27YwPSt9fJxivjYl432YCwfDMfZ+71RAqUrZef7LrKQZ3LHLOwCS4FLNBplP533Zx895SeOCHvA=="],
 
     "argparse": ["argparse@2.0.1", "", {}, "sha512-8+9WqebbFzpX9OR+Wa6O29asIogeRMzcGtAINdpMHHyAg10f05aSFVBbcEqGf/PXw1EjAZ+q2/bEBg3DvurK3Q=="],
@@ -3014,8 +3016,6 @@
     "dns-packet": ["dns-packet@5.6.1", "", { "dependencies": { "@leichtgewicht/ip-codec": "2.0.5" } }, "sha512-l4gcSouhcgIKRvyy99RNVOgxXiicE+2jZoNmaNmZ6JXiGajBOJAesk1OBlJuM5k2c+eudGdLxDqXuPCKIj6kpw=="],
 
     "docs": ["docs@workspace:apps/docs"],
-
-    "docs-site": ["docs-site@workspace:apps/docs-site"],
 
     "dom-helpers": ["dom-helpers@5.2.1", "", { "dependencies": { "@babel/runtime": "7.29.10", "csstype": "3.2.3" } }, "sha512-nRCa7CK3VTrM2NmGkIy4cbK7IZlgBE/PYMn55rrXefr5xXDP0LdtfPnblFDoVdcAfslJ7or6iqAUnx0CCGIWQA=="],
 

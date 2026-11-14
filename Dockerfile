@@ -1,18 +1,18 @@
 # syntax=docker/dockerfile:1
 #
-# Production image for the QRdx web app (apps/docs), built as a Next.js
+# Production image for the QRdx web app (apps/app), built as a Next.js
 # standalone server. docker-compose.yml builds it together with Postgres and a
-# one-shot schema sync job; see apps/docs/content/docs/self-hosting.mdx.
+# one-shot schema sync job; see apps/app/content/docs/self-hosting.mdx.
 # Untested reference setup.
 #
-#   cp apps/docs/.env.example .env   # then fill it in
+#   cp apps/app/.env.example .env    # then fill it in
 #   docker build -t qrdx --build-arg NEXT_PUBLIC_APP_URL=https://qr.example.com .
 #   docker run --env-file .env -p 3000:3000 qrdx
 #
 # NEXT_PUBLIC_* values are inlined into the client bundle, so pass them as
 # build args. Server secrets are only read at runtime (--env-file / compose),
 # and the server refuses to start when a required one is missing
-# (apps/docs/env.ts, checked from instrumentation.ts).
+# (apps/app/env.ts, checked from instrumentation.ts).
 
 ARG NODE_VERSION=22
 
@@ -28,16 +28,16 @@ WORKDIR /app
 # ── 1. Prune the monorepo to the web app and the packages it needs ───────────
 FROM base AS pruner
 COPY . .
-# @repo/rate-limit is imported by apps/docs without being listed in its
+# @repo/rate-limit is imported by apps/app without being listed in its
 # package.json, and the qrdx build bundles packages/cli/src, so both are
 # named explicitly.
-RUN turbo prune docs @repo/rate-limit @qrdx/cli --docker
+RUN turbo prune app @repo/rate-limit @qrdx/cli --docker
 
 # ── 2. Install dependencies (re-runs only when manifests or lockfile change) ─
 FROM base AS installer
 COPY --from=pruner /app/out/json/ .
 # Scripts are skipped because the sources aren't copied yet; the only workspace
-# script (fumadocs-mdx in apps/docs) runs explicitly in the build stage.
+# script (fumadocs-mdx in apps/app) runs explicitly in the build stage.
 RUN --mount=type=cache,id=bun,target=/root/.bun/install/cache \
     bun install --frozen-lockfile --ignore-scripts
 COPY --from=pruner /app/out/full/ .
@@ -61,8 +61,8 @@ ENV NEXT_OUTPUT=standalone \
 # Build args that were passed empty are unset, so optional URL fields are
 # treated as missing instead of failing validation.
 RUN for name in $(env | sed -n 's/^\(NEXT_PUBLIC_[A-Z0-9_]*\)=$/\1/p'); do unset "$name"; done \
- && (cd apps/docs && bun x fumadocs-mdx) \
- && turbo build --filter=docs
+ && (cd apps/app && bun x fumadocs-mdx) \
+ && turbo build --filter=app
 
 # ── 4. Schema sync (one-shot job used by docker-compose.yml) ─────────────────
 # Migration files are not committed, so the schema is applied from
@@ -84,9 +84,9 @@ ENV NODE_ENV=production \
     HOSTNAME=0.0.0.0
 RUN groupadd --system --gid 1001 nodejs \
  && useradd --system --uid 1001 --gid nodejs nextjs
-COPY --from=builder --chown=nextjs:nodejs /app/apps/docs/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/apps/docs/.next/static ./apps/docs/.next/static
-COPY --from=builder --chown=nextjs:nodejs /app/apps/docs/public ./apps/docs/public
+COPY --from=builder --chown=nextjs:nodejs /app/apps/app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/apps/app/.next/static ./apps/app/.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/apps/app/public ./apps/app/public
 USER nextjs
 EXPOSE 3000
-CMD ["node", "apps/docs/server.js"]
+CMD ["node", "apps/app/server.js"]

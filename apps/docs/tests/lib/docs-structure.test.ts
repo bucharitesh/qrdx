@@ -8,7 +8,6 @@ import { join, relative } from "node:path";
 import type { Node, Root } from "fumadocs-core/page-tree";
 import { loader, type VirtualFile } from "fumadocs-core/source";
 import { describe, expect, it } from "vitest";
-import { DOCS_REDIRECTS } from "@/lib/docs-redirects";
 import { docsTabs, filterPageTree } from "@/lib/docs-tree";
 import type { Locale } from "@/lib/i18n/config";
 import {
@@ -19,8 +18,12 @@ import {
   translationLocale,
 } from "@/lib/i18n/docs";
 import { withEnglishStructure } from "@/lib/i18n/docs-meta";
+// The redirects stay in the main app, which answers them on qrdx.dev before
+// it proxies the docs here: their destinations must be pages here.
+import { DOCS_REDIRECTS } from "../../../app/lib/docs-redirects";
 
-const CONTENT = join(import.meta.dirname, "../../content/docs");
+// The docs' content stays in the main app's folder (source.config.ts).
+const CONTENT = join(import.meta.dirname, "../../../app/content/docs");
 
 /** Docs URLs before the tabs (2 Nov 2026). Never remove an entry. */
 const LEGACY_URLS = [

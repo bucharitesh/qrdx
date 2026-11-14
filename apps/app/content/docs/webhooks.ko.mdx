@@ -1,0 +1,193 @@
+---
+title: "웹훅"
+description: "QR 코드가 스캔되거나 생성되거나 변경될 때, 또는 누군가 양식을 제출할 때 서명된 HTTPS 요청을 받아요. Zapier, Make, n8n과 함께 사용할 수 있어요."
+icon: Webhook
+---
+
+웹훅은 워크스페이스에서 발생한 이벤트를 발생 즉시 사용자가 관리하는 URL로 보냅니다. 누군가 양식을 작성하면 CRM을 업데이트하거나, 코드가 1,000번 스캔되면 내부 도구에 알림을 보내거나, 스캔 데이터의 사본을 직접 보관하는 데 활용할 수 있습니다.
+
+웹훅, Zapier/Make 훅, Slack/Discord 알림은 **Business** 요금제에 포함됩니다. 이메일 알림과 주간 요약은 Pro에 포함됩니다. [알림](/docs/notifications)을 참고하세요.
+
+## 엔드포인트 추가 [#add-an-endpoint]
+
+1. 이벤트를 받으려는 워크스페이스에서 [설정 → 웹훅](/dashboard?to=settings/webhooks)을 엽니다. 이 링크는 마지막으로 사용한 워크스페이스를 엽니다. 워크스페이스 전환기에서 다른 워크스페이스를 선택해도 같은 페이지에 머무릅니다.
+2. **엔드포인트 추가**를 클릭하고 `https://` URL을 입력한 다음 이벤트를 선택합니다. 먼저 QRdx가 [본인 확인](/docs/help/privacy-and-security/two-step-verification#confirm-its-you)을 요청하며, 엔드포인트의 URL을 변경할 때도 다시 요청합니다. 이벤트를 변경하거나 일시 중지할 때는 요청하지 않습니다.
+3. 저장 후 표시되는 **서명 시크릿**을 복사합니다. 소유자와 관리자는 나중에 [본인 확인](/docs/help/privacy-and-security/two-step-verification#confirm-its-you)을 거쳐 시크릿을 다시 표시하거나 교체할 수 있습니다.
+4. **테스트 보내기**를 클릭합니다. QRdx가 서명된 `ping` 이벤트를 보내고 응답 상태를 보여줍니다.
+
+엔드포인트는 소유자와 관리자가 관리하며, 멤버는 엔드포인트와 전송 로그를 볼 수 있습니다. 워크스페이스에는 엔드포인트를 최대 20개까지 만들 수 있습니다.
+
+엔드포인트 URL은 공개된 `https://` 호스트 이름이어야 합니다. IP 주소, `localhost`, 사설 네트워크로 확인되는 이름은 거부되며 리디렉션은 따라가지 않습니다.
+
+## 이벤트 [#events]
+
+| 이벤트 | 시점 | 참고 |
+| --- | --- | --- |
+| `scan.created` | 동적 QR 코드가 스캔될 때 | 일괄 전송: 엔드포인트당 분당 최대 한 번 요청하며 몇 분 안에 전송되고, 스캔은 최대 100개와 정확한 `count`를 포함합니다 |
+| `scan.milestone` | 코드의 첫 스캔, 그다음 10, 100, 500, 1,000, 5,000, 10,000, 50,000, 100,000, 500,000, 1,000,000번째 스캔, 이후 100만 번마다 | 마일스톤마다 한 번 발생합니다 |
+| `code.created` | 동적 QR 코드가 생성될 때(대시보드 또는 API) | 코드당 이벤트 하나이며, 일괄 생성 시에도 마찬가지입니다 |
+| `code.updated` | 코드의 목적지, 제목, 디자인 또는 단축 링크 도메인이 변경될 때 | `changes`에 해당 필드가 나열됩니다 |
+| `form.submitted` | 호스팅 페이지에서 누군가 양식을 제출할 때 | 답변이 포함됩니다 |
+| `ping` | **테스트 보내기**를 클릭할 때 | |
+
+봇, 링크 미리보기, 프리페처에 의한 스캔과 한 방문자의 빠른 반복 스캔은 [스캔 분석](/docs/dynamic-qr-codes)과 마찬가지로 집계되지 않으며 이벤트도 발생시키지 않습니다.
+
+## 페이로드 [#payloads]
+
+모든 요청은 JSON 본문과 다음 헤더를 갖는 `POST`입니다.
+
+| 헤더 | 값 |
+| --- | --- |
+| `Content-Type` | `application/json` |
+| `User-Agent` | `QRdx-Webhooks/1.0 (+https://qrdx.dev/docs/webhooks)` |
+| `X-QRdx-Event` | 이벤트 유형(예: `code.created`) |
+| `X-QRdx-Delivery` | 전송 ID: 재시도할 때마다 동일하므로 중복을 무시할 수 있습니다 |
+| `X-QRdx-Timestamp` | 이번 시도에 서명한 시점의 Unix 초 |
+| `X-QRdx-Signature` | `t=<timestamp>,v1=<hex HMAC-SHA256>` |
+
+본문은 항상 envelope 형태입니다.
+
+```json
+{
+  "id": "evt_cm3x8c1a20001",
+  "type": "code.created",
+  "created_at": "2026-10-31T09:30:00.000Z",
+  "data": {
+    "code": {
+      "id": "cm3x7q2l40000",
+      "slug": "aB3dE5f",
+      "title": "Spring menu",
+      "short_link": "https://qrdx.dev/q/aB3dE5f",
+      "destination_url": "https://example.com/menu",
+      "status": "active",
+      "scan_count": 0,
+      "created_at": "2026-10-31T09:30:00.000Z",
+      "updated_at": "2026-10-31T09:30:00.000Z"
+    },
+    "actor_id": "user_123"
+  }
+}
+```
+
+`scan.created` 배치:
+
+```json
+{
+  "id": "evt_cm3x9d0b10002",
+  "type": "scan.created",
+  "created_at": "2026-10-31T09:31:00.000Z",
+  "data": {
+    "window_started_at": "2026-10-31T09:31:00.000Z",
+    "window_seconds": 60,
+    "count": 2,
+    "scans": [
+      {
+        "scan_id": "cm3x9d0b00001",
+        "code": { "id": "cm3x7q2l40000", "slug": "aB3dE5f", "title": "Spring menu" },
+        "scanned_at": "2026-10-31T09:31:00.000Z",
+        "country": "DE",
+        "region": "BE",
+        "city": "Berlin",
+        "device_type": "mobile",
+        "os": "iOS",
+        "browser": "Safari",
+        "referer": null,
+        "source": "qr"
+      }
+    ]
+  }
+}
+```
+
+1분 안에 스캔이 100개를 넘으면 `scans`에는 처음 100개가 들어가고 `count`에는 정확한 총합이 들어갑니다. `source`는 [NFC 태그](/docs/nfc)를 탭한 경우 `nfc`, QR 스캔인 경우 `qr`입니다. 스캔 페이로드에는 IP 주소나 방문자 해시가 포함되지 않습니다.
+
+다른 이벤트에는 다음이 포함됩니다.
+
+- `scan.milestone`: `milestone`, `code`(`id`, `slug`, `title`, `scan_count`), 그리고 마일스톤에 도달한 `scan`.
+- `code.updated`: `code.created`와 같고, 추가로 `changes`가 있습니다(예: `["destination_url"]`).
+- `form.submitted`: `response_id`, `page`(`id`, `title`), `code`(`id`, `slug`, 또는 `null`), `fields`(`name`, `label`, 텍스트 형태의 `value`), `submitted_at`.
+
+## 서명 검증 [#verify-signatures]
+
+서명 시크릿으로 `<timestamp>.<raw body>`의 HMAC-SHA256을 계산하고 `X-QRdx-Signature`의 `v1` 값과 비교하세요. JSON 파싱 전의 원본 요청 본문을 사용하고, 5분보다 오래된 타임스탬프는 거부하세요.
+
+```ts
+import { createHmac, timingSafeEqual } from "node:crypto";
+
+export function isFromQRdx(rawBody: string, header: string, secret: string) {
+  const parts = Object.fromEntries(
+    header.split(",").map((part) => part.trim().split("=", 2)),
+  );
+  const timestamp = Number(parts.t);
+  if (!timestamp || Math.abs(Date.now() / 1000 - timestamp) > 300) return false;
+
+  const expected = createHmac("sha256", secret)
+    .update(`${timestamp}.${rawBody}`)
+    .digest("hex");
+  const received = Buffer.from(parts.v1 ?? "");
+  return (
+    received.length === expected.length &&
+    timingSafeEqual(received, Buffer.from(expected))
+  );
+}
+```
+
+시크릿을 교체하면 즉시 적용됩니다. 이전 시크릿으로는 더 이상 검증되지 않으므로 교체 직후 서버를 업데이트하세요.
+
+## 재시도와 전송 로그 [#retries-and-the-delivery-log]
+
+10초 안에 아무 `2xx` 상태로 응답하세요. 그 밖의 모든 경우(오류 상태, 리디렉션, 타임아웃, 접속할 수 없는 호스트)는 실패로 처리되며, QRdx는 최소 1분, 4분, 16분, 1시간, 4시간, 17시간, 24시간씩 대기 시간을 늘려 가며 재시도합니다. 각 재시도는 대기 시간이 끝나고 몇 분 안에 전송됩니다. 약 이틀 동안 총 8번 시도하며, 그 후에는 전송이 **실패**로 표시됩니다.
+
+각 엔드포인트의 **전송 내역** 페이지에는 최근 전송 50건이 상태, 시도 횟수, 마지막 오류, 페이로드와 함께 표시됩니다. **재시도**를 누르면 해당 건을 즉시 다시 보냅니다(전송 완료된 건도 가능합니다). 전송 내역은 30일 동안 보관됩니다.
+
+전송은 두 번 이상 도착하거나(느린 응답 뒤의 재시도, 수동 재시도) 순서가 뒤바뀌어 도착할 수 있습니다. 중복은 `X-QRdx-Delivery` 또는 envelope의 `id`로 무시하세요.
+
+엔드포인트를 비활성화하면 새 전송이 중지되고, 삭제하면 로그도 함께 삭제됩니다. 워크스페이스의 요금제에 더 이상 웹훅이 포함되지 않으면 엔드포인트는 유지되지만 다시 Business가 될 때까지 아무것도 전송되지 않습니다. 어느 경우든 QR 코드는 계속 작동합니다.
+
+## Zapier, Make, n8n (REST Hooks) [#zapier-make-and-n8n-rest-hooks]
+
+자동화 도구는 REST Hooks API로 직접 구독하고 구독을 해지할 수 있습니다. [코드 API](/docs/dynamic-qr-codes#rest-api)처럼 [API 키](/docs/developers/api-keys) 또는 OAuth 액세스 토큰으로 인증하세요. 구독 및 해지에는 `codes:write`, 목록 조회에는 `codes:read`가 필요합니다. 훅 URL은 비밀인 경우가 많아서 `codes:read`만 있으면 `target_url`에는 호스트만 표시됩니다(`https://hooks.zapier.com/…`). 토큰 요청은 본인의 워크스페이스에 적용되고, 키는 생성된 워크스페이스에 적용됩니다. 키나 토큰 대신 로그인된 브라우저 세션으로 구독하면 먼저 [본인 확인](/docs/help/privacy-and-security/two-step-verification#confirm-its-you)을 요청하며, 최근 10분 안에 확인하지 않았다면 `403`과 `CONFIRMATION_REQUIRED`로 응답합니다. 구독은 일반 엔드포인트와 같아서 설정 → 웹훅에 표시되며, 그곳에서 삭제할 수도 있습니다.
+
+| 메서드 | 경로 | 설명 |
+| --- | --- | --- |
+| `POST` | `/v1/hooks` | 구독합니다. 본문: `target_url`(또는 Zapier의 `hookUrl`)과 `event`(또는 `events` 배열). 구독 `id`와 `secret`을 포함해 `201`을 반환합니다 |
+| `DELETE` | `/v1/hooks/{id}` | 구독을 해지합니다(`204`) |
+| `GET` | `/v1/hooks` | 구독과 엔드포인트 목록을 조회합니다 |
+| `GET` | `/v1/hooks/{id}` | 구독 하나를 조회합니다 |
+| `GET` | `/v1/hooks/sample?event=<event>` | `event`의 최근 예시 페이로드를 배열로 반환합니다(Zapier의 "perform list") |
+
+```bash
+curl https://api.qrdx.dev/v1/hooks \
+  -H "Authorization: Bearer $QRDX_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"target_url": "https://hooks.zapier.com/hooks/standard/123/abc/", "event": "form.submitted"}'
+```
+
+```json
+{
+  "id": "cm3xa1b2c0003",
+  "target_url": "https://hooks.zapier.com/hooks/standard/123/abc/",
+  "events": ["form.submitted"],
+  "event": "form.submitted",
+  "active": true,
+  "created_at": "2026-10-31T09:40:00.000Z",
+  "secret": "whsec_..."
+}
+```
+
+Business가 아니면 구독 호출은 `402 PLAN_REQUIRED`를 반환합니다. `scan.created` 전송은 하나의 배치이므로 Zapier에서는 `data.scans` 라인 아이템을 사용해 각 스캔을 처리하세요.
+
+n8n에서는 [n8n용 QRdx 노드](/docs/developers/n8n)의 QRdx Trigger 노드가 이 호출을 대신 수행하고 서명도 매번 확인합니다. 일반 Webhook 노드도 다른 엔드포인트와 똑같이 설정해 사용할 수 있습니다.
+
+## 셀프 호스팅 [#self-hosting]
+
+전송은 즉시 이루어지며, 재시도와 해당 분이 끝난 스캔 배치는 예약된 작업이 전송합니다. QRdx는 이 작업을 GitHub Actions 워크플로로 5분마다 실행하는데, 이 방식은 Vercel의 무료 Hobby 요금제에서도 작동하며 `apps/app/vercel.json`도 하루에 한 번 전체 작업을 실행합니다. GitHub는 예약 실행을 늦게 시작할 수 있으므로 재시도는 정확한 분이 아니라 몇 분 안에 이루어진다고 보세요.
+
+같은 방식으로 하려면 `.github/workflows/webhook-worker.yml`을 복사하고, `CRON_SECRET`을 Actions 시크릿으로, 작업 URL을 `WEBHOOK_WORKER_URL` 변수로 추가하세요. 또는 환경에 설정한 `CRON_SECRET`으로 아무 스케줄러에서나 이 작업을 호출할 수 있습니다.
+
+```bash
+# every 1-5 minutes
+curl -H "Authorization: Bearer $CRON_SECRET" https://your-host/api/cron/webhooks
+```
+
+URL에 `?source=github`를 추가하면 작업이 먼저 Upstash Redis의 작은 마커를 확인하고, 처리할 항목이 없을 때는 데이터베이스를 조회하지 않고 `{"skipped": true}`를 반환합니다. 덕분에 0으로 스케일 다운되는 데이터베이스는 계속 잠든 상태로 둘 수 있습니다(Upstash가 없으면 항상 전체 작업을 실행합니다). 이 옵션 없이 하루에 한 번은 호출하세요. 그 실행은 항상 전체 작업을 수행하고 마커를 복구합니다.
