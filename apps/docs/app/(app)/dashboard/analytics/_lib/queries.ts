@@ -14,29 +14,30 @@ import {
   countDistinct,
   desc,
   eq,
+  getTableName,
   gte,
   ilike,
   inArray,
   isNotNull,
   isNull,
+  min,
   ne,
   or,
   type SQL,
   sql,
   sum,
 } from "drizzle-orm";
+import { fillSeries, type SeriesInterval } from "@/lib/scan-ranges";
 import {
   type BreakdownRow,
+  bucketOf,
   type DailyCount,
   nfcTapCount,
   type ScanSourceCounts,
   scanSourceCounts,
+  seriesInterval,
 } from "@/lib/scans";
 import type { ActiveScope } from "@/lib/scope";
-
-const DAY_MS = 24 * 60 * 60 * 1000;
-const dayOf = (column: SQL | typeof qrScan.scannedAt) =>
-  sql<string>`to_char(date_trunc('day', ${column}), 'YYYY-MM-DD')`;
 
 /** Codes of the workspace (personal or team), trashed ones excluded. */
 export function scopeCodesWhere(scope: ActiveScope): SQL {
@@ -56,18 +57,30 @@ export function scopeScansWhere(scope: ActiveScope): SQL {
   );
 }
 
-function fillDays(
-  rows: { day: string; count: number }[],
-  from: Date,
-  days: number,
-): DailyCount[] {
-  const byDay = new Map(rows.map((row) => [row.day, row.count]));
-  return Array.from({ length: days }, (_, i) => {
-    const date = new Date(from.getTime() + i * DAY_MS)
-      .toISOString()
-      .slice(0, 10);
-    return { date, count: byDay.get(date) ?? 0 };
-  });
+/**
+ * Where "All time" starts for a workspace: the day of the first scan of any
+ * of its codes, else the first code's creation (null: no codes). Each code's
+ * first scan is one read of the (qr_code_id, scanned_at) index, so this
+ * never scans the workspace's scans.
+ */
+export async function workspaceHistoryStart(
+  scope: ActiveScope,
+): Promise<Date | null> {
+  // A single-table select writes columns without their table, so the outer
+  // "qr_code"."id" is spelled out: a bare "id" would be qr_scan's own.
+  const codeId = sql`${sql.identifier(getTableName(qrCode))}.${sql.identifier(qrCode.id.name)}`;
+  const [row] = await db
+    .select({
+      firstScan:
+        sql<Date | null>`min((select min(${qrScan.scannedAt}) from ${qrScan} where ${qrScan.qrCodeId} = ${codeId}))`.mapWith(
+          qrScan.scannedAt,
+        ),
+      firstCode: min(qrCode.createdAt),
+    })
+    .from(qrCode)
+    .where(scopeCodesWhere(scope));
+  const first = row?.firstScan ?? row?.firstCode ?? null;
+  return first ? new Date(first) : null;
 }
 
 // ─── Workspace overview ──────────────────────────────────────────────────────
@@ -85,6 +98,8 @@ export interface WorkspaceAnalytics {
   allTimeScans: number;
   total: number;
   unique: number;
+  /** What one `series` point counts (lib/scan-ranges.ts seriesInterval) */
+  interval: SeriesInterval;
   series: DailyCount[];
   topCodes: TopCode[];
   countries: BreakdownRow[];
@@ -100,6 +115,7 @@ export async function getWorkspaceAnalytics(
 ): Promise<WorkspaceAnalytics> {
   const codesWhere = scopeCodesWhere(scope);
   const scansWhere = and(scopeScansWhere(scope), gte(qrScan.scannedAt, from));
+  const interval = seriesInterval(days);
 
   const [[codeTotals], [scanTotals], series, topCodes, countries, devices] =
     await db.batch([
@@ -119,7 +135,7 @@ export async function getWorkspaceAnalytics(
         .from(qrScan)
         .where(scansWhere),
       db
-        .select({ day: dayOf(qrScan.scannedAt), count: count() })
+        .select({ day: bucketOf(qrScan.scannedAt, interval), count: count() })
         .from(qrScan)
         .where(scansWhere)
         .groupBy(sql`1`),
@@ -158,7 +174,8 @@ export async function getWorkspaceAnalytics(
     allTimeScans: Number(codeTotals?.allTime ?? 0),
     total: scanTotals?.total ?? 0,
     unique: scanTotals?.unique ?? 0,
-    series: fillDays(series, from, days),
+    interval,
+    series: fillSeries(series, from, days, interval),
     topCodes,
     countries: countries as BreakdownRow[],
     devices: devices as BreakdownRow[],
