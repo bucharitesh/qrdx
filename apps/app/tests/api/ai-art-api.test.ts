@@ -1,4 +1,4 @@
-// AI art for developers and agents, as content/docs/developers/ai-art-api.mdx
+// AI art for developers and agents, as apps/docs/content/docs/developers/ai-art-api.mdx
 // describes it: POST /v1/art and the MCP generate_ai_art tool take the app's
 // request (or a dynamic code's id in place of `text`), need an API key with
 // codes:write, and use the monthly AI art allowance of the key's workspace.

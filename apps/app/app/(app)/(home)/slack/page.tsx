@@ -20,7 +20,7 @@ import { textLinkClass } from "@/components/sections/tools/cards";
 import { isFeatureAvailable } from "@/lib/feature-availability";
 import { createMetadata } from "@/lib/metadata";
 
-// The QRdx bot for Slack (lib/slack-bot), described as content/docs/
+// The QRdx bot for Slack (lib/slack-bot), described as apps/docs/content/docs/
 // slack-bot.mdx does. Only where the bot is set up (`slackBot`).
 
 export const metadata: Metadata = createMetadata({

@@ -22,7 +22,7 @@ import { TWO_FACTOR_MESSAGES } from "@/lib/auth/two-factor";
 const page = readFileSync(
   path.resolve(
     import.meta.dirname,
-    "../../content/docs/help/privacy-and-security/two-step-verification.mdx",
+    "../../../docs/content/docs/help/privacy-and-security/two-step-verification.mdx",
   ),
   "utf8",
 );
@@ -30,7 +30,7 @@ const page = readFileSync(
 const securityPage = readFileSync(
   path.resolve(
     import.meta.dirname,
-    "../../content/docs/help/privacy-and-security/account-security.mdx",
+    "../../../docs/content/docs/help/privacy-and-security/account-security.mdx",
   ),
   "utf8",
 );

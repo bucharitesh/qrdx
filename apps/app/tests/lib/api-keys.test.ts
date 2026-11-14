@@ -288,7 +288,10 @@ describe("the first request for a new key", () => {
 
 describe("the API keys docs match the code", () => {
   const page = readFileSync(
-    join(import.meta.dirname, "../../content/docs/developers/api-keys.mdx"),
+    join(
+      import.meta.dirname,
+      "../../../docs/content/docs/developers/api-keys.mdx",
+    ),
     "utf8",
   );
 

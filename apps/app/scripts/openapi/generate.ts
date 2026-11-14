@@ -1,7 +1,8 @@
 // Writes the REST API's OpenAPI document (lib/openapi/document.ts) to
 // public/openapi.json, served at qrdx.dev/openapi.json and
 // api.qrdx.dev/openapi.json, then the API reference pages built from it
-// (content/docs/developers/api) and the errors page (scripts/openapi/pages.ts).
+// (apps/docs/content/docs/developers/api, the docs site's) and the errors
+// page (scripts/openapi/pages.ts).
 // Run after changing a /v1 route, its schemas or lib/openapi:
 //
 //   bun run openapi:generate
@@ -19,6 +20,8 @@ import { join } from "node:path";
 
 const root = join(__dirname, "..", "..");
 const OPENAPI_PATH = join(root, "public", "openapi.json");
+/** The docs site's content (apps/docs/content/docs). */
+const DOCS = join(root, "..", "docs", "content", "docs");
 const ultracitePath = join(
   root,
   "..",
@@ -78,24 +81,23 @@ async function main() {
     input: { qrdx: () => document as never },
   });
   const { errorsPage, writeReferencePages } = await import("./pages");
-  const output = join(root, "content", "docs", "developers", "api");
+  const output = join(DOCS, "developers", "api");
   const operations = await writeReferencePages(document, apiReference, output);
-  writeFileSync(
-    join(root, "content", "docs", "developers", "errors.mdx"),
-    errorsPage(),
-  );
+  writeFileSync(join(DOCS, "developers", "errors.mdx"), errorsPage());
   const formatted = spawnSync(ultracitePath, ["fix", output], {
     cwd: root,
     stdio: "inherit",
   });
   if (formatted.status !== 0) {
-    throw new Error("ultracite fix failed on content/docs/developers/api");
+    throw new Error(
+      "ultracite fix failed on apps/docs/content/docs/developers/api",
+    );
   }
 
   console.log(
     `Wrote public/openapi.json (${operations} operations, ${
       Object.keys(document.components?.schemas ?? {}).length
-    } schemas), content/docs/developers/api and errors.mdx.`,
+    } schemas), apps/docs/content/docs/developers/api and errors.mdx.`,
   );
 }
 

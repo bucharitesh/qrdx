@@ -88,13 +88,18 @@ const FIELD: Record<string, keyof PlaygroundParams> = {
 
 describe("Markdown links into the playground", () => {
   const LINK = /\]\((\/playground[^)\s]*)\)|href="(\/playground[^"]*)"/g;
-  const links = files(path.join(ROOT, "content"), [".mdx", ".md"]).flatMap(
-    (file) =>
+  // This app's content and the docs' (apps/docs/content).
+  const links = [
+    path.join(ROOT, "content"),
+    path.join(ROOT, "..", "docs", "content"),
+  ]
+    .flatMap((dir) => files(dir, [".mdx", ".md"]))
+    .flatMap((file) =>
       [...readFileSync(file, "utf8").matchAll(LINK)].map((match) => ({
         file: relative(file),
         href: (match[1] ?? match[2]) as string,
       })),
-  );
+    );
 
   it("finds the links (the pattern still matches the content)", () => {
     expect(links.length).toBeGreaterThan(40);

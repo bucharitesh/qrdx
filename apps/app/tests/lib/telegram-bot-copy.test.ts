@@ -32,7 +32,7 @@ const sources: Record<string, () => string> = {
     read("../../lib/chat-bots/telegram/replies.ts"),
   "help text": () => helpText("QRdxTestBot"),
   "content/docs/telegram-bot.mdx": () =>
-    read("../../content/docs/telegram-bot.mdx"),
+    read("../../../docs/content/docs/telegram-bot.mdx"),
   "catalogue entry (telegram)": telegramEntry,
   "plugins/telegram/scripts/setup.mjs": () =>
     read("../../../../plugins/telegram/scripts/setup.mjs"),

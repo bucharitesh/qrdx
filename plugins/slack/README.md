@@ -5,7 +5,7 @@ The Slack app behind two QRdx features:
 - **The QRdx bot.** `/qr` with a link or any text posts a QR code image in the channel, with buttons for the PNG, the SVG and the QRdx editor, and Look, Color, Frame and Logo menus that restyle it in place. Options typed after the content (`/qr qrdx.dev --look modern --frame banner-bottom`) style it too, and every styled code passes the editor's scan check first. Mentioning the bot answers in the thread, a direct message answers in the DM, and the **Make a QR code** message shortcut answers in the message's thread. People who link their QRdx account (`/qr link`) can make tracked (dynamic) codes with `/qr track <link>`, in the QRdx workspace they picked and under their own role and plan. Linking asks them to sign in with Slack, so QRdx can check that the Slack account asking is theirs.
 - **Alerts in a channel.** "Add to Slack" in Settings → Integrations → Slack posts scan milestones, form responses and code changes to a channel through an incoming webhook (Business plan).
 
-Both use one Slack app, described by [`manifest.json`](manifest.json). The code is in the QRdx app: `apps/app/lib/slack-bot` and the routes under `apps/app/app/api/integrations/slack`. User docs: `apps/app/content/docs/slack-bot.mdx`.
+Both use one Slack app, described by [`manifest.json`](manifest.json). The code is in the QRdx app: `apps/app/lib/slack-bot` and the routes under `apps/app/app/api/integrations/slack`. User docs: `apps/docs/content/docs/slack-bot.mdx`.
 
 This folder holds no code to build. It isn't a workspace package (there is no `package.json`), so Bun, Turborepo and knip skip it.
 

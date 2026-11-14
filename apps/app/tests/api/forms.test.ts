@@ -1,4 +1,4 @@
-// Hosted-page forms as content/docs/forms-and-pages.mdx describes them: the
+// Hosted-page forms as apps/docs/content/docs/forms-and-pages.mdx describes them: the
 // public POST /api/forms/<pageId> (spam protection, answer validation, code
 // controls, monthly response limits per plan) and the owner's CSV export
 // (/dashboard/pages/<id>/responses/export). The route handlers and the

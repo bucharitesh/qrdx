@@ -3,7 +3,7 @@
 // opens the product page with that GTIN through its code on the domain and
 // records a scan like the short link; a wrong check digit is refused, other
 // domains' pages and the shared host never resolve. Runs the real pipeline
-// against in-memory tables, as content/docs/product-pages.mdx describes.
+// against in-memory tables, as apps/docs/content/docs/product-pages.mdx describes.
 import { NextRequest } from "next/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { fakeDb } from "../support/fake-db";

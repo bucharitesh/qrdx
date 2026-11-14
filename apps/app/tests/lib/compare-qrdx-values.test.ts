@@ -255,7 +255,10 @@ describe("QR Code AI compare page", () => {
     // The help page is the source for "No uptime SLA yet"
     expect(rows.get("Uptime commitment")).toBe("No uptime SLA yet");
     expect(
-      readFileSync(join(COMPARE, "..", "docs", "help", "contact.mdx"), "utf8"),
+      readFileSync(
+        join(COMPARE, "../../../docs/content/docs/help/contact.mdx"),
+        "utf8",
+      ),
     ).toContain("QRdx doesn't offer an uptime SLA yet");
   });
 });

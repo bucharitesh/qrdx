@@ -38,13 +38,11 @@ if (git(["rev-parse", "--is-shallow-repository"]) !== "false") {
   process.exit(1);
 }
 
-/** English MDX pages in the content folders the sitemap reads git dates for. */
-const content = git([
-  "ls-files",
-  "content/docs",
-  "content/legal",
-  "content/compare",
-])
+/**
+ * English MDX pages in the content folders the sitemap reads git dates for.
+ * The docs' are the docs site's (`bun run --filter docs seo:dates`).
+ */
+const content = git(["ls-files", "content/legal", "content/compare"])
   .split("\n")
   .filter((file) => file.endsWith(".mdx") && !translationLocale(file));
 

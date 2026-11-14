@@ -25,10 +25,10 @@ describe("public API rate limits", () => {
 
   it("the docs quote the same numbers", () => {
     expect(PRODUCT_FACTS.imageApiPerMinute).toBe(QR_IMAGE_REQUESTS_PER_MINUTE);
-    expect(source("content/docs/developers/image-api.mdx")).toContain(
+    expect(source("../docs/content/docs/developers/image-api.mdx")).toContain(
       `${QR_IMAGE_REQUESTS_PER_MINUTE} requests per minute per IP address`,
     );
-    expect(source("content/docs/developers/mcp.mdx")).toContain(
+    expect(source("../docs/content/docs/developers/mcp.mdx")).toContain(
       `${DESIGN_QR_REQUESTS_PER_MINUTE} calls per minute per IP address`,
     );
   });
