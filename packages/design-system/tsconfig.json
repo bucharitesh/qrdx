@@ -1,6 +1,8 @@
 {
   "extends": "@repo/typescript-config/nextjs.json",
   "compilerOptions": {
+    // Node for the OG fonts (og/), Next for its module types (*.module.css)
+    "types": ["node", "next"],
     "plugins": [
       {
         "name": "next"

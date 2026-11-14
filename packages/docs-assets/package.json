@@ -7,13 +7,16 @@
     "./registry.json": "./registry.json",
     "./registry/transform": "./registry/transform.ts",
     "./registry/outputs": "./registry/outputs.ts",
-    "./registry/examples": "./registry/examples/index.tsx"
+    "./registry/examples": "./registry/examples/index.tsx",
+    "./pattern-catalog": "./pattern-catalog.ts",
+    "./qr-catalog-tiles": "./qr-catalog-tiles.ts"
   },
   "scripts": {
     "clean": "git clean -xdf .cache .turbo dist node_modules",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "dependencies": {
+    "@repo/config": "workspace:*",
     "@repo/design-system": "workspace:*",
     "lucide-react": "^1.66.0",
     "next": "16.4.3",

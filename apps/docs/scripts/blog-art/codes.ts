@@ -1,7 +1,9 @@
-// The blog's illustrations: where each one is written, its size, and the
-// real QR codes it carries (what they encode, and the showcase style that
-// draws them). generate.ts bakes them into public/blog/<post>/<name>.svg and
-// tests/blog-art.test.ts checks that every baked code decodes to `value`.
+// The blog's illustrations (and the customer stories'): where each one is
+// written, its size, and the real QR codes it carries (what they encode, and
+// the showcase style that draws them). generate.ts bakes them into
+// public/<file>.svg (public/blog/<post>/<name>.svg, public/customers/<id>/
+// <name>.svg) and tests/blog-art.test.ts checks that every baked code
+// decodes to `value`.
 //
 // Codes link to the qrdx.dev page the post is about, so a scan from a
 // screenshot lands somewhere useful. Wi-Fi codes use a made-up network.
@@ -9,7 +11,7 @@
 import type { ArtCode } from "./kit";
 
 export interface BlogArt {
-  /** Written to public/blog/<file>.svg */
+  /** Written to public/<file>.svg */
   file: string;
   /** viewBox width and height; files are drawn at 10/3 of this. */
   size: readonly [number, number];
@@ -28,22 +30,22 @@ const url = (path: string) => `https://qrdx.dev${path}`;
 export const BLOG_ART = {
   // New posts
   dynamicCover: {
-    file: "dynamic-vs-static-qr-codes/cover",
+    file: "blog/dynamic-vs-static-qr-codes/cover",
     size: COVER,
     codes: [{ id: "code", value: url("/guarantee"), style: "classic" }],
   },
   launchCover: {
-    file: "launching-qrdx/cover",
+    file: "blog/launching-qrdx/cover",
     size: COVER,
     codes: [{ id: "code", value: url("/"), style: "signature" }],
   },
   sizeCover: {
-    file: "how-big-should-a-qr-code-be/cover",
+    file: "blog/how-big-should-a-qr-code-be/cover",
     size: COVER,
     codes: [{ id: "code", value: url("/tools/print-size"), style: "classic" }],
   },
   apiCover: {
-    file: "qr-code-api-guide/cover",
+    file: "blog/qr-code-api-guide/cover",
     size: COVER,
     codes: [
       {
@@ -54,7 +56,7 @@ export const BLOG_ART = {
     ],
   },
   menuCover: {
-    file: "qr-codes-for-restaurant-menus/cover",
+    file: "blog/qr-codes-for-restaurant-menus/cover",
     size: COVER,
     codes: [
       { id: "code", value: url("/qr-codes-on/menus"), style: "classic" },
@@ -66,13 +68,13 @@ export const BLOG_ART = {
     ],
   },
   chatCover: {
-    file: "qr-code-with-chatgpt-or-claude/cover",
+    file: "blog/qr-code-with-chatgpt-or-claude/cover",
     size: COVER,
     codes: [{ id: "code", value: url("/mcp"), style: "signature" }],
   },
   // Existing posts
   understandingCover: {
-    file: "understanding-qr-codes/cover",
+    file: "blog/understanding-qr-codes/cover",
     size: COVER,
     codes: [
       {
@@ -83,12 +85,12 @@ export const BLOG_ART = {
     ],
   },
   expireCover: {
-    file: "do-qr-codes-expire/cover",
+    file: "blog/do-qr-codes-expire/cover",
     size: COVER,
     codes: [{ id: "code", value: url("/guarantee"), style: "classy" }],
   },
   bestFreeCover: {
-    file: "best-free-qr-code-generators-2026/cover",
+    file: "blog/best-free-qr-code-generators-2026/cover",
     size: COVER,
     codes: [
       { id: "c1", value: url("/playground"), style: "classic" },
@@ -98,7 +100,7 @@ export const BLOG_ART = {
     ],
   },
   introCover: {
-    file: "introducing-qrdx/cover",
+    file: "blog/introducing-qrdx/cover",
     size: COVER,
     codes: [
       { id: "plain", value: url("/"), style: "classic" },
@@ -106,13 +108,13 @@ export const BLOG_ART = {
     ],
   },
   integrationsCover: {
-    file: "introducing-qrdx-integrations/cover",
+    file: "blog/introducing-qrdx-integrations/cover",
     size: COVER,
     codes: [{ id: "code", value: url("/integrations"), style: "classic" }],
   },
   // Inline figures
   introStyles: {
-    file: "introducing-qrdx/ai-styles",
+    file: "blog/introducing-qrdx/ai-styles",
     size: [480, 320],
     codes: [
       { id: "c1", value: url("/ai"), style: "fluid" },
@@ -121,22 +123,22 @@ export const BLOG_ART = {
     ],
   },
   introLayers: {
-    file: "introducing-qrdx/layers",
+    file: "blog/introducing-qrdx/layers",
     size: [480, 360],
     codes: [{ id: "code", value: url("/playground"), style: "classic" }],
   },
   introOpenSource: {
-    file: "introducing-qrdx/open-source",
+    file: "blog/introducing-qrdx/open-source",
     size: [480, 320],
     codes: [{ id: "code", value: url("/docs/self-hosting"), style: "classic" }],
   },
   integrationsDub: {
-    file: "introducing-qrdx-integrations/dub",
+    file: "blog/introducing-qrdx-integrations/dub",
     size: [480, 320],
     codes: [{ id: "code", value: url("/integrations"), style: "classic" }],
   },
   integrationsDrive: {
-    file: "introducing-qrdx-integrations/drive",
+    file: "blog/introducing-qrdx-integrations/drive",
     size: [480, 320],
     codes: [
       { id: "code", value: url("/integrations"), style: "classic", level: "H" },
@@ -145,27 +147,27 @@ export const BLOG_ART = {
     damage: { id: "code", x: 380, y: 380, w: 240, h: 240 },
   },
   integrationsOauth: {
-    file: "introducing-qrdx-integrations/oauth",
+    file: "blog/introducing-qrdx-integrations/oauth",
     size: [480, 270],
     codes: [{ id: "code", value: url("/integrations"), style: "classic" }],
   },
   integrationsExtensible: {
-    file: "introducing-qrdx-integrations/extensible",
+    file: "blog/introducing-qrdx-integrations/extensible",
     size: [480, 360],
     codes: [{ id: "code", value: url("/integrations"), style: "classic" }],
   },
   bestFreePaywall: {
-    file: "best-free-qr-code-generators-2026/paywall",
+    file: "blog/best-free-qr-code-generators-2026/paywall",
     size: [480, 320],
     codes: [{ id: "code", value: url("/pricing"), style: "classic" }],
   },
   bestFreeScanLimits: {
-    file: "best-free-qr-code-generators-2026/scan-limits",
+    file: "blog/best-free-qr-code-generators-2026/scan-limits",
     size: [400, 400],
     codes: [{ id: "code", value: url("/guarantee"), style: "classic" }],
   },
   bestFreePersonas: {
-    file: "best-free-qr-code-generators-2026/personas",
+    file: "blog/best-free-qr-code-generators-2026/personas",
     size: [480, 320],
     codes: [
       { id: "c1", value: url("/playground"), style: "fluid" },
@@ -174,7 +176,7 @@ export const BLOG_ART = {
     ],
   },
   understandingErrors: {
-    file: "understanding-qr-codes/error-correction",
+    file: "blog/understanding-qr-codes/error-correction",
     size: [480, 320],
     codes: [
       {
@@ -189,7 +191,7 @@ export const BLOG_ART = {
     damage: { id: "code", x: 320, y: 600, w: 300, h: 300 },
   },
   flamCover: {
-    file: "flam/cover",
+    file: "customers/flam/cover",
     size: COVER,
     // Round codes like the ones the post is about, drawn with QRdx's own
     // circle shape and circle frame: three links, three different dot rings.
@@ -210,7 +212,7 @@ export const BLOG_ART = {
     ],
   },
   understandingPipeline: {
-    file: "understanding-qr-codes/scan-pipeline",
+    file: "blog/understanding-qr-codes/scan-pipeline",
     size: [560, 240],
     codes: [{ id: "code", value: url("/"), style: "classic" }],
   },

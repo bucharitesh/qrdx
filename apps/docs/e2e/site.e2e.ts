@@ -546,7 +546,14 @@ async function testSeo() {
       problems.push(`origins: ${[...origins].join(", ")}`);
     if (new Set(locs).size !== locs.length) problems.push("duplicate URLs");
     const paths = new Set(locs.map((loc) => new URL(loc).pathname));
-    for (const path of ["/", "/playground", "/pricing", "/docs", "/blog"]) {
+    for (const path of [
+      "/",
+      "/playground",
+      "/pricing",
+      "/docs",
+      "/blog",
+      "/customers",
+    ]) {
       if (!paths.has(path)) problems.push(`missing ${path}`);
     }
     return [
@@ -636,8 +643,12 @@ async function testSeo() {
   const blogPost = (await sitemapPaths()).find((p) =>
     /^\/blog\/(?!category\/|author)[^/]+$/.test(p),
   );
+  const customerStory = (await sitemapPaths()).find((p) =>
+    /^\/customers\/[^/]+$/.test(p),
+  );
   const ogPages = ["/", "/pricing", "/plugins", "/docs/dynamic-qr-codes"];
   if (blogPost) ogPages.push(blogPost);
+  if (customerStory) ogPages.push(customerStory, "/customers");
   for (const pagePath of ogPages) {
     await check("seo", `og:image ${pagePath}`, async () => {
       const html = await (await get(pagePath)).text();
@@ -1205,6 +1216,7 @@ async function testLegal() {
     ["unknown page", "/e2e-this-page-does-not-exist"],
     ["unknown docs page", "/docs/e2e-does-not-exist"],
     ["unknown blog post", "/blog/e2e-does-not-exist"],
+    ["unknown customer story", "/customers/e2e-does-not-exist"],
     ["unknown legal page", "/legal/e2e-does-not-exist"],
     ["unknown short link", "/q/E2E0000"],
   ];
@@ -1220,6 +1232,20 @@ async function testLegal() {
       ];
     });
   }
+
+  await check(
+    "legal",
+    "moved Flam story redirects to /customers/flam",
+    async () => {
+      const response = await get("/blog/flam-branded-qr-codes");
+      await response.body?.cancel();
+      return [
+        response.status === 308 &&
+          response.headers.get("location") === "/customers/flam",
+        `${response.status} ${response.headers.get("location")}`,
+      ];
+    },
+  );
 
   await check("legal", "unknown easter-egg code goes home", async () => {
     const response = await get("/m/e2e-unknown");

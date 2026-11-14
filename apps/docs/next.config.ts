@@ -4,18 +4,18 @@ import {
   CANONICAL_ORIGIN,
   MCP_HOST,
 } from "@repo/config";
+import { OG_FONT_GLOB } from "@repo/design-system/og/font-files";
 import {
   docsEnglishRewrites,
   docsMarkdownAcceptRewrites,
   docsMarkdownRewrites,
+  docsZoneRewrites,
 } from "@repo/i18n/docs";
 import { englishRedirects, englishRewrites } from "@repo/i18n/routing";
 import { config, withAnalyzer } from "@repo/next-config";
-import { createMDX } from "fumadocs-mdx/next";
-import type { NextConfig } from "next";
-import createNextIntlPlugin from "next-intl/plugin";
-import { env } from "@/env";
-import { DOCS_REDIRECTS } from "@/lib/docs-redirects";
+// Imported from the package, not from lib/security/csp.ts: the config is
+// compiled with `@repo/*` paths rewritten for this folder, so a package
+// import made from a file below it can't be resolved.
 import {
   appCsp,
   cspHeaderName,
@@ -23,7 +23,14 @@ import {
   hostedPageCsp,
   prerenderedPagesSource,
   reportingEndpoints,
-} from "@/lib/security/csp";
+} from "@repo/next-config/csp";
+import { createMDX } from "fumadocs-mdx/next";
+import type { NextConfig } from "next";
+import createNextIntlPlugin from "next-intl/plugin";
+import { env } from "@/env";
+import { DOCS_REDIRECTS } from "@/lib/docs-redirects";
+import mediaManifest from "@/lib/media-manifest.json";
+import { MOVED_PAGES } from "@/lib/moved-pages";
 
 type Rewrites = Awaited<ReturnType<NonNullable<NextConfig["rewrites"]>>>;
 type RewritePhases = Required<Exclude<Rewrites, unknown[]>>;
@@ -38,12 +45,14 @@ const toRewritePhases = (rewrites: Rewrites = []): RewritePhases =>
         fallback: rewrites.fallback ?? [],
       };
 
-// Content-Security-Policy (lib/security/csp.ts): enforced in production
+// Content-Security-Policy (@repo/next-config/csp): enforced in production
 // builds, off in `next dev` (which keeps the frame rules only) unless
 // CSP_DEV=1. CSP_REPORT_ONLY=1 sends it as Report-Only instead.
 const cspEnabled =
   process.env.NODE_ENV === "production" || process.env.CSP_DEV === "1";
-const cspOptions = cspOptionsFromEnv();
+const cspOptions = cspOptionsFromEnv(process.env, {
+  mediaOrigin: mediaManifest.origin,
+});
 const cspHeader = cspHeaderName();
 const cspReporting = reportingEndpoints(cspOptions);
 
@@ -59,6 +68,22 @@ const PLATFORM_HOSTS = [
 
 /** An Accept header that lists text/markdown (rewrites to the Markdown versions). */
 const MARKDOWN_ACCEPT = "(?:.*[,\\s])?text/markdown(?:[;,\\s].*)?";
+
+/** What makes a request one for Markdown: the header, on QRdx's own hosts. */
+const MARKDOWN_REQUEST = {
+  has: [
+    { type: "header" as const, key: "accept", value: MARKDOWN_ACCEPT },
+    { type: "host" as const, value: `(?:${PLATFORM_HOSTS})` },
+  ],
+  missing: [{ type: "host" as const, value: "(?:api|mcp)\\.qrdx\\.dev" }],
+};
+
+// The docs site (apps/docs-site) at DOCS_ZONE_URL serves the docs: their
+// URLs are proxied there, ahead of every rule below (@repo/i18n/docs).
+// Unset, this app serves its own copy.
+const docsZone = docsZoneRewrites(env.DOCS_ZONE_URL, {
+  markdown: MARKDOWN_REQUEST,
+});
 
 /** Headers that put the app policy on prerendered pages (nonce routes: proxy.ts). */
 const cspHeaders = cspEnabled
@@ -154,10 +179,11 @@ let nextConfig: NextConfig = {
       "process.env.QRDX_HOME_NUMBERS": process.env.QRDX_HOME_NUMBERS ?? "",
     },
   },
-  // Geist for server PNGs: frame labels are drawn from its glyph outlines
-  // (lib/qr-text-outline.ts), read at runtime wherever a PNG is rasterized.
+  // Geist (@repo/design-system/og/font-files) for server images: OG cards,
+  // and frame labels drawn from its glyph outlines (lib/qr-text-outline.ts),
+  // read at runtime wherever a PNG is rasterized.
   outputFileTracingIncludes: {
-    "/**": ["./app/og/fonts/*.ttf"],
+    "/**": [OG_FONT_GLOB],
   },
   serverExternalPackages: [
     "ts-morph",
@@ -183,7 +209,7 @@ let nextConfig: NextConfig = {
       // App pages can't be framed by other sites (clickjacking), except by
       // PostHog's heatmap viewer. Hosted pages (/p), short links (/q) and the
       // API stay frameable: owners may embed them. With the CSP on, its
-      // frame-ancestors carries the same rule (lib/security/csp.ts).
+      // frame-ancestors carries the same rule (@repo/next-config/csp).
       {
         source: "/:path((?!p/|q/|api/).*)",
         headers: [
@@ -308,6 +334,11 @@ let nextConfig: NextConfig = {
         ...redirect,
         has: [{ type: "host" as const, value: `(?:${PLATFORM_HOSTS})` }],
       })),
+      // Site pages that moved (lib/moved-pages.ts), also on QRdx's own hosts.
+      ...MOVED_PAGES.map((redirect) => ({
+        ...redirect,
+        has: [{ type: "host" as const, value: `(?:${PLATFORM_HOSTS})` }],
+      })),
       // English has one address: /en/pricing → /pricing (lib/i18n/routing.ts).
       ...englishRedirects(`(?:${PLATFORM_HOSTS})`),
     ];
@@ -321,6 +352,9 @@ let nextConfig: NextConfig = {
       // must win over the /mcp marketing page, hence beforeFiles.
       beforeFiles: [
         ...base.beforeFiles,
+        // The docs site, when DOCS_ZONE_URL is set (above): first, so the
+        // docs' own rules below never see those URLs.
+        ...docsZone,
         // Community profiles live at /community/@handle; a folder named
         // @handle would be a parallel route slot, so they render from
         // app/(app)/(home)/community/u/[handle].
@@ -357,16 +391,7 @@ let nextConfig: NextConfig = {
           { source: "/docs/:path+", destination: "/llms.mdx/:path+" },
           // Translated docs pages (/es/docs/...): app/docs-md.
           ...docsMarkdownAcceptRewrites(),
-        ].map((rule) => ({
-          ...rule,
-          has: [
-            { type: "header" as const, key: "accept", value: MARKDOWN_ACCEPT },
-            { type: "host" as const, value: `(?:${PLATFORM_HOSTS})` },
-          ],
-          missing: [
-            { type: "host" as const, value: "(?:api|mcp)\\.qrdx\\.dev" },
-          ],
-        })),
+        ].map((rule) => ({ ...rule, ...MARKDOWN_REQUEST })),
         // Translated pages live in app/[lang]; English is [lang]=en behind
         // its unprefixed URL (lib/i18n/routing.ts). After the Markdown
         // rewrites, which answer agents for / and /pricing first.

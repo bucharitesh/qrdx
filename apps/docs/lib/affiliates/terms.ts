@@ -64,7 +64,7 @@ export const AFFILIATE_TERMS_NOTICE_DAYS = 30;
  * the same). Stored with each acceptance, so it's clear which text someone
  * agreed to. Change both when the terms change.
  */
-export const AFFILIATE_TERMS_VERSION = "2026-11-13";
+export const AFFILIATE_TERMS_VERSION = "2026-11-14";
 
 /** New referral codes are this many random letters and digits. */
 export const AFFILIATE_RANDOM_CODE_LENGTH = 8;

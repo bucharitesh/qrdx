@@ -109,6 +109,10 @@
         "name": "ブログ",
         "description": "QRコードのガイドとニュース"
       },
+      "customers": {
+        "name": "導入事例",
+        "description": "企業でのQRdxの活用方法"
+      },
       "compare": {
         "name": "比較",
         "description": "他のジェネレーターやライブラリとQRdxを比較できます"
@@ -211,6 +215,7 @@
       "github": "GitHub",
       "help": "ヘルプセンター",
       "blog": "ブログ",
+      "customers": "導入事例",
       "changelog": "変更履歴",
       "integrations": "連携",
       "industries": "業種別QRコード",

@@ -9,9 +9,12 @@ import {
   blogSource,
   changelogSource,
   compareSource,
+  customersSource,
   legalSource,
 } from "@/lib/content-source";
+import { CUSTOMERS_PATH } from "@/lib/customers";
 import { docsIndex, docsPageLocales } from "@/lib/docs-index";
+import { docsZoneManifest } from "@/lib/docs-zone-manifest";
 import { isPathAvailable } from "@/lib/feature-availability";
 import { docsSitemapEntries } from "@/lib/i18n/docs-seo";
 import { isLocalizedPath } from "@/lib/i18n/paths";
@@ -58,11 +61,37 @@ function withTranslations(entries: Entry[]): Entry[] {
   });
 }
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  return withTranslations(entries());
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  return withTranslations(entries(await docsEntries()));
 }
 
-function entries(): Entry[] {
+/**
+ * The docs' entries: from the docs site's manifest when DOCS_ZONE_URL is set
+ * (that fetch makes this sitemap regenerate hourly; lib/docs-zone-manifest.ts),
+ * else from this app's own copy of the docs. Docs for features this
+ * deployment can't offer (custom domains) are left out; the pages stay up
+ * for existing users. Translations a native reviewer signed off follow their
+ * English page (lib/i18n/docs-seo.ts).
+ */
+async function docsEntries(): Promise<Entry[]> {
+  const manifest = await docsZoneManifest();
+  if (manifest) return manifest.sitemap;
+  return docsIndex()
+    .getPages()
+    .filter((page) => isPathAvailable(page.url))
+    .flatMap((page) =>
+      docsSitemapEntries(page.slugs, docsPageLocales(page.slugs), {
+        lastModified: contentLastModified(
+          `content/docs/${page.path}`,
+          page.data.lastModified,
+        ),
+        changeFrequency: "weekly",
+        priority: page.url === "/docs" ? 0.8 : 0.5,
+      }),
+    );
+}
+
+function entries(docs: Entry[]): Entry[] {
   const url = (path: string): string => new URL(path, baseUrl).toString();
 
   // TypeScript-written pages: the last change to the file that holds the
@@ -95,6 +124,10 @@ function entries(): Entry[] {
   // A post's `updated` is its last substantive change; small fixes don't
   // count, so its git date isn't used.
   const postDate = (p: (typeof posts)[number]) =>
+    latest([p.data.updated, p.data.date]);
+  // Published customers' stories only (lib/content-source.ts).
+  const stories = customersSource.getPages();
+  const storyDate = (p: (typeof stories)[number]) =>
     latest([p.data.updated, p.data.date]);
   const compares = compareSource.getPages();
   // `lastVerified` is when the competitor facts were last checked.
@@ -280,22 +313,8 @@ function entries(): Entry[] {
       changeFrequency: "weekly",
       priority: 0.6,
     },
-    // Docs for features this deployment can't offer (custom domains) are
-    // left out; the pages stay up for existing users. Translations a native
-    // reviewer signed off follow their English page (lib/i18n/docs-seo.ts).
-    ...docsIndex()
-      .getPages()
-      .filter((page) => isPathAvailable(page.url))
-      .flatMap((page) =>
-        docsSitemapEntries(page.slugs, docsPageLocales(page.slugs), {
-          lastModified: contentLastModified(
-            `content/docs/${page.path}`,
-            page.data.lastModified,
-          ),
-          changeFrequency: "weekly",
-          priority: page.url === "/docs" ? 0.8 : 0.5,
-        }),
-      ),
+    // The docs (docsEntries).
+    ...docs,
     {
       url: url("/blog"),
       lastModified: latest(posts.map(postDate)),
@@ -309,6 +328,21 @@ function entries(): Entry[] {
         ({
           url: url(page.url),
           lastModified: postDate(page),
+          changeFrequency: "monthly",
+          priority: 0.7,
+        }) satisfies Entry,
+    ),
+    {
+      url: url(CUSTOMERS_PATH),
+      lastModified: latest(stories.map(storyDate)),
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
+    ...stories.map(
+      (page) =>
+        ({
+          url: url(page.url),
+          lastModified: storyDate(page),
           changeFrequency: "monthly",
           priority: 0.7,
         }) satisfies Entry,

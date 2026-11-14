@@ -1,16 +1,20 @@
-// The Content-Security-Policy (lib/security/csp.ts): what each policy allows,
-// which paths get which policy (next.config.ts headers, proxy.ts nonces) and
-// the violation report parser.
+// The Content-Security-Policy (@repo/next-config/csp, through
+// lib/security/csp.ts): what each policy allows, which paths get which policy
+// (next.config.ts headers, proxy.ts nonces) and the violation report parser.
+
+import { cspOptionsFromEnv as packageCspOptions } from "@repo/next-config/csp";
 // Next compiles header sources with its bundled path-to-regexp (no types).
 // @ts-expect-error: no declaration file for Next's compiled copy
 import { pathToRegexp } from "next/dist/compiled/path-to-regexp";
 import { NextRequest } from "next/server";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
+import mediaManifest from "@/lib/media-manifest.json";
 import {
   appCsp,
   appCspDirectives,
   type CspOptions,
   createNonce,
+  cspOptionsFromEnv,
   hostedPageCsp,
   NONCE_ROUTE,
   prerenderedPagesSource,
@@ -217,6 +221,27 @@ describe("which paths get which policy", () => {
   });
 });
 
+describe("options from the environment", () => {
+  const env = { R2_PUBLIC_BASE_URL: "https://files.example.com/uploads" };
+
+  it("list the site's media host, then R2's public URL", () => {
+    expect(cspOptionsFromEnv(env).storageOrigins).toEqual([
+      mediaManifest.origin,
+      "https://files.example.com",
+    ]);
+  });
+
+  it("leave the media host to the app: the package knows none", () => {
+    expect(packageCspOptions(env).storageOrigins).toEqual([
+      "https://files.example.com",
+    ]);
+    expect(
+      packageCspOptions({}, { mediaOrigin: "https://media.example.com/a" })
+        .storageOrigins,
+    ).toEqual(["https://media.example.com"]);
+  });
+});
+
 describe("hosted pages", () => {
   it("only blocks plugins and <base> hijacking (pixels and embeds stay)", () => {
     const policy = hostedPageCsp(PROD);
@@ -275,6 +300,17 @@ describe("next.config.ts headers", () => {
     expect(host.test("qrdx-git-x.vercel.app")).toBe(true);
     expect(host.test("localhost")).toBe(true);
     expect(host.test("links.customer.com")).toBe(false);
+  });
+
+  it("sends the policy proxy.ts builds, with the site's media host", () => {
+    const policy = valueFor(
+      prerenderedPagesSource(),
+      "Content-Security-Policy",
+    );
+    expect(policy).toBe(appCsp(cspOptionsFromEnv()));
+    expect(directive(policy ?? "", "connect-src")).toContain(
+      mediaManifest.origin,
+    );
   });
 
   it("gives hosted pages their own policy", () => {

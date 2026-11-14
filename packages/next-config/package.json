@@ -2,6 +2,13 @@
   "name": "@repo/next-config",
   "version": "0.0.0",
   "private": true,
+  "exports": {
+    ".": "./index.ts",
+    "./csp": "./csp.ts",
+    "./docs-zone": "./docs-zone.ts",
+    "./env-errors": "./env-errors.ts",
+    "./keys": "./keys.ts"
+  },
   "scripts": {
     "clean": "git clean -xdf .cache .turbo dist node_modules",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"

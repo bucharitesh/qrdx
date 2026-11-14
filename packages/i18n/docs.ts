@@ -152,3 +152,147 @@ export function docsMarkdownAcceptRewrites(): {
     { source: `/${lang}/docs/:path+`, destination: "/docs-md/:lang/:path+" },
   ];
 }
+
+// ─── The docs zone ───────────────────────────────────────────────────────────
+// The docs are a separate Next.js app (apps/docs-site), served at the same
+// URLs on qrdx.dev. The main app proxies the docs' URLs to it with
+// docsZoneRewrites() once DOCS_ZONE_URL is set; until then it serves its own
+// copy of the docs. The manifest the zones exchange is in
+// @repo/next-config/docs-zone.
+
+/** A next.config rewrite: `has` and `missing` as Next takes them. */
+export interface ZoneRewrite {
+  source: string;
+  destination: string;
+  has?: RouteCondition[];
+  missing?: RouteCondition[];
+}
+
+export type RouteCondition =
+  | { type: "header" | "cookie" | "query"; key: string; value?: string }
+  | { type: "host"; key?: undefined; value: string };
+
+export interface DocsZoneOptions {
+  /**
+   * URL segments of the languages with translated docs ("es", "pt-br");
+   * translatedDocsSegments() unless a test passes its own.
+   */
+  translatedSegments?: readonly string[];
+  /**
+   * What makes a request one for Markdown (`Accept: text/markdown` on the
+   * main app's own hosts). Those rules come first, so an agent asking for
+   * Markdown at a page's URL gets the page's Markdown, as it does today.
+   */
+  markdown: { has: RouteCondition[]; missing?: RouteCondition[] };
+}
+
+/**
+ * `url` without its trailing slashes. A loop rather than /\/+$/, which
+ * backtracks on every position of a long run of slashes.
+ */
+function withoutTrailingSlashes(url: string): string {
+  let end = url.length;
+  while (end > 0 && url[end - 1] === "/") end--;
+  return url.slice(0, end);
+}
+
+const langParam = (segments: readonly string[]) =>
+  segments.length > 0 ? `:lang(${segments.join("|")})` : null;
+
+/**
+ * The main app's beforeFiles rewrites that send the docs to the zone at
+ * `zoneUrl` (no trailing slash): the pages in every language and their
+ * Markdown versions, the docs' Open Graph images, search, llms-full.txt and
+ * the zone's own build assets (its assetPrefix, /docs-static). None when
+ * `zoneUrl` is unset: the main app keeps serving its own docs.
+ *
+ * The .md and .mdx URLs go to the zone as they are; the zone's own
+ * next.config maps them to its Markdown routes.
+ */
+export function docsZoneRewrites(
+  zoneUrl: string | undefined,
+  options: DocsZoneOptions
+): ZoneRewrite[] {
+  if (!zoneUrl) return [];
+  const zone = withoutTrailingSlashes(zoneUrl);
+  const lang = langParam(
+    options.translatedSegments ?? translatedDocsSegments()
+  );
+
+  const markdown: ZoneRewrite[] = [
+    { source: "/docs", destination: `${zone}/llms.mdx` },
+    { source: "/docs/:path+", destination: `${zone}/llms.mdx/:path+` },
+    ...(lang
+      ? [
+          { source: `/${lang}/docs`, destination: `${zone}/docs-md/:lang` },
+          {
+            source: `/${lang}/docs/:path+`,
+            destination: `${zone}/docs-md/:lang/:path+`,
+          },
+        ]
+      : []),
+  ].map((rule) => ({
+    ...rule,
+    has: options.markdown.has,
+    ...(options.markdown.missing && { missing: options.markdown.missing }),
+  }));
+
+  const pages: ZoneRewrite[] = [
+    { source: "/docs", destination: `${zone}/docs` },
+    { source: "/docs.md", destination: `${zone}/docs.md` },
+    { source: "/docs.mdx", destination: `${zone}/docs.mdx` },
+    { source: "/docs/:path*", destination: `${zone}/docs/:path*` },
+    ...(lang
+      ? [
+          { source: `/${lang}/docs`, destination: `${zone}/:lang/docs` },
+          { source: `/${lang}/docs.md`, destination: `${zone}/:lang/docs.md` },
+          {
+            source: `/${lang}/docs.mdx`,
+            destination: `${zone}/:lang/docs.mdx`,
+          },
+          {
+            source: `/${lang}/docs/:path*`,
+            destination: `${zone}/:lang/docs/:path*`,
+          },
+        ]
+      : []),
+  ];
+
+  const routes: ZoneRewrite[] = [
+    "/llms.mdx/:path*",
+    "/docs-md/:path*",
+    "/og/docs/:path*",
+    "/api/search",
+    "/llms-full.txt",
+    "/docs-static/:path*",
+  ].map((source) => ({ source, destination: `${zone}${source}` }));
+
+  return [...markdown, ...pages, ...routes];
+}
+
+/**
+ * Whether `href` is a docs page: /docs, /docs/…, and the same under a
+ * translated docs language (/es/docs/…). Not their .md or .mdx versions,
+ * which are files rather than pages. Query and hash are ignored; external
+ * and relative hrefs are never docs pages.
+ *
+ * Links between the zones must be plain <a> elements (a full page load):
+ * next/link would try to load the other zone's page in this app.
+ */
+export function isDocsPagePath(
+  href: string,
+  translatedSegments: readonly string[] = translatedDocsSegments()
+): boolean {
+  if (!href.startsWith("/") || href.startsWith("//")) return false;
+  const path = href.split(/[?#]/, 1)[0] ?? href;
+  if (path.endsWith(".md") || path.endsWith(".mdx")) return false;
+  // The first segment, and the rest of the path after it.
+  const slash = path.indexOf("/", 1);
+  const first = slash === -1 ? path.slice(1) : path.slice(1, slash);
+  const rest = translatedSegments.includes(first)
+    ? slash === -1
+      ? ""
+      : path.slice(slash)
+    : path;
+  return rest === "/docs" || rest.startsWith("/docs/");
+}

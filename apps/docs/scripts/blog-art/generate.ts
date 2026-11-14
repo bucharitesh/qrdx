@@ -1,8 +1,8 @@
-// Writes the blog's illustrations to public/blog/<post>/<name>.svg: the
+// Writes the blog's illustrations to public/<file>.svg (codes.ts): the
 // scenes from scenes.ts with the real codes from codes.ts rendered by qrdx.
 //
 // Run from apps/docs: bun x tsx scripts/blog-art/generate.ts
-//   [--out <dir>]            write somewhere else (default public/blog)
+//   [--out <dir>]            write somewhere else (default public)
 //   [--theme light|dark]     bake one palette instead of both (for previews)
 //   [ids...]                 only these illustrations (codes.ts keys)
 //
@@ -44,7 +44,7 @@ function main() {
     const [value] = args.splice(i, 2).slice(1);
     return value;
   };
-  const out = flag("--out") ?? join(import.meta.dirname, "../../public/blog");
+  const out = flag("--out") ?? join(import.meta.dirname, "../../public");
   const theme = (flag("--theme") ?? "auto") as "auto" | "light" | "dark";
   const ids = (args.length > 0 ? args : BLOG_ART_IDS).filter(
     (id): id is BlogArtId => id in BLOG_ART && Boolean(SCENES[id as BlogArtId]),

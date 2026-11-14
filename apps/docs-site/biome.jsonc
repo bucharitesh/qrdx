@@ -1,0 +1,73 @@
+{
+  "root": false,
+  "$schema": "https://biomejs.dev/schemas/2.6.4/schema.json",
+  // Not the root config: like apps/docs, where most of these files come
+  // from, the app keeps Biome's recommended rules (below) and takes only
+  // Ultracite's test preset.
+  "extends": ["ultracite/biome/vitest"],
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
+  "files": {
+    "ignoreUnknown": true,
+    "includes": [
+      "**",
+      "!node_modules",
+      "!.next",
+      "!dist",
+      "!build",
+      "!.source",
+      "!generated",
+      "!styles/loaders.css",
+      "!styles/styles.css"
+    ]
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "preset": "recommended",
+      "suspicious": {
+        "noExplicitAny": "off",
+        "noArrayIndexKey": "off",
+        // As in the root biome.jsonc: assertion helpers and table-driven tests.
+        "noMisplacedAssertion": "off",
+        "useExpect": "off",
+        "noConditionalExpect": "off"
+      },
+      "a11y": {
+        "noSvgWithoutTitle": "off"
+      },
+      "style": {
+        "noNonNullAssertion": "off",
+        "noParameterProperties": "off"
+      },
+      "performance": {
+        "noImgElement": "off",
+        "noDynamicNamespaceImportAccess": "off"
+      }
+    },
+    "domains": {
+      "next": "recommended",
+      "react": "recommended"
+    }
+  },
+  "markdown": {
+    "formatter": {
+      "enabled": false
+    }
+  },
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  }
+}

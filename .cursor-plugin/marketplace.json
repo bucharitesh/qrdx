@@ -12,7 +12,7 @@
       "name": "qrdx",
       "source": "plugins/agent",
       "description": "Styled, scannable QR codes from your agent: a skill that runs the QRdx CLI on your machine, and the QRdx MCP server for scan-checked designs, barcodes, and Wi-Fi, contact and payment codes.",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "author": {
         "name": "QRdx",
         "url": "https://qrdx.dev"

@@ -1,7 +1,8 @@
-// The blog's illustrations (public/blog/<post>/*.svg, written by
-// scripts/blog-art/generate.ts) each carry real QR codes. Every baked code
-// must scan as the data codes.ts promises, including the ones a scene partly
-// covers (a missing patch, a centre logo). Every image a post references
+// The blog's and the customer stories' illustrations (public/blog/<post>/
+// *.svg, public/customers/<id>/*.svg, written by scripts/blog-art/
+// generate.ts) each carry real QR codes. Every baked code must scan as the
+// data codes.ts promises, including the ones a scene partly covers (a
+// missing patch, a centre logo). Every image a post or story references
 // must exist.
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
@@ -14,7 +15,7 @@ import {
 } from "../../../packages/qrdx/tests/support/raster";
 
 const PUBLIC = join(import.meta.dirname, "../public");
-const BLOG = join(import.meta.dirname, "../content/blog");
+const CONTENT = join(import.meta.dirname, "../content");
 
 function symbol(svg: string, id: string) {
   const match = svg.match(
@@ -36,7 +37,7 @@ const flatten = (inner: string) =>
  * symbols drawn together when the scene only uses the split ones.
  */
 function bakedCode(file: string, id: string, cover?: string) {
-  const svg = readFileSync(join(PUBLIC, "blog", `${file}.svg`), "utf8");
+  const svg = readFileSync(join(PUBLIC, `${file}.svg`), "utf8");
   const whole = symbol(svg, id);
   const parts = whole
     ? [whole]
@@ -70,25 +71,31 @@ describe("blog illustrations", () => {
     );
   });
 
-  it("every image a post references exists", () => {
-    for (const name of readdirSync(BLOG).filter((f) => f.endsWith(".mdx"))) {
-      const source = readFileSync(join(BLOG, name), "utf8");
-      const paths = [
-        ...source.matchAll(/^image: (\/blog\/\S+)$/gm),
-        ...source.matchAll(/src="(\/blog\/[^"]+)"/g),
-      ].map((match) => match[1] ?? "");
-      expect(paths.length, name).toBeGreaterThan(0);
-      for (const path of paths) {
-        expect(existsSync(join(PUBLIC, path)), `${name}: ${path}`).toBe(true);
+  it.each(["blog", "customers"])(
+    "every image a %s page references exists, in its own folder",
+    (dir) => {
+      const files = readdirSync(join(CONTENT, dir)).filter((f) =>
+        f.endsWith(".mdx"),
+      );
+      expect(files.length).toBeGreaterThan(0);
+      for (const name of files) {
+        const source = readFileSync(join(CONTENT, dir, name), "utf8");
+        const paths = [
+          ...source.matchAll(/^image: (\/\S+)$/gm),
+          ...source.matchAll(/src="(\/[^"]+)"/g),
+        ].map((match) => match[1] ?? "");
+        expect(paths.length, name).toBeGreaterThan(0);
+        for (const path of paths) {
+          expect(path.startsWith(`/${dir}/`), `${name}: ${path}`).toBe(true);
+          expect(existsSync(join(PUBLIC, path)), `${name}: ${path}`).toBe(true);
+        }
       }
-    }
-  });
+    },
+  );
 
   it("every illustration has been generated", () => {
     for (const art of BLOG_ART_IDS) {
-      expect(
-        existsSync(join(PUBLIC, "blog", `${BLOG_ART[art].file}.svg`)),
-      ).toBe(true);
+      expect(existsSync(join(PUBLIC, `${BLOG_ART[art].file}.svg`))).toBe(true);
     }
   });
 });

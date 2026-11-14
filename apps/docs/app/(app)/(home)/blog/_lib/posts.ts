@@ -46,7 +46,10 @@ export function getPostSlug(page: BlogPage): string {
   return page.slugs[0] ?? "";
 }
 
-export function getReadingTime(page: BlogPage): number {
+/** Minutes to read a page: a blog post or a customer story. */
+export function getReadingTime(page: {
+  data: Pick<BlogPage["data"], "structuredData">;
+}): number {
   const { headings, contents } = page.data.structuredData;
   const words = [...headings, ...contents]
     .map((item) => item.content)

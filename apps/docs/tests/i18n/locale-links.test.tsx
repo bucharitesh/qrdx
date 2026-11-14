@@ -19,7 +19,7 @@ import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { NextIntlClientProvider } from "next-intl";
-import type { ReactNode } from "react";
+import type { ComponentProps, ReactNode } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 import { isPathIn, localizeHref } from "@/lib/i18n/paths";
@@ -150,6 +150,17 @@ vi.mock("next/navigation", async (importOriginal) => ({
   }),
 }));
 
+// next/link marks its anchors, so the docs-zone test below can tell them from
+// plain <a> elements (both render as <a href>).
+vi.mock("next/link", async (importOriginal) => {
+  const { default: Link } = await importOriginal<typeof import("next/link")>();
+  return {
+    default: (props: ComponentProps<typeof Link>) => (
+      <Link {...props} data-next-link="" />
+    ),
+  };
+});
+
 /** Every internal href in `html` that should carry the /hi prefix but doesn't. */
 function unprefixed(html: string): string[] {
   const hrefs = [...html.matchAll(/<a\b[^>]*\bhref="([^"]*)"/g)].map((match) =>
@@ -260,5 +271,40 @@ describe("translated chrome and home sections, rendered in Hindi", () => {
     ]) {
       expect(localizeHref(href, "hi")).toBe(href);
     }
+  });
+});
+
+// ─── 3. Into the docs zone ───────────────────────────────────────────────────
+
+describe("links to the docs", () => {
+  // The docs are moving to an app of their own behind the same URLs
+  // (@repo/i18n/docs): a link into them loads the page in full.
+  const render = async (href: string, props: object = {}) => {
+    const { LocaleLink } = await import("@/components/i18n/locale-link");
+    return renderHindi(
+      <LocaleLink href={href} {...props}>
+        x
+      </LocaleLink>,
+    );
+  };
+
+  it("are plain <a> elements, in the reader's language", async () => {
+    for (const [href, expected] of [
+      ["/docs", "/hi/docs"],
+      ["/docs/dynamic-qr-codes", "/hi/docs/dynamic-qr-codes"],
+      ["/docs/developers/rest-api#auth", "/hi/docs/developers/rest-api#auth"],
+    ]) {
+      const html = await render(href as string, { prefetch: false });
+      expect(html).toBe(`<a href="${expected}">x</a>`);
+    }
+  });
+
+  it("leave every other page to next/link", async () => {
+    expect(await render("/pricing")).toContain("data-next-link");
+    expect(await render("/playground")).toContain("data-next-link");
+    // A docs page's Markdown is a file, not a page of either app.
+    expect(await render("/docs/dynamic-qr-codes.md")).toContain(
+      "data-next-link",
+    );
   });
 });
