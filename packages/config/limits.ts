@@ -75,8 +75,18 @@ export const NEW_PAID_ACCOUNT_CODES_PER_HOUR = 2000;
 /** GET /v1/qr, the keyless image API (app/api/v1/qr/route.ts). */
 export const QR_IMAGE_REQUESTS_PER_MINUTE = 300;
 
-/** Every request to the MCP server (app/api/mcp/route.ts). */
+/**
+ * Every request to the MCP server (app/api/mcp/route.ts). Each message of a
+ * JSON-RPC batch counts as one request.
+ */
 export const MCP_REQUESTS_PER_MINUTE = 120;
+
+/**
+ * Most messages in one JSON-RPC batch to the MCP server; a longer batch is
+ * refused. Clients send one message per request (the 2025-06-18 protocol
+ * revision dropped batches), so this only bounds what one request can run.
+ */
+export const MCP_MAX_BATCH_MESSAGES = 10;
 
 /** The MCP design_qr tool, on top of the server's limit (app/api/mcp/tools.ts). */
 export const DESIGN_QR_REQUESTS_PER_MINUTE = 20;
