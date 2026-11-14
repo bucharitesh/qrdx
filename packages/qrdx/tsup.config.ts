@@ -57,6 +57,22 @@ const frameDataExternal = (extension: ".js" | ".mjs"): Plugin => ({
   },
 });
 
+// The zod schemas (types/schemas.ts) are built as a module of their own,
+// dist/schemas, which the core and the React entry only re-export. Nothing
+// the engine draws with uses them (it validates frame specs with
+// types/frame-spec-parse.ts), so a bundler that skips unused
+// side-effect-free modules leaves zod out of an app that never uses a
+// schema.
+const schemasExternal = (extension: ".js" | ".mjs"): Plugin => ({
+  name: "qrdx-schemas-external",
+  setup(build) {
+    build.onResolve({ filter: /\/types\/schemas$/ }, () => ({
+      path: `./schemas${extension}`,
+      external: true,
+    }));
+  },
+});
+
 // qrdx/core (dist/core) is the one React-free engine: qrdx/vanilla, qrdx/node
 // and the framework adapters import it rather than bundling their own copy,
 // so an app that uses two of them loads the engine once. Each of these
@@ -200,14 +216,22 @@ export default defineConfig([
     entry: ["src/index.tsx"],
     format: ["esm"],
     treeshake: true,
-    esbuildPlugins: [clientEntryExternal(".mjs"), frameDataExternal(".mjs")],
+    esbuildPlugins: [
+      clientEntryExternal(".mjs"),
+      frameDataExternal(".mjs"),
+      schemasExternal(".mjs"),
+    ],
   },
   {
     ...shared,
     entry: ["src/index.tsx"],
     format: ["cjs"],
     treeshake: true,
-    esbuildPlugins: [clientEntryExternal(".js"), frameDataExternal(".js")],
+    esbuildPlugins: [
+      clientEntryExternal(".js"),
+      frameDataExternal(".js"),
+      schemasExternal(".js"),
+    ],
   },
   // ── Official frame data (re-exported by the main entry) ────────────────
   {
@@ -216,6 +240,13 @@ export default defineConfig([
       "frames-official": "src/frames/official.ts",
       "frames-index": "src/frames/catalogue/index.ts",
     },
+    format: ["cjs", "esm"],
+    treeshake: true,
+  },
+  // ── The zod schemas (re-exported by the core and the main entry) ───────
+  {
+    ...shared,
+    entry: { schemas: "types/schemas.ts" },
     format: ["cjs", "esm"],
     treeshake: true,
   },
@@ -234,14 +265,14 @@ export default defineConfig([
     entry: { core: "src/core.ts" },
     format: ["esm"],
     treeshake: true,
-    esbuildPlugins: [frameDataExternal(".mjs")],
+    esbuildPlugins: [frameDataExternal(".mjs"), schemasExternal(".mjs")],
   },
   {
     ...shared,
     entry: { core: "src/core.ts" },
     format: ["cjs"],
     treeshake: true,
-    esbuildPlugins: [frameDataExternal(".js")],
+    esbuildPlugins: [frameDataExternal(".js"), schemasExternal(".js")],
   },
   // ── Plain JavaScript API (qrdx/vanilla), on the shared core ─────────────
   {
@@ -331,8 +362,10 @@ export default defineConfig([
     esbuildPlugins: [elementExternal("element.js"), sharedCore(".js", [])],
   },
   // ── <qrdx-code> as one file for <script type="module">, no bundler ──────
-  // Like vanilla.browser: zod inlined, jspdf and jsqr on demand, no official
-  // frame data. element-define.browser registers the tag from it.
+  // Like vanilla.browser: jspdf and jsqr on demand, no official frame data.
+  // The element exports no schema, so esbuild leaves the schemas and zod
+  // out (zod stays bundled-in rather than a bare import, should one ever
+  // be reached). element-define.browser registers the tag from it.
   {
     ...shared,
     entry: { "element.browser": "src/element.ts" },
