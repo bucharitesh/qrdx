@@ -4,10 +4,10 @@ description: Run your own QRdx web app, dynamic QR codes and hosted pages includ
 icon: Server
 ---
 
-QRdx is AGPL-3.0 licensed, and you can run the web app (QR editor, accounts, two-step verification and passkeys, dynamic codes and hosted pages, teams, saved themes, community gallery and these docs) on your own server. Workspace single sign-on and the workspace audit log are the exception: they live in the commercially licensed `ee/` folders and stay off unless you set a license key (`QRDX_EE_LICENSE`). Using them in production needs a written agreement with QRdx; see [LICENSING.md](https://github.com/bucharitesh/qrdx/blob/main/LICENSING.md). You don't need any of this to use the [`qrdx` React library](/docs/getting-started) or the CLI. Those run anywhere without a backend, under the MIT license. [Open source at QRdx](/open-source-qr-code-generator) lists each part of the repository and its license.
+QRdx is AGPL-3.0 licensed, and you can run the web app (QR editor, accounts, two-step verification and passkeys, dynamic codes and hosted pages, teams, saved themes, community gallery and these docs) on your own server. Workspace single sign-on and the workspace audit log are the exception: they live in the commercially licensed `ee/` folders and stay off unless you set a license key (`QRDX_EE_LICENSE`). Using them in production needs a written agreement with QRdx; see [LICENSING.md](https://github.com/qrdxinc/qrdx/blob/main/LICENSING.md). You don't need any of this to use the [`qrdx` React library](/docs/getting-started) or the CLI. Those run anywhere without a backend, under the MIT license. [Open source at QRdx](/open-source-qr-code-generator) lists each part of the repository and its license.
 
 <Callout type="warn">
-  The Docker setup is new. If something doesn't work, please [open an issue](https://github.com/bucharitesh/qrdx/issues).
+  The Docker setup is new. If something doesn't work, please [open an issue](https://github.com/qrdxinc/qrdx/issues).
 </Callout>
 
 ## Requirements
@@ -31,7 +31,7 @@ The schema comes from `packages/database/schema.ts` and is applied with `drizzle
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/bucharitesh/qrdx.git
+git clone https://github.com/qrdxinc/qrdx.git
 cd qrdx
 ```
 
@@ -103,7 +103,7 @@ docker run --rm -e DATABASE_URL="<your connection string>" qrdx-migrate
 ## Manual setup (Node.js)
 
 ```bash
-git clone https://github.com/bucharitesh/qrdx.git
+git clone https://github.com/qrdxinc/qrdx.git
 cd qrdx
 bun install
 
@@ -129,7 +129,7 @@ DATABASE_HTTP_ENDPOINT=http://localhost:4444/sql
 
 ## Environment variables
 
-[`apps/docs/.env.example`](https://github.com/bucharitesh/qrdx/blob/main/apps/docs/.env.example) lists every variable with a short note on where to get it.
+[`apps/docs/.env.example`](https://github.com/qrdxinc/qrdx/blob/main/apps/docs/.env.example) lists every variable with a short note on where to get it.
 
 ### Minimum
 
@@ -167,8 +167,8 @@ Add one OAuth provider (GitHub or Google), or Resend for email sign-in codes, so
 | Dub short links | `DUB_CLIENT_ID`, `DUB_CLIENT_SECRET`, `DUB_REDIRECT_URI`, `INTEGRATION_ENCRYPTION_KEY` | The Dub integration can't be connected |
 | Google Drive | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_DRIVE_REDIRECT_URI`, `INTEGRATION_ENCRYPTION_KEY` | The Google Drive integration can't be connected |
 | Bitly, Dropbox, OneDrive, Box, Notion | `BITLY_CLIENT_ID`/`_SECRET`, `DROPBOX_CLIENT_ID`/`_SECRET`, `MICROSOFT_CLIENT_ID`/`_SECRET`, `BOX_CLIENT_ID`/`_SECRET`, `NOTION_CLIENT_ID`/`_SECRET`, `INTEGRATION_ENCRYPTION_KEY` | That integration shows "Not configured" (Bitly still connects with pasted access tokens). Rebrandly and Short.io need no variables. See [Short links and file pickers](/docs/short-links-and-file-pickers#self-hosting) |
-| Slack bot | `SLACK_CLIENT_ID`, `SLACK_CLIENT_SECRET`, `SLACK_SIGNING_SECRET`, plus `INTEGRATION_ENCRYPTION_KEY` in production | No Slack bot: its routes and link page answer 404 and Settings doesn't offer it. Create your own Slack app from [`plugins/slack/manifest.json`](https://github.com/bucharitesh/qrdx/tree/main/plugins/slack) as its README describes. See [Slack bot](/docs/slack-bot#self-hosting) |
-| Discord bot | `DISCORD_APPLICATION_ID`, `DISCORD_PUBLIC_KEY` | No Discord bot: its interactions endpoint answers `404` and it's left out of the integrations directory. Register your own Discord app as [`plugins/discord/README.md`](https://github.com/bucharitesh/qrdx/tree/main/plugins/discord) describes |
+| Slack bot | `SLACK_CLIENT_ID`, `SLACK_CLIENT_SECRET`, `SLACK_SIGNING_SECRET`, plus `INTEGRATION_ENCRYPTION_KEY` in production | No Slack bot: its routes and link page answer 404 and Settings doesn't offer it. Create your own Slack app from [`plugins/slack/manifest.json`](https://github.com/qrdxinc/qrdx/tree/main/plugins/slack) as its README describes. See [Slack bot](/docs/slack-bot#self-hosting) |
+| Discord bot | `DISCORD_APPLICATION_ID`, `DISCORD_PUBLIC_KEY` | No Discord bot: its interactions endpoint answers `404` and it's left out of the integrations directory. Register your own Discord app as [`plugins/discord/README.md`](https://github.com/qrdxinc/qrdx/tree/main/plugins/discord) describes |
 | Telegram bot | `TELEGRAM_BOT_TOKEN`, `TELEGRAM_WEBHOOK_SECRET`, `TELEGRAM_BOT_USERNAME` | No Telegram bot: its routes answer 404 and the site doesn't list it. Create your own bot with @BotFather and run `plugins/telegram/scripts/setup.mjs`. See [Telegram bot](/docs/telegram-bot#self-hosting) |
 | Rate limiting (Upstash) | `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN` (or the Vercel KV names `KV_REST_API_URL`, `KV_REST_API_TOKEN`) | No rate limiting. Recommended in production. |
 | Analytics (PostHog, after cookie consent) | `NEXT_PUBLIC_POSTHOG_KEY`, `NEXT_PUBLIC_POSTHOG_HOST` | No product analytics |

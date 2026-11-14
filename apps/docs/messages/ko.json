@@ -3128,7 +3128,7 @@
       "openQuestion": "QRdx는 정말 오픈 소스인가요?",
       "openAnswer": "네. 소스는 GitHub에 있고, 웹 앱은 AGPL-3.0-or-later 라이선스를 따르며, qrdx 라이브러리, @qrdx/cli, 플러그인은 MIT예요. 워크스페이스 싱글 사인온과 감사 로그, 이 두 가지 비즈니스 기능은 QRdx Commercial License가 적용되는 ee 폴더에 있어요. 코드를 읽어볼 수는 있지만 프로덕션에서 사용하려면 QRdx와 계약이 필요해요.",
       "githubQuestion": "GitHub에서 QRdx 소스 코드는 어디에 있나요?",
-      "githubAnswer": "github.com/bucharitesh/qrdx에 있어요. 웹 앱, qrdx 라이브러리, CLI, 플러그인, 문서가 하나의 모노레포에 들어 있어요.",
+      "githubAnswer": "github.com/qrdxinc/qrdx에 있어요. 웹 앱, qrdx 라이브러리, CLI, 플러그인, 문서가 하나의 모노레포에 들어 있어요.",
       "freeQuestion": "QRdx를 무료로 셀프 호스팅할 수 있나요?",
       "freeAnswer": "네. 라이선스 비용은 없고, 직접 운영하는 서버와 데이터베이스 비용만 내시면 돼요. 셀프 호스팅 인스턴스에서도 동적 QR 코드, 호스팅 페이지, 스캔 분석을 사용할 수 있어요. 싱글 사인온과 감사 로그는 QRdx 라이선스 키가 없으면 꺼져 있어요.",
       "needQuestion": "QRdx를 셀프 호스팅하려면 무엇이 필요한가요?",

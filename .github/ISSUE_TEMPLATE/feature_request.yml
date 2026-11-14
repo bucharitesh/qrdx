@@ -6,9 +6,9 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thanks for the suggestion. Please search [open and closed issues](https://github.com/bucharitesh/qrdx/issues?q=is%3Aissue) first.
+        Thanks for the suggestion. Please search [open and closed issues](https://github.com/qrdxinc/qrdx/issues?q=is%3Aissue) first.
 
-        If the idea is still open-ended and you'd like to talk it through, start a thread in [Ideas](https://github.com/bucharitesh/qrdx/discussions/new?category=ideas) instead. Requests for a new integration or plugin are welcome here.
+        If the idea is still open-ended and you'd like to talk it through, start a thread in [Ideas](https://github.com/qrdxinc/qrdx/discussions/new?category=ideas) instead. Requests for a new integration or plugin are welcome here.
 
   # Keep these options in sync with .github/scripts/issue-area-labels.mjs,
   # which turns the answer into an area label.
@@ -67,7 +67,7 @@ body:
     id: terms
     attributes:
       label: Before submitting
-      description: By submitting this issue, you agree to follow the [contributing guidelines](https://github.com/bucharitesh/qrdx/blob/main/CONTRIBUTING.md) and the [code of conduct](https://github.com/bucharitesh/qrdx/blob/main/.github/CODE_OF_CONDUCT.md).
+      description: By submitting this issue, you agree to follow the [contributing guidelines](https://github.com/qrdxinc/qrdx/blob/main/CONTRIBUTING.md) and the [code of conduct](https://github.com/qrdxinc/qrdx/blob/main/.github/CODE_OF_CONDUCT.md).
       options:
         - label: I searched existing issues and pull requests
           required: true
