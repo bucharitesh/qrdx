@@ -1,5 +1,6 @@
 "use client";
 
+import { track } from "@repo/analytics";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Ghost, MagicStar, Tree } from "iconsax-reactjs";
 import type { ColorConfig } from "qrdx/types";
@@ -14,7 +15,6 @@ import {
   useState,
 } from "react";
 import { createPortal } from "react-dom";
-import { track } from "@/lib/analytics";
 import type { Season } from "@/lib/seasonal";
 import { useQREditorStore } from "@/store/editor-store";
 import type { ThemePreset } from "@/types/theme";

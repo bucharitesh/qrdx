@@ -1,13 +1,13 @@
 "use client";
 
+import { resetAnalytics, track } from "@repo/analytics";
 import { authClient } from "@repo/auth/client";
+import { QrdxLogo } from "@repo/design-system/components/brand/qrdx-logo";
 import { Spinner } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { QrdxLogo } from "@/components/qrdx-logo";
-import { resetAnalytics, track } from "@/lib/analytics";
 import { SIGNED_OUT_PATH, takeSignOutIntent } from "./_lib/intent";
 
 type Step = "starting" | "confirm" | "signing-out" | "failed";

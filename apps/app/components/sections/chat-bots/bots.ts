@@ -1,9 +1,9 @@
 // The QRdx chat bots' landing pages (/slack, /telegram, /discord). Each page
 // exists only where its bot is set up: the paths are in that feature's
-// `paths` in lib/feature-availability-rules.ts, so links to them hide, and
+// `paths` in packages/availability/rules.ts, so links to them hide, and
 // the page itself 404s. Pure data, safe for client components.
 
-import type { FeatureId } from "@/lib/feature-availability-rules";
+import type { FeatureId } from "@repo/availability";
 
 export type ChatBotId = "slack" | "telegram" | "discord";
 
@@ -12,7 +12,7 @@ export interface ChatBotInfo {
   /** The landing page. */
   path: string;
   name: string;
-  /** The feature that has to be set up (lib/feature-availability-rules.ts). */
+  /** The feature that has to be set up (packages/availability/rules.ts). */
   feature: FeatureId;
   /** Its entry in @repo/integrations' catalog (logo, /integrations page). */
   catalogSlug: string;

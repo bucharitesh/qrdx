@@ -1,5 +1,6 @@
 "use client";
 
+import { track } from "@repo/analytics";
 import { toast } from "@repo/design-system";
 import { Spinner, Tick } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
@@ -71,7 +72,6 @@ import { DialogCloseButton } from "@/components/editor/dialog-close-button";
 import { emitSound } from "@/components/editor/sound";
 import { InfoHint } from "@/components/help/info-hint";
 import { LocaleLink as Link } from "@/components/i18n/locale-link";
-import { track } from "@/lib/analytics";
 import { DEFAULT_QR_LOGO } from "@/lib/constants";
 import {
   fromMillimeters,

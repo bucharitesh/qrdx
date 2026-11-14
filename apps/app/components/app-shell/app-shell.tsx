@@ -5,6 +5,7 @@ import { changelogBodies } from "@/components/changelog/changelog-body";
 import { LimitDialogHost } from "@/components/limits/limit-dialog";
 import { PlanLimitsProvider } from "@/components/limits/plan-limits-provider";
 import { WorkspaceProvider } from "@/components/workspace-provider";
+import { env } from "@/env";
 import { toDay } from "@/lib/changelog-feed";
 import { getChangelogFeed } from "@/lib/changelog-feed-server";
 import { AppFrame } from "./app-frame";
@@ -44,7 +45,12 @@ export async function AppShell({ children }: { children: ReactNode }) {
             today={toDay(new Date()) ?? ""}
           >
             <CreateProvider codes={shell?.codes ?? null}>
-              <AppFrame limitWarnings={limitWarnings} shell={shell}>
+              <AppFrame
+                // Docs search goes through the docs site (/api/search).
+                docsSearch={Boolean(env.DOCS_ZONE_URL)}
+                limitWarnings={limitWarnings}
+                shell={shell}
+              >
                 {children}
               </AppFrame>
               {/* "Get set up", bottom right: loads its own tasks. */}

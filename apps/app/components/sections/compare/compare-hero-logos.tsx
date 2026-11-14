@@ -1,7 +1,7 @@
+import { QrdxLogo } from "@repo/design-system/components/brand/qrdx-logo";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { cn } from "@repo/design-system/lib/utils";
 import { EASE_CLASS } from "@/components/mockups/motion";
-import { QrdxLogo } from "@/components/qrdx-logo";
 import { CompetitorLogo } from "@/components/sections/compare/competitor-logo";
 
 interface CompareHeroLogosProps {

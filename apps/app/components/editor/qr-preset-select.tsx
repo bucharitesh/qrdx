@@ -1,5 +1,6 @@
 /** biome-ignore-all lint/suspicious/noArrayIndexKey: false positive */
 
+import { track } from "@repo/analytics";
 import { Tick as Check } from "@repo/design-system/components/icons";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
@@ -24,6 +25,7 @@ import {
   TooltipTrigger,
 } from "@repo/design-system/components/ui/tooltip";
 import { cn } from "@repo/design-system/lib/utils";
+import { splitLocale } from "@repo/i18n/paths";
 import {
   ArrowDown2,
   ArrowLeft,
@@ -41,11 +43,9 @@ import type React from "react";
 import { useCallback, useMemo, useState } from "react";
 import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import { seasonalPresetsFirst } from "@/components/seasonal/preset-order";
-import { track } from "@/lib/analytics";
 import { useMounted } from "@/lib/hooks/use-mounted";
 import { shuffleNext } from "@/lib/hooks/use-theme-shuffle";
 import { useUserSettings } from "@/lib/hooks/use-user-settings";
-import { splitLocale } from "@/lib/i18n/paths";
 import { soundEvent } from "@/lib/sound/emit";
 import { isShuffleId } from "@/lib/themes/shuffle";
 import { dashboardEntry } from "@/lib/workspace-paths";

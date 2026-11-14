@@ -1,7 +1,7 @@
 "use client";
 
+import { resetAnalytics } from "@repo/analytics";
 import { authClient } from "@repo/auth/client";
-import { resetAnalytics } from "@/lib/analytics";
 import { signInPath } from "@/lib/safe-redirect";
 import { ApiError, UnauthorizedError } from "@/types/errors";
 

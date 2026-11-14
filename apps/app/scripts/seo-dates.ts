@@ -10,7 +10,7 @@
 import { execFileSync } from "node:child_process";
 import { writeFileSync } from "node:fs";
 import path from "node:path";
-import { translationLocale } from "@/lib/i18n/docs";
+import { translationLocale } from "@repo/i18n/docs";
 import { industries, placements } from "@/lib/seo-content";
 import { gitLastModified, withoutGitEnv } from "@/lib/seo-dates";
 import {
@@ -38,13 +38,11 @@ if (git(["rev-parse", "--is-shallow-repository"]) !== "false") {
   process.exit(1);
 }
 
-/** English MDX pages in the content folders the sitemap reads git dates for. */
-const content = git([
-  "ls-files",
-  "content/docs",
-  "content/legal",
-  "content/compare",
-])
+/**
+ * English MDX pages in the content folders the sitemap reads git dates for.
+ * The docs' are the docs site's (`bun run --filter docs seo:dates`).
+ */
+const content = git(["ls-files", "content/legal", "content/compare"])
   .split("\n")
   .filter((file) => file.endsWith(".mdx") && !translationLocale(file));
 

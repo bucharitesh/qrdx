@@ -1,4 +1,4 @@
-import type { Locale } from "@/lib/i18n/config";
+import type { Locale } from "@repo/i18n/config";
 import type { TemplateDemo } from "@/lib/landing/demo";
 import { CARD_BOX } from "../_lib/gallery";
 import { TemplateCard } from "./template-card";

@@ -1,17 +1,12 @@
 // Message catalogs (apps/app/messages). English is the source; a key a
 // translation lacks falls back to English, so a slip never shows a raw key.
-// The helpers live in @repo/i18n (packages/i18n/messages.ts), with the copy
-// of the docs' namespaces another app reads; this app loads its full
-// catalogs here.
+// The helpers (mergeMessages, pickMessages, CHROME_NAMESPACES) live in
+// @repo/i18n/messages, with the copy of the docs' namespaces another app
+// reads; this app loads its full catalogs here.
+
+import { DEFAULT_LOCALE, type Locale } from "@repo/i18n/config";
 import { mergeMessages } from "@repo/i18n/messages";
 import en from "@/messages/en.json";
-import { DEFAULT_LOCALE, type Locale } from "./config";
-
-export {
-  CHROME_NAMESPACES,
-  mergeMessages,
-  pickMessages,
-} from "@repo/i18n/messages";
 
 export type Messages = typeof en;
 

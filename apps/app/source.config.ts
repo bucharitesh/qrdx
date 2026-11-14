@@ -2,57 +2,24 @@ import {
   rehypeCodeDefaultOptions,
   remarkSteps,
 } from "fumadocs-core/mdx-plugins";
-import { remarkTypeScriptToJavaScript } from "fumadocs-docgen/remark-ts2js";
 import {
   defineConfig,
   defineDocs,
   frontmatterSchema,
-  metaSchema,
 } from "fumadocs-mdx/config";
 import jsonSchema from "fumadocs-mdx/plugins/json-schema";
 import lastModified from "fumadocs-mdx/plugins/last-modified";
-import { transformerTwoslash } from "fumadocs-twoslash";
-import { createFileSystemTypesCache } from "fumadocs-twoslash/cache-fs";
-import { remarkAutoTypeTable } from "fumadocs-typescript";
 import type { ElementContent } from "hast";
-import rehypeKatex from "rehype-katex";
-import remarkMath from "remark-math";
 import { z } from "zod";
-import { docsIndex } from "./lib/docs-index-plugin";
 import { fillFactsDeep } from "./lib/product-facts";
 import { remarkNpmStatus } from "./lib/remark-npm-status";
 import { remarkProductFacts } from "./lib/remark-product-facts";
 import { gitFileDate } from "./lib/seo-dates";
-// You can customise Zod schemas for frontmatter and `meta.json` here
-// see https://fumadocs.dev/docs/mdx/collections
+
+// The site's MDX collections (lib/content-source.ts). The docs are the docs
+// site's (apps/docs/source.config.ts).
 // `.transform(fillFactsDeep)`: frontmatter strings can quote product counts as
 // `{facts.bodyPatterns}` (lib/product-facts.ts), filled in at build time.
-export const docs = defineDocs({
-  dir: "content/docs",
-  docs: {
-    schema: frontmatterSchema
-      .extend({
-        preview: z.string().optional(),
-        index: z.boolean().default(false),
-        /**
-         * API routes only
-         */
-        method: z.string().optional(),
-        /** API reference pages (fumadocs-openapi, `bun run openapi:generate`) */
-        _openapi: z.looseObject({}).optional(),
-      })
-      .transform(fillFactsDeep),
-    // No `postprocess.includeProcessedMarkdown`: each page's Markdown (the
-    // .md and llms routes) comes from the docs index (lib/docs-index.ts), so
-    // the compiled pages don't carry a copy.
-  },
-  meta: {
-    schema: metaSchema.extend({
-      description: z.string().optional(),
-    }),
-  },
-});
-
 export const legal = defineDocs({
   dir: "content/legal",
 });
@@ -258,9 +225,6 @@ export default defineConfig({
     lastModified({
       versionControl: async (file) => gitFileDate(file),
     }),
-    // .source/docs.ts, .source/content.ts and the docs index the route
-    // handlers read (lib/docs-index.ts), so the build compiles the docs once.
-    docsIndex({ collection: "docs" }),
   ],
   mdxOptions: {
     rehypeCodeOptions: {
@@ -276,9 +240,6 @@ export default defineConfig({
       },
       transformers: [
         ...(rehypeCodeDefaultOptions.transformers ?? []),
-        transformerTwoslash({
-          typesCache: createFileSystemTypesCache(),
-        }),
         {
           name: "@shikijs/transformers:remove-notation-escape",
           code(hast) {
@@ -306,15 +267,6 @@ export default defineConfig({
         id: "package-manager",
       },
     },
-    remarkPlugins: [
-      remarkProductFacts,
-      remarkNpmStatus,
-      remarkSteps,
-      // "$12 vs $15" in prose is prices, not inline math; use $$…$$ for math.
-      [remarkMath, { singleDollarTextMath: false }],
-      remarkAutoTypeTable,
-      remarkTypeScriptToJavaScript,
-    ],
-    rehypePlugins: (v) => [rehypeKatex, ...v],
+    remarkPlugins: [remarkProductFacts, remarkNpmStatus, remarkSteps],
   },
 });

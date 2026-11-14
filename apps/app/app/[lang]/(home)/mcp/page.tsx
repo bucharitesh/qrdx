@@ -1,5 +1,6 @@
 import { Card } from "@repo/design-system/components/ui/card";
 import { cn } from "@repo/design-system/lib/utils";
+import { localizeHref } from "@repo/i18n/paths";
 import { ArrowRight2, TickCircle } from "iconsax-reactjs";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
@@ -19,7 +20,6 @@ import { ToolHero } from "@/components/sections/tools/tool-hero";
 import { MCP_RULES } from "@/lib/i18n/content-rules";
 import { localizeContent } from "@/lib/i18n/content-server";
 import { localizedMetadata } from "@/lib/i18n/metadata";
-import { localizeHref } from "@/lib/i18n/paths";
 import { requireLocale } from "@/lib/i18n/server";
 import {
   claudeCodeCommand,

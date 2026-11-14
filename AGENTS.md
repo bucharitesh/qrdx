@@ -8,8 +8,8 @@ QRdx is an open-source QR code platform (https://qrdx.dev): a free static QR gen
 
 | Path | What it is |
 | --- | --- |
-| `apps/app` | The Next.js app behind qrdx.dev: marketing pages, the editor (`app/(app)/playground`), docs (`content/docs`, fumadocs), the signed-in app (`app/(app)/dashboard`, `app/(app)/settings`), API routes (`app/api`, served as `api.qrdx.dev/v1` and `mcp.qrdx.dev/mcp`) |
-| `apps/docs` | The docs as an app of their own (the docs zone), which the main app proxies at the same URLs once `DOCS_ZONE_URL` is set. Until that cut-over it's a copy of the main app's docs code; its README lists what it reads from `apps/app` |
+| `apps/app` | The Next.js app behind qrdx.dev: marketing pages, the blog, the editor (`app/(app)/playground`), the signed-in app (`app/(app)/dashboard`, `app/(app)/settings`), API routes (`app/api`, served as `api.qrdx.dev/v1` and `mcp.qrdx.dev/mcp`). It serves the docs' URLs through `apps/docs` |
+| `apps/docs` | The docs (qrdx.dev/docs): their content (`content/docs`, every language) and the docs site, a Next.js app (package `docs`) the main app proxies at the same URLs when `DOCS_ZONE_URL` is set; without it, the main app redirects the docs' URLs to qrdx.dev. Its README lists what it reads from `apps/app` |
 | `packages/qrdx` | The QR engine and React library, published to npm as `qrdx` |
 | `packages/cli` | `@qrdx/cli`, the command-line generator |
 | `packages/database` | Drizzle schema (`schema.ts`), migrations and `manual-sql/` |
@@ -30,6 +30,8 @@ QRdx is an open-source QR code platform (https://qrdx.dev): a free static QR gen
 bun install
 bun run --filter qrdx build:inplace     # the app imports the engine's dist/, so build it first
 bun run --filter app dev                # http://localhost:3000 (needs apps/app/.env.local, see CONTRIBUTING)
+bun run --filter docs dev               # the docs on http://localhost:3001 (needs apps/docs/.env.local, see its README);
+                                        # DOCS_ZONE_URL=http://localhost:3001 in apps/app/.env.local shows them through :3000
 bun x ultracite fix <files you changed> # format and lint (Ultracite runs Biome)
 
 cd apps/app
@@ -48,7 +50,7 @@ The pre-push hook runs the engine build, both typechecks, the lint check (`bun r
 - **No placeholders in shipped content.** Docs, legal pages and UI copy go live as written: no `[[PLACEHOLDER]]` (a test fails on them), no "TBD", no invented examples presented as real.
 - **Honest copy.** Never describe a feature that isn't built or isn't available on the deployment. Product counts come from code, not from memory: write `{facts.bodyPatterns}` and the other tokens from `apps/app/lib/product-facts.ts` in MDX, and import the catalogues in TSX. Features that need setup are gated by `lib/feature-availability*` (the rules are in `packages/availability`); docs use `<IfAvailable>`.
 - **Translated pages read their copy from `apps/app/messages/en.json`.** The header, footer, cookie banner, home page and `/pricing` live under `app/[lang]` and exist in every language in `packages/i18n/config.ts`. Change their English in `en.json` (counts and prices stay in code as ICU arguments), then run `bun run --filter app i18n:translate --all` if you have an AI Gateway key; otherwise the new strings show in English until someone does. `bun run --filter app i18n:check` must pass. Every other page lives under `app/(app)`; a page added straight under `app/` is moved by `bun run --filter app i18n:split`. CONTRIBUTING.md, "Translating QRdx", covers adding a language.
-- **The docs code lives in two apps for now.** `apps/docs` copies the main app's docs routes and components (`app/[lang]/docs`, `components/docs`, `components/mdx`, `lib/docs-*`, `lib/i18n/docs*`, `mdx-components.tsx`) until the cut-over removes them from `apps/app`. A change to one of them goes in both apps. The content (`apps/app/content/docs`) and the message catalogs stay in one place.
+- **The docs live in `apps/docs`.** Pages are `apps/docs/content/docs` (MDX, translations beside each English page, review records in `apps/docs/content/review`). The main app's scripts write some of them: `bun run --filter app i18n:docs` (translations) and `openapi:generate` (the API reference). The main app has no docs code of its own: with `DOCS_ZONE_URL` set it proxies the docs' URLs to the docs site, and without it it redirects them to qrdx.dev (self-hosted deployments read the docs there).
 - **Write like a person.** Blog posts and other long-form copy should read as if a person wrote them: plain words, no filler, no sales language.
 - **UI conventions.** Icons come from `iconsax-reactjs` (extra ones live in `packages/design-system/components/icons.tsx`). Don't edit `packages/design-system/components/ui/**`; compose around it. Keep the look monochrome with one accent colour.
 - **Environment variables are declared, then read through `env`.** Each package declares the variables it reads in its `keys.ts`; `apps/app/env.ts` extends them and adds the app's own. Code reads `env` (`import { env } from "@/env"`) or the package's `keys()` rather than `process.env`; the exceptions are `NODE_ENV` and literal `NEXT_PUBLIC_*` reads in client-safe modules, which Next inlines. Only `NEXT_PUBLIC_APP_URL`, `DATABASE_URL` and `BETTER_AUTH_SECRET` are required; a new variable is optional and switches off only its own feature. List it in `apps/app/.env.example` too (a test checks), the only env file a contributor copies (to `apps/app/.env.local`).

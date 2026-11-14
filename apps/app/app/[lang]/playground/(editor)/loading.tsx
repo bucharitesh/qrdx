@@ -1,5 +1,5 @@
+import { QrdxLogoAnimation } from "@repo/design-system/components/brand/qrdx-logo-animation";
 import { useTranslations } from "next-intl";
-import { QrdxLogoAnimation } from "@/components/qrdx-logo-animation";
 
 export default function Loading() {
   const t = useTranslations("playground");

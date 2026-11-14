@@ -2,7 +2,7 @@ import type { SeoTopic } from "./types";
 
 // Industry and placement pages sell custom domains in a few tips, FAQs and
 // recommendations. Where custom domains can't be added
-// (lib/feature-availability-rules.ts), those mentions are left out: a
+// (packages/availability/rules.ts), those mentions are left out: a
 // sentence that mentions them is dropped, and so is an item whose title,
 // label or question does or that has nothing left. They come back on their
 // own once the feature is configured.

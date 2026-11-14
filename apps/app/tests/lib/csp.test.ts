@@ -1,24 +1,24 @@
 // The Content-Security-Policy (@repo/next-config/csp, through
-// lib/security/csp.ts): what each policy allows, which paths get which policy
+// @repo/next-config/csp): what each policy allows, which paths get which policy
 // (next.config.ts headers, proxy.ts nonces) and the violation report parser.
 
-import { cspOptionsFromEnv as packageCspOptions } from "@repo/next-config/csp";
+import {
+  appCsp,
+  appCspDirectives,
+  type CspOptions,
+  createNonce,
+  hostedPageCsp,
+  NONCE_ROUTE,
+  cspOptionsFromEnv as packageCspOptions,
+  prerenderedPagesSource,
+} from "@repo/next-config/csp";
 // Next compiles header sources with its bundled path-to-regexp (no types).
 // @ts-expect-error: no declaration file for Next's compiled copy
 import { pathToRegexp } from "next/dist/compiled/path-to-regexp";
 import { NextRequest } from "next/server";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import mediaManifest from "@/lib/media-manifest.json";
-import {
-  appCsp,
-  appCspDirectives,
-  type CspOptions,
-  createNonce,
-  cspOptionsFromEnv,
-  hostedPageCsp,
-  NONCE_ROUTE,
-  prerenderedPagesSource,
-} from "@/lib/security/csp";
+import { cspOptionsFromEnv } from "@/lib/security/csp";
 import { parseCspReports } from "@/lib/security/csp-report";
 
 const PROD: CspOptions = {
@@ -265,7 +265,7 @@ describe("next.config.ts headers", () => {
     process.env.NEXT_PUBLIC_APP_URL ??= "http://localhost:3000";
     vi.resetModules();
     // createMDX() rewrites .source/*.ts in the background when it runs. In a
-    // test worker that write raced the suites importing @/lib/source and could
+    // test worker that write raced the suites importing .source and could
     // leave the files empty. The headers don't depend on MDX, so skip it.
     vi.doMock("fumadocs-mdx/next", () => ({
       createMDX: () => (config: unknown) => config,

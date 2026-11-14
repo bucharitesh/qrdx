@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { Locale } from "@/lib/i18n/config";
+import type { Locale } from "@repo/i18n/config";
 import { TEMPLATE_RULES } from "@/lib/i18n/content-rules";
 import { localizeContent } from "@/lib/i18n/content-server";
 import { listTemplateDemos } from "@/lib/landing/demo";

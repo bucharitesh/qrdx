@@ -11,7 +11,7 @@ import type { QrTypeFaq } from "./qr-types-content";
  * the dashboard's New page dialog with that page type picked
  * (app/(app)/dashboard/[workspace]/pages/page.tsx reads `?new=`).
  *
- * Every claim must match the page builder and docs: content/docs/
+ * Every claim must match the page builder and docs: apps/docs/content/docs/
  * landing-pages.mdx, files.mdx and nfc.mdx. Limits come from lib/plans.ts.
  */
 

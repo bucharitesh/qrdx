@@ -3,11 +3,11 @@
 // answers on the device.
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
+import { LOCALES } from "@repo/i18n/config";
 import { describe, expect, it } from "vitest";
 import { POST as englishShare } from "@/app/scan/share/route";
 import { manualInstall } from "@/components/scanner/install-app";
 import { launchIntent } from "@/components/scanner/shared-images";
-import { LOCALES } from "@/lib/i18n/config";
 import {
   SHARE_CACHE,
   SHARE_FIELD,

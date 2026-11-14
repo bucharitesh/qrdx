@@ -1,6 +1,10 @@
 "use client";
 
 import {
+  clearOfBanner,
+  useConsentBannerInset,
+} from "@repo/analytics/consent/banner-inset";
+import {
   Drawer,
   DrawerContent,
   DrawerDescription,
@@ -26,10 +30,6 @@ import {
   useRef,
   useState,
 } from "react";
-import {
-  clearOfBanner,
-  useConsentBannerInset,
-} from "@/components/consent/banner-inset";
 import { roleOf } from "@/lib/paint/contrast";
 import { addRecent, paintColors } from "@/lib/paint/swatches";
 import {

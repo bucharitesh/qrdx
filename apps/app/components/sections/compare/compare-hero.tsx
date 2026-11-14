@@ -1,3 +1,4 @@
+import { JsonLd } from "@repo/design-system/components/seo/json-ld";
 import { Button } from "@repo/design-system/components/ui/button";
 import { ArrowDown, ArrowRight } from "iconsax-reactjs";
 import { AsciiField } from "@/components/fx";
@@ -5,7 +6,7 @@ import { LocaleLink } from "@/components/i18n/locale-link";
 import { Breadcrumbs } from "@/components/sections/breadcrumbs";
 import { CompareHeroLogos } from "@/components/sections/compare/compare-hero-logos";
 import { CompareMigrateButton } from "@/components/sections/compare/compare-migrate-button";
-import { breadcrumbSchema, JsonLd } from "@/components/sections/tools/json-ld";
+import { breadcrumbSchema } from "@/components/sections/tools/json-ld";
 import { compareMigration } from "@/lib/migrate/compare";
 import { playgroundHref } from "@/lib/playground-links";
 

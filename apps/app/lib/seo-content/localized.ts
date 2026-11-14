@@ -1,8 +1,8 @@
 import "server-only";
 
+import type { Locale } from "@repo/i18n/config";
 import { getTranslations } from "next-intl/server";
 import { isFeatureAvailable } from "@/lib/feature-availability";
-import type { Locale } from "@/lib/i18n/config";
 import { localizeContent } from "@/lib/i18n/content-server";
 import { topicForDeployment } from "./availability";
 import { createCollection, type SeoCollection } from "./collection";

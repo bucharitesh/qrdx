@@ -1,3 +1,5 @@
+import { JsonLd } from "@repo/design-system/components/seo/json-ld";
+import { localizeHref } from "@repo/i18n/paths";
 import { Barcode, ScanBarcode } from "iconsax-reactjs";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -12,7 +14,6 @@ import {
   textLinkClass,
 } from "@/components/sections/tools/cards";
 import { FaqList } from "@/components/sections/tools/faq-list";
-import { JsonLd } from "@/components/sections/tools/json-ld";
 import { PublicBarcodeGenerator } from "@/components/sections/tools/save-barcode";
 import { ToolHero } from "@/components/sections/tools/tool-hero";
 import { apiBaseUrl } from "@/lib/agents/hosts";
@@ -30,7 +31,6 @@ import { defaultBarcodeStyle } from "@/lib/barcode/style";
 import { BARCODE_CONTENT_RULES } from "@/lib/i18n/content-rules";
 import { localizeContent } from "@/lib/i18n/content-server";
 import { localizedMetadata } from "@/lib/i18n/metadata";
-import { localizeHref } from "@/lib/i18n/paths";
 import { requireLocale } from "@/lib/i18n/server";
 import { baseUrl } from "@/lib/metadata";
 import { buildTimeParams } from "@/lib/static-params";

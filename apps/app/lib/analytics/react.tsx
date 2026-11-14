@@ -1,20 +1,20 @@
 "use client";
 
-import { type ComponentProps, useEffect, useRef } from "react";
-import { LocaleLink as Link } from "@/components/i18n/locale-link";
-import { previousPathname } from "@/lib/navigation-history";
 import type {
   AnalyticsEventName,
   AnalyticsPropsArg,
   EditorSurface,
   QrSource,
-} from "./events";
+} from "@repo/analytics/events";
+import { track } from "@repo/analytics/track";
+import { type ComponentProps, useEffect, useRef } from "react";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
+import { previousPathname } from "@/lib/navigation-history";
 import {
   countsAsBarcode,
   countsAsGenerated,
   editorOpenedProps,
 } from "./funnel";
-import { track } from "./track";
 
 /** Generation counts once the content has settled for this long. */
 const SETTLE_MS = 2000;

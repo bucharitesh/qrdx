@@ -2,22 +2,15 @@
 @import "streamdown/styles.css";
 
 @source "../node_modules/streamdown/dist";
-/* The registry examples render on the component docs pages; they live in
-   @repo/docs-assets, outside the folder Tailwind scans by itself. */
-@source "../../../packages/docs-assets/registry";
 
 @import "fumadocs-ui/css/neutral.css";
 @import "fumadocs-ui/css/preset.css";
 
-/* fumadocs' search marks matches with the CSS Custom Highlight API through
-   these two classes. Next's CSS optimizer (lightningcss) doesn't know the
-   valid ::highlight() pseudo-element yet and warns on every build, so they
-   aren't generated here; the same rule ships inline from
-   components/search-highlight-style.tsx instead. */
+/* fumadocs' search (the docs site's, not used here) marks matches with the
+   CSS Custom Highlight API through these two classes. Next's CSS optimizer
+   (lightningcss) doesn't know the valid ::highlight() pseudo-element yet and
+   warns on every build, so they aren't generated. */
 @source not inline("[&_::highlight(fd-search)]:text-fd-primary [&_::highlight(fd-search)]:underline");
-@import "fumadocs-twoslash/twoslash.css";
-/* API reference pages (content/docs/developers/api) */
-@import "fumadocs-openapi/css/preset.css";
 @import "./loaders.css";
 
 :root {
@@ -99,20 +92,6 @@ g.main:has(> g.plot) > rect {
 
 @utility scrollbar-gutter-both {
   scrollbar-gutter: stable both-edges;
-}
-
-/*
- * API reference (fumadocs-openapi): HTTP methods in the site's monochrome
- * instead of traffic-light colours, in the sidebar and on the pages.
- */
-.font-mono.font-medium:is(
-    .text-green-600,
-    .text-blue-600,
-    .text-orange-600,
-    .text-yellow-600,
-    .text-red-600
-  ) {
-  color: var(--color-fd-foreground);
 }
 
 /*

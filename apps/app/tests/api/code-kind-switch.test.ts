@@ -1,5 +1,5 @@
 // Changing what a printed code opens (app/(app)/dashboard/codes/_lib/code-kind.ts),
-// as content/docs/help/dynamic-codes/change-the-type.mdx describes it: a
+// as apps/docs/content/docs/help/dynamic-codes/change-the-type.mdx describes it: a
 // website link becomes a hosted page and back with the same short link and
 // scans; the page it leaves stays in Pages and can be brought back; a new
 // page counts toward the plan's hosted pages; settings of the other type are

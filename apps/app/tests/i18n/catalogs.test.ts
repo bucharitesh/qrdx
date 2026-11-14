@@ -2,6 +2,9 @@
 // catalogs against English, the glossary and the honest-copy rules.
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
+import { LOCALE_INFO, TRANSLATED_LOCALES } from "@repo/i18n/config";
+import { mergeMessages, pickMessages } from "@repo/i18n/messages";
+import { REVIEW } from "@repo/i18n/review";
 import { createTranslator } from "next-intl";
 import { describe, expect, it, it as test } from "vitest";
 import {
@@ -12,10 +15,7 @@ import {
   sourceHash,
   unflatten,
 } from "@/lib/i18n/catalog";
-import { LOCALE_INFO, TRANSLATED_LOCALES } from "@/lib/i18n/config";
 import { icuShape, shapeMismatch } from "@/lib/i18n/icu";
-import { mergeMessages, pickMessages } from "@/lib/i18n/messages";
-import { REVIEW } from "@/lib/i18n/review";
 import { siteDescription, siteTitle } from "@/lib/metadata";
 import { formatPrice } from "@/lib/pricing";
 import en from "@/messages/en.json";

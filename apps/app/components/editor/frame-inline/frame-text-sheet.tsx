@@ -1,5 +1,6 @@
 "use client";
 
+import { useHideFeaturebaseLauncher } from "@repo/analytics/featurebase-launcher";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
@@ -13,7 +14,6 @@ import { cn } from "@repo/design-system/lib/utils";
 import { Setting4 } from "iconsax-reactjs";
 import { useTranslations } from "next-intl";
 import { useId, useRef, useState } from "react";
-import { useHideFeaturebaseLauncher } from "@/lib/featurebase-launcher";
 import { FrameTextSize } from "../control-sections/frame-fields";
 import {
   charactersLeft,

@@ -1,4 +1,4 @@
-import { splitLocale } from "@/lib/i18n/paths";
+import { splitLocale } from "@repo/i18n/paths";
 
 /**
  * Paths where QRdx's own analytics (PostHog) and support widget (Featurebase)
@@ -16,7 +16,7 @@ import { splitLocale } from "@/lib/i18n/paths";
  */
 const UNTRACKED_PATHS = ["/p", "/q", "/ended", "/scan", "/stats", "/portal"];
 
-// Translated pages (/es/scan) count as their English path (lib/i18n/paths.ts).
+// Translated pages (/es/scan) count as their English path (packages/i18n/paths.ts).
 const TEMPLATE_DEMO_PATH = /^\/templates\/[^/]+\/[^/]+\/?$/;
 
 export function isUntrackedPath(pathname: string | null): boolean {

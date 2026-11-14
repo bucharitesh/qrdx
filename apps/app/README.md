@@ -1,12 +1,12 @@
 # apps/app
 
-The Next.js app behind [qrdx.dev](https://qrdx.dev): the marketing pages, the playground, the docs, the signed-in dashboard and the API. It's licensed under AGPL-3.0-or-later, like the rest of the repository outside the MIT folders ([LICENSING.md](../../LICENSING.md)).
+The Next.js app behind [qrdx.dev](https://qrdx.dev): the marketing pages, the playground, the signed-in dashboard and the API. The docs are their own app, [`apps/docs`](../docs/README.md), which this one serves at the same URLs when `DOCS_ZONE_URL` is set (without it, the docs' URLs redirect to qrdx.dev). It's licensed under AGPL-3.0-or-later, like the rest of the repository outside the MIT folders ([LICENSING.md](../../LICENSING.md)).
 
 | Path | What's there |
 | --- | --- |
 | `app/(app)/playground` | The editor at [qrdx.dev/playground](https://qrdx.dev/playground) |
 | `app/(app)/(home)` | Marketing pages, tools, the community and the blog |
-| `content/docs` | The docs at [qrdx.dev/docs](https://qrdx.dev/docs) (Fumadocs MDX) |
+| `content` | The blog, comparisons, customer stories, legal pages and changelog (Fumadocs MDX) |
 | `app/(app)/dashboard`, `app/(app)/settings` | The signed-in app: codes, pages, analytics, workspaces |
 | `app/api` | API routes, served as `api.qrdx.dev/v1` and `mcp.qrdx.dev/mcp` |
 | `app/q`, `app/(app)/p` | Dynamic code redirects and hosted pages |

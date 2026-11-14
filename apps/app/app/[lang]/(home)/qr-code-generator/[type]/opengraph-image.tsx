@@ -1,5 +1,5 @@
+import { ogSize, renderPageOgImage } from "@repo/design-system/og/brand";
 import { notFound } from "next/navigation";
-import { ogSize, renderPageOgImage } from "@/app/og/brand";
 import { requireLocaleParam } from "@/lib/i18n/static-params";
 import { getQrType, getQrTypeTitle } from "@/lib/qr-types-content";
 import { getHostedQrType } from "@/lib/qr-types-content-hosted";

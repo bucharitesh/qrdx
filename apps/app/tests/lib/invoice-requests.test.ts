@@ -174,9 +174,10 @@ describe("pay by invoice", () => {
 
 describe("where invoice requests are offered", () => {
   it("runs only where QRdx itself does, with email set up", async () => {
-    const { computeFeatures } = await vi.importActual<
-      typeof import("@/lib/feature-availability-rules")
-    >("@/lib/feature-availability-rules");
+    const { computeFeatures } =
+      await vi.importActual<typeof import("@repo/availability")>(
+        "@repo/availability",
+      );
     const on = (env: Record<string, string>) =>
       computeFeatures({ env, onVercel: true, production: true })
         .invoiceRequests;

@@ -1,6 +1,8 @@
 "use client";
 
+import { CookieSettingsButton } from "@repo/analytics/consent/cookie-settings-button";
 import { CANONICAL_HOST, CANONICAL_ORIGIN } from "@repo/config";
+import { QrdxLogo } from "@repo/design-system/components/brand/qrdx-logo";
 import { GithubLogo } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
@@ -13,13 +15,11 @@ import { ArrowDown2 } from "iconsax-reactjs";
 import { useTranslations } from "next-intl";
 import { useId, useState } from "react";
 import { useAvailability } from "@/components/availability-provider";
-import { CookieSettingsButton } from "@/components/consent/cookie-settings-button";
 import { EGG_QR } from "@/components/fx/qr-matrix";
 import { QrMosaic } from "@/components/fx/qr-mosaic";
 import { LocaleLink, useLocalizeHref } from "@/components/i18n/locale-link";
 import { LocaleSwitcher } from "@/components/i18n/locale-switcher";
 import { type FooterLinkConfig, siteConfig } from "@/config/site";
-import { QrdxLogo } from "../qrdx-logo";
 
 const LINK =
   "rounded-sm text-sm/snug text-muted-foreground transition-colors duration-150 hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring";

@@ -1,5 +1,5 @@
 // Folders, tags, trash and duplicates for dynamic codes
-// (app/(app)/dashboard/codes/_lib/organize.ts), as content/docs/dynamic-qr-codes.mdx
+// (app/(app)/dashboard/codes/_lib/organize.ts), as apps/docs/content/docs/dynamic-qr-codes.mdx
 // and teams.mdx describe them: everything is per workspace; team members
 // delete only what they created; trashed codes free their plan slot and
 // restoring needs one; duplicates copy destination, design, folder, tags and

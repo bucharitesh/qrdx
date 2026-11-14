@@ -4,14 +4,12 @@
 
 import {
   breadcrumbSchema as breadcrumbSchemaFor,
+  faqSchema,
   JsonLd,
 } from "@repo/design-system/components/seo/json-ld";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
-import {
-  breadcrumbSchema,
-  faqSchema,
-} from "@/components/sections/tools/json-ld";
+import { breadcrumbSchema } from "@/components/sections/tools/json-ld";
 import { baseUrl } from "@/lib/metadata";
 
 const crumbs = [

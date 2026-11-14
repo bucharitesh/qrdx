@@ -33,8 +33,6 @@ import * as industryImage from "@/app/[lang]/(home)/qr-codes-for/[slug]/opengrap
 import * as industryPage from "@/app/[lang]/(home)/qr-codes-for/[slug]/page";
 import * as placementImage from "@/app/[lang]/(home)/qr-codes-on/[slug]/opengraph-image";
 import * as placementPage from "@/app/[lang]/(home)/qr-codes-on/[slug]/page";
-import type { Locale } from "@/lib/i18n/config";
-import { docsI18n, docsUrl, translationLocale } from "@/lib/i18n/docs";
 import { localeParams } from "@/lib/i18n/static-params";
 import { listTemplates } from "@/lib/landing/templates";
 import { QR_TYPE_SLUGS } from "@/lib/qr-types-content";
@@ -67,11 +65,11 @@ function routesWithStaticParams(dir = APP, out: string[] = []): string[] {
 const ROUTES = routesWithStaticParams().sort();
 
 /**
- * OG images of pages with a dynamic segment, the docs as Markdown and the
- * image files the engine draws.
+ * OG images of pages with a dynamic segment and the image files the engine
+ * draws.
  */
 const ON_DEMAND = ROUTES.filter((file) =>
-  /(?:opengraph-image|twitter-image)\.tsx$|^og\/|^docs-md\/|^llms\.mdx\/|^(?:sample-codes|gallery|catalog|api\/brand-logos)\//.test(
+  /(?:opengraph-image|twitter-image)\.tsx$|^og\/|^(?:sample-codes|gallery|catalog|api\/brand-logos)\//.test(
     file,
   ),
 );
@@ -179,7 +177,7 @@ describe("localeParams", () => {
 });
 
 describe("routes with a fixed param list", () => {
-  it("are all found, the generator, topic, blog, customer, docs and catalogue routes among them", () => {
+  it("are all found, the generator, topic, blog, customer and catalogue routes among them", () => {
     for (const file of [
       "[lang]/(home)/qr-code-generator/[type]/page.tsx",
       "[lang]/(home)/barcode-generator/[format]/page.tsx",
@@ -190,10 +188,6 @@ describe("routes with a fixed param list", () => {
       "(app)/(home)/compare/[slug]/page.tsx",
       "[lang]/(home)/integrations/[slug]/page.tsx",
       "(app)/(home)/legal/[[...slug]]/page.tsx",
-      "[lang]/docs/[[...slug]]/page.tsx",
-      "llms.mdx/[[...slug]]/route.ts",
-      "docs-md/[lang]/[[...slug]]/route.ts",
-      "og/docs/[...slug]/route.tsx",
       "(app)/templates/[type]/page.tsx",
       "(app)/templates/[type]/[template]/page.tsx",
       "(app)/(home)/blog/category/[slug]/opengraph-image.tsx",
@@ -213,8 +207,7 @@ describe("routes with a fixed param list", () => {
       // dynamicParams = false with no params in dev would 404 every page there.
       expect(source).not.toMatch(/export const dynamicParams/);
       expect(source).toMatch(
-        // lib/i18n/static-params.ts has the [lang] list; the docs page takes
-        // its parent's params.
+        // lib/i18n/static-params.ts has the [lang] list.
         /export function generateStaticParams\([^)]*\) \{\s*return (?:buildTimeParams|localeParams|onDemandParams)\(/,
       );
     },
@@ -234,10 +227,7 @@ describe("routes with a fixed param list", () => {
         "[lang]/(home)/qr-code-generator/[type]/opengraph-image.tsx",
         "(app)/(home)/blog/[slug]/opengraph-image.tsx",
         "(app)/(home)/customers/[slug]/opengraph-image.tsx",
-        "og/docs/[...slug]/route.tsx",
         "og/legal/[...slug]/route.tsx",
-        "docs-md/[lang]/[[...slug]]/route.ts",
-        "llms.mdx/[[...slug]]/route.ts",
         "sample-codes/[file]/route.ts",
         "gallery/[file]/route.ts",
         "catalog/[file]/route.ts",
@@ -286,7 +276,7 @@ describe("routes with a fixed param list", () => {
   });
 });
 
-describe("fumadocs sources (docs, legal, blog, compare, llms.mdx, OG)", () => {
+describe("fumadocs sources (legal, blog, compare, OG)", () => {
   // Those routes call notFound() when source.getPage() finds nothing; their
   // modules load MDX, so this checks the loader they use directly.
   it("find no page for an unknown path or a prototype name", () => {
@@ -309,32 +299,6 @@ describe("fumadocs sources (docs, legal, blog, compare, llms.mdx, OG)", () => {
     ]) {
       expect(source.getPage(slugs), slugs.join("/")).toBeUndefined();
     }
-  });
-
-  it("serve the English page where a language has no translation (docs)", () => {
-    const docs = loader({
-      baseUrl: "/docs",
-      source: {
-        files: [
-          { type: "page", path: "guide.mdx", data: { title: "Guide" } },
-          { type: "page", path: "guide.es.mdx", data: { title: "Guía" } },
-          { type: "page", path: "other.mdx", data: { title: "Other" } },
-        ],
-      },
-      i18n: docsI18n,
-      url: (slugs, locale) => docsUrl(slugs, (locale ?? "en") as Locale),
-    });
-    const guide = docs.getPage(["guide"], "es");
-    expect(guide?.data.title).toBe("Guía");
-    expect(guide?.url).toBe("/es/docs/guide");
-    expect(translationLocale(guide?.path ?? "")).toBe("es");
-    const other = docs.getPage(["other"], "es");
-    expect(other?.data.title).toBe("Other");
-    expect(other?.url).toBe("/es/docs/other");
-    expect(translationLocale(other?.path ?? "")).toBeUndefined();
-    expect(docs.getPage(["guide"], "en")?.data.title).toBe("Guide");
-    expect(docs.getPage(["nope"], "es")).toBeUndefined();
-    expect(docs.getPage(["guide.es"], "en")).toBeUndefined();
   });
 });
 

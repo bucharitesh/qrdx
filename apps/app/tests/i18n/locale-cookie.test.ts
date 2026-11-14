@@ -4,12 +4,12 @@
 
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { describe, expect, it } from "vitest";
 import {
   LOCALE_COOKIE,
   LOCALE_COOKIE_MAX_AGE,
   TRANSLATED_LOCALES,
-} from "@/lib/i18n/config";
+} from "@repo/i18n/config";
+import { describe, expect, it } from "vitest";
 import {
   localeCookieString,
   readLocaleCookie,

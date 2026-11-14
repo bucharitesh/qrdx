@@ -1,3 +1,4 @@
+import { HairlineFigure } from "@repo/design-system/components/hairline/hairline";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
@@ -17,7 +18,6 @@ import { DomainsManager } from "@/app/(app)/dashboard/domains/_components/domain
 import { getDomainsOverview } from "@/app/(app)/dashboard/domains/_lib/domains";
 import { UpgradeButton } from "@/app/(app)/dashboard/team/_components/small-actions";
 import { InfoHint } from "@/components/help/info-hint";
-import { HairlineFigure } from "@/components/mockups/hairline";
 import { getDomainConnectOffers } from "@/lib/domain-connect/offers";
 import { parseConnectReturn } from "@/lib/domain-connect/return";
 import { isFeatureAvailable } from "@/lib/feature-availability";

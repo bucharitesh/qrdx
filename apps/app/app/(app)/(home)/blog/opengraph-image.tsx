@@ -1,4 +1,4 @@
-import { ogSize, renderPageOgImage } from "@/app/og/brand";
+import { ogSize, renderPageOgImage } from "@repo/design-system/og/brand";
 import { getPublishedPosts } from "./_lib/posts";
 
 export const alt = "The QRdx blog";

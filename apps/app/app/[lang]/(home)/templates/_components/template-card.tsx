@@ -1,5 +1,7 @@
 import { buttonVariants } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
+import type { Locale } from "@repo/i18n/config";
+import { localizeHref } from "@repo/i18n/paths";
 import { ArrowRight } from "iconsax-reactjs";
 import { getTranslations } from "next-intl/server";
 import { LocaleLink as Link } from "@/components/i18n/locale-link";
@@ -9,8 +11,6 @@ import {
   PhoneFrame,
   TemplatePreview,
 } from "@/components/landing/template-preview";
-import type { Locale } from "@/lib/i18n/config";
-import { localizeHref } from "@/lib/i18n/paths";
 import { buildDemoContent, type TemplateDemo } from "@/lib/landing/demo";
 import { baseUrl } from "@/lib/metadata";
 

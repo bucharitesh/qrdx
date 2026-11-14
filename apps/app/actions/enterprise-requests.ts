@@ -1,5 +1,6 @@
 "use server";
 
+import { DEFAULT_LOCALE, isLocale } from "@repo/i18n/config";
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import { headers } from "next/headers";
 import { ENTERPRISE_HONEYPOT_FIELD } from "@/lib/enterprise";
@@ -9,7 +10,6 @@ import {
   sendEnterpriseRequest,
 } from "@/lib/enterprise-requests";
 import { HttpError } from "@/lib/error-response";
-import { DEFAULT_LOCALE, isLocale } from "@/lib/i18n/config";
 import { enforceRateLimits, getClientIp } from "@/lib/request-guards";
 import { TURNSTILE_FIELD, verifyTurnstile } from "@/lib/safety/turnstile";
 import { logError } from "@/lib/shared";

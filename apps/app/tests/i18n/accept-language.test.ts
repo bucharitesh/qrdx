@@ -1,11 +1,11 @@
 // Scan pages pick QRdx's language from Accept-Language (lib/i18n/accept-language.ts).
 
+import { LOCALES } from "@repo/i18n/config";
 import { describe, expect, it } from "vitest";
 import {
   negotiateLocale,
   parseAcceptLanguage,
 } from "@/lib/i18n/accept-language";
-import { LOCALES } from "@/lib/i18n/config";
 
 describe("negotiateLocale", () => {
   it.each([

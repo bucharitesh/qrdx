@@ -1,8 +1,8 @@
+import { DEFAULT_LOCALE } from "@repo/i18n/config";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { LazyEditor as Editor } from "@/components/lazy-editor";
 import { PLAYGROUND_KEYWORDS } from "@/components/playground/playground-metadata";
-import { DEFAULT_LOCALE } from "@/lib/i18n/config";
 import { localizedMetadata } from "@/lib/i18n/metadata";
 import { requireLocale } from "@/lib/i18n/server";
 

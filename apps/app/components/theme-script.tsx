@@ -57,6 +57,6 @@ export function ThemeScript() {
     })();
   `;
 
-  // Carries the request's CSP nonce on nonce routes (lib/security/csp.ts).
+  // Carries the request's CSP nonce on nonce routes (@repo/next-config/csp).
   return <InlineScript html={scriptContent} />;
 }

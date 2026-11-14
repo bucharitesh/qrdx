@@ -45,7 +45,7 @@ export default async function GuaranteePage() {
     getTranslations({ locale, namespace: "common" }),
     getTranslations({ locale, namespace: "pricing.guarantee.promises" }),
   ]);
-  // Custom domains only where they can be added (lib/feature-availability-rules.ts).
+  // Custom domains only where they can be added (packages/availability/rules.ts).
   const domains = isFeatureAvailable("customDomains") ? "yes" : "no";
   return (
     <main className="flex flex-col divide-y divide-border min-h-screen w-full">

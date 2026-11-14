@@ -1,7 +1,8 @@
+import { JsonLd } from "@repo/design-system/components/seo/json-ld";
 import type { Metadata } from "next";
 import { BlogList } from "@/components/sections/blog/blog-list";
 import { SectionHeader } from "@/components/sections/section-header";
-import { breadcrumbSchema, JsonLd } from "@/components/sections/tools/json-ld";
+import { breadcrumbSchema } from "@/components/sections/tools/json-ld";
 import { baseUrl, createMetadata, siteName } from "@/lib/metadata";
 import { getPublishedPosts, rssAlternateTypes, toPostCard } from "./_lib/posts";
 

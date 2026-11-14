@@ -1,7 +1,7 @@
+import { QrdxLogoAnimation } from "@repo/design-system/components/brand/qrdx-logo-animation";
 import { Skeleton } from "@repo/design-system/components/ui/skeleton";
 import { cn } from "@repo/design-system/lib/utils";
 import { Suspense } from "react";
-import { QrdxLogoAnimation } from "@/components/qrdx-logo-animation";
 
 const LoadingSkeleton = () => (
   <div className="absolute inset-0 flex flex-col">

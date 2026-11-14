@@ -1,5 +1,5 @@
+import { ogSize, renderPageOgImage } from "@repo/design-system/og/brand";
 import { notFound } from "next/navigation";
-import { ogSize, renderPageOgImage } from "@/app/og/brand";
 import { isFeatureAvailable } from "@/lib/feature-availability";
 
 export const alt = "The QRdx bot for Slack";

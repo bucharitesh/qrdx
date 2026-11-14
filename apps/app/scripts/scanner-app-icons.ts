@@ -7,11 +7,11 @@
 // mark or the brand colour changes, and commit the PNGs.
 import { mkdirSync } from "node:fs";
 import path from "node:path";
+import { LOGO_MARK_PATH } from "@repo/design-system/components/brand/brand-marks";
 import { Camera, GalleryExport } from "iconsax-reactjs";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import sharp from "sharp";
-import { LOGO_MARK_PATH } from "@/components/brand-marks";
 
 const OUT = path.join(__dirname, "../public/app-icons/scanner");
 const BLUE = "#0051ff";

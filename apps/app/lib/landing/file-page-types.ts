@@ -1,6 +1,6 @@
 // Hosted page types built around files people upload (PDF, photos, audio,
 // video). Where file storage isn't set up (the fileStorage availability id,
-// lib/feature-availability-rules.ts), the pickers hide them: an owner
+// packages/availability/rules.ts), the pickers hide them: an owner
 // decision, so nobody starts a page whose main block can't take an upload.
 // Client-safe and tiny, so pickers can check without loading the templates.
 

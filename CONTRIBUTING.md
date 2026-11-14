@@ -81,12 +81,23 @@ You don't need a database or any environment variables to work on the React libr
 
    Open http://localhost:3000. On a fresh clone, run `bun run typegen:app` once before your first typecheck (the pre-push hook also runs it). Without `apps/app/.env.local` it uses the same placeholder settings as CI.
 
+6. **Run the docs (optional)**
+
+   The docs at `/docs` are an app of their own, `apps/docs`. Without it, the main app sends every docs URL to the same page on qrdx.dev. To work on the docs:
+
+   ```bash
+   cp apps/docs/.env.example apps/docs/.env.local
+   bun run --filter docs dev
+   ```
+
+   Open http://localhost:3001/docs. To see them through the main app, as readers do, add `DOCS_ZONE_URL=http://localhost:3001` to `apps/app/.env.local` and restart `bun run --filter app dev`.
+
 ## Project structure
 
 | Path | What it is |
 | --- | --- |
-| `apps/app` | The Next.js app behind qrdx.dev: marketing pages, the editor (`app/(app)/playground`), docs (`content/docs`), the blog, the signed-in app (`app/(app)/dashboard`, `app/(app)/settings`), admin, and the API routes (`app/api`, served as `api.qrdx.dev/v1` and `mcp.qrdx.dev/mcp`) |
-| `apps/docs` | The docs as an app of their own, deployed to a separate Vercel project from `.github/workflows/docs-deploy.yml`. With `DOCS_ZONE_URL` set, the main app proxies `/docs` and the other docs URLs to it. Until then it's a copy of the main app's docs code, so a change to the docs routes or components goes in both apps (its README says what it reads from `apps/app`) |
+| `apps/app` | The Next.js app behind qrdx.dev: marketing pages, the editor (`app/(app)/playground`), the blog, the signed-in app (`app/(app)/dashboard`, `app/(app)/settings`), admin, and the API routes (`app/api`, served as `api.qrdx.dev/v1` and `mcp.qrdx.dev/mcp`). It serves the docs' URLs through `apps/docs` |
+| `apps/docs` | The docs: their pages (`content/docs`, MDX, every language) and the docs site, a Next.js app deployed to a separate Vercel project from `.github/workflows/docs-deploy.yml`. With `DOCS_ZONE_URL` set, the main app proxies `/docs` and the other docs URLs to it; without it (self-hosting, local development), it redirects them to qrdx.dev. Its README says what it reads from `apps/app` |
 | `packages/qrdx` | The QR engine and React library, published to npm as `qrdx` |
 | `packages/cli` | The command-line tool, published to npm as `@qrdx/cli` |
 | `packages/auth` | Better Auth server and client configuration |
@@ -115,7 +126,7 @@ bun run test                        # every package's tests, through turbo
 bun run lint:ci                     # ultracite check: Biome's lint and format rules over the whole repository
 ```
 
-A pull request into `staging` tests only the packages it changes and the packages that depend on them (`turbo test --affected`). A content-only change runs the main app's tests and skips the engine's; a change to `packages/qrdx` runs the engine, the CLI and the main app. Pushes to `staging` and `main`, release pull requests into `main` and manual runs test everything, unless an earlier full run already passed on the identical code (see above). Turbo's cache (`.turbo/cache`, kept between runs with `actions/cache`) replays any task whose inputs haven't changed, and the job's summary lists what was replayed and what ran.
+A pull request into `staging` tests only the packages it changes and the packages that depend on them (`turbo test --affected`). A change to the docs' pages (`apps/docs/content`) runs the docs site's tests and the main app's, which check the app against them, and skips the engine's; a change to `packages/qrdx` runs the engine, the CLI and the main app. Pushes to `staging` and `main`, release pull requests into `main` and manual runs test everything, unless an earlier full run already passed on the identical code (see above). Turbo's cache (`.turbo/cache`, kept between runs with `actions/cache`) replays any task whose inputs haven't changed, and the job's summary lists what was replayed and what ran.
 
 The official frames (`packages/qrdx/src/frames/official`, hundreds of them) all get their spec, color, layout and generator checks and one crisp decode on every run, but the slow scan checks (the phone-camera model at three distances, 160 and 320 px, the scan score, zbar, PDF and EPS) only go to a sample: the hand-made frames, one frame per layout, and a set that rotates daily so every frame comes round (`packages/qrdx/scripts/official-frames/sample.mjs`). To scan every frame, as the weekly and release `Frame scan` workflow does, set `QRDX_FULL_FRAME_SCAN=1`:
 
@@ -138,7 +149,7 @@ bun x ultracite fix <files>
 
 | Suite | Where | Run |
 | --- | --- | --- |
-| Unit and integration (Vitest) | `apps/app/tests/**`, `packages/*/tests` | `bun run --filter app test:unit`, or `bun run test` for the monorepo |
+| Unit and integration (Vitest) | `apps/app/tests/**`, `apps/docs/tests/**`, `packages/*/tests` | `bun run --filter app test:unit`, `bun run --filter docs test`, or `bun run test` for the monorepo |
 | node:test suites next to the code | `apps/app/**/*.test.ts` outside `tests/` and `e2e/` | `bun run --filter app test:node` |
 | Playground e2e | `apps/app/e2e/playground.e2e.ts` | `bun run --filter app test:e2e` |
 | Signed-in app e2e | `apps/app/e2e/app.e2e.ts` | `bun run --filter app test:e2e:app` (needs a session cookie, below) |
@@ -225,18 +236,18 @@ It fails on keys that English doesn't have, on placeholders or tags that changed
 
 ### Docs
 
-The docs (`apps/app/content/docs`) are translated into the languages whose entry in `packages/i18n/config.ts` has `docs: true`: today all of them, `es`, `pt-BR`, `fr`, `de`, `it`, `ja`, `ko`, `zh-Hans`, `id` and `hi`. Their pages live under the language's segment, such as `/es/docs/...`, `/pt-br/docs/...` and `/zh-hans/docs/...`; English keeps `/docs/...`. A language added without `docs: true` links to the English docs.
+The docs (`apps/docs/content/docs`) are translated into the languages whose entry in `packages/i18n/config.ts` has `docs: true`: today all of them, `es`, `pt-BR`, `fr`, `de`, `it`, `ja`, `ko`, `zh-Hans`, `id` and `hi`. Their pages live under the language's segment, such as `/es/docs/...`, `/pt-br/docs/...` and `/zh-hans/docs/...`; English keeps `/docs/...`. A language added without `docs: true` links to the English docs.
 
 | File | What it holds |
 | --- | --- |
-| `content/docs/<page>.<code>.mdx` | A page's translation, beside the English `<page>.mdx` |
-| `content/docs/<folder>/meta.<code>.json` | The folder's sidebar labels: tab and folder names, separators |
-| `messages/review/docs/<code>.json` | For each English file, a hash of the English the translation came from and its status, `machine` or `reviewed` |
-| `messages/<code>.json`, key `docs` | The docs interface: search, table of contents, page buttons, the language menu, the 404 page |
+| `apps/docs/content/docs/<page>.<code>.mdx` | A page's translation, beside the English `<page>.mdx` |
+| `apps/docs/content/docs/<folder>/meta.<code>.json` | The folder's sidebar labels: tab and folder names, separators |
+| `apps/docs/content/review/<code>.json` | For each English file, a hash of the English the translation came from and its status, `machine` or `reviewed` |
+| `apps/app/messages/<code>.json`, key `docs` | The docs interface: search, table of contents, page buttons, the language menu, the 404 page |
 
 A page that isn't translated shows the English text at the language's URL, with a note saying so. The sidebar's structure always comes from the English `meta.json`; a translated `meta.<code>.json` only supplies labels. So a new English page shows up in every language's sidebar right away, in English, until someone translates it. The API reference (`developers/api`) stays English: it's generated from the OpenAPI document.
 
-Translate missing and stale pages with a model (same key as above):
+The translation tools stay with the main app's (they share its glossary and checks) and write into `apps/docs/content`. Translate missing and stale pages with a model (same key as above):
 
 ```bash
 AI_GATEWAY_API_KEY=<your key> bun run --filter app i18n:docs --locale <code>
@@ -253,7 +264,7 @@ By hand: write `<page>.<code>.mdx` with the same frontmatter keys, translating `
 
 A language with `review: "machine"` is live on the site but hidden from search engines. Its pages are `noindex`, they're left out of the sitemap, and no page links to them with hreflang. To publish a language, a native speaker reads every string, sets each one's `status` to `"reviewed"` in `review/<code>.json`, and changes the language's `review` to `"reviewed"` in the config. From the next deploy its pages are indexed, listed in the sitemap and linked with hreflang. `i18n:check` then fails on any string in that language that is missing, machine-made or stale. To publish single pages first, set `review` to a list of paths, such as `["/", "/pricing"]`.
 
-Docs pages follow the same `review`: a list can name docs paths (`"/docs/help"`), and `"reviewed"` publishes every translated docs page. Before that, a native speaker sets each page's `status` to `"reviewed"` in `review/docs/<code>.json`; `i18n:check` fails on a published docs page that is machine-made or stale. A page that isn't translated is never indexed: it carries `noindex` and a canonical link to the English page.
+Docs pages follow the same `review`: a list can name docs paths (`"/docs/help"`), and `"reviewed"` publishes every translated docs page. Before that, a native speaker sets each page's `status` to `"reviewed"` in `apps/docs/content/review/<code>.json`; `i18n:check` fails on a published docs page that is machine-made or stale. A page that isn't translated is never indexed: it carries `noindex` and a canonical link to the English page.
 
 ## Pull requests
 
@@ -263,7 +274,7 @@ Docs pages follow the same `review`: a list can name docs paths (`"/docs/help"`)
 - Fill in the pull request template. For UI changes, include before and after screenshots at 1440 px and 390 px wide, in light and dark mode.
 - Keep secrets out of code, tests, screenshots and logs: no `.env` values, tokens or session cookies. Tests use the fakes in `apps/app/tests/support/`.
 - Copy on the site goes live as written, so no placeholders or "TBD". Product counts come from code (`apps/app/lib/product-facts.ts` and the catalogues), not typed by hand.
-- Update the docs (`apps/app/content/docs`) or package READMEs when you change behavior or public APIs.
+- Update the docs (`apps/docs/content/docs`) or package READMEs when you change behavior or public APIs.
 - Make sure the checks above pass. A maintainer reviews every pull request before it's merged.
 - Sign the [contributor license agreement](#contributor-license-agreement) when the bot asks on your first pull request.
 
@@ -281,6 +292,6 @@ Pull requests from bots, such as Dependabot and GitHub Actions, don't need a sig
 
 Issues labeled [`good first issue`](https://github.com/qrdxinc/qrdx/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) are small and self-contained, and [`help wanted`](https://github.com/qrdxinc/qrdx/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) marks bigger ones where help is welcome. Comment on the issue before you start, so two people don't build the same thing. The `area: …` labels tell you which part of the repository an issue is about.
 
-When nothing is open under those labels, docs fixes are a good first pull request: the **Open** menu under each docs page's title has **Open in GitHub**, which takes you to the page's source in `apps/app/content/docs`. Or ask in [Q&A](https://github.com/qrdxinc/qrdx/discussions/categories/q-a) what would help most.
+When nothing is open under those labels, docs fixes are a good first pull request: the **Open** menu under each docs page's title has **Open in GitHub**, which takes you to the page's source in `apps/docs/content/docs`. Or ask in [Q&A](https://github.com/qrdxinc/qrdx/discussions/categories/q-a) what would help most.
 
 By contributing, you agree to the [contributor license agreement](#contributor-license-agreement) and to follow the [Code of Conduct](.github/CODE_OF_CONDUCT.md).

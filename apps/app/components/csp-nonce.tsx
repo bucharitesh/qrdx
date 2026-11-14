@@ -5,7 +5,7 @@ import { useContext } from "react";
 
 /**
  * The request's CSP nonce while server-rendering a nonce route (see
- * lib/security/csp.ts), else undefined. Next reads it from the policy that
+ * @repo/next-config/csp), else undefined. Next reads it from the policy that
  * proxy.ts sets and hands it to next/script through this context; inline
  * scripts we render ourselves need it too. Prerendered pages have none (their
  * policy allows inline scripts).

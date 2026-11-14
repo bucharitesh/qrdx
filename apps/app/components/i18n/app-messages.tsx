@@ -1,9 +1,10 @@
+import { LOCALE_INFO } from "@repo/i18n/config";
+import { pickMessages } from "@repo/i18n/messages";
 import { NextIntlClientProvider } from "next-intl";
 import type { ReactNode } from "react";
 import { getAppLocale } from "@/lib/i18n/app-locale";
-import { LOCALE_INFO } from "@/lib/i18n/config";
 import { APP_NAV_CONTENT, APP_NAV_RULES } from "@/lib/i18n/content-rules";
-import { loadMessages, pickMessages } from "@/lib/i18n/messages";
+import { loadMessages } from "@/lib/i18n/messages";
 import { ClientContent } from "./client-content";
 import { DocumentLocale } from "./document-locale";
 

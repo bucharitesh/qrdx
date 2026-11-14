@@ -1,9 +1,10 @@
+import { type Crumb, JsonLd } from "@repo/design-system/components/seo/json-ld";
+import { localizeHref } from "@repo/i18n/paths";
 import { useLocale } from "next-intl";
 import type { ReactNode } from "react";
 import { AsciiField, type AsciiVariant, Backdrop } from "@/components/fx";
 import { Breadcrumbs } from "@/components/sections/breadcrumbs";
-import { localizeHref } from "@/lib/i18n/paths";
-import { breadcrumbSchema, type Crumb, JsonLd } from "./json-ld";
+import { breadcrumbSchema } from "./json-ld";
 
 interface ToolHeroProps {
   /** Full trail including the current page (last item, not linked). */

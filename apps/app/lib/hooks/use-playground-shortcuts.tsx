@@ -1,5 +1,6 @@
 "use client";
 
+import { track } from "@repo/analytics";
 import { toast } from "@repo/design-system";
 import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
@@ -12,7 +13,6 @@ import {
 import { patterns as cornerEyeDotPatterns } from "@/components/playground/corner-eye-dot-pattern-selector";
 import { patterns as cornerEyePatterns } from "@/components/playground/corner-eye-pattern-selector";
 import { patterns as bodyPatterns } from "@/components/playground/pattern-selector";
-import { track } from "@/lib/analytics";
 import { DEFAULT_QR_LOGO } from "@/lib/constants";
 import { useControlsTabFromUrl } from "@/lib/hooks/use-controls-tab-from-url";
 import { useKeyboardShortcut } from "@/lib/hooks/use-keyboard-shortcuts";

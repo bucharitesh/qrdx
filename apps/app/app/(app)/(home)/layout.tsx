@@ -1,3 +1,4 @@
+import { JsonLd } from "@repo/design-system/components/seo/json-ld";
 import {
   SeasonalLayer,
   SeasonCharacters,
@@ -5,7 +6,6 @@ import {
 import { CTASection } from "@/components/sections/cta-section";
 import { FooterSection } from "@/components/sections/footer-section";
 import { Navbar } from "@/components/sections/navbar";
-import { JsonLd } from "@/components/sections/tools/json-ld";
 import { organizationSchema } from "@/lib/seo-schema";
 
 export default function Layout({ children }: LayoutProps<"/">) {

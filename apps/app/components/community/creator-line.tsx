@@ -1,11 +1,11 @@
 "use client";
 
+import { QrdxLogo } from "@repo/design-system/components/brand/qrdx-logo";
 import { cn } from "@repo/design-system/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "facehash";
 import { Verify } from "iconsax-reactjs";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { QrdxLogo } from "@/components/qrdx-logo";
 import { profilePath } from "@/lib/community/handles";
 import type { CommunityCreator } from "@/lib/community/types";
 

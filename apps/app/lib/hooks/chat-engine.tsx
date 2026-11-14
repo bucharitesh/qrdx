@@ -1,6 +1,7 @@
 "use client";
 
 import { useChat } from "@ai-sdk/react";
+import { track } from "@repo/analytics";
 import { toast } from "@repo/design-system";
 import { useQueryClient } from "@tanstack/react-query";
 import {
@@ -27,7 +28,6 @@ import type {
   DesignProgress,
 } from "@/lib/ai/agent/tools";
 import { parseAiSdkTransportError } from "@/lib/ai/parse-ai-sdk-transport-error";
-import { track } from "@/lib/analytics";
 import { handleUnauthorized } from "@/lib/handle-unauthorized";
 import { withoutImageFills } from "@/lib/paint/image-fills";
 import { isDeepEqual } from "@/lib/utils";

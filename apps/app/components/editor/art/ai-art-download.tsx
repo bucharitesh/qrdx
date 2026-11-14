@@ -1,5 +1,6 @@
 "use client";
 
+import { track } from "@repo/analytics";
 import { toast } from "@repo/design-system";
 import { Spinner } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
@@ -28,7 +29,6 @@ import {
   downloadImage,
   saveBlob,
 } from "@/components/sections/ai-art/image-utils";
-import { track } from "@/lib/analytics";
 import { soundEvent } from "@/lib/sound/emit";
 import { applyResultAsImageQR } from "./art-canvas";
 

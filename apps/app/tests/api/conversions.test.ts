@@ -1,4 +1,4 @@
-// POST /api/v1/conversions as content/docs/tracking-and-conversions.mdx and
+// POST /api/v1/conversions as apps/docs/content/docs/tracking-and-conversions.mdx and
 // developers/rest-api.mdx describe it: a Business feature that attributes a
 // sale or sign-up to the scan that led to it. Browsers report with the signed
 // qrdx_sid when tracking is on for the code; servers report with a codes:write

@@ -6,8 +6,8 @@
 // was translated from and its review status. A translation is "stale" when
 // the English has changed since; i18n:translate redoes those.
 import { createHash } from "node:crypto";
+import type { ReviewState } from "@repo/i18n/review";
 import { numberMismatch, shapeMismatch } from "./icu";
-import type { ReviewState } from "./review";
 
 export type Catalog = { [key: string]: string | Catalog };
 

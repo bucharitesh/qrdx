@@ -1,4 +1,4 @@
-// The QRdx OAuth 2.0 provider as content/docs/developers/rest-api.mdx
+// The QRdx OAuth 2.0 provider as apps/docs/content/docs/developers/rest-api.mdx
 // describes it, driven through the real route handlers (authorize, token,
 // revoke, userinfo, app-info, GET /v1/me) and Settings → Authorized apps.
 // Tables live in memory (tests/support/fake-db.ts), so the handlers' own

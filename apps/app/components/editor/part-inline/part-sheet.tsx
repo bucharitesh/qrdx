@@ -1,5 +1,6 @@
 "use client";
 
+import { useHideFeaturebaseLauncher } from "@repo/analytics/featurebase-launcher";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   Sheet,
@@ -11,7 +12,6 @@ import { cn } from "@repo/design-system/lib/utils";
 import { ArrowDown2, Setting4, Shuffle } from "iconsax-reactjs";
 import { useTranslations } from "next-intl";
 import { type ReactNode, useId, useState } from "react";
-import { useHideFeaturebaseLauncher } from "@/lib/featurebase-launcher";
 import { insideInlineEditor } from "../frame-inline/inline-toolbar";
 import type { PartItem } from "./part-controls";
 import type { PartId } from "./part-targets";

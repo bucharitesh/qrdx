@@ -1,11 +1,11 @@
 "use client";
 
+import { QrdxLogoAnimation } from "@repo/design-system/components/brand/qrdx-logo-animation";
 import { Button } from "@repo/design-system/components/ui/button";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
-import { QrdxLogoAnimation } from "@/components/qrdx-logo-animation";
 import { signInPath } from "@/lib/safe-redirect";
 import {
   SECOND_STEP_TITLES,

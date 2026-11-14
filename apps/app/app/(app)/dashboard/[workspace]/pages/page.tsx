@@ -1,3 +1,4 @@
+import { HairlineFigure } from "@repo/design-system/components/hairline/hairline";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
@@ -59,7 +60,6 @@ import {
   listPageTypes,
 } from "@/app/(app)/dashboard/pages/_lib/landing-pages";
 import { CopyButton } from "@/components/copy-button";
-import { HairlineFigure } from "@/components/mockups/hairline";
 import { getAppTranslations } from "@/lib/i18n/app-locale";
 import { getTemplate } from "@/lib/landing/templates";
 import { loadPage } from "@/lib/paging";

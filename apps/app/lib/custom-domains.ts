@@ -2,14 +2,14 @@ import "server-only";
 
 import { randomBytes } from "node:crypto";
 import { Resolver } from "node:dns/promises";
+import type { CustomDomainMode } from "@repo/availability";
 import { env } from "@/env";
 import { getCustomDomainMode } from "@/lib/feature-availability";
-import type { CustomDomainMode } from "@/lib/feature-availability-rules";
 import { baseUrl } from "@/lib/metadata";
 
 /**
  * How custom domains are connected on this deployment (decided in
- * lib/feature-availability-rules.ts, `customDomainMode`):
+ * packages/availability/rules.ts, `customDomainMode`):
  * - "vercel": added to the Vercel project through the Domains API
  *   (VERCEL_API_TOKEN + VERCEL_PROJECT_ID).
  * - "manual": self-hosted; the owner routes the domain to this server and
