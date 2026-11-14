@@ -20,7 +20,7 @@ The UI, parser and safety checks already exist as React components. With Capacit
 
 ## It stays out of the monorepo
 
-`apps/native` is excluded from the Bun workspace (`"!apps/native"` in the root `package.json`) and has its own `bun.lock`. Root `bun install`, turbo, CI and the Vercel build never see it. Biome lints its `src/`, and skips the generated `ios/` and `android/` projects.
+`apps/native` is excluded from the Bun workspace (`"!apps/native"` in the root `package.json`) and has its own `bun.lock`. Root `bun install`, turbo and the Vercel build never see it. CI installs it on its own and runs its typecheck (`bun run typecheck` here), which also checks the web components it reuses against the shims in `src/shims/`. Biome lints its `src/`, and skips the generated `ios/` and `android/` projects.
 
 ## Build and run
 
