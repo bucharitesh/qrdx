@@ -1,55 +1,55 @@
 ---
 title: "QR codes dinâmicos"
-description: "Imprima um QR code uma vez, mude depois para onde ele aponta e veja quantas vezes ele é lido."
+description: "Imprima um QR code uma vez, altere para onde ele aponta depois e veja com que frequência ele é lido."
 icon: QrCode
 ---
 
-Um QR code dinâmico codifica um link curto, como `https://qrdx.dev/q/aB3dE5f`, em vez da sua URL final. Ao ler o código, o link curto é aberto e redireciona para o destino que você definiu. Você pode mudar o destino a qualquer momento, então os códigos impressos nunca ficam desatualizados, e cada leitura é contabilizada.
+Um QR code dinâmico codifica um link curto, como `https://qrdx.dev/q/aB3dE5f`, em vez da sua URL final. Ao ser lido, ele abre o link curto, que redireciona para o destino que você definiu. Você pode alterar o destino a qualquer momento, então os códigos impressos nunca ficam desatualizados, e cada leitura é contabilizada.
 
-Os QR codes estáticos do Playground e da biblioteca `qrdx` continuam grátis e ilimitados. Os códigos dinâmicos exigem uma conta QRdx.
+Os QR codes estáticos do playground e da biblioteca `qrdx` continuam grátis e sem limite. Os QR codes dinâmicos exigem uma conta na QRdx.
 
 ## Criar um código dinâmico [#create-a-dynamic-code]
 
-- **Painel:** abra o [Painel](/dashboard), clique em **New code**, informe a URL de destino e, se quiser, um título. Baixe o código em PNG, WebP ou SVG.
-- **Playground:** escolha o tipo de conteúdo **URL**, informe seu link e ative **Make it dynamic**. O QR code passa a usar um link curto e mantém seu design. Se você editar a URL depois, clique em **Point it to the new URL** para atualizar o destino. **Save design to code** guarda o design atual junto com o código.
+- **Painel:** abra [Painel](/dashboard), clique em **Novo código**, informe a URL de destino e um título opcional. Baixe o código em PNG, WebP ou SVG.
+- **Playground:** escolha o tipo de conteúdo **URL**, informe o seu link e ative **Tornar dinâmico**. O QR code passa a usar um link curto e mantém o seu design. Se você editar a URL depois, clique em **Apontar para a nova URL** para atualizar o destino. **Salvar design no código** armazena o design atual junto com o código.
 
-Os destinos precisam ser links `http://` ou `https://`. Links com nome de usuário ou senha, e links para outros links curtos do QRdx, são rejeitados.
+Os destinos precisam ser links `http://` ou `https://`. Links com nome de usuário ou senha, e links para outros links curtos da QRdx, são rejeitados.
 
-## Back-halves personalizados [#custom-back-halves]
+## Final personalizado do link [#custom-back-halves]
 
-Cada código recebe um back-half aleatório de 7 caracteres, a parte depois de `/q/`. Nos planos Pro e Business, você pode escolher o seu, como `https://qrdx.dev/q/spring-menu`: preencha **Custom back-half** ao criar ou editar um código, e a caixa de diálogo avisa enquanto você digita se o nome está livre.
+Cada código recebe um final aleatório de 7 caracteres, a parte depois de `/q/`. No Pro e no Business você pode escolher o seu próprio, como `https://qrdx.dev/q/spring-menu`: preencha **Final personalizado** ao criar ou editar um código, e a caixa de diálogo informa enquanto você digita se ele está disponível.
 
-- De 3 a 64 caracteres: letras, dígitos, `-` e `_`, sem começar nem terminar com `-`.
-- Os back-halves diferenciam maiúsculas de minúsculas, como os gerados automaticamente: `Spring-Menu` e `spring-menu` são dois links diferentes.
-- Em `qrdx.dev`, um back-half é único em todo o QRdx, e palavras que parecem páginas do QRdx (`admin`, `api`, `docs`, `login`, `pricing`, `settings`, ...) são reservadas.
-- No seu próprio [domínio personalizado](/docs/custom-domains), ele só precisa ser único naquele domínio, e apenas `api`, `p` e `q` são reservados, então `go.yourbrand.com/pricing` funciona. Esse back-half pertence ao domínio: não existe um link `qrdx.dev/q/` para ele.
-- Mudar o back-half de um código muda o link dele: os QR codes impressos com o antigo deixam de funcionar, então baixe o código de novo.
+- De 3 a 64 caracteres: letras, dígitos, `-` e `_`, sem começar ou terminar com `-`.
+- Os finais diferenciam maiúsculas de minúsculas, como os gerados automaticamente: `Spring-Menu` e `spring-menu` são dois links diferentes.
+- Em `qrdx.dev`, um final é único em toda a QRdx, e palavras que parecem páginas da QRdx (`admin`, `api`, `docs`, `login`, `pricing`, `settings`, ...) são reservadas.
+- No seu próprio [domínio personalizado](/docs/custom-domains), o final só precisa ser único nesse domínio, e apenas `api`, `p` e `q` são reservados, então `go.yourbrand.com/pricing` funciona. Esse final pertence ao domínio: ele não tem um link `qrdx.dev/q/`.
+- Ao alterar o final de um código, o link dele muda: os QR codes impressos com o antigo deixam de funcionar, então baixe o código novamente.
 
 ## Gerenciar códigos [#manage-codes]
 
-No painel você pode:
+No painel, você pode:
 
-- **Edit link:** mudar o destino ou o título. O código impresso continua funcionando e abre o novo destino na próxima leitura.
-- **Change type:** transformar um link de site em uma [página hospedada](/docs/landing-pages), uma página de volta em link, ou uma página em outro tipo de página. O link curto e as leituras continuam. Veja [Mude o que um código impresso abre](/docs/help/dynamic-codes/change-the-type).
-- **Edit design in playground:** abre o código no editor, ainda vinculado ao link curto dele.
-- **Archive:** o link curto mostra uma página de "não está mais ativo" até você restaurar o código. Códigos arquivados não contam para o limite do seu plano.
-- **Move to trash:** o link curto mostra uma página de "não está mais ativo" (HTTP 410) e o código deixa de contar para o seu plano. Restaure-o em **Trash** ou exclua-o definitivamente por lá, o que também remove o histórico de leituras; o link curto passa então a mostrar uma página de "QR code não encontrado". Excluir pela API (`DELETE /v1/codes/{id}`) é permanente imediatamente.
-- **Duplicate:** copia o destino, o design, a pasta, as tags e as notas para um novo código, com um novo link curto e sem leituras.
-- **Version history:** cada alteração fica registrada na página do código; ao restaurar uma versão, as configurações atuais são salvas antes, então a restauração pode ser desfeita.
+- **Editar link:** alterar o destino ou o título. O código impresso continua funcionando e abre o novo destino na próxima leitura.
+- **Alterar tipo:** transformar um link de site em uma [página hospedada](/docs/landing-pages), uma página de volta em link, ou uma página em outro tipo de página. O link curto e as leituras são mantidos. Veja [Alterar o que um código impresso abre](/docs/help/dynamic-codes/change-the-type).
+- **Editar design no playground:** abre o código no editor, ainda vinculado ao seu link curto.
+- **Arquivar:** o link curto mostra a página "não está mais ativo" até você restaurar o código. Códigos arquivados não contam para o limite do seu plano.
+- **Mover para a lixeira:** o link curto mostra a página "não está mais ativo" (HTTP 410) e o código deixa de contar para o seu plano. Restaure-o em **Lixeira** ou exclua-o para sempre por lá, o que também remove o histórico de leituras; depois disso, o link curto mostra a página "QR code não encontrado". Excluir pela API (`DELETE /v1/codes/{id}`) é permanente imediatamente.
+- **Duplicar:** copia o destino, o design, a pasta, as tags e as notas para um novo código, com um novo link curto e sem leituras.
+- **Histórico de versões:** toda alteração é registrada na página do código; ao restaurar uma versão, as configurações atuais são salvas antes, então a restauração pode ser desfeita.
 
 ## Organizar códigos [#organize-codes]
 
-- **Pastas:** aninhe até 5 níveis. Arraste códigos para uma pasta ou use **Move to folder**. Excluir uma pasta move seus códigos e subpastas um nível acima.
+- **Pastas:** aninhe até 5 níveis de profundidade. Arraste códigos para uma pasta ou use **Mover para pasta**. Ao excluir uma pasta, os códigos e subpastas dela sobem um nível.
 - **Tags:** filtre por várias tags para ver os códigos que têm todas elas.
-- **Favoritos e notas:** marque códigos com estrela e guarde notas privadas; as notas são pesquisáveis.
-- **A busca** abrange títulos, destinos, notas, tags e back-halves (cole um link curto para encontrar o código dele).
-- **Ações em massa:** selecione códigos para mover, adicionar tags, pausar, arquivar, favoritar, enviar para a lixeira ou baixar como um ZIP de arquivos PNG, WebP ou SVG.
-- **Importação de CSV:** **Codes → Import** cria até {facts.importRows} códigos dinâmicos a partir de um CSV (destino, título, pasta, tags e, opcionalmente, um back-half personalizado na coluna `slug`), e pode colocar todos os códigos em uma pasta e adicionar tags a todos. Uma importação longa pode ser pausada e continua depois de um recarregamento ou de uma queda de conexão sem criar nenhum código duas vezes. Ela termina com um CSV de resultados (o link curto de cada linha) e um ZIP dos códigos em PNG ou SVG. Importar mais de uma linha e usar back-halves personalizados exigem o plano Pro.
+- **Favoritos e notas:** marque códigos com estrela e mantenha notas privadas; as notas podem ser pesquisadas.
+- **Busca** abrange títulos, destinos, notas, tags e finais (cole um link curto para encontrar o seu código).
+- **Ações em lote:** selecione códigos para mover, marcar com tags, pausar, arquivar, favoritar, enviar para a lixeira ou baixá-los como um ZIP de arquivos PNG, WebP ou SVG.
+- **Importação de CSV:** **Códigos → Importar** cria até {facts.importRows} códigos dinâmicos a partir de um CSV (destino, título, pasta, tags, final personalizado opcional na coluna `slug`), e pode colocar todos os códigos em uma mesma pasta e adicionar tags a todos eles. Uma importação longa pode ser pausada, e ela continua após um recarregamento da página ou uma queda de conexão sem criar nenhum código em duplicata. Ao final, você recebe um CSV de resultados (o link curto de cada linha) e um ZIP com os códigos em PNG ou SVG. Importar mais de uma linha e usar finais personalizados exigem o plano Pro.
 
-Os códigos pertencem ao workspace em que são criados. Todos os membros do workspace podem criá-los e editá-los; os membros podem excluir os próprios códigos, e proprietários e administradores podem excluir qualquer código do workspace.
+Os códigos pertencem ao workspace em que são criados. Todo membro do workspace pode criá-los e editá-los; os membros podem excluir os próprios códigos, e os proprietários e administradores podem excluir qualquer código do workspace.
 
 <Callout type="info">
-  Os códigos nunca morrem: rebaixar seu plano nunca desativa os códigos existentes. Acima do limite, você ainda pode editar e arquivar códigos, mas não pode criar nem restaurar mais até ficar abaixo dele.
+  Os códigos nunca deixam de funcionar: fazer downgrade do seu plano não desativa os códigos existentes. Acima do limite, você ainda pode editar e arquivar códigos; apenas não pode criar nem restaurar mais nenhum até voltar abaixo dele.
 </Callout>
 
 ## Planos [#plans]
@@ -59,36 +59,36 @@ Os códigos pertencem ao workspace em que são criados. Todos os membros do work
 | Códigos dinâmicos ativos | 10 | Ilimitados | Ilimitados |
 | Leituras | Ilimitadas | Ilimitadas | Ilimitadas |
 | Histórico de leituras | {facts.freeScanHistoryYears} ano | Ilimitado | Ilimitado |
-| Criação em massa pela API | Não | Até {facts.apiBatchCodes} por requisição | Até {facts.apiBatchCodes} por requisição |
+| Criação em lote via API | Não | Até {facts.apiBatchCodes} por requisição | Até {facts.apiBatchCodes} por requisição |
 
-Os códigos de um workspace usam o melhor plano entre os seus proprietários. Veja [Planos e limites](/docs/plans-and-limits) para tudo o mais que cada plano inclui.
+Os códigos de um workspace usam o melhor plano entre os seus proprietários. Veja [Planos e limites](/docs/plans-and-limits) para tudo o que cada plano inclui.
 
 ## Análises de leitura [#scan-analytics]
 
-Cada código tem uma página de análises com leituras ao longo do tempo, visitantes únicos, principais países e cidades, dispositivos, sistemas operacionais, navegadores e referenciadores dos últimos 7, 30 ou 90 dias, 1 ano ou 3 anos (limitado pelo histórico do seu plano). Você pode exportar as leituras do período selecionado em CSV.
+Cada código tem uma página de análises com leituras ao longo do tempo, visitantes únicos, principais países e cidades, dispositivos, sistemas operacionais, navegadores e origens de acesso dos últimos 7, 30 ou 90 dias, 1 ano ou 3 anos, ou de todo o período desde a primeira leitura do código (limitado pelo histórico do seu plano: todo o período está disponível no Pro e no Business). Você pode exportar as leituras do intervalo selecionado em CSV.
 
 O que é registrado em cada leitura:
 
-- Horário (UTC) e país, região e cidade quando a plataforma de hospedagem os fornece (cabeçalhos de geolocalização da Vercel em qrdx.dev)
+- Horário (UTC), e país, região e cidade quando a plataforma de hospedagem os fornece (cabeçalhos de geolocalização da Vercel em qrdx.dev)
 - Tipo de dispositivo, sistema operacional e navegador, detectados a partir do user agent
-- Apenas o nome do host do referenciador, nunca a URL completa. A maioria das leituras de QR code não tem referenciador.
-- Um hash de visitante: um SHA-256 com salt do endereço IP, do user agent e do dia. Ele conta visitantes únicos por dia; o endereço IP em si nunca é armazenado.
-- Nos planos Pro e Business, quando o código [pede a localização precisa](/docs/precise-location) e a pessoa permite: a localização dela arredondada para 3 casas decimais (cerca de 100 m) e a precisão informada pelo navegador
+- Apenas o nome do host da origem, nunca a URL completa. A maioria das leituras de QR não tem origem.
+- Um hash do visitante: um SHA-256 com sal do endereço IP, do user agent e do dia. Ele conta visitantes únicos por dia; o endereço IP em si nunca é armazenado.
+- No Pro e no Business, quando o código [pede localização precisa](/docs/precise-location) e quem lê permite: a localização dele arredondada para 3 casas decimais (cerca de 100 m) e a precisão informada pelo navegador
 
 Bots conhecidos, pré-visualizações de links e pré-carregamentos do navegador não são contabilizados.
 
 ## REST API [#rest-api]
 
-Gerencie os códigos programaticamente em `https://api.qrdx.dev/v1/codes`. As requisições são autenticadas com uma [chave de API](/docs/developers/api-keys) ou um token de acesso OAuth (`Authorization: Bearer <key or token>`) que tenha o escopo `codes:read` ou `codes:write`; veja [REST API](/docs/developers/rest-api) para saber como obter um. Uma chave atua no workspace em que foi criada; as requisições com token atuam no seu próprio workspace. Requisições de uma sessão de navegador autenticada também funcionam e atuam no workspace que você abriu por último no painel.
+Gerencie códigos de forma programática em `https://api.qrdx.dev/v1/codes`. As requisições são autenticadas com uma [chave de API](/docs/developers/api-keys) ou com um token de acesso OAuth (`Authorization: Bearer <key or token>`) que tenha o escopo `codes:read` ou `codes:write`; veja [REST API](/docs/developers/rest-api) para saber como obter um. Uma chave age sobre o workspace em que foi criada; as requisições com token agem sobre o seu próprio workspace. Requisições feitas a partir de uma sessão de navegador autenticada também funcionam e agem sobre o workspace que você abriu por último no painel.
 
 | Método | Caminho | Descrição |
 | --- | --- | --- |
 | `GET` | `/v1/codes` | Lista os códigos. Query: `status` (`active`, `archived`, `all`), `q`, `limit` (≤ 100), `offset` |
-| `POST` | `/v1/codes` | Cria um código ou um array de até {facts.apiBatchCodes} (arrays exigem Pro). Body: `destinationUrl`, e opcionais `title`, `style`, `domainId` e `slug` |
-| `GET` | `/v1/codes/{id}` | Busca um código |
-| `PATCH` | `/v1/codes/{id}` | Atualiza `destinationUrl`, `title`, `style`, `domainId` ([domínios personalizados](/docs/custom-domains)), `slug` ou `archived`, ou alterna `kind` entre `redirect` e `page` |
+| `POST` | `/v1/codes` | Cria um código, ou um array de até {facts.apiBatchCodes} (arrays exigem Pro). Body: `destinationUrl`, `title`, `style`, `domainId` e `slug` opcionais |
+| `GET` | `/v1/codes/{id}` | Obtém um código |
+| `PATCH` | `/v1/codes/{id}` | Atualiza `destinationUrl`, `title`, `style`, `domainId` ([domínios personalizados](/docs/custom-domains)), `slug` ou `archived`, ou troca `kind` entre `redirect` e `page` |
 | `DELETE` | `/v1/codes/{id}` | Exclui um código e suas leituras |
-| `GET` | `/v1/codes/{id}/scans` | Análises de `range` (`7d`, `30d`, `90d`, `365d`, `1095d`; limitado pelo histórico do seu plano). Adicione `limit` (≤ 500) para obter leituras individuais e `before` (o último `scannedAt`) para a próxima página |
+| `GET` | `/v1/codes/{id}/scans` | Analytics para `range` (`7d`, `30d`, `90d`, `365d`, `1095d`, ou `all` nos planos Pro e Business; limitado pelo histórico do seu plano). Adicione `limit` (≤ 500) para leituras individuais, e `before` (o último `scannedAt`) para a próxima página |
 
 Crie um código:
 
@@ -124,7 +124,7 @@ curl https://api.qrdx.dev/v1/codes \
 }
 ```
 
-Passe `slug` para escolher o final do link (Pro e Business; veja [finais de link personalizados](#custom-back-halves) para as regras). Com um `domainId`, ele é verificado nesse domínio; caso contrário, em `qrdx.dev`:
+Passe `slug` para escolher o back-half (Pro e Business; veja [back-halves personalizados](#custom-back-halves) para as regras). Com um `domainId`, ele é verificado nesse domínio; caso contrário, é verificado em `qrdx.dev`:
 
 ```bash
 curl https://api.qrdx.dev/v1/codes \
@@ -133,13 +133,13 @@ curl https://api.qrdx.dev/v1/codes \
   -d '{"destinationUrl": "https://example.com/menu", "slug": "spring-menu"}'
 ```
 
-A resposta então traz `"slug": "spring-menu"` e `"shortLink": "https://qrdx.dev/q/spring-menu"`. Um final de link escolhido em um domínio personalizado tem `"defaultShortLink": null`, porque ele só existe nesse domínio. Em um array, cada `slug` precisa ser diferente.
+A resposta then tem `"slug": "spring-menu"` e `"shortLink": "https://qrdx.dev/q/spring-menu"`. Um back-half escolhido em um domínio personalizado tem `"defaultShortLink": null`, porque ele só existe nesse domínio. Em um array, cada `slug` deve ser diferente.
 
-### Vários códigos em uma requisição [#many-codes-in-one-request]
+### Muitos códigos em uma única requisição [#many-codes-in-one-request]
 
-No Pro e no Business, envie um array de até {facts.apiBatchCodes} códigos. Os finais de link gerados nunca se repetem dentro do lote nem conflitam com códigos existentes. Links que o Google Web Risk não consegue verificar a tempo são consultados de novo logo após a criação do lote, e um código cujo link ele listar é desativado ([verificações de segurança nos links](/docs/code-controls#safety-checks-on-links)). Um lote é tudo ou nada: se qualquer linha tiver um problema (um destino inválido, um `slug` já usado ou reservado, um link inseguro), nada é criado e o `data.details` do erro lista todos os problemas por `index`, a posição da linha no array (a partir de 0).
+Nos planos Pro e Business, envie um array de até {facts.apiBatchCodes} códigos. Back-halves gerados nunca se repetem dentro do lote nem entram em conflito com códigos existentes. Links que o Google Web Risk não consegue verificar a tempo são consultados novamente logo após a criação do lote, e um código cujo link aparece na lista é desativado ([verificações de segurança](/docs/code-controls#safety-checks-on-links)). Um lote é tudo ou nada: se qualquer linha tiver um problema (um destino inválido, um `slug` já usado ou reservado, um link inseguro), nada é criado e o `data.details` do erro lista todos os problemas por `index`, a posição da linha no array (começando em 0).
 
-Envie um header `Idempotency-Key` com um valor único para o lote, como um UUID. Se a requisição der timeout ou a conexão cair, envie a mesma requisição com a mesma chave de novo: você recebe de volta os códigos que a primeira tentativa criou, com um header `Idempotent-Replayed: true`, e uma tentativa interrompida no meio é concluída sem criar nenhum código duas vezes.
+Envie um header `Idempotency-Key` com um valor único para o lote, como um UUID. Se a requisição expirar ou a conexão cair, envie a mesma requisição com a mesma chave novamente: você recebe de volta os códigos criados na primeira tentativa, com o header `Idempotent-Replayed: true`, e uma tentativa interrompida no meio é concluída sem criar nenhum código duas vezes.
 
 ```bash
 curl https://api.qrdx.dev/v1/codes \
@@ -151,9 +151,9 @@ curl https://api.qrdx.dev/v1/codes \
        {"destinationUrl": "https://example.com/table/2", "title": "Table 2"}]'
 ```
 
-Cada código volta com o seu design. Quando o tema padrão do seu workspace incorpora um logo, isso pesa em um lote grande: envie `Prefer: return=minimal` para receber cada código sem `style` (com id, slug, links, destino, título, status e data de criação). Um lote cuja resposta não caberia em 4 MB é recusado com `PAYLOAD_TOO_LARGE` antes de qualquer coisa ser criada.
+Cada código volta com o seu design. Quando o tema padrão do seu workspace incorpora um logo, isso se soma em um lote grande: envie `Prefer: return=minimal` para receber cada código sem `style` (seu id, slug, links, destino, título, status e data de criação). Um lote cuja resposta não caberia em 4 MB é recusado com `PAYLOAD_TOO_LARGE` antes de qualquer criação.
 
-Altere o destino:
+Troque o destino:
 
 ```bash
 curl -X PATCH https://api.qrdx.dev/v1/codes/cm3x... \
@@ -162,26 +162,26 @@ curl -X PATCH https://api.qrdx.dev/v1/codes/cm3x... \
   -d '{"destinationUrl": "https://example.com/summer-menu"}'
 ```
 
-`style` aceita os mesmos campos de design do Playground (`fgColor`, `bgColor`, `bodyPattern`, `cornerEyePattern`, `level`, ...). Para um logo, envie `logoIcon`<IfAvailable feature="fileStorage"> ou o `logoFileId` de um arquivo enviado</IfAvailable> ([logos no style de um código](/docs/developers/rest-api#code-logos)). Codifique o `shortLink` no seu QR code, por exemplo com a [biblioteca `qrdx`](/docs/getting-started) ou a [Image API](/docs/developers/image-api).
+`style` aceita os mesmos campos de design do playground (`fgColor`, `bgColor`, `bodyPattern`, `cornerEyePattern`, `level`, ...). Para um logo, envie `logoIcon`<IfAvailable feature="fileStorage"> ou o `logoFileId` de um arquivo enviado</IfAvailable> ([logos no style de um código](/docs/developers/rest-api#code-logos)). Codifique o `shortLink` no seu QR code, por exemplo com a [biblioteca `qrdx`](/docs/getting-started) ou a [API de imagens](/docs/developers/image-api).
 
-Os erros usam um único formato JSON, `{ "code": "...", "message": "...", "status": 400 }`, mais um link `docs` quando uma página explica a solução:
+Os erros usam um único formato JSON, `{ "code": "...", "message": "...", "status": 400 }`, mais um link `docs` quando uma página explica a correção:
 
 | Status | Código | Quando |
 | --- | --- | --- |
-| 400 | `VALIDATION_ERROR`, `INVALID_SLUG` | Body ou query inválido (detalhes em `data`, por `index` em um lote), ou um `slug` que viola as regras ou é reservado |
-| 401 | `UNAUTHORIZED`, `INVALID_TOKEN` | Sem token `Authorization: Bearer`, ou token inválido, expirado ou revogado ([obtenha um token](/docs/developers/rest-api#get-an-access-token)) |
+| 400 | `VALIDATION_ERROR`, `INVALID_SLUG` | Body ou query inválidos (detalhes em `data`, por `index` em um lote), ou um `slug` que quebra as regras ou está reservado |
+| 401 | `UNAUTHORIZED`, `INVALID_TOKEN` | Nenhum token `Authorization: Bearer`, ou um token inválido, expirado ou revogado ([obtenha um token](/docs/developers/rest-api#get-an-access-token)) |
 | 402 | `LIMIT_REACHED`, `PLAN_REQUIRED` | Acima do limite de códigos ativos do seu plano, ou criação em massa ou `slug` personalizado sem Pro |
-| 403 | `INSUFFICIENT_SCOPE`, `FORBIDDEN` | Token sem o escopo necessário, ou uma função no workspace que não pode fazer isso |
+| 403 | `INSUFFICIENT_SCOPE`, `FORBIDDEN` | Token sem o escopo necessário, ou um papel no workspace que não pode fazer isso |
 | 404 | `NOT_FOUND` | O código não existe ou não é seu, ou o endpoint não existe |
 | 409 | `SLUG_TAKEN` | Outro código já usa esse `slug` (em `qrdx.dev` ou no domínio personalizado) |
-| 429 | `RATE_LIMITED` | Requisições demais; tente de novo depois do tempo indicado no header `Retry-After` |
+| 429 | `RATE_LIMITED` | Muitas requisições; tente de novo após o header `Retry-After` |
 
-## Hospedagem própria [#self-hosting]
+## Self-hosting [#self-hosting]
 
-Os QR codes dinâmicos também funcionam em instâncias de hospedagem própria:
+Os códigos dinâmicos também funcionam em instâncias self-hosted:
 
-- `NEXT_PUBLIC_SHORT_LINK_BASE_URL` define a origem dos links curtos. O padrão é a URL do seu app.
-- `SCAN_HASH_SALT` define o salt secreto dos hashes de visitantes. Sem ele, um é derivado de `BETTER_AUTH_SECRET`.
-- País, região e cidade vêm dos headers de geolocalização da Vercel. Atrás da Cloudflare, só o país está disponível (`CF-IPCountry`); em outros ambientes, as localizações aparecem como desconhecidas.
-- As regras de área usam as coordenadas de IP da Vercel (`x-vercel-ip-latitude`, `x-vercel-ip-longitude`) quando quem fez a leitura não compartilhou a localização. Em outros ambientes, elas só correspondem a leituras com localização compartilhada.
-- Os limites de requisições se aplicam quando o Upstash Redis está configurado.
+- `NEXT_PUBLIC_SHORT_LINK_BASE_URL` define a origem dos links curtos. O padrão é a URL da sua aplicação.
+- `SCAN_HASH_SALT` define o salt secreto para os hashes dos visitantes. Sem ele, um é derivado de `BETTER_AUTH_SECRET`.
+- País, região e cidade vêm dos headers de geolocalização da Vercel. Atrás da Cloudflare só o país está disponível (`CF-IPCountry`); em outros lugares, as localizações aparecem como desconhecidas.
+- As regras de área usam as coordenadas de IP da Vercel (`x-vercel-ip-latitude`, `x-vercel-ip-longitude`) quando quem leu não compartilhou uma localização. Em outros lugares, elas só correspondem a leituras com localização compartilhada.
+- Os limites de requisição se aplicam quando o Upstash Redis está configurado.

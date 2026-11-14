@@ -1,10 +1,10 @@
 ---
 title: "Portale clienti"
-description: "Dai ai clienti accesso in sola lettura alle cartelle che scegli tu, con il nome e il logo della tua agenzia al posto di quelli di QRdx."
+description: "Dai ai clienti accesso in sola lettura alle cartelle che scegli, con il nome e il logo della tua agenzia al posto di quelli di QRdx."
 icon: Briefcase
 ---
 
-Il portale clienti è pensato per le agenzie che gestiscono QR code per conto dei propri clienti. Inviti un cliente via email e scegli le cartelle che può vedere. Il cliente accede al portale del tuo workspace e trova i codici di quelle cartelle, ciascuno con le sue statistiche delle scansioni e, per le pagine ospitate, un link alla pagina. Tutto ciò che vede è in sola lettura.
+Il portale clienti è pensato per le agenzie che gestiscono QR code per conto dei propri clienti. Inviti un cliente via email e scegli le cartelle che può vedere. Il cliente accede al portale del tuo workspace e trova i codici di quelle cartelle, ciascuno con le sue analisi delle scansioni e, per le pagine ospitate, un link alla pagina. Tutto ciò che vede è in sola lettura.
 
 Il portale fa parte di Business. I clienti non sono membri del tuo workspace e non occupano un posto.
 
@@ -12,34 +12,34 @@ Il portale fa parte di Business. I clienti non sono membri del tuo workspace e n
 
 Apri [Impostazioni → Portale clienti](/dashboard?to=settings/clients). Lo gestiscono i proprietari e gli amministratori.
 
-1. In **Branding**, inserisci il nome che vedono i clienti, aggiungi un logo e scegli un colore di accento. I campi vuoti usano il nome e il logo del workspace.
+1. In **Branding**, inserisci il nome che vedranno i clienti, aggiungi un logo e scegli un colore d'accento. I campi vuoti usano il nome e il logo del workspace.
 2. Metti i codici di ogni cliente in una cartella dedicata in [Codici](/dashboard?to=codes).
-3. In **Clienti**, inserisci l'indirizzo email del cliente, seleziona le sue cartelle e clicca su **Invita cliente**.
+3. In **Clienti**, inserisci l'indirizzo email del cliente, seleziona le sue cartelle e fai clic su **Invita cliente**.
 
-QRdx invia al cliente un'email con il link al portale, a nome del tuo portale. Se sul server che usi l'invio delle email non è configurato, copia l'indirizzo da **Indirizzo del portale** e invialo tu stesso.
+QRdx invia al cliente un'email con il link al portale, a nome del tuo portale. Se sul server che usi l'email non è configurata, copia l'indirizzo da **Indirizzo del portale** e invialo tu.
 
 Vengono condivise solo le cartelle che selezioni. Una sottocartella non viene condivisa se non la selezioni a sua volta.
 
 ## Cosa vedono i clienti [#what-clients-see]
 
-Il portale si trova all'indirizzo `https://qrdx.dev/portal/<your workspace's URL name>`. I clienti accedono con un codice monouso inviato all'indirizzo che hai invitato. L'email con il codice arriva da QRdx. La prima volta, l'accesso crea anche un account QRdx gratuito a loro nome, che non sono obbligati a usare.
+Il portale si trova all'indirizzo `https://qrdx.dev/portal/<your workspace's URL name>`. I clienti accedono lì con un codice monouso inviato all'indirizzo che hai invitato. L'email con il codice arriva da QRdx. Al primo accesso ricevono anche un account QRdx gratuito tutto loro, che non sono obbligati a usare.
 
-Dopo l'accesso vedono:
+Una volta effettuato l'accesso, vedono:
 
 - ogni cartella condivisa con i suoi codici, il totale delle scansioni e l'ultima scansione
-- per ogni codice, scansioni nel tempo, visitatori unici, scansioni QR e tocchi NFC, principali paesi, dispositivi e siti di provenienza degli ultimi 7, 30 o 90 giorni
+- per ogni codice, le scansioni nel tempo, i visitatori unici, le scansioni QR e i tocchi NFC, i paesi principali, i dispositivi e i siti di provenienza degli ultimi 7, 30 o 90 giorni, oppure di tutto il periodo
 - per i codici che aprono una pagina ospitata, un pulsante per aprire la pagina (aprirla da lì non conta come scansione)
 
-Non possono vedere altre cartelle, codici nel cestino, l'indirizzo completo di una destinazione, città, posizioni precise, i tuoi membri, le impostazioni o la fatturazione. Il portale mostra il tuo nome, il tuo logo e il tuo colore, senza alcun marchio QRdx.
+Non possono vedere altre cartelle, i codici nel cestino, l'indirizzo completo di una destinazione, le città, le posizioni precise, i tuoi membri, le impostazioni o la fatturazione. Il portale mostra il tuo nome, il tuo logo e il tuo colore, senza alcun marchio QRdx.
 
 Chi accede con un indirizzo che non hai invitato vede che non ha accesso. Un invito appartiene all'account che accede per primo con quell'indirizzo, quindi continua a funzionare anche se il cliente cambia email in seguito.
 
 ## Modificare o rimuovere l'accesso [#change-or-remove-access]
 
-In **Clienti**, **Cartelle** cambia ciò che un cliente vede e **Rimuovi** gli toglie l'accesso. Entrambe le modifiche si applicano al successivo caricamento della pagina. Invitare di nuovo un indirizzo ne aggiorna le cartelle e reinvia il link.
+In **Clienti**, **Cartelle** modifica ciò che un cliente vede e **Rimuovi** gli toglie l'accesso. Entrambe le modifiche si applicano al successivo caricamento di pagina. Se inviti di nuovo un indirizzo, ne aggiorni le cartelle e il link viene inviato di nuovo.
 
-Se il workspace esce da Business, il portale non si apre finché non torna su Business. Nel frattempo puoi comunque rimuovere dei clienti.
+Se il workspace esce da Business, il portale smette di aprirsi finché non torna su Business. Nel frattempo puoi comunque rimuovere i clienti.
 
 ## Perché il portale resta sull'indirizzo di QRdx [#why-the-portal-stays-on-qrdxs-address]
 
-I clienti restano connessi tramite un cookie del sito di QRdx. Servire le pagine con accesso sul tuo dominio significherebbe collocare quel cookie di accesso su un dominio il cui DNS è sotto il tuo controllo, fuori da QRdx. Per questo il portale è all'indirizzo di QRdx e mostra lì il tuo branding. I [report per i clienti](/docs/client-reports) condivisi non richiedono l'accesso, quindi Business può servirli sul tuo dominio.
+I clienti restano connessi tramite un cookie del sito di QRdx. Servire le pagine con accesso sul tuo dominio significherebbe mettere quel cookie di accesso su un dominio il cui DNS controlli tu, fuori da QRdx. Per questo il portale è sull'indirizzo di QRdx e mostra lì il tuo branding. I [report per i clienti](/docs/client-reports) condivisi non richiedono l'accesso, quindi Business può servirli sul tuo dominio.

@@ -1,18 +1,18 @@
 ---
 title: "Portal de clientes"
-description: "Da a tus clientes acceso de solo lectura a las carpetas que elijas, con el nombre y el logo de tu agencia en lugar de los de QRdx."
+description: "Da a tus clientes acceso de solo lectura a las carpetas que elijas, con el nombre y el logotipo de tu agencia en lugar de los de QRdx."
 icon: Briefcase
 ---
 
-El portal de clientes está pensado para agencias que gestionan códigos QR para sus clientes. Invitas a un cliente por correo electrónico y eliges las carpetas que puede ver. El cliente inicia sesión en el portal de tu espacio de trabajo y encuentra los códigos de esas carpetas, cada uno con sus analíticas de escaneo y, en el caso de las páginas alojadas, un enlace a la página. Todo lo que hay allí es de solo lectura.
+El portal de clientes es para agencias que gestionan códigos QR para sus clientes. Invitas a un cliente por correo electrónico y eliges las carpetas que puede ver. El cliente inicia sesión en el portal de tu espacio de trabajo y encuentra los códigos de esas carpetas, cada uno con sus analíticas de escaneos y, en el caso de las páginas alojadas, un enlace a la página. Todo lo que hay allí es de solo lectura.
 
-El portal forma parte de Business. Los clientes no son miembros de tu espacio de trabajo y no ocupan ningún puesto.
+El portal forma parte de Business. Los clientes no son miembros de tu espacio de trabajo y no ocupan una plaza.
 
-## Configúralo [#set-it-up]
+## Configuración [#set-it-up]
 
-Abre [Ajustes → Portal de clientes](/dashboard?to=settings/clients). Lo gestionan los propietarios y los administradores.
+Abre [Ajustes → Portal de clientes](/dashboard?to=settings/clients). Los propietarios y administradores lo gestionan.
 
-1. En **Marca**, escribe el nombre que verán los clientes, añade un logo y elige un color de acento. Los campos vacíos usan el nombre y el logo del propio espacio de trabajo.
+1. En **Marca**, escribe el nombre que verán los clientes, añade un logotipo y elige un color de acento. Los campos vacíos usan el nombre y el logotipo del propio espacio de trabajo.
 2. Coloca los códigos de cada cliente en una carpeta propia en [Códigos](/dashboard?to=codes).
 3. En **Clientes**, escribe la dirección de correo del cliente, marca sus carpetas y haz clic en **Invitar cliente**.
 
@@ -22,24 +22,24 @@ Solo se comparten las carpetas que marques. Una subcarpeta no se comparte a meno
 
 ## Qué ven los clientes [#what-clients-see]
 
-El portal está en `https://qrdx.dev/portal/<your workspace's URL name>`. Los clientes inician sesión allí con un código de un solo uso enviado a la dirección que invitaste. El correo con el código lo envía QRdx. La primera vez, al iniciar sesión también se les crea una cuenta gratuita de QRdx, que no necesitan usar.
+El portal está en `https://qrdx.dev/portal/<your workspace's URL name>`. Los clientes inician sesión allí con un código de un solo uso enviado a la dirección que invitaste. El correo con el código procede de QRdx. La primera vez, al iniciar sesión también se crea para ellos una cuenta gratuita de QRdx, que no tienen que usar.
 
 Una vez dentro, ven:
 
 - cada carpeta compartida con sus códigos, el total de escaneos y el último escaneo
-- de cada código, los escaneos a lo largo del tiempo, los visitantes únicos, los escaneos de QR y los toques de NFC, los principales países, dispositivos y sitios de referencia de los últimos 7, 30 o 90 días
-- en los códigos que abren una página alojada, un botón para abrir la página (abrirla desde ahí no cuenta como un escaneo)
+- de cada código, los escaneos a lo largo del tiempo, los visitantes únicos, los escaneos de QR y los toques de NFC, los países, dispositivos y sitios de referencia principales de los últimos 7, 30 o 90 días, o de todo el periodo
+- en los códigos que abren una página alojada, un botón para abrir la página (abrirla desde allí no cuenta como escaneo)
 
-No pueden ver otras carpetas, los códigos de la papelera, la dirección completa de un destino, las ciudades, las ubicaciones precisas, a tus miembros, los ajustes ni la facturación. El portal muestra tu nombre, tu logo y tu color, y ninguna marca de QRdx.
+No pueden ver otras carpetas, códigos de la papelera, la dirección completa de un destino, ciudades, ubicaciones precisas, tus miembros, los ajustes ni la facturación. El portal muestra tu nombre, tu logotipo y tu color, sin ninguna marca de QRdx.
 
-Quien inicie sesión con una dirección que no invitaste verá que no tiene acceso. Una invitación pertenece a la cuenta que inicia sesión con ella por primera vez, así que sigue funcionando si el cliente cambia más tarde de correo.
+Quien inicie sesión con una dirección que no invitaste verá que no tiene acceso. Una invitación pertenece a la cuenta que inicia sesión con ella por primera vez, así que sigue funcionando si el cliente cambia más adelante su correo.
 
-## Cambia o elimina el acceso [#change-or-remove-access]
+## Cambiar o quitar el acceso [#change-or-remove-access]
 
-En **Clientes**, **Carpetas** cambia lo que ve un cliente y **Eliminar** le quita el acceso. Ambos cambios se aplican en su siguiente carga de página. Si invitas de nuevo a una dirección, se actualizan sus carpetas y se vuelve a enviar el enlace.
+En **Clientes**, **Carpetas** cambia lo que ve un cliente y **Quitar** le retira el acceso. Ambos cambios se aplican la próxima vez que cargue una página. Si vuelves a invitar una dirección, se actualizan sus carpetas y se le envía de nuevo el enlace.
 
-Si el espacio de trabajo deja Business, el portal deja de abrirse hasta que vuelva a Business. Mientras tanto, aún puedes eliminar clientes.
+Si el espacio de trabajo deja Business, el portal deja de abrirse hasta que vuelva a Business. Mientras tanto, aún puedes quitar clientes.
 
 ## Por qué el portal sigue en la dirección de QRdx [#why-the-portal-stays-on-qrdxs-address]
 
-Los clientes mantienen la sesión iniciada mediante una cookie del propio sitio de QRdx. Servir las páginas con sesión iniciada en tu dominio colocaría esa cookie de inicio de sesión en un dominio cuyo DNS controlas tú, fuera de QRdx. Por eso el portal está en la dirección de QRdx y muestra allí tu marca. Los [informes para clientes](/docs/client-reports) compartidos no necesitan inicio de sesión, así que Business puede servirlos en tu propio dominio.
+Los clientes mantienen la sesión iniciada con una cookie del propio sitio de QRdx. Servir las páginas con sesión iniciada en tu dominio colocaría esa cookie de inicio de sesión en un dominio cuyo DNS controlas tú, fuera de QRdx. Por eso el portal está en la dirección de QRdx y muestra allí tu marca. Los [informes para clientes](/docs/client-reports) compartidos no requieren iniciar sesión, así que Business puede servirlos en tu propio dominio.

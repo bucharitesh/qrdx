@@ -1,45 +1,45 @@
 ---
 title: "Portal klien"
-description: "Berikan klien akses hanya-baca ke folder yang Anda pilih, dengan nama dan logo agensi Anda, bukan milik QRdx."
+description: "Beri klien akses hanya-baca ke folder yang Anda pilih, dengan nama dan logo agensi Anda, bukan milik QRdx."
 icon: Briefcase
 ---
 
-Portal klien ditujukan bagi agensi yang mengelola kode QR untuk klien mereka. Anda mengundang klien lewat email dan memilih folder yang dapat mereka lihat. Klien masuk di portal ruang kerja Anda dan menemukan kode-kode di folder tersebut, masing-masing dengan analitik pemindaian dan, untuk halaman yang di-hosting, tautan ke halamannya. Semua yang ada di sana bersifat hanya-baca.
+Portal klien ditujukan untuk agensi yang mengelola kode QR untuk klien mereka. Anda mengundang klien lewat email dan memilih folder yang boleh mereka lihat. Mereka masuk di portal ruang kerja Anda dan menemukan kode-kode di folder tersebut, masing-masing dengan analitik pemindaiannya dan, untuk halaman yang di-hosting, tautan ke halaman tersebut. Semua di dalamnya hanya-baca.
 
-Portal adalah bagian dari Business. Klien bukan anggota ruang kerja Anda dan tidak memakai kursi.
+Portal klien merupakan bagian dari Business. Klien bukan anggota ruang kerja Anda dan tidak memakai kursi.
 
-## Menyiapkan portal [#set-it-up]
+## Penyiapan [#set-it-up]
 
-Buka [Pengaturan → Portal klien](/dashboard?to=settings/clients). Pemilik dan admin dapat mengelolanya.
+Buka [Pengaturan → Portal klien](/dashboard?to=settings/clients). Pemilik dan admin yang mengelolanya.
 
-1. Di bawah **Branding**, masukkan nama yang dilihat klien, tambahkan logo, dan pilih warna aksen. Kolom yang kosong akan memakai nama dan logo ruang kerja itu sendiri.
+1. Di bagian **Branding**, masukkan nama yang akan dilihat klien, tambahkan logo, dan pilih warna aksen. Kolom yang kosong akan memakai nama dan logo ruang kerja itu sendiri.
 2. Letakkan kode setiap klien di folder tersendiri di [Kode](/dashboard?to=codes).
-3. Di bawah **Klien**, masukkan alamat email klien, centang folder mereka, lalu klik **Undang klien**.
+3. Di bagian **Klien**, masukkan alamat email klien, centang folder mereka, lalu klik **Undang klien**.
 
 QRdx mengirim email berisi tautan ke portal kepada klien, atas nama portal Anda. Jika email belum disiapkan di server yang Anda gunakan, salin alamat dari **Alamat portal** dan kirim sendiri.
 
-Hanya folder yang Anda centang yang dibagikan. Subfolder tidak dibagikan kecuali Anda mencentangnya juga.
+Hanya folder yang Anda centang yang dibagikan. Subfolder tidak ikut dibagikan kecuali Anda juga mencentangnya.
 
 ## Yang dilihat klien [#what-clients-see]
 
-Portal berada di `https://qrdx.dev/portal/<your workspace's URL name>`. Klien masuk di sana dengan kode sekali pakai yang dikirim ke alamat yang Anda undang. Email berisi kode itu berasal dari QRdx. Saat pertama kali, proses masuk juga memberi mereka akun QRdx gratis milik sendiri, yang tidak wajib mereka gunakan.
+Portal berada di `https://qrdx.dev/portal/<your workspace's URL name>`. Klien masuk di sana dengan kode sekali pakai yang dikirim ke alamat yang Anda undang. Email berisi kode tersebut berasal dari QRdx. Saat pertama kali masuk, mereka juga mendapatkan akun QRdx gratis milik sendiri, yang tidak perlu mereka gunakan.
 
 Setelah masuk, mereka melihat:
 
 - setiap folder yang dibagikan beserta kodenya, total pemindaian, dan pemindaian terakhir
-- untuk setiap kode, pemindaian dari waktu ke waktu, pengunjung unik, pemindaian QR dan ketukan NFC, negara teratas, perangkat, dan situs perujuk selama 7, 30, atau 90 hari terakhir
-- untuk kode yang membuka halaman yang di-hosting, tombol untuk membuka halaman tersebut (membukanya dari sana tidak dihitung sebagai pemindaian)
+- untuk setiap kode, pemindaian dari waktu ke waktu, pengunjung unik, pemindaian QR dan ketukan NFC, negara teratas, perangkat, dan situs perujuk untuk 7, 30, atau 90 hari terakhir, atau untuk sepanjang waktu
+- untuk kode yang membuka halaman yang di-hosting, tombol untuk membuka halaman tersebut (membukanya di sana tidak dihitung sebagai pemindaian)
 
-Mereka tidak dapat melihat folder lain, kode di tempat sampah, alamat lengkap tujuan, kota, lokasi presisi, anggota Anda, pengaturan, maupun penagihan. Portal menampilkan nama, logo, dan warna Anda tanpa tanda QRdx.
+Mereka tidak dapat melihat folder lain, kode di sampah, alamat lengkap tujuan, kota, lokasi yang tepat, anggota Anda, pengaturan, atau tagihan. Portal menampilkan nama, logo, dan warna Anda tanpa tanda QRdx.
 
-Orang yang masuk dengan alamat yang tidak Anda undang akan melihat bahwa mereka tidak memiliki akses. Undangan menjadi milik akun yang pertama kali masuk dengannya, sehingga tetap berfungsi jika klien kemudian mengganti email.
+Seseorang yang masuk dengan alamat yang tidak Anda undang akan melihat bahwa mereka tidak memiliki akses. Undangan menjadi milik akun yang pertama kali masuk dengannya, sehingga tetap berfungsi meskipun klien kemudian mengganti emailnya.
 
-## Mengubah atau menghapus akses [#change-or-remove-access]
+## Mengubah atau mencabut akses [#change-or-remove-access]
 
-Di **Klien**, **Folder** mengubah apa yang dilihat klien, dan **Hapus** mencabut akses mereka. Keduanya berlaku saat halaman dimuat berikutnya. Mengundang alamat yang sama lagi akan memperbarui folder-nya dan mengirim tautan itu kembali.
+Di **Klien**, **Folder** mengubah apa yang dilihat klien, dan **Hapus** mencabut aksesnya. Keduanya berlaku saat halaman berikutnya dimuat. Mengundang alamat yang sama lagi akan memperbarui folder-folder-nya dan mengirim tautan lagi.
 
-Jika ruang kerja keluar dari Business, portal tidak dapat dibuka sampai ruang kerja kembali ke Business. Selama itu Anda tetap dapat menghapus klien.
+Jika ruang kerja berhenti berlangganan Business, portal tidak bisa dibuka sampai ruang kerja kembali ke Business. Anda tetap bisa menghapus klien selama itu.
 
 ## Mengapa portal tetap di alamat QRdx [#why-the-portal-stays-on-qrdxs-address]
 
-Klien tetap masuk dengan cookie untuk situs QRdx sendiri. Menyajikan halaman yang memerlukan login di domain Anda berarti menaruh cookie login itu di domain yang DNS-nya Anda kendalikan, di luar QRdx. Karena itu portal berada di alamat QRdx dan menampilkan branding Anda di sana. [Laporan klien](/docs/client-reports) yang dibagikan tidak memerlukan login, sehingga Business dapat menyajikannya di domain Anda sendiri.
+Klien tetap masuk dengan cookie untuk situs QRdx sendiri. Menyajikan halaman yang sudah masuk di domain Anda berarti menaruh cookie masuk itu di domain yang DNS-nya Anda kendalikan, di luar kendali QRdx. Karena itu portal berada di alamat QRdx dan menampilkan branding Anda di sana. [Laporan klien](/docs/client-reports) yang dibagikan tidak memerlukan masuk, sehingga Business dapat menyajikannya di domain Anda sendiri.
