@@ -28,8 +28,9 @@ export interface DotRingProps {
    * Text set along the ring. Defaults to "Scan the QR code" four times
    * round; `""` leaves the ring empty. Text too long for the ring gets
    * tighter letter spacing, then a smaller font (down to half of
-   * `fontSize`'s default), then is cut after the last whole word that fits;
-   * it never runs into its own start.
+   * `fontSize`'s default); it never runs into its own start. Past that,
+   * text that repeats a phrase keeps as many whole copies as fit, and other
+   * text is cut after the last whole word that fits and ends with "…".
    */
   customText?: string;
   /**
