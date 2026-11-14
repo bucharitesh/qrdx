@@ -1,7 +1,7 @@
 // Drawing helpers for the product figures, in the hero's isometric line style
 // (the camera and shapes come from ../use-case-art/iso.ts). Every helper
 // returns SVG markup; the classes are styled by
-// components/mockups/hairline.module.css.
+// packages/design-system/components/hairline/hairline.module.css.
 
 import { type Camera, roundRect, type V3 } from "../use-case-art/iso";
 

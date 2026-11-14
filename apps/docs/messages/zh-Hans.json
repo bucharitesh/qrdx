@@ -109,6 +109,10 @@
         "name": "博客",
         "description": "二维码相关指南与资讯"
       },
+      "customers": {
+        "name": "客户",
+        "description": "企业如何使用 QRdx"
+      },
       "compare": {
         "name": "对比",
         "description": "QRdx 与其他生成器和库的对比"
@@ -211,6 +215,7 @@
       "github": "GitHub",
       "help": "帮助中心",
       "blog": "博客",
+      "customers": "客户",
       "changelog": "更新日志",
       "integrations": "集成",
       "industries": "按行业查看二维码",

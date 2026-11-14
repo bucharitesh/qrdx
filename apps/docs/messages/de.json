@@ -109,6 +109,10 @@
         "name": "Blog",
         "description": "Anleitungen und News rund um QR-Codes"
       },
+      "customers": {
+        "name": "Kunden",
+        "description": "So nutzen Firmen QRdx"
+      },
       "compare": {
         "name": "Vergleich",
         "description": "QRdx im Vergleich zu anderen Generatoren und Bibliotheken"
@@ -211,6 +215,7 @@
       "github": "GitHub",
       "help": "Hilfecenter",
       "blog": "Blog",
+      "customers": "Kunden",
       "changelog": "Changelog",
       "integrations": "Integrationen",
       "industries": "QR-Codes nach Branche",

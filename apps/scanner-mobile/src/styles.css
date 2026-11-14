@@ -3,7 +3,7 @@
 @import "../../../packages/design-system/styles/globals.css";
 
 @source "../../docs/components/scanner";
-@source "../../docs/components/brand-marks.tsx";
+@source "../../../packages/design-system/components/brand/brand-marks.tsx";
 @source "./";
 
 html,

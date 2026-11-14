@@ -4,8 +4,11 @@ import type { StandardSchemaV1 } from "@t3-oss/env-core";
 // package's keys.ts and by the app's env.ts, which extends them. Messages name
 // variables, never their values.
 
-/** The template that lists and explains every variable. */
-const TEMPLATE = "apps/docs/.env.example";
+/**
+ * The template that lists and explains every variable: the main app's,
+ * unless an app passes its own to validateTogether().
+ */
+const DEFAULT_TEMPLATE = "apps/docs/.env.example";
 
 type Issue = StandardSchemaV1.Issue;
 
@@ -26,18 +29,22 @@ function describe(issue: Issue): string {
     : issue.message;
 }
 
-function fail(issues: readonly Issue[]): never {
+function fail(
+  issues: readonly Issue[],
+  template: string = DEFAULT_TEMPLATE
+): never {
   const names = [...new Set(issues.map(variableName))];
+  const local = template.replace(/\.env\.example$/, ".env.local");
   console.error(
     [
       "❌ Invalid environment variables:",
       ...issues.map((issue) => `  ${variableName(issue)}: ${describe(issue)}`),
       "",
-      `Set them in apps/docs/.env.local (copy ${TEMPLATE}, which explains each one) or in your host's environment settings.`,
+      `Set them in ${local} (copy ${template}, which explains each one) or in your host's environment settings.`,
     ].join("\n")
   );
   throw new Error(
-    `Invalid environment variables: ${names.join(", ")}. See ${TEMPLATE}.`
+    `Invalid environment variables: ${names.join(", ")}. See ${template}.`
   );
 }
 
@@ -54,15 +61,19 @@ export function onValidationError(issues: readonly Issue[]): never {
 /**
  * Runs `create` (the app's createEnv, with the keys() it extends) and
  * reports every invalid variable in one error, instead of stopping at the
- * first package whose keys fail.
+ * first package whose keys fail. `template` is the app's .env.example, from
+ * the repository root, which the error points to.
  */
-export function validateTogether<T>(create: () => T): T {
+export function validateTogether<T>(
+  create: () => T,
+  { template = DEFAULT_TEMPLATE }: { template?: string } = {}
+): T {
   const issues: Issue[] = [];
   collecting = issues;
   try {
     const env = create();
     if (issues.length > 0) {
-      fail(issues);
+      fail(issues, template);
     }
     return env;
   } finally {

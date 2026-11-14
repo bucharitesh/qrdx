@@ -231,6 +231,14 @@
     "source": "598fa110bdc1",
     "status": "machine"
   },
+  "nav.items.customers.name": {
+    "source": "aabe76f1f4ec",
+    "status": "machine"
+  },
+  "nav.items.customers.description": {
+    "source": "83aee76af003",
+    "status": "machine"
+  },
   "nav.items.compare.name": {
     "source": "e888155d8c7d",
     "status": "machine"
@@ -533,6 +541,10 @@
   },
   "footer.links.blog": {
     "source": "8c6bc099534a",
+    "status": "machine"
+  },
+  "footer.links.customers": {
+    "source": "aabe76f1f4ec",
     "status": "machine"
   },
   "footer.links.changelog": {

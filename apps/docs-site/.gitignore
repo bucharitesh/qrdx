@@ -1,0 +1,20 @@
+# deps
+/node_modules
+
+# generated content (fumadocs-mdx)
+.source
+
+# what the build reads from the main app (scripts/zone-inputs.mjs)
+/generated/
+
+# test & build
+/coverage
+/.next/
+/out/
+*.tsbuildinfo
+
+# misc
+.DS_Store
+.env*.local
+.vercel
+next-env.d.ts
