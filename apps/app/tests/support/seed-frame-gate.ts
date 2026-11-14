@@ -4,6 +4,10 @@
 // QRDX_FULL_FRAME_SCAN=1 (packages/qrdx/scripts/official-frames/sample.mjs),
 // split into shards (tests/database/seed-frames-gate-*.test.ts). Every frame
 // is also checked to scan in the engine's own tests.
+//
+// Each frame is a test of its own, with the default per-test timeout: a
+// frame takes about a second, so the time a shard takes grows with the
+// library while no one frame's limit does.
 import { describe, expect, it, vi } from "vitest";
 
 vi.mock("next/cache", () => ({
@@ -16,39 +20,44 @@ const { checkScanGate } = await import("@/lib/community/scan-gate");
 const seed = await import(
   "../../../../packages/database/scripts/seed-community.mjs"
 );
-const { frameScanPlan, fullFrameScan } = await import(
-  "../../../../packages/qrdx/scripts/official-frames/sample.mjs"
-);
+const { framePart, framePartLabel, frameScanPlan, fullFrameScan, shardOf } =
+  await import("../../../../packages/qrdx/scripts/official-frames/sample.mjs");
+
+interface SeededFrame {
+  ref: string;
+  slug: string;
+  type: string;
+  payload: { frame: Parameters<typeof framePreviewStyle>[0] };
+}
 
 /** Gates shard `index` (1-based) of `count` of the seeded frames. */
 export function describeSeedFrameGate(index: number, count: number) {
-  const seeded = seed
-    .buildSeedItems()
-    .filter((item: { type: string }) => item.type === "frame");
-  const plan = frameScanPlan(seeded.map((item: { slug: string }) => item.slug));
+  const seeded = (seed.buildSeedItems() as SeededFrame[]).filter(
+    (item) => item.type === "frame",
+  );
+  const plan = frameScanPlan(seeded.map((item) => item.slug));
   const gated = new Set(plan.full);
-  const frames = seeded
-    .filter((item: { slug: string }) => gated.has(item.slug))
-    .filter((_: unknown, i: number) => i % count === index - 1);
+  const frames: SeededFrame[] = shardOf(
+    framePart(seeded.filter((item) => gated.has(item.slug))),
+    index,
+    count,
+  );
 
   const label = fullFrameScan() ? "every frame" : `day ${plan.day}`;
-  describe(`the seed's official frames (${label}, shard ${index} of ${count})`, () => {
-    it("scan Great with the publish gate", { timeout: 300_000 }, async () => {
-      const failures: string[] = [];
-      for (const item of frames) {
-        const style = framePreviewStyle(
-          (item.payload as { frame: Parameters<typeof framePreviewStyle>[0] })
-            .frame,
-        );
-        const gate = await checkScanGate(style);
-        if (!gate.passed) {
-          failures.push(
-            `${item.ref}: ${gate.results.map((r) => `${r.sample}=${r.score}`).join(" ")}`,
-          );
-        }
-      }
+  describe(`the seed's official frames (${label}${framePartLabel()}, shard ${index} of ${count})`, () => {
+    it("has frames to gate", () => {
       expect(frames.length).toBeGreaterThan(0);
-      expect(failures).toEqual([]);
     });
+
+    it.each(frames.map((item) => [item.ref, item] as const))(
+      "%s scans Great with the publish gate",
+      async (_ref, item) => {
+        const gate = await checkScanGate(framePreviewStyle(item.payload.frame));
+        expect(
+          gate.passed,
+          gate.results.map((r) => `${r.sample}=${r.score}`).join(" "),
+        ).toBe(true);
+      },
+    );
   });
 }

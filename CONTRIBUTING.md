@@ -132,10 +132,10 @@ The official frames (`packages/qrdx/src/frames/official`, hundreds of them) all 
 
 ```bash
 cd packages/qrdx && QRDX_FULL_FRAME_SCAN=1 bun x vitest run tests/official-frames tests/frame-label-markers.test.ts
-cd apps/app && QRDX_FULL_FRAME_SCAN=1 bun x vitest run tests/database/seed-frames-gate-1.test.ts tests/database/seed-frames-gate-2.test.ts
+cd apps/app && QRDX_FULL_FRAME_SCAN=1 bun x vitest run tests/database/seed-frames-gate-1.test.ts tests/database/seed-frames-gate-2.test.ts tests/database/seed-frames-gate-3.test.ts
 ```
 
-`QRDX_FRAME_SCAN_DAY=<n>` replays the sample a failing run named ("day n").
+`QRDX_FRAME_SCAN_DAY=<n>` replays the sample a failing run named ("day n"). `QRDX_FRAME_SCAN_PART=<i>/<n>` checks every n-th frame, starting with the i-th: the workflow runs its parts as parallel jobs, and a failing part can be replayed on its own ("part 2 of 4").
 
 The Husky `pre-push` hook runs `bun run prepush:quick`: the engine build, both typechecks, the lint check and the affected tests, compared with `origin/staging`. Run every test with `QRDX_PREPUSH=full git push` or `bun run prepush`, or skip the hook once with `git push --no-verify`.
 
