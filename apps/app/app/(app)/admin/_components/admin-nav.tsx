@@ -1,64 +1,40 @@
 "use client";
 
-import { Bot } from "@repo/design-system/components/icons";
 import { cn } from "@repo/design-system/lib/utils";
-import {
-  People as Community,
-  Card as CreditCard,
-  TrendUp as Growth,
-  Health as HeartPulse,
-  Element3 as LayoutDashboard,
-  ColorSwatch as Palette,
-  MoneySend as Payouts,
-  Electricity as Plug,
-  ScanBarcode as QrCode,
-  DocumentText as ScrollText,
-  ShieldCross as ShieldAlert,
-  StatusUp as TrendingUp,
-  Profile2User as Users,
-} from "iconsax-reactjs";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { adminNavLinks } from "../_lib/nav";
 
-const NAV_ITEMS = [
-  { href: "/admin", label: "Overview", icon: LayoutDashboard },
-  { href: "/admin/growth", label: "Growth", icon: Growth },
-  { href: "/admin/users", label: "Users", icon: Users },
-  { href: "/admin/themes", label: "Themes", icon: Palette },
-  { href: "/admin/community", label: "Community", icon: Community },
-  { href: "/admin/codes", label: "QR Codes", icon: QrCode },
-  { href: "/admin/abuse", label: "Abuse", icon: ShieldAlert },
-  { href: "/admin/ai-usage", label: "AI Usage", icon: Bot },
-  { href: "/admin/subscriptions", label: "Subscriptions", icon: CreditCard },
-  { href: "/admin/numbers", label: "Home numbers", icon: TrendingUp },
-  { href: "/admin/affiliates", label: "Affiliates", icon: Payouts },
-  { href: "/admin/integrations", label: "Integrations", icon: Plug },
-  { href: "/admin/audit-log", label: "Audit Log", icon: ScrollText },
-  { href: "/admin/health", label: "Health", icon: HeartPulse },
-];
-
-export function AdminNav() {
+/** `consoleEnabled`: the back-office console is on (CONSOLE_ORIGIN is set). */
+export function AdminNav({ consoleEnabled }: { consoleEnabled: boolean }) {
   const pathname = usePathname();
 
   return (
     <aside className="w-full min-w-0 shrink-0 md:w-56">
       <nav className="flex gap-1 overflow-x-auto md:flex-col">
-        {NAV_ITEMS.map((item) => {
+        {adminNavLinks(consoleEnabled).map((item) => {
           const isActive =
             item.href === "/admin"
               ? pathname === item.href
               : pathname.startsWith(item.href);
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                "hover:bg-muted flex shrink-0 items-center gap-2 rounded-md px-3 py-2 text-sm font-medium whitespace-nowrap transition-colors",
-                isActive && "bg-muted",
-              )}
-            >
+          const className = cn(
+            "hover:bg-muted flex shrink-0 items-center gap-2 rounded-md px-3 py-2 text-sm font-medium whitespace-nowrap transition-colors",
+            isActive && "bg-muted",
+          );
+          const content = (
+            <>
               <item.icon className="size-4 shrink-0" />
               {item.label}
+            </>
+          );
+          // Another zone's page: a full page load (next/link can't cross zones).
+          return item.crossZone ? (
+            <a className={className} href={item.href} key={item.href}>
+              {content}
+            </a>
+          ) : (
+            <Link className={className} href={item.href} key={item.href}>
+              {content}
             </Link>
           );
         })}

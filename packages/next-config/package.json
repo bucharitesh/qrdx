@@ -5,8 +5,12 @@
   "exports": {
     ".": "./index.ts",
     "./csp": "./csp.ts",
+    "./console-zone": "./console-zone.ts",
+    "./core-paths": "./core-paths.ts",
     "./docs-zone": "./docs-zone.ts",
     "./env-errors": "./env-errors.ts",
+    "./home-numbers": "./home-numbers.ts",
+    "./platform-hosts": "./platform-hosts.ts",
     "./keys": "./keys.ts"
   },
   "scripts": {

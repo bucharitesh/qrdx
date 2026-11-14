@@ -6,7 +6,7 @@ import {
   ChartTooltipContent,
 } from "@repo/design-system/components/ui/chart";
 import { Bar, BarChart, XAxis, YAxis } from "recharts";
-import type { DailyPoint } from "../_lib/queries";
+import type { DailyPoint } from "../_lib/types";
 
 const formatDay = (value: string) =>
   new Date(`${value}T00:00:00Z`).toLocaleDateString("en-US", {

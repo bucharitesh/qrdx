@@ -6,6 +6,7 @@
     "./server": "./server.ts",
     "./sign-up-locale": "./sign-up-locale.ts",
     "./admin": "./admin.ts",
+    "./admin-rules": "./admin-rules.ts",
     "./admin-http": "./admin-http.ts",
     "./confirm-gate": "./confirm-gate.ts",
     "./confirm-sign-in": "./confirm-sign-in.ts",
