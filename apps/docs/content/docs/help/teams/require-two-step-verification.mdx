@@ -5,19 +5,31 @@ description: Make everyone in a workspace turn on two-step verification before t
 
 Owners and admins can require everyone in a workspace to use [two-step verification](/docs/help/privacy-and-security/two-step-verification). A member who hasn't turned it on then can't open the workspace until they do, so getting into someone's email alone isn't enough to get into your workspace.
 
-Requiring two-step verification is part of the **Business** plan. A workspace has it when one of its owners or billing members is on Business. See [Seats and workspace limits](/docs/help/teams/seats).
+<Callout type="info">
+  Requiring two-step verification is part of the **Business** plan. A workspace has it when one of its owners or billing members is on Business. See [Seats and workspace limits](/docs/help/teams/seats).
+</Callout>
 
 ## Turn it on
 
-1. Turn on two-step verification for your own account first, in **Settings** → **Profile & security**. You can't require it without having it yourself.
-2. In the workspace, go to **Settings** → **Team**.
-3. Under **Two-step verification**, turn on **Require two-step verification**.
-4. If some members don't have it on yet, QRdx tells you how many and asks before it goes ahead.
-5. [Confirm it's you](/docs/help/privacy-and-security/two-step-verification#confirm-its-you).
+### 1. Turn it on for yourself first
 
-Only owners and admins can change it, and turning it on or off asks you to confirm it's you.
+Turn on two-step verification for your own account in **Settings** → **Profile & security**. You can't require it without having it yourself.
 
-Nobody is emailed. Members without two-step verification find out the next time they open the workspace.
+### 2. Open the Team page
+
+In the workspace, go to **Settings** → **Team**.
+
+### 3. Require it
+
+Under **Two-step verification**, turn on **Require two-step verification**. If some members don't have it on yet, QRdx says how many and asks before it goes ahead.
+
+{/* shot: team-require-two-step | the Two-step verification card on the Team page with the Require two-step verification switch | Dashboard, Settings, Team */}
+
+### 4. Confirm it's you
+
+[Confirm it's you](/docs/help/privacy-and-security/two-step-verification#confirm-its-you). The card then reads "Two-step verification is now required".
+
+Only owners and admins can change it, and turning it on or off asks you to confirm it's you. Nobody is emailed: members without two-step verification find out the next time they open the workspace.
 
 ## See who has it on
 
@@ -35,7 +47,7 @@ If someone turns two-step verification off later, the workspace closes for them 
 
 ## API keys
 
-API keys created in the workspace keep working for the person who created them, with or without two-step verification. Two-step verification protects signing in, and a key is a credential of its own. Nobody can create a new key in the workspace without being able to open it, and owners and admins can see and revoke everyone's keys in the workspace's **Settings** → **Developers**.
+API keys created in the workspace keep working for the person who created them, with or without two-step verification. Two-step verification protects signing in, and a key is a credential of its own. Nobody can create a new key in the workspace without being able to open it, and owners and admins can see and revoke everyone's keys in the workspace's **Settings** → **API keys & apps**.
 
 Apps connected to someone's account with OAuth only ever work in that person's own workspace, so they never reach a team workspace.
 
@@ -45,4 +57,20 @@ The requirement stops applying, and the setting shows as off. If the workspace m
 
 ## Turn it off
 
-On the **Settings** → **Team** page, turn off **Require two-step verification** and confirm it's you. Members without two-step verification can open the workspace again straight away.
+On the **Settings** → **Team** page, turn off **Require two-step verification** and confirm it's you. Members without two-step verification can open the workspace again right away.
+
+## If something goes wrong
+
+### The switch is disabled
+
+Either your own account doesn't have two-step verification on yet, or the workspace isn't on Business. The card says which.
+
+### A member is locked out and can't turn it on
+
+They can turn it on from their own **Settings** → **Profile & security**, which doesn't need the workspace. If they've lost their phone and backup codes, see [Lost your phone and your backup codes](/docs/help/privacy-and-security/two-step-verification#lost-your-phone-and-your-backup-codes).
+
+## Related
+
+- [Two-step verification](/docs/help/privacy-and-security/two-step-verification)
+- [Team roles](/docs/help/teams/roles)
+- [Keep your account secure](/docs/help/privacy-and-security/account-security)

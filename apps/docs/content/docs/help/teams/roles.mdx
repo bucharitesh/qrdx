@@ -1,42 +1,60 @@
 ---
 title: Team roles
-description: What owners, admins and members can do in a workspace.
+description: What owners, admins, members, billing members and viewers can do in a workspace.
 ---
 
-Every member of a workspace has one role. In your own workspace, you're the owner.
+Every member of a workspace has one role: **Owner**, **Admin**, **Member**, **Billing** or **Viewer**. In your own workspace, you're the owner. The role decides what someone can change; everyone can see the workspace's codes, pages and analytics.
 
-## Member
+## What each role can do
 
-- Create and edit the workspace's codes and pages, and upload files.
-- Delete their own codes, files and form responses.
-- Use the workspace's shared themes and verified domains.
+| | Owner | Admin | Member | Billing | Viewer |
+| --- | --- | --- | --- | --- | --- |
+| See codes, pages, files and analytics | Yes | Yes | Yes | Yes | Yes |
+| Create codes, pages, files, folders, tags and themes; edit the workspace's codes; delete their own | Yes | Yes | Yes | | |
+| Create API keys | Yes | Yes | Yes | | |
+| Delete or change what other members created | Yes | Yes | | | |
+| Invite and remove people, and change roles | Yes | Yes | | | |
+| Rename the workspace, change its URL and logo, and manage the join link | Yes | Yes | | | |
+| Add, verify and remove custom domains | Yes | Yes | | | |
+| Manage webhooks, shared themes and the default theme | Yes | Yes | | | |
+| See and revoke everyone's API keys | Yes | Yes | | | |
+| [Require two-step verification](/docs/help/teams/require-two-step-verification) and set up single sign-on (Business) | Yes | Yes | | | |
+| Read the audit log (Business) | Yes | Yes | | | |
+| Upgrade, change or cancel the plan the workspace runs on | Yes | | | Yes | |
+| Make other members owners or billing members | Yes | | | | |
+| Create and change OAuth apps | Yes | | | | |
+| Delete the workspace | Yes | | | | |
 
-## Admin
+A **Billing** member manages the plan and is read-only everywhere else. A **Viewer** sees everything and changes nothing.
 
-Everything a member can do, plus:
+## Who pays for the workspace
 
-- Delete any code, file or form response.
-- Invite and remove members, and change their roles.
-- Share themes with the workspace.
-- Rename the workspace and change its URL.
-- [Require two-step verification](/docs/help/teams/require-two-step-verification) for everyone in it (Business).
-- Add, verify and remove custom domains.
-- Manage webhooks.
-
-## Owner
-
-Everything an admin can do, plus:
-
-- Make other members owners.
-- Create and change OAuth apps.
-- Delete the workspace (never someone's own workspace).
+A workspace runs on the best plan among its owners and billing members. Giving someone the Billing role lets them pay for the workspace without being able to change its codes.
 
 ## Change someone's role
 
-On the **Settings** → **Team** page, change the role next to their name. Only admins and owners can change roles.
+On the **Settings** → **Team** page, change the **Role** next to their name. Admins can set admin, member and viewer; only owners can give or take away the owner and billing roles.
 
 Changing someone's role, removing someone, inviting an admin and deleting the workspace ask you to [confirm it's you](/docs/help/privacy-and-security/two-step-verification#confirm-its-you) first, unless you did in that browser in the last 10 minutes.
+
+{/* shot: team-members-roles | the Members table on the Team page with the Role picker open for one person | Dashboard, Settings, Team */}
 
 ## Hand over a workspace
 
 There's no separate transfer button. Make the new person an **Owner**. Once there's another owner, you can leave the workspace. Your own workspace can't be handed over this way: you can't leave it.
+
+## If something goes wrong
+
+### You can't pick Owner or Billing for someone
+
+Only an owner can give those roles. Ask one of the workspace's owners.
+
+### A member can't delete a code
+
+Members delete only what they created. A code someone else made needs an admin or owner.
+
+## Related
+
+- [Create a workspace and invite people](/docs/help/teams/create-and-invite)
+- [Seats and workspace limits](/docs/help/teams/seats)
+- [Require two-step verification](/docs/help/teams/require-two-step-verification)
