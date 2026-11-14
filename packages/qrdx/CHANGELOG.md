@@ -13,7 +13,7 @@ Release notes for earlier versions are at [qrdx.dev/changelog](https://qrdx.dev/
 
 ### Dot Ring text that fits the ring
 
-- **Long text no longer runs into its own start.** Text that doesn't fit the ring with a word space to spare first gets tighter letter spacing, then a smaller font, down to half the default size (16 units, the smallest size frame labels get). It then closes the ring with a word space. Text that still doesn't fit is cut after the last whole word that does.
+- **Long text no longer runs into its own start.** Text that doesn't fit the ring with a word space to spare first gets tighter letter spacing, then a smaller font, down to half the default size (16 units, the smallest size frame labels get). It then closes the ring with a word space. Past that, text that repeats a phrase keeps as many whole copies as fit, spaced like `textFill: "repeat"`. Other text is cut after the last whole word that fits and ends with "…", which EPS prints as "...".
 - **`textFill: "repeat"`** (in `customProps`) repeats the text as many times as fit and evens out the spacing, so the ring closes with the same gap as between the copies. Give the phrase once (`"Read the docs *"`). Text that already repeats a phrase (`"Make your own * Make your own *"`) counts as that phrase.
 - Text that fits is drawn exactly as before. The default ring is byte for byte the same.
 

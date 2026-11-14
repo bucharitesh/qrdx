@@ -235,6 +235,18 @@ describe("dot ring template", () => {
         },
         { customText: "Point your camera here * ".repeat(12) },
         { customText: "Read the docs *", textFill: "repeat" },
+        // Whole copies of a long phrase, and a sentence cut with "…"
+        {
+          customText: Array.from(
+            { length: 3 },
+            () =>
+              "Point your camera at the code to open the menu, order and pay at your table *"
+          ).join(" "),
+        },
+        {
+          customText:
+            "Point your camera at the code to open the menu, order and pay at your table * Scan to see today's specials and the wine list, book a table for tonight, join our loyalty club, pay your bill and leave a review on your way out *",
+        },
       ];
       for (const customProps of fills) {
         for (const value of Object.values(URLS)) {
@@ -526,13 +538,24 @@ describe("dot ring template", () => {
     const times = (phrase: string, count: number) =>
       Array.from({ length: count }, () => phrase).join(" ");
 
+    const LONG =
+      "Point your camera at the code to open the menu, order and pay at your table *";
+    /** The "…" that ends cut text is 1 em wide. */
+    const CUT = "\u2026";
+    const widthOf = (chars: string[], fontSize: number) =>
+      chars.reduce(
+        (sum, char, index) =>
+          sum +
+          (char === CUT && index === chars.length - 1
+            ? fontSize
+            : letterWidth(char, fontSize)),
+        0
+      );
+
     /** The line as set, plus the word space where the ring closes. */
     function closedLength(ring: ReturnType<typeof dotRingText>) {
       const chars = Array.from(ring.text);
-      const letters = chars.reduce(
-        (sum, char) => sum + letterWidth(char, ring.fontSize),
-        0
-      );
+      const letters = widthOf(chars, ring.fontSize);
       return (
         letters +
         ring.letterSpacing * (chars.length - 1) +
@@ -574,33 +597,78 @@ describe("dot ring template", () => {
       expect([...sizes]).toEqual([String(ring.fontSize)]);
     });
 
-    it("then cuts after the last whole word that fits, at the smallest size", () => {
-      const text = times(
-        "Point your camera at the code to open the menu, order and pay at your table *",
-        3
-      );
-      const ring = dotRingText(text, options);
+    it("then keeps whole copies of a repeated phrase, never part of one", () => {
+      // Three copies don't fit even at the smallest size; two do
+      const ring = dotRingText(times(LONG, 3), options);
+      expect(ring.text).toBe(times(LONG, 2));
+      expect(ring.text).not.toContain(CUT);
       expect(ring.fontSize).toBeGreaterThanOrEqual(MIN_FONT_SIZE);
-      expect(ring.fontSize).toBeLessThan(MIN_FONT_SIZE * 1.1);
-      expect(text.startsWith(ring.text)).toBe(true);
-      expect(text[ring.text.length]).toBe(" ");
-      expect(closedLength(ring)).toBeLessThanOrEqual(CIRCUMFERENCE + 1e-6);
-      // The next word wouldn't have fitted at the smallest size
-      const next = text.slice(0, text.indexOf(" ", ring.text.length + 1));
-      expect(
-        dotRingText(next, {
-          ...options,
-          fontSize: MIN_FONT_SIZE,
-          letterSpacing: 0,
-        }).text
-      ).not.toBe(next);
+      expect(ring.letterSpacing).toBe(0);
+      // Closed as textFill "repeat" closes it: the seam is the word space
+      // between the copies
+      expect(closedLength(ring)).toBeCloseTo(CIRCUMFERENCE, 1);
+      expect(ring).toEqual(dotRingText(times(LONG, 2), options));
+      // A short phrase many times over keeps whole copies too
+      expect(dotRingText(times("Scan me *", 40), options).text).toMatch(
+        /^Scan me \*( Scan me \*)+$/
+      );
     });
 
-    it("cuts within a word longer than the ring", () => {
-      const ring = dotRingText("W".repeat(200), options);
-      expect(ring.text).toMatch(/^W{100,130}$/);
+    it("shrinks a long sentence that fits at a smaller size, without cutting it", () => {
+      const text = `${LONG} Scan to see today's specials and the wine list`;
+      const ring = dotRingText(text, options);
+      expect(ring.text).toBe(text);
+      expect(ring.fontSize).toBeGreaterThan(MIN_FONT_SIZE);
+      expect(ring.fontSize).toBeLessThan(DEFAULT_FONT_SIZE);
+    });
+
+    it("cuts other text after the last whole word that fits, ending with …", () => {
+      const text = `${LONG} Scan to see today's specials and the wine list, book a table for tonight, join our loyalty club, pay your bill and leave a review on your way out *`;
+      const ring = dotRingText(text, options);
+      expect(ring.text.endsWith(CUT)).toBe(true);
+      const kept = ring.text.slice(0, -1);
+      // A whole-word prefix of the text, its trailing punctuation dropped
+      expect(text.startsWith(kept)).toBe(true);
+      expect(text.slice(kept.length)).toMatch(/^[^\p{L}\p{N}]/u);
+      expect(kept).toMatch(/[\p{L}\p{N}]$/u);
       expect(ring.fontSize).toBeGreaterThanOrEqual(MIN_FONT_SIZE);
-      expect(closedLength(ring)).toBeLessThanOrEqual(CIRCUMFERENCE + 1e-6);
+      // The word space before the ring's start is kept (fontSize is rounded
+      // to 3 decimals for the markup)
+      expect(closedLength(ring)).toBeLessThanOrEqual(CIRCUMFERENCE + 0.1);
+      // One more word and the "…" wouldn't fit at the smallest size
+      const next = Array.from(
+        `${text.slice(0, text.indexOf(" ", kept.length + 1)).replace(/[,.;:]$/, "")}${CUT}`
+      );
+      expect(
+        widthOf(next, MIN_FONT_SIZE) + letterWidth(" ", MIN_FONT_SIZE)
+      ).toBeGreaterThan(CIRCUMFERENCE);
+      // The template draws it as the last letter
+      const markup = toSVGString({
+        value: URLS.typical,
+        templateId: "DotRing",
+        customProps: { customText: text },
+      });
+      expect(textNodes(markup).at(-1)?.text).toBe(CUT);
+    });
+
+    it("cuts within a word longer than the ring, ending with …", () => {
+      const ring = dotRingText("W".repeat(200), options);
+      expect(ring.text).toMatch(/^W{100,130}\u2026$/u);
+      expect(ring.fontSize).toBeGreaterThanOrEqual(MIN_FONT_SIZE);
+      expect(closedLength(ring)).toBeLessThanOrEqual(CIRCUMFERENCE + 0.1);
+    });
+
+    it("prints the … as ... in EPS, whose font has no ellipsis", async () => {
+      const eps = await getQRAsEPS(
+        {
+          value: URLS.typical,
+          templateId: "DotRing",
+          customProps: { customText: "W".repeat(200) },
+        },
+        { sizeMm: 40 }
+      );
+      expect(eps).toContain("(...) 0 0 moveto");
+      expect(eps).not.toContain("(?)");
     });
 
     it("never shrinks a font asked for below the smallest size", () => {

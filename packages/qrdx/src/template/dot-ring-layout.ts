@@ -192,13 +192,36 @@ interface RingSetting {
   chars: string[];
   fontSize: number;
   letterSpacing: number;
+  /** The last letter is the "…" that ends cut text */
+  cut?: boolean;
+}
+
+/** Ends text cut short: a deliberate cut, not text running out. */
+const CUT_MARK = "\u2026";
+/** The cut mark's width in em (an ellipsis is about 1 em in a heavy sans) */
+const CUT_MARK_EM = 1;
+
+/** Width of `chars[index]`: its rough width, or the cut mark's. */
+function charWidth(
+  chars: readonly string[],
+  index: number,
+  fontSize: number,
+  cut = false
+): number {
+  return cut && index === chars.length - 1
+    ? CUT_MARK_EM * fontSize
+    : letterWidth(chars[index] as string, fontSize);
 }
 
 /** Sum of the letters' widths (no spacing). */
-function lettersWidth(chars: readonly string[], fontSize: number): number {
+function lettersWidth(
+  chars: readonly string[],
+  fontSize: number,
+  cut = false
+): number {
   let width = 0;
-  for (const char of chars) {
-    width += letterWidth(char, fontSize);
+  for (let index = 0; index < chars.length; index++) {
+    width += charWidth(chars, index, fontSize, cut);
   }
   return width;
 }
@@ -207,17 +230,33 @@ function lettersWidth(chars: readonly string[], fontSize: number): number {
  * True when `chars` go round with room to spare: the line plus a word
  * space where the ring closes, so its end never meets its start.
  */
-function fitsRing(chars: readonly string[], fontSize: number, spacing: number) {
+function fitsRing(
+  chars: readonly string[],
+  fontSize: number,
+  spacing: number,
+  cut = false
+) {
   const line =
-    lettersWidth(chars, fontSize) + spacing * Math.max(0, chars.length - 1);
+    lettersWidth(chars, fontSize, cut) +
+    spacing * Math.max(0, chars.length - 1);
   return line + letterWidth(" ", fontSize) + 2 * spacing <= CIRCUMFERENCE;
 }
+
+/** `text`'s words, without the spaces between them. */
+const wordsOf = (chars: readonly string[]) =>
+  chars.join("").split(" ").filter(Boolean);
+
+/** `phrase` `count` times, a space between the copies. */
+const copiesOf = (phrase: string[], count: number) =>
+  Array.from(Array.from({ length: count }, () => phrase.join(" ")).join(" "));
 
 /**
  * `chars` as asked when they fit round the ring. Longer text gets tighter
  * spacing first (down to none), then a smaller font (down to
- * MIN_FONT_SIZE), set so the line and a word space close the ring exactly;
- * past that it's cut after the last whole word that fits.
+ * MIN_FONT_SIZE), set so the line and a word space close the ring exactly.
+ * Past that, text that repeats a phrase keeps as many whole copies as fit,
+ * closed like textFill "repeat"; other text is cut after the last whole
+ * word that fits and ends with "…".
  */
 function fitRing(
   chars: string[],
@@ -229,34 +268,54 @@ function fitRing(
   }
   const tightest = Math.min(letterSpacing, 0);
   const smallest = Math.min(fontSize, MIN_FONT_SIZE);
-  const squeeze = (line: string[]): RingSetting | null => {
-    if (fitsRing(line, fontSize, letterSpacing)) {
-      return { chars: line, fontSize, letterSpacing };
-    }
+  // The line and a word space closing the ring exactly: spacing first,
+  // then the font (null when that would go below the smallest size)
+  const close = (line: string[], cut = false): RingSetting | null => {
     // The line plus the closing space, without spacing: it scales with the font
-    const width = lettersWidth(line, fontSize) + letterWidth(" ", fontSize);
+    const width =
+      lettersWidth(line, fontSize, cut) + letterWidth(" ", fontSize);
     // n letters and the space take n + 1 gaps round a closed ring
     const gaps = line.length + 1;
     const spacing = (CIRCUMFERENCE - width) / gaps;
     if (spacing >= tightest) {
-      return { chars: line, fontSize, letterSpacing: spacing };
+      return { chars: line, fontSize, letterSpacing: spacing, cut };
     }
     const size = ((CIRCUMFERENCE - tightest * gaps) / width) * fontSize;
     return size >= smallest
-      ? { chars: line, fontSize: size, letterSpacing: tightest }
+      ? { chars: line, fontSize: size, letterSpacing: tightest, cut }
       : null;
   };
-  const squeezed = squeeze(chars);
+  const squeezed = close(chars);
   if (squeezed) {
     return squeezed;
   }
-  // Too long even at the smallest size: cut after the last word that fits,
-  // or within a word longer than the ring
-  // Each letter takes its width and one gap; the closing space takes the
-  // rest (fitsRing, counted letter by letter)
-  const room = CIRCUMFERENCE - letterWidth(" ", smallest) - tightest;
+  // Too long even at the smallest size. Copies of one phrase: the most
+  // whole copies that fit
+  const words = wordsOf(chars);
+  const phrase = repeatedWords(words);
+  for (let count = words.length / phrase.length - 1; count >= 1; count--) {
+    const line = copiesOf(phrase, count);
+    if (fitsRing(line, smallest, tightest)) {
+      return (
+        close(line) ?? {
+          chars: line,
+          fontSize: smallest,
+          letterSpacing: tightest,
+        }
+      );
+    }
+  }
+  // Anything else: cut after the last word that fits (or within a word
+  // longer than the ring) and end with "…". Each letter takes its width
+  // and one gap; the mark and the closing space take the rest (fitsRing,
+  // counted letter by letter)
+  const room =
+    CIRCUMFERENCE -
+    letterWidth(" ", smallest) -
+    CUT_MARK_EM * smallest -
+    2 * tightest;
   let used = 0;
-  let words = 0;
+  let whole = 0;
   let letters = 0;
   for (const [index, char] of chars.entries()) {
     used += letterWidth(char, smallest) + tightest;
@@ -265,22 +324,31 @@ function fitRing(
     }
     letters = index + 1;
     if (letters === chars.length || chars[letters] === " ") {
-      words = letters;
+      whole = letters;
     }
   }
-  const line = trimEnd(chars.slice(0, words > 0 ? words : letters));
+  const line = [
+    ...trimCut(chars.slice(0, whole > 0 ? whole : letters)),
+    CUT_MARK,
+  ];
+  const asked = fitsRing(line, fontSize, letterSpacing, true)
+    ? { chars: line, fontSize, letterSpacing, cut: true }
+    : null;
   return (
-    squeeze(line) ?? {
+    asked ??
+    close(line, true) ?? {
       chars: line,
       fontSize: smallest,
       letterSpacing: tightest,
+      cut: true,
     }
   );
 }
 
-function trimEnd(chars: string[]): string[] {
+/** Without trailing spaces and punctuation that would sit before "…". */
+function trimCut(chars: string[]): string[] {
   let end = chars.length;
-  while (end > 0 && chars[end - 1] === " ") {
+  while (end > 0 && /[\s.,;:!?*·•\-–—]/u.test(chars[end - 1] as string)) {
     end--;
   }
   return chars.slice(0, end);
@@ -311,7 +379,7 @@ function repeatRing(
   fontSize: number,
   letterSpacing: number
 ): RingSetting {
-  const words = chars.join("").split(" ").filter(Boolean);
+  const words = wordsOf(chars);
   if (words.length === 0) {
     return { chars: [], fontSize, letterSpacing };
   }
@@ -382,8 +450,8 @@ export function dotRingText(
   const { fontSize, letterSpacing } = setting;
   const kept: { char: string; along: number }[] = [];
   let offset = 0;
-  for (const char of setting.chars) {
-    const width = letterWidth(char, fontSize);
+  for (const [index, char] of setting.chars.entries()) {
+    const width = charWidth(setting.chars, index, fontSize, setting.cut);
     kept.push({ char, along: offset + width / 2 });
     offset += width + letterSpacing;
   }
