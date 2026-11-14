@@ -12,28 +12,28 @@ No account or API key is needed.
 Claude Code:
 
 ```text
-/plugin marketplace add bucharitesh/qrdx
+/plugin marketplace add qrdxinc/qrdx
 /plugin install qrdx@qrdx
 ```
 
 GitHub Copilot CLI:
 
 ```bash
-copilot plugin marketplace add bucharitesh/qrdx
+copilot plugin marketplace add qrdxinc/qrdx
 copilot plugin install qrdx@qrdx
 ```
 
 Codex:
 
 ```bash
-codex plugin marketplace add bucharitesh/qrdx
+codex plugin marketplace add qrdxinc/qrdx
 codex plugin add qrdx@qrdx
 ```
 
 Gemini CLI installs the repository as an extension with the same MCP server and skill:
 
 ```bash
-gemini extensions install https://github.com/bucharitesh/qrdx
+gemini extensions install https://github.com/qrdxinc/qrdx
 ```
 
 ## What it runs and what it sends

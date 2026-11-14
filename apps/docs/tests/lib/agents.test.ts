@@ -137,7 +137,7 @@ describe("llms.txt", () => {
     const allowed = [
       LOCAL.origin,
       "https://api.qrdx.dev/",
-      "https://github.com/bucharitesh/qrdx",
+      "https://github.com/qrdxinc/qrdx",
     ];
     const targets = linkTargets(text);
     expect(targets.length).toBeGreaterThan(QR_TYPES.length);

@@ -3128,7 +3128,7 @@
       "openQuestion": "QRdx 真的是开源的吗？",
       "openAnswer": "是的。源代码在 GitHub 上，Web 应用采用 AGPL-3.0-or-later 许可，qrdx 库、@qrdx/cli 和插件采用 MIT 许可。两项商业功能，即工作区单点登录和审计日志，位于 ee 文件夹中，适用 QRdx Commercial License：你可以阅读这部分代码，但用于生产环境需要与 QRdx 签订协议。",
       "githubQuestion": "QRdx 在 GitHub 上的源代码在哪里？",
-      "githubAnswer": "在 github.com/bucharitesh/qrdx。这是一个 monorepo，包含 Web 应用、qrdx 库、CLI、插件和文档。",
+      "githubAnswer": "在 github.com/qrdxinc/qrdx。这是一个 monorepo，包含 Web 应用、qrdx 库、CLI、插件和文档。",
       "freeQuestion": "QRdx 可以免费自托管吗？",
       "freeAnswer": "可以。无需支付许可费用，你只需承担自己的服务器和数据库成本。自托管实例可以运行动态二维码、托管页面和扫描分析。除非你拥有 QRdx 许可密钥，否则单点登录和审计日志不会启用。",
       "needQuestion": "自托管 QRdx 需要准备什么？",

@@ -485,7 +485,7 @@ export function buildLlmsTxt(input: LlmsTxtInput): string {
     },
     {
       title: "Licence of the qrdx library and @qrdx/cli (MIT)",
-      url: "https://github.com/bucharitesh/qrdx/blob/main/packages/qrdx/LICENSE",
+      url: `${GITHUB_REPO_URL}/blob/main/packages/qrdx/LICENSE`,
     },
   ]);
 
