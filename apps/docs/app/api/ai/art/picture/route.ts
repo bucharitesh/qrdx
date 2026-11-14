@@ -41,6 +41,23 @@ const dailyLimiter = createRateLimiter({
 });
 
 /**
+ * Pictures per user per 30 days, for each image of the plan's monthly AI art
+ * allowance: room for variations, retries and remade pictures, but the free
+ * step can't be farmed on an account that never paints one (Free: 15).
+ */
+const PICTURES_PER_ART_IMAGE = 5;
+const monthlyLimiters = new Map<number, ReturnType<typeof createRateLimiter>>();
+function monthlyPictureLimiter(allowance: number) {
+  const limit = allowance * PICTURES_PER_ART_IMAGE;
+  let limiter = monthlyLimiters.get(limit);
+  if (!limiter) {
+    limiter = createRateLimiter({ limiter: fixedWindow(limit, "30 d") });
+    monthlyLimiters.set(limit, limiter);
+  }
+  return limiter;
+}
+
+/**
  * Scene mode's first step: the picture for the description and look, made
  * before the code is painted into it (POST /api/ai/art with `picture`). It
  * comes back sealed (lib/ai/art-seal.ts): nothing in it is usable on its
@@ -59,7 +76,15 @@ export async function POST(req: NextRequest) {
       artPictureRequestSchema,
       await readJsonBody(req, MAX_ART_REQUEST_BODY_BYTES),
     );
-    await assertArtCreditsLeft(scope);
+    const credits = await assertArtCreditsLeft(scope);
+    if (credits.limit !== null) {
+      await enforceRateLimits([
+        {
+          limiter: monthlyPictureLimiter(credits.limit),
+          key: `ai-art-picture:month:${scope.userId}`,
+        },
+      ]);
+    }
 
     const started = Date.now();
     const writtenPrompt =
