@@ -99,6 +99,8 @@ export interface AnalyticsEvents {
     preset?: string;
     /** The quick look (components/sections/ai-art/looks.ts) */
     look?: string;
+    /** How the code sits in the art: code, scene or photo */
+    mode?: string;
   };
   prompt_enhance_started: {
     length: number;

@@ -25,19 +25,24 @@ import { HttpError } from "@/lib/error-response";
 import { rasterizeImage, serializeQrSvg } from "@/lib/qr-render";
 import { logError } from "@/lib/shared";
 import {
+  type BlendStyle,
+  CODE_BLEND_STYLE,
   encodePng,
   findLeastBlend,
   leastBlendBounds,
   type ModuleGrid,
   type QRModuleMap,
   readModuleMap,
+  SCENE_BLEND_STYLE,
 } from "./art-blend";
 import { AI_MODELS, type ArtModelChoice, artProviderOptions } from "./models";
 import { aiGateway } from "./providers";
 
 // AI QR art in four steps, all on the server:
 // 1. Draw the code as a plain black-on-white QR (level H, square modules, a
-//    wide quiet zone): the control image.
+//    wide quiet zone): the control image. (Scene and photo modes paint the
+//    code into a picture instead: ./art-picture.ts, with steps 3 and 4 the
+//    same.)
 // 2. The art model (lib/ai/models.ts, through Vercel AI Gateway) restyles it,
 //    told to keep the module grid, flat finder eyes and a plain quiet zone
 //    (plus an optional reference image for colors or a logo).
@@ -48,8 +53,8 @@ import { aiGateway } from "./providers";
 //    which strengthening the finders, the quiet zone and then the modules,
 //    on the grid where the model drew them, makes it scan. Only when no
 //    strength QR visibility allows works, or the model didn't draw this code
-//    at all, does the Image QR (halftone) blend redraw the whole image as a
-//    code. Nothing that fails is delivered.
+//    at all, does the Image QR (halftone) blend redraw the code's square as
+//    a code (the whole image in code mode). Nothing that fails is delivered.
 
 /** Light border around the control code, in modules (the spec minimum is 4). */
 const CONTROL_QUIET_ZONE_MODULES = 6;
@@ -67,7 +72,7 @@ const seedFor = (choice: ArtModelChoice, seed: number) =>
   choice.supportsSeed ? { seed: seed % SEED_RANGE } : {};
 
 /** Plain props of the control code; the blend reuses them with `art`. */
-function controlProps(text: string): QRPropsSVG {
+export function controlProps(text: string): QRPropsSVG {
   return {
     value: text,
     level: "H",
@@ -85,11 +90,15 @@ const svgDataUrl = (svg: string) =>
   `data:image/svg+xml;base64,${Buffer.from(svg).toString("base64")}`;
 const dataUrl = (bytes: Uint8Array, mediaType: string) =>
   `data:${mediaType};base64,${Buffer.from(bytes).toString("base64")}`;
+/** The bytes of an uploaded (base64) data: URL. */
+const dataUrlBytes = (url: string) =>
+  new Uint8Array(Buffer.from(url.slice(url.indexOf(",") + 1), "base64"));
 
-async function renderPng(
+export async function renderPng(
   src: string,
+  size = ART_IMAGE_SIZE,
 ): Promise<{ png: Uint8Array; pixels: DecodedImage }> {
-  const png = new Uint8Array(await rasterizeImage(src, ART_IMAGE_SIZE));
+  const png = new Uint8Array(await rasterizeImage(src, size));
   const pixels = await decodePNGPixels(png);
   if (!pixels) throw new Error("Could not read the rendered PNG");
   return { png, pixels };
@@ -104,6 +113,13 @@ export interface ControlImage {
   modules: number;
   /** Every module's value and kind, read from the rendered control */
   map: QRModuleMap;
+  /** Where the code's modules are in `png`, in pixels */
+  grid: Omit<ModuleGrid, "fit">;
+  /**
+   * "code": the code fills the image; "scene" and "photo": it's painted
+   * into a square of a picture (./art-picture.ts)
+   */
+  mode: ArtMode;
 }
 
 /**
@@ -119,19 +135,20 @@ export async function renderControlImage(text: string): Promise<ControlImage> {
     throw new Error("The control QR code doesn't decode");
   }
   const modules = 17 + 4 * scan.version;
+  const pitch = ART_IMAGE_SIZE / (modules + 2 * CONTROL_QUIET_ZONE_MODULES);
+  const edge = CONTROL_QUIET_ZONE_MODULES * pitch;
   return {
     png,
     modules,
     map: readModuleMap(pixels, modules, CONTROL_QUIET_ZONE_MODULES),
+    grid: { left: edge, top: edge, pitch },
+    mode: "code",
   };
 }
 
 /** Where the control image has its modules, in pixels. */
 export function controlGrid(control: ControlImage): Omit<ModuleGrid, "fit"> {
-  const pitch =
-    ART_IMAGE_SIZE / (control.modules + 2 * CONTROL_QUIET_ZONE_MODULES);
-  const edge = CONTROL_QUIET_ZONE_MODULES * pitch;
-  return { left: edge, top: edge, pitch };
+  return control.grid;
 }
 
 // ── Prompt ─────────────────────────────────────────────────────────────────
@@ -153,6 +170,8 @@ const MODEL_PROMPT_RULES: Record<string, string> = {
     "- Keep it flat and front-on, like a print: no perspective, depth or 3D blocks, and nothing that rises above or overlaps the code.",
 };
 
+const sentence = (text: string) => text.replace(/[.\s]+$/, "");
+
 /** The instruction sent with the control image (exported for tests). */
 export function buildArtPrompt({
   prompt,
@@ -172,7 +191,7 @@ export function buildArtPrompt({
 }): string {
   const modelRule = MODEL_PROMPT_RULES[model];
   const lines = [
-    `Repaint the QR code in the first image as artwork: ${prompt.replace(/[.\s]+$/, "")}.`,
+    `Repaint the QR code in the first image as artwork: ${sentence(prompt)}.`,
     "",
     "The artwork must still scan as exactly this QR code:",
     "- Keep the image square and the code exactly where it is, at the same size, on the same grid. Don't move, resize, add, remove, rotate or merge modules.",
@@ -200,7 +219,7 @@ export function buildArtPrompt({
     );
   }
   if (negativePrompt) {
-    lines.push(`Avoid: ${negativePrompt.replace(/[.\s]+$/, "")}.`);
+    lines.push(`Avoid: ${sentence(negativePrompt)}.`);
   }
   return lines.join("\n");
 }
@@ -323,7 +342,7 @@ function errorStatus(error: unknown): number | undefined {
   return typeof status === "number" ? status : undefined;
 }
 
-async function callModel(
+export async function callModel(
   model: ArtImageModel,
   request: Omit<ArtModelRequest, "abortSignal">,
   signal: AbortSignal,
@@ -372,7 +391,7 @@ async function callModel(
 // ── Scan check and blend ───────────────────────────────────────────────────
 
 /** The model's image as ART_IMAGE_SIZE square RGBA pixels, plus PNG bytes. */
-async function readModelImage(
+export async function readModelImage(
   image: ArtModelImage,
 ): Promise<{ png: Uint8Array; pixels: DecodedImage }> {
   if (image.mediaType === "image/png") {
@@ -461,11 +480,40 @@ function blendPalette(pixels: DecodedImage): { fg: string; bg: string } {
   return { fg: hex(dark), bg: hex(light) };
 }
 
+/** Light border of the Image QR blend in scene and photo modes, in modules. */
+const REGION_BLEND_QUIET_ZONE_MODULES = 2;
+
+/** `patch` drawn over a copy of `pixels` at (`left`, `top`), clipped. */
+function paste(
+  pixels: DecodedImage,
+  patch: DecodedImage,
+  left: number,
+  top: number,
+): DecodedImage {
+  const data = new Uint8Array(pixels.data);
+  const x0 = Math.max(0, left);
+  const x1 = Math.min(pixels.width, left + patch.width);
+  for (
+    let y = Math.max(0, top);
+    y < Math.min(pixels.height, top + patch.height);
+    y++
+  ) {
+    const from = ((y - top) * patch.width + (x0 - left)) * 4;
+    data.set(
+      patch.data.subarray(from, from + (x1 - x0) * 4),
+      (y * pixels.width + x0) * 4,
+    );
+  }
+  return { width: pixels.width, height: pixels.height, data };
+}
+
 /**
  * The Image QR blend, the last resort: redraws the code with qrdx's Image QR
  * art on the control's module grid, the model's image showing through it,
- * then checks the result. Null when no strength scans. (The eval runs it on
- * every image to compare with the least blend.)
+ * then checks the result. In code mode that's the whole image; in scene and
+ * photo modes only the code's square and a thin border, over the picture.
+ * Null when no strength scans. (The eval runs it on every image to compare
+ * with the least blend.)
  */
 export async function blendImageQR({
   text,
@@ -478,26 +526,44 @@ export async function blendImageQR({
   control: ControlImage;
   visibility: number;
 }): Promise<Uint8Array | null> {
-  const cells = control.modules + 2 * CONTROL_QUIET_ZONE_MODULES;
-  const modulePx = ART_IMAGE_SIZE / cells;
+  const { left, top, pitch } = control.grid;
   // The art covers the code area only, so it lines up module for module.
-  const left = Math.round(CONTROL_QUIET_ZONE_MODULES * modulePx);
-  const side = Math.round(control.modules * modulePx);
-  const area = crop(pixels, left, left, side);
+  const side = Math.round(control.modules * pitch);
+  const area = crop(pixels, Math.round(left), Math.round(top), side);
   const image = createQRArtImage(area);
   const { fg, bg } = blendPalette(area);
+  const region = control.mode !== "code";
+  const quiet = region
+    ? REGION_BLEND_QUIET_ZONE_MODULES
+    : CONTROL_QUIET_ZONE_MODULES;
+  const size = region
+    ? Math.round((control.modules + 2 * quiet) * pitch)
+    : ART_IMAGE_SIZE;
   // A second, gentler try shows the code more strongly.
   for (const intensity of [visibilityToBlendIntensity(visibility), 0.4]) {
     const svg = serializeQrSvg(
       createElement(QRCodeSVG, {
         ...controlProps(text),
+        size,
+        margin: quiet,
         fgColor: fg,
         bgColor: bg,
         art: { mode: "halftone", variant: "color", image, intensity },
       }),
     );
-    const blend = await renderPng(svgDataUrl(svg));
-    if ((await scanQRPixels(blend.pixels, text)).passed) return blend.png;
+    const blend = await renderPng(svgDataUrl(svg), size);
+    if (!region) {
+      if ((await scanQRPixels(blend.pixels, text)).passed) return blend.png;
+      continue;
+    }
+    const offset = Math.round(quiet * pitch);
+    const whole = paste(
+      pixels,
+      blend.pixels,
+      Math.round(left) - offset,
+      Math.round(top) - offset,
+    );
+    if ((await scanQRPixels(whole, text)).passed) return encodePng(whole);
   }
   return null;
 }
@@ -555,7 +621,7 @@ async function passesGate(png: Uint8Array, text: string): Promise<boolean> {
   return Boolean(pixels && (await scanQRPixels(pixels, text)).passed);
 }
 
-interface Delivery {
+export interface Delivery {
   png: Uint8Array;
   blend: AIArtVariant["blend"];
   blendStrength: number;
@@ -566,18 +632,20 @@ interface Delivery {
  * allows: as drawn, else the least blend, else (from visibility 50) the
  * Image QR blend. Null when none of them passes the gate.
  */
-async function deliverable({
+export async function deliverable({
   text,
   art,
   control,
   visibility,
   signal,
+  blendStyle,
 }: {
   text: string;
   art: { png: Uint8Array; pixels: DecodedImage };
   control: ControlImage;
   visibility: number;
   signal: AbortSignal;
+  blendStyle?: BlendStyle;
 }): Promise<Delivery | null> {
   const flat = flattenOnWhite(art.pixels);
   const pixels = flat ?? art.pixels;
@@ -597,6 +665,9 @@ async function deliverable({
     bounds,
     deadline: Date.now() + LEAST_BLEND_BUDGET_MS,
     signal,
+    style:
+      blendStyle ??
+      (control.mode === "code" ? CODE_BLEND_STYLE : SCENE_BLEND_STYLE),
   });
   if (least) {
     const png = encodePng(least.pixels);
@@ -612,77 +683,34 @@ async function deliverable({
 // ── One variant ────────────────────────────────────────────────────────────
 
 /**
- * Generates one AI art image that is verified to decode to `text`. Throws an
- * HttpError (its message says no credit was used) when nothing scannable came
- * back; the caller refunds the reserved credit.
+ * The model's image (or the picture with the code painted in) made to scan
+ * and checked (see deliverable), as the variant the response carries.
+ * Throws an HttpError that says no credit was used when nothing passes.
  */
-export async function generateArtVariant({
+export async function deliverVariant({
   text,
-  prompt,
-  negativePrompt,
-  visibility,
-  creativity,
-  seed,
-  reference,
+  art,
   control,
+  visibility,
+  seed,
   signal,
-  model = gatewayArtModel,
-  modelId = AI_MODELS.art.model,
-  timeoutMs = ART_MODEL_TIMEOUT_MS,
+  blendStyle,
 }: {
   text: string;
-  prompt: string;
-  negativePrompt?: string;
-  visibility: number;
-  creativity: number;
-  seed: number;
-  /** An uploaded PNG/JPEG data URL (never a remote URL) */
-  reference?: string;
-  /** How the code sits in the artwork (config.ts ART_MODES); "code" when unset */
-  mode?: ArtMode;
-  /** Photo mode: the uploaded PNG/JPEG data URL the code is painted into */
-  photo?: string;
+  art: { png: Uint8Array; pixels: DecodedImage };
   control: ControlImage;
+  visibility: number;
+  seed: number;
   signal: AbortSignal;
-  model?: ArtImageModel;
-  /** Gateway id behind `model`, for its prompt rules */
-  modelId?: string;
-  /** How long the model may take before the request fails */
-  timeoutMs?: number;
+  blendStyle?: BlendStyle;
 }): Promise<AIArtVariant> {
-  const images = [control.png];
-  if (reference) {
-    images.push(
-      new Uint8Array(
-        Buffer.from(reference.slice(reference.indexOf(",") + 1), "base64"),
-      ),
-    );
-  }
-  const output = await callModel(
-    model,
-    {
-      prompt: buildArtPrompt({
-        prompt,
-        negativePrompt,
-        visibility,
-        creativity,
-        withReference: Boolean(reference),
-        model: modelId,
-      }),
-      images,
-      seed,
-    },
-    signal,
-    timeoutMs,
-  );
-  // A PNG: the model's own, or redrawn from its JPEG or WebP.
-  const art = await readModelImage(output);
   const delivery = await deliverable({
     text,
     art,
     control,
     visibility,
     signal,
+    blendStyle,
   });
   if (!delivery) {
     throw new HttpError(
@@ -709,4 +737,64 @@ export async function generateArtVariant({
     blend,
     blendStrength,
   };
+}
+
+/**
+ * Generates one code-mode AI art image that is verified to decode to `text`
+ * (scene and photo modes are lib/ai/art-picture.ts). Throws an HttpError
+ * (its message says no credit was used) when nothing scannable came back;
+ * the caller refunds the reserved credit.
+ */
+export async function generateArtVariant({
+  text,
+  prompt,
+  negativePrompt,
+  visibility,
+  creativity,
+  seed,
+  reference,
+  control,
+  signal,
+  model = gatewayArtModel,
+  modelId = AI_MODELS.art.model,
+  timeoutMs = ART_MODEL_TIMEOUT_MS,
+}: {
+  text: string;
+  prompt: string;
+  negativePrompt?: string;
+  visibility: number;
+  creativity: number;
+  seed: number;
+  /** An uploaded PNG/JPEG data URL (never a remote URL) */
+  reference?: string;
+  control: ControlImage;
+  signal: AbortSignal;
+  model?: ArtImageModel;
+  /** Gateway id behind `model`, for its prompt rules */
+  modelId?: string;
+  /** How long the model may take before the request fails */
+  timeoutMs?: number;
+}): Promise<AIArtVariant> {
+  const images = [control.png];
+  if (reference) images.push(dataUrlBytes(reference));
+  const output = await callModel(
+    model,
+    {
+      prompt: buildArtPrompt({
+        prompt,
+        negativePrompt,
+        visibility,
+        creativity,
+        withReference: Boolean(reference),
+        model: modelId,
+      }),
+      images,
+      seed,
+    },
+    signal,
+    timeoutMs,
+  );
+  // A PNG: the model's own, or redrawn from its JPEG or WebP.
+  const art = await readModelImage(output);
+  return deliverVariant({ text, art, control, visibility, seed, signal });
 }

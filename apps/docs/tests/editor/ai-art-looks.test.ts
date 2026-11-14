@@ -249,7 +249,7 @@ describe("writeArtPrompt (fake model)", () => {
 
     const scene = fakeWriter("A tiled courtyard at noon.");
     await writeArtPrompt({ mode: "scene" }, { write: scene.write });
-    expect(scene.calls[0]?.text).toMatch(/large, fairly flat surface/);
+    expect(scene.calls[0]?.text).toMatch(/painted into its middle/);
     expect(scene.calls[0]?.text).not.toMatch(/look/);
     expect(scene.calls[0]?.text).toMatch(/Surprise me/);
   });
