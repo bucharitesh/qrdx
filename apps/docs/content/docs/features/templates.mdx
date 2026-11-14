@@ -77,22 +77,40 @@ Its settings go in `customProps` (typed as `DotRingProps`):
 
 | Prop | Default | Notes |
 | --- | --- | --- |
-| `customText` | "Scan the QR code" four times round | Text along the ring. Letters that don't fit around it are left out; `""` leaves the ring empty |
+| `customText` | "Scan the QR code" four times round | Text along the ring; `""` leaves the ring empty. Text too long for the ring is fitted (below) |
+| `textFill` | `"none"` | `"repeat"` repeats the text round the whole ring (below) |
 | `textPosition` | `"top"` | `"top"`: centered over the top, reading clockwise. `"bottom"`: centered along the bottom, reading left to right |
 | `textRotation` | `0` | Turns the text around the center, in degrees |
 | `textColor` | `#ffffff` | Text color |
 | `fontFamily` | system font stack | CSS font family of the text |
 | `fontWeight` | `900` | Font weight |
-| `fontSize` | `32` | In the template's 593-unit drawing, where the code is 300 across |
-| `fontLetterSpacing` | `3.5` | Extra space between letters, in the same units |
+| `fontSize` | `32` | In the template's 593-unit drawing, where the code is 300 across. Long text may be drawn smaller |
+| `fontLetterSpacing` | `3.5` | Extra space between letters, in the same units. Long text and `textFill` adjust it |
 | `outerCircleColor` | `fgColor` | Ring color |
 | `strokeWidth`, `strokeColor` | `0`, `#000000` | A stroke along both edges of the ring |
 | `outerStrokeWidth`, `outerStrokeColor` | `strokeWidth`, `strokeColor` | The ring's outer edge only |
 | `innerStrokeWidth`, `innerStrokeColor` | `strokeWidth`, `strokeColor` | The ring's inner edge only |
 
+Text that fits the ring is set as given, centered over the top or along the bottom. Text too long for it never runs into its own start. The letters move closer first, then the font gets smaller, down to half the default size (the smallest frame labels get). The text then closes the ring with a word space where it meets its start. If it still doesn't fit at that size, it's cut after the last whole word that does.
+
 A logo goes in the middle as on any code. Long links (codes over 49 modules across) keep a light band between the code and the dots, so they still scan when printed small.
 
 The text is SVG text in the font you choose; the default is the system font stack, so nothing is downloaded. SVG and PNG downloads in the browser use the viewer's fonts. PDF and EPS print it in Helvetica Bold, so use Latin-1 text there. `getQRAsPNG` from `qrdx/node` needs a font installed on the server, as frame labels do.
+
+### Filling the ring
+
+A short phrase leaves part of the ring empty. Set `textFill: "repeat"` to repeat it as many times as fit, with the spacing evened out so the ring closes with the same gap as between the copies:
+
+```tsx
+<QRCode
+  value="https://example.com/docs"
+  templateId="DotRing"
+  customProps={{ customText: "Read the docs *", textFill: "repeat" }}
+  size={512}
+/>
+```
+
+Give the phrase once. Text that already repeats a phrase, like `"Make your own * Make your own *"`, is read as that phrase, so it fills the ring the same way.
 
 ## Templates are frame specs
 

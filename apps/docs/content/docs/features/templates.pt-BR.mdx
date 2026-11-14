@@ -1,14 +1,14 @@
 ---
 title: "Templates"
-description: "Molduras que encaixam o código dentro de uma arte de tamanho fixo e a API TemplateDefinition para molduras que você desenha em código."
+description: "Molduras que encaixam o código dentro de uma arte de tamanho fixo, e a API TemplateDefinition para molduras que você desenha em código."
 icon: LayoutTemplate
 ---
 
-Um template é uma moldura que encaixa o código dentro da própria arte. No Playground, os templates não ficam em uma lista separada. Arrow, Standard Box, Square Border, Striked Box, Halloween e Dot Ring são blocos no grupo **Classic** do seletor de molduras, junto com as outras [molduras](/docs/features/frames), e escolher qualquer moldura substitui a anterior.
+Um template é uma moldura que encaixa o código dentro da própria arte. No Playground, os templates não ficam em uma lista separada. Arrow, Standard Box, Square Border, Striked Box, Halloween e Dot Ring são blocos no grupo **Classic** do seletor de molduras, ao lado das outras [molduras](/docs/features/frames), e escolher qualquer moldura substitui a anterior.
 
-Os templates se diferenciam das outras molduras em um ponto: o tamanho. Uma moldura adiciona espaço ao redor do código, então `size` é a largura do código e a imagem cresce. Um template desenha toda a arte em `size`, com o código menor dentro dela.
+Os templates se diferenciam das outras molduras em um ponto: o tamanho. Uma moldura adiciona espaço ao redor do código, então `size` é a largura do código e a imagem cresce. Um template desenha a arte inteira em `size`, com o código menor dentro dela.
 
-## Templates incluídos [#built-in-templates]
+## Templates integrados [#built-in-templates]
 
 Passe o id como `templateId`. A Image API recebe como `template` e a CLI como `--template`.
 
@@ -19,9 +19,9 @@ Passe o id como `templateId`. A Image API recebe como `template` e a CLI como `-
 | `SquareBorder` | Square Border | `fgColor` |
 | `StrikedBox` | Striked Box | Cor escura própria |
 | `Halloween` | Halloween | Laranja, verde e preto próprios |
-| `DotRing` | Dot Ring | O anel em `fgColor`, o texto em branco; ambos podem mudar (veja abaixo) |
+| `DotRing` | Dot Ring | Anel em `fgColor`, texto em branco; ambos podem mudar (abaixo) |
 
-`default` não desenha arte. Ele só recua um pouco o código, para 95% de `size`.
+`default` não desenha arte. Ele apenas recua um pouco o código, para 95% de `size`.
 
 ```tsx
 import { QRCode } from 'qrdx';
@@ -59,7 +59,7 @@ Um código redondo. O código fica em um disco de pontos dentro de um anel escur
 />
 ```
 
-Os ajustes ficam em `customProps` (com o tipo `DotRingProps`):
+As configurações ficam em `customProps` (tipado como `DotRingProps`):
 
 ```tsx
 <QRCode
@@ -75,28 +75,46 @@ Os ajustes ficam em `customProps` (com o tipo `DotRingProps`):
 />
 ```
 
-| Prop | Padrão | Observações |
+| Prop | Padrão | Notas |
 | --- | --- | --- |
-| `customText` | "Scan the QR code" repetido quatro vezes ao redor | Texto ao longo do anel. Letras que não cabem ao redor são omitidas; `""` deixa o anel vazio |
-| `textPosition` | `"top"` | `"top"`: centralizado na parte de cima, lido no sentido horário. `"bottom"`: centralizado na parte de baixo, lido da esquerda para a direita |
+| `customText` | "Scan the QR code" quatro vezes ao redor | Texto ao longo do anel; `""` deixa o anel vazio. Texto longo demais para o anel é ajustado (abaixo) |
+| `textFill` | `"none"` | `"repeat"` repete o texto ao redor de todo o anel (abaixo) |
+| `textPosition` | `"top"` | `"top"`: centralizado no topo, lido no sentido horário. `"bottom"`: centralizado na parte de baixo, lido da esquerda para a direita |
 | `textRotation` | `0` | Gira o texto em torno do centro, em graus |
 | `textColor` | `#ffffff` | Cor do texto |
 | `fontFamily` | pilha de fontes do sistema | Família de fonte CSS do texto |
 | `fontWeight` | `900` | Peso da fonte |
-| `fontSize` | `32` | No desenho de 593 unidades do template, em que o código tem 300 de largura |
-| `fontLetterSpacing` | `3.5` | Espaço extra entre as letras, nas mesmas unidades |
+| `fontSize` | `32` | No desenho de 593 unidades do template, em que o código tem 300 de largura. Texto longo pode ser desenhado menor |
+| `fontLetterSpacing` | `3.5` | Espaço extra entre as letras, nas mesmas unidades. Texto longo e `textFill` o ajustam |
 | `outerCircleColor` | `fgColor` | Cor do anel |
 | `strokeWidth`, `strokeColor` | `0`, `#000000` | Um contorno nas duas bordas do anel |
 | `outerStrokeWidth`, `outerStrokeColor` | `strokeWidth`, `strokeColor` | Só a borda externa do anel |
 | `innerStrokeWidth`, `innerStrokeColor` | `strokeWidth`, `strokeColor` | Só a borda interna do anel |
 
-Um logo vai no meio, como em qualquer código. Links longos (códigos com mais de 49 módulos de largura) mantêm uma faixa clara entre o código e os pontos, para que ainda possam ser lidos quando impressos pequenos.
+Texto que cabe no anel é posicionado como foi escrito, centralizado no topo ou na parte de baixo. Texto longo demais nunca encosta no próprio começo. Primeiro as letras se aproximam, depois a fonte diminui, até a metade do tamanho padrão (o menor tamanho usado nos rótulos de moldura). O texto então fecha o anel com um espaço de palavra onde encontra o começo. Se mesmo assim não couber nesse tamanho, ele é cortado depois da última palavra inteira que couber.
 
-O texto é texto SVG na fonte que você escolher; o padrão é a pilha de fontes do sistema, então nada é baixado. Os downloads em SVG e PNG no navegador usam as fontes de quem está vendo. PDF e EPS imprimem o texto em Helvetica Bold, então use texto Latin-1 nesses formatos. `getQRAsPNG` de `qrdx/node` precisa de uma fonte instalada no servidor, assim como os rótulos das molduras.
+Um logo vai no meio, como em qualquer código. Links longos (códigos com mais de 49 módulos de largura) mantêm uma faixa clara entre o código e os pontos, para que ainda tenham leitura quando impressos pequenos.
+
+O texto é texto SVG na fonte que você escolher; o padrão é a pilha de fontes do sistema, então nada é baixado. Downloads em SVG e PNG no navegador usam as fontes de quem está vendo. PDF e EPS imprimem em Helvetica Bold, então use texto Latin-1 nesses formatos. `getQRAsPNG` de `qrdx/node` precisa de uma fonte instalada no servidor, assim como os rótulos de moldura.
+
+### Preenchendo o anel [#filling-the-ring]
+
+Uma frase curta deixa parte do anel vazia. Defina `textFill: "repeat"` para repeti-la quantas vezes couber, com o espaçamento ajustado para que o anel feche com o mesmo intervalo que existe entre as cópias:
+
+```tsx
+<QRCode
+  value="https://example.com/docs"
+  templateId="DotRing"
+  customProps={{ customText: "Read the docs *", textFill: "repeat" }}
+  size={512}
+/>
+```
+
+Informe a frase uma vez só. Um texto que já repete uma frase, como `"Make your own * Make your own *"`, é lido como essa frase, então preenche o anel do mesmo jeito.
 
 ## Templates são especificações de moldura [#templates-are-frame-specs]
 
-A arte de Arrow, Standard Box, Square Border, Striked Box e Halloween é uma [especificação de moldura](/docs/features/frames#frame-specs), o mesmo formato JSON de todas as outras molduras, desenhada pelo mesmo mecanismo. `getTemplate(id).spec` retorna essa especificação. Use-a como moldura quando quiser o dimensionamento de moldura (o código mantém o tamanho e a arte cresce ao redor) e a opção de cor da moldura:
+A arte de Arrow, Standard Box, Square Border, Striked Box e Halloween é uma [especificação de moldura](/docs/features/frames#frame-specs), no mesmo formato JSON de todas as outras molduras, desenhada pelo mesmo motor. `getTemplate(id).spec` a retorna. Use-a como moldura quando quiser o dimensionamento de moldura (o código mantém o tamanho e a arte cresce ao redor) e a opção de cor da moldura:
 
 ```tsx
 import { getTemplate, QRCode } from 'qrdx';
@@ -110,7 +128,7 @@ const spec = getTemplate('Arrow')?.spec;
 />
 ```
 
-O Dot Ring não tem especificação: os pontos vêm do conteúdo do código, então ele os desenha em código (veja [Molduras que você desenha em código](#frames-you-draw-in-code)).
+Dot Ring não tem especificação: seus pontos vêm do conteúdo do código, então ele os desenha em código (veja [Molduras que você desenha em código](#frames-you-draw-in-code)).
 
 `templateId` desenha a mesma arte de antes. Designs salvos, URLs de imagem, comandos da CLI e códigos que usam um id de template continuam com a mesma aparência de sempre.
 
@@ -126,9 +144,9 @@ getTemplate('Halloween'); // one by id
 
 ## Molduras que você desenha em código [#frames-you-draw-in-code]
 
-Uma especificação de moldura descreve uma arte fixa. Quando a arte precisa ser calculada, escreva um `TemplateDefinition` e passe-o como `customTemplate`. O `wrapper` recebe o código como `children` e retorna o SVG a ser desenhado. Ele desenha em um canvas de 300 por 300, e o código também chega nesse tamanho, então reduza-o para deixar espaço para a sua arte. `props` traz o `fgColor` e o `bgColor` do código, e o terceiro argumento tem o `url` e o `pixelSize` do código.
+Uma especificação de moldura descreve uma arte fixa. Quando a arte precisa ser calculada, escreva um `TemplateDefinition` e passe-o como `customTemplate`. O `wrapper` dele recebe o código como `children` e retorna o SVG a desenhar. Ele desenha em uma tela de 300 por 300, e o código também chega nesse tamanho, então reduza-o para deixar espaço para a sua arte. `props` traz o `fgColor` e o `bgColor` do código, e o terceiro argumento traz o `url` e o `pixelSize` do código.
 
-Este exemplo desenha um anel ao redor do código:
+Este desenha um anel ao redor do código:
 
 ```tsx
 import { QRCode, type TemplateDefinition } from "qrdx";
@@ -160,7 +178,7 @@ const ringTemplate: TemplateDefinition = {
 />
 ```
 
-Mantenha o código grande o bastante para ser lido de onde as pessoas vão segurar o celular e deixe um espaço claro entre ele e a sua arte. Confira o resultado com a [pontuação de leitura](/docs/features/frames#will-it-scan).
+Mantenha o código grande o bastante para ter leitura de onde as pessoas vão segurar o celular, e deixe um espaço claro entre ele e a sua arte. Confira o resultado com a [pontuação de leitura](/docs/features/frames#will-it-scan).
 
 ## Próximos passos [#next-steps]
 

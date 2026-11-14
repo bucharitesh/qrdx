@@ -4,13 +4,13 @@ description: "将二维码嵌入固定尺寸图案中的边框，以及用于在
 icon: LayoutTemplate
 ---
 
-模板是一种把二维码嵌入自身图案内部的边框。在 Playground 中，模板并不是单独的列表。Arrow、Standard Box、Square Border、Striked Box、Halloween 和 Dot Ring 都是边框选择器 **经典** 分组中的图块，与其他[边框](/docs/features/frames)并列，选择任一边框都会替换之前选中的边框。
+模板是一种把二维码嵌入自身图案中的边框。在 Playground 中，模板并不是单独的列表。Arrow、Standard Box、Square Border、Striked Box、Halloween 和 Dot Ring 都是边框选择器 **Classic** 分组里的图块，与其他[边框](/docs/features/frames)并列，选择任何一个边框都会替换之前选的那个。
 
-模板与其他边框只有一点不同：尺寸。边框会在二维码四周增加空白，因此 `size` 是二维码的宽度，图像会随之变大。模板则以 `size` 绘制整个图案，二维码在其中显得更小。
+模板与其他边框只有一点不同：尺寸。边框会在二维码周围增加空白，所以 `size` 是二维码的宽度，图像会随之变大。模板则以 `size` 绘制整个图案，二维码在其中会更小。
 
 ## 内置模板 [#built-in-templates]
 
-将 id 作为 `templateId` 传入。Image API 中对应参数为 `template`，CLI 中为 `--template`。
+将 id 作为 `templateId` 传入。Image API 中对应的参数是 `template`，CLI 中是 `--template`。
 
 | `templateId` | 名称 | 颜色 |
 |--------------|------|-------|
@@ -19,7 +19,7 @@ icon: LayoutTemplate
 | `SquareBorder` | Square Border | `fgColor` |
 | `StrikedBox` | Striked Box | 自带的深色 |
 | `Halloween` | Halloween | 自带的橙色、绿色和黑色 |
-| `DotRing` | Dot Ring | 圆环使用 `fgColor`，文字为白色；两者均可更改（见下文） |
+| `DotRing` | Dot Ring | 圆环用 `fgColor`，文字为白色；两者都可以更改（见下文） |
 
 `default` 不绘制任何图案，只是把二维码略微内缩到 `size` 的 95%。
 
@@ -29,7 +29,7 @@ import { QRCode } from 'qrdx';
 <QRCode value="https://example.com" templateId="Arrow" fgColor="#1a56db" size={256} />
 ```
 
-颜色、图案样式和徽标仍由二维码自身的属性控制，因此模板可以搭配任何样式：
+颜色、图案样式和徽标仍由二维码自身的属性控制，因此模板可以搭配任意样式使用：
 
 ```tsx
 <QRCode
@@ -48,7 +48,7 @@ import { QRCode } from 'qrdx';
 
 ## Dot Ring [#dot-ring]
 
-圆形二维码。二维码位于深色圆环内的点阵圆盘中，圆环上沿着环形排布一行文字。显示哪些点由二维码内容的哈希值决定，因此每个链接都有专属的圆环，同一个链接始终得到同样的圆环。
+圆形二维码。二维码位于深色圆环内的点阵圆盘中，圆环上沿环排布一行文字。显示哪些点由二维码内容的哈希值决定，所以每个链接都有专属的圆环，同一个链接始终得到同样的圆环。
 
 ```tsx
 <QRCode
@@ -59,7 +59,7 @@ import { QRCode } from 'qrdx';
 />
 ```
 
-其设置放在 `customProps` 中（类型为 `DotRingProps`）：
+相关设置放在 `customProps` 中（类型为 `DotRingProps`）：
 
 ```tsx
 <QRCode
@@ -77,26 +77,44 @@ import { QRCode } from 'qrdx';
 
 | 属性 | 默认值 | 说明 |
 | --- | --- | --- |
-| `customText` | “Scan the QR code” 重复四次绕一圈 | 沿圆环排布的文字。放不下的字母会被省略；`""` 表示圆环上不放文字 |
-| `textPosition` | `"top"` | `"top"`：在顶部居中，按顺时针方向阅读。`"bottom"`：在底部居中，从左到右阅读 |
-| `textRotation` | `0` | 围绕中心旋转文字，单位为度 |
+| `customText` | 重复四圈的 “Scan the QR code” | 沿圆环排布的文字；`""` 表示圆环上不放文字。文字过长时会自动适配圆环（见下文） |
+| `textFill` | `"none"` | `"repeat"` 会让文字重复排满整个圆环（见下文） |
+| `textPosition` | `"top"` | `"top"`：在顶部居中，顺时针阅读。`"bottom"`：沿底部居中，从左到右阅读 |
+| `textRotation` | `0` | 让文字绕中心旋转，单位为度 |
 | `textColor` | `#ffffff` | 文字颜色 |
 | `fontFamily` | 系统字体栈 | 文字的 CSS 字体族 |
 | `fontWeight` | `900` | 字重 |
-| `fontSize` | `32` | 以模板 593 单位的绘图为准，其中二维码宽 300 |
-| `fontLetterSpacing` | `3.5` | 字母之间的额外间距，单位相同 |
+| `fontSize` | `32` | 以模板 593 单位的绘图为准，其中二维码宽 300。较长的文字可能会以更小的字号绘制 |
+| `fontLetterSpacing` | `3.5` | 字母之间的额外间距，单位相同。长文字和 `textFill` 会对其进行调整 |
 | `outerCircleColor` | `fgColor` | 圆环颜色 |
 | `strokeWidth`, `strokeColor` | `0`, `#000000` | 圆环两侧边缘的描边 |
 | `outerStrokeWidth`, `outerStrokeColor` | `strokeWidth`, `strokeColor` | 仅圆环外缘 |
 | `innerStrokeWidth`, `innerStrokeColor` | `strokeWidth`, `strokeColor` | 仅圆环内缘 |
 
-与任何二维码一样，徽标放在中央。较长的链接（宽度超过 49 个模块的二维码）会在二维码与点阵之间保留一圈浅色带，这样缩小打印后仍能扫描。
+能放进圆环的文字按原样排布，在顶部居中或沿底部排列。过长的文字不会与自己的开头相接。系统会先缩小字母间距，再缩小字号，最小缩到默认字号的一半（这也是边框标签允许的最小字号）。随后，文字会在与开头相接处留出一个词间距，让圆环闭合。如果在该字号下仍然放不下，就会在能完整放下的最后一个词之后截断。
 
-文字是 SVG 文本，使用你选择的字体；默认是系统字体栈，因此不会下载任何字体。在浏览器中下载 SVG 和 PNG 时使用查看者的字体。PDF 和 EPS 会用 Helvetica Bold 打印，因此请在其中使用 Latin-1 文本。`qrdx/node` 中的 `getQRAsPNG` 需要服务器上安装有字体，边框标签也是如此。
+与任何二维码一样，徽标放在中间。长链接（宽度超过 49 个模块的二维码）会在二维码和点阵之间保留一圈浅色带，这样即使印得很小也能扫描。
+
+文字是 SVG 文本，使用你选择的字体；默认是系统字体栈，因此不会下载任何字体。在浏览器中下载 SVG 和 PNG 时使用查看者的字体。PDF 和 EPS 会以 Helvetica Bold 打印文字，所以这两种格式请使用 Latin-1 文本。`qrdx/node` 中的 `getQRAsPNG` 需要服务器上安装有字体，边框标签也是如此。
+
+### 填满圆环 [#filling-the-ring]
+
+较短的短语会让圆环的一部分留空。设置 `textFill: "repeat"`，可以让短语尽可能多次地重复，并均匀调整间距，使圆环闭合处的间隔与各份文字之间的间隔相同：
+
+```tsx
+<QRCode
+  value="https://example.com/docs"
+  templateId="DotRing"
+  customProps={{ customText: "Read the docs *", textFill: "repeat" }}
+  size={512}
+/>
+```
+
+短语只需给出一次。已经重复了某个短语的文字，比如 `"Make your own * Make your own *"`，会被识别为那个短语，因此填满圆环的方式相同。
 
 ## 模板就是边框规范 [#templates-are-frame-specs]
 
-Arrow、Standard Box、Square Border、Striked Box 和 Halloween 的图案都是一份[边框规范](/docs/features/frames#frame-specs)，与其他所有边框使用相同的 JSON 格式，由同一个引擎绘制。`getTemplate(id).spec` 会返回它。如果你想要边框式的尺寸（二维码保持原大小，图案在其周围扩展）以及边框的颜色选项，可以把它当作边框使用：
+Arrow、Standard Box、Square Border、Striked Box 和 Halloween 的图案是一份[边框规范](/docs/features/frames#frame-specs)，与其他所有边框使用相同的 JSON 格式，由同一个引擎绘制。`getTemplate(id).spec` 会返回它。如果你想要边框式的尺寸（二维码保持原有大小，图案在其周围扩展）以及边框的颜色选项，就把它当作边框使用：
 
 ```tsx
 import { getTemplate, QRCode } from 'qrdx';
@@ -110,9 +128,9 @@ const spec = getTemplate('Arrow')?.spec;
 />
 ```
 
-Dot Ring 没有规范：它的点阵由二维码内容生成，因此用代码绘制（参见[在代码中绘制边框](#frames-you-draw-in-code)）。
+Dot Ring 没有规范：它的点阵由二维码内容生成，因此在代码中绘制（参见[在代码中绘制边框](#frames-you-draw-in-code)）。
 
-`templateId` 绘制的图案与之前相同。使用模板 id 的已保存设计、图像 URL、CLI 命令和代码，外观都和以往一致。
+`templateId` 绘制的图案与之前相同。使用模板 id 的已保存设计、图像 URL、CLI 命令和代码，外观都与以往一致。
 
 ## 模板注册表 [#template-registry]
 
@@ -126,9 +144,9 @@ getTemplate('Halloween'); // one by id
 
 ## 在代码中绘制边框 [#frames-you-draw-in-code]
 
-边框规范描述的是固定的图案。当图案需要计算生成时，请编写一个 `TemplateDefinition`，并将其作为 `customTemplate` 传入。它的 `wrapper` 会以 `children` 的形式接收二维码，并返回要绘制的 SVG。绘制画布为 300 × 300，二维码也以该尺寸传入，因此需要把它缩小，为你的图案留出空间。`props` 包含二维码的 `fgColor` 和 `bgColor`，第三个参数包含二维码的 `url` 和 `pixelSize`。
+边框规范描述的是固定的图案。如果图案需要计算生成，就编写一个 `TemplateDefinition`，并将它作为 `customTemplate` 传入。它的 `wrapper` 会以 `children` 接收二维码，并返回要绘制的 SVG。绘制在 300×300 的画布上进行，二维码也以该尺寸传入，因此请先缩小它，为你的图案留出空间。`props` 携带二维码的 `fgColor` 和 `bgColor`，第三个参数包含二维码的 `url` 和 `pixelSize`。
 
-下面这个示例会在二维码周围绘制一个圆环：
+下面的例子在二维码周围画了一个圆环：
 
 ```tsx
 import { QRCode, type TemplateDefinition } from "qrdx";
@@ -160,10 +178,10 @@ const ringTemplate: TemplateDefinition = {
 />
 ```
 
-请让二维码保持足够大，以便人们在手持手机的距离下能够扫描，并在二维码与图案之间留出浅色间隙。用[扫描评分](/docs/features/frames#will-it-scan)检查结果。
+请让二维码保持足够大，确保人们在手机所处的距离上也能扫描，并在二维码与你的图案之间留出一道浅色间隙。用[扫描评分](/docs/features/frames#will-it-scan)检查结果。
 
 ## 后续步骤 [#next-steps]
 
 - [边框](/docs/features/frames)：所有边框，以及边框规范格式
-- [图案样式](/docs/features/patterns)：详细的图案自定义
+- [图案样式](/docs/features/patterns)：详细的图案样式自定义
 - [徽标](/docs/features/logos)：为二维码添加徽标
