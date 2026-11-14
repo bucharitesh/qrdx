@@ -1,7 +1,8 @@
 # Before every push: lint, both typechecks, and the tests of the packages
 # this branch changes compared with origin/staging, plus the packages that
 # depend on them (turbo --affected; unchanged results come from the turbo
-# cache). CI runs every test on the release PR and on main.
+# cache), and the main app's when the docs' pages changed (its tests check
+# them). CI runs every test on the release PR and on main.
 #
 # Every test, as before:  QRDX_PREPUSH=full git push   (or: bun run prepush)
 # Skip once with:         git push --no-verify
