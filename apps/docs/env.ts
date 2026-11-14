@@ -13,7 +13,7 @@ import { z } from "zod";
 // (NEXT_PUBLIC_APP_URL is qrdx.dev, the canonical origin every docs URL is
 // written against), @repo/config's, @repo/analytics's public ids and the
 // CSP switches, plus MAIN_ZONE_URL. No database, no auth secret: the docs site has
-// neither. Template with every variable explained: apps/docs-site/.env.example.
+// neither. Template with every variable explained: apps/docs/.env.example.
 const production = process.env.NODE_ENV === "production";
 
 export const env = validateTogether(
@@ -56,5 +56,5 @@ export const env = validateTogether(
       emptyStringAsUndefined: true,
       onValidationError,
     }),
-  { template: "apps/docs-site/.env.example" },
+  { template: "apps/docs/.env.example" },
 );
