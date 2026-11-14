@@ -4,6 +4,8 @@ Copyright (c) 2025 Ritesh Bucha
 
 All third-party components incorporated into the QRDX Software are licensed under the original license provided by the owner of the applicable component.
 
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) has the license notices for the code that came from next-forge and shadcn/ui.
+
 QRdx is open core. The repository is under three licenses:
 
 - **AGPLv3.** Everything not listed below is available under the "AGPLv3" license, whose full text is in [LICENSE](LICENSE). That includes the web app, two-step verification and passkeys.
