@@ -1,18 +1,31 @@
 ---
 title: Landing pages
-description: Build a mobile page for a QR code from blocks, with no website needed. Link lists, business pages, vCard Plus, product pages and {facts.hostedPageTypes} page types in all.
-icon: PanelsTopLeft
+description: Build a mobile page for a QR code from blocks, with no website needed. Link lists, business pages, vCard Plus, menus, product pages and {facts.hostedPageTypes} page types in all.
 ---
 
-A hosted landing page is a mobile page that QRdx serves for you at `https://qrdx.dev/p/<slug>` (or on your [custom domain](/docs/custom-domains)). Every page comes with a [dynamic QR code](/docs/dynamic-qr-codes), so you can keep editing the page after the code is printed and see every scan.
+A hosted landing page is a mobile page that QRdx serves for you at `https://qrdx.dev/p/<slug>` (or on your [custom domain](/docs/custom-domains)). Every page comes with a [dynamic QR code](/docs/dynamic-qr-codes), so you can keep editing the page after the code is printed and see every scan. Use one when the code has nothing to point at yet, or when a phone-sized page beats your website: a menu, a contact card, a link list, an event, a product's details.
+
+<Callout type="info" title="Plans">
+  Free includes 3 hosted pages with a "Made with QRdx" footer. Pro removes the footer and the limit; Business adds white-label pages and custom CSS. Each page also uses one of your plan's dynamic codes. See [Plans and limits](/docs/plans-and-limits).
+</Callout>
+
+In a hurry? The short task pages: [Create a mobile page](/docs/help/pages-and-forms/create-a-page) and [Change what a printed code opens](/docs/help/dynamic-codes/change-the-type).
+
+## How it works
+
+{/* diagram: hosted-page-anatomy | A dynamic code pointing at a hosted page made of blocks, with the editor on one side and the phone view on the other; publishing updates every printed code at once | concept drawing */}
+
+A page is a stack of blocks: a header, links, a contact card, a menu, a form. You arrange them in the editor and publish; QRdx renders the page on its servers, so it loads fast on phones and needs no site of your own. The code's short link opens the page, and everything from [code controls](/docs/code-controls) applies to it: a password, a schedule, a scan limit.
 
 ## Create a page
 
-1. Open [Dashboard → Pages & forms](/dashboard?to=pages) and click **New page**, or click **New code** on the codes list and pick a page type instead of **Website link**.
+1. Open **Pages & forms** in the sidebar and click **New page**, or click **New code** on the Codes list and pick a page type instead of **Website link**.
 2. Pick one of the {facts.hostedPageTypes} [page types](#page-types) and a template from its gallery.
-3. Click **Create page**. The editor opens with the template's blocks and the QR code is ready to download from **QR code**.
+3. Click **Create page**. The editor opens with the template's blocks, and the page's QR code is ready to download.
 
-Already printed a code that opens a website? Open it and click **Change type** to turn it into a page with the same short link. See [Change what a printed code opens](/docs/help/dynamic-codes/change-the-type).
+{/* shot: new-page-picker | The New dynamic QR code dialog on the page types, with the template gallery for one type open | Dashboard → Pages & forms → New page */}
+
+Already printed a code that opens a website? Open it and click **Change type** to turn it into a page with the same short link.
 
 Templates start with sample names, prices, numbers and photos so you can see how the page fits together. Until you first publish, the editor reminds you to replace them with your own.
 
@@ -26,11 +39,11 @@ Every page type is a starting point: any block can be added to any page, and a p
 | **Social media** | Every profile behind one code | Profile header, one row per network with your handle |
 | **Business** | Shops, salons, offices | Hours, address and map, contact, a call to action |
 | **vCard Plus** | Digital business cards | Contact card with **Save contact** |
-| **Menu** | Cafés, restaurants, bars | Menu, Wi-Fi, opening hours ([more](/docs/forms-and-pages#menu)) |
-| **Coupon** | Discounts and freebies | Coupon with barcode and **Redeem** ([more](/docs/forms-and-pages#coupon)) |
+| **Menu** | Cafés, restaurants, bars | Menu with dietary tags and allergens ([more](/docs/forms-and-pages#menu)) |
+| **Coupon** | Discounts and freebies | Coupon with a code, a barcode or a redeem button ([more](/docs/forms-and-pages#coupon)) |
 | **Event** | Parties, conferences, webinars, weddings | Event with add-to-calendar ([more](/docs/forms-and-pages#event)) |
 | **App download** | One code for every app store | App download ([more](/docs/forms-and-pages#app-download)) |
-| **Feedback & forms** | Reviews, NPS surveys, sign-ups | Form and review links ([more](/docs/forms-and-pages#forms)) |
+| **Feedback & forms** | Reviews, NPS surveys, sign-ups | Form, and review links on the feedback template ([more](/docs/forms-and-pages#forms)) |
 | **Product** | Packaging, labels, hang tags | Ingredients, allergens, nutrition, certifications, care, GS1 Digital Link ([more](/docs/product-pages)) |
 | **Appointments** | Salons, clinics, tutors | Services and prices, a booking request form, hours |
 | **Payments & tips** | Tip jars, donations, invoices | Payment links and bank details to copy |
@@ -44,7 +57,11 @@ Every page type is a starting point: any block can be added to any page, and a p
 | **Playlist** | Mixes, audio tours, audiobooks | Several tracks that play in a row |
 | **Custom page** | Anything else | A blank page or an announcement |
 
-Where file uploads aren't set up, the types built around an upload (PDF, Images, MP3 / Audio, Video and Playlist) are hidden from the picker.
+<IfAvailable feature="fileStorage" unavailable>
+
+File uploads aren't set up on this deployment, so the five types built around an upload (PDF, Images, MP3 / Audio, Video and Playlist) are hidden from the picker. Blocks can still link to files hosted elsewhere.
+
+</IfAvailable>
 
 **Appointments** sends booking requests to the page's [responses](/docs/forms-and-pages#responses) and notifications, and can link to your booking tool. It doesn't show a live calendar of free times: you confirm each request yourself.
 
@@ -58,11 +75,13 @@ The editor has three tabs and a live phone preview. Tap a block in the preview t
 
 - **Blocks**: add blocks with **Add block**, reorder them by dragging (or with the arrow buttons), hide a block without deleting it, duplicate or remove it. Each block has its own form; problems (for example a link without `https://`) are flagged on the block and must be fixed before publishing.
 - **Design**: use the colors of one of your [saved QR themes](/dashboard?to=themes) so the page matches the printed code, pick a preset palette or set each color yourself. Choose a font, corner radius, a solid, gradient or image background and an optional logo. **Match colors** derives readable text and card colors from your background and accent, and a warning appears when text contrast is low.
-- **Settings**: the share preview description and image, whether search engines may index the page (off by default), and custom CSS on Business.
+- **Settings**: the share preview description and image, **Show in search engines** (off by default), and **Custom CSS** on Business.
+
+{/* shot: page-editor | The page editor with the Blocks tab open on the left and the phone preview on the right | Dashboard → Pages & forms → open a page */}
 
 Click **Publish** (or press <kbd>⌘</kbd>/<kbd>Ctrl</kbd> + <kbd>S</kbd>) to put your changes live. Nothing changes for visitors until you publish; unpublished edits are kept in your browser so you can restore them after closing the tab. Each publish is stored as a version. If a teammate publishes the same page while you are editing, QRdx asks you to reload instead of overwriting their changes.
 
-## Core blocks
+## Blocks
 
 | Block | What it shows |
 | --- | --- |
@@ -71,40 +90,57 @@ Click **Publish** (or press <kbd>⌘</kbd>/<kbd>Ctrl</kbd> + <kbd>S</kbd>) to pu
 | Button | One call to action: a web link, email address or phone number |
 | Link list | A stack of link buttons, with site icons for Instagram, YouTube, WhatsApp and more |
 | Social icons | Profiles as round icons, buttons, or a list with each handle |
+| App download | App Store, Google Play and a website, the visitor's own store first ([more](/docs/forms-and-pages#app-download)) |
 | Image | A photo or banner, optionally linked |
 | Video | A YouTube, Vimeo or Loom video. It loads from the video site only after the visitor taps play |
-| Contact card | Name, job title, phones, emails, website, address, quick actions (call, WhatsApp, email, directions), **Save contact** and **Share** |
+| PDF, Gallery, Audio, Video file, Downloads | Files you upload or link to ([more](/docs/files)) |
+| Contact card | Name, job title, phones, emails, website, address, quick actions (call, WhatsApp, email, website, directions), **Save contact** and **Share** |
 | Address & map | Your address with Google Maps and Apple Maps directions, and an optional embedded map |
-| Opening hours | Hours per day (split shifts and past-midnight hours included) with an **Open now** badge in your time zone |
+| Opening hours | Hours per day (split shifts and past-midnight hours included) with an **Open now** badge that follows the time zone you set on the block |
+| Wi-Fi | Network name and password with copy buttons ([more](/docs/forms-and-pages#menu)) |
 | Details | Labels and values as a list or a grid of tiles (bedrooms, breed, blood type, net weight) |
+| Event | Date, venue, organizer and add-to-calendar ([more](/docs/forms-and-pages#event)) |
+| Form, Review links | Questions with a response inbox, and review buttons ([more](/docs/forms-and-pages#forms)) |
+| Menu, Coupon | Sections and items with prices, and a coupon with a barcode ([more](/docs/forms-and-pages)) |
 | Product details | Certifications, ingredients, allergens, a nutrition table, sections that open on tap, and the GTIN ([more](/docs/product-pages)) |
-| Payment links | PayPal, Venmo, Cash App, Revolut, Wise, UPI, bank transfer and crypto wallets. Buttons open each app; details have copy buttons. The page never takes the payment. |
+| Payment links | PayPal, Venmo, Cash App, Revolut, Wise, UPI, bank transfer and crypto wallets. Buttons open each app; details have copy buttons. The page never takes the payment |
 | Divider, Spacer | Layout helpers |
 
 ### vCard Plus and Save contact
 
-**Save contact** downloads a vCard 3.0 file (`.vcf`) that phones open in their contacts app. It contains the name, company, job title, phones, emails, website, address, bio, the page's social profiles and the photo. Photos uploaded to QRdx storage are embedded in the file; photos linked from other sites are included as a link (QRdx never downloads images from other sites). **Share** opens the phone's share sheet, or copies the page link on computers.
-
-## Plans
-
-| | Free | Pro | Business |
-| --- | --- | --- | --- |
-| Hosted pages | 3 | Unlimited | Unlimited |
-| "Made with QRdx" footer | Shown | Removed | Removed |
-| White-label (your logo as the browser icon, no QRdx branding) | — | — | ✓ |
-| Custom CSS | — | — | ✓ |
-
-Limits only stop you from creating new pages. Pages you already have keep working on every plan, including after a downgrade; on a downgrade from Business, custom CSS simply stops being applied. Each page also uses one of your plan's dynamic codes. See [Plans and limits](/docs/plans-and-limits).
-
-### Custom CSS (Business)
-
-Write plain CSS in **Settings → Custom CSS**. Rules only apply inside your page: every selector is scoped to the page content, and each block can be targeted with `.lp-block-<type>`, for example `.lp-block-links a` or `.lp-block-contact h1`. For safety, CSS can't load files (`url()`, `@import`, `@font-face`), can't use backslash escapes, and supports the `@media`, `@supports`, `@container` and `@keyframes` at-rules only.
+**Save contact** downloads a vCard 3.0 file (`.vcf`) that phones open in their contacts app. It contains the name, company, job title, phones, emails, website, address, bio, the page's social profiles and the photo. A photo uploaded to QRdx storage is embedded in the file when it is 1 MB or smaller; larger photos, and photos linked from other sites, are included as a link, because QRdx never downloads images from other sites. **Share** opens the phone's share sheet, or copies the page link on computers. To put the card on an NFC card as well, see [NFC business cards](/docs/nfc#nfc-business-cards).
 
 ## What visitors get
 
-- Fast, server-rendered pages built for phones, with no QRdx analytics or chat scripts. Tracking pixels load only if you add them to the code yourself.
+- Fast, server-rendered pages built for phones. The only QRdx script on the page counts views and taps for your **Page activity** card; there is no product analytics and no support widget. Your own [tracking pixels](/docs/tracking-and-conversions#tracking-pixels-on-hosted-pages-pro) load only if you add them to the code.
 - Hidden from search engines unless you turn on **Show in search engines**.
 - Share previews (title, description, image) for chat apps and social networks. Password-protected codes never reveal page details in previews.
 - A small **Report abuse** link on every page, including white-label pages.
 
 Password protection, start and end dates, scan limits and pausing from [code controls](/docs/code-controls) apply to the page and its **Save contact** file too, also when someone opens the page link directly.
+
+## Limits and plans
+
+| | Free | Pro | Business |
+| --- | --- | --- | --- |
+| Hosted pages | 3 | Unlimited | Unlimited |
+| "Made with QRdx" footer | Shown | Removed | Removed |
+| White-label (your logo as the browser icon, no QRdx branding) | No | No | Yes |
+| Custom CSS | No | No | Yes |
+
+Limits only stop you from creating new pages. Pages you already have keep working on every plan, including after a downgrade. After a downgrade from Business, a page's custom CSS is no longer applied, and the editor refuses to publish that page again until you remove the CSS in its **Settings**.
+
+### Custom CSS
+
+On Business, write plain CSS in **Settings** → **Custom CSS**. Rules only apply inside your page: every selector is scoped to the page content, and each block can be targeted with `.lp-block-<type>`, for example `.lp-block-links a` or `.lp-block-contact h1`. For safety, CSS can't load files (`url()`, `@import`, `@font-face`), can't use backslash escapes, and supports the `@media`, `@supports`, `@container` and `@keyframes` at-rules only.
+
+## For developers
+
+A code's `kind` in the [REST API](/docs/developers/api/update-code) is `redirect` or `page`, and `PATCH /v1/codes/{id}` switches between them the way **Change type** does. Pages themselves are built in the editor; the API doesn't edit blocks.
+
+## Related
+
+- [Menus, coupons, events and forms](/docs/forms-and-pages): the blocks for restaurants, offers, events and feedback
+- [Product pages and GS1 Digital Link](/docs/product-pages)
+- [Files](/docs/files): PDFs, galleries, audio and video on a page
+- [Create a mobile page](/docs/help/pages-and-forms/create-a-page)
