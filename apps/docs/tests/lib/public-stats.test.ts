@@ -16,16 +16,22 @@ vi.mock(
   async () => (await import("../support/fake-db")).repoDatabase,
 );
 vi.mock("@/lib/shared", () => ({ logError: () => {} }));
+const plan = vi.hoisted(() => ({ value: "free" as "free" | "pro" }));
 vi.mock("@/lib/plans", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/plans")>()),
-  getPlanForScope: async () => "free",
+  getPlanForScope: async () => plan.value,
 }));
 // The cache is Next's; the aggregates are faked (lib/scans has its own tests).
 vi.mock("next/cache", () => ({
   unstable_cache: (fn: (...args: unknown[]) => unknown) => fn,
 }));
-const analytics = vi.hoisted(() => ({ calls: [] as [string, number][] }));
+const analytics = vi.hoisted(() => ({
+  calls: [] as [string, number][],
+  firstScan: null as Date | null,
+}));
 vi.mock("@/lib/scans", () => ({
+  codeHistoryStart: async (_codeId: string, createdAt: Date | string) =>
+    analytics.firstScan ?? new Date(createdAt),
   getScanAnalytics: async (codeId: string, days: number) => {
     analytics.calls.push([codeId, days]);
     return {
@@ -54,6 +60,7 @@ const {
   TOKEN_PATTERN,
 } = await import("@/lib/public-stats");
 const { parsePublicStatsRange } = await import("@/lib/public-stats-shared");
+const { daysSince } = await import("@/lib/scan-ranges");
 
 const owner = {
   userId: "u_alice",
@@ -83,6 +90,8 @@ beforeEach(() => {
   fakeDb.unique("codePublicStats", "qrCodeId");
   fakeDb.unique("codePublicStats", "token");
   analytics.calls.length = 0;
+  analytics.firstScan = null;
+  plan.value = "free";
   fakeDb.seed("qrCode", [
     {
       id: "c_menu",
@@ -130,6 +139,9 @@ describe("sharing a code's analytics", () => {
       "countries",
       "days",
       "devices",
+      // The range's first day and the series' bucket ("All time")
+      "from",
+      "interval",
       "referrers",
       "series",
       // NFC (feat/nfc): QR scans and NFC taps, counts only
@@ -150,6 +162,29 @@ describe("sharing a code's analytics", () => {
     expect(analytics.calls.at(-1)).toEqual(["c_menu", 90]);
     expect(parsePublicStatsRange("365d")).toBe("30d");
     expect(parsePublicStatsRange(["7d"])).toBe("7d");
+  });
+
+  it("adds All time where the plan keeps the whole history", async () => {
+    plan.value = "pro";
+    analytics.firstScan = new Date("2026-10-05T08:00:00Z");
+    const share = await enablePublicStats(owner, "c_menu");
+    const stats = await loadPublicStats(tokenOf(share.url), "all");
+    expect(stats?.ranges).toEqual(["7d", "30d", "90d", "all"]);
+    expect(stats?.range).toBe("all");
+    // From the day of the first scan through today.
+    expect(analytics.calls.at(-1)).toEqual([
+      "c_menu",
+      daysSince(analytics.firstScan),
+    ]);
+    expect(parsePublicStatsRange("all")).toBe("all");
+  });
+
+  it("never shows All time on Free", async () => {
+    const share = await enablePublicStats(owner, "c_menu");
+    const stats = await loadPublicStats(tokenOf(share.url), "all");
+    expect(stats?.ranges).not.toContain("all");
+    expect(stats?.range).toBe("90d");
+    expect(analytics.calls.at(-1)).toEqual(["c_menu", 90]);
   });
 
   it("turns off and resets at once: old links stop working", async () => {
