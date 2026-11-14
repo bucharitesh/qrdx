@@ -3,7 +3,7 @@ import type { ViteUserConfig } from "vitest/config";
 
 const root = import.meta.dirname;
 
-// As in the main app (apps/docs/vitest.config.ts): tests must not see the
+// As in the main app (apps/app/vitest.config.ts): tests must not see the
 // deployment's environment, so deployment and service variables are dropped
 // before any test module loads, and `test.env` sets fixed fake ones.
 const DEPLOYMENT_ENV =

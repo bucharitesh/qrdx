@@ -13,7 +13,7 @@ import type { BetterAuthOptions } from "better-auth";
 // than a plain "verified" (false, or no answer at all) counts as unverified.
 //
 // The codes are client-safe: the sign-in page turns them into messages
-// (apps/docs/app/(auth)/sign-in/_lib/error-message.ts).
+// (apps/app/app/(auth)/sign-in/_lib/error-message.ts).
 
 type ValidateUserInfo = NonNullable<
   NonNullable<BetterAuthOptions["user"]>["validateUserInfo"]

@@ -33,7 +33,7 @@ export const notifications: IntegrationCatalogEntry[] = [
       "Click Add to Slack, pick a channel, and QRdx posts the alerts you choose there: a code's first scan and milestones, new form responses and code changes. Each alert is a short message with a link back to the code or the responses.",
       "Targets are per person and per workspace, so every teammate can send their own alerts to their own channels. Already pasted an incoming webhook URL? It keeps working, and you can still paste one instead of connecting.",
     ],
-    // The QRdx bot (apps/docs lib/slack-bot): shown only where it's set up.
+    // The QRdx bot (apps/app lib/slack-bot): shown only where it's set up.
     configuredExtras: [
       "Add the QRdx bot to your Slack workspace and anyone there can make a QR code without leaving Slack: type /qr with a link or any text, mention @QRdx, send the bot a direct message, or pick Make a QR code from a message's menu. The code comes back as an image, with buttons to download it as PNG or SVG or open it in the editor.",
       "Menus under the code change its look, color, frame and logo, and options after the link do the same (/qr qrdx.dev --look modern). Every styled code is checked so phones can scan it, and Open in editor opens the same design.",

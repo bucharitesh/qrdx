@@ -1,6 +1,6 @@
 // "Require two-step verification" for a workspace (Business): pure and
 // client-safe. The server side is ./workspace-two-factor.ts; the app's guard
-// is apps/docs/lib/scope.ts, its setting the Team page.
+// is apps/app/lib/scope.ts, its setting the Team page.
 //
 // While it applies, a member without two-step verification can't open the
 // workspace or act in it with a session (pages, server actions, the app's

@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto";
 
 // Everyone has one workspace of their own, created at sign-up (./server.ts),
-// on their first dashboard visit (apps/docs/lib/workspaces.ts) or by the
+// on their first dashboard visit (apps/app/lib/workspaces.ts) or by the
 // backfill (packages/database/scripts/backfill-workspaces.mjs). Its row ids
 // are derived from the user id, so every one of those paths writes the same
 // rows: `INSERT ... ON CONFLICT (id) DO NOTHING` makes creating it idempotent

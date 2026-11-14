@@ -1,4 +1,4 @@
--- Growth analytics (apps/docs/lib/analytics): how an account found QRdx,
+-- Growth analytics (apps/app/lib/analytics): how an account found QRdx,
 -- where a code was made, and daily API, MCP and chat bot usage counts.
 --
 -- user_acquisition: one row per account created after this ships, written

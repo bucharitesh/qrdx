@@ -1,8 +1,8 @@
 {
   "root": false,
   "$schema": "https://biomejs.dev/schemas/2.6.4/schema.json",
-  // Not the root config: these files moved here from apps/docs and keep its
-  // rules (apps/docs/biome.jsonc). The registry sources are published as
+  // Not the root config: these files moved here from apps/app and keep its
+  // rules (apps/app/biome.jsonc). The registry sources are published as
   // written (qrdx.dev/r/*.json), so the root formatter's ES5 trailing commas
   // and class sorting would change what shadcn/ui projects install.
   "vcs": {

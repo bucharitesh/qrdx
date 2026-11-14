@@ -87,7 +87,7 @@ export function registerAllIntegrations(): void {
 }
 
 /**
- * Origin OAuth callbacks are built on, matching apps/docs `baseUrl`:
+ * Origin OAuth callbacks are built on, matching apps/app `baseUrl`:
  * localhost in development, else the production domain or app URL.
  */
 export function getIntegrationRedirectOrigin(): string {

@@ -14,7 +14,7 @@ export const CONSENT_CATEGORIES = [
  * choose.
  *
  * Keeping no server-side record of the choice is deliberate, and the cookie
- * policy says so (apps/docs/content/legal/cookie-policy.mdx). `acknowledgeNoRecords`
+ * policy says so (apps/app/content/legal/cookie-policy.mdx). `acknowledgeNoRecords`
  * hides c15t's development-only console warning about it. Production builds
  * never print it. A server-side consent log would need a c15t backend.
  */
