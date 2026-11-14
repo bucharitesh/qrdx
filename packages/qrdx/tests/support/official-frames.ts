@@ -10,6 +10,8 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterAll, describe, expect, test as it, test } from "vitest";
 import {
+  framePart,
+  framePartLabel,
   frameScanPlan,
   fullFrameScan,
   shardOf,
@@ -42,9 +44,12 @@ import {
   toPng,
 } from "./raster";
 
-/** Shard `index` (1-based) of `count`: every count-th frame. */
+/**
+ * Shard `index` (1-based) of `count` of this run's part of the frames
+ * (QRDX_FRAME_SCAN_PART, scripts/official-frames/sample.mjs).
+ */
 export function officialShard(index: number, count: number): OfficialFrame[] {
-  return OFFICIAL_FRAMES.filter((_, i) => i % count === index - 1);
+  return shardOf(framePart(OFFICIAL_FRAMES), index, count);
 }
 
 const byId = new Map(OFFICIAL_FRAMES.map((frame) => [frame.id, frame]));
@@ -61,9 +66,9 @@ const framesOf = (ids: string[]): OfficialFrame[] =>
  */
 export function describeOfficialFrameScanShard(index: number, count: number) {
   const plan = frameScanPlan(OFFICIAL_FRAMES.map((frame) => frame.id));
-  const full = framesOf(shardOf(plan.full, index, count));
-  const light = framesOf(shardOf(plan.light, index, count));
-  describe(`frame scan, day ${plan.day}${fullFrameScan() ? " (every frame)" : ""}`, () => {
+  const full = framesOf(shardOf(framePart(plan.full), index, count));
+  const light = framesOf(shardOf(framePart(plan.light), index, count));
+  describe(`frame scan, day ${plan.day}${fullFrameScan() ? " (every frame)" : ""}${framePartLabel()}`, () => {
     if (full.length > 0) {
       describeOfficialFramePrint(full);
       describeOfficialFrameDecoding(full);
