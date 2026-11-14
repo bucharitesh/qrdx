@@ -1,14 +1,23 @@
 import { workspaceSlugFromPath } from "@repo/availability/workspace-pattern";
 import {
+  CONSOLE_KEY_HEADER,
+  isConsolePath,
+} from "@repo/next-config/console-zone";
+import {
   appCsp,
   createNonce,
   cspHeaderName,
   NONCE_ROUTE,
   reportingEndpoints,
 } from "@repo/next-config/csp";
+import {
+  hostMatcher,
+  platformHostsPattern,
+} from "@repo/next-config/platform-hosts";
 import { headers } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
 import { routeCustomDomain } from "@/app/(app)/dashboard/domains/_lib/host-routing";
+import { env } from "@/env";
 import { sessionCheckPath } from "@/lib/account/session-origin";
 import {
   getSessionAllowingHold,
@@ -33,6 +42,36 @@ const cspOptions = cspOptionsFromEnv();
 const CSP_HEADER = cspHeaderName();
 const REPORTING_ENDPOINTS = reportingEndpoints(cspOptions);
 
+// The back-office console serves some /admin sections once CONSOLE_ORIGIN is
+// set: next.config.ts proxies them there, on QRdx's own hosts only
+// (@repo/next-config/console-zone). Unset, every /admin page is this app's
+// own and nothing below changes.
+const CONSOLE_ON = Boolean(env.CONSOLE_ORIGIN);
+const onPlatformHost = hostMatcher(
+  platformHostsPattern(env.NEXT_PUBLIC_APP_URL),
+);
+
+/** Whether next.config.ts sends this request on to the console. */
+const forConsole = (request: NextRequest) =>
+  CONSOLE_ON &&
+  isConsolePath(request.nextUrl.pathname) &&
+  onPlatformHost(request.headers.get("host"));
+
+/**
+ * A console page: it sets its own policy with its own nonce, so this app
+ * adds none (one policy per page), and it gets the zone key, so it can tell
+ * requests that came through this app. Any copy the browser sent is dropped.
+ */
+function toConsole(request: NextRequest): NextResponse {
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.delete(CONSOLE_KEY_HEADER);
+  requestHeaders.delete(WORKSPACE_HEADER);
+  if (env.CONSOLE_ZONE_KEY) {
+    requestHeaders.set(CONSOLE_KEY_HEADER, env.CONSOLE_ZONE_KEY);
+  }
+  return NextResponse.next({ request: { headers: requestHeaders } });
+}
+
 /**
  * Continues the request. Pages under /dashboard/<slug> get the slug as a
  * request header (lib/scope.ts reads it, and so do the server actions they
@@ -41,6 +80,9 @@ const REPORTING_ENDPOINTS = reportingEndpoints(cspOptions);
  * from the request's policy and puts on every script it renders.
  */
 function next(request: NextRequest): NextResponse {
+  if (forConsole(request)) {
+    return toConsole(request);
+  }
   const { pathname } = request.nextUrl;
   const slug = workspaceSlugFromPath(pathname);
   const nonce = CSP_ENABLED && NONCE_ROUTE.test(pathname);

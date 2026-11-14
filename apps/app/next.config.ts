@@ -8,6 +8,10 @@ import { OG_FONT_GLOB } from "@repo/design-system/og/font-files";
 import { docsOriginRedirects, docsZoneRewrites } from "@repo/i18n/docs";
 import { englishRedirects, englishRewrites } from "@repo/i18n/routing";
 import { config, withAnalyzer } from "@repo/next-config";
+import {
+  CONSOLE_ASSET_PREFIX,
+  consoleZoneRewrites,
+} from "@repo/next-config/console-zone";
 // Imported from the package, not from lib/security/csp.ts: the config is
 // compiled with `@repo/*` paths rewritten for this folder, so a package
 // import made from a file below it can't be resolved.
@@ -19,6 +23,7 @@ import {
   prerenderedPagesSource,
   reportingEndpoints,
 } from "@repo/next-config/csp";
+import { platformHostsPattern } from "@repo/next-config/platform-hosts";
 import { createMDX } from "fumadocs-mdx/next";
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
@@ -53,13 +58,7 @@ const cspReporting = reportingEndpoints(cspOptions);
 
 // QRdx's own hosts (as in proxy.ts), plus a self-hosted app URL: customers'
 // custom domains never get the app policy.
-const appHostname = new URL(env.NEXT_PUBLIC_APP_URL).hostname;
-const PLATFORM_HOSTS = [
-  "(?:.+\\.)?(?:qrdx\\.dev|vercel\\.app)",
-  "localhost",
-  "127\\.0\\.0\\.1",
-  appHostname.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
-].join("|");
+const PLATFORM_HOSTS = platformHostsPattern(env.NEXT_PUBLIC_APP_URL);
 
 /** An Accept header that lists text/markdown (rewrites to the Markdown versions). */
 const MARKDOWN_ACCEPT = "(?:.*[,\\s])?text/markdown(?:[;,\\s].*)?";
@@ -87,11 +86,22 @@ const docsElsewhere = env.DOCS_ZONE_URL
       has: [{ type: "host", value: `(?:${PLATFORM_HOSTS})` }],
     });
 
+// The back-office console at CONSOLE_ORIGIN serves five /admin sections and
+// its build assets (@repo/next-config/console-zone), on QRdx's own hosts
+// only. Unset, there are no rules and this app serves its own pages.
+const consoleZone = consoleZoneRewrites(env.CONSOLE_ORIGIN, {
+  hosts: `(?:${PLATFORM_HOSTS})`,
+});
+
 /** Headers that put the app policy on prerendered pages (nonce routes: proxy.ts). */
 const cspHeaders = cspEnabled
   ? [
       {
-        source: prerenderedPagesSource(),
+        // The console's build assets aren't pages: no page policy on them
+        // while it's on (its pages are under /admin, which proxy.ts handles).
+        source: prerenderedPagesSource(
+          consoleZone.length > 0 ? [CONSOLE_ASSET_PREFIX.slice(1)] : [],
+        ),
         has: [{ type: "host" as const, value: `(?:${PLATFORM_HOSTS})` }],
         headers: [
           { key: cspHeader, value: appCsp(cspOptions) },
@@ -172,13 +182,16 @@ let nextConfig: NextConfig = {
   enablePrerenderSourceMaps: false,
   // Server code reads QRDX_HOME_NUMBERS as its build-time value
   // (lib/home-numbers/flag.ts). While it's off, the bundler drops the home
-  // page's "QRdx in numbers" branch, client code included. Server only: it
-  // never reaches client bundles.
+  // page's "QRdx in numbers" branch, client code included. CONSOLE_ORIGIN
+  // too: the rewrites above are fixed when the app is built, so proxy.ts and
+  // the admin nav must follow the same value, never a different one set
+  // later where the server runs. Server only: neither reaches client bundles.
   compiler: {
     ...config.compiler,
     defineServer: {
       ...config.compiler?.defineServer,
       "process.env.QRDX_HOME_NUMBERS": process.env.QRDX_HOME_NUMBERS ?? "",
+      "process.env.CONSOLE_ORIGIN": process.env.CONSOLE_ORIGIN ?? "",
     },
   },
   // Geist (@repo/design-system/og/font-files) for server images: OG cards,
@@ -352,6 +365,9 @@ let nextConfig: NextConfig = {
         // The docs site, when DOCS_ZONE_URL is set (above): first, so the
         // docs' own rules below never see those URLs.
         ...docsZone,
+        // The console's sections, when CONSOLE_ORIGIN is set (above): ahead
+        // of this app's own copies of those pages.
+        ...consoleZone,
         // Community profiles live at /community/@handle; a folder named
         // @handle would be a parallel route slot, so they render from
         // app/(app)/(home)/community/u/[handle].

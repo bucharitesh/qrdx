@@ -299,11 +299,16 @@ export function cspHeaderName(
     : "Content-Security-Policy";
 }
 
-/** Path-to-regexp source for next.config headers: every path outside NO_APP_CSP_PREFIXES. */
-export function prerenderedPagesSource(): string {
-  const skip = NO_APP_CSP_PREFIXES.flatMap((prefix) => [
-    `${prefix}/`,
-    `${prefix}$`,
-  ]).join("|");
+/**
+ * Path-to-regexp source for next.config headers: every path outside
+ * NO_APP_CSP_PREFIXES and `alsoSkip` (more first segments, such as another
+ * zone's asset prefix while that zone is on).
+ */
+export function prerenderedPagesSource(
+  alsoSkip: readonly string[] = []
+): string {
+  const skip = [...NO_APP_CSP_PREFIXES, ...alsoSkip]
+    .flatMap((prefix) => [`${prefix}/`, `${prefix}$`])
+    .join("|");
   return `/:path((?!${skip}).*)`;
 }

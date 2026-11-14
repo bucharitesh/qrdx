@@ -33,60 +33,22 @@ import {
   type SQL,
   sql,
 } from "drizzle-orm";
-import type { PgColumn, PgTable } from "drizzle-orm/pg-core";
+import type { PgColumn } from "drizzle-orm/pg-core";
 import { JOB_STORE_PROVIDER } from "@/lib/migrate/server/repo";
 import { offsetOf, PAGE_SIZE } from "@/lib/paging";
 import { type Plan, planForSubscriptionProduct } from "@/lib/plans";
+import { dailySeries, daysAgo, startOfUtcDay } from "./series";
 
 // Paging lives in lib/paging (Settings → Affiliate program pages the same way).
 export { PAGE_SIZE, parsePage } from "@/lib/paging";
 
 // Same as lib/subscription.ts: these statuses grant a paid plan.
 const ENTITLED = ["active", "trialing"];
-const DAY_MS = 24 * 60 * 60 * 1000;
-
-export interface DailyPoint {
-  date: string;
-  count: number;
-}
-
-const daysAgo = (days: number) => new Date(Date.now() - days * DAY_MS);
-
-function startOfUtcDay(offsetDays = 0) {
-  const date = new Date();
-  date.setUTCHours(0, 0, 0, 0);
-  date.setUTCDate(date.getUTCDate() - offsetDays);
-  return date;
-}
 
 const countSince = (column: PgColumn, since: Date) =>
   sql<number>`count(*) filter (where ${gte(column, since)})`.mapWith(Number);
 
 const escapeLike = (value: string) => value.replace(/[\\%_]/g, "\\$&");
-
-async function dailySeries(
-  table: PgTable,
-  column: PgColumn,
-  days: number,
-): Promise<DailyPoint[]> {
-  const since = startOfUtcDay(days - 1);
-  const rows = await db
-    .select({
-      day: sql<string>`to_char(date_trunc('day', ${column}), 'YYYY-MM-DD')`,
-      count: count(),
-    })
-    .from(table)
-    .where(gte(column, since))
-    .groupBy(sql`1`);
-
-  const byDay = new Map(rows.map((row) => [row.day, row.count]));
-  return Array.from({ length: days }, (_, i) => {
-    const date = new Date(since.getTime() + i * DAY_MS)
-      .toISOString()
-      .slice(0, 10);
-    return { date, count: byDay.get(date) ?? 0 };
-  });
-}
 
 // Overview
 
