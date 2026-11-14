@@ -164,7 +164,7 @@ export const SAMPLE_VALUE = "https://example.com";
  * components draw with the editor's own engine, so what they draw is the
  * design. The CDN links pin it.
  */
-export const QRDX_NPM_VERSION = "0.0.54";
+export const QRDX_NPM_VERSION = "0.0.55";
 export const QRDX_INSTALL = "npm install qrdx";
 const QRDX_CDN = `https://cdn.jsdelivr.net/npm/qrdx@${QRDX_NPM_VERSION}/dist`;
 /** qrdx/vanilla as one ES module, for pages without a bundler. */
