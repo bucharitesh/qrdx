@@ -10,6 +10,7 @@ import { make } from "../../scripts/official-frames/build.mjs";
 import { ENTRIES } from "../../scripts/official-frames/catalogue.mjs";
 import { writeModules } from "../../scripts/official-frames/modules.mjs";
 import {
+  framePart,
   frameScanPlan,
   layoutSample,
   ROTATION_DAYS,
@@ -85,5 +86,30 @@ describe("the scan sample", () => {
       expect(plan.full).toContain(id);
     }
     expect(plan.light.every((id) => !plan.full.includes(id))).toBe(true);
+  });
+
+  it("splits the frames into parts that check each one once", () => {
+    const ids = OFFICIAL_FRAMES.map((frame) => frame.id);
+    const previous = process.env.QRDX_FRAME_SCAN_PART;
+    try {
+      const parts: string[][] = [];
+      for (let part = 1; part <= 4; part++) {
+        process.env.QRDX_FRAME_SCAN_PART = `${part}/4`;
+        parts.push(framePart(ids));
+      }
+      expect(parts.flat().sort()).toEqual([...ids].sort());
+      for (const part of parts) {
+        expect(part.length).toBeGreaterThanOrEqual(Math.floor(ids.length / 4));
+      }
+      for (const bad of ["0/4", "5/4", "2", "two/4"]) {
+        process.env.QRDX_FRAME_SCAN_PART = bad;
+        expect(() => framePart(ids)).toThrow("QRDX_FRAME_SCAN_PART");
+      }
+      process.env.QRDX_FRAME_SCAN_PART = "";
+      expect(framePart(ids)).toEqual(ids);
+    } finally {
+      if (previous === undefined) delete process.env.QRDX_FRAME_SCAN_PART;
+      else process.env.QRDX_FRAME_SCAN_PART = previous;
+    }
   });
 });
