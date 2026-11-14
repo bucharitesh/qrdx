@@ -1,6 +1,6 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
-  "name": "io.github.bucharitesh/qrdx",
+  "name": "dev.qrdx/qrdx",
   "title": "QRdx",
   "description": "QR codes and barcodes that scan: styled designs with a scan check, plus Wi-Fi and payment codes.",
   "version": "1.3.0",

@@ -13,6 +13,7 @@ import { CANONICAL_ORIGIN, SUPPORT_EMAIL, MAX_CODES_PER_REQUEST } from "@repo/co
 | `origins.ts` | The two origins that depend on the environment, imported as `@repo/config/origins`: `appOrigin()` (`NEXT_PUBLIC_APP_URL`) and `shortLinkOrigin()` (`NEXT_PUBLIC_SHORT_LINK_BASE_URL`, falling back to the origin it's given). They stay out of the main entry so the tools that compile `next.config.ts` and the docs source config only see plain values |
 | `contact.ts` | The email addresses people are told to write to |
 | `social.ts` | Profiles and listings the site links to |
+| `mcp.ts` | The MCP server's name in the official MCP Registry (`dev.qrdx/qrdx`) and the URLs of its registry record and Glama page |
 | `limits.ts` | Platform limits that more than one part of QRdx enforces or quotes: editor uploads, AI caps, theme caps, batch sizes, the keyless endpoints' rate limits |
 | `facts.ts` | Product counts and names quoted in copy, imported as `@repo/config/facts`, for apps that can't import the main app (the docs site). `createFacts(snapshot)` gives them the main app's API (`PRODUCT_FACTS`, `STYLE_SUMMARY`, `productFact()`, `isProductFact()`, `fillFacts()`, `fillFactsDeep()`) over a snapshot of `apps/docs/lib/product-facts.ts` that `bun run --filter docs facts:snapshot` writes to `facts.generated.json` just before such an app builds. The file isn't committed, so it can't go stale |
 | `keys.ts` | The environment variable this package reads, validated like every other `keys.ts`; `apps/docs/env.ts` extends it |
