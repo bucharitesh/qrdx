@@ -1,24 +1,35 @@
 ---
 title: Client reports
-description: Share a code's scan analytics with a client on a page that shows their name, logo and color.
-icon: ChartLine
+description: Share a code's scan analytics with a client on a read-only page that shows their name, logo and color instead of QRdx's.
 ---
 
-Any dynamic QR code can have a shared stats page: a read-only page at `/stats/<token>` with scans over time, top countries, devices and referrers. Anyone with the link can open it. Search engines don't index it, and it shows nothing about the people who scanned.
+Any dynamic QR code can have a shared stats page: a read-only page at `/stats/<token>` with scans over time, top countries, devices and referrers. Anyone with the link can open it, search engines don't index it, and it shows nothing about the people who scanned. Client reports put a client's brand on that page, so you can send it as their report. Use them when you run codes for someone else and they want to see the numbers without a QRdx account.
 
-On Pro and Business you can put a client's brand on that page. It then shows the client's name, logo and accent color at the top, and the client's name in the browser tab and in link previews, so you can send it to the client as their report.
+<Callout type="info" title="Pro and Business">
+  Sharing a code's stats works on every plan. Putting a client's name, logo and color on the page is part of Pro and Business; Business also removes every QRdx mark and can serve the page on your own domain. See [Plans and limits](/docs/plans-and-limits).
+</Callout>
+
+In a hurry? [See your scans](/docs/help/dynamic-codes/scans) covers the analytics the page is built from.
+
+## How it works
+
+The shared page reads the same scan data as the code's **Analytics** tab, cut down to what a client needs and refreshed every few minutes. A client brand is a saved name, logo and accent color in your workspace; pick it on a shared page and the page is dressed in it. One brand can dress every page you share with that client.
 
 | | Free | Pro | Business |
 | --- | --- | --- | --- |
 | Shared stats page | Yes | Yes | Yes |
 | Client's name, logo and color | No | Yes | Yes |
-| QRdx on the page | Header and footer | A small "Made with QRdx" at the bottom | None |
+| QRdx on a branded page | Header and footer | A small "Made with QRdx" at the bottom | None |
 | Link on your own domain | No | No | Yes |
+
+A page without a client brand keeps QRdx's header and footer on every plan.
 
 ## Share a code's stats
 
-1. In [Codes](/dashboard?to=codes), open the code's **⋯** menu and choose **Share analytics**.
+1. In [Codes](/dashboard?to=codes), open the code's **⋯** menu and choose **Share analytics...**.
 2. Turn on **Public analytics page** and copy the link.
+
+{/* shot: share-analytics-dialog | The Share analytics dialog with Public analytics page turned on, the link to copy and the Client branding section below | Dashboard → Codes → ⋯ → Share analytics... */}
 
 **Reset link** makes a new link and stops the old one at once, and keeps the page's branding. Turning the page off makes its link a 404 and clears its branding; the brand itself stays saved.
 
@@ -26,7 +37,7 @@ On Pro and Business you can put a client's brand on that page. It then shows the
 
 Once the page is on, the same dialog has a **Client branding** section.
 
-1. Open the menu and choose **New client brand**.
+1. Open the menu and choose **New client brand…**.
 2. Enter the client's name, add a logo (upload a picture or paste an `https` image URL) and, if you like, an accent color.
 3. Click **Add and use**. The page shows the brand straight away.
 
@@ -35,6 +46,8 @@ Brands are saved in the workspace, so the next code for the same client only nee
 The accent color is used sparingly: the scans chart and the logo tile. If the color would be hard to see on a white or a black background, that theme keeps the chart in the page's own text color. Leave the accent empty for a fully monochrome page.
 
 Owners, admins and members can brand a page. Viewers and billing members can see the setting but not change it.
+
+{/* shot: branded-stats-page | A branded stats page as the client sees it: their logo and name at the top, the scans chart in their accent color, the country and device cards | Open a shared stats link */}
 
 ## Business: no QRdx mark, on your domain
 
@@ -56,8 +69,14 @@ The domain only serves pages you assigned to it, and only while the workspace is
 
 It never shows the destination's path or query string, cities, precise locations, or anything about a single scan. Numbers can be up to 5 minutes old.
 
-## If the plan changes
+## Limits and plans
 
 The branding is kept but only shows while the plan includes it. When a Business workspace moves to Pro, its pages get the small "Made with QRdx" back and their custom-domain links stop working; the QRdx address still works. On Free the page shows no client brand. Upgrading again restores both.
 
 To give a client a view of many codes at once, with their analytics and hosted pages, use the [client portal](/docs/client-portal) on Business.
+
+## Related
+
+- [Client portal](/docs/client-portal): read-only access to whole folders, with a sign-in
+- [Custom domains](/docs/custom-domains): the domain a Business report can live on
+- [See your scans](/docs/help/dynamic-codes/scans)

@@ -1,10 +1,13 @@
 ---
 title: Plans and limits
-description: What Free, Pro and Business include, how limits apply to each workspace, and what happens when you downgrade or cancel.
-icon: Gauge
+description: What Free, Pro and Business include, how limits apply to each workspace, and what happens when you go over a limit, downgrade or cancel.
 ---
 
-QRdx has three plans. Static QR codes from the playground and the `qrdx` library are free and unlimited on all of them, with no account. Compare prices on the [pricing page](/pricing).
+QRdx has three plans: Free, Pro and Business. Static QR codes from the playground and the `qrdx` library are free and unlimited on all of them, with no account; the plans decide how many dynamic codes, pages, domains and seats a workspace gets. Use this page to check a limit before you hit it, and to see exactly what changes when a plan changes. Compare prices on the [pricing page](/pricing), which also has an [Enterprise](/enterprise) offer on request.
+
+In a hurry? The short task pages: [Plans and what they include](/docs/help/account-and-billing/plans), [Upgrade, downgrade or switch billing](/docs/help/account-and-billing/change-plan) and [What happens to your codes if you stop paying](/docs/help/account-and-billing/never-hostage).
+
+## Prices
 
 | | Free | Pro | Business |
 | --- | --- | --- | --- |
@@ -17,11 +20,17 @@ In the EU and EEA, Pro is €5/month or €48/year and Business €15/month or �
 
 </IfAvailable>
 
-Visitors from India see prices in rupees. Checkout is handled by [Polar](https://polar.sh), which charges in the currency of the country you're in and adds local taxes where they apply. Your first payment for a paid plan comes with a {facts.moneyBackDays}-day money-back guarantee: see [Refunds & Cancellations](/legal/refunds).
+Visitors from India pay in rupees and everyone else in US dollars. Checkout is handled by [Polar](https://polar.sh), which adds local taxes where they apply. Your first payment for a paid plan comes with a {facts.moneyBackDays}-day money-back guarantee: see [Refunds & Cancellations](/legal/refunds).
 
 <IfAvailable feature="invoiceRequests">
 
-A year of Business can also be paid by bank transfer: see [pay by invoice](/docs/help/account-and-billing/pay-by-invoice).
+A year of Business can also be paid by bank transfer: see [Pay by invoice](/docs/help/account-and-billing/pay-by-invoice).
+
+</IfAvailable>
+
+<IfAvailable feature="nonprofitDiscounts">
+
+Registered non-profits and charities get {facts.nonprofitDiscountPercent}% off Pro and Business: see [Non-profit discount](/docs/help/account-and-billing/nonprofit-discount).
 
 </IfAvailable>
 
@@ -35,14 +44,16 @@ A year of Business can also be paid by bank transfer: see [pay by invoice](/docs
 | Analytics history | {facts.freeScanHistoryYears} year | Unlimited | Unlimited |
 | Custom domains | None | 5 | 25 |
 | Custom back-halves (`qrdx.dev/q/spring-menu`) | No | Yes | Yes |
-| Members per workspace | 1 (just you) | 3 | Unlimited |
+| Members per workspace | 1 (only you) | 3 | Unlimited |
 | More workspaces | No | Yes | Yes |
 | Smart routing, A/B tests, UTM tags | No | Yes | Yes |
 | Passwords, schedules, expiry, scan limits | No | Yes | Yes |
+| Precise location | No | Yes | Yes |
 | Retargeting pixels | No | Yes | Yes |
 | Conversion tracking | No | No | Yes |
 | Email digests and alerts | No | Yes | Yes |
 | Webhooks, Zapier and Slack | No | No | Yes |
+| Require two-step verification of every member | No | No | Yes |
 | OAuth apps ([build an integration](/docs/developers/build-an-integration)) | 1 | 5 | 25 |
 | File storage (largest file) | 50 MB (10 MB) | 5 GB (100 MB) | 50 GB (250 MB) |
 | Form responses per month | 50 | 1,000 | 10,000 |
@@ -51,39 +62,60 @@ A year of Business can also be paid by bank transfer: see [pay by invoice](/docs
 | AI theme generations | 5 in total | Unlimited | Unlimited |
 | Saved themes | 10 | Unlimited, can be shared with a workspace | Unlimited, can be shared with a workspace |
 | Saved [barcodes](/docs/developers/barcode-api#saved-barcodes) | 1,000 | 10,000 | 100,000 |
-| [Client-branded stats pages](/docs/client-reports) | No | Yes, with a small "Made with QRdx" | Yes, white-label, can use your custom domain |
+| [Client reports](/docs/client-reports) | No | Yes, with a small "Made with QRdx" | Yes, white-label, can use your custom domain |
 | [Client portal](/docs/client-portal) | No | No | Yes |
+
+<IfAvailable feature="sso">
+
+Business also includes workspace [single sign-on](/docs/help/teams/single-sign-on) over OIDC or SAML.
+
+</IfAvailable>
+
+<IfAvailable feature="auditLog">
+
+Business also includes the workspace [audit log](/docs/help/teams/audit-log).
+
+</IfAvailable>
 
 Analytics history only limits how far back you can look. Scans are kept as long as their code exists, so after an upgrade the older ones show again.
 
 Only active dynamic codes count toward the code limit: archived codes don't. Scans never count toward anything, and no plan pauses a code because of traffic. The only scan caps are the ones you set yourself on a code.
 
-The API allowance is per workspace and resets at 00:00 UTC. Each request that counts returns `X-RateLimit-Limit`, `X-RateLimit-Remaining` and `X-RateLimit-Reset` so you can watch it. See the [REST API](/docs/developers/rest-api) for the per-minute limits.
+The API allowance is per workspace and resets at 00:00 UTC. Each request that counts returns `X-RateLimit-Limit`, `X-RateLimit-Remaining` and `X-RateLimit-Reset` so you can watch it. See the [REST API](/docs/developers/rest-api#rate-limits) for the per-minute limits.
 
 ## Workspaces
 
 Limits apply to each [workspace](/docs/teams) separately, and a workspace uses the best plan among its owners and [billing members](/docs/teams#roles). Everyone gets a workspace of their own, created automatically with them as its owner, so it uses their plan. In any other workspace, one owner on Business gives everyone in it Business limits; members don't need their own subscription.
 
-Creating more workspaces needs Pro or Business. A workspace whose owners and billing members are on Free has 1 seat (just you), on Pro up to 3, and on Business no limit. Seats are members, owner included, plus pending invitations, so revoke an invitation you no longer need to free its seat. If the owners' plan changes, current members stay; only new invitations are blocked.
+Creating more workspaces needs Pro or Business. A workspace whose owners and billing members are on Free has 1 seat (only you), on Pro up to 3, and on Business no limit. Seats are members, owner included, plus pending invitations, so revoke an invitation you no longer need to free its seat. If the owners' plan changes, current members stay; only new invitations are blocked.
 
-## Going over a limit, downgrading and cancelling
+## Going over a limit, downgrading and canceling
 
-<Callout type="info">
-  Limits only stop new things. Existing codes keep redirecting on every plan, including after a downgrade, a failed payment or a cancellation. That's the [Never-Hostage Guarantee](/guarantee).
+<Callout type="info" title="Limits only stop new things">
+  Existing codes keep redirecting on every plan, including after a downgrade, a failed payment or a cancellation. That's the [Never-Hostage Guarantee](/guarantee).
 </Callout>
 
 - **Over a limit:** you can't create more until you're under it. You can still edit, archive and export what you have.
 - **Over the daily API allowance:** API calls get `429` until 00:00 UTC. Your codes keep redirecting and the website keeps working.
 - **Downgrading:** codes, landing pages and verified custom domains keep working. Analytics show the history your new plan includes.
-- **Cancelling:** your plan stays active until the end of the period you paid for, then your account moves to Free.
-- **A failed payment:** once the subscription lapses, it's the same as cancelling. Nothing is paused.
+- **Canceling:** your plan stays active until the end of the period you paid for, then your account moves to Free.
+- **A failed payment:** once the subscription lapses, it's the same as canceling. Nothing is paused.
 
 Codes that end for a reason you chose, such as an expiry date, a pause or a scan limit, send scanners to your fallback URL or to a neutral "This campaign has ended" page, never to a QRdx page.
 
 ## Billing
 
-Upgrade from the [pricing page](/pricing). To change plans, switch between monthly and yearly, update your card or cancel, open **Manage subscription** in your settings, which takes you to the Polar billing portal. One subscription covers your account, so while you have one, plan changes go through the portal instead of a new checkout.
+Upgrade from the [pricing page](/pricing). To change plans, switch between monthly and yearly, update your card or cancel, open **Settings** → **Plan & usage** in your workspace and click **Manage billing** (the pricing page's **Manage subscription** goes to the same place). Both open the Polar billing portal. One subscription covers your account, so while you have one, plan changes go through the portal instead of a new checkout.
+
+{/* shot: plan-and-usage | Settings → Plan & usage showing the current plan, the usage meters and the Manage billing button | Dashboard → Settings → Plan & usage */}
 
 ## Self-hosting
 
-A [self-hosted](/docs/self-hosting) instance uses the same plans. The limits are defined in one file, `apps/app/lib/plans.ts`, which you can change for your instance. Without Polar configured, upgrades are unavailable and every account uses the Free limits.
+A [self-hosted](/docs/self-hosting) instance uses the same plans. The limits are defined in one file, `apps/app/lib/plans.ts`, which you can change for your instance. Without Polar configured, upgrades are unavailable and every account uses the Free limits. Without Upstash Redis, the daily API allowance isn't counted and the `X-RateLimit-*` headers aren't sent.
+
+## Related
+
+- [Plans and what they include](/docs/help/account-and-billing/plans)
+- [Upgrade, downgrade or switch billing](/docs/help/account-and-billing/change-plan)
+- [Workspaces and teams](/docs/teams): seats and roles
+- [Cancel your subscription](/docs/help/account-and-billing/cancel)

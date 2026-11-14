@@ -1,65 +1,90 @@
 ---
 title: Code controls
-description: Pause a dynamic QR code, protect it with a password, schedule it, cap its scans and choose where ended codes send people.
-icon: LockKeyhole
+description: Pause a dynamic QR code, protect it with a password, give it start and end dates, cap its scans and choose where ended codes send people.
 ---
 
-Every [dynamic QR code](/docs/dynamic-qr-codes) has an **Access & schedule** panel on its page in the [dashboard](/dashboard?to=codes) (open a code, then open its **Settings** tab). Changes apply to the next scan; you never need to reprint the code.
+Code controls decide whether a scan of a [dynamic QR code](/docs/dynamic-qr-codes) goes through at all. Use them when a code should work only for a while (an event, a promotion), only for some people (a password), or only a set number of times, and when you want to switch a printed code off without reprinting it.
+
+<Callout type="info" title="Pausing is free, the rest is Pro">
+  Pausing works on every plan. Passwords, start and end dates, scan limits and the fallback URL are part of Pro and Business. See [Plans and limits](/docs/plans-and-limits).
+</Callout>
+
+In a hurry? The short task pages: [Pause, schedule or limit a code](/docs/help/dynamic-codes/pause-schedule-limit) and [Protect a code with a password](/docs/help/dynamic-codes/password).
+
+## How it works
+
+Every control lives in the **Access & schedule** panel on the code's **Settings** tab (open the code from [Codes](/dashboard?to=codes)). On each scan QRdx checks the controls in order before it redirects: is the code paused, has it started, has it ended, is it over its scan limit, does it need a password. The first check that fails decides what the scanner sees. Changes apply to the next scan; you never reprint the code.
+
+{/* shot: access-schedule-panel | The Access & schedule panel on a code's Settings tab with the Pause code switch, Password, Starts, Ends, Scan limit and Fallback URL fields | Dashboard → Codes → open a code → Settings */}
 
 | Control | What scanners see | Plan |
 | --- | --- | --- |
-| Pause | Your fallback URL, or a neutral "this campaign is paused" page | Every plan |
+| Pause | Your fallback URL, or a neutral "This campaign is paused" page | Every plan |
 | Password | A password screen; the right password opens the code | Pro and Business |
-| Starts | Before the start: a "hasn't started yet" page | Pro and Business |
-| Ends | After the end: your fallback URL, or a neutral "campaign has ended" page | Pro and Business |
+| Starts | Before the start: "This campaign hasn't started yet" | Pro and Business |
+| Ends | After the end: your fallback URL, or "This campaign has ended" | Pro and Business |
 | Scan limit | Once the limit is reached: your fallback URL, or the "ended" page | Pro and Business |
 | Fallback URL | Where paused, ended and over-limit codes send people | Pro and Business |
 
 ## Pause
 
-Turn on **Pause code** to stop a code temporarily, for example between two events, and turn it off to resume. Scans while it is paused go to your fallback URL when you set one, otherwise to a plain page that says the campaign is paused. Pausing is free on every plan.
+Turn on **Pause code** to stop a code for a while, for example between two events, and turn it off to resume. The code's **⋯** menu has **Pause** and **Resume** too, and the bulk actions on the Codes list pause several codes at once. Scans while a code is paused go to your fallback URL when you set one, otherwise to a plain page that says the campaign is paused.
 
 ## Password
 
-Set a password (at least 4 characters) and anyone who scans the code first sees a password screen. After the right password, that browser stays unlocked for 6 hours, on the short link and on the hosted page it opens. Changing or removing the password locks out every browser that unlocked the old one.
+Set a password of 4 to 64 characters and anyone who scans the code first sees a password screen. After the right password, that browser stays unlocked for 6 hours, on the short link and on the hosted page it opens. Changing the password locks out every browser that unlocked the old one; removing it opens the code to everyone again.
 
-Passwords are stored as bcrypt hashes; QRdx can't show you a password later, only replace it. Repeated wrong guesses from one visitor are slowed down.
+{/* shot: password-screen | The password screen a scanner sees on a protected code, on a phone | Scan a code with a password set */}
+
+Passwords are stored as bcrypt hashes, so QRdx can't show you a password later, only replace it. Repeated wrong guesses from one visitor are slowed down. Share the password separately from the code: anyone who has both gets in.
 
 ## Start and end dates
 
-- **Starts:** until then, scans show "This campaign hasn't started yet. Please scan this code again later."
+- **Starts:** until then, scans show "This campaign hasn't started yet. Please scan this code again later." The fallback URL isn't used before the start.
 - **Ends:** from then on, scans go to your fallback URL, or show "This campaign has ended".
 
 Dates are entered in your own time zone and stored as exact moments, so a code ends at the same instant everywhere. The end must be after the start.
 
 ## Scan limit
 
-The limit counts scans the same way your analytics do: bots, link previews and rapid repeat scans from one device aren't counted. Once the code has reached the limit, the next scans go to your fallback URL or the "ended" page. Raise or clear the limit to reopen the code.
+The limit counts scans the same way your analytics do: bots and link previews aren't counted, and repeat scans from one address within a minute count once. Once the code has reached the limit, the next scans go to your fallback URL or the "ended" page. Raise or clear the limit to reopen the code.
 
 ## Fallback URL
 
-The address paused, expired and over-limit codes send people to, such as your homepage or the next campaign. Without one, scanners see a small neutral page. That page never shows ads, a QRdx promotion or a sign-up prompt, only the campaign's status and a "Report abuse" link.
+The address paused, ended and over-limit codes send people to, such as your homepage or the next campaign. Without one, scanners see a small neutral page. That page never shows ads, a QRdx promotion or a sign-up prompt, only the campaign's status and a **Report abuse** link. The fallback URL goes through the same safety checks as a destination.
 
-The fallback URL goes through the same safety checks as a code's destination.
-
-## Plans and downgrades
+## Limits and plans
 
 - Pausing works on every plan.
 - Setting or changing a password, dates, a scan limit or a fallback URL needs Pro or Business.
-- **A downgrade never ends or locks a code.** Controls you set while on Pro keep working exactly as configured, and you can remove any of them on any plan.
+- A downgrade never ends or locks a code. Controls you set while on Pro keep working as configured, and you can remove any of them on any plan.
 
 ## Safety checks on links
 
 QRdx checks every destination and fallback URL when you save it:
 
-- links listed by [Google Web Risk](https://cloud.google.com/web-risk) as malware, phishing or unwanted software are rejected (when the server has a Web Risk key). When Web Risk can't answer in time, as can happen in a large batch, the code is created and its link is looked up again shortly after; if Web Risk lists it then, the code is switched off and a reviewer looks at it;
-- `javascript:`, `data:` and other non-web links are rejected;
-- during an account's first 7 days, codes that point to URL shorteners, bare IP addresses or lookalike (homoglyph) domains are saved switched off and **held for review**. The panel says so; nothing else is needed from you, and a reviewer turns the code on once it checks out. New accounts can also create up to 30 dynamic codes per hour, or {facts.newPaidAccountHourlyCodes} in a workspace on a paid plan. Over that, the error says how many minutes until you can create more, and a dashboard import pauses until then.
+- Links listed by [Google Web Risk](https://cloud.google.com/web-risk) as malware, phishing or unwanted software are rejected (when the server has a Web Risk key). When Web Risk can't answer in time, as can happen in a large batch, the code is created and its link is looked up again shortly after; if Web Risk lists it then, the code is switched off and a reviewer looks at it.
+- `javascript:`, `data:` and other non-web links are rejected.
+- During an account's first 7 days, codes that point to URL shorteners, bare IP addresses or lookalike (homoglyph) domains are saved switched off and **held for review**. The panel says so; nothing else is needed from you, and a reviewer turns the code on once it checks out.
+- New accounts can create up to 30 dynamic codes an hour, or {facts.newPaidAccountHourlyCodes} in a workspace on a paid plan. Over that, the error says how many minutes to wait, and a dashboard import pauses until then.
 
-Anyone can report a code at [qrdx.dev/report-abuse](/report-abuse). Codes switched off after a review stop working for everyone and can't be turned back on by their owner.
+Anyone can report a code at [qrdx.dev/report-abuse](/report-abuse). Codes switched off after a review stop working for everyone and can't be turned back on by their owner. See [Report a harmful QR code](/docs/help/privacy-and-security/report-abuse).
+
+## For developers
+
+The REST API creates, updates and deletes codes but doesn't set controls; they live in the dashboard. A code's `status` in API responses tells you whether it is active or archived. Scans blocked by a control aren't delivered as `scan.created` [webhook](/docs/webhooks) events, because they aren't recorded as scans.
 
 ## Self-hosting
 
 - `WEB_RISK_API_KEY`: a Google Cloud API key with the Web Risk API enabled. Without it, links are only checked by the offline rules above.
+- `SAFETY_YOUNG_ACCOUNT_DAYS`, `SAFETY_YOUNG_ACCOUNT_DYNAMIC_PER_HOUR` and `SAFETY_RECHECK_BATCH` change the 7 days, the 30 codes an hour and the size of a Web Risk recheck.
 - `NEXT_PUBLIC_TURNSTILE_SITE_KEY` and `TURNSTILE_SECRET_KEY`: Cloudflare Turnstile on the public report form (optional).
 - Unlock cookies are signed with `BETTER_AUTH_SECRET`.
+
+See [Self-hosting](/docs/self-hosting#optional-services).
+
+## Related
+
+- [Smart routing](/docs/smart-routing): a different destination by device, country, time or area
+- [A scan shows an error page](/docs/help/troubleshooting/error-pages): what each neutral page means
+- [What happens to your codes if you stop paying](/docs/help/account-and-billing/never-hostage)
