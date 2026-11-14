@@ -115,42 +115,44 @@ function simulateCamera(image: ImageData, modulePx: number, contrast = 0.7) {
     }
   }
   const radius = Math.max(1, Math.round(modulePx * 0.25));
+  const span = 2 * radius + 1;
   const buffer = new Float32Array(width * height * 3);
+  // Sliding window with clamped edges. Pixel (line, position) is
+  // `line * lineStep + position * step`; the sums are plain locals (this
+  // runs nine times a score, on every pixel).
   const blur = (horizontal: boolean) => {
     const lines = horizontal ? height : width;
     const length = horizontal ? width : height;
-    const index = (line: number, position: number) =>
-      horizontal ? line * width + position : position * width + line;
-    const sums = [0, 0, 0];
+    const lineStep = horizontal ? width : 1;
+    const step = horizontal ? 1 : width;
     for (let line = 0; line < lines; line++) {
-      sums.fill(0);
-      // Sliding window with clamped edges
+      const start = line * lineStep;
+      let red = 0;
+      let green = 0;
+      let blue = 0;
       for (let k = -radius; k <= radius; k++) {
-        const p = index(line, Math.min(Math.max(k, 0), length - 1)) * 4;
-        for (let c = 0; c < 3; c++) {
-          sums[c] = (sums[c] as number) + (data[p + c] as number);
-        }
+        const p = (start + Math.min(Math.max(k, 0), length - 1) * step) * 4;
+        red += data[p] as number;
+        green += data[p + 1] as number;
+        blue += data[p + 2] as number;
       }
       for (let position = 0; position < length; position++) {
-        const target = index(line, position) * 3;
-        for (let c = 0; c < 3; c++) {
-          buffer[target + c] = (sums[c] as number) / (2 * radius + 1);
-        }
-        const out = index(line, Math.max(position - radius, 0)) * 4;
+        const target = (start + position * step) * 3;
+        buffer[target] = red / span;
+        buffer[target + 1] = green / span;
+        buffer[target + 2] = blue / span;
+        const out = (start + Math.max(position - radius, 0) * step) * 4;
         const into =
-          index(line, Math.min(position + radius + 1, length - 1)) * 4;
-        for (let c = 0; c < 3; c++) {
-          sums[c] =
-            (sums[c] as number) -
-            (data[out + c] as number) +
-            (data[into + c] as number);
-        }
+          (start + Math.min(position + radius + 1, length - 1) * step) * 4;
+        red = red - (data[out] as number) + (data[into] as number);
+        green = green - (data[out + 1] as number) + (data[into + 1] as number);
+        blue = blue - (data[out + 2] as number) + (data[into + 2] as number);
       }
     }
-    for (let i = 0; i < width * height; i++) {
-      for (let c = 0; c < 3; c++) {
-        data[i * 4 + c] = buffer[i * 3 + c] as number;
-      }
+    for (let i = 0, o = 0; i < width * height * 3; i += 3, o += 4) {
+      data[o] = buffer[i] as number;
+      data[o + 1] = buffer[i + 1] as number;
+      data[o + 2] = buffer[i + 2] as number;
     }
   };
   for (let pass = 0; pass < 2; pass++) {
@@ -1548,20 +1550,26 @@ function resizePixels(
         x0 + 1,
         Math.min(source.width, Math.floor((x + 1) * stepX))
       );
-      const sums = [0, 0, 0, 0];
+      // Plain locals, not an array: this runs on every output pixel
+      let red = 0;
+      let green = 0;
+      let blue = 0;
+      let alpha = 0;
       for (let sy = y0; sy < y1; sy++) {
         for (let sx = x0; sx < x1; sx++) {
           const i = (sy * source.width + sx) * 4;
-          for (let c = 0; c < 4; c++) {
-            sums[c] = (sums[c] as number) + (source.data[i + c] as number);
-          }
+          red += source.data[i] as number;
+          green += source.data[i + 1] as number;
+          blue += source.data[i + 2] as number;
+          alpha += source.data[i + 3] as number;
         }
       }
       const count = (y1 - y0) * (x1 - x0);
       const o = (y * width + x) * 4;
-      for (let c = 0; c < 4; c++) {
-        out[o + c] = (sums[c] as number) / count;
-      }
+      out[o] = red / count;
+      out[o + 1] = green / count;
+      out[o + 2] = blue / count;
+      out[o + 3] = alpha / count;
     }
   }
   return { data: out, width, height, colorSpace: "srgb" } as ImageData;
