@@ -265,6 +265,17 @@ Docs pages follow the same `review`: a list can name docs paths (`"/docs/help"`)
 - Copy on the site goes live as written, so no placeholders or "TBD". Product counts come from code (`apps/app/lib/product-facts.ts` and the catalogues), not typed by hand.
 - Update the docs (`apps/app/content/docs`) or package READMEs when you change behavior or public APIs.
 - Make sure the checks above pass. A maintainer reviews every pull request before it's merged.
+- Sign the [contributor license agreement](#contributor-license-agreement) when the bot asks on your first pull request.
+
+## Contributor license agreement
+
+Before your first pull request can be merged, you sign the [QRdx Contributor License Agreement](CLA.md) (CLA). You keep the copyright in what you contribute. The CLA gives QRdx a license to use your work and to license it to others on any terms, including commercial ones, plus a matching patent license.
+
+When you open your first pull request, the CLA Assistant bot comments on it with a link. Follow it, sign in with GitHub and accept. One signature covers your later pull requests too. If you contribute as part of your job, your employer can also sign for the people it authorizes; CLA.md says how.
+
+We ask because QRdx is open core: most of the repository is AGPL-3.0-or-later or MIT, and the `ee/` folders are under the QRdx Commercial License. The CLA lets QRdx move your code into a commercial feature or change its license later, which the folder licenses alone don't allow. Your contribution is still released under the license of the folder it goes into ([LICENSING.md](LICENSING.md) lists them), so everyone else can keep using it on those terms.
+
+Pull requests from bots, such as Dependabot and GitHub Actions, don't need a signature.
 
 ## Good first issues
 
@@ -272,4 +283,4 @@ Issues labeled [`good first issue`](https://github.com/qrdxinc/qrdx/issues?q=is%
 
 When nothing is open under those labels, docs fixes are a good first pull request: the **Open** menu under each docs page's title has **Open in GitHub**, which takes you to the page's source in `apps/app/content/docs`. Or ask in [Q&A](https://github.com/qrdxinc/qrdx/discussions/categories/q-a) what would help most.
 
-By contributing, you agree that your contributions are licensed under the project's [AGPL-3.0-or-later license](LICENSE), or under the MIT license for files in folders with their own MIT `LICENSE` (`packages/qrdx`, `packages/cli`, `plugins/*`), and that you'll follow the [Code of Conduct](.github/CODE_OF_CONDUCT.md).
+By contributing, you agree to the [contributor license agreement](#contributor-license-agreement) and to follow the [Code of Conduct](.github/CODE_OF_CONDUCT.md).
