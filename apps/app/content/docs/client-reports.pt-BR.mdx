@@ -1,18 +1,18 @@
 ---
 title: "Relatórios para clientes"
-description: "Compartilhe as estatísticas de leitura de um código com um cliente, em uma página que mostra o nome, o logo e a cor dele."
+description: "Compartilhe as análises de leituras de um código com um cliente em uma página que mostra o nome, o logo e a cor dele."
 icon: ChartLine
 ---
 
-Qualquer QR code dinâmico pode ter uma página de estatísticas compartilhada: uma página somente leitura em `/stats/<token>`, com as leituras ao longo do tempo, os principais países, dispositivos e referenciadores. Quem tiver o link pode abri-la. Os mecanismos de busca não a indexam, e ela não mostra nada sobre as pessoas que fizeram a leitura.
+Todo QR code dinâmico pode ter uma página de estatísticas compartilhada: uma página somente leitura em `/stats/<token>` com leituras ao longo do tempo, principais países, dispositivos e origens de acesso. Qualquer pessoa com o link pode abri-la. Os mecanismos de busca não a indexam, e ela não mostra nada sobre as pessoas que fizeram a leitura.
 
-No Pro e no Business, você pode colocar a marca de um cliente nessa página. Ela passa a mostrar o nome, o logo e a cor de destaque do cliente no topo, além do nome dele na aba do navegador e nas prévias de links. Assim, você pode enviá-la ao cliente como o relatório dele.
+No Pro e no Business, você pode colocar a marca de um cliente nessa página. Ela passa a mostrar o nome, o logo e a cor de destaque do cliente no topo, e o nome do cliente na aba do navegador e nas prévias do link, então você pode enviá-la ao cliente como o relatório dele.
 
 | | Grátis | Pro | Business |
 | --- | --- | --- | --- |
 | Página de estatísticas compartilhada | Sim | Sim | Sim |
 | Nome, logo e cor do cliente | Não | Sim | Sim |
-| QRdx na página | Cabeçalho e rodapé | Um pequeno "Made with QRdx" na parte inferior | Nenhum |
+| QRdx na página | Cabeçalho e rodapé | Um pequeno "Made with QRdx" no final | Nenhum |
 | Link no seu próprio domínio | Não | Não | Sim |
 
 ## Compartilhar as estatísticas de um código [#share-a-codes-stats]
@@ -20,44 +20,44 @@ No Pro e no Business, você pode colocar a marca de um cliente nessa página. El
 1. Em [Códigos](/dashboard?to=codes), abra o menu **⋯** do código e escolha **Compartilhar análises**.
 2. Ative **Página pública de análises** e copie o link.
 
-**Redefinir link** gera um novo link e interrompe o antigo imediatamente, e mantém a marca da página. Desativar a página faz o link dela retornar 404 e limpa a marca; a marca em si continua salva.
+**Redefinir link** cria um novo link e desativa o antigo imediatamente, mantendo a marca da página. Ao desativar a página, o link dela passa a retornar 404 e a marca é removida da página; a marca em si continua salva.
 
 ## Adicionar a marca do cliente [#add-the-clients-brand]
 
-Depois que a página estiver ativa, o mesmo diálogo tem uma seção **Marca do cliente**.
+Com a página ativada, a mesma janela tem uma seção **Marca do cliente**.
 
 1. Abra o menu e escolha **Nova marca de cliente**.
-2. Digite o nome do cliente, adicione um logo (envie uma imagem ou cole uma URL de imagem `https`) e, se quiser, uma cor de destaque.
-3. Clique em **Adicionar e usar**. A página mostra a marca imediatamente.
+2. Informe o nome do cliente, adicione um logo (envie uma imagem ou cole a URL `https` de uma imagem) e, se quiser, uma cor de destaque.
+3. Clique em **Adicionar e usar**. A página mostra a marca na hora.
 
-As marcas são salvas no workspace, então o próximo código do mesmo cliente só precisa que a marca seja escolhida no menu. O botão de lápis edita a marca selecionada em todos os lugares onde ela é usada. Excluir uma marca faz com que todas as páginas que a usavam voltem a ser páginas comuns.
+As marcas ficam salvas no workspace, então no próximo código do mesmo cliente basta escolher a marca no menu. O botão de lápis edita a marca selecionada em todos os lugares onde ela é usada. Excluir uma marca faz todas as páginas que a usavam voltarem a ser páginas simples.
 
-A cor de destaque é usada com moderação: no gráfico de leituras e no bloco do logo. Se a cor ficar difícil de ver em um fundo branco ou preto, esse tema mantém o gráfico na cor do próprio texto da página. Deixe o destaque vazio para uma página totalmente monocromática.
+A cor de destaque é usada com moderação: no gráfico de leituras e no quadrado do logo. Se a cor for difícil de enxergar em um fundo branco ou preto, esse tema mantém o gráfico na cor de texto da própria página. Deixe a cor de destaque vazia para uma página totalmente monocromática.
 
-Proprietários, administradores e membros podem aplicar marca a uma página. Visualizadores e membros de faturamento podem ver a configuração, mas não alterá-la.
+Proprietários, administradores e membros podem aplicar uma marca a uma página. Visualizadores e membros de cobrança veem a configuração, mas não podem alterá-la.
 
-## Business: sem a marca do QRdx, no seu domínio [#business-no-qrdx-mark-on-your-domain]
+## Business: sem a marca QRdx, no seu domínio [#business-no-qrdx-mark-on-your-domain]
 
-No Business, uma página com marca não tem a marca do QRdx: sem o logo do QRdx no cabeçalho, sem o crédito no rodapé e sem "QRdx" no título da aba. A aba do navegador mostra o logo do cliente ou a inicial dele. Se o link curto do código estiver no domínio do QRdx, a página não o inclui.
+No Business, uma página com marca do cliente não tem a marca QRdx: sem logo do QRdx no cabeçalho, sem crédito no rodapé e sem "QRdx" no título da aba. A aba do navegador mostra o logo do cliente ou a inicial dele. Se o link curto do código estiver no domínio do QRdx, a página não o exibe.
 
-<IfAvailable feature="customDomains" id="serve-the-page-on-your-domain" title="Sirva a página no seu domínio">
+<IfAvailable feature="customDomains" id="serve-the-page-on-your-domain" title="Publique a página no seu domínio">
 
-Um workspace Business com um [domínio personalizado](/docs/custom-domains) verificado pode servir a página nele. No diálogo, escolha o domínio em **Endereço do link**. O link passa a ser `https://<your domain>/stats/<token>`.
+Um workspace Business com um [domínio personalizado](/docs/custom-domains) verificado pode publicar a página nele. Na janela, escolha o domínio em **Endereço do link**. O link passa a ser `https://<your domain>/stats/<token>`.
 
-O domínio só serve as páginas que você atribuiu a ele, e somente enquanto o workspace estiver no Business. O endereço do QRdx da mesma página continua funcionando também.
+O domínio só serve as páginas atribuídas a ele, e apenas enquanto o workspace estiver no Business. O endereço do QRdx da mesma página continua funcionando também.
 
 </IfAvailable>
 
 ## O que a página mostra [#what-the-page-shows]
 
-- Leituras e visitantes únicos dos últimos 7, 30 ou 90 dias, até onde o plano do workspace mantém o histórico, ou de todo o período no Pro e no Business
-- Leituras por QR e toques de NFC
-- Leituras por dia, principais países, tipos de dispositivo e sites referenciadores
+- Leituras e visitantes únicos dos últimos 7, 30 ou 90 dias, até onde o plano do workspace mantém o histórico, ou de todo o período nos planos Pro e Business
+- Leituras de QR code e toques de NFC
+- Leituras por dia, principais países, tipos de dispositivo e sites de origem
 
-Ela nunca mostra o caminho ou a query string do destino, cidades, localizações precisas nem nada sobre uma leitura específica. Os números podem ter até 5 minutos de atraso.
+Ela nunca mostra o caminho ou a query string do destino, cidades, localizações precisas nem nada sobre uma leitura individual. Os números podem ter até 5 minutos de atraso.
 
 ## Se o plano mudar [#if-the-plan-changes]
 
-A marca é mantida, mas só aparece enquanto o plano a incluir. Quando um workspace Business passa para o Pro, suas páginas voltam a exibir o pequeno "Made with QRdx" e os links de domínio personalizado deixam de funcionar; o endereço do QRdx continua funcionando. No Grátis, a página não mostra marca de cliente. Ao fazer upgrade novamente, os dois voltam.
+A marca é mantida, mas só aparece enquanto o plano a incluir. Quando um workspace Business passa para o Pro, as páginas voltam a mostrar o pequeno "Made with QRdx" e os links de domínio personalizado deixam de funcionar; o endereço do QRdx continua funcionando. No Grátis, a página não mostra a marca do cliente. Fazer upgrade de novo restaura os dois.
 
-Para dar a um cliente uma visão de vários códigos ao mesmo tempo, com as análises e as páginas hospedadas, use o [portal do cliente](/docs/client-portal) no Business.
+Para dar a um cliente uma visão de vários códigos de uma vez, com as análises e as páginas hospedadas deles, use o [portal do cliente](/docs/client-portal) no Business.

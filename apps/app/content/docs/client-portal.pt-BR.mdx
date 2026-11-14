@@ -1,45 +1,45 @@
 ---
 title: "Portal do cliente"
-description: "Dê aos seus clientes acesso somente leitura às pastas que você escolher, com o nome e o logo da sua agência no lugar dos da QRdx."
+description: "Dê aos clientes acesso somente leitura às pastas que você escolher, com o nome e o logo da sua agência no lugar dos do QRdx."
 icon: Briefcase
 ---
 
-O portal do cliente é para agências que gerenciam QR codes para os seus clientes. Você convida um cliente por e-mail e escolhe as pastas que ele pode ver. Ele entra no portal do seu workspace e encontra os códigos dessas pastas, cada um com suas análises de leitura e, para páginas hospedadas, um link para a página. Tudo ali é somente leitura.
+O portal do cliente é para agências que gerenciam QR codes para seus clientes. Você convida um cliente por e-mail e escolhe as pastas que ele pode ver. Ele entra no portal do seu workspace e encontra os códigos dessas pastas, cada um com suas métricas de leitura e, no caso de páginas hospedadas, um link para a página. Tudo ali é somente leitura.
 
-O portal faz parte do Business. Os clientes não são membros do seu workspace e não ocupam uma vaga.
+O portal faz parte do plano Business. Os clientes não são membros do seu workspace e não ocupam uma vaga.
 
-## Configurar [#set-it-up]
+## Configure [#set-it-up]
 
-Abra [Configurações → Portal do cliente](/dashboard?to=settings/clients). Proprietários e administradores gerenciam essa área.
+Abra [Configurações → Portal do cliente](/dashboard?to=settings/clients). Proprietários e administradores gerenciam o portal.
 
-1. Em **Identidade visual**, digite o nome que os clientes verão, adicione um logo e escolha uma cor de destaque. Os campos vazios usam o nome e o logo do próprio workspace.
+1. Em **Branding**, informe o nome que os clientes veem, adicione um logo e escolha uma cor de destaque. Campos vazios usam o nome e o logo do próprio workspace.
 2. Coloque os códigos de cada cliente em uma pasta própria em [Códigos](/dashboard?to=codes).
-3. Em **Clientes**, digite o e-mail do cliente, marque as pastas dele e clique em **Convidar cliente**.
+3. Em **Clientes**, informe o e-mail do cliente, marque as pastas dele e clique em **Convidar cliente**.
 
-A QRdx envia ao cliente, em nome do seu portal, um link para o portal. Se o e-mail não estiver configurado no servidor que você usa, copie o endereço em **Endereço do portal** e envie você mesmo.
+O QRdx envia ao cliente um e-mail com o link do portal, em nome do seu portal. Se o e-mail não estiver configurado no servidor que você usa, copie o endereço em **Endereço do portal** e envie você mesmo.
 
-Só são compartilhadas as pastas que você marcar. Uma subpasta não é compartilhada a menos que você a marque também.
+Só as pastas que você marcar são compartilhadas. Uma subpasta não é compartilhada, a menos que você a marque também.
 
 ## O que os clientes veem [#what-clients-see]
 
-O portal fica em `https://qrdx.dev/portal/<your workspace's URL name>`. Os clientes entram ali com um código de uso único enviado para o endereço que você convidou. O e-mail com o código vem da QRdx. Na primeira vez, o acesso também cria para eles uma conta gratuita na QRdx, que eles não precisam usar.
+O portal fica em `https://qrdx.dev/portal/<your workspace's URL name>`. Os clientes entram ali com um código de uso único enviado para o endereço que você convidou. O e-mail com o código vem do QRdx. Na primeira vez, o login também cria para eles uma conta grátis do QRdx, que eles não precisam usar.
 
-Já conectados, eles veem:
+Depois de entrar, eles veem:
 
-- cada pasta compartilhada com seus códigos, totais de leituras e última leitura
-- para cada código, leituras ao longo do tempo, visitantes únicos, leituras de QR e toques de NFC, principais países, dispositivos e sites de referência dos últimos 7, 30 ou 90 dias, ou de todo o período
-- para códigos que abrem uma página hospedada, um botão para abrir a página (abrir por ali não conta como leitura)
+- cada pasta compartilhada com seus códigos, totais de leituras e a última leitura
+- para cada código, leituras ao longo do tempo, visitantes únicos, leituras de QR e toques NFC, principais países, dispositivos e sites de origem dos últimos 7, 30 ou 90 dias, ou de todo o período
+- para códigos que abrem uma página hospedada, um botão para abrir a página (abri-la por ali não conta como leitura)
 
-Eles não podem ver outras pastas, códigos na lixeira, o endereço completo de um destino, cidades, localizações precisas, seus membros, configurações ou faturamento. O portal mostra o seu nome, logo e cor, sem a marca da QRdx.
+Eles não veem outras pastas, códigos na lixeira, o endereço completo de um destino, cidades, localizações precisas, seus membros, configurações ou cobrança. O portal mostra seu nome, logo e cor, sem nenhuma marca do QRdx.
 
-Quem entrar com um endereço que você não convidou vê que não tem acesso. Um convite pertence à conta que entrar primeiro com ele, então continua funcionando se o cliente trocar de e-mail depois.
+Quem entra com um endereço que você não convidou vê que não tem acesso. Um convite pertence à conta que entra primeiro com ele, então continua funcionando se o cliente trocar de e-mail depois.
 
-## Alterar ou remover acesso [#change-or-remove-access]
+## Altere ou remova o acesso [#change-or-remove-access]
 
-Em **Clientes**, **Pastas** altera o que um cliente vê, e **Remover** tira o acesso dele. Ambos valem no próximo carregamento da página. Convidar um endereço de novo atualiza as pastas dele e envia o link outra vez.
+Em **Clientes**, **Pastas** muda o que o cliente vê e **Remover** tira o acesso dele. Ambos valem a partir do próximo carregamento de página. Convidar um endereço de novo atualiza as pastas dele e envia o link outra vez.
 
-Se o workspace sair do Business, o portal deixa de abrir até que ele volte ao Business. Enquanto isso, você ainda pode remover clientes.
+Se o workspace sair do plano Business, o portal deixa de abrir até voltar ao Business. Nesse meio tempo, você ainda pode remover clientes.
 
-## Por que o portal fica no endereço da QRdx [#why-the-portal-stays-on-qrdxs-address]
+## Por que o portal fica no endereço do QRdx [#why-the-portal-stays-on-qrdxs-address]
 
-Os clientes permanecem conectados com um cookie do próprio site da QRdx. Servir páginas de acesso no seu domínio colocaria esse cookie de login em um domínio cujo DNS você controla, fora da QRdx. Por isso, o portal fica no endereço da QRdx e mostra sua identidade visual ali. Os [relatórios para clientes](/docs/client-reports) compartilhados não exigem login, então o Business pode servi-los no seu próprio domínio.
+Os clientes continuam conectados por meio de um cookie do site do próprio QRdx. Servir as páginas com login no seu domínio colocaria esse cookie de login em um domínio cujo DNS você controla, fora do QRdx. Por isso o portal fica no endereço do QRdx e mostra a sua marca ali. Os [relatórios para clientes](/docs/client-reports) compartilhados não exigem login, então o Business pode servi-los no seu próprio domínio.
