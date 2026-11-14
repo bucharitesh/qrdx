@@ -4,21 +4,21 @@ description: Generate a styled, scannable QR code with the QRdx CLI (@qrdx/cli) 
 license: MIT
 compatibility: Requires Node.js 22 or later and network access to the npm registry.
 metadata:
-  version: "2.1.0"
+  version: "2.2.0"
 ---
 
 # Generate QR Code
 
 Generate a styled, scannable QR code with the QRdx CLI, [`@qrdx/cli`](https://www.npmjs.com/package/@qrdx/cli). Its command is `qrdx`; the `qrdx` npm package itself is the React library. The code is rendered on this machine and nothing is uploaded. The only network requests are npm downloading the CLI and, if you pass `--logo` with a URL, fetching that image.
 
-**The CLI version is pinned on purpose.** Every command here runs `npx @qrdx/cli@0.0.8`, the release this file was checked against, so an agent never runs whatever happens to be newest on npm. Don't drop the version or swap in `@latest`. To update the skill: run `npm view @qrdx/cli version`, read that version's `npx @qrdx/cli@<version> --help`, update the flags and value lists below to match, then change the version in every command and bump `metadata.version`.
+**The CLI version is pinned on purpose.** Every command here runs `npx @qrdx/cli@0.0.10`, the release this file was checked against, so an agent never runs whatever happens to be newest on npm. Don't drop the version or swap in `@latest`. To update the skill: run `npm view @qrdx/cli version`, read that version's `npx @qrdx/cli@<version> --help`, update the flags and value lists below to match, then change the version in every command and bump `metadata.version`.
 
 **Secrets.** Put a Wi-Fi password or other secret only in the command you run. Never repeat it back in replies, summaries or logs; call it "the password you gave".
 
 ## Usage
 
 ```bash
-npx @qrdx/cli@0.0.8 generate "<data>" -o <output> [flags]
+npx @qrdx/cli@0.0.10 generate "<data>" -o <output> [flags]
 ```
 
 - `<data>`: the URL or text to encode (required). Wrap it in quotes.
@@ -52,7 +52,7 @@ Any `--frame-text`, `--frame-color` or `--frame-text-color` without `--frame` us
 
 ## Accepted values
 
-These are the values `@qrdx/cli@0.0.8` accepts. Anything else exits with an error that lists them.
+These are the values `@qrdx/cli@0.0.10` accepts. Anything else exits with an error that lists them.
 
 **Body** (`--body`): `square` `rounded` `circle` `circle-large` `circle-mixed` `small-square` `diamond` `pacman` `vertical-line` `horizontal-line` `liquid` `liquid-horizontal` `liquid-vertical` `classy` `classy-rounded` `leaf` `plus` `hexagon` `octagon` `star` `heart` `random-dots` `mosaic`
 
@@ -71,6 +71,7 @@ These are the values `@qrdx/cli@0.0.8` accepts. Anything else exits with an erro
 | `SquareBorder` | Bold square border around the QR |
 | `StrikedBox` | Box with diagonal strike decoration |
 | `Halloween` | Spooky Halloween-themed frame |
+| `DotRing` | Round badge: the code in a disc of dots, inside a ring that reads "Scan the QR code" |
 
 Previews of every pattern and frame: https://qrdx.dev/docs/styles
 
@@ -98,7 +99,7 @@ Pass a JSON object to `--fg`, `--bg`, `--eye-color` or `--dot-color` instead of 
 ## Many codes from a CSV
 
 ```bash
-npx @qrdx/cli@0.0.8 batch <file.csv> -o <folder> [--format svg|png|webp|eps] [style flags]
+npx @qrdx/cli@0.0.10 batch <file.csv> -o <folder> [--format svg|png|webp|eps] [style flags]
 ```
 
 - `-o, --out <folder>`: where the codes go (default `qr-codes`); the CLI creates it.
@@ -114,60 +115,60 @@ Every style flag from `generate` applies to all the codes. Rows that fail (empty
 
 ```bash
 # Basic URL → SVG
-npx @qrdx/cli@0.0.8 generate "https://qrdx.dev" -o qr.svg
+npx @qrdx/cli@0.0.10 generate "https://qrdx.dev" -o qr.svg
 
 # High-res PNG
-npx @qrdx/cli@0.0.8 generate "https://qrdx.dev" -o qr.png --size 2048 --level H
+npx @qrdx/cli@0.0.10 generate "https://qrdx.dev" -o qr.png --size 2048 --level H
 
 # Vector EPS for a print shop (--size is the width in points)
-npx @qrdx/cli@0.0.8 generate "https://qrdx.dev" -o qr.eps --size 144
+npx @qrdx/cli@0.0.10 generate "https://qrdx.dev" -o qr.eps --size 144
 
 # Lossless WebP for the web
-npx @qrdx/cli@0.0.8 generate "https://qrdx.dev" -o qr.webp
+npx @qrdx/cli@0.0.10 generate "https://qrdx.dev" -o qr.webp
 
 # Branded style with custom patterns
-npx @qrdx/cli@0.0.8 generate "https://qrdx.dev" -o branded.svg \
+npx @qrdx/cli@0.0.10 generate "https://qrdx.dev" -o branded.svg \
   --fg "#1a1a2e" --bg "#f5f5f5" --body circle --eye rounded --dot flower
 
 # With center logo (use --level H for best scannability)
-npx @qrdx/cli@0.0.8 generate "https://qrdx.dev" -o logo-qr.png \
+npx @qrdx/cli@0.0.10 generate "https://qrdx.dev" -o logo-qr.png \
   --logo "https://qrdx.dev/logo.png" --level H
 
 # Call-to-action frame with a label
-npx @qrdx/cli@0.0.8 generate "https://qrdx.dev" -o menu.png \
+npx @qrdx/cli@0.0.10 generate "https://qrdx.dev" -o menu.png \
   --frame banner-bottom --frame-text "Scan for the menu"
 
 # Linear gradient foreground
-npx @qrdx/cli@0.0.8 generate "https://qrdx.dev" -o gradient.svg \
+npx @qrdx/cli@0.0.10 generate "https://qrdx.dev" -o gradient.svg \
   --fg '{"type":"linear","stops":[{"color":"#6366f1","offset":0},{"color":"#ec4899","offset":100}],"angle":135}'
 
 # Radial gradient background
-npx @qrdx/cli@0.0.8 generate "https://qrdx.dev" -o radial-bg.svg \
+npx @qrdx/cli@0.0.10 generate "https://qrdx.dev" -o radial-bg.svg \
   --bg '{"type":"radial","stops":[{"color":"#fef9c3","offset":0},{"color":"#fde047","offset":100}]}'
 
 # Gradient fg + gradient eye color
-npx @qrdx/cli@0.0.8 generate "https://qrdx.dev" -o multi-gradient.svg \
+npx @qrdx/cli@0.0.10 generate "https://qrdx.dev" -o multi-gradient.svg \
   --fg '{"type":"linear","stops":[{"color":"#0ea5e9","offset":0},{"color":"#6366f1","offset":100}],"angle":90}' \
   --eye-color '{"type":"radial","stops":[{"color":"#f97316","offset":0},{"color":"#ef4444","offset":100}]}'
 
 # Arrow template
-npx @qrdx/cli@0.0.8 generate "https://qrdx.dev" -o arrow.svg --template Arrow
+npx @qrdx/cli@0.0.10 generate "https://qrdx.dev" -o arrow.svg --template Arrow
 
 # Halloween template with spooky styling (keep a light background so it scans)
-npx @qrdx/cli@0.0.8 generate "https://qrdx.dev" -o halloween.svg \
+npx @qrdx/cli@0.0.10 generate "https://qrdx.dev" -o halloween.svg \
   --template Halloween --body circle --eye gear --dot leaf --fg "#1a0a00"
 
 # Combined: template + gradient + logo
-npx @qrdx/cli@0.0.8 generate "https://qrdx.dev" -o full.svg \
+npx @qrdx/cli@0.0.10 generate "https://qrdx.dev" -o full.svg \
   --template StandardBox --level H \
   --fg '{"type":"linear","stops":[{"color":"#1e3a5f","offset":0},{"color":"#3b82f6","offset":100}],"angle":45}' \
   --logo "https://qrdx.dev/logo.png"
 
 # Wi-Fi QR (put the real network name and password in the command only)
-npx @qrdx/cli@0.0.8 generate "WIFI:T:WPA;S:<network>;P:<password>;;" -o wifi.png
+npx @qrdx/cli@0.0.10 generate "WIFI:T:WPA;S:<network>;P:<password>;;" -o wifi.png
 
 # vCard
-npx @qrdx/cli@0.0.8 generate "BEGIN:VCARD
+npx @qrdx/cli@0.0.10 generate "BEGIN:VCARD
 VERSION:3.0
 FN:Jane Smith
 TEL:+15551234567
@@ -175,7 +176,7 @@ EMAIL:jane@example.com
 END:VCARD" -o contact.svg
 
 # One PNG per row of a CSV, named by its "name" column
-npx @qrdx/cli@0.0.8 batch links.csv -o codes --format png --size 1024 --body rounded
+npx @qrdx/cli@0.0.10 batch links.csv -o codes --format png --size 1024 --body rounded
 ```
 
 ## Present Results to User
@@ -221,7 +222,7 @@ Invalid input makes the CLI exit with code `1` and print the reason: `✗ …` f
 
 **`WebP output needs the sharp package`**: sharp's native binary didn't install on this platform. PNG doesn't need it, so use `.png`, `.svg` or `.eps`, or reinstall following https://sharp.pixelplumbing.com/install.
 
-**`Unknown option`**: the flag doesn't exist in 0.0.8. Check the table above.
+**`Unknown option`**: the flag doesn't exist in 0.0.10. Check the table above.
 
 **npm `EBADENGINE` warning or a syntax error on start**: the CLI needs Node.js 22 or later. Check `node --version`.
 
