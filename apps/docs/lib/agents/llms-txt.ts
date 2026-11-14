@@ -58,6 +58,8 @@ export interface LlmsTxtInput {
   limits: Record<Plan, PlanLimits>;
   docs: LlmsDocsSection[];
   blog: LlmsLink[];
+  /** Published customer stories (lib/customers.ts) */
+  customers: LlmsLink[];
   compare: LlmsLink[];
   legal: LlmsLink[];
   integrations: LlmsLink[];
@@ -499,6 +501,8 @@ export function buildLlmsTxt(input: LlmsTxtInput): string {
     ...input.compare,
     { title: "Blog", url: "/blog" },
     ...input.blog,
+    { title: "Customers", url: "/customers" },
+    ...input.customers,
   ]);
 
   const sections: Record<(typeof LLMS_SECTIONS)[number], string[]> = {
