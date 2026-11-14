@@ -15,14 +15,14 @@ import {
 
 // "Require two-step verification" on the server (./workspace-two-factor-rules.ts
 // has the rules). The app asks lacksRequiredTwoFactor before it opens a
-// workspace for a session (apps/docs/lib/scope.ts). Better Auth's own
+// workspace for a session (apps/app/lib/scope.ts). Better Auth's own
 // workspace endpoints are open over HTTP too, where a session alone could
 // read or manage the workspace; the plugin below refuses those requests the
 // same way.
 //
 // The requirement applies while the setting is on and the workspace is on
 // Business: the best plan among its owners and billing members, as for SSO
-// (./plan.ts; apps/docs/lib/plans.ts `requireTwoFactor` says the same).
+// (./plan.ts; apps/app/lib/plans.ts `requireTwoFactor` says the same).
 
 async function workspaceMetadata(organizationId: string): Promise<unknown> {
   const row = await database.query.organization.findFirst({
@@ -183,7 +183,7 @@ export async function targetWorkspaces(
 /**
  * Settings that change only through the app's own actions, which check them
  * first: metadata (this requirement among the settings in it) and the logo
- * (apps/docs/actions/workspace-logo.ts accepts only an upload of this
+ * (apps/app/actions/workspace-logo.ts accepts only an upload of this
  * workspace or a public https image URL; Better Auth stores any string).
  */
 const APP_ONLY_FIELDS = ["metadata", "logo"] as const;

@@ -9,7 +9,7 @@ export const TEXT_LINK =
 
 /**
  * The app's link for the privacy policy links (the main app's keeps the
- * visitor's language: apps/docs/components/i18n/locale-link.tsx).
+ * visitor's language: apps/app/components/i18n/locale-link.tsx).
  */
 export type ConsentLink = ComponentType<{
   href: string;

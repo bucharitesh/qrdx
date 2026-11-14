@@ -42,7 +42,7 @@ export function isDocsPath(path: string): boolean {
 
 /**
  * fumadocs' i18n options for the docs loader. An app with the docs passes
- * them to fumadocs' `defineI18n<Locale>()` (apps/docs/lib/i18n/docs.ts), so
+ * them to fumadocs' `defineI18n<Locale>()` (apps/app/lib/i18n/docs.ts), so
  * this package doesn't depend on fumadocs.
  */
 export const docsI18nOptions = {
@@ -154,7 +154,7 @@ export function docsMarkdownAcceptRewrites(): {
 }
 
 // ─── The docs zone ───────────────────────────────────────────────────────────
-// The docs are a separate Next.js app (apps/docs-site), served at the same
+// The docs are a separate Next.js app (apps/docs), served at the same
 // URLs on qrdx.dev. The main app proxies the docs' URLs to it with
 // docsZoneRewrites() once DOCS_ZONE_URL is set; until then it serves its own
 // copy of the docs. The manifest the zones exchange is in

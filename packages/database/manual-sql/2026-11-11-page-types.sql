@@ -1,4 +1,4 @@
--- New hosted page types (apps/docs/lib/landing): one nullable column and
+-- New hosted page types (apps/app/lib/landing): one nullable column and
 -- one partial index on landing_page.
 --
 -- landing_page.gtin: a product page's GTIN (14 digits, check digit

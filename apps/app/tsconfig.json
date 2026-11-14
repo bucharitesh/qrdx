@@ -1,0 +1,20 @@
+{
+  "extends": ["@repo/typescript-config/nextjs.json"],
+  "compilerOptions": {
+    "allowArbitraryExtensions": true,
+    "paths": {
+      "@/registry/*": ["../../packages/docs-assets/registry/*"],
+      "@/*": ["./*"],
+      "@repo/*": ["../../packages/*"]
+    }
+  },
+  "include": [
+    "next-env.d.ts",
+    "svg.d.ts",
+    "next.config.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": ["node_modules"]
+}

@@ -1,18 +1,9 @@
 import type { MetadataRoute } from "next";
-import {
-  AI_CRAWLERS,
-  DISALLOW,
-  SEARCH_CRAWLERS,
-} from "@/lib/agents/robots-rules";
-import { baseUrl } from "@/lib/metadata";
 
+// Only fetched on the docs site's own host (docs.qrdx.dev), which nobody
+// should index: readers reach the docs through qrdx.dev, which proxies them
+// here and answers /robots.txt from the main app. The pages' canonical links
+// point at qrdx.dev either way.
 export default function robots(): MetadataRoute.Robots {
-  return {
-    rules: ["*", ...SEARCH_CRAWLERS, ...AI_CRAWLERS].map((userAgent) => ({
-      userAgent,
-      allow: "/",
-      disallow: DISALLOW,
-    })),
-    sitemap: new URL("/sitemap.xml", baseUrl).toString(),
-  };
+  return { rules: { userAgent: "*", disallow: "/" } };
 }

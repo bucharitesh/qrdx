@@ -15,21 +15,21 @@ import { Resolver } from "node:dns/promises";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, isAbsolute, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { buildApplyUrl } from "../apps/docs/lib/domain-connect/apply-url.ts";
+import { buildApplyUrl } from "../apps/app/lib/domain-connect/apply-url.ts";
 import {
   parseSigningKey,
   publicKeyFromTxt,
   publicKeyTxtValues,
   signQuery,
-} from "../apps/docs/lib/domain-connect/signing.ts";
+} from "../apps/app/lib/domain-connect/signing.ts";
 
-// Same values as apps/docs/lib/domain-connect/template.ts (SIGNING_KEY_ID)
+// Same values as apps/app/lib/domain-connect/template.ts (SIGNING_KEY_ID)
 // and domain-connect/qrdx.dev.qrdx.json.
 const KEY_ID = "_dck1";
 const PROVIDER_ID = "qrdx.dev";
 const SERVICE_ID = "qrdx";
 const CLOUDFLARE_SYNC_UX = "https://dash.cloudflare.com/domainconnect";
-// Where the app sends people back (apps/docs/lib/domain-connect/return.ts
+// Where the app sends people back (apps/app/lib/domain-connect/return.ts
 // connectRedirectUri, without a domain id): Settings → Domains of their
 // default workspace.
 const DEFAULT_REDIRECT = "https://qrdx.dev/dashboard?to=settings/domains";

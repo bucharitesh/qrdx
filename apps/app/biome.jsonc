@@ -1,0 +1,75 @@
+{
+  "root": false,
+  "$schema": "https://biomejs.dev/schemas/2.6.4/schema.json",
+  // Not the root config: the app keeps Biome's recommended rules (below) and
+  // takes only Ultracite's test and Drizzle presets.
+  "extends": ["ultracite/biome/vitest", "ultracite/biome/drizzle"],
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
+  "files": {
+    "ignoreUnknown": true,
+    "includes": [
+      "**",
+      "!node_modules",
+      "!.next",
+      "!dist",
+      "!build",
+      "!.source",
+      "!styles/loaders.css",
+      "!styles/styles.css",
+      "!tests/lib/fixtures",
+      "!public/**/*.svg",
+      // Translation memories scripts/i18n-translate.ts writes (over 1 MiB each)
+      "!messages/content"
+    ]
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "preset": "recommended",
+      "suspicious": {
+        "noExplicitAny": "off",
+        "noArrayIndexKey": "off",
+        // As in the root biome.jsonc: assertion helpers and table-driven tests.
+        "noMisplacedAssertion": "off",
+        "useExpect": "off",
+        "noConditionalExpect": "off"
+      },
+      "a11y": {
+        "noSvgWithoutTitle": "off"
+      },
+      "style": {
+        "noNonNullAssertion": "off",
+        "noParameterProperties": "off"
+      },
+      "performance": {
+        "noImgElement": "off",
+        "noDynamicNamespaceImportAccess": "off"
+      }
+    },
+    "domains": {
+      "next": "recommended",
+      "react": "recommended"
+    }
+  },
+  "markdown": {
+    "formatter": {
+      "enabled": false
+    }
+  },
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  }
+}

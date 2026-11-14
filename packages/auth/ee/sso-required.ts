@@ -36,7 +36,7 @@ import { emailDomain, emailInSsoDomain } from "./sso-rules";
 //   checked server-side for "Confirm it's you" isn't a sign-in:
 //   ../passkey-check.ts);
 // - turning it on ends existing sessions that didn't come from SSO
-//   (apps/docs/ee/sso/required.ts, endSessionsWithoutSso);
+//   (apps/app/ee/sso/required.ts, endSessionsWithoutSso);
 // - emailChangeSsoProblem: no email change onto or off a required domain.
 // Registered right after ssoGate in ../server.ts (licensed servers only).
 
@@ -59,7 +59,7 @@ interface VerifiedConnection {
 // Sign-ins, settings and email changes look up afresh. Reading the session
 // (every page) uses a short in-memory cache: the requirement changes rarely,
 // and turning it on ends the sessions it affects there and then
-// (apps/docs/ee/sso/required.ts), so the cache only delays the rarer cases
+// (apps/app/ee/sso/required.ts), so the cache only delays the rarer cases
 // (an owner who stops being one, a workspace back on Business) by up to a
 // minute. clearSsoRequirementCache only clears this server's copy, so after
 // the requirement stops (turned off, connection removed, workspace off

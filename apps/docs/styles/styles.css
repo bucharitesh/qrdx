@@ -1,9 +1,9 @@
 @import "@repo/design-system/styles/globals.css";
-@import "streamdown/styles.css";
 
-@source "../node_modules/streamdown/dist";
-/* The registry examples render on the component docs pages; they live in
-   @repo/docs-assets, outside the folder Tailwind scans by itself. */
+/* Tailwind scans this app's folder by itself. The docs' MDX lives in the
+   main app's folder and the registry examples in @repo/docs-assets, so
+   their classes are listed here. */
+@source "../../app/content/docs";
 @source "../../../packages/docs-assets/registry";
 
 @import "fumadocs-ui/css/neutral.css";

@@ -6,19 +6,19 @@
 //   with the engine's ids as their slugs, so /community/frames/<id> keeps
 //   the same URL it had before the seed;
 // - the 10 new themes and 8 collections in ./community-seed.json;
-// - 41 of the app's built-in themes (apps/docs/utils/qr-presets.ts), as
+// - 41 of the app's built-in themes (apps/app/utils/qr-presets.ts), as
 //   ./community-seed-presets.json stores them: written from the presets by
-//   apps/docs/scripts/community-seed/generate.ts, each payload what a
+//   apps/app/scripts/community-seed/generate.ts, each payload what a
 //   publish of that theme stores;
-// - QRdx's own page templates (apps/docs/lib/landing/templates), each run
+// - QRdx's own page templates (apps/app/lib/landing/templates), each run
 //   through the publish scrub (sample text, no photos, no real data), and
 //   8 official kits pairing one with a seeded theme and/or frame, as
-//   ./community-seed-pages.json stores them (apps/docs/scripts/
+//   ./community-seed-pages.json stores them (apps/app/scripts/
 //   community-seed/page-templates.ts);
 // - the official account's themes already in the gallery (copied by
 //   backfill-community.mjs) are moved to @qrdx and marked official.
 //
-//   node --env-file=apps/docs/.env.local packages/database/scripts/seed-community.mjs
+//   node --env-file=apps/app/.env.local packages/database/scripts/seed-community.mjs
 //       dry run (the default): prints every planned insert and update,
 //       rolls back. Writes nothing.
 //   ... seed-community.mjs --apply --backup ./community-seed-backup.json
@@ -33,7 +33,7 @@
 // payload hash) is skipped with a warning.
 //
 // Every seeded design is checked to scan Great with the publish gate's
-// samples by apps/docs/tests/database/seed-community.test.ts, which also
+// samples by apps/app/tests/database/seed-community.test.ts, which also
 // keeps this file's rules equal to the app's.
 
 import { createHash } from "node:crypto";
@@ -571,7 +571,7 @@ async function main() {
   const url = process.env.DATABASE_URL;
   if (!url) {
     console.error(
-      "Set DATABASE_URL (for example with node --env-file=apps/docs/.env.local)."
+      "Set DATABASE_URL (for example with node --env-file=apps/app/.env.local)."
     );
     return 2;
   }

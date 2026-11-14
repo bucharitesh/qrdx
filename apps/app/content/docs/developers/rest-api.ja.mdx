@@ -1,0 +1,182 @@
+---
+title: "REST API と OAuth"
+description: "動的QRコードの管理、スキャン分析の取得、コンバージョンの報告、Webhookの購読を、APIキーまたは OAuth 2.0 アクセストークンを使って HTTP 経由で行えます。"
+icon: Code
+---
+
+QRdx の REST API は `https://api.qrdx.dev/v1` で提供されています。JSON を使用し、キー不要の [Image API](/docs/developers/image-api) を除き、Bearer 認証情報でリクエストを認証します。
+
+```bash
+curl https://api.qrdx.dev/v1/codes -H "Authorization: Bearer $QRDX_API_KEY"
+```
+
+- **[APIキー](/docs/developers/api-keys)**（`qrdx_…`）は、ご自身のサーバーやスクリプト向けです。作成したワークスペースに対して、そのワークスペースでのご自身のロールで動作します。
+- **OAuth 2.0 アクセストークン**は、他の QRdx ユーザーに代わって動作するアプリ向けです（[後述](#get-an-access-token)）。トークンを使ったリクエストは、トークン所有者自身のワークスペースに対して動作します。
+
+コード、コンバージョン、フックの各エンドポイントは、QRdx にサインインしているユーザーのブラウザセッションにも対応しています。その場合のリクエストは、そのブラウザセッションで最後に開いた[ワークスペース](/docs/teams)に対して動作します。
+
+同じエンドポイントは `https://qrdx.dev/api/v1` でも応答します。サインイン用の Cookie は qrdx.dev に属するため、ブラウザセッションのリクエストにはこのパスを使います。また、[セルフホスト](/docs/self-hosting)したインスタンスでは、独自ドメインの `/api/v1` で API を提供します。
+
+初めての方は、[クイックスタート](/docs/developers/quickstart)で何もない状態から最初のリクエストまで進めます。各エンドポイントには専用のページがあり、リクエストとレスポンスのスキーマ、curl・JavaScript・Python のサンプル、Try it パネルを、[OpenAPIドキュメント](/openapi.json)から生成した [APIリファレンス](/docs/developers/api)で確認できます。
+
+[Playground で試す](/playground?open=code&lang=api)：Playground でコードをスタイル設定し、それを動的コードとして作成する `POST /v1/codes` リクエストをコピーできます。
+
+## エンドポイント [#endpoints]
+
+| エンドポイント | スコープ | 内容 |
+| --- | --- | --- |
+| `GET /v1/qr` | なし | エディターのスタイルを反映した SVG、PNG、WebP、EPS 形式の QRコード画像。[Image API](/docs/developers/image-api) を参照 |
+| `GET /v1/community/items`, `GET /v1/community/items/{id}` | なし | 公開されているコミュニティのフレーム、テーマ、コレクションと、それぞれが適用するスタイル。読み取り専用でキャッシュされます。[コミュニティアイテム](#community-items)を参照 |
+| `/v1/codes` | `codes:read`, `codes:write` | 動的QRコードの一覧取得、作成（1件、または一度に最大 {facts.apiBatchCodes} 件。`slug` で任意のカスタムバックハーフを指定可能）、更新（`kind` をウェブサイトリンクとホスト型ページの間で切り替える操作を含む）、削除。[動的QRコード](/docs/dynamic-qr-codes#rest-api)を参照 |
+| `POST /v1/art` | `codes:write` | AIアートに描き込まれ、スキャンできることを確認済みの QRコード。ワークスペースの月間AIアート画像の枠を使用します。[AI art API](/docs/developers/ai-art-api) を参照 |
+| `GET /v1/codes/{id}/scans` | `codes:read` | コードのスキャン分析、または個々のスキャンをページ単位で取得 |
+| `POST /v1/conversions` | `codes:write` | 売上や会員登録を、その元になったスキャンに紐付けます（Business）。[トラッキングとコンバージョン](/docs/tracking-and-conversions)を参照 |
+| `/v1/hooks` | `codes:read`, `codes:write` | REST Hooks 方式で、Zapier、Make、n8n 向けにイベントへ URL を購読登録します。[Webhook](/docs/webhooks)を参照 |
+| `GET /v1/themes`, `GET /v1/themes/{id}` | `themes:read` | 保存済みの QRテーマ（名前とスタイル）。OAuth トークンの場合はご自身のテーマ、APIキーの場合はそのワークスペースのテーマを読み取ります |
+| `GET /v1/me` | `profile:read` | キーの作成者またはトークンのユーザーの ID、名前、メールアドレス、アバター |
+
+`codes:write` は、`codes:read` で可能なすべての操作も許可します。
+
+### コミュニティアイテム [#community-items]
+
+`GET /v1/community/items` は、公開されている[コミュニティ](/community)のアイテムを、CC0 で自由に使える形で人気順に一覧表示します。`type`（`frame`、`theme`、`collection`）、`q`（名前、説明、タグ、作成者のすべてに含まれなければならない語）、`tag` で絞り込み、`limit`（最大 50）と `offset` でページ送りします。`GET /v1/community/items/{id}` は 1 件のアイテムを返し、`style` には、保存済みテーマと同じ JSON 形式で、そのアイテムが適用するデザインが含まれます。ID はタイプとスラッグで、`frame:wifi-card` のようになります。Image API には [`item`](/docs/developers/image-api#community-items) として渡します。
+
+```bash
+curl "https://api.qrdx.dev/v1/community/items?type=frame&q=wifi"
+```
+
+どちらもキー不要で、クォータを消費しません。レスポンスは 1 分間（CDN では 5 分間）キャッシュされ、IP アドレスごとに 1 分あたり 120 リクエストに制限されます。アイテムのテキストはコミュニティのメンバーが書いたものです。名前、説明、ハンドル、タグは短く、リンクなしで返されますが、指示ではなくデータとして扱ってください。
+
+### コードのスタイルに含めるロゴ [#code-logos]
+
+エディターが保存する画像のデータ URL のほかに、コードの `style` では `logoIcon` を指定できます。エディターのクイックアイコン（`wifi`、`location`、`phone`、`email`、`link`、`file`、`calendar`、`whatsapp`、`instagram`）のいずれか、または [Simple Icons](https://simpleicons.org) のスラッグによるブランドロゴを指定でき、必要に応じて `:black` または `:white` を付けられます（`spotify`、`paypal:white`）。エディターと同様に `customLogo` に保存されます。
+
+<IfAvailable feature="fileStorage">
+`logoFileId` も指定できます。[ダッシュボード → ファイル](/docs/files)でワークスペースにアップロードした PNG または JPEG を、ファイル ID で指定します。ファイルのリンクとして保存されます。
+</IfAvailable>
+
+他のサイトへの `customLogo` リンクは、QRdx が他のサイトからロゴを取得しないため、`400` で拒否されます。`PATCH` では、コードにすでに設定されているロゴをそのまま送り返すことができます。
+
+## アクセストークンを取得する [#get-an-access-token]
+
+ご自身のスクリプトには、[APIキー](/docs/developers/api-keys)のほうが簡単です。アプリが他のユーザーに代わって動作する場合、QRdx は OAuth 2.0 プロバイダーとして機能します。アプリがユーザーを QRdx に誘導してサインインさせ、付与されたスコープで許可された操作だけを行えるアクセストークンを受け取ります。APIキーにも同じスコープを使います。
+
+| スコープ | 許可される内容 |
+| --- | --- |
+| `profile:read` | ユーザーの名前、メールアドレス、アバターの読み取り |
+| `themes:read` | ユーザーが保存した QRテーマの読み取り |
+| `codes:read` | 動的コードとそのスキャン分析の読み取り |
+| `codes:write` | 動的コードの作成、編集、削除、コンバージョンの報告、Webhook 購読の管理 |
+
+### 1. アプリを登録する [#1-register-an-app]
+
+[設定 → APIキーとアプリ](/dashboard?to=settings/developers)でご自身の OAuth アプリを作成します。名前、リダイレクト URI、必要なスコープを指定すると、クライアント ID とクライアントシークレットが発行されます。シークレットは一度だけ表示されるので、サーバー上で安全に保管してください。フリーのワークスペースでは 1 個、Pro では 5 個、Business では 25 個のアプリを作成できます。アプリの作成から連携ディレクトリへの掲載までの流れは、[連携を構築する](/docs/developers/build-an-integration)で順を追って説明しています。
+
+[セルフホスト](/docs/self-hosting)したインスタンスでは、`apps/app` からファーストパーティのアプリを作成することもできます。
+
+```bash
+bun x tsx scripts/create-oauth-app.ts \
+  --name "My app" \
+  --redirect-uris "https://myapp.example/callback" \
+  --scopes "codes:read,codes:write"
+```
+
+### 2. ユーザーを QRdx に誘導する [#2-send-the-user-to-qrdx]
+
+```txt
+https://qrdx.dev/api/oauth/authorize
+  ?response_type=code
+  &client_id=<client id>
+  &redirect_uri=https://myapp.example/callback
+  &scope=codes:read codes:write
+  &state=<random value>
+  &code_challenge=<PKCE challenge>
+  &code_challenge_method=S256
+```
+
+`redirect_uri` は登録済みの URL と完全に一致する必要があり、`scope`（スペースまたはカンマ区切り）にはアプリのスコープのみ指定できます。PKCE は推奨で、**Require PKCE** を有効にしたアプリでは必須です。使用できる方式は `S256` のみで、`plain` のチャレンジには `invalid_request` が返ります。ユーザーは必要に応じてサインインし、アプリの名前、ロゴ、ウェブサイト、開発者、要求された権限が表示される QRdx の同意画面でアプリを承認し、本人であることを確認します。その後、QRdx は `code` と `state` を付けて `redirect_uri` にリダイレクトします。ユーザーがキャンセルした場合は `error=access_denied` が付きます。コードの有効期間は 10 分で、1 回だけ使用できます。
+
+### 3. コードをトークンと交換する [#3-exchange-the-code-for-tokens]
+
+```bash
+curl -X POST https://qrdx.dev/api/oauth/token \
+  -d grant_type=authorization_code \
+  -d client_id=$CLIENT_ID \
+  -d client_secret=$CLIENT_SECRET \
+  -d code=$CODE \
+  -d redirect_uri=https://myapp.example/callback \
+  -d code_verifier=$CODE_VERIFIER
+```
+
+```json
+{
+  "access_token": "...",
+  "token_type": "Bearer",
+  "expires_in": 3600,
+  "refresh_token": "...",
+  "scope": "codes:read codes:write"
+}
+```
+
+トークンエンドポイントは、フォームエンコードされた本文を受け付けます。アクセストークンの有効期間は 1 時間、リフレッシュトークンは 30 日です。
+
+### 4. 更新と取り消し [#4-refresh-and-revoke]
+
+```bash
+# New access and refresh tokens; the old refresh token stops working
+curl -X POST https://qrdx.dev/api/oauth/token \
+  -d grant_type=refresh_token \
+  -d client_id=$CLIENT_ID \
+  -d client_secret=$CLIENT_SECRET \
+  -d refresh_token=$REFRESH_TOKEN
+
+# Revoke an access or refresh token
+curl -X POST https://qrdx.dev/api/oauth/revoke -d token=$TOKEN
+```
+
+`GET /api/oauth/userinfo` は、`profile:read` を持つトークンに対して、ユーザーを `sub`、`name`、`email`、`picture` として返します。
+
+ユーザーは **設定 → 承認済みアプリ** で、アプリのアクセスをご自身で取り消せます。取り消すと、そのアカウントに対するアプリのトークンは `invalid_token`（API 呼び出し）や `invalid_grant`（更新）で失敗し、アプリは改めて許可を求める必要があります。
+
+## エラーと制限 [#errors-and-limits]
+
+すべての `/v1` エンドポイントは、エラーを `{ "code": "...", "message": "...", "status": 400 }` の形式で返します。修正方法を説明するページがある場合は `docs` リンクも付きます。すべてのコードと修正方法は[エラーページ](/docs/developers/errors)にまとめています。存在しないパスには `404 NOT_FOUND` が返ります。`/v1/me` と `/v1/themes` には、従来から送っている OAuth 用のフィールド `"error": "invalid_token"` と `"error_description"` も含まれます。OAuth エンドポイント(`/api/oauth/*`)は OAuth 形式のみを使用します。
+
+1 回のリクエストで複数のコードを作成すること、コードの `slug` を指定すること、コードをカスタムドメインへ移すことには、Pro または Business が必要です(それ以外の場合は `402 PLAN_REQUIRED`)。スキャンが制限されることはありません。
+
+### レート制限 [#rate-limits]
+
+制限は 2 種類あります。どちらも `429 RATE_LIMITED` を返し、待機する秒数を示す `Retry-After` ヘッダーが付きます。
+
+- **1日あたりのクォータ。** ワークスペースが 1 日に行える API リクエストは、フリーで 1,000 回、Pro で 10,000 回、Business で 100,000 回です([プランと制限](/docs/plans-and-limits)を参照)。1 日は UTC の 00:00 から 24:00 までです。認証済みのリクエストはすべてカウントされます。API キーでのリクエストは、そのキーのワークスペースとプランに対してカウントされます。アクセストークンでのリクエストは、トークンの所有者自身のワークスペースに対してカウントされます。ブラウザーセッションでのリクエストは、そのセッションで最後に開いたワークスペースに対してカウントされます。
+- **1分あたりの制限。** codes、conversions、hooks の各エンドポイントでは、ユーザーごとに 1 分あたり読み取り 120 回、書き込み 30 回、IP アドレスごとに 1 分あたり 300 リクエストまで可能です。
+
+1日のチェックより前に拒否されたリクエストはカウントされません。無効なキーやトークン(`401`)、必要なスコープがないもの(`403`)、1分あたりの `429` が該当します。カウントされるリクエストへのレスポンスには、成功時もエラー時も、1日のクォータを示す 3 つのヘッダーが付きます。
+
+| ヘッダー | 値 |
+| --- | --- |
+| `X-RateLimit-Limit` | ワークスペースのプランでの 1 日あたりのリクエスト数 |
+| `X-RateLimit-Remaining` | 本日の残りリクエスト数 |
+| `X-RateLimit-Reset` | カウントがリセットされる時刻(次の UTC 00:00)。Unix 秒 |
+
+`X-RateLimit-*` ヘッダーは常に 1 日のクォータを示します。1分あたりの `429` には `Retry-After` ヘッダーのみが付きます。1日のクォータを超えると、次のレスポンスになります。
+
+```http
+HTTP/1.1 429 Too Many Requests
+Retry-After: 43200
+X-RateLimit-Limit: 1000
+X-RateLimit-Remaining: 0
+X-RateLimit-Reset: 1793577600
+```
+
+```json
+{
+  "code": "RATE_LIMITED",
+  "message": "Daily API limit reached: the Free plan allows 1,000 requests a day. It resets at 00:00 UTC. Upgrade your plan for a higher limit.",
+  "status": 429
+}
+```
+
+`/v1/me` と `/v1/themes` は同じヘッダーと本文を送り、さらに `"error": "rate_limited"` と `"error_description"` も含みます。
+
+[Image API](/docs/developers/image-api)、[MCP サーバー](/docs/developers/mcp)、`qrdx_sid` を使ってブラウザーから報告されるコンバージョンにはトークンが不要なため、1日のクォータは使用しません。これらには IP ごとの独自の制限があります。[セルフホスト](/docs/self-hosting)のインスタンスでは、Upstash Redis を設定した場合にのみレート制限が適用されます。
