@@ -1,8 +1,10 @@
 ---
 title: vCard QR Code
-description: A QR code that saves a contact card when scanned, with a typed vCard 3.0 builder.
+description: A QR code for shadcn/ui projects that saves a contact card when scanned, with a typed vCard 3.0 builder.
 icon: Users
 ---
+
+`VCardQrCode` renders a code that saves a contact when a phone camera scans it, with the name and role under it. Use it on a business card, a staff directory, a conference badge or an email signature page.
 
 <ComponentLinks name="vcard-qr-code" />
 
@@ -14,11 +16,11 @@ icon: Users
 
 ## Usage
 
-```tsx
+```tsx title="components/example.tsx"
 import { VCardQrCode } from "@/components/vcard-qr-code";
 ```
 
-```tsx
+```tsx title="components/example.tsx"
 <VCardQrCode
   contact={{
     firstName: "Ada",
@@ -41,7 +43,13 @@ Phone cameras offer to save the contact when they scan the code. Empty fields ar
 
 Contact cards hold more text than a link, so the component uses error correction level `M` to keep the modules large. Add only the fields people need, and check how large to print it with the [print size calculator](/tools/print-size).
 
-## API Reference
+## Accessibility and rendering
+
+- The code has `aria-label="QR code with the contact card for <name>"`. The card's fields are not read out.
+- The name and the title and organization under the code are the figure's `<figcaption>`. Set `showDetails={false}` to show the code alone.
+- The component is a Client Component, and the code is rendered on the server.
+
+## API reference
 
 <auto-type-table path="../../../../../packages/docs-assets/registry/qrdx/vcard-qr-code.tsx" type="{ [K in keyof VCardQrCodeProps as K extends keyof ComponentProps<'figure'> ? never : K]: VCardQrCodeProps[K] }" />
 
@@ -50,3 +58,13 @@ Any other prop, such as `className`, is passed to the wrapping `<figure>`.
 ### VCardContact
 
 <auto-type-table path="../../../../../packages/docs-assets/registry/qrdx/vcard-qr-code.tsx" name="VCardContact" />
+
+`buildVCard(contact: VCardContact): string` writes `N`, `FN`, `ORG`, `TITLE`, `TEL` (work and mobile), `EMAIL`, `URL`, `ADR` and `NOTE` lines, each only when the field is set.
+
+## Related
+
+<Cards>
+  <Card href="/docs/components/wifi-qr-code" title="Wi-Fi QR Code" description="The same idea for a Wi-Fi network." />
+  <Card href="/docs/components/qr-code" title="QR Code" description="A code for any payload, with download buttons." />
+  <Card href="/docs/nfc" title="NFC tags and business cards" description="Put the same contact on an NFC tag." />
+</Cards>

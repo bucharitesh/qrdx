@@ -1,8 +1,10 @@
 ---
 title: QR Code Generator
-description: A text input with a live QR code preview, style presets and download buttons.
+description: A text input with a live QR code preview, style presets and download buttons, for shadcn/ui projects.
 icon: Sparkles
 ---
+
+`QrCodeGenerator` is a small generator in one component: a text field, a preview that redraws as you type, a row of style presets and download buttons. Use it to give your own users a way to make codes inside your product, without sending them anywhere else.
 
 <ComponentLinks name="qr-code-generator" />
 
@@ -14,15 +16,15 @@ icon: Sparkles
 
 ## Usage
 
-```tsx
+```tsx title="components/example.tsx"
 import { QrCodeGenerator } from "@/components/qr-code-generator";
 ```
 
-```tsx
+```tsx title="components/example.tsx"
 <QrCodeGenerator defaultValue="https://example.com" />
 ```
 
-The preview updates as you type. Each preset button shows a small sample of its style, and downloads use the selected preset at 1024 pixels.
+The preview updates as you type. Each preset button shows a small sample of its style, and downloads use the selected preset at 1024 pixels. With an empty field the preview shows "Type some text to generate a code" and the download buttons are disabled.
 
 ## Examples
 
@@ -34,31 +36,65 @@ Replace the built-in presets with your own. A preset is an `id`, a `name` and a 
 
 The built-in presets are exported as `QR_CODE_PRESETS`, so you can extend them:
 
-```tsx
-import { QR_CODE_PRESETS, QrCodeGenerator } from "@/components/qr-code-generator";
+```tsx title="components/brand-generator.tsx"
+import {
+  QR_CODE_PRESETS,
+  QrCodeGenerator,
+} from "@/components/qr-code-generator";
 
-<QrCodeGenerator
-  presets={[
-    ...QR_CODE_PRESETS,
-    { id: "brand", name: "Brand", style: { fgColor: "#155DFC" } },
-  ]}
-/>
+export function BrandGenerator() {
+  return (
+    <QrCodeGenerator
+      presets={[
+        ...QR_CODE_PRESETS,
+        { id: "brand", name: "Brand", style: { fgColor: "#155DFC" } },
+      ]}
+    />
+  );
+}
 ```
 
 ### Saving the result
 
 `onChange` reports the text and the selected preset on every change, for example to store the user's choice:
 
-```tsx
-<QrCodeGenerator
-  onChange={({ value, preset }) => saveDraft({ value, style: preset.style })}
-/>
+```tsx title="components/draft-generator.tsx"
+import { QrCodeGenerator } from "@/components/qr-code-generator";
+
+export function DraftGenerator({
+  saveDraft,
+}: {
+  saveDraft: (draft: { value: string; style: object }) => void;
+}) {
+  return (
+    <QrCodeGenerator
+      onChange={({ value, preset }) =>
+        saveDraft({ value, style: preset.style })
+      }
+    />
+  );
+}
 ```
 
-## API Reference
+## Accessibility and rendering
+
+- The field has a visible "Text or URL" label, and the presets are a `<fieldset>` with the legend "Style". Each preset is a toggle button with `aria-pressed`, and its sample code is hidden from screen readers.
+- The preview is a `role="img"` element labelled `QR code: <value>`, or "Empty QR code preview" with no text.
+- A download error shows under the preview with `role="alert"`.
+- The component is a Client Component with its own state. Render it from any page; pass `defaultValue` and `defaultPreset` to start it filled.
+
+## API reference
 
 <auto-type-table path="../../../../../packages/docs-assets/registry/qrdx/qr-code-generator.tsx" type="{ [K in keyof QrCodeGeneratorProps as K extends keyof ComponentProps<'div'> ? never : K]: QrCodeGeneratorProps[K] }" />
 
 ### QrCodePreset
 
 <auto-type-table path="../../../../../packages/docs-assets/registry/qrdx/qr-code-generator.tsx" name="QrCodePreset" />
+
+## Related
+
+<Cards>
+  <Card href="/docs/components/qr-code" title="QR Code" description="A single code with download buttons, when the value comes from your data." />
+  <Card href="/docs/components/qr-code-download" title="QR Code Download" description="A menu with more formats and sizes than the generator's buttons." />
+  <Card href="/docs/features/colors-gradients" title="Set colors and gradients" description="Every style option a preset can hold." />
+</Cards>

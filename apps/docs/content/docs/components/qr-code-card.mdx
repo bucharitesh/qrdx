@@ -1,8 +1,10 @@
 ---
 title: QR Code Card
-description: A card with a QR code in a "Scan me" frame, a title, a description and room for actions.
+description: A card with a QR code in a "Scan me" frame, a title, a description and room for actions, for shadcn/ui projects.
 icon: Frame
 ---
+
+`QrCodeCard` puts a QR code in a card with a call-to-action frame, a heading, a line of text and a footer for buttons. Use it where a code is the point of the card: a table tent, a check-in screen, an event poster preview, a "download our app" tile.
 
 <ComponentLinks name="qr-code-card" />
 
@@ -14,11 +16,11 @@ icon: Frame
 
 ## Usage
 
-```tsx
+```tsx title="components/example.tsx"
 import { QrCodeCard } from "@/components/qr-code-card";
 ```
 
-```tsx
+```tsx title="components/example.tsx"
 <QrCodeCard
   value="https://example.com/menu"
   title="Our menu"
@@ -42,19 +44,40 @@ The frame uses your theme's `foreground` and `background` colors by default, so 
 
 `qr` takes any qrdx style option: `fgColor`, `bgColor`, gradients, `bodyPattern`, corner patterns, `logo` and `templateId`.
 
-```tsx
-<QrCodeCard
-  value="https://example.com"
-  qr={{
-    fgColor: "#155DFC",
-    bodyPattern: "rounded",
-    cornerEyePattern: "extra-rounded",
-  }}
-/>
+```tsx title="components/brand-card.tsx"
+import { QrCodeCard } from "@/components/qr-code-card";
+
+export function BrandCard() {
+  return (
+    <QrCodeCard
+      value="https://example.com"
+      title="example.com"
+      qr={{
+        fgColor: "#155DFC",
+        bodyPattern: "rounded",
+        cornerEyePattern: "extra-rounded",
+      }}
+    />
+  );
+}
 ```
 
-## API Reference
+## Accessibility and rendering
+
+- The code sits in a `role="img"` element whose `aria-label` is `label`, or `QR code: <value>` without one. Set `label` when the value is not a public link.
+- `title` renders as the card's heading and `description` under it; both take any React node.
+- The component is a Client Component. A Server Component page can import it and pass server data as props, and the code is rendered on the server.
+
+## API reference
 
 <auto-type-table path="../../../../../packages/docs-assets/registry/qrdx/qr-code-card.tsx" type="{ [K in keyof QrCodeCardProps as K extends Exclude<keyof ComponentProps<'div'>, 'title' | 'children'> ? never : K]: QrCodeCardProps[K] }" />
 
 Any other prop, such as `className`, is passed to the [Card](https://ui.shadcn.com/docs/components/card).
+
+## Related
+
+<Cards>
+  <Card href="/docs/components/qr-code-download" title="QR Code Download" description="A download menu to drop into the card's footer." />
+  <Card href="/docs/components/qr-code" title="QR Code" description="The code on its own, with download buttons." />
+  <Card href="/docs/features/frames" title="Frames, scan score and print files" description="The library's own frames, drawn into the code's image." />
+</Cards>
