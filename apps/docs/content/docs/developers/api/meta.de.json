@@ -20,6 +20,8 @@
     "update-barcode",
     "delete-barcode",
     "get-saved-barcode-image",
+    "---KI-Kunst---",
+    "create-art",
     "---Scans---",
     "get-code-scans",
     "---Conversions---",

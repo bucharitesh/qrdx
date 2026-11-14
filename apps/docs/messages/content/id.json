@@ -29723,9 +29723,9 @@
     "status": "machine",
     "context": "mcp.tools.5.title"
   },
-  "35f9a7f12b6f": {
-    "source": "Saves a design as a theme in your workspace, under the plan's saved-theme limit. Needs a QRdx API key on the connection; every other tool works without one.",
-    "text": "Menyimpan desain sebagai tema di workspace Anda, sesuai batas tema tersimpan pada paket Anda. Memerlukan kunci API QRdx pada koneksi; alat lainnya berfungsi tanpa kunci.",
+  "8fcad3c406cf": {
+    "source": "Saves a design as a theme in your workspace, under the plan's saved-theme limit. Needs a QRdx API key on the connection.",
+    "text": "Menyimpan desain sebagai tema di workspace Anda, sesuai batas tema tersimpan pada paket Anda. Memerlukan kunci API QRdx pada koneksi.",
     "status": "machine",
     "context": "mcp.tools.5.description"
   },
@@ -29752,6 +29752,18 @@
     "text": "Menyimpan barcode di Barcodes pada workspace Anda untuk diedit dan diunduh nanti. Memerlukan kunci API QRdx pada koneksi.",
     "status": "machine",
     "context": "mcp.tools.7.description"
+  },
+  "4c95ba85d6f1": {
+    "source": "Generate AI art",
+    "text": "Buat seni AI",
+    "status": "machine",
+    "context": "mcp.tools.8.title"
+  },
+  "9254cd62817d": {
+    "source": "Paints a QR code into AI artwork from your description, a scene or your photo, and checks that it scans. Each image uses one of your workspace's monthly AI art images and takes up to a minute. Needs a QRdx API key on the connection.",
+    "text": "Melukis kode QR menjadi karya seni AI berdasarkan deskripsi, adegan, atau foto Anda, lalu memeriksa bahwa kode tersebut dapat dipindai. Setiap gambar menggunakan salah satu gambar seni AI bulanan di workspace Anda dan membutuhkan waktu hingga satu menit. Memerlukan kunci API QRdx pada koneksi.",
+    "status": "machine",
+    "context": "mcp.tools.8.description"
   },
   "abb9f9118ecf": {
     "source": "List styles",
@@ -29855,11 +29867,11 @@
     "status": "machine",
     "context": "mcp.faqs.2.question"
   },
-  "f538f592cdab": {
-    "source": "No, for designing and rendering codes and browsing the community: the QRdx MCP server is public and free, and it keeps no session state. Saving a design to your themes (save_template), saving a barcode (save_barcode) and using a logo you uploaded need a QRdx API key, sent as Authorization: Bearer qrdx_… in your app's settings for the server.",
-    "text": "Tidak, untuk mendesain dan merender kode serta menjelajahi komunitas: server MCP QRdx bersifat publik dan gratis, dan tidak menyimpan status sesi. Menyimpan desain ke tema Anda (save_template), menyimpan barcode (save_barcode), dan menggunakan logo yang Anda unggah memerlukan kunci API QRdx, yang dikirim sebagai Authorization: Bearer qrdx_… di pengaturan server pada aplikasi Anda.",
+  "95b27c7bcd0a": {
+    "source": "No, for designing and rendering codes and browsing the community: the QRdx MCP server is public and free, and it keeps no session state. Saving a design to your themes (save_template), saving a barcode (save_barcode), making AI art (generate_ai_art) and using a logo you uploaded need a QRdx API key, sent as Authorization: Bearer qrdx_… in your app's settings for the server.",
+    "text": "Tidak, untuk mendesain dan merender kode serta menjelajahi komunitas: server MCP QRdx bersifat publik dan gratis, dan tidak menyimpan status sesi. Menyimpan desain ke tema Anda (save_template), menyimpan barcode (save_barcode), membuat seni AI (generate_ai_art), dan menggunakan logo yang Anda unggah memerlukan kunci API QRdx, yang dikirim sebagai Authorization: Bearer qrdx_… di pengaturan server pada aplikasi Anda.",
     "status": "machine",
-    "context": "mcp.faqs.0.answer"
+    "context": "mcp.faqs.2.answer"
   },
   "d13545262ca7": {
     "source": "Which AI tools does it work with?",
@@ -29915,11 +29927,11 @@
     "status": "machine",
     "context": "mcp.faqs.5.question"
   },
-  "9ccc8cb2303b": {
-    "source": "No. The tools render images, format text and read the public community. Only save_template and save_barcode write anything: the theme or barcode you ask them to save, in the API key's workspace. The server doesn't save the codes. The image URLs it returns contain the encoded data, so don't share them if the data is private, such as a Wi-Fi password.",
-    "text": "Tidak. Alat-alat ini merender gambar, memformat teks, dan membaca komunitas publik. Hanya save_template dan save_barcode yang menulis sesuatu: tema atau barcode yang Anda minta untuk disimpan, di workspace milik kunci API. Server tidak menyimpan kode tersebut. URL gambar yang dikembalikan berisi data yang dienkode, jadi jangan bagikan jika datanya bersifat pribadi, seperti kata sandi Wi-Fi.",
+  "06b24c9cbc55": {
+    "source": "No. The tools render images, format text and read the public community. Only save_template and save_barcode write anything: the theme or barcode you ask them to save, in the API key's workspace. generate_ai_art uses one of the workspace's monthly AI art images but keeps neither the image nor a photo you send. The server doesn't save the codes. The image URLs it returns contain the encoded data, so don't share them if the data is private, such as a Wi-Fi password.",
+    "text": "Tidak. Alat-alat ini merender gambar, memformat teks, dan membaca komunitas publik. Hanya save_template dan save_barcode yang menulis data: tema atau barcode yang Anda minta untuk disimpan, di workspace milik kunci API. generate_ai_art menggunakan salah satu gambar seni AI bulanan di workspace tetapi tidak menyimpan gambar maupun foto yang Anda kirim. Server tidak menyimpan kode tersebut. URL gambar yang dikembalikan berisi data yang dikodekan, jadi jangan bagikan jika datanya bersifat pribadi, seperti kata sandi Wi-Fi.",
     "status": "machine",
-    "context": "mcp.faqs.5.answer"
+    "context": "mcp.faqs.7.answer"
   },
   "6b3231c3660f": {
     "source": "Are there limits?",
@@ -30575,11 +30587,23 @@
     "status": "machine",
     "context": "aiArt.faqs.9.question"
   },
-  "81399be3dc7a": {
-    "source": "OpenAI's GPT Image 2, through Vercel AI Gateway, with 171 style presets. QRdx draws a plain black-and-white QR code on the server, the model repaints it as your scene, and QRdx's own scan check makes sure the result decodes, strengthening the code only as much as it needs.",
-    "text": "GPT Image 2 dari OpenAI, melalui Vercel AI Gateway, dengan 171 preset gaya. QRdx menggambar kode QR hitam-putih polos di server, model mengecatnya ulang menjadi adegan pilihan Anda, lalu pemeriksaan pemindaian milik QRdx memastikan hasilnya dapat dibaca, dengan memperkuat kode hanya sebatas yang diperlukan.",
+  "6ae28ea3daea": {
+    "source": "OpenAI's GPT Image 2, through Vercel AI Gateway, with 171 style presets. QRdx draws a plain black-and-white QR code on the server, the model repaints it as your scene, and QRdx's own scan check makes sure the result decodes, strengthening the code only as much as it needs. In scene and photo modes the picture comes first (one made from your description, or your photo) and the code is painted into its middle the same way.",
+    "text": "GPT Image 2 dari OpenAI, melalui Vercel AI Gateway, dengan 171 preset gaya. QRdx menggambar kode QR hitam-putih polos di server, model mengecatnya ulang menjadi adegan pilihan Anda, lalu pemeriksaan pemindaian milik QRdx memastikan hasilnya dapat dibaca, dengan memperkuat kode hanya sebatas yang diperlukan. Pada mode adegan dan foto, gambar dibuat lebih dulu (dari deskripsi Anda, atau dari foto Anda) dan kode dilukis di bagian tengahnya dengan cara yang sama.",
     "status": "machine",
     "context": "aiArt.faqs.9.answer"
+  },
+  "944a8f8415b3": {
+    "source": "Can I make AI art with the API or an AI assistant?",
+    "text": "Bisakah saya membuat seni AI dengan API atau asisten AI?",
+    "status": "machine",
+    "context": "aiArt.faqs.10.question"
+  },
+  "6ceb6cca7bce": {
+    "source": "Yes. With a QRdx API key, the REST API (POST /v1/art) and the MCP server's generate_ai_art tool make the same scan-checked images, on your workspace's monthly credits. They can also encode a dynamic code by its id, so the link stays editable. The AI art API page in the developer docs has the details.",
+    "text": "Bisa. Dengan kunci API QRdx, REST API (POST /v1/art) dan alat generate_ai_art milik server MCP menghasilkan gambar yang sama dan sudah diperiksa pemindaiannya, menggunakan kredit bulanan workspace Anda. Keduanya juga dapat mengenkode kode dinamis berdasarkan id-nya, sehingga tautannya tetap bisa diedit. Halaman AI art API di dokumentasi developer berisi detail lengkapnya.",
+    "status": "machine",
+    "context": "aiArt.faqs.10.answer"
   },
   "d054c5dbcf04": {
     "source": "Does QRdx store my prompt or image?",
@@ -30592,5 +30616,29 @@
     "text": "QRdx tidak menyimpan prompt, gambar referensi, maupun gambar yang dihasilkan; QRdx hanya menghitung kredit Anda. Prompt, gambar kode QR, dan gambar referensi apa pun dikirim melalui Vercel AI Gateway ke GPT Image 2 dari OpenAI untuk membuat karya seninya, dan hasilnya langsung dikirim kembali ke browser Anda, jadi unduh gambar yang ingin Anda simpan.",
     "status": "machine",
     "context": "aiArt.faqs.10.answer"
+  },
+  "35f9a7f12b6f": {
+    "source": "Saves a design as a theme in your workspace, under the plan's saved-theme limit. Needs a QRdx API key on the connection; every other tool works without one.",
+    "text": "Menyimpan desain sebagai tema di workspace Anda, sesuai batas tema tersimpan pada paket Anda. Memerlukan kunci API QRdx pada koneksi; alat lainnya berfungsi tanpa kunci.",
+    "status": "machine",
+    "context": "mcp.tools.5.description"
+  },
+  "f538f592cdab": {
+    "source": "No, for designing and rendering codes and browsing the community: the QRdx MCP server is public and free, and it keeps no session state. Saving a design to your themes (save_template), saving a barcode (save_barcode) and using a logo you uploaded need a QRdx API key, sent as Authorization: Bearer qrdx_… in your app's settings for the server.",
+    "text": "Tidak, untuk mendesain dan merender kode serta menjelajahi komunitas: server MCP QRdx bersifat publik dan gratis, dan tidak menyimpan status sesi. Menyimpan desain ke tema Anda (save_template), menyimpan barcode (save_barcode), dan menggunakan logo yang Anda unggah memerlukan kunci API QRdx, yang dikirim sebagai Authorization: Bearer qrdx_… di pengaturan server pada aplikasi Anda.",
+    "status": "machine",
+    "context": "mcp.faqs.0.answer"
+  },
+  "9ccc8cb2303b": {
+    "source": "No. The tools render images, format text and read the public community. Only save_template and save_barcode write anything: the theme or barcode you ask them to save, in the API key's workspace. The server doesn't save the codes. The image URLs it returns contain the encoded data, so don't share them if the data is private, such as a Wi-Fi password.",
+    "text": "Tidak. Alat-alat ini merender gambar, memformat teks, dan membaca komunitas publik. Hanya save_template dan save_barcode yang menulis sesuatu: tema atau barcode yang Anda minta untuk disimpan, di workspace milik kunci API. Server tidak menyimpan kode tersebut. URL gambar yang dikembalikan berisi data yang dienkode, jadi jangan bagikan jika datanya bersifat pribadi, seperti kata sandi Wi-Fi.",
+    "status": "machine",
+    "context": "mcp.faqs.5.answer"
+  },
+  "81399be3dc7a": {
+    "source": "OpenAI's GPT Image 2, through Vercel AI Gateway, with 171 style presets. QRdx draws a plain black-and-white QR code on the server, the model repaints it as your scene, and QRdx's own scan check makes sure the result decodes, strengthening the code only as much as it needs.",
+    "text": "GPT Image 2 dari OpenAI, melalui Vercel AI Gateway, dengan 171 preset gaya. QRdx menggambar kode QR hitam-putih polos di server, model mengecatnya ulang menjadi adegan pilihan Anda, lalu pemeriksaan pemindaian milik QRdx memastikan hasilnya dapat dibaca, dengan memperkuat kode hanya sebatas yang diperlukan.",
+    "status": "machine",
+    "context": "aiArt.faqs.9.answer"
   }
 }

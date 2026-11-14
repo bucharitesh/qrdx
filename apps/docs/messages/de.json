@@ -2643,7 +2643,7 @@
     "setupUrl": "Server-URL",
     "toolsEyebrow": "Tools",
     "toolsTitle": "Das kann dein Assistent aufrufen",
-    "toolsDescription": "{count, number} Tools. Alle außer save_template und save_barcode sind schreibgeschützt und brauchen keinen Schlüssel: Sie rendern Bilder, formatieren Text und lesen die öffentliche Community. Alle Parameter findest du in der <link>MCP-Server-Doku</link>.",
+    "toolsDescription": "{count, number} Tools. Alle außer save_template, save_barcode und generate_ai_art sind schreibgeschützt und brauchen keinen Key: Sie rendern Bilder, formatieren Text und lesen die öffentliche Community. Alle Parameter findest du in der <link>MCP-Server-Dokumentation</link>.",
     "toolNoKey": "Ohne Key",
     "toolNeedsKey": "API-Key erforderlich",
     "faqTitle": "FAQ zum MCP-Server",
@@ -3303,6 +3303,61 @@
       "followsYourPrompt": "Folgt deinem Prompt",
       "interpretsFreely": "Interpretiert frei",
       "generateVariations": "{count, plural, one {QR-Art generieren} other {# Variationen generieren}}"
+    },
+    "artModes": {
+      "mode": "Modus",
+      "code": "Code",
+      "scene": "Szene",
+      "photo": "Foto",
+      "codeDescription": "Der Code ist das Bild: Die Grafik füllt seine Module, umgeben von einem schlichten Rand. Am schnellsten.",
+      "sceneDescription": "Aus deiner Beschreibung wird ein Bild gemalt, dann wird der Code in dessen Mitte gemalt, in den Farben des Bildes. Dauert etwas länger.",
+      "photoDescription": "Dein Foto, mit dem Code in der Mitte, gemalt in den Farben des Fotos. Dauert etwas länger.",
+      "dropAPhoto": "Foto hierher ziehen oder auswählen",
+      "photoHint": "PNG, JPG oder WebP. Es wird in deinem Browser quadratisch zugeschnitten und verkleinert, zusammen mit deinem Prompt zur Erstellung der Grafik gesendet, und QRdx speichert es nicht.",
+      "choosePhoto": "Foto auswählen",
+      "yourPhoto": "Dein Foto",
+      "crop": "Zuschnitt",
+      "left": "Links",
+      "right": "Rechts",
+      "top": "Oben",
+      "bottom": "Unten",
+      "croppedSquare": "Quadratisch zugeschnitten für die Grafik.",
+      "replace": "Ersetzen",
+      "remove": "Entfernen",
+      "couldntUseThisPhoto": "Foto nicht verwendbar",
+      "unsupportedFormat": "Bildformat nicht unterstützt",
+      "usePngJpgWebp": "Nutze ein Bild als PNG, JPG oder WebP.",
+      "photoTooLarge": "Foto ist zu groß",
+      "photosUpTo": "Fotos dürfen bis zu {size} MB groß sein.",
+      "examples": {
+        "eyebrow": "Szene- und Foto-Modus",
+        "title": "Setz den Code in ein Bild",
+        "description": "Der Szene-Modus malt zuerst ein Bild aus deiner Beschreibung und dann den Code in dessen Mitte, sodass das Bild bis an den Code und durch ihn hindurch reicht. Der Foto-Modus macht dasselbe mit einem Foto, das du hochlädst. Diese Beispiele stammen aus derselben Pipeline, die du nutzt, und jedes lässt sich scannen und öffnet diese Seite.",
+        "scene": "Szene",
+        "photo": "Foto",
+        "caption": {
+          "lighthouse": "Ein Leuchtturm auf einer Landzunge, der Code über Klippe und Meer",
+          "painted-townhouses": "Bunt bemalte Stadthäuser, deren Farben sich durch den Code ziehen",
+          "photo-mountain": "Ein Bergsee-Foto bei Sonnenuntergang",
+          "botanical-watercolor": "Ein Aquarell mit Wildblumen und Farnen",
+          "venice-canals": "Ein Kanal in Venedig, der Code über Wasser und Mauern",
+          "photo-latte": "Ein Latte-Foto auf einem Holztisch",
+          "zen-garden": "Ein japanischer Garten mit Kirschblüten und Koi",
+          "photo-dog": "Ein Studiofoto eines Golden Retrievers"
+        },
+        "alt": {
+          "lighthouse": "KI-QR-Art im Szenenmodus: ein Leuchtturm auf einer grasbewachsenen Landzunge am Meer, der QR-Code in Blau- und Grüntönen in die Mitte des Bildes gemalt",
+          "painted-townhouses": "KI-QR-Art im Szenenmodus: eine Reihe bunt bemalter Stadthäuser, der QR-Code in ihrem Rosa, Gelb und Blau in die Mitte des Bildes gemalt",
+          "photo-mountain": "KI-QR-Art im Fotomodus: ein Bergsee bei Sonnenuntergang, der QR-Code in den Farben des Fotos über den Gipfel und sein Spiegelbild gemalt",
+          "botanical-watercolor": "KI-QR-Art im Szenenmodus: ein Aquarell mit Wildblumen und Farnen, der QR-Code in den Farben der Blumen in die Mitte gemalt",
+          "venice-canals": "KI-QR-Art im Szenenmodus: ein Kanal in Venedig mit einer Gondel, der QR-Code in warmen Steinfarben in die Mitte des Bildes gemalt",
+          "photo-latte": "KI-QR-Art im Fotomodus: ein Latte auf einem Holztisch, der QR-Code in die Tasse und den Tisch gemalt",
+          "zen-garden": "KI-QR-Art im Szenenmodus: ein japanischer Garten mit Kirschblüten, einer Laterne und Koi, der QR-Code in die Mitte des Bildes gemalt",
+          "photo-dog": "KI-QR-Art im Fotomodus: ein Golden Retriever vor einem einfarbigen Hintergrund, der QR-Code in seinen eigenen Farben über sein Gesicht gemalt"
+        }
+      },
+      "paintingPicture": "Das Bild wird gemalt…",
+      "paintingCode": "Der Code wird hineingemalt…"
     }
   },
   "compare": {
@@ -3823,6 +3878,32 @@
           "halftone": "Ohne KI: Dein Foto wird Teil des Codes, in jedem Format.",
           "ai": "Die KI malt eine Szene in deinen Code. Jedes Bild wird auf Scanbarkeit geprüft."
         }
+      },
+      "artLooks": {
+        "look": "Look",
+        "lookChoices": "Looks",
+        "none": "Keiner",
+        "looks": {
+          "watercolor": "Aquarell",
+          "oil-painting": "Ölgemälde",
+          "anime": "Anime",
+          "cartoon": "Cartoon",
+          "pixel-art": "Pixel-Art",
+          "pop-art": "Pop-Art",
+          "charcoal": "Kohle",
+          "ink": "Tusche",
+          "cyberpunk": "Cyberpunk",
+          "fantasy": "Fantasy",
+          "photographic": "Fotorealistisch",
+          "low-poly": "Low Poly",
+          "papercut": "Papierschnitt"
+        },
+        "lookHint": "Ein Look wird deiner Beschreibung hinzugefügt. Wenn du oben einen Stil wählst, wird er auf „Keiner“ zurückgesetzt.",
+        "blankIsWritten": "Lass das Feld leer, dann wird beim Generieren eine Beschreibung für dich geschrieben. Eine zu schreiben kostet nie ein Guthaben.",
+        "writeOneForMe": "Schreib mir eine",
+        "writing": "Schreibt…",
+        "couldntWrite": "Beschreibung konnte nicht geschrieben werden",
+        "checkConnection": "Prüfe deine Verbindung und versuche es erneut."
       }
     },
     "brandLogos": {

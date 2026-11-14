@@ -2643,7 +2643,7 @@
     "setupUrl": "서버 URL",
     "toolsEyebrow": "도구",
     "toolsTitle": "어시스턴트가 호출할 수 있는 도구",
-    "toolsDescription": "도구 {count, number}개. save_template과 save_barcode를 제외한 모든 도구는 읽기 전용이며 키가 필요 없어요. 이미지를 렌더링하고, 텍스트를 포맷하고, 공개 커뮤니티를 읽어요. 전체 매개변수는 <link>MCP 서버 문서</link>에서 확인하세요.",
+    "toolsDescription": "도구 {count, number}개가 있어요. save_template, save_barcode, generate_ai_art를 제외한 모든 도구는 읽기 전용이며 키가 필요 없어요. 이미지를 렌더링하고, 텍스트를 서식화하고, 공개 커뮤니티를 읽어 와요. 전체 파라미터는 <link>MCP server docs</link>에서 확인하세요.",
     "toolNoKey": "키 불필요",
     "toolNeedsKey": "API 키 필요",
     "faqTitle": "MCP 서버 FAQ",
@@ -3303,6 +3303,61 @@
       "followsYourPrompt": "프롬프트에 충실",
       "interpretsFreely": "자유롭게 해석",
       "generateVariations": "{count, plural, one {QR 아트 생성} other {변형 #개 생성}}"
+    },
+    "artModes": {
+      "mode": "모드",
+      "code": "코드",
+      "scene": "장면",
+      "photo": "사진",
+      "codeDescription": "코드 자체가 그림이 돼요. 아트가 모듈을 채우고, 테두리는 단색이에요. 가장 빠릅니다.",
+      "sceneDescription": "설명을 바탕으로 그림을 그린 뒤, 그 그림 한가운데에 그림과 같은 색으로 코드를 그려 넣어요. 시간이 조금 더 걸립니다.",
+      "photoDescription": "내 사진 한가운데에 사진과 같은 색으로 코드를 그려 넣어요. 시간이 조금 더 걸립니다.",
+      "dropAPhoto": "사진을 끌어놓거나 선택하세요",
+      "photoHint": "PNG, JPG 또는 WebP를 사용할 수 있어요. 사진은 브라우저에서 정사각형으로 잘리고 크기가 조정된 뒤, 프롬프트와 함께 전송되어 아트를 만드는 데 쓰이며 QRdx는 사진을 저장하지 않습니다.",
+      "choosePhoto": "사진 선택",
+      "yourPhoto": "내 사진",
+      "crop": "자르기",
+      "left": "왼쪽",
+      "right": "오른쪽",
+      "top": "위쪽",
+      "bottom": "아래쪽",
+      "croppedSquare": "아트에 쓸 정사각형 크롭이에요.",
+      "replace": "바꾸기",
+      "remove": "삭제",
+      "couldntUseThisPhoto": "이 사진을 사용할 수 없어요",
+      "unsupportedFormat": "지원하지 않는 이미지 형식이에요",
+      "usePngJpgWebp": "PNG, JPG 또는 WebP 이미지를 사용해 주세요.",
+      "photoTooLarge": "사진이 너무 커요",
+      "photosUpTo": "사진은 최대 {size}MB까지 올릴 수 있어요.",
+      "examples": {
+        "eyebrow": "장면 및 사진 모드",
+        "title": "그림 안에 코드를 넣어 보세요",
+        "description": "장면 모드는 설명을 바탕으로 먼저 그림을 그린 뒤 그 한가운데에 코드를 그려 넣기 때문에, 그림이 코드까지 이어지고 코드를 통과해 흐릅니다. 사진 모드는 업로드한 사진으로 같은 작업을 해요. 이 예시들은 여러분이 쓰는 것과 같은 파이프라인에서 나왔고, 모두 스캔하면 이 페이지가 열립니다.",
+        "scene": "장면",
+        "photo": "사진",
+        "caption": {
+          "lighthouse": "곶 위의 등대, 절벽과 바다에 걸쳐 있는 코드",
+          "painted-townhouses": "색색의 타운하우스, 그 색이 코드 속으로 번져 있어요",
+          "photo-mountain": "해 질 녘 산속 호수 사진",
+          "botanical-watercolor": "들꽃과 고사리를 그린 수채화",
+          "venice-canals": "베네치아의 운하, 물과 벽 위에 얹은 코드",
+          "photo-latte": "나무 테이블 위 라테 사진",
+          "zen-garden": "벚꽃과 비단잉어가 있는 일본 정원",
+          "photo-dog": "골든 리트리버 스튜디오 사진"
+        },
+        "alt": {
+          "lighthouse": "장면 모드의 AI QR 아트: 바닷가 풀밭 곶 위의 등대, 그림 한가운데에 파랑과 초록 색감으로 QR 코드를 그려 넣었어요",
+          "painted-townhouses": "장면 모드의 AI QR 아트: 색색의 타운하우스 한 줄, 그림 한가운데에 분홍, 노랑, 파랑 색감으로 QR 코드를 그려 넣었어요",
+          "photo-mountain": "사진 모드의 AI QR 아트: 해 질 녘 산속 호수, 봉우리와 물에 비친 모습 위에 사진의 색으로 QR 코드를 그려 넣었어요",
+          "botanical-watercolor": "장면 모드의 AI QR 아트: 들꽃과 고사리를 그린 수채화, 한가운데에 꽃의 색으로 QR 코드를 그려 넣었어요",
+          "venice-canals": "장면 모드의 AI QR 아트: 곤돌라가 있는 베네치아의 운하, 그림 한가운데에 따뜻한 석재 색감으로 QR 코드를 그려 넣었어요",
+          "photo-latte": "사진 모드의 AI QR 아트: 나무 테이블 위의 라테, 컵과 테이블에 QR 코드를 그려 넣었어요",
+          "zen-garden": "장면 모드의 AI QR 아트: 벚꽃, 등롱, 비단잉어가 있는 일본 정원, 그림 한가운데에 QR 코드를 그려 넣었어요",
+          "photo-dog": "사진 모드의 AI QR 아트: 단색 배경 앞의 골든 리트리버, 얼굴 위에 털 색 그대로 QR 코드를 그려 넣었어요"
+        }
+      },
+      "paintingPicture": "그림을 그리는 중이에요…",
+      "paintingCode": "그림에 코드를 그려 넣는 중이에요…"
     }
   },
   "compare": {
@@ -3823,6 +3878,32 @@
           "halftone": "AI 없이 사진이 모든 형식에서 코드의 일부가 돼요.",
           "ai": "AI가 코드 안에 장면을 그려요. 모든 이미지는 스캔되는지 확인해요."
         }
+      },
+      "artLooks": {
+        "look": "룩",
+        "lookChoices": "룩 목록",
+        "none": "없음",
+        "looks": {
+          "watercolor": "수채화",
+          "oil-painting": "유화",
+          "anime": "애니메이션",
+          "cartoon": "카툰",
+          "pixel-art": "픽셀 아트",
+          "pop-art": "팝 아트",
+          "charcoal": "목탄화",
+          "ink": "잉크",
+          "cyberpunk": "사이버펑크",
+          "fantasy": "판타지",
+          "photographic": "사진 스타일",
+          "low-poly": "로우 폴리",
+          "papercut": "페이퍼컷"
+        },
+        "lookHint": "룩은 설명에 추가돼요. 위에서 스타일을 선택하면 룩이 없음으로 초기화돼요.",
+        "blankIsWritten": "비워 두면 생성할 때 설명이 자동으로 작성돼요. 설명을 작성할 때는 크레딧이 차감되지 않아요.",
+        "writeOneForMe": "설명 대신 써 주세요",
+        "writing": "작성 중…",
+        "couldntWrite": "설명을 작성하지 못했어요",
+        "checkConnection": "연결 상태를 확인하고 다시 시도해 주세요."
       }
     },
     "brandLogos": {

@@ -1,23 +1,23 @@
 ---
 title: "REST API e OAuth"
-description: "Gerencie QR codes dinâmicos, consulte as análises de leituras, registre conversões e assine webhooks via HTTP, com uma chave de API ou um token de acesso OAuth 2.0."
+description: "Gerencie QR codes dinâmicos, leia as análises de leitura, registre conversões e assine webhooks via HTTP, com uma chave de API ou um token de acesso OAuth 2.0."
 icon: Code
 ---
 
-A REST API do QRdx fica em `https://api.qrdx.dev/v1`. Ela usa JSON e, exceto pela [Image API](/docs/developers/image-api), que não exige chave, autentica as requisições com uma credencial Bearer:
+A REST API do QRdx fica em `https://api.qrdx.dev/v1`. Ela usa JSON e, exceto a [Image API](/docs/developers/image-api), que não precisa de chave, autentica as requisições com uma credencial Bearer:
 
 ```bash
 curl https://api.qrdx.dev/v1/codes -H "Authorization: Bearer $QRDX_API_KEY"
 ```
 
-- **Uma [chave de API](/docs/developers/api-keys)** (`qrdx_…`) para seus próprios servidores e scripts. Ela age no workspace em que foi criada, com o seu papel nele.
-- **Um token de acesso OAuth 2.0** para apps que agem em nome de outros usuários do QRdx ([abaixo](#get-an-access-token)). As requisições feitas com um token agem no workspace do próprio dono do token.
+- **Uma [chave de API](/docs/developers/api-keys)** (`qrdx_…`) para os seus próprios servidores e scripts. Ela age no workspace em que foi criada, com o seu papel nele.
+- **Um token de acesso OAuth 2.0** para apps que agem em nome de outros usuários do QRdx ([veja abaixo](#get-an-access-token)). As requisições feitas com um token agem no workspace do próprio dono do token.
 
-Os endpoints de codes, conversions e hooks também aceitam a sessão de navegador de quem está logado no QRdx; essas requisições agem no [workspace](/docs/teams) aberto por último nessa sessão do navegador.
+Os endpoints de códigos, conversões e hooks também aceitam a sessão de navegador de quem está conectado ao QRdx; essas requisições agem no [workspace](/docs/teams) aberto por último nessa sessão do navegador.
 
-Os mesmos endpoints também respondem em `https://qrdx.dev/api/v1`. As requisições de sessão de navegador usam esse caminho, já que o cookie de login pertence a qrdx.dev, e uma instância [auto-hospedada](/docs/self-hosting) serve a API em `/api/v1` no próprio domínio.
+Os mesmos endpoints também respondem em `https://qrdx.dev/api/v1`. As requisições da sessão do navegador usam esse caminho, já que o cookie de login pertence a qrdx.dev, e uma instância [auto-hospedada](/docs/self-hosting) serve a API em `/api/v1` no próprio domínio.
 
-Chegou agora? O [início rápido](/docs/developers/quickstart) leva você do zero até a primeira requisição. Cada endpoint tem a própria página, com esquemas de requisição e resposta, exemplos em curl, JavaScript e Python e um painel Try it, na [referência da API](/docs/developers/api), gerada a partir do [documento OpenAPI](/openapi.json).
+Chegou agora? O [início rápido](/docs/developers/quickstart) leva você do zero até a primeira requisição. Cada endpoint tem a sua própria página, com esquemas de requisição e resposta, exemplos em curl, JavaScript e Python e um painel Try it, na [referência da API](/docs/developers/api), gerada a partir do [documento OpenAPI](/openapi.json).
 
 [Teste no Playground](/playground?open=code&lang=api): estilize um código lá e depois copie a requisição `POST /v1/codes` que o cria como código dinâmico.
 
@@ -27,49 +27,50 @@ Chegou agora? O [início rápido](/docs/developers/quickstart) leva você do zer
 | --- | --- | --- |
 | `GET /v1/qr` | Nenhum | Imagem do QR code em SVG, PNG, WebP ou EPS, com os estilos do editor. Veja [Image API](/docs/developers/image-api) |
 | `GET /v1/community/items`, `GET /v1/community/items/{id}` | Nenhum | Molduras, temas e coleções da comunidade publicados, com o estilo que cada um aplica. Somente leitura e com cache. Veja [Itens da comunidade](#community-items) |
-| `/v1/codes` | `codes:read`, `codes:write` | Lista, cria (um ou até {facts.apiBatchCodes} por vez, com um final de link personalizado opcional em `slug`), atualiza (inclusive alternando `kind` entre um link de site e uma página hospedada) e exclui QR codes dinâmicos. Veja [QR codes dinâmicos](/docs/dynamic-qr-codes#rest-api) |
-| `GET /v1/codes/{id}/scans` | `codes:read` | Análises de leituras de um código, ou leituras individuais página por página |
-| `POST /v1/conversions` | `codes:write` | Atribui uma venda ou cadastro à leitura que levou a ele (Business). Veja [Rastreamento e conversões](/docs/tracking-and-conversions) |
+| `/v1/codes` | `codes:read`, `codes:write` | Lista, cria (um ou até {facts.apiBatchCodes} por vez, com um back-half personalizado opcional em `slug`), atualiza (inclusive trocando `kind` entre um link de site e uma página hospedada) e exclui QR codes dinâmicos. Veja [QR codes dinâmicos](/docs/dynamic-qr-codes#rest-api) |
+| `POST /v1/art` | `codes:write` | Um QR code pintado em uma arte de IA, com leitura verificada, usando as imagens de arte de IA mensais do workspace. Veja [API de arte de IA](/docs/developers/ai-art-api) |
+| `GET /v1/codes/{id}/scans` | `codes:read` | Análises de leitura de um código, ou leituras individuais página por página |
+| `POST /v1/conversions` | `codes:write` | Atribui uma venda ou um cadastro à leitura que levou a ele (Business). Veja [Rastreamento e conversões](/docs/tracking-and-conversions) |
 | `/v1/hooks` | `codes:read`, `codes:write` | Assina eventos para uma URL, no estilo REST Hooks, para Zapier, Make e n8n. Veja [Webhooks](/docs/webhooks) |
 | `GET /v1/themes`, `GET /v1/themes/{id}` | `themes:read` | Seus temas de QR salvos (nome e estilo) para um token OAuth; uma chave de API lê os temas do seu workspace |
-| `GET /v1/me` | `profile:read` | O id, nome, e-mail e avatar de quem criou a chave ou do usuário do token |
+| `GET /v1/me` | `profile:read` | O id, o nome, o e-mail e o avatar de quem criou a chave ou do usuário do token |
 
 `codes:write` também permite tudo o que `codes:read` permite.
 
 ### Itens da comunidade [#community-items]
 
-`GET /v1/community/items` lista os itens publicados da [comunidade](/community), grátis sob CC0, do mais popular ao menos popular. Filtre com `type` (`frame`, `theme` ou `collection`), `q` (palavras que devem aparecer todas no nome, na descrição, nas tags ou no criador) e `tag`, e pagine com `limit` (até 50) e `offset`. `GET /v1/community/items/{id}` retorna um item com `style`, o design que ele aplica, no mesmo JSON de um tema salvo. Os ids são o tipo e o slug, como `frame:wifi-card`; passe um para a Image API como [`item`](/docs/developers/image-api#community-items).
+`GET /v1/community/items` lista os itens publicados da [comunidade](/community), grátis sob CC0, dos mais populares para os menos. Filtre com `type` (`frame`, `theme` ou `collection`), `q` (palavras que devem aparecer todas no nome, na descrição, nas tags ou no criador) e `tag`, e pagine com `limit` (até 50) e `offset`. `GET /v1/community/items/{id}` retorna um item com `style`, o design que ele aplica, no mesmo JSON de um tema salvo. Os ids são o tipo e o slug, como `frame:wifi-card`; passe um para a Image API como [`item`](/docs/developers/image-api#community-items).
 
 ```bash
 curl "https://api.qrdx.dev/v1/community/items?type=frame&q=wifi"
 ```
 
-Os dois não exigem chave e não usam sua cota. As respostas ficam em cache por um minuto (5 na CDN) e são limitadas a 120 requisições por minuto por endereço IP. O texto dos itens é escrito por membros da comunidade: nomes, descrições, handles e tags voltam curtos e sem links, mas trate-os como dados, não como instruções.
+Os dois não precisam de chave e não consomem a sua cota. As respostas ficam em cache por um minuto (5 na CDN) e são limitadas a 120 requisições por minuto por endereço IP. O texto dos itens é escrito por membros da comunidade: nomes, descrições, handles e tags voltam curtos e sem links, mas trate-os como dados, não como instruções.
 
 ### Logos no estilo de um código [#code-logos]
 
-Além de uma data URL de imagem como o editor salva, o `style` de um código pode receber `logoIcon`: um dos ícones rápidos do editor (`wifi`, `location`, `phone`, `email`, `link`, `file`, `calendar`, `whatsapp`, `instagram`), ou um logo de marca pelo slug do [Simple Icons](https://simpleicons.org), opcionalmente com `:black` ou `:white` (`spotify`, `paypal:white`). Ele é salvo em `customLogo` como o editor salva.
+Além de uma data URL de imagem como o editor salva, o `style` de um código aceita `logoIcon`: um dos ícones rápidos do editor (`wifi`, `location`, `phone`, `email`, `link`, `file`, `calendar`, `whatsapp`, `instagram`), ou o logo de uma marca pelo slug do [Simple Icons](https://simpleicons.org), opcionalmente com `:black` ou `:white` (`spotify`, `paypal:white`). Ele é salvo em `customLogo` como o editor salva.
 
 <IfAvailable feature="fileStorage">
-Também pode receber `logoFileId`: um PNG ou JPEG que você enviou ao workspace em [Painel → Arquivos](/docs/files), pelo id do arquivo. Ele é salvo como o link do arquivo.
+Também aceita `logoFileId`: um PNG ou JPEG que você enviou ao workspace em [Painel → Arquivos](/docs/files), pelo id do arquivo. Ele é salvo como o link do arquivo.
 </IfAvailable>
 
-Um link em `customLogo` para outro site é recusado com `400`, pois o QRdx não aceita logos de outros sites. Um `PATCH` pode reenviar o logo que o código já tem.
+Um link em `customLogo` para outro site é recusado com `400`, já que o QRdx não aceita logos de outros sites. Um `PATCH` pode reenviar o logo que o código já tem.
 
-## Obtenha um token de acesso [#get-an-access-token]
+## Obter um token de acesso [#get-an-access-token]
 
-Para seus próprios scripts, uma [chave de API](/docs/developers/api-keys) é mais simples. Quando seu app age em nome de outras pessoas, o QRdx é um provedor OAuth 2.0: seu app envia as pessoas ao QRdx para entrar e recebe de volta um token de acesso que só pode fazer o que os escopos concedidos permitem. As chaves de API usam os mesmos escopos.
+Para os seus próprios scripts, uma [chave de API](/docs/developers/api-keys) é mais simples. Quando o seu app age em nome de outras pessoas, o QRdx é um provedor OAuth 2.0: o seu app envia as pessoas ao QRdx para entrar e recebe de volta um token de acesso que só pode fazer o que os escopos concedidos permitem. As chaves de API usam os mesmos escopos.
 
 | Escopo | Permite |
 | --- | --- |
-| `profile:read` | Ler o nome, e-mail e avatar do usuário |
+| `profile:read` | Ler o nome, o e-mail e o avatar do usuário |
 | `themes:read` | Ler os temas de QR salvos do usuário |
-| `codes:read` | Ler QR codes dinâmicos e suas análises de leituras |
+| `codes:read` | Ler QR codes dinâmicos e as análises de leitura deles |
 | `codes:write` | Criar, editar e excluir QR codes dinâmicos, registrar conversões e gerenciar assinaturas de webhook |
 
 ### 1. Registre um app [#1-register-an-app]
 
-Crie você mesmo um app OAuth em [Configurações → Chaves de API e apps](/dashboard?to=settings/developers): dê um nome a ele, informe os URIs de redirecionamento e os escopos de que precisa, e você recebe um client ID e um client secret. O secret aparece uma só vez; guarde-o no seu servidor. Workspaces Grátis podem ter 1 app, Pro 5 e Business 25. [Crie uma integração](/docs/developers/build-an-integration) mostra o fluxo completo, desde a criação do app até a publicação dele no diretório de integrações.
+Crie você mesmo um app OAuth em [Configurações → Chaves de API e apps](/dashboard?to=settings/developers): dê um nome a ele, informe as URIs de redirecionamento e os escopos de que ele precisa, e você recebe um client ID e um client secret. O secret aparece uma única vez; guarde-o no seu servidor. Workspaces Grátis podem ter 1 app, Pro 5 e Business 25. [Criar uma integração](/docs/developers/build-an-integration) mostra todo o fluxo, da criação do app até a listagem dele no diretório de integrações.
 
 Em uma instância [auto-hospedada](/docs/self-hosting), você também pode criar um app próprio a partir de `apps/docs`:
 
@@ -93,7 +94,7 @@ https://qrdx.dev/api/oauth/authorize
   &code_challenge_method=S256
 ```
 
-`redirect_uri` precisa ser exatamente igual a uma URL registrada, e `scope` (separado por espaço ou vírgula) só pode pedir os escopos do app. PKCE é recomendado e obrigatório para apps que ativam **Require PKCE**. `S256` é o único método: um desafio `plain` recebe `invalid_request`. As pessoas entram, se for preciso, e depois aprovam seu app na tela de consentimento do QRdx, que mostra o nome, logo, site, quem o criou e as permissões pedidas, e confirmam que são elas mesmas. O QRdx então redireciona para `redirect_uri` com `code` e o seu `state`, ou com `error=access_denied` se cancelarem. O código vale por 10 minutos e só pode ser usado uma vez.
+`redirect_uri` precisa ser exatamente igual a uma URL registrada, e `scope` (separado por espaço ou vírgula) só pode pedir os escopos do app. Recomendamos PKCE, que é obrigatório para apps que ativam **Require PKCE**. `S256` é o único método: um desafio `plain` recebe `invalid_request`. As pessoas entram, se for preciso, e depois aprovam o seu app na tela de consentimento do QRdx, que mostra o nome, o logo, o site, quem o criou e as permissões pedidas, e confirmam que são elas mesmas. Em seguida, o QRdx redireciona para `redirect_uri` com `code` e o seu `state`, ou com `error=access_denied` se cancelarem. O código vale por 10 minutos e só pode ser usado uma vez.
 
 ### 3. Troque o código por tokens [#3-exchange-the-code-for-tokens]
 
@@ -117,7 +118,7 @@ curl -X POST https://qrdx.dev/api/oauth/token \
 }
 ```
 
-O endpoint de token recebe um corpo codificado como formulário. Os tokens de acesso duram 1 hora e os tokens de atualização, 30 dias.
+O endpoint de token recebe um corpo codificado como formulário. Os tokens de acesso duram 1 hora e os tokens de atualização 30 dias.
 
 ### 4. Atualize e revogue [#4-refresh-and-revoke]
 
@@ -135,7 +136,7 @@ curl -X POST https://qrdx.dev/api/oauth/revoke -d token=$TOKEN
 
 `GET /api/oauth/userinfo` retorna o usuário como `sub`, `name`, `email` e `picture` para tokens com `profile:read`.
 
-As pessoas podem revogar o acesso de um app por conta própria em **Configurações → Apps autorizados**. Os tokens do app para essa conta passam a falhar com `invalid_token` (chamadas de API) e `invalid_grant` (atualização), e o app precisa pedir de novo.
+As pessoas podem revogar o acesso de um app por conta própria em **Configurações → Apps autorizados**. Os tokens dele para aquela conta passam a falhar com `invalid_token` (chamadas de API) e `invalid_grant` (atualização), e o app precisa pedir de novo.
 
 ## Erros e limites [#errors-and-limits]
 
@@ -143,14 +144,14 @@ Todo endpoint `/v1` retorna erros no formato `{ "code": "...", "message": "...",
 
 Criar vários códigos em uma única requisição, escolher o `slug` de um código e mover códigos para um domínio personalizado exigem Pro ou Business (caso contrário, `402 PLAN_REQUIRED`). As leituras nunca são limitadas.
 
-### Limites de taxa [#rate-limits]
+### Limites de requisições [#rate-limits]
 
-Há dois tipos de limite. Ambos respondem `429 RATE_LIMITED` com um header `Retry-After`, que indica o número de segundos de espera.
+Existem dois tipos de limite. Ambos respondem `429 RATE_LIMITED` com um header `Retry-After`, que indica o número de segundos de espera.
 
-- **Cota diária.** Um workspace pode fazer 1.000 requisições de API por dia no plano Grátis, 10.000 no Pro e 100.000 no Business (veja [Planos e limites](/docs/plans-and-limits)). O dia vai das 00:00 às 24:00 UTC. Toda requisição autenticada conta. As requisições feitas com uma chave de API contam para o workspace da chave e para o plano dele. As requisições feitas com um token de acesso contam para o workspace do próprio dono do token. As requisições feitas com uma sessão do navegador contam para o último workspace aberto nessa sessão.
-- **Limites por minuto.** Os endpoints de códigos, conversões e hooks permitem 120 leituras e 30 gravações por minuto por usuário, e 300 requisições por minuto por endereço IP.
+- **Cota diária.** Um workspace pode fazer 1.000 requisições de API por dia no plano Grátis, 10.000 no Pro e 100.000 no Business (veja [Planos e limites](/docs/plans-and-limits)). O dia vai de 00:00 a 24:00 UTC. Toda requisição autenticada conta. As requisições feitas com uma chave de API contam para o workspace da chave e o plano dele. As requisições feitas com um token de acesso contam para o workspace próprio do dono do token. As requisições feitas com uma sessão do navegador contam para o último workspace aberto nessa sessão.
+- **Limites por minuto.** Os endpoints de códigos, conversões e hooks permitem 120 leituras e 30 escritas por minuto por usuário, e 300 requisições por minuto por endereço IP.
 
-Requisições recusadas antes da verificação diária não contam: uma chave ou token inválido (`401`), uma requisição sem o escopo necessário (`403`) ou um `429` por minuto. As respostas às requisições que contam trazem a cota diária em três headers, tanto em sucessos quanto em erros:
+Requisições recusadas antes da verificação diária não contam: chave ou token inválido (`401`), requisição sem o escopo necessário (`403`) ou um `429` por minuto. As respostas às requisições que contam trazem a cota diária em três headers, tanto em sucessos quanto em erros:
 
 | Header | Valor |
 | --- | --- |
@@ -178,4 +179,4 @@ X-RateLimit-Reset: 1793577600
 
 `/v1/me` e `/v1/themes` enviam os mesmos headers e o mesmo corpo, além de `"error": "rate_limited"` e `"error_description"`.
 
-A [Image API](/docs/developers/image-api), o [servidor MCP](/docs/developers/mcp) e as conversões reportadas pelo navegador com um `qrdx_sid` não precisam de token, então não usam a cota diária. Elas têm limites próprios por IP. Uma instância [auto-hospedada](/docs/self-hosting) só aplica limites de taxa quando o Upstash Redis está configurado.
+A [Image API](/docs/developers/image-api), o [servidor MCP](/docs/developers/mcp) e as conversões reportadas pelo navegador com um `qrdx_sid` não precisam de token, então não usam a cota diária. Elas têm limites próprios por IP. Uma instância [auto-hospedada](/docs/self-hosting) só aplica limites de requisições quando o Upstash Redis está configurado.
