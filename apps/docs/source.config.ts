@@ -1,4 +1,3 @@
-import { spawnSync } from "node:child_process";
 import {
   rehypeCodeDefaultOptions,
   remarkSteps,
@@ -23,6 +22,7 @@ import { docsIndex } from "./lib/docs-index-plugin";
 import { fillFactsDeep } from "./lib/product-facts";
 import { remarkNpmStatus } from "./lib/remark-npm-status";
 import { remarkProductFacts } from "./lib/remark-product-facts";
+import { gitFileDate } from "./lib/seo-dates";
 // You can customise Zod schemas for frontmatter and `meta.json` here
 // see https://fumadocs.dev/docs/mdx/collections
 // `.transform(fillFactsDeep)`: frontmatter strings can quote product counts as
@@ -56,22 +56,18 @@ export const docs = defineDocs({
   },
 });
 
-// Each page's "last modified" date comes from git. A Docker build has
-// neither the git binary nor the .git folder (see .dockerignore), and
-// fumadocs fails the whole build when it can't run git, so there the dates
-// are left out. The sitemap already handles pages without one.
-const hasGit =
-  spawnSync("git", ["rev-parse", "--is-inside-work-tree"], {
-    stdio: "ignore",
-  }).status === 0;
-
 export default defineConfig({
   plugins: [
     jsonSchema({
       insert: true,
     }),
+    // Each page's "last modified" date comes from git, following moves:
+    // fumadocs' own git dates count a moved file as changed (gitFileDate).
+    // A Docker build has neither the git binary nor the .git folder (see
+    // .dockerignore), so there the dates are left out. The sitemap already
+    // handles pages without one.
     lastModified({
-      versionControl: hasGit ? "git" : async () => undefined,
+      versionControl: async (file) => gitFileDate(file),
     }),
     // .source/docs.ts, .source/content.ts and the docs index the route
     // handlers read (lib/docs-index.ts), so the build compiles the docs once.

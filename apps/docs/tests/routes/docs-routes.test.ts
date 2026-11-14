@@ -9,7 +9,7 @@ import { GITHUB_OWNER, GITHUB_REPO } from "@repo/config";
 import { parseDocsManifest } from "@repo/next-config/docs-zone";
 import { afterAll, describe, expect, it, vi } from "vitest";
 
-const root = mkdtempSync(join(tmpdir(), "docs-site-routes-"));
+const root = mkdtempSync(join(tmpdir(), "docs-routes-"));
 const dir = join(root, ".source/docs-index");
 mkdirSync(dir, { recursive: true });
 

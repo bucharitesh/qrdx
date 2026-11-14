@@ -78,7 +78,7 @@ const MARKDOWN_REQUEST = {
   missing: [{ type: "host" as const, value: "(?:api|mcp)\\.qrdx\\.dev" }],
 };
 
-// The docs site (apps/docs-site) at DOCS_ZONE_URL serves the docs: their
+// The docs site (apps/docs) at DOCS_ZONE_URL serves the docs: their
 // URLs are proxied there, ahead of every rule below (@repo/i18n/docs).
 // Unset, this app serves its own copy.
 const docsZone = docsZoneRewrites(env.DOCS_ZONE_URL, {

@@ -24,7 +24,7 @@
       "dependsOn": ["build"],
       "outputs": []
     },
-    "docs-site#typecheck": {
+    "docs#typecheck": {
       "dependsOn": ["^build"],
       "inputs": [
         "$TURBO_DEFAULT$",
@@ -36,7 +36,7 @@
       "env": ["MAIN_ZONE_URL", "DOCS_REQUIRE_AVAILABILITY"],
       "outputs": []
     },
-    "docs-site#test": {
+    "docs#test": {
       "dependsOn": ["^build"],
       "inputs": [
         "$TURBO_DEFAULT$",

@@ -1,5 +1,5 @@
 // The docs zone (@repo/i18n/docs, @repo/next-config/docs-zone): with DOCS_ZONE_URL set, the
-// main app proxies the docs' URLs to the docs site (apps/docs-site); unset,
+// main app proxies the docs' URLs to the docs site (apps/docs); unset,
 // nothing changes. Also the manifest the sitemap and llms.txt read from it.
 import {
   docsZoneRewrites,
