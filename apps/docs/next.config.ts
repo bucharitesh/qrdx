@@ -4,18 +4,18 @@ import {
   CANONICAL_ORIGIN,
   MCP_HOST,
 } from "@repo/config";
+import {
+  docsEnglishRewrites,
+  docsMarkdownAcceptRewrites,
+  docsMarkdownRewrites,
+} from "@repo/i18n/docs";
+import { englishRedirects, englishRewrites } from "@repo/i18n/routing";
 import { config, withAnalyzer } from "@repo/next-config";
 import { createMDX } from "fumadocs-mdx/next";
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 import { env } from "@/env";
 import { DOCS_REDIRECTS } from "@/lib/docs-redirects";
-import {
-  docsEnglishRewrites,
-  docsMarkdownAcceptRewrites,
-  docsMarkdownRewrites,
-} from "@/lib/i18n/docs";
-import { englishRedirects, englishRewrites } from "@/lib/i18n/routing";
 import {
   appCsp,
   cspHeaderName,

@@ -25,6 +25,7 @@
     "i18n:extract": "tsx scripts/i18n-extract.ts",
     "i18n:translate": "tsx scripts/i18n-translate.ts",
     "i18n:docs": "tsx scripts/i18n-translate-docs.ts",
+    "i18n:docs-messages": "tsx scripts/i18n-docs-messages.ts",
     "i18n:split": "node scripts/i18n-split-roots.mjs",
     "seo:dates": "tsx scripts/seo-dates.ts"
   },
@@ -49,6 +50,7 @@
     "@repo/database": "workspace:*",
     "@repo/design-system": "workspace:*",
     "@repo/docs-assets": "workspace:*",
+    "@repo/i18n": "workspace:*",
     "@repo/integration-kit": "workspace:*",
     "@repo/integrations": "workspace:*",
     "@repo/next-config": "workspace:*",
