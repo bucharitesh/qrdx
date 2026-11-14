@@ -1,12 +1,12 @@
 ---
 title: "Plantillas"
-description: "Marcos que ajustan el código dentro de un diseño de tamaño fijo, y la API TemplateDefinition para marcos que dibujas en código."
+description: "Marcos que encajan el código dentro de una ilustración de tamaño fijo, y la API TemplateDefinition para los marcos que dibujas en código."
 icon: LayoutTemplate
 ---
 
-Una plantilla es un marco que ajusta el código dentro de su propio diseño. En el Playground las plantillas no forman una lista aparte. Arrow, Standard Box, Square Border, Striked Box, Halloween y Dot Ring son mosaicos del grupo **Clásico** del selector de marcos, junto a los demás [marcos](/docs/features/frames), y al elegir un marco se reemplaza el anterior.
+Una plantilla es un marco que encaja el código dentro de su propia ilustración. En el Playground las plantillas no forman una lista aparte. Arrow, Standard Box, Square Border, Striked Box, Halloween y Dot Ring son mosaicos del grupo **Clásico** del selector de marcos, junto a los demás [marcos](/docs/features/frames), y al elegir cualquier marco se reemplaza el anterior.
 
-Las plantillas se diferencian de los demás marcos en una cosa: el tamaño. Un marco añade espacio alrededor del código, así que `size` es el ancho del código y la imagen crece. Una plantilla dibuja todo su diseño a `size`, con el código más pequeño dentro.
+Las plantillas se distinguen de los otros marcos en un aspecto: el tamaño. Un marco añade espacio alrededor del código, así que `size` es el ancho del código y la imagen crece. Una plantilla dibuja toda su ilustración en `size`, con el código más pequeño en su interior.
 
 ## Plantillas integradas [#built-in-templates]
 
@@ -21,7 +21,7 @@ Pasa el id como `templateId`. La Image API lo recibe como `template` y la CLI co
 | `Halloween` | Halloween | Su propio naranja, verde y negro |
 | `DotRing` | Dot Ring | Su anillo en `fgColor`, su texto en blanco; ambos se pueden cambiar (más abajo) |
 
-`default` no dibuja ningún diseño. Solo reduce un poco el código, al 95% de `size`.
+`default` no dibuja ninguna ilustración. Solo reduce un poco el código, al 95 % de `size`.
 
 ```tsx
 import { QRCode } from 'qrdx';
@@ -29,7 +29,7 @@ import { QRCode } from 'qrdx';
 <QRCode value="https://example.com" templateId="Arrow" fgColor="#1a56db" size={256} />
 ```
 
-Los colores, los patrones y el logo se mantienen en las propiedades del propio código, así que una plantilla funciona con cualquier estilo:
+Los colores, los patrones y el logotipo siguen en las propiedades del propio código, así que una plantilla funciona con cualquier estilo:
 
 ```tsx
 <QRCode
@@ -48,7 +48,7 @@ Los colores, los patrones y el logo se mantienen en las propiedades del propio c
 
 ## Dot Ring [#dot-ring]
 
-Un código redondo. El código está en un disco de puntos dentro de un anillo oscuro, con una línea de texto a lo largo del anillo. Los puntos que se muestran salen de un hash del contenido del código, así que cada enlace tiene su propio anillo y el mismo enlace siempre obtiene el mismo.
+Un código redondo. El código se asienta en un disco de puntos dentro de un anillo oscuro, con una línea de texto colocada a lo largo del anillo. Los puntos que se muestran salen de un hash del contenido del código, de modo que cada enlace tiene su propio anillo y el mismo enlace siempre obtiene el mismo.
 
 ```tsx
 <QRCode
@@ -75,28 +75,46 @@ Sus ajustes van en `customProps` (con el tipo `DotRingProps`):
 />
 ```
 
-| Propiedad | Valor por defecto | Notas |
+| Propiedad | Valor predeterminado | Notas |
 | --- | --- | --- |
-| `customText` | "Scan the QR code" cuatro veces alrededor | Texto a lo largo del anillo. Las letras que no caben alrededor se omiten; `""` deja el anillo vacío |
+| `customText` | "Scan the QR code" cuatro veces alrededor | Texto a lo largo del anillo; `""` deja el anillo vacío. El texto demasiado largo para el anillo se ajusta (más abajo) |
+| `textFill` | `"none"` | `"repeat"` repite el texto por todo el anillo (más abajo) |
 | `textPosition` | `"top"` | `"top"`: centrado en la parte superior, con lectura en sentido horario. `"bottom"`: centrado en la parte inferior, con lectura de izquierda a derecha |
 | `textRotation` | `0` | Gira el texto alrededor del centro, en grados |
 | `textColor` | `#ffffff` | Color del texto |
-| `fontFamily` | pila de fuentes del sistema | Familia de fuente CSS del texto |
+| `fontFamily` | pila de fuentes del sistema | Familia de fuentes CSS del texto |
 | `fontWeight` | `900` | Grosor de la fuente |
-| `fontSize` | `32` | En el dibujo de 593 unidades de la plantilla, donde el código mide 300 de ancho |
-| `fontLetterSpacing` | `3.5` | Espacio extra entre letras, en las mismas unidades |
+| `fontSize` | `32` | En el dibujo de 593 unidades de la plantilla, donde el código mide 300 de ancho. El texto largo puede dibujarse más pequeño |
+| `fontLetterSpacing` | `3.5` | Espacio adicional entre letras, en las mismas unidades. El texto largo y `textFill` lo ajustan |
 | `outerCircleColor` | `fgColor` | Color del anillo |
-| `strokeWidth`, `strokeColor` | `0`, `#000000` | Un trazo en ambos bordes del anillo |
+| `strokeWidth`, `strokeColor` | `0`, `#000000` | Un trazo a lo largo de ambos bordes del anillo |
 | `outerStrokeWidth`, `outerStrokeColor` | `strokeWidth`, `strokeColor` | Solo el borde exterior del anillo |
 | `innerStrokeWidth`, `innerStrokeColor` | `strokeWidth`, `strokeColor` | Solo el borde interior del anillo |
 
-Un logo va en el centro como en cualquier código. Los enlaces largos (códigos de más de 49 módulos de ancho) conservan una banda clara entre el código y los puntos, para que se sigan escaneando al imprimirse en tamaño pequeño.
+El texto que cabe en el anillo se coloca tal cual, centrado en la parte superior o a lo largo de la inferior. El texto demasiado largo nunca choca con su propio inicio. Primero se acercan las letras, y después la fuente se reduce, hasta la mitad del tamaño predeterminado (el mínimo que admiten las etiquetas de los marcos). Entonces el texto cierra el anillo con un espacio de palabra donde se encuentra con su inicio. Si aun así no cabe con ese tamaño, se corta después de la última palabra completa que quepa.
 
-El texto es texto SVG en la fuente que elijas; por defecto es la pila de fuentes del sistema, así que no se descarga nada. Las descargas en SVG y PNG en el navegador usan las fuentes de quien las ve. PDF y EPS lo imprimen en Helvetica Bold, así que usa texto Latin-1 en esos casos. `getQRAsPNG` de `qrdx/node` necesita una fuente instalada en el servidor, igual que las etiquetas de los marcos.
+Un logotipo se coloca en el centro como en cualquier código. Los enlaces largos (códigos de más de 49 módulos de ancho) conservan una banda clara entre el código y los puntos, para que se sigan escaneando al imprimirse en tamaño pequeño.
+
+El texto es texto SVG con la fuente que elijas; la predeterminada es la pila de fuentes del sistema, así que no se descarga nada. Las descargas SVG y PNG en el navegador usan las fuentes de quien lo ve. PDF y EPS lo imprimen en Helvetica Bold, así que usa texto Latin-1 en ellos. `getQRAsPNG` de `qrdx/node` necesita una fuente instalada en el servidor, igual que las etiquetas de los marcos.
+
+### Rellenar el anillo [#filling-the-ring]
+
+Una frase corta deja parte del anillo vacía. Define `textFill: "repeat"` para repetirla tantas veces como quepa, con el espaciado uniformado para que el anillo se cierre con el mismo hueco que hay entre las copias:
+
+```tsx
+<QRCode
+  value="https://example.com/docs"
+  templateId="DotRing"
+  customProps={{ customText: "Read the docs *", textFill: "repeat" }}
+  size={512}
+/>
+```
+
+Escribe la frase una sola vez. El texto que ya repite una frase, como `"Make your own * Make your own *"`, se interpreta como esa frase, así que llena el anillo del mismo modo.
 
 ## Las plantillas son especificaciones de marco [#templates-are-frame-specs]
 
-El diseño de Arrow, Standard Box, Square Border, Striked Box y Halloween es una [especificación de marco](/docs/features/frames#frame-specs), el mismo formato JSON que todos los demás marcos, dibujado por el mismo motor. `getTemplate(id).spec` la devuelve. Úsala como marco cuando quieras el dimensionamiento de marco (el código conserva su tamaño y el diseño crece a su alrededor) y la opción de color del marco:
+La ilustración de Arrow, Standard Box, Square Border, Striked Box y Halloween es una [especificación de marco](/docs/features/frames#frame-specs), con el mismo formato JSON que cualquier otro marco, dibujada por el mismo motor. `getTemplate(id).spec` la devuelve. Úsala como marco cuando quieras el dimensionamiento de un marco (el código conserva su tamaño y la ilustración crece a su alrededor) y la opción de color del marco:
 
 ```tsx
 import { getTemplate, QRCode } from 'qrdx';
@@ -112,7 +130,7 @@ const spec = getTemplate('Arrow')?.spec;
 
 Dot Ring no tiene especificación: sus puntos salen del contenido del código, así que los dibuja en código (consulta [Marcos que dibujas en código](#frames-you-draw-in-code)).
 
-`templateId` dibuja el mismo diseño que antes. Los diseños guardados, las URL de imagen, los comandos de la CLI y el código que usan un id de plantilla se ven igual que siempre.
+`templateId` dibuja la misma ilustración de antes. Los diseños guardados, las URL de imagen, los comandos de la CLI y el código que usan un id de plantilla se ven igual que siempre.
 
 ## Registro de plantillas [#template-registry]
 
@@ -126,9 +144,9 @@ getTemplate('Halloween'); // one by id
 
 ## Marcos que dibujas en código [#frames-you-draw-in-code]
 
-Una especificación de marco describe un diseño fijo. Cuando el diseño tiene que calcularse, escribe un `TemplateDefinition` y pásalo como `customTemplate`. Su `wrapper` recibe el código como `children` y devuelve el SVG que se dibujará. Dibuja en un lienzo de 300 por 300, y el código llega también con ese tamaño, así que redúcelo para dejar espacio a tu diseño. `props` incluye el `fgColor` y el `bgColor` del código, y el tercer argumento tiene la `url` y el `pixelSize` del código.
+Una especificación de marco describe una ilustración fija. Cuando la ilustración tiene que calcularse, escribe una `TemplateDefinition` y pásala como `customTemplate`. Su `wrapper` recibe el código como `children` y devuelve el SVG que se dibujará. Dibuja en un lienzo de 300 por 300, y el código llega también con ese tamaño, así que reduce su escala para dejar espacio a tu ilustración. `props` lleva el `fgColor` y el `bgColor` del código, y el tercer argumento contiene la `url` y el `pixelSize` del código.
 
-Este dibuja un anillo alrededor del código:
+Este ejemplo dibuja un anillo alrededor del código:
 
 ```tsx
 import { QRCode, type TemplateDefinition } from "qrdx";
@@ -160,10 +178,10 @@ const ringTemplate: TemplateDefinition = {
 />
 ```
 
-Mantén el código lo bastante grande para escanearlo desde donde la gente sostendrá el teléfono, y deja un espacio claro entre él y tu diseño. Comprueba el resultado con la [puntuación de escaneo](/docs/features/frames#will-it-scan).
+Mantén el código lo bastante grande para escanearlo desde donde la gente sostendrá el teléfono, y deja un hueco claro entre él y tu ilustración. Comprueba el resultado con la [puntuación de escaneo](/docs/features/frames#will-it-scan).
 
 ## Siguientes pasos [#next-steps]
 
 - [Marcos](/docs/features/frames): todos los marcos y el formato de especificación de marco
 - [Patrones](/docs/features/patterns): personalización detallada de patrones
-- [Logos](/docs/features/logos): añade un logo al código
+- [Logotipos](/docs/features/logos): añade un logotipo al código

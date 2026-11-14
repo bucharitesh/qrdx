@@ -272,13 +272,18 @@ qrdxdict begin
 /QRDX-Bold /Helvetica-Bold latin1
 end`;
 
-/** PostScript string literal; characters outside Latin-1 become "?". */
+/**
+ * PostScript string literal; "…" becomes "..." and other characters outside
+ * Latin-1 become "?".
+ */
 function psString(text: string): string {
   let out = "(";
   for (const char of text) {
     const code = char.codePointAt(0) ?? 63;
     if (char === "(" || char === ")" || char === "\\") {
       out += `\\${char}`;
+    } else if (char === "…") {
+      out += "...";
     } else if (code >= 32 && code < 127) {
       out += char;
     } else if (code >= 160 && code <= 255) {

@@ -1,25 +1,25 @@
 ---
-title: "Modèles"
-description: "Des cadres qui placent le code à l'intérieur d'un visuel de taille fixe, et l'API TemplateDefinition pour les cadres que vous dessinez dans le code."
+title: "Templates"
+description: "Des cadres qui placent le code à l'intérieur d'un visuel de taille fixe, et l'API TemplateDefinition pour les cadres que vous dessinez en code."
 icon: LayoutTemplate
 ---
 
-Un modèle est un cadre qui place le code à l'intérieur de son propre visuel. Dans le Playground, les modèles ne forment pas une liste à part. Arrow, Standard Box, Square Border, Striked Box, Halloween et Dot Ring sont des vignettes du groupe **Classique** du sélecteur de cadres, à côté des autres [cadres](/docs/features/frames), et choisir un cadre remplace le précédent.
+Un template est un cadre qui place le code à l'intérieur de son propre visuel. Dans le Playground, les templates ne forment pas une liste à part. Arrow, Standard Box, Square Border, Striked Box, Halloween et Dot Ring sont des vignettes du groupe **Classique** du sélecteur de cadres, à côté des autres [cadres](/docs/features/frames), et choisir un cadre remplace le précédent.
 
-Les modèles diffèrent des autres cadres sur un point : la taille. Un cadre ajoute de l'espace autour du code, donc `size` correspond à la largeur du code et l'image s'agrandit. Un modèle dessine tout son visuel à la taille `size`, avec le code plus petit à l'intérieur.
+Les templates se distinguent des autres cadres sur un point : la taille. Un cadre ajoute de l'espace autour du code, donc `size` correspond à la largeur du code et l'image s'agrandit. Un template dessine tout son visuel à la taille `size`, avec le code plus petit à l'intérieur.
 
-## Modèles intégrés [#built-in-templates]
+## Templates intégrés [#built-in-templates]
 
-Passez l'identifiant comme `templateId`. L'API Image le reçoit sous le nom `template` et la CLI sous `--template`.
+Passez l'identifiant comme `templateId`. L'Image API le prend sous le nom `template` et la CLI sous `--template`.
 
 | `templateId` | Nom | Couleur |
 |--------------|------|-------|
-| `Arrow` | Arrow | La couleur foncée du code (`fgColor`) |
+| `Arrow` | Arrow | La couleur sombre du code (`fgColor`) |
 | `StandardBox` | Standard Box | `fgColor` |
 | `SquareBorder` | Square Border | `fgColor` |
-| `StrikedBox` | Striked Box | Sa propre couleur foncée |
+| `StrikedBox` | Striked Box | Sa propre couleur sombre |
 | `Halloween` | Halloween | Son propre orange, vert et noir |
-| `DotRing` | Dot Ring | Anneau en `fgColor`, texte en blanc ; les deux peuvent changer (voir ci-dessous) |
+| `DotRing` | Dot Ring | Anneau en `fgColor`, texte en blanc ; les deux peuvent changer (voir plus bas) |
 
 `default` ne dessine aucun visuel. Il réduit simplement un peu le code, à 95 % de `size`.
 
@@ -29,7 +29,7 @@ import { QRCode } from 'qrdx';
 <QRCode value="https://example.com" templateId="Arrow" fgColor="#1a56db" size={256} />
 ```
 
-Les couleurs, les motifs et le logo restent dans les propriétés propres du code, si bien qu'un modèle fonctionne avec n'importe quel style :
+Les couleurs, les motifs et le logo restent dans les propriétés du code lui-même, donc un template fonctionne avec n'importe quel style :
 
 ```tsx
 <QRCode
@@ -48,7 +48,7 @@ Les couleurs, les motifs et le logo restent dans les propriétés propres du cod
 
 ## Dot Ring [#dot-ring]
 
-Un code rond. Le code se trouve dans un disque de points, à l'intérieur d'un anneau sombre, avec une ligne de texte disposée le long de l'anneau. Les points affichés proviennent d'un hachage du contenu du code : chaque lien obtient donc son propre anneau, et le même lien obtient toujours le même.
+Un code rond. Le code se trouve dans un disque de points, à l'intérieur d'un anneau sombre, avec une ligne de texte disposée le long de l'anneau. Les points affichés dépendent d'un hash du contenu du code : chaque lien obtient donc son propre anneau, et un même lien obtient toujours le même.
 
 ```tsx
 <QRCode
@@ -75,28 +75,46 @@ Ses réglages se placent dans `customProps` (typé `DotRingProps`) :
 />
 ```
 
-| Propriété | Valeur par défaut | Remarques |
+| Propriété | Par défaut | Remarques |
 | --- | --- | --- |
-| `customText` | « Scan the QR code » répété quatre fois | Texte le long de l'anneau. Les lettres qui ne tiennent pas autour sont omises ; `""` laisse l'anneau vide |
-| `textPosition` | `"top"` | `"top"` : centré en haut, lu dans le sens horaire. `"bottom"` : centré en bas, lu de gauche à droite |
+| `customText` | « Scan the QR code » répété quatre fois autour de l'anneau | Texte le long de l'anneau ; `""` laisse l'anneau vide. Un texte trop long pour l'anneau est ajusté (voir plus bas) |
+| `textFill` | `"none"` | `"repeat"` répète le texte sur tout l'anneau (voir plus bas) |
+| `textPosition` | `"top"` | `"top"` : centré sur le haut, lu dans le sens horaire. `"bottom"` : centré le long du bas, lu de gauche à droite |
 | `textRotation` | `0` | Fait tourner le texte autour du centre, en degrés |
 | `textColor` | `#ffffff` | Couleur du texte |
-| `fontFamily` | pile de polices système | Famille de police CSS du texte |
+| `fontFamily` | pile de polices système | Famille de polices CSS du texte |
 | `fontWeight` | `900` | Graisse de la police |
-| `fontSize` | `32` | Dans le dessin de 593 unités du modèle, où le code mesure 300 de large |
-| `fontLetterSpacing` | `3.5` | Espace supplémentaire entre les lettres, dans les mêmes unités |
+| `fontSize` | `32` | Dans le dessin de 593 unités du template, où le code mesure 300 de large. Un texte long peut être dessiné plus petit |
+| `fontLetterSpacing` | `3.5` | Espace supplémentaire entre les lettres, dans les mêmes unités. Un texte long et `textFill` l'ajustent |
 | `outerCircleColor` | `fgColor` | Couleur de l'anneau |
 | `strokeWidth`, `strokeColor` | `0`, `#000000` | Un contour sur les deux bords de l'anneau |
 | `outerStrokeWidth`, `outerStrokeColor` | `strokeWidth`, `strokeColor` | Le bord extérieur de l'anneau uniquement |
 | `innerStrokeWidth`, `innerStrokeColor` | `strokeWidth`, `strokeColor` | Le bord intérieur de l'anneau uniquement |
 
-Un logo se place au centre, comme sur n'importe quel code. Les liens longs (codes de plus de 49 modules de large) conservent une bande claire entre le code et les points, afin de rester scannables une fois imprimés en petit.
+Un texte qui tient dans l'anneau est placé tel quel, centré sur le haut ou le long du bas. Un texte trop long pour l'anneau ne empiète jamais sur son propre début. Les lettres se rapprochent d'abord, puis la police diminue, jusqu'à la moitié de la taille par défaut (la plus petite taille des libellés de cadre). Le texte referme ensuite l'anneau avec une espace entre mots à l'endroit où il rejoint son début. S'il ne tient toujours pas à cette taille, il est coupé après le dernier mot entier qui tient.
 
-Le texte est du texte SVG dans la police que vous choisissez ; par défaut, c'est la pile de polices système, donc rien n'est téléchargé. Les téléchargements SVG et PNG dans le navigateur utilisent les polices du visiteur. PDF et EPS l'impriment en Helvetica Bold, utilisez donc du texte Latin-1 dans ce cas. `getQRAsPNG` de `qrdx/node` nécessite une police installée sur le serveur, comme les libellés de cadre.
+Un logo se place au centre, comme sur n'importe quel code. Les liens longs (codes de plus de 49 modules de large) conservent une bande claire entre le code et les points, pour rester scannables même imprimés en petit.
 
-## Les modèles sont des spécifications de cadre [#templates-are-frame-specs]
+Le texte est du texte SVG dans la police que vous choisissez ; par défaut, c'est la pile de polices système, donc rien n'est téléchargé. Les téléchargements SVG et PNG dans le navigateur utilisent les polices de l'utilisateur. PDF et EPS l'impriment en Helvetica Bold, utilisez donc du texte Latin-1 dans ce cas. `getQRAsPNG` de `qrdx/node` nécessite une police installée sur le serveur, comme les libellés de cadre.
 
-Le visuel de Arrow, Standard Box, Square Border, Striked Box et Halloween est une [spécification de cadre](/docs/features/frames#frame-specs), au même format JSON que tous les autres cadres, dessinée par le même moteur. `getTemplate(id).spec` la renvoie. Utilisez-la comme cadre lorsque vous voulez le dimensionnement d'un cadre (le code garde sa taille et le visuel s'agrandit autour) et l'option de couleur du cadre :
+### Remplir l'anneau [#filling-the-ring]
+
+Une phrase courte laisse une partie de l'anneau vide. Définissez `textFill: "repeat"` pour la répéter autant de fois que possible, avec un espacement uniformisé pour que l'anneau se referme avec le même écart qu'entre les copies :
+
+```tsx
+<QRCode
+  value="https://example.com/docs"
+  templateId="DotRing"
+  customProps={{ customText: "Read the docs *", textFill: "repeat" }}
+  size={512}
+/>
+```
+
+Donnez la phrase une seule fois. Un texte qui répète déjà une phrase, comme `"Make your own * Make your own *"`, est interprété comme cette phrase, et remplit donc l'anneau de la même façon.
+
+## Les templates sont des spécifications de cadre [#templates-are-frame-specs]
+
+Le visuel d'Arrow, Standard Box, Square Border, Striked Box et Halloween est une [spécification de cadre](/docs/features/frames#frame-specs), au même format JSON que tous les autres cadres, dessinée par le même moteur. `getTemplate(id).spec` la renvoie. Utilisez-la comme cadre lorsque vous voulez le dimensionnement d'un cadre (le code garde sa taille et le visuel s'agrandit autour) et l'option de couleur du cadre :
 
 ```tsx
 import { getTemplate, QRCode } from 'qrdx';
@@ -110,11 +128,11 @@ const spec = getTemplate('Arrow')?.spec;
 />
 ```
 
-Dot Ring n'a pas de spécification : ses points dépendent du contenu du code, il les dessine donc dans le code (voir [Cadres dessinés dans le code](#frames-you-draw-in-code)).
+Dot Ring n'a pas de spécification : ses points dépendent du contenu du code, il les dessine donc en code (voir [Cadres dessinés en code](#frames-you-draw-in-code)).
 
-`templateId` dessine le même visuel qu'auparavant. Les designs enregistrés, les URL d'image, les commandes CLI et le code qui utilisent un identifiant de modèle donnent le même rendu qu'avant.
+`templateId` dessine le même visuel qu'avant. Les designs enregistrés, les URL d'images, les commandes CLI et le code qui utilisent un identifiant de template restent identiques à ce qu'ils ont toujours été.
 
-## Registre des modèles [#template-registry]
+## Registre des templates [#template-registry]
 
 ```tsx
 import { getAllTemplates, getTemplate, getTemplateIds } from 'qrdx';
@@ -124,11 +142,11 @@ getAllTemplates(); // every TemplateDefinition, with its id and name
 getTemplate('Halloween'); // one by id
 ```
 
-## Cadres dessinés dans le code [#frames-you-draw-in-code]
+## Cadres dessinés en code [#frames-you-draw-in-code]
 
-Une spécification de cadre décrit un visuel fixe. Lorsque le visuel doit être calculé, écrivez un `TemplateDefinition` et passez-le comme `customTemplate`. Son `wrapper` reçoit le code en tant que `children` et renvoie le SVG à dessiner. Il dessine sur un canevas de 300 par 300, et le code arrive lui aussi à cette taille : réduisez-le donc pour laisser de la place à votre visuel. `props` contient le `fgColor` et le `bgColor` du code, et le troisième argument contient l'`url` et le `pixelSize` du code.
+Une spécification de cadre décrit un visuel fixe. Quand le visuel doit être calculé, écrivez un `TemplateDefinition` et passez-le comme `customTemplate`. Son `wrapper` reçoit le code en `children` et renvoie le SVG à dessiner. Il dessine sur un canevas de 300 par 300, et le code arrive lui aussi à cette taille : réduisez-le donc pour laisser de la place à votre visuel. `props` contient les `fgColor` et `bgColor` du code, et le troisième argument contient l'`url` et le `pixelSize` du code.
 
-Celui-ci dessine un anneau autour du code :
+Cet exemple dessine un anneau autour du code :
 
 ```tsx
 import { QRCode, type TemplateDefinition } from "qrdx";
@@ -160,7 +178,7 @@ const ringTemplate: TemplateDefinition = {
 />
 ```
 
-Gardez le code assez grand pour être scanné à la distance où les gens tiendront leur téléphone, et laissez un espace clair entre lui et votre visuel. Vérifiez le résultat avec le [score de scan](/docs/features/frames#will-it-scan).
+Gardez le code assez grand pour être scanné à la distance où l'on tiendra son téléphone, et laissez un espace clair entre lui et votre visuel. Vérifiez le résultat avec le [score de scan](/docs/features/frames#will-it-scan).
 
 ## Étapes suivantes [#next-steps]
 

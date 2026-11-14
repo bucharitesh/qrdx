@@ -9,8 +9,8 @@
 import {
   QR_SILHOUETTE_MAX_CELLS,
   QR_SILHOUETTE_MIN_CELLS,
-  type QRSilhouette,
-} from "../types/qr";
+} from "../types/constants";
+import type { QRSilhouette } from "../types/qr";
 import type { QRArtPixels } from "./art";
 
 /** Fewest pixels across the shape itself (after cropping) worth tracing. */

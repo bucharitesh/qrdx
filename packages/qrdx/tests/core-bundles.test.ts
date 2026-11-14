@@ -146,3 +146,122 @@ describe("Preact and Solid adapters", () => {
     expect(code.length).toBeLessThan(2000);
   });
 });
+
+// zod (hundreds of kilobytes) loads only where validation really runs: the
+// schemas are dist/schemas, which the core and the React entry re-export by
+// name and nothing they draw with imports. Drawing frame specs uses the
+// engine's own parser (types/frame-spec-parse.ts).
+describe("rendering without zod", () => {
+  const ZOD_CODE = /\b_zod\b|\bZodError\b|\$ZodType/;
+  const NO_ZOD = [
+    "core.mjs",
+    "core.js",
+    "index.mjs",
+    "index.js",
+    "qr-code-canvas.mjs",
+    "qr-code-canvas.js",
+    "vanilla.mjs",
+    "vanilla.js",
+    "node.mjs",
+    "node.js",
+    "vue.mjs",
+    "vue.js",
+    "preact.mjs",
+    "preact.js",
+    "solid.mjs",
+    "solid.js",
+    "angular.mjs",
+    "angular.js",
+    "element.mjs",
+    "element.js",
+    "element-define.mjs",
+    "element-define.js",
+    // The no-bundler <qrdx-code> exports no schema, so it carries no zod
+    "element.browser.mjs",
+  ];
+
+  it.each(NO_ZOD)("%s neither imports nor contains zod", (file) => {
+    if (!existsSync(dist(file))) return;
+    const code = read(file);
+    expect(imports(code).filter((name) => /^zod(\/|$)/.test(name))).toEqual([]);
+    expect(code).not.toMatch(ZOD_CODE);
+  });
+
+  it("only dist/schemas imports zod", () => {
+    if (!existsSync(dist("schemas.mjs"))) return;
+    expect(imports(read("schemas.mjs"))).toEqual(["zod"]);
+    expect(imports(read("schemas.js"))).toEqual(["zod"]);
+  });
+
+  it.each([
+    ["core.mjs", /export\{([^}]*)\}from'\.\/schemas\.mjs'/g],
+    ["index.mjs", /export\{([^}]*)\}from'\.\/schemas\.mjs'/g],
+  ])(
+    "%s re-exports every schema by name, and nothing else of it",
+    async (file, pattern) => {
+      if (!existsSync(dist(file))) return;
+      const code = read(file);
+      // No namespace import, which would keep every schema (and zod) alive
+      expect(code).not.toMatch(/import\s*\*\s*as\s*\w+\s*from\s*'\.\/schemas/);
+      const named = [...code.matchAll(pattern)].flatMap((match) =>
+        (match[1] as string).split(",").map((name) => name.trim())
+      );
+      const schemas = await import("../types/schemas");
+      expect(named.sort()).toEqual(Object.keys(schemas).sort());
+    }
+  );
+
+  it("the source exports every schema from the engine", async () => {
+    const schemas = await import("../types/schemas");
+    const core = await import("../src/core");
+    for (const name of Object.keys(schemas)) {
+      expect(core, name).toHaveProperty(name);
+      expect((core as Record<string, unknown>)[name], name).toBe(
+        (schemas as Record<string, unknown>)[name]
+      );
+    }
+  });
+
+  // A bundler drops dist/schemas, and with it zod, from an app that only
+  // draws codes. esbuild comes with tsup, which builds the package.
+  it("an app that draws a code bundles no zod", async () => {
+    if (!existsSync(dist("core.mjs"))) return;
+    const { createRequire } = await import("node:module");
+    const { fileURLToPath } = await import("node:url");
+    let esbuild: typeof import("esbuild");
+    try {
+      const fromTsup = createRequire(
+        createRequire(import.meta.url).resolve("tsup/package.json")
+      );
+      esbuild = await import(fromTsup.resolve("esbuild"));
+    } catch {
+      return;
+    }
+    const bundle = async (contents: string) => {
+      const result = await esbuild.build({
+        stdin: {
+          contents,
+          resolveDir: fileURLToPath(new URL("../dist/", import.meta.url)),
+        },
+        bundle: true,
+        write: false,
+        minify: true,
+        format: "esm",
+        platform: "browser",
+        external: ["jsqr", "jspdf"],
+        logLevel: "silent",
+      });
+      return result.outputFiles[0]?.text ?? "";
+    };
+    const draws = await bundle(
+      'import { toSVGString, createQRCodeTree } from "./core.mjs"; console.log(toSVGString, createQRCodeTree);'
+    );
+    expect(draws).not.toMatch(ZOD_CODE);
+    expect(draws).toMatch(/Invalid frame spec/);
+    // …and keeps zod for an app that validates
+    const validates = await bundle(
+      'import { qrPropsSchema } from "./core.mjs"; console.log(qrPropsSchema);'
+    );
+    expect(validates).toMatch(ZOD_CODE);
+  });
+});
