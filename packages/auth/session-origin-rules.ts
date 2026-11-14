@@ -1,5 +1,5 @@
 // The stolen-session check: the pure parts, shared by Better Auth's side
-// (./session-origin.ts), the app (apps/docs/lib/account/session-origin*.ts)
+// (./session-origin.ts), the app (apps/app/lib/account/session-origin*.ts)
 // and tests. Client-safe.
 //
 // A session remembers where it started: the country of the request that

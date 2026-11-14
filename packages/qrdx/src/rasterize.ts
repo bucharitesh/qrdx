@@ -17,7 +17,7 @@ export interface RasterLogo {
   dataUrl: string;
 }
 
-/** Largest logo the rasterizer loads (the cap apps/docs/lib/qr-api/logo.ts uses). */
+/** Largest logo the rasterizer loads (the cap apps/app/lib/qr-api/logo.ts uses). */
 const LOGO_MAX_BYTES = 1024 * 1024;
 
 const LOGO_FETCH_TIMEOUT_MS = 10_000;

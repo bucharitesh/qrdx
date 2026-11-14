@@ -1,7 +1,7 @@
 // Which pages exist in every language, and their URLs. Client-safe.
 //
-// A page is translated once it lives under apps/docs/app/[lang] and its path
-// is in localized-paths.json (apps/docs/scripts/i18n-split-roots.mjs moves it
+// A page is translated once it lives under apps/app/app/[lang] and its path
+// is in localized-paths.json (apps/app/scripts/i18n-split-roots.mjs moves it
 // there). Links to any other page stay unprefixed in every language. The
 // docs are the exception: in a language with docs (docs.ts) every /docs page
 // has a prefixed URL; French visitors reach the English docs at /docs.

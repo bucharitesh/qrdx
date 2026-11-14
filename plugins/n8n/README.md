@@ -105,7 +105,7 @@ The tests use fake n8n contexts and never call the network. The lint config is t
 
 To try changes in a real n8n, run `npx @n8n/node-cli dev` in this folder. It compiles in watch mode, links the package into its own n8n user folder and starts n8n at `http://localhost:5678` (it needs Docker or Podman for that). To use an n8n you already run, pass `--external-n8n --custom-user-folder <the folder that holds .n8n>` and start that n8n with `N8N_DEV_RELOAD=true`.
 
-The dropdown values (shapes, frames, events, scan ranges) are copied from QRdx's OpenAPI document. `apps/docs/tests/plugins/n8n-node.test.ts` fails when they drift from the API.
+The dropdown values (shapes, frames, events, scan ranges) are copied from QRdx's OpenAPI document. `apps/app/tests/plugins/n8n-node.test.ts` fails when they drift from the API.
 
 ## Publishing
 

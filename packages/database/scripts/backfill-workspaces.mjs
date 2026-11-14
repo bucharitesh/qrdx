@@ -3,7 +3,7 @@
 // belong to no workspace (organization_id IS NULL, the old "personal
 // workspace") into it.
 //
-//   node --env-file=apps/docs/.env.local packages/database/scripts/backfill-workspaces.mjs
+//   node --env-file=apps/app/.env.local packages/database/scripts/backfill-workspaces.mjs
 //       dry run (the default): reads, prints every planned insert and update,
 //       rolls back. Writes nothing.
 //   ... backfill-workspaces.mjs --apply --backup ./backfill-backup.json
@@ -17,7 +17,7 @@
 // id (the same formula as packages/auth/own-workspace-id.ts), inserts use
 // ON CONFLICT (id) DO NOTHING, and only rows still without a workspace are
 // moved, so a second run plans nothing. The app creates the same workspaces
-// on sign-up and on a first dashboard visit (apps/docs/lib/workspaces.ts),
+// on sign-up and on a first dashboard visit (apps/app/lib/workspaces.ts),
 // so it may run before or after the app is deployed, and as often as needed.
 //
 // What it changes, and what it never touches:
@@ -35,7 +35,7 @@
 // - community_theme rows point at qr_preset.id, which doesn't change, so the
 //   public gallery keeps every published theme.
 //
-// Self-contained on purpose (no app imports): apps/docs/tests/database/
+// Self-contained on purpose (no app imports): apps/app/tests/database/
 // backfill-workspaces.test.ts checks that the ids, slugs, names and reserved
 // words here match packages/auth, and runs it against a fake database.
 
@@ -582,7 +582,7 @@ async function main() {
   const url = process.env.DATABASE_URL;
   if (!url) {
     console.error(
-      "Set DATABASE_URL (for example with node --env-file=apps/docs/.env.local)."
+      "Set DATABASE_URL (for example with node --env-file=apps/app/.env.local)."
     );
     return 2;
   }

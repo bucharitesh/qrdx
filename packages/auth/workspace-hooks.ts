@@ -18,7 +18,7 @@ import {
 //   its person removed or demoted (account deletion removes it directly);
 // - deleting any other workspace hands each row back to the own workspace of
 //   the member who created it, so codes keep working and stay manageable.
-// The app's lazy path (apps/docs/lib/workspaces.ts) creates own workspaces
+// The app's lazy path (apps/app/lib/workspaces.ts) creates own workspaces
 // the same way, with the same ids.
 
 function badRequest(message: string): APIError {

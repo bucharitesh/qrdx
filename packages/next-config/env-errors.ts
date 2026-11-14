@@ -8,7 +8,7 @@ import type { StandardSchemaV1 } from "@t3-oss/env-core";
  * The template that lists and explains every variable: the main app's,
  * unless an app passes its own to validateTogether().
  */
-const DEFAULT_TEMPLATE = "apps/docs/.env.example";
+const DEFAULT_TEMPLATE = "apps/app/.env.example";
 
 type Issue = StandardSchemaV1.Issue;
 

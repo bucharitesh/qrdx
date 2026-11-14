@@ -1,31 +1,32 @@
-// Message catalogs (apps/docs/messages). English is the source; a key a
+// The docs' message catalogs: the copy of the namespaces the docs read
+// (DOCS_NAMESPACES) that @repo/i18n keeps in packages/i18n/messages, written
+// from apps/app/messages before every dev server, build, typecheck and test
+// here (scripts/zone-inputs.mjs). English is the source; a key a
 // translation lacks falls back to English, so a slip never shows a raw key.
-// The helpers live in @repo/i18n (packages/i18n/messages.ts), with the copy
-// of the docs' namespaces another app reads; this app loads its full
-// catalogs here.
-import { mergeMessages } from "@repo/i18n/messages";
-import en from "@/messages/en.json";
-import { DEFAULT_LOCALE, type Locale } from "./config";
+import { type DocsMessages, loadDocsMessages } from "@repo/i18n/docs-messages";
+import type { DOCS_NAMESPACES } from "@repo/i18n/messages";
+// Types only: the keys and arguments of the namespaces the copy holds, from
+// the catalog they're copied from, so a wrong key fails tsc here too.
+import type en from "../../../app/messages/en.json";
+import type { Locale } from "./config";
 
-export {
-  CHROME_NAMESPACES,
-  mergeMessages,
-  pickMessages,
-} from "@repo/i18n/messages";
+export { mergeMessages, pickMessages } from "@repo/i18n/messages";
 
-export type Messages = typeof en;
+export type Messages = Pick<typeof en, (typeof DOCS_NAMESPACES)[number]>;
+
+/** A locale's docs catalog over English (throws, naming the command, if the copy is missing). */
+export async function loadMessages(locale: Locale): Promise<Messages> {
+  const messages: DocsMessages = await loadDocsMessages(locale);
+  return messages as unknown as Messages;
+}
 
 /**
- * A locale's catalog over English. Found by path, so a new language needs
- * no code here; a missing file renders English (i18n:check reports it).
+ * What every page's client components translate: the parts of the site's
+ * shared chrome the docs show (the product links' copy, the language menu
+ * and the cookie banner).
  */
-export async function loadMessages(locale: Locale): Promise<Messages> {
-  if (locale === DEFAULT_LOCALE) return en;
-  try {
-    const catalog: unknown = (await import(`../../messages/${locale}.json`))
-      .default;
-    return mergeMessages(en, catalog);
-  } catch {
-    return en;
-  }
-}
+export const CHROME_NAMESPACES = [
+  "footer",
+  "localeSwitcher",
+  "consent",
+] as const;

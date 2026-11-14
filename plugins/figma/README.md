@@ -11,7 +11,7 @@ A Figma plugin that inserts styled QR codes as vector layers, built with the [`q
 
 ## How it works
 
-`src/ui.tsx` (the plugin window) renders the SVG with `qrdx` and sends it to `src/code.ts` (Figma's main thread), which calls `figma.createNodeFromSvg`, names the node, stores the settings with `setPluginData("qrdx", …)` and sets relaunch data. `src/messages.ts` holds the message types and validates everything the main thread receives. The plugin has no network access (`"allowedDomains": ["none"]`). The playground link is built in `src/playground-link.ts` and opened by the main thread with `figma.openExternal`, only when you click it. A web address (http or https, without a user name or password) goes after the `#`, which browsers never send to a server; text that isn't a web address is never passed. `apps/docs/tests/plugins/playground-links.test.ts` checks the link against the site's reader.
+`src/ui.tsx` (the plugin window) renders the SVG with `qrdx` and sends it to `src/code.ts` (Figma's main thread), which calls `figma.createNodeFromSvg`, names the node, stores the settings with `setPluginData("qrdx", …)` and sets relaunch data. `src/messages.ts` holds the message types and validates everything the main thread receives. The plugin has no network access (`"allowedDomains": ["none"]`). The playground link is built in `src/playground-link.ts` and opened by the main thread with `figma.openExternal`, only when you click it. A web address (http or https, without a user name or password) goes after the `#`, which browsers never send to a server; text that isn't a web address is never passed. `apps/app/tests/plugins/playground-links.test.ts` checks the link against the site's reader.
 
 ## Build
 

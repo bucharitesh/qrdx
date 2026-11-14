@@ -92,19 +92,12 @@ export type DynamicOpenTarget = typeof DYNAMIC_OPEN_TARGET;
 // ─── end open=dynamic ───────────────────────────────────────────────────────
 
 /**
- * What a link can open in the Get code dialog (open=code&lang=…): each
- * framework of its Frameworks tab, then the tabs that ship. Equal to
- * CODE_TARGETS in components/editor/action-bar/code-snippets.ts, and "cli"
- * goes with CLI_TAB_ENABLED there; keep the two in step.
+ * Get code dialog tabs a link can open (open=code&lang=…): only tabs that
+ * ship. "cli" goes with CLI_TAB_ENABLED in
+ * components/editor/action-bar/code-snippets.ts; keep the two in step.
  */
 export const CODE_LANGS = [
   "react",
-  "vue",
-  "angular",
-  "preact",
-  "solid",
-  "web-component",
-  "vanilla",
   "shadcn",
   "image",
   "api",

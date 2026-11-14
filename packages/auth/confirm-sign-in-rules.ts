@@ -1,6 +1,6 @@
 // Pure and client-safe: what the app and Better Auth's side of "Confirm it's
 // you" agree on (./confirm-sign-in.ts, ./new-sign-in.ts, ./ee/sso-rules.ts,
-// apps/docs/lib/account/confirmation.ts and confirmation-server.tsx).
+// apps/app/lib/account/confirmation.ts and confirmation-server.tsx).
 
 /** How long a confirmation lasts for the session that made it. */
 export const CONFIRMATION_MINUTES = 10;

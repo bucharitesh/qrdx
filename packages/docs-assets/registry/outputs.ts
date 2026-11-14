@@ -3,8 +3,8 @@
  * registry.json: one item per component with its source inlined (imports
  * rewritten for shadcn/ui projects), plus the registry index.
  *
- * Written by build.ts; apps/docs/tests/docs/registry-build.test.ts holds the
- * app's committed copy (apps/docs/public/r) to it.
+ * Written by build.ts; apps/app/tests/docs/registry-build.test.ts holds the
+ * app's committed copy (apps/app/public/r) to it.
  */
 import { readFileSync } from "node:fs";
 import path from "node:path";

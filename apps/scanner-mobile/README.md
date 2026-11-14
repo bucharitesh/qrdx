@@ -4,7 +4,7 @@ The QRdx scanner as a native app: `dev.qrdx.scanner`, named "QRdx Scanner". It's
 
 ## What it is
 
-- **The website's scanner, reused.** The app bundles the same React components as [qrdx.dev/scan](https://qrdx.dev/scan) (`apps/docs/components/scanner`): the parser, the result cards, history, batch mode, CSV export and the safe-link preview. It also reuses their strings in all 11 site languages. `vite.config.ts` swaps five browser-only modules for native ones in `src/native/`:
+- **The website's scanner, reused.** The app bundles the same React components as [qrdx.dev/scan](https://qrdx.dev/scan) (`apps/app/components/scanner`): the parser, the result cards, history, batch mode, CSV export and the safe-link preview. It also reuses their strings in all 11 site languages. `vite.config.ts` swaps five browser-only modules for native ones in `src/native/`:
   - `camera-view`: scanning uses the system's own scanner through `@capacitor/barcode-scanner`: Apple Vision on iOS, Google ML Kit on Android. It opens full screen, reads a code and closes. In batch mode it reopens after each new code.
   - `link-check`: the safe-link preview asks `https://qrdx.dev/api/scan/check` over native HTTP. Only the scanned address is sent.
   - `download`: contacts, calendar events and CSV exports go to the share sheet as files.
@@ -27,7 +27,7 @@ The UI, parser and safety checks already exist as React components. With Capacit
 Prerequisites: Bun, Node 22, Xcode (iOS), Android SDK with Java 21 (Android).
 
 ```bash
-bun install                          # at the repo root: the app reads apps/docs in place
+bun install                          # at the repo root: the app reads apps/app in place
 cd apps/scanner-mobile
 bun install                          # the app's own dependencies
 bun run build                        # strings + decoder, then the web bundle (dist/)
@@ -89,4 +89,4 @@ Nothing below has been done: no developer accounts, signing keys, provisioning p
 - The iOS permission prompts are in English only (`InfoPlist.strings` per language would translate them).
 - Some reused strings still say "in this browser" (history); the app could get its own wording.
 - No share extension (sharing an image to the app from Photos); the installable web scanner does that on Android.
-- No automated tests run in CI for the app. The reused components are tested in `apps/docs`.
+- No automated tests run in CI for the app. The reused components are tested in `apps/app`.

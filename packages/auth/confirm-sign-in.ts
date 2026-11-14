@@ -5,7 +5,7 @@ import { APIError, createAuthMiddleware } from "better-auth/api";
 import { CONFIRM_SIGN_IN_WRONG_ACCOUNT } from "./confirm-sign-in-rules";
 
 // "Confirm it's you" by signing in again with Google, GitHub or workspace SSO
-// (the app starts and finishes it: apps/docs/lib/account/
+// (the app starts and finishes it: apps/app/lib/account/
 // confirmation-sign-in-server.ts). While one is under way the browser holds
 // CONFIRM_SIGN_IN_COOKIE, a random value whose SHA-256 names a `verification`
 // row saying who asked. On the OAuth and SSO callbacks that cookie keeps the

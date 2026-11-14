@@ -4,7 +4,7 @@
 // one picked from a dropdown answer. .github/workflows/issue-area-labels.yml
 // reads the "Area" answer from a new issue's body and adds the label this map
 // gives it. The keys must match the dropdown options in bug_report.yml and
-// feature_request.yml exactly; apps/docs/tests/repo/issue-forms.test.ts
+// feature_request.yml exactly; apps/app/tests/repo/issue-forms.test.ts
 // checks that in CI.
 
 /** Dropdown option → label. `null` means no area label. */

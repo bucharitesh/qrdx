@@ -1,9 +1,10 @@
 {
   "root": false,
   "$schema": "https://biomejs.dev/schemas/2.6.4/schema.json",
-  // Not the root config: the app keeps Biome's recommended rules (below) and
-  // takes only Ultracite's test and Drizzle presets.
-  "extends": ["ultracite/biome/vitest", "ultracite/biome/drizzle"],
+  // Not the root config: like apps/app, where most of these files come
+  // from, the app keeps Biome's recommended rules (below) and takes only
+  // Ultracite's test preset.
+  "extends": ["ultracite/biome/vitest"],
   "vcs": {
     "enabled": true,
     "clientKind": "git",
@@ -18,12 +19,9 @@
       "!dist",
       "!build",
       "!.source",
+      "!generated",
       "!styles/loaders.css",
-      "!styles/styles.css",
-      "!tests/lib/fixtures",
-      "!public/**/*.svg",
-      // Translation memories scripts/i18n-translate.ts writes (over 1 MiB each)
-      "!messages/content"
+      "!styles/styles.css"
     ]
   },
   "formatter": {
