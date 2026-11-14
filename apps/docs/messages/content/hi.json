@@ -29951,9 +29951,9 @@
     "status": "machine",
     "context": "mcp.faqs.9.question"
   },
-  "0a96e97f871b": {
-    "source": "Yes. The hosted server is listed in the official MCP Registry as io.github.bucharitesh/qrdx, so apps and directories that read the registry can find it there.",
-    "text": "हाँ। होस्टेड server आधिकारिक MCP Registry में io.github.bucharitesh/qrdx नाम से लिस्ट है, इसलिए registry पढ़ने वाले ऐप और डायरेक्टरी इसे वहाँ ढूँढ सकते हैं।",
+  "4b3b30987c1e": {
+    "source": "Yes. The hosted server is listed in the official MCP Registry as dev.qrdx/qrdx, so apps and directories that read the registry can find it there.",
+    "text": "हाँ। होस्टेड server आधिकारिक MCP Registry में dev.qrdx/qrdx नाम से लिस्ट है, इसलिए registry पढ़ने वाले ऐप और डायरेक्टरी इसे वहाँ ढूँढ सकते हैं।",
     "status": "machine",
     "context": "mcp.faqs.9.answer"
   },
