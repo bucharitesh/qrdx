@@ -30616,29 +30616,5 @@
     "text": "QRdx는 프롬프트, 참조 이미지, 생성된 이미지를 저장하지 않으며 크레딧 사용량만 집계해요. 아트워크를 만들기 위해 프롬프트, QR 코드 이미지, 참조 이미지는 Vercel AI Gateway를 거쳐 OpenAI의 GPT Image 2로 전송되고, 결과는 곧바로 브라우저로 돌아와요. 보관하고 싶은 이미지는 꼭 다운로드하세요.",
     "status": "machine",
     "context": "aiArt.faqs.10.answer"
-  },
-  "35f9a7f12b6f": {
-    "source": "Saves a design as a theme in your workspace, under the plan's saved-theme limit. Needs a QRdx API key on the connection; every other tool works without one.",
-    "text": "디자인을 워크스페이스에 테마로 저장하며, 요금제의 저장 테마 한도 안에서 가능합니다. 연결에 QRdx API 키가 필요하고, 다른 모든 도구는 키 없이 작동합니다.",
-    "status": "machine",
-    "context": "mcp.tools.5.description"
-  },
-  "f538f592cdab": {
-    "source": "No, for designing and rendering codes and browsing the community: the QRdx MCP server is public and free, and it keeps no session state. Saving a design to your themes (save_template), saving a barcode (save_barcode) and using a logo you uploaded need a QRdx API key, sent as Authorization: Bearer qrdx_… in your app's settings for the server.",
-    "text": "코드를 디자인하고 렌더링하거나 커뮤니티를 둘러보는 데는 필요하지 않습니다. QRdx MCP 서버는 공개되어 있고 무료이며, 세션 상태를 저장하지 않습니다. 디자인을 내 테마에 저장(save_template)하거나, 바코드를 저장(save_barcode)하거나, 업로드한 로고를 사용하려면 QRdx API 키가 필요합니다. 앱의 서버 설정에서 Authorization: Bearer qrdx_… 형식으로 보내세요.",
-    "status": "machine",
-    "context": "mcp.faqs.0.answer"
-  },
-  "9ccc8cb2303b": {
-    "source": "No. The tools render images, format text and read the public community. Only save_template and save_barcode write anything: the theme or barcode you ask them to save, in the API key's workspace. The server doesn't save the codes. The image URLs it returns contain the encoded data, so don't share them if the data is private, such as a Wi-Fi password.",
-    "text": "아니요. 도구는 이미지를 렌더링하고, 텍스트 형식을 만들고, 공개 커뮤니티를 읽을 뿐입니다. save_template과 save_barcode만 데이터를 기록하며, 저장하라고 요청한 테마나 바코드를 API 키의 워크스페이스에 저장합니다. 서버는 코드를 저장하지 않습니다. 반환되는 이미지 URL에는 인코딩된 데이터가 들어 있으므로, Wi-Fi 비밀번호처럼 비공개 데이터라면 공유하지 마세요.",
-    "status": "machine",
-    "context": "mcp.faqs.5.answer"
-  },
-  "81399be3dc7a": {
-    "source": "OpenAI's GPT Image 2, through Vercel AI Gateway, with 171 style presets. QRdx draws a plain black-and-white QR code on the server, the model repaints it as your scene, and QRdx's own scan check makes sure the result decodes, strengthening the code only as much as it needs.",
-    "text": "OpenAI의 GPT Image 2를 Vercel AI Gateway를 통해 사용하며, 171가지 스타일 프리셋을 제공합니다. QRdx가 서버에서 단순한 흑백 QR 코드를 그리면 모델이 이를 원하는 장면으로 다시 그리고, QRdx 자체 스캔 검사가 결과물이 인식되는지 확인합니다. 코드는 필요한 만큼만 보강합니다.",
-    "status": "machine",
-    "context": "aiArt.faqs.9.answer"
   }
 }

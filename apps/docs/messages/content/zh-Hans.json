@@ -30616,29 +30616,5 @@
     "text": "QRdx 不会保存你的提示词、参考图片或生成的图片，只会统计你的额度用量。提示词、二维码图片和所有参考图片会通过 Vercel AI Gateway 发送给 OpenAI 的 GPT Image 2 以生成作品，结果会直接返回到你的浏览器，因此请下载你想保留的图片。",
     "status": "machine",
     "context": "aiArt.faqs.10.answer"
-  },
-  "35f9a7f12b6f": {
-    "source": "Saves a design as a theme in your workspace, under the plan's saved-theme limit. Needs a QRdx API key on the connection; every other tool works without one.",
-    "text": "将设计作为主题保存到你的工作区，受当前套餐已保存主题数量的限制。连接中需要 QRdx API 密钥；其他所有工具无需密钥即可使用。",
-    "status": "machine",
-    "context": "mcp.tools.5.description"
-  },
-  "f538f592cdab": {
-    "source": "No, for designing and rendering codes and browsing the community: the QRdx MCP server is public and free, and it keeps no session state. Saving a design to your themes (save_template), saving a barcode (save_barcode) and using a logo you uploaded need a QRdx API key, sent as Authorization: Bearer qrdx_… in your app's settings for the server.",
-    "text": "设计、生成二维码和浏览社区内容不需要：QRdx MCP 服务器公开且免费，也不保存会话状态。将设计保存到你的主题（save_template）、保存条形码（save_barcode）以及使用你上传的 Logo，则需要 QRdx API 密钥，并在应用中该服务器的设置里以 Authorization: Bearer qrdx_… 的形式发送。",
-    "status": "machine",
-    "context": "mcp.faqs.0.answer"
-  },
-  "9ccc8cb2303b": {
-    "source": "No. The tools render images, format text and read the public community. Only save_template and save_barcode write anything: the theme or barcode you ask them to save, in the API key's workspace. The server doesn't save the codes. The image URLs it returns contain the encoded data, so don't share them if the data is private, such as a Wi-Fi password.",
-    "text": "不会。这些工具只负责生成图片、格式化文本和读取公开社区内容。只有 save_template 和 save_barcode 会写入数据：即你要求保存的主题或条形码，保存在该 API 密钥所属的工作区中。服务器不会保存二维码本身。它返回的图片 URL 包含编码的数据，因此如果数据属于隐私内容（例如 Wi-Fi 密码），请不要分享这些 URL。",
-    "status": "machine",
-    "context": "mcp.faqs.5.answer"
-  },
-  "81399be3dc7a": {
-    "source": "OpenAI's GPT Image 2, through Vercel AI Gateway, with 171 style presets. QRdx draws a plain black-and-white QR code on the server, the model repaints it as your scene, and QRdx's own scan check makes sure the result decodes, strengthening the code only as much as it needs.",
-    "text": "OpenAI 的 GPT Image 2，通过 Vercel AI Gateway 提供，内置 171 种风格预设。QRdx 会在服务器上绘制一个普通的黑白二维码，由模型将其重绘为你所要的场景，再由 QRdx 自带的扫描检测确认结果可以被解码，并且只在必要时才增强二维码。",
-    "status": "machine",
-    "context": "aiArt.faqs.9.answer"
   }
 }
