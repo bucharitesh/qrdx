@@ -41,12 +41,13 @@ export const SITE_ASSET_PREFIX = "/site-static";
 
 /**
  * The request header the main app's proxy.ts sets on the site's pages and
- * assets, from SITE_ZONE_KEY, after dropping any copy the browser sent. The
- * same header name as the console zone's, with the site's own value. The
- * site answers requests without it however it sees fit (a redirect to
- * qrdx.dev keeps its own address out of search results).
+ * assets, from SITE_ZONE_KEY, after dropping any copy the browser sent. A
+ * header of its own, never the console's (x-qrdx-zone-key): a site request
+ * never carries the console's key, and a console request never carries the
+ * site's. The site answers requests without it however it sees fit (a
+ * redirect to qrdx.dev keeps its own address out of search results).
  */
-export const SITE_KEY_HEADER = "x-qrdx-zone-key";
+export const SITE_KEY_HEADER = "x-qrdx-site-key";
 
 /** A next.config rewrite that only applies on the hosts given. */
 export interface SiteRewrite {
@@ -216,6 +217,19 @@ export function isSitePath(
     siteGroup(pathname, groups) !== null ||
     underPrefix(pathname, SITE_ASSET_PREFIX)
   );
+}
+
+/**
+ * Whether `href` is a page the site serves: a group's prefix or anything
+ * under it (/blog, /blog/…), with any query or hash. External and relative
+ * hrefs never are. Links into the site must be plain <a> elements (a full
+ * page load): next/link would try to load the site's page in this app. Both
+ * apps serve these URLs, so that holds with SITE_ORIGIN set or not.
+ */
+export function isSitePagePath(href: string): boolean {
+  if (!href.startsWith("/") || href.startsWith("//")) return false;
+  const path = href.split(/[?#]/, 1)[0] ?? href;
+  return siteGroup(path) !== null;
 }
 
 /**

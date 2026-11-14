@@ -193,8 +193,9 @@ export const env = validateTogether(() =>
             "must be an origin only (https://host, or http://localhost:port), with no path or query",
         })
         .optional(),
-      // Sent to the site on its pages (x-qrdx-zone-key), so it can turn away
-      // requests that didn't come through this app. Same value on both.
+      // Sent to the site on its pages (x-qrdx-site-key, its own header, never
+      // the console's), so it can turn away requests that didn't come through
+      // this app. Same value on both.
       SITE_ZONE_KEY: z.string().min(1).optional(),
       // Which groups of pages the site serves, comma-separated ("blog");
       // unset, every group. Also inlined at build time.

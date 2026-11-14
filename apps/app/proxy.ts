@@ -79,6 +79,8 @@ function toConsole(
 ): NextResponse {
   const requestHeaders = new Headers(request.headers);
   requestHeaders.delete(CONSOLE_KEY_HEADER);
+  // Never the site's key on a console request.
+  requestHeaders.delete(SITE_KEY_HEADER);
   requestHeaders.delete(WORKSPACE_HEADER);
   if (env.CONSOLE_ZONE_KEY) {
     requestHeaders.set(CONSOLE_KEY_HEADER, env.CONSOLE_ZONE_KEY);
@@ -108,13 +110,15 @@ const forSite = (request: NextRequest) =>
 /**
  * A site page or asset: public, so no session is read and no policy is
  * set here (its pages keep this app's prerendered-page rules from
- * next.config.ts, as the docs' do). It gets the zone key, so the site can
+ * next.config.ts, as the docs' do). It gets the site's key, so the site can
  * tell requests that came through this app; any copy the browser sent is
- * dropped, and so is the workspace header.
+ * dropped, and so are the console's key header and the workspace header.
  */
 function toSite(request: NextRequest): NextResponse {
   const requestHeaders = new Headers(request.headers);
   requestHeaders.delete(SITE_KEY_HEADER);
+  // Never the console's key on a site request.
+  requestHeaders.delete(CONSOLE_KEY_HEADER);
   requestHeaders.delete(WORKSPACE_HEADER);
   if (env.SITE_ZONE_KEY) {
     requestHeaders.set(SITE_KEY_HEADER, env.SITE_ZONE_KEY);
@@ -139,12 +143,17 @@ function next(request: NextRequest): NextResponse {
   const { pathname } = request.nextUrl;
   const slug = workspaceSlugFromPath(pathname);
   const nonce = CSP_ENABLED && NONCE_ROUTE.test(pathname);
-  if (!(slug || nonce || request.headers.has(WORKSPACE_HEADER))) {
+  // A site key the browser sent goes no further: only toSite() sets one.
+  const forgedSiteKey = request.headers.has(SITE_KEY_HEADER);
+  if (
+    !(slug || nonce || forgedSiteKey || request.headers.has(WORKSPACE_HEADER))
+  ) {
     return NextResponse.next();
   }
 
   const requestHeaders = new Headers(request.headers);
   requestHeaders.delete(WORKSPACE_HEADER);
+  requestHeaders.delete(SITE_KEY_HEADER);
   if (slug) requestHeaders.set(WORKSPACE_HEADER, slug);
   if (!nonce) {
     return NextResponse.next({ request: { headers: requestHeaders } });

@@ -308,3 +308,59 @@ describe("links to the docs", () => {
     );
   });
 });
+
+// ─── 4. Into the site zone ───────────────────────────────────────────────────
+
+describe("links to the site's pages", () => {
+  // The blog is moving to the marketing site behind the same URLs
+  // (@repo/next-config/site-zone), and this app serves it until then: a link
+  // into it loads the page in full in both modes.
+  const render = async (href: string, props: object = {}) => {
+    const { LocaleLink } = await import("@/components/i18n/locale-link");
+    return renderHindi(
+      <LocaleLink href={href} {...props}>
+        x
+      </LocaleLink>,
+    );
+  };
+
+  /** The <a> tags in `html` whose href is a site page. */
+  const siteAnchors = (html: string) =>
+    [...html.matchAll(/<a\b[^>]*>/g)]
+      .map((match) => match[0])
+      .filter((tag) => /\bhref="\/blog(?:[/"?#])/.test(tag));
+
+  it("are plain <a> elements", async () => {
+    for (const href of [
+      "/blog",
+      "/blog/dynamic-vs-static-qr-codes",
+      "/blog/category/education?page=2#top",
+    ]) {
+      expect(await render(href, { prefetch: false })).toBe(
+        `<a href="${href}">x</a>`,
+      );
+    }
+  });
+
+  it("leave neighbouring pages to next/link", async () => {
+    expect(await render("/customers")).toContain("data-next-link");
+    expect(await render("/blogx")).toContain("data-next-link");
+  });
+
+  it("hold for the header and footer entries that point at the blog", async () => {
+    const { Navbar } = await import("@/components/sections/navbar");
+    const { FooterSection } = await import(
+      "@/components/sections/footer-section"
+    );
+    for (const [name, node] of [
+      ["navbar", <Navbar key="navbar" />],
+      ["footer", <FooterSection key="footer" />],
+    ] as const) {
+      const anchors = siteAnchors(renderHindi(node));
+      expect(anchors.length, name).toBeGreaterThan(0);
+      for (const tag of anchors) {
+        expect(tag, `${name}: ${tag}`).not.toContain("data-next-link");
+      }
+    }
+  });
+});

@@ -16,6 +16,7 @@ import { CORE_PATHS, corePathSamples } from "@repo/next-config/core-paths";
 import { prerenderedPagesSource } from "@repo/next-config/csp";
 import {
   isSiteOrigin,
+  isSitePagePath,
   isSitePath,
   isSiteZoneGroups,
   lowerCasedSitePrefix,
@@ -261,6 +262,30 @@ describe("site paths", () => {
     expect(isSitePath(pathname)).toBe(false);
   });
 
+  it("knows the hrefs that must load the site's page in full", () => {
+    for (const href of [
+      "/blog",
+      "/blog/dynamic-vs-static-qr-codes",
+      "/blog/category/education?page=2#top",
+      "/blog/rss.xml",
+    ]) {
+      expect(isSitePagePath(href), href).toBe(true);
+    }
+    for (const href of [
+      "/",
+      "/blogx",
+      "/blog.md",
+      "/customers",
+      "/docs",
+      "/site-static/_next/static/x.js",
+      "https://qrdx.dev/blog",
+      "//qrdx.dev/blog",
+      "blog/relative",
+    ]) {
+      expect(isSitePagePath(href), href).toBe(false);
+    }
+  });
+
   it("includes the site's build assets, which belong to no group", () => {
     expect(isSitePath("/site-static/_next/static/x.js")).toBe(true);
     expect(siteGroup("/site-static/_next/static/x.js")).toBeNull();
@@ -308,7 +333,9 @@ describe("the groups and this app's own paths", () => {
       }
     }
     expect(SITE_ASSET_PREFIX).toMatch(/^\/[a-z-]+$/);
-    expect(SITE_KEY_HEADER).toBe(CONSOLE_KEY_HEADER);
+    // Its own header, never the console's: each zone gets only its own key.
+    expect(SITE_KEY_HEADER).toBe("x-qrdx-site-key");
+    expect(SITE_KEY_HEADER).not.toBe(CONSOLE_KEY_HEADER);
   });
 
   it("takes over none of this app's own paths", () => {
@@ -327,6 +354,32 @@ describe("the groups and this app's own paths", () => {
           prefix === root || prefix.startsWith(`${root}/`),
           `${prefix} is under ${core}`,
         ).toBe(false);
+      }
+    }
+  });
+
+  it("never lists an /admin path: the console's and this app's alone", () => {
+    for (const prefix of [
+      ...SITE_GROUP_NAMES.flatMap((group) => SITE_GROUPS[group]),
+      SITE_ASSET_PREFIX,
+    ]) {
+      expect(prefix === "/admin" || prefix.startsWith("/admin/"), prefix).toBe(
+        false,
+      );
+    }
+    for (const pathname of ["/admin", "/admin/growth", "/ADMIN/blog"]) {
+      expect(isSitePath(pathname), pathname).toBe(false);
+      expect(isSitePagePath(pathname), pathname).toBe(false);
+      expect(lowerCasedSitePrefix(pathname), pathname).toBeNull();
+    }
+    for (const rule of siteZoneRewrites(ORIGIN, { hosts: HOSTS })) {
+      const match = getPathMatch(rule.source, {
+        strict: true,
+        removeUnnamedParams: true,
+        regexModifier: (regex: string) => modifyRouteRegex(regex),
+      });
+      for (const pathname of ["/admin", "/admin/growth", "/admin/blog"]) {
+        expect(match(pathname), `${rule.source} vs ${pathname}`).toBe(false);
       }
     }
   });
@@ -788,14 +841,95 @@ describe("proxy.ts", () => {
     expect(forwarded(response)(SITE_KEY_HEADER)).toBeUndefined();
   });
 
-  it("changes nothing while SITE_ORIGIN is unset", async () => {
-    const response = await off(
-      request("https://qrdx.dev/blog", { [SITE_KEY_HEADER]: "forged" }),
-    );
+  it("changes nothing while SITE_ORIGIN is unset, but drops a forged site key", async () => {
+    const response = await off(request("https://qrdx.dev/blog"));
     expect(response.status).toBe(200);
     // Passed on untouched: no header is rewritten at all.
     expect(response.headers.get("x-middleware-override-headers")).toBeNull();
     expect(response.headers.get("content-security-policy")).toBeNull();
+    const forged = await off(
+      request("https://qrdx.dev/blog", { [SITE_KEY_HEADER]: "forged" }),
+    );
+    expect(forged.status).toBe(200);
+    expect(
+      forged.headers.get("x-middleware-override-headers")?.split(","),
+    ).not.toContain(SITE_KEY_HEADER);
+    expect(forwarded(forged)(SITE_KEY_HEADER)).toBeUndefined();
+  });
+
+  // The four rules for the site's key header, each on its own.
+  it("strips a client-sent site key on every request it handles", async () => {
+    for (const [proxy, mode] of [
+      [on, "on"],
+      [off, "off"],
+      [both, "both"],
+    ] as const) {
+      for (const pathname of [
+        "/blog",
+        "/blog/some-post",
+        "/site-static/x.js",
+        "/admin/users/u1",
+        "/oauth/consent",
+        "/invite/abc",
+      ]) {
+        const response = await proxy(
+          request(`https://qrdx.dev${pathname}`, {
+            [SITE_KEY_HEADER]: "forged",
+          }),
+        );
+        const label = `${mode} ${pathname}`;
+        expect(response.status, label).toBe(200);
+        const names =
+          response.headers.get("x-middleware-override-headers")?.split(",") ??
+          [];
+        // Either the request's headers are replaced without it, or it's the
+        // real key on a proxied site request: never the browser's value.
+        expect(names.length, label).toBeGreaterThan(0);
+        expect(forwarded(response)(SITE_KEY_HEADER), label).not.toBe("forged");
+      }
+    }
+  });
+
+  it("adds the site key only on requests it proxies to the site", async () => {
+    const proxied = await on(request("https://qrdx.dev/blog/some-post"));
+    expect(forwarded(proxied)(SITE_KEY_HEADER)).toBe(KEY);
+    for (const [proxy, url] of [
+      [on, "https://other.example.com/blog"],
+      [on, "https://qrdx.dev/admin/users/u1"],
+      [on, "https://qrdx.dev/oauth/consent"],
+      [off, "https://qrdx.dev/blog"],
+      [both, "https://qrdx.dev/admin/growth"],
+      [both, "https://qrdx.dev/console-static/x.js"],
+    ] as const) {
+      const response = await proxy(request(url));
+      expect(forwarded(response)(SITE_KEY_HEADER), url).toBeUndefined();
+    }
+  });
+
+  it("never sends the console's key header to the site", async () => {
+    for (const pathname of ["/blog", "/blog/some-post", "/site-static/x.js"]) {
+      const response = await both(
+        request(`https://qrdx.dev${pathname}`, {
+          [CONSOLE_KEY_HEADER]: "forged",
+        }),
+      );
+      const sent = forwarded(response);
+      expect(sent(SITE_KEY_HEADER), pathname).toBe(KEY);
+      expect(sent(CONSOLE_KEY_HEADER), pathname).toBeUndefined();
+    }
+  });
+
+  it("never sends the site's key header to the console", async () => {
+    for (const pathname of ["/admin/growth", "/console-static/x.js"]) {
+      const response = await both(
+        request(`https://qrdx.dev${pathname}`, {
+          [SITE_KEY_HEADER]: "forged",
+        }),
+      );
+      const sent = forwarded(response);
+      expect(sent(CONSOLE_KEY_HEADER), pathname).toBe(CONSOLE_KEY);
+      expect(sent(SITE_KEY_HEADER), pathname).toBeUndefined();
+    }
   });
 
   it("tells the zones apart when both are on: each gets its own key", async () => {
