@@ -222,6 +222,18 @@ const boxFields = {
   height: positive,
 };
 
+/**
+ * An outline drawn along a shape's edge, centered on it (half inside, half
+ * outside), in one solid color. Corners are mitered, as SVG draws them.
+ */
+const strokeSchema = z
+  .object({
+    color: frameSpecColorSchema,
+    /** Thickness, at most 10% of the artboard's shorter side */
+    width: positive,
+  })
+  .strict();
+
 const rectShapeSchema = z
   .object({
     type: z.literal("rect"),
@@ -233,6 +245,7 @@ const rectShapeSchema = z
       .object({ ...boxFields, radius: nonNegative.optional() })
       .strict()
       .optional(),
+    stroke: strokeSchema.optional(),
   })
   .strict();
 
@@ -245,6 +258,7 @@ const circleShapeSchema = z
     /** Radius of a hole in the middle (a ring) */
     hole: positive.optional(),
     fill: frameSpecPaintSchema,
+    stroke: strokeSchema.optional(),
   })
   .strict();
 
@@ -256,6 +270,7 @@ const ellipseShapeSchema = z
     rx: positive,
     ry: positive,
     fill: frameSpecPaintSchema,
+    stroke: strokeSchema.optional(),
   })
   .strict();
 
@@ -267,6 +282,7 @@ const polygonShapeSchema = z
       .min(3)
       .max(FRAME_SPEC_LIMITS.maxPolygonPoints),
     fill: frameSpecPaintSchema,
+    stroke: strokeSchema.optional(),
   })
   .strict();
 
@@ -277,6 +293,7 @@ const pathShapeSchema = z
     d: z.string().min(2).max(FRAME_SPEC_LIMITS.maxPathLength),
     fill: frameSpecPaintSchema,
     fillRule: z.enum(["nonzero", "evenodd"]).optional(),
+    stroke: strokeSchema.optional(),
   })
   .strict();
 
@@ -415,9 +432,13 @@ const frameSpecObjectSchema = z
          * them white, so artwork never shows through the quiet zone.
          * "background" keeps them see-through too (and leaves the plate
          * out); it's allowed only when nothing but `background` fills, or a
-         * ring whose hole clears the plate, lies under the plate.
+         * ring whose hole clears the plate, lies under the plate. "none"
+         * paints no plate at all: the code's own background and margin are
+         * its light space, so `padding` may be under 4% (down to 0), and
+         * whatever lies under the code shows through a see-through
+         * background.
          */
-        plate: z.enum(["opaque", "background"]).optional(),
+        plate: z.enum(["opaque", "background", "none"]).optional(),
       })
       .strict(),
     /** Default colors, used when the theme sets none */
@@ -582,7 +603,13 @@ function paintsUnderPlate(
   bounds: Box
 ): boolean {
   const zone = frameSpecQrZone(spec);
-  if (shape.fill === "background" || !overlaps(bounds, zone)) {
+  if (!overlaps(bounds, zone)) {
+    return false;
+  }
+  if ("stroke" in shape && shape.stroke) {
+    return true;
+  }
+  if (shape.fill === "background") {
     return false;
   }
   if (shape.type === "rect" && shape.hole) {
@@ -609,6 +636,31 @@ function paintsUnderPlate(
  * segments it counts against FRAME_SPEC_LIMITS.maxSegments.
  */
 export function frameSpecShapeBounds(shape: FrameSpecShape): {
+  bounds: Box | null;
+  segments: number;
+} {
+  const outline = outlineBounds(shape);
+  const stroke = "stroke" in shape ? shape.stroke : undefined;
+  if (!(stroke && outline.bounds)) {
+    return outline;
+  }
+  // Half the width outside a curve; a mitered corner reaches further (up to
+  // SVG's default miter limit of 4 half widths)
+  const reach =
+    shape.type === "circle" || shape.type === "ellipse"
+      ? stroke.width / 2
+      : shape.type === "rect"
+        ? (stroke.width * Math.SQRT2) / 2
+        : stroke.width * 2;
+  const { x0, y0, x1, y1 } = outline.bounds;
+  return {
+    bounds: { x0: x0 - reach, y0: y0 - reach, x1: x1 + reach, y1: y1 + reach },
+    // The outline is drawn a second time, as the stroke
+    segments: outline.segments * 2,
+  };
+}
+
+function outlineBounds(shape: FrameSpecShape): {
   bounds: Box | null;
   segments: number;
 } {
@@ -722,7 +774,7 @@ function checkFrameSpec(spec: FrameSpec, ctx: z.RefinementCtx) {
   // The code: big enough, inside the artboard with its padding
   const { qr } = spec;
   const padding = frameSpecPadding(spec);
-  if (padding < qr.size * limits.minPadding - 1e-9) {
+  if (qr.plate !== "none" && padding < qr.size * limits.minPadding - 1e-9) {
     issue(
       `qr.padding must be at least ${limits.minPadding * 100}% of qr.size`,
       ["qr", "padding"]
@@ -776,6 +828,17 @@ function checkFrameSpec(spec: FrameSpec, ctx: z.RefinementCtx) {
     }
     if (shape.type === "circle" && shape.hole && shape.hole >= shape.r) {
       issue("The hole must be smaller than the circle", [...path, "hole"]);
+    }
+    if (
+      "stroke" in shape &&
+      shape.stroke &&
+      shape.stroke.width > Math.min(width, height) * 0.1 + 1e-9
+    ) {
+      issue("A stroke may be at most 10% of the artboard's shorter side", [
+        ...path,
+        "stroke",
+        "width",
+      ]);
     }
     if (qr.plate === "background" && paintsUnderPlate(shape, spec, bounds)) {
       issue(

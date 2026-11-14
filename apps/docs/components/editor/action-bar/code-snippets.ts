@@ -20,7 +20,7 @@
 // serializer lists what its tab can't express in `omitted`, in plain English.
 
 import { API_BASE_URL, MCP_ENDPOINT, SHADCN_REGISTRY_URL } from "@repo/config";
-import { getTemplateIds } from "qrdx";
+import { getTemplate, getTemplateIds } from "qrdx";
 import {
   BODY_PATTERN,
   CORNER_EYE_DOT_PATTERNS,
@@ -205,7 +205,8 @@ export const LEFT_OUT = {
 
 const shapeLeftOut = (part: "dot" | "eye" | "eye center", value: string) =>
   `The "${value}" ${part} shape`;
-const borderLeftOut = (id: string) => `The "${id}" border`;
+const borderLeftOut = (id: string) =>
+  `The "${getTemplate(id)?.name ?? id}" frame`;
 
 /** What the editor renders when a style field is unset (QRCodeSVG defaults). */
 const ENGINE_DEFAULTS = {

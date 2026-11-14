@@ -4373,7 +4373,6 @@
         "frame": "Marco",
         "padding": "Margen",
         "errorCorrection": "Corrección de errores",
-        "border": "Borde",
         "none": "Ninguno"
       },
       "dotSizeSection": {
@@ -4396,31 +4395,26 @@
         }
       },
       "frameControls": {
-        "importSvg": "Importar SVG",
+        "uploadSvg": "Subir SVG",
         "publishFrame": "Publicar marco",
         "theFrameIsAddedAround": "El marco se añade alrededor del código, por lo que la imagen descargada es más grande y el código sigue siendo escaneable.",
         "label": "Etiqueta",
         "pickAFrameFirst": "Elige un marco primero",
-        "none": "Ninguno"
+        "none": "Ninguno",
+        "takesDotColor": "Toma el color de los puntos del código.",
+        "alsoHasTemplate": "Este diseño también incluye el marco {name} dentro de este. Si eliges otro marco, se reemplazan ambos.",
+        "templateKeepsSize": "Este marco ajusta el código en su interior, así que la imagen descargada mantiene el tamaño que elijas."
       },
       "frameFields": {
         "textSize": "Tamaño del texto"
       },
       "framePicker": {
-        "more": "Más",
         "showAll": "Ver todos",
         "frame": "Marco",
-        "moreFrames": "Más marcos",
-        "allTotalFrames": "Los {total, number} marcos",
-        "allFrames": "Todos los marcos",
         "searchFrames": "Buscar marcos",
         "searchTotalFrames": "Buscar entre {total, number} marcos",
-        "closeFrames": "Cerrar marcos",
         "filterFrames": "Filtrar marcos",
         "labelFrames": "Marcos: {label}",
-        "commonFrames": "Marcos comunes",
-        "everyFrameBuiltInStyles": "Todos los marcos: los marcos clásicos, los códigos con forma, los marcos oficiales de QRdx y los marcos que guardaste. Al elegir uno, se aplica de inmediato.",
-        "less": "Menos",
         "all": "Todos",
         "noFramesMatchQuery": "Ningún marco coincide con \"{query}\".",
         "loadingFrames": "Cargando marcos…",
@@ -4554,7 +4548,6 @@
       },
       "patternControls": {
         "customizeOuterAndCenter": "Personaliza exterior y centro",
-        "border": "Borde",
         "higherLevelsSurviveScratchesAnd": "Los niveles más altos resisten arañazos y logos, pero añaden más puntos. Usa H cuando añadas un logo.",
         "dotShape": "Forma del punto",
         "dotShapes": "formas de punto",

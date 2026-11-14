@@ -1,37 +1,37 @@
 ---
-title: "フレームと行動喚起を追加する"
+title: "フレームとコール・トゥ・アクションを追加する"
 description: "QRコードの周りに枠と「Scan me」のような短いメッセージを付けます。"
 ---
 
-フレームを付けると、スキャンしたときに何が得られるかを伝えられます。
+フレームを付けると、スキャンしたときに何が得られるのかが伝わります。
 
 ## フレームを追加する [#add-a-frame]
 
-1. [Playground](/playground?tab=design&section=frame)で **Design** タブを開き、**Frame** を選びます。
-2. フレームを選びます。**Classic** グループには標準のフレームがあります。**More** をクリックすると、検索付きですべてのグループが開きます。
-3. **Label** にテキストを入力するか、用意されている文言から選びます。Scan me、Scan for menu、Join Wi-Fi、Leave a review、Follow us、Pay here、Save contact、Download the app から選べます。
-4. **Frame color**、**Text color**、**Text size** を設定します。フレームによっては **Second line** も使えます。
+1. [Playground](/playground?tab=design&section=frame)で **デザイン** タブを開き、**フレーム** を選びます。
+2. フレームを選びます。名前で検索するか、グループから選べます。**Classic** には、Arrow、Standard Box、Square Border、Striked Box、Halloween、Dot Ring などの組み込みフレームがあります。フレームを選ぶと、それまでのフレームは置き換わります。独自のアートワークを使うには、サインインして検索欄の横にある **SVGをアップロード** を選びます。SVGの図形と色がフレームになります。
+3. **ラベル** にテキストを入力するか、用意されたものから選びます。Scan me、Scan for menu、Join Wi-Fi、Leave a review、Follow us、Pay here、Save contact、Download the app から選べます。
+4. **フレームの色**、**テキストの色**、**テキストサイズ** を設定します。フレームによっては **2行目** も設定できます。Arrow、Standard Box、Square Border、Dot Ring はコードのドットの色が使われ、Striked Box と Halloween は独自の色のままです。
 
 {/* Shaped codes (feat/heart-silhouette-shapes) */}
 
-## コードを図形の中に配置する [#put-the-code-in-a-shape]
+## コードを形の中に入れる [#put-the-code-in-a-shape]
 
-同じ選択画面に **Shaped codes** グループがあります。**Dot circle** と **Heart** は、装飾的なドットで作った円やハートの中にコードを配置します。**Silhouette** は、お好みの図形でコードを満たします。明るい背景または透明な背景に、暗い色またはべた塗りの図形を置いた PNG、JPEG、SVG をアップロードしてください。使われるのは輪郭だけで、画像そのものは使われません。
+同じピッカーに **シェイプ付きコード** グループがあります。**Dot circle** と **Heart** は、装飾用のドットで作った円やハートの中にコードを入れます。**Silhouette** は、お好みの形でコードを囲みます。明るい背景または透明な背景に、暗い色または単色の形が描かれたPNG、JPEG、SVGをアップロードしてください。保持されるのは輪郭だけで、画像そのものは使われません。
 
-スキャナが読み取るのは中央のコードだけです。同じスキャン距離で使うには、図形付きのコードを四角いコードより大きく印刷してください。図形はフレームの代わりに使うものなので、一方を選ぶともう一方は解除されます。コードを収めるには細すぎる図形は、メッセージが表示されて受け付けられません。
+スキャナーが読み取るのは中央のコードだけです。同じスキャン距離で読み取るには、シェイプ付きコードを四角いコードより大きく印刷してください。シェイプはフレームの代わりに使われ、どちらかを選ぶともう一方は解除されます。コードを入れるには細すぎる形は、メッセージが表示されて使用できません。
 
 {/* end shaped codes */}
 
-## フレームがスキャンの妨げになることはありません [#frames-never-hurt-scanning]
+## フレームはスキャンの妨げになりません [#frames-never-hurt-scanning]
 
-フレームはコードの外側に配置されます。コードのマスを隠すことはありません。
+フレームはコードの外側に置かれます。コードのマスを隠すことはありません。
 
-フレームのテキストは短くしてください。3〜4語であれば、離れた場所からでも読みやすくなります。
+フレームのテキストは短くしてください。3〜4語なら離れた場所からでも読みやすくなります。
 
 ## フレーム付きでダウンロードする [#download-with-the-frame]
 
-フレームはすべてのダウンロードに、どの形式でも含まれます。印刷については[QRコードをダウンロードして印刷する](/docs/help/getting-started/download-and-print)をご覧ください。
+フレームは、どの形式のダウンロードにも含まれます。印刷については、[QRコードのダウンロードと印刷](/docs/help/getting-started/download-and-print)をご覧ください。
 
-## 関連ページ [#related]
+## 関連項目 [#related]
 
 - [開発者向けのフレームと印刷](/docs/features/frames)

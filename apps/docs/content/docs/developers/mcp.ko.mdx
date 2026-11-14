@@ -82,7 +82,7 @@ https://mcp.qrdx.dev/mcp
 | `design_qr` | 어시스턴트가 고른 스타일, 기본 제공 테마 또는 커뮤니티 항목에서 시작한 스타일로 모든 콘텐츠 유형의 코드를 디자인하고, 스캔 점수를 확인한 뒤 점수가 Great가 될 때까지 스타일을 보정해요. 점수, 변경한 내용, 스타일 JSON, Playground 링크, PNG, SVG를 반환해요. |
 | `list_options` | `design_qr`가 받는 모든 값을 나열해요. 콘텐츠 유형과 필드, 색상과 그라디언트, 모양, 프레임(QRdx 공식 프레임의 ID 포함), 테두리, 로고 아이콘과 브랜드 로고, 기본 제공 테마, 오류 정정 수준, 제한 사항이 포함돼요. |
 | `generate_qr_code` | 에디터의 스타일로 QR 코드를 렌더링해요. PNG 이미지와, Markdown, HTML, 인쇄에 바로 쓸 수 있는 공개 [Image API](/docs/developers/image-api) URL(SVG, PNG, 무손실 WebP, 벡터 EPS)을 반환하고, 요청하면 SVG 마크업도 반환해요. |
-| `list_qr_styles` | 본체 패턴, 코너 눈과 눈 점 모양, 테두리 템플릿, 프레임, 로고 아이콘, 오류 정정 수준, 기본값, 제한 사항을 나열해요. |
+| `list_qr_styles` | 본체 패턴, 코너 눈과 눈 점 모양, 프레임(기본 제공 스타일과 템플릿으로 그리는 프레임), 로고 아이콘, 오류 정정 수준, 기본값, 제한 사항을 나열해요. |
 | `search_community` | 게시된 [커뮤니티](/community) 프레임, 테마, 컬렉션을 단어, 유형, 태그로 찾아요. |
 | `get_community_item` | 커뮤니티 항목 하나와 그 항목이 적용하는 스타일을 반환해요. `design_qr` 또는 `generate_qr_code`에 바로 사용할 수 있어요. |
 | `save_template` | 디자인을 워크스페이스의 테마로 저장해요. [API 키](#use-an-api-key)가 필요해요. |

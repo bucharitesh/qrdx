@@ -94,7 +94,7 @@ const src = `https://api.qrdx.dev/v1/qr?data=${encodeURIComponent(link)}&style=$
 | `dot` | `square` | 각 모서리 눈 안쪽 점의 모양 |
 | `level` | `Q` | 오류 정정: `L`(~7%), `M`(~15%), `Q`(~25%) 또는 `H`(~30%) |
 | `margin` | `4` | 코드 주변 여백(콰이어트 존), 모듈 단위, `0`~`16` |
-| `template` | 없음 | 장식용 테두리 템플릿 |
+| `template` | 없음 | [템플릿으로 그리는 프레임](/docs/features/templates): 전체 이미지의 너비가 `size`이고 코드는 그 안에 더 작게 들어가요 |
 | `frame` | 없음 | `banner-bottom`, `speech-bubble`, `circle` 같은 기본 제공 행동 유도 [프레임](/docs/features/frames)({facts.frameStyles}개의 기본 프레임 모두 사용 가능하며 각각 프레임 사양에 따라 그려집니다) |
 | `frameText` | `Scan me` | 프레임의 레이블, 최대 24자. `style`이나 `item`의 프레임 레이블도 바꿉니다 |
 | `style` | 없음 | JSON으로 된 에디터의 전체 디자인. [스타일](#style) 참고 |
@@ -115,7 +115,7 @@ const src = `https://api.qrdx.dev/v1/qr?data=${encodeURIComponent(link)}&style=$
 | `bgColor`, `fgColor`, `eyeColor`, `dotColor` | 색상(`#155dfc` 같은 16진수, `rgb()`, `hsl()` 또는 색상 이름) 또는 그라디언트: `{ "type": "linear", "angle": 45, "stops": [...] }` 또는 `{ "type": "radial", "stops": [...] }`. `{ "color", "offset" }` 형태의 정지점 2~8개(offset 0~100) |
 | `bodyPattern`, `cornerEyePattern`, `cornerEyeDotPattern` | [패턴 값](#pattern-values) |
 | `level`, `margin` | 위 매개변수와 같음(`margin`은 0~16) |
-| `templateId` | 테두리 템플릿, 없으면 `default` |
+| `templateId` | 템플릿으로 그리는 프레임, 없음은 `default` |
 | `frame` | 기본 제공 프레임 `{ "style": "banner-bottom", "text": "Scan me", "color": "#155dfc", "textColor": "#ffffff" }` 또는 커스텀 프레임 `{ "style": "custom", "spec": { … } }`. 프레임 사양은 [커뮤니티](#community-items)의 것이나 Playground의 프레임 섹션에서 만든 커스텀 프레임의 것을 사용합니다. 사양은 엔진의 프레임 사양 규칙에 따라 검사됩니다(마크업, 링크, 이미지 불가, 최대 32 KB) |
 | `eyeColors` | `eyeColor`와 `dotColor`보다 우선하는 눈별 색상: `{ "topLeft": { "outer": "#b91c1c", "inner": "#1d4ed8" }, "topRight": …, "bottomLeft": … }`, 각각 색상 또는 그라디언트 |
 | `moduleScale` | 각 점의 크기, `0.5`~`1`(기본값 `1`) |
@@ -161,7 +161,7 @@ Logo QR과 Image QR 아트는 여기서 사용할 수 없습니다. Playground�
 - `body`: `circle`, `circle-large`, `square`, `diamond`, `circle-mixed`, `pacman`, `rounded`, `small-square`, `vertical-line`, `horizontal-line`, `liquid`, `liquid-horizontal`, `liquid-vertical`, `classy`, `classy-rounded`, `leaf`, `plus`, `hexagon`, `star`, `heart`, `random-dots`, `mosaic`, `octagon`
 - `eye`: `square`, `rounded`, `gear`, `circle`, `diya`, `extra-rounded`, `message`, `pointy`, `leaf`, `drop`, `octagon`, `bevel`, `squircle`, `cushion`, `shield`, `petal`, `leaf-reverse`
 - `dot`: `square`, `rounded`, `circle`, `message`, `message-reverse`, `diya`, `diya-reverse`, `rounded-triangle`, `leaf`, `drop`, `plus`, `cross-rounded`, `hexagon`, `octagon`, `flower`, `heart`, `squircle`, `dots`, `extra-rounded`, `leaf-reverse`, `drop-reverse`
-- `template`: `default`, `Arrow`, `StandardBox`, `SquareBorder`, `StrikedBox`, `Halloween`
+- `template`: `default`, `Arrow`, `StandardBox`, `SquareBorder`, `StrikedBox`, `Halloween`, `DotRing`
 
 이 스타일은 [`qrdx` React 라이브러리](/docs/features/patterns)와 같습니다. [MCP 서버](/docs/developers/mcp)에서도 짧은 설명과 함께 목록을 볼 수 있습니다.
 

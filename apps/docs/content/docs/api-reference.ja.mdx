@@ -41,8 +41,8 @@ import { QRCode } from 'qrdx';
 | `cornerEyeDotPattern` | `CornerEyeDotPattern` | `'circle'` | コーナードットのパターン |
 | `hideLogo` | `boolean` | `false` | ロゴを非表示にします。`logo` を設定しない限り、ロゴは描画されません |
 | `logo` | `string` | — | ロゴのURL |
-| `templateId` | `string` | `'default'` | テンプレートID |
-| `customTemplate` | `TemplateDefinition` | — | カスタムテンプレート |
+| `templateId` | `string` | `'default'` | [テンプレートとして描くフレーム](/docs/features/templates)（`'Arrow'`、`'StandardBox'` など）。アートワーク全体の幅が `size` になります |
+| `customTemplate` | `TemplateDefinition` | — | コードで描くフレーム（`templateId` より優先されます） |
 | `level` | `ErrorLevel` | `'Q'` | 誤り訂正 |
 | `autoLevel` | `boolean` | `false` | ロゴがコードの7%を超えて覆う場合、`level` をHに引き上げます（`AUTO_LEVEL_LOGO_COVERAGE`） |
 | `margin` | `number` | `0` | 余白（モジュール単位） |

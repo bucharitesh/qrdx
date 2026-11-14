@@ -41,8 +41,8 @@ import { QRCode } from 'qrdx';
 | `cornerEyeDotPattern` | `CornerEyeDotPattern` | `'circle'` | Pola titik sudut |
 | `hideLogo` | `boolean` | `false` | Sembunyikan logo. Tidak ada logo yang digambar kecuali `logo` diatur |
 | `logo` | `string` | — | URL logo |
-| `templateId` | `string` | `'default'` | ID template |
-| `customTemplate` | `TemplateDefinition` | — | Template kustom |
+| `templateId` | `string` | `'default'` | [Bingkai yang digambar sebagai template](/docs/features/templates) (`'Arrow'`, `'StandardBox'`, …): seluruh gambar selebar `size` |
+| `customTemplate` | `TemplateDefinition` | — | Bingkai yang Anda gambar dengan kode (menggantikan `templateId`) |
 | `level` | `ErrorLevel` | `'Q'` | Koreksi kesalahan |
 | `autoLevel` | `boolean` | `false` | Naikkan `level` ke H saat logo menutupi lebih dari 7% kode (`AUTO_LEVEL_LOGO_COVERAGE`) |
 | `margin` | `number` | `0` | Margin dalam modul |

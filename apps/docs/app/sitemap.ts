@@ -46,7 +46,7 @@ type Entry = MetadataRoute.Sitemap[number];
 
 // lastmod is a real date or absent, never the build time (lib/seo-dates.ts).
 /**
- * Every translated page (lib/i18n/localized-paths.json) as its languages:
+ * Every translated page (packages/i18n/localized-paths.json) as its languages:
  * one entry per indexable language, with hreflang alternates (lib/i18n/
  * sitemap.ts). Languages a native reviewer hasn't signed off stay out.
  */

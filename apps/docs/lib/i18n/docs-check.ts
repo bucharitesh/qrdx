@@ -116,7 +116,7 @@ export function checkDocsLocale({
       if (page) report.counts.machine++;
       if (published) {
         report.errors.push(
-          `${locale}: ${file} is machine-translated, but ${docsPathOfFile(file)} is published (lib/i18n/config.ts review)`,
+          `${locale}: ${file} is machine-translated, but ${docsPathOfFile(file)} is published (packages/i18n/config.ts review)`,
         );
       }
     }
@@ -152,7 +152,7 @@ export function strayTranslations(files: readonly string[]): string[] {
     );
     return locale
       ? [
-          `${file}: ${LOCALE_INFO[locale].englishName} has no docs (lib/i18n/config.ts, docs: true), so this would show as an English page`,
+          `${file}: ${LOCALE_INFO[locale].englishName} has no docs (packages/i18n/config.ts, docs: true), so this would show as an English page`,
         ]
       : [];
   });

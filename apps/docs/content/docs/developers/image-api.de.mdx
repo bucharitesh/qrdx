@@ -94,7 +94,7 @@ const src = `https://api.qrdx.dev/v1/qr?data=${encodeURIComponent(link)}&style=$
 | `dot` | `square` | Form des Punkts in jedem Eck-Eye |
 | `level` | `Q` | Fehlerkorrektur: `L` (~7 %), `M` (~15 %), `Q` (~25 %) oder `H` (~30 %) |
 | `margin` | `4` | Ruhezone um den Code in Modulen, `0` bis `16` |
-| `template` | keine | Vorlage für einen dekorativen Rand |
+| `template` | keine | Ein [als Template gezeichneter Rahmen](/docs/features/templates): Das ganze Bild ist `size` breit, der Code kleiner darin |
 | `frame` | keiner | Ein integrierter [Rahmen](/docs/features/frames) mit Handlungsaufforderung, etwa `banner-bottom`, `speech-bubble` oder `circle` (jeder der {facts.frameStyles} integrierten Rahmen, jeweils aus seiner Rahmenspezifikation gezeichnet) |
 | `frameText` | `Scan me` | Die Beschriftung des Rahmens, bis zu 24 Zeichen. Beschriftet auch den Rahmen eines `style` oder `item` neu |
 | `style` | keiner | Das gesamte Design des Editors als JSON; siehe [Stile](#style) |
@@ -115,7 +115,7 @@ Bei einem Rahmen ist `size` die Breite des Codes selbst, und der Rahmen kommt in
 | `bgColor`, `fgColor`, `eyeColor`, `dotColor` | Eine Farbe (Hex wie `#155dfc`, `rgb()`, `hsl()` oder ein Farbname) oder einen Verlauf: `{ "type": "linear", "angle": 45, "stops": [...] }` oder `{ "type": "radial", "stops": [...] }`, mit 2 bis 8 Stopps der Form `{ "color", "offset" }` (Offset 0 bis 100) |
 | `bodyPattern`, `cornerEyePattern`, `cornerEyeDotPattern` | Die [Musterwerte](#pattern-values) |
 | `level`, `margin` | Wie bei den Parametern oben (`margin` 0 bis 16) |
-| `templateId` | Eine Rand-Vorlage, `default` für keine |
+| `templateId` | Ein als Template gezeichneter Rahmen, `default` für keinen |
 | `frame` | Ein integrierter Rahmen, `{ "style": "banner-bottom", "text": "Scan me", "color": "#155dfc", "textColor": "#ffffff" }`, oder ein eigener, `{ "style": "custom", "spec": { … } }`, mit einer Rahmenspezifikation aus der [Community](#community-items) oder einem eigenen Rahmen aus dem Bereich „Rahmen" im Playground. Spezifikationen werden gegen die Regeln der Engine für Rahmenspezifikationen geprüft (kein Markup, keine Links oder Bilder; höchstens 32 KB) |
 | `eyeColors` | Farben pro Eye, vorrangig vor `eyeColor` und `dotColor`: `{ "topLeft": { "outer": "#b91c1c", "inner": "#1d4ed8" }, "topRight": …, "bottomLeft": … }`, jeweils eine Farbe oder ein Verlauf |
 | `moduleScale` | Größe jedes Punkts, `0.5` bis `1` (Standard `1`) |
@@ -161,7 +161,7 @@ Logo QR und Image QR sind hier nicht verfügbar: Der Playground erstellt sie im 
 - `body`: `circle`, `circle-large`, `square`, `diamond`, `circle-mixed`, `pacman`, `rounded`, `small-square`, `vertical-line`, `horizontal-line`, `liquid`, `liquid-horizontal`, `liquid-vertical`, `classy`, `classy-rounded`, `leaf`, `plus`, `hexagon`, `star`, `heart`, `random-dots`, `mosaic`, `octagon`
 - `eye`: `square`, `rounded`, `gear`, `circle`, `diya`, `extra-rounded`, `message`, `pointy`, `leaf`, `drop`, `octagon`, `bevel`, `squircle`, `cushion`, `shield`, `petal`, `leaf-reverse`
 - `dot`: `square`, `rounded`, `circle`, `message`, `message-reverse`, `diya`, `diya-reverse`, `rounded-triangle`, `leaf`, `drop`, `plus`, `cross-rounded`, `hexagon`, `octagon`, `flower`, `heart`, `squircle`, `dots`, `extra-rounded`, `leaf-reverse`, `drop-reverse`
-- `template`: `default`, `Arrow`, `StandardBox`, `SquareBorder`, `StrikedBox`, `Halloween`
+- `template`: `default`, `Arrow`, `StandardBox`, `SquareBorder`, `StrikedBox`, `Halloween`, `DotRing`
 
 Das sind dieselben Stile wie in der [`qrdx`-React-Bibliothek](/docs/features/patterns). Der [MCP-Server](/docs/developers/mcp) kann sie ebenfalls mit Kurzbeschreibungen auflisten.
 

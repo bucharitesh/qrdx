@@ -4,7 +4,7 @@ import { CANONICAL_ORIGIN } from "@repo/config";
 import { cn } from "@repo/design-system/lib/utils";
 import { ArrowDown2 } from "iconsax-reactjs";
 import { useTranslations } from "next-intl";
-import { getAllTemplates, QRCodeSVG } from "qrdx";
+import { QRCodeSVG } from "qrdx";
 import type {
   BodyPattern,
   CornerEyeDotPattern,
@@ -21,13 +21,7 @@ import { patterns as eyePatterns } from "@/components/playground/corner-eye-patt
 import { patterns as bodyPatterns } from "@/components/playground/pattern-selector";
 import { soundEvent } from "@/lib/sound/emit";
 import type { QRStyle } from "@/types/theme";
-import { withoutShape } from "./frame-shapes";
-import {
-  OptionGrid,
-  OptionGroupLabel,
-  OptionTile,
-  ShapePicker,
-} from "./option-tiles";
+import { OptionGrid, OptionTile, ShapePicker } from "./option-tiles";
 import { pairBlocked, pairRisk } from "./pair-rules";
 import {
   BODY_CATEGORY,
@@ -289,42 +283,6 @@ export function EyeCentreShapeControl() {
       riskOf={(id) => pairRisk(style, { cornerEyeDotPattern: id })}
       value={centre}
     />
-  );
-}
-
-export function BorderControl() {
-  const t = useTranslations("editor.controlSections.patternControls");
-  const { style, setStyle } = useStyleSetter();
-  const templates = getAllTemplates();
-  const selected = style.templateId ?? "default";
-  return (
-    <div>
-      <OptionGroupLabel>{t("border")}</OptionGroupLabel>
-      <OptionGrid columns={3} label={t("border")}>
-        {templates.map((template) => (
-          <OptionTile
-            key={template.id}
-            name={template.name}
-            onSelect={() => {
-              // A border takes the place of a shaped code, like a frame
-              const base =
-                template.id === "default" ? style : withoutShape(style);
-              setStyle({ ...base, templateId: template.id });
-              soundEvent("tick");
-            }}
-            selected={selected === template.id}
-          >
-            <QRCodeSVG
-              bgColor="transparent"
-              fgColor="#000000"
-              size={56}
-              templateId={template.id}
-              value={CANONICAL_ORIGIN}
-            />
-          </OptionTile>
-        ))}
-      </OptionGrid>
-    </div>
   );
 }
 
