@@ -1,34 +1,24 @@
 import { z } from "zod";
+import {
+  QR_ART_MAX_SAMPLE_SIZE,
+  QR_ART_MODES,
+  QR_ART_VARIANTS,
+} from "./constants";
 
-/**
- * Art modes blend a picture into the code itself (vector output, no AI):
- * - "logo" (Logo QR): the logo, traced into crisp vector shapes, either fills
- *   the code under a fine dot screen ("blend") or sits on a rounded plate in
- *   the middle of a code tinted with its colors ("badge").
- * - "halftone" (Image QR): the photo shows through every module around a
- *   small center dot that keeps the module's dark/light value, in full color
- *   ("color") or as an error-diffused black-and-white halftone ("mono").
- * Finder, alignment and format patterns always stay crisp.
- */
-export const QR_ART_MODES = ["logo", "halftone"] as const;
+export {
+  QR_ART_MAX_SAMPLE_SIZE,
+  QR_ART_MODES,
+  QR_ART_VARIANTS,
+} from "./constants";
 
 export const qrArtModeSchema = z.enum(QR_ART_MODES);
 export type QRArtMode = z.infer<typeof qrArtModeSchema>;
-
-/** Looks within each mode; the first one is the mode's default. */
-export const QR_ART_VARIANTS = {
-  logo: ["blend", "badge"],
-  halftone: ["color", "mono"],
-} as const satisfies Record<QRArtMode, readonly string[]>;
 
 export const qrArtVariantSchema = z.enum([
   ...QR_ART_VARIANTS.logo,
   ...QR_ART_VARIANTS.halftone,
 ]);
 export type QRArtVariant = z.infer<typeof qrArtVariantSchema>;
-
-/** Largest side of an art sample grid, in pixels. */
-export const QR_ART_MAX_SAMPLE_SIZE = 192;
 
 const base64Length = (bytes: number) => Math.ceil(bytes / 3) * 4;
 

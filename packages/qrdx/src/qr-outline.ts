@@ -11,8 +11,8 @@ import {
   QR_SILHOUETTE_MAX_CELLS,
   QR_SILHOUETTE_MIN_CELLS,
   QR_SILHOUETTE_MIN_SHARE,
-  type QRSilhouette,
-} from "../types/qr";
+} from "../types/constants";
+import type { QRSilhouette } from "../types/qr";
 import { fmt } from "./utils/fmt";
 
 type Point = [number, number];

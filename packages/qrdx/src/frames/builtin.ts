@@ -13,11 +13,8 @@
 // hand-written layout for the style drew up to qrdx 0.0.51.
 import type { ColorConfig } from "../../types/color";
 import type { FrameStyle, QRFrame } from "../../types/frame";
-import {
-  type AnyQRFrame,
-  CUSTOM_FRAME_STYLE,
-  type FrameSpec,
-} from "../../types/frame-spec";
+import type { AnyQRFrame, FrameSpec } from "../../types/frame-spec";
+import { CUSTOM_FRAME_STYLE } from "../../types/frame-spec-rules";
 import type { FrameLayout } from "../frame";
 import {
   type FrameSlotFields,

@@ -4,7 +4,7 @@ description: "Bingkai yang menyesuaikan kode di dalam karya seni berukuran tetap
 icon: LayoutTemplate
 ---
 
-Template adalah bingkai yang menyesuaikan kode di dalam karya seninya sendiri. Di Playground, template bukan daftar tersendiri. Arrow, Standard Box, Square Border, Striked Box, Halloween, dan Dot Ring adalah ubin di grup **Classic** pada pemilih bingkai, bersama [bingkai](/docs/features/frames) lainnya, dan memilih bingkai apa pun akan menggantikan bingkai sebelumnya.
+Template adalah bingkai yang menempatkan kode di dalam karya seninya sendiri. Di Playground, template bukan daftar terpisah. Arrow, Standard Box, Square Border, Striked Box, Halloween, dan Dot Ring adalah kotak pilihan di grup **Classic** pada pemilih bingkai, bersama [bingkai](/docs/features/frames) lainnya, dan memilih bingkai apa pun akan menggantikan bingkai sebelumnya.
 
 Template berbeda dari bingkai lain dalam satu hal: ukuran. Bingkai menambahkan ruang di sekitar kode, sehingga `size` adalah lebar kode dan gambar menjadi lebih besar. Template menggambar seluruh karya seninya pada `size`, dengan kode yang lebih kecil di dalamnya.
 
@@ -21,7 +21,7 @@ Berikan id sebagai `templateId`. Image API menerimanya sebagai `template` dan CL
 | `Halloween` | Halloween | Oranye, hijau, dan hitam miliknya sendiri |
 | `DotRing` | Dot Ring | Cincinnya dalam `fgColor`, teksnya berwarna putih; keduanya dapat diubah (lihat di bawah) |
 
-`default` tidak menggambar karya seni. Template ini hanya memberi sedikit inset pada kode, menjadi 95% dari `size`.
+`default` tidak menggambar karya seni. Template ini hanya menggeser kode sedikit ke dalam, menjadi 95% dari `size`.
 
 ```tsx
 import { QRCode } from 'qrdx';
@@ -29,7 +29,7 @@ import { QRCode } from 'qrdx';
 <QRCode value="https://example.com" templateId="Arrow" fgColor="#1a56db" size={256} />
 ```
 
-Warna, pola, dan logo tetap diatur lewat prop kode itu sendiri, sehingga template bekerja dengan gaya apa pun:
+Warna, pola, dan logo tetap diatur lewat properti kode itu sendiri, sehingga template bekerja dengan gaya apa pun:
 
 ```tsx
 <QRCode
@@ -48,7 +48,7 @@ Warna, pola, dan logo tetap diatur lewat prop kode itu sendiri, sehingga templat
 
 ## Dot Ring [#dot-ring]
 
-Kode berbentuk bulat. Kode berada di dalam cakram titik-titik di dalam cincin gelap, dengan satu baris teks yang mengikuti cincin. Titik mana yang tampil ditentukan dari hash isi kode, sehingga setiap tautan mendapat cincin tersendiri dan tautan yang sama selalu mendapat cincin yang sama.
+Kode berbentuk bulat. Kode berada di dalam cakram titik-titik di dalam cincin gelap, dengan satu baris teks yang mengikuti cincin. Titik mana yang tampil ditentukan oleh hash dari isi kode, sehingga setiap tautan mendapat cincinnya sendiri dan tautan yang sama selalu mendapat cincin yang sama.
 
 ```tsx
 <QRCode
@@ -59,7 +59,7 @@ Kode berbentuk bulat. Kode berada di dalam cakram titik-titik di dalam cincin ge
 />
 ```
 
-Pengaturannya ditulis di `customProps` (bertipe `DotRingProps`):
+Pengaturannya ada di `customProps` (bertipe `DotRingProps`):
 
 ```tsx
 <QRCode
@@ -75,24 +75,42 @@ Pengaturannya ditulis di `customProps` (bertipe `DotRingProps`):
 />
 ```
 
-| Prop | Default | Catatan |
+| Properti | Default | Catatan |
 | --- | --- | --- |
-| `customText` | "Scan the QR code" empat kali mengelilingi cincin | Teks di sepanjang cincin. Huruf yang tidak muat di sekelilingnya dihilangkan; `""` membiarkan cincin kosong |
-| `textPosition` | `"top"` | `"top"`: di tengah bagian atas, dibaca searah jarum jam. `"bottom"`: di tengah bagian bawah, dibaca dari kiri ke kanan |
+| `customText` | "Scan the QR code" empat kali mengelilingi cincin | Teks di sepanjang cincin; `""` membiarkan cincin kosong. Teks yang terlalu panjang untuk cincin akan disesuaikan (lihat di bawah) |
+| `textFill` | `"none"` | `"repeat"` mengulang teks mengelilingi seluruh cincin (lihat di bawah) |
+| `textPosition` | `"top"` | `"top"`: di tengah bagian atas, terbaca searah jarum jam. `"bottom"`: di tengah sepanjang bagian bawah, terbaca dari kiri ke kanan |
 | `textRotation` | `0` | Memutar teks mengelilingi pusat, dalam derajat |
 | `textColor` | `#ffffff` | Warna teks |
-| `fontFamily` | susunan font sistem | Keluarga font CSS untuk teks |
+| `fontFamily` | system font stack | Keluarga font CSS untuk teks |
 | `fontWeight` | `900` | Ketebalan font |
-| `fontSize` | `32` | Dalam gambar template berukuran 593 unit, tempat kode selebar 300 |
-| `fontLetterSpacing` | `3.5` | Jarak tambahan antarhuruf, dalam satuan yang sama |
+| `fontSize` | `32` | Dalam gambar template berukuran 593 unit, tempat kode selebar 300. Teks panjang bisa digambar lebih kecil |
+| `fontLetterSpacing` | `3.5` | Spasi tambahan antarhuruf, dalam satuan yang sama. Teks panjang dan `textFill` menyesuaikannya |
 | `outerCircleColor` | `fgColor` | Warna cincin |
-| `strokeWidth`, `strokeColor` | `0`, `#000000` | Garis tepi di sepanjang kedua sisi cincin |
+| `strokeWidth`, `strokeColor` | `0`, `#000000` | Garis tepi di kedua sisi cincin |
 | `outerStrokeWidth`, `outerStrokeColor` | `strokeWidth`, `strokeColor` | Hanya tepi luar cincin |
 | `innerStrokeWidth`, `innerStrokeColor` | `strokeWidth`, `strokeColor` | Hanya tepi dalam cincin |
 
-Logo diletakkan di tengah seperti pada kode mana pun. Tautan panjang (kode dengan lebar lebih dari 49 modul) mempertahankan pita terang di antara kode dan titik-titik, sehingga tetap dapat dipindai saat dicetak kecil.
+Teks yang muat di cincin ditampilkan apa adanya, di tengah bagian atas atau sepanjang bagian bawah. Teks yang terlalu panjang tidak akan bertabrakan dengan awal teksnya sendiri. Huruf dirapatkan lebih dulu, lalu font diperkecil hingga setengah ukuran default (ukuran terkecil untuk label bingkai). Setelah itu teks menutup cincin dengan spasi antarkata di titik pertemuan dengan awal teks. Jika pada ukuran itu teks masih tidak muat, teks dipotong setelah kata utuh terakhir yang muat.
 
-Teksnya adalah teks SVG dengan font pilihan Anda; defaultnya adalah susunan font sistem, jadi tidak ada yang diunduh. Unduhan SVG dan PNG di browser memakai font milik pengguna yang melihatnya. PDF dan EPS mencetaknya dalam Helvetica Bold, jadi gunakan teks Latin-1 di sana. `getQRAsPNG` dari `qrdx/node` memerlukan font yang terpasang di server, seperti halnya label bingkai.
+Logo ditempatkan di tengah seperti pada kode mana pun. Tautan panjang (kode dengan lebar lebih dari 49 modul) mempertahankan pita terang di antara kode dan titik-titik, sehingga tetap dapat dipindai saat dicetak kecil.
+
+Teksnya adalah teks SVG dengan font pilihan Anda; defaultnya adalah system font stack, sehingga tidak ada yang diunduh. Unduhan SVG dan PNG di browser memakai font milik pengguna yang melihatnya. PDF dan EPS mencetaknya dalam Helvetica Bold, jadi gunakan teks Latin-1 di sana. `getQRAsPNG` dari `qrdx/node` memerlukan font yang terpasang di server, seperti halnya label bingkai.
+
+### Mengisi cincin [#filling-the-ring]
+
+Frasa pendek menyisakan sebagian cincin kosong. Atur `textFill: "repeat"` untuk mengulangnya sebanyak yang muat, dengan jarak yang diratakan sehingga cincin tertutup dengan celah yang sama seperti di antara salinan teks:
+
+```tsx
+<QRCode
+  value="https://example.com/docs"
+  templateId="DotRing"
+  customProps={{ customText: "Read the docs *", textFill: "repeat" }}
+  size={512}
+/>
+```
+
+Tuliskan frasa satu kali saja. Teks yang sudah mengulang suatu frasa, seperti `"Make your own * Make your own *"`, dibaca sebagai frasa tersebut, sehingga mengisi cincin dengan cara yang sama.
 
 ## Template adalah spesifikasi bingkai [#templates-are-frame-specs]
 
@@ -110,9 +128,9 @@ const spec = getTemplate('Arrow')?.spec;
 />
 ```
 
-Dot Ring tidak punya spesifikasi: titik-titiknya berasal dari isi kode, sehingga digambar lewat kode (lihat [Bingkai yang Anda gambar lewat kode](#frames-you-draw-in-code)).
+Dot Ring tidak memiliki spesifikasi: titik-titiknya berasal dari isi kode, sehingga digambar lewat kode (lihat [Bingkai yang Anda gambar lewat kode](#frames-you-draw-in-code)).
 
-`templateId` menggambar karya seni yang sama seperti sebelumnya. Desain tersimpan, URL gambar, perintah CLI, dan kode yang memakai id template tampil sama seperti biasa.
+`templateId` menggambar karya seni yang sama seperti sebelumnya. Desain tersimpan, URL gambar, perintah CLI, dan kode yang memakai id template tampil sama seperti biasanya.
 
 ## Registri template [#template-registry]
 
@@ -126,7 +144,7 @@ getTemplate('Halloween'); // one by id
 
 ## Bingkai yang Anda gambar lewat kode [#frames-you-draw-in-code]
 
-Spesifikasi bingkai menjelaskan karya seni yang tetap. Bila karya seni harus dihitung, tulis `TemplateDefinition` dan berikan sebagai `customTemplate`. `wrapper`-nya menerima kode sebagai `children` dan mengembalikan SVG yang akan digambar. Ia menggambar pada kanvas 300 kali 300, dan kode juga tiba dengan ukuran itu, jadi perkecil agar tersisa ruang untuk karya seni Anda. `props` membawa `fgColor` dan `bgColor` kode, dan argumen ketiga berisi `url` dan `pixelSize` kode.
+Spesifikasi bingkai menggambarkan karya seni yang tetap. Bila karya seni harus dihitung, tulis `TemplateDefinition` lalu berikan sebagai `customTemplate`. `wrapper`-nya menerima kode sebagai `children` dan mengembalikan SVG yang akan digambar. Ia menggambar pada kanvas 300 kali 300, dan kode juga tiba dalam ukuran itu, jadi perkecil kode agar ada ruang untuk karya seni Anda. `props` membawa `fgColor` dan `bgColor` kode, dan argumen ketiga berisi `url` dan `pixelSize` kode.
 
 Contoh ini menggambar cincin di sekitar kode:
 
@@ -160,10 +178,10 @@ const ringTemplate: TemplateDefinition = {
 />
 ```
 
-Jaga agar kode cukup besar untuk dipindai dari jarak tempat orang memegang ponsel mereka, dan sisakan celah terang antara kode dan karya seni Anda. Periksa hasilnya dengan [skor pemindaian](/docs/features/frames#will-it-scan).
+Jaga agar kode cukup besar untuk dipindai dari jarak tempat orang memegang ponsel, dan sisakan celah terang antara kode dan karya seni Anda. Periksa hasilnya dengan [skor pemindaian](/docs/features/frames#will-it-scan).
 
-## Langkah Berikutnya [#next-steps]
+## Langkah berikutnya [#next-steps]
 
 - [Bingkai](/docs/features/frames): semua bingkai, dan format spesifikasi bingkai
-- [Pola](/docs/features/patterns): penyesuaian pola secara rinci
+- [Pola](/docs/features/patterns): penyesuaian pola secara mendetail
 - [Logo](/docs/features/logos): tambahkan logo ke kode

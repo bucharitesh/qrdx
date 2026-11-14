@@ -1,8 +1,9 @@
 /** @jsxImportSource ./jsx */
 /** biome-ignore-all lint/style/noMagicNumbers: frame proportions */
 import type { ColorConfig } from "../types";
-import { DEFAULT_FRAME_TEXT, FRAME_TEXT_MAX_LENGTH } from "../types/frame";
-import { type AnyQRFrame, CUSTOM_FRAME_STYLE } from "../types/frame-spec";
+import { DEFAULT_FRAME_TEXT, FRAME_TEXT_MAX_LENGTH } from "../types/constants";
+import type { AnyQRFrame } from "../types/frame-spec";
+import { CUSTOM_FRAME_STYLE } from "../types/frame-spec-rules";
 import { getCustomFrameLayout, getFrameSpecGapRatio } from "./frame-spec";
 import { frameSpecOf, getBuiltInFrameLayout } from "./frames/builtin";
 import { cloneElement, type QRNode } from "./jsx/runtime";

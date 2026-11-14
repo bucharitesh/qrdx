@@ -14,12 +14,13 @@ import type {
   RadialGradient,
   TemplateConfig,
 } from "../types";
-import { isGradient, isImagePaint, normalizeColorConfig } from "../types/color";
 import {
-  AUTO_LEVEL_LOGO_COVERAGE,
-  type EyePosition,
-  type QRCodeShape,
-} from "../types/qr";
+  isGradient,
+  isImagePaint,
+  normalizeColorConfig,
+} from "../types/color-helpers";
+import { AUTO_LEVEL_LOGO_COVERAGE } from "../types/constants";
+import type { EyePosition, QRCodeShape } from "../types/qr";
 import { getQRArtEyeColors, isQRArtActive, renderQRArt } from "./art";
 import {
   alignmentMask,

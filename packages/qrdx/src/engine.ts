@@ -3,7 +3,59 @@
 // library's data (core.ts adds it). The no-bundler browser build of
 // qrdx/vanilla starts here, so a page doesn't download the whole library.
 
-export * from "../types";
+// The zod-free part of qrdx/types, and the schemas from a module of their
+// own: tsup.config.ts builds that as dist/schemas.mjs, which the core and
+// the React entry only re-export, so zod stays out of an app that never
+// uses a schema (nothing here draws with one). Named, not `export *`: a
+// bundled `export *` of another file becomes a runtime copy of its exports,
+// which bundlers can't tree-shake (tests/core-bundles.test.ts checks the
+// list against types/schemas.ts).
+export * from "../types/plain";
+export {
+  angularGradientSchema,
+  anyFrameSchema,
+  baseTemplatePropsSchema,
+  bodyPatternSchema,
+  colorConfigSchema,
+  colorTypeSchema,
+  cornerEyeDotPatternSchema,
+  cornerEyePatternSchema,
+  customFrameSchema,
+  errorLevelSchema,
+  excavationSchema,
+  eyeColorOverrideSchema,
+  eyeColorsSchema,
+  frameSchema,
+  frameSpecColorSchema,
+  frameSpecLabelSchema,
+  frameSpecPaintSchema,
+  frameSpecSchema,
+  frameSpecShapeSchema,
+  frameStyleSchema,
+  getFrameSpecIssues,
+  gradientStopSchema,
+  imageFitSchema,
+  imagePaintSchema,
+  imagePositionSchema,
+  imageSettingsSchema,
+  linearGradientSchema,
+  logoOptionsSchema,
+  logoShapeSchema,
+  pickableCornerEyeDotPatternSchema,
+  pickableCornerEyePatternSchema,
+  qrArtImageSchema,
+  qrArtModeSchema,
+  qrArtSchema,
+  qrArtVariantSchema,
+  qrCodeShapeSchema,
+  qrPropsSchema,
+  qrShapeSchema,
+  qrSilhouetteSchema,
+  radialGradientSchema,
+  solidColorSchema,
+  templateConfigSchema,
+  templateDefinitionBaseSchema,
+} from "../types/schemas";
 export {
   createQRArtImage,
   DEFAULT_ART_INTENSITY,
