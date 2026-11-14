@@ -3,32 +3,61 @@ title: Make your first QR code
 description: Create a QR code in the playground and download it. Free, with no account and no watermark.
 ---
 
-You can make a QR code in about a minute. You don't need an account.
+The [playground](/playground) is the QRdx editor. You can make a QR code there in about a minute, without an account. The code you download is static: the link is stored inside the code, it works forever, and it can't be changed after printing.
 
 ## Make the code
 
-1. Open the [playground](/playground). This is the QRdx editor.
-2. **URL** is already selected. For Wi-Fi, a contact card, WhatsApp or anything else, click **Change** next to **QR code type** and pick a type.
-3. Type your link in **Website address**. The preview shows your code as soon as the address is valid.
-4. Optional: pick a look under **Start from a style**, or open the **Design** tab to change colors, dots, eyes, the logo and the frame.
-5. Click the download icon above the preview, or press <kbd>D</kbd>. Choose a format and size, then download.
+### 1. Pick what the code opens
 
-Below the address, QRdx shows where scans will open, for example "Scans open example.com". Check it before you print.
+Open the [playground](/playground). The **Content** tab is open and **URL** is the selected type, which is right for any web address.
 
-## Before you print
+For Wi-Fi, a contact card, WhatsApp or anything else, click **Change** on the **QR code type** card and pick a type.
 
-Check the **Scan score** under the preview. A score of 85 or more is great. Below 65, fix the checks marked with a cross. See [Check a design with the scan score](/docs/help/designing/scan-score).
+{/* shot: playground-content-tab | the playground on arrival: the Content tab, the URL type card with its Change button, and the empty Website address field | /playground?type=url */}
+
+### 2. Type your link
+
+Paste or type the address in **Website address**. The preview changes from the blurred sample to your code once the address is a valid link, and the line under the field says where scans open, for example "Scans open example.com". Check it before you print.
+
+{/* shot: playground-link-typed | the Website address field filled in, the "Scans open example.com" line under it and the live preview | /playground?type=url, type https://example.com */}
+
+### 3. Pick a look
+
+This step is optional. Under **Start from a style**, pick one of the ready-made styles. To go further, open the **Design** tab, which holds the colors, dots, eyes, logo and frame.
+
+### 4. Download
+
+Click **Download** above the preview, or press <kbd>D</kbd>. Choose a format and a size, then click the download button at the bottom of the dialog. The file lands in your downloads folder.
+
+{/* shot: playground-download-button | the toolbar above the preview with the Download button at its right end | /playground with a link typed */}
+
+## Check that it scans
+
+Look at the **Scan score** under the preview. 85 or more is Great and ready to print. Below 65, click the score and fix the checks marked with a cross. See [Check a design with the scan score](/docs/help/designing/scan-score).
 
 Then scan the code with your own phone.
 
-## Codes from the playground are static
+## If you might change the link later
 
-A code you download from the playground is **static**: the link is stored inside the code. It works forever, but you can't change it after printing.
+A code from the playground stores the link itself, so a printed copy can't be changed. If the link might change, or you want to count scans, pick **Dynamic** in the **Static or dynamic QR code** switch under the address before you download. It needs a free account. See [Create a dynamic QR code](/docs/help/dynamic-codes/create) and [Static or dynamic, which do you need?](/docs/help/getting-started/static-vs-dynamic).
 
-If you might need to change the link later, make it a dynamic code instead. See [Static or dynamic](/docs/help/getting-started/static-vs-dynamic).
+## If something goes wrong
 
-## Next steps
+### The preview still shows the blurred sample
+
+The address isn't a valid link yet. Check for a missing dot or a stray space, and type the full address.
+
+### The Download button is grayed out
+
+It stays off until the code has content. Type the address first.
+
+### Your phone doesn't read the code
+
+Check the scan score, then see [A code won't scan](/docs/help/troubleshooting/wont-scan).
+
+## Related
 
 - [Download and print a QR code](/docs/help/getting-started/download-and-print)
 - [Choose colors that scan](/docs/help/designing/colors-and-contrast)
 - [Add a logo](/docs/help/designing/logos)
+- [Create a dynamic QR code](/docs/help/dynamic-codes/create)

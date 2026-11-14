@@ -3,43 +3,58 @@ title: Add a logo
 description: Put your logo in the center of a QR code without breaking scanning.
 ---
 
+A logo in the middle of a code makes it yours and tells people what to expect. QRdx hides some of the code's squares under the logo, and error correction rebuilds them when the code is scanned. This page shows how to add a logo and keep the code readable.
+
 ## Add your logo
 
 1. In the [playground](/playground?tab=design&section=logo), open the **Design** tab, then **Logo**.
 2. Turn on **Logo in the center**.
-3. Pick one of the **Quick icons**, pick a brand under **Brand logos**, or click **Upload your logo**.
-4. To change it later, click **Replace** or **Remove**.
+3. Pick one of the **Quick icons**, pick a brand under **Brand logos**, or click **Upload your logo**. Uploads can be PNG, JPG, WebP or SVG files up to 1 MB. A transparent PNG or an SVG looks best.
+4. Adjust the size, shape and plate under **Logo options**, which appears once a logo is on.
 
-Logos can be PNG, JPG, WebP or SVG files up to 1 MB. A transparent PNG or an SVG looks best.
+To change the logo later, click **Replace** or **Remove**.
+
+{/* shot: design-logo-section | the Logo section with Logo in the center on, the Quick icons, Brand logos and Upload your logo choices, and Logo options below | /playground?tab=design&section=logo */}
 
 ## Use a brand's logo
 
 **Brand logos** opens a gallery of {facts.brandLogos} brands from [Simple Icons](https://simpleicons.org): Instagram, WhatsApp, PayPal, Spotify, Google Maps, the app stores and thousands more. Popular ones come first, and you can search by name.
 
-- **Color**: the brand's own color, black or white.
-- **Plate**: a solid shape behind the logo. A white logo always gets one, in the brand's color, and so does a very light brand color.
+- Pick **Brand color**, **Black** or **White** for the logo.
+- **Plate** puts a solid shape behind the logo. A white logo always needs one, in the brand's color, and so does a very light brand color.
 
-The logo is saved inside your design, like an upload, so the code never loads it from anywhere. Change its size, shape and plate under **Logo options**.
+The logo is saved inside your design, like an upload, so the code never loads it from anywhere.
 
 Each brand's mark belongs to its owner. Use one to point people to that brand, for example your Instagram profile. A few brands asked Simple Icons to remove their marks, so they aren't in the gallery.
 
 ## Set error correction to High
 
-A logo covers some of the code's squares. Error correction rebuilds them when the code is scanned.
+Open **Error correction** in the **Design** tab and choose **High** whenever a logo is on. The levels are **Low** (7%), **Medium** (15%), **Quartile** (25%) and **High** (30%): the share of the code that can be covered or damaged and still scan.
 
-Open **Error correction** in the **Design** tab and choose **High** whenever a logo is on. High lets up to 30% of the code be covered.
+## If something goes wrong
 
-## If the score drops
+### The scan score drops after you add the logo
 
-QRdx sizes the logo for you. If the **Scan score** drops after you add it, check that **Error correction** is set to **High**.
+Check that **Error correction** is set to **High**. QRdx sizes the logo for you, so with High the score usually comes back.
 
-If it still struggles, try **Logo QR**, which keeps every square in place.
+### The score says the logo covers a corner eye
+
+The logo reaches one of the three big corner squares, which scanners need to find the code. Make the logo smaller under **Logo options**.
+
+### The logo looks fuzzy in the code
+
+A small PNG or JPG was scaled up. Upload an SVG or a larger PNG with a transparent background.
+
+### The upload is refused
+
+The file is over 1 MB or isn't a PNG, JPG, WebP or SVG. Export a smaller file and try again.
 
 ## Want the logo in the dots instead?
 
-**Logo QR** paints the dots inside your logo's shape, rather than placing the logo on top. See [Blend a logo or photo into the code](/docs/help/designing/art).
+**Logo QR** in the **Art** tab paints the dots inside your logo's shape, rather than placing the logo on top. See [Blend a logo or photo into the code](/docs/help/designing/art).
 
 ## Related
 
 - [Check a design with the scan score](/docs/help/designing/scan-score)
+- [Choose colors that scan](/docs/help/designing/colors-and-contrast)
 - [Logos for developers](/docs/features/logos)

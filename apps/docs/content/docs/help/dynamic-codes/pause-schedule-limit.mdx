@@ -3,27 +3,29 @@ title: Pause, schedule or limit a code
 description: Turn a dynamic QR code off, set start and end dates, cap its scans, and choose where ended codes send people.
 ---
 
-All of these are in one place: open the code from **Codes**, then under **Settings**, open **Access & schedule**.
+A dynamic code can be paused, given start and end dates, or capped at a number of scans. All of these are in one place: open the code from **Codes**, go to its **Settings** tab and open **Access & schedule**. Click **Save changes** when you're done.
+
+<Callout type="info">
+  Pausing works on every plan. Start and end dates, scan limits and fallback URLs are part of Pro and Business. See [Plans and what they include](/docs/help/account-and-billing/plans).
+</Callout>
+
+{/* shot: access-schedule-panel | the Access & schedule panel with Pause code, Starts, Ends, Scan limit, Fallback URL and Password | Dashboard, Codes, open a code, Settings, Access & schedule */}
 
 ## Pause a code
 
-Turn on **Pause code** and save. You can also choose **Pause** from the code's menu in **Codes**, and **Resume** to turn it back on.
-
-Pausing works on every plan.
+Turn on **Pause code** and click **Save changes**. The code's status reads "Code paused". You can also choose **Pause** from the code's menu in the **Codes** list, and **Resume** to turn it back on.
 
 ## Set start and end dates
 
-Fill in **Starts**, **Ends** or both. Scans before the start or after the end don't reach your destination.
-
-Use this for a campaign with fixed dates. Pro and Business only.
+Fill in **Starts**, **Ends** or both. Times are in your time zone. Scans before the start or after the end don't reach your destination. Use this for a campaign with fixed dates.
 
 ## Cap the scans
 
-Set a **Scan limit**. After that many scans, the code ends. Pro and Business only.
+Set a **Scan limit**. Scans are counted the way your analytics count them, with bots left out. After that many scans, the code ends.
 
 ## What people see
 
-When a code isn't active, scanners see a plain page with no QRdx branding:
+When a code isn't active, scanners see a plain page with no QRdx branding and a link to report abuse:
 
 - Paused: "This campaign is paused".
 - Before the start date: "This campaign hasn't started yet".
@@ -31,13 +33,28 @@ When a code isn't active, scanners see a plain page with no QRdx branding:
 
 ## Send people somewhere useful instead
 
-Fill in **Fallback URL** to send scans of a paused or ended code to a page you choose, such as your homepage. It doesn't apply before the start date.
+Fill in **Fallback URL** to send scans of a paused or ended code to a page you choose, such as your homepage. It applies to paused codes, codes past their end date and codes past their scan limit. Before the start date, scanners always see the "hasn't started yet" page.
 
 ## After a downgrade
 
-Settings you already saved keep working. Removing a setting never needs a paid plan.
+Settings you already saved keep working, and you can remove them at any time. Changing or adding one again needs Pro or Business.
+
+## If something goes wrong
+
+### The fallback page doesn't show before the start date
+
+That's expected. The fallback URL covers paused and ended codes only.
+
+### The code is marked Held for review
+
+QRdx checks fallback URLs the way it checks destinations. A fallback URL that looks unsafe holds the code for review, and the code doesn't redirect until a person has looked at it. [Contact support](/docs/help/contact) if you think it's a mistake.
+
+### Scans still get through after the end date
+
+Check that you clicked **Save changes**, and that the end time is in your time zone, which the panel names next to the fields.
 
 ## Related
 
 - [Protect a code with a password](/docs/help/dynamic-codes/password)
+- [Archive, delete and restore codes](/docs/help/dynamic-codes/archive-and-delete)
 - [Code controls guide](/docs/code-controls)

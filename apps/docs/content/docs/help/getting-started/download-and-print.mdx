@@ -3,47 +3,102 @@ title: Download and print a QR code
 description: Pick the right file format and size, and get print-ready files with bleed and crop marks.
 ---
 
-## Download
+The **Download** button in the [playground](/playground) gives you either an image for screens and documents or a print-ready file for a print shop. This page helps you choose the format and the size, and check the result before you print many copies.
 
-In the [playground](/playground), click the download icon above the preview, or press <kbd>D</kbd>. The **Download QR code** dialog opens with two tabs.
+## Download an image file
 
-### Image file
+Use this for screens, email, slides and most everyday printing.
 
-Use this for screens, email, slides and most printing.
+### 1. Open the download dialog
 
-1. Choose a format: **PNG**, **JPG**, **WebP**, **SVG**, **PDF** or **EPS**.
-2. Choose a size: Email (200 px), Web (400 px), Social (800 px), Print (1200 px), Poster (2000 px), or type your own.
-3. Turn on **Transparent background** if you need it. JPG can't be transparent.
-4. Click the download button at the bottom.
+Click **Download** above the preview, or press <kbd>D</kbd>. The **Download QR code** dialog opens with two tabs, **Image file** and **Print-ready**.
 
-### Print-ready
+{/* shot: download-dialog-image-file | the Download QR code dialog on the Image file tab with the format and size choices | /playground with a link typed, press D */}
 
-Use this when a print shop asks for a file.
+### 2. Choose a format
 
-1. Set the **code width** in millimeters or inches.
-2. Choose **RGB** or **CMYK**. Print shops usually want CMYK.
-3. Add **3 mm bleed** if the background runs to the edge of the page, so trimming never leaves a white line.
-4. Turn on **Crop marks** to show where to cut. Crop marks are added to PDFs.
-5. Download a **PDF**, **SVG** or **EPS** file.
+Pick **PNG**, **JPG**, **WebP**, **SVG**, **PDF** or **EPS**. The table below says which to use.
+
+### 3. Choose a size
+
+Pick **Email** (200 px), **Web** (400 px), **Social** (800 px), **Print** (1200 px) or **Poster** (2000 px), or **Custom** for any width from 50 to 5000 px.
+
+### 4. Set the background
+
+Turn on **Transparent background** if the code sits on a colored page or picture. JPG can't be transparent, so the switch is off for that format.
+
+### 5. Download
+
+Click the download button at the bottom. The file saves to your downloads folder with the frame included, in every format.
+
+## Download a print-ready file
+
+Use this when a print shop asks for a file, or when you print at an exact size.
+
+### 1. Open the Print-ready tab
+
+In the **Download QR code** dialog, click **Print-ready**.
+
+{/* shot: download-dialog-print-ready | the Print-ready tab with the distance, code width, color mode, bleed and crop marks controls | /playground with a link typed, press D, open Print-ready */}
+
+### 2. Set the size
+
+Under **Scanned from about**, pick how far away people will scan the code. Then set the **Code width** in mm or inches. The dialog suggests a minimum width for that distance.
+
+### 3. Choose the color mode
+
+Pick **RGB** or **CMYK** under **Color mode**. Print shops usually want CMYK.
+
+### 4. Add bleed and crop marks
+
+Set **Bleed** to **3 mm** if the background runs to the edge of the page, so trimming never leaves a white line. Turn on **Crop marks (PDF)** to show where to cut. Crop marks are added to the PDF only.
+
+### 5. Download
+
+Click the PDF download button, or **SVG** or **EPS** for a vector file without the page setup.
 
 ## Which format to choose
 
-- **PNG**, **JPG** or **WebP**: pixel images for screens, email and documents. WebP has the same pixels as PNG in a smaller file, which suits websites.
-- **SVG**, **EPS**, or a **PDF** from **Print-ready**: vector files that stay sharp at any size. Printers prefer these. A PDF from the **Image file** tab holds a picture of the code, so use Print-ready for anything you print.
+| Format | Use it for |
+| --- | --- |
+| PNG, WebP | Screens, email, documents and web pages. WebP holds the same pixels as PNG in a smaller file. |
+| JPG | Photos and apps that only take JPG. No transparent background. |
+| SVG, EPS | Print shops and design tools. Vector files stay sharp at any size. |
+| PDF from **Print-ready** | Anything you print. It carries the size, color mode, bleed and crop marks. A PDF from the **Image file** tab holds a picture of the code instead. |
 
 ## How big to print
 
-Make the code about one tenth of the scanning distance.
+A QR code scans from about ten times its width. Make the code about one tenth of the scanning distance:
 
 - A business card read from 20 cm needs a code about 2 cm wide.
 - A poster read from 1 m needs a code about 10 cm wide.
 
-Codes that hold more content need more room. The [print size calculator](/tools/print-size) works out the minimum size for you.
+Codes that hold more content have smaller squares and need more room. The [print size calculator](/tools/print-size) works out the minimum size for your code and distance.
 
 ## Leave a clear border
 
-Keep empty space around the code. Scanners need it to find the code. The **Padding** setting in the **Design** tab adds it for you; **Standard** (4 modules) is the safe choice.
+Scanners need empty space around the code to find it. **Padding** in the **Design** tab adds it for you; **Standard** (4 modules) is the safe choice. Don't let other artwork touch the code.
 
 ## Test before you print
 
-Print one copy and scan it with two different phones, from the distance people will scan it. You can also upload a photo of a printed code to the [scan checker](/tools/scan-checker).
+Print one copy and scan it with two different phones, from the distance people will scan it. You can also photograph the printed code and drop the photo into the [scan checker](/tools/scan-checker).
+
+## If something goes wrong
+
+### EPS is grayed out
+
+EPS can't hold an image fill. Download SVG or a print-ready PDF instead, or change the fill to a solid color or gradient in the **Design** tab.
+
+### Transparent background is grayed out
+
+You picked JPG. Choose PNG, WebP or SVG instead.
+
+### The printed code looks blurry
+
+A pixel image was printed larger than its size allows. Download an SVG, an EPS or a PDF from the **Print-ready** tab, which stay sharp at any size.
+
+## Related
+
+- [Check a design with the scan score](/docs/help/designing/scan-score)
+- [Add a frame and a call to action](/docs/help/designing/frames)
+- [A code won't scan](/docs/help/troubleshooting/wont-scan)

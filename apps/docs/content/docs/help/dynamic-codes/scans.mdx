@@ -3,25 +3,29 @@ title: See your scans
 description: Find how many people scanned a dynamic QR code, when, where and on which device.
 ---
 
-Every scan of a dynamic code is counted. Static codes aren't tracked.
+Every scan of a dynamic code is counted. Open a code to see its scans, or the **Analytics** page to see every code in the workspace. Static codes aren't tracked, because a scan of one never passes through QRdx.
 
 ## One code
 
-Go to **Codes** and click the code's name. The top of the page shows:
+Go to **Codes**, click the code and open its **Analytics** tab. The top of the tab shows:
 
 - **Total scans** and **Scans in range** (the dates you picked).
 - **Unique visitors**: each visitor counts once per day.
 - **Last scan**.
 
-Below that, **QR scans and NFC taps** splits the visits between the QR code and [NFC tags](/docs/nfc) carrying the code's link. Then come charts for countries, cities, devices, operating systems, browsers and referrers, plus when people scan and in which language. On Pro and Business, codes that [ask for precise location](/docs/precise-location) also list the places scanners chose to share.
+{/* shot: code-analytics-tab | a code's Analytics tab with Total scans, Scans in range, Unique visitors and Last scan, and the Scans over time chart below | Dashboard, Codes, open a code, Analytics */}
+
+Below that, **QR scans and NFC taps** splits the visits between the QR code and [NFC tags](/docs/nfc) carrying the code's link. Then come **Scans over time**, **Top countries**, **Top cities**, **Devices**, **Operating systems**, **Browsers**, **Referrers**, **Languages** and **When people scan**, by hour of day or day of week.
+
+On Pro and Business, a code set to **Ask scanners for precise location** also shows **Precise locations**: the places scanners chose to share. See [Precise location](/docs/precise-location).
 
 ## All your codes
 
-The **Analytics** page in your dashboard shows totals for every code, your top codes, countries, devices and languages. **Compare codes** puts up to 4 codes side by side.
+In the Codes sidebar, click **Analytics**. The page shows totals for every code, your top codes, countries, devices and languages. **Compare codes** puts up to 4 codes side by side.
 
 ## Date ranges and history
 
-Pick 7, 30 or 90 days, 1 year, 3 years or **All time**. All time starts on the day of the code's first scan, or of the workspace's first scan on the **Analytics** page. How far back you can look depends on your plan:
+Pick **7 days**, **30 days**, **90 days**, **1 year**, **3 years** or **All time**. All time starts on the day of the code's first scan, or of the workspace's first scan on the **Analytics** page. How far back you can look depends on your plan:
 
 - **Free**: {facts.freeScanHistoryYears} year.
 - **Pro** and **Business**: all of it, including **All time**.
@@ -30,12 +34,32 @@ Scans your plan doesn't show aren't deleted. They show again after an upgrade.
 
 ## Download your scans
 
-On a code's page, open the **Analytics** tab and click **Export CSV**. You get up to 50,000 scans for the selected dates, with the time, place, device, operating system, browser and referrer of each, whether it was a QR scan or an NFC tap, and the shared location when there is one.
+On a code's **Analytics** tab, click **Export CSV**. You get up to 50,000 scans for the selected dates, with the time, place, device, operating system, browser and referrer of each, whether it was a QR scan or an NFC tap, and the shared location when there is one.
 
 ## What isn't counted
 
-Bots and link previews aren't counted. If one network scans the same code more than 20 times in a minute, the extra scans aren't counted. The code still opens every time.
+Bots, link previews and prefetches aren't counted. If one network scans the same code more than 20 times in a minute, the extra scans aren't counted. The code still opens every time.
 
 ## Privacy
 
 QRdx never stores a scanner's IP address. See [What QRdx records when someone scans](/docs/help/privacy-and-security/scan-data).
+
+## If something goes wrong
+
+### Scans you expect are missing
+
+On Free, the charts stop {facts.freeScanHistoryYears} year back. Scans from one network beyond 20 a minute, and visits by bots and link previews, aren't counted either.
+
+### Unique visitors is much lower than total scans
+
+The same people scanned more than once in a day. Each visitor counts once per day in **Unique visitors**, and every scan in **Total scans**.
+
+### The chart shows scans but a code is static
+
+Only dynamic codes are counted. A printed static code never reports anything, even if a dynamic code with the same link exists.
+
+## Related
+
+- [What QRdx records when someone scans](/docs/help/privacy-and-security/scan-data)
+- [Export your data](/docs/help/account-and-billing/export-your-data)
+- [Tracking and conversions guide](/docs/tracking-and-conversions)
