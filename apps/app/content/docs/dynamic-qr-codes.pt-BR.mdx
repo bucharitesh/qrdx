@@ -65,7 +65,7 @@ Os códigos de um workspace usam o melhor plano entre os seus proprietários. Ve
 
 ## Análises de leitura [#scan-analytics]
 
-Cada código tem uma página de análises com leituras ao longo do tempo, visitantes únicos, principais países e cidades, dispositivos, sistemas operacionais, navegadores e referenciadores dos últimos 7, 30 ou 90 dias, 1 ano ou 3 anos (limitado pelo histórico do seu plano). Você pode exportar as leituras do período selecionado em CSV.
+Cada código tem uma página de análises com leituras ao longo do tempo, visitantes únicos, principais países e cidades, dispositivos, sistemas operacionais, navegadores e referenciadores dos últimos 7, 30 ou 90 dias, 1 ano ou 3 anos, ou de todo o período desde a primeira leitura do código (limitado pelo histórico do seu plano: todo o período está disponível no Pro e no Business). Você pode exportar em CSV as leituras do intervalo selecionado.
 
 O que é registrado em cada leitura:
 
@@ -88,7 +88,7 @@ Gerencie os códigos programaticamente em `https://api.qrdx.dev/v1/codes`. As re
 | `GET` | `/v1/codes/{id}` | Busca um código |
 | `PATCH` | `/v1/codes/{id}` | Atualiza `destinationUrl`, `title`, `style`, `domainId` ([domínios personalizados](/docs/custom-domains)), `slug` ou `archived`, ou alterna `kind` entre `redirect` e `page` |
 | `DELETE` | `/v1/codes/{id}` | Exclui um código e suas leituras |
-| `GET` | `/v1/codes/{id}/scans` | Análises de `range` (`7d`, `30d`, `90d`, `365d`, `1095d`; limitado pelo histórico do seu plano). Adicione `limit` (≤ 500) para obter leituras individuais e `before` (o último `scannedAt`) para a próxima página |
+| `GET` | `/v1/codes/{id}/scans` | Análises de `range` (`7d`, `30d`, `90d`, `365d`, `1095d`, ou `all` no Pro e no Business; limitado pelo histórico do seu plano). Adicione `limit` (≤ 500) para obter leituras individuais e `before` (o último `scannedAt`) para a próxima página |
 
 Crie um código:
 

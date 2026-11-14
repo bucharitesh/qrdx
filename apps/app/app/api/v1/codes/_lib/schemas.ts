@@ -13,7 +13,7 @@ import {
 } from "@/app/(app)/dashboard/pages/_lib/landing-pages";
 import { FILE_ID } from "@/lib/qr-api/style";
 import { LOGO_ICON_HELP, logoIconSchema } from "@/lib/qr-design/logo-icon";
-import { SCAN_RANGE_KEYS } from "@/lib/scans";
+import { SCAN_RANGE_KEYS } from "@/lib/scan-ranges";
 import { themeStylePropsSchema } from "@/types/theme";
 
 // Request schemas of /v1/codes. They live here, not in the route files, so

@@ -65,7 +65,7 @@ Die Codes eines Workspace nutzen den besten Plan unter seinen Ownern. Alles Weit
 
 ## Scan-Analysen [#scan-analytics]
 
-Jeder Code hat eine Analyseseite mit Scans im Zeitverlauf, eindeutigen Besuchern, Top-Ländern und -Städten, Geräten, Betriebssystemen, Browsern und Referrern für die letzten 7, 30 oder 90 Tage, 1 Jahr oder 3 Jahre (begrenzt durch den Verlauf deines Plans). Du kannst die Scans im gewählten Zeitraum als CSV exportieren.
+Jeder Code hat eine Analyseseite mit Scans im Zeitverlauf, eindeutigen Besuchern, Top-Ländern und -Städten, Geräten, Betriebssystemen, Browsern und Referrern für die letzten 7, 30 oder 90 Tage, 1 Jahr oder 3 Jahre oder für den gesamten Zeitraum seit dem ersten Scan des Codes (begrenzt durch den Verlauf deines Plans: der gesamte Zeitraum ist in Pro und Business verfügbar). Du kannst die Scans im gewählten Zeitraum als CSV exportieren.
 
 Das wird bei jedem Scan erfasst:
 
@@ -88,7 +88,7 @@ Verwalte Codes programmatisch unter `https://api.qrdx.dev/v1/codes`. Anfragen we
 | `GET` | `/v1/codes/{id}` | Einen Code abrufen |
 | `PATCH` | `/v1/codes/{id}` | `destinationUrl`, `title`, `style`, `domainId` ([eigene Domains](/docs/custom-domains)), `slug` oder `archived` aktualisieren oder `kind` zwischen `redirect` und `page` wechseln |
 | `DELETE` | `/v1/codes/{id}` | Einen Code und seine Scans löschen |
-| `GET` | `/v1/codes/{id}/scans` | Analytics für `range` (`7d`, `30d`, `90d`, `365d`, `1095d`; begrenzt durch den Verlauf deines Plans). Mit `limit` (≤ 500) bekommst du einzelne Scans, mit `before` (dem letzten `scannedAt`) die nächste Seite |
+| `GET` | `/v1/codes/{id}/scans` | Analysen für `range` (`7d`, `30d`, `90d`, `365d`, `1095d` oder `all` bei Pro und Business; begrenzt durch den Verlauf deines Plans). Mit `limit` (≤ 500) erhältst du einzelne Scans, mit `before` (dem letzten `scannedAt`) die nächste Seite |
 
 Einen Code erstellen:
 

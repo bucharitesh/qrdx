@@ -129,8 +129,15 @@ export const CODE_STATUSES = ["active", "archived", "all"] as const;
 /** GET /codes `limit` maximum */
 export const CODES_PAGE_SIZE = 100;
 
-/** GET /codes/{id}/scans `range` */
-export const SCAN_RANGES = ["7d", "30d", "90d", "365d", "1095d"] as const;
+/** GET /codes/{id}/scans `range` ("all": Pro and Business, the whole history) */
+export const SCAN_RANGES = [
+  "7d",
+  "30d",
+  "90d",
+  "365d",
+  "1095d",
+  "all",
+] as const;
 /** GET /codes/{id}/scans `limit` maximum */
 export const SCANS_PAGE_SIZE = 500;
 

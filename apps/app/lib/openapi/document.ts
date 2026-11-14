@@ -53,6 +53,7 @@ import { OAUTH_SCOPE_INFO, OAUTH_SCOPES } from "@/lib/oauth-scopes";
 import { getPlanLimits } from "@/lib/plans";
 import { qrOptionsSchema } from "@/lib/qr-render";
 import { SCAN_HISTORY_DAYS, scanHistoryLabel } from "@/lib/scan-history";
+import { DAILY_SERIES_MAX_DAYS } from "@/lib/scan-ranges";
 import { SHORT_LINK_BASE } from "@/lib/short-links";
 import { API_ERRORS, type ApiErrorCode, type ApiErrorInfo } from "./errors";
 import {
@@ -1036,12 +1037,12 @@ Its short link stops working, and this can't be undone. To pause a code and keep
         security: security("codes:read"),
         description: `Scan analytics of a code for a range of days.
 
-Totals, a daily series and the top countries, cities, devices, systems, browsers and referrers. \`sources\` splits the scans into QR scans and NFC taps (visits through the code's \`nfcLink\`), and each listed scan has its \`source\`. The range is clamped to how far back the plan's analytics reach: ${scanHistoryLabel(SCAN_HISTORY_DAYS.free)} on Free, the whole history on Pro and Business (\`retentionDays\` is then null). With \`limit\` above 0 the response also lists individual scans, newest first: pass the response's \`nextBefore\` as \`before\` for the next page.
+Totals, a series of scans over time and the top countries, cities, devices, systems, browsers and referrers. \`sources\` splits the scans into QR scans and NFC taps (visits through the code's \`nfcLink\`), and each listed scan has its \`source\`. The range is clamped to how far back the plan's analytics reach: ${scanHistoryLabel(SCAN_HISTORY_DAYS.free)} on Free, the whole history on Pro and Business (\`retentionDays\` is then null). On Pro and Business, \`range=all\` covers the whole history, from the day of the code's first scan; its series is per day up to ${scanHistoryLabel(DAILY_SERIES_MAX_DAYS)}, then per week or month (\`interval\`). With \`limit\` above 0 the response also lists individual scans, newest first: pass the response's \`nextBefore\` as \`before\` for the next page.
 
 On Pro and Business, \`preciseLocations\` lists the locations scanners chose to share (rounded to about 100 m) for codes that ask for them, and each scan has \`latitude\`, \`longitude\`, \`locationAccuracyM\` and \`locationSource\`. On Free, \`preciseLocations\` is null and those fields are null. More in [Precise location and geofencing](${docs("precise-location")}).`,
         parameters: c.parameters(scansQuerySchema, "query", {
           range:
-            "Days to cover; defaults to 30 days, or the longest range the plan keeps",
+            "Days to cover, ending today (UTC): 7, 30 or 90 days, 1 or 3 years, or `all` for the whole history (Pro and Business). Defaults to `30d`; a range longer than the plan's history gives `30d`",
           limit: "Individual scans to include (0–500; 0 = totals only)",
           before: "Only scans before this time: the previous `nextBefore`",
         }),
@@ -1059,6 +1060,7 @@ On Pro and Business, \`preciseLocations\` lists the locations scanners chose to 
                   days: 7,
                   total: 42,
                   unique: 37,
+                  interval: "day",
                   series: [
                     { date: "2026-01-06", count: 3 },
                     { date: "2026-01-07", count: 9 },

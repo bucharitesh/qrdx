@@ -65,7 +65,7 @@ Les codes d'un espace de travail bénéficient de la meilleure offre parmi celle
 
 ## Statistiques de scans [#scan-analytics]
 
-Chaque code dispose d'une page de statistiques avec les scans dans le temps, les visiteurs uniques, les principaux pays et villes, les appareils, les systèmes d'exploitation, les navigateurs et les référents sur les 7, 30 ou 90 derniers jours, 1 an ou 3 ans (selon l'historique de votre offre). Vous pouvez exporter en CSV les scans de la période sélectionnée.
+Chaque code dispose d'une page de statistiques avec les scans dans le temps, les visiteurs uniques, les principaux pays et villes, les appareils, les systèmes d'exploitation, les navigateurs et les sources de provenance (referrers) sur les 7, 30 ou 90 derniers jours, 1 an ou 3 ans, ou sur toute la période depuis le premier scan du code (limitée par l'historique de votre offre : la période complète est disponible avec Pro et Business). Vous pouvez exporter en CSV les scans de la période sélectionnée.
 
 Ce qui est enregistré pour chaque scan :
 
@@ -88,7 +88,7 @@ Gérez vos codes par programmation sous `https://api.qrdx.dev/v1/codes`. Les req
 | `GET` | `/v1/codes/{id}` | Récupère un code |
 | `PATCH` | `/v1/codes/{id}` | Met à jour `destinationUrl`, `title`, `style`, `domainId` ([domaines personnalisés](/docs/custom-domains)), `slug` ou `archived`, ou fait passer `kind` de `redirect` à `page` et inversement |
 | `DELETE` | `/v1/codes/{id}` | Supprime un code et ses scans |
-| `GET` | `/v1/codes/{id}/scans` | Statistiques pour `range` (`7d`, `30d`, `90d`, `365d`, `1095d` ; limité par l'historique de votre offre). Ajoutez `limit` (≤ 500) pour obtenir les scans individuels, et `before` (le dernier `scannedAt`) pour la page suivante |
+| `GET` | `/v1/codes/{id}/scans` | Statistiques pour `range` (`7d`, `30d`, `90d`, `365d`, `1095d`, ou `all` avec Pro et Business ; limité par l'historique de votre offre). Ajoutez `limit` (≤ 500) pour obtenir les scans individuels, et `before` (le dernier `scannedAt`) pour la page suivante |
 
 Créer un code :
 

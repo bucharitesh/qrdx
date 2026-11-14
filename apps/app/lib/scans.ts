@@ -25,6 +25,7 @@ import {
   isNull,
   lt,
   max,
+  min,
   type SQL,
   sql,
 } from "drizzle-orm";
@@ -33,9 +34,17 @@ import { isbot } from "isbot";
 import { env } from "@/env";
 import { getClientIp } from "@/lib/request-guards";
 import { scanGeo } from "./request-geo";
+import {
+  ALL_TIME_RANGE,
+  fillSeries,
+  rangeStart,
+  resolveScanRange,
+  type ScanRange,
+  type SeriesInterval,
+  scanRangeDays,
+  seriesInterval,
+} from "./scan-ranges";
 import { parseUserAgent } from "./user-agent";
-
-const DAY_MS = 24 * 60 * 60 * 1000;
 
 // ─── User agent ──────────────────────────────────────────────────────────────
 
@@ -219,54 +228,55 @@ export async function recordScan(
 
 // ─── Analytics ───────────────────────────────────────────────────────────────
 
-export const SCAN_RANGES = {
-  "7d": 7,
-  "30d": 30,
-  "90d": 90,
-  "365d": 365,
-  // Each plan's reach is in lib/scan-history (Pro and Business: everything).
-  // Scans started in October 2026, so 3 years covers every workspace's
-  // whole history until late 2029; a longer range is needed before then.
-  "1095d": 1095,
-} as const;
+// Ranges, their days and series buckets live in ./scan-ranges.ts (no server
+// imports, so charts and API schemas use them too).
+export {
+  ALL_TIME_RANGE,
+  rangeStart,
+  resolveScanRange,
+  SCAN_RANGE_KEYS,
+  SCAN_RANGES,
+  type ScanRange,
+  type SeriesInterval,
+  scanRangeDays,
+  scanRangeLabel,
+  seriesInterval,
+} from "./scan-ranges";
 
-export type ScanRange = keyof typeof SCAN_RANGES;
-
-/** "30 days", "1 year", "3 years" */
-export function scanRangeLabel(range: ScanRange): string {
-  const days = SCAN_RANGES[range];
-  if (days < 365) return `${days} days`;
-  const years = Math.round(days / 365);
-  return `${years} year${years === 1 ? "" : "s"}`;
+/**
+ * Where "All time" starts for a code: the day of its first scan, else its
+ * creation. One read of the (qr_code_id, scanned_at) index.
+ */
+export async function codeHistoryStart(
+  qrCodeId: string,
+  createdAt: Date | string,
+): Promise<Date> {
+  const [row] = await db
+    .select({ first: min(qrScan.scannedAt) })
+    .from(qrScan)
+    .where(eq(qrScan.qrCodeId, qrCodeId));
+  return row?.first ? new Date(row.first) : new Date(createdAt);
 }
 
-export const SCAN_RANGE_KEYS = Object.keys(SCAN_RANGES) as ScanRange[];
-
-const isScanRange = (value: unknown): value is ScanRange =>
-  typeof value === "string" && value in SCAN_RANGES;
-
-/** The requested range, or the longest one the plan's retention allows. */
-export function resolveScanRange(
+/**
+ * The range to show for one code (the request's, if the plan reaches it)
+ * and the days it covers. Only "all" reads the code's history.
+ */
+export async function codeScanRange(
+  code: { id: string; createdAt: Date | string },
   value: unknown,
   retentionDays: number,
-): { range: ScanRange; days: number } {
-  const allowed = SCAN_RANGE_KEYS.filter(
-    (key) => SCAN_RANGES[key] <= retentionDays,
-  );
-  const fallback = allowed.includes("30d") ? "30d" : (allowed.at(-1) ?? "7d");
-  const range =
-    isScanRange(value) && allowed.includes(value) ? value : fallback;
-  return { range, days: SCAN_RANGES[range] };
+  now: Date = new Date(),
+): Promise<{ range: ScanRange; days: number }> {
+  const range = resolveScanRange(value, retentionDays);
+  const start =
+    range === ALL_TIME_RANGE
+      ? await codeHistoryStart(code.id, code.createdAt)
+      : null;
+  return { range, days: scanRangeDays(range, start, now) };
 }
 
-/** Start of the UTC day `days - 1` days ago, so a range always includes today. */
-export function rangeStart(days: number, now: Date = new Date()): Date {
-  const start = new Date(now);
-  start.setUTCHours(0, 0, 0, 0);
-  start.setUTCDate(start.getUTCDate() - (days - 1));
-  return start;
-}
-
+/** Scans in one bucket of a series: `date` is the bucket's first day. */
 export interface DailyCount {
   date: string;
   count: number;
@@ -288,6 +298,8 @@ export interface ScanAnalytics {
   days: number;
   total: number;
   unique: number;
+  /** What one `series` point counts: a UTC day, ISO week or month */
+  interval: SeriesInterval;
   series: DailyCount[];
   countries: BreakdownRow[];
   cities: CityRow[];
@@ -300,29 +312,38 @@ export interface ScanAnalytics {
 }
 
 const BREAKDOWN_LIMIT = 10;
-const dayOf = (column: PgColumn) =>
-  sql<string>`to_char(date_trunc('day', ${column}), 'YYYY-MM-DD')`;
 
-function fillDays(
-  rows: { day: string; count: number }[],
-  from: Date,
-  days: number,
-): DailyCount[] {
-  const byDay = new Map(rows.map((row) => [row.day, row.count]));
-  return Array.from({ length: days }, (_, i) => {
-    const date = new Date(from.getTime() + i * DAY_MS)
-      .toISOString()
-      .slice(0, 10);
-    return { date, count: byDay.get(date) ?? 0 };
-  });
+/**
+ * The first day (YYYY-MM-DD) of the UTC day, ISO week or month a timestamp
+ * falls in. scanned_at holds UTC wall time, so date_trunc buckets in UTC;
+ * lib/scan-ranges.ts seriesDates lists the same keys.
+ */
+export function bucketOf(
+  column: PgColumn | SQL,
+  interval: SeriesInterval,
+): SQL<string> {
+  switch (interval) {
+    case "week":
+      return sql<string>`to_char(date_trunc('week', ${column}), 'YYYY-MM-DD')`;
+    case "month":
+      return sql<string>`to_char(date_trunc('month', ${column}), 'YYYY-MM-DD')`;
+    default:
+      return sql<string>`to_char(date_trunc('day', ${column}), 'YYYY-MM-DD')`;
+  }
 }
 
-/** Every aggregate uses the (qr_code_id, scanned_at) index and runs in one round trip. */
+/**
+ * Every aggregate uses the (qr_code_id, scanned_at) index and runs in one
+ * round trip. The series is per day up to 3 years, then per week or month
+ * (lib/scan-ranges.ts seriesInterval), so "All time" stays a few hundred
+ * rows however old the code is.
+ */
 export async function getScanAnalytics(
   qrCodeId: string,
   days: number,
 ): Promise<ScanAnalytics> {
   const from = rangeStart(days);
+  const interval = seriesInterval(days);
   const where = and(
     eq(qrScan.qrCodeId, qrCodeId),
     gte(qrScan.scannedAt, from),
@@ -356,7 +377,7 @@ export async function getScanAnalytics(
       .from(qrScan)
       .where(where),
     db
-      .select({ day: dayOf(qrScan.scannedAt), count: count() })
+      .select({ day: bucketOf(qrScan.scannedAt, interval), count: count() })
       .from(qrScan)
       .where(where)
       .groupBy(sql`1`),
@@ -379,7 +400,8 @@ export async function getScanAnalytics(
     days,
     total: totals?.total ?? 0,
     unique: totals?.unique ?? 0,
-    series: fillDays(series, from, days),
+    interval,
+    series: fillSeries(series, from, days, interval),
     countries: countries as BreakdownRow[],
     cities,
     devices: devices as BreakdownRow[],
@@ -390,7 +412,10 @@ export async function getScanAnalytics(
   };
 }
 
-/** Daily scan counts for several codes (dashboard sparklines). */
+/**
+ * Scan counts for several codes (dashboard sparklines, compare chart): one
+ * per bucket of seriesDates(rangeStart(days), days, seriesInterval(days)).
+ */
 export async function getScanSparklines(
   qrCodeIds: string[],
   days = 7,
@@ -399,10 +424,11 @@ export async function getScanSparklines(
   if (qrCodeIds.length === 0) return result;
 
   const from = rangeStart(days);
+  const interval = seriesInterval(days);
   const rows = await db
     .select({
       qrCodeId: qrScan.qrCodeId,
-      day: dayOf(qrScan.scannedAt),
+      day: bucketOf(qrScan.scannedAt, interval),
       count: count(),
     })
     .from(qrScan)
@@ -420,7 +446,9 @@ export async function getScanSparklines(
   for (const id of qrCodeIds) {
     result.set(
       id,
-      fillDays(grouped.get(id) ?? [], from, days).map((point) => point.count),
+      fillSeries(grouped.get(id) ?? [], from, days, interval).map(
+        (point) => point.count,
+      ),
     );
   }
   return result;

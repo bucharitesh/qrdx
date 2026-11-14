@@ -3,9 +3,9 @@ import { getCode } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import { handleError } from "@/lib/error-response";
 import { getPlanForScope, getPlanLimits } from "@/lib/plans";
 import {
+  codeScanRange,
   listScans,
   rangeStart,
-  resolveScanRange,
   scansToCsv,
   withoutPreciseLocation,
 } from "@/lib/scans";
@@ -15,7 +15,10 @@ export const dynamic = "force-dynamic";
 
 const MAX_EXPORT_ROWS = 50_000;
 
-/** CSV of the code's scans in the selected range (newest first). */
+/**
+ * CSV of the code's scans in the selected range (newest first). "all"
+ * (plans that keep the whole history) starts at the code's first scan.
+ */
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
@@ -27,12 +30,13 @@ export async function GET(
       getCode(scope, id),
       getPlanForScope(scope),
     ]);
-    const { range, days } = resolveScanRange(
+    const limits = getPlanLimits(plan);
+    const { range, days } = await codeScanRange(
+      code,
       request.nextUrl.searchParams.get("range"),
-      getPlanLimits(plan).analyticsRetentionDays,
+      limits.analyticsRetentionDays,
     );
     // ── Precise location (lib/scan-location) ──
-    const limits = getPlanLimits(plan);
     const scans = (
       await listScans(code.id, {
         from: rangeStart(days),

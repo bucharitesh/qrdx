@@ -6367,7 +6367,12 @@
           "allCodesLastValue": "All codes, last {value}",
           "topCountries": "Top countries",
           "devices": "Devices",
-          "unknown": "Unknown"
+          "unknown": "Unknown",
+          "allTime": "All time",
+          "sinceDateUtc": "Since {date} (UTC)",
+          "allCodesSince": "All codes, since {date}",
+          "allCodesPerIntervalSince": "All codes, per {interval, select, week {week} month {month} other {day}}, since {date} (UTC)",
+          "scansPerIntervalOfUpTo": "{interval, select, week {Weekly} month {Monthly} other {Daily}} scans of up to {MAX_COMPARE, number} codes side by side (UTC)."
         },
         "comparePicker": {
           "stopComparingValue": "Stop comparing {value}",
@@ -6704,7 +6709,9 @@
           "conversionTypes": "Conversion types",
           "sinceValue": " since {value}",
           "languageAndScanCountRules": " (language and scan-count rules can't be replayed, so these may include scans those rules sent elsewhere)",
-          "unknown": "Unknown"
+          "unknown": "Unknown",
+          "sinceDate": "Since {date}, {timeZone}",
+          "sinceDateBusiest": "Since {date}, {timeZone} · busiest hour {hour}:00"
         },
         "analyticsTab": {
           "exportCsv": "Export CSV",
@@ -6731,7 +6738,11 @@
           "daysDaysOfScanHistory": "{days, number} days of scan history",
           "valueKeepsValue2": "{value} keeps {value2}",
           "valueAndValue2": "{value} and {value2}.",
-          "yearsOfScanHistory": "{years, plural, one {# year of scan history} other {# years of scan history}}"
+          "yearsOfScanHistory": "{years, plural, one {# year of scan history} other {# years of scan history}}",
+          "allTime": "All time",
+          "sinceDateUtc": "Since {date} (UTC)",
+          "sinceDateTapsCome": "Since {date}. Taps come through the code's NFC link.",
+          "scansPerIntervalSince": "Scans per {interval, select, week {week} month {month} other {day}}, since {date} (UTC)"
         },
         "changeTypeDialog": {
           "theyStaySavedAndWork": "They stay saved and work again if you switch back.",
@@ -6909,7 +6920,9 @@
           "shared": "Shared",
           "allowed": "Allowed",
           "noScansAskedForA": "No scans asked for a location in the last {days, number} days yet.",
-          "thisCodeDoesntAskScanners": "This code doesn't ask scanners for their location."
+          "thisCodeDoesntAskScanners": "This code doesn't ask scanners for their location.",
+          "sharedByScannersWhoAllowedSince": "Shared by scanners who allowed it, rounded to about 100 m. Separate from the IP-based countries and cities above. Since {date}.",
+          "noScansAskedForASince": "No scans asked for a location since {date} yet."
         },
         "preciseLocationsTable": {
           "preciseScanLocationsRoundedTo": "Precise scan locations, rounded to about 100 m",

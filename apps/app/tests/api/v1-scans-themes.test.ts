@@ -13,7 +13,12 @@ import { fakeDb } from "../support/fake-db";
 const state = vi.hoisted(() => ({
   plan: "free" as "free" | "pro" | "business",
   analyticsCalls: [] as { codeId: string; days: number }[],
-  listCalls: [] as { codeId: string; before: Date | null; limit: number }[],
+  listCalls: [] as {
+    codeId: string;
+    from: Date;
+    before: Date | null;
+    limit: number;
+  }[],
   scans: [] as { id: string; scannedAt: Date }[],
 }));
 
@@ -62,6 +67,7 @@ vi.mock("@/lib/scans", async (importOriginal) => {
         days,
         total: 3,
         unique: 2,
+        interval: actual.seriesInterval(days),
         series: [],
         countries: [{ value: "DE", count: 3 }],
         cities: [],
@@ -73,7 +79,7 @@ vi.mock("@/lib/scans", async (importOriginal) => {
     },
     listScans: async (
       codeId: string,
-      options: { before: Date | null; limit: number },
+      options: { from: Date; before: Date | null; limit: number },
     ) => {
       state.listCalls.push({ codeId, ...options });
       return state.scans
@@ -194,6 +200,8 @@ interface ScansBody {
     retentionDays: number;
     total: number;
     from: string;
+    days: number;
+    interval: string;
     events?: { id: string; scannedAt: string }[];
     nextBefore?: string | null;
   };
@@ -220,8 +228,11 @@ describe("GET /v1/codes/{id}/scans", () => {
   it.each([
     ["free", "1095d", "30d", 365],
     ["free", "365d", "365d", 365],
+    ["free", "all", "30d", 365],
     ["pro", "1095d", "1095d", Number.POSITIVE_INFINITY],
     ["business", "1095d", "1095d", Number.POSITIVE_INFINITY],
+    ["pro", "all", "all", Number.POSITIVE_INFINITY],
+    ["business", "all", "all", Number.POSITIVE_INFINITY],
   ] as const)(
     "on %s, asking for %s gives %s (history: %s days)",
     async (plan, asked, served, retention) => {
@@ -236,6 +247,56 @@ describe("GET /v1/codes/{id}/scans", () => {
       );
     },
   );
+
+  it("covers the whole history with range=all, from the code's first scan", async () => {
+    state.plan = "pro";
+    fakeDb.seed("qrScan", [
+      {
+        id: "s_first",
+        qrCodeId: "code_alice",
+        scannedAt: new Date("2022-08-17T22:30:00Z"),
+      },
+      {
+        id: "s_last",
+        qrCodeId: "code_alice",
+        scannedAt: new Date("2026-10-31T09:00:00Z"),
+      },
+      // Another workspace's older scan doesn't move the start.
+      {
+        id: "s_bob",
+        qrCodeId: "code_bob",
+        scannedAt: new Date("2019-01-01T00:00:00Z"),
+      },
+    ]);
+    const { data } = (await (
+      await getScans("code_alice", "?range=all&limit=10")
+    ).json()) as ScansBody;
+    expect(data.range).toBe("all");
+    expect(data.from).toBe("2022-08-17T00:00:00.000Z");
+    // Aug 17, 2022 to Nov 1, 2026, both days included.
+    expect(data.days).toBe(1538);
+    expect(state.analyticsCalls).toEqual([
+      { codeId: "code_alice", days: 1538 },
+    ]);
+    // More than 3 years: one series point per week.
+    expect(data.interval).toBe("week");
+    // Listed scans reach back as far as the aggregates.
+    expect(state.listCalls[0]?.from.toISOString()).toBe(
+      "2022-08-17T00:00:00.000Z",
+    );
+  });
+
+  it("starts range=all at creation for a code nobody scanned yet", async () => {
+    state.plan = "business";
+    const { data } = (await (
+      await getScans("code_alice", "?range=all")
+    ).json()) as ScansBody;
+    expect(data.range).toBe("all");
+    // code_alice was made today (NOW): today only.
+    expect(data.from).toBe("2026-11-01T00:00:00.000Z");
+    expect(data.days).toBe(1);
+    expect(data.interval).toBe("day");
+  });
 
   it("rejects unknown ranges", async () => {
     expect((await getScans("code_alice", "?range=10y")).status).toBe(400);
