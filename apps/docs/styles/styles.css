@@ -5,6 +5,9 @@
    here. */
 @source "../../../packages/docs-assets/registry";
 
+/* The cookie banner and its settings come from @repo/analytics. */
+@source "../../../packages/analytics";
+
 @import "fumadocs-ui/css/neutral.css";
 @import "fumadocs-ui/css/preset.css";
 
