@@ -3,42 +3,63 @@ title: A code won't scan
 description: Why a QR code isn't scanning, and how to fix each cause.
 ---
 
-If a phone camera doesn't react to your code, or reads it only sometimes, work through these checks.
+If a phone camera doesn't react to your code, or reads it only sometimes, the cause is almost always one of the things below. Start by finding out which.
 
-Start with the **Scan score** under the preview in the [playground](/playground). Click it to see which checks fail. See [Check a design with the scan score](/docs/help/designing/scan-score).
+- For a design in the [playground](/playground), click the **Scan score** under the preview. The **Will it scan?** panel lists the failed checks first. See [Check a design with the scan score](/docs/help/designing/scan-score).
+- For a code that's already printed, take a photo and drop it into the [scan checker](/tools/scan-checker). It shows what the code says and how well it reads.
 
-For a code that's already printed, take a photo and drop it into the [scan checker](/tools/scan-checker). It shows what the code says and tests how well it reads.
+## The camera doesn't react at all
 
-## Common causes
+### Low contrast, or a light code on a dark background
 
-### Low contrast or light on dark
+Scanners look for dark squares on a light background, and give up when the two are too close. Make the code darker or the background lighter, and swap the colors if the code is the light part. Confirm it: the **Contrast** check in the scan score passes at 4.5:1 or more. See [Choose colors that scan](/docs/help/designing/colors-and-contrast).
 
-Scanners look for dark squares on a light background. Make the code darker or the background lighter, and avoid light codes on dark backgrounds. See [Choose colors that scan](/docs/help/designing/colors-and-contrast).
+{/* diagram: wont-scan-contrast | the same code twice: dark on light, which scans, and light gray on white, which doesn't | concept */}
 
-### A logo covers too much
+### No clear border around the code
 
-Set **Error correction** to **High** in the **Design** tab. See [Add a logo](/docs/help/designing/logos).
+Scanners need empty space around the code to find its edges. Set **Padding** to **Standard** or **Large** in the **Design** tab, and don't let text or artwork touch the code. Confirm it: the **Quiet zone** check passes.
 
-### Unusual eye shapes
-
-Circle and curly corner eyes fail in some scanner apps. Square, rounded and gear eyes read everywhere.
-
-### No clear border
-
-Scanners need empty space around the code. Set **Padding** to **Standard** or **Large**, and don't let other artwork touch the code.
+{/* diagram: wont-scan-quiet-zone | a code with artwork touching its edge next to the same code with four modules of empty space around it | concept */}
 
 ### Printed too small
 
-Make the code about one tenth of the scanning distance: 2 cm for a card read at 20 cm, 10 cm for a poster read from 1 m. The [print size calculator](/tools/print-size) works it out for you.
+A code scans from about ten times its width, so a 2 cm code read from across a room fails. Print it at about one tenth of the scanning distance: 2 cm for a card read at 20 cm, 10 cm for a poster read from 1 m. The [print size calculator](/tools/print-size) works it out for your code. Confirm it: scan a test print from the real distance.
+
+{/* diagram: wont-scan-print-size | a code's width next to the distance it can be scanned from, at about ten to one | concept */}
+
+## It scans only sometimes
+
+### A logo covers too much
+
+Error correction can only rebuild so much of a code. Set **Error correction** to **High** in the **Design** tab, or make the logo smaller. Confirm it: the **Logo** check passes. See [Add a logo](/docs/help/designing/logos).
+
+### Circle or curly eyes
+
+Some scanner apps don't recognize round or curly corner eyes. Switch to square, rounded or gear eyes. Confirm it: the **Eye shape** check passes.
+
+{/* diagram: wont-scan-eyes | corner eyes that scan everywhere (square, rounded, gear) next to the circle and curly ones that fail in some apps | concept */}
 
 ### Too much content
 
-A static code that holds a lot of text becomes dense and hard to read when small. Use a dynamic code instead: it holds only a short link. See [Static or dynamic](/docs/help/getting-started/static-vs-dynamic).
+A static code that holds a long text or address becomes dense, and dense codes fail when small. Make the code dynamic instead: it holds only a short link. See [Static or dynamic, which do you need?](/docs/help/getting-started/static-vs-dynamic).
 
-### The print itself
+## It scans on screen but not in print
 
-Blurry printing, glossy surfaces that reflect light, and curved or folded surfaces all make codes harder to read. Print as a vector file (SVG, EPS, or a PDF from **Print-ready**) and test one copy before printing many.
+### Blurry print, or a glossy or curved surface
+
+Pixel images printed large go soft, and glossy or curved surfaces reflect light into the camera. Download an SVG, an EPS or a PDF from the **Print-ready** tab, print on a matte surface, and keep the code flat. Confirm it: print one copy and scan it with two different phones before printing more. See [Download and print a QR code](/docs/help/getting-started/download-and-print).
 
 ## It scans, but shows an error
 
-If the camera reads the code but you see a page like "QR code not found", see [A scan shows an error page](/docs/help/troubleshooting/error-pages).
+The camera reads the code and opens a page like "QR code not found". That's not a scanning problem: see [A scan shows an error page](/docs/help/troubleshooting/error-pages).
+
+## Still stuck
+
+[Contact support](/docs/help/contact) with a photo of the printed code and the phone you tried.
+
+## Related
+
+- [Check a design with the scan score](/docs/help/designing/scan-score)
+- [Choose colors that scan](/docs/help/designing/colors-and-contrast)
+- [Download and print a QR code](/docs/help/getting-started/download-and-print)

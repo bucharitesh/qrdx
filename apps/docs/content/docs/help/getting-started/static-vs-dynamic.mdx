@@ -3,46 +3,50 @@ title: Static or dynamic, which do you need?
 description: Static codes store your content in the code and never change. Dynamic codes store a short link you can change after printing.
 ---
 
+Every QR code you make with QRdx is one of two kinds. A static code stores your content inside the code itself. A dynamic code stores a short link that forwards each scan to your destination, the page the code should open. Pick before you print, because a printed static code can't become dynamic.
+
+{/* diagram: static-vs-dynamic | a static code holding the website address itself, next to a dynamic code holding a short link that forwards to a destination you can change | concept */}
+
 ## Static QR codes
 
-A static code stores your content inside the code itself: the link, the Wi-Fi password or the contact card.
+A static code holds the link, the Wi-Fi password or the contact card itself.
 
 - It works forever, with no account and no server.
 - It's free and unlimited.
-- You **can't change it** after printing. To change the content, you print a new code.
+- It can't be changed after printing. To change the content, you print a new code.
 - Scans aren't counted.
 
-Every code you download from the [playground](/playground) without making it dynamic is static.
+Every code you download from the [playground](/playground) without picking **Dynamic** is static.
 
 ## Dynamic QR codes
 
-A dynamic code stores a short link, such as `qrdx.dev/q/aB3xY7k`. The short link forwards each scan to your destination.
+A dynamic code holds a short link, such as `qrdx.dev/q/aB3xY7k`. When someone scans it, QRdx forwards them to your destination.
 
-- You can **change the destination** any time, even after printing.
+- You can change the destination at any time, even after printing.
 - Every scan is counted, with when, where and on which device.
-- You can pause it, schedule it, add a password or send scans to different links.
+- You can pause it, give it start and end dates, add a password or send scans to different links.
 - It needs a free QRdx account. The Free plan includes 10 dynamic codes; Pro and Business have no limit.
 
 See [Create a dynamic QR code](/docs/help/dynamic-codes/create).
 
 ## Which to choose
 
-Choose **dynamic** when:
-
-- the code goes on something printed that you can't easily replace, like packaging, signs or menus;
-- the link might change, like a seasonal offer or a menu;
-- you want to know how many people scan it.
-
-Choose **static** when:
-
-- the content never changes, like Wi-Fi details or a contact card;
-- you don't want an account;
-- you want nothing between the scan and your content.
+| Choose dynamic when | Choose static when |
+| --- | --- |
+| The code goes on something you can't replace without a reprint, like packaging, signs or menus. | The content never changes, like Wi-Fi details or a contact card. |
+| The link might change, like a seasonal offer or a menu. | You don't want an account. |
+| You want to know how many people scan it. | You want nothing between the scan and your content. |
 
 ## Pages are dynamic too
 
-A [mobile page](/docs/help/pages-and-forms/create-a-page) hosted by QRdx gets a dynamic code. You can edit the page any time and the printed code keeps working.
+A [mobile page](/docs/help/pages-and-forms/create-a-page) hosted by QRdx always gets a dynamic code. You can edit the page at any time and the printed code keeps working.
 
 ## Dynamic codes keep working
 
-A dynamic code keeps redirecting if you downgrade, cancel or a payment fails. See [What happens to your codes if you stop paying](/docs/help/account-and-billing/never-hostage).
+A dynamic code keeps forwarding scans if you downgrade, cancel or a payment fails. See [What happens to your codes if you stop paying](/docs/help/account-and-billing/never-hostage).
+
+## Related
+
+- [Make your first QR code](/docs/help/getting-started/first-qr-code)
+- [Create a dynamic QR code](/docs/help/dynamic-codes/create)
+- [Dynamic QR codes guide](/docs/dynamic-qr-codes)

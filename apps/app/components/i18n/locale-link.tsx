@@ -1,6 +1,7 @@
 "use client";
 
 import { isDocsPagePath } from "@repo/i18n/docs";
+import { isSitePagePath } from "@repo/next-config/site-zone";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { type ComponentProps, useMemo } from "react";
@@ -42,12 +43,18 @@ function anchorProps({
  * Docs pages get a plain <a>: another app serves them behind the same URLs
  * (the docs site, @repo/i18n/docs), or qrdx.dev does when this deployment
  * has none (a redirect), and a link from one app into the other must load
- * the page in full.
+ * the page in full. The site's pages (the blog, @repo/next-config/site-zone)
+ * too: the marketing site serves them behind the same URLs once SITE_ORIGIN
+ * is set, and this app does until then, so a full page load is right in
+ * both modes and next/link never tries to load the other app's page here.
  */
 export function LocaleLink({ href, ...props }: LinkProps) {
   const localize = useLocalizeHref();
   const target = typeof href === "string" ? localize(href) : href;
-  if (typeof target === "string" && isDocsPagePath(target)) {
+  if (
+    typeof target === "string" &&
+    (isDocsPagePath(target) || isSitePagePath(target))
+  ) {
     return <a href={target} {...anchorProps(props)} />;
   }
   return <Link href={target} {...props} />;

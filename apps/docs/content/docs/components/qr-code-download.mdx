@@ -1,8 +1,10 @@
 ---
 title: QR Code Download
-description: A download menu that exports a QR code as PNG, SVG, JPG or PDF at the size you pick, or copies it as an image.
+description: A download menu for shadcn/ui projects that exports a QR code as PNG, SVG, JPG or PDF at the size you pick, or copies it as an image.
 icon: Download
 ---
+
+`QrCodeDownload` is one button that opens a menu of formats and sizes and saves the code as a file, or copies a PNG to the clipboard. Use it next to any code you render, with the same style object, so the file matches the preview.
 
 <ComponentLinks name="qr-code-download" />
 
@@ -14,15 +16,15 @@ icon: Download
 
 ## Usage
 
-```tsx
+```tsx title="components/example.tsx"
 import { QrCodeDownload } from "@/components/qr-code-download";
 ```
 
-```tsx
+```tsx title="components/example.tsx"
 <QrCodeDownload value="https://qrdx.dev" />
 ```
 
-The menu lists each format with a short hint, a size picker, and "Copy image", which puts a PNG on the clipboard. Files are rendered in the browser; nothing is uploaded.
+The menu lists each format with a short hint, a size picker, and **Copy image**, which puts a PNG on the clipboard. Files are rendered in the browser; nothing is uploaded.
 
 ## Examples
 
@@ -35,16 +37,50 @@ Give `qr` the same style object you render on screen, so every exported file mat
 ### Formats
 
 | Format | Output |
-|--------|--------|
+| --- | --- |
 | `png` | Image with the code's background |
 | `jpg` | Image with a solid background |
 | `svg` | Vector that scales to any size |
 | `pdf` | Single-page document. Needs the optional `jspdf` package (`npm install jspdf`) |
+| `eps` | Vector for print shops and design tools |
 
-Raster sizes go from 50 to 5000 pixels. Pass a single entry in `sizes` to hide the size picker.
+Raster sizes go from 50 to 5000 pixels. Pass a single entry in `sizes` to hide the size picker. The menu shows the pixel size next to raster formats and "vector" next to SVG and EPS.
 
-## API Reference
+### After a download
+
+`onComplete` is called with the format, or `"copy"`, after a file is saved or the image is copied. `onError` receives the error when an export fails; the message also shows under the button.
+
+```tsx title="components/tracked-download.tsx"
+import { QrCodeDownload } from "@/components/qr-code-download";
+
+export function TrackedDownload({ url }: { url: string }) {
+  return (
+    <QrCodeDownload
+      value={url}
+      onComplete={(action) => console.log("exported", action)}
+      onError={(error) => console.error(error.message)}
+    />
+  );
+}
+```
+
+## Accessibility and rendering
+
+- The trigger is your Button, with `aria-busy` while a file is rendered. A result is announced through a polite live region, and an error shows under the button with `role="alert"`.
+- The menu is your DropdownMenu, so keyboard navigation and focus follow your theme's components.
+- Copying needs a user gesture and a secure context (HTTPS or localhost); the browser rejects it otherwise, and the error shows under the button.
+- The component is a Client Component. It renders nothing visual on the server beyond the button.
+
+## API reference
 
 <auto-type-table path="../../../../../packages/docs-assets/registry/qrdx/qr-code-download.tsx" type="{ [K in keyof QrCodeDownloadProps as K extends Exclude<keyof ComponentProps<'div'>, 'onError'> ? never : K]: QrCodeDownloadProps[K] }" />
 
 Any other prop, such as `className`, is passed to the wrapping `<div>`.
+
+## Related
+
+<Cards>
+  <Card href="/docs/components/qr-code" title="QR Code" description="A code with a row of download buttons instead of a menu." />
+  <Card href="/docs/features/downloads" title="Export and download" description="The library functions behind the menu, and every format's details." />
+  <Card href="/docs/components/qr-code-card" title="QR Code Card" description="A card whose footer takes this menu." />
+</Cards>

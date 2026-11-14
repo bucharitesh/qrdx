@@ -3,35 +3,55 @@ title: Add a frame and a call to action
 description: Put a border and a short message like "Scan me" around your QR code.
 ---
 
-A frame tells people what they get when they scan.
+A frame puts a border and a short message around the code, so people know what they get when they scan. Frames sit outside the code and never cover any of its squares, so they never hurt scanning.
 
 ## Add a frame
 
 1. In the [playground](/playground?tab=design&section=frame), open the **Design** tab, then **Frame**.
-2. Pick a frame. Search by name, or pick a group: **Classic** has the built-in frames, including Arrow, Standard Box, Square Border, Striked Box, Halloween and Dot Ring. Picking a frame replaces the one you had. To use your own artwork, sign in and choose **Upload SVG** next to the search: the SVG's shapes and colors become a frame.
-3. Type your text in **Label**, or pick a ready-made one: Scan me, Scan for menu, Join Wi-Fi, Leave a review, Follow us, Pay here, Save contact or Download the app.
-4. Set the **Frame color**, **Text color** and **Text size**. Some frames also have a **Second line**. Arrow, Standard Box, Square Border and Dot Ring take the color of the code's dots instead, and Striked Box and Halloween keep their own colors.
+2. Pick a frame. Search by name, or browse the groups: **Classic** holds the built-in frames, including Arrow, Standard Box, Square Border, Striked Box, Halloween and Dot Ring; the frame library's collections follow; **Saved** holds frames you kept. Picking a frame replaces the one you had.
+3. Type your text in **Label**, or pick one of the **Label ideas**: Scan me, Scan for menu, Join Wi-Fi, Leave a review, Follow us, Pay here, Save contact or Download the app. Picking a label idea with no frame on adds the default frame.
+4. Set the **Frame color**, **Text color** and **Text size**. Some frames also have a **Second line**, an **Accent color** or an **Icon**.
 
-{/* Shaped codes (feat/heart-silhouette-shapes) */}
+Arrow, Standard Box, Square Border and Dot Ring take the color of the code's dots instead of a frame color, and Striked Box and Halloween keep their own colors.
+
+{/* shot: design-frame-section | the Frame section with a frame picked, the Label field filled with "Scan me", and the Frame color, Text color and Text size controls | /playground?tab=design&section=frame */}
+
+To use your own artwork, sign in and click **Upload SVG** next to the search. The SVG's shapes and colors become a frame.
 
 ## Put the code in a shape
 
-The same picker has a **Shaped codes** group. **Dot circle** and **Heart** put the code in a circle or a heart of decorative dots. **Silhouette** fills a shape of your own: upload a PNG, JPEG or SVG with a dark or solid shape on a light or clear background. Only its outline is kept, never the picture.
+The same picker has a **Shaped codes** group. **Dot circle** and **Heart** put the code inside a circle or a heart of decorative dots. **Silhouette** fills a shape of your own: upload a PNG, JPEG or SVG with a dark or solid shape on a light or clear background. Only its outline is kept, never the picture.
 
-Scanners read only the code in the middle, so print a shaped code larger than a square one for the same scan distance. A shape takes the place of a frame: picking one clears the other. A shape that is too thin to hold the code is refused with a message.
+Scanners read only the code in the middle, so print a shaped code larger than a square one for the same scanning distance. A shape takes the place of a frame: picking one clears the other.
 
-{/* end shaped codes */}
+## Keep the text short
 
-## Frames never hurt scanning
-
-Frames sit outside the code. They never cover any of its squares.
-
-Keep the frame text short. Three or four words read best from a distance.
+Three or four words read best from a distance. Say what people get, like "Scan for menu", rather than what to do with their phone.
 
 ## Download with the frame
 
 The frame is part of every download, in every format. For print, see [Download and print a QR code](/docs/help/getting-started/download-and-print).
 
+## Share your frame
+
+A frame you uploaded or took from the library can be published on its own: click **Publish frame** in the **Frame** section. It goes to the [community](/community) under the same terms as a published design. See [Save and reuse a design](/docs/help/designing/save-a-design).
+
+## If something goes wrong
+
+### The Label field is disabled
+
+No frame is on. The field reads "Pick a frame first": pick a frame, or pick a label idea, which adds one.
+
+### Frame color has no effect
+
+The frame you picked takes the color of the code's dots (Arrow, Standard Box, Square Border, Dot Ring) or keeps its own colors (Striked Box, Halloween). Change the **Dots** color under **Colors**, or pick another frame.
+
+### A silhouette is refused
+
+The shape is too thin to hold the code. Upload a picture with a thicker, more solid shape.
+
 ## Related
 
+- [Download and print a QR code](/docs/help/getting-started/download-and-print)
+- [Save and reuse a design](/docs/help/designing/save-a-design)
 - [Frames and print for developers](/docs/features/frames)

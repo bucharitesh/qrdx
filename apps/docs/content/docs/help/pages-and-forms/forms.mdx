@@ -3,39 +3,78 @@ title: Collect answers with a form
 description: Create a feedback form, survey or sign-up form, and read the responses in your dashboard.
 ---
 
+A form on a hosted page collects feedback, survey answers or sign-ups from the people who scan your code. Responses land in your dashboard, and you can download them as a spreadsheet.
+
+<Callout type="info">
+  Each workspace can collect 50 responses a month on Free, 1,000 on Pro and 10,000 on Business. Email alerts for new responses are part of Pro and Business. See [Plans and what they include](/docs/help/account-and-billing/plans).
+</Callout>
+
 ## Create a form
 
-1. Go to **Pages** and click **New page**.
-2. Choose **Feedback & forms**.
-3. Pick a template: **Guest feedback**, **NPS survey** or **Sign-up form**.
-4. Click **Create page**, edit the questions, then click **Publish**.
+### 1. Start a new page
 
-You can also add a **Form** block to any other page.
+Go to **Pages & forms** and click **New page**.
+
+### 2. Pick Feedback & forms
+
+Choose **Feedback & forms**, then a template: **Guest feedback**, **NPS survey** or **Sign-up form**.
+
+### 3. Create and edit
+
+Click **Create page**, then edit the questions in the **Blocks** tab.
+
+{/* shot: form-editor | the page editor with a form block's questions open in the Blocks tab | Dashboard, Pages & forms, New page, Feedback & forms */}
+
+### 4. Publish
+
+Click **Publish**. The form takes responses as soon as the page is live.
+
+You can also add a **Form** block to any other page from the add block menu.
 
 ## Read the responses
 
-In **Pages**, open the page's menu (**⋯**) and choose **Responses**.
+In **Pages & forms**, open the page's menu (**⋯**) and choose **Responses**. The item appears once the page has a form.
 
 Click **Export CSV** to download the responses as a spreadsheet.
 
+{/* shot: form-responses | the Responses view for a page with a few answers and the Export CSV button | Dashboard, Pages & forms, a page's menu, Responses */}
+
 ## Get an email for each response
 
-On Pro and Business, go to **Settings** → **Notifications** and turn on **Form submissions**.
+On Pro and Business, go to **Settings** → **Notifications** and turn on **Form submissions**. On Business you can also post responses to a Slack or Discord channel from the same page.
 
 ## Monthly limits
 
-Each workspace can collect a number of responses each calendar month (UTC):
+Responses are counted per workspace and per calendar month, in UTC:
 
-- **Free**: 50.
-- **Pro**: 1,000.
-- **Business**: 10,000.
+| Plan | Responses a month |
+| --- | --- |
+| Free | 50 |
+| Pro | 1,000 |
+| Business | 10,000 |
 
-When the limit is reached, visitors see "This form isn't accepting responses right now." The form takes responses again next month, or right away after you upgrade.
+When the limit is reached, visitors see "This form isn't accepting responses right now. Please try again later." Responses you already have are kept. The form takes responses again on the first of the next month, or right away after you upgrade.
 
 ## Spam
 
-Forms have built-in spam protection. You don't need to set anything up.
+Forms have built-in spam protection: a bot check, a hidden field bots fill in, and a cap on how fast one visitor can submit. You don't need to set anything up.
+
+## If something goes wrong
+
+### Responses isn't in the page's menu
+
+The page has no form block. Add one in the editor and publish.
+
+### The form says it isn't accepting responses
+
+The workspace reached this month's limit. Wait for the next month, or [upgrade](/pricing) and the form reopens right away.
+
+### Someone says their answer was refused
+
+They sent more than a few responses in a minute, which the spam cap blocks. Ask them to wait a minute and try again.
 
 ## Related
 
+- [Create a mobile page](/docs/help/pages-and-forms/create-a-page)
+- [Export your data](/docs/help/account-and-billing/export-your-data)
 - [Forms guide](/docs/forms-and-pages#forms)

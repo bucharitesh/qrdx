@@ -3,34 +3,42 @@ title: Check a design with the scan score
 description: The scan score tests your design the way a phone camera sees it, and tells you what to fix.
 ---
 
-Every design in the playground gets a **Scan score** from 0 to 100. It's shown under the preview, for example "Scan score 92 · Great".
+Every design in the [playground](/playground) gets a **Scan score** from 0 to 100, shown under the preview, for example "Scan score 92 · Great". It tests the code the way a phone camera would, so you can fix problems before you print.
+
+{/* shot: scan-score-badge | the Scan score badge under the preview reading "Scan score 92 · Great" | /playground with a link typed */}
 
 ## What the score means
 
-- **Great** (85 or more): ready to print.
-- **OK** (65 to 84): it should scan, but check the warnings.
-- **Risky** (below 65): fix the checks marked with a cross.
-- **Fails**: the code didn't decode in testing, or the contrast is far too low. Don't print it.
+| Grade | Score | What to do |
+| --- | --- | --- |
+| **Great** | 85 or more | Ready to print. |
+| **OK** | 65 to 84 | It should scan. Read the warnings. |
+| **Risky** | Below 65 | Fix the checks marked with a cross. |
+| **Fails** | | The code didn't decode at the largest test size, or the contrast is far too low. Don't print it. |
 
 ## See what to fix
 
 Click the score. The **Will it scan?** panel lists every check, with the failed ones first.
 
-The score checks:
+{/* shot: will-it-scan-panel | the Will it scan? panel open with the list of checks and one failed check at the top | /playground, click the Scan score */}
 
-- **Decoding**: the code is read at small sizes with a camera-like blur.
+The checks are:
+
+- **Decoding**: the code is read at three sizes with a camera-like blur.
 - **Contrast**: the code and background should differ by 4.5:1 or more.
 - **Dark on light**: dark codes on light backgrounds scan in more apps.
-- **Logo size**: a logo must not cover more than error correction can rebuild.
+- **Logo**: a logo must not cover more than error correction can rebuild, and must not touch a corner eye.
 - **Eye shape**: circle and curly eyes fail in some scanner apps.
-- **Clear space**: the empty border around the code. Four modules is ideal.
+- **Quiet zone**: the empty border around the code. Four modules is ideal.
 
 ## Quick fixes
 
-- Low contrast: make the code darker or the background lighter. See [Choose colors that scan](/docs/help/designing/colors-and-contrast).
-- Logo covers too much: set **Error correction** to **High**. See [Add a logo](/docs/help/designing/logos).
-- Eyes: switch to square, rounded or gear eyes.
-- Clear space: set **Padding** to **Standard** or **Large**.
+| The check | The fix |
+| --- | --- |
+| Low contrast | Make the code darker or the background lighter. See [Choose colors that scan](/docs/help/designing/colors-and-contrast). |
+| Logo covers too much | Set **Error correction** to **High**, or make the logo smaller. See [Add a logo](/docs/help/designing/logos). |
+| Eye shape | Switch to square, rounded or gear eyes. |
+| Quiet zone | Set **Padding** to **Standard** or **Large**. |
 
 ## Check a printed code
 
@@ -39,3 +47,5 @@ The score tests the design on screen. To test a code you already printed, take a
 ## Related
 
 - [A code won't scan](/docs/help/troubleshooting/wont-scan)
+- [Choose colors that scan](/docs/help/designing/colors-and-contrast)
+- [Download and print a QR code](/docs/help/getting-started/download-and-print)

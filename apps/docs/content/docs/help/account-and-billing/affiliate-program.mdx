@@ -3,24 +3,26 @@ title: Affiliate program
 description: Refer people to QRdx and earn a commission on what they pay in their first months. How to apply, share your link, follow your earnings and get paid.
 ---
 
-The affiliate program runs on qrdx.dev only. A self-hosted QRdx server doesn't offer it; see [Self-hosting](/docs/self-hosting#optional-services).
+The QRdx affiliate program pays you a share of what the customers you refer pay. It runs on qrdx.dev only; a self-hosted QRdx server doesn't offer it. The [Affiliate Terms](/legal/affiliate-terms) are the full rules; this page shows where everything is.
 
 <IfAvailable feature="affiliates">
 
-The QRdx affiliate program pays you {facts.affiliateCommissionPercent}% of what the customers you refer pay in their first {facts.affiliateCommissionMonths} months as paying customers. The [Affiliate Terms](/legal/affiliate-terms) are the full rules; this page shows where everything is.
+You earn {facts.affiliateCommissionPercent}% of what the customers you refer pay in their first {facts.affiliateCommissionMonths} months as paying customers.
 
 ## Apply
 
 1. Sign in to QRdx, or create a free account.
 2. Open the [affiliate program page](/affiliates), read the terms and fill in the short application.
-3. We review each application by hand. The answer shows in **Settings** → **Affiliate program**.
+3. Wait for the answer. We review each application by hand, and the result shows in **Settings** → **Affiliate program**.
 
 ## Share your link
 
 Once you're approved, **Settings** → **Affiliate program** shows your referral link with a **Copy** button. Anyone who opens it and creates a new QRdx account in that visit becomes your referral.
 
-- They need to sign up during that visit, without reloading the page, opening QRdx in a new tab or going between the docs and the rest of the site: the code goes along with the sign-up. No cookie is used and nothing is stored on their device, so a sign-up on a later visit doesn't count.
-- Your link starts with a random code. Under **Code** you can change it once to one you choose; links with the first code keep working.
+{/* shot: affiliate-settings-page | the Affiliate program settings page with the referral link, its Copy button and the Earnings section | Dashboard, Settings, Affiliate program */}
+
+- They need to sign up during that visit, without reloading the page, opening QRdx in a new tab or going between the docs and the rest of the site. No cookie is used and nothing is stored on their device, so a sign-up on a later visit doesn't count.
+- Your link starts with a random code. Under **Code**, click **Change once** to pick your own, 3 to 32 characters. It can't be changed again, and links with the first code keep working.
 - An account that already exists can't become your referral, and an account keeps the first referral it gets.
 - Your own account doesn't count, and neither does an account using your email address under another spelling or anyone in a workspace you're a member of.
 
@@ -28,19 +30,39 @@ Once you're approved, **Settings** → **Affiliate program** shows your referral
 
 The same page shows:
 
-- **Link visits**, counted without cookies (repeat visits count again), **Sign-ups** and **Paying customers**. You never see who they are.
+- **Link visits**, counted without cookies (repeat visits count again, up to 20 a minute from one IP address), **Sign-ups** and **Paying customers**. You never see who they are.
 - **On hold**: commissions still in their {facts.affiliateHoldDays}-day wait. A refund or chargeback in that time cancels the commission.
 - **Payable**: commissions past their wait that haven't been paid.
 - **Paid**: what we've sent you, with each payout's PayPal transaction ID.
 
-Commissions show in the currency the customer paid in, US dollars or Indian rupees. Payouts are in US dollars.
+Commissions show in the currency the customer paid in. Payouts are in US dollars.
 
 ## Get paid
 
-Add your PayPal email under **Earnings**. QRdx asks you to confirm it's you before it changes, because it decides where your money goes, and emails your account's address each time it changes.
+Add your **PayPal email** under **Earnings**. QRdx asks you to confirm it's you before it changes, because it decides where your money goes, and emails your account's address each time it changes.
 
-We pay by PayPal in US dollars once a month, by hand, once everything payable reaches {facts.affiliateMinPayoutUsd}. Commissions in rupees count at the European Central Bank's reference rate on the payout date, and each payout shows the rate used. A balance below the minimum carries over. You handle the taxes on what you earn.
+We pay by PayPal in US dollars once a month, by hand, once everything payable reaches {facts.affiliateMinPayoutUsd}. Commissions in other currencies count at the European Central Bank's reference rate on the payout date, and each payout shows the rate used. A balance below the minimum carries over. You handle the taxes on what you earn.
+
+## If something goes wrong
+
+### A sign-up you sent didn't count
+
+The person signed up on a later visit, in another tab, or already had an account. Only a new account created in the same visit as the link counts.
+
+### A commission disappeared from On hold
+
+The customer asked for a refund or their payment was charged back within the {facts.affiliateHoldDays}-day wait, which cancels the commission.
+
+### You weren't paid this month
+
+Your payable balance is under {facts.affiliateMinPayoutUsd}, or no PayPal email is set. The balance carries over to the next month.
 
 Questions about a commission or a payout: email [support@qrdx.dev](mailto:support@qrdx.dev).
 
 </IfAvailable>
+
+## Related
+
+- [Affiliate Terms](/legal/affiliate-terms)
+- [Plans and what they include](/docs/help/account-and-billing/plans)
+- [Contact support](/docs/help/contact)

@@ -1,8 +1,10 @@
 ---
 title: QR Code Share Dialog
-description: A share dialog with a QR code for a link, a copy button, a PNG download and the native share sheet.
+description: A share dialog for shadcn/ui projects with a QR code for a link, a copy button, a PNG download and the native share sheet.
 icon: Webhook
 ---
+
+`QrCodeShareDialog` opens a dialog that shows a link as a QR code, with the link in a field you can copy, a PNG download and, on phones, the system share sheet. Use it behind a "Share" button wherever people hand a link to someone standing next to them: an invite, a document, a profile.
 
 <ComponentLinks name="qr-code-share-dialog" />
 
@@ -14,15 +16,15 @@ icon: Webhook
 
 ## Usage
 
-```tsx
+```tsx title="components/example.tsx"
 import { QrCodeShareDialog } from "@/components/qr-code-share-dialog";
 ```
 
-```tsx
+```tsx title="components/example.tsx"
 <QrCodeShareDialog url="https://example.com/invite/abc123" />
 ```
 
-The dialog shows the code, the link in a read-only field with a copy button, and a PNG download. On devices with a share sheet (most phones), a "Share…" button opens it.
+The dialog shows the code, the link in a read-only field with a copy button, and **Download PNG**. On devices with a share sheet (most phones), a **Share…** button opens it.
 
 ## Examples
 
@@ -36,18 +38,42 @@ Pass your own trigger as children, such as an icon button in a toolbar. `title`,
 
 The dialog accepts the [Dialog](https://ui.shadcn.com/docs/components/dialog) props, so you can open it from code:
 
-```tsx
-const [open, setOpen] = useState(false);
+```tsx title="components/share-after-save.tsx"
+"use client";
 
-<QrCodeShareDialog
-  url="https://example.com"
-  open={open}
-  onOpenChange={setOpen}
-/>
+import { useState } from "react";
+import { QrCodeShareDialog } from "@/components/qr-code-share-dialog";
+
+export function ShareAfterSave({ url }: { url: string }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <button type="button" onClick={() => setOpen(true)}>
+        Save and share
+      </button>
+      <QrCodeShareDialog url={url} open={open} onOpenChange={setOpen} />
+    </>
+  );
+}
 ```
 
-## API Reference
+## Accessibility and rendering
+
+- The dialog is your Dialog, so focus moves into it when it opens and returns to the trigger when it closes.
+- The code has `aria-label="QR code: <url>"`, and the link field has a visually hidden "Link" label. The copy button's label changes to "Link copied" for a moment after a copy.
+- The **Share…** button appears only where `navigator.share` exists, after the first render in the browser, so the server's HTML and the client's first paint match.
+- Clicking the link field selects the whole link. Copying needs a secure context (HTTPS or localhost).
+
+## API reference
 
 <auto-type-table path="../../../../../packages/docs-assets/registry/qrdx/qr-code-share-dialog.tsx" type="{ [K in keyof QrCodeShareDialogProps as K extends Exclude<keyof ComponentProps<typeof Dialog>, 'children'> ? never : K]: QrCodeShareDialogProps[K] }" />
 
 `open`, `defaultOpen`, `onOpenChange` and `modal` are passed to the Dialog.
+
+## Related
+
+<Cards>
+  <Card href="/docs/components/qr-code-download" title="QR Code Download" description="More formats and sizes than the dialog's single PNG button." />
+  <Card href="/docs/components/qr-code" title="QR Code" description="The code inline on a page instead of in a dialog." />
+  <Card href="/docs/dynamic-qr-codes" title="Dynamic QR codes" description="Share a short link you can change later instead of the final URL." />
+</Cards>

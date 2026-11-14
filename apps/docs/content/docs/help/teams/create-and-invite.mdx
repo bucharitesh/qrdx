@@ -3,7 +3,11 @@ title: Create a workspace and invite people
 description: Share codes, pages and themes with other people. More workspaces need Pro or Business.
 ---
 
-Everything you make in QRdx belongs to a workspace. Everyone in a workspace works on the same codes, pages, files, domains and themes.
+Everything you make in QRdx belongs to a workspace. Everyone in a workspace works on the same codes, pages, files, domains and themes. This page gets a workspace made and people into it; the [Workspaces and teams guide](/docs/teams) covers how workspaces fit together.
+
+<Callout type="info">
+  Creating more workspaces and inviting people are part of Pro (up to 3 people in a workspace) and Business (no limit). See [Seats and workspace limits](/docs/help/teams/seats).
+</Callout>
 
 ## Your own workspace
 
@@ -16,29 +20,54 @@ Every account has one, created automatically, and you're its owner. You can't le
 3. Fill in a **Workspace name** and a **Workspace URL** (3 to 48 lowercase letters, numbers and dashes).
 4. Click **Create workspace**. QRdx switches you into it.
 
-Creating more workspaces needs Pro or Business.
+{/* shot: create-workspace-dialog | the Create workspace dialog with the Workspace name and Workspace URL fields | Dashboard, workspace switcher, Create workspace */}
 
 ## Invite someone
 
-1. Go to **Settings** → **Team** in the workspace.
-2. Enter their email address and choose a role: **Member** or **Admin**. See [Team roles](/docs/help/teams/roles).
-3. Click **Create invite link**.
+### 1. Open the Team page
 
-QRdx emails the invitation and shows a link you can share yourself. The confirmation tells you whether the email was sent.
+In the workspace, go to **Settings** → **Team**.
+
+### 2. Fill in the invitation
+
+Under **Invite people**, enter their **Email** and choose a **Role**: **Admin**, **Member**, **Billing** or **Viewer**. Only an owner can invite a billing member. See [Team roles](/docs/help/teams/roles).
+
+### 3. Send it
+
+Click **Create invite link**. QRdx says it emailed the invitation and shows a link you can share yourself, with **Copy invite link**.
+
+{/* shot: team-invite-form | the Invite people form on the Team page with an email typed, the Role picker and the Create invite link button | Dashboard, Settings, Team */}
 
 Inviting someone as an admin asks you to [confirm it's you](/docs/help/privacy-and-security/two-step-verification#confirm-its-you) first, unless you did in that browser in the last 10 minutes.
 
 ## Accepting an invitation
 
-- The invited person opens the link and signs in with the **same email address** the invite was sent to.
-- They click **Accept invitation**, or **Decline**.
-- Invite links expire after 48 hours.
+The invited person opens the link and signs in with the same email address the invite was sent to, then clicks **Accept invitation** or **Decline**. Invite links expire after 48 hours. Until then the invitation sits under **Pending invitations** on the Team page, where **Revoke** withdraws it.
+
+## Share a join link
+
+A join link lets anyone who has it join the workspace, without an invitation each. On the Team page, under **Join link**, pick the role new people get under **Joins as** and click **Create join link**. For safety the link is shown only when it's made, so copy it then with **Copy join link**. **Reset link** replaces it and stops the old one working; **Turn off** stops it altogether. People who already joined stay members. Letting a join link add admins asks you to confirm it's you.
 
 ## Switch between workspaces
 
 Use the workspace switcher to move between your own workspace and the others you belong to. Codes you create go into the workspace you're in.
 
+## If something goes wrong
+
+### The invitation email didn't arrive
+
+Copy the invite link from **Pending invitations** and send it to the person directly. See [Sign-in codes or emails don't arrive](/docs/help/troubleshooting/emails).
+
+### They can't accept the invitation
+
+They signed in with a different email address. Invitations only work for the address they were sent to; ask them to sign in with that one, or revoke and invite the right address.
+
+### Create invite link is disabled
+
+The workspace has no free seat: on Pro, 3 people including pending invitations. Revoke an invitation you don't need, or ask an owner to upgrade. See [Seats and workspace limits](/docs/help/teams/seats).
+
 ## Related
 
+- [Team roles](/docs/help/teams/roles)
 - [Seats and workspace limits](/docs/help/teams/seats)
 - [Workspaces and teams guide](/docs/teams)

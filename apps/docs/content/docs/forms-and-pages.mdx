@@ -1,30 +1,27 @@
 ---
 title: Menus, coupons, events and forms
-description: Hosted page types for restaurants, offers, events and app downloads, plus forms that collect feedback into a response inbox.
-icon: ClipboardList
+description: Hosted page blocks for restaurants, offers, events and app downloads, plus forms that collect feedback into a response inbox.
 ---
 
-A dynamic QR code can open a hosted page instead of a website. Besides link lists, business pages and vCards, QRdx has five page types for common print jobs. Each starts from a template you can change block by block in the page editor, with a live phone preview.
+A [hosted page](/docs/landing-pages) is built from blocks, and five of them do most of the work for print jobs: a menu, a coupon, an event, an app download and a form. Each has a page type and templates of its own, and each can be added to any other page. Use this guide when you're putting a code on a table, a flyer, an invitation, an app poster or a feedback card.
 
-| Page type | Made for | Blocks it starts with |
-| --- | --- | --- |
-| **Menu** | Cafés, restaurants, bars | Menu, Wi-Fi, opening hours, map |
-| **Coupon** | Discounts and freebies | Coupon with barcode and Redeem button |
-| **Event** | Parties, conferences, webinars | Event with add-to-calendar |
-| **App download** | One code for every app store | App download |
-| **Feedback & forms** | Reviews, NPS surveys, sign-ups | Form, review links |
+<Callout type="info" title="Plans">
+  Every block here works on every plan. Form responses have a monthly limit per plan ([below](#monthly-limits)), and alerts about responses need Pro (email) or Business (Slack, Discord, webhooks). See [Plans and limits](/docs/plans-and-limits).
+</Callout>
 
-Every block below can also be added to any other page.
+In a hurry? The short task page for forms: [Collect answers with a form](/docs/help/pages-and-forms/forms).
 
 ## Menu
 
-The **Menu** block lists sections (Starters, Mains, ...) with items. Each item can have a description, a price, a note after the price ("per glass", "Market price"), a photo, a short badge ("Chef's pick") and:
+The **Menu** block lists sections (Starters, Mains and so on) with items. Each item can have a description, a price, a note after the price ("per glass", "Market price"), a photo, a short badge ("Chef's pick") and:
 
 - **Dietary tags:** vegetarian, vegan, gluten-free, dairy-free, halal, kosher, spicy, organic.
 - **Allergens:** the 14 allergens food businesses must declare in the EU and UK (gluten, crustaceans, eggs, fish, peanuts, soy, milk, tree nuts, celery, mustard, sesame, sulphites, lupin, molluscs), shown as "Contains: …".
 - **Sold out:** the item stays on the menu, dimmed and marked as sold out.
 
 All prices on one menu use the currency you pick. With two or more sections, shortcut chips at the top jump to each section. A menu holds up to 30 sections and 300 items.
+
+{/* shot: menu-block | A menu page on a phone with section chips, an item with a photo, a dietary tag and an allergen line | Scan a Menu page */}
 
 The **Wi-Fi** block shows your network name and password with copy buttons. Phones can't join a network from a web page, so guests copy the password and paste it in their Wi-Fi settings. Anyone who opens the page can see the password.
 
@@ -33,13 +30,15 @@ The **Wi-Fi** block shows your network name and password with copy buttons. Phon
 The **Coupon** block shows a headline, the code with a copy button and, optionally, a barcode your till can scan:
 
 - **Code 128** encodes up to 48 letters, digits and symbols (no accents or emoji).
-- **EAN-13** takes 12 digits (QRdx adds the check digit) or all 13. Numbers starting with 20–29 are reserved for in-store use, which suits coupon codes.
+- **EAN-13** takes 12 digits (QRdx adds the check digit) or all 13. Numbers starting with 20 to 29 are reserved by GS1 for in-store use, which suits coupon codes.
 
 By default the barcode encodes the coupon code; set **Barcode value** to encode something else, such as your point-of-sale number.
 
 **Valid from** and **Valid until** are calendar days. A coupon counts as started once its first day has begun anywhere in the world and as expired only after its last day has ended everywhere, so nobody sees "expired" early because of their time zone. Expired coupons stay visible, marked as expired.
 
-Turn on **Redeem button** to count redemptions: the visitor shows the screen to your staff and taps **Redeem now**. The page then shows "Redeemed" with the time on that phone, and the count appears on the page's [Responses](#responses) screen. It can't stop the same code being shown on another phone, so treat it as a counter, not a lock.
+Turn on **Redeem button** to count redemptions: the visitor taps **Redeem coupon**, shows the screen to your staff and confirms with **Redeem now**. The page then shows "Redeemed" with the time on that phone, and the count appears on the page's [Responses](#responses) screen. It can't stop the same code being shown on another phone, so treat it as a counter, not a lock.
+
+{/* shot: coupon-block | A coupon page with the code, its barcode and the Redeem coupon button | Scan a Coupon page */}
 
 ## Event
 
@@ -61,23 +60,25 @@ The **Form** block collects answers. Questions can be:
 | Email | An email address |
 | Phone | A phone number |
 | Star rating | Stars, out of 3 to 10 (you choose; 5 by default) |
-| NPS | A 0–10 "how likely are you to recommend us" score |
+| NPS (0–10) | A 0 to 10 "how likely are you to recommend us" score |
 | Choice | One option, or several when **Allow several answers** is on |
 | Checkbox | A tick, for example consent to be contacted |
 
 Mark questions as **Required** to make them mandatory. Visitors see errors next to the question, and a thank-you message you write after sending. Ask only for what you need, and say how you'll use contact details.
 
+{/* shot: form-editor | The Form block's settings in the editor with three questions, one marked Required, and the thank-you message field | Dashboard → Pages & forms → open a page → Form block */}
+
 Spam protection is built in: a hidden field that only bots fill in, and limits on how often one device can send a form. When the server has [Cloudflare Turnstile](#cloudflare-turnstile) keys, forms also run Turnstile's invisible check.
 
 ### Review links
 
-The **Review links** block shows "Review us on Google" (and Tripadvisor, Yelp, Facebook, Trustpilot or any other site) buttons. It's shown to every visitor, whatever they answered in a form. Review sites, Google included, don't allow showing review links only to people who rated you highly, so QRdx never hides them based on a rating.
-
-In Google Business Profile, choose **Ask for reviews** to copy your review link.
+The **Review links** block shows "Review us on Google" (and Tripadvisor, Yelp, Facebook, Trustpilot or any other site) buttons. It's shown to every visitor, whatever they answered in a form. Review sites, Google included, don't allow showing review links only to people who rated you highly, so QRdx never hides them based on a rating. In Google Business Profile, choose **Ask for reviews** to copy your review link.
 
 ## Responses
 
-Open a page in **Dashboard → Pages & forms** and choose **Responses** (or go to `/dashboard/<workspace>/pages/<page id>/responses`). Responses are listed newest first, 25 per screen, with the time (UTC), the code the visitor scanned and every answer. Email addresses and phone numbers are links.
+Open a page in **Pages & forms** and choose **Responses**. Responses are listed newest first, 25 per screen, with the time (UTC), the code the visitor scanned and every answer. Email addresses and phone numbers are links.
+
+{/* shot: responses-inbox | The Responses screen of a page with the form tabs, a list of responses and the Export CSV button | Dashboard → Pages & forms → open a page → Responses */}
 
 - **Several forms on one page:** tabs filter by form.
 - **Export CSV:** one row per response and one column per question. Columns follow the current questions, then questions you removed that still have answers. Renaming a question keeps its column.
@@ -95,7 +96,7 @@ Responses belong to the page. Deleting the page deletes its responses.
 
 The limit counts responses received by all pages in the workspace, per calendar month (UTC), and starts over on the 1st. The Responses screen shows how many you've used.
 
-When the limit is reached, forms show "This form isn't accepting responses right now" and keep what the visitor typed. Responses you already have are never deleted or hidden, on any plan, including after a downgrade.
+When the limit is reached, forms show "This form isn't accepting responses right now. Please try again later." and keep what the visitor typed. Responses you already have are never deleted or hidden, on any plan, including after a downgrade.
 
 ## Access rules
 
@@ -103,7 +104,7 @@ Forms and calendar files follow the page's [code controls](/docs/code-controls):
 
 ## Notifications and webhooks
 
-Every response sends a `form.submitted` event with the answers. Use it for [email or Slack/Discord notifications](/docs/notifications) and [webhooks](/docs/webhooks) (Zapier, Make, your own server).
+Every response sends a `form.submitted` event with the answers. On Pro and Business, [email alerts](/docs/notifications) deliver each response to your inbox; on Business, Slack and Discord messages and [webhooks](/docs/webhooks) (Zapier, Make, your own server) get it too.
 
 ## Privacy
 
@@ -115,13 +116,20 @@ Answers are stored with the page in your workspace. QRdx doesn't store visitors'
 
 Set both variables to protect forms with [Cloudflare Turnstile](https://developers.cloudflare.com/turnstile/):
 
-```bash
+```bash title="apps/app/.env.local"
 NEXT_PUBLIC_TURNSTILE_SITE_KEY=0x4AAAAAAA...
 TURNSTILE_SECRET_KEY=0x4AAAAAAA...
 ```
 
-With only one of them set, Turnstile stays off. The Turnstile script loads when a visitor first touches a form, not with the page, and runs invisibly unless Cloudflare needs the visitor to click. If Cloudflare can't be reached, responses are still accepted so you never lose feedback; the other spam protections still apply.
+The server only verifies answers when both keys are set, so set them together. The Turnstile script loads when a visitor first touches a form, not with the page, and runs invisibly unless Cloudflare needs the visitor to click. If Cloudflare can't be reached, responses are still accepted so you never lose feedback; the other spam protections still apply.
 
 ### Custom domains
 
 On a verified [custom domain](/docs/custom-domains), the form endpoint (`/api/forms/...`) and calendar files (`/api/calendar/...`) are served next to your pages, so forms and add-to-calendar work there without extra setup.
+
+## Related
+
+- [Landing pages](/docs/landing-pages): every page type and block
+- [Notifications](/docs/notifications): an email or chat message for each response
+- [Collect answers with a form](/docs/help/pages-and-forms/forms)
+- [A scan shows an error page](/docs/help/troubleshooting/error-pages): the "isn't accepting responses" message and others

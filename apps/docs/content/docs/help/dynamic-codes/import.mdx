@@ -3,29 +3,62 @@ title: Bring codes from another service
 description: Import links from a CSV file, or move your codes from Bitly and other QR code services.
 ---
 
+You can create many dynamic codes at once from a CSV file, or move the codes you have at another service into QRdx. This page covers the import itself; [Move from Bitly, Rebrandly and others](/docs/migrate) explains how to keep codes you already printed working.
+
+<Callout type="info">
+  On Free you can import one code at a time. Pro and Business import many at once. See [Plans and what they include](/docs/help/account-and-billing/plans).
+</Callout>
+
 ## From a CSV file
 
-1. Go to **Codes** and click **Import CSV**.
-2. Upload a CSV file with one code per row.
+### 1. Open the import
 
-The only required column is the destination. You can also include a title, folder, tags and a custom back-half. A file can have up to {facts.importRows} rows and be up to 10 MB. Every row is checked before anything is created; rows with problems are skipped and listed.
+Go to **Codes** and click **Import** in the Codes sidebar. You can also open the **More code actions** menu (**⋯**) and choose **Import codes**, then **From a CSV file**. The **Import codes from CSV** page opens.
+
+### 2. Upload your file
+
+Upload a CSV file with one code per row. The only required column is the destination. You can also include a title, a folder, tags and a slug (the custom back-half). A file can have up to {facts.importRows} rows and be up to 10 MB.
 
 You can also pick a folder and tags for every code in the file. A row with its own folder keeps it, and the file's tags are added to the ones you pick.
 
-Large files are sent in parts while a progress bar fills. You can pause and resume. If the page reloads or the connection drops, the import stops and offers to resume or retry, and no code is made twice. When it's done, download a results CSV with each row's short link, or a ZIP of the new codes as PNG or SVG files.
+{/* shot: import-csv-page | the Import codes from CSV page with a file uploaded and the column preview | Dashboard, Codes, Import */}
 
-On Free you can import one code at a time. Pro and Business can import many at once.
+### 3. Let it run
+
+Every row is checked before anything is created; rows with problems are skipped and listed. Large files are sent in parts while a progress bar fills, and you can pause and resume.
+
+### 4. Download the results
+
+When it's done, download the **Results CSV** with each row's short link, or a ZIP of the new codes as **PNG (1024 px)** or **SVG (vector)** files with a `codes.csv` index.
 
 ## From another service
 
-Click **Import** on the **Codes** page and pick where your codes are now.
+Open the **More code actions** menu (**⋯**), choose **Import codes**, then **From Bitly and other apps**, and pick where your codes are now.
 
 - **Bitly**: sign in to Bitly and pick the links.
 - **Rebrandly** and **Short.io**: paste an API key from that service.
-- **QR Code Generator PRO, Uniqode, Flowcode, QR TIGER, ME-QR, TinyURL, Hovercode, Scanova** and others: upload the export file from that service.
+- **QR Code Generator PRO**, **Uniqode**, **Flowcode**, **QR TIGER**, **ME-QR**, **TinyURL**, **Hovercode**, **Scanova** and **Another provider (CSV)**: upload the export file from that service, up to 2 MB.
 
 ## Keep printed codes working
 
-Printed codes still point to the old service. The migration guide explains how to keep them working, and how to keep your original back-halves.
+Printed codes still point to the old service. The migration guide explains how to keep them working, and how to keep your original back-halves. See [Move from Bitly, Rebrandly and others](/docs/migrate).
 
-See [Move from Bitly, Rebrandly and others](/docs/migrate).
+## If something goes wrong
+
+### Some rows were skipped
+
+The results list each skipped row with the reason, such as an address that isn't a link or a back-half that's taken. Fix those rows in your file and import them again. Nothing is created twice.
+
+### The import stopped
+
+If the page reloaded or the connection dropped, the page offers to resume or retry when you come back. Codes already created aren't made again.
+
+### Only one row was imported
+
+You're on Free, which imports one code at a time. Import the next row, or [upgrade](/pricing) to import the whole file.
+
+## Related
+
+- [Move from Bitly, Rebrandly and others](/docs/migrate)
+- [Create a dynamic QR code](/docs/help/dynamic-codes/create)
+- [Use your own domain](/docs/help/domains/custom-domains)

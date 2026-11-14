@@ -19,7 +19,11 @@ export {
 type RateLimitResponse = Awaited<ReturnType<Ratelimit["limit"]>>;
 
 export interface RateLimiter {
-  limit: (identifier: string) => Promise<RateLimitResponse>;
+  /**
+   * Counts one request against `identifier`'s window, or `rate` of them (one
+   * HTTP request that does several requests' work, such as a JSON-RPC batch).
+   */
+  limit: (identifier: string, rate?: number) => Promise<RateLimitResponse>;
 }
 
 const noopRateLimiter: RateLimiter = {
@@ -126,12 +130,17 @@ export const createRateLimiter = (
     }
   );
   const limit = withFallback(
-    (identifier) => ratelimit.limit(identifier) as Promise<LimitResult>,
+    (identifier, rate) =>
+      ratelimit.limit(
+        identifier,
+        rate === undefined ? undefined : { rate }
+      ) as Promise<LimitResult>,
     memory,
     breaker
   );
 
   return {
-    limit: (identifier) => limit(identifier) as Promise<RateLimitResponse>,
+    limit: (identifier, rate) =>
+      limit(identifier, rate) as Promise<RateLimitResponse>,
   };
 };

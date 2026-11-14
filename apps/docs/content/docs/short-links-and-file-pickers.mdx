@@ -1,19 +1,26 @@
 ---
 title: Short links and file pickers
-description: Shorten a QR code's link with your own Bitly, Rebrandly or Short.io account, or encode a Dropbox share link.
-icon: Blocks
+description: Shorten a QR code's link with your own Bitly, Rebrandly or Short.io account, or encode a Dropbox share link, straight from the QR editor.
 ---
+
+Connected accounts let the QR editor use links that live in your other tools: a short link you manage in Bitly, Rebrandly or Short.io, or a share link to a file in Dropbox or another cloud drive. The QR code encodes that link, so you keep the tool you already use. Use this when your links must stay in that tool's analytics, or when the code should open a file you keep in a cloud drive.
+
+<Callout type="info" title="Every plan">
+  Connected accounts belong to your user account and work on every plan. If you'd rather keep the destination editable in QRdx itself, with scan analytics, use a [dynamic QR code](/docs/dynamic-qr-codes) instead.
+</Callout>
+
+## How it works
 
 Connect an account in [Settings → Integrations](/settings/integrations) and it shows up in the QR editor's **URL** type, in the **Use a link from…** menu beside the **Website address** field. Under **Your accounts**, each service says what it does:
 
 - **Shorten**: Bitly, Rebrandly or Short.io. Create a link under **Create new**, or pick one you already have under **Use existing**. The QR code encodes that short link, so you can change where it points later in that service, and it counts the clicks.
 - **File**: Dropbox<IfAvailable integration="onedrive">, OneDrive</IfAvailable><IfAvailable integration="box">, Box</IfAvailable><IfAvailable integration="notion">, Notion</IfAvailable>. Browse or search, then pick a file or folder. QRdx creates the item's share link and the QR code encodes it.
 
-Services you haven't connected yet are behind **Connect an account** at the bottom of the same menu.
+The same menu lists your other connected content sources, such as payment and booking links. Services you haven't connected yet are behind **Connect an account** at the bottom of the menu.
 
-Hosted pages can use cloud files too: PDF, audio, video and download blocks get **From Dropbox**<IfAvailable integration="onedrive">, **From OneDrive**</IfAvailable><IfAvailable integration="box">, **From Box**</IfAvailable> next to the upload buttons.
+{/* shot: use-a-link-from-menu | The Use a link from… menu open in the editor's URL form, with a connected Bitly account under Your accounts and Connect an account at the bottom | Playground → URL type → Use a link from… */}
 
-Integrations belong to your user account. Tokens and API keys are stored encrypted, and you can disconnect at any time.
+Tokens and API keys are stored encrypted, and you can disconnect at any time.
 
 ## Short links
 
@@ -26,10 +33,8 @@ Integrations belong to your user account. Tokens and API keys are stored encrypt
 Each integration's settings page shows your domains and lets you pick the default one for new links. You can still pick another domain per link.
 
 <Callout type="info" title="Changing a destination later">
-QRdx creates the link; editing where it points happens in Bitly, Rebrandly or Short.io. Bitly only lets paid plans change a link's destination.
+  QRdx creates the link; editing where it points happens in Bitly, Rebrandly or Short.io. Bitly only lets paid plans change a link's destination.
 </Callout>
-
-If you'd rather keep the destination editable in QRdx itself, with scan analytics, use a [dynamic QR code](/docs/dynamic-qr-codes) instead.
 
 ## File pickers
 
@@ -57,15 +62,13 @@ When the link can't be opened by everyone, QRdx says so right after you pick, so
 
 <IfAvailable integration="notion">
 
-**Notion pages.** QRdx only sees the pages you share with it: Notion asks which ones when you connect. To add more later, open the page in Notion, click **•••** → **Connections** and add QRdx (or reconnect and pick them).
-
-Notion's API can't publish a page. Publish it yourself (**Share** → **Publish** → **Publish to web**), then pick it again so QRdx uses the public link.
+**Notion pages.** QRdx only sees the pages you share with it: Notion asks which ones when you connect. To add more later, open the page in Notion, click **•••** → **Connections** and add QRdx (or reconnect and pick them). Notion's API can't publish a page. Publish it yourself (**Share** → **Publish** → **Publish to web**), then pick it again so QRdx uses the public link.
 
 </IfAvailable>
 
 ### Files on hosted pages
 
-For Dropbox<IfAvailable integration="box"> and Box</IfAvailable>, page blocks get a direct link to the file, so audio and video players and the PDF viewer can load it.<IfAvailable integration="onedrive"> OneDrive sharing links open OneDrive's viewer, so a block shows them as a link.</IfAvailable>
+Hosted pages can use cloud files too: the PDF, audio, video and download blocks get a **From Dropbox** button next to the upload button when Dropbox is your only connected drive, or **From cloud storage** when you have connected more than one<IfAvailable integration="onedrive">, OneDrive included</IfAvailable><IfAvailable integration="box">, Box included</IfAvailable>. For Dropbox<IfAvailable integration="box"> and Box</IfAvailable>, page blocks get a direct link to the file, so audio and video players and the PDF viewer can load it.<IfAvailable integration="onedrive"> OneDrive sharing links open OneDrive's viewer, so a block shows them as a link.</IfAvailable>
 
 ## Disconnecting
 
@@ -73,9 +76,13 @@ Disconnecting deletes the stored token. For Dropbox<IfAvailable integration="box
 
 QR codes you already made keep working: they hold the short link or share link, not your token.
 
+## Limits and plans
+
+Connected accounts have no plan limit of their own. The links they create are static from QRdx's point of view: QRdx neither counts their scans nor can change where they point. Each service's own plan decides what you can do with the link there.
+
 ## Self-hosting
 
-Rebrandly and Short.io need nothing on the server. The others need an app in each service, with its client ID and secret in the environment; without them the integration shows "Not configured". Bitly still works without them, through pasted access tokens.
+Rebrandly and Short.io need nothing on the server. The others need an app in each service, with its client ID and secret in the environment; without them the integration is hidden in production (local development shows a **Needs setup** badge). Bitly still works without them, through pasted access tokens.
 
 | Integration | Variables | Redirect URI |
 | --- | --- | --- |
@@ -93,3 +100,11 @@ Scopes to request:
 - **OneDrive:** `offline_access`, `Files.ReadWrite` (Microsoft Graph needs write access to create sharing links)
 - **Box:** Read and write all files and folders (`root_readwrite`)
 - **Bitly, Notion:** no scopes; Notion asks the user which pages to share
+
+See [Self-hosting](/docs/self-hosting#optional-services).
+
+## Related
+
+- [Dynamic QR codes](/docs/dynamic-qr-codes): editable, tracked links inside QRdx
+- [Move from Bitly, Rebrandly and others](/docs/migrate): bring existing links over instead
+- [Files](/docs/files): upload files to QRdx itself

@@ -1,234 +1,155 @@
 ---
-title: Downloads
-description: Export QR codes as PNG, JPG, WebP, SVG, PDF or vector EPS, copy them to the clipboard or get a data URL.
+title: Export and download
+description: Save a QR code as PNG, JPG, WebP, SVG, PDF or EPS with downloadQRCode, get it as a data URL, a Blob or SVG markup, copy it to the clipboard, and make a PNG in Node.
 icon: Download
 ---
 
-Export QR codes as PNG, JPG, WebP, SVG, PDF or EPS.
+`downloadQRCode(props, options)` saves the code described by `props` as a file in the browser, in any of six formats. Its siblings return the same file as a data URL, a Blob or markup instead, and `qrdx/node` makes a PNG on a server. Every function takes the same `props` as `QRCode`, so the file matches the code on screen.
 
-## Quick Download
+Downloading from the playground or the dashboard instead? See [Download and print a QR code](/docs/help/getting-started/download-and-print) in Help.
 
-```tsx
-import { downloadQRCode, PRESET_SIZES } from 'qrdx';
+## Download a file
+
+```ts title="lib/download.ts"
+import { downloadQRCode } from "qrdx";
 
 await downloadQRCode(
   {
     value: "https://example.com",
-    size: 1024,
-    fgColor: "#000000",
-    bgColor: "#ffffff",
+    fgColor: "#1d4ed8",
+    bodyPattern: "rounded",
+    frame: { style: "banner-bottom", text: "Scan me" },
   },
   {
     format: "png",
-    size: PRESET_SIZES.large,
-    filename: "my-qrcode.png"
+    size: { width: 1024, height: 1024 },
+    filename: "menu.png",
   }
 );
 ```
 
-## Supported Formats
+{/* clip: lib-download-png | clicking a Download button and the browser saving menu.png with the framed code in it | wire the snippet to a button and click it */}
 
-### PNG
-Best for web, supports transparency.
+The browser saves `menu.png`. `size` is the pixel width and height of the code itself, from 50 to 5000 and square; a frame makes the file bigger than that. `filename` is optional: without it the file is named `qr-code.<ext>`, with the exact pixel size added for raster formats (`qr-code-1024x1024.png`, or `qr-code-1270x1454.png` with a bottom banner). `quality` (0 to 1) applies to WebP only.
 
-```tsx
-await downloadQRCode(
-  { value: "https://example.com", size: 512 },
-  {
-    format: "png",
-    size: { width: 512, height: 512 },
-    filename: "qrcode.png"
-  }
-);
-```
+Props are the same as on `QRCode`, except that a logo goes in `imageSettings`. To export the code a `QRCode` draws, including its `logo` and `logoOptions`, pass `getQRData(props)` or `resolveQRCodeProps(props)` instead of the raw props.
 
-### JPG
-Smaller files, solid backgrounds only.
+## Formats
 
-```tsx
-await downloadQRCode(
-  { value: "https://example.com", size: 512 },
-  { format: "jpg", size: { width: 512, height: 512 }, filename: "qrcode.jpg" }
-);
-```
+| `format` | File | Notes |
+| --- | --- | --- |
+| `png` | Image | Keeps a transparent background. The default for most uses |
+| `jpg` | Image | Solid background only, smaller file |
+| `webp` | Image | PNG's pixels in a smaller file; lossless unless `quality` is set |
+| `svg` | Vector | Sharp at any size; the file for print shops and design tools |
+| `pdf` | Document | One page holding the code as a PNG. Needs the optional `jspdf` package |
+| `eps` | Vector | PostScript for Illustrator, CorelDRAW and InDesign. `size.width` is read as points (72 per inch) |
 
 ### WebP
-The same pixels as PNG in a smaller file, for websites. WebP is lossless by default, so module edges stay exact, and a transparent background stays transparent.
 
-```tsx
-await downloadQRCode(
-  { value: "https://example.com", size: 512 },
-  { format: "webp", size: { width: 512, height: 512 }, filename: "qrcode.webp" }
-);
-```
-
-Where the browser's canvas writes lossless WebP (Chrome and Edge do), the browser makes the file. Where it can't, qrdx checks the bytes and encodes the pixels itself with a small built-in lossless encoder. Safari is one of those: asked for WebP, it returns a PNG. Either way a `.webp` file is always WebP.
+WebP is lossless by default, so module edges stay exact and a transparent background stays transparent. Where the browser's canvas writes lossless WebP (Chrome and Edge do), the browser makes the file. Where it cannot, the library checks the bytes and encodes the pixels itself with a small built-in lossless encoder: Safari, asked for WebP, returns a PNG. Either way a `.webp` file is always WebP.
 
 `quality` (0 to 1) asks for a smaller lossy file instead, where the browser supports it. Lossy WebP softens module edges and colors, so keep the default for codes that need to scan from far away. `getQRAsWebP` returns the file as a `Blob`:
 
-```tsx
+```ts title="lib/webp.ts"
 import { getQRAsWebP } from "qrdx";
 
 const lossless = await getQRAsWebP({ value: "https://example.com", size: 1024 });
 const lossy = await getQRAsWebP({ value: "https://example.com", size: 1024 }, { quality: 0.9 });
 ```
 
-### SVG
-Perfect for print, infinitely scalable.
-
-```tsx
-await downloadQRCode(
-  { value: "https://example.com", size: 512 },
-  { format: "svg", size: { width: 512, height: 512 }, filename: "qrcode.svg" }
-);
-```
+`canvasToWebP(canvas, options)` does the same for any canvas, and `encodeWebPLossless(rgba, width, height)` encodes RGBA pixels with no DOM.
 
 ### PDF
-Ideal for professional documents. PDF export needs the optional `jspdf` package (`npm i jspdf`); without it, PDF downloads throw a clear error.
 
-```tsx
-await downloadQRCode(
-  { value: "https://example.com", size: 1024 },
-  { format: "pdf", size: { width: 1024, height: 1024 }, filename: "qrcode.pdf" }
-);
-```
+The PDF download holds the code as a PNG on a page of the same size. It needs the optional `jspdf` package (`npm install jspdf`); without it, PDF downloads throw `PDF export needs the optional "jspdf" package`. For a vector PDF at a physical size, with bleed, crop marks and CMYK, use `downloadPrintPDF`; see [Print-ready export](/docs/features/frames#print-ready-export).
 
 ### EPS
-Vector PostScript for print shops and design tools (Illustrator, CorelDRAW, InDesign). No extra package is needed. Here `size.width` is in points (72 per inch), so this file is 512 pt wide:
 
-```tsx
-await downloadQRCode(
-  { value: "https://example.com", size: 512 },
-  { format: "eps", size: { width: 512, height: 512 }, filename: "qrcode.eps" }
-);
-```
+EPS needs no extra package. `downloadQRCode` reads `size.width` as points, so a 512 px request writes a 512 pt (18 cm) file. For an exact physical size, use `getQRAsEPS`, which returns the EPS as a string: the code is `sizeMm` wide (default 50 mm), and a frame adds to that.
 
-For an exact physical size, use `getQRAsEPS`. It returns the EPS as a string: the code is `sizeMm` wide (default 50 mm), and a frame adds to that.
-
-```tsx
-import { getQRAsEPS } from "qrdx";
+```ts title="lib/eps.ts"
+import { downloadPrintEPS, getQRAsEPS } from "qrdx";
 
 const eps = await getQRAsEPS(
   { value: "https://example.com" },
   { sizeMm: 40, bleedMm: 3, colorMode: "cmyk" }
 );
+
+await downloadPrintEPS({ value: "https://example.com" }, { sizeMm: 40, filename: "menu.eps" });
 ```
 
-EPS has no transparency and no crop marks. Linear and radial gradients print as smooth PostScript Level 3 shadings. PNG and JPEG logos are embedded.
+EPS has no transparency and no crop marks. Linear and radial gradients print as smooth PostScript Level 3 shadings; angular gradients print as a fan of thin wedges. See-through colors are mixed with the background, and the background with white paper. PNG and JPEG logos are embedded. EPS cannot carry an [image fill](/docs/features/colors-gradients#image-fills): `getQRAsEPS` throws `EPS_IMAGE_FILL_REASON`, and the dashboard's download dialog offers PDF, SVG and PNG instead.
 
-{/* Angular gradients, see-through colors and image fills (paint picker) */}
-Angular gradients print as a fan of thin wedges. See-through colors are mixed with the background, and the background with white paper. EPS can't carry an [image fill](/docs/features/colors-gradients#image-fills): `getQRAsEPS` throws `EPS_IMAGE_FILL_REASON`, and the download dialog offers PDF, SVG and PNG instead.
+## Data URLs, Blobs and markup
 
-## Preset Sizes
+```ts title="lib/export.ts"
+import { copyQRCodeToClipboard, getQRCodeDataUrl, getSVGString } from "qrdx";
 
-```tsx
-import { PRESET_SIZES } from 'qrdx';
+const props = { value: "https://example.com", size: 512 };
 
-PRESET_SIZES.small    // 200x200
-PRESET_SIZES.medium   // 400x400
-PRESET_SIZES.large    // 800x800
-PRESET_SIZES.xlarge   // 1200x1200
-PRESET_SIZES["2xl"]   // 1600x1600
-PRESET_SIZES["3xl"]   // 2000x2000
+// The same file as a data URL, for an <img> or a form field
+const png = await getQRCodeDataUrl(props, "png", { width: 512, height: 512 });
+
+// A PNG on the clipboard, for pasting into a document
+await copyQRCodeToClipboard(props, { width: 512, height: 512 });
+
+// The SVG markup, for inlining in a page or an email template
+const svg = await getSVGString(props);
 ```
 
-### Size Recommendations
+- `getQRCodeDataUrl(props, format, size, { quality })` takes every format `downloadQRCode` takes.
+- `copyQRCodeToClipboard` writes a PNG. Call it from a click handler: browsers refuse clipboard writes outside a user gesture.
+- `getSVGString` embeds the logo as a data URL, so the markup stands on its own. `toSVGString` from `qrdx/core` is the synchronous version without that step.
 
-- **Small (200px)** — Social media thumbnails
-- **Medium (400px)** — Standard web use
-- **Large (800px)** — High-quality web
-- **X-Large (1200px)** — Print materials
-- **2X-Large (1600px)** — Large format printing
-- **3X-Large (2000px)** — Maximum quality
+## Preset sizes
 
-## Advanced Options
+```ts title="lib/sizes.ts"
+import { PRESET_SIZES, validateSize } from "qrdx";
 
-### Get Data URL
+PRESET_SIZES.small; // { width: 200, height: 200 }
+PRESET_SIZES.medium; // 400
+PRESET_SIZES.large; // 800
+PRESET_SIZES.xlarge; // 1200
+PRESET_SIZES["2xl"]; // 1600
+PRESET_SIZES["3xl"]; // 2000
 
-```tsx
-import { getQRCodeDataUrl } from 'qrdx';
+validateSize(4000, 4000); // { isValid: true }
+validateSize(6000, 6000); // { isValid: false, error: "Size must not exceed 5000x5000 pixels" }
+```
 
-const dataUrl = await getQRCodeDataUrl(
-  { value: "https://example.com", size: 512 },
-  "png",
-  { width: 512, height: 512 }
+Pick the size by where the file goes: 256 to 512 px for a web page, 1024 px or more for print at 300 pixels per inch (1024 px prints sharply up to about 8.7 cm wide). For exact print sizes use the print functions, which work in millimeters and inches.
+
+## PNG in Node
+
+`getQRAsPNG` from `qrdx/node` returns PNG bytes without a browser. It needs one optional rasterizer installed next to `qrdx`: `@resvg/resvg-js` draws the SVG, logos included, the way browsers do; `sharp` also works.
+
+```ts title="scripts/make-png.ts"
+import { writeFile } from "node:fs/promises";
+import { getQRAsPNG } from "qrdx/node";
+
+const png = await getQRAsPNG(
+  { value: "https://example.com", bodyPattern: "rounded", margin: 4 },
+  { size: 1024 }
 );
+await writeFile("qr-code.png", png);
 ```
 
-### Copy to Clipboard
+Import it from `qrdx/node`, never from `qrdx`, so browser bundles never see the native modules. A logo that is a data URL is embedded as it is; an `http(s)` URL or a local path is loaded only with `loadExternalLogos: true`, so a server passing a caller's settings through cannot be made to fetch internal URLs or read its own disk. SVG markup needs no rasterizer: `toSVGString` from `qrdx/core` runs anywhere.
 
-```tsx
-import { copyQRCodeToClipboard } from 'qrdx';
+## If something goes wrong
 
-await copyQRCodeToClipboard(
-  { value: "https://example.com" },
-  { width: 512, height: 512 }
-);
-```
+- **`Size must be at least 50x50 pixels`, `Size must not exceed 5000x5000 pixels` or `Width and height must be equal for QR codes`.** `validateSize` rejected the size. Pass a square size in range.
+- **`PDF export needs the optional "jspdf" package`.** Install `jspdf` in the same package as `qrdx`.
+- **The logo is missing from the file.** The image comes from another origin without CORS headers, so the browser could not copy it. Serve it from your own origin or pass a data URL.
+- **`copyQRCodeToClipboard` rejects.** It ran outside a click or key handler, or the page is not served over HTTPS. Call it from the handler itself.
+- **`getQRAsPNG` throws about a missing rasterizer.** Install `@resvg/resvg-js` or `sharp` next to `qrdx`.
 
-### Get SVG String
+## Related
 
-```tsx
-import { getSVGString } from 'qrdx';
-
-const svgString = await getSVGString({
-  value: "https://example.com",
-  size: 512
-});
-```
-
-## Batch Downloads
-
-Download multiple QR codes:
-
-```tsx
-const qrCodes = [
-  {
-    props: { value: "https://example.com", size: 512 },
-    options: { format: "png", size: { width: 512, height: 512 }, filename: "site.png" }
-  },
-  {
-    props: { value: "tel:+1234567890", size: 512 },
-    options: { format: "svg", size: { width: 512, height: 512 }, filename: "phone.svg" }
-  }
-];
-
-for (const qr of qrCodes) {
-  await downloadQRCode(qr.props, qr.options);
-}
-```
-
-## Error Handling
-
-```tsx
-try {
-  await downloadQRCode(
-    { value: "https://example.com", size: 512 },
-    { format: "png", size: { width: 512, height: 512 }, filename: "qr.png" }
-  );
-} catch (error) {
-  console.error("Download failed:", error);
-}
-```
-
-## Format Selection
-
-- **PNG** — Best quality, larger files, transparency
-- **JPG** — Smaller files, no transparency
-- **WebP** — PNG's quality and transparency in a smaller file, for websites
-- **SVG** — Scalable, small files, web/print
-- **PDF** — Professional documents, larger files
-- **EPS** — Vector print files for print shops and design tools
-
-## Size Optimization
-
-- **Web use** — 256-512px, PNG or WebP
-- **Print** — 1024px+, PDF or PNG
-- **Mobile** — 256px, optimized
-- **Email** — 200-300px, balance
-
-## Next Steps
-
-- [Usage](/docs/usage) — Learn basic generation
-- [Templates](/docs/features/templates) — Download styled QR codes
-- [API Reference](/docs/api-reference) — Complete download API
+<Cards>
+  <Card href="/docs/features/frames" title="Frames, scan score and print files" description="Vector PDF and SVG at a physical size, with bleed and crop marks." />
+  <Card href="/docs/components/qr-code-download" title="QR Code Download component" description="A ready-made download menu for shadcn/ui projects." />
+  <Card href="/docs/developers/image-api" title="QR code image API" description="A code as an image URL, with no code at all." />
+  <Card href="/docs/api-reference" title="Library API reference" description="Every download and export function, with its signature." />
+</Cards>

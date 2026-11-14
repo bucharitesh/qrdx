@@ -1,136 +1,119 @@
 ---
-title: Colors & gradients
-description: Use solid colors or linear and radial gradients, and check contrast so codes stay scannable.
+title: Set colors and gradients
+description: Color the modules, eyes and background with solid colors, linear, radial and angular gradients, see-through colors or image fills, and check that the result still scans.
 icon: Palette
 ---
 
-Apply colors and gradients to create branded QR codes.
+Four props color a code: `fgColor` for the data modules, `bgColor` for the background, `eyeColor` for the three corner eyes and `dotColor` for the dot inside each eye. Each takes a solid color or a gradient object, and the eye colors default to `fgColor`. This page covers every kind of fill and how to keep the code readable.
 
-## Solid Colors
+Designing in the playground or the dashboard instead? See [Choose colors that scan](/docs/help/designing/colors-and-contrast) in Help.
 
-```tsx
-import { QRCode } from 'qrdx';
+## Solid colors
 
-<QRCode
-  value="https://example.com"
-  size={256}
-  fgColor="#1a56db"
-  bgColor="#f9fafb"
-  eyeColor="#0d47a1"
-  dotColor="#3b82f6"
-/>
+```tsx title="components/brand-code.tsx"
+import { QRCode } from "qrdx";
+
+export function BrandCode() {
+  return (
+    <QRCode
+      value="https://example.com"
+      size={256}
+      fgColor="#1a56db"
+      bgColor="#f9fafb"
+      eyeColor="#0d47a1"
+      dotColor="#3b82f6"
+    />
+  );
+}
 ```
 
-Supported formats: `#hex`, `rgb()`, `rgba()`, `hsl()`, `hsla()`, named colors
+A solid color is any CSS color the engine parses: hex with 3, 4, 6 or 8 digits, `rgb()` and `rgba()`, a named color, or `transparent`. Other CSS syntaxes such as `hsl()` render in the SVG, but the contrast check, the PDF and the EPS cannot read them, so stay with the forms above. `{ type: "solid", color: "#1a56db" }` is the same as the string.
 
-`eyeColors` sets each eye on its own (`topLeft`, `topRight`, `bottomLeft`, each with an `outer` and `inner` color or gradient); see [Patterns](/docs/features/patterns#per-eye-colors).
+`eyeColors` sets each eye on its own (`topLeft`, `topRight`, `bottomLeft`, each with an `outer` and `inner` color or gradient); see [Per-eye colors](/docs/features/patterns#per-eye-colors).
 
 ### Transparent background
 
 `bgColor="transparent"` paints no background, so PNG and SVG downloads are see-through and PDF and EPS files have no background fill. Place the code on a light, plain surface: decoders need the light gaps between modules.
 
-## Linear Gradients
+## Linear gradients
 
-```tsx
-import { QRCodeCanvas } from 'qrdx';
+```tsx title="components/gradient-code.tsx"
+import { QRCode } from "qrdx";
 
-<QRCodeCanvas
-  value="https://example.com"
-  size={256}
-  fgColor={{
-    type: 'linear',
-    stops: [
-      { offset: 0, color: '#667eea' },
-      { offset: 1, color: '#764ba2' }
-    ],
-    x1: 0, y1: 0,
-    x2: 1, y2: 1
-  }}
-/>
+export function GradientCode() {
+  return (
+    <QRCode
+      value="https://example.com"
+      size={256}
+      fgColor={{
+        type: "linear",
+        angle: 45,
+        stops: [
+          { color: "#4f46e5", offset: 0 },
+          { color: "#db2777", offset: 100 },
+        ],
+      }}
+    />
+  );
+}
 ```
 
-### Gradient Directions
+- `angle` is in degrees: 0 runs left to right, 90 top to bottom, 45 from the top left corner down to the bottom right.
+- `stops` need at least two entries. `offset` is a percentage from 0 to 100, and a stop's color can carry alpha.
+- Any color prop takes a gradient, including `bgColor` and the eyes. `QRCodeCanvas` cannot draw gradients and uses the first stop; use `QRCode` or `QRCodeSVG`.
 
-- **Horizontal**: `x1: 0, y1: 0, x2: 1, y2: 0`
-- **Vertical**: `x1: 0, y1: 0, x2: 0, y2: 1`
-- **Diagonal**: `x1: 0, y1: 0, x2: 1, y2: 1`
+Gradients carry into SVG, PNG, JPG, WebP and PDF downloads.
 
-### Multi-Stop Gradients
+{/* shot: lib-gradient-codes | the linear, radial and angular gradient codes from this page side by side at 256 px | render gradient-code.tsx, radial-code.tsx and angular-code.tsx */} The print PDF and EPS draw them as smooth shadings.
 
-```tsx
-<QRCodeCanvas
-  value="https://example.com"
-  size={256}
-  fgColor={{
-    type: 'linear',
-    stops: [
-      { offset: 0, color: '#667eea' },
-      { offset: 0.3, color: '#764ba2' },
-      { offset: 0.7, color: '#f093fb' },
-      { offset: 1, color: '#f5576c' }
-    ],
-    x1: 0, y1: 0, x2: 1, y2: 1
-  }}
-/>
+## Radial gradients
+
+```tsx title="components/radial-code.tsx"
+import { QRCode } from "qrdx";
+
+export function RadialCode() {
+  return (
+    <QRCode
+      value="https://example.com"
+      size={256}
+      fgColor={{
+        type: "radial",
+        stops: [
+          { color: "#0f766e", offset: 0 },
+          { color: "#0c4a6e", offset: 100 },
+        ],
+      }}
+    />
+  );
+}
 ```
 
-## Radial Gradients
-
-```tsx
-<QRCodeCanvas
-  value="https://example.com"
-  size={256}
-  fgColor={{
-    type: 'radial',
-    stops: [
-      { offset: 0, color: '#ff6b6b' },
-      { offset: 1, color: '#4ecdc4' }
-    ],
-    cx: 0.5, cy: 0.5,
-    r: 0.5
-  }}
-/>
-```
-
-## Color Utilities
-
-### Check Contrast
-
-```tsx
-import { getContrastRatio, getContrastLevel } from 'qrdx';
-
-const ratio = getContrastRatio('#000000', '#ffffff');
-// Returns: 21
-
-const level = getContrastLevel(ratio);
-// Returns: { level: 'AAA', warning: false, message: 'Excellent contrast' }
-```
-
-### Contrast Guidelines
-
-- **Minimum**: 3.0:1 ratio
-- **Recommended**: 4.5:1 or higher
-- **Excellent**: 7.0:1 or higher
-
-{/* Angular gradients, see-through colors and image fills (paint picker) */}
+A radial gradient runs from the center of the code outwards. Its center and radius follow the code's size, so it takes only `stops`.
 
 ## Angular gradients
 
-An angular gradient sweeps clockwise around the centre of what it fills, like CSS `conic-gradient`. `angle` is where the sweep starts, in degrees clockwise from the top. Offsets run from 0 to 100 around the turn.
+An angular gradient sweeps clockwise around the center of what it fills, like CSS `conic-gradient`. `angle` is where the sweep starts, in degrees clockwise from the top. Offsets run from 0 to 100 around the turn.
 
-```tsx
-<QRCode
-  value="https://example.com"
-  fgColor={{
-    type: "angular",
-    angle: 30,
-    stops: [
-      { color: "#1d4ed8", offset: 0 },
-      { color: "#7c3aed", offset: 50 },
-      { color: "#1d4ed8", offset: 100 },
-    ],
-  }}
-/>
+```tsx title="components/angular-code.tsx"
+import { QRCode } from "qrdx";
+
+export function AngularCode() {
+  return (
+    <QRCode
+      value="https://example.com"
+      size={256}
+      fgColor={{
+        type: "angular",
+        angle: 30,
+        stops: [
+          { color: "#1d4ed8", offset: 0 },
+          { color: "#7c3aed", offset: 50 },
+          { color: "#1d4ed8", offset: 100 },
+        ],
+      }}
+    />
+  );
+}
 ```
 
 SVG has no conic gradient, so the code draws a fan of thin wedges, about two color levels apart. PDF and EPS draw the same wedges.
@@ -141,34 +124,58 @@ Colors and gradient stops can carry alpha, such as `#1d4ed8cc` or `rgba(29, 78, 
 
 ## Image fills
 
-An image fill paints a picture through the background, the dots or the eyes. The picture is laid over the whole code, so dots and eyes that share one show a single picture.
+An image fill paints a picture through the background, the modules or the eyes. The picture is laid over the whole code, so modules and eyes that share one show a single picture.
 
-```tsx
-<QRCode
-  value="https://example.com"
-  fgColor={{
-    type: "image",
-    src: "data:image/jpeg;base64,…",
-    fit: "cover", // or "contain", "tile"
-    position: "center",
-    scale: 1,
-    opacity: 0.45,
-    underlay: "#000000",
-  }}
-/>
+```tsx title="components/photo-code.tsx"
+import { QRCode } from "qrdx";
+
+export function PhotoCode({ photo }: { photo: string }) {
+  return (
+    <QRCode
+      value="https://example.com"
+      size={256}
+      fgColor={{
+        type: "image",
+        src: photo, // a data:image/jpeg;base64,… URL
+        fit: "cover", // or "contain", "tile"
+        position: "center",
+        scale: 1,
+        opacity: 0.45,
+        underlay: "#000000",
+      }}
+    />
+  );
+}
 ```
 
 - `src` is the picture itself, as with a logo. QRdx saves an image fill (in codes, themes and the REST API) only as a base64 `data:image` URL (PNG, JPEG, WebP or GIF) of 1.5 MB at most; a picture from a link is refused. PNG and JPEG embed in every export, and servers never fetch a link.
-- `underlay` is a solid color under the picture. `opacity` lets it through: over black it darkens a photo for the dots, and over white it lightens one for the background.
-- A picture's detail reads as noise to a camera, so the scan check asks for more contrast: 7:1 in the dots or eyes, 12:1 behind them (`SCAN_IMAGE_CONTRAST_MIN`). It measures a picture by its lightest and darkest tenth (`getImageTones`). In the editor, "Make it scannable" finds the opacity over the underlay that passes.
-- SVG, PNG and PDF carry image fills. EPS can't ([Downloads](/docs/features/downloads#eps)).
+- `underlay` is a solid color under the picture. `opacity` lets it through: over black it darkens a photo for the modules, and over white it lightens one for the background.
+- A picture's detail reads as noise to a camera, so the scan check asks for more contrast: 7:1 in the modules or eyes, 12:1 behind them (`SCAN_IMAGE_CONTRAST_MIN`). It measures a picture by its lightest and darkest tenth (`getImageTones`). In the editor, **Make it scannable** finds the opacity over the underlay that passes.
+- SVG, PNG and PDF carry image fills. EPS cannot; see [EPS](/docs/features/downloads#eps).
 
-Image fills travel like logos. They stay with the design in the editor, in saved codes and in saved themes. They don't go into `?style=` links, published community styles, Get code snippets or the chat's context: each image fill gives way to its underlay color there. The image API (`GET /v1/qr`) and the MCP server don't take them yet. `POST /v1/codes` and `PATCH /v1/codes/{id}` take one only as a `data:image` URL, and answer 400 for anything else; there's no uploaded-file id for pictures yet.
+Image fills travel like logos. They stay with the design in the editor, in saved codes and in saved themes. They do not go into `?style=` links, published community styles, Get code snippets or the chat's context: each image fill gives way to its underlay color there. The image API (`GET /v1/qr`) and the MCP server do not take them. `POST /v1/codes` and `PATCH /v1/codes/{id}` take one only as a `data:image` URL, and answer 400 for anything else.
 
-Angular gradients and image fills are in the qrdx source and ship with the next npm release. qrdx 0.0.46 on npm doesn't have them.
+## Check the contrast
 
-## Next Steps
+Scanners need dark modules on a light background. The scan score checks every color, including each gradient stop, against the background; the same helpers are exported:
 
-- [Logos](/docs/features/logos) — Add logos to colored QR codes
-- [Patterns](/docs/features/patterns) — Combine colors with patterns
-- [Downloads](/docs/features/downloads) — Export colored QR codes
+```ts title="lib/check-contrast.ts"
+import { getContrastLevel, getContrastRatio } from "qrdx";
+
+const ratio = getContrastRatio("#1a56db", "#f9fafb");
+// 5.9
+
+getContrastLevel(ratio);
+// { level: "AA", warning: false, message: "Good contrast" }
+```
+
+The scan score passes a ratio of 4.5 or more (`SCAN_CONTRAST_MIN`), takes points off below it, and fails the design below 1.5. `getContrastLevel` returns `AAA` from 7, `AA` from 4.5, `AA Large` from 3 with a warning, and `Fail` below that. A light code on a dark background passes the ratio but loses points on the polarity check: most phone cameras read it, some scanner apps do not.
+
+## Related
+
+<Cards>
+  <Card href="/docs/features/patterns" title="Choose module and eye shapes" description="Per-eye colors and the shapes these colors fill." />
+  <Card href="/docs/features/logos" title="Add a logo in code" description="A logo on a colored code, with a plate behind it." />
+  <Card href="/docs/features/downloads" title="Export and download" description="Which formats keep gradients, transparency and image fills." />
+  <Card href="/docs/utilities" title="Utilities" description="The color and contrast helpers in full." />
+</Cards>

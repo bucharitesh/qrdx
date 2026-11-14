@@ -3,28 +3,55 @@ title: Use your own domain
 description: Connect a custom domain, like go.yourbrand.com, for your dynamic codes' short links.
 ---
 
-With a custom domain, your codes encode `go.yourbrand.com/…` instead of a `qrdx.dev` link. People see your brand before they scan. Pro includes 5 domains and Business 25.
+With a custom domain, your codes encode `go.yourbrand.com/…` instead of a `qrdx.dev` link, so people see your brand before they scan. This page gets a domain connected and onto a code; the [Custom domains guide](/docs/custom-domains) has the details.
+
+<Callout type="info">
+  Pro includes 5 domains and Business 25. Workspace owners and admins add and verify domains; every member can use a verified one. See [Plans and what they include](/docs/help/account-and-billing/plans).
+</Callout>
 
 ## Connect a domain
 
-1. Go to **Domains** in your dashboard and click **Add domain**.
-2. Enter the domain, for example `go.yourbrand.com`. A subdomain works best: your main website stays where it is.
-3. Add the DNS records QRdx shows at your DNS provider, the place where you bought the domain or manage its DNS. Copy the values exactly.<IfAvailable feature="domainConnect"> If you see **Set up with** and your provider's name, you can click it instead: your provider adds the records once you approve them there.</IfAvailable>
-4. Click **Verify**.
+### 1. Add the domain
 
-The status shows **Waiting for DNS** until the records are found, then **Verified**. DNS changes usually show up within minutes, but can take up to 48 hours.
+Go to **Settings** → **Domains** in your dashboard and click **Add domain**. Enter the domain, for example `go.yourbrand.com`. A subdomain such as `go.` or `qr.` works best: your main website stays where it is.
+
+### 2. Add the DNS records
+
+QRdx shows the records to add, with their **Type**, **Name** and **Value**. Add them at your DNS provider, the place where you bought the domain or manage its DNS, copying the values exactly.<IfAvailable feature="domainConnect"> If QRdx recognizes your provider, you can click **Set up with** your provider's name instead: you approve the change there and come back.</IfAvailable>
+
+{/* shot: domains-dns-records | the Custom domains page after adding a domain, showing the DNS records table with Type, Name and Value and the Verify button | Dashboard, Settings, Domains, Add domain */}
+
+### 3. Verify
+
+Click **Verify**. The status shows **Waiting for DNS** until the records are found, then **Verified**, and QRdx says you can now pick the domain for your dynamic codes. DNS changes usually show up within minutes, but can take up to 48 hours.
 
 ## Use it for a code
 
-- **New code:** pick your domain in **Short link domain** before you click **Create code**.
-- **Existing code:** choose the domain in **Edit link**, save, then download the code again. The encoded link has changed.
+- **New code:** pick your domain under **Short link domain** before you click **Create code**.
+- **Existing code:** open **Edit link**, pick the domain and click **Save changes**. The code now encodes the new link, so download it again. Codes you already printed with the `qrdx.dev` link keep working.
 
 ## Printed codes keep working
 
-Every code also keeps working at its `qrdx.dev` link. Codes you printed before moving to your domain don't break.
+Every code also keeps working at its `qrdx.dev` link, so codes you printed before moving to your domain don't break.
 
 Moving a code from one custom domain to another does break codes printed with the old domain. QRdx warns you before you save.
+
+## If something goes wrong
+
+### The status stays on Waiting for DNS
+
+Check that each record's name and value match what QRdx shows, with no extra characters, then click **Check DNS**. Some providers take hours to publish a change, and a few take up to 48 hours.
+
+### Your DNS provider didn't add the records
+
+The automatic setup didn't go through. Add the records yourself from the table under the domain, then click **Verify**.
+
+### Scanners see "This domain isn't connected yet"
+
+A code already encodes the domain, but its DNS setup isn't finished. Finish the steps above; the code works as soon as the domain is **Verified**.
 
 ## Related
 
 - [Custom domains guide](/docs/custom-domains)
+- [Create a dynamic QR code](/docs/help/dynamic-codes/create)
+- [A scan shows an error page](/docs/help/troubleshooting/error-pages)

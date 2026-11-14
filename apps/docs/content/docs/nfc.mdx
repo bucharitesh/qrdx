@@ -1,18 +1,21 @@
 ---
 title: NFC tags and business cards
 description: Write a dynamic QR code's link to an NFC tag or card, count taps apart from QR scans, and put a vCard Plus page on an NFC business card.
-icon: Nfc
 ---
 
-Any [dynamic QR code](/docs/dynamic-qr-codes) can also go on an NFC tag. You write the code's NFC link to a tag, sticker or card, and a phone that touches it opens the same place the QR code does. Taps show up in the code's analytics next to QR scans, counted separately. It works on every plan.
+Any [dynamic QR code](/docs/dynamic-qr-codes) can also go on an NFC tag. You write the code's NFC link to a tag, sticker or card, and a phone that touches it opens the same place the QR code does. Taps show up in the code's analytics next to QR scans, counted separately. Use it where a tap is easier than a scan: table stickers, business cards, product shelves. It works on every plan.
 
 QRdx doesn't sell, print or ship tags or cards. Buy blank ones from any NFC supplier and write them yourself from the code's page.
 
-## The NFC link
+## How it works
+
+{/* diagram: nfc-link | A phone tapping a tag that holds the code's NFC link (the short link plus ?nfc), QRdx counting the visit as a tap and redirecting like a scan | concept drawing */}
 
 A code's NFC link is its short link with `?nfc` on the end, like `https://qrdx.dev/q/aB3dE5f?nfc`, or `https://go.example.com/menu?nfc` on a [custom domain](/docs/custom-domains). It goes through the same redirect as the short link, so smart routing, passwords, schedules and scan limits apply to taps as well. The `?nfc` ending only tells analytics the visit was a tap. The QR code keeps its own link, and codes you've already printed work exactly as before.
 
-To find it, open the code in the [dashboard](/dashboard?to=codes) and choose **Use with NFC** on its Overview tab. The [REST API](/docs/developers/rest-api) returns it as `nfcLink` on every code.
+To find the link, open the code from [Codes](/dashboard?to=codes) and choose **Use with NFC** on its **Overview** tab.
+
+{/* shot: nfc-page | The code's NFC page with the NFC link, its size in bytes and the Write to NFC tag button | Dashboard → Codes → open a code → Use with NFC */}
 
 ## Write a tag on Android
 
@@ -21,7 +24,7 @@ Chrome on Android can write tags straight from the code's NFC page:
 1. Turn on NFC in the phone's settings.
 2. Open the code in Chrome, choose **Use with NFC**, then tap **Write to NFC tag**.
 3. Hold the tag flat against the back of the phone until the page says **Written**.
-4. Tap the tag against the phone to test it. It should open the link.
+4. Tap the tag against the phone to test it. It opens the link.
 
 Writing from a web page needs Web NFC, which only Chrome on Android has. On a computer, the NFC page shows a QR code instead: scan it with the Android phone, sign in, and write the tag there.
 
@@ -55,7 +58,7 @@ Android phones with NFC turned on, and iPhone XS or later, open a tag's link as 
 
 ## NFC business cards
 
-A [vCard Plus page](/docs/landing-pages) is a contact page with a **Save contact** button, and it makes a good NFC business card. For a code that opens one, the Overview tab shows **Put this card on NFC**, and the page editor has a **Put on NFC** button. Both open the same NFC page with a guide for cards.
+A [vCard Plus page](/docs/landing-pages#vcard-plus-and-save-contact) is a contact page with a **Save contact** button, and it makes a good NFC business card. For a code that opens one, the **Overview** tab shows **Put this card on NFC**, and the page editor has a **Put on NFC** button. Both open the same NFC page with a guide for cards.
 
 1. Buy blank NFC business cards, or NFC stickers for cards you already have.
 2. Print the code's QR code on the card too. Phones without NFC, or with NFC turned off, scan it instead.
@@ -63,10 +66,22 @@ A [vCard Plus page](/docs/landing-pages) is a contact page with a **Save contact
 
 Because each card holds the code's link, editing the vCard Plus page in QRdx updates every card you've handed out.
 
+{/* shot: nfc-card-guide | The NFC page for a vCard Plus code, with the card guide and the QR code to print alongside | Dashboard → Codes → open a vCard Plus code → Put this card on NFC */}
+
 ## Taps in analytics
 
-A code's Analytics tab shows **QR scans and NFC taps** for the dates you picked, and the totals above it count both. The workspace's Analytics page and shared analytics pages show the same split.
+A code's **Analytics** tab shows **QR scans and NFC taps** for the dates you picked, and the totals above it count both. The workspace's Analytics page and shared analytics pages show the same split. Scans from before NFC links existed count as QR scans. Taps follow the same rules as scans: bots and link previews aren't counted.
 
-The CSV export has a `source` column with `qr` or `nfc` for each scan. In the REST API, [scan analytics](/docs/developers/api/get-code-scans) include `sources` with both counts and a `source` on each listed scan, and [webhooks](/docs/webhooks) for `scan.created` carry `source` too.
+## Limits and plans
 
-Scans from before NFC links existed count as QR scans. Taps follow the same rules as scans: bots and link previews aren't counted.
+NFC links work on every plan, for every dynamic code. The code itself counts toward your plan's active codes like any other.
+
+## For developers
+
+The REST API returns the link as `nfcLink` on every code. [Scan analytics](/docs/developers/api/get-code-scans) include `sources` with both counts and a `source` (`qr` or `nfc`) on each listed scan, the CSV export has a `source` column, and [webhooks](/docs/webhooks) for `scan.created` carry `source` too.
+
+## Related
+
+- [Landing pages](/docs/landing-pages): the vCard Plus page and its Save contact button
+- [Code controls](/docs/code-controls): passwords, schedules and limits apply to taps too
+- [Download and print a QR code](/docs/help/getting-started/download-and-print): the QR code for the same card

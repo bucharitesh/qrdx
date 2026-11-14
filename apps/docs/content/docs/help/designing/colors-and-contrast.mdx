@@ -3,33 +3,47 @@ title: Choose colors that scan
 description: Keep a dark code on a light background, keep strong contrast, and use gradients carefully.
 ---
 
-Scanners look for dark squares on a light background. Most color problems come from breaking that rule.
+Scanners look for dark squares on a light background. Most color problems come from breaking that rule. This page shows where the colors are in the playground and how to keep a code scannable while you change them.
 
 ## Change the colors
 
-In the [playground](/playground?tab=design&section=colors), open the **Design** tab, then **Colors**.
+1. In the [playground](/playground?tab=design&section=colors), open the **Design** tab, then **Colors**.
+2. Pick the color to change. **Background** is the area behind the code. **Foreground** colors the small squares that hold your data. **Eyes** colors the three big squares in the corners. **Dots** colors the center of each corner square.
+3. Choose a fill: **Solid**, **Linear**, **Radial**, **Angular** or **Image**.
 
-- **Background** is the area behind the code.
-- **Foreground** colors the small squares that hold your data.
-- **Eyes** colors the three big squares in the corners.
-- **Dots** colors the center of each corner square.
+The preview and the **Scan score** under it update as you go. **Color palettes**, under the four colors, sets them all at once.
 
-Each color can be solid, a linear gradient or a radial gradient. The palettes under the four colors set them all at once.
+{/* shot: design-colors-section | the Colors section of the Design tab with the four color swatches, the fill type choice and the Color palettes row | /playground?tab=design&section=colors */}
 
 ## Rules that keep a code scannable
 
 - **Dark code, light background.** Light codes on dark backgrounds fail in some camera apps.
 - **Strong contrast.** Aim for a contrast ratio of 4.5:1 or more between the code and the background.
 - **Gradients stay dark.** A gradient is fine when every color in it is dark enough against the background.
-- **Plain background.** A busy photo behind the code makes it harder to read.
+- **Plain background.** A busy photo behind the code makes it harder to read. If you want a picture in the code, use [Image QR](/docs/help/designing/art) instead, which tests the result for you.
 
 ## Check the contrast
 
-The contrast checker in the toolbar above the preview shows the ratio for your colors. It flags pairs under 4.5:1.
+**Contrast Checker** in the toolbar above the preview shows the ratio for your colors and flags pairs under 4.5:1.
 
 The **Scan score** under the preview checks contrast too, along with size, clear space and the logo. See [Check a design with the scan score](/docs/help/designing/scan-score).
 
+## If something goes wrong
+
+### The score says Fails after a color change
+
+The contrast is far too low for a camera to tell the code from the background. Make the foreground darker or the background lighter until the score comes back.
+
+### It scans on your phone but not on other phones
+
+Light-on-dark codes and low-contrast pairs read on some cameras and not others. Swap the colors so the code is the dark part, and bring the ratio to 4.5:1 or more.
+
+### A gradient makes the score Risky
+
+One end of the gradient is too light. Move both colors toward the dark end, or use a solid foreground and keep the gradient for the eyes.
+
 ## Related
 
+- [Check a design with the scan score](/docs/help/designing/scan-score)
 - [A code won't scan](/docs/help/troubleshooting/wont-scan)
 - [Colors and gradients for developers](/docs/features/colors-gradients)

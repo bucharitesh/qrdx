@@ -93,6 +93,23 @@ describe("createMemoryLimiter", () => {
     ]);
   });
 
+  it("counts a request with a rate as that many, and refuses one that doesn't fit", () => {
+    const time = clock(0);
+    const memory = createMemoryLimiter(
+      { tokens: 10, windowMs: 1000 },
+      time.now,
+    );
+    expect(memory.limit("k", 4)).toMatchObject({ success: true, remaining: 6 });
+    expect(memory.limit("k", 5)).toMatchObject({ success: true, remaining: 1 });
+    // Two more don't fit in the one left; a refused request uses nothing.
+    expect(memory.limit("k", 2)).toMatchObject({
+      success: false,
+      remaining: 1,
+    });
+    expect(memory.limit("k")).toMatchObject({ success: true, remaining: 0 });
+    expect(memory.limit("k").success).toBe(false);
+  });
+
   it("keeps a bounded number of keys", () => {
     const memory = createMemoryLimiter(
       { tokens: 1, windowMs: 60_000 },
@@ -159,7 +176,7 @@ describe("createCircuitBreaker", () => {
 });
 
 describe("withFallback", () => {
-  function setup(upstash: (id: string) => Promise<LimitResult>) {
+  function setup(upstash: (id: string, rate?: number) => Promise<LimitResult>) {
     const time = clock();
     const log = vi.fn();
     const breaker = createCircuitBreaker({
@@ -181,6 +198,16 @@ describe("withFallback", () => {
       limit: withFallback(spy, memory, breaker),
     };
   }
+
+  it("hands a request's rate to Upstash, and to memory when Upstash fails", async () => {
+    const { limit, spy } = setup(async () => {
+      throw new Error("fetch failed");
+    });
+    // Memory allows 2: a request of rate 2 fits, then nothing does.
+    expect((await limit("ip:1", 2)).success).toBe(true);
+    expect(spy).toHaveBeenCalledWith("ip:1", 2);
+    expect((await limit("ip:1")).success).toBe(false);
+  });
 
   it("uses Upstash while it answers", async () => {
     const { limit, spy } = setup(async () =>

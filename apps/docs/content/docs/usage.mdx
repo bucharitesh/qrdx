@@ -1,152 +1,149 @@
 ---
 title: Basic usage
-description: Render a QR code with the QRCode component, then change its colors, patterns, logo, template and error correction.
+description: Which qrdx component to render, and the props that set a code's size, quiet zone, colors, shapes, logo, frame and error correction.
 icon: FileCode
 ---
 
-Create and customize QR codes for your needs.
+`QRCode` is the component to reach for: it takes every styling option and a simple `logo` prop, and it renders on the server. This page goes through the props you set most often. For every prop, see the [library API reference](/docs/api-reference).
 
 <NpmStatus package="qrdx" />
 
-## Basic QR Code
+## Choose a component
 
-```tsx
-import { QRCode } from 'qrdx';
+| Component | What it draws | Use it when |
+| --- | --- | --- |
+| `QRCode` | An `<svg>` with every style option, plus `logo`, `logoOptions`, `hideLogo` and `scale`. Takes no other attributes | Almost always |
+| `QRCodeSVG` | The same `<svg>`, with the logo given as raw `imageSettings` in pixels. Any other prop (`aria-label`, `className`, `role`) goes on the `<svg>` | You need attributes on the `<svg>`, you lay the logo out yourself, or you port code from another renderer |
+| `QRCodeCanvas` | A `<canvas>` with plain square modules and solid colors | You need a canvas element. Patterns, eye colors, gradients and templates are ignored |
 
-<QRCode
-  value="https://example.com"
-  size={256}
-/>
+`QRCode` and `QRCodeSVG` use no browser-only hooks, so they render in React Server Components and in static HTML. `QRCodeCanvas` ships with `"use client"`.
+
+```tsx title="components/menu-code.tsx"
+import { QRCode } from "qrdx";
+
+export function MenuCode() {
+  return (
+    <div role="img" aria-label="QR code for the menu">
+      <QRCode value="https://example.com/menu" size={256} margin={4} />
+    </div>
+  );
+}
 ```
 
-## Customize Colors
+`value` is encoded exactly as you pass it, so a Wi-Fi payload, a vCard, `mailto:` or plain text all work. `QRCode` takes the code's own props and `style`, nothing else: give it an accessible name by wrapping it, as above. `QRCodeSVG` puts `aria-label`, `className`, `role` and any other attribute on the `<svg>` itself.
 
-```tsx
-<QRCode
-  value="https://example.com"
-  size={256}
-  fgColor="#1a56db"
-  bgColor="#ffffff"
-  eyeColor="#0d47a1"
-  dotColor="#3b82f6"
-/>
+## Size and quiet zone
+
+- `size` is the width and height in pixels (default 128). Below about 128 px a dense code gets hard to scan from a screen.
+- `margin` is the quiet zone around the code, in modules (default 0). The QR standard asks for 4. Set it when the code sits on a photo, a pattern or a dark page; a code inside a white card with its own padding can keep 0.
+- `scale` multiplies `size` on `QRCode`.
+
+A frame or a template changes the output size. See [Frame or template](#frame-or-template).
+
+## Colors
+
+```tsx title="components/brand-code.tsx"
+import { QRCode } from "qrdx";
+
+export function BrandCode() {
+  return (
+    <QRCode
+      value="https://example.com"
+      size={256}
+      fgColor="#1d4ed8"
+      bgColor="#f8fafc"
+      eyeColor="#0f172a"
+      dotColor="#1d4ed8"
+    />
+  );
+}
 ```
 
-## Add Patterns
+- `fgColor` colors the data modules, `bgColor` the background, `eyeColor` the three corner eyes and `dotColor` the dot inside each eye. The eye colors default to `fgColor`.
+- Each takes any CSS color (`#1d4ed8`, `rgb(29 78 216)`, a named color), or a gradient object. [Set colors and gradients](/docs/features/colors-gradients) covers gradients, see-through colors and image fills.
+- Keep the modules darker than the background. Scanners read dark on light; a light code on a dark background works in most phone cameras but not in some older apps.
 
-Choose from {facts.bodyPatterns} body patterns, {facts.eyeShapes} corner eye patterns and {facts.eyeCentres} corner eye dot patterns:
+## Shapes
 
-```tsx
-<QRCode
-  value="https://example.com"
-  size={256}
-  bodyPattern="rounded"
-  cornerEyePattern="circle"
-/>
+```tsx title="components/rounded-code.tsx"
+import { QRCode } from "qrdx";
+
+export function RoundedCode() {
+  return (
+    <QRCode
+      value="https://example.com"
+      size={256}
+      bodyPattern="rounded"
+      cornerEyePattern="extra-rounded"
+      cornerEyeDotPattern="rounded"
+    />
+  );
+}
 ```
 
-There are {facts.bodyPatterns} body patterns, from `square`, `rounded` and `circle` to connected `liquid` and `classy` styles and playful `star` or `heart` dots. See [Patterns](/docs/features/patterns) for the full list and the corner eye and eye dot options, and [Shapes, eyes and frames](/docs/styles) to see them all.
+- `bodyPattern` shapes the data modules (default `circle`). There are {facts.bodyPatterns} to choose from.
+- `cornerEyePattern` shapes the three corner eyes (default `gear`), one of {facts.eyeShapes}.
+- `cornerEyeDotPattern` shapes the dot inside each eye (default `circle`), one of {facts.eyeCentres}.
 
-## Add a Logo
+[Shapes, eyes and frames](/docs/styles) draws every value live. [Choose module and eye shapes](/docs/features/patterns) explains module scale, shaped codes and the few pairs that scan badly together.
 
-```tsx
-<QRCode
-  value="https://example.com"
-  size={512}
-  hideLogo={false}
-  logo="https://example.com/logo.png"
-  level="Q"
-/>
+## Logo
+
+```tsx title="components/logo-code.tsx"
+import { QRCode } from "qrdx";
+
+export function LogoCode() {
+  return (
+    <QRCode
+      value="https://example.com"
+      size={256}
+      level="H"
+      logo="/logo.png"
+      logoOptions={{ size: 0.2, padding: 1 }}
+    />
+  );
+}
 ```
 
-Use higher error correction (`Q` or `H`) when adding logos.
+`logo` takes a path in your app, a URL or a data URL. The modules behind it are cleared, so the code relies on error correction to scan: use `level="H"`. `logoOptions` sets the logo's width as a share of the code (0.1 to 0.3, default 0.25), its clear space in modules, its position and its crop. The component never draws a logo bigger than the code can repair. [Add a logo in code](/docs/features/logos) has the details.
 
-## Use Templates
+## Frame or template
 
-```tsx
-<QRCode
-  value="https://example.com"
-  templateId="Arrow"
-  size={256}
-/>
+```tsx title="components/framed-code.tsx"
+import { QRCode } from "qrdx";
+
+export function FramedCode() {
+  return (
+    <QRCode
+      value="https://example.com"
+      size={256}
+      frame={{ style: "banner-bottom", text: "Scan me", color: "#0f172a" }}
+    />
+  );
+}
 ```
 
-Available templates: `default`, `Arrow`, `StandardBox`, `SquareBorder`, `StrikedBox`, `Halloween`, `DotRing`
+- `frame` draws a call-to-action frame around the code. The code stays `size` wide and the output grows to fit the frame. There are {facts.frameStyles} built-in styles, plus the official frame library and your own frame specs. See [Frames, scan score and print files](/docs/features/frames).
+- `templateId` draws a template such as `Arrow` or `StandardBox` instead. A template draws its whole artwork at `size`, with the code smaller inside it. See [Use a frame template](/docs/features/templates).
 
-## Error Correction
+With both set, the frame is drawn around the template's artwork.
 
-Choose based on your use case:
+## Error correction
 
-- **L (Low)** — ~7% correction, clean environments
-- **M (Medium)** — ~15% correction, general use
-- **Q (Quartile)** — ~25% correction, with logos
-- **H (High)** — ~30% correction, maximum resilience
+| `level` | Can be damaged | Use it for |
+| --- | --- | --- |
+| `L` | about 7% | Clean screens, short links, the smallest code |
+| `M` | about 15% | Long payloads such as vCards, where a smaller code matters more |
+| `Q` | about 25% | The default. General use |
+| `H` | about 30% | Logos, art, print that gets scratched or folded |
 
-```tsx
-<QRCode
-  value="https://example.com"
-  level="Q"
-/>
-```
+A higher level adds modules, so the code gets denser at the same size. `autoLevel` raises the level to `H` on its own when a logo covers more than 7% of the code; it is off by default so existing codes keep their look.
 
-## Component Variants
+## Related
 
-### QRCodeCanvas
-
-For advanced customization with gradients:
-
-```tsx
-import { QRCodeCanvas } from 'qrdx';
-
-<QRCodeCanvas
-  value="https://example.com"
-  size={512}
-  fgColor={{
-    type: 'linear',
-    stops: [
-      { offset: 0, color: '#667eea' },
-      { offset: 1, color: '#764ba2' }
-    ],
-    x1: 0, y1: 0, x2: 1, y2: 1
-  }}
-/>
-```
-
-### QRCodeSVG
-
-For scalable vector graphics:
-
-```tsx
-import { QRCodeSVG } from 'qrdx';
-
-<QRCodeSVG
-  value="https://example.com"
-  size={512}
-/>
-```
-
-## Best Practices
-
-### Size Guidelines
-
-- **128px** — Minimum for scanning
-- **256-512px** — Recommended for web
-- **1024px+** — High quality print
-
-### Error Correction
-
-- Use `Q` or `H` when adding logos
-- Use `M` for general applications
-- Use `L` only in clean environments
-
-### Performance
-
-- Use solid colors over gradients when possible
-- Choose simpler patterns for better performance
-- Cache QR codes server-side when possible
-
-## Next Steps
-
-- [Colors & Gradients](/docs/features/colors-gradients) — Advanced color options
-- [Templates](/docs/features/templates) — Pre-built styles
-- [Downloads](/docs/features/downloads) — Export options
+<Cards>
+  <Card href="/docs/features/colors-gradients" title="Set colors and gradients" description="Solid colors, linear, radial and angular gradients, see-through colors and image fills." />
+  <Card href="/docs/features/logos" title="Add a logo in code" description="Size, clear space, position, crop and the error-correction budget." />
+  <Card href="/docs/features/downloads" title="Export and download" description="PNG, JPG, WebP, SVG, PDF and EPS, the clipboard and PNG in Node." />
+  <Card href="/docs/api-reference" title="Library API reference" description="Every prop, with its type and default." />
+</Cards>

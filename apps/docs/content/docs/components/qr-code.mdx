@@ -1,8 +1,10 @@
 ---
 title: QR Code
-description: A styled, accessible QR code with download buttons. Colors, gradients, patterns, logos and frame templates come from the qrdx library.
+description: A styled, accessible QR code with download buttons for shadcn/ui projects. Colors, gradients, patterns, logos and frame templates come from the qrdx library.
 icon: QrCode
 ---
+
+`QrCode` renders a QR code as an SVG with an accessible name, a caption and PNG and SVG download buttons, in one component you own. Use it wherever a page shows a code someone may want to save: an order confirmation, a ticket, a menu, a Wi-Fi card.
 
 <ComponentLinks name="qr-code" />
 
@@ -14,15 +16,15 @@ icon: QrCode
 
 ## Usage
 
-```tsx
+```tsx title="components/example.tsx"
 import { QrCode } from "@/components/qr-code";
 ```
 
-```tsx
+```tsx title="components/example.tsx"
 <QrCode value="https://qrdx.dev" />
 ```
 
-The code renders as an SVG with an accessible name, so it stays sharp at any size and screen readers announce what it links to.
+The code renders as an SVG inside a `role="img"` box, so it stays sharp at any size and screen readers announce what it links to. Two buttons under it save a 1024 px PNG and an SVG.
 
 ## Examples
 
@@ -46,7 +48,7 @@ Pass a qrdx gradient instead of a color: `linear` with an `angle`, or `radial`. 
 
 ### Patterns
 
-`bodyPattern` shapes the data modules, `cornerEyePattern` the corner frames and `cornerEyeDotPattern` the dots inside them. See [patterns](/docs/features/patterns) for every shape.
+`bodyPattern` shapes the data modules, `cornerEyePattern` the corner frames and `cornerEyeDotPattern` the dots inside them. [Choose module and eye shapes](/docs/features/patterns) lists every shape.
 
 <ComponentPreview name="qr-code-patterns" />
 
@@ -58,7 +60,7 @@ Pass a qrdx gradient instead of a color: `linear` with an `angle`, or `radial`. 
 
 ### Frame templates
 
-`templateId` draws one of qrdx's [frames drawn as templates](/docs/features/templates) around the code. Pair it with `caption` for a call to action under the frame.
+`templateId` draws one of qrdx's [frame templates](/docs/features/templates) around the code. Pair it with `caption` for a call to action under the frame.
 
 <ComponentPreview name="qr-code-template" />
 
@@ -72,7 +74,7 @@ For a single menu with formats and sizes, use [QR Code Download](/docs/component
 
 ### Dark mode
 
-The default white background is the safest choice in dark themes: dark modules on a light tile scan with every reader. To follow the theme instead, set `fgColor="currentColor"` and a transparent background. The code then inverts in dark mode, which phone cameras read but some older scanners don't.
+The default white background is the safest choice in dark themes: dark modules on a light tile scan with every reader. To follow the theme instead, set `fgColor="currentColor"` and a transparent background. The code then inverts in dark mode, which phone cameras read but some older scanners do not.
 
 <ComponentPreview name="qr-code-dark-mode" />
 
@@ -94,7 +96,7 @@ export default function MenuPage() {
 }
 ```
 
-The code itself is still rendered on the server, so it's in the page's HTML before the buttons become interactive. For more on rendering codes in the App Router, see [QR codes in Next.js](/docs/nextjs).
+The code itself is still rendered on the server, so it is in the page's HTML before the buttons become interactive. For more on rendering codes in the App Router, see [QR codes in Next.js](/docs/nextjs).
 
 ## Any content, not only links
 
@@ -161,10 +163,16 @@ export function TableCode() {
 }
 ```
 
-- **SVG** scales to any size without blurring, so it's the best file for a print shop or a design tool.
+- **SVG** scales to any size without blurring, so it is the best file for a print shop or a design tool.
 - **PNG** at `downloadSize={2048}` prints sharply up to about 17 cm (6.8 inches) wide at 300 pixels per inch. `downloadSize` takes 50 to 5000 pixels.
 - **PDF** needs the optional `jspdf` package (`npm install jspdf`).
 - `filename` names the file without its extension: `table-12.svg`, `table-12.png`.
+
+## Accessibility
+
+- The code sits in a `role="img"` element whose `aria-label` is `label`, or `QR code: <value>` without one. Set `label` whenever the value is not a public link.
+- The download buttons are a `<fieldset>` with a visually hidden legend, "Download QR code". A download's result is announced through a polite live region, and an error shows under the buttons with `role="alert"`.
+- `caption` renders as the figure's `<figcaption>`.
 
 ## Make sure it scans
 
@@ -174,8 +182,17 @@ export function TableCode() {
 - **Print size.** A short link scanned from about 25 cm needs a code about 2.5 cm wide; the [print size calculator](/tools/print-size) works it out for other distances.
 - **Test it.** Scan the finished code with a few phones, or upload an image to the [scan checker](/tools/scan-checker).
 
-## API Reference
+## API reference
 
 <auto-type-table path="../../../../../packages/docs-assets/registry/qrdx/qr-code.tsx" type="{ [K in keyof QrCodeProps as K extends keyof ComponentProps<'figure'> ? never : K]: QrCodeProps[K] }" />
 
 Any other prop, such as `className`, is passed to the wrapping `<figure>`.
+
+## Related
+
+<Cards>
+  <Card href="/docs/components/qr-code-download" title="QR Code Download" description="One menu with every format and size, instead of a row of buttons." />
+  <Card href="/docs/components/qr-code-card" title="QR Code Card" description="The code in a card with a title, a description and actions." />
+  <Card href="/docs/features/patterns" title="Choose module and eye shapes" description="Every value bodyPattern, cornerEyePattern and cornerEyeDotPattern take." />
+  <Card href="/docs/developers/shadcn" title="shadcn/ui registry" description="All eight components and how the registry installs them." />
+</Cards>

@@ -24,6 +24,11 @@ import {
   reportingEndpoints,
 } from "@repo/next-config/csp";
 import { platformHostsPattern } from "@repo/next-config/platform-hosts";
+import {
+  SITE_ASSET_PREFIX,
+  siteZoneGroups,
+  siteZoneRewrites,
+} from "@repo/next-config/site-zone";
 import { createMDX } from "fumadocs-mdx/next";
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
@@ -100,15 +105,35 @@ if (consoleZone.length > 0 && !env.CONSOLE_ZONE_KEY) {
   );
 }
 
+// The marketing site at SITE_ORIGIN serves groups of public pages (the blog
+// first) and its build assets (@repo/next-config/site-zone), on QRdx's own
+// hosts only; SITE_ZONE_GROUPS picks the groups. Unset, there are no rules
+// and this app serves its own pages. The site's responses carry their own
+// Cache-Control: nothing here adds any.
+const siteZone = siteZoneRewrites(env.SITE_ORIGIN, {
+  hosts: `(?:${PLATFORM_HOSTS})`,
+  groups: siteZoneGroups(env.SITE_ZONE_GROUPS),
+});
+if (siteZone.length > 0 && !env.SITE_ZONE_KEY) {
+  console.warn(
+    "⚠ SITE_ORIGIN is set but SITE_ZONE_KEY isn't: the site can't tell requests that came through this app. Set the same SITE_ZONE_KEY on both.",
+  );
+}
+
+// Another zone's build assets aren't pages: no page policy on them while
+// that zone is on (its pages keep this app's rules, as the docs' do).
+const zoneAssetPrefixes = [
+  ...(consoleZone.length > 0 ? [CONSOLE_ASSET_PREFIX] : []),
+  ...(siteZone.length > 0 ? [SITE_ASSET_PREFIX] : []),
+].map((prefix) => prefix.slice(1));
+
 /** Headers that put the app policy on prerendered pages (nonce routes: proxy.ts). */
 const cspHeaders = cspEnabled
   ? [
       {
-        // The console's build assets aren't pages: no page policy on them
-        // while it's on (its pages are under /admin, which proxy.ts handles).
-        source: prerenderedPagesSource(
-          consoleZone.length > 0 ? [CONSOLE_ASSET_PREFIX.slice(1)] : [],
-        ),
+        // Not on the other zones' build assets while they're on (the
+        // console's pages are under /admin, which proxy.ts handles).
+        source: prerenderedPagesSource(zoneAssetPrefixes),
         has: [{ type: "host" as const, value: `(?:${PLATFORM_HOSTS})` }],
         headers: [
           { key: cspHeader, value: appCsp(cspOptions) },
@@ -192,13 +217,17 @@ let nextConfig: NextConfig = {
   // page's "QRdx in numbers" branch, client code included. CONSOLE_ORIGIN
   // too: the rewrites above are fixed when the app is built, so proxy.ts and
   // the admin nav must follow the same value, never a different one set
-  // later where the server runs. Server only: neither reaches client bundles.
+  // later where the server runs. SITE_ORIGIN and SITE_ZONE_GROUPS likewise:
+  // proxy.ts sends the site's key on exactly the requests the rewrites send
+  // to the site. Server only: none reaches client bundles.
   compiler: {
     ...config.compiler,
     defineServer: {
       ...config.compiler?.defineServer,
       "process.env.QRDX_HOME_NUMBERS": process.env.QRDX_HOME_NUMBERS ?? "",
       "process.env.CONSOLE_ORIGIN": process.env.CONSOLE_ORIGIN ?? "",
+      "process.env.SITE_ORIGIN": process.env.SITE_ORIGIN ?? "",
+      "process.env.SITE_ZONE_GROUPS": process.env.SITE_ZONE_GROUPS ?? "",
     },
   },
   // Geist (@repo/design-system/og/font-files) for server images: OG cards,
@@ -375,6 +404,9 @@ let nextConfig: NextConfig = {
         // The console's sections, when CONSOLE_ORIGIN is set (above): ahead
         // of this app's own copies of those pages.
         ...consoleZone,
+        // The site's groups of pages, when SITE_ORIGIN is set (above): ahead
+        // of this app's own copies of those pages too.
+        ...siteZone,
         // Community profiles live at /community/@handle; a folder named
         // @handle would be a parallel route slot, so they render from
         // app/(app)/(home)/community/u/[handle].

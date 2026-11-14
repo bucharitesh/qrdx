@@ -3,45 +3,60 @@ title: A scan shows an error page
 description: What each QR code error page means, from "QR code not found" to "This campaign has ended", and how to fix it.
 ---
 
-When a dynamic code can't open its destination, scanners see a short page. Here's what each one means.
+When a dynamic code can't open its destination, scanners see a short page instead. Each page below is one of them, with the cause, the fix and how to check it worked. Most of them come from the code's own settings.
 
-## "QR code not found"
+## "This campaign is paused", "This campaign hasn't started yet" or "This campaign has ended"
 
-This is a 404 page: the short link doesn't belong to any code.
+The code is paused, hasn't reached its start date, is past its end date or has reached its scan limit.
 
-- The code was **deleted forever**.
-- The code's **back-half** or **domain** was changed after it was printed.
-- The account that owned it was deleted.
-- The link was typed by hand with a mistake. Short links are case-sensitive.
+1. Open the code from **Codes** and go to its **Settings** tab, then **Access & schedule**.
+2. Turn off **Pause code**, change **Starts** or **Ends**, or raise the **Scan limit**.
+3. Click **Save changes**.
 
-A deleted code can't come back. If you changed the back-half, change it back with **Edit link**.
+Scan again: the destination opens. To send people somewhere useful while a code is paused or ended, fill in **Fallback URL**. See [Pause, schedule or limit a code](/docs/help/dynamic-codes/pause-schedule-limit).
 
-## "This QR code is no longer active"
-
-The code is **archived** or in the **trash**. Choose **Unarchive** or **Restore** in **Codes**. See [Archive, delete and restore codes](/docs/help/dynamic-codes/archive-and-delete).
-
-QRdx also turns off codes that link to harmful sites.
-
-## "This campaign is paused", "hasn't started yet" or "has ended"
-
-These come from the code's own settings: a pause, a start or end date, or a scan limit. Change them in **Access & schedule**. See [Pause, schedule or limit a code](/docs/help/dynamic-codes/pause-schedule-limit).
+{/* shot: error-page-campaign-ended | the plain "This campaign has ended" page a scanner sees | scan a code past its end date */}
 
 ## "This QR code is password protected"
 
-The code has a password. Enter it and click **Continue**. See [Protect a code with a password](/docs/help/dynamic-codes/password).
+The code has a password, and this is the page that asks for it. Type it in **Password** and click **Continue**; the browser stays unlocked for 6 hours. To remove the password, open **Access & schedule** and click **Remove password**. See [Protect a code with a password](/docs/help/dynamic-codes/password).
 
-## "Too many requests"
+## "This QR code is no longer active"
 
-One network opened a lot of QR codes in a few seconds. Wait a moment and scan again.
+The code is archived or in the trash. In **Codes**, open the code's menu and choose **Unarchive**, or filter the list to **Trash** and choose **Restore**. On Free you need a free code slot. Scan again to confirm. See [Archive, delete and restore codes](/docs/help/dynamic-codes/archive-and-delete).
+
+QRdx also shows this page for a code it switched off after an abuse report.
+
+## "QR code not found"
+
+The short link doesn't belong to any code. One of these happened:
+
+- The code was deleted forever, or the account that owned it was deleted. A deleted code can't come back.
+- The code's back-half was changed after it was printed. Open **Edit link** and change it back.
+- The link was typed by hand with a mistake. Short links are case-sensitive.
 
 ## "This domain isn't connected yet"
 
-The code uses a custom domain whose DNS setup isn't finished. Check the domain on the **Domains** page in your dashboard.
+The code uses a custom domain whose DNS setup isn't finished. Go to **Settings** → **Domains**, add the records shown and click **Verify**. The page goes away once the domain is **Verified**. See [Use your own domain](/docs/help/domains/custom-domains).
 
-## "This page could not be found" on a page
+## "Too many requests"
 
-A mobile page at `/p/…` shows this when the page was deleted or the address was mistyped.
+One network opened a lot of QR codes in a few seconds. Wait a moment and scan again. Nothing is wrong with the code.
 
-## "This form isn't accepting responses right now"
+## "Page not found" on a mobile page
 
-The workspace reached its monthly form response limit. See [Collect answers with a form](/docs/help/pages-and-forms/forms#monthly-limits).
+The hosted page at `/p/…` was deleted, or its address was mistyped. Check **Pages & forms** for the page, and that the code points to it. See [Change what a printed code opens](/docs/help/dynamic-codes/change-the-type).
+
+## "This form isn't accepting responses right now."
+
+The workspace reached its monthly form response limit. It reopens next month, or right away after an upgrade. See [Collect answers with a form](/docs/help/pages-and-forms/forms#monthly-limits).
+
+## Still stuck
+
+[Contact support](/docs/help/contact) with the code's short link and the exact text on the page.
+
+## Related
+
+- [Pause, schedule or limit a code](/docs/help/dynamic-codes/pause-schedule-limit)
+- [Archive, delete and restore codes](/docs/help/dynamic-codes/archive-and-delete)
+- [A code opens the wrong page](/docs/help/troubleshooting/wrong-destination)

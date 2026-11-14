@@ -3,37 +3,62 @@ title: Delete your account
 description: Permanently delete your QRdx account and what's in it. Your dynamic codes stop working.
 ---
 
+Deleting your account removes it and everything in your own workspace. If you only want to stop paying, you don't need this: [cancel your subscription](/docs/help/account-and-billing/cancel) and your codes keep working on Free.
+
 <Callout type="warn">
-  Deleting your account **can't be undone**. The dynamic codes in your own workspace stop working: scanners see "QR code not found". [Export your data](/docs/help/account-and-billing/export-your-data) first.
+  Deleting your account can't be undone. The dynamic codes in your own workspace stop working: scanners see "QR code not found". [Export your data](/docs/help/account-and-billing/export-your-data) first.
 </Callout>
 
 ## Delete
 
-1. Go to **Settings** → **Profile & security**.
-2. Under **Danger zone**, click **Delete account…**.
-3. Type `delete` to confirm.
-4. Show it's you. What we ask for depends on whether you've turned on [two-step verification](/docs/help/privacy-and-security/two-step-verification):
-   - **It's on:** enter a code from your authenticator app, or one of your backup codes. We don't email you a code. Each backup code works only once.
-   - **It's off:** click **Email me a code** and type the 6-digit code we send you.
-5. Click **Delete account**.
+### 1. Open the danger zone
+
+Go to **Settings** → **Profile & security**. Under **Danger zone**, click **Delete account…**.
+
+### 2. Confirm
+
+In the **Delete your account?** dialog, type `delete` and click **Delete account**.
+
+{/* shot: delete-account-dialog | the Delete your account? dialog with the confirmation field | Dashboard, Settings, Profile & security, Delete account… */}
+
+### 3. Show it's you
+
+Unless you confirmed it's you in the last 10 minutes, QRdx asks you to. What it asks for depends on whether [two-step verification](/docs/help/privacy-and-security/two-step-verification) is on:
+
+- **It's on:** use your passkey, a code from your authenticator app or one of your backup codes. We don't email you a code.
+- **It's off:** click **Send code** and type the 6-digit code we email you, or sign in again with a Google or GitHub account you've linked.
+
+Your account is then deleted and you're signed out on every device.
 
 If two-step verification is on and you've lost both your phone and your backup codes, see [Lost your phone and your backup codes](/docs/help/privacy-and-security/two-step-verification#lost-your-phone-and-your-backup-codes).
 
 ## What gets deleted
 
-Your own workspace: its codes, scans, pages, files and domains, plus your themes, webhooks and integrations. You're signed out on every device.
+Your own workspace: its codes, scans, pages, files and domains, plus your themes, webhooks and integrations.
 
-If you invited other people into your own workspace, it isn't deleted: like any shared workspace (below), another member becomes owner and keeps it.
+If you invited other people into your own workspace, it isn't deleted: like any shared workspace, another member becomes owner and keeps it.
 
 ## Your subscription
 
-If you pay for Pro or Business, QRdx cancels the subscription straight away.
+If you pay for Pro or Business, QRdx cancels the subscription right away.
 
 ## Your other workspaces
 
 - In a workspace where you're the only member, the workspace is deleted.
 - In a workspace with other members, another member becomes owner and keeps the codes and pages you created there.
 
-## Just want to stop paying?
+## If something goes wrong
 
-You don't need to delete your account. [Cancel your subscription](/docs/help/account-and-billing/cancel) and your codes keep working on Free.
+### The Delete account button stays disabled
+
+Type `delete` exactly, in lower case.
+
+### You can't do the second step
+
+Sign in another way first, or follow [Lost your phone and your backup codes](/docs/help/privacy-and-security/two-step-verification#lost-your-phone-and-your-backup-codes). Support can't delete an account for you without confirming it's yours.
+
+## Related
+
+- [Export your data](/docs/help/account-and-billing/export-your-data)
+- [Cancel your subscription](/docs/help/account-and-billing/cancel)
+- [Seats and workspace limits](/docs/help/teams/seats)

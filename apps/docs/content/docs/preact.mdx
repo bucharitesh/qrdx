@@ -1,22 +1,31 @@
 ---
 title: Preact
-description: Styled QR codes as Preact components with qrdx/preact, drawn with Preact's own h (no preact/compat), rendered on a server with preact-render-to-string and hydrated without a redraw.
+description: Styled QR codes as Preact components with qrdx/preact, drawn with Preact's own h and no preact/compat, rendered on a server with preact-render-to-string and hydrated without a redraw.
 icon: FileCode
 ---
 
-`qrdx/preact` has the React library's two SVG components, `QRCodeSVG` and `QRCode`, for Preact. They draw with Preact's own `h`, so you don't need `preact/compat`, and they draw the same SVG as the React components.
+By the end of this page you will have a styled QR code in a Preact component and a button that saves it as a PNG. `qrdx/preact` has the React library's two SVG components, `QRCodeSVG` and `QRCode`, built for Preact. They draw with Preact's own `h`, so you need neither `preact/compat` nor `react`, and they draw the same SVG as the React components.
 
-## Install
+<NpmStatus package="qrdx" />
+
+## Before you start
+
+- A Preact 10 or newer project, with Vite or any other bundler.
+- Node.js 18 or newer.
+
+## Build it
+
+### 1. Install qrdx
 
 ```package-install
-qrdx@latest
+qrdx
 ```
 
-`preact` 10 or later is an optional peer dependency of `qrdx`. Your app already has it, and you don't need `react`.
+`preact` is an optional peer dependency of `qrdx`. Your app already has it.
 
-## Draw a code
+### 2. Draw a code
 
-```tsx
+```tsx title="src/components/menu-code.tsx"
 import { QRCodeSVG } from "qrdx/preact";
 
 export function MenuCode() {
@@ -24,6 +33,7 @@ export function MenuCode() {
     <QRCodeSVG
       value="https://example.com/menu"
       size={256}
+      margin={4}
       bodyPattern="rounded"
       frame={{ style: "banner-bottom", text: "Scan me" }}
       aria-label="QR code for the menu"
@@ -32,33 +42,33 @@ export function MenuCode() {
 }
 ```
 
-`QRCodeSVG` takes every option the React `QRCodeSVG` takes: patterns, colors and gradients, logos (`imageSettings`), frames, shapes, templates and Art QR. Attributes such as `class`, `style` or `aria-label` go on the `<svg>`, or on the frame's outer `<svg>` when there's a frame.
+The page shows a 256 px code with rounded modules and a "Scan me" banner under it.
 
-`QRCode` adds the React `QRCode`'s logo shortcut: `logo`, `logoOptions`, `hideLogo` and `scale`.
+{/* shot: preact-first-code | the framed code from menu-code.tsx in a Vite Preact project | run the example with npm create preact */}
 
-```tsx
+`QRCodeSVG` takes every option the React `QRCodeSVG` takes: patterns, colors and gradients, logos (`imageSettings`), frames, shapes, templates and art. Attributes such as `class`, `style` or `aria-label` go on the `<svg>`, or on the frame's outer `<svg>` when there is a frame.
+
+`QRCode` adds the React `QRCode`'s logo shortcut: `logo`, `logoOptions`, `hideLogo` and `scale`. It takes the code's props and `style` only; put `class` or `aria-label` on an element around it, or use `QRCodeSVG`.
+
+```tsx title="src/components/logo-code.tsx"
 import { QRCode } from "qrdx/preact";
 
-<QRCode value="https://example.com" logo="/logo.png" level="H" />;
+export function LogoCode() {
+  return <QRCode value="https://example.com" size={256} logo="/logo.png" level="H" />;
+}
 ```
 
-Both components redraw when a prop changes and skip the work when none did. Event handlers in the props aren't put on the `<svg>`, as in React. Put them on an element around the code.
+Both components redraw when a prop changes and skip the work when none did. Event handlers in the props are not put on the `<svg>`, as in React. Put them on an element around the code.
 
-## Server rendering
+### 3. Save it as a file
 
-`renderToString` from `preact-render-to-string` writes the same SVG as `toSVGString` from `qrdx/core`. The only difference is escaping: Preact leaves `>` and `'` as they are in text, where the core writes `&gt;` and `&#x27;`. Browsers read both the same way.
+The components only draw the code. Downloads, `toSVGString`, the scan score and the other functions come from `qrdx/core`. That is the engine the components already use, so it is not bundled twice.
 
-`hydrate` keeps the server's `<svg>` and doesn't draw it again. The markup has no random ids, so the server and the browser always agree.
-
-## Downloads, markup and the scan score
-
-The components only draw the code. Downloads, `toSVGString`, the scan score and the other functions come from `qrdx/core`. That's the engine the components already use, so it isn't bundled twice.
-
-```tsx
+```tsx title="src/components/downloadable-code.tsx"
 import { downloadQRCode } from "qrdx/core";
 import { QRCodeSVG } from "qrdx/preact";
 
-const options = { value: "https://example.com", size: 256 };
+const options = { value: "https://example.com", size: 256, margin: 4 };
 
 export function DownloadableCode() {
   return (
@@ -70,6 +80,7 @@ export function DownloadableCode() {
           downloadQRCode(options, {
             format: "png",
             size: { width: 1024, height: 1024 },
+            filename: "qr-code.png",
           })
         }
       >
@@ -80,8 +91,29 @@ export function DownloadableCode() {
 }
 ```
 
-[Vanilla JavaScript](/docs/vanilla-js) covers `qrdx/core` in full.
+Clicking the button saves `qr-code.png` at 1024 px. Keep the options in one object, as above, so the file matches the code on screen. [Vanilla JavaScript](/docs/vanilla-js) covers `qrdx/core` in full.
+
+## Server rendering
+
+`renderToString` from `preact-render-to-string` writes the same SVG as `toSVGString` from `qrdx/core`. The only difference is escaping: Preact leaves `>` and `'` as they are in text, where the core writes `&gt;` and `&#x27;`. Browsers read both the same way.
+
+`hydrate` keeps the server's `<svg>` and does not draw it again. The markup has no random ids, so the server and the browser always agree.
 
 ## With preact/compat
 
 If your app already aliases `react` to `preact/compat`, the React components from `qrdx` work too: `import { QRCodeSVG } from "qrdx"`. `qrdx/preact` draws the same code without the alias, so prefer it when you add `qrdx` to a Preact app.
+
+## If something goes wrong
+
+- **`Failed to resolve import "react"`.** You imported from `qrdx` instead of `qrdx/preact`, in an app without `preact/compat`. Change the import.
+- **A click handler on the component does nothing.** Handlers are dropped from the `<svg>`. Wrap the code in a `<button>` or a `<div>` and put the handler there.
+- **`PDF export needs the optional "jspdf" package`.** Run `npm install jspdf` in the app.
+
+## Related
+
+<Cards>
+  <Card href="/docs/vanilla-js" title="Vanilla JavaScript" description="Everything qrdx/core exports: downloads, markup, the scan score and print files." />
+  <Card href="/docs/web-component" title="Web component" description="The qrdx-code element, which Preact sets attributes on." />
+  <Card href="/docs/features/patterns" title="Choose module and eye shapes" description="Every shape, and the pairs to avoid." />
+  <Card href="/docs/api-reference" title="Library API reference" description="Every prop, with its type and default." />
+</Cards>
