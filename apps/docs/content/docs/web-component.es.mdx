@@ -1,0 +1,244 @@
+---
+title: "Web component"
+description: "Dibuja códigos QR con estilo usando el elemento personalizado <qrdx-code>, desde una CDN o un bundler, en HTML simple, React 19 o Vue, con renderizado en servidor mediante shadow DOM declarativo."
+icon: Blocks
+---
+
+`qrdx/element` es un elemento personalizado, `<qrdx-code>`. Está construido sobre `qrdx/core`, así que dibuja el mismo SVG que `QRCodeSVG`, con todos los estilos, marcos, logos y exportaciones. No necesita ningún framework: funciona en HTML simple y en frameworks que renderizan elementos del DOM. Está probado en React 19 y Vue 3.
+
+## Desde una CDN [#from-a-cdn]
+
+```html
+<script
+  type="module"
+  src="https://cdn.jsdelivr.net/npm/qrdx/dist/element-define.browser.mjs"
+></script>
+
+<qrdx-code
+  value="https://example.com"
+  size="256"
+  body-pattern="rounded"
+  label="Link to example.com"
+></qrdx-code>
+```
+
+`dist/element-define.browser.mjs` registra `<qrdx-code>`. Carga `dist/element.browser.mjs`, un módulo ES con el motor incluido. Añade `@` y una versión después de `qrdx` en la URL para fijar una. Las mismas rutas funcionan en unpkg.
+
+## Con un bundler [#with-a-bundler]
+
+```package-install
+qrdx@latest
+```
+
+```js
+import "qrdx/element/define"; // registers <qrdx-code>
+```
+
+Importar `qrdx/element` no registra nada. Llama tú mismo a `defineQRdxCode` para elegir el nombre de la etiqueta:
+
+```js
+import { defineQRdxCode } from "qrdx/element";
+
+defineQRdxCode(); // <qrdx-code>
+defineQRdxCode("brand-qr"); // <brand-qr> as well
+```
+
+Puedes llamarla de nuevo sin problema, y en un servidor no hace nada. Lanza un error si otro elemento ya usa ese nombre.
+
+## Atributos [#attributes]
+
+| Atributo | Qué establece |
+| --- | --- |
+| `value` | El texto o la URL que se codifica. Sin él no se dibuja nada |
+| `size` | Ancho y alto en píxeles (un marco se suma a esa medida) |
+| `level` | Corrección de errores: `L`, `M`, `Q` o `H` |
+| `fg-color`, `bg-color`, `eye-color`, `dot-color` | Colores sólidos |
+| `body-pattern`, `corner-eye-pattern`, `corner-eye-dot-pattern` | Formas de los puntos, los ojos y los puntos de los ojos |
+| `margin` | Zona de silencio, en módulos |
+| `template-id` | Una plantilla integrada |
+| `module-scale` | Tamaño de cada punto, de 0.5 a 1 |
+| `auto-level` | Sube la corrección de errores a `H` cuando un logo lo necesita |
+| `shape` | `square`, `circle` o `heart` |
+| `label` | Lo que anuncian los lectores de pantalla (por defecto "QR code") |
+| `props` | Cualquier otra opción, como JSON |
+
+Los números y niveles que no se pueden leer se ignoran. Consulta [Estilos](/docs/styles) para ver todos los patrones.
+
+## Propiedades [#properties]
+
+Cada atributo también es una propiedad, con el nombre de la opción: `qr.fgColor`, `qr.bodyPattern`, `qr.templateId`. Las opciones que son objetos son solo propiedades: degradados y rellenos de imagen, `frame`, `imageSettings`, `eyeColors`, `art`, `customTemplate` y `customProps`. `props` acepta todas las opciones a la vez.
+
+```js
+const qr = document.querySelector("qrdx-code");
+
+qr.fgColor = {
+  type: "linear",
+  angle: 45,
+  stops: [
+    { color: "#1d4ed8", offset: 0 },
+    { color: "#0f172a", offset: 100 },
+  ],
+};
+qr.frame = { style: "banner-bottom", text: "Scan me" };
+qr.imageSettings = { src: "/logo.png", width: 40, height: 40, excavate: true };
+qr.props = { margin: 2, eyeColor: "#be123c" };
+```
+
+- Un atributo o una propiedad con nombre prevalece sobre la misma opción en `props`. Entre un atributo y su propiedad, gana el que se haya establecido último. Establece una propiedad en `undefined` para quitarla.
+- Las propiedades no vuelven a escribir los atributos.
+- Los cambios se agrupan. Por muchos que hagas seguidos, el código se redibuja una sola vez, en una microtarea, y solo si su marcado cambió.
+- `qr.options` es lo que se usa para dibujar el código, y `qr.svg` es el `<svg>` dibujado.
+- Las propiedades establecidas antes de definir el elemento se recogen cuando este se define.
+
+Sin un script, pon las opciones que son objetos en el atributo `props` como JSON:
+
+```html
+<qrdx-code
+  value="https://example.com"
+  props='{"frame": {"style": "banner-bottom", "text": "Scan me"}}'
+></qrdx-code>
+```
+
+Un marco oficial viene del archivo que está junto al elemento:
+
+```js
+import { getOfficialFrame } from "https://cdn.jsdelivr.net/npm/qrdx/dist/frames-official.mjs";
+
+qr.frame = { style: "custom", spec: getOfficialFrame("wifi-card").spec };
+```
+
+## Exportación [#export]
+
+```js
+qr.toSVGString(); // the SVG markup
+await qr.toDataURL("png", { size: 1024 }); // "png", "jpg", "webp", "svg", "pdf" or "eps"
+await qr.download({ format: "svg", filename: "menu.svg" });
+```
+
+Exportan el código a partir de `qr.options`, igual que `toSVGString` y `downloadQRCode` de `qrdx/core`, sin los `part`, `role` y `aria-label` del elemento. `toDataURL` y `download` usan por defecto PNG con el `size` del código. Sin un valor, lanzan un error (`toSVGString`) o se rechazan.
+
+PDF necesita el paquete opcional `jspdf`. Desde una CDN, asígnalo con un import map colocado antes del script del módulo:
+
+```html
+<script type="importmap">
+  { "imports": { "jspdf": "https://cdn.jsdelivr.net/npm/jspdf@4/+esm" } }
+</script>
+```
+
+## Estilos y accesibilidad [#styling-and-accessibility]
+
+El código se dibuja en un shadow root abierto. El CSS de la página no puede alcanzar sus trazados, así que una regla como `svg path { fill: red }` o `svg { width: 100% }` no puede romper el código. Aplica estilos al `<svg>` desde fuera con `::part(svg)`:
+
+```css
+qrdx-code::part(svg) {
+  border-radius: 12px;
+}
+```
+
+El elemento es `inline-block`. Su `<svg>` mantiene su `size`, pero se reduce para ajustarse a un contenedor más estrecho.
+
+El `<svg>` tiene `role="img"` y un `aria-label` tomado del atributo `label`, o "QR code" si no lo hay. La etiqueta nunca recurre al valor, que puede contener una contraseña de Wi-Fi o datos de contacto.
+
+## Errores [#errors]
+
+Cuando el código no se puede dibujar, por ejemplo porque el valor es demasiado largo para un código QR, el elemento elimina el código anterior y dispara un evento `qrdx-error`, con el error en `event.detail.error`. Registra el error en la consola a menos que un listener llame a `event.preventDefault()`. Un atributo `props` que no sea un objeto JSON también lo dispara.
+
+```js
+qr.addEventListener("qrdx-error", (event) => {
+  event.preventDefault();
+  showMessage("That text is too long for a QR code.");
+});
+```
+
+## Renderizado en servidor [#server-rendering]
+
+`toQRdxCodeHTML(options)` devuelve el marcado del elemento con el código ya dibujado en un shadow root declarativo. Los navegadores muestran el código antes de que se ejecute ningún script, y el elemento toma el control cuando se define. Se ejecuta en Node y no necesita DOM.
+
+```js
+import { toQRdxCodeHTML } from "qrdx/element";
+
+const html = toQRdxCodeHTML(
+  {
+    value: "https://example.com",
+    size: 256,
+    frame: { style: "banner-bottom", text: "Scan me" },
+  },
+  { label: "Link to example.com" }
+);
+// <qrdx-code value="https://example.com" size="256" label="Link to example.com"
+//   props="{…}"><template shadowrootmode="open">…</template></qrdx-code>
+```
+
+Las opciones simples se convierten en atributos y el resto va en `props` como JSON, de modo que el elemento lee las mismas opciones. `customTemplate` no se puede escribir como marcado: establécelo como propiedad en el navegador. Pasa `tagName` si registraste otro nombre.
+
+## React 19 [#react-19]
+
+React 19 establece una prop como propiedad cuando el elemento la tiene, así que los objetos funcionan como props. Registra el elemento una vez, antes de renderizar:
+
+```tsx
+import "qrdx/element/define";
+
+export function MenuCode({ url }: { url: string }) {
+  return (
+    <qrdx-code
+      value={url}
+      size={256}
+      body-pattern="rounded"
+      frame={{ style: "banner-bottom", text: "Scan me" }}
+      label="Menu"
+    />
+  );
+}
+```
+
+Para TypeScript, añade el elemento a JSX en un archivo `.d.ts`:
+
+```ts
+import type { QRdxCodeElement, QRdxCodeJSXProps } from "qrdx/element";
+
+declare module "react" {
+  namespace JSX {
+    interface IntrinsicElements {
+      "qrdx-code": React.DetailedHTMLProps<
+        React.HTMLAttributes<QRdxCodeElement>,
+        QRdxCodeElement
+      > &
+        QRdxCodeJSXProps;
+    }
+  }
+}
+```
+
+Un `ref` te da el elemento, para `toDataURL` y `download`.
+
+## Vue [#vue]
+
+Indica al compilador de Vue que `qrdx-code` es un elemento personalizado:
+
+```js
+// vite.config.js
+import vue from "@vitejs/plugin-vue";
+import { defineConfig } from "vite";
+
+export default defineConfig({
+  plugins: [
+    vue({
+      template: {
+        compilerOptions: { isCustomElement: (tag) => tag === "qrdx-code" },
+      },
+    }),
+  ],
+});
+```
+
+Después importa `qrdx/element/define` una vez, en `main.js`, y enlaza las opciones en las plantillas. Vue establece un enlace como propiedad cuando el elemento la tiene:
+
+```vue
+<qrdx-code
+  :value="url"
+  :size="256"
+  body-pattern="rounded"
+  :frame="{ style: 'banner-bottom', text: 'Scan me' }"
+  label="Menu"
+/>
+```

@@ -1,0 +1,117 @@
+---
+title: "Vue"
+description: "Desenhe QR codes estilizados em Vue 3 e Nuxt com qrdx/vue, usando os componentes QRCode e QRCodeSVG, que renderizam no servidor, e o composable useQRCode para o markup e os downloads."
+icon: Code
+---
+
+`qrdx/vue` traz versões em Vue 3 dos componentes React, `QRCode` e `QRCodeSVG`, além do composable `useQRCode`. Eles aceitam as mesmas props dos componentes React e desenham o mesmo SVG, com todos os padrões, cores, logos, molduras e templates. A entrada é construída sobre `qrdx/core` e não importa `react`.
+
+## Instalar [#install]
+
+```package-install
+qrdx@latest
+```
+
+`vue` 3.3 ou mais recente é uma peer dependency opcional, então o Vue do seu próprio app é usado. O TypeScript verifica as props dos componentes com o Vue 3.4.20 ou mais recente.
+
+## Desenhar um código [#draw-a-code]
+
+```vue
+<script setup lang="ts">
+import { QRCode } from "qrdx/vue";
+import { ref } from "vue";
+
+const url = ref("https://example.com");
+</script>
+
+<template>
+  <QRCode
+    :value="url"
+    :size="256"
+    body-pattern="rounded"
+    :frame="{ style: 'banner-bottom', text: 'Scan me' }"
+    aria-label="QR code for example.com"
+  />
+</template>
+```
+
+`QRCode` aceita as props do `QRCode` do React: todas as opções de `QRProps`, mais `logo`, `logoOptions`, `hideLogo` e `scale` para um logo. Em um template, escreva-as em kebab-case (`body-pattern`) ou camelCase. Uma flag como `auto-level` ou `hide-logo` não precisa de valor.
+
+- Quando uma prop muda, o código é redesenhado e o Vue atualiza o `<svg>` no lugar.
+- `class`, `style`, `aria-label` e outros atributos vão no `<svg>`, ou no `<svg>` externo da moldura quando há uma moldura. Listeners como `@click` também vão aí.
+
+## QRCodeSVG [#qrcodesvg]
+
+`QRCodeSVG` aceita `QRProps`, como o `QRCodeSVG` do React. Um logo vai em `imageSettings`:
+
+```vue
+<script setup lang="ts">
+import { QRCodeSVG } from "qrdx/vue";
+</script>
+
+<template>
+  <QRCodeSVG
+    value="https://example.com"
+    level="H"
+    :image-settings="{ src: '/logo.png', width: 48, height: 48, excavate: true }"
+  />
+</template>
+```
+
+## Renderização no servidor e Nuxt [#server-rendering-and-nuxt]
+
+Os dois componentes renderizam com o renderizador de servidor do Vue (`vue/server-renderer`), então o código faz parte do HTML do servidor. O markup não tem ids aleatórios, então o navegador faz a hidratação sem divergências.
+
+No Nuxt, use-os em qualquer página ou componente. Eles renderizam no servidor e hidratam no navegador, ou renderizam só no navegador dentro de `<ClientOnly>`.
+
+## useQRCode [#useqrcode]
+
+```vue
+<script setup lang="ts">
+import { useQRCode } from "qrdx/vue";
+import { ref } from "vue";
+
+const url = ref("https://example.com");
+const { svg, download } = useQRCode(() => ({ value: url.value, size: 256 }));
+</script>
+
+<template>
+  <div v-html="svg" />
+  <button type="button" @click="download({ format: 'png', size: 1024 })">
+    Download PNG
+  </button>
+</template>
+```
+
+`useQRCode(props)` recebe as props de `QRCode` como um objeto, um ref, um objeto reativo ou um getter. Ele retorna:
+
+- `svg`: o markup SVG, como um computed ref. Acompanha as props e funciona durante a renderização no servidor.
+- `toDataURL(format, { size, quality })`: o código como uma data URL.
+- `download({ format, filename, size, quality })`: salva o código como arquivo.
+- `options`: as opções com que o código é desenhado, como um computed ref.
+
+`toDataURL` e `download` usam PNG por padrão, no `size` do próprio código. Os formatos são `png`, `jpg`, `webp`, `svg`, `pdf` e `eps`. PNG, JPG e WebP precisam de um navegador, e PDF precisa do pacote opcional `jspdf`.
+
+## Mais do qrdx/core [#more-from-qrdxcore]
+
+`qrdx/vue` reexporta tudo de `qrdx/core`: `toSVGString`, `downloadQRCode`, `getQRCodeDataUrl`, `getScanScore`, a biblioteca oficial de molduras (`getOfficialFrame`) e o resto. [Vanilla JavaScript](/docs/vanilla-js) explica cada um. Para PNG em um servidor, use `getQRAsPNG` de `qrdx/node`.
+
+O `wrapper` de um template personalizado é escrito com o `h` que `qrdx/vue` exporta. Esse é o `h` do core, não o do Vue, então importe um dos dois com outro nome quando um arquivo precisar dos dois:
+
+```js
+import { h } from "qrdx/vue";
+
+const Labelled = {
+  id: "Labelled",
+  name: "Labelled",
+  wrapper: (children, props) =>
+    h(
+      "svg",
+      { viewBox: "0 0 300 340", xmlns: "http://www.w3.org/2000/svg" },
+      h("g", { transform: "translate(20, 20) scale(0.87)" }, children),
+      h("text", { x: "150", y: "325", textAnchor: "middle" }, props?.label)
+    ),
+};
+```
+
+Passe-o como `customTemplate`, com as props dele em `customProps`: `<QRCode value="https://example.com" :custom-template="Labelled" :custom-props="{ label: 'Scan me' }" />`.

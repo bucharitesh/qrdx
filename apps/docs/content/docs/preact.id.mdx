@@ -1,0 +1,87 @@
+---
+title: "Preact"
+description: "Kode QR bergaya sebagai komponen Preact dengan qrdx/preact, digambar dengan `h` milik Preact sendiri (tanpa preact/compat), dirender di server dengan preact-render-to-string, dan di-hydrate tanpa menggambar ulang."
+icon: FileCode
+---
+
+`qrdx/preact` menyediakan dua komponen SVG dari pustaka React, yaitu `QRCodeSVG` dan `QRCode`, untuk Preact. Keduanya menggambar dengan `h` milik Preact sendiri, jadi Anda tidak memerlukan `preact/compat`, dan menghasilkan SVG yang sama dengan komponen React.
+
+## Instalasi [#install]
+
+```package-install
+qrdx@latest
+```
+
+`preact` 10 atau yang lebih baru adalah peer dependency opsional dari `qrdx`. Aplikasi Anda sudah memilikinya, dan Anda tidak memerlukan `react`.
+
+## Menggambar kode [#draw-a-code]
+
+```tsx
+import { QRCodeSVG } from "qrdx/preact";
+
+export function MenuCode() {
+  return (
+    <QRCodeSVG
+      value="https://example.com/menu"
+      size={256}
+      bodyPattern="rounded"
+      frame={{ style: "banner-bottom", text: "Scan me" }}
+      aria-label="QR code for the menu"
+    />
+  );
+}
+```
+
+`QRCodeSVG` menerima semua opsi yang diterima `QRCodeSVG` versi React: pola, warna dan gradien, logo (`imageSettings`), bingkai, bentuk, templat, dan Art QR. Atribut seperti `class`, `style`, atau `aria-label` dipasang pada `<svg>`, atau pada `<svg>` terluar milik bingkai jika ada bingkai.
+
+`QRCode` menambahkan pintasan logo dari `QRCode` versi React: `logo`, `logoOptions`, `hideLogo`, dan `scale`.
+
+```tsx
+import { QRCode } from "qrdx/preact";
+
+<QRCode value="https://example.com" logo="/logo.png" level="H" />;
+```
+
+Kedua komponen menggambar ulang saat sebuah prop berubah dan melewati pekerjaan itu jika tidak ada yang berubah. Event handler di dalam props tidak dipasang pada `<svg>`, seperti di React. Pasang pada elemen yang membungkus kode.
+
+## Perenderan di server [#server-rendering]
+
+`renderToString` dari `preact-render-to-string` menghasilkan SVG yang sama dengan `toSVGString` dari `qrdx/core`. Satu-satunya perbedaan ada pada escaping: Preact membiarkan `>` dan `'` apa adanya di dalam teks, sedangkan core menulis `&gt;` dan `&#x27;`. Browser membaca keduanya dengan cara yang sama.
+
+`hydrate` mempertahankan `<svg>` dari server dan tidak menggambarnya lagi. Markup tidak memiliki id acak, sehingga server dan browser selalu sepakat.
+
+## Unduhan, markup, dan skor pemindaian [#downloads-markup-and-the-scan-score]
+
+Komponen hanya menggambar kode. Unduhan, `toSVGString`, skor pemindaian, dan fungsi lainnya berasal dari `qrdx/core`. Itulah mesin yang sudah digunakan komponen, sehingga tidak dibundel dua kali.
+
+```tsx
+import { downloadQRCode } from "qrdx/core";
+import { QRCodeSVG } from "qrdx/preact";
+
+const options = { value: "https://example.com", size: 256 };
+
+export function DownloadableCode() {
+  return (
+    <>
+      <QRCodeSVG {...options} />
+      <button
+        type="button"
+        onClick={() =>
+          downloadQRCode(options, {
+            format: "png",
+            size: { width: 1024, height: 1024 },
+          })
+        }
+      >
+        Download PNG
+      </button>
+    </>
+  );
+}
+```
+
+[Vanilla JavaScript](/docs/vanilla-js) membahas `qrdx/core` secara lengkap.
+
+## Dengan preact/compat [#with-preactcompat]
+
+Jika aplikasi Anda sudah membuat alias `react` ke `preact/compat`, komponen React dari `qrdx` juga berfungsi: `import { QRCodeSVG } from "qrdx"`. `qrdx/preact` menggambar kode yang sama tanpa alias, jadi pilih yang ini saat Anda menambahkan `qrdx` ke aplikasi Preact.
