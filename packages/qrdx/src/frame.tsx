@@ -27,21 +27,30 @@ export interface FrameBox {
   radius: number;
 }
 
-export interface FrameRect extends FrameBox {
+/**
+ * An outline along a shape's edge (centered on it, mitered corners), drawn
+ * after its fill. `fill` may be "none" for an outline alone.
+ */
+export interface FrameStroke {
+  stroke?: string;
+  strokeWidth?: number;
+}
+
+export interface FrameRect extends FrameBox, FrameStroke {
   type: "rect";
   fill: string;
   /** Area cut out of the rect (where the QR code shows through) */
   hole?: FrameBox;
 }
 
-export interface FramePolygon {
+export interface FramePolygon extends FrameStroke {
   type: "polygon";
   points: [number, number][];
   fill: string;
 }
 
 /** Any outline, as SVG path data in artwork coordinates. */
-export interface FramePath {
+export interface FramePath extends FrameStroke {
   type: "path";
   d: string;
   fill: string;
@@ -180,6 +189,13 @@ function boxPath({ x, y, width, height, radius }: FrameBox): string {
   );
 }
 
+/** SVG attributes of a shape's outline, if it has one. */
+function strokeProps(shape: FrameStroke) {
+  return shape.stroke && shape.strokeWidth
+    ? { stroke: shape.stroke, strokeWidth: round(shape.strokeWidth) }
+    : {};
+}
+
 function renderShape(shape: FrameShape, key: number) {
   if (shape.type === "rect" && shape.hole) {
     return (
@@ -188,6 +204,7 @@ function renderShape(shape: FrameShape, key: number) {
         fill={shape.fill}
         fillRule="evenodd"
         key={key}
+        {...strokeProps(shape)}
       />
     );
   }
@@ -199,6 +216,7 @@ function renderShape(shape: FrameShape, key: number) {
         points={shape.points
           .map(([x, y]) => `${round(x)},${round(y)}`)
           .join(" ")}
+        {...strokeProps(shape)}
       />
     );
   }
@@ -209,11 +227,13 @@ function renderShape(shape: FrameShape, key: number) {
         fill={shape.fill}
         key={key}
         {...(shape.fillRule === "evenodd" && { fillRule: "evenodd" })}
+        {...strokeProps(shape)}
       />
     );
   }
   return (
     <rect
+      {...strokeProps(shape)}
       fill={shape.fill}
       height={round(shape.height)}
       key={key}
@@ -226,6 +246,11 @@ function renderShape(shape: FrameShape, key: number) {
       })}
     />
   );
+}
+
+/** A layout's shapes as SVG elements, in paint order (the frame's artwork). */
+export function frameShapeElements(layout: FrameLayout): QRNode[] {
+  return layout.shapes.map((shape, index) => renderShape(shape, index));
 }
 
 /**
@@ -314,14 +339,34 @@ export function drawFrameOnCanvas(
     ctx.closePath();
   };
 
+  const strokeShape = (shape: FrameShape, path?: Path2D) => {
+    if (!(shape.stroke && shape.strokeWidth)) {
+      return;
+    }
+    ctx.strokeStyle = shape.stroke;
+    ctx.lineWidth = shape.strokeWidth;
+    ctx.lineJoin = "miter";
+    ctx.miterLimit = 4;
+    if (path) {
+      ctx.stroke(path);
+    } else {
+      ctx.stroke();
+    }
+  };
+
   for (const shape of layout.shapes) {
-    if (shape.fill === "transparent" || shape.fill === "none") {
+    const filled = !(shape.fill === "transparent" || shape.fill === "none");
+    if (!(filled || shape.stroke)) {
       continue;
     }
     ctx.fillStyle = shape.fill;
     if (shape.type === "path") {
       if (typeof Path2D !== "undefined") {
-        ctx.fill(new Path2D(shape.d), shape.fillRule ?? "nonzero");
+        const path = new Path2D(shape.d);
+        if (filled) {
+          ctx.fill(path, shape.fillRule ?? "nonzero");
+        }
+        strokeShape(shape, path);
       }
       continue;
     }
@@ -335,14 +380,19 @@ export function drawFrameOnCanvas(
         }
       });
       ctx.closePath();
-      ctx.fill();
+      if (filled) {
+        ctx.fill();
+      }
     } else {
       traceBox(shape);
       if (shape.hole) {
         traceBox(shape.hole);
       }
-      ctx.fill("evenodd");
+      if (filled) {
+        ctx.fill("evenodd");
+      }
     }
+    strokeShape(shape);
   }
 
   for (const label of frameLabels(layout)) {

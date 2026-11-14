@@ -1,63 +1,54 @@
 ---
 title: "Templates"
-description: "Aplique templates de moldura pré-desenhados a um QR code ou registre os seus."
+description: "Molduras que encaixam o código dentro de uma arte de tamanho fixo e a API TemplateDefinition para molduras que você desenha em código."
 icon: LayoutTemplate
 ---
 
-Envolva um QR code em uma arte pronta ou na sua própria.
+Um template é uma moldura que encaixa o código dentro da própria arte. No Playground, os templates não ficam em uma lista separada. Arrow, Standard Box, Square Border, Striked Box, Halloween e Dot Ring são blocos no grupo **Classic** do seletor de molduras, junto com as outras [molduras](/docs/features/frames), e escolher qualquer moldura substitui a anterior.
 
-## O que são templates? [#what-are-templates]
+Os templates se diferenciam das outras molduras em um ponto: o tamanho. Uma moldura adiciona espaço ao redor do código, então `size` é a largura do código e a imagem cresce. Um template desenha toda a arte em `size`, com o código menor dentro dela.
 
-Um template é uma arte em SVG desenhada ao redor do código: uma caixa, uma borda, um selo. Ele recebe o código como `children` e o posiciona dentro do próprio desenho. Cores, padrões e logos continuam nas props do `QRCode`, então um template funciona com qualquer estilo.
+## Templates incluídos [#built-in-templates]
 
-## Templates disponíveis [#available-templates]
+Passe o id como `templateId`. A Image API recebe como `template` e a CLI como `--template`.
 
-### Default [#default]
-Preto e branco clássico.
+| `templateId` | Nome | Cor |
+|--------------|------|-----|
+| `Arrow` | Arrow | A cor escura do código (`fgColor`) |
+| `StandardBox` | Standard Box | `fgColor` |
+| `SquareBorder` | Square Border | `fgColor` |
+| `StrikedBox` | Striked Box | Cor escura própria |
+| `Halloween` | Halloween | Laranja, verde e preto próprios |
+| `DotRing` | Dot Ring | O anel em `fgColor`, o texto em branco; ambos podem mudar (veja abaixo) |
+
+`default` não desenha arte. Ele só recua um pouco o código, para 95% de `size`.
 
 ```tsx
 import { QRCode } from 'qrdx';
 
-<QRCode value="https://example.com" templateId="default" size={256} />
+<QRCode value="https://example.com" templateId="Arrow" fgColor="#1a56db" size={256} />
 ```
 
-### Arrow [#arrow]
-Design geométrico moderno.
+Cores, padrões e logo continuam nas props do próprio código, então um template funciona com qualquer estilo:
 
 ```tsx
-<QRCode value="https://example.com" templateId="Arrow" size={256} />
+<QRCode
+  value="https://example.com"
+  templateId="StandardBox"
+  fgColor="#1a56db"
+  imageSettings={{
+    src: "/your-logo.png",
+    width: 48,
+    height: 48,
+    excavate: true,
+  }}
+  size={512}
+/>
 ```
 
-### Standard Box [#standard-box]
-Design limpo e estruturado.
+## Dot Ring [#dot-ring]
 
-```tsx
-<QRCode value="https://example.com" templateId="StandardBox" size={256} />
-```
-
-### Square Border [#square-border]
-Design com borda e contornos bem definidos.
-
-```tsx
-<QRCode value="https://example.com" templateId="SquareBorder" size={256} />
-```
-
-### Striked Box [#striked-box]
-Design dinâmico com elementos diagonais.
-
-```tsx
-<QRCode value="https://example.com" templateId="StrikedBox" size={256} />
-```
-
-### Halloween [#halloween]
-Tema sazonal de Halloween.
-
-```tsx
-<QRCode value="https://example.com" templateId="Halloween" size={256} />
-```
-
-### Dot Ring [#dot-ring]
-Um código redondo. O código fica em um disco de pontos dentro de um anel escuro, com uma linha de texto ao longo do anel. Quais pontos aparecem vem de um hash do conteúdo do código, então cada link ganha um anel só dele e o mesmo link sempre recebe o mesmo anel.
+Um código redondo. O código fica em um disco de pontos dentro de um anel escuro, com uma linha de texto ao longo do anel. Os pontos exibidos vêm de um hash do conteúdo do código, então cada link ganha um anel só dele e o mesmo link sempre recebe o mesmo anel.
 
 ```tsx
 <QRCode
@@ -68,7 +59,7 @@ Um código redondo. O código fica em um disco de pontos dentro de um anel escur
 />
 ```
 
-As configurações ficam em `customProps` (com tipo `DotRingProps`):
+Os ajustes ficam em `customProps` (com o tipo `DotRingProps`):
 
 ```tsx
 <QRCode
@@ -86,11 +77,11 @@ As configurações ficam em `customProps` (com tipo `DotRingProps`):
 
 | Prop | Padrão | Observações |
 | --- | --- | --- |
-| `customText` | "Scan the QR code" quatro vezes ao redor | Texto ao longo do anel. As letras que não cabem no anel são omitidas; `""` deixa o anel vazio |
+| `customText` | "Scan the QR code" repetido quatro vezes ao redor | Texto ao longo do anel. Letras que não cabem ao redor são omitidas; `""` deixa o anel vazio |
 | `textPosition` | `"top"` | `"top"`: centralizado na parte de cima, lido no sentido horário. `"bottom"`: centralizado na parte de baixo, lido da esquerda para a direita |
 | `textRotation` | `0` | Gira o texto em torno do centro, em graus |
 | `textColor` | `#ffffff` | Cor do texto |
-| `fontFamily` | fontes padrão do sistema | Família de fonte CSS do texto |
+| `fontFamily` | pilha de fontes do sistema | Família de fonte CSS do texto |
 | `fontWeight` | `900` | Peso da fonte |
 | `fontSize` | `32` | No desenho de 593 unidades do template, em que o código tem 300 de largura |
 | `fontLetterSpacing` | `3.5` | Espaço extra entre as letras, nas mesmas unidades |
@@ -99,53 +90,45 @@ As configurações ficam em `customProps` (com tipo `DotRingProps`):
 | `outerStrokeWidth`, `outerStrokeColor` | `strokeWidth`, `strokeColor` | Só a borda externa do anel |
 | `innerStrokeWidth`, `innerStrokeColor` | `strokeWidth`, `strokeColor` | Só a borda interna do anel |
 
-Um logo vai no centro, como em qualquer código. Links longos (códigos com mais de 49 módulos de largura) mantêm uma faixa clara entre o código e os pontos, para que ainda sejam lidos quando impressos em tamanho pequeno.
+Um logo vai no meio, como em qualquer código. Links longos (códigos com mais de 49 módulos de largura) mantêm uma faixa clara entre o código e os pontos, para que ainda possam ser lidos quando impressos pequenos.
 
-O texto é texto SVG na fonte que você escolher; o padrão são as fontes do sistema, então nada é baixado. Os downloads em SVG e PNG no navegador usam as fontes de quem está vendo. PDF e EPS imprimem o texto em Helvetica Bold, então use texto Latin-1 nesses formatos. `getQRAsPNG` de `qrdx/node` precisa de uma fonte instalada no servidor, assim como os rótulos de moldura.
+O texto é texto SVG na fonte que você escolher; o padrão é a pilha de fontes do sistema, então nada é baixado. Os downloads em SVG e PNG no navegador usam as fontes de quem está vendo. PDF e EPS imprimem o texto em Helvetica Bold, então use texto Latin-1 nesses formatos. `getQRAsPNG` de `qrdx/node` precisa de uma fonte instalada no servidor, assim como os rótulos das molduras.
 
-## Personalizar templates [#customize-templates]
+## Templates são especificações de moldura [#templates-are-frame-specs]
 
-Os templates integrados desenham a arte em `fgColor`. Todo o resto, como padrões e logo, é definido no código normalmente:
+A arte de Arrow, Standard Box, Square Border, Striked Box e Halloween é uma [especificação de moldura](/docs/features/frames#frame-specs), o mesmo formato JSON de todas as outras molduras, desenhada pelo mesmo mecanismo. `getTemplate(id).spec` retorna essa especificação. Use-a como moldura quando quiser o dimensionamento de moldura (o código mantém o tamanho e a arte cresce ao redor) e a opção de cor da moldura:
 
 ```tsx
+import { getTemplate, QRCode } from 'qrdx';
+
+const spec = getTemplate('Arrow')?.spec;
+
 <QRCode
   value="https://example.com"
-  templateId="Arrow"
-  fgColor="#1a56db"
-  imageSettings={{
-    src: "/your-logo.png",
-    width: 48,
-    height: 48,
-    excavate: true,
-  }}
-  size={512}
+  frame={spec && { style: 'custom', spec, color: '#1a56db' }}
+  size={256}
 />
 ```
 
+O Dot Ring não tem especificação: os pontos vêm do conteúdo do código, então ele os desenha em código (veja [Molduras que você desenha em código](#frames-you-draw-in-code)).
+
+`templateId` desenha a mesma arte de antes. Designs salvos, URLs de imagem, comandos da CLI e códigos que usam um id de template continuam com a mesma aparência de sempre.
+
 ## Registro de templates [#template-registry]
 
-### Obter todos os templates [#get-all-templates]
-
 ```tsx
-import { getAllTemplates } from 'qrdx';
+import { getAllTemplates, getTemplate, getTemplateIds } from 'qrdx';
 
-const templates = getAllTemplates();
+getTemplateIds(); // ['default', 'Arrow', 'StandardBox', ...]
+getAllTemplates(); // every TemplateDefinition, with its id and name
+getTemplate('Halloween'); // one by id
 ```
 
-### Obter os IDs dos templates [#get-template-ids]
+## Molduras que você desenha em código [#frames-you-draw-in-code]
 
-```tsx
-import { getTemplateIds } from 'qrdx';
+Uma especificação de moldura descreve uma arte fixa. Quando a arte precisa ser calculada, escreva um `TemplateDefinition` e passe-o como `customTemplate`. O `wrapper` recebe o código como `children` e retorna o SVG a ser desenhado. Ele desenha em um canvas de 300 por 300, e o código também chega nesse tamanho, então reduza-o para deixar espaço para a sua arte. `props` traz o `fgColor` e o `bgColor` do código, e o terceiro argumento tem o `url` e o `pixelSize` do código.
 
-const ids = getTemplateIds();
-// Returns: ['default', 'Arrow', 'StandardBox', ...]
-```
-
-## Templates personalizados [#custom-templates]
-
-Escreva seu próprio template como um `TemplateDefinition`. O `wrapper` dele recebe o código como `children` e retorna o SVG a ser desenhado. Ele desenha em uma tela de 300 por 300, e o código também chega nesse tamanho, então reduza-o para deixar espaço para a sua arte. `props` traz o `fgColor` e o `bgColor` do código.
-
-Este desenha um anel ao redor do código:
+Este exemplo desenha um anel ao redor do código:
 
 ```tsx
 import { QRCode, type TemplateDefinition } from "qrdx";
@@ -177,29 +160,10 @@ const ringTemplate: TemplateDefinition = {
 />
 ```
 
-Mantenha o código grande o bastante para ser lido da distância em que as pessoas vão segurar o celular, e deixe um espaço claro entre ele e a sua arte. Confira o resultado com a [pontuação de leitura](/docs/features/frames#will-it-scan).
-
-## Quando usar templates [#when-to-use-templates]
-
-- **Consistência de marca** — Garanta que todos os QR codes combinem
-- **Configuração rápida** — Tenha resultados profissionais rapidamente
-- **Campanhas sazonais** — Use templates temáticos
-- **Geração em lote** — Aplique estilos consistentes
-
-## Guia de escolha de template [#template-selection-guide]
-
-| Template | Ideal para | Estilo |
-|----------|----------|------|
-| Default | Profissional | Neutro |
-| Arrow | Tecnologia, moderno | Dinâmico |
-| Standard Box | Corporativo | Profissional |
-| Square Border | Formal | Estruturado |
-| Striked Box | Marketing | Enérgico |
-| Halloween | Sazonal | Divertido |
-| Dot Ring | Códigos redondos, pôsteres, adesivos | Marcante |
+Mantenha o código grande o bastante para ser lido de onde as pessoas vão segurar o celular e deixe um espaço claro entre ele e a sua arte. Confira o resultado com a [pontuação de leitura](/docs/features/frames#will-it-scan).
 
 ## Próximos passos [#next-steps]
 
-- [Padrões](/docs/features/patterns) — Personalização detalhada de padrões
-- [Cores e gradientes](/docs/features/colors-gradients) — Cores avançadas
-- [Logos](/docs/features/logos) — Adicione logos aos templates
+- [Molduras](/docs/features/frames): todas as molduras e o formato de especificação de moldura
+- [Padrões](/docs/features/patterns): personalização detalhada de padrões
+- [Logos](/docs/features/logos): adicione um logo ao código

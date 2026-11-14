@@ -4373,7 +4373,6 @@
         "frame": "फ़्रेम",
         "padding": "पैडिंग",
         "errorCorrection": "एरर करेक्शन",
-        "border": "बॉर्डर",
         "none": "कोई नहीं"
       },
       "dotSizeSection": {
@@ -4396,31 +4395,26 @@
         }
       },
       "frameControls": {
-        "importSvg": "SVG इंपोर्ट करें",
+        "uploadSvg": "SVG अपलोड करें",
         "publishFrame": "फ़्रेम पब्लिश करें",
         "theFrameIsAddedAround": "फ़्रेम कोड के चारों ओर जुड़ता है, इसलिए डाउनलोड की गई इमेज बड़ी हो जाती है और कोड खुद स्कैन होने लायक रहता है।",
         "label": "लेबल",
         "pickAFrameFirst": "पहले फ़्रेम चुनें",
-        "none": "कोई नहीं"
+        "none": "कोई नहीं",
+        "takesDotColor": "यह कोड के डॉट्स का रंग लेता है।",
+        "alsoHasTemplate": "इस डिज़ाइन में इस फ़्रेम के अंदर {name} फ़्रेम भी है। दूसरा फ़्रेम चुनने पर दोनों बदल जाएँगे।",
+        "templateKeepsSize": "यह फ़्रेम कोड को अपने अंदर फ़िट कर लेता है, इसलिए डाउनलोड की गई इमेज का साइज़ वही रहता है जो आप चुनते हैं।"
       },
       "frameFields": {
         "textSize": "टेक्स्ट साइज़"
       },
       "framePicker": {
-        "more": "और",
         "showAll": "सभी देखें",
         "frame": "फ़्रेम",
-        "moreFrames": "और फ़्रेम",
-        "allTotalFrames": "सभी {total, number} फ़्रेम",
-        "allFrames": "सभी फ़्रेम",
         "searchFrames": "फ़्रेम खोजें",
         "searchTotalFrames": "{total, number} फ़्रेम में खोजें",
-        "closeFrames": "फ़्रेम बंद करें",
         "filterFrames": "फ़्रेम फ़िल्टर करें",
         "labelFrames": "{label} फ़्रेम",
-        "commonFrames": "आम फ़्रेम",
-        "everyFrameBuiltInStyles": "सभी फ़्रेम: क्लासिक फ़्रेम, शेप वाले कोड, QRdx के आधिकारिक फ़्रेम और आपके सेव किए हुए फ़्रेम। कोई एक चुनते ही वह तुरंत लागू हो जाता है।",
-        "less": "कम",
         "all": "सभी",
         "noFramesMatchQuery": "\"{query}\" से कोई फ़्रेम नहीं मिला।",
         "loadingFrames": "फ़्रेम लोड हो रहे हैं…",
@@ -4554,7 +4548,6 @@
       },
       "patternControls": {
         "customizeOuterAndCenter": "बाहरी और बीच का हिस्सा बदलें",
-        "border": "बॉर्डर",
         "higherLevelsSurviveScratchesAnd": "ऊँचे लेवल खरोंच और लोगो होने पर भी स्कैन होते हैं, लेकिन उनमें डॉट ज़्यादा होते हैं। लोगो जोड़ें तो H चुनें।",
         "dotShape": "डॉट का आकार",
         "dotShapes": "डॉट आकार",

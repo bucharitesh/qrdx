@@ -47,7 +47,7 @@ qrdx.dev --look modern --fg 0051ff --frame banner-bottom --frame-text "Scan me"
 | `--dot` | アイ中心の形 | {facts.eyeCentres}種類の中心形状のいずれか（`square`、`rounded`、`circle` など） |
 | `--frame` | コードを囲むフレーム | `none`、または{facts.frameStyles}種類の内蔵フレームのいずれか（`banner-bottom`、`banner-top`、`speech-bubble`、`polaroid` など） |
 | `--frame-text` | フレームのラベル（24文字まで） | 任意のテキスト。スペースを含む場合は引用符で囲みます。`--frame` がない場合は、コードの下のバナーに表示されます |
-| `--template` | 装飾的な枠 | `Arrow`, `StandardBox`, `SquareBorder`, `StrikedBox`, `Halloween` |
+| `--template` | テンプレートとして描くフレーム | `Arrow`, `StandardBox`, `SquareBorder`, `StrikedBox`, `Halloween` |
 | `--logo` | 中央のアイコン | `link`, `wifi`, `location`, `phone`, `email`, `whatsapp`, `instagram`, `file`, `calendar`, `none` |
 
 スタイルを適用したコードをボットが送信する前に、QRdxはエディタと同じスキャンスコアで確認します。デザインがスマートフォンで読み取りにくい場合は、QRdxが色を濃くする、形をシンプルにする、誤り訂正を強めるなどの調整を行い、キャプションでお知らせします。それでも足りない場合（多くは内容が長いとき）は、白地に黒のコードがメモ付きで届きます。

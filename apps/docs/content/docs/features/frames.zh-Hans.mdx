@@ -1,14 +1,14 @@
 ---
 title: "边框与打印"
-description: "行动号召边框、官方边框库、“能扫上吗？”评分,以及可直接打印的 PDF 导出。"
+description: "行动号召边框、官方边框库、\"能扫出来吗?\"评分,以及可直接打印的 PDF 导出。"
 icon: Frame
 ---
 
-添加“Scan me”边框,在发布前检查设计能否被扫描,并按精确的物理尺寸导出矢量文件。
+添加"扫描我"边框,在发布前检查设计能否被扫描,并按精确的物理尺寸导出矢量文件。
 
 ## 行动号召边框 [#call-to-action-frames]
 
-QRdx 绘制的每个边框都是一份边框规格:一段简短的 JSON,描述形状、标签和颜色。同一个引擎绘制所有规格,因此边框在 SVG、PNG、PDF 和 EPS 中看起来完全一致。QRdx 共有 {facts.frames} 个边框:{facts.frameStyles} 个内置边框和 {facts.officialFrames} 个[官方边框](#official-frames)。你也可以自己制作,或从[社区](/community/frames)中挑选。
+QRdx 绘制的每个边框都是一份边框规范(frame spec):一段描述形状、标签和颜色的小型 JSON。所有规范都由同一个引擎绘制,因此同一个边框在 SVG、PNG、PDF 和 EPS 中看起来完全一致。QRdx 共有 {facts.frames} 种边框:{facts.frameStyles} 种内置边框和 {facts.officialFrames} 种[官方边框](#official-frames)。你也可以自己制作,或从[社区](/community/frames)中挑选。
 
 `frame` 属性会在二维码周围绘制边框。它适用于 `QRCode`、`QRCodeSVG`、`QRCodeCanvas`、`getQRAsSVG`、`getQRData` 以及所有下载辅助函数。
 
@@ -21,19 +21,19 @@ import { QRCode } from "qrdx";
 />
 ```
 
-边框添加在二维码**外围**:输出尺寸会变大,二维码模块和静区绝不会被遮挡,因此可扫描性不变。二维码与边框之间会留出一道与二维码背景色相同的浅色间隙。
+边框添加在二维码**外围**:输出尺寸会变大,二维码的模块和静区不会被遮挡,因此可扫描性不变。二维码与边框之间有一道与二维码背景色相同的浅色间隙。
 
 ### 内置边框 [#built-in-frames]
 
-内置边框通过 `style` 命名。各选项会填充其规格中的标签和颜色:
+内置边框通过 `style` 命名。各选项用于填充其规范中的标签和颜色:
 
 | 选项 | 默认值 | 说明 |
 | --- | --- | --- |
-| `style` | — | 下列 {facts.frameStyles} 个内置边框之一,或 `none`(`FRAME_STYLES`) |
+| `style` | — | 下列 {facts.frameStyles} 种内置边框之一,或 `none`(`FRAME_STYLES`) |
 | `text` | `"Scan me"` | 最多 24 个字符。传入 `""` 可隐藏标签 |
 | `color` | `#000000` | 边框颜色(`gradient-border`:起始颜色,默认为紫色) |
-| `textColor` | 边框上为白色,浅色区域上为 `color` | 标签颜色 |
-| `secondaryText` | 无 | 第二个标签,最多 24 个字符:`banner-top-bottom` 的底部横幅、`circle` 的下半圆弧、`menu-card` 的页脚 |
+| `textColor` | 边框上为白色,浅色区域为 `color` | 标签颜色 |
+| `secondaryText` | 无 | 第二个标签,最多 24 个字符:`banner-top-bottom` 的底部横幅、`circle` 的下半弧、`menu-card` 的页脚 |
 | `secondaryColor` | `#db2777` | `gradient-border` 的结束颜色 |
 | `fontScale` | `1` | 标签大小,范围 0.5 到 1.5;标签仍会自动缩小以适应空间 |
 
@@ -41,12 +41,12 @@ import { QRCode } from "qrdx";
 
 - 横幅与边框:`banner-bottom`、`banner-top`、`banner-top-bottom`、`border`、`rounded-border`、`gradient-border`、`focus`(角括号)
 - 气泡:`speech-bubble`、`speech-bubble-top`、`chat-bubble`
-- 徽章:`circle`(文字环绕圆环)、`badge`(丝带)、`sticker`(带阴影的模切贴纸)
+- 徽章:`circle`(文字环绕圆环)、`badge`(缎带)、`sticker`(带阴影的模切贴纸)
 - 物件:`polaroid`、`phone`、`ticket`、`tag`(带孔的吊牌)、`envelope`、`menu-card`
 
-这些名称各自对应引擎中的一份规格,并且会长期有效。使用它们的已保存设计、image API 链接、CLI 参数和代码,绘制出的边框保持不变。没有标签时会去掉标签所在行的边框(例如各种边框),依然会这样处理。
+这些名称各自对应引擎中的一份规范,并且会长期有效。使用它们的已保存设计、Image API 链接、CLI 参数和代码,会继续绘制相同的边框。没有标签时会去掉标签所在行的边框(例如各种边框线样式),仍然如此。
 
-`BUILT_IN_FRAMES` 列出了它们的名称和规格(`BUILT_IN_FRAME_SPECS` 按 style 提供规格)。`frameSpecOf` 返回任意边框所绘制的规格,`getFrameColors` 返回其使用的颜色:
+`BUILT_IN_FRAMES` 列出了它们的名称和规范(`BUILT_IN_FRAME_SPECS` 按样式提供规范)。`frameSpecOf` 返回任意边框所绘制的规范,`getFrameColors` 返回它所用的颜色:
 
 ```tsx
 import { BUILT_IN_FRAMES, frameSpecOf, getFrameColors } from "qrdx";
@@ -61,9 +61,9 @@ getFrameColors({ style: "border", color: "#1e3a8a" });
 // { frame: "#1e3a8a", text: "#1e3a8a", accent: "#1e3a8a" }
 ```
 
-如果要修改的不只是标签和颜色,可以从内置规格开始创建自定义边框:`{ style: "custom", spec: frameSpecOf({ style: "ticket" }) }` 会绘制同样的票券,并且你可以编辑它的形状。
+如果想修改标签和颜色之外的内容,可以从内置规范出发创建自定义边框:`{ style: "custom", spec: frameSpecOf({ style: "ticket" }) }` 会绘制同样的票券,并且你可以编辑它的形状。
 
-在[形状、定位点与边框](/docs/styles#frames)中可以在浏览器里查看所有边框的解码效果。每个边框都由纯形状和文字组成,颜色均不透明,因此 SVG、PNG、PDF 和 EPS 的导出结果一致(渐变边框以细密的纯色阶梯绘制,circle 边框的弯曲文字在所有格式中都是旋转的文本)。
+在[形状、定位点与边框](/docs/styles#frames)中可以查看全部边框,并在浏览器中完成解码。每个边框都由纯形状和文字组成,颜色均为不透明,因此 SVG、PNG、PDF 和 EPS 的导出结果一致(渐变边框由细小的纯色色阶绘制,圆形边框的弯曲文字在所有格式中都是旋转后的文字)。
 
 ```tsx
 <QRCode
@@ -72,7 +72,7 @@ getFrameColors({ style: "border", color: "#1e3a8a" });
 />
 ```
 
-标签使用系统字体栈,因此无需下载任何字体。由于输出尺寸会增大,需要最终宽高时请使用 `getFrameDimensions(size, frame)`:
+标签使用系统字体栈,因此不会下载任何字体。由于输出尺寸会变大,需要最终宽高时请使用 `getFrameDimensions(size, frame)`:
 
 ```ts
 import { getFrameDimensions } from "qrdx";
@@ -80,13 +80,13 @@ import { getFrameDimensions } from "qrdx";
 getFrameDimensions(400, { style: "banner-bottom" }); // { width: 496, height: 568 }
 ```
 
-`FRAME_STYLES`、`frameSchema`(zod)以及 `QRFrame` / `FrameStyle` 类型也从 `qrdx/types` 导出,可用于服务端校验。`GRADIENT_FRAME_DEFAULTS`(渐变边框的默认颜色)和 `FRAME_GAP_RATIO` 仍然导出,供使用过它们的代码继续使用;每个边框自己的间隙就是其规格的内边距(`getFrameGapRatio`)。
+`FRAME_STYLES`、`frameSchema`(zod)以及 `QRFrame` / `FrameStyle` 类型也从 `qrdx/types` 导出,可用于服务端校验。`GRADIENT_FRAME_DEFAULTS`(渐变边框的默认颜色)和 `FRAME_GAP_RATIO` 仍然导出,供原先使用它们的代码继续使用;每个边框自己的间隙就是其规范的内边距(`getFrameGapRatio`)。
 
 ### 在 Playground 中 [#in-the-playground]
 
-**设计 → 边框**用一个选择器涵盖所有边框。**经典**分组包含内置边框,旁边是造型二维码、官方边框和你保存的边框。所有边框的编辑方式相同:标签、第二行文字、颜色和文字大小,带图标的边框还可以编辑图标。使用内置边框的设计会保留其 `style` 名称,因此链接、图片 URL 和代码片段都保持简短。
+**Design → Frame** 提供一个适用于所有边框的选择器。**Classic** 分组包含内置边框和[模板](/docs/features/templates)(Arrow、Standard Box 等),旁边是异形二维码、官方边框和你保存的边框。选择其中任何一个都会替换之前的选择。所有边框的编辑方式相同:标签、第二行文字、颜色和文字大小,带图标的边框还可以编辑图标。使用内置边框的设计会保留其 `style` 名称,因此链接、图片 URL 和代码片段都能保持简短。
 
-**造型二维码**分组让二维码本身呈现某种形状:由装饰性圆点组成的圆形或心形,或你上传的形状([`shape`](/docs/features/patterns#circle-codes))。造型二维码会取代边框:选择造型会清除边框,选择边框则会清除造型。
+**Shaped codes** 分组会让二维码本身呈现某种形状:由装饰性圆点组成的圆形或心形,或是你上传的形状([`shape`](/docs/features/patterns#circle-codes))。异形二维码会取代边框:选择异形二维码会清除边框,选择边框则会清除形状。
 
 ### 在 CLI 中 [#in-the-cli]
 
@@ -94,31 +94,32 @@ getFrameDimensions(400, { style: "banner-bottom" }); // { width: 496, height: 56
 qrdx generate "https://example.com/menu" --frame banner-bottom --frame-text "Scan for the menu" -o menu.png
 ```
 
-`--frame-color` 和 `--frame-text-color` 接受十六进制颜色。如果传入了文字或颜色但没有 `--frame`,则使用 `banner-bottom`。
+`--frame-color` 和 `--frame-text-color` 接受十六进制颜色。如果传入了文字或颜色但没有传 `--frame`,则使用 `banner-bottom`。
 
-### 边框规格 [#frame-specs]
+### 边框规范 [#frame-specs]
 
-边框规格是一段 JSON,包含 `kind: "qrdx.frame"`、`version: 1`、`artboard` 尺寸、放置二维码的 `qr` 区域、默认的 `colors`、绘制在二维码后方的 `shapes`,以及 `labels`。形状包括矩形(可带孔)、圆和圆环、椭圆、多边形、路径、线条和内置图标。它们可以用主题令牌(`frame`、`text`、`accent`、`background`)、十六进制颜色、两种颜色的混合或渐变来填充。规格不包含标记、链接或图片。对于不是你自己编写的规格,存储前请用 `qrdx/types` 中的 `frameSpecSchema` 或 `getFrameSpecIssues` 检查。引擎在绘制前会再次检查。
+边框规范是一段 JSON,包含 `kind: "qrdx.frame"`、`version: 1`、`artboard` 尺寸、放置二维码的 `qr` 区域、默认 `colors`、绘制在二维码后方的 `shapes` 以及 `labels`。形状包括矩形(可带镂空)、圆和圆环、椭圆、多边形、路径、线条和内置图标。它们可以用主题令牌(`frame`、`text`、`accent`、`background`)、十六进制颜色、两种颜色的混合或渐变填充。规范中不包含标记、链接或图片。对于不是你自己编写的规范,请在存储前用 `qrdx/types` 中的 `frameSpecSchema` 或 `getFrameSpecIssues` 检查。引擎在绘制前会再次检查。
 
-内置边框引入了以下可选字段。不含这些字段的规格绘制效果与之前相同:
+内置边框和模板引入了以下可选字段。没有这些字段的规范,绘制结果与之前一致:
 
 | 字段 | 作用 |
 | --- | --- |
-| `labels[].collapse` | `{ y, height }`。当标签不显示文字时,从 `y` 到 `y + height` 的区域会被裁掉:其下方的行上移,图形变短。完全位于该区域内的形状会被省略,与该区域交叉的形状会变短。该区域不能与二维码、其内边距或其他区域交叉。 |
-| `qr.plate` | `"opaque"`(默认)或 `"background"`。引擎会在二维码下方用二维码的背景色绘制一块底板。当该背景是透明的时,`"opaque"` 会绘制底板,`background` 填充为白色,这样图案绝不会透过静区显示出来。`"background"` 保持透明,并省略底板。仅当底板下方只有 `background` 填充,或只有一个孔中容纳底板的圆环时,才允许使用。 |
-| `colors.text` | 十六进制颜色,或由 `frame`、`accent`、`background` 与十六进制颜色混合而成的值,例如渐变边框标签使用的 `{ "mix": ["frame", "accent"], "amount": 0.5 }`。这是默认值;`textColor` 仍然优先。 |
+| `labels[].collapse` | `{ y, height }`。当标签不显示文字时,从 `y` 到 `y + height` 的区带会被裁掉:其下方的行上移,图形变得更矮。完全位于该区带内的形状会被省略,穿过该区带的形状会变短。区带不能穿过二维码、其内边距或另一个区带。 |
+| `qr.plate` | `"opaque"`(默认)、`"background"` 或 `"none"`。引擎会在二维码下方用二维码的背景色绘制一块底板。当该背景透明时,`"opaque"` 会绘制底板,`background` 填充白色,这样图形就不会透过静区显示出来。`"background"` 保持它们透明,并省略底板。只有当底板下方仅有 `background` 填充,或是孔洞正好容纳底板的圆环时,才允许使用。`"none"` 完全不绘制底板,因此二维码自身的背景和边距就是它唯一的浅色空间,`qr.padding` 可以小于 4%。模板使用此选项。 |
+| `stroke` | 用于矩形、圆、椭圆、多边形或路径的 `{ color, width }`:以形状边缘为中心的轮廓线,在填充之后绘制,宽度最多为画板短边的 10%。Halloween 模板用它为南瓜描边。 |
+| `colors.text` | 一个十六进制颜色,或由 `frame`、`accent`、`background` 和十六进制颜色组成的混合,例如渐变边框标签使用的 `{ "mix": ["frame", "accent"], "amount": 0.5 }`。这是默认值;`textColor` 仍然优先。 |
 
-文字标签所在行也可以延伸到底板的内边距中,前提是它不碰到二维码,并且在最大文字大小(`fontScale` 1.5)下其大写字母不会进入内边距。各种边框正是这样把标签放在二维码正下方的。
+文字标签所在的行也可以延伸到底板的内边距中,前提是它不碰到二维码,并且在最大文字大小(`fontScale` 1.5)下其大写字母不超出内边距。各种边框线样式就是这样把标签直接放在二维码下方的。
 
-qrdx 0.0.51 及更早版本会拒绝使用这些字段或把标签行放进内边距的规格,因此在其他地方绘制此类规格之前,请先更新引擎。
+qrdx 0.0.51 及更早版本会拒绝使用这些字段或把标签行放入内边距的规范,因此在其他地方绘制这类规范之前,请先更新引擎。
 
 ## 官方边框 [#official-frames]
 
-除内置边框外,QRdx 还有 {facts.officialFrames} 个官方边框:现成的设计,涵盖行动号召、餐厅与咖啡馆、商店与包装、美容与健康、活动与婚礼、酒店与旅行、房地产、汽车与停车、健康与教育、运动与健身、商务与社交,以及非营利组织与社区团体。其中 {facts.seasonalFrames} 个适用于节日和季节,从春节、Holi、开斋节和 Diwali,到 Hanukkah、复活节、感恩节和圣诞节。每个边框都是一份边框规格,标签和颜色都可以修改,以 CC0 发布,并且都经过测试,在手机扫描距离下可以扫上。
+除内置边框外,QRdx 还有 {facts.officialFrames} 种官方边框:现成的设计,涵盖行动号召、餐厅和咖啡馆、商店和包装、美容和健康、活动和婚礼、酒店和旅行、房地产、汽车和停车、医疗和教育、运动和健身、商务和社交,以及非营利和社区团体。其中 {facts.seasonalFrames} 种用于节日和季节,从农历新年、洒红节、开斋节和排灯节,到光明节、复活节、感恩节和圣诞节。每个边框都是一份边框规范,标签和颜色均可修改,以 CC0 发布,并且都经过测试,在手机扫描距离下可以扫出。
 
-在 [Playground](/playground) 中,打开**边框**,然后点击**更多**。可以按名称、用途或节日搜索,也可以选择分组。即将到来的节日和季节的边框会排在最前面。你也可以在[社区](/community/frames)中找到它们,由 @qrdx 发布。
+在 [Playground](/playground) 中,打开 **Frame**。可以按名称、用途或节日搜索,也可以选择一个分组。即将到来的节日和季节的边框会排在最前面。你也可以在[社区](/community/frames)中找到它们,由 @qrdx 发布。
 
-引擎以 `OFFICIAL_FRAMES` 导出它们:
+引擎将它们导出为 `OFFICIAL_FRAMES`:
 
 ```tsx
 import { getOfficialFrame, QRCode } from "qrdx";
@@ -133,7 +134,7 @@ const diwali = getOfficialFrame("diwali-diya"); // undefined for an unknown id
 )}
 ```
 
-`OFFICIAL_FRAME_INDEX` 列出每个边框但不含规格,因此选择器可以展示整个库,并仅在需要时才加载规格。在 [Image API](/docs/developers/image-api#community-items) 和 [MCP 服务器](/docs/developers/mcp)中,可以把官方边框当作社区项目使用,例如 `item=frame:diwali-diya`。
+`OFFICIAL_FRAME_INDEX` 列出了所有不含规范的边框,因此选择器可以展示整个边框库,并只在需要时才加载规范。在 [Image API](/docs/developers/image-api#community-items) 和 [MCP 服务器](/docs/developers/mcp)中,可以把官方边框作为社区项目使用,例如 `item=frame:diwali-diya`。
 
 ## 能扫出来吗？ [#will-it-scan]
 
@@ -153,14 +154,14 @@ const { score, grade, checks } = await getScanScore({
 
 检查内容：
 
-- **在 96、160 和 320 px 下解码。** 设计会按每种宽度渲染，加入类似摄像头的模糊和对比度损失，并在略有不同的缩放比例下解码数次。
-- **对比度**：二维码每种颜色（包括渐变色标、码眼颜色和圆点颜色）与背景之间的对比度，以及二维码是否为浅底深色。
-- **Logo 覆盖率**，并与当前纠错等级可恢复的范围比较。
+- **在 96、160 和 320 px 下解码。** 设计会按每种宽度渲染，加入类似相机的模糊和对比度损失，并以略有差异的缩放比例解码多次。
+- **对比度**：二维码每种颜色（包括渐变色标、码眼颜色和圆点颜色）与背景之间的对比度，以及二维码是否为浅底深码。
+- **Logo 覆盖率**：与当前纠错级别可恢复的范围相比较。
 - **静区**：边距，加上边框带来的间隙。
-- **码眼形状风险**：部分扫描应用可能无法识别 `circle` 码眼（已弃用的 `curly` 码眼若仍存在于已保存的设计中，则无法通过严格的解码器）。
-- **样式组合**（`style-pair`）：在我们的解码测试中会一起失败的形状组合，例如 `small-square` 圆点搭配方形码眼，以及已保存设计中已弃用的中心样式（参见 `getStylePairRisk`）。
+- **码眼形状风险**：某些扫描应用可能无法识别 `circle` 码眼（已停用的 `curly` 码眼如果仍用于已保存的设计，也无法通过严格的解码器）。
+- **样式组合**（`style-pair`）：在我们的解码测试中会一同失败的形状组合，例如 `small-square` 圆点搭配方形码眼，以及已保存设计中已停用的中心样式（参见 `getStylePairRisk`）。
 
-`getImageScanScore(fileOrImage)` 对现有图片执行同样的检查：它会返回解码出的内容，以及根据像素测得的解码、对比度、极性、静区和分辨率检查结果。[扫描检测工具](/tools/scan-checker)就是基于它构建的。
+`getImageScanScore(fileOrImage)` 对现有图片执行同样的检查：它返回解码出的内容，以及根据像素测得的解码、对比度、极性、静区和分辨率检查结果。[扫描检测工具](/tools/scan-checker)就是基于它构建的。
 
 <Callout type="info">
   该评分是基于一个开源解码器的启发式结果。手机相机应用通常更宽容，因此请将其作为参考，并对重要的印刷品进行实际扫描测试。
@@ -168,7 +169,7 @@ const { score, grade, checks } = await getScanScore({
 
 ## 可直接印刷的导出 [#print-ready-export]
 
-`downloadPrintPDF` 会按精确的物理尺寸生成矢量 PDF。模块、码眼和边框均为矢量路径（Logo 仍为位图）。
+`downloadPrintPDF` 会按精确的物理尺寸写出矢量 PDF。模块、码眼和边框都是矢量路径（Logo 仍为位图）。
 
 ```ts
 import { downloadPrintPDF, downloadPrintSVG, getPrintLayout } from "qrdx";
@@ -190,11 +191,11 @@ layout.trimWidth; // finished width in mm, frame included
 layout.maxScanDistance; // 400 (mm)
 ```
 
-- `size` 是二维码本身的宽度；边框会增加成品的尺寸。
-- 设置出血后，背景（或方形边框的颜色）会延伸到裁切线之外，这样裁切后不会留下白边。裁切标记位于出血区之外。
-- `colorMode: "cmyk"` 使用简单的转换方式（`rgbToCmyk`：K = 1 − max(R, G, B)，不使用 ICC 配置文件；纯黑只用 K 通道印刷）。如果需要精确还原品牌色，请向印刷商索取带色彩管理的转换。
-- 线性渐变和径向渐变在 PDF 中以平滑渐变印刷，PDF 为 CMYK 时则使用 CMYK；打印用 SVG 会保留渐变，但仍为 RGB。
-- PDF 中的边框文字使用 Helvetica Bold，因此 Latin-1 以外的字符可能无法显示。其他文字请使用 SVG。
-- `getQRAsPrintPDF` 和 `getQRAsPrintPDFBuffer` 返回文件而不是直接下载，并且也可在 Node 中使用。
+- `size` 是二维码的宽度；边框会增加成品尺寸。
+- 设置出血后，背景（或方形边框的颜色）会延伸到裁切边之外，裁切后不会留下白边。裁切标记位于出血区之外。
+- `colorMode: "cmyk"` 使用简单转换（`rgbToCmyk`：K = 1 − max(R, G, B)，不使用 ICC 配置文件；纯黑只用 K 通道印刷）。如果需要精确的品牌色，请向印刷商索取带色彩管理的转换。
+- 线性渐变和径向渐变在 PDF 中以平滑渐变着色印刷；PDF 为 CMYK 时使用 CMYK；印刷用 SVG 保留渐变，但仍为 RGB。
+- PDF 中的边框文字使用 Helvetica Bold，因此 Latin-1 之外的字符可能无法显示。其他文字请使用 SVG。
+- `getQRAsPrintPDF` 和 `getQRAsPrintPDFBuffer` 返回文件而不是下载，也可在 Node 中使用。
 
-**印多大：** 二维码大约可在其宽度十倍的距离外扫描，因此尺寸 ≈ 扫描距离 ÷ 10（20 cm 的距离需要 2 cm 宽）。更密集的二维码需要更大的尺寸；[打印尺寸计算器](/tools/print-size)已考虑这一点。
+**印多大：** 二维码大约可在其宽度十倍的距离外扫描，因此尺寸 ≈ 扫描距离 ÷ 10（20 cm 的距离需要 2 cm 宽）。越密集的二维码需要越大的尺寸；[印刷尺寸计算器](/tools/print-size)已考虑这一点。

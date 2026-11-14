@@ -4373,7 +4373,6 @@
         "frame": "Bingkai",
         "padding": "Padding",
         "errorCorrection": "Koreksi kesalahan",
-        "border": "Garis tepi",
         "none": "Tidak ada"
       },
       "dotSizeSection": {
@@ -4396,31 +4395,26 @@
         }
       },
       "frameControls": {
-        "importSvg": "Impor SVG",
+        "uploadSvg": "Unggah SVG",
         "publishFrame": "Publikasikan bingkai",
         "theFrameIsAddedAround": "Bingkai ditambahkan di sekeliling kode, sehingga gambar yang diunduh menjadi lebih besar dan kodenya sendiri tetap dapat dipindai.",
         "label": "Label",
         "pickAFrameFirst": "Pilih bingkai terlebih dahulu",
-        "none": "Tidak ada"
+        "none": "Tidak ada",
+        "takesDotColor": "Warnanya mengikuti warna titik-titik kode.",
+        "alsoHasTemplate": "Desain ini juga memiliki bingkai {name} di dalam bingkai ini. Memilih bingkai lain akan mengganti keduanya.",
+        "templateKeepsSize": "Bingkai ini menyesuaikan kode di dalamnya, sehingga gambar yang diunduh tetap berukuran sesuai pilihan Anda."
       },
       "frameFields": {
         "textSize": "Ukuran teks"
       },
       "framePicker": {
-        "more": "Lainnya",
         "showAll": "Lihat semua",
         "frame": "Bingkai",
-        "moreFrames": "Bingkai lainnya",
-        "allTotalFrames": "Semua {total, number} bingkai",
-        "allFrames": "Semua bingkai",
         "searchFrames": "Cari bingkai",
         "searchTotalFrames": "Cari {total, number} bingkai",
-        "closeFrames": "Tutup bingkai",
         "filterFrames": "Filter bingkai",
         "labelFrames": "Bingkai {label}",
-        "commonFrames": "Bingkai umum",
-        "everyFrameBuiltInStyles": "Semua bingkai: bingkai klasik, kode berbentuk, bingkai resmi QRdx, dan bingkai yang Anda simpan. Cukup pilih satu, lalu langsung diterapkan.",
-        "less": "Lebih sedikit",
         "all": "Semua",
         "noFramesMatchQuery": "Tidak ada bingkai yang cocok dengan \"{query}\".",
         "loadingFrames": "Memuat bingkai…",
@@ -4554,7 +4548,6 @@
       },
       "patternControls": {
         "customizeOuterAndCenter": "Sesuaikan bagian luar dan tengah",
-        "border": "Bingkai",
         "higherLevelsSurviveScratchesAnd": "Level yang lebih tinggi tahan terhadap goresan dan logo, tetapi menambah jumlah titik. Gunakan H saat Anda menambahkan logo.",
         "dotShape": "Bentuk titik",
         "dotShapes": "bentuk titik",

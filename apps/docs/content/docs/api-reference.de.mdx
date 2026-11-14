@@ -41,8 +41,8 @@ import { QRCode } from 'qrdx';
 | `cornerEyeDotPattern` | `CornerEyeDotPattern` | `'circle'` | Muster des Eckpunkts |
 | `hideLogo` | `boolean` | `false` | Blendet das Logo aus. Ein Logo wird nur gezeichnet, wenn `logo` gesetzt ist |
 | `logo` | `string` | — | Logo-URL |
-| `templateId` | `string` | `'default'` | Vorlagen-ID |
-| `customTemplate` | `TemplateDefinition` | — | Eigene Vorlage |
+| `templateId` | `string` | `'default'` | Ein [als Template gezeichneter Rahmen](/docs/features/templates) (`'Arrow'`, `'StandardBox'`, …): Das ganze Motiv ist `size` breit |
+| `customTemplate` | `TemplateDefinition` | — | Ein Rahmen, den du im Code zeichnest (hat Vorrang vor `templateId`) |
 | `level` | `ErrorLevel` | `'Q'` | Fehlerkorrektur |
 | `autoLevel` | `boolean` | `false` | Hebt `level` auf H an, wenn das Logo mehr als 7 % des Codes abdeckt (`AUTO_LEVEL_LOGO_COVERAGE`) |
 | `margin` | `number` | `0` | Rand in Modulen |
