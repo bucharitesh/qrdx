@@ -19,7 +19,11 @@ import {
   generateArtVariant,
   renderControlImage,
 } from "@/lib/ai/art-image";
-import { generatePictureVariant, makeScenePicture } from "@/lib/ai/art-picture";
+import {
+  generatePictureVariant,
+  makeScenePicture,
+  quickPaintModel,
+} from "@/lib/ai/art-picture";
 import {
   type ArtWriter,
   composeArtPrompt,
@@ -156,7 +160,12 @@ export async function runArt({
     };
     try {
       variant = picture
-        ? await generatePictureVariant({ ...shared, picture })
+        ? await generatePictureVariant({
+            ...shared,
+            picture,
+            // A scene made in one request paints at low quality, to fit.
+            ...(inlineScene && { model: quickPaintModel }),
+          })
         : await generateArtVariant(shared);
     } catch (error) {
       const timedOut =
