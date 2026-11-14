@@ -7,6 +7,7 @@
 // the console's.
 import { existsSync } from "node:fs";
 import path from "node:path";
+import { docsZoneRewrites } from "@repo/i18n/docs";
 import {
   CONSOLE_ASSET_PREFIX,
   CONSOLE_KEY_HEADER,
@@ -14,7 +15,10 @@ import {
   consoleReturnPath,
   consoleSection,
   consoleZoneRewrites,
+  hasDotSegment,
+  isConsoleOrigin,
   isConsolePath,
+  lowerCasedZonePrefix,
 } from "@repo/next-config/console-zone";
 import { CORE_PATHS, corePathSamples } from "@repo/next-config/core-paths";
 import { prerenderedPagesSource } from "@repo/next-config/csp";
@@ -23,6 +27,15 @@ import {
   platformHostsPattern,
 } from "@repo/next-config/platform-hosts";
 import type { NextConfig } from "next";
+// Next's own route matching, as `next start` and `next dev` run it
+// (server/lib/router-utils/filesystem.js, resolve-routes.js), not the test
+// helper above, which matches paths case-sensitively.
+// @ts-expect-error: exported at run time, not in its declaration file
+import { getMiddlewareMatchers } from "next/dist/build/analysis/get-page-static-info";
+import { modifyRouteRegex } from "next/dist/lib/redirect-status";
+import { getMiddlewareRouteMatcher } from "next/dist/shared/lib/router/utils/middleware-route-matcher";
+import { getPathMatch } from "next/dist/shared/lib/router/utils/path-match";
+import { matchHas } from "next/dist/shared/lib/router/utils/prepare-destination";
 import {
   getRedirectUrl,
   getRewrittenUrl,
@@ -31,6 +44,7 @@ import {
 import { NextRequest } from "next/server";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import { ADMIN_NAV_ITEMS, adminNavLinks } from "@/app/(app)/admin/_lib/nav";
+import { WORKSPACE_HEADER } from "@/lib/workspace-paths";
 
 const ORIGIN = "https://qrdx-console.vercel.app";
 const KEY = "test-zone-key-0123456789abcdef0123456789abcdef";
@@ -48,6 +62,30 @@ const MOVING_SECTIONS: readonly string[] = [
   "ai-usage",
   "affiliates",
 ];
+
+/**
+ * What proxy.ts reads besides the request: the session (signed in as an
+ * admin; held or not) and custom domains (none). Nothing is looked up.
+ */
+function mockProxyDependencies(session: { held: boolean; lookups: number }) {
+  vi.doMock("@/lib/account/session-origin-server", () => ({
+    getSessionAllowingHold: async () => {
+      session.lookups++;
+      return { user: { id: "admin_1" }, session: { id: "s1" } };
+    },
+    isSessionHeld: async () => session.held,
+  }));
+  vi.doMock("next/headers", () => ({ headers: async () => new Headers() }));
+  vi.doMock("@/app/(app)/dashboard/domains/_lib/host-routing", () => ({
+    routeCustomDomain: async () => null,
+  }));
+}
+
+function unmockProxyDependencies() {
+  vi.doUnmock("@/lib/account/session-origin-server");
+  vi.doUnmock("next/headers");
+  vi.doUnmock("@/app/(app)/dashboard/domains/_lib/host-routing");
+}
 
 const ADMIN_DIR = path.resolve(import.meta.dirname, "../../app/(app)/admin");
 
@@ -74,12 +112,66 @@ describe("consoleZoneRewrites", () => {
     ]);
   });
 
+  it("uses the origin alone, whatever else the value has", () => {
+    for (const value of [`${ORIGIN}/base`, `${ORIGIN}/?x=1`, `${ORIGIN}#x`]) {
+      expect(
+        consoleZoneRewrites(value, { hosts: HOSTS }).map(
+          (rule) => rule.destination,
+        ),
+        value,
+      ).toEqual([
+        `${ORIGIN}/admin/:section/:path*`,
+        `${ORIGIN}/console-static/:path*`,
+      ]);
+    }
+  });
+
   it("trims any number of trailing slashes, fast", () => {
     const run = "/".repeat(200_000);
     const start = performance.now();
     const [rule] = consoleZoneRewrites(`${ORIGIN}${run}`, { hosts: HOSTS });
     expect(rule?.destination).toBe(`${ORIGIN}/admin/:section/:path*`);
     expect(performance.now() - start).toBeLessThan(200);
+  });
+});
+
+describe("isConsoleOrigin (what env.ts accepts as CONSOLE_ORIGIN)", () => {
+  it.each([
+    ORIGIN,
+    `${ORIGIN}/`,
+    "https://Qrdx-Console.vercel.app",
+    "http://localhost:3002",
+    "http://127.0.0.1:3002/",
+  ])("accepts %s", (value) => {
+    expect(isConsoleOrigin(value)).toBe(true);
+  });
+
+  it.each([
+    "",
+    "qrdx-console.vercel.app",
+    `${ORIGIN}?x=1`,
+    `${ORIGIN}/base`,
+    `${ORIGIN}#x`,
+    "https://user:pass@qrdx-console.vercel.app",
+    "http://qrdx-console.vercel.app",
+    "ftp://qrdx-console.vercel.app",
+  ])("refuses %s", (value) => {
+    expect(isConsoleOrigin(value)).toBe(false);
+  });
+
+  it("stops the app from starting with anything else, naming the variable", async () => {
+    const errors = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      vi.resetModules();
+      vi.stubEnv("CONSOLE_ORIGIN", `${ORIGIN}?x=1`);
+      await expect(import("@/env")).rejects.toThrow("CONSOLE_ORIGIN");
+      vi.resetModules();
+      vi.stubEnv("CONSOLE_ORIGIN", `${ORIGIN}/`);
+      expect((await import("@/env")).env.CONSOLE_ORIGIN).toBe(`${ORIGIN}/`);
+    } finally {
+      vi.unstubAllEnvs();
+      errors.mockRestore();
+    }
   });
 });
 
@@ -118,6 +210,40 @@ describe("console paths", () => {
   it("includes the console's build assets, which aren't a section", () => {
     expect(isConsolePath("/console-static/_next/static/x.js")).toBe(true);
     expect(consoleSection("/console-static/_next/static/x.js")).toBeNull();
+  });
+});
+
+describe("lowerCasedZonePrefix and hasDotSegment (proxy.ts)", () => {
+  it.each([
+    ["/ADMIN/growth", "/admin/growth"],
+    ["/Admin", "/admin"],
+    ["/aDmIn/affiliates/X", "/admin/affiliates/X"],
+    ["/CONSOLE-STATIC/_next/x.js", "/console-static/_next/x.js"],
+  ])("sends %s to %s", (pathname, expected) => {
+    expect(lowerCasedZonePrefix(pathname)).toBe(expected);
+  });
+
+  it.each([
+    "/admin",
+    "/admin/growth",
+    "/console-static/x.js",
+    "/Adminx",
+    "/x/ADMIN",
+    "/",
+  ])("leaves %s alone", (pathname) => {
+    expect(lowerCasedZonePrefix(pathname)).toBeNull();
+  });
+
+  it("finds dot segments, encoded or not", () => {
+    for (const pathname of [
+      "/console-static/../admin/growth",
+      "/console-static/%2e%2e/admin/growth",
+      "/console-static/%2E%2E/x",
+      "/admin/growth/x%2ey",
+    ]) {
+      expect(hasDotSegment(pathname), pathname).toBe(true);
+    }
+    expect(hasDotSegment("/console-static/_next/static/x.js")).toBe(false);
   });
 });
 
@@ -242,10 +368,20 @@ describe("platform hosts (next.config's host conditions and proxy.ts)", () => {
 describe("next.config.ts", () => {
   const saved = { ...process.env };
 
-  /** The app's config with CONSOLE_ORIGIN set to `origin` (or unset). */
-  async function loadConfig(origin: string | undefined): Promise<NextConfig> {
-    if (origin === undefined) delete process.env.CONSOLE_ORIGIN;
-    else process.env.CONSOLE_ORIGIN = origin;
+  /** The app's config with these variables set (or, undefined, unset). */
+  async function loadConfig(
+    values: Record<string, string | undefined>,
+  ): Promise<NextConfig> {
+    for (const name of [
+      "CONSOLE_ORIGIN",
+      "CONSOLE_ZONE_KEY",
+      "DOCS_ZONE_URL",
+    ]) {
+      delete process.env[name];
+    }
+    for (const [name, value] of Object.entries(values)) {
+      if (value !== undefined) process.env[name] = value;
+    }
     process.env.CSP_DEV = "1";
     vi.resetModules();
     // createMDX() rewrites .source/*.ts in the background; the routes don't
@@ -256,18 +392,36 @@ describe("next.config.ts", () => {
     return (await import("@/next.config")).default as unknown as NextConfig;
   }
 
+  const DOCS = "https://docs.qrdx.dev";
   let on: NextConfig;
   let off: NextConfig;
+  let both: NextConfig;
+  let warned: string[];
 
   beforeAll(async () => {
-    off = await loadConfig(undefined);
-    on = await loadConfig(`${ORIGIN}/`);
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    off = await loadConfig({});
+    expect(warn).not.toHaveBeenCalled();
+    both = await loadConfig({
+      CONSOLE_ORIGIN: ORIGIN,
+      CONSOLE_ZONE_KEY: KEY,
+      DOCS_ZONE_URL: DOCS,
+    });
+    expect(warn).not.toHaveBeenCalled();
+    on = await loadConfig({ CONSOLE_ORIGIN: `${ORIGIN}/` });
+    warned = warn.mock.calls.map((call) => String(call[0]));
+    warn.mockRestore();
   }, 60_000);
 
   afterAll(() => {
     process.env = saved;
     vi.doUnmock("fumadocs-mdx/next");
+    unmockProxyDependencies();
   });
+
+  /** Whether `url` (absolute, or a path on qrdx.dev) is on the console's origin. */
+  const onConsole = (url: string) =>
+    new URL(url, "https://qrdx.dev").origin === ORIGIN;
 
   const resolve = (
     nextConfig: NextConfig,
@@ -283,7 +437,7 @@ describe("next.config.ts", () => {
   ) {
     const response = await resolve(nextConfig, url, headers);
     const target = getRewrittenUrl(response) ?? getRedirectUrl(response);
-    return target?.startsWith(ORIGIN) ? target : null;
+    return target && onConsole(target) ? target : null;
   }
 
   const CORE = [
@@ -353,18 +507,117 @@ describe("next.config.ts", () => {
     expect(await consoleTarget(off, `https://qrdx.dev${pathname}`)).toBeNull();
   });
 
+  interface Rule {
+    source: string;
+    destination: string;
+    has?: Parameters<typeof matchHas>[2];
+    missing?: Parameters<typeof matchHas>[3];
+  }
+  const beforeFiles = async (nextConfig: NextConfig) => {
+    const phases = (await nextConfig.rewrites?.()) as
+      | { beforeFiles: Rule[] }
+      | undefined;
+    return phases?.beforeFiles ?? [];
+  };
+
   it("adds exactly those two rules", async () => {
-    const phases = (await on.rewrites?.()) as {
-      beforeFiles: { destination: string }[];
+    const rules = await beforeFiles(on);
+    expect(rules.filter((rule) => onConsole(rule.destination))).toHaveLength(2);
+    expect(rules.length - (await beforeFiles(off)).length).toBe(2);
+  });
+
+  it("puts them right after the docs zone's when both zones are on", async () => {
+    const rules = await beforeFiles(both);
+    const docsCount = docsZoneRewrites(DOCS, { markdown: { has: [] } }).length;
+    const zoneOf = (rule: Rule) => {
+      const { origin } = new URL(rule.destination, "https://qrdx.dev");
+      if (origin === DOCS) return "docs";
+      return origin === ORIGIN ? "console" : "app";
     };
-    const offPhases = (await off.rewrites?.()) as {
-      beforeFiles: { destination: string }[];
-    };
-    const toConsole = phases.beforeFiles.filter((rule) =>
-      rule.destination.startsWith(ORIGIN),
+    const zones = rules.map(zoneOf);
+    const firstDocs = zones.indexOf("docs");
+    expect(zones.slice(firstDocs, firstDocs + docsCount + 2)).toEqual([
+      ...Array(docsCount).fill("docs"),
+      "console",
+      "console",
+    ]);
+    expect(zones.filter((zone) => zone !== "app")).toHaveLength(docsCount + 2);
+    expect(rules.length - (await beforeFiles(off)).length).toBe(docsCount + 2);
+    expect(await consoleTarget(both, "https://qrdx.dev/admin/growth")).toBe(
+      `${ORIGIN}/admin/growth`,
     );
-    expect(toConsole).toHaveLength(2);
-    expect(phases.beforeFiles.length - offPhases.beforeFiles.length).toBe(2);
+    expect(await consoleTarget(both, "https://qrdx.dev/docs")).toBeNull();
+  });
+
+  it("inlines CONSOLE_ORIGIN into server code, empty while unset", () => {
+    const inlined = (nextConfig: NextConfig) =>
+      nextConfig.compiler?.defineServer?.["process.env.CONSOLE_ORIGIN"];
+    expect(inlined(off)).toBe("");
+    expect(inlined(on)).toBe(`${ORIGIN}/`);
+    expect(inlined(both)).toBe(ORIGIN);
+  });
+
+  it("warns at build time when the zone key is missing", () => {
+    expect(warned).toHaveLength(1);
+    expect(warned[0]).toMatch(/CONSOLE_ZONE_KEY/);
+  });
+
+  // Next builds beforeFiles rewrites without experimental.caseSensitiveRoutes,
+  // so /ADMIN/growth reaches the console too; the proxy's matcher has to see
+  // every such path, or it would get there without the proxy's checks.
+  describe("in any case, with Next's own matching", () => {
+    const req = { headers: { host: "qrdx.dev" } } as never;
+    const rewriteMatches = async (pathname: string) =>
+      (await beforeFiles(on))
+        .filter((rule) => onConsole(rule.destination))
+        .some((rule) => {
+          const match = getPathMatch(rule.source, {
+            strict: true,
+            removeUnnamedParams: true,
+            regexModifier: (regex: string) => modifyRouteRegex(regex),
+          });
+          return (
+            match(pathname) !== false &&
+            matchHas(req, {}, rule.has, rule.missing) !== false
+          );
+        });
+
+    let proxyMatches: (pathname: string) => boolean;
+    beforeAll(async () => {
+      // Only its matcher is read: no session or domain lookups run.
+      vi.resetModules();
+      mockProxyDependencies({ held: false, lookups: 0 });
+      const { config } = await import("@/proxy");
+      const matcher = getMiddlewareRouteMatcher(
+        getMiddlewareMatchers(config.matcher, { basePath: "" } as never),
+      );
+      proxyMatches = (pathname) => matcher(pathname, req, {});
+    });
+
+    const CASINGS = [
+      "/admin/growth",
+      "/ADMIN/growth",
+      "/Admin/affiliates/abc",
+      "/aDmIn/GROWTH",
+      "/admin/Numbers",
+      "/console-static/_next/static/x.js",
+      "/CONSOLE-STATIC/_next/static/x.js",
+      "/Console-Static/x.js",
+    ];
+
+    it.each(CASINGS)(
+      "%s reaches the console and passes the proxy",
+      async (pathname) => {
+        expect(await rewriteMatches(pathname)).toBe(true);
+        expect(proxyMatches(pathname)).toBe(true);
+      },
+    );
+
+    it("never rewrites the other sections, in any case", async () => {
+      for (const pathname of ["/ADMIN", "/Admin/users", "/ADMIN/growthx"]) {
+        expect(await rewriteMatches(pathname), pathname).toBe(false);
+      }
+    });
   });
 
   it("puts no page policy on the console's assets while it's on", async () => {
@@ -392,7 +645,7 @@ describe("next.config.ts", () => {
 describe("proxy.ts", () => {
   const saved = { ...process.env };
   /** Whether the signed-in session is held (lib/account/session-origin.ts). */
-  const session = { held: false };
+  const session = { held: false, lookups: 0 };
 
   /** The proxy with CONSOLE_ORIGIN (and the key) set or unset. */
   async function loadProxy(
@@ -404,17 +657,7 @@ describe("proxy.ts", () => {
     }
     process.env.CSP_DEV = "1";
     vi.resetModules();
-    vi.doMock("@/lib/account/session-origin-server", () => ({
-      getSessionAllowingHold: async () => ({
-        user: { id: "admin_1" },
-        session: { id: "s1" },
-      }),
-      isSessionHeld: async () => session.held,
-    }));
-    vi.doMock("next/headers", () => ({ headers: async () => new Headers() }));
-    vi.doMock("@/app/(app)/dashboard/domains/_lib/host-routing", () => ({
-      routeCustomDomain: async () => null,
-    }));
+    mockProxyDependencies(session);
     return (await import("@/proxy")).default;
   }
 
@@ -436,9 +679,7 @@ describe("proxy.ts", () => {
 
   afterAll(() => {
     process.env = saved;
-    vi.doUnmock("@/lib/account/session-origin-server");
-    vi.doUnmock("next/headers");
-    vi.doUnmock("@/app/(app)/dashboard/domains/_lib/host-routing");
+    unmockProxyDependencies();
   });
 
   const request = (url: string, headers: Record<string, string> = {}) =>
@@ -466,6 +707,15 @@ describe("proxy.ts", () => {
     const sent = forwarded(response);
     expect(sent(CONSOLE_KEY_HEADER)).toBe(KEY);
     expect(sent("content-security-policy")).toBeUndefined();
+  });
+
+  it("drops the workspace header the browser sent", async () => {
+    const response = await on(
+      request("https://qrdx.dev/admin/growth", { [WORKSPACE_HEADER]: "acme" }),
+    );
+    const sent = forwarded(response);
+    expect(sent(WORKSPACE_HEADER)).toBeUndefined();
+    expect(sent(CONSOLE_KEY_HEADER)).toBe(KEY);
   });
 
   it("drops a key the browser sent when there's none to send", async () => {
@@ -512,6 +762,49 @@ describe("proxy.ts", () => {
     expect(response.headers.get("content-security-policy")).toMatch(/'nonce-/);
     // Passed on untouched, as any other header: nothing reads it here.
     expect(forwarded(response)(CONSOLE_KEY_HEADER)).toBe("forged");
+  });
+
+  it.each([
+    ["/ADMIN/growth?page=2", "/admin/growth?page=2"],
+    ["/Admin", "/admin"],
+    ["/aDmIn/affiliates/abc", "/admin/affiliates/abc"],
+    ["/CONSOLE-STATIC/_next/x.js", "/console-static/_next/x.js"],
+  ])("sends %s to the lower-case path, in both modes", async (path, target) => {
+    for (const proxy of [on, off]) {
+      const response = await proxy(request(`https://qrdx.dev${path}`));
+      expect(response.status).toBe(308);
+      expect(response.headers.get("location")).toBe(
+        `https://qrdx.dev${target}`,
+      );
+    }
+  });
+
+  it("answers 404 for dot segments in console paths, in both modes", async () => {
+    for (const proxy of [on, off]) {
+      for (const path of [
+        "/console-static/a..b.js",
+        "/console-static/x%2Ey.js",
+        "/admin/affiliates/a..b",
+      ]) {
+        const response = await proxy(request(`https://qrdx.dev${path}`));
+        expect(response.status, path).toBe(404);
+      }
+    }
+  });
+
+  it("passes the console's assets on without a session lookup", async () => {
+    session.lookups = 0;
+    const response = await on(
+      request("https://qrdx.dev/console-static/_next/static/x.js"),
+    );
+    expect(response.status).toBe(200);
+    expect(response.headers.get("content-security-policy")).toBeNull();
+    expect(forwarded(response)(CONSOLE_KEY_HEADER)).toBe(KEY);
+    const unset = await off(
+      request("https://qrdx.dev/console-static/_next/static/x.js"),
+    );
+    expect(unset.status).toBe(200);
+    expect(session.lookups).toBe(0);
   });
 
   it("still sends a held session to the check page first", async () => {

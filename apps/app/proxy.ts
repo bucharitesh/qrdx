@@ -1,7 +1,9 @@
 import { workspaceSlugFromPath } from "@repo/availability/workspace-pattern";
 import {
   CONSOLE_KEY_HEADER,
+  hasDotSegment,
   isConsolePath,
+  lowerCasedZonePrefix,
 } from "@repo/next-config/console-zone";
 import {
   appCsp,
@@ -116,6 +118,24 @@ export default async function proxy(request: NextRequest) {
   if (customDomainResponse) {
     return customDomainResponse;
   }
+  // Next's rewrites match /ADMIN/growth as /admin/growth, but this proxy's
+  // matchers and the pages are case-sensitive: any other casing of /admin or
+  // /console-static goes to the lower-case path first (it was a 404 before),
+  // so nothing reaches the console without passing through here.
+  const lowerCased = lowerCasedZonePrefix(request.nextUrl.pathname);
+  if (lowerCased) {
+    const url = request.nextUrl.clone();
+    url.pathname = lowerCased;
+    return NextResponse.redirect(url, 308);
+  }
+  // No dot segments into or out of the console's paths (its assets come
+  // here for this check alone: no session lookup).
+  if (
+    isConsolePath(request.nextUrl.pathname) &&
+    hasDotSegment(request.nextUrl.pathname)
+  ) {
+    return new NextResponse("Not found", { status: 404 });
+  }
   // The catch-all matcher also reaches here on hosts that aren't custom domains.
   const appPath = APP_PATHS.test(request.nextUrl.pathname);
   if (!(appPath || ADMIN_PATHS.test(request.nextUrl.pathname))) {
@@ -176,6 +196,10 @@ export const config = {
     // Nonce routes without a sign-in redirect (@repo/next-config/csp NONCE_ROUTE).
     "/admin",
     "/admin/:path*",
+    // The console's prefixes in any casing (its assets too): next.config's
+    // rewrites match them all, so each passes through here first.
+    "/:prefix([aA][dD][mM][iI][nN])/:path*",
+    "/:prefix([cC][oO][nN][sS][oO][lL][eE]-[sS][tT][aA][tT][iI][cC])/:path*",
     "/oauth/:path*",
     "/invite/:path*",
     "/join/:path*",
