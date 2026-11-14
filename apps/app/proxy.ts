@@ -1,4 +1,3 @@
-import { isMarkdownPreferred, rewritePath } from "fumadocs-core/negotiation";
 import { headers } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
 import { routeCustomDomain } from "@/app/(app)/dashboard/domains/_lib/host-routing";
@@ -18,8 +17,6 @@ import {
 } from "@/lib/security/csp";
 import { WORKSPACE_HEADER, workspaceSlugFromPath } from "@/lib/workspace-paths";
 import { API_AUTH_PREFIX } from "./routes";
-
-const { rewrite: rewriteLLM } = rewritePath("/docs/*path", "/llms.mdx/*path");
 
 /** Signed-in pages: signed-out visitors are sent to sign in (and back). */
 const APP_PATHS =
@@ -80,14 +77,6 @@ export default async function proxy(request: NextRequest) {
   const appPath = APP_PATHS.test(request.nextUrl.pathname);
   if (!(appPath || ADMIN_PATHS.test(request.nextUrl.pathname))) {
     return next(request);
-  }
-
-  if (isMarkdownPreferred(request)) {
-    const result = rewriteLLM(request.nextUrl.pathname);
-
-    if (result) {
-      return NextResponse.rewrite(new URL(result, request.nextUrl));
-    }
   }
 
   // Held or not (lib/account/session-origin.ts): a held session isn't

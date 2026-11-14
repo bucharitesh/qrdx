@@ -78,9 +78,12 @@ function Breadcrumb({ slug }: { slug: string | null }) {
 export function AppTopBar({
   shell,
   limitWarnings = null,
+  docsSearch,
 }: {
   shell: ShellData | null;
   limitWarnings?: Promise<Meter[]> | null;
+  /** The command menu searches the docs (a docs site serves them). */
+  docsSearch: boolean;
 }) {
   const t = useTranslations("app.shell.appTopbar");
   const slug = shell?.workspace.slug ?? null;
@@ -110,7 +113,7 @@ export function AppTopBar({
         <Breadcrumb slug={slug} />
 
         <div className="ml-auto flex shrink-0 items-center gap-1.5 md:gap-2">
-          <CommandMenu />
+          <CommandMenu docsSearch={docsSearch} />
           <CreateMenu />
           <HelpMenu />
           <UserProfileDropdown plan={shell?.personalPlan} signedIn />

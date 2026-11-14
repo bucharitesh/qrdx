@@ -5,9 +5,8 @@
 // out of their scripts), so each look is decoded here the way the
 // playground decodes it.
 
+import { tilesFor } from "@repo/docs-assets/qr-catalog-tiles";
 import { describe, expect, it } from "vitest";
-import { catalogPlaygroundHref } from "@/components/docs/qr-catalog";
-import { tilesFor } from "@/components/docs/qr-catalog-tiles";
 import {
   EXAMPLES as ART_EXAMPLES,
   artExampleHref,
@@ -31,8 +30,12 @@ import {
 } from "@/components/sections/home/hero-looks";
 import { useCases } from "@/components/sections/home/use-cases-section";
 import { showcaseThemeStyles } from "@/lib/landing/showcase-styles";
-import { parsePlaygroundParams } from "@/lib/playground-links";
+import { parsePlaygroundParams, playgroundHref } from "@/lib/playground-links";
 import { decodeStyleParam } from "@/lib/playground-style";
+import {
+  type LinkableStyle,
+  packStyleParam,
+} from "@/lib/playground-style-pack";
 import {
   USE_CASE_CODES,
   type UseCaseArtId,
@@ -148,21 +151,28 @@ describe("home use cases", () => {
   });
 });
 
+// The docs site (apps/docs) links each tile of its style catalogue
+// (/docs/styles) as its option on plain square shapes, packed the way the
+// pages above pack theirs: every tile's option must survive the playground's
+// decoder.
 describe("docs style catalogue", () => {
   it.each(["body", "eye", "dot", "frame"] as const)(
     "every %s tile opens its option in the playground",
     (kind) => {
       for (const tile of tilesFor(kind)) {
-        const { path, design } = read(catalogPlaygroundHref(tile));
-        expect(path).toBe("/playground");
         const { bodyPattern, cornerEyePattern, cornerEyeDotPattern, frame } =
           tile.props;
-        expect(design?.styles, tile.id).toEqual({
+        const look = {
           bodyPattern,
           cornerEyePattern,
           cornerEyeDotPattern,
-          ...(frame && { frame }),
-        });
+          ...(frame && { frame: frame as LinkableStyle["frame"] }),
+        };
+        const { path, design } = read(
+          playgroundHref({ style: packStyleParam(look) }),
+        );
+        expect(path).toBe("/playground");
+        expect(design?.styles, tile.id).toEqual(look);
       }
     },
   );

@@ -13,10 +13,8 @@ import {
   legalSource,
 } from "@/lib/content-source";
 import { CUSTOMERS_PATH } from "@/lib/customers";
-import { docsIndex, docsPageLocales } from "@/lib/docs-index";
 import { docsZoneManifest } from "@/lib/docs-zone-manifest";
 import { isPathAvailable } from "@/lib/feature-availability";
-import { docsSitemapEntries } from "@/lib/i18n/docs-seo";
 import { isLocalizedPath } from "@/lib/i18n/paths";
 import { localizedEntries } from "@/lib/i18n/sitemap";
 import { getIntegrationAvailability } from "@/lib/integration-availability";
@@ -66,29 +64,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 }
 
 /**
- * The docs' entries: from the docs site's manifest when DOCS_ZONE_URL is set
- * (that fetch makes this sitemap regenerate hourly; lib/docs-zone-manifest.ts),
- * else from this app's own copy of the docs. Docs for features this
- * deployment can't offer (custom domains) are left out; the pages stay up
- * for existing users. Translations a native reviewer signed off follow their
- * English page (lib/i18n/docs-seo.ts).
+ * The docs' entries, from the docs site's manifest when DOCS_ZONE_URL is set
+ * (that fetch makes this sitemap regenerate hourly; lib/docs-zone-manifest.ts).
+ * The docs site decides them: the pages this deployment offers, and the
+ * translations a native reviewer signed off. Without a docs site there are
+ * none: the docs URLs redirect to qrdx.dev, whose sitemap lists them.
  */
 async function docsEntries(): Promise<Entry[]> {
   const manifest = await docsZoneManifest();
-  if (manifest) return manifest.sitemap;
-  return docsIndex()
-    .getPages()
-    .filter((page) => isPathAvailable(page.url))
-    .flatMap((page) =>
-      docsSitemapEntries(page.slugs, docsPageLocales(page.slugs), {
-        lastModified: contentLastModified(
-          `content/docs/${page.path}`,
-          page.data.lastModified,
-        ),
-        changeFrequency: "weekly",
-        priority: page.url === "/docs" ? 0.8 : 0.5,
-      }),
-    );
+  return manifest?.sitemap ?? [];
 }
 
 function entries(docs: Entry[]): Entry[] {

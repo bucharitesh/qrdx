@@ -180,7 +180,6 @@ describe("Organization schema", () => {
     for (const layout of [
       "app/(app)/(home)/layout.tsx",
       "app/[lang]/(home)/layout.tsx",
-      "app/[lang]/docs/layout.tsx",
       // Both playground layouts render it (/playground and shared themes).
       "components/playground/playground-shell.tsx",
     ]) {

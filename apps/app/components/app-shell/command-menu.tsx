@@ -138,8 +138,10 @@ function HitItems({
 /**
  * ⌘K: jump to any app page, start something new, or find a code, landing
  * page or docs article. Workspace results come from the active workspace.
+ * Docs articles only where the docs site serves the docs (`docsSearch`,
+ * DOCS_ZONE_URL): without it /api/search answers 404.
  */
-export function CommandMenu() {
+export function CommandMenu({ docsSearch }: { docsSearch: boolean }) {
   const tc = useContentText();
   const t = useTranslations("app.shell.commandMenu");
   const router = useRouter();
@@ -182,10 +184,12 @@ export function CommandMenu() {
   useEffect(() => {
     if (!open || term.length < 2) return;
     let cancelled = false;
-    const docs = fetch(`/api/search?query=${encodeURIComponent(term)}`)
-      .then((res) => (res.ok ? res.json() : []))
-      .then(toDocHits)
-      .catch(() => []);
+    const docs: Promise<DocHit[]> = docsSearch
+      ? fetch(`/api/search?query=${encodeURIComponent(term)}`)
+          .then((res) => (res.ok ? res.json() : []))
+          .then(toDocHits)
+          .catch(() => [])
+      : Promise.resolve([]);
     void Promise.all([searchWorkspace(term), docs]).then(
       ([workspace, docHits]) => {
         if (cancelled) return;
@@ -211,7 +215,7 @@ export function CommandMenu() {
     return () => {
       cancelled = true;
     };
-  }, [open, term]);
+  }, [open, term, docsSearch]);
 
   const onOpenChange = (next: boolean) => {
     setOpen(next);
@@ -324,7 +328,9 @@ export function CommandMenu() {
       <Dialog onOpenChange={onOpenChange} open={open}>
         <DialogHeader className="sr-only">
           <DialogTitle>{t("searchOrJumpTo2")}</DialogTitle>
-          <DialogDescription>{t("findAPageACode")}</DialogDescription>
+          <DialogDescription>
+            {docsSearch ? t("findAPageACode") : t("findAPageOrA")}
+          </DialogDescription>
         </DialogHeader>
         <DialogContent
           className="top-[20%] translate-y-0 overflow-hidden p-0 sm:max-w-xl"
@@ -336,7 +342,11 @@ export function CommandMenu() {
           >
             <CommandInput
               onValueChange={setQuery}
-              placeholder={t("searchCodesPagesSettingsAnd")}
+              placeholder={
+                docsSearch
+                  ? t("searchCodesPagesSettingsAnd")
+                  : t("searchCodesPagesAndSettings")
+              }
               value={query}
             />
             <CommandList className="max-h-[min(60vh,420px)]">

@@ -151,7 +151,7 @@ Download the document at [\`https://qrdx.dev/openapi.json\`](/openapi.json) (als
 
 /**
  * Writes the pages. `server` is the fumadocs-openapi server of the document
- * (lib/api-reference), `output` the content folder.
+ * (generate.ts), `output` the content folder.
  */
 export async function writeReferencePages(
   document: OpenAPIV3_1.Document,
