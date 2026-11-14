@@ -24,11 +24,15 @@ export function getClientIp(req: { headers: Pick<Headers, "get"> }): string {
   );
 }
 
+/**
+ * Throws a 429 when any check is over its limit. `rate` counts one request as
+ * several (default 1).
+ */
 export async function enforceRateLimits(
-  checks: Array<{ limiter: RateLimiter; key: string }>,
+  checks: Array<{ limiter: RateLimiter; key: string; rate?: number }>,
 ): Promise<void> {
   const results = await Promise.all(
-    checks.map(({ limiter, key }) => limiter.limit(key)),
+    checks.map(({ limiter, key, rate }) => limiter.limit(key, rate)),
   );
   const blocked = results.filter((result) => !result.success);
 
