@@ -2,6 +2,11 @@
   "extends": ["@repo/typescript-config/nextjs.json"],
   "compilerOptions": {
     "allowArbitraryExtensions": true,
+    // Nothing here emits types (noEmit). With declarations on, tsc wants
+    // every inferred type nameable from this app, and @repo/auth's client
+    // (through @repo/analytics) infers types from its own dependencies.
+    "declaration": false,
+    "declarationMap": false,
     "paths": {
       "@/registry/*": ["../../packages/docs-assets/registry/*"],
       "@/*": ["./*"],

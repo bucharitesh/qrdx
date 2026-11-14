@@ -8,11 +8,10 @@ import {
   docsEnglishRewrites,
   docsMarkdownAcceptRewrites,
   docsMarkdownRewrites,
-  translatedDocsSegments,
+  docsZoneRewrites,
 } from "@repo/i18n/docs";
 import { englishRedirects, englishRewrites } from "@repo/i18n/routing";
 import { config, withAnalyzer } from "@repo/next-config";
-import { docsZoneRewrites } from "@repo/next-config/docs-zone";
 import { createMDX } from "fumadocs-mdx/next";
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
@@ -72,10 +71,9 @@ const MARKDOWN_REQUEST = {
 };
 
 // The docs site (apps/docs-site) at DOCS_ZONE_URL serves the docs: their
-// URLs are proxied there, ahead of every rule below
-// (@repo/next-config/docs-zone). Unset, this app serves its own copy.
+// URLs are proxied there, ahead of every rule below (@repo/i18n/docs).
+// Unset, this app serves its own copy.
 const docsZone = docsZoneRewrites(env.DOCS_ZONE_URL, {
-  translatedSegments: translatedDocsSegments(),
   markdown: MARKDOWN_REQUEST,
 });
 

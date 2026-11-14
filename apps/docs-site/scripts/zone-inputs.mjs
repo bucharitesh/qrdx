@@ -1,11 +1,18 @@
 #!/usr/bin/env node
 // What the docs build reads from the main app, written before every dev
-// server, build, typecheck and test (package.json):
+// server, build, typecheck and test (package.json), and nowhere committed,
+// so none of it can go stale between merges:
 //
 // 1. packages/config/facts.generated.json, the product facts snapshot
 //    (`bun run --filter docs facts:snapshot`, from apps/docs/lib/
 //    product-facts.ts), which lib/product-facts.ts reads.
-// 2. generated/zone-availability.json: the main app's
+// 2. packages/i18n/messages/<locale>.json, the namespaces of the message
+//    catalogs the docs read (`bun run --filter docs i18n:docs-messages`,
+//    DOCS_NAMESPACES in @repo/i18n), which lib/i18n/messages.ts loads.
+// 3. packages/docs-assets/openapi.json, a copy of the main app's OpenAPI
+//    document (`bun run --filter docs openapi:export`), which the API
+//    reference pages render (lib/api-reference.ts).
+// 4. generated/zone-availability.json: the main app's
 //    ${MAIN_ZONE_URL}/zone/availability.json, which lib/feature-availability.ts
 //    reads for <IfAvailable> and the sidebar. When it can't be fetched
 //    (MAIN_ZONE_URL unset, offline, a CI run), the file says so and the docs
@@ -25,17 +32,16 @@ const root = join(app, "..", "..");
 const AVAILABILITY_PATH = "/zone/availability.json";
 const OUT = join(app, "generated", "zone-availability.json");
 
-function factsSnapshot() {
-  const result = spawnSync(
-    "bun",
-    ["run", "--filter", "docs", "facts:snapshot"],
-    {
-      cwd: root,
-      stdio: "inherit",
-    },
-  );
+/** Runs one of the main app's scripts that write a generated input. */
+function mainAppScript(script, what) {
+  const result = spawnSync("bun", ["run", "--filter", "docs", script], {
+    cwd: root,
+    stdio: "inherit",
+  });
   if (result.status !== 0) {
-    console.error("zone-inputs: the product facts snapshot failed.");
+    console.error(
+      `zone-inputs: ${what} failed (bun run --filter docs ${script}).`,
+    );
     process.exit(result.status ?? 1);
   }
 }
@@ -103,7 +109,9 @@ async function fetchAvailability() {
   }
 }
 
-factsSnapshot();
+mainAppScript("facts:snapshot", "the product facts snapshot");
+mainAppScript("i18n:docs-messages", "the docs' message catalogs");
+mainAppScript("openapi:export", "the OpenAPI document's copy");
 const file = await fetchAvailability();
 mkdirSync(dirname(OUT), { recursive: true });
 writeFileSync(OUT, `${JSON.stringify(file, null, 2)}\n`);

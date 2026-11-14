@@ -1,22 +1,30 @@
 "use client";
 
-import { ConsentRoot } from "@c15t/nextjs";
-import { consentConfig } from "./config";
-import { ConsentScripts } from "./consent-scripts";
-import { CookieBanner } from "./cookie-banner";
-import { CookiePreferences } from "./cookie-preferences";
+import "@/lib/analytics/privacy";
+import { ConsentManager as Consent } from "@repo/analytics/consent/consent-manager";
+import type { ComponentProps } from "react";
 
 /**
- * c15t consent for QRdx's own pages. Rendered beside the page tree (not
- * around it) and only off customer pages, so hosted pages never get the
- * provider, banner or QRdx's tools.
+ * A plain <a> for the banner's and preferences' privacy policy links: the
+ * policy is a main-app page, so a full page load (components/zone-link.tsx).
+ */
+function PolicyLink({
+  prefetch: _prefetch,
+  ...props
+}: ComponentProps<"a"> & {
+  href: string;
+  prefetch?: boolean;
+}) {
+  return <a {...props} />;
+}
+
+/**
+ * The cookie banner, preferences and consent-gated tools
+ * (packages/analytics/consent), as on the main app's pages, minus the plan
+ * lookup: the docs site has no server actions, and the main app's pages
+ * set that PostHog person property. @/lib/analytics/privacy registers the
+ * docs site's untracked pages before anything is tracked.
  */
 export function ConsentManager() {
-  return (
-    <ConsentRoot config={consentConfig}>
-      <CookieBanner />
-      <CookiePreferences />
-      <ConsentScripts />
-    </ConsentRoot>
-  );
+  return <Consent link={PolicyLink} />;
 }

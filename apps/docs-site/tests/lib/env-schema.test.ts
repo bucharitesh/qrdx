@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 // As in the main app: the environment is declared in env.ts and the package
 // keys it extends, and explained in .env.example, which lists every
@@ -10,6 +10,7 @@ const read = (path: string) => readFileSync(join(ROOT, path), "utf8");
 
 const SCHEMAS = [
   "env.ts",
+  "../../packages/analytics/keys.ts",
   "../../packages/config/keys.ts",
   "../../packages/next-config/keys.ts",
 ];
@@ -55,5 +56,22 @@ describe(".env.example", () => {
     for (const name of ["DATABASE_URL", "BETTER_AUTH_SECRET"]) {
       expect(declared.has(name)).toBe(false);
     }
+  });
+});
+
+describe("a missing variable", () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+    vi.resetModules();
+    vi.restoreAllMocks();
+  });
+
+  it("stops the production server, naming it and this app's template", async () => {
+    vi.spyOn(console, "error").mockImplementation(() => undefined);
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("MAIN_ZONE_URL", "");
+    await expect(import("@/env")).rejects.toThrow(
+      "Invalid environment variables: MAIN_ZONE_URL. See apps/docs-site/.env.example.",
+    );
   });
 });
