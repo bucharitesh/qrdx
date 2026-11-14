@@ -3502,7 +3502,12 @@
       "qrCodeDialog": {
         "getCode": "Obter código",
         "useThisDesignInYour": "Use este design no seu app, em uma página web, pela API ou com um assistente de IA.",
+        "frameworks": "Frameworks",
+        "framework": "Framework",
         "installTheOpenSourceQrdx": "Instale o pacote open source <code>qrdx</code> ({version} no npm) e adicione este componente.",
+        "installAndDrawIntoAnyElement": "Instale o pacote open source <code>qrdx</code> ({version} no npm) e desenhe este design em qualquer elemento.",
+        "pasteThisIntoAnyPage": "Cole isto em qualquer página: o script carrega o elemento <code>qrdx-code</code> de uma CDN. Com um bundler, instale <code>qrdx</code> e importe <code>qrdx/element/define</code> no lugar.",
+        "withoutABundlerImportIt": "Sem um bundler, importe a partir de",
         "addTheQrCodeComponent": "Adicione o componente QR Code do registro do QRdx e use com este design.",
         "aPublicImageOfThis": "Uma imagem pública deste código para incorporar onde quiser. Sem precisar de chave de API.",
         "createsADynamicCodeWith": "Cria um QR code dinâmico com este design. Requer uma <link>chave de API</link>.",
@@ -6367,7 +6372,12 @@
           "allCodesLastValue": "Todos os códigos, últimos {value}",
           "topCountries": "Principais países",
           "devices": "Dispositivos",
-          "unknown": "Desconhecido"
+          "unknown": "Desconhecido",
+          "allTime": "Todo o período",
+          "sinceDateUtc": "Desde {date} (UTC)",
+          "allCodesSince": "Todos os códigos, desde {date}",
+          "allCodesPerIntervalSince": "Todos os códigos, por {interval, select, week {semana} month {mês} other {dia}}, desde {date} (UTC)",
+          "scansPerIntervalOfUpTo": "Leituras {interval, select, week {semanais} month {mensais} other {diárias}} de até {MAX_COMPARE, number} códigos lado a lado (UTC)."
         },
         "comparePicker": {
           "stopComparingValue": "Parar de comparar {value}",
@@ -6704,7 +6714,9 @@
           "conversionTypes": "Tipos de conversão",
           "sinceValue": " desde {value}",
           "languageAndScanCountRules": " (regras de idioma e de número de leituras não podem ser reproduzidas, então estes números podem incluir leituras que essas regras enviaram para outro lugar)",
-          "unknown": "Desconhecido"
+          "unknown": "Desconhecido",
+          "sinceDate": "Desde {date}, {timeZone}",
+          "sinceDateBusiest": "Desde {date}, {timeZone} · horário de pico: {hour}:00"
         },
         "analyticsTab": {
           "exportCsv": "Exportar CSV",
@@ -6731,7 +6743,11 @@
           "daysDaysOfScanHistory": "{days, number} dias de histórico de leituras",
           "valueKeepsValue2": "{value} mantém {value2}",
           "valueAndValue2": "{value} e {value2}.",
-          "yearsOfScanHistory": "{years, plural, one {# ano de histórico de leituras} other {# anos de histórico de leituras}}"
+          "yearsOfScanHistory": "{years, plural, one {# ano de histórico de leituras} other {# anos de histórico de leituras}}",
+          "allTime": "Todo o período",
+          "sinceDateUtc": "Desde {date} (UTC)",
+          "sinceDateTapsCome": "Desde {date}. Os toques chegam pelo link NFC do código.",
+          "scansPerIntervalSince": "Leituras por {interval, select, week {semana} month {mês} other {dia}}, desde {date} (UTC)"
         },
         "changeTypeDialog": {
           "theyStaySavedAndWork": "Elas continuam salvas e voltam a funcionar se você voltar.",
@@ -6909,7 +6925,9 @@
           "shared": "Compartilhadas",
           "allowed": "Permitidas",
           "noScansAskedForA": "Nenhuma leitura pediu localização nos últimos {days, number} dias.",
-          "thisCodeDoesntAskScanners": "Este código não pede a localização de quem o lê."
+          "thisCodeDoesntAskScanners": "Este código não pede a localização de quem o lê.",
+          "sharedByScannersWhoAllowedSince": "Compartilhada por quem leu o código e permitiu, arredondada para cerca de 100 m. Separada dos países e cidades baseados em IP acima. Desde {date}.",
+          "noScansAskedForASince": "Nenhuma leitura pediu localização desde {date} até agora."
         },
         "preciseLocationsTable": {
           "preciseScanLocationsRoundedTo": "Localizações precisas de leitura, arredondadas para cerca de 100 m",

@@ -3502,7 +3502,12 @@
       "qrCodeDialog": {
         "getCode": "Dapatkan kode",
         "useThisDesignInYour": "Gunakan desain ini di aplikasi Anda, di halaman web, melalui API, atau dengan asisten AI.",
+        "frameworks": "Framework",
+        "framework": "Framework",
         "installTheOpenSourceQrdx": "Instal paket open source <code>qrdx</code> ({version} di npm) dan pasang komponen ini.",
+        "installAndDrawIntoAnyElement": "Instal paket open source <code>qrdx</code> ({version} di npm) dan gambar desain ini ke elemen apa pun.",
+        "pasteThisIntoAnyPage": "Tempel kode ini ke halaman mana pun: skrip memuat elemen <code>qrdx-code</code> dari CDN. Jika menggunakan bundler, instal <code>qrdx</code> lalu impor <code>qrdx/element/define</code>.",
+        "withoutABundlerImportIt": "Tanpa bundler, impor dari",
         "addTheQrCodeComponent": "Tambahkan komponen QR Code dari registri QRdx, lalu gunakan dengan desain ini.",
         "aPublicImageOfThis": "Gambar publik dari kode ini untuk disematkan di mana saja. Tidak perlu kunci API.",
         "createsADynamicCodeWith": "Membuat kode dinamis dengan desain ini. Memerlukan <link>kunci API</link>.",
@@ -6367,7 +6372,12 @@
           "allCodesLastValue": "Semua kode, {value} terakhir",
           "topCountries": "Negara teratas",
           "devices": "Perangkat",
-          "unknown": "Tidak diketahui"
+          "unknown": "Tidak diketahui",
+          "allTime": "Sepanjang waktu",
+          "sinceDateUtc": "Sejak {date} (UTC)",
+          "allCodesSince": "Semua kode, sejak {date}",
+          "allCodesPerIntervalSince": "Semua kode, per {interval, select, week {minggu} month {bulan} other {hari}}, sejak {date} (UTC)",
+          "scansPerIntervalOfUpTo": "Pemindaian {interval, select, week {mingguan} month {bulanan} other {harian}} untuk hingga {MAX_COMPARE, number} kode secara berdampingan (UTC)."
         },
         "comparePicker": {
           "stopComparingValue": "Berhenti membandingkan {value}",
@@ -6704,7 +6714,9 @@
           "conversionTypes": "Jenis konversi",
           "sinceValue": " sejak {value}",
           "languageAndScanCountRules": " (aturan bahasa dan jumlah pemindaian tidak dapat diputar ulang, jadi angka ini mungkin mencakup pemindaian yang dialihkan ke tempat lain oleh aturan tersebut)",
-          "unknown": "Tak dikenal"
+          "unknown": "Tak dikenal",
+          "sinceDate": "Sejak {date}, {timeZone}",
+          "sinceDateBusiest": "Sejak {date}, {timeZone} · jam tersibuk {hour}:00"
         },
         "analyticsTab": {
           "exportCsv": "Ekspor CSV",
@@ -6731,7 +6743,11 @@
           "daysDaysOfScanHistory": "Riwayat pemindaian {days, number} hari",
           "valueKeepsValue2": "{value} mempertahankan {value2}",
           "valueAndValue2": "{value} dan {value2}.",
-          "yearsOfScanHistory": "{years, plural, other {Riwayat pemindaian # tahun}}"
+          "yearsOfScanHistory": "{years, plural, other {Riwayat pemindaian # tahun}}",
+          "allTime": "Sepanjang waktu",
+          "sinceDateUtc": "Sejak {date} (UTC)",
+          "sinceDateTapsCome": "Sejak {date}. Ketukan masuk melalui tautan NFC kode ini.",
+          "scansPerIntervalSince": "Pemindaian per {interval, select, week {minggu} month {bulan} other {hari}}, sejak {date} (UTC)"
         },
         "changeTypeDialog": {
           "theyStaySavedAndWork": "Semuanya tetap tersimpan dan berfungsi lagi jika Anda beralih kembali.",
@@ -6909,7 +6925,9 @@
           "shared": "Dibagikan",
           "allowed": "Diizinkan",
           "noScansAskedForA": "Belum ada pemindaian yang diminta lokasinya dalam {days, number} hari terakhir.",
-          "thisCodeDoesntAskScanners": "Kode ini tidak meminta lokasi dari pemindai."
+          "thisCodeDoesntAskScanners": "Kode ini tidak meminta lokasi dari pemindai.",
+          "sharedByScannersWhoAllowedSince": "Dibagikan oleh pemindai yang mengizinkannya, dibulatkan hingga sekitar 100 m. Terpisah dari negara dan kota berbasis IP di atas. Sejak {date}.",
+          "noScansAskedForASince": "Belum ada pemindaian yang meminta lokasi sejak {date}."
         },
         "preciseLocationsTable": {
           "preciseScanLocationsRoundedTo": "Lokasi pemindaian presisi, dibulatkan hingga sekitar 100 m",

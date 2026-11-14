@@ -86,10 +86,13 @@ function formatMoney(total: string, currency: string | null): string {
 export function TimeCard({
   time,
   days,
+  since,
   switcher,
 }: {
   time: TimeBreakdown;
   days: number;
+  /** "All time": the range's first day ("Oct 31, 2026"), shown instead of the days */
+  since?: string;
   switcher: React.ReactNode;
 }) {
   const t = use(getAppTranslations("app.dashboard.codes.analyticsExtra"));
@@ -102,13 +105,21 @@ export function TimeCard({
           <div className="space-y-1">
             <CardTitle>{t("whenPeopleScan")}</CardTitle>
             <CardDescription>
-              {total > 0
-                ? t("lastDaysBusiest", {
-                    days,
-                    timeZone: time.timeZone,
-                    hour: HOURS[busiestHour],
-                  })
-                : t("lastDays", { days, timeZone: time.timeZone })}
+              {since
+                ? total > 0
+                  ? t("sinceDateBusiest", {
+                      date: since,
+                      timeZone: time.timeZone,
+                      hour: HOURS[busiestHour],
+                    })
+                  : t("sinceDate", { date: since, timeZone: time.timeZone })
+                : total > 0
+                  ? t("lastDaysBusiest", {
+                      days,
+                      timeZone: time.timeZone,
+                      hour: HOURS[busiestHour],
+                    })
+                  : t("lastDays", { days, timeZone: time.timeZone })}
             </CardDescription>
           </div>
           {switcher}
@@ -320,10 +331,13 @@ function ConversionsCard({ conversions }: { conversions: ConversionSummary }) {
 export async function AnalyticsExtra({
   codeId,
   days,
+  since,
   query,
 }: {
   codeId: string;
   days: number;
+  /** "All time": the range's first day, for the copy */
+  since?: string;
   query: Query;
 }) {
   const timeZone = normalizeTimeZone(first(query.tz));
@@ -378,6 +392,7 @@ export async function AnalyticsExtra({
       {time && (
         <TimeCard
           days={days}
+          since={since}
           switcher={
             <TimeZoneSwitch
               current={time.timeZone}

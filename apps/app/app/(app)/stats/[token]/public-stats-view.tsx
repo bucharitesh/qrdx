@@ -54,6 +54,13 @@ const RANGE_LABELS: Record<PublicStatsRange, string> = {
   "7d": "7 days",
   "30d": "30 days",
   "90d": "90 days",
+  all: "All time",
+};
+
+const PER_INTERVAL: Record<PublicStats["analytics"]["interval"], string> = {
+  day: "per day",
+  week: "per week",
+  month: "per month",
 };
 
 const toItems = (
@@ -214,16 +221,23 @@ export function RangeNav({
  */
 export function StatsReportBody({
   analytics,
+  range,
   accent = false,
 }: {
   analytics: PublicStats["analytics"];
+  /** "all" describes the range from its first day instead of its days */
+  range?: PublicStatsRange;
   accent?: boolean;
 }) {
+  const since = range === "all" ? formatDate(analytics.from) : null;
+  const interval = analytics.interval ?? "day";
   return (
     <>
       <div className="grid grid-cols-2 gap-3">
         <Metric
-          label={`Scans, last ${analytics.days} days`}
+          label={
+            since ? "Scans, all time" : `Scans, last ${analytics.days} days`
+          }
           value={formatNumber(analytics.total)}
         />
         <Metric
@@ -234,7 +248,7 @@ export function StatsReportBody({
 
       {/* NFC (feat/nfc) */}
       <ScanSourceCard
-        description={`Last ${analytics.days} days`}
+        description={since ? `Since ${since}` : `Last ${analytics.days} days`}
         sources={analytics.sources}
       />
 
@@ -242,7 +256,9 @@ export function StatsReportBody({
         <CardHeader className="px-4">
           <CardTitle>Scans over time</CardTitle>
           <CardDescription>
-            Scans per day, last {analytics.days} days (UTC)
+            {since
+              ? `Scans ${PER_INTERVAL[interval]}, since ${since} (UTC)`
+              : `Scans per day, last ${analytics.days} days (UTC)`}
           </CardDescription>
         </CardHeader>
         <CardContent
@@ -252,7 +268,7 @@ export function StatsReportBody({
               "[--primary:var(--brand-chart-light)] dark:[--primary:var(--brand-chart-dark)]",
           )}
         >
-          <ScansChart data={analytics.series} />
+          <ScansChart data={analytics.series} interval={interval} />
         </CardContent>
       </Card>
 
@@ -319,7 +335,11 @@ export function PublicStatsView({
         />
       </section>
 
-      <StatsReportBody accent={Boolean(brand?.accent)} analytics={analytics} />
+      <StatsReportBody
+        accent={Boolean(brand?.accent)}
+        analytics={analytics}
+        range={range}
+      />
 
       <footer className="text-muted-foreground mt-auto flex flex-col gap-1 pt-4 text-xs sm:flex-row sm:justify-between">
         <span>

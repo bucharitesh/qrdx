@@ -10295,8 +10295,28 @@
     "source": "494576e1b1f5",
     "status": "machine"
   },
+  "editor.actionBar.qrCodeDialog.frameworks": {
+    "source": "cafd6b725820",
+    "status": "machine"
+  },
+  "editor.actionBar.qrCodeDialog.framework": {
+    "source": "192eb4525aab",
+    "status": "machine"
+  },
   "editor.actionBar.qrCodeDialog.installTheOpenSourceQrdx": {
     "source": "cbb3d770df82",
+    "status": "machine"
+  },
+  "editor.actionBar.qrCodeDialog.installAndDrawIntoAnyElement": {
+    "source": "d4e2ec78067b",
+    "status": "machine"
+  },
+  "editor.actionBar.qrCodeDialog.pasteThisIntoAnyPage": {
+    "source": "9465396840f2",
+    "status": "machine"
+  },
+  "editor.actionBar.qrCodeDialog.withoutABundlerImportIt": {
+    "source": "f3c04d3b1c81",
     "status": "machine"
   },
   "editor.actionBar.qrCodeDialog.addTheQrCodeComponent": {
@@ -19363,6 +19383,26 @@
     "source": "b764cdc0eab7",
     "status": "machine"
   },
+  "app.dashboard.analytics.page.allTime": {
+    "source": "9755c8d7d44a",
+    "status": "machine"
+  },
+  "app.dashboard.analytics.page.sinceDateUtc": {
+    "source": "610caac2fce9",
+    "status": "machine"
+  },
+  "app.dashboard.analytics.page.allCodesSince": {
+    "source": "2bb57154b6d4",
+    "status": "machine"
+  },
+  "app.dashboard.analytics.page.allCodesPerIntervalSince": {
+    "source": "4a27750bb65c",
+    "status": "machine"
+  },
+  "app.dashboard.analytics.page.scansPerIntervalOfUpTo": {
+    "source": "65e4c23c9899",
+    "status": "machine"
+  },
   "app.dashboard.analytics.comparePicker.stopComparingValue": {
     "source": "73b0ec7f195f",
     "status": "machine"
@@ -20527,6 +20567,14 @@
     "source": "b764cdc0eab7",
     "status": "machine"
   },
+  "app.dashboard.codes.analyticsExtra.sinceDate": {
+    "source": "2905742689a9",
+    "status": "machine"
+  },
+  "app.dashboard.codes.analyticsExtra.sinceDateBusiest": {
+    "source": "d22245a34460",
+    "status": "machine"
+  },
   "app.dashboard.codes.analyticsTab.exportCsv": {
     "source": "91f71c14c8d6",
     "status": "machine"
@@ -20625,6 +20673,22 @@
   },
   "app.dashboard.codes.analyticsTab.yearsOfScanHistory": {
     "source": "4432a5046c46",
+    "status": "machine"
+  },
+  "app.dashboard.codes.analyticsTab.allTime": {
+    "source": "9755c8d7d44a",
+    "status": "machine"
+  },
+  "app.dashboard.codes.analyticsTab.sinceDateUtc": {
+    "source": "610caac2fce9",
+    "status": "machine"
+  },
+  "app.dashboard.codes.analyticsTab.sinceDateTapsCome": {
+    "source": "3c52105658ce",
+    "status": "machine"
+  },
+  "app.dashboard.codes.analyticsTab.scansPerIntervalSince": {
+    "source": "f9cd42739d13",
     "status": "machine"
   },
   "app.dashboard.codes.changeTypeDialog.theyStaySavedAndWork": {
@@ -21241,6 +21305,14 @@
   },
   "app.dashboard.codes.preciseLocationsCard.thisCodeDoesntAskScanners": {
     "source": "c4ea21a0d3cd",
+    "status": "machine"
+  },
+  "app.dashboard.codes.preciseLocationsCard.sharedByScannersWhoAllowedSince": {
+    "source": "fc80a103322d",
+    "status": "machine"
+  },
+  "app.dashboard.codes.preciseLocationsCard.noScansAskedForASince": {
+    "source": "f89057bfcd2b",
     "status": "machine"
   },
   "app.dashboard.codes.preciseLocationsTable.preciseScanLocationsRoundedTo": {

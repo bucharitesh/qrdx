@@ -31,7 +31,8 @@ import {
   publicStatsUrlOn,
   type StatsBranding,
 } from "@/lib/public-stats-shared";
-import { getScanAnalytics } from "@/lib/scans";
+import { ALL_TIME_RANGE, SCAN_RANGES, scanRangeDays } from "@/lib/scan-ranges";
+import { codeHistoryStart, getScanAnalytics } from "@/lib/scans";
 import { type ActiveScope, isInScope } from "@/lib/scope";
 import { logError } from "@/lib/shared";
 import { codeLinks } from "@/lib/short-links";
@@ -439,12 +440,14 @@ export async function setStatsBranding(
  * applies at once even while the numbers are cached.
  */
 const cachedAnalytics = unstable_cache(
-  async (codeId: string, days: number) => {
+  async (codeId: string, days: number): Promise<PublicStats["analytics"]> => {
     const analytics = await getScanAnalytics(codeId, days);
     return {
+      from: analytics.from.toISOString(),
       days: analytics.days,
       total: analytics.total,
       unique: analytics.unique,
+      interval: analytics.interval,
       series: analytics.series,
       countries: analytics.countries,
       devices: analytics.devices,
@@ -453,8 +456,8 @@ const cachedAnalytics = unstable_cache(
       sources: analytics.sources,
     };
   },
-  // v2: entries cached before `sources` existed are never read.
-  ["public-stats-analytics-v2"],
+  // v3: entries cached before `from` and `interval` existed are never read.
+  ["public-stats-analytics-v3"],
   { revalidate: 300 },
 );
 
@@ -542,13 +545,20 @@ export async function loadPublicStats(
       : null;
   const hideQrdx = Boolean(brand && limits.clientReportsWhiteLabel);
 
-  // Never further back than the workspace's plan keeps scans.
+  // Never further back than the workspace's plan keeps scans: "all" only
+  // on plans that keep the whole history.
   const retention = limits.analyticsRetentionDays;
   const ranges = PUBLIC_STATS_RANGES.filter(
-    (key) => RANGE_DAYS[key] <= retention,
+    (key) => SCAN_RANGES[key] <= retention,
   );
   const chosen = ranges.includes(range) ? range : (ranges.at(-1) ?? "7d");
-  const analytics = await cachedAnalytics(row.codeId, RANGE_DAYS[chosen]);
+  const days = scanRangeDays(
+    chosen,
+    chosen === ALL_TIME_RANGE
+      ? await codeHistoryStart(row.codeId, row.createdAt)
+      : null,
+  );
+  const analytics = await cachedAnalytics(row.codeId, days);
 
   let destinationHost: string | null = null;
   try {
@@ -616,9 +626,3 @@ async function loadBrand(
     throw error;
   }
 }
-
-const RANGE_DAYS: Record<PublicStatsRange, number> = {
-  "7d": 7,
-  "30d": 30,
-  "90d": 90,
-};

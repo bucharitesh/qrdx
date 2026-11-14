@@ -3502,7 +3502,12 @@
       "qrCodeDialog": {
         "getCode": "Code abrufen",
         "useThisDesignInYour": "Nutze dieses Design in deiner App, auf einer Webseite, über die API oder mit einem KI-Assistenten.",
+        "frameworks": "Frameworks",
+        "framework": "Framework",
         "installTheOpenSourceQrdx": "Installiere das Open-Source-Paket <code>qrdx</code> ({version} auf npm) und füge diese Komponente ein.",
+        "installAndDrawIntoAnyElement": "Installiere das Open-Source-Paket <code>qrdx</code> ({version} auf npm) und zeichne dieses Design in ein beliebiges Element.",
+        "pasteThisIntoAnyPage": "Füge das auf einer beliebigen Seite ein: Das Skript lädt das Element <code>qrdx-code</code> von einem CDN. Mit einem Bundler installierst du stattdessen <code>qrdx</code> und importierst <code>qrdx/element/define</code>.",
+        "withoutABundlerImportIt": "Ohne Bundler importierst du es von",
         "addTheQrCodeComponent": "Füge die QR-Code-Komponente aus der QRdx-Registry hinzu und nutze sie dann mit diesem Design.",
         "aPublicImageOfThis": "Ein öffentliches Bild dieses Codes zum Einbetten überall. Kein API-Schlüssel nötig.",
         "createsADynamicCodeWith": "Erstellt einen dynamischen QR-Code mit diesem Design. Dafür brauchst du einen <link>API-Schlüssel</link>.",
@@ -6367,7 +6372,12 @@
           "allCodesLastValue": "Alle Codes, letzte {value}",
           "topCountries": "Top-Länder",
           "devices": "Geräte",
-          "unknown": "Unbekannt"
+          "unknown": "Unbekannt",
+          "allTime": "Gesamt",
+          "sinceDateUtc": "Seit {date} (UTC)",
+          "allCodesSince": "Alle Codes seit {date}",
+          "allCodesPerIntervalSince": "Alle Codes, pro {interval, select, week {Woche} month {Monat} other {Tag}}, seit {date} (UTC)",
+          "scansPerIntervalOfUpTo": "{interval, select, week {Wöchentliche} month {Monatliche} other {Tägliche}} Scans von bis zu {MAX_COMPARE, number} Codes im direkten Vergleich (UTC)."
         },
         "comparePicker": {
           "stopComparingValue": "{value} nicht mehr vergleichen",
@@ -6704,7 +6714,9 @@
           "conversionTypes": "Conversion-Typen",
           "sinceValue": " seit {value}",
           "languageAndScanCountRules": " (Sprach- und Scan-Anzahl-Regeln lassen sich nicht erneut abspielen, daher können hier auch Scans enthalten sein, die diese Regeln woandershin geleitet haben)",
-          "unknown": "Unbekannt"
+          "unknown": "Unbekannt",
+          "sinceDate": "Seit {date}, {timeZone}",
+          "sinceDateBusiest": "Seit {date}, {timeZone} · aktivste Stunde {hour}:00"
         },
         "analyticsTab": {
           "exportCsv": "CSV exportieren",
@@ -6731,7 +6743,11 @@
           "daysDaysOfScanHistory": "{days, number} Tage Scan-Verlauf",
           "valueKeepsValue2": "{value} behält {value2}",
           "valueAndValue2": "{value} und {value2}.",
-          "yearsOfScanHistory": "{years, plural, one {# Jahr Scan-Verlauf} other {# Jahre Scan-Verlauf}}"
+          "yearsOfScanHistory": "{years, plural, one {# Jahr Scan-Verlauf} other {# Jahre Scan-Verlauf}}",
+          "allTime": "Gesamt",
+          "sinceDateUtc": "Seit {date} (UTC)",
+          "sinceDateTapsCome": "Seit {date}. Taps kommen über den NFC-Link des Codes.",
+          "scansPerIntervalSince": "Scans pro {interval, select, week {Woche} month {Monat} other {Tag}}, seit {date} (UTC)"
         },
         "changeTypeDialog": {
           "theyStaySavedAndWork": "Sie bleiben gespeichert und funktionieren wieder, wenn du zurückwechselst.",
@@ -6909,7 +6925,9 @@
           "shared": "Geteilt",
           "allowed": "Erlaubt",
           "noScansAskedForA": "In den letzten {days, number} Tagen wurde bei keinem Scan nach dem Standort gefragt.",
-          "thisCodeDoesntAskScanners": "Dieser Code fragt Scanner nicht nach ihrem Standort."
+          "thisCodeDoesntAskScanners": "Dieser Code fragt Scanner nicht nach ihrem Standort.",
+          "sharedByScannersWhoAllowedSince": "Von Scannenden geteilt, die es erlaubt haben, auf etwa 100 m gerundet. Getrennt von den IP-basierten Ländern und Städten oben. Seit {date}.",
+          "noScansAskedForASince": "Seit {date} hat noch kein Scan nach einem Standort gefragt."
         },
         "preciseLocationsTable": {
           "preciseScanLocationsRoundedTo": "Genaue Scan-Standorte, auf etwa 100 m gerundet",

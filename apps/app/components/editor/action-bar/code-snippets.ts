@@ -2,9 +2,13 @@
 // for each way developers use QRdx. Pure and client-safe.
 //
 // Every snippet has to work against what is published today:
-// - React and shadcn: npm `qrdx` 0.0.46 (NPM_QRDX below). Props and shapes
-//   added to packages/qrdx since then are listed as left out until a newer
-//   qrdx is on npm. Check `npm view qrdx version` before widening NPM_QRDX.
+// - The Frameworks tab (React, Vue, Angular, Preact, Solid, the <qrdx-code>
+//   web component and vanilla JS): npm `qrdx` QRDX_NPM_VERSION, whose
+//   entries all draw with the same core as the editor's preview, so each
+//   snippet draws the design exactly, bar what `omitted` lists. Check
+//   `npm view qrdx version` before raising QRDX_NPM_VERSION.
+// - shadcn: the registry item's own props (registry/qrdx/qr-code.tsx). It
+//   installs the current npm `qrdx` and passes them to its QRCode as given.
 // - Image URL: GET https://api.qrdx.dev/v1/qr (app/api/v1/qr/_lib/query.ts):
 //   flat parameters where they say it, and `style` (lib/qr-api/style.ts) for
 //   gradients, other colors and frames with more than a label.
@@ -20,7 +24,13 @@
 // serializer lists what its tab can't express in `omitted`, in plain English.
 
 import { API_BASE_URL, MCP_ENDPOINT, SHADCN_REGISTRY_URL } from "@repo/config";
-import { getTemplate, getTemplateIds } from "qrdx";
+import {
+  DEFAULT_SIZE,
+  getTemplate,
+  getTemplateIds,
+  type QRCodeProps,
+  resolveQRCodeProps,
+} from "qrdx";
 import {
   BODY_PATTERN,
   CORNER_EYE_DOT_PATTERNS,
@@ -46,8 +56,36 @@ import { styleEngineOptions } from "@/lib/qr-design/engine-options";
 import type { ContentType, QRContentConfig } from "@/types/qr-content";
 import type { ThemeStyles } from "@/types/theme";
 
-/** A tab of the dialog: the link ids (the CLI tab included). */
-export type CodeTab = CodeLang | "cli";
+/**
+ * The Frameworks tab's picker, in menu order: each is a link id too
+ * (open=code&lang=react).
+ */
+export const FRAMEWORKS = [
+  "react",
+  "vue",
+  "angular",
+  "preact",
+  "solid",
+  "web-component",
+  "vanilla",
+  "shadcn",
+] as const satisfies readonly CodeLang[];
+
+export type Framework = (typeof FRAMEWORKS)[number];
+
+export const FRAMEWORK_LABELS: Record<Framework, string> = {
+  react: "React",
+  vue: "Vue",
+  angular: "Angular",
+  preact: "Preact",
+  solid: "SolidJS",
+  "web-component": "Web component",
+  vanilla: "Vanilla JS",
+  shadcn: "shadcn/ui",
+};
+
+/** A tab of the dialog: Frameworks, then one tab per service. */
+export type CodeTab = "frameworks" | "image" | "api" | "mcp" | "cli";
 
 /**
  * The CLI tab ships now that @qrdx/cli 0.0.5 (with qrdx 0.0.47) is on npm;
@@ -56,21 +94,42 @@ export type CodeTab = CodeLang | "cli";
  */
 export const CLI_TAB_ENABLED = true;
 
-const SHIPPED_TABS = ["react", "shadcn", "image", "api", "mcp"] as const;
+const SHIPPED_TABS = ["frameworks", "image", "api", "mcp"] as const;
 
-/** The tabs that ship, in tab order (equal to CODE_LANGS). */
+/** The tabs that ship, in tab order. */
 export const CODE_TABS: readonly CodeTab[] = CLI_TAB_ENABLED
   ? [...SHIPPED_TABS, "cli"]
   : SHIPPED_TABS;
 
-export const CODE_TAB_LABELS: Record<CodeTab, string> = {
-  react: "React",
-  shadcn: "shadcn",
+/** The service tabs' labels (the Frameworks tab's is translated). */
+export const CODE_TAB_LABELS: Record<Exclude<CodeTab, "frameworks">, string> = {
   image: "Image URL",
   api: "REST API",
   mcp: "MCP",
   cli: "CLI",
 };
+
+/**
+ * Everything a link can open (open=code&lang=…), equal to CODE_LANGS: the
+ * frameworks, then the service tabs.
+ */
+export const CODE_TARGETS: readonly CodeLang[] = [
+  ...FRAMEWORKS,
+  ...CODE_TABS.filter(
+    (tab): tab is Exclude<CodeTab, "frameworks"> => tab !== "frameworks",
+  ),
+];
+
+/** The tab and, on the Frameworks tab, the framework a link opens. */
+export function codeTargetTab(target: CodeLang): {
+  tab: CodeTab;
+  framework?: Framework;
+} {
+  if ((FRAMEWORKS as readonly string[]).includes(target)) {
+    return { tab: "frameworks", framework: target as Framework };
+  }
+  return { tab: target as Exclude<CodeTab, "frameworks"> };
+}
 
 export interface SnippetInput {
   style: ThemeStyles;
@@ -98,64 +157,25 @@ export interface RestSnippet extends Snippet {
 }
 
 export const SAMPLE_VALUE = "https://example.com";
-export const REACT_INSTALL = "npm install qrdx";
+
+/**
+ * The npm `qrdx` the Frameworks tab's snippets are written for (every
+ * framework entry, the web component and vanilla JS ship in it). Its
+ * components draw with the editor's own engine, so what they draw is the
+ * design. The CDN links pin it.
+ */
+export const QRDX_NPM_VERSION = "0.0.54";
+export const QRDX_INSTALL = "npm install qrdx";
+const QRDX_CDN = `https://cdn.jsdelivr.net/npm/qrdx@${QRDX_NPM_VERSION}/dist`;
+/** qrdx/vanilla as one ES module, for pages without a bundler. */
+export const VANILLA_CDN_URL = `${QRDX_CDN}/vanilla.browser.mjs`;
+/** Registers <qrdx-code>, for pages without a bundler. */
+export const ELEMENT_CDN_URL = `${QRDX_CDN}/element-define.browser.mjs`;
 export const SHADCN_ITEM_URL = `${SHADCN_REGISTRY_URL}/qr-code.json`;
 export const SHADCN_INSTALL = `npx shadcn@latest add ${SHADCN_ITEM_URL}`;
 export const IMAGE_API_URL = `${API_BASE_URL}/qr`;
 export const CODES_API_URL = `${API_BASE_URL}/codes`;
 export const MCP_SERVER_URL = MCP_ENDPOINT;
-
-/**
- * What npm `qrdx` 0.0.46 accepts (dist/types/*.d.ts and
- * dist/src/templates.d.ts of the published package). The React tab and the
- * shadcn registry item both run on it.
- */
-export const NPM_QRDX = {
-  version: "0.0.46",
-  bodyPatterns: [
-    "circle",
-    "circle-large",
-    "square",
-    "diamond",
-    "circle-mixed",
-    "pacman",
-    "rounded",
-    "small-square",
-    "vertical-line",
-  ],
-  eyePatterns: [
-    "square",
-    "rounded",
-    "gear",
-    "circle",
-    "diya",
-    "extra-rounded",
-    "message",
-    "pointy",
-    "curly",
-  ],
-  eyeDotPatterns: [
-    "square",
-    "rounded",
-    "circle",
-    "diamond",
-    "message",
-    "message-reverse",
-    "diya",
-    "diya-reverse",
-    "rounded-triangle",
-    "star",
-    "banner",
-  ],
-  templates: [
-    "default",
-    "Arrow",
-    "StandardBox",
-    "SquareBorder",
-    "StrikedBox",
-    "Halloween",
-  ],
-} as const;
 
 /** Plain-English names for what a tab leaves out. */
 export const LEFT_OUT = {
@@ -173,8 +193,6 @@ export const LEFT_OUT = {
   frameSecondLabel: "The frame's second label",
   logo: "The logo",
   uploadedLogo: "Your logo",
-  shadcnNoLogo: "Hiding the logo (it shows the QRdx logo)",
-  shadcnUploadedLogo: "Your logo (it shows the QRdx logo)",
   restLogo:
     "Your logo (upload it in Dashboard → Files and send its id as logoFileId)",
   qrdxLogo: "The QRdx logo (the API doesn't draw it)",
@@ -348,7 +366,7 @@ const roundMargin = (margin: number | undefined) =>
     Math.max(0, Math.round(margin ?? ENGINE_DEFAULTS.margin)),
   );
 
-// ─── React and shadcn (npm qrdx 0.0.46) ──────────────────────────────────────
+// ─── shadcn (the registry item on npm qrdx) ──────────────────────────────────
 
 const PROP_INDENT = "      ";
 /** Characters that need a JSX expression instead of a "string" attribute. */
@@ -395,62 +413,28 @@ function snippetStyle(style: ThemeStyles, notes: Notes): ThemeStyles {
   return withoutImageFills(style);
 }
 
-/** A color prop: `fgColor="#000"` or a gradient object literal. */
-function colorProp(name: string, paint: PublishedPaint): string {
-  if (paint.type === "solid") return jsxString(name, paint.color);
-  const inner = `${PROP_INDENT}  `;
-  const lines = [
-    `${name}={{`,
-    `${inner}type: "${paint.type}",`,
-    `${inner}stops: [`,
-    ...paint.stops.map(
-      (stop) =>
-        `${inner}  { color: ${JSON.stringify(stop.color)}, offset: ${stop.offset} },`,
-    ),
-    `${inner}],`,
-  ];
-  if (paint.type === "linear")
-    lines.push(`${inner}angle: ${paint.angle ?? 0},`);
-  lines.push(`${PROP_INDENT}}}`);
-  return lines.join("\n");
-}
-
 /**
- * Color, shape, level and border props npm qrdx 0.0.46 takes, shared by
- * the React and shadcn tabs. Shapes and borders it doesn't know are left
- * out (the component then draws its default).
+ * The color, shape, level and border props the shadcn item takes. It hands
+ * them to qrdx's QRCode as they are, so every color (gradients included)
+ * and shape the editor draws goes in; image fills, which are uploads, don't.
  */
-function npmStyleProps(style: ThemeStyles, notes: Notes): string[] {
+function shadcnStyleProps(style: ThemeStyles, notes: Notes): string[] {
+  const clean = snippetStyle(style, notes);
   const props: string[] = [];
-  for (const key of ["bgColor", "fgColor", "eyeColor", "dotColor"] as const) {
-    const color = style[key];
-    if (color !== undefined) {
-      props.push(colorProp(key, publishedNormalized(color, notes)));
-    }
-  }
-  const shapes = [
-    ["bodyPattern", style.bodyPattern, NPM_QRDX.bodyPatterns, "dot"],
-    ["cornerEyePattern", style.cornerEyePattern, NPM_QRDX.eyePatterns, "eye"],
-    [
-      "cornerEyeDotPattern",
-      style.cornerEyeDotPattern,
-      NPM_QRDX.eyeDotPatterns,
-      "eye center",
-    ],
-  ] as const;
-  for (const [name, value, known, part] of shapes) {
-    if (value === undefined) continue;
-    if (includes(known, value)) props.push(jsxString(name, value));
-    else notes.add(shapeLeftOut(part, value));
-  }
-  if (style.level) props.push(jsxString("level", style.level));
-  const template = style.templateId;
-  if (template && template !== "default") {
-    if (includes(NPM_QRDX.templates, template)) {
-      props.push(jsxString("templateId", template));
-    } else {
-      notes.add(borderLeftOut(template));
-    }
+  for (const key of [
+    "bgColor",
+    "fgColor",
+    "eyeColor",
+    "dotColor",
+    "bodyPattern",
+    "cornerEyePattern",
+    "cornerEyeDotPattern",
+    "level",
+    // "default" is a template too: it insets the code a little.
+    "templateId",
+  ] as const) {
+    const value = clean[key];
+    if (value !== undefined && value !== "") props.push(jsxProp(key, value));
   }
   return props;
 }
@@ -467,44 +451,19 @@ ${props.map((prop) => `${PROP_INDENT}${prop}`).join("\n")}
 }`;
 }
 
-/** `<QRCode … />` from npm qrdx, with the props 0.0.46 has. */
-export function reactSnippet(input: SnippetInput): Snippet {
-  const { style } = input;
-  const notes = new Notes();
-  const props = [jsxString("value", payloadOf(input.value))];
-  props.push(...npmStyleProps(style, notes));
-  // 0.0.46 defaults to a quiet zone of 0, like the editor.
-  if (style.margin) props.push(`margin={${style.margin}}`);
-  noteFrame(style, notes);
-
-  // 0.0.46 draws the QRdx logo unless told not to, so "no logo" is explicit.
-  const logo = logoOf(style);
-  if (logo.kind === "qrdx") props.push(jsxString("logo", DEFAULT_QR_LOGO));
-  else if (logo.kind === "url") props.push(jsxString("logo", logo.url));
-  else props.push("hideLogo");
-  if (logo.kind === "uploaded") notes.add(LEFT_OUT.uploadedLogo);
-  noteArt(style, notes);
-  noteEngineOptions(style, notes);
-
-  return {
-    code: component('import { QRCode } from "qrdx";', "QRCode", props),
-    omitted: notes.list,
-  };
-}
-
 export interface ShadcnSnippet extends Snippet {
   install: string;
 }
 
 /**
  * The shadcn registry's `qr-code` item (registry/qrdx/qr-code.tsx) with
- * this style. It runs on npm qrdx, and has no way to hide the logo.
+ * this style: its props, which don't include frames or the engine options.
  */
 export function shadcnSnippet(input: SnippetInput): ShadcnSnippet {
   const { style } = input;
   const notes = new Notes();
   const props = [jsxString("value", payloadOf(input.value))];
-  props.push(...npmStyleProps(style, notes));
+  props.push(...shadcnStyleProps(style, notes));
   // The item's own default is 2, so the editor's quiet zone always goes in.
   props.push(`margin={${style.margin ?? ENGINE_DEFAULTS.margin}}`);
   noteFrame(style, notes);
@@ -512,8 +471,8 @@ export function shadcnSnippet(input: SnippetInput): ShadcnSnippet {
   const logo = logoOf(style);
   if (logo.kind === "qrdx") props.push(jsxString("logo", DEFAULT_QR_LOGO));
   else if (logo.kind === "url") props.push(jsxString("logo", logo.url));
-  else if (logo.kind === "uploaded") notes.add(LEFT_OUT.shadcnUploadedLogo);
-  else notes.add(LEFT_OUT.shadcnNoLogo);
+  // Without `logo` the item draws none, as the editor does with the logo off.
+  else if (logo.kind === "uploaded") notes.add(LEFT_OUT.uploadedLogo);
   noteArt(style, notes);
   noteEngineOptions(style, notes);
 
@@ -1151,4 +1110,417 @@ export function cliSnippet(input: SnippetInput): Snippet {
     frameFlags.join(" "),
   ].filter(Boolean);
   return { code: lines.join(" \\\n  "), omitted: notes.list };
+}
+
+// ─── Frameworks (npm qrdx QRDX_NPM_VERSION) ──────────────────────────────────
+
+/** A prop value as a snippet writes it. */
+type LibraryValue = string | number | boolean | object;
+
+/**
+ * The design as `<QRCode>` props for npm qrdx QRDX_NPM_VERSION, in snippet
+ * order: what the editor's preview passes (qr-preview-panel.tsx), with
+ * unset fields left to the same defaults. Its React, Vue, Angular, Preact
+ * and Solid components take these props as they are; the web component
+ * and createQRCode take them resolved (resolveQRCodeProps).
+ */
+function libraryProps(
+  input: SnippetInput,
+  notes: Notes,
+): Record<string, LibraryValue> {
+  // Image fills and a traced silhouette are uploads: noted, never carried.
+  const style = snippetStyle(input.style, notes);
+  const engine = styleEngineOptions(style);
+  const props: Record<string, LibraryValue> = {
+    value: payloadOf(input.value),
+  };
+  for (const key of ["fgColor", "bgColor", "eyeColor", "dotColor"] as const) {
+    const color = style[key];
+    if (color !== undefined) props[key] = color;
+  }
+  if (engine.eyeColors) props.eyeColors = engine.eyeColors;
+  for (const key of [
+    "bodyPattern",
+    "cornerEyePattern",
+    "cornerEyeDotPattern",
+  ] as const) {
+    const shape = style[key];
+    if (shape !== undefined) props[key] = shape;
+  }
+  if (engine.moduleScale !== undefined) props.moduleScale = engine.moduleScale;
+  if (typeof engine.shape === "string") props.shape = engine.shape;
+  if (style.level) props.level = style.level;
+  // The default quiet zone is 0, as in the editor.
+  if (style.margin) props.margin = style.margin;
+  // "default" is a template too: it insets the code a little.
+  if (style.templateId) props.templateId = style.templateId;
+  if (style.frame && hasFrame(style)) props.frame = style.frame;
+
+  // No logo unless one is passed (qrdx 0.0.47 and later).
+  const logo = logoOf(style);
+  if (logo.kind === "qrdx" || logo.kind === "url") {
+    props.logo = logo.kind === "qrdx" ? DEFAULT_QR_LOGO : logo.url;
+    if (engine.logoOptions) props.logoOptions = engine.logoOptions;
+    if (engine.autoLevel) props.autoLevel = true;
+  } else if (logo.kind === "uploaded") {
+    notes.add(LEFT_OUT.uploadedLogo);
+  }
+  noteArt(style, notes);
+  return props;
+}
+
+const JS_KEY = /^[A-Za-z_$][\w$]*$/;
+/** Biome's line width: a short object or array stays on one line within it. */
+const JS_LINE_WIDTH = 80;
+
+/**
+ * A JavaScript literal for `value`, formatted as Biome would: two-space
+ * indents, trailing commas, bare keys, and objects and arrays of plain
+ * values on one line when they fit (`{ color: "#000000", offset: 0 }`).
+ * `column` is where the literal starts on its line, and `tail` how many
+ * characters follow it there (`;`, `}}`).
+ */
+export function formatJs(
+  value: unknown,
+  indent = "",
+  column = indent.length,
+  tail = 1,
+): string {
+  if (value === null || typeof value !== "object") {
+    return JSON.stringify(value) ?? "undefined";
+  }
+  const isArray = Array.isArray(value);
+  const entries: [string | null, unknown][] = isArray
+    ? value.map((item) => [null, item])
+    : Object.entries(value).filter(([, item]) => item !== undefined);
+  const [open, close] = isArray ? ["[", "]"] : ["{", "}"];
+  if (entries.length === 0) return `${open}${close}`;
+  const inner = `${indent}  `;
+  const parts = entries.map(([key, item]) => {
+    const name =
+      key === null ? "" : `${JS_KEY.test(key) ? key : JSON.stringify(key)}: `;
+    return `${name}${formatJs(item, inner, inner.length + name.length)}`;
+  });
+  const flat = entries.every(
+    ([, item]) => item === null || typeof item !== "object",
+  );
+  if (flat) {
+    const line = isArray ? `[${parts.join(", ")}]` : `{ ${parts.join(", ")} }`;
+    if (column + line.length + tail <= JS_LINE_WIDTH) return line;
+  }
+  return `${open}\n${parts.map((part) => `${inner}${part},`).join("\n")}\n${indent}${close}`;
+}
+
+/** A JSX prop: a string attribute, a bare flag or an expression. */
+function jsxProp(name: string, value: LibraryValue): string {
+  if (value === true) return name;
+  if (typeof value === "string") return jsxString(name, value);
+  const column = PROP_INDENT.length + name.length + 2;
+  return `${name}={${formatJs(value, PROP_INDENT, column, 2)}}`;
+}
+
+/** The JSX components and the entry each one comes from. */
+const JSX_ENTRIES = {
+  react: "qrdx",
+  preact: "qrdx/preact",
+  solid: "qrdx/solid",
+} as const;
+
+/**
+ * `<QRCode … />` for React, Preact or Solid: the three take the same props
+ * and draw the same markup.
+ */
+export function jsxSnippet(
+  input: SnippetInput,
+  framework: keyof typeof JSX_ENTRIES = "react",
+): Snippet {
+  const notes = new Notes();
+  const props = Object.entries(libraryProps(input, notes)).map(
+    ([name, value]) => jsxProp(name, value),
+  );
+  return {
+    code: component(
+      `import { QRCode } from "${JSX_ENTRIES[framework]}";`,
+      "QRCode",
+      props,
+    ),
+    omitted: notes.list,
+  };
+}
+
+/** `<QRCode … />` from npm qrdx. */
+export const reactSnippet = (input: SnippetInput): Snippet =>
+  jsxSnippet(input, "react");
+
+/** `QRCode` from qrdx/preact (no preact/compat). */
+export const preactSnippet = (input: SnippetInput): Snippet =>
+  jsxSnippet(input, "preact");
+
+/** `QRCode` from qrdx/solid. */
+export const solidSnippet = (input: SnippetInput): Snippet =>
+  jsxSnippet(input, "solid");
+
+/** camelCase → kebab-case, as Vue templates and the element's attributes write props. */
+const kebab = (name: string) =>
+  name.replace(/[A-Z]/g, (char) => `-${char.toLowerCase()}`);
+
+/**
+ * Strings that read the same as a plain attribute in a Vue or Angular
+ * template: no quote, entity, tag, line break, Angular interpolation or
+ * template-literal syntax, and no surrounding space.
+ */
+const PLAIN_ATTRIBUTE =
+  /^(?!\s)(?!.*\s$)(?!.*\{\{)(?!.*\}\})(?!.*\$\{)[^"&<>`\\\r\n\t]*$/;
+
+/** A typed constant for a prop the template binds. */
+function propConstant(
+  declaration: string,
+  name: string,
+  value: LibraryValue,
+  indent = "",
+): { line: string; typed: boolean } {
+  const typed = typeof value === "object";
+  const start = `${indent}${declaration}${name}${typed ? `: QRCodeProps["${name}"]` : ""} = `;
+  return {
+    line: `${start}${formatJs(value, indent, start.length)};`,
+    typed,
+  };
+}
+
+/**
+ * A Vue single-file component with `QRCode` from qrdx/vue: plain strings
+ * as attributes (kebab-case), numbers and flags as bindings and objects as
+ * typed constants in `<script setup>`.
+ */
+export function vueSnippet(input: SnippetInput): Snippet {
+  const notes = new Notes();
+  const attributes: string[] = [];
+  const constants: string[] = [];
+  let typed = false;
+  for (const [name, value] of Object.entries(libraryProps(input, notes))) {
+    const attribute = kebab(name);
+    if (value === true) attributes.push(attribute);
+    else if (typeof value === "number") {
+      attributes.push(`:${attribute}="${value}"`);
+    } else if (typeof value === "string" && PLAIN_ATTRIBUTE.test(value)) {
+      attributes.push(`${attribute}="${value}"`);
+    } else {
+      const constant = propConstant("const ", name, value);
+      typed ||= constant.typed;
+      constants.push(constant.line);
+      attributes.push(`:${attribute}="${name}"`);
+    }
+  }
+  const script = [
+    `import { QRCode${typed ? ", type QRCodeProps" : ""} } from "qrdx/vue";`,
+    ...constants.map((line) => `\n${line}`),
+  ].join("\n");
+  return {
+    code: `<script setup lang="ts">
+${script}
+</script>
+
+<template>
+  <QRCode
+${attributes.map((attribute) => `    ${attribute}`).join("\n")}
+  />
+</template>`,
+    omitted: notes.list,
+  };
+}
+
+/**
+ * A standalone Angular component that uses `<qrdx-qr-code>` from
+ * qrdx/angular: plain strings as attributes, numbers and flags as input
+ * bindings, and objects as typed fields of the component.
+ */
+export function angularSnippet(input: SnippetInput): Snippet {
+  const notes = new Notes();
+  const attributes: string[] = [];
+  const fields: string[] = [];
+  let typed = false;
+  for (const [name, value] of Object.entries(libraryProps(input, notes))) {
+    if (value === true || typeof value === "number") {
+      attributes.push(`[${name}]="${value}"`);
+    } else if (typeof value === "string" && PLAIN_ATTRIBUTE.test(value)) {
+      attributes.push(`${name}="${value}"`);
+    } else {
+      const field = propConstant("protected readonly ", name, value, "  ");
+      typed ||= field.typed;
+      fields.push(field.line);
+      attributes.push(`[${name}]="${name}"`);
+    }
+  }
+  const body = fields.length > 0 ? ` {\n${fields.join("\n\n")}\n}` : " {}";
+  return {
+    code: `import { Component } from "@angular/core";
+import { QRCode${typed ? ", type QRCodeProps" : ""} } from "qrdx/angular";
+
+@Component({
+  selector: "app-my-qr-code",
+  imports: [QRCode],
+  template: \`
+    <qrdx-qr-code
+${attributes.map((attribute) => `      ${attribute}`).join("\n")}
+    />
+  \`,
+})
+export class MyQRCode${body}`,
+    omitted: notes.list,
+  };
+}
+
+/**
+ * The design as `QRSVGOptions` (what createQRCode and <qrdx-code> take):
+ * the props as they are, or, with a logo, the logo laid out by
+ * resolveQRCodeProps into `imageSettings` for the default size.
+ */
+function svgOptions(props: Record<string, LibraryValue>): {
+  options: Record<string, LibraryValue>;
+  logo: boolean;
+} {
+  if (props.logo === undefined) return { options: props, logo: false };
+  const { logo: _logo, logoOptions: _logoOptions, ...rest } = props;
+  const resolved = resolveQRCodeProps(props as unknown as QRCodeProps);
+  const options: Record<string, LibraryValue> = {
+    value: rest.value as string,
+    size: resolved.size ?? DEFAULT_SIZE,
+    ...rest,
+  };
+  if (resolved.imageSettings) options.imageSettings = resolved.imageSettings;
+  return { options, logo: true };
+}
+
+export interface VanillaSnippet extends Snippet {
+  /** The same API as one ES module, for a page without a bundler */
+  cdnUrl: string;
+}
+
+/**
+ * `createQRCode` from qrdx/vanilla, drawing into `#qr`. With a logo the
+ * props go through resolveQRCodeProps, which lays the logo out as
+ * `<QRCode>` does.
+ */
+export function vanillaSnippet(input: SnippetInput): VanillaSnippet {
+  const notes = new Notes();
+  const props = libraryProps(input, notes);
+  const logo = props.logo !== undefined;
+  const call = logo
+    ? 'createQRCode("#qr", resolveQRCodeProps('
+    : 'createQRCode("#qr", ';
+  const end = logo ? "));" : ");";
+  const imports = logo ? "createQRCode, resolveQRCodeProps" : "createQRCode";
+  const comment = logo
+    ? `// Draws the code into <div id="qr"></div>. resolveQRCodeProps lays the
+// logo out as <QRCode> does.`
+    : `// Draws the code into <div id="qr"></div>`;
+  return {
+    code: `import { ${imports} } from "qrdx/vanilla";
+
+${comment}
+${call}${formatJs(props, "", call.length, end.length)}${end}`,
+    omitted: notes.list,
+    cdnUrl: VANILLA_CDN_URL,
+  };
+}
+
+/** <qrdx-code>'s attributes (qrdx/element), by option, with their kind. */
+const ELEMENT_ATTRIBUTES: Record<string, "string" | "number" | "boolean"> = {
+  value: "string",
+  size: "number",
+  level: "string",
+  fgColor: "string",
+  bgColor: "string",
+  eyeColor: "string",
+  dotColor: "string",
+  bodyPattern: "string",
+  cornerEyePattern: "string",
+  cornerEyeDotPattern: "string",
+  margin: "number",
+  templateId: "string",
+  moduleScale: "number",
+  autoLevel: "boolean",
+  shape: "string",
+};
+
+/** Characters an attribute in double quotes escapes. */
+const escapeAttribute = (value: string) =>
+  value
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+
+/**
+ * HTML for a page without a bundler: the CDN script that registers
+ * `<qrdx-code>`, and the element with the design. Simple options are
+ * attributes (kebab-case); gradients, the frame, per-eye colors and the
+ * laid-out logo go in the `props` attribute as JSON, so no script is
+ * needed. Text with line breaks goes there too, where JSON keeps them.
+ */
+export function webComponentSnippet(input: SnippetInput): Snippet {
+  const notes = new Notes();
+  const { options, logo } = svgOptions(libraryProps(input, notes));
+  const attributes: string[] = [];
+  const rest: Record<string, LibraryValue> = {};
+  for (const [name, value] of Object.entries(options)) {
+    const kind = ELEMENT_ATTRIBUTES[name];
+    if (kind === "boolean" && value === true) {
+      attributes.push(kebab(name));
+    } else if (kind === "number" && typeof value === "number") {
+      attributes.push(`${kebab(name)}="${value}"`);
+    } else if (
+      kind === "string" &&
+      typeof value === "string" &&
+      !/[\r\n\t]/.test(value)
+    ) {
+      attributes.push(`${kebab(name)}="${escapeAttribute(value)}"`);
+    } else {
+      rest[name] = value;
+    }
+  }
+  if (Object.keys(rest).length > 0) {
+    // JSON in single quotes: & and ' are the characters it can't hold.
+    const json = formatJson(rest, "  ")
+      .replace(/&/g, "&amp;")
+      .replace(/'/g, "&#39;");
+    attributes.push(`props='${json}'`);
+  }
+  const note = logo
+    ? `\n<!-- The logo in props is laid out for size="${options.size}": change them together -->`
+    : "";
+  return {
+    code: `<script
+  type="module"
+  src="${ELEMENT_CDN_URL}"
+></script>
+${note}
+<qrdx-code
+${attributes.map((attribute) => `  ${attribute}`).join("\n")}
+></qrdx-code>`,
+    omitted: notes.list,
+  };
+}
+
+/** Every framework's snippet, by picker entry. */
+export function frameworkSnippet(
+  framework: Exclude<Framework, "shadcn">,
+  input: SnippetInput,
+): Snippet {
+  switch (framework) {
+    case "react":
+    case "preact":
+    case "solid":
+      return jsxSnippet(input, framework);
+    case "vue":
+      return vueSnippet(input);
+    case "angular":
+      return angularSnippet(input);
+    case "web-component":
+      return webComponentSnippet(input);
+    case "vanilla":
+      return vanillaSnippet(input);
+    default:
+      return framework satisfies never;
+  }
 }

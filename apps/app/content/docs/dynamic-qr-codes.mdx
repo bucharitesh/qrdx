@@ -65,7 +65,7 @@ A workspace's codes use the best plan among its owners. See [Plans and limits](/
 
 ## Scan analytics
 
-Each code has an analytics page with scans over time, unique visitors, top countries and cities, devices, operating systems, browsers and referrers for the last 7, 30 or 90 days, 1 year or 3 years (limited by your plan's history). You can export the scans in the selected range as CSV.
+Each code has an analytics page with scans over time, unique visitors, top countries and cities, devices, operating systems, browsers and referrers for the last 7, 30 or 90 days, 1 year or 3 years, or for all time since the code's first scan (limited by your plan's history: all time is on Pro and Business). You can export the scans in the selected range as CSV.
 
 What is recorded for each scan:
 
@@ -88,7 +88,7 @@ Manage codes programmatically under `https://api.qrdx.dev/v1/codes`. Requests ar
 | `GET` | `/v1/codes/{id}` | Get one code |
 | `PATCH` | `/v1/codes/{id}` | Update `destinationUrl`, `title`, `style`, `domainId` ([custom domains](/docs/custom-domains)), `slug` or `archived`, or switch `kind` between `redirect` and `page` |
 | `DELETE` | `/v1/codes/{id}` | Delete a code and its scans |
-| `GET` | `/v1/codes/{id}/scans` | Analytics for `range` (`7d`, `30d`, `90d`, `365d`, `1095d`; limited by your plan's history). Add `limit` (≤ 500) for individual scans, and `before` (the last `scannedAt`) for the next page |
+| `GET` | `/v1/codes/{id}/scans` | Analytics for `range` (`7d`, `30d`, `90d`, `365d`, `1095d`, or `all` on Pro and Business; limited by your plan's history). Add `limit` (≤ 500) for individual scans, and `before` (the last `scannedAt`) for the next page |
 
 Create a code:
 

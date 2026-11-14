@@ -3502,7 +3502,12 @@
       "qrCodeDialog": {
         "getCode": "कोड पाएँ",
         "useThisDesignInYour": "इस डिज़ाइन को अपने app में, किसी वेब पेज पर, API के ज़रिए या AI असिस्टेंट के साथ इस्तेमाल करें।",
+        "frameworks": "फ़्रेमवर्क",
+        "framework": "फ़्रेमवर्क",
         "installTheOpenSourceQrdx": "ओपन-सोर्स <code>qrdx</code> पैकेज इंस्टॉल करें (npm पर {version}) और इस कॉम्पोनेंट को जोड़ें।",
+        "installAndDrawIntoAnyElement": "ओपन-सोर्स <code>qrdx</code> पैकेज ({version}, npm पर) इंस्टॉल करें और इस डिज़ाइन को किसी भी एलिमेंट में ड्रॉ करें।",
+        "pasteThisIntoAnyPage": "इसे किसी भी पेज में पेस्ट करें: स्क्रिप्ट CDN से <code>qrdx-code</code> एलिमेंट लोड करती है। बंडलर के साथ इसके बजाय <code>qrdx</code> इंस्टॉल करें और <code>qrdx/element/define</code> इम्पोर्ट करें।",
+        "withoutABundlerImportIt": "बंडलर के बिना, इसे यहाँ से इम्पोर्ट करें",
         "addTheQrCodeComponent": "QRdx रजिस्ट्री से QR Code कॉम्पोनेंट जोड़ें, फिर इसे इस डिज़ाइन के साथ इस्तेमाल करें।",
         "aPublicImageOfThis": "इस कोड की एक पब्लिक इमेज, जिसे कहीं भी एम्बेड किया जा सकता है। API key की ज़रूरत नहीं।",
         "createsADynamicCodeWith": "इस डिज़ाइन के साथ डायनेमिक कोड बनाता है। इसके लिए <link>API key</link> चाहिए।",
@@ -6367,7 +6372,12 @@
           "allCodesLastValue": "सभी कोड, पिछले {value}",
           "topCountries": "टॉप देश",
           "devices": "डिवाइस",
-          "unknown": "अज्ञात"
+          "unknown": "अज्ञात",
+          "allTime": "अब तक",
+          "sinceDateUtc": "{date} से (UTC)",
+          "allCodesSince": "सभी कोड, {date} से",
+          "allCodesPerIntervalSince": "सभी कोड, हर {interval, select, week {हफ़्ते} month {महीने} other {दिन}}, {date} से (UTC)",
+          "scansPerIntervalOfUpTo": "{MAX_COMPARE, number} कोड तक के {interval, select, week {साप्ताहिक} month {मासिक} other {दैनिक}} स्कैन, साथ-साथ (UTC)।"
         },
         "comparePicker": {
           "stopComparingValue": "{value} की तुलना बंद करें",
@@ -6704,7 +6714,9 @@
           "conversionTypes": "कन्वर्ज़न के प्रकार",
           "sinceValue": " {value} से",
           "languageAndScanCountRules": " (भाषा और स्कैन-संख्या के नियम दोबारा नहीं चलाए जा सकते, इसलिए इनमें वे स्कैन भी शामिल हो सकते हैं जिन्हें उन नियमों ने कहीं और भेज दिया)",
-          "unknown": "अज्ञात"
+          "unknown": "अज्ञात",
+          "sinceDate": "{date} से, {timeZone}",
+          "sinceDateBusiest": "{date} से, {timeZone} · सबसे व्यस्त घंटा {hour}:00"
         },
         "analyticsTab": {
           "exportCsv": "CSV एक्सपोर्ट करें",
@@ -6731,7 +6743,11 @@
           "daysDaysOfScanHistory": "{days, number} दिन की स्कैन हिस्ट्री",
           "valueKeepsValue2": "{value} में {value2} रहता है",
           "valueAndValue2": "{value} और {value2}।",
-          "yearsOfScanHistory": "{years, plural, one {# साल का स्कैन इतिहास} other {# साल का स्कैन इतिहास}}"
+          "yearsOfScanHistory": "{years, plural, one {# साल का स्कैन इतिहास} other {# साल का स्कैन इतिहास}}",
+          "allTime": "अब तक",
+          "sinceDateUtc": "{date} से (UTC)",
+          "sinceDateTapsCome": "{date} से। टैप कोड के NFC लिंक से आते हैं।",
+          "scansPerIntervalSince": "हर {interval, select, week {हफ़्ते} month {महीने} other {दिन}} स्कैन, {date} से (UTC)"
         },
         "changeTypeDialog": {
           "theyStaySavedAndWork": "ये सेव रहते हैं और वापस स्विच करने पर फिर से काम करते हैं।",
@@ -6909,7 +6925,9 @@
           "shared": "शेयर किया",
           "allowed": "अनुमति दी",
           "noScansAskedForA": "पिछले {days, number} दिनों में अभी तक किसी स्कैन में लोकेशन नहीं पूछी गई।",
-          "thisCodeDoesntAskScanners": "यह कोड स्कैन करने वालों से उनकी लोकेशन नहीं पूछता।"
+          "thisCodeDoesntAskScanners": "यह कोड स्कैन करने वालों से उनकी लोकेशन नहीं पूछता।",
+          "sharedByScannersWhoAllowedSince": "उन स्कैनर्स द्वारा शेयर की गई, जिन्होंने अनुमति दी, लगभग 100 m तक राउंड की हुई। यह ऊपर के IP-आधारित देशों और शहरों से अलग है। {date} से।",
+          "noScansAskedForASince": "{date} से अब तक किसी स्कैन ने लोकेशन नहीं माँगी।"
         },
         "preciseLocationsTable": {
           "preciseScanLocationsRoundedTo": "सटीक स्कैन लोकेशन, लगभग 100 m तक राउंड की हुई",

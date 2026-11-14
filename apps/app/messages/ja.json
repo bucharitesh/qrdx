@@ -3502,7 +3502,12 @@
       "qrCodeDialog": {
         "getCode": "コードを取得",
         "useThisDesignInYour": "このデザインを、アプリ、Webページ、API、またはAIアシスタントで使えます。",
+        "frameworks": "フレームワーク",
+        "framework": "フレームワーク",
         "installTheOpenSourceQrdx": "オープンソースの<code>qrdx</code>パッケージ(npm の {version})をインストールして、このコンポーネントを組み込みます。",
+        "installAndDrawIntoAnyElement": "オープンソースの<code>qrdx</code>パッケージ（npm の{version}）をインストールして、このデザインを任意の要素に描画します。",
+        "pasteThisIntoAnyPage": "これを任意のページに貼り付けてください。スクリプトが CDN から<code>qrdx-code</code>要素を読み込みます。バンドラーを使う場合は、代わりに<code>qrdx</code>をインストールして<code>qrdx/element/define</code>をインポートしてください。",
+        "withoutABundlerImportIt": "バンドラーを使わない場合は、次からインポートします",
         "addTheQrCodeComponent": "QRdxレジストリからQRコードコンポーネントを追加し、このデザインで使用します。",
         "aPublicImageOfThis": "このコードの公開画像です。どこにでも埋め込めます。APIキーは不要です。",
         "createsADynamicCodeWith": "このデザインで動的QRコードを作成します。<link>APIキー</link>が必要です。",
@@ -6367,7 +6372,12 @@
           "allCodesLastValue": "全コード、過去{value}",
           "topCountries": "上位の国",
           "devices": "デバイス",
-          "unknown": "不明"
+          "unknown": "不明",
+          "allTime": "全期間",
+          "sinceDateUtc": "{date}以降（UTC）",
+          "allCodesSince": "全コード、{date}以降",
+          "allCodesPerIntervalSince": "全コード、{interval, select, week {週ごと} month {月ごと} other {日ごと}}、{date}以降（UTC）",
+          "scansPerIntervalOfUpTo": "最大{MAX_COMPARE, number}件のコードの{interval, select, week {週ごと} month {月ごと} other {日ごと}}のスキャン数を並べて比較します（UTC）。"
         },
         "comparePicker": {
           "stopComparingValue": "{value}の比較を停止",
@@ -6704,7 +6714,9 @@
           "conversionTypes": "コンバージョンの種類",
           "sinceValue": " {value}以降",
           "languageAndScanCountRules": "（言語やスキャン回数のルールは再現できないため、それらのルールで別の宛先に転送されたスキャンが含まれる場合があります）",
-          "unknown": "不明"
+          "unknown": "不明",
+          "sinceDate": "{date}以降、{timeZone}",
+          "sinceDateBusiest": "{date}以降、{timeZone}・最も多い時間帯 {hour}:00"
         },
         "analyticsTab": {
           "exportCsv": "CSVをエクスポート",
@@ -6731,7 +6743,11 @@
           "daysDaysOfScanHistory": "{days, number}日間のスキャン履歴",
           "valueKeepsValue2": "{value}は{value2}を保持します",
           "valueAndValue2": "{value}と{value2}。",
-          "yearsOfScanHistory": "{years, plural, one {スキャン履歴 #年分} other {スキャン履歴 #年分}}"
+          "yearsOfScanHistory": "{years, plural, one {スキャン履歴 #年分} other {スキャン履歴 #年分}}",
+          "allTime": "全期間",
+          "sinceDateUtc": "{date}以降（UTC）",
+          "sinceDateTapsCome": "{date}以降。タップはコードのNFCリンク経由で記録されます。",
+          "scansPerIntervalSince": "{interval, select, week {週ごと} month {月ごと} other {日ごと}}のスキャン数、{date}以降（UTC）"
         },
         "changeTypeDialog": {
           "theyStaySavedAndWork": "保存されたままなので、元に戻せば再び使えます。",
@@ -6909,7 +6925,9 @@
           "shared": "共有",
           "allowed": "許可",
           "noScansAskedForA": "過去{days, number}日間に、位置情報を確認したスキャンはまだありません。",
-          "thisCodeDoesntAskScanners": "このコードはスキャン者に位置情報を確認しません。"
+          "thisCodeDoesntAskScanners": "このコードはスキャン者に位置情報を確認しません。",
+          "sharedByScannersWhoAllowedSince": "位置情報の共有を許可したスキャン元からのもので、約100 mに丸めています。上記のIPベースの国や都市とは別です。{date}以降。",
+          "noScansAskedForASince": "{date}以降、位置情報を求めたスキャンはまだありません。"
         },
         "preciseLocationsTable": {
           "preciseScanLocationsRoundedTo": "約100 m単位に丸めた正確なスキャン位置",

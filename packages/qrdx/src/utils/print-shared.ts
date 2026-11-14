@@ -1,5 +1,5 @@
 import type { QRProps } from "../../types";
-import { isGradient } from "../../types/color";
+import { isGradient } from "../../types/color-helpers";
 import { DEFAULT_BGCOLOR, DEFAULT_SIZE } from "../constants";
 import { withQRSize } from "../download";
 import { getQRAsSVGDataUri } from "../export";

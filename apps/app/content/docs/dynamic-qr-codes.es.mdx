@@ -65,7 +65,7 @@ Los códigos de un espacio de trabajo usan el mejor plan entre sus propietarios.
 
 ## Analíticas de escaneo [#scan-analytics]
 
-Cada código tiene una página de analíticas con los escaneos a lo largo del tiempo, visitantes únicos, principales países y ciudades, dispositivos, sistemas operativos, navegadores y referentes de los últimos 7, 30 o 90 días, 1 año o 3 años (limitado por el historial de tu plan). Puedes exportar como CSV los escaneos del intervalo seleccionado.
+Cada código tiene una página de analíticas con los escaneos a lo largo del tiempo, los visitantes únicos, los principales países y ciudades, dispositivos, sistemas operativos, navegadores y referentes de los últimos 7, 30 o 90 días, 1 año o 3 años, o de todo el tiempo desde el primer escaneo del código (limitado por el historial de tu plan: todo el tiempo está disponible en Pro y Business). Puedes exportar los escaneos del intervalo seleccionado como CSV.
 
 Qué se registra en cada escaneo:
 
@@ -88,7 +88,7 @@ Gestiona los códigos mediante programación en `https://api.qrdx.dev/v1/codes`.
 | `GET` | `/v1/codes/{id}` | Obtiene un código |
 | `PATCH` | `/v1/codes/{id}` | Actualiza `destinationUrl`, `title`, `style`, `domainId` ([dominios personalizados](/docs/custom-domains)), `slug` o `archived`, o cambia `kind` entre `redirect` y `page` |
 | `DELETE` | `/v1/codes/{id}` | Elimina un código y sus escaneos |
-| `GET` | `/v1/codes/{id}/scans` | Analíticas de `range` (`7d`, `30d`, `90d`, `365d`, `1095d`; limitado por el historial de tu plan). Añade `limit` (≤ 500) para obtener escaneos individuales, y `before` (el último `scannedAt`) para la página siguiente |
+| `GET` | `/v1/codes/{id}/scans` | Analíticas para `range` (`7d`, `30d`, `90d`, `365d`, `1095d`, o `all` en Pro y Business; limitado por el historial de tu plan). Añade `limit` (≤ 500) para obtener escaneos individuales y `before` (el último `scannedAt`) para la página siguiente |
 
 Crea un código:
 

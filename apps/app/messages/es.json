@@ -3502,7 +3502,12 @@
       "qrCodeDialog": {
         "getCode": "Obtener código",
         "useThisDesignInYour": "Usa este diseño en tu aplicación, en una página web, a través de la API o con un asistente de IA.",
+        "frameworks": "Frameworks",
+        "framework": "Framework",
         "installTheOpenSourceQrdx": "Instala el paquete de código abierto <code>qrdx</code> ({version} en npm) e incorpora este componente.",
+        "installAndDrawIntoAnyElement": "Instala el paquete de código abierto <code>qrdx</code> ({version} en npm) y dibuja este diseño en cualquier elemento.",
+        "pasteThisIntoAnyPage": "Pega esto en cualquier página: el script carga el elemento <code>qrdx-code</code> desde una CDN. Con un bundler, instala <code>qrdx</code> e importa <code>qrdx/element/define</code> en su lugar.",
+        "withoutABundlerImportIt": "Sin bundler, impórtalo desde",
         "addTheQrCodeComponent": "Añade el componente QR Code desde el registro de QRdx y úsalo con este diseño.",
         "aPublicImageOfThis": "Una imagen pública de este código para insertar donde quieras. No necesitas clave de API.",
         "createsADynamicCodeWith": "Crea un código dinámico con este diseño. Necesita una <link>clave de API</link>.",
@@ -6367,7 +6372,12 @@
           "allCodesLastValue": "Todos los códigos, últimos {value}",
           "topCountries": "Principales países",
           "devices": "Dispositivos",
-          "unknown": "Desconocido"
+          "unknown": "Desconocido",
+          "allTime": "Todo el tiempo",
+          "sinceDateUtc": "Desde el {date} (UTC)",
+          "allCodesSince": "Todos los códigos, desde el {date}",
+          "allCodesPerIntervalSince": "Todos los códigos, por {interval, select, week {semana} month {mes} other {día}}, desde el {date} (UTC)",
+          "scansPerIntervalOfUpTo": "Escaneos {interval, select, week {semanales} month {mensuales} other {diarios}} de hasta {MAX_COMPARE, number} códigos lado a lado (UTC)."
         },
         "comparePicker": {
           "stopComparingValue": "Dejar de comparar {value}",
@@ -6704,7 +6714,9 @@
           "conversionTypes": "Tipos de conversión",
           "sinceValue": " desde {value}",
           "languageAndScanCountRules": " (las reglas de idioma y de número de escaneos no se pueden reproducir, así que estos datos pueden incluir escaneos que esas reglas redirigieron a otro destino)",
-          "unknown": "Desconocido"
+          "unknown": "Desconocido",
+          "sinceDate": "Desde el {date}, {timeZone}",
+          "sinceDateBusiest": "Desde el {date}, {timeZone} · hora de mayor actividad {hour}:00"
         },
         "analyticsTab": {
           "exportCsv": "Exportar CSV",
@@ -6731,7 +6743,11 @@
           "daysDaysOfScanHistory": "{days, number} días de historial de escaneos",
           "valueKeepsValue2": "{value} conserva {value2}",
           "valueAndValue2": "{value} y {value2}.",
-          "yearsOfScanHistory": "{years, plural, one {# año de historial de escaneos} other {# años de historial de escaneos}}"
+          "yearsOfScanHistory": "{years, plural, one {# año de historial de escaneos} other {# años de historial de escaneos}}",
+          "allTime": "Todo el tiempo",
+          "sinceDateUtc": "Desde el {date} (UTC)",
+          "sinceDateTapsCome": "Desde el {date}. Los toques llegan a través del enlace NFC del código.",
+          "scansPerIntervalSince": "Escaneos por {interval, select, week {semana} month {mes} other {día}}, desde el {date} (UTC)"
         },
         "changeTypeDialog": {
           "theyStaySavedAndWork": "Se mantienen guardados y vuelven a funcionar si regresas.",
@@ -6909,7 +6925,9 @@
           "shared": "Compartidas",
           "allowed": "Permitidas",
           "noScansAskedForA": "Aún no hay escaneos que hayan pedido una ubicación en los últimos {days, number} días.",
-          "thisCodeDoesntAskScanners": "Este código no pide la ubicación a quienes lo escanean."
+          "thisCodeDoesntAskScanners": "Este código no pide la ubicación a quienes lo escanean.",
+          "sharedByScannersWhoAllowedSince": "Compartida por quienes escanearon y lo permitieron, redondeada a unos 100 m. Es independiente de los países y ciudades basados en la IP que aparecen arriba. Desde el {date}.",
+          "noScansAskedForASince": "Ningún escaneo ha pedido la ubicación desde el {date}."
         },
         "preciseLocationsTable": {
           "preciseScanLocationsRoundedTo": "Ubicaciones precisas de escaneo, redondeadas a unos 100 m",

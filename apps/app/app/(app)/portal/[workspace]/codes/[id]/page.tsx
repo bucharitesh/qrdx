@@ -48,7 +48,7 @@ export default async function PortalCodePage({ params, searchParams }: Props) {
   if (!code) notFound();
   const { range, ranges, analytics } = await portalCodeAnalytics(
     portal,
-    code.id,
+    code,
     parsePublicStatsRange(query.range),
   );
   const name = code.title?.trim() || code.destinationHost || "Untitled code";
@@ -107,6 +107,7 @@ export default async function PortalCodePage({ params, searchParams }: Props) {
       <StatsReportBody
         accent={Boolean(portal.brand.accent)}
         analytics={analytics}
+        range={range}
       />
 
       <p className="text-muted-foreground text-xs">

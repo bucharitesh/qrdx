@@ -30,11 +30,13 @@ import type { Translator } from "@/lib/i18n/translator";
 import { PLAN_LIMITS, PLANS } from "@/lib/plans";
 import { PLAN_NAMES } from "@/lib/pricing";
 import {
+  ALL_TIME_RANGE,
   type BreakdownRow,
+  codeScanRange,
   getScanAnalytics,
-  resolveScanRange,
   SCAN_RANGE_KEYS,
   SCAN_RANGES,
+  type ScanRange,
   scanRangeLabel,
 } from "@/lib/scans";
 import { requestWorkspaceSlug } from "@/lib/scope";
@@ -155,11 +157,15 @@ export async function AnalyticsTab({
   query: Query;
 }) {
   const t = await getAppTranslations("app.dashboard.codes.analyticsTab");
-  const { range, days } = resolveScanRange(query.range, retentionDays);
+  // "All time" starts at the code's first scan, else its creation.
+  const { range, days } = await codeScanRange(code, query.range, retentionDays);
   const [analytics, slug] = await Promise.all([
     getScanAnalytics(code.id, days),
     requestWorkspaceSlug(),
   ]);
+  const since = range === ALL_TIME_RANGE ? formatDate(analytics.from) : null;
+  const rangeLabel = (key: ScanRange) =>
+    key === ALL_TIME_RANGE ? t("allTime") : scanRangeLabel(key);
   const lockedRanges = SCAN_RANGE_KEYS.some(
     (key) => SCAN_RANGES[key] > retentionDays,
   );
@@ -193,7 +199,7 @@ export async function AnalyticsTab({
                 }
                 variant="ghost"
               >
-                {scanRangeLabel(key)}
+                {rangeLabel(key)}
                 <Lock />
               </Button>
             ) : (
@@ -210,7 +216,7 @@ export async function AnalyticsTab({
                   })}
                   scroll={false}
                 >
-                  {scanRangeLabel(key)}
+                  {rangeLabel(key)}
                 </Link>
               </Button>
             );
@@ -247,7 +253,11 @@ export async function AnalyticsTab({
           value={formatNumber(code.scanCount)}
         />
         <Metric
-          hint={`Last ${days} days (UTC)`}
+          hint={
+            since
+              ? t("sinceDateUtc", { date: since })
+              : `Last ${days} days (UTC)`
+          }
           label={t("scansInRange")}
           value={formatNumber(analytics.total)}
         />
@@ -273,7 +283,11 @@ export async function AnalyticsTab({
             </Button>
           )
         }
-        description={t("lastDaysDaysTapsCome", { days })}
+        description={
+          since
+            ? t("sinceDateTapsCome", { date: since })
+            : t("lastDaysDaysTapsCome", { days })
+        }
         sources={analytics.sources}
       />
 
@@ -281,11 +295,16 @@ export async function AnalyticsTab({
         <CardHeader className="px-4">
           <CardTitle>{t("scansOverTime")}</CardTitle>
           <CardDescription>
-            {t("scansPerDayLastDays", { days })}
+            {since
+              ? t("scansPerIntervalSince", {
+                  interval: analytics.interval,
+                  date: since,
+                })
+              : t("scansPerDayLastDays", { days })}
           </CardDescription>
         </CardHeader>
         <CardContent className="px-2 sm:px-4">
-          <ScansChart data={analytics.series} />
+          <ScansChart data={analytics.series} interval={analytics.interval} />
         </CardContent>
       </Card>
 
@@ -346,9 +365,15 @@ export async function AnalyticsTab({
         code={code}
         days={days}
         from={analytics.from}
+        since={since ?? undefined}
         slug={slug}
       />
-      <AnalyticsExtra codeId={code.id} days={days} query={query} />
+      <AnalyticsExtra
+        codeId={code.id}
+        days={days}
+        query={query}
+        since={since ?? undefined}
+      />
       <p className="text-muted-foreground text-xs">
         {t("botsAndLinkPreviewsAre")}
       </p>

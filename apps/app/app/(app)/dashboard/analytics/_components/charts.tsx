@@ -16,7 +16,11 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { formatDay } from "@/app/(app)/dashboard/codes/_components/format";
+import {
+  formatBucket,
+  formatBucketSpan,
+} from "@/app/(app)/dashboard/codes/_components/format";
+import type { SeriesInterval } from "@/lib/scan-ranges";
 
 const barConfig = { count: { label: "Scans", color: "var(--primary)" } };
 
@@ -66,14 +70,16 @@ const SERIES_COLORS = [
   "var(--chart-4)",
 ];
 
-/** Daily scans of up to four codes. */
+/** Scans of up to four codes per day (or week or month on long ranges). */
 export function CompareChart({
   dates,
   series,
+  interval = "day",
 }: {
-  /** One date (YYYY-MM-DD) per count */
+  /** One bucket start (YYYY-MM-DD) per count */
   dates: string[];
   series: { id: string; label: string; counts: number[] }[];
+  interval?: SeriesInterval;
 }) {
   const config = Object.fromEntries(
     series.map((item, index) => [
@@ -95,7 +101,7 @@ export function CompareChart({
           axisLine={false}
           dataKey="date"
           minTickGap={24}
-          tickFormatter={formatDay}
+          tickFormatter={(value) => formatBucket(String(value), interval)}
           tickLine={false}
         />
         <YAxis
@@ -106,7 +112,7 @@ export function CompareChart({
         />
         <ChartTooltip
           content={(props) => <ChartTooltipContent {...props} />}
-          labelFormatter={(value) => formatDay(String(value))}
+          labelFormatter={(value) => formatBucketSpan(String(value), interval)}
         />
         <ChartLegend content={<ChartLegendContent />} />
         {series.map((item) => (

@@ -65,7 +65,7 @@ icon: QrCode
 
 ## 扫描分析 [#scan-analytics]
 
-每个二维码都有一个分析页面，展示最近 7 天、30 天、90 天、1 年或 3 年（受套餐历史时长限制）内随时间变化的扫描量、独立访客、主要国家和城市、设备、操作系统、浏览器以及来源。你可以将所选范围内的扫描数据导出为 CSV。
+每个二维码都有一个分析页面，显示最近 7 天、30 天、90 天、1 年或 3 年，或自该二维码首次扫描以来全部时间内的扫描趋势、独立访客、热门国家和城市、设备、操作系统、浏览器和来源（受套餐历史范围限制：全部时间仅限 Pro 和 Business）。你可以将所选范围内的扫描记录导出为 CSV。
 
 每次扫描会记录以下内容：
 
@@ -88,7 +88,7 @@ icon: QrCode
 | `GET` | `/v1/codes/{id}` | 获取单个二维码 |
 | `PATCH` | `/v1/codes/{id}` | 更新 `destinationUrl`、`title`、`style`、`domainId`([自定义域名](/docs/custom-domains))、`slug` 或 `archived`,也可在 `redirect` 与 `page` 之间切换 `kind` |
 | `DELETE` | `/v1/codes/{id}` | 删除二维码及其扫描记录 |
-| `GET` | `/v1/codes/{id}/scans` | `range` 对应的分析数据(`7d`、`30d`、`90d`、`365d`、`1095d`;受你所在套餐的历史数据范围限制)。添加 `limit`(≤ 500)可获取单次扫描记录,添加 `before`(上一条的 `scannedAt`)可获取下一页 |
+| `GET` | `/v1/codes/{id}/scans` | `range` 范围内的分析数据(`7d`、`30d`、`90d`、`365d`、`1095d`,Pro 和 Business 还可用 `all`;受你套餐的历史记录期限限制)。添加 `limit`(≤ 500)可获取单次扫描记录,使用 `before`(上一条的 `scannedAt`)获取下一页 |
 
 创建二维码:
 
