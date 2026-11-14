@@ -5,6 +5,7 @@
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { GITHUB_OWNER, GITHUB_REPO } from "@repo/config";
 import { parseDocsManifest } from "@repo/next-config/docs-zone";
 import { afterAll, describe, expect, it, vi } from "vitest";
 
@@ -80,7 +81,7 @@ describe("Markdown copies", () => {
     expect(text).toContain("# Start (Guides)");
     expect(text).toContain("URL: http://localhost:3000/docs/guides/start");
     expect(text).toContain(
-      "Source: https://github.com/bucharitesh/qrdx/blob/main/apps/docs/content/docs/guides/start.mdx",
+      `Source: https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}/blob/main/apps/docs/content/docs/guides/start.mdx`,
     );
     expect(text).toContain("Start here.");
   });
