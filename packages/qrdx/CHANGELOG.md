@@ -2,6 +2,10 @@
 
 Release notes for earlier versions are at [qrdx.dev/changelog](https://qrdx.dev/changelog).
 
+## 0.0.54
+
+- The repository moved to [qrdxinc/qrdx](https://github.com/qrdxinc/qrdx). The package's `repository`, `homepage` and `bugs` links point there, and this release is published with provenance from it. No code changes. `@qrdx/cli` 0.0.11 is the same move.
+
 ## 0.0.53
 
 ### Templates are frames

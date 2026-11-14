@@ -161,7 +161,7 @@ describe("attributing a new account", () => {
   it("refuses self-referral: the same email under another spelling", async () => {
     const result = await attributeNewUser({
       userId: NEW_USER.id,
-      email: "Ana.Diaz+second@gmail.com",
+      email: "Ana.Diaz+second@example.test",
       candidates: [{ code: "ana-diaz-4k2p", via: "link" }],
     });
     expect(result).toEqual({ status: "skipped", reason: "self_referral" });

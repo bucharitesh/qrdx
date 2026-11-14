@@ -44,7 +44,7 @@ describe("register-commands.mjs", () => {
     expect(headers.Authorization).toBe(`Bot ${TOKEN}`);
     expect(headers["Content-Type"]).toBe("application/json");
     expect(headers["User-Agent"]).toMatch(
-      /^DiscordBot \(https:\/\/github\.com\/bucharitesh\/qrdx, \d+\)$/,
+      /^DiscordBot \(https:\/\/github\.com\/qrdxinc\/qrdx, \d+\)$/,
     );
     expect(JSON.parse(init.body as string)).toEqual(DISCORD_COMMANDS);
   });

@@ -8,7 +8,7 @@ body:
       value: |
         Thanks for helping fix the docs. For a typo or a small fix, you can also send a pull request: the **Open** menu under each docs page's title has **Open in GitHub**, which takes you to the page's source file.
 
-        If the docs are right and the product is wrong, use the [bug report](https://github.com/bucharitesh/qrdx/issues/new?template=bug_report.yml) instead.
+        If the docs are right and the product is wrong, use the [bug report](https://github.com/qrdxinc/qrdx/issues/new?template=bug_report.yml) instead.
 
   - type: input
     id: page
@@ -50,7 +50,7 @@ body:
     id: terms
     attributes:
       label: Before submitting
-      description: By submitting this issue, you agree to follow the [contributing guidelines](https://github.com/bucharitesh/qrdx/blob/main/CONTRIBUTING.md) and the [code of conduct](https://github.com/bucharitesh/qrdx/blob/main/.github/CODE_OF_CONDUCT.md).
+      description: By submitting this issue, you agree to follow the [contributing guidelines](https://github.com/qrdxinc/qrdx/blob/main/CONTRIBUTING.md) and the [code of conduct](https://github.com/qrdxinc/qrdx/blob/main/.github/CODE_OF_CONDUCT.md).
       options:
         - label: I searched existing issues for this page
           required: true

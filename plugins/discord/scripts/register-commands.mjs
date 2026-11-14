@@ -20,7 +20,7 @@ const COMMANDS_FILE = new URL(
 );
 
 const API = "https://discord.com/api/v10";
-const USER_AGENT = "DiscordBot (https://github.com/bucharitesh/qrdx, 1)";
+const USER_AGENT = "DiscordBot (https://github.com/qrdxinc/qrdx, 1)";
 
 /**
  * The command definitions, as the app answers them.
