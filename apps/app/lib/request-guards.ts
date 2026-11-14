@@ -7,7 +7,7 @@ import {
 } from "@repo/rate-limit";
 import type { z } from "zod";
 import { ValidationError } from "@/types/errors";
-import { HttpError } from "./error-response";
+import { HttpError } from "./http-error";
 
 const aiUserRateLimiter = createRateLimiter({
   limiter: slidingWindow(10, "10 s"),
