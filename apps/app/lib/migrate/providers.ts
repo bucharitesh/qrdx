@@ -226,9 +226,10 @@ export const FILE_PROVIDERS: Record<FileProviderId, FileProvider> = {
     name: "Flowcode",
     website: "https://www.flowcode.com",
     logo: "/compare/flowcode.svg",
-    export: "none",
+    export: "documented",
     exportSteps: [
-      "Flowcode doesn't document an export of your code list (its analytics export is scan data). If you created codes in bulk, reuse that spreadsheet; otherwise list Name, Scan URL and Destination for each code.",
+      "Flowcode only exports codes that are in a folder, so move your codes into folders first.",
+      "Open the Folder section, tick each folder and click Download URLs. The CSV lists Flowcode Name, Short Links and Scan Destination for each code.",
       SPREADSHEET_TIP,
     ],
     repointSteps: [
