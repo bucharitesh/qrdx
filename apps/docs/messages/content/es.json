@@ -30616,29 +30616,5 @@
     "text": "QRdx no guarda tu prompt, tu imagen de referencia ni las imágenes generadas; solo cuenta tus créditos. El prompt, la imagen del código QR y cualquier imagen de referencia se envían a través de Vercel AI Gateway a GPT Image 2 de OpenAI para crear la ilustración, y el resultado vuelve directamente a tu navegador, así que descarga las que quieras conservar.",
     "status": "machine",
     "context": "aiArt.faqs.10.answer"
-  },
-  "35f9a7f12b6f": {
-    "source": "Saves a design as a theme in your workspace, under the plan's saved-theme limit. Needs a QRdx API key on the connection; every other tool works without one.",
-    "text": "Guarda un diseño como tema en tu espacio de trabajo, dentro del límite de temas guardados de tu plan. Necesita una clave de API de QRdx en la conexión; el resto de las herramientas funcionan sin ella.",
-    "status": "machine",
-    "context": "mcp.tools.5.description"
-  },
-  "f538f592cdab": {
-    "source": "No, for designing and rendering codes and browsing the community: the QRdx MCP server is public and free, and it keeps no session state. Saving a design to your themes (save_template), saving a barcode (save_barcode) and using a logo you uploaded need a QRdx API key, sent as Authorization: Bearer qrdx_… in your app's settings for the server.",
-    "text": "No, para diseñar y generar códigos y para explorar la comunidad: el servidor MCP de QRdx es público y gratuito, y no guarda el estado de la sesión. Guardar un diseño en tus temas (save_template), guardar un código de barras (save_barcode) y usar un logo que subiste necesitan una clave de API de QRdx, enviada como Authorization: Bearer qrdx_… en los ajustes del servidor de tu aplicación.",
-    "status": "machine",
-    "context": "mcp.faqs.0.answer"
-  },
-  "9ccc8cb2303b": {
-    "source": "No. The tools render images, format text and read the public community. Only save_template and save_barcode write anything: the theme or barcode you ask them to save, in the API key's workspace. The server doesn't save the codes. The image URLs it returns contain the encoded data, so don't share them if the data is private, such as a Wi-Fi password.",
-    "text": "No. Las herramientas generan imágenes, dan formato a texto y leen la comunidad pública. Solo save_template y save_barcode escriben algo: el tema o el código de barras que les pides guardar, en el espacio de trabajo de la clave de API. El servidor no guarda los códigos. Las URL de imagen que devuelve contienen los datos codificados, así que no las compartas si los datos son privados, como la contraseña de una red Wi-Fi.",
-    "status": "machine",
-    "context": "mcp.faqs.5.answer"
-  },
-  "81399be3dc7a": {
-    "source": "OpenAI's GPT Image 2, through Vercel AI Gateway, with 171 style presets. QRdx draws a plain black-and-white QR code on the server, the model repaints it as your scene, and QRdx's own scan check makes sure the result decodes, strengthening the code only as much as it needs.",
-    "text": "GPT Image 2 de OpenAI, a través de Vercel AI Gateway, con 171 estilos predefinidos. QRdx dibuja en el servidor un código QR liso en blanco y negro, el modelo lo repinta como tu escena, y la propia verificación de escaneo de QRdx comprueba que el resultado se decodifique, reforzando el código solo lo necesario.",
-    "status": "machine",
-    "context": "aiArt.faqs.9.answer"
   }
 }
