@@ -1,38 +1,18 @@
 import { z } from "zod";
+import {
+  FRAME_FONT_SCALE_MAX,
+  FRAME_FONT_SCALE_MIN,
+  FRAME_STYLES,
+  FRAME_TEXT_MAX_LENGTH,
+} from "./constants";
 
-export const FRAME_STYLES = [
-  "none",
-  "banner-bottom",
-  "banner-top",
-  "border",
-  "rounded-border",
-  "speech-bubble",
-  // Added after 0.0.46
-  "banner-top-bottom",
-  "speech-bubble-top",
-  "chat-bubble",
-  "circle",
-  "polaroid",
-  "phone",
-  "ticket",
-  "badge",
-  "envelope",
-  "tag",
-  "menu-card",
-  "sticker",
-  "gradient-border",
-  "focus",
-] as const;
-
-/** Longest call-to-action label a frame renders. */
-export const FRAME_TEXT_MAX_LENGTH = 24;
-
-/** Label used when a frame has no `text`. Pass `""` to hide the label. */
-export const DEFAULT_FRAME_TEXT = "Scan me";
-
-/** Smallest and largest `fontScale` (label size relative to the default). */
-export const FRAME_FONT_SCALE_MIN = 0.5;
-export const FRAME_FONT_SCALE_MAX = 1.5;
+export {
+  DEFAULT_FRAME_TEXT,
+  FRAME_FONT_SCALE_MAX,
+  FRAME_FONT_SCALE_MIN,
+  FRAME_STYLES,
+  FRAME_TEXT_MAX_LENGTH,
+} from "./constants";
 
 // Zod schemas
 export const frameStyleSchema = z.enum(FRAME_STYLES);

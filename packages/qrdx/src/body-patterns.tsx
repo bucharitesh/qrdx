@@ -2,7 +2,7 @@
 /** biome-ignore-all lint/style/noMagicNumbers: module geometry */
 
 import type { BodyPattern, Modules } from "../types";
-import { MODULE_SCALE_MAX, MODULE_SCALE_MIN } from "../types/qr";
+import { MODULE_SCALE_MAX, MODULE_SCALE_MIN } from "../types/constants";
 import type { QRNode } from "./jsx/runtime";
 import {
   circlePath,

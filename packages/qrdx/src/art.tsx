@@ -24,16 +24,13 @@
 //   value (after Chu et al., "Halftone QR Codes", SIGGRAPH Asia 2013).
 // Finder, alignment and format patterns always stay crisp.
 
+import type { QRArt, QRArtImage, QRArtMode, QRArtVariant } from "../types/art";
+import type { Modules } from "../types/common";
 import {
   QR_ART_MAX_SAMPLE_SIZE,
   QR_ART_MODES,
   QR_ART_VARIANTS,
-  type QRArt,
-  type QRArtImage,
-  type QRArtMode,
-  type QRArtVariant,
-} from "../types/art";
-import type { Modules } from "../types/common";
+} from "../types/constants";
 import type { EyePosition } from "../types/qr";
 import {
   type ArtBitmap,
