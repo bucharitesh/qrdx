@@ -72,7 +72,8 @@ export function createMemoryLimiter(
   }
 
   return {
-    limit(identifier: string): LimitResult {
+    /** Uses `rate` tokens (default 1) when they fit in the window. */
+    limit(identifier: string, rate = 1): LimitResult {
       const at = now();
       const start = Math.floor(at / windowMs) * windowMs;
       let state = windows.get(identifier);
@@ -87,12 +88,12 @@ export function createMemoryLimiter(
       }
       const weight = sliding ? 1 - (at - start) / windowMs : 0;
       const used = Math.floor(state.previous * weight) + state.current;
-      const success = used < tokens;
-      if (success) state.current++;
+      const success = used + rate <= tokens;
+      if (success) state.current += rate;
       return {
         success,
         limit: tokens,
-        remaining: Math.max(0, tokens - used - (success ? 1 : 0)),
+        remaining: Math.max(0, tokens - used - (success ? rate : 0)),
         reset: start + windowMs,
         pending: Promise.resolve(),
         reason: "memory",
@@ -198,23 +199,23 @@ export type MemoryLimiter = ReturnType<typeof createMemoryLimiter>;
  * outage never turns limits off.
  */
 export function withFallback(
-  upstash: (identifier: string) => Promise<LimitResult>,
+  upstash: (identifier: string, rate?: number) => Promise<LimitResult>,
   memory: MemoryLimiter,
   breaker: CircuitBreaker
-): (identifier: string) => Promise<LimitResult> {
-  return async (identifier) => {
-    if (!breaker.tryAcquire()) return memory.limit(identifier);
+): (identifier: string, rate?: number) => Promise<LimitResult> {
+  return async (identifier, rate) => {
+    if (!breaker.tryAcquire()) return memory.limit(identifier, rate);
     try {
-      const result = await upstash(identifier);
+      const result = await upstash(identifier, rate);
       if (result.reason === "timeout") {
         breaker.onFailure("timeout");
-        return memory.limit(identifier);
+        return memory.limit(identifier, rate);
       }
       breaker.onSuccess();
       return result;
     } catch (error) {
       breaker.onFailure(error instanceof Error ? error.message : String(error));
-      return memory.limit(identifier);
+      return memory.limit(identifier, rate);
     }
   };
 }

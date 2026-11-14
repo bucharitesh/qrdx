@@ -73,6 +73,19 @@ describe("fixedWindow", () => {
     ]);
   });
 
+  it("counts a request with a rate as that many in Upstash", async () => {
+    const limiter = createRateLimiter({
+      prefix: "qrdx:test-rate",
+      limiter: fixedWindow(10, "1 d"),
+    });
+    expect(await limiter.limit("ip:1", 4)).toMatchObject({
+      success: true,
+      remaining: 6,
+    });
+    expect(await limiter.limit("ip:1", 7)).toMatchObject({ success: false });
+    expect([...upstash.store.values()]).toEqual([11]);
+  });
+
   it("keeps enforcing the same daily limit in memory while Upstash is down", async () => {
     const error = vi.spyOn(console, "error").mockImplementation(() => {});
     upstash.down = true;

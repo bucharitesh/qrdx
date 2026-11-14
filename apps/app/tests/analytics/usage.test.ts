@@ -176,6 +176,20 @@ describe("the REST API", () => {
     ]);
   });
 
+  it("doesn't count a request refused with a 429", async () => {
+    const limited = withApiUsage(
+      "qr",
+      async () => new Response(null, { status: 429 }),
+    );
+    const ok = withApiUsage("qr", async () => new Response("svg"));
+    await limited(request());
+    await limited(request({ authorization: "Bearer qrdx_abc" }));
+    await ok(request());
+    expect(await settled(1)).toEqual([
+      expect.objectContaining({ metric: "request", key: "qr:anon", count: 1 }),
+    ]);
+  });
+
   it("counts a handler that throws as a server error, and still throws", async () => {
     const broken = withApiUsage("hooks", () => {
       throw new Error("boom");

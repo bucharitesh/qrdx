@@ -134,12 +134,17 @@ export function apiCallerKind(req: Request): "keyed" | "anon" {
   return /^bearer\s+\S/i.test(authorization) ? "keyed" : "anon";
 }
 
-/** Counts a /v1 request and, when it fails, its error class. Never throws. */
+/**
+ * Counts a /v1 request and, when it fails, its error class. Never throws. A
+ * request refused with a 429 isn't counted: it was turned away, and a caller
+ * past its limit would otherwise still cost a write per request.
+ */
 export function recordApiRequest(
   group: ApiRouteGroup,
   req: Request,
   status: number,
 ): void {
+  if (status === 429) return;
   recordUsage("api", "request", `${group}:${apiCallerKind(req)}`);
   if (status >= 400) {
     recordUsage("api", "error", `${group}:${status >= 500 ? "5xx" : "4xx"}`);
