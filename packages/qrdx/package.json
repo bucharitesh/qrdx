@@ -1,6 +1,6 @@
 {
   "name": "qrdx",
-  "version": "0.0.53",
+  "version": "0.0.54",
   "description": "Customizable QR code generator for React and plain JavaScript: SVG and canvas rendering, dot and eye patterns, gradients, logos, frames, Logo QR and Image QR art, PNG/JPG/WebP/SVG/PDF/EPS export, a scan score and QR scanning.",
   "keywords": [
     "qr-code",
