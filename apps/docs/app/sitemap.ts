@@ -9,8 +9,10 @@ import {
   blogSource,
   changelogSource,
   compareSource,
+  customersSource,
   legalSource,
 } from "@/lib/content-source";
+import { CUSTOMERS_PATH } from "@/lib/customers";
 import { docsIndex, docsPageLocales } from "@/lib/docs-index";
 import { docsZoneManifest } from "@/lib/docs-zone-manifest";
 import { isPathAvailable } from "@/lib/feature-availability";
@@ -122,6 +124,10 @@ function entries(docs: Entry[]): Entry[] {
   // A post's `updated` is its last substantive change; small fixes don't
   // count, so its git date isn't used.
   const postDate = (p: (typeof posts)[number]) =>
+    latest([p.data.updated, p.data.date]);
+  // Published customers' stories only (lib/content-source.ts).
+  const stories = customersSource.getPages();
+  const storyDate = (p: (typeof stories)[number]) =>
     latest([p.data.updated, p.data.date]);
   const compares = compareSource.getPages();
   // `lastVerified` is when the competitor facts were last checked.
@@ -322,6 +328,21 @@ function entries(docs: Entry[]): Entry[] {
         ({
           url: url(page.url),
           lastModified: postDate(page),
+          changeFrequency: "monthly",
+          priority: 0.7,
+        }) satisfies Entry,
+    ),
+    {
+      url: url(CUSTOMERS_PATH),
+      lastModified: latest(stories.map(storyDate)),
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
+    ...stories.map(
+      (page) =>
+        ({
+          url: url(page.url),
+          lastModified: storyDate(page),
           changeFrequency: "monthly",
           priority: 0.7,
         }) satisfies Entry,

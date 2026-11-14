@@ -1,6 +1,6 @@
 {
   "name": "qrdx",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Styled, scannable QR codes: the QRdx MCP server for scan-checked designs, barcodes, and Wi-Fi, contact and payment codes, plus a skill that runs the QRdx CLI.",
   "mcpServers": {
     "qrdx": {
