@@ -3128,7 +3128,7 @@
       "openQuestion": "क्या QRdx सच में ओपन सोर्स है?",
       "openAnswer": "हाँ। सोर्स GitHub पर है, वेब ऐप AGPL-3.0-or-later के तहत लाइसेंस्ड है, और qrdx library, @qrdx/cli और plugins MIT हैं। दो बिज़नेस फ़ीचर, वर्कस्पेस सिंगल साइन-ऑन और ऑडिट लॉग, QRdx Commercial License के तहत ee फ़ोल्डर में हैं: आप वह कोड पढ़ सकते हैं, लेकिन प्रोडक्शन में इस्तेमाल के लिए QRdx के साथ एग्रीमेंट ज़रूरी है।",
       "githubQuestion": "GitHub पर QRdx का सोर्स कोड कहाँ है?",
-      "githubAnswer": "github.com/bucharitesh/qrdx पर। यह एक ही monorepo है जिसमें वेब ऐप, qrdx library, CLI, plugins और docs हैं।",
+      "githubAnswer": "github.com/qrdxinc/qrdx पर। यह एक ही monorepo है जिसमें वेब ऐप, qrdx library, CLI, plugins और docs हैं।",
       "freeQuestion": "क्या QRdx को खुद होस्ट करना फ़्री है?",
       "freeAnswer": "हाँ। कोई लाइसेंस फ़ीस नहीं है; आप सिर्फ़ अपने सर्वर और डेटाबेस का खर्च देते हैं। खुद होस्ट किया गया instance डायनेमिक कोड, होस्टेड पेज और स्कैन analytics चलाता है। सिंगल साइन-ऑन और ऑडिट लॉग तब तक बंद रहते हैं जब तक आपके पास QRdx license key न हो।",
       "needQuestion": "QRdx को खुद होस्ट करने के लिए मुझे क्या चाहिए?",

@@ -249,14 +249,16 @@ describe("US-dollar conversion", () => {
 
 describe("self-referral email matching", () => {
   it("ignores case, +tags and Gmail dots", () => {
-    expect(canonicalEmail(" Ana.Diaz+qrdx@GMail.com ")).toBe(
-      "anadiaz@gmail.com",
+    expect(canonicalEmail(" Jane.Doe+qrdx@GMail.com ")).toBe(
+      "janedoe@gmail.com",
     );
-    expect(canonicalEmail("ana.diaz@googlemail.com")).toBe("anadiaz@gmail.com");
+    expect(canonicalEmail("jane.doe@googlemail.com")).toBe("janedoe@gmail.com");
     expect(isSameCanonicalEmail("ana@acme.com", "ANA+promo@acme.com")).toBe(
       true,
     );
-    expect(isSameCanonicalEmail("a.na@gmail.com", "ana@gmail.com")).toBe(true);
+    expect(
+      isSameCanonicalEmail("j.ane.doe@gmail.com", "janedoe@gmail.com"),
+    ).toBe(true);
   });
 
   it("keeps dots outside Gmail and tells different people apart", () => {
@@ -331,7 +333,7 @@ describe("referral codes", () => {
   });
 
   it("refuses the local part of the affiliate's own email address, in any spelling", () => {
-    const emails = ["Ana.Diaz+promo@gmail.com"];
+    const emails = ["Ana.Diaz+promo@example.test"];
     for (const code of [
       "ana-diaz",
       "anadiaz",

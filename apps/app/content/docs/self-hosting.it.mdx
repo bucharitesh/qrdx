@@ -4,10 +4,10 @@ description: "Esegui la tua istanza dell'app web di QRdx, con QR code dinamici e
 icon: Server
 ---
 
-QRdx è distribuito con licenza AGPL-3.0 e puoi eseguire l'app web (editor di QR code, account, verifica in due passaggi e passkey, codici dinamici e pagine ospitate, team, temi salvati, galleria della community e questa documentazione) sul tuo server. Il single sign-on del workspace e il registro di controllo del workspace fanno eccezione: si trovano nelle cartelle `ee/` con licenza commerciale e restano disattivati finché non imposti una chiave di licenza (`QRDX_EE_LICENSE`). Per usarli in produzione serve un accordo scritto con QRdx; consulta [LICENSING.md](https://github.com/bucharitesh/qrdx/blob/main/LICENSING.md). Non ti serve nulla di tutto questo per usare la [libreria React `qrdx`](/docs/getting-started) o la CLI. Funzionano ovunque senza backend, con licenza MIT. [Open source in QRdx](/open-source-qr-code-generator) elenca ogni parte del repository e la relativa licenza.
+QRdx è distribuito con licenza AGPL-3.0 e puoi eseguire l'app web (editor di QR code, account, verifica in due passaggi e passkey, codici dinamici e pagine ospitate, team, temi salvati, galleria della community e questa documentazione) sul tuo server. Il single sign-on del workspace e il registro di controllo del workspace fanno eccezione: si trovano nelle cartelle `ee/` con licenza commerciale e restano disattivati finché non imposti una chiave di licenza (`QRDX_EE_LICENSE`). Per usarli in produzione serve un accordo scritto con QRdx; consulta [LICENSING.md](https://github.com/qrdxinc/qrdx/blob/main/LICENSING.md). Non ti serve nulla di tutto questo per usare la [libreria React `qrdx`](/docs/getting-started) o la CLI. Funzionano ovunque senza backend, con licenza MIT. [Open source in QRdx](/open-source-qr-code-generator) elenca ogni parte del repository e la relativa licenza.
 
 <Callout type="warn">
-  La configurazione Docker è nuova. Se qualcosa non funziona, [apri una issue](https://github.com/bucharitesh/qrdx/issues).
+  La configurazione Docker è nuova. Se qualcosa non funziona, [apri una issue](https://github.com/qrdxinc/qrdx/issues).
 </Callout>
 
 ## Requisiti [#requirements]
@@ -31,7 +31,7 @@ Lo schema proviene da `packages/database/schema.ts` e viene applicato con `drizz
 ### 1. Clona il repository [#1-clone-the-repository]
 
 ```bash
-git clone https://github.com/bucharitesh/qrdx.git
+git clone https://github.com/qrdxinc/qrdx.git
 cd qrdx
 ```
 
@@ -103,7 +103,7 @@ docker run --rm -e DATABASE_URL="<your connection string>" qrdx-migrate
 ## Configurazione manuale (Node.js) [#manual-setup-nodejs]
 
 ```bash
-git clone https://github.com/bucharitesh/qrdx.git
+git clone https://github.com/qrdxinc/qrdx.git
 cd qrdx
 bun install
 
@@ -129,7 +129,7 @@ DATABASE_HTTP_ENDPOINT=http://localhost:4444/sql
 
 ## Variabili d'ambiente [#environment-variables]
 
-[`apps/app/.env.example`](https://github.com/bucharitesh/qrdx/blob/main/apps/app/.env.example) elenca ogni variabile con una breve nota su dove ottenerla.
+[`apps/app/.env.example`](https://github.com/qrdxinc/qrdx/blob/main/apps/app/.env.example) elenca ogni variabile con una breve nota su dove ottenerla.
 
 ### Minimo [#minimum]
 
@@ -167,8 +167,8 @@ Aggiungi un provider OAuth (GitHub o Google), oppure Resend per i codici di acce
 | Link brevi Dub | `DUB_CLIENT_ID`, `DUB_CLIENT_SECRET`, `DUB_REDIRECT_URI`, `INTEGRATION_ENCRYPTION_KEY` | L'integrazione Dub non può essere collegata |
 | Google Drive | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_DRIVE_REDIRECT_URI`, `INTEGRATION_ENCRYPTION_KEY` | L'integrazione Google Drive non può essere collegata |
 | Bitly, Dropbox, OneDrive, Box, Notion | `BITLY_CLIENT_ID`/`_SECRET`, `DROPBOX_CLIENT_ID`/`_SECRET`, `MICROSOFT_CLIENT_ID`/`_SECRET`, `BOX_CLIENT_ID`/`_SECRET`, `NOTION_CLIENT_ID`/`_SECRET`, `INTEGRATION_ENCRYPTION_KEY` | Quell'integrazione mostra "Not configured" (Bitly si collega comunque con token di accesso incollati). Rebrandly e Short.io non richiedono variabili. Vedi [Link brevi e selettori di file](/docs/short-links-and-file-pickers#self-hosting) |
-| Bot Slack | `SLACK_CLIENT_ID`, `SLACK_CLIENT_SECRET`, `SLACK_SIGNING_SECRET`, più `INTEGRATION_ENCRYPTION_KEY` in produzione | Nessun bot Slack: le sue route e la sua pagina di collegamento rispondono 404 e Settings non lo offre. Crea la tua app Slack da [`plugins/slack/manifest.json`](https://github.com/bucharitesh/qrdx/tree/main/plugins/slack) come descritto nel suo README. Vedi [Bot Slack](/docs/slack-bot#self-hosting) |
-| Bot Discord | `DISCORD_APPLICATION_ID`, `DISCORD_PUBLIC_KEY` | Nessun bot Discord: il suo endpoint delle interazioni risponde `404` ed è escluso dalla directory delle integrazioni. Registra la tua app Discord come descritto in [`plugins/discord/README.md`](https://github.com/bucharitesh/qrdx/tree/main/plugins/discord) |
+| Bot Slack | `SLACK_CLIENT_ID`, `SLACK_CLIENT_SECRET`, `SLACK_SIGNING_SECRET`, più `INTEGRATION_ENCRYPTION_KEY` in produzione | Nessun bot Slack: le sue route e la sua pagina di collegamento rispondono 404 e Settings non lo offre. Crea la tua app Slack da [`plugins/slack/manifest.json`](https://github.com/qrdxinc/qrdx/tree/main/plugins/slack) come descritto nel suo README. Vedi [Bot Slack](/docs/slack-bot#self-hosting) |
+| Bot Discord | `DISCORD_APPLICATION_ID`, `DISCORD_PUBLIC_KEY` | Nessun bot Discord: il suo endpoint delle interazioni risponde `404` ed è escluso dalla directory delle integrazioni. Registra la tua app Discord come descritto in [`plugins/discord/README.md`](https://github.com/qrdxinc/qrdx/tree/main/plugins/discord) |
 | Bot Telegram | `TELEGRAM_BOT_TOKEN`, `TELEGRAM_WEBHOOK_SECRET`, `TELEGRAM_BOT_USERNAME` | Nessun bot Telegram: le sue route rispondono 404 e il sito non lo elenca. Crea il tuo bot con @BotFather ed esegui `plugins/telegram/scripts/setup.mjs`. Vedi [Bot Telegram](/docs/telegram-bot#self-hosting) |
 | Limitazione della frequenza (Upstash) | `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN` (oppure i nomi di Vercel KV `KV_REST_API_URL`, `KV_REST_API_TOKEN`) | Nessuna limitazione della frequenza. Consigliata in produzione. |
 | Analytics (PostHog, dopo il consenso ai cookie) | `NEXT_PUBLIC_POSTHOG_KEY`, `NEXT_PUBLIC_POSTHOG_HOST` | Nessuna analytics di prodotto |

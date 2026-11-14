@@ -4,10 +4,10 @@ description: "使用 Docker Compose 或 Node.js 运行你自己的 QRdx Web 应�
 icon: Server
 ---
 
-QRdx 采用 AGPL-3.0 许可，你可以在自己的服务器上运行 Web 应用（二维码编辑器、账户、两步验证和通行密钥、动态码和托管页面、团队、已保存的主题、社区图库以及本文档）。工作区单点登录和工作区审计日志除外：它们位于商业许可的 `ee/` 文件夹中，除非设置许可证密钥（`QRDX_EE_LICENSE`），否则保持关闭。在生产环境中使用它们需要与 QRdx 签订书面协议，详见 [LICENSING.md](https://github.com/bucharitesh/qrdx/blob/main/LICENSING.md)。使用 [`qrdx` React 库](/docs/getting-started)或 CLI 不需要这些。它们采用 MIT 许可，无需后端即可在任何地方运行。[QRdx 开源](/open-source-qr-code-generator)列出了代码仓库的各个部分及其许可证。
+QRdx 采用 AGPL-3.0 许可，你可以在自己的服务器上运行 Web 应用（二维码编辑器、账户、两步验证和通行密钥、动态码和托管页面、团队、已保存的主题、社区图库以及本文档）。工作区单点登录和工作区审计日志除外：它们位于商业许可的 `ee/` 文件夹中，除非设置许可证密钥（`QRDX_EE_LICENSE`），否则保持关闭。在生产环境中使用它们需要与 QRdx 签订书面协议，详见 [LICENSING.md](https://github.com/qrdxinc/qrdx/blob/main/LICENSING.md)。使用 [`qrdx` React 库](/docs/getting-started)或 CLI 不需要这些。它们采用 MIT 许可，无需后端即可在任何地方运行。[QRdx 开源](/open-source-qr-code-generator)列出了代码仓库的各个部分及其许可证。
 
 <Callout type="warn">
-  Docker 部署方式是新推出的。如果遇到问题，请[提交 issue](https://github.com/bucharitesh/qrdx/issues)。
+  Docker 部署方式是新推出的。如果遇到问题，请[提交 issue](https://github.com/qrdxinc/qrdx/issues)。
 </Callout>
 
 ## 环境要求 [#requirements]
@@ -31,7 +31,7 @@ QRdx 采用 AGPL-3.0 许可，你可以在自己的服务器上运行 Web 应用
 ### 1. 克隆代码仓库 [#1-clone-the-repository]
 
 ```bash
-git clone https://github.com/bucharitesh/qrdx.git
+git clone https://github.com/qrdxinc/qrdx.git
 cd qrdx
 ```
 
@@ -103,7 +103,7 @@ docker run --rm -e DATABASE_URL="<your connection string>" qrdx-migrate
 ## 手动部署（Node.js） [#manual-setup-nodejs]
 
 ```bash
-git clone https://github.com/bucharitesh/qrdx.git
+git clone https://github.com/qrdxinc/qrdx.git
 cd qrdx
 bun install
 
@@ -129,7 +129,7 @@ DATABASE_HTTP_ENDPOINT=http://localhost:4444/sql
 
 ## 环境变量 [#environment-variables]
 
-[`apps/app/.env.example`](https://github.com/bucharitesh/qrdx/blob/main/apps/app/.env.example) 列出了所有变量，并简要说明了各变量的获取方式。
+[`apps/app/.env.example`](https://github.com/qrdxinc/qrdx/blob/main/apps/app/.env.example) 列出了所有变量，并简要说明了各变量的获取方式。
 
 ### 最低要求 [#minimum]
 
@@ -167,8 +167,8 @@ DATABASE_HTTP_ENDPOINT=http://localhost:4444/sql
 | Dub 短链接 | `DUB_CLIENT_ID`、`DUB_CLIENT_SECRET`、`DUB_REDIRECT_URI`、`INTEGRATION_ENCRYPTION_KEY` | 无法连接 Dub 集成 |
 | Google Drive | `GOOGLE_CLIENT_ID`、`GOOGLE_CLIENT_SECRET`、`GOOGLE_DRIVE_REDIRECT_URI`、`INTEGRATION_ENCRYPTION_KEY` | 无法连接 Google Drive 集成 |
 | Bitly、Dropbox、OneDrive、Box、Notion | `BITLY_CLIENT_ID`/`_SECRET`、`DROPBOX_CLIENT_ID`/`_SECRET`、`MICROSOFT_CLIENT_ID`/`_SECRET`、`BOX_CLIENT_ID`/`_SECRET`、`NOTION_CLIENT_ID`/`_SECRET`、`INTEGRATION_ENCRYPTION_KEY` | 该集成显示“Not configured”（Bitly 仍可使用粘贴的访问令牌连接）。Rebrandly 和 Short.io 无需任何变量。参见[短链接和文件选择器](/docs/short-links-and-file-pickers#self-hosting) |
-| Slack 机器人 | `SLACK_CLIENT_ID`、`SLACK_CLIENT_SECRET`、`SLACK_SIGNING_SECRET`，生产环境中还需 `INTEGRATION_ENCRYPTION_KEY` | 没有 Slack 机器人：其路由和链接页面返回 404，设置中也不提供该选项。请按照 [`plugins/slack/manifest.json`](https://github.com/bucharitesh/qrdx/tree/main/plugins/slack) 的 README 说明创建你自己的 Slack 应用。参见 [Slack 机器人](/docs/slack-bot#self-hosting) |
-| Discord 机器人 | `DISCORD_APPLICATION_ID`、`DISCORD_PUBLIC_KEY` | 没有 Discord 机器人：其交互端点返回 `404`，且不会出现在集成目录中。请按照 [`plugins/discord/README.md`](https://github.com/bucharitesh/qrdx/tree/main/plugins/discord) 的说明注册你自己的 Discord 应用 |
+| Slack 机器人 | `SLACK_CLIENT_ID`、`SLACK_CLIENT_SECRET`、`SLACK_SIGNING_SECRET`，生产环境中还需 `INTEGRATION_ENCRYPTION_KEY` | 没有 Slack 机器人：其路由和链接页面返回 404，设置中也不提供该选项。请按照 [`plugins/slack/manifest.json`](https://github.com/qrdxinc/qrdx/tree/main/plugins/slack) 的 README 说明创建你自己的 Slack 应用。参见 [Slack 机器人](/docs/slack-bot#self-hosting) |
+| Discord 机器人 | `DISCORD_APPLICATION_ID`、`DISCORD_PUBLIC_KEY` | 没有 Discord 机器人：其交互端点返回 `404`，且不会出现在集成目录中。请按照 [`plugins/discord/README.md`](https://github.com/qrdxinc/qrdx/tree/main/plugins/discord) 的说明注册你自己的 Discord 应用 |
 | Telegram 机器人 | `TELEGRAM_BOT_TOKEN`、`TELEGRAM_WEBHOOK_SECRET`、`TELEGRAM_BOT_USERNAME` | 没有 Telegram 机器人：其路由返回 404，站点也不会列出它。请通过 @BotFather 创建你自己的机器人，并运行 `plugins/telegram/scripts/setup.mjs`。参见 [Telegram 机器人](/docs/telegram-bot#self-hosting) |
 | 速率限制（Upstash） | `UPSTASH_REDIS_REST_URL`、`UPSTASH_REDIS_REST_TOKEN`（或 Vercel KV 的名称 `KV_REST_API_URL`、`KV_REST_API_TOKEN`） | 没有速率限制。建议在生产环境中配置。 |
 | 分析（PostHog，在 Cookie 同意后） | `NEXT_PUBLIC_POSTHOG_KEY`、`NEXT_PUBLIC_POSTHOG_HOST` | 没有产品分析 |
