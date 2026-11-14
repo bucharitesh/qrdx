@@ -1567,16 +1567,16 @@
             "oauth2": ["codes:read"]
           }
         ],
-        "description": "Scan analytics of a code for a range of days.\n\nTotals, a daily series and the top countries, cities, devices, systems, browsers and referrers. `sources` splits the scans into QR scans and NFC taps (visits through the code's `nfcLink`), and each listed scan has its `source`. The range is clamped to how far back the plan's analytics reach: 1 year on Free, the whole history on Pro and Business (`retentionDays` is then null). With `limit` above 0 the response also lists individual scans, newest first: pass the response's `nextBefore` as `before` for the next page.\n\nOn Pro and Business, `preciseLocations` lists the locations scanners chose to share (rounded to about 100 m) for codes that ask for them, and each scan has `latitude`, `longitude`, `locationAccuracyM` and `locationSource`. On Free, `preciseLocations` is null and those fields are null. More in [Precise location and geofencing](https://qrdx.dev/docs/precise-location).\n\n**Scope:** `codes:read` or `codes:write`, for API keys and OAuth tokens alike.",
+        "description": "Scan analytics of a code for a range of days.\n\nTotals, a series of scans over time and the top countries, cities, devices, systems, browsers and referrers. `sources` splits the scans into QR scans and NFC taps (visits through the code's `nfcLink`), and each listed scan has its `source`. The range is clamped to how far back the plan's analytics reach: 1 year on Free, the whole history on Pro and Business (`retentionDays` is then null). On Pro and Business, `range=all` covers the whole history, from the day of the code's first scan; its series is per day up to 3 years, then per week or month (`interval`). With `limit` above 0 the response also lists individual scans, newest first: pass the response's `nextBefore` as `before` for the next page.\n\nOn Pro and Business, `preciseLocations` lists the locations scanners chose to share (rounded to about 100 m) for codes that ask for them, and each scan has `latitude`, `longitude`, `locationAccuracyM` and `locationSource`. On Free, `preciseLocations` is null and those fields are null. More in [Precise location and geofencing](https://qrdx.dev/docs/precise-location).\n\n**Scope:** `codes:read` or `codes:write`, for API keys and OAuth tokens alike.",
         "parameters": [
           {
             "name": "range",
             "in": "query",
             "required": false,
-            "description": "Days to cover; defaults to 30 days, or the longest range the plan keeps",
+            "description": "Days to cover, ending today (UTC): 7, 30 or 90 days, 1 or 3 years, or `all` for the whole history (Pro and Business). Defaults to `30d`; a range longer than the plan's history gives `30d`",
             "schema": {
               "type": "string",
-              "enum": ["7d", "30d", "90d", "365d", "1095d"]
+              "enum": ["7d", "30d", "90d", "365d", "1095d", "all"]
             }
           },
           {
@@ -1638,6 +1638,7 @@
                         "days": 7,
                         "total": 42,
                         "unique": 37,
+                        "interval": "day",
                         "series": [
                           {
                             "date": "2026-01-06",
@@ -9467,8 +9468,8 @@
           },
           "range": {
             "type": "string",
-            "enum": ["7d", "30d", "90d", "365d", "1095d"],
-            "description": "The range used: the requested one, or the longest the plan's retention allows"
+            "enum": ["7d", "30d", "90d", "365d", "1095d", "all"],
+            "description": "The range used: the requested one when the plan's history reaches that far, else `30d`. `all` (Pro and Business) starts on the day of the code's first scan, or its creation day when it has none"
           },
           "retentionDays": {
             "anyOf": [
@@ -9491,7 +9492,8 @@
           "days": {
             "type": "integer",
             "minimum": -9007199254740991,
-            "maximum": 9007199254740991
+            "maximum": 9007199254740991,
+            "description": "Days the range covers, today included"
           },
           "total": {
             "type": "integer",
@@ -9505,13 +9507,19 @@
             "maximum": 9007199254740991,
             "description": "Unique visitors in the range"
           },
+          "interval": {
+            "type": "string",
+            "enum": ["day", "week", "month"],
+            "description": "What one `series` entry counts: a UTC day for ranges up to 3 years (every fixed range), a week (starting Monday) up to 10 years, then a month. Only `all` can be longer than 3 years"
+          },
           "series": {
             "type": "array",
             "items": {
               "type": "object",
               "properties": {
                 "date": {
-                  "type": "string"
+                  "type": "string",
+                  "description": "First day of the bucket (YYYY-MM-DD, UTC)"
                 },
                 "count": {
                   "type": "integer",
@@ -9521,7 +9529,7 @@
               },
               "required": ["date", "count"]
             },
-            "description": "Scans per UTC day, oldest first, one entry per day"
+            "description": "Scans per `interval`, oldest first, one entry per bucket including empty ones. The first week or month can start before `from`"
           },
           "countries": {
             "type": "array",
@@ -9830,6 +9838,7 @@
           "days",
           "total",
           "unique",
+          "interval",
           "series",
           "countries",
           "cities",
