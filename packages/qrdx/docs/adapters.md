@@ -7,7 +7,8 @@ For whoever adds a wrapper for another framework (Vue, a web component, Angular,
 - Source in `src/<name>.ts` (plus its own modules if it needs any). Import the engine only from `"./core"`, never from engine modules such as `"./utils"` or `"./frame"`.
 - A tsup entry built with `sharedCore(extension, [<own modules>])` (see `qrdx/vanilla` in `tsup.config.ts`). It turns `"./core"` into an import of `dist/core.mjs` / `dist/core.js`, so the app loads one engine however many entries it uses, and it fails the build if the adapter imports an engine module directly.
 - An `exports` entry (`"./<name>"`, types from `dist/src/<name>.d.ts`), and the framework as an optional peer dependency in `peerDependenciesMeta`.
-- Add the built files to `tests/core-bundles.test.ts` (no `react`, imports only `./core.*` and its framework).
+- Add the built files to `tests/core-bundles.test.ts` (no `react`, no zod, imports only `./core.*` and its framework).
+- Don't validate with the zod schemas (`qrPropsSchema`…) on the way to drawing. Nothing in the core draws with them (it checks frame specs with its own parser), so an app that only renders codes never loads zod, which is about 450 KB minified. They come from `dist/schemas`, which the core only re-exports.
 
 ## Which functions
 
