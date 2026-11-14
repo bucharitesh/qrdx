@@ -4,10 +4,10 @@ description: "Docker Compose または Node.js を使って、動的QRコード�
 icon: Server
 ---
 
-QRdx は AGPL-3.0 ライセンスで公開されており、Web アプリ（QRエディタ、アカウント、二段階認証とパスキー、動的QRコードとホスト型ページ、チーム、保存済みテーマ、コミュニティギャラリー、このドキュメント）を自分のサーバーで運用できます。ワークスペースのシングルサインオンとワークスペースの監査ログは例外です。これらは商用ライセンスの `ee/` フォルダーにあり、ライセンスキー（`QRDX_EE_LICENSE`）を設定しない限り無効のままです。本番環境で使うには QRdx との書面による契約が必要です。詳しくは [LICENSING.md](https://github.com/bucharitesh/qrdx/blob/main/LICENSING.md) をご覧ください。[`qrdx` React ライブラリ](/docs/getting-started)や CLI を使うだけなら、これらは一切不要です。どちらもバックエンドなしでどこでも動作し、MIT ライセンスで提供されています。[QRdx のオープンソース](/open-source-qr-code-generator)では、リポジトリの各パーツとそのライセンスを一覧で紹介しています。
+QRdx は AGPL-3.0 ライセンスで公開されており、Web アプリ（QRエディタ、アカウント、二段階認証とパスキー、動的QRコードとホスト型ページ、チーム、保存済みテーマ、コミュニティギャラリー、このドキュメント）を自分のサーバーで運用できます。ワークスペースのシングルサインオンとワークスペースの監査ログは例外です。これらは商用ライセンスの `ee/` フォルダーにあり、ライセンスキー（`QRDX_EE_LICENSE`）を設定しない限り無効のままです。本番環境で使うには QRdx との書面による契約が必要です。詳しくは [LICENSING.md](https://github.com/qrdxinc/qrdx/blob/main/LICENSING.md) をご覧ください。[`qrdx` React ライブラリ](/docs/getting-started)や CLI を使うだけなら、これらは一切不要です。どちらもバックエンドなしでどこでも動作し、MIT ライセンスで提供されています。[QRdx のオープンソース](/open-source-qr-code-generator)では、リポジトリの各パーツとそのライセンスを一覧で紹介しています。
 
 <Callout type="warn">
-  Docker の構成は新しく追加されたものです。うまく動作しない場合は、[Issue を作成](https://github.com/bucharitesh/qrdx/issues)してください。
+  Docker の構成は新しく追加されたものです。うまく動作しない場合は、[Issue を作成](https://github.com/qrdxinc/qrdx/issues)してください。
 </Callout>
 
 ## 要件 [#requirements]
@@ -31,7 +31,7 @@ QRdx は AGPL-3.0 ライセンスで公開されており、Web アプリ（QR�
 ### 1. リポジトリをクローンする [#1-clone-the-repository]
 
 ```bash
-git clone https://github.com/bucharitesh/qrdx.git
+git clone https://github.com/qrdxinc/qrdx.git
 cd qrdx
 ```
 
@@ -103,7 +103,7 @@ docker run --rm -e DATABASE_URL="<your connection string>" qrdx-migrate
 ## 手動セットアップ（Node.js） [#manual-setup-nodejs]
 
 ```bash
-git clone https://github.com/bucharitesh/qrdx.git
+git clone https://github.com/qrdxinc/qrdx.git
 cd qrdx
 bun install
 
@@ -129,7 +129,7 @@ DATABASE_HTTP_ENDPOINT=http://localhost:4444/sql
 
 ## 環境変数 [#environment-variables]
 
-[`apps/docs/.env.example`](https://github.com/bucharitesh/qrdx/blob/main/apps/docs/.env.example) には、すべての変数と、それぞれの入手先を示す短いメモが記載されています。
+[`apps/docs/.env.example`](https://github.com/qrdxinc/qrdx/blob/main/apps/docs/.env.example) には、すべての変数と、それぞれの入手先を示す短いメモが記載されています。
 
 ### 最小構成 [#minimum]
 
@@ -167,8 +167,8 @@ DATABASE_HTTP_ENDPOINT=http://localhost:4444/sql
 | Dub短縮リンク | `DUB_CLIENT_ID`, `DUB_CLIENT_SECRET`, `DUB_REDIRECT_URI`, `INTEGRATION_ENCRYPTION_KEY` | Dub連携は接続できません |
 | Google Drive | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_DRIVE_REDIRECT_URI`, `INTEGRATION_ENCRYPTION_KEY` | Google Drive連携は接続できません |
 | Bitly、Dropbox、OneDrive、Box、Notion | `BITLY_CLIENT_ID`/`_SECRET`, `DROPBOX_CLIENT_ID`/`_SECRET`, `MICROSOFT_CLIENT_ID`/`_SECRET`, `BOX_CLIENT_ID`/`_SECRET`, `NOTION_CLIENT_ID`/`_SECRET`, `INTEGRATION_ENCRYPTION_KEY` | その連携には「Not configured」と表示されます（Bitlyは貼り付けたアクセストークンで引き続き接続できます）。RebrandlyとShort.ioには変数は不要です。[短縮リンクとファイルピッカー](/docs/short-links-and-file-pickers#self-hosting)を参照してください |
-| Slackボット | `SLACK_CLIENT_ID`, `SLACK_CLIENT_SECRET`, `SLACK_SIGNING_SECRET`。本番環境では `INTEGRATION_ENCRYPTION_KEY` も必要です | Slackボットは利用できません。ルートとリンクページは404を返し、設定にも表示されません。READMEの手順に従い、[`plugins/slack/manifest.json`](https://github.com/bucharitesh/qrdx/tree/main/plugins/slack)から独自のSlackアプリを作成してください。[Slackボット](/docs/slack-bot#self-hosting)を参照してください |
-| Discordボット | `DISCORD_APPLICATION_ID`, `DISCORD_PUBLIC_KEY` | Discordボットは利用できません。インタラクションのエンドポイントは `404` を返し、連携ディレクトリにも掲載されません。[`plugins/discord/README.md`](https://github.com/bucharitesh/qrdx/tree/main/plugins/discord)の説明に従って、独自のDiscordアプリを登録してください |
+| Slackボット | `SLACK_CLIENT_ID`, `SLACK_CLIENT_SECRET`, `SLACK_SIGNING_SECRET`。本番環境では `INTEGRATION_ENCRYPTION_KEY` も必要です | Slackボットは利用できません。ルートとリンクページは404を返し、設定にも表示されません。READMEの手順に従い、[`plugins/slack/manifest.json`](https://github.com/qrdxinc/qrdx/tree/main/plugins/slack)から独自のSlackアプリを作成してください。[Slackボット](/docs/slack-bot#self-hosting)を参照してください |
+| Discordボット | `DISCORD_APPLICATION_ID`, `DISCORD_PUBLIC_KEY` | Discordボットは利用できません。インタラクションのエンドポイントは `404` を返し、連携ディレクトリにも掲載されません。[`plugins/discord/README.md`](https://github.com/qrdxinc/qrdx/tree/main/plugins/discord)の説明に従って、独自のDiscordアプリを登録してください |
 | Telegramボット | `TELEGRAM_BOT_TOKEN`, `TELEGRAM_WEBHOOK_SECRET`, `TELEGRAM_BOT_USERNAME` | Telegramボットは利用できません。ルートは404を返し、サイトにも掲載されません。@BotFatherで独自のボットを作成し、`plugins/telegram/scripts/setup.mjs` を実行してください。[Telegramボット](/docs/telegram-bot#self-hosting)を参照してください |
 | レート制限（Upstash） | `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`（またはVercel KVの名前 `KV_REST_API_URL`, `KV_REST_API_TOKEN`） | レート制限は行われません。本番環境では設定を推奨します。 |
 | アナリティクス（PostHog、Cookie同意後） | `NEXT_PUBLIC_POSTHOG_KEY`, `NEXT_PUBLIC_POSTHOG_HOST` | プロダクトアナリティクスは行われません |

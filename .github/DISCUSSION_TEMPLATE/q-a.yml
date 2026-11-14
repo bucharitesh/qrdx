@@ -2,9 +2,9 @@ body:
   - type: markdown
     attributes:
       value: |
-        Ask anything about using, building with or self-hosting QRdx. Search [existing discussions](https://github.com/bucharitesh/qrdx/discussions/categories/q-a) and the [docs](https://qrdx.dev/docs) first; the answer may already be there. When someone answers your question, mark it as the answer so the next person finds it.
+        Ask anything about using, building with or self-hosting QRdx. Search [existing discussions](https://github.com/qrdxinc/qrdx/discussions/categories/q-a) and the [docs](https://qrdx.dev/docs) first; the answer may already be there. When someone answers your question, mark it as the answer so the next person finds it.
 
-        Found a bug? Use a [bug report](https://github.com/bucharitesh/qrdx/issues/new?template=bug_report.yml). Security problems go through [SECURITY.md](https://github.com/bucharitesh/qrdx/blob/main/SECURITY.md), never a public thread.
+        Found a bug? Use a [bug report](https://github.com/qrdxinc/qrdx/issues/new?template=bug_report.yml). Security problems go through [SECURITY.md](https://github.com/qrdxinc/qrdx/blob/main/SECURITY.md), never a public thread.
 
   - type: dropdown
     id: area

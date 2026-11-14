@@ -35,7 +35,7 @@ The calculator works like this:
 2. **Code width** = module size × modules per side.
 3. **Space on the page** = module size × (modules per side + 8).
 
-The 250 comes from the usual "10 to 1" rule of thumb: a code scans from about ten times its width. That rule holds for a simple 25 × 25 code, so the calculator treats it as describing one, and scales up for denser codes. A 49 × 49 code at the same distance needs nearly twice the width. You can read the code in [lib/print-size.ts](https://github.com/bucharitesh/qrdx/blob/main/apps/docs/lib/print-size.ts).
+The 250 comes from the usual "10 to 1" rule of thumb: a code scans from about ten times its width. That rule holds for a simple 25 × 25 code, so the calculator treats it as describing one, and scales up for denser codes. A 49 × 49 code at the same distance needs nearly twice the width. You can read the code in [lib/print-size.ts](https://github.com/qrdxinc/qrdx/blob/main/apps/docs/lib/print-size.ts).
 
 ## What decides the module count
 
@@ -92,7 +92,7 @@ The playground grades every design as you edit it, from 0 to 100. Under the hood
 3. Tries to decode each size three times, at 90%, 100% and 110% scale. Two successes count as a pass, one as fragile.
 4. Subtracts points for each problem: up to 15, 20 and 45 points for failing the small, medium and large sizes (half for fragile), plus the contrast, logo and quiet zone checks above, 40 points for curly corner eyes and 20 for circle eyes (both trip up strict decoders), and 10 for a known-weak combination of shapes.
 
-A score of 85 or more grades **great**, 65 or more **ok**, and anything lower **risky**. If the code fails at the largest size or the contrast is under 1.5:1, it **fails** and the score is capped at 30. The [source is on GitHub](https://github.com/bucharitesh/qrdx/blob/main/packages/qrdx/src/scan-score.ts).
+A score of 85 or more grades **great**, 65 or more **ok**, and anything lower **risky**. If the code fails at the largest size or the contrast is under 1.5:1, it **fails** and the score is capped at 30. The [source is on GitHub](https://github.com/qrdxinc/qrdx/blob/main/packages/qrdx/src/scan-score.ts).
 
 It's a heuristic: lighting, lenses and scanner apps vary. Treat a great score as "very likely fine" and still test the printed proof. For codes you already have as images, the [scan checker](/tools/scan-checker) decodes the file and runs similar checks, including whether the image has at least 2 pixels per module.
 
