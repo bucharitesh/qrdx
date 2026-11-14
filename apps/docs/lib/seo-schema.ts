@@ -10,6 +10,8 @@ import {
   CANONICAL_HOST,
   GITHUB_PROFILE_URL,
   GITHUB_REPO_URL,
+  MCP_GLAMA_URL,
+  MCP_REGISTRY_URL,
   NPM_CLI_URL,
   NPM_LIBRARY_URL,
   SUPPORT_EMAIL,
@@ -64,8 +66,8 @@ export const organizationSchema = {
     NPM_CLI_URL,
     CHROME_WEB_STORE_URL,
     // The official MCP Registry's record and Glama's page for the MCP server.
-    "https://registry.modelcontextprotocol.io/v0/servers/io.github.bucharitesh%2Fqrdx/versions/latest",
-    "https://glama.ai/mcp/connectors/io.github.bucharitesh/qrdx",
+    MCP_REGISTRY_URL,
+    MCP_GLAMA_URL,
   ],
   contactPoint: {
     "@type": "ContactPoint",
