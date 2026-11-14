@@ -3,11 +3,19 @@ title: Make QR codes in Discord
 description: Add the QRdx bot to a Discord server or to your own account, then make and style QR codes with /qr or from any message.
 ---
 
-<IfAvailable feature="discordBot">
+The QRdx bot makes QR codes inside Discord, and you don't need a QRdx account to use it. Each reply shows the code with buttons to download it as a PNG or SVG, or to open it in the [editor](/playground) and change how it looks. Use it when a server shares links and wants a code in the channel without leaving Discord.
 
-The QRdx bot makes QR codes inside Discord, and you don't need a QRdx account to use it. Each reply shows the code with buttons to download it as a PNG or SVG, or to open it in the [editor](/playground) and change how it looks.
+<IfAvailable feature="discordBot" unavailable>
+
+<Callout type="warn" title="Not offered on this deployment">
+  This QRdx doesn't run the Discord bot. A self-hosted copy can: see [Self-hosting](#self-hosting) below.
+</Callout>
 
 </IfAvailable>
+
+## How it works
+
+QRdx doesn't save the codes you make, and the bot can't read your chats. Discord sends QRdx what you type after `/qr`, or the one message you picked for **Make QR code**. The content and the design you picked go into the image link, and Discord loads the picture from the QRdx [image API](/docs/developers/image-api). Restyling a code reads both back from that link, so QRdx doesn't save the code to restyle it. Like any link, it can end up in logs and caches, so don't make codes of passwords or other secrets.
 
 <IfAvailable feature="discordBot" title="Add the bot">
 
@@ -27,6 +35,8 @@ Some servers don't let members' own apps post for everyone. There, replies from 
 
 The bot replies with the code, its content as the title, three buttons and the style menus described below. The buttons are **Download PNG** (1024 px), **Download SVG** and **Open in editor**. A link opens in the editor with the code's design. Text doesn't travel in the editor link, so paste it there yourself.
 
+{/* shot: discord-qr-reply | A /qr reply in a Discord channel: the code, the three buttons and the four style menus | Run /qr with a link in Discord */}
+
 To keep the code to yourself, set **private** to **True**. Only you see that reply, and Discord removes it when you dismiss it or reload.
 
 Very long content may not fit in one QR code, or may be too long for Discord to show as an image. The bot says so in a message only you can see.
@@ -45,7 +55,7 @@ Very long content may not fit in one QR code, or may be too long for Discord to 
 
 The look is applied first and the color on top of it, so **look** Royal with **color** Blue keeps Royal's shapes in blue.
 
-Under every code are four menus, **Look**, **Color**, **Frame** and **Logo**, with the same choices plus the editor's quick logo icons. Pick something and the code changes in place. Each change builds on the code as it is now. Only the person who made the code can restyle it. Anyone else who picks gets a note only they can see, and the code stays as it was.
+Under every code are four menus, **Look**, **Color**, **Frame** and **Logo**, with the same choices plus seven of the editor's quick logo icons. Pick something and the code changes in place. Each change builds on the code as it is now. Only the person who made the code can restyle it. Anyone else who picks gets a note only they can see, and the code stays as it was.
 
 Before a styled code appears, QRdx checks it with the same scan score as the editor, so Discord shows that QRdx is thinking for a moment first. When a design would be hard for phones to read, QRdx adjusts it (darker colors, plainer shapes or more error correction) and says so under the code. If that still isn't enough, usually because the content is long, you get the code in black on white with a note.
 
@@ -57,21 +67,13 @@ Before a styled code appears, QRdx checks it with the same scan score as the edi
 
 On desktop, right-click a message and choose **Apps** → **Make QR code**. On mobile, long-press the message and tap **Apps** → **Make QR code**.
 
-The code holds the first web address in the message. A message without one becomes a code of its text. Everyone in the chat sees the reply.
-
-Replies never mention or ping anyone, whatever the message says.
+The code holds the first web address in the message. A message without one becomes a code of its text. Everyone in the chat sees the reply. Replies never mention or ping anyone, whatever the message says.
 
 </IfAvailable>
 
-<IfAvailable feature="discordBot" title="Privacy">
+## Limits and plans
 
-QRdx doesn't save the codes you make, and the bot can't read your chats. Discord sends QRdx what you type after `/qr`, or the one message you picked for **Make QR code**.
-
-The content and the design you picked go into the image link, and Discord loads the picture from the QRdx [image API](/docs/developers/image-api). Restyling a code reads both back from that link, so QRdx doesn't save the code to restyle it. Like any link, it can end up in logs and caches, so don't make codes of passwords or other secrets.
-
-To stop one person flooding a channel, QRdx counts the codes each Discord account makes or restyles in a minute. It also counts the codes everyone makes together, and when too many arrive in one minute, the bot says it's busy. Neither count holds any content, and both expire after that minute.
-
-</IfAvailable>
+The bot is free and has no plan. To stop one person flooding a channel, QRdx counts the codes each Discord account makes or restyles in a minute. It also counts the codes everyone makes together, and when too many arrive in one minute, the bot says it's busy. Neither count holds any content, and both expire after that minute.
 
 <IfAvailable feature="discordBot" title="Remove the bot">
 
@@ -80,6 +82,16 @@ To stop one person flooding a channel, QRdx counts the codes each Discord accoun
 
 </IfAvailable>
 
+## For developers
+
+Every code the bot sends comes from the [image API](/docs/developers/image-api), which you can call directly from your own bot or script. The [CLI](/docs/developers/cli) has the same looks, colors and frames from a terminal.
+
 ## Self-hosting
 
-The bot works on your own QRdx once you register a Discord app and set `DISCORD_APPLICATION_ID` and `DISCORD_PUBLIC_KEY`. [`plugins/discord/README.md`](https://github.com/qrdxinc/qrdx/tree/main/plugins/discord) has the steps.
+The bot works on your own QRdx once you register a Discord app and set `DISCORD_APPLICATION_ID` and `DISCORD_PUBLIC_KEY`. [`plugins/discord/README.md`](https://github.com/qrdxinc/qrdx/tree/main/plugins/discord) has the steps. Rate limits need Upstash Redis; without it they're off. See [Self-hosting](/docs/self-hosting#optional-services).
+
+## Related
+
+- [Slack bot](/docs/slack-bot) and [Telegram bot](/docs/telegram-bot): the same bot in other chat apps
+- [Notifications](/docs/notifications#slack-and-discord): scan and form alerts in a Discord channel
+- [Image API](/docs/developers/image-api): the QR images behind every reply

@@ -1,16 +1,33 @@
 ---
 title: Slack bot
 description: Make and style QR codes in Slack with /qr, a mention, a direct message or a message shortcut, and tracked codes once you link your QRdx account.
-icon: Bot
 ---
 
-QRdx has a Slack app that makes QR codes inside Slack. Anyone in a Slack workspace that has the bot can make a code from a link or any text. People who link their QRdx account can also make tracked (dynamic) codes, which count scans and can point somewhere else later.
+The QRdx bot for Slack makes QR codes inside Slack. Anyone in a Slack workspace that has the bot can make a code from a link or any text, restyle it from menus under the message, and download it. People who link their QRdx account can also make tracked (dynamic) codes, which count scans and can point somewhere else later. Use it when a team shares links in Slack and wants a code without leaving the conversation.
+
+<IfAvailable feature="slackBot" unavailable>
+
+<Callout type="warn" title="Not offered on this deployment">
+  This QRdx doesn't run the Slack bot. A self-hosted copy can: see [Self-hosting](#self-hosting) below.
+</Callout>
+
+</IfAvailable>
+
+<Callout type="info" title="Every plan">
+  Adding the bot and making plain codes need no QRdx plan, and no QRdx account for the people who use it. Tracked codes follow the plan and role of the QRdx workspace you link. See [Plans and limits](/docs/plans-and-limits).
+</Callout>
+
+## How it works
+
+The bot never stores message text and never uploads an image. Each code is a QR image QRdx renders from the link in the message, through the [image API](/docs/developers/image-api), with the content and the design in that link. Restyling a code reads both back from the link, so nothing has to be saved to change it.
 
 <IfAvailable feature="slackBot" title="Add the bot to Slack">
 
 1. In QRdx, open [Settings → Integrations → Slack](/settings/integrations/slack) and click **Add the bot to Slack**. Any QRdx account can do this, on any plan.
 2. Pick the Slack workspace and approve. The bot asks to see its slash command, mentions of it and its direct messages, and to post messages.
 3. You come back to the settings page, which lists the Slack workspaces you added the bot to.
+
+{/* shot: slack-settings-add-bot | Settings → Integrations → Slack with the Add the bot to Slack button and one connected Slack workspace listed | Settings → Integrations → Slack */}
 
 The same Slack app also posts [alerts](/docs/notifications#slack-and-discord) to a channel. Adding the bot doesn't turn alerts on, and adding alerts doesn't add the bot.
 
@@ -27,7 +44,9 @@ The same Slack app also posts [alerts](/docs/notifications#slack-and-discord) to
 
 Each answer is a QR code image with the content under it, three buttons and the style menus described below. The buttons are **Download PNG** (1024 pixels), **Download SVG** and **Open in editor**, where you can change the design further. A link opens the editor with that link filled in; text opens an empty editor, because text never goes into a link.
 
-The shortcut makes a code of the message's first web address, or of its whole text when it has none. If the bot isn't in that channel, only you see the code, and a note says to add the app to the channel.
+{/* shot: slack-qr-reply | A /qr reply in a Slack channel: the QR code, the content under it, the three buttons and the four style menus | Run /qr with a link in Slack */}
+
+The shortcut makes a code of the message's first web address, or of its whole text when it has none. If the bot isn't in that channel, only you see the code, with the note "Only you can see this. Add the QRdx app to this channel to reply in threads."
 
 `/qr` on its own, or `/qr help`, shows the commands. Content that is too long for a QR code gets a short explanation instead of an image, and only you see it.
 
@@ -35,13 +54,13 @@ The shortcut makes a code of the message's first web address, or of its whole te
 
 <IfAvailable feature="slackBot" title="Style your code">
 
-Under each code are four menus: **Look**, **Color**, **Frame** and **Logo**. Pick something and the code changes in place, with new download links. Each pick builds on the code as it is now. Only the person who made the code can restyle it. When someone else picks, Slack shows them a note that only they can see, and the code stays as it was.
+Under each code are four menus: **Look**, **Color**, **Frame** and **Logo**. Pick something and the code changes in place, with new download links. Each pick builds on the code as it is now. Only the person who made the code can restyle it; when someone else picks, Slack shows them a note that only they can see, and the code stays as it was.
 
-The looks are some of the editor's built-in designs that read well at small sizes, and **Plain** goes back to black on white. A color puts the whole code in that color on white. The frames add a "Scan me" label, and the logos are the editor's quick icons.
+The looks are some of the editor's built-in designs that read well at small sizes; **Plain** is the black-on-white one. Picking a look changes the shapes and colors and keeps the frame and logo you chose. A color puts the whole code in that color on white. The frames add a "Scan me" label, and the logo menu offers seven of the editor's quick icons.
 
 You can also style a code as you make it by adding options after the link or text, with the same names as the [QRdx CLI](/docs/developers/cli):
 
-```text
+```text title="Slack message"
 /qr qrdx.dev --look modern --fg 0051ff --frame banner-bottom --frame-text "Scan me"
 ```
 
@@ -59,7 +78,7 @@ Everything before the first option is the content. The look is applied first and
 | `--dot` | The shape of the eye centers | Any of the {facts.eyeCentres} center shapes, such as `square`, `rounded` or `circle` |
 | `--frame` | A frame around the code | `none` or any of the {facts.frameStyles} built-in frames, such as `banner-bottom`, `banner-top`, `speech-bubble` or `polaroid` |
 | `--frame-text` | The frame's label, up to 24 characters | Any text, in quotes when it has spaces. Without `--frame`, it goes on a banner under the code |
-| `--template` | A frame drawn as a template | `Arrow`, `StandardBox`, `SquareBorder`, `StrikedBox` or `Halloween` |
+| `--template` | A frame drawn as a template | `Arrow`, `StandardBox`, `SquareBorder`, `StrikedBox`, `DotRing`, `Halloween` or `default`, in any case |
 | `--logo` | An icon in the middle | `link`, `wifi`, `location`, `phone`, `email`, `whatsapp`, `instagram`, `file`, `calendar` or `none` |
 
 Before a styled code is posted, QRdx checks it with the same scan score as the editor. When a design would be hard for phones to read, QRdx adjusts it (darker colors, plainer shapes or more error correction) and says so under the code. If that still isn't enough, usually because the content is long, you get the code in black on white with a note. A styled code from `/qr` arrives a moment after you send the command, once it has been checked.
@@ -74,11 +93,13 @@ Codes from the shortcut that only you can see have no menus, and tracked codes k
 
 A plain code holds the link itself. A tracked code holds a short link (`https://qrdx.dev/q/<slug>`) that redirects to your link, so QRdx counts its scans and you can change where it goes. To make them from Slack, link your QRdx account once:
 
-1. Run `/qr link`. A button only you can see opens QRdx. It works for 10 minutes.
+1. Run `/qr link`. A **Link QRdx account** button only you can see opens QRdx. It works for 10 minutes.
 2. Sign in to QRdx if asked. Then click **Sign in with Slack** and sign in as the same Slack account that ran `/qr link`. Slack tells QRdx only your Slack user and workspace, and QRdx checks that they match. If you sign in to Slack as someone else, nothing is linked.
-3. Pick the QRdx workspace your tracked codes should go to and click **Confirm**. QRdx asks you to [confirm it's you](/docs/help/privacy-and-security/two-step-verification#confirm-its-you) first, because the link lets that Slack account make codes in your workspace.
+3. Pick the QRdx workspace your tracked codes should go to and click **Confirm**. QRdx asks you to [confirm it's you](/docs/help/privacy-and-security/two-step-verification#confirm-its-you) first unless you did recently, because the link lets that Slack account make codes in your workspace.
 4. Back in Slack, the bot sends you a direct message naming the QRdx account and workspace you linked to. If you didn't link it, run `/qr unlink`.
 5. Run `/qr track` followed by a link that starts with `https://` or `http://`. You can also mention the bot with `track` and a link.
+
+{/* clip: slack-link-and-track | Running /qr link, confirming the workspace in QRdx, then /qr track with a link and the tracked code appearing in the channel | /qr link → QRdx link page → /qr track https://… */}
 
 The code appears in the channel with its short link and the name of the QRdx workspace it's in. The **Open in QRdx** button, which leads to the code in your dashboard, comes in a separate message that only you can see. The code is named after the link's site plus "from Slack", and you'll find it in the workspace's codes like any other.
 
@@ -86,7 +107,7 @@ Tracked codes follow the same rules as codes made in the dashboard: your role mu
 
 Each Slack account has one link per Slack workspace. When you run `/qr link` for a Slack account that's already linked, the page says which QRdx workspace it's linked to, and whether that's in another QRdx account. The button then reads **Replace the link**, and nothing changes until you click it. `/qr unlink` removes a link, and so does **Unlink** under **Linked Slack accounts** in [Settings → Integrations → Slack](/settings/integrations/slack).
 
-Owners and admins of a QRdx workspace see every Slack account linked to it in [Settings → API keys & apps](/dashboard?to=settings/developers): the Slack workspace, the Slack user id, the member it acts as and when it was linked. **Revoke** removes a link there. If the workspace has the [audit log](/docs/help/teams/audit-log), codes made with `/qr track` show the member's name "via Slack", with the Slack user and workspace ids, and revoking a link is recorded too.
+Owners and admins of a QRdx workspace see every Slack account linked to it under **Slack accounts** in **Settings** → **API keys & apps**: the Slack workspace, the Slack user id, the member it acts as and when it was linked. **Revoke** removes a link there. If the workspace has the [audit log](/docs/help/teams/audit-log), codes made with `/qr track` show the member's name "via Slack", with the Slack user and workspace ids, and revoking a link is recorded too.
 
 </IfAvailable>
 
@@ -94,7 +115,9 @@ Owners and admins of a QRdx workspace see every Slack account linked to it in [S
 
 The bot reads a message only when someone runs `/qr`, mentions the bot, messages it directly or uses the shortcut on that message. It never stores message text. QR code images come from the QRdx [image API](/docs/developers/image-api), which Slack loads from the link in the message, so nothing is uploaded.
 
-For each Slack workspace QRdx keeps its id and name, the bot's Slack user id, the bot's token (encrypted) and which QRdx account added it. For each linked Slack account it keeps the Slack user id, your QRdx account and the workspace you picked. Signing in with Slack to link adds nothing to that: QRdx compares the Slack user and workspace, then forgets the sign-in.<IfAvailable feature="slackBot"> Your linked Slack accounts are in your [data export](/docs/help/account-and-billing/export-your-data).</IfAvailable>
+For each Slack workspace QRdx keeps its id and name, the bot's Slack user id, the scopes it was granted, the bot's token (encrypted), which QRdx account added it and when. For each linked Slack account it keeps the Slack user and workspace ids, your QRdx account, the workspace you picked and when you linked it. Signing in with Slack to link adds nothing to that: QRdx compares the Slack user and workspace, then forgets the sign-in.<IfAvailable feature="slackBot"> Your linked Slack accounts are in your [data export](/docs/help/account-and-billing/export-your-data).</IfAvailable>
+
+To stop one person flooding a channel, the bot counts the codes each person makes or restyles in a minute, and the codes a Slack workspace and all of QRdx make together. When too many arrive, it answers "QRdx is busy right now. Try again in a minute." Neither count holds any content.
 
 <IfAvailable feature="slackBot" title="Remove the bot">
 
@@ -102,6 +125,16 @@ In Slack, open the app's page and choose **Remove App** (or ask a Slack admin to
 
 </IfAvailable>
 
+## For developers
+
+The bot is a thin layer over two public tools: the [image API](/docs/developers/image-api) renders every code, and tracked codes are ordinary dynamic codes you can read through the [REST API](/docs/developers/api/list-codes). The same style options exist in the [CLI](/docs/developers/cli).
+
 ## Self-hosting
 
-The bot uses the same Slack app as "Add to Slack" alerts, with its signing secret added. Set `SLACK_CLIENT_ID`, `SLACK_CLIENT_SECRET` and `SLACK_SIGNING_SECRET`, plus `INTEGRATION_ENCRYPTION_KEY` in production, which encrypts the bot tokens. Without them the bot's pages and endpoints don't exist. `plugins/slack/manifest.json` in the repository is the app's manifest, and `plugins/slack/README.md` walks through creating the app from it. The manifest includes the `openid` user scope and the redirect URL `/api/integrations/slack/link/callback`, which Sign in with Slack needs when someone links their account.
+The bot uses the same Slack app as "Add to Slack" alerts, with its signing secret added. Set `SLACK_CLIENT_ID`, `SLACK_CLIENT_SECRET` and `SLACK_SIGNING_SECRET`, plus `INTEGRATION_ENCRYPTION_KEY` in production, which encrypts the bot tokens. Without them the bot's pages and endpoints don't exist. `plugins/slack/manifest.json` in the repository is the app's manifest, and `plugins/slack/README.md` walks through creating the app from it. The manifest includes the `openid` user scope and the redirect URL `/api/integrations/slack/link/callback`, which Sign in with Slack needs when someone links their account. Rate limits need Upstash Redis; without it they're off. See [Self-hosting](/docs/self-hosting#optional-services).
+
+## Related
+
+- [Notifications](/docs/notifications#slack-and-discord): scan and form alerts in a Slack channel
+- [Telegram bot](/docs/telegram-bot) and [Discord bot](/docs/discord-bot): the same bot in other chat apps
+- [Dynamic QR codes](/docs/dynamic-qr-codes): what a tracked code is

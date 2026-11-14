@@ -1,17 +1,28 @@
 ---
 title: Move from Bitly, Rebrandly and others
 description: Import your short links and dynamic QR codes into QRdx, keep printed codes working, and keep your branded back-halves.
-icon: Download
 ---
 
-QRdx imports links and dynamic codes from other providers in one go. Open [Dashboard → Codes](/dashboard?to=codes) and click **Import**. Every import has the same three steps: pick what to bring, preview it, import it.
+QRdx imports links and dynamic codes from other providers in one go, so you can move without reprinting what's already out there. Every import has the same three steps: pick what to bring, preview it, import it. Use this guide when you have codes at another service and want them editable and tracked in QRdx.
+
+<Callout type="info" title="Plans">
+  Imports work on every plan, within your plan's active code limit. Keeping the original back-halves needs Pro or Business. See [Plans and limits](/docs/plans-and-limits).
+</Callout>
+
+In a hurry? The short task page: [Bring codes from another service](/docs/help/dynamic-codes/import).
+
+## How it works
+
+{/* diagram: import-flow | Links at the old provider becoming QRdx codes, with the optional step that points each old link at its new QRdx code so printed codes keep working | concept drawing */}
+
+Open [Codes](/dashboard?to=codes), then the **⋯** menu → **Import codes** → **From Bitly and other apps**. Two kinds of source:
 
 - **Connected accounts:** Bitly, Rebrandly and Short.io. QRdx lists your links through the provider's API.
 - **Export files:** QR Code Generator PRO, Uniqode (Beaconstac), Flowcode, QR TIGER, ME-QR, TinyURL, Hovercode, Scanova, or any CSV with destination URLs.
 
 Nothing changes in your old account during the import itself.
 
-## What an import creates
+### What an import creates
 
 Each link or code becomes a [dynamic QR code](/docs/dynamic-qr-codes) with:
 
@@ -22,23 +33,22 @@ Each link or code becomes a [dynamic QR code](/docs/dynamic-qr-codes) with:
 The preview shows how many codes will be created, which tags are new, and what is skipped:
 
 - **Already imported:** links imported before (from any earlier run) are always skipped, so running an import twice never creates duplicates.
-- **Same destination:** links whose destination already has a QRdx code are skipped by default. Tick the option to import them anyway.
+- **Same destination exists:** links whose destination already has a QRdx code are skipped by default. Tick the option to import them anyway.
+- **Over plan limit:** links that don't fit in your plan's active codes. The preview offers to import the first ones that fit, or to upgrade.
 - **Can't import:** missing or invalid destinations, and links that already point to a QRdx short link.
 
-Imports run in batches of 50 with a progress bar. Closing the dialog is safe: open **Import** again and the import continues from **Recent imports**. The summary lists created, skipped and failed codes with the reasons.
+{/* shot: import-preview | The import preview with the counts of codes to create, the skipped buckets and the Keep the original back-halves option | Dashboard → Codes → ⋯ → Import codes → From Bitly and other apps → preview */}
 
-<Callout type="info">
-Plan limits apply as for any new code. Free includes 10 active dynamic codes; if an import needs more, the preview says how many fit and offers to import the first ones, or to upgrade. Pro and Business have no limit.
-</Callout>
+Imports run in batches of 50 with a progress bar. Closing the dialog is safe: open the importer again and the import continues from **Recent imports**. The summary lists created, skipped and failed codes with the reasons.
 
 ## From a connected account
 
-1. Click **Import** and pick the provider. If it isn't connected yet, connect it right there (sign in, or paste an API key or token). Tokens are stored encrypted, and you can disconnect in Settings → Integrations.
+1. Pick the provider. If it isn't connected yet, connect it right there (sign in, or paste an API key or token). Tokens are stored encrypted, and you can disconnect in [Settings → Integrations](/settings/integrations).
 2. Search, filter by domain or tag, and select links. **Select all matching links** takes up to 1,000 links per import; run it again for the rest.
 3. Check the preview and click **Import**.
 
 | Provider | Connect with | List links | Keep printed codes working |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | Bitly | Sign in, or a generic access token | Yes | Paid Bitly plans only: 5 link redirects a month on Core, 20 on Growth, 110 on Premium |
 | Rebrandly | API key | Yes | Within Rebrandly's monthly destination edits: 10 on Essentials, 50 on Professional, 150 on Growth (none on Free) |
 | Short.io | API key | Yes, one domain at a time | Yes, on every plan |
@@ -55,23 +65,25 @@ QR codes you printed with another provider encode that provider's short link. Af
 
 If the provider refuses (for example a Bitly plan without link redirects left), QRdx stops, says why, and leaves the remaining links unchanged. Links skipped because their destination already had a QRdx code point at that existing code.<IfAvailable feature="customDomains"> Links whose back-half moves with your own domain (below) aren't changed: after the DNS switch they're the QRdx link.</IfAvailable>
 
+<Callout type="warn" title="Keep the old account for now">
+  Keep the provider connected until you're sure: undo needs the connection. The old account also has to stay active for its links to keep redirecting.
+</Callout>
+
 ## Keep the original back-halves
 
 On Pro and Business, tick **Keep the original back-halves** in the import preview. Each code then gets its old back-half instead of a random one when QRdx can keep it, so `bit.ly/spring-menu` becomes `qrdx.dev/q/spring-menu`:
 
-- A back-half is kept when it's 3 to 64 letters, digits, `-` or `_` (see [custom back-halves](/docs/dynamic-qr-codes#custom-back-halves)), isn't reserved, and isn't used yet on `qrdx.dev` by any QRdx code<IfAvailable feature="customDomains"> (on your own domain, only by your codes there)</IfAvailable>.
+- A back-half is kept when it's 3 to 64 letters, digits, `-` or `_`, doesn't start or end with `-` (see [custom back-halves](/docs/dynamic-qr-codes#custom-back-halves)), isn't reserved, and isn't used yet on `qrdx.dev` by any QRdx code<IfAvailable feature="customDomains"> (on your own domain, only by your codes there)</IfAvailable>.
 - Otherwise the code gets a generated back-half, and the preview shows the change with the reason, for example `spring-menu → Ab3xK9q · Another QRdx code already uses this back-half on qrdx.dev`. The import uses exactly the back-half the preview shows.
 - Back-halves are case-sensitive, as at Bitly and Short.io.
 
-<Callout type="warn">
-Keep the provider connected until you're sure: undo needs the connection. The old account also has to stay active for its links to keep redirecting.
-</Callout>
+Back-halves that can't be kept get a generated one; those links need a reprint or a redirect at the old provider.
 
 <IfAvailable feature="customDomains" title="Your own domain (go.yourbrand.com)">
 
 If your links use your own domain, you can move that domain to QRdx and keep the back-halves, so `go.yourbrand.com/spring-menu` keeps working after the DNS switch.
 
-1. Add the domain in [Settings → Domains](/dashboard?to=settings/domains) first. It can stay unverified for now: back-halves are then kept on the domain itself, where they only have to be unique among your own codes, and only `api`, `p` and `q` are reserved.
+1. Add the domain in **Settings** → **Domains** first. It can stay unverified for now: back-halves are then kept on the domain itself, where they only have to be unique among your own codes, and only a few technical words are reserved.
 2. In the import preview, tick **Keep the original back-halves** and pick the domain under **Links on**. The preview shows which back-halves are kept.
 3. Import. The codes go on the domain and claim their back-halves right away.
 4. Point the domain's DNS to QRdx and verify it (see [Custom domains](/docs/custom-domains)). Do this at a quiet time: links on the domain stop working at the old provider as soon as DNS moves, and start working on QRdx once it's verified.
@@ -80,13 +92,13 @@ If the domain isn't in QRdx yet when you import, its back-halves are kept on `qr
 
 </IfAvailable>
 
-Back-halves that can't be kept get a generated one; those links need a reprint or a redirect at the old provider. Custom back-halves are part of Pro and Business.
-
 ## From an export file
 
-1. Get the file (steps below). QRdx reads CSV; for an Excel file, save or download it as CSV first.
-2. Click **Import**, pick the provider and upload the file. QRdx recognizes the provider's columns where it can, and you can change the mapping. Only the destination is required; the old short link (or code ID) lets a re-upload skip codes already imported.
+1. Get the file (steps below). QRdx reads CSV up to 2 MB and 1,000 rows per run; for an Excel file, save or download it as CSV first.
+2. In the importer, pick the provider and upload the file. QRdx recognizes the provider's columns where it can, and you can change the mapping. Only the destination is required; the old short link (or code ID) lets a re-upload skip codes already imported.
 3. Preview and import, then use **Copy all new links** or **Download mapping CSV** (old link → new QRdx link).
+
+{/* shot: import-column-mapping | The column mapping step for an uploaded CSV, with the destination column recognized and the others offered | Dashboard → Codes → ⋯ → Import codes → From Bitly and other apps → upload a CSV */}
 
 QRdx can't change codes that live on the provider's own domain. To keep printed codes working, open each old dynamic code in the old provider and set its destination to the new QRdx link from the mapping. The old account has to stay active for those codes to redirect; reprint with the QRdx codes before you cancel.<IfAvailable feature="customDomains"> Codes on a domain you own can move with the domain instead, with no reprint: see [Your own domain](#your-own-domain-go-yourbrand-com) above.</IfAvailable>
 
@@ -96,7 +108,7 @@ There's no documented export of the code list. Make a spreadsheet with **Name**,
 
 ### Uniqode (Beaconstac)
 
-**QR Codes → Dynamic**, select all, **⋯ → Export**, per organization or folder. The export's columns (QR Code Name, QR Code URL, Destination URL, Labels, …) are recognized. To re-point: open the code → **Edit** → new URL → **Next** → **Save**.
+**QR Codes → Dynamic**, select all, **⋯ → Export**, per organization or folder. The export's columns (QR Code Name, QR Code URL, Destination URL, Labels and others) are recognized. To re-point: open the code → **Edit** → new URL → **Next** → **Save**.
 
 ### Flowcode
 
@@ -126,7 +138,7 @@ Libraries render static codes, so nothing needs migrating: codes already printed
 
 ### From qrcode.react [#from-qrcode-react]
 
-```tsx
+```tsx title="Before and after"
 // Before
 import { QRCodeSVG } from "qrcode.react";
 
@@ -147,7 +159,7 @@ import { QRCodeSVG } from "qrdx";
 
 ### From qr-code-styling [#from-qr-code-styling]
 
-```tsx
+```tsx title="Before and after"
 // Before
 import QRCodeStyling from "qr-code-styling";
 
@@ -172,3 +184,13 @@ import { QRCodeSVG } from "qrdx";
 ```
 
 qrdx is a React component, so there's no instance to append: render it like any element. Downloads use the helpers in the [API reference](/docs/api-reference).
+
+## For developers
+
+To move codes with a script instead, create them with the [codes API](/docs/developers/api/create-codes): up to {facts.apiBatchCodes} per request on Pro and Business, with `slug` for the back-half you want to keep and an `Idempotency-Key` so a retry never duplicates a batch.
+
+## Related
+
+- [Bring codes from another service](/docs/help/dynamic-codes/import)
+- [Custom domains](/docs/custom-domains): move your branded domain with the links
+- [Short links and file pickers](/docs/short-links-and-file-pickers): keep using Bitly, Rebrandly or Short.io for new codes instead
