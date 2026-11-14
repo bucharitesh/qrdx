@@ -15,7 +15,7 @@ localizeHref("/pricing", "es"); // "/es/pricing"
 | `paths.ts` (`@repo/i18n/paths`), `localized-paths.json` | The translated pages (`localized-paths.json`, by route path) and `localizePath`, `localizeHref`, `splitLocale` |
 | `routing.ts` (`@repo/i18n/routing`) | The `next.config.ts` rewrites and redirects that give English its unprefixed URLs |
 | `review.ts` (`@repo/i18n/review`) | The native review gate: which pages search engines may index in each language |
-| `docs.ts` (`@repo/i18n/docs`) | The docs' languages and URLs, `translatedDocsSegments()`, the docs rewrites for `next.config.ts`, and `docsI18nOptions` for fumadocs' `defineI18n()` |
+| `docs.ts` (`@repo/i18n/docs`) | The docs' languages and URLs, `translatedDocsSegments()`, the docs rewrites for `next.config.ts`, `docsI18nOptions` for fumadocs' `defineI18n()`, and the docs zone's routing: `docsZoneRewrites()` (the main app's rewrites to the docs site at `DOCS_ZONE_URL`) and `isDocsPagePath()` (which links stay inside the docs site) |
 | `docs-meta.ts` (`@repo/i18n/docs-meta`) | The docs sidebar in other languages: the English structure with translated labels |
 | `docs-search.ts` (`@repo/i18n/docs-search`) | The docs search tokenizer for each language |
 | `docs-seo.ts` (`@repo/i18n/docs-seo`) | Canonicals, `noindex`, hreflang and sitemap entries for docs pages; `createDocsSeo(baseUrl)` gives the helpers that write absolute URLs |
