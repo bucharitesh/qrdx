@@ -7,7 +7,7 @@ import {
   isListedAdmin,
   parseAdminList,
 } from "@repo/auth/admin-rules";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 const LISTS = { ids: ["u_listed"], emails: ["Owner@Example.com"] };
 
@@ -61,5 +61,38 @@ describe("isAdminWith", () => {
       ),
     ).toBe(false);
     expect(isListedAdmin({ id: "u3", role: "admin" }, LISTS)).toBe(false);
+  });
+});
+
+// @repo/auth/admin applies the same rule to this deployment's lists.
+describe("@repo/auth/admin, bound to ADMIN_USER_IDS and ADMIN_EMAILS", () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it("reads both lists from the environment", async () => {
+    vi.stubEnv("ADMIN_USER_IDS", "u_listed, u_other");
+    vi.stubEnv("ADMIN_EMAILS", "Owner@Example.com");
+    const { getAdminUserIds, isAdmin, isBootstrapAdmin } = await import(
+      "@repo/auth/admin"
+    );
+    expect(getAdminUserIds()).toEqual(["u_listed", "u_other"]);
+    expect(isBootstrapAdmin({ id: "u_listed" })).toBe(true);
+    expect(
+      isBootstrapAdmin({
+        id: "u2",
+        email: "owner@example.com",
+        emailVerified: true,
+      }),
+    ).toBe(true);
+    expect(
+      isBootstrapAdmin({
+        id: "u2",
+        email: "owner@example.com",
+        emailVerified: false,
+      }),
+    ).toBe(false);
+    expect(isAdmin({ id: "u3", role: "admin" })).toBe(true);
+    expect(isAdmin({ id: "u3", role: "user" })).toBe(false);
   });
 });

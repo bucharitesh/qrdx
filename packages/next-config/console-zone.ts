@@ -53,10 +53,31 @@ function withoutTrailingSlashes(url: string): string {
   return url.slice(0, end);
 }
 
+const LOCAL_HOSTNAMES = new Set(["localhost", "127.0.0.1"]);
+
+/**
+ * Whether `value` can be CONSOLE_ORIGIN: an origin and nothing else (no
+ * path, query, hash or credentials; trailing slashes are fine), over https,
+ * or over http on localhost for local development.
+ */
+export function isConsoleOrigin(value: string): boolean {
+  let url: URL;
+  try {
+    url = new URL(value);
+  } catch {
+    return false;
+  }
+  const secure =
+    url.protocol === "https:" ||
+    (url.protocol === "http:" && LOCAL_HOSTNAMES.has(url.hostname));
+  return secure && withoutTrailingSlashes(value).toLowerCase() === url.origin;
+}
+
 /**
  * The main app's beforeFiles rewrites that send the console's sections and
- * build assets to the console at `origin`. None while `origin` is unset or
- * empty: the main app keeps serving its own pages.
+ * build assets to the console at `origin` (its origin is used, so a stray
+ * path or query can't end up in the destinations). None while `origin` is
+ * unset or empty: the main app keeps serving its own pages.
  *
  * A section name fills a whole segment, so /admin/growthx and the other
  * /admin sections never match.
@@ -66,7 +87,7 @@ export function consoleZoneRewrites(
   { hosts }: ConsoleZoneOptions
 ): ConsoleRewrite[] {
   if (!origin) return [];
-  const zone = withoutTrailingSlashes(origin);
+  const zone = new URL(origin).origin;
   const has = [{ type: "host" as const, value: hosts }];
   return [
     {
@@ -82,7 +103,8 @@ export function consoleZoneRewrites(
   ];
 }
 
-// Next matches rewrite sources without regard to case, so these do too.
+// Next matches beforeFiles rewrites without regard to case (it never passes
+// them experimental.caseSensitiveRoutes), so these do too.
 const SECTION_PATH = new RegExp(
   `^/admin/(${CONSOLE_SECTIONS.join("|")})(?:/|$)`,
   "i"
@@ -101,6 +123,26 @@ export function consoleSection(pathname: string): ConsoleSection | null {
  */
 export function isConsolePath(pathname: string): boolean {
   return consoleSection(pathname) !== null || ASSET_PATH.test(pathname);
+}
+
+// The console's two prefixes as the first segment, in any case.
+const ZONE_PREFIX = /^\/(admin|console-static)(?=\/|$)/i;
+
+/**
+ * `pathname` with its /admin or /console-static prefix lower-cased, or null
+ * when the prefix already is (or there's none). The rewrites match /ADMIN/…
+ * too, but proxy.ts matchers and the pages don't, so the proxy sends any
+ * other casing to the lower-case path before anything reaches the console.
+ */
+export function lowerCasedZonePrefix(pathname: string): string | null {
+  const prefix = ZONE_PREFIX.exec(pathname)?.[1];
+  if (!prefix || prefix === prefix.toLowerCase()) return null;
+  return `/${prefix.toLowerCase()}${pathname.slice(prefix.length + 1)}`;
+}
+
+/** A `..` or an encoded dot (%2e, %2E) anywhere in `pathname`. */
+export function hasDotSegment(pathname: string): boolean {
+  return pathname.includes("..") || /%2e/i.test(pathname);
 }
 
 const RETURN_BASE = "https://return.invalid";

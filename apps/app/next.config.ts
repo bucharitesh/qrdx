@@ -92,6 +92,13 @@ const docsElsewhere = env.DOCS_ZONE_URL
 const consoleZone = consoleZoneRewrites(env.CONSOLE_ORIGIN, {
   hosts: `(?:${PLATFORM_HOSTS})`,
 });
+if (consoleZone.length > 0 && !env.CONSOLE_ZONE_KEY) {
+  // Not fatal (the console can fall back to x-forwarded-host), but with its
+  // key rule every page there would redirect back here in a loop.
+  console.warn(
+    "⚠ CONSOLE_ORIGIN is set but CONSOLE_ZONE_KEY isn't: the console can't tell requests that came through this app. Set the same CONSOLE_ZONE_KEY on both.",
+  );
+}
 
 /** Headers that put the app policy on prerendered pages (nonce routes: proxy.ts). */
 const cspHeaders = cspEnabled
