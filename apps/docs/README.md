@@ -1,4 +1,4 @@
-# docs-site
+# apps/docs
 
 The QRdx docs as a Next.js app of their own: the docs zone of qrdx.dev. Readers never see its own host. The main app (`apps/app`) proxies the docs' URLs here once its `DOCS_ZONE_URL` is set, so every URL stays the same: `/docs/...`, `/<lang>/docs/...`, the `.md` and `.mdx` copies, `/llms.mdx/...`, `/docs-md/...`, `/og/docs/...`, `/api/search` and `/llms-full.txt`. The routing rules live in `@repo/i18n/docs` (`docsZoneRewrites`, `isDocsPagePath`), the manifest contract in `@repo/next-config/docs-zone`.
 
@@ -7,10 +7,10 @@ Until the cut-over the main app still serves its own copy of the docs, and this 
 ## Run it
 
 ```bash
-cp apps/docs-site/.env.example apps/docs-site/.env.local
-bun run --filter docs-site dev        # http://localhost:3001
-bun run --filter docs-site test
-bun run --filter docs-site typecheck
+cp apps/docs/.env.example apps/docs/.env.local
+bun run --filter docs dev        # http://localhost:3001
+bun run --filter docs test
+bun run --filter docs typecheck
 ```
 
 To see it through the main app as readers will, run the main app with `DOCS_ZONE_URL=http://localhost:3001` in `apps/app/.env.local`.

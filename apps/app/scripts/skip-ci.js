@@ -9,7 +9,7 @@
 // Review happens locally (bun run --filter app dev); CI runs the typechecks,
 // tests and lint. [skip ci] still skips any build, production included.
 //
-// A change to the docs site alone (apps/docs-site, its deploy workflow) is
+// A change to the docs site alone (apps/docs, its deploy workflow) is
 // skipped too: that app deploys from its own GitHub Action
 // (.github/workflows/docs-deploy.yml), and nothing here uses it. The
 // changes are the ones since the last deployment (VERCEL_GIT_PREVIOUS_SHA);
@@ -39,7 +39,7 @@ function changedFiles(previous) {
 
 /** Files only the docs site uses: its app and its deploy workflow. */
 const DOCS_SITE_ONLY = [
-  /^apps\/docs-site\//,
+  /^apps\/docs\//,
   /^\.github\/workflows\/docs-deploy\.yml$/,
 ];
 
@@ -61,7 +61,7 @@ function shouldSkip({ message, env, branch, changedFiles: files = null }) {
     return {
       skip: true,
       reason:
-        "Skipping: only the docs site changed (apps/docs-site deploys from .github/workflows/docs-deploy.yml).",
+        "Skipping: only the docs site changed (apps/docs deploys from .github/workflows/docs-deploy.yml).",
     };
   }
   if (env === "production") {

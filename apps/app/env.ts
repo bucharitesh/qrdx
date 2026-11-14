@@ -154,7 +154,7 @@ export const env = validateTogether(() =>
       // GitHub token for the star counter in the docs (avoids API rate limits)
       GITHUB_TOKEN: z.string().min(1).optional(),
 
-      // The docs site (apps/docs-site), e.g. https://docs.qrdx.dev: when set,
+      // The docs site (apps/docs), e.g. https://docs.qrdx.dev: when set,
       // next.config.ts proxies the docs' URLs there and the sitemap and
       // llms.txt read its /zone/docs-manifest.json. Unset, this app serves
       // its own copy of the docs.

@@ -1,21 +1,21 @@
 name: Docs deploy
 
-# Builds the docs site (apps/docs-site) on GitHub's runner and deploys the
+# Builds the docs site (apps/docs) on GitHub's runner and deploys the
 # prebuilt output to its own Vercel project, whose Git deployments are off
-# (apps/docs-site/vercel.json). Runs when a push to main changes something
+# (apps/docs/vercel.json). Runs when a push to main changes something
 # the docs build reads, or by hand (production or a preview).
 #
 # Needs the repository variables DOCS_VERCEL_ORG_ID and DOCS_VERCEL_PROJECT_ID
 # (the project's Settings → General), and the secret VERCEL_TOKEN. The
-# project's Root Directory is apps/docs-site; its environment holds
+# project's Root Directory is apps/docs; its environment holds
 # NEXT_PUBLIC_APP_URL, MAIN_ZONE_URL and the analytics ids
-# (apps/docs-site/.env.example).
+# (apps/docs/.env.example).
 on:
   push:
     branches:
       - main
     paths:
-      - apps/docs-site/**
+      - apps/docs/**
       - .github/workflows/docs-deploy.yml
       # The content, its message catalogs and recorded dates, which stay in
       # the main app's folder for now
@@ -23,7 +23,7 @@ on:
       - apps/app/messages/**
       - apps/app/lib/seo-file-dates.json
       # The generated inputs' sources: the docs' message subset and the OpenAPI
-      # document's copy (apps/docs-site/scripts/zone-inputs.mjs)
+      # document's copy (apps/docs/scripts/zone-inputs.mjs)
       - apps/app/scripts/i18n-docs-messages.ts
       - apps/app/lib/i18n/docs-messages.ts
       - apps/app/public/openapi.json
@@ -149,7 +149,7 @@ jobs:
         run: bun x "$VERCEL_CLI" pull --yes --environment="$TARGET" --token="$VERCEL_TOKEN"
 
       # A production build stops when it can't read the main app's
-      # /zone/availability.json (apps/docs-site/scripts/zone-inputs.mjs)
+      # /zone/availability.json (apps/docs/scripts/zone-inputs.mjs)
       # rather than hide every feature that needs setup.
       - name: Build
         env:
