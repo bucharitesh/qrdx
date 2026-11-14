@@ -62,7 +62,7 @@ gemini extensions install https://github.com/bucharitesh/qrdx
 
 The plugin is in [`plugins/agent`](../plugins/agent), and its [README](../plugins/agent/README.md) says what it runs and sends.
 
-The skill runs `npx @qrdx/cli@0.0.8`, which downloads that exact version from npm on first use and needs Node.js 22 or later. The version is pinned on purpose so agents never run an unreviewed release; [`AGENTS.md`](AGENTS.md) says how to move it. Codes are rendered locally and nothing is uploaded.
+The skill runs `npx @qrdx/cli@0.0.10`, which downloads that exact version from npm on first use and needs Node.js 22 or later. The version is pinned on purpose so agents never run an unreviewed release; [`AGENTS.md`](AGENTS.md) says how to move it. Codes are rendered locally and nothing is uploaded.
 
 For styles the CLI doesn't have, an agent can use the keyless [image API](https://qrdx.dev/docs/developers/image-api) or the [MCP server](https://qrdx.dev/docs/developers/mcp) instead.
 
