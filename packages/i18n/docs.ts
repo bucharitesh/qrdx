@@ -42,7 +42,7 @@ export function isDocsPath(path: string): boolean {
 
 /**
  * fumadocs' i18n options for the docs loader. An app with the docs passes
- * them to fumadocs' `defineI18n<Locale>()` (apps/docs/lib/i18n/docs.ts), so
+ * them to fumadocs' `defineI18n<Locale>()` (apps/app/lib/i18n/docs.ts), so
  * this package doesn't depend on fumadocs.
  */
 export const docsI18nOptions = {

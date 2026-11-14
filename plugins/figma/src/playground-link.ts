@@ -1,6 +1,6 @@
 // "Open in QRdx": a link into the QRdx playground in the format the site
-// reads (apps/docs/lib/playground-links.ts, which this plugin can't import).
-// apps/docs/tests/plugins/playground-links.test.ts checks this file against
+// reads (apps/app/lib/playground-links.ts, which this plugin can't import).
+// apps/app/tests/plugins/playground-links.test.ts checks this file against
 // that reader.
 //
 // Only a web address goes in the link, after the `#`, which browsers never
@@ -17,7 +17,7 @@ const MAX_LINK_URL_LENGTH = 2048;
 
 /**
  * This plugin's presets that match the playground's preset of the same id
- * exactly (apps/docs/utils/qr-presets.ts). The others have drifted.
+ * exactly (apps/app/utils/qr-presets.ts). The others have drifted.
  */
 export const PLAYGROUND_PRESETS: readonly string[] = ["classic", "minimal"];
 

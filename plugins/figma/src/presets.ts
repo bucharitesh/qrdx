@@ -9,7 +9,7 @@ import {
   type QRProps,
 } from "qrdx";
 
-// A curated subset of the QRdx playground presets (apps/docs/utils/qr-presets.ts),
+// A curated subset of the QRdx playground presets (apps/app/utils/qr-presets.ts),
 // each checked to decode with zbar. Kept in sync by hand:
 // plugins/chrome/src/presets.ts and plugins/figma/src/presets.ts.
 export interface StylePreset {

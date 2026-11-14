@@ -3,14 +3,14 @@ import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import { defineConfig, type Plugin } from "vite";
 
-// The app is the web scanner (apps/docs/components/scanner) built on its
+// The app is the web scanner (apps/app/components/scanner) built on its
 // own: the same components, strings and safety checks, with the few
 // browser-only modules swapped for native ones below. It reads the web
 // app's files in place, so run `bun install` at the repo root first.
 const root = import.meta.dirname;
-const docs = path.resolve(root, "../docs");
+const web = path.resolve(root, "../app");
 const designSystem = path.resolve(root, "../../packages/design-system");
-const scanner = path.join(docs, "components/scanner");
+const scanner = path.join(web, "components/scanner");
 const native = (file: string) => path.join(root, "src/native", file);
 
 /** Web modules → native modules with the same exports. */
@@ -24,7 +24,7 @@ const NATIVE_MODULES = new Map([
   // No "Install app" inside an app.
   [path.join(scanner, "install-app.tsx"), native("install-app.tsx")],
   // The empty-history illustration loads with next/dynamic; a still icon here.
-  [path.join(docs, "components/mockups/hairline.tsx"), native("hairline.tsx")],
+  [path.join(web, "components/mockups/hairline.tsx"), native("hairline.tsx")],
 ]);
 
 function nativeModules(): Plugin {
@@ -32,7 +32,7 @@ function nativeModules(): Plugin {
     name: "qrdx-native-modules",
     enforce: "pre",
     async resolveId(source, importer, options) {
-      if (!importer?.startsWith(docs)) {
+      if (!importer?.startsWith(web)) {
         return null;
       }
       const resolved = await this.resolve(source, importer, {
@@ -48,7 +48,7 @@ export default defineConfig({
   plugins: [nativeModules(), react(), tailwindcss()],
   resolve: {
     alias: [
-      { find: /^@\//, replacement: `${docs}/` },
+      { find: /^@\//, replacement: `${web}/` },
       {
         find: /^@repo\/design-system$/,
         replacement: `${designSystem}/index.tsx`,
@@ -58,7 +58,7 @@ export default defineConfig({
       {
         find: /^barcode-detector\/ponyfill$/,
         replacement: path.join(
-          docs,
+          web,
           "node_modules/barcode-detector/dist/es/ponyfill.js"
         ),
       },

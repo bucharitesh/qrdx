@@ -17,13 +17,13 @@ const features = computeFeatures({ env, onVercel, production });
 
 ## How the app uses it
 
-- `apps/docs/lib/feature-availability.ts` (server only) feeds the rules the server environment: `isFeatureAvailable`, `getFeatures`, `isPathAvailable`.
-- `apps/docs/lib/integration-availability.ts` adds the integrations (it reads the database, so it stays in the app) and builds the `PublicAvailability` the root layout passes to client components (`useAvailability()` in `components/availability-provider.tsx`).
+- `apps/app/lib/feature-availability.ts` (server only) feeds the rules the server environment: `isFeatureAvailable`, `getFeatures`, `isPathAvailable`.
+- `apps/app/lib/integration-availability.ts` adds the integrations (it reads the database, so it stays in the app) and builds the `PublicAvailability` the root layout passes to client components (`useAvailability()` in `components/availability-provider.tsx`).
 - `/zone/availability.json` (`app/zone/availability.json/route.ts`) publishes the same thing plus the ids that are on, for QRdx's other deployments: the docs app reads it at build time. Ids, paths and slugs only, built once per deploy, cached publicly (`tests/routes/zone-availability.test.ts` checks it carries nothing else).
-- `apps/docs/lib/feature-availability-rules.ts`, and the helpers re-exported from `lib/workspace-paths.ts`, `lib/mcp-clients.ts` and `lib/pricing.ts`, keep the app's import paths working.
+- `apps/app/lib/feature-availability-rules.ts`, and the helpers re-exported from `lib/workspace-paths.ts`, `lib/mcp-clients.ts` and `lib/pricing.ts`, keep the app's import paths working.
 
-The tests for the rules live in the app: `apps/docs/tests/lib/feature-availability.test.ts`.
+The tests for the rules live in the app: `apps/app/tests/lib/feature-availability.test.ts`.
 
 ## Adding a feature
 
-Add its id to `FEATURE_IDS` and a rule to `FEATURE_RULES`: the variables it needs (names only), `usable` when set values can still be wrong, and the `paths` and `catalogSlugs` that only lead to it. The app then hides those pages and entries wherever the feature can't work, and the docs wrap their mentions in `<IfAvailable feature="…">`. List new variables in `apps/docs/.env.example`.
+Add its id to `FEATURE_IDS` and a rule to `FEATURE_RULES`: the variables it needs (names only), `usable` when set values can still be wrong, and the `paths` and `catalogSlugs` that only lead to it. The app then hides those pages and entries wherever the feature can't work, and the docs wrap their mentions in `<IfAvailable feature="…">`. List new variables in `apps/app/.env.example`.

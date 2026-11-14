@@ -4,12 +4,12 @@ import { OAUTH_LANDING_KEY, OAUTH_REFERRAL_KEY } from "./referral-keys";
 // What a sign-up carries to the new account, handed to the app once, when
 // the account is created:
 //
-// - an affiliate referral code (apps/docs/lib/affiliates). An email-code
+// - an affiliate referral code (apps/app/lib/affiliates). An email-code
 //   sign-up sends it in the REFERRAL_HEADER request header; a Google or
 //   GitHub sign-up sends it as the OAuth flow's additionalData
 //   (OAUTH_REFERRAL_KEY), which Better Auth keeps in the OAuth state across
 //   the provider's redirect;
-// - how the visit started (apps/docs/lib/analytics/landing.ts): the
+// - how the visit started (apps/app/lib/analytics/landing.ts): the
 //   referring site's host, campaign tags and first page, in LANDING_HEADER
 //   or OAUTH_LANDING_KEY the same way.
 //

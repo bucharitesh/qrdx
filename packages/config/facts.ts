@@ -1,9 +1,9 @@
 // Product counts and names quoted in copy, for apps that can't import the
 // main app (the docs site), imported as "@repo/config/facts".
-// apps/docs/lib/product-facts.ts is the only source of truth: it reads the
+// apps/app/lib/product-facts.ts is the only source of truth: it reads the
 // engine's catalogue, pricing, the affiliate terms, the AI art model and the
 // audit log limits. Another app gets the values as a snapshot that
-// `bun run --filter docs facts:snapshot` writes to
+// `bun run --filter app facts:snapshot` writes to
 // packages/config/facts.generated.json just before that app builds. The file
 // isn't committed, so it can't go stale between merges.
 //
@@ -42,7 +42,7 @@ export function createFacts(snapshot: FactsSnapshot): Facts {
   const productFact = (name: string): number | string => {
     if (!isProductFact(name)) {
       throw new Error(
-        `Unknown product fact "facts.${name}". Use one of: ${Object.keys(PRODUCT_FACTS).join(", ")} (apps/docs/lib/product-facts.ts).`
+        `Unknown product fact "facts.${name}". Use one of: ${Object.keys(PRODUCT_FACTS).join(", ")} (apps/app/lib/product-facts.ts).`
       );
     }
     return PRODUCT_FACTS[name] as number | string;

@@ -1,7 +1,7 @@
 // Platform limits: plain numbers that more than one part of QRdx enforces or
 // quotes (API routes, the dashboard, the editor, and copy through
-// apps/docs/lib/product-facts.ts). Plan limits and anything that needs a
-// lookup stay in the app (apps/docs/lib/plans.ts).
+// apps/app/lib/product-facts.ts). Plan limits and anything that needs a
+// lookup stay in the app (apps/app/lib/plans.ts).
 
 // ─── Editor uploads ──────────────────────────────────────────────────────────
 
@@ -69,7 +69,7 @@ export const NEW_PAID_ACCOUNT_CODES_PER_HOUR = 2000;
 // ─── Keyless public endpoints ────────────────────────────────────────────────
 // Per-IP rate limits, as copy quotes them (/qr-code-api, /mcp, llms.txt,
 // docs). The routes set their own limiters;
-// apps/docs/tests/lib/public-api-limits.test.ts fails when a route's limit and
+// apps/app/tests/lib/public-api-limits.test.ts fails when a route's limit and
 // these numbers part ways.
 
 /** GET /v1/qr, the keyless image API (app/api/v1/qr/route.ts). */

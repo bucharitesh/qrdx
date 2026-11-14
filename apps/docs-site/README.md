@@ -1,8 +1,8 @@
 # docs-site
 
-The QRdx docs as a Next.js app of their own: the docs zone of qrdx.dev. Readers never see its own host. The main app (`apps/docs`) proxies the docs' URLs here once its `DOCS_ZONE_URL` is set, so every URL stays the same: `/docs/...`, `/<lang>/docs/...`, the `.md` and `.mdx` copies, `/llms.mdx/...`, `/docs-md/...`, `/og/docs/...`, `/api/search` and `/llms-full.txt`. The routing rules live in `@repo/i18n/docs` (`docsZoneRewrites`, `isDocsPagePath`), the manifest contract in `@repo/next-config/docs-zone`.
+The QRdx docs as a Next.js app of their own: the docs zone of qrdx.dev. Readers never see its own host. The main app (`apps/app`) proxies the docs' URLs here once its `DOCS_ZONE_URL` is set, so every URL stays the same: `/docs/...`, `/<lang>/docs/...`, the `.md` and `.mdx` copies, `/llms.mdx/...`, `/docs-md/...`, `/og/docs/...`, `/api/search` and `/llms-full.txt`. The routing rules live in `@repo/i18n/docs` (`docsZoneRewrites`, `isDocsPagePath`), the manifest contract in `@repo/next-config/docs-zone`.
 
-Until the cut-over the main app still serves its own copy of the docs, and this app is a copy of that code. The content stays in `apps/docs/content/docs`, where the translation scripts write it; `source.config.ts` compiles it from there.
+Until the cut-over the main app still serves its own copy of the docs, and this app is a copy of that code. The content stays in `apps/app/content/docs`, where the translation scripts write it; `source.config.ts` compiles it from there.
 
 ## Run it
 
@@ -13,18 +13,18 @@ bun run --filter docs-site test
 bun run --filter docs-site typecheck
 ```
 
-To see it through the main app as readers will, run the main app with `DOCS_ZONE_URL=http://localhost:3001` in `apps/docs/.env.local`.
+To see it through the main app as readers will, run the main app with `DOCS_ZONE_URL=http://localhost:3001` in `apps/app/.env.local`.
 
 ## What it reads from the main app
 
 `scripts/zone-inputs.mjs` runs before `dev`, `build`, `typecheck` and `test`, and writes every generated input (none of them is committed):
 
-- the product facts snapshot (`bun run --filter docs facts:snapshot` writes `packages/config/facts.generated.json` from `apps/docs/lib/product-facts.ts`), for `{facts.…}` in the docs;
-- the docs' message catalogs (`bun run --filter docs i18n:docs-messages` writes the `DOCS_NAMESPACES` of `apps/docs/messages` to `packages/i18n/messages`), which `lib/i18n/messages.ts` loads;
-- the OpenAPI document's copy (`bun run --filter docs openapi:export` writes `packages/docs-assets/openapi.json`), for the API reference pages;
+- the product facts snapshot (`bun run --filter app facts:snapshot` writes `packages/config/facts.generated.json` from `apps/app/lib/product-facts.ts`), for `{facts.…}` in the docs;
+- the docs' message catalogs (`bun run --filter app i18n:docs-messages` writes the `DOCS_NAMESPACES` of `apps/app/messages` to `packages/i18n/messages`), which `lib/i18n/messages.ts` loads;
+- the OpenAPI document's copy (`bun run --filter app openapi:export` writes `packages/docs-assets/openapi.json`), for the API reference pages;
 - `${MAIN_ZONE_URL}/zone/availability.json` into `generated/zone-availability.json`, for `<IfAvailable>` and the sidebar (`lib/zone-availability.ts`). When it can't be fetched, every feature that needs setup counts as unavailable; with `DOCS_REQUIRE_AVAILABILITY=1` (the deploy workflow) the build stops instead.
 
-The content stays in `apps/docs/content/docs` and the recorded file dates in `apps/docs/lib/seo-file-dates.json`. The shared code comes from packages: `@repo/i18n` (languages, URLs, docs SEO), `@repo/analytics` (consent and analytics), `@repo/docs-assets` (registry, pattern catalog, catalogue tiles), `@repo/design-system`, `@repo/config` and `@repo/availability`.
+The content stays in `apps/app/content/docs` and the recorded file dates in `apps/app/lib/seo-file-dates.json`. The shared code comes from packages: `@repo/i18n` (languages, URLs, docs SEO), `@repo/analytics` (consent and analytics), `@repo/docs-assets` (registry, pattern catalog, catalogue tiles), `@repo/design-system`, `@repo/config` and `@repo/availability`.
 
 ## What it gives the main app
 

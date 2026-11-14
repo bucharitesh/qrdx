@@ -12,7 +12,7 @@ import { flushUmami, getUmamiConfig, isUmamiEnabled } from "./umami";
 
 /**
  * The signed-in user's plan for PostHog's person properties, or null. The
- * app passes its server action (apps/docs/actions/analytics.ts); only asked
+ * app passes its server action (apps/app/actions/analytics.ts); only asked
  * for after the visitor allowed analytics.
  */
 export type GetAnalyticsPlan = () => Promise<string | null>;

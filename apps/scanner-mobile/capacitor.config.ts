@@ -1,7 +1,7 @@
 import type { CapacitorConfig } from "@capacitor/cli";
 
 // QRdx Scanner for iOS and Android (README.md). The web build in dist/ is
-// the web scanner's UI (apps/docs/components/scanner) with native camera
+// the web scanner's UI (apps/app/components/scanner) with native camera
 // scanning; nothing is loaded from a server.
 const config: CapacitorConfig = {
   appId: "dev.qrdx.scanner",

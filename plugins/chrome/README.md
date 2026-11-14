@@ -48,11 +48,11 @@ No data leaves your browser. QR codes are drawn locally by the bundled `qrdx` li
 
 ## Icons
 
-`public/icons/icon-{16,32,48,128}.png` are generated from `apps/docs/public/logo.png`. To regenerate (ImageMagick):
+`public/icons/icon-{16,32,48,128}.png` are generated from `apps/app/public/logo.png`. To regenerate (ImageMagick):
 
 ```bash
 cd plugins/chrome
-for s in 16 32 48 128; do magick ../../apps/docs/public/logo.png -filter Lanczos -resize ${s}x${s} -strip public/icons/icon-$s.png; done
+for s in 16 32 48 128; do magick ../../apps/app/public/logo.png -filter Lanczos -resize ${s}x${s} -strip public/icons/icon-$s.png; done
 ```
 
 ## Chrome Web Store listing copy

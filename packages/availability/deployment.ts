@@ -1,6 +1,6 @@
 // Where a deployment runs, from the URLs it's given: QRdx itself (qrdx.dev,
 // its Vercel previews, local dev) or a self-hosted copy on its own domain.
-// Pure: the app passes its URLs in (apps/docs/lib/mcp-clients.ts reads them
+// Pure: the app passes its URLs in (apps/app/lib/mcp-clients.ts reads them
 // from the environment), so this never reads one itself.
 
 import { isQrdxHost } from "@repo/config";

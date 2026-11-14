@@ -28,10 +28,10 @@
       "dependsOn": ["^build"],
       "inputs": [
         "$TURBO_DEFAULT$",
-        "$TURBO_ROOT$/apps/docs/**",
-        "!$TURBO_ROOT$/apps/docs/.next/**",
-        "!$TURBO_ROOT$/apps/docs/.source/**",
-        "!$TURBO_ROOT$/apps/docs/node_modules/**"
+        "$TURBO_ROOT$/apps/app/**",
+        "!$TURBO_ROOT$/apps/app/.next/**",
+        "!$TURBO_ROOT$/apps/app/.source/**",
+        "!$TURBO_ROOT$/apps/app/node_modules/**"
       ],
       "env": ["MAIN_ZONE_URL", "DOCS_REQUIRE_AVAILABILITY"],
       "outputs": []
@@ -40,10 +40,10 @@
       "dependsOn": ["^build"],
       "inputs": [
         "$TURBO_DEFAULT$",
-        "$TURBO_ROOT$/apps/docs/**",
-        "!$TURBO_ROOT$/apps/docs/.next/**",
-        "!$TURBO_ROOT$/apps/docs/.source/**",
-        "!$TURBO_ROOT$/apps/docs/node_modules/**"
+        "$TURBO_ROOT$/apps/app/**",
+        "!$TURBO_ROOT$/apps/app/.next/**",
+        "!$TURBO_ROOT$/apps/app/.source/**",
+        "!$TURBO_ROOT$/apps/app/node_modules/**"
       ],
       "env": ["MAIN_ZONE_URL", "DOCS_REQUIRE_AVAILABILITY"],
       "outputs": []

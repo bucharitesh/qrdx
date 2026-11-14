@@ -1,6 +1,6 @@
 // Workspace roles as stored in member.role and invitation.role: pure and
 // client-safe. ./workspace-roles.ts refuses any other role when one is
-// written; apps/docs/lib/permissions.ts decides what each role may do.
+// written; apps/app/lib/permissions.ts decides what each role may do.
 //
 // Better Auth's organization plugin stores a role field as given, and reads
 // it by splitting on commas without trimming. Its invitation check does

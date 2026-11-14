@@ -1,4 +1,4 @@
--- The QRdx bot for Slack (apps/docs/lib/slack-bot): two new tables.
+-- The QRdx bot for Slack (apps/app/lib/slack-bot): two new tables.
 --
 -- slack_bot_installation: one row per Slack workspace the bot was added to
 -- (Settings → Integrations → Slack → Add the bot to Slack). It keeps the

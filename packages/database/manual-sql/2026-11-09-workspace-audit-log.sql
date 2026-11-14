@@ -1,4 +1,4 @@
--- Workspace audit log (Business, apps/docs/ee/audit-log): one new table,
+-- Workspace audit log (Business, apps/app/ee/audit-log): one new table,
 -- workspace_audit_log, with who changed what in a workspace and when. Owners
 -- and admins read it in Settings → Audit log and export it as CSV. It is
 -- separate from the staff-only admin_audit_log.

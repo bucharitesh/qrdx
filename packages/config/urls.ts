@@ -6,13 +6,13 @@ export const CANONICAL_HOST = "qrdx.dev";
 /** The hosted service, for links and copy that must point at it whatever the environment. */
 export const CANONICAL_ORIGIN = `https://${CANONICAL_HOST}`;
 
-/** The REST and image API (api.qrdx.dev/v1 → /api/v1, apps/docs/next.config.ts). */
+/** The REST and image API (api.qrdx.dev/v1 → /api/v1, apps/app/next.config.ts). */
 export const API_HOST = `api.${CANONICAL_HOST}`;
 const API_ORIGIN = `https://${API_HOST}`;
 /** The hosted REST API's base URL, without a trailing slash. */
 export const API_BASE_URL = `${API_ORIGIN}/v1`;
 
-/** The MCP server (mcp.qrdx.dev/mcp → /api/mcp, apps/docs/next.config.ts). */
+/** The MCP server (mcp.qrdx.dev/mcp → /api/mcp, apps/app/next.config.ts). */
 export const MCP_HOST = `mcp.${CANONICAL_HOST}`;
 /** The hosted MCP server's public endpoint. */
 export const MCP_ENDPOINT = `https://${MCP_HOST}/mcp`;
