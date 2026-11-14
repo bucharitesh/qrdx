@@ -16,7 +16,7 @@ mkdirSync(dir, { recursive: true });
 const page = (path: string, title: string, extra = {}) => ({
   type: "page",
   path,
-  absolutePath: `../app/content/docs/${path}`,
+  absolutePath: `content/docs/${path}`,
   data: { title, description: `${title} description`, ...extra },
 });
 writeFileSync(
@@ -30,13 +30,13 @@ writeFileSync(
       {
         type: "meta",
         path: "meta.json",
-        absolutePath: "../app/content/docs/meta.json",
+        absolutePath: "content/docs/meta.json",
         data: { pages: ["index", "guides"] },
       },
       {
         type: "meta",
         path: "guides/meta.json",
-        absolutePath: "../app/content/docs/guides/meta.json",
+        absolutePath: "content/docs/guides/meta.json",
         data: { title: "Guides", root: true, pages: ["start", "domains"] },
       },
     ],
@@ -81,7 +81,7 @@ describe("Markdown copies", () => {
     expect(text).toContain("# Start (Guides)");
     expect(text).toContain("URL: http://localhost:3000/docs/guides/start");
     expect(text).toContain(
-      `Source: https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}/blob/main/apps/app/content/docs/guides/start.mdx`,
+      `Source: https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}/blob/main/apps/docs/content/docs/guides/start.mdx`,
     );
     expect(text).toContain("Start here.");
   });

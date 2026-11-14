@@ -1,3 +1,4 @@
+import { QrdxLogo } from "@repo/design-system/components/brand/qrdx-logo";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   Card,
@@ -21,7 +22,6 @@ import {
 // NFC (feat/nfc): QR scans and NFC taps.
 import { ScanSourceCard } from "@/app/(app)/dashboard/codes/_components/scan-source-card";
 import { ScansChart } from "@/app/(app)/dashboard/codes/_components/scans-chart";
-import { QrdxLogo } from "@/components/qrdx-logo";
 import { accentUse } from "@/lib/client-brands-shared";
 import {
   type PublicStats,

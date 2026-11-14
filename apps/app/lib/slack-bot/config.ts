@@ -15,7 +15,7 @@ import { verifySlackSignature } from "./signature";
 // id and secret, plus the signing secret for the requests Slack sends.
 // Without all of them (and, in production, the encryption key for bot
 // tokens) every bot route answers 404 and nothing touches its tables
-// (lib/feature-availability-rules.ts, slackBot).
+// (packages/availability/rules.ts, slackBot).
 
 const BOT_CALLBACK_PATH = "/api/integrations/slack/bot/callback";
 export const LINK_PAGE_PATH = "/integrations/slack/link";

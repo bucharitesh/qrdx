@@ -8,13 +8,12 @@ import {
   compare,
   customers,
   legal,
-} from "@/.source/content";
+} from "@/.source/server";
 import { isPublishedCustomerStory } from "@/lib/customers";
 
-// The content other than the docs: legal pages, the changelog, comparisons,
-// the blog and customer stories. Route handlers (Open Graph images, RSS, the
-// sitemap, llms.txt) import these from here, never from lib/source.ts, which
-// also holds the compiled docs (see lib/docs-index.ts).
+// The site's MDX content (source.config.ts): legal pages, the changelog,
+// comparisons, the blog and customer stories. The docs are the docs site's
+// (apps/docs).
 
 export const legalSource = loader({
   baseUrl: "/legal",

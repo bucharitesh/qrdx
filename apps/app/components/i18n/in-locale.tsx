@@ -1,5 +1,5 @@
+import type { Locale } from "@repo/i18n/config";
 import type { ReactNode } from "react";
-import type { Locale } from "@/lib/i18n/config";
 import { requestAppLocale } from "@/lib/i18n/request-locale";
 
 /**

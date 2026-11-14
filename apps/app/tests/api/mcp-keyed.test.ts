@@ -1,5 +1,5 @@
 // What a QRdx API key unlocks on the public endpoints, as
-// content/docs/developers/mcp.mdx and image-api.mdx describe it:
+// apps/docs/content/docs/developers/mcp.mdx and image-api.mdx describe it:
 // - MCP save_template saves a design as a theme in the key's workspace (the
 //   plan's saved-theme limit, the API's LIMIT_REACHED shape), and without a
 //   key it's a clear 401 tool error;

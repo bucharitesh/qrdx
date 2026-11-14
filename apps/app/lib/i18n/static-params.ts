@@ -1,6 +1,10 @@
+import {
+  DEFAULT_LOCALE,
+  LOCALE_INFO,
+  localeFromSegment,
+} from "@repo/i18n/config";
 import { notFound } from "next/navigation";
 import { prerenderScope } from "@/lib/static-params";
-import { DEFAULT_LOCALE, LOCALE_INFO, localeFromSegment } from "./config";
 
 /**
  * The [lang] params a build prerenders: English only. The other languages

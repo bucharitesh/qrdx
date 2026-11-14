@@ -54,9 +54,20 @@ describe("skip-ci", () => {
         ],
       }).skip,
     ).toBe(true);
+    // The docs' content and its translation records are the docs site's.
+    expect(
+      shouldSkip({
+        ...production,
+        changedFiles: [
+          "apps/docs/content/docs/index.mdx",
+          "apps/docs/content/docs/index.es.mdx",
+          "apps/docs/content/review/es.json",
+        ],
+      }).skip,
+    ).toBe(true);
     // Anything else the main app might use builds.
     for (const changedFiles of [
-      ["apps/docs/app/robots.ts", "apps/app/content/docs/index.mdx"],
+      ["apps/docs/app/robots.ts", "apps/app/messages/en.json"],
       ["apps/docs/package.json", "bun.lock"],
       ["packages/i18n/docs.ts"],
       // No previous deployment, or git couldn't tell.

@@ -1,5 +1,11 @@
 import "server-only";
 
+import {
+  featureForCatalogSlug,
+  missingFeatureSetup,
+  type PublicAvailability,
+  toPublicAvailability,
+} from "@repo/availability";
 import { database as db, integration } from "@repo/database";
 import {
   getIntegrationRegistry,
@@ -10,12 +16,6 @@ import { getIntegrationCatalog } from "@repo/integrations/src/catalog";
 import { and, eq, inArray } from "drizzle-orm";
 import { env } from "@/env";
 import { featureContext, getFeatures } from "@/lib/feature-availability";
-import {
-  featureForCatalogSlug,
-  missingFeatureSetup,
-  type PublicAvailability,
-  toPublicAvailability,
-} from "@/lib/feature-availability-rules";
 import {
   computeAvailability,
   type IntegrationAvailability,

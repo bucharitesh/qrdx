@@ -1,3 +1,4 @@
+import { HairlineFigure } from "@repo/design-system/components/hairline/hairline";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
@@ -12,7 +13,6 @@ import Link from "next/link";
 import { requireDashboardScope } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import { UpgradePlanButton } from "@/app/(app)/dashboard/webhooks/_components/upgrade-plan-button";
 import { SettingsHeader } from "@/app/(app)/settings/components/settings-header";
-import { HairlineFigure } from "@/components/mockups/hairline";
 import { getAuditLogAccess } from "@/ee/audit-log/access";
 import { AuditLogView } from "@/ee/audit-log/audit-log-view";
 import { auditFilterQuery, parseAuditFilter } from "@/ee/audit-log/filter";

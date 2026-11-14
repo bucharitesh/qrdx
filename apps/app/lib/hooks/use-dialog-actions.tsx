@@ -1,10 +1,10 @@
+import { track } from "@repo/analytics";
 import { authClient } from "@repo/auth/client";
 import { useTranslations } from "next-intl";
 import { createContext, type ReactNode, useContext, useState } from "react";
 // import { QRCodeDialog } from "@/components/editor/qr";
 import { QRSaveDialog } from "@/components/editor/qr-save-dialog";
 import { QRShareDialog } from "@/components/editor/qr-share-dialog";
-import { track } from "@/lib/analytics";
 import { loadFrameIndex } from "@/lib/frames/library";
 import {
   useCreateTheme,

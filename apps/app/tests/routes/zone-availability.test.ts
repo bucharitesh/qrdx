@@ -5,20 +5,20 @@
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import {
-  getIntegrationRegistry,
-  initializeIntegrations,
-} from "@repo/integrations";
-import { getIntegrationCatalog } from "@repo/integrations/src/catalog";
-import { afterEach, describe, expect, it, vi } from "vitest";
-import * as route from "@/app/zone/availability.json/route";
-import {
   FEATURE_IDS,
   FEATURE_RULES,
   type FeatureContext,
   PUBLISHED_AVAILABILITY_PATH,
   type PublishedAvailability,
   toPublishedAvailability,
-} from "@/lib/feature-availability-rules";
+} from "@repo/availability";
+import {
+  getIntegrationRegistry,
+  initializeIntegrations,
+} from "@repo/integrations";
+import { getIntegrationCatalog } from "@repo/integrations/src/catalog";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import * as route from "@/app/zone/availability.json/route";
 import { getPublicAvailability } from "@/lib/integration-availability";
 
 initializeIntegrations();

@@ -1,5 +1,6 @@
 "use client";
 
+import { track } from "@repo/analytics";
 import { toast } from "@repo/design-system";
 import { Tick } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
@@ -35,7 +36,6 @@ import { useTranslations } from "next-intl";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
 import { type ReactNode, useEffect, useRef, useState } from "react";
 import { useContentText } from "@/components/i18n/content-text";
-import { track } from "@/lib/analytics";
 import {
   CHATGPT_CONNECTORS_URL,
   chatgptChatUrl,

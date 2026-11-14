@@ -1,5 +1,6 @@
 "use client";
 
+import { HairlineFigure } from "@repo/design-system/components/hairline/hairline";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Card } from "@repo/design-system/components/ui/card";
 import { Input } from "@repo/design-system/components/ui/input";
@@ -20,7 +21,6 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { LoadMore } from "@/components/load-more";
-import { HairlineFigure } from "@/components/mockups/hairline";
 import { playgroundHref } from "@/lib/playground-links";
 import { UpgradeButton } from "../../team/_components/small-actions";
 import type { SavedTheme } from "../_lib/theme";

@@ -1,10 +1,10 @@
+import { QrdxLogo } from "@repo/design-system/components/brand/qrdx-logo";
+import { JsonLd } from "@repo/design-system/components/seo/json-ld";
 import { Card } from "@repo/design-system/components/ui/card";
 import { cn } from "@repo/design-system/lib/utils";
 import { ArrowRight } from "iconsax-reactjs";
 import Link from "next/link";
-import { QrdxLogo } from "@/components/qrdx-logo";
 import { CompetitorLogo } from "@/components/sections/compare/competitor-logo";
-import { JsonLd } from "@/components/sections/tools/json-ld";
 import { compareSource } from "@/lib/content-source";
 import { baseUrl } from "@/lib/metadata";
 import { PLAN_LIMITS } from "@/lib/plans";

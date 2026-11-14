@@ -1,6 +1,7 @@
 "use client";
 
 import { toast } from "@repo/design-system";
+import { HairlineFigure } from "@repo/design-system/components/hairline/hairline";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -24,7 +25,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
-import { HairlineFigure } from "@/components/mockups/hairline";
 import { OAuthAppLogo } from "@/components/oauth/oauth-app-logo";
 import type { AuthorizedAppView } from "@/lib/oauth-apps/authorized-group";
 import { OAUTH_SCOPE_INFO } from "@/lib/oauth-scopes";

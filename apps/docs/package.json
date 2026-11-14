@@ -10,6 +10,7 @@
     "build": "next build",
     "start": "next start",
     "typecheck": "node scripts/typecheck.mjs",
+    "seo:dates": "tsx scripts/seo-dates.ts",
     "pretest": "bun run zone-inputs",
     "test": "vitest run",
     "lint": "ultracite check"
@@ -58,6 +59,7 @@
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "jsdom": "^28.1.0",
+    "tsx": "^4.23.15",
     "typescript": "^6.0.3",
     "vitest": "^5.0.5"
   },

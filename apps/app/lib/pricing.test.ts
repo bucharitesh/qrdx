@@ -1,6 +1,7 @@
 // Run: cd apps/app && npx tsx --test lib/pricing.test.ts
 import assert from "node:assert/strict";
 import { before, describe, it } from "node:test";
+import { isFlagOn } from "@repo/availability/flags";
 
 const PRODUCT_IDS = {
   NEXT_PUBLIC_QRDX_PRO_MONTHLY_PRODUCT_ID: "prod_pro_month",
@@ -42,10 +43,11 @@ describe("PRICING", () => {
     assert.equal(pricing.EUR_PRICES, false);
     assert.deepEqual(pricing.PRICING_CURRENCIES, ["USD", "INR"]);
     assert.deepEqual(pricing.pricingCurrencies(true), ["USD", "INR", "EUR"]);
-    assert.equal(pricing.isFlagOn("1"), true);
-    assert.equal(pricing.isFlagOn(" TRUE "), true);
+    // The same switch as NEXT_PUBLIC_QRDX_EUR_PRICES's reader.
+    assert.equal(isFlagOn("1"), true);
+    assert.equal(isFlagOn(" TRUE "), true);
     for (const value of ["0", "false", "", "yes", undefined, null]) {
-      assert.equal(pricing.isFlagOn(value), false, String(value));
+      assert.equal(isFlagOn(value), false, String(value));
     }
   });
 

@@ -23,6 +23,8 @@ import {
 } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { LOCALE_INFO, type Locale } from "@repo/i18n/config";
+import { localizePath } from "@repo/i18n/paths";
 import qrcodegen from "../../../packages/qrdx/src/codegen";
 import { decodePng } from "../../../packages/qrdx/src/utils/png";
 import {
@@ -32,8 +34,6 @@ import {
   simulateCamera,
 } from "../../../packages/qrdx/tests/support/raster";
 import { xmlProblems } from "../../../packages/qrdx/tests/support/xml";
-import { LOCALE_INFO, type Locale } from "../lib/i18n/config";
-import { localizePath } from "../lib/i18n/paths";
 import {
   CONTENT_TYPES_METADATA,
   type QRContentConfig,

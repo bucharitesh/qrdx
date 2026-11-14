@@ -1,5 +1,5 @@
+import { ogSize, renderPageOgImage } from "@repo/design-system/og/brand";
 import { notFound } from "next/navigation";
-import { ogSize, renderPageOgImage } from "@/app/og/brand";
 import { isCategorySlug, SLUG_TO_CATEGORY } from "@/lib/blog-constants";
 import { blogCategoriesSource } from "@/lib/content-source";
 import { onDemandParams } from "@/lib/static-params";

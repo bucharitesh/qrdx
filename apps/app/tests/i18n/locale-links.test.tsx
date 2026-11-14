@@ -17,12 +17,12 @@
 
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
+import { isPathIn, localizeHref } from "@repo/i18n/paths";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { NextIntlClientProvider } from "next-intl";
 import type { ComponentProps, ReactNode } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
-import { isPathIn, localizeHref } from "@/lib/i18n/paths";
 import en from "@/messages/en.json";
 
 const ROOT = resolve(import.meta.dirname, "../..");

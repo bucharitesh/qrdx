@@ -1,4 +1,6 @@
+import { JsonLd } from "@repo/design-system/components/seo/json-ld";
 import { cn } from "@repo/design-system/lib/utils";
+import { localizeHref } from "@repo/i18n/paths";
 import {
   Barcode,
   Calendar,
@@ -23,11 +25,9 @@ import {
   SectionHeading,
 } from "@/components/sections/tools/cards";
 import { FaqList } from "@/components/sections/tools/faq-list";
-import { JsonLd } from "@/components/sections/tools/json-ld";
 import { ToolHero } from "@/components/sections/tools/tool-hero";
 import { isFeatureAvailable } from "@/lib/feature-availability";
 import { localizedMetadata } from "@/lib/i18n/metadata";
-import { localizeHref } from "@/lib/i18n/paths";
 import { requireLocale } from "@/lib/i18n/server";
 import { baseUrl } from "@/lib/metadata";
 import { playgroundHref } from "@/lib/playground-links";

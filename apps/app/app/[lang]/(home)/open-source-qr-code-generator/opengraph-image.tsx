@@ -1,5 +1,5 @@
 import { GITHUB_REPO_SLUG } from "@repo/config";
-import { ogSize, renderPageOgImage } from "@/app/og/brand";
+import { ogSize, renderPageOgImage } from "@repo/design-system/og/brand";
 import { requireLocaleParam } from "@/lib/i18n/static-params";
 import { onDemandParams } from "@/lib/static-params";
 

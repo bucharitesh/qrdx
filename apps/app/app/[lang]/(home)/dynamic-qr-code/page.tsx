@@ -1,5 +1,7 @@
+import { JsonLd } from "@repo/design-system/components/seo/json-ld";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Card } from "@repo/design-system/components/ui/card";
+import { localizeHref } from "@repo/i18n/paths";
 import {
   ArrowRight,
   ArrowRight2,
@@ -26,11 +28,9 @@ import {
   textLinkClass,
 } from "@/components/sections/tools/cards";
 import { FaqList } from "@/components/sections/tools/faq-list";
-import { JsonLd } from "@/components/sections/tools/json-ld";
 import { ToolHero } from "@/components/sections/tools/tool-hero";
 import { isFeatureAvailable } from "@/lib/feature-availability";
 import { localizedMetadata } from "@/lib/i18n/metadata";
-import { localizeHref } from "@/lib/i18n/paths";
 import { requireLocale } from "@/lib/i18n/server";
 import { baseUrl } from "@/lib/metadata";
 import { getPlanLimits, type PlanLimits, plansWith } from "@/lib/plans";
@@ -54,7 +54,7 @@ import { SHORT_LINK_BASE } from "@/lib/short-links";
 // - "Make it dynamic" from a link: lib/playground-apply.ts (open=dynamic)
 // - the guarantee: app/[lang]/(home)/guarantee and lib/plans.ts
 // Custom domains are only mentioned where they can be added
-// (lib/feature-availability-rules.ts).
+// (packages/availability/rules.ts).
 
 const PATH = "/dynamic-qr-code";
 

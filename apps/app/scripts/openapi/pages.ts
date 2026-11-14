@@ -1,8 +1,8 @@
-// The API reference pages in content/docs/developers/api, written from the
+// The API reference pages in apps/docs/content/docs/developers/api, written from the
 // OpenAPI document by `bun run openapi:generate` (scripts/openapi/generate.ts):
 // one page per operation (fumadocs-openapi renders the operation, its code
 // samples and Try it), the section's meta.json, an index of every endpoint,
-// and the errors page (content/docs/developers/errors.mdx, from
+// and the errors page (apps/docs/content/docs/developers/errors.mdx, from
 // lib/openapi/errors.ts). Never edit these files by hand; change lib/openapi
 // instead. tests/api/openapi.test.ts checks they are current.
 import {
@@ -151,7 +151,7 @@ Download the document at [\`https://qrdx.dev/openapi.json\`](/openapi.json) (als
 
 /**
  * Writes the pages. `server` is the fumadocs-openapi server of the document
- * (lib/api-reference), `output` the content folder.
+ * (generate.ts), `output` the content folder.
  */
 export async function writeReferencePages(
   document: OpenAPIV3_1.Document,
@@ -232,7 +232,7 @@ export function metaJson(
   };
 }
 
-/** content/docs/developers/errors.mdx, from the errors catalogue. */
+/** apps/docs/content/docs/developers/errors.mdx, from the errors catalogue. */
 export function errorsPage(): string {
   const rows = [...API_ERRORS]
     .sort((a, b) => a.status - b.status)

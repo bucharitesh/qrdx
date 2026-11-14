@@ -1,9 +1,9 @@
 import "server-only";
 
+import { DEFAULT_LOCALE, type Locale } from "@repo/i18n/config";
 import { getLocale } from "next-intl/server";
 import { cache } from "react";
 import { sourceHash } from "./catalog";
-import { DEFAULT_LOCALE, type Locale } from "./config";
 import {
   type ContentRules,
   contentStrings,

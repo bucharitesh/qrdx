@@ -160,7 +160,8 @@ describe("recorded file dates (lib/seo-file-dates.json)", () => {
   const entries = Object.entries(recorded as Record<string, string>);
 
   it("dates the sitemap's source files", () => {
-    expect(entries.length).toBeGreaterThan(100);
+    // The docs' pages are the docs site's (apps/docs/lib/seo-file-dates.json).
+    expect(entries.length).toBeGreaterThan(50);
     expect(recorded).toHaveProperty([QR_TYPES_SOURCE]);
   });
 

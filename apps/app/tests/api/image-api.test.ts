@@ -1,4 +1,4 @@
-// GET /v1/qr, as content/docs/developers/image-api.mdx describes it: the
+// GET /v1/qr, as apps/docs/content/docs/developers/image-api.mdx describes it: the
 // original parameters render exactly as before (cached for a year), and the
 // editor's styles come in through `style` (JSON or a playground style value),
 // `frame`/`frameText` and `logoIcon`, still keyless, deterministic and

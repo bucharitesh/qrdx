@@ -1,5 +1,6 @@
 "use client";
 
+import { track } from "@repo/analytics";
 import { toast } from "@repo/design-system";
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
@@ -8,7 +9,6 @@ import { useTranslations } from "next-intl";
 import { downloadQRCode, getQRData, QRCode } from "qrdx";
 import { useState } from "react";
 import { defaultThemeState } from "@/config/qr";
-import { track } from "@/lib/analytics";
 import { DEFAULT_QR_LOGO } from "@/lib/constants";
 import { styleEngineOptions } from "@/lib/qr-design/engine-options";
 import { soundEvent } from "@/lib/sound/emit";

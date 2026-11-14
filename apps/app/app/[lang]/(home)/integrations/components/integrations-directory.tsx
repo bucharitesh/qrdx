@@ -1,5 +1,7 @@
 "use client";
 
+import { configuredEntry } from "@repo/availability";
+import { HairlineFigure } from "@repo/design-system/components/hairline/hairline";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Card } from "@repo/design-system/components/ui/card";
 import { Input } from "@repo/design-system/components/ui/input";
@@ -20,11 +22,9 @@ import { useMemo } from "react";
 import { useAvailability } from "@/components/availability-provider";
 import { useContentText } from "@/components/i18n/content-text";
 import { LocaleLink as Link } from "@/components/i18n/locale-link";
-import { HairlineFigure } from "@/components/mockups/hairline";
 import { useSlidingPill } from "@/components/mockups/sliding-pill";
 import { IntegrationCard } from "@/components/sections/integrations/integration-card";
 import { IntegrationLogo } from "@/components/sections/integrations/integration-logo";
-import { configuredEntry } from "@/lib/feature-availability-rules";
 
 type Filter = "all" | CatalogCategory;
 

@@ -1,4 +1,4 @@
-import { ogSize, renderPageOgImage } from "@/app/og/brand";
+import { ogSize, renderPageOgImage } from "@repo/design-system/og/brand";
 import { COMMUNITY_LICENSE_NAME } from "@/lib/community/licence";
 
 export const alt = "QR code frames and themes from the QRdx community";

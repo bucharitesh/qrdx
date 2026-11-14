@@ -3,8 +3,8 @@
 // current: every /v1 route handler has an operation, the committed file is
 // exactly what the generator builds from today's schemas, `openapi:export`
 // copies it byte for byte (to packages/docs-assets, uncommitted), the
-// reference pages (content/docs/developers/api) match it, and the errors
-// catalogue (lib/openapi/errors.ts, content/docs/developers/errors.mdx)
+// reference pages (apps/docs/content/docs/developers/api) match it, and the errors
+// catalogue (lib/openapi/errors.ts, apps/docs/content/docs/developers/errors.mdx)
 // covers every error code the API code can throw.
 import { execFileSync } from "node:child_process";
 import { mkdtempSync, readdirSync, readFileSync, rmSync } from "node:fs";
@@ -198,7 +198,7 @@ describe("OpenAPI document", () => {
 });
 
 describe("API reference pages (run `bun run openapi:generate`)", () => {
-  const api = join("content", "docs", "developers", "api");
+  const api = join("..", "docs", "content", "docs", "developers", "api");
   const pages = operationsOf(document as never);
 
   it("has one page per operation, rendering that operation", () => {
@@ -225,7 +225,9 @@ describe("API reference pages (run `bun run openapi:generate`)", () => {
     expect(JSON.parse(read(join(api, "meta.json")))).toEqual(
       metaJson(document as never, pages),
     );
-    expect(read("content/docs/developers/errors.mdx")).toBe(errorsPage());
+    expect(read("../docs/content/docs/developers/errors.mdx")).toBe(
+      errorsPage(),
+    );
   });
 });
 
@@ -281,7 +283,7 @@ describe("errors catalogue", () => {
   });
 
   it("is on the errors page, each code with its status", () => {
-    const page = read("content/docs/developers/errors.mdx");
+    const page = read("../docs/content/docs/developers/errors.mdx");
     for (const { code, status } of API_ERRORS) {
       expect(page, `${status} ${code}`).toMatch(
         new RegExp(`\\|\\s*${status}\\s*\\|\\s*\`${code}\`\\s*\\|`),

@@ -1,6 +1,7 @@
 "use client";
 
 import { authClient } from "@repo/auth/client";
+import { QrdxLogoAnimation } from "@repo/design-system/components/brand/qrdx-logo-animation";
 import { Spinner } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import Link from "next/link";
@@ -10,7 +11,6 @@ import {
   ConfirmIdentityProvider,
   useConfirmation,
 } from "@/components/confirm-identity/provider";
-import { QrdxLogoAnimation } from "@/components/qrdx-logo-animation";
 import { SESSION_CHECK_MESSAGES } from "@/lib/account/session-origin";
 import { signInPath } from "@/lib/safe-redirect";
 import { checkSession } from "./_lib/actions";

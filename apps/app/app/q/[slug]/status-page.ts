@@ -1,4 +1,4 @@
-import { localizePath } from "@/lib/i18n/paths";
+import { localizePath } from "@repo/i18n/paths";
 import { ENGLISH_SCAN_PAGES, type ScanPagesIntl } from "@/lib/i18n/scan-pages";
 import { baseUrl } from "@/lib/metadata";
 import { escapeHtml } from "@/lib/redirect/pages";

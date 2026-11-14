@@ -1,4 +1,4 @@
-// content/docs/developers/google-chart-api.mdx: the Perl one-liner it prints
+// apps/docs/content/docs/developers/google-chart-api.mdx: the Perl one-liner it prints
 // rewrites old Google Chart QR URLs as it says, and the image API renders
 // the rewritten URLs (leftover cht and choe ignored) as codes that decode to
 // the same data.
@@ -32,7 +32,7 @@ const route = await import("@/app/api/v1/qr/route");
 
 const GUIDE = join(
   import.meta.dirname,
-  "../../content/docs/developers/google-chart-api.mdx",
+  "../../../docs/content/docs/developers/google-chart-api.mdx",
 );
 
 /** The `-e` program of the guide's `perl -pi -e '…' index.html` line. */

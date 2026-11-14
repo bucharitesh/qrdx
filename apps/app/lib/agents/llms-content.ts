@@ -1,5 +1,7 @@
 import "server-only";
 
+import { configuredEntry } from "@repo/availability";
+import { CANONICAL_ORIGIN } from "@repo/config";
 import { getCatalogBySurface } from "@repo/integrations/src/catalog";
 import type { PricingOptions } from "@/components/sections/pricing/plan-content";
 import {
@@ -13,7 +15,6 @@ import {
   isFeatureAvailable,
   isPathAvailable,
 } from "@/lib/feature-availability";
-import { configuredEntry } from "@/lib/feature-availability-rules";
 import { getIntegrationAvailability } from "@/lib/integration-availability";
 import { filterVisible } from "@/lib/integration-availability-rules";
 import { baseUrl } from "@/lib/metadata";
@@ -21,8 +22,7 @@ import { getPublishedVersion } from "@/lib/npm-version";
 import { PLAN_LIMITS } from "@/lib/plans";
 import cliPackage from "../../../../packages/cli/package.json";
 import qrdxPackage from "../../../../packages/qrdx/package.json";
-import { docsSections } from "./docs-pages";
-import { buildLlmsTxt, type LlmsLink } from "./llms-txt";
+import { buildLlmsTxt, type LlmsDocsSection, type LlmsLink } from "./llms-txt";
 
 /** What this deployment offers, as the pricing page reads it. */
 export function pricingOptions(): PricingOptions {
@@ -57,13 +57,32 @@ function legalPages() {
   return legalSource.getPages().sort((a, b) => rank(a.url) - rank(b.url));
 }
 
+/**
+ * Without a docs site (DOCS_ZONE_URL unset) the docs URLs redirect to
+ * qrdx.dev (next.config.ts), so llms.txt links the docs there, from their
+ * home page.
+ */
+const DOCS_ON_QRDX: LlmsDocsSection[] = [
+  {
+    title: "",
+    pages: [
+      {
+        title: "QRdx docs",
+        url: "/docs",
+        description:
+          "Help articles, guides and the developer docs (REST API, MCP server, CLI, React library), on qrdx.dev",
+      },
+    ],
+  },
+];
+
 /** The /llms.txt body for this deployment. */
 export async function llmsTxt(): Promise<string> {
   const [libraryVersion, cliVersion, docsZone] = await Promise.all([
     getPublishedVersion("qrdx"),
     getPublishedVersion("@qrdx/cli"),
     // The docs site's sections when DOCS_ZONE_URL is set (it serves the
-    // docs then); else this app's own copy of the docs.
+    // docs then); null without it.
     docsZoneManifest(),
   ]);
 
@@ -96,15 +115,11 @@ export async function llmsTxt(): Promise<string> {
 
   return buildLlmsTxt({
     origin: baseUrl,
+    docsOrigin: docsZone ? baseUrl : new URL(CANONICAL_ORIGIN),
     offered: pricingOptions(),
     showsPath: isPathAvailable,
     limits: PLAN_LIMITS,
-    docs:
-      docsZone?.sections ??
-      docsSections().map((section) => ({
-        title: section.title,
-        pages: section.pages.map(pageLink),
-      })),
+    docs: docsZone?.sections ?? DOCS_ON_QRDX,
     blog,
     customers,
     compare: compareSource.getPages().map(pageLink),

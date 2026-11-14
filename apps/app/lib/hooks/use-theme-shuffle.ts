@@ -1,7 +1,7 @@
 "use client";
 
+import { track } from "@repo/analytics";
 import { create } from "zustand";
-import { track } from "@/lib/analytics";
 import { newShuffleSeed, shuffleId } from "@/lib/themes/shuffle";
 import { useQREditorStore } from "@/store/editor-store";
 import type { ThemeEditorState } from "@/types/editor";

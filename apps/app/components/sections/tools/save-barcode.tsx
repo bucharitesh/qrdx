@@ -4,6 +4,7 @@
 // the workspace's Barcodes (actions/barcodes.ts saveBarcode); signed out, a
 // quiet line offers sign-in and the generator keeps working without one.
 
+import { track } from "@repo/analytics";
 import { authClient } from "@repo/auth/client";
 import { toast } from "@repo/design-system";
 import { Spinner } from "@repo/design-system/components/icons";
@@ -17,7 +18,6 @@ import {
   BarcodeGenerator,
   type CurrentBarcode,
 } from "@/components/sections/tools/barcode-generator";
-import { track } from "@/lib/analytics";
 import { type BarcodeFormatId, getBarcodeFormat } from "@/lib/barcode/formats";
 import { styleChanges } from "@/lib/barcode/style";
 import { soundEvent } from "@/lib/sound/emit";

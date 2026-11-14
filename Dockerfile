@@ -2,7 +2,7 @@
 #
 # Production image for the QRdx web app (apps/app), built as a Next.js
 # standalone server. docker-compose.yml builds it together with Postgres and a
-# one-shot schema sync job; see apps/app/content/docs/self-hosting.mdx.
+# one-shot schema sync job; see apps/docs/content/docs/self-hosting.mdx.
 # Untested reference setup.
 #
 #   cp apps/app/.env.example .env    # then fill it in

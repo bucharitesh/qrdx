@@ -209,7 +209,7 @@ describe("wall tiles", () => {
       }
       if (about?.startsWith("/docs/")) {
         expect(
-          existsSync(join(APP, "content", `${about}.mdx`)),
+          existsSync(join(APP, "..", "docs", "content", `${about}.mdx`)),
           `${tile.id}: ${about}`,
         ).toBe(true);
       }

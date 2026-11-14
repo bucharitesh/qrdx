@@ -25,11 +25,14 @@ function readCollapsed(): boolean {
 export function AppFrame({
   shell,
   limitWarnings = null,
+  docsSearch,
   children,
 }: {
   shell: ShellData | null;
   /** Limits at 90% or more, streamed from the server */
   limitWarnings?: Promise<Meter[]> | null;
+  /** The command menu searches the docs (a docs site serves them). */
+  docsSearch: boolean;
   children: ReactNode;
 }) {
   const [collapsed, setCollapsedState] = useState(false);
@@ -58,7 +61,11 @@ export function AppFrame({
           : "md:[--app-sidebar-width:--spacing(60)]",
       )}
     >
-      <AppTopBar limitWarnings={limitWarnings} shell={shell} />
+      <AppTopBar
+        docsSearch={docsSearch}
+        limitWarnings={limitWarnings}
+        shell={shell}
+      />
       <div className="flex flex-1 md:min-h-0">
         <aside
           className={cn(

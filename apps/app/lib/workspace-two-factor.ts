@@ -2,8 +2,8 @@
 // client-safe. The rules are packages/auth/workspace-two-factor-rules.ts; the
 // guard is lib/scope.ts; the setting is on Settings → Team.
 
+import { workspaceSlugFromPath } from "@repo/availability/workspace-pattern";
 import { safeNextPath } from "@/lib/safe-redirect";
-import { workspaceSlugFromPath } from "@/lib/workspace-paths";
 
 /** Profile & security's two-step verification section. */
 export const TWO_FACTOR_SETTINGS_PATH = "/settings/account";

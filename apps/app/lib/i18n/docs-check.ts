@@ -1,7 +1,7 @@
 // Docs translations for scripts/i18n-check.ts: which pages each language
 // has, which are stale, and what blocks publishing. Node only.
 //
-// messages/review/docs/<locale>.json records, per English file, the hash of
+// apps/docs/content/review/<locale>.json records, per English file, the hash of
 // the English a translation came from and its status. A translation is
 // "stale" when the English changed since; `bun run --filter app i18n:docs`
 // redoes it.
@@ -11,9 +11,9 @@ import {
   LOCALES,
   type Locale,
   type ReviewState,
-} from "./config";
-import { hasDocs } from "./docs";
-import { isPublished, type ReviewTable } from "./review";
+} from "@repo/i18n/config";
+import { hasDocs } from "@repo/i18n/docs";
+import { isPublished, type ReviewTable } from "@repo/i18n/review";
 
 export type DocsReviewFile = Record<
   string,
@@ -58,7 +58,7 @@ export function checkDocsLocale({
   state,
 }: {
   locale: Locale;
-  /** English content files (relative to content/docs) and their hashes. */
+  /** English content files (relative to apps/docs/content/docs) and their hashes. */
   english: ReadonlyMap<string, string>;
   /** Translation files present for this locale, named after their English file. */
   translations: ReadonlySet<string>;

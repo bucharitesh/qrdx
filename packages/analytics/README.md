@@ -19,7 +19,7 @@ QRdx's browser-side analytics and cookie consent: the cookie banner and preferen
 
 ## What an app passes in
 
-- **Its untracked pages.** Which pages record nothing (the main app's customer pages, the scanner, template demos) depends on the app's routes, so the app registers them once, before anything can be tracked: `registerUntrackedPaths(isUntrackedPath)`. Until it does, every page counts as untracked and nothing is sent, so a missing registration loses numbers rather than recording a customer's page. The main app registers in `apps/app/lib/analytics/privacy.ts`, which every analytics path in the app imports first.
+- **Its untracked pages.** Which pages record nothing (the main app's customer pages, the scanner, template demos) depends on the app's routes, so the app registers them once, before anything can be tracked: `registerUntrackedPaths(isUntrackedPath)`. Until it does, every page counts as untracked and nothing is sent, so a missing registration loses numbers rather than recording a customer's page. The main app registers in `apps/app/lib/analytics/privacy.ts`, which re-exports this package's `privacy` module: its consent manager wrapper (mounted on every page that tracks) and its own analytics modules import it first, and so does any of its code that checks a path.
 - **A link component** for the privacy policy links: `<ConsentManager link={…}>`. The main app passes `LocaleLink`, which keeps the visitor's language.
 - **Optionally, `getPlan`**: a function (the main app's server action) that returns the signed-in user's plan for PostHog's person properties. It's only called after the visitor allowed analytics. Without it, the plan is left out.
 - **Copy**: the components read the `consent` messages through next-intl, so the app's `NextIntlClientProvider` must include that namespace.
@@ -28,4 +28,4 @@ QRdx's browser-side analytics and cookie consent: the cookie banner and preferen
 <ConsentManager link={LocaleLink} getPlan={getAnalyticsPlan} />
 ```
 
-The main app wraps this in `apps/app/components/consent/consent-manager.tsx`, and the files left at the old paths in `apps/app/lib/analytics` and `apps/app/components/consent` re-export this package so the app's imports keep working. The tests live in the app (`apps/app/tests/lib/analytics.test.ts`, `apps/app/tests/lib/consent-manager.test.tsx`).
+The main app wraps this in `apps/app/components/consent/consent-manager.tsx` and imports everything else from this package directly. The tests live in the app (`apps/app/tests/lib/analytics.test.ts`, `apps/app/tests/lib/consent-manager.test.tsx`).

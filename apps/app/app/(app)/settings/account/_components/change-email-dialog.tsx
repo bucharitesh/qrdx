@@ -1,5 +1,6 @@
 "use client";
 
+import { track } from "@repo/analytics";
 import { authClient } from "@repo/auth/client";
 import { toast } from "@repo/design-system";
 import { Spinner } from "@repo/design-system/components/icons";
@@ -28,7 +29,6 @@ import {
   isSameEmail,
   MAX_EMAIL_LENGTH,
 } from "@/lib/account/email-change";
-import { track } from "@/lib/analytics";
 import {
   confirmEmailChange,
   type EmailChangeResult,

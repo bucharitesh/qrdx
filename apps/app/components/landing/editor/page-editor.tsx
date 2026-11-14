@@ -1,5 +1,6 @@
 "use client";
 
+import { track } from "@repo/analytics";
 import { toast } from "@repo/design-system";
 import { Spinner as Loader2 } from "@repo/design-system/components/icons";
 import { Badge } from "@repo/design-system/components/ui/badge";
@@ -44,7 +45,6 @@ import { useShowLimit } from "@/components/limits/limit-dialog";
 import { PhoneFrame } from "@/components/mockups/phone-frame";
 import { useWorkspaceHref } from "@/components/workspace-provider";
 import { ViewOnlyNotice } from "@/components/workspaces/view-only";
-import { track } from "@/lib/analytics";
 import {
   type BlockEditorContext,
   createBlock,

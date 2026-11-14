@@ -1,5 +1,5 @@
 // What a scanner gets from a dynamic code's short link, /q/<slug>
-// (app/q/[slug]/route.ts), as content/docs/dynamic-qr-codes.mdx and
+// (app/q/[slug]/route.ts), as apps/docs/content/docs/dynamic-qr-codes.mdx and
 // code-controls.mdx describe it: a temporary, uncached redirect; "no longer
 // active" (410) for archived, trashed and disabled codes; "not found" (404)
 // for unknown links; neutral pages or the fallback URL for paused, ended and

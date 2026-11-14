@@ -1,6 +1,6 @@
+import { pickMessages } from "@repo/i18n/messages";
 import { NextIntlClientProvider, useLocale, useMessages } from "next-intl";
 import type { ReactNode } from "react";
-import { pickMessages } from "@/lib/i18n/messages";
 
 /**
  * Gives the client components inside it the catalog parts they translate

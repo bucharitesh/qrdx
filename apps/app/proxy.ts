@@ -1,4 +1,11 @@
-import { isMarkdownPreferred, rewritePath } from "fumadocs-core/negotiation";
+import { workspaceSlugFromPath } from "@repo/availability/workspace-pattern";
+import {
+  appCsp,
+  createNonce,
+  cspHeaderName,
+  NONCE_ROUTE,
+  reportingEndpoints,
+} from "@repo/next-config/csp";
 import { headers } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
 import { routeCustomDomain } from "@/app/(app)/dashboard/domains/_lib/host-routing";
@@ -8,18 +15,9 @@ import {
   isSessionHeld,
 } from "@/lib/account/session-origin-server";
 import { signInPath } from "@/lib/safe-redirect";
-import {
-  appCsp,
-  createNonce,
-  cspHeaderName,
-  cspOptionsFromEnv,
-  NONCE_ROUTE,
-  reportingEndpoints,
-} from "@/lib/security/csp";
-import { WORKSPACE_HEADER, workspaceSlugFromPath } from "@/lib/workspace-paths";
+import { cspOptionsFromEnv } from "@/lib/security/csp";
+import { WORKSPACE_HEADER } from "@/lib/workspace-paths";
 import { API_AUTH_PREFIX } from "./routes";
-
-const { rewrite: rewriteLLM } = rewritePath("/docs/*path", "/llms.mdx/*path");
 
 /** Signed-in pages: signed-out visitors are sent to sign in (and back). */
 const APP_PATHS =
@@ -28,7 +26,7 @@ const APP_PATHS =
 const ADMIN_PATHS = /^\/admin(?:\/.*)?$/;
 
 // Enforced in production builds; `next dev` keeps only the frame rules from
-// next.config.ts unless CSP_DEV=1 (lib/security/csp.ts).
+// next.config.ts unless CSP_DEV=1 (@repo/next-config/csp).
 const CSP_ENABLED =
   process.env.NODE_ENV === "production" || process.env.CSP_DEV === "1";
 const cspOptions = cspOptionsFromEnv();
@@ -82,14 +80,6 @@ export default async function proxy(request: NextRequest) {
     return next(request);
   }
 
-  if (isMarkdownPreferred(request)) {
-    const result = rewriteLLM(request.nextUrl.pathname);
-
-    if (result) {
-      return NextResponse.rewrite(new URL(result, request.nextUrl));
-    }
-  }
-
   // Held or not (lib/account/session-origin.ts): a held session isn't
   // signed out, it's asked to confirm it's you.
   const requestHeaders = await headers();
@@ -141,7 +131,7 @@ export const config = {
     "/dashboard/:path*",
     "/settings/:path*",
     "/success",
-    // Nonce routes without a sign-in redirect (lib/security/csp.ts NONCE_ROUTE).
+    // Nonce routes without a sign-in redirect (@repo/next-config/csp NONCE_ROUTE).
     "/admin",
     "/admin/:path*",
     "/oauth/:path*",

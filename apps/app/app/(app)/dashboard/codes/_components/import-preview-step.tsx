@@ -1,5 +1,6 @@
 "use client";
 
+import { track } from "@repo/analytics";
 import { Info, Spinner } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Checkbox } from "@repo/design-system/components/ui/checkbox";
@@ -25,7 +26,6 @@ import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 import { useAvailability } from "@/components/availability-provider";
 import { useWorkspaceHref } from "@/components/workspace-provider";
-import { track } from "@/lib/analytics";
 import { MigrateApiError, type MigrateClient } from "@/lib/migrate/client";
 import { FILE_PRESETS } from "@/lib/migrate/files";
 import { displayLink } from "@/lib/migrate/normalize";

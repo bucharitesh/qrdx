@@ -1,11 +1,11 @@
+import { configuredEntry } from "@repo/availability";
+import { ogSize, renderPageOgImage } from "@repo/design-system/og/brand";
 import {
   getCatalogEntry,
   getCatalogRedirect,
 } from "@repo/integrations/src/catalog";
 import { notFound } from "next/navigation";
-import { ogSize, renderPageOgImage } from "@/app/og/brand";
 import { getFeatures } from "@/lib/feature-availability";
-import { configuredEntry } from "@/lib/feature-availability-rules";
 import { requireLocaleParam } from "@/lib/i18n/static-params";
 import { getIntegrationAvailability } from "@/lib/integration-availability";
 import { isVisible } from "@/lib/integration-availability-rules";

@@ -5,9 +5,10 @@
 // default to English, so previews and tests render as before.
 // use-intl/core (next-intl's own core) has no React: emails also render in
 // node:test suites run with the react-server condition.
+
+import { DEFAULT_LOCALE, type Locale } from "@repo/i18n/config";
 import { createTranslator } from "use-intl/core";
 import en from "@/messages/en.json";
-import { DEFAULT_LOCALE, type Locale } from "./config";
 import { loadMessages, type Messages } from "./messages";
 
 export type EmailTranslator = ReturnType<

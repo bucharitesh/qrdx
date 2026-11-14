@@ -1,5 +1,5 @@
 {
-  "$comment": "Public pages that live under app/[lang] and exist in every locale. scripts/i18n-split-roots.mjs moves each one from app/(app)/(home) to app/[lang]/(home); lib/i18n/paths.ts reads the same list for links, rewrites, hreflang and the sitemap. A dynamic segment is written like its folder: /compare/[slug] covers every slug.",
+  "$comment": "Public pages that live under app/[lang] and exist in every locale. scripts/i18n-split-roots.mjs moves each one from app/(app)/(home) to app/[lang]/(home); packages/i18n/paths.ts reads the same list for links, rewrites, hreflang and the sitemap. A dynamic segment is written like its folder: /compare/[slug] covers every slug.",
   "paths": [
     "/",
     "/pricing",

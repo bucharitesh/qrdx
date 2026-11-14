@@ -12,7 +12,7 @@ export interface DiscordBotSettings {
 
 /**
  * The Discord app this deployment answers for, or null when the bot isn't
- * set up here (lib/feature-availability-rules.ts `discordBot`): its routes
+ * set up here (packages/availability/rules.ts `discordBot`): its routes
  * then answer 404 and the catalog and docs leave it out.
  */
 export function discordBotSettings(): DiscordBotSettings | null {

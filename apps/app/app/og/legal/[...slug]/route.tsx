@@ -1,6 +1,10 @@
+import {
+  BrandOgImage,
+  loadOgFonts,
+  ogSize,
+} from "@repo/design-system/og/brand";
 import { notFound } from "next/navigation";
 import { ImageResponse } from "next/og";
-import { BrandOgImage, loadOgFonts, ogSize } from "@/app/og/brand";
 import { legalSource } from "@/lib/content-source";
 import { onDemandParams } from "@/lib/static-params";
 

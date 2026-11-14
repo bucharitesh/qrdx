@@ -2,6 +2,7 @@
 
 import { authClient } from "@repo/auth/client";
 import { toast } from "@repo/design-system";
+import { QrdxLogo } from "@repo/design-system/components/brand/qrdx-logo";
 import { Button } from "@repo/design-system/components/ui/button";
 import { ExportSquare, InfoCircle } from "iconsax-reactjs";
 import { useRouter } from "next/navigation";
@@ -10,7 +11,6 @@ import { type ReactNode, useRef, useState } from "react";
 import { ensureConfirmed } from "@/components/confirm-identity/actions";
 import { useConfirmation } from "@/components/confirm-identity/provider";
 import { OAuthAppLogo } from "@/components/oauth/oauth-app-logo";
-import { QrdxLogo } from "@/components/qrdx-logo";
 import { OAUTH_SCOPE_INFO, type OAuthScope } from "@/lib/oauth-scopes";
 
 export function AuthorizeShell({ children }: { children: ReactNode }) {

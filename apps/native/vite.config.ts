@@ -24,7 +24,10 @@ const NATIVE_MODULES = new Map([
   // No "Install app" inside an app.
   [path.join(scanner, "install-app.tsx"), native("install-app.tsx")],
   // The empty-history illustration loads with next/dynamic; a still icon here.
-  [path.join(web, "components/mockups/hairline.tsx"), native("hairline.tsx")],
+  [
+    path.join(designSystem, "components/hairline/hairline.tsx"),
+    native("hairline.tsx"),
+  ],
 ]);
 
 function nativeModules(): Plugin {

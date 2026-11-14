@@ -1,5 +1,6 @@
 "use client";
 
+import { track } from "@repo/analytics";
 import { authClient } from "@repo/auth/client";
 import { toast } from "@repo/design-system";
 import { Spinner, Tick } from "@repo/design-system/components/icons";
@@ -32,7 +33,6 @@ import {
 import { emitSound } from "@/components/editor/sound";
 import { InfoHint } from "@/components/help/info-hint";
 import { LocaleLink as Link } from "@/components/i18n/locale-link";
-import { track } from "@/lib/analytics";
 import { markProgrammaticQrContent } from "@/lib/analytics/react";
 import { usePostLoginAction } from "@/lib/hooks/use-post-login-action";
 import { dashboardEntry } from "@/lib/workspace-paths";

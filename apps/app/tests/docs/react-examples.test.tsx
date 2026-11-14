@@ -1,4 +1,4 @@
-// The examples in content/docs/nextjs.mdx and content/docs/components/
+// The examples in apps/docs/content/docs/nextjs.mdx and apps/docs/content/docs/components/
 // qr-code.mdx live in tests/docs-examples: each docs code block must be the
 // example file as it is (the registry component imported from
 // @/components/qr-code, where shadcn installs it), and each example must
@@ -21,7 +21,7 @@ import MenuPage from "../docs-examples/qr-code/menu-page";
 import { TableCode } from "../docs-examples/qr-code/print-code";
 import { GuestWifi } from "../docs-examples/qr-code/wifi-code";
 
-const DOCS = join(import.meta.dirname, "../../content/docs");
+const DOCS = join(import.meta.dirname, "../../../docs/content/docs");
 const EXAMPLES = join(import.meta.dirname, "../docs-examples");
 
 /** The bodies of the titled tsx code blocks in a docs page. */

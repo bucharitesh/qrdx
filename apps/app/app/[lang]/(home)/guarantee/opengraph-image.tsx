@@ -1,4 +1,4 @@
-import { ogSize, renderPageOgImage } from "@/app/og/brand";
+import { ogSize, renderPageOgImage } from "@repo/design-system/og/brand";
 import { GUARANTEE_NAME } from "@/components/sections/pricing/guarantee-block";
 import { requireLocaleParam } from "@/lib/i18n/static-params";
 import { onDemandParams } from "@/lib/static-params";

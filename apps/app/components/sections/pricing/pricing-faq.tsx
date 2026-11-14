@@ -1,7 +1,7 @@
+import { faqSchema, JsonLd } from "@repo/design-system/components/seo/json-ld";
 import { Card } from "@repo/design-system/components/ui/card";
 import { ArrowDown2, MessageQuestion } from "iconsax-reactjs";
 import { useTranslations } from "next-intl";
-import { faqSchema, JsonLd } from "@/components/sections/tools/json-ld";
 import { siteConfig } from "@/config/site";
 
 interface PricingFaqProps {

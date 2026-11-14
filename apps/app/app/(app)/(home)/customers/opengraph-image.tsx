@@ -1,4 +1,4 @@
-import { ogSize, renderPageOgImage } from "@/app/og/brand";
+import { ogSize, renderPageOgImage } from "@repo/design-system/og/brand";
 import { getCustomerStories } from "./_lib/stories";
 
 export const alt = "QRdx customers and their case studies";

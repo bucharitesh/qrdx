@@ -1,9 +1,9 @@
 "use client";
 
+import { track } from "@repo/analytics";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { importQrCodesChunk } from "@/actions/bulk-codes";
 import type { OrganizeResult } from "@/app/(app)/dashboard/codes/_lib/organize";
-import { track } from "@/lib/analytics";
 import { soundEvent } from "@/lib/sound/emit";
 import type { ThemeStyles } from "@/types/theme";
 import {

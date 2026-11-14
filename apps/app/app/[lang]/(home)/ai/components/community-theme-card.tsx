@@ -1,11 +1,11 @@
 "use client";
 
+import { QrdxLogo } from "@repo/design-system/components/brand/qrdx-logo";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Skeleton } from "@repo/design-system/components/ui/skeleton";
 import { cn } from "@repo/design-system/lib/utils";
 import { Moon, More as MoreVertical, Sun1 as Sun } from "iconsax-reactjs";
 import { useTranslations } from "next-intl";
-import { QrdxLogo } from "@/components/qrdx-logo";
 import type { ThemePreset, ThemeStyles } from "@/types/theme";
 
 // This is repeating from `dashboard/components/theme-card.tsx`

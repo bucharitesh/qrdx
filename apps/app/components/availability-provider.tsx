@@ -1,12 +1,12 @@
 "use client";
 
-import { createContext, type ReactNode, useContext, useMemo } from "react";
 import {
   ALL_AVAILABLE,
   type FeatureId,
   isPathShown,
   type PublicAvailability,
-} from "@/lib/feature-availability-rules";
+} from "@repo/availability";
+import { createContext, type ReactNode, useContext, useMemo } from "react";
 
 // What this deployment offers, for client components: the root layout reads
 // it on the server (lib/integration-availability.ts, getPublicAvailability)

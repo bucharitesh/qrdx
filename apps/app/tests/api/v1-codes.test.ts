@@ -1,5 +1,5 @@
-// REST API v1 dynamic codes, as content/docs/developers/rest-api.mdx and
-// content/docs/plans-and-limits.mdx describe them: who may call (OAuth
+// REST API v1 dynamic codes, as apps/docs/content/docs/developers/rest-api.mdx and
+// apps/docs/content/docs/plans-and-limits.mdx describe them: who may call (OAuth
 // scopes, browser sessions, CSRF), what each plan allows (10 active codes on
 // Free, bulk creation on Pro, archived codes free a slot) and the JSON shapes.
 // The route handlers run the real codes service (app/(app)/dashboard/codes/_lib)

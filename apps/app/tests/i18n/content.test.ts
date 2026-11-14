@@ -3,9 +3,9 @@
 // the real sources and memories.
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
+import { TRANSLATED_LOCALES } from "@repo/i18n/config";
 import { describe, expect, it, it as test } from "vitest";
 import { checkContent, sourceHash } from "@/lib/i18n/catalog";
-import { TRANSLATED_LOCALES } from "@/lib/i18n/config";
 import {
   contentStrings,
   isCopy,

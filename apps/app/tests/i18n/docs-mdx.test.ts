@@ -3,8 +3,8 @@
 // must not change.
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
+import { translationLocale } from "@repo/i18n/docs";
 import { describe, expect, it } from "vitest";
-import { translationLocale } from "@/lib/i18n/docs";
 import {
   fileHash,
   frontmatterValue,
@@ -20,7 +20,7 @@ import {
   withFrontmatter,
 } from "@/lib/i18n/mdx";
 
-const DOCS = join(__dirname, "../../content/docs");
+const DOCS = join(__dirname, "../../../docs/content/docs");
 
 function englishPages(dir = DOCS): string[] {
   return readdirSync(dir).flatMap((name) => {
