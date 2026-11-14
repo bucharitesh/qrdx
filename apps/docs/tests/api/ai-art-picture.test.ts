@@ -1,7 +1,7 @@
 // Scene and photo modes end to end, with a fake Vercel AI Gateway behind
 // fetch and in-memory tables: scene mode's picture step (POST
 // /api/ai/art/picture: signed in, an image left, rate limits and its own
-// daily cap, nothing reserved, the picture sealed), the paint step with the
+// daily and monthly caps, nothing reserved, the picture sealed), the paint step with the
 // sealed picture, scene mode in one request for the REST API (refunded when
 // the picture leaves too little time), and photo mode's one paint call.
 import { NextRequest } from "next/server";
@@ -187,8 +187,12 @@ describe("POST /api/ai/art/picture", () => {
     expect(usage()).toHaveLength(3);
   });
 
-  it("keeps the art's rate limits and its own daily cap", async () => {
-    for (const key of ["ai-art:user:", "ai-art-picture:day:"]) {
+  it("keeps the art's rate limits and its own daily and monthly caps", async () => {
+    for (const key of [
+      "ai-art:user:",
+      "ai-art-picture:day:",
+      "ai-art-picture:month:",
+    ]) {
       state.limited = [key];
       const response = await post(picture, "/api/ai/art/picture", {
         text: TEXT,
