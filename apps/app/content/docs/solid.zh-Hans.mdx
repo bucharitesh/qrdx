@@ -1,0 +1,97 @@
+---
+title: "SolidJS"
+description: "通过 qrdx/solid 将样式化二维码用作 Solid 组件，支持响应式 props，软件包无需编译 JSX，支持用 renderToString 进行服务端渲染，并在激活（hydration）时保留服务端生成的 SVG。"
+icon: FileCode
+---
+
+`qrdx/solid` 为 SolidJS 提供了 React 库中的两个 SVG 组件：`QRCodeSVG` 和 `QRCode`。它们绘制的 SVG 与 React 组件相同，会跟随你的 signal 更新，也可以在服务端渲染。
+
+## 安装 [#install]
+
+```package-install
+qrdx@latest
+```
+
+`solid-js` 1.8 或更高版本（1.x 系列）是 `qrdx` 的可选 peer 依赖。你的应用本来就已安装它，也不需要 `react`。
+
+## 绘制二维码 [#draw-a-code]
+
+```tsx
+import { createSignal } from "solid-js";
+import { QRCodeSVG } from "qrdx/solid";
+
+export function MenuCode() {
+  const [color, setColor] = createSignal("#0f172a");
+  return (
+    <>
+      <QRCodeSVG
+        value="https://example.com/menu"
+        size={256}
+        fgColor={color()}
+        frame={{ style: "banner-bottom", text: "Scan me" }}
+        aria-label="QR code for the menu"
+      />
+      <button type="button" onClick={() => setColor("#1d4ed8")}>
+        Blue
+      </button>
+    </>
+  );
+}
+```
+
+`QRCodeSVG` 支持 React 版 `QRCodeSVG` 的所有选项：图案、颜色和渐变、徽标（`imageSettings`）、边框、形状、模板以及 Art QR。`class`、`style` 或 `aria-label` 等属性会加在 `<svg>` 上；如果有边框，则加在边框最外层的 `<svg>` 上。
+
+`QRCode` 增加了 React 版 `QRCode` 的徽标快捷方式：`logo`、`logoOptions`、`hideLogo` 和 `scale`。
+
+```tsx
+import { QRCode } from "qrdx/solid";
+
+<QRCode value="https://example.com" logo="/logo.png" level="H" />;
+```
+
+与任何 Solid 组件一样，props 是响应式的。`color()` 变化时，二维码会重新绘制。props 中的事件处理函数不会加到 `<svg>` 上，请将它们加在二维码外层的元素上。
+
+## 绘制方式 [#how-it-draws]
+
+该软件包中不含 Solid JSX，因此不需要 Solid 编译器，可用于任何构建配置。
+
+- 在浏览器中，组件直接返回 `<svg>` 元素本身，通过 `createElementNS` 构建（不解析 HTML）。Solid 会把它放到页面上；当 prop 变化导致标记改变时，会换入新的元素；组件卸载时则将其移除。
+- 如果 prop 变化后绘制出的标记不变，页面不会有任何改动。
+
+## 服务端渲染与激活 [#server-rendering-and-hydration]
+
+使用 `solid-js/web` 中的 `renderToString` 时，组件输出的标记与 `qrdx/core` 中的 `toSVGString` 相同，并在根元素上加上 Solid 的 `data-hk` 激活键。`hydrate` 通过这个键保留服务端的 `<svg>`，而不是重新绘制。在 `<NoHydration>` 内部，不会输出该键。
+
+标记中没有随机 id，因此服务端和浏览器始终保持一致。
+
+## 下载、标记与扫描评分 [#downloads-markup-and-the-scan-score]
+
+这些组件只负责绘制二维码。下载、`toSVGString`、扫描评分和其他函数都来自 `qrdx/core`。它就是组件已在使用的引擎，因此不会被重复打包。
+
+```tsx
+import { downloadQRCode } from "qrdx/core";
+import { QRCodeSVG } from "qrdx/solid";
+
+const options = { value: "https://example.com", size: 256 };
+
+export function DownloadableCode() {
+  return (
+    <>
+      <QRCodeSVG {...options} />
+      <button
+        type="button"
+        onClick={() =>
+          downloadQRCode(options, {
+            format: "png",
+            size: { width: 1024, height: 1024 },
+          })
+        }
+      >
+        Download PNG
+      </button>
+    </>
+  );
+}
+```
+
+[Vanilla JavaScript](/docs/vanilla-js) 完整介绍了 `qrdx/core`。

@@ -1,0 +1,99 @@
+---
+title: "Angular"
+description: "Gambar kode QR bergaya di Angular dengan komponen standalone QRCode dari qrdx/angular, dengan signal input, server rendering dan hydration, serta unduhan SVG, PNG, dan PDF."
+icon: Code
+---
+
+`qrdx/angular` adalah komponen Angular standalone, `<qrdx-qr-code>`, yang dibangun di atas engine yang sama dengan komponen React. Komponen ini menerima prop `<QRCode>` milik React sebagai signal input dan menggambar SVG yang sama persis, byte demi byte: pola, warna dan gradien, logo, bingkai, bentuk, Art QR, dan templat. Komponen ini dirender di server dengan `@angular/ssr` dan di-hydrate tanpa error.
+
+Komponen ini berfungsi dengan Angular 20 ke atas, baik di build produksi maupun dengan `ng serve`.
+
+## Instalasi [#install]
+
+```package-install
+qrdx@latest
+```
+
+`@angular/core` adalah peer dependency opsional dari `qrdx`, sehingga menginstalnya tidak akan menambahkan Angular ke aplikasi yang tidak menggunakannya, dan tidak pernah menambahkan React ke aplikasi Anda.
+
+## Menggambar kode [#draw-a-code]
+
+Impor `QRCode` dan tambahkan ke `imports` komponen Anda. NgModule tidak diperlukan.
+
+```ts title="app.ts"
+import { Component, signal } from "@angular/core";
+import { QRCode, type QRCodeProps } from "qrdx/angular";
+
+@Component({
+  selector: "app-root",
+  imports: [QRCode],
+  template: `
+    <qrdx-qr-code
+      [value]="url()"
+      [size]="240"
+      level="Q"
+      bodyPattern="rounded"
+      [fgColor]="fgColor"
+      [frame]="{ style: 'banner-bottom', text: 'Scan me' }"
+      aria-label="QR code for example.com"
+    />
+  `,
+})
+export class App {
+  protected readonly url = signal("https://example.com");
+  protected readonly fgColor: QRCodeProps["fgColor"] = {
+    type: "linear",
+    angle: 45,
+    stops: [
+      { color: "#1d4ed8", offset: 0 },
+      { color: "#0f172a", offset: 100 },
+    ],
+  };
+}
+```
+
+Kode digambar ulang saat sebuah input berubah. Jika perubahan tidak mengubah markup, halaman tidak disentuh.
+
+## Input [#inputs]
+
+Setiap prop `<QRCode>` milik React adalah input dengan nama dan tipe yang sama, dan Angular memeriksa binding Anda terhadap input tersebut saat mengompilasi templat Anda. `value` wajib diisi.
+
+| Input | Fungsinya |
+| --- | --- |
+| `value`, `size`, `level`, `margin`, `autoLevel` | Konten, ukuran piksel, koreksi kesalahan, area tenang, dan menaikkan level untuk logo besar |
+| `fgColor`, `bgColor`, `eyeColor`, `dotColor`, `eyeColors` | Warna, gradien, dan isian gambar |
+| `bodyPattern`, `cornerEyePattern`, `cornerEyeDotPattern`, `moduleScale` | Bentuk titik dan mata |
+| `logo`, `logoOptions`, `hideLogo`, `scale` | Logo di tengah, ditata seperti pada `<QRCode>` |
+| `frame`, `shape`, `art` | Bingkai dengan ajakan bertindak, kontur lingkaran dan hati, Logo QR, dan Image QR |
+| `templateId`, `customTemplate`, `customProps` | Templat |
+| `frameLabelMarkers`, `partMarkers` | Penanda untuk pratinjau langsung editor |
+| `svgStyle` | Gaya inline untuk `<svg>` (`style` milik `QRCode`) |
+
+`style` bernama `svgStyle` karena input bernama `style` akan mengambil alih atribut `style` milik elemen itu sendiri. Atribut yang Anda pasang pada `<qrdx-qr-code>`, seperti `class`, `style`, atau `aria-label`, tetap berada di elemen tersebut; `<svg>` berada di dalamnya.
+
+Gaya milik komponen Anda tidak menjangkau `<svg>`, karena Angular membatasinya pada elemen di templat Anda. Agar kode memenuhi kontainernya, gunakan `svgStyle`:
+
+```html
+<qrdx-qr-code value="https://example.com" [svgStyle]="{ width: '100%', height: 'auto' }" />
+```
+
+## Unduh dan ekspor [#download-and-export]
+
+Komponen ini mengunduh dan mengekspor kode yang digambarnya, seperti `qrdx/vanilla`. Aksesnya lewat template reference variable atau `viewChild(QRCode)`:
+
+```html
+<qrdx-qr-code #qr value="https://example.com" [size]="256" />
+<button type="button" (click)="qr.download({ format: 'svg' })">Download SVG</button>
+```
+
+- `download({ format, size, filename, quality })` menyimpan file: PNG secara default, atau `"jpg"`, `"webp"`, `"svg"`, `"pdf"`, atau `"eps"`. PDF memerlukan paket opsional `jspdf`.
+- `toDataURL(format, { size, quality })` mengembalikan kode sebagai data URL.
+- `markup()` adalah markup SVG, `options()` adalah prop yang digunakan untuk menggambar kode, dan `svg` adalah elemen `<svg>`.
+
+Semua yang ada di `qrdx/core` juga diekspor dari `qrdx/angular`, sehingga `toSVGString`, `downloadQRCode`, `getScanScore`, dan lainnya berasal dari impor yang sama.
+
+## Server rendering dan hydration [#server-rendering-and-hydration]
+
+Dengan `@angular/ssr`, HTML dari server sudah memuat kode tersebut, sehingga kode tampil sebelum aplikasi dimuat. Di browser, Angular melakukan hydrate pada halaman dan mempertahankan elemen `<qrdx-qr-code>`; komponen kemudian menggambar kodenya lagi, identik dengan yang dari server. Anda tidak memerlukan `ngSkipHydration`.
+
+Keluarannya tidak memiliki id acak, sehingga server dan browser menggambar markup yang sama.

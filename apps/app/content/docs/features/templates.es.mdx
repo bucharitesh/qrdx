@@ -91,7 +91,7 @@ Sus ajustes van en `customProps` (con el tipo `DotRingProps`):
 | `outerStrokeWidth`, `outerStrokeColor` | `strokeWidth`, `strokeColor` | Solo el borde exterior del anillo |
 | `innerStrokeWidth`, `innerStrokeColor` | `strokeWidth`, `strokeColor` | Solo el borde interior del anillo |
 
-El texto que cabe en el anillo se coloca tal cual, centrado en la parte superior o a lo largo de la inferior. El texto demasiado largo nunca choca con su propio inicio. Primero se acercan las letras, y después la fuente se reduce, hasta la mitad del tamaño predeterminado (el mínimo que admiten las etiquetas de los marcos). Entonces el texto cierra el anillo con un espacio de palabra donde se encuentra con su inicio. Si aun así no cabe con ese tamaño, se corta después de la última palabra completa que quepa.
+El texto que cabe en el anillo se coloca tal cual, centrado en la parte superior o a lo largo de la inferior. El texto demasiado largo nunca choca con su propio inicio. Primero se acercan las letras, y después la fuente se reduce, hasta la mitad del tamaño predeterminado (el mínimo que admiten las etiquetas de los marcos). Entonces el texto cierra el anillo con un espacio de palabra donde se encuentra con su inicio. Si aun así no cabe con ese tamaño, el texto que repite una frase conserva tantas copias completas como quepan, y el resto del texto se corta después de la última palabra completa que quepa y termina en «…».
 
 Un logotipo se coloca en el centro como en cualquier código. Los enlaces largos (códigos de más de 49 módulos de ancho) conservan una banda clara entre el código y los puntos, para que se sigan escaneando al imprimirse en tamaño pequeño.
 

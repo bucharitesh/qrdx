@@ -1,0 +1,244 @@
+---
+title: "Web component"
+description: "Gambar kode QR bergaya dengan elemen kustom <qrdx-code>, dari CDN atau bundler, di HTML biasa, React 19 atau Vue, dengan server rendering melalui declarative shadow DOM."
+icon: Blocks
+---
+
+`qrdx/element` adalah elemen kustom, `<qrdx-code>`. Elemen ini dibangun di atas `qrdx/core`, sehingga menggambar SVG yang sama dengan `QRCodeSVG`, lengkap dengan semua gaya, bingkai, logo, dan ekspor. Elemen ini tidak memerlukan framework: ia berfungsi di HTML biasa dan di framework yang merender elemen DOM. Elemen ini telah diuji di React 19 dan Vue 3.
+
+## Dari CDN [#from-a-cdn]
+
+```html
+<script
+  type="module"
+  src="https://cdn.jsdelivr.net/npm/qrdx/dist/element-define.browser.mjs"
+></script>
+
+<qrdx-code
+  value="https://example.com"
+  size="256"
+  body-pattern="rounded"
+  label="Link to example.com"
+></qrdx-code>
+```
+
+`dist/element-define.browser.mjs` mendaftarkan `<qrdx-code>`. File ini memuat `dist/element.browser.mjs`, satu modul ES dengan mesin di dalamnya. Tambahkan `@` dan versi setelah `qrdx` pada URL untuk mengunci satu versi. Path yang sama berfungsi di unpkg.
+
+## Dengan bundler [#with-a-bundler]
+
+```package-install
+qrdx@latest
+```
+
+```js
+import "qrdx/element/define"; // registers <qrdx-code>
+```
+
+Mengimpor `qrdx/element` tidak mendaftarkan apa pun. Panggil `defineQRdxCode` sendiri untuk memilih nama tag:
+
+```js
+import { defineQRdxCode } from "qrdx/element";
+
+defineQRdxCode(); // <qrdx-code>
+defineQRdxCode("brand-qr"); // <brand-qr> as well
+```
+
+Memanggilnya lagi aman, dan di server fungsi ini tidak melakukan apa-apa. Fungsi ini melempar error jika elemen lain sudah memakai nama tersebut.
+
+## Atribut [#attributes]
+
+| Atribut | Yang diatur |
+| --- | --- |
+| `value` | Teks atau URL yang akan dikodekan. Tanpa atribut ini, tidak ada yang digambar |
+| `size` | Lebar dan tinggi dalam piksel (bingkai menambah ukurannya) |
+| `level` | Koreksi kesalahan: `L`, `M`, `Q`, atau `H` |
+| `fg-color`, `bg-color`, `eye-color`, `dot-color` | Warna solid |
+| `body-pattern`, `corner-eye-pattern`, `corner-eye-dot-pattern` | Bentuk titik, mata, dan titik mata |
+| `margin` | Zona tenang, dalam modul |
+| `template-id` | Template bawaan |
+| `module-scale` | Ukuran setiap titik, 0.5 sampai 1 |
+| `auto-level` | Menaikkan koreksi kesalahan ke `H` saat logo memerlukannya |
+| `shape` | `square`, `circle`, atau `heart` |
+| `label` | Teks yang diumumkan pembaca layar (default "QR code") |
+| `props` | Opsi lainnya, dalam bentuk JSON |
+
+Angka dan level yang tidak dapat dibaca akan diabaikan. Lihat [Gaya](/docs/styles) untuk semua pola.
+
+## Properti [#properties]
+
+Setiap atribut juga merupakan properti, dengan nama opsinya: `qr.fgColor`, `qr.bodyPattern`, `qr.templateId`. Opsi berupa objek hanya tersedia sebagai properti: gradien dan isian gambar, `frame`, `imageSettings`, `eyeColors`, `art`, `customTemplate`, dan `customProps`. `props` menerima semua opsi sekaligus.
+
+```js
+const qr = document.querySelector("qrdx-code");
+
+qr.fgColor = {
+  type: "linear",
+  angle: 45,
+  stops: [
+    { color: "#1d4ed8", offset: 0 },
+    { color: "#0f172a", offset: 100 },
+  ],
+};
+qr.frame = { style: "banner-bottom", text: "Scan me" };
+qr.imageSettings = { src: "/logo.png", width: 40, height: 40, excavate: true };
+qr.props = { margin: 2, eyeColor: "#be123c" };
+```
+
+- Atribut atau properti bernama menang atas opsi yang sama di `props`. Antara atribut dan propertinya, yang diatur terakhir yang menang. Atur properti ke `undefined` untuk menghapusnya.
+- Properti tidak menulis balik ke atribut.
+- Perubahan dikelompokkan. Sebanyak apa pun perubahan berturut-turut yang Anda buat, kode digambar ulang sekali, dalam microtask, dan hanya jika markup-nya berubah.
+- `qr.options` adalah opsi yang dipakai untuk menggambar kode, dan `qr.svg` adalah `<svg>` yang telah digambar.
+- Properti yang diatur sebelum elemen didefinisikan akan diambil saat elemen itu didefinisikan.
+
+Tanpa skrip, taruh opsi objek di atribut `props` sebagai JSON:
+
+```html
+<qrdx-code
+  value="https://example.com"
+  props='{"frame": {"style": "banner-bottom", "text": "Scan me"}}'
+></qrdx-code>
+```
+
+Bingkai resmi berasal dari file di samping elemen:
+
+```js
+import { getOfficialFrame } from "https://cdn.jsdelivr.net/npm/qrdx/dist/frames-official.mjs";
+
+qr.frame = { style: "custom", spec: getOfficialFrame("wifi-card").spec };
+```
+
+## Ekspor [#export]
+
+```js
+qr.toSVGString(); // the SVG markup
+await qr.toDataURL("png", { size: 1024 }); // "png", "jpg", "webp", "svg", "pdf" or "eps"
+await qr.download({ format: "svg", filename: "menu.svg" });
+```
+
+Metode ini mengekspor kode dari `qr.options`, seperti `toSVGString` dan `downloadQRCode` dari `qrdx/core`, tanpa `part`, `role`, dan `aria-label` milik elemen. `toDataURL` dan `download` secara default menghasilkan PNG pada `size` kode. Tanpa value, keduanya melempar error (`toSVGString`) atau ditolak (reject).
+
+PDF memerlukan paket opsional `jspdf`. Dari CDN, petakan dengan import map yang ditempatkan sebelum skrip modul:
+
+```html
+<script type="importmap">
+  { "imports": { "jspdf": "https://cdn.jsdelivr.net/npm/jspdf@4/+esm" } }
+</script>
+```
+
+## Gaya dan aksesibilitas [#styling-and-accessibility]
+
+Kode digambar di shadow root terbuka. CSS halaman tidak dapat menjangkau path-nya, sehingga aturan seperti `svg path { fill: red }` atau `svg { width: 100% }` tidak dapat merusak kode. Atur gaya `<svg>` dari luar dengan `::part(svg)`:
+
+```css
+qrdx-code::part(svg) {
+  border-radius: 12px;
+}
+```
+
+Elemen ini berupa `inline-block`. `<svg>`-nya mempertahankan `size` tetapi mengecil agar muat di kontainer yang lebih sempit.
+
+`<svg>` memiliki `role="img"` dan `aria-label` dari atribut `label`, atau "QR code" jika tidak ada. Label tidak pernah beralih ke value, yang dapat berisi kata sandi Wi-Fi atau detail kontak.
+
+## Error [#errors]
+
+Saat kode tidak dapat digambar, misalnya karena value terlalu panjang untuk kode QR, elemen menghapus kode lama dan memicu event `qrdx-error`, dengan error di `event.detail.error`. Elemen mencatat error ke konsol kecuali listener memanggil `event.preventDefault()`. Atribut `props` yang bukan objek JSON juga memicunya.
+
+```js
+qr.addEventListener("qrdx-error", (event) => {
+  event.preventDefault();
+  showMessage("That text is too long for a QR code.");
+});
+```
+
+## Server rendering [#server-rendering]
+
+`toQRdxCodeHTML(options)` mengembalikan markup elemen dengan kode yang sudah digambar di declarative shadow root. Browser menampilkan kode sebelum skrip apa pun berjalan, dan elemen mengambil alih saat didefinisikan. Fungsi ini berjalan di Node dan tidak memerlukan DOM.
+
+```js
+import { toQRdxCodeHTML } from "qrdx/element";
+
+const html = toQRdxCodeHTML(
+  {
+    value: "https://example.com",
+    size: 256,
+    frame: { style: "banner-bottom", text: "Scan me" },
+  },
+  { label: "Link to example.com" }
+);
+// <qrdx-code value="https://example.com" size="256" label="Link to example.com"
+//   props="{…}"><template shadowrootmode="open">…</template></qrdx-code>
+```
+
+Opsi sederhana menjadi atribut dan sisanya masuk ke `props` sebagai JSON, sehingga elemen membaca kembali opsi yang sama. `customTemplate` tidak dapat ditulis sebagai markup: atur sebagai properti di browser. Berikan `tagName` jika Anda mendaftarkan nama lain.
+
+## React 19 [#react-19]
+
+React 19 mengatur prop sebagai properti jika elemen memilikinya, sehingga objek dapat dipakai sebagai prop. Daftarkan elemen sekali, sebelum merender:
+
+```tsx
+import "qrdx/element/define";
+
+export function MenuCode({ url }: { url: string }) {
+  return (
+    <qrdx-code
+      value={url}
+      size={256}
+      body-pattern="rounded"
+      frame={{ style: "banner-bottom", text: "Scan me" }}
+      label="Menu"
+    />
+  );
+}
+```
+
+Untuk TypeScript, tambahkan elemen ke JSX di file `.d.ts`:
+
+```ts
+import type { QRdxCodeElement, QRdxCodeJSXProps } from "qrdx/element";
+
+declare module "react" {
+  namespace JSX {
+    interface IntrinsicElements {
+      "qrdx-code": React.DetailedHTMLProps<
+        React.HTMLAttributes<QRdxCodeElement>,
+        QRdxCodeElement
+      > &
+        QRdxCodeJSXProps;
+    }
+  }
+}
+```
+
+`ref` memberi Anda elemennya, untuk `toDataURL` dan `download`.
+
+## Vue [#vue]
+
+Beri tahu compiler Vue bahwa `qrdx-code` adalah elemen kustom:
+
+```js
+// vite.config.js
+import vue from "@vitejs/plugin-vue";
+import { defineConfig } from "vite";
+
+export default defineConfig({
+  plugins: [
+    vue({
+      template: {
+        compilerOptions: { isCustomElement: (tag) => tag === "qrdx-code" },
+      },
+    }),
+  ],
+});
+```
+
+Lalu impor `qrdx/element/define` sekali, di `main.js`, dan ikat opsi di template. Vue mengatur binding sebagai properti jika elemen memilikinya:
+
+```vue
+<qrdx-code
+  :value="url"
+  :size="256"
+  body-pattern="rounded"
+  :frame="{ style: 'banner-bottom', text: 'Scan me' }"
+  label="Menu"
+/>
+```

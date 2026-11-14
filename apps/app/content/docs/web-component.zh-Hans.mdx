@@ -1,0 +1,244 @@
+---
+title: "Web 组件"
+description: "使用 <qrdx-code> 自定义元素绘制带样式的二维码，可通过 CDN 或打包工具引入，适用于纯 HTML、React 19 或 Vue，并支持通过声明式 shadow DOM 进行服务端渲染。"
+icon: Blocks
+---
+
+`qrdx/element` 是一个自定义元素 `<qrdx-code>`。它基于 `qrdx/core` 构建，因此绘制出的 SVG 与 `QRCodeSVG` 相同，支持全部样式、边框、Logo 和导出功能。它不依赖任何框架：既可用于纯 HTML，也可用于会渲染 DOM 元素的框架。它已在 React 19 和 Vue 3 中测试通过。
+
+## 通过 CDN 使用 [#from-a-cdn]
+
+```html
+<script
+  type="module"
+  src="https://cdn.jsdelivr.net/npm/qrdx/dist/element-define.browser.mjs"
+></script>
+
+<qrdx-code
+  value="https://example.com"
+  size="256"
+  body-pattern="rounded"
+  label="Link to example.com"
+></qrdx-code>
+```
+
+`dist/element-define.browser.mjs` 会注册 `<qrdx-code>`。它会加载 `dist/element.browser.mjs`，这是一个内含引擎的 ES 模块。如需固定版本，请在 URL 中 `qrdx` 之后加上 `@` 和版本号。相同的路径在 unpkg 上同样适用。
+
+## 通过打包工具使用 [#with-a-bundler]
+
+```package-install
+qrdx@latest
+```
+
+```js
+import "qrdx/element/define"; // registers <qrdx-code>
+```
+
+导入 `qrdx/element` 不会注册任何元素。请自行调用 `defineQRdxCode` 来选择标签名：
+
+```js
+import { defineQRdxCode } from "qrdx/element";
+
+defineQRdxCode(); // <qrdx-code>
+defineQRdxCode("brand-qr"); // <brand-qr> as well
+```
+
+重复调用是安全的，在服务端调用则不会执行任何操作。如果该名称已被其他元素占用，则会抛出错误。
+
+## 属性 [#attributes]
+
+| 属性 | 作用 |
+| --- | --- |
+| `value` | 要编码的文本或 URL。没有它则不会绘制任何内容 |
+| `size` | 宽度和高度，单位为像素（边框会在此基础上增加尺寸） |
+| `level` | 纠错等级：`L`、`M`、`Q` 或 `H` |
+| `fg-color`、`bg-color`、`eye-color`、`dot-color` | 纯色 |
+| `body-pattern`、`corner-eye-pattern`、`corner-eye-dot-pattern` | 圆点、定位眼和定位眼圆点的形状 |
+| `margin` | 静区，单位为模块 |
+| `template-id` | 内置模板 |
+| `module-scale` | 每个圆点的大小，范围为 0.5 到 1 |
+| `auto-level` | 当 Logo 需要时，将纠错等级提升到 `H` |
+| `shape` | `square`、`circle` 或 `heart` |
+| `label` | 屏幕阅读器播报的内容（默认为“QR code”） |
+| `props` | 其他任意选项，使用 JSON 格式 |
+
+无法解析的数字和等级会被忽略。所有图案请参阅[样式](/docs/styles)。
+
+## 属性（Properties） [#properties]
+
+每个特性（attribute）也都有对应的属性（property），名称与选项名一致：`qr.fgColor`、`qr.bodyPattern`、`qr.templateId`。对象类型的选项只能作为属性设置：渐变和图片填充、`frame`、`imageSettings`、`eyeColors`、`art`、`customTemplate` 和 `customProps`。`props` 可一次性接收所有选项。
+
+```js
+const qr = document.querySelector("qrdx-code");
+
+qr.fgColor = {
+  type: "linear",
+  angle: 45,
+  stops: [
+    { color: "#1d4ed8", offset: 0 },
+    { color: "#0f172a", offset: 100 },
+  ],
+};
+qr.frame = { style: "banner-bottom", text: "Scan me" };
+qr.imageSettings = { src: "/logo.png", width: 40, height: 40, excavate: true };
+qr.props = { margin: 2, eyeColor: "#be123c" };
+```
+
+- 特性或具名属性的优先级高于 `props` 中的同名选项。特性与其对应属性之间，以最后设置的为准。将属性设为 `undefined` 即可移除它。
+- 设置属性不会回写特性。
+- 更改会被批量处理。无论连续进行多少次更改，二维码都只会在一个微任务中重绘一次，且仅在其标记发生变化时才会重绘。
+- `qr.options` 是绘制二维码所用的选项，`qr.svg` 是已绘制的 `<svg>`。
+- 在元素定义之前设置的属性，会在元素定义时被读取。
+
+如果不使用脚本，可以将对象类型的选项以 JSON 形式放入 `props` 特性：
+
+```html
+<qrdx-code
+  value="https://example.com"
+  props='{"frame": {"style": "banner-bottom", "text": "Scan me"}}'
+></qrdx-code>
+```
+
+官方边框来自元素旁边的文件：
+
+```js
+import { getOfficialFrame } from "https://cdn.jsdelivr.net/npm/qrdx/dist/frames-official.mjs";
+
+qr.frame = { style: "custom", spec: getOfficialFrame("wifi-card").spec };
+```
+
+## 导出 [#export]
+
+```js
+qr.toSVGString(); // the SVG markup
+await qr.toDataURL("png", { size: 1024 }); // "png", "jpg", "webp", "svg", "pdf" or "eps"
+await qr.download({ format: "svg", filename: "menu.svg" });
+```
+
+它们会根据 `qr.options` 导出二维码，与 `qrdx/core` 中的 `toSVGString` 和 `downloadQRCode` 的行为一致，但不包含元素的 `part`、`role` 和 `aria-label`。`toDataURL` 和 `download` 默认按二维码的 `size` 导出 PNG。没有 value 时，它们会抛出错误（`toSVGString`）或被拒绝（reject）。
+
+导出 PDF 需要可选的 `jspdf` 包。通过 CDN 使用时，请在模块脚本之前放置 import map 来映射它：
+
+```html
+<script type="importmap">
+  { "imports": { "jspdf": "https://cdn.jsdelivr.net/npm/jspdf@4/+esm" } }
+</script>
+```
+
+## 样式与无障碍 [#styling-and-accessibility]
+
+二维码绘制在开放的 shadow root 中。页面的 CSS 无法作用于其路径，因此 `svg path { fill: red }` 或 `svg { width: 100% }` 之类的规则不会破坏二维码。如需从外部设置 `<svg>` 的样式，请使用 `::part(svg)`：
+
+```css
+qrdx-code::part(svg) {
+  border-radius: 12px;
+}
+```
+
+该元素为 `inline-block`。其 `<svg>` 保持 `size` 指定的尺寸，但在容器较窄时会缩小以适应。
+
+`<svg>` 带有 `role="img"`，并带有来自 `label` 特性的 `aria-label`；未设置时则为“QR code”。该标签绝不会回退为 value，因为 value 可能包含 Wi-Fi 密码或联系人信息。
+
+## 错误 [#errors]
+
+当二维码无法绘制时（例如内容过长，超出二维码容量），元素会移除旧的二维码并触发 `qrdx-error` 事件，错误信息位于 `event.detail.error`。除非监听器调用了 `event.preventDefault()`，否则元素会将错误输出到控制台。`props` 特性不是 JSON 对象时也会触发该事件。
+
+```js
+qr.addEventListener("qrdx-error", (event) => {
+  event.preventDefault();
+  showMessage("That text is too long for a QR code.");
+});
+```
+
+## 服务端渲染 [#server-rendering]
+
+`toQRdxCodeHTML(options)` 会返回该元素的标记，其中二维码已绘制在声明式 shadow root 中。浏览器会在任何脚本运行之前显示二维码，待元素定义后由其接管。它可在 Node 中运行，无需 DOM。
+
+```js
+import { toQRdxCodeHTML } from "qrdx/element";
+
+const html = toQRdxCodeHTML(
+  {
+    value: "https://example.com",
+    size: 256,
+    frame: { style: "banner-bottom", text: "Scan me" },
+  },
+  { label: "Link to example.com" }
+);
+// <qrdx-code value="https://example.com" size="256" label="Link to example.com"
+//   props="{…}"><template shadowrootmode="open">…</template></qrdx-code>
+```
+
+简单选项会变成特性，其余选项则以 JSON 形式放入 `props`，因此元素读取到的选项与原来一致。`customTemplate` 无法写成标记：请在浏览器中将其作为属性设置。如果你注册了其他名称，请传入 `tagName`。
+
+## React 19 [#react-19]
+
+当元素拥有某个属性（property）时，React 19 会将 prop 设置为该属性，因此对象也可以作为 prop 传入。请在渲染之前注册一次该元素：
+
+```tsx
+import "qrdx/element/define";
+
+export function MenuCode({ url }: { url: string }) {
+  return (
+    <qrdx-code
+      value={url}
+      size={256}
+      body-pattern="rounded"
+      frame={{ style: "banner-bottom", text: "Scan me" }}
+      label="Menu"
+    />
+  );
+}
+```
+
+使用 TypeScript 时，请在 `.d.ts` 文件中将该元素添加到 JSX：
+
+```ts
+import type { QRdxCodeElement, QRdxCodeJSXProps } from "qrdx/element";
+
+declare module "react" {
+  namespace JSX {
+    interface IntrinsicElements {
+      "qrdx-code": React.DetailedHTMLProps<
+        React.HTMLAttributes<QRdxCodeElement>,
+        QRdxCodeElement
+      > &
+        QRdxCodeJSXProps;
+    }
+  }
+}
+```
+
+通过 `ref` 可以获取该元素，用于调用 `toDataURL` 和 `download`。
+
+## Vue [#vue]
+
+告诉 Vue 编译器 `qrdx-code` 是一个自定义元素：
+
+```js
+// vite.config.js
+import vue from "@vitejs/plugin-vue";
+import { defineConfig } from "vite";
+
+export default defineConfig({
+  plugins: [
+    vue({
+      template: {
+        compilerOptions: { isCustomElement: (tag) => tag === "qrdx-code" },
+      },
+    }),
+  ],
+});
+```
+
+然后在 `main.js` 中导入一次 `qrdx/element/define`，即可在模板中绑定选项。当元素拥有某个属性（property）时，Vue 会将绑定设置为该属性：
+
+```vue
+<qrdx-code
+  :value="url"
+  :size="256"
+  body-pattern="rounded"
+  :frame="{ style: 'banner-bottom', text: 'Scan me' }"
+  label="Menu"
+/>
+```
