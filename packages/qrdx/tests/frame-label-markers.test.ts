@@ -6,6 +6,7 @@
 import { describe, expect, it, test } from "vitest";
 import { HAND_MADE } from "../scripts/official-frames/modules.mjs";
 import {
+  framePart,
   fullFrameScan,
   layoutSample,
 } from "../scripts/official-frames/sample.mjs";
@@ -27,11 +28,14 @@ import { renderSvg } from "./support/qr";
 const VALUE = "https://qrdx.dev/q/Ab3dE9x";
 // Official frames draw labels through one code path: the hand-made frames
 // and one frame per generator layout cover it (every frame with
-// QRDX_FULL_FRAME_SCAN=1, scripts/official-frames/sample.mjs).
+// QRDX_FULL_FRAME_SCAN=1, split by QRDX_FRAME_SCAN_PART;
+// scripts/official-frames/sample.mjs).
 const MARKED_IDS = new Set([...HAND_MADE, ...layoutSample()]);
-const MARKER_FRAMES = fullFrameScan()
-  ? OFFICIAL_FRAMES
-  : OFFICIAL_FRAMES.filter((frame) => MARKED_IDS.has(frame.id));
+const MARKER_FRAMES = framePart(
+  fullFrameScan()
+    ? OFFICIAL_FRAMES
+    : OFFICIAL_FRAMES.filter((frame) => MARKED_IDS.has(frame.id))
+);
 const BUILT_IN = FRAME_STYLES.filter((style) => style !== "none");
 // The built-in styles that draw `secondaryText`
 const SECOND_LINE = ["banner-top-bottom", "circle", "menu-card"];

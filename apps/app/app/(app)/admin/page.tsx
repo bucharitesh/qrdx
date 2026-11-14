@@ -1,5 +1,7 @@
 import { Badge } from "@repo/design-system/components/ui/badge";
+import { isConsolePath } from "@repo/next-config/console-zone";
 import { SettingsHeader } from "@/app/(app)/settings/components/settings-header";
+import { env } from "@/env";
 import { DailyChart } from "./_components/daily-chart";
 import { EmptyRow, Section, StatCard } from "./_components/stat-card";
 import { formatNumber } from "./_lib/format";
@@ -21,6 +23,11 @@ export default async function AdminOverviewPage() {
     attention.failedDeliveries7d +
     attention.overdueDeliveries +
     attention.integrationErrors;
+
+  // With the back-office console on, it serves some of the lists behind
+  // these numbers: those links load a new page.
+  const crossZone = (href: string) =>
+    Boolean(env.CONSOLE_ORIGIN) && isConsolePath(href);
 
   const providers = new Map<string, { active: number; total: number }>();
   for (const row of stats.integrationsByProvider) {
@@ -45,6 +52,7 @@ export default async function AdminOverviewPage() {
           hint={`${formatNumber(dashboard.users.last7d)} new this week`}
         />
         <StatCard
+          crossZone={crossZone("/admin/subscriptions")}
           href="/admin/subscriptions?status=active"
           label="Paying users"
           value={formatNumber(dashboard.paidUsers)}
@@ -74,6 +82,7 @@ export default async function AdminOverviewPage() {
           hint={`${formatNumber(dashboard.responses.last7d)} this week`}
         />
         <StatCard
+          crossZone={crossZone("/admin/ai-usage")}
           href="/admin/ai-usage"
           label="AI generations (30d)"
           value={formatNumber(stats.ai.last30d)}

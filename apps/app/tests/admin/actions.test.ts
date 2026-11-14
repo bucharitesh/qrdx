@@ -246,6 +246,8 @@ const modules = {
     import("@/app/(app)/admin/users/support-actions"),
   "app/admin/affiliates/actions": () =>
     import("@/app/(app)/admin/affiliates/actions"),
+  "app/admin/confirm/actions": () =>
+    import("@/app/(app)/admin/confirm/actions"),
 };
 
 // A plausible, valid input for every action (each also gets a reason).
@@ -321,9 +323,9 @@ beforeEach(() => {
 describe("admin guard", () => {
   it("covers every exported server action", async () => {
     const actions = await allActions();
-    // 5 + 2 + 4 + 10 + 6 (affiliates) at the time of writing; new ones are
-    // picked up here.
-    expect(actions.length).toBeGreaterThanOrEqual(27);
+    // 5 + 2 + 4 + 10 + 6 (affiliates) + 1 (confirm) at the time of
+    // writing; new ones are picked up here.
+    expect(actions.length).toBeGreaterThanOrEqual(28);
   });
 
   it("rejects non-admins before any query or auth call", async () => {
@@ -519,6 +521,27 @@ describe("with an admin", () => {
         (call) => call.root === "update" || call.root === "batch",
       ),
     ).toBe(false);
+    expect(auditInserts()).toEqual([]);
+  });
+
+  it("/admin/confirm's check asks for the same confirmation, and changes nothing", async () => {
+    const { checkStrongConfirmationAction } = await import(
+      "@/app/(app)/admin/confirm/actions"
+    );
+    state.adminTwoFactor = false;
+    expect(await checkStrongConfirmationAction()).toMatchObject({
+      ok: false,
+      error: expect.stringMatching(/two-step verification/),
+    });
+    state.adminTwoFactor = true;
+    state.adminStrongConfirmation = false;
+    expect(await checkStrongConfirmationAction()).toEqual({
+      ok: false,
+      error: "CONFIRMATION_REQUIRED",
+    });
+    state.adminStrongConfirmation = true;
+    expect(await checkStrongConfirmationAction()).toEqual({ ok: true });
+    expect(state.calls).toEqual([]);
     expect(auditInserts()).toEqual([]);
   });
 

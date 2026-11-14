@@ -2,6 +2,7 @@ import { keys as analytics } from "@repo/analytics/keys";
 import { keys as auth } from "@repo/auth/keys";
 import { keys as config } from "@repo/config/keys";
 import { keys as database } from "@repo/database/keys";
+import { isConsoleOrigin } from "@repo/next-config/console-zone";
 import {
   onValidationError,
   validateTogether,
@@ -157,6 +158,23 @@ export const env = validateTogether(() =>
       // redirect to the same paths on qrdx.dev (self-hosting).
       DOCS_ZONE_URL: z.url().optional(),
 
+      // The back-office console (a separate app, @repo/next-config/console-zone),
+      // e.g. https://qrdx-console.vercel.app: when set, next.config.ts proxies
+      // its /admin sections there and the admin nav links to them with full
+      // page loads. Decided at build time (next.config.ts inlines it into
+      // server code), like the rewrites. Unset, this app serves its own pages.
+      // An origin only: https, or http on localhost for local development.
+      CONSOLE_ORIGIN: z
+        .url()
+        .refine(isConsoleOrigin, {
+          error:
+            "must be an origin only (https://host, or http://localhost:port), with no path or query",
+        })
+        .optional(),
+      // Sent to the console on its pages (x-qrdx-zone-key), so it can turn
+      // away requests that didn't come through this app. Same value on both.
+      CONSOLE_ZONE_KEY: z.string().min(1).optional(),
+
       // OpenAI's plugin directory checks that we run the MCP host: the token
       // from its submission portal, served as plain text at
       // /.well-known/openai-apps-challenge (404 while unset)
@@ -245,6 +263,8 @@ export const env = validateTogether(() =>
       CSP_HTTPS: process.env.CSP_HTTPS,
       QRDX_HOME_NUMBERS: process.env.QRDX_HOME_NUMBERS,
       DOCS_ZONE_URL: process.env.DOCS_ZONE_URL,
+      CONSOLE_ORIGIN: process.env.CONSOLE_ORIGIN,
+      CONSOLE_ZONE_KEY: process.env.CONSOLE_ZONE_KEY,
       OPENAI_APPS_CHALLENGE: process.env.OPENAI_APPS_CHALLENGE,
       NODE_ENV: process.env.NODE_ENV,
       NEXT_PUBLIC_POSTHOG_HOST: process.env.NEXT_PUBLIC_POSTHOG_HOST,

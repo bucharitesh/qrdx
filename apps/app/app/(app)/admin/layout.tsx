@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { type ReactNode, Suspense } from "react";
 import { ConfirmIdentityProvider } from "@/components/confirm-identity/provider";
 import { Header } from "@/components/header";
+import { env } from "@/env";
 import { AdminNav } from "./_components/admin-nav";
 import { AdminSearch } from "./_components/admin-search";
 import { requireAdmin } from "./_lib/guard";
@@ -26,7 +27,7 @@ export default async function AdminLayout({
       <div className="flex flex-col">
         <Header />
         <main className="flex w-full flex-1 flex-col gap-4 px-4 py-4 md:flex-row md:px-6 md:py-8">
-          <AdminNav />
+          <AdminNav consoleEnabled={Boolean(env.CONSOLE_ORIGIN)} />
           <div className="mx-auto w-full max-w-6xl min-w-0 flex-1 space-y-4">
             <Suspense fallback={<div className="h-9" />}>
               <AdminSearch />

@@ -14,9 +14,5 @@ export const MCP_REGISTRY_NAME = "dev.qrdx/qrdx";
  */
 export const MCP_REGISTRY_URL = `https://registry.modelcontextprotocol.io/v0/servers/${encodeURIComponent(MCP_REGISTRY_NAME)}/versions/latest`;
 
-/**
- * Glama's page for the server. It still lives under the deprecated registry
- * name; move it to the dev.qrdx/qrdx connector page once Glama has one.
- */
-export const MCP_GLAMA_URL =
-  "https://glama.ai/mcp/connectors/io.github.bucharitesh/qrdx";
+/** Glama's page for the server, under its registry name. */
+export const MCP_GLAMA_URL = `https://glama.ai/mcp/connectors/${MCP_REGISTRY_NAME}`;
