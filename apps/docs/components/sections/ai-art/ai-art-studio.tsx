@@ -36,6 +36,8 @@ import {
   describeRequestFor,
   useArtPromptWriter,
 } from "./art-look-write";
+import { ArtModePicker } from "./art-mode-picker";
+import { useArtModeProgress } from "./art-mode-progress";
 import {
   type AIArtCredits,
   type AIArtRequest,
@@ -46,6 +48,8 @@ import {
   ART_PROMPT_MIN_LENGTH,
   ART_QR_VISIBILITY,
   ART_TEXT_MAX_LENGTH,
+  type ArtMode,
+  DEFAULT_ART_MODE,
   seedsForRun,
 } from "./config";
 import type { ArtLookId } from "./looks";
@@ -76,6 +80,7 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
   useTrackEditorOpened("ai_art");
   const [store] = useState(() => createAIArtRunStore(configured));
   const art = useAIArtRun({ store });
+  const progress = useArtModeProgress(store);
   const writer = useArtPromptWriter({ mock: art.mock });
   const [text, setText] = useState("");
   const [prompt, setPrompt] = useState("");
@@ -92,6 +97,9 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
   const [seed, setSeed] = useState("");
   const [seedLocked, setSeedLocked] = useState(false);
   const [reference, setReference] = useState<string | null>(null);
+  const [mode, setMode] = useState<ArtMode>(DEFAULT_ART_MODE);
+  // Photo mode's photo: in memory only, never stored.
+  const [photo, setPhoto] = useState<string | null>(null);
   const referenceInputRef = useRef<HTMLInputElement>(null);
 
   const { credits, isGenerating, pendingVariations, run: result } = art;
@@ -111,6 +119,7 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
     text.trim().length > 0 &&
     (promptLength === 0 || promptLength >= ART_PROMPT_MIN_LENGTH) &&
     !seedInvalid &&
+    (mode !== "photo" || Boolean(photo)) &&
     !busy;
   const meta = { preset: presetId, lockedSeed: lockedSeed !== undefined };
 
@@ -122,6 +131,8 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
     visibility,
     creativity,
     ...(reference && { reference }),
+    ...(mode !== DEFAULT_ART_MODE && { mode }),
+    ...(mode === "photo" && photo && { photo }),
   });
 
   /** Fills the description from the writer; null when it failed. */
@@ -181,6 +192,15 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
             {t("shorterContentMeansFewerLarger")}
           </p>
         </div>
+
+        <ArtModePicker
+          disabled={isGenerating}
+          idPrefix="ai-art"
+          mode={mode}
+          onModeChange={setMode}
+          onPhotoChange={setPhoto}
+          photo={photo}
+        />
 
         <div className="flex flex-col gap-2">
           <div className="flex items-baseline justify-between gap-2">
@@ -453,6 +473,7 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
 
       <AIArtResultPanel
         isGenerating={isGenerating}
+        progress={progress}
         onLockSeed={
           ART_SUPPORTS_SEED
             ? (value) => {

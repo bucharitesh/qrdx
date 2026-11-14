@@ -1759,11 +1759,11 @@ const ART_FIELD_DESCRIPTIONS: Record<string, string> = {
   seed: "Send a seed again for a similar image. Random when left out.",
   reference:
     "A reference image for colors and shapes, such as a logo or a palette: a PNG or JPEG `data:` URL, downsized to about 512 px. It goes to the model and is discarded.",
-  mode: "How the code sits in the art: `code` paints the art into the code's modules; `scene` paints a full-bleed picture with the code in something in it; `photo` paints the code into your `photo`.",
+  mode: "How the code sits in the art: `code` paints the art into the code's modules; `scene` paints a picture from the description first, then paints the code into its middle, so the picture runs through the code; `photo` does the same with your `photo` as the picture.",
   style:
     "A quick look by its id, combined with your `prompt`. The [AI art API docs](https://qrdx.dev/docs/developers/ai-art-api#quick-looks) list them.",
   photo:
-    "Photo mode only: your picture as a PNG or JPEG `data:` URL, downsized to about 512 px. It goes to the model and is discarded.",
+    "Photo mode only: your picture as a PNG or JPEG `data:` URL, cropped square and downsized to about 1024 px (at most 1 MB). It goes to the model and is discarded.",
 };
 
 function artRequestBody(c: SchemaCollector): JsonSchema {
@@ -1848,7 +1848,7 @@ function artOperations(c: SchemaCollector): Record<string, JsonSchema> {
 
 **Credits.** Each image uses one from the monthly AI art allowance of the workspace the key acts on, the same allowance as the app: ${artAllowance("free")} on Free, ${artAllowance("pro")} on Pro and ${artAllowance("business")} on Business, shared by the team. A failed call is refunded. Each person can also make at most ${AI_ART_DAILY_LIMIT} a day. \`credits\` in the response shows what's left.
 
-**Timing.** A call takes about 15 to 45 seconds and gives up before a minute, without using a credit. Set your HTTP client's timeout to at least 60 seconds.
+**Timing.** A call takes about 15 to 45 seconds in code mode, 25 to 45 in photo mode and 40 to 55 in scene mode (it makes its picture first), and gives up before a minute without using a credit: a scene that runs out of time answers \`AI_ART_TIMEOUT\`, so try again or use code mode. Set your HTTP client's timeout to at least 60 seconds.
 
 **What it encodes.** Send \`text\`, or a dynamic code's \`code\` (its \`id\`) to encode its short link, so you can change where it goes later and its scans are counted. A code in another workspace is a \`404\`.
 

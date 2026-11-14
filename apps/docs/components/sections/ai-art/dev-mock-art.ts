@@ -6,7 +6,9 @@
 //
 // Each "image" is a real QR code for the request's text, drawn over a soft
 // gradient: it scans, so the in-browser scan score, Print PNG and Use as
-// Image QR all run on it for real.
+// Image QR all run on it for real. Scene mode draws the code smaller, on a
+// light mat in the middle of the gradient; photo mode draws it over the
+// uploaded photo, the way the real pipeline places it.
 
 import { getQRAsSVGDataUri } from "qrdx";
 import {
@@ -16,6 +18,7 @@ import {
   ART_IMAGE_SIZE,
   type ArtDescribeRequest,
   type ArtDescribeResult,
+  type ArtPictureResult,
   DEFAULT_ART_MODE,
 } from "./config";
 
@@ -50,12 +53,15 @@ export async function mockArtImage(
   const visibility = request.visibility ?? 50;
   const size = ART_IMAGE_SIZE;
 
+  const mode = request.mode ?? DEFAULT_ART_MODE;
+  // Scene and photo modes: the code at about two thirds of the image.
+  const codeSize = mode === "code" ? size : Math.round(size * 0.7);
   const code = await loadImage(
     await getQRAsSVGDataUri({
       value: request.text,
       level: "H",
-      margin: 4,
-      size,
+      margin: mode === "code" ? 4 : 2,
+      size: codeSize,
       fgColor: "#111827",
       bgColor: "#ffffff",
     }),
@@ -67,14 +73,22 @@ export async function mockArtImage(
   if (!ctx) throw new Error("Dev mock: no canvas");
 
   const hue = (seed * 47) % 360;
-  const gradient = ctx.createLinearGradient(0, 0, size, size);
-  gradient.addColorStop(0, `hsl(${hue} 70% 82%)`);
-  gradient.addColorStop(1, `hsl(${(hue + 60) % 360} 55% 58%)`);
-  ctx.fillStyle = gradient;
-  ctx.fillRect(0, 0, size, size);
+  if (mode === "photo" && request.photo) {
+    ctx.drawImage(await loadImage(request.photo), 0, 0, size, size);
+  } else {
+    const gradient = ctx.createLinearGradient(0, 0, size, size);
+    gradient.addColorStop(0, `hsl(${hue} 70% 82%)`);
+    gradient.addColorStop(1, `hsl(${(hue + 60) % 360} 55% 58%)`);
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, size, size);
+  }
   // Higher QR visibility shows the code more strongly.
-  ctx.globalAlpha = 0.55 + (0.4 * visibility) / 100;
-  ctx.drawImage(code, 0, 0, size, size);
+  ctx.globalAlpha =
+    mode === "code"
+      ? 0.55 + (0.4 * visibility) / 100
+      : 0.7 + (0.3 * visibility) / 100;
+  const offset = (size - codeSize) / 2;
+  ctx.drawImage(code, offset, offset, codeSize, codeSize);
   ctx.globalAlpha = 1;
 
   const imageUrl = canvas.toDataURL("image/png");
@@ -89,7 +103,7 @@ export async function mockArtImage(
       blend: "none",
       blendStrength: 0,
     },
-    mode: request.mode ?? DEFAULT_ART_MODE,
+    mode,
     text: request.text,
     visibility,
     creativity: request.creativity ?? 45,
@@ -132,4 +146,22 @@ export async function mockArtDescription(
   const stand = MOCK_DESCRIPTIONS[mockDescriptionTurn++ % 3] ?? "";
   const hint = request.hint?.trim();
   return { prompt: hint ? `${hint}, ${stand}` : stand };
+}
+
+/**
+ * A fake scene picture (POST /api/ai/art/picture): a stand-in seal; the
+ * mock's paint step draws its own picture. Writes a description when none
+ * was given, as the real step does.
+ */
+export async function mockArtPicture(
+  request: AIArtRequest,
+  signal: AbortSignal,
+): Promise<ArtPictureResult> {
+  await wait(MOCK_DELAY_MS, signal);
+  return {
+    picture: `mock-picture-${request.seed ?? 0}`,
+    ...(!request.prompt && {
+      writtenPrompt: MOCK_DESCRIPTIONS[mockDescriptionTurn++ % 3] ?? "",
+    }),
+  };
 }

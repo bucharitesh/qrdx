@@ -16,7 +16,7 @@ curl https://api.qrdx.dev/v1/art \
   --max-time 90 -o art.json
 ```
 
-A call takes about 15 to 45 seconds. Give your HTTP client a timeout of at least 60 seconds.
+A call takes about 15 to 45 seconds in code mode, about 25 to 45 in photo mode and about 40 to 55 in scene mode, which makes its picture first. Give your HTTP client a timeout of at least 60 seconds. A scene that runs out of time answers `504 AI_ART_TIMEOUT` and uses no image: try again, or use code mode.
 
 ## Encode a link or a dynamic code [#encode]
 
@@ -51,7 +51,7 @@ Get a code's `id` from [`GET /v1/codes`](/docs/developers/api/list-codes) or whe
 | `reference` | | A reference image for colors and shapes, such as a logo or a palette |
 | `photo` | | Photo mode only: the picture to paint the code into |
 
-`reference` and `photo` are PNG or JPEG `data:` URLs (`data:image/jpeg;base64,…`), downsized to about 512 px on the longest side. They go to the model and are discarded: QRdx never stores or logs them. Larger images are refused with `413 AI_ART_IMAGE_TOO_LARGE`.
+`reference` and `photo` are PNG or JPEG `data:` URLs (`data:image/jpeg;base64,…`). Downsize a `reference` to about 512 px on its longest side (at most 600 KB), and crop a `photo` square at about 1024 px (at most 1 MB), the size the art is made at. They go to the model and are discarded: QRdx never stores or logs them. Larger images are refused with `413 AI_ART_IMAGE_TOO_LARGE`.
 
 The [API reference](/docs/developers/api/create-art) has the full schema.
 
@@ -60,8 +60,8 @@ The [API reference](/docs/developers/api/create-art) has the full schema.
 | `mode` | What you get |
 | --- | --- |
 | `code` | The code is the whole picture: your artwork painted into its modules, with plain finder squares and a light quiet zone around it. Scans most reliably |
-| `scene` | A full-bleed picture with the code painted into something in it, such as a tiled wall, a field or a window, with the finder squares drawn as part of the scene |
-| `photo` | Your own `photo`, with the code painted into it. Send the photo with this mode only |
+| `scene` | A picture is painted from the description first, then the code is painted into its middle, so the picture runs right up to and through the code, with the modules made of its colors and light |
+| `photo` | The same with your own `photo` as the picture: it keeps its subject, colors and light around and through the code. Send the photo with this mode only |
 
 ## Quick looks [#quick-looks]
 
@@ -157,7 +157,7 @@ Errors have the API's usual shape (`code`, `message`, `status`); [Errors](/docs/
 | 502 | `AI_ART_DESCRIBE_FAILED` | No `prompt` was sent and writing one failed. Try again or send your own |
 | 503 | `AI_ART_BUSY` | The model is busy. Wait a minute and try again |
 | 503 | `AI_NOT_CONFIGURED` | AI art isn't set up on this server (self-hosted) |
-| 504 | `AI_ART_TIMEOUT` | The model took too long. Try again |
+| 504 | `AI_ART_TIMEOUT` | The model took too long (in scene mode, the picture left too little time to paint the code). No image is used. Try again, or use code mode |
 
 None of the `5xx` errors uses an image.
 

@@ -161,7 +161,7 @@ export const API_ERRORS = [
     status: 413,
     meaning:
       "The `photo` or `reference` image is over the AI art size limit (the message says which).",
-    fix: "Downsize the image (about 512 px on its longest side) and send it again as a PNG or JPEG data URL.",
+    fix: "Downsize the image (a `reference` to about 512 px on its longest side, a `photo` to about 1024 px square) and send it again as a PNG or JPEG data URL.",
   },
   {
     code: "UNSUPPORTED_MEDIA_TYPE",

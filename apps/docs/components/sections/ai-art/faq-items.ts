@@ -63,7 +63,7 @@ export function faqItems(allowances: AIArtAllowances) {
     },
     {
       question: "Which AI model is used?",
-      answer: `${ART_MODEL_LABEL}, through Vercel AI Gateway, with ${AI_ART_PRESET_COUNT} style presets. QRdx draws a plain black-and-white QR code on the server, the model repaints it as your scene, and QRdx's own scan check makes sure the result decodes, strengthening the code only as much as it needs.`,
+      answer: `${ART_MODEL_LABEL}, through Vercel AI Gateway, with ${AI_ART_PRESET_COUNT} style presets. QRdx draws a plain black-and-white QR code on the server, the model repaints it as your scene, and QRdx's own scan check makes sure the result decodes, strengthening the code only as much as it needs. In scene and photo modes the picture comes first (one made from your description, or your photo) and the code is painted into its middle the same way.`,
     },
     {
       question: "Can I make AI art with the API or an AI assistant?",
