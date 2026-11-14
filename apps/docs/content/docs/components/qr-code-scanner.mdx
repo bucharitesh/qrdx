@@ -1,8 +1,10 @@
 ---
 title: QR Code Scanner
-description: A drop zone that reads a QR code from an image in the browser, with copy and open-link actions.
+description: A drop zone for shadcn/ui projects that reads a QR code from an image in the browser, with copy and open-link actions.
 icon: Scan
 ---
+
+`QrCodeScanner` is a drop zone that decodes a QR code from an image file, in the browser, and hands you the text. Use it to check in tickets from screenshots, read codes from photos people upload, or verify a code you generated. It reads image files, not a live camera feed.
 
 <ComponentLinks name="qr-code-scanner" />
 
@@ -14,17 +16,15 @@ icon: Scan
 
 ## Usage
 
-```tsx
+```tsx title="components/example.tsx"
 import { QrCodeScanner } from "@/components/qr-code-scanner";
 ```
 
-```tsx
+```tsx title="components/example.tsx"
 <QrCodeScanner onResult={(value) => console.log(value)} />
 ```
 
-People drop an image or click to pick one. Decoding runs in the browser with qrdx's [detection helpers](/docs/qr-detection), so the image never leaves the device. It reads image files, not a live camera feed.
-
-The result appears with a copy button, plus an "Open link" button when it is an `http` or `https` URL.
+People drop an image or click to pick one. Decoding runs in the browser with qrdx's [detection helpers](/docs/qr-detection), so the image never leaves the device. The result appears with a **Copy** button, plus an **Open link** button when it is an `http` or `https` URL.
 
 ## Examples
 
@@ -34,8 +34,35 @@ The result appears with a copy button, plus an "Open link" button when it is an 
 
 <ComponentPreview name="qr-code-scanner-tickets" />
 
-## API Reference
+## What the reader shows
+
+| State | Message |
+| --- | --- |
+| Scanning | "Scanning…" |
+| No code in the image | "No QR code found. Try a sharper or closer image." |
+| Not an image file | "Choose an image file." |
+| The image cannot be read | "Could not read that image." |
+| Found | The decoded text, with **Copy** and, for links, **Open link** |
+
+The decoder tries the whole image and four crops, at several scales, so a code that fills a small part of a screenshot is still found.
+
+## Accessibility and rendering
+
+- The drop zone is a `<label>` for a visually hidden file input, so it works with the keyboard and with screen readers like any file picker.
+- Results and errors are announced through a polite live region.
+- **Open link** opens in a new tab with `rel="noopener noreferrer nofollow"`, so a scanned page cannot reach yours.
+- The component is a Client Component. It needs the browser's canvas and, on the first scan, loads the decoder on demand.
+
+## API reference
 
 <auto-type-table path="../../../../../packages/docs-assets/registry/qrdx/qr-code-scanner.tsx" type="{ [K in keyof QrCodeScannerProps as K extends keyof ComponentProps<'div'> ? never : K]: QrCodeScannerProps[K] }" />
 
 Any other prop, such as `className`, is passed to the wrapping `<div>`.
+
+## Related
+
+<Cards>
+  <Card href="/docs/qr-detection" title="QR detection" description="The library functions the scanner calls, for your own reader." />
+  <Card href="/docs/components/qr-code" title="QR Code" description="Generate the codes the scanner reads." />
+  <Card href="/docs/features/frames" title="Frames, scan score and print files" description="Score a code image with getImageScanScore instead of only decoding it." />
+</Cards>

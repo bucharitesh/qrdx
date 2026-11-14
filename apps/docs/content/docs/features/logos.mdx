@@ -1,166 +1,136 @@
 ---
-title: Logos
-description: Add a logo to the center of a QR code without breaking scanning.
+title: Add a logo in code
+description: Put a logo in the center of a QR code with the logo and logoOptions props, size and place it, crop it, give it a plate, and keep the code scannable.
 icon: Image
 ---
 
-Add brand logos to QR codes while maintaining scannability.
+`QRCode` takes a `logo` prop and lays the image out for you: it clears the modules behind the logo and never draws one bigger than the code can repair. This page covers the layout options, the limits and the raw `imageSettings` API underneath.
 
-## Basic Logo
+Designing in the playground or the dashboard instead? See [Add a logo](/docs/help/designing/logos) in Help.
 
-```tsx
-import { QRCode } from 'qrdx';
+## A logo in three lines
 
-<QRCode
-  value="https://example.com"
-  size={512}
-  hideLogo={false}
-  logo="https://example.com/logo.png"
-  level="Q"
-/>
+```tsx title="components/logo-code.tsx"
+import { QRCode } from "qrdx";
+
+export function LogoCode() {
+  return (
+    <QRCode value="https://example.com" size={256} level="H" logo="/logo.png" />
+  );
+}
 ```
 
-Always use higher error correction (`Q` or `H`) with logos.
+`logo` takes a path in your app, a URL or a data URL. The logo is drawn at a quarter of the code's width, the modules behind it are cleared, and the code relies on error correction to scan. Use `level="H"` (30% of the code may be damaged) or at least the default `Q` (25%).
+
+{/* shot: lib-logo-code | the code from logo-code.tsx with a square logo in the middle and the modules behind it cleared | render components/logo-code.tsx with any logo.png in public */}
 
 ## Size, clear space and position
 
-`logoOptions` lays the logo out in units that don't depend on the render size, on `QRCode` and in `getQRData`:
+`logoOptions` lays the logo out in units that do not depend on the render size:
 
-- `size`: the logo's width as a share of the code's width, `0.1` to `0.3` (default `0.25`). In our decode tests even level H stops reading above 25%.
-- `padding`: clear space around the logo, `0` to `2` modules.
-- `x` and `y`: where the logo's center sits across the code, `0` to `1` (default `0.5`, the middle). The logo always stays inside the code.
+| Option | Range | Default | What it does |
+| --- | --- | --- | --- |
+| `size` | 0.1 to 0.3 | 0.25 | The logo's width as a share of the code's width. Above 25% even level H stops reading in the package's decode tests |
+| `padding` | 0 to 2 | 0 | Clear space around the logo, in modules |
+| `x`, `y` | 0 to 1 | 0.5 | Where the logo's center sits across the code. The logo always stays inside the code |
+| `shape` | `square`, `rounded`, `circle` | `square` | Crops the logo |
+| `plate` | a color | none | A solid plate behind the logo, in the same shape |
 
-```tsx
-<QRCode
-  value="https://example.com"
-  logo="https://example.com/logo.png"
-  level="H"
-  logoOptions={{ size: 0.2, padding: 1, x: 0.6, y: 0.55 }}
-/>
+```tsx title="components/placed-logo-code.tsx"
+import { QRCode } from "qrdx";
+
+export function PlacedLogoCode() {
+  return (
+    <QRCode
+      value="https://example.com"
+      size={256}
+      level="H"
+      logo="/logo.png"
+      logoOptions={{ size: 0.2, padding: 1, x: 0.6, y: 0.55 }}
+    />
+  );
+}
 ```
 
-`QRCode` and `getQRData` never draw a logo bigger than the code can repair. A logo (with its clear space) spoils every codeword it touches, and each error-correction block repairs only so many, so they count the spoiled codewords block by block and shrink the logo until the worst block uses at most 60% of its repair capacity (the same budget as the Logo QR badge). Small codes hold less: at level Q a short link fits a logo of about 13–17% of the width, and level H or shorter content makes room for more. `getLogoSizeLimit(props)` returns the largest size for a code, and the scan score checks the same count. Raw `imageSettings` on `QRCodeSVG`, `QRCodeCanvas` and `getQRAsSVG` get the same cap: a logo that fits is drawn as given, a bigger one is shrunk around its own center.
+Keep a moved logo off the three corner eyes and off the small square near the bottom right corner (the alignment pattern decoders use to correct perspective). The scan score fails a logo that covers one of them.
 
-Keep a moved logo off the three corner eyes and the small square near the bottom-right corner (the alignment pattern decoders use to correct perspective). The scan score fails a logo that covers one of them.
+## How big a logo can be
 
-In the playground, **Design → Logo options** has the same controls, plus **Raise error correction for big logos** (`autoLevel`).
+A logo (with its clear space) spoils every codeword it touches, and each error-correction block repairs only so many. `QRCode` and `getQRData` count the spoiled codewords block by block and shrink the logo until the worst block uses at most 60% of its repair capacity (`LOGO_EC_SAFETY`). Small codes hold less: at level Q a short link fits a logo of about 13% to 17% of the width, and level H or a shorter value makes room for more.
+
+- `getLogoSizeLimit(props)` returns the largest `size` that fits a code, so a slider can stop there.
+- Raw `imageSettings` on `QRCodeSVG`, `QRCodeCanvas` and `getQRAsSVG` get the same cap: a logo that fits is drawn as given, a bigger one is shrunk around its own center.
+- `autoLevel` raises error correction to `H` whenever the cleared area covers more than 7% of the code (`AUTO_LEVEL_LOGO_COVERAGE`). It is off by default, so existing codes keep their level.
+- The scan score counts the same codewords and warns before the cap would shrink your logo.
 
 ## Shape, plate and background
 
-- `shape`: crop the logo to `"square"` (as uploaded, the default), `"rounded"` corners or a `"circle"`.
-- `plate`: a solid color drawn behind the logo in the same shape; the logo sits inset on it.
+```tsx title="components/round-logo-code.tsx"
+import { QRCode } from "qrdx";
 
-```tsx
-<QRCode
-  value="https://example.com"
-  logo="/logo.png"
-  level="H"
-  logoOptions={{ size: 0.22, shape: "circle", plate: "#ffffff" }}
-/>
+export function RoundLogoCode() {
+  return (
+    <QRCode
+      value="https://example.com"
+      size={256}
+      level="H"
+      logo="/logo.png"
+      logoOptions={{ size: 0.22, shape: "circle", plate: "#ffffff" }}
+    />
+  );
+}
 ```
 
-The crop is an SVG clip path. The print PDF and EPS clip to the same outline, so every download format looks the same. EPS has no transparency, so the transparent parts of a logo print white there.
+The crop is an SVG clip path. The print PDF and EPS clip to the same outline, so every download looks the same. EPS has no transparency, so the transparent parts of a logo print white there.
 
-If an uploaded logo sits on a solid box (common with JPEGs), the playground offers **Remove background**. When the four corners share one color, it clears that color from the edges inward, so the same color inside the mark (white letters, say) stays. In code, `removeLogoBackground(src)` returns the cleaned PNG as a data URL in the browser, and `removeLogoBackdrop(pixels)` does the same on RGBA pixels anywhere.
+If a logo sits on a solid box (common with JPEGs), remove it: `removeLogoBackground(src)` returns the cleaned PNG as a data URL in the browser, and `removeLogoBackdrop(pixels)` does the same on RGBA pixels anywhere. When the four corners share one color, they clear that color from the edges inward, so the same color inside the mark (white letters, say) stays. Both return `null` when the image has no solid background.
 
-## Advanced Control
+## Raw image settings
 
-```tsx
-import { QRCodeCanvas } from 'qrdx';
+`QRCodeSVG` and `QRCodeCanvas` take the logo as `imageSettings`, in the same pixels as `size`. Use it when you lay the logo out yourself or port code from another renderer.
 
-<QRCodeCanvas
-  value="https://example.com"
-  size={512}
-  imageSettings={{
-    src: "https://example.com/logo.png",
-    height: 80,
-    width: 80,
-    excavate: true,
-    x: 216,
-    y: 216,
-    opacity: 0.9
-  }}
-  level="Q"
-/>
+```tsx title="components/image-settings-code.tsx"
+import { QRCodeSVG } from "qrdx";
+
+export function ImageSettingsCode() {
+  return (
+    <QRCodeSVG
+      value="https://example.com"
+      size={512}
+      level="H"
+      autoLevel
+      imageSettings={{
+        src: "/logo.png",
+        width: 110,
+        height: 110,
+        excavate: true,
+        padding: 8,
+      }}
+    />
+  );
+}
 ```
 
-## Size Guidelines
+- `width` and `height` are in pixels. Leave `x` and `y` out to center the logo.
+- `excavate` clears the modules behind the logo. Keep it on unless the logo is see-through and you want modules to show through it.
+- `padding` clears extra modules around the logo, in the same pixels as `width` and `height`.
+- `shape` and `plate` work as in `logoOptions`.
+- The logo keeps its pixel size whatever the `margin`.
 
-- **256px QR**: 32-48px logo
-- **512px QR**: 64-96px logo
-- **1024px QR**: 128-192px logo
+`getQRData(props)` turns `logo` and `logoOptions` into these `imageSettings` for a 1024 px code, which is how `QRCode` and the download helpers share one layout.
 
-Keep logos between 10-30% of QR code size.
+## Downloads and formats
 
-## Logo Excavation
+- PNG and JPEG logos embed in every export. SVG and WebP logos are drawn in the browser's exports and left out of a PNG made on a server.
+- For downloads, a data URL is safest. A remote image needs CORS headers before the browser may copy it into the file; without them the file has no logo.
+- A PNG with transparency gives the cleanest result on a colored code. For a JPEG, add a `plate` in the background color or remove its box first.
+- Test a logo code on two or three phones before you print it, or check it with the [scan score](/docs/features/frames#will-it-scan).
 
-### What It Does
+## Related
 
-Excavation removes QR modules under the logo for better scanning.
-
-```tsx
-<QRCodeCanvas
-  value="https://example.com"
-  size={512}
-  imageSettings={{
-    src: "/logo.png",
-    height: 80,
-    width: 80,
-    excavate: true  // Recommended for most logos
-  }}
-/>
-```
-
-### Clear space and error correction
-
-`padding` (in the same pixels as `width` and `height`) clears extra modules around the logo, so its edges never touch the code. `autoLevel` raises error correction to H whenever the cleared area covers more than 7% of the code, so a bigger logo stays readable; it is off by default, so existing codes keep their level.
-
-```tsx
-<QRCodeSVG
-  value="https://example.com"
-  size={512}
-  autoLevel
-  imageSettings={{ src: "/logo.png", height: 110, width: 110, excavate: true, padding: 8 }}
-/>
-```
-
-The logo keeps its pixel size whatever the `margin` (releases up to 0.0.46 shrank it as the margin grew).
-
-### When to Use
-
-- ✅ Logos with solid backgrounds
-- ✅ Logos that might interfere with scanning
-- ❌ Transparent logos (optional)
-- ⚠️ Always test scanning on real devices
-
-## Logo Formats
-
-- **PNG** — Best for transparency
-- **JPG** — Good for photos
-- **SVG** — Scalable but may have loading issues
-- **WebP** — Modern format, good compression
-
-## Center Calculation
-
-```tsx
-const qrSize = 512;
-const logoSize = 80;
-const position = {
-  x: (qrSize - logoSize) / 2,  // 216
-  y: (qrSize - logoSize) / 2   // 216
-};
-```
-
-## Best Practices
-
-1. Use PNG format with transparency
-2. Enable excavation for solid logos
-3. Use `Q` or `H` error correction
-4. Keep logo size reasonable (10-30%)
-5. Test scanning on target devices
-
-## Next Steps
-
-- [Downloads](/docs/features/downloads) — Export QR codes with logos
-- [Templates](/docs/features/templates) — Combine logos with templates
-- [Colors & Gradients](/docs/features/colors-gradients) — Style logos with colors
+<Cards>
+  <Card href="/docs/features/art-qr" title="Blend a picture into the modules" description="Logo QR and Image QR, for a logo that fills the code instead of sitting on it." />
+  <Card href="/docs/features/frames" title="Frames, scan score and print files" description="Check a logo code before you print it." />
+  <Card href="/docs/features/downloads" title="Export and download" description="Which formats embed the logo." />
+  <Card href="/docs/api-reference" title="Library API reference" description="LogoOptions, ImageSettings and getQRData." />
+</Cards>

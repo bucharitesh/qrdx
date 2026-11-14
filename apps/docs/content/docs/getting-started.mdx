@@ -1,58 +1,145 @@
 ---
-title: Install the React library
-description: Install the qrdx React library and render your first QR code in a few lines.
+title: Get started with the React library
+description: Install qrdx, render a styled QR code in a React component and save it as a file, in a few minutes.
 icon: Rocket
 ---
 
-Install `qrdx` and create your first QR code in minutes.
+By the end of this page you will have a styled QR code rendered by a React component and a button that saves it as an SVG. The library draws the code itself, so you need no account and no API key.
 
 <NpmStatus package="qrdx" />
 
-## Install the package
+## Before you start
+
+- A React app on React 18 or newer. Next.js, Vite, Remix and the others all work.
+- Node.js 18 or newer.
+
+Want to see the options before you write any code? Style a code in the [playground](/playground?open=code&lang=react) and copy it as a React component.
+
+## Build it
+
+### 1. Install qrdx
 
 ```package-install
-qrdx@latest
+qrdx
 ```
 
-`react` and `react-dom` (18 or newer) are peer dependencies, so `qrdx` uses the versions your app already has. PDF export is optional: install `jspdf` only if you need it.
+`react` and `react-dom` are peer dependencies, so the package uses the versions your app already has. Nothing else is installed: PDF export needs the optional `jspdf` package, and only when you use it.
 
-## Quick Start
+### 2. Render a code
 
-Create your first QR code:
+```tsx title="components/first-qr-code.tsx"
+import { QRCode } from "qrdx";
 
-```tsx
-import { QRCode } from 'qrdx';
+export function FirstQrCode() {
+  return <QRCode value="https://example.com" size={256} />;
+}
+```
 
-export default function App() {
+Put the component on a page. You see a 256 px code in the library's default look: round modules, gear-shaped corner eyes and black on white. Point a phone camera at the screen and it opens example.com.
+
+{/* shot: lib-first-code | the default QRCode (round modules, gear eyes) rendered at 256 px on an otherwise empty page | render components/first-qr-code.tsx in a Vite or Next.js app */}
+
+`QRCode` renders an `<svg>` and uses no browser-only hooks, so it works in React Server Components and renders in the page's HTML before any JavaScript runs. Screen readers get nothing from it on its own: step 3 shows how to label it.
+
+### 3. Style it
+
+```tsx title="components/styled-qr-code.tsx"
+import { QRCode } from "qrdx";
+
+export function StyledQrCode() {
   return (
     <QRCode
-      value="https://example.com"
+      value="https://example.com/menu"
       size={256}
+      margin={4}
+      fgColor="#1d4ed8"
+      bodyPattern="rounded"
+      cornerEyePattern="extra-rounded"
+      cornerEyeDotPattern="rounded"
+      frame={{ style: "banner-bottom", text: "Scan for the menu" }}
     />
   );
 }
 ```
 
-That's it. You now have a working QR code.
+The code is now blue with rounded modules, and a banner under it reads "Scan for the menu". The output is taller than 256 px, because a frame is added around the code rather than drawn over it, so the code still scans.
 
-Want to design it first? [Try it in the playground](/playground?open=code&lang=react): style a code there, then copy it as a React component.
+{/* shot: lib-styled-code | the styled code from step 3: blue rounded modules, extra-rounded eyes and a bottom banner reading "Scan for the menu" | render components/styled-qr-code.tsx */}
 
-## Next Steps
+What each prop does:
+
+- `margin` is the quiet zone around the code, in modules. The default is 0, which suits a code inside a card with its own padding. Use 4 on a busy or dark background.
+- `fgColor` takes any CSS color or a gradient. `bgColor`, `eyeColor` and `dotColor` work the same way.
+- `bodyPattern`, `cornerEyePattern` and `cornerEyeDotPattern` shape the modules, the corner eyes and the dots inside them. There are {facts.bodyPatterns} body patterns, {facts.eyeShapes} eye shapes and {facts.eyeCentres} eye centers, all drawn live in [Shapes, eyes and frames](/docs/styles).
+- `frame` adds one of {facts.frameStyles} built-in call-to-action frames, or a frame of your own.
+- `QRCode` takes the code's own props and `style`, nothing else. To give the code an accessible name or a class, wrap it in an element (`<div role="img" aria-label="QR code for the menu">`), or render `QRCodeSVG`, which puts `aria-label`, `className` and any other attribute on the `<svg>`.
+
+### 4. Save it as a file
+
+```tsx title="components/download-svg-button.tsx"
+"use client";
+
+import { downloadQRCode } from "qrdx";
+
+const menuCode = {
+  value: "https://example.com/menu",
+  margin: 4,
+  fgColor: "#1d4ed8",
+  bodyPattern: "rounded",
+  frame: { style: "banner-bottom", text: "Scan for the menu" },
+} as const;
+
+export function DownloadSvgButton() {
+  return (
+    <button
+      type="button"
+      onClick={() =>
+        downloadQRCode(menuCode, {
+          format: "svg",
+          size: { width: 1024, height: 1024 },
+          filename: "menu.svg",
+        })
+      }
+    >
+      Download SVG
+    </button>
+  );
+}
+```
+
+Clicking the button saves `menu.svg`: the same code as on screen, drawn at 1024 px and sharp at any size, which is the file a print shop asks for. Set `format` to `png`, `jpg` or `webp` for an image, `eps` for a vector file for design tools, or `pdf` (needs the optional `jspdf` package).
+
+`downloadQRCode` uses the browser's DOM, so the button lives in a Client Component. A Server Component can still render it. Keep the code's options in one object, as above, so the file matches the preview.
+
+### 5. Check that it scans
+
+Scan the code with two or three phones before you print it. For a design with unusual colors or a logo, `getScanScore` runs the same checks in the browser and returns a score, a grade and what to fix:
+
+```tsx title="lib/check-code.ts"
+import { getScanScore } from "qrdx";
+
+const { score, grade, checks } = await getScanScore({
+  value: "https://example.com/menu",
+  fgColor: "#1d4ed8",
+  bodyPattern: "rounded",
+});
+// score: 0 to 100, grade: "great" | "ok" | "risky" | "fails"
+// checks: [{ id, passed, message, fix? }]
+```
+
+You can also upload a screenshot or a photo of a printed code to the [scan checker](/tools/scan-checker).
+
+## If something goes wrong
+
+- **`Module not found: Can't resolve 'qrdx'`.** Install the package in the workspace or app that imports it, then restart the dev server.
+- **The code renders but phones don't read it.** Add `margin={4}`, keep dark modules on a light background, and render it at least 128 px wide on screen. [A code won't scan](/docs/help/troubleshooting/wont-scan) lists the other causes.
+- **`PDF export needs the optional "jspdf" package`.** Run `npm install jspdf` in the same package. SVG, PNG, JPG, WebP and EPS need nothing extra.
+
+## Related
 
 <Cards>
-  <Card
-    href="/docs/usage"
-    title="Learn Usage"
-    description="Customize colors, patterns, and more"
-  />
-  <Card
-    href="/docs/features/templates"
-    title="Use Templates"
-    description="Apply pre-built styles instantly"
-  />
-  <Card
-    href="/docs/api-reference"
-    title="API Reference"
-    description="Complete prop documentation"
-  />
+  <Card href="/docs/usage" title="Basic usage" description="Which component to use, and every prop that sets a code's look." />
+  <Card href="/docs/nextjs" title="QR codes in Next.js" description="Server Components, route params, live input and downloads in the App Router." />
+  <Card href="/docs/features/patterns" title="Choose module and eye shapes" description="Every shape, and the pairs to avoid." />
+  <Card href="/docs/api-reference" title="Library API reference" description="Every component, function and type the package exports." />
 </Cards>
