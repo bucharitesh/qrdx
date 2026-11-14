@@ -2,11 +2,8 @@
 
 import { CANONICAL_ORIGIN, MAX_LOGO_FILE_SIZE } from "@repo/config";
 import { toast } from "@repo/design-system";
-import {
-  Spinner as LoaderCircle,
-  Tick,
-  Close as X,
-} from "@repo/design-system/components/icons";
+import { Tick, Close as X } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   Collapsible,
@@ -306,7 +303,7 @@ export function ArtControls({
           size="sm"
           variant="outline"
         >
-          {isLoading ? <LoaderCircle className="animate-spin" /> : <ImageUp />}
+          {isLoading ? <ModuleOrbit aria-hidden /> : <ImageUp />}
           {art ? t("uploadAnother") : t("uploadYourOwn")}
         </Button>
         {mode === "logo" && customLogo && (
@@ -648,12 +645,15 @@ function ArtScanScore({ art, style }: { art: QRArt; style: QRStyle }) {
                 {gradeLabels[result.grade]}
               </span>
               {checking && (
-                <LoaderCircle className="text-muted-foreground size-3.5 animate-spin" />
+                <ModuleOrbit
+                  aria-hidden
+                  className="text-muted-foreground size-3.5"
+                />
               )}
             </p>
           ) : (
             <p className="text-muted-foreground flex items-center gap-2 text-xs">
-              <LoaderCircle className="size-3.5 animate-spin" />
+              <ModuleOrbit aria-hidden className="size-3.5" />
               {t("checking")}
             </p>
           )}

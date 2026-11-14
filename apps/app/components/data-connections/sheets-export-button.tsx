@@ -1,6 +1,6 @@
 "use client";
 
-import { Spinner } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
@@ -82,7 +82,7 @@ export function SheetsExportButton(
       variant="outline"
     >
       {pending ? (
-        <Spinner className="size-4" />
+        <ModuleOrbit aria-hidden className="size-4" />
       ) : (
         <img alt="" className="size-4" src="/integrations/google-sheets.svg" />
       )}

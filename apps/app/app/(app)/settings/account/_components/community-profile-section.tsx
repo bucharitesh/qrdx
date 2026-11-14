@@ -1,7 +1,7 @@
 "use client";
 
 import { toast } from "@repo/design-system";
-import { Spinner } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Checkbox } from "@repo/design-system/components/ui/checkbox";
 import { Input } from "@repo/design-system/components/ui/input";
@@ -183,7 +183,7 @@ export function CommunityProfileSection({
             </Button>
           )}
           <Button disabled={saving} type="submit">
-            {saving && <Spinner className="size-4" />}
+            {saving && <ModuleOrbit aria-hidden className="size-4" />}
             {t("save")}
           </Button>
         </div>

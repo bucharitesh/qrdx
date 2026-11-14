@@ -18,7 +18,6 @@
       "!dist",
       "!build",
       "!.source",
-      "!styles/loaders.css",
       "!styles/styles.css",
       "!tests/lib/fixtures",
       "!public/**/*.svg",

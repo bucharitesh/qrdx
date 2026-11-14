@@ -1,6 +1,7 @@
 "use client";
 
-import { Info, Spinner } from "@repo/design-system/components/icons";
+import { Info } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Checkbox } from "@repo/design-system/components/ui/checkbox";
 import { Progress } from "@repo/design-system/components/ui/progress";
@@ -153,9 +154,7 @@ export function RedirectsStep({
                 disabled={!agreed || busy}
                 onClick={() => execute("apply")}
               >
-                {busy && run?.mode === "apply" && (
-                  <Spinner className="animate-spin" />
-                )}
+                {busy && run?.mode === "apply" && <ModuleOrbit aria-hidden />}
                 {t("updateLinksIn", { count: pending, name })}
               </Button>
             )}
@@ -230,7 +229,8 @@ export function RedirectsStep({
 
         {plan === null && !error ? (
           <div className="text-muted-foreground flex items-center gap-2 py-6 text-sm">
-            <Spinner className="size-4 animate-spin" /> {t("listingTheChanges")}
+            <ModuleOrbit aria-hidden className="size-4" />{" "}
+            {t("listingTheChanges")}
           </div>
         ) : pending > 0 ? (
           <div className="space-y-2">

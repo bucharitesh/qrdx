@@ -5,7 +5,8 @@ import type { Translator } from "@/lib/i18n/translator";
 // A quiet pill says the draft is saved; with older drafts it becomes a menu
 // to restore one.
 
-import { Spinner, Tick } from "@repo/design-system/components/icons";
+import { Tick } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   DropdownMenu,
@@ -69,7 +70,7 @@ export function DraftControls({
   const status =
     state === "saving" ? (
       <>
-        <Spinner className="size-3.5" />
+        <ModuleOrbit aria-hidden className="size-3.5" />
         <span className="max-sm:sr-only">{t("saving")}</span>
       </>
     ) : state === "saved" ? (

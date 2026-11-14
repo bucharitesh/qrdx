@@ -1,7 +1,7 @@
 "use client";
 
 import { toast } from "@repo/design-system";
-import { Spinner } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -223,7 +223,7 @@ export function ItemActions({
           size="lg"
         >
           {busy === "template" ? (
-            <Spinner className="size-4" />
+            <ModuleOrbit aria-hidden className="size-4" />
           ) : (
             <DocumentCopy aria-hidden className="size-4" />
           )}
@@ -240,7 +240,7 @@ export function ItemActions({
             variant="outline"
           >
             {busy === "save" ? (
-              <Spinner className="size-4" />
+              <ModuleOrbit aria-hidden className="size-4" />
             ) : (
               <Archive className="size-4" variant={saved ? "Bold" : "Linear"} />
             )}
@@ -257,7 +257,7 @@ export function ItemActions({
             variant="outline"
           >
             {busy === "like" ? (
-              <Spinner className="size-4" />
+              <ModuleOrbit aria-hidden className="size-4" />
             ) : (
               <Heart className="size-4" variant={liked ? "Bold" : "Linear"} />
             )}
@@ -272,7 +272,7 @@ export function ItemActions({
             variant="outline"
           >
             {busy === "copy" ? (
-              <Spinner className="size-4" />
+              <ModuleOrbit aria-hidden className="size-4" />
             ) : (
               <FolderAdd aria-hidden className="size-4" />
             )}
@@ -329,7 +329,7 @@ function UnpublishButton({ item }: { item: CommunityItemDetail }) {
               void unpublish();
             }}
           >
-            {pending && <Spinner className="size-4" />}
+            {pending && <ModuleOrbit aria-hidden className="size-4" />}
             {t("unpublish")}
           </AlertDialogAction>
         </AlertDialogFooter>

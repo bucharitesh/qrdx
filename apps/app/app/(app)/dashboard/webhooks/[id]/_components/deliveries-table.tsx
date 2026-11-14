@@ -1,7 +1,7 @@
 "use client";
 
 import { toast } from "@repo/design-system";
-import { Spinner } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
@@ -174,7 +174,11 @@ export function DeliveriesTable({
                         }
                         variant="ghost"
                       >
-                        {retrying === delivery.id ? <Spinner /> : <RotateCw />}
+                        {retrying === delivery.id ? (
+                          <ModuleOrbit aria-hidden />
+                        ) : (
+                          <RotateCw />
+                        )}
                       </Button>
                     )}
                   </div>

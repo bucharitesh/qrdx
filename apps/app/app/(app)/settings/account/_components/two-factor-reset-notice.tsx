@@ -1,7 +1,7 @@
 "use client";
 
 import { toast } from "@repo/design-system";
-import { Spinner } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import { ShieldCross } from "iconsax-reactjs";
 import { useRouter } from "next/navigation";
@@ -71,7 +71,7 @@ export function TwoFactorResetNotice({
           size="sm"
           variant="outline"
         >
-          {busy && <Spinner className="animate-spin" />}
+          {busy && <ModuleOrbit aria-hidden />}
           {t("cancel")}
         </Button>
       </div>

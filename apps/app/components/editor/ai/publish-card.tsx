@@ -1,7 +1,7 @@
 "use client";
 
 import { CANONICAL_ORIGIN } from "@repo/config";
-import { Spinner } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import { TickCircle } from "iconsax-reactjs";
 import { useTranslations } from "next-intl";
@@ -165,7 +165,7 @@ export function PublishToCommunityCard({
           </span>
         ) : state === "approval-responded" ? (
           <span className="text-muted-foreground inline-flex items-center gap-1.5 text-xs">
-            <Spinner className="size-3.5" />
+            <ModuleOrbit aria-hidden className="size-3.5" />
             {t("checking")}
           </span>
         ) : state === "output-error" ? (

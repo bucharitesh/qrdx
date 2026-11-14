@@ -2,7 +2,8 @@
 
 import { authClient } from "@repo/auth/client";
 import { toast } from "@repo/design-system";
-import { Spinner, Tick } from "@repo/design-system/components/icons";
+import { Tick } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
@@ -149,7 +150,7 @@ function AvatarField({ profile }: { profile: ProfileView }) {
                 variant="outline"
               >
                 {busy === "upload" ? (
-                  <Spinner className="animate-spin" />
+                  <ModuleOrbit aria-hidden />
                 ) : (
                   <GalleryEdit aria-hidden />
                 )}
@@ -164,7 +165,7 @@ function AvatarField({ profile }: { profile: ProfileView }) {
               size="sm"
               variant="ghost"
             >
-              {busy === "remove" && <Spinner className="animate-spin" />}
+              {busy === "remove" && <ModuleOrbit aria-hidden />}
               {t("remove")}
             </Button>
           )}
@@ -228,7 +229,7 @@ function NameField({ initialName }: { initialName: string }) {
         type="submit"
         variant={changed && trimmed ? "default" : "outline"}
       >
-        {pending && <Spinner className="animate-spin" />}
+        {pending && <ModuleOrbit aria-hidden />}
         {t("save")}
       </Button>
     </form>

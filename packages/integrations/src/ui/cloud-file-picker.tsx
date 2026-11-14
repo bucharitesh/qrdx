@@ -1,9 +1,7 @@
 "use client";
 
-import {
-  Spinner as Loader2,
-  Close as X,
-} from "@repo/design-system/components/icons";
+import { Close as X } from "@repo/design-system/components/icons";
+import { ModuleOrbit, Scanframe } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   Dialog,
@@ -366,7 +364,11 @@ export function CloudFilePicker({
         <ScrollArea className="h-[360px] rounded-md border">
           {loading && items.length === 0 ? (
             <div className="flex items-center justify-center p-8">
-              <Loader2 className="size-6 animate-spin text-muted-foreground" />
+              <Scanframe
+                aria-hidden
+                className="text-muted-foreground"
+                size={24}
+              />
             </div>
           ) : items.length === 0 ? (
             <div className="flex flex-col items-center justify-center gap-1 p-8 text-center">
@@ -441,7 +443,10 @@ export function CloudFilePicker({
                         )}
                       </span>
                       {busy ? (
-                        <Loader2 className="size-4 shrink-0 animate-spin text-muted-foreground" />
+                        <ModuleOrbit
+                          aria-hidden
+                          className="size-4 shrink-0 text-muted-foreground"
+                        />
                       ) : item.kind === "folder" ? (
                         <ArrowRight2
                           aria-hidden
@@ -485,7 +490,7 @@ export function CloudFilePicker({
                 type="button"
                 variant="outline"
               >
-                {loading && <Loader2 className="size-3.5 animate-spin" />}
+                {loading && <ModuleOrbit aria-hidden className="size-3.5" />}
                 Load more
               </Button>
             </div>

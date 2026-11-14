@@ -1,6 +1,6 @@
 "use client";
 
-import { Spinner as Loader2 } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import {
   Alert,
   AlertDescription,
@@ -146,7 +146,7 @@ export function GoogleDriveForm() {
               type="button"
             >
               {isConnecting && (
-                <Loader2 className="mr-2 size-3.5 animate-spin" />
+                <ModuleOrbit aria-hidden className="mr-2 size-3.5" />
               )}
               {t("connectGoogleDrive")}
             </Button>

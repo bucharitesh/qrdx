@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Spinner as Loader2 } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   Form,
@@ -104,7 +104,7 @@ export function QRSaveDialog({
               >
                 {isUpdating ? (
                   <>
-                    <Loader2 className="mr-1 size-4 animate-spin" />
+                    <ModuleOrbit aria-hidden className="mr-1 size-4" />
                     {t("updating")}
                   </>
                 ) : (
@@ -162,7 +162,7 @@ export function QRSaveDialog({
           >
             {isSaving || form.formState.isSubmitting ? (
               <>
-                <Loader2 className="mr-1 size-4 animate-spin" />
+                <ModuleOrbit aria-hidden className="mr-1 size-4" />
                 {t("saving")}
               </>
             ) : hasUpdateOption ? (

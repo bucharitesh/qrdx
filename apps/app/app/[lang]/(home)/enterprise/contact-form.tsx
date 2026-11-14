@@ -1,6 +1,6 @@
 "use client";
 
-import { Spinner } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
@@ -236,7 +236,7 @@ export function EnterpriseContactForm({
           })}
         </p>
         <Button className="shrink-0" disabled={isPending} type="submit">
-          {isPending && <Spinner aria-hidden className="animate-spin" />}
+          {isPending && <ModuleOrbit aria-hidden />}
           {isPending ? t("sending") : t("submit")}
         </Button>
       </div>

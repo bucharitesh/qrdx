@@ -3,8 +3,11 @@
 import { track } from "@repo/analytics";
 import { toast } from "@repo/design-system";
 import { Close } from "@repo/design-system/components/icons";
+import {
+  AssemblingCode,
+  ModuleOrbit,
+} from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
-import { Spinner } from "@repo/design-system/components/ui/spinner";
 import { useIsMobile } from "@repo/design-system/hooks/use-mobile";
 import { cn } from "@repo/design-system/lib/utils";
 import {
@@ -227,7 +230,7 @@ export function ArtResultActions({
         title={t("artPrintSizePxChecked", { ART_PRINT_SIZE })}
         variant="outline"
       >
-        {busy === "print" ? <Spinner /> : <DocumentDownload />}
+        {busy === "print" ? <ModuleOrbit /> : <DocumentDownload />}
         {t("printPng")}
       </Button>
       <Button
@@ -236,7 +239,7 @@ export function ArtResultActions({
         size="sm"
         variant="outline"
       >
-        {busy === "image-qr" ? <Spinner /> : <Gallery />}
+        {busy === "image-qr" ? <ModuleOrbit /> : <Gallery />}
         {t("useAsImageQr")}
       </Button>
       {result.visibility < ART_QR_VISIBILITY.max && (
@@ -374,7 +377,7 @@ export function ArtCanvas() {
           )}
           {generating && (
             <div className="bg-background/80 absolute inset-0 flex flex-col items-center justify-center gap-2 p-4 text-center backdrop-blur-sm">
-              <Spinner className="size-5" />
+              <AssemblingCode label={t("generatingYourArtwork")} />
               <p className="text-sm font-medium">
                 {progress ??
                   (shown.pendingVariations > 1

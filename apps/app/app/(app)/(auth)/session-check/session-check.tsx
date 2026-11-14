@@ -2,7 +2,7 @@
 
 import { authClient } from "@repo/auth/client";
 import { QrdxLogoAnimation } from "@repo/design-system/components/brand/qrdx-logo-animation";
-import { Spinner } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
@@ -115,7 +115,7 @@ function SessionCheckScreen({
             onClick={() => void ask()}
             type="button"
           >
-            {step === "leaving" && <Spinner className="animate-spin" />}
+            {step === "leaving" && <ModuleOrbit aria-hidden />}
             {t("continue")}
           </Button>
           <Button

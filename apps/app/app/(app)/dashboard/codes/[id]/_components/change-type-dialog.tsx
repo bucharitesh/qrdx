@@ -1,7 +1,7 @@
 "use client";
 
 import { toast } from "@repo/design-system";
-import { Spinner as Loader2 } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
@@ -466,7 +466,7 @@ export function ChangeTypeDialog({
           form="change-type-redirect"
           type="submit"
         >
-          {isPending && <Loader2 className="animate-spin" />}
+          {isPending && <ModuleOrbit aria-hidden />}
           {isPending ? t("switching") : t("switchToWebsiteLink")}
         </Button>
       </>
@@ -498,7 +498,7 @@ export function ChangeTypeDialog({
       <>
         {back}
         <Button disabled={isPending} onClick={() => switchToPage(page)}>
-          {isPending && <Loader2 className="animate-spin" />}
+          {isPending && <ModuleOrbit aria-hidden />}
           {isPending ? t("switching") : t("switchToThisPage")}
         </Button>
       </>

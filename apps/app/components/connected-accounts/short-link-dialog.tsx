@@ -1,6 +1,6 @@
 "use client";
 
-import { Spinner } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   Dialog,
@@ -302,7 +302,7 @@ export function ShortLinkDialog({
 
               <div className="flex justify-end">
                 <Button disabled={creating || !destinationUrl} type="submit">
-                  {creating && <Spinner className="size-4 animate-spin" />}
+                  {creating && <ModuleOrbit aria-hidden className="size-4" />}
                   {t("createLink")}
                 </Button>
               </div>
@@ -372,7 +372,9 @@ export function ShortLinkDialog({
                     type="button"
                     variant="outline"
                   >
-                    {listing && <Spinner className="size-3.5 animate-spin" />}
+                    {listing && (
+                      <ModuleOrbit aria-hidden className="size-3.5" />
+                    )}
                     {t("loadMore")}
                   </Button>
                 </div>

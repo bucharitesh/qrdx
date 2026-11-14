@@ -2,11 +2,8 @@
 
 import { authClient } from "@repo/auth/client";
 import { toast } from "@repo/design-system";
-import {
-  GithubLogo,
-  GoogleLogo,
-  Spinner,
-} from "@repo/design-system/components/icons";
+import { GithubLogo, GoogleLogo } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -235,7 +232,7 @@ export function SignInMethodsSection({
                 size="sm"
                 variant="outline"
               >
-                {linking === provider && <Spinner className="animate-spin" />}
+                {linking === provider && <ModuleOrbit aria-hidden />}
                 {t("link")}
               </Button>
             }
@@ -274,7 +271,7 @@ export function SignInMethodsSection({
               onClick={confirmUnlink}
               variant="outline"
             >
-              {removing && <Spinner className="animate-spin" />}
+              {removing && <ModuleOrbit aria-hidden />}
               {t("unlink")}
             </Button>
           </AlertDialogFooter>

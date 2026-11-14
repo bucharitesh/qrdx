@@ -1,6 +1,6 @@
 "use client";
 
-import { Spinner } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Checkbox } from "@repo/design-system/components/ui/checkbox";
@@ -276,7 +276,10 @@ export function ResponseSinkPanel({ provider, name }: ResponseSinkPanelProps) {
         {error ? (
           <p className="text-muted-foreground text-sm text-pretty">{error}</p>
         ) : (
-          <Spinner className="mx-auto size-5 text-muted-foreground" />
+          <ModuleOrbit
+            aria-hidden
+            className="mx-auto size-5 text-muted-foreground"
+          />
         )}
       </div>
     );
@@ -390,7 +393,7 @@ export function ResponseSinkPanel({ provider, name }: ResponseSinkPanelProps) {
               placeholder={t("searchPages")}
               value={search}
             />
-            {searching && <Spinner aria-hidden className="size-4" />}
+            {searching && <ModuleOrbit aria-hidden className="size-4" />}
           </div>
         )}
         {!allPages && (
@@ -557,7 +560,7 @@ export function ResponseSinkPanel({ provider, name }: ResponseSinkPanelProps) {
           onClick={save}
           type="button"
         >
-          {saving && <Spinner className="size-4" />}
+          {saving && <ModuleOrbit aria-hidden className="size-4" />}
           {t("save")}
         </Button>
       </div>

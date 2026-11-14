@@ -1,7 +1,7 @@
 "use client";
 
 import { toast } from "@repo/design-system";
-import { Spinner } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import { DocumentDownload } from "iconsax-reactjs";
 import { useTranslations } from "next-intl";
@@ -68,7 +68,7 @@ export function DataExportSection() {
           </p>
           <Button disabled={preparing} onClick={download} variant="outline">
             {preparing ? (
-              <Spinner className="animate-spin" />
+              <ModuleOrbit aria-hidden />
             ) : (
               <DocumentDownload aria-hidden />
             )}

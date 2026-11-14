@@ -1,7 +1,7 @@
 "use client";
 
 import { toast } from "@repo/design-system";
-import { Spinner } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
@@ -149,7 +149,7 @@ export function WorkspaceLogoField({
                   variant="outline"
                 >
                   {busy === "upload" ? (
-                    <Spinner aria-hidden className="animate-spin" />
+                    <ModuleOrbit aria-hidden />
                   ) : (
                     <GalleryEdit aria-hidden />
                   )}
@@ -176,9 +176,7 @@ export function WorkspaceLogoField({
                 type="button"
                 variant="ghost"
               >
-                {busy === "remove" && (
-                  <Spinner aria-hidden className="animate-spin" />
-                )}
+                {busy === "remove" && <ModuleOrbit aria-hidden />}
                 {t("remove")}
               </Button>
             )}
@@ -207,7 +205,7 @@ export function WorkspaceLogoField({
             size="sm"
             type="submit"
           >
-            {busy === "url" && <Spinner aria-hidden className="animate-spin" />}
+            {busy === "url" && <ModuleOrbit aria-hidden />}
             {t("save")}
           </Button>
         </form>

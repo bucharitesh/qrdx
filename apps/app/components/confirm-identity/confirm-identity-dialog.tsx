@@ -1,11 +1,8 @@
 "use client";
 
 import { authClient } from "@repo/auth/client";
-import {
-  GithubLogo,
-  GoogleLogo,
-  Spinner,
-} from "@repo/design-system/components/icons";
+import { GithubLogo, GoogleLogo } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   Collapsible,
@@ -587,7 +584,7 @@ export function ConfirmIdentityDialog({
   } else if (!(options && method)) {
     body = (
       <div className="text-muted-foreground flex items-center justify-center gap-2 py-6 text-sm">
-        <Spinner className="size-4 animate-spin" />
+        <ModuleOrbit aria-hidden className="size-4" />
         {t("loading")}
       </div>
     );
@@ -628,7 +625,7 @@ export function ConfirmIdentityDialog({
           onClick={() => void runPasskey(false)}
           type="button"
         >
-          {busy && <Spinner className="animate-spin" />}
+          {busy && <ModuleOrbit aria-hidden />}
           {t("continueWithPasskey")}
         </Button>
         {errorLine}
@@ -655,7 +652,7 @@ export function ConfirmIdentityDialog({
         <div className="flex min-h-5 items-center justify-center">
           {busy ? (
             <p className="text-muted-foreground flex items-center gap-1.5 text-xs">
-              <Spinner className="size-3.5 animate-spin" />
+              <ModuleOrbit aria-hidden className="size-3.5" />
               {t("checkingCode")}
             </p>
           ) : (
@@ -702,7 +699,7 @@ export function ConfirmIdentityDialog({
           disabled={busy || !backupCode.trim()}
           type="submit"
         >
-          {busy && <Spinner className="animate-spin" />}
+          {busy && <ModuleOrbit aria-hidden />}
           {t("confirm")}
         </Button>
       </form>
@@ -787,7 +784,7 @@ export function ConfirmIdentityDialog({
           onClick={() => void sendCode(false)}
           type="button"
         >
-          {busy && <Spinner className="animate-spin" />}
+          {busy && <ModuleOrbit aria-hidden />}
           {t("sendCode")}
         </Button>
       </div>
@@ -807,11 +804,7 @@ export function ConfirmIdentityDialog({
           type="button"
           variant="outline"
         >
-          {busy ? (
-            <Spinner className="animate-spin" />
-          ) : (
-            <Icon className="size-4" />
-          )}
+          {busy ? <ModuleOrbit aria-hidden /> : <Icon className="size-4" />}
           {t("continueWith", {
             method: method === "sso" ? "SSO" : SIGN_IN_NAMES[method],
           })}

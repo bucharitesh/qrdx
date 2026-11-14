@@ -3,7 +3,8 @@
 import { track } from "@repo/analytics";
 import { authClient } from "@repo/auth/client";
 import { toast } from "@repo/design-system";
-import { Spinner, Tick } from "@repo/design-system/components/icons";
+import { Tick } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   ToggleGroup,
@@ -444,7 +445,7 @@ export function DynamicLinkToggle() {
           >
             <span className="flex items-center gap-1.5 text-sm font-medium">
               {creating ? (
-                <Spinner className="size-3.5" />
+                <ModuleOrbit aria-hidden className="size-3.5" />
               ) : (
                 <Flash
                   className="size-3.5"
@@ -515,7 +516,7 @@ export function DynamicLinkToggle() {
                 size="sm"
                 variant="outline"
               >
-                {isPending && <Spinner />}
+                {isPending && <ModuleOrbit aria-hidden />}
                 {t("pointItToTheNew")}
               </Button>
             </div>
@@ -529,7 +530,11 @@ export function DynamicLinkToggle() {
                 size="sm"
                 variant="outline"
               >
-                {designSaved ? <Tick /> : isPending ? <Spinner /> : null}
+                {designSaved ? (
+                  <Tick />
+                ) : isPending ? (
+                  <ModuleOrbit aria-hidden />
+                ) : null}
                 {designSaved ? t("designSaved") : t("saveDesignToCode")}
               </Button>
               <Button
