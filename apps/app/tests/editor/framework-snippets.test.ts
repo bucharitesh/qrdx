@@ -29,6 +29,7 @@ import {
   QRDX_NPM_VERSION,
   SAMPLE_VALUE,
   type SnippetInput,
+  shadcnSnippet,
   vanillaSnippet,
   vueSnippet,
   webComponentSnippet,
@@ -522,6 +523,41 @@ describe.each(
       expect(ANGULAR_INPUTS.has(name), name).toBe(true);
     }
     expect(coreMarkup(props)).toBe(expected);
+  });
+});
+
+describe("the shadcn item", () => {
+  // Designs the item's props can say in full (no frame or engine options)
+  const whole = Object.entries(DESIGNS).filter(
+    ([, style]) => shadcnSnippet(input(style)).omitted.length === 0,
+  );
+
+  it("can say most designs in full", () => {
+    expect(whole.length).toBeGreaterThanOrEqual(8);
+  });
+
+  it.each(whole)("%s draws the design", (_name, style) => {
+    const { code } = shadcnSnippet(input(style));
+    const exports = runModule(
+      code,
+      {
+        "@/components/qr-code": { QrCode: QRCODE },
+        "react/jsx-runtime": jsxRuntime,
+      },
+      "my-qr-code.tsx",
+    );
+    const element = (
+      exports.MyQRCode as () => {
+        type: unknown;
+        props: Record<string, unknown>;
+      }
+    )();
+    expect(element.type).toBe(QRCODE);
+    // The item draws qrdx's QRCode with these props at its size, 200
+    // (registry/qrdx/qr-code.tsx)
+    expect(reactMarkup({ ...element.props, size: 200 })).toBe(
+      reactMarkup({ ...editorCodeProps(style, URL_VALUE), size: 200 }),
+    );
   });
 });
 

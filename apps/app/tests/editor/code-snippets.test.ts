@@ -22,7 +22,6 @@ import {
   imageSnippet,
   LEFT_OUT,
   mcpSnippet,
-  NPM_QRDX,
   QRDX_NPM_VERSION,
   REST_UNAVAILABLE,
   reactSnippet,
@@ -371,11 +370,8 @@ describe("reactSnippet", () => {
     );
   });
 
-  it("keeps the shadcn item's shape lists apart", () => {
+  it("is written for the qrdx on npm", () => {
     expect(QRDX_NPM_VERSION).toBe("0.0.53");
-    expect(NPM_QRDX.version).toBe("0.0.46");
-    expect(NPM_QRDX.bodyPatterns).toHaveLength(9);
-    expect(NPM_QRDX.templates).toContain("Halloween");
   });
 });
 
@@ -406,8 +402,10 @@ describe("shadcnSnippet", () => {
     );
     const props = shadcnItemProps();
     expect(props.has("value")).toBe(true);
-    for (const name of propNames(snippet.code)) {
-      expect(props.has(name as string), name).toBe(true);
+    for (const [fixture, style] of Object.entries(FIXTURES)) {
+      for (const name of propNames(shadcnSnippet(urlInput(style)).code)) {
+        expect(props.has(name as string), `${fixture}: ${name}`).toBe(true);
+      }
     }
   });
 
@@ -416,25 +414,27 @@ describe("shadcnSnippet", () => {
     expect(shadcnSnippet(urlInput(plain)).code).toContain("margin={2}");
   });
 
-  it("says the logo can't be hidden or replaced by an upload", () => {
-    expect(shadcnSnippet(urlInput(plain)).omitted).toEqual([
-      LEFT_OUT.shadcnNoLogo,
-    ]);
-    expect(shadcnSnippet(urlInput(uploadedLogo)).omitted).toEqual([
-      LEFT_OUT.shadcnUploadedLogo,
-    ]);
+  it("draws no logo without one, and leaves an upload out", () => {
+    // The item installs the current qrdx, which draws no logo unless given one
+    const plainSnippet = shadcnSnippet(urlInput(plain));
+    expect(plainSnippet.omitted).toEqual([]);
+    expect(plainSnippet.code).not.toMatch(/\blogo=/);
+    const uploaded = shadcnSnippet(urlInput(uploadedLogo));
+    expect(uploaded.omitted).toEqual([LEFT_OUT.uploadedLogo]);
+    expect(uploaded.code).not.toMatch(/\blogo=/);
     const qrdx = shadcnSnippet(urlInput(qrdxLogo));
     expect(qrdx.code).toContain('logo="https://qrdx.dev/logo.png"');
     expect(qrdx.omitted).toEqual([]);
   });
 
-  it("leaves out frames and shapes newer than 0.0.46", () => {
+  it("passes every shape and gradient, and leaves out frames", () => {
     expect(shadcnSnippet(urlInput(builtInFrame)).omitted).toContain(
       LEFT_OUT.frame,
     );
-    expect(shadcnSnippet(urlInput(newerShapes)).omitted).toContain(
-      'The "liquid" dot shape',
-    );
+    const newer = shadcnSnippet(urlInput(newerShapes));
+    expect(newer.omitted).toEqual([]);
+    expect(newer.code).toContain('bodyPattern="liquid"');
+    expect(shadcnSnippet(urlInput(gradient)).code).toContain('type: "radial"');
   });
 });
 
