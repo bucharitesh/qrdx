@@ -19,6 +19,19 @@ export const EARLY_BANNER_ACTIONS: readonly HeadlessConsentSurfaceAction[] = [
 
 const EARLY_ACTIONS = new Set<string>(EARLY_BANNER_ACTIONS);
 
+/**
+ * Runs in <head>, before the body paints; the app renders it inline with
+ * the request's CSP nonce (apps/docs/components/consent/
+ * consent-early-script.tsx). A visitor with no stored choice (c15t's `c15t`
+ * cookie / localStorage key) gets the attribute that reveals the
+ * server-rendered cookie banner, so it paints with the page instead of
+ * after hydration (where it used to become a late LCP element).
+ *
+ * A tap on the banner before it is live is held on `window` and recorded by
+ * CookieBanner once c15t starts; Accept/Reject hide the banner at once.
+ */
+export const CONSENT_EARLY_SCRIPT = `(function(){var r=document.documentElement;try{if(/(?:^|;\\s*)c15t=/.test(document.cookie))return;try{if(localStorage.getItem("c15t"))return}catch(e){}}catch(e){return}r.setAttribute("${CONSENT_EARLY_ATTRIBUTE}","");document.addEventListener("click",function(e){var t=e.target,b=t&&t.closest&&t.closest("[${CONSENT_EARLY_TAP_ATTRIBUTE}]");if(!b||window.__qrdxConsentLive)return;var a=b.getAttribute("${CONSENT_EARLY_TAP_ATTRIBUTE}");window.__qrdxConsentTap=a;if(a!=="customize")r.removeAttribute("${CONSENT_EARLY_ATTRIBUTE}")},true)})()`;
+
 declare global {
   interface Window {
     /** True once the banner is driven by c15t (taps go straight to it). */

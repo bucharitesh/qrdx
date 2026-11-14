@@ -22,16 +22,19 @@ import { Switch } from "@repo/design-system/components/ui/switch";
 import { Chart2, type Icon, Lock1, MessageQuestion } from "iconsax-reactjs";
 import { useTranslations } from "next-intl";
 import { useEffect, useLayoutEffect, useRef } from "react";
-import { LocaleLink as Link } from "@/components/i18n/locale-link";
-import { PRIVACY_POLICY_URL, TEXT_LINK } from "./consent-copy";
+import {
+  type ConsentLink,
+  PRIVACY_POLICY_URL,
+  TEXT_LINK,
+} from "./consent-copy";
 import { OPEN_COOKIE_SETTINGS_EVENT } from "./open-cookie-settings";
 
 /** Title and description: messages (consent.categories). Tool names stay as is. */
-type CategoryCopy = {
+interface CategoryCopy {
   key: "necessary" | "functionality" | "measurement";
   tools: string;
   icon: Icon;
-};
+}
 
 const CATEGORY_COPY: Partial<Record<AllConsentNames, CategoryCopy>> = {
   necessary: {
@@ -52,7 +55,7 @@ const CATEGORY_COPY: Partial<Record<AllConsentNames, CategoryCopy>> = {
 };
 
 /** Preference center: opened from the banner or any Cookie settings trigger. */
-export function CookiePreferences() {
+export function CookiePreferences({ link }: { link: ConsentLink }) {
   const t = useTranslations("consent.dialog");
   const { dialog, openDialog, openBanner, closeUI } = useHeadlessConsentUI();
   const prompt = usePromptRequirement();
@@ -104,19 +107,19 @@ export function CookiePreferences() {
         </DialogHeader>
         {/* Mounted with the dialog, so every open starts from the saved choice. */}
         <ConsentDraftProvider>
-          <PreferencesForm />
+          <PreferencesForm link={link} />
         </ConsentDraftProvider>
       </DialogContent>
     </Dialog>
   );
 }
 
-function PreferencesForm() {
+function PreferencesForm({ link: Link }: { link: ConsentLink }) {
   const t = useTranslations("consent");
   const draft = useConsentDraft();
   const { dialog, performDialogAction } = useHeadlessConsentUI();
   const actions = dialog.orderedActions.filter(
-    (action) => action === "accept" || action === "reject" || action === "save",
+    (action) => action === "accept" || action === "reject" || action === "save"
   );
 
   return (
@@ -154,7 +157,9 @@ function PreferencesForm() {
             className={
               action === "save" ? "col-span-2 sm:col-span-1" : undefined
             }
-            onClick={() => void performDialogAction(action)}
+            onClick={() => {
+              performDialogAction(action);
+            }}
           >
             {action === "save" && <Tick aria-hidden="true" />}
             {t(`actions.${action}`)}
@@ -217,7 +222,7 @@ function CategoryRow({
         </div>
         <p
           id={descriptionId}
-          className="text-pretty text-sm text-muted-foreground"
+          className="text-sm text-pretty text-muted-foreground"
         >
           {t(`categories.${copy.key}.description`)}
         </p>
