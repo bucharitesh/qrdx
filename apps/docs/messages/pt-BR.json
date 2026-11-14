@@ -4373,7 +4373,6 @@
         "frame": "Frame",
         "padding": "Margem",
         "errorCorrection": "Correção de erros",
-        "border": "Borda",
         "none": "Nenhuma"
       },
       "dotSizeSection": {
@@ -4396,31 +4395,26 @@
         }
       },
       "frameControls": {
-        "importSvg": "Importar SVG",
+        "uploadSvg": "Enviar SVG",
         "publishFrame": "Publicar moldura",
         "theFrameIsAddedAround": "A moldura é adicionada ao redor do código, então a imagem baixada fica maior e o código continua legível na leitura.",
         "label": "Texto",
         "pickAFrameFirst": "Escolha uma moldura primeiro",
-        "none": "Nenhuma"
+        "none": "Nenhuma",
+        "takesDotColor": "Usa a cor dos pontos do código.",
+        "alsoHasTemplate": "Este design também tem a moldura {name} dentro desta. Ao escolher outra moldura, as duas são substituídas.",
+        "templateKeepsSize": "Esta moldura ajusta o código dentro dela, então a imagem baixada mantém o tamanho que você escolher."
       },
       "frameFields": {
         "textSize": "Tamanho do texto"
       },
       "framePicker": {
-        "more": "Mais",
         "showAll": "Ver todas",
         "frame": "Moldura",
-        "moreFrames": "Mais molduras",
-        "allTotalFrames": "Todas as {total, number} molduras",
-        "allFrames": "Todas as molduras",
         "searchFrames": "Buscar molduras",
         "searchTotalFrames": "Buscar entre {total, number} molduras",
-        "closeFrames": "Fechar molduras",
         "filterFrames": "Filtrar molduras",
         "labelFrames": "Molduras: {label}",
-        "commonFrames": "Molduras comuns",
-        "everyFrameBuiltInStyles": "Todas as molduras: as clássicas, os códigos com formas, as molduras oficiais do QRdx e as que você salvou. Ao escolher uma, ela é aplicada na hora.",
-        "less": "Menos",
         "all": "Todos",
         "noFramesMatchQuery": "Nenhum frame corresponde a \"{query}\".",
         "loadingFrames": "Carregando frames…",
@@ -4554,7 +4548,6 @@
       },
       "patternControls": {
         "customizeOuterAndCenter": "Personalize externo e centro",
-        "border": "Borda",
         "higherLevelsSurviveScratchesAnd": "Níveis mais altos resistem a arranhões e logos, mas adicionam mais pontos. Use H ao adicionar um logo.",
         "dotShape": "Formato dos pontos",
         "dotShapes": "formatos de ponto",

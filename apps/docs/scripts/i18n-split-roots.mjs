@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Splits apps/docs/app into two root layouts (i18n design §3 and §10):
 //
-//   app/[lang]/   translated public pages (lib/i18n/localized-paths.json),
+//   app/[lang]/   translated public pages (packages/i18n/localized-paths.json),
 //                 each under app/[lang]/(home)/…
 //   app/(app)/    every other page, layout and boundary, URLs unchanged
 //   app/          route handlers and metadata files stay where they are
@@ -31,7 +31,10 @@ const DRY = flags.has("--dry-run") || flags.has("--check");
 const CHECK = flags.has("--check");
 
 const { paths: LOCALIZED_PATHS } = JSON.parse(
-  fs.readFileSync(path.join(DOCS, "lib/i18n/localized-paths.json"), "utf8"),
+  fs.readFileSync(
+    path.join(REPO, "packages/i18n/localized-paths.json"),
+    "utf8",
+  ),
 );
 
 // Files that need a root layout above them (Next's UI file conventions).

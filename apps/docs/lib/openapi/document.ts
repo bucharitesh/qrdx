@@ -73,9 +73,8 @@ import {
 
 // The OpenAPI 3.1 document of the REST API (/v1), built from the zod schemas
 // the routes validate with (request side) and lib/openapi/schemas (response
-// side). scripts/openapi/generate.ts writes it to
-// packages/docs-assets/openapi.json and its served copy, public/openapi.json;
-// tests/api/openapi.test.ts fails when either is stale or a /v1 route has
+// side). scripts/openapi/generate.ts writes it to public/openapi.json;
+// tests/api/openapi.test.ts fails when that file is stale or a /v1 route has
 // no operation here. Script and test only (see lib/openapi/schemas).
 
 type Document = OpenAPIV3_1.Document;
@@ -562,7 +561,7 @@ function operations(c: SchemaCollector): Record<string, JsonSchema> {
 
 **No key or token needed**, and it doesn't use your daily quota: put the URL straight into an \`<img>\` tag. The same query always returns the same bytes, so responses are cached for a year. Colors are hex without \`#\` (or with \`#\` encoded as \`%23\`). Limit: 300 requests a minute per IP address. More in the [Image API guide](${docs("developers/image-api")}).
 
-**The editor's styles.** \`style\` takes the whole design as URL-encoded JSON, with the same fields as a saved theme: gradients (linear, radial), frames including custom frame specs, border templates, eye and dot colors, and a logo icon. It also takes the \`style\` value of a playground link. \`item\` renders a community frame or theme (\`/community/items\`); \`frame\` and \`frameText\` add a built-in frame. Flat parameters you set win over \`style\`, and \`style\` wins over \`item\`. With a frame, \`size\` is the code's width and the frame adds to it.
+**The editor's styles.** \`style\` takes the whole design as URL-encoded JSON, with the same fields as a saved theme: gradients (linear, radial), frames (built-in, custom frame specs, or a frame drawn as a template), eye and dot colors, and a logo icon. It also takes the \`style\` value of a playground link. \`item\` renders a community frame or theme (\`/community/items\`); \`frame\` and \`frameText\` add a built-in frame. Flat parameters you set win over \`style\`, and \`style\` wins over \`item\`. With a frame, \`size\` is the code's width and the frame adds to it.
 
 **Logos.** \`logoIcon\` draws one of the editor's quick icons, or a brand logo by its Simple Icons slug (\`spotify\`, \`paypal:white\`). \`logoFileId\` draws an image you uploaded, and needs \`Authorization: Bearer qrdx_…\` from the workspace that owns it; that response is private and counts toward the daily quota. QRdx never fetches a logo from an address you send. Logo QR and Image QR art aren't available here.
 

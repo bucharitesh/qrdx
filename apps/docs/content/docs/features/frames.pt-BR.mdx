@@ -21,7 +21,7 @@ import { QRCode } from "qrdx";
 />
 ```
 
-A moldura é adicionada **em volta** do código: a saída fica maior, e os módulos do QR e a zona de silêncio nunca são cobertos, então a facilidade de leitura não muda. Um espaço claro, na cor de fundo do código, separa o código da moldura.
+A moldura é adicionada **em volta** do código: a saída fica maior, e os módulos do QR e a zona de silêncio nunca são cobertos, então a leitura não muda. Um espaço claro, na cor de fundo do código, separa o código da moldura.
 
 ### Molduras integradas [#built-in-frames]
 
@@ -35,18 +35,18 @@ Uma moldura integrada é identificada pelo `style`. As opções preenchem os ró
 | `textColor` | branco na moldura, `color` nas áreas claras | Cor do rótulo |
 | `secondaryText` | nenhum | Segundo rótulo, até 24 caracteres: a faixa inferior de `banner-top-bottom`, o arco inferior de `circle`, o rodapé de `menu-card` |
 | `secondaryColor` | `#db2777` | Cor final de `gradient-border` |
-| `fontScale` | `1` | Tamanho do rótulo de 0.5 a 1.5; os rótulos ainda encolhem para caber |
+| `fontScale` | `1` | Tamanho do rótulo de 0.5 a 1.5; os rótulos ainda diminuem para caber |
 
 As molduras integradas, por `style`:
 
 - Faixas e bordas: `banner-bottom`, `banner-top`, `banner-top-bottom`, `border`, `rounded-border`, `gradient-border`, `focus` (colchetes nos cantos)
 - Balões: `speech-bubble`, `speech-bubble-top`, `chat-bubble`
 - Selos: `circle` (texto em volta de um anel), `badge` (fita), `sticker` (adesivo recortado com sombra)
-- Objetos: `polaroid`, `phone`, `ticket`, `tag` (etiqueta com furo), `envelope`, `menu-card`
+- Objetos: `polaroid`, `phone`, `ticket`, `tag` (etiqueta de pendurar com furo), `envelope`, `menu-card`
 
 Cada um desses nomes representa uma especificação no motor, e os nomes continuam válidos para sempre. Designs salvos, links da Image API, flags da CLI e códigos que os usam continuam desenhando a mesma moldura. As molduras que eliminam a linha do rótulo quando não há rótulo, como as bordas, continuam fazendo isso.
 
-`BUILT_IN_FRAMES` lista todas com seus nomes e especificações (`BUILT_IN_FRAME_SPECS` traz as especificações por estilo). `frameSpecOf` retorna a especificação que qualquer moldura desenha, e `getFrameColors` as cores com que ela pinta:
+`BUILT_IN_FRAMES` lista todas, com nomes e especificações (`BUILT_IN_FRAME_SPECS` traz as especificações por estilo). `frameSpecOf` retorna a especificação que qualquer moldura desenha, e `getFrameColors` as cores com que ela pinta:
 
 ```tsx
 import { BUILT_IN_FRAMES, frameSpecOf, getFrameColors } from "qrdx";
@@ -61,9 +61,9 @@ getFrameColors({ style: "border", color: "#1e3a8a" });
 // { frame: "#1e3a8a", text: "#1e3a8a", accent: "#1e3a8a" }
 ```
 
-Para mudar mais do que os rótulos e as cores, crie uma moldura personalizada a partir de uma especificação integrada: `{ style: "custom", spec: frameSpecOf({ style: "ticket" }) }` desenha o mesmo ticket, e você pode editar as formas dele.
+Para mudar mais do que os rótulos e as cores, comece uma moldura personalizada a partir de uma especificação integrada: `{ style: "custom", spec: frameSpecOf({ style: "ticket" }) }` desenha o mesmo ticket, e você pode editar as formas dele.
 
-Veja todas elas, decodificadas no seu navegador, em [Formas, olhos e molduras](/docs/styles#frames). Toda moldura é feita de formas simples e texto com cores opacas, então as exportações em SVG, PNG, PDF e EPS ficam iguais (a borda em gradiente é desenhada como degraus finos de cor sólida, e as letras curvas da moldura circle são texto girado em todos os formatos).
+Veja todas, decodificadas no seu navegador, em [Formas, olhos e molduras](/docs/styles#frames). Toda moldura é feita de formas simples e texto com cores opacas, então as exportações em SVG, PNG, PDF e EPS ficam iguais (a borda em degradê é desenhada com passos finos de cor sólida, e as letras curvas da moldura circle são texto girado em todos os formatos).
 
 ```tsx
 <QRCode
@@ -80,13 +80,13 @@ import { getFrameDimensions } from "qrdx";
 getFrameDimensions(400, { style: "banner-bottom" }); // { width: 496, height: 568 }
 ```
 
-`FRAME_STYLES`, `frameSchema` (zod) e os tipos `QRFrame` / `FrameStyle` também são exportados de `qrdx/types` para validação no servidor. `GRADIENT_FRAME_DEFAULTS` (as cores padrão da borda em gradiente) e `FRAME_GAP_RATIO` continuam exportados para o código que os usava; o espaço de cada moldura é o padding da sua especificação (`getFrameGapRatio`).
+`FRAME_STYLES`, `frameSchema` (zod) e os tipos `QRFrame` / `FrameStyle` também são exportados de `qrdx/types` para validação no servidor. `GRADIENT_FRAME_DEFAULTS` (as cores padrão da borda em degradê) e `FRAME_GAP_RATIO` continuam exportados para o código que os usava; o espaço de cada moldura é o padding da própria especificação (`getFrameGapRatio`).
 
 ### No Playground [#in-the-playground]
 
-**Design → Moldura** tem um seletor único para todas as molduras. O grupo **Clássicas** reúne as molduras integradas, ao lado dos códigos com formato, das molduras oficiais e das molduras que você salvou. Todas são editadas do mesmo jeito: rótulo, segunda linha, cores e tamanho do texto, além de ícones nas molduras que os têm. Um design com moldura integrada mantém o nome do `style`, então links, URLs de imagem e trechos de código ficam curtos.
+**Design → Moldura** tem um único seletor para todas as molduras. O grupo **Clássicas** reúne as molduras integradas e os [modelos](/docs/features/templates) (Arrow, Standard Box e os demais), ao lado dos códigos com formato, das molduras oficiais e das molduras que você salvou. Escolher qualquer uma substitui a anterior. Todas as molduras são editadas do mesmo jeito: rótulo, segunda linha, cores e tamanho do texto, mais ícones nas molduras que os têm. Um design com moldura integrada mantém o nome do `style`, então links, URLs de imagem e trechos de código ficam curtos.
 
-O grupo **Códigos com formato** coloca o próprio código em uma forma: um círculo ou um coração de pontos decorativos, ou uma forma que você envia ([`shape`](/docs/features/patterns#circle-codes)). Um código com formato ocupa o lugar de uma moldura: escolher um remove a moldura, e escolher uma moldura remove a forma.
+O grupo **Códigos com formato** coloca o próprio código em uma forma: um círculo ou um coração de pontos decorativos, ou uma forma que você envia ([`shape`](/docs/features/patterns#circle-codes)). Um código com formato ocupa o lugar de uma moldura: escolher um limpa a moldura, e escolher uma moldura limpa a forma.
 
 ### Na CLI [#in-the-cli]
 
@@ -98,25 +98,26 @@ qrdx generate "https://example.com/menu" --frame banner-bottom --frame-text "Sca
 
 ### Especificações de moldura [#frame-specs]
 
-Uma especificação de moldura é um JSON com `kind: "qrdx.frame"`, `version: 1`, um tamanho de `artboard`, uma caixa `qr` onde o código fica, `colors` padrão, as `shapes` pintadas atrás do código e os `labels`. As formas são retângulos (com um furo opcional), círculos e anéis, elipses, polígonos, caminhos, linhas e ícones integrados. Elas são preenchidas com um token de tema (`frame`, `text`, `accent`, `background`), uma cor hex, uma mistura de duas ou um gradiente. Uma especificação não contém marcação, links nem imagens. Valide uma que você não escreveu com `frameSpecSchema` ou `getFrameSpecIssues` de `qrdx/types` antes de armazená-la. O motor a verifica de novo antes de desenhar.
+Uma especificação de moldura é um JSON com `kind: "qrdx.frame"`, `version: 1`, um tamanho de `artboard`, uma caixa `qr` onde o código fica, `colors` padrão, as `shapes` pintadas atrás do código e os `labels`. As formas são retângulos (com um furo opcional), círculos e anéis, elipses, polígonos, caminhos, linhas e ícones integrados. Elas são preenchidas com um token de tema (`frame`, `text`, `accent`, `background`), uma cor hex, uma mistura de duas ou um degradê. Uma especificação não contém marcação, links nem imagens. Verifique uma que você não escreveu com `frameSpecSchema` ou `getFrameSpecIssues` de `qrdx/types` antes de armazená-la. O motor a verifica de novo antes de desenhar.
 
-As molduras integradas trouxeram estes campos opcionais. Especificações sem eles são desenhadas como antes:
+As molduras integradas e os modelos trouxeram estes campos opcionais. Especificações sem eles são desenhadas como antes:
 
 | Campo | O que faz |
 | --- | --- |
-| `labels[].collapse` | `{ y, height }`. Quando o rótulo não mostra texto, a faixa de `y` até `y + height` é recortada: as linhas abaixo sobem e a arte fica mais baixa. Formas inteiramente dentro da faixa são omitidas, e formas que a cruzam ficam mais curtas. Uma faixa não pode cruzar o código, o padding dele nem outra faixa. |
-| `qr.plate` | `"opaque"` (o padrão) ou `"background"`. O motor pinta uma placa na cor de fundo do código sob o código. Quando esse fundo é transparente, `"opaque"` pinta a placa e `background` preenche de branco, para que a arte nunca apareça pela zona de silêncio. `"background"` mantém tudo transparente e deixa a placa de fora. Só é permitido quando sob a placa há apenas preenchimentos `background`, ou um anel cujo furo contém a placa. |
-| `colors.text` | Uma cor hex, ou uma mistura de `frame`, `accent`, `background` e cores hex, como `{ "mix": ["frame", "accent"], "amount": 0.5 }` para o rótulo da borda em gradiente. É o padrão; `textColor` ainda prevalece. |
+| `labels[].collapse` | `{ y, height }`. Quando o rótulo não mostra texto, a faixa de `y` até `y + height` é recortada: as linhas abaixo sobem e a arte fica mais baixa. Formas totalmente dentro da faixa são omitidas, e formas que a atravessam ficam menores. Uma faixa não pode cruzar o código, o padding dele nem outra faixa. |
+| `qr.plate` | `"opaque"` (o padrão), `"background"` ou `"none"`. O motor pinta uma placa na cor de fundo do código sob o código. Quando esse fundo é transparente, `"opaque"` pinta a placa e `background` preenche de branco, para que a arte nunca apareça pela zona de silêncio. `"background"` mantém os dois transparentes e omite a placa. Só é permitido quando abaixo da placa há apenas preenchimentos `background`, ou um anel cujo furo contém a placa. `"none"` não pinta placa alguma, então o fundo e a margem do próprio código são o único espaço claro, e `qr.padding` pode ficar abaixo de 4%. Os modelos usam esse valor. |
+| `stroke` | `{ color, width }` em um retângulo, círculo, elipse, polígono ou caminho: um contorno centrado na borda da forma, desenhado depois do preenchimento, com no máximo 10% do lado menor da prancheta. O modelo de Halloween contorna a abóbora com ele. |
+| `colors.text` | Uma cor hex, ou uma mistura de `frame`, `accent`, `background` e cores hex, como `{ "mix": ["frame", "accent"], "amount": 0.5 }` para o rótulo da borda em degradê. É o padrão; `textColor` ainda tem prioridade. |
 
-A linha de um rótulo de texto também pode entrar no padding da placa, desde que fique fora do código e que suas maiúsculas fiquem fora do padding no maior tamanho de texto (`fontScale` 1.5). As molduras de borda colocam o rótulo logo abaixo do código dessa forma.
+A linha de um rótulo de texto também pode avançar sobre o padding da placa, desde que fique fora do código e que as letras maiúsculas fiquem fora do padding no maior tamanho de texto (`fontScale` 1.5). As molduras de borda posicionam o rótulo logo abaixo do código dessa forma.
 
-O qrdx 0.0.51 e anteriores rejeitam especificações que usam esses campos ou que colocam uma linha de rótulo no padding, então atualize o motor antes de desenhar uma especificação assim em outro lugar.
+O qrdx 0.0.51 e anteriores rejeitam especificações que usam esses campos ou que põem uma linha de rótulo no padding, então atualize o motor antes de desenhar uma especificação assim em outro lugar.
 
 ## Molduras oficiais [#official-frames]
 
-Além das molduras integradas, o QRdx tem {facts.officialFrames} molduras oficiais: designs prontos para chamadas para ação, restaurantes e cafés, lojas e embalagens, beleza e bem-estar, eventos e casamentos, hotéis e viagens, imóveis, carros e estacionamentos, saúde e educação, esportes e fitness, negócios e redes sociais, e organizações sem fins lucrativos e grupos comunitários. {facts.seasonalFrames} delas são para feriados e estações, do Ano Novo Lunar, Holi, Eid e Diwali a Hanukkah, Páscoa, Ação de Graças e Natal. Cada uma é uma especificação de moldura com rótulos e cores que você pode mudar, publicada sob CC0, e cada uma foi testada para ser lida à distância de um celular.
+Além das molduras integradas, o QRdx tem {facts.officialFrames} molduras oficiais: designs prontos para chamadas para ação, restaurantes e cafés, lojas e embalagens, beleza e bem-estar, eventos e casamentos, hotéis e viagens, imóveis, carros e estacionamento, saúde e educação, esportes e fitness, negócios e redes sociais, e organizações sem fins lucrativos e grupos comunitários. {facts.seasonalFrames} delas são para feriados e estações, do Ano Novo Lunar, Holi, Eid e Diwali a Hanukkah, Páscoa, Ação de Graças e Natal. Cada uma é uma especificação de moldura com rótulos e cores que você pode mudar, lançada sob CC0, e cada uma é testada para ser lida em distâncias de celular.
 
-No [Playground](/playground), abra **Moldura** e depois **Mais**. Busque por nome, uso ou feriado, ou escolha um grupo. As molduras dos feriados e das estações que estão chegando aparecem primeiro. Você também as encontra na [comunidade](/community/frames), publicadas por @qrdx.
+No [Playground](/playground), abra **Moldura**. Pesquise por nome, uso ou feriado, ou escolha um grupo. As molduras dos feriados e das estações que estão chegando aparecem primeiro. Você também as encontra na [comunidade](/community/frames), publicadas por @qrdx.
 
 O motor as exporta como `OFFICIAL_FRAMES`:
 
@@ -135,9 +136,9 @@ const diwali = getOfficialFrame("diwali-diya"); // undefined for an unknown id
 
 `OFFICIAL_FRAME_INDEX` lista todas as molduras sem a especificação, para que um seletor possa mostrar a biblioteca inteira e carregar as especificações só quando forem necessárias. Na [Image API](/docs/developers/image-api#community-items) e no [servidor MCP](/docs/developers/mcp), use uma moldura oficial como item da comunidade, por exemplo `item=frame:diwali-diya`.
 
-## Vai ler? [#will-it-scan]
+## Será que vai ler? [#will-it-scan]
 
-`getScanScore` estima a confiabilidade de leitura de um design. Ele roda no navegador e carrega o [jsQR](https://github.com/cozmo/jsQR) sob demanda.
+`getScanScore` estima com que confiabilidade um design é lido. Ele roda no navegador e carrega o [jsQR](https://github.com/cozmo/jsQR) sob demanda.
 
 ```ts
 import { getScanScore } from "qrdx";
@@ -154,16 +155,16 @@ const { score, grade, checks } = await getScanScore({
 O que ele verifica:
 
 - **Decodificação em 96, 160 e 320 px.** O design é renderizado em cada largura, recebe desfoque e perda de contraste parecidos com os de uma câmera e é decodificado algumas vezes em escalas ligeiramente diferentes.
-- **Contraste** entre cada cor do código (incluindo pontos de gradiente, cores dos olhos e dos pontos) e o fundo, e se o código é escuro sobre claro.
+- **Contraste** entre cada cor do código (incluindo pontos de parada de gradiente, cores dos olhos e dos pontos) e o fundo, e se o código é escuro sobre claro.
 - **Cobertura do logo** em comparação com o que o nível de correção de erros consegue recuperar.
 - **Zona de silêncio**: a margem, mais o espaço que uma moldura adiciona.
-- **Risco do formato dos olhos**: olhos `circle` podem não ser reconhecidos por alguns apps leitores (e os olhos `curly`, já descontinuados, falham em decodificadores estritos se um design salvo ainda os usar).
-- **Combinações de estilo** (`style-pair`): formas que falham juntas nos nossos testes de decodificação, como pontos `small-square` ao lado de olhos quadrados, e centros descontinuados em designs salvos (veja `getStylePairRisk`).
+- **Risco do formato dos olhos**: olhos `circle` podem não ser reconhecidos por alguns apps de leitura (e os olhos `curly`, já descontinuados, falham em decodificadores rígidos se um design salvo ainda os usar).
+- **Combinações de estilos** (`style-pair`): formas que falham juntas nos nossos testes de decodificação, como pontos `small-square` ao lado de olhos quadrados, e centros descontinuados em designs salvos (veja `getStylePairRisk`).
 
-`getImageScanScore(fileOrImage)` faz o mesmo para uma imagem existente: retorna o conteúdo decodificado, além de verificações de decodificação, contraste, polaridade, zona de silêncio e resolução medidas a partir dos pixels. O [verificador de leitura](/tools/scan-checker) é construído sobre ele.
+`getImageScanScore(fileOrImage)` faz o mesmo para uma imagem existente: retorna o conteúdo decodificado e as verificações de decodificação, contraste, polaridade, zona de silêncio e resolução, medidas a partir dos pixels. O [verificador de leitura](/tools/scan-checker) é construído sobre ele.
 
 <Callout type="info">
-  A pontuação é uma heurística baseada em um único decodificador de código aberto. Os apps de câmera dos celulares costumam ser mais tolerantes, então use a pontuação como guia e teste a leitura de impressões importantes.
+  A pontuação é uma heurística baseada em um único decodificador de código aberto. Os apps de câmera dos celulares costumam ser mais tolerantes, então use-a como guia e teste a leitura de impressões importantes.
 </Callout>
 
 ## Exportação pronta para impressão [#print-ready-export]
@@ -191,10 +192,10 @@ layout.maxScanDistance; // 400 (mm)
 ```
 
 - `size` é a largura do código; uma moldura aumenta o tamanho final.
-- Com sangria, o fundo (ou a cor de uma moldura quadrada) se estende além da borda de corte, para que o corte não deixe nenhuma faixa branca. As marcas de corte ficam fora da sangria.
+- Com sangria, o fundo (ou a cor de uma moldura quadrada) se estende além da borda de corte, para que o corte não deixe nenhuma fresta branca. As marcas de corte ficam fora da sangria.
 - `colorMode: "cmyk"` usa uma conversão simples (`rgbToCmyk`: K = 1 − max(R, G, B), sem perfil ICC; o preto puro é impresso só com K). Peça à gráfica uma conversão com gerenciamento de cor quando as cores exatas da marca forem importantes.
 - Gradientes lineares e radiais são impressos como degradês suaves no PDF, em CMYK quando o PDF é CMYK; o SVG de impressão os mantém, mas continua em RGB.
 - O texto da moldura no PDF usa Helvetica Bold, então caracteres fora do Latin-1 podem não ser renderizados. Use o SVG para outros alfabetos.
-- `getQRAsPrintPDF` e `getQRAsPrintPDFBuffer` retornam o arquivo em vez de baixá-lo, e também funcionam em Node.
+- `getQRAsPrintPDF` e `getQRAsPrintPDFBuffer` retornam o arquivo em vez de baixá-lo e também funcionam no Node.
 
-**Qual tamanho imprimir:** um código pode ser lido a uma distância de cerca de dez vezes a sua largura, então tamanho ≈ distância de leitura ÷ 10 (2 cm de largura para 20 cm). Códigos mais densos precisam de mais; a [calculadora de tamanho de impressão](/tools/print-size) leva isso em conta.
+**Qual tamanho imprimir:** um código é lido a uma distância de cerca de dez vezes a sua largura, então tamanho ≈ distância de leitura ÷ 10 (2 cm de largura para 20 cm). Códigos mais densos precisam de mais; a [calculadora de tamanho de impressão](/tools/print-size) leva isso em conta.

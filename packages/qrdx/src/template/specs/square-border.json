@@ -1,0 +1,27 @@
+{
+  "kind": "qrdx.frame",
+  "version": 1,
+  "artboard": {
+    "width": 316,
+    "height": 316
+  },
+  "qr": {
+    "x": 20,
+    "y": 20,
+    "size": 276,
+    "padding": 0,
+    "plate": "none"
+  },
+  "colors": {
+    "frame": "#000000"
+  },
+  "shapes": [
+    {
+      "type": "path",
+      "d": "M308 8H8v300h300V8ZM0 0v316h316V0H0Z",
+      "fill": "frame",
+      "fillRule": "evenodd"
+    }
+  ],
+  "labels": []
+}

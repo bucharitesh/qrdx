@@ -1,63 +1,54 @@
 ---
 title: "Template"
-description: "Terapkan template bingkai yang sudah dirancang ke kode QR, atau daftarkan template Anda sendiri."
+description: "Bingkai yang menyesuaikan kode di dalam karya seni berukuran tetap, serta API TemplateDefinition untuk bingkai yang Anda gambar lewat kode."
 icon: LayoutTemplate
 ---
 
-Bungkus kode QR dengan desain siap pakai, atau dengan desain Anda sendiri.
+Template adalah bingkai yang menyesuaikan kode di dalam karya seninya sendiri. Di Playground, template bukan daftar tersendiri. Arrow, Standard Box, Square Border, Striked Box, Halloween, dan Dot Ring adalah ubin di grup **Classic** pada pemilih bingkai, bersama [bingkai](/docs/features/frames) lainnya, dan memilih bingkai apa pun akan menggantikan bingkai sebelumnya.
 
-## Apa Itu Template? [#what-are-templates]
+Template berbeda dari bingkai lain dalam satu hal: ukuran. Bingkai menambahkan ruang di sekitar kode, sehingga `size` adalah lebar kode dan gambar menjadi lebih besar. Template menggambar seluruh karya seninya pada `size`, dengan kode yang lebih kecil di dalamnya.
 
-Template adalah desain SVG yang digambar di sekeliling kode: kotak, bingkai, atau lencana. Template menerima kode sebagai `children` dan menempatkannya di dalam gambarnya sendiri. Warna, pola, dan logo tetap diatur lewat prop `QRCode`, sehingga template bisa dipakai dengan gaya apa pun.
+## Template bawaan [#built-in-templates]
 
-## Template yang Tersedia [#available-templates]
+Berikan id sebagai `templateId`. Image API menerimanya sebagai `template` dan CLI sebagai `--template`.
 
-### Default [#default]
-Hitam putih klasik.
+| `templateId` | Nama | Warna |
+|--------------|------|-------|
+| `Arrow` | Arrow | Warna gelap kode (`fgColor`) |
+| `StandardBox` | Standard Box | `fgColor` |
+| `SquareBorder` | Square Border | `fgColor` |
+| `StrikedBox` | Striked Box | Warna gelapnya sendiri |
+| `Halloween` | Halloween | Oranye, hijau, dan hitam miliknya sendiri |
+| `DotRing` | Dot Ring | Cincinnya dalam `fgColor`, teksnya berwarna putih; keduanya dapat diubah (lihat di bawah) |
+
+`default` tidak menggambar karya seni. Template ini hanya memberi sedikit inset pada kode, menjadi 95% dari `size`.
 
 ```tsx
 import { QRCode } from 'qrdx';
 
-<QRCode value="https://example.com" templateId="default" size={256} />
+<QRCode value="https://example.com" templateId="Arrow" fgColor="#1a56db" size={256} />
 ```
 
-### Arrow [#arrow]
-Desain geometris modern.
+Warna, pola, dan logo tetap diatur lewat prop kode itu sendiri, sehingga template bekerja dengan gaya apa pun:
 
 ```tsx
-<QRCode value="https://example.com" templateId="Arrow" size={256} />
+<QRCode
+  value="https://example.com"
+  templateId="StandardBox"
+  fgColor="#1a56db"
+  imageSettings={{
+    src: "/your-logo.png",
+    width: 48,
+    height: 48,
+    excavate: true,
+  }}
+  size={512}
+/>
 ```
 
-### Standard Box [#standard-box]
-Desain rapi dan terstruktur.
+## Dot Ring [#dot-ring]
 
-```tsx
-<QRCode value="https://example.com" templateId="StandardBox" size={256} />
-```
-
-### Square Border [#square-border]
-Desain berbingkai dengan tepi yang tegas.
-
-```tsx
-<QRCode value="https://example.com" templateId="SquareBorder" size={256} />
-```
-
-### Striked Box [#striked-box]
-Desain dinamis dengan elemen diagonal.
-
-```tsx
-<QRCode value="https://example.com" templateId="StrikedBox" size={256} />
-```
-
-### Halloween [#halloween]
-Tema Halloween musiman.
-
-```tsx
-<QRCode value="https://example.com" templateId="Halloween" size={256} />
-```
-
-### Dot Ring [#dot-ring]
-Kode berbentuk bulat. Kode berada di dalam cakram titik-titik di dalam cincin gelap, dengan satu baris teks yang mengikuti lengkung cincin. Titik mana yang tampil ditentukan dari hash isi kode, sehingga setiap tautan mendapat cincin yang unik dan tautan yang sama selalu mendapat cincin yang sama.
+Kode berbentuk bulat. Kode berada di dalam cakram titik-titik di dalam cincin gelap, dengan satu baris teks yang mengikuti cincin. Titik mana yang tampil ditentukan dari hash isi kode, sehingga setiap tautan mendapat cincin tersendiri dan tautan yang sama selalu mendapat cincin yang sama.
 
 ```tsx
 <QRCode
@@ -86,66 +77,58 @@ Pengaturannya ditulis di `customProps` (bertipe `DotRingProps`):
 
 | Prop | Default | Catatan |
 | --- | --- | --- |
-| `customText` | "Scan the QR code" diulang empat kali mengelilingi cincin | Teks di sepanjang cincin. Huruf yang tidak muat di sekeliling cincin dihilangkan; `""` membiarkan cincin kosong |
+| `customText` | "Scan the QR code" empat kali mengelilingi cincin | Teks di sepanjang cincin. Huruf yang tidak muat di sekelilingnya dihilangkan; `""` membiarkan cincin kosong |
 | `textPosition` | `"top"` | `"top"`: di tengah bagian atas, dibaca searah jarum jam. `"bottom"`: di tengah bagian bawah, dibaca dari kiri ke kanan |
 | `textRotation` | `0` | Memutar teks mengelilingi pusat, dalam derajat |
 | `textColor` | `#ffffff` | Warna teks |
-| `fontFamily` | font sistem bawaan | Keluarga font CSS untuk teks |
+| `fontFamily` | susunan font sistem | Keluarga font CSS untuk teks |
 | `fontWeight` | `900` | Ketebalan font |
-| `fontSize` | `32` | Dalam gambar template berukuran 593 unit, tempat lebar kode adalah 300 |
+| `fontSize` | `32` | Dalam gambar template berukuran 593 unit, tempat kode selebar 300 |
 | `fontLetterSpacing` | `3.5` | Jarak tambahan antarhuruf, dalam satuan yang sama |
 | `outerCircleColor` | `fgColor` | Warna cincin |
-| `strokeWidth`, `strokeColor` | `0`, `#000000` | Garis tepi di kedua sisi cincin |
-| `outerStrokeWidth`, `outerStrokeColor` | `strokeWidth`, `strokeColor` | Hanya untuk tepi luar cincin |
-| `innerStrokeWidth`, `innerStrokeColor` | `strokeWidth`, `strokeColor` | Hanya untuk tepi dalam cincin |
+| `strokeWidth`, `strokeColor` | `0`, `#000000` | Garis tepi di sepanjang kedua sisi cincin |
+| `outerStrokeWidth`, `outerStrokeColor` | `strokeWidth`, `strokeColor` | Hanya tepi luar cincin |
+| `innerStrokeWidth`, `innerStrokeColor` | `strokeWidth`, `strokeColor` | Hanya tepi dalam cincin |
 
-Logo dapat ditempatkan di tengah seperti pada kode lainnya. Tautan panjang (kode dengan lebar lebih dari 49 modul) mempertahankan pita terang antara kode dan titik-titik, sehingga tetap bisa dipindai saat dicetak kecil.
+Logo diletakkan di tengah seperti pada kode mana pun. Tautan panjang (kode dengan lebar lebih dari 49 modul) mempertahankan pita terang di antara kode dan titik-titik, sehingga tetap dapat dipindai saat dicetak kecil.
 
-Teksnya adalah teks SVG dengan font pilihan Anda; bawaannya adalah font sistem, jadi tidak ada yang diunduh. Unduhan SVG dan PNG di browser memakai font milik pemirsa. PDF dan EPS mencetaknya dengan Helvetica Bold, jadi gunakan teks Latin-1 di sana. `getQRAsPNG` dari `qrdx/node` memerlukan font yang terpasang di server, seperti halnya label bingkai.
+Teksnya adalah teks SVG dengan font pilihan Anda; defaultnya adalah susunan font sistem, jadi tidak ada yang diunduh. Unduhan SVG dan PNG di browser memakai font milik pengguna yang melihatnya. PDF dan EPS mencetaknya dalam Helvetica Bold, jadi gunakan teks Latin-1 di sana. `getQRAsPNG` dari `qrdx/node` memerlukan font yang terpasang di server, seperti halnya label bingkai.
 
-## Menyesuaikan Template [#customize-templates]
+## Template adalah spesifikasi bingkai [#templates-are-frame-specs]
 
-Template bawaan menggambar desainnya dengan `fgColor`. Hal lain, seperti pola dan logo, diatur pada kode seperti biasa:
+Karya seni Arrow, Standard Box, Square Border, Striked Box, dan Halloween adalah [spesifikasi bingkai](/docs/features/frames#frame-specs), dengan format JSON yang sama seperti bingkai lainnya, digambar oleh mesin yang sama. `getTemplate(id).spec` mengembalikannya. Gunakan sebagai bingkai bila Anda menginginkan ukuran bingkai (kode mempertahankan ukurannya dan karya seni membesar di sekelilingnya) serta opsi warna bingkai:
 
 ```tsx
+import { getTemplate, QRCode } from 'qrdx';
+
+const spec = getTemplate('Arrow')?.spec;
+
 <QRCode
   value="https://example.com"
-  templateId="Arrow"
-  fgColor="#1a56db"
-  imageSettings={{
-    src: "/your-logo.png",
-    width: 48,
-    height: 48,
-    excavate: true,
-  }}
-  size={512}
+  frame={spec && { style: 'custom', spec, color: '#1a56db' }}
+  size={256}
 />
 ```
 
-## Registri Template [#template-registry]
+Dot Ring tidak punya spesifikasi: titik-titiknya berasal dari isi kode, sehingga digambar lewat kode (lihat [Bingkai yang Anda gambar lewat kode](#frames-you-draw-in-code)).
 
-### Mengambil Semua Template [#get-all-templates]
+`templateId` menggambar karya seni yang sama seperti sebelumnya. Desain tersimpan, URL gambar, perintah CLI, dan kode yang memakai id template tampil sama seperti biasa.
 
-```tsx
-import { getAllTemplates } from 'qrdx';
-
-const templates = getAllTemplates();
-```
-
-### Mengambil ID Template [#get-template-ids]
+## Registri template [#template-registry]
 
 ```tsx
-import { getTemplateIds } from 'qrdx';
+import { getAllTemplates, getTemplate, getTemplateIds } from 'qrdx';
 
-const ids = getTemplateIds();
-// Returns: ['default', 'Arrow', 'StandardBox', ...]
+getTemplateIds(); // ['default', 'Arrow', 'StandardBox', ...]
+getAllTemplates(); // every TemplateDefinition, with its id and name
+getTemplate('Halloween'); // one by id
 ```
 
-## Template Kustom [#custom-templates]
+## Bingkai yang Anda gambar lewat kode [#frames-you-draw-in-code]
 
-Tulis template Anda sendiri sebagai `TemplateDefinition`. `wrapper`-nya menerima kode sebagai `children` dan mengembalikan SVG yang akan digambar. Template digambar pada kanvas 300 kali 300, dan kode juga datang dengan ukuran itu, jadi perkecil kode agar ada ruang untuk desain Anda. `props` membawa `fgColor` dan `bgColor` milik kode.
+Spesifikasi bingkai menjelaskan karya seni yang tetap. Bila karya seni harus dihitung, tulis `TemplateDefinition` dan berikan sebagai `customTemplate`. `wrapper`-nya menerima kode sebagai `children` dan mengembalikan SVG yang akan digambar. Ia menggambar pada kanvas 300 kali 300, dan kode juga tiba dengan ukuran itu, jadi perkecil agar tersisa ruang untuk karya seni Anda. `props` membawa `fgColor` dan `bgColor` kode, dan argumen ketiga berisi `url` dan `pixelSize` kode.
 
-Contoh berikut menggambar cincin di sekeliling kode:
+Contoh ini menggambar cincin di sekitar kode:
 
 ```tsx
 import { QRCode, type TemplateDefinition } from "qrdx";
@@ -177,29 +160,10 @@ const ringTemplate: TemplateDefinition = {
 />
 ```
 
-Jaga agar kode cukup besar untuk dipindai dari jarak orang memegang ponselnya, dan sisakan celah terang antara kode dan desain Anda. Periksa hasilnya dengan [skor pemindaian](/docs/features/frames#will-it-scan).
-
-## Kapan Menggunakan Template [#when-to-use-templates]
-
-- **Konsistensi Merek** — Pastikan semua kode QR serasi
-- **Penyiapan Cepat** — Dapatkan hasil profesional dengan cepat
-- **Kampanye Musiman** — Gunakan template bertema
-- **Pembuatan Massal** — Terapkan gaya yang konsisten
-
-## Panduan Memilih Template [#template-selection-guide]
-
-| Template | Paling Cocok Untuk | Suasana |
-|----------|----------|------|
-| Default | Profesional | Netral |
-| Arrow | Teknologi, modern | Dinamis |
-| Standard Box | Korporat | Profesional |
-| Square Border | Formal | Terstruktur |
-| Striked Box | Pemasaran | Energik |
-| Halloween | Musiman | Seru |
-| Dot Ring | Kode bulat, poster, stiker | Mencolok |
+Jaga agar kode cukup besar untuk dipindai dari jarak tempat orang memegang ponsel mereka, dan sisakan celah terang antara kode dan karya seni Anda. Periksa hasilnya dengan [skor pemindaian](/docs/features/frames#will-it-scan).
 
 ## Langkah Berikutnya [#next-steps]
 
-- [Pola](/docs/features/patterns) — Penyesuaian pola secara rinci
-- [Warna & Gradien](/docs/features/colors-gradients) — Warna tingkat lanjut
-- [Logo](/docs/features/logos) — Tambahkan logo ke template
+- [Bingkai](/docs/features/frames): semua bingkai, dan format spesifikasi bingkai
+- [Pola](/docs/features/patterns): penyesuaian pola secara rinci
+- [Logo](/docs/features/logos): tambahkan logo ke kode

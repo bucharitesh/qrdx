@@ -1,3 +1,4 @@
+import { keys as analytics } from "@repo/analytics/keys";
 import { keys as auth } from "@repo/auth/keys";
 import { keys as config } from "@repo/config/keys";
 import { keys as database } from "@repo/database/keys";
@@ -19,7 +20,7 @@ import { z } from "zod";
 // Template with every variable explained: apps/docs/.env.example.
 export const env = validateTogether(() =>
   createEnv({
-    extends: [auth(), config(), core(), database(), rateLimit()],
+    extends: [analytics(), auth(), config(), core(), database(), rateLimit()],
     server: {
       // AI - Vercel AI Gateway (AI themes, prompt enhancement and AI QR art;
       // models per task in lib/ai/models.ts)
@@ -148,12 +149,9 @@ export const env = validateTogether(() =>
         .default("development"),
     },
     client: {
-      NEXT_PUBLIC_FEATUREBASE_APP_ID: z.string().min(1).optional(),
-      NEXT_PUBLIC_POSTHOG_KEY: z.string().min(1).optional(),
+      // PostHog's capture host for server events (lib/analytics/server.ts);
+      // the key and the browser-side tools' ids are @repo/analytics's keys.
       NEXT_PUBLIC_POSTHOG_HOST: z.url().min(1).optional(),
-      // Umami web analytics (cookieless). Off without the website id.
-      NEXT_PUBLIC_UMAMI_WEBSITE_ID: z.string().min(1).optional(),
-      NEXT_PUBLIC_UMAMI_SCRIPT_URL: z.url().optional(),
       NEXT_PUBLIC_QRDX_PRO_MONTHLY_PRODUCT_ID: z.string().min(1).optional(),
       NEXT_PUBLIC_QRDX_PRO_YEARLY_PRODUCT_ID: z.string().min(1).optional(),
       NEXT_PUBLIC_QRDX_BUSINESS_MONTHLY_PRODUCT_ID: z
@@ -226,12 +224,7 @@ export const env = validateTogether(() =>
       GITHUB_TOKEN: process.env.GITHUB_TOKEN,
       DOCS_ZONE_URL: process.env.DOCS_ZONE_URL,
       NODE_ENV: process.env.NODE_ENV,
-      NEXT_PUBLIC_FEATUREBASE_APP_ID:
-        process.env.NEXT_PUBLIC_FEATUREBASE_APP_ID,
-      NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY,
       NEXT_PUBLIC_POSTHOG_HOST: process.env.NEXT_PUBLIC_POSTHOG_HOST,
-      NEXT_PUBLIC_UMAMI_WEBSITE_ID: process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID,
-      NEXT_PUBLIC_UMAMI_SCRIPT_URL: process.env.NEXT_PUBLIC_UMAMI_SCRIPT_URL,
       NEXT_PUBLIC_QRDX_PRO_MONTHLY_PRODUCT_ID:
         process.env.NEXT_PUBLIC_QRDX_PRO_MONTHLY_PRODUCT_ID,
       NEXT_PUBLIC_QRDX_PRO_YEARLY_PRODUCT_ID:
