@@ -50,16 +50,16 @@ The plugin has no hooks and no scripts of its own.
 | --- | --- |
 | `.claude-plugin/plugin.json` | Claude Code manifest |
 | `.mcp.json` | MCP server for Claude Code |
-| `plugin.json` | [Agent Plugins](https://github.com/agentplugins/agent-plugins-spec) 1.0.0 manifest, read by Copilot CLI, Cursor and Codex |
+| `plugin.json` | [Agent Plugins](https://github.com/agentplugins/agent-plugins-spec) 1.0.0 manifest, read by Copilot CLI, Cursor and Codex; `extensions.com.openai` holds the OpenAI plugin directory's listing, review cases and release notes |
 | `mcp.json` | MCP server in the Agent Plugins format |
 | `skills/generate-qr/` | A copy of [`skills/generate-qr`](../../skills/generate-qr) |
 | `LICENSE` | MIT |
 
-The marketplaces that list this folder are [`.claude-plugin/marketplace.json`](../../.claude-plugin/marketplace.json) (Claude Code) and [`.cursor-plugin/marketplace.json`](../../.cursor-plugin/marketplace.json) (Cursor) at the repository root, and the Gemini CLI manifest is [`gemini-extension.json`](../../gemini-extension.json) next to them.
+The marketplaces that list this folder are [`.claude-plugin/marketplace.json`](../../.claude-plugin/marketplace.json) (Claude Code) and [`.cursor-plugin/marketplace.json`](../../.cursor-plugin/marketplace.json) (Cursor) at the repository root, and the Gemini CLI manifest is [`gemini-extension.json`](../../gemini-extension.json) next to them. The OpenAI plugin directory takes a ZIP upload of `plugin.json`, `mcp.json`, `skills/` and `assets/` from this folder.
 
 ## Changing the plugin
 
-`skills/generate-qr` is the canonical skill. After changing it, copy it here with `bun run sync:agent-plugin` from the repository root; a test fails while the two differ. Raise `version` in `plugin.json`, `.claude-plugin/plugin.json`, `gemini-extension.json` and the entry in `.cursor-plugin/marketplace.json` with every change, because Claude Code keeps people on the version they installed until it changes.
+`skills/generate-qr` is the canonical skill. After changing it, copy it here with `bun run sync:agent-plugin` from the repository root; a test fails while the two differ. Raise `version` in `plugin.json`, `.claude-plugin/plugin.json`, `gemini-extension.json` and the entry in `.cursor-plugin/marketplace.json` with every change, because Claude Code keeps people on the version they installed until it changes. For an OpenAI update, also rewrite `release_notes` under `extensions.com.openai.publication` and upload a new ZIP.
 
 ## License
 
