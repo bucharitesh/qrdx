@@ -4,10 +4,10 @@ description: "Ejecuta tu propia aplicación web de QRdx, con códigos QR dinámi
 icon: Server
 ---
 
-QRdx tiene licencia AGPL-3.0 y puedes ejecutar la aplicación web (editor de QR, cuentas, verificación en dos pasos y passkeys, códigos dinámicos y páginas alojadas, equipos, temas guardados, galería de la comunidad y esta documentación) en tu propio servidor. El inicio de sesión único del espacio de trabajo y el registro de auditoría del espacio de trabajo son la excepción: están en las carpetas `ee/`, con licencia comercial, y permanecen desactivados a menos que configures una clave de licencia (`QRDX_EE_LICENSE`). Usarlos en producción requiere un acuerdo escrito con QRdx; consulta [LICENSING.md](https://github.com/bucharitesh/qrdx/blob/main/LICENSING.md). No necesitas nada de esto para usar la [biblioteca `qrdx` de React](/docs/getting-started) ni la CLI. Ambas funcionan en cualquier lugar sin backend, bajo la licencia MIT. [Código abierto en QRdx](/open-source-qr-code-generator) enumera cada parte del repositorio y su licencia.
+QRdx tiene licencia AGPL-3.0 y puedes ejecutar la aplicación web (editor de QR, cuentas, verificación en dos pasos y passkeys, códigos dinámicos y páginas alojadas, equipos, temas guardados, galería de la comunidad y esta documentación) en tu propio servidor. El inicio de sesión único del espacio de trabajo y el registro de auditoría del espacio de trabajo son la excepción: están en las carpetas `ee/`, con licencia comercial, y permanecen desactivados a menos que configures una clave de licencia (`QRDX_EE_LICENSE`). Usarlos en producción requiere un acuerdo escrito con QRdx; consulta [LICENSING.md](https://github.com/qrdxinc/qrdx/blob/main/LICENSING.md). No necesitas nada de esto para usar la [biblioteca `qrdx` de React](/docs/getting-started) ni la CLI. Ambas funcionan en cualquier lugar sin backend, bajo la licencia MIT. [Código abierto en QRdx](/open-source-qr-code-generator) enumera cada parte del repositorio y su licencia.
 
 <Callout type="warn">
-  La configuración con Docker es nueva. Si algo no funciona, [abre una incidencia](https://github.com/bucharitesh/qrdx/issues).
+  La configuración con Docker es nueva. Si algo no funciona, [abre una incidencia](https://github.com/qrdxinc/qrdx/issues).
 </Callout>
 
 ## Requisitos [#requirements]
@@ -31,7 +31,7 @@ El esquema proviene de `packages/database/schema.ts` y se aplica con `drizzle-ki
 ### 1. Clona el repositorio [#1-clone-the-repository]
 
 ```bash
-git clone https://github.com/bucharitesh/qrdx.git
+git clone https://github.com/qrdxinc/qrdx.git
 cd qrdx
 ```
 
@@ -103,7 +103,7 @@ docker run --rm -e DATABASE_URL="<your connection string>" qrdx-migrate
 ## Instalación manual (Node.js) [#manual-setup-nodejs]
 
 ```bash
-git clone https://github.com/bucharitesh/qrdx.git
+git clone https://github.com/qrdxinc/qrdx.git
 cd qrdx
 bun install
 
@@ -129,7 +129,7 @@ DATABASE_HTTP_ENDPOINT=http://localhost:4444/sql
 
 ## Variables de entorno [#environment-variables]
 
-[`apps/docs/.env.example`](https://github.com/bucharitesh/qrdx/blob/main/apps/docs/.env.example) enumera todas las variables con una breve nota sobre dónde obtenerlas.
+[`apps/docs/.env.example`](https://github.com/qrdxinc/qrdx/blob/main/apps/docs/.env.example) enumera todas las variables con una breve nota sobre dónde obtenerlas.
 
 ### Mínimo [#minimum]
 
@@ -167,8 +167,8 @@ Añade un proveedor OAuth (GitHub o Google), o Resend para los códigos de inici
 | Enlaces cortos de Dub | `DUB_CLIENT_ID`, `DUB_CLIENT_SECRET`, `DUB_REDIRECT_URI`, `INTEGRATION_ENCRYPTION_KEY` | No se puede conectar la integración con Dub |
 | Google Drive | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_DRIVE_REDIRECT_URI`, `INTEGRATION_ENCRYPTION_KEY` | No se puede conectar la integración con Google Drive |
 | Bitly, Dropbox, OneDrive, Box, Notion | `BITLY_CLIENT_ID`/`_SECRET`, `DROPBOX_CLIENT_ID`/`_SECRET`, `MICROSOFT_CLIENT_ID`/`_SECRET`, `BOX_CLIENT_ID`/`_SECRET`, `NOTION_CLIENT_ID`/`_SECRET`, `INTEGRATION_ENCRYPTION_KEY` | Esa integración muestra "Not configured" (Bitly aún se conecta con tokens de acceso pegados). Rebrandly y Short.io no necesitan variables. Consulta [Enlaces cortos y selectores de archivos](/docs/short-links-and-file-pickers#self-hosting) |
-| Bot de Slack | `SLACK_CLIENT_ID`, `SLACK_CLIENT_SECRET`, `SLACK_SIGNING_SECRET`, más `INTEGRATION_ENCRYPTION_KEY` en producción | Sin bot de Slack: sus rutas y su página de enlace responden 404 y Settings no lo ofrece. Crea tu propia aplicación de Slack a partir de [`plugins/slack/manifest.json`](https://github.com/bucharitesh/qrdx/tree/main/plugins/slack) como describe su README. Consulta [Bot de Slack](/docs/slack-bot#self-hosting) |
-| Bot de Discord | `DISCORD_APPLICATION_ID`, `DISCORD_PUBLIC_KEY` | Sin bot de Discord: su endpoint de interacciones responde `404` y queda fuera del directorio de integraciones. Registra tu propia aplicación de Discord como describe [`plugins/discord/README.md`](https://github.com/bucharitesh/qrdx/tree/main/plugins/discord) |
+| Bot de Slack | `SLACK_CLIENT_ID`, `SLACK_CLIENT_SECRET`, `SLACK_SIGNING_SECRET`, más `INTEGRATION_ENCRYPTION_KEY` en producción | Sin bot de Slack: sus rutas y su página de enlace responden 404 y Settings no lo ofrece. Crea tu propia aplicación de Slack a partir de [`plugins/slack/manifest.json`](https://github.com/qrdxinc/qrdx/tree/main/plugins/slack) como describe su README. Consulta [Bot de Slack](/docs/slack-bot#self-hosting) |
+| Bot de Discord | `DISCORD_APPLICATION_ID`, `DISCORD_PUBLIC_KEY` | Sin bot de Discord: su endpoint de interacciones responde `404` y queda fuera del directorio de integraciones. Registra tu propia aplicación de Discord como describe [`plugins/discord/README.md`](https://github.com/qrdxinc/qrdx/tree/main/plugins/discord) |
 | Bot de Telegram | `TELEGRAM_BOT_TOKEN`, `TELEGRAM_WEBHOOK_SECRET`, `TELEGRAM_BOT_USERNAME` | Sin bot de Telegram: sus rutas responden 404 y el sitio no lo muestra. Crea tu propio bot con @BotFather y ejecuta `plugins/telegram/scripts/setup.mjs`. Consulta [Bot de Telegram](/docs/telegram-bot#self-hosting) |
 | Límite de frecuencia (Upstash) | `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN` (o los nombres de Vercel KV `KV_REST_API_URL`, `KV_REST_API_TOKEN`) | Sin límite de frecuencia. Recomendado en producción. |
 | Analítica (PostHog, tras el consentimiento de cookies) | `NEXT_PUBLIC_POSTHOG_KEY`, `NEXT_PUBLIC_POSTHOG_HOST` | Sin analítica de producto |
