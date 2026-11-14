@@ -1,0 +1,87 @@
+---
+title: "Preact"
+description: "通过 qrdx/preact 将带样式的二维码用作 Preact 组件：使用 Preact 自带的 h 绘制（无需 preact/compat），可通过 preact-render-to-string 在服务器端渲染，并在激活（hydrate）时无需重绘。"
+icon: FileCode
+---
+
+`qrdx/preact` 为 Preact 提供了与 React 库相同的两个 SVG 组件：`QRCodeSVG` 和 `QRCode`。它们使用 Preact 自带的 `h` 绘制，因此无需 `preact/compat`，绘制出的 SVG 也与 React 组件完全一致。
+
+## 安装 [#install]
+
+```package-install
+qrdx@latest
+```
+
+`preact` 10 或更高版本是 `qrdx` 的可选对等依赖。你的应用本来就已安装它，也不需要 `react`。
+
+## 绘制二维码 [#draw-a-code]
+
+```tsx
+import { QRCodeSVG } from "qrdx/preact";
+
+export function MenuCode() {
+  return (
+    <QRCodeSVG
+      value="https://example.com/menu"
+      size={256}
+      bodyPattern="rounded"
+      frame={{ style: "banner-bottom", text: "Scan me" }}
+      aria-label="QR code for the menu"
+    />
+  );
+}
+```
+
+`QRCodeSVG` 支持 React 版 `QRCodeSVG` 的所有选项：图案、颜色与渐变、徽标（`imageSettings`）、边框、形状、模板和 Art QR。`class`、`style`、`aria-label` 等属性会加在 `<svg>` 上；如果有边框，则加在边框最外层的 `<svg>` 上。
+
+`QRCode` 增加了 React 版 `QRCode` 的徽标快捷方式：`logo`、`logoOptions`、`hideLogo` 和 `scale`。
+
+```tsx
+import { QRCode } from "qrdx/preact";
+
+<QRCode value="https://example.com" logo="/logo.png" level="H" />;
+```
+
+当属性发生变化时，两个组件都会重绘；没有变化时则跳过绘制。与 React 中一样，props 里的事件处理函数不会加到 `<svg>` 上，请把它们加在二维码外层的元素上。
+
+## 服务器端渲染 [#server-rendering]
+
+`preact-render-to-string` 的 `renderToString` 输出的 SVG 与 `qrdx/core` 的 `toSVGString` 相同。唯一的区别在于转义：Preact 在文本中保留 `>` 和 `'` 原样，而 core 会写成 `&gt;` 和 `&#x27;`。浏览器对两者的解析结果一致。
+
+`hydrate` 会保留服务器输出的 `<svg>`，不会再次绘制。标记中没有随机 id，因此服务器与浏览器始终保持一致。
+
+## 下载、标记和扫描评分 [#downloads-markup-and-the-scan-score]
+
+这些组件只负责绘制二维码。下载、`toSVGString`、扫描评分以及其他函数都来自 `qrdx/core`。组件本身已在使用这个引擎，所以不会被重复打包。
+
+```tsx
+import { downloadQRCode } from "qrdx/core";
+import { QRCodeSVG } from "qrdx/preact";
+
+const options = { value: "https://example.com", size: 256 };
+
+export function DownloadableCode() {
+  return (
+    <>
+      <QRCodeSVG {...options} />
+      <button
+        type="button"
+        onClick={() =>
+          downloadQRCode(options, {
+            format: "png",
+            size: { width: 1024, height: 1024 },
+          })
+        }
+      >
+        Download PNG
+      </button>
+    </>
+  );
+}
+```
+
+[Vanilla JavaScript](/docs/vanilla-js) 对 `qrdx/core` 有完整介绍。
+
+## 配合 preact/compat 使用 [#with-preactcompat]
+
+如果你的应用已经把 `react` 别名指向 `preact/compat`，那么 `qrdx` 的 React 组件同样可用：`import { QRCodeSVG } from "qrdx"`。`qrdx/preact` 无需别名即可绘制相同的二维码，因此在 Preact 应用中添加 `qrdx` 时，建议优先使用它。

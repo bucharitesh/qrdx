@@ -91,7 +91,7 @@ Its settings go in `customProps` (typed as `DotRingProps`):
 | `outerStrokeWidth`, `outerStrokeColor` | `strokeWidth`, `strokeColor` | The ring's outer edge only |
 | `innerStrokeWidth`, `innerStrokeColor` | `strokeWidth`, `strokeColor` | The ring's inner edge only |
 
-Text that fits the ring is set as given, centered over the top or along the bottom. Text too long for it never runs into its own start. The letters move closer first, then the font gets smaller, down to half the default size (the smallest frame labels get). The text then closes the ring with a word space where it meets its start. If it still doesn't fit at that size, it's cut after the last whole word that does.
+Text that fits the ring is set as given, centered over the top or along the bottom. Text too long for it never runs into its own start. The letters move closer first, then the font gets smaller, down to half the default size (the smallest frame labels get). The text then closes the ring with a word space where it meets its start. If it still doesn't fit at that size, text that repeats a phrase keeps as many whole copies as fit, and other text is cut after the last whole word that does and ends with "…".
 
 A logo goes in the middle as on any code. Long links (codes over 49 modules across) keep a light band between the code and the dots, so they still scan when printed small.
 

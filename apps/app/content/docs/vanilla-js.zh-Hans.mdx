@@ -1,0 +1,144 @@
+---
+title: "Vanilla JavaScript"
+description: "无需 React，即可绘制、更新和导出带样式的二维码：在页面或应用中使用 qrdx/vanilla，用 qrdx/core 生成标记和 DOM 节点，无打包工具的页面可使用单个 ES 模块。"
+icon: FileCode
+---
+
+`qrdx` 并不只适用于 React。React 组件所用的绘制引擎已作为 `qrdx/core` 单独发布，而 `qrdx/vanilla` 则在其基础上为原生 JavaScript 提供了一套小巧的 API。它们绘制的 SVG 与 `QRCodeSVG` 逐字节完全一致，支持所有样式、边框、Logo 和导出功能。两者都不会导入 `react` 或 `react-dom`。
+
+## 安装 [#install]
+
+```package-install
+qrdx@latest
+```
+
+`react` 和 `react-dom` 是可选的对等依赖。使用 `qrdx/vanilla` 或 `qrdx/core` 时不需要它们。
+
+## 在页面中绘制二维码 [#draw-a-code-in-a-page]
+
+```js
+import { createQRCode } from "qrdx/vanilla";
+
+const qr = createQRCode("#qr", {
+  value: "https://example.com",
+  size: 256,
+  bodyPattern: "rounded",
+  frame: { style: "banner-bottom", text: "Scan me" },
+  "aria-label": "QR code for example.com",
+});
+```
+
+`createQRCode(element, options)` 接受一个元素或 CSS 选择器，以及 `QRCodeSVG` 支持的所有选项：图案、颜色与渐变、Logo（`imageSettings`）、边框、形状和 Art QR。`className`、`style` 或 `aria-label` 等属性会设置在 `<svg>` 上。`<svg>` 通过 `createElementNS` 构建，因此不会解析任何 HTML。
+
+## 更新、导出和移除 [#update-export-and-remove-it]
+
+```js
+qr.update({ fgColor: "#1d4ed8" });
+
+qr.toSVGString(); // the SVG markup
+await qr.toDataURL("png", { size: 1024 }); // "png", "jpg", "webp", "svg", "pdf" or "eps"
+await qr.download({ format: "svg", filename: "menu.svg" });
+
+qr.destroy();
+```
+
+- `update` 会把新选项合并到当前选项中并重新绘制。传入 `undefined` 可移除某个选项。如果标记没有变化，则不会改动页面。
+- `toDataURL` 和 `download` 默认以二维码自身的 `size` 输出 PNG。添加边框后，图片会比二维码本身更大。导出 PDF 需要可选的 `jspdf` 包。
+- `qr.svg` 是 `<svg>` 元素，`qr.options` 是当前选项。
+- `destroy` 会移除 `<svg>`。调用后再调用 `update` 会抛出错误。
+
+## 无需打包工具 [#without-a-bundler]
+
+`dist/vanilla.browser.mjs` 是同一套 API 的单个 ES 模块，适合直接从 CDN 加载的页面：
+
+```html
+<div id="qr"></div>
+<script type="module">
+  import { createQRCode } from "https://cdn.jsdelivr.net/npm/qrdx/dist/vanilla.browser.mjs";
+
+  createQRCode("#qr", { value: "https://example.com", size: 256 });
+</script>
+```
+
+在 URL 中 `qrdx` 之后添加 `@` 和版本号即可锁定版本。相同的路径在 unpkg 上同样适用。
+
+该文件不包含官方边框库的数据，因此不使用边框库的页面不必下载这些数据。若要使用官方边框，请从相邻的文件中导入：
+
+```js
+import { getOfficialFrame } from "https://cdn.jsdelivr.net/npm/qrdx/dist/frames-official.mjs";
+
+const wifi = getOfficialFrame("wifi-card");
+qr.update({ frame: { style: "custom", spec: wifi.spec } });
+```
+
+PDF 导出和扫描评分会在运行时加载 `jspdf` 和 `jsqr`。使用它们的页面需要通过 import map 映射这两个包，并将其放在模块脚本之前：
+
+```html
+<script type="importmap">
+  {
+    "imports": {
+      "jspdf": "https://cdn.jsdelivr.net/npm/jspdf@4/+esm",
+      "jsqr": "https://cdn.jsdelivr.net/npm/jsqr@1/+esm"
+    }
+  }
+</script>
+```
+
+## 标记和 DOM 节点（qrdx/core） [#markup-and-dom-nodes-qrdxcore]
+
+`qrdx/core` 包含主入口 `qrdx` 的全部功能，但不含 React 组件。它既可在 Node 中运行，也可在浏览器中运行。
+
+```ts
+import {
+  createQRCodeTree,
+  renderToDOM,
+  renderToString,
+  resolveQRCodeProps,
+  toSVGElement,
+  toSVGString,
+} from "qrdx/core";
+
+// What <QRCodeSVG> renders, as a string (no DOM needed)
+const svg = toSVGString({ value: "https://example.com", size: 256 });
+
+// The same code as an <svg> element
+document.body.append(toSVGElement({ value: "https://example.com" }));
+
+// The code as plain { type, props, key } nodes, then markup or DOM nodes
+const tree = createQRCodeTree({ value: "https://example.com" });
+renderToString(tree);
+renderToDOM(tree);
+
+// <QRCode>'s logo API (logo, logoOptions, hideLogo, scale)
+toSVGString(resolveQRCodeProps({ value: "https://example.com", logo: "/logo.png" }));
+```
+
+输出中没有随机 id，因此在服务器上渲染的标记与浏览器中的一致。下载、扫描评分以及可直接印刷的 PDF 和 EPS，使用的函数与 React 库中相同：`downloadQRCode`、`getQRCodeDataUrl`、`getScanScore`、`downloadPrintPDF` 等。若要在服务器上生成 PNG，请使用 `qrdx/node` 中的 `getQRAsPNG`。
+
+## 无需 JSX 的自定义模板 [#custom-templates-without-jsx]
+
+模板的 `wrapper` 接收绘制好的二维码，并返回包装后的结果。`h(type, props, ...children)` 可以不借助 JSX 来编写它：
+
+```js
+import { h, toSVGString } from "qrdx/core";
+
+const Labelled = {
+  id: "Labelled",
+  name: "Labelled",
+  wrapper: (children, props) =>
+    h(
+      "svg",
+      { viewBox: "0 0 300 340", xmlns: "http://www.w3.org/2000/svg" },
+      h("g", { transform: "translate(20, 20) scale(0.87)" }, children),
+      h("text", { x: "150", y: "325", textAnchor: "middle" }, props?.label)
+    ),
+};
+
+toSVGString({
+  value: "https://example.com",
+  customTemplate: Labelled,
+  customProps: { label: "Scan me" },
+});
+```
+
+如果改为从 `qrdx` 导入 `h`，同一个 wrapper 也可以在 React 组件中使用。

@@ -1,0 +1,144 @@
+---
+title: "Vanilla JavaScript"
+description: "React 없이 스타일이 적용된 QR 코드를 그리고, 업데이트하고, 내보내 보세요. 페이지나 앱에서는 qrdx/vanilla, 마크업과 DOM 노드에는 qrdx/core, 번들러가 없는 페이지에는 ES 모듈 하나를 사용합니다."
+icon: FileCode
+---
+
+`qrdx`는 React 전용이 아닙니다. React 컴포넌트가 그리기에 사용하는 엔진은 `qrdx/core`로 따로 배포되며, `qrdx/vanilla`는 그 위에 순수 JavaScript용 작은 API를 더합니다. 둘 다 `QRCodeSVG`와 바이트 단위로 똑같은 SVG를 그리며, 모든 스타일, 프레임, 로고, 내보내기를 지원합니다. 둘 다 `react`나 `react-dom`을 import하지 않습니다.
+
+## 설치 [#install]
+
+```package-install
+qrdx@latest
+```
+
+`react`와 `react-dom`은 선택적 peer dependency입니다. `qrdx/vanilla`나 `qrdx/core`에는 필요하지 않습니다.
+
+## 페이지에 코드 그리기 [#draw-a-code-in-a-page]
+
+```js
+import { createQRCode } from "qrdx/vanilla";
+
+const qr = createQRCode("#qr", {
+  value: "https://example.com",
+  size: 256,
+  bodyPattern: "rounded",
+  frame: { style: "banner-bottom", text: "Scan me" },
+  "aria-label": "QR code for example.com",
+});
+```
+
+`createQRCode(element, options)`는 요소 또는 CSS 선택자와 `QRCodeSVG`가 받는 모든 옵션(패턴, 색상과 그라디언트, 로고(`imageSettings`), 프레임, 모양, Art QR)을 받습니다. `className`, `style`, `aria-label` 같은 속성은 `<svg>`에 적용됩니다. `<svg>`는 `createElementNS`로 만들어지므로 HTML을 파싱하지 않습니다.
+
+## 업데이트, 내보내기, 제거 [#update-export-and-remove-it]
+
+```js
+qr.update({ fgColor: "#1d4ed8" });
+
+qr.toSVGString(); // the SVG markup
+await qr.toDataURL("png", { size: 1024 }); // "png", "jpg", "webp", "svg", "pdf" or "eps"
+await qr.download({ format: "svg", filename: "menu.svg" });
+
+qr.destroy();
+```
+
+- `update`는 새 옵션을 현재 옵션에 병합한 뒤 다시 그립니다. 옵션을 제거하려면 `undefined`를 전달하세요. 마크업이 바뀌지 않으면 페이지는 변경되지 않습니다.
+- `toDataURL`과 `download`는 기본적으로 코드 자체의 `size`로 PNG를 만듭니다. 프레임이 있으면 이미지가 코드보다 커집니다. PDF에는 선택 패키지인 `jspdf`가 필요합니다.
+- `qr.svg`는 `<svg>` 요소이고 `qr.options`는 현재 옵션입니다.
+- `destroy`는 `<svg>`를 제거합니다. 그 이후에 `update`를 호출하면 오류가 발생합니다.
+
+## 번들러 없이 사용하기 [#without-a-bundler]
+
+`dist/vanilla.browser.mjs`는 같은 API를 ES 모듈 하나로 만든 파일로, CDN에서 바로 불러오는 페이지에 사용합니다.
+
+```html
+<div id="qr"></div>
+<script type="module">
+  import { createQRCode } from "https://cdn.jsdelivr.net/npm/qrdx/dist/vanilla.browser.mjs";
+
+  createQRCode("#qr", { value: "https://example.com", size: 256 });
+</script>
+```
+
+버전을 고정하려면 URL의 `qrdx` 뒤에 `@`와 버전을 붙이세요. 같은 경로가 unpkg에서도 동작합니다.
+
+이 파일에는 공식 프레임 라이브러리 데이터가 들어 있지 않아, 사용하지 않는 페이지가 그 데이터를 내려받지 않습니다. 공식 프레임을 사용하려면 옆에 있는 파일에서 import하세요.
+
+```js
+import { getOfficialFrame } from "https://cdn.jsdelivr.net/npm/qrdx/dist/frames-official.mjs";
+
+const wifi = getOfficialFrame("wifi-card");
+qr.update({ frame: { style: "custom", spec: wifi.spec } });
+```
+
+PDF 내보내기와 스캔 점수는 실행될 때 `jspdf`와 `jsqr`를 불러옵니다. 이 기능을 사용하는 페이지에서는 모듈 스크립트보다 앞에 둔 import map으로 두 패키지를 매핑하세요.
+
+```html
+<script type="importmap">
+  {
+    "imports": {
+      "jspdf": "https://cdn.jsdelivr.net/npm/jspdf@4/+esm",
+      "jsqr": "https://cdn.jsdelivr.net/npm/jsqr@1/+esm"
+    }
+  }
+</script>
+```
+
+## 마크업과 DOM 노드 (qrdx/core) [#markup-and-dom-nodes-qrdxcore]
+
+`qrdx/core`에는 React 컴포넌트를 제외하고 `qrdx` 기본 진입점이 가진 모든 기능이 있습니다. Node와 브라우저에서 모두 동작합니다.
+
+```ts
+import {
+  createQRCodeTree,
+  renderToDOM,
+  renderToString,
+  resolveQRCodeProps,
+  toSVGElement,
+  toSVGString,
+} from "qrdx/core";
+
+// What <QRCodeSVG> renders, as a string (no DOM needed)
+const svg = toSVGString({ value: "https://example.com", size: 256 });
+
+// The same code as an <svg> element
+document.body.append(toSVGElement({ value: "https://example.com" }));
+
+// The code as plain { type, props, key } nodes, then markup or DOM nodes
+const tree = createQRCodeTree({ value: "https://example.com" });
+renderToString(tree);
+renderToDOM(tree);
+
+// <QRCode>'s logo API (logo, logoOptions, hideLogo, scale)
+toSVGString(resolveQRCodeProps({ value: "https://example.com", logo: "/logo.png" }));
+```
+
+출력에는 무작위 id가 없으므로 서버에서 렌더링한 마크업이 브라우저의 마크업과 일치합니다. 다운로드, 스캔 점수, 인쇄용 PDF와 EPS는 React 라이브러리와 같은 함수(`downloadQRCode`, `getQRCodeDataUrl`, `getScanScore`, `downloadPrintPDF` 등)로 제공됩니다. 서버에서 PNG가 필요하면 `qrdx/node`의 `getQRAsPNG`를 사용하세요.
+
+## JSX 없이 사용자 지정 템플릿 만들기 [#custom-templates-without-jsx]
+
+템플릿의 `wrapper`는 그려진 코드를 받아 감싼 결과를 반환합니다. `h(type, props, ...children)`를 사용하면 JSX 없이 wrapper를 작성할 수 있습니다.
+
+```js
+import { h, toSVGString } from "qrdx/core";
+
+const Labelled = {
+  id: "Labelled",
+  name: "Labelled",
+  wrapper: (children, props) =>
+    h(
+      "svg",
+      { viewBox: "0 0 300 340", xmlns: "http://www.w3.org/2000/svg" },
+      h("g", { transform: "translate(20, 20) scale(0.87)" }, children),
+      h("text", { x: "150", y: "325", textAnchor: "middle" }, props?.label)
+    ),
+};
+
+toSVGString({
+  value: "https://example.com",
+  customTemplate: Labelled,
+  customProps: { label: "Scan me" },
+});
+```
+
+`h`를 `qrdx`에서 import하면 같은 wrapper를 React 컴포넌트에서도 사용할 수 있습니다.

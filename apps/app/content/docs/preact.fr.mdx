@@ -1,0 +1,87 @@
+---
+title: "Preact"
+description: "QR codes stylisés sous forme de composants Preact avec qrdx/preact, dessinés avec le `h` natif de Preact (sans preact/compat), rendus côté serveur avec preact-render-to-string et hydratés sans nouveau dessin."
+icon: FileCode
+---
+
+`qrdx/preact` propose pour Preact les deux composants SVG de la bibliothèque React, `QRCodeSVG` et `QRCode`. Ils dessinent avec le `h` natif de Preact, donc vous n'avez pas besoin de `preact/compat`, et ils produisent le même SVG que les composants React.
+
+## Installation [#install]
+
+```package-install
+qrdx@latest
+```
+
+`preact` 10 ou version ultérieure est une dépendance peer facultative de `qrdx`. Votre application l'a déjà, et vous n'avez pas besoin de `react`.
+
+## Dessiner un code [#draw-a-code]
+
+```tsx
+import { QRCodeSVG } from "qrdx/preact";
+
+export function MenuCode() {
+  return (
+    <QRCodeSVG
+      value="https://example.com/menu"
+      size={256}
+      bodyPattern="rounded"
+      frame={{ style: "banner-bottom", text: "Scan me" }}
+      aria-label="QR code for the menu"
+    />
+  );
+}
+```
+
+`QRCodeSVG` accepte toutes les options du `QRCodeSVG` de React : motifs, couleurs et dégradés, logos (`imageSettings`), cadres, formes, modèles et Art QR. Les attributs comme `class`, `style` ou `aria-label` sont placés sur le `<svg>`, ou sur le `<svg>` extérieur du cadre lorsqu'il y a un cadre.
+
+`QRCode` ajoute le raccourci de logo du `QRCode` de React : `logo`, `logoOptions`, `hideLogo` et `scale`.
+
+```tsx
+import { QRCode } from "qrdx/preact";
+
+<QRCode value="https://example.com" logo="/logo.png" level="H" />;
+```
+
+Les deux composants se redessinent quand une prop change et ne font aucun travail lorsqu'aucune n'a changé. Les gestionnaires d'événements passés dans les props ne sont pas placés sur le `<svg>`, comme dans React. Placez-les sur un élément qui entoure le code.
+
+## Rendu côté serveur [#server-rendering]
+
+`renderToString` de `preact-render-to-string` produit le même SVG que `toSVGString` de `qrdx/core`. La seule différence concerne l'échappement : Preact laisse `>` et `'` tels quels dans le texte, là où le cœur écrit `&gt;` et `&#x27;`. Les navigateurs interprètent les deux de la même façon.
+
+`hydrate` conserve le `<svg>` du serveur et ne le redessine pas. Le balisage ne contient aucun identifiant aléatoire, donc le serveur et le navigateur sont toujours d'accord.
+
+## Téléchargements, balisage et score de scan [#downloads-markup-and-the-scan-score]
+
+Les composants se contentent de dessiner le code. Les téléchargements, `toSVGString`, le score de scan et les autres fonctions viennent de `qrdx/core`. C'est le moteur que les composants utilisent déjà, il n'est donc pas inclus deux fois.
+
+```tsx
+import { downloadQRCode } from "qrdx/core";
+import { QRCodeSVG } from "qrdx/preact";
+
+const options = { value: "https://example.com", size: 256 };
+
+export function DownloadableCode() {
+  return (
+    <>
+      <QRCodeSVG {...options} />
+      <button
+        type="button"
+        onClick={() =>
+          downloadQRCode(options, {
+            format: "png",
+            size: { width: 1024, height: 1024 },
+          })
+        }
+      >
+        Download PNG
+      </button>
+    </>
+  );
+}
+```
+
+[JavaScript natif](/docs/vanilla-js) présente `qrdx/core` en détail.
+
+## Avec preact/compat [#with-preactcompat]
+
+Si votre application associe déjà `react` à `preact/compat` par un alias, les composants React de `qrdx` fonctionnent aussi : `import { QRCodeSVG } from "qrdx"`. `qrdx/preact` dessine le même code sans alias, alors préférez-le quand vous ajoutez `qrdx` à une application Preact.

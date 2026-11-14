@@ -4,7 +4,7 @@
     "status": "machine"
   },
   "(react)/meta.json": {
-    "source": "079cea1b5c15",
+    "source": "e2d6a9c652cc",
     "status": "machine"
   },
   "(self-hosting)/meta.json": {
@@ -172,7 +172,7 @@
     "status": "machine"
   },
   "features/templates.mdx": {
-    "source": "20d758ca35ca",
+    "source": "21e2406ba13a",
     "status": "machine"
   },
   "files.mdx": {
@@ -188,7 +188,7 @@
     "status": "machine"
   },
   "help/account-and-billing/affiliate-program.mdx": {
-    "source": "810d6f835b6c",
+    "source": "84e583e74de4",
     "status": "machine"
   },
   "help/account-and-billing/cancel.mdx": {
@@ -459,6 +459,10 @@
     "source": "1db05fb2b86d",
     "status": "machine"
   },
+  "preact.mdx": {
+    "source": "135fc638eeeb",
+    "status": "machine"
+  },
   "precise-location.mdx": {
     "source": "4b2a7cbe3af3",
     "status": "machine"
@@ -487,6 +491,10 @@
     "source": "78fca9c833b6",
     "status": "machine"
   },
+  "solid.mdx": {
+    "source": "8406c12838b0",
+    "status": "machine"
+  },
   "styles.mdx": {
     "source": "26fadbacd0e4",
     "status": "machine"
@@ -509,6 +517,18 @@
   },
   "utilities.mdx": {
     "source": "40385e9a9f9c",
+    "status": "machine"
+  },
+  "vanilla-js.mdx": {
+    "source": "07d39db04236",
+    "status": "machine"
+  },
+  "vue.mdx": {
+    "source": "325e62a49c14",
+    "status": "machine"
+  },
+  "web-component.mdx": {
+    "source": "63ef948e32f4",
     "status": "machine"
   },
   "webhooks.mdx": {
