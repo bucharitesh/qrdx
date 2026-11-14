@@ -4,7 +4,7 @@
 -- utm_campaign for every code.
 --
 -- Written by the dashboard-gaps agent (2026-11-04). Read by the UTM panel's
--- templates (apps/docs/lib/utm-templates.ts, feat/code-features), which
+-- templates (apps/app/lib/utm-templates.ts, feat/code-features), which
 -- stay hidden until this is applied: the missing table counts as "off".
 --
 -- Additive and idempotent: safe to run more than once, in one transaction. It
@@ -12,7 +12,7 @@
 -- column.
 --
 -- `utm` holds the same shape as qr_code.utm, validated by the app with
--- utmConfigSchema (apps/docs/lib/redirect/routing.ts) on read and write.
+-- utmConfigSchema (apps/app/lib/redirect/routing.ts) on read and write.
 -- Scope: the workspace (organization_id, required: every row belongs to
 -- one, as with the app's other workspace data since workspaces shipped).
 -- user_id is the creator. Deleting the creator or the workspace deletes

@@ -9,7 +9,7 @@ export const keys = () =>
   createEnv({
     client: {
       // PostHog product analytics, after the visitor's "Analytics" consent
-      // (posthog.ts). Server events read it too (apps/docs/lib/analytics/server.ts).
+      // (posthog.ts). Server events read it too (apps/app/lib/analytics/server.ts).
       NEXT_PUBLIC_POSTHOG_KEY: z.string().min(1).optional(),
       // Umami web analytics (cookieless). Off without the website id.
       NEXT_PUBLIC_UMAMI_WEBSITE_ID: z.string().min(1).optional(),

@@ -1,7 +1,7 @@
 # Calls the webhook worker (/api/cron/webhooks) every 5 minutes, so webhook
 # retries, closed scan batches and data-sync retries go out within a few
 # minutes, and destinations created without a Web Risk answer (large
-# batches, lib/safety/recheck.ts) are looked up. Vercel Hobby only allows daily crons (apps/docs/vercel.json keeps
+# batches, lib/safety/recheck.ts) are looked up. Vercel Hobby only allows daily crons (apps/app/vercel.json keeps
 # that daily full run); Actions minutes are free for this public repo.
 #
 # Required secret: CRON_SECRET (Settings → Secrets and variables → Actions),

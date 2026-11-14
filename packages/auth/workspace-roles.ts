@@ -26,7 +26,7 @@ import {
 // neither layer changes anything they do.
 //
 // The gate also keeps the owner and billing roles, which decide who pays, to
-// owners (apps/docs/lib/permissions.ts canAssignRole): the plugin only
+// owners (apps/app/lib/permissions.ts canAssignRole): the plugin only
 // reserves the owner role, so over HTTP an admin could otherwise give or
 // take away billing, or remove a billing member. The app's actions check
 // this first, with their own words.

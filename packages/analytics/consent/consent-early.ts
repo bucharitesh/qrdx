@@ -21,7 +21,7 @@ const EARLY_ACTIONS = new Set<string>(EARLY_BANNER_ACTIONS);
 
 /**
  * Runs in <head>, before the body paints; the app renders it inline with
- * the request's CSP nonce (apps/docs/components/consent/
+ * the request's CSP nonce (apps/app/components/consent/
  * consent-early-script.tsx). A visitor with no stored choice (c15t's `c15t`
  * cookie / localStorage key) gets the attribute that reveals the
  * server-rendered cookie banner, so it paints with the page instead of

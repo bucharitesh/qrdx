@@ -32,19 +32,19 @@ export interface UserSettings {
   lastWorkspaceId?: string;
   /**
    * "What's new": the newest changelog day (YYYY-MM-DD) the person has seen
-   * (apps/docs/actions/changelog.ts). Written by the app only.
+   * (apps/app/actions/changelog.ts). Written by the app only.
    */
   changelogSeenAt?: string;
   /**
    * "What's new": changelog entries the person is done with (a dismissed
    * card, a closed announcement), newest last, at most 50. Written by the
-   * app only (apps/docs/actions/changelog.ts).
+   * app only (apps/app/actions/changelog.ts).
    */
   whatsNewDismissed?: string[];
   /**
    * Feature spotlights the person dismissed or used (ids from
-   * apps/docs/lib/spotlights.ts), newest last, at most 50. Written by the
-   * app only (apps/docs/actions/spotlights.ts).
+   * apps/app/lib/spotlights.ts), newest last, at most 50. Written by the
+   * app only (apps/app/actions/spotlights.ts).
    */
   spotlightsSeen?: string[];
 }
@@ -453,7 +453,7 @@ export const integration = pgTable(
   ]
 );
 
-// ─── The QRdx bot for Slack (apps/docs/lib/slack-bot) ───────────────────────
+// ─── The QRdx bot for Slack (apps/app/lib/slack-bot) ───────────────────────
 // Two tables of their own (manual-sql/2026-11-10-slack-bot.sql); the app only
 // reads or writes them while the bot is configured (SLACK_SIGNING_SECRET and
 // the Slack app keys). No message text is ever stored.
@@ -573,7 +573,7 @@ export const themeLike = pgTable(
 // copy of the current version for fast reads. Only new tables: nothing
 // existing changes, so code deployed before the SQL keeps working, and code
 // that reads these tables falls back to community_theme until they exist
-// (apps/docs/lib/community/store.ts).
+// (apps/app/lib/community/store.ts).
 
 /** Item types, in gallery order (a text column: a new type needs no SQL). */
 export const COMMUNITY_ITEM_TYPES = [
@@ -683,7 +683,7 @@ export const communityItem = pgTable(
     index("community_item_payload_hash_idx").on(table.payloadHash),
     index("community_item_source_idx").on(table.sourceKind, table.sourceId),
     // Full-text search (manual-sql/0017_community_search.sql; the expression
-    // must stay the one apps/docs/lib/community/search.ts queries)
+    // must stay the one apps/app/lib/community/search.ts queries)
     index("community_item_search_idx").using(
       "gin",
       sql`to_tsvector('simple'::regconfig, coalesce("name", '') || ' ' || coalesce("description", ''))`
@@ -959,7 +959,7 @@ export const adminAuditLog = pgTable(
   ]
 );
 
-// Workspace audit log (apps/docs/ee/audit-log, Business): who changed what in
+// Workspace audit log (apps/app/ee/audit-log, Business): who changed what in
 // a workspace, read by its owners and admins. Separate from the staff log
 // above. manual-sql/2026-11-09-workspace-audit-log.sql creates it.
 export const workspaceAuditLog = pgTable(
@@ -1003,7 +1003,7 @@ export const workspaceAuditLog = pgTable(
   ]
 );
 
-// ─── Affiliate program (apps/docs/lib/affiliates) ────────────────────────────
+// ─── Affiliate program (apps/app/lib/affiliates) ────────────────────────────
 // People apply, an admin approves them, and their referral link brings in new
 // accounts. Paid Polar orders from those accounts earn a commission, which
 // waits 30 days and is then paid by hand through PayPal; the app only records
@@ -1076,7 +1076,7 @@ export const affiliateReferral = pgTable(
 
 // Kept for bookkeeping when the affiliate deletes their account: the
 // affiliate and user are set to null and the PayPal address is cleared
-// (apps/docs/lib/account/deletion-server.ts); the amount, currency, rates,
+// (apps/app/lib/account/deletion-server.ts); the amount, currency, rates,
 // date and PayPal reference stay.
 export const affiliatePayout = pgTable(
   "affiliate_payout",
@@ -1203,7 +1203,7 @@ export const affiliateRefundedOrder = pgTable("affiliate_refunded_order", {
 });
 
 // ─── Growth analytics (manual-sql/2026-11-13-growth-analytics.sql) ───────────
-// apps/docs/lib/analytics: how an account found QRdx, where codes are made,
+// apps/app/lib/analytics: how an account found QRdx, where codes are made,
 // and daily API, MCP and chat bot usage counts.
 
 /** user_acquisition.channel, worked out on the server (lib/analytics/channel.ts). */
@@ -1528,7 +1528,7 @@ export const brandKit = pgTable(
     // NULL: an older QR design kit (merged into saved themes, unused);
     // "client": a client's name, logo and accent (colors.accent) for shared
     // stats pages; "portal": the workspace's client-portal branding, one per
-    // workspace (apps/docs/lib/client-brands.ts).
+    // workspace (apps/app/lib/client-brands.ts).
     purpose: text("purpose", { enum: BRAND_KIT_PURPOSES }),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at")
@@ -1897,7 +1897,7 @@ export const utmTemplate = pgTable(
       .notNull()
       .references(() => organization.id, { onDelete: "cascade" }),
     name: text("name").notNull(),
-    // Same shape as qr_code.utm (utmConfigSchema in apps/docs/lib/redirect/routing.ts)
+    // Same shape as qr_code.utm (utmConfigSchema in apps/app/lib/redirect/routing.ts)
     utm: json("utm").$type<unknown>().notNull(),
     createdAt: timestamp("created_at").notNull(),
     updatedAt: timestamp("updated_at").notNull(),
@@ -1975,7 +1975,7 @@ export const codePublicStats = pgTable(
   ]
 );
 
-// ─── Client portal (apps/docs/lib/portal, agency tools) ─────────────────────
+// ─── Client portal (apps/app/lib/portal, agency tools) ─────────────────────
 // People outside a workspace (an agency's clients) invited to a read-only
 // view of some of its folders at /portal/<workspace-slug>. They are never
 // workspace members: nothing in the dashboard or the API knows them. A row
@@ -2027,7 +2027,7 @@ export const portalClientFolder = pgTable(
   ]
 );
 
-// ─── Saved barcodes (apps/docs/lib/barcodes) ─────────────────────────────────
+// ─── Saved barcodes (apps/app/lib/barcodes) ─────────────────────────────────
 // Static barcodes (EAN-13, Code 128, Data Matrix, ...) kept in a workspace to
 // edit and download again: the symbology, the value it encodes and how it's
 // drawn. Nothing is hosted: the bars hold the data. Folders are the codes'

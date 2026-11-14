@@ -1,0 +1,225 @@
+---
+title: "셀프 호스팅 가이드"
+description: "Docker Compose 또는 Node.js로 동적 QR 코드와 호스팅 페이지를 포함한 나만의 QRdx 웹 앱을 운영해 보세요."
+icon: Server
+---
+
+QRdx는 AGPL-3.0 라이선스로 공개되어 있으며, 웹 앱(QR 에디터, 계정, 2단계 인증과 패스키, 동적 코드와 호스팅 페이지, 팀, 저장된 테마, 커뮤니티 갤러리, 그리고 이 문서)을 직접 운영하는 서버에서 실행할 수 있습니다. 워크스페이스 싱글 사인온과 워크스페이스 감사 로그는 예외입니다. 이 기능은 상용 라이선스가 적용되는 `ee/` 폴더에 있으며, 라이선스 키(`QRDX_EE_LICENSE`)를 설정하지 않으면 꺼진 상태로 유지됩니다. 프로덕션에서 사용하려면 QRdx와 서면 계약이 필요합니다. 자세한 내용은 [LICENSING.md](https://github.com/qrdxinc/qrdx/blob/main/LICENSING.md)를 참고하세요. [`qrdx` React 라이브러리](/docs/getting-started)나 CLI를 사용하는 데에는 이런 절차가 전혀 필요하지 않습니다. 둘 다 백엔드 없이 어디서나 실행되며 MIT 라이선스가 적용됩니다. [QRdx 오픈 소스](/open-source-qr-code-generator)에서 저장소의 각 부분과 라이선스를 확인할 수 있습니다.
+
+<Callout type="warn">
+  Docker 설정은 새로 추가되었습니다. 제대로 동작하지 않는 부분이 있다면 [이슈를 등록해 주세요](https://github.com/qrdxinc/qrdx/issues).
+</Callout>
+
+## 요구 사항 [#requirements]
+
+- Compose v2와 BuildKit이 포함된 Docker(Docker Desktop과 최신 Docker Engine에는 둘 다 포함되어 있습니다), 또는 수동 설치를 위한 Node.js 22(22.22.3 이상)와 [Bun](https://bun.com/docs/installation) 1.4
+- 이미지를 빌드하는 동안 Docker에 할당할 8GB 이상의 메모리
+- 계정을 만들 수 있도록 로그인 수단 한 가지: GitHub 또는 Google OAuth 앱, 또는 이메일 로그인 코드를 보내기 위한 [Resend](https://resend.com). 코드는 `NEXT_PUBLIC_APP_URL`이 `localhost`가 아닐 때만 이메일로 발송됩니다. `bun run dev`는 코드를 터미널에 출력하지만 Docker 이미지는 그렇지 않으므로, 로컬에서 Docker로 테스트하려면 GitHub 또는 Google 로그인이 필요합니다.
+- Postgres: `docker-compose.yml`에 포함된 컨테이너 또는 [Neon](https://neon.tech) 데이터베이스
+
+### 데이터베이스 연결 방식 [#how-the-database-connection-works]
+
+앱은 Neon의 서버리스 HTTP 드라이버를 통해 Postgres와 통신합니다.
+
+- **Neon:** 바로 사용할 수 있습니다. `DATABASE_URL`에 Neon 연결 문자열을 설정하세요.
+- **일반 Postgres:** 앞단에 Neon 호환 HTTP 프록시가 필요합니다. `docker-compose.yml`이 프록시([local-neon-http-proxy](https://github.com/TimoWilhelm/local-neon-http-proxy))를 실행하고, 앱이 쿼리를 그쪽으로 보내도록 `DATABASE_HTTP_ENDPOINT`를 설정합니다.
+
+스키마는 `packages/database/schema.ts`에서 가져오며 `drizzle-kit push`로 적용됩니다.
+
+## Docker Compose로 빠르게 시작하기 [#quick-start-with-docker-compose]
+
+### 1. 저장소 복제 [#1-clone-the-repository]
+
+```bash
+git clone https://github.com/qrdxinc/qrdx.git
+cd qrdx
+```
+
+### 2. 환경 설정 [#2-configure-the-environment]
+
+```bash
+cp apps/app/.env.example .env
+```
+
+`.env`를 수정하세요.
+
+- `BETTER_AUTH_SECRET`: `openssl rand -base64 32`로 생성하세요
+- `NEXT_PUBLIC_APP_URL`: 인스턴스의 공개 URL입니다. 예: `https://qr.example.com`. 로컬 테스트에서는 `http://localhost:3000`을 그대로 두세요.
+- `BETTER_AUTH_URL`: 주석을 해제하고 같은 값을 사용하세요
+- `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET`: 콜백 URL이 `<your url>/api/auth/callback/github`인 [GitHub OAuth 앱](https://github.com/settings/developers)에서 발급받은 값
+- 또는 `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET`: 리디렉션 URI가 `<your url>/api/auth/callback/google`인 [Google OAuth 클라이언트](https://console.cloud.google.com/apis/credentials)에서 발급받은 값
+
+`DATABASE_URL`은 설정하지 않아도 됩니다. Compose가 앱이 자체 Postgres 컨테이너를 사용하도록 연결합니다. 데이터베이스 비밀번호를 바꾸려면 처음 시작하기 전에 `POSTGRES_PASSWORD`를 설정하세요.
+
+### 3. 스택 시작 [#3-start-the-stack]
+
+```bash
+docker compose up -d --build
+```
+
+이 명령은 이미지를 빌드하고, Postgres와 프록시를 시작한 뒤, 일회성 `migrate` 서비스(`drizzle-kit push`)를 실행하고 나서 3000번 포트에서 앱을 시작합니다. 첫 빌드에는 몇 분이 걸립니다.
+
+```bash
+docker compose ps                    # migrate should show "exited (0)"
+docker compose logs -f migrate app   # follow the schema sync and the app
+```
+
+### 4. 첫 번째 사용자 만들기 [#4-create-your-first-user]
+
+브라우저에서 `NEXT_PUBLIC_APP_URL`을 열고 GitHub, Google 또는 이메일 코드로 로그인하세요. 계정은 처음 로그인할 때 만들어집니다.
+
+### 5. 첫 번째 관리자 만들기 [#5-create-your-first-admin]
+
+방금 만든 계정의 이메일 주소를 `.env`에 추가하세요.
+
+```bash
+ADMIN_EMAILS=you@example.com
+```
+
+변경 사항이 반영되도록 앱 컨테이너를 다시 만든 다음, 로그인하고 `/admin`을 여세요.
+
+```bash
+docker compose up -d app
+```
+
+`ADMIN_USER_IDS`도 사용자 ID로 같은 방식으로 동작합니다.
+
+## Neon 또는 다른 관리형 데이터베이스 사용하기 [#using-neon-or-another-managed-database]
+
+포함된 Postgres를 건너뛰고 앱 이미지만 실행할 수 있습니다.
+
+```bash
+docker build -t qrdx --build-arg NEXT_PUBLIC_APP_URL=https://qr.example.com .
+docker run -d --env-file .env -p 3000:3000 qrdx
+```
+
+`.env`의 `DATABASE_URL`에 Neon 연결 문자열을 설정하고 `DATABASE_HTTP_ENDPOINT`는 설정하지 마세요. 마이그레이터 이미지로 스키마를 한 번 적용하세요(업데이트할 때마다 다시 적용해야 합니다).
+
+```bash
+docker build --target migrator -t qrdx-migrate .
+docker run --rm -e DATABASE_URL="<your connection string>" qrdx-migrate
+```
+
+## 수동 설치(Node.js) [#manual-setup-nodejs]
+
+```bash
+git clone https://github.com/qrdxinc/qrdx.git
+cd qrdx
+bun install
+
+cp apps/app/.env.example apps/app/.env.local            # then edit it
+
+bun run db:push                                          # apply the schema
+bun run --filter app dev                                 # http://localhost:3000
+```
+
+프로덕션에서는 앱을 빌드한 뒤 시작하세요.
+
+```bash
+bun x turbo build --filter=app
+bun run --filter app start
+```
+
+`bun run db:push`는 Neon 드라이버로 연결하므로 Neon 데이터베이스가 필요합니다. 대신 로컬 개발에 Docker Postgres를 사용하려면 `docker compose up -d db db-proxy`로 시작하고, `docker compose run --rm migrate`로 스키마를 적용한 다음, `apps/app/.env.local`에 다음 값을 설정하세요.
+
+```bash
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/qrdx
+DATABASE_HTTP_ENDPOINT=http://localhost:4444/sql
+```
+
+## 환경 변수 [#environment-variables]
+
+[`apps/app/.env.example`](https://github.com/qrdxinc/qrdx/blob/main/apps/app/.env.example)에 모든 변수가 나열되어 있으며, 각 변수를 어디서 얻는지 짧은 설명이 붙어 있습니다.
+
+### 최소 구성 [#minimum]
+
+| 변수 | 용도 |
+| --- | --- |
+| `NEXT_PUBLIC_APP_URL` | 인스턴스의 공개 URL |
+| `DATABASE_URL` | Postgres 연결 문자열(Compose가 설정함) |
+| `BETTER_AUTH_SECRET` | 세션과 쿠키에 서명함 |
+
+사용자가 로그인할 수 있도록 OAuth 제공자(GitHub 또는 Google) 하나를 추가하거나, 이메일 로그인 코드를 위해 Resend를 추가하세요.
+
+### 선택 서비스 [#optional-services]
+
+| 서비스 | 변수 | 설정하지 않으면 |
+| --- | --- | --- |
+| GitHub 로그인 | `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET` | GitHub 로그인을 사용할 수 없습니다 |
+| Google 로그인 | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | Google 로그인을 사용할 수 없습니다 |
+| 인증 기본 URL | `BETTER_AUTH_URL` | 각 요청에서 추론하며, 로그에 경고가 남습니다 |
+| 관리자 패널 | `ADMIN_EMAILS`, `ADMIN_USER_IDS` | 아무도 `/admin`을 열 수 없습니다 |
+| 워크스페이스 SSO | `QRDX_EE_LICENSE` | SSO가 꺼진 상태로 유지됩니다. **Sign in with SSO**와 SSO 설정이 없고, SSO 로그인 경로도 존재하지 않습니다. SSO는 QRdx 상용 라이선스가 적용되는 `ee/` 폴더에 있으므로, 프로덕션에서 사용하려면 QRdx와 서면 계약이 필요합니다. [단일 로그인(SSO)](/docs/help/teams/single-sign-on)을 참고하세요 |
+| 워크스페이스 감사 로그 | `QRDX_EE_LICENSE` | 감사 로그가 꺼진 상태로 유지됩니다. 아무것도 기록되지 않으며 **설정** → **감사 로그**도 없습니다. SSO와 마찬가지로 QRdx 상용 라이선스가 적용되는 `ee/` 폴더에 있습니다. 기록은 {facts.auditLogRetentionDays}일 동안 보관되며, `/api/cron/webhooks`의 일일 실행이 그보다 오래된 기록을 삭제합니다. [감사 로그](/docs/help/teams/audit-log)를 참고하세요 |
+| AI 테마, 프롬프트 개선, AI QR 아트(Vercel AI Gateway) | `AI_GATEWAY_API_KEY` | AI 요청이 실패하고, AI 페이지가 탐색 메뉴와 사이트맵에서 빠집니다. 에디터는 정상적으로 동작합니다. 키는 본인의 Vercel 계정(AI Gateway, API keys)에서 만드세요. 사용량은 해당 계정의 AI Gateway 크레딧으로 청구되며, 앱을 Vercel에서 실행하지 않아도 됩니다. 작업별 모델은 `apps/app/lib/ai/models.ts`에서 설정합니다 |
+| 짧은 링크 출처 | `NEXT_PUBLIC_SHORT_LINK_BASE_URL` | [동적 코드](/docs/dynamic-qr-codes#self-hosting)가 `NEXT_PUBLIC_APP_URL`을 사용합니다 |
+| 스캔 개인정보 보호용 솔트 | `SCAN_HASH_SALT` | `BETTER_AUTH_SECRET`에서 파생됩니다 |
+| 파일 저장소(Cloudflare R2) | `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`, `R2_PUBLIC_BASE_URL` | 업로드가 꺼집니다. 페이지에서 다른 곳에 호스팅된 파일은 계속 링크할 수 있습니다. [파일](/docs/files#set-up-storage-self-hosting)을 참고하세요 |
+| 이메일(Resend) | `RESEND_API_KEY`, `EMAIL_FROM` | 이메일은 발송되지 않고 로그에만 남으므로 이메일 로그인 코드를 보낼 수 없습니다. 팀 초대에는 복사 가능한 링크를 사용합니다. [알림](/docs/notifications#self-hosting)을 참고하세요 |
+| Vercel의 사용자 지정 도메인 | `VERCEL_API_TOKEN`, `VERCEL_PROJECT_ID`, `VERCEL_TEAM_ID` | Vercel이 아닌 환경에서는 설정하지 마세요. 이 경우 도메인은 DNS `TXT` 레코드로 확인합니다. [사용자 지정 도메인](/docs/custom-domains#self-hosting)을 참고하세요 |
+| 원클릭 DNS 설정(Domain Connect) | `DOMAIN_CONNECT_PROVIDER_ID`, `DOMAIN_CONNECT_SERVICE_ID`, `DOMAIN_CONNECT_PRIVATE_KEY` | **Set up with …** 버튼이 없으며, 사용자가 직접 DNS 레코드를 추가합니다. 각 DNS 제공업체가 승인한 자체 Domain Connect 템플릿이 필요하고, 그 공개 키를 DNS에 등록해야 합니다. [사용자 지정 도메인](/docs/custom-domains#self-hosting)을 참고하세요 |
+| 예약 작업 | `CRON_SECRET` | 프로덕션에서는 주간 요약과 웹훅 재시도 작업이 실행되지 않고, {facts.auditLogRetentionDays}일보다 오래된 감사 로그 기록도 삭제되지 않습니다 |
+| 링크 안전성(Google Web Risk) | `WEB_RISK_API_KEY` | 목적지를 오프라인 규칙으로만 검사합니다. [코드 제어](/docs/code-controls)를 참고하세요 |
+| 양식 스팸 검사(Cloudflare Turnstile) | `NEXT_PUBLIC_TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY` | 양식은 기본 제공되는 허니팟과 속도 제한에 의존합니다 |
+| 결제(Polar) | `POLAR_ACCESS_TOKEN`, `POLAR_WEBHOOK_SECRET`, `NEXT_PUBLIC_QRDX_PRO_MONTHLY_PRODUCT_ID`, `NEXT_PUBLIC_QRDX_PRO_YEARLY_PRODUCT_ID`, `NEXT_PUBLIC_QRDX_BUSINESS_MONTHLY_PRODUCT_ID`, `NEXT_PUBLIC_QRDX_BUSINESS_YEARLY_PRODUCT_ID` | 업그레이드가 동작하지 않고(제품 ID가 없는 플랜은 "Coming soon"으로 표시됨), 모든 계정이 무료 한도를 사용합니다 |
+| 유로 가격 | `NEXT_PUBLIC_QRDX_EUR_PRICES=1`, 위의 모든 제품에 Polar의 EUR 가격이 설정된 후에만 지정하세요 | EU와 EEA 방문자에게 US$ 가격이 표시되고 US$로 청구됩니다 |
+| 제휴 프로그램 | 없음: qrdx.dev에서만 운영됩니다 | 꺼짐: QRdx의 제휴 프로그램과 [약관](/legal/affiliate-terms)은 qrdx.dev용으로 작성되었으므로, 자체 호스팅 사본에는 **/affiliates** 페이지, 신청, **설정** → **제휴 프로그램**이 없고 추천 링크는 홈 페이지로 이동합니다. |
+| Dub 짧은 링크 | `DUB_CLIENT_ID`, `DUB_CLIENT_SECRET`, `DUB_REDIRECT_URI`, `INTEGRATION_ENCRYPTION_KEY` | Dub 연동을 연결할 수 없습니다 |
+| Google Drive | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_DRIVE_REDIRECT_URI`, `INTEGRATION_ENCRYPTION_KEY` | Google Drive 연동을 연결할 수 없습니다 |
+| Bitly, Dropbox, OneDrive, Box, Notion | `BITLY_CLIENT_ID`/`_SECRET`, `DROPBOX_CLIENT_ID`/`_SECRET`, `MICROSOFT_CLIENT_ID`/`_SECRET`, `BOX_CLIENT_ID`/`_SECRET`, `NOTION_CLIENT_ID`/`_SECRET`, `INTEGRATION_ENCRYPTION_KEY` | 해당 연동이 "Not configured"로 표시됩니다(Bitly는 붙여 넣은 액세스 토큰으로 계속 연결할 수 있습니다). Rebrandly와 Short.io는 변수가 필요 없습니다. [짧은 링크와 파일 선택기](/docs/short-links-and-file-pickers#self-hosting)를 참고하세요 |
+| Slack 봇 | `SLACK_CLIENT_ID`, `SLACK_CLIENT_SECRET`, `SLACK_SIGNING_SECRET`, 프로덕션에서는 `INTEGRATION_ENCRYPTION_KEY`도 필요 | Slack 봇이 없습니다. 관련 경로와 링크 페이지는 404로 응답하고 설정에서도 제공되지 않습니다. README의 설명대로 [`plugins/slack/manifest.json`](https://github.com/qrdxinc/qrdx/tree/main/plugins/slack)으로 자체 Slack 앱을 만드세요. [Slack 봇](/docs/slack-bot#self-hosting)을 참고하세요 |
+| Discord 봇 | `DISCORD_APPLICATION_ID`, `DISCORD_PUBLIC_KEY` | Discord 봇이 없습니다. 인터랙션 엔드포인트는 `404`로 응답하고 연동 디렉터리에서도 빠집니다. [`plugins/discord/README.md`](https://github.com/qrdxinc/qrdx/tree/main/plugins/discord)의 설명대로 자체 Discord 앱을 등록하세요 |
+| Telegram 봇 | `TELEGRAM_BOT_TOKEN`, `TELEGRAM_WEBHOOK_SECRET`, `TELEGRAM_BOT_USERNAME` | Telegram 봇이 없습니다. 관련 경로는 404로 응답하고 사이트에도 표시되지 않습니다. @BotFather로 자체 봇을 만들고 `plugins/telegram/scripts/setup.mjs`를 실행하세요. [Telegram 봇](/docs/telegram-bot#self-hosting)을 참고하세요 |
+| 속도 제한(Upstash) | `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`(또는 Vercel KV 이름인 `KV_REST_API_URL`, `KV_REST_API_TOKEN`) | 속도 제한이 없습니다. 프로덕션에서는 설정을 권장합니다. |
+| 분석(PostHog, 쿠키 동의 후) | `NEXT_PUBLIC_POSTHOG_KEY`, `NEXT_PUBLIC_POSTHOG_HOST` | 제품 분석이 없습니다 |
+| 분석(Umami, 쿠키 없음) | `NEXT_PUBLIC_UMAMI_WEBSITE_ID`, `NEXT_PUBLIC_UMAMI_SCRIPT_URL` | 방문 수 집계가 없습니다 |
+| 피드백 위젯 | `NEXT_PUBLIC_FEATUREBASE_APP_ID` | 위젯이 로드되지 않습니다 |
+| 문서 추가 기능 | `GITHUB_TOKEN` | 별 개수 조회가 GitHub 속도 제한에 걸릴 수 있습니다 |
+
+연동을 활성화하는 즉시 프로덕션에서 `INTEGRATION_ENCRYPTION_KEY`를 설정해야 합니다. 저장된 토큰을 암호화하는 키이기 때문입니다.
+
+<Callout>
+  `NEXT_PUBLIC_*` 값은 빌드 시점에 브라우저 번들에 인라인됩니다. 값을 변경한 후에는 `docker compose up -d --build`로 다시 빌드하세요.
+</Callout>
+
+## 리버스 프록시와 HTTPS [#reverse-proxy-and-https]
+
+앱 앞에 TLS를 종료하는 Caddy, nginx, Traefik 같은 리버스 프록시를 두고, 3000번 포트는 인터넷에 직접 노출하지 마세요. 속도 제한, 보안 이메일, [감사 로그](/docs/help/teams/audit-log)는 `X-Real-IP`에서 클라이언트 IP를 읽고, 없으면 `X-Forwarded-For`의 첫 번째 주소를 읽습니다. 따라서 프록시가 이 헤더들을 설정해야 하며, 앱은 프록시를 통해서만 접근할 수 있어야 합니다. 프록시가 연결을 받은 주소를 `X-Real-IP`로 설정하도록 하세요(nginx에서는 `proxy_set_header X-Real-IP $remote_addr;`). `X-Forwarded-For`에 값을 덧붙이기만 하는 프록시는 클라이언트가 임의의 주소를 맨 앞에 넣을 수 있게 합니다.
+
+HTTPS 설정이 끝나면 `NEXT_PUBLIC_APP_URL`과 `BETTER_AUTH_URL`을 `https://` URL로 바꾸고, OAuth 콜백 URL을 업데이트한 다음 다시 빌드하세요.
+
+### Content-Security-Policy [#content-security-policy]
+
+프로덕션 빌드는 QRdx 자체 페이지에 Content-Security-Policy를 보냅니다. 로그인한 상태의 페이지는 요청마다 새 스크립트 nonce를 받고, 사전 렌더링된 페이지는 스크립트 호스트 허용 목록을 받습니다. 호스팅 페이지(`/p`)는 소유자의 픽셀을 실행하고 어디서든 미디어를 임베드하므로 느슨한 정책을 받습니다. 리버스 프록시도 `Content-Security-Policy`를 설정하면 브라우저가 둘 다 적용하므로, 프록시에서는 설정하지 마세요. 새 설정을 확인하는 동안 정책을 보고 전용으로 보내려면 `CSP_REPORT_ONLY=1`을 빌드 시점과 실행 시점에 모두 설정하세요. 위반 사항은 `/api/csp-report`에 기록됩니다. Vercel 밖에서 HTTPS로 서비스할 때는 `CSP_HTTPS=1`을 추가하면 브라우저가 `http://` 리소스를 업그레이드합니다.
+
+## 업데이트 [#updating]
+
+먼저 데이터베이스를 백업하세요.
+
+```bash
+docker compose exec db pg_dump -U postgres qrdx > qrdx-backup.sql
+```
+
+그런 다음 pull하고 다시 빌드하세요. 앱이 시작되기 전에 `migrate` 서비스가 스키마를 다시 동기화합니다.
+
+```bash
+git pull
+docker compose up -d --build
+```
+
+수동 설정이라면 `git pull`, `bun install`, `bun run db:push`를 실행한 다음 다시 빌드하세요.
+
+스키마 변경으로 데이터가 삭제될 수 있는 경우 `drizzle-kit push`가 확인을 요청합니다. 이때는 터미널에서 `docker compose run --rm migrate`를 실행해 변경 사항을 검토하고 확인하세요.
+
+## 문제 해결 [#troubleshooting]
+
+- **시작할 때 "Invalid environment variables"가 표시되는 경우:** 로그에 누락되었거나 잘못된 변수가 각각 표시됩니다. 선택 변수는 빈 값으로 설정하지 말고 주석 처리해야 합니다.
+- **"BETTER_AUTH_SECRET is missing" 또는 "You are using the default secret"가 표시되는 경우:** `BETTER_AUTH_SECRET`을 설정한 뒤 컨테이너를 다시 생성하세요.
+- **OAuth `redirect_uri` 불일치:** OAuth 앱의 콜백 URL은 정확히 `<NEXT_PUBLIC_APP_URL>/api/auth/callback/<github|google>`이어야 합니다. `BETTER_AUTH_URL`도 같은 기본 URL로 설정하세요.
+- **앱이 데이터베이스에 연결되지 않는 경우(`fetch failed`):** 일반 Postgres를 사용한다면 `DATABASE_HTTP_ENDPOINT`가 실행 중인 프록시를 가리켜야 합니다. `docker compose ps db-proxy`로 확인하세요.
+- **`migrate`가 끝나지 않는 경우:** `drizzle-kit push`가 확인을 기다리고 있습니다. [업데이트](#updating)를 참고하세요.
+- **`NEXT_PUBLIC_*` 값을 바꿨는데 적용되지 않는 경우:** 이미지를 다시 빌드하세요.
+- **4444 포트가 이미 사용 중인 경우:** `docker-compose.yml`에서 `db-proxy` 포트 매핑을 변경하세요. 이 포트는 호스트에서 로컬 개발을 할 때만 사용합니다.
+- **"the --mount option requires BuildKit"가 표시되는 경우:** 사용 중인 Docker에 BuildKit이 없습니다. `buildx` 플러그인을 설치하거나 Docker를 업데이트하세요.
+- **빌드가 `Killed` 또는 종료 코드 137과 함께 중단되는 경우:** Docker의 메모리가 부족합니다. 최소 8GB를 할당하고(Docker Desktop: Settings → Resources) `docker compose up -d --build`를 다시 실행하세요.
+- **"sign-in code email is off for this deployment"가 표시되는 경우:** `NEXT_PUBLIC_APP_URL`이 `localhost`이면 이메일 코드가 전송되지 않습니다. 로컬에서 테스트할 때는 GitHub 또는 Google 로그인을 사용하세요.

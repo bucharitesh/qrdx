@@ -1,6 +1,6 @@
 // Values the QRdx REST API accepts, copied from its OpenAPI document
 // (https://qrdx.dev/openapi.json). This package can't import the app, so
-// apps/docs/tests/plugins/n8n-node.test.ts holds these lists to the API.
+// apps/app/tests/plugins/n8n-node.test.ts holds these lists to the API.
 
 /** The hosted API; self-hosted copies set their own in the credential. */
 export const DEFAULT_BASE_URL = "https://api.qrdx.dev/v1";

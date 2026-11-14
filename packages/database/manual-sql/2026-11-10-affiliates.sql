@@ -1,4 +1,4 @@
--- Affiliate program (apps/docs/lib/affiliates): five new tables.
+-- Affiliate program (apps/app/lib/affiliates): five new tables.
 --
 --   affiliate                 one row per person who applied: status
 --                             (pending, approved, rejected, suspended),

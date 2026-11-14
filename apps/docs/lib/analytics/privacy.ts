@@ -1,12 +1,14 @@
 // The PII guards live in @repo/analytics (packages/analytics/privacy.ts).
-// Which of this app's pages record nothing is the app's to say: customer
-// pages, the scanner, template demos and the other paths in
-// components/landing/customer-page-paths.ts (any language). Registered here,
-// and every analytics path in the app imports this module first, so the
-// rule is in place before anything can be tracked.
-import { registerUntrackedPaths } from "@repo/analytics/privacy";
-import { isUntrackedPath } from "@/components/landing/customer-page-paths";
+// Which pages record nothing is each app's to say. The docs site serves the
+// docs and nothing else (on qrdx.dev, every other path belongs to the main
+// app, which has its own rule), so it records its own pages only: a path
+// that isn't a docs page counts as untracked. Registered here, and every
+// analytics path in this app imports this module first, so the rule is in
+// place before anything can be tracked.
 
-registerUntrackedPaths(isUntrackedPath);
+import { registerUntrackedPaths } from "@repo/analytics/privacy";
+import { isDocsPagePath } from "@repo/i18n/docs";
+
+registerUntrackedPaths((path) => !isDocsPagePath(path));
 
 export * from "@repo/analytics/privacy";
