@@ -3128,7 +3128,7 @@
       "openQuestion": "QRdxは本当にオープンソースですか？",
       "openAnswer": "はい。ソースコードはGitHubで公開されており、Webアプリは AGPL-3.0-or-later、qrdxライブラリ、@qrdx/cli、プラグインは MIT ライセンスです。ワークスペースのシングルサインオンと監査ログという2つのビジネス向け機能は、eeフォルダ内にあり、QRdx Commercial Licenseの対象です。コードは閲覧できますが、本番環境で使用するにはQRdxとの契約が必要です。",
       "githubQuestion": "GitHubのQRdxのソースコードはどこにありますか？",
-      "githubAnswer": "github.com/bucharitesh/qrdx にあります。Webアプリ、qrdxライブラリ、CLI、プラグイン、ドキュメントを含む1つのモノレポです。",
+      "githubAnswer": "github.com/qrdxinc/qrdx にあります。Webアプリ、qrdxライブラリ、CLI、プラグイン、ドキュメントを含む1つのモノレポです。",
       "freeQuestion": "QRdxは無料でセルフホストできますか？",
       "freeAnswer": "はい。ライセンス料はかかりません。ご自身のサーバーとデータベースの費用のみです。セルフホストしたインスタンスでは、動的QRコード、ホスト型ページ、スキャン分析が使えます。シングルサインオンと監査ログは、QRdxのライセンスキーがない限り無効のままです。",
       "needQuestion": "QRdxをセルフホストするには何が必要ですか？",

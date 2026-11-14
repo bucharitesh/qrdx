@@ -1,5 +1,6 @@
 // The /mcp page's copy that the Markdown version (/mcp.md,
 // lib/agents/markdown-pages.ts) repeats, kept in one place.
+import { MCP_REGISTRY_NAME } from "@repo/config";
 import {
   ArchiveAdd,
   Bank,
@@ -217,8 +218,7 @@ export const MCP_FAQS: { question: string; answer: string }[] = [
   },
   {
     question: "Is it in the MCP Registry?",
-    answer:
-      "Yes. The hosted server is listed in the official MCP Registry as io.github.bucharitesh/qrdx, so apps and directories that read the registry can find it there.",
+    answer: `Yes. The hosted server is listed in the official MCP Registry as ${MCP_REGISTRY_NAME}, so apps and directories that read the registry can find it there.`,
   },
   {
     question: "Can I run it myself?",

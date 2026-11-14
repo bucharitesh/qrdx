@@ -6,12 +6,12 @@
   "resources": {
     "credentialDocumentation": [
       {
-        "url": "https://github.com/bucharitesh/qrdx/tree/main/plugins/n8n#credentials"
+        "url": "https://github.com/qrdxinc/qrdx/tree/main/plugins/n8n#credentials"
       }
     ],
     "primaryDocumentation": [
       {
-        "url": "https://github.com/bucharitesh/qrdx/tree/main/plugins/n8n#trigger"
+        "url": "https://github.com/qrdxinc/qrdx/tree/main/plugins/n8n#trigger"
       }
     ]
   }

@@ -113,6 +113,23 @@ export const env = validateTogether(() =>
       // Google Web Risk lookups of destination URLs
       WEB_RISK_API_KEY: z.string().min(1).optional(),
 
+      // Abuse limits, whole numbers above 0 (lib/safety/limits.ts reads them
+      // and has the defaults used when unset): how many days an account
+      // counts as new, the dynamic codes a new account can create per hour,
+      // and the destinations one Web Risk recheck pass looks up
+      SAFETY_YOUNG_ACCOUNT_DAYS: z
+        .string()
+        .regex(/^[1-9]\d{0,8}$/)
+        .optional(),
+      SAFETY_YOUNG_ACCOUNT_DYNAMIC_PER_HOUR: z
+        .string()
+        .regex(/^[1-9]\d{0,8}$/)
+        .optional(),
+      SAFETY_RECHECK_BATCH: z
+        .string()
+        .regex(/^[1-9]\d{0,8}$/)
+        .optional(),
+
       // Search Console on /admin/growth: a Google service account's JSON key
       // (one line) with read access to sc-domain:qrdx.dev. Read server-side
       // only, never logged; the section explains the setup without it.
@@ -220,6 +237,10 @@ export const env = validateTogether(() =>
       RESEND_API_KEY: process.env.RESEND_API_KEY,
       EMAIL_FROM: process.env.EMAIL_FROM,
       WEB_RISK_API_KEY: process.env.WEB_RISK_API_KEY,
+      SAFETY_YOUNG_ACCOUNT_DAYS: process.env.SAFETY_YOUNG_ACCOUNT_DAYS,
+      SAFETY_YOUNG_ACCOUNT_DYNAMIC_PER_HOUR:
+        process.env.SAFETY_YOUNG_ACCOUNT_DYNAMIC_PER_HOUR,
+      SAFETY_RECHECK_BATCH: process.env.SAFETY_RECHECK_BATCH,
       GSC_SERVICE_ACCOUNT_JSON: process.env.GSC_SERVICE_ACCOUNT_JSON,
       TURNSTILE_SECRET_KEY: process.env.TURNSTILE_SECRET_KEY,
       CRON_SECRET: process.env.CRON_SECRET,

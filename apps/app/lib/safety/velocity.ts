@@ -9,6 +9,7 @@ import { after } from "next/server";
 import { cache } from "react";
 import { HttpError } from "@/lib/error-response";
 import { formatCount } from "@/lib/format-count";
+import { safetyLimits } from "./limits";
 
 /**
  * Abuse defences for young accounts, where most phishing comes from: a cap on
@@ -17,8 +18,11 @@ import { formatCount } from "@/lib/format-count";
  * going live (/admin/abuse).
  */
 
-export const NEW_ACCOUNT_DAYS = 7;
-export const NEW_ACCOUNT_CODES_PER_HOUR = 30;
+const limits = safetyLimits();
+/** 7 unless SAFETY_YOUNG_ACCOUNT_DAYS is set (lib/safety/limits.ts). */
+export const NEW_ACCOUNT_DAYS = limits.youngAccountDays;
+/** 30 unless SAFETY_YOUNG_ACCOUNT_DYNAMIC_PER_HOUR is set. */
+export const NEW_ACCOUNT_CODES_PER_HOUR = limits.youngAccountDynamicPerHour;
 /** In a paid workspace (@repo/config limits.ts). */
 export { NEW_PAID_ACCOUNT_CODES_PER_HOUR };
 

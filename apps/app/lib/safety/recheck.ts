@@ -6,6 +6,7 @@ import { and, asc, eq, inArray, isNotNull } from "drizzle-orm";
 import { after } from "next/server";
 import { scheduleWorkerRun } from "@/lib/events/worker-due";
 import { mapWithConcurrency, THREAT_LABELS } from "./check";
+import { safetyLimits } from "./limits";
 import { lookupWebRisk } from "./web-risk";
 
 // Destinations created without a Google Web Risk answer: a batch stops
@@ -19,8 +20,8 @@ import { lookupWebRisk } from "./web-risk";
 // switched off and an "auto-threat" report waits in /admin/abuse.
 
 const CONCURRENCY = 16;
-/** Codes one pass looks at. */
-const PASS_LIMIT = 500;
+/** Codes one pass looks at: 500 unless SAFETY_RECHECK_BATCH is set. */
+const PASS_LIMIT = safetyLimits().recheckBatch;
 
 export interface RecheckSummary {
   checked: number;

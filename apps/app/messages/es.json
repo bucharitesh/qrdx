@@ -3128,7 +3128,7 @@
       "openQuestion": "¿QRdx es realmente de código abierto?",
       "openAnswer": "Sí. El código fuente está en GitHub, la aplicación web tiene licencia AGPL-3.0-or-later, y la biblioteca qrdx, @qrdx/cli y los plugins son MIT. Dos funciones para empresas, el inicio de sesión único del espacio de trabajo y el registro de auditoría, están en carpetas ee bajo la QRdx Commercial License: puedes leer ese código, pero para usarlo en producción necesitas un acuerdo con QRdx.",
       "githubQuestion": "¿Dónde está el código fuente de QRdx en GitHub?",
-      "githubAnswer": "En github.com/bucharitesh/qrdx. Es un único monorepo con la aplicación web, la biblioteca qrdx, la CLI, los plugins y la documentación.",
+      "githubAnswer": "En github.com/qrdxinc/qrdx. Es un único monorepo con la aplicación web, la biblioteca qrdx, la CLI, los plugins y la documentación.",
       "freeQuestion": "¿Se puede alojar QRdx por cuenta propia gratis?",
       "freeAnswer": "Sí. No hay cuota de licencia; solo pagas tu propio servidor y tu base de datos. Una instancia autoalojada ejecuta códigos dinámicos, páginas alojadas y analítica de escaneos. El inicio de sesión único y el registro de auditoría permanecen desactivados salvo que tengas una clave de licencia de QRdx.",
       "needQuestion": "¿Qué necesito para alojar QRdx por mi cuenta?",
