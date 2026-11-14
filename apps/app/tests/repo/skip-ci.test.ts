@@ -49,15 +49,15 @@ describe("skip-ci", () => {
       shouldSkip({
         ...production,
         changedFiles: [
-          "apps/docs-site/app/robots.ts",
+          "apps/docs/app/robots.ts",
           ".github/workflows/docs-deploy.yml",
         ],
       }).skip,
     ).toBe(true);
     // Anything else the main app might use builds.
     for (const changedFiles of [
-      ["apps/docs-site/app/robots.ts", "apps/app/content/docs/index.mdx"],
-      ["apps/docs-site/package.json", "bun.lock"],
+      ["apps/docs/app/robots.ts", "apps/app/content/docs/index.mdx"],
+      ["apps/docs/package.json", "bun.lock"],
       ["packages/i18n/docs.ts"],
       // No previous deployment, or git couldn't tell.
       [],

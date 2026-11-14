@@ -154,7 +154,7 @@ export function docsMarkdownAcceptRewrites(): {
 }
 
 // ─── The docs zone ───────────────────────────────────────────────────────────
-// The docs are a separate Next.js app (apps/docs-site), served at the same
+// The docs are a separate Next.js app (apps/docs), served at the same
 // URLs on qrdx.dev. The main app proxies the docs' URLs to it with
 // docsZoneRewrites() once DOCS_ZONE_URL is set; until then it serves its own
 // copy of the docs. The manifest the zones exchange is in
