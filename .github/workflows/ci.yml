@@ -88,7 +88,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.bun/install/cache
-          key: bun-${{ runner.os }}-${{ hashFiles('bun.lock') }}
+          key: bun-${{ runner.os }}-${{ hashFiles('bun.lock', 'apps/native/bun.lock') }}
           restore-keys: |
             bun-${{ runner.os }}-
 
@@ -106,9 +106,13 @@ jobs:
             turbo-${{ runner.os }}-${{ hashFiles('bun.lock') }}-
             turbo-${{ runner.os }}-
 
+      # apps/native sits outside the Bun workspace with its own bun.lock
+      # (apps/native/README.md), so it installs on its own.
       - name: Install dependencies
         if: steps.reuse.outputs.hit != 'true'
-        run: bun install --frozen-lockfile
+        run: |
+          bun install --frozen-lockfile
+          (cd apps/native && bun install --frozen-lockfile)
 
       # The main app, CLI and CLI tests consume qrdx from its dist/ output,
       # and the CLI tests run the CLI's own dist/index.js.
@@ -116,9 +120,13 @@ jobs:
         if: steps.reuse.outputs.hit != 'true'
         run: bun x turbo build --filter=qrdx --filter=@qrdx/cli 2>&1 | tee -a "$RUNNER_TEMP/turbo.log"
 
+      # Turbo doesn't see apps/native (outside the workspace), so its
+      # typecheck runs here too: a few seconds.
       - name: Typecheck packages
         if: steps.reuse.outputs.hit != 'true'
-        run: bun run typecheck 2>&1 | tee -a "$RUNNER_TEMP/turbo.log"
+        run: |
+          bun run typecheck 2>&1 | tee -a "$RUNNER_TEMP/turbo.log"
+          (cd apps/native && bun run typecheck)
 
       - name: Typecheck the main app
         if: steps.reuse.outputs.hit != 'true'
