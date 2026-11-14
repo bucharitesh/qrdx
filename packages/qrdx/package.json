@@ -37,12 +37,46 @@
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/src/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "core": [
+        "./dist/src/core.d.ts"
+      ],
+      "vanilla": [
+        "./dist/src/vanilla.d.ts"
+      ],
+      "element": [
+        "./dist/src/element.d.ts"
+      ],
+      "element/define": [
+        "./dist/src/element-define.d.ts"
+      ],
+      "node": [
+        "./dist/src/node.d.ts"
+      ],
+      "vue": [
+        "./dist/src/vue.d.ts"
+      ],
+      "types": [
+        "./dist/types/public.d.ts"
+      ],
+      "preact": [
+        "./dist/src/preact.d.ts"
+      ],
+      "solid": [
+        "./dist/src/solid.d.ts"
+      ],
+      "angular": [
+        "./dist/src/angular.d.ts"
+      ]
+    }
+  },
   "unpkg": "./dist/vanilla.browser.mjs",
   "jsdelivr": "./dist/vanilla.browser.mjs",
   "exports": {
     ".": {
       "import": {
-        "types": "./dist/src/index.d.ts",
+        "types": "./dist/src/index.d.mts",
         "default": "./dist/index.mjs"
       },
       "require": {
@@ -52,7 +86,7 @@
     },
     "./core": {
       "import": {
-        "types": "./dist/src/core.d.ts",
+        "types": "./dist/src/core.d.mts",
         "default": "./dist/core.mjs"
       },
       "require": {
@@ -62,7 +96,7 @@
     },
     "./vanilla": {
       "import": {
-        "types": "./dist/src/vanilla.d.ts",
+        "types": "./dist/src/vanilla.d.mts",
         "default": "./dist/vanilla.mjs"
       },
       "require": {
@@ -72,7 +106,7 @@
     },
     "./element": {
       "import": {
-        "types": "./dist/src/element.d.ts",
+        "types": "./dist/src/element.d.mts",
         "default": "./dist/element.mjs"
       },
       "require": {
@@ -82,7 +116,7 @@
     },
     "./element/define": {
       "import": {
-        "types": "./dist/src/element-define.d.ts",
+        "types": "./dist/src/element-define.d.mts",
         "default": "./dist/element-define.mjs"
       },
       "require": {
@@ -92,7 +126,7 @@
     },
     "./node": {
       "import": {
-        "types": "./dist/src/node.d.ts",
+        "types": "./dist/src/node.d.mts",
         "default": "./dist/node.mjs"
       },
       "require": {
@@ -102,7 +136,7 @@
     },
     "./vue": {
       "import": {
-        "types": "./dist/src/vue.d.ts",
+        "types": "./dist/src/vue.d.mts",
         "default": "./dist/vue.mjs"
       },
       "require": {
@@ -112,7 +146,7 @@
     },
     "./types": {
       "import": {
-        "types": "./dist/types/public.d.ts",
+        "types": "./dist/types/public.d.mts",
         "default": "./dist/types/index.mjs"
       },
       "require": {
@@ -123,7 +157,7 @@
     "./package.json": "./package.json",
     "./preact": {
       "import": {
-        "types": "./dist/src/preact.d.ts",
+        "types": "./dist/src/preact.d.mts",
         "default": "./dist/preact.mjs"
       },
       "require": {
@@ -133,7 +167,7 @@
     },
     "./solid": {
       "import": {
-        "types": "./dist/src/solid.d.ts",
+        "types": "./dist/src/solid.d.mts",
         "default": "./dist/solid.mjs"
       },
       "require": {
@@ -143,7 +177,7 @@
     },
     "./angular": {
       "import": {
-        "types": "./dist/src/angular.d.ts",
+        "types": "./dist/src/angular.d.mts",
         "default": "./dist/angular.mjs"
       },
       "require": {
@@ -158,8 +192,8 @@
     "src"
   ],
   "scripts": {
-    "build": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\" && tsup && tsc --project tsconfig.build.json --emitDeclarationOnly",
-    "build:inplace": "tsup && tsc --project tsconfig.build.json --emitDeclarationOnly",
+    "build": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\" && tsup && tsc --project tsconfig.build.json --emitDeclarationOnly && node scripts/esm-types.mjs",
+    "build:inplace": "tsup && tsc --project tsconfig.build.json --emitDeclarationOnly && node scripts/esm-types.mjs",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
