@@ -109,6 +109,10 @@
         "name": "블로그",
         "description": "QR 코드 가이드와 소식"
       },
+      "customers": {
+        "name": "고객 사례",
+        "description": "기업이 QRdx를 활용하는 방법"
+      },
       "compare": {
         "name": "비교",
         "description": "다른 생성기, 라이브러리와 QRdx를 비교해요"
@@ -211,6 +215,7 @@
       "github": "GitHub",
       "help": "도움말 센터",
       "blog": "블로그",
+      "customers": "고객 사례",
       "changelog": "변경 내역",
       "integrations": "연동",
       "industries": "업종별 QR 코드",

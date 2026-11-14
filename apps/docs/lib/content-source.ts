@@ -6,15 +6,15 @@ import {
   blogCategories,
   changelog,
   compare,
+  customers,
   legal,
 } from "@/.source/content";
-import { isHiddenCustomerStory } from "@/lib/customers";
+import { isPublishedCustomerStory } from "@/lib/customers";
 
-// The content other than the docs: legal pages, the changelog, comparisons
-// and the blog. Route handlers (Open Graph images, RSS, the sitemap, llms.txt)
-// import these from here, never from lib/source.ts, which also holds the
-// compiled docs (see lib/docs-index.ts). Pages can use either: lib/source.ts
-// re-exports them.
+// The content other than the docs: legal pages, the changelog, comparisons,
+// the blog and customer stories. Route handlers (Open Graph images, RSS, the
+// sitemap, llms.txt) import these from here, never from lib/source.ts, which
+// also holds the compiled docs (see lib/docs-index.ts).
 
 export const legalSource = loader({
   baseUrl: "/legal",
@@ -31,14 +31,20 @@ export const compareSource = loader({
   source: compare.toFumadocsSource(),
 });
 
-// A customer story stays out of the blog until its customer is published in
-// lib/customers.ts: every blog page, list, feed and sitemap reads this source,
-// so it's as if the post weren't there (no page, no static params).
 export const blogSource = loader({
   baseUrl: "/blog",
+  source: blog.toFumadocsSource(),
+});
+
+// Only the stories of customers published in lib/customers.ts: every
+// /customers page, the sitemap, llms.txt and the Open Graph images read this
+// source, so an unpublished story is as if it weren't there (no page, no
+// static params).
+export const customersSource = loader({
+  baseUrl: "/customers",
   source: toFumadocsSource(
-    blog.docs.filter((post) => !isHiddenCustomerStory(post.info.path)),
-    blog.meta,
+    customers.docs.filter((story) => isPublishedCustomerStory(story.info.path)),
+    customers.meta,
   ),
 });
 

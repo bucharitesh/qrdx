@@ -2,7 +2,12 @@ import "server-only";
 
 import { getCatalogBySurface } from "@repo/integrations/src/catalog";
 import type { PricingOptions } from "@/components/sections/pricing/plan-content";
-import { blogSource, compareSource, legalSource } from "@/lib/content-source";
+import {
+  blogSource,
+  compareSource,
+  customersSource,
+  legalSource,
+} from "@/lib/content-source";
 import {
   isFeatureAvailable,
   isPathAvailable,
@@ -75,14 +80,15 @@ export async function llmsTxt(): Promise<string> {
     description: `${entry.tagline}${entry.note ? ` ${entry.note}` : ""}`,
   }));
 
+  const newestFirst = (a: { data: { date: string } }, b: typeof a) =>
+    new Date(b.data.date).getTime() - new Date(a.data.date).getTime();
   const blog = blogSource
     .getPages()
     .filter((page) => page.data.published)
-    .sort(
-      (a, b) =>
-        new Date(b.data.date).getTime() - new Date(a.data.date).getTime(),
-    )
+    .sort(newestFirst)
     .map(pageLink);
+  // Published customers' stories only (lib/content-source.ts).
+  const customers = customersSource.getPages().sort(newestFirst).map(pageLink);
 
   return buildLlmsTxt({
     origin: baseUrl,
@@ -94,6 +100,7 @@ export async function llmsTxt(): Promise<string> {
       pages: section.pages.map(pageLink),
     })),
     blog,
+    customers,
     compare: compareSource.getPages().map(pageLink),
     legal: legalPages().map(pageLink),
     integrations,

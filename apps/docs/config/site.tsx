@@ -7,6 +7,7 @@ import {
   Barcode,
   Book1,
   Box,
+  Buildings,
   Category,
   Clock,
   Code1,
@@ -257,6 +258,11 @@ export const siteConfig = {
             key: "blog",
             href: "/blog",
             icon: Notepad2,
+          },
+          {
+            key: "customers",
+            href: "/customers",
+            icon: Buildings,
           },
           {
             key: "compare",
@@ -625,6 +631,7 @@ export const siteConfig = {
       links: [
         { id: 8, key: "help", url: "/docs/help" },
         { id: 1, key: "blog", url: "/blog" },
+        { id: 11, key: "customers", url: "/customers" },
         { id: 2, key: "changelog", url: "/changelogs" },
         { id: 3, key: "integrations", url: "/integrations" },
         { id: 5, key: "industries", url: "/qr-codes-for" },
