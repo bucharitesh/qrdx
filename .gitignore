@@ -283,12 +283,12 @@ packages/database/*.sql
 packages/database/meta
 .gstack/
 
-# Product facts snapshot, written before the docs site builds (bun run --filter docs facts:snapshot)
+# Product facts snapshot, written before the docs site builds (bun run --filter app facts:snapshot)
 packages/config/facts.generated.json
 
-# Copy of apps/docs/public/openapi.json, written before the docs site builds (bun run --filter docs openapi:export)
+# Copy of apps/app/public/openapi.json, written before the docs site builds (bun run --filter app openapi:export)
 packages/docs-assets/openapi.json
-# The docs' messages, copied from apps/docs/messages before the docs site builds (bun run --filter docs i18n:docs-messages)
+# The docs' messages, copied from apps/app/messages before the docs site builds (bun run --filter app i18n:docs-messages)
 packages/i18n/messages/
 
 # Local agent tooling (skills, settings, worktrees): never committed

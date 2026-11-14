@@ -6,7 +6,7 @@ import { createAuthMiddleware, isAPIError } from "better-auth/api";
 // _DAYS with a notice to the account's address, like moving an account to a
 // new email: whoever wrote to support may not be the account's owner. The
 // app schedules, shows, cancels and completes it
-// (apps/docs/lib/account/two-factor-reset-server.tsx); this file holds what
+// (apps/app/lib/account/two-factor-reset-server.tsx); this file holds what
 // both sides share, and cancels it when the person signs in with an
 // authenticator code or a backup code, which shows they still have them.
 //

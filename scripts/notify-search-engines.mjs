@@ -41,7 +41,7 @@ export const SITE = "https://qrdx.dev";
 export const SITEMAP_URL = `${SITE}/sitemap.xml`;
 
 /**
- * The IndexNow key. apps/docs/public/<key>.txt serves it, which proves the
+ * The IndexNow key. apps/app/public/<key>.txt serves it, which proves the
  * submissions come from the site's owner (tests/repo checks the two match).
  */
 export const INDEXNOW_KEY = "16c804a6f4ac077e1778c4c29c898228";

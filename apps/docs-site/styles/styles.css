@@ -3,7 +3,7 @@
 /* Tailwind scans this app's folder by itself. The docs' MDX lives in the
    main app's folder and the registry examples in @repo/docs-assets, so
    their classes are listed here. */
-@source "../../docs/content/docs";
+@source "../../app/content/docs";
 @source "../../../packages/docs-assets/registry";
 
 @import "fumadocs-ui/css/neutral.css";

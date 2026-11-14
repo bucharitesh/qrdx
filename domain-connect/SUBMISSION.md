@@ -174,11 +174,11 @@ The app needs no change for more providers: discovery finds each domain's provid
 
 ## Rotating the key
 
-The key id `_dck1` is fixed in the app (`SIGNING_KEY_ID` in `apps/docs/lib/domain-connect/template.ts`). To rotate, generate a new key, then replace the `_dck1` TXT records and `DOMAIN_CONNECT_PRIVATE_KEY` together and redeploy. Between those two changes the app sees a mismatch and hides the button, so nobody gets a link that fails. For an overlap-free rotation, publish the new key at `_dck2`, change `SIGNING_KEY_ID` to `_dck2` with the new variable in one deploy, then remove `_dck1`.
+The key id `_dck1` is fixed in the app (`SIGNING_KEY_ID` in `apps/app/lib/domain-connect/template.ts`). To rotate, generate a new key, then replace the `_dck1` TXT records and `DOMAIN_CONNECT_PRIVATE_KEY` together and redeploy. Between those two changes the app sees a mismatch and hides the button, so nobody gets a link that fails. For an overlap-free rotation, publish the new key at `_dck2`, change `SIGNING_KEY_ID` to `_dck2` with the new variable in one deploy, then remove `_dck1`.
 
 ## How the app decides (reference)
 
-For each domain waiting for DNS, on the Domains page, for workspace owners and admins on a plan with custom domains (code: `apps/docs/lib/domain-connect/`):
+For each domain waiting for DNS, on the Domains page, for workspace owners and admins on a plan with custom domains (code: `apps/app/lib/domain-connect/`):
 
 1. The published key at `_dck1.qrdx.dev` must match `DOMAIN_CONNECT_PRIVATE_KEY`.
 2. Find the domain's DNS zone (the most specific parent name with an SOA record), read `_domainconnect.<zone>`, and fetch `https://<that>/v2/<zone>/settings`. That URL comes from the customer's DNS, so the server fetches it only over HTTPS on the default port, to public addresses, without redirects.

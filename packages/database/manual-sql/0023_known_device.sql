@@ -10,7 +10,7 @@
 -- alert: an account gets at most 10 in 24 hours.
 --
 -- Rows stay bounded: the plugin keeps each account's 50 most recently seen
--- browsers, and the daily cron (apps/docs/lib/auth/verification-prune.ts)
+-- browsers, and the daily cron (apps/app/lib/auth/verification-prune.ts)
 -- deletes rows whose last_seen_at is more than 400 days old.
 --
 -- Additive and idempotent: a new table only, safe to run more than once, in

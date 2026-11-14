@@ -6,7 +6,7 @@ import {
 } from "better-auth/api";
 
 // Team and workspace changes for the workspace audit log
-// (apps/docs/ee/audit-log). Every change to a workspace's people and name
+// (apps/app/ee/audit-log). Every change to a workspace's people and name
 // goes through the organization plugin's endpoints, called over HTTP
 // (/api/auth/organization/*) or by the app's server actions (auth.api.*).
 // Both run the same hook pipeline, so this plugin's after-hooks see each

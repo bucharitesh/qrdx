@@ -1,6 +1,6 @@
 // Workspace paths as availability rules match them: every workspace's page
 // is /dashboard/<slug>/…, so a rule names it once as
-// /dashboard/[workspace]/…. Client-safe. apps/docs/lib/workspace-paths.ts
+// /dashboard/[workspace]/…. Client-safe. apps/app/lib/workspace-paths.ts
 // re-exports these with the rest of its workspace URL helpers.
 
 /** Stands for any workspace in path patterns (./rules.ts). */

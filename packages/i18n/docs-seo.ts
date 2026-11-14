@@ -1,5 +1,5 @@
 // Search-engine rules for docs pages in other languages, the docs version of
-// apps/docs/lib/i18n/metadata.ts and apps/docs/lib/i18n/sitemap.ts.
+// apps/app/lib/i18n/metadata.ts and apps/app/lib/i18n/sitemap.ts.
 //
 // - A translation a native reviewer signed off (the language's `review` in
 //   config.ts, "reviewed" or a list of paths that names the page) is
@@ -10,9 +10,9 @@
 //   URL: `noindex, follow`, canonical to the English page.
 //
 // Pure functions: callers pass which languages a page is translated into
-// (apps/docs/lib/source.ts docsPageLocales), so tests need no content. The
+// (apps/app/lib/source.ts docsPageLocales), so tests need no content. The
 // helpers that write absolute URLs come from createDocsSeo(baseUrl): the app
-// passes its own origin (apps/docs/lib/i18n/docs-seo.ts), as this package
+// passes its own origin (apps/app/lib/i18n/docs-seo.ts), as this package
 // reads no environment.
 import type { MetadataRoute } from "next";
 import { DEFAULT_LOCALE, LOCALE_INFO, type Locale } from "./config";
@@ -48,7 +48,7 @@ export interface DocsPageSeo {
 
 type Entry = MetadataRoute.Sitemap[number];
 
-/** Translations rank a little below the English page (as apps/docs/lib/i18n/sitemap.ts). */
+/** Translations rank a little below the English page (as apps/app/lib/i18n/sitemap.ts). */
 const TRANSLATION_PRIORITY = 0.9;
 
 /**

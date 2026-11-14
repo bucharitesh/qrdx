@@ -2,7 +2,7 @@
 
 The QRdx bot makes QR codes in Telegram. People send it a link or text in a private chat, call it inline from any chat by typing its username, or send `/qr` in a group. No QRdx account is needed, and QRdx doesn't save the codes. The content travels in the image links, so like any link it can end up in logs and caches.
 
-The bot runs inside the QRdx app (`apps/docs`), so there's nothing to deploy from this folder. It holds the setup script that registers the bot with Telegram. The user guide is the [Telegram bot docs page](https://qrdx.dev/docs/telegram-bot).
+The bot runs inside the QRdx app (`apps/app`), so there's nothing to deploy from this folder. It holds the setup script that registers the bot with Telegram. The user guide is the [Telegram bot docs page](https://qrdx.dev/docs/telegram-bot).
 
 ## How it works
 
@@ -10,7 +10,7 @@ The bot runs inside the QRdx app (`apps/docs`), so there's nothing to deploy fro
 - A reply in a chat is a photo from the image API (`/v1/qr`, PNG) with buttons to download the PNG or SVG, to open the editor, and **Style**, which opens Look, Color, Frame and Logo buttons for the person who asked. A pick redraws the photo (`editMessageMedia`) after the editor's scan check. The content and design come back from the message's Download PNG button, and who asked from the buttons' data, so QRdx doesn't save the code to restyle it. Options typed after the content (`qrdx.dev --look modern`) style a code too, in chats and inline.
 - An inline result is a photo too, but the Bot API only accepts JPEG there, so it comes from `GET /api/integrations/telegram/photo`, which serves the same code as a JPEG, in the design the bot checked. The bot signs each of these links, design included (HMAC-SHA256, with a key derived from `TELEGRAM_WEBHOOK_SECRET`), and each one works for one to two hours. The route answers `403` to any other link before it draws anything.
 - Each person can send the bot 20 messages a minute (a pick under **Style** counts as one) and 60 inline queries a minute. Past that, the bot asks them to wait (once a minute in chats). Across everyone, it answers 300 messages and inline queries a minute, and past that it says it's busy. These limits use the app's Upstash rate limiting, so they only apply where Upstash is configured.
-- The code lives in `apps/docs/lib/chat-bots/telegram/` and `apps/docs/app/api/integrations/telegram/`.
+- The code lives in `apps/app/lib/chat-bots/telegram/` and `apps/app/app/api/integrations/telegram/`.
 
 ## Set up a bot
 

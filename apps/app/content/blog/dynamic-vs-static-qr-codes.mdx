@@ -1,0 +1,137 @@
+---
+title: "Dynamic vs Static QR Codes: What If You Stop Paying?"
+description: "A static QR code holds your link. A dynamic one holds a short link that redirects. How each works, what vendors do when you cancel, and how to choose."
+date: "2026-11-02"
+updated: "2026-11-13"
+author: ["ritesh-bucha"]
+category: Education
+tags: ["dynamic qr code", "static vs dynamic qr code", "dynamic qr code generator", "editable qr code", "qr code subscription"]
+image: /blog/dynamic-vs-static-qr-codes/cover.svg
+imageAlt: Line drawing of a printed QR code linked by a pipe to a redirect block, which points to a new web page while an old, dashed page stands behind it
+related: ["do-qr-codes-expire", "how-big-should-a-qr-code-be"]
+published: true
+---
+
+**A static QR code stores your content in the pattern itself, so it keeps working with no account and no provider. A dynamic QR code stores a short link that a provider redirects to your destination.** That redirect is what lets you edit the destination after printing and count scans. It also means the code works only while the provider keeps redirecting it, and many providers stop when a trial ends or a plan lapses.
+
+This guide explains how each kind works, what happens to dynamic codes when you stop paying (with links to each vendor's own terms), and how to choose.
+
+<Callout title="Disclosure">
+We make QRdx, which offers both kinds. Every claim about another vendor links to that vendor's page as we read it on November 2, 2026. Terms change, so check the current page before you print in volume.
+</Callout>
+
+## How a static QR code works
+
+A static code is the data itself, encoded as modules (the small squares). A URL code holds `https://example.com/menu`; a Wi-Fi code holds the network name and password; a contact code holds a vCard. When a phone scans it, the camera decodes the pattern and acts on the content directly. No server sits in between.
+
+That gives static codes three properties, two of them strengths:
+
+- **They can't be switched off.** Nobody can deactivate a pattern that's already printed. A static Wi-Fi or contact code works for as long as the print is legible.
+- **They're free and private.** There's nothing to host, so generators can give them away. On QRdx, static codes are made in the browser and never pass through our servers.
+- **They can't change.** If the menu moves to a new URL, the printed code still points at the old one. Your only fix is to redirect the old URL on your own website, or reprint.
+
+## How a dynamic QR code works
+
+A dynamic code encodes a short link instead of your destination. On QRdx that looks like `https://qrdx.dev/q/aB3dE5f`: the domain, `/q/`, and a seven-character back-half. When someone scans it:
+
+1. The phone opens the short link.
+2. The provider's server looks up the code and finds the destination you set.
+3. The server answers with an HTTP redirect, and the phone follows it to your page.
+4. The provider records the scan: time, rough location, device type, browser and the like.
+
+Because the destination lives in the provider's database, you can change it whenever you like and the printed code follows. The same lookup step is where the extras plug in: routing by device or country, A/B splits, passwords, start and end dates, and scan analytics.
+
+Two details are worth knowing if you evaluate providers:
+
+- **Which redirect status they send.** A `301 Moved Permanently` can be cached by browsers, so a phone that scanned before may skip the lookup after you change the destination. QRdx sends `302` with `Cache-Control: no-store` for this reason, and records the scan after the redirect has been sent, so analytics never slow down a scan. You can read it in [the redirect route on GitHub](https://github.com/qrdxinc/qrdx/blob/main/apps/app/app/q/%5Bslug%5D/route.ts).
+- **Whose domain the short link uses.** A code printed with the provider's domain depends on that provider forever. A code printed with your own domain (for example `go.yourbrand.com/menu`) can be moved, because you control where that domain points. QRdx supports [custom domains](/docs/custom-domains) on paid plans.
+
+A side benefit: short links make smaller codes. A 26-character short link fits in a 29 × 29 module code at error-correction level Q. A 108-character URL with tracking parameters needs 49 × 49 modules at the same level, so it must be printed much larger to scan from the same distance. The [print size calculator](/tools/print-size) uses the same capacity tables as the encoder, and [How big should a QR code be?](/blog/how-big-should-a-qr-code-be) walks through the numbers.
+
+## Static vs dynamic at a glance
+
+| | Static | Dynamic |
+| --- | --- | --- |
+| What the code holds | Your content (URL, Wi-Fi, vCard…) | A short link to the provider |
+| Change after printing | No | Yes, any time |
+| Scan analytics | No | Yes |
+| Needs a provider to keep working | No | Yes |
+| Works for Wi-Fi, contacts, payments | Yes | Only for things a link can open |
+| Typical code size for a long URL | Larger | Smaller (the short link is short) |
+| Cost | Free almost everywhere | Usually part of a plan |
+
+## What happens to dynamic codes when you stop paying
+
+The redirect in step 3 is a business decision. Across the industry, the common pattern is that dynamic codes depend on an active trial or subscription. Here's what vendors say in their own words:
+
+- **QRFY**, on its trial: "Any Dynamic QR Codes that you created during the trial period will be deactivated and linked to a service page." Upgrading reactivates them. ([QRFY help](https://support.qrfy.com/en/articles/6998440-what-happens-to-my-account-and-qr-codes-when-the-trial-expires))
+- **Scanova**: "Your Dynamic QR Code will stop working once the free trial ends," and "Dynamic QR Codes require an active subscription to keep working." The trial is 14 days. ([Scanova pricing](https://scanova.io/pricing/))
+- **Uniqode**: "Once your free trial expires, any dynamic QR Codes you created will become inactive," and "If you decide to cancel your subscription, your QR Codes will become inactive." ([Uniqode pricing](https://www.uniqode.com/pricing))
+- **QRCodeChimp**: the free plan has 1,000 scans a month across all dynamic codes, after which "scans are paused" until the next month. If a paid plan isn't renewed, the account moves to Free and "the dynamic codes other than the last 10 will be paused." ([QRCodeChimp pricing](https://www.qrcodechimp.com/pricing))
+- **Hovercode**: on cancellation, "Your first 3 dynamic QR codes, first 3 short links, and first multi-link page stay active." The rest become inactive but aren't deleted, and codes on a custom domain stop working. Its free plan has unlimited scans. ([Hovercode pricing](https://hovercode.com/pricing/))
+- **QR TIGER**: the free plan includes 3 dynamic codes with "500 scans per dynamic QR code." ([QR TIGER pricing](https://www.qrcode-tiger.com/payment))
+
+None of this is hidden: it's on each vendor's pricing or help page. The trouble is that nobody reads those pages while designing a menu, and a printed code outlives the trial. For more cases, including codes that only *look* expired, see [Do QR codes expire?](/blog/do-qr-codes-expire).
+
+## QRdx's Never-Hostage Guarantee
+
+QRdx takes the other position, and writes it down. These are the promises, as published on the [Never-Hostage Guarantee](/guarantee) page:
+
+- **Static codes are free forever.** Make, style and download static QR codes without an account. They hold your content directly, never expire and never pass through our servers.
+- **Dynamic codes keep redirecting.** Every dynamic code keeps working on every plan, including after a downgrade, a failed payment or a cancellation.
+- **No pausing, no ads.** We never pause your codes over billing, show ads or interstitials, or send your scanners through a QRdx page.
+- **Limits only stop new things.** Going over a limit blocks creating more. Existing codes and pages keep working, and you can still change where your codes point.
+- **Export everything.** Download any code as SVG or PNG, export its scans as CSV, and read your codes through the REST API, on every plan.
+- **12 months' notice.** If QRdx ever shuts down, you get at least 12 months' notice and a documented path to run the open-source app yourself.
+
+The page's one exception is abuse: a code that points to phishing or malware is disabled after a report or review, which is a safety decision, never a billing one. In the redirect code, the rule reads: "Only the owner archiving or trashing, or an admin disabling, turns a code off; plan changes never do."
+
+In practice, the Free plan includes 10 active dynamic codes with unlimited scans and {facts.freeScanHistoryYears} year of scan history; Pro removes the code limit and keeps the whole history. If you cancel Pro, the account returns to Free, and every code you made keeps redirecting. You just can't create more dynamic codes until you're under the Free limit. The full plan comparison is on the [pricing page](/pricing).
+
+## How to choose
+
+**Use a static code when the content won't change**, or when it isn't a link at all:
+
+- Wi-Fi logins, contact cards, payment IDs, calendar events.
+- A URL on your own domain that you'll keep stable, like `yourbrand.com/menu`. If the page moves, you can redirect it on your site.
+- Anything you want to work with no account and no third party.
+
+**Use a dynamic code when you need to change it or measure it:**
+
+- Menus, price lists, event pages and campaigns that change after printing.
+- Print runs where you want to know which placement gets scanned.
+- Destinations you don't control, such as a booking page or an app store listing.
+
+**Before you print a dynamic code, ask the provider five questions:**
+
+1. What happens when the trial ends?
+2. What happens if I cancel, or a payment fails?
+3. Is there a scan cap, and what happens when a code passes it?
+4. Can I export my codes and scans?
+5. Can I use my own domain, so the codes can move with me?
+
+If any answer is "deactivated", "paused" or "redirected to our page", plan for the day that happens. If you already have codes elsewhere, QRdx can import them from Bitly, Rebrandly, Short.io and the export files of most QR services; see [moving to QRdx](/docs/migrate).
+
+You can make either kind in the [QRdx playground](/playground). The [dynamic QR code generator](/dynamic-qr-code) page shows what each plan includes, and the [dynamic QR codes docs](/docs/dynamic-qr-codes) cover editing, analytics and the API.
+
+## FAQ
+
+### Can I turn a static QR code into a dynamic one?
+
+Not without reprinting: the URL is in the pattern. If the static code points at a page on your own domain, you can get most of the benefit by redirecting that page on your server.
+
+### Are dynamic QR codes slower to scan?
+
+The camera reads both the same way. Opening a dynamic code adds one redirect, which is usually a fraction of a second.
+
+### Do dynamic QR codes work offline?
+
+The scan itself does, but following the short link needs a connection, just as the destination page does. Static Wi-Fi and contact codes need no connection at all.
+
+### Will my QRdx dynamic codes stop if I downgrade?
+
+No. Under the Never-Hostage Guarantee they keep redirecting on every plan, including Free, after a downgrade, a failed payment or a cancellation.
+
+### What's the difference between a dynamic QR code and a short link?
+
+A dynamic QR code is a short link printed as a QR code. The redirect, the analytics and the risks are the same; the QR code is just how people open it.

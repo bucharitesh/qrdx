@@ -12,7 +12,7 @@ import { CHROME_NAMESPACES, pickMessages } from "@/lib/i18n/messages";
 
 /**
  * The <html> document of the docs site: the main app's
- * (apps/docs/components/root-document.tsx) without what only the main app
+ * (apps/app/components/root-document.tsx) without what only the main app
  * has, such as the sign-in dialog, the editor's saved state and the
  * availability context (the docs decide availability on the server).
  */

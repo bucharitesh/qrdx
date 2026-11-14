@@ -2,9 +2,9 @@
 // imports.
 //
 // Adding a language is data only (CONTRIBUTING.md, "Translating QRdx"):
-// one entry here, its catalog in apps/docs/messages/<locale>.json (a partial
+// one entry here, its catalog in apps/app/messages/<locale>.json (a partial
 // one works: missing strings fall back to English) and, optionally,
-// glossary terms in apps/docs/messages/glossary.json. Routes, the language
+// glossary terms in apps/app/messages/glossary.json. Routes, the language
 // menu, metadata, hreflang and the sitemap all read this list.
 //
 // English is the source and the canonical, unprefixed URL; every other

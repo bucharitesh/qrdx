@@ -28,10 +28,10 @@ import { remarkProductFacts } from "./lib/remark-product-facts";
 // `.transform(fillFactsDeep)`: frontmatter strings can quote product counts as
 // `{facts.bodyPatterns}` (lib/product-facts.ts), filled in at build time.
 // The docs' content stays in the main app's folder for now
-// (apps/docs/content/docs): the translation scripts and the main app's own
+// (apps/app/content/docs): the translation scripts and the main app's own
 // copy of the docs read it there. The docs site compiles it from there.
 export const docs = defineDocs({
-  dir: "../docs/content/docs",
+  dir: "../app/content/docs",
   docs: {
     schema: frontmatterSchema
       .extend({

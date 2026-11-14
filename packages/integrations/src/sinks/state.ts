@@ -1,7 +1,7 @@
 import { isIntegrationApiError } from "../core/http-client";
 import type { SinkDeliveryResult, SyncCursor, SyncState } from "./types";
 
-// Same schedule as webhook deliveries (apps/docs lib/events/deliveries.ts):
+// Same schedule as webhook deliveries (apps/app lib/events/deliveries.ts):
 // 8 tries over about two days, then the stream stops until "Retry now".
 export const SYNC_MAX_ATTEMPTS = 8;
 const MINUTE_MS = 60_000;

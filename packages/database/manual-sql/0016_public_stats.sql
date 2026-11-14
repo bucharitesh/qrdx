@@ -5,7 +5,7 @@
 --
 -- Written by the code-features agent (2026-11-04). NOT APPLIED. Until it is,
 -- "Share analytics…" says sharing isn't available yet and /stats/<token> is
--- a 404 (apps/docs/lib/public-stats.ts treats the missing table as "off").
+-- a 404 (apps/app/lib/public-stats.ts treats the missing table as "off").
 --
 -- Additive and idempotent: safe to run more than once, in one transaction.
 -- It creates one table, one foreign key and two unique indexes, and changes

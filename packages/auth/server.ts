@@ -88,7 +88,7 @@ import { workspaceTwoFactorGate } from "./workspace-two-factor";
 
 // Members per team, owner included, by the best plan among its owners and
 // billing members (workspacePlanTier in ./plan.ts). Keep in sync with
-// `teamMembers` in apps/docs/lib/plans.ts.
+// `teamMembers` in apps/app/lib/plans.ts.
 const TEAM_MEMBER_LIMITS = {
   free: 1,
   pro: 3,
@@ -158,7 +158,7 @@ const UNUSED_EMAIL_OTP_PATHS = [
   "/email-otp/reset-password",
 ];
 // Email change is on, but never over HTTP: only the app's server actions call
-// it, through auth.api (apps/docs/app/settings/account/_lib/
+// it, through auth.api (apps/app/app/settings/account/_lib/
 // email-change-actions.ts). They add what the plugin doesn't: "Confirm it's
 // you", per-user limits and the notice to the old address, so a direct
 // request can't skip them.
@@ -170,7 +170,7 @@ const SERVER_ONLY_EMAIL_OTP_PATHS = [
 // Two-step verification (Lane A). An authenticator app plus backup codes;
 // no codes by email or SMS as a second factor, so the plugin's OTP endpoints
 // are off. Turning it on or off and new backup codes only go through the
-// app's server actions (apps/docs/app/settings/account/_lib/
+// app's server actions (apps/app/app/settings/account/_lib/
 // two-factor-actions.ts), which add "Confirm it's you", limits and the
 // notice email. Over HTTP only the challenge's own endpoints remain.
 const twoFactorPlugin = twoFactor({
@@ -245,7 +245,7 @@ export const auth = betterAuth({
           return { data: { ...user, name } };
         },
         // Every account gets a workspace of its own straight away. If this
-        // fails, the first dashboard visit makes it (apps/docs/lib/workspaces.ts).
+        // fails, the first dashboard visit makes it (apps/app/lib/workspaces.ts).
         after: async (user, ctx) => {
           try {
             await createOwnWorkspace(user);
@@ -342,7 +342,7 @@ export const auth = betterAuth({
     // Business users can create more (any entitled subscription, ./plan.ts).
     organization({
       creatorRole: "owner",
-      // QRdx's five roles (apps/docs/lib/permissions.ts decides what each
+      // QRdx's five roles (apps/app/lib/permissions.ts decides what each
       // may do in the app). Viewer and billing get the plugin's member
       // statements: neither manages the workspace or its people through
       // the plugin. Registering them lets invitations and role changes use
@@ -353,7 +353,7 @@ export const auth = betterAuth({
       // an invitation is accepted; pending invitations can't exceed free seats.
       membershipLimit: (_user, org) => teamMemberLimit(org.id),
       invitationLimit: ({ organization: org }) => teamInvitationLimit(org.id),
-      // Invite emails are sent by apps/docs/actions/organizations.ts; the
+      // Invite emails are sent by apps/app/actions/organizations.ts; the
       // copyable /invite/<id> link in the dashboard always works too.
       sendInvitationEmail: () => Promise.resolve(),
       // Invite links can be forwarded, so only the verified invitee may accept.
