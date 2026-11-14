@@ -1,8 +1,7 @@
 // Where passkeys work. WebAuthn binds every passkey to a host (the "relying
 // party ID") and checks the page's origin on each use, so QRdx accepts
-// exactly one origin: the app's own URL. Pure and client-safe: the app's
-// availability rules (apps/docs/lib/feature-availability-rules.ts) read it
-// too.
+// exactly one origin: the app's own URL. Pure and client-safe: the
+// availability rules (packages/availability/rules.ts) read it too.
 
 export interface PasskeyRelyingParty {
   /** The host passkeys belong to: "qrdx.dev", "localhost" */

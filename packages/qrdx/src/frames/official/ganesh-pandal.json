@@ -1,0 +1,109 @@
+{
+  "id": "ganesh-pandal",
+  "name": "Pandal sign",
+  "description": "A hanging sign on two chains, in vermilion and marigold.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "ganesh-chaturthi",
+  "contentTypes": [],
+  "tags": ["ganesh chaturthi", "ganeshotsav", "festival", "pandal"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1820
+    },
+    "qr": {
+      "x": 160,
+      "y": 460,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#a63d14",
+      "text": "#ffffff",
+      "accent": "#f6c443"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1320,
+        "height": 40,
+        "radius": 20,
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.3
+        }
+      },
+      {
+        "type": "line",
+        "x1": 260,
+        "y1": 20,
+        "x2": 260,
+        "y2": 340,
+        "width": 14,
+        "dash": [26, 10],
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.4
+        }
+      },
+      {
+        "type": "line",
+        "x1": 1060,
+        "y1": 20,
+        "x2": 1060,
+        "y2": 340,
+        "width": 14,
+        "dash": [26, 10],
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.4
+        }
+      },
+      {
+        "type": "rect",
+        "x": 40,
+        "y": 320,
+        "width": 1240,
+        "height": 1500,
+        "radius": 40,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 260,
+        "cy": 360,
+        "r": 16,
+        "fill": "background"
+      },
+      {
+        "type": "circle",
+        "cx": 1060,
+        "cy": 360,
+        "r": 16,
+        "fill": "background"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for pandal timings",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1580,
+          "width": 1040,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

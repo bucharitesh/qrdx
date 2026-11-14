@@ -1,8 +1,8 @@
 import { notFound } from "next/navigation";
 import { ogSize, renderPageOgImage } from "@/app/og/brand";
 import { COMMUNITY_LICENSE_NAME } from "@/lib/community/licence";
-import { TYPE_SEGMENTS, typeFromSegment } from "@/lib/community/types";
-import { buildTimeParams } from "@/lib/static-params";
+import { typeFromSegment } from "@/lib/community/types";
+import { onDemandParams } from "@/lib/static-params";
 import { COPY } from "./copy";
 
 export const alt =
@@ -11,9 +11,7 @@ export const size = ogSize;
 export const contentType = "image/png";
 
 export function generateStaticParams() {
-  return buildTimeParams(() =>
-    Object.values(TYPE_SEGMENTS).map((type) => ({ type })),
-  );
+  return onDemandParams();
 }
 
 export default async function Image({

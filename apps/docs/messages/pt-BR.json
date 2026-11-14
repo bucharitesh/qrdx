@@ -1669,6 +1669,11 @@
       "after": "Ele abre direto no leitor, em uma janela própria, e funciona offline depois que você ler um código com ele."
     }
   },
+  "scannerApp": {
+    "share": "Enviar",
+    "scanInstructions": "Aponte a câmera para um QR code ou código de barras",
+    "cameraBlocked": "O acesso à câmera está desativado para o QRdx Scanner. Ative nos Ajustes ou faça a leitura de uma imagem."
+  },
   "scanPages": {
     "reportAbuse": "Denunciar abuso",
     "privacy": "Privacidade",
@@ -4368,7 +4373,6 @@
         "frame": "Frame",
         "padding": "Margem",
         "errorCorrection": "Correção de erros",
-        "border": "Borda",
         "none": "Nenhuma"
       },
       "dotSizeSection": {
@@ -4391,43 +4395,32 @@
         }
       },
       "frameControls": {
-        "customise": "Personalizar",
-        "importSvg": "Importar SVG",
+        "uploadSvg": "Enviar SVG",
         "publishFrame": "Publicar moldura",
         "theFrameIsAddedAround": "A moldura é adicionada ao redor do código, então a imagem baixada fica maior e o código continua legível na leitura.",
         "label": "Texto",
-        "secondLine": "Segunda linha",
-        "leaveEmptyForNoLabel": "Deixe vazio para não ter texto",
         "pickAFrameFirst": "Escolha uma moldura primeiro",
-        "frameColor": "Cor da moldura",
-        "textColor": "Cor do texto",
-        "endColor": "Cor final",
-        "optionalEGYourWebsite": "Opcional, ex.: seu site",
-        "none": "Nenhuma"
+        "none": "Nenhuma",
+        "takesDotColor": "Usa a cor dos pontos do código.",
+        "alsoHasTemplate": "Este design também tem a moldura {name} dentro desta. Ao escolher outra moldura, as duas são substituídas.",
+        "templateKeepsSize": "Esta moldura ajusta o código dentro dela, então a imagem baixada mantém o tamanho que você escolher."
       },
       "frameFields": {
         "textSize": "Tamanho do texto"
       },
       "framePicker": {
-        "more": "Mais",
         "showAll": "Ver todas",
         "frame": "Moldura",
-        "moreFrames": "Mais molduras",
-        "allTotalFrames": "Todas as {total, number} molduras",
-        "allFrames": "Todas as molduras",
         "searchFrames": "Buscar molduras",
         "searchTotalFrames": "Buscar entre {total, number} molduras",
-        "closeFrames": "Fechar molduras",
         "filterFrames": "Filtrar molduras",
         "labelFrames": "Molduras: {label}",
-        "commonFrames": "Molduras comuns",
-        "everyFrameBuiltInStyles": "Todos os frames: estilos nativos, os frames oficiais do QRdx e os que você salvou. Ao escolher um, ele é aplicado na hora.",
-        "less": "Menos",
         "all": "Todos",
         "noFramesMatchQuery": "Nenhum frame corresponde a \"{query}\".",
         "loadingFrames": "Carregando frames…",
         "comingUp": "Em breve",
-        "builtIn": "Nativos",
+        "classic": "Clássicas",
+        "shapedCodes": "Códigos com forma",
         "saved": "Salvos",
         "results": "Resultados"
       },
@@ -4555,7 +4548,6 @@
       },
       "patternControls": {
         "customizeOuterAndCenter": "Personalize externo e centro",
-        "border": "Borda",
         "higherLevelsSurviveScratchesAnd": "Níveis mais altos resistem a arranhões e logos, mas adicionam mais pontos. Use H ao adicionar um logo.",
         "dotShape": "Formato dos pontos",
         "dotShapes": "formatos de ponto",
@@ -8342,8 +8334,12 @@
       },
       "setupGuide": {
         "getSetUp": "Configuração",
+        "launcherLabel": "Configure sua conta: {done, number} de {length, number} concluídas",
         "doneOfLengthDone": "{done, number} de {length, number} concluídas",
+        "doneOfLengthShort": "{done, number}/{length, number}",
         "setupTasksDone": "Tarefas concluídas",
+        "collapse": "Recolher",
+        "dismissGuide": "Dispensar guia",
         "done": "(concluído)",
         "create": "Criar",
         "start": "Começar",

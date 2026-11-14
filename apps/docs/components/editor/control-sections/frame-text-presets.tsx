@@ -4,7 +4,10 @@ import { Button } from "@repo/design-system/components/ui/button";
 import { useTranslations } from "next-intl";
 import { type AnyQRFrame, DEFAULT_FRAME_TEXT } from "qrdx";
 import { useEditableStyle } from "@/components/editor/style-scope";
+import { DEFAULT_FRAME_STYLE } from "@/lib/frames/built-in";
 import { soundEvent } from "@/lib/sound/emit";
+import { withoutShape } from "./frame-shapes";
+import { withoutTemplate } from "./frame-templates";
 
 const CTA_LABELS = [
   "Scan me",
@@ -19,7 +22,7 @@ const CTA_LABELS = [
 
 /**
  * Call-to-action labels for the frame. Picking one with no frame yet adds
- * the Banner frame, so the label shows right away.
+ * the default frame (the first built-in one), so the label shows right away.
  */
 export function FrameTextPresets() {
   const t = useTranslations("editor.controlSections.frameTextPresets");
@@ -30,10 +33,12 @@ export function FrameTextPresets() {
 
   const apply = (text: string) => {
     setStyle({
-      ...style,
+      // With no frame yet, the label's frame replaces a shaped code or a
+      // template (one frame at a time)
+      ...(framed ? style : withoutTemplate(withoutShape(style))),
       frame: framed
         ? { ...frame, text }
-        : { ...frame, style: "banner-bottom", text },
+        : { ...frame, style: DEFAULT_FRAME_STYLE, text },
     });
     soundEvent("tick");
   };

@@ -8,7 +8,9 @@ Ajoutez un cadre « Scan me », vérifiez qu'un design se scanne avant de le dif
 
 ## Cadres d'appel à l'action [#call-to-action-frames]
 
-La prop `frame` dessine autour du code un cadre avec un court libellé. Elle fonctionne sur `QRCode`, `QRCodeSVG`, `QRCodeCanvas`, `getQRAsSVG`, `getQRData` et sur tous les utilitaires de téléchargement.
+Chaque cadre que dessine QRdx est une spécification de cadre : une petite description JSON de formes, de libellés et de couleurs. Un seul moteur dessine toutes les spécifications, donc un cadre a le même rendu en SVG, PNG, PDF et EPS. QRdx propose {facts.frames} cadres : {facts.frameStyles} cadres intégrés et {facts.officialFrames} [cadres officiels](#official-frames). Vous pouvez aussi créer le vôtre ou en choisir un dans la [communauté](/community/frames).
+
+La prop `frame` en dessine un autour du code. Elle fonctionne sur `QRCode`, `QRCodeSVG`, `QRCodeCanvas`, `getQRAsSVG`, `getQRData` et tous les utilitaires de téléchargement.
 
 ```tsx
 import { QRCode } from "qrdx";
@@ -19,26 +21,49 @@ import { QRCode } from "qrdx";
 />
 ```
 
-Le cadre est ajouté **autour** du code : le résultat est plus grand, et les modules du QR ainsi que la zone de silence ne sont jamais recouverts, donc la lisibilité au scan reste identique. Un léger espace, de la couleur de fond du code, sépare le code du cadre.
+Le cadre est ajouté **autour** du code : la sortie devient plus grande, et les modules du QR code ainsi que la zone de silence ne sont jamais recouverts, donc la lisibilité au scan reste inchangée. Un espace clair, de la couleur d'arrière-plan du code, sépare le code du cadre.
 
-| Option | Par défaut | Remarques |
+### Cadres intégrés [#built-in-frames]
+
+Un cadre intégré est désigné par son `style`. Les options remplissent les libellés et les couleurs de sa spécification :
+
+| Option | Par défaut | Notes |
 | --- | --- | --- |
-| `style` | — | L'un des {facts.frameStyles} styles ci-dessous, ou `none` (`FRAME_STYLES`) |
+| `style` | — | L'un des {facts.frameStyles} cadres intégrés ci-dessous, ou `none` (`FRAME_STYLES`) |
 | `text` | `"Scan me"` | 24 caractères maximum. Passez `""` pour masquer le libellé |
 | `color` | `#000000` | Couleur du cadre (`gradient-border` : couleur de départ, violet par défaut) |
 | `textColor` | blanc sur le cadre, `color` sur les zones claires | Couleur du libellé |
-| `secondaryText` | aucun | Second libellé, 24 caractères maximum : la bande du bas de `banner-top-bottom`, l'arc inférieur de `circle`, le pied de `menu-card` |
+| `secondaryText` | aucun | Second libellé, 24 caractères maximum : le bandeau inférieur de `banner-top-bottom`, l'arc inférieur de `circle`, le pied de `menu-card` |
 | `secondaryColor` | `#db2777` | Couleur de fin de `gradient-border` |
 | `fontScale` | `1` | Taille du libellé de 0,5 à 1,5 ; les libellés se réduisent toujours pour tenir |
 
-Styles :
+Les cadres intégrés, par `style` :
 
-- Bannières et bordures : `banner-bottom`, `banner-top`, `banner-top-bottom`, `border`, `rounded-border`, `gradient-border`, `focus` (angles en équerre)
+- Bannières et bordures : `banner-bottom`, `banner-top`, `banner-top-bottom`, `border`, `rounded-border`, `gradient-border`, `focus` (équerres d'angle)
 - Bulles : `speech-bubble`, `speech-bubble-top`, `chat-bubble`
-- Badges : `circle` (texte disposé autour d'un anneau), `badge` (ruban), `sticker` (découpe à l'emporte-pièce avec ombre)
-- Objets : `polaroid`, `phone`, `ticket`, `tag` (étiquette à suspendre avec un trou), `envelope`, `menu-card`
+- Badges : `circle` (texte disposé autour d'un anneau), `badge` (ruban), `sticker` (découpe avec ombre)
+- Objets : `polaroid`, `phone`, `ticket`, `tag` (étiquette à trou), `envelope`, `menu-card`
 
-Retrouvez-les tous, décodés dans votre navigateur, dans [Formes, yeux et cadres](/docs/styles#frames). Chaque cadre est composé de formes simples et de texte avec des couleurs opaques, si bien que les exports SVG, PNG, PDF et EPS sont identiques (la bordure en dégradé est dessinée avec de fins paliers de couleur unie, et les lettres courbes du cadre circulaire sont du texte pivoté dans tous les formats).
+Chacun de ces noms correspond à une spécification du moteur, et les noms restent valides à long terme. Les designs enregistrés, les liens Image API, les options de la CLI et le code qui les utilisent continuent de dessiner le même cadre. Les cadres qui suppriment la ligne de leur libellé quand il n'y en a pas, comme les bordures, continuent de le faire.
+
+`BUILT_IN_FRAMES` les liste avec leurs noms et leurs spécifications (`BUILT_IN_FRAME_SPECS` donne les spécifications par style). `frameSpecOf` renvoie la spécification que dessine un cadre quelconque, et `getFrameColors` les couleurs avec lesquelles il peint :
+
+```tsx
+import { BUILT_IN_FRAMES, frameSpecOf, getFrameColors } from "qrdx";
+
+BUILT_IN_FRAMES.map((frame) => frame.name); // ["Banner", "Top banner", …]
+
+// A built-in style's spec, or a custom frame's own
+const ticket = frameSpecOf({ style: "ticket" });
+
+// The frame's options, else its spec's defaults
+getFrameColors({ style: "border", color: "#1e3a8a" });
+// { frame: "#1e3a8a", text: "#1e3a8a", accent: "#1e3a8a" }
+```
+
+Pour modifier plus que les libellés et les couleurs, partez de la spécification d'un cadre intégré : `{ style: "custom", spec: frameSpecOf({ style: "ticket" }) }` dessine le même ticket, et vous pouvez en modifier les formes.
+
+Voyez-les tous, décodés dans votre navigateur, dans [Formes, yeux et cadres](/docs/styles#frames). Chaque cadre n'est composé que de formes simples et de texte avec des couleurs opaques, donc les exports SVG, PNG, PDF et EPS sont identiques (la bordure en dégradé est dessinée en fines étapes de couleur unie, et les lettres courbes du cadre circulaire sont du texte pivoté dans tous les formats).
 
 ```tsx
 <QRCode
@@ -47,7 +72,7 @@ Retrouvez-les tous, décodés dans votre navigateur, dans [Formes, yeux et cadre
 />
 ```
 
-Le libellé utilise la pile de polices du système, donc rien n'est téléchargé. Comme le résultat s'agrandit, utilisez `getFrameDimensions(size, frame)` quand vous avez besoin de la largeur et de la hauteur finales :
+Le libellé utilise la pile de polices du système, donc rien n'est téléchargé. Comme la sortie s'agrandit, utilisez `getFrameDimensions(size, frame)` quand vous avez besoin de la largeur et de la hauteur finales :
 
 ```ts
 import { getFrameDimensions } from "qrdx";
@@ -55,7 +80,13 @@ import { getFrameDimensions } from "qrdx";
 getFrameDimensions(400, { style: "banner-bottom" }); // { width: 496, height: 568 }
 ```
 
-`FRAME_STYLES`, `frameSchema` (zod) et les types `QRFrame` / `FrameStyle` sont aussi exportés depuis `qrdx/types` pour la validation côté serveur.
+`FRAME_STYLES`, `frameSchema` (zod) et les types `QRFrame` / `FrameStyle` sont aussi exportés depuis `qrdx/types` pour la validation côté serveur. `GRADIENT_FRAME_DEFAULTS` (les couleurs par défaut de la bordure en dégradé) et `FRAME_GAP_RATIO` restent exportés pour le code qui les utilisait ; l'espacement propre à chaque cadre est la marge intérieure de sa spécification (`getFrameGapRatio`).
+
+### Dans le Playground [#in-the-playground]
+
+**Design → Cadre** propose un seul sélecteur pour tous les cadres. Le groupe **Classique** contient les cadres intégrés et les [modèles](/docs/features/templates) (Flèche, Boîte standard et les autres), à côté des codes en forme, des cadres officiels et des cadres que vous avez enregistrés. En choisir un remplace le précédent. Chaque cadre se modifie de la même façon : son libellé, sa deuxième ligne, ses couleurs et la taille du texte, plus les icônes sur les cadres qui en ont. Un design avec un cadre intégré conserve son nom de `style`, donc les liens, les URL d'image et les extraits de code restent courts.
+
+Le groupe **Codes en forme** place le code lui-même dans une forme : un cercle ou un cœur de points décoratifs, ou une forme que vous importez ([`shape`](/docs/features/patterns#circle-codes)). Un code en forme remplace le cadre : en choisir un supprime le cadre, et choisir un cadre supprime la forme.
 
 ### Dans la CLI [#in-the-cli]
 
@@ -63,13 +94,30 @@ getFrameDimensions(400, { style: "banner-bottom" }); // { width: 496, height: 56
 qrdx generate "https://example.com/menu" --frame banner-bottom --frame-text "Scan for the menu" -o menu.png
 ```
 
-`--frame-color` et `--frame-text-color` acceptent des couleurs hexadécimales. Si vous passez du texte ou des couleurs sans `--frame`, `banner-bottom` est utilisé.
+`--frame-color` et `--frame-text-color` acceptent des couleurs hexadécimales. Passer du texte ou des couleurs sans `--frame` utilise `banner-bottom`.
+
+### Spécifications de cadre [#frame-specs]
+
+Une spécification de cadre est un JSON avec `kind: "qrdx.frame"`, `version: 1`, une taille d'`artboard`, une zone `qr` où se place le code, des `colors` par défaut, les `shapes` peintes derrière le code et les `labels`. Les formes sont des rectangles (avec un trou facultatif), des cercles et des anneaux, des ellipses, des polygones, des tracés, des lignes et des icônes intégrées. Elles sont remplies avec un jeton de thème (`frame`, `text`, `accent`, `background`), une couleur hexadécimale, un mélange de deux, ou un dégradé. Une spécification ne contient ni balisage, ni liens, ni images. Vérifiez toute spécification que vous n'avez pas écrite avec `frameSpecSchema` ou `getFrameSpecIssues` de `qrdx/types` avant de la stocker. Le moteur la vérifie de nouveau avant de dessiner.
+
+Les cadres intégrés et les modèles ont apporté ces champs facultatifs. Les spécifications qui n'en ont pas se dessinent comme avant :
+
+| Champ | Rôle |
+| --- | --- |
+| `labels[].collapse` | `{ y, height }`. Quand le libellé n'affiche aucun texte, la bande de `y` à `y + height` est retirée : les lignes en dessous remontent et l'illustration devient plus courte. Les formes entièrement dans la bande sont omises, et celles qui la traversent raccourcissent. Une bande ne peut pas traverser le code, sa marge intérieure ni une autre bande. |
+| `qr.plate` | `"opaque"` (par défaut), `"background"` ou `"none"`. Le moteur peint une plaque de la couleur d'arrière-plan du code sous le code. Quand cet arrière-plan est transparent, `"opaque"` peint la plaque et `background` se remplit de blanc, donc l'illustration n'apparaît jamais à travers la zone de silence. `"background"` les garde transparents et omet la plaque. Il n'est autorisé que si seuls des remplissages `background`, ou un anneau dont le trou contient la plaque, se trouvent sous la plaque. `"none"` ne peint aucune plaque, donc l'arrière-plan et la marge propres au code sont son seul espace clair, et `qr.padding` peut être inférieur à 4 %. Les modèles l'utilisent. |
+| `stroke` | `{ color, width }` sur un rectangle, un cercle, une ellipse, un polygone ou un tracé : un contour centré sur le bord de la forme, dessiné après son remplissage, d'au plus 10 % du plus petit côté de l'artboard. Le modèle Halloween s'en sert pour détourer sa citrouille. |
+| `colors.text` | Une couleur hexadécimale, ou un mélange de `frame`, `accent`, `background` et de couleurs hexadécimales, comme `{ "mix": ["frame", "accent"], "amount": 0.5 }` pour le libellé de la bordure en dégradé. C'est la valeur par défaut ; `textColor` l'emporte toujours. |
+
+La ligne d'un libellé texte peut aussi empiéter sur la marge intérieure de la plaque, tant qu'elle reste hors du code et que ses majuscules restent hors de la marge à la plus grande taille de texte (`fontScale` 1.5). Les cadres à bordure placent ainsi leur libellé juste sous le code.
+
+qrdx 0.0.51 et les versions antérieures rejettent les spécifications qui utilisent ces champs ou qui placent une ligne de libellé dans la marge intérieure, donc mettez le moteur à jour avant de dessiner une telle spécification ailleurs.
 
 ## Cadres officiels [#official-frames]
 
-En plus des styles intégrés, QRdx propose {facts.officialFrames} cadres officiels : des designs prêts à l'emploi pour les appels à l'action, les restaurants et cafés, les commerces et emballages, les événements et mariages, l'hôtellerie, les voyages et l'immobilier, la santé, le sport et l'éducation, ainsi que le monde professionnel et les réseaux sociaux. {facts.seasonalFrames} d'entre eux sont dédiés aux fêtes et aux saisons, du Nouvel An lunaire, de Holi, de l'Aïd et de Diwali à Hanoucca, Pâques, Thanksgiving et Noël. Chacun est une spécification de cadre avec des libellés et des couleurs modifiables, publiée sous licence CC0, et chacun est testé pour se scanner à des distances de smartphone.
+En plus des cadres intégrés, QRdx propose {facts.officialFrames} cadres officiels : des designs prêts à l'emploi pour les appels à l'action, les restaurants et cafés, les commerces et emballages, la beauté et le bien-être, les événements et mariages, les hôtels et voyages, l'immobilier, les voitures et parkings, la santé et l'éducation, le sport et la forme, les entreprises et les réseaux sociaux, ainsi que les associations et groupes communautaires. {facts.seasonalFrames} d'entre eux sont dédiés aux fêtes et aux saisons, du Nouvel An lunaire, de Holi, de l'Aïd et de Diwali à Hanoucca, Pâques, Thanksgiving et Noël. Chacun est une spécification de cadre avec des libellés et des couleurs que vous pouvez modifier, publiée sous CC0, et chacun est testé pour se scanner aux distances d'un téléphone.
 
-Dans le [Playground](/playground), ouvrez **Cadre** puis **Plus**. Recherchez par nom, usage ou fête, ou choisissez un groupe. Les cadres des fêtes et saisons à venir sont affichés en premier. Vous les trouverez aussi dans la [communauté](/community/frames), publiés par @qrdx.
+Dans le [Playground](/playground), ouvrez **Cadre**. Recherchez par nom, usage ou fête, ou choisissez un groupe. Les cadres des fêtes et saisons à venir apparaissent en premier. Vous les trouverez aussi dans la [communauté](/community/frames), publiés par @qrdx.
 
 Le moteur les exporte sous le nom `OFFICIAL_FRAMES` :
 
@@ -86,11 +134,11 @@ const diwali = getOfficialFrame("diwali-diya"); // undefined for an unknown id
 )}
 ```
 
-`OFFICIAL_FRAME_INDEX` liste tous les cadres sans leur spécification, afin qu'un sélecteur puisse afficher toute la bibliothèque et ne charger les spécifications qu'à la demande. Dans l'[Image API](/docs/developers/image-api#community-items) et le [serveur MCP](/docs/developers/mcp), utilisez un cadre officiel comme élément de la communauté, par exemple `item=frame:diwali-diya`.
+`OFFICIAL_FRAME_INDEX` liste chaque cadre sans sa spécification, afin qu'un sélecteur puisse afficher toute la bibliothèque et ne charger les spécifications qu'au besoin. Dans l'[Image API](/docs/developers/image-api#community-items) et le [serveur MCP](/docs/developers/mcp), utilisez un cadre officiel comme élément de la communauté, par exemple `item=frame:diwali-diya`.
 
-## Est-ce que ça se scanne ? [#will-it-scan]
+## Sera-t-il scannable ? [#will-it-scan]
 
-`getScanScore` estime la fiabilité du scan d'un design. Il s'exécute dans le navigateur et charge [jsQR](https://github.com/cozmo/jsQR) à la demande.
+`getScanScore` estime la fiabilité de scan d'un design. Il s'exécute dans le navigateur et charge [jsQR](https://github.com/cozmo/jsQR) à la demande.
 
 ```ts
 import { getScanScore } from "qrdx";
@@ -104,24 +152,24 @@ const { score, grade, checks } = await getScanScore({
 // checks: [{ id, passed, message, fix? }]
 ```
 
-Ce qu'il vérifie :
+Ce qui est vérifié :
 
-- **Décodage à 96, 160 et 320 px.** Le design est rendu à chaque largeur, avec un flou et une perte de contraste simulant une caméra, puis décodé plusieurs fois à des échelles légèrement différentes.
-- **Contraste** entre chaque couleur du code (y compris les étapes de dégradé, les couleurs des yeux et des points) et l'arrière-plan, et si le code est sombre sur fond clair.
-- **Couverture du logo** par rapport à ce que le niveau de correction d'erreurs peut récupérer.
+- **Décodage à 96, 160 et 320 px.** Le design est rendu à chaque largeur, avec un flou et une perte de contraste semblables à ceux d'une caméra, puis décodé plusieurs fois à des échelles légèrement différentes.
+- **Contraste** entre chaque couleur du code (y compris les points d'arrêt de dégradé, les couleurs des yeux et des points) et l'arrière-plan, et si le code est sombre sur fond clair.
+- **Couverture du logo** par rapport à ce que le niveau de correction d'erreur peut récupérer.
 - **Zone de silence** : la marge, plus l'espace qu'ajoute un cadre.
-- **Risque lié à la forme des yeux** : les yeux `circle` peuvent être ignorés par certaines applications de scan (et les yeux `curly`, abandonnés, font échouer les décodeurs stricts si un design enregistré les utilise encore).
-- **Associations de styles** (`style-pair`) : des formes qui échouent ensemble lors de nos tests de décodage, comme des points `small-square` à côté d'yeux carrés, et les centres abandonnés dans les designs enregistrés (voir `getStylePairRisk`).
+- **Risque lié à la forme des yeux** : les yeux `circle` peuvent ne pas être détectés par certaines applications de scan (et les yeux `curly`, abandonnés, échouent avec les décodeurs stricts si un design enregistré les utilise encore).
+- **Paires de styles** (`style-pair`) : des formes qui échouent ensemble lors de nos tests de décodage, comme des points `small-square` à côté d'yeux carrés, et les centres abandonnés dans les designs enregistrés (voir `getStylePairRisk`).
 
-`getImageScanScore(fileOrImage)` fait la même chose pour une image existante : il renvoie le contenu décodé ainsi que des vérifications de décodage, de contraste, de polarité, de zone de silence et de résolution, mesurées à partir des pixels. Le [vérificateur de scan](/tools/scan-checker) repose dessus.
+`getImageScanScore(fileOrImage)` fait la même chose pour une image existante : il renvoie le contenu décodé, ainsi que les vérifications de décodage, de contraste, de polarité, de zone de silence et de résolution, mesurées à partir des pixels. Le [vérificateur de scan](/tools/scan-checker) repose sur cette fonction.
 
 <Callout type="info">
   Le score est une heuristique fondée sur un seul décodeur open source. Les applications d'appareil photo des téléphones sont souvent plus tolérantes : considérez-le comme un repère et testez par un scan les impressions importantes.
 </Callout>
 
-## Export prêt à imprimer [#print-ready-export]
+## Export prêt pour l'impression [#print-ready-export]
 
-`downloadPrintPDF` écrit un PDF vectoriel à une taille physique exacte. Les modules, les yeux et les cadres sont des tracés vectoriels (un logo reste une image raster).
+`downloadPrintPDF` génère un PDF vectoriel à une taille physique exacte. Les modules, les yeux et les cadres sont des tracés vectoriels (un logo reste une image raster).
 
 ```ts
 import { downloadPrintPDF, downloadPrintSVG, getPrintLayout } from "qrdx";
@@ -144,10 +192,10 @@ layout.maxScanDistance; // 400 (mm)
 ```
 
 - `size` correspond à la largeur du code ; un cadre s'ajoute à la taille finale.
-- Avec un fond perdu, l'arrière-plan (ou la couleur d'un cadre carré) dépasse le bord de coupe, de sorte que le rognage ne laisse aucun liseré blanc. Les traits de coupe se trouvent en dehors du fond perdu.
-- `colorMode: "cmyk"` utilise une conversion simple (`rgbToCmyk` : K = 1 − max(R, V, B), sans profil ICC ; le noir pur s'imprime en K seul). Demandez à votre imprimeur une conversion avec gestion des couleurs quand les couleurs exactes de votre marque comptent.
-- Les dégradés linéaires et radiaux sont imprimés sous forme de dégradés lisses dans le PDF, en CMYK quand le PDF est en CMYK ; le SVG d'impression les conserve mais reste en RVB.
-- Le texte des cadres dans le PDF utilise Helvetica Bold, donc les caractères hors Latin-1 peuvent ne pas s'afficher. Utilisez le SVG pour les autres écritures.
+- Avec fond perdu, l'arrière-plan (ou la couleur d'un cadre carré) dépasse le bord de coupe, pour qu'aucun liseré blanc ne subsiste après la découpe. Les traits de coupe se trouvent à l'extérieur du fond perdu.
+- `colorMode: "cmyk"` utilise une conversion simple (`rgbToCmyk` : K = 1 − max(R, G, B), sans profil ICC ; le noir pur s'imprime avec le seul canal K). Demandez à votre imprimeur une conversion avec gestion des couleurs lorsque les couleurs exactes de la marque comptent.
+- Les dégradés linéaires et radiaux sont imprimés sous forme de dégradés lisses dans le PDF, en CMYK lorsque le PDF est en CMYK ; le SVG d'impression les conserve mais reste en RVB.
+- Le texte du cadre dans le PDF utilise Helvetica Bold : les caractères hors Latin-1 peuvent donc ne pas s'afficher. Utilisez le SVG pour les autres écritures.
 - `getQRAsPrintPDF` et `getQRAsPrintPDFBuffer` renvoient le fichier au lieu de le télécharger, et fonctionnent aussi dans Node.
 
-**Quelle taille imprimer :** un code se scanne à environ dix fois sa largeur, donc taille ≈ distance de scan ÷ 10 (2 cm de large pour 20 cm). Les codes plus denses demandent plus ; le [calculateur de taille d'impression](/tools/print-size) en tient compte.
+**Quelle taille imprimer :** un code se scanne à une distance d'environ dix fois sa largeur, donc taille ≈ distance de scan ÷ 10 (2 cm de large pour 20 cm). Les codes plus denses demandent plus de place ; le [calculateur de taille d'impression](/tools/print-size) en tient compte.

@@ -4,15 +4,15 @@ description: "任意のURLをQRコード画像に変換し、Markdown、HTML、�
 icon: ImageDown
 ---
 
-`GET https://api.qrdx.dev/v1/qr` は、QRコードをSVG、PNG、WebPの画像として返します。印刷やデザインツール向けには、ベクターのEPSファイルとしても返せます。すべてクエリ文字列で指定するため、URLそのものが画像になります。README、`<img>` タグ、メールテンプレートにそのまま貼り付けてください。エディタのスタイルも利用できます。グラデーション、フレーム(カスタムフレームを含む)、枠線、アイとドットの色、ロゴアイコンに対応しています。
+`GET https://api.qrdx.dev/v1/qr` は、QRコードをSVG、PNG、WebPの画像として、または印刷やデザインツール向けのベクターEPSファイルとして返します。すべてクエリ文字列で指定するため、URLそのものが画像になります。READMEや `<img>` タグ、メールテンプレートにそのまま貼り付けられます。エディターのスタイルにも対応しています。グラデーション、フレーム（カスタムフレームを含む）、枠線、アイと中央ドットの色、ロゴアイコンを指定できます。
 
 ```md
 ![QR code](https://api.qrdx.dev/v1/qr?data=https://github.com/you/repo)
 ```
 
-アカウントもAPIキーも不要です。ただし、QRdxにアップロードしたロゴを使う場合は例外です([ロゴ](#logos)を参照)。
+アカウントもAPIキーも不要です。例外は、QRdxにアップロードしたロゴを使う場合のみです（[ロゴ](#logos)を参照）。
 
-[Playgroundで試す](/playground?open=code&lang=image): Playgroundでコードをスタイル設定し、その画像URLをコピーしてください。
+[Playgroundで試す](/playground?open=code&lang=image)：Playgroundでコードをスタイリングし、その画像URLをコピーします。
 
 ## 例 [#examples]
 
@@ -25,38 +25,38 @@ icon: ImageDown
 />
 ```
 
-curlでPNGをダウンロードします(シェルが `&` を解釈しないよう、URLを引用符で囲んでください):
+curlでPNGをダウンロードします（シェルが `&` をそのまま扱えるよう、URLを引用符で囲みます）。
 
 ```bash
 curl -o qr.png "https://api.qrdx.dev/v1/qr?data=https://qrdx.dev&format=png&size=1024"
 ```
 
-WebPの場合です。PNGと同じ画素を可逆圧縮のまま、透過も保持して、より小さなファイルで取得できます:
+WebPの場合です。PNGと同じピクセルで、可逆圧縮のため透明度も保たれ、ファイルサイズは小さくなります。
 
 ```bash
 curl -o qr.webp "https://api.qrdx.dev/v1/qr?data=https://qrdx.dev&format=webp&size=1024"
 ```
 
-Illustrator、InDesign、印刷会社向けのベクターEPSを取得します(`size` はポイント単位の幅で、1インチが72ポイントです。したがって `144` は2インチです):
+Illustrator、InDesign、印刷会社向けのベクターEPSを取得します（`size` はポイント単位の幅で、1インチあたり72ポイントのため `144` は2インチです）。
 
 ```bash
 curl -o qr.eps "https://api.qrdx.dev/v1/qr?data=https://qrdx.dev&format=eps&size=144"
 ```
 
-ドットをスタイル設定し、フレームを付けた例です:
+ドットのスタイルを変え、フレームを付けた例です。
 
 ```txt
 https://api.qrdx.dev/v1/qr?data=https://qrdx.dev&body=rounded&eye=rounded&dot=rounded&template=Arrow
 ```
 
-ラベル付きの組み込みフレームと、IDで指定するコミュニティフレームです:
+ラベル付きの組み込みフレームと、IDで指定するコミュニティフレームです。
 
 ```txt
 https://api.qrdx.dev/v1/qr?data=https://qrdx.dev&frame=banner-bottom&frameText=Scan%20the%20menu
 https://api.qrdx.dev/v1/qr?data=https://qrdx.dev&item=frame:wifi-card
 ```
 
-`style` にデザイン全体をJSONで指定した例です。グラデーション、赤いアイ、フレームを使っています:
+デザイン全体を `style` にJSONで指定します。ここではグラデーション、赤いアイ、フレームを使っています。
 
 ```js
 const style = {
@@ -75,107 +75,107 @@ const src = `https://api.qrdx.dev/v1/qr?data=${encodeURIComponent(link)}&style=$
 ```
 
 <Callout>
-  `data` の値に `&`、`#`、`+`、スペースが含まれる場合は、エンコードしてください。たとえばJavaScriptでは `encodeURIComponent` を使います。エンコードしないと、URLがそれらの文字で分割されてしまいます。`style` も同様にエンコードしてください。
+  `data` の値に `&`、`#`、`+`、スペースが含まれる場合はエンコードしてください。たとえばJavaScriptでは `encodeURIComponent` を使います。エンコードしないと、URLがそれらの文字で分割されてしまいます。`style` も同様にエンコードします。
 </Callout>
 
-## パラメータ [#parameters]
+## パラメーター [#parameters]
 
-| パラメータ | デフォルト | 説明 |
+| パラメーター | デフォルト | 説明 |
 |-----------|---------|-------------|
-| `data` | 必須 | エンコードするテキストまたはURL(最大2048文字) |
-| `format` | `svg` | `svg`、`png`、`webp`(可逆圧縮)、`eps`(ベクターPostScript。この場合 `size` はポイント単位の幅) |
-| `size` | `512` | 幅と高さ(ピクセル)、`64` から `2048` |
-| `fg` | `000000` | モジュールの色(16進数。`155dfc`、`fff`、またはアルファ付きの8桁) |
-| `bg` | `ffffff` | 背景色(16進数)。`00000000` で背景が透明になります |
+| `data` | 必須 | エンコードするテキストまたはURL（2048文字まで） |
+| `format` | `svg` | `svg`、`png`、`webp`（可逆圧縮）、`eps`（ベクターPostScript。この場合 `size` はポイント単位の幅） |
+| `size` | `512` | 幅と高さ（ピクセル）。`64` から `2048` |
+| `fg` | `000000` | モジュールの色（16進数。`155dfc`、`fff`、またはアルファ付きの8桁） |
+| `bg` | `ffffff` | 背景色（16進数）。`00000000` で背景が透明になります |
 | `eyeColor` | `fg` | 3つの角のアイの色 |
-| `dotColor` | `fg` | 各アイの内側にあるドットの色 |
-| `body` | `square` | データモジュールの形状 |
-| `eye` | `square` | 角のアイの枠の形状 |
-| `dot` | `square` | 各アイの内側にあるドットの形状 |
-| `level` | `Q` | 誤り訂正レベル: `L`(約7%)、`M`(約15%)、`Q`(約25%)、`H`(約30%) |
-| `margin` | `4` | コードの周囲の余白(クワイエットゾーン)。モジュール単位で `0` から `16` |
-| `template` | なし | 装飾用の枠線テンプレート |
-| `frame` | なし | 組み込みの行動喚起[フレーム](/docs/features/frames)。`banner-bottom`、`speech-bubble`、`circle` など({facts.frameStyles}種類のスタイルから選べます) |
-| `frameText` | `Scan me` | フレームのラベル(最大24文字)。`style` や `item` のフレームのラベルも書き換えます |
-| `style` | なし | エディタのデザイン全体をJSONで指定します。[スタイル](#style)を参照してください |
-| `item` | なし | IDで指定するコミュニティのフレームまたはテーマ(例: `frame:wifi-card`)。[コミュニティアイテム](#community-items)を参照してください |
-| `logoIcon` | なし | 中央に配置するクイックアイコンまたはブランドロゴ。[ロゴ](#logos)を参照してください |
-| `logoFileId` | なし | アップロードしたロゴをファイルIDで指定します。APIキーが必要です。[ロゴ](#logos)を参照してください |
+| `dotColor` | `fg` | 各アイの内側のドットの色 |
+| `body` | `square` | データモジュールの形 |
+| `eye` | `square` | 角のアイの枠の形 |
+| `dot` | `square` | 各アイの内側のドットの形 |
+| `level` | `Q` | 誤り訂正：`L`（約7%）、`M`（約15%）、`Q`（約25%）、`H`（約30%） |
+| `margin` | `4` | コードの周囲の余白（クワイエットゾーン）。モジュール単位で `0` から `16` |
+| `template` | なし | [テンプレートとして描くフレーム](/docs/features/templates)。画像全体の幅が `size` になり、コードはその中に小さく収まります |
+| `frame` | なし | `banner-bottom`、`speech-bubble`、`circle` などの組み込みの行動喚起[フレーム](/docs/features/frames)（{facts.frameStyles}種類の組み込みフレームのいずれかで、それぞれフレーム仕様から描画されます） |
+| `frameText` | `Scan me` | フレームのラベル（24文字まで）。`style` や `item` のフレームのラベルも書き換えます |
+| `style` | なし | エディターのデザイン全体をJSONで指定します。[スタイル](#style)を参照 |
+| `item` | なし | `frame:wifi-card` のように、IDで指定するコミュニティのフレームまたはテーマ。[コミュニティアイテム](#community-items)を参照 |
+| `logoIcon` | なし | 中央に表示するクイックアイコンまたはブランドロゴ。[ロゴ](#logos)を参照 |
+| `logoFileId` | なし | ファイルIDで指定するアップロード済みのロゴ。APIキーが必要です。[ロゴ](#logos)を参照 |
 
-色は `#` を付けずに書くか、`%23` としてエンコードしてください。`#` をそのまま書くとURLのフラグメントの開始とみなされ、送信されません。列挙値(`level`、`format`、`template`、`frame`)は大文字と小文字を区別しません。
+色は `#` を付けずに書くか、`%23` としてエンコードしてください。`#` をそのまま書くとURLのフラグメントの開始になり、送信されません。列挙値（`level`、`format`、`template`、`frame`）は大文字と小文字を区別しません。
 
-フレームを使う場合、`size` はコード自体の幅であり、フレーム分はどの形式でも画像に追加されます。
+フレームを付けた場合、`size` はコード自体の幅であり、どの形式でもフレーム分だけ画像が大きくなります。
 
 ## スタイル [#style]
 
-`style` には、保存済みテーマと同じフィールドを持つデザインをJSONで指定します。そのため、[`GET /v1/themes`](/docs/developers/api/list-themes) で取得したテーマや、[MCPサーバー](/docs/developers/mcp)の `design_qr` が返す `qrdxStyle` を、そのまま渡せます(アップロードしたロゴを除きます。下記を参照)。
+`style` には、保存済みテーマと同じフィールドを持つデザインをJSONで指定します。そのため、[`GET /v1/themes`](/docs/developers/api/list-themes) のテーマや、[MCPサーバー](/docs/developers/mcp)の `design_qr` が返す `qrdxStyle` を、そのまま渡せます（アップロードしたロゴを除く。下記参照）。
 
 | フィールド | 指定できる値 |
 | --- | --- |
-| `bgColor`, `fgColor`, `eyeColor`, `dotColor` | 色(`#155dfc` のような16進数、`rgb()`、`hsl()`、色名)、またはグラデーション: `{ "type": "linear", "angle": 45, "stops": [...] }` もしくは `{ "type": "radial", "stops": [...] }`。ストップは `{ "color", "offset" }` の形式で2〜8個(offsetは0〜100) |
-| `bodyPattern`, `cornerEyePattern`, `cornerEyeDotPattern` | [パターン値](#pattern-values) |
-| `level`, `margin` | 上記のパラメータと同じです(`margin` は0〜16) |
-| `templateId` | 枠線テンプレート。なしの場合は `default` |
-| `frame` | 組み込みフレーム `{ "style": "banner-bottom", "text": "Scan me", "color": "#155dfc", "textColor": "#ffffff" }`、またはカスタムフレーム `{ "style": "custom", "spec": { … } }`。フレームのspecには、[コミュニティ](#community-items)のものか、Playgroundのフレームセクションで作成したカスタムフレームを使います。specはエンジンのフレームspecルールで検証されます(マークアップ、リンク、画像は不可。最大32 KB) |
-| `eyeColors` | `eyeColor` と `dotColor` より優先される、アイごとの色: `{ "topLeft": { "outer": "#b91c1c", "inner": "#1d4ed8" }, "topRight": …, "bottomLeft": … }`。それぞれ色またはグラデーションを指定できます |
-| `moduleScale` | 各ドットのサイズ。`0.5` から `1`(デフォルトは `1`) |
-| `shape` | `square`(デフォルト)または `circle`: 装飾ドットの円盤の中にコードを配置します |
-| `autoLevel` | ロゴがコードの7%を超えて覆う場合、誤り訂正を `H` に引き上げます(ロゴがあるときは、ここでは常にオンです) |
-| `logoOptions` | ロゴのレイアウト: `size`(コード幅の `0.1` から `0.3`。コードに余裕のあるモジュールがない場合、QRdxが縮小します)、`padding`(`0` から `2` モジュール)、`x` と `y`(`0` から `1`)、`shape`(`square`、`rounded`、`circle` のいずれかの切り抜き)、`plate`(ロゴの背面の色) |
-| `showLogo`, `logoIcon`, `logoFileId` | [ロゴ](#logos)を参照してください |
+| `bgColor`、`fgColor`、`eyeColor`、`dotColor` | 色（`#155dfc` のような16進数、`rgb()`、`hsl()`、色名）、またはグラデーション：`{ "type": "linear", "angle": 45, "stops": [...] }` または `{ "type": "radial", "stops": [...] }`。ストップは `{ "color", "offset" }` を2〜8個（offsetは0〜100） |
+| `bodyPattern`、`cornerEyePattern`、`cornerEyeDotPattern` | [パターン値](#pattern-values) |
+| `level`、`margin` | 上記のパラメーターと同じ（`margin` は0〜16） |
+| `templateId` | テンプレートとして描くフレーム。なしにする場合は `default` |
+| `frame` | 組み込みフレーム `{ "style": "banner-bottom", "text": "Scan me", "color": "#155dfc", "textColor": "#ffffff" }`、またはカスタムフレーム `{ "style": "custom", "spec": { … } }`。フレーム仕様は[コミュニティ](#community-items)のものか、Playgroundのフレームセクションで作成したカスタムフレームのものを使います。仕様はエンジンのフレーム仕様ルールで検証されます（マークアップ、リンク、画像は不可。32 KBまで） |
+| `eyeColors` | `eyeColor` と `dotColor` より優先される、アイごとの色：`{ "topLeft": { "outer": "#b91c1c", "inner": "#1d4ed8" }, "topRight": …, "bottomLeft": … }`。それぞれ色またはグラデーション |
+| `moduleScale` | 各ドットのサイズ。`0.5` から `1`（デフォルトは `1`） |
+| `shape` | `square`（デフォルト）または `circle`：装飾的なドットで作った円盤の中にコードを配置します |
+| `autoLevel` | ロゴがコードの7%を超えて覆う場合に、誤り訂正を `H` に引き上げます（ロゴがある場合、ここでは常に有効） |
+| `logoOptions` | ロゴのレイアウト：`size`（コード幅の `0.1` から `0.3`。コードにモジュールの余裕がない場合、QRdxは縮小します）、`padding`（`0` から `2` モジュール）、`x` と `y`（`0` から `1`）、`shape`（`square`、`rounded`、`circle` の切り抜き）、`plate`（背面の色） |
+| `showLogo`、`logoIcon`、`logoFileId` | [ロゴ](#logos)を参照 |
 
-`style` には、Playgroundのリンクにある `style` の値(`1.` で始まります)も指定できます。したがって、[Playground](/playground)で共有されたデザインは、ロゴなしで、Playgroundでの見た目のままレンダリングされます。
+`style` には、Playgroundのリンクの `style` 値（`1.` で始まります）も指定できます。[Playground](/playground)で共有されたデザインが、ロゴなしでそのままの見た目で描画されます。
 
-フラットなパラメータ(`fg`、`body`、`frame` など)で設定した項目は `style` より優先され、`style` は `item` より優先されます。不明なフィールド、ロゴのアドレス(`customLogo`)、Logo QRやImage QRのアート(`art`)は、理由を示す `400` エラーで拒否されます。
+フラットなパラメーター（`fg`、`body`、`frame` など）で指定したフィールドは `style` より優先され、`style` は `item` より優先されます。不明なフィールド、ロゴのアドレス（`customLogo`）、Logo QRやImage QRのアート（`art`）は、理由を示す `400` で拒否されます。
 
 ## コミュニティアイテム [#community-items]
 
-`item` は、公開されている[コミュニティ](/community)のフレームまたはテーマをレンダリングします。CC0で、無料で利用できます。IDは [`GET /v1/community/items`](/docs/developers/api/list-community-items) で確認できます。または、アイテムのページを開き、そのタイプとスラッグから組み立てることもできます。`/community/frames/wifi-card` は `frame:wifi-card` になります。フレームアイテムは、白地に黒の無地のコードに適用されます。その下のコードを変更するには、`style` またはフラットなパラメータを追加してください。
+`item` は、公開済みの[コミュニティ](/community)のフレームまたはテーマを描画します。CC0で自由に使えます。IDは [`GET /v1/community/items`](/docs/developers/api/list-community-items) で調べるか、アイテムのページを開いてタイプとスラッグから組み立てます。たとえば `/community/frames/wifi-card` は `frame:wifi-card` です。フレームアイテムは、白地に黒のシンプルなコードに付きます。その下のコードを変更するには、`style` またはフラットなパラメーターを追加してください。
 
 ## ロゴ [#logos]
 
-- **クイックアイコン。** `logoIcon` を使うと、エディタのアイコンのうち1つを、中央の白いタイルの上に配置できます。指定できるのは `wifi`、`location`、`phone`、`email`、`link`、`file`、`calendar`、`whatsapp`、`instagram` です。これらは QRdx が自前で描画するため、キーは不要です。
-- **ブランドロゴ。** `logoIcon` には、[Simple Icons](https://simpleicons.org) にある {facts.brandLogos} 件のブランドも、スラッグで指定できます（`spotify`、`paypal`、`googlemaps`、`appstore` など）。マークはブランドカラーのまま、背景なしで描画されます。`:black` または `:white` を付けるとその色になり（`whatsapp:white`）、`style` 内の `logoOptions.plate` を使うと背面にプレートを敷けます。[`GET /api/brand-logos`](https://qrdx.dev/api/brand-logos) で、すべてのスラッグを一覧できます。QRdx にないスラッグを指定すると `400` が返ります。
-- **QRdx マーク**は、エディタではデフォルトで表示されますが、ここでは描画されません。`showLogo: true` だけではロゴは追加されません。
-- **ロゴを入れると誤り訂正レベルが上がります。** ロゴがコードの7%を超えて覆う場合、`level` の指定にかかわらずコードはレベル `H` で描画され、スキャンできる状態が保たれます。
+- **クイックアイコン。** `logoIcon` を指定すると、エディターのアイコンの1つが中央の白いタイルに配置されます。使えるのは `wifi`、`location`、`phone`、`email`、`link`、`file`、`calendar`、`whatsapp`、`instagram` です。QRdx が自前で描画するため、キーは不要です。
+- **ブランドロゴ。** `logoIcon` では、[Simple Icons](https://simpleicons.org) の {facts.brandLogos} 個のブランドも、スラッグで指定できます（`spotify`、`paypal`、`googlemaps`、`appstore` など）。マークはブランドカラーのまま、背景なしで描画されます。`:black` または `:white` を付けるとその色になります（`whatsapp:white`）。背面にプレートを置くには、`style` 内の `logoOptions.plate` を使います。[`GET /api/brand-logos`](https://qrdx.dev/api/brand-logos) で、すべてのスラッグを確認できます。QRdx にないスラッグを指定すると `400` が返ります。
+- **QRdx マーク**はエディターでは既定で表示されますが、ここでは描画されません。`showLogo: true` だけではロゴは追加されません。
+- **ロゴを入れると誤り訂正レベルが上がります。** ロゴがコードの7%を超えて覆う場合、`level` の指定にかかわらずコードはレベル `H` で描画されます。これにより、スキャンできる状態が保たれます。
 
 <IfAvailable feature="fileStorage">
 
-**独自のロゴ。** `logoFileId` を使うと、[ダッシュボード → ファイル](/docs/files)でアップロードした、1 MB までの PNG または JPEG を描画できます。ID は、ファイルのリンク `https://qrdx.dev/api/files/<id>` の最後の部分です。ファイルを所有するワークスペースの [APIキー](/docs/developers/api-keys)を送信してください。
+**独自のロゴ。** `logoFileId` を使うと、[ダッシュボード → ファイル](/docs/files)でアップロードした、1 MB までの PNG または JPEG を描画できます。ID はファイルのリンクの最後の部分で、`https://qrdx.dev/api/files/<id>` の `<id>` にあたります。ファイルを所有するワークスペースの [APIキー](/docs/developers/api-keys)を送信してください。
 
 ```bash
 curl -o qr.png -H "Authorization: Bearer $QRDX_API_KEY" \
   "https://api.qrdx.dev/v1/qr?data=https://qrdx.dev&format=png&logoFileId=<id>"
 ```
 
-レスポンスは非公開（`Cache-Control: private, no-store`）で、ワークスペースの1日あたりの API クォータに計上されます。別のワークスペースのファイルには `404` が返り、キーなしのリクエストには `401` が返ります。QRdx は画像を自社のストレージから読み込み、本当に PNG または JPEG であることを確認します。送信された Web アドレスからロゴを取得することはありません。
+レスポンスは非公開（`Cache-Control: private, no-store`）で、ワークスペースの1日あたりのAPI利用枠にカウントされます。別のワークスペースのファイルには `404` が返り、キーなしのリクエストには `401` が返ります。QRdx は自身のストレージから画像を読み込み、本当に PNG または JPEG であることを確認します。送信されたWebアドレスからロゴを取得することはありません。
 
 </IfAvailable>
 
-`logoOptions` では、これらのどのロゴについても、サイズ、位置、切り抜き、背景を指定できます。アップロードしたロゴ自体の背景除去は Playground で行います。Image API は、アップロードされたファイルをそのまま描画します。
+`logoOptions` では、これらのロゴのサイズ、配置、トリミング、背景を指定できます。アップロードしたロゴ自体の背景を除去する操作は Playground で行います。Image API は、アップロードされたファイルをそのまま描画します。
 
-Logo QR と Image QR のアートは、ここでは利用できません。Playground ではブラウザ上で画像からアートを作成しますが、Image API はアップロードからアートを作成しません。アートコードのデザインは [Playground](/playground?tab=art) で行ってください。
+Logo QR と Image QR のアートは、ここでは利用できません。Playground ではブラウザー上で画像からアートを生成しますが、Image API はアップロードされた画像からアートを生成しません。アートコードのデザインは [Playground](/playground?tab=art) で行ってください。
 
 ### パターンの値 [#pattern-values]
 
 - `body`: `circle`, `circle-large`, `square`, `diamond`, `circle-mixed`, `pacman`, `rounded`, `small-square`, `vertical-line`, `horizontal-line`, `liquid`, `liquid-horizontal`, `liquid-vertical`, `classy`, `classy-rounded`, `leaf`, `plus`, `hexagon`, `star`, `heart`, `random-dots`, `mosaic`, `octagon`
 - `eye`: `square`, `rounded`, `gear`, `circle`, `diya`, `extra-rounded`, `message`, `pointy`, `leaf`, `drop`, `octagon`, `bevel`, `squircle`, `cushion`, `shield`, `petal`, `leaf-reverse`
 - `dot`: `square`, `rounded`, `circle`, `message`, `message-reverse`, `diya`, `diya-reverse`, `rounded-triangle`, `leaf`, `drop`, `plus`, `cross-rounded`, `hexagon`, `octagon`, `flower`, `heart`, `squircle`, `dots`, `extra-rounded`, `leaf-reverse`, `drop-reverse`
-- `template`: `default`, `Arrow`, `StandardBox`, `SquareBorder`, `StrikedBox`, `Halloween`
+- `template`: `default`, `Arrow`, `StandardBox`, `SquareBorder`, `StrikedBox`, `Halloween`, `DotRing`
 
-これらは [`qrdx` React ライブラリ](/docs/features/patterns)と同じスタイルです。[MCP サーバー](/docs/developers/mcp)でも、短い説明付きで一覧できます。
+これらは [`qrdx` React ライブラリ](/docs/features/patterns)と同じスタイルです。[MCPサーバー](/docs/developers/mcp)でも、短い説明付きで一覧を取得できます。
 
 ## レスポンス [#responses]
 
-リクエストが成功すると、次のヘッダー付きで画像が返ります。
+リクエストが成功すると、次の内容で画像が返されます。
 
-- `Content-Type: image/svg+xml`、`image/png` または `application/postscript`（EPS は `qr-code.eps` のダウンロードとして送信されます）
-- `Cache-Control: public, max-age=31536000, immutable`。ただし、`item` を指定したレンダリング（5分、CDN では10分。アイテムは新しいバージョンになったり、取り下げられたりすることがあるためです）と、`logoFileId` を指定したレンダリング（`private, no-store`）は除きます
-- `Access-Control-Allow-Origin: *`。どの Web サイトからでも `fetch` できます
+- `Content-Type: image/svg+xml`、`image/png` または `application/postscript`（EPS は `qr-code.eps` というダウンロードとして送信されます）
+- `Cache-Control: public, max-age=31536000, immutable`。ただし、`item` を指定した描画（5分、CDN では10分。アイテムは新しいバージョンが作られたり、公開が取り下げられたりすることがあるため）と、`logoFileId` を指定した描画（`private, no-store`）は例外です
+- `Access-Control-Allow-Origin: *`。どのWebサイトからでも `fetch` できます
 
-レンダリングは決定的です。同じクエリ文字列からは常に同じバイト列が返されるため、レスポンスを1年間キャッシュできます。元のパラメータだけを使う URL は、これまでとまったく同じようにレンダリングされます。
+描画は決定的です。同じクエリ文字列は、常に同じバイト列を返します。そのため、レスポンスを1年間キャッシュできます。従来のパラメーターだけを使うURLは、これまでとまったく同じように描画されます。
 
-無効なパラメータがあると、問題ごとに名前を示す JSON ボディ付きで `400` が返ります。
+無効なパラメーターがある場合は `400` が返り、JSON の本文で問題ごとに指定されます。
 
 ```json
 {
@@ -190,22 +190,22 @@ Logo QR と Image QR のアートは、ここでは利用できません。Playg
 }
 ```
 
-選択した誤り訂正レベルで QR コードに収まらないデータの場合も、`param: "data"` 付きで `400` が返ります。`level` を下げるか、データを短くしてください。
+選択した誤り訂正レベルでQRコードに収まらないデータの場合も、`param: "data"` とともに `400` が返ります。`level` を下げるか、データを短くしてください。
 
 ## 制限 [#limits]
 
-- **レート制限:** IP アドレスごとに1分あたり300リクエストです。上限を超えると、`Retry-After` ヘッダー付きで `429` が返ります。
-- **スキャンチェックはありません。** Image API は、指定されたとおりに描画します。デザインのスキャンスコアを事前に確認して修正するには、[MCP サーバー](/docs/developers/mcp)の `design_qr` か、[Playground](/playground?tab=design) のスキャンスコアを使ってください。
-- **`style` は URL 内で8,192文字まで**、JSON としては40 KB までです。
-- **データは URL の一部です。** ほかの URL と同様に、サーバーログ、ブラウザ履歴、キャッシュに残る可能性があります。パスワードなどの機密情報は含めないでください。
+- **レート制限:** IPアドレスごとに1分あたり300リクエストです。上限を超えると、`Retry-After` ヘッダー付きで `429` が返ります。
+- **スキャンチェックはありません。** Image API は指定されたとおりに描画します。デザインのスキャンスコアを事前に確認して修復するには、[MCPサーバー](/docs/developers/mcp)の `design_qr` か、[Playground](/playground?tab=design) のスキャンスコアを使ってください。
+- **`style` はURL内で8,192文字まで**で、その JSON は40 KBまでです。
+- **データはURLの一部です。** ほかのURLと同様に、サーバーログ、ブラウザーの履歴、キャッシュに残る可能性があります。パスワードなどの機密情報は含めないでください。
 
 ## スキャンのヒント [#scanning-tips]
 
-- 暗い背景や複雑な背景の上に画像を置く場合（GitHub のダークモードの README など）は、`margin` を `2` 以上にしてください。
-- `fg` と `bg` のコントラストを十分に保ってください。明るい背景に暗いモジュールの組み合わせが、最も確実にスキャンできます。
-- デフォルト（正方形のモジュール、4モジュールの余白）は、どのリーダーでもスキャンできます。`circle` のドットのような装飾的な形は柔らかい印象になりますが、古いスキャナーでは読み取りにくい場合があります。[スキャンチェッカー](/tools/scan-checker)で確認してください。
+- 暗い背景や複雑な背景（GitHub のダークモードの README など）に画像を置く場合は、`margin` を `2` 以上にしてください。
+- `fg` と `bg` のコントラストを十分に確保してください。明るい背景に暗いモジュールの組み合わせが、最も確実にスキャンできます。
+- 既定値（四角いモジュール、4モジュール分の余白）は、どのリーダーでもスキャンできます。`circle` のドットのような装飾的な形は柔らかい印象になりますが、古いスキャナーでは読み取りにくい場合があります。[スキャンチェッカー](/tools/scan-checker)で確認してください。
 - 印刷する前に、数台のスマートフォンでコードをテストしてください。
 
 ## セルフホスティング [#self-hosting]
 
-このエンドポイントは QRdx の Web アプリの一部なので、[セルフホスト](/docs/self-hosting)したインスタンスでは、自分のドメインの `/api/v1/qr` で利用できます（例: `https://qr.example.com/api/v1/qr?data=…`）。短い `/v1/qr` パスは `api.qrdx.dev` でのみ使えます。レート制限は、Upstash Redis が設定されている場合はそれを使用し、設定されていない場合は無効です。
+このエンドポイントは QRdx のWebアプリの一部です。そのため、[セルフホスト](/docs/self-hosting)したインスタンスでは、ご自身のドメインの `/api/v1/qr` で利用できます（例: `https://qr.example.com/api/v1/qr?data=…`）。短い `/v1/qr` パスは `api.qrdx.dev` でのみ動作します。レート制限は、Upstash Redis が設定されている場合はそれを使用し、設定されていない場合は無効です。

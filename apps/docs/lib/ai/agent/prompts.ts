@@ -1,5 +1,25 @@
+import { BUILT_IN_FRAMES, getAllTemplates, getTemplateIds } from "qrdx";
 import { contentFieldGuide } from "@/lib/qr-design/content";
 import { MAX_REPAIRS } from "@/lib/qr-design/repair";
+
+/** The frames drawn as templates ("default" draws none). */
+const FRAME_TEMPLATE_IDS = getTemplateIds()
+  .filter((id) => id !== "default")
+  .join(", ");
+
+/**
+ * The templates whose artwork takes the dot color: their spec's frame color,
+ * or `fgColor` for those drawn in code.
+ */
+const DOT_COLORED_TEMPLATES = getAllTemplates()
+  .filter(
+    (template) =>
+      template.id !== "default" &&
+      (!template.spec ||
+        template.spec.shapes.some((shape) => shape.fill === "frame")),
+  )
+  .map((template) => template.id)
+  .join(", ");
 
 /** The chat agent (Claude): talks to the user and calls the tools. */
 export const QR_AGENT_SYSTEM = `# Role
@@ -66,8 +86,8 @@ You produce the complete style of a QR code as JSON, from the conversation, the 
 # Options
 - bodyPattern, cornerEyePattern, cornerEyeDotPattern: only the schema's values.
 - gradients: optional two-color gradients for the dots (body), background, eyes or eye centers. Use them only when the user asks for a gradient.
-- frame: a call-to-action frame (banner-bottom, banner-top, border, rounded-border, speech-bubble, banner-top-bottom, speech-bubble-top, chat-bubble, circle, polaroid, phone, ticket, badge, envelope, tag, menu-card, sticker, gradient-border, focus) with a label of at most 24 characters, or style "none". Without colors a frame is black with a white label; to match the design, set the frame color (usually the eye or dot color) and a label color that contrasts with it.
-- templateId: a decorative border ("default" for none). Don't combine a border with a frame.
+- frame: a call-to-action frame (${BUILT_IN_FRAMES.map((frame) => frame.style).join(", ")}) with a label of at most 24 characters, or style "none". Without colors a frame is black with a white label; to match the design, set the frame color (usually the eye or dot color) and a label color that contrasts with it.
+- templateId: one of the frames drawn as templates (${FRAME_TEMPLATE_IDS}; "default" for none). These are frames too: use either \`frame\` or \`templateId\`, never both. ${DOT_COLORED_TEMPLATES} take the dot color; the others have colors of their own.
 - logo: none, keep (the code's current logo), qrdx, or an icon (wifi, location, phone, email, link, file, calendar, whatsapp, instagram). Use none unless the brief or the user asks for a logo; keep when changing a code that has one.
 - level: L, M, Q or H. margin: 0 to 16 modules.
 

@@ -58,7 +58,7 @@ Passa un gradiente qrdx al posto di un colore: `linear` con un `angle`, oppure `
 
 ### Template di cornice [#frame-templates]
 
-`templateId` disegna intorno al codice un [template](/docs/features/templates) qrdx. Abbinalo a `caption` per una call to action sotto la cornice.
+`templateId` disegna attorno al codice una delle [cornici di qrdx disegnate come template](/docs/features/templates). Abbinalo a `caption` per una call to action sotto la cornice.
 
 <ComponentPreview name="qr-code-template" />
 
@@ -176,6 +176,6 @@ export function TableCode() {
 
 ## Riferimento API [#api-reference]
 
-<auto-type-table path="../../../registry/qrdx/qr-code.tsx" type="{ [K in keyof QrCodeProps as K extends keyof ComponentProps<'figure'> ? never : K]: QrCodeProps[K] }" />
+<auto-type-table path="../../../../../packages/docs-assets/registry/qrdx/qr-code.tsx" type="{ [K in keyof QrCodeProps as K extends keyof ComponentProps<'figure'> ? never : K]: QrCodeProps[K] }" />
 
 Qualsiasi altra prop, come `className`, viene passata al `<figure>` che fa da contenitore.

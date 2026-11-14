@@ -1,0 +1,81 @@
+{
+  "kind": "qrdx.frame",
+  "version": 1,
+  "artboard": {
+    "width": 1320,
+    "height": 1558
+  },
+  "qr": {
+    "x": 160,
+    "y": 130,
+    "size": 1000,
+    "padding": 60
+  },
+  "colors": {
+    "frame": "#000000",
+    "text": "#FFFFFF"
+  },
+  "shapes": [
+    {
+      "type": "rect",
+      "x": 0,
+      "y": 370,
+      "width": 1320,
+      "height": 1188,
+      "fill": {
+        "mix": ["frame", "#FFFFFF"],
+        "amount": 0.45
+      }
+    },
+    {
+      "type": "polygon",
+      "points": [[0, 370], [660, 0], [1320, 370]],
+      "fill": {
+        "mix": ["frame", "#FFFFFF"],
+        "amount": 0.25
+      }
+    },
+    {
+      "type": "rect",
+      "x": 80,
+      "y": 50,
+      "width": 1160,
+      "height": 1268,
+      "fill": "background"
+    },
+    {
+      "type": "rect",
+      "x": 68,
+      "y": 38,
+      "width": 1184,
+      "height": 1280,
+      "fill": "frame",
+      "hole": {
+        "x": 80,
+        "y": 50,
+        "width": 1160,
+        "height": 1268
+      }
+    },
+    {
+      "type": "polygon",
+      "points": [[0, 1178], [660, 1318], [1320, 1178], [1320, 1558], [0, 1558]],
+      "fill": "frame"
+    }
+  ],
+  "labels": [
+    {
+      "type": "text",
+      "id": "cta",
+      "slot": "primary",
+      "text": "Scan me",
+      "color": "text",
+      "box": {
+        "x": 160,
+        "y": 1318,
+        "width": 1000,
+        "height": 220
+      }
+    }
+  ]
+}

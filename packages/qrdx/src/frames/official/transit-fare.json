@@ -1,0 +1,97 @@
+{
+  "id": "transit-fare",
+  "name": "Transit fare",
+  "description": "A wide ticket: the code on the left, a perforated stub with a city bus on the right.",
+  "category": "use-case",
+  "collection": "places",
+  "contentTypes": ["url"],
+  "tags": ["transit", "travel", "tickets", "fare"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 2000,
+      "height": 1040
+    },
+    "qr": {
+      "x": 120,
+      "y": 120,
+      "size": 800,
+      "padding": 64,
+      "radius": 19.2
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M56 0L1044 0A56 56 0 0 0 1156 0L1944 0A56 56 0 0 1 2000 56L2000 984A56 56 0 0 1 1944 1040L1156 1040A56 56 0 0 0 1044 1040L56 1040A56 56 0 0 1 0 984L0 56A56 56 0 0 1 56 0Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.88
+        }
+      },
+      {
+        "type": "path",
+        "d": "M1156 0L1944 0A56 56 0 0 1 2000 56L2000 984A56 56 0 0 1 1944 1040L1156 1040A56 56 0 0 1 1100 984L1100 56A56 56 0 0 1 1156 0Z",
+        "fill": "frame"
+      },
+      {
+        "type": "line",
+        "x1": 1100,
+        "y1": 110,
+        "x2": 1100,
+        "y2": 930,
+        "width": 10,
+        "dash": [34, 24],
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.5
+        }
+      },
+      {
+        "type": "path",
+        "d": "M1506 212L1594 212A24 24 0 0 1 1618 236L1618 344A24 24 0 0 1 1594 368L1506 368A24 24 0 0 1 1482 344L1482 236A24 24 0 0 1 1506 212ZM1508 236A10 10 0 0 0 1498 246L1498 286A10 10 0 0 0 1508 296L1592 296A10 10 0 0 0 1602 286L1602 246A10 10 0 0 0 1592 236ZM1519 218A5 5 0 0 0 1514 223L1514 223A5 5 0 0 0 1519 228L1581 228A5 5 0 0 0 1586 223L1586 223A5 5 0 0 0 1581 218ZM1498 332A10 10 0 1 0 1518 332A10 10 0 1 0 1498 332ZM1582 332A10 10 0 1 0 1602 332A10 10 0 1 0 1582 332ZM1535 340A5 5 0 0 0 1530 345L1530 345A5 5 0 0 0 1535 350L1565 350A5 5 0 0 0 1570 345L1570 345A5 5 0 0 0 1565 340Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M1500 368L1514 368A6 6 0 0 1 1520 374L1520 384A6 6 0 0 1 1514 390L1500 390A6 6 0 0 1 1494 384L1494 374A6 6 0 0 1 1500 368ZM1586 368L1600 368A6 6 0 0 1 1606 374L1606 384A6 6 0 0 1 1600 390L1586 390A6 6 0 0 1 1580 384L1580 374A6 6 0 0 1 1586 368ZM1470 244L1470 244A6 6 0 0 1 1476 250L1476 270A6 6 0 0 1 1470 276L1470 276A6 6 0 0 1 1464 270L1464 250A6 6 0 0 1 1470 244ZM1630 244L1630 244A6 6 0 0 1 1636 250L1636 270A6 6 0 0 1 1630 276L1630 276A6 6 0 0 1 1624 270L1624 250A6 6 0 0 1 1630 244Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Buy a ticket",
+        "color": "text",
+        "box": {
+          "x": 1150,
+          "y": 500,
+          "width": 800,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan to pay your fare",
+        "color": "text",
+        "box": {
+          "x": 1150,
+          "y": 690,
+          "width": 800,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

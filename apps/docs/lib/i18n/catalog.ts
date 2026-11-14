@@ -75,7 +75,7 @@ export interface LocaleReport {
  * doesn't have, broken ICU arguments or tags, dropped numbers. A partial
  * catalog is fine while the locale isn't reviewed (missing strings render
  * in English): missing, unrecorded and stale strings are warnings. A locale
- * marked "reviewed" (lib/i18n/config.ts) must be complete, recorded and
+ * marked "reviewed" (packages/i18n/config.ts) must be complete, recorded and
  * signed off string by string.
  */
 export function checkLocale({

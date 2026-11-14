@@ -1,69 +1,40 @@
 ---
 title: Templates
-description: Apply pre-designed frame templates to a QR code, or register your own.
+description: Frames that fit the code inside artwork of a set size, and the TemplateDefinition API for frames you draw in code.
 icon: LayoutTemplate
 ---
 
-Wrap a QR code in ready-made artwork, or in your own.
+A template is a frame that fits the code inside its own artwork. In the playground templates aren't a separate list. Arrow, Standard Box, Square Border, Striked Box, Halloween and Dot Ring are tiles in the frame picker's **Classic** group, next to the other [frames](/docs/features/frames), and picking any frame replaces the one before.
 
-## What Are Templates?
+Templates differ from the other frames in one way: size. A frame adds space around the code, so `size` is the code's width and the image grows. A template draws its whole artwork at `size`, with the code smaller inside it.
 
-A template is SVG artwork drawn around the code: a box, a border, a badge. It gets the code as `children` and places it inside its own drawing. Colors, patterns and logos stay on the `QRCode` props, so a template works with any style.
+## Built-in templates
 
-## Available Templates
+Pass the id as `templateId`. The image API takes it as `template` and the CLI as `--template`.
 
-### Default
-Classic black and white.
+| `templateId` | Name | Color |
+|--------------|------|-------|
+| `Arrow` | Arrow | The code's dark color (`fgColor`) |
+| `StandardBox` | Standard Box | `fgColor` |
+| `SquareBorder` | Square Border | `fgColor` |
+| `StrikedBox` | Striked Box | Its own dark color |
+| `Halloween` | Halloween | Its own orange, green and black |
+| `DotRing` | Dot Ring | Its ring in `fgColor`, its text in white; both can change (below) |
+
+`default` draws no artwork. It only insets the code a little, to 95% of `size`.
 
 ```tsx
 import { QRCode } from 'qrdx';
 
-<QRCode value="https://example.com" templateId="default" size={256} />
+<QRCode value="https://example.com" templateId="Arrow" fgColor="#1a56db" size={256} />
 ```
 
-### Arrow
-Modern geometric design.
-
-```tsx
-<QRCode value="https://example.com" templateId="Arrow" size={256} />
-```
-
-### Standard Box
-Clean, structured design.
-
-```tsx
-<QRCode value="https://example.com" templateId="StandardBox" size={256} />
-```
-
-### Square Border
-Bordered design with defined edges.
-
-```tsx
-<QRCode value="https://example.com" templateId="SquareBorder" size={256} />
-```
-
-### Striked Box
-Dynamic design with diagonal elements.
-
-```tsx
-<QRCode value="https://example.com" templateId="StrikedBox" size={256} />
-```
-
-### Halloween
-Seasonal Halloween theme.
-
-```tsx
-<QRCode value="https://example.com" templateId="Halloween" size={256} />
-```
-
-## Customize Templates
-
-The built-in templates draw their artwork in `fgColor`. Everything else, such as patterns and a logo, is set on the code as usual:
+Colors, patterns and a logo stay on the code's own props, so a template works with any style:
 
 ```tsx
 <QRCode
   value="https://example.com"
-  templateId="Arrow"
+  templateId="StandardBox"
   fgColor="#1a56db"
   imageSettings={{
     src: "/your-logo.png",
@@ -75,28 +46,87 @@ The built-in templates draw their artwork in `fgColor`. Everything else, such as
 />
 ```
 
-## Template Registry
+## Dot Ring
 
-### Get All Templates
-
-```tsx
-import { getAllTemplates } from 'qrdx';
-
-const templates = getAllTemplates();
-```
-
-### Get Template IDs
+A round code. The code sits in a disc of dots inside a dark ring, with a line of text set along the ring. Which dots show comes from a hash of the code's content, so every link gets a ring of its own and the same link always gets the same one.
 
 ```tsx
-import { getTemplateIds } from 'qrdx';
-
-const ids = getTemplateIds();
-// Returns: ['default', 'Arrow', 'StandardBox', ...]
+<QRCode
+  value="https://example.com"
+  templateId="DotRing"
+  bodyPattern="circle-large"
+  size={512}
+/>
 ```
 
-## Custom Templates
+Its settings go in `customProps` (typed as `DotRingProps`):
 
-Write your own template as a `TemplateDefinition`. Its `wrapper` gets the code as `children` and returns the SVG to draw. It draws on a 300 by 300 canvas, and the code arrives at that size too, so scale it down to leave room for your artwork. `props` carries the code's `fgColor` and `bgColor`.
+```tsx
+<QRCode
+  value="https://example.com"
+  templateId="DotRing"
+  customProps={{
+    customText: "Scan for the menu",
+    textPosition: "bottom",
+    textColor: "#fde047",
+    outerCircleColor: "#1e3a8a",
+  }}
+  size={512}
+/>
+```
+
+| Prop | Default | Notes |
+| --- | --- | --- |
+| `customText` | "Scan the QR code" four times round | Text along the ring. Letters that don't fit around it are left out; `""` leaves the ring empty |
+| `textPosition` | `"top"` | `"top"`: centered over the top, reading clockwise. `"bottom"`: centered along the bottom, reading left to right |
+| `textRotation` | `0` | Turns the text around the center, in degrees |
+| `textColor` | `#ffffff` | Text color |
+| `fontFamily` | system font stack | CSS font family of the text |
+| `fontWeight` | `900` | Font weight |
+| `fontSize` | `32` | In the template's 593-unit drawing, where the code is 300 across |
+| `fontLetterSpacing` | `3.5` | Extra space between letters, in the same units |
+| `outerCircleColor` | `fgColor` | Ring color |
+| `strokeWidth`, `strokeColor` | `0`, `#000000` | A stroke along both edges of the ring |
+| `outerStrokeWidth`, `outerStrokeColor` | `strokeWidth`, `strokeColor` | The ring's outer edge only |
+| `innerStrokeWidth`, `innerStrokeColor` | `strokeWidth`, `strokeColor` | The ring's inner edge only |
+
+A logo goes in the middle as on any code. Long links (codes over 49 modules across) keep a light band between the code and the dots, so they still scan when printed small.
+
+The text is SVG text in the font you choose; the default is the system font stack, so nothing is downloaded. SVG and PNG downloads in the browser use the viewer's fonts. PDF and EPS print it in Helvetica Bold, so use Latin-1 text there. `getQRAsPNG` from `qrdx/node` needs a font installed on the server, as frame labels do.
+
+## Templates are frame specs
+
+The artwork of Arrow, Standard Box, Square Border, Striked Box and Halloween is a [frame spec](/docs/features/frames#frame-specs), the same JSON format as every other frame, drawn by the same engine. `getTemplate(id).spec` returns it. Use it as a frame when you want frame sizing (the code keeps its size and the artwork grows around it) and the frame's color option:
+
+```tsx
+import { getTemplate, QRCode } from 'qrdx';
+
+const spec = getTemplate('Arrow')?.spec;
+
+<QRCode
+  value="https://example.com"
+  frame={spec && { style: 'custom', spec, color: '#1a56db' }}
+  size={256}
+/>
+```
+
+Dot Ring has no spec: its dots come from the code's content, so it draws them in code (see [Frames you draw in code](#frames-you-draw-in-code)).
+
+`templateId` draws the same artwork as before. Saved designs, image URLs, CLI commands and code that use a template id look the same as they always have.
+
+## Template registry
+
+```tsx
+import { getAllTemplates, getTemplate, getTemplateIds } from 'qrdx';
+
+getTemplateIds(); // ['default', 'Arrow', 'StandardBox', ...]
+getAllTemplates(); // every TemplateDefinition, with its id and name
+getTemplate('Halloween'); // one by id
+```
+
+## Frames you draw in code
+
+A frame spec describes fixed artwork. When the artwork has to be computed, write a `TemplateDefinition` and pass it as `customTemplate`. Its `wrapper` gets the code as `children` and returns the SVG to draw. It draws on a 300 by 300 canvas, and the code arrives at that size too, so scale it down to leave room for your artwork. `props` carries the code's `fgColor` and `bgColor`, and the third argument has the code's `url` and `pixelSize`.
 
 This one draws a ring around the code:
 
@@ -132,26 +162,8 @@ const ringTemplate: TemplateDefinition = {
 
 Keep the code large enough to scan from where people will hold their phones, and leave a light gap between it and your artwork. Check the result with the [scan score](/docs/features/frames#will-it-scan).
 
-## When to Use Templates
-
-- **Brand Consistency** — Ensure all QR codes match
-- **Quick Setup** — Get professional results fast
-- **Seasonal Campaigns** — Use themed templates
-- **Batch Generation** — Apply consistent styles
-
-## Template Selection Guide
-
-| Template | Best For | Mood |
-|----------|----------|------|
-| Default | Professional | Neutral |
-| Arrow | Tech, modern | Dynamic |
-| Standard Box | Corporate | Professional |
-| Square Border | Formal | Structured |
-| Striked Box | Marketing | Energetic |
-| Halloween | Seasonal | Fun |
-
 ## Next Steps
 
-- [Patterns](/docs/features/patterns) — Detailed pattern customization
-- [Colors & Gradients](/docs/features/colors-gradients) — Advanced colors
-- [Logos](/docs/features/logos) — Add logos to templates
+- [Frames](/docs/features/frames): every frame, and the frame spec format
+- [Patterns](/docs/features/patterns): detailed pattern customization
+- [Logos](/docs/features/logos): add a logo to the code

@@ -12,7 +12,7 @@ icon: Code
 
 ### QRCode [#qrcode]
 
-QR 코드를 렌더링하는 주요 컴포넌트입니다.
+QR 코드를 렌더링하는 메인 컴포넌트입니다.
 
 ```tsx
 import { QRCode } from 'qrdx';
@@ -41,19 +41,19 @@ import { QRCode } from 'qrdx';
 | `cornerEyeDotPattern` | `CornerEyeDotPattern` | `'circle'` | 모서리 점 패턴 |
 | `hideLogo` | `boolean` | `false` | 로고를 숨깁니다. `logo`를 설정하지 않으면 로고는 그려지지 않습니다 |
 | `logo` | `string` | — | 로고 URL |
-| `templateId` | `string` | `'default'` | 템플릿 ID |
-| `customTemplate` | `TemplateDefinition` | — | 사용자 지정 템플릿 |
+| `templateId` | `string` | `'default'` | [템플릿으로 그리는 프레임](/docs/features/templates)(`'Arrow'`, `'StandardBox'` 등): 전체 아트워크의 너비가 `size`입니다 |
+| `customTemplate` | `TemplateDefinition` | — | 코드로 그리는 프레임(`templateId`보다 우선해요) |
 | `level` | `ErrorLevel` | `'Q'` | 오류 정정 |
-| `autoLevel` | `boolean` | `false` | 로고가 코드의 7%보다 넓은 영역을 가리면 `level`을 H로 높입니다(`AUTO_LEVEL_LOGO_COVERAGE`) |
+| `autoLevel` | `boolean` | `false` | 로고가 코드의 7% 넘게 차지하면 `level`을 H로 올립니다(`AUTO_LEVEL_LOGO_COVERAGE`) |
 | `margin` | `number` | `0` | 모듈 단위 여백 |
 | `imageSettings` | `ImageSettings` | — | 로고 설정 |
-| `eyeColors` | `EyeColors` | — | `topLeft`, `topRight`, `bottomLeft` 각각의 `outer` / `inner` 눈 색상이며, 각각 `eyeColor` / `dotColor`보다 우선합니다 |
-| `moduleScale` | `number` | `1` | 데이터 모듈 크기, 0.5~1. 각 패턴은 스캔이 가능한 가장 작은 크기에서 멈춥니다(`MODULE_SCALE_FLOOR`) |
-| `frame` | `QRFrame` | — | 행동 유도 프레임. [프레임 및 인쇄](/docs/features/frames)를 참고하세요 |
-| `art` | `QRArt` | — | 로고나 사진을 모듈에 섞어 넣습니다(Logo QR, Image QR). [아트 QR](/docs/features/art-qr)를 참고하세요 |
-| `frameLabelMarkers` | `boolean` | `false` | 편집기용: 각 프레임 라벨 `<text>`에 `data-qrdx-frame-label`(`"text"`, `"secondaryText"` 또는 스펙 라벨의 id)을 표시합니다. 다운로드와 내보내기에는 포함되지 않습니다 |
+| `eyeColors` | `EyeColors` | — | `topLeft`, `topRight`, `bottomLeft` 각각의 `outer` / `inner` 눈별 색상이며, 각각 `eyeColor` / `dotColor`보다 우선합니다 |
+| `moduleScale` | `number` | `1` | 데이터 모듈 크기(0.5~1). 각 패턴은 스캔이 가능한 가장 작은 크기에서 멈춥니다(`MODULE_SCALE_FLOOR`) |
+| `frame` | `QRFrame` | — | 행동 유도 프레임. [프레임 및 인쇄](/docs/features/frames) 참고 |
+| `art` | `QRArt` | — | 로고나 사진을 모듈에 섞어 넣습니다(Logo QR, Image QR). [아트 QR](/docs/features/art-qr) 참고 |
+| `frameLabelMarkers` | `boolean` | `false` | 편집기용: 각 프레임 레이블 `<text>`에 `data-qrdx-frame-label`(`"text"`, `"secondaryText"` 또는 스펙 레이블의 id)을 표시합니다. 다운로드와 내보내기에는 포함되지 않습니다 |
 
-{facts.bodyPatterns}가지 본문 패턴, {facts.eyeShapes}가지 눈 모양, {facts.eyeCentres}가지 눈 중심, {facts.frameStyles}가지 프레임 스타일은 [모양, 눈, 프레임](/docs/styles)에서 실시간으로 볼 수 있습니다.
+{facts.bodyPatterns}가지 본문 패턴, {facts.eyeShapes}가지 눈 모양, {facts.eyeCentres}가지 눈 중심, {facts.frameStyles}가지 기본 제공 프레임은 [모양, 눈, 프레임](/docs/styles)에서 실시간으로 볼 수 있습니다.
 
 ### QRCodeCanvas [#qrcodecanvas]
 
@@ -115,7 +115,7 @@ getQRCodeDataUrl(
 
 ### getQRAsWebP [#getqraswebp]
 
-QR 코드를 WebP `Blob`으로 반환하며, `quality`를 설정하지 않으면 무손실입니다. 브라우저가 WebP를 인코딩할 수 없는 경우(Safari)에는 qrdx에 내장된 무손실 인코더가 만듭니다. `canvasToWebP(canvas, options)`는 임의의 캔버스에 대해 같은 작업을 하며, `encodeWebPLossless(rgba, width, height)`는 DOM 없이 RGBA 픽셀을 인코딩합니다.
+코드를 WebP `Blob`으로 반환하며, `quality`를 설정하지 않으면 무손실입니다. 브라우저가 WebP를 인코딩하지 못하는 경우(Safari)에는 qrdx에 내장된 무손실 인코더가 만듭니다. `canvasToWebP(canvas, options)`는 임의의 canvas에 같은 작업을 하고, `encodeWebPLossless(rgba, width, height)`는 DOM 없이 RGBA 픽셀을 인코딩합니다.
 
 ```tsx
 getQRAsWebP(
@@ -145,19 +145,19 @@ getSVGString(qrProps: QRProps): Promise<string>
 
 ## 인쇄 및 스캔 함수 [#print-and-scan-functions]
 
-아래 함수는 각 기능 페이지에서 예제와 함께 설명합니다.
+각 기능 페이지에 예제와 함께 설명되어 있습니다.
 
 | 함수 | 기능 | 문서 |
 |----------|--------------|------|
-| `getQRAsSVG(props)` | 프레임을 포함한 QR 코드의 SVG 마크업 | [프레임](/docs/features/frames) |
-| `getQRAsPrintPDF`, `downloadPrintPDF` | 정확한 실제 크기의 벡터 PDF. 블리드, 재단선, CMYK 지원(`jspdf` 필요) | [인쇄용 내보내기](/docs/features/frames#print-ready-export) |
+| `getQRAsSVG(props)` | 프레임을 포함한 코드의 SVG 마크업 | [프레임](/docs/features/frames) |
+| `getQRAsPrintPDF`, `downloadPrintPDF` | 정확한 실제 크기의 벡터 PDF로, 블리드, 재단선, CMYK를 지원합니다(`jspdf` 필요) | [인쇄용 내보내기](/docs/features/frames#print-ready-export) |
 | `downloadPrintSVG` | 정확한 실제 크기의 인쇄용 SVG | [인쇄용 내보내기](/docs/features/frames#print-ready-export) |
 | `getQRAsEPS`, `downloadPrintEPS` | 인쇄소와 디자인 도구용 벡터 EPS | [다운로드](/docs/features/downloads) |
-| `getScanScore(props)` | 디자인이 얼마나 안정적으로 스캔되는지 추정 | [스캔될까요?](/docs/features/frames#will-it-scan) |
-| `getImageScanScore(image)` | 이미 가지고 있는 QR 코드 이미지의 점수 계산(브라우저 전용) | [스캔될까요?](/docs/features/frames#will-it-scan) |
-| `getQRAsPNG(props, { size })` | DOM 없이 일반 Node에서 PNG 바이트 반환. `qrdx/node`에서 가져오며, `@resvg/resvg-js` 또는 `sharp`가 설치되어 있어야 합니다 | — |
-| `scanQRPixels(pixels, expected)` | 원시 RGBA 픽셀이 `expected`로 디코딩되는지 확인하며, 흐리게 하거나 축소한 경우도 확인합니다. Node에서 실행됩니다 | — |
-| `getStylePairRisk(...)` | 일부 스캐너가 인식하지 못하는 눈과 패턴 조합을 경고 | [패턴](/docs/features/patterns) |
+| `getScanScore(props)` | 디자인이 얼마나 안정적으로 스캔되는지 추정합니다 | [스캔될까요?](/docs/features/frames#will-it-scan) |
+| `getImageScanScore(image)` | 이미 가지고 있는 QR 코드 이미지를 평가합니다(브라우저 전용) | [스캔될까요?](/docs/features/frames#will-it-scan) |
+| `getQRAsPNG(props, { size })` | DOM 없이 순수 Node에서 PNG 바이트를 반환합니다. `qrdx/node`에서 가져오며, `@resvg/resvg-js` 또는 `sharp`가 설치되어 있어야 합니다 | — |
+| `scanQRPixels(pixels, expected)` | 원시 RGBA 픽셀이 `expected`로 디코딩되는지 확인하며, 흐리게 하거나 축소한 경우도 검사합니다. Node에서 실행됩니다 | — |
+| `getStylePairRisk(...)` | 일부 스캐너가 인식하지 못하는 눈과 패턴 조합을 경고합니다 | [패턴](/docs/features/patterns) |
 
 ## 감지 함수 [#detection-functions]
 
@@ -268,6 +268,8 @@ type ErrorLevel = 'L' | 'M' | 'Q' | 'H';
 ```tsx
 // The arrays BODY_PATTERN, CORNER_EYE_PATTERNS, CORNER_EYE_DOT_PATTERNS and
 // FRAME_STYLES (and their zod schemas) are exported from 'qrdx/types'.
+// FRAME_STYLES names the built-in frames; each is a frame spec in
+// BUILT_IN_FRAMES (from 'qrdx').
 
 type BodyPattern =
   | 'circle' | 'circle-large' | 'square' | 'diamond' | 'circle-mixed'
@@ -297,7 +299,7 @@ type EyeColors = {
 };
 
 type QRFrame = {
-  style: FrameStyle; // "none" or a frame, see FRAME_STYLES
+  style: FrameStyle; // "none" or a built-in frame, see FRAME_STYLES
   text?: string; // up to 24 characters, default "Scan me"
   color?: string;
   textColor?: string;
@@ -396,7 +398,7 @@ try {
 - 잘못된 이미지 URL
 - 네트워크 오류
 - 잘못된 크기 매개변수
-- 캔버스 컨텍스트 사용 불가
+- 사용할 수 없는 Canvas 컨텍스트
 
 ## 브라우저 지원 [#browser-support]
 
@@ -407,7 +409,7 @@ try {
 
 ## 서버 지원 [#server-support]
 
-Node.js 환경에서 동작합니다.
+Node.js 환경에서 작동합니다.
 - Next.js
 - Remix
 - Express.js

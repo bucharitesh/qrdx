@@ -1,0 +1,81 @@
+{
+  "id": "hari-raya-ketupat",
+  "name": "Ketupat",
+  "description": "A solid card with a ketupat over the code and the label underneath, in green and gold.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "eid-al-fitr",
+  "contentTypes": [],
+  "tags": ["eid al-fitr", "eid", "hari raya", "ketupat", "aidilfitri"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#14532d",
+      "text": "#ffffff",
+      "accent": "#e9c46a"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M620 59L671 110L620 161L569 110ZM617.46 63.59L602.46 39.59L607.54 36.41L622.54 60.41ZM617.46 60.41L632.46 36.41L637.54 39.59L622.54 63.59Z",
+        "fill": "accent"
+      },
+      {
+        "type": "path",
+        "d": "M620 59L637 76L620 93L603 76ZM586 93L603 110L586 127L569 110ZM620 93L637 110L620 127L603 110ZM654 93L671 110L654 127L637 110ZM620 127L637 144L620 161L603 144Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Selamat Hari Raya",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan me",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

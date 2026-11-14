@@ -1,11 +1,14 @@
 // The REST API's OpenAPI document (public/openapi.json, written by
 // `bun run openapi:generate` from lib/openapi/document.ts) stays complete and
 // current: every /v1 route handler has an operation, the committed file is
-// exactly what the generator builds from today's schemas, the reference pages
-// (content/docs/developers/api) match it, and the errors catalogue
-// (lib/openapi/errors.ts, content/docs/developers/errors.mdx) covers every
-// error code the API code can throw.
-import { readdirSync, readFileSync } from "node:fs";
+// exactly what the generator builds from today's schemas, `openapi:export`
+// copies it byte for byte (to packages/docs-assets, uncommitted), the
+// reference pages (content/docs/developers/api) match it, and the errors
+// catalogue (lib/openapi/errors.ts, content/docs/developers/errors.mdx)
+// covers every error code the API code can throw.
+import { execFileSync } from "node:child_process";
+import { mkdtempSync, readdirSync, readFileSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { join, relative, sep } from "node:path";
 import { describe, expect, it } from "vitest";
 import { buildOpenApiDocument } from "@/lib/openapi/document";
@@ -84,6 +87,28 @@ describe("OpenAPI document", () => {
   it("public/openapi.json is exactly what the generator builds (run `bun run openapi:generate`)", () => {
     const committed = JSON.parse(read("public/openapi.json"));
     expect(committed).toEqual(document);
+  });
+
+  it("`openapi:export` writes a byte-for-byte copy of public/openapi.json", () => {
+    const dir = mkdtempSync(join(tmpdir(), "qrdx-openapi-"));
+    try {
+      const out = join(dir, "openapi.json");
+      execFileSync(
+        process.execPath,
+        [
+          "--experimental-strip-types",
+          "--no-warnings",
+          join("scripts", "openapi", "export.ts"),
+          "--out",
+          out,
+        ],
+        { cwd: root, stdio: ["ignore", "ignore", "inherit"] },
+      );
+      const served = readFileSync(join(root, "public", "openapi.json"));
+      expect(readFileSync(out).equals(served)).toBe(true);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
   });
 
   it("has an operation for every /v1 route handler, and no others", () => {

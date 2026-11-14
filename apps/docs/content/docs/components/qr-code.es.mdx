@@ -58,7 +58,7 @@ Pasa un degradado de qrdx en lugar de un color: `linear` con un `angle`, o `radi
 
 ### Plantillas de marco [#frame-templates]
 
-`templateId` dibuja una [plantilla](/docs/features/templates) de qrdx alrededor del código. Combínalo con `caption` para añadir una llamada a la acción debajo del marco.
+`templateId` dibuja alrededor del código uno de los [marcos dibujados como plantilla](/docs/features/templates) de qrdx. Combínalo con `caption` para añadir una llamada a la acción debajo del marco.
 
 <ComponentPreview name="qr-code-template" />
 
@@ -176,6 +176,6 @@ export function TableCode() {
 
 ## Referencia de la API [#api-reference]
 
-<auto-type-table path="../../../registry/qrdx/qr-code.tsx" type="{ [K in keyof QrCodeProps as K extends keyof ComponentProps<'figure'> ? never : K]: QrCodeProps[K] }" />
+<auto-type-table path="../../../../../packages/docs-assets/registry/qrdx/qr-code.tsx" type="{ [K in keyof QrCodeProps as K extends keyof ComponentProps<'figure'> ? never : K]: QrCodeProps[K] }" />
 
 Cualquier otra prop, como `className`, se pasa al elemento `<figure>` que envuelve el código.

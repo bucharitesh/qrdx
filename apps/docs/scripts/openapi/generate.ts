@@ -1,12 +1,14 @@
 // Writes the REST API's OpenAPI document (lib/openapi/document.ts) to
 // public/openapi.json, served at qrdx.dev/openapi.json and
-// api.qrdx.dev/openapi.json, the API reference pages built from it
+// api.qrdx.dev/openapi.json, then the API reference pages built from it
 // (content/docs/developers/api) and the errors page (scripts/openapi/pages.ts).
 // Run after changing a /v1 route, its schemas or lib/openapi:
 //
 //   bun run openapi:generate
 //
 // tests/api/openapi.test.ts fails while the committed files are stale.
+// packages/docs-assets/openapi.json isn't written here: it's an uncommitted
+// copy that `bun run openapi:export` makes for the apps that read it.
 //
 // Modules resolve as in the Vitest suites (scripts/openapi/tsconfig.json:
 // "server-only" is a stub, qrdx is its source), with the suites' fake

@@ -1,0 +1,92 @@
+{
+  "id": "park-map",
+  "name": "Park map",
+  "description": "Rolling hills under the code and a leafy tree in the sky.",
+  "category": "use-case",
+  "collection": "places",
+  "contentTypes": ["url"],
+  "tags": ["park", "outdoors", "map"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1820
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1820,
+        "radius": 56,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.88
+        }
+      },
+      {
+        "type": "path",
+        "d": "M914.4 132A45.6 45.6 0 1 1 1005.6 132A45.6 45.6 0 1 1 914.4 132ZM887.8 162.4A34.2 34.2 0 1 1 956.2 162.4A34.2 34.2 0 1 1 887.8 162.4ZM963.8 162.4A34.2 34.2 0 1 1 1032.2 162.4A34.2 34.2 0 1 1 963.8 162.4ZM922 173.8A38 38 0 1 1 998 173.8A38 38 0 1 1 922 173.8ZM950.5 185.2L969.5 185.2L975.2 253.6L944.8 253.6ZM956.64 212.24L983.24 185.64L989.96 192.36L963.36 218.96ZM919.15 251.7L1000.85 251.7A4.75 4.75 0 0 1 1005.6 256.45L1005.6 256.45A4.75 4.75 0 0 1 1000.85 261.2L919.15 261.2A4.75 4.75 0 0 1 914.4 256.45L914.4 256.45A4.75 4.75 0 0 1 919.15 251.7Z",
+        "fill": "accent"
+      },
+      {
+        "type": "path",
+        "d": "M0 1330C300 1190 600 1430 1240 1270L1240 1764Q1240 1820 1184 1820L56 1820Q0 1820 0 1764Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.45
+        }
+      },
+      {
+        "type": "path",
+        "d": "M0 1530C380 1420 820 1610 1240 1480L1240 1764Q1240 1820 1184 1820L56 1820Q0 1820 0 1764Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for the park map",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1600,
+          "width": 1040,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Welcome to the park",
+        "color": "frame",
+        "box": {
+          "x": 100,
+          "y": 120,
+          "width": 640,
+          "height": 110
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

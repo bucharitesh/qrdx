@@ -1,4 +1,4 @@
-import { toTargetPath } from "@/registry/transform";
+import { toTargetPath } from "@repo/docs-assets/registry/transform";
 import { CollapsibleCode } from "./collapsible-code";
 import { HighlightedCode } from "./highlighted-code";
 import { getRegistryItem, readRegistrySource } from "./registry-data";

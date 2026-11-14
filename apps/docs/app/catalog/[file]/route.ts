@@ -1,30 +1,18 @@
 import { QRCodeSVG } from "qrdx";
 import { createElement } from "react";
-import {
-  CATALOG_KINDS,
-  findCatalogTile,
-  tileSize,
-  tilesFor,
-} from "@/components/docs/qr-catalog-tiles";
+import { findCatalogTile, tileSize } from "@/components/docs/qr-catalog-tiles";
 import { serializeQrSvg } from "@/lib/qr-render";
-import { buildTimeParams } from "@/lib/static-params";
+import { onDemandParams } from "@/lib/static-params";
 
 // The docs style catalogue's codes (/docs/styles) as SVG files
 // (/catalog/<tile id>.svg), drawn by the same engine at the size the page
-// shows them and prerendered at build time. The page loads them as lazy
-// <img>s: two hundred inline SVGs made it a 3 MB document. Unknown names
-// answer 404.
+// shows them, on their first request and cached from then on. The page
+// loads them as lazy <img>s: two hundred inline SVGs made it a 3 MB document.
+// Unknown names answer 404.
 
-/**
- * Every tile, for the build to prerender; none under `next dev`
- * (lib/static-params.ts says why). Unknown names answer 404 below.
- */
+/** None at build (lib/static-params.ts). Unknown names answer 404 below. */
 export function generateStaticParams() {
-  return buildTimeParams(() =>
-    CATALOG_KINDS.flatMap((kind) =>
-      tilesFor(kind).map((tile) => ({ file: `${tile.id}.svg` })),
-    ),
-  );
+  return onDemandParams();
 }
 
 export async function GET(

@@ -1,0 +1,90 @@
+{
+  "id": "winter-lift-pass",
+  "name": "Lift pass",
+  "description": "A ticket with side notches, a perforated line and a stub for the label and skis and poles, in red and snow.",
+  "category": "seasonal",
+  "collection": "seasons",
+  "occasion": "winter",
+  "contentTypes": [],
+  "tags": ["winter", "snow", "ski", "ticket"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1820
+    },
+    "qr": {
+      "x": 120,
+      "y": 300,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#7f1d1d",
+      "text": "#ffffff",
+      "accent": "#e2e8f0"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M64 0L1176 0A64 64 0 0 1 1240 64L1240 1380A60 60 0 0 0 1240 1500L1240 1756A64 64 0 0 1 1176 1820L64 1820A64 64 0 0 1 0 1756L0 1500A60 60 0 0 0 0 1380L0 64A64 64 0 0 1 64 0Z",
+        "fill": "frame"
+      },
+      {
+        "type": "line",
+        "x1": 100,
+        "y1": 1440,
+        "x2": 1140,
+        "y2": 1440,
+        "width": 10,
+        "dash": [36, 24],
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.55
+        }
+      },
+      {
+        "type": "path",
+        "d": "M572.76 186.08L644.94 56.78L660.54 51.18L663.46 62.82L655.06 63.22L583.24 191.92ZM656.76 191.92L584.94 63.22L576.54 62.82L579.46 51.18L595.06 56.78L667.24 186.08Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M602.75 191.89L608.75 65.89L613.25 66.11L607.25 192.11ZM632.75 192.11L626.75 66.11L631.25 65.89L637.25 191.89ZM598.4 174A7.5 7.5 0 1 1 613.4 174A7.5 7.5 0 1 1 598.4 174ZM626.6 174A7.5 7.5 0 1 1 641.6 174A7.5 7.5 0 1 1 626.6 174Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Lift pass",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1490,
+          "width": 1040,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan for lift status",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1675,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

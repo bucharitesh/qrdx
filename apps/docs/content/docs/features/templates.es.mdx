@@ -1,69 +1,40 @@
 ---
 title: "Plantillas"
-description: "Aplica plantillas de marco prediseñadas a un código QR o registra las tuyas."
+description: "Marcos que ajustan el código dentro de un diseño de tamaño fijo, y la API TemplateDefinition para marcos que dibujas en código."
 icon: LayoutTemplate
 ---
 
-Envuelve un código QR en un diseño listo para usar o en uno propio.
+Una plantilla es un marco que ajusta el código dentro de su propio diseño. En el Playground las plantillas no forman una lista aparte. Arrow, Standard Box, Square Border, Striked Box, Halloween y Dot Ring son mosaicos del grupo **Clásico** del selector de marcos, junto a los demás [marcos](/docs/features/frames), y al elegir un marco se reemplaza el anterior.
 
-## ¿Qué son las plantillas? [#what-are-templates]
+Las plantillas se diferencian de los demás marcos en una cosa: el tamaño. Un marco añade espacio alrededor del código, así que `size` es el ancho del código y la imagen crece. Una plantilla dibuja todo su diseño a `size`, con el código más pequeño dentro.
 
-Una plantilla es un diseño SVG dibujado alrededor del código: un recuadro, un borde, una insignia. Recibe el código como `children` y lo coloca dentro de su propio dibujo. Los colores, los patrones y los logotipos se mantienen en las props de `QRCode`, así que una plantilla funciona con cualquier estilo.
+## Plantillas integradas [#built-in-templates]
 
-## Plantillas disponibles [#available-templates]
+Pasa el id como `templateId`. La Image API lo recibe como `template` y la CLI como `--template`.
 
-### Default [#default]
-Blanco y negro clásico.
+| `templateId` | Nombre | Color |
+|--------------|------|-------|
+| `Arrow` | Arrow | El color oscuro del código (`fgColor`) |
+| `StandardBox` | Standard Box | `fgColor` |
+| `SquareBorder` | Square Border | `fgColor` |
+| `StrikedBox` | Striked Box | Su propio color oscuro |
+| `Halloween` | Halloween | Su propio naranja, verde y negro |
+| `DotRing` | Dot Ring | Su anillo en `fgColor`, su texto en blanco; ambos se pueden cambiar (más abajo) |
+
+`default` no dibuja ningún diseño. Solo reduce un poco el código, al 95% de `size`.
 
 ```tsx
 import { QRCode } from 'qrdx';
 
-<QRCode value="https://example.com" templateId="default" size={256} />
+<QRCode value="https://example.com" templateId="Arrow" fgColor="#1a56db" size={256} />
 ```
 
-### Arrow [#arrow]
-Diseño geométrico moderno.
-
-```tsx
-<QRCode value="https://example.com" templateId="Arrow" size={256} />
-```
-
-### Standard Box [#standard-box]
-Diseño limpio y estructurado.
-
-```tsx
-<QRCode value="https://example.com" templateId="StandardBox" size={256} />
-```
-
-### Square Border [#square-border]
-Diseño con borde y contornos definidos.
-
-```tsx
-<QRCode value="https://example.com" templateId="SquareBorder" size={256} />
-```
-
-### Striked Box [#striked-box]
-Diseño dinámico con elementos diagonales.
-
-```tsx
-<QRCode value="https://example.com" templateId="StrikedBox" size={256} />
-```
-
-### Halloween [#halloween]
-Tema estacional de Halloween.
-
-```tsx
-<QRCode value="https://example.com" templateId="Halloween" size={256} />
-```
-
-## Personalizar plantillas [#customize-templates]
-
-Las plantillas integradas dibujan su diseño con `fgColor`. Todo lo demás, como los patrones y un logotipo, se configura en el código de la forma habitual:
+Los colores, los patrones y el logo se mantienen en las propiedades del propio código, así que una plantilla funciona con cualquier estilo:
 
 ```tsx
 <QRCode
   value="https://example.com"
-  templateId="Arrow"
+  templateId="StandardBox"
   fgColor="#1a56db"
   imageSettings={{
     src: "/your-logo.png",
@@ -75,30 +46,89 @@ Las plantillas integradas dibujan su diseño con `fgColor`. Todo lo demás, como
 />
 ```
 
+## Dot Ring [#dot-ring]
+
+Un código redondo. El código está en un disco de puntos dentro de un anillo oscuro, con una línea de texto a lo largo del anillo. Los puntos que se muestran salen de un hash del contenido del código, así que cada enlace tiene su propio anillo y el mismo enlace siempre obtiene el mismo.
+
+```tsx
+<QRCode
+  value="https://example.com"
+  templateId="DotRing"
+  bodyPattern="circle-large"
+  size={512}
+/>
+```
+
+Sus ajustes van en `customProps` (con el tipo `DotRingProps`):
+
+```tsx
+<QRCode
+  value="https://example.com"
+  templateId="DotRing"
+  customProps={{
+    customText: "Scan for the menu",
+    textPosition: "bottom",
+    textColor: "#fde047",
+    outerCircleColor: "#1e3a8a",
+  }}
+  size={512}
+/>
+```
+
+| Propiedad | Valor por defecto | Notas |
+| --- | --- | --- |
+| `customText` | "Scan the QR code" cuatro veces alrededor | Texto a lo largo del anillo. Las letras que no caben alrededor se omiten; `""` deja el anillo vacío |
+| `textPosition` | `"top"` | `"top"`: centrado en la parte superior, con lectura en sentido horario. `"bottom"`: centrado en la parte inferior, con lectura de izquierda a derecha |
+| `textRotation` | `0` | Gira el texto alrededor del centro, en grados |
+| `textColor` | `#ffffff` | Color del texto |
+| `fontFamily` | pila de fuentes del sistema | Familia de fuente CSS del texto |
+| `fontWeight` | `900` | Grosor de la fuente |
+| `fontSize` | `32` | En el dibujo de 593 unidades de la plantilla, donde el código mide 300 de ancho |
+| `fontLetterSpacing` | `3.5` | Espacio extra entre letras, en las mismas unidades |
+| `outerCircleColor` | `fgColor` | Color del anillo |
+| `strokeWidth`, `strokeColor` | `0`, `#000000` | Un trazo en ambos bordes del anillo |
+| `outerStrokeWidth`, `outerStrokeColor` | `strokeWidth`, `strokeColor` | Solo el borde exterior del anillo |
+| `innerStrokeWidth`, `innerStrokeColor` | `strokeWidth`, `strokeColor` | Solo el borde interior del anillo |
+
+Un logo va en el centro como en cualquier código. Los enlaces largos (códigos de más de 49 módulos de ancho) conservan una banda clara entre el código y los puntos, para que se sigan escaneando al imprimirse en tamaño pequeño.
+
+El texto es texto SVG en la fuente que elijas; por defecto es la pila de fuentes del sistema, así que no se descarga nada. Las descargas en SVG y PNG en el navegador usan las fuentes de quien las ve. PDF y EPS lo imprimen en Helvetica Bold, así que usa texto Latin-1 en esos casos. `getQRAsPNG` de `qrdx/node` necesita una fuente instalada en el servidor, igual que las etiquetas de los marcos.
+
+## Las plantillas son especificaciones de marco [#templates-are-frame-specs]
+
+El diseño de Arrow, Standard Box, Square Border, Striked Box y Halloween es una [especificación de marco](/docs/features/frames#frame-specs), el mismo formato JSON que todos los demás marcos, dibujado por el mismo motor. `getTemplate(id).spec` la devuelve. Úsala como marco cuando quieras el dimensionamiento de marco (el código conserva su tamaño y el diseño crece a su alrededor) y la opción de color del marco:
+
+```tsx
+import { getTemplate, QRCode } from 'qrdx';
+
+const spec = getTemplate('Arrow')?.spec;
+
+<QRCode
+  value="https://example.com"
+  frame={spec && { style: 'custom', spec, color: '#1a56db' }}
+  size={256}
+/>
+```
+
+Dot Ring no tiene especificación: sus puntos salen del contenido del código, así que los dibuja en código (consulta [Marcos que dibujas en código](#frames-you-draw-in-code)).
+
+`templateId` dibuja el mismo diseño que antes. Los diseños guardados, las URL de imagen, los comandos de la CLI y el código que usan un id de plantilla se ven igual que siempre.
+
 ## Registro de plantillas [#template-registry]
 
-### Obtener todas las plantillas [#get-all-templates]
-
 ```tsx
-import { getAllTemplates } from 'qrdx';
+import { getAllTemplates, getTemplate, getTemplateIds } from 'qrdx';
 
-const templates = getAllTemplates();
+getTemplateIds(); // ['default', 'Arrow', 'StandardBox', ...]
+getAllTemplates(); // every TemplateDefinition, with its id and name
+getTemplate('Halloween'); // one by id
 ```
 
-### Obtener los ID de las plantillas [#get-template-ids]
+## Marcos que dibujas en código [#frames-you-draw-in-code]
 
-```tsx
-import { getTemplateIds } from 'qrdx';
+Una especificación de marco describe un diseño fijo. Cuando el diseño tiene que calcularse, escribe un `TemplateDefinition` y pásalo como `customTemplate`. Su `wrapper` recibe el código como `children` y devuelve el SVG que se dibujará. Dibuja en un lienzo de 300 por 300, y el código llega también con ese tamaño, así que redúcelo para dejar espacio a tu diseño. `props` incluye el `fgColor` y el `bgColor` del código, y el tercer argumento tiene la `url` y el `pixelSize` del código.
 
-const ids = getTemplateIds();
-// Returns: ['default', 'Arrow', 'StandardBox', ...]
-```
-
-## Plantillas personalizadas [#custom-templates]
-
-Escribe tu propia plantilla como un `TemplateDefinition`. Su `wrapper` recibe el código como `children` y devuelve el SVG que se va a dibujar. Dibuja sobre un lienzo de 300 por 300, y el código llega también con ese tamaño, así que redúcelo para dejar espacio a tu diseño. `props` incluye los valores `fgColor` y `bgColor` del código.
-
-Este ejemplo dibuja un anillo alrededor del código:
+Este dibuja un anillo alrededor del código:
 
 ```tsx
 import { QRCode, type TemplateDefinition } from "qrdx";
@@ -130,28 +160,10 @@ const ringTemplate: TemplateDefinition = {
 />
 ```
 
-Mantén el código lo bastante grande para que se pueda escanear desde la distancia a la que la gente sostendrá el teléfono, y deja un espacio claro entre el código y tu diseño. Comprueba el resultado con la [puntuación de escaneo](/docs/features/frames#will-it-scan).
-
-## Cuándo usar plantillas [#when-to-use-templates]
-
-- **Coherencia de marca** — Asegura que todos los códigos QR combinen
-- **Configuración rápida** — Obtén resultados profesionales en poco tiempo
-- **Campañas estacionales** — Usa plantillas temáticas
-- **Generación por lotes** — Aplica estilos uniformes
-
-## Guía de selección de plantillas [#template-selection-guide]
-
-| Plantilla | Ideal para | Ambiente |
-|----------|----------|------|
-| Default | Profesional | Neutro |
-| Arrow | Tecnología, moderno | Dinámico |
-| Standard Box | Corporativo | Profesional |
-| Square Border | Formal | Estructurado |
-| Striked Box | Marketing | Enérgico |
-| Halloween | Estacional | Divertido |
+Mantén el código lo bastante grande para escanearlo desde donde la gente sostendrá el teléfono, y deja un espacio claro entre él y tu diseño. Comprueba el resultado con la [puntuación de escaneo](/docs/features/frames#will-it-scan).
 
 ## Siguientes pasos [#next-steps]
 
-- [Patrones](/docs/features/patterns) — Personalización detallada de patrones
-- [Colores y degradados](/docs/features/colors-gradients) — Colores avanzados
-- [Logotipos](/docs/features/logos) — Añade logotipos a las plantillas
+- [Marcos](/docs/features/frames): todos los marcos y el formato de especificación de marco
+- [Patrones](/docs/features/patterns): personalización detallada de patrones
+- [Logos](/docs/features/logos): añade un logo al código

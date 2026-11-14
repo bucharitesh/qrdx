@@ -6,6 +6,7 @@ import {
   easterSunday,
   hemisphereOf,
   OCCASIONS,
+  orthodoxEasterSunday,
   upcomingOccasions,
 } from "@/lib/frames/occasions";
 
@@ -43,6 +44,63 @@ describe("occasions", () => {
     expect(iso(easterSunday(2026))).toBe("2026-4-5");
     expect(iso(easterSunday(2027))).toBe("2027-3-28");
     expect(iso(easterSunday(2030))).toBe("2030-4-21");
+  });
+
+  it("finds Orthodox Easter Sunday", () => {
+    const iso = (date: Date) =>
+      `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+    expect(iso(orthodoxEasterSunday(2025))).toBe("2025-4-20");
+    expect(iso(orthodoxEasterSunday(2026))).toBe("2026-4-12");
+    expect(iso(orthodoxEasterSunday(2027))).toBe("2027-5-2");
+    expect(iso(orthodoxEasterSunday(2028))).toBe("2028-4-16");
+    expect(iso(orthodoxEasterSunday(2029))).toBe("2029-4-8");
+    expect(iso(orthodoxEasterSunday(2030))).toBe("2030-4-28");
+  });
+
+  it("dates the Easter-based and lunisolar festivals", () => {
+    const first = (id: string, year: number) => {
+      const window = OCCASIONS[id]?.window(year, "north");
+      return window
+        ? `${window.start.getMonth() + 1}-${window.start.getDate()}`
+        : null;
+    };
+    // Carnival: the Friday before Shrove Tuesday (2027-02-09)
+    expect(first("carnival", 2027)).toBe("2-5");
+    expect(first("pancake-day", 2028)).toBe("2-29");
+    // Maslenitsa week and Sham el-Nessim follow Orthodox Easter
+    expect(first("maslenitsa", 2027)).toBe("3-8");
+    expect(first("sham-el-nessim", 2026)).toBe("4-13");
+    // Onam's ten days end on Thiruvonam (2026-08-26)
+    expect(first("onam", 2026)).toBe("8-17");
+    // Chuseok: the day before the harvest moon
+    expect(first("chuseok", 2028)).toBe("10-2");
+    expect(first("kings-day", 2026)).toBe("4-27");
+  });
+
+  it("surfaces festivals from around the world", () => {
+    expect(ids(new Date(2026, 8, 20))).toEqual(
+      expect.arrayContaining([
+        "mid-autumn",
+        "chuseok",
+        "navratri",
+        "ganesh-chaturthi",
+      ]),
+    );
+    expect(ids(new Date(2027, 1, 8))).toEqual(
+      expect.arrayContaining(["carnival", "lunar-new-year", "pancake-day"]),
+    );
+    expect(ids(new Date(2026, 3, 12))).toEqual(
+      expect.arrayContaining([
+        "songkran",
+        "vaisakhi",
+        "orthodox-easter",
+        "sinhala-tamil-new-year",
+      ]),
+    );
+    // Monsoon and harvest turn round with the hemispheres too
+    expect(ids(new Date(2026, 6, 15))).toContain("monsoon");
+    expect(ids(new Date(2026, 6, 15), "south")).not.toContain("monsoon");
+    expect(ids(new Date(2027, 0, 20), "south")).toContain("monsoon");
   });
 
   it("puts what's on now and coming up first, soonest first", () => {

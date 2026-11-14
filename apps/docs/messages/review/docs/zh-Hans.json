@@ -12,7 +12,7 @@
     "status": "machine"
   },
   "api-reference.mdx": {
-    "source": "d7b53be7df6f",
+    "source": "255191322255",
     "status": "machine"
   },
   "client-portal.mdx": {
@@ -32,35 +32,35 @@
     "status": "machine"
   },
   "components/qr-code-card.mdx": {
-    "source": "d69a08f01029",
+    "source": "3226d01ca68f",
     "status": "machine"
   },
   "components/qr-code-download.mdx": {
-    "source": "d50f6275f526",
+    "source": "16bde8bed1b3",
     "status": "machine"
   },
   "components/qr-code-generator.mdx": {
-    "source": "378a4b369f75",
+    "source": "e3697dc4e163",
     "status": "machine"
   },
   "components/qr-code-scanner.mdx": {
-    "source": "639d25a0d8e1",
+    "source": "bf40cd66616f",
     "status": "machine"
   },
   "components/qr-code-share-dialog.mdx": {
-    "source": "6e986ab1cd95",
+    "source": "b3ff1b968bff",
     "status": "machine"
   },
   "components/qr-code.mdx": {
-    "source": "f9407df848c9",
+    "source": "05fe27d1dec6",
     "status": "machine"
   },
   "components/vcard-qr-code.mdx": {
-    "source": "abaa0b546bbe",
+    "source": "8c649eff82e7",
     "status": "machine"
   },
   "components/wifi-qr-code.mdx": {
-    "source": "ba6ebf7d9510",
+    "source": "f9a1b956e488",
     "status": "machine"
   },
   "custom-domains.mdx": {
@@ -88,7 +88,7 @@
     "status": "machine"
   },
   "developers/cli.mdx": {
-    "source": "ce4d18504c6a",
+    "source": "01a37178580c",
     "status": "machine"
   },
   "developers/errors.mdx": {
@@ -100,7 +100,7 @@
     "status": "machine"
   },
   "developers/image-api.mdx": {
-    "source": "adb6c5eaf03d",
+    "source": "7728d1919cca",
     "status": "machine"
   },
   "developers/index.mdx": {
@@ -108,7 +108,7 @@
     "status": "machine"
   },
   "developers/mcp.mdx": {
-    "source": "9bd5a65015cb",
+    "source": "2b48d42ae8ae",
     "status": "machine"
   },
   "developers/meta.json": {
@@ -152,7 +152,7 @@
     "status": "machine"
   },
   "features/frames.mdx": {
-    "source": "984c29607483",
+    "source": "e1c528083a88",
     "status": "machine"
   },
   "features/logos.mdx": {
@@ -168,7 +168,7 @@
     "status": "machine"
   },
   "features/templates.mdx": {
-    "source": "29894891201f",
+    "source": "5aae499f17e1",
     "status": "machine"
   },
   "files.mdx": {
@@ -244,7 +244,7 @@
     "status": "machine"
   },
   "help/designing/frames.mdx": {
-    "source": "b4f7a677f30e",
+    "source": "c485e9c96f6e",
     "status": "machine"
   },
   "help/designing/logos.mdx": {
@@ -476,7 +476,7 @@
     "status": "machine"
   },
   "slack-bot.mdx": {
-    "source": "2f612b88f758",
+    "source": "11f954ed737f",
     "status": "machine"
   },
   "smart-routing.mdx": {
@@ -484,7 +484,7 @@
     "status": "machine"
   },
   "styles.mdx": {
-    "source": "d0ea089a62aa",
+    "source": "26fadbacd0e4",
     "status": "machine"
   },
   "teams.mdx": {
@@ -492,7 +492,7 @@
     "status": "machine"
   },
   "telegram-bot.mdx": {
-    "source": "561fc758806f",
+    "source": "d5013323bbc5",
     "status": "machine"
   },
   "tracking-and-conversions.mdx": {
@@ -500,7 +500,7 @@
     "status": "machine"
   },
   "usage.mdx": {
-    "source": "2111b24add8f",
+    "source": "5a1ec90c8d5d",
     "status": "machine"
   },
   "utilities.mdx": {

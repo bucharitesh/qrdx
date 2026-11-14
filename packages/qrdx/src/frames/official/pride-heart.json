@@ -1,0 +1,83 @@
+{
+  "id": "pride-heart",
+  "name": "Pride heart sticker",
+  "description": "A die-cut sticker with a thick outline and an offset shadow and a heart, in violet and pink.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "pride",
+  "contentTypes": [],
+  "tags": ["pride", "pride month", "lgbtq", "june", "heart", "ally"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1750
+    },
+    "qr": {
+      "x": 110,
+      "y": 370,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#4c1d95",
+      "text": "#ffffff",
+      "accent": "#f472b6"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 50,
+        "y": 50,
+        "width": 1270,
+        "height": 1700,
+        "radius": 110,
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1270,
+        "height": 1700,
+        "radius": 110,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 36,
+        "y": 36,
+        "width": 1198,
+        "height": 1628,
+        "radius": 80,
+        "fill": "background"
+      },
+      {
+        "type": "path",
+        "d": "M635 212.85C621.56 196.72 566.46 159.09 567.8 126.83C569.14 91.89 621.56 86.51 635 121.46C648.44 86.51 700.86 91.89 702.2 126.83C703.54 159.09 648.44 196.72 635 212.85Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Proud ally",
+        "color": "frame",
+        "box": {
+          "x": 100,
+          "y": 1490,
+          "width": 1070,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

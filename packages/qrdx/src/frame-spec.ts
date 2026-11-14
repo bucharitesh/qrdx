@@ -1,12 +1,18 @@
 /** biome-ignore-all lint/style/noMagicNumbers: frame geometry */
 // Draws a frame spec (types/frame-spec.ts): validates it, scales it to the
-// code's size and compiles every shape and label into the same FrameLayout
-// the built-in frames produce, so SVG, canvas, PDF and EPS draw it with the
-// existing code and stay identical. Path data is re-written from the
-// numbers it was read as, never passed through.
+// code's size and compiles every shape and label into a FrameLayout, which
+// SVG, canvas, PDF and EPS all draw with the same code. Every frame is a
+// spec: custom frames carry theirs, and the built-in styles are specs too
+// (src/frames/builtin). Path data is re-written from the numbers it was
+// read as, never passed through.
 import type { ColorConfig } from "../types/color";
-import { FRAME_FONT_SCALE_MAX, FRAME_FONT_SCALE_MIN } from "../types/frame";
 import {
+  FRAME_FONT_SCALE_MAX,
+  FRAME_FONT_SCALE_MIN,
+  type QRFrame,
+} from "../types/frame";
+import {
+  FRAME_SPEC_DEFAULT_FONT,
   FRAME_SPEC_LABEL_MAX_FONT,
   FRAME_SPEC_LIMITS,
   type FrameSpec,
@@ -16,18 +22,23 @@ import {
   type FrameSpecShape,
   frameSpecPadding,
   frameSpecSchema,
+  frameSpecShapeBounds,
   type QRCustomFrame,
   sanitizeFrameText,
 } from "../types/frame-spec";
 import { DEFAULT_BGCOLOR } from "./constants";
 import type { FrameLabel, FrameLayout, FrameShape } from "./frame";
 import { FRAME_ICON_BOX, getFrameIconPath } from "./frame-icons";
-import { arcLabels, estimateTextEm, mixFrameColors } from "./frame-styles";
+import { arcLabels, estimateTextEm, mixFrameColors } from "./frame-text";
 import { circlePath } from "./shapes";
 import { getSolidColor } from "./utils/color";
 import { fmt } from "./utils/fmt";
 import { parseColor } from "./utils/parse-color";
-import { tokenizePathData, writePathData } from "./utils/path-data";
+import {
+  type PathCommand,
+  tokenizePathData,
+  writePathData,
+} from "./utils/path-data";
 import {
   clipPolygon,
   flattenSegments,
@@ -92,33 +103,91 @@ export function getFrameSpecGapRatio(spec: unknown): number {
 
 type Resolve = (color: FrameSpecColor) => string;
 
+/** The options a frame spec reads: its labels' text, colors and size. */
+export type FrameSpecOptions = Pick<
+  QRFrame,
+  | "text"
+  | "secondaryText"
+  | "color"
+  | "textColor"
+  | "secondaryColor"
+  | "fontScale"
+>;
+
+const isOpaque = (color: string) => {
+  const parsed = parseColor(color);
+  return Boolean(parsed && parsed.a >= 1);
+};
+
 /**
- * The plate under the code is always opaque: the code's background, or
- * white when that is transparent, so artwork never shows through the quiet
- * zone. `background` in a spec means the same color.
+ * What `background` means in a spec: the code's background as a solid
+ * color. The plate under the code is opaque, so artwork never shows through
+ * the quiet zone: a see-through background becomes white, unless the spec
+ * sets `qr.plate: "background"` (nothing of its own lies under the code),
+ * which keeps it see-through as the code draws it.
  */
-function opaqueBackground(bgColor: ColorConfig | undefined): string {
+function specBackground(
+  spec: FrameSpec,
+  bgColor: ColorConfig | undefined
+): { color: string; plate: boolean } {
   const background = getSolidColor(bgColor, DEFAULT_BGCOLOR);
-  const parsed = parseColor(background);
-  return parsed && parsed.a >= 1 ? background : DEFAULT_BGCOLOR;
+  if (spec.qr.plate === "none") {
+    // No plate: the code's own background and margin are its light space
+    return { color: background, plate: false };
+  }
+  if (isOpaque(background)) {
+    return { color: background, plate: true };
+  }
+  return spec.qr.plate === "background"
+    ? { color: background, plate: false }
+    : { color: DEFAULT_BGCOLOR, plate: true };
+}
+
+/** The frame, text and accent colors a spec paints with for `frame`. */
+export function getFrameSpecColors(
+  spec: FrameSpec,
+  frame: FrameSpecOptions,
+  background: string = DEFAULT_BGCOLOR
+): { frame: string; text: string; accent: string } {
+  const frameColor = frame.color || spec.colors.frame;
+  const accent = frame.secondaryColor || spec.colors.accent || frameColor;
+  const base = (ref: string): string =>
+    ref === "frame"
+      ? frameColor
+      : ref === "accent"
+        ? accent
+        : ref === "background"
+          ? background
+          : ref;
+  const fallback = spec.colors.text;
+  const text =
+    frame.textColor ||
+    (fallback === undefined
+      ? frameColor
+      : typeof fallback === "string"
+        ? fallback
+        : mixFrameColors(
+            base(fallback.mix[0]),
+            base(fallback.mix[1]),
+            fallback.amount
+          ));
+  return { frame: frameColor, text, accent };
 }
 
 function colorResolver(
-  frame: QRCustomFrame,
+  frame: FrameSpecOptions,
   spec: FrameSpec,
   background: string
 ): Resolve {
-  const frameColor = frame.color || spec.colors.frame;
-  const text = frame.textColor || spec.colors.text || frameColor;
-  const accent = frame.secondaryColor || spec.colors.accent || frameColor;
+  const colors = getFrameSpecColors(spec, frame, background);
   const base = (ref: string): string => {
     switch (ref) {
       case "frame":
-        return frameColor;
+        return colors.frame;
       case "text":
-        return text;
+        return colors.text;
       case "accent":
-        return accent;
+        return colors.accent;
       case "background":
         return background;
       default:
@@ -375,15 +444,26 @@ function compileShape(
   resolve: Resolve
 ): FrameShape[] {
   const outline = outlineOf(shape, k);
+  const stroke =
+    "stroke" in shape && shape.stroke
+      ? {
+          stroke: resolve(shape.stroke.color),
+          strokeWidth: shape.stroke.width * k,
+        }
+      : undefined;
   if (typeof shape.fill === "object" && "gradient" in shape.fill) {
-    return gradientSteps(outline, shape.fill.gradient, resolve);
+    const steps = gradientSteps(outline, shape.fill.gradient, resolve);
+    // The outline goes over the steps, drawn once along the whole shape
+    return stroke
+      ? [...steps, { ...outline, fill: "none", ...stroke } as FrameShape]
+      : steps;
   }
-  return [{ ...outline, fill: resolve(shape.fill) } as FrameShape];
+  return [{ ...outline, fill: resolve(shape.fill), ...stroke } as FrameShape];
 }
 
 // ── Labels ─────────────────────────────────────────────────────────────────
 
-function labelText(label: FrameSpecLabel, frame: QRCustomFrame): string {
+function labelText(label: FrameSpecLabel, frame: FrameSpecOptions): string {
   const maxLength = Math.min(
     label.maxLength ?? FRAME_SPEC_LIMITS.maxTextLength,
     FRAME_SPEC_LIMITS.maxTextLength
@@ -406,15 +486,12 @@ function clampFontScale(scale: number | undefined): number {
 
 function compileLabel(
   label: FrameSpecLabel,
-  frame: QRCustomFrame,
+  text: string,
+  fontScale: number,
   k: number,
-  resolve: Resolve
+  resolve: Resolve,
+  field: string
 ): FrameLabel[] {
-  const text = labelText(label, frame);
-  if (!text) {
-    return [];
-  }
-  const fontScale = clampFontScale(frame.fontScale);
   const color = resolve(label.color);
   const weight = label.weight === "regular" ? { fontWeight: 400 } : {};
   if (label.type === "curved") {
@@ -432,14 +509,18 @@ function compileLabel(
       fontSize,
       side,
       color,
-      label.id
+      field
     ).map((letter) => ({ ...letter, ...weight }));
   }
   const x = label.box.x * k;
   const y = label.box.y * k;
   const width = label.box.width * k;
   const height = label.box.height * k;
-  const base = (label.fontSize ?? label.box.height * 0.52) * k;
+  if (!(height > 0)) {
+    return [];
+  }
+  const base =
+    (label.fontSize ?? label.box.height * FRAME_SPEC_DEFAULT_FONT) * k;
   // At most 95% of the row, so the glyphs stay inside it
   const fontSize = Math.min(
     base * fontScale,
@@ -458,47 +539,229 @@ function compileLabel(
       color,
       ...(align !== "middle" && { align }),
       ...weight,
-      field: label.id,
+      field,
     },
   ];
 }
 
-// ── Layout ─────────────────────────────────────────────────────────────────
+// ── Collapsing labels ──────────────────────────────────────────────────────
+
+interface Band {
+  y: number;
+  height: number;
+}
+
+/** Path commands made absolute (so each y can move on its own). */
+function absoluteCommands(commands: PathCommand[]): PathCommand[] {
+  let x = 0;
+  let y = 0;
+  let startX = 0;
+  let startY = 0;
+  return commands.map(({ command, values }) => {
+    const upper = command.toUpperCase();
+    const relative = command !== upper;
+    switch (upper) {
+      case "Z":
+        x = startX;
+        y = startY;
+        return { command: "Z", values: [] };
+      case "H":
+        x = (relative ? x : 0) + (values[0] as number);
+        return { command: "H", values: [x] };
+      case "V":
+        y = (relative ? y : 0) + (values[0] as number);
+        return { command: "V", values: [y] };
+      case "A": {
+        x = (relative ? x : 0) + (values[5] as number);
+        y = (relative ? y : 0) + (values[6] as number);
+        return { command: "A", values: [...values.slice(0, 5), x, y] };
+      }
+      default: {
+        const out = values.map((value, i) =>
+          relative ? value + (i % 2 === 0 ? x : y) : value
+        );
+        x = out.at(-2) as number;
+        y = out.at(-1) as number;
+        if (upper === "M") {
+          startX = x;
+          startY = y;
+        }
+        return { command: upper, values: out };
+      }
+    }
+  });
+}
+
+function collapsePath(d: string, mapY: (y: number) => number): string {
+  const commands = tokenizePathData(d);
+  if (!commands) {
+    return d;
+  }
+  return writePathData(
+    absoluteCommands(commands).map(({ command, values }) => {
+      if (command === "V") {
+        return { command, values: [mapY(values[0] as number)] };
+      }
+      if (command === "H" || command === "Z") {
+        return { command, values };
+      }
+      if (command === "A") {
+        return {
+          command,
+          values: [...values.slice(0, 6), mapY(values[6] as number)],
+        };
+      }
+      return {
+        command,
+        values: values.map((value, i) => (i % 2 === 1 ? mapY(value) : value)),
+      };
+    })
+  );
+}
+
+function collapseShape(
+  shape: FrameSpecShape,
+  mapY: (y: number) => number
+): FrameSpecShape {
+  const span = (y: number, height: number) => {
+    const top = mapY(y);
+    return { y: top, height: mapY(y + height) - top };
+  };
+  switch (shape.type) {
+    case "rect":
+      return {
+        ...shape,
+        ...span(shape.y, shape.height),
+        ...(shape.hole && {
+          hole: { ...shape.hole, ...span(shape.hole.y, shape.hole.height) },
+        }),
+      };
+    case "circle":
+    case "ellipse":
+      return { ...shape, cy: mapY(shape.cy) };
+    case "polygon":
+      return {
+        ...shape,
+        points: shape.points.map(([x, y]): [number, number] => [x, mapY(y)]),
+      };
+    case "path":
+      return { ...shape, d: collapsePath(shape.d, mapY) };
+    case "line":
+      return { ...shape, y1: mapY(shape.y1), y2: mapY(shape.y2) };
+    default:
+      return { ...shape, y: mapY(shape.y) };
+  }
+}
 
 /**
- * Layout of a custom frame for a code of `size` pixels: the spec scaled so
- * its QR box is `size` wide, colors resolved from the frame options (then
- * the spec's defaults), labels filled from `text` / `secondaryText`.
- * Throws a `FrameSpecError` when the spec is invalid.
+ * The spec with `bands` cut out: rows below a band move up by its height,
+ * shapes wholly inside a band are left out and the artboard gets shorter.
  */
-export function getCustomFrameLayout(
+function collapseSpec(spec: FrameSpec, bands: Band[]): FrameSpec {
+  if (bands.length === 0) {
+    return spec;
+  }
+  const mapY = (y: number) => {
+    let out = y;
+    for (const band of bands) {
+      out -= Math.min(Math.max(y - band.y, 0), band.height);
+    }
+    return out;
+  };
+  const inBand = (y0: number, y1: number) =>
+    bands.some(
+      (band) => y0 >= band.y - 1e-6 && y1 <= band.y + band.height + 1e-6
+    );
+  return {
+    ...spec,
+    artboard: { ...spec.artboard, height: mapY(spec.artboard.height) },
+    qr: { ...spec.qr, y: mapY(spec.qr.y) },
+    shapes: spec.shapes
+      .filter((shape) => {
+        const { bounds } = frameSpecShapeBounds(shape);
+        return !(bounds && inBand(bounds.y0, bounds.y1));
+      })
+      .map((shape) => collapseShape(shape, mapY)),
+    labels: spec.labels.map((label) => {
+      if (label.type === "curved") {
+        return {
+          ...label,
+          curve: { ...label.curve, cy: mapY(label.curve.cy) },
+        };
+      }
+      const top = mapY(label.box.y);
+      return {
+        ...label,
+        box: {
+          ...label.box,
+          y: top,
+          height: mapY(label.box.y + label.box.height) - top,
+        },
+      };
+    }),
+  };
+}
+
+// ── Layout ─────────────────────────────────────────────────────────────────
+
+/** What a frame's primary and secondary labels edit (FrameLabel.field). */
+export type FrameSlotFields = Partial<Record<"primary" | "secondary", string>>;
+
+/**
+ * Layout of a valid `spec` (see resolveFrameSpec) for a code of `size`
+ * pixels: the spec scaled so its QR box is `size` wide, colors resolved
+ * from the frame options (then the spec's defaults), labels filled from
+ * `text` / `secondaryText`, and the bands of empty labels cut out. Each
+ * label's field is its id, or `slotFields` for the primary and secondary
+ * slots.
+ */
+export function frameSpecLayout(
   size: number,
-  frame: QRCustomFrame,
-  bgColor?: ColorConfig
+  valid: FrameSpec,
+  frame: FrameSpecOptions,
+  bgColor?: ColorConfig,
+  slotFields: FrameSlotFields = {}
 ): FrameLayout {
-  const spec = resolveFrameSpec(frame.spec);
+  const texts = new Map(
+    valid.labels.map((label) => [label.id, labelText(label, frame)])
+  );
+  const spec = collapseSpec(
+    valid,
+    valid.labels.flatMap((label) =>
+      label.collapse && !texts.get(label.id) ? [label.collapse] : []
+    )
+  );
   const k = size / spec.qr.size;
-  const background = opaqueBackground(bgColor);
-  const resolve = colorResolver(frame, spec, background);
+  const background = specBackground(spec, bgColor);
+  const resolve = colorResolver(frame, spec, background.color);
 
   const shapes = spec.shapes.flatMap((shape) =>
     compileShape(shape, k, resolve)
   );
   // The plate: last behind the code, so nothing shows in its quiet zone
-  const padding = frameSpecPadding(spec) * k;
-  shapes.push({
-    type: "rect",
-    x: spec.qr.x * k - padding,
-    y: spec.qr.y * k - padding,
-    width: size + 2 * padding,
-    height: size + 2 * padding,
-    radius: (spec.qr.radius ?? 0) * k,
-    fill: background,
-  });
+  if (background.plate) {
+    const padding = frameSpecPadding(spec) * k;
+    shapes.push({
+      type: "rect",
+      x: spec.qr.x * k - padding,
+      y: spec.qr.y * k - padding,
+      width: size + 2 * padding,
+      height: size + 2 * padding,
+      radius: (spec.qr.radius ?? 0) * k,
+      fill: background.color,
+    });
+  }
 
-  const labels = spec.labels.flatMap((label) =>
-    compileLabel(label, frame, k, resolve)
-  );
+  const fontScale = clampFontScale(frame.fontScale);
+  const labels = spec.labels.flatMap((label) => {
+    const text = texts.get(label.id);
+    if (!text) {
+      return [];
+    }
+    const field =
+      (label.slot === "fixed" ? undefined : slotFields[label.slot]) ?? label.id;
+    return compileLabel(label, text, fontScale, k, resolve, field);
+  });
   const first = labels[0];
   const main = first && first.rotate === undefined ? first : null;
   const bleed = spec.bleed ?? "none";
@@ -515,4 +778,16 @@ export function getCustomFrameLayout(
     squareEdges: bleed !== "none",
     color: resolve(bleed === "none" ? "frame" : bleed),
   };
+}
+
+/**
+ * Layout of a custom frame for a code of `size` pixels (see
+ * frameSpecLayout). Throws a `FrameSpecError` when the spec is invalid.
+ */
+export function getCustomFrameLayout(
+  size: number,
+  frame: QRCustomFrame,
+  bgColor?: ColorConfig
+): FrameLayout {
+  return frameSpecLayout(size, resolveFrameSpec(frame.spec), frame, bgColor);
 }

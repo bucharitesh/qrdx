@@ -13,6 +13,7 @@ import type {
 } from "qrdx";
 import {
   BODY_PATTERN,
+  BUILT_IN_FRAMES,
   CORNER_EYE_DOT_PATTERNS,
   CORNER_EYE_PATTERNS,
   colorConfigSchema,
@@ -21,6 +22,7 @@ import {
   errorLevelSchema,
   FRAME_STYLES,
   FRAME_TEXT_MAX_LENGTH,
+  getAllTemplates,
   getFrameDimensions,
   getTemplateIds,
 } from "qrdx";
@@ -34,6 +36,9 @@ const RESET = "\x1b[0m";
 const TEXT = "\x1b[38;5;145m";
 const GREEN = "\x1b[38;5;114m";
 const DIM = "\x1b[38;5;102m";
+
+/** Interactive frame choices that name a template. */
+const TEMPLATE_CHOICE = "template:";
 
 export interface GenerateFlags {
   value?: string;
@@ -787,36 +792,36 @@ export async function runGenerate(
       dotColor = dotVal ? parseColorFlag(dotVal) : undefined;
     }
 
-    // ── Template ──────────────────────────────────────────────────────
-    if (!flags.template) {
-      const templateIds = getTemplateIds();
-      const res = await p.select<string>({
-        message: `Template ${DIM}(decorative wrapper around the QR code)${RESET}`,
-        options: [
-          { value: "", label: "none" },
-          ...templateIds
-            .filter((id) => id !== "default")
-            .map((id) => ({ value: id, label: id })),
-        ],
-        initialValue: "",
-      });
-      if (isCancel(res)) {
-        handleCancel();
-      }
-      template = (res as string) || undefined;
-    }
-
     // ── Frame ─────────────────────────────────────────────────────────
-    if (flags.frame === undefined && !frame) {
-      const res = await p.select<FrameStyle>({
-        message: `Frame ${DIM}(call-to-action label around the code)${RESET}`,
-        options: FRAME_STYLES.map((style) => ({ value: style, label: style })),
-        initialValue: "none" as FrameStyle,
+    // One choice: a built-in frame (it adds space around the code) or a
+    // frame drawn as a template (--template: the whole artwork is --size)
+    if (flags.frame === undefined && !frame && !flags.template) {
+      const res = await p.select<string>({
+        message: `Frame ${DIM}(around the code)${RESET}`,
+        options: [
+          { value: "none", label: "none" },
+          ...BUILT_IN_FRAMES.map((item) => ({
+            value: item.style,
+            label: item.style,
+            hint: item.name,
+          })),
+          ...getAllTemplates()
+            .filter((item) => item.id !== "default")
+            .map((item) => ({
+              value: `${TEMPLATE_CHOICE}${item.id}`,
+              label: item.id,
+              hint: `${item.name} (--template)`,
+            })),
+        ],
+        initialValue: "none",
       });
       if (isCancel(res)) {
         handleCancel();
       }
-      if (res !== "none") {
+      const choice = res as string;
+      if (choice.startsWith(TEMPLATE_CHOICE)) {
+        template = choice.slice(TEMPLATE_CHOICE.length);
+      } else if (choice !== "none") {
         const text = await p.text({
           message: `Frame text ${DIM}(up to ${FRAME_TEXT_MAX_LENGTH} characters)${RESET}`,
           placeholder: DEFAULT_FRAME_TEXT,
@@ -831,7 +836,7 @@ export async function runGenerate(
           handleCancel();
         }
         frame = {
-          style: res as FrameStyle,
+          style: choice as FrameStyle,
           text: (text as string) || DEFAULT_FRAME_TEXT,
         };
       }

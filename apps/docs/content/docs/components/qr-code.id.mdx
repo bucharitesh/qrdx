@@ -58,7 +58,7 @@ Berikan gradasi qrdx sebagai ganti warna: `linear` dengan `angle`, atau `radial`
 
 ### Templat bingkai [#frame-templates]
 
-`templateId` menggambar [templat](/docs/features/templates) qrdx di sekeliling kode. Padukan dengan `caption` untuk ajakan bertindak di bawah bingkai.
+`templateId` menggambar salah satu [bingkai qrdx yang digambar sebagai template](/docs/features/templates) di sekeliling kode. Padukan dengan `caption` untuk ajakan bertindak di bawah bingkai.
 
 <ComponentPreview name="qr-code-template" />
 
@@ -176,6 +176,6 @@ export function TableCode() {
 
 ## Referensi API [#api-reference]
 
-<auto-type-table path="../../../registry/qrdx/qr-code.tsx" type="{ [K in keyof QrCodeProps as K extends keyof ComponentProps<'figure'> ? never : K]: QrCodeProps[K] }" />
+<auto-type-table path="../../../../../packages/docs-assets/registry/qrdx/qr-code.tsx" type="{ [K in keyof QrCodeProps as K extends keyof ComponentProps<'figure'> ? never : K]: QrCodeProps[K] }" />
 
 Prop lain apa pun, seperti `className`, diteruskan ke `<figure>` pembungkus.

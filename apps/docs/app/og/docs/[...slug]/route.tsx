@@ -1,8 +1,8 @@
 import { notFound } from "next/navigation";
 import { ImageResponse } from "next/og";
 import { BrandOgImage, loadOgFonts, ogSize } from "@/app/og/brand";
-import { docsIndex, getPageImage } from "@/lib/docs-index";
-import { buildTimeParams } from "@/lib/static-params";
+import { docsIndex } from "@/lib/docs-index";
+import { onDemandParams } from "@/lib/static-params";
 
 export const revalidate = false;
 
@@ -26,14 +26,8 @@ export async function GET(
   );
 }
 
-// Unknown pages answer notFound() above (lib/static-params.ts).
+// None at build: each image renders on its first request and is cached
+// (lib/static-params.ts). Unknown pages answer notFound() above.
 export function generateStaticParams() {
-  return buildTimeParams(() =>
-    docsIndex()
-      .getPages()
-      .map((page) => ({
-        lang: page.locale,
-        slug: getPageImage(page).segments,
-      })),
-  );
+  return onDemandParams();
 }

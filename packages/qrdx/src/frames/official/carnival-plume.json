@@ -1,0 +1,71 @@
+{
+  "id": "carnival-plume",
+  "name": "Carnival plumes",
+  "description": "An arched card, like a window, with a fan of carnival feathers, in carnival orange and turquoise.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "carnival",
+  "contentTypes": [],
+  "tags": ["carnival", "mardi gras", "parade", "feathers", "samba"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1880
+    },
+    "qr": {
+      "x": 160,
+      "y": 470,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#c2410c",
+      "text": "#ffffff",
+      "accent": "#22d3ee"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M0 660A660 660 0 0 1 1320 660L1320 1840Q1320 1880 1280 1880L40 1880Q0 1880 0 1840Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M50 660A610 610 0 0 1 1270 660L1270 1830L50 1830ZM62 660L62 1818L1258 1818L1258 660A598 598 0 0 0 62 660Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.35
+        }
+      },
+      {
+        "type": "path",
+        "d": "M660 291C657.24 266.23 628.06 248.69 595.16 252.01C607.65 282.62 636.83 300.17 660 291ZM660 291C669.4 264.57 650.29 224.14 617.52 201.17C614.49 241.07 633.6 281.5 660 291ZM660 291C679.8 268.2 679.8 216.9 660 177C640.2 216.9 640.2 268.2 660 291ZM660 291C686.4 281.5 705.51 241.07 702.48 201.17C669.71 224.14 650.6 264.57 660 291ZM660 291C683.17 300.17 712.35 282.62 724.84 252.01C691.94 248.69 662.76 266.23 660 291Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M659.23 292.29L607.36 261.09L608.9 258.52L660.77 289.71ZM658.64 291.64L624.66 219.77L627.37 218.49L661.36 290.36ZM658.5 291L658.5 199.8L661.5 199.8L661.5 291ZM658.64 290.36L692.63 218.49L695.34 219.77L661.36 291.64ZM659.23 289.71L711.1 258.52L712.64 261.09L660.77 292.29ZM645 291A15 15 0 1 1 675 291A15 15 0 1 1 645 291Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Bom Carnaval",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1610,
+          "width": 1040,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

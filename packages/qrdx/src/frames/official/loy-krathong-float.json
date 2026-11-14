@@ -1,0 +1,88 @@
+{
+  "id": "loy-krathong-float",
+  "name": "Krathong",
+  "description": "A solid card with a krathong over the code and the label underneath, in night blue and candle gold.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "loy-krathong",
+  "contentTypes": [],
+  "tags": [
+    "loy krathong",
+    "thailand",
+    "festival of lights",
+    "november",
+    "krathong",
+    "river"
+  ],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#1e1b4b",
+      "text": "#ffffff",
+      "accent": "#fbbf24"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M557 140C572 167 668 167 683 140ZM620 143C619.48 121.44 596.53 106.59 569 110C577.17 136.51 600.12 151.36 620 143ZM620 143C629.11 123.96 615.61 102.36 590 95C585.39 121.24 598.89 142.84 620 143ZM620 143C641.11 142.84 654.61 121.24 650 95C624.39 102.36 610.89 123.96 620 143ZM620 143C639.88 151.36 662.83 136.51 671 110C643.47 106.59 620.52 121.44 620 143ZM605 143C618.86 131.6 618.86 105.95 605 86C591.14 105.95 591.14 131.6 605 143ZM635 143C648.86 131.6 648.86 105.95 635 86C621.14 105.95 621.14 131.6 635 143Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M617 80L623 80A3 3 0 0 1 626 83L626 122A3 3 0 0 1 623 125L617 125A3 3 0 0 1 614 122L614 83A3 3 0 0 1 617 80ZM620 53C622.36 60.2 626.75 66.2 626.75 70.25A6.75 6.75 0 0 1 613.25 70.25C613.25 66.2 617.64 60.2 620 53Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Happy Loy Krathong",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan me",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

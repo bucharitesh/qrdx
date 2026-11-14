@@ -1,18 +1,17 @@
 import { notFound } from "next/navigation";
-import { POPULAR_BRAND_SLUGS } from "@/lib/brand-logos/popular";
 import { getBrandIcon } from "@/lib/brand-logos/server";
 import { BRAND_SLUG } from "@/lib/brand-logos/svg";
-import { buildTimeParams } from "@/lib/static-params";
+import { onDemandParams } from "@/lib/static-params";
 
 // One brand mark as SVG, in its brand color: the logo gallery's thumbnails
 // and the source of a picked logo (the editor embeds it in the code's style
-// as a data URL, so codes never load it from here). Popular brands are built
-// at build time; the rest on first request, then cached.
+// as a data URL, so codes never load it from here). Each one is drawn on its
+// first request, then cached.
 
 export const dynamic = "force-static";
 
 export function generateStaticParams() {
-  return buildTimeParams(() => POPULAR_BRAND_SLUGS.map((slug) => ({ slug })));
+  return onDemandParams();
 }
 
 export async function GET(

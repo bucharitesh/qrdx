@@ -4863,6 +4863,18 @@
     "source": "3ee48cb78ef2",
     "status": "machine"
   },
+  "scannerApp.share": {
+    "source": "29887a5ff984",
+    "status": "machine"
+  },
+  "scannerApp.scanInstructions": {
+    "source": "716118d231d5",
+    "status": "machine"
+  },
+  "scannerApp.cameraBlocked": {
+    "source": "7d85f36d7bea",
+    "status": "machine"
+  },
   "scanPages.reportAbuse": {
     "source": "179e5a21cc1e",
     "status": "machine"
@@ -13023,10 +13035,6 @@
     "source": "c7bdad567af2",
     "status": "machine"
   },
-  "editor.controlSections.designControls.border": {
-    "source": "3b4bdff339e9",
-    "status": "machine"
-  },
   "editor.controlSections.designControls.none": {
     "source": "dc937b598926",
     "status": "machine"
@@ -13083,12 +13091,8 @@
     "source": "f5a57b969150",
     "status": "machine"
   },
-  "editor.controlSections.frameControls.customise": {
-    "source": "1bed90804c20",
-    "status": "machine"
-  },
-  "editor.controlSections.frameControls.importSvg": {
-    "source": "88575ae0c628",
+  "editor.controlSections.frameControls.uploadSvg": {
+    "source": "25be4dcf4b6f",
     "status": "machine"
   },
   "editor.controlSections.frameControls.publishFrame": {
@@ -13103,44 +13107,28 @@
     "source": "0e66373f45dc",
     "status": "machine"
   },
-  "editor.controlSections.frameControls.secondLine": {
-    "source": "c8b588f708d6",
-    "status": "machine"
-  },
-  "editor.controlSections.frameControls.leaveEmptyForNoLabel": {
-    "source": "664c33884a79",
-    "status": "machine"
-  },
   "editor.controlSections.frameControls.pickAFrameFirst": {
     "source": "4aede128d746",
-    "status": "machine"
-  },
-  "editor.controlSections.frameControls.frameColor": {
-    "source": "2d7228cc6b77",
-    "status": "machine"
-  },
-  "editor.controlSections.frameControls.textColor": {
-    "source": "4a69d0166046",
-    "status": "machine"
-  },
-  "editor.controlSections.frameControls.endColor": {
-    "source": "da2d25d0b723",
-    "status": "machine"
-  },
-  "editor.controlSections.frameControls.optionalEGYourWebsite": {
-    "source": "f7f267b95bd4",
     "status": "machine"
   },
   "editor.controlSections.frameControls.none": {
     "source": "dc937b598926",
     "status": "machine"
   },
-  "editor.controlSections.frameFields.textSize": {
-    "source": "d68761cc1eb2",
+  "editor.controlSections.frameControls.takesDotColor": {
+    "source": "efde7cd49587",
     "status": "machine"
   },
-  "editor.controlSections.framePicker.more": {
-    "source": "d47d7cb0e4f8",
+  "editor.controlSections.frameControls.alsoHasTemplate": {
+    "source": "9f6a4b56a0b8",
+    "status": "machine"
+  },
+  "editor.controlSections.frameControls.templateKeepsSize": {
+    "source": "e4fef3437820",
+    "status": "machine"
+  },
+  "editor.controlSections.frameFields.textSize": {
+    "source": "d68761cc1eb2",
     "status": "machine"
   },
   "editor.controlSections.framePicker.showAll": {
@@ -13151,18 +13139,6 @@
     "source": "d0b50e064a4f",
     "status": "machine"
   },
-  "editor.controlSections.framePicker.moreFrames": {
-    "source": "40c979613836",
-    "status": "machine"
-  },
-  "editor.controlSections.framePicker.allTotalFrames": {
-    "source": "f7d30aed62b4",
-    "status": "machine"
-  },
-  "editor.controlSections.framePicker.allFrames": {
-    "source": "5fcbddfb6256",
-    "status": "machine"
-  },
   "editor.controlSections.framePicker.searchFrames": {
     "source": "5ed62fabbc22",
     "status": "machine"
@@ -13171,28 +13147,12 @@
     "source": "47673afc88b7",
     "status": "machine"
   },
-  "editor.controlSections.framePicker.closeFrames": {
-    "source": "d31d0c2f9088",
-    "status": "machine"
-  },
   "editor.controlSections.framePicker.filterFrames": {
     "source": "42d8c95ad102",
     "status": "machine"
   },
   "editor.controlSections.framePicker.labelFrames": {
     "source": "800e6f3afaaf",
-    "status": "machine"
-  },
-  "editor.controlSections.framePicker.commonFrames": {
-    "source": "ca35ed18a577",
-    "status": "machine"
-  },
-  "editor.controlSections.framePicker.everyFrameBuiltInStyles": {
-    "source": "40954525a2f2",
-    "status": "machine"
-  },
-  "editor.controlSections.framePicker.less": {
-    "source": "ae5239ec63f2",
     "status": "machine"
   },
   "editor.controlSections.framePicker.all": {
@@ -13211,8 +13171,12 @@
     "source": "b743c760826c",
     "status": "machine"
   },
-  "editor.controlSections.framePicker.builtIn": {
-    "source": "1f43948106d1",
+  "editor.controlSections.framePicker.classic": {
+    "source": "ae25d6481fc1",
+    "status": "machine"
+  },
+  "editor.controlSections.framePicker.shapedCodes": {
+    "source": "85014cc1a454",
     "status": "machine"
   },
   "editor.controlSections.framePicker.saved": {
@@ -13609,10 +13573,6 @@
   },
   "editor.controlSections.patternControls.customizeOuterAndCenter": {
     "source": "b779d19aaffb",
-    "status": "machine"
-  },
-  "editor.controlSections.patternControls.border": {
-    "source": "3b4bdff339e9",
     "status": "machine"
   },
   "editor.controlSections.patternControls.higherLevelsSurviveScratchesAnd": {
@@ -26183,12 +26143,28 @@
     "source": "359c897644fa",
     "status": "machine"
   },
+  "app.shell.setupGuide.launcherLabel": {
+    "source": "b7c0c7c31b4f",
+    "status": "machine"
+  },
   "app.shell.setupGuide.doneOfLengthDone": {
     "source": "179059a52a15",
     "status": "machine"
   },
+  "app.shell.setupGuide.doneOfLengthShort": {
+    "source": "0594fae3e732",
+    "status": "machine"
+  },
   "app.shell.setupGuide.setupTasksDone": {
     "source": "71d73e3562de",
+    "status": "machine"
+  },
+  "app.shell.setupGuide.collapse": {
+    "source": "be6eb1fc3b05",
+    "status": "machine"
+  },
+  "app.shell.setupGuide.dismissGuide": {
+    "source": "3986028d181d",
     "status": "machine"
   },
   "app.shell.setupGuide.done": {

@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">QRdx Scanner</string>
+    <string name="title_activity_main">QRdx Scanner</string>
+    <string name="package_name">dev.qrdx.scanner</string>
+    <string name="custom_url_scheme">dev.qrdx.scanner</string>
+</resources>

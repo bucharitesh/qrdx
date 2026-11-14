@@ -1,69 +1,40 @@
 ---
 title: "Modèles"
-description: "Appliquez à un QR code des modèles de cadre prédéfinis, ou enregistrez les vôtres."
+description: "Des cadres qui placent le code à l'intérieur d'un visuel de taille fixe, et l'API TemplateDefinition pour les cadres que vous dessinez dans le code."
 icon: LayoutTemplate
 ---
 
-Entourez un QR code d'un habillage prêt à l'emploi, ou du vôtre.
+Un modèle est un cadre qui place le code à l'intérieur de son propre visuel. Dans le Playground, les modèles ne forment pas une liste à part. Arrow, Standard Box, Square Border, Striked Box, Halloween et Dot Ring sont des vignettes du groupe **Classique** du sélecteur de cadres, à côté des autres [cadres](/docs/features/frames), et choisir un cadre remplace le précédent.
 
-## Que sont les modèles ? [#what-are-templates]
+Les modèles diffèrent des autres cadres sur un point : la taille. Un cadre ajoute de l'espace autour du code, donc `size` correspond à la largeur du code et l'image s'agrandit. Un modèle dessine tout son visuel à la taille `size`, avec le code plus petit à l'intérieur.
 
-Un modèle est un habillage SVG dessiné autour du code : une boîte, une bordure, un badge. Il reçoit le code en tant que `children` et le place à l'intérieur de son propre dessin. Les couleurs, les motifs et les logos restent définis dans les props de `QRCode`, de sorte qu'un modèle fonctionne avec n'importe quel style.
+## Modèles intégrés [#built-in-templates]
 
-## Modèles disponibles [#available-templates]
+Passez l'identifiant comme `templateId`. L'API Image le reçoit sous le nom `template` et la CLI sous `--template`.
 
-### Default [#default]
-Noir et blanc classique.
+| `templateId` | Nom | Couleur |
+|--------------|------|-------|
+| `Arrow` | Arrow | La couleur foncée du code (`fgColor`) |
+| `StandardBox` | Standard Box | `fgColor` |
+| `SquareBorder` | Square Border | `fgColor` |
+| `StrikedBox` | Striked Box | Sa propre couleur foncée |
+| `Halloween` | Halloween | Son propre orange, vert et noir |
+| `DotRing` | Dot Ring | Anneau en `fgColor`, texte en blanc ; les deux peuvent changer (voir ci-dessous) |
+
+`default` ne dessine aucun visuel. Il réduit simplement un peu le code, à 95 % de `size`.
 
 ```tsx
 import { QRCode } from 'qrdx';
 
-<QRCode value="https://example.com" templateId="default" size={256} />
+<QRCode value="https://example.com" templateId="Arrow" fgColor="#1a56db" size={256} />
 ```
 
-### Arrow [#arrow]
-Design géométrique moderne.
-
-```tsx
-<QRCode value="https://example.com" templateId="Arrow" size={256} />
-```
-
-### Standard Box [#standard-box]
-Design net et structuré.
-
-```tsx
-<QRCode value="https://example.com" templateId="StandardBox" size={256} />
-```
-
-### Square Border [#square-border]
-Design bordé aux contours bien définis.
-
-```tsx
-<QRCode value="https://example.com" templateId="SquareBorder" size={256} />
-```
-
-### Striked Box [#striked-box]
-Design dynamique avec des éléments diagonaux.
-
-```tsx
-<QRCode value="https://example.com" templateId="StrikedBox" size={256} />
-```
-
-### Halloween [#halloween]
-Thème saisonnier d'Halloween.
-
-```tsx
-<QRCode value="https://example.com" templateId="Halloween" size={256} />
-```
-
-## Personnaliser les modèles [#customize-templates]
-
-Les modèles intégrés dessinent leur habillage avec `fgColor`. Tout le reste, comme les motifs et un logo, se définit sur le code de la manière habituelle :
+Les couleurs, les motifs et le logo restent dans les propriétés propres du code, si bien qu'un modèle fonctionne avec n'importe quel style :
 
 ```tsx
 <QRCode
   value="https://example.com"
-  templateId="Arrow"
+  templateId="StandardBox"
   fgColor="#1a56db"
   imageSettings={{
     src: "/your-logo.png",
@@ -75,30 +46,89 @@ Les modèles intégrés dessinent leur habillage avec `fgColor`. Tout le reste, 
 />
 ```
 
-## Registre de modèles [#template-registry]
+## Dot Ring [#dot-ring]
 
-### Obtenir tous les modèles [#get-all-templates]
-
-```tsx
-import { getAllTemplates } from 'qrdx';
-
-const templates = getAllTemplates();
-```
-
-### Obtenir les ID des modèles [#get-template-ids]
+Un code rond. Le code se trouve dans un disque de points, à l'intérieur d'un anneau sombre, avec une ligne de texte disposée le long de l'anneau. Les points affichés proviennent d'un hachage du contenu du code : chaque lien obtient donc son propre anneau, et le même lien obtient toujours le même.
 
 ```tsx
-import { getTemplateIds } from 'qrdx';
-
-const ids = getTemplateIds();
-// Returns: ['default', 'Arrow', 'StandardBox', ...]
+<QRCode
+  value="https://example.com"
+  templateId="DotRing"
+  bodyPattern="circle-large"
+  size={512}
+/>
 ```
 
-## Modèles personnalisés [#custom-templates]
+Ses réglages se placent dans `customProps` (typé `DotRingProps`) :
 
-Écrivez votre propre modèle sous la forme d'un `TemplateDefinition`. Son `wrapper` reçoit le code en tant que `children` et renvoie le SVG à dessiner. Il dessine sur un canevas de 300 par 300, et le code arrive lui aussi à cette taille : réduisez-le donc pour laisser de la place à votre habillage. `props` contient les valeurs `fgColor` et `bgColor` du code.
+```tsx
+<QRCode
+  value="https://example.com"
+  templateId="DotRing"
+  customProps={{
+    customText: "Scan for the menu",
+    textPosition: "bottom",
+    textColor: "#fde047",
+    outerCircleColor: "#1e3a8a",
+  }}
+  size={512}
+/>
+```
 
-Cet exemple dessine un anneau autour du code :
+| Propriété | Valeur par défaut | Remarques |
+| --- | --- | --- |
+| `customText` | « Scan the QR code » répété quatre fois | Texte le long de l'anneau. Les lettres qui ne tiennent pas autour sont omises ; `""` laisse l'anneau vide |
+| `textPosition` | `"top"` | `"top"` : centré en haut, lu dans le sens horaire. `"bottom"` : centré en bas, lu de gauche à droite |
+| `textRotation` | `0` | Fait tourner le texte autour du centre, en degrés |
+| `textColor` | `#ffffff` | Couleur du texte |
+| `fontFamily` | pile de polices système | Famille de police CSS du texte |
+| `fontWeight` | `900` | Graisse de la police |
+| `fontSize` | `32` | Dans le dessin de 593 unités du modèle, où le code mesure 300 de large |
+| `fontLetterSpacing` | `3.5` | Espace supplémentaire entre les lettres, dans les mêmes unités |
+| `outerCircleColor` | `fgColor` | Couleur de l'anneau |
+| `strokeWidth`, `strokeColor` | `0`, `#000000` | Un contour sur les deux bords de l'anneau |
+| `outerStrokeWidth`, `outerStrokeColor` | `strokeWidth`, `strokeColor` | Le bord extérieur de l'anneau uniquement |
+| `innerStrokeWidth`, `innerStrokeColor` | `strokeWidth`, `strokeColor` | Le bord intérieur de l'anneau uniquement |
+
+Un logo se place au centre, comme sur n'importe quel code. Les liens longs (codes de plus de 49 modules de large) conservent une bande claire entre le code et les points, afin de rester scannables une fois imprimés en petit.
+
+Le texte est du texte SVG dans la police que vous choisissez ; par défaut, c'est la pile de polices système, donc rien n'est téléchargé. Les téléchargements SVG et PNG dans le navigateur utilisent les polices du visiteur. PDF et EPS l'impriment en Helvetica Bold, utilisez donc du texte Latin-1 dans ce cas. `getQRAsPNG` de `qrdx/node` nécessite une police installée sur le serveur, comme les libellés de cadre.
+
+## Les modèles sont des spécifications de cadre [#templates-are-frame-specs]
+
+Le visuel de Arrow, Standard Box, Square Border, Striked Box et Halloween est une [spécification de cadre](/docs/features/frames#frame-specs), au même format JSON que tous les autres cadres, dessinée par le même moteur. `getTemplate(id).spec` la renvoie. Utilisez-la comme cadre lorsque vous voulez le dimensionnement d'un cadre (le code garde sa taille et le visuel s'agrandit autour) et l'option de couleur du cadre :
+
+```tsx
+import { getTemplate, QRCode } from 'qrdx';
+
+const spec = getTemplate('Arrow')?.spec;
+
+<QRCode
+  value="https://example.com"
+  frame={spec && { style: 'custom', spec, color: '#1a56db' }}
+  size={256}
+/>
+```
+
+Dot Ring n'a pas de spécification : ses points dépendent du contenu du code, il les dessine donc dans le code (voir [Cadres dessinés dans le code](#frames-you-draw-in-code)).
+
+`templateId` dessine le même visuel qu'auparavant. Les designs enregistrés, les URL d'image, les commandes CLI et le code qui utilisent un identifiant de modèle donnent le même rendu qu'avant.
+
+## Registre des modèles [#template-registry]
+
+```tsx
+import { getAllTemplates, getTemplate, getTemplateIds } from 'qrdx';
+
+getTemplateIds(); // ['default', 'Arrow', 'StandardBox', ...]
+getAllTemplates(); // every TemplateDefinition, with its id and name
+getTemplate('Halloween'); // one by id
+```
+
+## Cadres dessinés dans le code [#frames-you-draw-in-code]
+
+Une spécification de cadre décrit un visuel fixe. Lorsque le visuel doit être calculé, écrivez un `TemplateDefinition` et passez-le comme `customTemplate`. Son `wrapper` reçoit le code en tant que `children` et renvoie le SVG à dessiner. Il dessine sur un canevas de 300 par 300, et le code arrive lui aussi à cette taille : réduisez-le donc pour laisser de la place à votre visuel. `props` contient le `fgColor` et le `bgColor` du code, et le troisième argument contient l'`url` et le `pixelSize` du code.
+
+Celui-ci dessine un anneau autour du code :
 
 ```tsx
 import { QRCode, type TemplateDefinition } from "qrdx";
@@ -130,28 +160,10 @@ const ringTemplate: TemplateDefinition = {
 />
 ```
 
-Gardez le code assez grand pour qu'il soit scannable à la distance où les gens tiendront leur téléphone, et laissez un espace clair entre le code et votre habillage. Vérifiez le résultat avec le [score de scan](/docs/features/frames#will-it-scan).
-
-## Quand utiliser les modèles [#when-to-use-templates]
-
-- **Cohérence de marque** — Assurez-vous que tous vos QR codes se ressemblent
-- **Configuration rapide** — Obtenez rapidement un résultat professionnel
-- **Campagnes saisonnières** — Utilisez des modèles thématiques
-- **Génération par lots** — Appliquez des styles cohérents
-
-## Guide de choix d'un modèle [#template-selection-guide]
-
-| Modèle | Idéal pour | Ambiance |
-|----------|----------|------|
-| Default | Professionnel | Neutre |
-| Arrow | Tech, moderne | Dynamique |
-| Standard Box | Entreprise | Professionnelle |
-| Square Border | Formel | Structurée |
-| Striked Box | Marketing | Énergique |
-| Halloween | Saisonnier | Ludique |
+Gardez le code assez grand pour être scanné à la distance où les gens tiendront leur téléphone, et laissez un espace clair entre lui et votre visuel. Vérifiez le résultat avec le [score de scan](/docs/features/frames#will-it-scan).
 
 ## Étapes suivantes [#next-steps]
 
-- [Motifs](/docs/features/patterns) — Personnalisation détaillée des motifs
-- [Couleurs et dégradés](/docs/features/colors-gradients) — Couleurs avancées
-- [Logos](/docs/features/logos) — Ajouter des logos aux modèles
+- [Cadres](/docs/features/frames) : tous les cadres, et le format de spécification de cadre
+- [Motifs](/docs/features/patterns) : personnalisation détaillée des motifs
+- [Logos](/docs/features/logos) : ajouter un logo au code

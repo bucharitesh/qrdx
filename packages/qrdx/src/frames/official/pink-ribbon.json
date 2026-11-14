@@ -1,0 +1,82 @@
+{
+  "id": "pink-ribbon",
+  "name": "Pink ribbon",
+  "description": "A solid card with an awareness ribbon over the code and the label underneath, in pink.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "breast-cancer-awareness",
+  "contentTypes": [],
+  "tags": [
+    "breast cancer awareness",
+    "pink ribbon",
+    "october",
+    "ribbon",
+    "awareness"
+  ],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#be185d",
+      "text": "#ffffff",
+      "accent": "#f9a8d4"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M579.14 168.62L622.64 90.62L638.36 99.38L594.86 177.38ZM622.45 90.98L624.93 86.04L626.3 82.21L626.94 79.1L627.04 76.69L626.77 74.91L626.3 73.63L625.68 72.66L624.91 71.87L623.94 71.21L622.77 70.7L621.43 70.37L620 70.25L618.57 70.37L617.23 70.7L616.06 71.21L615.09 71.87L614.32 72.66L613.7 73.63L613.23 74.91L612.96 76.69L613.06 79.1L613.7 82.21L615.07 86.04L617.55 90.98L601.45 99.02L598.54 93.18L596.39 87.16L595.2 81.37L594.98 75.81L595.76 70.56L597.52 65.75L600.14 61.56L603.46 58.13L607.26 55.51L611.37 53.68L615.65 52.6L620 52.25L624.35 52.6L628.63 53.68L632.74 55.51L636.54 58.13L639.86 61.56L642.48 65.75L644.24 70.56L645.02 75.81L644.8 81.37L643.61 87.16L641.46 93.18L638.55 99.02ZM617.36 90.62L660.86 168.62L645.14 177.38L601.64 99.38Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan to book a screening",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Breast Cancer Awareness",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

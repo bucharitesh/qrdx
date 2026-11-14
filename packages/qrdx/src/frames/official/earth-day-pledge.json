@@ -1,0 +1,66 @@
+{
+  "id": "earth-day-pledge",
+  "name": "Green pledge",
+  "description": "An arched card, like a window, with a sprout, in forest green and sky blue.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "earth-day",
+  "contentTypes": [],
+  "tags": ["earth day", "environment", "april 22", "pledge", "sustainability"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1880
+    },
+    "qr": {
+      "x": 160,
+      "y": 470,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#14532d",
+      "text": "#ffffff",
+      "accent": "#38bdf8"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M0 660A660 660 0 0 1 1320 660L1320 1840Q1320 1880 1280 1880L40 1880Q0 1880 0 1840Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M50 660A610 610 0 0 1 1270 660L1270 1830L50 1830ZM62 660L62 1818L1258 1818L1258 660A598 598 0 0 0 62 660Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.35
+        }
+      },
+      {
+        "type": "path",
+        "d": "M664.5 306L664.5 302.41L664.5 298.83L664.5 295.27L664.5 291.72L664.5 288.19L664.5 284.67L664.5 281.17L664.5 277.68L664.5 274.21L664.5 270.75L664.5 267.31L664.5 263.88L664.5 260.47L664.5 257.07L664.5 253.69L664.5 250.32L664.5 246.97L664.5 243.63L664.5 240.31L664.5 237A4.5 4.5 0 0 1 655.5 237L655.5 240.31L655.5 243.63L655.5 246.97L655.5 250.32L655.5 253.69L655.5 257.07L655.5 260.47L655.5 263.88L655.5 267.31L655.5 270.75L655.5 274.21L655.5 277.68L655.5 281.17L655.5 284.67L655.5 288.19L655.5 291.72L655.5 295.27L655.5 298.83L655.5 302.41L655.5 306A4.5 4.5 0 0 1 664.5 306ZM660 243C658.49 221.87 634.19 205.67 606 207C605.63 248.51 629.93 264.71 660 243ZM660 234C694.56 256.15 718.86 237.25 714 192C682.39 190.36 658.09 209.26 660 234Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Take the green pledge",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1610,
+          "width": 1040,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

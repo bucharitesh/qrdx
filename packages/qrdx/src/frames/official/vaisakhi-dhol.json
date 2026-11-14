@@ -1,0 +1,81 @@
+{
+  "id": "vaisakhi-dhol",
+  "name": "Baisakhi dhol",
+  "description": "A solid card with a dhol drum over the code and the label underneath, in field green and wheat gold.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "vaisakhi",
+  "contentTypes": [],
+  "tags": ["vaisakhi", "baisakhi", "harvest festival", "april", "dhol", "fair"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#1f4d2b",
+      "text": "#ffffff",
+      "accent": "#e8b931"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M578 80C569 98 569 122 578 140L662 140C671 122 671 98 662 80ZM572.7 78.74L575.37 73.87L578.78 69.36L582.76 65.4L587.21 61.98L592.07 59.11L597.27 56.76L602.72 54.95L608.37 53.66L614.15 52.88L620 52.63L625.85 52.88L631.63 53.66L637.28 54.95L642.73 56.76L647.93 59.11L652.79 61.98L657.24 65.4L661.22 69.36L664.63 73.87L667.3 78.74L662.7 81.26L660.22 76.72L657.26 72.82L653.79 69.35L649.85 66.34L645.51 63.77L640.83 61.66L635.86 60.01L630.69 58.82L625.38 58.11L620 57.88L614.62 58.11L609.31 58.82L604.14 60.01L599.17 61.66L594.49 63.77L590.15 66.34L586.21 69.35L582.74 72.82L579.78 76.72L577.3 81.26Z",
+        "fill": "accent"
+      },
+      {
+        "type": "path",
+        "d": "M564.5 110A10.5 31.5 0 1 1 585.5 110A10.5 31.5 0 1 1 564.5 110ZM654.5 110A10.5 31.5 0 1 1 675.5 110A10.5 31.5 0 1 1 654.5 110ZM589.19 83.98L599 133.25L611 82.25L623 133.25L635 82.25L648.01 133.49L653.8 94.51L658.2 95.49L645.99 137.51L635 86.75L623 137.75L611 86.75L599 137.75L584.81 85.02Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for the mela",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Happy Baisakhi",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

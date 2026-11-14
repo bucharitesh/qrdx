@@ -4,37 +4,23 @@
 // the slug; docs and messages that can't know it use dashboardEntry(), which
 // /dashboard resolves to the reader's default workspace.
 
+import { pathInWorkspace } from "@repo/availability/workspace-pattern";
+
+// Reading a workspace from a path, and the pattern availability rules match
+// (/dashboard/[workspace]/…), live with those rules in @repo/availability.
+export {
+  pathInWorkspace,
+  WORKSPACE_PATTERN_PREFIX,
+  workspacePattern,
+  workspaceSlugFromPath,
+} from "@repo/availability/workspace-pattern";
+
 /** Request header proxy.ts sets from the URL (lib/scope.ts reads it). */
 export const WORKSPACE_HEADER = "x-qrdx-workspace";
-
-/** Stands for any workspace in path patterns (lib/feature-availability-rules). */
-export const WORKSPACE_PATTERN_PREFIX = "/dashboard/[workspace]";
-
-const SLUG_SEGMENT = /^[a-z0-9][a-z0-9-]*$/;
 
 /** `/dashboard/<slug><path>`; `path` starts with "/" (or is empty for Home). */
 export function workspaceHref(slug: string, path = ""): string {
   return `/dashboard/${encodeURIComponent(slug)}${path}`;
-}
-
-/** The workspace slug a dashboard path names, or null outside one. */
-export function workspaceSlugFromPath(pathname: string): string | null {
-  const match = /^\/dashboard\/([^/?#]+)/.exec(pathname);
-  if (!match?.[1]) return null;
-  let segment: string;
-  try {
-    segment = decodeURIComponent(match[1]);
-  } catch {
-    return null;
-  }
-  return segment.length <= 64 && SLUG_SEGMENT.test(segment) ? segment : null;
-}
-
-/** "/dashboard/acme/codes/x" -> "/codes/x"; "" for Home or outside a workspace. */
-export function pathInWorkspace(pathname: string): string {
-  const match = /^\/dashboard\/[^/?#]+(\/[^?#]*)?/.exec(pathname);
-  const rest = match?.[1] ?? "";
-  return rest === "/" ? "" : rest;
 }
 
 /**
@@ -105,14 +91,4 @@ export function entryPath(to: string | string[] | undefined): string | null {
   if (path.length > 100 || !ENTRY_PATH.test(path)) return null;
   const [section] = path.split("/");
   return section && ENTRY_SECTIONS.has(section) ? `/${path}` : null;
-}
-
-/**
- * "/dashboard/acme/settings/domains" -> "/dashboard/[workspace]/settings/domains",
- * so rules written once match every workspace. Other paths are unchanged.
- */
-export function workspacePattern(href: string): string {
-  const path = href.split(/[?#]/, 1)[0] ?? href;
-  if (!workspaceSlugFromPath(path)) return path;
-  return `${WORKSPACE_PATTERN_PREFIX}${pathInWorkspace(path)}`;
 }

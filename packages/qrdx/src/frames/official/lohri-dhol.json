@@ -1,0 +1,114 @@
+{
+  "id": "lohri-dhol",
+  "name": "Lohri dhol",
+  "description": "A light card with a dhol drum and a solid label band, in ember red and amber.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "lohri",
+  "contentTypes": [],
+  "tags": ["lohri", "punjab", "january", "dhol", "party"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1770
+    },
+    "qr": {
+      "x": 120,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#7c2d12",
+      "text": "#ffffff",
+      "accent": "#f59e0b"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "frame",
+        "hole": {
+          "x": 20,
+          "y": 20,
+          "width": 1200,
+          "height": 1730,
+          "radius": 38
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 250,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 60,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M580.8 74C572.4 90.8 572.4 113.2 580.8 130L659.2 130C667.6 113.2 667.6 90.8 659.2 74ZM575.85 72.82L578.35 68.28L581.53 64.07L585.24 60.38L589.4 57.19L593.93 54.5L598.78 52.31L603.87 50.62L609.15 49.41L614.54 48.69L620 48.45L625.46 48.69L630.85 49.41L636.13 50.62L641.22 52.31L646.07 54.5L650.6 57.19L654.76 60.38L658.47 64.07L661.65 68.28L664.15 72.82L659.85 75.18L657.54 70.94L654.78 67.29L651.54 64.06L647.86 61.25L643.81 58.85L639.44 56.88L634.81 55.34L629.98 54.23L625.02 53.57L620 53.35L614.98 53.57L610.02 54.23L605.19 55.34L600.56 56.88L596.19 58.85L592.14 61.25L588.46 64.06L585.22 67.29L582.46 70.94L580.15 75.18Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M568.2 102A9.8 29.4 0 1 1 587.8 102A9.8 29.4 0 1 1 568.2 102ZM652.2 102A9.8 29.4 0 1 1 671.8 102A9.8 29.4 0 1 1 652.2 102ZM591.24 77.72L600.4 123.7L611.6 76.1L622.8 123.7L634 76.1L646.14 123.92L651.55 87.54L655.65 88.46L644.26 127.68L634 80.3L622.8 127.9L611.6 80.3L600.4 127.9L587.16 78.68Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for the party",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1550,
+          "width": 1040,
+          "height": 190
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Happy Lohri",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 180,
+          "width": 960,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

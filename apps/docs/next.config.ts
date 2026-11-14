@@ -4,18 +4,18 @@ import {
   CANONICAL_ORIGIN,
   MCP_HOST,
 } from "@repo/config";
+import {
+  docsEnglishRewrites,
+  docsMarkdownAcceptRewrites,
+  docsMarkdownRewrites,
+} from "@repo/i18n/docs";
+import { englishRedirects, englishRewrites } from "@repo/i18n/routing";
 import { config, withAnalyzer } from "@repo/next-config";
 import { createMDX } from "fumadocs-mdx/next";
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 import { env } from "@/env";
 import { DOCS_REDIRECTS } from "@/lib/docs-redirects";
-import {
-  docsEnglishRewrites,
-  docsMarkdownAcceptRewrites,
-  docsMarkdownRewrites,
-} from "@/lib/i18n/docs";
-import { englishRedirects, englishRewrites } from "@/lib/i18n/routing";
 import {
   appCsp,
   cspHeaderName,
@@ -133,6 +133,16 @@ let nextConfig: NextConfig = {
       turbopackSourceMaps: false,
     }),
   },
+  // The workers that prerender pages ("Generating static pages") run with
+  // Node's --enable-source-maps and 50-frame stack traces by default, so
+  // each one keeps the source map of every server chunk it loads. Measured
+  // on a local build of all 8,547 pages (2026-11-14): off, the worker peaked
+  // at 2.7 GB instead of 3.1 GB and finished in 2.5 min instead of 3.0. Off
+  // everywhere, not only on Vercel: Vercel's build writes no maps (above),
+  // so there it only drops the longer stacks, while Docker and local builds
+  // have maps and run on whatever memory the machine has. Set it to true for
+  // a build that fails while prerendering, to read the error's source lines.
+  enablePrerenderSourceMaps: false,
   // Server code reads QRDX_HOME_NUMBERS as its build-time value
   // (lib/home-numbers/flag.ts). While it's off, the bundler drops the home
   // page's "QRdx in numbers" branch, client code included. Server only: it

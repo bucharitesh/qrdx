@@ -39,21 +39,21 @@ import { QRCode } from 'qrdx';
 | `bodyPattern` | `BodyPattern` | `'circle'` | Padrão dos pontos de dados |
 | `cornerEyePattern` | `CornerEyePattern` | `'gear'` | Padrão dos marcadores de canto |
 | `cornerEyeDotPattern` | `CornerEyeDotPattern` | `'circle'` | Padrão do ponto do canto |
-| `hideLogo` | `boolean` | `false` | Oculta o logo. Nenhum logo é desenhado a menos que `logo` esteja definido |
+| `hideLogo` | `boolean` | `false` | Oculta o logo. Nenhum logo é desenhado a menos que `logo` seja definido |
 | `logo` | `string` | — | URL do logo |
-| `templateId` | `string` | `'default'` | ID do template |
-| `customTemplate` | `TemplateDefinition` | — | Template personalizado |
+| `templateId` | `string` | `'default'` | Uma [moldura desenhada como template](/docs/features/templates) (`'Arrow'`, `'StandardBox'`, …): a arte inteira tem `size` de largura |
+| `customTemplate` | `TemplateDefinition` | — | Uma moldura que você desenha em código (tem prioridade sobre `templateId`) |
 | `level` | `ErrorLevel` | `'Q'` | Correção de erros |
 | `autoLevel` | `boolean` | `false` | Eleva `level` para H quando o logo cobre mais de 7% do código (`AUTO_LEVEL_LOGO_COVERAGE`) |
 | `margin` | `number` | `0` | Margem em módulos |
 | `imageSettings` | `ImageSettings` | — | Configurações do logo |
 | `eyeColors` | `EyeColors` | — | Cores `outer` / `inner` por olho para `topLeft`, `topRight` e `bottomLeft`; cada uma substitui `eyeColor` / `dotColor` |
-| `moduleScale` | `number` | `1` | Tamanho do módulo de dados, de 0.5 a 1. Cada padrão para no menor tamanho que ainda é lido (`MODULE_SCALE_FLOOR`) |
+| `moduleScale` | `number` | `1` | Tamanho do módulo de dados, de 0.5 a 1. Cada padrão para no menor tamanho que ainda permite a leitura (`MODULE_SCALE_FLOOR`) |
 | `frame` | `QRFrame` | — | Moldura de chamada para ação; veja [Molduras e impressão](/docs/features/frames) |
-| `art` | `QRArt` | — | Mistura um logo ou foto aos módulos (Logo QR, Image QR); veja [Art QR](/docs/features/art-qr) |
-| `frameLabelMarkers` | `boolean` | `false` | Para editores: marca cada `<text>` de rótulo da moldura com `data-qrdx-frame-label` (`"text"`, `"secondaryText"` ou o id do rótulo de uma especificação). Downloads e exportações nunca o incluem |
+| `art` | `QRArt` | — | Mistura um logo ou foto nos módulos (Logo QR, Image QR); veja [Art QR](/docs/features/art-qr) |
+| `frameLabelMarkers` | `boolean` | `false` | Para editores: marca cada `<text>` de rótulo da moldura com `data-qrdx-frame-label` (`"text"`, `"secondaryText"` ou o id de um rótulo da especificação). Downloads e exportações nunca o incluem |
 
-Todos os {facts.bodyPatterns} padrões de corpo, {facts.eyeShapes} olhos, {facts.eyeCentres} centros de olho e {facts.frameStyles} estilos de moldura aparecem ao vivo em [Formas, olhos e molduras](/docs/styles).
+Todos os {facts.bodyPatterns} padrões de corpo, {facts.eyeShapes} olhos, {facts.eyeCentres} centros de olho e {facts.frameStyles} molduras integradas são mostrados ao vivo em [Formas, olhos e molduras](/docs/styles).
 
 ### QRCodeCanvas [#qrcodecanvas]
 
@@ -102,7 +102,7 @@ downloadQRCode(
 
 ### getQRCodeDataUrl [#getqrcodedataurl]
 
-Obtenha como data URL.
+Obtém como data URL.
 
 ```tsx
 getQRCodeDataUrl(
@@ -115,7 +115,7 @@ getQRCodeDataUrl(
 
 ### getQRAsWebP [#getqraswebp]
 
-O código como um `Blob` WebP, sem perdas a menos que `quality` seja definido. Onde o navegador não consegue codificar WebP (Safari), o codificador sem perdas embutido do qrdx faz isso. `canvasToWebP(canvas, options)` faz o mesmo para qualquer canvas, e `encodeWebPLossless(rgba, width, height)` codifica pixels RGBA sem DOM.
+O código como um `Blob` WebP, sem perdas, a menos que `quality` seja definido. Onde o navegador não consegue codificar WebP (Safari), o codificador sem perdas integrado do qrdx faz isso. `canvasToWebP(canvas, options)` faz o mesmo para qualquer canvas, e `encodeWebPLossless(rgba, width, height)` codifica pixels RGBA sem DOM.
 
 ```tsx
 getQRAsWebP(
@@ -126,7 +126,7 @@ getQRAsWebP(
 
 ### copyQRCodeToClipboard [#copyqrcodetoclipboard]
 
-Copie para a área de transferência.
+Copia para a área de transferência.
 
 ```tsx
 copyQRCodeToClipboard(
@@ -137,7 +137,7 @@ copyQRCodeToClipboard(
 
 ### getSVGString [#getsvgstring]
 
-Obtenha a marcação SVG.
+Obtém a marcação SVG.
 
 ```tsx
 getSVGString(qrProps: QRProps): Promise<string>
@@ -154,16 +154,16 @@ Elas estão documentadas com exemplos nas páginas dos respectivos recursos.
 | `downloadPrintSVG` | SVG pronto para impressão em tamanho físico exato | [Exportação pronta para impressão](/docs/features/frames#print-ready-export) |
 | `getQRAsEPS`, `downloadPrintEPS` | EPS vetorial para gráficas e ferramentas de design | [Downloads](/docs/features/downloads) |
 | `getScanScore(props)` | Estima a confiabilidade da leitura de um design | [Vai ler?](/docs/features/frames#will-it-scan) |
-| `getImageScanScore(image)` | Pontua uma imagem de QR code que você já tem (somente no navegador) | [Vai ler?](/docs/features/frames#will-it-scan) |
+| `getImageScanScore(image)` | Avalia uma imagem de QR code que você já tem (somente no navegador) | [Vai ler?](/docs/features/frames#will-it-scan) |
 | `getQRAsPNG(props, { size })` | Bytes de PNG em Node puro, sem DOM. Importe de `qrdx/node`; requer `@resvg/resvg-js` ou `sharp` instalado | — |
-| `scanQRPixels(pixels, expected)` | Verifica se pixels RGBA brutos são decodificados como `expected`, inclusive desfocados e reduzidos; roda em Node | — |
+| `scanQRPixels(pixels, expected)` | Verifica se pixels RGBA brutos decodificam para `expected`, inclusive quando desfocados e reduzidos; roda em Node | — |
 | `getStylePairRisk(...)` | Avisa sobre combinações de olho e padrão que alguns leitores não reconhecem | [Padrões](/docs/features/patterns) |
 
 ## Funções de detecção [#detection-functions]
 
 ### handleImageLoad [#handleimageload]
 
-Detecte QR codes em imagens.
+Detecta QR codes em imagens.
 
 ```tsx
 handleImageLoad(
@@ -189,7 +189,7 @@ downloadImageWithBoundingBox(
 
 ### getTemplate [#gettemplate]
 
-Obtenha um template específico.
+Obtém um template específico.
 
 ```tsx
 getTemplate(templateId: string): TemplateDefinition | undefined
@@ -197,7 +197,7 @@ getTemplate(templateId: string): TemplateDefinition | undefined
 
 ### getAllTemplates [#getalltemplates]
 
-Obtenha todos os templates.
+Obtém todos os templates.
 
 ```tsx
 getAllTemplates(): TemplateDefinition[]
@@ -205,7 +205,7 @@ getAllTemplates(): TemplateDefinition[]
 
 ### getTemplateIds [#gettemplateids]
 
-Obtenha os IDs dos templates.
+Obtém os IDs dos templates.
 
 ```tsx
 getTemplateIds(): string[]
@@ -268,6 +268,8 @@ type ErrorLevel = 'L' | 'M' | 'Q' | 'H';
 ```tsx
 // The arrays BODY_PATTERN, CORNER_EYE_PATTERNS, CORNER_EYE_DOT_PATTERNS and
 // FRAME_STYLES (and their zod schemas) are exported from 'qrdx/types'.
+// FRAME_STYLES names the built-in frames; each is a frame spec in
+// BUILT_IN_FRAMES (from 'qrdx').
 
 type BodyPattern =
   | 'circle' | 'circle-large' | 'square' | 'diamond' | 'circle-mixed'
@@ -297,7 +299,7 @@ type EyeColors = {
 };
 
 type QRFrame = {
-  style: FrameStyle; // "none" or a frame, see FRAME_STYLES
+  style: FrameStyle; // "none" or a built-in frame, see FRAME_STYLES
   text?: string; // up to 24 characters, default "Scan me"
   color?: string;
   textColor?: string;
@@ -382,7 +384,7 @@ const ERROR_LEVELS = {
 
 ## Tratamento de erros [#error-handling]
 
-Envolva funções assíncronas em try-catch:
+Envolva as funções assíncronas em try-catch:
 
 ```tsx
 try {
@@ -414,6 +416,6 @@ Funciona em ambientes Node.js:
 - Outros frameworks Node.js
 
 Alguns recursos exigem APIs do navegador:
-- Operações com canvas
+- Operações de canvas
 - Clipboard API
 - File API

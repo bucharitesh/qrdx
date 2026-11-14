@@ -2,8 +2,9 @@ import { ogSize, renderPageOgImage } from "@/app/og/brand";
 import { AI_ART_PRESET_COUNT } from "@/components/sections/ai-art/preset-meta";
 import { isArtConfigured } from "@/lib/ai/art";
 import { ART_MODEL_LABEL } from "@/lib/ai/art-models";
-import { localeParams, requireLocaleParam } from "@/lib/i18n/static-params";
+import { requireLocaleParam } from "@/lib/i18n/static-params";
 import { PLAN_LIMITS } from "@/lib/plans";
+import { onDemandParams } from "@/lib/static-params";
 
 export const alt = "Scannable QR code art from QRdx";
 export const size = ogSize;
@@ -11,7 +12,7 @@ export const contentType = "image/png";
 
 // Same switch as the page: AI art only where this deployment offers it.
 export function generateStaticParams() {
-  return localeParams();
+  return onDemandParams();
 }
 
 export default async function Image({

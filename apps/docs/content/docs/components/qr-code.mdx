@@ -58,7 +58,7 @@ Pass a qrdx gradient instead of a color: `linear` with an `angle`, or `radial`. 
 
 ### Frame templates
 
-`templateId` draws a qrdx [template](/docs/features/templates) around the code. Pair it with `caption` for a call to action under the frame.
+`templateId` draws one of qrdx's [frames drawn as templates](/docs/features/templates) around the code. Pair it with `caption` for a call to action under the frame.
 
 <ComponentPreview name="qr-code-template" />
 
@@ -176,6 +176,6 @@ export function TableCode() {
 
 ## API Reference
 
-<auto-type-table path="../../../registry/qrdx/qr-code.tsx" type="{ [K in keyof QrCodeProps as K extends keyof ComponentProps<'figure'> ? never : K]: QrCodeProps[K] }" />
+<auto-type-table path="../../../../../packages/docs-assets/registry/qrdx/qr-code.tsx" type="{ [K in keyof QrCodeProps as K extends keyof ComponentProps<'figure'> ? never : K]: QrCodeProps[K] }" />
 
 Any other prop, such as `className`, is passed to the wrapping `<figure>`.

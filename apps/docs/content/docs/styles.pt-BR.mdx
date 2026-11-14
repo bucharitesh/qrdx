@@ -1,18 +1,18 @@
 ---
 title: "Formas, olhos e molduras"
-description: "Todos os padrões de corpo, molduras de olho, centros de olho e molduras de chamada para ação, desenhados ao vivo pelo renderizador do qrdx e decodificados no seu navegador."
+description: "Todos os padrões de corpo, molduras de olho, centros de olho e molduras de call to action, desenhados ao vivo pelo renderizador do qrdx e decodificados no seu navegador."
 icon: Grid3x3
 ---
 
 import { QrCatalog } from "@/components/docs/qr-catalog";
 
-Todos os estilos abaixo são desenhados pelo mesmo renderizador dos seus downloads, com o nome da opção e o valor da API para copiar. Cada bloco é decodificado com o [jsQR](https://github.com/cozmo/jsQR) aqui mesmo no seu navegador, um de cada vez, então o selo **Scans** é um resultado ao vivo, não uma promessa.
+Todos os estilos abaixo são desenhados pelo mesmo renderizador dos seus downloads, com o nome da opção e o valor da API para copiar. Cada bloco é decodificado com o [jsQR](https://github.com/cozmo/jsQR) aqui mesmo no seu navegador, um de cada vez, então o selo **Lê** é um resultado ao vivo, não uma promessa.
 
-Todos eles também são testados no pacote (`packages/qrdx/tests/catalog-*.test.ts`): cada valor é decodificado por um modelo de câmera de celular (perda de contraste e desfoque de um quarto de módulo) a 4, 6 e 9 pixels por módulo, ao lado de todos os outros corpos, olhos e centros, com correção de erros L, M, Q e H, a 148 px e 1024 px, claro sobre escuro, com cores de marca e com um logo no centro; eles também foram verificados com o ZXing e em renderizações nítidas. Algumas combinações funcionam mal juntas; veja [Combinações a evitar](#pairs-to-avoid).
+Todos eles também são testados no pacote (`packages/qrdx/tests/catalog-*.test.ts`): cada valor é decodificado por um modelo de câmera de celular (perda de contraste e desfoque de um quarto de módulo) a 4, 6 e 9 pixels por módulo, ao lado de todos os outros corpos, olhos e centros, com correção de erros L, M, Q e H, a 148 px e 1024 px, claro sobre escuro, com cores de marca e com um logo no centro. Eles também foram verificados com o ZXing e em renderizações nítidas. Alguns pares funcionam mal juntos; veja [Combinações a evitar](#pairs-to-avoid).
 
 ## Padrões de corpo [#body-patterns]
 
-A forma dos módulos de dados (`bodyPattern`). Os estilos conectados (`liquid`, `classy`) unem módulos vizinhos em um único contorno. `random-dots` e `mosaic` variam por módulo, mas são determinísticos: o mesmo valor sempre desenha o mesmo código.
+O formato dos módulos de dados (`bodyPattern`). Os estilos conectados (`liquid`, `classy`) unem módulos vizinhos em um único contorno. `random-dots` e `mosaic` variam por módulo, mas são determinísticos: o mesmo valor sempre desenha o mesmo código.
 
 <QrCatalog kind="body" />
 
@@ -30,7 +30,7 @@ O centro sólido de cada marcador de canto (`cornerEyeDotPattern`), mostrado den
 
 ## Molduras [#frames]
 
-As molduras de chamada para ação são desenhadas ao redor do código, então o código e sua zona de silêncio nunca ficam cobertos e a imagem baixada cresce para caber. Toda moldura aceita `text` (até 24 caracteres), `color`, `textColor` e `fontScale` (0,5 a 1,5). `banner-top-bottom`, `circle` e `menu-card` também exibem `secondaryText`; `gradient-border` vai de `color` até `secondaryColor`.
+As molduras de call to action são desenhadas ao redor do código, então o código e sua zona de silêncio nunca ficam cobertos e a imagem baixada aumenta para acomodá-las. Cada moldura integrada abaixo é uma especificação de moldura, desenhada pelo mesmo motor das [molduras oficiais e da comunidade](/docs/features/frames). Toda moldura aceita `text` (até 24 caracteres), `color`, `textColor` e `fontScale` (0,5 a 1,5). `banner-top-bottom`, `circle` e `menu-card` também mostram `secondaryText`; `gradient-border` vai de `color` até `secondaryColor`.
 
 <QrCatalog kind="frame" />
 
@@ -48,12 +48,12 @@ import { QRCode } from "qrdx";
 
 ## Combinações a evitar [#pairs-to-avoid]
 
-Algumas combinações de formas que funcionam sozinhas falham juntas nos nossos testes de decodificação. O playground não deixa você escolhê-las juntas, e a pontuação de leitura avisa sobre elas (`style-pair`):
+Algumas combinações de formas que são lidas bem isoladamente falham juntas nos nossos testes de decodificação. O Playground não deixa você escolhê-las juntas, e a pontuação de leitura avisa sobre elas (`style-pair`):
 
-- corpos `diamond` ao lado de olhos `square`, `pacman` ao lado de `rounded`, e `small-square` ao lado de olhos `square` ou `rounded` (falha de leitura de perto).
+- corpos `diamond` ao lado de olhos `square`, `pacman` ao lado de `rounded`, e `small-square` ao lado de olhos `square` ou `rounded` (não é lido de perto).
 
-Os olhos `circle` são lidos pelos dois decodificadores que testamos (jsQR e ZXing), mas são marcados como **cuidado**: alguns apps de leitura não os reconhecem. As combinações vão no pacote como `WEAK_BODY_EYES`, e `getStylePairRisk(props)` retorna o aviso para um estilo.
+Os olhos `circle` são lidos nos dois decodificadores que testamos (jsQR e ZXing), mas ficam marcados como **atenção**: alguns apps de leitura não os reconhecem. Os pares vêm no pacote como `WEAK_BODY_EYES`, e `getStylePairRisk(props)` retorna o aviso para um estilo.
 
-## Formas descontinuadas [#retired-shapes]
+## Formas aposentadas [#retired-shapes]
 
-Os olhos `curly` e os centros `diamond`, `star` e `banner` foram removidos porque não são lidos de forma confiável: o ZXing (o decodificador da maioria dos leitores Android) não reconhece olhos curly nem centros diamond e star em distâncias de celular, e o jsQR não reconhece centros banner em nenhuma renderização nítida. Os códigos salvos com eles continuam carregando e sendo renderizados exatamente como antes, e a Image API ainda os desenha para links existentes, mas nenhum seletor, predefinição ou tema de IA os oferece, e os nomes ficam apenas como valores obsoletos (`RETIRED_CORNER_EYE_PATTERNS`, `RETIRED_CORNER_EYE_DOT_PATTERNS`).
+Os olhos `curly` e os centros `diamond`, `star` e `banner` foram removidos porque não são lidos de forma confiável: o ZXing (o decodificador da maioria dos leitores Android) não reconhece olhos curly nem centros diamond e star a distâncias de celular, e o jsQR não reconhece centros banner em nenhuma renderização nítida. Os códigos salvos com eles continuam carregando e sendo renderizados exatamente como antes, e a Image API ainda os desenha para links existentes, mas nenhum seletor, predefinição ou tema de IA os oferece, e os nomes são mantidos apenas como valores obsoletos (`RETIRED_CORNER_EYE_PATTERNS`, `RETIRED_CORNER_EYE_DOT_PATTERNS`).

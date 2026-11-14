@@ -1,14 +1,16 @@
 ---
-title: "Rahmen & Druck"
-description: "Call-to-Action-Rahmen, die offizielle Rahmenbibliothek, ein „Wird er gescannt?\"-Score und druckfertiger PDF-Export."
+title: "Frames & Druck"
+description: "Call-to-Action-Frames, die offizielle Frame-Bibliothek, ein „Will it scan?\"-Score und druckfertiger PDF-Export."
 icon: Frame
 ---
 
-Füge einen „Scan me"-Rahmen hinzu, prüfe vor der Veröffentlichung, ob ein Design sich scannen lässt, und exportiere eine Vektordatei in exakter physischer Größe.
+Füge einen „Scan me"-Frame hinzu, prüfe vor der Veröffentlichung, ob ein Design sich scannen lässt, und exportiere eine Vektordatei in einer exakten physischen Größe.
 
-## Call-to-Action-Rahmen [#call-to-action-frames]
+## Call-to-Action-Frames [#call-to-action-frames]
 
-Die Prop `frame` zeichnet einen Rahmen mit einem kurzen Text um den Code. Sie funktioniert bei `QRCode`, `QRCodeSVG`, `QRCodeCanvas`, `getQRAsSVG`, `getQRData` und allen Download-Helfern.
+Jeder Frame, den QRdx zeichnet, ist eine Frame-Spezifikation: eine kleine JSON-Beschreibung aus Formen, Beschriftungen und Farben. Eine einzige Engine zeichnet jede Spezifikation, deshalb sieht ein Frame in SVG, PNG, PDF und EPS gleich aus. QRdx hat {facts.frames} Frames: {facts.frameStyles} integrierte Frames und {facts.officialFrames} [offizielle Frames](#official-frames). Du kannst auch eigene erstellen oder einen aus der [Community](/community/frames) wählen.
+
+Die Prop `frame` zeichnet einen Frame um den Code. Sie funktioniert bei `QRCode`, `QRCodeSVG`, `QRCodeCanvas`, `getQRAsSVG`, `getQRData` und allen Download-Helfern.
 
 ```tsx
 import { QRCode } from "qrdx";
@@ -19,26 +21,49 @@ import { QRCode } from "qrdx";
 />
 ```
 
-Der Rahmen wird **um** den Code herum hinzugefügt: Die Ausgabe wird größer, und die QR-Module und die Ruhezone werden nie überdeckt, daher bleibt die Scanbarkeit unverändert. Ein heller Abstand in der Hintergrundfarbe des Codes trennt den Code vom Rahmen.
+Der Frame wird **um** den Code herum hinzugefügt: Die Ausgabe wird größer, und die QR-Module und die Ruhezone werden nie verdeckt, daher bleibt die Scanbarkeit unverändert. Ein heller Abstand in der Hintergrundfarbe des Codes trennt den Code vom Frame.
+
+### Integrierte Frames [#built-in-frames]
+
+Ein integrierter Frame wird über seinen `style` benannt. Die Optionen füllen die Beschriftungen und Farben seiner Spezifikation:
 
 | Option | Standard | Hinweise |
 | --- | --- | --- |
-| `style` | — | Einer der {facts.frameStyles} Stile unten oder `none` (`FRAME_STYLES`) |
-| `text` | `"Scan me"` | Bis zu 24 Zeichen. Mit `""` blendest du den Text aus |
-| `color` | `#000000` | Rahmenfarbe (`gradient-border`: Startfarbe, Standard Violett) |
-| `textColor` | Weiß auf dem Rahmen, `color` auf hellen Flächen | Textfarbe |
-| `secondaryText` | keiner | Zweiter Text, bis zu 24 Zeichen: das untere Band von `banner-top-bottom`, der untere Bogen von `circle`, die Fußzeile von `menu-card` |
+| `style` | — | Einer der {facts.frameStyles} integrierten Frames unten oder `none` (`FRAME_STYLES`) |
+| `text` | `"Scan me"` | Bis zu 24 Zeichen. Übergib `""`, um die Beschriftung auszublenden |
+| `color` | `#000000` | Frame-Farbe (`gradient-border`: Startfarbe, standardmäßig Violett) |
+| `textColor` | Weiß auf dem Frame, `color` auf hellen Flächen | Beschriftungsfarbe |
+| `secondaryText` | keiner | Zweite Beschriftung, bis zu 24 Zeichen: das untere Band bei `banner-top-bottom`, der untere Bogen bei `circle`, die Fußzeile bei `menu-card` |
 | `secondaryColor` | `#db2777` | Endfarbe von `gradient-border` |
-| `fontScale` | `1` | Textgröße von 0.5 bis 1.5; Texte werden trotzdem verkleinert, damit sie passen |
+| `fontScale` | `1` | Beschriftungsgröße von 0,5 bis 1,5; Beschriftungen schrumpfen weiterhin, bis sie passen |
 
-Stile:
+Die integrierten Frames nach `style`:
 
-- Banner und Rahmenlinien: `banner-bottom`, `banner-top`, `banner-top-bottom`, `border`, `rounded-border`, `gradient-border`, `focus` (Eckklammern)
+- Banner und Rahmen: `banner-bottom`, `banner-top`, `banner-top-bottom`, `border`, `rounded-border`, `gradient-border`, `focus` (Eckklammern)
 - Sprechblasen: `speech-bubble`, `speech-bubble-top`, `chat-bubble`
 - Abzeichen: `circle` (Text rund um einen Ring), `badge` (Band), `sticker` (ausgestanzt mit Schatten)
 - Objekte: `polaroid`, `phone`, `ticket`, `tag` (Anhänger mit Loch), `envelope`, `menu-card`
 
-Alle Stile siehst du, direkt in deinem Browser dekodiert, unter [Formen, Augen und Rahmen](/docs/styles#frames). Jeder Rahmen besteht aus einfachen Formen und Text mit deckenden Farben, deshalb stimmen SVG-, PNG-, PDF- und EPS-Exporte überein (der Verlaufsrahmen wird in feinen einfarbigen Stufen gezeichnet, und die gebogenen Buchstaben des Rahmens `circle` sind in jedem Format gedrehter Text).
+Jeder dieser Namen steht für eine Spezifikation in der Engine, und die Namen bleiben dauerhaft gültig. Gespeicherte Designs, Image-API-Links, CLI-Flags und Code, die sie verwenden, zeichnen weiterhin denselben Frame. Frames, bei denen die Zeile der Beschriftung entfällt, wenn es keine Beschriftung gibt, etwa die Rahmen, tun das weiterhin.
+
+`BUILT_IN_FRAMES` listet sie mit ihren Namen und Spezifikationen auf (`BUILT_IN_FRAME_SPECS` enthält die Spezifikationen nach Style). `frameSpecOf` gibt die Spezifikation zurück, die ein beliebiger Frame zeichnet, und `getFrameColors` die Farben, mit denen er malt:
+
+```tsx
+import { BUILT_IN_FRAMES, frameSpecOf, getFrameColors } from "qrdx";
+
+BUILT_IN_FRAMES.map((frame) => frame.name); // ["Banner", "Top banner", …]
+
+// A built-in style's spec, or a custom frame's own
+const ticket = frameSpecOf({ style: "ticket" });
+
+// The frame's options, else its spec's defaults
+getFrameColors({ style: "border", color: "#1e3a8a" });
+// { frame: "#1e3a8a", text: "#1e3a8a", accent: "#1e3a8a" }
+```
+
+Wenn du mehr als Beschriftungen und Farben ändern willst, starte einen eigenen Frame aus einer integrierten Spezifikation: `{ style: "custom", spec: frameSpecOf({ style: "ticket" }) }` zeichnet dasselbe Ticket, und du kannst seine Formen bearbeiten.
+
+Alle Frames, im Browser dekodiert, findest du unter [Formen, Augen und Frames](/docs/styles#frames). Jeder Frame besteht aus einfachen Formen und Text mit deckenden Farben, daher stimmen die Exporte in SVG, PNG, PDF und EPS überein (der Verlaufsrahmen wird als feine Stufen aus einfarbigen Flächen gezeichnet, und die gebogenen Buchstaben des Circle-Frames sind in jedem Format gedrehter Text).
 
 ```tsx
 <QRCode
@@ -47,7 +72,7 @@ Alle Stile siehst du, direkt in deinem Browser dekodiert, unter [Formen, Augen u
 />
 ```
 
-Der Text verwendet den Systemschrift-Stack, es wird also nichts heruntergeladen. Weil die Ausgabe größer wird, nutze `getFrameDimensions(size, frame)`, wenn du die endgültige Breite und Höhe brauchst:
+Die Beschriftung verwendet den Systemschrift-Stack, daher wird nichts heruntergeladen. Da die Ausgabe wächst, nutze `getFrameDimensions(size, frame)`, wenn du die endgültige Breite und Höhe brauchst:
 
 ```ts
 import { getFrameDimensions } from "qrdx";
@@ -55,7 +80,13 @@ import { getFrameDimensions } from "qrdx";
 getFrameDimensions(400, { style: "banner-bottom" }); // { width: 496, height: 568 }
 ```
 
-`FRAME_STYLES`, `frameSchema` (zod) und die Typen `QRFrame` / `FrameStyle` werden außerdem aus `qrdx/types` exportiert, für die serverseitige Validierung.
+`FRAME_STYLES`, `frameSchema` (zod) und die Typen `QRFrame` / `FrameStyle` werden außerdem aus `qrdx/types` für die serverseitige Validierung exportiert. `GRADIENT_FRAME_DEFAULTS` (die Standardfarben des Verlaufsrahmens) und `FRAME_GAP_RATIO` werden weiterhin für Code exportiert, der sie verwendet hat; der Abstand jedes Frames ist das Padding seiner Spezifikation (`getFrameGapRatio`).
+
+### Im Playground [#in-the-playground]
+
+**Design → Frame** bietet eine einzige Auswahl für alle Frames. Die Gruppe **Classic** enthält die integrierten Frames und die [Vorlagen](/docs/features/templates) (Arrow, Standard Box und die übrigen), neben den geformten Codes, den offiziellen Frames und den Frames, die du gespeichert hast. Wenn du einen davon wählst, ersetzt er den vorherigen. Jeder Frame wird auf dieselbe Weise bearbeitet: Beschriftung, zweite Zeile, Farben und Textgröße, dazu Icons bei Frames, die welche haben. Ein Design mit integriertem Frame behält seinen `style`-Namen, sodass Links, Bild-URLs und Code-Snippets kurz bleiben.
+
+Die Gruppe **Shaped codes** gibt dem Code selbst eine Form: einen Kreis oder ein Herz aus dekorativen Punkten oder eine Form, die du hochlädst ([`shape`](/docs/features/patterns#circle-codes)). Ein geformter Code ersetzt einen Frame: Wählst du einen, wird der Frame entfernt, und wählst du einen Frame, wird die Form entfernt.
 
 ### In der CLI [#in-the-cli]
 
@@ -63,13 +94,30 @@ getFrameDimensions(400, { style: "banner-bottom" }); // { width: 496, height: 56
 qrdx generate "https://example.com/menu" --frame banner-bottom --frame-text "Scan for the menu" -o menu.png
 ```
 
-`--frame-color` und `--frame-text-color` erwarten Hex-Farben. Wenn du Text oder Farben ohne `--frame` angibst, wird `banner-bottom` verwendet.
+`--frame-color` und `--frame-text-color` akzeptieren Hex-Farben. Wenn du Text oder Farben ohne `--frame` angibst, wird `banner-bottom` verwendet.
 
-## Offizielle Rahmen [#official-frames]
+### Frame-Spezifikationen [#frame-specs]
 
-Zusätzlich zu den integrierten Stilen bietet QRdx {facts.officialFrames} offizielle Rahmen: fertige Designs für Call-to-Actions, Restaurants und Cafés, Geschäfte und Verpackungen, Events und Hochzeiten, Hotels, Reisen und Immobilien, Gesundheit, Fitness und Bildung sowie Business und Social. {facts.seasonalFrames} davon sind für Feiertage und Jahreszeiten, vom Mondneujahr, Holi, Eid und Diwali bis zu Hanukkah, Ostern, Thanksgiving und Weihnachten. Jeder ist eine Rahmenspezifikation mit Texten und Farben, die du ändern kannst, steht unter CC0, und jeder wurde darauf getestet, dass er sich aus Handy-Entfernung scannen lässt.
+Eine Frame-Spezifikation ist JSON mit `kind: "qrdx.frame"`, `version: 1`, einer `artboard`-Größe, einer `qr`-Box, in der der Code sitzt, standardmäßigen `colors`, den `shapes`, die hinter dem Code gemalt werden, und den `labels`. Formen sind Rechtecke (mit optionalem Loch), Kreise und Ringe, Ellipsen, Polygone, Pfade, Linien und integrierte Icons. Sie werden mit einem Theme-Token (`frame`, `text`, `accent`, `background`), einer Hex-Farbe, einer Mischung aus zwei Farben oder einem Verlauf gefüllt. Eine Spezifikation enthält kein Markup, keine Links und keine Bilder. Prüfe eine Spezifikation, die du nicht selbst geschrieben hast, mit `frameSpecSchema` oder `getFrameSpecIssues` aus `qrdx/types`, bevor du sie speicherst. Die Engine prüft sie vor dem Zeichnen noch einmal.
 
-Öffne im [Playground](/playground) **Rahmen** und dann **Mehr**. Suche nach Name, Verwendungszweck oder Feiertag oder wähle eine Gruppe. Rahmen für die anstehenden Feiertage und Jahreszeiten stehen zuerst. Du findest sie auch in der [Community](/community/frames), veröffentlicht von @qrdx.
+Die integrierten Frames und Vorlagen haben diese optionalen Felder mitgebracht. Spezifikationen ohne sie werden wie zuvor gezeichnet:
+
+| Feld | Was es bewirkt |
+| --- | --- |
+| `labels[].collapse` | `{ y, height }`. Zeigt die Beschriftung keinen Text, wird das Band von `y` bis `y + height` herausgeschnitten: Zeilen darunter rücken nach oben, und die Grafik wird kürzer. Formen, die ganz im Band liegen, entfallen, und Formen, die es kreuzen, werden kürzer. Ein Band darf weder den Code noch sein Padding noch ein anderes Band kreuzen. |
+| `qr.plate` | `"opaque"` (Standard), `"background"` oder `"none"`. Die Engine malt unter den Code eine Platte in der Hintergrundfarbe des Codes. Ist dieser Hintergrund durchsichtig, malt `"opaque"` die Platte und `background` füllt mit Weiß, sodass die Grafik nie durch die Ruhezone scheint. `"background"` belässt sie durchsichtig und lässt die Platte weg. Das ist nur erlaubt, wenn unter der Platte nichts als `background`-Füllungen liegt oder ein Ring, dessen Loch die Platte enthält. `"none"` malt gar keine Platte, sodass der eigene Hintergrund und Rand des Codes die einzige helle Fläche sind, und `qr.padding` darf unter 4 % liegen. Die Vorlagen verwenden das. |
+| `stroke` | `{ color, width }` bei Rechteck, Kreis, Ellipse, Polygon oder Pfad: eine Kontur, zentriert auf der Kante der Form, nach ihrer Füllung gezeichnet, höchstens 10 % der kürzeren Seite der Artboard. Die Halloween-Vorlage umrandet damit ihren Kürbis. |
+| `colors.text` | Eine Hex-Farbe oder eine Mischung aus `frame`, `accent`, `background` und Hex-Farben, etwa `{ "mix": ["frame", "accent"], "amount": 0.5 }` für die Beschriftung des Verlaufsrahmens. Sie ist der Standard; `textColor` hat weiterhin Vorrang. |
+
+Die Zeile einer Textbeschriftung darf auch in das Padding der Platte hineinreichen, solange sie vom Code fernbleibt und ihre Großbuchstaben bei der größten Textgröße (`fontScale` 1,5) nicht ins Padding ragen. Die Rahmen-Frames setzen ihre Beschriftung auf diese Weise direkt unter den Code.
+
+qrdx 0.0.51 und älter lehnen Spezifikationen ab, die diese Felder verwenden oder eine Beschriftungszeile ins Padding legen. Aktualisiere also die Engine, bevor du eine solche Spezifikation anderswo zeichnest.
+
+## Offizielle Frames [#official-frames]
+
+Zusätzlich zu den integrierten Frames hat QRdx {facts.officialFrames} offizielle Frames: fertige Designs für Calls to Action, Restaurants und Cafés, Geschäfte und Verpackungen, Beauty und Wellness, Events und Hochzeiten, Hotels und Reisen, Immobilien, Autos und Parken, Gesundheit und Bildung, Sport und Fitness, Business und Social sowie gemeinnützige Organisationen und Gemeinschaftsgruppen. {facts.seasonalFrames} davon sind für Feiertage und Jahreszeiten, vom Mondneujahr, Holi, Eid und Diwali bis zu Hanukkah, Ostern, Thanksgiving und Weihnachten. Jeder ist eine Frame-Spezifikation mit Beschriftungen und Farben, die du ändern kannst, steht unter CC0 und ist darauf getestet, dass er sich aus Handy-Entfernung scannen lässt.
+
+Öffne im [Playground](/playground) **Frame**. Suche nach Name, Verwendung oder Feiertag oder wähle eine Gruppe. Frames für die anstehenden Feiertage und Jahreszeiten stehen zuerst. Du findest sie auch in der [Community](/community/frames), veröffentlicht von @qrdx.
 
 Die Engine exportiert sie als `OFFICIAL_FRAMES`:
 
@@ -86,9 +134,9 @@ const diwali = getOfficialFrame("diwali-diya"); // undefined for an unknown id
 )}
 ```
 
-`OFFICIAL_FRAME_INDEX` listet jeden Rahmen ohne seine Spezifikation auf, sodass eine Auswahl die ganze Bibliothek anzeigen und die Spezifikationen erst bei Bedarf laden kann. In der [Image API](/docs/developers/image-api#community-items) und im [MCP-Server](/docs/developers/mcp) verwendest du einen offiziellen Rahmen als Community-Element, zum Beispiel `item=frame:diwali-diya`.
+`OFFICIAL_FRAME_INDEX` listet jeden Frame ohne seine Spezifikation auf, sodass eine Auswahl die ganze Bibliothek zeigen und Spezifikationen erst bei Bedarf laden kann. In der [Image API](/docs/developers/image-api#community-items) und im [MCP-Server](/docs/developers/mcp) verwendest du einen offiziellen Frame als Community-Element, etwa `item=frame:diwali-diya`.
 
-## Wird er gescannt? [#will-it-scan]
+## Lässt er sich scannen? [#will-it-scan]
 
 `getScanScore` schätzt, wie zuverlässig sich ein Design scannen lässt. Die Funktion läuft im Browser und lädt [jsQR](https://github.com/cozmo/jsQR) bei Bedarf nach.
 
@@ -106,17 +154,17 @@ const { score, grade, checks } = await getScanScore({
 
 Das wird geprüft:
 
-- **Dekodierung bei 96, 160 und 320 px.** Das Design wird in jeder Breite gerendert, mit kameraähnlicher Unschärfe und Kontrastverlust versehen und einige Male in leicht abweichenden Maßstäben dekodiert.
-- **Kontrast** zwischen jeder Codefarbe (einschließlich Verlaufsstopps, Augen- und Punktfarben) und dem Hintergrund sowie ob der Code dunkel auf hell ist.
+- **Dekodierung bei 96, 160 und 320 px.** Das Design wird in jeder Breite gerendert, mit kameraähnlicher Unschärfe und Kontrastverlust versehen und mehrmals in leicht abweichenden Maßstäben dekodiert.
+- **Kontrast** zwischen jeder Farbe des Codes (einschließlich Verlaufsstopps, Augen- und Punktfarben) und dem Hintergrund sowie die Frage, ob der Code dunkel auf hell ist.
 - **Logo-Abdeckung** im Vergleich zu dem, was die Fehlerkorrekturstufe wiederherstellen kann.
 - **Ruhezone**: der Rand plus der Abstand, den ein Rahmen hinzufügt.
-- **Risiko durch die Augenform**: `circle`-Augen werden von manchen Scanner-Apps womöglich nicht erkannt (und die eingestellten `curly`-Augen scheitern an strengen Dekodern, falls ein gespeichertes Design sie noch verwendet).
-- **Stilpaare** (`style-pair`): Formen, die in unseren Dekodiertests zusammen scheitern, etwa `small-square`-Punkte neben eckigen Augen, sowie eingestellte Zentren in gespeicherten Designs (siehe `getStylePairRisk`).
+- **Risiko durch die Augenform**: `circle`-Augen werden von manchen Scanner-Apps eventuell nicht erkannt (und die eingestellten `curly`-Augen, falls ein gespeichertes Design sie noch verwendet, scheitern an strengen Dekodern).
+- **Stilpaare** (`style-pair`): Formen, die in unseren Dekodiertests gemeinsam scheitern, etwa `small-square`-Punkte neben quadratischen Augen, sowie eingestellte Zentren in gespeicherten Designs (siehe `getStylePairRisk`).
 
-`getImageScanScore(fileOrImage)` macht dasselbe für ein vorhandenes Bild: Die Funktion liefert den dekodierten Inhalt sowie Prüfungen zu Dekodierung, Kontrast, Polarität, Ruhezone und Auflösung, gemessen an den Pixeln. Der [Scan-Checker](/tools/scan-checker) baut darauf auf.
+`getImageScanScore(fileOrImage)` macht dasselbe für ein vorhandenes Bild: Die Funktion liefert den dekodierten Inhalt sowie Prüfungen zu Dekodierung, Kontrast, Polarität, Ruhezone und Auflösung, gemessen anhand der Pixel. Der [Scan-Checker](/tools/scan-checker) basiert darauf.
 
 <Callout type="info">
-  Der Score ist eine Heuristik auf Basis eines einzigen Open-Source-Decoders. Kamera-Apps auf dem Handy sind oft nachsichtiger. Verstehe ihn also als Orientierung und teste wichtige Drucke mit einem Probe-Scan.
+  Der Score ist eine Heuristik, die auf einem einzigen Open-Source-Decoder beruht. Kamera-Apps auf dem Smartphone sind oft toleranter. Verstehe ihn also als Orientierung und teste wichtige Drucke mit einem echten Scan.
 </Callout>
 
 ## Druckfertiger Export [#print-ready-export]
@@ -144,10 +192,10 @@ layout.maxScanDistance; // 400 (mm)
 ```
 
 - `size` ist die Breite des Codes; ein Rahmen vergrößert das fertige Maß.
-- Mit Beschnitt reicht der Hintergrund (oder die Farbe eines eckigen Rahmens) über die Schnittkante hinaus, sodass beim Zuschneiden kein weißer Streifen bleibt. Schnittmarken liegen außerhalb des Beschnitts.
-- `colorMode: "cmyk"` verwendet eine einfache Umrechnung (`rgbToCmyk`: K = 1 − max(R, G, B), kein ICC-Profil; reines Schwarz wird nur mit K gedruckt). Bitte deine Druckerei um eine farbverwaltete Umrechnung, wenn exakte Markenfarben wichtig sind.
-- Lineare und radiale Verläufe werden im PDF als weiche Verläufe gedruckt, in CMYK, wenn das PDF CMYK ist; das Druck-SVG behält sie, bleibt aber RGB.
-- Rahmentext im PDF verwendet Helvetica Bold, daher werden Zeichen außerhalb von Latin-1 womöglich nicht dargestellt. Nutze für andere Schriften das SVG.
+- Mit Beschnitt reicht der Hintergrund (oder die Farbe eines quadratischen Rahmens) über die Schnittkante hinaus, sodass nach dem Zuschnitt kein weißer Streifen bleibt. Schnittmarken liegen außerhalb des Beschnitts.
+- `colorMode: "cmyk"` nutzt eine einfache Umrechnung (`rgbToCmyk`: K = 1 − max(R, G, B), kein ICC-Profil; reines Schwarz wird nur mit K gedruckt). Bitte deine Druckerei um eine farbverwaltete Umrechnung, wenn exakte Markenfarben wichtig sind.
+- Lineare und radiale Verläufe werden im PDF als weiche Farbverläufe gedruckt, in CMYK, wenn das PDF CMYK ist; das Druck-SVG behält sie, bleibt aber RGB.
+- Rahmentext im PDF verwendet Helvetica Bold, daher werden Zeichen außerhalb von Latin-1 eventuell nicht dargestellt. Nutze für andere Schriften das SVG.
 - `getQRAsPrintPDF` und `getQRAsPrintPDFBuffer` geben die Datei zurück, statt sie herunterzuladen, und funktionieren auch in Node.
 
-**Wie groß du drucken solltest:** Ein Code lässt sich aus etwa dem Zehnfachen seiner Breite scannen, also Größe ≈ Scan-Entfernung ÷ 10 (2 cm breit für 20 cm). Dichtere Codes brauchen mehr; der [Druckgrößen-Rechner](/tools/print-size) berücksichtigt das.
+**Wie groß du drucken solltest:** Ein Code lässt sich etwa aus dem Zehnfachen seiner Breite scannen, also Größe ≈ Scan-Abstand ÷ 10 (2 cm Breite für 20 cm). Dichtere Codes brauchen mehr; der [Druckgrößen-Rechner](/tools/print-size) berücksichtigt das.

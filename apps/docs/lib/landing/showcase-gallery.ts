@@ -1,5 +1,10 @@
 import { CANONICAL_HOST, CANONICAL_ORIGIN } from "@repo/config";
-import { getFrameLayout, isFrameActive, OFFICIAL_FRAMES } from "qrdx";
+import {
+  getFrameLayout,
+  getTemplate,
+  isFrameActive,
+  OFFICIAL_FRAMES,
+} from "qrdx";
 import type {
   ColorConfig,
   QRArtImage,
@@ -36,7 +41,7 @@ import { defaultPresets } from "@/utils/qr-presets";
  * every one, so nothing that doesn't scan can ship.
  *
  * Tiles come in four bands: every built-in theme, the official frames, art
- * and logos (with the border templates and the transparent and print-ready
+ * and logos (with the template frames and the transparent and print-ready
  * codes), and every content type and hosted page. The home page shows a
  * curated selection (lib/landing/showcase-wall.ts); /community shows them
  * all.
@@ -225,7 +230,10 @@ function describeLook(styles: ThemeStyles): string {
         : `a ${name} frame`,
     );
   }
-  if (styles.templateId) parts.push("a border");
+  if (styles.templateId && styles.templateId !== "default") {
+    const name = getTemplate(styles.templateId)?.name.toLowerCase() ?? "";
+    parts.push(name ? `the ${name} frame` : "a frame");
+  }
   if (styles.showLogo) parts.push("the QRdx logo in the center");
   return parts.join(", ");
 }
@@ -421,7 +429,10 @@ const art = (
   };
 };
 
-/** The border templates that score Great are themes; these show the rest. */
+/**
+ * The templates (frames drawn at the template's size) that score Great are
+ * themes; these show the rest.
+ */
 const border = (
   templateId: string,
   label: string,
@@ -436,9 +447,9 @@ const border = (
   return {
     id: `border-${kebab(templateId)}`,
     band: "art",
-    label: `${label} border`,
-    detail: "Border template",
-    alt: `QR code inside the ${label} border template`,
+    label: `${label} frame`,
+    detail: "Frame",
+    alt: `QR code inside the ${label} frame`,
     value: SITE,
     preset: "minimal",
     style,
@@ -457,7 +468,9 @@ const CIRCLE_EYES: Partial<ThemeStyles> = {
 };
 
 const SMALL_IN_BORDER =
-  "The border draws the code at under half the artwork's width, so the scan score marks it down; print it at 5 cm or more.";
+  "The border draws the code at under half the artwork's width; print it at 5 cm or more.";
+const HALF_IN_RING =
+  "The ring draws the code at about half the artwork's width; print it at 5 cm or more.";
 
 const artTiles: WallTile[] = [
   art("bloom", "logo", "blend", "classic"),
@@ -529,6 +542,7 @@ const artTiles: WallTile[] = [
   border("StrikedBox", "Striked box"),
   border("Arrow", "Arrow", SMALL_IN_BORDER),
   border("Halloween", "Halloween", SMALL_IN_BORDER),
+  border("DotRing", "Dot ring", HALF_IN_RING),
   {
     id: "eyes-circle",
     band: "art",

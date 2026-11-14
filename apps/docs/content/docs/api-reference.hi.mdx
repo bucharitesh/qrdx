@@ -1,6 +1,6 @@
 ---
 title: "लाइब्रेरी API रेफ़रेंस"
-description: "qrdx React लाइब्रेरी से एक्सपोर्ट होने वाला हर कंपोनेंट, फ़ंक्शन और टाइप। HTTP एंडपॉइंट के लिए REST API देखें।"
+description: "qrdx React लाइब्रेरी से एक्सपोर्ट होने वाले हर कंपोनेंट, फ़ंक्शन और टाइप की जानकारी। HTTP एंडपॉइंट के लिए REST API देखें।"
 icon: Code
 ---
 
@@ -41,23 +41,23 @@ import { QRCode } from 'qrdx';
 | `cornerEyeDotPattern` | `CornerEyeDotPattern` | `'circle'` | कॉर्नर डॉट का पैटर्न |
 | `hideLogo` | `boolean` | `false` | लोगो छिपाएँ। `logo` सेट न हो तो कोई लोगो नहीं बनता |
 | `logo` | `string` | — | लोगो का URL |
-| `templateId` | `string` | `'default'` | टेम्पलेट ID |
-| `customTemplate` | `TemplateDefinition` | — | कस्टम टेम्पलेट |
+| `templateId` | `string` | `'default'` | [टेम्पलेट के रूप में बना फ़्रेम](/docs/features/templates) (`'Arrow'`, `'StandardBox'`, …): पूरा आर्टवर्क `size` चौड़ा होता है |
+| `customTemplate` | `TemplateDefinition` | — | कोड में बनाया गया आपका अपना फ़्रेम (`templateId` से पहले लागू होता है) |
 | `level` | `ErrorLevel` | `'Q'` | एरर करेक्शन |
-| `autoLevel` | `boolean` | `false` | लोगो कोड के 7% से ज़्यादा हिस्से को ढके तो `level` को H पर ले जाएँ (`AUTO_LEVEL_LOGO_COVERAGE`) |
+| `autoLevel` | `boolean` | `false` | जब लोगो कोड के 7% से ज़्यादा हिस्से को ढके (`AUTO_LEVEL_LOGO_COVERAGE`), तब `level` को H तक बढ़ा देता है |
 | `margin` | `number` | `0` | मॉड्यूल में मार्जिन |
-| `imageSettings` | `ImageSettings` | — | लोगो सेटिंग |
-| `eyeColors` | `EyeColors` | — | `topLeft`, `topRight` और `bottomLeft` के लिए अलग-अलग `outer` / `inner` रंग; हर एक `eyeColor` / `dotColor` को ओवरराइड करता है |
-| `moduleScale` | `number` | `1` | डेटा मॉड्यूल का साइज़, 0.5 से 1। हर पैटर्न उस सबसे छोटे साइज़ पर रुकता है जिस पर कोड अब भी स्कैन होता है (`MODULE_SCALE_FLOOR`) |
+| `imageSettings` | `ImageSettings` | — | लोगो की सेटिंग |
+| `eyeColors` | `EyeColors` | — | `topLeft`, `topRight` और `bottomLeft` के लिए हर आई के अलग `outer` / `inner` रंग; हर एक `eyeColor` / `dotColor` को ओवरराइड करता है |
+| `moduleScale` | `number` | `1` | डेटा मॉड्यूल का साइज़, 0.5 से 1। हर पैटर्न उस सबसे छोटे साइज़ पर रुक जाता है जिस पर कोड अब भी स्कैन हो सके (`MODULE_SCALE_FLOOR`) |
 | `frame` | `QRFrame` | — | कॉल-टू-एक्शन फ़्रेम; देखें [फ़्रेम और प्रिंट](/docs/features/frames) |
 | `art` | `QRArt` | — | लोगो या फ़ोटो को मॉड्यूल में मिलाएँ (Logo QR, Image QR); देखें [Art QR](/docs/features/art-qr) |
 | `frameLabelMarkers` | `boolean` | `false` | एडिटर के लिए: हर फ़्रेम लेबल `<text>` पर `data-qrdx-frame-label` (`"text"`, `"secondaryText"` या स्पेक लेबल की id) लगाता है। डाउनलोड और एक्सपोर्ट में यह कभी शामिल नहीं होता |
 
-सभी {facts.bodyPatterns} बॉडी पैटर्न, {facts.eyeShapes} आई, {facts.eyeCentres} आई सेंटर और {facts.frameStyles} फ़्रेम स्टाइल [शेप, आई और फ़्रेम](/docs/styles) में लाइव दिखाए गए हैं।
+सभी {facts.bodyPatterns} बॉडी पैटर्न, {facts.eyeShapes} आई, {facts.eyeCentres} आई सेंटर और {facts.frameStyles} बिल्ट-इन फ़्रेम [शेप, आई और फ़्रेम](/docs/styles) में लाइव दिखाए गए हैं।
 
 ### QRCodeCanvas [#qrcodecanvas]
 
-Canvas पर आधारित रेंडरिंग।
+Canvas आधारित रेंडरिंग।
 
 ```tsx
 import { QRCodeCanvas } from 'qrdx';
@@ -71,7 +71,7 @@ import { QRCodeCanvas } from 'qrdx';
 
 ### QRCodeSVG [#qrcodesvg]
 
-SVG पर आधारित रेंडरिंग।
+SVG आधारित रेंडरिंग।
 
 ```tsx
 import { QRCodeSVG } from 'qrdx';
@@ -115,7 +115,7 @@ getQRCodeDataUrl(
 
 ### getQRAsWebP [#getqraswebp]
 
-कोड को WebP `Blob` के रूप में देता है; `quality` सेट न हो तो लॉसलेस। जहाँ ब्राउज़र WebP एन्कोड नहीं कर सकता (Safari), वहाँ qrdx का बिल्ट-इन लॉसलेस एन्कोडर इसे बनाता है। `canvasToWebP(canvas, options)` किसी भी canvas के लिए यही करता है, और `encodeWebPLossless(rgba, width, height)` बिना DOM के RGBA पिक्सल एन्कोड करता है।
+कोड को WebP `Blob` के रूप में देता है, जो `quality` सेट न करने पर लॉसलेस होता है। जहाँ ब्राउज़र WebP एन्कोड नहीं कर सकता (Safari), वहाँ qrdx का बिल्ट-इन लॉसलेस एन्कोडर इसे बनाता है। `canvasToWebP(canvas, options)` किसी भी canvas के लिए यही करता है, और `encodeWebPLossless(rgba, width, height)` बिना DOM के RGBA पिक्सल एन्कोड करता है।
 
 ```tsx
 getQRAsWebP(
@@ -145,19 +145,19 @@ getSVGString(qrProps: QRProps): Promise<string>
 
 ## प्रिंट और स्कैन फ़ंक्शन [#print-and-scan-functions]
 
-इनके उदाहरण संबंधित फ़ीचर पेजों पर दिए गए हैं।
+इनका उदाहरणों के साथ वर्णन इनके फ़ीचर पेजों पर है।
 
 | फ़ंक्शन | क्या करता है | डॉक्स |
 |----------|--------------|------|
-| `getQRAsSVG(props)` | कोड का SVG मार्कअप, उसके फ़्रेम समेत | [फ़्रेम](/docs/features/frames) |
-| `getQRAsPrintPDF`, `downloadPrintPDF` | सटीक फ़िज़िकल साइज़ पर वेक्टर PDF, bleed, क्रॉप मार्क और CMYK के साथ (`jspdf` चाहिए) | [प्रिंट-रेडी एक्सपोर्ट](/docs/features/frames#print-ready-export) |
-| `downloadPrintSVG` | सटीक फ़िज़िकल साइज़ पर प्रिंट-रेडी SVG | [प्रिंट-रेडी एक्सपोर्ट](/docs/features/frames#print-ready-export) |
+| `getQRAsSVG(props)` | फ़्रेम समेत कोड का SVG मार्कअप | [फ़्रेम](/docs/features/frames) |
+| `getQRAsPrintPDF`, `downloadPrintPDF` | सटीक भौतिक साइज़ पर वेक्टर PDF, ब्लीड, क्रॉप मार्क और CMYK के साथ (`jspdf` चाहिए) | [प्रिंट-रेडी एक्सपोर्ट](/docs/features/frames#print-ready-export) |
+| `downloadPrintSVG` | सटीक भौतिक साइज़ पर प्रिंट-रेडी SVG | [प्रिंट-रेडी एक्सपोर्ट](/docs/features/frames#print-ready-export) |
 | `getQRAsEPS`, `downloadPrintEPS` | प्रिंट शॉप और डिज़ाइन टूल के लिए वेक्टर EPS | [डाउनलोड](/docs/features/downloads) |
-| `getScanScore(props)` | अनुमान लगाता है कि कोई डिज़ाइन कितने भरोसे से स्कैन होता है | [क्या यह स्कैन होगा?](/docs/features/frames#will-it-scan) |
+| `getScanScore(props)` | अनुमान लगाता है कि कोई डिज़ाइन कितनी भरोसेमंद तरह से स्कैन होता है | [क्या यह स्कैन होगा?](/docs/features/frames#will-it-scan) |
 | `getImageScanScore(image)` | आपके पास पहले से मौजूद QR कोड इमेज को स्कोर करता है (सिर्फ़ ब्राउज़र में) | [क्या यह स्कैन होगा?](/docs/features/frames#will-it-scan) |
-| `getQRAsPNG(props, { size })` | सादे Node में PNG बाइट, बिना DOM के। इसे `qrdx/node` से इंपोर्ट करें; इसके लिए `@resvg/resvg-js` या `sharp` इंस्टॉल होना चाहिए | — |
-| `scanQRPixels(pixels, expected)` | जाँचता है कि कच्चे RGBA पिक्सल डिकोड होकर `expected` देते हैं, धुंधला और छोटा करने पर भी; Node में चलता है | — |
-| `getStylePairRisk(...)` | उन आई और पैटर्न जोड़ियों के बारे में चेतावनी देता है जिन्हें कुछ स्कैनर नहीं पढ़ पाते | [पैटर्न](/docs/features/patterns) |
+| `getQRAsPNG(props, { size })` | सादे Node में बिना DOM के PNG बाइट देता है। इसे `qrdx/node` से इम्पोर्ट करें; इसके लिए `@resvg/resvg-js` या `sharp` इंस्टॉल होना चाहिए | — |
+| `scanQRPixels(pixels, expected)` | जाँचता है कि रॉ RGBA पिक्सल `expected` में डिकोड होते हैं, धुंधला और छोटा करने पर भी; Node में चलता है | — |
+| `getStylePairRisk(...)` | उन आई और पैटर्न जोड़ियों की चेतावनी देता है जिन्हें कुछ स्कैनर नहीं पढ़ पाते | [पैटर्न](/docs/features/patterns) |
 
 ## डिटेक्शन फ़ंक्शन [#detection-functions]
 
@@ -189,7 +189,7 @@ downloadImageWithBoundingBox(
 
 ### getTemplate [#gettemplate]
 
-कोई खास टेम्पलेट पाएँ।
+कोई एक टेम्पलेट पाएँ।
 
 ```tsx
 getTemplate(templateId: string): TemplateDefinition | undefined
@@ -268,6 +268,8 @@ type ErrorLevel = 'L' | 'M' | 'Q' | 'H';
 ```tsx
 // The arrays BODY_PATTERN, CORNER_EYE_PATTERNS, CORNER_EYE_DOT_PATTERNS and
 // FRAME_STYLES (and their zod schemas) are exported from 'qrdx/types'.
+// FRAME_STYLES names the built-in frames; each is a frame spec in
+// BUILT_IN_FRAMES (from 'qrdx').
 
 type BodyPattern =
   | 'circle' | 'circle-large' | 'square' | 'diamond' | 'circle-mixed'
@@ -297,7 +299,7 @@ type EyeColors = {
 };
 
 type QRFrame = {
-  style: FrameStyle; // "none" or a frame, see FRAME_STYLES
+  style: FrameStyle; // "none" or a built-in frame, see FRAME_STYLES
   text?: string; // up to 24 characters, default "Scan me"
   color?: string;
   textColor?: string;
@@ -395,7 +397,7 @@ try {
 आम एरर:
 - गलत इमेज URL
 - नेटवर्क फ़ेल होना
-- गलत साइज़ पैरामीटर
+- गलत size पैरामीटर
 - Canvas कॉन्टेक्स्ट उपलब्ध न होना
 
 ## ब्राउज़र सपोर्ट [#browser-support]

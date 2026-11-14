@@ -176,7 +176,8 @@ function randomChange(
       return logo ? { customLogo: logo, showLogo: true } : null;
     }
     default:
-      return { frame: randomFrame(style.frame, random) };
+      // Another frame takes the place of a template inside it too
+      return { frame: randomFrame(style.frame, random), templateId: undefined };
   }
 }
 
