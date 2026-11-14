@@ -1,10 +1,21 @@
 ---
 title: Workspaces and teams
 description: Everyone has their own workspace. Create more on Pro or Business, invite people by email or a join link, and choose owner, admin, member, billing or viewer roles.
-icon: Users
 ---
 
-Everything you make in QRdx belongs to a workspace: dynamic codes and [hosted pages](/docs/landing-pages), [files](/docs/files), [custom domains](/docs/custom-domains), folders and tags, form responses, [webhooks](/docs/webhooks) and API keys. Saved themes are yours, and owners and admins can share copies with a workspace so every member designs with the same colors. Every dashboard page has the workspace in its URL (`/dashboard/<workspace>/…`). Switch workspaces with the workspace switcher at the bottom of the sidebar (on a phone, in the menu); you stay in the same section, such as Codes or Settings → Domains, of the workspace you pick.
+Everything you make in QRdx belongs to a workspace: dynamic codes and [hosted pages](/docs/landing-pages), [files](/docs/files), [custom domains](/docs/custom-domains), folders and tags, form responses, [webhooks](/docs/webhooks) and API keys. A workspace is where a team, a client or a project keeps its codes and who may touch them. Use more than one when different people should see different codes.
+
+<Callout type="info" title="Plans and seats">
+  Everyone has a workspace of their own on every plan. Creating more workspaces and inviting people need Pro (up to 3 members) or Business (no limit). Anyone can join a workspace they're invited to, including people on Free. See [Plans and limits](/docs/plans-and-limits).
+</Callout>
+
+In a hurry? The short task pages: [Create a workspace and invite people](/docs/help/teams/create-and-invite), [Team roles](/docs/help/teams/roles) and [Seats and workspace limits](/docs/help/teams/seats).
+
+## How it works
+
+Every dashboard page has the workspace in its URL (`/dashboard/<workspace>/…`). Switch workspaces with the workspace switcher at the bottom of the sidebar (on a phone, in the menu); you stay in the same section, such as Codes or Settings → Domains, of the workspace you pick. Saved themes are yours, and owners and admins can share copies with a workspace so every member designs with the same colors.
+
+{/* shot: workspace-switcher | The workspace switcher open at the bottom of the sidebar, listing two workspaces and the Create workspace item | Dashboard → workspace switcher */}
 
 ## Your own workspace
 
@@ -12,19 +23,19 @@ Every account has a workspace of its own, created automatically, with you as its
 
 ## Create another workspace
 
-Creating more workspaces needs Pro or Business. Anyone can join a workspace they're invited to, including people on the Free plan.
-
 1. Open the workspace switcher and click **Create workspace**.
 2. Enter a **Workspace name** and a **Workspace URL** (3 to 48 lowercase letters, numbers and dashes). QRdx checks as you type whether the URL is free; a few words, such as `codes` and `settings`, are reserved.
 3. Click **Create workspace**. It opens with you as its owner.
 
 ## Invite people
 
-Owners and admins invite people from [Settings → Team](/dashboard?to=settings/team):
+Owners and admins invite people from **Settings** → **Team** in the workspace:
 
 1. Enter the person's email address and pick a role: **Admin**, **Member** or **Viewer**. Owners can also invite someone as **Billing**.
 2. QRdx emails them an invitation. Every invitation also has a link you can copy and send yourself.
 3. They open the link, sign in with the invited email address and click **Accept invitation**. The workspace then opens for them.
+
+{/* shot: team-settings | Settings → Team with the invite form, the member list with roles and the join link section | Dashboard → Settings → Team */}
 
 Inviting someone as an admin asks you to [confirm it's you](/docs/help/privacy-and-security/two-step-verification#confirm-its-you) first, unless you did in that browser in the last 10 minutes.
 
@@ -32,7 +43,7 @@ Invitations expire after 48 hours and only work for the email address they were 
 
 ## Join link
 
-A join link is one link for the whole team: anyone signed in who opens it joins the workspace, while it has free seats. Owners and admins manage it in [Settings → Team](/dashboard?to=settings/team), on Pro and Business:
+A join link is one link for the whole team: anyone signed in who opens it joins the workspace, while it has free seats. Owners and admins manage it in **Settings** → **Team**, on Pro and Business:
 
 1. Pick the role people get when they join (**Member** by default; never owner, and only owners can make a **Billing** link) and click **Create join link**. A link that adds people as admins asks you to [confirm it's you](/docs/help/privacy-and-security/two-step-verification#confirm-its-you) first.
 2. Copy the link and share it. For safety it's shown only once; QRdx keeps a fingerprint of it, not the link.
@@ -48,11 +59,13 @@ People who aren't signed in sign in first and come back to the link. Someone who
 | Create and edit codes and pages, upload files | No | No | Yes | Yes | Yes |
 | Delete codes, files and form responses | No | No | Their own | Any | Any |
 | Create API keys | No | No | Yes | Yes | Yes |
+| See and revoke everyone's API keys | No | No | No | Yes | Yes |
 | Share saved themes with the workspace | No | No | No | Yes | Yes |
 | Invite and remove people, change roles | No | No | No | Yes | Yes |
 | Rename the workspace, change its URL and logo | No | No | No | Yes | Yes |
 | Add, verify and remove custom domains | No | No | No | Yes | Yes |
 | Manage webhook endpoints and see signing secrets | No | No | No | Yes | Yes |
+| Set up single sign-on and read the audit log (Business) | No | No | No | Yes | Yes |
 | Upgrade the workspace's plan | No | Yes | No | No | Yes |
 | Create and change OAuth apps | No | No | No | No | Yes |
 | Make someone an owner or billing member | No | No | No | No | Yes |
@@ -60,20 +73,27 @@ People who aren't signed in sign in first and come back to the link. Someone who
 
 Viewers and billing members only read: they can't create, edit or delete anything in the workspace, and an API key can't do more than its creator's role. Members can see webhook endpoints and their delivery logs, and use the workspace's verified domains for their codes. [Notification settings](/docs/notifications) are personal: every member chooses their own alerts for each workspace.
 
-## Plans and seats
+## Limits and plans
 
-A workspace uses the best plan among its owners and billing members, so one of them on Business gives the whole workspace Business limits and members don't need their own subscription. That's what the **Billing** role is for: someone who pays for the workspace without managing it. Limits such as dynamic codes, pages, storage and form responses are counted per workspace. See [Plans and limits](/docs/plans-and-limits).
+A workspace uses the best plan among its owners and billing members, so one of them on Business gives the whole workspace Business limits and members don't need their own subscription. That's what the **Billing** role is for: someone who pays for the workspace without managing it. Limits such as dynamic codes, pages, storage and form responses are counted per workspace.
 
-Seats are members, owner included, plus pending invitations: 1 (just you) when the owners and billing members are on Free, up to 3 on Pro and no limit on Business. If their plan changes, current members stay and every code keeps working; only new invitations and new things over the limit are blocked.
+| | Free | Pro | Business |
+| --- | --- | --- | --- |
+| More workspaces | No | Yes | Yes |
+| Seats (members, owner included, plus pending invitations) | 1 | 3 | Unlimited |
+| Join link | No | Yes | Yes |
+| Require two-step verification of every member | No | No | Yes |
+
+If the owners' plan changes, current members stay and every code keeps working; only new invitations and new things over the limit are blocked. See [Seats and workspace limits](/docs/help/teams/seats) and [Require two-step verification](/docs/help/teams/require-two-step-verification).
 
 ## Rename, leave or delete a workspace
 
-These are in the workspace's [Settings → General](/dashboard?to=settings).
+These are in the workspace's **Settings** → **General**.
 
 - **Rename:** owners and admins change the name and the URL. Links to the old URL stop working; printed codes don't change.
 - **Logo:** owners and admins upload a logo (when file storage is set up on the server) or use an https image URL. It shows in the workspace switcher; without one the switcher shows the first letter of the name.
 - **Leave:** click **Leave workspace** in the danger zone. The last owner can't leave: make another member an owner first, or delete the workspace. Nobody can leave their own workspace.
-- **Remove a member:** in [Settings → Team](/dashboard?to=settings/team). The codes and pages they created stay in the workspace. Nobody can be removed from their own workspace. Removing someone, like changing their role, asks you to [confirm it's you](/docs/help/privacy-and-security/two-step-verification#confirm-its-you) first.
+- **Remove a member:** in **Settings** → **Team**. The codes and pages they created stay in the workspace. Nobody can be removed from their own workspace. Removing someone, like changing their role, asks you to [confirm it's you](/docs/help/privacy-and-security/two-step-verification#confirm-its-you) first.
 - **Delete a workspace:** owners only, and never someone's own workspace. You confirm by typing the workspace URL, and QRdx asks you to confirm it's you. Nothing stops working: codes, pages, files, domains and other items move to the own workspace of whoever created them. The workspace's API keys are deleted with it.
 
 ## Move a code to another workspace
@@ -83,7 +103,15 @@ In the code's **⋯** menu on the Codes page, choose **Move to workspace...** an
 - Members can move the codes they created; owners and admins any code.
 - The other workspace's plan must have room for another active code. Archived codes don't count.
 - A code whose link is on a custom domain can't move, because the domain belongs to the old workspace and its printed link would stop working. Codes that open a hosted page stay with their page.
+- A workspace that requires two-step verification isn't offered until you have it turned on.
 
-## API access
+## For developers
 
-[REST API](/docs/developers/rest-api) requests made with an OAuth access token act on the token owner's own workspace. An [API key](/docs/developers/api-keys) acts on the workspace it was created in, with your role there. Requests made from a signed-in browser session act on the workspace last opened in that session.
+[REST API](/docs/developers/rest-api) requests made with an OAuth access token act on the token owner's own workspace. An [API key](/docs/developers/api-keys) acts on the workspace it was created in, with its creator's role there. Requests made from a signed-in browser session act on the workspace the request names, or otherwise on the one last opened in that session.
+
+## Related
+
+- [Create a workspace and invite people](/docs/help/teams/create-and-invite)
+- [Team roles](/docs/help/teams/roles)
+- [Audit log](/docs/help/teams/audit-log): who did what in a Business workspace
+- [Client portal](/docs/client-portal): read-only access for clients without a seat

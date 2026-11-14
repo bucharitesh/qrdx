@@ -1,23 +1,34 @@
 ---
 title: Custom domains
-description: Serve your dynamic QR codes' short links from a domain you own.
-icon: Globe
+description: Serve your dynamic QR codes' short links and hosted pages from a domain you own, such as go.yourbrand.com.
 ---
 
-By default a [dynamic QR code](/docs/dynamic-qr-codes) encodes a short link such as `https://qrdx.dev/q/aB3dE5f`. With a custom domain it encodes `https://go.yourbrand.com/aB3dE5f` instead, so people see your brand before they scan. Redirects, editing and scan analytics work the same way.
+By default a [dynamic QR code](/docs/dynamic-qr-codes) encodes a short link such as `https://qrdx.dev/q/aB3dE5f`. With a custom domain it encodes `https://go.yourbrand.com/aB3dE5f` instead, so people see your brand before they scan. Redirects, editing and scan analytics work the same way. Use one when the link itself is printed, or when your brand should be the only name on the pack.
 
-Custom domains are part of Pro (up to 5 per workspace) and Business (up to 25).
+<Callout type="info" title="Pro and Business">
+  Custom domains are part of Pro (up to 5 per workspace) and Business (up to 25). See [Plans and limits](/docs/plans-and-limits).
+</Callout>
+
+In a hurry? The short task page: [Use your own domain](/docs/help/domains/custom-domains).
+
+## How it works
+
+{/* diagram: custom-domain-dns | Your DNS pointing go.yourbrand.com at QRdx, QRdx recognizing the domain on each request and answering with your codes' redirects and pages | concept drawing */}
+
+You point a domain (usually a subdomain like `go.yourbrand.com`) at QRdx with a DNS record and prove you own it. From then on QRdx answers requests for that host name with your workspace's codes and pages, and nothing else. The domain belongs to the workspace it was added in: owners and admins add, verify and remove it, and every member can use it for their codes.
 
 ## Connect a domain
 
-1. Open [Settings → Domains](/dashboard?to=settings/domains) and enter the domain, for example `go.yourbrand.com`. A subdomain works best, because your main website stays where it is.
-2. Add the DNS records shown for the domain at your DNS provider (where you bought the domain, Cloudflare, ...):
+1. Open **Settings** → **Domains** in the workspace and enter the domain, for example `go.yourbrand.com`. A subdomain works best, because your main website stays where it is.
+2. Add the DNS records shown for the domain at your DNS provider (where you bought the domain, Cloudflare, or wherever its DNS lives):
    - a subdomain gets a `CNAME` record,
    - a root domain (`yourbrand.com`) gets an `A` record,
    - a `TXT` record is shown too when ownership has to be confirmed.
 
    Copy the exact values from the dashboard. Most providers want only the part before your domain as the name (`go`, or `@` for the root).
 3. Click **Verify**. DNS changes usually show up within minutes but can take up to 48 hours, so try again later if the records aren't found yet.
+
+{/* shot: domains-settings | Settings → Domains with one domain waiting for DNS, its record table and the Verify button | Dashboard → Settings → Domains */}
 
 Once verified, the domain appears in the **Short link domain** picker when you create or edit a dynamic code. Verified domains stay verified until you remove them, and **Check DNS** re-reads the records any time.
 
@@ -39,36 +50,41 @@ The button appears only for subdomains such as `go.yourbrand.com`, and only when
 
 ## Use it for codes
 
-- **New code:** pick the domain in **Short link domain** before you click **Create code**.
+- **New code:** pick the domain in **Short link domain** before you create the code.
 - **Existing code:** choose the domain in **Edit link**, save, and download the QR code again, because the encoded link changes.
+
+{/* shot: short-link-domain-picker | The Short link domain picker in the Edit link dialog with a verified custom domain selected | Dashboard → Codes → open a code → Edit link */}
 
 Every code also keeps working at its default `https://qrdx.dev/q/<slug>` link, so QR codes you printed before moving a code to your domain never break. Moving a code from one custom domain to another (or back to the default) does break QR codes printed with the old custom-domain link; the dialog warns you before you save.
 
 ### Your own back-halves
 
-On Pro and Business you can choose a code's [back-half](/docs/dynamic-qr-codes#custom-back-halves) on your domain, such as `go.yourbrand.com/spring-menu`. It only has to be unique on that domain, so another QRdx customer using `spring-menu` doesn't matter, and only `api`, `p` and `q` are reserved there. A back-half chosen on your domain belongs to it and has no `qrdx.dev/q/` link. Moving such a code to another domain keeps the back-half when it's free there; moving it back to the default link keeps it when it's free on `qrdx.dev`, otherwise the code gets a new generated one.
+On Pro and Business you can choose a code's [back-half](/docs/dynamic-qr-codes#custom-back-halves) on your domain, such as `go.yourbrand.com/spring-menu`. It only has to be unique on that domain, so another QRdx customer using `spring-menu` doesn't matter, and only a few technical words (`api`, `_next`, `null`, `undefined`) are reserved there. A back-half chosen on your domain belongs to it and has no `qrdx.dev/q/` link. Moving such a code to another domain keeps the back-half when it's free there; moving it back to the default link keeps it when it's free on `qrdx.dev`, otherwise the code gets a new generated one.
 
-On your domain:
+## What the domain serves
 
 - `https://go.yourbrand.com/<slug>` redirects for codes that use that domain. Codes on other domains, or on the default link only, show a "not found" page there.
-- `https://go.yourbrand.com/` shows a small page saying the domain hosts QR code links.
+- `https://go.yourbrand.com/p/<slug>` serves your [hosted pages](/docs/landing-pages), with their forms, calendar files and **Save contact** downloads.
 - `https://go.yourbrand.com/01/<GTIN>` ([GS1 Digital Link](/docs/product-pages#gs1-digital-link)) opens the product page with that GTIN whose code uses the domain.
-- Every other path returns "not found". The domain never serves the rest of QRdx.
+- On Business, `https://go.yourbrand.com/stats/<token>` serves the [client reports](/docs/client-reports) you assigned to the domain.
+- `https://go.yourbrand.com/` shows a small page saying the domain hosts QR code links. Every other path returns "not found": the domain never serves the dashboard, the editor or any other part of QRdx.
 
-Changes (a newly verified or removed domain) take up to a minute to reach every server.
+A domain that isn't verified yet shows "This domain isn't connected yet" instead. Changes (a newly verified or removed domain) take up to a minute to reach every server.
 
-## Workspaces and roles
+## Limits and plans
 
-A domain belongs to the workspace it was added in. Owners and admins add, verify and remove it; every member can use the workspace's verified domains for their codes.
+| | Free | Pro | Business |
+| --- | --- | --- | --- |
+| Custom domains per workspace | None | 5 | 25 |
+| Client reports on your domain | No | No | Yes |
 
-## Plans and removing domains
+Downgrading never breaks anything: verified domains keep serving the codes that use them. Without Pro or Business you can't add or verify domains or move more codes onto one, but you can still edit those codes and remove domains.
 
-- Downgrading never breaks anything: verified domains keep serving the codes that use them. Without Pro or Business you can't add or verify domains or move more codes onto one, but you can still edit those codes and remove domains.
-- Removing a domain switches its codes back to their default `qrdx.dev/q/<slug>` link. Back-halves chosen on the domain move to `qrdx.dev` when they're free there; the others get a new generated back-half. QR codes printed with the custom-domain link stop working, so the dialog shows how many codes use the domain first.
+Removing a domain switches its codes back to their default `qrdx.dev/q/<slug>` link. Back-halves chosen on the domain move to `qrdx.dev` when they're free there; the others get a new generated back-half. QR codes printed with the custom-domain link stop working, so the dialog shows how many codes use the domain first.
 
-## REST API
+## For developers
 
-The [codes API](/docs/dynamic-qr-codes#rest-api) accepts `domainId` (the id of a verified domain in the same workspace) on `POST /v1/codes` and `PATCH /v1/codes/{id}`. Send `"domainId": null` in a `PATCH` to switch back to the default link. Moving a code onto a domain needs Pro and returns `402 PLAN_REQUIRED` otherwise.
+The [codes API](/docs/developers/api/create-codes) accepts `domainId` (the id of a verified domain in the same workspace) on `POST /v1/codes` and `PATCH /v1/codes/{id}`. Send `"domainId": null` in a `PATCH` to switch back to the default link. Moving a code onto a domain needs Pro or Business and returns `402 PLAN_REQUIRED` otherwise.
 
 Each code in a response includes:
 
@@ -90,4 +106,11 @@ How domains get connected depends on your deployment:
 
 **One-click DNS setup** (optional) uses [Domain Connect](https://www.domainconnect.org). It needs a template of your own, accepted by each DNS provider you want to support, and an RSA key that signs the setup links: set `DOMAIN_CONNECT_PROVIDER_ID`, `DOMAIN_CONNECT_SERVICE_ID` and `DOMAIN_CONNECT_PRIVATE_KEY` (PEM), and publish the public key as `TXT` records at `_dck1.<provider id>`. QRdx's own template (`domain-connect/` in the repository) works only for qrdx.dev, because providers check the signature against its key. Until the published key matches, no button is shown and the app logs why.
 
-The app recognizes custom domains by the `Host` header. Requests for your own app URL, `NEXT_PUBLIC_SHORT_LINK_BASE_URL`, `localhost` and `*.vercel.app` are always treated as the main app.
+The app recognizes custom domains by the `Host` header. Requests for your own app URL, `NEXT_PUBLIC_SHORT_LINK_BASE_URL`, `localhost` and `*.vercel.app` are always treated as the main app. See [Self-hosting](/docs/self-hosting#optional-services).
+
+## Related
+
+- [Use your own domain](/docs/help/domains/custom-domains)
+- [Dynamic QR codes](/docs/dynamic-qr-codes#custom-back-halves): custom back-halves
+- [Product pages and GS1 Digital Link](/docs/product-pages#gs1-digital-link)
+- [Client reports](/docs/client-reports): branded stats pages on your domain
