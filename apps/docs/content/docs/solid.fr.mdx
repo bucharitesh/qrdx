@@ -1,0 +1,97 @@
+---
+title: "SolidJS"
+description: "Des QR codes stylisés sous forme de composants Solid avec qrdx/solid : props réactives, aucun JSX à compiler pour le paquet, rendu serveur avec renderToString et hydratation qui conserve le SVG du serveur."
+icon: FileCode
+---
+
+`qrdx/solid` fournit pour SolidJS les deux composants SVG de la bibliothèque React, `QRCodeSVG` et `QRCode`. Ils dessinent le même SVG que les composants React, suivent vos signaux et s'affichent côté serveur.
+
+## Installation [#install]
+
+```package-install
+qrdx@latest
+```
+
+`solid-js` 1.8 ou version ultérieure (dans la branche 1.x) est une dépendance peer facultative de `qrdx`. Votre application l'a déjà, et vous n'avez pas besoin de `react`.
+
+## Dessiner un code [#draw-a-code]
+
+```tsx
+import { createSignal } from "solid-js";
+import { QRCodeSVG } from "qrdx/solid";
+
+export function MenuCode() {
+  const [color, setColor] = createSignal("#0f172a");
+  return (
+    <>
+      <QRCodeSVG
+        value="https://example.com/menu"
+        size={256}
+        fgColor={color()}
+        frame={{ style: "banner-bottom", text: "Scan me" }}
+        aria-label="QR code for the menu"
+      />
+      <button type="button" onClick={() => setColor("#1d4ed8")}>
+        Blue
+      </button>
+    </>
+  );
+}
+```
+
+`QRCodeSVG` accepte toutes les options du `QRCodeSVG` de React : motifs, couleurs et dégradés, logos (`imageSettings`), cadres, formes, modèles et Art QR. Les attributs comme `class`, `style` ou `aria-label` sont placés sur le `<svg>`, ou sur le `<svg>` extérieur du cadre lorsqu'il y a un cadre.
+
+`QRCode` ajoute le raccourci de logo du `QRCode` de React : `logo`, `logoOptions`, `hideLogo` et `scale`.
+
+```tsx
+import { QRCode } from "qrdx/solid";
+
+<QRCode value="https://example.com" logo="/logo.png" level="H" />;
+```
+
+Les props sont réactives, comme avec tout composant Solid. Quand `color()` change, le code est redessiné. Les gestionnaires d'événements passés dans les props ne sont pas placés sur le `<svg>` : mettez-les sur un élément qui entoure le code.
+
+## Comment le code est dessiné [#how-it-draws]
+
+Le paquet ne contient aucun JSX Solid : il n'a donc besoin d'aucun compilateur Solid et fonctionne avec n'importe quelle configuration de build.
+
+- Dans le navigateur, un composant renvoie directement l'élément `<svg>`, construit avec `createElementNS` (aucun HTML n'est analysé). Solid l'insère dans la page, le remplace par un nouveau lorsqu'un changement de prop modifie le balisage, et le retire lorsque le composant est démonté.
+- Un changement de prop qui produit le même balisage laisse la page intacte.
+
+## Rendu serveur et hydratation [#server-rendering-and-hydration]
+
+Avec `renderToString` de `solid-js/web`, un composant écrit le même balisage que `toSVGString` de `qrdx/core`, plus la clé d'hydratation `data-hk` de Solid sur l'élément racine. `hydrate` utilise cette clé pour conserver le `<svg>` du serveur au lieu de le dessiner à nouveau. À l'intérieur de `<NoHydration>`, la clé est omise.
+
+Le balisage ne contient aucun identifiant aléatoire : le serveur et le navigateur sont donc toujours d'accord.
+
+## Téléchargements, balisage et score de scan [#downloads-markup-and-the-scan-score]
+
+Les composants se contentent de dessiner le code. Les téléchargements, `toSVGString`, le score de scan et les autres fonctions proviennent de `qrdx/core`. C'est le moteur que les composants utilisent déjà, il n'est donc pas inclus deux fois dans le bundle.
+
+```tsx
+import { downloadQRCode } from "qrdx/core";
+import { QRCodeSVG } from "qrdx/solid";
+
+const options = { value: "https://example.com", size: 256 };
+
+export function DownloadableCode() {
+  return (
+    <>
+      <QRCodeSVG {...options} />
+      <button
+        type="button"
+        onClick={() =>
+          downloadQRCode(options, {
+            format: "png",
+            size: { width: 1024, height: 1024 },
+          })
+        }
+      >
+        Download PNG
+      </button>
+    </>
+  );
+}
+```
+
+[JavaScript natif](/docs/vanilla-js) présente `qrdx/core` en détail.

@@ -1,7 +1,7 @@
 {
   "$schema": "../../../.source/json-schema/docs.meta.json",
   "title": "Pustaka React",
-  "description": "Komponen qrdx dan registri shadcn",
+  "description": "Komponen qrdx dan registry shadcn",
   "icon": "Code",
   "root": true,
   "pages": [
@@ -9,6 +9,12 @@
     "../getting-started",
     "../usage",
     "../nextjs",
+    "../vanilla-js",
+    "../vue",
+    "../web-component",
+    "../preact",
+    "../solid",
+    "../angular",
     "---Gaya dan ekspor---",
     "../styles",
     "...../features",

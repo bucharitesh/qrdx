@@ -91,7 +91,7 @@ As configurações ficam em `customProps` (tipado como `DotRingProps`):
 | `outerStrokeWidth`, `outerStrokeColor` | `strokeWidth`, `strokeColor` | Só a borda externa do anel |
 | `innerStrokeWidth`, `innerStrokeColor` | `strokeWidth`, `strokeColor` | Só a borda interna do anel |
 
-Texto que cabe no anel é posicionado como foi escrito, centralizado no topo ou na parte de baixo. Texto longo demais nunca encosta no próprio começo. Primeiro as letras se aproximam, depois a fonte diminui, até a metade do tamanho padrão (o menor tamanho usado nos rótulos de moldura). O texto então fecha o anel com um espaço de palavra onde encontra o começo. Se mesmo assim não couber nesse tamanho, ele é cortado depois da última palavra inteira que couber.
+Texto que cabe no anel é posicionado como foi escrito, centralizado no topo ou na parte de baixo. Texto longo demais nunca encosta no próprio começo. Primeiro as letras se aproximam, depois a fonte diminui, até a metade do tamanho padrão (o menor tamanho usado nos rótulos de moldura). O texto então fecha o anel com um espaço de palavra onde encontra o começo. Se mesmo assim não couber nesse tamanho, um texto que repete uma frase mantém tantas cópias inteiras quanto couberem, e qualquer outro texto é cortado depois da última palavra inteira que couber e termina com "…".
 
 Um logo vai no meio, como em qualquer código. Links longos (códigos com mais de 49 módulos de largura) mantêm uma faixa clara entre o código e os pontos, para que ainda tenham leitura quando impressos pequenos.
 
