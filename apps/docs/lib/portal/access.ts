@@ -22,7 +22,8 @@ import {
   type PublicStats,
   type PublicStatsRange,
 } from "@/lib/public-stats-shared";
-import { getScanAnalytics } from "@/lib/scans";
+import { ALL_TIME_RANGE, SCAN_RANGES, scanRangeDays } from "@/lib/scan-ranges";
+import { codeHistoryStart, getScanAnalytics } from "@/lib/scans";
 import { logError } from "@/lib/shared";
 import { codeLinks, SHORT_LINK_BASE } from "@/lib/short-links";
 
@@ -359,16 +360,13 @@ export async function findPortalCode(
   return { ...toPortalCode(row as CodeRow), folderName: row.folderName };
 }
 
-const RANGE_DAYS: Record<PublicStatsRange, number> = {
-  "7d": 7,
-  "30d": 30,
-  "90d": 90,
-};
-
-/** A code's aggregates for the portal: the same as a shared stats page. */
+/**
+ * A code's aggregates for the portal: the same as a shared stats page.
+ * "all" (plans that keep the whole history) starts at the code's first scan.
+ */
 export async function portalCodeAnalytics(
   portal: Pick<PortalWorkspace, "retentionDays">,
-  codeId: string,
+  code: Pick<PortalCode, "id" | "createdAt">,
   range: PublicStatsRange,
 ): Promise<{
   range: PublicStatsRange;
@@ -376,17 +374,25 @@ export async function portalCodeAnalytics(
   analytics: PublicStats["analytics"];
 }> {
   const ranges = PUBLIC_STATS_RANGES.filter(
-    (key) => RANGE_DAYS[key] <= portal.retentionDays,
+    (key) => SCAN_RANGES[key] <= portal.retentionDays,
   );
   const chosen = ranges.includes(range) ? range : (ranges.at(-1) ?? "7d");
-  const analytics = await getScanAnalytics(codeId, RANGE_DAYS[chosen]);
+  const days = scanRangeDays(
+    chosen,
+    chosen === ALL_TIME_RANGE
+      ? await codeHistoryStart(code.id, code.createdAt)
+      : null,
+  );
+  const analytics = await getScanAnalytics(code.id, days);
   return {
     range: chosen,
     ranges,
     analytics: {
+      from: analytics.from.toISOString(),
       days: analytics.days,
       total: analytics.total,
       unique: analytics.unique,
+      interval: analytics.interval,
       series: analytics.series,
       countries: analytics.countries,
       devices: analytics.devices,
