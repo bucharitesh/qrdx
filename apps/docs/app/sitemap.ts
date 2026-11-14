@@ -14,6 +14,7 @@ import {
 } from "@/lib/content-source";
 import { CUSTOMERS_PATH } from "@/lib/customers";
 import { docsIndex, docsPageLocales } from "@/lib/docs-index";
+import { docsZoneManifest } from "@/lib/docs-zone-manifest";
 import { isPathAvailable } from "@/lib/feature-availability";
 import { docsSitemapEntries } from "@/lib/i18n/docs-seo";
 import { isLocalizedPath } from "@/lib/i18n/paths";
@@ -60,11 +61,37 @@ function withTranslations(entries: Entry[]): Entry[] {
   });
 }
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  return withTranslations(entries());
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  return withTranslations(entries(await docsEntries()));
 }
 
-function entries(): Entry[] {
+/**
+ * The docs' entries: from the docs site's manifest when DOCS_ZONE_URL is set
+ * (that fetch makes this sitemap regenerate hourly; lib/docs-zone-manifest.ts),
+ * else from this app's own copy of the docs. Docs for features this
+ * deployment can't offer (custom domains) are left out; the pages stay up
+ * for existing users. Translations a native reviewer signed off follow their
+ * English page (lib/i18n/docs-seo.ts).
+ */
+async function docsEntries(): Promise<Entry[]> {
+  const manifest = await docsZoneManifest();
+  if (manifest) return manifest.sitemap;
+  return docsIndex()
+    .getPages()
+    .filter((page) => isPathAvailable(page.url))
+    .flatMap((page) =>
+      docsSitemapEntries(page.slugs, docsPageLocales(page.slugs), {
+        lastModified: contentLastModified(
+          `content/docs/${page.path}`,
+          page.data.lastModified,
+        ),
+        changeFrequency: "weekly",
+        priority: page.url === "/docs" ? 0.8 : 0.5,
+      }),
+    );
+}
+
+function entries(docs: Entry[]): Entry[] {
   const url = (path: string): string => new URL(path, baseUrl).toString();
 
   // TypeScript-written pages: the last change to the file that holds the
@@ -286,22 +313,8 @@ function entries(): Entry[] {
       changeFrequency: "weekly",
       priority: 0.6,
     },
-    // Docs for features this deployment can't offer (custom domains) are
-    // left out; the pages stay up for existing users. Translations a native
-    // reviewer signed off follow their English page (lib/i18n/docs-seo.ts).
-    ...docsIndex()
-      .getPages()
-      .filter((page) => isPathAvailable(page.url))
-      .flatMap((page) =>
-        docsSitemapEntries(page.slugs, docsPageLocales(page.slugs), {
-          lastModified: contentLastModified(
-            `content/docs/${page.path}`,
-            page.data.lastModified,
-          ),
-          changeFrequency: "weekly",
-          priority: page.url === "/docs" ? 0.8 : 0.5,
-        }),
-      ),
+    // The docs (docsEntries).
+    ...docs,
     {
       url: url("/blog"),
       lastModified: latest(posts.map(postDate)),
