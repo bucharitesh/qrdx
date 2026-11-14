@@ -1,0 +1,144 @@
+---
+title: "Vanilla JavaScript"
+description: "Gambar, perbarui, dan ekspor kode QR bergaya tanpa React, dengan qrdx/vanilla di halaman atau aplikasi, qrdx/core untuk markup dan node DOM, serta satu modul ES untuk halaman tanpa bundler."
+icon: FileCode
+---
+
+`qrdx` tidak hanya untuk React. Engine yang digunakan komponen React untuk menggambar dipublikasikan tersendiri sebagai `qrdx/core`, dan `qrdx/vanilla` menambahkan API kecil untuk JavaScript biasa di atasnya. Keduanya menggambar SVG yang sama persis dengan `QRCodeSVG`, byte demi byte, lengkap dengan semua gaya, bingkai, logo, dan ekspor. Keduanya tidak mengimpor `react` maupun `react-dom`.
+
+## Instal [#install]
+
+```package-install
+qrdx@latest
+```
+
+`react` dan `react-dom` adalah peer dependency opsional. Anda tidak membutuhkannya untuk `qrdx/vanilla` atau `qrdx/core`.
+
+## Menggambar kode di halaman [#draw-a-code-in-a-page]
+
+```js
+import { createQRCode } from "qrdx/vanilla";
+
+const qr = createQRCode("#qr", {
+  value: "https://example.com",
+  size: 256,
+  bodyPattern: "rounded",
+  frame: { style: "banner-bottom", text: "Scan me" },
+  "aria-label": "QR code for example.com",
+});
+```
+
+`createQRCode(element, options)` menerima elemen atau selector CSS, beserta semua opsi yang diterima `QRCodeSVG`: pola, warna dan gradien, logo (`imageSettings`), bingkai, bentuk, dan Art QR. Atribut seperti `className`, `style`, atau `aria-label` dipasang pada `<svg>`. `<svg>` dibuat dengan `createElementNS`, sehingga tidak ada HTML yang di-parse.
+
+## Memperbarui, mengekspor, dan menghapusnya [#update-export-and-remove-it]
+
+```js
+qr.update({ fgColor: "#1d4ed8" });
+
+qr.toSVGString(); // the SVG markup
+await qr.toDataURL("png", { size: 1024 }); // "png", "jpg", "webp", "svg", "pdf" or "eps"
+await qr.download({ format: "svg", filename: "menu.svg" });
+
+qr.destroy();
+```
+
+- `update` menggabungkan opsi baru ke opsi yang ada lalu menggambar ulang. Berikan `undefined` untuk menghapus suatu opsi. Jika markup tidak berubah, halaman tidak disentuh.
+- `toDataURL` dan `download` secara default menghasilkan PNG dengan `size` asli kode. Bingkai membuat gambar lebih besar daripada kodenya. PDF memerlukan paket opsional `jspdf`.
+- `qr.svg` adalah elemen `<svg>` dan `qr.options` adalah opsi saat ini.
+- `destroy` menghapus `<svg>`. Setelah itu, `update` akan melempar error.
+
+## Tanpa bundler [#without-a-bundler]
+
+`dist/vanilla.browser.mjs` adalah API yang sama dalam satu modul ES, untuk halaman yang memuatnya langsung dari CDN:
+
+```html
+<div id="qr"></div>
+<script type="module">
+  import { createQRCode } from "https://cdn.jsdelivr.net/npm/qrdx/dist/vanilla.browser.mjs";
+
+  createQRCode("#qr", { value: "https://example.com", size: 256 });
+</script>
+```
+
+Tambahkan `@` dan versi setelah `qrdx` pada URL untuk mengunci versi. Path yang sama berfungsi di unpkg.
+
+File ini tidak menyertakan data pustaka bingkai resmi, sehingga halaman yang tidak memakainya tidak mengunduhnya. Untuk memakai bingkai resmi, impor dari file di sebelahnya:
+
+```js
+import { getOfficialFrame } from "https://cdn.jsdelivr.net/npm/qrdx/dist/frames-official.mjs";
+
+const wifi = getOfficialFrame("wifi-card");
+qr.update({ frame: { style: "custom", spec: wifi.spec } });
+```
+
+Ekspor PDF dan skor pemindaian memuat `jspdf` dan `jsqr` saat dijalankan. Halaman yang memakainya memetakan keduanya dengan import map, yang ditempatkan sebelum skrip modul:
+
+```html
+<script type="importmap">
+  {
+    "imports": {
+      "jspdf": "https://cdn.jsdelivr.net/npm/jspdf@4/+esm",
+      "jsqr": "https://cdn.jsdelivr.net/npm/jsqr@1/+esm"
+    }
+  }
+</script>
+```
+
+## Markup dan node DOM (qrdx/core) [#markup-and-dom-nodes-qrdxcore]
+
+`qrdx/core` memiliki semua yang ada di entri utama `qrdx` kecuali komponen React. Ia berjalan di Node dan di browser.
+
+```ts
+import {
+  createQRCodeTree,
+  renderToDOM,
+  renderToString,
+  resolveQRCodeProps,
+  toSVGElement,
+  toSVGString,
+} from "qrdx/core";
+
+// What <QRCodeSVG> renders, as a string (no DOM needed)
+const svg = toSVGString({ value: "https://example.com", size: 256 });
+
+// The same code as an <svg> element
+document.body.append(toSVGElement({ value: "https://example.com" }));
+
+// The code as plain { type, props, key } nodes, then markup or DOM nodes
+const tree = createQRCodeTree({ value: "https://example.com" });
+renderToString(tree);
+renderToDOM(tree);
+
+// <QRCode>'s logo API (logo, logoOptions, hideLogo, scale)
+toSVGString(resolveQRCodeProps({ value: "https://example.com", logo: "/logo.png" }));
+```
+
+Keluarannya tidak memiliki id acak, sehingga markup yang dirender di server sama dengan yang ada di browser. Unduhan, skor pemindaian, serta PDF dan EPS siap cetak berasal dari fungsi yang sama dengan pustaka React: `downloadQRCode`, `getQRCodeDataUrl`, `getScanScore`, `downloadPrintPDF`, dan lainnya. Untuk PNG di server, gunakan `getQRAsPNG` dari `qrdx/node`.
+
+## Template kustom tanpa JSX [#custom-templates-without-jsx]
+
+`wrapper` milik template menerima kode yang sudah digambar dan mengembalikannya dalam keadaan terbungkus. `h(type, props, ...children)` menuliskannya tanpa JSX:
+
+```js
+import { h, toSVGString } from "qrdx/core";
+
+const Labelled = {
+  id: "Labelled",
+  name: "Labelled",
+  wrapper: (children, props) =>
+    h(
+      "svg",
+      { viewBox: "0 0 300 340", xmlns: "http://www.w3.org/2000/svg" },
+      h("g", { transform: "translate(20, 20) scale(0.87)" }, children),
+      h("text", { x: "150", y: "325", textAnchor: "middle" }, props?.label)
+    ),
+};
+
+toSVGString({
+  value: "https://example.com",
+  customTemplate: Labelled,
+  customProps: { label: "Scan me" },
+});
+```
+
+Wrapper yang sama berfungsi di komponen React jika `h` diimpor dari `qrdx`.

@@ -1,0 +1,97 @@
+---
+title: "SolidJS"
+description: "qrdx/solid を使って、スタイル付きQRコードをSolidコンポーネントとして利用できます。リアクティブなprops、パッケージ側でコンパイルするJSXが不要な構成、renderToString によるサーバーレンダリング、サーバー側のSVGを維持するハイドレーションに対応しています。"
+icon: FileCode
+---
+
+`qrdx/solid` は、ReactライブラリのSVGコンポーネント `QRCodeSVG` と `QRCode` をSolidJS向けに提供します。Reactコンポーネントと同じSVGを描画し、シグナルに追従し、サーバー上でもレンダリングできます。
+
+## インストール [#install]
+
+```package-install
+qrdx@latest
+```
+
+`solid-js` 1.8以降（1.x系）は、`qrdx` のオプションのピア依存関係です。アプリにはすでに含まれているはずで、`react` は不要です。
+
+## コードを描画する [#draw-a-code]
+
+```tsx
+import { createSignal } from "solid-js";
+import { QRCodeSVG } from "qrdx/solid";
+
+export function MenuCode() {
+  const [color, setColor] = createSignal("#0f172a");
+  return (
+    <>
+      <QRCodeSVG
+        value="https://example.com/menu"
+        size={256}
+        fgColor={color()}
+        frame={{ style: "banner-bottom", text: "Scan me" }}
+        aria-label="QR code for the menu"
+      />
+      <button type="button" onClick={() => setColor("#1d4ed8")}>
+        Blue
+      </button>
+    </>
+  );
+}
+```
+
+`QRCodeSVG` は、Reactの `QRCodeSVG` が受け取るすべてのオプションに対応しています。パターン、色とグラデーション、ロゴ（`imageSettings`）、フレーム、シェイプ、テンプレート、Art QRが使えます。`class`、`style`、`aria-label` などの属性は `<svg>` に付与されます。フレームがある場合は、フレームの外側の `<svg>` に付与されます。
+
+`QRCode` には、Reactの `QRCode` にあるロゴのショートカットとして `logo`、`logoOptions`、`hideLogo`、`scale` が加わります。
+
+```tsx
+import { QRCode } from "qrdx/solid";
+
+<QRCode value="https://example.com" logo="/logo.png" level="H" />;
+```
+
+propsは、一般的なSolidコンポーネントと同様にリアクティブです。`color()` が変わると、コードが再描画されます。propsに渡したイベントハンドラーは `<svg>` には設定されないため、コードを囲む要素に設定してください。
+
+## 描画の仕組み [#how-it-draws]
+
+このパッケージにはSolidのJSXが含まれていないため、Solidのコンパイラーは不要で、どのビルド構成でも動作します。
+
+- ブラウザーでは、コンポーネントは `createElementNS` で構築した `<svg>` 要素そのものを返します（HTMLは解析しません）。Solidがそれをページに配置し、propsの変更でマークアップが変わると新しい要素に差し替え、コンポーネントがアンマウントされると削除します。
+- 同じマークアップになるpropsの変更では、ページは更新されません。
+
+## サーバーレンダリングとハイドレーション [#server-rendering-and-hydration]
+
+`solid-js/web` の `renderToString` を使うと、コンポーネントは `qrdx/core` の `toSVGString` と同じマークアップを出力し、ルート要素にSolidのハイドレーションキー `data-hk` が加わります。`hydrate` はこのキーを使って、`<svg>` を再描画せずサーバー側のものをそのまま維持します。`<NoHydration>` の内側では、このキーは出力されません。
+
+マークアップにランダムなIDは含まれないため、サーバーとブラウザーの出力は常に一致します。
+
+## ダウンロード、マークアップ、スキャンスコア [#downloads-markup-and-the-scan-score]
+
+コンポーネントはコードを描画するだけです。ダウンロード、`toSVGString`、スキャンスコアなどの関数は `qrdx/core` から利用します。コンポーネントがすでに使っているエンジンなので、二重にバンドルされることはありません。
+
+```tsx
+import { downloadQRCode } from "qrdx/core";
+import { QRCodeSVG } from "qrdx/solid";
+
+const options = { value: "https://example.com", size: 256 };
+
+export function DownloadableCode() {
+  return (
+    <>
+      <QRCodeSVG {...options} />
+      <button
+        type="button"
+        onClick={() =>
+          downloadQRCode(options, {
+            format: "png",
+            size: { width: 1024, height: 1024 },
+          })
+        }
+      >
+        Download PNG
+      </button>
+    </>
+  );
+}
+```
+
+`qrdx/core` の詳細は、[Vanilla JavaScript](/docs/vanilla-js) を参照してください。

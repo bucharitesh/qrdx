@@ -1,0 +1,99 @@
+---
+title: "Angular"
+description: "qrdx/angular のスタンドアロン QRCode コンポーネントで、Angular にスタイル付きQRコードを描画します。シグナル入力、サーバーレンダリングとハイドレーション、SVG・PNG・PDF のダウンロードに対応しています。"
+icon: Code
+---
+
+`qrdx/angular` は、スタンドアロンの Angular コンポーネント `<qrdx-qr-code>` です。React コンポーネントと同じエンジンで動作します。React の `<QRCode>` のプロップをシグナル入力として受け取り、パターン、色とグラデーション、ロゴ、フレーム、シェイプ、Art QR、テンプレートまで、同じ SVG をバイト単位で一致するように描画します。`@angular/ssr` によるサーバーレンダリングにも対応し、エラーなくハイドレーションできます。
+
+Angular 20 以降で動作し、本番ビルドでも `ng serve` でも使えます。
+
+## インストール [#install]
+
+```package-install
+qrdx@latest
+```
+
+`@angular/core` は `qrdx` のオプションのピア依存関係です。そのため、Angular を使わないアプリに Angular が追加されることはなく、あなたのアプリに React が追加されることもありません。
+
+## QRコードを描画する [#draw-a-code]
+
+`QRCode` をインポートし、コンポーネントの `imports` に追加します。NgModule は不要です。
+
+```ts title="app.ts"
+import { Component, signal } from "@angular/core";
+import { QRCode, type QRCodeProps } from "qrdx/angular";
+
+@Component({
+  selector: "app-root",
+  imports: [QRCode],
+  template: `
+    <qrdx-qr-code
+      [value]="url()"
+      [size]="240"
+      level="Q"
+      bodyPattern="rounded"
+      [fgColor]="fgColor"
+      [frame]="{ style: 'banner-bottom', text: 'Scan me' }"
+      aria-label="QR code for example.com"
+    />
+  `,
+})
+export class App {
+  protected readonly url = signal("https://example.com");
+  protected readonly fgColor: QRCodeProps["fgColor"] = {
+    type: "linear",
+    angle: 45,
+    stops: [
+      { color: "#1d4ed8", offset: 0 },
+      { color: "#0f172a", offset: 100 },
+    ],
+  };
+}
+```
+
+入力が変わると、QRコードは再描画されます。変更してもマークアップが同じ場合、ページには手を加えません。
+
+## 入力 [#inputs]
+
+React の `<QRCode>` のプロップはすべて、同じ名前と型の入力として使えます。テンプレートのコンパイル時に、Angular がバインディングをこれらの入力と照らして検査します。`value` は必須です。
+
+| 入力 | 内容 |
+| --- | --- |
+| `value`, `size`, `level`, `margin`, `autoLevel` | コンテンツ、ピクセルサイズ、誤り訂正、クワイエットゾーン、大きなロゴ向けにレベルを引き上げる設定 |
+| `fgColor`, `bgColor`, `eyeColor`, `dotColor`, `eyeColors` | 色、グラデーション、画像による塗りつぶし |
+| `bodyPattern`, `cornerEyePattern`, `cornerEyeDotPattern`, `moduleScale` | ドットとアイの形 |
+| `logo`, `logoOptions`, `hideLogo`, `scale` | 中央に置くロゴ。レイアウトは `<QRCode>` と同じです |
+| `frame`, `shape`, `art` | 行動喚起付きのフレーム、円やハートの輪郭、Logo QR、Image QR |
+| `templateId`, `customTemplate`, `customProps` | テンプレート |
+| `frameLabelMarkers`, `partMarkers` | エディターのライブプレビュー用マーカー |
+| `svgStyle` | `<svg>` に適用するインラインスタイル（`QRCode` の `style`） |
+
+`style` を `svgStyle` という名前にしているのは、`style` という名前の入力があると、要素自身の `style` 属性を奪ってしまうためです。`<qrdx-qr-code>` に付けた `class`、`style`、`aria-label` などの属性は、その要素に残ります。`<svg>` はその内側にあります。
+
+Angular はコンポーネントのスタイルをテンプレート内の要素にスコープするため、コンポーネント自身のスタイルは `<svg>` には届きません。QRコードをコンテナいっぱいに広げるには、`svgStyle` を使います。
+
+```html
+<qrdx-qr-code value="https://example.com" [svgStyle]="{ width: '100%', height: 'auto' }" />
+```
+
+## ダウンロードとエクスポート [#download-and-export]
+
+このコンポーネントは、`qrdx/vanilla` と同様に、描画したQRコードをダウンロードしたりエクスポートしたりできます。テンプレート参照変数または `viewChild(QRCode)` から呼び出します。
+
+```html
+<qrdx-qr-code #qr value="https://example.com" [size]="256" />
+<button type="button" (click)="qr.download({ format: 'svg' })">Download SVG</button>
+```
+
+- `download({ format, size, filename, quality })` はファイルを保存します。既定は PNG で、`"jpg"`、`"webp"`、`"svg"`、`"pdf"`、`"eps"` も指定できます。PDF にはオプションの `jspdf` パッケージが必要です。
+- `toDataURL(format, { size, quality })` は、QRコードをデータ URL として返します。
+- `markup()` は SVG マークアップ、`options()` はQRコードの描画に使うプロップ、`svg` は `<svg>` 要素です。
+
+`qrdx/core` のすべてが `qrdx/angular` からもエクスポートされるため、`toSVGString`、`downloadQRCode`、`getScanScore` などは同じインポートから使えます。
+
+## サーバーレンダリングとハイドレーション [#server-rendering-and-hydration]
+
+`@angular/ssr` を使うと、サーバーが返す HTML にすでにQRコードが含まれているため、アプリの読み込み前から表示されます。ブラウザーでは、Angular がページをハイドレーションし、`<qrdx-qr-code>` 要素を保持します。その後コンポーネントがQRコードを再描画しますが、結果はサーバーのものと同一です。`ngSkipHydration` は不要です。
+
+出力にランダムな ID は含まれないため、サーバーとブラウザーは同じマークアップを描画します。

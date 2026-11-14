@@ -1,0 +1,87 @@
+---
+title: "Preact"
+description: "qrdx/preact로 스타일이 적용된 QR 코드를 Preact 컴포넌트로 사용하세요. preact/compat 없이 Preact 자체의 h로 그리고, preact-render-to-string으로 서버에서 렌더링하며, 다시 그리지 않고 하이드레이션합니다."
+icon: FileCode
+---
+
+`qrdx/preact`에는 React 라이브러리의 SVG 컴포넌트 두 가지인 `QRCodeSVG`와 `QRCode`가 Preact용으로 들어 있습니다. 이 컴포넌트들은 Preact 자체의 `h`로 그리므로 `preact/compat`이 필요 없으며, React 컴포넌트와 동일한 SVG를 그립니다.
+
+## 설치 [#install]
+
+```package-install
+qrdx@latest
+```
+
+`preact` 10 이상은 `qrdx`의 선택적 피어 의존성입니다. 앱에 이미 설치되어 있을 것이며, `react`는 필요하지 않습니다.
+
+## 코드 그리기 [#draw-a-code]
+
+```tsx
+import { QRCodeSVG } from "qrdx/preact";
+
+export function MenuCode() {
+  return (
+    <QRCodeSVG
+      value="https://example.com/menu"
+      size={256}
+      bodyPattern="rounded"
+      frame={{ style: "banner-bottom", text: "Scan me" }}
+      aria-label="QR code for the menu"
+    />
+  );
+}
+```
+
+`QRCodeSVG`는 React `QRCodeSVG`가 받는 모든 옵션을 지원합니다. 패턴, 색상과 그라디언트, 로고(`imageSettings`), 프레임, 모양, 템플릿, Art QR을 사용할 수 있습니다. `class`, `style`, `aria-label` 같은 속성은 `<svg>`에 적용되며, 프레임이 있으면 프레임의 바깥쪽 `<svg>`에 적용됩니다.
+
+`QRCode`는 React `QRCode`의 로고 단축 옵션인 `logo`, `logoOptions`, `hideLogo`, `scale`을 추가로 제공합니다.
+
+```tsx
+import { QRCode } from "qrdx/preact";
+
+<QRCode value="https://example.com" logo="/logo.png" level="H" />;
+```
+
+두 컴포넌트 모두 prop이 바뀌면 다시 그리고, 바뀐 것이 없으면 작업을 건너뜁니다. React와 마찬가지로 prop의 이벤트 핸들러는 `<svg>`에 붙지 않습니다. 코드를 감싸는 요소에 붙여 주세요.
+
+## 서버 렌더링 [#server-rendering]
+
+`preact-render-to-string`의 `renderToString`은 `qrdx/core`의 `toSVGString`과 동일한 SVG를 출력합니다. 차이는 이스케이프뿐입니다. Preact는 텍스트의 `>`와 `'`를 그대로 두지만, core는 `&gt;`와 `&#x27;`로 씁니다. 브라우저는 둘을 똑같이 해석합니다.
+
+`hydrate`는 서버에서 만든 `<svg>`를 유지하고 다시 그리지 않습니다. 마크업에 무작위 id가 없으므로 서버와 브라우저의 결과가 항상 일치합니다.
+
+## 다운로드, 마크업, 스캔 점수 [#downloads-markup-and-the-scan-score]
+
+이 컴포넌트들은 코드를 그리는 일만 합니다. 다운로드, `toSVGString`, 스캔 점수 등 나머지 기능은 `qrdx/core`에서 가져옵니다. 컴포넌트가 이미 사용하는 엔진이므로 중복으로 번들되지 않습니다.
+
+```tsx
+import { downloadQRCode } from "qrdx/core";
+import { QRCodeSVG } from "qrdx/preact";
+
+const options = { value: "https://example.com", size: 256 };
+
+export function DownloadableCode() {
+  return (
+    <>
+      <QRCodeSVG {...options} />
+      <button
+        type="button"
+        onClick={() =>
+          downloadQRCode(options, {
+            format: "png",
+            size: { width: 1024, height: 1024 },
+          })
+        }
+      >
+        Download PNG
+      </button>
+    </>
+  );
+}
+```
+
+`qrdx/core`는 [Vanilla JavaScript](/docs/vanilla-js)에서 자세히 다룹니다.
+
+## preact/compat과 함께 사용하기 [#with-preactcompat]
+
+앱에서 이미 `react`를 `preact/compat`의 별칭으로 지정했다면 `qrdx`의 React 컴포넌트도 동작합니다: `import { QRCodeSVG } from "qrdx"`. `qrdx/preact`는 별칭 없이도 같은 코드를 그리므로, Preact 앱에 `qrdx`를 추가할 때는 이쪽을 권장합니다.
