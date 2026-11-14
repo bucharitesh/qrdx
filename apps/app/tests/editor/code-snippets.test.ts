@@ -371,7 +371,7 @@ describe("reactSnippet", () => {
   });
 
   it("is written for the qrdx on npm", () => {
-    expect(QRDX_NPM_VERSION).toBe("0.0.53");
+    expect(QRDX_NPM_VERSION).toBe("0.0.54");
   });
 });
 
