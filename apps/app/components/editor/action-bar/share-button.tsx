@@ -1,4 +1,4 @@
-import { Spinner } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
 import { Share } from "iconsax-reactjs";
@@ -32,7 +32,7 @@ export function ShareButton({
         {...props}
       >
         {isSharing ? (
-          <Spinner className="size-4" />
+          <ModuleOrbit aria-hidden className="size-4" />
         ) : (
           <Share className="size-4" />
         )}

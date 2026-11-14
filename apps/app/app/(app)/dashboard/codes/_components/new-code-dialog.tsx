@@ -2,7 +2,7 @@
 
 import { track } from "@repo/analytics";
 import { toast } from "@repo/design-system";
-import { Spinner as Loader2 } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
@@ -535,7 +535,7 @@ export function NewCodeDialog({
               {t("back")}
             </Button>
             <Button disabled={isPending} form="new-page-form" type="submit">
-              {isPending && <Loader2 className="animate-spin" />}
+              {isPending && <ModuleOrbit aria-hidden />}
               {isPending ? t("creating") : t("createPage")}
             </Button>
           </ResponsiveDialogFooter>

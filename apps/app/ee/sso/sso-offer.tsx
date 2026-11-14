@@ -1,6 +1,6 @@
 "use client";
 
-import { Spinner } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Building } from "iconsax-reactjs";
@@ -80,7 +80,7 @@ export function SsoOffer({
         >
           <Building aria-hidden className="size-5" />
           <span className="font-medium">Continue with SSO</span>
-          {starting && <Spinner className="size-4 animate-spin" />}
+          {starting && <ModuleOrbit aria-hidden className="size-4" />}
         </Button>
         {lastUsed && (
           <Badge

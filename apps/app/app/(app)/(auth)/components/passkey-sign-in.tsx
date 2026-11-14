@@ -1,7 +1,7 @@
 "use client";
 
 import { authClient } from "@repo/auth/client";
-import { Spinner } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import { FingerScan } from "iconsax-reactjs";
@@ -84,7 +84,7 @@ export function PasskeySignIn({
         >
           <FingerScan className="size-5" />
           <span className="font-medium">{t("continueWithPasskey")}</span>
-          {loading && <Spinner className="size-4 animate-spin" />}
+          {loading && <ModuleOrbit aria-hidden className="size-4" />}
         </Button>
         {lastUsed && (
           <Badge

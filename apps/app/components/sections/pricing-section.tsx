@@ -3,11 +3,8 @@
 import { track } from "@repo/analytics";
 import { authClient } from "@repo/auth/client";
 import { toast } from "@repo/design-system";
-import {
-  GithubLogo,
-  Spinner,
-  Tick,
-} from "@repo/design-system/components/icons";
+import { GithubLogo, Tick } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Card } from "@repo/design-system/components/ui/card";
@@ -353,7 +350,7 @@ export function PricingSection({
         >
           {busy ? (
             <>
-              <Spinner aria-hidden />
+              <ModuleOrbit aria-hidden />
               {t("cards.redirecting")}
             </>
           ) : (

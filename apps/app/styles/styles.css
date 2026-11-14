@@ -11,7 +11,6 @@
    (lightningcss) doesn't know the valid ::highlight() pseudo-element yet and
    warns on every build, so they aren't generated. */
 @source not inline("[&_::highlight(fd-search)]:text-fd-primary [&_::highlight(fd-search)]:underline");
-@import "./loaders.css";
 
 :root {
   --fd-layout-width: 100vw;

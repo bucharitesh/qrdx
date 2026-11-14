@@ -1,11 +1,8 @@
 "use client";
 
 import { authClient } from "@repo/auth/client";
-import {
-  GithubLogo,
-  GoogleLogo,
-  Spinner as Loader2,
-} from "@repo/design-system/components/icons";
+import { GithubLogo, GoogleLogo } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
@@ -62,7 +59,7 @@ export function OAuthSignIn({
           <GoogleLogo className="h-4 w-4" />
           {t("continueWithGoogle")}
           {loadingProvider === "google" && (
-            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            <ModuleOrbit aria-hidden className="h-3.5 w-3.5" />
           )}
         </Button>
 
@@ -75,7 +72,7 @@ export function OAuthSignIn({
           <GithubLogo className="h-4 w-4" />
           {t("continueWithGithub")}
           {loadingProvider === "github" && (
-            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            <ModuleOrbit aria-hidden className="h-3.5 w-3.5" />
           )}
         </Button>
       </div>

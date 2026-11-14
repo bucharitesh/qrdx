@@ -1,6 +1,6 @@
 "use client";
 
-import { Spinner } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import type { SourceItem } from "@repo/integrations";
@@ -92,7 +92,7 @@ export function SourcePreview({ slug, name }: { slug: string; name: string }) {
 
       {items === null ? (
         <div className="flex justify-center p-6">
-          <Spinner className="size-5 text-muted-foreground" />
+          <ModuleOrbit aria-hidden className="size-5 text-muted-foreground" />
         </div>
       ) : error ? (
         <p className="rounded-md bg-muted p-3 text-muted-foreground text-sm text-pretty">

@@ -2,8 +2,11 @@
 
 import { track } from "@repo/analytics";
 import { toast } from "@repo/design-system";
+import {
+  AssemblingCode,
+  ModuleOrbit,
+} from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
-import { Spinner } from "@repo/design-system/components/ui/spinner";
 import { cn } from "@repo/design-system/lib/utils";
 import {
   DocumentDownload,
@@ -139,7 +142,7 @@ export function AIArtResultPanel({
 
         {isGenerating && (
           <div className="bg-background/80 absolute inset-0 flex flex-col items-center justify-center gap-3 p-6 text-center backdrop-blur-sm">
-            <Spinner className="size-6" />
+            <AssemblingCode label={t("generating")} />
             <p className="text-sm font-medium">
               {progress ?? (
                 <>
@@ -222,7 +225,7 @@ export function AIArtResultPanel({
               onClick={handlePrintDownload}
               variant="outline"
             >
-              {preparingPrint ? <Spinner /> : <DocumentDownload />}
+              {preparingPrint ? <ModuleOrbit /> : <DocumentDownload />}
               {t("printSize")}
               {ART_PRINT_SIZE} {t("px")}
             </Button>
@@ -278,7 +281,7 @@ export function StatusDot({ status }: { status: ScanStatus }) {
 // Titles and descriptions: aiArt.aiArtResult.status.<status>.
 export const SCAN_STATUS: Record<ScanStatus, { icon: ReactNode }> = {
   checking: {
-    icon: <Spinner className="size-4" />,
+    icon: <ModuleOrbit className="size-4" />,
   },
   scannable: {
     icon: (

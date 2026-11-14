@@ -1,4 +1,5 @@
 import { Close } from "@repo/design-system/components/icons";
+import { AssemblingCode } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
 import { InfoCircle } from "iconsax-reactjs";
@@ -9,7 +10,6 @@ import {
   ConversationContent,
   ConversationScrollButton,
 } from "@/components/ai-elements/conversation";
-import { Loader } from "@/components/loader";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
 import { parseAiSdkTransportError } from "@/lib/ai/parse-ai-sdk-transport-error";
 import { useChatContext } from "@/lib/hooks/use-chat-context";
@@ -46,6 +46,7 @@ export function Messages({
   onSuggestion,
 }: ChatMessagesProps) {
   const t = useTranslations("editor.ai.messages");
+  const tInput = useTranslations("editor.ai.chatInput");
   const { status, error, clearError } = useChatContext();
   const { isScrollStart, isScrollEnd, scrollStartRef, scrollEndRef } =
     useScrollStartEnd();
@@ -156,7 +157,7 @@ export function Messages({
                 <div className="bg-background/70 grid size-8 place-items-center rounded-full border shadow-xs">
                   <AnimatedBot className="size-5" thinking />
                 </div>
-                <Loader variant="dots" size="sm" />
+                <AssemblingCode label={tInput("designingYourCode")} size={24} />
               </div>
             )}
 

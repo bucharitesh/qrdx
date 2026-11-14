@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Spinner } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   Form,
@@ -123,7 +123,7 @@ export function ThemeSaveDialog({
           >
             {isSaving || form.formState.isSubmitting ? (
               <>
-                <Spinner className="mr-1 size-4 animate-spin" />
+                <ModuleOrbit aria-hidden className="mr-1 size-4" />
                 {t("saving")}
               </>
             ) : (

@@ -1,7 +1,7 @@
 "use client";
 
 import { authClient } from "@repo/auth/client";
-import { Spinner } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
@@ -100,7 +100,7 @@ export function UserProfileDropdown({
           key="spinner"
           className={cn("flex size-8 items-center justify-center", FADE_IN)}
         >
-          <Spinner className="text-muted-foreground size-7 animate-spin" />
+          <ModuleOrbit aria-hidden className="text-muted-foreground size-7" />
         </div>
       );
     }

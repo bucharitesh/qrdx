@@ -1,6 +1,7 @@
 "use client";
 
-import { Info, Spinner } from "@repo/design-system/components/icons";
+import { Info } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   Dialog,
@@ -135,7 +136,9 @@ export function PublishThemeDialog({
             {t("cancel")}
           </Button>
           <Button disabled={!accepted || publish.isPending} onClick={submit}>
-            {publish.isPending && <Spinner className="size-4" />}
+            {publish.isPending && (
+              <ModuleOrbit aria-hidden className="size-4" />
+            )}
             {publish.isPending ? t("checkingAndPublishing") : t("publish")}
           </Button>
         </DialogFooter>

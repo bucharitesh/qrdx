@@ -9,7 +9,7 @@ import { useTranslations } from "next-intl";
 // (tests/barcode/render.test.ts).
 
 import { toast } from "@repo/design-system";
-import { Spinner } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
@@ -220,7 +220,7 @@ export function BarcodeEditor({
               onClick={() => current && save(current)}
             >
               {saving ? (
-                <Spinner className="size-4 animate-spin" />
+                <ModuleOrbit aria-hidden className="size-4" />
               ) : (
                 <Save2 aria-hidden className="size-4" />
               )}

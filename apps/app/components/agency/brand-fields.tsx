@@ -5,7 +5,7 @@
 // logo is an upload (cropped and re-encoded here, checked again on the
 // server) or an https image URL; the accent is optional.
 
-import { Spinner } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
@@ -419,7 +419,7 @@ export function BrandFields({
           </Button>
         )}
         <Button disabled={off} size="sm" type="submit">
-          {busy && <Spinner aria-hidden className="animate-spin" />}
+          {busy && <ModuleOrbit aria-hidden />}
           {submitLabel}
         </Button>
       </div>

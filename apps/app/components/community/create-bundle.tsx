@@ -1,6 +1,7 @@
 "use client";
 
-import { Spinner, Tick } from "@repo/design-system/components/icons";
+import { Tick } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Checkbox } from "@repo/design-system/components/ui/checkbox";
 import { Input } from "@repo/design-system/components/ui/input";
@@ -334,7 +335,7 @@ export function CreateBundle({
           )}
           <div>
             <Button disabled={!ready || pending} onClick={submit}>
-              {pending && <Spinner className="size-4" />}
+              {pending && <ModuleOrbit aria-hidden className="size-4" />}
               {pending
                 ? t("publishing")
                 : mode === "collection"

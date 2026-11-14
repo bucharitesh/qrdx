@@ -1,7 +1,7 @@
 "use client";
 
 import { toast } from "@repo/design-system";
-import { Spinner } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -185,11 +185,7 @@ export function JoinLinkCard({
             </>
           ) : (
             <Button disabled={isPending} onClick={() => void issue(role)}>
-              {isPending ? (
-                <Spinner aria-hidden className="animate-spin" />
-              ) : (
-                <Link21 aria-hidden />
-              )}
+              {isPending ? <ModuleOrbit aria-hidden /> : <Link21 aria-hidden />}
               {t("createJoinLink")}
             </Button>
           )}

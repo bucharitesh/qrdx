@@ -1,9 +1,7 @@
 "use client";
 
-import {
-  Spinner as Loader2,
-  Close as X,
-} from "@repo/design-system/components/icons";
+import { Close as X } from "@repo/design-system/components/icons";
+import { ModuleOrbit, Scanframe } from "@repo/design-system/components/loaders";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
@@ -241,7 +239,11 @@ export function SourcePickerDialog({
         <div className="h-[340px] overflow-y-auto overscroll-contain rounded-md border">
           {loading && items.length === 0 ? (
             <div className="flex items-center justify-center p-8">
-              <Loader2 className="size-6 animate-spin text-muted-foreground" />
+              <Scanframe
+                aria-hidden
+                className="text-muted-foreground"
+                size={24}
+              />
             </div>
           ) : !ready ? (
             <p className="p-8 text-center text-muted-foreground text-sm text-pretty">
@@ -314,7 +316,7 @@ export function SourcePickerDialog({
                 type="button"
                 variant="outline"
               >
-                {loading && <Loader2 className="size-3.5 animate-spin" />}
+                {loading && <ModuleOrbit aria-hidden className="size-3.5" />}
                 {t("loadMore")}
               </Button>
             </div>

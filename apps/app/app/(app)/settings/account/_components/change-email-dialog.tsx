@@ -3,7 +3,7 @@
 import { track } from "@repo/analytics";
 import { authClient } from "@repo/auth/client";
 import { toast } from "@repo/design-system";
-import { Spinner } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   Dialog,
@@ -301,7 +301,7 @@ export function ChangeEmailDialog({
                 disabled={busy || codeDead || code.length !== CODE_LENGTH}
                 type="submit"
               >
-                {confirming && <Spinner className="animate-spin" />}
+                {confirming && <ModuleOrbit aria-hidden />}
                 {t("changeEmail")}
               </Button>
             </DialogFooter>
@@ -343,7 +343,7 @@ export function ChangeEmailDialog({
                 {t("cancel")}
               </Button>
               <Button disabled={sending || !newEmail.trim()} type="submit">
-                {sending && <Spinner className="animate-spin" />}
+                {sending && <ModuleOrbit aria-hidden />}
                 {t("sendCode")}
               </Button>
             </DialogFooter>

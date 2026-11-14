@@ -2,6 +2,7 @@
 
 import { toast } from "@repo/design-system";
 import { Tick as Check } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   Dialog,
@@ -11,7 +12,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@repo/design-system/components/ui/dialog";
-import { Spinner } from "@repo/design-system/components/ui/spinner";
 import { cn } from "@repo/design-system/lib/utils";
 import { FolderOpen } from "iconsax-reactjs";
 import { useTranslations } from "next-intl";
@@ -134,7 +134,7 @@ export function LibraryButton({
           <div className="max-h-80 space-y-1 overflow-y-auto" ref={scrollRef}>
             {files === null ? (
               <div className="flex justify-center py-8">
-                <Spinner />
+                <ModuleOrbit />
               </div>
             ) : files.length === 0 ? (
               <p className="py-8 text-center text-muted-foreground text-sm">

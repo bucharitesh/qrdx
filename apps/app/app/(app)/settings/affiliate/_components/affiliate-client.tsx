@@ -1,7 +1,8 @@
 "use client";
 
 import { toast } from "@repo/design-system";
-import { Spinner, Tick } from "@repo/design-system/components/icons";
+import { Tick } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Copy } from "iconsax-reactjs";
@@ -102,7 +103,7 @@ export function PaypalEmailForm({ current }: { current: string | null }) {
           value={email}
         />
         <Button disabled={isPending || unchanged} type="submit">
-          {isPending && <Spinner className="animate-spin" />}
+          {isPending && <ModuleOrbit aria-hidden />}
           {t("save")}
         </Button>
       </div>
@@ -170,7 +171,7 @@ export function ChooseCodeForm({ current }: { current: string }) {
           type="submit"
           variant="outline"
         >
-          {isPending && <Spinner className="animate-spin" />}
+          {isPending && <ModuleOrbit aria-hidden />}
           {t("changeOnce")}
         </Button>
       </div>

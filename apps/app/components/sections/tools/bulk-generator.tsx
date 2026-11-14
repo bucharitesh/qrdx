@@ -3,10 +3,8 @@
 import { track } from "@repo/analytics";
 import { authClient } from "@repo/auth/client";
 import { HairlineFigure } from "@repo/design-system/components/hairline/hairline";
-import {
-  Spinner as Loader2,
-  Close as X,
-} from "@repo/design-system/components/icons";
+import { Close as X } from "@repo/design-system/components/icons";
+import { AssemblingCode } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Checkbox } from "@repo/design-system/components/ui/checkbox";
 import { Label } from "@repo/design-system/components/ui/label";
@@ -790,7 +788,7 @@ export function BulkGenerator() {
 
         {status.phase === "running" && status.done === 0 && (
           <p className="flex items-center gap-2 text-xs text-muted-foreground">
-            <Loader2 className="size-3 animate-spin" /> {t("preparing")}
+            <AssemblingCode aria-hidden size={16} /> {t("preparing")}
           </p>
         )}
 

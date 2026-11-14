@@ -2,10 +2,10 @@
 
 import { toast } from "@repo/design-system";
 import { Close } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Label } from "@repo/design-system/components/ui/label";
 import { Slider } from "@repo/design-system/components/ui/slider";
-import { Spinner } from "@repo/design-system/components/ui/spinner";
 import {
   ToggleGroup,
   ToggleGroupItem,
@@ -199,7 +199,7 @@ function ArtPhotoField({
           type="button"
         >
           {preparing ? (
-            <Spinner className="size-5" />
+            <ModuleOrbit className="size-5" />
           ) : (
             <GalleryAdd aria-hidden className="size-5" />
           )}
@@ -263,7 +263,7 @@ function ArtPhotoField({
             type="button"
             variant="outline"
           >
-            {preparing ? <Spinner /> : <GalleryAdd />}
+            {preparing ? <ModuleOrbit /> : <GalleryAdd />}
             {t("replace")}
           </Button>
           <Button

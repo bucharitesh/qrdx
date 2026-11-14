@@ -1,6 +1,6 @@
 "use client";
 
-import { Spinner } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Label } from "@repo/design-system/components/ui/label";
 import {
@@ -183,7 +183,7 @@ export function SlackLinkForm({
           <Link href={cancelHref}>Cancel</Link>
         </Button>
         <Button disabled={pending || !verified} onClick={confirm} type="button">
-          {pending && <Spinner aria-hidden className="animate-spin" />}
+          {pending && <ModuleOrbit aria-hidden />}
           {replacing ? "Replace the link" : "Confirm"}
         </Button>
       </div>

@@ -1,6 +1,7 @@
 "use client";
 
-import { Close, Spinner } from "@repo/design-system/components/icons";
+import { Close } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   HoverCard,
@@ -28,7 +29,7 @@ export function UploadedImagePreview({
   if (isImageLoading) {
     return (
       <div className="bg-muted flex size-14 items-center justify-center rounded-md border">
-        <Spinner className="text-muted-foreground size-4 animate-spin" />
+        <ModuleOrbit aria-hidden className="text-muted-foreground size-4" />
       </div>
     );
   }

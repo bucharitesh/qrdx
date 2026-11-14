@@ -1,6 +1,6 @@
 "use client";
 
-import { Spinner } from "@repo/design-system/components/icons";
+import { ModuleOrbit } from "@repo/design-system/components/loaders";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Label } from "@repo/design-system/components/ui/label";
 import { Switch } from "@repo/design-system/components/ui/switch";
@@ -116,7 +116,7 @@ function SheetsPanel() {
               onCheckedChange={toggle}
             />
             <Label htmlFor={`${id}-sync`}>{t("keepThisSheetInSync")}</Label>
-            {busy && <Spinner className="size-3.5" />}
+            {busy && <ModuleOrbit aria-hidden className="size-3.5" />}
           </div>
           <p className="text-muted-foreground text-xs text-pretty">
             {t("newScansAreAppendedIn")}
@@ -165,7 +165,7 @@ function AddSlackChannelButton() {
 
   return (
     <Button disabled={busy} onClick={add}>
-      {busy && <Spinner className="size-3.5" />}
+      {busy && <ModuleOrbit aria-hidden className="size-3.5" />}
       {t("addAnotherChannel")}
     </Button>
   );
