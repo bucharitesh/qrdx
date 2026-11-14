@@ -1,8 +1,8 @@
 /** biome-ignore-all lint/style/noMagicNumbers: scoring weights and thresholds */
 import type { QRCode as JsQRResult } from "jsqr";
 import type { ColorConfig, QRProps } from "../types";
-import { normalizeColorConfig } from "../types/color";
-import { EYE_POSITIONS } from "../types/qr";
+import { normalizeColorConfig } from "../types/color-helpers";
+import { EYE_POSITIONS } from "../types/constants";
 import type { QRArtPixels } from "./art";
 import qrcodegen from "./codegen";
 import {

@@ -16,15 +16,16 @@
 //   attribute is ever copied, so on* handlers, href / xlink:href and
 //   url(...) references go with them (internal gradients are flattened to
 //   their first color);
-// - segment, shape and color caps, and the result must pass frameSpecSchema.
+// - segment, shape and color caps, and the result must pass frameSpecSchema (checked without zod, by
+//   parseFrameSpec).
 // Everything dropped is reported as a warning.
+import type { FrameSpec } from "../types/frame-spec";
+import { parseFrameSpec } from "../types/frame-spec-parse";
 import {
   FRAME_SPEC_KIND,
   FRAME_SPEC_LIMITS,
   FRAME_SPEC_VERSION,
-  type FrameSpec,
-  frameSpecSchema,
-} from "../types/frame-spec";
+} from "../types/frame-spec-rules";
 import { fmt } from "./utils/fmt";
 import { parseColor } from "./utils/parse-color";
 import {
@@ -1167,9 +1168,9 @@ export function importFrameSvg(
       labels: [],
     };
 
-    const result = frameSpecSchema.safeParse(spec);
+    const result = parseFrameSpec(spec);
     if (!result.success) {
-      const issue = result.error.issues[0];
+      const issue = result.issues[0];
       throw new ImportError(
         `The converted frame doesn't fit the frame format: ${issue?.message ?? "invalid"}`
       );

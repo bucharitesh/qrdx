@@ -7,11 +7,8 @@
 // decorative modules on the same grid, so the code reads as one pattern.
 // Decoders only ever see the symbol: the ring separates it from the noise.
 import type { Modules } from "../types";
-import {
-  QR_CIRCLE_QUIET_MIN,
-  type QRCodeShape,
-  type QRSilhouette,
-} from "../types/qr";
+import { QR_CIRCLE_QUIET_MIN } from "../types/constants";
+import type { QRCodeShape, QRSilhouette } from "../types/qr";
 import {
   getHeartOutline,
   getSilhouetteOutline,

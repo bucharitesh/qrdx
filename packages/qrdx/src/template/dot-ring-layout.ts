@@ -5,7 +5,7 @@
 // The dot layout and the way a link picks its dots come from the first
 // round design built on qrdx's custom templates (2025), so designs made
 // with it keep their rings.
-import { sanitizeFrameText } from "../../types/frame-spec";
+import { sanitizeFrameText } from "../../types/frame-spec-rules";
 import { roundTo } from "../utils/fmt";
 
 // ── Geometry (a 593 × 593 drawing) ────────────────────────────────────────

@@ -1,5 +1,5 @@
 import type { ErrorLevel, ImageSettings, LogoOptions, QRProps } from "../types";
-import { LOGO_SIZE_DEFAULT, LOGO_SIZE_MAX } from "../types/qr";
+import { LOGO_SIZE_DEFAULT, LOGO_SIZE_MAX } from "../types/constants";
 import qrcodegen from "./codegen";
 import { DEFAULT_LEVEL, DEFAULT_MARGIN, ERROR_LEVEL_MAP } from "./constants";
 import { fitLogoWidth } from "./logo-budget";

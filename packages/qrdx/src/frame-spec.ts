@@ -6,26 +6,25 @@
 // (src/frames/builtin). Path data is re-written from the numbers it was
 // read as, never passed through.
 import type { ColorConfig } from "../types/color";
-import {
-  FRAME_FONT_SCALE_MAX,
-  FRAME_FONT_SCALE_MIN,
-  type QRFrame,
-} from "../types/frame";
+import { FRAME_FONT_SCALE_MAX, FRAME_FONT_SCALE_MIN } from "../types/constants";
+import type { QRFrame } from "../types/frame";
+import type {
+  FrameSpec,
+  FrameSpecColor,
+  FrameSpecLabel,
+  FrameSpecPaint,
+  FrameSpecShape,
+  QRCustomFrame,
+} from "../types/frame-spec";
+import { frameSpecIssueText, parseFrameSpec } from "../types/frame-spec-parse";
 import {
   FRAME_SPEC_DEFAULT_FONT,
   FRAME_SPEC_LABEL_MAX_FONT,
   FRAME_SPEC_LIMITS,
-  type FrameSpec,
-  type FrameSpecColor,
-  type FrameSpecLabel,
-  type FrameSpecPaint,
-  type FrameSpecShape,
   frameSpecPadding,
-  frameSpecSchema,
   frameSpecShapeBounds,
-  type QRCustomFrame,
   sanitizeFrameText,
-} from "../types/frame-spec";
+} from "../types/frame-spec-rules";
 import { DEFAULT_BGCOLOR } from "./constants";
 import type { FrameLabel, FrameLayout, FrameShape } from "./frame";
 import { FRAME_ICON_BOX, getFrameIconPath } from "./frame-icons";
@@ -66,8 +65,9 @@ export class FrameSpecError extends Error {
 const validated = new WeakMap<object, FrameSpec>();
 
 /**
- * Validates `spec` with `frameSpecSchema` (every limit applies) and returns
- * the parsed copy. Throws a `FrameSpecError` listing the problems.
+ * Validates `spec` as `frameSpecSchema` does (every limit applies, the same
+ * problems reported, without loading zod) and returns the parsed copy.
+ * Throws a `FrameSpecError` listing the problems.
  */
 export function resolveFrameSpec(spec: unknown): FrameSpec {
   if (spec && typeof spec === "object") {
@@ -79,15 +79,9 @@ export function resolveFrameSpec(spec: unknown): FrameSpec {
   if (spec === undefined || spec === null) {
     throw new FrameSpecError(['A "custom" frame needs a spec']);
   }
-  const result = frameSpecSchema.safeParse(spec);
+  const result = parseFrameSpec(spec);
   if (!result.success) {
-    throw new FrameSpecError(
-      result.error.issues.map((issue) =>
-        issue.path.length > 0
-          ? `${issue.path.join(".")}: ${issue.message}`
-          : issue.message
-      )
-    );
+    throw new FrameSpecError(result.issues.map(frameSpecIssueText));
   }
   if (typeof spec === "object") {
     validated.set(spec, result.data);
