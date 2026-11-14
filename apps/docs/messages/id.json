@@ -6367,7 +6367,12 @@
           "allCodesLastValue": "Semua kode, {value} terakhir",
           "topCountries": "Negara teratas",
           "devices": "Perangkat",
-          "unknown": "Tidak diketahui"
+          "unknown": "Tidak diketahui",
+          "allTime": "Sepanjang waktu",
+          "sinceDateUtc": "Sejak {date} (UTC)",
+          "allCodesSince": "Semua kode, sejak {date}",
+          "allCodesPerIntervalSince": "Semua kode, per {interval, select, week {minggu} month {bulan} other {hari}}, sejak {date} (UTC)",
+          "scansPerIntervalOfUpTo": "Pemindaian {interval, select, week {mingguan} month {bulanan} other {harian}} untuk hingga {MAX_COMPARE, number} kode secara berdampingan (UTC)."
         },
         "comparePicker": {
           "stopComparingValue": "Berhenti membandingkan {value}",
@@ -6704,7 +6709,9 @@
           "conversionTypes": "Jenis konversi",
           "sinceValue": " sejak {value}",
           "languageAndScanCountRules": " (aturan bahasa dan jumlah pemindaian tidak dapat diputar ulang, jadi angka ini mungkin mencakup pemindaian yang dialihkan ke tempat lain oleh aturan tersebut)",
-          "unknown": "Tak dikenal"
+          "unknown": "Tak dikenal",
+          "sinceDate": "Sejak {date}, {timeZone}",
+          "sinceDateBusiest": "Sejak {date}, {timeZone} · jam tersibuk {hour}:00"
         },
         "analyticsTab": {
           "exportCsv": "Ekspor CSV",
@@ -6731,7 +6738,11 @@
           "daysDaysOfScanHistory": "Riwayat pemindaian {days, number} hari",
           "valueKeepsValue2": "{value} mempertahankan {value2}",
           "valueAndValue2": "{value} dan {value2}.",
-          "yearsOfScanHistory": "{years, plural, other {Riwayat pemindaian # tahun}}"
+          "yearsOfScanHistory": "{years, plural, other {Riwayat pemindaian # tahun}}",
+          "allTime": "Sepanjang waktu",
+          "sinceDateUtc": "Sejak {date} (UTC)",
+          "sinceDateTapsCome": "Sejak {date}. Ketukan masuk melalui tautan NFC kode ini.",
+          "scansPerIntervalSince": "Pemindaian per {interval, select, week {minggu} month {bulan} other {hari}}, sejak {date} (UTC)"
         },
         "changeTypeDialog": {
           "theyStaySavedAndWork": "Semuanya tetap tersimpan dan berfungsi lagi jika Anda beralih kembali.",
@@ -6909,7 +6920,9 @@
           "shared": "Dibagikan",
           "allowed": "Diizinkan",
           "noScansAskedForA": "Belum ada pemindaian yang diminta lokasinya dalam {days, number} hari terakhir.",
-          "thisCodeDoesntAskScanners": "Kode ini tidak meminta lokasi dari pemindai."
+          "thisCodeDoesntAskScanners": "Kode ini tidak meminta lokasi dari pemindai.",
+          "sharedByScannersWhoAllowedSince": "Dibagikan oleh pemindai yang mengizinkannya, dibulatkan hingga sekitar 100 m. Terpisah dari negara dan kota berbasis IP di atas. Sejak {date}.",
+          "noScansAskedForASince": "Belum ada pemindaian yang meminta lokasi sejak {date}."
         },
         "preciseLocationsTable": {
           "preciseScanLocationsRoundedTo": "Lokasi pemindaian presisi, dibulatkan hingga sekitar 100 m",

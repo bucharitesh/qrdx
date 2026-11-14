@@ -16,11 +16,11 @@
     "status": "machine"
   },
   "client-portal.mdx": {
-    "source": "e751d5b63704",
+    "source": "1a6b8ea7ea02",
     "status": "machine"
   },
   "client-reports.mdx": {
-    "source": "81fd390efbd3",
+    "source": "30c3a24f7827",
     "status": "machine"
   },
   "code-controls.mdx": {
@@ -140,7 +140,7 @@
     "status": "machine"
   },
   "dynamic-qr-codes.mdx": {
-    "source": "339330d48a19",
+    "source": "6ed89793e1c8",
     "status": "machine"
   },
   "features/art-qr.mdx": {
@@ -312,7 +312,7 @@
     "status": "machine"
   },
   "help/dynamic-codes/scans.mdx": {
-    "source": "7110d4575cf9",
+    "source": "790684b8bb0c",
     "status": "machine"
   },
   "help/getting-started/download-and-print.mdx": {

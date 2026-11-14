@@ -6367,7 +6367,12 @@
           "allCodesLastValue": "Tous les codes, {value} derniers",
           "topCountries": "Principaux pays",
           "devices": "Appareils",
-          "unknown": "Inconnu"
+          "unknown": "Inconnu",
+          "allTime": "Depuis toujours",
+          "sinceDateUtc": "Depuis le {date} (UTC)",
+          "allCodesSince": "Tous les codes, depuis le {date}",
+          "allCodesPerIntervalSince": "Tous les codes, par {interval, select, week {semaine} month {mois} other {jour}}, depuis le {date} (UTC)",
+          "scansPerIntervalOfUpTo": "Scans {interval, select, week {hebdomadaires} month {mensuels} other {quotidiens}} de {MAX_COMPARE, number} codes maximum côte à côte (UTC)."
         },
         "comparePicker": {
           "stopComparingValue": "Ne plus comparer {value}",
@@ -6704,7 +6709,9 @@
           "conversionTypes": "Types de conversion",
           "sinceValue": " depuis le {value}",
           "languageAndScanCountRules": " (les règles de langue et de nombre de scans ne peuvent pas être rejouées ; ces chiffres peuvent donc inclure des scans que ces règles ont redirigés ailleurs)",
-          "unknown": "Inconnu"
+          "unknown": "Inconnu",
+          "sinceDate": "Depuis le {date}, {timeZone}",
+          "sinceDateBusiest": "Depuis le {date}, {timeZone} · heure de pointe {hour}:00"
         },
         "analyticsTab": {
           "exportCsv": "Exporter en CSV",
@@ -6731,7 +6738,11 @@
           "daysDaysOfScanHistory": "{days, number} jours d’historique des scans",
           "valueKeepsValue2": "{value} conserve {value2}",
           "valueAndValue2": "{value} et {value2}.",
-          "yearsOfScanHistory": "{years, plural, one {# an d’historique de scans} other {# ans d’historique de scans}}"
+          "yearsOfScanHistory": "{years, plural, one {# an d’historique de scans} other {# ans d’historique de scans}}",
+          "allTime": "Depuis toujours",
+          "sinceDateUtc": "Depuis le {date} (UTC)",
+          "sinceDateTapsCome": "Depuis le {date}. Les contacts NFC passent par le lien NFC du code.",
+          "scansPerIntervalSince": "Scans par {interval, select, week {semaine} month {mois} other {jour}}, depuis le {date} (UTC)"
         },
         "changeTypeDialog": {
           "theyStaySavedAndWork": "Ils restent enregistrés et refonctionnent si vous revenez en arrière.",
@@ -6909,7 +6920,9 @@
           "shared": "Partagées",
           "allowed": "Autorisées",
           "noScansAskedForA": "Aucun scan n’a encore demandé de position au cours des {days, number} derniers jours.",
-          "thisCodeDoesntAskScanners": "Ce code ne demande pas leur position aux personnes qui scannent."
+          "thisCodeDoesntAskScanners": "Ce code ne demande pas leur position aux personnes qui scannent.",
+          "sharedByScannersWhoAllowedSince": "Partagé par les utilisateurs qui ont autorisé le scan avec localisation, arrondi à environ 100 m. Distinct des pays et villes déterminés par IP ci-dessus. Depuis le {date}.",
+          "noScansAskedForASince": "Aucun scan n’a demandé de localisation depuis le {date}."
         },
         "preciseLocationsTable": {
           "preciseScanLocationsRoundedTo": "Positions de scan précises, arrondies à environ 100 m",
