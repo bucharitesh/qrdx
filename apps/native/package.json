@@ -1,5 +1,5 @@
 {
-  "name": "@qrdx/scanner-mobile",
+  "name": "@qrdx/native",
   "version": "0.1.0",
   "private": true,
   "description": "QRdx Scanner for iOS and Android: the web scanner's UI in Capacitor, with native camera scanning. Not published yet (see README.md).",

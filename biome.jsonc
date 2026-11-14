@@ -101,8 +101,8 @@
   "overrides": [
     {
       // The native scanner reuses the website's packages through Vite aliases
-      // (apps/scanner-mobile/vite.config.ts), outside the workspace.
-      "includes": ["apps/scanner-mobile/src/**"],
+      // (apps/native/vite.config.ts), outside the workspace.
+      "includes": ["apps/native/src/**"],
       "linter": {
         "rules": { "correctness": { "noUndeclaredDependencies": "off" } }
       }
@@ -146,8 +146,8 @@
       "!packages/design-system/hooks",
       "!plugins/raycast/raycast-env.d.ts",
       // The native scanner's generated Xcode and Gradle projects
-      "!apps/scanner-mobile/ios",
-      "!apps/scanner-mobile/android",
+      "!apps/native/ios",
+      "!apps/native/android",
       // Generated screenshots, E2E results and agent worktrees
       "!.claude/build/shots",
       "!.claude/worktrees"
