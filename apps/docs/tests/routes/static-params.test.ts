@@ -179,13 +179,14 @@ describe("localeParams", () => {
 });
 
 describe("routes with a fixed param list", () => {
-  it("are all found, the generator, topic, blog, docs and catalogue routes among them", () => {
+  it("are all found, the generator, topic, blog, customer, docs and catalogue routes among them", () => {
     for (const file of [
       "[lang]/(home)/qr-code-generator/[type]/page.tsx",
       "[lang]/(home)/barcode-generator/[format]/page.tsx",
       "[lang]/(home)/qr-codes-for/[slug]/page.tsx",
       "[lang]/(home)/qr-codes-on/[slug]/page.tsx",
       "(app)/(home)/blog/[slug]/page.tsx",
+      "(app)/(home)/customers/[slug]/page.tsx",
       "(app)/(home)/compare/[slug]/page.tsx",
       "[lang]/(home)/integrations/[slug]/page.tsx",
       "(app)/(home)/legal/[[...slug]]/page.tsx",
@@ -232,6 +233,7 @@ describe("routes with a fixed param list", () => {
         "[lang]/(home)/pricing/opengraph-image.tsx",
         "[lang]/(home)/qr-code-generator/[type]/opengraph-image.tsx",
         "(app)/(home)/blog/[slug]/opengraph-image.tsx",
+        "(app)/(home)/customers/[slug]/opengraph-image.tsx",
         "og/docs/[...slug]/route.tsx",
         "og/legal/[...slug]/route.tsx",
         "docs-md/[lang]/[[...slug]]/route.ts",
