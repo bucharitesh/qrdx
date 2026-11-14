@@ -3,6 +3,13 @@
 
 @source "../node_modules/streamdown/dist";
 
+/* Tailwind scans this app's folder by itself, but not the workspace packages
+   it imports. These two render UI with their own class names: the cookie
+   banner and its settings (@repo/analytics) and the cloud file pickers
+   (@repo/integrations). Without these lines their classes aren't generated. */
+@source "../../../packages/analytics";
+@source "../../../packages/integrations/src";
+
 @import "fumadocs-ui/css/neutral.css";
 @import "fumadocs-ui/css/preset.css";
 
