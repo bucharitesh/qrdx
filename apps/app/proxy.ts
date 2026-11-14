@@ -17,6 +17,12 @@ import {
   hostMatcher,
   platformHostsPattern,
 } from "@repo/next-config/platform-hosts";
+import {
+  isSitePath,
+  lowerCasedSitePrefix,
+  SITE_KEY_HEADER,
+  siteZoneGroups,
+} from "@repo/next-config/site-zone";
 import { headers } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
 import { routeCustomDomain } from "@/app/(app)/dashboard/domains/_lib/host-routing";
@@ -73,6 +79,8 @@ function toConsole(
 ): NextResponse {
   const requestHeaders = new Headers(request.headers);
   requestHeaders.delete(CONSOLE_KEY_HEADER);
+  // Never the site's key on a console request.
+  requestHeaders.delete(SITE_KEY_HEADER);
   requestHeaders.delete(WORKSPACE_HEADER);
   if (env.CONSOLE_ZONE_KEY) {
     requestHeaders.set(CONSOLE_KEY_HEADER, env.CONSOLE_ZONE_KEY);
@@ -82,6 +90,38 @@ function toConsole(
     if (cookie) requestHeaders.set("cookie", cookie);
     else requestHeaders.delete("cookie");
     requestHeaders.delete("authorization");
+  }
+  return NextResponse.next({ request: { headers: requestHeaders } });
+}
+
+// The marketing site serves groups of public pages (the blog first) once
+// SITE_ORIGIN is set: next.config.ts proxies them there, on QRdx's own hosts
+// only (@repo/next-config/site-zone). Unset, those pages are this app's own
+// and nothing below changes.
+const SITE_ON = Boolean(env.SITE_ORIGIN);
+const SITE_GROUPS_ON = siteZoneGroups(env.SITE_ZONE_GROUPS);
+
+/** Whether next.config.ts sends this request on to the site. */
+const forSite = (request: NextRequest) =>
+  SITE_ON &&
+  isSitePath(request.nextUrl.pathname, SITE_GROUPS_ON) &&
+  onPlatformHost(request.headers.get("host"));
+
+/**
+ * A site page or asset: public, so no session is read and no policy is
+ * set here (its pages keep this app's prerendered-page rules from
+ * next.config.ts, as the docs' do). It gets the site's key, so the site can
+ * tell requests that came through this app; any copy the browser sent is
+ * dropped, and so are the console's key header and the workspace header.
+ */
+function toSite(request: NextRequest): NextResponse {
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.delete(SITE_KEY_HEADER);
+  // Never the console's key on a site request.
+  requestHeaders.delete(CONSOLE_KEY_HEADER);
+  requestHeaders.delete(WORKSPACE_HEADER);
+  if (env.SITE_ZONE_KEY) {
+    requestHeaders.set(SITE_KEY_HEADER, env.SITE_ZONE_KEY);
   }
   return NextResponse.next({ request: { headers: requestHeaders } });
 }
@@ -97,15 +137,23 @@ function next(request: NextRequest): NextResponse {
   if (forConsole(request)) {
     return toConsole(request);
   }
+  if (forSite(request)) {
+    return toSite(request);
+  }
   const { pathname } = request.nextUrl;
   const slug = workspaceSlugFromPath(pathname);
   const nonce = CSP_ENABLED && NONCE_ROUTE.test(pathname);
-  if (!(slug || nonce || request.headers.has(WORKSPACE_HEADER))) {
+  // A site key the browser sent goes no further: only toSite() sets one.
+  const forgedSiteKey = request.headers.has(SITE_KEY_HEADER);
+  if (
+    !(slug || nonce || forgedSiteKey || request.headers.has(WORKSPACE_HEADER))
+  ) {
     return NextResponse.next();
   }
 
   const requestHeaders = new Headers(request.headers);
   requestHeaders.delete(WORKSPACE_HEADER);
+  requestHeaders.delete(SITE_KEY_HEADER);
   if (slug) requestHeaders.set(WORKSPACE_HEADER, slug);
   if (!nonce) {
     return NextResponse.next({ request: { headers: requestHeaders } });
@@ -131,19 +179,23 @@ export default async function proxy(request: NextRequest) {
     return customDomainResponse;
   }
   // Next's rewrites match /ADMIN/growth as /admin/growth, but this proxy's
-  // matchers and the pages are case-sensitive: any other casing of /admin or
-  // /console-static goes to the lower-case path first (it was a 404 before),
-  // so nothing reaches the console without passing through here.
-  const lowerCased = lowerCasedZonePrefix(request.nextUrl.pathname);
+  // matchers and the pages are case-sensitive: any other casing of /admin,
+  // /console-static, or the site's prefixes (/blog, /site-static) goes to
+  // the lower-case path first (it was a 404 before), so nothing reaches
+  // another zone without passing through here.
+  const lowerCased =
+    lowerCasedZonePrefix(request.nextUrl.pathname) ??
+    lowerCasedSitePrefix(request.nextUrl.pathname);
   if (lowerCased) {
     const url = request.nextUrl.clone();
     url.pathname = lowerCased;
     return NextResponse.redirect(url, 308);
   }
-  // No dot segments into or out of the console's paths (its assets come
-  // here for this check alone: no session lookup).
+  // No dot segments into or out of the zones' paths (their assets come here
+  // for this check alone: no session lookup).
   if (
-    isConsolePath(request.nextUrl.pathname) &&
+    (isConsolePath(request.nextUrl.pathname) ||
+      isSitePath(request.nextUrl.pathname)) &&
     hasDotSegment(request.nextUrl.pathname)
   ) {
     return new NextResponse("Not found", { status: 404 });
@@ -218,6 +270,12 @@ export const config = {
     // rewrites match them all, so each passes through here first.
     "/:prefix([aA][dD][mM][iI][nN])/:path*",
     "/:prefix([cC][oO][nN][sS][oO][lL][eE]-[sS][tT][aA][tT][iI][cC])/:path*",
+    // The site's prefixes likewise (@repo/next-config/site-zone SITE_GROUPS
+    // and its assets): one literal entry per prefix, since Next reads this
+    // list without running it. tests/lib/site-zone.test.ts checks they
+    // cover every prefix.
+    "/:prefix([bB][lL][oO][gG])/:path*",
+    "/:prefix([sS][iI][tT][eE]-[sS][tT][aA][tT][iI][cC])/:path*",
     "/oauth/:path*",
     "/invite/:path*",
     "/join/:path*",

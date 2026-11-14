@@ -11,6 +11,7 @@
     "./env-errors": "./env-errors.ts",
     "./home-numbers": "./home-numbers.ts",
     "./platform-hosts": "./platform-hosts.ts",
+    "./site-zone": "./site-zone.ts",
     "./keys": "./keys.ts"
   },
   "scripts": {

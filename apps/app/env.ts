@@ -8,6 +8,11 @@ import {
   validateTogether,
 } from "@repo/next-config/env-errors";
 import { keys as core } from "@repo/next-config/keys";
+import {
+  isSiteOrigin,
+  isSiteZoneGroups,
+  SITE_GROUP_NAMES,
+} from "@repo/next-config/site-zone";
 import { keys as rateLimit } from "@repo/rate-limit/keys";
 import { createEnv } from "@t3-oss/env-nextjs";
 import { z } from "zod";
@@ -175,6 +180,32 @@ export const env = validateTogether(() =>
       // away requests that didn't come through this app. Same value on both.
       CONSOLE_ZONE_KEY: z.string().min(1).optional(),
 
+      // The marketing site (a separate app, @repo/next-config/site-zone),
+      // e.g. https://qrdx-site.vercel.app: when set, next.config.ts proxies
+      // its groups of public pages (the blog first) and its /site-static
+      // assets there. Decided at build time (next.config.ts inlines it into
+      // server code), like the rewrites. Unset, this app serves its own
+      // pages. An origin only: https, or http on localhost for development.
+      SITE_ORIGIN: z
+        .url()
+        .refine(isSiteOrigin, {
+          error:
+            "must be an origin only (https://host, or http://localhost:port), with no path or query",
+        })
+        .optional(),
+      // Sent to the site on its pages (x-qrdx-site-key, its own header, never
+      // the console's), so it can turn away requests that didn't come through
+      // this app. Same value on both.
+      SITE_ZONE_KEY: z.string().min(1).optional(),
+      // Which groups of pages the site serves, comma-separated ("blog");
+      // unset, every group. Also inlined at build time.
+      SITE_ZONE_GROUPS: z
+        .string()
+        .refine(isSiteZoneGroups, {
+          error: `must be comma-separated group names from: ${SITE_GROUP_NAMES.join(", ")}`,
+        })
+        .optional(),
+
       // OpenAI's plugin directory checks that we run the MCP host: the token
       // from its submission portal, served as plain text at
       // /.well-known/openai-apps-challenge (404 while unset)
@@ -265,6 +296,9 @@ export const env = validateTogether(() =>
       DOCS_ZONE_URL: process.env.DOCS_ZONE_URL,
       CONSOLE_ORIGIN: process.env.CONSOLE_ORIGIN,
       CONSOLE_ZONE_KEY: process.env.CONSOLE_ZONE_KEY,
+      SITE_ORIGIN: process.env.SITE_ORIGIN,
+      SITE_ZONE_KEY: process.env.SITE_ZONE_KEY,
+      SITE_ZONE_GROUPS: process.env.SITE_ZONE_GROUPS,
       OPENAI_APPS_CHALLENGE: process.env.OPENAI_APPS_CHALLENGE,
       NODE_ENV: process.env.NODE_ENV,
       NEXT_PUBLIC_POSTHOG_HOST: process.env.NEXT_PUBLIC_POSTHOG_HOST,
