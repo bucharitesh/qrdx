@@ -1,30 +1,30 @@
 ---
 title: Shapes, eyes and frames
-description: Every body pattern, eye frame, eye center and call-to-action frame, drawn live by the qrdx renderer and decoded in your browser.
+description: Every body pattern, eye frame, eye center and built-in call-to-action frame, drawn live by the qrdx renderer and decoded in your browser, with the value to copy into code.
 icon: Grid3x3
 ---
 
 import { QrCatalog } from "@/components/docs/qr-catalog";
 
-Every style below is drawn by the same renderer as your downloads, with its option name and the API value to copy. Each tile is decoded with [jsQR](https://github.com/cozmo/jsQR) right here in your browser, one at a time, so the **Scans** badge is a live result rather than a promise.
+This page draws every shape the library offers, with its option name and the value to copy into `bodyPattern`, `cornerEyePattern`, `cornerEyeDotPattern` or `frame.style`. Use it to pick a look before you write code. Each tile is drawn by the same renderer as your downloads and decoded in your browser with jsQR, one at a time, so the **Scans** badge is a live result.
 
-All of them are also tested in the package (`packages/qrdx/tests/catalog-*.test.ts`): each value decodes through a phone-camera model (contrast loss and a quarter-module blur) at 4, 6 and 9 pixels per module, next to every other body, eye and center, at error correction L, M, Q and H, at 148 px and 1024 px, light-on-dark, with brand colors and with a center logo; they were also checked with ZXing and in sharp renders. A few pairings are weak together; see [Pairs to avoid](#pairs-to-avoid).
+Every value is also tested in the package (`packages/qrdx/tests/catalog-*.test.ts`): it decodes through a phone-camera model (contrast loss and a quarter-module blur) at 4, 6 and 9 pixels per module, next to every other body, eye and center, at error correction L, M, Q and H, at 148 px and 1024 px, light-on-dark, with brand colors and with a center logo. A few pairings are weak together; see [Pairs to avoid](#pairs-to-avoid).
 
 ## Body patterns
 
-The shape of the data modules (`bodyPattern`). Connected styles (`liquid`, `classy`) merge neighboring modules into one outline. `random-dots` and `mosaic` vary per module but are deterministic: the same value always draws the same code.
+The shape of the data modules (`bodyPattern`, default `circle`). Connected styles (`liquid`, `classy`) merge neighboring modules into one outline. `random-dots` and `mosaic` vary per module but are deterministic: the same value always draws the same code.
 
 <QrCatalog kind="body" />
 
 ## Eye frames
 
-The outer ring of the three corner markers (`cornerEyePattern`). `leaf`, `leaf-reverse`, `drop` and `petal` turn each eye so it faces the corner of the code. Each tile pairs the eye with its recommended center.
+The outer ring of the three corner markers (`cornerEyePattern`, default `gear`). `leaf`, `leaf-reverse`, `drop` and `petal` turn each eye so it faces the corner of the code. Each tile pairs the eye with its recommended center.
 
 <QrCatalog kind="eye" />
 
 ## Eye centers
 
-The solid center of each corner marker (`cornerEyeDotPattern`), shown inside square eyes.
+The solid center of each corner marker (`cornerEyeDotPattern`, default `circle`), shown inside square eyes.
 
 <QrCatalog kind="dot" />
 
@@ -34,26 +34,38 @@ Call-to-action frames are drawn around the code, so the code and its quiet zone 
 
 <QrCatalog kind="frame" />
 
-```tsx
+```tsx title="components/framed-code.tsx"
 import { QRCode } from "qrdx";
 
-<QRCode
-  value="https://example.com"
-  bodyPattern="liquid"
-  cornerEyePattern="leaf"
-  cornerEyeDotPattern="leaf"
-  frame={{ style: "circle", text: "Scan me", secondaryText: "example.com" }}
-/>;
+export function FramedCode() {
+  return (
+    <QRCode
+      value="https://example.com"
+      bodyPattern="liquid"
+      cornerEyePattern="leaf"
+      cornerEyeDotPattern="leaf"
+      frame={{ style: "circle", text: "Scan me", secondaryText: "example.com" }}
+    />
+  );
+}
 ```
 
 ## Pairs to avoid
 
-A few pairings of shapes that scan on their own fail together in our decode tests. The playground won't let you pick them together, and the scan score warns about them (`style-pair`):
+A few pairings of shapes that scan on their own fail together in the package's decode tests. The playground does not let you pick them together, and the scan score warns about them (`style-pair`):
 
-- `diamond` bodies next to `square` eyes, `pacman` next to `rounded`, and `small-square` next to `square` or `rounded` eyes (missed up close).
+- `diamond` bodies next to `square` eyes, `pacman` next to `rounded`, and `small-square` next to `square` or `rounded` eyes are missed up close.
 
-`circle` eyes read in both decoders we test (jsQR and ZXing) but are marked **caution**: some scanner apps miss them. The pairs ship in the package as `WEAK_BODY_EYES`, and `getStylePairRisk(props)` returns the warning for a style.
+`circle` eyes read in both decoders the tests use (jsQR and ZXing) but are marked **caution**: some scanner apps miss them. The pairs ship in the package as `WEAK_BODY_EYES`, and `getStylePairRisk(props)` returns the warning for a style.
 
 ## Retired shapes
 
-`curly` eyes and `diamond`, `star` and `banner` centers were removed because they don't scan reliably: ZXing (the decoder in most Android scanners) misses curly eyes and diamond and star centers at phone distances, and jsQR misses banner centers in every sharp render. Codes saved with them still load and render exactly as before, and the image API still draws them for existing links, but no picker, preset or AI theme offers them, and their names are kept only as deprecated values (`RETIRED_CORNER_EYE_PATTERNS`, `RETIRED_CORNER_EYE_DOT_PATTERNS`).
+`curly` eyes and `diamond`, `star` and `banner` centers were removed because they do not scan reliably: ZXing (the decoder in most Android scanners) misses curly eyes and diamond and star centers at phone distances, and jsQR misses banner centers in every sharp render. Codes saved with them still load and render exactly as before, and the image API still draws them for existing links, but no picker, preset or AI theme offers them. Their names are kept only as deprecated values (`RETIRED_CORNER_EYE_PATTERNS`, `RETIRED_CORNER_EYE_DOT_PATTERNS`).
+
+## Related
+
+<Cards>
+  <Card href="/docs/features/patterns" title="Choose module and eye shapes" description="Module scale, circle and heart codes, custom silhouettes and per-eye colors." />
+  <Card href="/docs/features/frames" title="Frames, scan score and print files" description="Frame options, the official frame library and frame specs." />
+  <Card href="/docs/usage" title="Basic usage" description="Where these props go on the component." />
+</Cards>
