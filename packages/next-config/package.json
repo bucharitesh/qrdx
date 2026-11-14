@@ -5,6 +5,7 @@
   "exports": {
     ".": "./index.ts",
     "./csp": "./csp.ts",
+    "./docs-zone": "./docs-zone.ts",
     "./env-errors": "./env-errors.ts",
     "./keys": "./keys.ts"
   },
