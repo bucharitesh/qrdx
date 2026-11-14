@@ -1,20 +1,22 @@
+import { OG_FONT_GLOB } from "@repo/design-system/og/font-files";
 import {
   docsEnglishRewrites,
   docsMarkdownAcceptRewrites,
   docsMarkdownRewrites,
 } from "@repo/i18n/docs";
 import { config, withAnalyzer } from "@repo/next-config";
-import { createMDX } from "fumadocs-mdx/next";
-import type { NextConfig } from "next";
-import createNextIntlPlugin from "next-intl/plugin";
-import { env } from "@/env";
 import {
   appCsp,
   cspHeaderName,
   cspOptionsFromEnv,
   prerenderedPagesSource,
   reportingEndpoints,
-} from "@/lib/security/csp";
+} from "@repo/next-config/csp";
+import { createMDX } from "fumadocs-mdx/next";
+import type { NextConfig } from "next";
+import createNextIntlPlugin from "next-intl/plugin";
+import { env } from "@/env";
+import mediaManifest from "@/lib/media-manifest.json";
 
 // The docs site: one zone of qrdx.dev. The main app (apps/docs) proxies the
 // docs' URLs here once its DOCS_ZONE_URL is set (@repo/next-config/
@@ -34,12 +36,16 @@ const toRewritePhases = (rewrites: Rewrites = []): RewritePhases =>
         fallback: rewrites.fallback ?? [],
       };
 
-// Content-Security-Policy (lib/security/csp.ts), as in the main app:
+// Content-Security-Policy (@repo/next-config/csp, imported from the package:
+// next.config can't resolve a package through a file under lib/), as in
+// the main app:
 // enforced in production builds, off in `next dev` unless CSP_DEV=1.
 // CSP_REPORT_ONLY=1 sends it as Report-Only instead.
 const cspEnabled =
   process.env.NODE_ENV === "production" || process.env.CSP_DEV === "1";
-const cspOptions = cspOptionsFromEnv();
+const cspOptions = cspOptionsFromEnv(process.env, {
+  mediaOrigin: mediaManifest.origin,
+});
 const cspHeader = cspHeaderName();
 const cspReporting = reportingEndpoints(cspOptions);
 
@@ -90,10 +96,10 @@ let nextConfig: NextConfig = {
   // As in the main app: the prerender workers keep less in memory without
   // source maps.
   enablePrerenderSourceMaps: false,
-  // Geist for the Open Graph images (app/og/brand.tsx reads the fonts at
-  // runtime), as in the main app.
+  // Geist for the Open Graph images (@repo/design-system/og/brand reads the
+  // fonts at runtime), as in the main app.
   outputFileTracingIncludes: {
-    "/**": ["./app/og/fonts/*.ttf"],
+    "/**": [OG_FONT_GLOB],
   },
   serverExternalPackages: [
     "ts-morph",
