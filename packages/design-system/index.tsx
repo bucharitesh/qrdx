@@ -1,6 +1,6 @@
 import type { ThemeProviderProps } from "next-themes";
 import type { ComponentProps } from "react";
-import { Toaster } from "./components/ui/sonner";
+import { Toaster } from "./components/toaster";
 import { TooltipProvider } from "./components/ui/tooltip";
 import { ThemeProvider } from "./providers/theme";
 
@@ -22,4 +22,4 @@ export const DesignSystemProvider = ({
 
 // Export Sonner toast function
 export { toast } from "sonner";
-export { Toaster } from "./components/ui/sonner";
+export { Toaster } from "./components/toaster";

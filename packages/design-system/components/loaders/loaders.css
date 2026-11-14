@@ -1,0 +1,172 @@
+/*
+ * The QRdx loaders (scanframe.tsx, module-orbit.tsx, assembling-code.tsx),
+ * drawn from the mark: four rounded corner brackets and an X of modules.
+ * Pure SVG and CSS in currentColor, with one module in the brand accent.
+ * A plain stylesheet (styles/globals.css imports it) rather than a CSS module,
+ * so the components stay plain TypeScript that Node can import in tests.
+ *
+ * Every loader shows only after --loader-delay (300 ms unless the delay prop
+ * says otherwise), so quick loads never flash one. The delay is a CSS
+ * animation, so it works in server-rendered HTML with no timer.
+ *
+ * Without a motion preference the marks move; with reduced motion they hold
+ * still at full opacity, and the loader appears after the delay without a
+ * fade. Lengths in transform-origin are SVG user units. In the components
+ * layer, so a utility class on a loader still wins.
+ */
+
+@layer components {
+  .qrdx-loader {
+    overflow: visible;
+    flex-shrink: 0;
+    animation-name: qrdx-loader-in;
+    animation-duration: 0s;
+    animation-delay: var(--loader-delay, 300ms);
+    animation-fill-mode: both;
+  }
+
+  .qrdx-loader * {
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+
+  .qrdx-loader-bracket {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .qrdx-loader-accent {
+    fill: var(--primary);
+  }
+
+  /* On a button the accent would vanish into the primary fill: there the
+     whole mark follows the label colour. */
+  :where(button, [data-slot="button"]) .qrdx-loader-accent {
+    fill: currentColor;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .qrdx-loader {
+      animation-duration: 0.2s;
+      animation-timing-function: ease-out;
+    }
+
+    /* Scanframe: the brackets breathe in and out like a camera locking on,
+       and the X's modules pop in one by one. */
+    .qrdx-loader-breathe-tl {
+      animation: qrdx-loader-breathe-top-left 1.6s
+        cubic-bezier(0.65, 0, 0.35, 1) infinite;
+    }
+    .qrdx-loader-breathe-tr {
+      animation: qrdx-loader-breathe-top-right 1.6s
+        cubic-bezier(0.65, 0, 0.35, 1) infinite;
+    }
+    .qrdx-loader-breathe-br {
+      animation: qrdx-loader-breathe-bottom-right 1.6s
+        cubic-bezier(0.65, 0, 0.35, 1) infinite;
+    }
+    .qrdx-loader-breathe-bl {
+      animation: qrdx-loader-breathe-bottom-left 1.6s
+        cubic-bezier(0.65, 0, 0.35, 1) infinite;
+    }
+    .qrdx-loader-pop {
+      animation: qrdx-loader-module-pop 1.6s cubic-bezier(0.32, 0.72, 0, 1)
+        infinite;
+    }
+
+    /* Module orbit: five modules circle the still centre, a fading tail
+       behind the leading one. */
+    .qrdx-loader .qrdx-loader-orbit {
+      transform-box: view-box;
+      transform-origin: 24px 24px;
+      animation: qrdx-loader-orbit 1.1s linear infinite;
+    }
+    .qrdx-loader-tail-1 {
+      opacity: 0.8;
+    }
+    .qrdx-loader-tail-2 {
+      opacity: 0.6;
+    }
+    .qrdx-loader-tail-3 {
+      opacity: 0.4;
+    }
+    .qrdx-loader-tail-4 {
+      opacity: 0.22;
+    }
+
+    /* Assembling code: a mini code builds itself, finder eyes first, then
+       fades and rebuilds. */
+    .qrdx-loader-build {
+      animation: qrdx-loader-build 2.6s cubic-bezier(0.32, 0.72, 0, 1) infinite
+        both;
+    }
+  }
+
+  @keyframes qrdx-loader-in {
+    from {
+      opacity: 0;
+    }
+  }
+
+  @keyframes qrdx-loader-breathe-top-left {
+    50% {
+      transform: translate(3px, 3px);
+    }
+  }
+
+  @keyframes qrdx-loader-breathe-top-right {
+    50% {
+      transform: translate(-3px, 3px);
+    }
+  }
+
+  @keyframes qrdx-loader-breathe-bottom-right {
+    50% {
+      transform: translate(-3px, -3px);
+    }
+  }
+
+  @keyframes qrdx-loader-breathe-bottom-left {
+    50% {
+      transform: translate(3px, -3px);
+    }
+  }
+
+  @keyframes qrdx-loader-module-pop {
+    0%,
+    15%,
+    100% {
+      opacity: 0.15;
+      transform: scale(0.6);
+    }
+    35%,
+    70% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes qrdx-loader-orbit {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes qrdx-loader-build {
+    0%,
+    8%,
+    92%,
+    100% {
+      opacity: 0;
+      transform: scale(0.4);
+    }
+    20%,
+    80% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+}
