@@ -151,13 +151,10 @@ export const env = validateTogether(() =>
       // time: next.config.ts inlines it into server code (lib/home-numbers/flag.ts).
       QRDX_HOME_NUMBERS: z.enum(["0", "1"]).optional(),
 
-      // GitHub token for the star counter in the docs (avoids API rate limits)
-      GITHUB_TOKEN: z.string().min(1).optional(),
-
       // The docs site (apps/docs), e.g. https://docs.qrdx.dev: when set,
       // next.config.ts proxies the docs' URLs there and the sitemap and
-      // llms.txt read its /zone/docs-manifest.json. Unset, this app serves
-      // its own copy of the docs.
+      // llms.txt read its /zone/docs-manifest.json. Unset, the docs' URLs
+      // redirect to the same paths on qrdx.dev (self-hosting).
       DOCS_ZONE_URL: z.url().optional(),
 
       // OpenAI's plugin directory checks that we run the MCP host: the token
@@ -247,7 +244,6 @@ export const env = validateTogether(() =>
       CSP_REPORT_ONLY: process.env.CSP_REPORT_ONLY,
       CSP_HTTPS: process.env.CSP_HTTPS,
       QRDX_HOME_NUMBERS: process.env.QRDX_HOME_NUMBERS,
-      GITHUB_TOKEN: process.env.GITHUB_TOKEN,
       DOCS_ZONE_URL: process.env.DOCS_ZONE_URL,
       OPENAI_APPS_CHALLENGE: process.env.OPENAI_APPS_CHALLENGE,
       NODE_ENV: process.env.NODE_ENV,

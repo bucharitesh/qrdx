@@ -157,7 +157,7 @@ cp apps/app/.env.example .env    # set BETTER_AUTH_SECRET and a sign-in method
 docker compose up -d --build
 ```
 
-Read the [self-hosting guide](https://qrdx.dev/docs/self-hosting) before you run it in production.
+Read the [self-hosting guide](https://qrdx.dev/docs/self-hosting) before you run it in production. A self-hosted instance doesn't serve the docs: its docs links go to the same pages on qrdx.dev.
 
 ## License
 
