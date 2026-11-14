@@ -1,5 +1,6 @@
 // plugins/agent is the QRdx plugin for Claude Code, Copilot CLI, Cursor and
-// Codex (listed by .claude-plugin/marketplace.json), and gemini-extension.json
+// Codex (listed by .claude-plugin/marketplace.json for Claude Code and by
+// .cursor-plugin/marketplace.json for Cursor), and gemini-extension.json
 // at the root is the Gemini CLI extension. The plugin carries a real copy of
 // skills/generate-qr, because directories refuse symlinks; this keeps the
 // copy, the manifests and the MCP server URL in step.
@@ -19,6 +20,7 @@ function readJson(...path: string[]) {
 const agentPlugin = readJson(PLUGIN, "plugin.json");
 const claudePlugin = readJson(PLUGIN, ".claude-plugin", "plugin.json");
 const gemini = readJson(REPO, "gemini-extension.json");
+const cursorMarketplace = readJson(REPO, ".cursor-plugin", "marketplace.json");
 
 describe("plugins/agent", () => {
   it("carries an exact copy of skills/generate-qr", () => {
@@ -40,6 +42,7 @@ describe("plugins/agent", () => {
     );
     expect(agentPlugin.license).toBe("MIT");
     expect(claudePlugin.license).toBe("MIT");
+    expect(cursorMarketplace.plugins[0].version).toBe(agentPlugin.version);
   });
 
   it("connects the public MCP server with no headers", () => {
@@ -60,6 +63,20 @@ describe("plugins/agent", () => {
     expect(marketplace.plugins).toEqual([
       expect.objectContaining({ name: "qrdx", source: "./plugins/agent" }),
     ]);
+  });
+
+  it("is listed for Cursor, with a logo that exists", () => {
+    expect(cursorMarketplace.name).toBe("qrdx");
+    expect(cursorMarketplace.plugins).toEqual([
+      expect.objectContaining({
+        name: "qrdx",
+        source: "plugins/agent",
+        logo: "assets/logo.png",
+      }),
+    ]);
+    expect(() =>
+      readFileSync(join(PLUGIN, cursorMarketplace.plugins[0].logo)),
+    ).not.toThrow();
   });
 
   it("states the CLI version the skill pins", () => {
