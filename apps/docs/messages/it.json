@@ -4373,7 +4373,6 @@
         "frame": "Cornice",
         "padding": "Margine",
         "errorCorrection": "Correzione errori",
-        "border": "Bordo",
         "none": "Nessuno"
       },
       "dotSizeSection": {
@@ -4396,31 +4395,26 @@
         }
       },
       "frameControls": {
-        "importSvg": "Importa SVG",
+        "uploadSvg": "Carica SVG",
         "publishFrame": "Pubblica cornice",
         "theFrameIsAddedAround": "La cornice viene aggiunta attorno al codice, quindi l’immagine scaricata diventa più grande e il codice resta leggibile alla scansione.",
         "label": "Etichetta",
         "pickAFrameFirst": "Scegli prima una cornice",
-        "none": "Nessuna"
+        "none": "Nessuna",
+        "takesDotColor": "Prende il colore dei punti del codice.",
+        "alsoHasTemplate": "Questo design include anche la cornice {name} all’interno di questa. Scegliendo un’altra cornice, vengono sostituite entrambe.",
+        "templateKeepsSize": "Questa cornice si adatta al codice che contiene, quindi l’immagine scaricata mantiene la dimensione che scegli."
       },
       "frameFields": {
         "textSize": "Dimensione testo"
       },
       "framePicker": {
-        "more": "Altre",
         "showAll": "Mostra tutte",
         "frame": "Cornice",
-        "moreFrames": "Altre cornici",
-        "allTotalFrames": "Tutte le {total, number} cornici",
-        "allFrames": "Tutte le cornici",
         "searchFrames": "Cerca cornici",
         "searchTotalFrames": "Cerca tra {total, number} cornici",
-        "closeFrames": "Chiudi cornici",
         "filterFrames": "Filtra cornici",
         "labelFrames": "Cornici {label}",
-        "commonFrames": "Cornici comuni",
-        "everyFrameBuiltInStyles": "Tutte le cornici: quelle classiche, i codici sagomati, le cornici ufficiali di QRdx e quelle che hai salvato. Se ne scegli una, viene applicata subito.",
-        "less": "Meno",
         "all": "Tutte",
         "noFramesMatchQuery": "Nessuna cornice per \"{query}\".",
         "loadingFrames": "Caricamento cornici…",
@@ -4554,7 +4548,6 @@
       },
       "patternControls": {
         "customizeOuterAndCenter": "Personalizza esterno e centro",
-        "border": "Bordo",
         "higherLevelsSurviveScratchesAnd": "I livelli più alti resistono a graffi e loghi, ma aggiungono più punti. Usa H quando aggiungi un logo.",
         "dotShape": "Forma dei punti",
         "dotShapes": "forme dei punti",

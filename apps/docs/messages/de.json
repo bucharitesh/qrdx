@@ -4373,7 +4373,6 @@
         "frame": "Rahmen",
         "padding": "Abstand",
         "errorCorrection": "Fehlerkorrektur",
-        "border": "Rand",
         "none": "Keine"
       },
       "dotSizeSection": {
@@ -4396,31 +4395,26 @@
         }
       },
       "frameControls": {
-        "importSvg": "SVG importieren",
+        "uploadSvg": "SVG hochladen",
         "publishFrame": "Rahmen veröffentlichen",
         "theFrameIsAddedAround": "Der Rahmen wird um den Code herum hinzugefügt. Dadurch wird das heruntergeladene Bild größer und der Code selbst bleibt scanbar.",
         "label": "Text",
         "pickAFrameFirst": "Wähle zuerst einen Rahmen",
-        "none": "Keiner"
+        "none": "Keiner",
+        "takesDotColor": "Er übernimmt die Farbe der Punkte des Codes.",
+        "alsoHasTemplate": "Dieses Design enthält auch den Rahmen {name}. Wenn du einen anderen Rahmen wählst, werden beide ersetzt.",
+        "templateKeepsSize": "Dieser Rahmen passt sich dem Code darin an, sodass das heruntergeladene Bild die von dir gewählte Größe behält."
       },
       "frameFields": {
         "textSize": "Textgröße"
       },
       "framePicker": {
-        "more": "Mehr",
         "showAll": "Alle zeigen",
         "frame": "Rahmen",
-        "moreFrames": "Mehr Rahmen",
-        "allTotalFrames": "Alle {total, number} Rahmen",
-        "allFrames": "Alle Rahmen",
         "searchFrames": "Rahmen suchen",
         "searchTotalFrames": "{total, number} Rahmen durchsuchen",
-        "closeFrames": "Rahmen schließen",
         "filterFrames": "Rahmen filtern",
         "labelFrames": "{label}-Rahmen",
-        "commonFrames": "Gängige Rahmen",
-        "everyFrameBuiltInStyles": "Alle Rahmen: die klassischen Rahmen, Formcodes, die offiziellen Rahmen von QRdx und deine gespeicherten Rahmen. Ein Klick darauf wendet den Rahmen sofort an.",
-        "less": "Weniger",
         "all": "Alle",
         "noFramesMatchQuery": "Keine Rahmen für „{query}“ gefunden.",
         "loadingFrames": "Rahmen werden geladen …",
@@ -4554,7 +4548,6 @@
       },
       "patternControls": {
         "customizeOuterAndCenter": "Außen und Mitte anpassen",
-        "border": "Rahmen",
         "higherLevelsSurviveScratchesAnd": "Höhere Stufen überstehen Kratzer und Logos, benötigen aber mehr Punkte. Nimm H, wenn du ein Logo hinzufügst.",
         "dotShape": "Punktform",
         "dotShapes": "Punktformen",

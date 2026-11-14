@@ -550,7 +550,7 @@ type ChatFlag = (typeof CHAT_FLAGS)[number];
 /** Other names people reach for. */
 const FLAG_ALIASES: Record<string, ChatFlag> = { color: "fg" };
 
-/** Border templates by lower-case id ("default" is no border). */
+/** Frames drawn as templates, by lower-case id ("default" draws none). */
 const TEMPLATES = new Map(
   getTemplateIds().map((id) => [id.toLowerCase(), id] as const),
 );
@@ -672,7 +672,7 @@ function setFlag(choice: ChatStyleChoice, flag: ChatFlag, raw: string) {
       const id = TEMPLATES.get(raw.toLowerCase());
       if (!id) {
         throw new FlagError(
-          `There's no border "${raw.slice(0, 40)}". --template takes one of: ${list([...TEMPLATES.values()])}.`,
+          `There's no template frame "${raw.slice(0, 40)}". --template takes one of: ${list([...TEMPLATES.values()])}.`,
         );
       }
       choice.template = id;

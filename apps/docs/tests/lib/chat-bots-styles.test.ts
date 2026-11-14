@@ -319,7 +319,7 @@ describe("typed options", () => {
       ["x --body blob", /no dot shape "blob".*square/],
       ["x --frame cloud", /no frame "cloud".*banner-bottom/],
       ["x --logo cat", /no logo icon "cat".*wifi/],
-      ["x --template wavy", /no border "wavy".*Arrow/],
+      ["x --template wavy", /no template frame "wavy".*Arrow/],
       [`x --frame-text "${"a".repeat(25)}"`, /up to 24 characters/],
       ["x --look", /--look needs a value/],
       ['x --frame-text ""', /--frame-text needs a value/],

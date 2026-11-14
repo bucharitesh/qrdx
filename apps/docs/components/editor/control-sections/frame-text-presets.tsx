@@ -7,6 +7,7 @@ import { useEditableStyle } from "@/components/editor/style-scope";
 import { DEFAULT_FRAME_STYLE } from "@/lib/frames/built-in";
 import { soundEvent } from "@/lib/sound/emit";
 import { withoutShape } from "./frame-shapes";
+import { withoutTemplate } from "./frame-templates";
 
 const CTA_LABELS = [
   "Scan me",
@@ -32,7 +33,9 @@ export function FrameTextPresets() {
 
   const apply = (text: string) => {
     setStyle({
-      ...(framed ? style : withoutShape(style)),
+      // With no frame yet, the label's frame replaces a shaped code or a
+      // template (one frame at a time)
+      ...(framed ? style : withoutTemplate(withoutShape(style))),
       frame: framed
         ? { ...frame, text }
         : { ...frame, style: DEFAULT_FRAME_STYLE, text },

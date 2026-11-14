@@ -1,63 +1,54 @@
 ---
 title: "模板"
-description: "为二维码套用预先设计好的边框模板，或注册你自己的模板。"
+description: "将二维码嵌入固定尺寸图案中的边框，以及用于在代码中绘制边框的 TemplateDefinition API。"
 icon: LayoutTemplate
 ---
 
-用现成的图案，或你自己的图案，把二维码包起来。
+模板是一种把二维码嵌入自身图案内部的边框。在 Playground 中，模板并不是单独的列表。Arrow、Standard Box、Square Border、Striked Box、Halloween 和 Dot Ring 都是边框选择器 **经典** 分组中的图块，与其他[边框](/docs/features/frames)并列，选择任一边框都会替换之前选中的边框。
 
-## 什么是模板？ [#what-are-templates]
+模板与其他边框只有一点不同：尺寸。边框会在二维码四周增加空白，因此 `size` 是二维码的宽度，图像会随之变大。模板则以 `size` 绘制整个图案，二维码在其中显得更小。
 
-模板是围绕二维码绘制的 SVG 图案：一个方框、一道边框、一枚徽章。它以 `children` 的形式接收二维码，并把二维码放进自己的绘图中。颜色、图案样式和徽标仍由 `QRCode` 的属性控制，因此模板可以搭配任何样式使用。
+## 内置模板 [#built-in-templates]
 
-## 可用模板 [#available-templates]
+将 id 作为 `templateId` 传入。Image API 中对应参数为 `template`，CLI 中为 `--template`。
 
-### 默认 [#default]
-经典黑白。
+| `templateId` | 名称 | 颜色 |
+|--------------|------|-------|
+| `Arrow` | Arrow | 二维码的深色（`fgColor`） |
+| `StandardBox` | Standard Box | `fgColor` |
+| `SquareBorder` | Square Border | `fgColor` |
+| `StrikedBox` | Striked Box | 自带的深色 |
+| `Halloween` | Halloween | 自带的橙色、绿色和黑色 |
+| `DotRing` | Dot Ring | 圆环使用 `fgColor`，文字为白色；两者均可更改（见下文） |
+
+`default` 不绘制任何图案，只是把二维码略微内缩到 `size` 的 95%。
 
 ```tsx
 import { QRCode } from 'qrdx';
 
-<QRCode value="https://example.com" templateId="default" size={256} />
+<QRCode value="https://example.com" templateId="Arrow" fgColor="#1a56db" size={256} />
 ```
 
-### 箭头 [#arrow]
-现代几何设计。
+颜色、图案样式和徽标仍由二维码自身的属性控制，因此模板可以搭配任何样式：
 
 ```tsx
-<QRCode value="https://example.com" templateId="Arrow" size={256} />
+<QRCode
+  value="https://example.com"
+  templateId="StandardBox"
+  fgColor="#1a56db"
+  imageSettings={{
+    src: "/your-logo.png",
+    width: 48,
+    height: 48,
+    excavate: true,
+  }}
+  size={512}
+/>
 ```
 
-### 标准方框 [#standard-box]
-简洁、规整的设计。
+## Dot Ring [#dot-ring]
 
-```tsx
-<QRCode value="https://example.com" templateId="StandardBox" size={256} />
-```
-
-### 方形边框 [#square-border]
-边缘分明的带边框设计。
-
-```tsx
-<QRCode value="https://example.com" templateId="SquareBorder" size={256} />
-```
-
-### 斜纹方框 [#striked-box]
-带有斜向元素的动感设计。
-
-```tsx
-<QRCode value="https://example.com" templateId="StrikedBox" size={256} />
-```
-
-### 万圣节 [#halloween]
-万圣节季节主题。
-
-```tsx
-<QRCode value="https://example.com" templateId="Halloween" size={256} />
-```
-
-### 圆点环 [#dot-ring]
-圆形二维码。二维码位于深色圆环内的圆点圆盘中，圆环上沿环排布一行文字。显示哪些圆点由二维码内容的哈希值决定，因此每个链接都有自己独一无二的圆环，而同一个链接始终得到同一个圆环。
+圆形二维码。二维码位于深色圆环内的点阵圆盘中，圆环上沿着环形排布一行文字。显示哪些点由二维码内容的哈希值决定，因此每个链接都有专属的圆环，同一个链接始终得到同样的圆环。
 
 ```tsx
 <QRCode
@@ -68,7 +59,7 @@ import { QRCode } from 'qrdx';
 />
 ```
 
-它的设置放在 `customProps` 中（类型为 `DotRingProps`）：
+其设置放在 `customProps` 中（类型为 `DotRingProps`）：
 
 ```tsx
 <QRCode
@@ -86,66 +77,58 @@ import { QRCode } from 'qrdx';
 
 | 属性 | 默认值 | 说明 |
 | --- | --- | --- |
-| `customText` | “Scan the QR code”，沿圆环重复四次 | 沿圆环排布的文字。放不下的字母会被省略；设为 `""` 则圆环上不显示文字 |
+| `customText` | “Scan the QR code” 重复四次绕一圈 | 沿圆环排布的文字。放不下的字母会被省略；`""` 表示圆环上不放文字 |
 | `textPosition` | `"top"` | `"top"`：在顶部居中，按顺时针方向阅读。`"bottom"`：在底部居中，从左到右阅读 |
-| `textRotation` | `0` | 让文字绕中心旋转，单位为度 |
+| `textRotation` | `0` | 围绕中心旋转文字，单位为度 |
 | `textColor` | `#ffffff` | 文字颜色 |
 | `fontFamily` | 系统字体栈 | 文字的 CSS 字体族 |
 | `fontWeight` | `900` | 字重 |
-| `fontSize` | `32` | 以模板 593 单位的绘图为基准，其中二维码宽 300 |
+| `fontSize` | `32` | 以模板 593 单位的绘图为准，其中二维码宽 300 |
 | `fontLetterSpacing` | `3.5` | 字母之间的额外间距，单位相同 |
 | `outerCircleColor` | `fgColor` | 圆环颜色 |
-| `strokeWidth`、`strokeColor` | `0`、`#000000` | 沿圆环两侧边缘的描边 |
-| `outerStrokeWidth`、`outerStrokeColor` | `strokeWidth`、`strokeColor` | 仅圆环外缘 |
-| `innerStrokeWidth`、`innerStrokeColor` | `strokeWidth`、`strokeColor` | 仅圆环内缘 |
+| `strokeWidth`, `strokeColor` | `0`, `#000000` | 圆环两侧边缘的描边 |
+| `outerStrokeWidth`, `outerStrokeColor` | `strokeWidth`, `strokeColor` | 仅圆环外缘 |
+| `innerStrokeWidth`, `innerStrokeColor` | `strokeWidth`, `strokeColor` | 仅圆环内缘 |
 
-和其他二维码一样，可以在中间放置徽标。较长的链接（宽度超过 49 个模块的二维码）会在二维码与圆点之间保留一圈浅色带，这样即使印得很小也能被扫描。
+与任何二维码一样，徽标放在中央。较长的链接（宽度超过 49 个模块的二维码）会在二维码与点阵之间保留一圈浅色带，这样缩小打印后仍能扫描。
 
-文字是 SVG 文本，使用你选择的字体；默认是系统字体栈，因此不会下载任何字体。在浏览器中下载 SVG 和 PNG 时会使用查看者的字体。PDF 和 EPS 以 Helvetica Bold 打印文字，因此请在这两种格式中使用 Latin-1 文本。来自 `qrdx/node` 的 `getQRAsPNG` 需要服务器上安装字体，边框标签也是如此。
+文字是 SVG 文本，使用你选择的字体；默认是系统字体栈，因此不会下载任何字体。在浏览器中下载 SVG 和 PNG 时使用查看者的字体。PDF 和 EPS 会用 Helvetica Bold 打印，因此请在其中使用 Latin-1 文本。`qrdx/node` 中的 `getQRAsPNG` 需要服务器上安装有字体，边框标签也是如此。
 
-## 自定义模板 [#customize-templates]
+## 模板就是边框规范 [#templates-are-frame-specs]
 
-内置模板用 `fgColor` 绘制其图案。其他一切，例如图案样式和徽标，仍照常设置在二维码上：
+Arrow、Standard Box、Square Border、Striked Box 和 Halloween 的图案都是一份[边框规范](/docs/features/frames#frame-specs)，与其他所有边框使用相同的 JSON 格式，由同一个引擎绘制。`getTemplate(id).spec` 会返回它。如果你想要边框式的尺寸（二维码保持原大小，图案在其周围扩展）以及边框的颜色选项，可以把它当作边框使用：
 
 ```tsx
+import { getTemplate, QRCode } from 'qrdx';
+
+const spec = getTemplate('Arrow')?.spec;
+
 <QRCode
   value="https://example.com"
-  templateId="Arrow"
-  fgColor="#1a56db"
-  imageSettings={{
-    src: "/your-logo.png",
-    width: 48,
-    height: 48,
-    excavate: true,
-  }}
-  size={512}
+  frame={spec && { style: 'custom', spec, color: '#1a56db' }}
+  size={256}
 />
 ```
 
+Dot Ring 没有规范：它的点阵由二维码内容生成，因此用代码绘制（参见[在代码中绘制边框](#frames-you-draw-in-code)）。
+
+`templateId` 绘制的图案与之前相同。使用模板 id 的已保存设计、图像 URL、CLI 命令和代码，外观都和以往一致。
+
 ## 模板注册表 [#template-registry]
 
-### 获取所有模板 [#get-all-templates]
-
 ```tsx
-import { getAllTemplates } from 'qrdx';
+import { getAllTemplates, getTemplate, getTemplateIds } from 'qrdx';
 
-const templates = getAllTemplates();
+getTemplateIds(); // ['default', 'Arrow', 'StandardBox', ...]
+getAllTemplates(); // every TemplateDefinition, with its id and name
+getTemplate('Halloween'); // one by id
 ```
 
-### 获取模板 ID [#get-template-ids]
+## 在代码中绘制边框 [#frames-you-draw-in-code]
 
-```tsx
-import { getTemplateIds } from 'qrdx';
+边框规范描述的是固定的图案。当图案需要计算生成时，请编写一个 `TemplateDefinition`，并将其作为 `customTemplate` 传入。它的 `wrapper` 会以 `children` 的形式接收二维码，并返回要绘制的 SVG。绘制画布为 300 × 300，二维码也以该尺寸传入，因此需要把它缩小，为你的图案留出空间。`props` 包含二维码的 `fgColor` 和 `bgColor`，第三个参数包含二维码的 `url` 和 `pixelSize`。
 
-const ids = getTemplateIds();
-// Returns: ['default', 'Arrow', 'StandardBox', ...]
-```
-
-## 自定义模板 [#custom-templates]
-
-把你自己的模板写成一个 `TemplateDefinition`。它的 `wrapper` 以 `children` 的形式接收二维码，并返回要绘制的 SVG。它在 300 × 300 的画布上绘制，二维码也以这个尺寸传入，所以请把它缩小，为你的图案留出空间。`props` 携带二维码的 `fgColor` 和 `bgColor`。
-
-下面这个模板会在二维码周围画一圈圆环：
+下面这个示例会在二维码周围绘制一个圆环：
 
 ```tsx
 import { QRCode, type TemplateDefinition } from "qrdx";
@@ -177,29 +160,10 @@ const ringTemplate: TemplateDefinition = {
 />
 ```
 
-请让二维码足够大，确保人们手持手机的距离也能扫描，并在二维码与你的图案之间留出一道浅色间隙。用[扫描评分](/docs/features/frames#will-it-scan)检查效果。
-
-## 何时使用模板 [#when-to-use-templates]
-
-- **品牌一致性** — 确保所有二维码风格统一
-- **快速设置** — 快速获得专业效果
-- **季节性活动** — 使用主题模板
-- **批量生成** — 套用一致的样式
-
-## 模板选择指南 [#template-selection-guide]
-
-| 模板 | 最适合 | 风格 |
-|----------|----------|------|
-| 默认 | 专业场景 | 中性 |
-| 箭头 | 科技、现代 | 动感 |
-| 标准方框 | 企业 | 专业 |
-| 方形边框 | 正式场合 | 规整 |
-| 斜纹方框 | 营销 | 活力 |
-| 万圣节 | 季节性 | 趣味 |
-| 圆点环 | 圆形二维码、海报、贴纸 | 醒目 |
+请让二维码保持足够大，以便人们在手持手机的距离下能够扫描，并在二维码与图案之间留出浅色间隙。用[扫描评分](/docs/features/frames#will-it-scan)检查结果。
 
 ## 后续步骤 [#next-steps]
 
-- [图案](/docs/features/patterns) — 详细的图案自定义
-- [颜色与渐变](/docs/features/colors-gradients) — 高级颜色设置
-- [徽标](/docs/features/logos) — 为模板添加徽标
+- [边框](/docs/features/frames)：所有边框，以及边框规范格式
+- [图案样式](/docs/features/patterns)：详细的图案自定义
+- [徽标](/docs/features/logos)：为二维码添加徽标

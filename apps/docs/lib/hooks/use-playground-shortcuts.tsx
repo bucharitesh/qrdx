@@ -3,7 +3,12 @@
 import { toast } from "@repo/design-system";
 import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
-import { getAllTemplates, getQRData, getSVGString } from "qrdx";
+import { getQRData, getSVGString } from "qrdx";
+import {
+  CLASSIC_FRAME_IDS,
+  classicFrameOf,
+  withClassicFrame,
+} from "@/components/editor/control-sections/frame-templates";
 import { patterns as cornerEyeDotPatterns } from "@/components/playground/corner-eye-dot-pattern-selector";
 import { patterns as cornerEyePatterns } from "@/components/playground/corner-eye-pattern-selector";
 import { patterns as bodyPatterns } from "@/components/playground/pattern-selector";
@@ -250,20 +255,18 @@ export function usePlaygroundShortcuts({
     { enabled: shortcutsEnabled },
   );
 
-  // Cycle frames (F)
+  // Cycle frames (F): the Classic frames in picker order, each replacing
+  // the frame, template or shaped code before it
   useKeyboardShortcut(
     "f",
     () => {
-      const templates = getAllTemplates();
-      const currentTemplate = themeState.styles.templateId;
-      const currentIndex = templates.findIndex((t) => t.id === currentTemplate);
-      const nextIndex = (currentIndex + 1) % templates.length;
+      const current = classicFrameOf(themeState.styles);
+      const index = current ? CLASSIC_FRAME_IDS.indexOf(current) : -1;
+      const next =
+        CLASSIC_FRAME_IDS[(index + 1) % CLASSIC_FRAME_IDS.length] ?? "none";
       setThemeState({
         ...themeState,
-        styles: {
-          ...themeState.styles,
-          templateId: templates[nextIndex].id,
-        },
+        styles: withClassicFrame(themeState.styles, next),
       });
       soundEvent("tick");
     },

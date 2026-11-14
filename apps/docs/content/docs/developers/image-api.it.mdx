@@ -94,7 +94,7 @@ const src = `https://api.qrdx.dev/v1/qr?data=${encodeURIComponent(link)}&style=$
 | `dot` | `square` | Forma del punto all'interno di ogni occhio agli angoli |
 | `level` | `Q` | Correzione degli errori: `L` (~7%), `M` (~15%), `Q` (~25%) o `H` (~30%) |
 | `margin` | `4` | Zona di silenzio attorno al codice in moduli, da `0` a `16` |
-| `template` | nessuno | Template di bordo decorativo |
+| `template` | nessuno | Una [cornice disegnata come template](/docs/features/templates): l'intera immagine è larga `size`, con il codice più piccolo all'interno |
 | `frame` | nessuna | Una [cornice](/docs/features/frames) integrata con invito all'azione, come `banner-bottom`, `speech-bubble` o `circle` (una qualsiasi delle {facts.frameStyles} cornici integrate, ciascuna disegnata a partire dalla sua specifica) |
 | `frameText` | `Scan me` | L'etichetta della cornice, fino a 24 caratteri. Cambia anche l'etichetta della cornice di uno `style` o di un `item` |
 | `style` | nessuno | L'intero design dell'editor come JSON; vedi [Stili](#style) |
@@ -115,7 +115,7 @@ Con una cornice, `size` è la larghezza del codice stesso e la cornice si aggiun
 | `bgColor`, `fgColor`, `eyeColor`, `dotColor` | Un colore (esadecimale come `#155dfc`, `rgb()`, `hsl()` o un nome di colore), oppure un gradiente: `{ "type": "linear", "angle": 45, "stops": [...] }` oppure `{ "type": "radial", "stops": [...] }`, con da 2 a 8 stop di tipo `{ "color", "offset" }` (offset da 0 a 100) |
 | `bodyPattern`, `cornerEyePattern`, `cornerEyeDotPattern` | I [valori dei pattern](#pattern-values) |
 | `level`, `margin` | Come i parametri sopra (`margin` da 0 a 16) |
-| `templateId` | Un template di bordo, `default` per nessuno |
+| `templateId` | Una cornice disegnata come template, `default` per nessuna |
 | `frame` | Una cornice integrata, `{ "style": "banner-bottom", "text": "Scan me", "color": "#155dfc", "textColor": "#ffffff" }`, oppure una personalizzata, `{ "style": "custom", "spec": { … } }`, con una specifica di cornice dalla [community](#community-items) o una cornice personalizzata creata nella sezione Cornice del Playground. Le specifiche vengono verificate rispetto alle regole del motore per le specifiche di cornice (niente markup, link o immagini; al massimo 32 KB) |
 | `eyeColors` | Colori per ogni occhio, con precedenza su `eyeColor` e `dotColor`: `{ "topLeft": { "outer": "#b91c1c", "inner": "#1d4ed8" }, "topRight": …, "bottomLeft": … }`, ciascuno un colore o un gradiente |
 | `moduleScale` | Dimensione di ogni punto, da `0.5` a `1` (predefinito `1`) |
@@ -161,7 +161,7 @@ Il Logo QR e l'arte Image QR non sono disponibili qui: il Playground li costruis
 - `body`: `circle`, `circle-large`, `square`, `diamond`, `circle-mixed`, `pacman`, `rounded`, `small-square`, `vertical-line`, `horizontal-line`, `liquid`, `liquid-horizontal`, `liquid-vertical`, `classy`, `classy-rounded`, `leaf`, `plus`, `hexagon`, `star`, `heart`, `random-dots`, `mosaic`, `octagon`
 - `eye`: `square`, `rounded`, `gear`, `circle`, `diya`, `extra-rounded`, `message`, `pointy`, `leaf`, `drop`, `octagon`, `bevel`, `squircle`, `cushion`, `shield`, `petal`, `leaf-reverse`
 - `dot`: `square`, `rounded`, `circle`, `message`, `message-reverse`, `diya`, `diya-reverse`, `rounded-triangle`, `leaf`, `drop`, `plus`, `cross-rounded`, `hexagon`, `octagon`, `flower`, `heart`, `squircle`, `dots`, `extra-rounded`, `leaf-reverse`, `drop-reverse`
-- `template`: `default`, `Arrow`, `StandardBox`, `SquareBorder`, `StrikedBox`, `Halloween`
+- `template`: `default`, `Arrow`, `StandardBox`, `SquareBorder`, `StrikedBox`, `Halloween`, `DotRing`
 
 Sono gli stessi stili della [libreria React `qrdx`](/docs/features/patterns). Anche il [server MCP](/docs/developers/mcp) può elencarli con brevi descrizioni.
 

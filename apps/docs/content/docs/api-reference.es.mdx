@@ -41,8 +41,8 @@ import { QRCode } from 'qrdx';
 | `cornerEyeDotPattern` | `CornerEyeDotPattern` | `'circle'` | Patrón del punto de las esquinas |
 | `hideLogo` | `boolean` | `false` | Oculta el logotipo. No se dibuja ningún logotipo a menos que se defina `logo` |
 | `logo` | `string` | — | URL del logotipo |
-| `templateId` | `string` | `'default'` | ID de la plantilla |
-| `customTemplate` | `TemplateDefinition` | — | Plantilla personalizada |
+| `templateId` | `string` | `'default'` | Un [marco dibujado como plantilla](/docs/features/templates) (`'Arrow'`, `'StandardBox'`, …): toda la imagen mide `size` de ancho |
+| `customTemplate` | `TemplateDefinition` | — | Un marco que dibujas en código (tiene prioridad sobre `templateId`) |
 | `level` | `ErrorLevel` | `'Q'` | Corrección de errores |
 | `autoLevel` | `boolean` | `false` | Sube `level` a H cuando el logotipo cubre más del 7 % del código (`AUTO_LEVEL_LOGO_COVERAGE`) |
 | `margin` | `number` | `0` | Margen en módulos |

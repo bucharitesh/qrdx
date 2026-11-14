@@ -59,7 +59,7 @@ QRdx에는 Slack 안에서 QR 코드를 만들어 주는 Slack 앱이 있습니�
 | `--dot` | 눈 중심 모양 | {facts.eyeCentres}가지 중심 모양 중 하나 (예: `square`, `rounded`, `circle`) |
 | `--frame` | 코드 주위의 프레임 | `none` 또는 {facts.frameStyles}가지 기본 프레임 중 하나 (예: `banner-bottom`, `banner-top`, `speech-bubble`, `polaroid`) |
 | `--frame-text` | 프레임 라벨 (최대 24자) | 임의의 텍스트이며, 공백이 있으면 따옴표로 묶어요. `--frame` 없이 사용하면 코드 아래 배너에 표시됩니다 |
-| `--template` | 장식용 테두리 | `Arrow`, `StandardBox`, `SquareBorder`, `StrikedBox`, `Halloween` |
+| `--template` | 템플릿으로 그리는 프레임 | `Arrow`, `StandardBox`, `SquareBorder`, `StrikedBox`, `Halloween` |
 | `--logo` | 가운데 아이콘 | `link`, `wifi`, `location`, `phone`, `email`, `whatsapp`, `instagram`, `file`, `calendar`, `none` |
 
 스타일을 적용한 코드는 게시하기 전에 편집기와 같은 스캔 점수로 QRdx가 검사합니다. 휴대폰이 읽기 어려운 디자인이면 QRdx가 색을 더 어둡게 하거나, 모양을 단순하게 하거나, 오류 정정을 높이는 식으로 조정하고 코드 아래에 그 내용을 알려 줍니다. 그래도 부족하면(대개 콘텐츠가 길 때) 흰색 바탕에 검은색 코드와 안내 메시지가 표시됩니다. `/qr`로 만든 스타일 코드는 검사를 마친 뒤에 올라오므로 명령을 보내고 잠시 후에 표시됩니다.
