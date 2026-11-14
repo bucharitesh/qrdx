@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+Scan → Range has All Time: the whole history, from the code's first scan (Pro and Business; other plans get 30 days).
+
 ## 0.1.1
 
 QR Image → Generate can return WebP (lossless) as well as PNG, SVG and EPS.

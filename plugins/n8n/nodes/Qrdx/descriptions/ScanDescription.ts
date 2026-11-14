@@ -8,6 +8,7 @@ const RANGE_LABELS: Record<(typeof SCAN_RANGES)[number], string> = {
   "90d": "Last 90 Days",
   "365d": "Last Year",
   "1095d": "Last 3 Years",
+  all: "All Time",
 };
 
 const rangeField = (description: string): INodeProperties => ({
