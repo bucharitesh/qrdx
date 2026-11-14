@@ -29723,9 +29723,9 @@
     "status": "machine",
     "context": "mcp.tools.5.title"
   },
-  "35f9a7f12b6f": {
-    "source": "Saves a design as a theme in your workspace, under the plan's saved-theme limit. Needs a QRdx API key on the connection; every other tool works without one.",
-    "text": "디자인을 워크스페이스에 테마로 저장하며, 요금제의 저장 테마 한도 안에서 가능합니다. 연결에 QRdx API 키가 필요하고, 다른 모든 도구는 키 없이 작동합니다.",
+  "8fcad3c406cf": {
+    "source": "Saves a design as a theme in your workspace, under the plan's saved-theme limit. Needs a QRdx API key on the connection.",
+    "text": "디자인을 워크스페이스에 테마로 저장하며, 요금제의 저장 가능한 테마 한도 안에서 저장돼요. 연결에 QRdx API 키가 필요해요.",
     "status": "machine",
     "context": "mcp.tools.5.description"
   },
@@ -29752,6 +29752,18 @@
     "text": "워크스페이스의 바코드에 바코드를 보관해 나중에 편집하고 다운로드할 수 있습니다. 연결에 QRdx API 키가 필요합니다.",
     "status": "machine",
     "context": "mcp.tools.7.description"
+  },
+  "4c95ba85d6f1": {
+    "source": "Generate AI art",
+    "text": "AI 아트 생성",
+    "status": "machine",
+    "context": "mcp.tools.8.title"
+  },
+  "9254cd62817d": {
+    "source": "Paints a QR code into AI artwork from your description, a scene or your photo, and checks that it scans. Each image uses one of your workspace's monthly AI art images and takes up to a minute. Needs a QRdx API key on the connection.",
+    "text": "설명, 장면 또는 사진을 바탕으로 QR 코드를 AI 아트워크에 그려 넣고, 스캔이 되는지 확인해요. 이미지 한 장마다 워크스페이스의 월간 AI 아트 이미지 한 장이 사용되며, 최대 1분까지 걸려요. 연결에 QRdx API 키가 필요해요.",
+    "status": "machine",
+    "context": "mcp.tools.8.description"
   },
   "abb9f9118ecf": {
     "source": "List styles",
@@ -29855,11 +29867,11 @@
     "status": "machine",
     "context": "mcp.faqs.2.question"
   },
-  "f538f592cdab": {
-    "source": "No, for designing and rendering codes and browsing the community: the QRdx MCP server is public and free, and it keeps no session state. Saving a design to your themes (save_template), saving a barcode (save_barcode) and using a logo you uploaded need a QRdx API key, sent as Authorization: Bearer qrdx_… in your app's settings for the server.",
-    "text": "코드를 디자인하고 렌더링하거나 커뮤니티를 둘러보는 데는 필요하지 않습니다. QRdx MCP 서버는 공개되어 있고 무료이며, 세션 상태를 저장하지 않습니다. 디자인을 내 테마에 저장(save_template)하거나, 바코드를 저장(save_barcode)하거나, 업로드한 로고를 사용하려면 QRdx API 키가 필요합니다. 앱의 서버 설정에서 Authorization: Bearer qrdx_… 형식으로 보내세요.",
+  "95b27c7bcd0a": {
+    "source": "No, for designing and rendering codes and browsing the community: the QRdx MCP server is public and free, and it keeps no session state. Saving a design to your themes (save_template), saving a barcode (save_barcode), making AI art (generate_ai_art) and using a logo you uploaded need a QRdx API key, sent as Authorization: Bearer qrdx_… in your app's settings for the server.",
+    "text": "아니요. 코드를 디자인하고 렌더링하거나 커뮤니티를 둘러보는 데는 필요하지 않아요. QRdx MCP 서버는 공개되어 있고 무료이며, 세션 상태를 저장하지 않아요. 디자인을 내 테마에 저장(save_template)하거나, 바코드를 저장(save_barcode)하거나, AI 아트를 만들거나(generate_ai_art), 업로드한 로고를 사용하려면 QRdx API 키가 필요해요. 앱의 서버 설정에서 Authorization: Bearer qrdx_… 형태로 보내 주세요.",
     "status": "machine",
-    "context": "mcp.faqs.0.answer"
+    "context": "mcp.faqs.2.answer"
   },
   "d13545262ca7": {
     "source": "Which AI tools does it work with?",
@@ -29915,11 +29927,11 @@
     "status": "machine",
     "context": "mcp.faqs.5.question"
   },
-  "9ccc8cb2303b": {
-    "source": "No. The tools render images, format text and read the public community. Only save_template and save_barcode write anything: the theme or barcode you ask them to save, in the API key's workspace. The server doesn't save the codes. The image URLs it returns contain the encoded data, so don't share them if the data is private, such as a Wi-Fi password.",
-    "text": "아니요. 도구는 이미지를 렌더링하고, 텍스트 형식을 만들고, 공개 커뮤니티를 읽을 뿐입니다. save_template과 save_barcode만 데이터를 기록하며, 저장하라고 요청한 테마나 바코드를 API 키의 워크스페이스에 저장합니다. 서버는 코드를 저장하지 않습니다. 반환되는 이미지 URL에는 인코딩된 데이터가 들어 있으므로, Wi-Fi 비밀번호처럼 비공개 데이터라면 공유하지 마세요.",
+  "06b24c9cbc55": {
+    "source": "No. The tools render images, format text and read the public community. Only save_template and save_barcode write anything: the theme or barcode you ask them to save, in the API key's workspace. generate_ai_art uses one of the workspace's monthly AI art images but keeps neither the image nor a photo you send. The server doesn't save the codes. The image URLs it returns contain the encoded data, so don't share them if the data is private, such as a Wi-Fi password.",
+    "text": "아니요. 이 도구들은 이미지를 렌더링하고, 텍스트를 포맷하고, 공개 커뮤니티를 읽기만 해요. 저장을 요청한 테마나 바코드를 API 키의 워크스페이스에 기록하는 도구는 save_template과 save_barcode뿐이에요. generate_ai_art는 워크스페이스의 월간 AI 아트 이미지 한 장을 사용하지만, 이미지도 보내신 사진도 저장하지 않아요. 서버는 코드를 저장하지 않아요. 반환되는 이미지 URL에는 인코딩된 데이터가 들어 있으므로, Wi-Fi 비밀번호처럼 비공개 데이터라면 URL을 공유하지 마세요.",
     "status": "machine",
-    "context": "mcp.faqs.5.answer"
+    "context": "mcp.faqs.7.answer"
   },
   "6b3231c3660f": {
     "source": "Are there limits?",
@@ -30575,11 +30587,23 @@
     "status": "machine",
     "context": "aiArt.faqs.9.question"
   },
-  "81399be3dc7a": {
-    "source": "OpenAI's GPT Image 2, through Vercel AI Gateway, with 171 style presets. QRdx draws a plain black-and-white QR code on the server, the model repaints it as your scene, and QRdx's own scan check makes sure the result decodes, strengthening the code only as much as it needs.",
-    "text": "OpenAI의 GPT Image 2를 Vercel AI Gateway를 통해 사용하며, 171가지 스타일 프리셋을 제공합니다. QRdx가 서버에서 단순한 흑백 QR 코드를 그리면 모델이 이를 원하는 장면으로 다시 그리고, QRdx 자체 스캔 검사가 결과물이 인식되는지 확인합니다. 코드는 필요한 만큼만 보강합니다.",
+  "6ae28ea3daea": {
+    "source": "OpenAI's GPT Image 2, through Vercel AI Gateway, with 171 style presets. QRdx draws a plain black-and-white QR code on the server, the model repaints it as your scene, and QRdx's own scan check makes sure the result decodes, strengthening the code only as much as it needs. In scene and photo modes the picture comes first (one made from your description, or your photo) and the code is painted into its middle the same way.",
+    "text": "OpenAI의 GPT Image 2를 Vercel AI Gateway를 통해 사용하며, 171가지 스타일 프리셋을 제공해요. QRdx가 서버에서 흑백의 기본 QR 코드를 그리면, 모델이 이를 원하는 장면으로 다시 그리고, QRdx 자체 스캔 검사로 결과가 제대로 인식되는지 확인해요. 코드는 필요한 만큼만 보강해요. 장면 모드와 사진 모드에서는 그림이 먼저 만들어지고(설명으로 만든 그림 또는 내 사진), 코드는 같은 방식으로 그 중앙에 그려져요.",
     "status": "machine",
     "context": "aiArt.faqs.9.answer"
+  },
+  "944a8f8415b3": {
+    "source": "Can I make AI art with the API or an AI assistant?",
+    "text": "API나 AI 어시스턴트로도 AI 아트를 만들 수 있나요?",
+    "status": "machine",
+    "context": "aiArt.faqs.10.question"
+  },
+  "6ceb6cca7bce": {
+    "source": "Yes. With a QRdx API key, the REST API (POST /v1/art) and the MCP server's generate_ai_art tool make the same scan-checked images, on your workspace's monthly credits. They can also encode a dynamic code by its id, so the link stays editable. The AI art API page in the developer docs has the details.",
+    "text": "네. QRdx API 키가 있으면 REST API(POST /v1/art)와 MCP 서버의 generate_ai_art 도구로 스캔 검사를 거친 같은 이미지를 만들 수 있고, 워크스페이스의 월간 크레딧이 사용돼요. 동적 QR 코드도 id로 인코딩할 수 있어서 링크를 계속 수정할 수 있어요. 자세한 내용은 개발자 문서의 AI art API 페이지에서 확인하세요.",
+    "status": "machine",
+    "context": "aiArt.faqs.10.answer"
   },
   "d054c5dbcf04": {
     "source": "Does QRdx store my prompt or image?",
@@ -30592,5 +30616,29 @@
     "text": "QRdx는 프롬프트, 참조 이미지, 생성된 이미지를 저장하지 않으며 크레딧 사용량만 집계해요. 아트워크를 만들기 위해 프롬프트, QR 코드 이미지, 참조 이미지는 Vercel AI Gateway를 거쳐 OpenAI의 GPT Image 2로 전송되고, 결과는 곧바로 브라우저로 돌아와요. 보관하고 싶은 이미지는 꼭 다운로드하세요.",
     "status": "machine",
     "context": "aiArt.faqs.10.answer"
+  },
+  "35f9a7f12b6f": {
+    "source": "Saves a design as a theme in your workspace, under the plan's saved-theme limit. Needs a QRdx API key on the connection; every other tool works without one.",
+    "text": "디자인을 워크스페이스에 테마로 저장하며, 요금제의 저장 테마 한도 안에서 가능합니다. 연결에 QRdx API 키가 필요하고, 다른 모든 도구는 키 없이 작동합니다.",
+    "status": "machine",
+    "context": "mcp.tools.5.description"
+  },
+  "f538f592cdab": {
+    "source": "No, for designing and rendering codes and browsing the community: the QRdx MCP server is public and free, and it keeps no session state. Saving a design to your themes (save_template), saving a barcode (save_barcode) and using a logo you uploaded need a QRdx API key, sent as Authorization: Bearer qrdx_… in your app's settings for the server.",
+    "text": "코드를 디자인하고 렌더링하거나 커뮤니티를 둘러보는 데는 필요하지 않습니다. QRdx MCP 서버는 공개되어 있고 무료이며, 세션 상태를 저장하지 않습니다. 디자인을 내 테마에 저장(save_template)하거나, 바코드를 저장(save_barcode)하거나, 업로드한 로고를 사용하려면 QRdx API 키가 필요합니다. 앱의 서버 설정에서 Authorization: Bearer qrdx_… 형식으로 보내세요.",
+    "status": "machine",
+    "context": "mcp.faqs.0.answer"
+  },
+  "9ccc8cb2303b": {
+    "source": "No. The tools render images, format text and read the public community. Only save_template and save_barcode write anything: the theme or barcode you ask them to save, in the API key's workspace. The server doesn't save the codes. The image URLs it returns contain the encoded data, so don't share them if the data is private, such as a Wi-Fi password.",
+    "text": "아니요. 도구는 이미지를 렌더링하고, 텍스트 형식을 만들고, 공개 커뮤니티를 읽을 뿐입니다. save_template과 save_barcode만 데이터를 기록하며, 저장하라고 요청한 테마나 바코드를 API 키의 워크스페이스에 저장합니다. 서버는 코드를 저장하지 않습니다. 반환되는 이미지 URL에는 인코딩된 데이터가 들어 있으므로, Wi-Fi 비밀번호처럼 비공개 데이터라면 공유하지 마세요.",
+    "status": "machine",
+    "context": "mcp.faqs.5.answer"
+  },
+  "81399be3dc7a": {
+    "source": "OpenAI's GPT Image 2, through Vercel AI Gateway, with 171 style presets. QRdx draws a plain black-and-white QR code on the server, the model repaints it as your scene, and QRdx's own scan check makes sure the result decodes, strengthening the code only as much as it needs.",
+    "text": "OpenAI의 GPT Image 2를 Vercel AI Gateway를 통해 사용하며, 171가지 스타일 프리셋을 제공합니다. QRdx가 서버에서 단순한 흑백 QR 코드를 그리면 모델이 이를 원하는 장면으로 다시 그리고, QRdx 자체 스캔 검사가 결과물이 인식되는지 확인합니다. 코드는 필요한 만큼만 보강합니다.",
+    "status": "machine",
+    "context": "aiArt.faqs.9.answer"
   }
 }

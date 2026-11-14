@@ -7612,7 +7612,7 @@
     "status": "machine"
   },
   "mcp.toolsDescription": {
-    "source": "636196decb0b",
+    "source": "a5d8ebb931d8",
     "status": "machine"
   },
   "mcp.toolNoKey": {
@@ -9671,6 +9671,194 @@
     "source": "ce25a29da4a6",
     "status": "machine"
   },
+  "aiArt.artModes.mode": {
+    "source": "5e23ec6a300d",
+    "status": "machine"
+  },
+  "aiArt.artModes.code": {
+    "source": "340f463033e0",
+    "status": "machine"
+  },
+  "aiArt.artModes.scene": {
+    "source": "477e5af2fd7e",
+    "status": "machine"
+  },
+  "aiArt.artModes.photo": {
+    "source": "d84eebada93e",
+    "status": "machine"
+  },
+  "aiArt.artModes.codeDescription": {
+    "source": "770a8b7ab859",
+    "status": "machine"
+  },
+  "aiArt.artModes.sceneDescription": {
+    "source": "8a89323e7d38",
+    "status": "machine"
+  },
+  "aiArt.artModes.photoDescription": {
+    "source": "62f7553996f9",
+    "status": "machine"
+  },
+  "aiArt.artModes.dropAPhoto": {
+    "source": "a458ea99cf60",
+    "status": "machine"
+  },
+  "aiArt.artModes.photoHint": {
+    "source": "807b3e9d0c5d",
+    "status": "machine"
+  },
+  "aiArt.artModes.choosePhoto": {
+    "source": "118fb65601f7",
+    "status": "machine"
+  },
+  "aiArt.artModes.yourPhoto": {
+    "source": "70f597b73eb3",
+    "status": "machine"
+  },
+  "aiArt.artModes.crop": {
+    "source": "98caf7c43c6f",
+    "status": "machine"
+  },
+  "aiArt.artModes.left": {
+    "source": "58eb9032e3bb",
+    "status": "machine"
+  },
+  "aiArt.artModes.right": {
+    "source": "883361d5d682",
+    "status": "machine"
+  },
+  "aiArt.artModes.top": {
+    "source": "d5cdfcf7ff75",
+    "status": "machine"
+  },
+  "aiArt.artModes.bottom": {
+    "source": "479ad21ac909",
+    "status": "machine"
+  },
+  "aiArt.artModes.croppedSquare": {
+    "source": "0742493d8328",
+    "status": "machine"
+  },
+  "aiArt.artModes.replace": {
+    "source": "95e154398a4b",
+    "status": "machine"
+  },
+  "aiArt.artModes.remove": {
+    "source": "c3812fc4acb8",
+    "status": "machine"
+  },
+  "aiArt.artModes.couldntUseThisPhoto": {
+    "source": "7199a5b7ffdc",
+    "status": "machine"
+  },
+  "aiArt.artModes.unsupportedFormat": {
+    "source": "8438ac9ced67",
+    "status": "machine"
+  },
+  "aiArt.artModes.usePngJpgWebp": {
+    "source": "0f9ba10fad74",
+    "status": "machine"
+  },
+  "aiArt.artModes.photoTooLarge": {
+    "source": "54cb96b12f31",
+    "status": "machine"
+  },
+  "aiArt.artModes.photosUpTo": {
+    "source": "708f56373265",
+    "status": "machine"
+  },
+  "aiArt.artModes.examples.eyebrow": {
+    "source": "3edb74466d00",
+    "status": "machine"
+  },
+  "aiArt.artModes.examples.title": {
+    "source": "010e2326acb9",
+    "status": "machine"
+  },
+  "aiArt.artModes.examples.description": {
+    "source": "a3923a79a7ef",
+    "status": "machine"
+  },
+  "aiArt.artModes.examples.scene": {
+    "source": "477e5af2fd7e",
+    "status": "machine"
+  },
+  "aiArt.artModes.examples.photo": {
+    "source": "d84eebada93e",
+    "status": "machine"
+  },
+  "aiArt.artModes.examples.caption.lighthouse": {
+    "source": "01634ed58280",
+    "status": "machine"
+  },
+  "aiArt.artModes.examples.caption.painted-townhouses": {
+    "source": "1c812f90055e",
+    "status": "machine"
+  },
+  "aiArt.artModes.examples.caption.photo-mountain": {
+    "source": "4953bda44858",
+    "status": "machine"
+  },
+  "aiArt.artModes.examples.caption.botanical-watercolor": {
+    "source": "66ea9d28b7d6",
+    "status": "machine"
+  },
+  "aiArt.artModes.examples.caption.venice-canals": {
+    "source": "76f377ee158c",
+    "status": "machine"
+  },
+  "aiArt.artModes.examples.caption.photo-latte": {
+    "source": "3b148a86fc26",
+    "status": "machine"
+  },
+  "aiArt.artModes.examples.caption.zen-garden": {
+    "source": "dda8a35ad952",
+    "status": "machine"
+  },
+  "aiArt.artModes.examples.caption.photo-dog": {
+    "source": "8c45c41d37e1",
+    "status": "machine"
+  },
+  "aiArt.artModes.examples.alt.lighthouse": {
+    "source": "4f21c3784ac7",
+    "status": "machine"
+  },
+  "aiArt.artModes.examples.alt.painted-townhouses": {
+    "source": "4b0c06ab72b2",
+    "status": "machine"
+  },
+  "aiArt.artModes.examples.alt.photo-mountain": {
+    "source": "752c5e45fefb",
+    "status": "machine"
+  },
+  "aiArt.artModes.examples.alt.botanical-watercolor": {
+    "source": "beb7aa485319",
+    "status": "machine"
+  },
+  "aiArt.artModes.examples.alt.venice-canals": {
+    "source": "e8339abeedfd",
+    "status": "machine"
+  },
+  "aiArt.artModes.examples.alt.photo-latte": {
+    "source": "4cd0f5611e9e",
+    "status": "machine"
+  },
+  "aiArt.artModes.examples.alt.zen-garden": {
+    "source": "efd48096b3ed",
+    "status": "machine"
+  },
+  "aiArt.artModes.examples.alt.photo-dog": {
+    "source": "06519651b169",
+    "status": "machine"
+  },
+  "aiArt.artModes.paintingPicture": {
+    "source": "06f841e715b7",
+    "status": "machine"
+  },
+  "aiArt.artModes.paintingCode": {
+    "source": "c8fab2a5e2c3",
+    "status": "machine"
+  },
   "compare.metaTitle": {
     "source": "c1f2a0f4f44e",
     "status": "machine"
@@ -11289,6 +11477,94 @@
   },
   "editor.art.artPanel.modes.ai": {
     "source": "423600bc9155",
+    "status": "machine"
+  },
+  "editor.art.artLooks.look": {
+    "source": "a0de5719f595",
+    "status": "machine"
+  },
+  "editor.art.artLooks.lookChoices": {
+    "source": "c64fb0872e9d",
+    "status": "machine"
+  },
+  "editor.art.artLooks.none": {
+    "source": "dc937b598926",
+    "status": "machine"
+  },
+  "editor.art.artLooks.looks.watercolor": {
+    "source": "150fcde296ec",
+    "status": "machine"
+  },
+  "editor.art.artLooks.looks.oil-painting": {
+    "source": "bb158eb9f44c",
+    "status": "machine"
+  },
+  "editor.art.artLooks.looks.anime": {
+    "source": "3eac161518fc",
+    "status": "machine"
+  },
+  "editor.art.artLooks.looks.cartoon": {
+    "source": "763bba837545",
+    "status": "machine"
+  },
+  "editor.art.artLooks.looks.pixel-art": {
+    "source": "85983b2d4914",
+    "status": "machine"
+  },
+  "editor.art.artLooks.looks.pop-art": {
+    "source": "b2dcefdca2b2",
+    "status": "machine"
+  },
+  "editor.art.artLooks.looks.charcoal": {
+    "source": "2632c885aa43",
+    "status": "machine"
+  },
+  "editor.art.artLooks.looks.ink": {
+    "source": "f089d6229593",
+    "status": "machine"
+  },
+  "editor.art.artLooks.looks.cyberpunk": {
+    "source": "84ad688ed1e8",
+    "status": "machine"
+  },
+  "editor.art.artLooks.looks.fantasy": {
+    "source": "542855513e4f",
+    "status": "machine"
+  },
+  "editor.art.artLooks.looks.photographic": {
+    "source": "07ea23279997",
+    "status": "machine"
+  },
+  "editor.art.artLooks.looks.low-poly": {
+    "source": "f6a52fcad197",
+    "status": "machine"
+  },
+  "editor.art.artLooks.looks.papercut": {
+    "source": "ed87db22eefa",
+    "status": "machine"
+  },
+  "editor.art.artLooks.lookHint": {
+    "source": "e7880e571812",
+    "status": "machine"
+  },
+  "editor.art.artLooks.blankIsWritten": {
+    "source": "9d03f67ed79e",
+    "status": "machine"
+  },
+  "editor.art.artLooks.writeOneForMe": {
+    "source": "3a0a9782249b",
+    "status": "machine"
+  },
+  "editor.art.artLooks.writing": {
+    "source": "e52fe93bbbf3",
+    "status": "machine"
+  },
+  "editor.art.artLooks.couldntWrite": {
+    "source": "dac05bdadd5e",
+    "status": "machine"
+  },
+  "editor.art.artLooks.checkConnection": {
+    "source": "481859b689b0",
     "status": "machine"
   },
   "editor.brandLogos.brandLogoGallery.brandLogos": {

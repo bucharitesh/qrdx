@@ -2643,7 +2643,7 @@
     "setupUrl": "URL do servidor",
     "toolsEyebrow": "Ferramentas",
     "toolsTitle": "O que seu assistente pode chamar",
-    "toolsDescription": "{count, number} ferramentas. Todas, exceto save_template e save_barcode, são somente leitura e não precisam de chave: elas geram imagens, formatam texto e leem a comunidade pública. Os parâmetros completos estão na <link>documentação do servidor MCP</link>.",
+    "toolsDescription": "{count, number} ferramentas. Todas, exceto save_template, save_barcode e generate_ai_art, são somente leitura e não precisam de chave: elas geram imagens, formatam texto e leem a comunidade pública. Os parâmetros completos estão na <link>documentação do servidor MCP</link>.",
     "toolNoKey": "Sem chave",
     "toolNeedsKey": "Requer chave de API",
     "faqTitle": "Dúvidas sobre o servidor MCP",
@@ -3303,6 +3303,61 @@
       "followsYourPrompt": "Segue seu prompt",
       "interpretsFreely": "Interpreta livremente",
       "generateVariations": "{count, plural, one {Gerar arte de QR} other {Gerar # variações}}"
+    },
+    "artModes": {
+      "mode": "Modo",
+      "code": "Código",
+      "scene": "Cena",
+      "photo": "Foto",
+      "codeDescription": "O código é a imagem: a arte preenche os módulos, com uma borda lisa. É o mais rápido.",
+      "sceneDescription": "Uma imagem é pintada a partir da sua descrição, e depois o código é pintado no meio dela, com as cores da própria imagem. Demora um pouco mais.",
+      "photoDescription": "Sua foto, com o código pintado no meio dela, nas cores da própria foto. Demora um pouco mais.",
+      "dropAPhoto": "Solte uma foto ou escolha uma",
+      "photoHint": "PNG, JPG ou WebP. Ela é cortada em formato quadrado e redimensionada no seu navegador, enviada com o seu prompt para criar a arte, e o QRdx não a guarda.",
+      "choosePhoto": "Escolher uma foto",
+      "yourPhoto": "Sua foto",
+      "crop": "Cortar",
+      "left": "Esquerda",
+      "right": "Direita",
+      "top": "Topo",
+      "bottom": "Base",
+      "croppedSquare": "Recorte quadrado para a arte.",
+      "replace": "Trocar",
+      "remove": "Remover",
+      "couldntUseThisPhoto": "Não foi possível usar esta foto",
+      "unsupportedFormat": "Formato de imagem não compatível",
+      "usePngJpgWebp": "Use uma imagem PNG, JPG ou WebP.",
+      "photoTooLarge": "A foto é grande demais",
+      "photosUpTo": "As fotos podem ter até {size} MB.",
+      "examples": {
+        "eyebrow": "Modos Cena e Foto",
+        "title": "Coloque o código dentro de uma imagem",
+        "description": "O modo Cena primeiro pinta uma imagem a partir da sua descrição e depois pinta o código no meio dela, para que a imagem chegue até o código e passe por ele. O modo Foto faz o mesmo com uma foto que você envia. Estes exemplos vieram do mesmo processo que você usa, e cada um tem leitura e abre esta página.",
+        "scene": "Cena",
+        "photo": "Foto",
+        "caption": {
+          "lighthouse": "Um farol em um promontório, com o código sobre o penhasco e o mar",
+          "painted-townhouses": "Casarões pintados, com as cores se espalhando pelo código",
+          "photo-mountain": "Foto de um lago na montanha ao pôr do sol",
+          "botanical-watercolor": "Uma aquarela de flores silvestres e samambaias",
+          "venice-canals": "Um canal em Veneza, com o código sobre a água e as paredes",
+          "photo-latte": "Foto de um latte numa mesa de madeira",
+          "zen-garden": "Um jardim japonês com cerejeiras em flor e carpas koi",
+          "photo-dog": "Foto de estúdio de um golden retriever"
+        },
+        "alt": {
+          "lighthouse": "Arte de QR code com IA no modo cena: um farol num promontório gramado à beira-mar, com o QR code pintado no meio da imagem nos tons de azul e verde dela",
+          "painted-townhouses": "Arte de QR code com IA no modo cena: uma fileira de casarões pintados, com o QR code pintado no meio da imagem em rosa, amarelo e azul",
+          "photo-mountain": "Arte de QR code com IA no modo foto: um lago na montanha ao pôr do sol, com o QR code pintado sobre o pico e o reflexo nas cores da foto",
+          "botanical-watercolor": "Arte de QR code com IA no modo cena: uma aquarela de flores silvestres e samambaias, com o QR code pintado no meio nas cores das flores",
+          "venice-canals": "Arte de QR code com IA no modo cena: um canal em Veneza com uma gôndola, com o QR code pintado no meio da imagem nos tons quentes da pedra",
+          "photo-latte": "Arte de QR code com IA no modo foto: um latte numa mesa de madeira, com o QR code pintado na xícara e na mesa",
+          "zen-garden": "Arte de QR code com IA no modo cena: um jardim japonês com cerejeiras em flor, uma lanterna e carpas koi, com o QR code pintado no meio da imagem",
+          "photo-dog": "Arte de QR code com IA no modo foto: um golden retriever num fundo liso, com o QR code pintado sobre o rosto dele nas cores do próprio pelo"
+        }
+      },
+      "paintingPicture": "Pintando a imagem…",
+      "paintingCode": "Pintando o código nela…"
     }
   },
   "compare": {
@@ -3823,6 +3878,32 @@
           "halftone": "Sem IA: sua foto vira parte do código, em todos os formatos.",
           "ai": "A IA pinta uma cena dentro do seu código. Toda imagem é verificada para garantir a leitura."
         }
+      },
+      "artLooks": {
+        "look": "Visual",
+        "lookChoices": "Visuais",
+        "none": "Nenhum",
+        "looks": {
+          "watercolor": "Aquarela",
+          "oil-painting": "Pintura a óleo",
+          "anime": "Anime",
+          "cartoon": "Cartoon",
+          "pixel-art": "Pixel art",
+          "pop-art": "Pop art",
+          "charcoal": "Carvão",
+          "ink": "Nanquim",
+          "cyberpunk": "Cyberpunk",
+          "fantasy": "Fantasia",
+          "photographic": "Fotográfico",
+          "low-poly": "Low poly",
+          "papercut": "Recorte"
+        },
+        "lookHint": "Um visual é adicionado à sua descrição. Escolher um estilo acima volta para Nenhum.",
+        "blankIsWritten": "Deixe em branco e uma descrição será escrita para você na hora de gerar. Escrever uma nunca usa um crédito.",
+        "writeOneForMe": "Escreva uma para mim",
+        "writing": "Escrevendo…",
+        "couldntWrite": "Não foi possível escrever uma descrição",
+        "checkConnection": "Verifique sua conexão e tente de novo."
       }
     },
     "brandLogos": {
