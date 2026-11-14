@@ -533,7 +533,7 @@ describe("the confirmation rules", () => {
   });
 
   it("masks the address and knows the big webmails", () => {
-    expect(maskEmail("ritesh@gmail.com")).toBe("r…@gmail.com");
+    expect(maskEmail("jane@example.test")).toBe("j…@example.test");
     expect(mailProviderFor("a@gmail.com")?.label).toBe("Open Gmail");
     expect(mailProviderFor("a@Outlook.com")?.label).toBe("Open Outlook");
     expect(mailProviderFor("a@qrdx.test")).toBeNull();
