@@ -40,6 +40,6 @@ jobs:
           cp .github/scripts/submit-sitemap.mjs /tmp/
           node /tmp/submit-sitemap.mjs
         env:
-          GOOGLE_SEARCH_CONSOLE_JSON_KEY: ${{ secrets.GOOGLE_SEARCH_CONSOLE_JSON_KEY }}
+          GSC_SERVICE_ACCOUNT_JSON: ${{ secrets.GSC_SERVICE_ACCOUNT_JSON }}
           SITE_URL: ${{ env.SITE_URL }}
           SITEMAP_URL: ${{ inputs.sitemap_url || env.SITEMAP_URL }}
