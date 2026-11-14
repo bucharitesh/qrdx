@@ -4,7 +4,7 @@
 // drawn from Geist's glyph outlines (lib/qr-text-outline.ts) before the
 // rasterizer sees them, and PNGs without text keep their exact bytes.
 import { readFileSync } from "node:fs";
-import { join } from "node:path";
+import { ogFontPath } from "@repo/design-system/og/font-files";
 import { NextRequest } from "next/server";
 import { parse } from "opentype.js";
 import { decodePNGPixels, getFrameLayout } from "qrdx";
@@ -63,9 +63,7 @@ const { ImageResponse } = await import("next/og");
 const get = (query: string) =>
   route.GET(new NextRequest(`http://localhost:3000/api/v1/qr?${query}`));
 
-const bold = parse(
-  readFileSync(join(process.cwd(), "app/og/fonts/Geist-Bold.ttf")).buffer,
-);
+const bold = parse(readFileSync(ogFontPath("Geist-Bold.ttf")).buffer);
 
 async function png(query: string) {
   drawn.svgs = [];
