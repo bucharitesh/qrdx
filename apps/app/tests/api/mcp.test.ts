@@ -1,4 +1,4 @@
-// The public MCP server (app/api/mcp/route.ts) as content/docs/developers/
+// The public MCP server (app/api/mcp/route.ts) as apps/docs/content/docs/developers/
 // mcp.mdx describes it: stateless Streamable HTTP over POST, read-only QR
 // tools, CORS for browser clients, a redirect to the connect page for people
 // who open the URL, and a per-IP rate limit. Called in-process with JSON-RPC

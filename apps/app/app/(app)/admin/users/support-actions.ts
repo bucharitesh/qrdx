@@ -239,7 +239,7 @@ const changeEmailSchema = userReason.extend({
 /**
  * For someone who lost their mailbox and has no other way to confirm it's
  * them, only after the checks in the lost-email policy (the help page
- * content/docs/help/account-and-billing/sign-in.mdx, "Lost access to your
+ * apps/docs/content/docs/help/account-and-billing/sign-in.mdx, "Lost access to your
  * email"). The account moves to the new address, marked verified (support
  * had a reply from it); every session is signed out, and the old address
  * gets the "email changed" notice, by QRdx support.

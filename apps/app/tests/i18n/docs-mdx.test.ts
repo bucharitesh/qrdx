@@ -20,7 +20,7 @@ import {
   withFrontmatter,
 } from "@/lib/i18n/mdx";
 
-const DOCS = join(__dirname, "../../content/docs");
+const DOCS = join(__dirname, "../../../docs/content/docs");
 
 function englishPages(dir = DOCS): string[] {
   return readdirSync(dir).flatMap((name) => {

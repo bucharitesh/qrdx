@@ -153,7 +153,7 @@ describe("remarkProductFacts", () => {
 
   it("names the AI art model from the model map in the Art QR docs", async () => {
     const source = readFileSync(
-      path.join(app, "content/docs/features/art-qr.mdx"),
+      path.join(app, "../docs/content/docs/features/art-qr.mdx"),
       "utf8",
     )
       // Only the body: the frontmatter isn't Markdown.

@@ -1,7 +1,7 @@
 // The read-only community API (GET /v1/community/items, /items/{id}), the
 // MCP tools search_community and get_community_item, and community items in
 // renders (GET /v1/qr?item=, design_qr community_item, generate_qr_code
-// item), as content/docs/developers/rest-api.mdx and mcp.mdx describe them.
+// item), as apps/docs/content/docs/developers/rest-api.mdx and mcp.mdx describe them.
 // Reads go through lib/community/queries, mocked here with fixtures: no
 // database. Creator text is untrusted, so it must come back short and
 // without links.

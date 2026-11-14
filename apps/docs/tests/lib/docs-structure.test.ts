@@ -22,8 +22,7 @@ import { withEnglishStructure } from "@/lib/i18n/docs-meta";
 // it proxies the docs here: their destinations must be pages here.
 import { DOCS_REDIRECTS } from "../../../app/lib/docs-redirects";
 
-// The docs' content stays in the main app's folder (source.config.ts).
-const CONTENT = join(import.meta.dirname, "../../../app/content/docs");
+const CONTENT = join(import.meta.dirname, "../../content/docs");
 
 /** Docs URLs before the tabs (2 Nov 2026). Never remove an entry. */
 const LEGACY_URLS = [

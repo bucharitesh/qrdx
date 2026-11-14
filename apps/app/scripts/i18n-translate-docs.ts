@@ -1,6 +1,6 @@
 // bun run --filter app i18n:docs --locale es   (or --all)
 //
-// Machine-translates the docs (content/docs) into the languages with docs
+// Machine-translates the docs (apps/docs/content/docs) into the languages with docs
 // (packages/i18n/config.ts `docs: true`) through Vercel AI Gateway: each page to
 // <page>.<locale>.mdx beside the English one, and each folder's sidebar
 // labels to meta.<locale>.json. Pages that are missing or stale (the English
@@ -16,7 +16,7 @@
 // ([#id]), so links to #section work in every language.
 //
 // Records each file's English hash and status ("machine") in
-// messages/review/docs/<locale>.json; i18n:check reports stale pages.
+// apps/docs/content/review/<locale>.json; i18n:check reports stale pages.
 //
 //   --locale <l>   one locale (repeatable)   --all       every docs language
 //   --page <path>  only files starting with it, e.g. help/ (repeatable)
@@ -62,9 +62,9 @@ import {
   withFrontmatter,
 } from "@/lib/i18n/mdx";
 
-const DOCS = path.join(__dirname, "../content/docs");
+const DOCS = path.join(__dirname, "../../docs/content/docs");
 const MESSAGES = path.join(__dirname, "../messages");
-const REVIEW_DIR = path.join(MESSAGES, "review/docs");
+const REVIEW_DIR = path.join(DOCS, "../review");
 
 /**
  * Not translated: the API reference is generated from the OpenAPI document
@@ -119,7 +119,7 @@ const glossary = JSON.parse(
   readFileSync(path.join(MESSAGES, "glossary.json"), "utf8"),
 ) as Glossary;
 
-/** English content files, relative to content/docs. */
+/** English content files, relative to apps/docs/content/docs. */
 function englishFiles(): string[] {
   const out: string[] = [];
   const walk = (dir: string) => {

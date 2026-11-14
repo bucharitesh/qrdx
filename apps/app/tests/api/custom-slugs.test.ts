@@ -1,4 +1,4 @@
-// Custom back-halves, as content/docs/dynamic-qr-codes.mdx (#custom-back-halves),
+// Custom back-halves, as apps/docs/content/docs/dynamic-qr-codes.mdx (#custom-back-halves),
 // custom-domains.mdx and plans-and-limits.mdx describe them: Pro and Business
 // choose a code's back-half (3–64 of A–Z a–z 0–9 - _, no dash at either end,
 // case-sensitive); on qrdx.dev it's unique across QRdx and QRdx words are

@@ -149,7 +149,7 @@ describe("the art model in copy", () => {
       "components/sections/ai-art/ai-art-result.tsx",
       "components/sections/ai-art/ai-art-coming-soon.tsx",
       "app/[lang]/(home)/ai/art/page.tsx",
-      "content/docs/features/art-qr.mdx",
+      "../docs/content/docs/features/art-qr.mdx",
     ];
     for (const file of files) {
       const text = read(file);
@@ -163,7 +163,7 @@ describe("the art model in copy", () => {
         expect(text, `${file} names ${name}`).not.toContain(name);
       }
     }
-    expect(read("content/docs/features/art-qr.mdx")).toContain(
+    expect(read("../docs/content/docs/features/art-qr.mdx")).toContain(
       "{facts.artModel}",
     );
   });

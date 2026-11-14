@@ -1,5 +1,5 @@
 // The rules for short-link back-halves (lib/short-links.ts), as
-// content/docs/dynamic-qr-codes.mdx (#custom-back-halves) states them.
+// apps/docs/content/docs/dynamic-qr-codes.mdx (#custom-back-halves) states them.
 import { describe, expect, it } from "vitest";
 import {
   codeLinks,

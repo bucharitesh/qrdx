@@ -1,4 +1,4 @@
-// The barcode endpoints, as content/docs/developers/barcode-api.mdx describes
+// The barcode endpoints, as apps/docs/content/docs/developers/barcode-api.mdx describes
 // them:
 // - GET /v1/barcode: keyless images in every file type, the format's value
 //   rules as 400s naming `data`, the QR image API's caching, CORS and

@@ -9,11 +9,12 @@
 // Review happens locally (bun run --filter app dev); CI runs the typechecks,
 // tests and lint. [skip ci] still skips any build, production included.
 //
-// A change to the docs site alone (apps/docs, its deploy workflow) is
-// skipped too: that app deploys from its own GitHub Action
-// (.github/workflows/docs-deploy.yml), and nothing here uses it. The
-// changes are the ones since the last deployment (VERCEL_GIT_PREVIOUS_SHA);
-// when git can't list them, the build goes ahead.
+// A change to the docs site alone (apps/docs, its content in
+// apps/docs/content included, and its deploy workflow) is skipped too: that
+// app deploys from its own GitHub Action (.github/workflows/docs-deploy.yml),
+// and nothing this app builds reads it. The changes are the ones since the
+// last deployment (VERCEL_GIT_PREVIOUS_SHA); when git can't list them, the
+// build goes ahead.
 const { execFileSync, execSync } = require("node:child_process");
 const path = require("node:path");
 
@@ -37,7 +38,7 @@ function changedFiles(previous) {
   }
 }
 
-/** Files only the docs site uses: its app and its deploy workflow. */
+/** Files only the docs site uses: its app, its content and its deploy workflow. */
 const DOCS_SITE_ONLY = [
   /^apps\/docs\//,
   /^\.github\/workflows\/docs-deploy\.yml$/,

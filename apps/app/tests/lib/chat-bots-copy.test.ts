@@ -20,9 +20,9 @@ const read = (path: string) =>
   readFileSync(new URL(path, import.meta.url), "utf8");
 
 const docs = {
-  slack: read("../../content/docs/slack-bot.mdx"),
-  telegram: read("../../content/docs/telegram-bot.mdx"),
-  discord: read("../../content/docs/discord-bot.mdx"),
+  slack: read("../../../docs/content/docs/slack-bot.mdx"),
+  telegram: read("../../../docs/content/docs/telegram-bot.mdx"),
+  discord: read("../../../docs/content/docs/discord-bot.mdx"),
 };
 
 /** Promises the bots can't keep: nothing kept, stored or logged anywhere. */

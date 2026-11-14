@@ -46,8 +46,8 @@ import { organizationId } from "@/lib/seo-schema";
 // - licenses: LICENSING.md, LICENSE, the LICENSE files in packages/qrdx,
 //   packages/cli and plugins/*, the LICENSE.md files in the ee/ folders, and
 //   the README's License section (MIT from qrdx 0.0.47 and @qrdx/cli 0.0.5)
-// - self-hosting: content/docs/self-hosting.mdx and the README; the Free
-//   limits without payments: content/docs/plans-and-limits.mdx
+// - self-hosting: apps/docs/content/docs/self-hosting.mdx and the README; the Free
+//   limits without payments: apps/docs/content/docs/plans-and-limits.mdx
 // - the name and logo: TRADEMARK.md; contributing: CONTRIBUTING.md
 // - the shutdown promise: the Never-Hostage Guarantee (/guarantee)
 

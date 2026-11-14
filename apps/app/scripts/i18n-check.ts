@@ -100,10 +100,10 @@ for (const locale of TRANSLATED_LOCALES) {
   );
 }
 
-// Docs translations: content/docs/<page>.<locale>.mdx and meta.<locale>.json
-// beside the English files, recorded in messages/review/docs/<locale>.json
+// Docs translations: apps/docs/content/docs/<page>.<locale>.mdx and meta.<locale>.json
+// beside the English files, recorded in apps/docs/content/review/<locale>.json
 // (lib/i18n/docs-check.ts).
-const DOCS = path.join(__dirname, "../content/docs");
+const DOCS = path.join(__dirname, "../../docs/content/docs");
 const docsFiles: string[] = [];
 const walkDocs = (dir: string) => {
   for (const name of readdirSync(dir)) {
@@ -126,7 +126,7 @@ const englishDocs = new Map(
 errors.push(...strayTranslations(docsFiles));
 for (const locale of DOCS_LOCALES) {
   if (locale === "en") continue;
-  const reviewPath = path.join(MESSAGES, `review/docs/${locale}.json`);
+  const reviewPath = path.join(DOCS, `../review/${locale}.json`);
   const report = checkDocsLocale({
     locale,
     english: englishDocs,

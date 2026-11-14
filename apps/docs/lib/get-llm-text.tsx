@@ -44,7 +44,7 @@ export async function getLLMText(page: Page) {
     `# ${title}`,
     "",
     `URL: ${pageUrl(page)}`,
-    `Source: https://github.com/${owner}/${repo}/blob/main/apps/app/content/docs/${page.path}`,
+    `Source: https://github.com/${owner}/${repo}/blob/main/apps/docs/content/docs/${page.path}`,
     "",
   ];
   if (page.data.description) header.push(page.data.description, "");

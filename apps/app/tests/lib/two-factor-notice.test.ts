@@ -227,7 +227,7 @@ describe("the help page", () => {
     const page = readFileSync(
       path.resolve(
         import.meta.dirname,
-        "../../content/docs/help/privacy-and-security/two-step-verification.mdx",
+        "../../../docs/content/docs/help/privacy-and-security/two-step-verification.mdx",
       ),
       "utf8",
     );

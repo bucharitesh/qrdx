@@ -14,7 +14,7 @@
 //   logo.ts against the caller's workspace). A logo address (`customLogo`)
 //   is refused: QRdx never fetches a remote image for a caller.
 // - Art (Logo QR, Image QR) is refused: it's built in the browser from the
-//   picture (see content/docs/developers/image-api.mdx#limits).
+//   picture (see apps/docs/content/docs/developers/image-api.mdx#limits).
 //
 // Engine options (per-eye colours, `moduleScale`, `autoLevel`, the logo's
 // size, clear space, position, crop and plate, the circle shape) are fields
