@@ -15,7 +15,7 @@ import {
   DEFAULT_LETTER_SPACING,
   DEFAULT_TEXT,
   dotRingDots,
-  dotRingLetters,
+  dotRingText,
   dotsClearOfCode,
   RING_INNER_RADIUS,
   RING_PATH,
@@ -26,10 +26,21 @@ import {
 export interface DotRingProps {
   /**
    * Text set along the ring. Defaults to "Scan the QR code" four times
-   * round; `""` leaves the ring empty. Letters that don't fit around the
-   * ring are left out.
+   * round; `""` leaves the ring empty. Text too long for the ring gets
+   * tighter letter spacing, then a smaller font (down to half of
+   * `fontSize`'s default), then is cut after the last whole word that fits;
+   * it never runs into its own start.
    */
   customText?: string;
+  /**
+   * "repeat" fills the ring: the phrase is repeated as many times as fit,
+   * with the spacing evened out so the copies close the ring with the same
+   * gap as between them. Give the phrase once ("Read the docs *"); text
+   * that already repeats a phrase ("A * A * A *") is read as that phrase.
+   * Default "none": the text is set once, centered over the top (or along
+   * the bottom).
+   */
+  textFill?: "none" | "repeat";
   /** "top" (default): centered over the top, reading clockwise. "bottom": centered along the bottom, reading left to right. */
   textPosition?: "top" | "bottom";
   /** Turns the text around the center, in degrees clockwise (default 0). */
@@ -40,9 +51,15 @@ export interface DotRingProps {
   fontFamily?: string;
   /** Font weight (default 900). */
   fontWeight?: number | string;
-  /** Font size in the template's 593-unit drawing, where the code is 300 across (default 32). */
+  /**
+   * Font size in the template's 593-unit drawing, where the code is 300
+   * across (default 32). Long text may be drawn smaller (see `customText`).
+   */
   fontSize?: number;
-  /** Extra space between letters, in the same units (default 3.5). */
+  /**
+   * Extra space between letters, in the same units (default 3.5). Long text
+   * and `textFill: "repeat"` adjust it to fit the ring.
+   */
   fontLetterSpacing?: number;
   /** Color of the ring (default: the code's `fgColor`). */
   outerCircleColor?: string;
@@ -82,11 +99,12 @@ export const DotRing: TemplateDefinition<DotRingProps> = {
     const fontSize = requestedSize > 0 ? requestedSize : DEFAULT_FONT_SIZE;
     const text =
       typeof props?.customText === "string" ? props.customText : DEFAULT_TEXT;
-    const letters = dotRingLetters(text, {
+    const ring = dotRingText(text, {
       fontSize,
       letterSpacing: finite(props?.fontLetterSpacing, DEFAULT_LETTER_SPACING),
       position: props?.textPosition === "bottom" ? "bottom" : "top",
       rotation: finite(props?.textRotation, 0),
+      fill: props?.textFill === "repeat" ? "repeat" : "none",
     });
     const textColor = props?.textColor || "#ffffff";
     const fontFamily = props?.fontFamily || FRAME_FONT_FAMILY;
@@ -142,11 +160,11 @@ export const DotRing: TemplateDefinition<DotRingProps> = {
             screen reader, so they're hidden from it */}
         {/* biome-ignore lint/a11y/noAriaHiddenOnFocusable: an SVG <g> can't take focus */}
         <g aria-hidden="true">
-          {letters.map((letter, index) => (
+          {ring.letters.map((letter, index) => (
             <text
               fill={textColor}
               fontFamily={fontFamily}
-              fontSize={fontSize}
+              fontSize={ring.fontSize}
               fontWeight={fontWeight}
               key={index}
               textAnchor="middle"

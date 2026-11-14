@@ -5,6 +5,7 @@
 // The dot layout and the way a link picks its dots come from the first
 // round design built on qrdx's custom templates (2025), so designs made
 // with it keep their rings.
+import { FRAME_FONT_SCALE_MIN } from "../../types/constants";
 import { sanitizeFrameText } from "../../types/frame-spec-rules";
 import { roundTo } from "../utils/fmt";
 
@@ -143,8 +144,15 @@ export const DEFAULT_TEXT =
   "Scan the QR code * Scan the QR code * Scan the QR code * Scan the QR code *";
 export const DEFAULT_FONT_SIZE = 32;
 export const DEFAULT_LETTER_SPACING = 3.5;
+/**
+ * Smallest font long text shrinks to before it's cut: half the default, as
+ * frame labels go no smaller than half their size (FRAME_FONT_SCALE_MIN).
+ * That's the share of the code the circle frame's smallest labels take.
+ */
+export const MIN_FONT_SIZE = DEFAULT_FONT_SIZE * FRAME_FONT_SCALE_MIN;
 /** Letters are spaced along this circle. */
 const TEXT_PATH_RADIUS = 246.5;
+const CIRCUMFERENCE = 2 * Math.PI * TEXT_PATH_RADIUS;
 /** Half a cap height, in em: the letters' band is centered on TEXT_BAND_RADIUS. */
 const HALF_CAP = 0.36;
 const TEXT_BAND_RADIUS = TEXT_PATH_RADIUS + HALF_CAP * DEFAULT_FONT_SIZE;
@@ -179,26 +187,203 @@ export interface RingLetter {
   rotate: number;
 }
 
-/** Letters of `text` along the ring, centered at the top or the bottom. */
-export function dotRingLetters(
+/** How the text is set: which letters, at what size and spacing. */
+interface RingSetting {
+  chars: string[];
+  fontSize: number;
+  letterSpacing: number;
+}
+
+/** Sum of the letters' widths (no spacing). */
+function lettersWidth(chars: readonly string[], fontSize: number): number {
+  let width = 0;
+  for (const char of chars) {
+    width += letterWidth(char, fontSize);
+  }
+  return width;
+}
+
+/**
+ * True when `chars` go round with room to spare: the line plus a word
+ * space where the ring closes, so its end never meets its start.
+ */
+function fitsRing(chars: readonly string[], fontSize: number, spacing: number) {
+  const line =
+    lettersWidth(chars, fontSize) + spacing * Math.max(0, chars.length - 1);
+  return line + letterWidth(" ", fontSize) + 2 * spacing <= CIRCUMFERENCE;
+}
+
+/**
+ * `chars` as asked when they fit round the ring. Longer text gets tighter
+ * spacing first (down to none), then a smaller font (down to
+ * MIN_FONT_SIZE), set so the line and a word space close the ring exactly;
+ * past that it's cut after the last whole word that fits.
+ */
+function fitRing(
+  chars: string[],
+  fontSize: number,
+  letterSpacing: number
+): RingSetting {
+  if (fitsRing(chars, fontSize, letterSpacing)) {
+    return { chars, fontSize, letterSpacing };
+  }
+  const tightest = Math.min(letterSpacing, 0);
+  const smallest = Math.min(fontSize, MIN_FONT_SIZE);
+  const squeeze = (line: string[]): RingSetting | null => {
+    if (fitsRing(line, fontSize, letterSpacing)) {
+      return { chars: line, fontSize, letterSpacing };
+    }
+    // The line plus the closing space, without spacing: it scales with the font
+    const width = lettersWidth(line, fontSize) + letterWidth(" ", fontSize);
+    // n letters and the space take n + 1 gaps round a closed ring
+    const gaps = line.length + 1;
+    const spacing = (CIRCUMFERENCE - width) / gaps;
+    if (spacing >= tightest) {
+      return { chars: line, fontSize, letterSpacing: spacing };
+    }
+    const size = ((CIRCUMFERENCE - tightest * gaps) / width) * fontSize;
+    return size >= smallest
+      ? { chars: line, fontSize: size, letterSpacing: tightest }
+      : null;
+  };
+  const squeezed = squeeze(chars);
+  if (squeezed) {
+    return squeezed;
+  }
+  // Too long even at the smallest size: cut after the last word that fits,
+  // or within a word longer than the ring
+  // Each letter takes its width and one gap; the closing space takes the
+  // rest (fitsRing, counted letter by letter)
+  const room = CIRCUMFERENCE - letterWidth(" ", smallest) - tightest;
+  let used = 0;
+  let words = 0;
+  let letters = 0;
+  for (const [index, char] of chars.entries()) {
+    used += letterWidth(char, smallest) + tightest;
+    if (used > room) {
+      break;
+    }
+    letters = index + 1;
+    if (letters === chars.length || chars[letters] === " ") {
+      words = letters;
+    }
+  }
+  const line = trimEnd(chars.slice(0, words > 0 ? words : letters));
+  return (
+    squeeze(line) ?? {
+      chars: line,
+      fontSize: smallest,
+      letterSpacing: tightest,
+    }
+  );
+}
+
+function trimEnd(chars: string[]): string[] {
+  let end = chars.length;
+  while (end > 0 && chars[end - 1] === " ") {
+    end--;
+  }
+  return chars.slice(0, end);
+}
+
+/** The shortest run of words `words` repeats ("A * A * A *" gives "A *"). */
+function repeatedWords(words: string[]): string[] {
+  for (let size = 1; size < words.length; size++) {
+    if (
+      words.length % size === 0 &&
+      words.every((word, index) => word === words[index % size])
+    ) {
+      return words.slice(0, size);
+    }
+  }
+  return words;
+}
+
+/**
+ * The phrase `chars` repeats, as many times as fill the ring, spaced so the
+ * copies close it exactly: the ring's seam is the same word space as
+ * between the copies. Of the counts either side of a whole fit, the one
+ * whose spacing is nearest the asked spacing wins; spacing never goes below
+ * none (else the phrase is fitted once, as fitRing does).
+ */
+function repeatRing(
+  chars: string[],
+  fontSize: number,
+  letterSpacing: number
+): RingSetting {
+  const words = chars.join("").split(" ").filter(Boolean);
+  if (words.length === 0) {
+    return { chars: [], fontSize, letterSpacing };
+  }
+  const phrase = Array.from(repeatedWords(words).join(" "));
+  // One copy and the space after it, without spacing
+  const width = lettersWidth(phrase, fontSize) + letterWidth(" ", fontSize);
+  const advance = width + (phrase.length + 1) * letterSpacing;
+  const tightest = Math.min(letterSpacing, 0);
+  let best: RingSetting | null = null;
+  for (const copies of new Set([
+    Math.floor(CIRCUMFERENCE / advance),
+    Math.ceil(CIRCUMFERENCE / advance),
+  ])) {
+    if (copies < 1) {
+      continue;
+    }
+    const spacing =
+      (CIRCUMFERENCE - copies * width) / (copies * (phrase.length + 1));
+    if (
+      spacing >= tightest &&
+      (!best ||
+        Math.abs(spacing - letterSpacing) <
+          Math.abs(best.letterSpacing - letterSpacing))
+    ) {
+      const line = Array.from({ length: copies }, () => phrase.join(""));
+      best = {
+        chars: Array.from(line.join(" ")),
+        fontSize,
+        letterSpacing: spacing,
+      };
+    }
+  }
+  return best ?? fitRing(phrase, fontSize, letterSpacing);
+}
+
+/** The text along the ring: its letters, and the size they're drawn at. */
+export interface RingText {
+  /** The line as set: the text, cut or repeated to fit */
+  text: string;
+  letters: RingLetter[];
+  /** The asked size, or smaller when long text had to shrink */
+  fontSize: number;
+  letterSpacing: number;
+}
+
+/**
+ * Letters of `text` along the ring, centered at the top or the bottom.
+ * Text that fits is set as asked. Longer text tightens its spacing, then
+ * shrinks, then is cut at a word (fitRing), and never meets its own start.
+ * `fill: "repeat"` repeats the phrase round the whole ring (repeatRing).
+ */
+export function dotRingText(
   text: string,
   options: {
     fontSize: number;
     letterSpacing: number;
     position: "top" | "bottom";
     rotation: number;
+    fill?: "none" | "repeat";
   }
-): RingLetter[] {
-  const { fontSize, letterSpacing, position, rotation } = options;
-  const circumference = 2 * Math.PI * TEXT_PATH_RADIUS;
-  // Keep the letters that fit around the ring
+): RingText {
+  const { position, rotation } = options;
+  const chars = cleanText(text);
+  const setting =
+    options.fill === "repeat"
+      ? repeatRing(chars, options.fontSize, options.letterSpacing)
+      : fitRing(chars, options.fontSize, options.letterSpacing);
+  const { fontSize, letterSpacing } = setting;
   const kept: { char: string; along: number }[] = [];
   let offset = 0;
-  for (const char of cleanText(text)) {
+  for (const char of setting.chars) {
     const width = letterWidth(char, fontSize);
-    if (offset + width > circumference) {
-      break;
-    }
     kept.push({ char, along: offset + width / 2 });
     offset += width + letterSpacing;
   }
@@ -209,13 +394,13 @@ export function dotRingLetters(
   const radius = top
     ? TEXT_BAND_RADIUS - HALF_CAP * fontSize
     : TEXT_BAND_RADIUS + HALF_CAP * fontSize;
-  const half = (total / circumference) * 180;
+  const half = (total / CIRCUMFERENCE) * 180;
   const letters: RingLetter[] = [];
   for (const { char, along } of kept) {
     if (char.trim() === "") {
       continue;
     }
-    const step = (along / circumference) * 360;
+    const step = (along / CIRCUMFERENCE) * 360;
     // Degrees clockwise from twelve o'clock
     const angle = top ? rotation - half + step : rotation + 180 + half - step;
     const radians = (angle * Math.PI) / 180;
@@ -226,5 +411,18 @@ export function dotRingLetters(
       rotate: roundTo(top ? angle : angle - 180),
     });
   }
-  return letters;
+  return {
+    text: setting.chars.join(""),
+    letters,
+    fontSize: fontSize === options.fontSize ? fontSize : roundTo(fontSize),
+    letterSpacing,
+  };
+}
+
+/** Letters of `text` along the ring (see dotRingText). */
+export function dotRingLetters(
+  text: string,
+  options: Parameters<typeof dotRingText>[1]
+): RingLetter[] {
+  return dotRingText(text, options).letters;
 }
