@@ -235,6 +235,10 @@ describe("scene mode's paint step", () => {
     // One paint call, with the control and the picture's square.
     expect(gateway.calls).toHaveLength(1);
     expect(imageModelParts(gateway.calls[0]!).images).toHaveLength(2);
+    // The app's paint step keeps the model's own quality.
+    expect(
+      gateway.calls[0]!.body.providerOptions?.openai?.quality,
+    ).toBeUndefined();
   });
 
   it("refuses a picture for other content, costing nothing", async () => {
@@ -284,6 +288,10 @@ describe("scene mode in one request (the REST API and MCP)", () => {
       req: req(),
       signal: new AbortController().signal,
     });
+    // Picture and paint both at low quality, to fit one request's minute.
+    expect(
+      gateway.calls.map((call) => call.body.providerOptions?.openai?.quality),
+    ).toEqual(["low", "low"]);
     expect(await scans(result.variant.imageUrl)).toBe(true);
     expect(
       gateway.calls.map((call) => imageModelParts(call).images.length),

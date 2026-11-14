@@ -32,6 +32,7 @@ import {
   ART_MODEL_TIMEOUT_MS,
   type ArtImageModel,
   type ArtModelImage,
+  artModelFor,
   type ControlImage,
   callModel,
   controlProps,
@@ -408,6 +409,18 @@ export async function paintIntoPicture({
 }
 
 // ── The picture ────────────────────────────────────────────────────────────
+
+/**
+ * The paint call for a scene made in one request (the REST API and MCP):
+ * GPT Image 2 at low quality paints in about 15 s instead of 25 (p95 35 s
+ * end to end instead of 50-67) and looked the same in
+ * scripts/ai/art-eval-picture.ts --paint-quality low, so the picture and
+ * the paint fit one request's minute.
+ */
+export const quickPaintModel: ArtImageModel = artModelFor({
+  ...AI_MODELS.art,
+  options: { ...AI_MODELS.art.options, quality: "low" },
+});
 
 /** The configured art model, as the scene's text-to-image model. */
 export const gatewayPictureModel: PictureModel = pictureModelFor();

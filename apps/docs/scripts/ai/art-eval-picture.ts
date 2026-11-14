@@ -13,6 +13,7 @@
  *   AI_GATEWAY_API_KEY=... bun x tsx --conditions=react-server scripts/ai/art-eval-picture.ts \
  *     --mode scene|photo [--n 2] [--presets a,b] [--photos dog,latte] \
  *     [--size 0.64] [--keep 0.75] [--feather 0.75] [--quality low] \
+ *     [--paint-quality medium] (the paint call's quality; default the model's) \
  *     [--blend '{"ringFull":0.3}'] [--text https://qrdx.dev/ai/art] \
  *     [--max-cost 1] [--concurrency 3] [--out dir]
  *   ... --replay <dir>   (no cost: the saved model images stand in)
@@ -112,6 +113,7 @@ async function main() {
       presets: { type: "string" },
       photos: { type: "string" },
       quality: { type: "string" },
+      "paint-quality": { type: "string" },
       blend: { type: "string" },
       keep: { type: "string" },
       feather: { type: "string" },
@@ -301,7 +303,14 @@ async function main() {
               data: request.images[0] as Uint8Array,
               mediaType: "image/png",
             })
-          : pipeline.artModelFor(models.AI_MODELS.art)(request),
+          : pipeline.artModelFor(
+              values["paint-quality"]
+                ? {
+                    ...models.AI_MODELS.art,
+                    options: { quality: values["paint-quality"] },
+                  }
+                : models.AI_MODELS.art,
+            )(request),
       );
     try {
       let bytes: Uint8Array;
