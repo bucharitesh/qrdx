@@ -6,30 +6,40 @@ description: Add a second step to every sign-in with a passkey or an authenticat
 Two-step verification (also called 2FA) adds a second step to signing in. After you sign in with an email code, Google or GitHub<IfAvailable feature="sso"> (or your workspace's single sign-on)</IfAvailable>, QRdx asks for <IfAvailable feature="passkeys">your passkey or </IfAvailable>a 6-digit code from an authenticator app. Someone who gets into your email or your Google account still can't get into QRdx without it.
 
 <IfAvailable feature="passkeys">
+
 A [passkey](/docs/help/privacy-and-security/passkeys) checks it's you with your fingerprint, face, screen lock or a security key. It only works on QRdx's own site, so a look-alike site can't collect it.
+
 </IfAvailable>
 
 An authenticator app works too: any app that shows 6-digit codes that change every 30 seconds, including the one-time code feature of most password managers. QRdx doesn't send second-step codes by email or text message.
 
-You can set up both, and use whichever is to hand when you sign in.
+You can set up both, and use whichever is at hand when you sign in.
 
 ## Turn it on
 
 1. Go to **Settings** → **Profile & security**.
 2. Under **Two-step verification**, click **Turn on**, and [confirm it's you](#confirm-its-you).
 3. Set up your second step<IfAvailable feature="passkeys">: pick **Passkey** or **Authenticator app**</IfAvailable>, as described below.
-4. Save your 10 backup codes. Copy them or download them as a text file, and keep them somewhere safe, such as a password manager. QRdx shows them only once. Tick **I've saved my backup codes** and click **Done**.
+4. Save your 10 backup codes. Copy them or download them as a text file, and keep them somewhere safe, such as a password manager. QRdx shows them only once. Check **I've saved my backup codes** and click **Done**.
+
+{/* shot: two-step-settings-card | the Two-step verification card in Profile & security with the Turn on button | Dashboard, Settings, Profile & security */}
 
 <IfAvailable feature="passkeys">
+
 For a passkey, keep the suggested name (your browser and system, like "Chrome on macOS") or type your own, click **Continue**, and let your browser save the passkey.
+
 </IfAvailable>
 
 For an authenticator app, scan the QR code with the app, or type the key shown under it. Enter the 6-digit code the app shows and click **Verify**.
 
+{/* shot: two-step-authenticator-setup | the Set up your authenticator app step with the QR code and the 6-digit code field | Dashboard, Settings, Profile & security, Turn on, Authenticator app */}
+
 Two-step verification is now on, and every other browser or device signed in to your account is signed out. Each one has to sign in again, now with the second step. The browser you turned it on in stays signed in.<IfAvailable feature="passkeys"> To add the other method later, use the same section. You keep the backup codes you already have, and nobody is signed out.</IfAvailable>
 
 <IfAvailable feature="passkeys">
+
 If you added a passkey before two-step verification could use one, Settings says **Your passkey is ready to be your second step**. Click **Turn on**, confirm it's you, check it's you with that passkey, and save your backup codes. This signs out your other devices too.
+
 </IfAvailable>
 
 We email your account's address whenever two-step verification is turned on or off, a method is added or removed, new backup codes are made, or a backup code is used. We also email it when support is asked to turn two-step verification off for you.
@@ -39,7 +49,9 @@ We email your account's address whenever two-step verification is turned on or o
 Sign in the way you always do. QRdx then asks for the second step.
 
 <IfAvailable feature="passkeys">
+
 If you have a passkey, your browser's passkey prompt opens on its own. Some browsers only open it after a click: then click **Continue with passkey**. If you closed the prompt or it timed out, try again, or pick another method.
+
 </IfAvailable>
 
 Below the step, **Use an authenticator code** and **Use a backup code** switch to the other methods you have. QRdx remembers which one you used last in this browser and starts with it next time.
@@ -54,20 +66,22 @@ The step expires after 10 minutes. If it does, sign in again.
 
 A backup code works instead of your second step, for when you don't have your phone<IfAvailable feature="passkeys"> or your passkey</IfAvailable>. On the second step, click **Use a backup code** and enter one. Codes look like `ABCDE-FGH23`: capital letters and the digits 2 to 9, with no 0, O, 1 or I to mix up. You can type them in lower case, and with or without the dash. Each code works once.
 
-Each time a backup code is used, to sign in or to confirm it's you, we email your account's address with how many codes you have left. If it wasn't you, someone has your backup codes: contact support straight away.
+Each time a backup code is used, to sign in or to confirm it's you, we email your account's address with how many codes you have left. If it wasn't you, someone has your backup codes: contact support right away.
 
 Settings shows how many codes you have left. When you're down to 2 or fewer, make new ones: click **New codes** and confirm it's you. Your old codes stop working.
 
 ## Trusted devices
 
-On the second step, tick **Don't ask again on this device for 30 days** to skip it on that browser for 30 days. Only use it on a device that's yours. Turning two-step verification off forgets every trusted device.
+On the second step, check **Don't ask again on this device for 30 days** to skip it on that browser for 30 days. Only use it on a device that's yours. Turning two-step verification off forgets every trusted device.
 
 ## Which sign-ins ask for it
 
 All of them: email codes, Google and GitHub<IfAvailable feature="sso">, and workspace single sign-on</IfAvailable>. That includes signing in again in a browser where you're already signed in.
 
 <IfAvailable feature="passkeys">
+
 Signing in with **Continue with passkey** is the exception. A passkey sign-in already uses two factors, the device and your fingerprint, face or screen lock, so QRdx doesn't ask for a second step. QRdx only accepts passkeys that check you that way.
+
 </IfAvailable>
 
 ## Change your methods
@@ -92,19 +106,19 @@ Before a change to your account's security, QRdx asks you to confirm it's you, e
 - in a workspace: deleting it, changing someone's role, removing someone, inviting an admin by email or with a join link, and [requiring two-step verification](/docs/help/teams/require-two-step-verification) or no longer requiring it.
 
 <IfAvailable feature="sso">
+
 So does creating, editing, verifying or deleting a workspace's single sign-on connection, or requiring single sign-on.
+
 </IfAvailable>
 
-With two-step verification on, confirm with <IfAvailable feature="passkeys">your passkey, </IfAvailable>a code from your authenticator app, or a backup code (which is then used up). QRdx doesn't offer an emailed code here, so getting into your email isn't enough to change your security.
+{/* shot: confirm-its-you-dialog | the Confirm it's you dialog offering the authenticator code and backup code methods | any change that asks, for example Change next to Email in Profile & security */}
 
-With it off, confirm with any of these:
+How you confirm depends on whether two-step verification is on:
 
-- a 6-digit code QRdx emails you;
-- signing in again with a Google or GitHub account you've linked<IfAvailable feature="sso">, or your workspace's single sign-on when it uses OIDC</IfAvailable>.
-
-<IfAvailable feature="passkeys">
-Your passkey works too, if you have one.
-</IfAvailable>
+| Two-step verification | You confirm with |
+| --- | --- |
+| **On** | <IfAvailable feature="passkeys">Your passkey, </IfAvailable>a code from your authenticator app, or a backup code (which is then used up). QRdx doesn't offer an emailed code here, so getting into your email isn't enough to change your security. |
+| **Off** | A 6-digit code QRdx emails you, or signing in again with a Google or GitHub account you've linked<IfAvailable feature="sso">, or your workspace's single sign-on when it uses OIDC</IfAvailable>.<IfAvailable feature="passkeys"> Your passkey works too, if you have one.</IfAvailable> |
 
 Signing in again takes you to that sign-in, where it asks you to pick or sign in to your account, and back to the same page. Your change isn't saved while you're away, so make it again when you're back. Use the account you linked: QRdx won't switch you to another account or create one.
 
@@ -114,7 +128,7 @@ A confirmation lasts 10 minutes in that browser, so several changes in a row ask
 
 Signing in also counts as confirming, for 10 minutes in that browser. With two-step verification on, that's only a sign-in where you answered the second step<IfAvailable feature="passkeys"> or used **Continue with passkey**</IfAvailable>, not one where a trusted device skipped it.<IfAvailable feature="sso"> Opening QRdx from your identity provider's app dashboard doesn't count either, unless you answered your second step.</IfAvailable>
 
-Signing out your other devices never asks, so if someone else got into your account you can sign them out straight away.
+Signing out your other devices never asks, so if someone else got into your account you can sign them out right away.
 
 ## Turn it off
 
@@ -128,6 +142,12 @@ If you still have <IfAvailable feature="passkeys">a passkey, </IfAvailable>your 
 
 If you've lost every way to do the second step, email [support@qrdx.dev](mailto:support@qrdx.dev) from your account's email address and tell us what happened. Whoever writes to us might not be you, so once we've confirmed the request came from that address, support's turn-off waits 7 days:
 
-- **We email that address the day it happens.** Until then nothing changes, and you stay signed in where you are.
-- **If you didn't ask for it, stop it.** Sign in with your authenticator app or a backup code: that cancels it.<IfAvailable feature="passkeys"> Signing in with a passkey doesn't, because the reset is for a lost device and a passkey may be on it.</IfAvailable> You can also click **Cancel** under **Two-step verification** in **Settings** → **Profile & security** and [confirm it's you](#confirm-its-you), or reply to the email. We email you when it's cancelled.
-- **On that day, two-step verification turns off.** Your authenticator app setup, backup codes and trusted devices are deleted,<IfAvailable feature="passkeys"> your passkeys stay,</IfAvailable> your account is signed out on every device, and we email you to say so. Then sign in as usual and turn it on again.
+1. **We email that address the day it happens.** Until then nothing changes, and you stay signed in where you are.
+2. **If you didn't ask for it, stop it.** Sign in with your authenticator app or a backup code: that cancels it.<IfAvailable feature="passkeys"> Signing in with a passkey doesn't, because the reset is for a lost device and a passkey may be on it.</IfAvailable> You can also click **Cancel** under **Two-step verification** in **Settings** → **Profile & security** and [confirm it's you](#confirm-its-you), or reply to the email. We email you when it's canceled.
+3. **On that day, two-step verification turns off.** Your authenticator app setup, backup codes and trusted devices are deleted,<IfAvailable feature="passkeys"> your passkeys stay,</IfAvailable> your account is signed out on every device, and we email you to say so. Then sign in as usual and turn it on again.
+
+## Related
+
+- [Passkeys](/docs/help/privacy-and-security/passkeys)
+- [Keep your account secure](/docs/help/privacy-and-security/account-security)
+- [Require two-step verification](/docs/help/teams/require-two-step-verification)

@@ -3,18 +3,22 @@ title: Sign-in methods and email address
 description: Sign in with Google, GitHub or an email code, link sign-in methods, change your email address, and what to do if you lost access to your email.
 ---
 
+QRdx has no passwords. You sign in with Google, GitHub or a code sent to your email, and your account is tied to that email address. This page covers the ways to sign in, linking them, changing your address, and getting back in when you've lost access to your mailbox.
+
 ## Ways to sign in
 
 - **Google** or **GitHub**.
-- **Email code**: enter your email, then type the 6-digit code we send. A code works for 5 minutes.
+- **Email code**: enter your email and click **Email me a code**, then type the 6-digit code we send. A code works for 5 minutes.
 
 <IfAvailable feature="passkeys">
-Once you've [added a passkey](/docs/help/privacy-and-security/passkeys), you can also sign in with your fingerprint, face or screen lock.
+Once you've [added a passkey](/docs/help/privacy-and-security/passkeys), you can also click **Continue with passkey** and sign in with your fingerprint, face or screen lock.
 </IfAvailable>
 
-The first time you sign in, QRdx creates your account. There's no password to remember.
+The first time you sign in, QRdx creates your account.
 
 With Google or GitHub, QRdx only creates the account if they've verified your email address. If yours isn't verified there, verify it first (GitHub lists your addresses under **Settings** → **Emails**), or sign in with an email code instead.
+
+{/* shot: sign-in-page | the sign-in page with Google, GitHub, the email field with Email me a code, and Continue with passkey | /sign-in */}
 
 ## An account for your address you didn't make
 
@@ -25,7 +29,7 @@ If QRdx already has an account for your address and you didn't make it, sign in 
 - its API keys, and the apps it allowed to use the account;
 - the webhooks and the Slack and Discord alerts it set up, and any syncs it set up that send scans or form answers to another tool.
 
-Everything else in the account stays, so check its workspaces and their members afterwards.
+Everything else in the account stays, so check its workspaces and their members afterward.
 
 ## Link Google or GitHub
 
@@ -47,13 +51,11 @@ QRdx then signs you out on every other device and browser, and your old address 
 
 If you can still get into QRdx, change your email yourself, as above. To confirm it's you without your mailbox, use <IfAvailable feature="passkeys">your passkey, </IfAvailable>a Google or GitHub account you've linked, or your two-step verification method if it's on. Signed out? Sign in with <IfAvailable feature="passkeys">your passkey or </IfAvailable>a linked Google or GitHub account first.
 
-If none of those work, email [support@qrdx.dev](mailto:support@qrdx.dev) from the address you want to use. Moving an account to a new address is the most sensitive thing support does, so:
+If none of those work, email [support@qrdx.dev](mailto:support@qrdx.dev) from the address you want to use. Moving an account to a new address is the most sensitive thing support does, so it follows three steps:
 
-- **We need proof the account is yours.** We'll ask for the email address on the account, and for one of these:
-  - if you've paid for QRdx, the number on one of your [invoices](/docs/help/account-and-billing/invoices) and roughly when you paid;
-  - if a workspace on your account uses its own [domain](/docs/help/domains/custom-domains), a DNS record we send you, added to that domain.
-- **We tell the old address and wait 7 days.** If anyone answers from it in that time and says no, we stop.
-- **Then we move the account.** We change its email to the new address, sign it out everywhere and email the old address. Sign in with a code sent to the new address. Your two-step verification, if it's on, stays as it is.
+1. **We need proof the account is yours.** We ask for the email address on the account, and for one of these: if you've paid for QRdx, the number on one of your [invoices](/docs/help/account-and-billing/invoices) and roughly when you paid; if a workspace on your account uses its own [domain](/docs/help/domains/custom-domains), a DNS record we send you, added to that domain.
+2. **We tell the old address and wait 7 days.** If anyone answers from it in that time and says no, we stop.
+3. **Then we move the account.** We change its email to the new address, sign it out everywhere and email the old address. Sign in with a code sent to the new address. Your two-step verification, if it's on, stays as it is.
 
 If we can't confirm the account is yours, we won't move it, even if that leaves it out of reach. Handing it to the wrong person would be worse.
 
@@ -63,6 +65,22 @@ Before your old address stops working, add a passkey or link Google or GitHub, s
 
 Under **Sessions** in **Settings** → **Profile & security**, sign out of one device, or click **Sign out everywhere else**.
 
-## Trouble signing in
+## If something goes wrong
+
+### The sign-in code doesn't arrive
 
 See [Sign-in codes or emails don't arrive](/docs/help/troubleshooting/emails).
+
+### Google or GitHub says your email isn't verified
+
+Verify the address there first, or sign in with an email code to the same address.
+
+### Linking Google or GitHub is refused
+
+That account uses a different email address than your QRdx account. Link an account with the same address, or [change your email](#change-your-email-address) first.
+
+## Related
+
+- [Keep your account secure](/docs/help/privacy-and-security/account-security)
+- [Two-step verification](/docs/help/privacy-and-security/two-step-verification)
+- [Sign-in codes or emails don't arrive](/docs/help/troubleshooting/emails)

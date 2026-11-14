@@ -3,20 +3,27 @@ title: Change where a code points
 description: Edit the destination of a dynamic QR code. Printed copies open the new link on the next scan.
 ---
 
-You can change the destination of a dynamic code at any time. Every printed copy opens the new link on its next scan.
+You can change the destination of a dynamic code at any time: the page a scan opens. Every printed copy opens the new link on its next scan, because the code itself only holds the short link.
 
 ## From your dashboard
 
-1. Go to **Codes**.
-2. Open the code's menu (**⋯**) and choose **Edit link**. You can also open the code and click **Edit link**.
-3. Change the **Destination URL**.
-4. Click **Save changes**.
+### 1. Open Edit link
 
-QRdx confirms with "Scans now open the updated destination."
+Go to **Codes**. Open the code's menu (the **Code actions** button, shown as **⋯**) and choose **Edit link**. You can also open the code and click **Edit link** on its **Overview** tab.
+
+### 2. Change the destination
+
+In the **Edit dynamic QR code** dialog, change the **Destination URL**.
+
+{/* shot: edit-link-dialog | the Edit dynamic QR code dialog with a new Destination URL typed and the Save changes button | Dashboard, Codes, a code's menu, Edit link */}
+
+### 3. Save
+
+Click **Save changes**. QRdx confirms with "Changes saved" and "Scans now open the updated destination."
 
 ## From the playground
 
-If the code is open in the playground, change the address. The card says "Printed codes still open" your old link until you click **Point it to the new address**.
+If the dynamic code is open in the playground, type the new address in **Website address**. The switch under it says "Printed codes still open" your old link until you click **Point it to the new address**. QRdx then confirms with "Destination updated".
 
 ## Changes take effect right away
 
@@ -24,20 +31,32 @@ QRdx doesn't cache redirects. The next scan opens the new destination, on every 
 
 ## Don't change the short link itself
 
-Changing the destination is always safe. Changing the code's **back-half** or **domain** is not: codes already printed with the old short link stop working.
+Changing the destination is always safe. Changing the code's back-half, or moving it off a custom domain, is not: QRdx warns that codes printed with the old link stop working. Moving a code from its `qrdx.dev` link to a custom domain is the exception: the `qrdx.dev` link keeps working.
 
 ## Undo a change
 
-1. Open the code from **Codes**.
-2. Under **Settings**, open **Version history**.
+1. Open the code from **Codes** and go to its **Settings** tab.
+2. Open **Version history**.
 3. Click **Restore** next to the version you want, then **Restore version**.
 
-QRdx keeps up to 100 versions of each code.
+QRdx keeps up to 100 versions of each code, on every plan.
 
 ## Open a page instead
 
-To make the code open a hosted page instead of a link, use **Change type** on the code's page. See [Change what a printed code opens](/docs/help/dynamic-codes/change-the-type).
+To make the code open a hosted page instead of a link, click **Change type** on the code's **Overview** tab. See [Change what a printed code opens](/docs/help/dynamic-codes/change-the-type).
 
-## Static codes can't change
+## If something goes wrong
 
-A static code stores the link inside the code. To change it, you need to print a new code. See [Static or dynamic](/docs/help/getting-started/static-vs-dynamic).
+### The printed code still opens the old page
+
+In the playground, changing the address isn't enough: click **Point it to the new address**. In the dashboard, check that you clicked **Save changes**. If the destination is right and a scan still lands elsewhere, see [A code opens the wrong page](/docs/help/troubleshooting/wrong-destination).
+
+### Edit link isn't there
+
+The code is static: the link is stored inside it and can't change. Print a dynamic code instead. See [Static or dynamic, which do you need?](/docs/help/getting-started/static-vs-dynamic).
+
+## Related
+
+- [Change what a printed code opens](/docs/help/dynamic-codes/change-the-type)
+- [A code opens the wrong page](/docs/help/troubleshooting/wrong-destination)
+- [Use your own domain](/docs/help/domains/custom-domains)

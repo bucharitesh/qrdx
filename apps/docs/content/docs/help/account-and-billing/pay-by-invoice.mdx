@@ -3,17 +3,37 @@ title: Pay by invoice
 description: Ask for an invoice for a year of Business, to pay by bank transfer instead of by card.
 ---
 
-<IfAvailable feature="invoiceRequests" title="Pay by invoice">
+Checkout takes cards and wallets such as Apple Pay and Google Pay. If your company pays by bank transfer or needs an invoice first, you can ask for one for a year of Business. The QRdx team arranges it by hand, so this is offered on qrdx.dev; a self-hosted QRdx server has its own billing.
 
-Checkout takes cards and wallets such as Apple Pay and Google Pay. If your company pays by bank transfer or needs an invoice first, you can ask for one for a year of Business.
+<IfAvailable feature="invoiceRequests">
+
+## Ask for an invoice
 
 1. Sign in and open the [pricing page](/pricing).
 2. Choose **Yearly** and click **Pay by invoice instead** under the Business plan.
 3. Enter your company name, the billing email address and country, and if you need them, your tax or VAT ID, billing address and a purchase order number.
 4. Click **Send request**.
 
-The request reaches the QRdx team by email. We arrange invoices by hand and reply to the billing email with the invoice and how to pay it. Nothing is charged when you send the request.
+{/* shot: pay-by-invoice-form | the Pay by invoice form with the company fields and the Send request button | /pricing, Yearly, Pay by invoice instead */}
 
-If the form can't send your request, email [enterprise@qrdx.dev](mailto:enterprise@qrdx.dev) with the same details.
+## What happens next
+
+The request reaches the QRdx team by email. We reply to the billing email with the invoice and how to pay it, and turn on Business for your account once the payment arrives. Nothing is charged when you send the request.
+
+## If something goes wrong
+
+### The form can't send your request
+
+Email [enterprise@qrdx.dev](mailto:enterprise@qrdx.dev) with the same details.
+
+### Pay by invoice instead isn't on the pricing page
+
+It only shows under the Business plan with **Yearly** selected, and only when you're signed in.
 
 </IfAvailable>
+
+## Related
+
+- [Plans and what they include](/docs/help/account-and-billing/plans)
+- [Find invoices and receipts](/docs/help/account-and-billing/invoices)
+- [Contact support](/docs/help/contact)

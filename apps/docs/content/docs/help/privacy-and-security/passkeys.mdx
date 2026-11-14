@@ -19,6 +19,8 @@ It also [confirms it's you](/docs/help/privacy-and-security/two-step-verificatio
 3. Keep the suggested name (your browser and system, like "Chrome on macOS") or type your own, then click **Continue**.
 4. Your browser asks where to save the passkey and checks your fingerprint, face or screen lock.
 
+{/* shot: add-passkey-step | the Add a passkey step with the Name field and the Continue button | Dashboard, Settings, Profile & security, Add passkey */}
+
 If two-step verification is off, adding a passkey turns it on, and QRdx shows you 10 backup codes to save. They get you in when you don't have your passkey.
 
 The passkey has to check that it's you each time it's used. Phones, computers and password managers do this with your fingerprint, face or screen lock. A security key needs a PIN set on it.
@@ -37,22 +39,38 @@ A passkey signs in to the account it was added to. It can't create an account: i
 
 With two-step verification on, sign in the way you usually do. Your browser's passkey prompt then opens on its own; check it's you and you're in. Some browsers only open the prompt after a click: then click **Continue with passkey**.
 
-No passkey to hand? Click **Use an authenticator code** (if you've set up an authenticator app) or **Use a backup code**.
+No passkey at hand? Click **Use an authenticator code** (if you've set up an authenticator app) or **Use a backup code**.
 
 If you added a passkey before it could be a second step and two-step verification is off, Settings says **Your passkey is ready to be your second step**. Click **Turn on** to use it that way: confirm it's you, check it's you with the passkey, and save your backup codes.
 
 ## Synced and device-bound passkeys
 
-A synced passkey is backed up to a password manager or a cloud keychain, such as iCloud Keychain or Google Password Manager. It works on every device signed in to that account.
+A synced passkey is backed up to a password manager or a cloud keychain, such as iCloud Keychain or Google Password Manager. It works on every device signed in to that account. Settings marks each passkey **Synced** or **Device-bound**.
 
 A device-bound passkey stays on the one phone, computer or security key that made it. To sign in somewhere else, use another sign-in method or add a passkey on that device too.
 
 ## Rename or remove a passkey
 
-Under **Two-step verification**, open the menu next to the passkey and click **Rename** or **Remove**, then confirm it's you. A removed passkey stops working on QRdx straight away. Your device or password manager may keep listing it until you delete it there as well.
+Under **Two-step verification**, open the menu next to the passkey and click **Rename** or **Remove**, then confirm it's you. A removed passkey stops working on QRdx right away. Your device or password manager may keep listing it until you delete it there as well.
 
 If that passkey is your only second step, removing it turns two-step verification off. QRdx tells you before you confirm.
 
-Lost a device that had a passkey on it? Sign in another way and remove that passkey.
+## If something goes wrong
 
-You can always sign in with a code sent to your email, so removing your last passkey doesn't lock you out.
+### The passkey prompt doesn't open
+
+Some browsers only open it after a click. Click **Continue with passkey**. If it still doesn't open, the passkey may be on another device: use another method, then add a passkey on this device.
+
+### You lost a device that had a passkey on it
+
+Sign in another way and remove that passkey under **Two-step verification**.
+
+### You removed your last passkey
+
+You can always sign in with a code sent to your email, so you're not locked out. If it was your only second step, two-step verification is now off; turn it back on with a new passkey or an authenticator app.
+
+## Related
+
+- [Two-step verification](/docs/help/privacy-and-security/two-step-verification)
+- [Keep your account secure](/docs/help/privacy-and-security/account-security)
+- [Sign-in methods and email address](/docs/help/account-and-billing/sign-in)

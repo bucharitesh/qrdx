@@ -7,23 +7,34 @@ A dynamic code opens either a website link or a hosted page, and you can switch 
 
 ## Turn a website link into a page
 
-1. Open the code from **Codes** and click **Change type**.
-2. Pick a page type, then a template.
-3. Click **Continue to editor** and build the page.
-4. Click **Publish**.
+### 1. Open Change type
 
-Scans keep going to the old link until you publish. If you leave the editor without publishing, nothing changes. Your unpublished edits stay in this browser.
+Open the code from **Codes** and click **Change type** on its **Overview** tab. The **Change what this code opens** dialog opens.
+
+{/* shot: change-type-dialog | the Change what this code opens dialog for a website link, with the Hosted page types to pick from | Dashboard, Codes, open a code, Change type */}
+
+### 2. Pick a page
+
+Under **Hosted page**, pick a page type, then a template.
+
+### 3. Build the page
+
+Click **Continue to editor** and build the page.
+
+### 4. Publish
+
+Click **Publish** in the page editor. Scans keep going to the old link until you do. If you leave the editor without publishing, nothing changes, and your unpublished edits stay in this browser.
 
 ## Turn a page back into a link
 
 1. Open the code and click **Change type**.
 2. Choose **Website link**, enter the address and click **Switch to website link**.
 
-The page stays in **Pages**. To bring it back, open **Change type** again and pick it under **Switch back**.
+The page stays in **Pages**. To bring it back, open **Change type** again and pick it under **Switch back**, which appears once the code has earlier pages.
 
 ## Switch to another page type
 
-Pick a type under **Another page type**. The new page starts from the template you choose and takes what fits from the old one: the page name, settings and logo, plus any blocks the template also has, such as the header, links or contact details. The dialog lists what doesn't fit. That stays on the old page, which is kept in **Pages**.
+For a code that already opens a page, the dialog has an **Another page type** section. The new page starts from the template you choose and takes what fits from the old one: the page name, settings and logo, plus any blocks the template also has, such as the header, links or contact details. The dialog lists what doesn't fit. That stays on the old page, which is kept in **Pages**.
 
 ## What stays the same
 
@@ -42,8 +53,20 @@ A new page counts toward your plan's hosted pages, like any page you create. A p
 
 ## Undo a switch
 
-Each switch saves the code's previous settings in **Version history**. Restoring an earlier version switches the type back, as long as the page it opened still exists.
+Each switch saves the code's previous settings in **Version history** on the **Settings** tab. Restoring an earlier version switches the type back, as long as the page it opened still exists.
 
-## From the API
+## If something goes wrong
 
-Send `kind` with `PATCH /v1/codes/{id}`. See [Update a code](/docs/developers/api/update-code).
+### Scans still open the old link
+
+You haven't published the page yet. Open it from **Pages** and click **Publish**.
+
+### Switch back isn't in the dialog
+
+It only appears when the code opened a page before. For a new page, pick a type under **Hosted page**.
+
+## Related
+
+- [Create a mobile page](/docs/help/pages-and-forms/create-a-page)
+- [Change where a code points](/docs/help/dynamic-codes/change-the-link)
+- [Update a code with the API](/docs/developers/api/update-code)

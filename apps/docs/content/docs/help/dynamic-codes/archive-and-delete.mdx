@@ -3,30 +3,47 @@ title: Archive, delete and restore codes
 description: What happens to a printed code when you archive it, move it to the trash or delete it forever.
 ---
 
+When you're done with a dynamic code, you can archive it, move it to the trash or delete it forever. Each one stops the code from working, in a different way.
+
 <Callout type="warn">
-  Archiving, trashing or deleting a code **stops it from working**. To retire a printed code gently, [pause it](/docs/help/dynamic-codes/pause-schedule-limit) and add a fallback URL instead.
+  Archiving, trashing or deleting a code stops it from working. To retire a printed code gently, [pause it](/docs/help/dynamic-codes/pause-schedule-limit) and add a fallback URL instead.
 </Callout>
 
-## Archive
+## Which to choose
 
-Choose **Archive** from the code's menu in **Codes**.
+| | Scanners see | Counts toward your limit | Comes back with |
+| --- | --- | --- | --- |
+| **Pause** | The fallback URL, or "This campaign is paused" | Yes | **Resume** |
+| **Archive** | "This QR code is no longer active" | No | **Unarchive** |
+| **Move to trash** | "This QR code is no longer active" | No | **Restore** |
+| **Delete forever** | "QR code not found" | No | Nothing. It's gone. |
 
-- Scanners see "This QR code is no longer active".
-- Archived codes don't count toward your plan's code limit.
-- Choose **Unarchive** to turn the code back on. On Free, you need a free code slot.
+## Archive a code
 
-## Move to the trash
+In **Codes**, open the code's menu (**⋯**) and choose **Archive**. Archived codes don't count toward your plan's code limit. Choose **Unarchive** to turn the code back on. On Free, you need a free code slot.
 
-Choose **Move to trash** from the code's menu.
+## Move a code to the trash
 
-- Scanners see "This QR code is no longer active".
-- Open **Trash** in the Codes sidebar and choose **Restore** to bring it back.
-- QRdx never empties the trash on its own.
+Open the code's menu and choose **Move to trash**. To see trashed codes, open **Filter** in the toolbar and set **Status** to **Trash**. There, each code's menu offers **Restore** and **Delete forever**. QRdx never empties the trash on its own.
 
-## Delete forever
+{/* shot: codes-trash-filter | the Codes list filtered to Trash, with a trashed code's menu showing Restore and Delete forever | Dashboard, Codes, Filter, Status, Trash */}
 
-In **Trash**, choose **Delete forever**.
+## Delete a code forever
 
-- Scanners see "QR code not found".
-- The code's scan history is deleted.
-- This can't be undone.
+In the trash, choose **Delete forever** on one code, or **Empty trash** to delete everything in it. The code's scan history and version history are deleted with it, and nothing can bring it back. Scanners see "QR code not found".
+
+## If something goes wrong
+
+### Unarchive or Restore is refused
+
+You're on Free and already have 10 active codes. Archive another code first, or [upgrade](/pricing).
+
+### You deleted a code and want its scans back
+
+They're gone with the code. Before deleting a code you might need, [export its scans](/docs/help/dynamic-codes/scans#download-your-scans).
+
+## Related
+
+- [Pause, schedule or limit a code](/docs/help/dynamic-codes/pause-schedule-limit)
+- [A scan shows an error page](/docs/help/troubleshooting/error-pages)
+- [Create a dynamic QR code](/docs/help/dynamic-codes/create)

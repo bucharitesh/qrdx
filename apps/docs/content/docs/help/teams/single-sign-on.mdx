@@ -3,9 +3,11 @@ title: Single sign-on (SSO)
 description: Let your team sign in to QRdx with your company's identity provider, over OIDC or SAML 2.0. Part of the Business plan.
 ---
 
-Single sign-on lets people at your company sign in to QRdx through your identity provider instead of an email code, Google or GitHub. You set up one connection for one email domain, prove you own the domain, and people at that domain are offered single sign-on when they enter their work email to sign in. Signing in that way makes them a member of your workspace. You can also [require it](#require-single-sign-on), so your identity provider is the only way in for that domain.
+Single sign-on lets people at your company sign in to QRdx through your identity provider instead of an email code, Google or GitHub. You set up one connection for one email domain, prove you own the domain, and people at that domain are offered single sign-on when they enter their work email. Signing in that way makes them a member of your workspace. You can also [require it](#require-single-sign-on), so your identity provider is the only way in for that domain.
 
-Single sign-on is part of the **Business** plan. A workspace has it when one of its owners or billing members is on Business. See [Seats and workspace limits](/docs/help/teams/seats).
+<Callout type="info">
+  Single sign-on is part of the **Business** plan. A workspace has it when one of its owners or billing members is on Business. See [Seats and workspace limits](/docs/help/teams/seats).
+</Callout>
 
 Single sign-on is a Business feature under the QRdx commercial license. A self-hosted QRdx server needs a license key (`QRDX_EE_LICENSE`) to turn it on; see [Self-hosting](/docs/self-hosting#optional-services).
 
@@ -15,30 +17,38 @@ Single sign-on is a Business feature under the QRdx commercial license. A self-h
 - You need to be able to add a DNS record for your email domain, like `acme.com`.
 - Setting up, changing, verifying or removing the connection, and requiring single sign-on, asks you to [confirm it's you](/docs/help/privacy-and-security/two-step-verification#confirm-its-you) first: with your passkey or a two-step verification code, or, if two-step verification is off, with a code we email you or, for an OIDC connection, by signing in through it again. One confirmation covers your changes for the next 10 minutes.
 
-QRdx uses the standard OIDC and SAML 2.0 settings that identity providers ask for. The steps below list the values; where to paste them depends on your provider.
+QRdx uses the standard OIDC and SAML 2.0 settings that identity providers ask for. Where to paste each value depends on your provider.
+
+## What you exchange with your identity provider
+
+| | You give your provider | Your provider gives you |
+| --- | --- | --- |
+| **OIDC** | The **Redirect URI** shown on the Single sign-on page | The **Issuer URL**, a **Client ID** and a **Client secret** |
+| **SAML 2.0** | The **Assertion Consumer Service (ACS) URL**, the **Entity ID (audience)** and, if it reads settings from a URL, the **Metadata URL** | Its **metadata XML**, or the **Sign-in URL (SSO URL)**, its **entity ID** and its **signing certificate** |
 
 ## Set up with OIDC
 
 1. In the workspace, go to **Settings** → **Single sign-on**. **OIDC** is selected.
 2. In your identity provider, create a web app (OIDC client) for QRdx and add the **Redirect URI** shown on the page as an allowed redirect.
-3. Back in QRdx, fill in:
-   - **Email domain**: your company's domain, like `acme.com`.
-   - **Issuer URL**: your provider's issuer. QRdx reads the rest from `<issuer>/.well-known/openid-configuration`, so the issuer has to match that document exactly.
-   - **Client ID** and **Client secret** from the app you created.
+3. Back in QRdx, fill in the **Email domain** (your company's domain, like `acme.com`), the **Issuer URL**, and the **Client ID** and **Client secret** from the app you created. QRdx reads the rest from `<issuer>/.well-known/openid-configuration`, so the issuer has to match that document exactly.
 4. Click **Save connection**.
+
+{/* shot: sso-settings-oidc | the Single sign-on settings page with OIDC selected and the Redirect URI, Email domain, Issuer URL, Client ID and Client secret fields | Dashboard, Settings, Single sign-on */}
 
 QRdx asks for the `openid`, `email` and `profile` scopes and uses PKCE. The issuer has to be reachable over HTTPS from the internet; identity providers on a private network aren't supported.
 
 ## Set up with SAML 2.0
 
 1. In the workspace, go to **Settings** → **Single sign-on** and choose **SAML 2.0**.
-2. In your identity provider, create a SAML app for QRdx with the values shown on the page:
-   - **Assertion Consumer Service (ACS) URL**
-   - **Entity ID (audience)**
-   - **Metadata URL**, if your provider can read QRdx's settings from a URL
-3. Send the person's email address as the **NameID** (email format) or as an attribute named `email`. For their name, send `givenName` and `surname` (or `firstName` and `lastName`, or the X.500 names `urn:oid:2.5.4.42` and `urn:oid:2.5.4.4`), or a display name (`displayName`, `name` or `urn:oid:2.16.840.1.113730.3.1.241`). Without a name, QRdx uses the part of the address before the @.
+2. In your identity provider, create a SAML app for QRdx with the **Assertion Consumer Service (ACS) URL**, the **Entity ID (audience)** and, if your provider can read QRdx's settings from a URL, the **Metadata URL** shown on the page.
+3. Send the person's email address and name in the assertion, as the table below describes.
 4. Back in QRdx, enter your **Email domain** and paste your provider's **metadata XML**. Or click **Enter the details instead** and fill in the **Sign-in URL (SSO URL)**, the provider's **entity ID** and its **signing certificate**.
 5. Click **Save connection**.
+
+| What | How to send it |
+| --- | --- |
+| Email address | As the **NameID** (email format), or as an attribute named `email`. |
+| Name | `givenName` and `surname`, or `firstName` and `lastName`, or the X.500 names `urn:oid:2.5.4.42` and `urn:oid:2.5.4.4`; or a display name as `displayName`, `name` or `urn:oid:2.16.840.1.113730.3.1.241`. Without a name, QRdx uses the part of the address before the @. |
 
 Your provider has to sign its responses and include an HTTP-Redirect sign-in URL. QRdx turns away responses without a valid signature or without validity times (`NotBefore` and `NotOnOrAfter`).
 
@@ -63,6 +73,8 @@ A verified domain covers its subdomains too, so `acme.com` also covers `eu.acme.
 1. On the sign-in page, they enter their work email and click **Email me a code**, like any email sign-in.
 2. Before sending a code, QRdx checks the address's domain. For your verified domain, it says your company signs in with single sign-on and offers **Continue with SSO**. No code is sent unless they ask for one.
 3. **Continue with SSO** sends them to your identity provider, then back to QRdx, signed in and in your workspace.
+
+{/* shot: sign-in-continue-with-sso | the sign-in page after a work email is entered, offering Continue with SSO | /sign-in with an address at a verified domain */}
 
 They can choose **Email me a code** instead, unless you [require single sign-on](#require-single-sign-on). **Sign in with SSO**, below the email field, also still works: it asks for their work email and goes straight to your identity provider.
 
@@ -157,6 +169,6 @@ If the workspace is no longer on Business, nobody can sign in with SSO, includin
 
 ## Related
 
+- [Require two-step verification](/docs/help/teams/require-two-step-verification)
 - [Team roles](/docs/help/teams/roles)
-- [Seats and workspace limits](/docs/help/teams/seats)
-- [Create a workspace and invite people](/docs/help/teams/create-and-invite)
+- [Keep your account secure](/docs/help/privacy-and-security/account-security)

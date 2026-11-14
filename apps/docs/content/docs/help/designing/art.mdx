@@ -3,39 +3,55 @@ title: Blend a logo or photo into the code
 description: Logo QR and Image QR blend a picture into the dots themselves, with no AI.
 ---
 
-## Logo QR and Image QR
+The **Art** tab blends a picture into the dots of the code themselves, rather than placing it on top. **Logo QR** and **Image QR** work without any AI, and a scan check tests the result in your browser before you download.
 
-In the [playground](/playground?tab=art), open the **Art** tab. Choose a mode:
+## Choose a mode
 
-- **Logo QR** colors the dots inside your logo's shape.
-- **Image QR** turns the whole code into your photo.
-- **Off** turns art off.
+1. In the [playground](/playground?tab=art), open the **Art** tab.
+2. Pick **Logo QR** to color the dots inside your logo's shape, or **Image QR** to turn the whole code into your photo. **Off** turns art off.
+3. Upload your own picture, or try a sample. Logos work best as a transparent PNG or an SVG. Photos work best with one clear subject.
+4. Under **Strength**, choose **Subtle**, **Balanced** or **Bold**. Stronger art looks better but is harder to scan. **Fine-tune** gives you a slider.
 
-Upload your own picture, or try a sample. Logos work best as a transparent PNG or an SVG. Photos work best with one clear subject.
+Art works in every download format.
 
-Art works in every download format, and there's no AI involved.
+{/* shot: art-tab-image-qr | the Art tab with Image QR picked, a photo loaded, the Strength choice and the Scan check result below | /playground?tab=art */}
 
-## Balance art and scanning
+## Check that it scans
 
-Choose how strong the art is: **Subtle**, **Balanced** or **Bold**. Stronger art looks better but is harder to scan.
+The **Scan check** below the art decodes your real code in your browser at three sizes. If the result isn't great, it lists what to fix.
 
-The **Scan check** below the art decodes your real code in your browser at three sizes. If it isn't great, it lists what to fix.
+For the best results, set **Error correction** to **High** in the **Design** tab and keep a clear border around the code.
 
-For the best results, set **Error correction** to **High** and keep a clear border around the code.
+## Why the logo is small on a short link
 
-With the Logo QR badge, the logo only grows as far as the code can repair. A short link makes a small code, so the logo stays small, and the smallest codes show no logo at all. Error correction **High** gives it the most room.
+With Logo QR, the logo only grows as far as the code can repair. A short link makes a small code, so the logo stays small, and the smallest codes show no logo at all. **High** error correction gives it the most room.
 
 <IfAvailable feature="aiArt" title="AI art">
 
 [AI QR art](/ai/art) generates artwork around a code that still scans. It needs a free account.
 
-In the playground, pick **AI art** in the **Art** tab. It paints the code you're editing. If that code is linked to a dynamic code, the art encodes the short link, so you can change where it points after printing. AI art is an image: download it as a PNG, or use **Use as Image QR** to turn it into a vector code for SVG, PDF or EPS.
+In the playground, pick **AI art** in the **Art** tab. It paints the code you're editing. If that code is dynamic, the art encodes the short link, so you can change where it points after printing. AI art is an image: download it as a PNG, or click **Use as Image QR** to turn it into a vector code for SVG, PDF or EPS.
 
-Each plan includes a number of AI art images a month: 3 on Free, 30 on Pro and 150 on Business, shared by everyone in the workspace.
+Each plan includes a number of AI art images a month: 3 on Free, 30 on Pro and 150 on Business. On Business the allowance is shared by everyone in the workspace. An image that fails isn't counted.
 
 </IfAvailable>
+
+## If something goes wrong
+
+### The scan check isn't Great
+
+Lower the **Strength**, set **Error correction** to **High**, and pick a picture with one clear subject and strong contrast.
+
+### The photo looks muddy in the code
+
+Busy photos lose their shape in the dots. Crop to one subject, or try **Logo QR** with a simple shape.
+
+### AI art says the link is too long
+
+AI art fits a limited number of characters. Make the code dynamic first, so it holds a short link instead of the full address. See [Create a dynamic QR code](/docs/help/dynamic-codes/create).
 
 ## Related
 
 - [Check a design with the scan score](/docs/help/designing/scan-score)
+- [Add a logo](/docs/help/designing/logos)
 - [Art QR codes for developers](/docs/features/art-qr)

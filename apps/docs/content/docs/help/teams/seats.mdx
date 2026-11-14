@@ -3,17 +3,21 @@ title: Seats and workspace limits
 description: How many people a workspace can have, and how to leave, remove someone or delete a workspace.
 ---
 
+A workspace's seats come from the plan of its owners and billing members. This page covers how many people fit, and how people leave, get removed, or a workspace is deleted.
+
 ## How many seats you get
 
-- **Pro**: 3 seats, including the owner.
-- **Business**: unlimited seats.
-- **Free**: 1 seat, just you.
+| Plan | Seats |
+| --- | --- |
+| Free | 1 (you) |
+| Pro | 3, including the owner |
+| Business | Unlimited |
 
-A workspace uses the best plan among its owners. Members don't need their own subscription.
+A workspace uses the best plan among its owners and billing members. Members don't need their own subscription.
 
 ## Pending invitations use a seat
 
-An invitation takes a seat until it's accepted or revoked. To free the seat, find the invitation on the **Settings** → **Team** page and click **Revoke**.
+An invitation takes a seat until it's accepted or revoked. To free the seat, find the invitation under **Pending invitations** on the **Settings** → **Team** page and click **Revoke**.
 
 ## If the owners' plan changes
 
@@ -21,13 +25,13 @@ People already in the workspace stay. Only new invitations are blocked until the
 
 ## Remove someone
 
-On the **Settings** → **Team** page, click **Remove** next to their name, then **Remove member**. Only admins and owners can remove members, and nobody can be removed from their own workspace.
+On the **Settings** → **Team** page, click **Remove** next to their name, then **Remove member**, and [confirm it's you](/docs/help/privacy-and-security/two-step-verification#confirm-its-you) if asked. Only admins and owners can remove members, and nobody can be removed from their own workspace.
 
-The codes and pages they created stay in the workspace.
+The codes and pages they created stay in the workspace. API keys they made for the workspace stop working.
 
 ## Leave a workspace
 
-In the workspace's **Settings** → **General**, click **Leave workspace**.
+In the workspace's **Settings** → **General**, click **Leave workspace**. You lose access to its codes, pages and themes; what you created stays in the workspace, and you need a new invitation to rejoin.
 
 If you're the only owner, make someone else an owner first. See [Team roles](/docs/help/teams/roles). You can't leave your own workspace.
 
@@ -35,4 +39,22 @@ If you're the only owner, make someone else an owner first. See [Team roles](/do
 
 Owners can click **Delete workspace** in **Settings** → **General**. To confirm, type the workspace's URL. Your own workspace can't be deleted; it goes when you [delete your account](/docs/help/account-and-billing/delete-your-account).
 
-Nothing stops working. Each code, page, file and domain moves to the own workspace of the person who created it, and printed codes keep redirecting. The workspace's API keys are deleted.
+{/* shot: workspace-danger-zone | the Danger zone of a workspace's General settings with Leave workspace and Delete workspace | Dashboard, Settings, General */}
+
+Nothing stops working. Each code, page, theme, file and domain moves to the own workspace of the member who created it, and printed codes keep redirecting. The workspace's members and pending invitations are removed, and its API keys are deleted.
+
+## If something goes wrong
+
+### Create invite link is disabled
+
+Every seat is taken, counting pending invitations. Revoke an invitation, remove someone, or ask an owner or billing member to upgrade.
+
+### Leave workspace is refused
+
+You're the only owner, or it's your own workspace. Make another member an owner first; your own workspace can't be left.
+
+## Related
+
+- [Create a workspace and invite people](/docs/help/teams/create-and-invite)
+- [Team roles](/docs/help/teams/roles)
+- [Plans and what they include](/docs/help/account-and-billing/plans)

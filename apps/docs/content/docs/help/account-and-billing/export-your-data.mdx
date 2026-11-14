@@ -3,23 +3,49 @@ title: Export your data
 description: Download everything in your account, or export scans and form responses as CSV.
 ---
 
+Everything in your account can be downloaded, on every plan: one ZIP with all of it, or a CSV of one code's scans, one form's responses or your code images. Nothing is locked behind a paid plan.
+
 ## Everything at once
 
 1. Go to **Settings** → **Profile & security**.
 2. Under **Your data**, click **Download my data**.
 
-You get a ZIP file with your codes, scans, pages, form responses, themes and account details, as JSON and CSV files, plus a README that explains them.
+You get a ZIP file with your profile, codes, pages, themes and settings as JSON files, your scans as `scans.csv`, your form responses as `form-responses.csv`, and a `README.txt` that explains each file.
 
-You can download it up to 3 times an hour.
+The export holds up to 500,000 scans and 100,000 responses. You can download it up to 3 times an hour.
+
+{/* shot: your-data-download | the Your data section of Profile & security with the Download my data button | Dashboard, Settings, Profile & security */}
 
 ## Scans of one code
 
-Open the code from **Codes** and click **Export CSV**. You get up to 50,000 scans for the dates you picked.
+Open the code from **Codes**, go to its **Analytics** tab and click **Export CSV**. You get up to 50,000 scans for the dates you picked, with the time, place, device, operating system, browser and referrer of each. See [See your scans](/docs/help/dynamic-codes/scans).
 
 ## Form responses
 
-In **Pages**, open the page's menu (**⋯**), choose **Responses**, then click **Export CSV**.
+In **Pages & forms**, open the page's menu (**⋯**), choose **Responses**, then click **Export CSV**.
 
 ## QR code images
 
-In **Codes**, select the codes you want, then click **Download**. You get a ZIP of PNG, WebP or SVG files, with a CSV list of the codes.
+In **Codes**, select the codes you want, then click **Download** and pick **PNG images (ZIP)**, **WebP images (ZIP)** or **SVG images (ZIP)**. The ZIP also holds a `codes.csv` listing each file with its title, short link and destination.
+
+<IfAvailable feature="auditLog" title="The audit log">
+
+On Business, owners and admins can export the workspace's [audit log](/docs/help/teams/audit-log#export-as-csv) as CSV.
+
+</IfAvailable>
+
+## If something goes wrong
+
+### Download my data is refused
+
+You've downloaded it 3 times in the last hour. Wait and try again.
+
+### The ZIP doesn't hold all your scans
+
+The full export stops at 500,000 scans. For a busy code, use **Export CSV** on the code with a shorter date range, as many times as you need.
+
+## Related
+
+- [See your scans](/docs/help/dynamic-codes/scans)
+- [Delete your account](/docs/help/account-and-billing/delete-your-account)
+- [What happens to your codes if you stop paying](/docs/help/account-and-billing/never-hostage)

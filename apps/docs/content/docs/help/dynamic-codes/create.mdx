@@ -3,39 +3,81 @@ title: Create a dynamic QR code
 description: Make a code you can change after printing, from the playground or from your dashboard.
 ---
 
-A dynamic code holds a short link that forwards to your destination. You need a free QRdx account. The Free plan includes 10 dynamic codes; Pro and Business have no limit.
+A dynamic code holds a short link, such as `qrdx.dev/q/aB3xY7k`, that forwards each scan to your destination: the page you want the code to open. You can change the destination after printing and see every scan. You can make one from the playground while you design, or from your dashboard.
+
+<Callout type="info">
+  Dynamic codes need a free QRdx account. The Free plan includes 10 active codes; Pro and Business have no limit. See [Plans and what they include](/docs/help/account-and-billing/plans).
+</Callout>
 
 ## From the playground
 
-1. Open the [playground](/playground?type=url) and type your link in **Website address**.
-2. Under the address, find the **Dynamic QR code** card.
-3. If you're signed out, click **Sign in to make it dynamic** and sign in. Your link is still there when you come back.
-4. Click **Make it dynamic**.
+### 1. Type your link
 
-The card now shows your short link and "Scans go to" your destination. Download the code as usual: it now encodes the short link.
+Open the [playground](/playground?type=url) and type the address in **Website address**.
 
-Dynamic codes from the playground work for website links. For other content, create a [mobile page](/docs/help/pages-and-forms/create-a-page), which also gets a dynamic code.
+### 2. Pick Dynamic
+
+Under the address, the **Static or dynamic QR code** switch offers **Static** ("Fixed once printed") and **Dynamic** ("Edit later, count scans"). Pick **Dynamic**.
+
+If you're signed out, the sign-in dialog opens. Your link stays where it is, and the code is created as soon as you're signed in.
+
+{/* shot: playground-static-dynamic-switch | the Static or dynamic QR code switch under the Website address field, with Dynamic about to be picked | /playground?type=url with a link typed */}
+
+### 3. Download the code
+
+QRdx confirms with "Your QR code is now dynamic". The switch now shows the short link with a copy button, plus **Link options…** for the domain, back-half, folder and tags, and **Scans & settings** to open the code in your dashboard. Download the code as usual: it now encodes the short link.
+
+{/* shot: playground-dynamic-on | the switch after picking Dynamic, showing the short link, its copy button, Link options and Scans & settings | /playground after making a code dynamic */}
+
+The switch is for the URL type. For a contact card, a menu or any other content you want to change later, create a [mobile page](/docs/help/pages-and-forms/create-a-page), which gets a dynamic code of its own.
 
 ## From your dashboard
 
-1. Go to **Codes** in your dashboard and click **New code**.
-2. Under **Link**, choose **Website link**.
-3. Fill in **Destination URL** and, if you like, a **Title**.
-4. Click **Create code**.
+### 1. Start a new code
 
-You can then download the code or click **View analytics** to open it.
+Go to **Codes** and click **New code**. The **New dynamic QR code** dialog opens.
+
+### 2. Say what it opens
+
+Under **What does it open?**, pick **Website link**.
+
+### 3. Fill in the details
+
+Fill in **Destination URL**. If you like, pick a **Short link domain**, type a **Custom back-half (optional)** and give the code a **Title (optional)**.
+
+{/* shot: new-code-dialog | the New dynamic QR code dialog with Website link picked and the Destination URL filled in | Dashboard, Codes, New code */}
+
+### 4. Create it
+
+Click **Create code**. The dialog shows "Your dynamic QR code is ready" with **View analytics**, **Open the code**, **Create another** and **Done**. Download the code from its page.
 
 ## Choose your own short link ending
 
-On Pro and Business, fill in **Custom back-half** to choose the end of the short link, for example `qrdx.dev/q/spring-menu`. It can be 3 to 64 letters, numbers, dashes or underscores.
+On Pro and Business, **Custom back-half (optional)** lets you choose the end of the short link, for example `qrdx.dev/q/spring-menu`. It can be 3 to 64 letters, numbers, dashes or underscores, can't start or end with a dash, and a few reserved words aren't allowed.
 
-On Free, QRdx picks a short random ending for you.
+On Free, QRdx picks a random 7-character ending for you. Short links are case-sensitive.
 
 ## When you reach the limit
 
-On Free, only active codes count toward the 10. Archived codes and codes in the trash don't. Archive a code you no longer use, or [upgrade to Pro](/pricing).
+On Free, only active codes count toward the 10. Archived codes and codes in the trash don't; paused codes do. When you're at the limit, the playground shows **Upgrade to Pro** and **Manage codes**. [Archive](/docs/help/dynamic-codes/archive-and-delete) a code you no longer use, or [upgrade](/pricing).
+
+## If something goes wrong
+
+### The switch doesn't show Dynamic
+
+The code's type isn't URL. Click **Change** on the **QR code type** card and pick **URL**, or make a mobile page for other content.
+
+### You signed in but the code wasn't made
+
+Pick **Dynamic** again. The link you typed is still there.
+
+### The back-half is refused
+
+It's already taken, or it uses a character or a reserved word that isn't allowed. Try another ending.
 
 ## Related
 
 - [Change where a code points](/docs/help/dynamic-codes/change-the-link)
+- [See your scans](/docs/help/dynamic-codes/scans)
+- [Static or dynamic, which do you need?](/docs/help/getting-started/static-vs-dynamic)
 - [Dynamic QR codes guide](/docs/dynamic-qr-codes)

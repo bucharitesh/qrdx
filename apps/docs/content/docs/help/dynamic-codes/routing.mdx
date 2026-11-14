@@ -3,51 +3,80 @@ title: Send scans to different links
 description: Route each scan by device, country, area, language or time, and run A/B tests with smart routing.
 ---
 
-Smart routing sends each scan of a dynamic code to a different link, based on rules you set. Pro and Business only.
+Smart routing sends each scan of a dynamic code to a different link, based on rules you set: iPhones to the App Store, visitors in France to the French page, scans after closing time to an order form. This page gets you to a working rule; the [Smart routing guide](/docs/smart-routing) covers every condition in depth.
+
+<Callout type="info">
+  Smart routing is part of Pro and Business, and works on codes that open a website link. See [Plans and what they include](/docs/help/account-and-billing/plans).
+</Callout>
 
 ## Add a rule
 
-1. Open the code from **Codes**.
-2. Under **Settings**, open **Smart routing**.
-3. Click **Add rule**, or start from a template.
-4. Choose a condition and the link that matching scans open.
-5. Click **Save rules**.
+### 1. Open Smart routing
 
-Scans that match no rule open the code's normal destination.
+Open the code from **Codes**, go to its **Settings** tab and open **Smart routing**.
+
+### 2. Start a rule
+
+Click **Add rule**. Under **Start from**, pick a template or **Empty rule**.
+
+{/* shot: smart-routing-add-rule | the Smart routing panel with the Add rule menu open, listing the templates under Start from | Dashboard, Codes, open a code, Settings, Smart routing, Add rule */}
+
+### 3. Set the conditions and the link
+
+Choose the conditions a scan must match, and the link that matching scans open.
+
+### 4. Save
+
+Click **Save rules**. Scans that match no rule open the code's normal destination.
 
 ## Conditions you can use
 
-Device, operating system, country, region, area, language, time of day, date range and scan count. Each condition can also be turned around with **is not**.
+**Device**, **Operating system**, **Country**, **Region**, **Area**, **Language**, **Time of day**, **Date range** and **Scan count**. Check **is not** to turn a condition around.
 
-An **area** is a point and a radius. It uses the location a scanner shares when [precise location](/docs/precise-location) is on, and otherwise the rough location of their network.
+An **Area** is a point and a radius. It uses the location a scanner shares when [precise location](/docs/precise-location) is on, and otherwise the rough location of their network.
 
 A rule can have up to 8 conditions. A code can have up to 20 rules.
 
 ## Templates
 
-- **Smart app link**: iPhones to the App Store, Android phones to Google Play.
+- **Smart app link (App Store / Google Play)**: iPhones to the App Store, Android phones to Google Play.
 - **Country** and **Visitor language**.
 - **Business hours**.
-- **Date range** for a campaign.
+- **Date range (campaign)**.
 - **First scans**: a different link for the first scans.
-- **Inside an area**: a different link for scans near a place.
-- **A/B split**: share scans between up to 5 versions.
+- **Inside an area (geofence)**: a different link for scans near a place.
+- **A/B split**: share scans between 2 to 5 versions.
 
 ## The first matching rule wins
 
 Rules are checked from top to bottom. Put the most specific rules first.
 
-Click **Test your rules** to see where a scan would go before you save.
+Open **Test your rules (uses unsaved changes)** and click **Run test** to see where a scan would go before you save.
 
 ## A/B tests
 
-An A/B split sends each visitor to one version. The same visitor sees the same version for the rest of the day. The code's page shows how scans split between versions.
+An A/B split sends each visitor to one version. Each visitor keeps their version for the day. The code's **Analytics** tab shows how scans split between versions.
 
 ## After a downgrade
 
-Saved rules keep working.
+Saved rules keep working. Changing them again needs Pro or Business.
+
+## If something goes wrong
+
+### Smart routing isn't in Settings
+
+The code opens a hosted page. Routing is for codes that open a website link; switch the type first. See [Change what a printed code opens](/docs/help/dynamic-codes/change-the-type).
+
+### A scan went to the wrong link
+
+An earlier rule matched first. Reorder the rules, then confirm with **Run test**. See [A code opens the wrong page](/docs/help/troubleshooting/wrong-destination).
+
+### An area rule misses people who are there
+
+Without precise location, QRdx only knows the rough location of the scanner's network, which can be a city away. Turn on **Ask scanners for precise location** for the code, or widen the radius.
 
 ## Related
 
 - [Smart routing guide](/docs/smart-routing)
 - [A code opens the wrong page](/docs/help/troubleshooting/wrong-destination)
+- [Precise location](/docs/precise-location)
