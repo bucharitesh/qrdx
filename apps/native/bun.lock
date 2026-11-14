@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "@qrdx/scanner-mobile",
+      "name": "@qrdx/native",
       "dependencies": {
         "@capacitor/android": "8.6.0",
         "@capacitor/app": "8.1.2",
