@@ -4,18 +4,17 @@ import {
   CANONICAL_ORIGIN,
   MCP_HOST,
 } from "@repo/config";
-import { config, withAnalyzer } from "@repo/next-config";
-import { createMDX } from "fumadocs-mdx/next";
-import type { NextConfig } from "next";
-import createNextIntlPlugin from "next-intl/plugin";
-import { env } from "@/env";
-import { DOCS_REDIRECTS } from "@/lib/docs-redirects";
+import { OG_FONT_GLOB } from "@repo/design-system/og/font-files";
 import {
   docsEnglishRewrites,
   docsMarkdownAcceptRewrites,
   docsMarkdownRewrites,
-} from "@/lib/i18n/docs";
-import { englishRedirects, englishRewrites } from "@/lib/i18n/routing";
+} from "@repo/i18n/docs";
+import { englishRedirects, englishRewrites } from "@repo/i18n/routing";
+import { config, withAnalyzer } from "@repo/next-config";
+// Imported from the package, not from lib/security/csp.ts: the config is
+// compiled with `@repo/*` paths rewritten for this folder, so a package
+// import made from a file below it can't be resolved.
 import {
   appCsp,
   cspHeaderName,
@@ -23,7 +22,13 @@ import {
   hostedPageCsp,
   prerenderedPagesSource,
   reportingEndpoints,
-} from "@/lib/security/csp";
+} from "@repo/next-config/csp";
+import { createMDX } from "fumadocs-mdx/next";
+import type { NextConfig } from "next";
+import createNextIntlPlugin from "next-intl/plugin";
+import { env } from "@/env";
+import { DOCS_REDIRECTS } from "@/lib/docs-redirects";
+import mediaManifest from "@/lib/media-manifest.json";
 
 type Rewrites = Awaited<ReturnType<NonNullable<NextConfig["rewrites"]>>>;
 type RewritePhases = Required<Exclude<Rewrites, unknown[]>>;
@@ -38,12 +43,14 @@ const toRewritePhases = (rewrites: Rewrites = []): RewritePhases =>
         fallback: rewrites.fallback ?? [],
       };
 
-// Content-Security-Policy (lib/security/csp.ts): enforced in production
+// Content-Security-Policy (@repo/next-config/csp): enforced in production
 // builds, off in `next dev` (which keeps the frame rules only) unless
 // CSP_DEV=1. CSP_REPORT_ONLY=1 sends it as Report-Only instead.
 const cspEnabled =
   process.env.NODE_ENV === "production" || process.env.CSP_DEV === "1";
-const cspOptions = cspOptionsFromEnv();
+const cspOptions = cspOptionsFromEnv(process.env, {
+  mediaOrigin: mediaManifest.origin,
+});
 const cspHeader = cspHeaderName();
 const cspReporting = reportingEndpoints(cspOptions);
 
@@ -154,10 +161,11 @@ let nextConfig: NextConfig = {
       "process.env.QRDX_HOME_NUMBERS": process.env.QRDX_HOME_NUMBERS ?? "",
     },
   },
-  // Geist for server PNGs: frame labels are drawn from its glyph outlines
-  // (lib/qr-text-outline.ts), read at runtime wherever a PNG is rasterized.
+  // Geist (@repo/design-system/og/font-files) for server images: OG cards,
+  // and frame labels drawn from its glyph outlines (lib/qr-text-outline.ts),
+  // read at runtime wherever a PNG is rasterized.
   outputFileTracingIncludes: {
-    "/**": ["./app/og/fonts/*.ttf"],
+    "/**": [OG_FONT_GLOB],
   },
   serverExternalPackages: [
     "ts-morph",
@@ -183,7 +191,7 @@ let nextConfig: NextConfig = {
       // App pages can't be framed by other sites (clickjacking), except by
       // PostHog's heatmap viewer. Hosted pages (/p), short links (/q) and the
       // API stay frameable: owners may embed them. With the CSP on, its
-      // frame-ancestors carries the same rule (lib/security/csp.ts).
+      // frame-ancestors carries the same rule (@repo/next-config/csp).
       {
         source: "/:path((?!p/|q/|api/).*)",
         headers: [

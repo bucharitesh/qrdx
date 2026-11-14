@@ -285,3 +285,8 @@ packages/database/meta
 
 # Product facts snapshot, written before the docs site builds (bun run --filter docs facts:snapshot)
 packages/config/facts.generated.json
+
+# Copy of apps/docs/public/openapi.json, written before the docs site builds (bun run --filter docs openapi:export)
+packages/docs-assets/openapi.json
+# The docs' messages, copied from apps/docs/messages before the docs site builds (bun run --filter docs i18n:docs-messages)
+packages/i18n/messages/

@@ -94,7 +94,7 @@ const src = `https://api.qrdx.dev/v1/qr?data=${encodeURIComponent(link)}&style=$
 | `dot` | `square` | Formato do ponto dentro de cada olho dos cantos |
 | `level` | `Q` | Correção de erros: `L` (~7%), `M` (~15%), `Q` (~25%) ou `H` (~30%) |
 | `margin` | `4` | Zona de silêncio ao redor do código, em módulos, de `0` a `16` |
-| `template` | nenhum | Template de borda decorativa |
+| `template` | nenhum | Uma [moldura desenhada como template](/docs/features/templates): a imagem inteira tem `size` de largura, com o código menor dentro dela |
 | `frame` | nenhum | Uma [moldura](/docs/features/frames) integrada de chamada para ação, como `banner-bottom`, `speech-bubble` ou `circle` (qualquer uma das {facts.frameStyles} molduras integradas, cada uma desenhada a partir da sua especificação) |
 | `frameText` | `Scan me` | O rótulo da moldura, até 24 caracteres. Também troca o rótulo da moldura de um `style` ou `item` |
 | `style` | nenhum | O design completo do editor em JSON; veja [Estilos](#style) |
@@ -115,7 +115,7 @@ O `style` recebe o design em JSON com os mesmos campos de um tema salvo, então 
 | `bgColor`, `fgColor`, `eyeColor`, `dotColor` | Uma cor (hex como `#155dfc`, `rgb()`, `hsl()` ou nome de cor) ou um gradiente: `{ "type": "linear", "angle": 45, "stops": [...] }` ou `{ "type": "radial", "stops": [...] }`, com 2 a 8 paradas de `{ "color", "offset" }` (offset de 0 a 100) |
 | `bodyPattern`, `cornerEyePattern`, `cornerEyeDotPattern` | Os [valores de padrão](#pattern-values) |
 | `level`, `margin` | Como nos parâmetros acima (`margin` de 0 a 16) |
-| `templateId` | Um template de borda, `default` para nenhum |
+| `templateId` | Uma moldura desenhada como template, `default` para nenhuma |
 | `frame` | Uma moldura integrada, `{ "style": "banner-bottom", "text": "Scan me", "color": "#155dfc", "textColor": "#ffffff" }`, ou personalizada, `{ "style": "custom", "spec": { … } }`, com uma especificação de moldura da [comunidade](#community-items) ou de uma moldura personalizada criada na seção Moldura do Playground. As especificações são validadas pelas regras de especificação de moldura do motor (sem marcação, links ou imagens; no máximo 32 KB) |
 | `eyeColors` | Cores por olho, sobrepondo `eyeColor` e `dotColor`: `{ "topLeft": { "outer": "#b91c1c", "inner": "#1d4ed8" }, "topRight": …, "bottomLeft": … }`, cada uma uma cor ou um gradiente |
 | `moduleScale` | Tamanho de cada ponto, de `0.5` a `1` (padrão `1`) |
@@ -161,7 +161,7 @@ Os códigos de arte Logo QR e Image QR não estão disponíveis aqui: o Playgrou
 - `body`: `circle`, `circle-large`, `square`, `diamond`, `circle-mixed`, `pacman`, `rounded`, `small-square`, `vertical-line`, `horizontal-line`, `liquid`, `liquid-horizontal`, `liquid-vertical`, `classy`, `classy-rounded`, `leaf`, `plus`, `hexagon`, `star`, `heart`, `random-dots`, `mosaic`, `octagon`
 - `eye`: `square`, `rounded`, `gear`, `circle`, `diya`, `extra-rounded`, `message`, `pointy`, `leaf`, `drop`, `octagon`, `bevel`, `squircle`, `cushion`, `shield`, `petal`, `leaf-reverse`
 - `dot`: `square`, `rounded`, `circle`, `message`, `message-reverse`, `diya`, `diya-reverse`, `rounded-triangle`, `leaf`, `drop`, `plus`, `cross-rounded`, `hexagon`, `octagon`, `flower`, `heart`, `squircle`, `dots`, `extra-rounded`, `leaf-reverse`, `drop-reverse`
-- `template`: `default`, `Arrow`, `StandardBox`, `SquareBorder`, `StrikedBox`, `Halloween`
+- `template`: `default`, `Arrow`, `StandardBox`, `SquareBorder`, `StrikedBox`, `Halloween`, `DotRing`
 
 Esses são os mesmos estilos da [biblioteca React `qrdx`](/docs/features/patterns). O [servidor MCP](/docs/developers/mcp) também pode listá-los com descrições curtas.
 

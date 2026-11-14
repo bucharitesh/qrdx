@@ -1,7 +1,7 @@
 // What API and MCP clients read is in US spelling, like the rest of the
 // site: the MCP server's instructions, tool descriptions and input schemas,
-// the OpenAPI document (packages/docs-assets/openapi.json, generated from
-// lib/openapi and the route schemas) and the REST routes' own messages. Descriptions only:
+// the OpenAPI document (public/openapi.json, generated from lib/openapi and
+// the route schemas) and the REST routes' own messages. Descriptions only:
 // field names and other identifiers are the APIs' contract.
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
@@ -62,10 +62,7 @@ describe("what API and MCP clients read", () => {
   });
 
   it("the OpenAPI document uses US spelling", () => {
-    const document = readFileSync(
-      join(root, "../../packages/docs-assets/openapi.json"),
-      "utf8",
-    );
+    const document = readFileSync(join(root, "public/openapi.json"), "utf8");
     expect(ukWords(document)).toEqual([]);
   });
 

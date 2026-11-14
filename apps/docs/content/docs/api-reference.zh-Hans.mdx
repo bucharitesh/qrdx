@@ -41,8 +41,8 @@ import { QRCode } from 'qrdx';
 | `cornerEyeDotPattern` | `CornerEyeDotPattern` | `'circle'` | 角标记圆点图案 |
 | `hideLogo` | `boolean` | `false` | 隐藏徽标。除非设置了 `logo`,否则不会绘制徽标 |
 | `logo` | `string` | — | 徽标 URL |
-| `templateId` | `string` | `'default'` | 模板 ID |
-| `customTemplate` | `TemplateDefinition` | — | 自定义模板 |
+| `templateId` | `string` | `'default'` | [以模板绘制的边框](/docs/features/templates)（`'Arrow'`、`'StandardBox'` 等）：整幅图稿宽 `size` |
+| `customTemplate` | `TemplateDefinition` | — | 用代码绘制的边框（优先于 `templateId`） |
 | `level` | `ErrorLevel` | `'Q'` | 纠错等级 |
 | `autoLevel` | `boolean` | `false` | 当徽标覆盖超过 7% 的二维码面积(`AUTO_LEVEL_LOGO_COVERAGE`)时,将 `level` 提升到 H |
 | `margin` | `number` | `0` | 边距,单位为模块 |

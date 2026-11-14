@@ -94,7 +94,7 @@ const src = `https://api.qrdx.dev/v1/qr?data=${encodeURIComponent(link)}&style=$
 | `dot` | `square` | 每个定位点内部圆点的形状 |
 | `level` | `Q` | 纠错级别：`L`（约 7%）、`M`（约 15%）、`Q`（约 25%）或 `H`（约 30%） |
 | `margin` | `4` | 二维码周围的空白区域，单位为模块，范围 `0` 到 `16` |
-| `template` | 无 | 装饰性边框模板 |
+| `template` | 无 | [以模板绘制的边框](/docs/features/templates)：整张图片宽 `size`，二维码在其中缩小显示 |
 | `frame` | 无 | 内置的行动号召[边框](/docs/features/frames)，例如 `banner-bottom`、`speech-bubble` 或 `circle`（可使用全部 {facts.frameStyles} 种内置边框中的任意一种，每种都按其边框规范绘制） |
 | `frameText` | `Scan me` | 边框的文字标签，最多 24 个字符。也可以改写 `style` 或 `item` 中边框的文字 |
 | `style` | 无 | 编辑器的完整设计，以 JSON 表示；参见[样式](#style) |
@@ -115,7 +115,7 @@ const src = `https://api.qrdx.dev/v1/qr?data=${encodeURIComponent(link)}&style=$
 | `bgColor`、`fgColor`、`eyeColor`、`dotColor` | 一种颜色（如 `#155dfc` 这样的十六进制、`rgb()`、`hsl()` 或颜色名称），或一个渐变：`{ "type": "linear", "angle": 45, "stops": [...] }` 或 `{ "type": "radial", "stops": [...] }`，包含 2 到 8 个 `{ "color", "offset" }` 形式的色标（offset 为 0 到 100） |
 | `bodyPattern`、`cornerEyePattern`、`cornerEyeDotPattern` | [图案取值](#pattern-values) |
 | `level`、`margin` | 与上面的参数相同（`margin` 为 0 到 16） |
-| `templateId` | 边框模板，`default` 表示不使用 |
+| `templateId` | 以模板绘制的边框，`default` 表示无 |
 | `frame` | 内置边框，如 `{ "style": "banner-bottom", "text": "Scan me", "color": "#155dfc", "textColor": "#ffffff" }`；或自定义边框，如 `{ "style": "custom", "spec": { … } }`，其中的边框规范来自[社区](#community-items)，或来自在 Playground 的边框部分制作的自定义边框。规范会按引擎的边框规范规则进行校验（不允许标记、链接或图片；最大 32 KB） |
 | `eyeColors` | 为每个定位点单独设置颜色，优先于 `eyeColor` 和 `dotColor`：`{ "topLeft": { "outer": "#b91c1c", "inner": "#1d4ed8" }, "topRight": …, "bottomLeft": … }`，每一项可以是颜色或渐变 |
 | `moduleScale` | 每个圆点的大小，`0.5` 到 `1`（默认 `1`） |
@@ -161,7 +161,7 @@ curl -o qr.png -H "Authorization: Bearer $QRDX_API_KEY" \
 - `body`：`circle`、`circle-large`、`square`、`diamond`、`circle-mixed`、`pacman`、`rounded`、`small-square`、`vertical-line`、`horizontal-line`、`liquid`、`liquid-horizontal`、`liquid-vertical`、`classy`、`classy-rounded`、`leaf`、`plus`、`hexagon`、`star`、`heart`、`random-dots`、`mosaic`、`octagon`
 - `eye`：`square`、`rounded`、`gear`、`circle`、`diya`、`extra-rounded`、`message`、`pointy`、`leaf`、`drop`、`octagon`、`bevel`、`squircle`、`cushion`、`shield`、`petal`、`leaf-reverse`
 - `dot`：`square`、`rounded`、`circle`、`message`、`message-reverse`、`diya`、`diya-reverse`、`rounded-triangle`、`leaf`、`drop`、`plus`、`cross-rounded`、`hexagon`、`octagon`、`flower`、`heart`、`squircle`、`dots`、`extra-rounded`、`leaf-reverse`、`drop-reverse`
-- `template`：`default`、`Arrow`、`StandardBox`、`SquareBorder`、`StrikedBox`、`Halloween`
+- `template`：`default`、`Arrow`、`StandardBox`、`SquareBorder`、`StrikedBox`、`Halloween`、`DotRing`
 
 这些样式与 [`qrdx` React 库](/docs/features/patterns)中的样式相同。[MCP 服务器](/docs/developers/mcp)也可以列出它们，并附有简短说明。
 

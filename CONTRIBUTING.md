@@ -47,7 +47,7 @@ You don't need a database or any environment variables to work on the React libr
 
    In `apps/docs/.env.local`, set the three required values (`NEXT_PUBLIC_APP_URL`, `DATABASE_URL`, `BETTER_AUTH_SECRET`). To sign in locally, also add a [GitHub OAuth app](https://github.com/settings/developers) with the callback URL `http://localhost:3000/api/auth/callback/github`. Every other variable is optional, and `apps/docs/.env.example` explains each one. It's the only env file you need: the database scripts (`bun run db:push` and the other `db:*` scripts) read `DATABASE_URL` from it too.
 
-   The app checks its environment when it starts (`next dev`, `next build` and a production server): if a required value is missing, or a value is set but invalid, it stops and names the variable. The schema is `apps/docs/env.ts`, which extends the `keys.ts` of `packages/auth`, `packages/config`, `packages/database`, `packages/next-config` and `packages/rate-limit`. A new variable goes in the `keys.ts` of the package that reads it, or in `apps/docs/env.ts` if only the app does, and in `apps/docs/.env.example`; server code reads it from `env` (`import { env } from "@/env"`) or the package's `keys()` rather than from `process.env`.
+   The app checks its environment when it starts (`next dev`, `next build` and a production server): if a required value is missing, or a value is set but invalid, it stops and names the variable. The schema is `apps/docs/env.ts`, which extends the `keys.ts` of `packages/analytics`, `packages/auth`, `packages/config`, `packages/database`, `packages/next-config` and `packages/rate-limit`. A new variable goes in the `keys.ts` of the package that reads it, or in `apps/docs/env.ts` if only the app does, and in `apps/docs/.env.example`; server code reads it from `env` (`import { env } from "@/env"`) or the package's `keys()` rather than from `process.env`.
 
 4. **Set up the database**
 
@@ -90,18 +90,20 @@ You don't need a database or any environment variables to work on the React libr
 | `packages/cli` | The command-line tool, published to npm as `@qrdx/cli` |
 | `packages/auth` | Better Auth server and client configuration |
 | `packages/database` | Drizzle schema (`schema.ts`), the database client, and hand-applied SQL (`manual-sql/`) |
-| `packages/design-system` | Shared UI components (shadcn/ui), icons, styles and fonts |
+| `packages/design-system` | Shared UI components (shadcn/ui), icons, styles and fonts; the logo, the figure set, JSON-LD helpers and the Open Graph image frame (`og/`, with the Geist files server images use) |
 | `packages/integrations`, `packages/integration-kit` | The integrations catalogue (`src/catalog`), the connected-account integrations (`src/integrations`) and the shared integration types |
 | `packages/config` | Platform constants: the brand, the hosted service's URLs, contact emails, social links and limits shared across the app (its README says what belongs there) |
 | `packages/availability` | Which built-in features a deployment can offer (custom domains, AI, storage, email, the bots), decided from which variables are set; the app passes its environment in (its README says how the app and `/zone/availability.json` use it) |
+| `packages/analytics` | The cookie banner and preferences, `track()`, and the browser-side tools consent gates (PostHog, Umami, Featurebase); its README says what an app passes in |
+| `packages/i18n` | The languages (`config.ts`), which pages exist in each (`localized-paths.json`) and their URLs, the docs' languages, sidebar labels, search and SEO rules, and a copy of the docs' messages (its README says what's where) |
 | `packages/rate-limit` | Upstash-based rate limiting |
-| `packages/next-config`, `packages/typescript-config` | Shared Next.js config and env keys, shared tsconfig presets |
+| `packages/next-config`, `packages/typescript-config` | Shared Next.js config, env keys and Content-Security-Policy builder (`@repo/next-config/csp`), shared tsconfig presets |
 | `plugins/chrome`, `plugins/figma`, `plugins/raycast`, `plugins/canva` | The Chrome extension, Figma plugin, Raycast extension and Canva app |
 | `skills/` | Agent skills, such as `generate-qr` |
 
 ## Checks before you open a pull request
 
-CI (`.github/workflows/ci.yml`) runs these on every pull request and on every push to `main`. Pushes to `staging` don't run it again: every change reaches `staging` through a pull request that already did. Both branches require the job to pass before anything merges.
+CI (`.github/workflows/ci.yml`) runs these on every pull request and on every push to `staging` and `main`. Both branches require the job to pass before anything merges. A push to `staging` runs the full suite in the background after each merge. A release pull request into `main`, and the push to `main` it creates, hold the same code, so they reuse that result instead of testing it again (`scripts/ci-reuse-check.sh` compares git trees; it waits up to 20 minutes for a staging run that's still going, and falls back to the full suite when nothing matches). Manual runs always test everything.
 
 ```bash
 bun x turbo build --filter=qrdx --filter=@qrdx/cli   # the docs app and CLI use qrdx's build output; the CLI tests run its dist/index.js
@@ -112,7 +114,7 @@ bun run test                        # every package's tests, through turbo
 bun run lint:ci                     # ultracite check: Biome's lint and format rules over the whole repository
 ```
 
-A pull request into `staging` tests only the packages it changes and the packages that depend on them (`turbo test --affected`). A content-only change runs the docs app's tests and skips the engine's; a change to `packages/qrdx` runs the engine, the CLI and the docs app. Release pull requests into `main`, pushes to `main` and manual runs test everything. Turbo's cache (`.turbo/cache`, kept between runs with `actions/cache`) replays any task whose inputs haven't changed, and the job's summary lists what was replayed and what ran.
+A pull request into `staging` tests only the packages it changes and the packages that depend on them (`turbo test --affected`). A content-only change runs the docs app's tests and skips the engine's; a change to `packages/qrdx` runs the engine, the CLI and the docs app. Pushes to `staging` and `main`, release pull requests into `main` and manual runs test everything, unless an earlier full run already passed on the identical code (see above). Turbo's cache (`.turbo/cache`, kept between runs with `actions/cache`) replays any task whose inputs haven't changed, and the job's summary lists what was replayed and what ran.
 
 The official frames (`packages/qrdx/src/frames/official`, hundreds of them) all get their spec, color, layout and generator checks and one crisp decode on every run, but the slow scan checks (the phone-camera model at three distances, 160 and 320 px, the scan score, zbar, PDF and EPS) only go to a sample: the hand-made frames, one frame per layout, and a set that rotates daily so every frame comes round (`packages/qrdx/scripts/official-frames/sample.mjs`). To scan every frame, as the weekly and release `Frame scan` workflow does, set `QRDX_FULL_FRAME_SCAN=1`:
 
@@ -157,7 +159,7 @@ A maintainer applies schema changes to the production database before the code t
 
 ## Translating QRdx
 
-English is the source and keeps the unprefixed URLs (`/pricing`). Every other language lives under its own lowercase segment: `/es/pricing`, `/pt-br/pricing`, `/zh-hans`. Translated so far: the header, the footer, the cookie banner and its dialog, the home page, `/pricing` and the other marketing pages listed in `apps/docs/lib/i18n/localized-paths.json` (tools, scanner, generators, industry and placement guides, templates, integrations, plugins, MCP, AI and the comparison index). A dynamic route is listed the way its folder is named (`/qr-code-generator/[type]`). The docs are in every one of these languages too (see [Docs](#docs) below). The blog, the legal pages, the comparison pages themselves and the signed-in app are English only.
+English is the source and keeps the unprefixed URLs (`/pricing`). Every other language lives under its own lowercase segment: `/es/pricing`, `/pt-br/pricing`, `/zh-hans`. Translated so far: the header, the footer, the cookie banner and its dialog, the home page, `/pricing` and the other marketing pages listed in `packages/i18n/localized-paths.json` (tools, scanner, generators, industry and placement guides, templates, integrations, plugins, MCP, AI and the comparison index). A dynamic route is listed the way its folder is named (`/qr-code-generator/[type]`). The docs are in every one of these languages too (see [Docs](#docs) below). The blog, the legal pages, the comparison pages themselves and the signed-in app are English only.
 
 The copy is in `apps/docs/messages/`:
 
@@ -171,11 +173,13 @@ The copy is in `apps/docs/messages/`:
 
 Long copy kept in TypeScript (for example `lib/qr-types-content.ts`, `lib/seo-content`, a page's `content.ts`) stays English in its file. `apps/docs/lib/i18n/content-sources.ts` lists that data, the translate script fills `content/<locale>.json` from it, and pages render it with `localizeContent()` (client components with `useContentText()`). A string is looked up by its English, so when the English changes it shows in English until it's translated again.
 
+An app other than `apps/docs` loads the namespaces the docs read (`docs`, `footer`, `localeSwitcher`, `meta` and `consent`) through `@repo/i18n`, from a copy that `bun run --filter docs i18n:docs-messages` writes to `packages/i18n/messages` right before that app builds. The copy isn't committed, so there's nothing to refresh by hand.
+
 ### Add a language
 
 Open an issue first, so two people don't start the same language. A new language touches these files and nothing else:
 
-1. `apps/docs/lib/i18n/config.ts`: one entry in `LOCALE_CONFIG`. The key is the BCP 47 code (`nl`, `zh-Hant`). Give it the lowercase URL `segment`, its `name` written in the language itself, its `englishName`, the `hreflang` values, `ogLocale`, `dir` (`"rtl"` for Arabic, Hebrew or Persian) and `review: "machine"`.
+1. `packages/i18n/config.ts`: one entry in `LOCALE_CONFIG`. The key is the BCP 47 code (`nl`, `zh-Hant`). Give it the lowercase URL `segment`, its `name` written in the language itself, its `englishName`, the `hreflang` values, `ogLocale`, `dir` (`"rtl"` for Arabic, Hebrew or Persian) and `review: "machine"`.
 2. `apps/docs/messages/<code>.json`: the translations. It can start as `{}`, and a partial file is fine to merge, because untranslated strings show in English.
 3. `apps/docs/messages/review/<code>.json`: written by the translate script (below). Don't edit the hashes by hand.
 4. `apps/docs/messages/glossary.json` (optional): the language's fixed terms under `fixed`, such as the Free plan's name, and its tone under `register`.
@@ -220,7 +224,7 @@ It fails on keys that English doesn't have, on placeholders or tags that changed
 
 ### Docs
 
-The docs (`apps/docs/content/docs`) are translated into the languages whose entry in `lib/i18n/config.ts` has `docs: true`: today all of them, `es`, `pt-BR`, `fr`, `de`, `it`, `ja`, `ko`, `zh-Hans`, `id` and `hi`. Their pages live under the language's segment, such as `/es/docs/...`, `/pt-br/docs/...` and `/zh-hans/docs/...`; English keeps `/docs/...`. A language added without `docs: true` links to the English docs.
+The docs (`apps/docs/content/docs`) are translated into the languages whose entry in `packages/i18n/config.ts` has `docs: true`: today all of them, `es`, `pt-BR`, `fr`, `de`, `it`, `ja`, `ko`, `zh-Hans`, `id` and `hi`. Their pages live under the language's segment, such as `/es/docs/...`, `/pt-br/docs/...` and `/zh-hans/docs/...`; English keeps `/docs/...`. A language added without `docs: true` links to the English docs.
 
 | File | What it holds |
 | --- | --- |

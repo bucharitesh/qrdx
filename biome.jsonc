@@ -115,6 +115,16 @@
       }
     },
     {
+      // CSS modules scope with :global(). Ultracite turns Biome's CSS modules
+      // parsing off; back on for module files, where the unknown-pseudo-class
+      // rule still reads :global() as a typo.
+      "includes": ["**/*.module.css"],
+      "css": { "parser": { "cssModules": true } },
+      "linter": {
+        "rules": { "correctness": { "noUnknownPseudoClass": "off" } }
+      }
+    },
+    {
       // Two vendored @layer base blocks (shadcn/ui, next-forge) both style * and body.
       "includes": ["packages/design-system/styles/globals.css"],
       "linter": {

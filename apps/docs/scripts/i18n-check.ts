@@ -1,6 +1,6 @@
 // bun run --filter docs i18n:check [--verbose]   (CI, next to tsc and biome)
 //
-// Every catalog in lib/i18n/config.ts (messages/<locale>.json) against
+// Every catalog in packages/i18n/config.ts (messages/<locale>.json) against
 // English. Errors (exit 1): a missing catalog file, keys English doesn't
 // have, changed ICU arguments or tags, dropped numbers, and, in a locale
 // marked "reviewed", any missing, unrecorded, machine or stale string.

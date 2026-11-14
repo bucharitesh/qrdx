@@ -2,6 +2,18 @@
 
 Release notes for earlier versions are at [qrdx.dev/changelog](https://qrdx.dev/changelog).
 
+## 0.0.53
+
+### Templates are frames
+
+- **The built-in templates draw from frame specs.** Arrow, StandardBox, SquareBorder, StrikedBox and Halloween are now JSON frame specs in `src/template/specs`, drawn by the frame engine. Their hand-written SVG is gone, and `getTemplate(id).spec` returns each one (`TemplateDefinition` gains an optional `spec`). A parity test renders each against the old templates in SVG, PDF and EPS: alone, with brand colors, on a see-through background and inside a frame. `default`, which draws no artwork, is unchanged.
+- **Nothing changes for template users.** `templateId`, `customTemplate`, `TemplateDefinition`, `getTemplate`, `getAllTemplates` and `getTemplateIds` work as before. A template still draws its whole artwork at `size` with the code smaller inside it, and takes `fgColor` for its artwork (Striked Box and Halloween keep their own colors).
+- **Use a template's artwork as a frame:** `{ style: "custom", spec: getTemplate("Arrow").spec }` draws it with frame sizing. The code keeps its size and the artwork grows around it.
+- **New spec fields**, both optional:
+  - `qr.plate: "none"` paints no plate. The code's own background and margin are its light space, so `qr.padding` may be under 4%.
+  - `stroke: { color, width }` on rects, circles, ellipses, polygons and paths outlines the shape after its fill, with mitered corners, at most 10% of the artboard's shorter side. SVG, canvas, PDF and EPS all draw it. `FrameShape` gains `stroke` and `strokeWidth`.
+  - qrdx 0.0.51 and older reject specs that use these.
+
 ## 0.0.52
 
 ### Web component (`qrdx/element`)

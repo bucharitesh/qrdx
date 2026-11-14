@@ -41,8 +41,8 @@ import { QRCode } from 'qrdx';
 | `cornerEyeDotPattern` | `CornerEyeDotPattern` | `'circle'` | 모서리 점 패턴 |
 | `hideLogo` | `boolean` | `false` | 로고를 숨깁니다. `logo`를 설정하지 않으면 로고는 그려지지 않습니다 |
 | `logo` | `string` | — | 로고 URL |
-| `templateId` | `string` | `'default'` | 템플릿 ID |
-| `customTemplate` | `TemplateDefinition` | — | 사용자 지정 템플릿 |
+| `templateId` | `string` | `'default'` | [템플릿으로 그리는 프레임](/docs/features/templates)(`'Arrow'`, `'StandardBox'` 등): 전체 아트워크의 너비가 `size`입니다 |
+| `customTemplate` | `TemplateDefinition` | — | 코드로 그리는 프레임(`templateId`보다 우선해요) |
 | `level` | `ErrorLevel` | `'Q'` | 오류 정정 |
 | `autoLevel` | `boolean` | `false` | 로고가 코드의 7% 넘게 차지하면 `level`을 H로 올립니다(`AUTO_LEVEL_LOGO_COVERAGE`) |
 | `margin` | `number` | `0` | 모듈 단위 여백 |
