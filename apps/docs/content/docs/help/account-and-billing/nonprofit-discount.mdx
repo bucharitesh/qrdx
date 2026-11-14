@@ -3,28 +3,42 @@ title: Non-profit discount
 description: Registered non-profits and charities get {facts.nonprofitDiscountPercent}% off Pro or Business, monthly or yearly. How to ask for a discount code.
 ---
 
-<IfAvailable feature="nonprofitDiscounts" title="Non-profit discount">
+Registered non-profits and charities get {facts.nonprofitDiscountPercent}% off Pro or Business, billed monthly or yearly. The discount comes as a code you enter at checkout, after the QRdx team checks your registration. It's QRdx's own offer, so it's made on qrdx.dev; a self-hosted QRdx server has its own billing.
 
-Registered non-profits and charities get {facts.nonprofitDiscountPercent}% off Pro or Business, billed monthly or yearly. The discount comes as a code you enter at checkout.
+<IfAvailable feature="nonprofitDiscounts">
 
-To ask for a code:
+## Ask for a code
 
 1. Sign in and open the [pricing page](/pricing).
 2. Under the plans, next to **Non-profit or charity?**, click **Ask for a code**.
 3. Enter your organization's name and country, your number in a charity or non-profit register (or a link to your entry in a public register), the email address we should reply to, and the plan you want.
 4. Click **Send request**.
 
+{/* shot: nonprofit-request-form | the non-profit discount request form with the organization fields and the Send request button | /pricing, Ask for a code */}
+
 The request reaches the QRdx team by email, and we check the registration. We usually reply within a few days. If your organization qualifies, the reply has a discount code. Nothing is charged until you check out.
 
-If the form can't send your request, email [support@qrdx.dev](mailto:support@qrdx.dev) with the same details.
-
-To use the code:
+## Use the code
 
 1. On the [pricing page](/pricing), choose **Monthly** or **Yearly** and click the upgrade button for the plan.
 2. At checkout, enter the code in the discount field. The price drops before you pay.
 
-The discount applies to every payment of that subscription, renewals included.
+The discount applies to every payment of that subscription, renewals included. Like any first payment for a paid plan, it comes with a {facts.moneyBackDays}-day money-back guarantee. See the [refund policy](/legal/refunds).
 
-Like any first payment for a paid plan, it comes with a {facts.moneyBackDays}-day money-back guarantee. See the [refund policy](/legal/refunds).
+## If something goes wrong
+
+### The form can't send your request
+
+Email [support@qrdx.dev](mailto:support@qrdx.dev) with the same details.
+
+### The code is refused at checkout
+
+Check that you picked the plan the code was issued for, and that you're signed in to the account you named in the request. If it still fails, reply to the email that sent you the code.
 
 </IfAvailable>
+
+## Related
+
+- [Plans and what they include](/docs/help/account-and-billing/plans)
+- [Upgrade, downgrade or switch billing](/docs/help/account-and-billing/change-plan)
+- [Contact support](/docs/help/contact)
